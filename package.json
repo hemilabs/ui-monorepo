@@ -1,0 +1,72 @@
+{
+  "name": "ui-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "format:check": "prettier --check .",
+    "lint": "eslint --cache ."
+  },
+  "workspaces": [
+    "marketing",
+    "webapp"
+  ],
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "6.16.0",
+    "@typescript-eslint/parser": "6.16.0",
+    "eslint": "8.56.0",
+    "eslint-config-bloq": "4.0.0",
+    "prettier": "3.1.1",
+    "prettier-plugin-tailwindcss": "0.5.9"
+  },
+  "eslintConfig": {
+    "extends": [
+      "bloq",
+      "prettier"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "webapp/**/*.{js,ts,tsx}"
+        ],
+        "extends": [
+          "bloq/next",
+          "plugin:@typescript-eslint/eslint-recommended",
+          "plugin:@typescript-eslint/recommended",
+          "prettier"
+        ],
+        "parser": "@typescript-eslint/parser",
+        "plugins": [
+          "@typescript-eslint"
+        ],
+        "settings": {
+          "next": {
+            "rootDir": [
+              "webapp"
+            ]
+          }
+        }
+      },
+      {
+        "files": [
+          "*.d.ts"
+        ],
+        "extends": [
+          "plugin:@typescript-eslint/eslint-recommended",
+          "plugin:@typescript-eslint/recommended",
+          "prettier"
+        ]
+      }
+    ],
+    "root": true
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "quoteProps": "consistent",
+    "semi": false,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ]
+  }
+}

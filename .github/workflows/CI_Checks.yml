@@ -1,0 +1,38 @@
+name: Checks on CI
+
+# Will limit one workflow per branch and one per pull_request at the same time
+# and cancel if a new one appears.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  builds:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+      - name: Build apps
+        run: npm run build --workspaces --if-present
+
+  code_checks:
+    name: Code Styling check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+      - name: Check formatting
+        run: npm run format:check
+      - name: Check linting
+        run: npm run lint
+      # Enable once there are more deps installed
+      # - name: Check dependencies
+      #   run: npm run lerna:run deps:check

@@ -1,0 +1,5 @@
+.env.local
+.eslintcache
+.next
+.vscode/
+node_modules

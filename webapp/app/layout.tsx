@@ -1,4 +1,11 @@
+import type { Metadata } from 'next'
 import 'styles/globals.css'
+
+import { Header } from './header'
+
+export const metadata: Metadata = {
+  title: 'BVM',
+}
 
 export default function RootLayout({
   children,
@@ -7,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="flex h-screen flex-col bg-neutral-100">
+        <Header />
+        {children}
+      </body>
     </html>
   )
 }

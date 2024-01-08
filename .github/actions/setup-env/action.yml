@@ -5,6 +5,7 @@ runs:
   using: composite
   steps:
     - name: Add extra required branches
+      if: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'main' }}
       run: git fetch origin main:main ${{ github.event.pull_request.base.ref }}:${{ github.event.pull_request.base.ref }}
       shell: bash
 

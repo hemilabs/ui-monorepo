@@ -1,11 +1,20 @@
 'use client'
+
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+
+const WalletConnectButton = dynamic(() =>
+  import('components/wallet-integration/walletConnectButton').then(
+    mod => mod.WalletConnectButton,
+  ),
+)
 
 type Props = {
   path: '/bridge' | '/swap'
   text: string
 }
+
 const Route = function ({ path, text }: Props) {
   const pathname = usePathname()
   const activeLink = 'bg-white text-black cursor-auto'
@@ -29,6 +38,8 @@ export const Header = () => (
         <Route path="/swap" text="Swap" />
       </ul>
     </nav>
-    {/* I think we should add the Connect Wallet button around here, floating to the right */}
+    <div className="absolute right-4 top-6 pr-4">
+      <WalletConnectButton />
+    </div>
   </header>
 )

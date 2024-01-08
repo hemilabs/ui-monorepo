@@ -1,5 +1,7 @@
-import type { Metadata } from 'next'
 import 'styles/globals.css'
+
+import { WalletContext } from 'components/wallet-integration/walletContext'
+import type { Metadata } from 'next'
 
 import { Header } from './header'
 
@@ -15,8 +17,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="flex h-screen flex-col bg-neutral-100">
-        <Header />
-        {children}
+        <WalletContext>
+          <Header />
+          {children}
+        </WalletContext>
       </body>
     </html>
   )

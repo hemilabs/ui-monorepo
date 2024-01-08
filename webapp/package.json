@@ -7,9 +7,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "@rainbow-me/rainbowkit": "^1.3.3",
     "next": "14.0.4",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "viem": "1.21.4",
+    "wagmi": "1.4.13"
   },
   "devDependencies": {
     "@types/node": "20.10.5",

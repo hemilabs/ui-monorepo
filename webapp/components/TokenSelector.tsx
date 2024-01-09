@@ -127,7 +127,7 @@ export const TokenSelector = function ({
           src={selectedToken.logoURI}
           width={24}
         />
-        <span className="text-xs font-medium uppercase text-slate-700 sm:text-sm">
+        <span className="text-sm font-medium uppercase text-slate-700">
           {selectedToken.symbol}
         </span>
         <svg

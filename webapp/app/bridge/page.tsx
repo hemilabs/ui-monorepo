@@ -41,6 +41,20 @@ export default function Bridge() {
               </button>
             </div>
           </div>
+          <div className="flex flex-col justify-between">
+            {/* Filter tokens based on "From network" - See https://github.com/BVM-priv/ui-monorepo/issues/10 */}
+            <TokenSelector
+              onSelectToken={setFromToken}
+              selectedToken={fromToken}
+              tokens={tokenList.tokens}
+            />
+            <div className="flex items-center gap-x-2 text-sm font-normal">
+              <span>Balance: 5.609</span>
+              <button className="cursor-pointer font-semibold text-slate-700">
+                MAX
+              </button>
+            </div>
+          </div>
           <div className="my-2 flex items-center justify-between text-sm">
             <span>From Network</span>
             <span className="text-xs">Chain Selector</span>

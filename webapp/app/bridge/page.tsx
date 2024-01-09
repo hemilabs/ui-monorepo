@@ -42,11 +42,11 @@ export default function Bridge() {
             </div>
           </div>
           <div className="my-2 flex items-center justify-between text-sm">
-            <span className="font-medium">From Network</span>
+            <span>From Network</span>
             <span className="text-xs">Chain Selector</span>
           </div>
-          <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
-            <div className="flex flex-col gap-y-2">
+          <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400 ">
+            <div className="flex basis-1/2 flex-col gap-y-2">
               <span className="text-xs font-normal">You send</span>
               <div className="flex items-center gap-x-2">
                 <button className="cursor-pointer rounded-md bg-gray-200 p-[6px]">
@@ -67,7 +67,7 @@ export default function Bridge() {
                     />
                   </svg>
                 </button>
-                <div className="flex w-1/5">
+                <div className="flex max-w-7 sm:max-w-none">
                   $
                   <input
                     className="ml-1 max-w-28 bg-transparent text-base font-medium text-neutral-400"
@@ -77,14 +77,14 @@ export default function Bridge() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col justify-between">
+            <div className="flex basis-1/2 flex-col justify-between">
               {/* Filter tokens based on "From network" - See https://github.com/BVM-priv/ui-monorepo/issues/10 */}
               <TokenSelector
                 onSelectToken={setFromToken}
                 selectedToken={fromToken}
                 tokens={tokenList.tokens}
               />
-              <div className="flex items-center justify-end gap-x-2 text-sm font-normal">
+              <div className="flex items-center justify-end gap-x-2 text-xs font-normal sm:text-sm">
                 <span>Balance: 5.609</span>
                 <button className="cursor-pointer font-semibold text-slate-700">
                   MAX

@@ -1,7 +1,10 @@
 'use client'
 
+import { TokenSelector, Token } from 'app/components/TokenSelector'
 import { Card } from 'components/design/card'
 import dynamic from 'next/dynamic'
+import { useState } from 'react'
+import { tokenList } from 'tokenList'
 import { useNetwork } from 'wagmi'
 
 const AddNetworkToWallet = dynamic(() =>
@@ -10,6 +13,8 @@ const AddNetworkToWallet = dynamic(() =>
 
 export default function Bridge() {
   const network = useNetwork()
+  // Default token needs to be taken from the "From network" - See https://github.com/BVM-priv/ui-monorepo/issues/10
+  const [fromToken, setFromToken] = useState<Token>(tokenList.tokens[0])
 
   return (
     <div className="mx-auto flex w-full max-w-[480px] flex-col px-8 pt-8 lg:pt-20">
@@ -73,8 +78,13 @@ export default function Bridge() {
               </div>
             </div>
             <div className="flex flex-col justify-between">
-              <span className="text-xs">Token selector</span>
-              <div className="flex items-center gap-x-2 text-sm font-normal">
+              {/* Filter tokens based on "From network" - See https://github.com/BVM-priv/ui-monorepo/issues/10 */}
+              <TokenSelector
+                onSelectToken={setFromToken}
+                selectedToken={fromToken}
+                tokens={tokenList.tokens}
+              />
+              <div className="flex items-center justify-end gap-x-2 text-sm font-normal">
                 <span>Balance: 5.609</span>
                 <button className="cursor-pointer font-semibold text-slate-700">
                   MAX
@@ -99,7 +109,7 @@ export default function Bridge() {
             </button>
           </div>
           <div className="my-2 flex items-center justify-between text-sm">
-            <span className="font-medium">To Network</span>
+            <span>To Network</span>
             <span className="text-xs">Chain Selector</span>
           </div>
           <div className="mb-6 flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
@@ -131,7 +141,18 @@ export default function Bridge() {
               </div>
             </div>
             <div className="flex flex-col justify-between">
-              <span className="text-xs">Token selector</span>
+              <div className="flex items-center justify-end gap-x-2 text-xs">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt={`${fromToken.symbol} Logo`}
+                  height={24}
+                  src={fromToken.logoURI}
+                  width={24}
+                />
+                <span className="text-sm font-medium uppercase text-slate-700">
+                  {fromToken.symbol}
+                </span>
+              </div>
               <div className="flex items-center gap-x-2 text-sm font-normal">
                 <span>Balance: 5.609</span>
               </div>

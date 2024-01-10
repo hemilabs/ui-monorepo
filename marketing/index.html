@@ -5,15 +5,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tailwind v2.2</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Inter"
+      rel="preconnect"
+    />
     <link rel="stylesheet" href="app.css" />
   </head>
   <body
-    class="flex h-screen w-full flex-col pb-28 pt-6 sm:mx-auto sm:w-4/5 lg:w-3/4 2xl:max-w-7xl"
+    class="font-inter flex h-screen w-full flex-col pb-28 pt-6 sm:mx-auto sm:w-4/5 lg:w-3/4 xl:w-5/6 2xl:max-w-[1500px]"
   >
     <header class="mb-6 overflow-x-auto">
       <div>
         <nav>
-          <ul class="flex gap-x-4">
+          <ul class="flex gap-x-4 font-medium">
             <li class="mr-auto py-4 pr-5">
               <a class="cursor-pointer">Logo</a>
             </li>
@@ -35,10 +39,10 @@
     </header>
     <main class="flex-grow">
       <section
-        class="bg-triangles-pattern flex h-full flex-col items-center gap-y-5 bg-cover sm:rounded-3xl"
+        class="bg-triangles-pattern flex h-full flex-col items-center gap-y-5 bg-cover px-2 sm:rounded-3xl sm:px-5 2xl:px-8"
       >
         <h1
-          class="mt-14 flex text-center text-2xl font-black uppercase text-[#F3EDE4] sm:text-4xl xl:text-6xl 2xl:text-8xl"
+          class="font-right-grotesk mt-14 flex text-center text-2xl font-black uppercase text-[#F3EDE4] sm:text-4xl xl:text-6xl 2xl:text-8xl"
         >
           Bitcoin's security. <br />Ethereum's agility.
         </h1>

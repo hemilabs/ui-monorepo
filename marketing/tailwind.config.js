@@ -8,6 +8,10 @@ module.exports = {
       backgroundImage: {
         'triangles-pattern': "url('main-background.webp')",
       },
+      fontFamily: {
+        'inter': ['Inter', 'sans-serif'],
+        'right-grotesk': ['PP Right Grotesk', 'sans-serif'],
+      },
     },
   },
 }

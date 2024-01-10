@@ -24,7 +24,7 @@ export default function Bridge() {
           </div>
         </div>
         <div className="my-2 flex items-center justify-between text-sm">
-          <span>From Network</span>
+          <span className="font-medium">From Network</span>
           <span className="text-xs">Chain Selector</span>
         </div>
         <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
@@ -86,7 +86,7 @@ export default function Bridge() {
           </button>
         </div>
         <div className="my-2 flex items-center justify-between text-sm">
-          <span>To Network</span>
+          <span className="font-medium">To Network</span>
           <span className="text-xs">Chain Selector</span>
         </div>
         <div className="mb-6 flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">

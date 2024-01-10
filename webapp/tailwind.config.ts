@@ -7,5 +7,13 @@ const config: Config = {
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   plugins: [],
+  theme: {
+    extend: {
+      fontFamily: {
+        'inter': '--font-inter',
+        'right-grotesk': '--font-right-grotesk',
+      },
+    },
+  },
 }
 export default config

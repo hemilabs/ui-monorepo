@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: PP Right Grotesk;
+  font-weight: 900;
+  src: url('./fonts/RightGrotesk-fw-900.otf');
+}

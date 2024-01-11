@@ -30,7 +30,7 @@ export default function Bridge() {
   // Default token needs to be taken from the "From network" - See https://github.com/BVM-priv/ui-monorepo/issues/10
   const [fromToken, setFromToken] = useState<Token>(tokenList.tokens[0])
 
-  const [fromNetworkId, setFromNetworkId] = useState(mainnet.id)
+  const [fromNetworkId, setFromNetworkId] = useState<number>(mainnet.id)
   const [toNetworkId, setToNetworkId] = useState(bvm.id)
 
   const toggleNetworks = function () {

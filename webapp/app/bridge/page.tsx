@@ -2,12 +2,13 @@
 
 import { TokenSelector, Token } from 'app/components/TokenSelector'
 import { Card } from 'components/design/card'
-import { networks } from 'components/wallet-integration/walletContext'
+import { bvm, networks } from 'components/wallet-integration/walletContext'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { useNetwork } from 'wagmi'
+import { mainnet } from 'wagmi/chains'
 
 const AddNetworkToWallet = dynamic(() =>
   import('components/addNetworkToWallet').then(mod => mod.AddNetworkToWallet),
@@ -24,17 +25,13 @@ const NetworkSelector = dynamic(
   },
 )
 
-// TODO read from config after rebasing, and use real bvmChain
-const bvmChainId = 11155222
-
 export default function Bridge() {
   const network = useNetwork()
   // Default token needs to be taken from the "From network" - See https://github.com/BVM-priv/ui-monorepo/issues/10
   const [fromToken, setFromToken] = useState<Token>(tokenList.tokens[0])
 
-  // TODO get from network config
-  const [fromNetworkId, setFromNetworkId] = useState(1)
-  const [toNetworkId, setToNetworkId] = useState(bvmChainId)
+  const [fromNetworkId, setFromNetworkId] = useState(mainnet.id)
+  const [toNetworkId, setToNetworkId] = useState(bvm.id)
 
   const toggleNetworks = function () {
     setFromNetworkId(toNetworkId)
@@ -72,7 +69,7 @@ export default function Bridge() {
               networkId={fromNetworkId}
               networks={networks.filter(chain => chain.id !== toNetworkId)}
               onSelectNetwork={setFromNetworkId}
-              readonly={fromNetworkId === bvmChainId}
+              readonly={fromNetworkId === bvm.id}
             />
           </div>
           <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400 ">
@@ -147,7 +144,7 @@ export default function Bridge() {
               networkId={toNetworkId}
               networks={networks.filter(chain => chain.id !== fromNetworkId)}
               onSelectNetwork={setToNetworkId}
-              readonly={toNetworkId === bvmChainId}
+              readonly={toNetworkId === bvm.id}
             />
           </div>
           <div className="mb-6 flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
@@ -197,15 +194,15 @@ export default function Bridge() {
             </div>
           </div>
           <button className="h-14 w-full cursor-pointer rounded-xl bg-black text-base text-white">
-            Deposit funds
+            {fromNetworkId !== bvm.id ? 'Deposit funds' : 'Withdraw funds'}
           </button>
         </main>
       </Card>
       {network?.chain?.id ===
       parseInt(process.env.NEXT_PUBLIC_CHAIN_ID) ? null : (
-        <Card className="mt-4 px-2 pb-4 pt-6" customPadding>
+        <div className="mt-4">
           <AddNetworkToWallet />
-        </Card>
+        </div>
       )}
     </div>
   )

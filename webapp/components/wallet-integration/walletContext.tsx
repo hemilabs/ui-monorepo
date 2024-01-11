@@ -13,7 +13,7 @@ import { Chain, configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { mainnet, sepolia, holesky, optimism } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
 
-const bvm: Chain = {
+export const bvm: Chain = {
   blockExplorers: {
     default: {
       name: process.env.NEXT_PUBLIC_CHAIN_EXPLORER_NAME,

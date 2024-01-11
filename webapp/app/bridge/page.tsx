@@ -2,11 +2,12 @@
 
 import { TokenSelector, Token } from 'app/components/TokenSelector'
 import { Card } from 'components/design/card'
+import { networks } from 'components/wallet-integration/walletContext'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
-import { useConfig, useNetwork } from 'wagmi'
+import { useNetwork } from 'wagmi'
 
 const AddNetworkToWallet = dynamic(() =>
   import('components/addNetworkToWallet').then(mod => mod.AddNetworkToWallet),
@@ -34,8 +35,6 @@ export default function Bridge() {
   // TODO get from network config
   const [fromNetworkId, setFromNetworkId] = useState(1)
   const [toNetworkId, setToNetworkId] = useState(bvmChainId)
-
-  const { chains } = useConfig()
 
   const toggleNetworks = function () {
     setFromNetworkId(toNetworkId)
@@ -71,7 +70,7 @@ export default function Bridge() {
             <span>From Network</span>
             <NetworkSelector
               networkId={fromNetworkId}
-              networks={chains?.filter(chain => chain.id !== toNetworkId)}
+              networks={networks.filter(chain => chain.id !== toNetworkId)}
               onSelectNetwork={setFromNetworkId}
               readonly={fromNetworkId === bvmChainId}
             />
@@ -146,7 +145,7 @@ export default function Bridge() {
             <span>To Network</span>
             <NetworkSelector
               networkId={toNetworkId}
-              networks={chains?.filter(chain => chain.id !== fromNetworkId)}
+              networks={networks.filter(chain => chain.id !== fromNetworkId)}
               onSelectNetwork={setToNetworkId}
               readonly={toNetworkId === bvmChainId}
             />

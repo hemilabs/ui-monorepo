@@ -39,10 +39,9 @@ const bvm: Chain = {
   testnet: true,
 }
 
-const { chains, publicClient } = configureChains(
-  [mainnet, sepolia, holesky, optimism, bvm],
-  [publicProvider()],
-)
+export const networks = [mainnet, sepolia, holesky, optimism, bvm]
+
+const { chains, publicClient } = configureChains(networks, [publicProvider()])
 
 const { connectors } = getDefaultWallets({
   appName: process.env.NEXT_PUBLIC_APP_NAME,

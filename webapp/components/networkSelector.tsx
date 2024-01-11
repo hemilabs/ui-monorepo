@@ -24,6 +24,10 @@ export const NetworkSelector = function ({
 
   const network = networks.find(n => n.id === networkId)
 
+  if (!network) {
+    return null
+  }
+
   const selectNetwork = function ({ id }: Chain) {
     setShowNetworkDropdown(false)
     onSelectNetwork(id)

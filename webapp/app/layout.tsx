@@ -1,4 +1,5 @@
 import 'styles/globals.css'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 import { WalletContext } from 'components/wallet-integration/walletContext'
 import type { Metadata } from 'next'

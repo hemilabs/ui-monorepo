@@ -4,17 +4,43 @@ import { TokenSelector, Token } from 'app/components/TokenSelector'
 import { Card } from 'components/design/card'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
-import { useNetwork } from 'wagmi'
+import { useConfig, useNetwork } from 'wagmi'
 
 const AddNetworkToWallet = dynamic(() =>
   import('components/addNetworkToWallet').then(mod => mod.AddNetworkToWallet),
 )
 
+const NetworkSelector = dynamic(
+  () =>
+    import('app/components/networkSelector').then(mod => mod.NetworkSelector),
+  {
+    loading: () => (
+      <Skeleton className="h-10 py-2" containerClassName="basis-1/4" />
+    ),
+    ssr: false,
+  },
+)
+
+// TODO read from config after rebasing, and use real bvmChain
+const bvmChainId = 11155222
+
 export default function Bridge() {
   const network = useNetwork()
   // Default token needs to be taken from the "From network" - See https://github.com/BVM-priv/ui-monorepo/issues/10
   const [fromToken, setFromToken] = useState<Token>(tokenList.tokens[0])
+
+  // TODO get from network config
+  const [fromNetworkId, setFromNetworkId] = useState(1)
+  const [toNetworkId, setToNetworkId] = useState(bvmChainId)
+
+  const { chains } = useConfig()
+
+  const toggleNetworks = function () {
+    setFromNetworkId(toNetworkId)
+    setToNetworkId(fromNetworkId)
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-[480px] flex-col px-8 pt-8 lg:pt-20">
@@ -41,9 +67,14 @@ export default function Bridge() {
               </button>
             </div>
           </div>
-          <div className="my-2 flex items-center justify-between text-sm">
+          <div className="my-2 flex w-full items-center justify-between text-sm">
             <span>From Network</span>
-            <span className="text-xs">Chain Selector</span>
+            <NetworkSelector
+              networkId={fromNetworkId}
+              networks={chains?.filter(chain => chain.id !== toNetworkId)}
+              onSelectNetwork={setFromNetworkId}
+              readonly={fromNetworkId === bvmChainId}
+            />
           </div>
           <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400 ">
             <div className="flex basis-1/2 flex-col gap-y-2">
@@ -93,7 +124,10 @@ export default function Bridge() {
             </div>
           </div>
           <div className="my-6 flex w-full">
-            <button className="mx-auto cursor-pointer rounded-lg p-2 shadow-xl">
+            <button
+              className="mx-auto cursor-pointer rounded-lg p-2 shadow-xl"
+              onClick={toggleNetworks}
+            >
               <svg
                 fill="none"
                 height="16"
@@ -110,7 +144,12 @@ export default function Bridge() {
           </div>
           <div className="my-2 flex items-center justify-between text-sm">
             <span>To Network</span>
-            <span className="text-xs">Chain Selector</span>
+            <NetworkSelector
+              networkId={toNetworkId}
+              networks={chains?.filter(chain => chain.id !== fromNetworkId)}
+              onSelectNetwork={setToNetworkId}
+              readonly={toNetworkId === bvmChainId}
+            />
           </div>
           <div className="mb-6 flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
             <div className="flex flex-col gap-y-2">

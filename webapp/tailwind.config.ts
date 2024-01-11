@@ -9,6 +9,10 @@ const config: Config = {
   plugins: [],
   theme: {
     extend: {
+      backgroundImage: {
+        'bvm-gradient':
+          'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',
+      },
       fontFamily: {
         'inter': '--font-inter',
         'right-grotesk': '--font-right-grotesk',

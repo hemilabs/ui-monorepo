@@ -13,7 +13,7 @@ import { Chain, configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { mainnet, sepolia, holesky, optimism } from 'wagmi/chains'
 import { publicProvider } from 'wagmi/providers/public'
 
-const bvm: Chain = {
+export const bvm: Chain = {
   blockExplorers: {
     default: {
       name: process.env.NEXT_PUBLIC_CHAIN_EXPLORER_NAME,
@@ -39,10 +39,9 @@ const bvm: Chain = {
   testnet: true,
 }
 
-const { chains, publicClient } = configureChains(
-  [mainnet, sepolia, holesky, optimism, bvm],
-  [publicProvider()],
-)
+export const networks = [mainnet, sepolia, holesky, optimism, bvm]
+
+const { chains, publicClient } = configureChains(networks, [publicProvider()])
 
 const { connectors } = getDefaultWallets({
   appName: process.env.NEXT_PUBLIC_APP_NAME,

@@ -29,6 +29,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
       - name: Setup env
         uses: ./.github/actions/setup-env
       - name: Check formatting

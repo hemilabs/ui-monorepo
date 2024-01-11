@@ -1,7 +1,10 @@
 'use client'
 
+import { TokenSelector, Token } from 'app/components/TokenSelector'
 import { Card } from 'components/design/card'
 import dynamic from 'next/dynamic'
+import { useState } from 'react'
+import { tokenList } from 'tokenList'
 import { useNetwork } from 'wagmi'
 
 const AddNetworkToWallet = dynamic(() =>
@@ -10,6 +13,8 @@ const AddNetworkToWallet = dynamic(() =>
 
 export default function Bridge() {
   const network = useNetwork()
+  // Default token needs to be taken from the "From network" - See https://github.com/BVM-priv/ui-monorepo/issues/10
+  const [fromToken, setFromToken] = useState<Token>(tokenList.tokens[0])
 
   return (
     <div className="mx-auto flex w-full max-w-[480px] flex-col px-8 pt-8 lg:pt-20">
@@ -37,11 +42,11 @@ export default function Bridge() {
             </div>
           </div>
           <div className="my-2 flex items-center justify-between text-sm">
-            <span className="font-medium">From Network</span>
+            <span>From Network</span>
             <span className="text-xs">Chain Selector</span>
           </div>
-          <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
-            <div className="flex flex-col gap-y-2">
+          <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400 ">
+            <div className="flex basis-1/2 flex-col gap-y-2">
               <span className="text-xs font-normal">You send</span>
               <div className="flex items-center gap-x-2">
                 <button className="cursor-pointer rounded-md bg-gray-200 p-[6px]">
@@ -62,7 +67,7 @@ export default function Bridge() {
                     />
                   </svg>
                 </button>
-                <div className="flex w-1/5">
+                <div className="flex max-w-7 sm:max-w-none">
                   $
                   <input
                     className="ml-1 max-w-28 bg-transparent text-base font-medium text-neutral-400"
@@ -72,9 +77,14 @@ export default function Bridge() {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col justify-between">
-              <span className="text-xs">Token selector</span>
-              <div className="flex items-center gap-x-2 text-sm font-normal">
+            <div className="flex basis-1/2 flex-col justify-between">
+              {/* Filter tokens based on "From network" - See https://github.com/BVM-priv/ui-monorepo/issues/10 */}
+              <TokenSelector
+                onSelectToken={setFromToken}
+                selectedToken={fromToken}
+                tokens={tokenList.tokens}
+              />
+              <div className="flex items-center justify-end gap-x-2 text-xs font-normal sm:text-sm">
                 <span>Balance: 5.609</span>
                 <button className="cursor-pointer font-semibold text-slate-700">
                   MAX
@@ -99,7 +109,7 @@ export default function Bridge() {
             </button>
           </div>
           <div className="my-2 flex items-center justify-between text-sm">
-            <span className="font-medium">To Network</span>
+            <span>To Network</span>
             <span className="text-xs">Chain Selector</span>
           </div>
           <div className="mb-6 flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
@@ -131,7 +141,18 @@ export default function Bridge() {
               </div>
             </div>
             <div className="flex flex-col justify-between">
-              <span className="text-xs">Token selector</span>
+              <div className="flex items-center justify-end gap-x-2 text-xs">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  alt={`${fromToken.symbol} Logo`}
+                  height={24}
+                  src={fromToken.logoURI}
+                  width={24}
+                />
+                <span className="text-sm font-medium uppercase text-slate-700">
+                  {fromToken.symbol}
+                </span>
+              </div>
               <div className="flex items-center gap-x-2 text-sm font-normal">
                 <span>Balance: 5.609</span>
               </div>

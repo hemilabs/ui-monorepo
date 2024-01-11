@@ -11,13 +11,7 @@ export function AddNetworkToWallet() {
       onClick={() => switchNetwork(parseInt(process.env.NEXT_PUBLIC_CHAIN_ID))}
     >
       <div className="flex items-center bg-zinc-50 px-4 py-2">
-        <div
-          className="mr-1 h-8 w-8 rounded-full"
-          style={{
-            background:
-              'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',
-          }}
-        ></div>
+        <div className="bg-bvm-gradient mr-1 h-8 w-8 rounded-full"></div>
         <span className="font-base mr-auto text-xl text-black">
           Add BVM Network to your wallet
         </span>

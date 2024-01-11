@@ -7,7 +7,7 @@ import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
-import { useNetwork } from 'wagmi'
+import { useAccount, useNetwork } from 'wagmi'
 import { mainnet } from 'wagmi/chains'
 
 const AddNetworkToWallet = dynamic(() =>
@@ -32,6 +32,8 @@ export default function Bridge() {
 
   const [fromNetworkId, setFromNetworkId] = useState<number>(mainnet.id)
   const [toNetworkId, setToNetworkId] = useState(bvm.id)
+
+  const { isConnected } = useAccount()
 
   const toggleNetworks = function () {
     setFromNetworkId(toNetworkId)
@@ -193,7 +195,14 @@ export default function Bridge() {
               </div>
             </div>
           </div>
-          <button className="h-14 w-full cursor-pointer rounded-xl bg-black text-base text-white">
+          <button
+            className={`h-14 w-full cursor-pointer rounded-xl bg-black text-base text-white  ${
+              isConnected
+                ? 'cursor-pointer hover:bg-opacity-80'
+                : 'cursor-not-allowed bg-opacity-60'
+            }`}
+            disabled={!isConnected}
+          >
             {fromNetworkId !== bvm.id ? 'Deposit funds' : 'Withdraw funds'}
           </button>
         </main>

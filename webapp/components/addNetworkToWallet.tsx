@@ -1,9 +1,16 @@
 'use client'
 
-import { useSwitchNetwork } from 'wagmi'
+import { bvm } from 'app/networks'
+import { useAccount, useSwitchNetwork, useNetwork } from 'wagmi'
 
 export function AddNetworkToWallet() {
+  const { isConnected } = useAccount()
+  const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
+
+  if (!isConnected || chain.id === bvm.id) {
+    return null
+  }
 
   return (
     <button

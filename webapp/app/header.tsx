@@ -3,11 +3,17 @@
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Skeleton from 'react-loading-skeleton'
 
-const WalletConnectButton = dynamic(() =>
-  import('components/wallet-integration/walletConnectButton').then(
-    mod => mod.WalletConnectButton,
-  ),
+const WalletConnectButton = dynamic(
+  () =>
+    import('components/wallet-integration/walletConnectButton').then(
+      mod => mod.WalletConnectButton,
+    ),
+  {
+    loading: () => <Skeleton className="h-10 w-28" />,
+    ssr: false,
+  },
 )
 
 type Props = {

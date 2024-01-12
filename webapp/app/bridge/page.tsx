@@ -8,10 +8,11 @@ import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
-import { useNetwork } from 'wagmi'
 
-const AddNetworkToWallet = dynamic(() =>
-  import('components/addNetworkToWallet').then(mod => mod.AddNetworkToWallet),
+const AddNetworkToWallet = dynamic(
+  () =>
+    import('components/addNetworkToWallet').then(mod => mod.AddNetworkToWallet),
+  { loading: () => null, ssr: false },
 )
 
 const NetworkSelector = dynamic(
@@ -47,8 +48,6 @@ const Balance = dynamic(
 )
 
 export default function Bridge() {
-  const network = useNetwork()
-
   const [fromNetworkId, setFromNetworkId] = useState<number>(
     bridgableNetworks[0].id,
   )
@@ -238,12 +237,9 @@ export default function Bridge() {
           />
         </main>
       </Card>
-      {network?.chain?.id ===
-      parseInt(process.env.NEXT_PUBLIC_CHAIN_ID) ? null : (
-        <div className="mt-4">
-          <AddNetworkToWallet />
-        </div>
-      )}
+      <div className="mt-4">
+        <AddNetworkToWallet />
+      </div>
     </div>
   )
 }

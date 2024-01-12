@@ -1,14 +1,14 @@
 'use client'
 
-import { TokenSelector, Token } from 'app/components/TokenSelector'
-import { Card } from 'components/design/card'
-import { bvm, networks } from 'components/wallet-integration/walletContext'
+import { Card } from 'app/components/design/card'
+import { TokenSelector } from 'app/components/TokenSelector'
+import { bvm, bridgableNetworks, networks } from 'app/networks'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
+import { Token } from 'types/token'
 import { useNetwork } from 'wagmi'
-import { mainnet } from 'wagmi/chains'
 
 const AddNetworkToWallet = dynamic(() =>
   import('components/addNetworkToWallet').then(mod => mod.AddNetworkToWallet),
@@ -25,17 +25,56 @@ const NetworkSelector = dynamic(
   },
 )
 
+const OperationButton = dynamic(
+  () =>
+    import('app/bridge/components/OperationButton').then(
+      mod => mod.OperationButton,
+    ),
+  {
+    loading: () => <Skeleton className="h-14" />,
+    ssr: false,
+  },
+)
+
+const Balance = dynamic(
+  () => import('components/balance').then(mod => mod.Balance),
+  {
+    loading: () => (
+      <Skeleton className="h-full" containerClassName="basis-1/3" />
+    ),
+    ssr: false,
+  },
+)
+
 export default function Bridge() {
   const network = useNetwork()
-  // Default token needs to be taken from the "From network" - See https://github.com/BVM-priv/ui-monorepo/issues/10
-  const [fromToken, setFromToken] = useState<Token>(tokenList.tokens[0])
 
-  const [fromNetworkId, setFromNetworkId] = useState<number>(mainnet.id)
+  const [fromNetworkId, setFromNetworkId] = useState<number>(
+    bridgableNetworks[0].id,
+  )
   const [toNetworkId, setToNetworkId] = useState(bvm.id)
 
+  const [fromToken, setFromToken] = useState<Token>(() =>
+    // default to native token
+    tokenList.tokens.find(
+      t => t.chainId === fromNetworkId && !t.address.startsWith('0x'),
+    ),
+  )
+
+  const [toToken, setToToken] = useState<Token>(() =>
+    tokenList.tokens.find(
+      // default to native token
+      t => t.chainId === toNetworkId && !t.address.startsWith('0x'),
+    ),
+  )
+
   const toggleNetworks = function () {
+    // update from network and token
     setFromNetworkId(toNetworkId)
+    setFromToken(toToken)
+    // update to network and token
     setToNetworkId(fromNetworkId)
+    setToToken(fromToken)
   }
 
   return (
@@ -105,14 +144,15 @@ export default function Bridge() {
               </div>
             </div>
             <div className="flex basis-1/2 flex-col justify-between">
-              {/* Filter tokens based on "From network" - See https://github.com/BVM-priv/ui-monorepo/issues/10 */}
               <TokenSelector
                 onSelectToken={setFromToken}
                 selectedToken={fromToken}
-                tokens={tokenList.tokens}
+                tokens={tokenList.tokens.filter(
+                  t => t.chainId === fromNetworkId,
+                )}
               />
               <div className="flex items-center justify-end gap-x-2 text-xs font-normal sm:text-sm">
-                <span>Balance: 5.609</span>
+                Balance: <Balance token={fromToken} />
                 <button className="cursor-pointer font-semibold text-slate-700">
                   MAX
                 </button>
@@ -179,23 +219,23 @@ export default function Bridge() {
               <div className="flex items-center justify-end gap-x-2 text-xs">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  alt={`${fromToken.symbol} Logo`}
+                  alt={`${toToken.symbol} Logo`}
                   height={24}
-                  src={fromToken.logoURI}
+                  src={toToken.logoURI}
                   width={24}
                 />
                 <span className="text-sm font-medium uppercase text-slate-700">
-                  {fromToken.symbol}
+                  {toToken.symbol}
                 </span>
               </div>
-              <div className="flex items-center gap-x-2 text-sm font-normal">
-                <span>Balance: 5.609</span>
+              <div className="flex items-center justify-end gap-x-2 text-sm font-normal">
+                Balance: <Balance token={toToken} />
               </div>
             </div>
           </div>
-          <button className="h-14 w-full cursor-pointer rounded-xl bg-black text-base text-white">
-            {fromNetworkId !== bvm.id ? 'Deposit funds' : 'Withdraw funds'}
-          </button>
+          <OperationButton
+            text={fromNetworkId !== bvm.id ? 'Deposit funds' : 'Withdraw funds'}
+          />
         </main>
       </Card>
       {network?.chain?.id ===

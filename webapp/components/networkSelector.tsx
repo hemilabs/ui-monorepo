@@ -38,7 +38,7 @@ export const NetworkSelector = function ({
 
   const commonCss = 'flex items-center rounded-xl bg-zinc-50 p-2 gap-x-2'
 
-  if (readonly) {
+  if (readonly || networks.length === 1) {
     return (
       <div className={commonCss}>
         <Logo />

@@ -3,6 +3,9 @@
 import { useVirtualizer } from '@tanstack/react-virtual'
 import dynamic from 'next/dynamic'
 import { useRef, useState } from 'react'
+import { Token } from 'types/token'
+
+import { Balance } from './balance'
 
 const Modal = dynamic(() => import('components/modal').then(mod => mod.Modal), {
   ssr: false,
@@ -24,16 +27,6 @@ const CloseIcon = (props: React.SVGProps<SVGSVGElement>) => (
     />
   </svg>
 )
-
-// Probably needs to be moved somewhere else, let's keep it here for now
-export type Token = {
-  readonly chainId: number
-  readonly address: string
-  readonly name: string
-  readonly decimals: number
-  readonly symbol: string
-  readonly logoURI?: string
-}
 
 type Props = {
   onSelectToken: (token: Token) => void
@@ -87,7 +80,7 @@ const TokenList = function ({
                 <div className="mx-2 flex w-full flex-col text-xs">
                   <div className="flex items-center justify-between font-medium">
                     <span>{token.name}</span>
-                    <span className="text-sm">1,234.12</span>
+                    <Balance token={token} />
                   </div>
                   <div className="flex items-center justify-between text-zinc-400">
                     <span className="uppercase">{token.symbol}</span>
@@ -113,6 +106,12 @@ export const TokenSelector = function ({
 
   const closeModal = () => setShowTokenSelector(false)
   const openModal = () => setShowTokenSelector(true)
+
+  const tokensToList = tokens.filter(
+    token =>
+      token.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      token.symbol.toLowerCase().includes(searchText.toLowerCase()),
+  )
 
   return (
     <>
@@ -194,17 +193,17 @@ export const TokenSelector = function ({
                 value={searchText}
               ></input>
             </div>
-            <TokenList
-              onSelectToken={function (token) {
-                onSelectToken(token)
-                closeModal()
-              }}
-              tokens={tokens.filter(
-                token =>
-                  token.name.toLowerCase().includes(searchText.toLowerCase()) ||
-                  token.symbol.toLowerCase().includes(searchText.toLowerCase()),
-              )}
-            />
+            {tokensToList.length > 0 ? (
+              <TokenList
+                onSelectToken={function (token) {
+                  onSelectToken(token)
+                  closeModal()
+                }}
+                tokens={tokensToList}
+              />
+            ) : (
+              <span>There are no tokens</span>
+            )}
           </div>
         </Modal>
       )}

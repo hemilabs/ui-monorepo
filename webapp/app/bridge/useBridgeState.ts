@@ -69,10 +69,11 @@ const reducer = function (state: BridgeState, action: Actions) {
     }
     case 'updateFromInput': {
       const { payload: value } = action
-
+      // if input ends with a dot, add a zero so it is a valid number.
+      const fromInput = value === '' ? '0' : value
       return {
         ...state,
-        fromInput: value,
+        fromInput: fromInput.startsWith('.') ? `0${fromInput}` : fromInput,
       }
     }
     case 'updateToNetwork': {
@@ -126,9 +127,8 @@ export const useBridgeState = function (): BridgeState & {
     if (!validationRegex.test(payload)) {
       return
     }
-    const trimmedPayload = payload.replace(/^0+/, '')
     dispatch({
-      payload: trimmedPayload === '' ? '0' : trimmedPayload,
+      payload: payload.replace(/^0+/, ''),
       type: 'updateFromInput',
     })
   }

@@ -2,12 +2,17 @@
 
 import { Card } from 'app/components/design/card'
 import { TokenSelector } from 'app/components/TokenSelector'
-import { bvm, bridgableNetworks, networks } from 'app/networks'
+import { bvm, networks } from 'app/networks'
+import Big from 'big.js'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
-import { Token } from 'types/token'
+import { formatNumber, fromUnits } from 'utils/format'
+import { isNativeToken } from 'utils/token'
+import { useAccount } from 'wagmi'
+
+import { useBridgeState } from './useBridgeState'
 
 const AddNetworkToWallet = dynamic(
   () =>
@@ -48,33 +53,59 @@ const Balance = dynamic(
 )
 
 export default function Bridge() {
-  const [fromNetworkId, setFromNetworkId] = useState<number>(
-    bridgableNetworks[0].id,
-  )
-  const [toNetworkId, setToNetworkId] = useState(bvm.id)
+  const { isConnected } = useAccount()
+  const {
+    fromNetworkId,
+    fromInput,
+    fromToken,
+    updateFromNetwork,
+    updateFromInput,
+    updateFromToken,
+    toNetworkId,
+    updateToNetwork,
+    toggle,
+    toToken,
+  } = useBridgeState()
 
-  const [fromToken, setFromToken] = useState<Token>(() =>
-    // default to native token
-    tokenList.tokens.find(
-      t => t.chainId === fromNetworkId && !t.address.startsWith('0x'),
-    ),
-  )
+  const {
+    balance: walletNativeTokenBalance,
+    status: nativeTokenBalanceStatus,
+  } = useNativeTokenBalance(fromToken, isNativeToken(fromToken))
+  const { balance: walletTokenBalance, status: tokenBalanceStatus } =
+    useTokenBalance(fromToken, !isNativeToken(fromToken))
 
-  const [toToken, setToToken] = useState<Token>(() =>
-    tokenList.tokens.find(
-      // default to native token
-      t => t.chainId === toNetworkId && !t.address.startsWith('0x'),
-    ),
-  )
+  const isDepositOperation = toNetworkId === bvm.id
 
-  const toggleNetworks = function () {
-    // update from network and token
-    setFromNetworkId(toNetworkId)
-    setFromToken(toToken)
-    // update to network and token
-    setToNetworkId(fromNetworkId)
-    setToToken(fromToken)
-  }
+  const loadedBalances =
+    nativeTokenBalanceStatus === 'success' && tokenBalanceStatus === 'success'
+
+  const canDeposit =
+    isDepositOperation &&
+    loadedBalances &&
+    fromInput &&
+    Big(fromInput).gt(0) &&
+    ((isNativeToken(fromToken) &&
+      Big(fromInput).lt(
+        fromUnits(walletNativeTokenBalance, fromToken.decimals),
+      )) ||
+      (!isNativeToken(fromToken) &&
+        Big(fromInput).lt(fromUnits(walletTokenBalance, fromToken.decimals))))
+
+  const fromTokenBalanceInWallet = loadedBalances
+    ? fromUnits(
+        isNativeToken(fromToken)
+          ? walletNativeTokenBalance
+          : walletTokenBalance,
+        fromToken.decimals,
+      )
+    : '0'
+
+  const canSetMaxBalance =
+    isConnected && loadedBalances && Big(fromTokenBalanceInWallet).gt(0)
+  const setMaxBalance = () =>
+    updateFromInput(formatNumber(fromTokenBalanceInWallet))
+
+  const toTokenOutput = fromInput ?? '0'
 
   return (
     <div className="mx-auto flex w-full max-w-[480px] flex-col px-8 pt-8 lg:pt-20">
@@ -106,7 +137,7 @@ export default function Bridge() {
             <NetworkSelector
               networkId={fromNetworkId}
               networks={networks.filter(chain => chain.id !== toNetworkId)}
-              onSelectNetwork={setFromNetworkId}
+              onSelectNetwork={updateFromNetwork}
               readonly={fromNetworkId === bvm.id}
             />
           </div>
@@ -136,15 +167,16 @@ export default function Bridge() {
                   $
                   <input
                     className="ml-1 max-w-28 bg-transparent text-base font-medium text-neutral-400"
-                    defaultValue="0"
+                    onChange={e => updateFromInput(e.target.value)}
                     type="text"
+                    value={fromInput}
                   />
                 </div>
               </div>
             </div>
             <div className="flex basis-1/2 flex-col justify-between">
               <TokenSelector
-                onSelectToken={setFromToken}
+                onSelectToken={updateFromToken}
                 selectedToken={fromToken}
                 tokens={tokenList.tokens.filter(
                   t => t.chainId === fromNetworkId,
@@ -152,7 +184,11 @@ export default function Bridge() {
               />
               <div className="flex items-center justify-end gap-x-2 text-xs font-normal sm:text-sm">
                 Balance: <Balance token={fromToken} />
-                <button className="cursor-pointer font-semibold text-slate-700">
+                <button
+                  className="cursor-pointer font-semibold text-slate-700"
+                  disabled={!canSetMaxBalance}
+                  onClick={setMaxBalance}
+                >
                   MAX
                 </button>
               </div>
@@ -161,7 +197,7 @@ export default function Bridge() {
           <div className="my-6 flex w-full">
             <button
               className="mx-auto cursor-pointer rounded-lg p-2 shadow-xl"
-              onClick={toggleNetworks}
+              onClick={toggle}
             >
               <svg
                 fill="none"
@@ -182,7 +218,7 @@ export default function Bridge() {
             <NetworkSelector
               networkId={toNetworkId}
               networks={networks.filter(chain => chain.id !== fromNetworkId)}
-              onSelectNetwork={setToNetworkId}
+              onSelectNetwork={updateToNetwork}
               readonly={toNetworkId === bvm.id}
             />
           </div>
@@ -210,7 +246,7 @@ export default function Bridge() {
                 </button>
                 <span className="text-base font-medium text-neutral-400">
                   <span>$</span>
-                  <span className="ml-1 ">0</span>
+                  <span className="ml-1 ">{toTokenOutput}</span>
                 </span>
               </div>
             </div>
@@ -233,6 +269,8 @@ export default function Bridge() {
             </div>
           </div>
           <OperationButton
+            // Eventually, withdraw needs to be added
+            disabled={!canDeposit}
             text={fromNetworkId !== bvm.id ? 'Deposit funds' : 'Withdraw funds'}
           />
         </main>

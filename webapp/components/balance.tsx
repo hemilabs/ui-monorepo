@@ -4,6 +4,7 @@ import { useTokenBalance, useNativeTokenBalance } from 'hooks/useBalance'
 import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
 import { formatNumber, fromUnits } from 'utils/format'
+import { isNativeToken } from 'utils/token'
 
 type Props = {
   token: Token
@@ -34,8 +35,8 @@ const TokenBalance = function ({ token }: { token: Token }) {
 }
 
 export const Balance = ({ token }: Props) =>
-  token.address.startsWith('0x') ? (
-    <TokenBalance token={token} />
-  ) : (
+  isNativeToken(token) ? (
     <NativeTokenBalance token={token} />
+  ) : (
+    <TokenBalance token={token} />
   )

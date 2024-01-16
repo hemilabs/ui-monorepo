@@ -3,8 +3,9 @@
 import { useTokenBalance, useNativeTokenBalance } from 'hooks/useBalance'
 import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
-import { formatNumber, fromUnits } from 'utils/format'
+import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
+import { formatUnits } from 'viem'
 
 type Props = {
   token: Token
@@ -14,13 +15,14 @@ const RenderBalance = ({
   balance,
   status,
   token,
-}: Props & ReturnType<typeof useTokenBalance>) => (
+}: Props & Omit<ReturnType<typeof useTokenBalance>, 'refetchBalance'>) => (
   <>
     {status === 'loading' && (
       <Skeleton className="h-full" containerClassName="basis-1/3" />
     )}
     {(status === 'error' || status === 'idle') && '-'}
-    {status === 'success' && formatNumber(fromUnits(balance, token.decimals))}
+    {status === 'success' &&
+      formatNumber(parseFloat(formatUnits(balance, token.decimals)), 2)}
   </>
 )
 

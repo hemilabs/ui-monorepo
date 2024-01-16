@@ -7,19 +7,19 @@ export const useNativeTokenBalance = function (
   enabled: boolean = true,
 ) {
   const { address } = useAccount()
-  const { data, status } = useWagmiBalance({
+  const { data, status, refetch } = useWagmiBalance({
     address,
     chainId: token.chainId,
     enabled,
     formatUnits: 'wei',
-    watch: true,
     // for native tokens, address must be omited
     // Once updated to wagmi v2.x, we should be able to remove this line
-    ...(isNativeToken(token) ? { token: token.address as `0x${string}` } : {}),
+    ...(isNativeToken(token) ? {} : { token: token.address as `0x${string}` }),
   })
 
   return {
     balance: status === 'error' ? BigInt(0) : data?.value,
+    refetchBalance: refetch,
     status,
   }
 }

@@ -3,6 +3,7 @@
 import { useAccount } from 'wagmi'
 
 type Props = { disabled: boolean; text: string }
+
 export const OperationButton = function ({ disabled, text }: Props) {
   const { isConnected } = useAccount()
   const shouldDisable = !isConnected || disabled
@@ -14,6 +15,7 @@ export const OperationButton = function ({ disabled, text }: Props) {
           : 'cursor-pointer hover:bg-opacity-80'
       }`}
       disabled={shouldDisable}
+      type="submit"
     >
       {text}
     </button>

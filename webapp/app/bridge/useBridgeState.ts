@@ -6,7 +6,7 @@ import { isNativeToken } from 'utils/token'
 import { Chain } from 'viem'
 
 const getNativeToken = (chain: Chain['id']) =>
-  tokenList.tokens.find(t => t.chainId === chain && !isNativeToken(t))
+  tokenList.tokens.find(t => t.chainId === chain && isNativeToken(t))
 
 type BridgeState = {
   fromNetworkId: Chain['id']

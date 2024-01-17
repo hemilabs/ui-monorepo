@@ -2,17 +2,41 @@
 
 import { Card } from 'app/components/design/card'
 import { TokenSelector } from 'app/components/TokenSelector'
-import { bvm, bridgableNetworks, networks } from 'app/networks'
+import { bvm, networks } from 'app/networks'
+import Big from 'big.js'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
-import { useState } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
+import { fromUnits } from 'utils/format'
+import { isNativeToken } from 'utils/token'
+import { formatEther } from 'viem'
+import {
+  useAccount,
+  useConfig,
+  useSendTransaction,
+  useWaitForTransaction,
+} from 'wagmi'
 
-const AddNetworkToWallet = dynamic(
-  () =>
-    import('components/addNetworkToWallet').then(mod => mod.AddNetworkToWallet),
-  { loading: () => null, ssr: false },
+import { useBridgeState } from './useBridgeState'
+import { useDepositNativeToken } from './useBridgeToken'
+
+// const AddNetworkToWallet = dynamic(
+//   () =>
+//     import('components/addNetworkToWallet').then(mod => mod.AddNetworkToWallet),
+//   { loading: () => null, ssr: false },
+// )
+
+const Balance = dynamic(
+  () => import('components/balance').then(mod => mod.Balance),
+  {
+    loading: () => (
+      <Skeleton className="h-full" containerClassName="basis-1/3" />
+    ),
+    ssr: false,
+  },
 )
 
 const NetworkSelector = dynamic(
@@ -37,76 +61,212 @@ const OperationButton = dynamic(
   },
 )
 
-const Balance = dynamic(
-  () => import('components/balance').then(mod => mod.Balance),
+const SwitchToNetwork = dynamic(
+  () => import('components/switchToNetwork').then(mod => mod.SwitchToNetwork),
   {
-    loading: () => (
-      <Skeleton className="h-full" containerClassName="basis-1/3" />
-    ),
     ssr: false,
   },
 )
 
+const TransactionStatus = dynamic(
+  () =>
+    import('components/transactionStatus').then(mod => mod.TransactionStatus),
+  {
+    ssr: false,
+  },
+)
+
+type UseDeposit = {
+  canDeposit: boolean
+  fromInput: string
+  fromToken: Token
+  toToken: Token
+}
+const useDeposit = function ({
+  canDeposit,
+  fromInput,
+  fromToken,
+  toToken,
+}: UseDeposit) {
+  const depositingNative = isNativeToken(fromToken)
+
+  const { depositNativeToken, depositNativeTokenTxHash } =
+    useDepositNativeToken({
+      amount: fromInput,
+      enabled: depositingNative && canDeposit,
+    })
+
+  const { status } = useWaitForTransaction({
+    hash: depositNativeTokenTxHash,
+  })
+
+  // we clone the "status" but we manually update it
+  // so the error/success message can be displayed for a few extra seconds
+  const [depositStatus, setDepositStatus] =
+    useState<ReturnType<typeof useSendTransaction>['status']>('idle')
+
+  const deposit = function (e: FormEvent) {
+    e.preventDefault()
+    if (depositingNative) {
+      setDepositStatus('loading')
+      depositNativeToken()
+    }
+    // TODO Enable deposit token
+    // else {
+    //   depositToken()
+    // }
+  }
+
+  useEffect(
+    function delayStatus() {
+      if (status === 'success') {
+        setDepositStatus('success')
+      } else if (status === 'error') {
+        setDepositStatus('error')
+      }
+    },
+    [status, setDepositStatus],
+  )
+
+  useEffect(
+    function clearTransactionStatusMessage() {
+      if (['error', 'success'].includes(depositStatus)) {
+        // clear success message in 5 secs for success, 10 secs for error
+        const timeoutId = setTimeout(
+          () => setDepositStatus('idle'),
+          depositStatus === 'success' ? 5000 : 10000,
+        )
+
+        return () => clearTimeout(timeoutId)
+      }
+      return undefined
+    },
+    [depositStatus, setDepositStatus],
+  )
+
+  const { refetchBalance: refetchFromToken } = useNativeTokenBalance(fromToken)
+  const { refetchBalance: refetchToToken } = useNativeTokenBalance(toToken)
+
+  useEffect(
+    function refetchBalances() {
+      if (['error', 'success'].includes(depositStatus)) {
+        refetchFromToken()
+        refetchToToken()
+      }
+    },
+    [depositStatus, refetchFromToken, refetchToToken],
+  )
+
+  return {
+    deposit,
+    depositStatus,
+    depositTxHash: depositNativeTokenTxHash,
+  }
+}
+
 export default function Bridge() {
-  const [fromNetworkId, setFromNetworkId] = useState<number>(
-    bridgableNetworks[0].id,
-  )
-  const [toNetworkId, setToNetworkId] = useState(bvm.id)
+  const { isConnected } = useAccount()
+  const { chains = [] } = useConfig()
 
-  const [fromToken, setFromToken] = useState<Token>(() =>
-    // default to native token
-    tokenList.tokens.find(
-      t => t.chainId === fromNetworkId && !t.address.startsWith('0x'),
-    ),
+  const {
+    fromNetworkId,
+    fromInput,
+    fromToken,
+    updateFromNetwork,
+    updateFromInput,
+    updateFromToken,
+    toNetworkId,
+    updateToNetwork,
+    toggle,
+    toToken,
+  } = useBridgeState()
+
+  const {
+    balance: walletNativeTokenBalance,
+    status: nativeTokenBalanceStatus,
+  } = useNativeTokenBalance(fromToken, isNativeToken(fromToken))
+
+  const { balance: walletTokenBalance, status: tokenBalanceStatus } =
+    useTokenBalance(fromToken, !isNativeToken(fromToken))
+
+  const isDepositOperation = toNetworkId === bvm.id
+
+  const loadedBalances =
+    nativeTokenBalanceStatus === 'success' && tokenBalanceStatus === 'success'
+
+  const canDeposit =
+    isDepositOperation &&
+    loadedBalances &&
+    fromInput &&
+    Big(fromInput).gt(0) &&
+    ((isNativeToken(fromToken) &&
+      Big(fromInput).lt(
+        fromUnits(walletNativeTokenBalance, fromToken.decimals).toString(),
+      )) ||
+      (!isNativeToken(fromToken) &&
+        Big(fromInput).lt(
+          fromUnits(walletTokenBalance, fromToken.decimals).toString(),
+        )))
+
+  const fromTokenBalanceInWallet = loadedBalances
+    ? fromUnits(
+        isNativeToken(fromToken)
+          ? walletNativeTokenBalance
+          : walletTokenBalance,
+        fromToken.decimals,
+      )
+    : BigInt(0)
+
+  const toTokenOutput = fromInput ?? '0'
+
+  const { deposit, depositTxHash, depositStatus } = useDeposit({
+    canDeposit,
+    fromInput,
+    fromToken,
+    toToken,
+  })
+
+  useEffect(
+    function () {
+      if (depositStatus === 'success') {
+        updateFromInput('0')
+      }
+    },
+    [depositStatus, updateFromInput],
   )
 
-  const [toToken, setToToken] = useState<Token>(() =>
-    tokenList.tokens.find(
-      // default to native token
-      t => t.chainId === toNetworkId && !t.address.startsWith('0x'),
-    ),
-  )
+  const canSetMaxBalance =
+    isConnected &&
+    loadedBalances &&
+    depositStatus === 'idle' &&
+    Big(fromTokenBalanceInWallet.toString()).gt(0)
 
-  const toggleNetworks = function () {
-    // update from network and token
-    setFromNetworkId(toNetworkId)
-    setFromToken(toToken)
-    // update to network and token
-    setToNetworkId(fromNetworkId)
-    setToToken(fromToken)
+  const setMaxBalance = () =>
+    updateFromInput(formatEther(fromTokenBalanceInWallet, 'wei'))
+
+  const canToggle = depositStatus === 'idle'
+
+  const getOperationButtonText = function () {
+    if (depositStatus === 'loading') {
+      return isDepositOperation ? 'Depositing...' : 'Withdrawing...'
+    }
+    return isDepositOperation ? 'Deposit' : 'Withdraw'
   }
 
   return (
     <div className="mx-auto flex w-full max-w-[480px] flex-col px-8 pt-8 lg:pt-20">
       <Card>
-        <main>
+        <form onSubmit={isDepositOperation ? deposit : undefined}>
           <h3 className="text-xl font-medium text-black">Bridge</h3>
           <div className="my-2">
-            <div className="flex h-9 items-center gap-x-2 rounded-xl bg-[#FF684B]/10 px-2 text-xs text-zinc-800">
-              <svg
-                fill="none"
-                height="18"
-                viewBox="0 0 19 18"
-                width="19"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M9.5 1.5C5.36 1.5 2 4.86 2 9C2 13.14 5.36 16.5 9.5 16.5C13.64 16.5 17 13.14 17 9C17 4.86 13.64 1.5 9.5 1.5ZM9.5 9.75C9.0875 9.75 8.75 9.4125 8.75 9V6C8.75 5.5875 9.0875 5.25 9.5 5.25C9.9125 5.25 10.25 5.5875 10.25 6V9C10.25 9.4125 9.9125 9.75 9.5 9.75ZM10.25 12.75H8.75V11.25H10.25V12.75Z"
-                  fill="#323232"
-                />
-              </svg>
-              <span className="font-normal">Wrong Network</span>
-              <button className="ml-auto cursor-pointer underline">
-                Switch to BVM
-              </button>
-            </div>
+            <SwitchToNetwork selectedNetwork={fromNetworkId} />
           </div>
           <div className="my-2 flex w-full items-center justify-between text-sm">
             <span>From Network</span>
             <NetworkSelector
               networkId={fromNetworkId}
               networks={networks.filter(chain => chain.id !== toNetworkId)}
-              onSelectNetwork={setFromNetworkId}
+              onSelectNetwork={updateFromNetwork}
               readonly={fromNetworkId === bvm.id}
             />
           </div>
@@ -114,7 +274,10 @@ export default function Bridge() {
             <div className="flex basis-1/2 flex-col gap-y-2">
               <span className="text-xs font-normal">You send</span>
               <div className="flex items-center gap-x-2">
-                <button className="cursor-pointer rounded-md bg-gray-200 p-[6px]">
+                <button
+                  className="cursor-pointer rounded-md bg-gray-200 p-[6px]"
+                  type="button"
+                >
                   <svg
                     fill="none"
                     height="12"
@@ -136,15 +299,16 @@ export default function Bridge() {
                   $
                   <input
                     className="ml-1 max-w-28 bg-transparent text-base font-medium text-neutral-400"
-                    defaultValue="0"
+                    onChange={e => updateFromInput(e.target.value)}
                     type="text"
+                    value={fromInput}
                   />
                 </div>
               </div>
             </div>
             <div className="flex basis-1/2 flex-col justify-between">
               <TokenSelector
-                onSelectToken={setFromToken}
+                onSelectToken={updateFromToken}
                 selectedToken={fromToken}
                 tokens={tokenList.tokens.filter(
                   t => t.chainId === fromNetworkId,
@@ -152,7 +316,12 @@ export default function Bridge() {
               />
               <div className="flex items-center justify-end gap-x-2 text-xs font-normal sm:text-sm">
                 Balance: <Balance token={fromToken} />
-                <button className="cursor-pointer font-semibold text-slate-700">
+                <button
+                  className="cursor-pointer font-semibold text-slate-700"
+                  disabled={!canSetMaxBalance || false}
+                  onClick={setMaxBalance}
+                  type="button"
+                >
                   MAX
                 </button>
               </div>
@@ -160,8 +329,12 @@ export default function Bridge() {
           </div>
           <div className="my-6 flex w-full">
             <button
-              className="mx-auto cursor-pointer rounded-lg p-2 shadow-xl"
-              onClick={toggleNetworks}
+              className={`mx-auto rounded-lg p-2 shadow-xl ${
+                canToggle ? 'cursor-pointer' : 'cursor-not-allowed'
+              }`}
+              disabled={canToggle}
+              onClick={toggle}
+              type="button"
             >
               <svg
                 fill="none"
@@ -182,7 +355,7 @@ export default function Bridge() {
             <NetworkSelector
               networkId={toNetworkId}
               networks={networks.filter(chain => chain.id !== fromNetworkId)}
-              onSelectNetwork={setToNetworkId}
+              onSelectNetwork={updateToNetwork}
               readonly={toNetworkId === bvm.id}
             />
           </div>
@@ -190,7 +363,10 @@ export default function Bridge() {
             <div className="flex flex-col gap-y-2">
               <span className="text-xs font-normal">You receive</span>
               <div className="flex items-center gap-x-2">
-                <button className="cursor-pointer rounded-md bg-gray-200 p-[6px]">
+                <button
+                  className="cursor-pointer rounded-md bg-gray-200 p-[6px]"
+                  type="button"
+                >
                   <svg
                     fill="none"
                     height="12"
@@ -210,7 +386,7 @@ export default function Bridge() {
                 </button>
                 <span className="text-base font-medium text-neutral-400">
                   <span>$</span>
-                  <span className="ml-1 ">0</span>
+                  <span className="ml-1 ">{toTokenOutput}</span>
                 </span>
               </div>
             </div>
@@ -233,13 +409,26 @@ export default function Bridge() {
             </div>
           </div>
           <OperationButton
-            text={fromNetworkId !== bvm.id ? 'Deposit funds' : 'Withdraw funds'}
+            // Eventually, withdraw needs to be added
+            disabled={!canDeposit || depositStatus === 'loading'}
+            text={getOperationButtonText()}
           />
-        </main>
+        </form>
       </Card>
-      <div className="mt-4">
+      {/* <div className="mt-4">
         <AddNetworkToWallet />
-      </div>
+      </div> */}
+      {depositStatus !== 'idle' && (
+        <div className="mt-4">
+          <TransactionStatus
+            operation={`Bridging ${fromInput} ${
+              fromToken.symbol
+            } to ${chains.find(c => c.id === toNetworkId)?.name}`}
+            status={depositStatus}
+            txHash={depositTxHash}
+          />
+        </div>
+      )}
     </div>
   )
 }

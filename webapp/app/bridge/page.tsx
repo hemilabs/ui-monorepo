@@ -254,7 +254,7 @@ export default function Bridge() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-[480px] flex-col px-8 pt-8 lg:pt-20">
+    <div className="mx-auto flex h-screen w-full flex-col px-4 md:h-full md:max-w-[480px] md:pt-10">
       <Card>
         <form onSubmit={isDepositOperation ? deposit : undefined}>
           <h3 className="text-xl font-medium text-black">Bridge</h3>

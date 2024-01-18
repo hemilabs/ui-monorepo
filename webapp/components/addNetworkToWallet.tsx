@@ -16,6 +16,7 @@ export function AddNetworkToWallet() {
     <button
       className="flex w-full cursor-pointer items-center rounded-xl bg-white px-6 py-4"
       onClick={() => switchNetwork(parseInt(process.env.NEXT_PUBLIC_CHAIN_ID))}
+      type="button"
     >
       <div className="bg-bvm-gradient mr-2 h-8 w-8 rounded-full"></div>
       <p className="mr-auto text-base text-black">

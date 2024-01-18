@@ -32,6 +32,7 @@ export const SwitchToNetwork = function ({ selectedNetwork }: Props) {
       <button
         className="ml-auto cursor-pointer underline"
         onClick={switchToNetwork}
+        type="button"
       >
         Switch to {walletTargetNetwork.name}
       </button>

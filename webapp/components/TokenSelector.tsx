@@ -118,6 +118,7 @@ export const TokenSelector = function ({
       <button
         className="flex items-center justify-end gap-x-2 text-xs"
         onClick={openModal}
+        type="button"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

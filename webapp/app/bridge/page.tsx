@@ -55,6 +55,14 @@ const OperationButton = dynamic(
   },
 )
 
+const ReviewDeposit = dynamic(
+  () => import('components/reviewBox').then(mod => mod.ReviewDeposit),
+  {
+    loading: () => <Skeleton className="h-48 w-full md:w-80" />,
+    ssr: false,
+  },
+)
+
 const SwitchToNetwork = dynamic(
   () => import('components/switchToNetwork').then(mod => mod.SwitchToNetwork),
   {
@@ -248,10 +256,16 @@ export default function Bridge() {
 
   const canToggle = depositStatus === 'idle'
 
+  const fromChain = chains.find(c => c.id === fromNetworkId)
+  const toChain = chains.find(c => c.id === toNetworkId)
+
   return (
-    <div className="mx-auto flex h-screen w-full flex-col px-4 md:h-full md:max-w-[480px] md:pt-10">
+    <div className="mx-auto flex h-screen w-full flex-col gap-y-4 px-4 md:h-full md:max-w-fit md:flex-row md:gap-x-4 md:pt-10">
       <Card>
-        <form onSubmit={isDepositOperation ? deposit : undefined}>
+        <form
+          className="w-full text-zinc-800"
+          onSubmit={isDepositOperation ? deposit : undefined}
+        >
           <h3 className="text-xl font-medium text-black">Bridge</h3>
           <div className="my-2">
             <SwitchToNetwork selectedNetwork={fromNetworkId} />
@@ -412,20 +426,27 @@ export default function Bridge() {
           />
         </form>
       </Card>
-      {/* <div className="mt-4">
-        <AddNetworkToWallet />
-      </div> */}
-      {depositStatus !== 'idle' && (
-        <div className="mt-4">
-          <TransactionStatus
-            operation={`Bridging ${fromInput} ${
-              fromToken.symbol
-            } to ${chains.find(c => c.id === toNetworkId)?.name}`}
-            status={depositStatus}
-            txHash={depositTxHash}
+      <div className="flex flex-col gap-y-4">
+        <div className="shrink-1 order-2 md:order-1 md:w-80">
+          <ReviewDeposit
+            deposit={fromInput}
+            depositSymbol={fromToken.symbol}
+            gas="TBD"
+            gasSymbol={fromChain?.nativeCurrency.symbol}
+            targetSymbol={toToken.symbol}
+            total="TBD"
           />
         </div>
-      )}
+        {depositStatus !== 'idle' && (
+          <div className="order-1 md:order-2">
+            <TransactionStatus
+              operation={`Bridging ${fromInput} ${fromToken.symbol} to ${toChain.name}`}
+              status={depositStatus}
+              txHash={depositTxHash}
+            />
+          </div>
+        )}
+      </div>
     </div>
   )
 }

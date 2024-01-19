@@ -2,11 +2,29 @@
 
 import { useAccount } from 'wagmi'
 
-type Props = { disabled: boolean; text: string }
+type Props = {
+  disabled: boolean
+  operation: 'deposit' | 'withdraw'
+  operationStatus: string
+}
 
-export const OperationButton = function ({ disabled, text }: Props) {
+export const OperationButton = function ({
+  disabled,
+  operation,
+  operationStatus,
+}: Props) {
   const { isConnected } = useAccount()
   const shouldDisable = !isConnected || disabled
+
+  const isDepositOperation = operation === 'deposit'
+
+  const getOperationButtonText = function () {
+    if (operationStatus === 'loading') {
+      return isDepositOperation ? 'Depositing...' : 'Withdrawing...'
+    }
+    return isDepositOperation ? 'Deposit' : 'Withdraw'
+  }
+
   return (
     <button
       className={`h-14 w-full cursor-pointer rounded-xl bg-black text-base text-white ${
@@ -17,7 +35,7 @@ export const OperationButton = function ({ disabled, text }: Props) {
       disabled={shouldDisable}
       type="submit"
     >
-      {text}
+      {getOperationButtonText()}
     </button>
   )
 }

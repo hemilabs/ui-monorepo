@@ -18,7 +18,7 @@ export const useNativeTokenBalance = function (
   })
 
   return {
-    balance: status === 'error' ? BigInt(0) : data?.value,
+    balance: status === 'error' ? BigInt(0) : data?.value ?? BigInt(0),
     refetchBalance: refetch,
     status,
   }

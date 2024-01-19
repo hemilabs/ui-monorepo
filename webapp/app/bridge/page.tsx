@@ -5,17 +5,22 @@ import { TokenSelector } from 'app/components/TokenSelector'
 import { bvm, networks } from 'app/networks'
 import Big from 'big.js'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import dynamic from 'next/dynamic'
 import { FormEvent, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
+import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { formatUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import { useConfig, useSendTransaction, useWaitForTransaction } from 'wagmi'
 
 import { useBridgeState } from './useBridgeState'
 import { useDepositNativeToken } from './useBridgeToken'
+
+// Calculated from Tesnet, may need to be reviewed/updated
+const DepositGas = 150_000
 
 // const AddNetworkToWallet = dynamic(
 //   () =>
@@ -209,6 +214,8 @@ export default function Bridge() {
   const { balance: walletTokenBalance, status: tokenBalanceStatus } =
     useTokenBalance(fromToken, !isNativeToken(fromToken))
 
+  const expectedFees = useEstimateFees(fromNetworkId, DepositGas)
+
   const isDepositOperation = toNetworkId === bvm.id
 
   const balancesLoaded =
@@ -258,6 +265,15 @@ export default function Bridge() {
 
   const fromChain = chains.find(c => c.id === fromNetworkId)
   const toChain = chains.find(c => c.id === toNetworkId)
+
+  const totalFees = formatUnits(
+    BigInt(
+      Big(parseUnits(fromInput, fromToken.decimals).toString())
+        .plus(expectedFees.toString())
+        .toFixed(),
+    ),
+    fromToken.decimals,
+  )
 
   return (
     <div className="mx-auto flex h-screen w-full flex-col gap-y-4 px-4 md:h-full md:max-w-fit md:flex-row md:gap-x-4 md:pt-10">
@@ -429,12 +445,15 @@ export default function Bridge() {
       <div className="flex flex-col gap-y-4">
         <div className="shrink-1 order-2 md:order-1 md:w-80">
           <ReviewDeposit
-            deposit={fromInput}
+            canDeposit={canDeposit}
+            deposit={formatNumber(fromInput, 3)}
             depositSymbol={fromToken.symbol}
-            gas="TBD"
+            gas={formatNumber(
+              formatUnits(expectedFees, fromChain?.nativeCurrency.decimals),
+              3,
+            )}
             gasSymbol={fromChain?.nativeCurrency.symbol}
-            targetSymbol={toToken.symbol}
-            total="TBD"
+            total={formatNumber(totalFees, 3)}
           />
         </div>
         {depositStatus !== 'idle' && (

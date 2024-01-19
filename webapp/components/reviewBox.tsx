@@ -19,19 +19,19 @@ const Heading = ({ text }: { text: string }) => (
 )
 
 type DepositProps = {
+  canDeposit: boolean
   deposit: string
   depositSymbol: string
   gas: string
   gasSymbol: string
-  targetSymbol: string
   total: string
 }
 export const ReviewDeposit = ({
+  canDeposit,
   deposit,
   depositSymbol,
   gas,
   gasSymbol,
-  targetSymbol,
   total,
 }: DepositProps) => (
   <Card>
@@ -39,11 +39,22 @@ export const ReviewDeposit = ({
     <SubSection
       symbol={depositSymbol}
       text="You are Depositing"
-      value={deposit}
+      value={canDeposit ? deposit : '0'}
     />
-    <SubSection symbol={gasSymbol} text="Ethereum Gas fee" value={gas} />
+    <SubSection
+      symbol={gasSymbol}
+      text="Ethereum Gas fee"
+      value={canDeposit ? gas : '0'}
+    />
     <div className="absolute left-0 right-0 h-px border-t border-zinc-400"></div>
-    <SubSection symbol={targetSymbol} text="Total" value={total} />
+    {/* When implementing ERC20, we need to allow different tokens in total 
+        See https://github.com/BVM-priv/ui-monorepo/issues/20
+    */}
+    <SubSection
+      symbol={gasSymbol}
+      text="Total"
+      value={canDeposit ? total : '0'}
+    />
   </Card>
 )
 

@@ -443,7 +443,7 @@ export default function Bridge() {
         </form>
       </Card>
       <div className="flex flex-col gap-y-4">
-        <div className="shrink-1 order-2 md:order-1 md:w-80">
+        <div className="shrink-1 order-2 md:order-1 md:w-full md:min-w-80">
           <ReviewDeposit
             canDeposit={canDeposit}
             deposit={formatNumber(fromInput, 3)}

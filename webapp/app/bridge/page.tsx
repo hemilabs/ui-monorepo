@@ -7,17 +7,17 @@ import Big from 'big.js'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import dynamic from 'next/dynamic'
-import { FormEvent, useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits } from 'viem'
-import { useConfig, useSendTransaction, useWaitForTransaction } from 'wagmi'
+import { useConfig } from 'wagmi'
 
 import { useBridgeState } from './useBridgeState'
-import { useDepositNativeToken } from './useBridgeToken'
+import { useDeposit } from './useDeposit'
 
 // Calculated from Testnet, may need to be reviewed/updated
 const DepositGas = 150_000
@@ -82,94 +82,6 @@ const TransactionStatus = dynamic(
     ssr: false,
   },
 )
-
-type UseDeposit = {
-  canDeposit: boolean
-  fromInput: string
-  fromToken: Token
-  toToken: Token
-}
-const useDeposit = function ({
-  canDeposit,
-  fromInput,
-  fromToken,
-  toToken,
-}: UseDeposit) {
-  const depositingNative = isNativeToken(fromToken)
-
-  const { depositNativeToken, depositNativeTokenTxHash } =
-    useDepositNativeToken({
-      amount: fromInput,
-      enabled: depositingNative && canDeposit,
-    })
-
-  const { status } = useWaitForTransaction({
-    hash: depositNativeTokenTxHash,
-  })
-
-  // we clone the "status" but we manually update it
-  // so the error/success message can be displayed for a few extra seconds
-  const [depositStatus, setDepositStatus] =
-    useState<ReturnType<typeof useSendTransaction>['status']>('idle')
-
-  const deposit = function (e: FormEvent) {
-    e.preventDefault()
-    if (depositingNative) {
-      setDepositStatus('loading')
-      depositNativeToken()
-    }
-    // TODO Enable deposit token
-    // else {
-    //   depositToken()
-    // }
-  }
-
-  useEffect(
-    function delayStatus() {
-      if (status === 'success') {
-        setDepositStatus('success')
-      } else if (status === 'error') {
-        setDepositStatus('error')
-      }
-    },
-    [status, setDepositStatus],
-  )
-
-  useEffect(
-    function clearTransactionStatusMessage() {
-      if (['error', 'success'].includes(depositStatus)) {
-        // clear success message in 5 secs for success, 10 secs for error
-        const timeoutId = setTimeout(
-          () => setDepositStatus('idle'),
-          depositStatus === 'success' ? 5000 : 10000,
-        )
-
-        return () => clearTimeout(timeoutId)
-      }
-      return undefined
-    },
-    [depositStatus, setDepositStatus],
-  )
-
-  const { refetchBalance: refetchFromToken } = useNativeTokenBalance(fromToken)
-  const { refetchBalance: refetchToToken } = useNativeTokenBalance(toToken)
-
-  useEffect(
-    function refetchBalances() {
-      if (['error', 'success'].includes(depositStatus)) {
-        refetchFromToken()
-        refetchToToken()
-      }
-    },
-    [depositStatus, refetchFromToken, refetchToToken],
-  )
-
-  return {
-    deposit,
-    depositStatus,
-    depositTxHash: depositNativeTokenTxHash,
-  }
-}
 
 type InputEnoughInBalance = {
   fromInput: string

@@ -51,6 +51,7 @@ export const NetworkSelector = function ({
       <button
         className={`${commonCss} relative cursor-pointer`}
         onClick={() => setShowNetworkDropdown(true)}
+        type="button"
       >
         <Logo />
         <span>{network.name}</span>

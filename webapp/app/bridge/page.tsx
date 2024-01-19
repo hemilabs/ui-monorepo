@@ -10,15 +10,9 @@ import { FormEvent, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
-import { fromUnits } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { formatEther } from 'viem'
-import {
-  useAccount,
-  useConfig,
-  useSendTransaction,
-  useWaitForTransaction,
-} from 'wagmi'
+import { formatUnits } from 'viem'
+import { useConfig, useSendTransaction, useWaitForTransaction } from 'wagmi'
 
 import { useBridgeState } from './useBridgeState'
 import { useDepositNativeToken } from './useBridgeToken'
@@ -164,8 +158,26 @@ const useDeposit = function ({
   }
 }
 
+type InputEnoughInBalance = {
+  fromInput: string
+  fromToken: Token
+  walletNativeTokenBalance: bigint
+  walletTokenBalance: bigint
+}
+const inputEnoughInBalance = ({
+  fromInput,
+  fromToken,
+  walletNativeTokenBalance,
+  walletTokenBalance,
+}: InputEnoughInBalance) =>
+  (isNativeToken(fromToken) &&
+    Big(fromInput).lt(
+      formatUnits(walletNativeTokenBalance, fromToken.decimals),
+    )) ||
+  (!isNativeToken(fromToken) &&
+    Big(fromInput).lt(formatUnits(walletTokenBalance, fromToken.decimals)))
+
 export default function Bridge() {
-  const { isConnected } = useAccount()
   const { chains = [] } = useConfig()
 
   const {
@@ -191,33 +203,24 @@ export default function Bridge() {
 
   const isDepositOperation = toNetworkId === bvm.id
 
-  const loadedBalances =
+  const balancesLoaded =
     nativeTokenBalanceStatus === 'success' && tokenBalanceStatus === 'success'
 
   const canDeposit =
     isDepositOperation &&
-    loadedBalances &&
-    fromInput &&
+    balancesLoaded &&
     Big(fromInput).gt(0) &&
-    ((isNativeToken(fromToken) &&
-      Big(fromInput).lt(
-        fromUnits(walletNativeTokenBalance, fromToken.decimals).toString(),
-      )) ||
-      (!isNativeToken(fromToken) &&
-        Big(fromInput).lt(
-          fromUnits(walletTokenBalance, fromToken.decimals).toString(),
-        )))
+    inputEnoughInBalance({
+      fromInput,
+      fromToken,
+      walletNativeTokenBalance,
+      walletTokenBalance,
+    })
 
-  const fromTokenBalanceInWallet = loadedBalances
-    ? fromUnits(
-        isNativeToken(fromToken)
-          ? walletNativeTokenBalance
-          : walletTokenBalance,
-        fromToken.decimals,
-      )
-    : BigInt(0)
-
-  const toTokenOutput = fromInput ?? '0'
+  const fromTokenBalanceInWallet = formatUnits(
+    isNativeToken(fromToken) ? walletNativeTokenBalance : walletTokenBalance,
+    fromToken.decimals,
+  )
 
   const { deposit, depositTxHash, depositStatus } = useDeposit({
     canDeposit,
@@ -236,25 +239,17 @@ export default function Bridge() {
   )
 
   const canSetMaxBalance =
-    isConnected &&
-    loadedBalances &&
+    balancesLoaded &&
     depositStatus === 'idle' &&
-    Big(fromTokenBalanceInWallet.toString()).gt(0)
+    Big(fromTokenBalanceInWallet).gt(0)
 
   const setMaxBalance = () =>
-    updateFromInput(formatEther(fromTokenBalanceInWallet, 'wei'))
+    updateFromInput(Big(fromTokenBalanceInWallet).toFixed(2, Big.roundDown))
 
   const canToggle = depositStatus === 'idle'
 
-  const getOperationButtonText = function () {
-    if (depositStatus === 'loading') {
-      return isDepositOperation ? 'Depositing...' : 'Withdrawing...'
-    }
-    return isDepositOperation ? 'Deposit' : 'Withdraw'
-  }
-
   return (
-    <div className="mx-auto flex w-full max-w-[480px] flex-col px-8 pt-8 lg:pt-20">
+    <div className="mx-auto flex h-screen w-full flex-col px-4 md:h-full md:max-w-[480px] md:pt-10">
       <Card>
         <form onSubmit={isDepositOperation ? deposit : undefined}>
           <h3 className="text-xl font-medium text-black">Bridge</h3>
@@ -318,7 +313,7 @@ export default function Bridge() {
                 Balance: <Balance token={fromToken} />
                 <button
                   className="cursor-pointer font-semibold text-slate-700"
-                  disabled={!canSetMaxBalance || false}
+                  disabled={!canSetMaxBalance}
                   onClick={setMaxBalance}
                   type="button"
                 >
@@ -332,7 +327,7 @@ export default function Bridge() {
               className={`mx-auto rounded-lg p-2 shadow-xl ${
                 canToggle ? 'cursor-pointer' : 'cursor-not-allowed'
               }`}
-              disabled={canToggle}
+              disabled={!canToggle}
               onClick={toggle}
               type="button"
             >
@@ -386,7 +381,8 @@ export default function Bridge() {
                 </button>
                 <span className="text-base font-medium text-neutral-400">
                   <span>$</span>
-                  <span className="ml-1 ">{toTokenOutput}</span>
+                  {/* Bridging goes 1:1, so output equals input */}
+                  <span className="ml-1 ">{fromInput}</span>
                 </span>
               </div>
             </div>
@@ -409,9 +405,10 @@ export default function Bridge() {
             </div>
           </div>
           <OperationButton
-            // Eventually, withdraw needs to be added
             disabled={!canDeposit || depositStatus === 'loading'}
-            text={getOperationButtonText()}
+            // Eventually, withdraw needs to be added
+            operation="deposit"
+            operationStatus={depositStatus}
           />
         </form>
       </Card>

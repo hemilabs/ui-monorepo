@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`flex h-screen flex-col bg-neutral-100 ${rightGrotesk.variable} ${inter.className}`}
+        className={`flex min-h-screen flex-col bg-neutral-100 ${rightGrotesk.variable} ${inter.className}`}
       >
         <WalletContext>
           <Header />

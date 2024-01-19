@@ -4558,7 +4558,7 @@ const nativeTokens = [
     logoURI:
       'https://raw.githubusercontent.com/trustwallet/assets/5dacd70ae31627be3ff510fe1bb8bc3bf1453cca/blockchains/ethereum/info/logo.png',
     name: 'sepolia Ether',
-    symbol: 'ETH',
+    symbol: 'SEP',
   },
   {
     address: 'BVM',

@@ -19,7 +19,7 @@ import { useConfig, useSendTransaction, useWaitForTransaction } from 'wagmi'
 import { useBridgeState } from './useBridgeState'
 import { useDepositNativeToken } from './useBridgeToken'
 
-// Calculated from Tesnet, may need to be reviewed/updated
+// Calculated from Testnet, may need to be reviewed/updated
 const DepositGas = 150_000
 
 // const AddNetworkToWallet = dynamic(

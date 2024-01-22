@@ -5,17 +5,22 @@ import { TokenSelector } from 'app/components/TokenSelector'
 import { bvm, networks } from 'app/networks'
 import Big from 'big.js'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import dynamic from 'next/dynamic'
 import { FormEvent, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
+import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { formatUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import { useConfig, useSendTransaction, useWaitForTransaction } from 'wagmi'
 
 import { useBridgeState } from './useBridgeState'
 import { useDepositNativeToken } from './useBridgeToken'
+
+// Calculated from Testnet, may need to be reviewed/updated
+const DepositGas = 150_000
 
 // const AddNetworkToWallet = dynamic(
 //   () =>
@@ -51,6 +56,14 @@ const OperationButton = dynamic(
     ),
   {
     loading: () => <Skeleton className="h-14" />,
+    ssr: false,
+  },
+)
+
+const ReviewDeposit = dynamic(
+  () => import('components/reviewBox').then(mod => mod.ReviewDeposit),
+  {
+    loading: () => <Skeleton className="h-48 w-full md:w-80" />,
     ssr: false,
   },
 )
@@ -201,6 +214,8 @@ export default function Bridge() {
   const { balance: walletTokenBalance, status: tokenBalanceStatus } =
     useTokenBalance(fromToken, !isNativeToken(fromToken))
 
+  const expectedFees = useEstimateFees(fromNetworkId, DepositGas)
+
   const isDepositOperation = toNetworkId === bvm.id
 
   const balancesLoaded =
@@ -248,10 +263,25 @@ export default function Bridge() {
 
   const canToggle = depositStatus === 'idle'
 
+  const fromChain = chains.find(c => c.id === fromNetworkId)
+  const toChain = chains.find(c => c.id === toNetworkId)
+
+  const totalFees = formatUnits(
+    BigInt(
+      Big(parseUnits(fromInput, fromToken.decimals).toString())
+        .plus(expectedFees.toString())
+        .toFixed(),
+    ),
+    fromToken.decimals,
+  )
+
   return (
-    <div className="mx-auto flex h-screen w-full flex-col px-4 md:h-full md:max-w-[480px] md:pt-10">
+    <div className="mx-auto flex h-screen w-full flex-col gap-y-4 px-4 md:h-full md:max-w-fit md:flex-row md:gap-x-4 md:pt-10">
       <Card>
-        <form onSubmit={isDepositOperation ? deposit : undefined}>
+        <form
+          className="w-full text-zinc-800"
+          onSubmit={isDepositOperation ? deposit : undefined}
+        >
           <h3 className="text-xl font-medium text-black">Bridge</h3>
           <div className="my-2">
             <SwitchToNetwork selectedNetwork={fromNetworkId} />
@@ -412,20 +442,30 @@ export default function Bridge() {
           />
         </form>
       </Card>
-      {/* <div className="mt-4">
-        <AddNetworkToWallet />
-      </div> */}
-      {depositStatus !== 'idle' && (
-        <div className="mt-4">
-          <TransactionStatus
-            operation={`Bridging ${fromInput} ${
-              fromToken.symbol
-            } to ${chains.find(c => c.id === toNetworkId)?.name}`}
-            status={depositStatus}
-            txHash={depositTxHash}
+      <div className="flex flex-col gap-y-4">
+        <div className="shrink-1 order-2 md:order-1 md:w-full md:min-w-80">
+          <ReviewDeposit
+            canDeposit={canDeposit}
+            deposit={formatNumber(fromInput, 3)}
+            depositSymbol={fromToken.symbol}
+            gas={formatNumber(
+              formatUnits(expectedFees, fromChain?.nativeCurrency.decimals),
+              3,
+            )}
+            gasSymbol={fromChain?.nativeCurrency.symbol}
+            total={formatNumber(totalFees, 3)}
           />
         </div>
-      )}
+        {depositStatus !== 'idle' && (
+          <div className="order-1 md:order-2">
+            <TransactionStatus
+              operation={`Bridging ${fromInput} ${fromToken.symbol} to ${toChain.name}`}
+              status={depositStatus}
+              txHash={depositTxHash}
+            />
+          </div>
+        )}
+      </div>
     </div>
   )
 }

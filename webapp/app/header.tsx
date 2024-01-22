@@ -107,8 +107,8 @@ export const Header = function () {
 
   return (
     <header className="relative flex h-24 items-center py-6">
-      <div className="fixed bottom-0 left-0 right-0 h-[90px] bg-white/60 backdrop-blur-sm md:hidden" />
-      <div className="fixed bottom-0 flex w-full pb-6 pt-4 md:absolute md:left-1/2 md:block md:-translate-x-1/2">
+      <div className="fixed bottom-0 left-0 right-0 z-10 h-[90px] bg-white/60 backdrop-blur-sm md:hidden" />
+      <div className="fixed bottom-0 z-10 flex w-full pb-6 pt-4 md:absolute md:left-1/2 md:block md:-translate-x-1/2">
         <ul className="mx-auto flex justify-center gap-x-4 rounded-xl bg-neutral-100 p-[2px] md:mx-0 md:bg-inherit">
           <Route path="/bridge" text="Bridge" />
           <Route path="/swap" text="Swap" />
@@ -124,9 +124,9 @@ export const Header = function () {
       </button>
       {isMenuOpen && (
         <>
-          <div className="fixed bottom-0 top-0 w-full bg-neutral-200/30 backdrop-blur-sm"></div>
+          <div className="fixed bottom-0 top-0 z-20 w-full bg-neutral-200/30 backdrop-blur-sm"></div>
           <div
-            className="fixed bottom-0 left-0 right-0 flex items-center shadow-2xl md:hidden"
+            className="fixed bottom-0 left-0 right-0 z-20 flex items-center shadow-2xl md:hidden"
             ref={menuRef}
           >
             <CustomConnectButton />

@@ -6,18 +6,19 @@ import {
   useSendTransaction,
 } from 'wagmi'
 
-type Options = Pick<
+type UseDepositNativeToken = Pick<
   Parameters<typeof usePrepareSendTransaction>['0'],
   'enabled'
 > & { amount: string }
 
-const bridgeSmartContractAddress = process.env.NEXT_PUBLIC_BRIDGE_SMART_CONTRACT
-
-export const useDepositNativeToken = function ({ amount, enabled }: Options) {
+export const useDepositNativeToken = function ({
+  amount,
+  ...options
+}: UseDepositNativeToken) {
   const { config } = usePrepareSendTransaction({
-    enabled,
-    to: bridgeSmartContractAddress,
+    to: process.env.NEXT_PUBLIC_PROXY_OVM_L1_STANDARD_BRIDGE,
     value: parseEther(amount),
+    ...options,
   })
   const { data, sendTransaction, status } = useSendTransaction(config)
 
@@ -28,10 +29,12 @@ export const useDepositNativeToken = function ({ amount, enabled }: Options) {
   }
 }
 
-export const useDepositToken = function ({ enabled }: Options) {
-  const { config } = usePrepareContractWrite({
-    enabled,
-  })
+type UseDepositToken = Pick<
+  Parameters<typeof usePrepareContractWrite>['0'],
+  'enabled'
+>
+export const useDepositToken = function (options: UseDepositToken) {
+  const { config } = usePrepareContractWrite(options)
   const { data, status, write } = useContractWrite(config)
   return {
     depositToken: write,

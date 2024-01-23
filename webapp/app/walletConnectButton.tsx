@@ -12,7 +12,7 @@ export const WalletConnectButton = function () {
   return (
     <>
       {/* Only visible for large screens */}
-      <div className="ml-auto mr-6 hidden md:block xl:mr-20">
+      <div className="z-20 ml-auto mr-6 hidden md:block xl:mr-20">
         <ConnectButton />
       </div>
       {/* Only visible at the top when connected */}

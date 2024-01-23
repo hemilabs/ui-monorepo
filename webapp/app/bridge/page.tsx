@@ -5,9 +5,7 @@ import { TokenSelector } from 'app/components/TokenSelector'
 import { bvm, networks } from 'app/networks'
 import Big from 'big.js'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import dynamic from 'next/dynamic'
-import { useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
@@ -18,9 +16,7 @@ import { useConfig } from 'wagmi'
 
 import { useBridgeState } from './useBridgeState'
 import { useDeposit } from './useDeposit'
-
-// Calculated from Testnet, may need to be reviewed/updated
-const DepositGas = 150_000
+import { useWithdraw } from './useWithdraw'
 
 // const AddNetworkToWallet = dynamic(
 //   () =>
@@ -51,7 +47,7 @@ const NetworkSelector = dynamic(
 
 const OperationButton = dynamic(
   () =>
-    import('app/bridge/components/OperationButton').then(
+    import('app/bridge/_components/OperationButton').then(
       mod => mod.OperationButton,
     ),
   {
@@ -68,6 +64,25 @@ const ReviewDeposit = dynamic(
   },
 )
 
+const ReviewWithdraw = dynamic(
+  () => import('components/reviewBox').then(mod => mod.ReviewWithdraw),
+  {
+    loading: () => <Skeleton className="h-48 w-full md:w-80" />,
+    ssr: false,
+  },
+)
+
+const SetMaxBalance = dynamic(
+  () =>
+    import('app/bridge/_components/SetMaxBalance').then(
+      mod => mod.SetMaxBalance,
+    ),
+  {
+    loading: () => <Skeleton className="h-5 w-8" />,
+    ssr: false,
+  },
+)
+
 const SwitchToNetwork = dynamic(
   () => import('components/switchToNetwork').then(mod => mod.SwitchToNetwork),
   {
@@ -79,6 +94,20 @@ const TransactionStatus = dynamic(
   () =>
     import('components/transactionStatus').then(mod => mod.TransactionStatus),
   {
+    ssr: false,
+  },
+)
+
+const ToggleButton = dynamic(
+  () =>
+    import('app/bridge/_components/ToggleButton').then(mod => mod.ToggleButton),
+  {
+    loading: () => (
+      <Skeleton
+        className="mx-auto h-7 w-8 rounded-lg"
+        containerClassName="mx-auto"
+      />
+    ),
     ssr: false,
   },
 )
@@ -102,6 +131,21 @@ const inputEnoughInBalance = ({
   (!isNativeToken(fromToken) &&
     Big(fromInput).lt(formatUnits(walletTokenBalance, fromToken.decimals)))
 
+type GetTotalFees = {
+  fees: bigint
+  fromInput: string
+  fromToken: Token
+}
+const getTotalFees = ({ fees, fromInput, fromToken }: GetTotalFees) =>
+  formatUnits(
+    BigInt(
+      Big(parseUnits(fromInput, fromToken.decimals).toString())
+        .plus(fees.toString())
+        .toFixed(),
+    ),
+    fromToken.decimals,
+  )
+
 export default function Bridge() {
   const { chains = [] } = useConfig()
 
@@ -118,24 +162,20 @@ export default function Bridge() {
     toToken,
   } = useBridgeState()
 
-  const {
-    balance: walletNativeTokenBalance,
-    status: nativeTokenBalanceStatus,
-  } = useNativeTokenBalance(fromToken, isNativeToken(fromToken))
+  const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
+    fromToken,
+    isNativeToken(fromToken),
+  )
 
-  const { balance: walletTokenBalance, status: tokenBalanceStatus } =
-    useTokenBalance(fromToken, !isNativeToken(fromToken))
-
-  const expectedFees = useEstimateFees(fromNetworkId, DepositGas)
+  const { balance: walletTokenBalance } = useTokenBalance(
+    fromToken,
+    !isNativeToken(fromToken),
+  )
 
   const isDepositOperation = toNetworkId === bvm.id
-
-  const balancesLoaded =
-    nativeTokenBalanceStatus === 'success' && tokenBalanceStatus === 'success'
+  const isWithdrawOperation = !isDepositOperation
 
   const canDeposit =
-    isDepositOperation &&
-    balancesLoaded &&
     Big(fromInput).gt(0) &&
     inputEnoughInBalance({
       fromInput,
@@ -144,55 +184,71 @@ export default function Bridge() {
       walletTokenBalance,
     })
 
-  const fromTokenBalanceInWallet = formatUnits(
-    isNativeToken(fromToken) ? walletNativeTokenBalance : walletTokenBalance,
-    fromToken.decimals,
-  )
+  const onSuccessOperation = () => updateFromInput('0')
 
-  const { deposit, depositTxHash, depositStatus } = useDeposit({
+  const { deposit, depositFees, depositStatus, depositTxHash } = useDeposit({
     canDeposit,
     fromInput,
     fromToken,
+    onSuccess: onSuccessOperation,
     toToken,
   })
 
-  useEffect(
-    function () {
-      if (depositStatus === 'success') {
-        updateFromInput('0')
-      }
-    },
-    [depositStatus, updateFromInput],
+  const canWithdraw =
+    Big(fromInput).gt(0) &&
+    inputEnoughInBalance({
+      fromInput,
+      fromToken,
+      walletNativeTokenBalance,
+      walletTokenBalance,
+    })
+
+  const { withdraw, withdrawFees, withdrawStatus, withdrawTxHash } =
+    useWithdraw({
+      canWithdraw,
+      fromInput,
+      fromToken,
+      onSuccess: onSuccessOperation,
+      toToken,
+    })
+
+  const isRunningOperation = !(
+    depositStatus === 'idle' && withdrawStatus === 'idle'
   )
-
-  const canSetMaxBalance =
-    balancesLoaded &&
-    depositStatus === 'idle' &&
-    Big(fromTokenBalanceInWallet).gt(0)
-
-  const setMaxBalance = () =>
-    updateFromInput(Big(fromTokenBalanceInWallet).toFixed(2, Big.roundDown))
-
-  const canToggle = depositStatus === 'idle'
 
   const fromChain = chains.find(c => c.id === fromNetworkId)
   const toChain = chains.find(c => c.id === toNetworkId)
 
-  const totalFees = formatUnits(
-    BigInt(
-      Big(parseUnits(fromInput, fromToken.decimals).toString())
-        .plus(expectedFees.toString())
-        .toFixed(),
-    ),
-    fromToken.decimals,
-  )
+  const totalDeposit = getTotalFees({
+    fees: depositFees,
+    fromInput,
+    fromToken,
+  })
+
+  const totalWithdraw = getTotalFees({
+    fees: withdrawFees,
+    fromInput,
+    fromToken,
+  })
+
+  const operationButtonProps = isDepositOperation
+    ? {
+        disabled: !canDeposit || depositStatus === 'loading',
+        operation: 'deposit',
+        operationStatus: depositStatus,
+      }
+    : {
+        disabled: !canWithdraw || withdrawStatus === 'loading',
+        operation: 'withdraw',
+        operationStatus: withdrawStatus,
+      }
 
   return (
     <div className="mx-auto flex h-screen w-full flex-col gap-y-4 px-4 md:h-full md:max-w-fit md:flex-row md:gap-x-4 md:pt-10">
       <Card>
         <form
           className="w-full text-zinc-800"
-          onSubmit={isDepositOperation ? deposit : undefined}
+          onSubmit={isDepositOperation ? deposit : withdraw}
         >
           <h3 className="text-xl font-medium text-black">Bridge</h3>
           <div className="my-2">
@@ -253,39 +309,18 @@ export default function Bridge() {
               />
               <div className="flex items-center justify-end gap-x-2 text-xs font-normal sm:text-sm">
                 Balance: <Balance token={fromToken} />
-                <button
-                  className="cursor-pointer font-semibold text-slate-700"
-                  disabled={!canSetMaxBalance}
-                  onClick={setMaxBalance}
-                  type="button"
-                >
-                  MAX
-                </button>
+                <SetMaxBalance
+                  fromToken={fromToken}
+                  isRunningOperation={isRunningOperation}
+                  onSetMaxBalance={maxBalance =>
+                    updateFromInput(formatNumber(maxBalance, 2))
+                  }
+                />
               </div>
             </div>
           </div>
           <div className="my-6 flex w-full">
-            <button
-              className={`mx-auto rounded-lg p-2 shadow-xl ${
-                canToggle ? 'cursor-pointer' : 'cursor-not-allowed'
-              }`}
-              disabled={!canToggle}
-              onClick={toggle}
-              type="button"
-            >
-              <svg
-                fill="none"
-                height="16"
-                viewBox="0 0 22 16"
-                width="22"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M3 8H1.20711C0.761654 8 0.538571 8.53857 0.853553 8.85355L3.64645 11.6464C3.84171 11.8417 4.15829 11.8417 4.35355 11.6464L7.14645 8.85355C7.46143 8.53857 7.23835 8 6.79289 8H5C5 4.69 7.69 2 11 2C11.8773 2 12.7169 2.18863 13.4663 2.53312C13.6675 2.62557 13.9073 2.59266 14.0638 2.43616L14.8193 1.68072C15.0455 1.45454 15.0041 1.07636 14.7216 0.926334C13.5783 0.3192 12.3008 -0.000361652 11 3.07144e-07C6.58 3.07144e-07 3 3.58 3 8ZM17 8C17 11.31 14.31 14 11 14C10.1471 14.0029 9.30537 13.8199 8.53281 13.4656C8.33221 13.3736 8.09316 13.4068 7.9371 13.5629L7.18072 14.3193C6.95454 14.5455 6.99594 14.9236 7.27843 15.0737C8.42167 15.6808 9.69924 16.0004 11 16C15.42 16 19 12.42 19 8H20.7929C21.2383 8 21.4614 7.46143 21.1464 7.14645L18.3536 4.35355C18.1583 4.15829 17.8417 4.15829 17.6464 4.35355L14.8536 7.14645C14.5386 7.46143 14.7617 8 15.2071 8H17Z"
-                  fill="black"
-                />
-              </svg>
-            </button>
+            <ToggleButton disabled={isRunningOperation} toggle={toggle} />
           </div>
           <div className="my-2 flex items-center justify-between text-sm">
             <span>To Network</span>
@@ -346,37 +381,55 @@ export default function Bridge() {
               </div>
             </div>
           </div>
-          <OperationButton
-            disabled={!canDeposit || depositStatus === 'loading'}
-            // Eventually, withdraw needs to be added
-            operation="deposit"
-            operationStatus={depositStatus}
-          />
+          {/* @ts-expect-error operation prop is typed as string, but it actually is 'deposit' | 'withdraw' */}
+          <OperationButton {...operationButtonProps} />
         </form>
       </Card>
       <div className="flex flex-col gap-y-4">
         <div className="shrink-1 order-2 md:order-1 md:w-full md:min-w-80">
-          <ReviewDeposit
-            canDeposit={canDeposit}
-            deposit={formatNumber(fromInput, 3)}
-            depositSymbol={fromToken.symbol}
-            gas={formatNumber(
-              formatUnits(expectedFees, fromChain?.nativeCurrency.decimals),
-              3,
-            )}
-            gasSymbol={fromChain?.nativeCurrency.symbol}
-            total={formatNumber(totalFees, 3)}
-          />
+          {isDepositOperation && (
+            <ReviewDeposit
+              canDeposit={canDeposit}
+              deposit={formatNumber(fromInput, 3)}
+              depositSymbol={fromToken.symbol}
+              gas={formatNumber(
+                formatUnits(depositFees, fromChain?.nativeCurrency.decimals),
+                3,
+              )}
+              gasSymbol={fromChain?.nativeCurrency.symbol}
+              total={formatNumber(totalDeposit, 3)}
+            />
+          )}
+          {isWithdrawOperation && (
+            <ReviewWithdraw
+              canWithdraw={canWithdraw}
+              gas={formatNumber(
+                formatUnits(withdrawFees, fromChain?.nativeCurrency.decimals),
+                3,
+              )}
+              gasSymbol={fromChain?.nativeCurrency.symbol}
+              total={formatNumber(totalWithdraw, 3)}
+              withdraw={formatNumber(fromInput, 3)}
+              withdrawSymbol={fromToken.symbol}
+            />
+          )}
         </div>
-        {depositStatus !== 'idle' && (
-          <div className="order-1 md:order-2">
+        <div className="order-1 md:order-2">
+          {depositStatus !== 'idle' && (
             <TransactionStatus
               operation={`Bridging ${fromInput} ${fromToken.symbol} to ${toChain.name}`}
               status={depositStatus}
               txHash={depositTxHash}
             />
-          </div>
-        )}
+          )}
+          {withdrawStatus !== 'idle' && (
+            <TransactionStatus
+              operation={`Withdrawing ${fromInput} ${toToken.symbol} from ${fromChain.name}`}
+              status={withdrawStatus}
+              txHash={withdrawTxHash}
+            />
+          )}
+        </div>
       </div>
     </div>
   )

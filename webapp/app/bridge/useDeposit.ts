@@ -1,39 +1,67 @@
-import { useNativeTokenBalance } from 'hooks/useBalance'
-import { FormEvent, useEffect, useState } from 'react'
+import { useDelayedIdleStatus } from 'hooks/useDelayedIdleStatus'
+import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useReloadBalances } from 'hooks/useReloadBalances'
+import { FormEvent, useEffect } from 'react'
 import { Token } from 'types/token'
 import { isNativeToken } from 'utils/token'
-import { useSendTransaction, useWaitForTransaction } from 'wagmi'
+import { useWaitForTransaction } from 'wagmi'
 
 import { useDepositNativeToken } from './useBridgeToken'
+
+// Calculated from Testnet, may need to be reviewed/updated
+const DepositGas = 150_000
 
 type UseDeposit = {
   canDeposit: boolean
   fromInput: string
   fromToken: Token
+  onSuccess?: () => void
   toToken: Token
 }
 export const useDeposit = function ({
   canDeposit,
   fromInput,
   fromToken,
+  onSuccess,
   toToken,
 }: UseDeposit) {
   const depositingNative = isNativeToken(fromToken)
 
-  const { depositNativeToken, depositNativeTokenTxHash } =
-    useDepositNativeToken({
-      amount: fromInput,
-      enabled: depositingNative && canDeposit,
-    })
+  const depositFees = useEstimateFees(fromToken.chainId, DepositGas)
 
-  const { status } = useWaitForTransaction({
-    hash: depositNativeTokenTxHash,
+  const {
+    depositNativeToken,
+    depositNativeTokenTxHash,
+    status: nativeTokenUserConfirmationStatus,
+  } = useDepositNativeToken({
+    amount: fromInput,
+    enabled: depositingNative && canDeposit,
   })
 
-  // we clone the "status" but we manually update it
-  // so the error/success message can be displayed for a few extra seconds
+  const { status: depositTxStatus } = useWaitForTransaction({
+    hash: depositNativeTokenTxHash,
+    onSuccess,
+  })
+
   const [depositStatus, setDepositStatus] =
-    useState<ReturnType<typeof useSendTransaction>['status']>('idle')
+    useDelayedIdleStatus(depositTxStatus)
+
+  useEffect(
+    function clearDepositStatusAfterUserReject() {
+      // When the user rejects a Tx, the deposit status hangs on "Loading"
+      // so we need to set it to error manually
+      if (nativeTokenUserConfirmationStatus === 'error') {
+        setDepositStatus('error')
+      }
+    },
+    [nativeTokenUserConfirmationStatus, setDepositStatus],
+  )
+
+  useReloadBalances({
+    fromToken,
+    status: depositStatus,
+    toToken,
+  })
 
   const deposit = function (e: FormEvent) {
     e.preventDefault()
@@ -47,48 +75,9 @@ export const useDeposit = function ({
     // }
   }
 
-  useEffect(
-    function delayStatus() {
-      if (status === 'success') {
-        setDepositStatus('success')
-      } else if (status === 'error') {
-        setDepositStatus('error')
-      }
-    },
-    [status, setDepositStatus],
-  )
-
-  useEffect(
-    function clearTransactionStatusMessage() {
-      if (['error', 'success'].includes(depositStatus)) {
-        // clear success message in 5 secs for success, 10 secs for error
-        const timeoutId = setTimeout(
-          () => setDepositStatus('idle'),
-          depositStatus === 'success' ? 5000 : 10000,
-        )
-
-        return () => clearTimeout(timeoutId)
-      }
-      return undefined
-    },
-    [depositStatus, setDepositStatus],
-  )
-
-  const { refetchBalance: refetchFromToken } = useNativeTokenBalance(fromToken)
-  const { refetchBalance: refetchToToken } = useNativeTokenBalance(toToken)
-
-  useEffect(
-    function refetchBalances() {
-      if (['error', 'success'].includes(depositStatus)) {
-        refetchFromToken()
-        refetchToToken()
-      }
-    },
-    [depositStatus, refetchFromToken, refetchToToken],
-  )
-
   return {
     deposit,
+    depositFees,
     depositStatus,
     depositTxHash: depositNativeTokenTxHash,
   }

@@ -137,16 +137,18 @@ export const TransactionStatus = function ({
             </p>
           </div>
         </div>
-        {txHash && (
-          <a
-            className="ml-auto cursor-pointer"
-            href={`${chain.blockExplorers.default.url}/tx/${txHash}`}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <ExternalLink />
-          </a>
-        )}
+        <a
+          className="ml-auto cursor-pointer"
+          href={
+            txHash
+              ? `${chain.blockExplorers.default.url}/tx/${txHash}`
+              : undefined
+          }
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <ExternalLink />
+        </a>
       </div>
     </Card>
   )

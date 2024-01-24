@@ -22,7 +22,7 @@ const RenderBalance = ({
     )}
     {(status === 'error' || status === 'idle') && '-'}
     {status === 'success' &&
-      formatNumber(parseFloat(formatUnits(balance, token.decimals)), 2)}
+      formatNumber(formatUnits(balance, token.decimals), 2)}
   </>
 )
 

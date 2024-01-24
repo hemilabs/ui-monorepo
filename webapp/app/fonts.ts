@@ -5,18 +5,12 @@ import localFont from 'next/font/local'
 export const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 
 // Check with https://fontdrop.info if needed
-export const rightGrotesk = localFont({
+export const bricolageGrotesque = localFont({
   src: [
     {
-      path: '../styles/fonts/RightGrotesk-fw-500.otf',
-    },
-    {
-      path: '../styles/fonts/RightGrotesk-fw-500-2.otf',
-    },
-    {
-      path: '../styles/fonts/RightGrotesk-fw-500-3.otf',
+      path: '../styles/fonts/BricolageGrotesque_24pt-Bold.ttf',
     },
   ],
-  variable: '--font-right-grotesk',
-  weight: '500',
+  variable: '--font-bricolage-grotesque',
+  weight: '400',
 })

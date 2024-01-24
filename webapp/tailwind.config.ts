@@ -15,7 +15,7 @@ const config: Config = {
       },
       fontFamily: {
         'inter': '--font-inter',
-        'right-grotesk': '--font-right-grotesk',
+        'bricolage-grotesque': '--font-bricolage-grotesque',
       },
     },
   },

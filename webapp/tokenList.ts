@@ -673,7 +673,8 @@ const tokens = [
         },
       },
     },
-    logoURI: 'ipfs://QmXttGpZrECX5qCyXbBQiqgQNytVGeZW5Anewvh2jc4psg',
+    logoURI:
+      'https://raw.githubusercontent.com/Uniswap/assets/master/blockchains/ethereum/assets/0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984/logo.png',
     name: 'Uniswap',
     symbol: 'UNI',
   },
@@ -681,7 +682,8 @@ const tokens = [
     address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
     chainId: 11155111,
     decimals: 18,
-    logoURI: 'ipfs://QmXttGpZrECX5qCyXbBQiqgQNytVGeZW5Anewvh2jc4psg',
+    logoURI:
+      'https://raw.githubusercontent.com/Uniswap/assets/master/blockchains/ethereum/assets/0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984/logo.png',
     name: 'Uniswap',
     symbol: 'UNI',
   },

@@ -12,7 +12,7 @@ export const useNativeTokenBalance = function (
     chainId: token.chainId,
     enabled,
     formatUnits: 'wei',
-    // for native tokens, address must be omited
+    // for native tokens, address must be omitted
     // Once updated to wagmi v2.x, we should be able to remove this line
     ...(isNativeToken(token) ? {} : { token: token.address as `0x${string}` }),
   })

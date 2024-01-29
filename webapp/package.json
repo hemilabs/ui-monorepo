@@ -16,7 +16,8 @@
     "react-dom": "18.2.0",
     "react-loading-skeleton": "3.3.1",
     "viem": "1.21.4",
-    "wagmi": "1.4.13"
+    "wagmi": "1.4.13",
+    "wagmi-erc20-hooks": "1.0.0"
   },
   "devDependencies": {
     "@types/big.js": "6.2.2",

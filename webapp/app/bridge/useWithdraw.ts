@@ -1,12 +1,9 @@
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { bvm } from 'app/networks'
-import { useDelayedIdleStatus } from 'hooks/useDelayedIdleStatus'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useEthersSigner } from 'hooks/useEthersSigner'
 import { useReloadBalances } from 'hooks/useReloadBalances'
-import { type FormEvent, useEffect } from 'react'
 import { Token } from 'types/token'
-import { isNativeToken } from 'utils/token'
 import { parseUnits } from 'viem'
 // Once we migrate to 2.x, @tanstack/react-query is moved into a peer dependency
 // so we will have to install it manually and import useMutation from there
@@ -76,17 +73,15 @@ export const useWithdraw = function ({
   onSuccess,
   toToken,
 }: UseWithdraw) {
-  const depositingNative = isNativeToken(fromToken)
-
   const l1Signer = useEthersSigner(fromToken.chainId)
   const l2Signer = useEthersSigner(bvm.id)
 
-  const withdrawFees = useEstimateFees(fromToken.chainId, WithdrawGas)
+  const withdrawGasFees = useEstimateFees(fromToken.chainId, WithdrawGas)
 
   const {
     data: withdrawTxHash,
     mutate: withdrawNativeToken,
-    status: userConfirmationStatus,
+    status: userWithdrawConfirmationStatus,
   } = useMutation<string, Error, void>({
     mutationFn: async function withdraw() {
       const crossChainMessenger = await getCrossChainMessenger(
@@ -107,45 +102,23 @@ export const useWithdraw = function ({
     onSuccess,
   })
 
-  const [withdrawStatus, setWithdrawStatus] =
-    useDelayedIdleStatus(withdrawTxStatus)
-
-  useEffect(
-    function clearWithdrawStatusAfterUserReject() {
-      // When the user rejects a Tx, the withdraw status hangs on "Loading"
-      // so we need to set it to error manually
-      if (userConfirmationStatus === 'error') {
-        setWithdrawStatus('error')
-      }
-    },
-    [userConfirmationStatus, setWithdrawStatus],
-  )
-
   useReloadBalances({
     fromToken,
-    status: withdrawStatus,
+    status: withdrawTxStatus,
     toToken,
   })
 
-  const withdraw = function (e: FormEvent) {
-    e.preventDefault()
-    if (!canWithdraw) {
-      return
-    }
-    if (depositingNative) {
-      setWithdrawStatus('loading')
+  const handleWithdraw = function () {
+    if (canWithdraw) {
       withdrawNativeToken()
     }
-    // TODO Enable withdraw ERC20 token
-    // else {
-    //   withdrawErc20Token()
-    // }
   }
 
   return {
-    withdraw,
-    withdrawFees,
-    withdrawStatus,
+    userWithdrawConfirmationStatus,
+    withdraw: handleWithdraw,
+    withdrawGasFees,
+    withdrawStatus: withdrawTxStatus,
     withdrawTxHash,
   }
 }

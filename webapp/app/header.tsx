@@ -68,6 +68,7 @@ const CustomConnectButton = function () {
             <button
               className="px-auto w-full rounded-xl bg-black py-3 text-sm font-medium text-white"
               onClick={openConnectModal}
+              type="button"
             >
               Connect wallet
             </button>

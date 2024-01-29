@@ -20,7 +20,7 @@
     "wallet",
     "web3"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "peerDependencies": {
     "react": ">=17",
     "react-dom": ">=17",

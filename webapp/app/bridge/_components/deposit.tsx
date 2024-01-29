@@ -100,6 +100,9 @@ export const Deposit = function ({ renderForm, state }: Props) {
     updateTransaction,
   } = useTransactionsList()
 
+  const fromChain = chains.find(c => c.id === fromNetworkId)
+  const toChain = chains.find(c => c.id === toNetworkId)
+
   const {
     approvalTxHash,
     approvalTokenGasFees = BigInt(0),
@@ -118,7 +121,34 @@ export const Deposit = function ({ renderForm, state }: Props) {
       : extendedErc20Approval,
     fromInput,
     fromToken,
-    onSuccess() {
+    onApprovalError() {
+      updateTransaction({
+        id: 'approval',
+        status: 'error',
+        text: 'Tx failed',
+      })
+    },
+    onApprovalSuccess() {
+      addTransaction({
+        id: 'deposit',
+        status: 'loading',
+        text: `Depositing ${fromInput} ${fromToken.symbol} to ${toChain?.name}`,
+      })
+      updateTransaction({
+        id: 'approval',
+        status: 'success',
+        text: `${fromToken.symbol} Approved`,
+      })
+    },
+    onDepositError() {
+      updateTransaction({
+        id: 'deposit',
+        status: 'error',
+        text: 'Tx failed',
+      })
+      delayedClearTransactionList()
+    },
+    onDepositSuccess() {
       updateTransaction({
         id: 'deposit',
         status: 'success',
@@ -133,8 +163,12 @@ export const Deposit = function ({ renderForm, state }: Props) {
     toToken,
   })
 
-  const fromChain = chains.find(c => c.id === fromNetworkId)
-  const toChain = chains.find(c => c.id === toNetworkId)
+  const isRunningOperation = [
+    approvalStatus,
+    depositStatus,
+    userConfirmationApprovalStatus,
+    userDepositConfirmation,
+  ].includes('loading')
 
   const handleDeposit = function (e: FormEvent) {
     e.preventDefault()
@@ -175,21 +209,6 @@ export const Deposit = function ({ renderForm, state }: Props) {
   )
 
   useEffect(
-    function updateTransactionsAfterApprovalError() {
-      if (approvalStatus === 'error') {
-        updateTransaction({
-          id: 'approval',
-          status: 'error',
-          text: 'Tx rejected',
-        })
-        return delayedClearTransactionList()
-      }
-      return undefined
-    },
-    [approvalStatus, updateTransaction, delayedClearTransactionList],
-  )
-
-  useEffect(
     function addApprovalTxOnceAvailable() {
       if (approvalTxHash) {
         updateTransaction({
@@ -199,31 +218,6 @@ export const Deposit = function ({ renderForm, state }: Props) {
       }
     },
     [approvalTxHash, updateTransaction],
-  )
-
-  useEffect(
-    function updateTransactionsAfterApprovalSuccess() {
-      if (approvalStatus === 'success') {
-        addTransaction({
-          id: 'deposit',
-          status: 'loading',
-          text: `Depositing ${fromInput} ${fromToken.symbol} to ${toChain?.name}`,
-        })
-        updateTransaction({
-          id: 'approval',
-          status: 'success',
-          text: `${fromToken.symbol} Approved`,
-        })
-      }
-    },
-    [
-      addTransaction,
-      approvalStatus,
-      fromInput,
-      fromToken,
-      toChain,
-      updateTransaction,
-    ],
   )
 
   useEffect(
@@ -252,28 +246,6 @@ export const Deposit = function ({ renderForm, state }: Props) {
     },
     [delayedClearTransactionList, userDepositConfirmation, updateTransaction],
   )
-
-  useEffect(
-    function updateTransactionsAfterDepositError() {
-      if (depositStatus === 'error') {
-        updateTransaction({
-          id: 'deposit',
-          status: 'error',
-          text: 'Tx failed',
-        })
-        return delayedClearTransactionList()
-      }
-      return undefined
-    },
-    [delayedClearTransactionList, depositStatus, updateTransaction],
-  )
-
-  const isRunningOperation = [
-    approvalStatus,
-    depositStatus,
-    userConfirmationApprovalStatus,
-    userDepositConfirmation,
-  ].includes('loading')
 
   const getOperationButtonText = function () {
     const texts = {

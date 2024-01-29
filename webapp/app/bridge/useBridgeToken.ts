@@ -54,12 +54,20 @@ const erc20Spender = process.env
 type UseDepositToken = Pick<
   Parameters<typeof usePrepareContractWrite>['0'],
   'enabled'
-> & { amount: string; extendedApproval?: boolean; token: Token }
+> & {
+  amount: string
+  extendedApproval?: boolean
+  onApprovalError?: () => void
+  onApprovalSuccess?: () => void
+  token: Token
+}
 export const useDepositToken = function ({
   amount,
-  extendedApproval = false,
-  token,
   enabled,
+  extendedApproval = false,
+  onApprovalError,
+  onApprovalSuccess,
+  token,
 }: UseDepositToken) {
   const depositErc20TokenGasFees = useEstimateFees(
     token.chainId,
@@ -101,7 +109,11 @@ export const useDepositToken = function ({
 
   const { status: approvalTxStatus } = useWaitForTransaction({
     hash: approvalTxHash,
-    onSuccess: deposit,
+    onError: onApprovalError,
+    onSuccess() {
+      onApprovalSuccess?.()
+      deposit()
+    },
   })
 
   const depositToken = function () {

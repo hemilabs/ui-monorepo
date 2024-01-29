@@ -63,13 +63,15 @@ type UseWithdraw = {
   canWithdraw: boolean
   fromInput: string
   fromToken: Token
-  onSuccess: () => void
+  onSuccess?: () => void
+  onError?: () => void
   toToken: Token
 }
 export const useWithdraw = function ({
   canWithdraw,
   fromInput,
   fromToken,
+  onError,
   onSuccess,
   toToken,
 }: UseWithdraw) {
@@ -99,6 +101,7 @@ export const useWithdraw = function ({
   const { status: withdrawTxStatus } = useWaitForTransaction({
     // @ts-expect-error string is `0x${string}`
     hash: withdrawTxHash,
+    onError,
     onSuccess,
   })
 

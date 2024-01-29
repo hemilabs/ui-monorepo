@@ -10,7 +10,10 @@ type UseDeposit = {
   extendedErc20Approval: boolean | undefined
   fromInput: string
   fromToken: Token
-  onSuccess?: () => void
+  onApprovalError?: () => void
+  onApprovalSuccess?: () => void
+  onDepositError?: () => void
+  onDepositSuccess?: () => void
   toToken: Token
 }
 export const useDeposit = function ({
@@ -18,7 +21,10 @@ export const useDeposit = function ({
   extendedErc20Approval,
   fromInput,
   fromToken,
-  onSuccess,
+  onApprovalError,
+  onApprovalSuccess,
+  onDepositError,
+  onDepositSuccess,
   toToken,
 }: UseDeposit) {
   const depositingNative = isNativeToken(fromToken)
@@ -48,12 +54,15 @@ export const useDeposit = function ({
     amount: fromInput,
     enabled: !depositingNative && canDeposit,
     extendedApproval: extendedErc20Approval,
+    onApprovalError,
+    onApprovalSuccess,
     token: fromToken,
   })
 
   const { status: depositTxStatus } = useWaitForTransaction({
     hash: depositingNative ? depositNativeTokenTxHash : depositTokenTxHash,
-    onSuccess,
+    onError: onDepositError,
+    onSuccess: onDepositSuccess,
   })
 
   useReloadBalances({

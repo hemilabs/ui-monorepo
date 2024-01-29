@@ -89,6 +89,14 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     canWithdraw,
     fromInput,
     fromToken,
+    onError() {
+      updateTransaction({
+        id: 'withdraw',
+        status: 'error',
+        text: 'Tx failed',
+      })
+      delayedClearTransactionList()
+    },
     onSuccess() {
       updateTransaction({
         id: 'withdraw',
@@ -147,21 +155,6 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       }
     },
     [updateTransaction, withdrawTxHash],
-  )
-
-  useEffect(
-    function updateTransactionsAfterWithdrawalError() {
-      if (withdrawStatus === 'error') {
-        updateTransaction({
-          id: 'withdraw',
-          status: 'error',
-          text: 'Tx failed',
-        })
-        return delayedClearTransactionList()
-      }
-      return undefined
-    },
-    [delayedClearTransactionList, updateTransaction, withdrawStatus],
   )
 
   const isWithdrawing = [

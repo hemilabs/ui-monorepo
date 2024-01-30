@@ -15,8 +15,7 @@ export const SetMaxBalance = function ({
   onSetMaxBalance,
 }: Props) {
   const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
-    fromToken,
-    isNativeToken(fromToken),
+    fromToken.chainId,
   )
 
   const { balance: walletTokenBalance } = useTokenBalance(

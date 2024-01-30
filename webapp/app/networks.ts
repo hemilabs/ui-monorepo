@@ -29,6 +29,6 @@ export const bvm: Chain = {
 
 const testnetMode = process.env.NEXT_PUBLIC_TESTNET_MODE === 'true'
 
-export const bridgableNetworks = testnetMode ? [sepolia] : [mainnet]
+export const bridgeableNetworks = testnetMode ? [sepolia] : [mainnet]
 
-export const networks = [bvm, ...bridgableNetworks]
+export const networks = [bvm, ...bridgeableNetworks]

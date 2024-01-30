@@ -1,20 +1,16 @@
 import { Token } from 'types/token'
-import { isNativeToken } from 'utils/token'
 import { useAccount, useBalance as useWagmiBalance } from 'wagmi'
 
 export const useNativeTokenBalance = function (
-  token: Token,
+  chainId: Token['chainId'],
   enabled: boolean = true,
 ) {
   const { address } = useAccount()
   const { data, status, refetch } = useWagmiBalance({
     address,
-    chainId: token.chainId,
+    chainId,
     enabled,
     formatUnits: 'wei',
-    // for native tokens, address must be omited
-    // Once updated to wagmi v2.x, we should be able to remove this line
-    ...(isNativeToken(token) ? {} : { token: token.address as `0x${string}` }),
   })
 
   return {
@@ -27,5 +23,22 @@ export const useNativeTokenBalance = function (
 // Once we migrate to wagmi v2.x, we should update this hook
 // as token balances will use a different wagmi hook.
 // See https://wagmi.sh/react/guides/migrate-from-v1-to-v2
-export const useTokenBalance = (token: Token, enabled: boolean = true) =>
-  useNativeTokenBalance(token, enabled)
+export const useTokenBalance = function (
+  token: Token,
+  enabled: boolean = true,
+) {
+  const { address } = useAccount()
+  const { data, status, refetch } = useWagmiBalance({
+    address,
+    chainId: token.chainId,
+    enabled,
+    formatUnits: 'wei',
+    token: token.address as `0x${string}`,
+  })
+
+  return {
+    balance: status === 'error' ? BigInt(0) : data?.value ?? BigInt(0),
+    refetchBalance: refetch,
+    status,
+  }
+}

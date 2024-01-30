@@ -14,8 +14,8 @@ const config: Config = {
           'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',
       },
       fontFamily: {
-        'inter': '--font-inter',
         'bricolage-grotesque': '--font-bricolage-grotesque',
+        'inter': '--font-inter',
       },
     },
   },

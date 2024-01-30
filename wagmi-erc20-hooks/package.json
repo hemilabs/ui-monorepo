@@ -1,0 +1,39 @@
+{
+  "name": "wagmi-erc20-hooks",
+  "version": "1.0.0",
+  "description": "React hooks for ERC20 tokens based on the wagmi library",
+  "author": {
+    "name": "Gonzalo D'elia",
+    "email": "gonzalo@bloq.com"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "dapps",
+    "eth",
+    "ethereum",
+    "hooks",
+    "react",
+    "viem",
+    "wagmi",
+    "wallet",
+    "web3"
+  ],
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=17",
+    "react-dom": ">=17",
+    "viem": "^1.0.0",
+    "wagmi": "^1.4.0"
+  },
+  "dependencies": {
+    "erc-20-abi": "1.0.1"
+  },
+  "devDependencies": {
+    "@tanstack/react-query": "^4.28.0"
+  },
+  "exports": {
+    ".": "./index.ts"
+  }
+}

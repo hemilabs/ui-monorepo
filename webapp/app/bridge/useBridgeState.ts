@@ -1,4 +1,4 @@
-import { bvm, bridgableNetworks } from 'app/networks'
+import { bvm, bridgeableNetworks } from 'app/networks'
 import { useReducer } from 'react'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
@@ -9,6 +9,7 @@ const getNativeToken = (chain: Chain['id']) =>
   tokenList.tokens.find(t => t.chainId === chain && isNativeToken(t))
 
 type BridgeState = {
+  extendedErc20Approval: boolean
   fromNetworkId: Chain['id']
   fromInput: string
   fromToken: Token
@@ -19,6 +20,11 @@ type BridgeState = {
 type Action<T extends string> = {
   type: T
 }
+
+type NoPayload = { payload?: never }
+
+type UpdateExtendedErc20Approval = Action<'updateExtendedErc20Approval'> &
+  NoPayload
 
 type UpdateFromNetwork = Action<'updateFromNetwork'> & {
   payload: Chain['id']
@@ -35,15 +41,17 @@ type UpdateToNetwork = Action<'updateToNetwork'> & {
 type UpdateToToken = Action<'updateToToken'> & {
   payload: Token
 }
-type Toggle = Action<'toggle'> & { payload?: never }
+type ToggleInputs = Action<'toggleInput'> & NoPayload
 type Actions =
+  | UpdateExtendedErc20Approval
   | UpdateFromNetwork
   | UpdateFromInput
   | UpdateFromToken
   | UpdateToNetwork
   | UpdateToToken
-  | Toggle
+  | ToggleInputs
 
+// the _:never is used to fail compilation if a case is missing
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const compilationError = function (_: never): never {
   throw new Error('Missing implementation of action in reducer')
@@ -52,10 +60,17 @@ const compilationError = function (_: never): never {
 const reducer = function (state: BridgeState, action: Actions) {
   const { type } = action
   switch (type) {
+    case 'updateExtendedErc20Approval': {
+      return {
+        ...state,
+        extendedErc20Approval: !state.extendedErc20Approval,
+      }
+    }
     case 'updateFromNetwork': {
       const { payload: fromNetworkId } = action
       return {
         ...state,
+        extendedErc20Approval: false,
         fromNetworkId,
         fromToken: getNativeToken(fromNetworkId),
       }
@@ -64,6 +79,9 @@ const reducer = function (state: BridgeState, action: Actions) {
       const { payload: fromToken } = action
       return {
         ...state,
+        extendedErc20Approval: isNativeToken(fromToken)
+          ? false
+          : state.extendedErc20Approval,
         fromToken,
       }
     }
@@ -91,11 +109,15 @@ const reducer = function (state: BridgeState, action: Actions) {
         toToken,
       }
     }
-    case 'toggle': {
+    case 'toggleInput': {
+      const newFromToken = state.toToken
       return {
         ...state,
+        extendedErc20Approval: isNativeToken(newFromToken)
+          ? false
+          : state.extendedErc20Approval,
         fromNetworkId: state.toNetworkId,
-        fromToken: state.toToken,
+        fromToken: newFromToken,
         toNetworkId: state.fromNetworkId,
         toToken: state.fromToken,
       }
@@ -114,9 +136,10 @@ export const useBridgeState = function (): BridgeState & {
   ) => void
 } {
   const [state, dispatch] = useReducer(reducer, {
+    extendedErc20Approval: false,
     fromInput: '0',
-    fromNetworkId: bridgableNetworks[0].id,
-    fromToken: getNativeToken(bridgableNetworks[0].id),
+    fromNetworkId: bridgeableNetworks[0].id,
+    fromToken: getNativeToken(bridgeableNetworks[0].id),
     toNetworkId: bvm.id,
     toToken: getNativeToken(bvm.id),
   })
@@ -135,7 +158,9 @@ export const useBridgeState = function (): BridgeState & {
 
   return {
     ...state,
-    toggle: () => dispatch({ type: 'toggle' }),
+    toggleInput: () => dispatch({ type: 'toggleInput' }),
+    updateExtendedErc20Approval: () =>
+      dispatch({ type: 'updateExtendedErc20Approval' }),
     updateFromInput,
     updateFromNetwork: (payload: UpdateFromNetwork['payload']) =>
       dispatch({ payload, type: 'updateFromNetwork' }),

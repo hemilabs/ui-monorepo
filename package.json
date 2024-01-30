@@ -8,6 +8,7 @@
   },
   "workspaces": [
     "marketing",
+    "wagmi-erc20-hooks",
     "webapp"
   ],
   "devDependencies": {
@@ -73,6 +74,7 @@
           "prettier"
         ],
         "files": [
+          "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
           "webapp/**/*.{js,ts,tsx}"
         ],
         "parser": "@typescript-eslint/parser",

@@ -56,7 +56,7 @@ export const ReviewDeposit = ({
         See https://github.com/BVM-priv/ui-monorepo/issues/20
     */}
     <SubSection
-      symbol={gasSymbol}
+      symbol={depositSymbol}
       text="Total"
       value={canDeposit ? total : '0'}
     />

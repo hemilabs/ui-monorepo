@@ -97,7 +97,7 @@ const ExternalLink = () => (
 const statusMap = {
   error: {
     color: 'text-rose-700',
-    text: 'Tx Rejected',
+    text: 'Tx failed',
   },
   loading: {
     color: 'text-amber-500',
@@ -110,17 +110,14 @@ const statusMap = {
 } as const
 
 type Props = {
-  operation: string
   status: 'error' | 'loading' | 'success'
-  txHash: string
+  text: string
+  txHash: string | undefined
 }
 
-export const TransactionStatus = function ({
-  operation,
-  status,
-  txHash,
-}: Props) {
+export const TransactionStatus = function ({ status, text, txHash }: Props) {
   const { chain } = useNetwork()
+
   return (
     <Card>
       <div className="flex items-center gap-x-3">
@@ -128,7 +125,7 @@ export const TransactionStatus = function ({
         {status === 'loading' && <Spinner />}
         {status === 'success' && <Success />}
         <div className="flex flex-col">
-          <p className="text-sm font-semibold">{operation}</p>
+          <p className="text-sm font-semibold">{text}</p>
           <div className="flex items-center ">
             <p
               className={`text-xs font-medium capitalize ${statusMap[status].color}`}

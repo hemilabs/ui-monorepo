@@ -27,7 +27,7 @@ const RenderBalance = ({
 )
 
 const NativeTokenBalance = function ({ token }: { token: Token }) {
-  const { balance, status } = useNativeTokenBalance(token)
+  const { balance, status } = useNativeTokenBalance(token.chainId)
   return <RenderBalance balance={balance} status={status} token={token} />
 }
 

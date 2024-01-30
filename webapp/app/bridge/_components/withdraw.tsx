@@ -55,8 +55,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   const fromChain = chains.find(c => c.id === fromNetworkId)
 
   const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
-    fromToken,
-    operatesNativeToken,
+    fromToken.chainId,
   )
 
   const { balance: walletTokenBalance } = useTokenBalance(

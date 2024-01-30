@@ -76,8 +76,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
   const operatesNativeToken = isNativeToken(fromToken)
 
   const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
-    fromToken,
-    operatesNativeToken,
+    fromToken.chainId,
   )
 
   const { balance: walletTokenBalance } = useTokenBalance(

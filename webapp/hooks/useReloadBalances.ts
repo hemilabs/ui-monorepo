@@ -12,8 +12,12 @@ export const useReloadBalances = function ({
   toToken,
   status,
 }: UseReloadBalances) {
-  const { refetchBalance: refetchFromToken } = useNativeTokenBalance(fromToken)
-  const { refetchBalance: refetchToToken } = useNativeTokenBalance(toToken)
+  const { refetchBalance: refetchFromToken } = useNativeTokenBalance(
+    fromToken.chainId,
+  )
+  const { refetchBalance: refetchToToken } = useNativeTokenBalance(
+    toToken.chainId,
+  )
 
   useEffect(
     function refetchBalances() {

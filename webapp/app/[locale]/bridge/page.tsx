@@ -105,9 +105,7 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
       </div>
       <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
         <div className="flex basis-1/2 flex-col gap-y-2">
-          <span className="text-xs font-normal capitalize">
-            {t('form.you-send')}
-          </span>
+          <span className="text-xs font-normal">{t('form.you-send')}</span>
           <div className="flex items-center gap-x-2">
             <button
               className="cursor-pointer rounded-md bg-gray-200 p-[6px]"

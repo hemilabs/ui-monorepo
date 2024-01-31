@@ -2,7 +2,7 @@
   "bridge-page": {
     "form": {
       "balance": "Balance",
-      "from-network": "Desde Red",
+      "from-network": "Desde la Red",
       "max": "max",
       "to-network": "Hacia la Red",
       "you-receive": "Usted recibe",
@@ -28,7 +28,7 @@
     "transaction-status": {
       "deposited": "{fromInput} {symbol} depositado",
       "depositing": "Depositando {fromInput} {symbol} en {network}",
-      "erc20-approved": "{symbol} Aprobado",
+      "erc20-approved": "{symbol} aprobado",
       "erc20-approving": "Aprobando {symbol}",
       "withdrawing": "Retirando {fromInput} {symbol}",
       "withdrawn": "{fromInput} {symbol} retirado"
@@ -38,20 +38,20 @@
     "connect-wallet": "Conectar Billetera",
     "erc20-extra-approval": "Aprobar 10x este depósito",
     "network-gas-fee": "Tarifa de gas de {network}",
-    "select-network": "Seleccione red",
+    "select-network": "Seleccione Red",
     "switch-to-network": "Cambiar a {network}",
     "total": "Total",
     "transaction-status": {
-      "confirmed": "Tx Confirmada",
+      "confirmed": "Tx confirmada",
       "error": "La Tx falló",
       "pending": "Pendiente",
-      "rejected": "Tx Rechazada"
+      "rejected": "Tx rechazada"
     },
     "wrong-network": "Red Incorrecta"
   },
   "token-selector": {
     "no-tokens": "No hay tokens",
-    "search-tokens": "Buscar Tokens",
+    "search-tokens": "Buscar tokens",
     "select-token": "Seleccionar Token"
   }
 }

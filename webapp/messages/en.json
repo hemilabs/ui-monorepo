@@ -6,7 +6,7 @@
       "max": "max",
       "to-network": "To Network",
       "you-receive": "You receive",
-      "you-send": "you send"
+      "you-send": "You send"
     },
     "review-deposit": {
       "heading": "Review Deposit",
@@ -14,7 +14,7 @@
     },
     "review-withdraw": {
       "heading": "Review Withdraw",
-      "you-are-withdrawing": "You are Withdrawing"
+      "you-are-withdrawing": "You are withdrawing"
     },
     "submit-button": {
       "approve-and-deposit": "Approve and Deposit",
@@ -28,7 +28,7 @@
     "transaction-status": {
       "deposited": "{fromInput} {symbol} deposited",
       "depositing": "Depositing {fromInput} {symbol} to {network}",
-      "erc20-approved": "{symbol} Approved",
+      "erc20-approved": "{symbol} pproved",
       "erc20-approving": "Approving {symbol}",
       "withdrawing": "Withdrawing {fromInput} {symbol}",
       "withdrawn": "{fromInput} {symbol} withdrawn"
@@ -37,21 +37,21 @@
   "common": {
     "connect-wallet": "Connect Wallet",
     "erc20-extra-approval": "Approve 10x deposits",
-    "network-gas-fee": "{network} Gas fee",
+    "network-gas-fee": "{network} gas fee",
     "select-network": "Select Network",
     "switch-to-network": "Switch to {network}",
     "total": "Total",
     "transaction-status": {
-      "confirmed": "Tx Confirmed",
+      "confirmed": "Tx confirmed",
       "error": "Tx failed",
       "pending": "Pending",
-      "rejected": "Tx Rejected"
+      "rejected": "Tx rejected"
     },
     "wrong-network": "Wrong Network"
   },
   "token-selector": {
     "no-tokens": "There are no tokens",
-    "search-tokens": "Search Tokens",
+    "search-tokens": "Search tokens",
     "select-token": "Select Token"
   }
 }

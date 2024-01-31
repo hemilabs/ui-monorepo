@@ -1,6 +1,20 @@
-import { defaultLocale } from 'app/i18n'
-import { redirect } from 'next/navigation'
+'use client'
 
+import { useRouter } from 'next/navigation'
+import { useLocale } from 'next-intl'
+import { useEffect } from 'react'
+
+// Applying client side redirect because it breaks on static export otherwise
 export default function RootPage() {
-  redirect(`/${defaultLocale}/bridge`)
+  const router = useRouter()
+  const locale = useLocale()
+
+  useEffect(
+    function () {
+      router.replace(`/${locale}/bridge`)
+    },
+    [locale, router],
+  )
+
+  return null
 }

@@ -1,31 +1,11 @@
-import 'styles/globals.css'
-import 'react-loading-skeleton/dist/skeleton.css'
+import { ReactNode } from 'react'
 
-import { WalletContext } from 'components/wallet-integration/walletContext'
-import type { Metadata } from 'next'
-
-import { bricolageGrotesque, inter } from './fonts'
-import { Header } from './header'
-
-export const metadata: Metadata = {
-  title: 'BVM',
+type Props = {
+  children: ReactNode
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <html lang="en">
-      <body
-        className={`flex min-h-screen flex-col bg-neutral-100 ${bricolageGrotesque.variable} ${inter.className}`}
-      >
-        <WalletContext>
-          <Header />
-          {children}
-        </WalletContext>
-      </body>
-    </html>
-  )
+// Since we have a `not-found.tsx` page on the root, a layout file
+// is required, even if it's just passing children through.
+export default function RootLayout({ children }: Props) {
+  return children
 }

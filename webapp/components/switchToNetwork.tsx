@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
 export const SwitchToNetwork = function ({ selectedNetwork }: Props) {
   const { chain, chains } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
+  const t = useTranslations('common')
 
   if (!chain || selectedNetwork === chain.id) {
     return null
@@ -28,13 +30,13 @@ export const SwitchToNetwork = function ({ selectedNetwork }: Props) {
           fill="#323232"
         />
       </svg>
-      <span className="font-normal">Wrong Network</span>
+      <span className="font-normal">{t('wrong-network')}</span>
       <button
         className="ml-auto cursor-pointer underline"
         onClick={switchToNetwork}
         type="button"
       >
-        Switch to {walletTargetNetwork.name}
+        {t('switch-to-network', { network: walletTargetNetwork.name })}
       </button>
     </div>
   )

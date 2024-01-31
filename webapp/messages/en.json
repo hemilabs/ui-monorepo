@@ -1,0 +1,57 @@
+{
+  "bridge-page": {
+    "form": {
+      "balance": "Balance",
+      "from-network": "From Network",
+      "max": "max",
+      "to-network": "To Network",
+      "you-receive": "You receive",
+      "you-send": "you send"
+    },
+    "review-deposit": {
+      "heading": "Review Deposit",
+      "you-are-depositing": "You are depositing"
+    },
+    "review-withdraw": {
+      "heading": "Review Withdraw",
+      "you-are-withdrawing": "You are Withdrawing"
+    },
+    "submit-button": {
+      "approve-and-deposit": "Approve and Deposit",
+      "approving": "approving...",
+      "deposit": "Deposit",
+      "depositing": "Depositing...",
+      "withdraw": "Withdraw",
+      "withdrawing": "Withdrawing..."
+    },
+    "title": "bridge",
+    "transaction-status": {
+      "deposited": "{fromInput} {symbol} deposited",
+      "depositing": "Depositing {fromInput} {symbol} to {network}",
+      "erc20-approved": "{symbol} Approved",
+      "erc20-approving": "Approving {symbol}",
+      "withdrawing": "Withdrawing {fromInput} {symbol}",
+      "withdrawn": "{fromInput} {symbol} withdrawn"
+    }
+  },
+  "common": {
+    "connect-wallet": "Connect Wallet",
+    "erc20-extra-approval": "Approve 10x deposits",
+    "network-gas-fee": "{network} Gas fee",
+    "select-network": "Select Network",
+    "switch-to-network": "Switch to {network}",
+    "total": "Total",
+    "transaction-status": {
+      "confirmed": "Tx Confirmed",
+      "error": "Tx failed",
+      "pending": "Pending",
+      "rejected": "Tx Rejected"
+    },
+    "wrong-network": "Wrong Network"
+  },
+  "token-selector": {
+    "no-tokens": "There are no tokens",
+    "search-tokens": "Search Tokens",
+    "select-token": "Select Token"
+  }
+}

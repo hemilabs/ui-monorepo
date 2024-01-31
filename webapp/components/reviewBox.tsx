@@ -1,4 +1,5 @@
 import Big from 'big.js'
+import { useTranslations } from 'next-intl'
 
 import { Card } from './design/card'
 
@@ -31,48 +32,41 @@ type DepositProps = {
   gasSymbol: string
   total: string
 }
-export const ReviewDeposit = ({
+export const ReviewDeposit = function ({
   canDeposit,
   deposit,
   depositSymbol,
   gas,
   gasSymbol,
   total,
-}: DepositProps) => (
-  <Card>
-    <Heading text="Review Deposit" />
-    <SubSection
-      symbol={depositSymbol}
-      text="You are Depositing"
-      value={canDeposit ? deposit : '0'}
-    />
-    <SubSection
-      symbol={gasSymbol}
-      text="Ethereum Gas fee"
-      value={canDeposit ? gas : '0'}
-    />
-    <div className="absolute left-0 right-0 h-px border-t border-zinc-400"></div>
-    {/* When implementing ERC20, we need to allow different tokens in total 
+}: DepositProps) {
+  const t = useTranslations('bridge-page.review-deposit')
+  const tCommon = useTranslations('common')
+  return (
+    <Card>
+      <Heading text={t('heading')} />
+      <SubSection
+        symbol={depositSymbol}
+        text={t('you-are-depositing')}
+        value={canDeposit ? deposit : '0'}
+      />
+      <SubSection
+        symbol={gasSymbol}
+        text={tCommon('network-gas-fee', { network: 'Ethereum' })}
+        value={canDeposit ? gas : '0'}
+      />
+      <div className="absolute left-0 right-0 h-px border-t border-zinc-400"></div>
+      {/* When implementing ERC20, we need to allow different tokens in total 
         See https://github.com/BVM-priv/ui-monorepo/issues/20
     */}
-    <SubSection
-      symbol={depositSymbol}
-      text="Total"
-      value={canDeposit ? total : '0'}
-    />
-  </Card>
-)
-
-export const ReviewSwap = () => (
-  <Card>
-    <Heading text="Review Swap" />
-    <SubSection symbol="eth" text="Price impact" value="-" />
-    <SubSection symbol="eth" text="Max. slippage" value="-" />
-    <SubSection symbol="eth" text="Gas fee" value="-" />
-    <SubSection symbol="eth" text="Order Routing" value="-" />
-  </Card>
-)
-
+      <SubSection
+        symbol={depositSymbol}
+        text={tCommon('total')}
+        value={canDeposit ? total : '0'}
+      />
+    </Card>
+  )
+}
 type WithdrawProps = {
   canWithdraw: boolean
   withdraw: string
@@ -81,34 +75,38 @@ type WithdrawProps = {
   gasSymbol: string
   total: string
 }
-export const ReviewWithdraw = ({
+export const ReviewWithdraw = function ({
   canWithdraw,
   gas,
   gasSymbol,
   total,
   withdraw,
   withdrawSymbol,
-}: WithdrawProps) => (
-  <Card>
-    <Heading text="Review Withdraw" />
-    <SubSection
-      symbol={withdrawSymbol}
-      text="You are Withdrawing"
-      value={canWithdraw ? withdraw : '0'}
-    />
-    <SubSection
-      symbol={gasSymbol}
-      text="BVM Gas fee"
-      value={canWithdraw ? gas : '0'}
-    />
-    <div className="absolute left-0 right-0 h-px border-t border-zinc-400"></div>
-    {/* When implementing ERC20, we need to allow different tokens in total 
+}: WithdrawProps) {
+  const t = useTranslations('bridge-page.review-withdraw')
+  const tCommon = useTranslations('common')
+  return (
+    <Card>
+      <Heading text={t('heading')} />
+      <SubSection
+        symbol={withdrawSymbol}
+        text={t('you-are-withdrawing')}
+        value={canWithdraw ? withdraw : '0'}
+      />
+      <SubSection
+        symbol={gasSymbol}
+        text={tCommon('network-gas-fee', { network: 'BVM' })}
+        value={canWithdraw ? gas : '0'}
+      />
+      <div className="absolute left-0 right-0 h-px border-t border-zinc-400"></div>
+      {/* When implementing ERC20, we need to allow different tokens in total 
         See https://github.com/BVM-priv/ui-monorepo/issues/20
     */}
-    <SubSection
-      symbol={withdrawSymbol}
-      text="Total"
-      value={canWithdraw ? total : '0'}
-    />
-  </Card>
-)
+      <SubSection
+        symbol={withdrawSymbol}
+        text={tCommon('total')}
+        value={canWithdraw ? total : '0'}
+      />
+    </Card>
+  )
+}

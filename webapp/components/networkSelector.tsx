@@ -1,6 +1,7 @@
 'use client'
 
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { Chain } from 'wagmi'
 
@@ -21,6 +22,8 @@ export const NetworkSelector = function ({
   const dropdownRef = useOnClickOutside<HTMLDivElement>(() =>
     setShowNetworkDropdown(false),
   )
+
+  const t = useTranslations('common')
 
   const network = networks.find(n => n.id === networkId)
 
@@ -74,7 +77,9 @@ export const NetworkSelector = function ({
             className="absolute bottom-0 right-0 flex w-48 translate-y-full flex-col rounded-xl bg-white py-3 shadow-2xl"
             ref={dropdownRef}
           >
-            <h5 className="w-full px-6 py-1 text-left">Select Network</h5>
+            <h5 className="w-full px-6 py-1 text-left">
+              {t('select-network')}
+            </h5>
             <ul>
               {networks
                 .filter(n => n.id !== networkId)

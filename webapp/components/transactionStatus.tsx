@@ -1,4 +1,5 @@
 import { Card } from 'components/design/card'
+import { useTranslations } from 'next-intl'
 import { useNetwork } from 'wagmi'
 
 const Error = () => (
@@ -94,21 +95,6 @@ const ExternalLink = () => (
   </svg>
 )
 
-const statusMap = {
-  error: {
-    color: 'text-rose-700',
-    text: 'Tx failed',
-  },
-  loading: {
-    color: 'text-amber-500',
-    text: 'Pending',
-  },
-  success: {
-    color: 'text-green-600',
-    text: 'Tx Confirmed',
-  },
-} as const
-
 type Props = {
   status: 'error' | 'loading' | 'success'
   text: string
@@ -117,6 +103,22 @@ type Props = {
 
 export const TransactionStatus = function ({ status, text, txHash }: Props) {
   const { chain } = useNetwork()
+  const t = useTranslations('common.transaction-status')
+
+  const statusMap = {
+    error: {
+      color: 'text-rose-700',
+      text: t('error'),
+    },
+    loading: {
+      color: 'text-amber-500',
+      text: t('pending'),
+    },
+    success: {
+      color: 'text-green-600',
+      text: t('confirmed'),
+    },
+  } as const
 
   return (
     <Card>

@@ -3,6 +3,7 @@
 import { TokenSelector } from 'app/components/TokenSelector'
 import { bvm, networks } from 'app/networks'
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { formatNumber } from 'utils/format'
@@ -34,7 +35,7 @@ const NetworkSelector = dynamic(
 
 const SetMaxBalance = dynamic(
   () =>
-    import('app/bridge/_components/SetMaxBalance').then(
+    import('app/[locale]/bridge/_components/SetMaxBalance').then(
       mod => mod.SetMaxBalance,
     ),
   {
@@ -52,7 +53,9 @@ const SwitchToNetwork = dynamic(
 
 const ToggleButton = dynamic(
   () =>
-    import('app/bridge/_components/ToggleButton').then(mod => mod.ToggleButton),
+    import('app/[locale]/bridge/_components/ToggleButton').then(
+      mod => mod.ToggleButton,
+    ),
   {
     loading: () => (
       <Skeleton
@@ -82,12 +85,17 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
     toggleInput,
     toToken,
   } = bridgeState
+
+  const t = useTranslations('bridge-page')
+
   return (
     <>
-      <h3 className="text-xl font-medium text-black">Bridge</h3>
+      <h3 className="text-xl font-medium capitalize text-black">
+        {t('title')}
+      </h3>
       <SwitchToNetwork selectedNetwork={fromNetworkId} />
       <div className="flex w-full items-center justify-between text-sm">
-        <span>From Network</span>
+        <span>{t('form.from-network')}</span>
         <NetworkSelector
           networkId={fromNetworkId}
           networks={networks.filter(chain => chain.id !== toNetworkId)}
@@ -97,7 +105,7 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
       </div>
       <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
         <div className="flex basis-1/2 flex-col gap-y-2">
-          <span className="text-xs font-normal">You send</span>
+          <span className="text-xs font-normal">{t('form.you-send')}</span>
           <div className="flex items-center gap-x-2">
             <button
               className="cursor-pointer rounded-md bg-gray-200 p-[6px]"
@@ -136,10 +144,12 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
           <TokenSelector
             onSelectToken={updateFromToken}
             selectedToken={fromToken}
-            tokens={tokenList.tokens.filter(t => t.chainId === fromNetworkId)}
+            tokens={tokenList.tokens.filter(
+              token => token.chainId === fromNetworkId,
+            )}
           />
           <div className="flex items-center justify-end gap-x-2 text-xs font-normal sm:text-sm">
-            Balance: <Balance token={fromToken} />
+            {t('form.balance')}: <Balance token={fromToken} />
             <SetMaxBalance
               fromToken={fromToken}
               isRunningOperation={isRunningOperation}
@@ -154,7 +164,7 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
         <ToggleButton disabled={isRunningOperation} toggle={toggleInput} />
       </div>
       <div className="flex items-center justify-between text-sm">
-        <span>To Network</span>
+        <span>{t('form.to-network')}</span>
         <NetworkSelector
           networkId={toNetworkId}
           networks={networks.filter(chain => chain.id !== fromNetworkId)}
@@ -164,7 +174,7 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
       </div>
       <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
         <div className="flex flex-col gap-y-2">
-          <span className="text-xs font-normal">You receive</span>
+          <span className="text-xs font-normal">{t('form.you-receive')}</span>
           <div className="flex items-center gap-x-2">
             <button
               className="cursor-pointer rounded-md bg-gray-200 p-[6px]"
@@ -208,7 +218,7 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
             </span>
           </div>
           <div className="flex items-center justify-end gap-x-2 text-sm font-normal">
-            Balance: <Balance token={toToken} />
+            {t('form.balance')}: <Balance token={toToken} />
           </div>
         </div>
       </div>

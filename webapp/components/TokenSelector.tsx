@@ -2,6 +2,7 @@
 
 import { useVirtualizer } from '@tanstack/react-virtual'
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import { Token } from 'types/token'
 
@@ -101,6 +102,7 @@ export const TokenSelector = function ({
   selectedToken,
   tokens,
 }: Props) {
+  const t = useTranslations('token-selector')
   const [showTokenSelector, setShowTokenSelector] = useState(false)
   const [searchText, setSearchText] = useState('')
 
@@ -149,7 +151,7 @@ export const TokenSelector = function ({
         <Modal onClose={closeModal}>
           <div className="mx-8 flex w-full flex-col bg-white p-4 sm:max-w-96">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-medium">Select Token</h3>
+              <h3 className="text-xl font-medium">{t('select-token')}</h3>
               <CloseIcon onClick={closeModal} />
             </div>
             {/* hidden for now, as we won't allow adding custom tokens */}
@@ -189,7 +191,7 @@ export const TokenSelector = function ({
               <input
                 className="ml-4 w-full bg-transparent placeholder:text-sm placeholder:text-neutral-400"
                 onChange={e => setSearchText(e.target.value)}
-                placeholder="Search tokens"
+                placeholder={t('search-tokens')}
                 type="text"
                 value={searchText}
               ></input>
@@ -203,7 +205,7 @@ export const TokenSelector = function ({
                 tokens={tokensToList}
               />
             ) : (
-              <span>There are no tokens</span>
+              <span>{t('no-tokens')}</span>
             )}
           </div>
         </Modal>

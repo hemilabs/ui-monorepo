@@ -1,8 +1,9 @@
-import { useBridgeState } from 'app/bridge/useBridgeState'
-import { useTransactionsList } from 'app/bridge/useTransactionsList'
-import { useWithdraw } from 'app/bridge/useWithdraw'
+import { useBridgeState } from 'app/[locale]/bridge/useBridgeState'
+import { useTransactionsList } from 'app/[locale]/bridge/useTransactionsList'
+import { useWithdraw } from 'app/[locale]/bridge/useWithdraw'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 import { FormEvent, useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { formatNumber } from 'utils/format'
@@ -14,7 +15,7 @@ import { BridgeForm, canSubmit, getTotal } from './form'
 
 const OperationButton = dynamic(
   () =>
-    import('app/bridge/_components/OperationButton').then(
+    import('app/[locale]/bridge/_components/OperationButton').then(
       mod => mod.OperationButton,
     ),
   {
@@ -45,6 +46,7 @@ type Props = {
 }
 
 export const Withdraw = function ({ renderForm, state }: Props) {
+  const t = useTranslations()
   const { fromInput, fromNetworkId, fromToken, updateFromInput, toToken } =
     state
 
@@ -92,7 +94,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       updateTransaction({
         id: 'withdraw',
         status: 'error',
-        text: 'Tx failed',
+        text: t('common.transaction-status.error'),
       })
       delayedClearTransactionList()
     },
@@ -100,7 +102,10 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       updateTransaction({
         id: 'withdraw',
         status: 'success',
-        text: `${fromInput} ${fromToken.symbol} withdrawn`,
+        text: t('bridge-page.transaction-status.withdrawn', {
+          fromInput,
+          fromToken: fromToken.symbol,
+        }),
       })
       updateFromInput('0')
       delayedClearTransactionList(7000)
@@ -115,7 +120,10 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     addTransaction({
       id: 'withdraw',
       status: 'loading',
-      text: `Withdrawing ${fromInput} ${fromToken.symbol}`,
+      text: t('bridge-page.transaction-status.withdrawing', {
+        fromInput,
+        fromToken: fromToken.symbol,
+      }),
     })
   }
 
@@ -125,13 +133,14 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     fromToken,
   })
 
+  const rejectedText = t('common.transaction-status.rejected')
   useEffect(
     function updateWithdrawalTransactionsAfterUserReject() {
       if (userWithdrawConfirmationStatus === 'error') {
         updateTransaction({
           id: 'withdraw',
           status: 'error',
-          text: 'Tx rejected',
+          text: rejectedText,
         })
         return delayedClearTransactionList()
       }
@@ -139,6 +148,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     },
     [
       delayedClearTransactionList,
+      rejectedText,
       userWithdrawConfirmationStatus,
       updateTransaction,
     ],
@@ -181,7 +191,11 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       submitButton={
         <OperationButton
           disabled={!canWithdraw || isWithdrawing}
-          text={isWithdrawing ? 'Withdrawing...' : 'Withdraw'}
+          text={t(
+            `bridge-page.submit-button.${
+              isWithdrawing ? 'withdrawing' : 'withdraw'
+            }`,
+          )}
         />
       }
       transactionStatus={

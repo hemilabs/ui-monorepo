@@ -1,10 +1,11 @@
 'use client'
 
-import { useBridgeState } from 'app/bridge/useBridgeState'
-import { useDeposit } from 'app/bridge/useDeposit'
-import { useTransactionsList } from 'app/bridge/useTransactionsList'
+import { useBridgeState } from 'app/[locale]/bridge/useBridgeState'
+import { useDeposit } from 'app/[locale]/bridge/useDeposit'
+import { useTransactionsList } from 'app/[locale]/bridge/useTransactionsList'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode, useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { formatNumber } from 'utils/format'
@@ -16,7 +17,7 @@ import { BridgeForm, canSubmit, getTotal } from './form'
 
 const Erc20Approval = dynamic(
   () =>
-    import('app/bridge/_components/Erc20Approval').then(
+    import('app/[locale]/bridge/_components/Erc20Approval').then(
       mod => mod.Erc20Approval,
     ),
   {
@@ -29,7 +30,7 @@ const Erc20Approval = dynamic(
 
 const OperationButton = dynamic(
   () =>
-    import('app/bridge/_components/OperationButton').then(
+    import('app/[locale]/bridge/_components/OperationButton').then(
       mod => mod.OperationButton,
     ),
   {
@@ -60,6 +61,7 @@ type Props = {
 }
 
 export const Deposit = function ({ renderForm, state }: Props) {
+  const t = useTranslations()
   const {
     extendedErc20Approval,
     fromInput,
@@ -124,26 +126,32 @@ export const Deposit = function ({ renderForm, state }: Props) {
       updateTransaction({
         id: 'approval',
         status: 'error',
-        text: 'Tx failed',
+        text: t('common.transaction-status.error'),
       })
     },
     onApprovalSuccess() {
       addTransaction({
         id: 'deposit',
         status: 'loading',
-        text: `Depositing ${fromInput} ${fromToken.symbol} to ${toChain?.name}`,
+        text: t('bridge-page.transaction-status.depositing', {
+          fromInput,
+          network: toChain?.name,
+          symbol: fromToken.symbol,
+        }),
       })
       updateTransaction({
         id: 'approval',
         status: 'success',
-        text: `${fromToken.symbol} Approved`,
+        text: t('bridge-page.transaction-status.erc20-approved', {
+          symbol: fromToken.symbol,
+        }),
       })
     },
     onDepositError() {
       updateTransaction({
         id: 'deposit',
         status: 'error',
-        text: 'Tx failed',
+        text: t('common.transaction-status.error'),
       })
       delayedClearTransactionList()
     },
@@ -151,7 +159,10 @@ export const Deposit = function ({ renderForm, state }: Props) {
       updateTransaction({
         id: 'deposit',
         status: 'success',
-        text: `${fromInput} ${fromToken.symbol} deposited`,
+        text: t('bridge-page.transaction-status.deposited', {
+          fromInput,
+          symbol: fromToken.symbol,
+        }),
       })
       updateFromInput('0')
       if (extendedErc20Approval) {
@@ -177,24 +188,31 @@ export const Deposit = function ({ renderForm, state }: Props) {
       addTransaction({
         id: 'approval',
         status: 'loading',
-        text: `Approving ${fromToken.symbol}`,
+        text: t('bridge-page.transaction-status.erc20-approving', {
+          symbol: fromToken.symbol,
+        }),
       })
     } else {
       addTransaction({
         id: 'deposit',
         status: 'loading',
-        text: `Depositing ${fromInput} ${fromToken.symbol} to ${toChain?.name}`,
+        text: t('bridge-page.transaction-status.depositing', {
+          fromInput,
+          network: toChain?.name,
+          symbol: fromToken.symbol,
+        }),
       })
     }
   }
 
+  const rejectedText = t('common.transaction-status.rejected')
   useEffect(
     function updateApprovalTransactionsAfterUserReject() {
       if (userConfirmationApprovalStatus === 'error') {
         updateTransaction({
           id: 'approval',
           status: 'error',
-          text: 'Tx rejected',
+          text: rejectedText,
         })
         return delayedClearTransactionList()
       }
@@ -202,8 +220,9 @@ export const Deposit = function ({ renderForm, state }: Props) {
     },
     [
       delayedClearTransactionList,
-      userConfirmationApprovalStatus,
+      rejectedText,
       updateTransaction,
+      userConfirmationApprovalStatus,
     ],
   )
 
@@ -237,24 +256,29 @@ export const Deposit = function ({ renderForm, state }: Props) {
         updateTransaction({
           id: 'deposit',
           status: 'error',
-          text: 'Tx rejected',
+          text: rejectedText,
         })
         return delayedClearTransactionList()
       }
       return undefined
     },
-    [delayedClearTransactionList, userDepositConfirmation, updateTransaction],
+    [
+      delayedClearTransactionList,
+      userDepositConfirmation,
+      rejectedText,
+      updateTransaction,
+    ],
   )
 
   const getOperationButtonText = function () {
     const texts = {
       approve: {
-        idle: 'Approve and Deposit',
-        loading: 'Approving...',
+        idle: t('bridge-page.submit-button.approve-and-deposit'),
+        loading: t('bridge-page.submit-button.approving'),
       },
       deposit: {
-        idle: 'Deposit',
-        loading: 'Depositing...',
+        idle: t('bridge-page.submit-button.deposit'),
+        loading: t('bridge-page.submit-button.depositing'),
       },
     }
     if (!isRunningOperation) {

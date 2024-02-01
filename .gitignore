@@ -2,5 +2,6 @@
 .env.local
 .eslintcache
 .next
+out
 .vscode/
 node_modules

@@ -1,3 +1,5 @@
+import { useTranslations } from 'next-intl'
+
 type Props = {
   checked: boolean
   disabled: boolean
@@ -30,23 +32,26 @@ const Toggle = ({ checked, disabled, onCheckedChange }: Props) => (
   </div>
 )
 
-export const Erc20Approval = ({
+export const Erc20Approval = function ({
   checked,
   disabled,
   onCheckedChange,
-}: Props) => (
-  <div className="flex w-full items-center justify-between rounded-xl bg-zinc-50 px-4 py-2">
-    <span
-      className={`text-sm text-neutral-400 ${
-        disabled ? 'text-opacity-30' : ''
-      }`}
-    >
-      Approve 10x deposits
-    </span>
-    <Toggle
-      checked={checked}
-      disabled={disabled}
-      onCheckedChange={onCheckedChange}
-    />
-  </div>
-)
+}: Props) {
+  const t = useTranslations('common')
+  return (
+    <div className="flex w-full items-center justify-between rounded-xl bg-zinc-50 px-4 py-2">
+      <span
+        className={`text-sm text-neutral-400 ${
+          disabled ? 'text-opacity-30' : ''
+        }`}
+      >
+        {t('erc20-extra-approval')}
+      </span>
+      <Toggle
+        checked={checked}
+        disabled={disabled}
+        onCheckedChange={onCheckedChange}
+      />
+    </div>
+  )
+}

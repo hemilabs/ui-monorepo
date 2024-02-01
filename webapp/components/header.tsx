@@ -1,13 +1,11 @@
 'use client'
 
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { useAccount } from 'wagmi'
 
 const HamburgerIcon = () => (
   <svg
@@ -25,59 +23,26 @@ const HamburgerIcon = () => (
 )
 
 const WalletConnectButton = dynamic(
-  () => import('app/walletConnectButton').then(mod => mod.WalletConnectButton),
+  () =>
+    import('components/walletConnectButton').then(
+      mod => mod.WalletConnectButton,
+    ),
   {
     loading: () => <Skeleton className="h-10 w-28" />,
     ssr: false,
   },
 )
 
-// Custom style implementation for the mobile view when disconnected
-const CustomConnectButton = function () {
-  const { isConnected } = useAccount()
-
-  const containerCommonCss = 'w-full rounded-xl bg-white px-5 py-4'
-
-  if (isConnected) {
-    return (
-      <div className={`${containerCommonCss} flex justify-center`}>
-        <ConnectButton />
-      </div>
-    )
-  }
-  return (
-    <ConnectButton.Custom>
-      {function ({
-        account,
-        chain,
-        openConnectModal,
-        authenticationStatus,
-        mounted,
-      }) {
-        const ready = mounted && authenticationStatus !== 'loading'
-        const connected =
-          ready &&
-          account &&
-          chain &&
-          (!authenticationStatus || authenticationStatus === 'authenticated')
-        if (!ready || connected) {
-          return null
-        }
-        return (
-          <div className={containerCommonCss}>
-            <button
-              className="px-auto w-full rounded-xl bg-black py-3 text-sm font-medium text-white"
-              onClick={openConnectModal}
-              type="button"
-            >
-              Connect wallet
-            </button>
-          </div>
-        )
-      }}
-    </ConnectButton.Custom>
-  )
-}
+const WalletConnectMobile = dynamic(
+  () =>
+    import('components/walletConnectButton').then(
+      mod => mod.WalletConnectMobile,
+    ),
+  {
+    loading: () => <Skeleton className="h-10 w-28" />,
+    ssr: false,
+  },
+)
 
 type Props = {
   path: '/bridge' | '/swap'
@@ -130,7 +95,7 @@ export const Header = function () {
             className="fixed bottom-0 left-0 right-0 z-20 flex items-center shadow-2xl md:hidden"
             ref={menuRef}
           >
-            <CustomConnectButton />
+            <WalletConnectMobile />
           </div>
         </>
       )}

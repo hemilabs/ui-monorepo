@@ -1,5 +1,6 @@
 import Big from 'big.js'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
 import { isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -14,6 +15,8 @@ export const SetMaxBalance = function ({
   isRunningOperation,
   onSetMaxBalance,
 }: Props) {
+  const t = useTranslations('bridge-page.form')
+
   const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
     fromToken.chainId,
   )
@@ -34,12 +37,12 @@ export const SetMaxBalance = function ({
 
   return (
     <button
-      className="cursor-pointer font-semibold text-slate-700"
+      className="cursor-pointer font-semibold uppercase text-slate-700"
       disabled={disabled}
       onClick={handleClick}
       type="button"
     >
-      MAX
+      {t('max')}
     </button>
   )
 }

@@ -107,7 +107,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
         status: 'success',
         text: t('bridge-page.transaction-status.withdrawn', {
           fromInput,
-          fromToken: fromToken.symbol,
+          symbol: fromToken.symbol,
         }),
       })
       updateFromInput('0')
@@ -125,7 +125,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       status: 'loading',
       text: t('bridge-page.transaction-status.withdrawing', {
         fromInput,
-        fromToken: fromToken.symbol,
+        symbol: fromToken.symbol,
       }),
     })
   }

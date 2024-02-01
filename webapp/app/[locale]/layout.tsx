@@ -4,15 +4,10 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { locales, type Locale } from 'app/i18n'
 import { Header } from 'components/header'
 import { WalletContext } from 'components/wallet-integration/walletContext'
-import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 
 import { bricolageGrotesque, inter } from '../fonts'
-
-export const metadata: Metadata = {
-  title: 'BVM',
-}
 
 async function getMessages(locale: Locale) {
   try {

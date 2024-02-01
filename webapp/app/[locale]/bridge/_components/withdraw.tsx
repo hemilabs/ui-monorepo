@@ -47,8 +47,14 @@ type Props = {
 
 export const Withdraw = function ({ renderForm, state }: Props) {
   const t = useTranslations()
-  const { fromInput, fromNetworkId, fromToken, updateFromInput, toToken } =
-    state
+  const {
+    fromInput,
+    fromNetworkId,
+    fromToken,
+    updateFromInput,
+    toNetworkId,
+    toToken,
+  } = state
 
   const { chains = [] } = useConfig()
   const { chain } = useNetwork()
@@ -86,13 +92,14 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   const {
     userWithdrawConfirmationStatus,
     withdraw,
-    withdrawGasFees,
+    withdrawNativeTokenGasFees,
     withdrawStatus,
     withdrawTxHash,
   } = useWithdraw({
     canWithdraw,
     fromInput,
     fromToken,
+    l1ChainId: toNetworkId,
     onError() {
       updateTransaction({
         id: 'withdraw',
@@ -131,7 +138,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   }
 
   const totalWithdraw = getTotal({
-    fees: withdrawGasFees,
+    fees: withdrawNativeTokenGasFees,
     fromInput,
     fromToken,
   })
@@ -182,7 +189,10 @@ export const Withdraw = function ({ renderForm, state }: Props) {
         <ReviewWithdraw
           canWithdraw={canWithdraw}
           gas={formatNumber(
-            formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals),
+            formatUnits(
+              withdrawNativeTokenGasFees,
+              fromChain?.nativeCurrency.decimals,
+            ),
             3,
           )}
           gasSymbol={fromChain?.nativeCurrency.symbol}

@@ -1,3 +1,4 @@
+import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
@@ -8,9 +9,12 @@ type Props = {
 export const SwitchToNetwork = function ({ selectedNetwork }: Props) {
   const { chain, chains } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
+  const isConnectedToExpectedNetwork =
+    useIsConnectedToExpectedNetwork(selectedNetwork)
+
   const t = useTranslations('common')
 
-  if (!chain || selectedNetwork === chain.id) {
+  if (!chain || isConnectedToExpectedNetwork) {
     return null
   }
 

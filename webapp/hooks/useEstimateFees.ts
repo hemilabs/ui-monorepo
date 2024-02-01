@@ -1,9 +1,22 @@
 import Big from 'big.js'
 import { useFeeData } from 'wagmi'
 
-export const useEstimateFees = function (chainId: number, expectedGas: number) {
+type UseEstimateFees = {
+  chainId: number
+  enabled: boolean
+  gasUnits: bigint
+  overEstimation: number
+}
+
+export const useEstimateFees = function ({
+  chainId,
+  enabled,
+  gasUnits = BigInt(0),
+  overEstimation,
+}: UseEstimateFees) {
   const { data: fees } = useFeeData({
     chainId,
+    enabled,
     watch: true,
   })
 
@@ -11,10 +24,11 @@ export const useEstimateFees = function (chainId: number, expectedGas: number) {
     fees ?? {}
 
   return BigInt(
-    Big(expectedGas)
+    Big(gasUnits.toString())
       .times(
         Big(lastBaseFeePerGas.toString()).plus(maxPriorityFeePerGas.toString()),
       )
+      .times(overEstimation)
       .toFixed(),
   )
 }

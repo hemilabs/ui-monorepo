@@ -6,7 +6,9 @@ import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits } from 'viem'
 
 type InputEnoughInBalance = {
+  chainId?: number
   fromInput: string
+  fromNetworkId: number
   fromToken: Token
   walletNativeTokenBalance: bigint
   walletTokenBalance: bigint
@@ -16,7 +18,7 @@ const inputEnoughInBalance = ({
   fromToken,
   walletNativeTokenBalance,
   walletTokenBalance,
-}: InputEnoughInBalance) =>
+}: Omit<InputEnoughInBalance, 'fromNetworkId'>) =>
   (isNativeToken(fromToken) &&
     Big(fromInput).lt(
       formatUnits(walletNativeTokenBalance, fromToken.decimals),
@@ -25,12 +27,15 @@ const inputEnoughInBalance = ({
     Big(fromInput).lt(formatUnits(walletTokenBalance, fromToken.decimals)))
 
 export const canSubmit = ({
+  chainId,
   fromInput,
+  fromNetworkId,
   fromToken,
   walletNativeTokenBalance,
   walletTokenBalance,
 }: InputEnoughInBalance) =>
   Big(fromInput).gt(0) &&
+  chainId === fromNetworkId &&
   inputEnoughInBalance({
     fromInput,
     fromToken,

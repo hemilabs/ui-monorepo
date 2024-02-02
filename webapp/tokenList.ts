@@ -4530,6 +4530,25 @@ const tokens = [
     name: 'Wrapped Ether',
     symbol: 'WETH',
   },
+  {
+    address: '0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357',
+    chainId: 11155111,
+    decimals: 18,
+    extensions: {
+      bridgeInfo: {
+        11155111: {
+          tokenAddress: '0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357',
+        },
+        [process.env.NEXT_PUBLIC_CHAIN_ID]: {
+          tokenAddress: '0x97942656B0EfC2555155cEA70Cb3C716C33EcF70',
+        },
+      },
+    },
+    logoURI:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
+    name: 'Dai Stablecoin',
+    symbol: 'DAI',
+  },
   // Testing token for BVM Testnet - See http://external-testnet.bvmdev.cc/address/0x4200000000000000000000000000000000000042
   {
     address: '0x4200000000000000000000000000000000000042',

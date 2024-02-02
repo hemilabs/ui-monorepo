@@ -253,7 +253,7 @@ export const useDepositNativeToken = function ({
     mutate: depositNativeToken,
     status,
   } = useMutation<string, Error, string>({
-    mutationFn: async function withdraw(amount: string) {
+    mutationFn: async function deposit(amount: string) {
       const response = await crossChainMessenger.depositETH(amount)
       return response.hash
     },

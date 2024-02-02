@@ -38,7 +38,7 @@ export const useTokenBalance = function (
 
   return {
     balance: status === 'error' ? BigInt(0) : data?.value ?? BigInt(0),
-    refetchBalance: refetch,
+    refetchTokenBalance: refetch,
     status,
   }
 }

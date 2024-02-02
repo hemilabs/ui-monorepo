@@ -1,6 +1,7 @@
-import { useNativeTokenBalance } from 'hooks/useBalance'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useEffect } from 'react'
 import { Token } from 'types/token'
+import { isNativeToken } from 'utils/token'
 
 type UseReloadBalances = {
   fromToken: Token
@@ -12,20 +13,41 @@ export const useReloadBalances = function ({
   toToken,
   status,
 }: UseReloadBalances) {
-  const { refetchBalance: refetchFromToken } = useNativeTokenBalance(
+  const operatesNativeToken = isNativeToken(fromToken)
+
+  // Native token balance in "From" should always reload
+  const { refetchBalance: refetchFromNativeToken } = useNativeTokenBalance(
     fromToken.chainId,
   )
+  const { refetchTokenBalance: refetchFromTokenBalance } = useTokenBalance(
+    fromToken,
+    !operatesNativeToken,
+  )
+
   const { refetchBalance: refetchToToken } = useNativeTokenBalance(
     toToken.chainId,
+  )
+
+  const { refetchTokenBalance: refetchToTokenBalance } = useTokenBalance(
+    toToken,
+    !operatesNativeToken,
   )
 
   useEffect(
     function refetchBalances() {
       if (['error', 'success'].includes(status)) {
-        refetchFromToken()
+        refetchFromNativeToken()
+        refetchFromTokenBalance()
         refetchToToken()
+        refetchToTokenBalance()
       }
     },
-    [status, refetchFromToken, refetchToToken],
+    [
+      status,
+      refetchFromNativeToken,
+      refetchFromTokenBalance,
+      refetchToToken,
+      refetchToTokenBalance,
+    ],
   )
 }

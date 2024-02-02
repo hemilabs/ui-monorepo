@@ -1,6 +1,7 @@
-import { useWithdrawNativeToken } from 'hooks/useOpBridge'
+import { useWithdrawNativeToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
 import { Token } from 'types/token'
+import { isNativeToken } from 'utils/token'
 import { parseUnits } from 'viem'
 import { type Chain, useWaitForTransaction } from 'wagmi'
 
@@ -22,6 +23,7 @@ export const useWithdraw = function ({
   onSuccess,
   toToken,
 }: UseWithdraw) {
+  const withdrawingNative = isNativeToken(fromToken)
   const toWithdraw = parseUnits(fromInput, fromToken.decimals).toString()
 
   const {
@@ -29,7 +31,11 @@ export const useWithdraw = function ({
     withdrawNativeToken,
     withdrawNativeTokenGasFees,
     withdrawTxHash,
-  } = useWithdrawNativeToken(l1ChainId, toWithdraw)
+  } = useWithdrawNativeToken({
+    enabled: withdrawingNative && canWithdraw,
+    l1ChainId,
+    toWithdraw,
+  })
 
   const { status: withdrawTxStatus } = useWaitForTransaction({
     // @ts-expect-error string is `0x${string}`

@@ -77,12 +77,26 @@ const reducer = function (state: BridgeState, action: Actions) {
     }
     case 'updateFromToken': {
       const { payload: fromToken } = action
+      const { toNetworkId } = state
+      const nativeToken = isNativeToken(fromToken)
+      let toToken
+      if (nativeToken) {
+        toToken = getNativeToken(toNetworkId)
+      } else {
+        const bridgeAddress =
+          fromToken.extensions.bridgeInfo[toNetworkId].tokenAddress
+        // find the tunneled pair of the token
+        toToken = tokenList.tokens.find(
+          t => t.chainId === toNetworkId && t.address === bridgeAddress,
+        )
+      }
       return {
         ...state,
-        extendedErc20Approval: isNativeToken(fromToken)
+        extendedErc20Approval: nativeToken
           ? false
           : state.extendedErc20Approval,
         fromToken,
+        toToken,
       }
     }
     case 'updateFromInput': {

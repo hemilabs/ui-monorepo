@@ -1,11 +1,11 @@
-import { useDepositNativeToken } from 'hooks/useOpBridge'
+import { useDepositNativeToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
 import { Token } from 'types/token'
 import { isNativeToken } from 'utils/token'
 import { parseUnits } from 'viem'
 import { useWaitForTransaction } from 'wagmi'
 
-import { useDepositToken } from './useBridgeToken'
+import { useDepositToken } from './useDepositToken'
 
 type UseDeposit = {
   canDeposit: boolean
@@ -38,15 +38,19 @@ export const useDeposit = function ({
     depositNativeToken,
     depositNativeTokenTxHash,
     status: nativeTokenDepositUserConfirmationStatus,
-  } = useDepositNativeToken(fromToken.chainId, toDeposit)
+  } = useDepositNativeToken({
+    enabled: depositingNative && canDeposit,
+    l1ChainId: fromToken.chainId,
+    toDeposit,
+  })
 
   const {
     approvalTxHash,
     approvalTokenGasFees,
     approvalTxStatus: approvalStatus,
     depositErc20TokenGasFees,
+    depositErc20TokenTxHash,
     depositToken,
-    depositTokenTxHash,
     needsApproval,
     status: erc20DepositUserConfirmationStatus,
     userConfirmationApprovalStatus,
@@ -61,7 +65,7 @@ export const useDeposit = function ({
 
   const { status: depositTxStatus } = useWaitForTransaction({
     // @ts-expect-error string is `0x${string}`
-    hash: depositingNative ? depositNativeTokenTxHash : depositTokenTxHash,
+    hash: depositingNative ? depositNativeTokenTxHash : depositErc20TokenTxHash,
     onError: onDepositError,
     onSuccess: onDepositSuccess,
   })
@@ -97,7 +101,7 @@ export const useDeposit = function ({
     deposit: handleDeposit(depositToken),
     depositGasFees: depositErc20TokenGasFees,
     depositStatus: depositTxStatus,
-    depositTxHash: depositTokenTxHash,
+    depositTxHash: depositErc20TokenTxHash,
     needsApproval,
     userConfirmationApprovalStatus,
     userDepositConfirmation: erc20DepositUserConfirmationStatus,

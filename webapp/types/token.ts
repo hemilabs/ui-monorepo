@@ -1,8 +1,18 @@
+import { Address } from 'viem'
+
+type Extensions = {
+  bridgeInfo?: {
+    [keyof: number]: {
+      tokenAddress?: Address
+    }
+  }
+}
 export type Token = {
-  readonly chainId: number
   readonly address: string
-  readonly name: string
+  readonly chainId: number
   readonly decimals: number
-  readonly symbol: string
+  readonly extensions?: Extensions
   readonly logoURI?: string
+  readonly name: string
+  readonly symbol: string
 }

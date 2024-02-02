@@ -11,7 +11,7 @@ import Skeleton from 'react-loading-skeleton'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
-import { useConfig } from 'wagmi'
+import { useConfig, useNetwork } from 'wagmi'
 
 import { BridgeForm, canSubmit, getTotal } from './form'
 
@@ -74,6 +74,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
   } = state
 
   const { chains = [] } = useConfig()
+  const { chain } = useNetwork()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -87,7 +88,9 @@ export const Deposit = function ({ renderForm, state }: Props) {
   )
 
   const canDeposit = canSubmit({
+    chainId: chain?.id,
     fromInput,
+    fromNetworkId,
     fromToken,
     walletNativeTokenBalance,
     walletTokenBalance,

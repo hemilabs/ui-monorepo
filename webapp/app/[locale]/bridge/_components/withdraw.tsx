@@ -9,7 +9,7 @@ import Skeleton from 'react-loading-skeleton'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
-import { useConfig } from 'wagmi'
+import { useConfig, useNetwork } from 'wagmi'
 
 import { BridgeForm, canSubmit, getTotal } from './form'
 
@@ -47,10 +47,17 @@ type Props = {
 
 export const Withdraw = function ({ renderForm, state }: Props) {
   const t = useTranslations()
-  const { fromInput, fromNetworkId, fromToken, updateFromInput, toToken } =
-    state
+  const {
+    fromInput,
+    fromNetworkId,
+    fromToken,
+    updateFromInput,
+    toNetworkId,
+    toToken,
+  } = state
 
   const { chains = [] } = useConfig()
+  const { chain } = useNetwork()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -66,7 +73,9 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   )
 
   const canWithdraw = canSubmit({
+    chainId: chain?.id,
     fromInput,
+    fromNetworkId,
     fromToken,
     walletNativeTokenBalance,
     walletTokenBalance,
@@ -83,13 +92,14 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   const {
     userWithdrawConfirmationStatus,
     withdraw,
-    withdrawGasFees,
+    withdrawNativeTokenGasFees,
     withdrawStatus,
     withdrawTxHash,
   } = useWithdraw({
     canWithdraw,
     fromInput,
     fromToken,
+    l1ChainId: toNetworkId,
     onError() {
       updateTransaction({
         id: 'withdraw',
@@ -104,7 +114,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
         status: 'success',
         text: t('bridge-page.transaction-status.withdrawn', {
           fromInput,
-          fromToken: fromToken.symbol,
+          symbol: fromToken.symbol,
         }),
       })
       updateFromInput('0')
@@ -122,13 +132,13 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       status: 'loading',
       text: t('bridge-page.transaction-status.withdrawing', {
         fromInput,
-        fromToken: fromToken.symbol,
+        symbol: fromToken.symbol,
       }),
     })
   }
 
   const totalWithdraw = getTotal({
-    fees: withdrawGasFees,
+    fees: withdrawNativeTokenGasFees,
     fromInput,
     fromToken,
   })
@@ -179,7 +189,10 @@ export const Withdraw = function ({ renderForm, state }: Props) {
         <ReviewWithdraw
           canWithdraw={canWithdraw}
           gas={formatNumber(
-            formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals),
+            formatUnits(
+              withdrawNativeTokenGasFees,
+              fromChain?.nativeCurrency.decimals,
+            ),
             3,
           )}
           gasSymbol={fromChain?.nativeCurrency.symbol}

@@ -4,7 +4,7 @@ import { isNativeToken } from 'utils/token'
 import { useAccount } from 'wagmi'
 import { useAllowance, useApprove } from 'wagmi-erc20-hooks'
 
-const ApproveErc20TokenGas = 45_000
+const ApproveErc20TokenGas = BigInt(45_000)
 
 export const useApproveToken = function (
   token: Token,
@@ -16,10 +16,12 @@ export const useApproveToken = function (
   const erc20AddressToken = token.address as `0x${string}`
 
   const { address: owner } = useAccount()
-  const approvalTokenGasFees = useEstimateFees(
-    token.chainId,
-    ApproveErc20TokenGas,
-  )
+
+  const approvalTokenGasFees = useEstimateFees({
+    chainId: token.chainId,
+    enabled: true,
+    gasUnits: ApproveErc20TokenGas,
+  })
 
   const {
     data: allowance = BigInt(0),

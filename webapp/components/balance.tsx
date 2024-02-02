@@ -15,7 +15,7 @@ const RenderBalance = ({
   balance,
   status,
   token,
-}: Props & Omit<ReturnType<typeof useTokenBalance>, 'refetchBalance'>) => (
+}: Props & Pick<ReturnType<typeof useTokenBalance>, 'balance' | 'status'>) => (
   <>
     {status === 'loading' && (
       <Skeleton className="h-full" containerClassName="basis-1/3" />

@@ -1,9 +1,9 @@
 import { Address } from 'viem'
 
 type Extensions = {
-  bridgeInfo: {
+  bridgeInfo?: {
     [keyof: number]: {
-      tokenAddress: Address
+      tokenAddress?: Address
     }
   }
 }

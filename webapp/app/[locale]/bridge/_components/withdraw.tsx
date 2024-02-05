@@ -6,9 +6,10 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { Token } from 'types/token'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { formatUnits } from 'viem'
+import { type Chain, formatUnits } from 'viem'
 import { useConfig, useNetwork } from 'wagmi'
 
 import { BridgeForm, canSubmit, getTotal } from './form'
@@ -39,6 +40,10 @@ const TransactionStatus = dynamic(
     ssr: false,
   },
 )
+
+const hasBridgeConfiguration = (token: Token, l1ChainId: Chain['id']) =>
+  isNativeToken(token) ||
+  token.extensions?.bridgeInfo[l1ChainId].tokenAddress !== undefined
 
 type Props = {
   renderForm: (isRunningOperation: boolean) => React.ReactNode
@@ -72,14 +77,15 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     !operatesNativeToken,
   )
 
-  const canWithdraw = canSubmit({
-    chainId: chain?.id,
-    fromInput,
-    fromNetworkId,
-    fromToken,
-    walletNativeTokenBalance,
-    walletTokenBalance,
-  })
+  const canWithdraw =
+    canSubmit({
+      chainId: chain?.id,
+      fromInput,
+      fromNetworkId,
+      fromToken,
+      walletNativeTokenBalance,
+      walletTokenBalance,
+    }) && hasBridgeConfiguration(fromToken, toNetworkId)
 
   const {
     addTransaction,
@@ -92,7 +98,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   const {
     userWithdrawConfirmationStatus,
     withdraw,
-    withdrawNativeTokenGasFees,
+    withdrawGasFees,
     withdrawStatus,
     withdrawTxHash,
   } = useWithdraw({
@@ -138,7 +144,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   }
 
   const totalWithdraw = getTotal({
-    fees: withdrawNativeTokenGasFees,
+    fees: withdrawGasFees,
     fromInput,
     fromToken,
   })
@@ -189,10 +195,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
         <ReviewWithdraw
           canWithdraw={canWithdraw}
           gas={formatNumber(
-            formatUnits(
-              withdrawNativeTokenGasFees,
-              fromChain?.nativeCurrency.decimals,
-            ),
+            formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals),
             3,
           )}
           gasSymbol={fromChain?.nativeCurrency.symbol}

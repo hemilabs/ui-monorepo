@@ -26,23 +26,28 @@ const l1Contracts = {
   StateCommitmentChain: zeroAddr,
 }
 
+type GasEstimationOperations = Extract<
+  keyof CrossChainMessengerType['estimateGas'],
+  'depositERC20' | 'depositETH' | 'withdrawERC20' | 'withdrawETH'
+>
+
 type UseCrossChainMessenger = {
   l1ChainId: Chain['id']
   walletConnectedToChain: Chain['id']
   l1Signer: Provider
   l2Signer: Provider
+  operation: GasEstimationOperations
 }
 const useCrossChainMessenger = function ({
   walletConnectedToChain,
   l1ChainId,
   l1Signer,
   l2Signer,
+  operation,
 }: UseCrossChainMessenger) {
   const isConnectedToCorrectChain = useIsConnectedToExpectedNetwork(
     walletConnectedToChain,
   )
-
-  const queryKey = [l1ChainId, bvm.id]
 
   // This Hook creates the dynamically loaded instance of the sdk's CrossChainMessenger
   // We can't use useMemo because it only works for synchronous code
@@ -51,7 +56,7 @@ const useCrossChainMessenger = function ({
   // to handle in React's context (it will require useEffect for different scenarios).
   const { data: crossChainMessenger, status: crossChainMessengerStatus } =
     useQuery(
-      queryKey,
+      [l1ChainId, operation],
       async function getCrossChainMessenger() {
         const { CrossChainMessenger, ETHBridgeAdapter, StandardBridgeAdapter } =
           await sdkPromise
@@ -88,11 +93,6 @@ const useCrossChainMessenger = function ({
     crossChainMessengerStatus,
   }
 }
-
-type GasEstimationOperations = Extract<
-  keyof CrossChainMessengerType['estimateGas'],
-  'depositERC20' | 'depositETH' | 'withdrawETH'
->
 
 type UseEstimateGasFees<T extends GasEstimationOperations> = {
   amount: string
@@ -149,6 +149,38 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
   })
 }
 
+const useDepositCrossChainMessenger = function (
+  l1ChainId: Chain['id'],
+  operation: GasEstimationOperations,
+) {
+  const l1Signer = useWeb3Provider(l1ChainId)
+  const l2Signer = useJsonRpcProvider(bvm.id)
+
+  return useCrossChainMessenger({
+    l1ChainId,
+    l1Signer,
+    l2Signer,
+    operation,
+    walletConnectedToChain: l1ChainId,
+  })
+}
+
+const useWithdrawCrossChainMessenger = function (
+  l1ChainId: Chain['id'],
+  operation: GasEstimationOperations,
+) {
+  const l1Signer = useJsonRpcProvider(l1ChainId)
+  const l2Signer = useWeb3Provider(bvm.id)
+
+  return useCrossChainMessenger({
+    l1ChainId,
+    l1Signer,
+    l2Signer,
+    operation,
+    walletConnectedToChain: bvm.id,
+  })
+}
+
 type UseDepositErc20Token = {
   enabled: boolean
   l1ChainId: Chain['id']
@@ -161,16 +193,8 @@ export const useDepositErc20Token = function ({
   toDeposit,
   token,
 }: UseDepositErc20Token) {
-  const l1Signer = useWeb3Provider(l1ChainId)
-  const l2Signer = useJsonRpcProvider(bvm.id)
-
   const { crossChainMessenger, crossChainMessengerStatus } =
-    useCrossChainMessenger({
-      l1ChainId,
-      l1Signer,
-      l2Signer,
-      walletConnectedToChain: l1ChainId,
-    })
+    useDepositCrossChainMessenger(l1ChainId, 'depositERC20')
 
   const l1BridgeAddress = token.address
   const l2BridgeAddress = token.extensions?.bridgeInfo[bvm.id].tokenAddress
@@ -227,16 +251,8 @@ export const useDepositNativeToken = function ({
   l1ChainId,
   toDeposit,
 }: UseDepositNativeToken) {
-  const l1Signer = useWeb3Provider(l1ChainId)
-  const l2Signer = useJsonRpcProvider(bvm.id)
-
   const { crossChainMessenger, crossChainMessengerStatus } =
-    useCrossChainMessenger({
-      l1ChainId,
-      l1Signer,
-      l2Signer,
-      walletConnectedToChain: l1ChainId,
-    })
+    useDepositCrossChainMessenger(l1ChainId, 'depositETH')
 
   const depositNativeTokenGasFees = useEstimateGasFees({
     amount: toDeposit,
@@ -269,29 +285,21 @@ export const useDepositNativeToken = function ({
 }
 
 type UseWithdrawNativeToken = {
+  amount: string
   enabled: boolean
   l1ChainId: Chain['id']
-  toWithdraw: string
 }
 export const useWithdrawNativeToken = function ({
+  amount,
   enabled,
   l1ChainId,
-  toWithdraw,
 }: UseWithdrawNativeToken) {
-  const l1Signer = useJsonRpcProvider(l1ChainId)
-  const l2Signer = useWeb3Provider(bvm.id)
-
   const { crossChainMessenger, crossChainMessengerStatus } =
-    useCrossChainMessenger({
-      l1ChainId,
-      l1Signer,
-      l2Signer,
-      walletConnectedToChain: bvm.id,
-    })
+    useWithdrawCrossChainMessenger(l1ChainId, 'withdrawETH')
 
   const withdrawNativeTokenGasFees = useEstimateGasFees({
-    amount: toWithdraw,
-    args: [toWithdraw],
+    amount,
+    args: [amount],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled,
@@ -302,19 +310,77 @@ export const useWithdrawNativeToken = function ({
   const {
     data: withdrawTxHash,
     mutate: withdrawNativeToken,
-    status: userWithdrawConfirmationStatus,
+    status: userWithdrawNativeTokenConfirmationStatus,
   } = useMutation<string, Error, string>({
-    mutationFn: async function withdraw(amount: string) {
-      const response = await crossChainMessenger.withdrawETH(amount)
+    mutationFn: async function withdraw(toWithdraw: string) {
+      const response = await crossChainMessenger.withdrawETH(toWithdraw)
       return response.hash
     },
-    mutationKey: [l1ChainId, bvm.id, crossChainMessengerStatus, toWithdraw],
+    mutationKey: [l1ChainId, bvm.id, crossChainMessengerStatus, amount],
   })
 
   return {
-    userWithdrawConfirmationStatus,
-    withdrawNativeToken: () => withdrawNativeToken(toWithdraw),
+    userWithdrawNativeTokenConfirmationStatus,
+    withdrawNativeToken: () => withdrawNativeToken(amount),
     withdrawNativeTokenGasFees,
     withdrawTxHash,
+  }
+}
+
+type UseWithdrawToken = {
+  amount: string
+  enabled: boolean
+  l1ChainId: Chain['id']
+  token: Token
+}
+export const useWithdrawToken = function ({
+  amount,
+  enabled,
+  l1ChainId,
+  token,
+}: UseWithdrawToken) {
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useWithdrawCrossChainMessenger(l1ChainId, 'withdrawERC20')
+
+  const l1BridgeAddress = token.extensions?.bridgeInfo[l1ChainId].tokenAddress
+  const l2BridgeAddress = token.address
+
+  const withdrawErc20TokenGasFees = useEstimateGasFees({
+    amount,
+    args: [l1BridgeAddress, l2BridgeAddress, amount],
+    crossChainMessenger,
+    crossChainMessengerStatus,
+    enabled,
+    operation: 'withdrawERC20',
+    walletConnectedToChain: bvm.id,
+  })
+
+  const {
+    data: withdrawErc20TokenTxHash,
+    mutate: withdrawErc20Token,
+    status,
+  } = useMutation<string, Error, string>({
+    mutationFn: async function withdraw(toWithdraw: string) {
+      const response = await crossChainMessenger.withdrawERC20(
+        l1BridgeAddress,
+        l2BridgeAddress,
+        toWithdraw,
+      )
+      return response.hash
+    },
+    mutationKey: [
+      amount,
+      l1ChainId,
+      crossChainMessengerStatus,
+      l1BridgeAddress,
+      l2BridgeAddress,
+    ],
+  })
+
+  return {
+    userWithdrawTokenConfirmationStatus: status,
+    withdrawErc20Token: () => withdrawErc20Token(amount),
+    withdrawErc20TokenGasFees,
+    withdrawErc20TokenTxHash,
   }
 }

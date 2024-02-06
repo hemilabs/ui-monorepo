@@ -1,4 +1,4 @@
-import { useWithdrawNativeToken } from 'hooks/useL2Bridge'
+import { useWithdrawNativeToken, useWithdrawToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
 import { Token } from 'types/token'
 import { isNativeToken } from 'utils/token'
@@ -24,22 +24,35 @@ export const useWithdraw = function ({
   toToken,
 }: UseWithdraw) {
   const withdrawingNative = isNativeToken(fromToken)
+
   const toWithdraw = parseUnits(fromInput, fromToken.decimals).toString()
 
   const {
-    userWithdrawConfirmationStatus,
+    userWithdrawNativeTokenConfirmationStatus,
     withdrawNativeToken,
     withdrawNativeTokenGasFees,
     withdrawTxHash,
   } = useWithdrawNativeToken({
+    amount: toWithdraw,
     enabled: withdrawingNative && canWithdraw,
     l1ChainId,
-    toWithdraw,
+  })
+
+  const {
+    userWithdrawTokenConfirmationStatus,
+    withdrawErc20TokenGasFees,
+    withdrawErc20Token,
+    withdrawErc20TokenTxHash,
+  } = useWithdrawToken({
+    amount: toWithdraw,
+    enabled: !withdrawingNative && canWithdraw,
+    l1ChainId,
+    token: fromToken,
   })
 
   const { status: withdrawTxStatus } = useWaitForTransaction({
     // @ts-expect-error string is `0x${string}`
-    hash: withdrawTxHash,
+    hash: withdrawingNative ? withdrawTxHash : withdrawErc20TokenTxHash,
     onError,
     onSuccess,
   })
@@ -50,17 +63,27 @@ export const useWithdraw = function ({
     toToken,
   })
 
-  const handleWithdraw = function () {
-    if (canWithdraw) {
-      withdrawNativeToken()
+  const handleWithdraw = (withdrawCallback: () => void) =>
+    function () {
+      if (canWithdraw) {
+        withdrawCallback()
+      }
+    }
+
+  if (withdrawingNative) {
+    return {
+      userWithdrawConfirmationStatus: userWithdrawNativeTokenConfirmationStatus,
+      withdraw: handleWithdraw(withdrawNativeToken),
+      withdrawGasFees: withdrawNativeTokenGasFees,
+      withdrawStatus: withdrawTxStatus,
+      withdrawTxHash,
     }
   }
-
   return {
-    userWithdrawConfirmationStatus,
-    withdraw: handleWithdraw,
-    withdrawNativeTokenGasFees,
+    userWithdrawConfirmationStatus: userWithdrawTokenConfirmationStatus,
+    withdraw: handleWithdraw(withdrawErc20Token),
+    withdrawGasFees: withdrawErc20TokenGasFees,
     withdrawStatus: withdrawTxStatus,
-    withdrawTxHash,
+    withdrawTxHash: withdrawErc20TokenTxHash,
   }
 }

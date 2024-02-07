@@ -61,9 +61,6 @@
       "bloq",
       "prettier"
     ],
-    "ignorePatterns": [
-      "marketing/app.css"
-    ],
     "overrides": [
       {
         "extends": [
@@ -74,6 +71,7 @@
           "prettier"
         ],
         "files": [
+          "marketing/**/*.{js,ts,tsx}",
           "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
           "webapp/**/*.{js,ts,tsx}"
         ],
@@ -97,18 +95,6 @@
         ],
         "files": [
           "*.d.ts"
-        ]
-      },
-      {
-        "extends": [
-          "bloq/next",
-          "prettier"
-        ],
-        "files": [
-          "marketing/**/*.{html}"
-        ],
-        "plugins": [
-          "html"
         ]
       },
       {

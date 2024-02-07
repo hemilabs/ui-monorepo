@@ -8,6 +8,7 @@
   },
   "workspaces": [
     "marketing",
+    "ui-common",
     "wagmi-erc20-hooks",
     "webapp"
   ],
@@ -72,6 +73,7 @@
         ],
         "files": [
           "marketing/**/*.{js,ts,tsx}",
+          "ui-common/**/*.{js,ts,tsx}",
           "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
           "webapp/**/*.{js,ts,tsx}"
         ],

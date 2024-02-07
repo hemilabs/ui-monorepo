@@ -7,7 +7,7 @@
     "email": "gonzalo@bloq.com"
   },
   "scripts": {
-    "build": "tsc"
+    "tsc:check": "tsc"
   },
   "keywords": [
     "dapps",

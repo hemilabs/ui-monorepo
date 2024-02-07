@@ -20,6 +20,8 @@ jobs:
           ref: ${{ github.ref }}
       - name: Setup env
         uses: ./.github/actions/setup-env
+      - name: Compile Typescript packages
+        run: npm run tsc:check --workspaces --if-present
       - name: Build apps
         run: npm run build --workspaces --if-present
 

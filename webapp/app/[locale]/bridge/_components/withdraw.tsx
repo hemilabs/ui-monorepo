@@ -7,23 +7,13 @@ import { useTranslations } from 'next-intl'
 import { FormEvent, useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
+import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { type Chain, formatUnits } from 'viem'
 import { useConfig, useNetwork } from 'wagmi'
 
 import { BridgeForm, canSubmit, getTotal } from './form'
-
-const OperationButton = dynamic(
-  () =>
-    import('app/[locale]/bridge/_components/OperationButton').then(
-      mod => mod.OperationButton,
-    ),
-  {
-    loading: () => <Skeleton className="h-14" />,
-    ssr: false,
-  },
-)
 
 const ReviewWithdraw = dynamic(
   () => import('components/reviewBox').then(mod => mod.ReviewWithdraw),
@@ -205,14 +195,13 @@ export const Withdraw = function ({ renderForm, state }: Props) {
         />
       }
       submitButton={
-        <OperationButton
-          disabled={!canWithdraw || isWithdrawing}
-          text={t(
+        <Button disabled={!canWithdraw || isWithdrawing} type="submit">
+          {t(
             `bridge-page.submit-button.${
               isWithdrawing ? 'withdrawing' : 'withdraw'
             }`,
           )}
-        />
+        </Button>
       }
       transactionStatus={
         <>

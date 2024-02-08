@@ -4,6 +4,7 @@ const config: Config = {
   content: [
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    '../node_modules/ui-common/components/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   plugins: [],

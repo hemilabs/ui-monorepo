@@ -1,5 +1,5 @@
-import { Card } from 'components/design/card'
 import { useTranslations } from 'next-intl'
+import { Card } from 'ui-common/components/card'
 import { useNetwork } from 'wagmi'
 
 const Error = () => (

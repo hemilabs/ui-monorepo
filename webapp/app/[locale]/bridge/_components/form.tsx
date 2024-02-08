@@ -1,7 +1,7 @@
-import { Card } from 'app/components/design/card'
 import Big from 'big.js'
 import { FormEvent, ReactNode } from 'react'
 import { Token } from 'types/token'
+import { Card } from 'ui-common/components/card'
 import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits } from 'viem'
 

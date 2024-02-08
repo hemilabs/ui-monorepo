@@ -2,8 +2,8 @@
 
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Link from 'next-intl/link'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { HamburgerIcon } from 'ui-common/components/HamburguerIcon'

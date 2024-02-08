@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode, useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -24,17 +25,6 @@ const Erc20Approval = dynamic(
     loading: () => (
       <Skeleton className="h-10 py-2" containerClassName="basis-1/4" />
     ),
-    ssr: false,
-  },
-)
-
-const OperationButton = dynamic(
-  () =>
-    import('app/[locale]/bridge/_components/OperationButton').then(
-      mod => mod.OperationButton,
-    ),
-  {
-    loading: () => <Skeleton className="h-14" />,
     ssr: false,
   },
 )
@@ -339,10 +329,9 @@ export const Deposit = function ({ renderForm, state }: Props) {
             }
             onCheckedChange={updateExtendedErc20Approval}
           />
-          <OperationButton
-            disabled={!canDeposit || isRunningOperation}
-            text={getOperationButtonText()}
-          />
+          <Button disabled={!canDeposit || isRunningOperation} type="submit">
+            {getOperationButtonText()}
+          </Button>
         </>
       }
       transactionStatus={

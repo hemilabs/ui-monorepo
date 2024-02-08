@@ -1,11 +1,9 @@
-type Props = {
-  disabled: boolean
-  operation?: 'approve' | 'deposit' | 'withdraw'
-  operationStatus?: string
-  text?: string
-}
+type Props = React.DetailedHTMLProps<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  HTMLButtonElement
+>
 
-export const OperationButton = ({ disabled, text }: Props) => (
+export const Button = ({ disabled, ...props }: Props) => (
   <button
     className={`h-14 w-full cursor-pointer rounded-xl bg-black text-base text-white ${
       disabled
@@ -13,8 +11,6 @@ export const OperationButton = ({ disabled, text }: Props) => (
         : 'cursor-pointer hover:bg-opacity-80'
     }`}
     disabled={disabled}
-    type="submit"
-  >
-    {text}
-  </button>
+    {...props}
+  />
 )

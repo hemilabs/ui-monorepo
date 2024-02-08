@@ -1,7 +1,6 @@
 import Big from 'big.js'
 import { useTranslations } from 'next-intl'
-
-import { Card } from './design/card'
+import { Card } from 'ui-common/components/card'
 
 type SubSectionProps = {
   symbol: string

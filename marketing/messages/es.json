@@ -1,10 +1,24 @@
 {
-  "home": {
+  "header": {
     "documentation": "Documentación",
+    "network": "Red"
+  },
+  "home": {
     "get-started": "Comenzar",
-    "network": "Red",
     "page-title": "La seguridad de Bitcoin.<br />La agilidad de Ethereum.",
     "subtitle": "Todas las posibilidades dentro y más allá. Un mejor enfoque para la capa 2 de Ethereum con la red BVM.",
     "tunnel-and-swap": "Túnel e Intercambio"
+  },
+  "network": {
+    "amount-of-tokens": "{amount} {symbol} tokens",
+    "automatic": "Automático",
+    "claim-my-tokens": "Reclamar mis tokens",
+    "configure-sepolia-testnet": "Configurar la red de prueba Sepolia",
+    "manual": "Manual",
+    "page-subtitle": "¡Comienza con nuestra red de prueba ahora!",
+    "page-title": "Añadir la red BVM",
+    "welcome-pack-description": "Te enviaremos un email para reclamar tus tokens de bienvenida",
+    "your-quick-starter": "Comienzo rápido",
+    "your-welcome-pack": "Tu pack de bienvenida"
   }
 }

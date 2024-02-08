@@ -5,6 +5,8 @@ import { bricolageGrotesque, inter } from 'fonts'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 
+import { Header } from './header'
+
 async function getMessages(locale: Locale) {
   try {
     return (await import(`../../messages/${locale}.json`)).default
@@ -29,9 +31,10 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`font-inter flex h-screen w-full flex-col pb-28 pt-6 sm:mx-auto sm:w-4/5 lg:w-3/4 xl:w-5/6 2xl:max-w-[1500px] ${bricolageGrotesque.variable} ${inter.className}`}
+        className={`font-inter flex h-screen w-full flex-col pb-28 pt-6 sm:mx-auto sm:w-4/5 lg:w-3/4 xl:w-5/6 2xl:max-w-[1500px] ${bricolageGrotesque.variable} ${inter.className} bg-zinc-100 px-4`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
+          <Header />
           {children}
         </NextIntlClientProvider>
       </body>

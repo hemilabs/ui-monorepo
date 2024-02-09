@@ -7,6 +7,7 @@
     "lint": "eslint --cache ."
   },
   "workspaces": [
+    "landing",
     "marketing",
     "ui-common",
     "wagmi-erc20-hooks",
@@ -62,6 +63,9 @@
       "bloq",
       "prettier"
     ],
+    "ignorePatterns": [
+      "landing/fullview.*"
+    ],
     "overrides": [
       {
         "extends": [
@@ -72,6 +76,7 @@
           "prettier"
         ],
         "files": [
+          "landing/**/*.{js,ts,tsx}",
           "marketing/**/*.{js,ts,tsx}",
           "ui-common/**/*.{js,ts,tsx}",
           "wagmi-erc20-hooks/**/*.{js,ts,tsx}",

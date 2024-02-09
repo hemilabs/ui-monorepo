@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: Bricolage Grotesque;
+  font-weight: 400;
+  src: url('./fonts/BricolageGrotesque_24pt-Bold.ttf');
+}

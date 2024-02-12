@@ -119,7 +119,8 @@
         ],
         "globals": {
           "$": true,
-          "document": true
+          "document": true,
+          "hbspt": true
         },
         "plugins": [
           "eslint-plugin-html"

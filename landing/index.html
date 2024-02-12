@@ -19,6 +19,12 @@
     <!-- FullView Plugin -->
     <link type="text/css" rel="stylesheet" href="fullview.min.css" />
     <script type="text/javascript" src="./fullview.min.js"></script>
+    <!-- hubspot plugin -->
+    <script
+      charset="utf-8"
+      type="text/javascript"
+      src="https://js.hsforms.net/forms/embed/v2.js"
+    ></script>
     <!-- FullView Plugin -->
     <script type="text/javascript" src="./main.js"></script>
   </head>
@@ -480,24 +486,8 @@
       </section>
       <section class="text-center font-normal">
         <div class="flex h-full flex-col items-center justify-center">
-          <div class="flex flex-col gap-y-9">
-            <h2
-              class="font-bricolage-grotesque relative w-fit text-3xl md:text-4xl xl:text-5xl"
-            >
-              <span class="-left-14 z-10 md:absolute">🎉</span>
-              Stay Connected
-            </h2>
-            <input
-              class="w-full max-w-[300px] rounded-xl border-2 border-white bg-slate-50 px-2 py-3 text-sm font-normal lowercase text-neutral-400"
-              placeholder="example@email.xyz"
-              type="email"
-            />
-            <button
-              class="bg-orange-650 hover:bg-orange-650/75 mt-3 w-full max-w-[300px] rounded-2xl px-3 py-4 text-xs font-bold text-white md:px-4 md:py-5 md:text-sm"
-            >
-              Submit
-            </button>
-          </div>
+          <!-- Hubspot target form container -->
+          <form id="hubspot-target-form"></form>
         </div>
       </section>
     </main>

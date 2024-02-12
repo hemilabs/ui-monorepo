@@ -7,3 +7,25 @@
   font-weight: 400;
   src: url('./fonts/BricolageGrotesque_24pt-Bold.ttf');
 }
+
+#hubspot-target-form {
+  h2 > strong {
+    @apply font-bricolage-grotesque relative w-fit text-3xl md:text-4xl xl:text-5xl;
+  }
+  input[type='email'] {
+    @apply w-full rounded-xl border-2 border-white bg-slate-50 px-2 py-3 text-sm font-normal lowercase text-neutral-400;
+  }
+
+  input[type='submit'] {
+    @apply bg-orange-650 hover:bg-orange-650/75 mt-6 w-full cursor-pointer rounded-2xl px-3 py-4 text-xs font-bold text-white md:mt-9 md:px-4 md:py-5 md:text-sm;
+  }
+
+  .hs-email > label {
+    @apply block w-full text-left;
+  }
+
+  .hs-error-msg,
+  .hs-form-required {
+    @apply text-orange-650;
+  }
+}

@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { useTranslations } from 'next-intl'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
 
 type NetworkConfiguration = 'automatic' | 'manual'

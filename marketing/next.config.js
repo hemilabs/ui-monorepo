@@ -3,6 +3,10 @@ const nextConfig = {
   experimental: {
     instrumentationHook: true,
   },
+  // images are exported on demand, which is incompatible with static export
+  images: {
+    unoptimized: true,
+  },
   output: 'export',
   reactStrictMode: true,
   transpilePackages: ['ui-common'],

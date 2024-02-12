@@ -19,7 +19,7 @@ const Home = function () {
         ></p>
         <div className="mt-12 flex w-full flex-col gap-x-4 gap-y-4 md:flex-row md:justify-center">
           <Link
-            className='className="w-full md:w-auto" rounded-xl bg-blue-500 px-7 py-[13px] text-xs font-semibold text-white sm:text-base'
+            className='md:w-auto" w-full rounded-xl bg-blue-500 px-7 py-[13px] text-center text-xs font-semibold text-white sm:text-base'
             href="/network"
           >
             {t('get-started')}

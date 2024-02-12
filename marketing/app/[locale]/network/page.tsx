@@ -1,6 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
+import { Suspense } from 'react'
 import { Card } from 'ui-common/components/card'
 
 import { ConfigureNetwork } from './configureNetworks'
@@ -19,7 +20,9 @@ const NetworkPage = function () {
       <main className="flex flex-col gap-y-4 md:w-full md:flex-row md:gap-x-4">
         <div className="md:basis-2/3">
           <Card>
-            <ConfigureNetwork />
+            <Suspense>
+              <ConfigureNetwork />
+            </Suspense>
           </Card>
         </div>
         <div>

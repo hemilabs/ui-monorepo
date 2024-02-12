@@ -537,6 +537,9 @@ video {
   font-weight: 400;
   src: url(fonts/BricolageGrotesque_24pt-Bold.ttf);
 }
+.hover\:bg-orange-650\/75:hover {
+  background-color: #ff5f00bf;
+}
 @media (min-width: 640px) {
   .sm\:mx-auto {
     margin-left: auto;

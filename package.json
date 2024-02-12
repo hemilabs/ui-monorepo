@@ -64,7 +64,9 @@
       "prettier"
     ],
     "ignorePatterns": [
-      "landing/fullview.*"
+      "landing/fullview.*",
+      "landing/app.css",
+      "landing/globals.css"
     ],
     "overrides": [
       {
@@ -76,7 +78,6 @@
           "prettier"
         ],
         "files": [
-          "landing/**/*.{js,ts,tsx}",
           "marketing/**/*.{js,ts,tsx}",
           "ui-common/**/*.{js,ts,tsx}",
           "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
@@ -102,6 +103,26 @@
         ],
         "files": [
           "*.d.ts"
+        ]
+      },
+      {
+        "env": {
+          "browser": true,
+          "jquery": true
+        },
+        "extends": [
+          "bloq",
+          "prettier"
+        ],
+        "files": [
+          "landing/**/*.{css,html,js}"
+        ],
+        "globals": {
+          "$": true,
+          "document": true
+        },
+        "plugins": [
+          "eslint-plugin-html"
         ]
       },
       {

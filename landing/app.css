@@ -395,7 +395,7 @@ video {
 }
 .bg-orange-650 {
   --tw-bg-opacity: 1;
-  background-color: rgb(209 70 0 / var(--tw-bg-opacity));
+  background-color: rgb(255 95 0 / var(--tw-bg-opacity));
 }
 .bg-slate-50 {
   --tw-bg-opacity: 1;
@@ -526,7 +526,7 @@ video {
 }
 .text-orange-650 {
   --tw-text-opacity: 1;
-  color: rgb(209 70 0 / var(--tw-text-opacity));
+  color: rgb(255 95 0 / var(--tw-text-opacity));
 }
 .text-white {
   --tw-text-opacity: 1;

@@ -7,6 +7,7 @@
     "lint": "eslint --cache ."
   },
   "workspaces": [
+    "landing",
     "marketing",
     "ui-common",
     "wagmi-erc20-hooks",
@@ -62,6 +63,11 @@
       "bloq",
       "prettier"
     ],
+    "ignorePatterns": [
+      "landing/fullview.*",
+      "landing/app.css",
+      "landing/globals.css"
+    ],
     "overrides": [
       {
         "extends": [
@@ -97,6 +103,26 @@
         ],
         "files": [
           "*.d.ts"
+        ]
+      },
+      {
+        "env": {
+          "browser": true,
+          "jquery": true
+        },
+        "extends": [
+          "bloq",
+          "prettier"
+        ],
+        "files": [
+          "landing/**/*.{css,html,js}"
+        ],
+        "globals": {
+          "$": true,
+          "document": true
+        },
+        "plugins": [
+          "eslint-plugin-html"
         ]
       },
       {

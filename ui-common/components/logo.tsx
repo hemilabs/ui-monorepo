@@ -1,4 +1,4 @@
-export const DesktopLogo = () => (
+export const Logo = () => (
   <svg
     viewBox="0 0 1054 285"
     xmlSpace="preserve"

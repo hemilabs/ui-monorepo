@@ -2,7 +2,21 @@
 
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
-import { DesktopLogo } from 'ui-common/components/logo'
+import { useState } from 'react'
+import { HamburgerIcon } from 'ui-common/components/HamburguerIcon'
+import { Logo } from 'ui-common/components/logo'
+
+const CloseIcon = () => (
+  <svg fill="none" height={24} width={24} xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="m5 5 14 14M5 19 19 5"
+      stroke="#000"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+    />
+  </svg>
+)
 
 const DiscordLogo = () => (
   <svg fill="none" height={32} width={33} xmlns="http://www.w3.org/2000/svg">
@@ -30,41 +44,98 @@ const XLogo = () => (
 )
 
 export const Header = function () {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
+
   const t = useTranslations()
-  const navigationItemCss = 'py-4 text-neutral-400'
+  const navigationItemCss = 'py-4 text-neutral-400 block'
+
+  const mobileLogo = (
+    <Link className="block w-24 cursor-pointer" href="/">
+      <Logo />
+    </Link>
+  )
+
+  const networkLink = (
+    <Link className="cursor-pointer" href="/network">
+      {t('header.network')}
+    </Link>
+  )
+
+  const tunnelAndSwapLink = (
+    <a className="cursor-pointer">{t('home.tunnel-and-swap')}</a>
+  )
+
+  const documentationLink = (
+    <a className="cursor-pointer">{t('header.documentation')}</a>
+  )
+
+  const discordLink = (
+    <a className="cursor-pointer">
+      <DiscordLogo />
+    </a>
+  )
+
+  const XLink = (
+    <a className="cursor-pointer">
+      <XLogo />
+    </a>
+  )
 
   return (
-    <header className="mx-auto hidden overflow-x-auto md:block md:w-5/6 lg:w-4/5 xl:w-11/12 2xl:max-w-[1650px]">
-      <nav>
-        <ul className="flex items-center justify-between font-medium md:gap-x-2 lg:gap-x-4 xl:gap-x-8">
-          <li className={`mr-auto ${navigationItemCss}`}>
-            <Link className="block w-32 cursor-pointer" href="./">
-              <DesktopLogo />
-            </Link>
-          </li>
-          <li className={navigationItemCss}>
-            <Link className="cursor-pointer" href="/network">
-              {t('header.network')}
-            </Link>
-          </li>
-          <li className={navigationItemCss}>
-            <a className="cursor-pointer">{t('header.documentation')}</a>
-          </li>
-          <li className={navigationItemCss}>
-            <a className="cursor-pointer">{t('home.tunnel-and-swap')}</a>
-          </li>
-          <li className={`ml-auto ${navigationItemCss}`}>
-            <a className="cursor-pointer">
-              <DiscordLogo />
-            </a>
-          </li>
-          <li className={navigationItemCss}>
-            <a className="cursor-pointer">
-              <XLogo />
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </header>
+    <>
+      <header>
+        {/* Mobile header */}
+        <div className="flex items-center justify-between md:hidden">
+          {mobileLogo}
+          <button onClick={toggleMenu}>
+            <HamburgerIcon />
+          </button>
+        </div>
+
+        {/* Tablet / Desktop header */}
+        <div className="mx-auto hidden overflow-x-auto md:block md:w-5/6 lg:w-4/5 xl:w-11/12 2xl:max-w-[1650px]">
+          <nav>
+            <ul className="flex items-center justify-between font-medium md:gap-x-2 lg:gap-x-4 xl:gap-x-8">
+              <li className={`mr-auto ${navigationItemCss}`}>
+                <Link className="block w-32 cursor-pointer" href="/">
+                  <Logo />
+                </Link>
+              </li>
+              <li className={navigationItemCss}>{networkLink}</li>
+              <li className={navigationItemCss}>{documentationLink}</li>
+              <li className={navigationItemCss}>{tunnelAndSwapLink}</li>
+              <li className={`ml-auto ${navigationItemCss}`}>{discordLink}</li>
+              <li className={navigationItemCss}>{XLink}</li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+      {/* Mobile sidebar */}
+      {isMenuOpen && (
+        <div className="fixed bottom-0 left-0 right-0 top-0 z-20 bg-neutral-100 px-4 py-7">
+          <div className="flex items-center justify-between">
+            {mobileLogo}
+            <button className="h-8" onClick={toggleMenu}>
+              <CloseIcon />
+            </button>
+          </div>
+          <nav className="h-full">
+            <ul className="flex h-full flex-col py-5">
+              <li className={navigationItemCss}>{networkLink}</li>
+              <li className={navigationItemCss}>{documentationLink}</li>
+              <li className={navigationItemCss}>{tunnelAndSwapLink}</li>
+              <li
+                className={`mt-auto flex items-center gap-x-5 ${navigationItemCss}`}
+              >
+                {discordLink}
+                {XLink}
+              </li>
+            </ul>
+          </nav>
+        </div>
+      )}
+    </>
   )
 }

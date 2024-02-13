@@ -1,8 +1,8 @@
 'use client'
 
-import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 import { Chain } from 'wagmi'
 
 type Props = {

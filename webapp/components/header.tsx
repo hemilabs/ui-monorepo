@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import Link from 'next-intl/link'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { HamburgerIcon } from 'ui-common/components/HamburguerIcon'
+import { HamburgerIcon } from 'ui-common/components/hamburgerIcon'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 
 const WalletConnectButton = dynamic(

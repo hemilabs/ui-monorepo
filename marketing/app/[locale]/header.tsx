@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import { useState } from 'react'
-import { HamburgerIcon } from 'ui-common/components/HamburguerIcon'
+import { HamburgerIcon } from 'ui-common/components/hamburgerIcon'
 import { Logo } from 'ui-common/components/logo'
 
 const CloseIcon = () => (

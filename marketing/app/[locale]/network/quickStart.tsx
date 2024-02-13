@@ -29,7 +29,7 @@ const InfoBox = ({
   title: string
 }) => (
   <Card>
-    <div className="flex flex-row flex-wrap justify-between md:w-48 md:flex-col md:gap-y-2">
+    <div className="flex flex-row flex-wrap justify-between md:w-40 md:flex-col md:gap-y-2">
       <div className="relative h-24 w-28 md:w-full">
         <Image
           alt="documentation background image"

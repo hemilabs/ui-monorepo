@@ -17,7 +17,7 @@ const NetworkPage = function () {
       <p className="my-3 text-sm text-neutral-400">
         {t('network.page-subtitle')}
       </p>
-      <main className="flex flex-col gap-y-4 md:w-full md:flex-row md:gap-x-4">
+      <main className="flex flex-col gap-y-4 md:w-full md:flex-row md:justify-between md:gap-x-4">
         <div className="md:basis-2/3">
           <Card>
             <Suspense>

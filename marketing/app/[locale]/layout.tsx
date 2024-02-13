@@ -31,11 +31,13 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`font-inter flex h-screen w-full flex-col pb-28 pt-6 sm:mx-auto sm:w-4/5 lg:w-3/4 xl:w-5/6 2xl:max-w-[1500px] ${bricolageGrotesque.variable} ${inter.className} bg-zinc-100 px-4`}
+        className={`font-inter flex w-full flex-col py-7 ${bricolageGrotesque.variable} ${inter.className} bg-zinc-100 px-4`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <Header />
-          {children}
+          <div className="mt-6 sm:mx-auto sm:w-4/5 lg:w-3/4 xl:w-5/6 2xl:max-w-[1500px]">
+            {children}
+          </div>
         </NextIntlClientProvider>
       </body>
     </html>

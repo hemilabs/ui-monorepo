@@ -15,7 +15,7 @@ const useSelectedTab = function (
   const searchParams = useSearchParams()
 
   useEffect(
-    function () {
+    function redirectToDefaultConfigurationIfInvalid() {
       if (
         ['automatic', 'manual'].some(
           c => searchParams.get('networkConfiguration') === c,

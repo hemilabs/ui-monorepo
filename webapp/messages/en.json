@@ -35,6 +35,7 @@
     }
   },
   "common": {
+    "add-hemi-to-wallet": "Add Hemi Network to your wallet",
     "connect-wallet": "Connect Wallet",
     "erc20-extra-approval": "Approve 10x deposits",
     "network-gas-fee": "{network} gas fee",

@@ -37,7 +37,7 @@ export const NetworkSelector = function ({
   }
 
   // TODO update with image from network
-  const Logo = () => <div className="bg-bvm-gradient h-6 w-6 rounded-full" />
+  const Logo = () => <div className="bg-hemi-gradient h-6 w-6 rounded-full" />
 
   const commonCss = 'flex items-center rounded-xl bg-zinc-50 p-2 gap-x-2'
 

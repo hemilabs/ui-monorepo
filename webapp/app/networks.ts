@@ -1,7 +1,7 @@
 import { Chain } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains'
 
-export const bvm: Chain = {
+export const hemi: Chain = {
   blockExplorers: {
     default: {
       name: process.env.NEXT_PUBLIC_CHAIN_EXPLORER_NAME,
@@ -31,4 +31,4 @@ const testnetMode = process.env.NEXT_PUBLIC_TESTNET_MODE === 'true'
 
 export const bridgeableNetworks = testnetMode ? [sepolia] : [mainnet]
 
-export const networks = [bvm, ...bridgeableNetworks]
+export const networks = [hemi, ...bridgeableNetworks]

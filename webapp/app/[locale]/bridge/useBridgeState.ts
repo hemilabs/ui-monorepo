@@ -1,4 +1,4 @@
-import { bvm, bridgeableNetworks } from 'app/networks'
+import { hemi, bridgeableNetworks } from 'app/networks'
 import { useReducer } from 'react'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
@@ -154,8 +154,8 @@ export const useBridgeState = function (): BridgeState & {
     fromInput: '0',
     fromNetworkId: bridgeableNetworks[0].id,
     fromToken: getNativeToken(bridgeableNetworks[0].id),
-    toNetworkId: bvm.id,
-    toToken: getNativeToken(bvm.id),
+    toNetworkId: hemi.id,
+    toToken: getNativeToken(hemi.id),
   })
 
   const updateFromInput = function (payload: UpdateFromInput['payload']) {

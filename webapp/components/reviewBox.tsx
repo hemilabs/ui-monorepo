@@ -94,7 +94,7 @@ export const ReviewWithdraw = function ({
       />
       <SubSection
         symbol={gasSymbol}
-        text={tCommon('network-gas-fee', { network: 'BVM' })}
+        text={tCommon('network-gas-fee', { network: 'Hemi' })}
         value={canWithdraw ? gas : '0'}
       />
       <div className="absolute left-0 right-0 h-px border-t border-zinc-400"></div>

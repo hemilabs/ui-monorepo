@@ -35,6 +35,7 @@
     }
   },
   "common": {
+    "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
     "connect-wallet": "Conectar Billetera",
     "erc20-extra-approval": "Aprobar 10x este depósito",
     "network-gas-fee": "Tarifa de gas de {network}",

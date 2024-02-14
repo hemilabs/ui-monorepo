@@ -95,7 +95,7 @@ export const Header = function () {
         </div>
 
         {/* Tablet / Desktop header */}
-        <div className="mx-auto hidden overflow-x-auto md:block md:w-5/6 lg:w-4/5 xl:w-11/12 2xl:max-w-[1650px]">
+        <div className="mx-auto hidden overflow-x-auto md:block">
           <nav>
             <ul className="flex items-center justify-between font-medium md:gap-x-2 lg:gap-x-4 xl:gap-x-8">
               <li className={`mr-auto ${navigationItemCss}`}>

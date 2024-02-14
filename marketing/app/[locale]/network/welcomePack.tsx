@@ -58,8 +58,8 @@ export const WelcomePack = function () {
       </p>
       {giveAwayTokens.map(({ amount, icon, symbol }) => (
         <CoinRow
-          key={symbol}
           icon={icon}
+          key={symbol}
           text={t('network.amount-of-tokens', {
             amount,
             symbol,

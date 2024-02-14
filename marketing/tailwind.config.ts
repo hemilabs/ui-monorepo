@@ -17,6 +17,12 @@ const config: Config = {
         'bricolage-grotesque': '--font-bricolage-grotesque',
         'inter': '--font-inter',
       },
+      height: {
+        // 67px from header, 24px from container margin's top, and 28px twice from body y-padding
+        'fit-rest-screen-desktop': 'calc(100vh - 67px - 24px - 28px - 28px)',
+        // same as above, but header is now 32px
+        'fit-rest-screen-mobile': 'calc(100vh - 32px - 24px - 28px - 28px)',
+      },
     },
   },
 }

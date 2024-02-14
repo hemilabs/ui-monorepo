@@ -1,5 +1,5 @@
 import { type CrossChainMessenger as CrossChainMessengerType } from '@eth-optimism/sdk'
-import { bvm } from 'app/networks'
+import { hemi } from 'app/networks'
 import {
   type Provider,
   useJsonRpcProvider,
@@ -79,7 +79,7 @@ const useCrossChainMessenger = function ({
           },
           l1ChainId,
           l1SignerOrProvider: l1Signer,
-          l2ChainId: bvm.id,
+          l2ChainId: hemi.id,
           l2SignerOrProvider: l2Signer,
         })
       },
@@ -154,7 +154,7 @@ const useDepositCrossChainMessenger = function (
   operation: GasEstimationOperations,
 ) {
   const l1Signer = useWeb3Provider(l1ChainId)
-  const l2Signer = useJsonRpcProvider(bvm.id)
+  const l2Signer = useJsonRpcProvider(hemi.id)
 
   return useCrossChainMessenger({
     l1ChainId,
@@ -170,14 +170,14 @@ const useWithdrawCrossChainMessenger = function (
   operation: GasEstimationOperations,
 ) {
   const l1Signer = useJsonRpcProvider(l1ChainId)
-  const l2Signer = useWeb3Provider(bvm.id)
+  const l2Signer = useWeb3Provider(hemi.id)
 
   return useCrossChainMessenger({
     l1ChainId,
     l1Signer,
     l2Signer,
     operation,
-    walletConnectedToChain: bvm.id,
+    walletConnectedToChain: hemi.id,
   })
 }
 
@@ -197,7 +197,7 @@ export const useDepositErc20Token = function ({
     useDepositCrossChainMessenger(l1ChainId, 'depositERC20')
 
   const l1BridgeAddress = token.address
-  const l2BridgeAddress = token.extensions?.bridgeInfo[bvm.id].tokenAddress
+  const l2BridgeAddress = token.extensions?.bridgeInfo[hemi.id].tokenAddress
 
   const depositErc20TokenGasFees = useEstimateGasFees({
     amount: toDeposit,
@@ -224,7 +224,7 @@ export const useDepositErc20Token = function ({
     },
     mutationKey: [
       l1ChainId,
-      bvm.id,
+      hemi.id,
       crossChainMessengerStatus,
       l1BridgeAddress,
       l2BridgeAddress,
@@ -273,7 +273,7 @@ export const useDepositNativeToken = function ({
       const response = await crossChainMessenger.depositETH(amount)
       return response.hash
     },
-    mutationKey: [l1ChainId, bvm.id, crossChainMessengerStatus, toDeposit],
+    mutationKey: [l1ChainId, hemi.id, crossChainMessengerStatus, toDeposit],
   })
 
   return {
@@ -304,7 +304,7 @@ export const useWithdrawNativeToken = function ({
     crossChainMessengerStatus,
     enabled,
     operation: 'withdrawETH',
-    walletConnectedToChain: bvm.id,
+    walletConnectedToChain: hemi.id,
   })
 
   const {
@@ -316,7 +316,7 @@ export const useWithdrawNativeToken = function ({
       const response = await crossChainMessenger.withdrawETH(toWithdraw)
       return response.hash
     },
-    mutationKey: [l1ChainId, bvm.id, crossChainMessengerStatus, amount],
+    mutationKey: [l1ChainId, hemi.id, crossChainMessengerStatus, amount],
   })
 
   return {
@@ -352,7 +352,7 @@ export const useWithdrawToken = function ({
     crossChainMessengerStatus,
     enabled,
     operation: 'withdrawERC20',
-    walletConnectedToChain: bvm.id,
+    walletConnectedToChain: hemi.id,
   })
 
   const {

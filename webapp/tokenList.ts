@@ -1,7 +1,7 @@
 /* eslint-disable sort-keys */
 // example list for Token list - will probably need to be loaded from somewhere
 
-import { bvm } from 'app/networks'
+import { hemi } from 'app/networks'
 import { Token } from 'types/token'
 import { sepolia } from 'wagmi/chains'
 
@@ -13,7 +13,7 @@ const tokens: Token[] = [
     decimals: 18,
     extensions: {
       bridgeInfo: {
-        [bvm.id]: {
+        [hemi.id]: {
           tokenAddress: '0x97942656B0EfC2555155cEA70Cb3C716C33EcF70',
         },
       },
@@ -29,7 +29,7 @@ const tokens: Token[] = [
     decimals: 6,
     extensions: {
       bridgeInfo: {
-        [bvm.id]: {
+        [hemi.id]: {
           tokenAddress: '0x221f3Ea46017307daCaf669F38529223B08f3178',
         },
       },
@@ -41,7 +41,7 @@ const tokens: Token[] = [
   },
   {
     address: '0x97942656B0EfC2555155cEA70Cb3C716C33EcF70',
-    chainId: bvm.id,
+    chainId: hemi.id,
     decimals: 18,
     extensions: {
       bridgeInfo: {
@@ -57,7 +57,7 @@ const tokens: Token[] = [
   },
   {
     address: '0x221f3Ea46017307daCaf669F38529223B08f3178',
-    chainId: bvm.id,
+    chainId: hemi.id,
     decimals: 6,
     extensions: {
       bridgeInfo: {
@@ -93,14 +93,14 @@ const nativeTokens: Token[] = [
     symbol: sepolia.nativeCurrency.symbol,
   },
   {
-    address: 'BVM',
-    chainId: bvm.id,
-    decimals: bvm.nativeCurrency.decimals,
+    address: 'HEMI',
+    chainId: hemi.id,
+    decimals: hemi.nativeCurrency.decimals,
     // using random logo for now
     logoURI:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png',
-    name: bvm.nativeCurrency.name,
-    symbol: bvm.nativeCurrency.symbol,
+    name: hemi.nativeCurrency.name,
+    symbol: hemi.nativeCurrency.symbol,
   },
 ]
 

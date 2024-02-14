@@ -1,7 +1,7 @@
 'use client'
 
 import { TokenSelector } from 'app/components/TokenSelector'
-import { bvm, networks } from 'app/networks'
+import { hemi, networks } from 'app/networks'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
@@ -100,7 +100,7 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
           networkId={fromNetworkId}
           networks={networks.filter(chain => chain.id !== toNetworkId)}
           onSelectNetwork={updateFromNetwork}
-          readonly={fromNetworkId === bvm.id}
+          readonly={fromNetworkId === hemi.id}
         />
       </div>
       <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
@@ -169,7 +169,7 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
           networkId={toNetworkId}
           networks={networks.filter(chain => chain.id !== fromNetworkId)}
           onSelectNetwork={updateToNetwork}
-          readonly={toNetworkId === bvm.id}
+          readonly={toNetworkId === hemi.id}
         />
       </div>
       <div className="flex justify-between rounded-xl bg-zinc-50 p-4 text-zinc-400">
@@ -229,7 +229,7 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
 export default function Bridge() {
   const bridgeState = useBridgeState()
 
-  const isDepositOperation = bridgeState.toNetworkId === bvm.id
+  const isDepositOperation = bridgeState.toNetworkId === hemi.id
 
   const OperationComponent = isDepositOperation ? Deposit : Withdraw
 

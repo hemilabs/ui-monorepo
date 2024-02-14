@@ -1,6 +1,6 @@
 'use client'
 
-import { bvm } from 'app/networks'
+import { hemi } from 'app/networks'
 import { useAccount, useSwitchNetwork, useNetwork } from 'wagmi'
 
 export function AddNetworkToWallet() {
@@ -8,7 +8,7 @@ export function AddNetworkToWallet() {
   const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
 
-  if (!isConnected || chain.id === bvm.id) {
+  if (!isConnected || chain.id === hemi.id) {
     return null
   }
 
@@ -18,9 +18,9 @@ export function AddNetworkToWallet() {
       onClick={() => switchNetwork(parseInt(process.env.NEXT_PUBLIC_CHAIN_ID))}
       type="button"
     >
-      <div className="bg-bvm-gradient mr-2 h-8 w-8 rounded-full"></div>
+      <div className="bg-hemi-gradient mr-2 h-8 w-8 rounded-full"></div>
       <p className="mr-auto text-base text-black">
-        Add BVM Network to your wallet
+        Add HEMI Network to your wallet
       </p>
       <svg
         fill="none"

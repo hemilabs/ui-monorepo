@@ -21,7 +21,7 @@ Integer representing the ID of the blockchain. E.g.: 11155222
 
 #### NEXT_PUBLIC_CHAIN_NAME
 
-The name of the blockchain. E.g.: HEMI
+The name of the blockchain. E.g.: Hemi
 
 #### NEXT_PUBLIC_CHAIN_NETWORK
 
@@ -34,7 +34,7 @@ If the address is no a secure address (https), the application will not work.
 
 #### NEXT_PUBLIC_CHAIN_EXPLORER_NAME
 
-The name of the blockchain explorer. E.g.: HEMI Explorer
+The name of the blockchain explorer. E.g.: Hemi Explorer
 
 #### NEXT_PUBLIC_CHAIN_EXPLORER_URL
 

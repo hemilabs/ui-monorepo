@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom'
+import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 
-import { useOnClickOutside } from '../hooks/useOnClickOutside'
 import { useOnKeyUp } from '../hooks/useOnKeyUp'
 
 type Props = {

@@ -1,10 +1,31 @@
 {
-  "home": {
+  "header": {
     "documentation": "Documentación",
+    "network": "Red"
+  },
+  "home": {
     "get-started": "Comenzar",
-    "network": "Red",
     "page-title": "La seguridad de Bitcoin.<br />La agilidad de Ethereum.",
     "subtitle": "Todas las posibilidades dentro y más allá. Un mejor enfoque para la capa 2 de Ethereum con la red BVM.",
     "tunnel-and-swap": "Túnel e Intercambio"
+  },
+  "network": {
+    "amount-of-tokens": "{amount} {symbol} tokens",
+    "automatic": "Automático",
+    "claim-my-tokens": "Reclamar mis tokens",
+    "configure-sepolia-testnet": "Configurar la red de prueba Sepolia",
+    "dive-into-docs": "Sumergirse en la documentación de Hemi",
+    "dive-into-architecture": "Sumergirse em la arquitectura de Hemi",
+    "documentation": "Documentación",
+    "learn": "Aprender",
+    "learn-with-tutorials": "Póngase al dia con nuestros tutoriales",
+    "manual": "Manual",
+    "page-subtitle": "¡Comience con nuestra red de prueba ahora!",
+    "page-title": "Añadir la red Hemi",
+    "technology": "Tecnología",
+    "tunnel-and-swap-description": "Tunnel and swap into Hemi network",
+    "welcome-pack-description": "Le enviaremos un email para reclamar sus tokens de bienvenida",
+    "your-quick-starter": "Comienzo rápido",
+    "your-welcome-pack": "Su pack de bienvenida"
   }
 }

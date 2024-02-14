@@ -6,27 +6,30 @@ import Link from 'next-intl/link'
 const Home = function () {
   const t = useTranslations('home')
 
+  const linksCommonCss =
+    'w-full rounded-xl px-7 py-3 font-semibold text-center text-xs sm:text-base md:w-auto cursor-pointer'
+
   return (
-    <main className="flex-grow">
-      <section className="bg-triangles-pattern flex h-full flex-col items-center gap-y-5 rounded-3xl bg-cover px-2 sm:px-5 2xl:px-8">
+    <main className="h-fit-rest-screen-mobile md:h-fit-rest-screen-desktop md:pb-11">
+      <section className="bg-triangles-pattern flex h-full flex-col items-center gap-y-5 rounded-3xl bg-cover px-4 pb-10 pt-12 sm:px-5 md:pt-24 2xl:px-8">
         <h1
-          className="font-right-grotesk mt-14 flex text-left text-2xl font-black uppercase text-[#F3EDE4] sm:text-4xl md:text-center xl:text-6xl 2xl:text-8xl"
+          className="font-right-grotesk flex text-left text-5xl font-black uppercase leading-[64px] text-[#F3EDE4] md:text-center lg:text-6xl xl:text-8xl"
           dangerouslySetInnerHTML={{ __html: t.raw('page-title') }}
         />
         <p
-          className="text-left text-sm font-normal text-white md:text-center 2xl:text-xl"
+          className="text-left text-base font-normal leading-7 text-white md:text-center 2xl:text-xl"
           dangerouslySetInnerHTML={{ __html: t.raw('subtitle') }}
         ></p>
-        <div className="mt-12 flex w-full flex-col gap-x-4 gap-y-4 md:flex-row md:justify-center">
+        <div className="mt-auto flex w-full flex-col gap-x-4 gap-y-4 md:mt-14 md:flex-row md:justify-center">
           <Link
-            className='md:w-auto" w-full rounded-xl bg-blue-500 px-7 py-[13px] text-center text-xs font-semibold text-white sm:text-base'
+            className={`${linksCommonCss} bg-blue-500 text-white`}
             href="/network"
           >
             {t('get-started')}
           </Link>
-          <button className="w-full rounded-xl bg-white px-7 py-[13px] text-xs font-semibold text-teal-900 sm:text-base md:w-auto">
+          <a className={`${linksCommonCss} bg-white text-teal-900`}>
             {t('tunnel-and-swap')}
-          </button>
+          </a>
         </div>
       </section>
     </main>

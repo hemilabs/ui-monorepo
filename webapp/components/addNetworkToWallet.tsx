@@ -1,12 +1,14 @@
 'use client'
 
 import { hemi } from 'app/networks'
+import { useTranslations } from 'next-intl'
 import { useAccount, useSwitchNetwork, useNetwork } from 'wagmi'
 
 export function AddNetworkToWallet() {
   const { isConnected } = useAccount()
   const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
+  const t = useTranslations()
 
   if (!isConnected || chain.id === hemi.id) {
     return null
@@ -20,7 +22,7 @@ export function AddNetworkToWallet() {
     >
       <div className="bg-hemi-gradient mr-2 h-8 w-8 rounded-full"></div>
       <p className="mr-auto text-base text-black">
-        Add HEMI Network to your wallet
+        {t('common.add-hemi-to-wallet')}
       </p>
       <svg
         fill="none"

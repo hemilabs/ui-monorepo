@@ -10,6 +10,8 @@
     "tunnel-and-swap": "Tunnel & Swap"
   },
   "network": {
+    "added": "Added",
+    "add-to-wallet": "Add to wallet",
     "amount-of-tokens": "{amount} {symbol} tokens",
     "automatic": "Automatic",
     "block-explorer-url": "Block explorer URL",
@@ -20,6 +22,7 @@
     "dive-into-docs": "Dive into Hemi documentation",
     "dive-into-architecture": "Dive into Hemi architecture",
     "documentation": "Documentation",
+    "layer": "Layer {layer}",
     "learn": "Learn",
     "learn-with-tutorials": "Get up to speed with our tutorials",
     "manual": "Manual",
@@ -28,6 +31,7 @@
     "page-title": "Add Hemi network",
     "rpc-url": "RPC URL",
     "technology": "Technology",
+    "troubleshoot-other-errors": "Having issues? Troubleshoot other common errors here",
     "tunnel-and-swap-description": "Tunnel and swap into Hemi network",
     "welcome-pack-description": "We will send you an email to claim your welcome pack tokens",
     "your-quick-starter": "Your quick starter",

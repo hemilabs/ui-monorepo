@@ -1,9 +1,11 @@
 import 'styles/globals.css'
+import '@rainbow-me/rainbowkit/styles.css'
 
 import { locales, type Locale } from 'app/i18n'
 import { bricolageGrotesque, inter } from 'fonts'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
+import { WalletContext } from 'ui-common/components/walletContext'
 
 import { Header } from './header'
 
@@ -34,8 +36,10 @@ export default async function RootLayout({
         className={`font-inter flex w-full flex-col py-7 ${bricolageGrotesque.variable} ${inter.className} bg-zinc-100 px-4 sm:mx-auto sm:w-4/5 lg:w-3/4 xl:w-5/6 2xl:max-w-[1500px]`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <Header />
-          <div className="mt-6">{children}</div>
+          <WalletContext locale={locale}>
+            <Header />
+            <div className="mt-6">{children}</div>
+          </WalletContext>
         </NextIntlClientProvider>
       </body>
     </html>

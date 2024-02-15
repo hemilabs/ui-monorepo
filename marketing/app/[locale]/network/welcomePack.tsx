@@ -8,6 +8,7 @@ const giveAwayTokens = [
   {
     amount: 200,
     icon: (
+      // https://github.com/BVM-priv/ui-monorepo/issues/63
       <div className="h-6 w-6 rounded-full bg-gradient-to-r from-red-400 to-indigo-500" />
     ),
     symbol: 'HEMI',

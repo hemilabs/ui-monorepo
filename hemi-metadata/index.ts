@@ -1,6 +1,8 @@
 import { Chain } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains'
 
+const testnet = (process.env.NEXT_PUBLIC_TESTNET_MODE ?? 'false') === 'true'
+
 // These values will change once migrated to Hemi network
 const hemiTestnet: Chain = {
   blockExplorers: {
@@ -26,7 +28,7 @@ const hemiTestnet: Chain = {
       http: ['http://216.219.89.253:18546'],
     },
   },
-  testnet: process.env.NEXT_PUBLIC_TESTNET_MODE === 'true',
+  testnet,
 }
 
 // Currently, there's no data for mainnet, so let's copy the testnet data
@@ -36,13 +38,8 @@ const hemiMainnet: Chain = {
   ...hemiTestnet,
 }
 
-export const hemi =
-  (process.env.NEXT_PUBLIC_TESTNET_MODE ?? 'false') === 'true'
-    ? hemiTestnet
-    : hemiMainnet
+export const hemi = testnet ? hemiTestnet : hemiMainnet
 
-const testnetMode = process.env.NEXT_PUBLIC_TESTNET_MODE === 'true'
-
-export const bridgeableNetworks = testnetMode ? [sepolia] : [mainnet]
+export const bridgeableNetworks = testnet ? [sepolia] : [mainnet]
 
 export const networks = [hemi, ...bridgeableNetworks]

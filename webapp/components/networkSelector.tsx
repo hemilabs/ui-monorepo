@@ -36,7 +36,7 @@ export const NetworkSelector = function ({
     onSelectNetwork(id)
   }
 
-  // TODO update with image from network
+  // TODO https://github.com/BVM-priv/ui-monorepo/issues/63
   const Logo = () => <div className="bg-hemi-gradient h-6 w-6 rounded-full" />
 
   const commonCss = 'flex items-center rounded-xl bg-zinc-50 p-2 gap-x-2'

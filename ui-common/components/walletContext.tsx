@@ -1,9 +1,5 @@
 'use client'
 
-import 'styles/globals.css'
-
-import '@rainbow-me/rainbowkit/styles.css'
-
 import {
   connectorsForWallets,
   RainbowKitProvider,
@@ -12,7 +8,6 @@ import {
 } from '@rainbow-me/rainbowkit'
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
 import { networks } from 'hemi-metadata'
-import { useLocale } from 'next-intl'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { publicProvider } from 'wagmi/providers/public'
 
@@ -34,23 +29,21 @@ const wagmiConfig = createConfig({
   publicClient,
 })
 
-type WalletContextProps = {
+type Props = {
   children: React.ReactNode
+  locale: Locale
 }
 
-export const WalletContext = function ({ children }: WalletContextProps) {
-  const locale = useLocale()
-  return (
-    <WagmiConfig config={wagmiConfig}>
-      <RainbowKitProvider
-        chains={chains}
-        locale={locale as Locale}
-        theme={lightTheme({
-          accentColor: 'black',
-        })}
-      >
-        {children}
-      </RainbowKitProvider>
-    </WagmiConfig>
-  )
-}
+export const WalletContext = ({ children, locale }: Props) => (
+  <WagmiConfig config={wagmiConfig}>
+    <RainbowKitProvider
+      chains={chains}
+      locale={locale as Locale}
+      theme={lightTheme({
+        accentColor: 'black',
+      })}
+    >
+      {children}
+    </RainbowKitProvider>
+  </WagmiConfig>
+)

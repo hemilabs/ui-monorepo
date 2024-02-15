@@ -1,4 +1,4 @@
-import { hemi, bridgeableNetworks } from 'app/networks'
+import { hemi, bridgeableNetworks } from 'hemi-metadata'
 import { useReducer } from 'react'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'

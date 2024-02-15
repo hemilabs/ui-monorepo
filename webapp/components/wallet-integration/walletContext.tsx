@@ -11,7 +11,7 @@ import {
   type Locale,
 } from '@rainbow-me/rainbowkit'
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
-import { networks } from 'app/networks'
+import { networks } from 'hemi-metadata'
 import { useLocale } from 'next-intl'
 import { configureChains, createConfig, WagmiConfig } from 'wagmi'
 import { publicProvider } from 'wagmi/providers/public'

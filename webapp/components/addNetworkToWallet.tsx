@@ -1,6 +1,6 @@
 'use client'
 
-import { hemi } from 'app/networks'
+import { hemi } from 'hemi-metadata'
 import { useTranslations } from 'next-intl'
 import { useAccount, useSwitchNetwork, useNetwork } from 'wagmi'
 
@@ -17,7 +17,7 @@ export function AddNetworkToWallet() {
   return (
     <button
       className="flex w-full cursor-pointer items-center rounded-xl bg-white px-6 py-4"
-      onClick={() => switchNetwork(parseInt(process.env.NEXT_PUBLIC_CHAIN_ID))}
+      onClick={() => switchNetwork(hemi.id)}
       type="button"
     >
       <div className="bg-hemi-gradient mr-2 h-8 w-8 rounded-full"></div>

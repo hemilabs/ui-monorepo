@@ -1,5 +1,5 @@
 import { type CrossChainMessenger as CrossChainMessengerType } from '@eth-optimism/sdk'
-import { hemi } from 'app/networks'
+import { hemi } from 'hemi-metadata'
 import {
   type Provider,
   useJsonRpcProvider,

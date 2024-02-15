@@ -1,7 +1,7 @@
 'use client'
 
 import { TokenSelector } from 'app/components/TokenSelector'
-import { hemi, networks } from 'app/networks'
+import { hemi, networks } from 'hemi-metadata'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'

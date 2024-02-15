@@ -1,0 +1,16 @@
+{
+  "name": "hemi-metadata",
+  "version": "1.0.0",
+  "description": "Tiny package containing the configuration of enabled networks for the Hemi pages",
+  "main": "index.js",
+  "scripts": {
+    "tsc:check": "tsc"
+  },
+  "peerDependencies": {
+    "viem": "^1.0.0",
+    "wagmi": "^1.4.0"
+  },
+  "devDependencies": {
+    "wagmi": "1.4.13"
+  }
+}

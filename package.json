@@ -191,9 +191,5 @@
     "plugins": [
       "prettier-plugin-tailwindcss"
     ]
-  },
-  "dependencies": {
-    "hemi-metadata": "1.0.0",
-    "webapp": "0.0.2"
   }
 }

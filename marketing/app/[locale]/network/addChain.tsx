@@ -36,7 +36,7 @@ export const AddChain = function ({ chain }: Props) {
   return (
     <>
       {!isConnected && <ConnectButton />}
-      {!isChainAdded && !connectedToChain && (
+      {!isChainAdded && isConnected && !connectedToChain && (
         <Button
           disabled={status === 'loading'}
           onClick={() => addChain()}

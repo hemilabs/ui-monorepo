@@ -14,7 +14,7 @@ const tokens: Token[] = [
     extensions: {
       bridgeInfo: {
         [hemi.id]: {
-          tokenAddress: '0x97942656B0EfC2555155cEA70Cb3C716C33EcF70',
+          tokenAddress: '0x7c0d8ddd8e736fb22f2acd3c12502c8c49737237',
         },
       },
     },
@@ -24,23 +24,7 @@ const tokens: Token[] = [
     symbol: 'DAI',
   },
   {
-    address: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
-    chainId: sepolia.id,
-    decimals: 6,
-    extensions: {
-      bridgeInfo: {
-        [hemi.id]: {
-          tokenAddress: '0x221f3Ea46017307daCaf669F38529223B08f3178',
-        },
-      },
-    },
-    logoURI:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
-    name: 'USDT',
-    symbol: 'USDT',
-  },
-  {
-    address: '0x97942656B0EfC2555155cEA70Cb3C716C33EcF70',
+    address: '7c0d8ddd8e736fb22f2acd3c12502c8c49737237',
     chainId: hemi.id,
     decimals: 18,
     extensions: {
@@ -54,22 +38,6 @@ const tokens: Token[] = [
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
     name: 'Tunneled DAI',
     symbol: 'tDAI',
-  },
-  {
-    address: '0x221f3Ea46017307daCaf669F38529223B08f3178',
-    chainId: hemi.id,
-    decimals: 6,
-    extensions: {
-      bridgeInfo: {
-        [sepolia.id]: {
-          tokenAddress: '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
-        },
-      },
-    },
-    logoURI:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
-    name: 'Tunneled USDT',
-    symbol: 'tUSDT',
   },
 ]
 

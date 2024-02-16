@@ -2,7 +2,13 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { Button } from 'ui-common/components/button'
-import { useAccount, useWalletClient, type Chain } from 'wagmi'
+import {
+  useAccount,
+  useWalletClient,
+  type Chain,
+  useMutation,
+  useNetwork,
+} from 'wagmi'
 
 type Props = {
   chain: Chain
@@ -15,19 +21,32 @@ export const AddChain = function ({ chain }: Props) {
 
   const { isConnected } = useAccount()
   const { data: walletClient } = useWalletClient()
+  const { chain: connectedChain } = useNetwork()
 
-  const addChain = () =>
-    walletClient?.addChain({ chain }).then(() => setIsChainAdded(true))
+  const { status, mutate: addChain } = useMutation({
+    mutationFn: () => walletClient?.addChain({ chain }),
+    mutationKey: ['addChain', chain.id],
+    onSuccess: () => setIsChainAdded(true),
+  })
+
+  // can't use this as initial value for useState because value from wallet is not
+  // available in first render... and I'd rather not sync it with an effect
+  const connectedToChain = connectedChain?.id === chain.id
 
   return (
     <>
       {!isConnected && <ConnectButton />}
-      {isConnected && !isChainAdded && (
-        <Button onClick={addChain} size="small" type="button">
+      {!isChainAdded && !connectedToChain && (
+        <Button
+          disabled={status === 'loading'}
+          onClick={() => addChain()}
+          size="small"
+          type="button"
+        >
           {t('add-to-wallet')}
         </Button>
       )}
-      {isConnected && isChainAdded && (
+      {(isChainAdded || connectedToChain) && (
         <>
           <svg
             fill="none"

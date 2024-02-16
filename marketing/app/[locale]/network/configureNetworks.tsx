@@ -1,6 +1,6 @@
 'use client'
 
-import { bridgeableNetworks, hemi } from 'hemi-metadata'
+import { bridgeableNetworks, hemi } from 'app/networks'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'

@@ -1,7 +1,7 @@
 /* eslint-disable sort-keys */
 // example list for Token list - will probably need to be loaded from somewhere
 
-import { hemi } from 'hemi-metadata'
+import { hemi } from 'app/networks'
 import { Token } from 'types/token'
 import { sepolia } from 'wagmi/chains'
 

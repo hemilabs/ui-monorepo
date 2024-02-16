@@ -1,6 +1,6 @@
 'use client'
 
-import { hemi } from 'hemi-metadata'
+import { hemi } from 'app/networks'
 import { useTranslations } from 'next-intl'
 import { useAccount, useNetwork, useWalletClient } from 'wagmi'
 

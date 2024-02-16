@@ -3,6 +3,7 @@ import '@rainbow-me/rainbowkit/styles.css'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 import { locales, type Locale } from 'app/i18n'
+import { networks } from 'app/networks'
 import { Header } from 'components/header'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
@@ -37,7 +38,7 @@ export default async function RootLayout({
         className={`flex min-h-screen flex-col bg-neutral-100 ${bricolageGrotesque.variable} ${inter.className}`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <WalletContext locale={locale}>
+          <WalletContext networks={networks} locale={locale}>
             <Header />
             {children}
           </WalletContext>

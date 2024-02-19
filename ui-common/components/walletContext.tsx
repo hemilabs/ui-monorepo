@@ -20,7 +20,7 @@ type Props = {
 export const WalletContext = function ({ children, networks, locale }: Props) {
   const { chains, publicClient } = useMemo(
     () => configureChains(networks, [publicProvider()]),
-    networks,
+    [networks],
   )
 
   const connectors = connectorsForWallets([

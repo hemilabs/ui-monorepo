@@ -3,6 +3,7 @@ import '@rainbow-me/rainbowkit/styles.css'
 
 import { locales, type Locale } from 'app/i18n'
 import { networks } from 'app/networks'
+import { RecaptchaContext } from 'app/recaptcha'
 import { bricolageGrotesque, inter } from 'fonts'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
@@ -37,13 +38,15 @@ export default async function RootLayout({
         className={`font-inter flex flex-col py-7 ${bricolageGrotesque.variable} ${inter.className} bg-zinc-100`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <WalletContext networks={networks} locale={locale}>
-            {/* These styles can't be on body because they break with RainbowKit https://github.com/rainbow-me/rainbowkit/issues/609 */}
-            <div className="w-full px-4 sm:mx-auto sm:w-4/5 lg:w-3/4 xl:w-5/6 2xl:max-w-[1500px]">
-              <Header />
-              <div className="mt-6">{children}</div>
-            </div>
-          </WalletContext>
+          <RecaptchaContext>
+            <WalletContext locale={locale} networks={networks}>
+              {/* These styles can't be on body because they break with RainbowKit https://github.com/rainbow-me/rainbowkit/issues/609 */}
+              <div className="w-full px-4 sm:mx-auto sm:w-4/5 lg:w-3/4 xl:w-5/6 2xl:max-w-[1500px]">
+                <Header />
+                <div className="mt-6">{children}</div>
+              </div>
+            </WalletContext>
+          </RecaptchaContext>
         </NextIntlClientProvider>
       </body>
     </html>

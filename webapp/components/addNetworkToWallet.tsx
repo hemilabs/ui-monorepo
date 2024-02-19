@@ -2,22 +2,22 @@
 
 import { hemi } from 'app/networks'
 import { useTranslations } from 'next-intl'
-import { useAccount, useSwitchNetwork, useNetwork } from 'wagmi'
+import { useAccount, useNetwork, useWalletClient } from 'wagmi'
 
 export function AddNetworkToWallet() {
   const { isConnected } = useAccount()
   const { chain } = useNetwork()
-  const { switchNetwork } = useSwitchNetwork()
   const t = useTranslations()
+  const { data: walletClient, status } = useWalletClient()
 
-  if (!isConnected || chain.id === hemi.id) {
+  if (!isConnected || chain.id === hemi.id || status !== 'success') {
     return null
   }
 
   return (
     <button
       className="flex w-full cursor-pointer items-center rounded-xl bg-white px-6 py-4"
-      onClick={() => switchNetwork(parseInt(process.env.NEXT_PUBLIC_CHAIN_ID))}
+      onClick={() => walletClient.addChain({ chain: hemi })}
       type="button"
     >
       <div className="bg-hemi-gradient mr-2 h-8 w-8 rounded-full"></div>

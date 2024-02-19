@@ -23,6 +23,15 @@ const config: Config = {
         // same as above, but header is now 32px
         'fit-rest-screen-mobile': 'calc(100vh - 32px - 24px - 28px - 28px)',
       },
+      // Tailwind order-x classes go up to 12 - https://tailwindcss.com/docs/order
+      order: {
+        '13': '13',
+        '14': '14',
+        '15': '15',
+        '16': '16',
+        '17': '17',
+        '18': '18',
+      },
     },
   },
 }

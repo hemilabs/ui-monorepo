@@ -116,10 +116,9 @@ export const WelcomePack = function () {
   const { isLoading: isClaiming, mutate: claimTokens } = useMutation({
     mutationFn: async function claimTokens() {
       // TODO use the recaptcha token response once the backend is ready
-      await executeRecaptcha('claim_tokens')
-      // TODO we should get the IP and check for VPN cleanliness
-      // TODO we should store the
+      // and check the IP for VPN cleanliness
       // See https://github.com/BVM-priv/ui-monorepo/issues/45
+      await executeRecaptcha('claim_tokens')
       // using fake request for now
       return new Promise(resolve => setTimeout(resolve, 4000))
     },

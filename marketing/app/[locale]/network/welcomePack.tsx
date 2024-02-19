@@ -1,8 +1,12 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-import { FormEvent } from 'react'
+import { useLocale, useTranslations } from 'next-intl'
+import { useReCaptcha } from 'next-recaptcha-v3'
+import { FormEvent, useState } from 'react'
 import { Button } from 'ui-common/components/button'
+import { useMutation } from 'wagmi'
+
+const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 const giveAwayTokens = [
   {
@@ -38,38 +42,184 @@ const giveAwayTokens = [
 ]
 
 const CoinRow = ({ icon, text }: { icon: React.ReactNode; text: string }) => (
-  <div className="flex items-center gap-x-2 py-3">
+  <div className="flex items-center gap-x-2 py-3 text-sm ">
     {icon}
     <p>{text}</p>
   </div>
 )
 
+const EmailIcon = () => (
+  <svg fill="none" height={25} width={24} xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M21 4.542H3a.75.75 0 0 0-.75.75v12.75a1.5 1.5 0 0 0 1.5 1.5h16.5a1.5 1.5 0 0 0 1.5-1.5V5.292a.75.75 0 0 0-.75-.75Zm-9 7.983L4.928 6.042h14.144L12 12.525Zm-2.746-.483L3.75 17.087V6.997l5.504 5.045Zm1.11 1.017 1.125 1.036a.75.75 0 0 0 1.014 0l1.125-1.036 5.438 4.983H4.928l5.436-4.983Zm4.382-1.017 5.504-5.045v10.09l-5.504-5.045Z"
+      fill="gray"
+    />
+  </svg>
+)
+
+const SuccessIcon = () => (
+  <svg fill="none" height={61} width={61} xmlns="http://www.w3.org/2000/svg">
+    <path
+      clipRule="evenodd"
+      d="M30.501 55.042c13.807 0 25-11.192 25-25 0-13.807-11.193-25-25-25s-25 11.193-25 25c0 13.808 11.193 25 25 25Zm11.48-31.348a1.875 1.875 0 0 0-2.96-2.303l-10.018 12.88a.625.625 0 0 1-.911.08l-6.337-5.702a1.875 1.875 0 0 0-2.508 2.787l6.336 5.703a4.375 4.375 0 0 0 6.38-.566l10.018-12.88Z"
+      fill="#01AE33"
+      fillRule="evenodd"
+    />
+  </svg>
+)
+
+const ResetIcon = () => (
+  <svg fill="none" height={25} width={24} xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M21 12.042a9 9 0 0 1-8.88 9H12a8.942 8.942 0 0 1-6.178-2.456.75.75 0 0 1 1.031-1.09 7.5 7.5 0 1 0-.18-10.738L4.18 9.042h2.57a.75.75 0 1 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 1 1 1.5 0v2.794l2.648-2.419A9 9 0 0 1 21 12.042Z"
+      fill="gray"
+    />
+  </svg>
+)
+
+const SuccessMessage = function ({ setTryAgain }: { setTryAgain: () => void }) {
+  const t = useTranslations('network')
+  return (
+    <div className="flex flex-col items-center justify-center gap-y-2 rounded-lg bg-zinc-50 p-6">
+      <SuccessIcon />
+      <div className="flex items-center gap-x-1">
+        <EmailIcon />
+        <p className="text-xs text-black">{t('magic-link-in-your-email')}</p>
+      </div>
+      <div className="flex items-center gap-x-1">
+        <ResetIcon />
+        <p className="text-xs text-black">
+          {t.rich('did-not-receive-try-again', {
+            button: (chunk: string) => (
+              <button className="font-semibold underline" onClick={setTryAgain}>
+                {chunk}
+              </button>
+            ),
+          })}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export const WelcomePack = function () {
+  const locale = useLocale()
   const t = useTranslations()
 
-  const claimTokens = function (e: FormEvent) {
+  const { executeRecaptcha, loaded: recaptchaLoaded } = useReCaptcha()
+
+  const [email, setEmail] = useState('')
+  const [receiveUpdates, setReceiveUpdates] = useState(false)
+
+  const [emailSent, setEmailSent] = useState(false)
+
+  const { isLoading: isClaiming, mutate: claimTokens } = useMutation({
+    mutationFn: async function claimTokens() {
+      // TODO use the recaptcha token response once the backend is ready
+      await executeRecaptcha('claim_tokens')
+      // TODO we should get the IP and check for VPN cleanliness
+      // TODO we should store the
+      // See https://github.com/BVM-priv/ui-monorepo/issues/45
+      // using fake request for now
+      return new Promise(resolve => setTimeout(resolve, 4000))
+    },
+    onSuccess() {
+      setEmailSent(true)
+    },
+  })
+
+  const canClaim = !isClaiming && recaptchaLoaded && EmailRegex.test(email)
+
+  const handleSubmit = function (e: FormEvent) {
     e.preventDefault()
-    // TODO https://github.com/BVM-priv/ui-monorepo/issues/45
+    if (!canClaim) {
+      return
+    }
+    claimTokens()
   }
+
+  const onTryAgain = function () {
+    setEmailSent(false)
+    setEmail('')
+  }
+
+  const linksCss =
+    'cursor-pointer underline text-blue-600 hover:text-blue-800 visited:text-purple-600'
+
   return (
     <>
       <h4 className="text-xl font-medium">{t('network.your-welcome-pack')}</h4>
-      <p className="pt-3 text-sm text-neutral-400">
-        {t('network.welcome-pack-description')}
-      </p>
-      {giveAwayTokens.map(({ amount, icon, symbol }) => (
-        <CoinRow
-          icon={icon}
-          key={symbol}
-          text={t('network.amount-of-tokens', {
-            amount,
-            symbol,
-          })}
-        />
-      ))}
-      <form onSubmit={claimTokens}>
-        <Button type="submit">{t('network.claim-my-tokens')}</Button>
-      </form>
+      {!emailSent && (
+        <>
+          <p className="pt-3 text-sm text-neutral-400">
+            {t('network.welcome-pack-description')}
+          </p>
+          {giveAwayTokens.map(({ amount, icon, symbol }) => (
+            <CoinRow
+              icon={icon}
+              key={symbol}
+              text={t('network.amount-of-tokens', {
+                amount,
+                symbol,
+              })}
+            />
+          ))}
+          <form className="flex flex-col gap-y-3" onSubmit={handleSubmit}>
+            <input
+              className="w-full rounded-xl bg-zinc-50 px-7 py-4 text-sm font-medium text-black"
+              onChange={e => setEmail(e.target.value)}
+              placeholder="email@mail.com"
+              type="email"
+              value={email}
+            />
+            <div className="flex items-center gap-x-2">
+              <input
+                checked={receiveUpdates}
+                className="cursor-pointer border-gray-300 bg-gray-100 text-green-600 accent-green-600 focus:ring-2 focus:ring-green-600"
+                id="receive-updates-checkbox"
+                onChange={e => setReceiveUpdates(e.target.checked)}
+                placeholder={t('network.email-placeholder')}
+                type="checkbox"
+              />
+              <label
+                className="cursor-pointer text-xs text-zinc-500 "
+                htmlFor="receive-updates-checkbox"
+              >
+                {t('network.receive-updates')}
+              </label>
+            </div>
+            <Button disabled={!canClaim} type="submit">
+              {t(isClaiming ? 'network.claiming' : 'network.claim-my-tokens')}
+            </Button>
+            <div className="text-xs text-neutral-400">
+              {/* See https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed */}
+              {t.rich('network.recaptcha-terms-and-conditions', {
+                privacy: (chunk: string) => (
+                  <a
+                    className={linksCss}
+                    href={`https://policies.google.com/privacy?hl=${locale}`}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    {chunk}
+                  </a>
+                ),
+                terms: (chunk: string) => (
+                  <a
+                    className={linksCss}
+                    href={`https://policies.google.com/terms?hl=${locale}`}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    {chunk}
+                  </a>
+                ),
+              })}
+            </div>
+          </form>
+        </>
+      )}
+      {emailSent && <SuccessMessage setTryAgain={onTryAgain} />}
     </>
   )
 }

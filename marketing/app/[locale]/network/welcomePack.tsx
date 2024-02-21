@@ -1,5 +1,6 @@
 'use client'
 
+import fetch from 'fetch-plus-plus'
 import { useLocale, useTranslations } from 'next-intl'
 import { useReCaptcha } from 'next-recaptcha-v3'
 import { FormEvent, useState } from 'react'
@@ -57,6 +58,18 @@ const EmailIcon = () => (
   </svg>
 )
 
+const ErrorIcon = () => (
+  <svg height={61} width={61} xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M30.469 0C47.297 0 60.94 13.64 60.94 30.469c0 16.828-13.644 30.472-30.472 30.472C13.64 60.941 0 47.297 0 30.47 0 13.64 13.64 0 30.469 0Zm5.957 19.418a3.476 3.476 0 0 1 4.953-.016 3.564 3.564 0 0 1 .016 5l-5.985 6.07 5.988 6.075c1.356 1.375 1.332 3.598-.039 4.973-1.375 1.37-3.586 1.367-4.937-.008l-5.95-6.032-5.96 6.043a3.47 3.47 0 0 1-4.95.012 3.56 3.56 0 0 1-.015-5l5.984-6.066-5.988-6.078c-1.355-1.371-1.336-3.598.039-4.97 1.375-1.37 3.586-1.366 4.938.009l5.949 6.03Zm0 0"
+      fill="#ff4141"
+      fillOpacity={1}
+      fillRule="evenodd"
+      stroke="none"
+    />
+  </svg>
+)
+
 const SuccessIcon = () => (
   <svg fill="none" height={61} width={61} xmlns="http://www.w3.org/2000/svg">
     <path
@@ -77,30 +90,20 @@ const ResetIcon = () => (
   </svg>
 )
 
-const SuccessMessage = function ({ setTryAgain }: { setTryAgain: () => void }) {
-  const t = useTranslations('network')
-  return (
-    <div className="flex flex-col items-center justify-center gap-y-2 rounded-lg bg-zinc-50 p-6">
-      <SuccessIcon />
-      <div className="flex items-center gap-x-1">
-        <EmailIcon />
-        <p className="text-xs text-black">{t('magic-link-in-your-email')}</p>
-      </div>
-      <div className="flex items-center gap-x-1">
-        <ResetIcon />
-        <p className="text-xs text-black">
-          {t.rich('did-not-receive-try-again', {
-            button: (chunk: string) => (
-              <button className="font-semibold underline" onClick={setTryAgain}>
-                {chunk}
-              </button>
-            ),
-          })}
-        </p>
-      </div>
-    </div>
-  )
-}
+const PostClaimMessage = ({
+  description,
+  icon,
+}: {
+  icon: React.ReactNode
+  description: React.ReactNode
+}) => (
+  <div className="mt-4 flex flex-col items-center justify-center gap-y-3 rounded-lg bg-zinc-50 p-6">
+    {icon}
+    {description}
+  </div>
+)
+
+type EmailState = 'initial' | 'sent' | 'failed'
 
 export const WelcomePack = function () {
   const locale = useLocale()
@@ -111,19 +114,32 @@ export const WelcomePack = function () {
   const [email, setEmail] = useState('')
   const [receiveUpdates, setReceiveUpdates] = useState(false)
 
-  const [emailSent, setEmailSent] = useState(false)
+  const [emailState, setEmailState] = useState<EmailState>('initial')
 
-  const { isLoading: isClaiming, mutate: claimTokens } = useMutation({
-    mutationFn: async function claimTokens() {
-      // TODO use the recaptcha token response once the backend is ready
-      // and check the IP for VPN cleanliness
-      // See https://github.com/BVM-priv/ui-monorepo/issues/45
-      await executeRecaptcha('claim_tokens')
-      // using fake request for now
-      return new Promise(resolve => setTimeout(resolve, 4000))
+  const { isLoading: isClaiming, mutate: claimTokens } = useMutation<
+    void,
+    Error,
+    { email: string; receiveUpdates: boolean }
+  >({
+    mutationFn: async function claimTokens(body) {
+      const token = await executeRecaptcha('claim_tokens')
+
+      return fetch(`${process.env.NEXT_PUBLIC_CLAIM_TOKENS_URL}/claim`, {
+        body: JSON.stringify({
+          ...body,
+          token,
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+      })
+    },
+    onError() {
+      setEmailState('failed')
     },
     onSuccess() {
-      setEmailSent(true)
+      setEmailState('sent')
     },
   })
 
@@ -134,11 +150,11 @@ export const WelcomePack = function () {
     if (!canClaim) {
       return
     }
-    claimTokens()
+    claimTokens({ email, receiveUpdates })
   }
 
   const onTryAgain = function () {
-    setEmailSent(false)
+    setEmailState('initial')
     setEmail('')
   }
 
@@ -147,8 +163,10 @@ export const WelcomePack = function () {
 
   return (
     <>
-      <h4 className="text-xl font-medium">{t('network.your-welcome-pack')}</h4>
-      {!emailSent && (
+      <h4 className="w-full text-xl font-medium">
+        {t('network.your-welcome-pack')}
+      </h4>
+      {emailState === 'initial' && (
         <>
           <p className="pt-3 text-sm text-neutral-400">
             {t('network.welcome-pack-description')}
@@ -218,7 +236,64 @@ export const WelcomePack = function () {
           </form>
         </>
       )}
-      {emailSent && <SuccessMessage setTryAgain={onTryAgain} />}
+      {emailState === 'sent' && (
+        <PostClaimMessage
+          description={
+            <>
+              <div className="flex items-center gap-x-2">
+                <div className="min-w-6">
+                  <EmailIcon />
+                </div>
+                <p className="text-xs text-black">
+                  {t('network.magic-link-in-your-email')}
+                </p>
+              </div>
+              <div className="flex items-center gap-x-2">
+                <div className="min-w-6">
+                  <ResetIcon />
+                </div>
+                <p className="text-xs text-black">
+                  {t.rich('network.did-not-receive-try-again', {
+                    button: (chunk: string) => (
+                      <button
+                        className="font-semibold underline"
+                        onClick={onTryAgain}
+                      >
+                        {chunk}
+                      </button>
+                    ),
+                  })}
+                </p>
+              </div>
+            </>
+          }
+          icon={<SuccessIcon />}
+        />
+      )}
+      {emailState === 'failed' && (
+        <PostClaimMessage
+          description={
+            <div className="flex items-center gap-x-2">
+              <div className="min-w-6">
+                <ResetIcon />
+              </div>
+              <p className="flex-shrink text-xs text-black">
+                {t.rich('network.email-failed', {
+                  button: (chunk: string) => (
+                    <button
+                      className="font-semibold underline"
+                      onClick={onTryAgain}
+                    >
+                      {chunk}
+                    </button>
+                  ),
+                })}
+              </p>
+            </div>
+          }
+          icon={<ErrorIcon />}
+        />
+      )}
     </>
   )
 }

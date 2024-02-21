@@ -25,7 +25,7 @@ const NetworkPage = function () {
             </Suspense>
           </Card>
         </div>
-        <div>
+        <div className="md:basis-1/3">
           <Card>
             <WelcomePack />
           </Card>

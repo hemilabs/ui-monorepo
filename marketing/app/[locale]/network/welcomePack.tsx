@@ -7,6 +7,7 @@ import { FormEvent, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { useMutation } from 'wagmi'
 
+const DiscordInviteLink = 'https://discord.com/invite/2DnVTugBf2'
 const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 const giveAwayTokens = [
@@ -49,6 +50,28 @@ const CoinRow = ({ icon, text }: { icon: React.ReactNode; text: string }) => (
   </div>
 )
 
+const DiscordIcon = () => (
+  <svg
+    className="inline"
+    fill="none"
+    height={17}
+    width={17}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <g clipPath="url(#path)">
+      <path
+        d="M14.045 3.27a13.195 13.195 0 0 0-3.257-1.01.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.181 12.181 0 0 0-3.658 0 8.426 8.426 0 0 0-.412-.833.051.051 0 0 0-.052-.025 13.158 13.158 0 0 0-3.257 1.01.047.047 0 0 0-.021.019C.856 6.388.287 9.41.566 12.396c.001.014.01.028.02.037a13.266 13.266 0 0 0 3.996 2.02.052.052 0 0 0 .056-.019 9.48 9.48 0 0 0 .818-1.33.05.05 0 0 0-.028-.07 8.746 8.746 0 0 1-1.248-.594.051.051 0 0 1-.005-.085c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007c.08.066.164.132.248.194a.051.051 0 0 1-.004.086c-.399.233-.813.43-1.249.594a.051.051 0 0 0-.027.07c.24.466.514.91.817 1.33a.05.05 0 0 0 .056.019 13.222 13.222 0 0 0 4.001-2.02.051.051 0 0 0 .021-.037c.334-3.45-.559-6.449-2.366-9.106a.04.04 0 0 0-.02-.02Zm-8.198 7.308c-.789 0-1.438-.724-1.438-1.613 0-.888.637-1.612 1.438-1.612.807 0 1.45.73 1.438 1.612 0 .89-.637 1.613-1.438 1.613Zm5.316 0c-.788 0-1.438-.724-1.438-1.613 0-.888.637-1.612 1.438-1.612.807 0 1.45.73 1.438 1.612 0 .89-.63 1.613-1.438 1.613Z"
+        fill="#1A1A1A"
+      />
+    </g>
+    <defs>
+      <clipPath id="path">
+        <path d="M.5.5h16v16H.5z" fill="#fff" />
+      </clipPath>
+    </defs>
+  </svg>
+)
+
 const EmailIcon = () => (
   <svg fill="none" height={25} width={24} xmlns="http://www.w3.org/2000/svg">
     <path
@@ -59,13 +82,10 @@ const EmailIcon = () => (
 )
 
 const ErrorIcon = () => (
-  <svg height={61} width={61} xmlns="http://www.w3.org/2000/svg">
+  <svg fill="none" height={60} width={60} xmlns="http://www.w3.org/2000/svg">
     <path
-      d="M30.469 0C47.297 0 60.94 13.64 60.94 30.469c0 16.828-13.644 30.472-30.472 30.472C13.64 60.941 0 47.297 0 30.47 0 13.64 13.64 0 30.469 0Zm5.957 19.418a3.476 3.476 0 0 1 4.953-.016 3.564 3.564 0 0 1 .016 5l-5.985 6.07 5.988 6.075c1.356 1.375 1.332 3.598-.039 4.973-1.375 1.37-3.586 1.367-4.937-.008l-5.95-6.032-5.96 6.043a3.47 3.47 0 0 1-4.95.012 3.56 3.56 0 0 1-.015-5l5.984-6.066-5.988-6.078c-1.355-1.371-1.336-3.598.039-4.97 1.375-1.37 3.586-1.366 4.938.009l5.949 6.03Zm0 0"
-      fill="#ff4141"
-      fillOpacity={1}
-      fillRule="evenodd"
-      stroke="none"
+      d="M30 49.167c10.924 0 19.888-8.984 19.888-19.908 0-10.904-8.983-19.888-19.888-19.888-10.924 0-19.888 8.984-19.888 19.888 0 10.924 8.983 19.908 19.888 19.908Zm0-4.954c-8.268 0-14.916-6.667-14.916-14.954 0-8.268 6.63-14.935 14.916-14.935A14.91 14.91 0 0 1 44.935 29.26 14.89 14.89 0 0 1 30 44.213Zm-5.8-7.138c.62 0 1.11-.188 1.506-.602L30 32.179l4.313 4.294c.395.395.885.602 1.488.602a2.002 2.002 0 0 0 2.034-2.034c0-.546-.226-1.035-.622-1.412L32.9 29.297l4.332-4.35c.396-.415.603-.886.603-1.413 0-1.149-.885-2.034-2.015-2.034-.603 0-1.074.188-1.488.603L30 26.416l-4.313-4.295c-.395-.414-.866-.602-1.488-.602-1.13 0-2.015.885-2.015 2.034 0 .527.207 1.017.603 1.393l4.331 4.351-4.331 4.332a1.938 1.938 0 0 0-.603 1.412c0 1.15.885 2.034 2.015 2.034Z"
+      fill="#C14D4F"
     />
   </svg>
 )
@@ -273,23 +293,29 @@ export const WelcomePack = function () {
       {emailState === 'failed' && (
         <PostClaimMessage
           description={
-            <div className="flex items-center gap-x-2">
-              <div className="min-w-6">
-                <ResetIcon />
-              </div>
-              <p className="flex-shrink text-xs text-black">
-                {t.rich('network.email-failed', {
-                  button: (chunk: string) => (
-                    <button
-                      className="font-semibold underline"
-                      onClick={onTryAgain}
-                    >
-                      {chunk}
-                    </button>
-                  ),
-                })}
-              </p>
-            </div>
+            <p className="flex-shrink text-xs text-black">
+              {t.rich('network.email-failed', {
+                button: (chunk: string) => (
+                  <button
+                    className="font-semibold underline"
+                    onClick={onTryAgain}
+                  >
+                    {chunk}
+                  </button>
+                ),
+                discord: () => <DiscordIcon />,
+                link: (chunk: string) => (
+                  <a
+                    className="cursor-pointer font-medium underline"
+                    href={DiscordInviteLink}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                  >
+                    {chunk}
+                  </a>
+                ),
+              })}
+            </p>
           }
           icon={<ErrorIcon />}
         />

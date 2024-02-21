@@ -24,7 +24,7 @@
     "dive-into-docs": "Dive into Hemi documentation",
     "dive-into-architecture": "Dive into Hemi architecture",
     "documentation": "Documentation",
-    "email-failed": "We were unable to complete your request. If you feel this was incorrect, please contact us or <button>try again</button>",
+    "email-failed": "We were unable to complete your request. If you feel this was incorrect, please <link>contact us</link> at discord <discord></discord> or <button>try again</button>",
     "email-placeholder": "youremail@mail.com",
     "layer": "Layer {layer}",
     "learn": "Learn",

@@ -1,0 +1,27 @@
+{
+  "name": "claim-tokens",
+  "version": "1.0.0",
+  "description": "Tiny microservice that validates recaptcha tokens for claiming tokens from the Welcome Pack",
+  "main": "index.js",
+  "scripts": {
+    "dev": "sls offline start"
+  },
+  "author": {
+    "email": "gonzalo@bloq.com",
+    "name": "Gonzalo D'Elia"
+  },
+  "devDependencies": {
+    "serverless": "3.38.0",
+    "serverless-offline": "13.3.3"
+  },
+  "dependencies": {
+    "@bloq/service-logger": "2.0.0",
+    "config": "3.3.11",
+    "fetch-plus-plus": "1.0.0",
+    "http-errors": "2.0.0",
+    "http-status-codes": "2.3.0"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

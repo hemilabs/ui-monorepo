@@ -1,0 +1,16 @@
+{
+  "ipQualityScore": {
+    "maxScore": 75,
+    "url": "https://www.ipqualityscore.com/api/json"
+  },
+  "logger": {
+    "Papertrail": {
+      "program": "hemi-claim-tokens-dev"
+    }
+  },
+  "recaptcha": {
+    "action": "claim_tokens",
+    "minScore": 0.6,
+    "url": "https://www.google.com/recaptcha/api"
+  }
+}

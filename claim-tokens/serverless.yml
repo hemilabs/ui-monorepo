@@ -1,4 +1,4 @@
-service: hemi-claim-tokens
+service: ${file(./package.json):name}
 
 useDotenv: true
 

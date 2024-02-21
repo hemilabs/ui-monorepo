@@ -4,7 +4,7 @@
 
 Run the following command so styles are auto-generated as you develop:
 
-```bash
+```sh
 npx tailwindcss -i globals.css -o app.css --watch
 ```
 

@@ -46,7 +46,9 @@ const parseBody = function (body) {
   try {
     return JSON.parse(body)
   } catch {
-    return undefined
+    throw new httpErrors.UnprocessableEntity(
+      'Invalid or malformed JSON was provided',
+    )
   }
 }
 
@@ -123,9 +125,12 @@ const verifyIP = publicIp =>
     logger.verbose('IP address verified correctly')
   })
 
-const claimTokens = async function ({ body, requestContext }) {
+const claimTokens = async function ({ body, headers, requestContext }) {
   logger.debug('Starting request to claim tokens')
-
+  const contentType = headers?.['Content-Type'] ?? headers?.['content-type']
+  if (!/^application\/(.+\+)?json($|;.+)/.test(contentType)) {
+    throw new httpErrors.UnsupportedMediaType('Unsupported Media Type')
+  }
   const parsedBody = parseBody(body)
   if (!parsedBody?.token) {
     logger.debug('Body sent is invalid')

@@ -6,29 +6,29 @@ custom:
   serverless-offline:
     httpPort: 4000
 
+functions:
+  claim-tokens:
+    environment:
+      IP_QUALITY_SCORE_SECRET_KEY: ${env:IP_QUALITY_SCORE_SECRET_KEY}
+      RECAPTCHA_SECRET_KEY: ${env:RECAPTCHA_SECRET_KEY}
+    events:
+      - http:
+          cors: true
+          method: post
+          path: /claim'
+    handler: ./index.post
+
 plugins:
   - serverless-offline
 
 provider:
-  name: 'aws'
-  stage: ${opt:stage,env:STAGE,'dev'}
-  region: ${opt:region,env:AWS_REGION,'eu-central-1'}
-  runtime: nodejs20.x
   environment:
     LOGGER_CONSOLE_LEVEL: ${env:LOGGER_CONSOLE_LEVEL,'debug'}
     LOGGER_PAPERTRAIL_HOST: ${env:LOGGER_PAPERTRAIL_HOST,''}
     LOGGER_PAPERTRAIL_LEVEL: ${env:LOGGER_PAPERTRAIL_LEVEL,'info'}
     LOGGER_PAPERTRAIL_PORT: ${env:LOGGER_PAPERTRAIL_PORT,''}
     LOGGER_PAPERTRAIL_PROGRAM: ${self:service}-${self:provider.stage}
-
-functions:
-  claim-tokens:
-    handler: ./index.post
-    environment:
-      IP_QUALITY_SCORE_SECRET_KEY: ${env:IP_QUALITY_SCORE_SECRET_KEY}
-      RECAPTCHA_SECRET_KEY: ${env:RECAPTCHA_SECRET_KEY}
-    events:
-      - http:
-          path: /claim
-          method: post
-          cors: true
+  name: 'aws'
+  region: ${opt:region,env:AWS_REGION,'eu-central-1'}
+  runtime: nodejs20.x
+  stage: ${opt:stage,env:STAGE,'dev'}

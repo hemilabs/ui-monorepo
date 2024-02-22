@@ -24,6 +24,7 @@
     "dive-into-docs": "Sumergirse en la documentación de Hemi",
     "dive-into-architecture": "Sumergirse en la arquitectura de Hemi",
     "documentation": "Documentación",
+    "email-failed": "No pudimos completar su solicitud. Si cree que esto fue un error, por favor <link>contáctenos</link> en Discord <discord></discord> o <button>inténtelo de nuevo</button>.",
     "email-placeholder": "suemail@mail.com",
     "layer": "Capa {layer}",
     "learn": "Aprender",

@@ -4,7 +4,7 @@
 
 Create a `.env.local` with the following configuration
 
-```bash
+```sh
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<recaptcha-v3-key>"
 ```
 
@@ -12,7 +12,7 @@ The recaptcha v3 key can be generated [in this page](https://www.google.com/reca
 
 ## Development
 
-```bash
+```sh
 npm run dev
 ```
 

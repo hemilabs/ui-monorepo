@@ -38,7 +38,7 @@ export default async function RootLayout({
         className={`flex min-h-screen flex-col bg-neutral-100 ${bricolageGrotesque.variable} ${inter.className}`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <WalletContext networks={networks} locale={locale}>
+          <WalletContext locale={locale} networks={networks}>
             <Header />
             {children}
           </WalletContext>

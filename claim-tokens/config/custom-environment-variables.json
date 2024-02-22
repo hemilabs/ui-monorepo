@@ -13,6 +13,9 @@
       "program": "LOGGER_PAPERTRAIL_PROGRAM"
     }
   },
+  "marketing": {
+    "url": "MARKETING_DOMAIN_URL"
+  },
   "recaptcha": {
     "secretKey": "RECAPTCHA_SECRET_KEY"
   }

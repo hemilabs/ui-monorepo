@@ -7,6 +7,11 @@ const { getReasonPhrase, StatusCodes } = require('http-status-codes')
 
 const { logger } = require('./logger')
 
+const headers = {
+  'Access-Control-Allow-Credentials': false,
+  'Access-Control-Allow-Origin': config.get('marketing.url'),
+}
+
 const errorResponse = ({ detail = '', status }) => ({
   body: JSON.stringify({
     detail: status >= StatusCodes.INTERNAL_SERVER_ERROR ? undefined : detail,
@@ -14,10 +19,12 @@ const errorResponse = ({ detail = '', status }) => ({
     title: getReasonPhrase(status),
     type: `https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/${status}`,
   }),
+  headers,
   statusCode: status,
 })
 
 const successResponse = () => ({
+  headers,
   statusCode: StatusCodes.NO_CONTENT,
 })
 
@@ -125,9 +132,14 @@ const verifyIP = publicIp =>
     logger.verbose('IP address verified correctly')
   })
 
-const claimTokens = async function ({ body, headers, requestContext }) {
+const claimTokens = async function ({
+  body,
+  headers: requestHeaders,
+  requestContext,
+}) {
   logger.debug('Starting request to claim tokens')
-  const contentType = headers?.['Content-Type'] ?? headers?.['content-type']
+  const contentType =
+    requestHeaders?.['Content-Type'] ?? requestHeaders?.['content-type']
   if (!/^application\/(.+\+)?json($|;.+)/.test(contentType)) {
     throw new httpErrors.UnsupportedMediaType('Unsupported Media Type')
   }
@@ -144,16 +156,17 @@ const claimTokens = async function ({ body, headers, requestContext }) {
     // TODO send email
     // TODO log the email+ip+timestamp
     logger.info('Email to claim tokens sent')
-    return successResponse()
   })
 }
 
 const post = event =>
-  claimTokens(event).catch(err =>
-    errorResponse({
-      detail: err?.message,
-      status: err?.status ?? StatusCodes.INTERNAL_SERVER_ERROR,
-    }),
-  )
+  claimTokens(event)
+    .then(successResponse)
+    .catch(err =>
+      errorResponse({
+        detail: err?.message,
+        status: err?.status ?? StatusCodes.INTERNAL_SERVER_ERROR,
+      }),
+    )
 
 module.exports = { post }

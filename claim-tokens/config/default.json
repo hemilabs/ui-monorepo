@@ -8,6 +8,9 @@
       "program": "hemi-claim-tokens-dev"
     }
   },
+  "marketing": {
+    "url": "http://127.0.0.1:3001"
+  },
   "recaptcha": {
     "action": "claim_tokens",
     "minScore": 0.6,

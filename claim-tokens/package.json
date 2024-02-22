@@ -4,7 +4,8 @@
   "description": "Tiny microservice that validates recaptcha tokens for claiming tokens from the Welcome Pack",
   "main": "index.js",
   "scripts": {
-    "dev": "sls offline start"
+    "dev": "sls offline start",
+    "deploy": "sls deploy"
   },
   "author": {
     "email": "gonzalo@bloq.com",

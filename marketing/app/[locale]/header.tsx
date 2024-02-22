@@ -1,5 +1,6 @@
 'use client'
 
+import { discordUrl, twitterUrl } from 'hemi-metadata/socials'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import { useState } from 'react'
@@ -72,13 +73,23 @@ export const Header = function () {
   )
 
   const discordLink = (
-    <a className="cursor-pointer">
+    <a
+      className="cursor-pointer"
+      href={discordUrl}
+      rel="noopener noreferrer"
+      target="_blank"
+    >
       <DiscordLogo />
     </a>
   )
 
   const XLink = (
-    <a className="cursor-pointer">
+    <a
+      className="cursor-pointer"
+      href={twitterUrl}
+      rel="noopener noreferrer"
+      target="_blank"
+    >
       <XLogo />
     </a>
   )

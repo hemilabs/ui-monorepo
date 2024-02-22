@@ -14,3 +14,11 @@ The name of the application. It is used to display the name of the application i
 #### NEXT_PUBLIC_RAINBOW_PROJECT_ID
 
 A Rainbow project ID. You can obtain it from [https://cloud.walletconnect.com/]
+
+## Deployment
+
+```bash
+cd webapp && npm run build
+```
+
+The .out folder's content should be deployed as a static page.

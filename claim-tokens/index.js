@@ -4,7 +4,11 @@ const config = require('config')
 const fetch = require('fetch-plus-plus')
 const httpErrors = require('http-errors')
 const { getReasonPhrase, StatusCodes } = require('http-status-codes')
+const pTap = require('p-tap')
 
+const { db, transactionProvider } = require('./db')
+const { createEmailRepository } = require('./db/emailSubmissions')
+const { createIpRepository } = require('./db/ipAccesses')
 const { logger } = require('./logger')
 
 const headers = {
@@ -12,16 +16,24 @@ const headers = {
   'Access-Control-Allow-Origin': config.get('marketing.url'),
 }
 
-const errorResponse = ({ detail = '', status }) => ({
-  body: JSON.stringify({
-    detail: status >= StatusCodes.INTERNAL_SERVER_ERROR ? undefined : detail,
-    status,
-    title: getReasonPhrase(status),
-    type: `https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/${status}`,
-  }),
-  headers,
-  statusCode: status,
-})
+const errorResponse = function (error) {
+  const { detail } = error
+  if (!error.status) {
+    // if status is not set, this is probably an unhandled error. Log it and return 500
+    logger.warn(detail)
+  }
+  const { status = StatusCodes.INTERNAL_SERVER_ERROR } = error
+  return {
+    body: JSON.stringify({
+      detail: status >= StatusCodes.INTERNAL_SERVER_ERROR ? undefined : detail,
+      status,
+      title: getReasonPhrase(status),
+      type: `https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/${status}`,
+    }),
+    headers,
+    statusCode: status,
+  }
+}
 
 const successResponse = () => ({
   headers,
@@ -58,6 +70,16 @@ const parseBody = function (body) {
     )
   }
 }
+
+const verifyEmail = email =>
+  createEmailRepository(db)
+    .isEmailSubmitted(email)
+    .then(function (submitted) {
+      if (submitted) {
+        logger.debug('Email already submitted for claiming before')
+        throw new httpErrors.Conflict('Email already submitted')
+      }
+    })
 
 const verifyRecaptcha = (token, userIp) =>
   fetchSiteVerify(token, userIp).then(function (response) {
@@ -109,11 +131,11 @@ const verifyRecaptcha = (token, userIp) =>
   })
 
 // See parameters and response in https://www.ipqualityscore.com/documentation/proxy-detection-api/overview
-const verifyIP = publicIp =>
+const verifyIpQualityScore = ip =>
   fetch(
     `${config.get('ipQualityScore.url')}/ip/${config.get(
       'ipQualityScore.secretKey',
-    )}/${publicIp}`,
+    )}/${ip}`,
     {
       queryString: {
         // eslint-disable-next-line camelcase
@@ -129,8 +151,56 @@ const verifyIP = publicIp =>
     ) {
       throw new httpErrors.Forbidden('Suspicious IP address')
     }
-    logger.verbose('IP address verified correctly')
+    logger.verbose('IP score verified correctly')
   })
+
+const verifyIP = ip =>
+  Promise.all([
+    verifyIpQualityScore(ip),
+    createIpRepository(db)
+      .isIpRecentlyUsed(ip, config.get('ipDaysBan'))
+      .then(function (wasRecentlyUsed) {
+        if (wasRecentlyUsed) {
+          logger.debug('IP address has been used recently')
+          throw new httpErrors.Conflict('IP address used recently')
+        }
+      }),
+  ])
+
+const saveEmailAndIP = (transaction, email, ip) =>
+  Promise.all([
+    createEmailRepository(transaction).saveEmail(email, ip),
+    createIpRepository(transaction).saveIp(ip),
+  ])
+
+const sendEmail = email =>
+  function () {
+    logger.debug('Calling webhook to send email')
+    return Promise.resolve(email)
+  }
+
+const submitClaimingRequest = function (email, ip) {
+  logger.debug('Starting transaction to submit email and IP')
+  return transactionProvider().then(transaction =>
+    saveEmailAndIP(transaction, email, ip)
+      .then(
+        pTap(function () {
+          logger.debug('Email and IP saved successfully. Sending email now')
+        }),
+      )
+      .then(sendEmail(email))
+      .then(transaction.commit)
+      .then(
+        pTap(function () {
+          logger.verbose('Transaction committed')
+        }),
+      )
+      .catch(
+        // rollback and let the error bubble up
+        pTap.catch(transaction.rollback),
+      ),
+  )
+}
 
 const claimTokens = async function ({
   body,
@@ -144,28 +214,35 @@ const claimTokens = async function ({
     throw new httpErrors.UnsupportedMediaType('Unsupported Media Type')
   }
   const parsedBody = parseBody(body)
-  if (!parsedBody?.token) {
+  if (!parsedBody?.token || !parsedBody?.email) {
     logger.debug('Body sent is invalid')
     throw new httpErrors.BadRequest('Invalid body')
   }
+  const ip = requestContext.identity.sourceIp
+
   return Promise.all([
-    verifyRecaptcha(parsedBody.token, requestContext.identity.sourceIp),
-    verifyIP(requestContext.identity.sourceIp),
-  ]).then(function () {
-    // if no errors were thrown, it means all checks were successful. Let's proceed to send the email
-    // TODO send email
-    // TODO log the email+ip+timestamp
-    logger.info('Email to claim tokens sent')
-  })
+    verifyEmail(parsedBody.email),
+    verifyRecaptcha(parsedBody.token),
+    verifyIP(ip),
+  ])
+    .then(() => submitClaimingRequest(parsedBody.email, ip))
+    .then(function () {
+      logger.info('Email to claim tokens sent')
+    })
 }
 
 const post = event =>
   claimTokens(event)
     .then(successResponse)
+    .catch(
+      pTap.catch(function (err) {
+        logger.debug('Failed to submit claim request: %s', err.message)
+      }),
+    )
     .catch(err =>
       errorResponse({
         detail: err?.message,
-        status: err?.status ?? StatusCodes.INTERNAL_SERVER_ERROR,
+        status: err?.status,
       }),
     )
 

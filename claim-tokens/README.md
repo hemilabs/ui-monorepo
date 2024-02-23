@@ -1,5 +1,9 @@
 # claim-tokens
 
+## Setup
+
+Use the [migrations-pg](../migrations-pg) project to set up a local database if needed.
+
 ## Environment variables
 
 ```sh

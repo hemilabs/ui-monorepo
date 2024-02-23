@@ -16,6 +16,14 @@
   "marketing": {
     "url": "MARKETING_DOMAIN_URL"
   },
+  "postgres": {
+    "connection": {
+      "database": "POSTGRES_CONNECTION_DATABASE",
+      "host": "POSTGRES_CONNECTION_HOST",
+      "password": "POSTGRES_CONNECTION_PASSWORD",
+      "user": "POSTGRES_CONNECTION_USER"
+    }
+  },
   "recaptcha": {
     "secretKey": "RECAPTCHA_SECRET_KEY"
   }

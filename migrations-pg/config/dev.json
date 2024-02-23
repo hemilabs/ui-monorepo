@@ -1,0 +1,10 @@
+{
+  "postgres": {
+    "connection": {
+      "database": "postgres",
+      "host": "localhost",
+      "password": null,
+      "user": "postgres"
+    }
+  }
+}

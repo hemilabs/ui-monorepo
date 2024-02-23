@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:16.2
+    environment:
+      - POSTGRES_DB=${POSTGRES_CONNECTION_DATABASE:-postgres}
+      - POSTGRES_HOST_AUTH_METHOD=trust
+      - POSTGRES_PASSWORD=${POSTGRES_CONNECTION_PASSWORD:-pass}
+      - POSTGRES_USER=${POSTGRES_CONNECTION_USER:-postgres}
+      - TZ=UTC
+    command: postgres -c log_statement=all
+    ports:
+      - 5432:5432

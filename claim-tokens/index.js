@@ -158,7 +158,7 @@ const verifyIP = ip =>
   Promise.all([
     verifyIpQualityScore(ip),
     createIpRepository(db)
-      .isIpRecentlyUsed(ip, config.get('ipDaysBan'))
+      .isIpRecentlyUsed(ip)
       .then(function (wasRecentlyUsed) {
         if (wasRecentlyUsed) {
           logger.debug('IP address has been used recently')

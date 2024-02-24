@@ -9,7 +9,7 @@ type Job = {
 }
 
 const connectToDefaultDatabase = function () {
-  // we need to connect to default postgres database to create/remove the job, and then update the database where it runs
+  // We need to connect to the default postgres database to create/remove the job, and then update the database where it runs.
   // See https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/PostgreSQL_pg_cron.html#PostgreSQL_pg_cron.otherDB
   const defaultDatabaseConnection = config.util.cloneDeep(
     config.get('postgres'),
@@ -74,8 +74,7 @@ export const up = (pg: Knex) =>
           .unique({ indexName: 'email_unique_index' })
         tableBuilder.string('ip').notNullable()
         // This will automatically convert the timestamp into UTC when saved
-        // and back to timezone when retrieved from the session
-        // useful to compare with date-fns which uses local timezone
+        // and back to the timezone when retrieved from the session
         tableBuilder
           .timestamp('submitted_at', { useTz: true })
           .defaultTo(pg.fn.now())
@@ -95,8 +94,8 @@ export const up = (pg: Knex) =>
       },
     ),
   ])
-    // this pg job will prune the database, running every hour
-    // however, the extension is not available on local database from docker
+    // The pg job will prune the IPs, running every hour.
+    // However, the extension is not available on the local database from docker.
     .then(() =>
       process.env.NODE_ENV === 'dev' ? undefined : enableIpPurging(),
     )

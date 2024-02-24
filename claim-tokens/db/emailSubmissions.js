@@ -8,8 +8,8 @@ const tableName = 'email_submissions'
 
 /**
  *
- * @param {import('knex').Knex} db knex db or transaction instance
- * @returns
+ * @param {import('knex').Knex} db Knex's db or transaction instance
+ * @returns {object}
  */
 const createEmailRepository = function (db) {
   /**

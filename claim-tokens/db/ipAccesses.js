@@ -6,6 +6,11 @@ const { logger } = require('../logger')
 
 const tableName = 'ip_accesses'
 
+/**
+ *
+ * @param {import('knex').Knex} db Knex's db or transaction instance
+ * @returns {object}
+ */
 const createIpRepository = function (db) {
   /**
    * Checks if an IP address has been recently used

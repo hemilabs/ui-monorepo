@@ -53,7 +53,7 @@ const useSelectedTab = function (
       }
       const current = new URLSearchParams(Array.from(searchParams.entries()))
       current.append('networkConfiguration', defaultConfiguration)
-      router.push(`${pathname}?${current.toString()}`)
+      router.replace(`${pathname}?${current.toString()}`)
       return undefined
     },
     [defaultConfiguration, pathname, router, searchParams],

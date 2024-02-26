@@ -14,7 +14,7 @@ const tokens: Token[] = [
     extensions: {
       bridgeInfo: {
         [hemi.id]: {
-          tokenAddress: '0x7c0d8ddd8e736fb22f2acd3c12502c8c49737237',
+          tokenAddress: '0xec46e0efb2ea8152da0327a5eb3ff9a43956f13e',
         },
       },
     },
@@ -24,7 +24,7 @@ const tokens: Token[] = [
     symbol: 'DAI',
   },
   {
-    address: '7c0d8ddd8e736fb22f2acd3c12502c8c49737237',
+    address: '0xec46e0efb2ea8152da0327a5eb3ff9a43956f13e',
     chainId: hemi.id,
     decimals: 18,
     extensions: {
@@ -64,9 +64,6 @@ const nativeTokens: Token[] = [
     address: 'HEMI',
     chainId: hemi.id,
     decimals: hemi.nativeCurrency.decimals,
-    // using random logo for now
-    logoURI:
-      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599/logo.png',
     name: hemi.nativeCurrency.name,
     symbol: hemi.nativeCurrency.symbol,
   },

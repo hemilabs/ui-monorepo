@@ -61,7 +61,7 @@ export const Header = function () {
     <header className="relative flex h-24 items-center py-6">
       <div className="fixed bottom-0 left-0 right-0 z-10 h-[90px] bg-white/60 backdrop-blur-sm md:hidden" />
       <div className="fixed bottom-0 z-10 flex w-full pb-6 pt-4 md:absolute md:left-1/2 md:block md:-translate-x-1/2">
-        <ul className="mx-auto flex justify-center gap-x-4 rounded-xl bg-neutral-100 p-[2px] md:mx-0 md:bg-inherit">
+        <ul className="mx-auto hidden justify-center gap-x-4 rounded-xl bg-neutral-100 p-[2px] md:mx-0 md:bg-inherit">
           <Route path="/bridge" text="Bridge" />
           <Route path="/swap" text="Swap" />
         </ul>

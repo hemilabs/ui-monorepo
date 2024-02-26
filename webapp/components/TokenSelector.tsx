@@ -8,9 +8,12 @@ import { Token } from 'types/token'
 
 import { Balance } from './balance'
 
-const Modal = dynamic(() => import('components/modal').then(mod => mod.Modal), {
-  ssr: false,
-})
+const Modal = dynamic(
+  () => import('ui-common/components/modal').then(mod => mod.Modal),
+  {
+    ssr: false,
+  },
+)
 
 const CloseIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg

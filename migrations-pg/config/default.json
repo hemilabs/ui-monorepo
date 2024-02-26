@@ -1,0 +1,17 @@
+{
+  "claimTokens": {
+    "ipDaysBan": 7
+  },
+  "postgres": {
+    "client": "pg",
+    "connection": {
+      "port": 5432,
+      "timezone": "UTC"
+    },
+    "migrations": {
+      "directory": "./src/migrations",
+      "extension": "ts"
+    },
+    "version": "16.2"
+  }
+}

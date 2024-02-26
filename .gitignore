@@ -2,7 +2,9 @@
 .env.local
 .eslintcache
 .next
-out
+.serverless
 .vscode/
+
 node_modules
+out
 tsconfig.tsbuildinfo

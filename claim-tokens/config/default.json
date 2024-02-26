@@ -11,6 +11,14 @@
   "marketing": {
     "url": "http://127.0.0.1:3001"
   },
+  "postgres": {
+    "client": "pg",
+    "connection": {
+      "port": 5432,
+      "timezone": "UTC"
+    },
+    "version": "16.2"
+  },
   "recaptcha": {
     "action": "claim_tokens",
     "minScore": 0.6,

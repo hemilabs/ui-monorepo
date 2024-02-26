@@ -11,6 +11,7 @@
     "hemi-metadata",
     "landing",
     "marketing",
+    "migrations-pg",
     "ui-common",
     "wagmi-erc20-hooks",
     "webapp"
@@ -105,6 +106,23 @@
               "webapp"
             ]
           }
+        }
+      },
+      {
+        "extends": [
+          "plugin:@typescript-eslint/eslint-recommended",
+          "plugin:@typescript-eslint/recommended",
+          "prettier"
+        ],
+        "files": [
+          "migrations-pg/**/*.{js,ts}"
+        ],
+        "parser": "@typescript-eslint/parser",
+        "plugins": [
+          "@typescript-eslint"
+        ],
+        "rules": {
+          "no-console": "off"
         }
       },
       {

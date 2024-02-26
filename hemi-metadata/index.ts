@@ -1,28 +1,28 @@
 import { Chain } from 'wagmi'
 
-// These values will change once migrated to Hemi network
+// See https://docs.hemi.xyz/metamask-wallet-setup
 export const hemiTestnet: Chain = {
   blockExplorers: {
     default: {
-      name: 'BVM Tesnet Explorer',
-      url: 'http://216.219.89.253',
+      name: 'Hemi Tesnet Explorer',
+      url: 'https://testnet.explorer.hemi.network/',
     },
   },
-  id: 11155222,
-  name: 'BVM Tesnet',
+  id: 743_111,
+  name: 'Hemi Testnet',
   nativeCurrency: {
     decimals: 18,
-    name: 'BVM',
-    symbol: 'bvmETH',
+    name: 'Testnet Hemi Ether',
+    symbol: 'thETH',
   },
   // This field will be deprecated in viem v2, but it's required for now
   network: 'sepolia',
   rpcUrls: {
     default: {
-      http: ['http://216.219.89.253:18546'],
+      http: ['https://testnet.rpc.hemi.network/rpc'],
     },
     public: {
-      http: ['http://216.219.89.253:18546'],
+      http: ['https://testnet.rpc.hemi.network/rpc'],
     },
   },
   testnet: true,

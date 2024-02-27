@@ -6,6 +6,7 @@ import Link from 'next-intl/link'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { HamburgerIcon } from 'ui-common/components/hamburgerIcon'
+import { HemiLogoFull, HemiSymbol } from 'ui-common/components/hemiLogo'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 
 const WalletConnectButton = dynamic(
@@ -59,13 +60,23 @@ export const Header = function () {
 
   return (
     <header className="relative flex h-24 items-center py-6">
-      <div className="fixed bottom-0 left-0 right-0 z-10 h-[90px] bg-white/60 backdrop-blur-sm md:hidden" />
-      <div className="fixed bottom-0 z-10 flex w-full pb-6 pt-4 md:absolute md:left-1/2 md:block md:-translate-x-1/2">
-        <ul className="mx-auto flex justify-center gap-x-4 rounded-xl bg-neutral-100 p-[2px] md:mx-0 md:bg-inherit">
-          <Route path="/bridge" text="Bridge" />
-          <Route path="/swap" text="Swap" />
-        </ul>
+      <div className="ml-4 h-8 w-8 md:hidden">
+        <HemiSymbol />
       </div>
+      <div className="hidden h-10 w-28 md:ml-6 md:block xl:ml-20">
+        <HemiLogoFull />
+      </div>
+      {/* Hidden below until links are re-enabled */}
+      {/* <div className="fixed bottom-0 left-0 right-0 z-10 h-[90px] bg-white/60 backdrop-blur-sm md:hidden" /> */}
+      <div className="hidden">
+        <div className="fixed bottom-0 z-10 flex w-full pb-6 pt-4 md:absolute md:left-1/2 md:block md:-translate-x-1/2">
+          <ul className="mx-auto hidden justify-center gap-x-4 rounded-xl bg-neutral-100 p-[2px] md:mx-0 md:bg-inherit">
+            <Route path="/bridge" text="Bridge" />
+            <Route path="/swap" text="Swap" />
+          </ul>
+        </div>
+      </div>
+      {/* Hidden above until links are re-enabled */}
       <WalletConnectButton />
       <button
         className="ml-auto mr-4 cursor-pointer md:hidden"

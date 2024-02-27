@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    instrumentationHook: true,
+  },
   output: 'export',
   reactStrictMode: true,
   transpilePackages: ['ui-common', 'wagmi-erc20-hooks'],

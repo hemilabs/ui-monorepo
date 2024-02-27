@@ -1,9 +1,15 @@
 'use client'
 
+import { hemi } from 'app/networks'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { EthLogo } from 'ui-common/components/ethLogo'
+import { HemiTokenWithBackground } from 'ui-common/components/hemiLogo'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 import { Chain } from 'wagmi'
+
+const ChainLogo = ({ networkId }: { networkId: Chain['id'] }) =>
+  networkId === hemi.id ? <HemiTokenWithBackground /> : <EthLogo />
 
 type Props = {
   networkId: Chain['id'] | undefined
@@ -36,15 +42,12 @@ export const NetworkSelector = function ({
     onSelectNetwork(id)
   }
 
-  // TODO https://github.com/BVM-priv/ui-monorepo/issues/63
-  const Logo = () => <div className="bg-hemi-gradient h-6 w-6 rounded-full" />
-
   const commonCss = 'flex items-center rounded-xl bg-zinc-50 p-2 gap-x-2'
 
   if (readonly || networks.length === 1) {
     return (
       <div className={commonCss}>
-        <Logo />
+        <ChainLogo networkId={networkId} />
         <span>{network.name}</span>
       </div>
     )
@@ -56,7 +59,7 @@ export const NetworkSelector = function ({
         onClick={() => setShowNetworkDropdown(true)}
         type="button"
       >
-        <Logo />
+        <ChainLogo networkId={networkId} />
         <span>{network.name}</span>
         <svg
           fill="none"
@@ -96,7 +99,7 @@ export const NetworkSelector = function ({
                     }}
                   >
                     <div className="flex items-center gap-x-2 py-1">
-                      <Logo />
+                      <ChainLogo networkId={networkId} />
                       <span>{n.name}</span>
                     </div>
                   </li>

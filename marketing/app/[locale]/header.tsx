@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import { useState } from 'react'
 import { HamburgerIcon } from 'ui-common/components/hamburgerIcon'
-import { Logo } from 'ui-common/components/logo'
+import { HemiLogoFull } from 'ui-common/components/hemiLogo'
 
 const CloseIcon = () => (
   <svg fill="none" height={24} width={24} xmlns="http://www.w3.org/2000/svg">
@@ -54,7 +54,7 @@ export const Header = function () {
 
   const mobileLogo = (
     <Link className="block w-24 cursor-pointer" href="/">
-      <Logo />
+      <HemiLogoFull />
     </Link>
   )
 
@@ -111,7 +111,7 @@ export const Header = function () {
             <ul className="flex items-center justify-between font-medium md:gap-x-2 lg:gap-x-4 xl:gap-x-8">
               <li className={`mr-auto ${navigationItemCss}`}>
                 <Link className="block w-32 cursor-pointer" href="/">
-                  <Logo />
+                  <HemiLogoFull />
                 </Link>
               </li>
               <li className={navigationItemCss}>{networkLink}</li>

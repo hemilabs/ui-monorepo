@@ -7,6 +7,7 @@ import { useRef, useState } from 'react'
 import { Token } from 'types/token'
 
 import { Balance } from './balance'
+import { TokenLogo } from './tokenLogo'
 
 const CloseIcon = dynamic(
   () => import('ui-common/components/closeIcon').then(mod => mod.CloseIcon),
@@ -60,17 +61,9 @@ const TokenList = function ({
               }}
             >
               <div className="flex items-center py-2">
-                {/* Using img instead of Next's Image because for remote images they require static configuration in next.config.js.
-                      And for that we need to know exactly which token list we will use. See https://nextjs.org/docs/pages/api-reference/components/image#remotepatterns
-                      Once we know the token list, maybe we can calculate the remotes on build time.
-                    */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  alt={`${token.symbol} Logo`}
-                  height={32}
-                  src={token.logoURI}
-                  width={32}
-                />
+                <div className="flex-shrink-0">
+                  <TokenLogo token={token} />
+                </div>
                 <div className="mx-2 flex w-full flex-col text-xs">
                   <div className="flex items-center justify-between font-medium">
                     <span>{token.name}</span>
@@ -78,7 +71,8 @@ const TokenList = function ({
                   </div>
                   <div className="flex items-center justify-between text-zinc-400">
                     <span className="uppercase">{token.symbol}</span>
-                    <span>$1,234.12</span>
+                    {/*  Hiding as there are no usd rates so far*/}
+                    {/* <span>$1,234.12</span> */}
                   </div>
                 </div>
               </div>
@@ -115,13 +109,7 @@ export const TokenSelector = function ({
         onClick={openModal}
         type="button"
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          alt={`${selectedToken.symbol} Logo`}
-          height={24}
-          src={selectedToken.logoURI}
-          width={24}
-        />
+        <TokenLogo token={selectedToken} />
         <span className="text-xs font-medium uppercase text-slate-700 sm:text-sm">
           {selectedToken.symbol}
         </span>

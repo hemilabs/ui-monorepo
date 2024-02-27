@@ -1,13 +1,13 @@
 'use client'
 
 import fetch from 'fetch-plus-plus'
+import { discordUrl } from 'hemi-metadata/socials'
 import { useLocale, useTranslations } from 'next-intl'
 import { useReCaptcha } from 'next-recaptcha-v3'
 import { FormEvent, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { useMutation } from 'wagmi'
 
-const DiscordInviteLink = 'https://discord.com/invite/2DnVTugBf2'
 const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
 const giveAwayTokens = [
@@ -307,7 +307,7 @@ export const WelcomePack = function () {
                 link: (chunk: string) => (
                   <a
                     className="cursor-pointer font-medium underline"
-                    href={DiscordInviteLink}
+                    href={discordUrl}
                     rel="noopener noreferrer"
                     target="_blank"
                   >

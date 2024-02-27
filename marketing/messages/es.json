@@ -4,7 +4,14 @@
     "network": "Red"
   },
   "home": {
+    "choose-your-path": "Elige tu camino",
+    "developer-path": "Quiero desarrollar dApps y publicar contratos inteligentes en Hemi",
     "get-started": "Comenzar",
+    "i-am-a-developer": "Soy Desarrollador",
+    "i-am-a-miner": "Soy un Minero de PoP",
+    "individuals": "Individuos",
+    "individuals-path": "Quiero realizar transacciones personales y acceder a las dApps de Hemi",
+    "miner-path": "Quiero ejecutar un minero PoP y asegurar la red Hemi",
     "page-title": "La seguridad de Bitcoin.<br />La agilidad de Ethereum.",
     "subtitle": "Todas las posibilidades dentro y más allá. Un mejor enfoque para la capa 2 de Ethereum con la red Hemi.",
     "tunnel-and-swap": "Túnel e Intercambio"

@@ -4,7 +4,14 @@
     "network": "Network"
   },
   "home": {
+    "choose-your-path": "Choose your path",
+    "developer-path": "I want to build dApps and deploy smart contracts on Hemi",
     "get-started": "Get Started",
+    "i-am-a-developer": "I am a Developer",
+    "i-am-a-miner": "I am a PoP Miner",
+    "individuals": "Individuals",
+    "individuals-path": "I want to conduct personal transactions and access Hemi dApps",
+    "miner-path": "I want to run a PoP miner and secure the Hemi Network",
     "page-title": "Bitcoin's security.<br />Ethereum's agility.",
     "subtitle": "All possibilities In Between and Beyond.<br />A better approach to Ethereum's Layer-2 with Hemi Network.",
     "tunnel-and-swap": "Tunnel & Swap"

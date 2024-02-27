@@ -8,7 +8,7 @@ export default function RootPage() {
   useRedirectToDefaultLocale({
     defaultLocale,
     locales,
-    redirectPage: '/bridge',
+    redirectPage: '/tunnel',
   })
 
   return null

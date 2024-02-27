@@ -24,7 +24,7 @@
       "withdraw": "Retirar",
       "withdrawing": "Retirando..."
     },
-    "title": "bridge",
+    "title": "Túnel",
     "transaction-status": {
       "deposited": "{fromInput} {symbol} depositado",
       "depositing": "Depositando {fromInput} {symbol} en {network}",
@@ -40,6 +40,7 @@
     "erc20-extra-approval": "Aprobar 10x este depósito",
     "network-gas-fee": "Tarifa de gas de {network}",
     "select-network": "Seleccione Red",
+    "swap": "Intercambiar",
     "switch-to-network": "Cambiar a {network}",
     "total": "Total",
     "transaction-status": {
@@ -48,6 +49,7 @@
       "pending": "Pendiente",
       "rejected": "Tx rechazada"
     },
+    "tunnel": "Túnel",
     "wrong-network": "Red Incorrecta"
   },
   "token-selector": {

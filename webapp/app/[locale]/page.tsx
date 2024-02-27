@@ -11,7 +11,7 @@ export default function RootPage() {
 
   useEffect(
     function () {
-      router.replace(`/${locale}/bridge`)
+      router.replace(`/${locale}/tunnel`)
     },
     [locale, router],
   )

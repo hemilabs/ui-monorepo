@@ -162,7 +162,7 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
         <div className="flex flex-col justify-between">
           <div className="flex items-center justify-end gap-x-2 text-xs">
             <TokenLogo token={toToken} />
-            <span className="text-sm font-medium uppercase text-slate-700">
+            <span className="text-sm font-medium text-slate-700">
               {toToken.symbol}
             </span>
           </div>

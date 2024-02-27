@@ -13,9 +13,7 @@ const SubSection = function ({ symbol, text, value }: SubSectionProps) {
   return (
     <div className="flex items-center justify-between py-3 text-xs font-normal md:text-sm">
       <p className="text-zinc-400">{text}</p>
-      <span className="uppercase">
-        {value === '0' ? '-' : `${getValue()} ${symbol}`}
-      </span>
+      <span>{value === '0' ? '-' : `${getValue()} ${symbol}`}</span>
     </div>
   )
 }

@@ -1,0 +1,39 @@
+diff --git a/node_modules/viem/_cjs/chains/definitions/sepolia.js b/node_modules/viem/_cjs/chains/definitions/sepolia.js
+index 48241ee..88a83a3 100644
+--- a/node_modules/viem/_cjs/chains/definitions/sepolia.js
++++ b/node_modules/viem/_cjs/chains/definitions/sepolia.js
+@@ -6,7 +6,7 @@ exports.sepolia = (0, defineChain_js_1.defineChain)({
+     id: 11155111,
+     network: 'sepolia',
+     name: 'Sepolia',
+-    nativeCurrency: { name: 'Sepolia Ether', symbol: 'SEP', decimals: 18 },
++    nativeCurrency: { name: 'Sepolia Ether', symbol: 'sepETH', decimals: 18 },
+     rpcUrls: {
+         alchemy: {
+             http: ['https://eth-sepolia.g.alchemy.com/v2'],
+diff --git a/node_modules/viem/_esm/chains/definitions/sepolia.js b/node_modules/viem/_esm/chains/definitions/sepolia.js
+index ba06e4e..9ae5e1e 100644
+--- a/node_modules/viem/_esm/chains/definitions/sepolia.js
++++ b/node_modules/viem/_esm/chains/definitions/sepolia.js
+@@ -3,7 +3,7 @@ export const sepolia = /*#__PURE__*/ defineChain({
+     id: 11155111,
+     network: 'sepolia',
+     name: 'Sepolia',
+-    nativeCurrency: { name: 'Sepolia Ether', symbol: 'SEP', decimals: 18 },
++    nativeCurrency: { name: 'Sepolia Ether', symbol: 'sepETH', decimals: 18 },
+     rpcUrls: {
+         alchemy: {
+             http: ['https://eth-sepolia.g.alchemy.com/v2'],
+diff --git a/node_modules/viem/chains/definitions/sepolia.ts b/node_modules/viem/chains/definitions/sepolia.ts
+index f46584b..65a0890 100644
+--- a/node_modules/viem/chains/definitions/sepolia.ts
++++ b/node_modules/viem/chains/definitions/sepolia.ts
+@@ -4,7 +4,7 @@ export const sepolia = /*#__PURE__*/ defineChain({
+   id: 11_155_111,
+   network: 'sepolia',
+   name: 'Sepolia',
+-  nativeCurrency: { name: 'Sepolia Ether', symbol: 'SEP', decimals: 18 },
++  nativeCurrency: { name: 'Sepolia Ether', symbol: 'sepETH', decimals: 18 },
+   rpcUrls: {
+     alchemy: {
+       http: ['https://eth-sepolia.g.alchemy.com/v2'],

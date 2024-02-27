@@ -5,6 +5,7 @@ const nextConfig = {
   },
   output: 'export',
   reactStrictMode: true,
+  trailingSlash: true,
   transpilePackages: ['ui-common', 'wagmi-erc20-hooks'],
   webpack(config) {
     config.resolve.fallback = { fs: false, net: false, tls: false }

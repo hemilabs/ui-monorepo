@@ -70,7 +70,7 @@ const TokenList = function ({
                     <Balance token={token} />
                   </div>
                   <div className="flex items-center justify-between text-zinc-400">
-                    <span className="uppercase">{token.symbol}</span>
+                    <span>{token.symbol}</span>
                     {/*  Hiding as there are no usd rates so far*/}
                     {/* <span>$1,234.12</span> */}
                   </div>
@@ -110,7 +110,7 @@ export const TokenSelector = function ({
         type="button"
       >
         <TokenLogo token={selectedToken} />
-        <span className="text-xs font-medium uppercase text-slate-700 sm:text-sm">
+        <span className="text-xs font-medium text-slate-700 sm:text-sm">
           {selectedToken.symbol}
         </span>
         <svg

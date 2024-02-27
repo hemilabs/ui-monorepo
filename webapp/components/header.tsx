@@ -2,13 +2,13 @@
 
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { HamburgerIcon } from 'ui-common/components/hamburgerIcon'
 import { HemiLogoFull, HemiSymbol } from 'ui-common/components/hemiLogo'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
-import { useTranslations } from 'next-intl'
 
 const WalletConnectButton = dynamic(
   () =>

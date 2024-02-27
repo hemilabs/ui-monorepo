@@ -1,5 +1,6 @@
 'use client'
 
+import { TokenLogo } from 'app/components/tokenLogo'
 import { TokenSelector } from 'app/components/TokenSelector'
 import { hemi, networks } from 'app/networks'
 import dynamic from 'next/dynamic'
@@ -206,13 +207,7 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
         </div>
         <div className="flex flex-col justify-between">
           <div className="flex items-center justify-end gap-x-2 text-xs">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              alt={`${toToken.symbol} Logo`}
-              height={24}
-              src={toToken.logoURI}
-              width={24}
-            />
+            <TokenLogo token={toToken} />
             <span className="text-sm font-medium uppercase text-slate-700">
               {toToken.symbol}
             </span>
@@ -234,7 +229,7 @@ export default function Bridge() {
   const OperationComponent = isDepositOperation ? Deposit : Withdraw
 
   return (
-    <div className="mx-auto flex h-screen w-full flex-col gap-y-4 px-4 md:h-full md:max-w-fit md:flex-row md:gap-x-4 md:pt-10">
+    <div className="mx-auto flex h-full w-full flex-col gap-y-4 px-4 md:max-w-fit md:flex-row md:gap-x-4 md:pt-10">
       <OperationComponent
         renderForm={isRunningOperation => (
           <FormContent

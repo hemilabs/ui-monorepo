@@ -35,7 +35,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body
-        className={`flex min-h-screen flex-col bg-neutral-100 ${bricolageGrotesque.variable} ${inter.className}`}
+        className={`flex h-dvh flex-col bg-neutral-100 ${bricolageGrotesque.variable} ${inter.className}`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <WalletContext locale={locale} networks={networks}>

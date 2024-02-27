@@ -1,8 +1,8 @@
 'use client'
 
-import { useBridgeState } from 'app/[locale]/bridge/useBridgeState'
-import { useDeposit } from 'app/[locale]/bridge/useDeposit'
-import { useTransactionsList } from 'app/[locale]/bridge/useTransactionsList'
+import { useBridgeState } from 'app/[locale]/tunnel/useBridgeState'
+import { useDeposit } from 'app/[locale]/tunnel/useDeposit'
+import { useTransactionsList } from 'app/[locale]/tunnel/useTransactionsList'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -18,7 +18,7 @@ import { BridgeForm, canSubmit, getTotal } from './form'
 
 const Erc20Approval = dynamic(
   () =>
-    import('app/[locale]/bridge/_components/Erc20Approval').then(
+    import('app/[locale]/tunnel/_components/Erc20Approval').then(
       mod => mod.Erc20Approval,
     ),
   {

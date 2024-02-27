@@ -24,7 +24,7 @@
       "withdraw": "Withdraw",
       "withdrawing": "Withdrawing..."
     },
-    "title": "bridge",
+    "title": "Tunnel",
     "transaction-status": {
       "deposited": "{fromInput} {symbol} deposited",
       "depositing": "Depositing {fromInput} {symbol} to {network}",
@@ -40,6 +40,7 @@
     "erc20-extra-approval": "Approve 10x deposits",
     "network-gas-fee": "{network} gas fee",
     "select-network": "Select Network",
+    "swap": "Swap",
     "switch-to-network": "Switch to {network}",
     "total": "Total",
     "transaction-status": {
@@ -48,6 +49,7 @@
       "pending": "Pending",
       "rejected": "Tx rejected"
     },
+    "tunnel": "Tunnel",
     "wrong-network": "Wrong Network"
   },
   "token-selector": {

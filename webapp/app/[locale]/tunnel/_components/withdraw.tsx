@@ -1,11 +1,11 @@
 import { useBridgeState } from 'app/[locale]/tunnel/useBridgeState'
 import { useTransactionsList } from 'app/[locale]/tunnel/useTransactionsList'
+import { ReviewWithdraw } from 'components/reviewBox'
 import { useWithdraw } from 'app/[locale]/tunnel/useWithdraw'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, useEffect } from 'react'
-import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
@@ -14,14 +14,6 @@ import { type Chain, formatUnits } from 'viem'
 import { useConfig, useNetwork } from 'wagmi'
 
 import { BridgeForm, canSubmit, getTotal } from './form'
-
-const ReviewWithdraw = dynamic(
-  () => import('components/reviewBox').then(mod => mod.ReviewWithdraw),
-  {
-    loading: () => <Skeleton className="h-48 w-full md:w-80" />,
-    ssr: false,
-  },
-)
 
 const TransactionStatus = dynamic(
   () =>

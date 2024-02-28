@@ -3,39 +3,19 @@
 import { useBridgeState } from 'app/[locale]/tunnel/useBridgeState'
 import { useDeposit } from 'app/[locale]/tunnel/useDeposit'
 import { useTransactionsList } from 'app/[locale]/tunnel/useTransactionsList'
+import { ReviewDeposit } from 'components/reviewBox'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode, useEffect } from 'react'
-import Skeleton from 'react-loading-skeleton'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useConfig, useNetwork } from 'wagmi'
 
+import { Erc20Approval } from './Erc20Approval'
 import { BridgeForm, canSubmit, getTotal } from './form'
-
-const Erc20Approval = dynamic(
-  () =>
-    import('app/[locale]/tunnel/_components/Erc20Approval').then(
-      mod => mod.Erc20Approval,
-    ),
-  {
-    loading: () => (
-      <Skeleton className="h-10 py-2" containerClassName="basis-1/4" />
-    ),
-    ssr: false,
-  },
-)
-
-const ReviewDeposit = dynamic(
-  () => import('components/reviewBox').then(mod => mod.ReviewDeposit),
-  {
-    loading: () => <Skeleton className="h-48 w-full md:w-80" />,
-    ssr: false,
-  },
-)
 
 const TransactionStatus = dynamic(
   () =>

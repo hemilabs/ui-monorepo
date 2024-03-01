@@ -36,9 +36,25 @@ const createIpRepository = function (db) {
   }
 
   /**
+   * Removes an ip submission by id
+   * @param {number} id
+   * @returns {Promise<void>}
+   */
+  const removeIpById = function (id) {
+    logger.debug('Removing IP id %s', id)
+    return db
+      .from(tableName)
+      .where({ id })
+      .delete()
+      .then(function () {
+        logger.verbose('IP id %s removed', id)
+      })
+  }
+
+  /**
    * Saves an IP address
    * @param {string} ip
-   * @returns {Promise<void>}
+   * @returns {Promise<object>}
    */
   const saveIp = function (ip) {
     logger.debug('Saving IP address')
@@ -46,13 +62,17 @@ const createIpRepository = function (db) {
       .from(tableName)
       .returning('id')
       .insert({ ip })
-      .then(function ([{ id }]) {
-        logger.verbose('IP address saved with id %s', id)
-      })
+      .then(([row]) => row)
+      .then(
+        pTap(function ({ id }) {
+          logger.verbose('IP address saved with id %s', id)
+        }),
+      )
   }
 
   return {
     isIpRecentlyUsed,
+    removeIpById,
     saveIp,
   }
 }

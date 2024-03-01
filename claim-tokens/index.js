@@ -222,7 +222,7 @@ const claimTokens = async function ({
 
   return Promise.all([
     verifyEmail(parsedBody.email),
-    verifyRecaptcha(parsedBody.token),
+    verifyRecaptcha(parsedBody.token, ip),
     verifyIP(ip),
   ])
     .then(() => submitClaimingRequest(parsedBody.email, ip))

@@ -19,14 +19,17 @@
   ],
   "devDependencies": {
     "@commitlint/cli": "18.4.3",
+    "@types/mocha": "10.0.6",
     "@typescript-eslint/eslint-plugin": "6.16.0",
     "@typescript-eslint/parser": "6.16.0",
+    "chai": "4.4.1",
     "eslint": "8.56.0",
     "eslint-config-bloq": "4.0.0",
     "eslint-plugin-html": "7.1.0",
     "eslint-plugin-markdownlint": "0.5.0",
     "husky": "4.3.8",
     "lint-staged": "15.2.0",
+    "mocha": "10.3.0",
     "patch-package": "8.0.0",
     "prettier": "3.1.1",
     "prettier-plugin-tailwindcss": "0.5.9"
@@ -138,6 +141,21 @@
         ]
       },
       {
+        "files": [
+          "*.spec.js"
+        ],
+        "extends": [
+          "bloq/mocha",
+          "prettier"
+        ],
+        "rules": {
+          "mocha/no-exclusive-tests": "error",
+          "no-unsafe-finally": "off",
+          "prefer-arrow/prefer-arrow-functions": "off",
+          "promise/no-return-in-finally": "off"
+        }
+      },
+      {
         "env": {
           "browser": true,
           "jquery": true
@@ -221,5 +239,8 @@
     "plugins": [
       "prettier-plugin-tailwindcss"
     ]
+  },
+  "mocha": {
+    "timeout": 5000
   }
 }

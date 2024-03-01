@@ -35,6 +35,22 @@ const createEmailRepository = function (db) {
   }
 
   /**
+   * Removes an email submission by id
+   * @param {number} id
+   * @returns {Promise<void>}
+   */
+  const removeEmailById = function (id) {
+    logger.debug('Removing email id %s', id)
+    return db
+      .from(tableName)
+      .where({ id })
+      .delete()
+      .then(function () {
+        logger.verbose('Email id %s removed', id)
+      })
+  }
+
+  /**
    * Saves an email
    * @param {string} email
    * @param {string} ip
@@ -46,13 +62,17 @@ const createEmailRepository = function (db) {
       .from(tableName)
       .returning('id')
       .insert({ email, ip })
-      .then(function ([{ id }]) {
-        logger.verbose('Email saved with id %s', id)
-      })
+      .then(([row]) => row)
+      .then(
+        pTap(function ({ id }) {
+          logger.verbose('Email saved with id %s', id)
+        }),
+      )
   }
 
   return {
     isEmailSubmitted,
+    removeEmailById,
     saveEmail,
   }
 }

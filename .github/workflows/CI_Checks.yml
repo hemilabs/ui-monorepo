@@ -44,3 +44,15 @@ jobs:
       # Enable once there are more deps installed
       # - name: Check dependencies
       #   run: npm run lerna:run deps:check
+  tests:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - name: Setup env
+        uses: ./.github/actions/setup-env
+      - name: Run tests
+        run: npm run test --workspaces --if-present

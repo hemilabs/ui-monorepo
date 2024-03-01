@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "sls offline start",
     "deploy": "sls deploy",
+    "package": "sls package",
     "posttest": "cd ../migrations-pg && npm run db:stop",
     "pretest": "cd ../migrations-pg && npm run db:start && npm run migrate:up",
     "test": "NODE_ENV=test mocha"
@@ -18,7 +19,8 @@
     "nock": "14.0.0-beta.5",
     "serverless": "3.38.0",
     "serverless-iam-roles-per-function": "3.2.0",
-    "serverless-offline": "13.3.3"
+    "serverless-offline": "13.3.3",
+    "serverless-plugin-conditional-functions": "1.0.8"
   },
   "dependencies": {
     "@bloq/service-logger": "2.0.0",

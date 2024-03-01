@@ -34,17 +34,17 @@ functions:
           - rds:ExecuteStatement
           - rds:RollbackTransaction
         Resource: arn:aws:rds:::db:${self:provider.environment.POSTGRES_CONNECTION_DATABASE}
-  # Use this lambda to simulate fake email sending instead of using zappier
-  # uncomment if needed
-  # fake-email:
-  #   events:
-  #     - http:
-  #         method: post
-  #         path: /fake-email
-  #   handler: ./fake-email.post
+  fake-email:
+    enabled: ${self:custom.fake-email.enabled.${self:provider.stage}, self:custom.fake-email.enabled.default}
+    events:
+      - http:
+          method: post
+          path: /fake-email
+    handler: ./fake-email.post
 
 plugins:
   - serverless-iam-roles-per-function
+  - serverless-plugin-conditional-functions
   - serverless-offline
 
 provider:

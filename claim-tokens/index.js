@@ -194,7 +194,7 @@ const saveEmailAndIP =
 
 const sendEmail = function (email, ip, timestamp) {
   logger.debug('Calling webhook to send email')
-  return fetch(config.get('email.webhook.url'), {
+  return fetch(config.get('email.webhook'), {
     body: JSON.stringify({ email, ip, timestamp }),
     method: 'POST',
   }).then(function ({ request_id: requestId, status }) {

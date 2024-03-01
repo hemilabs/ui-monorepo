@@ -1,8 +1,6 @@
 {
   "email": {
-    "webhook": {
-      "url": "https://my-email-hook.com/email"
-    }
+    "webhook": "https://my-email-hook.com/email"
   },
   "ipQualityScore": {
     "secretKey": "secret-key",

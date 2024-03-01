@@ -2,34 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-@font-face {
-  font-family: Bricolage Grotesque;
-  font-weight: 400;
-  src: url('./fonts/BricolageGrotesque_24pt-Bold.ttf');
+#hubspot-target-form {
+  @apply w-full;
 }
 
-#fullview > section {
-  /* Overriding for iOS browsers with floating bar.
-  * Using !important because it's set with important in the original file...*/
-  height: 100dvh !important;
+#hubspot-target-form > form {
+  @apply flex w-full flex-row lg:justify-center;
 }
 
-#hubspot-target-form h2 > strong {
-  @apply font-bricolage-grotesque relative w-fit text-3xl md:text-4xl xl:text-5xl;
+#hubspot-target-form > form > div {
+  @apply flex-grow;
 }
+
+/* Hide the "Stay Connected" icon */
+#hubspot-target-form form > div:first-child {
+  @apply hidden;
+}
+
 #hubspot-target-form input[type='email'] {
-  @apply w-full rounded-xl border-2 border-white bg-slate-50 px-2 py-3 text-sm font-normal lowercase text-neutral-400;
+  @apply w-full rounded-xl border-2 border-white bg-slate-50 px-2 py-2 text-sm font-normal lowercase text-neutral-400 outline-none placeholder:text-sm placeholder:capitalize;
+}
+
+/* Hide the "Email" label, placeholder added in hubspot.js */
+#hubspot-target-form .hs-email > label {
+  @apply hidden;
 }
 
 #hubspot-target-form input[type='submit'] {
-  @apply bg-orange-650 hover:bg-orange-650/75 mt-6 w-full cursor-pointer rounded-2xl px-3 py-4 text-xs font-bold text-white md:mt-9 md:px-4 md:py-5 md:text-sm;
+  @apply -ml-14 w-[calc(100%+32px)] max-w-64 cursor-pointer rounded-lg bg-black px-4 py-2 text-base text-white hover:bg-black/75 lg:py-[6px] lg:text-lg xl:text-xl;
 }
 
-#hubspot-target-form .hs-email > label {
-  @apply block w-full text-left;
+#hubspot-target-form .submitted-message {
+  @apply text-base text-neutral-400 lg:text-lg xl:text-xl;
 }
 
-#hubspot-target-form .hs-error-msg,
-#hubspot-target-form .hs-form-required {
-  @apply text-orange-650;
+#hubspot-target-form .hs-error-msg {
+  @apply text-orange-650 absolute left-0 translate-y-1 text-xs;
 }

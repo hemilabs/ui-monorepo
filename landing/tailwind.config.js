@@ -12,8 +12,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        'bricolage-grotesque': ['Bricolage Grotesque', 'sans-serif'],
-        'inter': ['Inter', 'sans-serif'],
+        inter: ['Inter', 'sans-serif'],
       },
     },
   },

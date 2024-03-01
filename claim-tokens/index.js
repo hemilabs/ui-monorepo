@@ -1,10 +1,12 @@
 'use strict'
 
 const config = require('config')
+const camelCaseKeys = require('camelcase-keys')
 const fetch = require('fetch-plus-plus')
 const httpErrors = require('http-errors')
 const { getReasonPhrase, StatusCodes } = require('http-status-codes')
 const pTap = require('p-tap')
+const snakeCaseKeys = require('snakecase-keys')
 
 const { db, transactionProvider } = require('./db')
 const { createEmailRepository } = require('./db/emailSubmissions')
@@ -139,22 +141,23 @@ const verifyIpQualityScore = ip =>
       'ipQualityScore.secretKey',
     )}/${ip}`,
     {
-      queryString: {
-        // eslint-disable-next-line camelcase
-        allow_public_access_points: true,
+      queryString: snakeCaseKeys({
+        allowPublicAccessPoints: true,
         strictness: 0,
-      },
+      }),
     },
-  ).then(function (response) {
-    if (
-      response.is_crawler ||
-      response.proxy ||
-      response.fraud_score > config.get('ipQualityScore.maxScore')
-    ) {
-      throw new httpErrors.Forbidden('Suspicious IP address')
-    }
-    logger.verbose('IP score verified correctly')
-  })
+  )
+    .then(camelCaseKeys)
+    .then(function (response) {
+      if (
+        response.isCrawler ||
+        response.proxy ||
+        response.fraudScore > config.get('ipQualityScore.maxScore')
+      ) {
+        throw new httpErrors.Forbidden('Suspicious IP address')
+      }
+      logger.verbose('IP score verified correctly')
+    })
 
 const verifyIP = ip =>
   Promise.all([

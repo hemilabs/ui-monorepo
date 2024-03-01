@@ -1,7 +1,7 @@
-/* eslint-disable camelcase */
 'use strict'
 
 const pTap = require('p-tap')
+const snakeCaseKeys = require('snakecase-keys')
 
 const { logger } = require('../logger')
 
@@ -65,7 +65,7 @@ const createEmailRepository = function (db) {
     return db
       .from(tableName)
       .returning('id')
-      .insert({ email, ip, request_id: requestId, submitted_at: submittedAt })
+      .insert(snakeCaseKeys({ email, ip, requestId, submittedAt }))
       .then(([row]) => row)
       .then(
         pTap(function ({ id }) {

@@ -1,7 +1,7 @@
-/* eslint-disable camelcase */
 'use strict'
 
 const pTap = require('p-tap')
+const snakeCaseKeys = require('snakecase-keys')
 
 const { logger } = require('../logger')
 
@@ -55,15 +55,15 @@ const createIpRepository = function (db) {
   /**
    * Saves an IP address
    * @param {string} ip
-   * @param {string} created_at
+   * @param {string} createdAt
    * @returns {Promise<object>}
    */
-  const saveIp = function (ip, created_at) {
+  const saveIp = function (ip, createdAt) {
     logger.debug('Saving IP address')
     return db
       .from(tableName)
       .returning('id')
-      .insert({ created_at, ip })
+      .insert(snakeCaseKeys({ createdAt, ip }))
       .then(([row]) => row)
       .then(
         pTap(function ({ id }) {

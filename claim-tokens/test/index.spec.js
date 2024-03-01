@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 'use strict'
 
 const chai = require('chai')
@@ -7,6 +6,7 @@ const config = require('config')
 // eslint-disable-next-line node/no-unpublished-require
 const nock = require('nock')
 const { getReasonPhrase, StatusCodes } = require('http-status-codes')
+const snakeCaseKeys = require('snakecase-keys')
 
 const { db } = require('../db')
 const { createEmailRepository } = require('../db/emailSubmissions')
@@ -64,11 +64,11 @@ const nockReCaptcha = function ({ ip, response, statusCode, token }) {
 }
 
 const nockIpScoreSuccessfulResponse = () => ({
-  response: {
-    fraud_score: 20,
-    is_crawler: false,
+  response: snakeCaseKeys({
+    fraudScore: 20,
+    isCrawler: false,
     proxy: false,
-  },
+  }),
   statusCode: 200,
 })
 
@@ -387,11 +387,11 @@ describe('claim-tokens', function () {
 
     nockIpQualityScore({
       ip: event.requestContext.identity.sourceIp,
-      response: {
-        fraud_score: 90,
-        is_crawler: false,
+      response: snakeCaseKeys({
+        fraudScore: 90,
+        isCrawler: false,
         proxy: true,
-      },
+      }),
       statusCode: 200,
     })
 
@@ -495,10 +495,13 @@ describe('claim-tokens', function () {
           body.ip === ip &&
           body.timestamp !== undefined,
       )
-      .reply(200, {
-        request_id: requestId,
-        status: 'success',
-      })
+      .reply(
+        200,
+        snakeCaseKeys({
+          requestId,
+          status: 'success',
+        }),
+      )
 
     const response = await post(event)
 

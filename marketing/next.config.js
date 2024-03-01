@@ -8,8 +8,8 @@ const nextConfig = {
     unoptimized: true,
   },
   output: 'export',
-  trailingSlash: true,
   reactStrictMode: true,
+  trailingSlash: true,
   transpilePackages: ['ui-common'],
   webpack(config) {
     config.resolve.fallback = { fs: false, net: false, tls: false }

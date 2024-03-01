@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 'use strict'
 
 const pTap = require('p-tap')
@@ -54,14 +55,15 @@ const createIpRepository = function (db) {
   /**
    * Saves an IP address
    * @param {string} ip
+   * @param {string} created_at
    * @returns {Promise<object>}
    */
-  const saveIp = function (ip) {
+  const saveIp = function (ip, created_at) {
     logger.debug('Saving IP address')
     return db
       .from(tableName)
       .returning('id')
-      .insert({ ip })
+      .insert({ created_at, ip })
       .then(([row]) => row)
       .then(
         pTap(function ({ id }) {

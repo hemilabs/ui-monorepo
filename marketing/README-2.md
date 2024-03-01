@@ -6,6 +6,7 @@ Create a `.env.local` with the following configuration
 
 ```sh
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<recaptcha-v3-key>"
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<claim-tokens-url>" # Defaults to http://localhost:4000/dev in .env.development
 ```
 
 The recaptcha v3 key can be generated [in this page](https://www.google.com/recaptcha/admin/create).
@@ -21,6 +22,7 @@ npm run dev
 Create a `.env.production` with the following configuration
 
 ```bash
+NEXT_PUBLIC_CLAIM_TOKENS_URL="<claim-tokens-url>"
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<recaptcha-v3-key>"
 NEXT_PUBLIC_TESTNET_MODE=true|false # Depending on the network being deployed
 ```

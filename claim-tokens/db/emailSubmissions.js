@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 'use strict'
 
 const pTap = require('p-tap')
@@ -52,16 +53,19 @@ const createEmailRepository = function (db) {
 
   /**
    * Saves an email
-   * @param {string} email
-   * @param {string} ip
+   * @param {object} params
+   * @param {string} params.email
+   * @param {string} params.ip
+   * @param {string} params.requestId
+   * @param {string} params.submittedAt
    *
    */
-  const saveEmail = function (email, ip) {
+  const saveEmail = function ({ email, ip, requestId, submittedAt }) {
     logger.debug('Saving email')
     return db
       .from(tableName)
       .returning('id')
-      .insert({ email, ip })
+      .insert({ email, ip, request_id: requestId, submitted_at: submittedAt })
       .then(([row]) => row)
       .then(
         pTap(function ({ id }) {

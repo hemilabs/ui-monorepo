@@ -78,6 +78,8 @@ export const up = (pg: Knex) =>
         tableBuilder
           .timestamp('submitted_at', { useTz: true })
           .defaultTo(pg.fn.now())
+        // save the request id from the service
+        tableBuilder.string('request_id').notNullable()
       },
     ),
     pg.schema.createTable(

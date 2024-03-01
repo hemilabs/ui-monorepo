@@ -1,4 +1,9 @@
 {
+  "email": {
+    "webhook": {
+      "url": "http://localhost:4000/dev/fake-email"
+    }
+  },
   "postgres": {
     "connection": {
       "database": "postgres",

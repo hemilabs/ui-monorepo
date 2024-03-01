@@ -11,6 +11,7 @@ const { getReasonPhrase, StatusCodes } = require('http-status-codes')
 const { db } = require('../db')
 const { createEmailRepository } = require('../db/emailSubmissions')
 const { createIpRepository } = require('../db/ipAccesses')
+const { createUtils } = require('../db/utils')
 
 chai.should()
 
@@ -183,6 +184,7 @@ describe('claim-tokens', function () {
   it('should return Conflict if the email has already been submitted', async function () {
     const event = getEvent({ body: JSON.stringify(validBody) })
     const emailRepository = createEmailRepository(db)
+    const dbUtils = createUtils(db)
 
     nockReCaptcha({
       ip: event.requestContext.identity.sourceIp,
@@ -197,10 +199,12 @@ describe('claim-tokens', function () {
 
     let email
     try {
-      email = await emailRepository.saveEmail(
-        validBody.email,
-        event.requestContext.identity.sourceIp,
-      )
+      email = await emailRepository.saveEmail({
+        email: validBody.email,
+        ip: event.requestContext.identity.sourceIp,
+        requestId: 'some-id',
+        submittedAt: await dbUtils.getTimestamp(),
+      })
 
       const response = await post(event)
 
@@ -402,6 +406,7 @@ describe('claim-tokens', function () {
   it('should return Conflict if the IP has been used recently', async function () {
     const event = getEvent({ body: JSON.stringify(validBody) })
     const ipRepository = createIpRepository(db)
+    const dbUtils = createUtils(db)
 
     nockReCaptcha({
       ip: event.requestContext.identity.sourceIp,
@@ -418,6 +423,7 @@ describe('claim-tokens', function () {
     try {
       ipAccess = await ipRepository.saveIp(
         event.requestContext.identity.sourceIp,
+        await dbUtils.getTimestamp(),
       )
 
       const response = await post(event)
@@ -428,6 +434,94 @@ describe('claim-tokens', function () {
       })
     } finally {
       await ipRepository.removeIpById(ipAccess.id)
+    }
+  })
+
+  it('should throw Internal Server Error if if failed to send the email', async function () {
+    const event = getEvent({ body: JSON.stringify(validBody) })
+
+    nockReCaptcha({
+      ip: event.requestContext.identity.sourceIp,
+      token: validBody.token,
+      ...nockRecaptchaSuccessfulResponse(),
+    })
+
+    nockIpQualityScore({
+      ip: event.requestContext.identity.sourceIp,
+      ...nockIpScoreSuccessfulResponse(),
+    })
+
+    nock('https://my-email-hook.com')
+      .post(
+        '/email',
+        body =>
+          body.email === validBody.email &&
+          body.ip === event.requestContext.identity.sourceIp &&
+          body.timestamp !== undefined,
+      )
+      .reply(500, {
+        status: 'error',
+      })
+
+    const response = await post(event)
+
+    assertErrorResponse(response, {
+      detail: undefined,
+      statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+    })
+  })
+
+  it('should return No Content if the email was sent successfully', async function () {
+    const event = getEvent({ body: JSON.stringify(validBody) })
+    const ip = event.requestContext.identity.sourceIp
+    const requestId = 'some-request-id'
+
+    nockReCaptcha({
+      ip,
+      token: validBody.token,
+      ...nockRecaptchaSuccessfulResponse(),
+    })
+
+    nockIpQualityScore({
+      ip: event.requestContext.identity.sourceIp,
+      ...nockIpScoreSuccessfulResponse(),
+    })
+
+    nock('https://my-email-hook.com')
+      .post(
+        '/email',
+        body =>
+          body.email === validBody.email &&
+          body.ip === ip &&
+          body.timestamp !== undefined,
+      )
+      .reply(200, {
+        request_id: requestId,
+        status: 'success',
+      })
+
+    const response = await post(event)
+
+    response.statusCode.should.equal(StatusCodes.NO_CONTENT)
+
+    // verify data's been inserted
+    const [submission, access] = await Promise.all([
+      db.from('email_submissions').where({ email: validBody.email }).first(),
+      db.from('ip_accesses').where({ ip }).first(),
+    ])
+
+    try {
+      submission.should.have.property('ip', ip)
+      submission.should.have.property('request_id', requestId)
+      submission.should.have.property('submitted_at')
+
+      access.should.have.property('created_at')
+    } finally {
+      // empty database even if assertions fail
+      await Promise.all([
+        db.from('email_submissions').where({ email: submission.email }).del(),
+        db.from('ip_accesses').where({ ip }).del(),
+      ])
     }
   })
 })

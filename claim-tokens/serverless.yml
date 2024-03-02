@@ -3,6 +3,10 @@ service: ${file(./package.json):name}
 useDotenv: true
 
 custom:
+  fake-email:
+    enabled:
+      default: false
+      dev: true
   serverless-offline:
     httpPort: 4000
 
@@ -22,8 +26,25 @@ functions:
           method: post
           path: /claim
     handler: ./index.post
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - rds:BeginTransaction
+          - rds:CommitTransaction
+          - rds:ExecuteStatement
+          - rds:RollbackTransaction
+        Resource: arn:aws:rds:::db:${self:provider.environment.POSTGRES_CONNECTION_DATABASE}
+  fake-email:
+    enabled: ${self:custom.fake-email.enabled.${self:provider.stage}, self:custom.fake-email.enabled.default}
+    events:
+      - http:
+          method: post
+          path: /fake-email
+    handler: ./fake-email.post
 
 plugins:
+  - serverless-iam-roles-per-function
+  - serverless-plugin-conditional-functions
   - serverless-offline
 
 provider:

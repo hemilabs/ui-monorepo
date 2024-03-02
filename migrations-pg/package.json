@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "db:start": "docker-compose up -d",
+    "db:stop": "docker-compose down",
     "deploy": "NODE_ENV=${STAGE:-staging} POSTGRES_CONNECTION_DATABASE=$DEPLOY_POSTGRES_CONNECTION_DATABASE POSTGRES_CONNECTION_HOST=$DEPLOY_POSTGRES_CONNECTION_HOST POSTGRES_CONNECTION_PASSWORD=$DEPLOY_POSTGRES_CONNECTION_PASSWORD POSTGRES_CONNECTION_USER=$DEPLOY_POSTGRES_CONNECTION_USER npm run migrate:up",
     "migrate:up": "NODE_ENV=${NODE_ENV:-dev} ts-node ./src/migrateUp",
     "migrate:down": "NODE_ENV=${NODE_ENV:-dev} ts-node ./src/migrateDown"

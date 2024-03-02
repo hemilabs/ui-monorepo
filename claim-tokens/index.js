@@ -1,14 +1,17 @@
 'use strict'
 
 const config = require('config')
+const camelCaseKeys = require('camelcase-keys')
 const fetch = require('fetch-plus-plus')
 const httpErrors = require('http-errors')
 const { getReasonPhrase, StatusCodes } = require('http-status-codes')
 const pTap = require('p-tap')
+const snakeCaseKeys = require('snakecase-keys')
 
 const { db, transactionProvider } = require('./db')
 const { createEmailRepository } = require('./db/emailSubmissions')
 const { createIpRepository } = require('./db/ipAccesses')
+const { createUtils } = require('./db/utils')
 const { logger } = require('./logger')
 
 const headers = {
@@ -115,6 +118,7 @@ const verifyRecaptcha = (token, userIp) =>
       // or someone else's frontend calling us (not our error)
       // However, recaptcha does generate an invalid token (that's why we've reached this point), so I believe
       // returning Invalid Token is correct, even though the error may be ours.
+      // When running from local, make sure you're using the 127.0.0.1 (needs whitelisting) and not localhost
       logger.warn(
         'The recaptcha configured domain is not whitelisted. It may be a misconfiguration',
       )
@@ -137,22 +141,23 @@ const verifyIpQualityScore = ip =>
       'ipQualityScore.secretKey',
     )}/${ip}`,
     {
-      queryString: {
-        // eslint-disable-next-line camelcase
-        allow_public_access_points: true,
+      queryString: snakeCaseKeys({
+        allowPublicAccessPoints: true,
         strictness: 0,
-      },
+      }),
     },
-  ).then(function (response) {
-    if (
-      response.is_crawler ||
-      response.proxy ||
-      response.fraud_score > config.get('ipQualityScore.maxScore')
-    ) {
-      throw new httpErrors.Forbidden('Suspicious IP address')
-    }
-    logger.verbose('IP score verified correctly')
-  })
+  )
+    .then(camelCaseKeys)
+    .then(function (response) {
+      if (
+        response.isCrawler ||
+        response.proxy ||
+        response.fraudScore > config.get('ipQualityScore.maxScore')
+      ) {
+        throw new httpErrors.Forbidden('Suspicious IP address')
+      }
+      logger.verbose('IP score verified correctly')
+    })
 
 const verifyIP = ip =>
   Promise.all([
@@ -167,37 +172,52 @@ const verifyIP = ip =>
       }),
   ])
 
-const saveEmailAndIP = (transaction, email, ip) =>
-  Promise.all([
-    createEmailRepository(transaction).saveEmail(email, ip),
-    createIpRepository(transaction).saveIp(ip),
-  ])
+const saveEmailAndIP =
+  ({ email, ip, timestamp, transaction }) =>
+  requestId =>
+    Promise.all([
+      createEmailRepository(transaction).saveEmail({
+        email,
+        ip,
+        requestId,
+        submittedAt: timestamp,
+      }),
+      createIpRepository(transaction).saveIp(ip, timestamp),
+    ])
+      .then(transaction.commit)
+      .catch(
+        // rollback and let the error bubble up
+        pTap.catch(transaction.rollback),
+      )
+      .then(
+        pTap(function () {
+          logger.verbose('Email and IP saving transaction committed')
+        }),
+      )
 
-const sendEmail = email =>
-  function () {
-    logger.debug('Calling webhook to send email')
-    return Promise.resolve(email)
-  }
+const sendEmail = function (email, ip, timestamp) {
+  logger.debug('Calling webhook to send email')
+  return fetch(config.get('email.webhook'), {
+    body: JSON.stringify({ email, ip, timestamp }),
+    method: 'POST',
+  }).then(function ({ request_id: requestId, status }) {
+    if (status !== 'success') {
+      throw new httpErrors.InternalServerError('Failed to send email')
+    }
+    logger.verbose('Email request id %s sent successfully', requestId)
+    return requestId
+  })
+}
 
 const submitClaimingRequest = function (email, ip) {
   logger.debug('Starting transaction to submit email and IP')
   return transactionProvider().then(transaction =>
-    saveEmailAndIP(transaction, email, ip)
-      .then(
-        pTap(function () {
-          logger.debug('Email and IP saved successfully. Sending email now')
-        }),
-      )
-      .then(sendEmail(email))
-      .then(transaction.commit)
-      .then(
-        pTap(function () {
-          logger.verbose('Transaction committed')
-        }),
-      )
-      .catch(
-        // rollback and let the error bubble up
-        pTap.catch(transaction.rollback),
+    createUtils(transaction)
+      .getTimestamp()
+      .then(timestamp =>
+        sendEmail(email, ip, timestamp).then(
+          saveEmailAndIP({ email, ip, timestamp, transaction }),
+        ),
       ),
   )
 }
@@ -222,7 +242,7 @@ const claimTokens = async function ({
 
   return Promise.all([
     verifyEmail(parsedBody.email),
-    verifyRecaptcha(parsedBody.token),
+    verifyRecaptcha(parsedBody.token, ip),
     verifyIP(ip),
   ])
     .then(() => submitClaimingRequest(parsedBody.email, ip))

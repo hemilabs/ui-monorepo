@@ -1,0 +1,26 @@
+{
+  "email": {
+    "webhook": "https://my-email-hook.com/email"
+  },
+  "ipQualityScore": {
+    "secretKey": "secret-key",
+    "url": "https://ipscore.com"
+  },
+  "logger": {
+    "Console": {
+      "level": "debug"
+    }
+  },
+  "postgres": {
+    "connection": {
+      "database": "postgres",
+      "host": "localhost",
+      "password": null,
+      "user": "postgres"
+    }
+  },
+  "recaptcha": {
+    "secretKey": "secret-key",
+    "url": "https://my-recaptcha-api.com"
+  }
+}

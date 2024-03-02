@@ -2,7 +2,13 @@
 
 ## Setup
 
-Use the [migrations-pg](../migrations-pg) project to set up a local database if needed.
+Use the [migrations-pg](../migrations-pg) project to set up a local database which should be running to run this project.
+
+Then start the local environment with
+
+```sh
+npm run dev
+```
 
 ## Environment variables
 

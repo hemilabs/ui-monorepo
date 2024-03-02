@@ -1,6 +1,7 @@
 'use strict'
 
 const pTap = require('p-tap')
+const snakeCaseKeys = require('snakecase-keys')
 
 const { logger } = require('../logger')
 
@@ -36,23 +37,44 @@ const createIpRepository = function (db) {
   }
 
   /**
-   * Saves an IP address
-   * @param {string} ip
+   * Removes an ip submission by id
+   * @param {number} id
    * @returns {Promise<void>}
    */
-  const saveIp = function (ip) {
+  const removeIpById = function (id) {
+    logger.debug('Removing IP id %s', id)
+    return db
+      .from(tableName)
+      .where({ id })
+      .delete()
+      .then(function () {
+        logger.verbose('IP id %s removed', id)
+      })
+  }
+
+  /**
+   * Saves an IP address
+   * @param {string} ip
+   * @param {string} createdAt
+   * @returns {Promise<object>}
+   */
+  const saveIp = function (ip, createdAt) {
     logger.debug('Saving IP address')
     return db
       .from(tableName)
       .returning('id')
-      .insert({ ip })
-      .then(function ([{ id }]) {
-        logger.verbose('IP address saved with id %s', id)
-      })
+      .insert(snakeCaseKeys({ createdAt, ip }))
+      .then(([row]) => row)
+      .then(
+        pTap(function ({ id }) {
+          logger.verbose('IP address saved with id %s', id)
+        }),
+      )
   }
 
   return {
     isIpRecentlyUsed,
+    removeIpById,
     saveIp,
   }
 }

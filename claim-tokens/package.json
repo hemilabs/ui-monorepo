@@ -5,25 +5,34 @@
   "main": "index.js",
   "scripts": {
     "dev": "sls offline start",
-    "deploy": "sls deploy"
+    "deploy": "sls deploy",
+    "package": "sls package",
+    "posttest": "cd ../migrations-pg && npm run db:stop",
+    "pretest": "cd ../migrations-pg && npm run db:start && npm run migrate:up",
+    "test": "NODE_ENV=test mocha"
   },
   "author": {
     "email": "gonzalo@bloq.com",
     "name": "Gonzalo D'Elia"
   },
   "devDependencies": {
+    "nock": "14.0.0-beta.5",
     "serverless": "3.38.0",
-    "serverless-offline": "13.3.3"
+    "serverless-iam-roles-per-function": "3.2.0",
+    "serverless-offline": "13.3.3",
+    "serverless-plugin-conditional-functions": "1.0.8"
   },
   "dependencies": {
     "@bloq/service-logger": "2.0.0",
+    "camelcase-keys": "7.0.2",
     "config": "3.3.11",
     "fetch-plus-plus": "1.0.0",
     "http-errors": "2.0.0",
     "http-status-codes": "2.3.0",
     "knex": "3.1.0",
     "p-tap": "3.1.0",
-    "pg": "8.11.3"
+    "pg": "8.11.3",
+    "snakecase-keys": "6.0.0"
   },
   "engines": {
     "node": ">=16"

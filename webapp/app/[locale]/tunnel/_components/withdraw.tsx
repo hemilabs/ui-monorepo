@@ -1,5 +1,3 @@
-import { useBridgeState } from 'app/[locale]/tunnel/useBridgeState'
-import { useWithdraw } from 'app/[locale]/tunnel/useWithdraw'
 import { ReviewWithdraw } from 'components/reviewBox'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
@@ -15,6 +13,9 @@ import {
   useAccount,
   useConfig,
 } from 'wagmi'
+
+import { useBridgeState } from '../_hooks/useBridgeState'
+import { useWithdraw } from '../_hooks/useWithdraw'
 
 import { BridgeForm, canSubmit, getTotal } from './form'
 

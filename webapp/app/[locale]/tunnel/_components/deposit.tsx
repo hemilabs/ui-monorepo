@@ -1,7 +1,5 @@
 'use client'
 
-import { useBridgeState } from 'app/[locale]/tunnel/useBridgeState'
-import { useDeposit } from 'app/[locale]/tunnel/useDeposit'
 import { ReviewDeposit } from 'components/reviewBox'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
@@ -17,6 +15,9 @@ import {
   useConfig,
   type UseWaitForTransactionReceiptReturnType,
 } from 'wagmi'
+
+import { useBridgeState } from '../_hooks/useBridgeState'
+import { useDeposit } from '../_hooks/useDeposit'
 
 import { Erc20Approval } from './Erc20Approval'
 import { BridgeForm, canSubmit, getTotal } from './form'

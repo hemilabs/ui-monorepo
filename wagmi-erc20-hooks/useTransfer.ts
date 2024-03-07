@@ -1,11 +1,27 @@
-import { Address } from 'viem'
+import { type Address, type ContractFunctionArgs } from 'viem'
 
-import { useWriteErc20, type MutationWithArgs } from './baseErc20'
+import {
+  useWriteErc20,
+  type Erc20Abi,
+  type WriteQueryOptions,
+} from './baseErc20'
 
-type TransferArgs = { amount: bigint; recipient: Address }
-type Options = MutationWithArgs<TransferArgs>
+type TransferArgs = ContractFunctionArgs<Erc20Abi, 'nonpayable', 'transfer'>
+type Recipient = TransferArgs[0]
+type Amount = TransferArgs[1]
+
+type Options = {
+  args: { amount: Amount; recipient: Recipient }
+  query?: WriteQueryOptions
+}
 
 export const useTransfer = (
   erc20Address: Address,
   { args: { amount, recipient }, query }: Options,
-) => useWriteErc20(erc20Address, 'transfer', [recipient, amount], query)
+) =>
+  useWriteErc20({
+    address: erc20Address,
+    args: [recipient, amount],
+    functionName: 'transfer',
+    query,
+  })

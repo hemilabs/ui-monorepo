@@ -8,7 +8,8 @@ type SubSectionProps = {
   value: string
 }
 const SubSection = function ({ symbol, text, value }: SubSectionProps) {
-  const getValue = () => (Big(value).lt('0.001') ? '< 0.001' : value)
+  const getValue = () =>
+    Big(value.replace(/,/g, '')).lt('0.001') ? '< 0.001' : value
 
   return (
     <div className="flex items-center justify-between py-3 text-xs font-normal md:text-sm">

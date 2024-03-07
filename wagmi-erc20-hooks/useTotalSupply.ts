@@ -1,8 +1,15 @@
-import { Address } from 'viem'
+import { type Address } from 'viem'
+import { type UseReadContractParameters } from 'wagmi'
 
-import { useReadErc20, type QueryOptions } from './baseErc20'
+import { useReadErc20, Erc20Abi } from './baseErc20'
 
-export const useTotalSupply = (
-  erc20Address: Address,
-  { query }: { query?: QueryOptions<bigint> } = {},
-) => useReadErc20(erc20Address, 'totalSupply', undefined, query)
+type Options = {
+  query?: UseReadContractParameters<Erc20Abi, 'totalSupply'>['query']
+}
+
+export const useTotalSupply = (erc20Address: Address, { query }: Options) =>
+  useReadErc20({
+    address: erc20Address,
+    functionName: 'totalSupply',
+    query,
+  })

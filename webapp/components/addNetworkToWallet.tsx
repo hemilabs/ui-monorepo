@@ -2,11 +2,10 @@
 
 import { hemi } from 'app/networks'
 import { useTranslations } from 'next-intl'
-import { useAccount, useNetwork, useWalletClient } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 
 export function AddNetworkToWallet() {
-  const { isConnected } = useAccount()
-  const { chain } = useNetwork()
+  const { chain, isConnected } = useAccount()
   const t = useTranslations()
   const { data: walletClient, status } = useWalletClient()
 

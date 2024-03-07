@@ -1,9 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useDepositNativeToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
+import { useCallback } from 'react'
 import { Token } from 'types/token'
 import { isNativeToken } from 'utils/token'
 import { parseUnits } from 'viem'
-import { useWaitForTransaction } from 'wagmi'
+import { useWaitForTransactionReceipt } from 'wagmi'
 
 import { useDepositToken } from './useDepositToken'
 
@@ -12,10 +14,6 @@ type UseDeposit = {
   extendedErc20Approval: boolean | undefined
   fromInput: string
   fromToken: Token
-  onApprovalError?: () => void
-  onApprovalSuccess?: () => void
-  onDepositError?: () => void
-  onDepositSuccess?: () => void
   toToken: Token
 }
 export const useDeposit = function ({
@@ -23,21 +21,20 @@ export const useDeposit = function ({
   extendedErc20Approval,
   fromInput,
   fromToken,
-  onApprovalError,
-  onApprovalSuccess,
-  onDepositError,
-  onDepositSuccess,
   toToken,
 }: UseDeposit) {
+  const queryClient = useQueryClient()
   const depositingNative = isNativeToken(fromToken)
 
   const toDeposit = parseUnits(fromInput, fromToken.decimals).toString()
 
   const {
-    depositNativeTokenGasFees,
+    depositNativeMutationKey,
     depositNativeToken,
+    depositNativeTokenError,
+    depositNativeTokenGasFees,
     depositNativeTokenTxHash,
-    status: nativeTokenDepositUserConfirmationStatus,
+    resetDepositNativeToken,
   } = useDepositNativeToken({
     enabled: depositingNative && canDeposit,
     l1ChainId: fromToken.chainId,
@@ -45,29 +42,34 @@ export const useDeposit = function ({
   })
 
   const {
-    approvalTxHash,
+    approvalError,
+    approvalQueryKey,
+    approvalReceipt,
+    approvalReceiptError,
     approvalTokenGasFees,
-    approvalTxStatus: approvalStatus,
+    approvalTxHash,
+    depositErc20TokenError,
     depositErc20TokenGasFees,
+    depositErc20TokenMutationKey,
     depositErc20TokenTxHash,
     depositToken,
     needsApproval,
-    status: erc20DepositUserConfirmationStatus,
-    userConfirmationApprovalStatus,
+    resetApproval,
+    resetDepositToken,
   } = useDepositToken({
     amount: fromInput,
     enabled: !depositingNative && canDeposit,
     extendedApproval: extendedErc20Approval,
-    onApprovalError,
-    onApprovalSuccess,
     token: fromToken,
   })
 
-  const { status: depositTxStatus } = useWaitForTransaction({
+  const {
+    data: depositReceipt,
+    error: depositReceiptError,
+    status: depositTxStatus,
+  } = useWaitForTransactionReceipt({
     // @ts-expect-error string is `0x${string}`
     hash: depositingNative ? depositNativeTokenTxHash : depositErc20TokenTxHash,
-    onError: onDepositError,
-    onSuccess: onDepositSuccess,
   })
 
   useReloadBalances({
@@ -83,27 +85,62 @@ export const useDeposit = function ({
       }
     }
 
+  const clearDepositNativeState = useCallback(
+    function () {
+      // clear the deposit operation hash
+      resetDepositNativeToken()
+      // clear deposit receipt state
+      queryClient.removeQueries({ queryKey: depositNativeMutationKey })
+    },
+    [depositNativeMutationKey, queryClient, resetDepositNativeToken],
+  )
+
+  const clearDepositTokenState = useCallback(
+    function () {
+      // clear the approval operation hash, if any
+      resetApproval?.()
+      // clear the deposit operation hash
+      resetDepositToken()
+      // clear approval receipt state
+      queryClient.removeQueries({ queryKey: approvalQueryKey })
+      // clear deposit token receipt state
+      queryClient.removeQueries({ queryKey: depositErc20TokenMutationKey })
+    },
+    [
+      approvalQueryKey,
+      depositErc20TokenMutationKey,
+      queryClient,
+      resetApproval,
+      resetDepositToken,
+    ],
+  )
+
   if (depositingNative) {
     return {
+      clearDepositState: clearDepositNativeState,
       deposit: handleDeposit(depositNativeToken),
+      depositError: depositNativeTokenError,
       depositGasFees: depositNativeTokenGasFees,
-      depositStatus: depositTxStatus,
+      depositReceipt,
+      depositReceiptError,
       depositTxHash: depositNativeTokenTxHash,
       needsApproval: false,
-      userDepositConfirmation: nativeTokenDepositUserConfirmationStatus,
     }
   }
 
   return {
-    approvalStatus,
+    approvalError,
+    approvalReceipt,
+    approvalReceiptError,
     approvalTokenGasFees,
     approvalTxHash,
+    clearDepositState: clearDepositTokenState,
     deposit: handleDeposit(depositToken),
+    depositError: depositErc20TokenError,
     depositGasFees: depositErc20TokenGasFees,
-    depositStatus: depositTxStatus,
+    depositReceipt,
+    depositReceiptError,
     depositTxHash: depositErc20TokenTxHash,
     needsApproval,
-    userConfirmationApprovalStatus,
-    userDepositConfirmation: erc20DepositUserConfirmationStatus,
   }
 }

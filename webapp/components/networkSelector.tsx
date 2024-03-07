@@ -6,7 +6,7 @@ import { useState } from 'react'
 import { EthLogo } from 'ui-common/components/ethLogo'
 import { HemiTokenWithBackground } from 'ui-common/components/hemiLogo'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
-import { Chain } from 'wagmi'
+import { type Chain } from 'viem'
 
 const ChainLogo = ({ networkId }: { networkId: Chain['id'] }) =>
   networkId === hemi.id ? <HemiTokenWithBackground /> : <EthLogo />

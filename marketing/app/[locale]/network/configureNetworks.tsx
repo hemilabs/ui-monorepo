@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import React, { useEffect } from 'react'
-import { type Chain } from 'wagmi'
+import { type Chain } from 'viem'
 
 const AddChain = dynamic(
   () => import('app/[locale]/network/addChain').then(mod => mod.AddChain),

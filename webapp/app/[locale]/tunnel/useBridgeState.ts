@@ -1,5 +1,5 @@
 import { bridgeableNetworks, hemi } from 'app/networks'
-import { useReducer } from 'react'
+import { useCallback, useReducer } from 'react'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
 import { isNativeToken } from 'utils/token'
@@ -23,6 +23,8 @@ type Action<T extends string> = {
 
 type NoPayload = { payload?: never }
 
+type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
+
 type UpdateExtendedErc20Approval = Action<'updateExtendedErc20Approval'> &
   NoPayload
 
@@ -43,6 +45,7 @@ type UpdateToToken = Action<'updateToToken'> & {
 }
 type ToggleInputs = Action<'toggleInput'> & NoPayload
 type Actions =
+  | ResetStateAfterOperation
   | UpdateExtendedErc20Approval
   | UpdateFromNetwork
   | UpdateFromInput
@@ -60,6 +63,13 @@ const compilationError = function (_: never): never {
 const reducer = function (state: BridgeState, action: Actions) {
   const { type } = action
   switch (type) {
+    case 'resetStateAfterOperation': {
+      return {
+        ...state,
+        extendedErc20Approval: false,
+        fromInput: '0',
+      }
+    }
     case 'updateExtendedErc20Approval': {
       return {
         ...state,
@@ -158,31 +168,57 @@ export const useBridgeState = function (): BridgeState & {
     toToken: getNativeToken(hemi.id),
   })
 
-  const updateFromInput = function (payload: UpdateFromInput['payload']) {
-    // verify if input is a valid number
-    const validationRegex = /^\d*\.?\d*$/
-    if (!validationRegex.test(payload)) {
-      return
-    }
-    dispatch({
-      payload: payload.replace(/^0+/, ''),
-      type: 'updateFromInput',
-    })
-  }
+  const updateFromInput = useCallback(
+    function (payload: UpdateFromInput['payload']) {
+      // verify if input is a valid number
+      const validationRegex = /^\d*\.?\d*$/
+      if (!validationRegex.test(payload)) {
+        return
+      }
+      dispatch({
+        payload: payload.replace(/^0+/, ''),
+        type: 'updateFromInput',
+      })
+    },
+    [dispatch],
+  )
+
+  const resetStateAfterOperation = useCallback(
+    () => dispatch({ type: 'resetStateAfterOperation' }),
+    [dispatch],
+  )
 
   return {
     ...state,
-    toggleInput: () => dispatch({ type: 'toggleInput' }),
-    updateExtendedErc20Approval: () =>
-      dispatch({ type: 'updateExtendedErc20Approval' }),
+    resetStateAfterOperation,
+    toggleInput: useCallback(
+      () => dispatch({ type: 'toggleInput' }),
+      [dispatch],
+    ),
+    updateExtendedErc20Approval: useCallback(
+      () => dispatch({ type: 'updateExtendedErc20Approval' }),
+      [dispatch],
+    ),
     updateFromInput,
-    updateFromNetwork: (payload: UpdateFromNetwork['payload']) =>
-      dispatch({ payload, type: 'updateFromNetwork' }),
-    updateFromToken: (payload: UpdateFromToken['payload']) =>
-      dispatch({ payload, type: 'updateFromToken' }),
-    updateToNetwork: (payload: UpdateToNetwork['payload']) =>
-      dispatch({ payload, type: 'updateToNetwork' }),
-    updateToToken: (payload: UpdateToToken['payload']) =>
-      dispatch({ payload, type: 'updateToToken' }),
+    updateFromNetwork: useCallback(
+      (payload: UpdateFromNetwork['payload']) =>
+        dispatch({ payload, type: 'updateFromNetwork' }),
+      [dispatch],
+    ),
+    updateFromToken: useCallback(
+      (payload: UpdateFromToken['payload']) =>
+        dispatch({ payload, type: 'updateFromToken' }),
+      [dispatch],
+    ),
+    updateToNetwork: useCallback(
+      (payload: UpdateToNetwork['payload']) =>
+        dispatch({ payload, type: 'updateToNetwork' }),
+      [dispatch],
+    ),
+    updateToToken: useCallback(
+      (payload: UpdateToToken['payload']) =>
+        dispatch({ payload, type: 'updateToToken' }),
+      [dispatch],
+    ),
   }
 }

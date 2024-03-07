@@ -6,10 +6,9 @@
     "tsc:check": "tsc"
   },
   "peerDependencies": {
-    "viem": "^1.0.0",
-    "wagmi": "^1.4.0"
+    "viem": "^2.7.19"
   },
   "devDependencies": {
-    "wagmi": "1.4.13"
+    "viem": "2.7.19"
   }
 }

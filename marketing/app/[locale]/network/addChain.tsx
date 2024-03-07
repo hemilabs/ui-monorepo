@@ -1,14 +1,10 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { useMutation } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { Button } from 'ui-common/components/button'
-import {
-  useAccount,
-  useWalletClient,
-  type Chain,
-  useMutation,
-  useNetwork,
-} from 'wagmi'
+import { type Chain } from 'viem'
+import { useAccount, useWalletClient } from 'wagmi'
 
 type Props = {
   chain: Chain
@@ -19,13 +15,11 @@ export const AddChain = function ({ chain }: Props) {
 
   const t = useTranslations('network')
 
-  const { isConnected } = useAccount()
+  const { chain: connectedChain, isConnected } = useAccount()
   const { data: walletClient } = useWalletClient()
-  const { chain: connectedChain } = useNetwork()
 
   const { status, mutate: addChain } = useMutation({
-    mutationFn: () => walletClient?.addChain({ chain }),
-    mutationKey: ['addChain', chain.id],
+    mutationFn: (c: Chain) => walletClient?.addChain({ chain: c }),
     onSuccess: () => setIsChainAdded(true),
   })
 
@@ -38,8 +32,8 @@ export const AddChain = function ({ chain }: Props) {
       {!isConnected && <ConnectButton />}
       {!isChainAdded && isConnected && !connectedToChain && (
         <Button
-          disabled={status === 'loading'}
-          onClick={() => addChain()}
+          disabled={status === 'pending'}
+          onClick={() => addChain(chain)}
           size="small"
           type="button"
         >

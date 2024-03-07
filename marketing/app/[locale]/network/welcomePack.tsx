@@ -1,12 +1,12 @@
 'use client'
 
+import { useMutation } from '@tanstack/react-query'
 import fetch from 'fetch-plus-plus'
 import { discordUrl } from 'hemi-metadata/socials'
 import { useLocale, useTranslations } from 'next-intl'
 import { useReCaptcha } from 'next-recaptcha-v3'
 import { FormEvent, useState } from 'react'
 import { Button } from 'ui-common/components/button'
-import { useMutation } from 'wagmi'
 
 const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
@@ -136,7 +136,7 @@ export const WelcomePack = function () {
 
   const [emailState, setEmailState] = useState<EmailState>('initial')
 
-  const { isLoading: isClaiming, mutate: claimTokens } = useMutation<
+  const { isPending: isClaiming, mutate: claimTokens } = useMutation<
     void,
     Error,
     { email: string; receiveUpdates: boolean }

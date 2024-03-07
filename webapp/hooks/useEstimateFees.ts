@@ -1,5 +1,5 @@
 import Big from 'big.js'
-import { useFeeData } from 'wagmi'
+import { useEstimateFeesPerGas, useFeeHistory } from 'wagmi'
 
 // Overestimation for L1 gas limit used by OP/SDK
 // See https://github.com/ethereum-optimism/optimism/blob/592daa704a56f5b3df21b41ea7cc294ab63b95ff/packages/sdk/src/cross-chain-messenger.ts#L2060
@@ -18,19 +18,28 @@ export const useEstimateFees = function ({
   gasUnits = BigInt(0),
   overEstimation = defaultOverEstimation,
 }: UseEstimateFees) {
-  const { data: fees } = useFeeData({
+  const { data: fees } = useEstimateFeesPerGas({
     chainId,
-    enabled,
-    watch: true,
+    query: {
+      enabled,
+    },
   })
 
-  const { lastBaseFeePerGas = BigInt(0), maxPriorityFeePerGas = BigInt(0) } =
-    fees ?? {}
+  const { data: feeHistory } = useFeeHistory({
+    chainId,
+    query: {
+      enabled,
+    },
+  })
+
+  const { maxPriorityFeePerGas = BigInt(0) } = fees ?? {}
+
+  const { baseFeePerGas = BigInt(0) } = feeHistory ?? {}
 
   return BigInt(
     Big(gasUnits.toString())
       .times(
-        Big(lastBaseFeePerGas.toString()).plus(maxPriorityFeePerGas.toString()),
+        Big(baseFeePerGas.toString()).plus(maxPriorityFeePerGas.toString()),
       )
       .times(overEstimation)
       .toFixed(0),

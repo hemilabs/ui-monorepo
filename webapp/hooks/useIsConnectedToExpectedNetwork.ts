@@ -1,9 +1,9 @@
 import { type Chain } from 'viem'
-import { useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 export const useIsConnectedToExpectedNetwork = function (
   expectedChainId: Chain['id'],
 ) {
-  const { chain } = useNetwork()
+  const { chain } = useAccount()
   return chain?.id === expectedChainId
 }

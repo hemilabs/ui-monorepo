@@ -10,6 +10,7 @@ import { tokenList } from 'tokenList'
 import { formatNumber } from 'utils/format'
 
 import { Deposit } from './_components/deposit'
+import { ToggleButton } from './_components/ToggleButton'
 import { Withdraw } from './_components/withdraw'
 import { useBridgeState } from './useBridgeState'
 
@@ -51,23 +52,6 @@ const SwitchToNetwork = dynamic(
     ssr: false,
   },
 )
-
-const ToggleButton = dynamic(
-  () =>
-    import('app/[locale]/tunnel/_components/ToggleButton').then(
-      mod => mod.ToggleButton,
-    ),
-  {
-    loading: () => (
-      <Skeleton
-        className="mx-auto h-7 w-8 rounded-lg"
-        containerClassName="mx-auto"
-      />
-    ),
-    ssr: false,
-  },
-)
-
 type Props = {
   bridgeState: ReturnType<typeof useBridgeState>
   isRunningOperation: boolean

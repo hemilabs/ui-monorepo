@@ -31,28 +31,35 @@ export const useApproveToken = function (
     args: { owner, spender },
     query: {
       enabled: !isNativeToken(token) && !!owner && !!spender,
-      watch: true,
     },
   })
+
   const needsApproval = amount > allowance && allowanceStatus === 'success'
 
   const {
-    data,
-    status: userConfirmationApprovalStatus,
-    write: approve,
+    data: hash,
+    error: approvalError,
+    reset: resetApproval,
+    writeContract,
   } = useApprove(erc20AddressToken, {
     args: { amount, spender },
     query: {
-      enabled: needsApproval,
       onSuccess: () => refetchAllowance(),
     },
   })
 
+  const approve = function () {
+    if (needsApproval) {
+      writeContract()
+    }
+  }
+
   return {
+    approvalError,
     approvalTokenGasFees,
-    approvalTxHash: data?.hash,
+    approvalTxHash: hash,
     approve,
     needsApproval,
-    userConfirmationApprovalStatus,
+    resetApproval,
   }
 }

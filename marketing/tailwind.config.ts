@@ -14,8 +14,7 @@ const config: Config = {
         'triangles-pattern': "url('../public/main-background.webp')",
       },
       fontFamily: {
-        'bricolage-grotesque': '--font-bricolage-grotesque',
-        'inter': '--font-inter',
+        inter: '--font-inter',
       },
       height: {
         // 67px from header, 24px from container margin's top, and 28px twice from body y-padding

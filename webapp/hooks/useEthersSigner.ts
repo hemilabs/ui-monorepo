@@ -2,15 +2,10 @@
 // See https://wagmi.sh/react/guides/ethers#connector-client-%E2%86%92-signer
 import { providers } from 'ethers'
 import { useMemo } from 'react'
-import { HttpTransport, type Chain } from 'viem'
-import {
-  type WalletClient,
-  useWalletClient,
-  PublicClient,
-  usePublicClient,
-} from 'wagmi'
+import type { Chain, HttpTransport, PublicClient } from 'viem'
+import { Config, useConnectorClient, usePublicClient } from 'wagmi'
 
-// See https://1.x.wagmi.sh/react/ethers-adapters#public-client--provider
+// See https://wagmi.sh/react/guides/ethers#client-%E2%86%92-provider
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient
   const network = {
@@ -27,26 +22,25 @@ export function publicClientToProvider(publicClient: PublicClient) {
   return new providers.JsonRpcProvider(transport.url, network)
 }
 
-// See https://1.x.wagmi.sh/react/ethers-adapters#wallet-client--signer
-function walletClientToSigner(walletClient: WalletClient) {
-  const { account, chain, transport } = walletClient
+// https://wagmi.sh/react/guides/ethers#connector-client-%E2%86%92-signer
+// Types provided by docs do not work, unless [strict](https://www.typescriptlang.org/tsconfig#strict) is enabled.
+// See https://github.com/BVM-priv/ui-monorepo/issues/105
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function clientToSigner(client: any) {
+  const { account, chain, transport } = client
   const network = {
     chainId: chain.id,
     ensAddress: chain.contracts?.ensRegistry?.address,
     name: chain.name,
   }
-  // @ts-expect-error it's the literal code from docs
   const provider = new providers.Web3Provider(transport, network)
   const signer = provider.getSigner(account.address)
   return signer
 }
 
 export function useWeb3Provider(chainId: Chain['id']) {
-  const { data: walletClient } = useWalletClient({ chainId })
-  return useMemo(
-    () => (walletClient ? walletClientToSigner(walletClient) : undefined),
-    [walletClient],
-  )
+  const { data: client } = useConnectorClient<Config>({ chainId })
+  return useMemo(() => (client ? clientToSigner(client) : undefined), [client])
 }
 
 export function useJsonRpcProvider(chainId: Chain['id']) {

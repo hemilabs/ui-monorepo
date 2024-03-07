@@ -1,36 +1,45 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useApproveToken } from 'hooks/useApproveToken'
 import { useDepositErc20Token } from 'hooks/useL2Bridge'
+import { useEffect } from 'react'
 import { Token } from 'types/token'
 import { parseUnits } from 'viem'
-import { usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
+import {
+  useAccount,
+  useSimulateContract,
+  useWaitForTransactionReceipt,
+} from 'wagmi'
+import { useAllowance } from 'wagmi-erc20-hooks'
 
 const ExtraApprovalTimesAmount = 10
 
 type UseDepositToken = Pick<
-  Parameters<typeof usePrepareContractWrite>['0'],
+  Parameters<typeof useSimulateContract>['0'],
   'enabled'
 > & {
   amount: string
   extendedApproval?: boolean
-  onApprovalError?: () => void
-  onApprovalSuccess?: () => void
   token: Token
 }
 export const useDepositToken = function ({
   amount,
   enabled,
   extendedApproval = false,
-  onApprovalError,
-  onApprovalSuccess,
   token,
 }: UseDepositToken) {
   const toDeposit = parseUnits(amount, token.decimals).toString()
+  const queryClient = useQueryClient()
+
+  const { address: owner } = useAccount()
 
   const {
     depositErc20Token,
+    depositErc20TokenError,
     depositErc20TokenGasFees,
+    depositErc20TokenMutationKey,
     depositErc20TokenTxHash,
     l1StandardBridgeAddress,
+    resetDepositToken,
     status: depositStatus,
   } = useDepositErc20Token({
     enabled,
@@ -39,12 +48,37 @@ export const useDepositToken = function ({
     token,
   })
 
+  const { data: depositReceipt, error: depositReceiptError } =
+    useWaitForTransactionReceipt({
+      // @ts-expect-error string is `0x${string}`
+      hash: depositErc20TokenTxHash,
+    })
+
+  // @ts-expect-error string is `0x${string}`
+  const { queryKey } = useAllowance(token.address, {
+    args: {
+      owner,
+      spender: l1StandardBridgeAddress,
+    },
+  })
+
+  const depositReceiptStatus = depositReceipt?.status
+  useEffect(
+    function invalidateAllowance() {
+      if (depositReceiptStatus === 'status' || depositReceiptError) {
+        queryClient.invalidateQueries({ queryKey })
+      }
+    },
+    [depositReceiptError, depositReceiptStatus, queryClient, queryKey],
+  )
+
   const {
+    approvalError,
     approvalTokenGasFees,
     approvalTxHash,
     approve,
     needsApproval,
-    userConfirmationApprovalStatus,
+    resetApproval,
   } = useApproveToken(token, {
     amount:
       BigInt(toDeposit) *
@@ -53,35 +87,50 @@ export const useDepositToken = function ({
     spender: l1StandardBridgeAddress,
   })
 
-  const { status: approvalTxStatus } = useWaitForTransaction({
+  const {
+    data: approvalReceipt,
+    error: approvalReceiptError,
+    queryKey: approvalQueryKey,
+  } = useWaitForTransactionReceipt({
     hash: approvalTxHash,
-    onError: onApprovalError,
-    onSuccess() {
-      onApprovalSuccess?.()
-      depositErc20Token()
-    },
   })
+
+  const approvalReceiptStatus = approvalReceipt?.status
+  useEffect(
+    function depositAfterApprovalSuccess() {
+      if (approvalReceiptStatus === 'success' && depositStatus === 'idle') {
+        depositErc20Token()
+      }
+    },
+    [approvalReceiptStatus, depositErc20Token, depositStatus],
+  )
 
   const depositToken = function () {
     if (!enabled) {
-      return
+      return undefined
     }
     if (needsApproval) {
       approve()
     } else {
       depositErc20Token()
     }
+    return undefined
   }
 
   return {
+    approvalError,
+    approvalQueryKey,
+    approvalReceipt,
+    approvalReceiptError,
     approvalTokenGasFees,
     approvalTxHash,
-    approvalTxStatus,
+    depositErc20TokenError,
     depositErc20TokenGasFees,
+    depositErc20TokenMutationKey,
     depositErc20TokenTxHash,
     depositToken,
     needsApproval,
-    status: depositStatus,
-    userConfirmationApprovalStatus,
+    resetApproval,
+    resetDepositToken,
   }
 }

@@ -1,17 +1,17 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useWithdrawNativeToken, useWithdrawToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
+import { useCallback } from 'react'
 import { Token } from 'types/token'
 import { isNativeToken } from 'utils/token'
-import { parseUnits } from 'viem'
-import { type Chain, useWaitForTransaction } from 'wagmi'
+import { type Chain, parseUnits } from 'viem'
+import { useWaitForTransactionReceipt } from 'wagmi'
 
 type UseWithdraw = {
   canWithdraw: boolean
   fromInput: string
   fromToken: Token
   l1ChainId: Chain['id']
-  onSuccess?: () => void
-  onError?: () => void
   toToken: Token
 }
 export const useWithdraw = function ({
@@ -19,17 +19,18 @@ export const useWithdraw = function ({
   fromInput,
   fromToken,
   l1ChainId,
-  onError,
-  onSuccess,
   toToken,
 }: UseWithdraw) {
+  const queryClient = useQueryClient()
   const withdrawingNative = isNativeToken(fromToken)
 
   const toWithdraw = parseUnits(fromInput, fromToken.decimals).toString()
 
   const {
-    userWithdrawNativeTokenConfirmationStatus,
+    resetWithdrawNativeToken,
+    withdrawNativeTokenMutationKey,
     withdrawNativeToken,
+    withdrawNativeTokenError,
     withdrawNativeTokenGasFees,
     withdrawTxHash,
   } = useWithdrawNativeToken({
@@ -39,8 +40,10 @@ export const useWithdraw = function ({
   })
 
   const {
-    userWithdrawTokenConfirmationStatus,
+    resetWithdrawErc20Token,
+    withdrawErc20TokenError,
     withdrawErc20TokenGasFees,
+    withdrawErc20TokenMutationKey,
     withdrawErc20Token,
     withdrawErc20TokenTxHash,
   } = useWithdrawToken({
@@ -50,13 +53,14 @@ export const useWithdraw = function ({
     token: fromToken,
   })
 
-  const { status: withdrawTxStatus } = useWaitForTransaction({
+  const {
+    data: withdrawReceipt,
+    error: withdrawReceiptError,
+    status: withdrawTxStatus,
+  } = useWaitForTransactionReceipt({
     // @ts-expect-error string is `0x${string}`
     hash: withdrawingNative ? withdrawTxHash : withdrawErc20TokenTxHash,
-    onError,
-    onSuccess,
   })
-
   useReloadBalances({
     fromToken,
     status: withdrawTxStatus,
@@ -70,19 +74,45 @@ export const useWithdraw = function ({
       }
     }
 
+  const clearWithdrawNativeState = useCallback(
+    function () {
+      // clear the withdrawal operation hash
+      resetWithdrawErc20Token()
+      // clear withdrawal receipt state
+      queryClient.removeQueries({ queryKey: withdrawNativeTokenMutationKey })
+    },
+    [queryClient, resetWithdrawErc20Token, withdrawNativeTokenMutationKey],
+  )
+
+  const clearWithdrawErc20TokenState = useCallback(
+    function () {
+      // clear the withdrawal operation hash
+      resetWithdrawNativeToken()
+      // clear withdrawal receipt state
+      queryClient.removeQueries({ queryKey: withdrawErc20TokenMutationKey })
+    },
+    [queryClient, resetWithdrawNativeToken, withdrawErc20TokenMutationKey],
+  )
+
   if (withdrawingNative) {
     return {
-      userWithdrawConfirmationStatus: userWithdrawNativeTokenConfirmationStatus,
+      clearWithdrawState: clearWithdrawNativeState,
       withdraw: handleWithdraw(withdrawNativeToken),
+      withdrawError: withdrawNativeTokenError,
       withdrawGasFees: withdrawNativeTokenGasFees,
+      withdrawReceipt,
+      withdrawReceiptError,
       withdrawStatus: withdrawTxStatus,
       withdrawTxHash,
     }
   }
   return {
-    userWithdrawConfirmationStatus: userWithdrawTokenConfirmationStatus,
+    clearWithdrawState: clearWithdrawErc20TokenState,
     withdraw: handleWithdraw(withdrawErc20Token),
+    withdrawError: withdrawErc20TokenError,
     withdrawGasFees: withdrawErc20TokenGasFees,
+    withdrawReceipt,
+    withdrawReceiptError,
     withdrawStatus: withdrawTxStatus,
     withdrawTxHash: withdrawErc20TokenTxHash,
   }

@@ -13,27 +13,47 @@ type Props = {
 
 const RenderBalance = ({
   balance,
+  fetchStatus,
   status,
   token,
-}: Props & Pick<ReturnType<typeof useTokenBalance>, 'balance' | 'status'>) => (
+}: Props &
+  Pick<
+    ReturnType<typeof useTokenBalance>,
+    'balance' | 'fetchStatus' | 'status'
+  >) => (
   <>
-    {status === 'loading' && (
+    {status === 'pending' && fetchStatus === 'fetching' && (
       <Skeleton className="h-full" containerClassName="basis-1/3" />
     )}
-    {(status === 'error' || status === 'idle') && '-'}
+    {(status === 'error' || (status === 'pending' && fetchStatus === 'idle')) &&
+      '-'}
     {status === 'success' &&
       formatNumber(formatUnits(balance, token.decimals), 2)}
   </>
 )
 
 const NativeTokenBalance = function ({ token }: { token: Token }) {
-  const { balance, status } = useNativeTokenBalance(token.chainId)
-  return <RenderBalance balance={balance} status={status} token={token} />
+  const { balance, fetchStatus, status } = useNativeTokenBalance(token.chainId)
+  return (
+    <RenderBalance
+      balance={balance}
+      fetchStatus={fetchStatus}
+      status={status}
+      token={token}
+    />
+  )
 }
 
 const TokenBalance = function ({ token }: { token: Token }) {
-  const { balance, status } = useTokenBalance(token)
-  return <RenderBalance balance={balance} status={status} token={token} />
+  const { balance, fetchStatus, status } = useTokenBalance(token)
+  return (
+    <RenderBalance
+      balance={balance}
+      fetchStatus={fetchStatus}
+      status={status}
+      token={token}
+    />
+  )
 }
 
 export const Balance = ({ token }: Props) =>

@@ -1,17 +1,20 @@
 import { useBridgeState } from 'app/[locale]/tunnel/useBridgeState'
-import { useTransactionsList } from 'app/[locale]/tunnel/useTransactionsList'
 import { useWithdraw } from 'app/[locale]/tunnel/useWithdraw'
 import { ReviewWithdraw } from 'components/reviewBox'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { FormEvent, useEffect } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { type Chain, formatUnits } from 'viem'
-import { useConfig, useNetwork } from 'wagmi'
+import {
+  UseWaitForTransactionReceiptReturnType,
+  useAccount,
+  useConfig,
+} from 'wagmi'
 
 import { BridgeForm, canSubmit, getTotal } from './form'
 
@@ -22,6 +25,88 @@ const TransactionStatus = dynamic(
     ssr: false,
   },
 )
+type UseUiTransactionsList = {
+  fromChain: Chain | undefined
+  fromToken: Token
+  isWithdrawing: boolean
+  withdrawn: string
+  withdrawError: Error | undefined
+  withdrawReceipt: UseWaitForTransactionReceiptReturnType['data'] | undefined
+  withdrawReceiptError: Error | undefined
+  withdrawTxHash: string | undefined
+}
+const useTransactionList = function ({
+  fromChain,
+  fromToken,
+  isWithdrawing,
+  withdrawError,
+  withdrawn,
+  withdrawReceipt,
+  withdrawReceiptError,
+  withdrawTxHash,
+}: UseUiTransactionsList) {
+  const t = useTranslations()
+  const transactionsList = []
+
+  if (withdrawError) {
+    // user rejected the request
+    if (
+      ['user rejected', 'denied transaction signature'].includes(
+        withdrawError.message,
+      )
+    ) {
+      transactionsList.push({
+        id: 'withdraw',
+        status: 'error',
+        text: t('common.transaction-status.rejected'),
+      })
+    } else {
+      // failed for some reason before sending the tx to the node (no tx hash)
+      transactionsList.push({
+        id: 'withdraw',
+        status: 'error',
+        text: t('common.transaction-status.error'),
+      })
+    }
+  }
+
+  if (withdrawTxHash || (isWithdrawing && !withdrawError)) {
+    // withdraw failed for some reason
+    if (withdrawReceiptError) {
+      transactionsList.push({
+        id: 'withdraw',
+        status: 'error',
+        text: t('common.transaction-status.error'),
+      })
+    }
+    // withdraw was successful
+    if (withdrawReceipt?.status === 'success') {
+      transactionsList.push({
+        id: 'withdraw',
+        status: 'success',
+        text: t('bridge-page.transaction-status.withdrawn', {
+          fromInput: withdrawn,
+          symbol: fromToken.symbol,
+        }),
+      })
+    }
+    // withdrawal in progress
+    if (!withdrawReceipt) {
+      transactionsList.push({
+        id: 'withdraw',
+        status: 'loading',
+        text: t('bridge-page.transaction-status.withdrawing', {
+          fromInput: withdrawn,
+          network: fromChain?.name,
+          symbol: fromToken.symbol,
+        }),
+        txHash: withdrawTxHash,
+      })
+    }
+  }
+
+  return transactionsList
+}
 
 const hasBridgeConfiguration = (token: Token, l1ChainId: Chain['id']) =>
   isNativeToken(token) ||
@@ -33,18 +118,26 @@ type Props = {
 }
 
 export const Withdraw = function ({ renderForm, state }: Props) {
+  // use this to hold the withdrawn amount for the Tx list after clearing the state upon confirmation
+  const [withdrawn, setWithdrawn] = useState('0')
+  // use this to avoid infinite loops in effects when resetting the form
+  const [hasClearedForm, setHasClearedForm] = useState(false)
+  // use this to be able to show state boxes before user confirmation (mutation isn't finished)
+  const [isWithdrawing, setIsWithdrawing] = useState(false)
+
   const t = useTranslations()
+
   const {
     fromInput,
     fromNetworkId,
     fromToken,
-    updateFromInput,
+    resetStateAfterOperation,
     toNetworkId,
     toToken,
   } = state
 
   const { chains = [] } = useConfig()
-  const { chain } = useNetwork()
+  const { chain } = useAccount()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -70,59 +163,76 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     }) && hasBridgeConfiguration(fromToken, toNetworkId)
 
   const {
-    addTransaction,
-    clearTransactionList,
-    delayedClearTransactionList,
-    transactionsList,
-    updateTransaction,
-  } = useTransactionsList()
-
-  const {
-    userWithdrawConfirmationStatus,
+    clearWithdrawState,
     withdraw,
+    withdrawError,
     withdrawGasFees,
-    withdrawStatus,
+    withdrawReceipt,
+    withdrawReceiptError,
     withdrawTxHash,
   } = useWithdraw({
     canWithdraw,
     fromInput,
     fromToken,
     l1ChainId: toNetworkId,
-    onError() {
-      updateTransaction({
-        id: 'withdraw',
-        status: 'error',
-        text: t('common.transaction-status.error'),
-      })
-      delayedClearTransactionList()
-    },
-    onSuccess() {
-      updateTransaction({
-        id: 'withdraw',
-        status: 'success',
-        text: t('bridge-page.transaction-status.withdrawn', {
-          fromInput,
-          symbol: fromToken.symbol,
-        }),
-      })
-      updateFromInput('0')
-      delayedClearTransactionList(7000)
-    },
     toToken,
   })
 
+  const withdrawReceiptStatus = withdrawReceipt?.status
+  useEffect(
+    function handleWithdrawSuccess() {
+      if (withdrawReceiptStatus === 'success') {
+        const timeoutId = setTimeout(clearWithdrawState, 7000)
+        if (!hasClearedForm) {
+          setHasClearedForm(true)
+          setIsWithdrawing(false)
+          resetStateAfterOperation()
+        }
+        return () => clearTimeout(timeoutId)
+      }
+      return undefined
+    },
+    [
+      clearWithdrawState,
+      hasClearedForm,
+      resetStateAfterOperation,
+      setHasClearedForm,
+      setIsWithdrawing,
+      withdrawReceiptStatus,
+    ],
+  )
+
+  useEffect(
+    function handleWithdrawErrors() {
+      if (withdrawError || withdrawReceiptError) {
+        const timeoutId = setTimeout(clearWithdrawState, 7000)
+        if (!hasClearedForm) {
+          setHasClearedForm(true)
+          setIsWithdrawing(false)
+          resetStateAfterOperation()
+        }
+        return () => clearTimeout(timeoutId)
+      }
+      return undefined
+    },
+    [
+      clearWithdrawState,
+      hasClearedForm,
+      resetStateAfterOperation,
+      setHasClearedForm,
+      setIsWithdrawing,
+      withdrawError,
+      withdrawReceiptError,
+    ],
+  )
+
   const handleWithdraw = function (e: FormEvent) {
     e.preventDefault()
-    clearTransactionList()
+    setWithdrawn(fromInput)
+    clearWithdrawState()
     withdraw()
-    addTransaction({
-      id: 'withdraw',
-      status: 'loading',
-      text: t('bridge-page.transaction-status.withdrawing', {
-        fromInput,
-        symbol: fromToken.symbol,
-      }),
-    })
+    setHasClearedForm(false)
+    setIsWithdrawing(true)
   }
 
   const totalWithdraw = getTotal({
@@ -130,44 +240,16 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     fromInput,
     fromToken,
   })
-
-  const rejectedText = t('common.transaction-status.rejected')
-  useEffect(
-    function updateWithdrawalTransactionsAfterUserReject() {
-      if (userWithdrawConfirmationStatus === 'error') {
-        updateTransaction({
-          id: 'withdraw',
-          status: 'error',
-          text: rejectedText,
-        })
-        return delayedClearTransactionList()
-      }
-      return undefined
-    },
-    [
-      delayedClearTransactionList,
-      rejectedText,
-      userWithdrawConfirmationStatus,
-      updateTransaction,
-    ],
-  )
-
-  useEffect(
-    function addWithdrawTxHashOnceAvailable() {
-      if (withdrawTxHash) {
-        updateTransaction({
-          id: 'withdraw',
-          txHash: withdrawTxHash,
-        })
-      }
-    },
-    [updateTransaction, withdrawTxHash],
-  )
-
-  const isWithdrawing = [
-    userWithdrawConfirmationStatus,
-    withdrawStatus,
-  ].includes('loading')
+  const transactionsList = useTransactionList({
+    fromChain,
+    fromToken,
+    isWithdrawing,
+    withdrawError,
+    withdrawn,
+    withdrawReceipt,
+    withdrawReceiptError,
+    withdrawTxHash,
+  })
 
   return (
     <BridgeForm

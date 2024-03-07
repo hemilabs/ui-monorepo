@@ -1,14 +1,15 @@
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useConfig, useSwitchChain } from 'wagmi'
 
 type Props = {
   selectedNetwork: number
 }
 
 export const SwitchToNetwork = function ({ selectedNetwork }: Props) {
-  const { chain, chains } = useNetwork()
-  const { switchNetwork } = useSwitchNetwork()
+  const { chain } = useAccount()
+  const { chains } = useConfig()
+  const { switchChain } = useSwitchChain()
   const isConnectedToExpectedNetwork =
     useIsConnectedToExpectedNetwork(selectedNetwork)
 
@@ -19,7 +20,7 @@ export const SwitchToNetwork = function ({ selectedNetwork }: Props) {
   }
 
   const walletTargetNetwork = chains.find(c => c.id === selectedNetwork)
-  const switchToNetwork = () => switchNetwork(selectedNetwork)
+  const switchToNetwork = () => switchChain({ chainId: selectedNetwork })
   return (
     <div className="flex h-9 items-center gap-x-2 rounded-xl bg-[#FF684B]/10 px-2 text-xs text-zinc-800">
       <svg

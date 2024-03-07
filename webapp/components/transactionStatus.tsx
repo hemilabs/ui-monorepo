@@ -1,6 +1,6 @@
 import { useTranslations } from 'next-intl'
 import { Card } from 'ui-common/components/card'
-import { useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 const Error = () => (
   <svg
@@ -102,7 +102,7 @@ type Props = {
 }
 
 export const TransactionStatus = function ({ status, text, txHash }: Props) {
-  const { chain } = useNetwork()
+  const { chain } = useAccount()
   const t = useTranslations('common.transaction-status')
 
   const statusMap = {

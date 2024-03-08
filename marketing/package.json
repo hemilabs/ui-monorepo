@@ -6,7 +6,7 @@
     "dev": "next dev -p ${PORT:-3001}",
     "dev:wifi": "WIFI=true LOCAL_IP=$(ipconfig getifaddr en0) PORT=3001 npm run dev",
     "preserve": "npm run build",
-    "serve": "serve out"
+    "serve": "serve -p ${PORT:-3001} out"
   },
   "version": "1.0.0",
   "dependencies": {

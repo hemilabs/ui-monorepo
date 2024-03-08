@@ -4,7 +4,7 @@ import { ReviewDeposit } from 'components/reviewBox'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { FormEvent, ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
@@ -325,8 +325,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
 
   const isRunningOperation = operationRunning !== 'idle'
 
-  const handleDeposit = function (e: FormEvent) {
-    e.preventDefault()
+  const handleDeposit = function () {
     setDepositAmount(fromInput)
     clearDepositState()
     deposit()

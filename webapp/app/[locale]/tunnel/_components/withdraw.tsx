@@ -2,7 +2,7 @@ import { ReviewWithdraw } from 'components/reviewBox'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { FormEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
@@ -227,8 +227,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     ],
   )
 
-  const handleWithdraw = function (e: FormEvent) {
-    e.preventDefault()
+  const handleWithdraw = function () {
     setWithdrawn(fromInput)
     clearWithdrawState()
     withdraw()
@@ -241,6 +240,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     fromInput,
     fromToken,
   })
+
   const transactionsList = useTransactionList({
     fromChain,
     fromToken,

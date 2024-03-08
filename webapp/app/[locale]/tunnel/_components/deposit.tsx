@@ -1,6 +1,6 @@
 'use client'
 
-import { ReviewDeposit } from 'components/reviewBox'
+import { ReviewDeposit } from 'components/reviewBox/reviewDeposit'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'

@@ -1,4 +1,4 @@
-import { ReviewWithdraw } from 'components/reviewBox'
+import { ReviewWithdraw } from 'components/reviewBox/reviewWithdraw'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'

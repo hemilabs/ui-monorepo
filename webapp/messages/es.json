@@ -4,6 +4,7 @@
       "balance": "Balance",
       "from-network": "Desde la Red",
       "max": "max",
+      "switch-to-prove": "Cambie a {network} para completar la transacción",
       "to-network": "Hacia la Red",
       "you-receive": "Usted recibe",
       "you-send": "Usted envía"
@@ -14,13 +15,15 @@
     },
     "review-withdraw": {
       "heading": "Revisar Retiro",
-      "you-are-withdrawing": "Usted está retirando"
+      "total-to-withdraw": "Total a retirar"
     },
     "submit-button": {
       "approve-and-deposit": "Aprobar y Depositar",
       "approving": "Aprobando...",
       "deposit": "Depositar",
       "depositing": "Depositando...",
+      "prove-withdrawal": "Probar retiro",
+      "proving-withdrawal": "Probando...",
       "withdraw": "Retirar",
       "withdrawing": "Retirando..."
     },

@@ -1,4 +1,7 @@
-import { ReviewWithdraw } from 'components/reviewBox/reviewWithdraw'
+import {
+  ReviewWithdraw,
+  WithdrawProgress,
+} from 'components/reviewBox/reviewWithdraw'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -7,7 +10,7 @@ import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { type Chain, formatUnits } from 'viem'
+import { type Chain, formatUnits, Address } from 'viem'
 import {
   UseWaitForTransactionReceiptReturnType,
   useAccount,
@@ -17,7 +20,7 @@ import {
 import { useBridgeState } from '../_hooks/useBridgeState'
 import { useWithdraw } from '../_hooks/useWithdraw'
 
-import { BridgeForm, canSubmit, getTotal } from './form'
+import { BridgeForm, canSubmit } from './form'
 
 const TransactionStatus = dynamic(
   () =>
@@ -124,7 +127,11 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   // use this to avoid infinite loops in effects when resetting the form
   const [hasClearedForm, setHasClearedForm] = useState(false)
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
-  const [isWithdrawing, setIsWithdrawing] = useState(false)
+  const [withdrawProgress, setWithdrawProgress] = useState<WithdrawProgress>(
+    WithdrawProgress.IDLE,
+  )
+  // hold the withdrawTx to show after success
+  const [successTxHash, setSuccessTxHash] = useState<Address | undefined>()
 
   const t = useTranslations()
 
@@ -179,14 +186,14 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     toToken,
   })
 
-  const withdrawReceiptStatus = withdrawReceipt?.status
   useEffect(
     function handleWithdrawSuccess() {
-      if (withdrawReceiptStatus === 'success') {
+      if (withdrawReceipt?.status === 'success') {
         const timeoutId = setTimeout(clearWithdrawState, 7000)
         if (!hasClearedForm) {
           setHasClearedForm(true)
-          setIsWithdrawing(false)
+          setSuccessTxHash(withdrawReceipt.transactionHash)
+          setWithdrawProgress(WithdrawProgress.WITHDRAW_NOT_PUBLISHED)
           resetStateAfterOperation()
         }
         return () => clearTimeout(timeoutId)
@@ -198,8 +205,9 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       hasClearedForm,
       resetStateAfterOperation,
       setHasClearedForm,
-      setIsWithdrawing,
-      withdrawReceiptStatus,
+      setSuccessTxHash,
+      setWithdrawProgress,
+      withdrawReceipt,
     ],
   )
 
@@ -209,7 +217,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
         const timeoutId = setTimeout(clearWithdrawState, 7000)
         if (!hasClearedForm) {
           setHasClearedForm(true)
-          setIsWithdrawing(false)
+          setWithdrawProgress(WithdrawProgress.IDLE)
           resetStateAfterOperation()
         }
         return () => clearTimeout(timeoutId)
@@ -221,7 +229,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       hasClearedForm,
       resetStateAfterOperation,
       setHasClearedForm,
-      setIsWithdrawing,
+      setWithdrawProgress,
       withdrawError,
       withdrawReceiptError,
     ],
@@ -232,14 +240,10 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     clearWithdrawState()
     withdraw()
     setHasClearedForm(false)
-    setIsWithdrawing(true)
+    setWithdrawProgress(WithdrawProgress.WITHDRAWING)
   }
 
-  const totalWithdraw = getTotal({
-    fees: withdrawGasFees,
-    fromInput,
-    fromToken,
-  })
+  const isWithdrawing = withdrawProgress === WithdrawProgress.WITHDRAWING
 
   const transactionsList = useTransactionList({
     fromChain,
@@ -259,14 +263,12 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       reviewOperation={
         <ReviewWithdraw
           canWithdraw={canWithdraw}
-          gas={formatNumber(
-            formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals),
-            3,
-          )}
+          gas={formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals)}
           gasSymbol={fromChain?.nativeCurrency.symbol}
-          total={formatNumber(totalWithdraw, 3)}
-          withdraw={formatNumber(fromInput, 3)}
+          progress={withdrawProgress}
+          toWithdraw={formatNumber(fromInput, 3)}
           withdrawSymbol={fromToken.symbol}
+          withdrawTxHash={successTxHash}
         />
       }
       submitButton={

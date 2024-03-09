@@ -10,6 +10,9 @@ const config: Config = {
   plugins: [],
   theme: {
     extend: {
+      animation: {
+        'withdraw-progress': 'withdraw-progress 2s infinite',
+      },
       backgroundImage: {
         'hemi-gradient':
           'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',

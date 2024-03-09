@@ -77,21 +77,21 @@ export const useWithdraw = function ({
   const clearWithdrawNativeState = useCallback(
     function () {
       // clear the withdrawal operation hash
-      resetWithdrawErc20Token()
+      resetWithdrawNativeToken()
       // clear withdrawal receipt state
       queryClient.removeQueries({ queryKey: withdrawNativeTokenMutationKey })
     },
-    [queryClient, resetWithdrawErc20Token, withdrawNativeTokenMutationKey],
+    [queryClient, resetWithdrawNativeToken, withdrawNativeTokenMutationKey],
   )
 
   const clearWithdrawErc20TokenState = useCallback(
     function () {
       // clear the withdrawal operation hash
-      resetWithdrawNativeToken()
+      resetWithdrawErc20Token()
       // clear withdrawal receipt state
       queryClient.removeQueries({ queryKey: withdrawErc20TokenMutationKey })
     },
-    [queryClient, resetWithdrawNativeToken, withdrawErc20TokenMutationKey],
+    [queryClient, resetWithdrawErc20Token, withdrawErc20TokenMutationKey],
   )
 
   if (withdrawingNative) {

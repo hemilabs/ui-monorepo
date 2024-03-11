@@ -1,10 +1,8 @@
-import { useBridgeState } from 'app/[locale]/tunnel/useBridgeState'
-import { useWithdraw } from 'app/[locale]/tunnel/useWithdraw'
-import { ReviewWithdraw } from 'components/reviewBox'
+import { ReviewWithdraw } from 'components/reviewBox/reviewWithdraw'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { FormEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
@@ -15,6 +13,9 @@ import {
   useAccount,
   useConfig,
 } from 'wagmi'
+
+import { useBridgeState } from '../_hooks/useBridgeState'
+import { useWithdraw } from '../_hooks/useWithdraw'
 
 import { BridgeForm, canSubmit, getTotal } from './form'
 
@@ -226,8 +227,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     ],
   )
 
-  const handleWithdraw = function (e: FormEvent) {
-    e.preventDefault()
+  const handleWithdraw = function () {
     setWithdrawn(fromInput)
     clearWithdrawState()
     withdraw()
@@ -240,6 +240,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     fromInput,
     fromToken,
   })
+
   const transactionsList = useTransactionList({
     fromChain,
     fromToken,

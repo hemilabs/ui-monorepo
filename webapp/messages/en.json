@@ -4,6 +4,7 @@
       "balance": "Balance",
       "from-network": "From Network",
       "max": "max",
+      "switch-to-prove": "Switch to {network} to complete transaction",
       "to-network": "To Network",
       "you-receive": "You receive",
       "you-send": "You send"
@@ -14,13 +15,15 @@
     },
     "review-withdraw": {
       "heading": "Review Withdraw",
-      "you-are-withdrawing": "You are withdrawing"
+      "total-to-withdraw": "Total to withdraw"
     },
     "submit-button": {
       "approve-and-deposit": "Approve and Deposit",
       "approving": "Approving...",
       "deposit": "Deposit",
       "depositing": "Depositing...",
+      "prove-withdrawal": "Prove withdrawal",
+      "proving-withdrawal": "Proving...",
       "withdraw": "Withdraw",
       "withdrawing": "Withdrawing..."
     },

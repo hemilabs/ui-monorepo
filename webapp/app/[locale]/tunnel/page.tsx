@@ -12,7 +12,7 @@ import { formatNumber } from 'utils/format'
 import { Deposit } from './_components/deposit'
 import { ToggleButton } from './_components/ToggleButton'
 import { Withdraw } from './_components/withdraw'
-import { useBridgeState } from './useBridgeState'
+import { useBridgeState } from './_hooks/useBridgeState'
 
 const Balance = dynamic(
   () => import('components/balance').then(mod => mod.Balance),

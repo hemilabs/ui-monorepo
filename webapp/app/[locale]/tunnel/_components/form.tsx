@@ -64,7 +64,7 @@ export const getTotal = ({
 
 type Props = {
   formContent: ReactNode
-  onSubmit: (e: FormEvent) => void
+  onSubmit: () => void
   reviewOperation: ReactNode
   submitButton: ReactNode
   transactionStatus: ReactNode
@@ -81,7 +81,10 @@ export const BridgeForm = ({
     <Card>
       <form
         className="flex w-full flex-col gap-y-4 text-zinc-800"
-        onSubmit={onSubmit}
+        onSubmit={function (e: FormEvent) {
+          e.preventDefault()
+          onSubmit()
+        }}
       >
         {formContent}
         {submitButton}

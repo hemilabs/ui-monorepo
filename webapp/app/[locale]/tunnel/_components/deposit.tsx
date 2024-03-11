@@ -1,12 +1,10 @@
 'use client'
 
-import { useBridgeState } from 'app/[locale]/tunnel/useBridgeState'
-import { useDeposit } from 'app/[locale]/tunnel/useDeposit'
-import { ReviewDeposit } from 'components/reviewBox'
+import { ReviewDeposit } from 'components/reviewBox/reviewDeposit'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { FormEvent, ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
@@ -17,6 +15,9 @@ import {
   useConfig,
   type UseWaitForTransactionReceiptReturnType,
 } from 'wagmi'
+
+import { useBridgeState } from '../_hooks/useBridgeState'
+import { useDeposit } from '../_hooks/useDeposit'
 
 import { Erc20Approval } from './Erc20Approval'
 import { BridgeForm, canSubmit, getTotal } from './form'
@@ -324,8 +325,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
 
   const isRunningOperation = operationRunning !== 'idle'
 
-  const handleDeposit = function (e: FormEvent) {
-    e.preventDefault()
+  const handleDeposit = function () {
     setDepositAmount(fromInput)
     clearDepositState()
     deposit()

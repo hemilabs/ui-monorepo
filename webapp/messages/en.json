@@ -14,8 +14,15 @@
       "you-are-depositing": "You are depositing"
     },
     "review-withdraw": {
+      "claim-withdrawal": "Claim withdrawal",
       "heading": "Review Withdraw",
-      "total-to-withdraw": "Total to withdraw"
+      "initiate-withdrawal": "Initiate withdrawal",
+      "gas-estimated": "Est. gas {gas} {symbol}",
+      "prove-withdrawal": "Prove withdrawal",
+      "total-to-withdraw": "Total to withdraw",
+      "view-tx": "View",
+      "wait-hours": "Wait up to {hours} hours",
+      "wait-minutes": "Wait up to {minutes} minutes"
     },
     "submit-button": {
       "approve-and-deposit": "Approve and Deposit",

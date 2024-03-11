@@ -14,8 +14,15 @@
       "you-are-depositing": "Usted está depositando"
     },
     "review-withdraw": {
+      "claim-withdrawal": "Reclamar retiro",
       "heading": "Revisar Retiro",
-      "total-to-withdraw": "Total a retirar"
+      "initiate-withdrawal": "Iniciar retiro",
+      "gas-estimated": "Gas est. {gas} {symbol}",
+      "prove-withdrawal": "Probar retiro",
+      "total-to-withdraw": "Total a retirar",
+      "view-tx": "View",
+      "wait-hours": "Espere hasta {hours} horas",
+      "wait-minutes": "Espere hasta {minutes} minutos"
     },
     "submit-button": {
       "approve-and-deposit": "Aprobar y Depositar",

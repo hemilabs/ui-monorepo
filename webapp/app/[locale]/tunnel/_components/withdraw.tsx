@@ -10,12 +10,8 @@ import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { type Chain, formatUnits, Address } from 'viem'
-import {
-  UseWaitForTransactionReceiptReturnType,
-  useAccount,
-  useConfig,
-} from 'wagmi'
+import { type Chain, formatUnits, Hash } from 'viem'
+import { useAccount, useConfig } from 'wagmi'
 
 import { useBridgeState } from '../_hooks/useBridgeState'
 import { useWithdraw } from '../_hooks/useWithdraw'
@@ -35,9 +31,8 @@ type UseUiTransactionsList = {
   isWithdrawing: boolean
   withdrawn: string
   withdrawError: Error | undefined
-  withdrawReceipt: UseWaitForTransactionReceiptReturnType['data'] | undefined
   withdrawReceiptError: Error | undefined
-  withdrawTxHash: string | undefined
+  withdrawTxHash: Hash | undefined
 }
 const useTransactionList = function ({
   fromChain,
@@ -45,7 +40,6 @@ const useTransactionList = function ({
   isWithdrawing,
   withdrawError,
   withdrawn,
-  withdrawReceipt,
   withdrawReceiptError,
   withdrawTxHash,
 }: UseUiTransactionsList) {
@@ -81,21 +75,9 @@ const useTransactionList = function ({
         id: 'withdraw',
         status: 'error',
         text: t('common.transaction-status.error'),
+        txHash: withdrawTxHash,
       })
-    }
-    // withdraw was successful
-    if (withdrawReceipt?.status === 'success') {
-      transactionsList.push({
-        id: 'withdraw',
-        status: 'success',
-        text: t('bridge-page.transaction-status.withdrawn', {
-          fromInput: withdrawn,
-          symbol: fromToken.symbol,
-        }),
-      })
-    }
-    // withdrawal in progress
-    if (!withdrawReceipt) {
+    } else {
       transactionsList.push({
         id: 'withdraw',
         status: 'loading',
@@ -107,6 +89,7 @@ const useTransactionList = function ({
         txHash: withdrawTxHash,
       })
     }
+    // success status is shown in the Prove page!
   }
 
   return transactionsList
@@ -118,7 +101,7 @@ const hasBridgeConfiguration = (token: Token, l1ChainId: Chain['id']) =>
 
 type Props = {
   renderForm: (isRunningOperation: boolean) => React.ReactNode
-  state: ReturnType<typeof useBridgeState>
+  state: ReturnType<typeof useBridgeState> & { operation: 'withdraw' }
 }
 
 export const Withdraw = function ({ renderForm, state }: Props) {
@@ -130,8 +113,6 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   const [withdrawProgress, setWithdrawProgress] = useState<WithdrawProgress>(
     WithdrawProgress.IDLE,
   )
-  // hold the withdrawTx to show after success
-  const [successTxHash, setSuccessTxHash] = useState<Address | undefined>()
 
   const t = useTranslations()
 
@@ -142,6 +123,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     resetStateAfterOperation,
     toNetworkId,
     toToken,
+    waitForWithdrawalPublished,
   } = state
 
   const { chains = [] } = useConfig()
@@ -187,26 +169,26 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   })
 
   useEffect(
-    function handleWithdrawSuccess() {
+    function goToWaitToLaterProveForm() {
       if (withdrawReceipt?.status === 'success') {
-        const timeoutId = setTimeout(clearWithdrawState, 7000)
-        if (!hasClearedForm) {
-          setHasClearedForm(true)
-          setSuccessTxHash(withdrawReceipt.transactionHash)
-          setWithdrawProgress(WithdrawProgress.WITHDRAW_NOT_PUBLISHED)
-          resetStateAfterOperation()
-        }
-        return () => clearTimeout(timeoutId)
+        clearWithdrawState()
+        waitForWithdrawalPublished({
+          withdrawAmount: fromInput,
+          withdrawL1NetworkId: toNetworkId,
+          withdrawSymbol: fromToken.symbol,
+          withdrawTxHash: withdrawReceipt.transactionHash,
+        })
+        resetStateAfterOperation()
       }
       return undefined
     },
     [
       clearWithdrawState,
-      hasClearedForm,
+      fromInput,
+      fromToken,
       resetStateAfterOperation,
-      setHasClearedForm,
-      setSuccessTxHash,
-      setWithdrawProgress,
+      toNetworkId,
+      waitForWithdrawalPublished,
       withdrawReceipt,
     ],
   )
@@ -251,7 +233,6 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     isWithdrawing,
     withdrawError,
     withdrawn,
-    withdrawReceipt,
     withdrawReceiptError,
     withdrawTxHash,
   })
@@ -265,10 +246,10 @@ export const Withdraw = function ({ renderForm, state }: Props) {
           canWithdraw={canWithdraw}
           gas={formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals)}
           gasSymbol={fromChain?.nativeCurrency.symbol}
+          operation="withdraw"
           progress={withdrawProgress}
           toWithdraw={formatNumber(fromInput, 3)}
           withdrawSymbol={fromToken.symbol}
-          withdrawTxHash={successTxHash}
         />
       }
       submitButton={

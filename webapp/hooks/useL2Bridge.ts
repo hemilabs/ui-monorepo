@@ -1,50 +1,54 @@
-import { type CrossChainMessenger as CrossChainMessengerType } from '@eth-optimism/sdk'
+import {
+  MessageStatus,
+  type CrossChainMessenger as CrossChainMessengerType,
+  type SignerOrProviderLike,
+} from '@eth-optimism/sdk'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { hemi } from 'app/networks'
-import {
-  type Provider,
-  useJsonRpcProvider,
-  useWeb3Provider,
-} from 'hooks/useEthersSigner'
+import { useJsonRpcProvider, useWeb3Provider } from 'hooks/useEthersSigner'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { Token } from 'types/token'
-import { type Chain } from 'viem'
+import { type Address, type Chain, type Hash, isHash } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
 
 const sdkPromise = import('@eth-optimism/sdk')
 
-const zeroAddr = '0x'.padEnd(42, '0')
+const zeroAddr = '0x'.padEnd(42, '0') as Address
 const l1Contracts = {
-  AddressManager: process.env.NEXT_PUBLIC_ADDRESS_MANAGER,
+  AddressManager: process.env.NEXT_PUBLIC_ADDRESS_MANAGER as Address,
   BondManager: zeroAddr,
   CanonicalTransactionChain: zeroAddr,
-  L1CrossDomainMessenger:
-    process.env.NEXT_PUBLIC_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER,
-  L1StandardBridge: process.env.NEXT_PUBLIC_PROXY_OVM_L1_STANDARD_BRIDGE,
-  L2OutputOracle: process.env.NEXT_PUBLIC_L2_OUTPUT_ORACLE_PROXY,
-  OptimismPortal: process.env.NEXT_PUBLIC_OPTIMISM_PORTAL_PROXY,
+  L1CrossDomainMessenger: process.env
+    .NEXT_PUBLIC_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER as Address,
+  L1StandardBridge: process.env
+    .NEXT_PUBLIC_PROXY_OVM_L1_STANDARD_BRIDGE as Address,
+  L2OutputOracle: process.env.NEXT_PUBLIC_L2_OUTPUT_ORACLE_PROXY as Address,
+  OptimismPortal: process.env.NEXT_PUBLIC_OPTIMISM_PORTAL_PROXY as Address,
   StateCommitmentChain: zeroAddr,
 }
 
 type GasEstimationOperations = Extract<
   keyof CrossChainMessengerType['estimateGas'],
-  'depositERC20' | 'depositETH' | 'withdrawERC20' | 'withdrawETH'
+  | 'depositERC20'
+  | 'depositETH'
+  | 'proveMessage'
+  | 'withdrawERC20'
+  | 'withdrawETH'
 >
 
 type UseCrossChainMessenger = {
   l1ChainId: Chain['id']
   walletConnectedToChain: Chain['id']
-  l1Signer: Provider
-  l2Signer: Provider
-  operation: GasEstimationOperations
+  l1Signer: SignerOrProviderLike
+  l2Signer: SignerOrProviderLike
 }
 const useCrossChainMessenger = function ({
   walletConnectedToChain,
   l1ChainId,
   l1Signer,
   l2Signer,
-  operation,
 }: UseCrossChainMessenger) {
   const isConnectedToCorrectChain = useIsConnectedToExpectedNetwork(
     walletConnectedToChain,
@@ -84,7 +88,7 @@ const useCrossChainMessenger = function ({
           l2SignerOrProvider: l2Signer,
         })
       },
-      queryKey: [l1ChainId, operation],
+      queryKey: [l1ChainId, walletConnectedToChain],
     })
 
   return {
@@ -94,7 +98,6 @@ const useCrossChainMessenger = function ({
 }
 
 type UseEstimateGasFees<T extends GasEstimationOperations> = {
-  amount: string
   args: Parameters<CrossChainMessengerType['estimateGas'][T]>
   crossChainMessenger: CrossChainMessengerType
   crossChainMessengerStatus: string
@@ -103,7 +106,6 @@ type UseEstimateGasFees<T extends GasEstimationOperations> = {
   walletConnectedToChain: Chain['id']
 }
 const useEstimateGasFees = function <T extends GasEstimationOperations>({
-  amount,
   args,
   crossChainMessenger,
   crossChainMessengerStatus,
@@ -120,9 +122,6 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
       enabled &&
       isConnectedToExpectedChain &&
       crossChainMessengerStatus === 'success' &&
-      // @ts-expect-error isNaN also accepts strings!
-      !isNaN(amount) &&
-      BigInt(amount) > BigInt(0) &&
       Object.keys(crossChainMessenger.estimateGas).length > 0,
     async queryFn() {
       // @ts-expect-error this works, unsure why TS is not picking it up
@@ -135,7 +134,8 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
       ...Object.keys(crossChainMessenger?.estimateGas ?? {}),
       ...args,
     ],
-    retry: false,
+    // update gas fees every 15 seconds
+    refetchInterval: 15 * 1000,
   })
 
   return useEstimateFees({
@@ -145,10 +145,13 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
   })
 }
 
-const useDepositCrossChainMessenger = function (
-  l1ChainId: Chain['id'],
-  operation: GasEstimationOperations,
-) {
+/**
+ * This hook returns an instance of crossChainMessenger in which the wallet is connected to the L1
+ * and uses a JsonRpcProvider to connect to the L2
+ * @param l1ChainId
+ * @returns
+ */
+const useL1ToL2CrossChainMessenger = function (l1ChainId: Chain['id']) {
   const l1Signer = useWeb3Provider(l1ChainId)
   const l2Signer = useJsonRpcProvider(hemi.id)
 
@@ -156,15 +159,17 @@ const useDepositCrossChainMessenger = function (
     l1ChainId,
     l1Signer,
     l2Signer,
-    operation,
     walletConnectedToChain: l1ChainId,
   })
 }
 
-const useWithdrawCrossChainMessenger = function (
-  l1ChainId: Chain['id'],
-  operation: GasEstimationOperations,
-) {
+/**
+ * This hook returns an instance of crossChainMessenger in which the wallet is connected to the L2
+ * and uses a JsonRpcProvider to connect to the L1
+ * @param l1ChainId
+ * @returns
+ */
+const useL2toL1CrossChainMessenger = function (l1ChainId: Chain['id']) {
   const l1Signer = useJsonRpcProvider(l1ChainId)
   const l2Signer = useWeb3Provider(hemi.id)
 
@@ -172,9 +177,39 @@ const useWithdrawCrossChainMessenger = function (
     l1ChainId,
     l1Signer,
     l2Signer,
-    operation,
     walletConnectedToChain: hemi.id,
   })
+}
+
+type UseGetMessageStatus = {
+  l1ChainId: Chain['id']
+  transactionHash: Hash
+}
+export const useGetTransactionMessageStatus = function ({
+  l1ChainId,
+  transactionHash,
+}: UseGetMessageStatus) {
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useL1ToL2CrossChainMessenger(l1ChainId)
+
+  const { data: messageStatus } = useQuery({
+    // ensure correct chain was used
+    enabled: crossChainMessengerStatus === 'success' && l1ChainId !== hemi.id,
+    placeholderData: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+    queryFn: () => crossChainMessenger.getMessageStatus(transactionHash),
+    queryKey: [crossChainMessengerStatus, l1ChainId, transactionHash],
+    refetchInterval(query) {
+      // if message status is ready to prove, stop polling
+      if (query.state.data === MessageStatus.READY_TO_PROVE) {
+        return false
+      }
+      // poll every 15 seconds
+      return 15 * 1000
+    },
+    refetchIntervalInBackground: true,
+  })
+
+  return messageStatus
 }
 
 type UseDepositErc20Token = {
@@ -191,17 +226,19 @@ export const useDepositErc20Token = function ({
 }: UseDepositErc20Token) {
   const operation = 'depositERC20'
   const { crossChainMessenger, crossChainMessengerStatus } =
-    useDepositCrossChainMessenger(l1ChainId, operation)
+    useL1ToL2CrossChainMessenger(l1ChainId)
 
   const l1BridgeAddress = token.address
   const l2BridgeAddress = token.extensions?.bridgeInfo[hemi.id].tokenAddress
 
   const depositErc20TokenGasFees = useEstimateGasFees({
-    amount: toDeposit,
     args: [l1BridgeAddress, l2BridgeAddress, toDeposit],
     crossChainMessenger,
     crossChainMessengerStatus,
-    enabled,
+    enabled:
+      enabled && // @ts-expect-error isNaN also accepts strings!
+      !isNaN(toDeposit) &&
+      BigInt(toDeposit) > BigInt(0),
     operation,
     walletConnectedToChain: l1ChainId,
   })
@@ -229,7 +266,7 @@ export const useDepositErc20Token = function ({
         l2Address,
         amount,
       )
-      return response.hash
+      return response.hash as Hash
     },
     mutationKey: depositErc20TokenMutationKey,
   })
@@ -263,14 +300,17 @@ export const useDepositNativeToken = function ({
 }: UseDepositNativeToken) {
   const operation = 'depositETH'
   const { crossChainMessenger, crossChainMessengerStatus } =
-    useDepositCrossChainMessenger(l1ChainId, operation)
+    useL1ToL2CrossChainMessenger(l1ChainId)
 
   const depositNativeTokenGasFees = useEstimateGasFees({
-    amount: toDeposit,
     args: [toDeposit],
     crossChainMessenger,
     crossChainMessengerStatus,
-    enabled,
+    enabled:
+      enabled &&
+      // @ts-expect-error isNaN also accepts strings!
+      !isNaN(toDeposit) &&
+      BigInt(toDeposit) > BigInt(0),
     operation,
     walletConnectedToChain: l1ChainId,
   })
@@ -285,7 +325,7 @@ export const useDepositNativeToken = function ({
   } = useMutation({
     async mutationFn(amount: string) {
       const response = await crossChainMessenger.depositETH(amount)
-      return response.hash
+      return response.hash as Hash
     },
     mutationKey: depositNativeMutationKey,
   })
@@ -311,16 +351,22 @@ export const useWithdrawNativeToken = function ({
   l1ChainId,
 }: UseWithdrawNativeToken) {
   const operation = 'withdrawETH'
+  const { address, isConnected } = useAccount()
   const { crossChainMessenger, crossChainMessengerStatus } =
-    useWithdrawCrossChainMessenger(l1ChainId, operation)
+    useL2toL1CrossChainMessenger(l1ChainId)
 
   const withdrawNativeTokenGasFees = useEstimateGasFees({
-    amount,
-    args: [amount],
+    // Need to manually override from address - See https://github.com/ethereum-optimism/optimism/issues/8952
+    args: [amount, { overrides: { from: address } }],
     crossChainMessenger,
     crossChainMessengerStatus,
-    enabled,
-    operation: 'withdrawETH',
+    enabled:
+      enabled &&
+      isConnected &&
+      // @ts-expect-error isNaN also accepts strings!
+      !isNaN(amount) &&
+      BigInt(amount) > BigInt(0),
+    operation,
     walletConnectedToChain: hemi.id,
   })
 
@@ -331,10 +377,10 @@ export const useWithdrawNativeToken = function ({
     error: withdrawNativeTokenError,
     mutate: withdrawNativeToken,
     reset: resetWithdrawNativeToken,
-  } = useMutation({
+  } = useMutation<Hash, Error, string>({
     async mutationFn(toWithdraw: string) {
       const response = await crossChainMessenger.withdrawETH(toWithdraw)
-      return response.hash
+      return response.hash as Hash
     },
     mutationKey: withdrawNativeTokenMutationKey,
   })
@@ -346,6 +392,55 @@ export const useWithdrawNativeToken = function ({
     withdrawNativeTokenGasFees,
     withdrawNativeTokenMutationKey,
     withdrawTxHash,
+  }
+}
+
+type UseProveMessage = {
+  enabled: boolean
+  l1ChainId: Chain['id']
+  withdrawTxHash: Address
+}
+
+export const useProveMessage = function ({
+  enabled,
+  l1ChainId,
+  withdrawTxHash,
+}: UseProveMessage) {
+  const operation = 'proveMessage'
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useL1ToL2CrossChainMessenger(l1ChainId)
+
+  const proveWithdrawalTokenGasFees = useEstimateGasFees({
+    args: [withdrawTxHash],
+    crossChainMessenger,
+    crossChainMessengerStatus,
+    enabled: enabled && isHash(withdrawTxHash),
+    operation,
+    walletConnectedToChain: l1ChainId,
+  })
+
+  const proveWithdrawalMutationKey = [operation]
+
+  const {
+    data: proveWithdrawalTxHash,
+    error: proveWithdrawalError,
+    mutate: proveWithdrawal,
+    reset: resetProveWithdrawal,
+  } = useMutation({
+    async mutationFn(toProve: Address) {
+      const response = await crossChainMessenger.proveMessage(toProve)
+      return response.hash as Hash
+    },
+    mutationKey: proveWithdrawalMutationKey,
+  })
+
+  return {
+    proveWithdrawal: () => proveWithdrawal(withdrawTxHash),
+    proveWithdrawalError,
+    proveWithdrawalMutationKey,
+    proveWithdrawalTokenGasFees,
+    proveWithdrawalTxHash,
+    resetProveWithdrawal,
   }
 }
 
@@ -363,17 +458,20 @@ export const useWithdrawToken = function ({
 }: UseWithdrawToken) {
   const operation = 'withdrawERC20'
   const { crossChainMessenger, crossChainMessengerStatus } =
-    useWithdrawCrossChainMessenger(l1ChainId, operation)
+    useL2toL1CrossChainMessenger(l1ChainId)
 
   const l1BridgeAddress = token.extensions?.bridgeInfo[l1ChainId].tokenAddress
   const l2BridgeAddress = token.address
 
   const withdrawErc20TokenGasFees = useEstimateGasFees({
-    amount,
     args: [l1BridgeAddress, l2BridgeAddress, amount],
     crossChainMessenger,
     crossChainMessengerStatus,
-    enabled,
+    enabled:
+      enabled &&
+      // @ts-expect-error isNaN also accepts strings!
+      !isNaN(amount) &&
+      BigInt(amount) > BigInt(0),
     operation,
     walletConnectedToChain: hemi.id,
   })
@@ -385,14 +483,14 @@ export const useWithdrawToken = function ({
     error: withdrawErc20TokenError,
     mutate: withdrawErc20Token,
     reset: resetWithdrawErc20Token,
-  } = useMutation({
+  } = useMutation<Hash, Error, string>({
     async mutationFn(toWithdraw: string) {
       const response = await crossChainMessenger.withdrawERC20(
         l1BridgeAddress,
         l2BridgeAddress,
         toWithdraw,
       )
-      return response.hash
+      return response.hash as Hash
     },
     mutationKey: withdrawErc20TokenMutationKey,
   })

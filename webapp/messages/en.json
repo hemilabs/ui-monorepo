@@ -27,6 +27,8 @@
     "submit-button": {
       "approve-and-deposit": "Approve and Deposit",
       "approving": "Approving...",
+      "claim-withdrawal": "Claim Withdrawal",
+      "claiming-withdrawal": "Claiming Withdrawal",
       "deposit": "Deposit",
       "depositing": "Depositing...",
       "prove-withdrawal": "Prove withdrawal",
@@ -40,6 +42,8 @@
       "depositing": "Depositing {fromInput} {symbol} to {network}",
       "erc20-approved": "{symbol} approved",
       "erc20-approving": "Approving {symbol}",
+      "proving-withdrawal": "Proving withdrawal",
+      "withdrawal-proved": "Withdrawal proved",
       "withdrawing": "Withdrawing {fromInput} {symbol}",
       "withdrawn": "{fromInput} {symbol} withdrawn"
     }

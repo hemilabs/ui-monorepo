@@ -58,7 +58,6 @@ export const useWithdraw = function ({
     error: withdrawReceiptError,
     status: withdrawTxStatus,
   } = useWaitForTransactionReceipt({
-    // @ts-expect-error string is `0x${string}`
     hash: withdrawingNative ? withdrawTxHash : withdrawErc20TokenTxHash,
   })
   useReloadBalances({

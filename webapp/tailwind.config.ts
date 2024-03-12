@@ -17,6 +17,11 @@ const config: Config = {
         'hemi-gradient':
           'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',
       },
+      colors: {
+        orange: {
+          hemi: '#FF5F00',
+        },
+      },
       fontFamily: {
         inter: '--font-inter',
       },

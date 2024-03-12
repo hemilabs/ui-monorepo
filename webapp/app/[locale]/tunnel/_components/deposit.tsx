@@ -179,7 +179,7 @@ const useTransactionList = function ({
 
 type Props = {
   renderForm: (isRunningOperation: boolean) => ReactNode
-  state: ReturnType<typeof useBridgeState>
+  state: ReturnType<typeof useBridgeState> & { operation: 'deposit' }
 }
 
 export const Deposit = function ({ renderForm, state }: Props) {

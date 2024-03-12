@@ -3,19 +3,36 @@ import { useCallback, useReducer } from 'react'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
 import { isNativeToken } from 'utils/token'
-import { Chain } from 'viem'
+import type { Address, Chain, Hash } from 'viem'
+
+export type Operation = 'claim' | 'deposit' | 'prove' | 'withdraw'
 
 const getNativeToken = (chain: Chain['id']) =>
   tokenList.tokens.find(t => t.chainId === chain && isNativeToken(t))
+
+type ProveWithdrawalData = {
+  withdrawAmount: string
+  withdrawL1NetworkId: Chain['id']
+  withdrawSymbol: string
+  withdrawTxHash: Hash
+}
 
 type BridgeState = {
   extendedErc20Approval: boolean
   fromNetworkId: Chain['id']
   fromInput: string
   fromToken: Token
+  operation: Operation
   toNetworkId: Chain['id']
   toToken: Token
-}
+} & (
+  | { operation: 'deposit' | 'withdraw' }
+  | (ProveWithdrawalData &
+      (
+        | { operation: 'prove' }
+        | ({ operation: 'claim' } & { proveWithdrawalTxHash: Hash })
+      ))
+)
 
 type Action<T extends string> = {
   type: T
@@ -43,6 +60,18 @@ type UpdateToNetwork = Action<'updateToNetwork'> & {
 type UpdateToToken = Action<'updateToToken'> & {
   payload: Token
 }
+type WaitForClaimAvailable = Action<'waitForClaimAvailable'> & {
+  payload: Hash
+}
+type WaitForWithdrawalPublished = Action<'waitForWithdrawalPublished'> & {
+  payload: {
+    withdrawAmount: string
+    withdrawL1NetworkId: Chain['id']
+    withdrawSymbol: string
+    withdrawTxHash: Address
+  }
+}
+
 type ToggleInputs = Action<'toggleInput'> & NoPayload
 type Actions =
   | ResetStateAfterOperation
@@ -53,6 +82,8 @@ type Actions =
   | UpdateToNetwork
   | UpdateToToken
   | ToggleInputs
+  | WaitForClaimAvailable
+  | WaitForWithdrawalPublished
 
 // the _:never is used to fail compilation if a case is missing
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -60,7 +91,7 @@ const compilationError = function (_: never): never {
   throw new Error('Missing implementation of action in reducer')
 }
 
-const reducer = function (state: BridgeState, action: Actions) {
+const reducer = function (state: BridgeState, action: Actions): BridgeState {
   const { type } = action
   switch (type) {
     case 'resetStateAfterOperation': {
@@ -134,8 +165,8 @@ const reducer = function (state: BridgeState, action: Actions) {
       }
     }
     case 'toggleInput': {
-      const newFromToken = state.toToken
-      return {
+      const { toToken: newFromToken } = state
+      const newState = {
         ...state,
         extendedErc20Approval: isNativeToken(newFromToken)
           ? false
@@ -144,6 +175,45 @@ const reducer = function (state: BridgeState, action: Actions) {
         fromToken: newFromToken,
         toNetworkId: state.fromNetworkId,
         toToken: state.fromToken,
+      }
+      if (newState.operation === 'claim' || newState.operation === 'prove') {
+        // clean extra fields that are not part of deposit
+        delete newState.withdrawL1NetworkId
+        delete newState.withdrawAmount
+        delete newState.withdrawSymbol
+        delete newState.withdrawTxHash
+      }
+      if (newState.operation === 'claim') {
+        delete newState.proveWithdrawalTxHash
+      }
+      newState.operation =
+        newState.operation === 'deposit' ? 'withdraw' : 'deposit'
+      return newState
+    }
+    case 'waitForClaimAvailable': {
+      const proveWithdrawalTxHash = action.payload
+      // @ts-expect-error due actions defined, properties that TS think may be missing
+      // are already defined
+      return {
+        ...state,
+        operation: 'claim',
+        proveWithdrawalTxHash,
+      }
+    }
+    case 'waitForWithdrawalPublished': {
+      const {
+        withdrawAmount,
+        withdrawL1NetworkId,
+        withdrawSymbol,
+        withdrawTxHash,
+      } = action.payload
+      return {
+        ...state,
+        operation: 'prove',
+        withdrawAmount,
+        withdrawL1NetworkId,
+        withdrawSymbol,
+        withdrawTxHash,
       }
     }
     default:
@@ -164,6 +234,7 @@ export const useBridgeState = function (): BridgeState & {
     fromInput: '0',
     fromNetworkId: bridgeableNetworks[0].id,
     fromToken: getNativeToken(bridgeableNetworks[0].id),
+    operation: 'deposit',
     toNetworkId: hemi.id,
     toToken: getNativeToken(hemi.id),
   })
@@ -183,14 +254,12 @@ export const useBridgeState = function (): BridgeState & {
     [dispatch],
   )
 
-  const resetStateAfterOperation = useCallback(
-    () => dispatch({ type: 'resetStateAfterOperation' }),
-    [dispatch],
-  )
-
   return {
     ...state,
-    resetStateAfterOperation,
+    resetStateAfterOperation: useCallback(
+      () => dispatch({ type: 'resetStateAfterOperation' }),
+      [dispatch],
+    ),
     toggleInput: useCallback(
       () => dispatch({ type: 'toggleInput' }),
       [dispatch],
@@ -218,6 +287,16 @@ export const useBridgeState = function (): BridgeState & {
     updateToToken: useCallback(
       (payload: UpdateToToken['payload']) =>
         dispatch({ payload, type: 'updateToToken' }),
+      [dispatch],
+    ),
+    waitForClaimAvailable: useCallback(
+      (payload: WaitForClaimAvailable['payload']) =>
+        dispatch({ payload, type: 'waitForClaimAvailable' }),
+      [dispatch],
+    ),
+    waitForWithdrawalPublished: useCallback(
+      (payload: WaitForWithdrawalPublished['payload']) =>
+        dispatch({ payload, type: 'waitForWithdrawalPublished' }),
       [dispatch],
     ),
   }

@@ -2,7 +2,6 @@
 
 import { ReviewDeposit } from 'components/reviewBox/reviewDeposit'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useState } from 'react'
 import { Token } from 'types/token'
@@ -22,13 +21,65 @@ import { useDeposit } from '../_hooks/useDeposit'
 import { Erc20Approval } from './Erc20Approval'
 import { BridgeForm, canSubmit, getTotal } from './form'
 
-const TransactionStatus = dynamic(
-  () =>
-    import('components/transactionStatus').then(mod => mod.TransactionStatus),
-  {
-    ssr: false,
-  },
-)
+type OperationRunning = 'idle' | 'approving' | 'depositing'
+
+const SubmitButton = function ({
+  canDeposit,
+  extendedErc20Approval,
+  fromToken,
+  isRunningOperation,
+  needsApproval,
+  operationRunning,
+  updateExtendedErc20Approval,
+}: {
+  canDeposit: boolean
+  extendedErc20Approval: boolean
+  fromToken: Token
+  isRunningOperation: boolean
+  needsApproval: boolean
+  operationRunning: OperationRunning
+  updateExtendedErc20Approval: () => void
+}) {
+  const t = useTranslations()
+
+  const getOperationButtonText = function () {
+    const texts = {
+      approve: {
+        idle: t('bridge-page.submit-button.approve-and-deposit'),
+        loading: t('bridge-page.submit-button.approving'),
+      },
+      deposit: {
+        idle: t('bridge-page.submit-button.deposit'),
+        loading: t('bridge-page.submit-button.depositing'),
+      },
+    }
+    if (!isRunningOperation) {
+      return texts[needsApproval ? 'approve' : 'deposit'].idle
+    }
+    if (operationRunning === 'approving') {
+      return texts.approve.loading
+    }
+    if (operationRunning === 'depositing') {
+      return texts.deposit.loading
+    }
+    return texts.deposit.idle
+  }
+
+  return (
+    <>
+      <Erc20Approval
+        checked={extendedErc20Approval}
+        disabled={
+          isNativeToken(fromToken) || !needsApproval || isRunningOperation
+        }
+        onCheckedChange={updateExtendedErc20Approval}
+      />
+      <Button disabled={!canDeposit || isRunningOperation} type="submit">
+        {getOperationButtonText()}
+      </Button>
+    </>
+  )
+}
 
 type UseUiTransactionsList = {
   approvalError: Error | undefined
@@ -41,7 +92,7 @@ type UseUiTransactionsList = {
   depositTxHash: string | undefined
   deposited: string
   fromToken: Token
-  operationRunning: 'idle' | 'approving' | 'depositing'
+  operationRunning: OperationRunning
   toChain: Chain | undefined
 }
 const useTransactionList = function ({
@@ -179,7 +230,7 @@ const useTransactionList = function ({
 
 type Props = {
   renderForm: (isRunningOperation: boolean) => ReactNode
-  state: ReturnType<typeof useBridgeState>
+  state: ReturnType<typeof useBridgeState> & { operation: 'deposit' }
 }
 
 export const Deposit = function ({ renderForm, state }: Props) {
@@ -188,11 +239,8 @@ export const Deposit = function ({ renderForm, state }: Props) {
   // use this to avoid infinite loops in effects when resetting the form
   const [hasClearedForm, setHasClearedForm] = useState(false)
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
-  const [operationRunning, setOperationRunning] = useState<
-    'idle' | 'approving' | 'depositing'
-  >('idle')
-
-  const t = useTranslations()
+  const [operationRunning, setOperationRunning] =
+    useState<OperationRunning>('idle')
 
   const {
     extendedErc20Approval,
@@ -337,29 +385,6 @@ export const Deposit = function ({ renderForm, state }: Props) {
     }
   }
 
-  const getOperationButtonText = function () {
-    const texts = {
-      approve: {
-        idle: t('bridge-page.submit-button.approve-and-deposit'),
-        loading: t('bridge-page.submit-button.approving'),
-      },
-      deposit: {
-        idle: t('bridge-page.submit-button.deposit'),
-        loading: t('bridge-page.submit-button.depositing'),
-      },
-    }
-    if (!isRunningOperation) {
-      return texts[needsApproval ? 'approve' : 'deposit'].idle
-    }
-    if (operationRunning === 'approving') {
-      return texts.approve.loading
-    }
-    if (operationRunning === 'depositing') {
-      return texts.deposit.loading
-    }
-    return texts.deposit.idle
-  }
-
   const totalDeposit = operatesNativeToken
     ? getTotal({
         fees: depositGasFees,
@@ -407,31 +432,17 @@ export const Deposit = function ({ renderForm, state }: Props) {
         />
       }
       submitButton={
-        <>
-          <Erc20Approval
-            checked={extendedErc20Approval}
-            disabled={
-              isNativeToken(fromToken) || !needsApproval || isRunningOperation
-            }
-            onCheckedChange={updateExtendedErc20Approval}
-          />
-          <Button disabled={!canDeposit || isRunningOperation} type="submit">
-            {getOperationButtonText()}
-          </Button>
-        </>
+        <SubmitButton
+          canDeposit={canDeposit}
+          extendedErc20Approval={extendedErc20Approval}
+          fromToken={fromToken}
+          isRunningOperation={isRunningOperation}
+          needsApproval={needsApproval}
+          operationRunning={operationRunning}
+          updateExtendedErc20Approval={updateExtendedErc20Approval}
+        />
       }
-      transactionStatus={
-        <>
-          {transactionsList.map(transaction => (
-            <TransactionStatus
-              key={transaction.id}
-              status={transaction.status}
-              text={transaction.text}
-              txHash={transaction.txHash}
-            />
-          ))}
-        </>
-      }
+      transactionsList={transactionsList}
     />
   )
 }

@@ -68,7 +68,6 @@ export const useDeposit = function ({
     error: depositReceiptError,
     status: depositTxStatus,
   } = useWaitForTransactionReceipt({
-    // @ts-expect-error string is `0x${string}`
     hash: depositingNative ? depositNativeTokenTxHash : depositErc20TokenTxHash,
   })
 

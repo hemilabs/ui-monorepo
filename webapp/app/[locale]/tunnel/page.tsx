@@ -9,7 +9,9 @@ import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { formatNumber } from 'utils/format'
 
+import { Claim } from './_components/claim'
 import { Deposit } from './_components/deposit'
+import { Prove } from './_components/prove'
 import { ToggleButton } from './_components/ToggleButton'
 import { Withdraw } from './_components/withdraw'
 import { useBridgeState } from './_hooks/useBridgeState'
@@ -62,6 +64,7 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
     fromNetworkId,
     fromInput,
     fromToken,
+    operation,
     updateFromNetwork,
     updateFromInput,
     updateFromToken,
@@ -78,7 +81,9 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
       <h3 className="text-xl font-medium capitalize text-black">
         {t('title')}
       </h3>
-      <SwitchToNetwork selectedNetwork={fromNetworkId} />
+      {['deposit', 'withdraw'].includes(operation) && (
+        <SwitchToNetwork selectedNetwork={fromNetworkId} />
+      )}
       <div className="flex w-full items-center justify-between text-sm">
         <span>{t('form.from-network')}</span>
         <NetworkSelector
@@ -159,12 +164,17 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
   )
 }
 
+const OperationsComponent = {
+  claim: Claim,
+  deposit: Deposit,
+  prove: Prove,
+  withdraw: Withdraw,
+}
+
 export default function Bridge() {
   const bridgeState = useBridgeState()
 
-  const isDepositOperation = bridgeState.toNetworkId === hemi.id
-
-  const OperationComponent = isDepositOperation ? Deposit : Withdraw
+  const OperationComponent = OperationsComponent[bridgeState.operation]
 
   return (
     <div className="mx-auto flex h-full w-full flex-col gap-y-4 px-4 md:max-w-fit md:flex-row md:gap-x-4 md:pt-10">
@@ -175,6 +185,7 @@ export default function Bridge() {
             isRunningOperation={isRunningOperation}
           />
         )}
+        // @ts-expect-error This works, but TS does not pick it up correctly.
         state={bridgeState}
       />
     </div>

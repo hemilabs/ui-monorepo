@@ -50,7 +50,6 @@ export const useDepositToken = function ({
 
   const { data: depositReceipt, error: depositReceiptError } =
     useWaitForTransactionReceipt({
-      // @ts-expect-error string is `0x${string}`
       hash: depositErc20TokenTxHash,
     })
 
@@ -83,7 +82,6 @@ export const useDepositToken = function ({
     amount:
       BigInt(toDeposit) *
       BigInt(extendedApproval ? ExtraApprovalTimesAmount : 1),
-    // @ts-expect-error address is `0x${string}`
     spender: l1StandardBridgeAddress,
   })
 

@@ -9,83 +9,14 @@ import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { type Chain, formatUnits, Hash } from 'viem'
+import { type Chain, formatUnits } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 
 import { useBridgeState } from '../_hooks/useBridgeState'
+import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useWithdraw } from '../_hooks/useWithdraw'
 
 import { BridgeForm, canSubmit } from './form'
-
-type UseUiTransactionsList = {
-  fromChain: Chain | undefined
-  fromToken: Token
-  isWithdrawing: boolean
-  withdrawn: string
-  withdrawError: Error | undefined
-  withdrawReceiptError: Error | undefined
-  withdrawTxHash: Hash | undefined
-}
-const useTransactionList = function ({
-  fromChain,
-  fromToken,
-  isWithdrawing,
-  withdrawError,
-  withdrawn,
-  withdrawReceiptError,
-  withdrawTxHash,
-}: UseUiTransactionsList) {
-  const t = useTranslations()
-  const transactionsList = []
-
-  if (withdrawError) {
-    // user rejected the request
-    if (
-      ['user rejected', 'denied transaction signature'].includes(
-        withdrawError.message,
-      )
-    ) {
-      transactionsList.push({
-        id: 'withdraw',
-        status: 'error',
-        text: t('common.transaction-status.rejected'),
-      })
-    } else {
-      // failed for some reason before sending the tx to the node (no tx hash)
-      transactionsList.push({
-        id: 'withdraw',
-        status: 'error',
-        text: t('common.transaction-status.error'),
-      })
-    }
-  }
-
-  if (withdrawTxHash || (isWithdrawing && !withdrawError)) {
-    // withdraw failed for some reason
-    if (withdrawReceiptError) {
-      transactionsList.push({
-        id: 'withdraw',
-        status: 'error',
-        text: t('common.transaction-status.error'),
-        txHash: withdrawTxHash,
-      })
-    } else {
-      transactionsList.push({
-        id: 'withdraw',
-        status: 'loading',
-        text: t('bridge-page.transaction-status.withdrawing', {
-          fromInput: withdrawn,
-          network: fromChain?.name,
-          symbol: fromToken.symbol,
-        }),
-        txHash: withdrawTxHash,
-      })
-    }
-    // success status is shown in the Prove page!
-  }
-
-  return transactionsList
-}
 
 const hasBridgeConfiguration = (token: Token, l1ChainId: Chain['id']) =>
   isNativeToken(token) ||
@@ -219,14 +150,22 @@ export const Withdraw = function ({ renderForm, state }: Props) {
 
   const isWithdrawing = withdrawProgress === WithdrawProgress.WITHDRAWING
 
-  const transactionsList = useTransactionList({
-    fromChain,
-    fromToken,
-    isWithdrawing,
-    withdrawError,
-    withdrawn,
-    withdrawReceiptError,
-    withdrawTxHash,
+  const transactionsList = useTransactionsList({
+    inProgressMessage: t('bridge-page.transaction-status.withdrawing', {
+      fromInput: withdrawn,
+      network: fromChain?.name,
+      symbol: fromToken.symbol,
+    }),
+    isOperating: isWithdrawing,
+    operation: 'withdraw',
+    receipt: withdrawReceipt,
+    receiptError: withdrawReceiptError,
+    successMessage: t('bridge-page.transaction-status.withdrawn', {
+      fromInput,
+      symbol: fromToken.symbol,
+    }),
+    txHash: withdrawTxHash,
+    userConfirmationError: withdrawError,
   })
 
   return (

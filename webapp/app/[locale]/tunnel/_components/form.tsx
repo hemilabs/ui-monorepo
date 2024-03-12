@@ -1,9 +1,18 @@
 import Big from 'big.js'
+import dynamic from 'next/dynamic'
 import { FormEvent, ReactNode } from 'react'
 import { Token } from 'types/token'
 import { Card } from 'ui-common/components/card'
 import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits } from 'viem'
+
+const TransactionStatus = dynamic(
+  () =>
+    import('components/transactionStatus').then(mod => mod.TransactionStatus),
+  {
+    ssr: false,
+  },
+)
 
 type InputEnoughInBalance = {
   chainId?: number
@@ -67,7 +76,12 @@ type Props = {
   onSubmit: () => void
   reviewOperation: ReactNode
   submitButton: ReactNode
-  transactionStatus: ReactNode
+  transactionsList: {
+    id: string
+    status: React.ComponentProps<typeof TransactionStatus>['status']
+    text: string
+    txHash: string
+  }[]
 }
 
 export const BridgeForm = ({
@@ -75,7 +89,7 @@ export const BridgeForm = ({
   onSubmit,
   reviewOperation,
   submitButton,
-  transactionStatus,
+  transactionsList,
 }: Props) => (
   <>
     <Card>
@@ -95,7 +109,14 @@ export const BridgeForm = ({
         {reviewOperation}
       </div>
       <div className="order-1 flex flex-col gap-y-4 md:order-2">
-        {transactionStatus}
+        {transactionsList.map(transaction => (
+          <TransactionStatus
+            key={transaction.id}
+            status={transaction.status}
+            text={transaction.text}
+            txHash={transaction.txHash}
+          />
+        ))}
       </div>
     </div>
   </>

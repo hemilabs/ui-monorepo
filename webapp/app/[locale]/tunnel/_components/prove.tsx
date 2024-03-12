@@ -3,7 +3,6 @@ import {
   ReviewWithdraw,
   WithdrawProgress,
 } from 'components/reviewBox/reviewWithdraw'
-import { TransactionStatus } from 'components/transactionStatus'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -316,18 +315,7 @@ export const Prove = function ({ renderForm, state }: Props) {
           l1ChainId={withdrawL1NetworkId}
         />
       }
-      transactionStatus={
-        <>
-          {transactionsList.map(transaction => (
-            <TransactionStatus
-              key={transaction.id}
-              status={transaction.status}
-              text={transaction.text}
-              txHash={transaction.txHash}
-            />
-          ))}
-        </>
-      }
+      transactionsList={transactionsList}
     />
   )
 }

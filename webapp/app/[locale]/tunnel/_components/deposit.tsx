@@ -2,7 +2,6 @@
 
 import { ReviewDeposit } from 'components/reviewBox/reviewDeposit'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useState } from 'react'
 import { Token } from 'types/token'
@@ -21,14 +20,6 @@ import { useDeposit } from '../_hooks/useDeposit'
 
 import { Erc20Approval } from './Erc20Approval'
 import { BridgeForm, canSubmit, getTotal } from './form'
-
-const TransactionStatus = dynamic(
-  () =>
-    import('components/transactionStatus').then(mod => mod.TransactionStatus),
-  {
-    ssr: false,
-  },
-)
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
 
@@ -451,18 +442,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
           updateExtendedErc20Approval={updateExtendedErc20Approval}
         />
       }
-      transactionStatus={
-        <>
-          {transactionsList.map(transaction => (
-            <TransactionStatus
-              key={transaction.id}
-              status={transaction.status}
-              text={transaction.text}
-              txHash={transaction.txHash}
-            />
-          ))}
-        </>
-      }
+      transactionsList={transactionsList}
     />
   )
 }

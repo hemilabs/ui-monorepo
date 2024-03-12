@@ -3,7 +3,6 @@ import {
   WithdrawProgress,
 } from 'components/reviewBox/reviewWithdraw'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { Token } from 'types/token'
@@ -18,13 +17,6 @@ import { useWithdraw } from '../_hooks/useWithdraw'
 
 import { BridgeForm, canSubmit } from './form'
 
-const TransactionStatus = dynamic(
-  () =>
-    import('components/transactionStatus').then(mod => mod.TransactionStatus),
-  {
-    ssr: false,
-  },
-)
 type UseUiTransactionsList = {
   fromChain: Chain | undefined
   fromToken: Token
@@ -261,18 +253,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
           )}
         </Button>
       }
-      transactionStatus={
-        <>
-          {transactionsList.map(transaction => (
-            <TransactionStatus
-              key={transaction.id}
-              status={transaction.status}
-              text={transaction.text}
-              txHash={transaction.txHash}
-            />
-          ))}
-        </>
-      }
+      transactionsList={transactionsList}
     />
   )
 }

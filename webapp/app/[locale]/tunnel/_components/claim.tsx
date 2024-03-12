@@ -2,7 +2,6 @@ import {
   ReviewWithdraw,
   WithdrawProgress,
 } from 'components/reviewBox/reviewWithdraw'
-import { TransactionStatus } from 'components/transactionStatus'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
@@ -128,18 +127,7 @@ export const Claim = function ({ renderForm, state }: Props) {
           isReadyToClaim={false}
         />
       }
-      transactionStatus={
-        <>
-          {transactionsList.map(transaction => (
-            <TransactionStatus
-              key={transaction.id}
-              status={transaction.status}
-              text={transaction.text}
-              txHash={transaction.txHash}
-            />
-          ))}
-        </>
-      }
+      transactionsList={transactionsList}
     />
   )
 }

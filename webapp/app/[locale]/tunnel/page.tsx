@@ -177,7 +177,7 @@ export default function Bridge() {
   const OperationComponent = OperationsComponent[bridgeState.operation]
 
   return (
-    <div className="mx-auto flex h-full w-full flex-col gap-y-4 px-4 md:max-w-fit md:flex-row md:gap-x-4 md:pt-10">
+    <div className="h-fit-rest-screen mx-auto flex w-full flex-col gap-y-4 px-4 md:max-w-fit md:flex-row md:gap-x-4 md:pt-10">
       <OperationComponent
         renderForm={isRunningOperation => (
           <FormContent

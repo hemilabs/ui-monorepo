@@ -94,7 +94,7 @@ export const BridgeForm = ({
   <>
     <Card>
       <form
-        className="flex w-full flex-col gap-y-4 text-zinc-800"
+        className="flex w-full flex-col gap-y-4 text-zinc-800 lg:min-w-[400px]"
         onSubmit={function (e: FormEvent) {
           e.preventDefault()
           onSubmit()
@@ -105,7 +105,7 @@ export const BridgeForm = ({
       </form>
     </Card>
     <div className="flex flex-col gap-y-4">
-      <div className="shrink-1 order-2 md:order-1 md:w-full md:min-w-96">
+      <div className="shrink-1 order-2 md:order-1 md:w-full md:min-w-80 xl:min-w-96">
         {reviewOperation}
       </div>
       <div className="order-1 flex flex-col gap-y-4 md:order-2">

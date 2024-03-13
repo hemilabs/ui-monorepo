@@ -1,9 +1,20 @@
 import Big from 'big.js'
-import { useEstimateFeesPerGas, useFeeHistory } from 'wagmi'
+import { useFeeHistory } from 'wagmi'
 
+const defaultBlockCount = 4
 // Overestimation for L1 gas limit used by OP/SDK
 // See https://github.com/ethereum-optimism/optimism/blob/592daa704a56f5b3df21b41ea7cc294ab63b95ff/packages/sdk/src/cross-chain-messenger.ts#L2060
 const defaultOverEstimation = 1.5
+
+const mean = function (rewards: bigint[] = []) {
+  if (rewards.length === 0) {
+    return '0'
+  }
+  return rewards
+    .reduce((a, b) => Big(a).plus(b.toString()), Big(0))
+    .div(rewards.length)
+    .toFixed(0)
+}
 
 type UseEstimateFees = {
   chainId: number
@@ -18,24 +29,21 @@ export const useEstimateFees = function ({
   gasUnits = BigInt(0),
   overEstimation = defaultOverEstimation,
 }: UseEstimateFees) {
-  const { data: fees } = useEstimateFeesPerGas({
-    chainId,
-    query: {
-      enabled,
-    },
-  })
-
   const { data: feeHistory } = useFeeHistory({
+    blockCount: defaultBlockCount,
+    blockTag: 'latest',
     chainId,
     query: {
       enabled,
+      // refetch every 15 seconds
+      refetchInterval: 15 * 1000,
     },
+    rewardPercentiles: [30],
   })
 
-  const { maxPriorityFeePerGas = BigInt(0) } = fees ?? {}
-
-  const { baseFeePerGas = BigInt(0) } = feeHistory ?? {}
-
+  const baseFeePerGas =
+    feeHistory?.baseFeePerGas?.[defaultBlockCount] ?? BigInt(0)
+  const maxPriorityFeePerGas = mean(feeHistory?.reward.map(r => r[0]))
   return BigInt(
     Big(gasUnits.toString())
       .times(

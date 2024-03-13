@@ -25,6 +25,10 @@ const config: Config = {
       fontFamily: {
         inter: '--font-inter',
       },
+      height: {
+        // 96px from header (height + padding), 40px from container's padding top in > md screns
+        'fit-rest-screen': 'calc(100dvh - 96px) md:calc(100dvh - 96px - 40px)',
+      },
     },
   },
 }

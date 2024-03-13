@@ -1,7 +1,8 @@
 import Big from 'big.js'
+import { formatNumber } from 'utils/format'
 
 export const getValue = (value: string) =>
-  Big(value.replace(/,/g, '')).lt('0.001') ? '< 0.001' : value
+  Big(value.replace(/,/g, '')).lt('0.001') ? '< 0.001' : formatNumber(value, 3)
 
 type SubSectionProps = {
   symbol: string

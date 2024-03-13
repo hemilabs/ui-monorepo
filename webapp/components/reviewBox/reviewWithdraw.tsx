@@ -8,8 +8,8 @@ import { useConfig } from 'wagmi'
 
 import { Heading, getValue, SubSection } from './index'
 
-const ExpectedWithdrawalWaitTimeMinutes = 10
-const ExpectedProofWaitTimeHours = 2
+const ExpectedWithdrawalWaitTimeMinutes = 20
+const ExpectedProofWaitTimeHours = 3
 
 type ProgressStatus = 'completed' | 'idle' | 'progress'
 
@@ -147,7 +147,7 @@ const Step = function ({
           <FuelIcon />
         </>
       ) : null}
-      {transactionHash && chainId ? (
+      {transactionHash && chainId && status === 'completed' ? (
         <a
           className="flex cursor-pointer items-center gap-x-2"
           href={`${
@@ -182,9 +182,12 @@ export enum WithdrawProgress {
 }
 
 type Props = {
+  claimWithdrawalTxHash?: Hash
   gas: string
   gasSymbol: string
+  l1ChainId: Chain['id']
   progress: WithdrawProgress
+  proveWithdrawalTxHash?: Hash
   toWithdraw: string
   withdrawSymbol: string
   withdrawTxHash?: Hash
@@ -192,18 +195,18 @@ type Props = {
   | { canWithdraw: boolean; operation: 'withdraw' }
   | {
       operation: 'prove'
-      proveWithdrawalTxHash?: Hash
     }
   | {
       operation: 'claim'
-      proveWithdrawalTxHash: Hash
-      claimWithdrawalTxHash?: Hash
     }
 )
 export const ReviewWithdraw = function ({
+  claimWithdrawalTxHash,
   gas,
   gasSymbol,
+  l1ChainId,
   progress,
+  proveWithdrawalTxHash,
   toWithdraw,
   withdrawSymbol,
   withdrawTxHash,
@@ -259,6 +262,7 @@ export const ReviewWithdraw = function ({
         status={getProgressStatus(WithdrawProgress.WITHDRAW_NOT_PUBLISHED)}
       />
       <Step
+        chainId={l1ChainId}
         icon={<ProveIcon />}
         status={getProgressStatus(WithdrawProgress.PROVING)}
         text={t('prove-withdrawal')}
@@ -268,11 +272,7 @@ export const ReviewWithdraw = function ({
               symbol: gasSymbol,
             }
           : {})}
-        transactionHash={
-          isProve && props.proveWithdrawalTxHash
-            ? props.proveWithdrawalTxHash
-            : undefined
-        }
+        transactionHash={proveWithdrawalTxHash}
       />
       <VerticalLine status={getProgressStatus(WithdrawProgress.PROVING)} />
       <Step
@@ -285,8 +285,9 @@ export const ReviewWithdraw = function ({
         status={getProgressStatus(WithdrawProgress.WAITING_FOR_CLAIM_ENABLED)}
       />
       <Step
+        chainId={l1ChainId}
         icon={<PlaneIcon />}
-        status={getProgressStatus(WithdrawProgress.CLAIMED)}
+        status={getProgressStatus(WithdrawProgress.CLAIMING)}
         text={t('claim-withdrawal')}
         {...(isClaim
           ? {
@@ -294,11 +295,7 @@ export const ReviewWithdraw = function ({
               symbol: gasSymbol,
             }
           : {})}
-        transactionHash={
-          isClaim && props.claimWithdrawalTxHash
-            ? props.claimWithdrawalTxHash
-            : undefined
-        }
+        transactionHash={claimWithdrawalTxHash}
       />
     </Card>
   )

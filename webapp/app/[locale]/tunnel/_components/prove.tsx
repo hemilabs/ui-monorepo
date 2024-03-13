@@ -1,22 +1,18 @@
-import { NotificationBox } from 'components/notificationBox'
 import {
   ReviewWithdraw,
   WithdrawProgress,
 } from 'components/reviewBox/reviewWithdraw'
-import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
-import { type Address, formatUnits, type Chain, Hash } from 'viem'
-import {
-  type UseWaitForTransactionReceiptReturnType,
-  useConfig,
-  useSwitchChain,
-} from 'wagmi'
+import { formatUnits, type Chain } from 'viem'
+import { useConfig } from 'wagmi'
 
+import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
 import { useBridgeState } from '../_hooks/useBridgeState'
 import { useProveTransaction } from '../_hooks/useProveTransaction'
+import { useTransactionsList } from '../_hooks/useTransactionsList'
 
 import { BridgeForm } from './form'
 
@@ -29,19 +25,12 @@ const SubmitButton = function ({
   isReadyToProve: boolean
   l1ChainId: Chain['id']
 }) {
-  const { chains } = useConfig()
-  const { switchChain } = useSwitchChain()
-
   const t = useTranslations()
 
-  const connectedToL1 = useIsConnectedToExpectedNetwork(l1ChainId)
-  const targetChain = chains.find(c => c.id === l1ChainId)
-
-  const switchToL1 = () => switchChain({ chainId: l1ChainId })
-
   return (
-    <>
-      {connectedToL1 && (
+    <SubmitWhenConnectedToChain
+      l1ChainId={l1ChainId}
+      submitButton={
         <Button disabled={!isReadyToProve || isProving} type="submit">
           {t(
             `bridge-page.submit-button.${
@@ -49,118 +38,10 @@ const SubmitButton = function ({
             }`,
           )}
         </Button>
-      )}
-      {!connectedToL1 && (
-        <>
-          <NotificationBox
-            backgroundColor="bg-orange-100"
-            text={t('bridge-page.form.switch-to-prove', {
-              network: targetChain.name,
-            })}
-          />
-          <Button onClick={switchToL1} type="button">
-            {t('common.switch-to-network', { network: targetChain.name })}
-          </Button>
-        </>
-      )}
-    </>
+      }
+    />
   )
 }
-
-const useTransactionList = function ({
-  isProving,
-  proveWithdrawalError,
-  proveWithdrawalTxHash,
-  showWithdrawalTx,
-  withdrawalProofReceipt,
-  withdrawalProofReceiptError,
-  withdrawAmount,
-  withdrawSymbol,
-  withdrawTxHash,
-}: {
-  isProving: boolean
-  proveWithdrawalError: Error | undefined
-  proveWithdrawalTxHash: Hash | undefined
-  showWithdrawalTx: boolean
-  withdrawalProofReceipt:
-    | UseWaitForTransactionReceiptReturnType['data']
-    | undefined
-  withdrawalProofReceiptError: Error | undefined
-  withdrawAmount: string
-  withdrawSymbol: string
-  withdrawTxHash: Address
-}) {
-  const t = useTranslations()
-  const transactionsList = []
-
-  if (showWithdrawalTx) {
-    transactionsList.push({
-      id: 'withdraw',
-      status: 'success',
-      text: t('bridge-page.transaction-status.withdrawn', {
-        fromInput: withdrawAmount,
-        symbol: withdrawSymbol,
-      }),
-      txHash: withdrawTxHash,
-    })
-    return transactionsList
-  }
-
-  if (proveWithdrawalError) {
-    // user rejected the request
-    if (
-      ['user rejected', 'denied transaction signature'].includes(
-        proveWithdrawalError.message,
-      )
-    ) {
-      transactionsList.push({
-        id: 'prove',
-        status: 'error',
-        text: t('common.transaction-status.rejected'),
-      })
-    } else {
-      // failed for some reason before sending the tx to the node (no tx hash)
-      transactionsList.push({
-        id: 'prove',
-        status: 'error',
-        text: t('common.transaction-status.error'),
-      })
-    }
-  }
-
-  if (proveWithdrawalTxHash || (isProving && !proveWithdrawalError)) {
-    // proving failed for some reason
-    if (withdrawalProofReceiptError) {
-      transactionsList.push({
-        id: 'prove',
-        status: 'error',
-        text: t('common.transaction-status.error'),
-        txHash: proveWithdrawalTxHash,
-      })
-    }
-    // proving was successful
-    if (withdrawalProofReceipt?.status === 'success') {
-      transactionsList.push({
-        id: 'prove',
-        status: 'success',
-        text: t('bridge-page.transaction-status.withdrawal-proved'),
-        txHash: proveWithdrawalTxHash,
-      })
-    }
-    // proving in progress
-    if (!withdrawalProofReceipt) {
-      transactionsList.push({
-        id: 'prove',
-        status: 'loading',
-        text: t('bridge-page.transaction-status.proving-withdrawal'),
-        txHash: proveWithdrawalTxHash,
-      })
-    }
-  }
-
-  return transactionsList
-}
-
 type Props = {
   renderForm: (isRunningOperation: boolean) => React.ReactNode
   state: ReturnType<typeof useBridgeState> & { operation: 'prove' }
@@ -174,6 +55,8 @@ export const Prove = function ({ renderForm, state }: Props) {
   const [withdrawProgress, setWithdrawProgress] = useState<WithdrawProgress>(
     WithdrawProgress.WITHDRAW_NOT_PUBLISHED,
   )
+
+  const t = useTranslations()
 
   const { chains = [] } = useConfig()
   const {
@@ -277,16 +160,15 @@ export const Prove = function ({ renderForm, state }: Props) {
 
   const isProving = withdrawProgress === WithdrawProgress.PROVING
 
-  const transactionsList = useTransactionList({
-    isProving,
-    proveWithdrawalError,
-    proveWithdrawalTxHash,
-    showWithdrawalTx,
-    withdrawalProofReceipt,
-    withdrawalProofReceiptError,
-    withdrawAmount,
-    withdrawSymbol,
-    withdrawTxHash,
+  const transactionsList = useTransactionsList({
+    inProgressMessage: t('bridge-page.transaction-status.proving-withdrawal'),
+    isOperating: isProving,
+    operation: 'prove',
+    receipt: withdrawalProofReceipt,
+    receiptError: withdrawalProofReceiptError,
+    successMessage: t('bridge-page.transaction-status.withdrawal-proved'),
+    txHash: proveWithdrawalTxHash,
+    userConfirmationError: proveWithdrawalError,
   })
 
   return (
@@ -300,6 +182,7 @@ export const Prove = function ({ renderForm, state }: Props) {
             fromChain?.nativeCurrency.decimals,
           )}
           gasSymbol={fromChain?.nativeCurrency.symbol}
+          l1ChainId={withdrawL1NetworkId}
           operation="prove"
           progress={withdrawProgress}
           proveWithdrawalTxHash={proveWithdrawalTxHash}
@@ -315,7 +198,21 @@ export const Prove = function ({ renderForm, state }: Props) {
           l1ChainId={withdrawL1NetworkId}
         />
       }
-      transactionsList={transactionsList}
+      transactionsList={
+        showWithdrawalTx
+          ? [
+              {
+                id: 'withdraw',
+                status: 'success',
+                text: t('bridge-page.transaction-status.withdrawn', {
+                  fromInput: withdrawAmount,
+                  symbol: withdrawSymbol,
+                }),
+                txHash: withdrawTxHash,
+              },
+            ]
+          : transactionsList
+      }
     />
   )
 }

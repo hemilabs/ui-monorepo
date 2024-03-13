@@ -38,11 +38,13 @@
     },
     "title": "Tunnel",
     "transaction-status": {
+      "claiming-withdrawal": "Claiming Withdrawal",
       "deposited": "{fromInput} {symbol} deposited",
       "depositing": "Depositing {fromInput} {symbol} to {network}",
       "erc20-approved": "{symbol} approved",
       "erc20-approving": "Approving {symbol}",
       "proving-withdrawal": "Proving withdrawal",
+      "withdrawal-claimed": "Withdrawal claimed",
       "withdrawal-proved": "Withdrawal proved",
       "withdrawing": "Withdrawing {fromInput} {symbol}",
       "withdrawn": "{fromInput} {symbol} withdrawn"

@@ -6,53 +6,49 @@ import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
-import { formatUnits, type Hash } from 'viem'
+import { Chain, formatUnits } from 'viem'
 import { useConfig } from 'wagmi'
 
+import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
 import { useBridgeState } from '../_hooks/useBridgeState'
+import { useClaimTransaction } from '../_hooks/useClaimTransaction'
+import { useTransactionsList } from '../_hooks/useTransactionsList'
 
 import { BridgeForm } from './form'
 
 const SubmitButton = function ({
+  l1ChainId,
   isClaiming,
   isReadyToClaim,
+  withdrawProgress,
 }: {
+  l1ChainId: Chain['id']
   isClaiming: boolean
   isReadyToClaim: boolean
+  withdrawProgress: WithdrawProgress
 }) {
   const t = useTranslations()
   return (
-    <Button disabled={!isReadyToClaim || isClaiming} type="submit">
-      {t(
-        `bridge-page.submit-button.${
-          isClaiming ? 'claiming-withdrawal' : 'claim-withdrawal'
-        }`,
-      )}
-    </Button>
+    <SubmitWhenConnectedToChain
+      l1ChainId={l1ChainId}
+      submitButton={
+        <Button
+          disabled={
+            !isReadyToClaim ||
+            isClaiming ||
+            withdrawProgress !== WithdrawProgress.READY_TO_CLAIM
+          }
+          type="submit"
+        >
+          {t(
+            `bridge-page.submit-button.${
+              isClaiming ? 'claiming-withdrawal' : 'claim-withdrawal'
+            }`,
+          )}
+        </Button>
+      }
+    />
   )
-}
-
-const useTransactionList = function ({
-  proveWithdrawalTxHash,
-  showProveWithdrawalTx,
-}: {
-  proveWithdrawalTxHash: Hash
-  showProveWithdrawalTx: boolean
-}) {
-  const t = useTranslations()
-  const transactionsList = []
-
-  if (showProveWithdrawalTx) {
-    transactionsList.push({
-      id: 'prove',
-      status: 'success',
-      text: t('bridge-page.transaction-status.withdrawal-proved'),
-      txHash: proveWithdrawalTxHash,
-    })
-    return transactionsList
-  }
-
-  return transactionsList
 }
 
 type Props = {
@@ -64,9 +60,11 @@ export const Claim = function ({ renderForm, state }: Props) {
   // initially show the Withdraw Tx hash, because this component renders as soon as it is
   // confirmed, so after some time, we must hide it!
   const [showProveWithdrawalTx, setShowProveWithdrawalTx] = useState(true)
-  const [withdrawProgress] = useState<WithdrawProgress>(
+  const [withdrawProgress, setWithdrawProgress] = useState<WithdrawProgress>(
     WithdrawProgress.WAITING_FOR_CLAIM_ENABLED,
   )
+
+  const t = useTranslations()
 
   const { chains = [] } = useConfig()
 
@@ -80,6 +78,32 @@ export const Claim = function ({ renderForm, state }: Props) {
 
   const fromChain = chains.find(c => c.id === withdrawL1NetworkId)
 
+  const {
+    claimWithdrawal,
+    claimWithdrawalError,
+    claimWithdrawalReceipt,
+    claimWithdrawalReceiptError,
+    claimWithdrawalTokenGasFees,
+    claimWithdrawalTxHash,
+    clearClaimWithdrawalState,
+    isReadyToClaim,
+  } = useClaimTransaction({
+    l1ChainId: withdrawL1NetworkId,
+    withdrawTxHash,
+  })
+
+  useEffect(
+    function updateWithdrawProgressOnceReady() {
+      if (
+        isReadyToClaim &&
+        withdrawProgress === WithdrawProgress.WAITING_FOR_CLAIM_ENABLED
+      ) {
+        setWithdrawProgress(WithdrawProgress.READY_TO_CLAIM)
+      }
+    },
+    [isReadyToClaim, setWithdrawProgress, withdrawProgress],
+  )
+
   useEffect(
     function hideProveTxFromTransactionList() {
       const timeoutId = setTimeout(function () {
@@ -92,15 +116,77 @@ export const Claim = function ({ renderForm, state }: Props) {
     [setShowProveWithdrawalTx, showProveWithdrawalTx],
   )
 
+  useEffect(
+    function handleClaimSuccess() {
+      if (
+        claimWithdrawalReceipt?.status === 'success' &&
+        withdrawProgress !== WithdrawProgress.CLAIMED
+      ) {
+        setWithdrawProgress(WithdrawProgress.CLAIMED)
+      }
+      if (withdrawProgress === WithdrawProgress.CLAIMED) {
+        const timeoutId = setTimeout(function () {
+          clearClaimWithdrawalState()
+        }, 7000)
+        return () => clearTimeout(timeoutId)
+      }
+
+      return undefined
+    },
+    [
+      claimWithdrawalReceipt,
+      clearClaimWithdrawalState,
+      setWithdrawProgress,
+      withdrawProgress,
+    ],
+  )
+
+  useEffect(
+    function handleClaimErrors() {
+      if (
+        withdrawProgress === WithdrawProgress.CLAIMING &&
+        (claimWithdrawalError || claimWithdrawalReceiptError)
+      ) {
+        const timeoutId = setTimeout(clearClaimWithdrawalState, 7000)
+        setWithdrawProgress(
+          isReadyToClaim
+            ? WithdrawProgress.READY_TO_CLAIM
+            : WithdrawProgress.WAITING_FOR_CLAIM_ENABLED,
+        )
+        return () => clearTimeout(timeoutId)
+      }
+      return undefined
+    },
+    [
+      claimWithdrawalError,
+      claimWithdrawalReceiptError,
+      clearClaimWithdrawalState,
+      isReadyToClaim,
+      setWithdrawProgress,
+      withdrawProgress,
+    ],
+  )
+
   const handleClaim = function () {
-    // TODO https://github.com/BVM-priv/ui-monorepo/issues/113
+    if (!isReadyToClaim) {
+      return
+    }
+    clearClaimWithdrawalState()
+    claimWithdrawal()
+    setWithdrawProgress(WithdrawProgress.CLAIMING)
   }
 
   const isClaiming = withdrawProgress === WithdrawProgress.CLAIMING
 
-  const transactionsList = useTransactionList({
-    proveWithdrawalTxHash,
-    showProveWithdrawalTx,
+  const transactionsList = useTransactionsList({
+    inProgressMessage: t('bridge-page.transaction-status.claiming-withdrawal'),
+    isOperating: isClaiming,
+    operation: 'claim',
+    receipt: claimWithdrawalReceipt,
+    receiptError: claimWithdrawalReceiptError,
+    successMessage: t('bridge-page.transaction-status.withdrawal-claimed'),
+    txHash: claimWithdrawalTxHash,
+    userConfirmationError: claimWithdrawalError,
   })
 
   return (
@@ -109,9 +195,13 @@ export const Claim = function ({ renderForm, state }: Props) {
       onSubmit={handleClaim}
       reviewOperation={
         <ReviewWithdraw
-          // TODO get real gas fees https://github.com/BVM-priv/ui-monorepo/issues/113
-          gas={formatUnits(BigInt(0), fromChain?.nativeCurrency.decimals)}
+          claimWithdrawalTxHash={claimWithdrawalTxHash}
+          gas={formatUnits(
+            claimWithdrawalTokenGasFees,
+            fromChain?.nativeCurrency.decimals,
+          )}
           gasSymbol={fromChain?.nativeCurrency.symbol}
+          l1ChainId={withdrawL1NetworkId}
           operation="claim"
           progress={withdrawProgress}
           proveWithdrawalTxHash={proveWithdrawalTxHash}
@@ -123,11 +213,23 @@ export const Claim = function ({ renderForm, state }: Props) {
       submitButton={
         <SubmitButton
           isClaiming={isClaiming}
-          // TODO https://github.com/BVM-priv/ui-monorepo/issues/113
-          isReadyToClaim={false}
+          isReadyToClaim={isReadyToClaim}
+          l1ChainId={withdrawL1NetworkId}
+          withdrawProgress={withdrawProgress}
         />
       }
-      transactionsList={transactionsList}
+      transactionsList={
+        showProveWithdrawalTx
+          ? [
+              {
+                id: 'prove',
+                status: 'success',
+                text: t('bridge-page.transaction-status.withdrawal-proved'),
+                txHash: proveWithdrawalTxHash,
+              },
+            ]
+          : transactionsList
+      }
     />
   )
 }

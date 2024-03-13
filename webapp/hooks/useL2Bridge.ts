@@ -33,6 +33,7 @@ type GasEstimationOperations = Extract<
   keyof CrossChainMessengerType['estimateGas'],
   | 'depositERC20'
   | 'depositETH'
+  | 'finalizeMessage'
   | 'proveMessage'
   | 'withdrawERC20'
   | 'withdrawETH'
@@ -183,10 +184,12 @@ const useL2toL1CrossChainMessenger = function (l1ChainId: Chain['id']) {
 
 type UseGetMessageStatus = {
   l1ChainId: Chain['id']
+  refetchUntilStatus: MessageStatus
   transactionHash: Hash
 }
 export const useGetTransactionMessageStatus = function ({
   l1ChainId,
+  refetchUntilStatus,
   transactionHash,
 }: UseGetMessageStatus) {
   const { crossChainMessenger, crossChainMessengerStatus } =
@@ -197,10 +200,15 @@ export const useGetTransactionMessageStatus = function ({
     enabled: crossChainMessengerStatus === 'success' && l1ChainId !== hemi.id,
     placeholderData: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
     queryFn: () => crossChainMessenger.getMessageStatus(transactionHash),
-    queryKey: [crossChainMessengerStatus, l1ChainId, transactionHash],
+    queryKey: [
+      crossChainMessengerStatus,
+      l1ChainId,
+      refetchUntilStatus,
+      transactionHash,
+    ],
     refetchInterval(query) {
       // if message status is ready to prove, stop polling
-      if (query.state.data === MessageStatus.READY_TO_PROVE) {
+      if (query.state.data === refetchUntilStatus) {
         return false
       }
       // poll every 15 seconds
@@ -392,6 +400,55 @@ export const useWithdrawNativeToken = function ({
     withdrawNativeTokenGasFees,
     withdrawNativeTokenMutationKey,
     withdrawTxHash,
+  }
+}
+
+type UseFinalizeMessage = {
+  enabled: boolean
+  l1ChainId: Chain['id']
+  withdrawTxHash: Address
+}
+
+export const useFinalizeMessage = function ({
+  enabled,
+  l1ChainId,
+  withdrawTxHash,
+}: UseFinalizeMessage) {
+  const operation = 'finalizeMessage'
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useL1ToL2CrossChainMessenger(l1ChainId)
+
+  const finalizeWithdrawalTokenGasFees = useEstimateGasFees({
+    args: [withdrawTxHash],
+    crossChainMessenger,
+    crossChainMessengerStatus,
+    enabled: enabled && isHash(withdrawTxHash),
+    operation,
+    walletConnectedToChain: l1ChainId,
+  })
+
+  const finalizeWithdrawalMutationKey = [operation]
+
+  const {
+    data: finalizeWithdrawalTxHash,
+    error: finalizeWithdrawalError,
+    mutate: finalizeWithdrawal,
+    reset: resetFinalizeWithdrawal,
+  } = useMutation({
+    async mutationFn(toFinalize: Hash) {
+      const response = await crossChainMessenger.finalizeMessage(toFinalize)
+      return response.hash as Hash
+    },
+    mutationKey: finalizeWithdrawalMutationKey,
+  })
+
+  return {
+    finalizeWithdrawal: () => finalizeWithdrawal(withdrawTxHash),
+    finalizeWithdrawalError,
+    finalizeWithdrawalMutationKey,
+    finalizeWithdrawalTokenGasFees,
+    finalizeWithdrawalTxHash,
+    resetFinalizeWithdrawal,
   }
 }
 

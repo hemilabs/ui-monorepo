@@ -8,15 +8,12 @@ import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { Chain, formatUnits } from 'viem'
-import {
-  useAccount,
-  useConfig,
-  type UseWaitForTransactionReceiptReturnType,
-} from 'wagmi'
+import { formatUnits } from 'viem'
+import { useAccount, useConfig } from 'wagmi'
 
 import { useBridgeState } from '../_hooks/useBridgeState'
 import { useDeposit } from '../_hooks/useDeposit'
+import { useTransactionsList } from '../_hooks/useTransactionsList'
 
 import { Erc20Approval } from './Erc20Approval'
 import { BridgeForm, canSubmit, getTotal } from './form'
@@ -81,153 +78,6 @@ const SubmitButton = function ({
   )
 }
 
-type UseUiTransactionsList = {
-  approvalError: Error | undefined
-  approvalTxHash: string | undefined
-  approvalReceipt: UseWaitForTransactionReceiptReturnType['data'] | undefined
-  approvalReceiptError: Error | undefined
-  depositError: Error | undefined
-  depositReceipt: UseWaitForTransactionReceiptReturnType['data'] | undefined
-  depositReceiptError: Error | undefined
-  depositTxHash: string | undefined
-  deposited: string
-  fromToken: Token
-  operationRunning: OperationRunning
-  toChain: Chain | undefined
-}
-const useTransactionList = function ({
-  approvalError,
-  approvalTxHash,
-  approvalReceipt,
-  approvalReceiptError,
-  depositError,
-  depositTxHash,
-  depositReceipt,
-  depositReceiptError,
-  deposited,
-  fromToken,
-  operationRunning,
-  toChain,
-}: UseUiTransactionsList) {
-  const t = useTranslations()
-  const transactionsList = []
-
-  if (approvalError) {
-    // user rejected the approval request
-    if (
-      ['user rejected', 'denied transaction signature'].includes(
-        approvalError.message,
-      )
-    ) {
-      transactionsList.push({
-        id: 'approval',
-        status: 'error',
-        text: t('common.transaction-status.rejected'),
-      })
-    } else {
-      // failed for some reason before sending the tx to the node (no tx hash)
-      transactionsList.push({
-        id: 'approval',
-        status: 'error',
-        text: t('common.transaction-status.error'),
-      })
-    }
-  }
-
-  // user has given confirmation for the approval and there's a tx hash
-  // or is looking at the confirmation prompt
-  if (approvalTxHash || (operationRunning === 'approving' && !approvalError)) {
-    // approval failed for some reason
-    if (approvalReceiptError) {
-      transactionsList.push({
-        id: 'approval',
-        status: 'error',
-        text: t('common.transaction-status.error'),
-      })
-    }
-    if (approvalReceipt?.status === 'success') {
-      // approval confirmed
-      transactionsList.push({
-        id: 'approval',
-        status: 'success',
-        text: t('bridge-page.transaction-status.erc20-approved', {
-          symbol: fromToken.symbol,
-        }),
-      })
-    }
-    // approval in progress
-    if (!approvalReceipt) {
-      transactionsList.push({
-        id: 'approval',
-        status: 'loading',
-        text: t('bridge-page.transaction-status.erc20-approving', {
-          symbol: fromToken.symbol,
-        }),
-        txHash: approvalTxHash,
-      })
-    }
-  }
-
-  if (depositError) {
-    // user rejected the request
-    if (
-      ['user rejected', 'denied transaction signature'].includes(
-        depositError.message,
-      )
-    ) {
-      transactionsList.push({
-        id: 'deposit',
-        status: 'error',
-        text: t('common.transaction-status.rejected'),
-      })
-    } else {
-      // failed for some reason before sending the tx to the node (no tx hash)
-      transactionsList.push({
-        id: 'deposit',
-        status: 'error',
-        text: t('common.transaction-status.error'),
-      })
-    }
-  }
-  // user has given confirmation for the deposit and there's a tx hash
-  // or is looking at the confirmation prompt
-  if (depositTxHash || (operationRunning === 'depositing' && !depositError)) {
-    // deposit failed for some reason
-    if (depositReceiptError) {
-      transactionsList.push({
-        id: 'deposit',
-        status: 'error',
-        text: t('common.transaction-status.error'),
-      })
-    }
-    // deposit was successful
-    if (depositReceipt?.status === 'success') {
-      transactionsList.push({
-        id: 'deposit',
-        status: 'success',
-        text: t('bridge-page.transaction-status.deposited', {
-          fromInput: deposited,
-          symbol: fromToken.symbol,
-        }),
-      })
-    }
-    // deposit in progress
-    if (!depositReceipt) {
-      transactionsList.push({
-        id: 'deposit',
-        status: 'loading',
-        text: t('bridge-page.transaction-status.depositing', {
-          fromInput: deposited,
-          network: toChain?.name,
-          symbol: fromToken.symbol,
-        }),
-        txHash: depositTxHash,
-      })
-    }
-  }
-  return transactionsList
-}
-
 type Props = {
   renderForm: (isRunningOperation: boolean) => ReactNode
   state: ReturnType<typeof useBridgeState> & { operation: 'deposit' }
@@ -241,6 +91,8 @@ export const Deposit = function ({ renderForm, state }: Props) {
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
+
+  const t = useTranslations()
 
   const {
     extendedErc20Approval,
@@ -396,20 +248,42 @@ export const Deposit = function ({ renderForm, state }: Props) {
         fromToken,
       })
 
-  const transactionsList = useTransactionList({
-    approvalError,
-    approvalReceipt,
-    approvalReceiptError,
-    approvalTxHash,
-    deposited: depositAmount,
-    depositError,
-    depositReceipt,
-    depositReceiptError,
-    depositTxHash,
-    fromToken,
-    operationRunning,
-    toChain,
+  const approvalTransactionList = useTransactionsList({
+    inProgressMessage: t('bridge-page.transaction-status.erc20-approving', {
+      symbol: fromToken.symbol,
+    }),
+    isOperating: operationRunning === 'approving',
+    operation: 'approve',
+    receipt: approvalReceipt,
+    receiptError: approvalReceiptError,
+    successMessage: t('bridge-page.transaction-status.erc20-approved', {
+      symbol: fromToken.symbol,
+    }),
+    txHash: approvalTxHash,
+    userConfirmationError: approvalError,
   })
+
+  const depositTransactionList = useTransactionsList({
+    inProgressMessage: t('bridge-page.transaction-status.depositing', {
+      fromInput: depositAmount,
+      network: toChain?.name,
+      symbol: fromToken.symbol,
+    }),
+    isOperating: operationRunning === 'depositing',
+    operation: 'deposit',
+    receipt: depositReceipt,
+    receiptError: depositReceiptError,
+    successMessage: t('bridge-page.transaction-status.deposited', {
+      fromInput: depositAmount,
+      symbol: fromToken.symbol,
+    }),
+    txHash: depositTxHash,
+    userConfirmationError: depositError,
+  })
+
+  const transactionsList = approvalTransactionList.concat(
+    depositTransactionList,
+  )
 
   return (
     <BridgeForm

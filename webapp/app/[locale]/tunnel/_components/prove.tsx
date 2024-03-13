@@ -1,16 +1,15 @@
-import { NotificationBox } from 'components/notificationBox'
 import {
   ReviewWithdraw,
   WithdrawProgress,
 } from 'components/reviewBox/reviewWithdraw'
-import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { formatUnits, type Chain } from 'viem'
-import { useConfig, useSwitchChain } from 'wagmi'
+import { useConfig } from 'wagmi'
 
+import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
 import { useBridgeState } from '../_hooks/useBridgeState'
 import { useProveTransaction } from '../_hooks/useProveTransaction'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
@@ -26,19 +25,12 @@ const SubmitButton = function ({
   isReadyToProve: boolean
   l1ChainId: Chain['id']
 }) {
-  const { chains } = useConfig()
-  const { switchChain } = useSwitchChain()
-
   const t = useTranslations()
 
-  const connectedToL1 = useIsConnectedToExpectedNetwork(l1ChainId)
-  const targetChain = chains.find(c => c.id === l1ChainId)
-
-  const switchToL1 = () => switchChain({ chainId: l1ChainId })
-
   return (
-    <>
-      {connectedToL1 && (
+    <SubmitWhenConnectedToChain
+      l1ChainId={l1ChainId}
+      submitButton={
         <Button disabled={!isReadyToProve || isProving} type="submit">
           {t(
             `bridge-page.submit-button.${
@@ -46,24 +38,10 @@ const SubmitButton = function ({
             }`,
           )}
         </Button>
-      )}
-      {!connectedToL1 && (
-        <>
-          <NotificationBox
-            backgroundColor="bg-orange-100"
-            text={t('bridge-page.form.switch-to-prove', {
-              network: targetChain.name,
-            })}
-          />
-          <Button onClick={switchToL1} type="button">
-            {t('common.switch-to-network', { network: targetChain.name })}
-          </Button>
-        </>
-      )}
-    </>
+      }
+    />
   )
 }
-
 type Props = {
   renderForm: (isRunningOperation: boolean) => React.ReactNode
   state: ReturnType<typeof useBridgeState> & { operation: 'prove' }
@@ -204,6 +182,7 @@ export const Prove = function ({ renderForm, state }: Props) {
             fromChain?.nativeCurrency.decimals,
           )}
           gasSymbol={fromChain?.nativeCurrency.symbol}
+          l1ChainId={withdrawL1NetworkId}
           operation="prove"
           progress={withdrawProgress}
           proveWithdrawalTxHash={proveWithdrawalTxHash}

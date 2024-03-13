@@ -24,6 +24,7 @@ export const useProveTransaction = function ({
 
   const transactionMessageStatus = useGetTransactionMessageStatus({
     l1ChainId,
+    refetchUntilStatus: MessageStatus.READY_TO_PROVE,
     transactionHash: withdrawTxHash,
   })
 

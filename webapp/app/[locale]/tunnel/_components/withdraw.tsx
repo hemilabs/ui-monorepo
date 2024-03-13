@@ -177,6 +177,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
           canWithdraw={canWithdraw}
           gas={formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals)}
           gasSymbol={fromChain?.nativeCurrency.symbol}
+          l1ChainId={toNetworkId}
           operation="withdraw"
           progress={withdrawProgress}
           toWithdraw={formatNumber(fromInput, 3)}

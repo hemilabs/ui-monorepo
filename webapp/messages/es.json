@@ -38,11 +38,13 @@
     },
     "title": "Túnel",
     "transaction-status": {
+      "claiming-withdrawal": "Reclamando Retiro",
       "deposited": "{fromInput} {symbol} depositado",
       "depositing": "Depositando {fromInput} {symbol} en {network}",
       "erc20-approved": "{symbol} aprobado",
       "erc20-approving": "Aprobando {symbol}",
       "proving-withdrawal": "Probando retiro",
+      "withdrawal-claimed": "Retiro Reclamado",
       "withdrawal-proved": "Retiro probado",
       "withdrawing": "Retirando {fromInput} {symbol}",
       "withdrawn": "{fromInput} {symbol} retirado"

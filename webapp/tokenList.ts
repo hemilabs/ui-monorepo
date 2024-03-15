@@ -38,8 +38,8 @@ const tokens: Token[] = [
     },
     logoURI:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
-    name: 'Tunneled DAI',
-    symbol: 'tDAI',
+    name: 'Testnet Hemi DAI',
+    symbol: 'thDAI',
   },
 ]
 

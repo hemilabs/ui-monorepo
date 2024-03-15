@@ -1,23 +1,27 @@
 'use client'
 
 import { useMutation } from '@tanstack/react-query'
+import { hemi } from 'app/networks'
 import fetch from 'fetch-plus-plus'
 import { discordUrl } from 'hemi-metadata/socials'
 import { useLocale, useTranslations } from 'next-intl'
 import { useReCaptcha } from 'next-recaptcha-v3'
 import { FormEvent, useState } from 'react'
 import { Button } from 'ui-common/components/button'
+import { HemiSymbol } from 'ui-common/components/hemiLogo'
 
 const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
+// TBD the real tokens https://github.com/BVM-priv/ui-monorepo/issues/99
 const giveAwayTokens = [
   {
     amount: 200,
     icon: (
-      // https://github.com/BVM-priv/ui-monorepo/issues/63
-      <div className="h-6 w-6 rounded-full bg-gradient-to-r from-red-400 to-indigo-500" />
+      <div className="h-6 w-6">
+        <HemiSymbol />
+      </div>
     ),
-    symbol: 'HEMI',
+    symbol: hemi.nativeCurrency.symbol,
   },
   {
     amount: 0.0012,

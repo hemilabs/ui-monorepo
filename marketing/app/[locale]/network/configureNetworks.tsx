@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import React, { useEffect } from 'react'
+import { HemiSymbol } from 'ui-common/components/hemiLogo'
 import { type Chain } from 'viem'
 
 const AddChain = dynamic(
@@ -156,9 +157,10 @@ const AutomaticConfiguration = function () {
       <ChainRow
         chain={hemi}
         layer={2}
-        // TODO https://github.com/BVM-priv/ui-monorepo/issues/63
         logo={
-          <div className="h-6 w-6 rounded-full bg-gradient-to-r from-red-400 to-indigo-500" />
+          <div className="h-6 w-6">
+            <HemiSymbol />
+          </div>
         }
       />
       {/* TODO add link for troubleshooting https://github.com/BVM-priv/ui-monorepo/issues/62 */}

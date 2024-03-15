@@ -4,12 +4,12 @@ import { type Chain } from 'viem'
 export const hemiTestnet = {
   blockExplorers: {
     default: {
-      name: 'Hemi Tesnet Explorer',
+      name: 'Hemi Sepolia Explorer',
       url: 'https://testnet.explorer.hemi.network',
     },
   },
   id: 743_111,
-  name: 'Hemi Testnet',
+  name: 'Hemi Sepolia',
   nativeCurrency: {
     decimals: 18,
     name: 'Testnet Hemi Ether',
@@ -27,10 +27,28 @@ export const hemiTestnet = {
 } as const satisfies Chain
 // For ↑, See https://wagmi.sh/core/api/chains#create-chain
 
-// Currently, there's no data for mainnet, so let's copy the testnet data
-// Once that's defined, we could use the flag in build time to compile either test or mainnet
-// for exported hemi object
+// These are not live yet!
 export const hemiMainnet = {
-  ...hemiTestnet,
+  blockExplorers: {
+    default: {
+      name: 'Hemi Explorer',
+      url: 'https://explorer.hemi.network',
+    },
+  },
+  id: 43_111,
+  name: 'Hemi',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'Hemi Ether',
+    symbol: 'hETH',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://rpc.hemi.network/rpc'],
+    },
+    public: {
+      http: ['https://rpc.hemi.network/rpc'],
+    },
+  },
   testnet: false,
 } as const satisfies Chain

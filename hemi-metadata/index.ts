@@ -18,6 +18,7 @@ export const hemiTestnet = {
   rpcUrls: {
     default: {
       http: ['https://testnet.rpc.hemi.network/rpc'],
+      webSocket: ['wss://testnet.rpc.hemi.network/wsrpc'],
     },
     public: {
       http: ['https://testnet.rpc.hemi.network/rpc'],

@@ -9,7 +9,7 @@ import { QuickStart } from './quickStart'
 import { WelcomePack } from './welcomePack'
 
 const NetworkPage = function () {
-  const t = useTranslations()
+  const t = useTranslations('get-started')
 
   return (
     <>

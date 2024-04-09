@@ -131,7 +131,7 @@ type EmailState = 'initial' | 'sent' | 'failed'
 
 export const WelcomePack = function () {
   const locale = useLocale()
-  const t = useTranslations()
+  const t = useTranslations('get-started')
 
   const { executeRecaptcha, loaded: recaptchaLoaded } = useReCaptcha()
 

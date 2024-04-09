@@ -68,6 +68,50 @@
     "tunnel": "Túnel",
     "wrong-network": "Red Incorrecta"
   },
+  "get-started": {
+    "header": {
+      "documentation": "Documentación",
+      "network": "Red"
+    },
+    "home": {
+      "tunnel-and-swap": "Túnel e Intercambio"
+    },
+    "network": {
+      "added": "Añadida",
+      "add-to-wallet": "Añadir a la billetera",
+      "amount-of-tokens": "{amount} {symbol} tokens",
+      "automatic": "Automático",
+      "block-explorer-url": "URL del explorador de bloques",
+      "chain-id": "ID de la red",
+      "claiming": "Reclamando...",
+      "claim-my-tokens": "Reclamar mis tokens",
+      "configure-sepolia-testnet": "Configurar la red de prueba Sepolia",
+      "currency-symbol": "Símbolo de la moneda nativa",
+      "did-not-receive-try-again": "¿No recibiste este enlace? <button>Inténtalo de nuevo.</button>",
+      "dive-into-docs": "Sumergirse en la documentación de Hemi",
+      "dive-into-architecture": "Sumergirse en la arquitectura de Hemi",
+      "documentation": "Documentación",
+      "email-failed": "No pudimos completar su solicitud. Si cree que esto fue un error, por favor <link>contáctenos</link> en Discord <discord></discord> o <button>inténtelo de nuevo</button>.",
+      "email-placeholder": "suemail@mail.com",
+      "layer": "Capa {layer}",
+      "learn": "Aprender",
+      "learn-with-tutorials": "Póngase al dia con nuestros tutoriales",
+      "magic-link-in-your-email": "El enlace mágico está en su correo electrónico.",
+      "manual": "Manual",
+      "network-name": "Nombre de la red",
+      "page-subtitle": "¡Comience con nuestra red de prueba ahora!",
+      "page-title": "Añadir la red Hemi",
+      "recaptcha-terms-and-conditions": "Este sitio está protegido por reCAPTCHA y se aplican la <privacy>Política de Privacidad</privacy> y los <terms>Términos y Condiciones</terms> del servicio de Google.",
+      "receive-updates": "Quiero recibir actualizaciones de desarrollo",
+      "rpc-url": "URL de RPC",
+      "technology": "Tecnología",
+      "troubleshoot-other-errors": "¿Tiene problemas? Resuelva otros errores comunes aquí.",
+      "tunnel-and-swap-description": "Tunnel and swap into Hemi network",
+      "welcome-pack-description": "Le enviaremos un email para reclamar sus tokens de bienvenida",
+      "your-quick-starter": "Comienzo rápido",
+      "your-welcome-pack": "Su pack de bienvenida"
+    }
+  },
   "token-selector": {
     "no-tokens": "No hay tokens",
     "search-tokens": "Buscar tokens",

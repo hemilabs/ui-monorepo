@@ -11,7 +11,6 @@
     "claim-tokens",
     "hemi-metadata",
     "landing",
-    "marketing",
     "migrations-pg",
     "ui-common",
     "wagmi-erc20-hooks",
@@ -96,7 +95,6 @@
         ],
         "files": [
           "hemi-metadata/**/*.{js,ts,tsx}",
-          "marketing/**/*.{js,ts,tsx}",
           "ui-common/**/*.{js,ts,tsx}",
           "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
           "webapp/**/*.{js,ts,tsx}"

@@ -5,6 +5,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { locales, type Locale } from 'app/i18n'
 import { networks } from 'app/networks'
 import { Header } from 'components/header'
+import { RecaptchaContext } from 'components/recaptcha'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 import { WalletContext } from 'ui-common/components/walletContext'
@@ -36,10 +37,12 @@ export default async function RootLayout({
     <html lang={locale}>
       <body className={`flex h-dvh flex-col bg-neutral-100 ${inter.className}`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <WalletContext locale={locale} networks={networks}>
-            <Header />
-            {children}
-          </WalletContext>
+          <RecaptchaContext>
+            <WalletContext locale={locale} networks={networks}>
+              <Header />
+              {children}
+            </WalletContext>
+          </RecaptchaContext>
         </NextIntlClientProvider>
       </body>
     </html>

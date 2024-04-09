@@ -52,7 +52,7 @@ const InfoBox = ({
 )
 
 export const QuickStart = function () {
-  const t = useTranslations()
+  const t = useTranslations('get-started')
   return (
     <section className="py-4">
       <h3 className="py-7 text-2xl font-bold md:text-3xl">

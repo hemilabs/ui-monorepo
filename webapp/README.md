@@ -5,20 +5,26 @@
 ### Environment variables
 
 The environment variables are defined in the `.env` file at the root of the project.
-The prefix `NEXT_PUBLIC_` is required for the variables to be available in the browser.
+The prefix `NEXT_PUBLIC_` is required for the variables to be available in the browser. A few variables need to be set to run locally (in a `.env.local`), in addition to the ones already defined in the `.env`
 
-#### NEXT_PUBLIC_RAINBOW_APP_NAME
+```sh
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<recaptcha-v3-key>"
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<claim-tokens-url>"
+```
 
-The name of the application. It is used to display the name of the application in the dialog opened by the Rainbow.
-
-#### NEXT_PUBLIC_RAINBOW_PROJECT_ID
-
-A Rainbow project ID. You can obtain it from [https://cloud.walletconnect.com/]
+The recaptcha v3 key can be generated [in this page](https://www.google.com/recaptcha/admin/create).
 
 ## Deployment
 
+Inside the `webapp` folder, create a `.env.production` with the following configuration
+
+````bash
+NEXT_PUBLIC_CLAIM_TOKENS_URL="<claim-tokens-url>"
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<recaptcha-v3-key>"
+NEXT_PUBLIC_TESTNET_MODE=true|false # Depending on the network being deployed
+
 ```bash
-cd webapp && npm run build
-```
+npm run build
+````
 
 The .out folder's content should be deployed as a static page.

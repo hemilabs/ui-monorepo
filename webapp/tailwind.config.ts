@@ -16,6 +16,7 @@ const config: Config = {
       backgroundImage: {
         'hemi-gradient':
           'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',
+        'triangles-pattern': "url('../public/main-background.webp')",
       },
       colors: {
         orange: {
@@ -28,6 +29,19 @@ const config: Config = {
       height: {
         // 96px from header (height + padding), 40px from container's padding top in > md screns
         'fit-rest-screen': 'calc(100dvh - 96px) md:calc(100dvh - 96px - 40px)',
+        // 67px from header, 24px from container margin's top, and 28px twice from body y-padding
+        'fit-rest-screen-desktop': 'calc(100vh - 67px - 24px - 28px - 28px)',
+        // same as above, but header is now 32px
+        'fit-rest-screen-mobile': 'calc(100vh - 32px - 24px - 28px - 28px)',
+      },
+      // Tailwind order-x classes go up to 12 - https://tailwindcss.com/docs/order
+      order: {
+        '13': '13',
+        '14': '14',
+        '15': '15',
+        '16': '16',
+        '17': '17',
+        '18': '18',
       },
     },
   },

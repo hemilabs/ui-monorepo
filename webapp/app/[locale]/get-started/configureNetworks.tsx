@@ -10,7 +10,7 @@ import { HemiSymbol } from 'ui-common/components/hemiLogo'
 import { type Chain } from 'viem'
 
 const AddChain = dynamic(
-  () => import('app/[locale]/network/addChain').then(mod => mod.AddChain),
+  () => import('app/[locale]/get-started/addChain').then(mod => mod.AddChain),
   {
     ssr: false,
   },
@@ -72,7 +72,7 @@ const Tab = function ({ active, networkConfiguration }: TabProps) {
   const pathname = usePathname()
   const searchParams = useSearchParams()
 
-  const t = useTranslations()
+  const t = useTranslations('get-started')
 
   return (
     <li>
@@ -131,7 +131,7 @@ type ChainRowProps = {
 }
 
 const ChainRow = function ({ chain, layer, logo }: ChainRowProps) {
-  const t = useTranslations('network')
+  const t = useTranslations('get-started.network')
 
   return (
     <div className="flex items-center gap-x-3 text-sm font-medium">
@@ -148,7 +148,7 @@ const ChainRow = function ({ chain, layer, logo }: ChainRowProps) {
 }
 
 const AutomaticConfiguration = function () {
-  const t = useTranslations('network')
+  const t = useTranslations('get-started.network')
   const ethereum = bridgeableNetworks.at(-1)
 
   return (
@@ -172,7 +172,7 @@ const AutomaticConfiguration = function () {
 }
 
 const ManualConfiguration = function () {
-  const t = useTranslations('network')
+  const t = useTranslations('get-started.network')
   const ethereum = bridgeableNetworks.at(-1)
 
   return (
@@ -236,7 +236,9 @@ export const ConfigureNetwork = function () {
 
   return (
     <div className="flex flex-col px-1 py-2">
-      <h4 className="text-xl">{t('network.configure-sepolia-testnet')}</h4>
+      <h4 className="text-xl">
+        {t('get-started.network.configure-sepolia-testnet')}
+      </h4>
       <div className="text-center text-sm">
         <ul className="flex flex-wrap gap-x-4">
           <Tab

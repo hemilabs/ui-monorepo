@@ -13,7 +13,7 @@ type Props = {
 export const AddChain = function ({ chain }: Props) {
   const [isChainAdded, setIsChainAdded] = useState(false)
 
-  const t = useTranslations('network')
+  const t = useTranslations('get-started.network')
 
   const { chain: connectedChain, isConnected } = useAccount()
   const { data: walletClient } = useWalletClient()

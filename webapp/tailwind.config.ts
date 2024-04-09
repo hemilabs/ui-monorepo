@@ -18,7 +18,15 @@ const config: Config = {
           'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',
       },
       colors: {
+        gray: {
+          1: '#E5E6E6',
+          3: '#CCCCCC',
+          5: '#8F8F8F',
+          6: '#808080',
+          9: '#1A1C20',
+        },
         orange: {
+          1: '#FF4D00',
           hemi: '#FF5F00',
         },
       },

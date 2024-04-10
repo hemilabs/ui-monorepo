@@ -19,7 +19,15 @@ const config: Config = {
         'triangles-pattern': "url('../public/main-background.webp')",
       },
       colors: {
+        gray: {
+          1: '#E5E6E6',
+          3: '#CCCCCC',
+          5: '#8F8F8F',
+          6: '#808080',
+          9: '#1A1C20',
+        },
         orange: {
+          1: '#FF4D00',
           hemi: '#FF5F00',
         },
       },

@@ -116,5 +116,14 @@
     "no-tokens": "There are no tokens",
     "search-tokens": "Search tokens",
     "select-token": "Select Token"
+  },
+  "get-started-page": {
+    "heading": "Get Started with Hemi",
+    "sub-heading": "To get started, select one of the options below",
+    "options": {
+      "developer": "I'm a Developer",
+      "miner": "I'm a Miner",
+      "individual": "I'm an Individual"
+    }
   }
 }

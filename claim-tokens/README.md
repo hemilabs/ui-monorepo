@@ -26,7 +26,7 @@ You can create a IP Quality Score Secret key at [https://www.ipqualityscore.com/
 
 ## Deployment
 
-Ensure that the database is created in the tarted environment (If not, see [migrations-pg](../migrations-pg#create-and-setup-the-database-in-aws)).  
+Ensure that the database is created in the target environment (If not, see [migrations-pg](../migrations-pg#create-and-setup-the-database-in-aws)).  
 Ensure that migrations are run in the target environment.
 
 Set the appropriate environment variable values (listed above, and including the [database connection values](../migrations-pg#create-and-setup-the-database-in-aws)), and run the following commands:

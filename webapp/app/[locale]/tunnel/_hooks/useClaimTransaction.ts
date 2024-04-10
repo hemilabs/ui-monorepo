@@ -2,7 +2,7 @@ import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import {
-  useGetTransactionMessageStatus,
+  useL1GetTransactionMessageStatus,
   useFinalizeMessage,
 } from 'hooks/useL2Bridge'
 import { useCallback } from 'react'
@@ -22,7 +22,7 @@ export const useClaimTransaction = function ({
 
   const connectedToL1 = useIsConnectedToExpectedNetwork(l1ChainId)
 
-  const transactionMessageStatus = useGetTransactionMessageStatus({
+  const transactionMessageStatus = useL1GetTransactionMessageStatus({
     l1ChainId,
     refetchUntilStatus: MessageStatus.READY_FOR_RELAY,
     transactionHash: withdrawTxHash,

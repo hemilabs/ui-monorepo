@@ -29,6 +29,41 @@ const l1Contracts = {
   StateCommitmentChain: zeroAddr,
 }
 
+async function getCrossChainMessenger({
+  l1ChainId,
+  l1Signer,
+  l2Signer,
+}: {
+  l1ChainId: Chain['id']
+  l1Signer: SignerOrProviderLike
+  l2Signer: SignerOrProviderLike
+}) {
+  const { CrossChainMessenger, ETHBridgeAdapter, StandardBridgeAdapter } =
+    await sdkPromise
+  return new CrossChainMessenger({
+    bedrock: true,
+    bridges: {
+      ETH: {
+        Adapter: ETHBridgeAdapter,
+        l1Bridge: l1Contracts.L1StandardBridge,
+        l2Bridge: process.env.NEXT_PUBLIC_L2_BRIDGE,
+      },
+      Standard: {
+        Adapter: StandardBridgeAdapter,
+        l1Bridge: l1Contracts.L1StandardBridge,
+        l2Bridge: process.env.NEXT_PUBLIC_L2_BRIDGE,
+      },
+    },
+    contracts: {
+      l1: l1Contracts,
+    },
+    l1ChainId,
+    l1SignerOrProvider: l1Signer,
+    l2ChainId: hemi.id,
+    l2SignerOrProvider: l2Signer,
+  })
+}
+
 type GasEstimationOperations = Extract<
   keyof CrossChainMessengerType['estimateGas'],
   | 'depositERC20'
@@ -63,32 +98,7 @@ const useCrossChainMessenger = function ({
   const { data: crossChainMessenger, status: crossChainMessengerStatus } =
     useQuery({
       enabled: isConnectedToCorrectChain && !!l1Signer && !!l2Signer,
-      queryFn: async function getCrossChainMessenger() {
-        const { CrossChainMessenger, ETHBridgeAdapter, StandardBridgeAdapter } =
-          await sdkPromise
-        return new CrossChainMessenger({
-          bedrock: true,
-          bridges: {
-            ETH: {
-              Adapter: ETHBridgeAdapter,
-              l1Bridge: l1Contracts.L1StandardBridge,
-              l2Bridge: process.env.NEXT_PUBLIC_L2_BRIDGE,
-            },
-            Standard: {
-              Adapter: StandardBridgeAdapter,
-              l1Bridge: l1Contracts.L1StandardBridge,
-              l2Bridge: process.env.NEXT_PUBLIC_L2_BRIDGE,
-            },
-          },
-          contracts: {
-            l1: l1Contracts,
-          },
-          l1ChainId,
-          l1SignerOrProvider: l1Signer,
-          l2ChainId: hemi.id,
-          l2SignerOrProvider: l2Signer,
-        })
-      },
+      queryFn: () => getCrossChainMessenger({ l1ChainId, l1Signer, l2Signer }),
       queryKey: [l1ChainId, walletConnectedToChain],
     })
 
@@ -182,23 +192,103 @@ const useL2toL1CrossChainMessenger = function (l1ChainId: Chain['id']) {
   })
 }
 
-type UseGetMessageStatus = {
+/**
+ * This hook returns a web3Signer for the chain the wallet is connected to, and a jsonSigner for the chain
+ * the user is not connected, regardless of which one is the L2 and the L1
+ * @param l1ChainId
+ * @returns {object}
+ */
+const useConnectedChainCrossChainMessenger = function (l1ChainId: Chain['id']) {
+  const { chainId } = useAccount()
+  const isConnectedToL2 = chainId === hemi.id
+
+  const web3Signer = useWeb3Provider(chainId)
+  const jsonSigner = useJsonRpcProvider(isConnectedToL2 ? l1ChainId : hemi.id)
+
+  const signers = isConnectedToL2
+    ? {
+        l1Signer: jsonSigner,
+        l2Signer: web3Signer,
+      }
+    : {
+        l1Signer: web3Signer,
+        l2Signer: jsonSigner,
+      }
+
+  return useCrossChainMessenger({
+    ...signers,
+    l1ChainId,
+    walletConnectedToChain: chainId,
+  })
+}
+
+export const useGetDepositsByAddress = function (l1ChainId: Chain['id']) {
+  const { address, chainId } = useAccount()
+
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useConnectedChainCrossChainMessenger(l1ChainId)
+
+  const { data: deposits, ...rest } = useQuery({
+    // ensure correct chain was used
+    enabled: crossChainMessengerStatus === 'success',
+    queryFn: () => crossChainMessenger.getDepositsByAddress(address),
+    queryKey: [
+      address,
+      chainId,
+      crossChainMessengerStatus,
+      l1ChainId,
+      'deposit',
+    ],
+  })
+
+  return {
+    deposits,
+    ...rest,
+  }
+}
+
+export const useGetWithdrawalsByAddress = function (l1ChainId: Chain['id']) {
+  const { address, chainId } = useAccount()
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useConnectedChainCrossChainMessenger(l1ChainId)
+
+  const { data: withdrawals, ...rest } = useQuery({
+    // ensure correct chain was used
+    enabled: crossChainMessengerStatus === 'success',
+    queryFn: () => crossChainMessenger.getWithdrawalsByAddress(address),
+    queryKey: [
+      address,
+      chainId,
+      crossChainMessengerStatus,
+      l1ChainId,
+      'withdrawals',
+    ],
+  })
+
+  return {
+    withdrawals,
+    ...rest,
+  }
+}
+
+type UseGetTransactionMessageStatus = {
+  crossChainMessenger: CrossChainMessengerType
+  crossChainMessengerStatus: 'error' | 'pending' | 'success'
   l1ChainId: Chain['id']
-  refetchUntilStatus: MessageStatus
+  refetchUntilStatus?: MessageStatus
   transactionHash: Hash
 }
-export const useGetTransactionMessageStatus = function ({
+
+const useGetTransactionMessageStatus = function ({
+  crossChainMessenger,
+  crossChainMessengerStatus,
   l1ChainId,
   refetchUntilStatus,
   transactionHash,
-}: UseGetMessageStatus) {
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useL1ToL2CrossChainMessenger(l1ChainId)
-
+}: UseGetTransactionMessageStatus) {
   const { data: messageStatus } = useQuery({
     // ensure correct chain was used
     enabled: crossChainMessengerStatus === 'success' && l1ChainId !== hemi.id,
-    placeholderData: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
     queryFn: () => crossChainMessenger.getMessageStatus(transactionHash),
     queryKey: [
       crossChainMessengerStatus,
@@ -207,8 +297,8 @@ export const useGetTransactionMessageStatus = function ({
       transactionHash,
     ],
     refetchInterval(query) {
-      // if message status is ready to prove, stop polling
-      if (query.state.data === refetchUntilStatus) {
+      // if message status is ready to prove, or no refetch was requested, stop polling
+      if (!refetchUntilStatus || query.state.data === refetchUntilStatus) {
         return false
       }
       // poll every 15 seconds
@@ -218,6 +308,54 @@ export const useGetTransactionMessageStatus = function ({
   })
 
   return messageStatus
+}
+
+/**
+ * Use this method to query the status of a transaction message
+ * while connected to any chain.
+ */
+export const useAnyChainGetTransactionMessageStatus = function ({
+  l1ChainId,
+  transactionHash,
+}: Omit<
+  UseGetTransactionMessageStatus,
+  'crossChainMessenger' | 'crossChainMessengerStatus'
+>) {
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useConnectedChainCrossChainMessenger(l1ChainId)
+  return useGetTransactionMessageStatus({
+    crossChainMessenger,
+    crossChainMessengerStatus,
+    l1ChainId,
+    transactionHash,
+  })
+}
+
+/**
+ * Use this method to query the status of a transaction message
+ * while connected to the L1 chain
+ */
+export const useL1GetTransactionMessageStatus = function ({
+  l1ChainId,
+  refetchUntilStatus,
+  transactionHash,
+}: Required<
+  Omit<
+    UseGetTransactionMessageStatus,
+    'crossChainMessenger' | 'crossChainMessengerStatus'
+  >
+>) {
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useL1ToL2CrossChainMessenger(l1ChainId)
+  return (
+    useGetTransactionMessageStatus({
+      crossChainMessenger,
+      crossChainMessengerStatus,
+      l1ChainId,
+      refetchUntilStatus,
+      transactionHash,
+    }) ?? MessageStatus.STATE_ROOT_NOT_PUBLISHED
+  )
 }
 
 type UseDepositErc20Token = {

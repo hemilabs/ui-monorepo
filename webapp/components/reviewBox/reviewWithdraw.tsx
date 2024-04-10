@@ -115,7 +115,7 @@ const Step = function ({
   ...props
 }: StepProps) {
   const { chains } = useConfig()
-  const t = useTranslations('bridge-page.review-withdraw')
+  const t = useTranslations('tunnel-page.review-withdraw')
 
   const icons = {
     completed: <CheckIcon />,
@@ -212,7 +212,7 @@ export const ReviewWithdraw = function ({
   withdrawTxHash,
   ...props
 }: Props) {
-  const t = useTranslations('bridge-page.review-withdraw')
+  const t = useTranslations('tunnel-page.review-withdraw')
 
   const getProgressStatus = function (step: WithdrawProgress): ProgressStatus {
     if (progress > step) return 'completed'

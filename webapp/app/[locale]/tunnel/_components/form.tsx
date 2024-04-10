@@ -84,7 +84,7 @@ type Props = {
   }[]
 }
 
-export const BridgeForm = ({
+export const TunnelForm = ({
   formContent,
   onSubmit,
   reviewOperation,

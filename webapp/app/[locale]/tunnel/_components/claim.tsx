@@ -10,11 +10,11 @@ import { Chain, formatUnits } from 'viem'
 import { useConfig } from 'wagmi'
 
 import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
-import { useBridgeState } from '../_hooks/useBridgeState'
 import { useClaimTransaction } from '../_hooks/useClaimTransaction'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
+import { useTunnelState } from '../_hooks/useTunnelState'
 
-import { BridgeForm } from './form'
+import { TunnelForm } from './form'
 
 const SubmitButton = function ({
   l1ChainId,
@@ -41,7 +41,7 @@ const SubmitButton = function ({
           type="submit"
         >
           {t(
-            `bridge-page.submit-button.${
+            `tunnel-page.submit-button.${
               isClaiming ? 'claiming-withdrawal' : 'claim-withdrawal'
             }`,
           )}
@@ -53,7 +53,7 @@ const SubmitButton = function ({
 
 type Props = {
   renderForm: (isRunningOperation: boolean) => ReactNode
-  state: ReturnType<typeof useBridgeState> & { operation: 'claim' }
+  state: ReturnType<typeof useTunnelState> & { operation: 'claim' }
 }
 
 export const Claim = function ({ renderForm, state }: Props) {
@@ -179,18 +179,18 @@ export const Claim = function ({ renderForm, state }: Props) {
   const isClaiming = withdrawProgress === WithdrawProgress.CLAIMING
 
   const transactionsList = useTransactionsList({
-    inProgressMessage: t('bridge-page.transaction-status.claiming-withdrawal'),
+    inProgressMessage: t('tunnel-page.transaction-status.claiming-withdrawal'),
     isOperating: isClaiming,
     operation: 'claim',
     receipt: claimWithdrawalReceipt,
     receiptError: claimWithdrawalReceiptError,
-    successMessage: t('bridge-page.transaction-status.withdrawal-claimed'),
+    successMessage: t('tunnel-page.transaction-status.withdrawal-claimed'),
     txHash: claimWithdrawalTxHash,
     userConfirmationError: claimWithdrawalError,
   })
 
   return (
-    <BridgeForm
+    <TunnelForm
       formContent={renderForm(isClaiming)}
       onSubmit={handleClaim}
       reviewOperation={
@@ -224,7 +224,7 @@ export const Claim = function ({ renderForm, state }: Props) {
               {
                 id: 'prove',
                 status: 'success',
-                text: t('bridge-page.transaction-status.withdrawal-proved'),
+                text: t('tunnel-page.transaction-status.withdrawal-proved'),
                 txHash: proveWithdrawalTxHash,
               },
             ]

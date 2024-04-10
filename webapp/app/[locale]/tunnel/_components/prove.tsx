@@ -10,11 +10,11 @@ import { formatUnits, type Chain } from 'viem'
 import { useConfig } from 'wagmi'
 
 import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
-import { useBridgeState } from '../_hooks/useBridgeState'
 import { useProveTransaction } from '../_hooks/useProveTransaction'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
+import { useTunnelState } from '../_hooks/useTunnelState'
 
-import { BridgeForm } from './form'
+import { TunnelForm } from './form'
 
 const SubmitButton = function ({
   isProving,
@@ -33,7 +33,7 @@ const SubmitButton = function ({
       submitButton={
         <Button disabled={!isReadyToProve || isProving} type="submit">
           {t(
-            `bridge-page.submit-button.${
+            `tunnel-page.submit-button.${
               isProving ? 'proving-withdrawal' : 'prove-withdrawal'
             }`,
           )}
@@ -44,7 +44,7 @@ const SubmitButton = function ({
 }
 type Props = {
   renderForm: (isRunningOperation: boolean) => React.ReactNode
-  state: ReturnType<typeof useBridgeState> & { operation: 'prove' }
+  state: ReturnType<typeof useTunnelState> & { operation: 'prove' }
 }
 
 export const Prove = function ({ renderForm, state }: Props) {
@@ -161,18 +161,18 @@ export const Prove = function ({ renderForm, state }: Props) {
   const isProving = withdrawProgress === WithdrawProgress.PROVING
 
   const transactionsList = useTransactionsList({
-    inProgressMessage: t('bridge-page.transaction-status.proving-withdrawal'),
+    inProgressMessage: t('tunnel-page.transaction-status.proving-withdrawal'),
     isOperating: isProving,
     operation: 'prove',
     receipt: withdrawalProofReceipt,
     receiptError: withdrawalProofReceiptError,
-    successMessage: t('bridge-page.transaction-status.withdrawal-proved'),
+    successMessage: t('tunnel-page.transaction-status.withdrawal-proved'),
     txHash: proveWithdrawalTxHash,
     userConfirmationError: proveWithdrawalError,
   })
 
   return (
-    <BridgeForm
+    <TunnelForm
       formContent={renderForm(isProving)}
       onSubmit={handleProve}
       reviewOperation={
@@ -204,7 +204,7 @@ export const Prove = function ({ renderForm, state }: Props) {
               {
                 id: 'withdraw',
                 status: 'success',
-                text: t('bridge-page.transaction-status.withdrawn', {
+                text: t('tunnel-page.transaction-status.withdrawn', {
                   fromInput: withdrawAmount,
                   symbol: withdrawSymbol,
                 }),

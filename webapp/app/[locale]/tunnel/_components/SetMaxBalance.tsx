@@ -15,7 +15,7 @@ export const SetMaxBalance = function ({
   isRunningOperation,
   onSetMaxBalance,
 }: Props) {
-  const t = useTranslations('bridge-page.form')
+  const t = useTranslations('tunnel-page.form')
 
   const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
     fromToken.chainId,

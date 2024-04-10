@@ -14,7 +14,7 @@ import { Deposit } from './_components/deposit'
 import { Prove } from './_components/prove'
 import { ToggleButton } from './_components/ToggleButton'
 import { Withdraw } from './_components/withdraw'
-import { useBridgeState } from './_hooks/useBridgeState'
+import { useTunnelState } from './_hooks/useTunnelState'
 
 const Balance = dynamic(
   () => import('components/balance').then(mod => mod.Balance),
@@ -55,11 +55,11 @@ const SwitchToNetwork = dynamic(
   },
 )
 type Props = {
-  bridgeState: ReturnType<typeof useBridgeState>
+  tunnelState: ReturnType<typeof useTunnelState>
   isRunningOperation: boolean
 }
 
-const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
+const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
   const {
     fromNetworkId,
     fromInput,
@@ -72,9 +72,9 @@ const FormContent = function ({ bridgeState, isRunningOperation }: Props) {
     updateToNetwork,
     toggleInput,
     toToken,
-  } = bridgeState
+  } = tunnelState
 
-  const t = useTranslations('bridge-page')
+  const t = useTranslations('tunnel-page')
 
   return (
     <>
@@ -171,22 +171,22 @@ const OperationsComponent = {
   withdraw: Withdraw,
 }
 
-export default function Bridge() {
-  const bridgeState = useBridgeState()
+export default function Tunnel() {
+  const tunnelState = useTunnelState()
 
-  const OperationComponent = OperationsComponent[bridgeState.operation]
+  const OperationComponent = OperationsComponent[tunnelState.operation]
 
   return (
     <div className="h-fit-rest-screen mx-auto flex w-full flex-col gap-y-4 px-4 md:max-w-fit md:flex-row md:gap-x-4 md:pt-10">
       <OperationComponent
         renderForm={isRunningOperation => (
           <FormContent
-            bridgeState={bridgeState}
             isRunningOperation={isRunningOperation}
+            tunnelState={tunnelState}
           />
         )}
         // @ts-expect-error This works, but TS does not pick it up correctly.
-        state={bridgeState}
+        state={tunnelState}
       />
     </div>
   )

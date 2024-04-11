@@ -11,12 +11,12 @@ import { isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 
-import { useBridgeState } from '../_hooks/useBridgeState'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
+import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { Erc20Approval } from './Erc20Approval'
-import { BridgeForm, canSubmit, getTotal } from './form'
+import { TunnelForm, canSubmit, getTotal } from './form'
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
 
@@ -42,12 +42,12 @@ const SubmitButton = function ({
   const getOperationButtonText = function () {
     const texts = {
       approve: {
-        idle: t('bridge-page.submit-button.approve-and-deposit'),
-        loading: t('bridge-page.submit-button.approving'),
+        idle: t('tunnel-page.submit-button.approve-and-deposit'),
+        loading: t('tunnel-page.submit-button.approving'),
       },
       deposit: {
-        idle: t('bridge-page.submit-button.deposit'),
-        loading: t('bridge-page.submit-button.depositing'),
+        idle: t('tunnel-page.submit-button.deposit'),
+        loading: t('tunnel-page.submit-button.depositing'),
       },
     }
     if (!isRunningOperation) {
@@ -80,7 +80,7 @@ const SubmitButton = function ({
 
 type Props = {
   renderForm: (isRunningOperation: boolean) => ReactNode
-  state: ReturnType<typeof useBridgeState> & { operation: 'deposit' }
+  state: ReturnType<typeof useTunnelState> & { operation: 'deposit' }
 }
 
 export const Deposit = function ({ renderForm, state }: Props) {
@@ -249,14 +249,14 @@ export const Deposit = function ({ renderForm, state }: Props) {
       })
 
   const approvalTransactionList = useTransactionsList({
-    inProgressMessage: t('bridge-page.transaction-status.erc20-approving', {
+    inProgressMessage: t('tunnel-page.transaction-status.erc20-approving', {
       symbol: fromToken.symbol,
     }),
     isOperating: operationRunning === 'approving',
     operation: 'approve',
     receipt: approvalReceipt,
     receiptError: approvalReceiptError,
-    successMessage: t('bridge-page.transaction-status.erc20-approved', {
+    successMessage: t('tunnel-page.transaction-status.erc20-approved', {
       symbol: fromToken.symbol,
     }),
     txHash: approvalTxHash,
@@ -264,7 +264,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
   })
 
   const depositTransactionList = useTransactionsList({
-    inProgressMessage: t('bridge-page.transaction-status.depositing', {
+    inProgressMessage: t('tunnel-page.transaction-status.depositing', {
       fromInput: depositAmount,
       network: toChain?.name,
       symbol: fromToken.symbol,
@@ -273,7 +273,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
     operation: 'deposit',
     receipt: depositReceipt,
     receiptError: depositReceiptError,
-    successMessage: t('bridge-page.transaction-status.deposited', {
+    successMessage: t('tunnel-page.transaction-status.deposited', {
       fromInput: depositAmount,
       symbol: fromToken.symbol,
     }),
@@ -286,7 +286,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
   )
 
   return (
-    <BridgeForm
+    <TunnelForm
       formContent={renderForm(isRunningOperation)}
       onSubmit={handleDeposit}
       reviewOperation={

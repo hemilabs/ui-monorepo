@@ -17,7 +17,7 @@ type ProveWithdrawalData = {
   withdrawTxHash: Hash
 }
 
-type BridgeState = {
+type TunnelState = {
   extendedErc20Approval: boolean
   fromNetworkId: Chain['id']
   fromInput: string
@@ -91,7 +91,7 @@ const compilationError = function (_: never): never {
   throw new Error('Missing implementation of action in reducer')
 }
 
-const reducer = function (state: BridgeState, action: Actions): BridgeState {
+const reducer = function (state: TunnelState, action: Actions): TunnelState {
   const { type } = action
   switch (type) {
     case 'resetStateAfterOperation': {
@@ -223,7 +223,7 @@ const reducer = function (state: BridgeState, action: Actions): BridgeState {
   }
 }
 
-export const useBridgeState = function (): BridgeState & {
+export const useTunnelState = function (): TunnelState & {
   // will throw compile error if a proper function event is missing!
   [K in Actions['type']]: (
     payload?: Extract<Actions, { type: K }>['payload'],

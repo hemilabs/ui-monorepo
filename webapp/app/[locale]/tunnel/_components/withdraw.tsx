@@ -12,11 +12,11 @@ import { isNativeToken } from 'utils/token'
 import { type Chain, formatUnits } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 
-import { useBridgeState } from '../_hooks/useBridgeState'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
+import { useTunnelState } from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
 
-import { BridgeForm, canSubmit } from './form'
+import { TunnelForm, canSubmit } from './form'
 
 const hasBridgeConfiguration = (token: Token, l1ChainId: Chain['id']) =>
   isNativeToken(token) ||
@@ -24,7 +24,7 @@ const hasBridgeConfiguration = (token: Token, l1ChainId: Chain['id']) =>
 
 type Props = {
   renderForm: (isRunningOperation: boolean) => React.ReactNode
-  state: ReturnType<typeof useBridgeState> & { operation: 'withdraw' }
+  state: ReturnType<typeof useTunnelState> & { operation: 'withdraw' }
 }
 
 export const Withdraw = function ({ renderForm, state }: Props) {
@@ -151,7 +151,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   const isWithdrawing = withdrawProgress === WithdrawProgress.WITHDRAWING
 
   const transactionsList = useTransactionsList({
-    inProgressMessage: t('bridge-page.transaction-status.withdrawing', {
+    inProgressMessage: t('tunnel-page.transaction-status.withdrawing', {
       fromInput: withdrawn,
       network: fromChain?.name,
       symbol: fromToken.symbol,
@@ -160,7 +160,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     operation: 'withdraw',
     receipt: withdrawReceipt,
     receiptError: withdrawReceiptError,
-    successMessage: t('bridge-page.transaction-status.withdrawn', {
+    successMessage: t('tunnel-page.transaction-status.withdrawn', {
       fromInput,
       symbol: fromToken.symbol,
     }),
@@ -169,7 +169,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   })
 
   return (
-    <BridgeForm
+    <TunnelForm
       formContent={renderForm(isWithdrawing)}
       onSubmit={handleWithdraw}
       reviewOperation={
@@ -187,7 +187,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       submitButton={
         <Button disabled={!canWithdraw || isWithdrawing} type="submit">
           {t(
-            `bridge-page.submit-button.${
+            `tunnel-page.submit-button.${
               isWithdrawing ? 'withdrawing' : 'withdraw'
             }`,
           )}

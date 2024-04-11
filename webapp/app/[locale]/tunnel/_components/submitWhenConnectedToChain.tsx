@@ -31,7 +31,7 @@ export const SubmitWhenConnectedToChain = function ({
         <>
           <NotificationBox
             backgroundColor="bg-orange-100"
-            text={t('bridge-page.form.switch-to-prove', {
+            text={t('tunnel-page.form.switch-to-prove', {
               network: targetChain.name,
             })}
           />

@@ -19,7 +19,7 @@ export const ReviewDeposit = function ({
   gasSymbol,
   total,
 }: Props) {
-  const t = useTranslations('bridge-page.review-deposit')
+  const t = useTranslations('tunnel-page.review-deposit')
   const tCommon = useTranslations('common')
   return (
     <Card>

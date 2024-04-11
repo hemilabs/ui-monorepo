@@ -14,8 +14,8 @@ npm run migrate:up
 
 ## Create and setup the database in AWS
 
-- Create a Postgres database in AWS RDS (v16.2), setting it up with a VPC, security group, and subnet group that allows for public access
-- In Amazon RDS, go to "Parameter Groups" in the navigation pane, and create a new parameter group by picking "Parameter group family" with the database version that matches the one created. A name and description must be completed
+- Create a Postgres database in AWS RDS (v16.2), setting it up with a VPC, security group, and subnet group that allows for public access (this is for the dev/staging environments only)
+- Once the database is created, in Amazon RDS, go to "Parameter Groups" in the navigation pane, and create a new parameter group by picking "Parameter group family" with the database version that matches the one created. A name and description must be completed (For example, `hemi-<stage>-db-parameter-group`)
 - Open the newly created Parameter Group, click on "Edit" and in the list of parameters, search and change:
   - `rds.force_ssl`, from 1 to 0
   - `shared_preload_libraries`, appending `pg_cron` to the list of libraries preloaded.

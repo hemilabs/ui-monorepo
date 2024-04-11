@@ -240,5 +240,8 @@
   },
   "mocha": {
     "timeout": 5000
+  },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.0.2"
   }
 }

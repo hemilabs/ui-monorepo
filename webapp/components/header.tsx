@@ -1,5 +1,6 @@
 'use client'
 
+import { navItems } from 'app/[locale]/navbar/navData'
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -7,8 +8,10 @@ import Link from 'next-intl/link'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { HamburgerIcon } from 'ui-common/components/hamburgerIcon'
-import { HemiLogoFull, HemiSymbol } from 'ui-common/components/hemiLogo'
+import { HemiSymbol } from 'ui-common/components/hemiLogo'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
+
+import { NavbarMobile } from './NavbarMobile'
 
 const WalletConnectButton = dynamic(
   () =>
@@ -16,7 +19,7 @@ const WalletConnectButton = dynamic(
       mod => mod.WalletConnectButton,
     ),
   {
-    loading: () => <Skeleton className="h-10 w-28" />,
+    loading: () => <Skeleton className="mr-8 h-10 w-28" />,
     ssr: false,
   },
 )
@@ -52,7 +55,11 @@ const Route = function ({ path, text }: Props) {
   )
 }
 
-export const Header = function () {
+type HeaderProps = {
+  locale: string
+}
+
+export const Header = function ({ locale }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const t = useTranslations('common')
 
@@ -61,12 +68,13 @@ export const Header = function () {
   const menuRef = useOnClickOutside<HTMLDivElement>(toggleMenu)
 
   return (
-    <header className="relative flex h-24 items-center py-6">
+    <header className="h-19 relative flex items-center justify-end pb-3 pt-1">
+      <div className="hidden md:flex">
+        <WalletConnectButton />
+      </div>
+
       <div className="ml-4 h-8 w-8 md:hidden">
         <HemiSymbol />
-      </div>
-      <div className="hidden h-10 w-28 md:ml-6 md:block xl:ml-20">
-        <HemiLogoFull />
       </div>
       {/* Hidden below until links are re-enabled */}
       {/* <div className="fixed bottom-0 left-0 right-0 z-10 h-[90px] bg-white/60 backdrop-blur-sm md:hidden" /> */}
@@ -79,7 +87,8 @@ export const Header = function () {
         </div>
       </div>
       {/* Hidden above until links are re-enabled */}
-      <WalletConnectButton />
+      {/* <WalletConnectButton /> */}
+
       <button
         className="ml-auto mr-4 cursor-pointer md:hidden"
         onClick={toggleMenu}
@@ -89,12 +98,21 @@ export const Header = function () {
       </button>
       {isMenuOpen && (
         <>
-          <div className="fixed bottom-0 top-0 z-20 w-full bg-neutral-200/30 backdrop-blur-sm"></div>
+          <div className="fixed bottom-0 left-[1px] top-0 z-20 w-full rounded-3xl bg-neutral-200/30 backdrop-blur-sm"></div>
           <div
             className="fixed bottom-0 left-0 right-0 z-20 flex items-center shadow-2xl md:hidden"
             ref={menuRef}
           >
-            <WalletConnectMobile />
+            <div className="mb-3 flex w-full flex-col justify-between rounded-xl bg-white px-5 py-1">
+              <WalletConnectMobile />
+              <div className="flex flex-col items-center">
+                <NavbarMobile
+                  locale={locale}
+                  navItems={navItems}
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                />
+              </div>
+            </div>
           </div>
         </>
       )}

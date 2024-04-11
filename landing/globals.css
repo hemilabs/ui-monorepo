@@ -39,3 +39,8 @@
 #hubspot-target-form .hs-error-msg {
   @apply text-orange-650 absolute left-0 translate-y-1 text-xs;
 }
+
+.accordion-transition {
+  @apply overflow-hidden transition-all duration-500 ease-in-out;
+  transition-property: max-height, opacity;
+}

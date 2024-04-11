@@ -48,7 +48,7 @@ export const NetworkSelector = function ({
     return (
       <div className={commonCss}>
         <ChainLogo networkId={networkId} />
-        <span>{network.name}</span>
+        <span className="font-medium">{network.name}</span>
       </div>
     )
   }

@@ -1,8 +1,10 @@
 import Big from 'big.js'
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import { Token } from 'types/token'
 import { Card } from 'ui-common/components/card'
+import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits } from 'viem'
 
@@ -71,11 +73,21 @@ export const getTotal = ({
     fromToken.decimals,
   )
 
+export const getFormattedValue = (value: string) =>
+  Big(value.replace(/,/g, '')).lt('0.001') ? '< 0.001' : formatNumber(value, 3)
+
 type Props = {
   formContent: ReactNode
+  gas: {
+    amount: string
+    label: string
+    symbol: string
+  }
   onSubmit: () => void
-  reviewOperation: ReactNode
+  operationSymbol: string
+  showReview: boolean
   submitButton: ReactNode
+  total: string
   transactionsList: {
     id: string
     status: React.ComponentProps<typeof TransactionStatus>['status']
@@ -84,31 +96,44 @@ type Props = {
   }[]
 }
 
-export const TunnelForm = ({
+export const TunnelForm = function ({
   formContent,
+  gas,
   onSubmit,
-  reviewOperation,
+  operationSymbol,
+  showReview,
   submitButton,
+  total,
   transactionsList,
-}: Props) => (
-  <>
-    <Card>
-      <form
-        className="flex w-full flex-col gap-y-4 text-zinc-800 lg:min-w-[400px]"
-        onSubmit={function (e: FormEvent) {
-          e.preventDefault()
-          onSubmit()
-        }}
-      >
-        {formContent}
-        {submitButton}
-      </form>
-    </Card>
-    <div className="flex flex-col gap-y-4">
-      <div className="shrink-1 order-2 md:order-1 md:w-full md:min-w-80 xl:min-w-96">
-        {reviewOperation}
-      </div>
-      <div className="order-1 flex flex-col gap-y-4 md:order-2">
+}: Props) {
+  const t = useTranslations('common')
+  return (
+    <>
+      <Card radius="large">
+        <form
+          className="flex w-full flex-col gap-y-4 text-zinc-800 lg:min-w-[400px]"
+          onSubmit={function (e: FormEvent) {
+            e.preventDefault()
+            onSubmit()
+          }}
+        >
+          {formContent}
+          {submitButton}
+          {showReview && (
+            <div className="mt-2 flex flex-col gap-y-4 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-400">{gas.label}</span>
+                <span>{`${getFormattedValue(gas.amount)} ${gas.symbol}`}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-400">{t('total')}</span>
+                <span>{`${getFormattedValue(total)} ${operationSymbol}`}</span>
+              </div>
+            </div>
+          )}
+        </form>
+      </Card>
+      <div className="flex flex-col gap-y-4">
         {transactionsList.map(transaction => (
           <TransactionStatus
             key={transaction.id}
@@ -118,6 +143,6 @@ export const TunnelForm = ({
           />
         ))}
       </div>
-    </div>
-  </>
-)
+    </>
+  )
+}

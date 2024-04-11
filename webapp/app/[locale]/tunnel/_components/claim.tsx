@@ -1,11 +1,7 @@
-import {
-  ReviewWithdraw,
-  WithdrawProgress,
-} from 'components/reviewBox/reviewWithdraw'
+import { WithdrawProgress } from 'components/reviewBox/reviewWithdraw'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
-import { formatNumber } from 'utils/format'
 import { Chain, formatUnits } from 'viem'
 import { useConfig } from 'wagmi'
 
@@ -68,13 +64,7 @@ export const Claim = function ({ renderForm, state }: Props) {
 
   const { chains = [] } = useConfig()
 
-  const {
-    proveWithdrawalTxHash,
-    withdrawAmount,
-    withdrawL1NetworkId,
-    withdrawSymbol,
-    withdrawTxHash,
-  } = state
+  const { proveWithdrawalTxHash, withdrawL1NetworkId, withdrawTxHash } = state
 
   const fromChain = chains.find(c => c.id === withdrawL1NetworkId)
 
@@ -192,24 +182,17 @@ export const Claim = function ({ renderForm, state }: Props) {
   return (
     <TunnelForm
       formContent={renderForm(isClaiming)}
+      gas={{
+        amount: formatUnits(
+          claimWithdrawalTokenGasFees,
+          fromChain?.nativeCurrency.decimals,
+        ),
+        label: t('common.network-gas-fee', { network: fromChain?.name }),
+        symbol: fromChain?.nativeCurrency.symbol,
+      }}
       onSubmit={handleClaim}
-      reviewOperation={
-        <ReviewWithdraw
-          claimWithdrawalTxHash={claimWithdrawalTxHash}
-          gas={formatUnits(
-            claimWithdrawalTokenGasFees,
-            fromChain?.nativeCurrency.decimals,
-          )}
-          gasSymbol={fromChain?.nativeCurrency.symbol}
-          l1ChainId={withdrawL1NetworkId}
-          operation="claim"
-          progress={withdrawProgress}
-          proveWithdrawalTxHash={proveWithdrawalTxHash}
-          toWithdraw={formatNumber(withdrawAmount, 3)}
-          withdrawSymbol={withdrawSymbol}
-          withdrawTxHash={withdrawTxHash}
-        />
-      }
+      operationSymbol={fromChain?.nativeCurrency.symbol}
+      showReview={isReadyToClaim}
       submitButton={
         <SubmitButton
           isClaiming={isClaiming}
@@ -218,6 +201,10 @@ export const Claim = function ({ renderForm, state }: Props) {
           withdrawProgress={withdrawProgress}
         />
       }
+      total={formatUnits(
+        claimWithdrawalTokenGasFees,
+        fromChain?.nativeCurrency.decimals,
+      )}
       transactionsList={
         showProveWithdrawalTx
           ? [

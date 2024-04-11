@@ -1,7 +1,4 @@
-import {
-  ReviewWithdraw,
-  WithdrawProgress,
-} from 'components/reviewBox/reviewWithdraw'
+import { WithdrawProgress } from 'components/reviewBox/reviewWithdraw'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -171,28 +168,27 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   return (
     <TunnelForm
       formContent={renderForm(isWithdrawing)}
+      gas={{
+        amount: formatUnits(
+          withdrawGasFees,
+          fromChain?.nativeCurrency.decimals,
+        ),
+        label: t('common.network-gas-fee', { network: fromChain?.name }),
+        symbol: fromChain?.nativeCurrency.symbol,
+      }}
       onSubmit={handleWithdraw}
-      reviewOperation={
-        <ReviewWithdraw
-          canWithdraw={canWithdraw}
-          gas={formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals)}
-          gasSymbol={fromChain?.nativeCurrency.symbol}
-          l1ChainId={toNetworkId}
-          operation="withdraw"
-          progress={withdrawProgress}
-          toWithdraw={formatNumber(fromInput, 3)}
-          withdrawSymbol={fromToken.symbol}
-        />
-      }
+      operationSymbol={fromToken.symbol}
+      showReview={canWithdraw}
       submitButton={
         <Button disabled={!canWithdraw || isWithdrawing} type="submit">
           {t(
             `tunnel-page.submit-button.${
-              isWithdrawing ? 'withdrawing' : 'withdraw'
+              isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'
             }`,
           )}
         </Button>
       }
+      total={formatNumber(fromInput, 3)}
       transactionsList={transactionsList}
     />
   )

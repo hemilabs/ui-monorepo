@@ -1,11 +1,7 @@
-import {
-  ReviewWithdraw,
-  WithdrawProgress,
-} from 'components/reviewBox/reviewWithdraw'
+import { WithdrawProgress } from 'components/reviewBox/reviewWithdraw'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
-import { formatNumber } from 'utils/format'
 import { formatUnits, type Chain } from 'viem'
 import { useConfig } from 'wagmi'
 
@@ -174,23 +170,17 @@ export const Prove = function ({ renderForm, state }: Props) {
   return (
     <TunnelForm
       formContent={renderForm(isProving)}
+      gas={{
+        amount: formatUnits(
+          proveWithdrawalTokenGasFees,
+          fromChain?.nativeCurrency.decimals,
+        ),
+        label: t('common.network-gas-fee', { network: fromChain?.name }),
+        symbol: fromChain?.nativeCurrency.symbol,
+      }}
       onSubmit={handleProve}
-      reviewOperation={
-        <ReviewWithdraw
-          gas={formatUnits(
-            proveWithdrawalTokenGasFees,
-            fromChain?.nativeCurrency.decimals,
-          )}
-          gasSymbol={fromChain?.nativeCurrency.symbol}
-          l1ChainId={withdrawL1NetworkId}
-          operation="prove"
-          progress={withdrawProgress}
-          proveWithdrawalTxHash={proveWithdrawalTxHash}
-          toWithdraw={formatNumber(withdrawAmount, 3)}
-          withdrawSymbol={withdrawSymbol}
-          withdrawTxHash={withdrawTxHash}
-        />
-      }
+      operationSymbol={fromChain?.nativeCurrency.symbol}
+      showReview={isReadyToProve}
       submitButton={
         <SubmitButton
           isProving={isProving}
@@ -198,6 +188,10 @@ export const Prove = function ({ renderForm, state }: Props) {
           l1ChainId={withdrawL1NetworkId}
         />
       }
+      total={formatUnits(
+        proveWithdrawalTokenGasFees,
+        fromChain?.nativeCurrency.decimals,
+      )}
       transactionsList={
         showWithdrawalTx
           ? [

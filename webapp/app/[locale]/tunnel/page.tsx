@@ -101,7 +101,7 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
           {t('title')}
         </h3>
       </div>
-      <h4 className="text-gray-5 text-sm font-normal">{t('subtitle')}</h4>
+      <h4 className="text-sm font-normal text-slate-500">{t('subtitle')}</h4>
       {['deposit', 'withdraw'].includes(operation) && (
         <SwitchToNetwork selectedNetwork={fromNetworkId} />
       )}
@@ -147,7 +147,7 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
           </div>
         </div>
       </div>
-      <div className="my-2 flex w-full">
+      <div className="mx-auto my-2 flex h-10">
         <ToggleButton disabled={isRunningOperation} toggle={toggleInput} />
       </div>
       <div className="flex items-center justify-between text-sm">

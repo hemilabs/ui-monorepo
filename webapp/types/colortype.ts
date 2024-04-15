@@ -1,1 +1,1 @@
-export type ColorType = 'gray-3' | 'gray-5' | 'gray-9' | 'orange-1'
+export type ColorType = 'slate-200' | 'slate-500' | 'orange-1'

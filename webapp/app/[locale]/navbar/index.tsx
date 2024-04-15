@@ -34,7 +34,7 @@ export default function Navbar() {
       </div>
       <div className="ml-8 mt-10">
         <NavItems
-          color="gray-3"
+          color="slate-200"
           isSelectable={true}
           navItems={navItems}
           selectedItem={selectedItem || getCurrentPath()}
@@ -53,7 +53,7 @@ export default function Navbar() {
       </div>
       <div className="ml-8 mt-6">
         <NavItems
-          color="gray-9"
+          color="slate-500"
           isSelectable={false}
           navItems={navItemsBottom}
           selectedItem={selectedItem || getCurrentPath()}

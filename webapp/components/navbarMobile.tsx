@@ -43,10 +43,13 @@ export function NavbarMobile({ navItems, onClick }: NavbarMobileProps) {
                     className="ml-2 flex w-full items-center p-1"
                     onClick={onClick}
                   >
-                    <Text className="text-gray-3" size="16">
+                    <Text className="text-slate-200" size="16">
                       {subMenu.text}
                     </Text>
-                    <ArrowDownLeftIcon className="text-gray-3 ml-2" size="18" />
+                    <ArrowDownLeftIcon
+                      className="ml-2 text-slate-200"
+                      size="18"
+                    />
                   </div>
                 </NavRouterItem>
               ))
@@ -60,12 +63,15 @@ export function NavbarMobile({ navItems, onClick }: NavbarMobileProps) {
                   className="ml-2 flex w-full items-center p-1"
                   onClick={onClick}
                 >
-                  <Icon className="text-gray-3 mr-1" size="18" />
-                  <Text className="text-gray-3" size="16">
+                  <Icon className="mr-1 text-slate-200" size="18" />
+                  <Text className="text-slate-200" size="16">
                     {t(id)}
                   </Text>
                   {isExternalLink(href) && (
-                    <ArrowDownLeftIcon className="text-gray-3 ml-2" size="18" />
+                    <ArrowDownLeftIcon
+                      className="ml-2 text-slate-200"
+                      size="18"
+                    />
                   )}
                 </div>
               </NavRouterItem>
@@ -73,7 +79,7 @@ export function NavbarMobile({ navItems, onClick }: NavbarMobileProps) {
           )}
           <NavRouterItem href="/get-started" isExternal={false}>
             <div
-              className="ml-2 flex w-full justify-center rounded-lg border border-gray-300 p-1"
+              className="ml-2 flex w-full justify-center rounded-lg border border-slate-200 p-1"
               onClick={onClick}
             >
               <Text className="text-orange-1 mr-1" size="16">
@@ -86,22 +92,22 @@ export function NavbarMobile({ navItems, onClick }: NavbarMobileProps) {
           <div className="flex items-center">
             <div className="mr-3">
               <NavRouterItem href={twitterUrl} isExternal={true}>
-                <TwitterIcon className="text-gray-3" size="22" />
+                <TwitterIcon className="text-slate-200" size="22" />
               </NavRouterItem>
             </div>
             <div className="mr-3">
               <NavRouterItem href={discordUrl} isExternal={true}>
-                <DiscordIcon className="text-gray-3" size="22" />
+                <DiscordIcon className="text-slate-200" size="22" />
               </NavRouterItem>
             </div>
             <div className="mr-3">
               <NavRouterItem href={githubUrl} isExternal={true}>
-                <GithubIcon className="text-gray-3" size="22" />
+                <GithubIcon className="text-slate-200" size="22" />
               </NavRouterItem>
             </div>
             <div>
               <NavRouterItem href={linkedinUrl} isExternal={true}>
-                <LinkedinIcon className="text-gray-3" size="22" />
+                <LinkedinIcon className="text-slate-200" size="22" />
               </NavRouterItem>
             </div>
           </div>

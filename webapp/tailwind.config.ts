@@ -31,18 +31,37 @@ const config: Config = {
         'hemi-layout':
           '0px 110px 31px rgba(148, 148, 148, 0.00), 0px 71px 28px rgba(148, 148, 148, 0.00), 0px 40px 24px rgba(148, 148, 148, 0.00), 0px 18px 18px rgba(148, 148, 148, 0.01), 0px 4px 10px rgba(148, 148, 148, 0.01)',
       },
+      // See https://www.figma.com/file/4fVd9wneclsvYDYD95ApZ9/Hemi-Portal?node-id=8%3A5122&mode=dev
       colors: {
-        gray: {
-          1: '#E5E6E6',
-          3: '#CCCCCC',
-          5: '#8F8F8F',
-          6: '#808080',
-          9: '#1A1C20',
-        },
+        // Easier to read sorted like this, instead of sorting asc (as string) as the rules indicates
+        /* eslint-disable sort-keys */
         orange: {
           1: '#FF4D00',
+          50: '#FFFBF8',
+          200: '#FFE2D0',
+          300: '#FFD3B9',
+          400: '#FFC4A1',
+          500: '#FFB58A',
+          600: '#FFA773',
+          700: '#FF985B',
+          800: '#FF7D33',
+          900: '#FF7B2C',
+          950: '#FF6C15',
           hemi: '#FF5F00',
         },
+        slate: {
+          100: '#E5E6E6',
+          200: '#CCCCCC',
+          300: '#B2B3B3',
+          400: '#999A9A',
+          500: '#808080',
+          600: '#666767',
+          700: '#4D4E4E',
+          800: '#333535',
+          900: '#1A1B1B',
+          950: '#000202',
+        },
+        /* eslint-disable sort-keys */
       },
       fontFamily: {
         inter: '--font-inter',

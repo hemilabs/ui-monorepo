@@ -21,35 +21,35 @@ export const Footer = () => (
     <div
       className={`bg-hemi-color-footer flex w-full justify-between gap-6 
       rounded-bl-3xl rounded-br-3xl border 
-      border-gray-300 border-opacity-50 px-9 py-4`}
+      border-slate-200 border-opacity-50 px-9 py-4`}
     >
       <div className="flex select-none items-center">
         <div className="mr-1">
-          <SmallHemiIcon className="text-gray-3" size="22" />
+          <SmallHemiIcon className="text-slate-200" size="22" />
         </div>
-        <Text className="text-gray-3" size="18">
+        <Text className="text-slate-200" size="18">
           Hemi
         </Text>
       </div>
       <div className="flex items-center">
         <div className="mr-3">
           <NavRouterItem href={twitterUrl} isExternal={true}>
-            <TwitterIcon className="text-gray-3" size="22" />
+            <TwitterIcon className="text-slate-200" size="22" />
           </NavRouterItem>
         </div>
         <div className="mr-3">
           <NavRouterItem href={discordUrl} isExternal={true}>
-            <DiscordIcon className="text-gray-3" size="22" />
+            <DiscordIcon className="text-slate-200" size="22" />
           </NavRouterItem>
         </div>
         <div className="mr-3">
           <NavRouterItem href={githubUrl} isExternal={true}>
-            <GithubIcon className="text-gray-3" size="22" />
+            <GithubIcon className="text-slate-200" size="22" />
           </NavRouterItem>
         </div>
         <div>
           <NavRouterItem href={linkedinUrl} isExternal={true}>
-            <LinkedinIcon className="text-gray-3" size="22" />
+            <LinkedinIcon className="text-slate-200" size="22" />
           </NavRouterItem>
         </div>
       </div>

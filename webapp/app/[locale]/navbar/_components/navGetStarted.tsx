@@ -7,7 +7,7 @@ type Props = {
 export const NavGetStarted = ({ children }: Props) => (
   <div
     className="h-30 w-45 relative overflow-hidden 
-    rounded-3xl border border-gray-300 border-opacity-50"
+    rounded-3xl border border-slate-200 border-opacity-50"
   >
     <svg
       fill="none"

@@ -28,7 +28,7 @@ export function NavItem({
   iconLeft,
   text,
   isSelected,
-  color = 'gray-3',
+  color = 'slate-200',
   subMenus,
   href,
   onClick,
@@ -39,7 +39,7 @@ export function NavItem({
     if (subMenus && !isSelected) {
       return (
         <ChevronBottomIcon
-          className={`group-hover:text-gray-9 text-${color}`}
+          className={`group-hover:text-slate-500 text-${color}`}
           transitionColorDurationMs="250"
         />
       )
@@ -47,7 +47,7 @@ export function NavItem({
     if (subMenus && isSelected) {
       return (
         <ChevronUpIcon
-          className={`group-hover:text-gray-9 text-${color}`}
+          className={`group-hover:text-slate-500 text-${color}`}
           transitionColorDurationMs="250"
         />
       )
@@ -55,7 +55,7 @@ export function NavItem({
     if (isExternalLink(href)) {
       return (
         <ArrowDownLeftIcon
-          className={`group-hover:text-gray-9 text-${color}`}
+          className={`group-hover:text-slate-500 text-${color}`}
           transitionColorDurationMs="250"
         />
       )
@@ -69,13 +69,15 @@ export function NavItem({
         <div
           className={`w-45 flex h-10 cursor-pointer items-center justify-between gap-0 rounded-tl-lg 
               bg-transparent px-2.5 py-2 ${
-                isSelected ? 'rounded-lg border border-gray-300' : 'hover group'
+                isSelected
+                  ? 'rounded-lg border border-slate-200'
+                  : 'hover group'
               }`}
           onClick={onClick}
         >
           <div className="flex items-center">
             {React.cloneElement(iconLeft as ReactElement, {
-              className: `group-hover:text-gray-9 text-${color}`,
+              className: `group-hover:text-slate-500 text-${color}`,
               transitionColorDurationMs: '250',
             })}
             <div className="ml-2 select-none">
@@ -83,7 +85,7 @@ export function NavItem({
                 className={`${
                   isSelected && !subMenus ? 'text-orange-1' : `text-${color}`
                 }
-                 group-hover:text-gray-9`}
+                 group-hover:text-slate-500`}
                 size="14"
                 transitionColorDurationMs="250"
               >
@@ -109,7 +111,7 @@ export function NavItem({
                 >
                   <div className="cursor-pointer pb-2">
                     <Text
-                      className="text-gray-3"
+                      className="text-slate-200"
                       size="14"
                       transitionColorDurationMs="250"
                     >

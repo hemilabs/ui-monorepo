@@ -48,6 +48,8 @@ const config: Config = {
         inter: '--font-inter',
       },
       height: {
+        '97vh': '97vh',
+        '98vh': '98vh',
         // 96px from header (height + padding), 40px from container's padding top in > md screns
         'fit-rest-screen': 'calc(100dvh - 96px) md:calc(100dvh - 96px - 40px)',
         // 67px from header, 24px from container margin's top, and 28px twice from body y-padding

@@ -1,6 +1,6 @@
 'use client'
 
-import { navbarIconFactory } from './NavbarIconFactory'
+import { iconFactory } from './iconFactory'
 
 const paths = [
   {
@@ -29,4 +29,4 @@ const paths = [
   },
 ]
 
-export const SquareCircleIcon = navbarIconFactory(paths, 'SQUARE_CIRCLE')
+export const SquareCircleIcon = iconFactory(paths, 'SQUARE_CIRCLE')

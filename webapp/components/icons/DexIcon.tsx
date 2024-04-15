@@ -1,6 +1,6 @@
 'use client'
 
-import { navbarIconFactory } from './NavbarIconFactory'
+import { iconFactory } from './iconFactory'
 
 const paths = [
   {
@@ -11,4 +11,4 @@ const paths = [
   },
 ]
 
-export const DexIcon = navbarIconFactory(paths, 'DEX')
+export const DexIcon = iconFactory(paths, 'DEX')

@@ -1,6 +1,6 @@
 'use client'
 
-import { navbarIconFactory } from './NavbarIconFactory'
+import { iconFactory } from './iconFactory'
 
 const paths = [
   {
@@ -10,4 +10,4 @@ const paths = [
   },
 ]
 
-export const GraduateCapIcon = navbarIconFactory(paths, 'GRADUATE_CAP')
+export const GraduateCapIcon = iconFactory(paths, 'GRADUATE_CAP')

@@ -2,13 +2,12 @@
 
 import { clsx } from 'clsx'
 import React from 'react'
-import { ColorType } from 'types/colortype'
 import { TransitionColorDurationMs } from 'types/transitionColorDurationMs'
 
-interface NavbarIconFactoryProps {
+interface IconFactoryProps {
   size?: '12' | '14' | '16' | '18' | '20' | '22'
-  color: ColorType
   transitionColorDurationMs?: TransitionColorDurationMs
+  className?: string
 }
 
 interface PathProps {
@@ -18,14 +17,14 @@ interface PathProps {
   strokeWidth?: string
 }
 
-export function navbarIconFactory(
+export function iconFactory(
   paths: PathProps[],
   displayName: string,
-): React.FC<NavbarIconFactoryProps> {
-  const Component: React.FC<NavbarIconFactoryProps> = ({
+): React.FC<IconFactoryProps> {
+  const Component: React.FC<IconFactoryProps> = ({
     size = '18',
-    color = 'gray-3',
     transitionColorDurationMs = '0',
+    className,
   }) => (
     <svg
       className={clsx(
@@ -38,12 +37,8 @@ export function navbarIconFactory(
           'text-lg': size === '18',
           'text-sm': size === '14',
           'text-xs': size === '12',
-          // eslint-disable-next-line sort-keys
-          'text-gray-3': color === 'gray-3',
-          'text-gray-5': color === 'gray-5',
-          'text-gray-9': color === 'gray-9',
-          'text-orange-1': color === 'orange-1',
         },
+        className,
       )}
       fill="none"
       height={size}

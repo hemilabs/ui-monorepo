@@ -1,13 +1,13 @@
 import React from 'react'
 
-type NavGetStartedProps = {
+type Props = {
   children: React.ReactNode
 }
 
-export const NavGetStarted = ({ children }: NavGetStartedProps) => (
+export const NavGetStarted = ({ children }: Props) => (
   <div
-    className="relative overflow-hidden rounded-[20px] border border-gray-300 border-opacity-50"
-    style={{ height: 121, width: 180 }}
+    className="h-30 w-45 relative overflow-hidden 
+    rounded-3xl border border-gray-300 border-opacity-50"
   >
     <svg
       fill="none"
@@ -274,7 +274,7 @@ export const NavGetStarted = ({ children }: NavGetStartedProps) => (
         </clipPath>
       </defs>
     </svg>
-    <div className="absolute left-1/2 top-1/2 h-[38px] w-[120px] -translate-x-1/2 -translate-y-1/2 transform">
+    <div className="absolute left-1/2 top-1/2 h-9 w-32 -translate-x-1/2 -translate-y-1/2 transform">
       {children}
     </div>
   </div>

@@ -1,18 +1,16 @@
-import Link from 'next/link'
+import Link from 'next-intl/link'
 import React from 'react'
 
 type NavRouterItemProps = {
   href?: string
   children: React.ReactNode
   isExternal?: boolean
-  locale: string
 }
 
 export function NavRouterItem({
   href,
   children,
   isExternal = false,
-  locale,
 }: NavRouterItemProps) {
   if (!href) {
     return <>{children}</>
@@ -26,6 +24,5 @@ export function NavRouterItem({
     )
   }
 
-  const localizedHref = `/${locale}${href}`
-  return <Link href={localizedHref}>{children}</Link>
+  return <Link href={href}>{children}</Link>
 }

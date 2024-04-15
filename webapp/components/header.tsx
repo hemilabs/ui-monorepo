@@ -1,5 +1,6 @@
 'use client'
 
+import { NavRouterItem } from 'app/[locale]/navbar/_components/navRouterItem'
 import { navItems } from 'app/[locale]/navbar/navData'
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
@@ -11,7 +12,7 @@ import { HamburgerIcon } from 'ui-common/components/hamburgerIcon'
 import { HemiSymbol } from 'ui-common/components/hemiLogo'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 
-import { NavbarMobile } from './NavbarMobile'
+import { NavbarMobile } from './navbarMobile'
 
 const WalletConnectButton = dynamic(
   () =>
@@ -55,11 +56,7 @@ const Route = function ({ path, text }: Props) {
   )
 }
 
-type HeaderProps = {
-  locale: string
-}
-
-export const Header = function ({ locale }: HeaderProps) {
+export const Header = function () {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const t = useTranslations('common')
 
@@ -74,13 +71,15 @@ export const Header = function ({ locale }: HeaderProps) {
       </div>
 
       <div className="ml-4 h-8 w-8 md:hidden">
-        <HemiSymbol />
+        <NavRouterItem href="/tunnel">
+          <HemiSymbol />
+        </NavRouterItem>
       </div>
       {/* Hidden below until links are re-enabled */}
       {/* <div className="fixed bottom-0 left-0 right-0 z-10 h-[90px] bg-white/60 backdrop-blur-sm md:hidden" /> */}
       <div className="hidden">
         <div className="fixed bottom-0 z-10 flex w-full pb-6 pt-4 md:absolute md:left-1/2 md:block md:-translate-x-1/2">
-          <ul className="mx-auto hidden justify-center gap-x-4 rounded-xl bg-neutral-100 p-[2px] md:mx-0 md:bg-inherit">
+          <ul className="mx-auto hidden justify-center gap-x-4 rounded-xl bg-neutral-100 p-1 md:mx-0 md:bg-inherit">
             <Route path="/tunnel" text={t('tunnel')} />
             <Route path="/swap" text={t('swap')} />
           </ul>
@@ -98,16 +97,15 @@ export const Header = function ({ locale }: HeaderProps) {
       </button>
       {isMenuOpen && (
         <>
-          <div className="fixed bottom-0 left-[1px] top-0 z-20 w-full rounded-3xl bg-neutral-200/30 backdrop-blur-sm"></div>
+          <div className="fixed bottom-0 left-px top-0 z-20 w-full rounded-3xl bg-neutral-200/30 backdrop-blur-sm"></div>
           <div
             className="fixed bottom-0 left-0 right-0 z-20 flex items-center shadow-2xl md:hidden"
             ref={menuRef}
           >
             <div className="mb-3 flex w-full flex-col justify-between rounded-xl bg-white px-5 py-1">
               <WalletConnectMobile />
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col">
                 <NavbarMobile
-                  locale={locale}
                   navItems={navItems}
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                 />

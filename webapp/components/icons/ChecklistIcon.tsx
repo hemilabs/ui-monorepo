@@ -1,6 +1,6 @@
 'use client'
 
-import { navbarIconFactory } from './NavbarIconFactory'
+import { iconFactory } from './iconFactory'
 
 const paths = [
   {
@@ -10,4 +10,4 @@ const paths = [
   },
 ]
 
-export const ChecklistIcon = navbarIconFactory(paths, 'CHECKLIST')
+export const ChecklistIcon = iconFactory(paths, 'CHECKLIST')

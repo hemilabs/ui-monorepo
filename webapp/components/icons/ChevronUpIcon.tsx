@@ -1,6 +1,6 @@
 'use client'
 
-import { navbarIconFactory } from './NavbarIconFactory'
+import { iconFactory } from './iconFactory'
 
 const paths = [
   {
@@ -10,4 +10,4 @@ const paths = [
   },
 ]
 
-export const ChevronUpIcon = navbarIconFactory(paths, 'CHEVRONUP')
+export const ChevronUpIcon = iconFactory(paths, 'CHEVRONUP')

@@ -1,26 +1,24 @@
 'use client'
 
-import { Text } from 'components/Text'
-import React, { useState, ReactElement } from 'react'
+import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
+import { ChevronBottomIcon } from 'components/icons/chevronBottomIcon'
+import { ChevronUpIcon } from 'components/icons/chevronUpIcon'
+import { Text } from 'components/text'
+import React, { ReactElement } from 'react'
 import { ColorType } from 'types/colortype'
 
-import { NavRouterItem } from './NavRouterItem'
+import { NavRouterItem } from './navRouterItem'
 
 interface NavItemProps {
   iconLeft: React.ReactNode
   text: React.ReactNode
-  iconRightClosed?: React.ReactNode
-  iconRightOpened?: React.ReactNode
   isSelected: boolean
   color?: ColorType
   href?: string
-  locale: string
-  isExternal?: boolean
   subMenus?: {
     id: string
     text: string
     href?: string
-    isExternal?: boolean
     onClick?: () => void
   }[]
   onClick?: () => void
@@ -29,39 +27,63 @@ interface NavItemProps {
 export function NavItem({
   iconLeft,
   text,
-  iconRightClosed,
-  iconRightOpened,
   isSelected,
   color = 'gray-3',
   subMenus,
   href,
-  locale,
-  isExternal,
   onClick,
 }: NavItemProps) {
-  const [isHovered, setIsHovered] = useState(false)
-  const getColor = () => (isHovered && !isSelected ? 'gray-9' : color)
+  const isExternalLink = url => url && !url.startsWith('/')
+
+  function renderRightIcon() {
+    if (subMenus && !isSelected) {
+      return (
+        <ChevronBottomIcon
+          className={`group-hover:text-gray-9 text-${color}`}
+          transitionColorDurationMs="250"
+        />
+      )
+    }
+    if (subMenus && isSelected) {
+      return (
+        <ChevronUpIcon
+          className={`group-hover:text-gray-9 text-${color}`}
+          transitionColorDurationMs="250"
+        />
+      )
+    }
+    if (isExternalLink(href)) {
+      return (
+        <ArrowDownLeftIcon
+          className={`group-hover:text-gray-9 text-${color}`}
+          transitionColorDurationMs="250"
+        />
+      )
+    }
+    return null
+  }
 
   return (
     <>
-      <NavRouterItem href={href} isExternal={isExternal} locale={locale}>
+      <NavRouterItem href={href} isExternal={isExternalLink(href)}>
         <div
-          className={`w-45 flex h-10 cursor-pointer items-center justify-between rounded-tl-lg bg-transparent 
-              px-2.5 py-2 ${
-                isSelected ? 'rounded-lg border border-gray-300' : ''
+          className={`w-45 flex h-10 cursor-pointer items-center justify-between gap-0 rounded-tl-lg 
+              bg-transparent px-2.5 py-2 ${
+                isSelected ? 'rounded-lg border border-gray-300' : 'hover group'
               }`}
           onClick={onClick}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          style={{ gap: '0px' }}
         >
           <div className="flex items-center">
             {React.cloneElement(iconLeft as ReactElement, {
-              color: getColor(),
+              className: `group-hover:text-gray-9 text-${color}`,
+              transitionColorDurationMs: '250',
             })}
             <div className="ml-2 select-none">
               <Text
-                color={getColor()}
+                className={`${
+                  isSelected && !subMenus ? 'text-orange-1' : `text-${color}`
+                }
+                 group-hover:text-gray-9`}
                 size="14"
                 transitionColorDurationMs="250"
               >
@@ -69,16 +91,7 @@ export function NavItem({
               </Text>
             </div>
           </div>
-          {iconRightClosed &&
-            (!isSelected || !iconRightOpened) &&
-            React.cloneElement(iconRightClosed as ReactElement, {
-              color: getColor(),
-            })}
-          {iconRightOpened &&
-            isSelected &&
-            React.cloneElement(iconRightOpened as ReactElement, {
-              color: getColor(),
-            })}
+          {renderRightIcon()}
         </div>
         {subMenus && (
           <div
@@ -91,13 +104,12 @@ export function NavItem({
               subMenus?.map(submenu => (
                 <NavRouterItem
                   href={submenu.href}
-                  isExternal={submenu.isExternal}
+                  isExternal={isExternalLink(submenu.href)}
                   key={submenu.id}
-                  locale={locale}
                 >
                   <div className="cursor-pointer pb-2">
                     <Text
-                      color="gray-3"
+                      className="text-gray-3"
                       size="14"
                       transitionColorDurationMs="250"
                     >

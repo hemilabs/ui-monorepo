@@ -37,16 +37,16 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`flex h-dvh flex-col ${inter.className}`}>
+      <body className={`flex h-dvh flex-col bg-white ${inter.className}`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <RecaptchaContext>
             <WalletContext locale={locale} networks={networks}>
               <div className="flex flex-col">
                 <div className="flex items-start">
                   <div className="hidden md:block">
-                    <Navbar locale={locale} />
+                    <Navbar />
                   </div>
-                  <AppScreen locale={locale}>{children}</AppScreen>
+                  <AppScreen>{children}</AppScreen>
                 </div>
               </div>
             </WalletContext>

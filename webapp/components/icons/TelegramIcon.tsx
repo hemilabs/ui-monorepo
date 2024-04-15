@@ -1,6 +1,6 @@
 'use client'
 
-import { navbarIconFactory } from './NavbarIconFactory'
+import { iconFactory } from './iconFactory'
 
 const paths = [
   {
@@ -14,4 +14,4 @@ const paths = [
   },
 ]
 
-export const TelegramIcon = navbarIconFactory(paths, 'TELEGRAM')
+export const TelegramIcon = iconFactory(paths, 'TELEGRAM')

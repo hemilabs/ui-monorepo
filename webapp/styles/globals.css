@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #fff;
-}
-
 @keyframes withdraw-progress {
   0% {
     height: 0;

@@ -1,6 +1,6 @@
 'use client'
 
-import { navbarIconFactory } from './NavbarIconFactory'
+import { iconFactory } from './iconFactory'
 
 const paths = [
   {
@@ -10,7 +10,4 @@ const paths = [
   },
 ]
 
-export const ElectroCardiogramIcon = navbarIconFactory(
-  paths,
-  'ELECTRO_CARDIOGRAM',
-)
+export const ElectroCardiogramIcon = iconFactory(paths, 'ELECTRO_CARDIOGRAM')

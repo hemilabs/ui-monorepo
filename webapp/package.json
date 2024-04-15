@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@eth-optimism/sdk": "3.2.1",
+    "@radix-ui/react-slot": "^1.0.2",
     "@rainbow-me/rainbowkit": "2.0.1",
     "@tanstack/react-query": "5.24.8",
     "@tanstack/react-virtual": "3.0.1",

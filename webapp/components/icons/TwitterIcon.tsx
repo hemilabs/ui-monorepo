@@ -1,6 +1,6 @@
 'use client'
 
-import { navbarIconFactory } from './NavbarIconFactory'
+import { iconFactory } from './iconFactory'
 
 const paths = [
   {
@@ -13,4 +13,4 @@ const paths = [
   },
 ]
 
-export const TwitterIcon = navbarIconFactory(paths, 'TWITTER')
+export const TwitterIcon = iconFactory(paths, 'TWITTER')

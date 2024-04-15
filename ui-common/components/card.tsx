@@ -2,7 +2,7 @@ import React from 'react'
 
 const borderColors = {
   default: '',
-  gray: 'border border-gray-1 border-solid',
+  gray: 'border border-slate-100 border-solid',
 } as const
 
 const radiusVariants = {

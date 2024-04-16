@@ -7,7 +7,7 @@ type NavRouterItemProps = {
   isExternal?: boolean
 }
 
-export function NavRouterItem({
+export const NavRouterItem = function ({
   href,
   children,
   isExternal = false,

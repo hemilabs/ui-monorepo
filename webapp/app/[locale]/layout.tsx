@@ -12,7 +12,7 @@ import { WalletContext } from 'ui-common/components/walletContext'
 
 import { inter } from '../fonts'
 
-import Navbar from './navbar'
+import { Navbar } from './navbar'
 
 async function getMessages(locale: Locale) {
   try {

@@ -1,7 +1,6 @@
 'use client'
 
 import { NavItemData } from 'app/[locale]/navbar/_components/navItems'
-import { NavRouterItem } from 'app/[locale]/navbar/_components/navRouterItem'
 import {
   discordUrl,
   githubUrl,
@@ -16,6 +15,7 @@ import { DiscordIcon } from './icons/discordIcon'
 import { GithubIcon } from './icons/githubIcon'
 import { LinkedinIcon } from './icons/linkedinIcon'
 import { TwitterIcon } from './icons/twitterIcon'
+import { NavRouterItem } from './navRouterItem'
 import { Text } from './text'
 
 type NavbarMobileProps = {
@@ -23,7 +23,10 @@ type NavbarMobileProps = {
   onClick?: () => void
 }
 
-export function NavbarMobile({ navItems, onClick }: NavbarMobileProps) {
+export const NavbarMobile = function ({
+  navItems,
+  onClick,
+}: NavbarMobileProps) {
   const t = useTranslations('common') as unknown as (key: string) => string
   const isExternalLink = url => url && !url.startsWith('/')
 
@@ -91,24 +94,24 @@ export function NavbarMobile({ navItems, onClick }: NavbarMobileProps) {
         <div className="ml-8 flex justify-end p-1" onClick={onClick}>
           <div className="flex items-center">
             <div className="mr-3">
-              <NavRouterItem href={twitterUrl} isExternal={true}>
+              <a href={twitterUrl} rel="noopener noreferrer" target="_blank">
                 <TwitterIcon className="text-slate-200" size="22" />
-              </NavRouterItem>
+              </a>
             </div>
             <div className="mr-3">
-              <NavRouterItem href={discordUrl} isExternal={true}>
+              <a href={discordUrl} rel="noopener noreferrer" target="_blank">
                 <DiscordIcon className="text-slate-200" size="22" />
-              </NavRouterItem>
+              </a>
             </div>
             <div className="mr-3">
-              <NavRouterItem href={githubUrl} isExternal={true}>
+              <a href={githubUrl} rel="noopener noreferrer" target="_blank">
                 <GithubIcon className="text-slate-200" size="22" />
-              </NavRouterItem>
+              </a>
             </div>
             <div>
-              <NavRouterItem href={linkedinUrl} isExternal={true}>
+              <a href={linkedinUrl} rel="noopener noreferrer" target="_blank">
                 <LinkedinIcon className="text-slate-200" size="22" />
-              </NavRouterItem>
+              </a>
             </div>
           </div>
         </div>

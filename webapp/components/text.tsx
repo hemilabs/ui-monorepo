@@ -12,7 +12,7 @@ interface TextProps {
   className?: string
 }
 
-export function Text({
+export const Text = function ({
   size = '14',
   children,
   asChild,

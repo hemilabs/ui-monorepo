@@ -21,7 +21,7 @@ interface NavItemsProps {
   setSelectedItem: (selectedItem: string) => void
 }
 
-export function NavItems({
+export const NavItems = function ({
   color,
   colorSelected = 'orange-1',
   navItems,

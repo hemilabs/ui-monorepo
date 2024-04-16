@@ -1,5 +1,6 @@
 'use client'
 
+import { NavRouterItem } from 'components/navRouterItem'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import React, { useState, useEffect } from 'react'
@@ -8,10 +9,9 @@ import { HemiLogoFull } from 'ui-common/components/hemiLogo'
 
 import { NavGetStarted } from './_components/navGetStarted'
 import { NavItems } from './_components/navItems'
-import { NavRouterItem } from './_components/navRouterItem'
 import { navItems, navItemsBottom } from './navData'
 
-export default function Navbar() {
+export const Navbar = function () {
   const t = useTranslations('common')
   const [selectedItem, setSelectedItem] = useState('')
   const pathname = usePathname()

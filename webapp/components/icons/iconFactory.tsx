@@ -17,7 +17,7 @@ interface PathProps {
   strokeWidth?: string
 }
 
-export function iconFactory(
+export const iconFactory = function (
   paths: PathProps[],
   displayName: string,
 ): React.FC<IconFactoryProps> {

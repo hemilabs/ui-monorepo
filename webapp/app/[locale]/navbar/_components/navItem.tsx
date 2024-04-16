@@ -3,11 +3,10 @@
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { ChevronBottomIcon } from 'components/icons/chevronBottomIcon'
 import { ChevronUpIcon } from 'components/icons/chevronUpIcon'
+import { NavRouterItem } from 'components/navRouterItem'
 import { Text } from 'components/text'
 import React, { ReactElement } from 'react'
 import { ColorType } from 'types/colortype'
-
-import { NavRouterItem } from './navRouterItem'
 
 interface NavItemProps {
   iconLeft: React.ReactNode
@@ -24,7 +23,7 @@ interface NavItemProps {
   onClick?: () => void
 }
 
-export function NavItem({
+export const NavItem = function ({
   iconLeft,
   text,
   isSelected,
@@ -35,11 +34,16 @@ export function NavItem({
 }: NavItemProps) {
   const isExternalLink = url => url && !url.startsWith('/')
 
+  const colorVariants = {
+    'slate-200': 'text-slate-200 group-hover:text-slate-500',
+    'slate-500': 'text-slate-500 group-hover:text-slate-500',
+  }
+
   function renderRightIcon() {
     if (subMenus && !isSelected) {
       return (
         <ChevronBottomIcon
-          className={`group-hover:text-slate-500 text-${color}`}
+          className={`${colorVariants[color]}`}
           transitionColorDurationMs="250"
         />
       )
@@ -47,7 +51,7 @@ export function NavItem({
     if (subMenus && isSelected) {
       return (
         <ChevronUpIcon
-          className={`group-hover:text-slate-500 text-${color}`}
+          className={`${colorVariants[color]}`}
           transitionColorDurationMs="250"
         />
       )
@@ -55,7 +59,7 @@ export function NavItem({
     if (isExternalLink(href)) {
       return (
         <ArrowDownLeftIcon
-          className={`group-hover:text-slate-500 text-${color}`}
+          className={`${colorVariants[color]}`}
           transitionColorDurationMs="250"
         />
       )
@@ -77,15 +81,20 @@ export function NavItem({
         >
           <div className="flex items-center">
             {React.cloneElement(iconLeft as ReactElement, {
-              className: `group-hover:text-slate-500 text-${color}`,
+              className: `${
+                isSelected && !subMenus
+                  ? 'text-orange-1'
+                  : `${colorVariants[color]}`
+              }`,
               transitionColorDurationMs: '250',
             })}
             <div className="ml-2 select-none">
               <Text
                 className={`${
-                  isSelected && !subMenus ? 'text-orange-1' : `text-${color}`
-                }
-                 group-hover:text-slate-500`}
+                  isSelected && !subMenus
+                    ? 'text-orange-1'
+                    : `${colorVariants[color]}`
+                }`}
                 size="14"
                 transitionColorDurationMs="250"
               >

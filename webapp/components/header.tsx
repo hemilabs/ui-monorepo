@@ -1,6 +1,5 @@
 'use client'
 
-import { NavRouterItem } from 'app/[locale]/navbar/_components/navRouterItem'
 import { navItems } from 'app/[locale]/navbar/navData'
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
@@ -71,9 +70,9 @@ export const Header = function () {
       </div>
 
       <div className="ml-4 h-8 w-8 md:hidden">
-        <NavRouterItem href="/tunnel">
+        <Link href="/tunnel">
           <HemiSymbol />
-        </NavRouterItem>
+        </Link>
       </div>
       {/* Hidden below until links are re-enabled */}
       {/* <div className="fixed bottom-0 left-0 right-0 z-10 h-[90px] bg-white/60 backdrop-blur-sm md:hidden" /> */}

@@ -35,7 +35,7 @@ export function GetStarted({
             <h1 className="text-4xl font-medium tracking-tighter">
               {t('heading')}
             </h1>
-            <h2 className="text-gray-6 mb-12 mt-4 text-lg">
+            <h2 className="mb-12 mt-4 text-lg text-slate-500">
               {t('sub-heading')}
             </h2>
 

@@ -6,7 +6,7 @@ const sizes = {
 const variants = {
   primary: 'bg-black text-white',
   secondary:
-    'bg-white text-orange-1 border border-gray-1 px-3 leading-none h-9',
+    'bg-white text-orange-1 border border-slate-100 px-3 leading-none h-9',
 } as const
 
 type Props = React.DetailedHTMLProps<

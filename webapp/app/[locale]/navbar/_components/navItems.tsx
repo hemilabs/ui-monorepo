@@ -18,7 +18,7 @@ interface NavItemsProps {
   navItems: NavItemData[]
   isSelectable: boolean
   selectedItem: string
-  setSelectedItem: (selectedItem: string) => void
+  onItemClick: (selectedItem: string) => void
 }
 
 export const NavItems = function ({
@@ -27,11 +27,9 @@ export const NavItems = function ({
   navItems,
   isSelectable,
   selectedItem,
-  setSelectedItem,
+  onItemClick,
 }: NavItemsProps) {
   const t = useTranslations('common') as unknown as (key: string) => string
-
-  const handleItemClick = itemName => setSelectedItem(itemName)
 
   return (
     <>
@@ -52,7 +50,7 @@ export const NavItems = function ({
             key={id}
             onClick={function () {
               if (isSelectable) {
-                handleItemClick(subMenus ? id : '')
+                onItemClick(subMenus ? id : '')
               }
             }}
             subMenus={subMenus}

@@ -23,6 +23,9 @@ export const Navbar = function () {
     return cleanedUrl
   }
 
+  const handleItemClick = value =>
+    setSelectedItem(value === selectedItem ? '' : value)
+
   return (
     <div className="h-98vh flex flex-col justify-between">
       <div className="mt-8">
@@ -37,11 +40,11 @@ export const Navbar = function () {
           color="slate-200"
           isSelectable={true}
           navItems={navItems}
+          onItemClick={handleItemClick}
           selectedItem={selectedItem || getCurrentPath()}
-          setSelectedItem={setSelectedItem}
         />
       </div>
-      <div className="flex-grow"></div>
+      <div className="flex-grow" />
       <div className="ml-8">
         <NavGetStarted>
           <NavRouterItem href={'/get-started'} isExternal={false}>
@@ -56,8 +59,8 @@ export const Navbar = function () {
           color="slate-500"
           isSelectable={false}
           navItems={navItemsBottom}
+          onItemClick={handleItemClick}
           selectedItem={selectedItem || getCurrentPath()}
-          setSelectedItem={setSelectedItem}
         />
       </div>
     </div>

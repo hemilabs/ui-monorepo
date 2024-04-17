@@ -5,11 +5,11 @@ import { ChevronBottomIcon } from 'components/icons/chevronBottomIcon'
 import { ChevronUpIcon } from 'components/icons/chevronUpIcon'
 import { NavRouterItem } from 'components/navRouterItem'
 import { Text } from 'components/text'
-import React, { ReactElement } from 'react'
+import React from 'react'
 import { ColorType } from 'types/colortype'
 
 interface NavItemProps {
-  iconLeft: React.ReactNode
+  IconLeft: React.ElementType
   text: React.ReactNode
   isSelected: boolean
   color?: ColorType
@@ -24,7 +24,7 @@ interface NavItemProps {
 }
 
 export const NavItem = function ({
-  iconLeft,
+  IconLeft,
   text,
   isSelected,
   color = 'slate-200',
@@ -80,14 +80,14 @@ export const NavItem = function ({
           onClick={onClick}
         >
           <div className="flex items-center">
-            {React.cloneElement(iconLeft as ReactElement, {
-              className: `${
+            <IconLeft
+              className={`${
                 isSelected && !subMenus
                   ? 'text-orange-1'
                   : `${colorVariants[color]}`
-              }`,
-              transitionColorDurationMs: '250',
-            })}
+              }`}
+              transitionColorDurationMs="250"
+            />
             <div className="ml-2 select-none">
               <Text
                 className={`${

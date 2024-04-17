@@ -36,14 +36,9 @@ export const NavItems = function ({
       <div className="flex flex-col justify-center gap-3">
         {navItems.map(({ id, icon: Icon, href, subMenus }) => (
           <NavItem
+            IconLeft={Icon}
             color={href === selectedItem ? colorSelected : color}
             href={href}
-            iconLeft={
-              <Icon
-                color={href === selectedItem ? colorSelected : color}
-                size="18"
-              />
-            }
             isSelected={
               href === selectedItem || (subMenus && selectedItem === id)
             }

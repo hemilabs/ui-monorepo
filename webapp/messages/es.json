@@ -73,8 +73,89 @@
       "documentation": "Documentación",
       "network": "Red"
     },
-    "home": {
-      "tunnel-and-swap": "Túnel e Intercambio"
+    "steps": {
+      "heading": "Comience con Hemi",
+      "dev": {
+        "1": {
+          "title": "Para Comenzar",
+          "text": "Explore los Fundamentos de la Red Hemi.",
+          "url": "https://docs.hemi.xyz/main/introduction"
+        },
+        "2": {
+          "title": "Tunelización",
+          "text": "Aprenda sobre la tunelización y cómo enviar fondos hacia y desde Hemi.",
+          "url": "/tunnel/"
+        },
+        "3": {
+          "title": "GitHub",
+          "text": "Proponga nuevas características o mejoras y gane recompensas.",
+          "url": "https://github.com/hemilabs/heminetwork"
+        },
+        "4": {
+          "title": "Acceso a Discord",
+          "text": "Conéctese con sus pares y obtenga acceso directo al faucet.",
+          "url": "https://discord.com/invite/hemixyz"
+        },
+        "5": {
+          "title": "Programa de Recompensas",
+          "text": "Participe en actividades y gane recompensas.",
+          "url": "#"
+        }
+      },
+      "individual": {
+        "1": {
+          "title": "Para Comenzar",
+          "text": "Explore los Fundamentos de la Red Hemi.",
+          "url": "https://docs.hemi.xyz/main/introduction"
+        },
+        "2": {
+          "title": "Tunelización",
+          "text": "Aprenda sobre la tunelización y cómo enviar fondos hacia y desde Hemi.",
+          "url": "/tunnel/"
+        },
+        "3": {
+          "title": "Programa de Recompensas",
+          "text": "Participe en actividades y gane recompensas.",
+          "url": "#"
+        },
+        "4": {
+          "title": "Acceso a Discord",
+          "text": "Conéctese con sus pares y chatee con nuestro equipo.",
+          "url": "https://discord.com/invite/hemixyz"
+        },
+        "5": {
+          "title": "Deploy a Smart Contract",
+          "text": "¡Amistoso para principiantes! Aprenda cómo publicar contratos inteligentes.",
+          "url": "https://docs.hemi.xyz/how-to-tutorials/using-remix-ide"
+        }
+      },
+      "miner": {
+        "1": {
+          "title": "Para Comenzar",
+          "text": "Obtenga recompensas ejecutando un minero PoP.",
+          "url": "https://docs.hemi.xyz/foundational-topics/pop-mining"
+        },
+        "2": {
+          "title": "Solicite acceso minero",
+          "text": "Configure su sistema, genere su clave pública y envíela para su aprobación.",
+          "url": "https://docs.hemi.xyz/foundational-topics/pop-mining/setup-part-1"
+        },
+        "3": {
+          "title": "Comprenda las recompensas",
+          "text": "Aprenda cómo están estructuradas las recompensas.",
+          "url": "https://docs.hemi.xyz/foundational-topics/pop-mining#earning-rewards"
+        },
+        "4": {
+          "title": "Acceso a Discord",
+          "text": "Participe y comparta ideas con otros mineros.",
+          "url": "https://discord.com/invite/hemixyz"
+        },
+        "5": {
+          "title": "Detalle de la Red",
+          "text": "Obtenga información detallada sobre la red.",
+          "url": "https://docs.hemi.xyz/main/network-details/testnet"
+        }
+      }
     },
     "network": {
       "added": "Añadida",
@@ -88,14 +169,9 @@
       "configure-sepolia-testnet": "Configurar la red de prueba Sepolia",
       "currency-symbol": "Símbolo de la moneda nativa",
       "did-not-receive-try-again": "¿No recibiste este enlace? <button>Inténtalo de nuevo.</button>",
-      "dive-into-docs": "Sumergirse en la documentación de Hemi",
-      "dive-into-architecture": "Sumergirse en la arquitectura de Hemi",
-      "documentation": "Documentación",
       "email-failed": "No pudimos completar su solicitud. Si cree que esto fue un error, por favor <link>contáctenos</link> en Discord <discord></discord> o <button>inténtelo de nuevo</button>.",
       "email-placeholder": "suemail@mail.com",
       "layer": "Capa {layer}",
-      "learn": "Aprender",
-      "learn-with-tutorials": "Póngase al dia con nuestros tutoriales",
       "magic-link-in-your-email": "El enlace mágico está en su correo electrónico.",
       "manual": "Manual",
       "network-name": "Nombre de la red",
@@ -104,11 +180,8 @@
       "recaptcha-terms-and-conditions": "Este sitio está protegido por reCAPTCHA y se aplican la <privacy>Política de Privacidad</privacy> y los <terms>Términos y Condiciones</terms> del servicio de Google.",
       "receive-updates": "Quiero recibir actualizaciones de desarrollo",
       "rpc-url": "URL de RPC",
-      "technology": "Tecnología",
       "troubleshoot-other-errors": "¿Tiene problemas? Resuelva otros errores comunes aquí.",
-      "tunnel-and-swap-description": "Tunnel and swap into Hemi network",
       "welcome-pack-description": "Le enviaremos un email para reclamar sus tokens de bienvenida",
-      "your-quick-starter": "Comienzo rápido",
       "your-welcome-pack": "Su pack de bienvenida"
     }
   },

@@ -13,6 +13,7 @@ const radiusVariants = {
 const shadows = {
   none: '',
   regular: 'shadow-[0px_1px_30px_0px_#00000026]',
+  soft: 'shadow-[0px_88px_25px_0px_#00000000,_0px_56px_23px_0px_#00000000,_0px_32px_19px_0px_#00000003,_0px_14px_14px_0px_#00000005,_0px_4px_8px_0px_#00000005]',
 } as const
 
 type CardProps = React.DetailedHTMLProps<
@@ -32,14 +33,14 @@ export const Card = ({
 }: CardProps) => (
   <div
     className={`
-                  relative
-                  bg-white
-                  px-5
-                  py-3
-                  ${borderColors[variant ?? 'default']} 
-                  ${radiusVariants[radius ?? 'default']}
-                  ${shadows[shadow ?? 'none']}
-                `}
+      relative
+      bg-white
+      px-5
+      py-3
+      ${borderColors[variant ?? 'default']} 
+      ${radiusVariants[radius ?? 'default']}
+      ${shadows[shadow ?? 'none']}
+    `}
   >
     {children}
   </div>

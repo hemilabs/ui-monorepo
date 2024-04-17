@@ -1,5 +1,6 @@
 'use client'
 
+import { useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 import { Card } from 'ui-common/components/card'
@@ -7,6 +8,15 @@ import { Card } from 'ui-common/components/card'
 import { ConfigureNetwork } from './configureNetworks'
 import { QuickStart } from './quickStart'
 import { WelcomePack } from './welcomePack'
+
+const QuickStartSection = function () {
+  const profileParam = useSearchParams().get('profile')
+  const profile = ['miner', 'dev', 'individual'].includes(profileParam)
+    ? (profileParam as 'miner' | 'dev' | 'individual')
+    : 'individual'
+
+  return <QuickStart profile={profile} />
+}
 
 const NetworkPage = function () {
   const t = useTranslations('get-started')
@@ -31,7 +41,9 @@ const NetworkPage = function () {
           </Card>
         </div>
       </main>
-      <QuickStart />
+      <Suspense>
+        <QuickStartSection />
+      </Suspense>
     </>
   )
 }

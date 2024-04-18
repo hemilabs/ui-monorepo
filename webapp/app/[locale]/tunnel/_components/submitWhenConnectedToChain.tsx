@@ -28,7 +28,7 @@ export const SubmitWhenConnectedToChain = function ({
     <>
       {connectedToL1 && submitButton}
       {!connectedToL1 && (
-        <>
+        <div className="flex flex-col gap-y-2">
           <NotificationBox
             backgroundColor="bg-orange-100"
             text={t('tunnel-page.form.switch-to-prove', {
@@ -38,7 +38,7 @@ export const SubmitWhenConnectedToChain = function ({
           <Button onClick={switchToL1} type="button">
             {t('common.switch-to-network', { network: targetChain.name })}
           </Button>
-        </>
+        </div>
       )}
     </>
   )

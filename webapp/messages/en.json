@@ -17,10 +17,11 @@
       "claim-withdrawal": "Claim withdrawal",
       "heading": "Review Withdraw",
       "initiate-withdrawal": "Initiate withdrawal",
-      "gas-estimated": "Est. gas {gas} {symbol}",
       "prove-withdrawal": "Prove withdrawal",
+      "total-amount": "Total Amount",
       "total-to-withdraw": "Total to withdraw",
       "view-tx": "View",
+      "wait-complete": "Wait complete",
       "wait-hours": "Wait up to {hours} hours",
       "wait-minutes": "Wait up to {minutes} minutes"
     },
@@ -69,6 +70,7 @@
       "rejected": "Tx rejected"
     },
     "tunnel": "Tunnel",
+    "view": "View",
     "wrong-network": "Wrong Network",
     "explorer": "Explorer",
     "tutorials": "Tutorials",

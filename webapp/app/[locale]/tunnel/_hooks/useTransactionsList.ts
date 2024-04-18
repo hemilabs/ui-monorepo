@@ -1,8 +1,14 @@
+import { MessageStatus } from '@eth-optimism/sdk'
+import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
-import { type Hash } from 'viem'
+import { type Chain, type Hash } from 'viem'
 import { type UseWaitForTransactionReceiptReturnType } from 'wagmi'
 
+import { useTunnelOperation } from './useTunnelState'
+
 type UseTransactionsList = {
+  expectedWithdrawSuccessfulMessageStatus?: MessageStatus
+  l1ChainId: Chain['id']
   inProgressMessage: string
   isOperating: boolean
   operation: string
@@ -16,6 +22,8 @@ type UseTransactionsList = {
   txHash: Hash | undefined
 }
 export const useTransactionsList = function ({
+  expectedWithdrawSuccessfulMessageStatus,
+  l1ChainId,
   inProgressMessage,
   isOperating,
   operation,
@@ -26,6 +34,13 @@ export const useTransactionsList = function ({
   txHash,
 }: UseTransactionsList) {
   const t = useTranslations()
+
+  const { txHash: withdrawalTxHash } = useTunnelOperation()
+  // deposits won't have a withdrawalTxHash and no requests will run
+  const { messageStatus } = useAnyChainGetTransactionMessageStatus({
+    l1ChainId,
+    transactionHash: withdrawalTxHash,
+  })
 
   const transactionsList = []
 
@@ -62,8 +77,13 @@ export const useTransactionsList = function ({
         txHash,
       })
     }
-    // operation was successful
-    if (receipt?.status === 'success') {
+    // operation was successful if tx was confirmed
+    // and status of operation is the expected one (withdrawal flow only)
+    if (
+      receipt?.status === 'success' &&
+      (expectedWithdrawSuccessfulMessageStatus === undefined ||
+        messageStatus >= expectedWithdrawSuccessfulMessageStatus)
+    ) {
       transactionsList.push({
         id: operation,
         status: 'success',
@@ -72,7 +92,7 @@ export const useTransactionsList = function ({
       })
     }
     // operation in progress
-    if (!receipt) {
+    if (!receipt || messageStatus < expectedWithdrawSuccessfulMessageStatus) {
       transactionsList.push({
         id: operation,
         status: 'loading',

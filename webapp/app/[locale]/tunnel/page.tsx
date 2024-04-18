@@ -1,12 +1,16 @@
 'use client'
 
+import { MessageStatus } from '@eth-optimism/sdk'
 import { TokenLogo } from 'app/components/tokenLogo'
 import { TokenSelector } from 'app/components/TokenSelector'
-import { hemi, networks } from 'app/networks'
+import { bridgeableNetworks, hemi, networks } from 'app/networks'
+import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
+import { useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
+import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { formatNumber } from 'utils/format'
 
 import { Claim } from './_components/claim'
@@ -14,7 +18,7 @@ import { Deposit } from './_components/deposit'
 import { Prove } from './_components/prove'
 import { ToggleButton } from './_components/ToggleButton'
 import { Withdraw } from './_components/withdraw'
-import { useTunnelState } from './_hooks/useTunnelState'
+import { useTunnelOperation, useTunnelState } from './_hooks/useTunnelState'
 
 const Balance = dynamic(
   () => import('components/balance').then(mod => mod.Balance),
@@ -81,7 +85,6 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
     fromNetworkId,
     fromInput,
     fromToken,
-    operation,
     updateFromNetwork,
     updateFromInput,
     updateFromToken,
@@ -90,6 +93,7 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
     toggleInput,
     toToken,
   } = tunnelState
+  const { operation } = useTunnelOperation()
 
   const t = useTranslations('tunnel-page')
 
@@ -147,7 +151,7 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
           </div>
         </div>
       </div>
-      <div className="mx-auto my-2 flex h-10">
+      <div className="mx-auto flex h-10">
         <ToggleButton disabled={isRunningOperation} toggle={toggleInput} />
       </div>
       <div className="flex items-center justify-between text-sm">
@@ -192,23 +196,57 @@ const OperationsComponent = {
   withdraw: Withdraw,
 }
 
+const OperationByMessageStatus = {
+  [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: 'withdraw',
+  [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: 'withdraw',
+  [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: 'prove',
+  [MessageStatus.READY_TO_PROVE]: 'prove',
+  [MessageStatus.IN_CHALLENGE_PERIOD]: 'claim',
+  [MessageStatus.READY_FOR_RELAY]: 'claim',
+  [MessageStatus.RELAYED]: 'claim',
+}
+
 export default function Tunnel() {
   const tunnelState = useTunnelState()
+  const { operation, txHash } = useTunnelOperation()
+  const { setQueryParams } = useQueryParams()
 
-  const OperationComponent = OperationsComponent[tunnelState.operation]
+  const { messageStatus } = useAnyChainGetTransactionMessageStatus({
+    l1ChainId: bridgeableNetworks[0].id,
+    transactionHash: txHash,
+  })
+
+  useEffect(
+    function updateWithdrawOperationComponentPerMessageStatus() {
+      if (!operation || operation === 'deposit' || !messageStatus) {
+        return
+      }
+      const newOperation = OperationByMessageStatus[messageStatus]
+      if (operation !== newOperation) {
+        setQueryParams({ operation: newOperation })
+      }
+    },
+    [messageStatus, operation, setQueryParams],
+  )
+
+  const stateLoaded = !txHash || messageStatus !== undefined
+  const OperationComponent = stateLoaded ? OperationsComponent[operation] : null
 
   return (
-    <div className="h-fit-rest-screen mx-auto flex w-full flex-col gap-y-4 px-4 md:max-w-3xl md:flex-row md:gap-x-4 md:pt-10">
-      <OperationComponent
-        renderForm={isRunningOperation => (
-          <FormContent
-            isRunningOperation={isRunningOperation}
-            tunnelState={tunnelState}
-          />
-        )}
-        // @ts-expect-error This works, but TS does not pick it up correctly.
-        state={tunnelState}
-      />
+    <div className="h-fit-rest-screen">
+      {stateLoaded && (
+        <OperationComponent
+          renderForm={isRunningOperation => (
+            <FormContent
+              isRunningOperation={isRunningOperation}
+              tunnelState={tunnelState}
+            />
+          )}
+          state={tunnelState}
+        />
+      )}
+      {/* Add better loading indicator https://github.com/BVM-priv/ui-monorepo/issues/157 */}
+      {!stateLoaded && <span>...</span>}
     </div>
   )
 }

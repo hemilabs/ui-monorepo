@@ -22,15 +22,31 @@ export const useClaimTransaction = function ({
 
   const connectedToL1 = useIsConnectedToExpectedNetwork(l1ChainId)
 
-  const transactionMessageStatus = useL1GetTransactionMessageStatus({
-    l1ChainId,
-    refetchUntilStatus: MessageStatus.READY_FOR_RELAY,
-    transactionHash: withdrawTxHash,
-  })
+  const { messageStatus: transactionMessageStatus } =
+    useL1GetTransactionMessageStatus({
+      l1ChainId,
+      refetchUntilStatus: MessageStatus.READY_FOR_RELAY,
+      transactionHash: withdrawTxHash,
+    })
 
   const isReadyToClaim =
     transactionMessageStatus === MessageStatus.READY_FOR_RELAY && connectedToL1
 
+  const onSettled = function () {
+    queryClient.invalidateQueries({
+      queryKey: [l1ChainId, withdrawTxHash, 'getMessageStatus'],
+    })
+    queryClient.invalidateQueries({
+      queryKey: [l1ChainId, withdrawTxHash, 'getMessageReceipt'],
+    })
+  }
+
+  const onSuccess = function (claimTxHash: Hash) {
+    // optimistically add the claim Tx to the cache
+    queryClient.setQueryData([l1ChainId, withdrawTxHash, 'getMessageReceipt'], {
+      transactionReceipt: { transactionHash: claimTxHash },
+    })
+  }
   const {
     finalizeWithdrawal,
     finalizeWithdrawalMutationKey,
@@ -41,6 +57,8 @@ export const useClaimTransaction = function ({
   } = useFinalizeMessage({
     enabled: isReadyToClaim,
     l1ChainId,
+    onSettled,
+    onSuccess,
     withdrawTxHash,
   })
 
@@ -71,7 +89,6 @@ export const useClaimTransaction = function ({
     claimWithdrawalReceipt,
     claimWithdrawalReceiptError,
     claimWithdrawalTokenGasFees: finalizeWithdrawalTokenGasFees,
-    claimWithdrawalTxHash: finalizeWithdrawalTxHash,
     clearClaimWithdrawalState,
     isReadyToClaim,
   }

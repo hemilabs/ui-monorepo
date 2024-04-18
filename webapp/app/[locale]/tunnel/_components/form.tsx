@@ -4,9 +4,11 @@ import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import { Token } from 'types/token'
 import { Card } from 'ui-common/components/card'
-import { formatNumber } from 'utils/format'
+import { useQueryParams } from 'ui-common/hooks/useQueryParams'
+import { getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { formatUnits, parseUnits } from 'viem'
+import { formatUnits, isHash, parseUnits } from 'viem'
+import { useAccount } from 'wagmi'
 
 const TransactionStatus = dynamic(
   () =>
@@ -73,9 +75,6 @@ export const getTotal = ({
     fromToken.decimals,
   )
 
-export const getFormattedValue = (value: string) =>
-  Big(value.replace(/,/g, '')).lt('0.001') ? '< 0.001' : formatNumber(value, 3)
-
 type Props = {
   formContent: ReactNode
   gas: {
@@ -86,9 +85,9 @@ type Props = {
   onSubmit: () => void
   operationSymbol: string
   showReview: boolean
-  submitButton: ReactNode
+  submitButton?: ReactNode
   total: string
-  transactionsList: {
+  transactionsList?: {
     id: string
     status: React.ComponentProps<typeof TransactionStatus>['status']
     text: string
@@ -104,45 +103,65 @@ export const TunnelForm = function ({
   showReview,
   submitButton,
   total,
-  transactionsList,
+  transactionsList = [],
 }: Props) {
   const t = useTranslations('common')
+  const { isConnected } = useAccount()
+  const { queryParams } = useQueryParams()
+  if (
+    !isConnected &&
+    queryParams.operation === 'withdraw' &&
+    isHash(queryParams.txHash)
+  ) {
+    // Ensure wallet is connected https://github.com/BVM-priv/ui-monorepo/issues/new
+    return <span>...</span>
+  }
   return (
-    <>
-      <Card radius="large">
-        <form
-          className="flex w-full flex-col gap-y-4 text-zinc-800 lg:min-w-[400px]"
-          onSubmit={function (e: FormEvent) {
-            e.preventDefault()
-            onSubmit()
-          }}
-        >
-          {formContent}
-          {submitButton}
-          {showReview && (
-            <div className="mt-2 flex flex-col gap-y-4 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-neutral-400">{gas.label}</span>
-                <span>{`${getFormattedValue(gas.amount)} ${gas.symbol}`}</span>
+    <div className="mx-auto flex w-full flex-col items-center gap-y-4 pt-2 lg:grid lg:grid-cols-[1fr_1fr_400px_1fr_1fr] lg:items-start lg:gap-x-4">
+      {/* empty column for grid flow in large screens, do not remove */}
+      <div className="hidden lg:col-span-2 lg:block" />
+      <div className="mx-auto w-full md:w-96">
+        <Card borderColor="gray" radius="large">
+          <form
+            className="flex flex-col gap-y-3 text-zinc-800"
+            onSubmit={function (e: FormEvent) {
+              e.preventDefault()
+              onSubmit()
+            }}
+          >
+            {formContent}
+            {submitButton}
+            {showReview && (
+              <div className="mt-2 flex flex-col gap-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral-400">{gas.label}</span>
+                  <span>{`${getFormattedValue(gas.amount)} ${
+                    gas.symbol
+                  }`}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-neutral-400">{t('total')}</span>
+                  <span>{`${getFormattedValue(
+                    total,
+                  )} ${operationSymbol}`}</span>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-neutral-400">{t('total')}</span>
-                <span>{`${getFormattedValue(total)} ${operationSymbol}`}</span>
-              </div>
-            </div>
-          )}
-        </form>
-      </Card>
-      <div className="flex flex-col gap-y-4">
-        {transactionsList.map(transaction => (
-          <TransactionStatus
-            key={transaction.id}
-            status={transaction.status}
-            text={transaction.text}
-            txHash={transaction.txHash}
-          />
-        ))}
+            )}
+          </form>
+        </Card>
       </div>
-    </>
+      {transactionsList.length > 0 && (
+        <div className="flex w-full flex-col gap-y-4 md:max-w-96">
+          {transactionsList.map(transaction => (
+            <TransactionStatus
+              key={transaction.id}
+              status={transaction.status}
+              text={transaction.text}
+              txHash={transaction.txHash}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   )
 }

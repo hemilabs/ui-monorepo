@@ -1,38 +1,70 @@
+import { TokenBridgeMessage } from '@eth-optimism/sdk'
 import { bridgeableNetworks, hemi } from 'app/networks'
-import { useCallback, useReducer } from 'react'
+import { useCallback, useEffect, useReducer } from 'react'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
+import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { isNativeToken } from 'utils/token'
-import type { Address, Chain, Hash } from 'viem'
+import { Address, Chain, Hash, isHash } from 'viem'
 
 export type Operation = 'claim' | 'deposit' | 'prove' | 'withdraw'
 
 const getNativeToken = (chain: Chain['id']) =>
   tokenList.tokens.find(t => t.chainId === chain && isNativeToken(t))
 
-type ProveWithdrawalData = {
-  withdrawAmount: string
-  withdrawL1NetworkId: Chain['id']
-  withdrawSymbol: string
-  withdrawTxHash: Hash
+const validOperations: Operation[] = ['claim', 'deposit', 'prove', 'withdraw']
+
+function isValidOperation(value: string): value is Operation {
+  return validOperations.includes(value as Operation)
 }
 
+export const useTunnelOperation = function (): {
+  operation: Operation
+  txHash: Address | undefined
+} {
+  const { queryParams, removeQueryParams, setQueryParams } = useQueryParams()
+  const { operation, txHash } = queryParams
+
+  const isValid = isValidOperation(operation)
+  const isValidTxHash = isHash(txHash)
+
+  useEffect(
+    function updateDefaultParameters() {
+      if (!isValid) {
+        setQueryParams({ operation: 'deposit' })
+      }
+      if (!isValidTxHash && txHash) {
+        removeQueryParams('txHash')
+      }
+    },
+    [
+      isValid,
+      isValidTxHash,
+      queryParams,
+      removeQueryParams,
+      setQueryParams,
+      txHash,
+    ],
+  )
+
+  return {
+    operation: isValid ? operation : 'deposit',
+    txHash: isValidTxHash ? txHash : undefined,
+  }
+}
 type TunnelState = {
   extendedErc20Approval: boolean
   fromNetworkId: Chain['id']
   fromInput: string
   fromToken: Token
-  operation: Operation
   toNetworkId: Chain['id']
   toToken: Token
-} & (
-  | { operation: 'deposit' | 'withdraw' }
-  | (ProveWithdrawalData &
-      (
-        | { operation: 'prove' }
-        | ({ operation: 'claim' } & { proveWithdrawalTxHash: Hash })
-      ))
-)
+  partialWithdrawal?: Partial<
+    TokenBridgeMessage & {
+      proveWithdrawalTxHash: Hash
+    }
+  >
+}
 
 type Action<T extends string> = {
   type: T
@@ -41,6 +73,10 @@ type Action<T extends string> = {
 type NoPayload = { payload?: never }
 
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
+
+type SavePartialWithdrawal = Action<'savePartialWithdrawal'> & {
+  payload: TunnelState['partialWithdrawal']
+}
 
 type UpdateExtendedErc20Approval = Action<'updateExtendedErc20Approval'> &
   NoPayload
@@ -57,33 +93,17 @@ type UpdateFromInput = Action<'updateFromInput'> & {
 type UpdateToNetwork = Action<'updateToNetwork'> & {
   payload: Chain['id']
 }
-type UpdateToToken = Action<'updateToToken'> & {
-  payload: Token
-}
-type WaitForClaimAvailable = Action<'waitForClaimAvailable'> & {
-  payload: Hash
-}
-type WaitForWithdrawalPublished = Action<'waitForWithdrawalPublished'> & {
-  payload: {
-    withdrawAmount: string
-    withdrawL1NetworkId: Chain['id']
-    withdrawSymbol: string
-    withdrawTxHash: Address
-  }
-}
 
-type ToggleInputs = Action<'toggleInput'> & NoPayload
+type ToggleInput = Action<'toggleInput'> & NoPayload
 type Actions =
   | ResetStateAfterOperation
+  | SavePartialWithdrawal
   | UpdateExtendedErc20Approval
   | UpdateFromNetwork
   | UpdateFromInput
   | UpdateFromToken
   | UpdateToNetwork
-  | UpdateToToken
-  | ToggleInputs
-  | WaitForClaimAvailable
-  | WaitForWithdrawalPublished
+  | ToggleInput
 
 // the _:never is used to fail compilation if a case is missing
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -99,6 +119,15 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
         ...state,
         extendedErc20Approval: false,
         fromInput: '0',
+      }
+    }
+    case 'savePartialWithdrawal': {
+      return {
+        ...state,
+        partialWithdrawal: {
+          ...(state.partialWithdrawal || {}),
+          ...action.payload,
+        },
       }
     }
     case 'updateExtendedErc20Approval': {
@@ -157,13 +186,6 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
         toToken: getNativeToken(toNetworkId),
       }
     }
-    case 'updateToToken': {
-      const { payload: toToken } = action
-      return {
-        ...state,
-        toToken,
-      }
-    }
     case 'toggleInput': {
       const { toToken: newFromToken } = state
       const newState = {
@@ -176,45 +198,9 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
         toNetworkId: state.fromNetworkId,
         toToken: state.fromToken,
       }
-      if (newState.operation === 'claim' || newState.operation === 'prove') {
-        // clean extra fields that are not part of deposit
-        delete newState.withdrawL1NetworkId
-        delete newState.withdrawAmount
-        delete newState.withdrawSymbol
-        delete newState.withdrawTxHash
-      }
-      if (newState.operation === 'claim') {
-        delete newState.proveWithdrawalTxHash
-      }
-      newState.operation =
-        newState.operation === 'deposit' ? 'withdraw' : 'deposit'
+      delete newState.partialWithdrawal
+
       return newState
-    }
-    case 'waitForClaimAvailable': {
-      const proveWithdrawalTxHash = action.payload
-      // @ts-expect-error due actions defined, properties that TS think may be missing
-      // are already defined
-      return {
-        ...state,
-        operation: 'claim',
-        proveWithdrawalTxHash,
-      }
-    }
-    case 'waitForWithdrawalPublished': {
-      const {
-        withdrawAmount,
-        withdrawL1NetworkId,
-        withdrawSymbol,
-        withdrawTxHash,
-      } = action.payload
-      return {
-        ...state,
-        operation: 'prove',
-        withdrawAmount,
-        withdrawL1NetworkId,
-        withdrawSymbol,
-        withdrawTxHash,
-      }
     }
     default:
       // if a switch statement is missing on all possible actions
@@ -229,14 +215,26 @@ export const useTunnelState = function (): TunnelState & {
     payload?: Extract<Actions, { type: K }>['payload'],
   ) => void
 } {
+  const { setQueryParams, removeQueryParams } = useQueryParams()
+  const { operation } = useTunnelOperation()
+
+  const initial =
+    operation === 'deposit'
+      ? {
+          fromNetworkId: bridgeableNetworks[0].id,
+          toNetworkId: hemi.id,
+        }
+      : {
+          fromNetworkId: hemi.id,
+          toNetworkId: bridgeableNetworks[0].id,
+        }
+
   const [state, dispatch] = useReducer(reducer, {
     extendedErc20Approval: false,
     fromInput: '0',
-    fromNetworkId: bridgeableNetworks[0].id,
-    fromToken: getNativeToken(bridgeableNetworks[0].id),
-    operation: 'deposit',
-    toNetworkId: hemi.id,
-    toToken: getNativeToken(hemi.id),
+    fromToken: getNativeToken(initial.fromNetworkId),
+    toToken: getNativeToken(initial.toNetworkId),
+    ...initial,
   })
 
   const updateFromInput = useCallback(
@@ -260,9 +258,22 @@ export const useTunnelState = function (): TunnelState & {
       () => dispatch({ type: 'resetStateAfterOperation' }),
       [dispatch],
     ),
-    toggleInput: useCallback(
-      () => dispatch({ type: 'toggleInput' }),
+    savePartialWithdrawal: useCallback(
+      (payload: SavePartialWithdrawal['payload']) =>
+        dispatch({
+          payload,
+          type: 'savePartialWithdrawal',
+        }),
       [dispatch],
+    ),
+    toggleInput: useCallback(
+      function () {
+        const newOperation = operation === 'deposit' ? 'withdraw' : 'deposit'
+        removeQueryParams('txHash')
+        setQueryParams({ operation: newOperation })
+        dispatch({ type: 'toggleInput' })
+      },
+      [dispatch, operation, removeQueryParams, setQueryParams],
     ),
     updateExtendedErc20Approval: useCallback(
       () => dispatch({ type: 'updateExtendedErc20Approval' }),
@@ -282,21 +293,6 @@ export const useTunnelState = function (): TunnelState & {
     updateToNetwork: useCallback(
       (payload: UpdateToNetwork['payload']) =>
         dispatch({ payload, type: 'updateToNetwork' }),
-      [dispatch],
-    ),
-    updateToToken: useCallback(
-      (payload: UpdateToToken['payload']) =>
-        dispatch({ payload, type: 'updateToToken' }),
-      [dispatch],
-    ),
-    waitForClaimAvailable: useCallback(
-      (payload: WaitForClaimAvailable['payload']) =>
-        dispatch({ payload, type: 'waitForClaimAvailable' }),
-      [dispatch],
-    ),
-    waitForWithdrawalPublished: useCallback(
-      (payload: WaitForWithdrawalPublished['payload']) =>
-        dispatch({ payload, type: 'waitForWithdrawalPublished' }),
       [dispatch],
     ),
   }

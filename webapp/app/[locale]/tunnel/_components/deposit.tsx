@@ -79,7 +79,7 @@ const SubmitButton = function ({
 
 type Props = {
   renderForm: (isRunningOperation: boolean) => ReactNode
-  state: ReturnType<typeof useTunnelState> & { operation: 'deposit' }
+  state: ReturnType<typeof useTunnelState>
 }
 
 export const Deposit = function ({ renderForm, state }: Props) {
@@ -250,6 +250,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
       symbol: fromToken.symbol,
     }),
     isOperating: operationRunning === 'approving',
+    l1ChainId: fromNetworkId,
     operation: 'approve',
     receipt: approvalReceipt,
     receiptError: approvalReceiptError,
@@ -266,6 +267,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
       symbol: fromToken.symbol,
     }),
     isOperating: operationRunning === 'depositing',
+    l1ChainId: fromNetworkId,
     operation: 'deposit',
     receipt: depositReceipt,
     receiptError: depositReceiptError,

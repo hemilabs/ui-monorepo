@@ -64,7 +64,7 @@ export const Header = function () {
   const menuRef = useOnClickOutside<HTMLDivElement>(toggleMenu)
 
   return (
-    <header className="h-19 relative flex items-center justify-end pb-3 pt-1">
+    <header className="h-19 relative flex items-center justify-end pb-3">
       <div className="hidden md:flex">
         <WalletConnectButton />
       </div>

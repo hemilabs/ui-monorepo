@@ -117,7 +117,7 @@ export const TransactionStatus = function ({ status, text, txHash }: Props) {
   }
 
   return (
-    <Card>
+    <Card padding="medium">
       <div className="flex min-w-72 items-start gap-x-2">
         <div className="w-6">{icons[status]}</div>
         <div className="flex w-full flex-col gap-y-1">

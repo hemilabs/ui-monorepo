@@ -1,16 +1,21 @@
-'use client'
-
-import { iconFactory } from './iconFactory'
-
-const paths = [
-  {
-    d: 'M15.75 9C15.75 12.728 12.7279 15.75 8.99998 15.75C5.27208 15.75 2.25 12.728 2.25 9C2.25 5.27208 5.27208 2.25 8.99998 2.25C12.7279 2.25 15.75 5.27208 15.75 9Z',
-    stroke: true,
-  },
-  {
-    d: 'M11.1215 6.87891L7.50022 7.50023L6.87891 11.1215L10.5002 10.5002L11.1215 6.87891Z',
-    stroke: true,
-  },
-]
-
-export const ExplorerIcon = iconFactory(paths, 'EXPLORER')
+export const ExplorerIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    height="22"
+    viewBox="0 0 22 22"
+    width="22"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M15.75 9a6.75 6.75 0 1 1-13.5 0 6.75 6.75 0 0 1 13.5 0Z"
+      stroke="currentColor"
+      strokeWidth={1.5}
+    />
+    <path
+      d="m11.121 6.879-3.62.621-.622 3.621 3.621-.62.621-3.622Z"
+      stroke="currentColor"
+      strokeWidth={1.5}
+    />
+  </svg>
+)

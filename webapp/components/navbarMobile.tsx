@@ -49,10 +49,7 @@ export const NavbarMobile = function ({
                     <Text className="text-slate-200" size="16">
                       {subMenu.text}
                     </Text>
-                    <ArrowDownLeftIcon
-                      className="ml-2 text-slate-200"
-                      size="18"
-                    />
+                    <ArrowDownLeftIcon className="ml-2 text-slate-200" />
                   </div>
                 </NavRouterItem>
               ))
@@ -66,15 +63,12 @@ export const NavbarMobile = function ({
                   className="ml-2 flex w-full items-center p-1"
                   onClick={onClick}
                 >
-                  <Icon className="mr-1 text-slate-200" size="18" />
+                  <Icon className="mr-1 text-slate-200" />
                   <Text className="text-slate-200" size="16">
                     {t(id)}
                   </Text>
                   {isExternalLink(href) && (
-                    <ArrowDownLeftIcon
-                      className="ml-2 text-slate-200"
-                      size="18"
-                    />
+                    <ArrowDownLeftIcon className="ml-2 text-slate-200" />
                   )}
                 </div>
               </NavRouterItem>
@@ -95,22 +89,22 @@ export const NavbarMobile = function ({
           <div className="flex items-center">
             <div className="mr-3">
               <a href={twitterUrl} rel="noopener noreferrer" target="_blank">
-                <TwitterIcon className="text-slate-200" size="22" />
+                <TwitterIcon className="text-slate-200" />
               </a>
             </div>
             <div className="mr-3">
               <a href={discordUrl} rel="noopener noreferrer" target="_blank">
-                <DiscordIcon className="text-slate-200" size="22" />
+                <DiscordIcon className="text-slate-200" />
               </a>
             </div>
             <div className="mr-3">
               <a href={githubUrl} rel="noopener noreferrer" target="_blank">
-                <GithubIcon className="text-slate-200" size="22" />
+                <GithubIcon className="text-slate-200" />
               </a>
             </div>
             <div>
               <a href={linkedinUrl} rel="noopener noreferrer" target="_blank">
-                <LinkedinIcon className="text-slate-200" size="22" />
+                <LinkedinIcon className="text-slate-200" />
               </a>
             </div>
           </div>

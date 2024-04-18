@@ -35,34 +35,21 @@ export const NavItem = function ({
   const isExternalLink = url => url && !url.startsWith('/')
 
   const colorVariants = {
-    'slate-200': 'text-slate-200 group-hover:text-slate-500',
-    'slate-500': 'text-slate-500 group-hover:text-slate-500',
+    'slate-200':
+      'text-slate-200 group-hover:text-slate-500 transition-colors duration-300',
+    'slate-500':
+      'text-slate-500 group-hover:text-slate-500 transition-colors duration-300',
   }
 
   function renderRightIcon() {
     if (subMenus && !isSelected) {
-      return (
-        <ChevronBottomIcon
-          className={`${colorVariants[color]}`}
-          transitionColorDurationMs="250"
-        />
-      )
+      return <ChevronBottomIcon className={`${colorVariants[color]}`} />
     }
     if (subMenus && isSelected) {
-      return (
-        <ChevronUpIcon
-          className={`${colorVariants[color]}`}
-          transitionColorDurationMs="250"
-        />
-      )
+      return <ChevronUpIcon className={`${colorVariants[color]}`} />
     }
     if (isExternalLink(href)) {
-      return (
-        <ArrowDownLeftIcon
-          className={`${colorVariants[color]}`}
-          transitionColorDurationMs="250"
-        />
-      )
+      return <ArrowDownLeftIcon className={`${colorVariants[color]}`} />
     }
     return null
   }
@@ -81,12 +68,12 @@ export const NavItem = function ({
         >
           <div className="flex items-center">
             <IconLeft
-              className={`${
+              className={`transition-colors duration-300
+              ${
                 isSelected && !subMenus
                   ? 'text-orange-1'
                   : `${colorVariants[color]}`
               }`}
-              transitionColorDurationMs="250"
             />
             <div className="ml-2 select-none">
               <Text

@@ -24,7 +24,7 @@ export const Footer = () => (
     >
       <div className="flex select-none items-center">
         <div className="mr-1">
-          <SmallHemiIcon className="text-slate-200" size="22" />
+          <SmallHemiIcon className="text-slate-200" />
         </div>
         <Text className="text-slate-200" size="18">
           Hemi
@@ -33,22 +33,22 @@ export const Footer = () => (
       <div className="flex items-center">
         <div className="mr-3">
           <a href={twitterUrl} rel="noopener noreferrer" target="_blank">
-            <TwitterIcon className="text-slate-200" size="22" />
+            <TwitterIcon className="text-slate-200" />
           </a>
         </div>
         <div className="mr-3">
           <a href={discordUrl} rel="noopener noreferrer" target="_blank">
-            <DiscordIcon className="text-slate-200" size="22" />
+            <DiscordIcon className="text-slate-200" />
           </a>
         </div>
         <div className="mr-3">
           <a href={githubUrl} rel="noopener noreferrer" target="_blank">
-            <GithubIcon className="text-slate-200" size="22" />
+            <GithubIcon className="text-slate-200" />
           </a>
         </div>
         <div>
           <a href={linkedinUrl} rel="noopener noreferrer" target="_blank">
-            <LinkedinIcon className="text-slate-200" size="22" />
+            <LinkedinIcon className="text-slate-200" />
           </a>
         </div>
       </div>

@@ -1,14 +1,17 @@
-'use client'
-
-import { iconFactory } from './iconFactory'
-
-const paths = [
-  {
-    d: `M12.0001 16.8108L16.0608 12.7501L12.0001 8.68942L10.9394 9.75007L13.1894 12.0001H2.25011V13.5001H13.1894L10.9394
-   15.7501L12.0001 16.8108ZM7.06077 8.25007L4.81077 6.00011H15.7501V4.50011H4.81077L7.06077 2.25011L6.00011
-    1.18945L1.93945 5.25011L6.00011 9.3108L7.06077 8.25007Z`,
-    fill: true,
-  },
-]
-
-export const DexIcon = iconFactory(paths, 'DEX')
+export const DexIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    height="22"
+    viewBox="0 0 22 22"
+    width="22"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      clipRule="evenodd"
+      d="m11 15.81 4.06-4.06L11 7.69 9.94 8.75 12.19 11H1.25v1.5h10.94l-2.25 2.25L11 15.81ZM6.06 7.25 3.81 5h10.94V3.5H3.81l2.25-2.25L5 .19.94 4.25 5 8.31l1.06-1.06Z"
+      fill="currentColor"
+      fillRule="evenodd"
+    />
+  </svg>
+)

@@ -1,15 +1,18 @@
-'use client'
-
-import { iconFactory } from './iconFactory'
-
-const paths = [
-  {
-    d: `M9 4.25H3C2.58579 4.25 2.25 4.58579 2.25 5V14C2.25 14.4142 2.58579 14.75 3 14.75H9M12 4.25H15C15.4142 4.25 
-  15.75 4.58579 15.75 5V14C15.75 14.4142 15.4142 14.75 15 14.75H12M12 4.25V2.375M12 4.25V14.75M12 14.75V16.625M6 
-  7.625L7.875 9.5L6 11.375`,
-    fill: false,
-    stroke: true,
-  },
-]
-
-export const CodeInsertIcon = iconFactory(paths, 'CODE_INSERT')
+export const CodeInsertIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    fill="none"
+    height="22"
+    viewBox="0 0 22 22"
+    width="22"
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M9 4.25H3a.75.75 0 0 0-.75.75v9c0 .414.336.75.75.75h6m3-10.5h3a.75.75 0 0 1 .75.75v9a.75.75 0 0 1-.75.75h-3m0-10.5V2.375m0 1.875v10.5m0 0v1.875m-6-9L7.875 9.5 6 11.375"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+    />
+  </svg>
+)

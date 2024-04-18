@@ -66,7 +66,15 @@
       "rejected": "Tx rechazada"
     },
     "tunnel": "Túnel",
-    "wrong-network": "Red Incorrecta"
+    "wrong-network": "Red Incorrecta",
+    "explorer": "Explorador",
+    "tutorials": "Tutoriales",
+    "tools": "Herramientas",
+    "dex": "DEX",
+    "bitcoinhkit": "hKit de Bitcoin",
+    "networkstatus": "Estado de la red",
+    "hemidocs": "Documentacion de Hemi",
+    "get-started": "Comenzar"
   },
   "get-started": {
     "header": {

@@ -66,7 +66,15 @@
       "rejected": "Tx rejected"
     },
     "tunnel": "Tunnel",
-    "wrong-network": "Wrong Network"
+    "wrong-network": "Wrong Network",
+    "explorer": "Explorer",
+    "tutorials": "Tutorials",
+    "tools": "Tools",
+    "dex": "DEX",
+    "bitcoinhkit": "Bitcoin hKit",
+    "networkstatus": "Network Status",
+    "hemidocs": "Hemi Docs",
+    "get-started": "Get Started"
   },
   "get-started": {
     "header": {

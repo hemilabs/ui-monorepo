@@ -4,13 +4,15 @@ import 'react-loading-skeleton/dist/skeleton.css'
 
 import { locales, type Locale } from 'app/i18n'
 import { networks } from 'app/networks'
-import { Header } from 'components/header'
+import { AppScreen } from 'components/appScreen'
 import { RecaptchaContext } from 'components/recaptcha'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 import { WalletContext } from 'ui-common/components/walletContext'
 
 import { inter } from '../fonts'
+
+import { Navbar } from './navbar'
 
 async function getMessages(locale: Locale) {
   try {
@@ -35,12 +37,18 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`flex h-dvh flex-col bg-neutral-100 ${inter.className}`}>
+      <body className={`flex h-dvh flex-col bg-white ${inter.className}`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <RecaptchaContext>
             <WalletContext locale={locale} networks={networks}>
-              <Header />
-              {children}
+              <div className="flex flex-col">
+                <div className="flex items-start">
+                  <div className="hidden md:block">
+                    <Navbar />
+                  </div>
+                  <AppScreen>{children}</AppScreen>
+                </div>
+              </div>
             </WalletContext>
           </RecaptchaContext>
         </NextIntlClientProvider>

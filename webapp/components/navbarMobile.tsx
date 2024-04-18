@@ -31,85 +31,83 @@ export const NavbarMobile = function ({
   const isExternalLink = url => url && !url.startsWith('/')
 
   return (
-    <>
-      <div className="flex items-end">
-        <div className="flex flex-col items-start">
-          {navItems.map(({ id, href, subMenus, icon: Icon }) =>
-            subMenus ? (
-              subMenus.map(subMenu => (
-                <NavRouterItem
-                  href={subMenu.href}
-                  isExternal={isExternalLink(subMenu.href)}
-                  key={subMenu.id}
-                >
-                  <div
-                    className="ml-2 flex w-full items-center p-1"
-                    onClick={onClick}
-                  >
-                    <Text className="text-slate-200" size="16">
-                      {subMenu.text}
-                    </Text>
-                    <ArrowDownLeftIcon className="ml-2 text-slate-200" />
-                  </div>
-                </NavRouterItem>
-              ))
-            ) : (
+    <div className="flex items-end">
+      <div className="flex flex-col items-start">
+        {navItems.map(({ id, href, subMenus, icon: Icon }) =>
+          subMenus ? (
+            subMenus.map(subMenu => (
               <NavRouterItem
-                href={href}
-                isExternal={isExternalLink(href)}
-                key={id}
+                href={subMenu.href}
+                isExternal={isExternalLink(subMenu.href)}
+                key={subMenu.id}
               >
                 <div
                   className="ml-2 flex w-full items-center p-1"
                   onClick={onClick}
                 >
-                  <Icon className="mr-1 text-slate-200" />
                   <Text className="text-slate-200" size="16">
-                    {t(id)}
+                    {subMenu.text}
                   </Text>
-                  {isExternalLink(href) && (
-                    <ArrowDownLeftIcon className="ml-2 text-slate-200" />
-                  )}
+                  <ArrowDownLeftIcon className="ml-2 text-slate-200" />
                 </div>
               </NavRouterItem>
-            ),
-          )}
-          <NavRouterItem href="/get-started" isExternal={false}>
-            <div
-              className="ml-2 flex w-full justify-center rounded-lg border border-slate-200 p-1"
-              onClick={onClick}
+            ))
+          ) : (
+            <NavRouterItem
+              href={href}
+              isExternal={isExternalLink(href)}
+              key={id}
             >
-              <Text className="text-orange-1 mr-1" size="16">
-                {t('get-started')}
-              </Text>
-            </div>
-          </NavRouterItem>
-        </div>
-        <div className="ml-8 flex justify-end p-1" onClick={onClick}>
-          <div className="flex items-center">
-            <div className="mr-3">
-              <a href={twitterUrl} rel="noopener noreferrer" target="_blank">
-                <TwitterIcon className="text-slate-200" />
-              </a>
-            </div>
-            <div className="mr-3">
-              <a href={discordUrl} rel="noopener noreferrer" target="_blank">
-                <DiscordIcon className="text-slate-200" />
-              </a>
-            </div>
-            <div className="mr-3">
-              <a href={githubUrl} rel="noopener noreferrer" target="_blank">
-                <GithubIcon className="text-slate-200" />
-              </a>
-            </div>
-            <div>
-              <a href={linkedinUrl} rel="noopener noreferrer" target="_blank">
-                <LinkedinIcon className="text-slate-200" />
-              </a>
-            </div>
+              <div
+                className="ml-2 flex w-full items-center p-1"
+                onClick={onClick}
+              >
+                <Icon className="mr-1 text-slate-200" />
+                <Text className="text-slate-200" size="16">
+                  {t(id)}
+                </Text>
+                {isExternalLink(href) && (
+                  <ArrowDownLeftIcon className="ml-2 text-slate-200" />
+                )}
+              </div>
+            </NavRouterItem>
+          ),
+        )}
+        <NavRouterItem href="/get-started" isExternal={false}>
+          <div
+            className="ml-2 flex w-full justify-center rounded-lg border border-slate-200 p-1"
+            onClick={onClick}
+          >
+            <Text className="text-orange-1 mr-1" size="16">
+              {t('get-started')}
+            </Text>
+          </div>
+        </NavRouterItem>
+      </div>
+      <div className="ml-8 flex justify-end p-1" onClick={onClick}>
+        <div className="flex items-center">
+          <div className="mr-3">
+            <a href={twitterUrl} rel="noopener noreferrer" target="_blank">
+              <TwitterIcon className="text-slate-200" />
+            </a>
+          </div>
+          <div className="mr-3">
+            <a href={discordUrl} rel="noopener noreferrer" target="_blank">
+              <DiscordIcon className="text-slate-200" />
+            </a>
+          </div>
+          <div className="mr-3">
+            <a href={githubUrl} rel="noopener noreferrer" target="_blank">
+              <GithubIcon className="text-slate-200" />
+            </a>
+          </div>
+          <div>
+            <a href={linkedinUrl} rel="noopener noreferrer" target="_blank">
+              <LinkedinIcon className="text-slate-200" />
+            </a>
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }

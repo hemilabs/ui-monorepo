@@ -32,27 +32,25 @@ export const NavItems = function ({
   const t = useTranslations('common') as unknown as (key: string) => string
 
   return (
-    <>
-      <div className="flex flex-col justify-center gap-3">
-        {navItems.map(({ id, icon: Icon, href, subMenus }) => (
-          <NavItem
-            IconLeft={Icon}
-            color={href === selectedItem ? colorSelected : color}
-            href={href}
-            isSelected={
-              href === selectedItem || (subMenus && selectedItem === id)
+    <div className="flex flex-col justify-center gap-3">
+      {navItems.map(({ id, icon: Icon, href, subMenus }) => (
+        <NavItem
+          IconLeft={Icon}
+          color={href === selectedItem ? colorSelected : color}
+          href={href}
+          isSelected={
+            href === selectedItem || (subMenus && selectedItem === id)
+          }
+          key={id}
+          onClick={function () {
+            if (isSelectable) {
+              onItemClick(subMenus ? id : '')
             }
-            key={id}
-            onClick={function () {
-              if (isSelectable) {
-                onItemClick(subMenus ? id : '')
-              }
-            }}
-            subMenus={subMenus}
-            text={t(id)}
-          />
-        ))}
-      </div>
-    </>
+          }}
+          subMenus={subMenus}
+          text={t(id)}
+        />
+      ))}
+    </div>
   )
 }

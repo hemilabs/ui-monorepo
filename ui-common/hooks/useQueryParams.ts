@@ -3,6 +3,21 @@
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useMemo } from 'react'
 
+const updateRoute = function ({
+  pathname,
+  router,
+  urlSearchParams,
+}: {
+  pathname: string
+  router: ReturnType<typeof useRouter>
+  urlSearchParams: URLSearchParams
+}) {
+  const search = urlSearchParams.toString()
+  const query = search.length > 0 ? `?${search}` : ''
+
+  router.push(`${pathname}${query}`)
+}
+
 export const useQueryParams = function <T = Record<string, string>>() {
   const router = useRouter()
   const pathname = usePathname()
@@ -20,10 +35,11 @@ export const useQueryParams = function <T = Record<string, string>>() {
         urlSearchParams.set(key, String(value))
       })
 
-      const search = urlSearchParams.toString()
-      const query = search.length > 0 ? `?${search}` : ''
-
-      router.push(`${pathname}${query}`)
+      updateRoute({
+        pathname,
+        router,
+        urlSearchParams,
+      })
     },
     [pathname, router, urlSearchParams],
   )
@@ -31,16 +47,17 @@ export const useQueryParams = function <T = Record<string, string>>() {
   const removeQueryParams = useCallback(
     function (toRemove: string[] | string) {
       const newSearchParams = new URLSearchParams()
-      const keysToRemove = [].concat(toRemove)
+      const keysToRemove = Array.isArray(toRemove) ? toRemove : [toRemove]
       Array.from(urlSearchParams.entries()).forEach(function ([key, value]) {
         if (!keysToRemove.includes(key)) {
           newSearchParams.set(key, value)
         }
       })
-      const search = newSearchParams.toString()
-      const query = search.length > 0 ? `?${search}` : ''
-
-      router.push(`${pathname}${query}`)
+      updateRoute({
+        pathname,
+        router,
+        urlSearchParams: newSearchParams,
+      })
     },
     [pathname, router, urlSearchParams],
   )

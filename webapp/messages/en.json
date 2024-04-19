@@ -54,6 +54,7 @@
   },
   "common": {
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
+    "connect-to-network": "Connect to {network}",
     "connect-wallet": "Connect Wallet",
     "erc20-approve-10x-deposits": "Approve 10x the amount of this deposit",
     "erc20-approve-10x-detailed-description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
@@ -61,7 +62,6 @@
     "network-gas-fee": "{network} gas fee",
     "select-network": "Select Network",
     "swap": "Swap",
-    "switch-to-network": "Switch to {network}",
     "total": "Total",
     "transaction-status": {
       "confirmed": "Tx confirmed",

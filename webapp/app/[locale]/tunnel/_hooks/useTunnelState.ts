@@ -30,7 +30,7 @@ export const useTunnelOperation = function (): {
 
   useEffect(
     function updateDefaultParameters() {
-      if (!isValid) {
+      if (!isValid && !txHash) {
         setQueryParams({ operation: 'deposit' })
       }
       if (!isValidTxHash && txHash) {
@@ -48,7 +48,7 @@ export const useTunnelOperation = function (): {
   )
 
   return {
-    operation: isValid ? operation : 'deposit',
+    operation: isValid ? operation : undefined,
     txHash: isValidTxHash ? txHash : undefined,
   }
 }
@@ -219,7 +219,7 @@ export const useTunnelState = function (): TunnelState & {
   const { operation } = useTunnelOperation()
 
   const initial =
-    operation === 'deposit'
+    !operation || operation === 'deposit'
       ? {
           fromNetworkId: bridgeableNetworks[0].id,
           toNetworkId: hemi.id,

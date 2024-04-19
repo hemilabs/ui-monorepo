@@ -285,6 +285,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
 
   return (
     <TunnelForm
+      expectedChainId={fromNetworkId}
       formContent={renderForm(isRunningOperation)}
       gas={{
         amount: formatNumber(

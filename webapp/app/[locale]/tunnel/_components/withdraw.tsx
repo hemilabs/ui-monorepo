@@ -190,6 +190,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   return (
     <>
       <TunnelForm
+        expectedChainId={fromNetworkId}
         formContent={renderForm(isWithdrawing)}
         gas={gas}
         onSubmit={handleWithdraw}

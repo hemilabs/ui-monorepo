@@ -4,11 +4,19 @@ import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import { Token } from 'types/token'
 import { Card } from 'ui-common/components/card'
-import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { formatUnits, isHash, parseUnits } from 'viem'
+import { Chain, formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
+
+import { useTunnelOperation } from '../_hooks/useTunnelState'
+
+const SwitchToNetwork = dynamic(
+  () => import('components/switchToNetwork').then(mod => mod.SwitchToNetwork),
+  {
+    ssr: false,
+  },
+)
 
 const TransactionStatus = dynamic(
   () =>
@@ -76,6 +84,7 @@ export const getTotal = ({
   )
 
 type Props = {
+  expectedChainId: Chain['id']
   formContent: ReactNode
   gas: {
     amount: string
@@ -96,6 +105,7 @@ type Props = {
 }
 
 export const TunnelForm = function ({
+  expectedChainId,
   formContent,
   gas,
   onSubmit,
@@ -107,12 +117,9 @@ export const TunnelForm = function ({
 }: Props) {
   const t = useTranslations('common')
   const { isConnected } = useAccount()
-  const { queryParams } = useQueryParams()
-  if (
-    !isConnected &&
-    queryParams.operation === 'withdraw' &&
-    isHash(queryParams.txHash)
-  ) {
+  const { operation } = useTunnelOperation()
+
+  if (!operation || (!isConnected && operation === 'withdraw')) {
     // Ensure wallet is connected https://github.com/BVM-priv/ui-monorepo/issues/new
     return <span>...</span>
   }
@@ -120,7 +127,10 @@ export const TunnelForm = function ({
     <div className="mx-auto flex w-full flex-col items-center gap-y-4 pt-2 lg:grid lg:grid-cols-[1fr_1fr_400px_1fr_1fr] lg:items-start lg:gap-x-4">
       {/* empty column for grid flow in large screens, do not remove */}
       <div className="hidden lg:col-span-2 lg:block" />
-      <div className="mx-auto w-full md:w-96">
+      <div className="mx-auto flex w-full flex-col gap-y-2 md:w-96">
+        {['deposit', 'withdraw'].includes(operation) && (
+          <SwitchToNetwork selectedNetwork={expectedChainId} />
+        )}
         <Card borderColor="gray" radius="large">
           <form
             className="flex flex-col gap-y-3 text-zinc-800"

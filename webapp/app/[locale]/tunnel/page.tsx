@@ -7,7 +7,7 @@ import { bridgeableNetworks, hemi, networks } from 'app/networks'
 import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
@@ -52,12 +52,6 @@ const SetMaxBalance = dynamic(
   },
 )
 
-const SwitchToNetwork = dynamic(
-  () => import('components/switchToNetwork').then(mod => mod.SwitchToNetwork),
-  {
-    ssr: false,
-  },
-)
 type Props = {
   tunnelState: ReturnType<typeof useTunnelState>
   isRunningOperation: boolean
@@ -93,7 +87,6 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
     toggleInput,
     toToken,
   } = tunnelState
-  const { operation } = useTunnelOperation()
 
   const t = useTranslations('tunnel-page')
 
@@ -106,9 +99,6 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
         </h3>
       </div>
       <h4 className="text-sm font-normal text-slate-500">{t('subtitle')}</h4>
-      {['deposit', 'withdraw'].includes(operation) && (
-        <SwitchToNetwork selectedNetwork={fromNetworkId} />
-      )}
       <div className="flex w-full items-center justify-between text-sm">
         <span>{t('form.from-network')}</span>
         <NetworkSelector
@@ -206,7 +196,7 @@ const OperationByMessageStatus = {
   [MessageStatus.RELAYED]: 'claim',
 }
 
-export default function Tunnel() {
+const Tunnel = function () {
   const tunnelState = useTunnelState()
   const { operation, txHash } = useTunnelOperation()
   const { setQueryParams } = useQueryParams()
@@ -218,7 +208,11 @@ export default function Tunnel() {
 
   useEffect(
     function updateWithdrawOperationComponentPerMessageStatus() {
-      if (!operation || operation === 'deposit' || !messageStatus) {
+      if (
+        operation === 'deposit' ||
+        !messageStatus ||
+        (!operation && !txHash)
+      ) {
         return
       }
       const newOperation = OperationByMessageStatus[messageStatus]
@@ -226,7 +220,7 @@ export default function Tunnel() {
         setQueryParams({ operation: newOperation })
       }
     },
-    [messageStatus, operation, setQueryParams],
+    [messageStatus, operation, setQueryParams, txHash],
   )
 
   const stateLoaded = !txHash || messageStatus !== undefined
@@ -234,7 +228,7 @@ export default function Tunnel() {
 
   return (
     <div className="h-fit-rest-screen">
-      {stateLoaded && (
+      {stateLoaded && OperationComponent && (
         <OperationComponent
           renderForm={isRunningOperation => (
             <FormContent
@@ -248,5 +242,13 @@ export default function Tunnel() {
       {/* Add better loading indicator https://github.com/BVM-priv/ui-monorepo/issues/157 */}
       {!stateLoaded && <span>...</span>}
     </div>
+  )
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <Tunnel />
+    </Suspense>
   )
 }

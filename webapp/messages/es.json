@@ -55,13 +55,13 @@
   "common": {
     "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
     "connect-wallet": "Conectar Billetera",
+    "connect-to-network": "Conectarse a {network}",
     "erc20-approve-10x-deposits": "Aprobar 10x el monto de este depósito",
     "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
     "erc20-extra-approval": "Aprobar 10x este depósito",
     "network-gas-fee": "Tarifa de gas de {network}",
     "select-network": "Seleccione Red",
     "swap": "Intercambiar",
-    "switch-to-network": "Cambiar a {network}",
     "total": "Total",
     "transaction-status": {
       "confirmed": "Tx confirmada",

@@ -23,7 +23,7 @@ const ArrowIcon = () => (
 )
 
 const InfoBoxCard = ({ text, title }: { text: string; title: string }) => (
-  <Card borderColor="gray" shadow="soft">
+  <Card borderColor="gray" padding="small" shadow="soft">
     <div className="flex flex-col">
       <div className="just flex flex-row items-start justify-between">
         <h5 className="my-1 h-fit text-sm font-medium leading-4">{title}</h5>

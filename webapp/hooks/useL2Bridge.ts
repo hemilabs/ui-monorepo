@@ -1,13 +1,19 @@
 import {
+  MessageReceipt,
   MessageStatus,
   type CrossChainMessenger as CrossChainMessengerType,
   type SignerOrProviderLike,
 } from '@eth-optimism/sdk'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import {
+  UseMutationOptions,
+  useMutation,
+  useQuery,
+} from '@tanstack/react-query'
 import { hemi } from 'app/networks'
 import { useJsonRpcProvider, useWeb3Provider } from 'hooks/useEthersSigner'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { Token } from 'types/token'
+import { ZeroAddress } from 'utils/token'
 import { type Address, type Chain, type Hash, isHash } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -15,18 +21,17 @@ import { useEstimateFees } from './useEstimateFees'
 
 const sdkPromise = import('@eth-optimism/sdk')
 
-const zeroAddr = '0x'.padEnd(42, '0') as Address
 const l1Contracts = {
   AddressManager: process.env.NEXT_PUBLIC_ADDRESS_MANAGER as Address,
-  BondManager: zeroAddr,
-  CanonicalTransactionChain: zeroAddr,
+  BondManager: ZeroAddress,
+  CanonicalTransactionChain: ZeroAddress,
   L1CrossDomainMessenger: process.env
     .NEXT_PUBLIC_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER as Address,
   L1StandardBridge: process.env
     .NEXT_PUBLIC_PROXY_OVM_L1_STANDARD_BRIDGE as Address,
   L2OutputOracle: process.env.NEXT_PUBLIC_L2_OUTPUT_ORACLE_PROXY as Address,
   OptimismPortal: process.env.NEXT_PUBLIC_OPTIMISM_PORTAL_PROXY as Address,
-  StateCommitmentChain: zeroAddr,
+  StateCommitmentChain: ZeroAddress,
 }
 
 async function getCrossChainMessenger({
@@ -140,7 +145,6 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
       return estimate.toBigInt()
     },
     queryKey: [
-      crossChainMessengerStatus,
       operation,
       ...Object.keys(crossChainMessenger?.estimateGas ?? {}),
       ...args,
@@ -232,13 +236,7 @@ export const useGetDepositsByAddress = function (l1ChainId: Chain['id']) {
     // ensure correct chain was used
     enabled: crossChainMessengerStatus === 'success',
     queryFn: () => crossChainMessenger.getDepositsByAddress(address),
-    queryKey: [
-      address,
-      chainId,
-      crossChainMessengerStatus,
-      l1ChainId,
-      'deposit',
-    ],
+    queryKey: [address, chainId, l1ChainId, 'deposit'],
   })
 
   return {
@@ -247,22 +245,15 @@ export const useGetDepositsByAddress = function (l1ChainId: Chain['id']) {
   }
 }
 
-export const useGetWithdrawalsByAddress = function (l1ChainId: Chain['id']) {
+export const useGetWithdrawalsByAddress = function () {
   const { address, chainId } = useAccount()
   const { crossChainMessenger, crossChainMessengerStatus } =
-    useConnectedChainCrossChainMessenger(l1ChainId)
-
+    useConnectedChainCrossChainMessenger(chainId)
   const { data: withdrawals, ...rest } = useQuery({
     // ensure correct chain was used
     enabled: crossChainMessengerStatus === 'success',
     queryFn: () => crossChainMessenger.getWithdrawalsByAddress(address),
-    queryKey: [
-      address,
-      chainId,
-      crossChainMessengerStatus,
-      l1ChainId,
-      'withdrawals',
-    ],
+    queryKey: [address, chainId, 'withdrawals'],
   })
 
   return {
@@ -286,19 +277,17 @@ const useGetTransactionMessageStatus = function ({
   refetchUntilStatus,
   transactionHash,
 }: UseGetTransactionMessageStatus) {
-  const { data: messageStatus } = useQuery({
+  const { data: messageStatus, isLoading } = useQuery({
     // ensure correct chain was used
-    enabled: crossChainMessengerStatus === 'success' && l1ChainId !== hemi.id,
+    enabled:
+      crossChainMessengerStatus === 'success' &&
+      l1ChainId !== hemi.id &&
+      !!transactionHash,
     queryFn: () => crossChainMessenger.getMessageStatus(transactionHash),
-    queryKey: [
-      crossChainMessengerStatus,
-      l1ChainId,
-      refetchUntilStatus,
-      transactionHash,
-    ],
+    queryKey: [l1ChainId, transactionHash, 'getMessageStatus'],
     refetchInterval(query) {
       // if message status is ready to prove, or no refetch was requested, stop polling
-      if (!refetchUntilStatus || query.state.data === refetchUntilStatus) {
+      if (query.state.data === refetchUntilStatus) {
         return false
       }
       // poll every 15 seconds
@@ -307,7 +296,10 @@ const useGetTransactionMessageStatus = function ({
     refetchIntervalInBackground: true,
   })
 
-  return messageStatus
+  return {
+    isLoadingMessageStatus: isLoading,
+    messageStatus,
+  }
 }
 
 /**
@@ -316,7 +308,7 @@ const useGetTransactionMessageStatus = function ({
  */
 export const useAnyChainGetTransactionMessageStatus = function ({
   l1ChainId,
-  transactionHash,
+  ...options
 }: Omit<
   UseGetTransactionMessageStatus,
   'crossChainMessenger' | 'crossChainMessengerStatus'
@@ -327,7 +319,7 @@ export const useAnyChainGetTransactionMessageStatus = function ({
     crossChainMessenger,
     crossChainMessengerStatus,
     l1ChainId,
-    transactionHash,
+    ...options,
   })
 }
 
@@ -339,23 +331,19 @@ export const useL1GetTransactionMessageStatus = function ({
   l1ChainId,
   refetchUntilStatus,
   transactionHash,
-}: Required<
-  Omit<
-    UseGetTransactionMessageStatus,
-    'crossChainMessenger' | 'crossChainMessengerStatus'
-  >
+}: Omit<
+  UseGetTransactionMessageStatus,
+  'crossChainMessenger' | 'crossChainMessengerStatus'
 >) {
   const { crossChainMessenger, crossChainMessengerStatus } =
     useL1ToL2CrossChainMessenger(l1ChainId)
-  return (
-    useGetTransactionMessageStatus({
-      crossChainMessenger,
-      crossChainMessengerStatus,
-      l1ChainId,
-      refetchUntilStatus,
-      transactionHash,
-    }) ?? MessageStatus.STATE_ROOT_NOT_PUBLISHED
-  )
+  return useGetTransactionMessageStatus({
+    crossChainMessenger,
+    crossChainMessengerStatus,
+    l1ChainId,
+    refetchUntilStatus,
+    transactionHash,
+  })
 }
 
 type UseDepositErc20Token = {
@@ -375,7 +363,7 @@ export const useDepositErc20Token = function ({
     useL1ToL2CrossChainMessenger(l1ChainId)
 
   const l1BridgeAddress = token.address
-  const l2BridgeAddress = token.extensions?.bridgeInfo[hemi.id].tokenAddress
+  const l2BridgeAddress = token.extensions?.bridgeInfo[hemi.id]?.tokenAddress
 
   const depositErc20TokenGasFees = useEstimateGasFees({
     args: [l1BridgeAddress, l2BridgeAddress, toDeposit],
@@ -490,11 +478,13 @@ type UseWithdrawNativeToken = {
   amount: string
   enabled: boolean
   l1ChainId: Chain['id']
-}
+} & Pick<UseMutationOptions<Hash, Error, string>, 'onSettled' | 'onSuccess'>
+
 export const useWithdrawNativeToken = function ({
   amount,
   enabled,
   l1ChainId,
+  ...options
 }: UseWithdrawNativeToken) {
   const operation = 'withdrawETH'
   const { address, isConnected } = useAccount()
@@ -519,7 +509,6 @@ export const useWithdrawNativeToken = function ({
   const withdrawNativeTokenMutationKey = [operation]
 
   const {
-    data: withdrawTxHash,
     error: withdrawNativeTokenError,
     mutate: withdrawNativeToken,
     reset: resetWithdrawNativeToken,
@@ -529,6 +518,7 @@ export const useWithdrawNativeToken = function ({
       return response.hash as Hash
     },
     mutationKey: withdrawNativeTokenMutationKey,
+    ...options,
   })
 
   return {
@@ -537,20 +527,20 @@ export const useWithdrawNativeToken = function ({
     withdrawNativeTokenError,
     withdrawNativeTokenGasFees,
     withdrawNativeTokenMutationKey,
-    withdrawTxHash,
   }
 }
 
 type UseFinalizeMessage = {
   enabled: boolean
   l1ChainId: Chain['id']
-  withdrawTxHash: Address
-}
+  withdrawTxHash: Hash
+} & Pick<UseMutationOptions<Hash, Error, string>, 'onSettled' | 'onSuccess'>
 
 export const useFinalizeMessage = function ({
   enabled,
   l1ChainId,
   withdrawTxHash,
+  ...options
 }: UseFinalizeMessage) {
   const operation = 'finalizeMessage'
   const { crossChainMessenger, crossChainMessengerStatus } =
@@ -578,6 +568,7 @@ export const useFinalizeMessage = function ({
       return response.hash as Hash
     },
     mutationKey: finalizeWithdrawalMutationKey,
+    ...options,
   })
 
   return {
@@ -622,7 +613,7 @@ export const useProveMessage = function ({
     mutate: proveWithdrawal,
     reset: resetProveWithdrawal,
   } = useMutation({
-    async mutationFn(toProve: Address) {
+    async mutationFn(toProve: Hash) {
       const response = await crossChainMessenger.proveMessage(toProve)
       return response.hash as Hash
     },
@@ -644,12 +635,13 @@ type UseWithdrawToken = {
   enabled: boolean
   l1ChainId: Chain['id']
   token: Token
-}
+} & Pick<UseMutationOptions<Hash, Error, string>, 'onSettled' | 'onSuccess'>
 export const useWithdrawToken = function ({
   amount,
   enabled,
   l1ChainId,
   token,
+  ...options
 }: UseWithdrawToken) {
   const operation = 'withdrawERC20'
   const { crossChainMessenger, crossChainMessengerStatus } =
@@ -674,7 +666,6 @@ export const useWithdrawToken = function ({
   const withdrawErc20TokenMutationKey = [operation]
 
   const {
-    data: withdrawErc20TokenTxHash,
     error: withdrawErc20TokenError,
     mutate: withdrawErc20Token,
     reset: resetWithdrawErc20Token,
@@ -688,6 +679,7 @@ export const useWithdrawToken = function ({
       return response.hash as Hash
     },
     mutationKey: withdrawErc20TokenMutationKey,
+    ...options,
   })
 
   return {
@@ -696,6 +688,34 @@ export const useWithdrawToken = function ({
     withdrawErc20TokenError,
     withdrawErc20TokenGasFees,
     withdrawErc20TokenMutationKey,
-    withdrawErc20TokenTxHash,
+  }
+}
+/**
+ **Returns the Claim TX hash on the L1 or undefined if the withdrawal is not finalized
+ */
+export const useGetClaimWithdrawalTxHash = function (
+  l1ChainId: Chain['id'],
+  withdrawalTxHash: Hash,
+) {
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useConnectedChainCrossChainMessenger(l1ChainId)
+
+  const { data: receipt, ...rest } = useQuery<
+    Partial<Pick<MessageReceipt['transactionReceipt'], 'transactionHash'>>
+  >({
+    enabled: crossChainMessengerStatus === 'success' && l1ChainId !== hemi.id,
+    // return undefined for withdrawals not claimed yet
+    queryFn: () =>
+      crossChainMessenger
+        .getMessageReceipt(withdrawalTxHash)
+        // react-query doesn't allow saving undefined values in its cache
+        // so we must return an object...
+        .catch(() => ({ transactionReceipt: { transactionHash: undefined } }))
+        .then(({ transactionReceipt }) => transactionReceipt),
+    queryKey: [l1ChainId, withdrawalTxHash, 'getMessageReceipt'],
+  })
+  return {
+    claimTxHash: receipt?.transactionHash as Hash | undefined,
+    ...rest,
   }
 }

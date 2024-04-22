@@ -1,11 +1,15 @@
+import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { useWithdrawNativeToken, useWithdrawToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
 import { useCallback } from 'react'
 import { Token } from 'types/token'
+import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { isNativeToken } from 'utils/token'
-import { type Chain, parseUnits } from 'viem'
+import { type Chain, parseUnits, Hash } from 'viem'
 import { useWaitForTransactionReceipt } from 'wagmi'
+
+import { useTunnelOperation } from './useTunnelState'
 
 type UseWithdraw = {
   canWithdraw: boolean
@@ -23,8 +27,26 @@ export const useWithdraw = function ({
 }: UseWithdraw) {
   const queryClient = useQueryClient()
   const withdrawingNative = isNativeToken(fromToken)
+  const { txHash } = useTunnelOperation()
+  const { setQueryParams } = useQueryParams()
 
   const toWithdraw = parseUnits(fromInput, fromToken.decimals).toString()
+
+  const onSettled = (hash: Hash) =>
+    // revalidate message status
+    queryClient.invalidateQueries({
+      queryKey: [l1ChainId, hash, 'getMessageStatus'],
+    })
+
+  const onSuccess = function (hash: Hash) {
+    // add hash to query string
+    setQueryParams({ txHash: hash })
+    // optimistically add the message status to the cache
+    queryClient.setQueryData(
+      [l1ChainId, hash, 'getMessageStatus'],
+      MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
+    )
+  }
 
   const {
     resetWithdrawNativeToken,
@@ -32,11 +54,12 @@ export const useWithdraw = function ({
     withdrawNativeToken,
     withdrawNativeTokenError,
     withdrawNativeTokenGasFees,
-    withdrawTxHash,
   } = useWithdrawNativeToken({
     amount: toWithdraw,
     enabled: withdrawingNative && canWithdraw,
     l1ChainId,
+    onSettled,
+    onSuccess,
   })
 
   const {
@@ -45,11 +68,12 @@ export const useWithdraw = function ({
     withdrawErc20TokenGasFees,
     withdrawErc20TokenMutationKey,
     withdrawErc20Token,
-    withdrawErc20TokenTxHash,
   } = useWithdrawToken({
     amount: toWithdraw,
     enabled: !withdrawingNative && canWithdraw,
     l1ChainId,
+    onSettled,
+    onSuccess,
     token: fromToken,
   })
 
@@ -57,9 +81,7 @@ export const useWithdraw = function ({
     data: withdrawReceipt,
     error: withdrawReceiptError,
     status: withdrawTxStatus,
-  } = useWaitForTransactionReceipt({
-    hash: withdrawingNative ? withdrawTxHash : withdrawErc20TokenTxHash,
-  })
+  } = useWaitForTransactionReceipt({ hash: txHash })
   useReloadBalances({
     fromToken,
     status: withdrawTxStatus,
@@ -102,7 +124,6 @@ export const useWithdraw = function ({
       withdrawReceipt,
       withdrawReceiptError,
       withdrawStatus: withdrawTxStatus,
-      withdrawTxHash,
     }
   }
   return {
@@ -113,6 +134,5 @@ export const useWithdraw = function ({
     withdrawReceipt,
     withdrawReceiptError,
     withdrawStatus: withdrawTxStatus,
-    withdrawTxHash: withdrawErc20TokenTxHash,
   }
 }

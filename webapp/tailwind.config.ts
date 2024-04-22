@@ -50,6 +50,7 @@ const config: Config = {
           hemi: '#FF5F00',
         },
         slate: {
+          50: '#F7F7F7',
           100: '#E5E6E6',
           200: '#CCCCCC',
           300: '#B2B3B3',

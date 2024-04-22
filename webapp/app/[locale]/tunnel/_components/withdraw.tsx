@@ -1,22 +1,28 @@
-import {
-  ReviewWithdraw,
-  WithdrawProgress,
-} from 'components/reviewBox/reviewWithdraw'
+import { MessageDirection, MessageStatus, toBigNumber } from '@eth-optimism/sdk'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
+import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
-import { isNativeToken } from 'utils/token'
-import { type Chain, formatUnits } from 'viem'
+import { isNativeToken, ZeroAddress } from 'utils/token'
+import { type Chain, formatUnits, parseUnits } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 
 import { useTransactionsList } from '../_hooks/useTransactionsList'
-import { useTunnelState } from '../_hooks/useTunnelState'
+import { useTunnelOperation, useTunnelState } from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
 
 import { TunnelForm, canSubmit } from './form'
+
+const ReviewWithdrawal = dynamic(
+  () => import('./reviewWithdrawal').then(mod => mod.ReviewWithdrawal),
+  {
+    ssr: false,
+  },
+)
 
 const hasBridgeConfiguration = (token: Token, l1ChainId: Chain['id']) =>
   isNativeToken(token) ||
@@ -24,18 +30,13 @@ const hasBridgeConfiguration = (token: Token, l1ChainId: Chain['id']) =>
 
 type Props = {
   renderForm: (isRunningOperation: boolean) => React.ReactNode
-  state: ReturnType<typeof useTunnelState> & { operation: 'withdraw' }
+  state: ReturnType<typeof useTunnelState>
 }
 
 export const Withdraw = function ({ renderForm, state }: Props) {
-  // use this to hold the withdrawn amount for the Tx list after clearing the state upon confirmation
-  const [withdrawn, setWithdrawn] = useState('0')
   // use this to avoid infinite loops in effects when resetting the form
   const [hasClearedForm, setHasClearedForm] = useState(false)
-  // use this to be able to show state boxes before user confirmation (mutation isn't finished)
-  const [withdrawProgress, setWithdrawProgress] = useState<WithdrawProgress>(
-    WithdrawProgress.IDLE,
-  )
+  const [isWithdrawing, setIsWithdrawing] = useState(false)
 
   const t = useTranslations()
 
@@ -43,14 +44,16 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     fromInput,
     fromNetworkId,
     fromToken,
+    partialWithdrawal,
     resetStateAfterOperation,
+    savePartialWithdrawal,
     toNetworkId,
     toToken,
-    waitForWithdrawalPublished,
   } = state
 
   const { chains = [] } = useConfig()
-  const { chain } = useAccount()
+  const { address, chainId } = useAccount()
+  const { txHash } = useTunnelOperation()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -67,7 +70,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
 
   const canWithdraw =
     canSubmit({
-      chainId: chain?.id,
+      chainId,
       fromInput,
       fromNetworkId,
       fromToken,
@@ -82,7 +85,6 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     withdrawGasFees,
     withdrawReceipt,
     withdrawReceiptError,
-    withdrawTxHash,
   } = useWithdraw({
     canWithdraw,
     fromInput,
@@ -92,37 +94,12 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   })
 
   useEffect(
-    function goToWaitToLaterProveForm() {
-      if (withdrawReceipt?.status === 'success') {
-        clearWithdrawState()
-        waitForWithdrawalPublished({
-          withdrawAmount: fromInput,
-          withdrawL1NetworkId: toNetworkId,
-          withdrawSymbol: fromToken.symbol,
-          withdrawTxHash: withdrawReceipt.transactionHash,
-        })
-        resetStateAfterOperation()
-      }
-      return undefined
-    },
-    [
-      clearWithdrawState,
-      fromInput,
-      fromToken,
-      resetStateAfterOperation,
-      toNetworkId,
-      waitForWithdrawalPublished,
-      withdrawReceipt,
-    ],
-  )
-
-  useEffect(
     function handleWithdrawErrors() {
       if (withdrawError || withdrawReceiptError) {
         const timeoutId = setTimeout(clearWithdrawState, 7000)
         if (!hasClearedForm) {
           setHasClearedForm(true)
-          setWithdrawProgress(WithdrawProgress.IDLE)
+          setIsWithdrawing(false)
           resetStateAfterOperation()
         }
         return () => clearTimeout(timeoutId)
@@ -134,29 +111,65 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       hasClearedForm,
       resetStateAfterOperation,
       setHasClearedForm,
-      setWithdrawProgress,
+      setIsWithdrawing,
       withdrawError,
       withdrawReceiptError,
     ],
   )
 
+  // this is needed to be able to show the transaction amount when switching to
+  // prove.tsx component. This is because it takes a while for the op-sdk to show the withdrawal
+  // in the "GetWithdrawals" method after confirming the tx, and if we don't do this,
+  // it would show a spinner of the data user wrote on the form.
+  // Updating react-query's cache is not enough because it will be overridden
+  // by a few refetch requests until the API returns the withdrawal.
+  // When starting from scratch (refresh) we are loading everything so there
+  // it is ok to show a Loading skeleton.
+  useEffect(
+    function saveWithdrawDataForProve() {
+      if (!partialWithdrawal && txHash) {
+        savePartialWithdrawal({
+          amount: toBigNumber(
+            parseUnits(fromInput, fromToken.decimals).toString(),
+          ),
+          direction: MessageDirection.L2_TO_L1,
+          from: address,
+          l1Token: ZeroAddress,
+          l2Token: isNativeToken(fromToken)
+            ? NativeTokenSpecialAddressOnL2
+            : fromToken.extensions.bridgeInfo[toNetworkId].tokenAddress,
+          transactionHash: txHash,
+        })
+      }
+    },
+    [
+      address,
+      fromInput,
+      fromToken,
+      partialWithdrawal,
+      savePartialWithdrawal,
+      toNetworkId,
+      txHash,
+    ],
+  )
+
   const handleWithdraw = function () {
-    setWithdrawn(fromInput)
     clearWithdrawState()
     withdraw()
     setHasClearedForm(false)
-    setWithdrawProgress(WithdrawProgress.WITHDRAWING)
+    setIsWithdrawing(true)
   }
 
-  const isWithdrawing = withdrawProgress === WithdrawProgress.WITHDRAWING
-
   const transactionsList = useTransactionsList({
+    expectedWithdrawSuccessfulMessageStatus:
+      MessageStatus.STATE_ROOT_NOT_PUBLISHED,
     inProgressMessage: t('tunnel-page.transaction-status.withdrawing', {
-      fromInput: withdrawn,
+      fromInput,
       network: fromChain?.name,
       symbol: fromToken.symbol,
     }),
     isOperating: isWithdrawing,
+    l1ChainId: toNetworkId,
     operation: 'withdraw',
     receipt: withdrawReceipt,
     receiptError: withdrawReceiptError,
@@ -164,36 +177,45 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       fromInput,
       symbol: fromToken.symbol,
     }),
-    txHash: withdrawTxHash,
+    txHash,
     userConfirmationError: withdrawError,
   })
 
+  const gas = {
+    amount: formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals),
+    label: t('common.network-gas-fee', { network: fromChain?.name }),
+    symbol: fromChain?.nativeCurrency.symbol,
+  }
+
   return (
-    <TunnelForm
-      formContent={renderForm(isWithdrawing)}
-      onSubmit={handleWithdraw}
-      reviewOperation={
-        <ReviewWithdraw
-          canWithdraw={canWithdraw}
-          gas={formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals)}
-          gasSymbol={fromChain?.nativeCurrency.symbol}
-          l1ChainId={toNetworkId}
-          operation="withdraw"
-          progress={withdrawProgress}
-          toWithdraw={formatNumber(fromInput, 3)}
-          withdrawSymbol={fromToken.symbol}
+    <>
+      <TunnelForm
+        expectedChainId={fromNetworkId}
+        formContent={renderForm(isWithdrawing)}
+        gas={gas}
+        onSubmit={handleWithdraw}
+        operationSymbol={fromToken.symbol}
+        showReview={canWithdraw}
+        submitButton={
+          <Button disabled={!canWithdraw || isWithdrawing} type="submit">
+            {t(
+              `tunnel-page.submit-button.${
+                isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'
+              }`,
+            )}
+          </Button>
+        }
+        total={formatNumber(fromInput, 3)}
+        transactionsList={transactionsList}
+      />
+      {!!txHash && (
+        <ReviewWithdrawal
+          gas={gas}
+          isRunningOperation={isWithdrawing}
+          transactionsList={transactionsList}
+          withdrawal={partialWithdrawal}
         />
-      }
-      submitButton={
-        <Button disabled={!canWithdraw || isWithdrawing} type="submit">
-          {t(
-            `tunnel-page.submit-button.${
-              isWithdrawing ? 'withdrawing' : 'withdraw'
-            }`,
-          )}
-        </Button>
-      }
-      transactionsList={transactionsList}
-    />
+      )}
+    </>
   )
 }

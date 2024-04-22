@@ -1,6 +1,5 @@
 'use client'
 
-import { ReviewDeposit } from 'components/reviewBox/reviewDeposit'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useState } from 'react'
@@ -80,7 +79,7 @@ const SubmitButton = function ({
 
 type Props = {
   renderForm: (isRunningOperation: boolean) => ReactNode
-  state: ReturnType<typeof useTunnelState> & { operation: 'deposit' }
+  state: ReturnType<typeof useTunnelState>
 }
 
 export const Deposit = function ({ renderForm, state }: Props) {
@@ -101,7 +100,6 @@ export const Deposit = function ({ renderForm, state }: Props) {
     fromToken,
     resetStateAfterOperation,
     updateExtendedErc20Approval,
-    toNetworkId,
     toToken,
   } = state
 
@@ -129,7 +127,6 @@ export const Deposit = function ({ renderForm, state }: Props) {
   })
 
   const fromChain = chains.find(c => c.id === fromNetworkId)
-  const toChain = chains.find(c => c.id === toNetworkId)
 
   const {
     approvalError,
@@ -253,6 +250,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
       symbol: fromToken.symbol,
     }),
     isOperating: operationRunning === 'approving',
+    l1ChainId: fromNetworkId,
     operation: 'approve',
     receipt: approvalReceipt,
     receiptError: approvalReceiptError,
@@ -266,10 +264,10 @@ export const Deposit = function ({ renderForm, state }: Props) {
   const depositTransactionList = useTransactionsList({
     inProgressMessage: t('tunnel-page.transaction-status.depositing', {
       fromInput: depositAmount,
-      network: toChain?.name,
       symbol: fromToken.symbol,
     }),
     isOperating: operationRunning === 'depositing',
+    l1ChainId: fromNetworkId,
     operation: 'deposit',
     receipt: depositReceipt,
     receiptError: depositReceiptError,
@@ -287,24 +285,22 @@ export const Deposit = function ({ renderForm, state }: Props) {
 
   return (
     <TunnelForm
+      expectedChainId={fromNetworkId}
       formContent={renderForm(isRunningOperation)}
+      gas={{
+        amount: formatNumber(
+          formatUnits(
+            depositGasFees + approvalTokenGasFees,
+            fromChain?.nativeCurrency.decimals,
+          ),
+          3,
+        ),
+        label: t('common.network-gas-fee', { network: fromChain?.name }),
+        symbol: fromChain?.nativeCurrency.symbol,
+      }}
       onSubmit={handleDeposit}
-      reviewOperation={
-        <ReviewDeposit
-          canDeposit={canDeposit}
-          deposit={formatNumber(fromInput, 3)}
-          depositSymbol={fromToken.symbol}
-          gas={formatNumber(
-            formatUnits(
-              depositGasFees + approvalTokenGasFees,
-              fromChain?.nativeCurrency.decimals,
-            ),
-            3,
-          )}
-          gasSymbol={fromChain?.nativeCurrency.symbol}
-          total={formatNumber(totalDeposit, 3)}
-        />
-      }
+      operationSymbol={fromToken.symbol}
+      showReview={canDeposit}
       submitButton={
         <SubmitButton
           canDeposit={canDeposit}
@@ -316,6 +312,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
           updateExtendedErc20Approval={updateExtendedErc20Approval}
         />
       }
+      total={formatNumber(totalDeposit, 3)}
       transactionsList={transactionsList}
     />
   )

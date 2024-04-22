@@ -22,11 +22,12 @@ export const useProveTransaction = function ({
 
   const connectedToL1 = useIsConnectedToExpectedNetwork(l1ChainId)
 
-  const transactionMessageStatus = useL1GetTransactionMessageStatus({
-    l1ChainId,
-    refetchUntilStatus: MessageStatus.READY_TO_PROVE,
-    transactionHash: withdrawTxHash,
-  })
+  const { messageStatus: transactionMessageStatus } =
+    useL1GetTransactionMessageStatus({
+      l1ChainId,
+      refetchUntilStatus: MessageStatus.READY_TO_PROVE,
+      transactionHash: withdrawTxHash,
+    })
 
   const isReadyToProve =
     transactionMessageStatus === MessageStatus.READY_TO_PROVE && connectedToL1

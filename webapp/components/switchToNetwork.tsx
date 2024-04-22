@@ -1,11 +1,12 @@
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
+import { Chain } from 'viem'
 import { useAccount, useConfig, useSwitchChain } from 'wagmi'
 
 import { NotificationBox } from './notificationBox'
 
 type Props = {
-  selectedNetwork: number
+  selectedNetwork: Chain['id']
 }
 
 export const SwitchToNetwork = function ({ selectedNetwork }: Props) {
@@ -31,7 +32,7 @@ export const SwitchToNetwork = function ({ selectedNetwork }: Props) {
           onClick={switchToNetwork}
           type="button"
         >
-          {t('switch-to-network', { network: walletTargetNetwork.name })}
+          {t('connect-to-network', { network: walletTargetNetwork.name })}
         </button>
       }
       text={t('wrong-network')}

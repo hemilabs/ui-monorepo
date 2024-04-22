@@ -5,7 +5,7 @@ export const hemiTestnet = {
   blockExplorers: {
     default: {
       name: 'Hemi Sepolia Explorer',
-      url: 'https://testnet.explorer.hemi.network',
+      url: 'https://testnet.explorer.hemi.xyz',
     },
   },
   id: 743_111,
@@ -33,7 +33,7 @@ export const hemiMainnet = {
   blockExplorers: {
     default: {
       name: 'Hemi Explorer',
-      url: 'https://explorer.hemi.network',
+      url: 'https://explorer.hemi.xyz',
     },
   },
   id: 43_111,

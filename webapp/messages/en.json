@@ -1,5 +1,6 @@
 {
   "transaction-history": {
+    "connect-wallet-to-review": "Connect your wallet to review transaction history.",
     "in-challenge-period": "In Challenge period",
     "ready-to-claim": "Ready to claim",
     "ready-to-prove": "Ready to prove"
@@ -83,6 +84,7 @@
     "bitcoinhkit": "Bitcoin hKit",
     "connect-to-network": "Connect to {network}",
     "connect-wallet": "Connect Wallet",
+    "connect-your-wallet": "Connect your Wallet",
     "demos": "Demos",
     "dex": "DEX",
     "erc20-approve-10x-deposits": "Approve 10x the amount of this deposit",

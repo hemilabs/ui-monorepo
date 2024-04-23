@@ -1,5 +1,6 @@
 {
   "transaction-history": {
+    "connect-wallet-to-review": "Conecte su billetera para revisar su historial de transacciones.",
     "in-challenge-period": "En período de Desafío",
     "ready-to-claim": "Listo para Reclamar",
     "ready-to-prove": "Listo para Probar"
@@ -81,8 +82,9 @@
   "common": {
     "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
     "bitcoinhkit": "hKit de Bitcoin",
-    "connect-wallet": "Conectar Billetera",
     "connect-to-network": "Conectarse a {network}",
+    "connect-wallet": "Conectar Billetera",
+    "connect-your-wallet": "Conecte su Billetera",
     "erc20-approve-10x-deposits": "Aprobar 10x el monto de este depósito",
     "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
     "erc20-extra-approval": "Aprobar 10x este depósito",

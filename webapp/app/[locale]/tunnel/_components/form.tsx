@@ -120,7 +120,7 @@ export const TunnelForm = function ({
   const { operation } = useTunnelOperation()
 
   if (!operation || (!isConnected && operation === 'withdraw')) {
-    // Ensure wallet is connected https://github.com/BVM-priv/ui-monorepo/issues/new
+    // Ensure wallet is connected https://github.com/BVM-priv/ui-monorepo/issues/159
     return <span>...</span>
   }
   return (

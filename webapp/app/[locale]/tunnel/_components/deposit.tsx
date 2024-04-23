@@ -1,6 +1,7 @@
 'use client'
 
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useChain } from 'hooks/useChain'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useState } from 'react'
 import { Token } from 'types/token'
@@ -8,7 +9,7 @@ import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
-import { useAccount, useConfig } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { useDeposit } from '../_hooks/useDeposit'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
@@ -103,7 +104,6 @@ export const Deposit = function ({ renderForm, state }: Props) {
     toToken,
   } = state
 
-  const { chains = [] } = useConfig()
   const { chain } = useAccount()
 
   const operatesNativeToken = isNativeToken(fromToken)
@@ -126,7 +126,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
     walletTokenBalance,
   })
 
-  const fromChain = chains.find(c => c.id === fromNetworkId)
+  const fromChain = useChain(fromNetworkId)
 
   const {
     approvalError,

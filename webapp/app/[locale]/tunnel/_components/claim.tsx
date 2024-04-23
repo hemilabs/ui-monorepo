@@ -1,6 +1,7 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { bridgeableNetworks } from 'app/networks'
+import { useChain } from 'hooks/useChain'
 import {
   useAnyChainGetTransactionMessageStatus,
   useGetClaimWithdrawalTxHash,
@@ -9,7 +10,7 @@ import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { Chain, Hash, formatUnits } from 'viem'
-import { useConfig } from 'wagmi'
+import { useChains } from 'wagmi'
 
 import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
 import { useClaimTransaction } from '../_hooks/useClaimTransaction'
@@ -30,7 +31,7 @@ const SubmitButton = function ({
   isReadyToClaim: boolean
 }) {
   const t = useTranslations()
-  const { chains } = useConfig()
+  const chains = useChains()
   const { txHash } = useTunnelOperation()
 
   const { claimTxHash } = useGetClaimWithdrawalTxHash(l1ChainId, txHash)
@@ -105,9 +106,7 @@ export const Claim = function ({ state }: Props) {
   const queryClient = useQueryClient()
   const t = useTranslations()
 
-  const { chains = [] } = useConfig()
-
-  const fromChain = chains.find(c => c.id === l1ChainId)
+  const fromChain = useChain(l1ChainId)
 
   const {
     claimWithdrawal,

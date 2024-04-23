@@ -1,5 +1,6 @@
 import { MessageDirection, MessageStatus, toBigNumber } from '@eth-optimism/sdk'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useChain } from 'hooks/useChain'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -9,7 +10,7 @@ import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { isNativeToken, ZeroAddress } from 'utils/token'
 import { type Chain, formatUnits, parseUnits } from 'viem'
-import { useAccount, useConfig } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation, useTunnelState } from '../_hooks/useTunnelState'
@@ -51,13 +52,12 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     toToken,
   } = state
 
-  const { chains = [] } = useConfig()
   const { address, chainId } = useAccount()
   const { txHash } = useTunnelOperation()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
-  const fromChain = chains.find(c => c.id === fromNetworkId)
+  const fromChain = useChain(fromNetworkId)
 
   const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
     fromToken.chainId,

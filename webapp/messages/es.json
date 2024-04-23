@@ -1,4 +1,9 @@
 {
+  "transaction-history": {
+    "in-challenge-period": "En período de Desafío",
+    "ready-to-claim": "Listo para Reclamar",
+    "ready-to-prove": "Listo para Probar"
+  },
   "tunnel-page": {
     "form": {
       "balance": "Balance",
@@ -39,6 +44,27 @@
     },
     "subtitle": "Mueva tokens hacia y desde Hemi",
     "title": "Túnel",
+    "transaction-history": {
+      "actions": {
+        "claim": "Reclamar",
+        "prove": "Probar",
+        "retry": "Reintentar",
+        "view": "Ver"
+      },
+      "column-headers": {
+        "amount": "Monto",
+        "from": "Desde",
+        "status": "Estado",
+        "time": "Hora",
+        "to": "Hacia",
+        "tx-hash": "Hash de la Tx",
+        "type": "Tipo"
+      },
+      "deposit": "Depósito",
+      "no-transactions": "No hay transacciones",
+      "title": "Historial de Transacciones",
+      "withdraw": "Retiro"
+    },
     "transaction-status": {
       "claiming-withdrawal": "Reclamando Retiro",
       "deposited": "{fromInput} {symbol} depositado",
@@ -54,14 +80,24 @@
   },
   "common": {
     "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
+    "bitcoinhkit": "hKit de Bitcoin",
     "connect-wallet": "Conectar Billetera",
     "connect-to-network": "Conectarse a {network}",
     "erc20-approve-10x-deposits": "Aprobar 10x el monto de este depósito",
     "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
     "erc20-extra-approval": "Aprobar 10x este depósito",
+    "demos": "Demos",
+    "dex": "DEX",
+    "explorer": "Explorador",
+    "failed": "Falló",
+    "get-started": "Comenzar",
+    "hemidocs": "Documentacion de Hemi",
     "network-gas-fee": "Tarifa de gas de {network}",
+    "networkstatus": "Estado de la red",
     "select-network": "Seleccione Red",
+    "success": "Exitoso",
     "swap": "Intercambiar",
+    "tools": "Herramientas",
     "total": "Total",
     "transaction-status": {
       "confirmed": "Tx confirmada",
@@ -71,15 +107,7 @@
     },
     "tunnel": "Túnel",
     "view": "Ver",
-    "wrong-network": "Red Incorrecta",
-    "explorer": "Explorador",
-    "demos": "Demos",
-    "tools": "Herramientas",
-    "dex": "DEX",
-    "bitcoinhkit": "hKit de Bitcoin",
-    "networkstatus": "Estado de la red",
-    "hemidocs": "Documentacion de Hemi",
-    "get-started": "Comenzar"
+    "wrong-network": "Red Incorrecta"
   },
   "get-started": {
     "header": {

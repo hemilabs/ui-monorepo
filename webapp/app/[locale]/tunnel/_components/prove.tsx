@@ -1,6 +1,7 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { bridgeableNetworks, hemi } from 'app/networks'
+import { useChain } from 'hooks/useChain'
 import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -8,7 +9,6 @@ import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { getL2TokenByBridgedAddress, getTokenByAddress } from 'utils/token'
 import { Address, Hash, formatUnits, type Chain } from 'viem'
-import { useConfig } from 'wagmi'
 
 import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
 import { useProveTransaction } from '../_hooks/useProveTransaction'
@@ -79,11 +79,10 @@ export const Prove = function ({ state }: Props) {
   const l1ChainId = bridgeableNetworks[0].id
 
   const t = useTranslations()
-  const { chains = [] } = useConfig()
   const queryClient = useQueryClient()
   const { txHash } = useTunnelOperation()
 
-  const fromChain = chains.find(c => c.id === l1ChainId)
+  const fromChain = useChain(l1ChainId)
 
   const {
     clearProveWithdrawalState,

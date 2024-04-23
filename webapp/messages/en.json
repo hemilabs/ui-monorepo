@@ -1,4 +1,9 @@
 {
+  "transaction-history": {
+    "in-challenge-period": "In Challenge period",
+    "ready-to-claim": "Ready to claim",
+    "ready-to-prove": "Ready to prove"
+  },
   "tunnel-page": {
     "form": {
       "balance": "Balance",
@@ -39,6 +44,27 @@
     },
     "subtitle": "Move tokens to and from Hemi",
     "title": "Tunnel",
+    "transaction-history": {
+      "actions": {
+        "claim": "Claim",
+        "prove": "Prove",
+        "retry": "Retry",
+        "view": "View"
+      },
+      "column-headers": {
+        "amount": "Amount",
+        "from": "From",
+        "status": "Status",
+        "time": "Time",
+        "to": "To",
+        "tx-hash": "Tx Hash",
+        "type": "Type"
+      },
+      "deposit": "Deposit",
+      "no-transactions": "There are no transactions",
+      "title": "Transaction History",
+      "withdraw": "Withdraw"
+    },
     "transaction-status": {
       "claiming-withdrawal": "Claiming Withdrawal",
       "deposited": "{fromInput} {symbol} deposited",
@@ -54,14 +80,24 @@
   },
   "common": {
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
+    "bitcoinhkit": "Bitcoin hKit",
     "connect-to-network": "Connect to {network}",
     "connect-wallet": "Connect Wallet",
+    "demos": "Demos",
+    "dex": "DEX",
     "erc20-approve-10x-deposits": "Approve 10x the amount of this deposit",
     "erc20-approve-10x-detailed-description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
     "erc20-extra-approval": "Approve 10x deposits",
+    "explorer": "Explorer",
+    "get-started": "Get Started",
+    "failed": "Failed",
+    "hemidocs": "Hemi Docs",
     "network-gas-fee": "{network} gas fee",
+    "networkstatus": "Network Status",
     "select-network": "Select Network",
+    "success": "Success",
     "swap": "Swap",
+    "tools": "Tools",
     "total": "Total",
     "transaction-status": {
       "confirmed": "Tx confirmed",
@@ -71,15 +107,7 @@
     },
     "tunnel": "Tunnel",
     "view": "View",
-    "wrong-network": "Wrong Network",
-    "explorer": "Explorer",
-    "demos": "Demos",
-    "tools": "Tools",
-    "dex": "DEX",
-    "bitcoinhkit": "Bitcoin hKit",
-    "networkstatus": "Network Status",
-    "hemidocs": "Hemi Docs",
-    "get-started": "Get Started"
+    "wrong-network": "Wrong Network"
   },
   "get-started": {
     "header": {

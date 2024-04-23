@@ -180,9 +180,9 @@ export const TransactionHistory = function () {
   // See https://github.com/BVM-priv/ui-monorepo/issues/158
   const l1ChainId = bridgeableNetworks[0].id
 
-  const { isLoading: isLoadingWithdrawals, withdrawals = [] } =
+  const { isLoading: isLoadingWithdrawals, withdrawals } =
     useGetWithdrawalsByAddress()
-  const { deposits = [], isLoading: isLoadingDeposits } =
+  const { deposits, isLoading: isLoadingDeposits } =
     useGetDepositsByAddress(l1ChainId)
 
   const t = useTranslations('tunnel-page.transaction-history')
@@ -192,7 +192,7 @@ export const TransactionHistory = function () {
   // Data for useReactTable must be a stable reference
   // otherwise, we hit infinite rerenders
   const data = useMemo(
-    () => withdrawals.concat(deposits),
+    () => (withdrawals ?? []).concat(deposits ?? []),
     [deposits, withdrawals],
   )
 

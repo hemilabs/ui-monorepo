@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import { Token } from 'types/token'
+import { Card } from 'ui-common/components/card'
 
 import { Balance } from './balance'
 import { TokenLogo } from './tokenLogo'
@@ -21,6 +22,23 @@ const Modal = dynamic(
   {
     ssr: false,
   },
+)
+
+const MagnifyingGlass = () => (
+  <svg
+    fill="none"
+    height="25"
+    viewBox="0 0 24 25"
+    width="24"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M20 20.5L16.05 16.55M18 11.5C18 15.366 14.866 18.5 11 18.5C7.13401 18.5 4 15.366 4 11.5C4 7.63401 7.13401 4.5 11 4.5C14.866 4.5 18 7.63401 18 11.5Z"
+      stroke="black"
+      strokeLinecap="round"
+      strokeWidth="2"
+    />
+  </svg>
 )
 
 type Props = {
@@ -130,64 +148,36 @@ export const TokenSelector = function ({
       </button>
       {showTokenSelector && (
         <Modal onClose={closeModal}>
-          <div className="mx-8 flex w-full flex-col bg-white p-4 sm:max-w-96">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xl font-medium">{t('select-token')}</h3>
-              <CloseIcon onClick={closeModal} />
-            </div>
-            {/* hidden for now, as we won't allow adding custom tokens */}
-            {/* <div className="border-b border-gray-200 text-center text-sm font-medium text-gray-500">
-              <ul className="-mb-px flex flex-wrap text-black">
-                <li className="me-2">
-                  <button className="active inline-block rounded-t-lg border-b-2 border-transparent p-4 hover:border-gray-300 hover:text-gray-600">
-                    Tokens
-                  </button>
-                </li>
-                
-                <li className="me-2">
-                  <button className="active inline-block rounded-t-lg border-b-2 border-blue-600 p-4 text-blue-600 dark:border-blue-500 dark:text-blue-500">
-                    Custom Tokens
-                  </button>
-                </li>
-              </ul>
-            </div> */}
-            <div className="my-4 flex w-full items-center bg-zinc-50 px-4 py-3">
-              <svg
-                fill="none"
-                height="21"
-                viewBox="0 0 21 21"
-                width="21"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <g id="search">
-                  <path
-                    clipRule="evenodd"
-                    d="M17.25 9.5C17.25 13.7802 13.7802 17.25 9.5 17.25C5.21979 17.25 1.75 13.7802 1.75 9.5C1.75 5.21979 5.21979 1.75 9.5 1.75C13.7802 1.75 17.25 5.21979 17.25 9.5ZM9.5 18.75C14.6086 18.75 18.75 14.6086 18.75 9.5C18.75 4.39137 14.6086 0.25 9.5 0.25C4.39137 0.25 0.25 4.39137 0.25 9.5C0.25 14.6086 4.39137 18.75 9.5 18.75ZM20.4217 20.4217C19.6506 21.1928 18.4004 21.1928 17.6293 20.4217L15.7563 18.5488C16.8465 17.7936 17.7936 16.8465 18.5488 15.7563L20.4217 17.6292C21.1928 18.4003 21.1928 19.6506 20.4217 20.4217Z"
-                    fill="#93989A"
-                    fillRule="evenodd"
-                    id="combo shape"
+          <div className="w-[calc(100vw-2rem)] px-4 sm:w-screen sm:max-w-96">
+            <Card padding="medium" radius="large">
+              <div className="mx-2 flex flex-col">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-medium">{t('choose-token')}</h3>
+                  <CloseIcon onClick={closeModal} />
+                </div>
+                <div className="my-4 flex w-full items-center rounded-2xl bg-zinc-50 px-3 py-2">
+                  <MagnifyingGlass />
+                  <input
+                    className="ml-4 w-full bg-transparent placeholder:text-xs placeholder:text-neutral-400"
+                    onChange={e => setSearchText(e.target.value)}
+                    placeholder={t('search-tokens')}
+                    type="text"
+                    value={searchText}
+                  ></input>
+                </div>
+                {tokensToList.length > 0 ? (
+                  <TokenList
+                    onSelectToken={function (token) {
+                      onSelectToken(token)
+                      closeModal()
+                    }}
+                    tokens={tokensToList}
                   />
-                </g>
-              </svg>
-              <input
-                className="ml-4 w-full bg-transparent placeholder:text-sm placeholder:text-neutral-400"
-                onChange={e => setSearchText(e.target.value)}
-                placeholder={t('search-tokens')}
-                type="text"
-                value={searchText}
-              ></input>
-            </div>
-            {tokensToList.length > 0 ? (
-              <TokenList
-                onSelectToken={function (token) {
-                  onSelectToken(token)
-                  closeModal()
-                }}
-                tokens={tokensToList}
-              />
-            ) : (
-              <span>{t('no-tokens')}</span>
-            )}
+                ) : (
+                  <span>{t('no-tokens')}</span>
+                )}
+              </div>
+            </Card>
           </div>
         </Modal>
       )}

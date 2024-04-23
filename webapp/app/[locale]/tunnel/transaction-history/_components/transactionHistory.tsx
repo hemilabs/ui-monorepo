@@ -168,8 +168,8 @@ const columnsBuilder = (
   {
     cell: ({ row }) =>
       isDeposit(row.original) ? (
-        // Deposits do not render an action, let's add empty space
-        <div className="h-9 w-24" />
+        // Deposits do not render an action, let's add a "-"
+        <span className="opacity-40">-</span>
       ) : (
         <WithdrawAction l1ChainId={l1ChainId} withdraw={row.original} />
       ),

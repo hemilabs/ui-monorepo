@@ -9,12 +9,12 @@ type AppScreenProps = {
 
 export const AppScreen = ({ children }: AppScreenProps) => (
   <div
-    className={`bg-hemi-layout bg-hemi-color-layout shadow-hemi-layout backdrop-blur-20 
-    h-97vh ml-5 mr-2 mt-3 flex flex-1 flex-col self-stretch 
-    rounded-3xl border border-slate-100 px-5 pb-3 pt-3 md:pb-0`}
+    className={`bg-hemi-layout bg-hemi-color-layout shadow-hemi-layout backdrop-blur-20 h-97vh
+    mr-2 mt-3 flex w-3/4 flex-1 flex-col 
+    self-stretch rounded-3xl border border-slate-100 px-5 pb-3 pt-3 md:pb-0`}
   >
     <Header />
-    <div className="max-h-[calc(100vh-1rem)] flex-grow overflow-auto pr-5">
+    <div className="max-h-[calc(100vh-1rem)] flex-grow overflow-y-auto pr-5">
       {children}
     </div>
     <div className="mx-[-21px] mb-[-1px] mt-auto hidden pt-3 md:block">

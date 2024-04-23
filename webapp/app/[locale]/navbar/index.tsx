@@ -27,7 +27,7 @@ export const Navbar = function () {
     setSelectedItem(value === selectedItem ? '' : value)
 
   return (
-    <div className="h-98vh flex flex-col justify-between">
+    <div className="h-98vh flex flex-col justify-between pr-5">
       <div className="mt-8">
         <div className="ml-10 mt-4 hidden h-10 w-28 md:block">
           <Link href="/tunnel">

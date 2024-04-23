@@ -37,13 +37,13 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`flex h-dvh flex-col bg-white ${inter.className}`}>
+      <body className={`flex h-dvh flex-col bg-white ${inter.className} w-svw`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <RecaptchaContext>
             <WalletContext locale={locale} networks={networks}>
               <div className="flex flex-col">
-                <div className="flex items-start">
-                  <div className="hidden md:block">
+                <div className="flex flex-nowrap justify-stretch">
+                  <div className="hidden w-1/4 max-w-56 md:block">
                     <Navbar />
                   </div>
                   <AppScreen>{children}</AppScreen>

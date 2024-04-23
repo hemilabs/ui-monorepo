@@ -229,9 +229,9 @@
     }
   },
   "token-selector": {
+    "choose-token": "Choose Token",
     "no-tokens": "There are no tokens",
-    "search-tokens": "Search tokens",
-    "select-token": "Select Token"
+    "search-tokens": "Search tokens"
   },
   "get-started-page": {
     "heading": "Get Started with Hemi",

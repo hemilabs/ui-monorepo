@@ -229,9 +229,8 @@
     }
   },
   "token-selector": {
-    "no-tokens": "No hay tokens",
-    "search-tokens": "Buscar tokens",
-    "select-token": "Seleccionar Token"
+    "choose-token": "Elegir Token",
+    "no-tokens": "No hay tokens"
   },
   "get-started-page": {
     "heading": "Comience con Hemi",

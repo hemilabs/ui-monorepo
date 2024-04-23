@@ -9,7 +9,7 @@ The prefix `NEXT_PUBLIC_` is required for the variables to be available in the b
 
 ```bash
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<recaptcha-v3-key>"
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<claim-tokens-url>"
+NEXT_PUBLIC_CLAIM_TOKENS_URL="<claim-tokens-url>"
 ```
 
 The recaptcha v3 key can be generated [in this page](https://www.google.com/recaptcha/admin/create).

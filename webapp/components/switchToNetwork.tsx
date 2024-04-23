@@ -1,7 +1,8 @@
+import { useChain } from 'hooks/useChain'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
 import { Chain } from 'viem'
-import { useAccount, useConfig, useSwitchChain } from 'wagmi'
+import { useAccount, useSwitchChain } from 'wagmi'
 
 import { NotificationBox } from './notificationBox'
 
@@ -11,18 +12,18 @@ type Props = {
 
 export const SwitchToNetwork = function ({ selectedNetwork }: Props) {
   const { chain } = useAccount()
-  const { chains } = useConfig()
   const { switchChain } = useSwitchChain()
   const isConnectedToExpectedNetwork =
     useIsConnectedToExpectedNetwork(selectedNetwork)
 
   const t = useTranslations('common')
 
+  const walletTargetNetwork = useChain(selectedNetwork)
+
   if (!chain || isConnectedToExpectedNetwork) {
     return null
   }
 
-  const walletTargetNetwork = chains.find(c => c.id === selectedNetwork)
   const switchToNetwork = () => switchChain({ chainId: selectedNetwork })
   return (
     <NotificationBox

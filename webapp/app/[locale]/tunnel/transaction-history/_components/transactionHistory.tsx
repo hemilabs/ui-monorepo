@@ -9,6 +9,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { bridgeableNetworks, hemi } from 'app/networks'
+import { ConnectWallet } from 'components/connectWallet'
 import {
   useAnyChainGetTransactionMessageStatus,
   useGetDepositsByAddress,
@@ -22,6 +23,7 @@ import { Tabs, Tab } from 'ui-common/components/tabs'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { isDeposit } from 'utils/tunnel'
 import { Chain } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { Amount } from './amount'
 import { Chain as ChainComponent } from './chain'
@@ -176,16 +178,11 @@ const columnsBuilder = (
   },
 ]
 
-export const TransactionHistory = function () {
-  // See https://github.com/BVM-priv/ui-monorepo/issues/158
-  const l1ChainId = bridgeableNetworks[0].id
-
-  const { isLoading: isLoadingWithdrawals, withdrawals } =
+const useTransactionsHistory = function (l1ChainId: Chain['id']) {
+  const { isPending: isLoadingWithdrawals, withdrawals } =
     useGetWithdrawalsByAddress()
-  const { deposits, isLoading: isLoadingDeposits } =
+  const { deposits, isPending: isLoadingDeposits } =
     useGetDepositsByAddress(l1ChainId)
-
-  const t = useTranslations('tunnel-page.transaction-history')
 
   const loading = isLoadingWithdrawals || isLoadingDeposits
 
@@ -195,6 +192,19 @@ export const TransactionHistory = function () {
     () => (withdrawals ?? []).concat(deposits ?? []),
     [deposits, withdrawals],
   )
+
+  return { data, loading }
+}
+
+export const TransactionHistory = function () {
+  // See https://github.com/BVM-priv/ui-monorepo/issues/158
+  const l1ChainId = bridgeableNetworks[0].id
+
+  const { status } = useAccount()
+
+  const { data, loading } = useTransactionsHistory(l1ChainId)
+
+  const t = useTranslations('tunnel-page.transaction-history')
 
   const columns = useMemo(
     () =>
@@ -243,78 +253,88 @@ export const TransactionHistory = function () {
 
   return (
     <>
-      <Card borderColor="gray" radius="large">
-        <div className="overflow-x-auto">
-          <table className="w-full whitespace-nowrap">
-            <thead>
-              {table.getHeaderGroups().map(headerGroup => (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <th key={header.id}>
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                    </th>
+      {status === 'connected' && (
+        <>
+          <Card borderColor="gray" radius="large">
+            <div className="overflow-x-auto">
+              <table className="w-full whitespace-nowrap">
+                <thead>
+                  {table.getHeaderGroups().map(headerGroup => (
+                    <tr key={headerGroup.id}>
+                      {headerGroup.headers.map(header => (
+                        <th key={header.id}>
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                        </th>
+                      ))}
+                    </tr>
                   ))}
-                </tr>
-              ))}
-            </thead>
-            <tbody>
-              {loading &&
-                Array.from(Array(10).keys()).map(index => (
-                  <tr key={index}>
-                    {columns.map((c, i) => (
-                      <td className="py-2" key={c.id || i}>
-                        {/* @ts-expect-error it works */}
-                        {c.cell()}
-                      </td>
+                </thead>
+                <tbody>
+                  {loading &&
+                    Array.from(Array(10).keys()).map(index => (
+                      <tr key={index}>
+                        {columns.map((c, i) => (
+                          <td className="py-2" key={c.id || i}>
+                            {/* @ts-expect-error it works */}
+                            {c.cell()}
+                          </td>
+                        ))}
+                      </tr>
                     ))}
-                  </tr>
-                ))}
-              {!loading && rows.length === 0 && (
-                <tr>
-                  <td
-                    className="py-2 text-center text-neutral-700"
-                    colSpan={columns.length}
+                  {!loading && (
+                    <>
+                      {rows.length === 0 && (
+                        <tr>
+                          <td
+                            className="py-2 text-center text-neutral-700"
+                            colSpan={columns.length}
+                          >
+                            {t('no-transactions')}
+                          </td>
+                        </tr>
+                      )}
+                      {rows.map(row => (
+                        <tr key={row.id}>
+                          {row.getVisibleCells().map(cell => (
+                            <td className="p-2 text-neutral-700" key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+          {!loading && pageCount > 1 && (
+            <div className="mt-2 flex justify-center">
+              <Tabs>
+                {Array.from(Array(pageCount).keys()).map(index => (
+                  <Tab
+                    key={index}
+                    onClick={() => table.setPageIndex(index)}
+                    selected={pageIndex === index}
                   >
-                    {t('no-transactions')}
-                  </td>
-                </tr>
-              )}
-              {!loading &&
-                rows.length > 0 &&
-                rows.map(row => (
-                  <tr key={row.id}>
-                    {row.getVisibleCells().map(cell => (
-                      <td className="p-2 text-neutral-700" key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
-                    ))}
-                  </tr>
+                    {index + 1}
+                  </Tab>
                 ))}
-            </tbody>
-          </table>
-        </div>
-      </Card>
-      {!loading && pageCount > 1 && (
-        <div className="mt-2 flex justify-center">
-          <Tabs>
-            {Array.from(Array(pageCount).keys()).map(index => (
-              <Tab
-                key={index}
-                onClick={() => table.setPageIndex(index)}
-                selected={pageIndex === index}
-              >
-                {index + 1}
-              </Tab>
-            ))}
-          </Tabs>
-        </div>
+              </Tabs>
+            </div>
+          )}
+        </>
       )}
+      {['connecting', 'reconnecting'].includes(status) && (
+        <Skeleton className="h-4/5 w-full" />
+      )}
+      {status === 'disconnected' && <ConnectWallet />}
     </>
   )
 }

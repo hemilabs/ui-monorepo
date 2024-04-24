@@ -206,5 +206,21 @@
       "miner": "I'm a Miner",
       "individual": "I'm an Individual"
     }
+  },
+  "demos": {
+    "heading": "Demos",
+    "sub-heading": "Learn & earn with Hemi developer demos",
+    "hemihatchlings": {
+      "heading": "Hemi Hatchlings",
+      "sub-heading": "Learn how Ethereum & Bitcoin finality works"
+    },
+    "cryptochords": {
+      "heading": "Crypto Chords",
+      "sub-heading": "An audio-visual depiction of transactions on the Hemi Network"
+    },
+    "purefinance": {
+      "heading": "Pure Finance",
+      "sub-heading": "Utility and smart contract interaction built directly into the Hemi Network"
+    }
   }
 }

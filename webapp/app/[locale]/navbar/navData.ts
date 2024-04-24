@@ -27,7 +27,7 @@ export const navItems: NavItemData[] = [
     id: 'explorer',
   },
   {
-    href: '',
+    href: '/demos',
     icon: GraduateCapIcon,
     id: 'demos',
   },

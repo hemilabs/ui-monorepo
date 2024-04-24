@@ -2,11 +2,11 @@
 
 import { bridgeableNetworks, hemi } from 'app/networks'
 import dynamic from 'next/dynamic'
-import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import React, { useEffect } from 'react'
 import { HemiSymbol } from 'ui-common/components/hemiLogo'
+import { Tabs, Tab } from 'ui-common/components/tabs'
 import { type Chain } from 'viem'
 
 const AddChain = dynamic(
@@ -64,39 +64,6 @@ const useSelectedTab = function (
     defaultConfiguration) as NetworkConfiguration
 }
 
-type TabProps = {
-  active: boolean
-  networkConfiguration: NetworkConfiguration
-}
-const Tab = function ({ active, networkConfiguration }: TabProps) {
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-
-  const t = useTranslations('get-started')
-
-  return (
-    <li>
-      <Link
-        className={`${
-          active
-            ? 'cursor-default border-b-2 border-black font-medium text-black '
-            : 'cursor-pointer font-normal text-neutral-400 hover:border-b hover:border-gray-300 hover:text-gray-600'
-        } my-2 inline-block py-2`}
-        href={{
-          pathname,
-          query: {
-            ...Object.fromEntries(searchParams.entries()),
-            networkConfiguration,
-          },
-        }}
-        shallow
-      >
-        {t(`network.${networkConfiguration}`)}
-      </Link>
-    </li>
-  )
-}
-
 const ConfigurationPropTitle = ({
   children,
   order,
@@ -136,8 +103,9 @@ const ChainRow = function ({ chain, layer, logo }: ChainRowProps) {
   return (
     <div className="flex items-center gap-x-3 text-sm font-medium">
       {logo}
-      <div className="flex flex-col lg:flex-row lg:gap-x-4">
+      <div className="flex flex-col lg:flex-row lg:gap-x-1">
         <p>{chain.name}</p>
+        <span className="text-neutral-400">·</span>
         <span className="text-neutral-400">{t('layer', { layer })}</span>
       </div>
       <div className="ml-auto flex w-40 items-center justify-end gap-x-4">
@@ -148,7 +116,6 @@ const ChainRow = function ({ chain, layer, logo }: ChainRowProps) {
 }
 
 const AutomaticConfiguration = function () {
-  const t = useTranslations('get-started.network')
   const ethereum = bridgeableNetworks.at(-1)
 
   return (
@@ -163,10 +130,6 @@ const AutomaticConfiguration = function () {
           </div>
         }
       />
-      {/* TODO add link for troubleshooting https://github.com/BVM-priv/ui-monorepo/issues/62 */}
-      <p className="text-xs font-normal text-neutral-400">
-        {t('troubleshoot-other-errors')}
-      </p>
     </div>
   )
 }
@@ -176,7 +139,7 @@ const ManualConfiguration = function () {
   const ethereum = bridgeableNetworks.at(-1)
 
   return (
-    <div className="grid grid-cols-1 gap-y-4 rounded-lg bg-slate-100 p-4 text-black xl:grid-cols-2 2xl:grid-cols-3 [&>a]:text-sm [&>h5]:text-base xl:[&>h5]:text-lg [&>p]:text-sm xl:[&>p]:text-base">
+    <div className="grid grid-cols-1 gap-y-4 rounded-lg bg-white text-black xl:grid-cols-2 2xl:grid-cols-3 [&>a]:text-sm [&>h5]:text-base xl:[&>h5]:text-lg [&>p]:text-sm xl:[&>p]:text-base">
       {/* By not adding order, when visible, this is shown first */}
       <h5 className="hidden 2xl:block">{t('network-name')}</h5>
       <h5 className="order-1">{hemi.name}</h5>
@@ -230,31 +193,45 @@ const ManualConfiguration = function () {
 }
 
 export const ConfigureNetwork = function () {
-  const t = useTranslations()
+  const t = useTranslations('get-started.network')
+  const searchParams = useSearchParams()
 
   const networkConfiguration = useSelectedTab('automatic')
 
+  function getHref(config: NetworkConfiguration): string {
+    const params = new URLSearchParams(searchParams)
+
+    params.set('networkConfiguration', config)
+
+    return `?${params.toString()}`
+  }
+
   return (
-    <div className="flex flex-col px-1 py-2">
-      <h4 className="text-xl">
-        {t('get-started.network.configure-sepolia-testnet')}
-      </h4>
+    <div className="flex flex-col gap-y-6 px-1 py-2 lg:gap-y-9">
       <div className="text-center text-sm">
-        <ul className="flex flex-wrap gap-x-4">
+        <Tabs>
           <Tab
-            active={networkConfiguration === 'automatic'}
-            networkConfiguration="automatic"
-          />
+            href={getHref('automatic')}
+            selected={networkConfiguration === 'automatic'}
+          >
+            {t('automatic')}
+          </Tab>
           <Tab
-            active={networkConfiguration === 'manual'}
-            networkConfiguration="manual"
-          />
-        </ul>
+            href={getHref('manual')}
+            selected={networkConfiguration === 'manual'}
+          >
+            {t('manual')}
+          </Tab>
+        </Tabs>
       </div>
       <div>
         {networkConfiguration === 'automatic' && <AutomaticConfiguration />}
         {networkConfiguration === 'manual' && <ManualConfiguration />}
       </div>
+      {/* TODO add link for troubleshooting https://github.com/BVM-priv/ui-monorepo/issues/62 */}
+      <p className="text-xs font-normal text-neutral-400">
+        {t('troubleshoot-other-errors')}
+      </p>
     </div>
   )
 }

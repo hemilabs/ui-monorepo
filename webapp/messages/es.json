@@ -201,7 +201,7 @@
       }
     },
     "network": {
-      "added": "Añadida",
+      "added": "Red Añadida",
       "add-to-wallet": "Añadir a la billetera",
       "amount-of-tokens": "{amount} {symbol} tokens",
       "automatic": "Automático",

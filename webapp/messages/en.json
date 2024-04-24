@@ -201,7 +201,7 @@
       }
     },
     "network": {
-      "added": "Added",
+      "added": "Network Added",
       "add-to-wallet": "Add to wallet",
       "amount-of-tokens": "{amount} {symbol} tokens",
       "automatic": "Automatic",

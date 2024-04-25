@@ -37,6 +37,7 @@ const config: Config = {
         /* eslint-disable sort-keys */
         orange: {
           1: '#FF4D00',
+          100: '#FFF0E8',
           50: '#FFFBF8',
           200: '#FFE2D0',
           300: '#FFD3B9',

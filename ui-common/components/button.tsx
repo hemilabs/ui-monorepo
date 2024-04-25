@@ -7,6 +7,7 @@ const variants = {
   primary: 'bg-black text-white',
   secondary:
     'bg-white text-orange-1 border border-slate-100 px-3 leading-none h-9',
+  tertiary: 'bg-orange-950 text-white rounded-xl',
 } as const
 
 type Props = React.DetailedHTMLProps<

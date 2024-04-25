@@ -6,7 +6,7 @@ const borderColors = {
 } as const
 
 const paddingVariants = {
-  default: 'p-6 md:p-9',
+  large: 'p-6 md:p-9',
   medium: 'p-6',
   small: 'px-4 py-3',
 }
@@ -27,7 +27,7 @@ type CardProps = React.DetailedHTMLProps<
   HTMLDivElement
 > & {
   borderColor?: keyof typeof borderColors
-  padding?: keyof typeof paddingVariants
+  padding: keyof typeof paddingVariants
   radius?: keyof typeof radiusVariants
   shadow?: keyof typeof shadows
 }
@@ -35,7 +35,7 @@ type CardProps = React.DetailedHTMLProps<
 export const Card = ({
   children,
   borderColor: variant = 'default',
-  padding = 'default',
+  padding,
   radius = 'default',
   shadow = 'none',
 }: CardProps) => (

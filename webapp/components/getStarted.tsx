@@ -30,7 +30,7 @@ export function GetStarted({
                     ${className ?? ''}`}
     >
       <div className="m-auto max-md:p-6">
-        <Card radius="large" shadow="regular">
+        <Card padding="small" radius="large" shadow="regular">
           <div className="px-4 py-8 text-center">
             <h1 className="text-4xl font-medium tracking-tighter">
               {t('heading')}
@@ -57,7 +57,7 @@ export function GetStarted({
                   label: t('options.individual'),
                 },
               ].map(({ icon, handler, label }) => (
-                <Card borderColor="gray" key={label}>
+                <Card borderColor="gray" key={label} padding="small">
                   <div className="flex flex-col items-center px-2 py-4">
                     <div className="mb-10 mt-16">{icon}</div>
                     <Button onClick={handler} variant="secondary">

@@ -29,14 +29,14 @@ const NetworkPage = function () {
       </p>
       <main className="flex flex-col gap-y-4 md:w-full md:flex-row md:justify-between md:gap-x-4">
         <div className="md:basis-2/3">
-          <Card borderColor="gray" radius="large">
+          <Card borderColor="gray" padding="medium" radius="large">
             <Suspense>
               <ConfigureNetwork />
             </Suspense>
           </Card>
         </div>
         <div className="md:basis-1/3">
-          <Card borderColor="gray" radius="large">
+          <Card borderColor="gray" padding="medium" radius="large">
             <WelcomePack />
           </Card>
         </div>

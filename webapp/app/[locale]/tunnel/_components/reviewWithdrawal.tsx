@@ -399,7 +399,7 @@ export const ReviewWithdrawal = function ({
   return (
     <Modal onClose={closeModal}>
       <div className="flex w-96 flex-col gap-y-4">
-        <Card>
+        <Card padding="large">
           <div className="flex items-center justify-between pb-2">
             <h4 className="text-base font-medium text-slate-950 lg:text-xl">
               {t('heading')}

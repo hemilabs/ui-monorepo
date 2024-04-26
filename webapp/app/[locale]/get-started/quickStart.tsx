@@ -2,7 +2,11 @@
 
 import { AbstractIntlMessages, useMessages, useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
+import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
+
+export const profiles = ['dev', 'miner', 'individual'] as const
+export type Profile = (typeof profiles)[number]
 
 const ArrowIcon = () => (
   <svg
@@ -66,11 +70,7 @@ const InfoBox = function ({
   )
 }
 
-export const QuickStart = function ({
-  profile = 'individual',
-}: {
-  profile: 'miner' | 'dev' | 'individual' | undefined
-}) {
+export const QuickStart = function ({ profile }: { profile?: Profile }) {
   const allMessages = useMessages()
   const messages = allMessages['get-started'] as AbstractIntlMessages
   const t = useTranslations('get-started')
@@ -80,19 +80,22 @@ export const QuickStart = function ({
         {t('steps.heading')}
       </h3>
       <div className="grid auto-cols-fr grid-flow-row gap-3 md:grid-flow-col md:gap-6">
-        {Object.values(messages.steps[profile]).map(
-          ({
-            text,
-            title,
-            url,
-          }: {
-            text: string
-            title: string
-            url: string
-          }) => (
-            <InfoBox key={title} text={text} title={title} url={url} />
-          ),
-        )}
+        {profile !== undefined &&
+          Object.values(messages.steps[profile]).map(
+            ({
+              text,
+              title,
+              url,
+            }: {
+              text: string
+              title: string
+              url: string
+            }) => <InfoBox key={title} text={text} title={title} url={url} />,
+          )}
+        {profile === undefined &&
+          Array.from(Array(5).keys()).map(index => (
+            <Skeleton className="h-20 w-56" key={index} />
+          ))}
       </div>
     </section>
   )

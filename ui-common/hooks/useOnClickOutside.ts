@@ -1,7 +1,7 @@
 import { useRef, useEffect, MutableRefObject } from 'react'
 
 export const useOnClickOutside = function <T extends HTMLElement>(
-  handler: (e: MouseEvent | TouchEvent) => void,
+  handler?: (e: MouseEvent | TouchEvent) => void,
   initialRef?: MutableRefObject<T>,
 ) {
   const internalRef = useRef(null)
@@ -9,12 +9,15 @@ export const useOnClickOutside = function <T extends HTMLElement>(
 
   useEffect(
     function () {
+      if (!handler) {
+        return undefined
+      }
       const listener = function (e: MouseEvent | TouchEvent) {
         // Do nothing if clicking ref's element or descendent elements
         if (!ref.current || ref.current.contains(e.target as Node)) {
-          return
+          return undefined
         }
-        handler(e)
+        handler?.(e)
       }
       document.addEventListener('mousedown', listener)
       document.addEventListener('touchstart', listener)

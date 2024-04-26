@@ -131,7 +131,7 @@ export const TunnelForm = function ({
         {['deposit', 'withdraw'].includes(operation) && (
           <SwitchToNetwork selectedNetwork={expectedChainId} />
         )}
-        <Card borderColor="gray" radius="large">
+        <Card borderColor="gray" padding="large" radius="large">
           <form
             className="flex flex-col gap-y-3 text-zinc-800"
             onSubmit={function (e: FormEvent) {

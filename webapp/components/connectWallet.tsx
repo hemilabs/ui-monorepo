@@ -5,7 +5,7 @@ import { Card } from 'ui-common/components/card'
 export const ConnectWallet = function () {
   const t = useTranslations()
   return (
-    <Card borderColor="gray" radius="large">
+    <Card borderColor="gray" padding="large" radius="large">
       <div className="flex h-[50dvh] w-full flex-col items-center justify-center gap-y-2">
         <h3 className="text-2xl font-normal text-black">
           {t('common.connect-your-wallet')}

@@ -128,7 +128,7 @@ const ResetIcon = () => (
 )
 
 const PostClaimContainer = ({ children }: { children: ReactNode }) => (
-  <Card borderColor="gray" shadow="soft">
+  <Card borderColor="gray" padding="medium" shadow="soft">
     <div className="flex flex-col items-center justify-center gap-y-3">
       {children}
     </div>

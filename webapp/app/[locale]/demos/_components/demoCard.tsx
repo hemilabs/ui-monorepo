@@ -31,7 +31,7 @@ export const DemoCard = ({
   subHeading,
 }: Props) => (
   <a href={href} rel="noopener noreferrer" target="_blank">
-    <Card borderColor="gray" shadow="soft">
+    <Card borderColor="gray" padding="small" shadow="soft">
       <div className="h-60 max-w-64 cursor-pointer">
         <div className="overflow-hidden rounded-xl border border-solid border-slate-100">
           <Image

@@ -255,7 +255,7 @@ export const TransactionHistory = function () {
     <>
       {status === 'connected' && (
         <>
-          <Card borderColor="gray" radius="large">
+          <Card borderColor="gray" padding="medium" radius="large">
             <div className="overflow-x-auto">
               <table className="w-full whitespace-nowrap">
                 <thead>

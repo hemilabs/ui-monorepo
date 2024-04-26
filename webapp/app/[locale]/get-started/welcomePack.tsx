@@ -6,51 +6,54 @@ import fetch from 'fetch-plus-plus'
 import { discordUrl } from 'hemi-metadata/socials'
 import { useLocale, useTranslations } from 'next-intl'
 import { useReCaptcha } from 'next-recaptcha-v3'
-import { FormEvent, useState } from 'react'
+import { FormEvent, ReactNode, useState } from 'react'
 import { Button } from 'ui-common/components/button'
-import { HemiSymbol } from 'ui-common/components/hemiLogo'
+import { Card } from 'ui-common/components/card'
+
+import { Btc } from './_icons/btc'
+import { Eth } from './_icons/eth'
+import { Hemi } from './_icons/hemi'
 
 const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
-// TBD the real tokens https://github.com/BVM-priv/ui-monorepo/issues/99
-const giveAwayTokens = [
-  {
-    amount: 200,
-    icon: (
-      <div className="h-6 w-6">
-        <HemiSymbol />
-      </div>
-    ),
-    symbol: hemi.nativeCurrency.symbol,
-  },
-  {
-    amount: 0.0012,
-    icon: (
-      <svg
-        fill="none"
-        height="24"
-        viewBox="0 0 24 24"
-        width="24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M12 24C18.6274 24 24 18.6274 24 12C24 5.37258 18.6274 0 12 0C5.37258 0 0 5.37258 0 12C0 18.6274 5.37258 24 12 24Z"
-          fill="#F7931A"
-        />
-        <path
-          d="M17.392 10.515C17.6275 8.943 16.4298 8.09775 14.7933 7.53375L15.3243 5.40375L14.0283 5.08125L13.5108 7.155C13.1703 7.0695 12.8208 6.99 12.472 6.9105L12.9933 4.82325L11.6973 4.5L11.1663 6.62925C10.8843 6.56475 10.6068 6.50175 10.3383 6.43425L10.3398 6.4275L8.55179 5.98125L8.20679 7.36575C8.20679 7.36575 9.16904 7.58625 9.14879 7.59975C9.67379 7.731 9.76829 8.07825 9.75254 8.35425L9.14804 10.7805C9.18404 10.7895 9.23054 10.803 9.28304 10.8232L9.14579 10.7895L8.29829 14.1885C8.23379 14.3475 8.07104 14.5867 7.70354 14.496C7.71704 14.5147 6.76154 14.2612 6.76154 14.2612L6.11804 15.7448L7.80554 16.1655C8.11904 16.2443 8.42654 16.3267 8.72879 16.404L8.19254 18.558L9.48779 18.8805L10.0188 16.7505C10.3728 16.8457 10.7163 16.9342 11.0523 17.0182L10.5228 19.1392L11.8188 19.4618L12.355 17.3123C14.566 17.7308 16.228 17.562 16.9278 15.5625C17.4918 13.953 16.9 13.0238 15.7368 12.4185C16.5843 12.2235 17.2218 11.6663 17.392 10.515ZM14.4295 14.6685C14.0298 16.2788 11.3185 15.408 10.4395 15.1898L11.152 12.336C12.031 12.5557 14.8488 12.99 14.4295 14.6685ZM14.8308 10.4918C14.4655 11.9565 12.2095 11.2118 11.4783 11.0295L12.1233 8.442C12.8545 8.62425 15.2118 8.964 14.8308 10.4918Z"
-          fill="white"
-        />
-      </svg>
-    ),
-    symbol: 'sBTC',
-  },
-]
+const giveAwayTokens = hemi.testnet
+  ? [
+      {
+        amount: 0.2,
+        icon: <Hemi />,
+        symbol: hemi.nativeCurrency.symbol,
+      },
+      {
+        amount: 0.01,
+        icon: <Btc />,
+        symbol: 'tBTC',
+      },
+      {
+        amount: 0.02,
+        icon: <Eth />,
+        symbol: 'sepETH',
+      },
+      {
+        symbol: 'Hemi Hatchling NFT',
+      },
+    ]
+  : // mainnet capsules not confirmed
+    []
 
-const CoinRow = ({ icon, text }: { icon: React.ReactNode; text: string }) => (
-  <div className="flex items-center gap-x-2 py-3 text-sm ">
+const CoinRow = ({
+  amount,
+  icon,
+  symbol,
+}: {
+  amount?: number
+  icon?: React.ReactNode
+  symbol: string
+}) => (
+  <div className="flex w-fit items-center gap-x-2 rounded-lg bg-orange-100 px-2 py-1.5">
     {icon}
-    <p>{text}</p>
+    <span className="text-sm font-medium text-orange-950">
+      {[amount, symbol].filter(Boolean).join(' ')}
+    </span>
   </div>
 )
 
@@ -64,6 +67,7 @@ const DiscordIcon = () => (
   >
     <g clipPath="url(#path)">
       <path
+        className="fill-slate-400"
         d="M14.045 3.27a13.195 13.195 0 0 0-3.257-1.01.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.181 12.181 0 0 0-3.658 0 8.426 8.426 0 0 0-.412-.833.051.051 0 0 0-.052-.025 13.158 13.158 0 0 0-3.257 1.01.047.047 0 0 0-.021.019C.856 6.388.287 9.41.566 12.396c.001.014.01.028.02.037a13.266 13.266 0 0 0 3.996 2.02.052.052 0 0 0 .056-.019 9.48 9.48 0 0 0 .818-1.33.05.05 0 0 0-.028-.07 8.746 8.746 0 0 1-1.248-.594.051.051 0 0 1-.005-.085c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007c.08.066.164.132.248.194a.051.051 0 0 1-.004.086c-.399.233-.813.43-1.249.594a.051.051 0 0 0-.027.07c.24.466.514.91.817 1.33a.05.05 0 0 0 .056.019 13.222 13.222 0 0 0 4.001-2.02.051.051 0 0 0 .021-.037c.334-3.45-.559-6.449-2.366-9.106a.04.04 0 0 0-.02-.02Zm-8.198 7.308c-.789 0-1.438-.724-1.438-1.613 0-.888.637-1.612 1.438-1.612.807 0 1.45.73 1.438 1.612 0 .89-.637 1.613-1.438 1.613Zm5.316 0c-.788 0-1.438-.724-1.438-1.613 0-.888.637-1.612 1.438-1.612.807 0 1.45.73 1.438 1.612 0 .89-.63 1.613-1.438 1.613Z"
         fill="#1A1A1A"
       />
@@ -77,54 +81,58 @@ const DiscordIcon = () => (
 )
 
 const EmailIcon = () => (
-  <svg fill="none" height={25} width={24} xmlns="http://www.w3.org/2000/svg">
+  <svg
+    fill="none"
+    height="10"
+    viewBox="0 0 13 10"
+    width="13"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
-      d="M21 4.542H3a.75.75 0 0 0-.75.75v12.75a1.5 1.5 0 0 0 1.5 1.5h16.5a1.5 1.5 0 0 0 1.5-1.5V5.292a.75.75 0 0 0-.75-.75Zm-9 7.983L4.928 6.042h14.144L12 12.525Zm-2.746-.483L3.75 17.087V6.997l5.504 5.045Zm1.11 1.017 1.125 1.036a.75.75 0 0 0 1.014 0l1.125-1.036 5.438 4.983H4.928l5.436-4.983Zm4.382-1.017 5.504-5.045v10.09l-5.504-5.045Z"
-      fill="gray"
+      className="fill-green-600"
+      d="M11.1666 2.78301V7.21634H12.3333V2.78301H11.1666ZM9.88329 8.49968H3.11663V9.66634H9.88329V8.49968ZM1.83329 7.21634V2.78301H0.666627V7.21634H1.83329ZM3.11663 1.49968H9.88329V0.333009H3.11663V1.49968ZM3.11663 8.49968C2.78031 8.49968 2.56314 8.49921 2.39787 8.48573C2.23939 8.47278 2.18064 8.45079 2.1518 8.43609L1.62214 9.47559C1.84287 9.58806 2.07224 9.62965 2.30286 9.64849C2.52667 9.66681 2.79956 9.66634 3.11663 9.66634V8.49968ZM0.666627 7.21634C0.666627 7.53338 0.666172 7.80633 0.68446 8.03009C0.703301 8.26074 0.744905 8.49011 0.857365 8.71084L1.89687 8.18118C1.88218 8.1523 1.8602 8.09356 1.84725 7.93513C1.83375 7.76981 1.83329 7.55263 1.83329 7.21634H0.666627ZM2.1518 8.43609C2.04204 8.38015 1.9528 8.2909 1.89687 8.18118L0.857365 8.71084C1.02514 9.04013 1.29286 9.30783 1.62214 9.47559L2.1518 8.43609ZM11.1666 7.21634C11.1666 7.55263 11.1662 7.76981 11.1527 7.93513C11.1397 8.09356 11.1177 8.1523 11.103 8.18118L12.1425 8.71084C12.255 8.49011 12.2966 8.26074 12.3154 8.03009C12.3338 7.80633 12.3333 7.53338 12.3333 7.21634H11.1666ZM9.88329 9.66634C10.2004 9.66634 10.4733 9.66681 10.697 9.64849C10.9277 9.62965 11.1571 9.58806 11.3778 9.47559L10.8481 8.43609C10.8193 8.45079 10.7605 8.47278 10.6021 8.48573C10.4368 8.49921 10.2196 8.49968 9.88329 8.49968V9.66634ZM11.103 8.18118C11.0471 8.2909 10.9579 8.38015 10.8481 8.43609L11.3778 9.47559C11.7071 9.30783 11.9748 9.04013 12.1425 8.71084L11.103 8.18118ZM12.3333 2.78301C12.3333 2.46594 12.3338 2.19305 12.3154 1.96924C12.2966 1.73863 12.255 1.50925 12.1425 1.28853L11.103 1.81818C11.1177 1.84702 11.1397 1.90577 11.1527 2.06425C11.1662 2.22952 11.1666 2.44669 11.1666 2.78301H12.3333ZM9.88329 1.49968C10.2196 1.49968 10.4368 1.50013 10.6021 1.51363C10.7605 1.52658 10.8193 1.54856 10.8481 1.56325L11.3778 0.523747C11.1571 0.411286 10.9277 0.369683 10.697 0.350841C10.4733 0.332554 10.2004 0.333009 9.88329 0.333009V1.49968ZM12.1425 1.28853C11.9748 0.959241 11.7071 0.691526 11.3778 0.523747L10.8481 1.56325C10.9579 1.61918 11.0471 1.70842 11.103 1.81818L12.1425 1.28853ZM1.83329 2.78301C1.83329 2.44669 1.83375 2.22952 1.84725 2.06425C1.8602 1.90577 1.88218 1.84702 1.89687 1.81818L0.857365 1.28853C0.744905 1.50925 0.703301 1.73863 0.68446 1.96924C0.666172 2.19305 0.666627 2.46594 0.666627 2.78301H1.83329ZM3.11663 0.333009C2.79956 0.333009 2.52667 0.332554 2.30286 0.350841C2.07224 0.369683 1.84287 0.411286 1.62214 0.523747L2.1518 1.56325C2.18064 1.54856 2.23939 1.52658 2.39787 1.51363C2.56314 1.50013 2.78031 1.49968 3.11663 1.49968V0.333009ZM1.89687 1.81818C1.9528 1.70842 2.04204 1.61918 2.1518 1.56325L1.62214 0.523747C1.29286 0.691526 1.02514 0.959241 0.857365 1.28853L1.89687 1.81818ZM11.3806 0.836081L6.86933 4.52706L7.60812 5.43006L12.1193 1.73903L11.3806 0.836081ZM6.13059 4.52706L1.61935 0.836081L0.88057 1.73903L5.3918 5.43006L6.13059 4.52706ZM6.86933 4.52706C6.65449 4.70288 6.34544 4.70288 6.13059 4.52706L5.3918 5.43006C6.03644 5.95745 6.96348 5.95745 7.60812 5.43006L6.86933 4.52706Z"
     />
   </svg>
 )
 
 const ErrorIcon = () => (
-  <svg fill="none" height={60} width={60} xmlns="http://www.w3.org/2000/svg">
+  <svg
+    fill="none"
+    height="14"
+    viewBox="0 0 14 14"
+    width="14"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
-      d="M30 49.167c10.924 0 19.888-8.984 19.888-19.908 0-10.904-8.983-19.888-19.888-19.888-10.924 0-19.888 8.984-19.888 19.888 0 10.924 8.983 19.908 19.888 19.908Zm0-4.954c-8.268 0-14.916-6.667-14.916-14.954 0-8.268 6.63-14.935 14.916-14.935A14.91 14.91 0 0 1 44.935 29.26 14.89 14.89 0 0 1 30 44.213Zm-5.8-7.138c.62 0 1.11-.188 1.506-.602L30 32.179l4.313 4.294c.395.395.885.602 1.488.602a2.002 2.002 0 0 0 2.034-2.034c0-.546-.226-1.035-.622-1.412L32.9 29.297l4.332-4.35c.396-.415.603-.886.603-1.413 0-1.149-.885-2.034-2.015-2.034-.603 0-1.074.188-1.488.603L30 26.416l-4.313-4.295c-.395-.414-.866-.602-1.488-.602-1.13 0-2.015.885-2.015 2.034 0 .527.207 1.017.603 1.393l4.331 4.351-4.331 4.332a1.938 1.938 0 0 0-.603 1.412c0 1.15.885 2.034 2.015 2.034Z"
-      fill="#C14D4F"
-    />
-  </svg>
-)
-
-const SuccessIcon = () => (
-  <svg fill="none" height={61} width={61} xmlns="http://www.w3.org/2000/svg">
-    <path
-      clipRule="evenodd"
-      d="M30.501 55.042c13.807 0 25-11.192 25-25 0-13.807-11.193-25-25-25s-25 11.193-25 25c0 13.808 11.193 25 25 25Zm11.48-31.348a1.875 1.875 0 0 0-2.96-2.303l-10.018 12.88a.625.625 0 0 1-.911.08l-6.337-5.702a1.875 1.875 0 0 0-2.508 2.787l6.336 5.703a4.375 4.375 0 0 0 6.38-.566l10.018-12.88Z"
-      fill="#01AE33"
-      fillRule="evenodd"
+      d="M2.91675 2.91699L11.0834 11.0837M11.0834 2.91699L2.91675 11.0837"
+      stroke="#DC2626"
+      strokeLinecap="round"
+      strokeWidth="1.5"
     />
   </svg>
 )
 
 const ResetIcon = () => (
-  <svg fill="none" height={25} width={24} xmlns="http://www.w3.org/2000/svg">
+  <svg
+    fill="none"
+    height="14"
+    viewBox="0 0 15 14"
+    width="15"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
-      d="M21 12.042a9 9 0 0 1-8.88 9H12a8.942 8.942 0 0 1-6.178-2.456.75.75 0 0 1 1.031-1.09 7.5 7.5 0 1 0-.18-10.738L4.18 9.042h2.57a.75.75 0 1 1 0 1.5h-4.5a.75.75 0 0 1-.75-.75v-4.5a.75.75 0 1 1 1.5 0v2.794l2.648-2.419A9 9 0 0 1 21 12.042Z"
-      fill="gray"
+      className="fill-slate-400"
+      d="M7.3291 0.753861C7.10131 0.526057 6.73194 0.526057 6.50415 0.753861C6.27634 0.98167 6.27634 1.35101 6.50415 1.57882L7.3291 0.753861ZM8.66663 2.91634L9.0791 3.32882C9.30689 3.10101 9.30689 2.73167 9.0791 2.50386L8.66663 2.91634ZM6.50415 4.25386C6.27634 4.48167 6.27634 4.85101 6.50415 5.07882C6.73194 5.30663 7.10131 5.30663 7.3291 5.07882L6.50415 4.25386ZM8.49577 9.74548C8.72356 9.51769 8.72356 9.14832 8.49577 8.92053C8.26798 8.69274 7.89861 8.69274 7.67082 8.92053L8.49577 9.74548ZM6.33329 11.083L5.92081 10.6705C5.69301 10.8983 5.69301 11.2677 5.92081 11.4955L6.33329 11.083ZM7.67082 13.2455C7.89861 13.4733 8.26798 13.4733 8.49577 13.2455C8.72356 13.0177 8.72356 12.6483 8.49577 12.4205L7.67082 13.2455ZM11.9999 3.73366C11.7745 3.50355 11.4051 3.49981 11.175 3.72529C10.9449 3.95078 10.9412 4.3201 11.1667 4.55021L11.9999 3.73366ZM8.08329 3.49968C8.40547 3.49968 8.66663 3.2385 8.66663 2.91634C8.66663 2.59418 8.40547 2.33301 8.08329 2.33301V3.49968ZM2.99999 10.2657C3.22547 10.4958 3.5948 10.4996 3.8249 10.274C4.055 10.0486 4.05875 9.67922 3.83327 9.44915L2.99999 10.2657ZM6.50415 1.57882L8.25415 3.32882L9.0791 2.50386L7.3291 0.753861L6.50415 1.57882ZM8.25415 2.50386L6.50415 4.25386L7.3291 5.07882L9.0791 3.32882L8.25415 2.50386ZM7.67082 8.92053L5.92081 10.6705L6.74577 11.4955L8.49577 9.74548L7.67082 8.92053ZM5.92081 11.4955L7.67082 13.2455L8.49577 12.4205L6.74577 10.6705L5.92081 11.4955ZM8.66663 10.4997H6.91663V11.6663H8.66663V10.4997ZM12.1666 6.99967C12.1666 8.93267 10.5996 10.4997 8.66663 10.4997V11.6663C11.244 11.6663 13.3333 9.57702 13.3333 6.99967H12.1666ZM13.3333 6.99967C13.3333 5.72833 12.8242 4.57475 11.9999 3.73366L11.1667 4.55021C11.7858 5.18207 12.1666 6.04581 12.1666 6.99967H13.3333ZM6.33329 3.49968H8.08329V2.33301H6.33329V3.49968ZM2.83329 6.99967C2.83329 5.06668 4.4003 3.49968 6.33329 3.49968V2.33301C3.75596 2.33301 1.66663 4.42234 1.66663 6.99967H2.83329ZM1.66663 6.99967C1.66663 8.27099 2.17578 9.42459 2.99999 10.2657L3.83327 9.44915C3.21409 8.81728 2.83329 7.95354 2.83329 6.99967H1.66663Z"
     />
   </svg>
 )
 
-const PostClaimMessage = ({
-  description,
-  icon,
-}: {
-  icon: React.ReactNode
-  description: React.ReactNode
-}) => (
-  <div className="mt-4 flex flex-col items-center justify-center gap-y-3 rounded-lg bg-zinc-50 p-6">
-    {icon}
-    {description}
-  </div>
+const PostClaimContainer = ({ children }: { children: ReactNode }) => (
+  <Card borderColor="gray" shadow="soft">
+    <div className="flex flex-col items-center justify-center gap-y-3">
+      {children}
+    </div>
+  </Card>
 )
 
 type EmailState = 'initial' | 'sent' | 'failed'
@@ -185,53 +193,57 @@ export const WelcomePack = function () {
   const linksCss =
     'cursor-pointer underline text-blue-600 hover:text-blue-800 visited:text-purple-600'
 
+  const submitButton = (
+    <Button disabled={!canClaim} type="submit" variant="tertiary">
+      {t(isClaiming ? 'network.claiming' : 'network.claim-my-tokens')}
+    </Button>
+  )
+
   return (
     <>
-      <h4 className="w-full text-xl font-medium">
-        {t('network.your-welcome-pack')}
+      <h4 className="w-full text-xl font-medium text-slate-900">
+        {t('network.welcome-pack')}
       </h4>
+      <p className="pt-2 text-sm text-slate-500">
+        {t('network.welcome-pack-description')}
+      </p>
+      <div className="flex flex-col gap-y-2 py-8">
+        {giveAwayTokens.map(({ amount, icon, symbol }) => (
+          <CoinRow amount={amount} icon={icon} key={symbol} symbol={symbol} />
+        ))}
+      </div>
       {emailState === 'initial' && (
         <>
-          <p className="pt-3 text-sm text-neutral-400">
-            {t('network.welcome-pack-description')}
-          </p>
-          {giveAwayTokens.map(({ amount, icon, symbol }) => (
-            <CoinRow
-              icon={icon}
-              key={symbol}
-              text={t('network.amount-of-tokens', {
-                amount,
-                symbol,
-              })}
-            />
-          ))}
           <form className="flex flex-col gap-y-3" onSubmit={handleSubmit}>
-            <input
-              className="w-full rounded-xl bg-zinc-50 px-7 py-4 text-sm font-medium text-black"
-              onChange={e => setEmail(e.target.value)}
-              placeholder="email@mail.com"
-              type="email"
-              value={email}
-            />
+            <div className="relative">
+              <input
+                className="w-full rounded-lg border border-solid border-slate-100 px-3 py-2 text-sm font-medium text-slate-900 placeholder:opacity-30 lg:py-4 lg:pr-24"
+                onChange={e => setEmail(e.target.value)}
+                placeholder="joe@email.com"
+                type="email"
+                value={email}
+              />
+              <div className="absolute right-3 top-2 hidden lg:block [&>button]:h-fit [&>button]:w-fit [&>button]:px-3 [&>button]:py-2">
+                {submitButton}
+              </div>
+            </div>
             <div className="flex items-center gap-x-2">
               <input
                 checked={receiveUpdates}
-                className="cursor-pointer border-gray-300 bg-gray-100 text-green-600 accent-green-600 focus:ring-2 focus:ring-green-600"
+                className="cursor-pointer border-gray-300 bg-gray-100 text-orange-950 accent-orange-950 focus:ring-2 focus:ring-orange-950"
                 id="receive-updates-checkbox"
                 onChange={e => setReceiveUpdates(e.target.checked)}
                 placeholder={t('network.email-placeholder')}
                 type="checkbox"
               />
               <label
-                className="cursor-pointer text-xs text-zinc-500 "
+                className="cursor-pointer text-xs text-zinc-500"
                 htmlFor="receive-updates-checkbox"
               >
                 {t('network.receive-updates')}
               </label>
             </div>
-            <Button disabled={!canClaim} type="submit">
-              {t(isClaiming ? 'network.claiming' : 'network.claim-my-tokens')}
-            </Button>
+            <div className="lg:hidden">{submitButton}</div>
             <div className="text-xs text-neutral-400">
               {/* See https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed */}
               {t.rich('network.recaptcha-terms-and-conditions', {
@@ -261,44 +273,15 @@ export const WelcomePack = function () {
         </>
       )}
       {emailState === 'sent' && (
-        <PostClaimMessage
-          description={
-            <>
-              <div className="flex items-center gap-x-2">
-                <div className="min-w-6">
-                  <EmailIcon />
-                </div>
-                <p className="text-xs text-black">
-                  {t('network.magic-link-in-your-email')}
-                </p>
-              </div>
-              <div className="flex items-center gap-x-2">
-                <div className="min-w-6">
-                  <ResetIcon />
-                </div>
-                <p className="text-xs text-black">
-                  {t.rich('network.did-not-receive-try-again', {
-                    button: (chunk: string) => (
-                      <button
-                        className="font-semibold underline"
-                        onClick={onTryAgain}
-                      >
-                        {chunk}
-                      </button>
-                    ),
-                  })}
-                </p>
-              </div>
-            </>
-          }
-          icon={<SuccessIcon />}
-        />
-      )}
-      {emailState === 'failed' && (
-        <PostClaimMessage
-          description={
-            <p className="flex-shrink text-xs text-black">
-              {t.rich('network.email-failed', {
+        <PostClaimContainer>
+          <div className="flex items-center gap-x-1">
+            <EmailIcon />
+            <p className="text-xs text-green-600">{t('network.email-sent')}</p>
+          </div>
+          <div className="flex items-center gap-x-1">
+            <ResetIcon />
+            <p className="text-xs text-slate-400">
+              {t.rich('network.did-not-receive-try-again', {
                 button: (chunk: string) => (
                   <button
                     className="font-semibold underline"
@@ -307,22 +290,43 @@ export const WelcomePack = function () {
                     {chunk}
                   </button>
                 ),
-                discord: () => <DiscordIcon />,
-                link: (chunk: string) => (
-                  <a
-                    className="cursor-pointer font-medium underline"
-                    href={discordUrl}
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    {chunk}
-                  </a>
-                ),
               })}
             </p>
-          }
-          icon={<ErrorIcon />}
-        />
+          </div>
+        </PostClaimContainer>
+      )}
+      {emailState === 'failed' && (
+        <PostClaimContainer>
+          <div className="flex items-center gap-x-1">
+            <ErrorIcon />
+            <p className="flex-shrink text-xs text-red-600">
+              {t('network.email-failed')}
+            </p>
+          </div>
+          <p className="flex-shrink text-xs text-slate-400">
+            {t.rich('network.email-failed-retry', {
+              button: (chunk: string) => (
+                <button
+                  className="font-medium text-slate-950 underline"
+                  onClick={onTryAgain}
+                >
+                  {chunk}
+                </button>
+              ),
+              discord: () => <DiscordIcon />,
+              link: (chunk: string) => (
+                <a
+                  className="cursor-pointer font-medium underline"
+                  href={discordUrl}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  {chunk}
+                </a>
+              ),
+            })}
+          </p>
+        </PostClaimContainer>
       )}
     </>
   )

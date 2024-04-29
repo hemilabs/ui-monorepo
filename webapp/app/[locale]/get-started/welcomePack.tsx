@@ -9,11 +9,11 @@ import { useReCaptcha } from 'next-recaptcha-v3'
 import { FormEvent, ReactNode, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { Card } from 'ui-common/components/card'
+import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 
 import { Btc } from './_icons/btc'
 import { Eth } from './_icons/eth'
 import { Hemi } from './_icons/hemi'
-import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { Profile } from './quickStart'
 
 const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/

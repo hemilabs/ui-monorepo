@@ -4,17 +4,18 @@ import {
   connectorsForWallets,
   RainbowKitProvider,
   lightTheme,
+  type Chain,
   type Locale,
 } from '@rainbow-me/rainbowkit'
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { type Chain, http } from 'viem'
+import { http } from 'viem'
 import { WagmiProvider, createConfig } from 'wagmi'
 
 type Props = {
+  chains: readonly [Chain, ...Chain[]]
   children: React.ReactNode
-  networks: readonly [Chain, ...Chain[]]
   locale: Locale
 }
 
@@ -34,15 +35,15 @@ const connectors = connectorsForWallets(
   },
 )
 
-export const WalletContext = function ({ children, networks, locale }: Props) {
+export const WalletContext = function ({ chains, children, locale }: Props) {
   const wagmiConfig = useMemo(
     () =>
       createConfig({
-        chains: networks,
+        chains,
         connectors,
-        transports: Object.fromEntries(networks.map(n => [n.id, http()])),
+        transports: Object.fromEntries(chains.map(n => [n.id, http()])),
       }),
-    [networks],
+    [chains],
   )
 
   return (

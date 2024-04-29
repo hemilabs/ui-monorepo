@@ -40,7 +40,7 @@ export default async function RootLayout({
       <body className={`flex h-dvh flex-col bg-white ${inter.className} w-svw`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <RecaptchaContext>
-            <WalletContext locale={locale} networks={networks}>
+            <WalletContext chains={networks} locale={locale}>
               <div className="flex flex-col">
                 <div className="flex flex-nowrap justify-stretch">
                   <div className="hidden w-1/4 max-w-56 md:block">

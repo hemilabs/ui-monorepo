@@ -69,7 +69,9 @@ const NetworkPage = function () {
         </div>
         <div className="md:basis-1/3">
           <Card borderColor="gray" padding="medium" radius="large">
-            <WelcomePack />
+            <Suspense>
+              <WelcomePack />
+            </Suspense>
           </Card>
         </div>
       </main>

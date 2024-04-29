@@ -1,21 +1,53 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { Suspense } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { Card } from 'ui-common/components/card'
+import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 
 import { ConfigureNetwork } from './configureNetworks'
-import { QuickStart } from './quickStart'
+import { QuickStart, profiles, Profile } from './quickStart'
 import { WelcomePack } from './welcomePack'
 
-const QuickStartSection = function () {
-  const profileParam = useSearchParams().get('profile')
-  const profile = ['miner', 'dev', 'individual'].includes(profileParam)
-    ? (profileParam as 'miner' | 'dev' | 'individual')
-    : 'individual'
+const SelectProfile = dynamic(
+  () => import('./selectProfile').then(mod => mod.SelectProfile),
+  {
+    ssr: false,
+  },
+)
 
-  return <QuickStart profile={profile} />
+const isProfileValid = (profile: string): profile is Profile =>
+  profiles.includes(profile as Profile)
+
+const QuickStartSection = function () {
+  const { queryParams, setQueryParams } = useQueryParams<{ profile: string }>()
+  const { profile } = queryParams
+  const isValid = isProfileValid(profile)
+  const [savedProfileChecked, setSavedProfileChecked] = useState(false)
+
+  useEffect(
+    function checkPreviouslySetProfileInLocalStorage() {
+      if (savedProfileChecked || isValid) {
+        return
+      }
+      const savedProfile = localStorage.getItem('portal.get-started-profile')
+      if (isProfileValid(savedProfile)) {
+        setQueryParams({ profile: savedProfile })
+      } else {
+        setSavedProfileChecked(true)
+      }
+      return
+    },
+    [isValid, savedProfileChecked, setQueryParams, setSavedProfileChecked],
+  )
+
+  return (
+    <>
+      <QuickStart profile={isValid ? profile : undefined} />
+      {savedProfileChecked && !isValid && <SelectProfile />}
+    </>
+  )
 }
 
 const NetworkPage = function () {

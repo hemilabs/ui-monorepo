@@ -4,7 +4,7 @@ import { useOnKeyUp } from 'ui-common/hooks/useOnKeyUp'
 
 type Props = {
   children: React.ReactNode
-  onClose: () => void
+  onClose?: () => void
 }
 
 export const Modal = function ({ children, onClose }: Props) {
@@ -12,7 +12,7 @@ export const Modal = function ({ children, onClose }: Props) {
 
   useOnKeyUp(function (e) {
     if (e.key === 'Escape') {
-      onClose()
+      onClose?.()
     }
   }, modalRef)
 

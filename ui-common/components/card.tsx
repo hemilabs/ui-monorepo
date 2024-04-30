@@ -17,6 +17,8 @@ const radiusVariants = {
 } as const
 
 const shadows = {
+  extraSoft:
+    'shadow-[0px_64px_15px_0px_#00000001,_0px_32px_10px_0px_#00000002,_0px_16px_6px_0px_#00000003]',
   none: '',
   regular: 'shadow-[0px_1px_30px_0px_#00000026]',
   soft: 'shadow-[0px_88px_25px_0px_#00000000,_0px_56px_23px_0px_#00000000,_0px_32px_19px_0px_#00000003,_0px_14px_14px_0px_#00000005,_0px_4px_8px_0px_#00000005]',

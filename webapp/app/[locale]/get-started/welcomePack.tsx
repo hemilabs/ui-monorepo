@@ -217,7 +217,7 @@ export const WelcomePack = function () {
           <form className="flex flex-col gap-y-3" onSubmit={handleSubmit}>
             <div className="relative">
               <input
-                className="w-full rounded-lg border border-solid border-slate-100 px-3 py-2 text-sm font-medium text-slate-900 placeholder:opacity-30 lg:py-4 lg:pr-24"
+                className="w-full rounded-lg border border-solid border-slate-100 px-3 py-3 text-base font-medium text-slate-900 placeholder:opacity-30 lg:py-4 lg:pr-24"
                 onChange={e => setEmail(e.target.value)}
                 placeholder="joe@email.com"
                 type="email"
@@ -227,6 +227,7 @@ export const WelcomePack = function () {
                 {submitButton}
               </div>
             </div>
+            <div className="lg:hidden">{submitButton}</div>
             <div className="flex items-center gap-x-2">
               <input
                 checked={receiveUpdates}
@@ -243,7 +244,6 @@ export const WelcomePack = function () {
                 {t('network.receive-updates')}
               </label>
             </div>
-            <div className="lg:hidden">{submitButton}</div>
             <div className="text-xs text-neutral-400">
               {/* See https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed */}
               {t.rich('network.recaptcha-terms-and-conditions', {

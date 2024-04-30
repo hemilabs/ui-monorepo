@@ -27,7 +27,7 @@ const ArrowIcon = () => (
 )
 
 const InfoBoxCard = ({ text, title }: { text: string; title: string }) => (
-  <Card borderColor="gray" padding="small" shadow="soft">
+  <Card borderColor="gray" padding="small" shadow="extraSoft">
     <div className="flex flex-col">
       <div className="just flex flex-row items-start justify-between">
         <h5 className="my-1 h-fit text-sm font-medium leading-4">{title}</h5>
@@ -75,11 +75,11 @@ export const QuickStart = function ({ profile }: { profile?: Profile }) {
   const messages = allMessages['get-started'] as AbstractIntlMessages
   const t = useTranslations('get-started')
   return (
-    <section className="flex flex-col items-center gap-3 md:items-start">
+    <section className="mt-4 flex flex-col items-start gap-3 md:items-start">
       <h3 className="p-0 text-2xl font-semibold leading-9">
         {t('steps.heading')}
       </h3>
-      <div className="grid auto-cols-fr grid-flow-row gap-3 md:grid-flow-col md:gap-6">
+      <div className="grid grid-flow-row grid-cols-2 gap-3 md:auto-cols-fr md:grid-flow-col md:gap-6">
         {profile !== undefined &&
           Object.values(messages.steps[profile]).map(
             ({

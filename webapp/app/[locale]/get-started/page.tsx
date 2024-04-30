@@ -55,8 +55,8 @@ const NetworkPage = function () {
 
   return (
     <>
-      <h1 className="text-4xl font-medium">{t('network.page-title')}</h1>
-      <p className="my-3 text-sm text-neutral-400">
+      <h1 className="text-3xl font-semibold">{t('network.page-title')}</h1>
+      <p className="my-3 text-base text-slate-500">
         {t('network.page-subtitle')}
       </p>
       <main className="flex flex-col gap-y-4 md:w-full md:flex-row md:justify-between md:gap-x-4">

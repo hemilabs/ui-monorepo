@@ -101,14 +101,16 @@ const ChainRow = function ({ chain, layer, logo }: ChainRowProps) {
   const t = useTranslations('get-started.network')
 
   return (
-    <div className="flex items-center gap-x-3 text-sm font-medium">
-      {logo}
-      <div className="flex flex-col lg:flex-row lg:gap-x-1">
-        <p>{chain.name}</p>
-        <span className="text-neutral-400">·</span>
-        <span className="text-neutral-400">{t('layer', { layer })}</span>
+    <div className="flex flex-col gap-y-6 lg:flex-row lg:justify-between">
+      <div className="flex items-center gap-x-3 text-sm font-medium">
+        {logo}
+        <div className="flex flex-row gap-x-2">
+          <p>{chain.name}</p>
+          <span className="text-neutral-400">·</span>
+          <span className="text-neutral-400">{t('layer', { layer })}</span>
+        </div>
       </div>
-      <div className="ml-auto flex w-40 items-center justify-end gap-x-4">
+      <div className="flex items-center gap-x-4 lg:w-44">
         <AddChain chain={chain} />
       </div>
     </div>
@@ -208,7 +210,7 @@ export const ConfigureNetwork = function () {
 
   return (
     <div className="flex flex-col gap-y-6 px-1 py-2 lg:gap-y-9">
-      <div className="text-center text-sm">
+      <div className="flex justify-center lg:justify-start">
         <Tabs>
           <Tab
             href={getHref('automatic')}

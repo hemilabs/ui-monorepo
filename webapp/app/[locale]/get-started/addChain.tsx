@@ -29,7 +29,11 @@ export const AddChain = function ({ chain }: Props) {
 
   return (
     <>
-      {!isConnected && <ConnectButton />}
+      {!isConnected && (
+        <div className="w-full [&>div>button]:w-full [&>div>button]:!text-center">
+          <ConnectButton />
+        </div>
+      )}
       {!isChainAdded && isConnected && !connectedToChain && (
         <Button
           disabled={status === 'pending'}
@@ -41,7 +45,7 @@ export const AddChain = function ({ chain }: Props) {
         </Button>
       )}
       {(isChainAdded || connectedToChain) && (
-        <div className="flex items-center gap-2 rounded-lg bg-green-100 px-3 py-2">
+        <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-100 px-3 py-2">
           <svg
             fill="none"
             height="14"

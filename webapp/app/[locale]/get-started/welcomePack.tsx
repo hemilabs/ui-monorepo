@@ -9,10 +9,12 @@ import { useReCaptcha } from 'next-recaptcha-v3'
 import { FormEvent, ReactNode, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { Card } from 'ui-common/components/card'
+import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 
 import { Btc } from './_icons/btc'
 import { Eth } from './_icons/eth'
 import { Hemi } from './_icons/hemi'
+import { Profile } from './quickStart'
 
 const EmailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
@@ -141,6 +143,8 @@ export const WelcomePack = function () {
   const locale = useLocale()
   const t = useTranslations('get-started')
 
+  const { profile } = useQueryParams<{ profile: Profile }>().queryParams
+
   const { executeRecaptcha, loaded: recaptchaLoaded } = useReCaptcha()
 
   const [email, setEmail] = useState('')
@@ -151,7 +155,7 @@ export const WelcomePack = function () {
   const { isPending: isClaiming, mutate: claimTokens } = useMutation<
     void,
     Error,
-    { email: string; receiveUpdates: boolean }
+    { email: string; profile: Profile; receiveUpdates: boolean }
   >({
     mutationFn: async function claimTokens(body) {
       const token = await executeRecaptcha('claim_tokens')
@@ -182,7 +186,7 @@ export const WelcomePack = function () {
     if (!canClaim) {
       return
     }
-    claimTokens({ email, receiveUpdates })
+    claimTokens({ email, profile, receiveUpdates })
   }
 
   const onTryAgain = function () {

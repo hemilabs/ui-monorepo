@@ -36,5 +36,8 @@
   },
   "engines": {
     "node": ">=16"
+  },
+  "mocha": {
+    "timeout": 5000
   }
 }

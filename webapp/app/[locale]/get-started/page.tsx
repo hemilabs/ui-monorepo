@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { Suspense, useEffect, useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 
@@ -61,16 +62,18 @@ const NetworkPage = function () {
       </p>
       <main className="flex flex-col gap-y-4 md:w-full md:flex-row md:justify-between md:gap-x-4">
         <div className="md:basis-2/3">
-          <Card borderColor="gray" padding="medium" radius="large">
-            <Suspense>
+          <Suspense fallback={<Skeleton className="h-80 w-full" />}>
+            <Card borderColor="gray" padding="medium" radius="large">
               <ConfigureNetwork />
-            </Suspense>
-          </Card>
+            </Card>
+          </Suspense>
         </div>
         <div className="md:basis-1/3">
-          <Card borderColor="gray" padding="medium" radius="large">
-            <WelcomePack />
-          </Card>
+          <Suspense fallback={<Skeleton className="h-96 w-full" />}>
+            <Card borderColor="gray" padding="medium" radius="large">
+              <WelcomePack />
+            </Card>
+          </Suspense>
         </div>
       </main>
       <Suspense>

@@ -8,7 +8,7 @@ const { getReasonPhrase, StatusCodes } = require('http-status-codes')
 const pTap = require('p-tap')
 const snakeCaseKeys = require('snakecase-keys')
 
-const { db, transactionProvider } = require('./db')
+const { db, getTransaction } = require('./db')
 const { createEmailRepository } = require('./db/emailSubmissions')
 const { createIpRepository } = require('./db/ipAccesses')
 const { createUtils } = require('./db/utils')
@@ -73,6 +73,12 @@ const parseBody = function (body) {
     )
   }
 }
+
+const isReceiveUpdatesValid = receiveUpdates =>
+  receiveUpdates === undefined || typeof receiveUpdates === 'boolean'
+
+const isValidProfile = profile =>
+  ['dev', 'individual', 'miner'].includes(profile)
 
 const verifyEmail = email =>
   createEmailRepository(db)
@@ -185,20 +191,22 @@ const saveEmailAndIP =
       createIpRepository(transaction).saveIp(ip, timestamp),
     ])
       .then(transaction.commit)
-      .catch(
-        // rollback and let the error bubble up
-        pTap.catch(transaction.rollback),
-      )
       .then(
         pTap(function () {
           logger.verbose('Email and IP saving transaction committed')
         }),
       )
 
-const sendEmail = function (email, ip, timestamp) {
+const sendEmail = function (email, profile, receiveUpdates) {
   logger.debug('Calling webhook to send email')
   return fetch(config.get('email.webhook'), {
-    body: JSON.stringify({ email, ip, timestamp }),
+    body: JSON.stringify(
+      snakeCaseKeys({
+        email,
+        hsMarketableStatus: receiveUpdates ?? false,
+        websiteProfile: profile,
+      }),
+    ),
     method: 'POST',
   }).then(function ({ request_id: requestId, status }) {
     if (status !== 'success') {
@@ -209,15 +217,24 @@ const sendEmail = function (email, ip, timestamp) {
   })
 }
 
-const submitClaimingRequest = function (email, ip) {
+const submitClaimingRequest = function ({
+  email,
+  ip,
+  profile,
+  receiveUpdates,
+}) {
   logger.debug('Starting transaction to submit email and IP')
-  return transactionProvider().then(transaction =>
+  return getTransaction().then(transaction =>
     createUtils(transaction)
       .getTimestamp()
       .then(timestamp =>
-        sendEmail(email, ip, timestamp).then(
+        sendEmail(email, profile, receiveUpdates).then(
           saveEmailAndIP({ email, ip, timestamp, transaction }),
         ),
+      )
+      .catch(
+        // rollback and let the error bubble up
+        pTap.catch(transaction.rollback),
       ),
   )
 }
@@ -234,7 +251,12 @@ const claimTokens = async function ({
     throw new httpErrors.UnsupportedMediaType('Unsupported Media Type')
   }
   const parsedBody = parseBody(body)
-  if (!parsedBody?.token || !parsedBody?.email) {
+  if (
+    !parsedBody?.token ||
+    !parsedBody?.email ||
+    !isValidProfile(parsedBody?.profile) ||
+    !isReceiveUpdatesValid(parsedBody?.receiveUpdates)
+  ) {
     logger.debug('Body sent is invalid')
     throw new httpErrors.BadRequest('Invalid body')
   }
@@ -245,7 +267,12 @@ const claimTokens = async function ({
     verifyRecaptcha(parsedBody.token, ip),
     verifyIP(ip),
   ])
-    .then(() => submitClaimingRequest(parsedBody.email, ip))
+    .then(() =>
+      submitClaimingRequest({
+        ...parsedBody,
+        ip,
+      }),
+    )
     .then(function () {
       logger.info('Email to claim tokens sent')
     })

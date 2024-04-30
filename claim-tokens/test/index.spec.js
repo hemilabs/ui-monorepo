@@ -22,6 +22,8 @@ const defaultHeaders = {
 }
 const validBody = {
   email: 'test@email.com',
+  profile: 'miner',
+  receiveUpdates: true,
   token: 'some-recaptcha-token',
 }
 
@@ -170,6 +172,52 @@ describe('claim-tokens', function () {
     const event = getEvent({
       body: JSON.stringify({
         token: validBody.token,
+      }),
+    })
+
+    const response = await post(event)
+
+    assertErrorResponse(response, {
+      detail: 'Invalid body',
+      statusCode: StatusCodes.BAD_REQUEST,
+    })
+  })
+
+  it('should return bad request if the profile is not valid', async function () {
+    const event = getEvent({
+      body: JSON.stringify({
+        ...validBody,
+        profile: 'invalid',
+      }),
+    })
+
+    const response = await post(event)
+
+    assertErrorResponse(response, {
+      detail: 'Invalid body',
+      statusCode: StatusCodes.BAD_REQUEST,
+    })
+  })
+
+  it('should return bad request if the profile is not set', async function () {
+    const { profile, ...body } = validBody
+    const event = getEvent({
+      body: JSON.stringify(body),
+    })
+
+    const response = await post(event)
+
+    assertErrorResponse(response, {
+      detail: 'Invalid body',
+      statusCode: StatusCodes.BAD_REQUEST,
+    })
+  })
+
+  it('should return bad request if receiveUpdates is not a boolean', async function () {
+    const event = getEvent({
+      body: JSON.stringify({
+        ...validBody,
+        receiveUpdates: 123,
       }),
     })
 
@@ -437,7 +485,7 @@ describe('claim-tokens', function () {
     }
   })
 
-  it('should throw Internal Server Error if if failed to send the email', async function () {
+  it('should throw Internal Server Error if failed to send the email', async function () {
     const event = getEvent({ body: JSON.stringify(validBody) })
 
     nockReCaptcha({
@@ -456,8 +504,8 @@ describe('claim-tokens', function () {
         '/email',
         body =>
           body.email === validBody.email &&
-          body.ip === event.requestContext.identity.sourceIp &&
-          body.timestamp !== undefined,
+          body.website_profile === validBody.profile &&
+          body.hs_marketable_status === validBody.receiveUpdates,
       )
       .reply(500, {
         status: 'error',
@@ -471,60 +519,82 @@ describe('claim-tokens', function () {
     })
   })
 
-  it('should return No Content if the email was sent successfully', async function () {
-    const event = getEvent({ body: JSON.stringify(validBody) })
-    const ip = event.requestContext.identity.sourceIp
-    const requestId = 'some-request-id'
+  const testSuccessfulEmails = scenarios =>
+    scenarios.forEach((bodyScenario, index) =>
+      it(`should return No Content if the email was sent successfully - Scenario ${
+        index + 1
+      }`, async function () {
+        const event = getEvent({ body: JSON.stringify(bodyScenario) })
+        const ip = event.requestContext.identity.sourceIp
+        const requestId = 'some-request-id'
 
-    nockReCaptcha({
-      ip,
-      token: validBody.token,
-      ...nockRecaptchaSuccessfulResponse(),
-    })
+        nockReCaptcha({
+          ip,
+          token: bodyScenario.token,
+          ...nockRecaptchaSuccessfulResponse(),
+        })
 
-    nockIpQualityScore({
-      ip: event.requestContext.identity.sourceIp,
-      ...nockIpScoreSuccessfulResponse(),
-    })
+        nockIpQualityScore({
+          ip: event.requestContext.identity.sourceIp,
+          ...nockIpScoreSuccessfulResponse(),
+        })
 
-    nock('https://my-email-hook.com')
-      .post(
-        '/email',
-        body =>
-          body.email === validBody.email &&
-          body.ip === ip &&
-          body.timestamp !== undefined,
-      )
-      .reply(
-        200,
-        snakeCaseKeys({
-          requestId,
-          status: 'success',
-        }),
-      )
+        nock('https://my-email-hook.com')
+          .post(
+            '/email',
+            body =>
+              body.email === bodyScenario.email &&
+              body.website_profile === bodyScenario.profile &&
+              (body.hs_marketable_status === bodyScenario.receiveUpdates ||
+                (body.hs_marketable_status === false &&
+                  bodyScenario.receiveUpdates === undefined)),
+          )
+          .reply(
+            200,
+            snakeCaseKeys({
+              requestId,
+              status: 'success',
+            }),
+          )
 
-    const response = await post(event)
+        const response = await post(event)
 
-    response.statusCode.should.equal(StatusCodes.NO_CONTENT)
+        response.statusCode.should.equal(StatusCodes.NO_CONTENT)
 
-    // verify data's been inserted
-    const [submission, access] = await Promise.all([
-      db.from('email_submissions').where({ email: validBody.email }).first(),
-      db.from('ip_accesses').where({ ip }).first(),
-    ])
+        // verify data's been inserted
+        const [submission, access] = await Promise.all([
+          db
+            .from('email_submissions')
+            .where({ email: validBody.email })
+            .first(),
+          db.from('ip_accesses').where({ ip }).first(),
+        ])
 
-    try {
-      submission.should.have.property('ip', ip)
-      submission.should.have.property('request_id', requestId)
-      submission.should.have.property('submitted_at')
+        try {
+          submission.should.have.property('ip', ip)
+          submission.should.have.property('request_id', requestId)
+          submission.should.have.property('submitted_at')
 
-      access.should.have.property('created_at')
-    } finally {
-      // empty database even if assertions fail
-      await Promise.all([
-        db.from('email_submissions').where({ email: submission.email }).del(),
-        db.from('ip_accesses').where({ ip }).del(),
-      ])
-    }
-  })
+          access.should.have.property('created_at')
+        } finally {
+          // empty database even if assertions fail
+          await Promise.all([
+            db
+              .from('email_submissions')
+              .where({ email: submission.email })
+              .del(),
+            db.from('ip_accesses').where({ ip }).del(),
+          ])
+        }
+      }),
+    )
+
+  // eslint-disable-next-line mocha/no-setup-in-describe
+  testSuccessfulEmails([
+    validBody,
+    { ...validBody, profile: 'individual' },
+    { ...validBody, profile: 'dev' },
+    { ...validBody, receiveUpdates: false },
+    { ...validBody, receiveUpdates: undefined },
+  ])
 })

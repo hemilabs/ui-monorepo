@@ -8,7 +8,6 @@ const db = knex(config.util.cloneDeep(config.get('postgres')))
 
 module.exports = {
   db,
-  // the exported function returns a Promise<singleton>, starting the tx the first time you call it
   // See https://knexjs.org/guide/transactions.html
-  transactionProvider: db.transactionProvider(),
+  getTransaction: () => db.transaction(),
 }

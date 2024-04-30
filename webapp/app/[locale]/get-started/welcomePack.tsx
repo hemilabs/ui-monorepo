@@ -227,7 +227,6 @@ export const WelcomePack = function () {
                 {submitButton}
               </div>
             </div>
-            <div className="lg:hidden">{submitButton}</div>
             <div className="flex items-center gap-x-2">
               <input
                 checked={receiveUpdates}
@@ -244,6 +243,7 @@ export const WelcomePack = function () {
                 {t('network.receive-updates')}
               </label>
             </div>
+            <div className="lg:hidden">{submitButton}</div>
             <div className="text-xs text-neutral-400">
               {/* See https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed */}
               {t.rich('network.recaptcha-terms-and-conditions', {

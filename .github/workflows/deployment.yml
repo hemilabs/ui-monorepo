@@ -26,6 +26,9 @@ jobs:
         run: |
           cd webapp
           npm run build
+        with:
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: $ {{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }} 
+          NEXT_PUBLIC_CLAIM_TOKENS_URL: http://localhost:4000/dev # to be updated once claim-tokens service is deployed
 
       - name: Copy files to Hostinger
         uses: appleboy/scp-action@master

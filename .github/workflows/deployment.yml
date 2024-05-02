@@ -1,0 +1,43 @@
+name: Deploy Hemi Webapp
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build site
+        run: |
+          cd webapp
+          npm run build
+        with:
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: $ {{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }} 
+          NEXT_PUBLIC_CLAIM_TOKENS_URL: http://localhost:4000/dev # to be updated once claim-tokens service is deployed
+
+      - name: Copy files to Hostinger
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOSTINGER_HOST }}
+          username: ${{ secrets.HOSTINGER_USER }}
+          port: ${{ secrets.HOSTINGER_PORT }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          source: webapp/out/*
+          target: public_html/app-testnet
+          rm: true
+          strip_components: 2

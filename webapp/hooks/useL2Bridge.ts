@@ -1,4 +1,5 @@
 import {
+  MessageDirection,
   MessageReceipt,
   MessageStatus,
   type CrossChainMessenger as CrossChainMessengerType,
@@ -265,6 +266,7 @@ export const useGetWithdrawalsByAddress = function () {
 type UseGetTransactionMessageStatus = {
   crossChainMessenger: CrossChainMessengerType
   crossChainMessengerStatus: 'error' | 'pending' | 'success'
+  direction?: MessageDirection
   l1ChainId: Chain['id']
   refetchUntilStatus?: MessageStatus
   transactionHash: Hash
@@ -273,6 +275,7 @@ type UseGetTransactionMessageStatus = {
 const useGetTransactionMessageStatus = function ({
   crossChainMessenger,
   crossChainMessengerStatus,
+  direction,
   l1ChainId,
   refetchUntilStatus,
   transactionHash,
@@ -283,15 +286,21 @@ const useGetTransactionMessageStatus = function ({
       crossChainMessengerStatus === 'success' &&
       l1ChainId !== hemi.id &&
       !!transactionHash,
-    queryFn: () => crossChainMessenger.getMessageStatus(transactionHash),
-    queryKey: [l1ChainId, transactionHash, 'getMessageStatus'],
+    queryFn: () =>
+      crossChainMessenger.getMessageStatus(
+        transactionHash,
+        // default value
+        0,
+        direction,
+      ),
+    queryKey: [direction, l1ChainId, transactionHash, 'getMessageStatus'],
     refetchInterval(query) {
       // if message status is ready to prove, or no refetch was requested, stop polling
       if (query.state.data === refetchUntilStatus) {
         return false
       }
-      // poll every 15 seconds
-      return 15 * 1000
+      // poll every 1 minute
+      return 60 * 1000
     },
     refetchIntervalInBackground: true,
   })
@@ -328,6 +337,7 @@ export const useAnyChainGetTransactionMessageStatus = function ({
  * while connected to the L1 chain
  */
 export const useL1GetTransactionMessageStatus = function ({
+  direction,
   l1ChainId,
   refetchUntilStatus,
   transactionHash,
@@ -340,6 +350,7 @@ export const useL1GetTransactionMessageStatus = function ({
   return useGetTransactionMessageStatus({
     crossChainMessenger,
     crossChainMessengerStatus,
+    direction,
     l1ChainId,
     refetchUntilStatus,
     transactionHash,

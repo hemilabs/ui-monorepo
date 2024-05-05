@@ -1,6 +1,10 @@
 'use client'
 
-import { MessageStatus, TokenBridgeMessage } from '@eth-optimism/sdk'
+import {
+  MessageDirection,
+  MessageStatus,
+  TokenBridgeMessage,
+} from '@eth-optimism/sdk'
 import {
   ColumnDef,
   flexRender,
@@ -71,6 +75,7 @@ const WithdrawStatus = function ({
 
   const { isLoadingMessageStatus, messageStatus } =
     useAnyChainGetTransactionMessageStatus({
+      direction: MessageDirection.L2_TO_L1,
       l1ChainId,
       // @ts-expect-error string is hash `0x${string}`
       transactionHash: withdrawal.transactionHash,

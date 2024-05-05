@@ -1,4 +1,8 @@
-import { MessageStatus, TokenBridgeMessage } from '@eth-optimism/sdk'
+import {
+  MessageDirection,
+  MessageStatus,
+  TokenBridgeMessage,
+} from '@eth-optimism/sdk'
 import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
@@ -32,6 +36,7 @@ type Props = {
 export const WithdrawAction = function ({ l1ChainId, withdraw }: Props) {
   const { isLoadingMessageStatus, messageStatus } =
     useAnyChainGetTransactionMessageStatus({
+      direction: MessageDirection.L2_TO_L1,
       l1ChainId,
       // @ts-expect-error string is Hash `0x${string}`
       transactionHash: withdraw.transactionHash,

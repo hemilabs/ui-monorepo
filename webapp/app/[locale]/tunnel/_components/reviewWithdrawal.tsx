@@ -1,4 +1,8 @@
-import { MessageStatus, TokenBridgeMessage } from '@eth-optimism/sdk'
+import {
+  MessageDirection,
+  MessageStatus,
+  TokenBridgeMessage,
+} from '@eth-optimism/sdk'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
 import {
@@ -318,6 +322,7 @@ export const ReviewWithdrawal = function ({
 
   const { isLoadingMessageStatus, messageStatus } =
     useAnyChainGetTransactionMessageStatus({
+      direction: MessageDirection.L2_TO_L1,
       l1ChainId,
       transactionHash: txHash,
     })

@@ -19,6 +19,7 @@ import { type Address, type Chain, type Hash, isHash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
+import { sepolia } from 'viem/chains'
 
 const sdkPromise = import('@eth-optimism/sdk')
 
@@ -33,6 +34,14 @@ const l1Contracts = {
   L2OutputOracle: process.env.NEXT_PUBLIC_L2_OUTPUT_ORACLE_PROXY as Address,
   OptimismPortal: process.env.NEXT_PUBLIC_OPTIMISM_PORTAL_PROXY as Address,
   StateCommitmentChain: ZeroAddress,
+}
+
+// Some chains exist before Hemi. Therefore, it does not make sense to
+// search in the entire blockchain for deposits. We only need to search from blocks
+// whose date is after the genesis block in Hemi.
+// This should be updated once Hemi is deployed to mainnet.
+const l1ChainHemiBirthBlock = {
+  [sepolia.id]: 5294649,
 }
 
 async function getCrossChainMessenger({
@@ -236,7 +245,10 @@ export const useGetDepositsByAddress = function (l1ChainId: Chain['id']) {
   const { data: deposits, ...rest } = useQuery({
     // ensure correct chain was used
     enabled: crossChainMessengerStatus === 'success',
-    queryFn: () => crossChainMessenger.getDepositsByAddress(address),
+    queryFn: () =>
+      crossChainMessenger.getDepositsByAddress(address, {
+        fromBlock: l1ChainHemiBirthBlock[l1ChainId],
+      }),
     queryKey: [address, chainId, l1ChainId, 'deposit'],
   })
 

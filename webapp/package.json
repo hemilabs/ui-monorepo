@@ -5,6 +5,7 @@
     "build": "next build",
     "dev": "next dev",
     "dev:wifi": "WIFI=true LOCAL_IP=$(ipconfig getifaddr en0) PORT=3000 npm run dev",
+    "deploy": "npm run build",
     "preserve": "npm run build",
     "serve": "serve out"
   },

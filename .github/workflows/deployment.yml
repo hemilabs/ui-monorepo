@@ -27,6 +27,7 @@ jobs:
           cd webapp
           npm run build
         env:
+          BASE_PATH: "/app-testnet"
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: $ {{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }} 
           NEXT_PUBLIC_CLAIM_TOKENS_URL: http://localhost:4000/dev # to be updated once claim-tokens service is deployed
 

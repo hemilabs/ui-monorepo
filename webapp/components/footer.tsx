@@ -27,7 +27,7 @@ export const Footer = () => (
           <SmallHemiIcon className="text-slate-200" />
         </div>
         <Text className="text-slate-200" size="18">
-          Hemi
+          hemi
         </Text>
       </div>
       <div className="flex items-center">

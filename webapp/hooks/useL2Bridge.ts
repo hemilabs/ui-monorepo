@@ -1,4 +1,5 @@
 import {
+  MessageDirection,
   MessageReceipt,
   MessageStatus,
   type CrossChainMessenger as CrossChainMessengerType,
@@ -18,6 +19,7 @@ import { type Address, type Chain, type Hash, isHash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
+import { sepolia } from 'viem/chains'
 
 const sdkPromise = import('@eth-optimism/sdk')
 
@@ -32,6 +34,14 @@ const l1Contracts = {
   L2OutputOracle: process.env.NEXT_PUBLIC_L2_OUTPUT_ORACLE_PROXY as Address,
   OptimismPortal: process.env.NEXT_PUBLIC_OPTIMISM_PORTAL_PROXY as Address,
   StateCommitmentChain: ZeroAddress,
+}
+
+// Some chains exist before Hemi. Therefore, it does not make sense to
+// search in the entire blockchain for deposits. We only need to search from blocks
+// whose date is after the genesis block in Hemi.
+// This should be updated once Hemi is deployed to mainnet.
+const l1ChainHemiBirthBlock = {
+  [sepolia.id]: 5294649,
 }
 
 async function getCrossChainMessenger({
@@ -235,7 +245,10 @@ export const useGetDepositsByAddress = function (l1ChainId: Chain['id']) {
   const { data: deposits, ...rest } = useQuery({
     // ensure correct chain was used
     enabled: crossChainMessengerStatus === 'success',
-    queryFn: () => crossChainMessenger.getDepositsByAddress(address),
+    queryFn: () =>
+      crossChainMessenger.getDepositsByAddress(address, {
+        fromBlock: l1ChainHemiBirthBlock[l1ChainId],
+      }),
     queryKey: [address, chainId, l1ChainId, 'deposit'],
   })
 
@@ -265,6 +278,7 @@ export const useGetWithdrawalsByAddress = function () {
 type UseGetTransactionMessageStatus = {
   crossChainMessenger: CrossChainMessengerType
   crossChainMessengerStatus: 'error' | 'pending' | 'success'
+  direction?: MessageDirection
   l1ChainId: Chain['id']
   refetchUntilStatus?: MessageStatus
   transactionHash: Hash
@@ -273,6 +287,7 @@ type UseGetTransactionMessageStatus = {
 const useGetTransactionMessageStatus = function ({
   crossChainMessenger,
   crossChainMessengerStatus,
+  direction,
   l1ChainId,
   refetchUntilStatus,
   transactionHash,
@@ -283,15 +298,21 @@ const useGetTransactionMessageStatus = function ({
       crossChainMessengerStatus === 'success' &&
       l1ChainId !== hemi.id &&
       !!transactionHash,
-    queryFn: () => crossChainMessenger.getMessageStatus(transactionHash),
-    queryKey: [l1ChainId, transactionHash, 'getMessageStatus'],
+    queryFn: () =>
+      crossChainMessenger.getMessageStatus(
+        transactionHash,
+        // default value
+        0,
+        direction,
+      ),
+    queryKey: [direction, l1ChainId, transactionHash, 'getMessageStatus'],
     refetchInterval(query) {
       // if message status is ready to prove, or no refetch was requested, stop polling
       if (query.state.data === refetchUntilStatus) {
         return false
       }
-      // poll every 15 seconds
-      return 15 * 1000
+      // poll every 1 minute
+      return 60 * 1000
     },
     refetchIntervalInBackground: true,
   })
@@ -328,6 +349,7 @@ export const useAnyChainGetTransactionMessageStatus = function ({
  * while connected to the L1 chain
  */
 export const useL1GetTransactionMessageStatus = function ({
+  direction,
   l1ChainId,
   refetchUntilStatus,
   transactionHash,
@@ -340,6 +362,7 @@ export const useL1GetTransactionMessageStatus = function ({
   return useGetTransactionMessageStatus({
     crossChainMessenger,
     crossChainMessengerStatus,
+    direction,
     l1ChainId,
     refetchUntilStatus,
     transactionHash,

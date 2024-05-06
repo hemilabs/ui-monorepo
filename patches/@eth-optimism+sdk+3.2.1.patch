@@ -1,0 +1,104 @@
+diff --git a/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.d.ts b/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.d.ts
+index 743d4b4..6eafe8d 100644
+--- a/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.d.ts
++++ b/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.d.ts
+@@ -44,8 +44,8 @@ export declare class CrossChainMessenger {
+         fromBlock?: BlockTag;
+         toBlock?: BlockTag;
+     }): Promise<TokenBridgeMessage[]>;
+-    toCrossChainMessage(message: MessageLike, messageIndex?: number): Promise<CrossChainMessage>;
+-    getMessageStatus(message: MessageLike, messageIndex?: number, fromBlockOrBlockHash?: BlockTag, toBlockOrBlockHash?: BlockTag): Promise<MessageStatus>;
++    toCrossChainMessage(message: MessageLike, messageIndex?: number, direction: MessageDirection): Promise<CrossChainMessage>;
++    getMessageStatus(message: MessageLike, messageIndex?: number, direction?: MessageDirection, fromBlockOrBlockHash?: BlockTag, toBlockOrBlockHash?: BlockTag): Promise<MessageStatus>;
+     getMessageReceipt(message: MessageLike, messageIndex?: number, fromBlockOrBlockHash?: BlockTag, toBlockOrHash?: BlockTag): Promise<MessageReceipt>;
+     waitForMessageReceipt(message: MessageLike, opts?: {
+         fromBlockOrBlockHash?: BlockTag;
+diff --git a/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.js b/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.js
+index 01ac898..bc760d9 100644
+--- a/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.js
++++ b/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.js
+@@ -439,7 +439,7 @@ class CrossChainMessenger {
+             return b.blockNumber - a.blockNumber;
+         });
+     }
+-    async toCrossChainMessage(message, messageIndex = 0) {
++    async toCrossChainMessage(message, messageIndex = 0, direction) {
+         if (!message) {
+             throw new Error('message is undefined');
+         }
+@@ -449,7 +449,7 @@ class CrossChainMessenger {
+         else if (message.l1Token &&
+             message.l2Token &&
+             message.transactionHash) {
+-            const messages = await this.getMessagesByTransaction(message.transactionHash);
++            const messages = await this.getMessagesByTransaction(message.transactionHash, { direction });
+             const found = messages
+                 .sort((a, b) => {
+                 return a.logIndex - b.logIndex;
+@@ -463,7 +463,7 @@ class CrossChainMessenger {
+             return found;
+         }
+         else {
+-            const messages = await this.getMessagesByTransaction(message);
++            const messages = await this.getMessagesByTransaction(message, { direction });
+             const out = messages[messageIndex];
+             if (!out) {
+                 throw new Error(`withdrawal index ${messageIndex} out of bounds. There are ${messages.length} withdrawals`);
+@@ -471,8 +471,8 @@ class CrossChainMessenger {
+             return out;
+         }
+     }
+-    async getMessageStatus(message, messageIndex = 0, fromBlockOrBlockHash, toBlockOrBlockHash) {
+-        const resolved = await this.toCrossChainMessage(message, messageIndex);
++    async getMessageStatus(message, messageIndex = 0, direction, fromBlockOrBlockHash, toBlockOrBlockHash) {
++        const resolved = await this.toCrossChainMessage(message, messageIndex, direction);
+         const messageHashV0 = (0, core_utils_1.hashCrossDomainMessagev0)(resolved.target, resolved.sender, resolved.message, resolved.messageNonce);
+         const messageHashV1 = (0, core_utils_1.hashCrossDomainMessagev1)(resolved.messageNonce, resolved.sender, resolved.target, resolved.value, resolved.minGasLimit, resolved.message);
+         const messenger = resolved.direction === interfaces_1.MessageDirection.L1_TO_L2
+diff --git a/node_modules/@eth-optimism/sdk/src/cross-chain-messenger.ts b/node_modules/@eth-optimism/sdk/src/cross-chain-messenger.ts
+index 7d17f33..60a9f9e 100644
+--- a/node_modules/@eth-optimism/sdk/src/cross-chain-messenger.ts
++++ b/node_modules/@eth-optimism/sdk/src/cross-chain-messenger.ts
+@@ -620,7 +620,8 @@ export class CrossChainMessenger {
+    */
+   public async toCrossChainMessage(
+     message: MessageLike,
+-    messageIndex = 0
++    messageIndex = 0,
++    direction?: MessageDirection
+   ): Promise<CrossChainMessage> {
+     if (!message) {
+       throw new Error('message is undefined')
+@@ -634,7 +635,8 @@ export class CrossChainMessenger {
+       (message as TokenBridgeMessage).transactionHash
+     ) {
+       const messages = await this.getMessagesByTransaction(
+-        (message as TokenBridgeMessage).transactionHash
++        (message as TokenBridgeMessage).transactionHash,
++        { direction }
+       )
+ 
+       // The `messages` object corresponds to a list of SentMessage events that were triggered by
+@@ -661,7 +663,8 @@ export class CrossChainMessenger {
+     } else {
+       // TODO: Explicit TransactionLike check and throw if not TransactionLike
+       const messages = await this.getMessagesByTransaction(
+-        message as TransactionLike
++        message as TransactionLike,
++        { direction }
+       )
+ 
+       const out = messages[messageIndex]
+@@ -687,10 +690,11 @@ export class CrossChainMessenger {
+     message: MessageLike,
+     // consider making this an options object next breaking release
+     messageIndex = 0,
++    direction?: MessageDirection,
+     fromBlockOrBlockHash?: BlockTag,
+     toBlockOrBlockHash?: BlockTag
+   ): Promise<MessageStatus> {
+-    const resolved = await this.toCrossChainMessage(message, messageIndex)
++    const resolved = await this.toCrossChainMessage(message, messageIndex, direction)
+     // legacy withdrawals relayed prebedrock are v1
+     const messageHashV0 = hashCrossDomainMessagev0(
+       resolved.target,

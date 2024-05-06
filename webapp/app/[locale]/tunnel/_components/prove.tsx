@@ -1,4 +1,4 @@
-import { MessageStatus } from '@eth-optimism/sdk'
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { useChain } from 'hooks/useChain'
@@ -32,6 +32,7 @@ const SubmitButton = function ({
 
   const { txHash } = useTunnelOperation()
   const { messageStatus } = useAnyChainGetTransactionMessageStatus({
+    direction: MessageDirection.L2_TO_L1,
     l1ChainId,
     transactionHash: txHash,
   })

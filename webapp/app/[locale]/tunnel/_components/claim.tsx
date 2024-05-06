@@ -1,4 +1,4 @@
-import { MessageStatus } from '@eth-optimism/sdk'
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { bridgeableNetworks } from 'app/networks'
 import { useChain } from 'hooks/useChain'
@@ -36,6 +36,7 @@ const SubmitButton = function ({
 
   const { claimTxHash } = useGetClaimWithdrawalTxHash(l1ChainId, txHash)
   const { messageStatus } = useAnyChainGetTransactionMessageStatus({
+    direction: MessageDirection.L2_TO_L1,
     l1ChainId,
     transactionHash: txHash,
   })

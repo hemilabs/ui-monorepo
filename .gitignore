@@ -2,9 +2,11 @@
 .env.local
 .eslintcache
 .next
+.nx/cache
 .serverless
 .vscode/
 
+lerna-debug.log
 node_modules
 out
 tsconfig.tsbuildinfo

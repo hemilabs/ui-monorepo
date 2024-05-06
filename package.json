@@ -27,6 +27,7 @@
     "eslint-plugin-html": "7.1.0",
     "eslint-plugin-markdownlint": "0.5.0",
     "husky": "4.3.8",
+    "lerna": "8.1.2",
     "lint-staged": "15.2.0",
     "mocha": "10.3.0",
     "patch-package": "8.0.0",

@@ -243,7 +243,12 @@ const Body = function ({
           {rows.map(row => (
             <tr key={row.id}>
               {row.getVisibleCells().map(cell => (
-                <td className="p-2 text-neutral-700" key={cell.id}>
+                <td
+                  className={`py-2 text-neutral-700 ${
+                    cell.column.columnDef.id === 'action' ? 'text-center' : ''
+                  }`}
+                  key={cell.id}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

@@ -110,6 +110,7 @@
       "rejected": "Tx rechazada"
     },
     "tunnel": "Túnel",
+    "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
     "unsupported-chain-heading": "Usted no se encuentra conectado a una red soportada",
     "view": "Ver",
     "wrong-network": "Red Incorrecta"

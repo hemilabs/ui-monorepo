@@ -23,7 +23,6 @@ import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
-import { Tabs, Tab } from 'ui-common/components/tabs'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { isDeposit } from 'utils/tunnel'
 import { Chain } from 'viem'
@@ -31,6 +30,7 @@ import { useAccount } from 'wagmi'
 
 import { Amount } from './amount'
 import { Chain as ChainComponent } from './chain'
+import { Paginator } from './paginator'
 import { TxLink } from './txLink'
 import { TxStatus } from './txStatus'
 import { TxTime } from './txTime'
@@ -320,19 +320,12 @@ export const TransactionHistory = function () {
             </div>
           </Card>
           {!loading && pageCount > 1 && (
-            <div className="mt-2 flex justify-center">
-              <Tabs>
-                {Array.from(Array(pageCount).keys()).map(index => (
-                  <Tab
-                    key={index}
-                    onClick={() => table.setPageIndex(index)}
-                    selected={pageIndex === index}
-                  >
-                    {index + 1}
-                  </Tab>
-                ))}
-              </Tabs>
-            </div>
+            <Paginator
+              onPageChange={table.setPageIndex}
+              pageCount={pageCount}
+              pageIndex={pageIndex}
+              windowSize={width}
+            />
           )}
         </>
       )}

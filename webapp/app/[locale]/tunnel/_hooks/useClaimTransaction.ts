@@ -1,4 +1,4 @@
-import { MessageStatus } from '@eth-optimism/sdk'
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import {
@@ -34,7 +34,12 @@ export const useClaimTransaction = function ({
 
   const onSettled = function () {
     queryClient.invalidateQueries({
-      queryKey: [l1ChainId, withdrawTxHash, 'getMessageStatus'],
+      queryKey: [
+        MessageDirection.L2_TO_L1,
+        l1ChainId,
+        withdrawTxHash,
+        'getMessageStatus',
+      ],
     })
     queryClient.invalidateQueries({
       queryKey: [l1ChainId, withdrawTxHash, 'getMessageReceipt'],

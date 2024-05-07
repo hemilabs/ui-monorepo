@@ -1,4 +1,5 @@
 import Big from 'big.js'
+import { ConnectWallet } from 'components/connectWallet'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
@@ -117,11 +118,10 @@ export const TunnelForm = function ({
 }: Props) {
   const t = useTranslations('common')
   const { isConnected } = useAccount()
-  const { operation } = useTunnelOperation()
+  const { operation, txHash } = useTunnelOperation()
 
-  if (!operation || (!isConnected && operation === 'withdraw')) {
-    // Ensure wallet is connected https://github.com/BVM-priv/ui-monorepo/issues/159
-    return <span>...</span>
+  if (!operation || (!isConnected && txHash)) {
+    return <ConnectWallet />
   }
   return (
     <div className="mx-auto flex w-full flex-col items-center gap-y-4 pt-2 lg:grid lg:grid-cols-[1fr_1fr_400px_1fr_1fr] lg:items-start lg:gap-x-4">

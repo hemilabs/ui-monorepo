@@ -1,6 +1,6 @@
 'use client'
 
-import { MessageStatus } from '@eth-optimism/sdk'
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { TokenLogo } from 'app/components/tokenLogo'
 import { TokenSelector } from 'app/components/TokenSelector'
 import { bridgeableNetworks, hemi, networks } from 'app/networks'
@@ -206,6 +206,7 @@ const Tunnel = function () {
   const { setQueryParams } = useQueryParams()
 
   const { messageStatus } = useAnyChainGetTransactionMessageStatus({
+    direction: MessageDirection.L2_TO_L1,
     l1ChainId: bridgeableNetworks[0].id,
     transactionHash: txHash,
   })

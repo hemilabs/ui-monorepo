@@ -24,3 +24,6 @@ export const bridgeableNetworks: OrderedChains = testnetMode
   : [mainnet]
 
 export const networks: OrderedChains = [hemi, ...bridgeableNetworks]
+
+export const isChainSupported = (chainId: Chain['id']) =>
+  networks.some(({ id }) => id === chainId)

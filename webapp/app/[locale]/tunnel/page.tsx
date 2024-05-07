@@ -4,6 +4,8 @@ import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { TokenLogo } from 'app/components/tokenLogo'
 import { TokenSelector } from 'app/components/TokenSelector'
 import { bridgeableNetworks, hemi, networks } from 'app/networks'
+import { ConnectWallet } from 'components/connectWallet'
+import { useConnectedToUnsupportedChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -12,6 +14,7 @@ import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { formatNumber } from 'utils/format'
+import { useAccount } from 'wagmi'
 
 import { Claim } from './_components/claim'
 import { Deposit } from './_components/deposit'
@@ -201,8 +204,10 @@ const OperationByMessageStatus = {
 }
 
 const Tunnel = function () {
+  const { status } = useAccount()
   const tunnelState = useTunnelState()
   const { operation, txHash } = useTunnelOperation()
+  const t = useTranslations()
   const { setQueryParams } = useQueryParams()
 
   const { messageStatus } = useAnyChainGetTransactionMessageStatus({
@@ -228,6 +233,8 @@ const Tunnel = function () {
     [messageStatus, operation, setQueryParams, txHash],
   )
 
+  const connectedToUnsupportedChain = useConnectedToUnsupportedChain()
+
   const stateLoaded = !txHash || messageStatus !== undefined
   const OperationComponent = stateLoaded ? OperationsComponent[operation] : null
 
@@ -242,6 +249,18 @@ const Tunnel = function () {
             />
           )}
           state={tunnelState}
+        />
+      )}
+      {txHash && connectedToUnsupportedChain && (
+        <ConnectWallet
+          heading={t('common.connect-your-wallet')}
+          subheading={t('tunnel-page.connect-wallet-to-review')}
+        />
+      )}
+      {txHash && status === 'disconnected' && (
+        <ConnectWallet
+          heading={t('common.connect-your-wallet')}
+          subheading={t('tunnel-page.connect-wallet-to-review')}
         />
       )}
       {/* Add better loading indicator https://github.com/BVM-priv/ui-monorepo/issues/157 */}

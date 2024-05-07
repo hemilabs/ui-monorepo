@@ -56,9 +56,9 @@ export const AddChain = function ({ chain }: Props) {
             <path
               d="M9 5.33333L6 9L4.66667 7.66667M13 7C13 10.3137 10.3137 13 7 13C3.68629 13 1 10.3137 1 7C1 3.68629 3.68629 1 7 1C10.3137 1 13 3.68629 13 7Z"
               stroke="#10A732"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.33333"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="1.33333"
             />
           </svg>
           <span className="text-green-600">{t('added')}</span>

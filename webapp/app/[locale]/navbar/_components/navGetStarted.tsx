@@ -41,7 +41,8 @@ export const NavGetStarted = ({ children }: Props) => (
   <div
     className="h-30 w-45 relative cursor-pointer 
     overflow-hidden rounded-3xl border border-slate-200
-    border-opacity-50 hover:bg-slate-200 hover:bg-opacity-5"
+    border-opacity-50 transition-colors duration-300
+    hover:bg-slate-500 hover:bg-opacity-5"
   >
     <svg
       fill="none"

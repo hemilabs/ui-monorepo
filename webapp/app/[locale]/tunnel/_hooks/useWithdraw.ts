@@ -1,4 +1,4 @@
-import { MessageStatus } from '@eth-optimism/sdk'
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { useWithdrawNativeToken, useWithdrawToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
@@ -35,7 +35,12 @@ export const useWithdraw = function ({
   const onSettled = (hash: Hash) =>
     // revalidate message status
     queryClient.invalidateQueries({
-      queryKey: [l1ChainId, hash, 'getMessageStatus'],
+      queryKey: [
+        MessageDirection.L2_TO_L1,
+        l1ChainId,
+        hash,
+        'getMessageStatus',
+      ],
     })
 
   const onSuccess = function (hash: Hash) {
@@ -43,7 +48,7 @@ export const useWithdraw = function ({
     setQueryParams({ txHash: hash })
     // optimistically add the message status to the cache
     queryClient.setQueryData(
-      [l1ChainId, hash, 'getMessageStatus'],
+      [MessageDirection.L2_TO_L1, l1ChainId, hash, 'getMessageStatus'],
       MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
     )
   }

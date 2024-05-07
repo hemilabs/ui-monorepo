@@ -139,7 +139,12 @@ export const Claim = function ({ state }: Props) {
       if (claimWithdrawalReceipt?.status === 'success' && !savedClaimTxHash) {
         setSavedClaimTxHash(claimWithdrawalReceipt.transactionHash)
         queryClient.invalidateQueries({
-          queryKey: [l1ChainId, txHash, 'getMessageStatus'],
+          queryKey: [
+            MessageDirection.L2_TO_L1,
+            l1ChainId,
+            txHash,
+            'getMessageStatus',
+          ],
         })
         setIsClaiming(false)
         const timeoutId = setTimeout(clearClaimWithdrawalState, 7000)

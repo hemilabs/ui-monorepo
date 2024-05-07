@@ -1,4 +1,4 @@
-import { MessageStatus } from '@eth-optimism/sdk'
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
 import { type Chain, type Hash } from 'viem'
@@ -38,6 +38,7 @@ export const useTransactionsList = function ({
   const { txHash: withdrawalTxHash } = useTunnelOperation()
   // deposits won't have a withdrawalTxHash and no requests will run
   const { messageStatus } = useAnyChainGetTransactionMessageStatus({
+    direction: MessageDirection.L2_TO_L1,
     l1ChainId,
     transactionHash: withdrawalTxHash,
   })

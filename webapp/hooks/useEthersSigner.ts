@@ -2,6 +2,7 @@
 import { isChainSupported } from 'app/networks'
 import { providers } from 'ethers'
 import { useMemo } from 'react'
+import { cacheProvider } from 'ui-common/utils/cache'
 import type { Chain, HttpTransport, PublicClient } from 'viem'
 import { Config, useConnectorClient, usePublicClient } from 'wagmi'
 
@@ -15,11 +16,11 @@ function publicClientToProvider(publicClient: PublicClient) {
   }
   if (transport.type === 'fallback')
     return new providers.FallbackProvider(
-      (transport.transports as ReturnType<HttpTransport>[]).map(
-        ({ value }) => new providers.JsonRpcProvider(value?.url, network),
+      (transport.transports as ReturnType<HttpTransport>[]).map(({ value }) =>
+        cacheProvider(new providers.JsonRpcProvider(value?.url, network)),
       ),
     )
-  return new providers.JsonRpcProvider(transport.url, network)
+  return cacheProvider(new providers.JsonRpcProvider(transport.url, network))
 }
 
 // https://wagmi.sh/react/guides/ethers#connector-client-%E2%86%92-signer
@@ -33,7 +34,7 @@ function clientToSigner(client: any) {
     ensAddress: chain.contracts?.ensRegistry?.address,
     name: chain.name,
   }
-  const provider = new providers.Web3Provider(transport, network)
+  const provider = cacheProvider(new providers.Web3Provider(transport, network))
   const signer = provider.getSigner(account.address)
   return signer
 }

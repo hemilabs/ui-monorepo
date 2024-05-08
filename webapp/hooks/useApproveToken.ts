@@ -1,3 +1,4 @@
+import { isChainSupported } from 'app/networks'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { Token } from 'types/token'
 import { isNativeToken } from 'utils/token'
@@ -19,7 +20,7 @@ export const useApproveToken = function (
 
   const approvalTokenGasFees = useEstimateFees({
     chainId: token.chainId,
-    enabled: true,
+    enabled: isChainSupported(token.chainId),
     gasUnits: ApproveErc20TokenGas,
   })
 
@@ -30,7 +31,11 @@ export const useApproveToken = function (
   } = useAllowance(erc20AddressToken, {
     args: { owner, spender },
     query: {
-      enabled: !isNativeToken(token) && !!owner && !!spender,
+      enabled:
+        isChainSupported(token.chainId) &&
+        !isNativeToken(token) &&
+        !!owner &&
+        !!spender,
     },
   })
 

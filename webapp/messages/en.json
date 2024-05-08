@@ -3,9 +3,11 @@
     "connect-wallet-to-review": "Connect your wallet to review transaction history.",
     "in-challenge-period": "In Challenge period",
     "ready-to-claim": "Ready to claim",
-    "ready-to-prove": "Ready to prove"
+    "ready-to-prove": "Ready to prove",
+    "unsupported-chain-subheading": "Connect to a supported chain to view your transaction history."
   },
   "tunnel-page": {
+    "connect-wallet-to-review": "Connect your wallet to continue the operation.",
     "form": {
       "balance": "Balance",
       "from-network": "From Network",
@@ -108,6 +110,8 @@
       "rejected": "Tx rejected"
     },
     "tunnel": "Tunnel",
+    "unexpected-error": "An unexpected error has ocurred. Please try again.",
+    "unsupported-chain-heading": "You're not connected to a supported chain",
     "view": "View",
     "wrong-network": "Wrong Network"
   },

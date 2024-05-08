@@ -7,6 +7,7 @@ import {
 } from '@eth-optimism/sdk'
 import {
   ColumnDef,
+  Row,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -14,6 +15,7 @@ import {
 } from '@tanstack/react-table'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
+import { useConnectedToUnsupportedChain } from 'hooks/useConnectedToUnsupportedChain'
 import {
   useAnyChainGetTransactionMessageStatus,
   useGetDepositsByAddress,
@@ -201,6 +203,58 @@ const useTransactionsHistory = function (l1ChainId: Chain['id']) {
   return { data, loading }
 }
 
+const pageSize = 10
+
+const Body = function ({
+  columns,
+  loading,
+  rows,
+}: {
+  columns: ColumnDef<TokenBridgeMessage>[]
+  loading: boolean
+  rows: Row<TokenBridgeMessage>[]
+}) {
+  const t = useTranslations('tunnel-page.transaction-history')
+  return (
+    <tbody>
+      {loading &&
+        Array.from(Array(pageSize).keys()).map(index => (
+          <tr key={index}>
+            {columns.map((c, i) => (
+              <td className="py-2" key={c.id || i}>
+                {/* @ts-expect-error it works */}
+                {c.cell()}
+              </td>
+            ))}
+          </tr>
+        ))}
+      {!loading && (
+        <>
+          {rows.length === 0 && (
+            <tr>
+              <td
+                className="py-2 text-center text-neutral-700"
+                colSpan={columns.length}
+              >
+                {t('no-transactions')}
+              </td>
+            </tr>
+          )}
+          {rows.map(row => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map(cell => (
+                <td className="p-2 text-neutral-700" key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </>
+      )}
+    </tbody>
+  )
+}
+
 export const TransactionHistory = function () {
   // See https://github.com/BVM-priv/ui-monorepo/issues/158
   const l1ChainId = bridgeableNetworks[0].id
@@ -210,6 +264,7 @@ export const TransactionHistory = function () {
   const { data, loading } = useTransactionsHistory(l1ChainId)
 
   const t = useTranslations('tunnel-page.transaction-history')
+  const translate = useTranslations()
 
   const columns = useMemo(
     () =>
@@ -234,7 +289,7 @@ export const TransactionHistory = function () {
     initialState: {
       pagination: {
         pageIndex: 0,
-        pageSize: 10,
+        pageSize,
       },
     },
     state: {
@@ -251,6 +306,8 @@ export const TransactionHistory = function () {
     },
   })
 
+  const connectedToUnsupportedChain = useConnectedToUnsupportedChain()
+
   const { pageIndex } = table.getState().pagination
   const pageCount = table.getPageCount()
 
@@ -258,7 +315,7 @@ export const TransactionHistory = function () {
 
   return (
     <>
-      {status === 'connected' && (
+      {status === 'connected' && !connectedToUnsupportedChain && (
         <>
           <Card borderColor="gray" padding="medium" radius="large">
             <div className="overflow-x-auto">
@@ -277,45 +334,7 @@ export const TransactionHistory = function () {
                     </tr>
                   ))}
                 </thead>
-                <tbody>
-                  {loading &&
-                    Array.from(Array(10).keys()).map(index => (
-                      <tr key={index}>
-                        {columns.map((c, i) => (
-                          <td className="py-2" key={c.id || i}>
-                            {/* @ts-expect-error it works */}
-                            {c.cell()}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  {!loading && (
-                    <>
-                      {rows.length === 0 && (
-                        <tr>
-                          <td
-                            className="py-2 text-center text-neutral-700"
-                            colSpan={columns.length}
-                          >
-                            {t('no-transactions')}
-                          </td>
-                        </tr>
-                      )}
-                      {rows.map(row => (
-                        <tr key={row.id}>
-                          {row.getVisibleCells().map(cell => (
-                            <td className="p-2 text-neutral-700" key={cell.id}>
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext(),
-                              )}
-                            </td>
-                          ))}
-                        </tr>
-                      ))}
-                    </>
-                  )}
-                </tbody>
+                <Body columns={columns} loading={loading} rows={rows} />
               </table>
             </div>
           </Card>
@@ -332,7 +351,20 @@ export const TransactionHistory = function () {
       {['connecting', 'reconnecting'].includes(status) && (
         <Skeleton className="h-4/5 w-full" />
       )}
-      {status === 'disconnected' && <ConnectWallet />}
+      {status === 'disconnected' && (
+        <ConnectWallet
+          heading={translate('common.connect-your-wallet')}
+          subheading={translate('transaction-history.connect-wallet-to-review')}
+        />
+      )}
+      {connectedToUnsupportedChain && (
+        <ConnectWallet
+          heading={translate('common.unsupported-chain-heading')}
+          subheading={translate(
+            'transaction-history.unsupported-chain-subheading',
+          )}
+        />
+      )}
     </>
   )
 }

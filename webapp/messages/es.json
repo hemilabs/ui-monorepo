@@ -3,9 +3,11 @@
     "connect-wallet-to-review": "Conecte su billetera para revisar su historial de transacciones.",
     "in-challenge-period": "En período de Desafío",
     "ready-to-claim": "Listo para Reclamar",
-    "ready-to-prove": "Listo para Probar"
+    "ready-to-prove": "Listo para Probar",
+    "unsupported-chain-subheading": "Conéctese a una red soportada para ver su historial de transacciones."
   },
   "tunnel-page": {
+    "connect-wallet-to-review": "Conecte su billetera para continuar la operacion.",
     "form": {
       "balance": "Balance",
       "from-network": "Desde la Red",
@@ -108,6 +110,8 @@
       "rejected": "Tx rechazada"
     },
     "tunnel": "Túnel",
+    "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
+    "unsupported-chain-heading": "Usted no se encuentra conectado a una red soportada",
     "view": "Ver",
     "wrong-network": "Red Incorrecta"
   },

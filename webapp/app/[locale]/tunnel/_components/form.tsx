@@ -1,5 +1,4 @@
 import Big from 'big.js'
-import { ConnectWallet } from 'components/connectWallet'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
@@ -8,7 +7,6 @@ import { Card } from 'ui-common/components/card'
 import { getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { Chain, formatUnits, parseUnits } from 'viem'
-import { useAccount } from 'wagmi'
 
 import { useTunnelOperation } from '../_hooks/useTunnelState'
 
@@ -116,13 +114,9 @@ export const TunnelForm = function ({
   total,
   transactionsList = [],
 }: Props) {
-  const t = useTranslations('common')
-  const { isConnected } = useAccount()
-  const { operation, txHash } = useTunnelOperation()
+  const t = useTranslations()
+  const { operation } = useTunnelOperation()
 
-  if (!operation || (!isConnected && txHash)) {
-    return <ConnectWallet />
-  }
   return (
     <div className="mx-auto flex w-full flex-col items-center gap-y-4 pt-2 lg:grid lg:grid-cols-[1fr_1fr_400px_1fr_1fr] lg:items-start lg:gap-x-4">
       {/* empty column for grid flow in large screens, do not remove */}
@@ -150,7 +144,7 @@ export const TunnelForm = function ({
                   }`}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-neutral-400">{t('total')}</span>
+                  <span className="text-neutral-400">{t('common.total')}</span>
                   <span>{`${getFormattedValue(
                     total,
                   )} ${operationSymbol}`}</span>

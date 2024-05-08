@@ -5,6 +5,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { locales, type Locale } from 'app/i18n'
 import { networks } from 'app/networks'
 import { AppScreen } from 'components/appScreen'
+import { ErrorBoundary } from 'components/errorBoundary'
 import { RecaptchaContext } from 'components/recaptcha'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
@@ -46,7 +47,9 @@ export default async function RootLayout({
                   <div className="hidden w-1/4 max-w-56 md:block">
                     <Navbar />
                   </div>
-                  <AppScreen>{children}</AppScreen>
+                  <AppScreen>
+                    <ErrorBoundary>{children}</ErrorBoundary>
+                  </AppScreen>
                 </div>
               </div>
             </WalletContext>

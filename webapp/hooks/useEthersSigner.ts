@@ -1,12 +1,12 @@
-// Needs to be updated when migrating to wagmi 2.x
 // See https://wagmi.sh/react/guides/ethers#connector-client-%E2%86%92-signer
+import { isChainSupported } from 'app/networks'
 import { providers } from 'ethers'
 import { useMemo } from 'react'
 import type { Chain, HttpTransport, PublicClient } from 'viem'
 import { Config, useConnectorClient, usePublicClient } from 'wagmi'
 
 // See https://wagmi.sh/react/guides/ethers#client-%E2%86%92-provider
-export function publicClientToProvider(publicClient: PublicClient) {
+function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient
   const network = {
     chainId: chain.id,
@@ -26,7 +26,7 @@ export function publicClientToProvider(publicClient: PublicClient) {
 // Types provided by docs do not work, unless [strict](https://www.typescriptlang.org/tsconfig#strict) is enabled.
 // See https://github.com/BVM-priv/ui-monorepo/issues/105
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function clientToSigner(client: any) {
+function clientToSigner(client: any) {
   const { account, chain, transport } = client
   const network = {
     chainId: chain.id,
@@ -40,14 +40,21 @@ export function clientToSigner(client: any) {
 
 export function useWeb3Provider(chainId: Chain['id']) {
   const { data: client } = useConnectorClient<Config>({ chainId })
-  return useMemo(() => (client ? clientToSigner(client) : undefined), [client])
+  return useMemo(
+    () =>
+      client && isChainSupported(chainId) ? clientToSigner(client) : undefined,
+    [chainId, client],
+  )
 }
 
 export function useJsonRpcProvider(chainId: Chain['id']) {
   const publicClient = usePublicClient({ chainId })
   return useMemo(
-    () => (publicClient ? publicClientToProvider(publicClient) : undefined),
-    [publicClient],
+    () =>
+      publicClient && isChainSupported(chainId)
+        ? publicClientToProvider(publicClient)
+        : undefined,
+    [chainId, publicClient],
   )
 }
 

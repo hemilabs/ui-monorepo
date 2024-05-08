@@ -16,10 +16,10 @@ import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedN
 import { Token } from 'types/token'
 import { ZeroAddress } from 'utils/token'
 import { type Address, type Chain, type Hash, isHash } from 'viem'
+import { sepolia } from 'viem/chains'
 import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
-import { sepolia } from 'viem/chains'
 
 const sdkPromise = import('@eth-optimism/sdk')
 

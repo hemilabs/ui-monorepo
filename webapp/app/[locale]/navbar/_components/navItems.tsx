@@ -32,7 +32,7 @@ export const NavItems = function ({
   const t = useTranslations('common') as unknown as (key: string) => string
 
   return (
-    <div className="flex flex-col justify-center gap-3">
+    <div className="flex flex-col justify-center">
       {navItems.map(({ id, icon: Icon, href, subMenus }) => (
         <NavItem
           IconLeft={Icon}

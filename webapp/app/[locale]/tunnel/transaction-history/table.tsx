@@ -15,6 +15,6 @@ const TransactionHistory = dynamic(
   },
 )
 
-export default function Page() {
+export default function Table() {
   return <TransactionHistory />
 }

@@ -17,7 +17,7 @@ export const navItems: NavItemData[] = [
     id: 'tunnel',
   },
   {
-    href: '',
+    href: 'https://hemi.xyz/swap',
     icon: DexIcon,
     id: 'dex',
   },
@@ -36,8 +36,16 @@ export const navItems: NavItemData[] = [
     icon: ChecklistIcon,
     id: 'tools',
     subMenus: [
-      { id: 'purefinance', text: 'Pure Finance' },
-      { id: 'faucet', text: 'Faucet' },
+      {
+        href: 'https://hemi.xyz/pure.finance',
+        id: 'purefinance',
+        text: 'Pure Finance',
+      },
+      {
+        href: 'https://discord.com/channels/1202677849887080508/1230886659222929418',
+        id: 'faucet',
+        text: 'Faucet',
+      },
     ],
   },
   {

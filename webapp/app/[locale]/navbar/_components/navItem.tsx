@@ -57,7 +57,7 @@ export const NavItem = function ({
   return (
     <NavRouterItem href={href} isExternal={isExternalLink(href)}>
       <div
-        className={`w-45 flex h-10 cursor-pointer items-center justify-between gap-0 rounded-tl-lg 
+        className={`w-45 mb-3 flex h-10 cursor-pointer items-center justify-between rounded-tl-lg 
             bg-transparent px-2.5 py-2 ${
               isSelected ? 'rounded-lg border border-slate-200' : 'hover group'
             }`}

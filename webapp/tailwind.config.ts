@@ -25,7 +25,6 @@ const config: Config = {
           'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',
         'hemi-layout':
           'linear-gradient(180deg, rgba(255, 77, 0, 0.00) 50%, rgba(255, 77, 0, 0.05) 100%)',
-        'triangles-pattern': "url('../public/main-background.webp')",
       },
       boxShadow: {
         'hemi-layout':

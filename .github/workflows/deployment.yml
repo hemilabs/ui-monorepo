@@ -13,14 +13,12 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          # Can't only bring commits since ${{ github.event.before }} yet https://github.com/actions/checkout/issues/1444
+          fetch-depth: 0
 
-      - name: Install Dependencies
-        run: npm ci
+      - name: Setup env
+        uses: ./.github/actions/setup-env
 
       # Migrations must be manually run before deploying the portal
       - name: Run migrations

@@ -131,7 +131,7 @@
         "2": {
           "title": "Tunelización",
           "text": "Aprenda sobre la tunelización y cómo enviar fondos hacia y desde Hemi.",
-          "url": "/tunnel/"
+          "url": "https://docs.hemi.xyz/how-to-tutorials/tunnel-eth-to-hemi"
         },
         "3": {
           "title": "GitHub",
@@ -158,12 +158,12 @@
         "2": {
           "title": "Tunelización",
           "text": "Aprenda sobre la tunelización y cómo enviar fondos hacia y desde Hemi.",
-          "url": "/tunnel/"
+          "url": "https://docs.hemi.xyz/how-to-tutorials/tunnel-eth-to-hemi"
         },
         "3": {
           "title": "Programa de Recompensas",
           "text": "Participe en actividades y gane recompensas.",
-          "url": "#"
+          "url": "https://www.app.fuul.xyz/incentives/hemi"
         },
         "4": {
           "title": "Acceso a Discord",

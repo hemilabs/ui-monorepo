@@ -131,7 +131,7 @@
         "2": {
           "title": "Tunneling",
           "text": "Learn about tunneling and how to send funds to and from Hemi.",
-          "url": "/tunnel"
+          "url": "https://docs.hemi.xyz/how-to-tutorials/tunnel-eth-to-hemi"
         },
         "3": {
           "title": "GitHub",
@@ -146,7 +146,7 @@
         "5": {
           "title": "Rewards Program",
           "text": "Participate in activities and earn rewards.",
-          "url": "#"
+          "url": "https://www.app.fuul.xyz/incentives/hemi"
         }
       },
       "individual": {
@@ -158,7 +158,7 @@
         "2": {
           "title": "Tunneling",
           "text": "Learn about tunneling and how to send funds to and from Hemi.",
-          "url": "/tunnel/"
+          "url": "https://docs.hemi.xyz/how-to-tutorials/tunnel-eth-to-hemi"
         },
         "3": {
           "title": "Rewards Program",

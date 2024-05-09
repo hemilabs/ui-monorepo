@@ -1,4 +1,8 @@
-import React from 'react'
+'use client'
+
+import { Navbar } from 'app/[locale]/navbar'
+import { NavItemData } from 'app/[locale]/navbar/_components/navItems'
+import React, { useState } from 'react'
 
 import { Footer } from './footer'
 import { Header } from './header'
@@ -7,18 +11,40 @@ type AppScreenProps = {
   children: React.ReactNode
 }
 
-export const AppScreen = ({ children }: AppScreenProps) => (
-  <div
-    className={`bg-hemi-layout bg-hemi-color-layout shadow-hemi-layout backdrop-blur-20 h-97vh
-    mr-2 mt-3 flex w-3/4 flex-1 flex-col 
-    self-stretch rounded-3xl border border-slate-100 px-5 pb-3 pt-3 md:pb-0`}
-  >
-    <Header />
-    <div className="max-h-[calc(100vh-1rem)] flex-grow overflow-y-auto pr-5">
-      {children}
+export const AppScreen = function ({ children }: AppScreenProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  // Hide instead of not-rendering when the header is open, to avoid loosing state of the components when opening
+  // and closing the header
+  const hiddenClass = isMenuOpen ? 'hidden' : ''
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
+
+  const onNavBarMenuItemClick = function (item: NavItemData) {
+    // close the nav bar menu... unless we clicked an item with submenus
+    if (!item?.subMenus) {
+      toggleMenu()
+    }
+  }
+  return (
+    <div
+      className={`bg-hemi-layout bg-hemi-color-layout shadow-hemi-layout backdrop-blur-20 lg:100-dvh lg:h-97vh
+    flex w-3/4 flex-1 flex-col self-stretch overflow-y-hidden border-slate-100
+    md:my-3 md:mr-2 md:w-[calc(75%-8px)] md:rounded-3xl md:border md:pb-0`}
+    >
+      <Header isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
+      <div
+        className={`max-h-[calc(100vh-1rem)] flex-grow overflow-y-auto px-5 pt-4 ${hiddenClass} pb-3`}
+      >
+        {children}
+      </div>
+      <div className={`-mb-px mt-auto hidden pt-3 md:block ${hiddenClass}`}>
+        <Footer />
+      </div>
+      {isMenuOpen && (
+        <div className="md:hidden [&>*]:px-3">
+          <Navbar onItemClick={onNavBarMenuItemClick} />
+        </div>
+      )}
     </div>
-    <div className="mx-[-21px] mb-[-1px] mt-auto hidden pt-3 md:block">
-      <Footer />
-    </div>
-  </div>
-)
+  )
+}

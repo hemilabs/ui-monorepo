@@ -12,13 +12,13 @@ export type NavItemData = {
   id: string
   subMenus?: { id: string; text: string; href?: string }[]
 }
-interface NavItemsProps {
+type Props = {
   color: ColorType
   colorSelected?: ColorType
   navItems: NavItemData[]
   isSelectable: boolean
   selectedItem: string
-  onItemClick: (selectedItem: string) => void
+  onItemClick: (selectedItem: NavItemData) => void
 }
 
 export const NavItems = function ({
@@ -28,29 +28,32 @@ export const NavItems = function ({
   isSelectable,
   selectedItem,
   onItemClick,
-}: NavItemsProps) {
+}: Props) {
   const t = useTranslations('common') as unknown as (key: string) => string
 
   return (
     <div className="flex flex-col justify-center">
-      {navItems.map(({ id, icon: Icon, href, subMenus }) => (
-        <NavItem
-          IconLeft={Icon}
-          color={href === selectedItem ? colorSelected : color}
-          href={href}
-          isSelected={
-            href === selectedItem || (subMenus && selectedItem === id)
-          }
-          key={id}
-          onClick={function () {
-            if (isSelectable) {
-              onItemClick(subMenus ? id : '')
+      {navItems.map(function (item) {
+        const { id, icon: Icon, href, subMenus } = item
+        return (
+          <NavItem
+            IconLeft={Icon}
+            color={href === selectedItem ? colorSelected : color}
+            href={href}
+            isSelected={
+              href === selectedItem || (subMenus && selectedItem === id)
             }
-          }}
-          subMenus={subMenus}
-          text={t(id)}
-        />
-      ))}
+            key={id}
+            onClick={function () {
+              if (isSelectable) {
+                onItemClick(item)
+              }
+            }}
+            subMenus={subMenus}
+            text={t(id)}
+          />
+        )
+      })}
     </div>
   )
 }

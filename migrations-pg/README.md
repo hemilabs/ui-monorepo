@@ -7,7 +7,6 @@ Postgres version: 16.2
 ```sh
 # Start the docker container
 npm run db:start
-
 # Run migrations locally
 npm run migrate:up
 ```

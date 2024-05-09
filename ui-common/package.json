@@ -20,7 +20,7 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
-    "eth-rpc-cache": "0.0.2",
+    "eth-rpc-cache": "1.0.0",
     "hemi-metadata": "1.0.0"
   }
 }

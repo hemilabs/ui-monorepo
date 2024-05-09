@@ -1,5 +1,10 @@
 name: Deploy Hemi Webapp
 
+# Will limit one workflow at the same time
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 on:
   workflow_dispatch:
   push:

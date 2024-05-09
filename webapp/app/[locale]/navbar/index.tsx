@@ -20,7 +20,9 @@ export const Navbar = function () {
 
   function getCurrentPath() {
     const cleanedUrl = pathname.replace(/^\/[a-z]{2}/, '').replace(/\/$/, '')
-    return cleanedUrl
+    const firstPath = `/${cleanedUrl.split('/')[1]}`
+
+    return firstPath
   }
 
   const handleItemClick = value =>

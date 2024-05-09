@@ -7,8 +7,11 @@ import { Card } from 'ui-common/components/card'
 import { getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { Chain, formatUnits, parseUnits } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { useTunnelOperation } from '../_hooks/useTunnelState'
+
+import { ConnectWallet } from './connectWallet'
 
 const SwitchToNetwork = dynamic(
   () => import('components/switchToNetwork').then(mod => mod.SwitchToNetwork),
@@ -114,6 +117,7 @@ export const TunnelForm = function ({
   total,
   transactionsList = [],
 }: Props) {
+  const { isConnected } = useAccount()
   const t = useTranslations()
   const { operation } = useTunnelOperation()
 
@@ -134,7 +138,7 @@ export const TunnelForm = function ({
             }}
           >
             {formContent}
-            {submitButton}
+            {isConnected ? submitButton : <ConnectWallet />}
             {showReview && (
               <div className="mt-2 flex flex-col gap-y-2 text-sm">
                 <div className="flex items-center justify-between">

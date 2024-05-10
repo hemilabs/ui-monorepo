@@ -7,7 +7,6 @@ import { useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
-import { formatNumber } from 'utils/format'
 import { isNativeToken, ZeroAddress } from 'utils/token'
 import { type Chain, formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -205,7 +204,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
             )}
           </Button>
         }
-        total={formatNumber(fromInput, 3)}
+        total={fromInput}
         transactionsList={transactionsList}
       />
       {!!txHash && (

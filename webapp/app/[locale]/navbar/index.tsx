@@ -8,10 +8,14 @@ import { Button } from 'ui-common/components/button'
 import { HemiLogoFull } from 'ui-common/components/hemiLogo'
 
 import { NavGetStarted } from './_components/navGetStarted'
-import { NavItems } from './_components/navItems'
+import { NavItems, type NavItemData } from './_components/navItems'
 import { navItems, navItemsBottom } from './navData'
 
-export const Navbar = function () {
+type Props = {
+  onItemClick?: (item?: NavItemData) => void
+}
+
+export const Navbar = function ({ onItemClick }: Props) {
   const t = useTranslations('common')
   const [selectedItem, setSelectedItem] = useState('')
   const pathname = usePathname()
@@ -25,19 +29,23 @@ export const Navbar = function () {
     return firstPath
   }
 
-  const handleItemClick = value =>
-    setSelectedItem(value === selectedItem ? '' : value)
+  const handleItemClick = function (item: NavItemData) {
+    setSelectedItem(
+      (item.subMenus ? item.id : '') !== selectedItem ? item.id : '',
+    )
+    onItemClick?.(item)
+  }
 
   return (
-    <div className="h-98vh flex flex-col justify-between pr-5">
-      <div className="mt-8">
-        <div className="ml-10 mt-4 hidden h-10 w-28 md:block">
+    <div className="md:h-98vh flex h-[calc(100dvh-64px)] flex-col justify-between pr-5 pt-3 md:pt-0 [&>*]:md:ml-4">
+      <div className="mt-8 hidden md:block">
+        <div className="ml-2 mt-4 hidden h-10 w-28 md:block">
           <Link href="/tunnel">
             <HemiLogoFull />
           </Link>
         </div>
       </div>
-      <div className="ml-8 mt-10">
+      <div className="mt-2 md:mt-10">
         <NavItems
           color="slate-200"
           isSelectable={true}
@@ -47,8 +55,8 @@ export const Navbar = function () {
         />
       </div>
       <div className="flex-grow" />
-      <div className="ml-8">
-        <Link href="/get-started">
+      <div>
+        <Link href="/get-started" onClick={() => onItemClick()}>
           <NavGetStarted>
             <Button onClick={() => setSelectedItem('')} variant="secondary">
               {t('get-started')}
@@ -56,7 +64,7 @@ export const Navbar = function () {
           </NavGetStarted>
         </Link>
       </div>
-      <div className="ml-8 mt-6">
+      <div className="mt-6">
         <NavItems
           color="slate-500"
           isSelectable={false}

@@ -1,6 +1,6 @@
 export const Hemi = () => (
   <svg fill="none" height={19} width={19} xmlns="http://www.w3.org/2000/svg">
-    <g clipPath="url(#a)">
+    <g clipPath="url(#hemi_path)">
       <path
         className="fill-orange-950"
         d="M9.5 18.54a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z"
@@ -11,7 +11,7 @@ export const Hemi = () => (
       />
     </g>
     <defs>
-      <clipPath id="a">
+      <clipPath id="hemi_path">
         <path d="M.5.54h18v18H.5z" fill="#fff" />
       </clipPath>
     </defs>

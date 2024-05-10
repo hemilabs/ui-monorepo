@@ -22,8 +22,8 @@ const giveAwayTokens = hemi.testnet
   ? [
       {
         amount: 0.2,
-        icon: <Hemi />,
-        symbol: hemi.nativeCurrency.symbol,
+        icon: <Eth />,
+        symbol: 'sepETH',
       },
       {
         amount: 0.01,
@@ -31,9 +31,9 @@ const giveAwayTokens = hemi.testnet
         symbol: 'tBTC',
       },
       {
-        amount: 0.02,
-        icon: <Eth />,
-        symbol: 'sepETH',
+        amount: 0.2,
+        icon: <Hemi />,
+        symbol: 'tHEMI',
       },
       {
         symbol: 'Hemi Hatchling NFT',

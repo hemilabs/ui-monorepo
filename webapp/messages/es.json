@@ -228,8 +228,8 @@
       "receive-updates": "Quiero recibir actualizaciones de marketing",
       "rpc-url": "URL de RPC",
       "troubleshoot-other-errors": "¿Tiene problemas? Resuelva otros <link>errores comunes</link> aquí.",
-      "welcome-pack": "Pack de bienvenida",
-      "welcome-pack-description": "Suscríbase para recibir nuestro paquete de bienvenida de Hemi"
+      "welcome-pack": "Pack de Bienvenida",
+      "welcome-pack-description": "Suscríbase para recibir nuestro paquete de bienvenida de la red de prueba Hemi."
     }
   },
   "token-selector": {

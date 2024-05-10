@@ -1,5 +1,5 @@
 diff --git a/node_modules/viem/_cjs/chains/definitions/sepolia.js b/node_modules/viem/_cjs/chains/definitions/sepolia.js
-index a5dceed..59a12b4 100644
+index a5dceed..19e54c1 100644
 --- a/node_modules/viem/_cjs/chains/definitions/sepolia.js
 +++ b/node_modules/viem/_cjs/chains/definitions/sepolia.js
 @@ -5,7 +5,7 @@ const defineChain_js_1 = require("../../utils/chain/defineChain.js");
@@ -7,12 +7,12 @@ index a5dceed..59a12b4 100644
      id: 11155111,
      name: 'Sepolia',
 -    nativeCurrency: { name: 'Sepolia Ether', symbol: 'SEP', decimals: 18 },
-+    nativeCurrency: { name: 'Sepolia Ether', symbol: 'sepETH', decimals: 18 },
++    nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
      rpcUrls: {
          default: {
              http: ['https://rpc.sepolia.org'],
 diff --git a/node_modules/viem/_esm/chains/definitions/sepolia.js b/node_modules/viem/_esm/chains/definitions/sepolia.js
-index 0a45fdf..feeecb7 100644
+index 0a45fdf..655ebc9 100644
 --- a/node_modules/viem/_esm/chains/definitions/sepolia.js
 +++ b/node_modules/viem/_esm/chains/definitions/sepolia.js
 @@ -2,7 +2,7 @@ import { defineChain } from '../../utils/chain/defineChain.js';
@@ -20,12 +20,12 @@ index 0a45fdf..feeecb7 100644
      id: 11155111,
      name: 'Sepolia',
 -    nativeCurrency: { name: 'Sepolia Ether', symbol: 'SEP', decimals: 18 },
-+    nativeCurrency: { name: 'Sepolia Ether', symbol: 'sepETH', decimals: 18 },
++    nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
      rpcUrls: {
          default: {
              http: ['https://rpc.sepolia.org'],
 diff --git a/node_modules/viem/chains/definitions/sepolia.ts b/node_modules/viem/chains/definitions/sepolia.ts
-index 29ade81..b2898df 100644
+index 29ade81..77b7c9e 100644
 --- a/node_modules/viem/chains/definitions/sepolia.ts
 +++ b/node_modules/viem/chains/definitions/sepolia.ts
 @@ -3,7 +3,7 @@ import { defineChain } from '../../utils/chain/defineChain.js'
@@ -33,7 +33,7 @@ index 29ade81..b2898df 100644
    id: 11_155_111,
    name: 'Sepolia',
 -  nativeCurrency: { name: 'Sepolia Ether', symbol: 'SEP', decimals: 18 },
-+  nativeCurrency: { name: 'Sepolia Ether', symbol: 'sepETH', decimals: 18 },
++  nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
    rpcUrls: {
      default: {
        http: ['https://rpc.sepolia.org'],

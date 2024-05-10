@@ -230,9 +230,19 @@ export const ConfigureNetwork = function () {
         {networkConfiguration === 'automatic' && <AutomaticConfiguration />}
         {networkConfiguration === 'manual' && <ManualConfiguration />}
       </div>
-      {/* TODO add link for troubleshooting https://github.com/BVM-priv/ui-monorepo/issues/62 */}
       <p className="text-xs font-normal text-neutral-400">
-        {t('troubleshoot-other-errors')}
+        {t.rich('troubleshoot-other-errors', {
+          link: (chunk: string) => (
+            <a
+              className="cursor-pointer underline"
+              href="https://docs.hemi.xyz/support/portal"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {chunk}
+            </a>
+          ),
+        })}
       </p>
     </div>
   )

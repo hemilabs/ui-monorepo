@@ -312,7 +312,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
           updateExtendedErc20Approval={updateExtendedErc20Approval}
         />
       }
-      total={formatNumber(totalDeposit, 3)}
+      total={totalDeposit}
       transactionsList={transactionsList}
     />
   )

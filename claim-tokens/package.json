@@ -32,7 +32,7 @@
     "knex": "3.1.0",
     "p-tap": "3.1.0",
     "pg": "8.11.3",
-    "snakecase-keys": "6.0.0"
+    "snakecase-keys": "8.0.0"
   },
   "engines": {
     "node": ">=16"

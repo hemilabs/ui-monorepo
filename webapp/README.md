@@ -24,7 +24,7 @@ NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<recaptcha-v3-key>"
 NEXT_PUBLIC_TESTNET_MODE=true|false # Depending on the network being deployed
 ```
 
-and then run
+and then run:
 
 ```bash
 npm run build

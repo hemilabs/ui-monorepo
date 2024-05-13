@@ -34,9 +34,23 @@ jobs:
           DEPLOY_POSTGRES_CONNECTION_PASSWORD: ${{ secrets.POSTGRES_CONNECTION_PASSWORD }}
           DEPLOY_POSTGRES_CONNECTION_USER: ${{ secrets.POSTGRES_CONNECTION_USER }}
       
+      - name: Deploy claim-tokens microservice
+        run: npx lerna run deploy --scope=claim-tokens --since=${{ github.event.before }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DEPLOY_POSTGRES_CONNECTION_DATABASE: ${{ secrets.POSTGRES_CONNECTION_DATABASE }}
+          DEPLOY_POSTGRES_CONNECTION_HOST: ${{ secrets.POSTGRES_CONNECTION_HOST }}
+          DEPLOY_POSTGRES_CONNECTION_PASSWORD: ${{ secrets.POSTGRES_CONNECTION_PASSWORD }}
+          DEPLOY_POSTGRES_CONNECTION_USER: ${{ secrets.POSTGRES_CONNECTION_USER }}
+          MARKETING_DOMAIN_URL: https://hemi.xyz
+          IP_QUALITY_SCORE_SECRET_KEY: ${{ secrets.IP_QUALITY_SCORE_SECRET_KEY }}
+          RECAPTCHA_SECRET_KEY:  ${{ secrets.RECAPTCHA_SECRET_KEY }}
+          STAGE: 'staging'
+
       # Deploy everything else, ignoring migrations
       - name: Build site
-        run: npx lerna run deploy --ignore=migrations-pg --since=${{ github.event.before }} --concurrency=1
+        run: npx lerna run deploy --ignore=migrations-pg --ignore=claim-tokens --since=${{ github.event.before }} --concurrency=1
         env:
           # portal envs
           BASE_PATH: "/app-testnet"

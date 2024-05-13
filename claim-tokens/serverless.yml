@@ -45,6 +45,7 @@ functions:
 plugins:
   - serverless-iam-roles-per-function
   - serverless-plugin-conditional-functions
+  - serverless-plugin-monorepo
   - serverless-offline
 
 provider:

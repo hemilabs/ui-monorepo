@@ -228,8 +228,8 @@
       "receive-updates": "Receive marketing updates",
       "rpc-url": "RPC URL",
       "troubleshoot-other-errors": "Having issues? Troubleshoot other <link>common errors</link> here",
-      "welcome-pack": "Welcome pack",
-      "welcome-pack-description": "Sign up to receive our Hemi welcome pack"
+      "welcome-pack": "Welcome Pack",
+      "welcome-pack-description": "Sign up to receive our Hemi testnet welcome pack."
     }
   },
   "token-selector": {

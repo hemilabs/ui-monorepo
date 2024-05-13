@@ -23,7 +23,7 @@ const tokens: Token[] = [
     extensions: {
       bridgeInfo: {
         [hemi.id]: {
-          tokenAddress: '0xec46e0efb2ea8152da0327a5eb3ff9a43956f13e',
+          tokenAddress: '0x141A1972B03C99A3b46fc62cAC8b79778D8b7B70',
         },
       },
     },
@@ -33,7 +33,39 @@ const tokens: Token[] = [
     symbol: 'DAI',
   },
   {
-    address: '0xec46e0efb2ea8152da0327a5eb3ff9a43956f13e',
+    address: '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8',
+    chainId: sepolia.id,
+    decimals: 6,
+    extensions: {
+      bridgeInfo: {
+        [hemi.id]: {
+          tokenAddress: '0xD47971C7F5B1067d25cd45d30b2c9eb60de96443',
+        },
+      },
+    },
+    logoURI:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png',
+    name: 'USD Coin',
+    symbol: 'USDC',
+  },
+  {
+    address: '0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0',
+    chainId: sepolia.id,
+    decimals: 6,
+    extensions: {
+      bridgeInfo: {
+        [hemi.id]: {
+          tokenAddress: '0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298',
+        },
+      },
+    },
+    logoURI:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
+    name: 'Tether',
+    symbol: 'USDT',
+  },
+  {
+    address: '0x141A1972B03C99A3b46fc62cAC8b79778D8b7B70',
     chainId: hemi.id,
     decimals: 18,
     extensions: {
@@ -46,7 +78,39 @@ const tokens: Token[] = [
     logoURI:
       'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png',
     name: 'Testnet Hemi DAI',
-    symbol: 'thDAI',
+    symbol: 'DAI',
+  },
+  {
+    address: '0xD47971C7F5B1067d25cd45d30b2c9eb60de96443',
+    chainId: hemi.id,
+    decimals: 6,
+    extensions: {
+      bridgeInfo: {
+        [sepolia.id]: {
+          tokenAddress: '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8',
+        },
+      },
+    },
+    logoURI:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png',
+    name: 'USD Coin',
+    symbol: 'USDC.e',
+  },
+  {
+    address: '0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298',
+    chainId: hemi.id,
+    decimals: 6,
+    extensions: {
+      bridgeInfo: {
+        [sepolia.id]: {
+          tokenAddress: '0xaa8e23fb1079ea71e0a56f48a2aa51851d8433d0',
+        },
+      },
+    },
+    logoURI:
+      'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png',
+    name: 'Tether',
+    symbol: 'USDT.e',
   },
 ]
 

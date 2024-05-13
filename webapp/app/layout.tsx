@@ -7,7 +7,7 @@ type Props = {
 }
 
 export const metadata: Metadata = {
-  title: 'Hemi',
+  title: 'hemi',
 }
 
 export const generateStaticParams = async () =>

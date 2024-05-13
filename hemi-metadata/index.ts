@@ -13,7 +13,7 @@ export const hemiTestnet = {
   nativeCurrency: {
     decimals: 18,
     name: 'Testnet Hemi Ether',
-    symbol: 'thETH',
+    symbol: 'ETH',
   },
   rpcUrls: {
     default: {

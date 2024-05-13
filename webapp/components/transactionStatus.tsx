@@ -117,28 +117,30 @@ export const TransactionStatus = function ({ status, text, txHash }: Props) {
   }
 
   return (
-    <Card padding="medium">
-      <div className="flex min-w-72 items-start gap-x-2">
-        <div className="w-6">{icons[status]}</div>
-        <div className="flex w-full flex-col gap-y-1">
-          <p className="text-sm font-semibold leading-none">{text}</p>
-          <div className="flex items-center">
-            <p
-              className={`text-xs font-medium capitalize ${statusMap[status].color}`}
-            >
-              {statusMap[status].text}
-            </p>
+    <a
+      className={`cursor-pointer ${!txHash ? 'pointer-events-none' : ''}`}
+      href={`${chain.blockExplorers.default.url}/tx/${txHash}`}
+      rel="noopener noreferrer"
+      target="_blank"
+    >
+      <Card padding="medium">
+        <div className="flex min-w-72 items-start gap-x-2">
+          <div className="w-6">{icons[status]}</div>
+          <div className="flex w-full flex-col gap-y-1">
+            <p className="text-sm font-semibold leading-none">{text}</p>
+            <div className="flex items-center">
+              <p
+                className={`text-xs font-medium capitalize ${statusMap[status].color}`}
+              >
+                {statusMap[status].text}
+              </p>
+            </div>
+          </div>
+          <div className={`${!txHash ? 'invisible' : ''}`}>
+            <ExternalLink />
           </div>
         </div>
-        <a
-          className={`cursor-pointer ${txHash ? '' : 'invisible'}`}
-          href={`${chain.blockExplorers.default.url}/tx/${txHash}`}
-          rel="noopener noreferrer"
-          target="_blank"
-        >
-          <ExternalLink />
-        </a>
-      </div>
-    </Card>
+      </Card>
+    </a>
   )
 }

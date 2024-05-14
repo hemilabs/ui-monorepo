@@ -18,11 +18,7 @@ functions:
       RECAPTCHA_SECRET_KEY: ${env:RECAPTCHA_SECRET_KEY, ''}
     events:
       - http:
-          cors:
-            headers:
-              - Content-Type
-            origins:
-              - ${self:functions.claim-tokens.environment.MARKETING_DOMAIN_URL}:*
+          cors: true
           method: post
           path: /claim
     handler: ./index.post

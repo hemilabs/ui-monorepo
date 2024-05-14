@@ -56,7 +56,7 @@ export const Navbar = function ({ onItemClick }: Props) {
       </div>
       <div className="flex-grow" />
       <div>
-        <Link href="/get-started" onClick={() => onItemClick()}>
+        <Link href="/get-started" onClick={() => onItemClick?.()}>
           <NavGetStarted>
             <Button onClick={() => setSelectedItem('')} variant="secondary">
               {t('get-started')}

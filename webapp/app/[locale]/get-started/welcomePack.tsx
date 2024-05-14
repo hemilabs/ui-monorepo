@@ -308,7 +308,7 @@ export const WelcomePack = function () {
               {t('network.email-failed')}
             </p>
           </div>
-          <p className="flex-shrink text-xs text-slate-400">
+          <p className="flex-shrink text-center text-xs text-slate-400">
             {t.rich('network.email-failed-retry', {
               button: (chunk: string) => (
                 <button
@@ -321,7 +321,7 @@ export const WelcomePack = function () {
               discord: () => <DiscordIcon />,
               link: (chunk: string) => (
                 <a
-                  className="cursor-pointer font-medium underline"
+                  className="cursor-pointer font-medium text-slate-950 underline"
                   href={discordUrl}
                   rel="noopener noreferrer"
                   target="_blank"

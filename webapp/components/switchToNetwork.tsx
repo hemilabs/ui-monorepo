@@ -11,7 +11,7 @@ type Props = {
 }
 
 export const SwitchToNetwork = function ({ selectedNetwork }: Props) {
-  const { status } = useAccount()
+  const { chainId } = useAccount()
   const { switchChain } = useSwitchChain()
   const isConnectedToExpectedNetwork =
     useIsConnectedToExpectedNetwork(selectedNetwork)
@@ -19,8 +19,9 @@ export const SwitchToNetwork = function ({ selectedNetwork }: Props) {
   const t = useTranslations('common')
 
   const walletTargetNetwork = useChain(selectedNetwork)
-
-  if (isConnectedToExpectedNetwork || status !== 'connected') {
+  // status has different internal status to account for. If "chainId" is undefined, it is disconnected.
+  // If defined, it is connected to anything
+  if (chainId === undefined || isConnectedToExpectedNetwork) {
     return null
   }
 

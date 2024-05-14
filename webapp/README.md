@@ -8,8 +8,8 @@ The environment variables are defined in the `.env` file at the root of the proj
 The prefix `NEXT_PUBLIC_` is required for the variables to be available in the browser. A few variables need to be set to run locally (in a `.env.local`), in addition to the ones already defined in the `.env`
 
 ```bash
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<recaptcha-v3-key>"
 NEXT_PUBLIC_CLAIM_TOKENS_URL="<claim-tokens-url>"
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<recaptcha-v3-key>"
 ```
 
 The recaptcha v3 key can be generated [in this page](https://www.google.com/recaptcha/admin/create).

@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import React from 'react'
+import React, { useState } from 'react'
 import { ColorType } from 'types/colortype'
 
 import { NavItem } from './navItem'
@@ -30,6 +30,17 @@ export const NavItems = function ({
   onItemClick,
 }: Props) {
   const t = useTranslations('common') as unknown as (key: string) => string
+  const [openSubMenus, setOpenSubMenus] = useState<{ [key: string]: boolean }>(
+    {},
+  )
+
+  const handleClick = function (item: NavItemData) {
+    onItemClick(item)
+    setOpenSubMenus(prevState => ({
+      ...prevState,
+      [item.id]: !prevState[item.id],
+    }))
+  }
 
   return (
     <div className="flex flex-col justify-center">
@@ -40,15 +51,14 @@ export const NavItems = function ({
             IconLeft={Icon}
             color={href === selectedItem ? colorSelected : color}
             href={href}
-            isSelected={
-              href === selectedItem || (subMenus && selectedItem === id)
-            }
+            isSelected={href === selectedItem}
             key={id}
             onClick={function () {
               if (isSelectable) {
-                onItemClick(item)
+                handleClick(item)
               }
             }}
+            subMenuOpened={!!openSubMenus[id]}
             subMenus={subMenus}
             text={t(id)}
           />

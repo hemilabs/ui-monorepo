@@ -3,7 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Button } from 'ui-common/components/button'
 import { HemiLogoFull } from 'ui-common/components/hemiLogo'
 
@@ -17,10 +17,7 @@ type Props = {
 
 export const Navbar = function ({ onItemClick }: Props) {
   const t = useTranslations('common')
-  const [selectedItem, setSelectedItem] = useState('')
   const pathname = usePathname()
-
-  useEffect(() => setSelectedItem(''), [pathname])
 
   function getCurrentPath() {
     const cleanedUrl = pathname.replace(/^\/[a-z]{2}/, '').replace(/\/$/, '')
@@ -30,9 +27,6 @@ export const Navbar = function ({ onItemClick }: Props) {
   }
 
   const handleItemClick = function (item: NavItemData) {
-    setSelectedItem(
-      (item.subMenus ? item.id : '') !== selectedItem ? item.id : '',
-    )
     onItemClick?.(item)
   }
 
@@ -51,16 +45,14 @@ export const Navbar = function ({ onItemClick }: Props) {
           isSelectable={true}
           navItems={navItems}
           onItemClick={handleItemClick}
-          selectedItem={selectedItem || getCurrentPath()}
+          selectedItem={getCurrentPath()}
         />
       </div>
       <div className="flex-grow" />
       <div>
         <Link href="/get-started" onClick={() => onItemClick()}>
           <NavGetStarted>
-            <Button onClick={() => setSelectedItem('')} variant="secondary">
-              {t('get-started')}
-            </Button>
+            <Button variant="secondary">{t('get-started')}</Button>
           </NavGetStarted>
         </Link>
       </div>
@@ -70,7 +62,7 @@ export const Navbar = function ({ onItemClick }: Props) {
           isSelectable={false}
           navItems={navItemsBottom}
           onItemClick={handleItemClick}
-          selectedItem={selectedItem || getCurrentPath()}
+          selectedItem={getCurrentPath()}
         />
       </div>
     </div>

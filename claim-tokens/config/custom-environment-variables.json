@@ -1,5 +1,9 @@
 {
   "ipQualityScore": {
+    "enableCheck": {
+      "__format": "json",
+      "__name": "ENABLE_IP_CHECK"
+    },
     "secretKey": "IP_QUALITY_SCORE_SECRET_KEY"
   },
   "logger": {

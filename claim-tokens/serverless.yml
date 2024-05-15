@@ -13,6 +13,7 @@ custom:
 functions:
   claim-tokens:
     environment:
+      ENABLE_IP_CHECK: ${env:ENABLE_IP_CHECK, 'true'}
       MARKETING_DOMAIN_URL: ${env:MARKETING_DOMAIN_URL, 'http://127.0.0.1:3001'}
       IP_QUALITY_SCORE_SECRET_KEY: ${env:IP_QUALITY_SCORE_SECRET_KEY, ''}
       RECAPTCHA_SECRET_KEY: ${env:RECAPTCHA_SECRET_KEY, ''}

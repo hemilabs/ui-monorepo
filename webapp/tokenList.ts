@@ -120,7 +120,7 @@ const nativeTokens: Token[] = [
     chainId: mainnet.id,
     decimals: 18,
     logoURI: ethLogoUri,
-    name: 'Ether',
+    name: mainnet.nativeCurrency.name,
     symbol: mainnet.nativeCurrency.symbol,
   },
   {
@@ -128,7 +128,7 @@ const nativeTokens: Token[] = [
     chainId: sepolia.id,
     decimals: sepolia.nativeCurrency.decimals,
     logoURI: ethLogoUri,
-    name: 'sepolia Ether',
+    name: sepolia.nativeCurrency.name,
     symbol: sepolia.nativeCurrency.symbol,
   },
   {

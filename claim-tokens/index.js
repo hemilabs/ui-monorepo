@@ -168,6 +168,7 @@ const verifyIpQualityScore = ip =>
 const verifyIP = function (ip) {
   if (!config.get('ipQualityScore.enableCheck')) {
     logger.debug('IP verification is disabled')
+    return Promise.resolve()
   }
   return Promise.all([
     verifyIpQualityScore(ip),

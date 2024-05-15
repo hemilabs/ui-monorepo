@@ -3,6 +3,7 @@
     "webhook": "https://hooks.zapier.com/hooks/catch/17630282/3e9hj8q"
   },
   "ipQualityScore": {
+    "enableCheck": true,
     "maxScore": 75,
     "url": "https://www.ipqualityscore.com/api/json"
   },

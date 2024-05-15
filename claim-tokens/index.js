@@ -165,8 +165,11 @@ const verifyIpQualityScore = ip =>
       logger.verbose('IP score verified correctly')
     })
 
-const verifyIP = ip =>
-  Promise.all([
+const verifyIP = function (ip) {
+  if (!config.get('ipQualityScore.enableCheck')) {
+    logger.debug('IP verification is disabled')
+  }
+  return Promise.all([
     verifyIpQualityScore(ip),
     createIpRepository(db)
       .isIpRecentlyUsed(ip)
@@ -177,7 +180,7 @@ const verifyIP = ip =>
         }
       }),
   ])
-
+}
 const saveEmailAndIP =
   ({ email, ip, timestamp, transaction }) =>
   requestId =>
@@ -188,7 +191,10 @@ const saveEmailAndIP =
         requestId,
         submittedAt: timestamp,
       }),
-      createIpRepository(transaction).saveIp(ip, timestamp),
+      // do not save IP if check is not enabled
+      config.get('ipQualityScore.enableCheck')
+        ? createIpRepository(transaction).saveIp(ip, timestamp)
+        : Promise.resolve(),
     ])
       .then(transaction.commit)
       .then(

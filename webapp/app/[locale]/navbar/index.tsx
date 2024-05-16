@@ -32,14 +32,14 @@ export const Navbar = function ({ onItemClick }: Props) {
 
   return (
     <div className="md:h-98vh flex h-[calc(100dvh-64px)] flex-col justify-between pr-5 pt-3 md:pt-0 [&>*]:md:ml-4">
-      <div className="mt-8 hidden md:block">
+      <div className="mb-2 mt-8 hidden md:mb-10 md:block">
         <div className="ml-2 mt-4 hidden h-10 w-28 md:block">
           <Link href="/tunnel">
             <HemiLogoFull />
           </Link>
         </div>
       </div>
-      <div className="mt-2 md:mt-10">
+      <div className="overflow-y-auto">
         <NavItems
           color="slate-200"
           isSelectable={true}
@@ -47,23 +47,23 @@ export const Navbar = function ({ onItemClick }: Props) {
           onItemClick={handleItemClick}
           selectedItem={getCurrentPath()}
         />
-      </div>
-      <div className="flex-grow" />
-      <div>
-        <Link href="/get-started" onClick={() => onItemClick?.()}>
-          <NavGetStarted>
-            <Button variant="secondary">{t('get-started')}</Button>
-          </NavGetStarted>
-        </Link>
-      </div>
-      <div className="mt-6">
-        <NavItems
-          color="slate-500"
-          isSelectable={false}
-          navItems={navItemsBottom}
-          onItemClick={handleItemClick}
-          selectedItem={getCurrentPath()}
-        />
+        <div className="flex-grow" />
+        <div>
+          <Link href="/get-started" onClick={() => onItemClick?.()}>
+            <NavGetStarted>
+              <Button variant="secondary">{t('get-started')}</Button>
+            </NavGetStarted>
+          </Link>
+        </div>
+        <div className="mt-6">
+          <NavItems
+            color="slate-500"
+            isSelectable={false}
+            navItems={navItemsBottom}
+            onItemClick={handleItemClick}
+            selectedItem={getCurrentPath()}
+          />
+        </div>
       </div>
     </div>
   )

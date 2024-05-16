@@ -1,7 +1,7 @@
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useMutation } from '@tanstack/react-query'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { Button } from 'ui-common/components/button'
 import { type Chain } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
@@ -11,8 +11,6 @@ type Props = {
 }
 
 export const AddChain = function ({ chain }: Props) {
-  const [isChainAdded, setIsChainAdded] = useState(false)
-
   const t = useTranslations('get-started.network')
 
   const { chain: connectedChain, isConnected } = useAccount()
@@ -20,12 +18,31 @@ export const AddChain = function ({ chain }: Props) {
 
   const { status, mutate: addChain } = useMutation({
     mutationFn: (c: Chain) => walletClient?.addChain({ chain: c }),
-    onSuccess: () => setIsChainAdded(true),
+    onSuccess() {
+      localStorage.setItem(
+        `portal.get-started.configure-networks-added-${chain.id}`,
+        'true',
+      )
+    },
   })
 
-  // can't use this as initial value for useState because value from wallet is not
-  // available in first render... and I'd rather not sync it with an effect
   const connectedToChain = connectedChain?.id === chain.id
+  const isChainAdded =
+    localStorage.getItem(
+      `portal.get-started.configure-networks-added-${chain.id}`,
+    ) === 'true'
+
+  useEffect(
+    function () {
+      if (connectedChain) {
+        localStorage.setItem(
+          `portal.get-started.configure-networks-added-${connectedChain.id}`,
+          'true',
+        )
+      }
+    },
+    [connectedChain],
+  )
 
   return (
     <>
@@ -44,7 +61,7 @@ export const AddChain = function ({ chain }: Props) {
           {t('add-to-wallet')}
         </Button>
       )}
-      {(isChainAdded || connectedToChain) && (
+      {(isChainAdded || connectedToChain) && isConnected && (
         <div className="flex w-full items-center justify-center gap-2 rounded-lg bg-green-100 px-3 py-2">
           <svg
             fill="none"

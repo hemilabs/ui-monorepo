@@ -122,10 +122,8 @@ export const TunnelForm = function ({
   const { operation } = useTunnelOperation()
 
   return (
-    <div className="mx-auto flex w-full flex-col items-center gap-y-4 pt-2 lg:grid lg:grid-cols-[1fr_1fr_400px_1fr_1fr] lg:items-start lg:gap-x-4">
-      {/* empty column for grid flow in large screens, do not remove */}
-      <div className="hidden lg:col-span-2 lg:block" />
-      <div className="mx-auto flex w-full flex-col gap-y-2 md:w-96">
+    <div className="grid grid-cols-1 gap-y-4 pt-2 xl:grid-cols-[1fr_400px_1fr] xl:gap-x-4">
+      <div className="mx-auto flex w-full flex-col gap-y-2 md:w-96 xl:col-start-2">
         {['deposit', 'withdraw'].includes(operation) && (
           <SwitchToNetwork selectedNetwork={expectedChainId} />
         )}
@@ -159,7 +157,7 @@ export const TunnelForm = function ({
         </Card>
       </div>
       {transactionsList.length > 0 && (
-        <div className="flex w-full flex-col gap-y-4 md:max-w-96">
+        <div className="mx-auto flex w-full flex-col gap-y-4 md:max-w-96 xl:mx-0 xl:max-w-72">
           {transactionsList.map(transaction => (
             <TransactionStatus
               key={transaction.id}

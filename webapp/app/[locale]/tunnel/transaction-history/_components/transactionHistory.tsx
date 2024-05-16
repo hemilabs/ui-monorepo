@@ -25,6 +25,7 @@ import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
+import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { isDeposit } from 'utils/tunnel'
 import { Chain } from 'viem'
@@ -286,17 +287,27 @@ export const TransactionHistory = function () {
 
   const { width } = useWindowSize()
 
+  const { queryParams, setQueryParams } = useQueryParams<{
+    pageIndex: string
+  }>()
+
+  // @ts-expect-error isNaN does accept string, TS error it works
+  const parsedPageIndex = isNaN(queryParams.pageIndex)
+    ? 0
+    : // convert negative numbers to 0
+      Math.max(parseInt(queryParams.pageIndex), 0)
+
+  // if pageIndex from the URL exceeds the number of pages available, show the last page
+  const pageIndex = Math.min(
+    parsedPageIndex,
+    Math.floor(data.length / pageSize),
+  )
+
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize,
-      },
-    },
     state: {
       columnOrder:
         // move "action" and "status" to the left in small devices
@@ -308,12 +319,15 @@ export const TransactionHistory = function () {
                 .map(c => c.id),
             )
           : undefined,
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
     },
   })
 
   const connectedToUnsupportedChain = useConnectedToUnsupportedChain()
 
-  const { pageIndex } = table.getState().pagination
   const pageCount = table.getPageCount()
 
   const { rows } = table.getRowModel()
@@ -345,7 +359,9 @@ export const TransactionHistory = function () {
           </Card>
           {!loading && pageCount > 1 && (
             <Paginator
-              onPageChange={table.setPageIndex}
+              onPageChange={page =>
+                setQueryParams({ pageIndex: page.toString() })
+              }
               pageCount={pageCount}
               pageIndex={pageIndex}
               windowSize={width}

@@ -72,7 +72,7 @@ export const WithdrawAction = function ({ l1ChainId, withdraw }: Props) {
     />
   )
 
-  const getView = (operation: string = 'withdraw') => (
+  const getViewButton = (operation: string) => (
     <Action
       className="border border-solid border-slate-50 bg-slate-100 text-slate-950"
       operation={operation}
@@ -82,13 +82,13 @@ export const WithdrawAction = function ({ l1ChainId, withdraw }: Props) {
   )
 
   const actions = {
-    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getView(),
+    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getViewButton('withdraw'),
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: Failed,
-    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getView('prove'),
+    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getViewButton('prove'),
     [MessageStatus.READY_TO_PROVE]: Prove,
     [MessageStatus.IN_CHALLENGE_PERIOD]: Claim,
     [MessageStatus.READY_FOR_RELAY]: Claim,
-    [MessageStatus.RELAYED]: getView(),
+    [MessageStatus.RELAYED]: getViewButton('view'),
   }
   return actions[messageStatus]
 }

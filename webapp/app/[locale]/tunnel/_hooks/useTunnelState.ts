@@ -7,12 +7,18 @@ import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { isNativeToken } from 'utils/token'
 import { Address, Chain, Hash, isHash } from 'viem'
 
-export type Operation = 'claim' | 'deposit' | 'prove' | 'withdraw'
+export type Operation = 'claim' | 'deposit' | 'prove' | 'withdraw' | 'view'
 
 const getNativeToken = (chain: Chain['id']) =>
   tokenList.tokens.find(t => t.chainId === chain && isNativeToken(t))
 
-const validOperations: Operation[] = ['claim', 'deposit', 'prove', 'withdraw']
+const validOperations: Operation[] = [
+  'claim',
+  'deposit',
+  'prove',
+  'withdraw',
+  'view',
+]
 
 const isValidOperation = (value: string): value is Operation =>
   validOperations.includes(value as Operation)
@@ -60,6 +66,7 @@ type TunnelState = {
   toToken: Token
   partialWithdrawal?: Partial<
     TokenBridgeMessage & {
+      claimWithdrawalTxHash: Hash
       proveWithdrawalTxHash: Hash
     }
   >

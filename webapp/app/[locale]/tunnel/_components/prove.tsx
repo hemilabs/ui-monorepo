@@ -123,7 +123,7 @@ export const Prove = function ({ state }: Props) {
         !partialWithdrawal?.proveWithdrawalTxHash
       ) {
         savePartialWithdrawal({
-          proveWithdrawalTxHash: withdrawalProofReceipt?.transactionHash,
+          proveWithdrawalTxHash: withdrawalProofReceipt.transactionHash,
         })
         queryClient.invalidateQueries({
           queryKey: [

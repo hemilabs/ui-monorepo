@@ -94,6 +94,7 @@ export const useClaimTransaction = function ({
     claimWithdrawalReceipt,
     claimWithdrawalReceiptError,
     claimWithdrawalTokenGasFees: finalizeWithdrawalTokenGasFees,
+    claimWithdrawalTxHash: finalizeWithdrawalTxHash,
     clearClaimWithdrawalState,
     isReadyToClaim,
   }

@@ -90,8 +90,7 @@ type Props = {
 }
 
 export const Claim = function ({ state }: Props) {
-  const { partialWithdrawal } = state
-
+  const { partialWithdrawal, resetStateAfterOperation } = state
   // If coming from the Prove form, show the prove transaction briefly
   // but if entering from the history, there's no need to show it
   const [showProveWithdrawalTx, setShowProveWithdrawalTx] = useState(
@@ -227,6 +226,7 @@ export const Claim = function ({ state }: Props) {
     <ReviewWithdrawal
       gas={gas}
       isRunningOperation={isClaiming}
+      onClose={resetStateAfterOperation}
       onSubmit={handleClaim}
       submitButton={submitButton}
       transactionsList={

@@ -114,11 +114,13 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
   const { type } = action
   switch (type) {
     case 'resetStateAfterOperation': {
-      return {
+      const newState = {
         ...state,
         extendedErc20Approval: false,
         fromInput: '0',
       }
+      delete newState.partialWithdrawal
+      return newState
     }
     case 'savePartialWithdrawal': {
       return {
@@ -268,7 +270,7 @@ export const useTunnelState = function (): TunnelState & {
     toggleInput: useCallback(
       function () {
         const newOperation = operation === 'deposit' ? 'withdraw' : 'deposit'
-        removeQueryParams('txHash')
+        removeQueryParams('txHash', 'replace')
         setQueryParams({ operation: newOperation })
         dispatch({ type: 'toggleInput' })
       },

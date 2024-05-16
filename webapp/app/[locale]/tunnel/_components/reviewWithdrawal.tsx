@@ -10,7 +10,7 @@ import {
   useGetWithdrawalsByAddress,
 } from 'hooks/useL2Bridge'
 import { useRouter } from 'next/navigation'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
@@ -292,6 +292,7 @@ type ReviewWithdrawalProps = {
     symbol: string
   }
   isRunningOperation: boolean
+  onClose?: () => void
   onSubmit?: () => void
   submitButton?: ReactNode
   transactionsList?: {
@@ -306,6 +307,7 @@ type ReviewWithdrawalProps = {
 export const ReviewWithdrawal = function ({
   gas,
   isRunningOperation,
+  onClose,
   onSubmit,
   submitButton,
   transactionsList = [],
@@ -315,7 +317,6 @@ export const ReviewWithdrawal = function ({
   const l1ChainId = bridgeableNetworks[0].id
 
   const router = useRouter()
-  const locale = useLocale()
 
   const t = useTranslations('tunnel-page.review-withdraw')
   const { operation, txHash } = useTunnelOperation()
@@ -397,8 +398,8 @@ export const ReviewWithdrawal = function ({
     if (isRunningOperation) {
       return
     }
-    // redirect to the withdraw form.
-    router.push(`/${locale}/tunnel?operation=withdraw`)
+    onClose?.()
+    router.back()
   }
 
   return (

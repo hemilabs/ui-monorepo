@@ -7,6 +7,7 @@ import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 import { type Chain } from 'viem'
 
 type Props = {
+  disabled: boolean
   networkId: Chain['id'] | undefined
   networks: Chain[]
   onSelectNetwork: (network: Chain['id']) => void
@@ -14,6 +15,7 @@ type Props = {
 }
 
 export const NetworkSelector = function ({
+  disabled,
   networkId,
   networks = [],
   onSelectNetwork,
@@ -51,6 +53,7 @@ export const NetworkSelector = function ({
     <>
       <button
         className={`${commonCss} relative cursor-pointer`}
+        disabled={disabled}
         onClick={() => setShowNetworkDropdown(true)}
         type="button"
       >

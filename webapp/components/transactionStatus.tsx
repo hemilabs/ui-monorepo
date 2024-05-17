@@ -118,13 +118,15 @@ export const TransactionStatus = function ({ status, text, txHash }: Props) {
 
   return (
     <a
-      className={`cursor-pointer ${!txHash ? 'pointer-events-none' : ''}`}
+      className={`min-w-72 file:cursor-pointer ${
+        !txHash ? 'pointer-events-none' : ''
+      }`}
       href={`${chain.blockExplorers.default.url}/tx/${txHash}`}
       rel="noopener noreferrer"
       target="_blank"
     >
       <Card padding="medium">
-        <div className="flex min-w-72 items-start gap-x-2">
+        <div className="flex items-start gap-x-2">
           <div className="w-6">{icons[status]}</div>
           <div className="flex w-full flex-col gap-y-1">
             <p className="text-sm font-semibold leading-none">{text}</p>

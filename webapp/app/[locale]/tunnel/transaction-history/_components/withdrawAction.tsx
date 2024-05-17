@@ -72,23 +72,23 @@ export const WithdrawAction = function ({ l1ChainId, withdraw }: Props) {
     />
   )
 
-  const View = (
+  const getViewButton = (operation: string) => (
     <Action
       className="border border-solid border-slate-50 bg-slate-100 text-slate-950"
-      operation="withdraw"
+      operation={operation}
       text={t('view')}
       txHash={withdraw.transactionHash}
     />
   )
 
   const actions = {
-    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: View,
+    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getViewButton('withdraw'),
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: Failed,
-    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: View,
+    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getViewButton('prove'),
     [MessageStatus.READY_TO_PROVE]: Prove,
     [MessageStatus.IN_CHALLENGE_PERIOD]: Claim,
     [MessageStatus.READY_FOR_RELAY]: Claim,
-    [MessageStatus.RELAYED]: View,
+    [MessageStatus.RELAYED]: getViewButton('view'),
   }
   return actions[messageStatus]
 }

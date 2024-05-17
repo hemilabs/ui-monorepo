@@ -20,6 +20,7 @@ import { Claim } from './_components/claim'
 import { Deposit } from './_components/deposit'
 import { Prove } from './_components/prove'
 import { ToggleButton } from './_components/ToggleButton'
+import { View } from './_components/view'
 import { Withdraw } from './_components/withdraw'
 import { useTunnelOperation, useTunnelState } from './_hooks/useTunnelState'
 
@@ -190,6 +191,7 @@ const OperationsComponent = {
   claim: Claim,
   deposit: Deposit,
   prove: Prove,
+  view: View,
   withdraw: Withdraw,
 }
 
@@ -200,7 +202,7 @@ const OperationByMessageStatus = {
   [MessageStatus.READY_TO_PROVE]: 'prove',
   [MessageStatus.IN_CHALLENGE_PERIOD]: 'claim',
   [MessageStatus.READY_FOR_RELAY]: 'claim',
-  [MessageStatus.RELAYED]: 'claim',
+  [MessageStatus.RELAYED]: 'view',
 }
 
 const Tunnel = function () {

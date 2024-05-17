@@ -211,6 +211,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
         <ReviewWithdrawal
           gas={gas}
           isRunningOperation={isWithdrawing}
+          onClose={resetStateAfterOperation}
           transactionsList={transactionsList}
           withdrawal={partialWithdrawal}
         />

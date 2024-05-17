@@ -45,7 +45,7 @@ export const useWithdraw = function ({
 
   const onSuccess = function (hash: Hash) {
     // add hash to query string
-    setQueryParams({ txHash: hash })
+    setQueryParams({ txHash: hash }, 'push')
     // optimistically add the message status to the cache
     queryClient.setQueryData(
       [MessageDirection.L2_TO_L1, l1ChainId, hash, 'getMessageStatus'],

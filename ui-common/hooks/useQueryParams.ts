@@ -6,16 +6,18 @@ import { useCallback, useMemo } from 'react'
 const updateRoute = function ({
   pathname,
   router,
+  updateAction = 'replace',
   urlSearchParams,
 }: {
   pathname: string
   router: ReturnType<typeof useRouter>
+  updateAction?: 'push' | 'replace'
   urlSearchParams: URLSearchParams
 }) {
   const search = urlSearchParams.toString()
   const query = search.length > 0 ? `?${search}` : ''
 
-  router.push(`${pathname}${query}`)
+  router[updateAction](`${pathname}${query}`)
 }
 
 export const useQueryParams = function <T = Record<string, string>>() {
@@ -30,7 +32,10 @@ export const useQueryParams = function <T = Record<string, string>>() {
   )
 
   const setQueryParams = useCallback(
-    function (params: Partial<T>) {
+    function (
+      params: Partial<T>,
+      updateAction: 'push' | 'replace' = 'replace',
+    ) {
       Object.entries(params).forEach(function ([key, value]) {
         urlSearchParams.set(key, String(value))
       })
@@ -38,6 +43,7 @@ export const useQueryParams = function <T = Record<string, string>>() {
       updateRoute({
         pathname,
         router,
+        updateAction,
         urlSearchParams,
       })
     },
@@ -45,7 +51,10 @@ export const useQueryParams = function <T = Record<string, string>>() {
   )
 
   const removeQueryParams = useCallback(
-    function (toRemove: string[] | string) {
+    function (
+      toRemove: string[] | string,
+      updateAction: 'push' | 'replace' = 'replace',
+    ) {
       const newSearchParams = new URLSearchParams()
       const keysToRemove = Array.isArray(toRemove) ? toRemove : [toRemove]
       Array.from(urlSearchParams.entries()).forEach(function ([key, value]) {
@@ -56,6 +65,7 @@ export const useQueryParams = function <T = Record<string, string>>() {
       updateRoute({
         pathname,
         router,
+        updateAction,
         urlSearchParams: newSearchParams,
       })
     },

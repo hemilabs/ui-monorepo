@@ -10,7 +10,6 @@ import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { Chain, Hash, formatUnits } from 'viem'
-import { useChains } from 'wagmi'
 
 import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
 import { useClaimTransaction } from '../_hooks/useClaimTransaction'
@@ -31,7 +30,6 @@ const SubmitButton = function ({
   isReadyToClaim: boolean
 }) {
   const t = useTranslations()
-  const chains = useChains()
   const { txHash } = useTunnelOperation()
 
   const { claimTxHash } = useGetClaimWithdrawalTxHash(l1ChainId, txHash)
@@ -49,20 +47,6 @@ const SubmitButton = function ({
   const claimConfirmed =
     messageStatus === MessageStatus.RELAYED && hasClaimTxHash
 
-  if (claimConfirmed) {
-    const chain = chains.find(c => c.id === l1ChainId)
-    return (
-      <a
-        href={`${chain.blockExplorers.default.url}/tx/${
-          inMemoryClaimTxHash ?? claimTxHash
-        }`}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        <Button type="button">{t('common.view')}</Button>
-      </a>
-    )
-  }
   return (
     <SubmitWhenConnectedToChain
       l1ChainId={l1ChainId}
@@ -90,15 +74,14 @@ type Props = {
 }
 
 export const Claim = function ({ state }: Props) {
-  const { partialWithdrawal } = state
-
+  const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =
+    state
   // If coming from the Prove form, show the prove transaction briefly
   // but if entering from the history, there's no need to show it
   const [showProveWithdrawalTx, setShowProveWithdrawalTx] = useState(
     !!partialWithdrawal?.proveWithdrawalTxHash,
   )
   const [isClaiming, setIsClaiming] = useState(false)
-  const [savedClaimTxHash, setSavedClaimTxHash] = useState<Hash | undefined>()
 
   // https://github.com/BVM-priv/ui-monorepo/issues/158
   const l1ChainId = bridgeableNetworks[0].id
@@ -115,6 +98,7 @@ export const Claim = function ({ state }: Props) {
     claimWithdrawalReceipt,
     claimWithdrawalReceiptError,
     claimWithdrawalTokenGasFees,
+    claimWithdrawalTxHash,
     clearClaimWithdrawalState,
     isReadyToClaim,
   } = useClaimTransaction({
@@ -136,8 +120,13 @@ export const Claim = function ({ state }: Props) {
 
   useEffect(
     function handleClaimSuccess() {
-      if (claimWithdrawalReceipt?.status === 'success' && !savedClaimTxHash) {
-        setSavedClaimTxHash(claimWithdrawalReceipt.transactionHash)
+      if (
+        claimWithdrawalReceipt?.status === 'success' &&
+        !partialWithdrawal?.claimWithdrawalTxHash
+      ) {
+        savePartialWithdrawal({
+          claimWithdrawalTxHash: claimWithdrawalReceipt.transactionHash,
+        })
         queryClient.invalidateQueries({
           queryKey: [
             MessageDirection.L2_TO_L1,
@@ -147,8 +136,6 @@ export const Claim = function ({ state }: Props) {
           ],
         })
         setIsClaiming(false)
-        const timeoutId = setTimeout(clearClaimWithdrawalState, 7000)
-        return () => clearTimeout(timeoutId)
       }
 
       return undefined
@@ -157,9 +144,9 @@ export const Claim = function ({ state }: Props) {
       claimWithdrawalReceipt,
       clearClaimWithdrawalState,
       l1ChainId,
+      partialWithdrawal,
       queryClient,
-      savedClaimTxHash,
-      setSavedClaimTxHash,
+      savePartialWithdrawal,
       txHash,
     ],
   )
@@ -201,7 +188,7 @@ export const Claim = function ({ state }: Props) {
     receipt: claimWithdrawalReceipt,
     receiptError: claimWithdrawalReceiptError,
     successMessage: t('tunnel-page.transaction-status.withdrawal-claimed'),
-    txHash: savedClaimTxHash,
+    txHash: claimWithdrawalTxHash,
     userConfirmationError: claimWithdrawalError,
   })
 
@@ -216,7 +203,7 @@ export const Claim = function ({ state }: Props) {
 
   const submitButton = (
     <SubmitButton
-      claimTxHash={savedClaimTxHash}
+      claimTxHash={claimWithdrawalTxHash}
       isClaiming={isClaiming}
       isReadyToClaim={isReadyToClaim}
       l1ChainId={l1ChainId}
@@ -227,6 +214,7 @@ export const Claim = function ({ state }: Props) {
     <ReviewWithdrawal
       gas={gas}
       isRunningOperation={isClaiming}
+      onClose={resetStateAfterOperation}
       onSubmit={handleClaim}
       submitButton={submitButton}
       transactionsList={
@@ -236,7 +224,7 @@ export const Claim = function ({ state }: Props) {
                 id: 'prove',
                 status: 'success',
                 text: t('tunnel-page.transaction-status.withdrawal-proved'),
-                txHash: partialWithdrawal.proveWithdrawalTxHash,
+                txHash: partialWithdrawal?.proveWithdrawalTxHash,
               },
             ]
           : transactionsList

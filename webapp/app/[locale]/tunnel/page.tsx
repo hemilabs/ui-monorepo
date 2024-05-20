@@ -106,6 +106,7 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
       <div className="flex w-full items-center justify-between text-sm">
         <span>{t('form.from-network')}</span>
         <NetworkSelector
+          disabled={isRunningOperation}
           networkId={fromNetworkId}
           networks={networks.filter(chain => chain.id !== toNetworkId)}
           onSelectNetwork={updateFromNetwork}
@@ -128,6 +129,7 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
           </div>
           <div className="flex basis-2/3 flex-col justify-between gap-y-3">
             <TokenSelector
+              disabled={isRunningOperation}
               onSelectToken={updateFromToken}
               selectedToken={fromToken}
               tokens={tokenList.tokens.filter(
@@ -153,6 +155,7 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
       <div className="flex items-center justify-between text-sm">
         <span>{t('form.to-network')}</span>
         <NetworkSelector
+          disabled
           networkId={toNetworkId}
           networks={networks.filter(chain => chain.id !== fromNetworkId)}
           onSelectNetwork={updateToNetwork}

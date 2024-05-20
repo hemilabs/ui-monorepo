@@ -42,6 +42,7 @@ const MagnifyingGlass = () => (
 )
 
 type Props = {
+  disabled: boolean
   onSelectToken: (token: Token) => void
   selectedToken: Token
   tokens: Token[]
@@ -103,6 +104,7 @@ const TokenList = function ({
 }
 
 export const TokenSelector = function ({
+  disabled,
   onSelectToken,
   selectedToken,
   tokens,
@@ -124,6 +126,7 @@ export const TokenSelector = function ({
     <>
       <button
         className="flex items-center justify-end gap-x-2 text-xs"
+        disabled={disabled}
         onClick={openModal}
         type="button"
       >

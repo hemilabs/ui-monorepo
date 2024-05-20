@@ -1,4 +1,4 @@
-name: Deploy Hemi Webapp
+name: Deploy Hemi Portal
 
 # Will limit one workflow at the same time
 concurrency:
@@ -62,7 +62,7 @@ jobs:
         id: portal_build
         uses: andstor/file-existence-action@v3
         with:
-          files: "./webapp/out/"
+          files: "./portal/out/"
 
       - name: Copy portal files to Hostinger
         # folder should only exists if portal was built
@@ -73,7 +73,7 @@ jobs:
           username: ${{ secrets.HOSTINGER_USER }}
           port: ${{ secrets.HOSTINGER_PORT }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
-          source: webapp/out/*
+          source: portal/out/*
           target: public_html/app-testnet
           rm: true
           strip_components: 2

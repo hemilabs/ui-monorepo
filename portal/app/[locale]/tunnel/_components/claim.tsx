@@ -11,7 +11,7 @@ import { ReactNode, useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { Chain, Hash, formatUnits } from 'viem'
 
-import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
+import { SubmitWhenConnectedToChain } from './submitWhenConnectedToChain'
 import { useClaimTransaction } from '../_hooks/useClaimTransaction'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation, useTunnelState } from '../_hooks/useTunnelState'

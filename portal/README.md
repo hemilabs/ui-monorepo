@@ -1,4 +1,4 @@
-# Webapp
+# Portal
 
 ## Project setup
 
@@ -16,7 +16,7 @@ The recaptcha v3 key can be generated [in this page](https://www.google.com/reca
 
 ## Deployment
 
-Inside the `webapp` folder, create a `.env.production` with the following configuration:
+Inside the `portal` folder, create a `.env.production` with the following configuration:
 
 ```bash
 NEXT_PUBLIC_CLAIM_TOKENS_URL="<claim-tokens-url>"

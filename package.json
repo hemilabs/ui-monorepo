@@ -12,9 +12,9 @@
     "hemi-metadata",
     "landing",
     "migrations-pg",
+    "portal",
     "ui-common",
-    "wagmi-erc20-hooks",
-    "webapp"
+    "wagmi-erc20-hooks"
   ],
   "devDependencies": {
     "@commitlint/cli": "18.4.3",
@@ -96,9 +96,9 @@
         ],
         "files": [
           "hemi-metadata/**/*.{js,ts,tsx}",
+          "portal/**/*.{js,ts,tsx}",
           "ui-common/**/*.{js,ts,tsx}",
-          "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
-          "webapp/**/*.{js,ts,tsx}"
+          "wagmi-erc20-hooks/**/*.{js,ts,tsx}"
         ],
         "parser": "@typescript-eslint/parser",
         "plugins": [
@@ -107,7 +107,7 @@
         "settings": {
           "next": {
             "rootDir": [
-              "webapp"
+              "portal"
             ]
           }
         }

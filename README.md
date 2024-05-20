@@ -8,4 +8,4 @@ This repository contains the various apps and websites related to the Hemi Netwo
 
 [marketing site](./marketing) The main site that will live at the root of the domain and eventually replace the `landing` page.
 
-[web app](./webapp) The main web app that will reside at the `app` subdomain.
+[Portal app](./portal) The main web app that will reside at the `app` subdomain.

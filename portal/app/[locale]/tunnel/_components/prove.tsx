@@ -10,7 +10,7 @@ import { formatNumber } from 'utils/format'
 import { getL2TokenByBridgedAddress, getTokenByAddress } from 'utils/token'
 import { Address, Hash, formatUnits, type Chain } from 'viem'
 
-import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
+import { SubmitWhenConnectedToChain } from './submitWhenConnectedToChain'
 import { useProveTransaction } from '../_hooks/useProveTransaction'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation, useTunnelState } from '../_hooks/useTunnelState'

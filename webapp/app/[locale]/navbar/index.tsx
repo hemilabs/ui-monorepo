@@ -50,7 +50,9 @@ export const Navbar = function ({ onItemClick }: Props) {
         <div className="mt-auto">
           <Link href="/get-started" onClick={() => onItemClick?.()}>
             <NavGetStarted>
-              <Button variant="secondary">{t('get-started')}</Button>
+              <Button size="medium" variant="secondary">
+                {t('get-started')}
+              </Button>
             </NavGetStarted>
           </Link>
         </div>

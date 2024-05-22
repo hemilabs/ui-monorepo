@@ -1,5 +1,6 @@
 'use client'
 
+import { FooterSocials } from 'components/footerSocials'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
@@ -64,6 +65,9 @@ export const Navbar = function ({ onItemClick }: Props) {
             onItemClick={handleItemClick}
             selectedItem={getCurrentPath()}
           />
+        </div>
+        <div className="block pb-6 pl-2 md:hidden">
+          <FooterSocials />
         </div>
       </div>
     </div>

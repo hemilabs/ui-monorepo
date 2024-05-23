@@ -41,7 +41,14 @@ export const WalletContext = function ({ chains, children, locale }: Props) {
       createConfig({
         chains,
         connectors,
-        transports: Object.fromEntries(chains.map(n => [n.id, http()])),
+        transports: Object.fromEntries(
+          chains.map(n => [
+            n.id,
+            http(n.rpcUrls.default.http[0], {
+              batch: { wait: 1000 },
+            }),
+          ]),
+        ),
       }),
     [chains],
   )

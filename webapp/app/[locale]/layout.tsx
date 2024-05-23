@@ -2,14 +2,13 @@ import 'styles/globals.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+import { WalletContext } from 'app/context/walletContext'
 import { locales, type Locale } from 'app/i18n'
-import { networks } from 'app/networks'
 import { AppScreen } from 'components/appScreen'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { RecaptchaContext } from 'components/recaptcha'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
-import { WalletContext } from 'ui-common/components/walletContext'
 
 import { inter } from '../fonts'
 
@@ -41,7 +40,7 @@ export default async function RootLayout({
       <body className={`${inter.className} w-svw overflow-y-hidden`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <RecaptchaContext>
-            <WalletContext chains={networks} locale={locale}>
+            <WalletContext locale={locale}>
               <div className="flex h-dvh flex-nowrap justify-stretch">
                 <div className="hidden w-1/4 max-w-56 md:block">
                   <Navbar />

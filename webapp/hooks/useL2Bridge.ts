@@ -14,8 +14,7 @@ import { hemi } from 'app/networks'
 import { useJsonRpcProvider, useWeb3Provider } from 'hooks/useEthersSigner'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { Token } from 'types/token'
-import { ZeroAddress } from 'utils/token'
-import { type Address, type Chain, type Hash, isHash } from 'viem'
+import { type Address, type Chain, type Hash, isHash, zeroAddress } from 'viem'
 import { sepolia } from 'viem/chains'
 import { useAccount } from 'wagmi'
 
@@ -25,15 +24,15 @@ const sdkPromise = import('@eth-optimism/sdk')
 
 const l1Contracts = {
   AddressManager: process.env.NEXT_PUBLIC_ADDRESS_MANAGER as Address,
-  BondManager: ZeroAddress,
-  CanonicalTransactionChain: ZeroAddress,
+  BondManager: zeroAddress,
+  CanonicalTransactionChain: zeroAddress,
   L1CrossDomainMessenger: process.env
     .NEXT_PUBLIC_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER as Address,
   L1StandardBridge: process.env
     .NEXT_PUBLIC_PROXY_OVM_L1_STANDARD_BRIDGE as Address,
   L2OutputOracle: process.env.NEXT_PUBLIC_L2_OUTPUT_ORACLE_PROXY as Address,
   OptimismPortal: process.env.NEXT_PUBLIC_OPTIMISM_PORTAL_PROXY as Address,
-  StateCommitmentChain: ZeroAddress,
+  StateCommitmentChain: zeroAddress,
 }
 
 // Some chains exist before Hemi. Therefore, it does not make sense to
@@ -212,7 +211,9 @@ const useL2toL1CrossChainMessenger = function (l1ChainId: Chain['id']) {
  * @param l1ChainId
  * @returns {object}
  */
-const useConnectedChainCrossChainMessenger = function (l1ChainId: Chain['id']) {
+export const useConnectedChainCrossChainMessenger = function (
+  l1ChainId: Chain['id'],
+) {
   const { chainId } = useAccount()
   const isConnectedToL2 = chainId === hemi.id
 

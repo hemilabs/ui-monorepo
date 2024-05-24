@@ -2,6 +2,7 @@
   "transaction-history": {
     "connect-wallet-to-review": "Connect your wallet to review transaction history.",
     "in-challenge-period": "In Challenge period",
+    "loading-transactions": "Loading transactions",
     "ready-to-claim": "Ready to claim",
     "ready-to-prove": "Ready to prove",
     "unsupported-chain-subheading": "Connect to a supported chain to view your transaction history."

@@ -1,10 +1,6 @@
 'use client'
 
-import {
-  MessageDirection,
-  MessageStatus,
-  TokenBridgeMessage,
-} from '@eth-optimism/sdk'
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import {
   ColumnDef,
   Row,
@@ -13,16 +9,16 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import {
+  TunnelHistoryContext,
+  TunnelOperation,
+} from 'app/context/tunnelHistoryContext'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToUnsupportedChain } from 'hooks/useConnectedToUnsupportedChain'
-import {
-  useAnyChainGetTransactionMessageStatus,
-  useGetDepositsByAddress,
-  useGetWithdrawalsByAddress,
-} from 'hooks/useL2Bridge'
+import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
-import { useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
@@ -47,7 +43,7 @@ const WithdrawStatus = function ({
   withdrawal,
 }: {
   l1ChainId: Chain['id']
-  withdrawal: TokenBridgeMessage
+  withdrawal: TunnelOperation
 }) {
   const t = useTranslations('transaction-history')
   const waitMinutes = useTranslations()(
@@ -100,17 +96,9 @@ const Header = ({ text }: { text?: string }) => (
 const columnsBuilder = (
   t: ReturnType<typeof useTranslations<'tunnel-page.transaction-history'>>,
   l1ChainId: Chain['id'],
-): ColumnDef<TokenBridgeMessage>[] => [
+): ColumnDef<TunnelOperation>[] => [
   {
-    cell({ row }) {
-      const chainId = isDeposit(row.original) ? l1ChainId : hemi.id
-      return (
-        <TxTime
-          blockNumber={BigInt(row.original.blockNumber)}
-          chainId={chainId}
-        />
-      )
-    },
+    cell: ({ row }) => <TxTime timestamp={row.original.timestamp} />,
     header: () => <Header text={t('column-headers.time')} />,
     id: 'time',
   },
@@ -186,22 +174,10 @@ const columnsBuilder = (
   },
 ]
 
-const useTransactionsHistory = function (l1ChainId: Chain['id']) {
-  const { isPending: isLoadingWithdrawals, withdrawals } =
-    useGetWithdrawalsByAddress()
-  const { deposits, isPending: isLoadingDeposits } =
-    useGetDepositsByAddress(l1ChainId)
+const useTransactionsHistory = function () {
+  const { deposits, depositSyncStatus } = useContext(TunnelHistoryContext)
 
-  const loading = isLoadingWithdrawals || isLoadingDeposits
-
-  // Data for useReactTable must be a stable reference
-  // otherwise, we hit infinite rerenders
-  const data = useMemo(
-    () => (withdrawals ?? []).concat(deposits ?? []),
-    [deposits, withdrawals],
-  )
-
-  return { data, loading }
+  return { data: deposits, loading: depositSyncStatus === 'syncing' }
 }
 
 const pageSize = 10
@@ -211,14 +187,15 @@ const Body = function ({
   loading,
   rows,
 }: {
-  columns: ColumnDef<TokenBridgeMessage>[]
+  columns: ColumnDef<TunnelOperation>[]
   loading: boolean
-  rows: Row<TokenBridgeMessage>[]
+  rows: Row<TunnelOperation>[]
 }) {
   const t = useTranslations('tunnel-page.transaction-history')
   return (
     <tbody>
       {loading &&
+        rows.length === 0 &&
         Array.from(Array(pageSize).keys()).map(index => (
           <tr key={index}>
             {columns.map((c, i) => (
@@ -229,7 +206,7 @@ const Body = function ({
             ))}
           </tr>
         ))}
-      {!loading && (
+      {(!loading || rows.length > 0) && (
         <>
           {rows.length === 0 && (
             <tr>
@@ -267,7 +244,7 @@ export const TransactionHistory = function () {
 
   const { status } = useAccount()
 
-  const { data, loading } = useTransactionsHistory(l1ChainId)
+  const { data, loading } = useTransactionsHistory()
 
   const t = useTranslations('tunnel-page.transaction-history')
   const translate = useTranslations()
@@ -275,14 +252,14 @@ export const TransactionHistory = function () {
   const columns = useMemo(
     () =>
       columnsBuilder(t, l1ChainId).map(c =>
-        loading
+        data.length === 0 && loading
           ? {
               ...c,
               cell: () => <Skeleton className="w-24" />,
             }
           : c,
       ),
-    [loading, t, l1ChainId],
+    [data.length, loading, t, l1ChainId],
   )
 
   const { width } = useWindowSize()
@@ -357,7 +334,7 @@ export const TransactionHistory = function () {
               </table>
             </div>
           </Card>
-          {!loading && pageCount > 1 && (
+          {pageCount > 1 && (
             <Paginator
               onPageChange={page =>
                 setQueryParams({ pageIndex: page.toString() })

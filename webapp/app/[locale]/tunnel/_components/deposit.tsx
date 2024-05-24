@@ -1,14 +1,17 @@
 'use client'
 
+import { MessageDirection } from '@eth-optimism/sdk'
+import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useTranslations } from 'next-intl'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useContext, useEffect, useState } from 'react'
+import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { formatUnits } from 'viem'
+import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useDeposit } from '../_hooks/useDeposit'
@@ -84,6 +87,7 @@ type Props = {
 }
 
 export const Deposit = function ({ renderForm, state }: Props) {
+  const { addDepositToTunnelHistory } = useContext(TunnelHistoryContext)
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
   const [depositAmount, setDepositAmount] = useState('0')
   // use this to avoid infinite loops in effects when resetting the form
@@ -165,27 +169,43 @@ export const Deposit = function ({ renderForm, state }: Props) {
     [approvalReceiptStatus, operationRunning, setOperationRunning],
   )
 
-  const depositReceiptStatus = depositReceipt?.status
   useEffect(
     function handleDepositSuccess() {
-      if (depositReceiptStatus === 'success') {
+      if (depositReceipt?.status === 'success') {
         const timeoutId = setTimeout(clearDepositState, 7000)
         if (!hasClearedForm) {
           setHasClearedForm(true)
           setOperationRunning('idle')
           resetStateAfterOperation()
+          const isNative = isNativeToken(fromToken)
+          addDepositToTunnelHistory({
+            amount: parseUnits(fromInput, fromToken.decimals).toString(),
+            blockNumber: Number(depositReceipt.blockNumber),
+            data: '0x', // not needed for deposits
+            direction: MessageDirection.L1_TO_L2,
+            from: depositReceipt.from,
+            l1Token: isNative ? zeroAddress : fromToken.address,
+            l2Token: isNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
+            logIndex: 0, // not needed for deposits
+            to: depositReceipt.to,
+            transactionHash: depositReceipt.transactionHash,
+          })
         }
         return () => clearTimeout(timeoutId)
       }
       return undefined
     },
     [
+      addDepositToTunnelHistory,
       clearDepositState,
-      depositReceiptStatus,
+      depositReceipt,
+      fromInput,
+      fromToken,
       hasClearedForm,
       resetStateAfterOperation,
       setOperationRunning,
       setHasClearedForm,
+      toToken,
     ],
   )
 

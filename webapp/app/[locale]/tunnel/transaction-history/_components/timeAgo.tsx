@@ -5,14 +5,13 @@ import esLocale from 'javascript-time-ago/locale/es'
 const modules = [enLocale, esLocale]
 modules.forEach(module => JsTimeAgo.addLocale(module))
 
-export const TimeAgo = function ({
-  locale,
-  timestamp,
-}: {
+type Props = {
   locale: string
-  timestamp: bigint
-}) {
+  timestamp: number
+}
+
+export const TimeAgo = function ({ locale, timestamp }: Props) {
   const timeAgo = new JsTimeAgo(locale)
   // timestamp is unix format
-  return timeAgo.format(Number(timestamp) * 1000)
+  return timeAgo.format(timestamp * 1000)
 }

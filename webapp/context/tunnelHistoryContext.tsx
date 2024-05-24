@@ -1,6 +1,6 @@
 'use client'
 
-import { TokenBridgeMessage, toNumber } from '@eth-optimism/sdk'
+import { CrossChainMessenger, TokenBridgeMessage } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { getBlock } from '@wagmi/core'
 import { getWalletConfig } from 'app/context/walletContext'
@@ -8,6 +8,8 @@ import { bridgeableNetworks, hemi } from 'app/networks'
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
 import { usePathname } from 'next/navigation'
 import pAll from 'p-all'
+import pThrottle from 'p-throttle'
+import pMemoize from 'promise-mem'
 import { createContext, useCallback, useMemo, ReactNode } from 'react'
 import {
   type SyncState,
@@ -27,7 +29,7 @@ const chainConfiguration = {
   },
   [sepolia.id]: {
     blockWindowSize: 7000, // Approximately 1 day
-    minBlockToSync: 5294649, // Approximately hemi testnet birth.
+    minBlockToSync: 5_294_649, // Approximately hemi testnet birth.
   },
 }
 
@@ -35,6 +37,11 @@ const getTunnelHistoryDepositStorageKey = (
   l1ChainId: Chain['id'],
   address: Address,
 ) => `portal.transaction-history-L1-${l1ChainId}-${address}-deposits`
+
+const getTunnelHistoryWithdrawStorageKey = (
+  l2ChainId: number,
+  address: Address,
+) => `portal.transaction-history-L2-${l2ChainId}-${address}-deposits`
 
 export type TunnelOperation = Omit<TokenBridgeMessage, 'amount'> & {
   amount: string
@@ -45,28 +52,40 @@ type TunnelHistoryContext = {
   addDepositToTunnelHistory: (
     deposit: Omit<TunnelOperation, 'timestamp'>,
   ) => Promise<void>
+  addWithdrawalToTunnelHistory: (
+    deposit: Omit<TunnelOperation, 'timestamp'>,
+  ) => Promise<void>
   deposits: TunnelOperation[]
   depositSyncStatus: SyncStatus
   resumeSync: () => void
-  // withdrawSyncStatus: SyncStatus
+  withdrawSyncStatus: SyncStatus
+  withdrawals: TunnelOperation[]
 }
 
 export const TunnelHistoryContext = createContext<TunnelHistoryContext>({
   addDepositToTunnelHistory: () => undefined,
+  addWithdrawalToTunnelHistory: () => undefined,
   deposits: [],
   depositSyncStatus: 'syncing',
   resumeSync: () => undefined,
-  // withdrawSyncStatus: 'syncing',
+  withdrawals: [],
+  withdrawSyncStatus: 'syncing',
 })
+
+const pGetBlock = pMemoize(
+  (blockNumber: TunnelOperation['blockNumber'], chainId: Chain['id']) =>
+    getBlock(getWalletConfig(), {
+      blockNumber: BigInt(blockNumber),
+      chainId,
+    }),
+  { resolver: (blockNumber, chainId) => `${blockNumber}-${chainId}` },
+)
 
 const addTimestampToOperation = (
   operation: Omit<TunnelOperation, 'timestamp'>,
   chainId: Chain['id'],
 ) =>
-  getBlock(getWalletConfig(), {
-    blockNumber: BigInt(operation.blockNumber),
-    chainId,
-  }).then(blockNumber => ({
+  pGetBlock(operation.blockNumber, chainId).then(blockNumber => ({
     ...operation,
     timestamp: Number(blockNumber.timestamp),
   }))
@@ -85,81 +104,128 @@ const mergeContent = function (
   const merged = previousContent.concat(newContent)
   return removeDuplicates(merged).sort((a, b) => b.timestamp - a.timestamp)
 }
-type Props = {
-  children: ReactNode
-}
 
-export const TunnelHistoryProvider = function ({ children }: Props) {
+const getDeposits = pThrottle({ interval: 1000, limit: 2 })(
+  ({
+    address,
+    crossChainMessenger,
+    fromBlock,
+    toBlock,
+  }: {
+    address: Address
+    crossChainMessenger: CrossChainMessenger
+    fromBlock: number
+    toBlock: number
+  }) =>
+    crossChainMessenger.getDepositsByAddress(address, {
+      fromBlock,
+      toBlock,
+    }),
+)
+
+const getWithdrawals = pThrottle({ interval: 1000, limit: 2 })(
+  ({
+    address,
+    crossChainMessenger,
+    fromBlock,
+    toBlock,
+  }: {
+    address: Address
+    crossChainMessenger: CrossChainMessenger
+    fromBlock: number
+    toBlock: number
+  }) =>
+    crossChainMessenger.getWithdrawalsByAddress(address, {
+      fromBlock,
+      toBlock,
+    }),
+)
+
+const useSyncTunnelOperations = function ({
+  chainId,
+  l1ChainId,
+  getStorageKey,
+  getTunnelOperations,
+}: {
+  chainId: Chain['id']
+  l1ChainId: Chain['id']
+  getStorageKey:
+    | typeof getTunnelHistoryDepositStorageKey
+    | typeof getTunnelHistoryWithdrawStorageKey
+  getTunnelOperations: typeof getDeposits | typeof getWithdrawals
+}) {
   const { address } = useAccount()
-
-  // TODO https://github.com/BVM-priv/ui-monorepo/issues/158
-  const l1ChainId = bridgeableNetworks[0].id
 
   const isTransactionHistoryPage = usePathname().endsWith(
     'transaction-history/',
   )
 
-  const { data: l1ChainIdLastBlockNumber, queryKey } = useBlockNumber({
-    chainId: l1ChainId,
+  const { data: lastBlockNumber, queryKey } = useBlockNumber({
+    chainId,
     query: {
       refetchOnMount: 'always',
     },
   })
+
+  const storageKey = getStorageKey(chainId, address)
 
   const queryClient = useQueryClient()
 
   const { crossChainMessenger, crossChainMessengerStatus } =
     useConnectedChainCrossChainMessenger(l1ChainId)
 
-  const syncBlockWindow = (fromBlock: number, toBlock: number) =>
-    crossChainMessenger
-      .getDepositsByAddress(address, {
-        fromBlock: toNumber(fromBlock.toString()),
-        toBlock: toNumber(toBlock.toString()),
-      })
-      .then(deposits =>
+  const syncBlockWindow = useCallback(
+    (fromBlock: number, toBlock: number) =>
+      getTunnelOperations({
+        address,
+        crossChainMessenger,
+        fromBlock,
+        toBlock,
+      }).then(operations =>
         pAll(
-          deposits.map(
-            deposit => () =>
+          operations.map(
+            operation => () =>
               addTimestampToOperation(
                 {
-                  ...deposit,
+                  ...operation,
                   // convert these types to something that we can serialize
-                  amount: deposit.amount.toString(),
+                  amount: operation.amount.toString(),
                 },
-                l1ChainId,
+                chainId,
               ),
           ),
           { concurrency },
         ),
-      )
+      ),
+    [address, chainId, crossChainMessenger, getTunnelOperations],
+  )
 
-  const depositsState = useSyncInBlockChunks<TunnelOperation>({
-    ...chainConfiguration[l1ChainId],
-    chainId: l1ChainId,
+  const state = useSyncInBlockChunks<TunnelOperation>({
+    ...chainConfiguration[chainId],
+    chainId,
     enabled:
       crossChainMessengerStatus === 'success' &&
       // only sync while in the Transaction History page
       isTransactionHistoryPage,
     lastBlockNumber:
-      l1ChainIdLastBlockNumber !== undefined
-        ? Number(l1ChainIdLastBlockNumber)
-        : undefined,
+      lastBlockNumber !== undefined ? Number(lastBlockNumber) : undefined,
     mergeContent,
-    storageKey: getTunnelHistoryDepositStorageKey(l1ChainId, address),
+    storageKey,
     syncBlockWindow,
   })
 
-  const addDepositToTunnelHistory = useCallback(
-    async function (deposit: Omit<TunnelOperation, 'timestamp'>) {
-      if (depositsState.syncBlock.hasSyncToMinBlock) {
+  // Use this function to add an operation to the local storage
+  // from outside of the automatic sync process.
+  const addOperationToTunnelHistory = useCallback(
+    async function (operation: Omit<TunnelOperation, 'timestamp'>) {
+      if (state.syncBlock.hasSyncToMinBlock) {
         // This means that we have walked through the whole blockchain history
         // up to minBlockToSync. So we don't need to manually add it
         // as syncing will automatically pick it up.
         return undefined
       }
 
-      // Here our app it is walking through the history way back, so new deposits
+      // Here our app it is walking through the history way back, so new operations
       // may take a while to appear, because it is still syncing previous blocks
       // and won't check for recent blocks until finishes that process
       // This will cause that recent operations don't appear in the tx history, which
@@ -168,39 +234,78 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
       // if in the future it re-syncs and gets duplicated, the code in "mergeContent"
       // will automatically discard it.
 
-      const key = getTunnelHistoryDepositStorageKey(l1ChainId, address)
-      const stringItem = localStorage.getItem(key)
+      const stringItem = localStorage.getItem(storageKey)
       if (!stringItem) {
         // if nothing is saved, it means that we have never entered the tx history page before
-        // so once we enter it will automatically sync and pick up the new deposit.
+        // so once we enter it will automatically sync and pick up the new operation.
         // starting from the newest block and going back
         // Nothing to do here then.
         return undefined
       }
       const item: SyncState<TunnelOperation> = JSON.parse(stringItem)
-      // add the new deposit, and update local storage.
+      // add the new operation, and update local storage.
       // It should resync automatically on the state once we enter the tx-history page
-      return addTimestampToOperation(deposit, l1ChainId).then(
-        function (operation) {
-          item.content = mergeContent(item.content, [operation])
-          localStorage.setItem(key, JSON.stringify(item))
+      return addTimestampToOperation(operation, chainId).then(
+        function (updatedOperation) {
+          item.content = mergeContent(item.content, [updatedOperation])
+          localStorage.setItem(storageKey, JSON.stringify(item))
         },
       )
     },
-    [address, depositsState, l1ChainId],
+    [chainId, state, storageKey],
   )
+
+  return useMemo(
+    () => ({
+      addOperationToTunnelHistory,
+      operations: state.syncBlock.content,
+      resumeSync() {
+        queryClient.invalidateQueries({ queryKey })
+        state.resumeSync()
+      },
+      syncStatus: state.syncStatus,
+    }),
+    [addOperationToTunnelHistory, state, queryClient, queryKey],
+  )
+}
+
+type Props = {
+  children: ReactNode
+}
+
+export const TunnelHistoryProvider = function ({ children }: Props) {
+  // TODO https://github.com/BVM-priv/ui-monorepo/issues/158
+  const l1ChainId = bridgeableNetworks[0].id
+
+  const depositState = useSyncTunnelOperations({
+    chainId: l1ChainId,
+    getStorageKey: getTunnelHistoryDepositStorageKey,
+    getTunnelOperations: getDeposits,
+    l1ChainId,
+  })
+
+  const withdrawalsState = useSyncTunnelOperations({
+    chainId: hemi.id,
+    getStorageKey: getTunnelHistoryWithdrawStorageKey,
+    getTunnelOperations: getWithdrawals,
+    l1ChainId,
+  })
 
   const value = useMemo(
     () => ({
-      addDepositToTunnelHistory,
-      deposits: depositsState.syncBlock.content,
-      depositSyncStatus: depositsState.syncStatus,
+      addDepositToTunnelHistory: depositState.addOperationToTunnelHistory,
+      addWithdrawalToTunnelHistory:
+        withdrawalsState.addOperationToTunnelHistory,
+      deposits: depositState.operations,
+      depositSyncStatus: depositState.syncStatus,
       resumeSync() {
-        queryClient.invalidateQueries({ queryKey })
-        depositsState.resumeSync()
+        depositState.resumeSync()
+        withdrawalsState.resumeSync()
       },
+      withdrawals: withdrawalsState.operations,
+      withdrawSyncStatus: withdrawalsState.syncStatus,
     }),
-    [addDepositToTunnelHistory, depositsState, queryClient, queryKey],
+    [depositState, withdrawalsState],
   )
 
   return (

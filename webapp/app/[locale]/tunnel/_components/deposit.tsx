@@ -181,13 +181,14 @@ export const Deposit = function ({ renderForm, state }: Props) {
           addDepositToTunnelHistory({
             amount: parseUnits(fromInput, fromToken.decimals).toString(),
             blockNumber: Number(depositReceipt.blockNumber),
-            data: '0x', // not needed for deposits
+            data: '0x', // not needed
             direction: MessageDirection.L1_TO_L2,
             from: depositReceipt.from,
             l1Token: isNative ? zeroAddress : fromToken.address,
             l2Token: isNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
-            logIndex: 0, // not needed for deposits
-            to: depositReceipt.to,
+            logIndex: 0, // not needed
+            // "to" field uses the same address as from, which is user's address
+            to: depositReceipt.from,
             transactionHash: depositReceipt.transactionHash,
           })
         }

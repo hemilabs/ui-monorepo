@@ -175,9 +175,19 @@ const columnsBuilder = (
 ]
 
 const useTransactionsHistory = function () {
-  const { deposits, depositSyncStatus } = useContext(TunnelHistoryContext)
+  const { deposits, depositSyncStatus, withdrawals, withdrawSyncStatus } =
+    useContext(TunnelHistoryContext)
 
-  return { data: deposits, loading: depositSyncStatus === 'syncing' }
+  const data = useMemo(
+    () =>
+      deposits.concat(withdrawals).sort((a, b) => b.timestamp - a.timestamp),
+    [deposits, withdrawals],
+  )
+  return {
+    data,
+    loading:
+      depositSyncStatus === 'syncing' || withdrawSyncStatus === 'syncing',
+  }
 }
 
 const pageSize = 10

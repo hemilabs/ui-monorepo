@@ -1,9 +1,10 @@
 import { MessageDirection, MessageStatus, toBigNumber } from '@eth-optimism/sdk'
+import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
@@ -34,6 +35,7 @@ type Props = {
 }
 
 export const Withdraw = function ({ renderForm, state }: Props) {
+  const { addWithdrawalToTunnelHistory } = useContext(TunnelHistoryContext)
   // use this to avoid infinite loops in effects when resetting the form
   const [hasClearedForm, setHasClearedForm] = useState(false)
   const [isWithdrawing, setIsWithdrawing] = useState(false)
@@ -113,6 +115,34 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       setIsWithdrawing,
       withdrawError,
       withdrawReceiptError,
+    ],
+  )
+
+  useEffect(
+    function handleWithdrawalSuccess() {
+      if (withdrawReceipt?.status === 'success') {
+        const isNative = isNativeToken(fromToken)
+        addWithdrawalToTunnelHistory({
+          amount: parseUnits(fromInput, fromToken.decimals).toString(),
+          blockNumber: Number(withdrawReceipt.blockNumber),
+          data: '0x', // not needed
+          direction: MessageDirection.L2_TO_L1,
+          from: withdrawReceipt.from,
+          l1Token: isNative ? zeroAddress : fromToken.address,
+          l2Token: isNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
+          logIndex: 0, // not needed
+          // "to" field uses the same address as from, which is user's address
+          to: withdrawReceipt.from,
+          transactionHash: withdrawReceipt.transactionHash,
+        })
+      }
+    },
+    [
+      addWithdrawalToTunnelHistory,
+      fromInput,
+      fromToken,
+      toToken,
+      withdrawReceipt,
     ],
   )
 

@@ -86,27 +86,12 @@ export const useSyncInBlockChunks = function <T>({
         return
       }
 
-      setSyncBlock(prev => {
-        console.log({
-          ...prev,
-          chunkIndex,
-          content,
-          toBlock,
-        })
-        return {
-          ...prev,
-          chunkIndex,
-          content,
-          toBlock,
-        }
-      })
-
-      // setSyncBlock(prev => ({
-      //   ...prev,
-      //   chunkIndex,
-      //   content,
-      //   toBlock,
-      // }))
+      setSyncBlock(prev => ({
+        ...prev,
+        chunkIndex,
+        content,
+        toBlock,
+      }))
     },
     [enabled, setSyncBlock, storageKey, syncStatus],
   )
@@ -119,7 +104,7 @@ export const useSyncInBlockChunks = function <T>({
         !lastBlockNumber ||
         syncStatus !== 'syncing'
       ) {
-        return
+        return undefined
       }
 
       const { fromBlock, toBlock, chunkIndex, hasSyncToMinBlock } = syncBlock
@@ -141,7 +126,7 @@ export const useSyncInBlockChunks = function <T>({
           pivotBlock,
         }) - (chunkIndex === 0 ? 0 : 1)
       if (to < from) {
-        return
+        return undefined
       }
 
       // eslint-disable-next-line no-console
@@ -176,7 +161,7 @@ export const useSyncInBlockChunks = function <T>({
                 toBlock: pivotBlock,
               }),
             )
-            console.log(newHasSyncToMinBlock ? pivotBlock + 1 : prev.fromBlock)
+
             return {
               ...prev,
               chunkIndex: newHasSyncToMinBlock ? 0 : prev.chunkIndex + 1,

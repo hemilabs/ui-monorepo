@@ -37,6 +37,20 @@ const createIpRepository = function (db) {
   }
 
   /**
+   * Removes all ip submissions
+   * @returns {Promise<void>}
+   */
+  const removeAllIps = function () {
+    logger.debug('Removing all IPs')
+    return db
+      .from(tableName)
+      .delete()
+      .then(function () {
+        logger.verbose('All IPs removed')
+      })
+  }
+
+  /**
    * Removes an ip submission by id
    * @param {number} id
    * @returns {Promise<void>}
@@ -74,6 +88,7 @@ const createIpRepository = function (db) {
 
   return {
     isIpRecentlyUsed,
+    removeAllIps,
     removeIpById,
     saveIp,
   }

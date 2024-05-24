@@ -36,6 +36,20 @@ const createEmailRepository = function (db) {
   }
 
   /**
+   * Removes all email submissions
+   * @returns {Promise<void>}
+   */
+  const removeAllEmails = function () {
+    logger.debug('Removing all emails')
+    return db
+      .from(tableName)
+      .delete()
+      .then(function () {
+        logger.verbose('All Emails removed')
+      })
+  }
+
+  /**
    * Removes an email submission by id
    * @param {number} id
    * @returns {Promise<void>}
@@ -76,6 +90,7 @@ const createEmailRepository = function (db) {
 
   return {
     isEmailSubmitted,
+    removeAllEmails,
     removeEmailById,
     saveEmail,
   }

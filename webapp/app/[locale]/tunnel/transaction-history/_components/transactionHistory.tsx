@@ -9,10 +9,11 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
 import {
-  TunnelHistoryContext,
   TunnelOperation,
-} from 'app/context/tunnelHistoryContext'
+  WithdrawOperation,
+} from 'app/context/tunnelHistoryContext/types'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToUnsupportedChain } from 'hooks/useConnectedToUnsupportedChain'
@@ -43,7 +44,7 @@ const WithdrawStatus = function ({
   withdrawal,
 }: {
   l1ChainId: Chain['id']
-  withdrawal: TunnelOperation
+  withdrawal: WithdrawOperation
 }) {
   const t = useTranslations('transaction-history')
   const waitMinutes = useTranslations()(

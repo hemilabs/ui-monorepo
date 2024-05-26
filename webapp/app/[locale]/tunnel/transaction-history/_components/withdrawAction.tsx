@@ -1,5 +1,5 @@
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
-import { TunnelOperation } from 'context/tunnelHistoryContext'
+import { WithdrawOperation } from 'context/tunnelHistoryContext/types'
 import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
@@ -27,7 +27,7 @@ const Action = ({
 
 type Props = {
   l1ChainId: Chain['id']
-  withdraw: TunnelOperation
+  withdraw: WithdrawOperation
 }
 
 export const WithdrawAction = function ({ l1ChainId, withdraw }: Props) {

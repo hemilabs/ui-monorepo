@@ -1,5 +1,10 @@
 import { MessageDirection } from '@eth-optimism/sdk'
-import { TunnelOperation } from 'app/context/tunnelHistoryContext'
+import {
+  DepositOperation,
+  TunnelOperation,
+} from 'app/context/tunnelHistoryContext/types'
 
-export const isDeposit = ({ direction }: TunnelOperation) =>
-  direction === MessageDirection.L1_TO_L2
+export const isDeposit = (
+  operation: TunnelOperation,
+): operation is DepositOperation =>
+  operation.direction === MessageDirection.L1_TO_L2

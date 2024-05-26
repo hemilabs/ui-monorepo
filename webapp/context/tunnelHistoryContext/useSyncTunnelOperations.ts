@@ -1,27 +1,20 @@
-'use client'
-
-import { CrossChainMessenger, TokenBridgeMessage } from '@eth-optimism/sdk'
+import { CrossChainMessenger } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
-import { getBlock } from '@wagmi/core'
-import { getWalletConfig } from 'app/context/walletContext'
-import { bridgeableNetworks, hemi } from 'app/networks'
+import { hemi } from 'app/networks'
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
 import { usePathname } from 'next/navigation'
 import pAll from 'p-all'
-import pThrottle from 'p-throttle'
-import pMemoize from 'promise-mem'
-import { createContext, useCallback, useMemo, ReactNode } from 'react'
+import { useCallback, useMemo } from 'react'
 import {
   type SyncState,
-  type SyncStatus,
   useSyncInBlockChunks,
 } from 'ui-common/hooks/useSyncInBlockChunks'
 import { type Address, type Chain } from 'viem'
 import { sepolia } from 'viem/chains'
 import { useAccount, useBlockNumber } from 'wagmi'
 
-// When requesting data per deposit/withdraw, do not request more than 5 per type at a time.
-const concurrency = 5
+import { addTimestampToOperation } from './operations'
+import { TunnelOperation } from './types'
 
 const chainConfiguration = {
   [hemi.id]: {
@@ -33,62 +26,8 @@ const chainConfiguration = {
   },
 }
 
-const getTunnelHistoryDepositStorageKey = (
-  l1ChainId: Chain['id'],
-  address: Address,
-) => `portal.transaction-history-L1-${l1ChainId}-${address}-deposits`
-
-const getTunnelHistoryWithdrawStorageKey = (
-  l2ChainId: number,
-  address: Address,
-) => `portal.transaction-history-L2-${l2ChainId}-${address}-deposits`
-
-export type TunnelOperation = Omit<TokenBridgeMessage, 'amount'> & {
-  amount: string
-  timestamp: number
-}
-
-type TunnelHistoryContext = {
-  addDepositToTunnelHistory: (
-    deposit: Omit<TunnelOperation, 'timestamp'>,
-  ) => Promise<void>
-  addWithdrawalToTunnelHistory: (
-    deposit: Omit<TunnelOperation, 'timestamp'>,
-  ) => Promise<void>
-  deposits: TunnelOperation[]
-  depositSyncStatus: SyncStatus
-  resumeSync: () => void
-  withdrawSyncStatus: SyncStatus
-  withdrawals: TunnelOperation[]
-}
-
-export const TunnelHistoryContext = createContext<TunnelHistoryContext>({
-  addDepositToTunnelHistory: () => undefined,
-  addWithdrawalToTunnelHistory: () => undefined,
-  deposits: [],
-  depositSyncStatus: 'syncing',
-  resumeSync: () => undefined,
-  withdrawals: [],
-  withdrawSyncStatus: 'syncing',
-})
-
-const pGetBlock = pMemoize(
-  (blockNumber: TunnelOperation['blockNumber'], chainId: Chain['id']) =>
-    getBlock(getWalletConfig(), {
-      blockNumber: BigInt(blockNumber),
-      chainId,
-    }),
-  { resolver: (blockNumber, chainId) => `${blockNumber}-${chainId}` },
-)
-
-const addTimestampToOperation = (
-  operation: Omit<TunnelOperation, 'timestamp'>,
-  chainId: Chain['id'],
-) =>
-  pGetBlock(operation.blockNumber, chainId).then(blockNumber => ({
-    ...operation,
-    timestamp: Number(blockNumber.timestamp),
-  }))
+// When requesting data per deposit/withdraw, do not request more than 5 per type at a time.
+const concurrency = 5
 
 const removeDuplicates = (operations: TunnelOperation[]) =>
   Array.from(
@@ -105,43 +44,7 @@ const mergeContent = function (
   return removeDuplicates(merged).sort((a, b) => b.timestamp - a.timestamp)
 }
 
-const getDeposits = pThrottle({ interval: 1000, limit: 2 })(
-  ({
-    address,
-    crossChainMessenger,
-    fromBlock,
-    toBlock,
-  }: {
-    address: Address
-    crossChainMessenger: CrossChainMessenger
-    fromBlock: number
-    toBlock: number
-  }) =>
-    crossChainMessenger.getDepositsByAddress(address, {
-      fromBlock,
-      toBlock,
-    }),
-)
-
-const getWithdrawals = pThrottle({ interval: 1000, limit: 2 })(
-  ({
-    address,
-    crossChainMessenger,
-    fromBlock,
-    toBlock,
-  }: {
-    address: Address
-    crossChainMessenger: CrossChainMessenger
-    fromBlock: number
-    toBlock: number
-  }) =>
-    crossChainMessenger.getWithdrawalsByAddress(address, {
-      fromBlock,
-      toBlock,
-    }),
-)
-
-const useSyncTunnelOperations = function ({
+export const useSyncTunnelOperations = function <T extends TunnelOperation>({
   chainId,
   l1ChainId,
   getStorageKey,
@@ -149,10 +52,13 @@ const useSyncTunnelOperations = function ({
 }: {
   chainId: Chain['id']
   l1ChainId: Chain['id']
-  getStorageKey:
-    | typeof getTunnelHistoryDepositStorageKey
-    | typeof getTunnelHistoryWithdrawStorageKey
-  getTunnelOperations: typeof getDeposits | typeof getWithdrawals
+  getStorageKey: (c: Chain['id'], address: Address) => string
+  getTunnelOperations: (params: {
+    address: Address
+    crossChainMessenger: CrossChainMessenger
+    fromBlock: number
+    toBlock: number
+  }) => Promise<Omit<T, 'timestamp'>[]>
 }) {
   const { address } = useAccount()
 
@@ -184,15 +90,7 @@ const useSyncTunnelOperations = function ({
       }).then(operations =>
         pAll(
           operations.map(
-            operation => () =>
-              addTimestampToOperation(
-                {
-                  ...operation,
-                  // convert these types to something that we can serialize
-                  amount: operation.amount.toString(),
-                },
-                chainId,
-              ),
+            operation => () => addTimestampToOperation(operation, chainId),
           ),
           { concurrency },
         ),
@@ -266,51 +164,5 @@ const useSyncTunnelOperations = function ({
       syncStatus: state.syncStatus,
     }),
     [addOperationToTunnelHistory, state, queryClient, queryKey],
-  )
-}
-
-type Props = {
-  children: ReactNode
-}
-
-export const TunnelHistoryProvider = function ({ children }: Props) {
-  // TODO https://github.com/BVM-priv/ui-monorepo/issues/158
-  const l1ChainId = bridgeableNetworks[0].id
-
-  const depositState = useSyncTunnelOperations({
-    chainId: l1ChainId,
-    getStorageKey: getTunnelHistoryDepositStorageKey,
-    getTunnelOperations: getDeposits,
-    l1ChainId,
-  })
-
-  const withdrawalsState = useSyncTunnelOperations({
-    chainId: hemi.id,
-    getStorageKey: getTunnelHistoryWithdrawStorageKey,
-    getTunnelOperations: getWithdrawals,
-    l1ChainId,
-  })
-
-  const value = useMemo(
-    () => ({
-      addDepositToTunnelHistory: depositState.addOperationToTunnelHistory,
-      addWithdrawalToTunnelHistory:
-        withdrawalsState.addOperationToTunnelHistory,
-      deposits: depositState.operations,
-      depositSyncStatus: depositState.syncStatus,
-      resumeSync() {
-        depositState.resumeSync()
-        withdrawalsState.resumeSync()
-      },
-      withdrawals: withdrawalsState.operations,
-      withdrawSyncStatus: withdrawalsState.syncStatus,
-    }),
-    [depositState, withdrawalsState],
-  )
-
-  return (
-    <TunnelHistoryContext.Provider value={value}>
-      {children}
-    </TunnelHistoryContext.Provider>
   )
 }

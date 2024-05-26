@@ -1,4 +1,4 @@
-import { TunnelOperation } from 'app/context/tunnelHistoryContext'
+import { TunnelOperation } from 'app/context/tunnelHistoryContext/types'
 import { hemi } from 'app/networks'
 import { ChainLogo } from 'components/chainLogo'
 import { TokenLogo } from 'components/tokenLogo'

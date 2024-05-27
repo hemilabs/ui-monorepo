@@ -33,29 +33,21 @@ const connectors = connectorsForWallets(
   },
 )
 
-// we need a single instance of the config
-let config: ReturnType<typeof createConfig> | undefined
-
-export const getWalletConfig = function () {
-  if (!config) {
-    config = createConfig({
-      chains: networks,
-      connectors,
-      transports: Object.fromEntries(
-        networks.map(n => [
-          n.id,
-          http(n.rpcUrls.default.http[0], {
-            batch: { wait: 1000 },
-          }),
-        ]),
-      ),
-    })
-  }
-  return config
-}
+export const walletConfig = createConfig({
+  chains: networks,
+  connectors,
+  transports: Object.fromEntries(
+    networks.map(n => [
+      n.id,
+      http(n.rpcUrls.default.http[0], {
+        batch: { wait: 1000 },
+      }),
+    ]),
+  ),
+})
 
 export const WalletContext = ({ children, locale }: Props) => (
-  <WagmiProvider config={getWalletConfig()}>
+  <WagmiProvider config={walletConfig}>
     <QueryClientProvider client={queryClient}>
       <RainbowKitProvider
         locale={locale as Locale}

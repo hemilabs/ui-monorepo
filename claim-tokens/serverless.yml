@@ -31,6 +31,16 @@ functions:
           - rds:ExecuteStatement
           - rds:RollbackTransaction
         Resource: arn:aws:rds:::db:${self:provider.environment.POSTGRES_CONNECTION_DATABASE}
+  clear-tables:
+    handler: ./clear-tables.post
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - rds:BeginTransaction
+          - rds:CommitTransaction
+          - rds:ExecuteStatement
+          - rds:RollbackTransaction
+        Resource: arn:aws:rds:::db:${self:provider.environment.POSTGRES_CONNECTION_DATABASE}
   fake-email:
     enabled: ${self:custom.fake-email.enabled.${self:provider.stage}, self:custom.fake-email.enabled.default}
     events:

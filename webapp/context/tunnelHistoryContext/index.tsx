@@ -17,7 +17,7 @@ const getTunnelHistoryDepositStorageKey = (
 const getTunnelHistoryWithdrawStorageKey = (
   l2ChainId: Chain['id'],
   address: Address,
-) => `portal.transaction-history-L2-${l2ChainId}-${address}-deposits`
+) => `portal.transaction-history-L2-${l2ChainId}-${address}-withdrawals`
 
 type TunnelHistoryContext = {
   addDepositToTunnelHistory: (
@@ -51,14 +51,14 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
   // TODO https://github.com/BVM-priv/ui-monorepo/issues/158
   const l1ChainId = bridgeableNetworks[0].id
 
-  const depositState = useSyncTunnelOperations({
+  const depositState = useSyncTunnelOperations<DepositOperation>({
     chainId: l1ChainId,
     getStorageKey: getTunnelHistoryDepositStorageKey,
     getTunnelOperations: getDeposits,
     l1ChainId,
   })
 
-  const withdrawalsState = useSyncTunnelOperations({
+  const withdrawalsState = useSyncTunnelOperations<WithdrawOperation>({
     chainId: hemi.id,
     getStorageKey: getTunnelHistoryWithdrawStorageKey,
     getTunnelOperations: getWithdrawals,

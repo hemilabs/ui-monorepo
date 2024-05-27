@@ -5,16 +5,23 @@ import pThrottle from 'p-throttle'
 import pMemoize from 'promise-mem'
 import { type Address, type Chain } from 'viem'
 
-import { TunnelOperation, DepositOperation, WithdrawOperation } from './types'
+import {
+  TunnelOperation,
+  RawTunnelOperation,
+  DepositOperation,
+  WithdrawOperation,
+} from './types'
 
-const toOperation = <T extends DepositOperation | WithdrawOperation>(
+const throttlingOptions = { interval: 2000, limit: 1 }
+
+const toOperation = <T extends TunnelOperation>(
   tunnelOperation: TokenBridgeMessage,
 ) =>
   ({
     ...tunnelOperation,
     // convert these types to something that we can serialize
     amount: tunnelOperation.amount.toString(),
-  }) as T
+  }) as RawTunnelOperation<T>
 
 const pGetBlock = pMemoize(
   (blockNumber: TunnelOperation['blockNumber'], chainId: Chain['id']) =>
@@ -25,16 +32,19 @@ const pGetBlock = pMemoize(
   { resolver: (blockNumber, chainId) => `${blockNumber}-${chainId}` },
 )
 
-export const addTimestampToOperation = (
-  operation: Omit<TunnelOperation, 'timestamp'>,
+export const addTimestampToOperation = <T extends TunnelOperation>(
+  operation: RawTunnelOperation<T>,
   chainId: Chain['id'],
 ) =>
-  pGetBlock(operation.blockNumber, chainId).then(blockNumber => ({
-    ...operation,
-    timestamp: Number(blockNumber.timestamp),
-  }))
+  pGetBlock(operation.blockNumber, chainId).then(
+    blockNumber =>
+      ({
+        ...operation,
+        timestamp: Number(blockNumber.timestamp),
+      }) as T,
+  )
 
-export const getDeposits = pThrottle({ interval: 1000, limit: 2 })(
+export const getDeposits = pThrottle(throttlingOptions)(
   ({
     address,
     crossChainMessenger,
@@ -51,10 +61,12 @@ export const getDeposits = pThrottle({ interval: 1000, limit: 2 })(
         fromBlock,
         toBlock,
       })
-      .then(deposits => deposits.map(toOperation)),
+      .then(deposits =>
+        deposits.map(deposit => toOperation<DepositOperation>(deposit)),
+      ),
 )
 
-export const getWithdrawals = pThrottle({ interval: 1000, limit: 2 })(
+export const getWithdrawals = pThrottle(throttlingOptions)(
   ({
     address,
     crossChainMessenger,
@@ -71,5 +83,9 @@ export const getWithdrawals = pThrottle({ interval: 1000, limit: 2 })(
         fromBlock,
         toBlock,
       })
-      .then(withdrawals => withdrawals.map(toOperation)),
+      .then(withdrawals =>
+        withdrawals.map(withdrawal =>
+          toOperation<WithdrawOperation>(withdrawal),
+        ),
+      ),
 )

@@ -250,6 +250,7 @@ type UseGetTransactionMessageStatus = {
   crossChainMessengerStatus: 'error' | 'pending' | 'success'
   direction?: MessageDirection
   l1ChainId: Chain['id']
+  placeholderData?: MessageStatus
   refetchUntilStatus?: MessageStatus
   transactionHash: Hash
 }
@@ -259,6 +260,7 @@ const useGetTransactionMessageStatus = function ({
   crossChainMessengerStatus,
   direction,
   l1ChainId,
+  placeholderData,
   refetchUntilStatus,
   transactionHash,
 }: UseGetTransactionMessageStatus) {
@@ -268,6 +270,7 @@ const useGetTransactionMessageStatus = function ({
       crossChainMessengerStatus === 'success' &&
       l1ChainId !== hemi.id &&
       !!transactionHash,
+    placeholderData,
     queryFn: () =>
       crossChainMessenger.getMessageStatus(
         transactionHash,

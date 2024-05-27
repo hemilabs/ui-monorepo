@@ -35,6 +35,7 @@ export const WithdrawAction = function ({ l1ChainId, withdraw }: Props) {
     useAnyChainGetTransactionMessageStatus({
       direction: MessageDirection.L2_TO_L1,
       l1ChainId,
+      placeholderData: withdraw.status,
       // @ts-expect-error string is Hash `0x${string}`
       transactionHash: withdraw.transactionHash,
     })

@@ -77,6 +77,7 @@ const WithdrawStatus = function ({
     useAnyChainGetTransactionMessageStatus({
       direction: MessageDirection.L2_TO_L1,
       l1ChainId,
+      placeholderData: withdrawal.status,
       // @ts-expect-error string is hash `0x${string}`
       transactionHash: withdrawal.transactionHash,
     })

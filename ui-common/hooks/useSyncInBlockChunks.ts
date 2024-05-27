@@ -67,7 +67,10 @@ export const useSyncInBlockChunks = function <T>({
 
       const storedItem = localStorage.getItem(storageKey)
       if (!storedItem) {
-        setSyncBlock(defaultSyncState<T>())
+        setSyncBlock({
+          ...defaultSyncState<T>(),
+          fromBlock: minBlockToSync,
+        })
         return
       }
 
@@ -93,7 +96,7 @@ export const useSyncInBlockChunks = function <T>({
         toBlock,
       }))
     },
-    [enabled, setSyncBlock, storageKey, syncStatus],
+    [enabled, minBlockToSync, setSyncBlock, storageKey, syncStatus],
   )
 
   useEffect(

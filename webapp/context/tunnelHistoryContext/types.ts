@@ -12,3 +12,4 @@ export type WithdrawOperation = Omit<TokenBridgeMessage, 'amount'> & {
 }
 
 export type TunnelOperation = DepositOperation | WithdrawOperation
+export type RawTunnelOperation<T extends TunnelOperation> = Omit<T, 'timestamp'>

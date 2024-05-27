@@ -1,6 +1,6 @@
 import { CrossChainMessenger, TokenBridgeMessage } from '@eth-optimism/sdk'
 import { getBlock } from '@wagmi/core'
-import { getWalletConfig } from 'app/context/walletContext'
+import { walletConfig } from 'app/context/walletContext'
 import pThrottle from 'p-throttle'
 import pMemoize from 'promise-mem'
 import { type Address, type Chain } from 'viem'
@@ -18,7 +18,7 @@ const toOperation = <T extends DepositOperation | WithdrawOperation>(
 
 const pGetBlock = pMemoize(
   (blockNumber: TunnelOperation['blockNumber'], chainId: Chain['id']) =>
-    getBlock(getWalletConfig(), {
+    getBlock(walletConfig, {
       blockNumber: BigInt(blockNumber),
       chainId,
     }),

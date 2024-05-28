@@ -240,9 +240,7 @@ const Step = function ({ gas, icon, isLoading, text, status }: StepProps) {
                 <FuelIcon />
               </div>
               <span className="text-[10px] font-normal sm:text-xs">
-                {gas.amount === '0'
-                  ? '-'
-                  : `${getFormattedValue(gas.amount)} ${gas.symbol}`}
+                {`${getFormattedValue(gas.amount)} ${gas.symbol}`}
               </span>
             </>
           ) : null}

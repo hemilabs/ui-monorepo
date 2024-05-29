@@ -222,7 +222,7 @@ const Body = function ({
         Array.from(Array(pageSize).keys()).map(index => (
           <tr key={index}>
             {columns.map((c, i) => (
-              <td className="py-2" key={c.id || i}>
+              <td className="px-2 py-2" key={c.id || i}>
                 {/* @ts-expect-error it works */}
                 {c.cell()}
               </td>
@@ -234,7 +234,7 @@ const Body = function ({
           {rows.length === 0 && (
             <tr>
               <td
-                className="py-2 text-center text-neutral-700"
+                className="px-2 py-2 text-center text-neutral-700"
                 colSpan={columns.length}
               >
                 {t('no-transactions')}
@@ -245,7 +245,7 @@ const Body = function ({
             <tr key={row.id}>
               {row.getVisibleCells().map(cell => (
                 <td
-                  className={`py-2 text-neutral-700 ${
+                  className={`px-2 py-2 text-neutral-700 ${
                     cell.column.columnDef.id === 'action' ? 'text-center' : ''
                   }`}
                   key={cell.id}

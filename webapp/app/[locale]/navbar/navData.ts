@@ -1,6 +1,6 @@
 import { hemi } from 'app/networks'
 import { ChecklistIcon } from 'components/icons/checklistIcon'
-import { CodeInsertIcon } from 'components/icons/codeInsertIcon'
+// import { CodeInsertIcon } from 'components/icons/codeInsertIcon'
 import { DexIcon } from 'components/icons/dexIcon'
 import { ElectroCardiogramIcon } from 'components/icons/electroCardiogramIcon'
 import { ExplorerIcon } from 'components/icons/explorerIcon'
@@ -48,11 +48,11 @@ export const navItems: NavItemData[] = [
       },
     ],
   },
-  {
-    href: '',
-    icon: CodeInsertIcon,
-    id: 'bitcoinhkit',
-  },
+  // {
+  //   href: '',
+  //   icon: CodeInsertIcon,
+  //   id: 'bitcoinhkit',
+  // },
 ]
 
 export const navItemsBottom: NavItemData[] = [

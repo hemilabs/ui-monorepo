@@ -7,8 +7,8 @@ import { useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
-import { isNativeToken, ZeroAddress } from 'utils/token'
-import { type Chain, formatUnits, parseUnits } from 'viem'
+import { isNativeToken } from 'utils/token'
+import { type Chain, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useTransactionsList } from '../_hooks/useTransactionsList'
@@ -133,7 +133,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
           ),
           direction: MessageDirection.L2_TO_L1,
           from: address,
-          l1Token: ZeroAddress,
+          l1Token: zeroAddress,
           l2Token: isNativeToken(fromToken)
             ? NativeTokenSpecialAddressOnL2
             : fromToken.extensions.bridgeInfo[toNetworkId].tokenAddress,

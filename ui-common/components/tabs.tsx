@@ -52,7 +52,7 @@ type TabsProps = {
 }
 
 export const Tabs = ({ children }: TabsProps) => (
-  <ul className="flex flex-wrap border-gray-200 text-center text-sm font-medium text-gray-500">
+  <ul className="flex flex-wrap items-center border-gray-200 text-center text-sm font-medium text-gray-500">
     {children}
   </ul>
 )

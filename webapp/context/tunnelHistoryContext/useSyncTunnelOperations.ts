@@ -6,11 +6,7 @@ import { usePathname } from 'next/navigation'
 import pAll from 'p-all'
 import pMemoize from 'promise-mem'
 import { useCallback, useMemo } from 'react'
-import {
-  defaultSyncState,
-  type SyncState,
-  useSyncInBlockChunks,
-} from 'ui-common/hooks/useSyncInBlockChunks'
+import { useSyncInBlockChunks } from 'ui-common/hooks/useSyncInBlockChunks'
 import { type Address, type Chain } from 'viem'
 import { sepolia } from 'viem/chains'
 import { useAccount, useBlockNumber } from 'wagmi'
@@ -133,18 +129,7 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
       addTimestampToOperation<T>(operation, chainId).then(
         function (updatedOperation) {
           state.setSyncBlock(function (prev) {
-            // in order to avoid race conditions, where local storage was updated somewhere else
-            // read it again and update it, all in this sync function
-            const stringItem = localStorage.getItem(storageKey)
-            const item: SyncState<T> = stringItem
-              ? JSON.parse(stringItem)
-              : {
-                  ...defaultSyncState<T>(),
-                  fromBlock: chainConfiguration[chainId].minBlockToSync,
-                }
-            const newItems = mergeContent<T>(item.content, [updatedOperation])
-            item.content = newItems
-            localStorage.setItem(storageKey, JSON.stringify(item))
+            const newItems = mergeContent<T>(prev.content, [updatedOperation])
             return {
               ...prev,
               content: newItems,
@@ -152,7 +137,7 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
           })
         },
       ),
-    [chainId, state, storageKey],
+    [chainId, state],
   )
 
   return useMemo(

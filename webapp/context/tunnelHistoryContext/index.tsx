@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic'
 import { createContext, useMemo, ReactNode } from 'react'
 import { type SyncStatus } from 'ui-common/hooks/useSyncInBlockChunks'
 import { type Address, type Chain } from 'viem'
-import { useAccount } from 'wagmi'
 
 import { getDeposits, getWithdrawals } from './operations'
 import { DepositOperation, WithdrawOperation } from './types'
@@ -67,8 +66,6 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
   // TODO https://github.com/BVM-priv/ui-monorepo/issues/158
   const l1ChainId = bridgeableNetworks[0].id
 
-  const { address } = useAccount()
-
   const depositState = useSyncTunnelOperations<DepositOperation>({
     chainId: l1ChainId,
     getStorageKey: getTunnelHistoryDepositStorageKey,
@@ -99,10 +96,6 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
         status: MessageStatus,
       ) {
         withdrawalsState.updateOperation(function (current) {
-          const storageKey = getTunnelHistoryWithdrawStorageKey(
-            hemi.id,
-            address,
-          )
           const newState = {
             ...current,
             content: current.content.map(o =>
@@ -112,14 +105,13 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
                 : o,
             ),
           }
-          localStorage.setItem(storageKey, JSON.stringify(newState))
           return newState
         })
       },
       withdrawals: withdrawalsState.operations,
       withdrawSyncStatus: withdrawalsState.syncStatus,
     }),
-    [address, depositState, withdrawalsState],
+    [depositState, withdrawalsState],
   )
 
   return (

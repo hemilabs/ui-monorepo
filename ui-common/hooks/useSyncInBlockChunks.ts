@@ -52,21 +52,22 @@ export const useSyncInBlockChunks = function <T>({
   storageKey,
   syncBlockWindow,
 }: UseSyncInBlockChunks<T>) {
+  const [hasCheckedLocalStorage, setHasCheckedLocalStorage] = useState(false)
   const [syncBlock, setSyncBlock] = useState<SyncState<T>>({
     ...defaultSyncState<T>(),
     fromBlock: minBlockToSync,
   })
-
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('syncing')
 
+  // This effect restores what is stored from local storage, or leaves the default state if nothing was found
   useEffect(
-    function loadSyncStateOrSetDefault() {
+    function restoreFromLocalStorage() {
+      if (hasCheckedLocalStorage) {
+        return
+      }
+      setHasCheckedLocalStorage(true)
       const storedItem = localStorage.getItem(storageKey)
       if (!storedItem) {
-        setSyncBlock({
-          ...defaultSyncState<T>(),
-          fromBlock: minBlockToSync,
-        })
         return
       }
 
@@ -92,7 +93,12 @@ export const useSyncInBlockChunks = function <T>({
         toBlock,
       }))
     },
-    [minBlockToSync, setSyncBlock, storageKey, syncStatus],
+    [
+      hasCheckedLocalStorage,
+      setHasCheckedLocalStorage,
+      setSyncBlock,
+      storageKey,
+    ],
   )
 
   useEffect(
@@ -101,6 +107,7 @@ export const useSyncInBlockChunks = function <T>({
         !enabled ||
         !storageKey ||
         !lastBlockNumber ||
+        !hasCheckedLocalStorage ||
         syncStatus !== 'syncing'
       ) {
         return undefined
@@ -149,18 +156,6 @@ export const useSyncInBlockChunks = function <T>({
           setSyncBlock(function (prev) {
             const newContent = mergeContent(prev.content, blockContent)
 
-            // sync to local storage
-            localStorage.setItem(
-              storageKey,
-              JSON.stringify({
-                chunkIndex: newHasSyncToMinBlock ? 0 : chunkIndex + 1,
-                content: newContent,
-                fromBlock: newHasSyncToMinBlock ? pivotBlock + 1 : fromBlock,
-                hasSyncToMinBlock: newHasSyncToMinBlock,
-                toBlock: pivotBlock,
-              }),
-            )
-
             return {
               chunkIndex: newHasSyncToMinBlock ? 0 : prev.chunkIndex + 1,
               content: newContent,
@@ -191,6 +186,7 @@ export const useSyncInBlockChunks = function <T>({
       blockWindowSize,
       chainId,
       enabled,
+      hasCheckedLocalStorage,
       lastBlockNumber,
       mergeContent,
       setSyncStatus,
@@ -199,6 +195,18 @@ export const useSyncInBlockChunks = function <T>({
       syncBlockWindow,
       syncStatus,
     ],
+  )
+
+  useEffect(
+    function offloadToLocalStorage() {
+      // to avoid offloading on every state update, wait for 1 second
+      // before actually proceeding
+      const timeoutId = setTimeout(function () {
+        localStorage.setItem(storageKey, JSON.stringify(syncBlock))
+      }, 1000)
+      return () => clearTimeout(timeoutId)
+    },
+    [syncBlock, storageKey],
   )
 
   return {

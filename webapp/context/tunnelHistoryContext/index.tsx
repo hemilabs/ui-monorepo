@@ -1,13 +1,24 @@
 'use client'
 
+import { MessageStatus } from '@eth-optimism/sdk'
 import { bridgeableNetworks, hemi } from 'app/networks'
+import dynamic from 'next/dynamic'
 import { createContext, useMemo, ReactNode } from 'react'
 import { type SyncStatus } from 'ui-common/hooks/useSyncInBlockChunks'
 import { type Address, type Chain } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { getDeposits, getWithdrawals } from './operations'
 import { DepositOperation, WithdrawOperation } from './types'
 import { useSyncTunnelOperations } from './useSyncTunnelOperations'
+
+const WithdrawalsStatusUpdater = dynamic(
+  () =>
+    import('./withdrawalsStatusUpdater').then(
+      mod => mod.WithdrawalsStatusUpdater,
+    ),
+  { ssr: false },
+)
 
 const getTunnelHistoryDepositStorageKey = (
   l1ChainId: Chain['id'],
@@ -29,6 +40,10 @@ type TunnelHistoryContext = {
   deposits: DepositOperation[]
   depositSyncStatus: SyncStatus
   resumeSync: () => void
+  updateWithdrawalStatus: (
+    withdrawal: WithdrawOperation,
+    status: MessageStatus,
+  ) => void
   withdrawSyncStatus: SyncStatus
   withdrawals: WithdrawOperation[]
 }
@@ -39,6 +54,7 @@ export const TunnelHistoryContext = createContext<TunnelHistoryContext>({
   deposits: [],
   depositSyncStatus: 'syncing',
   resumeSync: () => undefined,
+  updateWithdrawalStatus: () => undefined,
   withdrawals: [],
   withdrawSyncStatus: 'syncing',
 })
@@ -50,6 +66,8 @@ type Props = {
 export const TunnelHistoryProvider = function ({ children }: Props) {
   // TODO https://github.com/BVM-priv/ui-monorepo/issues/158
   const l1ChainId = bridgeableNetworks[0].id
+
+  const { address } = useAccount()
 
   const depositState = useSyncTunnelOperations<DepositOperation>({
     chainId: l1ChainId,
@@ -76,14 +94,37 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
         depositState.resumeSync()
         withdrawalsState.resumeSync()
       },
+      updateWithdrawalStatus(
+        withdrawal: WithdrawOperation,
+        status: MessageStatus,
+      ) {
+        withdrawalsState.updateOperation(function (current) {
+          const storageKey = getTunnelHistoryWithdrawStorageKey(
+            hemi.id,
+            address,
+          )
+          const newState = {
+            ...current,
+            content: current.content.map(o =>
+              o.transactionHash === withdrawal.transactionHash &&
+              o.direction === withdrawal.direction
+                ? { ...o, status }
+                : o,
+            ),
+          }
+          localStorage.setItem(storageKey, JSON.stringify(newState))
+          return newState
+        })
+      },
       withdrawals: withdrawalsState.operations,
       withdrawSyncStatus: withdrawalsState.syncStatus,
     }),
-    [depositState, withdrawalsState],
+    [address, depositState, withdrawalsState],
   )
 
   return (
     <TunnelHistoryContext.Provider value={value}>
+      <WithdrawalsStatusUpdater />
       {children}
     </TunnelHistoryContext.Provider>
   )

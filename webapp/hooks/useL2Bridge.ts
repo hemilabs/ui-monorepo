@@ -249,8 +249,10 @@ type UseGetTransactionMessageStatus = {
   crossChainMessenger: CrossChainMessengerType
   crossChainMessengerStatus: 'error' | 'pending' | 'success'
   direction?: MessageDirection
+  enabled?: boolean
+  initialData?: MessageStatus
   l1ChainId: Chain['id']
-  placeholderData?: MessageStatus
+  refetchInterval?: number | false
   refetchUntilStatus?: MessageStatus
   transactionHash: Hash
 }
@@ -259,18 +261,21 @@ const useGetTransactionMessageStatus = function ({
   crossChainMessenger,
   crossChainMessengerStatus,
   direction,
+  enabled = true,
+  initialData,
   l1ChainId,
-  placeholderData,
+  refetchInterval = 15 * 1000,
   refetchUntilStatus,
   transactionHash,
 }: UseGetTransactionMessageStatus) {
   const { data: messageStatus, isLoading } = useQuery({
     // ensure correct chain was used
     enabled:
+      enabled &&
       crossChainMessengerStatus === 'success' &&
       l1ChainId !== hemi.id &&
       !!transactionHash,
-    placeholderData,
+    initialData,
     queryFn: () =>
       crossChainMessenger.getMessageStatus(
         transactionHash,
@@ -284,8 +289,7 @@ const useGetTransactionMessageStatus = function ({
       if (query.state.data === refetchUntilStatus) {
         return false
       }
-      // poll every 1 minute
-      return 60 * 1000
+      return refetchInterval
     },
     refetchIntervalInBackground: true,
   })

@@ -1,6 +1,6 @@
 'use client'
 
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
+import { MessageStatus } from '@eth-optimism/sdk'
 import {
   ColumnDef,
   Row,
@@ -17,7 +17,6 @@ import {
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToUnsupportedChain } from 'hooks/useConnectedToUnsupportedChain'
-import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
 import { useContext, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -40,10 +39,8 @@ import { WithdrawAction } from './withdrawAction'
 const DepositStatus = () => <TxStatus.Success />
 
 const WithdrawStatus = function ({
-  l1ChainId,
   withdrawal,
 }: {
-  l1ChainId: Chain['id']
   withdrawal: WithdrawOperation
 }) {
   const t = useTranslations('transaction-history')
@@ -73,20 +70,7 @@ const WithdrawStatus = function ({
     [MessageStatus.RELAYED]: <TxStatus.Success />,
   }
 
-  const { isLoadingMessageStatus, messageStatus } =
-    useAnyChainGetTransactionMessageStatus({
-      direction: MessageDirection.L2_TO_L1,
-      l1ChainId,
-      placeholderData: withdrawal.status,
-      // @ts-expect-error string is hash `0x${string}`
-      transactionHash: withdrawal.transactionHash,
-    })
-
-  if (isLoadingMessageStatus) {
-    return <Skeleton className="w-24" />
-  }
-
-  return statuses[messageStatus]
+  return statuses[withdrawal.status]
 }
 
 const Header = ({ text }: { text?: string }) => (
@@ -158,7 +142,7 @@ const columnsBuilder = (
       isDeposit(row.original) ? (
         <DepositStatus />
       ) : (
-        <WithdrawStatus l1ChainId={l1ChainId} withdrawal={row.original} />
+        <WithdrawStatus withdrawal={row.original} />
       ),
     header: () => <Header text={t('column-headers.status')} />,
     id: 'status',
@@ -169,7 +153,7 @@ const columnsBuilder = (
         // Deposits do not render an action, let's add a "-"
         <span className="opacity-40">-</span>
       ) : (
-        <WithdrawAction l1ChainId={l1ChainId} withdraw={row.original} />
+        <WithdrawAction withdraw={row.original} />
       ),
     header: () => <Header />,
     id: 'action',

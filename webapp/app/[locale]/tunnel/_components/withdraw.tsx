@@ -35,7 +35,8 @@ type Props = {
 }
 
 export const Withdraw = function ({ renderForm, state }: Props) {
-  const { addWithdrawalToTunnelHistory } = useContext(TunnelHistoryContext)
+  const { addWithdrawalToTunnelHistory, withdrawals } =
+    useContext(TunnelHistoryContext)
   // use this to avoid infinite loops in effects when resetting the form
   const [hasClearedForm, setHasClearedForm] = useState(false)
   const [isWithdrawing, setIsWithdrawing] = useState(false)
@@ -120,7 +121,12 @@ export const Withdraw = function ({ renderForm, state }: Props) {
 
   useEffect(
     function handleWithdrawalSuccess() {
-      if (withdrawReceipt?.status === 'success') {
+      if (
+        withdrawReceipt?.status === 'success' &&
+        !withdrawals.some(
+          w => w.transactionHash === withdrawReceipt.transactionHash,
+        )
+      ) {
         const isNative = isNativeToken(fromToken)
         addWithdrawalToTunnelHistory({
           amount: parseUnits(fromInput, fromToken.decimals).toString(),
@@ -128,9 +134,10 @@ export const Withdraw = function ({ renderForm, state }: Props) {
           data: '0x', // not needed
           direction: MessageDirection.L2_TO_L1,
           from: withdrawReceipt.from,
-          l1Token: isNative ? zeroAddress : fromToken.address,
-          l2Token: isNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
+          l1Token: isNative ? zeroAddress : toToken.address,
+          l2Token: isNative ? NativeTokenSpecialAddressOnL2 : fromToken.address,
           logIndex: 0, // not needed
+          status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
           // "to" field uses the same address as from, which is user's address
           to: withdrawReceipt.from,
           transactionHash: withdrawReceipt.transactionHash,
@@ -141,7 +148,9 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       addWithdrawalToTunnelHistory,
       fromInput,
       fromToken,
+      toNetworkId,
       toToken,
+      withdrawals,
       withdrawReceipt,
     ],
   )
@@ -157,16 +166,15 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   useEffect(
     function saveWithdrawDataForProve() {
       if (!partialWithdrawal && txHash) {
+        const isNative = isNativeToken(fromToken)
         savePartialWithdrawal({
           amount: toBigNumber(
             parseUnits(fromInput, fromToken.decimals).toString(),
           ),
           direction: MessageDirection.L2_TO_L1,
           from: address,
-          l1Token: zeroAddress,
-          l2Token: isNativeToken(fromToken)
-            ? NativeTokenSpecialAddressOnL2
-            : fromToken.extensions.bridgeInfo[toNetworkId].tokenAddress,
+          l1Token: isNative ? zeroAddress : toToken.address,
+          l2Token: isNative ? NativeTokenSpecialAddressOnL2 : fromToken.address,
           transactionHash: txHash,
         })
       }
@@ -178,6 +186,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       partialWithdrawal,
       savePartialWithdrawal,
       toNetworkId,
+      toToken,
       txHash,
     ],
   )

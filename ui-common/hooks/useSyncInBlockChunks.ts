@@ -34,7 +34,7 @@ const getPreviousFromBlock = ({
   pivotBlock: number
 }) => Math.max(minBlock, pivotBlock - blockWindowSize * chunkIndex)
 
-const defaultSyncState = <T>(): SyncState<T> => ({
+export const defaultSyncState = <T>(): SyncState<T> => ({
   chunkIndex: 0,
   content: [],
   fromBlock: 0,
@@ -61,10 +61,6 @@ export const useSyncInBlockChunks = function <T>({
 
   useEffect(
     function loadSyncStateOrSetDefault() {
-      if (!enabled) {
-        return
-      }
-
       const storedItem = localStorage.getItem(storageKey)
       if (!storedItem) {
         setSyncBlock({
@@ -96,7 +92,7 @@ export const useSyncInBlockChunks = function <T>({
         toBlock,
       }))
     },
-    [enabled, minBlockToSync, setSyncBlock, storageKey, syncStatus],
+    [minBlockToSync, setSyncBlock, storageKey, syncStatus],
   )
 
   useEffect(
@@ -113,7 +109,7 @@ export const useSyncInBlockChunks = function <T>({
       const { fromBlock, toBlock, chunkIndex, hasSyncToMinBlock } = syncBlock
 
       const pivotBlock =
-        hasSyncToMinBlock || !toBlock ? lastBlockNumber : toBlock
+        hasSyncToMinBlock || toBlock === undefined ? lastBlockNumber : toBlock
 
       const from = getPreviousFromBlock({
         blockWindowSize,
@@ -166,11 +162,11 @@ export const useSyncInBlockChunks = function <T>({
             )
 
             return {
-              ...prev,
               chunkIndex: newHasSyncToMinBlock ? 0 : prev.chunkIndex + 1,
               content: newContent,
               fromBlock: newHasSyncToMinBlock ? pivotBlock + 1 : prev.fromBlock,
               hasSyncToMinBlock: newHasSyncToMinBlock,
+              toBlock: pivotBlock,
             }
           })
 
@@ -207,6 +203,7 @@ export const useSyncInBlockChunks = function <T>({
 
   return {
     resumeSync: () => setSyncStatus('syncing'),
+    setSyncBlock,
     syncBlock,
     syncStatus,
   }

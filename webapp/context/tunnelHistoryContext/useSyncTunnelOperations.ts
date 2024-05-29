@@ -7,6 +7,7 @@ import pAll from 'p-all'
 import pMemoize from 'promise-mem'
 import { useCallback, useMemo } from 'react'
 import {
+  defaultSyncState,
   type SyncState,
   useSyncInBlockChunks,
 } from 'ui-common/hooks/useSyncInBlockChunks'
@@ -127,41 +128,30 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
   // Use this function to add an operation to the local storage
   // from outside of the automatic sync process.
   const addOperationToTunnelHistory = useCallback(
-    async function (operation: RawTunnelOperation<T>) {
-      if (state.syncBlock.hasSyncToMinBlock) {
-        // This means that we have walked through the whole blockchain history
-        // up to minBlockToSync. So we don't need to manually add it
-        // as syncing will automatically pick it up.
-        return undefined
-      }
-
-      // Here our app it is walking through the history way back, so new operations
-      // may take a while to appear, because it is still syncing previous blocks
-      // and won't check for recent blocks until finishes that process
-      // This will cause that recent operations don't appear in the tx history, which
-      // is bad for the user experience.
-      // So we can manually add them to local storage, without changing the rest
-      // if in the future it re-syncs and gets duplicated, the code in "mergeContent"
-      // will automatically discard it.
-
-      const stringItem = localStorage.getItem(storageKey)
-      if (!stringItem) {
-        // if nothing is saved, it means that we have never entered the tx history page before
-        // so once we enter it will automatically sync and pick up the new operation.
-        // starting from the newest block and going back
-        // Nothing to do here then.
-        return undefined
-      }
-      const item: SyncState<TunnelOperation> = JSON.parse(stringItem)
+    (operation: RawTunnelOperation<T>) =>
       // add the new operation, and update local storage.
-      // It should resync automatically on the state once we enter the tx-history page
-      return addTimestampToOperation<T>(operation, chainId).then(
+      addTimestampToOperation<T>(operation, chainId).then(
         function (updatedOperation) {
-          item.content = mergeContent(item.content, [updatedOperation])
-          localStorage.setItem(storageKey, JSON.stringify(item))
+          state.setSyncBlock(function (prev) {
+            // in order to avoid race conditions, where local storage was updated somewhere else
+            // read it again and update it, all in this sync function
+            const stringItem = localStorage.getItem(storageKey)
+            const item: SyncState<T> = stringItem
+              ? JSON.parse(stringItem)
+              : {
+                  ...defaultSyncState<T>(),
+                  fromBlock: chainConfiguration[chainId].minBlockToSync,
+                }
+            const newItems = mergeContent<T>(item.content, [updatedOperation])
+            item.content = newItems
+            localStorage.setItem(storageKey, JSON.stringify(item))
+            return {
+              ...prev,
+              content: newItems,
+            }
+          })
         },
-      )
-    },
+      ),
     [chainId, state, storageKey],
   )
 
@@ -174,6 +164,7 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
         state.resumeSync()
       },
       syncStatus: state.syncStatus,
+      updateOperation: state.setSyncBlock,
     }),
     [addOperationToTunnelHistory, state, queryClient, queryKey],
   )

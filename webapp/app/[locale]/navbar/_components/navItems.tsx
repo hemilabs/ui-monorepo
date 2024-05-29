@@ -7,6 +7,7 @@ import { ColorType } from 'types/colortype'
 import { NavItem } from './navItem'
 
 export type NavItemData = {
+  alertComponent?: React.ElementType
   href: string
   icon: React.ElementType
   id: string
@@ -45,10 +46,11 @@ export const NavItems = function ({
   return (
     <div className="flex flex-col justify-center">
       {navItems.map(function (item) {
-        const { id, icon: Icon, href, subMenus } = item
+        const { id, icon, href, alertComponent, subMenus } = item
         return (
           <NavItem
-            IconLeft={Icon}
+            AlertComponent={alertComponent}
+            IconLeft={icon}
             color={href === selectedItem ? colorSelected : color}
             href={href}
             isSelected={href === selectedItem}

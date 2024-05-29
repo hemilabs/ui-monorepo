@@ -16,6 +16,7 @@ interface SubMenu {
 }
 
 interface NavItemProps {
+  AlertComponent?: React.ElementType
   IconLeft: React.ElementType
   text: React.ReactNode
   isSelected: boolean
@@ -27,6 +28,7 @@ interface NavItemProps {
 }
 
 export const NavItem = function ({
+  AlertComponent,
   IconLeft,
   text,
   isSelected,
@@ -71,8 +73,8 @@ export const NavItem = function ({
   return (
     <NavRouterItem href={href} isExternal={isExternalLink(href)}>
       <div
-        className={`w-45 mb-3 flex h-10 cursor-pointer items-center justify-between rounded-tl-lg 
-            bg-transparent px-2.5 py-2 ${
+        className={`w-45 relative mb-3 flex h-10 cursor-pointer items-center justify-between 
+            rounded-tl-lg bg-transparent px-2.5 py-2 ${
               isSelected ? 'rounded-lg border border-slate-200' : 'hover group'
             }`}
         onClick={onClick}
@@ -93,6 +95,7 @@ export const NavItem = function ({
           </div>
         </div>
         <div className="mt-1">{renderRightIcon()}</div>
+        {AlertComponent && <AlertComponent />}
       </div>
       {subMenus && (
         <div

@@ -10,7 +10,7 @@ type UseSyncInBlockChunks<T> = {
   lastBlockNumber: number | undefined
   mergeContent: (previousContent: T[], newContent: T[]) => T[]
   minBlockToSync?: number
-  storageKey: string
+  storageKey: string | undefined
   syncBlockWindow: (fromBlock: number, toBlock: number) => Promise<T[]>
 }
 
@@ -59,10 +59,29 @@ export const useSyncInBlockChunks = function <T>({
   })
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('syncing')
 
+  useEffect(
+    function () {
+      if (!storageKey || !hasCheckedLocalStorage) {
+        setHasCheckedLocalStorage(false)
+        setSyncBlock({
+          ...defaultSyncState<T>(),
+          fromBlock: minBlockToSync,
+        })
+      }
+    },
+    [
+      hasCheckedLocalStorage,
+      minBlockToSync,
+      setSyncBlock,
+      setHasCheckedLocalStorage,
+      storageKey,
+    ],
+  )
+
   // This effect restores what is stored from local storage, or leaves the default state if nothing was found
   useEffect(
     function restoreFromLocalStorage() {
-      if (hasCheckedLocalStorage) {
+      if (hasCheckedLocalStorage || !storageKey) {
         return
       }
       setHasCheckedLocalStorage(true)
@@ -70,7 +89,6 @@ export const useSyncInBlockChunks = function <T>({
       if (!storedItem) {
         return
       }
-
       const { chunkIndex, content, hasSyncToMinBlock, toBlock }: SyncState<T> =
         JSON.parse(storedItem)
 
@@ -199,14 +217,17 @@ export const useSyncInBlockChunks = function <T>({
 
   useEffect(
     function offloadToLocalStorage() {
-      // to avoid offloading on every state update, wait for 1 second
+      if (!storageKey || !hasCheckedLocalStorage) {
+        return undefined
+      }
+      // to avoid offloading on every state update, wait for 0.5 second
       // before actually proceeding
       const timeoutId = setTimeout(function () {
         localStorage.setItem(storageKey, JSON.stringify(syncBlock))
-      }, 1000)
+      }, 500)
       return () => clearTimeout(timeoutId)
     },
-    [syncBlock, storageKey],
+    [hasCheckedLocalStorage, syncBlock, storageKey],
   )
 
   return {

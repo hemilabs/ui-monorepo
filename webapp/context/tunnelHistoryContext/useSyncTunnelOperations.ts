@@ -72,7 +72,7 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
     },
   })
 
-  const storageKey = getStorageKey(chainId, address)
+  const storageKey = address ? getStorageKey(chainId, address) : undefined
 
   const queryClient = useQueryClient()
 
@@ -111,6 +111,7 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
     ...chainConfiguration[chainId],
     chainId,
     enabled:
+      !!storageKey &&
       crossChainMessengerStatus === 'success' &&
       // only sync while in the Transaction History page
       isTransactionHistoryPage,

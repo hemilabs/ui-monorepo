@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
+import { getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { type Chain, formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
@@ -163,7 +164,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     expectedWithdrawSuccessfulMessageStatus:
       MessageStatus.STATE_ROOT_NOT_PUBLISHED,
     inProgressMessage: t('tunnel-page.transaction-status.withdrawing', {
-      fromInput,
+      fromInput: getFormattedValue(fromInput),
       network: fromChain?.name,
       symbol: fromToken.symbol,
     }),
@@ -173,7 +174,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     receipt: withdrawReceipt,
     receiptError: withdrawReceiptError,
     successMessage: t('tunnel-page.transaction-status.withdrawn', {
-      fromInput,
+      fromInput: getFormattedValue(fromInput),
       symbol: fromToken.symbol,
     }),
     txHash,

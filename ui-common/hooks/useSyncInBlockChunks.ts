@@ -179,6 +179,7 @@ export const useSyncInBlockChunks = function <T>({
           })
         })
         .catch(function () {
+          // TODO handle error https://github.com/BVM-priv/ui-monorepo/issues/322
           setSyncStatus('error')
         })
 

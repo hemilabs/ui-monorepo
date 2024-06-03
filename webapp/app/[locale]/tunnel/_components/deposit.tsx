@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useState } from 'react'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
-import { formatNumber } from 'utils/format'
+import { formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -263,7 +263,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
 
   const depositTransactionList = useTransactionsList({
     inProgressMessage: t('tunnel-page.transaction-status.depositing', {
-      fromInput: depositAmount,
+      fromInput: getFormattedValue(depositAmount),
       symbol: fromToken.symbol,
     }),
     isOperating: operationRunning === 'depositing',
@@ -272,7 +272,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
     receipt: depositReceipt,
     receiptError: depositReceiptError,
     successMessage: t('tunnel-page.transaction-status.deposited', {
-      fromInput: depositAmount,
+      fromInput: getFormattedValue(depositAmount),
       symbol: fromToken.symbol,
     }),
     txHash: depositTxHash,

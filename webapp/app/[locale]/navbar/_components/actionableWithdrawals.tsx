@@ -16,7 +16,7 @@ export const ActionableWithdrawals = function () {
   }
 
   return (
-    <div className="absolute right-0 top-0 flex aspect-square min-w-6 -translate-y-1/2 translate-x-1/2 items-center justify-center rounded-full bg-orange-950 p-1 text-center text-xs text-white">
+    <div className="-mt-1 flex aspect-square min-w-6 items-center justify-center rounded-full bg-orange-950 p-1 text-center text-xs text-white">
       {actionableWithdrawals}
     </div>
   )

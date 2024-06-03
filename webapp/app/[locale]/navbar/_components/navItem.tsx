@@ -67,13 +67,16 @@ export const NavItem = function ({
     if (isExternalLink(href)) {
       return <ArrowDownLeftIcon className={getTextColor()} />
     }
+    if (AlertComponent) {
+      return <AlertComponent />
+    }
     return null
   }
 
   return (
     <NavRouterItem href={href} isExternal={isExternalLink(href)}>
       <div
-        className={`w-45 relative mb-3 flex h-10 cursor-pointer items-center justify-between 
+        className={`w-45 mb-3 flex h-10 cursor-pointer items-center justify-between 
             rounded-tl-lg bg-transparent px-2.5 py-2 ${
               isSelected ? 'rounded-lg border border-slate-200' : 'hover group'
             }`}
@@ -95,7 +98,6 @@ export const NavItem = function ({
           </div>
         </div>
         <div className="mt-1">{renderRightIcon()}</div>
-        {AlertComponent && <AlertComponent />}
       </div>
       {subMenus && (
         <div

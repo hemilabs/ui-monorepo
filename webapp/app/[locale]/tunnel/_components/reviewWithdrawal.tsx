@@ -15,7 +15,7 @@ import { FormEvent, ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { Modal } from 'ui-common/components/modal'
-import { formatNumber, getFormattedValue } from 'utils/format'
+import { getFormattedValue } from 'utils/format'
 import { getL2TokenByBridgedAddress, getTokenByAddress } from 'utils/token'
 import { Address, formatUnits } from 'viem'
 
@@ -176,10 +176,7 @@ const Amount = function ({
   return (
     <span className="text-sm font-medium text-slate-950">
       {`${getFormattedValue(
-        formatNumber(
-          formatUnits(withdrawal.amount.toBigInt(), token?.decimals ?? 18),
-          3,
-        ),
+        formatUnits(withdrawal.amount.toBigInt(), token?.decimals ?? 18),
       )} ${token?.symbol ?? ''}`}
     </span>
   )

@@ -153,11 +153,6 @@ export const useSyncInBlockChunks = function <T>({
         return undefined
       }
 
-      // eslint-disable-next-line no-console
-      console.log(
-        `syncing chainId ${chainId} from blockNumber ${from} to blockNumber ${to}`,
-      )
-
       let effectUnmounted = false
 
       syncBlockWindow(from, to)
@@ -182,17 +177,8 @@ export const useSyncInBlockChunks = function <T>({
               toBlock: pivotBlock,
             }
           })
-
-          // eslint-disable-next-line no-console
-          console.log(
-            `chainId ${chainId} from blockNumber ${from} to blockNumber ${to} synced`,
-          )
         })
-        .catch(function (err) {
-          // eslint-disable-next-line no-console
-          console.warn(
-            `Syncing from blockNumber ${from} to blockNumber ${to} failed: ${err.message}`,
-          )
+        .catch(function () {
           setSyncStatus('error')
         })
 

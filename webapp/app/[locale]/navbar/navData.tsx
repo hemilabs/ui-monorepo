@@ -7,11 +7,20 @@ import { ExplorerIcon } from 'components/icons/explorerIcon'
 import { FiletextIcon } from 'components/icons/filetextIcon'
 import { GraduateCapIcon } from 'components/icons/graduateCapIcon'
 import { TunnelIcon } from 'components/icons/tunnelIcon'
+import dynamic from 'next/dynamic'
 
 import { NavItemData } from './_components/navItems'
 
+const ActionableWithdrawals = dynamic(
+  () =>
+    import('./_components/actionableWithdrawals').then(
+      mod => mod.ActionableWithdrawals,
+    ),
+  { ssr: false },
+)
 export const navItems: NavItemData[] = [
   {
+    alertComponent: () => <ActionableWithdrawals />,
     href: '/tunnel',
     icon: TunnelIcon,
     id: 'tunnel',

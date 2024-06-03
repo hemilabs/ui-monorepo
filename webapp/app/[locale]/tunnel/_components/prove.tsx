@@ -1,10 +1,11 @@
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
+import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { useChain } from 'hooks/useChain'
 import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { getL2TokenByBridgedAddress, getTokenByAddress } from 'utils/token'
@@ -67,6 +68,9 @@ type Props = {
 }
 
 export const Prove = function ({ state }: Props) {
+  const { updateWithdrawalStatus, withdrawals } =
+    useContext(TunnelHistoryContext)
+
   const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =
     state
 
@@ -110,6 +114,20 @@ export const Prove = function ({ state }: Props) {
       return () => clearTimeout(timeoutId)
     },
     [setShowWithdrawalTx, showWithdrawalTx],
+  )
+
+  useEffect(
+    function updateWithdrawalStatusAfterConfirmation() {
+      if (withdrawalProofReceipt?.status !== 'success') {
+        return
+      }
+      const withdrawal = withdrawals.find(w => w.transactionHash === txHash)
+      if (withdrawal?.status === MessageStatus.IN_CHALLENGE_PERIOD) {
+        return
+      }
+      updateWithdrawalStatus(withdrawal, MessageStatus.IN_CHALLENGE_PERIOD)
+    },
+    [txHash, withdrawals, updateWithdrawalStatus, withdrawalProofReceipt],
   )
 
   // Save the Prove Tx Hash to show the tx status

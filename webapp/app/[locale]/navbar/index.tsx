@@ -33,14 +33,14 @@ export const Navbar = function ({ onItemClick }: Props) {
 
   return (
     <div className="md:h-98vh flex h-[calc(100dvh-64px)] flex-col pt-3 md:pt-0 [&>*]:pr-4 [&>*]:md:ml-4">
-      <div className="mb-2 mt-8 hidden md:mb-10 md:block">
+      <div className="mt-8 hidden md:mb-6 md:block">
         <div className="mt-4 hidden h-10 w-28 md:block">
           <Link href="/tunnel">
             <HemiLogoFull />
           </Link>
         </div>
       </div>
-      <div className="flex h-full flex-col overflow-y-auto">
+      <div className="flex h-full flex-col overflow-y-auto pt-4">
         <NavItems
           color="slate-200"
           isSelectable={true}

@@ -1,9 +1,10 @@
 import { MessageDirection, MessageStatus, toBigNumber } from '@eth-optimism/sdk'
+import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
@@ -35,6 +36,8 @@ type Props = {
 }
 
 export const Withdraw = function ({ renderForm, state }: Props) {
+  const { addWithdrawalToTunnelHistory, withdrawals } =
+    useContext(TunnelHistoryContext)
   // use this to avoid infinite loops in effects when resetting the form
   const [hasClearedForm, setHasClearedForm] = useState(false)
   const [isWithdrawing, setIsWithdrawing] = useState(false)
@@ -117,6 +120,42 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     ],
   )
 
+  useEffect(
+    function handleWithdrawalSuccess() {
+      if (
+        withdrawReceipt?.status === 'success' &&
+        !withdrawals.some(
+          w => w.transactionHash === withdrawReceipt.transactionHash,
+        )
+      ) {
+        const isNative = isNativeToken(fromToken)
+        addWithdrawalToTunnelHistory({
+          amount: parseUnits(fromInput, fromToken.decimals).toString(),
+          blockNumber: Number(withdrawReceipt.blockNumber),
+          data: '0x', // not needed
+          direction: MessageDirection.L2_TO_L1,
+          from: withdrawReceipt.from,
+          l1Token: isNative ? zeroAddress : toToken.address,
+          l2Token: isNative ? NativeTokenSpecialAddressOnL2 : fromToken.address,
+          logIndex: 0, // not needed
+          status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+          // "to" field uses the same address as from, which is user's address
+          to: withdrawReceipt.from,
+          transactionHash: withdrawReceipt.transactionHash,
+        })
+      }
+    },
+    [
+      addWithdrawalToTunnelHistory,
+      fromInput,
+      fromToken,
+      toNetworkId,
+      toToken,
+      withdrawals,
+      withdrawReceipt,
+    ],
+  )
+
   // this is needed to be able to show the transaction amount when switching to
   // prove.tsx component. This is because it takes a while for the op-sdk to show the withdrawal
   // in the "GetWithdrawals" method after confirming the tx, and if we don't do this,
@@ -128,16 +167,15 @@ export const Withdraw = function ({ renderForm, state }: Props) {
   useEffect(
     function saveWithdrawDataForProve() {
       if (!partialWithdrawal && txHash) {
+        const isNative = isNativeToken(fromToken)
         savePartialWithdrawal({
           amount: toBigNumber(
             parseUnits(fromInput, fromToken.decimals).toString(),
           ),
           direction: MessageDirection.L2_TO_L1,
           from: address,
-          l1Token: zeroAddress,
-          l2Token: isNativeToken(fromToken)
-            ? NativeTokenSpecialAddressOnL2
-            : fromToken.extensions.bridgeInfo[toNetworkId].tokenAddress,
+          l1Token: isNative ? zeroAddress : toToken.address,
+          l2Token: isNative ? NativeTokenSpecialAddressOnL2 : fromToken.address,
           transactionHash: txHash,
         })
       }
@@ -149,6 +187,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       partialWithdrawal,
       savePartialWithdrawal,
       toNetworkId,
+      toToken,
       txHash,
     ],
   )

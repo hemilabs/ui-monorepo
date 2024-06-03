@@ -2,6 +2,7 @@
   "transaction-history": {
     "connect-wallet-to-review": "Conecte su billetera para revisar su historial de transacciones.",
     "in-challenge-period": "En período de Desafío",
+    "loading-transactions": "Cargando transacciones",
     "ready-to-claim": "Listo para Reclamar",
     "ready-to-prove": "Listo para Probar",
     "unsupported-chain-subheading": "Conéctese a una red soportada para ver su historial de transacciones."

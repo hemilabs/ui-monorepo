@@ -1,5 +1,6 @@
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
+import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
 import { bridgeableNetworks } from 'app/networks'
 import { useChain } from 'hooks/useChain'
 import {
@@ -7,7 +8,7 @@ import {
   useGetClaimWithdrawalTxHash,
 } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useContext, useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { Chain, Hash, formatUnits } from 'viem'
 
@@ -74,6 +75,8 @@ type Props = {
 }
 
 export const Claim = function ({ state }: Props) {
+  const { updateWithdrawalStatus, withdrawals } =
+    useContext(TunnelHistoryContext)
   const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =
     state
   // If coming from the Prove form, show the prove transaction briefly
@@ -116,6 +119,20 @@ export const Claim = function ({ state }: Props) {
       return () => clearTimeout(timeoutId)
     },
     [setShowProveWithdrawalTx, showProveWithdrawalTx],
+  )
+
+  useEffect(
+    function updateWithdrawalStatusAfterConfirmation() {
+      if (claimWithdrawalReceipt?.status !== 'success') {
+        return
+      }
+      const withdrawal = withdrawals.find(w => w.transactionHash === txHash)
+      if (withdrawal?.status === MessageStatus.RELAYED) {
+        return
+      }
+      updateWithdrawalStatus(withdrawal, MessageStatus.RELAYED)
+    },
+    [claimWithdrawalReceipt, txHash, updateWithdrawalStatus, withdrawals],
   )
 
   useEffect(

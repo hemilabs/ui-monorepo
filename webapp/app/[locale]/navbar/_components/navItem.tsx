@@ -16,6 +16,7 @@ interface SubMenu {
 }
 
 interface NavItemProps {
+  AlertComponent?: React.ElementType
   IconLeft: React.ElementType
   text: React.ReactNode
   isSelected: boolean
@@ -27,6 +28,7 @@ interface NavItemProps {
 }
 
 export const NavItem = function ({
+  AlertComponent,
   IconLeft,
   text,
   isSelected,
@@ -65,14 +67,17 @@ export const NavItem = function ({
     if (isExternalLink(href)) {
       return <ArrowDownLeftIcon className={getTextColor()} />
     }
+    if (AlertComponent) {
+      return <AlertComponent />
+    }
     return null
   }
 
   return (
     <NavRouterItem href={href} isExternal={isExternalLink(href)}>
       <div
-        className={`w-45 mb-3 flex h-10 cursor-pointer items-center justify-between rounded-tl-lg 
-            bg-transparent px-2.5 py-2 ${
+        className={`w-45 mb-3 flex h-10 cursor-pointer items-center justify-between 
+            rounded-tl-lg bg-transparent px-2.5 py-2 ${
               isSelected ? 'rounded-lg border border-slate-200' : 'hover group'
             }`}
         onClick={onClick}

@@ -1,13 +1,8 @@
-import {
-  MessageDirection,
-  MessageStatus,
-  TokenBridgeMessage,
-} from '@eth-optimism/sdk'
-import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
+import { MessageStatus } from '@eth-optimism/sdk'
+import { WithdrawOperation } from 'context/tunnelHistoryContext/types'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import Skeleton from 'react-loading-skeleton'
-import { type Chain } from 'viem'
 
 const Action = ({
   className = 'bg-orange-950 text-white',
@@ -29,22 +24,13 @@ const Action = ({
 )
 
 type Props = {
-  l1ChainId: Chain['id']
-  withdraw: TokenBridgeMessage
+  withdraw: WithdrawOperation
 }
 
-export const WithdrawAction = function ({ l1ChainId, withdraw }: Props) {
-  const { isLoadingMessageStatus, messageStatus } =
-    useAnyChainGetTransactionMessageStatus({
-      direction: MessageDirection.L2_TO_L1,
-      l1ChainId,
-      // @ts-expect-error string is Hash `0x${string}`
-      transactionHash: withdraw.transactionHash,
-    })
-
+export const WithdrawAction = function ({ withdraw }: Props) {
   const t = useTranslations('tunnel-page.transaction-history.actions')
 
-  if (isLoadingMessageStatus) {
+  if (withdraw.status === undefined) {
     return <Skeleton className="h-9 w-24" />
   }
 
@@ -90,5 +76,5 @@ export const WithdrawAction = function ({ l1ChainId, withdraw }: Props) {
     [MessageStatus.READY_FOR_RELAY]: Claim,
     [MessageStatus.RELAYED]: getViewButton('view'),
   }
-  return actions[messageStatus]
+  return actions[withdraw.status]
 }

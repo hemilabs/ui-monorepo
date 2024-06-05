@@ -1,4 +1,4 @@
-import { MessageDirection, MessageStatus, toBigNumber } from '@eth-optimism/sdk'
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
@@ -48,14 +48,13 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     fromInput,
     fromNetworkId,
     fromToken,
-    partialWithdrawal,
     resetStateAfterOperation,
     savePartialWithdrawal,
     toNetworkId,
     toToken,
   } = state
 
-  const { address, chainId } = useAccount()
+  const { chainId } = useAccount()
   const { txHash } = useTunnelOperation()
 
   const operatesNativeToken = isNativeToken(fromToken)
@@ -143,52 +142,21 @@ export const Withdraw = function ({ renderForm, state }: Props) {
           to: withdrawReceipt.from,
           transactionHash: withdrawReceipt.transactionHash,
         })
+        // use this to show the TX confirmation in prove.tsx when mounting
+        savePartialWithdrawal({
+          withdrawalTxHash: withdrawReceipt.transactionHash,
+        })
       }
     },
     [
       addWithdrawalToTunnelHistory,
       fromInput,
       fromToken,
+      savePartialWithdrawal,
       toNetworkId,
       toToken,
       withdrawals,
       withdrawReceipt,
-    ],
-  )
-
-  // this is needed to be able to show the transaction amount when switching to
-  // prove.tsx component. This is because it takes a while for the op-sdk to show the withdrawal
-  // in the "GetWithdrawals" method after confirming the tx, and if we don't do this,
-  // it would show a spinner of the data user wrote on the form.
-  // Updating react-query's cache is not enough because it will be overridden
-  // by a few refetch requests until the API returns the withdrawal.
-  // When starting from scratch (refresh) we are loading everything so there
-  // it is ok to show a Loading skeleton.
-  useEffect(
-    function saveWithdrawDataForProve() {
-      if (!partialWithdrawal && txHash) {
-        const isNative = isNativeToken(fromToken)
-        savePartialWithdrawal({
-          amount: toBigNumber(
-            parseUnits(fromInput, fromToken.decimals).toString(),
-          ),
-          direction: MessageDirection.L2_TO_L1,
-          from: address,
-          l1Token: isNative ? zeroAddress : toToken.address,
-          l2Token: isNative ? NativeTokenSpecialAddressOnL2 : fromToken.address,
-          transactionHash: txHash,
-        })
-      }
-    },
-    [
-      address,
-      fromInput,
-      fromToken,
-      partialWithdrawal,
-      savePartialWithdrawal,
-      toNetworkId,
-      toToken,
-      txHash,
     ],
   )
 
@@ -208,7 +176,6 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       symbol: fromToken.symbol,
     }),
     isOperating: isWithdrawing,
-    l1ChainId: toNetworkId,
     operation: 'withdraw',
     receipt: withdrawReceipt,
     receiptError: withdrawReceiptError,
@@ -253,7 +220,6 @@ export const Withdraw = function ({ renderForm, state }: Props) {
           isRunningOperation={isWithdrawing}
           onClose={resetStateAfterOperation}
           transactionsList={transactionsList}
-          withdrawal={partialWithdrawal}
         />
       )}
     </>

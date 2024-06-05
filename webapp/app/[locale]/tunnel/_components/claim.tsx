@@ -1,12 +1,9 @@
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
-import { useQueryClient } from '@tanstack/react-query'
+import { MessageStatus } from '@eth-optimism/sdk'
 import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
+import { WithdrawOperation } from 'app/context/tunnelHistoryContext/types'
 import { bridgeableNetworks } from 'app/networks'
 import { useChain } from 'hooks/useChain'
-import {
-  useAnyChainGetTransactionMessageStatus,
-  useGetClaimWithdrawalTxHash,
-} from 'hooks/useL2Bridge'
+import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useContext, useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
@@ -24,21 +21,19 @@ const SubmitButton = function ({
   l1ChainId,
   isClaiming,
   isReadyToClaim,
+  withdrawal,
 }: {
   claimTxHash: Hash | undefined
   l1ChainId: Chain['id']
   isClaiming: boolean
   isReadyToClaim: boolean
+  withdrawal: WithdrawOperation
 }) {
   const t = useTranslations()
   const { txHash } = useTunnelOperation()
 
   const { claimTxHash } = useGetClaimWithdrawalTxHash(l1ChainId, txHash)
-  const { messageStatus } = useAnyChainGetTransactionMessageStatus({
-    direction: MessageDirection.L2_TO_L1,
-    l1ChainId,
-    transactionHash: txHash,
-  })
+  const { status: messageStatus } = withdrawal
 
   const hasClaimTxHash = !!inMemoryClaimTxHash || !!claimTxHash
 
@@ -90,7 +85,6 @@ export const Claim = function ({ state }: Props) {
   const l1ChainId = bridgeableNetworks[0].id
 
   const { txHash } = useTunnelOperation()
-  const queryClient = useQueryClient()
   const t = useTranslations()
 
   const fromChain = useChain(l1ChainId)
@@ -109,6 +103,8 @@ export const Claim = function ({ state }: Props) {
     withdrawTxHash: txHash,
   })
 
+  const withdrawal = withdrawals.find(w => w.transactionHash === txHash)
+
   useEffect(
     function hideProveTxFromTransactionList() {
       const timeoutId = setTimeout(function () {
@@ -126,45 +122,22 @@ export const Claim = function ({ state }: Props) {
       if (claimWithdrawalReceipt?.status !== 'success') {
         return
       }
-      const withdrawal = withdrawals.find(w => w.transactionHash === txHash)
+
       if (withdrawal?.status === MessageStatus.RELAYED) {
         return
       }
       updateWithdrawalStatus(withdrawal, MessageStatus.RELAYED)
-    },
-    [claimWithdrawalReceipt, txHash, updateWithdrawalStatus, withdrawals],
-  )
-
-  useEffect(
-    function handleClaimSuccess() {
-      if (
-        claimWithdrawalReceipt?.status === 'success' &&
-        !partialWithdrawal?.claimWithdrawalTxHash
-      ) {
-        savePartialWithdrawal({
-          claimWithdrawalTxHash: claimWithdrawalReceipt.transactionHash,
-        })
-        queryClient.invalidateQueries({
-          queryKey: [
-            MessageDirection.L2_TO_L1,
-            l1ChainId,
-            txHash,
-            'getMessageStatus',
-          ],
-        })
-        setIsClaiming(false)
-      }
-
-      return undefined
+      savePartialWithdrawal({
+        claimWithdrawalTxHash: claimWithdrawalReceipt.transactionHash,
+      })
     },
     [
       claimWithdrawalReceipt,
-      clearClaimWithdrawalState,
-      l1ChainId,
-      partialWithdrawal,
-      queryClient,
       savePartialWithdrawal,
       txHash,
+      updateWithdrawalStatus,
+      withdrawal,
+      withdrawals,
     ],
   )
 
@@ -200,7 +173,6 @@ export const Claim = function ({ state }: Props) {
     expectedWithdrawSuccessfulMessageStatus: MessageStatus.RELAYED,
     inProgressMessage: t('tunnel-page.transaction-status.claiming-withdrawal'),
     isOperating: isClaiming,
-    l1ChainId,
     operation: 'claim',
     receipt: claimWithdrawalReceipt,
     receiptError: claimWithdrawalReceiptError,
@@ -224,6 +196,7 @@ export const Claim = function ({ state }: Props) {
       isClaiming={isClaiming}
       isReadyToClaim={isReadyToClaim}
       l1ChainId={l1ChainId}
+      withdrawal={withdrawal}
     />
   )
 
@@ -246,7 +219,6 @@ export const Claim = function ({ state }: Props) {
             ]
           : transactionsList
       }
-      withdrawal={partialWithdrawal}
     />
   )
 }

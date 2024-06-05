@@ -1,9 +1,8 @@
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
-import { useQueryClient } from '@tanstack/react-query'
+import { MessageStatus } from '@eth-optimism/sdk'
 import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
+import { WithdrawOperation } from 'app/context/tunnelHistoryContext/types'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { useChain } from 'hooks/useChain'
-import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
 import { useContext, useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
@@ -23,20 +22,17 @@ const SubmitButton = function ({
   isReadyToProve,
   l1ChainId,
   proveWithdrawalTxHash,
+  withdrawal,
 }: {
   isProving: boolean
   isReadyToProve: boolean
   l1ChainId: Chain['id']
   proveWithdrawalTxHash: Hash
+  withdrawal: WithdrawOperation
 }) {
   const t = useTranslations()
 
-  const { txHash } = useTunnelOperation()
-  const { messageStatus } = useAnyChainGetTransactionMessageStatus({
-    direction: MessageDirection.L2_TO_L1,
-    l1ChainId,
-    transactionHash: txHash,
-  })
+  const { status: messageStatus } = withdrawal
 
   const hasProveTxHash = !!proveWithdrawalTxHash
   const proveConfirmed =
@@ -77,7 +73,7 @@ export const Prove = function ({ state }: Props) {
   // If coming from the Withdraw form, show the withdrawal transaction briefly
   // but if entering from the history, there's no need to show it
   const [showWithdrawalTx, setShowWithdrawalTx] = useState(
-    !!partialWithdrawal?.amount,
+    !!partialWithdrawal?.withdrawalTxHash,
   )
   const [isProving, setIsProving] = useState(false)
 
@@ -85,7 +81,6 @@ export const Prove = function ({ state }: Props) {
   const l1ChainId = bridgeableNetworks[0].id
 
   const t = useTranslations()
-  const queryClient = useQueryClient()
   const { txHash } = useTunnelOperation()
 
   const fromChain = useChain(l1ChainId)
@@ -104,6 +99,8 @@ export const Prove = function ({ state }: Props) {
     withdrawTxHash: txHash,
   })
 
+  const withdrawal = withdrawals.find(w => w.transactionHash === txHash)
+
   useEffect(
     function hideWithdrawalTxFromTransactionList() {
       const timeoutId = setTimeout(function () {
@@ -121,44 +118,20 @@ export const Prove = function ({ state }: Props) {
       if (withdrawalProofReceipt?.status !== 'success') {
         return
       }
-      const withdrawal = withdrawals.find(w => w.transactionHash === txHash)
       if (withdrawal?.status === MessageStatus.IN_CHALLENGE_PERIOD) {
         return
       }
       updateWithdrawalStatus(withdrawal, MessageStatus.IN_CHALLENGE_PERIOD)
-    },
-    [txHash, withdrawals, updateWithdrawalStatus, withdrawalProofReceipt],
-  )
-
-  // Save the Prove Tx Hash to show the tx status
-  // while rendering the Claim component. This TX can't be recovered later
-  // See https://github.com/ethereum-optimism/optimism/issues/9974
-  // so when entering directly to that component, we just won't show it
-  useEffect(
-    function saveProveTxForClaim() {
-      if (
-        withdrawalProofReceipt?.status === 'success' &&
-        !partialWithdrawal?.proveWithdrawalTxHash
-      ) {
-        savePartialWithdrawal({
-          proveWithdrawalTxHash: withdrawalProofReceipt.transactionHash,
-        })
-        queryClient.invalidateQueries({
-          queryKey: [
-            MessageDirection.L2_TO_L1,
-            l1ChainId,
-            txHash,
-            'getMessageStatus',
-          ],
-        })
-      }
+      savePartialWithdrawal({
+        proveWithdrawalTxHash: withdrawalProofReceipt.transactionHash,
+      })
     },
     [
-      l1ChainId,
-      partialWithdrawal,
-      queryClient,
       savePartialWithdrawal,
       txHash,
+      updateWithdrawalStatus,
+      withdrawal,
+      withdrawals,
       withdrawalProofReceipt,
     ],
   )
@@ -195,7 +168,6 @@ export const Prove = function ({ state }: Props) {
     expectedWithdrawSuccessfulMessageStatus: MessageStatus.IN_CHALLENGE_PERIOD,
     inProgressMessage: t('tunnel-page.transaction-status.proving-withdrawal'),
     isOperating: isProving,
-    l1ChainId,
     operation: 'prove',
     receipt: withdrawalProofReceipt,
     receiptError: withdrawalProofReceiptError,
@@ -215,18 +187,15 @@ export const Prove = function ({ state }: Props) {
 
   const getPartialWithdrawTxList = function () {
     const token =
-      getTokenByAddress(partialWithdrawal.l2Token as Address, hemi.id) ??
-      getL2TokenByBridgedAddress(
-        partialWithdrawal.l2Token as Address,
-        l1ChainId,
-      )
+      getTokenByAddress(withdrawal.l2Token as Address, hemi.id) ??
+      getL2TokenByBridgedAddress(withdrawal.l2Token as Address, l1ChainId)
     return [
       {
         id: 'withdraw',
         status: 'success',
         text: t('tunnel-page.transaction-status.withdrawn', {
           fromInput: formatNumber(
-            formatUnits(partialWithdrawal.amount.toBigInt(), token.decimals),
+            formatUnits(BigInt(withdrawal.amount), token.decimals),
             3,
           ),
           symbol: token.symbol,
@@ -242,6 +211,7 @@ export const Prove = function ({ state }: Props) {
       isReadyToProve={isReadyToProve}
       l1ChainId={l1ChainId}
       proveWithdrawalTxHash={partialWithdrawal?.proveWithdrawalTxHash}
+      withdrawal={withdrawal}
     />
   )
 
@@ -257,7 +227,6 @@ export const Prove = function ({ state }: Props) {
           ? getPartialWithdrawTxList()
           : transactionsList
       }
-      withdrawal={partialWithdrawal}
     />
   )
 }

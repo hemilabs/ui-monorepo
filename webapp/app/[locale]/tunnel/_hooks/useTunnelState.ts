@@ -1,4 +1,3 @@
-import { TokenBridgeMessage } from '@eth-optimism/sdk'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { useCallback, useEffect, useReducer } from 'react'
 import { tokenList } from 'tokenList'
@@ -64,12 +63,11 @@ type TunnelState = {
   fromToken: Token
   toNetworkId: Chain['id']
   toToken: Token
-  partialWithdrawal?: Partial<
-    TokenBridgeMessage & {
-      claimWithdrawalTxHash: Hash
-      proveWithdrawalTxHash: Hash
-    }
-  >
+  partialWithdrawal?: Partial<{
+    withdrawalTxHash: Hash
+    claimWithdrawalTxHash: Hash
+    proveWithdrawalTxHash: Hash
+  }>
 }
 
 type Action<T extends string> = {

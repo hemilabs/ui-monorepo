@@ -1,5 +1,8 @@
 'use strict'
 
+const config = require('config')
+const { createHmac } = require('crypto')
+
 /**
  *
  * @param {import('knex').Knex} db
@@ -17,4 +20,17 @@ function createUtils(db) {
   }
 }
 
-module.exports = { createUtils }
+/**
+ *
+ * @param {string} ip
+ * @returns {string}
+ */
+function hashIp(ip) {
+  const key = config.get('databaseHash.secretKey')
+  if (!key) {
+    throw new Error('HASH_SECRET_KEY is not defined')
+  }
+  return createHmac('sha256', key).update(ip).digest('base64')
+}
+
+module.exports = { createUtils, hashIp }

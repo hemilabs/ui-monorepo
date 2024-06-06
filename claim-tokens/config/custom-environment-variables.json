@@ -1,4 +1,7 @@
 {
+  "databaseHash": {
+    "secretKey": "HASH_SECRET_KEY"
+  },
   "ipQualityScore": {
     "enableCheck": {
       "__format": "json",

@@ -11,7 +11,7 @@ const snakeCaseKeys = require('snakecase-keys')
 const { db } = require('../db')
 const { createEmailRepository } = require('../db/emailSubmissions')
 const { createIpRepository } = require('../db/ipAccesses')
-const { createUtils } = require('../db/utils')
+const { createUtils, hashIp } = require('../db/utils')
 
 chai.should()
 
@@ -453,26 +453,24 @@ describe('claim-tokens', function () {
 
   it('should return Conflict if the IP has been used recently', async function () {
     const event = getEvent({ body: JSON.stringify(validBody) })
+    const ip = event.requestContext.identity.sourceIp
     const ipRepository = createIpRepository(db)
     const dbUtils = createUtils(db)
 
     nockReCaptcha({
-      ip: event.requestContext.identity.sourceIp,
+      ip,
       token: validBody.token,
       ...nockRecaptchaSuccessfulResponse(),
     })
 
     nockIpQualityScore({
-      ip: event.requestContext.identity.sourceIp,
+      ip,
       ...nockIpScoreSuccessfulResponse(),
     })
 
     let ipAccess
     try {
-      ipAccess = await ipRepository.saveIp(
-        event.requestContext.identity.sourceIp,
-        await dbUtils.getTimestamp(),
-      )
+      ipAccess = await ipRepository.saveIp(ip, await dbUtils.getTimestamp())
 
       const response = await post(event)
 
@@ -526,6 +524,7 @@ describe('claim-tokens', function () {
       }`, async function () {
         const event = getEvent({ body: JSON.stringify(bodyScenario) })
         const ip = event.requestContext.identity.sourceIp
+        const hashedIp = hashIp(ip)
         const requestId = 'some-request-id'
 
         nockReCaptcha({
@@ -567,11 +566,11 @@ describe('claim-tokens', function () {
             .from('email_submissions')
             .where({ email: validBody.email })
             .first(),
-          db.from('ip_accesses').where({ ip }).first(),
+          db.from('ip_accesses').where({ ip: hashedIp }).first(),
         ])
 
         try {
-          submission.should.have.property('ip', ip)
+          submission.should.have.property('ip', hashedIp)
           submission.should.have.property('request_id', requestId)
           submission.should.have.property('submitted_at')
 
@@ -583,7 +582,7 @@ describe('claim-tokens', function () {
               .from('email_submissions')
               .where({ email: submission.email })
               .del(),
-            db.from('ip_accesses').where({ ip }).del(),
+            db.from('ip_accesses').where({ ip: hashedIp }).del(),
           ])
         }
       }),

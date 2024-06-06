@@ -182,6 +182,7 @@ const verifyIP = function (ip) {
       }),
   ])
 }
+
 const saveEmailAndIP =
   ({ email, ip, timestamp, transaction }) =>
   requestId =>

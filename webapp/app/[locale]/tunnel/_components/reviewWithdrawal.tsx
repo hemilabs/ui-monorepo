@@ -1,17 +1,11 @@
-import {
-  MessageDirection,
-  MessageStatus,
-  TokenBridgeMessage,
-} from '@eth-optimism/sdk'
+import { MessageStatus } from '@eth-optimism/sdk'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
-import {
-  useAnyChainGetTransactionMessageStatus,
-  useGetWithdrawalsByAddress,
-} from 'hooks/useL2Bridge'
+import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
+import { WithdrawOperation } from 'context/tunnelHistoryContext/types'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { FormEvent, ReactNode } from 'react'
+import { FormEvent, ReactNode, useContext } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { Modal } from 'ui-common/components/modal'
@@ -157,11 +151,7 @@ const ProveIcon = () => (
   </svg>
 )
 
-const Amount = function ({
-  withdrawal,
-}: {
-  withdrawal?: Partial<TokenBridgeMessage>
-}) {
+const Amount = function ({ withdrawal }: { withdrawal?: WithdrawOperation }) {
   if (!withdrawal) {
     return <Skeleton containerClassName="w-5" />
   }
@@ -169,14 +159,14 @@ const Amount = function ({
     getTokenByAddress(withdrawal.l2Token as Address, hemi.id) ??
     getL2TokenByBridgedAddress(
       withdrawal.l2Token as Address,
-      // TODO l1chainID
+      // TODO https://github.com/BVM-priv/ui-monorepo/issues/158
       bridgeableNetworks[0].id,
     )
 
   return (
     <span className="text-sm font-medium text-slate-950">
       {`${getFormattedValue(
-        formatUnits(withdrawal.amount.toBigInt(), token?.decimals ?? 18),
+        formatUnits(BigInt(withdrawal.amount), token?.decimals ?? 18),
       )} ${token?.symbol ?? ''}`}
     </span>
   )
@@ -211,53 +201,40 @@ type StepProps = {
     symbol: string
   }
   icon: ReactNode
-  isLoading: boolean
   status: ProgressStatus
   text: string
 }
 
-const Step = function ({ gas, icon, isLoading, text, status }: StepProps) {
+const Step = function ({ gas, icon, text, status }: StepProps) {
   const border = status === 'idle' ? 'border border-solid border-slate-100' : ''
   return (
-    <>
-      {isLoading && (
-        <Skeleton className="h-full" containerClassName="block h-9 w-full" />
-      )}
-      {!isLoading && (
-        <div
-          className={`flex items-center gap-x-2 rounded-lg p-2 text-xs font-medium md:text-sm ${backgroundColors[status]} ${border} ${textColors[status]}`}
-        >
+    <div
+      className={`flex items-center gap-x-2 rounded-lg p-2 text-xs font-medium md:text-sm ${backgroundColors[status]} ${border} ${textColors[status]}`}
+    >
+      <div className={iconColors[status]}>
+        {status === 'completed' ? <CheckIcon /> : icon}
+      </div>
+      <p className="mr-auto">{text}</p>
+      {gas && status !== 'completed' ? (
+        <>
           <div className={iconColors[status]}>
-            {status === 'completed' ? <CheckIcon /> : icon}
+            <FuelIcon />
           </div>
-          <p className="mr-auto">{text}</p>
-          {gas && status !== 'completed' ? (
-            <>
-              <div className={iconColors[status]}>
-                <FuelIcon />
-              </div>
-              <span className="text-[10px] font-normal sm:text-xs">
-                {`${getFormattedValue(gas.amount)} ${gas.symbol}`}
-              </span>
-            </>
-          ) : null}
-        </div>
-      )}
-    </>
+          <span className="text-[10px] font-normal sm:text-xs">
+            {`${getFormattedValue(gas.amount)} ${gas.symbol}`}
+          </span>
+        </>
+      ) : null}
+    </div>
   )
 }
 
 type SubStepProps = {
-  isLoading: boolean
   status: ProgressStatus
   text: string
 }
-const SubStep = function ({ isLoading, status, text }: SubStepProps) {
+const SubStep = function ({ status, text }: SubStepProps) {
   const t = useTranslations('tunnel-page.review-withdraw')
-
-  if (isLoading) {
-    return <Skeleton containerClassName="block h-5 w-full" />
-  }
 
   const completed = status === 'completed'
   return (
@@ -296,7 +273,6 @@ type ReviewWithdrawalProps = {
     text: string
     txHash: string
   }[]
-  withdrawal?: Partial<TokenBridgeMessage>
 }
 
 export const ReviewWithdrawal = function ({
@@ -306,24 +282,15 @@ export const ReviewWithdrawal = function ({
   onSubmit,
   submitButton,
   transactionsList = [],
-  withdrawal,
 }: ReviewWithdrawalProps) {
-  // https://github.com/BVM-priv/ui-monorepo/issues/158
-  const l1ChainId = bridgeableNetworks[0].id
-
   const router = useRouter()
 
   const t = useTranslations('tunnel-page.review-withdraw')
   const { operation, txHash } = useTunnelOperation()
 
-  const { isLoadingMessageStatus, messageStatus } =
-    useAnyChainGetTransactionMessageStatus({
-      direction: MessageDirection.L2_TO_L1,
-      l1ChainId,
-      transactionHash: txHash,
-    })
-
-  const { withdrawals = [] } = useGetWithdrawalsByAddress()
+  const { withdrawals } = useContext(TunnelHistoryContext)
+  const foundWithdrawal = withdrawals.find(w => w.transactionHash === txHash)
+  const messageStatus = foundWithdrawal.status
 
   const getClaimStatus = function () {
     if (messageStatus < MessageStatus.READY_FOR_RELAY) return 'idle'
@@ -374,19 +341,10 @@ export const ReviewWithdrawal = function ({
   const isProve = operation === 'prove'
   const isWithdraw = operation === 'withdraw'
 
-  const isLoading = isLoadingMessageStatus
-
   const handleSubmit = function (e: FormEvent) {
     e.preventDefault()
     onSubmit()
   }
-
-  // when starting from "Prove", amount is not available in the partial withdrawal
-  // so we must go to the full list of withdrawals to find the amount
-  const foundWithdrawal =
-    withdrawal && withdrawal.amount
-      ? withdrawal
-      : withdrawals.find(w => w.transactionHash === txHash)
 
   const closeModal = function () {
     // prevent closing if running an operation
@@ -416,13 +374,11 @@ export const ReviewWithdrawal = function ({
           <Step
             gas={isWithdraw && gas}
             icon={<CursorIcon />}
-            isLoading={isLoading}
             status={getWithdrawalProgress()}
             text={t('initiate-withdrawal')}
           />
           <VerticalLine />
           <SubStep
-            isLoading={isLoading}
             status={getWaitReadyToProveStatus()}
             text={t('wait-minutes', {
               minutes: ExpectedWithdrawalWaitTimeMinutes,
@@ -432,13 +388,11 @@ export const ReviewWithdrawal = function ({
           <Step
             gas={isProve && gas}
             icon={<ProveIcon />}
-            isLoading={isLoading}
             status={getProveStatus()}
             text={t('prove-withdrawal')}
           />
           <VerticalLine />
           <SubStep
-            isLoading={isLoading}
             status={getWaitReadyToClaimStatus()}
             text={t('wait-hours', { hours: ExpectedProofWaitTimeHours })}
           />
@@ -446,7 +400,6 @@ export const ReviewWithdrawal = function ({
           <Step
             gas={isClaim && gas}
             icon={<ClaimIcon />}
-            isLoading={isLoading}
             status={getClaimStatus()}
             text={t('claim-withdrawal')}
           />

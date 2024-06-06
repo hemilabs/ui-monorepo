@@ -1,14 +1,14 @@
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
-import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
+import { MessageStatus } from '@eth-optimism/sdk'
+import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
 import { useTranslations } from 'next-intl'
-import { type Chain, type Hash } from 'viem'
+import { useContext } from 'react'
+import { type Hash } from 'viem'
 import { type UseWaitForTransactionReceiptReturnType } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelState'
 
 type UseTransactionsList = {
   expectedWithdrawSuccessfulMessageStatus?: MessageStatus
-  l1ChainId: Chain['id']
   inProgressMessage: string
   isOperating: boolean
   operation: string
@@ -23,7 +23,6 @@ type UseTransactionsList = {
 }
 export const useTransactionsList = function ({
   expectedWithdrawSuccessfulMessageStatus,
-  l1ChainId,
   inProgressMessage,
   isOperating,
   operation,
@@ -35,13 +34,12 @@ export const useTransactionsList = function ({
 }: UseTransactionsList) {
   const t = useTranslations()
 
+  const { withdrawals } = useContext(TunnelHistoryContext)
   const { txHash: withdrawalTxHash } = useTunnelOperation()
   // deposits won't have a withdrawalTxHash and no requests will run
-  const { messageStatus } = useAnyChainGetTransactionMessageStatus({
-    direction: MessageDirection.L2_TO_L1,
-    l1ChainId,
-    transactionHash: withdrawalTxHash,
-  })
+  const messageStatus = withdrawals.find(
+    w => w.transactionHash === withdrawalTxHash,
+  )?.status
 
   const transactionsList = []
 

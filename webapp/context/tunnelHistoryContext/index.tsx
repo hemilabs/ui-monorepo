@@ -1,6 +1,7 @@
 'use client'
 
 import { MessageStatus } from '@eth-optimism/sdk'
+import { useQueryClient } from '@tanstack/react-query'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import dynamic from 'next/dynamic'
 import { createContext, useMemo, ReactNode } from 'react'
@@ -66,6 +67,8 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
   // TODO https://github.com/BVM-priv/ui-monorepo/issues/158
   const l1ChainId = bridgeableNetworks[0].id
 
+  const queryClient = useQueryClient()
+
   const depositState = useSyncTunnelOperations<DepositOperation>({
     chainId: l1ChainId,
     getStorageKey: getTunnelHistoryDepositStorageKey,
@@ -107,11 +110,20 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
           }
           return newState
         })
+        queryClient.setQueryData(
+          [
+            withdrawal.direction,
+            l1ChainId,
+            withdrawal.transactionHash,
+            'getMessageStatus',
+          ],
+          status,
+        )
       },
       withdrawals: withdrawalsState.operations,
       withdrawSyncStatus: withdrawalsState.syncStatus,
     }),
-    [depositState, withdrawalsState],
+    [depositState, l1ChainId, queryClient, withdrawalsState],
   )
 
   return (

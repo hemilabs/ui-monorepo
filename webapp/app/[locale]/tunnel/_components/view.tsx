@@ -55,9 +55,7 @@ export const View = function ({ state }: Props) {
       submitButton={
         hasTxHash ? (
           <a
-            href={`${chain.blockExplorers.default.url}/tx/${
-              partialWithdrawal?.claimWithdrawalTxHash ?? claimTxHash
-            }`}
+            href={`${chain.blockExplorers.default.url}/tx/${claimTxHash}`}
             rel="noopener noreferrer"
             target="_blank"
           >

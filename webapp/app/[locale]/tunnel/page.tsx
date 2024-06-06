@@ -1,15 +1,15 @@
 'use client'
 
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
+import { MessageStatus } from '@eth-optimism/sdk'
 import { TokenLogo } from 'app/components/tokenLogo'
 import { TokenSelector } from 'app/components/TokenSelector'
-import { bridgeableNetworks, hemi, networks } from 'app/networks'
+import { hemi, networks } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
+import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { useConnectedToUnsupportedChain } from 'hooks/useConnectedToUnsupportedChain'
-import { useAnyChainGetTransactionMessageStatus } from 'hooks/useL2Bridge'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { Suspense, useEffect } from 'react'
+import { Suspense, useContext, useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
@@ -210,16 +210,14 @@ const OperationByMessageStatus = {
 
 const Tunnel = function () {
   const { status } = useAccount()
+  const { withdrawals } = useContext(TunnelHistoryContext)
   const tunnelState = useTunnelState()
   const { operation, txHash } = useTunnelOperation()
   const t = useTranslations()
   const { setQueryParams } = useQueryParams()
 
-  const { messageStatus } = useAnyChainGetTransactionMessageStatus({
-    direction: MessageDirection.L2_TO_L1,
-    l1ChainId: bridgeableNetworks[0].id,
-    transactionHash: txHash,
-  })
+  const messageStatus = withdrawals.find(w => w.transactionHash === txHash)
+    ?.status
 
   useEffect(
     function updateWithdrawOperationComponentPerMessageStatus() {

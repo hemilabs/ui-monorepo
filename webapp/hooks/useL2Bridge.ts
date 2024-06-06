@@ -228,23 +228,6 @@ export const useConnectedChainCrossChainMessenger = function (
   })
 }
 
-export const useGetWithdrawalsByAddress = function () {
-  const { address, chainId } = useAccount()
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useConnectedChainCrossChainMessenger(chainId)
-  const { data: withdrawals, ...rest } = useQuery({
-    // ensure correct chain was used
-    enabled: crossChainMessengerStatus === 'success',
-    queryFn: () => crossChainMessenger.getWithdrawalsByAddress(address),
-    queryKey: [address, chainId, 'withdrawals'],
-  })
-
-  return {
-    withdrawals,
-    ...rest,
-  }
-}
-
 type UseGetTransactionMessageStatus = {
   crossChainMessenger: CrossChainMessengerType
   crossChainMessengerStatus: 'error' | 'pending' | 'success'
@@ -264,7 +247,7 @@ const useGetTransactionMessageStatus = function ({
   enabled = true,
   initialData,
   l1ChainId,
-  refetchInterval = 15 * 1000,
+  refetchInterval = 60 * 1000,
   refetchUntilStatus,
   transactionHash,
 }: UseGetTransactionMessageStatus) {
@@ -298,27 +281,6 @@ const useGetTransactionMessageStatus = function ({
     isLoadingMessageStatus: isLoading,
     messageStatus,
   }
-}
-
-/**
- * Use this method to query the status of a transaction message
- * while connected to any chain.
- */
-export const useAnyChainGetTransactionMessageStatus = function ({
-  l1ChainId,
-  ...options
-}: Omit<
-  UseGetTransactionMessageStatus,
-  'crossChainMessenger' | 'crossChainMessengerStatus'
->) {
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useConnectedChainCrossChainMessenger(l1ChainId)
-  return useGetTransactionMessageStatus({
-    crossChainMessenger,
-    crossChainMessengerStatus,
-    l1ChainId,
-    ...options,
-  })
 }
 
 /**

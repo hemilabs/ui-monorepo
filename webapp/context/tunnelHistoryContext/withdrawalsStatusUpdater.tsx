@@ -1,5 +1,5 @@
 import { CrossChainMessenger, MessageStatus } from '@eth-optimism/sdk'
-import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
+import { QueryClient, useQuery } from '@tanstack/react-query'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { hemiMainnet, hemiTestnet } from 'hemi-metadata'
 import { useConnectedToUnsupportedChain } from 'hooks/useConnectedToUnsupportedChain'
@@ -24,26 +24,25 @@ const refetchInterval = {
   [hemiMainnet.id]: {
     [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: false,
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: false,
-    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(3),
-    [MessageStatus.READY_TO_PROVE]: getMinutes(5),
-    [MessageStatus.IN_CHALLENGE_PERIOD]: getMinutes(5),
-    [MessageStatus.READY_FOR_RELAY]: getMinutes(5),
+    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(1),
+    [MessageStatus.READY_TO_PROVE]: getMinutes(1),
+    [MessageStatus.IN_CHALLENGE_PERIOD]: getMinutes(3),
+    [MessageStatus.READY_FOR_RELAY]: getMinutes(3),
     [MessageStatus.RELAYED]: false,
   },
   [hemiTestnet.id]: {
     [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: false,
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: false,
-    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(2),
-    [MessageStatus.READY_TO_PROVE]: getMinutes(3),
-    [MessageStatus.IN_CHALLENGE_PERIOD]: getMinutes(3),
-    [MessageStatus.READY_FOR_RELAY]: getMinutes(3),
+    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(1),
+    [MessageStatus.READY_TO_PROVE]: getMinutes(2),
+    [MessageStatus.IN_CHALLENGE_PERIOD]: getMinutes(2),
+    [MessageStatus.READY_FOR_RELAY]: getMinutes(2),
     [MessageStatus.RELAYED]: false,
   },
 }
 
 const updateWithdrawal = async ({
   crossChainMessenger,
-  queryClient,
   updateWithdrawalStatus,
   withdrawal,
 }: {
@@ -63,18 +62,9 @@ const updateWithdrawal = async ({
         0,
         withdrawal.direction,
       )
-      // given we requested this, let's update it for the tx-history cache
-      queryClient.setQueryData(
-        [
-          withdrawal.direction,
-          l1ChainId,
-          withdrawal.transactionHash,
-          'getMessageStatus',
-        ],
-        status,
-      )
-
-      updateWithdrawalStatus(withdrawal, status)
+      if (withdrawal.status !== status) {
+        updateWithdrawalStatus(withdrawal, status)
+      }
 
       return status
     },
@@ -111,7 +101,6 @@ export const WithdrawalsStatusUpdater = function () {
   const { isConnected } = useAccount()
   const { updateWithdrawalStatus, withdrawals = [] } =
     useContext(TunnelHistoryContext)
-  const queryClient = useQueryClient()
 
   const unsupportedChain = useConnectedToUnsupportedChain()
 
@@ -157,7 +146,6 @@ export const WithdrawalsStatusUpdater = function () {
             // @ts-expect-error unsure why it adds void, but actual result is not needed
             updateWithdrawal({
               crossChainMessenger,
-              queryClient,
               updateWithdrawalStatus,
               withdrawal: w,
             })

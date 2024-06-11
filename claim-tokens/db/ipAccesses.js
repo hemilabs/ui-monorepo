@@ -4,6 +4,7 @@ const pTap = require('p-tap')
 const snakeCaseKeys = require('snakecase-keys')
 
 const { logger } = require('../logger')
+const { hashIp } = require('./utils')
 
 const tableName = 'ip_accesses'
 
@@ -21,9 +22,10 @@ const createIpRepository = function (db) {
    */
   const isIpRecentlyUsed = function (ip) {
     logger.debug('Checking if IP address has been used recently')
+    const hashedIp = hashIp(ip)
     return db
       .from(tableName)
-      .where('ip', ip)
+      .where('ip', hashedIp)
       .first()
       .then(row => row !== undefined)
       .then(
@@ -74,10 +76,11 @@ const createIpRepository = function (db) {
    */
   const saveIp = function (ip, createdAt) {
     logger.debug('Saving IP address')
+    const hashedIp = hashIp(ip)
     return db
       .from(tableName)
       .returning('id')
-      .insert(snakeCaseKeys({ createdAt, ip }))
+      .insert(snakeCaseKeys({ createdAt, ip: hashedIp }))
       .then(([row]) => row)
       .then(
         pTap(function ({ id }) {

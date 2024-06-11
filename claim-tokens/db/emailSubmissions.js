@@ -4,6 +4,7 @@ const pTap = require('p-tap')
 const snakeCaseKeys = require('snakecase-keys')
 
 const { logger } = require('../logger')
+const { hashIp } = require('./utils')
 
 const tableName = 'email_submissions'
 
@@ -76,10 +77,11 @@ const createEmailRepository = function (db) {
    */
   const saveEmail = function ({ email, ip, requestId, submittedAt }) {
     logger.debug('Saving email')
+    const hashedIp = hashIp(ip)
     return db
       .from(tableName)
       .returning('id')
-      .insert(snakeCaseKeys({ email, ip, requestId, submittedAt }))
+      .insert(snakeCaseKeys({ email, ip: hashedIp, requestId, submittedAt }))
       .then(([row]) => row)
       .then(
         pTap(function ({ id }) {

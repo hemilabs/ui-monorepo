@@ -4,7 +4,7 @@ import { hemi } from 'app/networks'
 import { useTranslations } from 'next-intl'
 
 import cryptochordsImg from '../../../public/demos/cryptochords.png'
-import hemihatchlingsImg from '../../../public/demos/hemihatchlings.png'
+import hemihatchlingspixelatedImg from '../../../public/demos/hemihatchlingspixelated.png'
 import purefinanceImg from '../../../public/demos/purefinance.png'
 
 import { DemoCard } from './_components/demoCard'
@@ -45,7 +45,7 @@ const Demos = function () {
                 ? 'https://hemihatchlings-test.hemi.xyz'
                 : 'https://hemihatchlings.hemi.xyz'
             }
-            imageSrc={hemihatchlingsImg}
+            imageSrc={hemihatchlingspixelatedImg}
             subHeading={t('hemihatchlings.sub-heading')}
           />
           <DemoCard

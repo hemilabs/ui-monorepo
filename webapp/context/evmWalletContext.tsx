@@ -33,7 +33,7 @@ const connectors = connectorsForWallets(
   },
 )
 
-export const walletConfig = createConfig({
+export const evmWalletConfig = createConfig({
   chains: networks,
   connectors,
   transports: Object.fromEntries(
@@ -46,8 +46,8 @@ export const walletConfig = createConfig({
   ),
 })
 
-export const WalletContext = ({ children, locale }: Props) => (
-  <WagmiProvider config={walletConfig}>
+export const EvmWalletContext = ({ children, locale }: Props) => (
+  <WagmiProvider config={evmWalletConfig}>
     <QueryClientProvider client={queryClient}>
       <RainbowKitProvider
         locale={locale as Locale}

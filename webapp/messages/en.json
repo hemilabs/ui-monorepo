@@ -119,11 +119,11 @@
     "wrong-network": "Wrong Network"
   },
   "connect-wallets": {
-    "btc-wallet-requirement": "Your BTC wallet is only needed if you want to tunnel BTC to the Hemi network.",
+    "btc-wallet-requirement": "A Bitcoin wallet is only required if moving assets between Bitcoin and Hemi.",
     "connect-btc-wallet": "Connect your Unisat BTC Wallet",
     "connect-evm-wallet": "Connect your EVM Wallet",
     "connected-with-wallet": "Connected with {wallet}",
-    "description": "On Hemi, you can link both your EVM and BTC wallets. For the best experience, we recommend connecting wallets from both types.",
+    "description": "Connect your EVM and BTC wallets to transfer assets seamlessly. For the best experience, use wallets from both networks.",
     "evm-wallet": "EVM Wallet"
   },
   "get-started": {

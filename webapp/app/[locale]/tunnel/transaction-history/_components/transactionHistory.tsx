@@ -16,7 +16,7 @@ import {
 } from 'app/context/tunnelHistoryContext/types'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
-import { useConnectedToUnsupportedChain } from 'hooks/useConnectedToUnsupportedChain'
+import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTranslations } from 'next-intl'
 import { useContext, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -299,7 +299,7 @@ export const TransactionHistory = function () {
     },
   })
 
-  const connectedToUnsupportedChain = useConnectedToUnsupportedChain()
+  const connectedToUnsupportedChain = useConnectedToUnsupportedEvmChain()
 
   const pageCount = table.getPageCount()
 

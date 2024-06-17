@@ -6,7 +6,7 @@ import { TokenSelector } from 'app/components/TokenSelector'
 import { hemi, networks } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
-import { useConnectedToUnsupportedChain } from 'hooks/useConnectedToUnsupportedChain'
+import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { Suspense, useContext, useEffect } from 'react'
@@ -236,7 +236,7 @@ const Tunnel = function () {
     [messageStatus, operation, setQueryParams, txHash],
   )
 
-  const connectedToUnsupportedChain = useConnectedToUnsupportedChain()
+  const connectedToUnsupportedChain = useConnectedToUnsupportedEvmChain()
 
   const stateLoaded = !txHash || messageStatus !== undefined
   const OperationComponent = stateLoaded ? OperationsComponent[operation] : null

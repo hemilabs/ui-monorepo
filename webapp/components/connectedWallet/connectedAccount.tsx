@@ -24,8 +24,8 @@ import {
 import { BtcLogo } from './btcLogo'
 import { CopyLogo } from './copyLogo'
 import { DisconnectLogo } from './disconnectLogo'
-import { EthLogo } from './ethLogo'
 import { EvmChainsMenu } from './evmChainsMenu'
+import { EvmLogo } from './evmLogo'
 import { Menu } from './menu'
 import { WrongEvmNetwork, WrongNetwork } from './wrongNetwork'
 
@@ -146,7 +146,7 @@ export const ConnectedEvmChain = function () {
   return (
     <ConnectedChain
       closeMenu={closeMenu}
-      icon={<EthLogo />}
+      icon={<EvmLogo chainId={chain.id} />}
       menu={<EvmChainsMenu onSwitchChain={closeMenu} />}
       menuOpen={menuOpen}
       name={chain.name}

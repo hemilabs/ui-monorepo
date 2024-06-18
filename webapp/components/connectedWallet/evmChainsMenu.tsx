@@ -1,6 +1,6 @@
 import { useAccount, useSwitchChain as useSwitchEvmChain } from 'wagmi'
 
-import { EthLogo } from './ethLogo'
+import { EvmLogo } from './evmLogo'
 import { Menu } from './menu'
 
 export const EvmChainsMenu = function ({
@@ -22,7 +22,7 @@ export const EvmChainsMenu = function ({
               onSwitchChain()
             }}
           >
-            <EthLogo />
+            <EvmLogo chainId={c.id} />
             <span>{c.name}</span>
             <div className={chainId === c.id ? 'block' : 'invisible'}>
               <svg

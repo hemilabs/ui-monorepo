@@ -6,13 +6,13 @@ import { GlobalContext } from '../context/globalContext'
 import { useAccount } from './useAccount'
 
 export const useBalance = function () {
-  const { address, isConnected } = useAccount()
+  const { address, chainId, isConnected } = useAccount()
   const { currentConnector } = useContext(GlobalContext)
 
   const { data: balance, ...rest } = useQuery({
     enabled: isConnected,
     queryFn: () => currentConnector.getBalance(),
-    queryKey: ['btc-wallet', 'balance', address, currentConnector?.id],
+    queryKey: ['btc-wallet', 'balance', address, chainId, currentConnector?.id],
     // 10 minutes
     refetchInterval: 1000 * 60 * 10,
   })

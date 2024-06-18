@@ -181,14 +181,18 @@ export const ConnectedBtcAccount = function () {
   const { balance } = useBtcBalance()
   const { disconnect } = useBtcDisconnect()
 
+  const getBalance = function () {
+    if (balance.confirmed === 0) {
+      return 0
+    }
+    return getFormattedValue(
+      formatUnits(BigInt(balance.confirmed), bitcoin.nativeCurrency.decimals),
+    )
+  }
+
   const formattedBalance =
     balance !== undefined
-      ? `${getFormattedValue(
-          formatUnits(
-            BigInt(balance.confirmed),
-            bitcoin.nativeCurrency.decimals,
-          ),
-        )} ${bitcoin.nativeCurrency.symbol}`
+      ? `${getBalance()} ${bitcoin.nativeCurrency.symbol}`
       : undefined
 
   return (

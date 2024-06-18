@@ -1,7 +1,8 @@
 import Big from 'big.js'
+import { type Account } from 'btc-wallet/unisat'
 import { Address } from 'viem'
 
-export const formatAddress = (address: Address) =>
+export const formatAddress = (address: Address | Account) =>
   `${address.slice(0, 4)}...${address.slice(-4)}`
 
 export const formatNumber = (

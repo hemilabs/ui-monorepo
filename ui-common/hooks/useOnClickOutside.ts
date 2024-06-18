@@ -4,7 +4,7 @@ export const useOnClickOutside = function <T extends HTMLElement>(
   handler?: (e: MouseEvent | TouchEvent) => void,
   initialRef?: MutableRefObject<T>,
 ) {
-  const internalRef = useRef(null)
+  const internalRef = useRef<T>(null)
   const ref = initialRef ?? internalRef
 
   useEffect(

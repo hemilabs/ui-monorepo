@@ -1,5 +1,10 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
+import { useConfig } from 'btc-wallet/hooks/useConfig'
+import { useConnect } from 'btc-wallet/hooks/useConnect'
 import {
+  ConnectedBtcAccount,
+  ConnectedBtcChain,
   ConnectedEvmAccount,
   ConnectedEvmChain,
 } from 'components/connectedWallet/connectedAccount'
@@ -7,11 +12,12 @@ import { Chevron } from 'components/icons/chevron'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { Box } from 'ui-common/components/box'
-import { useAccount } from 'wagmi'
+import { useAccount as useEvmAccount } from 'wagmi'
 
 import { BtcLogo } from './btcLogo'
 import { EthLogo } from './ethLogo'
 import { MetamaskLogo } from './metamaskLogo'
+import { UnisatLogo } from './unisatLogo'
 
 const ConnectedToWallet = function ({
   icon,
@@ -58,21 +64,44 @@ const ConnectWalletButton = ({
 )
 
 export const BtcWallet = function () {
+  const { connector, status } = useBtcAccount()
+  const { connect } = useConnect()
+  const { connectors } = useConfig()
+
   const t = useTranslations('connect-wallets')
-  return (
-    <ConnectWalletButton
-      hoverClassName="hover:bg-orange-950/5"
-      icon={<BtcLogo />}
-      // TODO enable btc wallet https://github.com/BVM-priv/ui-monorepo/issues/339
-      // eslint-disable-next-line arrow-body-style
-      onClick={() => {}}
-      text={t('connect-btc-wallet')}
-    />
-  )
+
+  if (status === 'disconnected') {
+    return (
+      <ConnectWalletButton
+        hoverClassName="hover:bg-orange-950/5"
+        icon={<BtcLogo />}
+        onClick={() => connect(connectors[0].wallet)}
+        text={t('connect-btc-wallet')}
+      />
+    )
+  }
+
+  if (status === 'connected') {
+    return (
+      <Box
+        description={
+          <ConnectedToWallet icon={<UnisatLogo />} wallet={connector?.name} />
+        }
+        title={t('btc-wallet')}
+      >
+        <div className="flex flex-wrap items-center gap-4">
+          <ConnectedBtcAccount />
+          <ConnectedBtcChain />
+        </div>
+      </Box>
+    )
+  }
+
+  return <Skeleton className="h-14 w-full" />
 }
 
 export const EvmWallet = function () {
-  const { connector, status } = useAccount()
+  const { connector, status } = useEvmAccount()
   const { openConnectModal } = useConnectModal()
   const t = useTranslations('connect-wallets')
 

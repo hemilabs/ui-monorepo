@@ -1,88 +1,166 @@
-import { useAccountModal, useChainModal } from '@rainbow-me/rainbowkit'
+import { bitcoin } from 'app/networks'
+import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
+import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
+import { useConfig as useBtcConfig } from 'btc-wallet/hooks/useConfig'
+import { useDisconnect as useBtcDisconnect } from 'btc-wallet/hooks/useDisconnect'
+import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchChain'
+import { type Account } from 'btc-wallet/unisat'
 import { Chevron } from 'components/icons/chevron'
-import { useConnectedToUnsupportedChain } from 'hooks/useConnectedToUnsupportedChain'
+import {
+  useConnectedToUnsupportedBtcChain,
+  useConnectedToUnsupportedEvmChain,
+} from 'hooks/useConnectedToUnsupportedChain'
 import { useTranslations } from 'next-intl'
+import { useState } from 'react'
+import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 import { formatAddress, getFormattedValue } from 'utils/format'
 import { Address, formatUnits } from 'viem'
-import { useAccount, useBalance } from 'wagmi'
+import {
+  useAccount,
+  useBalance,
+  useDisconnect as useEvmDisconnect,
+} from 'wagmi'
 
+import { BtcLogo } from './btcLogo'
+import { CopyLogo } from './copyLogo'
+import { DisconnectLogo } from './disconnectLogo'
 import { EthLogo } from './ethLogo'
+import { EvmChainsMenu } from './evmChainsMenu'
+import { Menu } from './menu'
+import { WrongEvmNetwork, WrongNetwork } from './wrongNetwork'
 
-const ConnectedChain = ({
+const ConnectedChain = function ({
+  closeMenu,
   icon,
+  menu,
+  menuOpen = false,
   name,
-  openChainSelector,
+  openMenu,
 }: {
+  closeMenu?: () => void
   icon: React.ReactNode
+  menu?: React.ReactNode
+  menuOpen?: boolean
   name: string
-  openChainSelector: () => void
-}) => (
-  <div
-    className="flex h-10 w-fit cursor-pointer items-center gap-x-2 rounded-md bg-neutral-200/30 p-2"
-    onClick={openChainSelector}
-  >
-    {icon}
-    <span>{name}</span>
-    <Chevron.Bottom />
-  </div>
-)
+  openMenu?: () => void
+}) {
+  const ref = useOnClickOutside<HTMLDivElement>(closeMenu)
 
-const ConnectedWallet = ({
+  return (
+    <div className="relative" ref={ref}>
+      <div
+        className={`flex h-10 w-fit items-center gap-x-2 rounded-md bg-neutral-200/30 p-2 ${
+          openMenu ? 'cursor-pointer' : ''
+        }`}
+        onClick={openMenu}
+      >
+        {icon}
+        <span className="min-w-24">{name}</span>
+        {menu !== undefined && <Chevron.Bottom />}
+      </div>
+      {menuOpen && menu}
+    </div>
+  )
+}
+
+const ConnectedWallet = function ({
   address,
   balance,
-  openAddressSelector,
+  disconnect,
 }: {
-  address: Address
+  address: Address | Account
   balance: string
-  openAddressSelector: () => void
-}) => (
-  <div className="-py-1 flex h-10 w-fit items-center rounded-lg border border-solid border-slate-600/45 bg-white pr-1 text-sm font-medium leading-normal text-slate-950">
-    <span className="p-2">{balance}</span>
+  disconnect: () => void
+}) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const t = useTranslations('connect-wallets')
+
+  const closeMenu = () => setMenuOpen(false)
+
+  const ref = useOnClickOutside<HTMLDivElement>(closeMenu)
+
+  const copyAddress = function () {
+    navigator.clipboard.writeText(address)
+    closeMenu()
+  }
+
+  return (
     <div
-      className="flex cursor-pointer items-center justify-between rounded-md bg-neutral-200/65 py-1 pl-2"
-      onClick={openAddressSelector}
+      className="relative flex h-10 w-fit items-center rounded-lg border border-solid border-slate-600/45 bg-white pr-1 text-sm font-medium leading-normal text-slate-950"
+      ref={ref}
     >
-      <span>{formatAddress(address)}</span>
-      <Chevron.Bottom />
+      <span className="p-2">{balance}</span>
+      <div
+        className="flex cursor-pointer items-center justify-between rounded-md bg-neutral-200/65 py-1 pl-2"
+        onClick={() => setMenuOpen(true)}
+      >
+        <span>{address ? formatAddress(address) : '...'}</span>
+        <Chevron.Bottom />
+      </div>
+      {menuOpen && (
+        <Menu
+          items={[
+            {
+              content: (
+                <div
+                  className="flex items-center gap-x-2"
+                  onClick={copyAddress}
+                >
+                  <CopyLogo />
+                  <span>{t('copy-address')}</span>
+                </div>
+              ),
+              id: 'copy',
+            },
+            {
+              content: (
+                <div className="flex items-center gap-x-2" onClick={disconnect}>
+                  <DisconnectLogo />
+                  <span>{t('disconnect')}</span>
+                </div>
+              ),
+              id: 'disconnect',
+            },
+          ]}
+        />
+      )}
     </div>
-  </div>
-)
+  )
+}
 
 export const ConnectedEvmChain = function () {
   const { chain, isConnected } = useAccount()
-  const { openChainModal } = useChainModal()
-  const isChainUnsupported = useConnectedToUnsupportedChain()
-  const t = useTranslations('common')
+  const isChainUnsupported = useConnectedToUnsupportedEvmChain()
+
+  const [menuOpen, setMenuOpen] = useState(false)
 
   if (!isConnected) {
     return null
   }
 
+  const closeMenu = () => setMenuOpen(false)
+
   if (isChainUnsupported) {
-    return (
-      <button
-        className="flex items-center gap-x-2 rounded-xl bg-red-500 px-[10px] py-2 text-base font-bold text-white shadow-md duration-150 hover:scale-105"
-        onClick={openChainModal}
-      >
-        <span>{t('wrong-network')}</span>
-        <Chevron.Bottom />
-      </button>
-    )
+    return <WrongEvmNetwork />
   }
   return (
     <ConnectedChain
+      closeMenu={closeMenu}
       icon={<EthLogo />}
+      menu={<EvmChainsMenu onSwitchChain={closeMenu} />}
+      menuOpen={menuOpen}
       name={chain.name}
-      openChainSelector={openChainModal}
+      openMenu={() => setMenuOpen(true)}
     />
   )
 }
 
 export const ConnectedEvmAccount = function () {
   const { address } = useAccount()
-  const { openAccountModal } = useAccountModal()
+  const { disconnect } = useEvmDisconnect()
 
   const { data: balance } = useBalance({ address })
+
   const formattedBalance =
     balance !== undefined
       ? `${getFormattedValue(formatUnits(balance.value, balance.decimals))} ${
@@ -93,7 +171,52 @@ export const ConnectedEvmAccount = function () {
     <ConnectedWallet
       address={address}
       balance={formattedBalance}
-      openAddressSelector={openAccountModal}
+      disconnect={disconnect}
     />
   )
+}
+
+export const ConnectedBtcAccount = function () {
+  const { address } = useBtcAccount()
+  const { balance } = useBtcBalance()
+  const { disconnect } = useBtcDisconnect()
+
+  const formattedBalance =
+    balance !== undefined
+      ? `${getFormattedValue(
+          formatUnits(
+            BigInt(balance.confirmed),
+            bitcoin.nativeCurrency.decimals,
+          ),
+        )} ${bitcoin.nativeCurrency.symbol}`
+      : undefined
+
+  return (
+    <ConnectedWallet
+      address={address}
+      balance={formattedBalance}
+      disconnect={disconnect}
+    />
+  )
+}
+
+export const ConnectedBtcChain = function () {
+  const { chains } = useBtcConfig()
+  const { chain, isConnected } = useBtcAccount()
+
+  const { switchChain } = useSwitchBtcChain()
+
+  const isChainUnsupported = useConnectedToUnsupportedBtcChain()
+
+  if (!isConnected) {
+    return null
+  }
+
+  if (isChainUnsupported) {
+    // As only one btc chain is supported at the moment, this will work.
+    // Once there are multiple chains, we may need to show a dropdown or something
+    // to select the chain to connect to.
+    return <WrongNetwork onClick={() => switchChain(chains[0])} />
+  }
+  return <ConnectedChain icon={<BtcLogo />} name={chain.name} />
 }

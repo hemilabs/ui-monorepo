@@ -1,10 +1,15 @@
-import { ConnectedEvmChain } from 'components/connectedWallet/connectedAccount'
+import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
+import {
+  ConnectedBtcChain,
+  ConnectedEvmChain,
+} from 'components/connectedWallet/connectedAccount'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { Fragment, useState } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount as useEvmAccount } from 'wagmi'
 
 import { MetamaskLogo } from './metamaskLogo'
+import { UnisatLogo } from './unisatLogo'
 
 const ConnectWalletsDrawer = dynamic(
   () => import('./connectWalletsDrawer').then(mod => mod.ConnectWalletsDrawer),
@@ -36,17 +41,26 @@ export const ConnectWallets = function () {
 
   const walletsConnected = []
 
-  const { isConnected: isEvmWalletConnected } = useAccount()
+  const { isConnected: isEvmWalletConnected } = useEvmAccount()
+  const { isConnected: isBtcWalletConnected } = useBtcAccount()
 
-  // TODO enable btc wallet connection https://github.com/BVM-priv/ui-monorepo/issues/339
   if (isEvmWalletConnected) {
     walletsConnected.push({ icon: <MetamaskLogo /> })
+  }
+  if (isBtcWalletConnected) {
+    walletsConnected.push({ icon: <UnisatLogo /> })
   }
 
   return (
     <div className="flex items-center gap-x-3">
-      <div className="hidden md:block">
+      <div className="hidden md:flex md:items-center md:gap-x-3">
         {isEvmWalletConnected && <ConnectedEvmChain />}
+        {walletsConnected.length > 1 && (
+          <span className="text-base font-medium leading-normal text-slate-700">
+            &
+          </span>
+        )}
+        {isBtcWalletConnected && <ConnectedBtcChain />}
       </div>
       <button
         className="flex h-10 items-center gap-x-2 rounded-xl border border-solid border-zinc-400/55 bg-white px-3 py-2 text-sm font-medium leading-normal shadow-sm"

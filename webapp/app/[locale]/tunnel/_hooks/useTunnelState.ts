@@ -4,7 +4,7 @@ import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { isNativeToken } from 'utils/token'
-import { Address, Chain, Hash, isHash } from 'viem'
+import { Chain, Hash, isHash } from 'viem'
 
 export type Operation = 'claim' | 'deposit' | 'prove' | 'withdraw' | 'view'
 
@@ -24,7 +24,7 @@ const isValidOperation = (value: string): value is Operation =>
 
 export const useTunnelOperation = function (): {
   operation: Operation
-  txHash: Address | undefined
+  txHash: Hash | undefined
 } {
   const { queryParams, removeQueryParams, setQueryParams } = useQueryParams()
   const { operation, txHash } = queryParams

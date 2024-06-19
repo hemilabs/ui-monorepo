@@ -1,4 +1,4 @@
-import { bridgeableNetworks } from 'app/networks'
+import { evmRemoteNetworks } from 'app/networks'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useState } from 'react'
@@ -25,7 +25,7 @@ export const View = function ({ state }: Props) {
   )
 
   // https://github.com/BVM-priv/ui-monorepo/issues/158
-  const l1ChainId = bridgeableNetworks[0].id
+  const l1ChainId = evmRemoteNetworks[0].id
 
   const chains = useChains()
   const t = useTranslations()

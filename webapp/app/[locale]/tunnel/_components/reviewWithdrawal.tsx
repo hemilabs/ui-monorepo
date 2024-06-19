@@ -1,5 +1,5 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { bridgeableNetworks, hemi } from 'app/networks'
+import { evmRemoteNetworks, hemi } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { WithdrawOperation } from 'context/tunnelHistoryContext/types'
@@ -160,7 +160,7 @@ const Amount = function ({ withdrawal }: { withdrawal?: WithdrawOperation }) {
     getL2TokenByBridgedAddress(
       withdrawal.l2Token as Address,
       // TODO https://github.com/BVM-priv/ui-monorepo/issues/158
-      bridgeableNetworks[0].id,
+      evmRemoteNetworks[0].id,
     )
 
   return (

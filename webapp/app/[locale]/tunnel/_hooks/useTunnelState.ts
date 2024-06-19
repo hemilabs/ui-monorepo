@@ -1,4 +1,4 @@
-import { bridgeableNetworks, hemi } from 'app/networks'
+import { evmRemoteNetworks, hemi } from 'app/networks'
 import { useCallback, useEffect, useReducer } from 'react'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
@@ -227,12 +227,12 @@ export const useTunnelState = function (): TunnelState & {
   const initial =
     !operation || operation === 'deposit'
       ? {
-          fromNetworkId: bridgeableNetworks[0].id,
+          fromNetworkId: evmRemoteNetworks[0].id,
           toNetworkId: hemi.id,
         }
       : {
           fromNetworkId: hemi.id,
-          toNetworkId: bridgeableNetworks[0].id,
+          toNetworkId: evmRemoteNetworks[0].id,
         }
 
   const [state, dispatch] = useReducer(reducer, {

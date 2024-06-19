@@ -14,7 +14,7 @@ import {
   TunnelOperation,
   WithdrawOperation,
 } from 'app/context/tunnelHistoryContext/types'
-import { bridgeableNetworks, hemi } from 'app/networks'
+import { evmRemoteNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTranslations } from 'next-intl'
@@ -236,7 +236,7 @@ const Body = function ({
 
 export const TransactionHistory = function () {
   // See https://github.com/BVM-priv/ui-monorepo/issues/158
-  const l1ChainId = bridgeableNetworks[0].id
+  const l1ChainId = evmRemoteNetworks[0].id
 
   const { status } = useAccount()
 

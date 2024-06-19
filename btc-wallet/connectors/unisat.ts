@@ -32,7 +32,6 @@ export const unisat: WalletConnector = {
   name: 'Unisat',
   onAccountsChanged(handler) {
     assertInstalled()
-    window.addEventListener
     window.unisat.on('accountsChanged', handler)
     return () => window.unisat.removeListener('accountsChanged', handler)
   },

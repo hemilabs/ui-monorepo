@@ -37,7 +37,7 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
 
   return (
     <Drawer onClose={onClose}>
-      <div className="h-full rounded-t-xl border border-solid border-slate-200 bg-white px-4 pb-12 pt-6 md:max-w-md md:rounded-xl md:p-6 ">
+      <div className="h-full rounded-t-xl border border-solid border-slate-200 bg-white px-4 pb-12 pt-6 md:max-w-md md:rounded-xl md:p-6">
         <div className="flex h-full flex-col gap-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-medium leading-5">

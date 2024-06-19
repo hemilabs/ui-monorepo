@@ -4,8 +4,8 @@ import { useContext, useEffect } from 'react'
 import { BtcChain } from '../chains'
 import { GlobalContext } from '../context/globalContext'
 
-import { useConfig } from './useConfig'
 import { useAccount } from './useAccount'
+import { useConfig } from './useConfig'
 
 export const useSwitchChain = function () {
   const { chainId } = useAccount()

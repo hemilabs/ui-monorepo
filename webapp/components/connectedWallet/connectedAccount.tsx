@@ -6,6 +6,7 @@ import { useDisconnect as useBtcDisconnect } from 'btc-wallet/hooks/useDisconnec
 import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchChain'
 import { type Account } from 'btc-wallet/unisat'
 import { Chevron } from 'components/icons/chevron'
+import { Menu } from 'components/menu'
 import {
   useConnectedToUnsupportedBtcChain,
   useConnectedToUnsupportedEvmChain,
@@ -30,7 +31,6 @@ import { CopyLogo } from './copyLogo'
 import { DisconnectLogo } from './disconnectLogo'
 import { EvmChainsMenu } from './evmChainsMenu'
 import { EvmLogo } from './evmLogo'
-import { Menu } from './menu'
 import { WrongEvmNetwork, WrongNetwork } from './wrongNetwork'
 
 const ConnectedChain = function ({

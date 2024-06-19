@@ -1,7 +1,7 @@
+import { Menu } from 'components/menu'
 import { useAccount, useSwitchChain as useSwitchEvmChain } from 'wagmi'
 
 import { EvmLogo } from './evmLogo'
-import { Menu } from './menu'
 
 export const EvmChainsMenu = function ({
   onSwitchChain,

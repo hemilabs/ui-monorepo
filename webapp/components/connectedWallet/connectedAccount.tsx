@@ -13,7 +13,11 @@ import {
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
-import { formatAddress, getFormattedValue } from 'utils/format'
+import {
+  formatBtcAddress,
+  formatEvmAddress,
+  getFormattedValue,
+} from 'utils/format'
 import { Address, formatUnits } from 'viem'
 import {
   useAccount,
@@ -67,10 +71,12 @@ const ConnectedWallet = function ({
   address,
   balance,
   disconnect,
+  formattedAddress,
 }: {
   address: Address | Account
   balance: string
   disconnect: () => void
+  formattedAddress: string
 }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const t = useTranslations('connect-wallets')
@@ -94,7 +100,7 @@ const ConnectedWallet = function ({
         className="flex cursor-pointer items-center justify-between rounded-md bg-neutral-200/65 py-1 pl-2"
         onClick={() => setMenuOpen(true)}
       >
-        <span>{address ? formatAddress(address) : '...'}</span>
+        <span>{formattedAddress}</span>
         <Chevron.Bottom />
       </div>
       {menuOpen && (
@@ -172,6 +178,7 @@ export const ConnectedEvmAccount = function () {
       address={address}
       balance={formattedBalance}
       disconnect={disconnect}
+      formattedAddress={address ? formatEvmAddress(address) : '...'}
     />
   )
 }
@@ -200,6 +207,7 @@ export const ConnectedBtcAccount = function () {
       address={address}
       balance={formattedBalance}
       disconnect={disconnect}
+      formattedAddress={address ? formatBtcAddress(address) : '...'}
     />
   )
 }

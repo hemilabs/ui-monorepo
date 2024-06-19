@@ -2,8 +2,8 @@ import 'styles/globals.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+import { EvmWalletContext } from 'app/context/evmWalletContext'
 import { TunnelHistoryProvider } from 'app/context/tunnelHistoryContext'
-import { WalletContext } from 'app/context/walletContext'
 import { locales, type Locale } from 'app/i18n'
 import { AppScreen } from 'components/appScreen'
 import { ErrorBoundary } from 'components/errorBoundary'
@@ -41,7 +41,7 @@ export default async function RootLayout({
       <body className={`${inter.className} w-svw overflow-y-hidden`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <RecaptchaContext>
-            <WalletContext locale={locale}>
+            <EvmWalletContext locale={locale}>
               <TunnelHistoryProvider>
                 <div className="flex h-dvh flex-nowrap justify-stretch">
                   <div className="hidden w-1/4 max-w-56 md:block">
@@ -52,7 +52,7 @@ export default async function RootLayout({
                   </AppScreen>
                 </div>
               </TunnelHistoryProvider>
-            </WalletContext>
+            </EvmWalletContext>
           </RecaptchaContext>
         </NextIntlClientProvider>
       </body>

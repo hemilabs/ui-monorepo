@@ -1,8 +1,7 @@
 'use client'
 
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
-import { ChevronBottomIcon } from 'components/icons/chevronBottomIcon'
-import { ChevronUpIcon } from 'components/icons/chevronUpIcon'
+import { Chevron } from 'components/icons/chevron'
 import { NavRouterItem } from 'components/navRouterItem'
 import { Text } from 'components/text'
 import React from 'react'
@@ -59,10 +58,10 @@ export const NavItem = function ({
 
   function renderRightIcon() {
     if (subMenus && !subMenuOpened) {
-      return <ChevronBottomIcon className={getTextColor()} />
+      return <Chevron.Bottom className={getTextColor()} />
     }
     if (subMenus && subMenuOpened) {
-      return <ChevronUpIcon className={getTextColor()} />
+      return <Chevron.Up className={getTextColor()} />
     }
     if (isExternalLink(href)) {
       return <ArrowDownLeftIcon className={getTextColor()} />

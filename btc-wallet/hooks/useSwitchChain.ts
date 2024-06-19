@@ -22,7 +22,7 @@ export const useSwitchChain = function () {
   })
 
   useEffect(
-    function listerForAccountChange() {
+    function listenForAccountChange() {
       if (!currentConnector) {
         return undefined
       }

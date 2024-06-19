@@ -27,7 +27,7 @@ export const useAccount = function () {
   const queryClient = useQueryClient()
 
   useEffect(
-    function listerForAccountChange() {
+    function listenForAccountChange() {
       if (!currentConnector) {
         return undefined
       }

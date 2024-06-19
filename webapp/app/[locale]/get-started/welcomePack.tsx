@@ -2,6 +2,7 @@
 
 import { useMutation } from '@tanstack/react-query'
 import { hemi } from 'app/networks'
+import { bitcoinTestnet } from 'btc-wallet/chains'
 import fetch from 'fetch-plus-plus'
 import { discordUrl } from 'hemi-metadata/socials'
 import { useLocale, useTranslations } from 'next-intl'
@@ -29,7 +30,7 @@ const giveAwayTokens = hemi.testnet
       {
         amount: 0.01,
         icon: <Btc />,
-        symbol: 'tBTC',
+        symbol: bitcoinTestnet.nativeCurrency.symbol,
       },
       {
         amount: 0.2,

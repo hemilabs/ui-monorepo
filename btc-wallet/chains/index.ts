@@ -16,7 +16,7 @@ export const bitcoinTestnet = {
   nativeCurrency: {
     decimals: 8,
     name: 'Testnet Bitcoin',
-    symbol: 'BTC',
+    symbol: 'tBTC',
   },
   rpcUrls: {
     default: {

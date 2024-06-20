@@ -34,8 +34,6 @@ const config: Config = {
       },
       // See https://www.figma.com/file/4fVd9wneclsvYDYD95ApZ9/Hemi-Portal?node-id=8%3A5122&mode=dev
       colors: {
-        // Easier to read sorted like this, instead of sorting asc (as string) as the rules indicates
-        /* eslint-disable sort-keys */
         orange: {
           1: '#FF4D00',
           50: '#FFFBF8',
@@ -64,7 +62,6 @@ const config: Config = {
           900: '#1A1B1B',
           950: '#000202',
         },
-        /* eslint-disable sort-keys */
       },
       fontFamily: {
         inter: '--font-inter',

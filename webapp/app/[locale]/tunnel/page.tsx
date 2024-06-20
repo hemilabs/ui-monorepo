@@ -155,7 +155,7 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
       <div className="flex items-center justify-between text-sm">
         <span>{t('form.to-network')}</span>
         <NetworkSelector
-          disabled
+          disabled={isRunningOperation}
           networkId={toNetworkId}
           networks={networks.filter(chain => chain.id !== fromNetworkId)}
           onSelectNetwork={updateToNetwork}

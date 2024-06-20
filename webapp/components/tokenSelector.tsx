@@ -127,7 +127,7 @@ export const TokenSelector = function ({
     <>
       <button
         className="flex items-center justify-end gap-x-2 text-xs"
-        disabled={disabled}
+        disabled={disabled || tokensToList.length < 2}
         onClick={openModal}
         type="button"
       >
@@ -135,7 +135,9 @@ export const TokenSelector = function ({
         <span className="text-xs font-medium text-slate-700 sm:text-sm">
           {selectedToken.symbol}
         </span>
-        <Chevron.Bottom className="scale-110 [&>path]:stroke-slate-700" />
+        {tokensToList.length > 1 && (
+          <Chevron.Bottom className="scale-110 [&>path]:stroke-slate-700" />
+        )}
       </button>
       {showTokenSelector && (
         <Modal onClose={closeModal}>

@@ -2,7 +2,7 @@ import { CrossChainMessenger, MessageStatus } from '@eth-optimism/sdk'
 import { QueryClient, useQuery } from '@tanstack/react-query'
 import { bridgeableNetworks, hemi } from 'app/networks'
 import { hemiMainnet, hemiTestnet } from 'hemi-metadata'
-import { useConnectedToUnsupportedChain } from 'hooks/useConnectedToUnsupportedChain'
+import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
 import PQueue from 'p-queue'
 import { useContext } from 'react'
@@ -102,7 +102,7 @@ export const WithdrawalsStatusUpdater = function () {
   const { updateWithdrawalStatus, withdrawals = [] } =
     useContext(TunnelHistoryContext)
 
-  const unsupportedChain = useConnectedToUnsupportedChain()
+  const unsupportedChain = useConnectedToUnsupportedEvmChain()
 
   const withdrawalsToWatch = withdrawals
     .filter(

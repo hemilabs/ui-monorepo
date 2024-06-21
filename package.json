@@ -8,6 +8,7 @@
     "postinstall": "patch-package"
   },
   "workspaces": [
+    "btc-wallet",
     "claim-tokens",
     "hemi-metadata",
     "landing",
@@ -95,6 +96,7 @@
           "prettier"
         ],
         "files": [
+          "btc-wallet/**/*.{js,ts,tsx}",
           "hemi-metadata/**/*.{js,ts,tsx}",
           "ui-common/**/*.{js,ts,tsx}",
           "wagmi-erc20-hooks/**/*.{js,ts,tsx}",

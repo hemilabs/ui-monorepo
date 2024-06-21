@@ -1,12 +1,13 @@
 'use client'
 
 import { type Chain } from '@rainbow-me/rainbowkit'
+import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
 import { hemiMainnet, hemiTestnet } from 'hemi-metadata'
 import { renderToString } from 'react-dom/server'
 import { HemiSymbolWhite } from 'ui-common/components/hemiLogo'
 import { mainnet, sepolia } from 'wagmi/chains'
 
-type OrderedChains = readonly [Chain, ...Chain[]]
+export type OrderedChains = readonly [Chain, ...Chain[]]
 
 const testnetMode = (process.env.NEXT_PUBLIC_TESTNET_MODE ?? 'false') === 'true'
 
@@ -18,6 +19,8 @@ export const hemi: Chain = {
       `data:image/svg+xml;base64,${btoa(renderToString(<HemiSymbolWhite />))}`,
     ),
 }
+
+export const bitcoin = testnetMode ? bitcoinTestnet : bitcoinMainnet
 
 export const bridgeableNetworks: OrderedChains = testnetMode
   ? [sepolia]

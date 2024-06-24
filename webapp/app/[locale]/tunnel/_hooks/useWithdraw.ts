@@ -3,20 +3,20 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useWithdrawNativeToken, useWithdrawToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
 import { useCallback } from 'react'
-import { Token } from 'types/token'
+import { type EvmToken } from 'types/token'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { isNativeToken } from 'utils/token'
 import { type Chain, parseUnits, Hash } from 'viem'
 import { useWaitForTransactionReceipt } from 'wagmi'
 
-import { useTunnelOperation } from './useTunnelState'
+import { useTunnelOperation } from './useTunnelOperation'
 
 type UseWithdraw = {
   canWithdraw: boolean
   fromInput: string
-  fromToken: Token
+  fromToken: EvmToken
   l1ChainId: Chain['id']
-  toToken: Token
+  toToken: EvmToken
 }
 export const useWithdraw = function ({
   canWithdraw,
@@ -86,6 +86,7 @@ export const useWithdraw = function ({
     data: withdrawReceipt,
     error: withdrawReceiptError,
     status: withdrawTxStatus,
+    // @ts-expect-error string is `0x${string}`
   } = useWaitForTransactionReceipt({ hash: txHash })
   useReloadBalances({
     fromToken,

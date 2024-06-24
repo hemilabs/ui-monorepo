@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useDepositNativeToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
 import { useCallback } from 'react'
-import { Token } from 'types/token'
+import { type EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/token'
 import { parseUnits } from 'viem'
 import { useWaitForTransactionReceipt } from 'wagmi'
@@ -13,8 +13,8 @@ type UseDeposit = {
   canDeposit: boolean
   extendedErc20Approval: boolean | undefined
   fromInput: string
-  fromToken: Token
-  toToken: Token
+  fromToken: EvmToken
+  toToken: EvmToken
 }
 export const useDeposit = function ({
   canDeposit,

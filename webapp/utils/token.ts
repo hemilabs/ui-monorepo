@@ -1,7 +1,7 @@
 import { Chain } from '@rainbow-me/rainbowkit'
 import { hemi } from 'app/networks'
 import { tokenList } from 'tokenList'
-import { Token } from 'types/token'
+import { EvmToken, Token } from 'types/token'
 import { Address, isAddress, isAddressEqual } from 'viem'
 
 const isNativeAddress = (address: string) => !address.startsWith('0x')
@@ -40,3 +40,6 @@ export const getL2TokenByBridgedAddress = (
         address,
       ),
   )
+
+export const isEvmToken = (token: Token): token is EvmToken =>
+  typeof token.chainId === 'number'

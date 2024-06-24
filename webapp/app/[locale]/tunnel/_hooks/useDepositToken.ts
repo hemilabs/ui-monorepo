@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useApproveToken } from 'hooks/useApproveToken'
 import { useDepositErc20Token } from 'hooks/useL2Bridge'
 import { useEffect } from 'react'
-import { Token } from 'types/token'
+import { type EvmToken } from 'types/token'
 import { parseUnits } from 'viem'
 import {
   useAccount,
@@ -19,7 +19,7 @@ type UseDepositToken = Pick<
 > & {
   amount: string
   extendedApproval?: boolean
-  token: Token
+  token: EvmToken
 }
 export const useDepositToken = function ({
   amount,

@@ -5,14 +5,15 @@ import { evmRemoteNetworks } from 'app/networks'
 import { useChain } from 'hooks/useChain'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
-import { ReactNode, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { Chain, Hash, formatUnits } from 'viem'
 
 import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
 import { useClaimTransaction } from '../_hooks/useClaimTransaction'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
-import { useTunnelOperation, useTunnelState } from '../_hooks/useTunnelState'
+import { useTunnelOperation } from '../_hooks/useTunnelOperation'
+import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { ReviewWithdrawal } from './reviewWithdrawal'
 
@@ -30,7 +31,7 @@ const SubmitButton = function ({
   withdrawal: WithdrawOperation
 }) {
   const t = useTranslations()
-  const { txHash } = useTunnelOperation()
+  const txHash = useTunnelOperation().txHash as Hash
 
   const { claimTxHash } = useGetClaimWithdrawalTxHash(l1ChainId, txHash)
   const { status: messageStatus } = withdrawal
@@ -65,7 +66,6 @@ const SubmitButton = function ({
 }
 
 type Props = {
-  renderForm: (isRunningOperation: boolean) => ReactNode
   state: ReturnType<typeof useTunnelState>
 }
 
@@ -84,7 +84,7 @@ export const Claim = function ({ state }: Props) {
   // https://github.com/BVM-priv/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id
 
-  const { txHash } = useTunnelOperation()
+  const txHash = useTunnelOperation().txHash as Hash
   const t = useTranslations()
 
   const fromChain = useChain(l1ChainId)

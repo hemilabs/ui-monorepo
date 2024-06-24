@@ -1,73 +1,35 @@
-import { evmRemoteNetworks, hemi } from 'app/networks'
-import { useCallback, useEffect, useReducer } from 'react'
+import {
+  evmRemoteNetworks,
+  hemi,
+  networks,
+  type RemoteChain,
+} from 'app/networks'
+import { type BtcChain } from 'btc-wallet/chains'
+import { useCallback, useReducer } from 'react'
 import { tokenList } from 'tokenList'
-import { Token } from 'types/token'
+import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
-import { isNativeToken } from 'utils/token'
-import { Chain, Hash, isHash } from 'viem'
+import { isNativeToken, getTokenByAddress } from 'utils/token'
+import { type Chain, type Hash } from 'viem'
+
+import { useTunnelOperation } from './useTunnelOperation'
 
 export type Operation = 'claim' | 'deposit' | 'prove' | 'withdraw' | 'view'
 
-const getNativeToken = (chain: Chain['id']) =>
+const getNativeToken = (chain: RemoteChain['id']) =>
   tokenList.tokens.find(t => t.chainId === chain && isNativeToken(t))
 
-const validOperations: Operation[] = [
-  'claim',
-  'deposit',
-  'prove',
-  'withdraw',
-  'view',
-]
-
-const isValidOperation = (value: string): value is Operation =>
-  validOperations.includes(value as Operation)
-
-export const useTunnelOperation = function (): {
-  operation: Operation
-  txHash: Hash | undefined
-} {
-  const { queryParams, removeQueryParams, setQueryParams } = useQueryParams()
-  const { operation, txHash } = queryParams
-
-  const isValid = isValidOperation(operation)
-  const isValidTxHash = isHash(txHash)
-
-  useEffect(
-    function updateDefaultParameters() {
-      if (!isValid && !txHash) {
-        setQueryParams({ operation: 'deposit' })
-      }
-      if (!isValidTxHash && txHash) {
-        removeQueryParams('txHash')
-      }
-    },
-    [
-      isValid,
-      isValidTxHash,
-      queryParams,
-      removeQueryParams,
-      setQueryParams,
-      txHash,
-    ],
-  )
-
-  return {
-    operation: isValid ? operation : undefined,
-    txHash: isValidTxHash ? txHash : undefined,
-  }
-}
-type TunnelState = {
-  extendedErc20Approval: boolean
-  fromNetworkId: Chain['id']
+export type TunnelState = {
   fromInput: string
+  fromNetworkId: RemoteChain['id']
   fromToken: Token
-  toNetworkId: Chain['id']
-  toToken: Token
   partialWithdrawal?: Partial<{
     withdrawalTxHash: Hash
     claimWithdrawalTxHash: Hash
     proveWithdrawalTxHash: Hash
   }>
+  toNetworkId: RemoteChain['id']
+  toToken: Token
 }
 
 type Action<T extends string> = {
@@ -81,28 +43,23 @@ type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
 type SavePartialWithdrawal = Action<'savePartialWithdrawal'> & {
   payload: TunnelState['partialWithdrawal']
 }
-
-type UpdateExtendedErc20Approval = Action<'updateExtendedErc20Approval'> &
-  NoPayload
-
 type UpdateFromNetwork = Action<'updateFromNetwork'> & {
-  payload: Chain['id']
+  payload: TunnelState['fromNetworkId']
 }
 type UpdateFromToken = Action<'updateFromToken'> & {
-  payload: Token
+  payload: TunnelState['fromToken']
 }
 type UpdateFromInput = Action<'updateFromInput'> & {
   payload: string
 }
 type UpdateToNetwork = Action<'updateToNetwork'> & {
-  payload: Chain['id']
+  payload: TunnelState['toNetworkId']
 }
 
 type ToggleInput = Action<'toggleInput'> & NoPayload
 type Actions =
   | ResetStateAfterOperation
   | SavePartialWithdrawal
-  | UpdateExtendedErc20Approval
   | UpdateFromNetwork
   | UpdateFromInput
   | UpdateFromToken
@@ -121,7 +78,6 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
     case 'resetStateAfterOperation': {
       const newState = {
         ...state,
-        extendedErc20Approval: false,
         fromInput: '0',
       }
       delete newState.partialWithdrawal
@@ -136,42 +92,29 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
         },
       }
     }
-    case 'updateExtendedErc20Approval': {
-      return {
-        ...state,
-        extendedErc20Approval: !state.extendedErc20Approval,
-      }
-    }
     case 'updateFromNetwork': {
       const { payload: fromNetworkId } = action
       return {
         ...state,
-        extendedErc20Approval: false,
         fromNetworkId,
-        fromToken: getNativeToken(fromNetworkId),
       }
     }
     case 'updateFromToken': {
       const { payload: fromToken } = action
       const { toNetworkId } = state
-      const nativeToken = isNativeToken(fromToken)
-      let toToken
-      if (nativeToken) {
-        toToken = getNativeToken(toNetworkId)
-      } else {
-        const bridgeAddress =
-          fromToken.extensions.bridgeInfo[toNetworkId].tokenAddress
-        // find the tunneled pair of the token
-        toToken = tokenList.tokens.find(
-          t => t.chainId === toNetworkId && t.address === bridgeAddress,
-        )
-      }
+
+      const bridgeAddress =
+        fromToken.extensions?.bridgeInfo[toNetworkId]?.tokenAddress
+      // find the tunneled pair of the token, or go with the native if missing
+      const toToken = bridgeAddress
+        ? getTokenByAddress(bridgeAddress, toNetworkId) ??
+          getNativeToken(toNetworkId)
+        : getNativeToken(toNetworkId)
+
       return {
         ...state,
-        extendedErc20Approval: nativeToken
-          ? false
-          : state.extendedErc20Approval,
         fromToken,
+        toNetworkId,
         toToken,
       }
     }
@@ -196,9 +139,6 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
       const { toToken: newFromToken } = state
       const newState = {
         ...state,
-        extendedErc20Approval: isNativeToken(newFromToken)
-          ? false
-          : state.extendedErc20Approval,
         fromNetworkId: state.toNetworkId,
         fromToken: newFromToken,
         toNetworkId: state.fromNetworkId,
@@ -236,12 +176,11 @@ export const useTunnelState = function (): TunnelState & {
         }
 
   const [state, dispatch] = useReducer(reducer, {
-    extendedErc20Approval: false,
     fromInput: '0',
     fromToken: getNativeToken(initial.fromNetworkId),
     toToken: getNativeToken(initial.toNetworkId),
     ...initial,
-  })
+  } as TunnelState)
 
   const updateFromInput = useCallback(
     function (payload: UpdateFromInput['payload']) {
@@ -281,25 +220,95 @@ export const useTunnelState = function (): TunnelState & {
       },
       [dispatch, operation, removeQueryParams, setQueryParams],
     ),
-    updateExtendedErc20Approval: useCallback(
-      () => dispatch({ type: 'updateExtendedErc20Approval' }),
-      [dispatch],
-    ),
     updateFromInput,
     updateFromNetwork: useCallback(
-      (payload: UpdateFromNetwork['payload']) =>
-        dispatch({ payload, type: 'updateFromNetwork' }),
+      function (fromNetworkId: UpdateFromNetwork['payload']) {
+        // update network
+        dispatch({ payload: fromNetworkId, type: 'updateFromNetwork' })
+        // given the upload, we may need to update the tokens
+        const nativeToken = getNativeToken(fromNetworkId)
+        dispatch({ payload: nativeToken, type: 'updateFromToken' })
+      },
       [dispatch],
     ),
     updateFromToken: useCallback(
-      (payload: UpdateFromToken['payload']) =>
-        dispatch({ payload, type: 'updateFromToken' }),
-      [dispatch],
+      function (fromToken: UpdateFromToken['payload']) {
+        // if the selected token can't be tunneled to the target chain
+        // we need to first update the target network
+        if (!fromToken.extensions?.bridgeInfo[state.toNetworkId]) {
+          // just grab the first available network that's enabled
+          const [newFromNetworkId] = Object.keys(
+            fromToken.extensions.bridgeInfo,
+          ).filter(id => networks.some(n => n.id.toString() === id))
+          // parse as int or keep as string, depending on the id
+          const payload = (
+            isNaN(parseInt(newFromNetworkId))
+              ? newFromNetworkId
+              : parseInt(newFromNetworkId)
+          ) as TunnelState['fromNetworkId']
+          dispatch({
+            payload,
+            type: 'updateToNetwork',
+          })
+        }
+        dispatch({ payload: fromToken, type: 'updateFromToken' })
+      },
+      [dispatch, state],
     ),
     updateToNetwork: useCallback(
-      (payload: UpdateToNetwork['payload']) =>
-        dispatch({ payload, type: 'updateToNetwork' }),
+      function (toNetworkId: UpdateToNetwork['payload']) {
+        // update network
+        dispatch({ payload: toNetworkId, type: 'updateToNetwork' })
+        // if we're updating the "To", it means Hemi is on the "From" network
+        // so the "From" must be updated to the tunnel equivalent in Hemi.
+        const tunneledEthHemi = getNativeToken(hemi.id)
+        const nativeToken = getNativeToken(toNetworkId)
+        const newToken = nativeToken.extensions?.bridgeInfo[hemi.id]
+          ?.tokenAddress
+          ? getTokenByAddress(
+              nativeToken.extensions.bridgeInfo[hemi.id].tokenAddress,
+              hemi.id,
+            ) ?? tunneledEthHemi
+          : tunneledEthHemi
+
+        dispatch({ payload: newToken, type: 'updateFromToken' })
+      },
       [dispatch],
     ),
   }
 }
+
+// EVM L1 <=> HEMI L2
+export type EvmTunneling = {
+  fromNetworkId: Chain['id']
+  fromToken: EvmToken
+  toNetworkId: Chain['id']
+  toToken: EvmToken
+}
+
+// BTC L1 => Hemi L2
+export type BtcToHemiTunneling = {
+  fromNetworkId: BtcChain['id']
+  fromToken: BtcToken
+  toNetworkId: Chain['id']
+  toToken: EvmToken
+}
+
+// Hemi L2 => BTC L1
+export type HemiToBitcoinTunneling = {
+  fromNetworkId: Chain['id']
+  fromToken: EvmToken
+  toNetworkId: BtcChain['id']
+  toToken: BtcToken
+}
+
+type TunnelingOperations =
+  | EvmTunneling
+  | BtcToHemiTunneling
+  | HemiToBitcoinTunneling
+
+// Use this to narrow down in each operation to better typing, depending on the "fromNetworkId"
+export type TypedTunnelState<T extends TunnelingOperations> = ReturnType<
+  typeof useTunnelState
+> &
+  T

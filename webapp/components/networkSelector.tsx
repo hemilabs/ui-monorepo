@@ -1,16 +1,19 @@
 'use client'
 
+import { type RemoteChain } from 'app/networks'
 import { ChainLogo } from 'components/chainLogo'
-import { useTranslations } from 'next-intl'
+import { CheckMark } from 'components/icons/checkMark'
+import { Chevron } from 'components/icons/chevron'
 import { useState } from 'react'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
-import { type Chain } from 'viem'
+
+import { Menu } from './menu'
 
 type Props = {
   disabled: boolean
-  networkId: Chain['id'] | undefined
-  networks: Chain[]
-  onSelectNetwork: (network: Chain['id']) => void
+  networkId: RemoteChain['id'] | undefined
+  networks: RemoteChain[]
+  onSelectNetwork: (network: RemoteChain['id']) => void
   readonly?: boolean
 }
 
@@ -22,11 +25,10 @@ export const NetworkSelector = function ({
   readonly,
 }: Props) {
   const [showNetworkDropdown, setShowNetworkDropdown] = useState(false)
-  const dropdownRef = useOnClickOutside<HTMLDivElement>(() =>
-    setShowNetworkDropdown(false),
-  )
 
-  const t = useTranslations('common')
+  const closeNetworkMenu = () => setShowNetworkDropdown(false)
+
+  const ref = useOnClickOutside<HTMLButtonElement>(closeNetworkMenu)
 
   const network = networks.find(n => n.id === networkId)
 
@@ -34,7 +36,7 @@ export const NetworkSelector = function ({
     return null
   }
 
-  const selectNetwork = function ({ id }: Chain) {
+  const selectNetwork = function ({ id }: RemoteChain) {
     setShowNetworkDropdown(false)
     onSelectNetwork(id)
   }
@@ -53,57 +55,39 @@ export const NetworkSelector = function ({
     <>
       <button
         className={`${commonCss} relative cursor-pointer`}
-        disabled={disabled}
+        disabled={disabled || networks.length < 2}
         onClick={() => setShowNetworkDropdown(true)}
+        ref={ref}
         type="button"
       >
         <ChainLogo chainId={networkId} />
         <span>{network.name}</span>
-        <svg
-          fill="none"
-          height="16"
-          viewBox="0 0 17 16"
-          width="17"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            clipRule="evenodd"
-            d="M4.78061 4.32695C4.34467 3.89102 3.63788 3.89102 3.20195 4.32695C2.76602 4.76288 2.76602 5.46967 3.20195 5.90561L8.08567 10.7893C8.52161 11.2253 9.22839 11.2253 9.66433 10.7893L14.548 5.90561C14.984 5.46967 14.984 4.76288 14.548 4.32695C14.1121 3.89102 13.4053 3.89102 12.9694 4.32695L8.875 8.42134L4.78061 4.32695Z"
-            fill="#1A1C20"
-            fillRule="evenodd"
-          />
-        </svg>
+        {networks.length > 1 && <Chevron.Bottom />}
         {showNetworkDropdown && (
-          <div
-            className="absolute bottom-0 right-0 flex w-48 translate-y-full flex-col rounded-xl bg-white py-3 shadow-2xl"
-            ref={dropdownRef}
-          >
-            <h5 className="w-full px-6 py-1 text-left">
-              {t('select-network')}
-            </h5>
-            <ul>
-              {networks
-                .filter(n => n.id !== networkId)
-                .sort((a, b) =>
-                  a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
-                )
-                .map(n => (
-                  <li
-                    className="cursor-pointer px-6 hover:bg-slate-100"
-                    key={n.id}
+          <Menu
+            items={networks
+              .sort((a, b) =>
+                a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+              )
+              .map(n => ({
+                content: (
+                  <div
+                    className="flex items-center gap-x-2 py-1"
                     onClick={function (e) {
                       e.stopPropagation()
                       selectNetwork(n)
                     }}
                   >
-                    <div className="flex items-center gap-x-2 py-1">
-                      <ChainLogo chainId={networkId} />
-                      <span>{n.name}</span>
+                    <ChainLogo chainId={n.id} />
+                    <span className="whitespace-nowrap">{n.name}</span>
+                    <div className={networkId === n.id ? 'block' : 'invisible'}>
+                      <CheckMark />
                     </div>
-                  </li>
-                ))}
-            </ul>
-          </div>
+                  </div>
+                ),
+                id: n.id.toString(),
+              }))}
+          />
         )}
       </button>
     </>

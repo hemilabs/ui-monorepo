@@ -13,7 +13,8 @@ import { Address, Hash, formatUnits, type Chain } from 'viem'
 import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
 import { useProveTransaction } from '../_hooks/useProveTransaction'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
-import { useTunnelOperation, useTunnelState } from '../_hooks/useTunnelState'
+import { useTunnelOperation } from '../_hooks/useTunnelOperation'
+import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { ReviewWithdrawal } from './reviewWithdrawal'
 
@@ -59,7 +60,6 @@ const SubmitButton = function ({
   )
 }
 type Props = {
-  renderForm: (isRunningOperation: boolean) => React.ReactNode
   state: ReturnType<typeof useTunnelState>
 }
 
@@ -81,7 +81,7 @@ export const Prove = function ({ state }: Props) {
   const l1ChainId = evmRemoteNetworks[0].id
 
   const t = useTranslations()
-  const { txHash } = useTunnelOperation()
+  const txHash = useTunnelOperation().txHash as Hash
 
   const fromChain = useChain(l1ChainId)
 

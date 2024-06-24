@@ -1,4 +1,5 @@
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
+import { RemoteChain, isEvmNetwork } from 'app/networks'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
@@ -10,14 +11,20 @@ import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { type Chain, formatUnits, parseUnits, zeroAddress } from 'viem'
+import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useTransactionsList } from '../_hooks/useTransactionsList'
-import { useTunnelOperation, useTunnelState } from '../_hooks/useTunnelState'
+import { useTunnelOperation } from '../_hooks/useTunnelOperation'
+import {
+  type EvmTunneling,
+  type HemiToBitcoinTunneling,
+  useTunnelState,
+  type TypedTunnelState,
+} from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
 
-import { TunnelForm, canSubmit } from './form'
+import { FormContent, TunnelForm, canSubmit } from './form'
 
 const ReviewWithdrawal = dynamic(
   () => import('./reviewWithdrawal').then(mod => mod.ReviewWithdrawal),
@@ -26,16 +33,49 @@ const ReviewWithdrawal = dynamic(
   },
 )
 
-const hasBridgeConfiguration = (token: Token, l1ChainId: Chain['id']) =>
+const hasBridgeConfiguration = (token: Token, l1ChainId: RemoteChain['id']) =>
   isNativeToken(token) ||
   token.extensions?.bridgeInfo[l1ChainId].tokenAddress !== undefined
 
-type Props = {
-  renderForm: (isRunningOperation: boolean) => React.ReactNode
-  state: ReturnType<typeof useTunnelState>
+type BtcWithdrawProps = {
+  state: TypedTunnelState<HemiToBitcoinTunneling>
 }
 
-export const Withdraw = function ({ renderForm, state }: Props) {
+const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
+  const t = useTranslations()
+  const isWithdrawing = false
+  // eslint-disable-next-line arrow-body-style
+  const handleWithdraw = () => {}
+  return (
+    <TunnelForm
+      expectedChainId={state.fromNetworkId}
+      formContent={
+        <FormContent isRunningOperation={isWithdrawing} tunnelState={state} />
+      }
+      gas={{
+        amount: '0',
+        label: '',
+        symbol: '',
+      }}
+      onSubmit={handleWithdraw}
+      operationSymbol={state.fromToken.symbol}
+      showReview={false}
+      submitButton={
+        <Button disabled type="submit">
+          {t('tunnel-page.submit-button.initiate-withdrawal')}
+        </Button>
+      }
+      total={state.fromInput}
+      transactionsList={[]}
+    />
+  )
+}
+
+type EvmWithdrawProps = {
+  state: TypedTunnelState<EvmTunneling>
+}
+
+const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   const { addWithdrawalToTunnelHistory, withdrawals } =
     useContext(TunnelHistoryContext)
   // use this to avoid infinite loops in effects when resetting the form
@@ -183,6 +223,7 @@ export const Withdraw = function ({ renderForm, state }: Props) {
       fromInput: getFormattedValue(fromInput),
       symbol: fromToken.symbol,
     }),
+    // @ts-expect-error string is `0x${string}`
     txHash,
     userConfirmationError: withdrawError,
   })
@@ -197,7 +238,9 @@ export const Withdraw = function ({ renderForm, state }: Props) {
     <>
       <TunnelForm
         expectedChainId={fromNetworkId}
-        formContent={renderForm(isWithdrawing)}
+        formContent={
+          <FormContent isRunningOperation={isWithdrawing} tunnelState={state} />
+        }
         gas={gas}
         onSubmit={handleWithdraw}
         operationSymbol={fromToken.symbol}
@@ -223,5 +266,22 @@ export const Withdraw = function ({ renderForm, state }: Props) {
         />
       )}
     </>
+  )
+}
+
+export const Withdraw = function ({
+  state,
+}: {
+  state: ReturnType<typeof useTunnelState>
+}) {
+  const { toNetworkId } = state
+  const toChain = useChain(toNetworkId)
+
+  // Typescript can't infer it, but we can cast these safely
+  if (isEvmNetwork(toChain)) {
+    return <EvmWithdraw state={state as TypedTunnelState<EvmTunneling>} />
+  }
+  return (
+    <BtcWithdraw state={state as TypedTunnelState<HemiToBitcoinTunneling>} />
   )
 }

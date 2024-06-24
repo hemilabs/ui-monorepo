@@ -1,17 +1,18 @@
 import { evmRemoteNetworks } from 'app/networks'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
-import { ReactNode, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Button } from 'ui-common/components/button'
+import { Hash } from 'viem'
 import { useChains } from 'wagmi'
 
-import { useTunnelOperation, useTunnelState } from '../_hooks/useTunnelState'
+import { useTunnelOperation } from '../_hooks/useTunnelOperation'
+import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { ReviewWithdrawal } from './reviewWithdrawal'
 
 type Props = {
-  renderForm: (isRunningOperation: boolean) => ReactNode
   state: ReturnType<typeof useTunnelState>
 }
 
@@ -29,7 +30,7 @@ export const View = function ({ state }: Props) {
 
   const chains = useChains()
   const t = useTranslations()
-  const { txHash } = useTunnelOperation()
+  const txHash = useTunnelOperation().txHash as Hash
 
   const { claimTxHash } = useGetClaimWithdrawalTxHash(l1ChainId, txHash)
   const chain = chains.find(c => c.id === l1ChainId)

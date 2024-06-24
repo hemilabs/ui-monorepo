@@ -2,7 +2,7 @@
 
 import { MessageStatus } from '@eth-optimism/sdk'
 import { TokenLogo } from 'app/components/tokenLogo'
-import { TokenSelector } from 'app/components/TokenSelector'
+import { TokenSelector } from 'app/components/tokenSelector'
 import { hemi, networks } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
@@ -155,7 +155,7 @@ const FormContent = function ({ tunnelState, isRunningOperation }: Props) {
       <div className="flex items-center justify-between text-sm">
         <span>{t('form.to-network')}</span>
         <NetworkSelector
-          disabled
+          disabled={isRunningOperation}
           networkId={toNetworkId}
           networks={networks.filter(chain => chain.id !== fromNetworkId)}
           onSelectNetwork={updateToNetwork}

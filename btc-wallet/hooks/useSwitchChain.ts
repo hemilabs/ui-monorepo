@@ -8,7 +8,7 @@ import { useAccount } from './useAccount'
 import { useConfig } from './useConfig'
 
 export const useSwitchChain = function () {
-  const { chainId } = useAccount()
+  const { chainId: currentChainId } = useAccount()
   const { connectionStatus, currentConnector } = useContext(GlobalContext)
   const { chains: supportedChains } = useConfig()
 
@@ -17,7 +17,7 @@ export const useSwitchChain = function () {
     reset,
     status,
   } = useMutation({
-    mutationFn: (chain: BtcChain) => currentConnector.switchNetwork(chain.id),
+    mutationFn: (c: BtcChain['id']) => currentConnector.switchNetwork(c),
     mutationKey: ['btc-wallet', 'switch'],
   })
 
@@ -31,18 +31,18 @@ export const useSwitchChain = function () {
     [currentConnector, reset],
   )
 
-  const switchChain = function (chain: BtcChain) {
+  const switchChain = function ({ chainId }: { chainId: BtcChain['id'] }) {
     if (!currentConnector || connectionStatus !== 'connected') {
       throw new Error('Not Connected')
     }
-    if (!supportedChains.some(c => c.id === chain.id)) {
-      throw new Error(`Unsupported chain ${chain.id}`)
+    if (!supportedChains.some(c => c.id === chainId)) {
+      throw new Error(`Unsupported chain ${chainId}`)
     }
-    if (chainId === chain.id) {
+    if (currentChainId === chainId) {
       // already connected - do nothing
       return
     }
-    trySwitch(chain)
+    trySwitch(chainId)
   }
 
   return {

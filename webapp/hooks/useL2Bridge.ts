@@ -546,7 +546,7 @@ export const useFinalizeMessage = function ({
 type UseProveMessage = {
   enabled: boolean
   l1ChainId: Chain['id']
-  withdrawTxHash: Address
+  withdrawTxHash: Hash
 }
 
 export const useProveMessage = function ({

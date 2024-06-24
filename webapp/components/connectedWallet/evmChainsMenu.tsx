@@ -1,7 +1,8 @@
+import { CheckMark } from 'components/icons/checkMark'
+import { Menu } from 'components/menu'
 import { useAccount, useSwitchChain as useSwitchEvmChain } from 'wagmi'
 
 import { EvmLogo } from './evmLogo'
-import { Menu } from './menu'
 
 export const EvmChainsMenu = function ({
   onSwitchChain,
@@ -23,22 +24,9 @@ export const EvmChainsMenu = function ({
             }}
           >
             <EvmLogo chainId={c.id} />
-            <span>{c.name}</span>
+            <span className="whitespace-nowrap">{c.name}</span>
             <div className={chainId === c.id ? 'block' : 'invisible'}>
-              <svg
-                fill="none"
-                height={12}
-                width={12}
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M1.375 7.547 4.5 10.125l6.125-8.25"
-                  stroke="#FF6C15"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                />
-              </svg>
+              <CheckMark />
             </div>
           </button>
         ),

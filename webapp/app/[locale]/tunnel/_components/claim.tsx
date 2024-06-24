@@ -1,7 +1,7 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
 import { WithdrawOperation } from 'app/context/tunnelHistoryContext/types'
-import { bridgeableNetworks } from 'app/networks'
+import { evmRemoteNetworks } from 'app/networks'
 import { useChain } from 'hooks/useChain'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
@@ -82,7 +82,7 @@ export const Claim = function ({ state }: Props) {
   const [isClaiming, setIsClaiming] = useState(false)
 
   // https://github.com/BVM-priv/ui-monorepo/issues/158
-  const l1ChainId = bridgeableNetworks[0].id
+  const l1ChainId = evmRemoteNetworks[0].id
 
   const { txHash } = useTunnelOperation()
   const t = useTranslations()

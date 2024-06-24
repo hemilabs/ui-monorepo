@@ -22,11 +22,12 @@ export const hemi: Chain = {
 
 export const bitcoin = testnetMode ? bitcoinTestnet : bitcoinMainnet
 
-export const bridgeableNetworks: OrderedChains = testnetMode
+// EVM-compatible networks that can tunnel to/from Hemi
+export const evmRemoteNetworks: OrderedChains = testnetMode
   ? [sepolia]
   : [mainnet]
 
-export const networks: OrderedChains = [hemi, ...bridgeableNetworks]
+export const networks: OrderedChains = [hemi, ...evmRemoteNetworks]
 
 export const isChainSupported = (chainId: Chain['id']) =>
   networks.some(({ id }) => id === chainId)

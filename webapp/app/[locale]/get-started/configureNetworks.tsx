@@ -1,6 +1,6 @@
 'use client'
 
-import { bridgeableNetworks, hemi } from 'app/networks'
+import { evmRemoteNetworks, hemi } from 'app/networks'
 import dynamic from 'next/dynamic'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -118,7 +118,7 @@ const ChainRow = function ({ chain, layer, logo }: ChainRowProps) {
 }
 
 const AutomaticConfiguration = function () {
-  const ethereum = bridgeableNetworks.at(-1)
+  const ethereum = evmRemoteNetworks.at(-1)
 
   return (
     <div className="flex flex-col gap-y-6 py-2 lg:gap-y-9">
@@ -138,7 +138,7 @@ const AutomaticConfiguration = function () {
 
 const ManualConfiguration = function () {
   const t = useTranslations('get-started.network')
-  const ethereum = bridgeableNetworks.at(-1)
+  const ethereum = evmRemoteNetworks.at(-1)
 
   return (
     <div className="grid grid-cols-1 gap-y-4 rounded-lg bg-white text-black xl:grid-cols-2 2xl:grid-cols-3 [&>a]:text-sm [&>h5]:text-base xl:[&>h5]:text-lg [&>p]:text-sm xl:[&>p]:text-base">

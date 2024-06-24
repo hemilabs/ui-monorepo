@@ -1,6 +1,6 @@
 import { CrossChainMessenger, MessageStatus } from '@eth-optimism/sdk'
 import { QueryClient, useQuery } from '@tanstack/react-query'
-import { bridgeableNetworks, hemi } from 'app/networks'
+import { evmRemoteNetworks, hemi } from 'app/networks'
 import { hemiMainnet, hemiTestnet } from 'hemi-metadata'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
@@ -15,7 +15,7 @@ import { TunnelHistoryContext } from './index'
 const queue = new PQueue({ concurrency: 3 })
 
 // https://github.com/BVM-priv/ui-monorepo/issues/158
-const l1ChainId = bridgeableNetworks[0].id
+const l1ChainId = evmRemoteNetworks[0].id
 
 const getMinutes = (minutes: number) => minutes * 60 * 1000
 

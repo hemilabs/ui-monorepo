@@ -8,6 +8,7 @@ import { Token } from 'types/token'
 import { Card } from 'ui-common/components/card'
 
 import { Balance } from './balance'
+import { Chevron } from './icons/chevron'
 import { TokenLogo } from './tokenLogo'
 
 const CloseIcon = dynamic(
@@ -126,7 +127,7 @@ export const TokenSelector = function ({
     <>
       <button
         className="flex items-center justify-end gap-x-2 text-xs"
-        disabled={disabled}
+        disabled={disabled || tokensToList.length < 2}
         onClick={openModal}
         type="button"
       >
@@ -134,20 +135,9 @@ export const TokenSelector = function ({
         <span className="text-xs font-medium text-slate-700 sm:text-sm">
           {selectedToken.symbol}
         </span>
-        <svg
-          fill="none"
-          height="16"
-          viewBox="0 0 17 16"
-          width="17"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            clipRule="evenodd"
-            d="M4.65561 4.32695C4.21967 3.89102 3.51288 3.89102 3.07695 4.32695C2.64102 4.76288 2.64102 5.46967 3.07695 5.90561L7.96067 10.7893C8.39661 11.2253 9.10339 11.2253 9.53933 10.7893L14.423 5.90561C14.859 5.46967 14.859 4.76288 14.423 4.32695C13.9871 3.89102 13.2803 3.89102 12.8444 4.32695L8.75 8.42134L4.65561 4.32695Z"
-            fill="#2E3A59"
-            fillRule="evenodd"
-          />
-        </svg>
+        {tokensToList.length > 1 && (
+          <Chevron.Bottom className="scale-110 [&>path]:stroke-slate-700" />
+        )}
       </button>
       {showTokenSelector && (
         <Modal onClose={closeModal}>

@@ -11,6 +11,8 @@
     "connect-wallet-to-review": "Connect your wallet to continue the operation.",
     "form": {
       "balance": "Balance",
+      "btc-receiving-address": "Receiving ETH address",
+      "btc-receiving-address-description": "You will receive your tunneled {symbol} to the connected EVM wallet address.",
       "from-network": "From Network",
       "max": "max",
       "switch-to-prove": "Switch to {network} to complete transaction",
@@ -127,7 +129,13 @@
     "copy-address": "Copy Address",
     "description": "Connect your EVM and BTC wallets to transfer assets seamlessly. For the best experience, use wallets from both networks.",
     "disconnect": "Disconnect",
-    "evm-wallet": "EVM Wallet"
+    "evm-wallet": "EVM Wallet",
+    "status": {
+      "connected": "Connected",
+      "connecting": "Connecting",
+      "disconnected": "Disconnected",
+      "reconnecting": "Reconnecting"
+    }
   },
   "get-started": {
     "header": {

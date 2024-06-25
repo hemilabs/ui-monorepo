@@ -125,20 +125,16 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
   // Use this function to add an operation to the local storage
   // from outside of the automatic sync process.
   const addOperationToTunnelHistory = useCallback(
-    (operation: RawTunnelOperation<T>) =>
-      // add the new operation, and update local storage.
-      addTimestampToOperation<T>(operation, chainId).then(
-        function (updatedOperation) {
-          state.setSyncBlock(function (prev) {
-            const newItems = mergeContent<T>(prev.content, [updatedOperation])
-            return {
-              ...prev,
-              content: newItems,
-            }
-          })
-        },
-      ),
-    [chainId, state],
+    (operation: T) =>
+      state.setSyncBlock(function (prev) {
+        const newItems = mergeContent<T>(prev.content, [operation])
+        return {
+          ...prev,
+          content: newItems,
+        }
+      }),
+
+    [state],
   )
 
   return useMemo(

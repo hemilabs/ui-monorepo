@@ -3,6 +3,8 @@
 import { MessageDirection } from '@eth-optimism/sdk'
 import { bitcoin, isEvmNetwork } from 'app/networks'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
+import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
+import { DepositOperation } from 'context/tunnelHistoryContext/types'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useTranslations } from 'next-intl'
@@ -221,19 +223,26 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
           setOperationRunning('idle')
           resetStateAfterOperation()
           const isNative = isNativeToken(fromToken)
-          addDepositToTunnelHistory({
-            amount: parseUnits(fromInput, fromToken.decimals).toString(),
-            blockNumber: Number(depositReceipt.blockNumber),
-            data: '0x', // not needed
-            direction: MessageDirection.L1_TO_L2,
-            from: depositReceipt.from,
-            l1Token: isNative ? zeroAddress : fromToken.address,
-            l2Token: isNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
-            logIndex: 0, // not needed
-            // "to" field uses the same address as from, which is user's address
-            to: depositReceipt.from,
-            transactionHash: depositReceipt.transactionHash,
-          })
+          // Handling of this error is needed https://github.com/BVM-priv/ui-monorepo/issues/322
+          // eslint-disable-next-line promise/catch-or-return
+          addTimestampToOperation<DepositOperation>(
+            {
+              amount: parseUnits(fromInput, fromToken.decimals).toString(),
+              blockNumber: Number(depositReceipt.blockNumber),
+              data: '0x', // not needed
+              direction: MessageDirection.L1_TO_L2,
+              from: depositReceipt.from,
+              l1Token: isNative ? zeroAddress : fromToken.address,
+              l2Token: isNative
+                ? NativeTokenSpecialAddressOnL2
+                : toToken.address,
+              logIndex: 0, // not needed
+              // "to" field uses the same address as from, which is user's address
+              to: depositReceipt.from,
+              transactionHash: depositReceipt.transactionHash,
+            },
+            fromToken.chainId,
+          ).then(addDepositToTunnelHistory)
         }
         return () => clearTimeout(timeoutId)
       }

@@ -64,8 +64,7 @@ type Props = {
 }
 
 export const Prove = function ({ state }: Props) {
-  const { updateWithdrawalStatus, withdrawals } =
-    useContext(TunnelHistoryContext)
+  const { updateWithdrawal, withdrawals } = useContext(TunnelHistoryContext)
 
   const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =
     state
@@ -114,14 +113,16 @@ export const Prove = function ({ state }: Props) {
   )
 
   useEffect(
-    function updateWithdrawalStatusAfterConfirmation() {
+    function updateWithdrawalAfterConfirmation() {
       if (withdrawalProofReceipt?.status !== 'success') {
         return
       }
       if (withdrawal?.status === MessageStatus.IN_CHALLENGE_PERIOD) {
         return
       }
-      updateWithdrawalStatus(withdrawal, MessageStatus.IN_CHALLENGE_PERIOD)
+      updateWithdrawal(withdrawal, {
+        status: MessageStatus.IN_CHALLENGE_PERIOD,
+      })
       savePartialWithdrawal({
         proveWithdrawalTxHash: withdrawalProofReceipt.transactionHash,
       })
@@ -129,7 +130,7 @@ export const Prove = function ({ state }: Props) {
     [
       savePartialWithdrawal,
       txHash,
-      updateWithdrawalStatus,
+      updateWithdrawal,
       withdrawal,
       withdrawals,
       withdrawalProofReceipt,

@@ -1,17 +1,17 @@
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
+import { MessageStatus } from '@eth-optimism/sdk'
 import { RemoteChain, isEvmNetwork } from 'app/networks'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
+import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useContext, useEffect, useState } from 'react'
-import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { formatUnits, parseUnits, zeroAddress } from 'viem'
+import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useTransactionsList } from '../_hooks/useTransactionsList'
@@ -76,8 +76,7 @@ type EvmWithdrawProps = {
 }
 
 const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
-  const { addWithdrawalToTunnelHistory, withdrawals } =
-    useContext(TunnelHistoryContext)
+  const { updateWithdrawal, withdrawals } = useContext(TunnelHistoryContext)
   // use this to avoid infinite loops in effects when resetting the form
   const [hasClearedForm, setHasClearedForm] = useState(false)
   const [isWithdrawing, setIsWithdrawing] = useState(false)
@@ -161,27 +160,26 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
 
   useEffect(
     function handleWithdrawalSuccess() {
-      if (
-        withdrawReceipt?.status === 'success' &&
-        !withdrawals.some(
-          w => w.transactionHash === withdrawReceipt.transactionHash,
-        )
-      ) {
-        const isNative = isNativeToken(fromToken)
-        addWithdrawalToTunnelHistory({
-          amount: parseUnits(fromInput, fromToken.decimals).toString(),
+      if (withdrawReceipt?.status !== 'success') {
+        return
+      }
+      const withdrawalFound = withdrawals.find(
+        w =>
+          w.transactionHash === withdrawReceipt.transactionHash && !w.timestamp,
+      )
+      if (withdrawalFound) {
+        const extendedWithdrawal = {
+          ...withdrawalFound,
           blockNumber: Number(withdrawReceipt.blockNumber),
-          data: '0x', // not needed
-          direction: MessageDirection.L2_TO_L1,
-          from: withdrawReceipt.from,
-          l1Token: isNative ? zeroAddress : toToken.address,
-          l2Token: isNative ? NativeTokenSpecialAddressOnL2 : fromToken.address,
-          logIndex: 0, // not needed
-          status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
-          // "to" field uses the same address as from, which is user's address
-          to: withdrawReceipt.from,
-          transactionHash: withdrawReceipt.transactionHash,
-        })
+        }
+        // Handling of this error is needed https://github.com/BVM-priv/ui-monorepo/issues/322
+        // eslint-disable-next-line promise/catch-or-return
+        addTimestampToOperation(extendedWithdrawal, fromNetworkId).then(w =>
+          updateWithdrawal(extendedWithdrawal, {
+            ...w,
+            status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+          }),
+        )
         // use this to show the TX confirmation in prove.tsx when mounting
         savePartialWithdrawal({
           withdrawalTxHash: withdrawReceipt.transactionHash,
@@ -189,12 +187,9 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       }
     },
     [
-      addWithdrawalToTunnelHistory,
-      fromInput,
-      fromToken,
+      fromNetworkId,
       savePartialWithdrawal,
-      toNetworkId,
-      toToken,
+      updateWithdrawal,
       withdrawals,
       withdrawReceipt,
     ],

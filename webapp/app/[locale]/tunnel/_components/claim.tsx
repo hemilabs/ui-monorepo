@@ -70,8 +70,7 @@ type Props = {
 }
 
 export const Claim = function ({ state }: Props) {
-  const { updateWithdrawalStatus, withdrawals } =
-    useContext(TunnelHistoryContext)
+  const { updateWithdrawal, withdrawals } = useContext(TunnelHistoryContext)
   const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =
     state
   // If coming from the Prove form, show the prove transaction briefly
@@ -118,7 +117,7 @@ export const Claim = function ({ state }: Props) {
   )
 
   useEffect(
-    function updateWithdrawalStatusAfterConfirmation() {
+    function updateWithdrawalAfterConfirmation() {
       if (claimWithdrawalReceipt?.status !== 'success') {
         return
       }
@@ -126,7 +125,7 @@ export const Claim = function ({ state }: Props) {
       if (withdrawal?.status === MessageStatus.RELAYED) {
         return
       }
-      updateWithdrawalStatus(withdrawal, MessageStatus.RELAYED)
+      updateWithdrawal(withdrawal, { status: MessageStatus.RELAYED })
       savePartialWithdrawal({
         claimWithdrawalTxHash: claimWithdrawalReceipt.transactionHash,
       })
@@ -135,7 +134,7 @@ export const Claim = function ({ state }: Props) {
       claimWithdrawalReceipt,
       savePartialWithdrawal,
       txHash,
-      updateWithdrawalStatus,
+      updateWithdrawal,
       withdrawal,
       withdrawals,
     ],

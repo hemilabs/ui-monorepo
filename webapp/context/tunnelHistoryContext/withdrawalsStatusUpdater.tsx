@@ -41,14 +41,17 @@ const refetchInterval = {
   },
 }
 
-const updateWithdrawal = async ({
+const pollUpdateWithdrawal = async ({
   crossChainMessenger,
-  updateWithdrawalStatus,
+  updateWithdrawal,
   withdrawal,
 }: {
   crossChainMessenger: CrossChainMessenger
   queryClient: QueryClient
-  updateWithdrawalStatus: (w: WithdrawOperation, status: MessageStatus) => void
+  updateWithdrawal: (
+    w: WithdrawOperation,
+    updates: Partial<WithdrawOperation>,
+  ) => void
   withdrawal: WithdrawOperation
 }) =>
   // Use a queue to avoid firing lots of requests. Throttling may also not work because it throttles
@@ -63,7 +66,7 @@ const updateWithdrawal = async ({
         withdrawal.direction,
       )
       if (withdrawal.status !== status) {
-        updateWithdrawalStatus(withdrawal, status)
+        updateWithdrawal(withdrawal, { status })
       }
 
       return status
@@ -99,7 +102,7 @@ const WithdrawalStatusUpdater = function ({
 
 export const WithdrawalsStatusUpdater = function () {
   const { isConnected } = useAccount()
-  const { updateWithdrawalStatus, withdrawals = [] } =
+  const { updateWithdrawal, withdrawals = [] } =
     useContext(TunnelHistoryContext)
 
   const unsupportedChain = useConnectedToUnsupportedEvmChain()
@@ -144,9 +147,9 @@ export const WithdrawalsStatusUpdater = function () {
           key={w.transactionHash}
           queryFn={() =>
             // @ts-expect-error unsure why it adds void, but actual result is not needed
-            updateWithdrawal({
+            pollUpdateWithdrawal({
               crossChainMessenger,
-              updateWithdrawalStatus,
+              updateWithdrawal,
               withdrawal: w,
             })
           }

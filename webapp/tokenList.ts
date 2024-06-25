@@ -97,8 +97,8 @@ const nativeTokens: Token[] = [
 ]
 
 if (featureFlags.btcTunnelEnabled) {
-  // TODO needs to be added to the token list
-  const btcTokenAddress = '0x15Faa86E4c334c173A31FA20dcD9F3c3536337FA'
+  // TODO needs to be added to the token list https://github.com/BVM-priv/ui-monorepo/issues/356
+  const btcTokenAddress = '0x816A8F283A09b0B233b35200b1bb934f2D2E1925'
   nativeTokens.push({
     address: bitcoinTestnet.nativeCurrency.symbol,
     chainId: bitcoinTestnet.id,

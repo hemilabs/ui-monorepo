@@ -1,8 +1,7 @@
 import Big from 'big.js'
-import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useTranslations } from 'next-intl'
-import { type BtcToken, type EvmToken, type Token } from 'types/token'
+import { type EvmToken, type Token } from 'types/token'
 import { isEvmToken, isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 
@@ -58,29 +57,9 @@ const SetMaxEvmBalance = function ({
   return <MaxButton disabled={disabled} onClick={handleClick} />
 }
 
-const SetMaxBtcBalance = function ({
-  fromToken,
-  isRunningOperation,
-  onSetMaxBalance,
-}: Props<BtcToken>) {
-  const { balance } = useBtcBalance()
-  const disabled = isRunningOperation || (balance?.confirmed ?? 0) === 0
-
-  const handleClick = () =>
-    onSetMaxBalance(formatUnits(BigInt(balance!.confirmed), fromToken.decimals))
-
-  return (
-    <MaxButton
-      disabled={disabled}
-      // TODO we must account for btc fees https://github.com/BVM-priv/ui-monorepo/issues/342
-      onClick={handleClick}
-    />
-  )
-}
-
 export const SetMaxBalance = ({ fromToken, ...props }: Props) =>
+  // TODO Enable "Max" button (uncommenting below code) once fees are taking into consideration
+  // for btc https://github.com/BVM-priv/ui-monorepo/issues/342
   isEvmToken(fromToken) ? (
     <SetMaxEvmBalance {...props} fromToken={fromToken} />
-  ) : (
-    <SetMaxBtcBalance {...props} fromToken={fromToken} />
-  )
+  ) : null

@@ -106,11 +106,9 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
       const bridgeAddress =
         fromToken.extensions?.bridgeInfo[toNetworkId]?.tokenAddress
       // find the tunneled pair of the token, or go with the native if missing
-      const toToken = bridgeAddress
-        ? getTokenByAddress(bridgeAddress, toNetworkId) ??
-          getNativeToken(toNetworkId)
-        : getNativeToken(toNetworkId)
-
+      const toToken =
+        (bridgeAddress && getTokenByAddress(bridgeAddress, toNetworkId)) ??
+        getNativeToken(toNetworkId)
       return {
         ...state,
         fromToken,

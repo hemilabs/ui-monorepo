@@ -9,12 +9,9 @@ import { HemiSymbol } from 'ui-common/components/hemiLogo'
 import { Tabs, Tab } from 'ui-common/components/tabs'
 import { type Chain } from 'viem'
 
-const AddChain = dynamic(
-  () => import('app/[locale]/get-started/addChain').then(mod => mod.AddChain),
-  {
-    ssr: false,
-  },
-)
+const AddChain = dynamic(() => import('./addChain').then(mod => mod.AddChain), {
+  ssr: false,
+})
 
 const EthLogo = () => (
   <svg fill="none" height={24} width={24} xmlns="http://www.w3.org/2000/svg">

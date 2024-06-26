@@ -7,12 +7,12 @@ import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 
-import { ConfigureNetwork } from './configureNetworks'
-import { QuickStart, profiles, Profile } from './quickStart'
-import { WelcomePack } from './welcomePack'
+import { ConfigureNetwork } from './_components/configureNetworks'
+import { QuickStart, profiles, Profile } from './_components/quickStart'
+import { WelcomePack } from './_components/welcomePack'
 
 const SelectProfile = dynamic(
-  () => import('./selectProfile').then(mod => mod.SelectProfile),
+  () => import('./_components/selectProfile').then(mod => mod.SelectProfile),
   {
     ssr: false,
   },

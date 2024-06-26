@@ -163,7 +163,7 @@
           "url": "#"
         }
       },
-      "individual": {
+      "explorers": {
         "1": {
           "title": "Para Comenzar",
           "text": "Explore los Fundamentos de la Red Hemi.",
@@ -255,8 +255,8 @@
     "sub-heading": "Para comenzar, seleccione una de las siguientes opciones",
     "options": {
       "developer": "Soy Desarrollador",
-      "miner": "Soy Minero",
-      "individual": "Soy un individuo"
+      "explorer": "Soy un Explorador",
+      "miner": "Soy Minero"
     }
   },
   "demos": {

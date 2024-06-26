@@ -1,4 +1,4 @@
-export const IndividualIcon = () => (
+export const ExplorersIcon = () => (
   <svg
     fill="none"
     height="49"

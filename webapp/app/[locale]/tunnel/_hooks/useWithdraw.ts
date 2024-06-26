@@ -1,13 +1,15 @@
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
+import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { useWithdrawNativeToken, useWithdrawToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
-import { useCallback } from 'react'
+import { useCallback, useContext } from 'react'
+import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken } from 'types/token'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { isNativeToken } from 'utils/token'
-import { type Chain, parseUnits, Hash } from 'viem'
-import { useWaitForTransactionReceipt } from 'wagmi'
+import { type Chain, parseUnits, Hash, zeroAddress } from 'viem'
+import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelOperation'
 
@@ -25,6 +27,8 @@ export const useWithdraw = function ({
   l1ChainId,
   toToken,
 }: UseWithdraw) {
+  const { addWithdrawalToTunnelHistory } = useContext(TunnelHistoryContext)
+  const { address } = useAccount()
   const queryClient = useQueryClient()
   const withdrawingNative = isNativeToken(fromToken)
   const { txHash } = useTunnelOperation()
@@ -51,6 +55,22 @@ export const useWithdraw = function ({
       [MessageDirection.L2_TO_L1, l1ChainId, hash, 'getMessageStatus'],
       MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
     )
+
+    addWithdrawalToTunnelHistory({
+      amount: toWithdraw,
+      data: '0x', // not needed
+      direction: MessageDirection.L2_TO_L1,
+      from: address,
+      l1Token: withdrawingNative ? zeroAddress : toToken.address,
+      l2Token: withdrawingNative
+        ? NativeTokenSpecialAddressOnL2
+        : fromToken.address,
+      logIndex: 0, // not needed
+      status: MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
+      // "to" field uses the same address as from, which is user's address
+      to: address,
+      transactionHash: hash,
+    })
   }
 
   const {

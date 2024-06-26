@@ -1,6 +1,5 @@
 'use client'
 
-import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import dynamic from 'next/dynamic'
@@ -33,16 +32,16 @@ const getTunnelHistoryWithdrawStorageKey = (
 type TunnelHistoryContext = {
   addDepositToTunnelHistory: (
     deposit: Omit<DepositOperation, 'timestamp'>,
-  ) => Promise<void>
+  ) => void
   addWithdrawalToTunnelHistory: (
     withdrawal: Omit<WithdrawOperation, 'timestamp'>,
-  ) => Promise<void>
+  ) => void
   deposits: DepositOperation[]
   depositSyncStatus: SyncStatus
   resumeSync: () => void
-  updateWithdrawalStatus: (
+  updateWithdrawal: (
     withdrawal: WithdrawOperation,
-    status: MessageStatus,
+    updates: Partial<WithdrawOperation>,
   ) => void
   withdrawSyncStatus: SyncStatus
   withdrawals: WithdrawOperation[]
@@ -54,7 +53,7 @@ export const TunnelHistoryContext = createContext<TunnelHistoryContext>({
   deposits: [],
   depositSyncStatus: 'syncing',
   resumeSync: () => undefined,
-  updateWithdrawalStatus: () => undefined,
+  updateWithdrawal: () => undefined,
   withdrawals: [],
   withdrawSyncStatus: 'syncing',
 })
@@ -94,9 +93,9 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
         depositState.resumeSync()
         withdrawalsState.resumeSync()
       },
-      updateWithdrawalStatus(
+      updateWithdrawal(
         withdrawal: WithdrawOperation,
-        status: MessageStatus,
+        updates: Partial<WithdrawOperation>,
       ) {
         withdrawalsState.updateOperation(function (current) {
           const newState = {
@@ -104,21 +103,26 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
             content: current.content.map(o =>
               o.transactionHash === withdrawal.transactionHash &&
               o.direction === withdrawal.direction
-                ? { ...o, status }
+                ? { ...o, ...updates }
                 : o,
             ),
           }
           return newState
         })
-        queryClient.setQueryData(
-          [
-            withdrawal.direction,
-            l1ChainId,
-            withdrawal.transactionHash,
-            'getMessageStatus',
-          ],
-          status,
-        )
+        if (
+          updates.status !== undefined &&
+          withdrawal.status !== updates.status
+        ) {
+          queryClient.setQueryData(
+            [
+              withdrawal.direction,
+              l1ChainId,
+              withdrawal.transactionHash,
+              'getMessageStatus',
+            ],
+            updates.status,
+          )
+        }
       },
       withdrawals: withdrawalsState.operations,
       withdrawSyncStatus: withdrawalsState.syncStatus,

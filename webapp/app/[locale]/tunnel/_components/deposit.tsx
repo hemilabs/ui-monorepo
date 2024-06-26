@@ -33,6 +33,16 @@ import { ReceivingHemiAddress } from './receivingHemiAddress'
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
 
+const SetMaxBtcBalance = dynamic(
+  () => import('./setMaxBalance').then(mod => mod.SetMaxBtcBalance),
+  { ssr: false },
+)
+
+const SetMaxEvmBalance = dynamic(
+  () => import('./setMaxBalance').then(mod => mod.SetMaxEvmBalance),
+  { ssr: false },
+)
+
 const WalletsConnected = dynamic(
   () => import('./walletsConnected').then(mod => mod.WalletsConnected),
   { ssr: false },
@@ -104,6 +114,7 @@ type BtcDepositProps = {
 // but nothing is actually visible until BTC is enabled
 // https://github.com/BVM-priv/ui-monorepo/issues/342
 const BtcDeposit = function ({ state }: BtcDepositProps) {
+  const { fromToken, updateFromInput } = state
   const isRunningOperation = false
   // eslint-disable-next-line arrow-body-style
   const handleDeposit = () => {}
@@ -116,6 +127,13 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
       formContent={
         <FormContent
           isRunningOperation={isRunningOperation}
+          setMaxBalanceButton={
+            <SetMaxBtcBalance
+              fromToken={fromToken}
+              isRunningOperation={isRunningOperation}
+              onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+            />
+          }
           tunnelState={state}
         />
       }
@@ -164,6 +182,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     fromToken,
     resetStateAfterOperation,
     toToken,
+    updateFromInput,
   } = state
 
   const { chain } = useAccount()
@@ -375,6 +394,14 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
       formContent={
         <FormContent
           isRunningOperation={isRunningOperation}
+          setMaxBalanceButton={
+            <SetMaxEvmBalance
+              fromToken={fromToken}
+              gas={depositGasFees}
+              isRunningOperation={isRunningOperation}
+              onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+            />
+          }
           tunnelState={{
             ...state,
             // patch these events to update the extendedErc20Approval state

@@ -9,7 +9,7 @@ import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
 import { Token } from 'types/token'
 import { Card } from 'ui-common/components/card'
-import { formatNumber, getFormattedValue } from 'utils/format'
+import { getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -37,17 +37,6 @@ const NetworkSelector = dynamic(
     loading: () => (
       <Skeleton className="h-10 py-2" containerClassName="basis-1/4" />
     ),
-    ssr: false,
-  },
-)
-
-const SetMaxBalance = dynamic(
-  () =>
-    import('app/[locale]/tunnel/_components/SetMaxBalance').then(
-      mod => mod.SetMaxBalance,
-    ),
-  {
-    loading: () => <Skeleton className="h-5 w-8" />,
     ssr: false,
   },
 )
@@ -143,11 +132,13 @@ export const getTotal = ({
   )
 
 type FormContentProps = {
+  setMaxBalanceButton: ReactNode
   tunnelState: ReturnType<typeof useTunnelState>
   isRunningOperation: boolean
 }
 
 export const FormContent = function ({
+  setMaxBalanceButton,
   tunnelState,
   isRunningOperation,
 }: FormContentProps) {
@@ -212,13 +203,7 @@ export const FormContent = function ({
         </div>
         <div className="flex items-center justify-end gap-x-2 text-xs font-normal sm:text-sm">
           {t('form.balance')}: <Balance token={fromToken} />
-          <SetMaxBalance
-            fromToken={fromToken}
-            isRunningOperation={isRunningOperation}
-            onSetMaxBalance={maxBalance =>
-              updateFromInput(formatNumber(maxBalance, 2))
-            }
-          />
+          {setMaxBalanceButton}
         </div>
       </div>
       <div className="mx-auto flex h-10">

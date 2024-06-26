@@ -33,6 +33,11 @@ const ReviewWithdrawal = dynamic(
   },
 )
 
+const SetMaxEvmBalance = dynamic(
+  () => import('./setMaxBalance').then(mod => mod.SetMaxEvmBalance),
+  { ssr: false },
+)
+
 const hasBridgeConfiguration = (token: Token, l1ChainId: RemoteChain['id']) =>
   isNativeToken(token) ||
   token.extensions?.bridgeInfo[l1ChainId].tokenAddress !== undefined
@@ -41,7 +46,11 @@ type BtcWithdrawProps = {
   state: TypedTunnelState<HemiToBitcoinTunneling>
 }
 
+// TODO implement correctly, this only puts some props so it compiles
+// but nothing is actually visible until BTC is enabled
+// https://github.com/BVM-priv/ui-monorepo/issues/343
 const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
+  const { fromToken, updateFromInput } = state
   const t = useTranslations()
   const isWithdrawing = false
   // eslint-disable-next-line arrow-body-style
@@ -50,7 +59,19 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     <TunnelForm
       expectedChainId={state.fromNetworkId}
       formContent={
-        <FormContent isRunningOperation={isWithdrawing} tunnelState={state} />
+        <FormContent
+          isRunningOperation={isWithdrawing}
+          setMaxBalanceButton={
+            <SetMaxEvmBalance
+              fromToken={fromToken}
+              // Fees will be defined once btc withdraw is implemented
+              gas={BigInt(0)}
+              isRunningOperation={isWithdrawing}
+              onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+            />
+          }
+          tunnelState={state}
+        />
       }
       gas={{
         amount: '0',
@@ -91,6 +112,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     savePartialWithdrawal,
     toNetworkId,
     toToken,
+    updateFromInput,
   } = state
 
   const { chainId } = useAccount()
@@ -234,7 +256,18 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       <TunnelForm
         expectedChainId={fromNetworkId}
         formContent={
-          <FormContent isRunningOperation={isWithdrawing} tunnelState={state} />
+          <FormContent
+            isRunningOperation={isWithdrawing}
+            setMaxBalanceButton={
+              <SetMaxEvmBalance
+                fromToken={fromToken}
+                gas={withdrawGasFees}
+                isRunningOperation={isWithdrawing}
+                onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+              />
+            }
+            tunnelState={state}
+          />
         }
         gas={gas}
         onSubmit={handleWithdraw}

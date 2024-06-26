@@ -26,14 +26,14 @@ export const ReceivingHemiAddress = function ({ token }: Props) {
     <div className="flex flex-col gap-y-1 text-xs leading-normal">
       <div className="flex items-center gap-x-2">
         <span className="font-normal text-zinc-900">
-          {t('tunnel-page.form.btc-receiving-address')}
+          {t('tunnel-page.form.hemi-receiving-address')}
         </span>
         <Tooltip
           id="btc-target-address-hemi"
           overlay={
             <div className="w-60">
               <p className="text-xs text-gray-600">
-                {t('tunnel-page.form.btc-receiving-address-description', {
+                {t('tunnel-page.form.hemi-receiving-address-description', {
                   symbol: token.symbol,
                 })}
               </p>

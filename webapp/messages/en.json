@@ -11,9 +11,9 @@
     "connect-wallet-to-review": "Connect your wallet to continue the operation.",
     "form": {
       "balance": "Balance",
-      "btc-receiving-address": "Receiving ETH address",
-      "btc-receiving-address-description": "You will receive your tunneled {symbol} to the connected EVM wallet address.",
       "from-network": "From Network",
+      "hemi-receiving-address": "Receiving Hemi address",
+      "hemi-receiving-address-description": "You will receive your tunneled {symbol} to the connected EVM wallet address.",
       "max": "max",
       "switch-to-prove": "Switch to {network} to complete transaction",
       "to-network": "To Network",

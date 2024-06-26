@@ -13,7 +13,7 @@ import { getFormattedValue } from 'utils/format'
 import { getL2TokenByBridgedAddress, getTokenByAddress } from 'utils/token'
 import { Address, formatUnits } from 'viem'
 
-import { useTunnelOperation } from '../_hooks/useTunnelState'
+import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 
 const ExpectedWithdrawalWaitTimeMinutes = 20
 const ExpectedProofWaitTimeHours = 3

@@ -5,7 +5,7 @@ import { useContext } from 'react'
 import { type Hash } from 'viem'
 import { type UseWaitForTransactionReceiptReturnType } from 'wagmi'
 
-import { useTunnelOperation } from './useTunnelState'
+import { useTunnelOperation } from './useTunnelOperation'
 
 type UseTransactionsList = {
   expectedWithdrawSuccessfulMessageStatus?: MessageStatus

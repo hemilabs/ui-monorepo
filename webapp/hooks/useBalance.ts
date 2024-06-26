@@ -1,9 +1,9 @@
-import { Token } from 'types/token'
+import { EvmToken } from 'types/token'
 import { useAccount, useBalance as useWagmiBalance } from 'wagmi'
 import { useBalanceOf } from 'wagmi-erc20-hooks'
 
 export const useNativeTokenBalance = function (
-  chainId: Token['chainId'],
+  chainId: EvmToken['chainId'],
   enabled: boolean = true,
 ) {
   const { address } = useAccount()
@@ -24,7 +24,7 @@ export const useNativeTokenBalance = function (
 }
 
 export const useTokenBalance = function (
-  token: Token,
+  token: EvmToken,
   enabled: boolean = true,
 ) {
   const { address } = useAccount()

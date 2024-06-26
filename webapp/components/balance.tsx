@@ -1,14 +1,15 @@
 'use client'
 
+import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { useTokenBalance, useNativeTokenBalance } from 'hooks/useBalance'
 import Skeleton from 'react-loading-skeleton'
-import { Token } from 'types/token'
+import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { formatNumber } from 'utils/format'
-import { isNativeToken } from 'utils/token'
+import { isEvmToken, isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 
-type Props = {
-  token: Token
+type Props<T extends Token = Token> = {
+  token: T
 }
 
 const RenderBalance = ({
@@ -32,7 +33,7 @@ const RenderBalance = ({
   </>
 )
 
-const NativeTokenBalance = function ({ token }: { token: Token }) {
+const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
   const { balance, fetchStatus, status } = useNativeTokenBalance(token.chainId)
   return (
     <RenderBalance
@@ -44,7 +45,7 @@ const NativeTokenBalance = function ({ token }: { token: Token }) {
   )
 }
 
-const TokenBalance = function ({ token }: { token: Token }) {
+const TokenBalance = function ({ token }: Props<EvmToken>) {
   const { balance, fetchStatus, status } = useTokenBalance(token)
   return (
     <RenderBalance
@@ -56,9 +57,28 @@ const TokenBalance = function ({ token }: { token: Token }) {
   )
 }
 
-export const Balance = ({ token }: Props) =>
+const EvmBalance = ({ token }: Props<EvmToken>) =>
   isNativeToken(token) ? (
     <NativeTokenBalance token={token} />
   ) : (
     <TokenBalance token={token} />
+  )
+
+const BtcBalance = function ({ token }: Props<BtcToken>) {
+  const { balance, fetchStatus, status } = useBtcBalance()
+  return (
+    <RenderBalance
+      balance={BigInt(balance?.confirmed ?? 0)}
+      fetchStatus={fetchStatus}
+      status={status}
+      token={token}
+    />
+  )
+}
+
+export const Balance = ({ token }: Props) =>
+  isEvmToken(token) ? (
+    <EvmBalance token={token} />
+  ) : (
+    <BtcBalance token={token} />
   )

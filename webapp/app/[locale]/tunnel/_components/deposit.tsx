@@ -1,13 +1,14 @@
 'use client'
 
 import { MessageDirection } from '@eth-optimism/sdk'
+import { bitcoin, isEvmNetwork } from 'app/networks'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useTranslations } from 'next-intl'
-import { ReactNode, useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
-import { Token } from 'types/token'
+import { type EvmToken, type Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
@@ -16,10 +17,15 @@ import { useAccount } from 'wagmi'
 
 import { useDeposit } from '../_hooks/useDeposit'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
-import { useTunnelState } from '../_hooks/useTunnelState'
+import {
+  type BtcToHemiTunneling,
+  type EvmTunneling,
+  useTunnelState,
+  TypedTunnelState,
+} from '../_hooks/useTunnelState'
 
 import { Erc20Approval } from './Erc20Approval'
-import { TunnelForm, canSubmit, getTotal } from './form'
+import { FormContent, TunnelForm, canSubmit, getTotal } from './form'
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
 
@@ -81,12 +87,48 @@ const SubmitButton = function ({
   )
 }
 
-type Props = {
-  renderForm: (isRunningOperation: boolean) => ReactNode
-  state: ReturnType<typeof useTunnelState>
+type BtcDepositProps = {
+  state: TypedTunnelState<BtcToHemiTunneling>
 }
 
-export const Deposit = function ({ renderForm, state }: Props) {
+// TODO implement correctly, this only puts some props so it compiles
+// but nothing is actually visible until BTC is enabled
+// https://github.com/BVM-priv/ui-monorepo/issues/342
+const BtcDeposit = function ({ state }: BtcDepositProps) {
+  const isRunningOperation = false
+  // eslint-disable-next-line arrow-body-style
+  const handleDeposit = () => {}
+  const t = useTranslations()
+
+  return (
+    <TunnelForm
+      expectedChainId={bitcoin.id}
+      formContent={
+        <FormContent
+          isRunningOperation={isRunningOperation}
+          tunnelState={state}
+        />
+      }
+      gas={{ amount: '0', label: '', symbol: '' }}
+      onSubmit={handleDeposit}
+      operationSymbol={bitcoin.nativeCurrency.symbol}
+      showReview={false}
+      submitButton={
+        <Button disabled type="submit">
+          {t('tunnel-page.submit-button.deposit')}
+        </Button>
+      }
+      total={'0'}
+      transactionsList={[]}
+    />
+  )
+}
+
+type EvmDepositProps = {
+  state: TypedTunnelState<EvmTunneling>
+}
+
+const EvmDeposit = function ({ state }: EvmDepositProps) {
   const { addDepositToTunnelHistory } = useContext(TunnelHistoryContext)
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
   const [depositAmount, setDepositAmount] = useState('0')
@@ -96,15 +138,16 @@ export const Deposit = function ({ renderForm, state }: Props) {
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
 
+  // use this state to toggle the Erc20 token approval
+  const [extendedErc20Approval, setExtendedErc20Approval] = useState(false)
+
   const t = useTranslations()
 
   const {
-    extendedErc20Approval,
     fromInput,
     fromNetworkId,
     fromToken,
     resetStateAfterOperation,
-    updateExtendedErc20Approval,
     toToken,
   } = state
 
@@ -223,6 +266,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
           setHasClearedForm(true)
           setOperationRunning('idle')
           resetStateAfterOperation()
+          setExtendedErc20Approval(false)
         }
         return () => clearTimeout(timeoutId)
       }
@@ -236,6 +280,7 @@ export const Deposit = function ({ renderForm, state }: Props) {
       clearDepositState,
       hasClearedForm,
       resetStateAfterOperation,
+      setExtendedErc20Approval,
       setOperationRunning,
       setHasClearedForm,
     ],
@@ -305,7 +350,32 @@ export const Deposit = function ({ renderForm, state }: Props) {
   return (
     <TunnelForm
       expectedChainId={fromNetworkId}
-      formContent={renderForm(isRunningOperation)}
+      formContent={
+        <FormContent
+          isRunningOperation={isRunningOperation}
+          tunnelState={{
+            ...state,
+            // patch these events to update the extendedErc20Approval state
+            toggleInput() {
+              // toToken becomes fromToken, so we must check that one
+              if (isNativeToken(state.toToken)) {
+                setExtendedErc20Approval(false)
+              }
+              state.toggleInput()
+            },
+            updateFromNetwork(payload: number) {
+              setExtendedErc20Approval(false)
+              state.updateFromNetwork(payload)
+            },
+            updateFromToken(payload: EvmToken) {
+              if (isNativeToken(payload)) {
+                setExtendedErc20Approval(false)
+              }
+              state.updateFromToken(payload)
+            },
+          }}
+        />
+      }
       gas={{
         amount: formatNumber(
           formatUnits(
@@ -328,11 +398,28 @@ export const Deposit = function ({ renderForm, state }: Props) {
           isRunningOperation={isRunningOperation}
           needsApproval={needsApproval}
           operationRunning={operationRunning}
-          updateExtendedErc20Approval={updateExtendedErc20Approval}
+          updateExtendedErc20Approval={() =>
+            setExtendedErc20Approval(prev => !prev)
+          }
         />
       }
       total={totalDeposit}
       transactionsList={transactionsList}
     />
   )
+}
+
+export const Deposit = function ({
+  state,
+}: {
+  state: ReturnType<typeof useTunnelState>
+}) {
+  const { fromNetworkId } = state
+  const chain = useChain(fromNetworkId)
+
+  // Typescript can't infer it, but we can cast these safely
+  if (isEvmNetwork(chain)) {
+    return <EvmDeposit state={state as TypedTunnelState<EvmTunneling>} />
+  }
+  return <BtcDeposit state={state as TypedTunnelState<BtcToHemiTunneling>} />
 }

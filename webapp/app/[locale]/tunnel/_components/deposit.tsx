@@ -7,6 +7,7 @@ import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations
 import { DepositOperation } from 'context/tunnelHistoryContext/types'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
+import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useContext, useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
@@ -28,8 +29,14 @@ import {
 
 import { Erc20Approval } from './Erc20Approval'
 import { FormContent, TunnelForm, canSubmit, getTotal } from './form'
+import { ReceivingHemiAddress } from './receivingHemiAddress'
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
+
+const WalletsConnected = dynamic(
+  () => import('./walletsConnected').then(mod => mod.WalletsConnected),
+  { ssr: false },
+)
 
 const SubmitButton = function ({
   canDeposit,
@@ -104,6 +111,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
 
   return (
     <TunnelForm
+      bottomSection={<WalletsConnected />}
       expectedChainId={bitcoin.id}
       formContent={
         <FormContent
@@ -116,9 +124,14 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
       operationSymbol={bitcoin.nativeCurrency.symbol}
       showReview={false}
       submitButton={
-        <Button disabled type="submit">
-          {t('tunnel-page.submit-button.deposit')}
-        </Button>
+        <>
+          <div className="mb-2">
+            <ReceivingHemiAddress token={state.fromToken} />
+          </div>
+          <Button disabled type="submit">
+            {t('tunnel-page.submit-button.deposit')}
+          </Button>
+        </>
       }
       total={'0'}
       transactionsList={[]}

@@ -12,6 +12,8 @@
     "form": {
       "balance": "Balance",
       "from-network": "Desde la Red",
+      "hemi-receiving-address": "Dirección de recepción en Hemi",
+      "hemi-receiving-address-description": "Recibirá su {symbol} tunelizado en la dirección de la billetera EVM conectada.",
       "max": "max",
       "switch-to-prove": "Cambie a {network} para completar la transacción",
       "to-network": "Hacia la Red",
@@ -127,7 +129,13 @@
     "copy-address": "Copiar dirección",
     "description": "Conecte sus billeteras EVM y BTC para transferir activos de manera fluida. Para una mejor experiencia, use billeteras de ambas redes.",
     "disconnect": "Desconectar",
-    "evm-wallet": "Billetera EVM"
+    "evm-wallet": "Billetera EVM",
+    "status": {
+      "connected": "Conectada",
+      "connecting": "Conectando",
+      "disconnected": "Desconectada",
+      "reconnecting": "Reconectando"
+    }
   },
   "get-started": {
     "header": {

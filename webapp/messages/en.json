@@ -12,6 +12,8 @@
     "form": {
       "balance": "Balance",
       "from-network": "From Network",
+      "hemi-receiving-address": "Receiving Hemi address",
+      "hemi-receiving-address-description": "You will receive your tunneled {symbol} to the connected EVM wallet address.",
       "max": "max",
       "switch-to-prove": "Switch to {network} to complete transaction",
       "to-network": "To Network",
@@ -127,7 +129,13 @@
     "copy-address": "Copy Address",
     "description": "Connect your EVM and BTC wallets to transfer assets seamlessly. For the best experience, use wallets from both networks.",
     "disconnect": "Disconnect",
-    "evm-wallet": "EVM Wallet"
+    "evm-wallet": "EVM Wallet",
+    "status": {
+      "connected": "Connected",
+      "connecting": "Connecting",
+      "disconnected": "Disconnected",
+      "reconnecting": "Reconnecting"
+    }
   },
   "get-started": {
     "header": {

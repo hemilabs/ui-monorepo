@@ -263,6 +263,7 @@ export const FormContent = function ({
 }
 
 type TunnelFormProps = {
+  bottomSection?: ReactNode
   expectedChainId: RemoteChain['id']
   formContent: ReactNode
   gas: {
@@ -284,6 +285,7 @@ type TunnelFormProps = {
 }
 
 export const TunnelForm = function ({
+  bottomSection,
   expectedChainId,
   formContent,
   gas,
@@ -332,6 +334,7 @@ export const TunnelForm = function ({
             )}
           </form>
         </Card>
+        {bottomSection}
       </div>
       {transactionsList.length > 0 && (
         <div className="mx-auto flex w-full flex-col gap-y-4 md:max-w-96 xl:mx-0 xl:max-w-72">

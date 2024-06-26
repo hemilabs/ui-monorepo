@@ -5,7 +5,7 @@ import Link from 'next-intl/link'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 
-export const profiles = ['dev', 'miner', 'individual'] as const
+export const profiles = ['dev', 'miner', 'explorers'] as const
 export type Profile = (typeof profiles)[number]
 
 const ArrowIcon = () => (

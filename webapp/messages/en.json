@@ -171,7 +171,7 @@
           "url": "https://www.app.fuul.xyz/incentives/hemi"
         }
       },
-      "individual": {
+      "explorers": {
         "1": {
           "title": "Getting Started",
           "text": "Explore the Basics of Hemi Network.",
@@ -264,8 +264,8 @@
     "sub-heading": "To get started, select one of the options below",
     "options": {
       "developer": "I'm a Developer",
-      "miner": "I'm a Miner",
-      "individual": "I'm an Individual"
+      "explorer": "I'm an Explorer",
+      "miner": "I'm a Miner"
     }
   },
   "demos": {

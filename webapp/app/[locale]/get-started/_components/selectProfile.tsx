@@ -8,14 +8,21 @@ import { Card } from 'ui-common/components/card'
 import { Modal } from 'ui-common/components/modal'
 
 import { DeveloperIcon } from './icons/developer'
-import { IndividualIcon } from './icons/individual'
+import { ExplorersIcon } from './icons/explorers'
 import { MinerIcon } from './icons/miner'
+import { Profile } from './quickStart'
+
+type Option = {
+  icon: React.ReactNode
+  label: string
+  profile: Profile
+}
 
 export const SelectProfile = function () {
   const t = useTranslations('get-started-page')
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const options = [
+  const options: Option[] = [
     {
       icon: <DeveloperIcon />,
       label: t('options.developer'),
@@ -27,9 +34,9 @@ export const SelectProfile = function () {
       profile: 'miner',
     },
     {
-      icon: <IndividualIcon />,
-      label: t('options.individual'),
-      profile: 'individual',
+      icon: <ExplorersIcon />,
+      label: t('options.explorer'),
+      profile: 'explorers',
     },
   ]
 

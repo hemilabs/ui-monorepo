@@ -199,12 +199,13 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
   )
 
   const canDeposit = canSubmit({
+    balance: operatesNativeToken
+      ? walletNativeTokenBalance
+      : walletTokenBalance,
     chainId: chain?.id,
     fromInput,
     fromNetworkId,
     fromToken,
-    walletNativeTokenBalance,
-    walletTokenBalance,
   })
 
   const fromChain = useChain(fromNetworkId)

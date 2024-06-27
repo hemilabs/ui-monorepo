@@ -77,40 +77,25 @@ type InputEnoughInBalance = Pick<
   TunnelState,
   'fromNetworkId' | 'fromToken' | 'fromInput'
 > & {
-  chainId?: number
+  balance: bigint
+  chainId?: TunnelState['fromNetworkId']
   fromInput: string
-  walletNativeTokenBalance: bigint
-  walletTokenBalance: bigint
 }
-const inputEnoughInBalance = ({
-  fromInput,
-  fromToken,
-  walletNativeTokenBalance,
-  walletTokenBalance,
-}: Omit<InputEnoughInBalance, 'fromNetworkId'>) =>
-  (isNativeToken(fromToken) &&
-    Big(fromInput).lt(
-      formatUnits(walletNativeTokenBalance, fromToken.decimals),
-    )) ||
-  (!isNativeToken(fromToken) &&
-    Big(fromInput).lt(formatUnits(walletTokenBalance, fromToken.decimals)))
 
 export const canSubmit = ({
+  balance,
   chainId,
   fromInput,
   fromNetworkId,
   fromToken,
-  walletNativeTokenBalance,
-  walletTokenBalance,
 }: InputEnoughInBalance) =>
   Big(fromInput).gt(0) &&
   chainId === fromNetworkId &&
-  inputEnoughInBalance({
-    fromInput,
-    fromToken,
-    walletNativeTokenBalance,
-    walletTokenBalance,
-  })
+  // for native tokens, it can't match the whole balance
+  // as native tokens are used to pay for fees
+  Big(fromInput)[isNativeToken(fromToken) ? 'lt' : 'lte'](
+    formatUnits(balance, fromToken.decimals),
+  )
 
 type GetTotal = {
   fees?: bigint

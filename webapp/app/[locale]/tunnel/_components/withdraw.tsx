@@ -133,12 +133,13 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
 
   const canWithdraw =
     canSubmit({
+      balance: operatesNativeToken
+        ? walletNativeTokenBalance
+        : walletTokenBalance,
       chainId,
       fromInput,
       fromNetworkId,
       fromToken,
-      walletNativeTokenBalance,
-      walletTokenBalance,
     }) && hasBridgeConfiguration(fromToken, toNetworkId)
 
   const {

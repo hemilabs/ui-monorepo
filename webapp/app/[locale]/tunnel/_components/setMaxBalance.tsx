@@ -1,4 +1,5 @@
 import Big from 'big.js'
+import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useEstimateBtcFees } from 'hooks/useEstimateBtcFees'
@@ -66,22 +67,16 @@ export const SetMaxEvmBalance = function ({
   return <MaxButton disabled={disabled} onClick={handleClick} />
 }
 
-const btcFeeBlocks = parseInt(process.env.NEXT_PUBLIC_BTC_FEE_BLOCKS)
-const btcTxSize = parseInt(process.env.NEXT_PUBLIC_BTC_TX_SIZE)
-
 export const SetMaxBtcBalance = function ({
   fromToken,
   isRunningOperation,
   onSetMaxBalance,
 }: Props<BtcToken>) {
+  const { address } = useBtcAccount()
   const { balance, isLoading: isLoadingBalance } = useBtcBalance()
-
-  const { fees, isLoading: isLoadingFees } = useEstimateBtcFees({
-    feeBlocks: btcFeeBlocks,
-    txSize: btcTxSize,
-  })
-
   const btcBalance = balance?.confirmed ?? 0
+
+  const { fees, isLoading: isLoadingFees } = useEstimateBtcFees(address)
 
   const disabled =
     isRunningOperation ||

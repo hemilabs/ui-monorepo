@@ -1,10 +1,13 @@
 export type Account = string
+export type Satoshis = number
 export type Balance = {
-  confirmed: number
-  total: number
-  unconfirmed: number
+  confirmed: Satoshis
+  total: Satoshis
+  unconfirmed: Satoshis
 }
 export type BtcSupportedNetworks = 'livenet' | 'testnet'
+
+export type BtcTransaction = string
 
 interface EventMap {
   accountsChanged: (accounts: Account[]) => void

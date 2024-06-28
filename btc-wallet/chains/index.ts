@@ -12,7 +12,7 @@ export const bitcoinTestnet = {
     },
   },
   id: 'testnet',
-  name: 'Bitcoin Testnet',
+  name: 'Testnet Bitcoin',
   nativeCurrency: {
     decimals: 8,
     name: 'Testnet Bitcoin',

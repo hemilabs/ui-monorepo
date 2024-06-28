@@ -29,7 +29,6 @@
       "heading": "Revisar Retiro",
       "initiate-withdrawal": "Iniciar retiro",
       "prove-withdrawal": "Probar retiro",
-      "total-amount": "Monto Total",
       "total-to-withdraw": "Total a retirar",
       "view-tx": "View",
       "wait-complete": "Espera completada",
@@ -107,6 +106,7 @@
     "swap": "Intercambiar",
     "tools": "Herramientas",
     "total": "Total",
+    "total-amount": "Monto Total",
     "transaction-status": {
       "confirmed": "Tx confirmada",
       "error": "La Tx falló",

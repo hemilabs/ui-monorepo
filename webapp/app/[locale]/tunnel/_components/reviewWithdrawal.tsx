@@ -285,7 +285,7 @@ export const ReviewWithdrawal = function ({
 }: ReviewWithdrawalProps) {
   const router = useRouter()
 
-  const t = useTranslations('tunnel-page.review-withdraw')
+  const t = useTranslations()
   const { operation, txHash } = useTunnelOperation()
 
   const { withdrawals } = useContext(TunnelHistoryContext)
@@ -361,13 +361,13 @@ export const ReviewWithdrawal = function ({
         <Card padding="large">
           <div className="flex items-center justify-between pb-2">
             <h4 className="text-base font-medium text-slate-950 lg:text-xl">
-              {t('heading')}
+              {t('tunnel-page.review-withdraw.heading')}
             </h4>
             <CloseIcon className="cursor-pointer" onClick={closeModal} />
           </div>
           <div className="flex items-center justify-between py-4">
             <span className="text-xs font-medium text-slate-500">
-              {t('total-amount')}
+              {t('common.total-amount')}
             </span>
             <Amount withdrawal={foundWithdrawal} />
           </div>
@@ -375,12 +375,12 @@ export const ReviewWithdrawal = function ({
             gas={isWithdraw && gas}
             icon={<CursorIcon />}
             status={getWithdrawalProgress()}
-            text={t('initiate-withdrawal')}
+            text={t('tunnel-page.review-withdraw.initiate-withdrawal')}
           />
           <VerticalLine />
           <SubStep
             status={getWaitReadyToProveStatus()}
-            text={t('wait-minutes', {
+            text={t('tunnel-page.review-withdraw.wait-minutes', {
               minutes: ExpectedWithdrawalWaitTimeMinutes,
             })}
           />
@@ -389,19 +389,21 @@ export const ReviewWithdrawal = function ({
             gas={isProve && gas}
             icon={<ProveIcon />}
             status={getProveStatus()}
-            text={t('prove-withdrawal')}
+            text={t('tunnel-page.review-withdraw.prove-withdrawal')}
           />
           <VerticalLine />
           <SubStep
             status={getWaitReadyToClaimStatus()}
-            text={t('wait-hours', { hours: ExpectedProofWaitTimeHours })}
+            text={t('tunnel-page.review-withdraw.wait-hours', {
+              hours: ExpectedProofWaitTimeHours,
+            })}
           />
           <VerticalLine />
           <Step
             gas={isClaim && gas}
             icon={<ClaimIcon />}
             status={getClaimStatus()}
-            text={t('claim-withdrawal')}
+            text={t('tunnel-page.review-withdraw.claim-withdrawal')}
           />
           {
             <form className="mt-6" onSubmit={handleSubmit}>

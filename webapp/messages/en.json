@@ -29,7 +29,6 @@
       "heading": "Review Withdraw",
       "initiate-withdrawal": "Initiate withdrawal",
       "prove-withdrawal": "Prove withdrawal",
-      "total-amount": "Total Amount",
       "total-to-withdraw": "Total to withdraw",
       "view-tx": "View",
       "wait-complete": "Wait complete",
@@ -107,6 +106,7 @@
     "swap": "Swap",
     "tools": "Tools",
     "total": "Total",
+    "total-amount": "Total Amount",
     "transaction-status": {
       "confirmed": "Tx confirmed",
       "error": "Tx failed",

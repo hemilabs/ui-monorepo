@@ -1,15 +1,12 @@
-import {
-  discordUrl,
-  twitterUrl,
-  githubUrl,
-  linkedinUrl,
-} from 'hemi-metadata/socials'
+import hemiSocials from 'hemi-socials'
 import React from 'react'
 
 import { DiscordIcon } from './icons/discordIcon'
 import { GithubIcon } from './icons/githubIcon'
 import { LinkedinIcon } from './icons/linkedinIcon'
 import { TwitterIcon } from './icons/twitterIcon'
+
+const { discordUrl, twitterUrl, githubUrl, linkedinUrl } = hemiSocials
 
 export const FooterSocials = () => (
   <div className="flex items-center">

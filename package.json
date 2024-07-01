@@ -10,7 +10,7 @@
   "workspaces": [
     "btc-wallet",
     "claim-tokens",
-    "hemi-metadata",
+    "hemi-socials",
     "landing",
     "migrations-pg",
     "ui-common",
@@ -97,7 +97,7 @@
         ],
         "files": [
           "btc-wallet/**/*.{js,ts,tsx}",
-          "hemi-metadata/**/*.{js,ts,tsx}",
+          "hemi-socials/**/*.{js,ts,tsx}",
           "ui-common/**/*.{js,ts,tsx}",
           "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
           "webapp/**/*.{js,ts,tsx}"

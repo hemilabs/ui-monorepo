@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { hemi } from 'app/networks'
 import { bitcoinTestnet } from 'btc-wallet/chains'
 import fetch from 'fetch-plus-plus'
-import { discordUrl } from 'hemi-metadata/socials'
+import hemiSocials from 'hemi-socials'
 import { useLocale, useTranslations } from 'next-intl'
 import { useReCaptcha } from 'next-recaptcha-v3'
 import { FormEvent, ReactNode, useState } from 'react'
@@ -140,6 +140,8 @@ const PostClaimContainer = ({ children }: { children: ReactNode }) => (
 )
 
 type EmailState = 'initial' | 'sent' | 'failed'
+
+const { discordUrl } = hemiSocials
 
 export const WelcomePack = function () {
   const locale = useLocale()

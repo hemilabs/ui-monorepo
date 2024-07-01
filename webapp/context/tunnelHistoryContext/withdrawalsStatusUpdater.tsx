@@ -1,7 +1,7 @@
 import { CrossChainMessenger, MessageStatus } from '@eth-optimism/sdk'
 import { QueryClient, useQuery } from '@tanstack/react-query'
 import { evmRemoteNetworks, hemi } from 'app/networks'
-import { hemiMainnet, hemiTestnet } from 'hemi-metadata'
+import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
 import PQueue from 'p-queue'
@@ -39,7 +39,7 @@ const refetchInterval = {
     [MessageStatus.READY_FOR_RELAY]: getMinutes(2),
     [MessageStatus.RELAYED]: false,
   },
-}
+} satisfies { [chainId: number]: { [status: number]: number | false } }
 
 const pollUpdateWithdrawal = async ({
   crossChainMessenger,

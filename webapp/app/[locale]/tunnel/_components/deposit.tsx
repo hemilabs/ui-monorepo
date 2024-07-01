@@ -28,7 +28,13 @@ import {
 } from '../_hooks/useTunnelState'
 
 import { Erc20Approval } from './Erc20Approval'
-import { FormContent, TunnelForm, canSubmit, getTotal } from './form'
+import {
+  EvmSummary,
+  FormContent,
+  TunnelForm,
+  canSubmit,
+  getTotal,
+} from './form'
 import { ReceivingHemiAddress } from './receivingHemiAddress'
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
@@ -137,10 +143,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
           tunnelState={state}
         />
       }
-      gas={{ amount: '0', label: '', symbol: '' }}
       onSubmit={handleDeposit}
-      operationSymbol={bitcoin.nativeCurrency.symbol}
-      showReview={false}
       submitButton={
         <>
           <div className="mb-2">
@@ -151,7 +154,6 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
           </Button>
         </>
       }
-      total={'0'}
       transactionsList={[]}
     />
   )
@@ -389,6 +391,18 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     depositTransactionList,
   )
 
+  const gas = {
+    amount: formatNumber(
+      formatUnits(
+        depositGasFees + approvalTokenGasFees,
+        fromChain?.nativeCurrency.decimals,
+      ),
+      3,
+    ),
+    label: t('common.network-gas-fee', { network: fromChain?.name }),
+    symbol: fromChain?.nativeCurrency.symbol,
+  }
+
   return (
     <TunnelForm
       expectedChainId={fromNetworkId}
@@ -426,20 +440,16 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
           }}
         />
       }
-      gas={{
-        amount: formatNumber(
-          formatUnits(
-            depositGasFees + approvalTokenGasFees,
-            fromChain?.nativeCurrency.decimals,
-          ),
-          3,
-        ),
-        label: t('common.network-gas-fee', { network: fromChain?.name }),
-        symbol: fromChain?.nativeCurrency.symbol,
-      }}
       onSubmit={handleDeposit}
-      operationSymbol={fromToken.symbol}
-      showReview={canDeposit}
+      reviewSummary={
+        canDeposit ? (
+          <EvmSummary
+            gas={gas}
+            operationSymbol={fromToken.symbol}
+            total={totalDeposit}
+          />
+        ) : null
+      }
       submitButton={
         <SubmitButton
           canDeposit={canDeposit}
@@ -453,7 +463,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
           }
         />
       }
-      total={totalDeposit}
       transactionsList={transactionsList}
     />
   )

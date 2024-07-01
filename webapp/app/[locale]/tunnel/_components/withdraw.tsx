@@ -24,7 +24,7 @@ import {
 } from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
 
-import { FormContent, TunnelForm, canSubmit } from './form'
+import { EvmSummary, FormContent, TunnelForm, canSubmit } from './form'
 
 const ReviewEvmWithdrawal = dynamic(
   () =>
@@ -76,20 +76,12 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           tunnelState={state}
         />
       }
-      gas={{
-        amount: '0',
-        label: '',
-        symbol: '',
-      }}
       onSubmit={handleWithdraw}
-      operationSymbol={state.fromToken.symbol}
-      showReview={false}
       submitButton={
         <Button disabled type="submit">
           {t('tunnel-page.submit-button.initiate-withdrawal')}
         </Button>
       }
-      total={state.fromInput}
       transactionsList={[]}
     />
   )
@@ -273,10 +265,16 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             tunnelState={state}
           />
         }
-        gas={gas}
         onSubmit={handleWithdraw}
-        operationSymbol={fromToken.symbol}
-        showReview={canWithdraw}
+        reviewSummary={
+          canWithdraw ? (
+            <EvmSummary
+              gas={gas}
+              operationSymbol={fromToken.symbol}
+              total={fromInput}
+            />
+          ) : null
+        }
         submitButton={
           <Button disabled={!canWithdraw || isWithdrawing} type="submit">
             {t(
@@ -286,7 +284,6 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             )}
           </Button>
         }
-        total={fromInput}
         transactionsList={transactionsList}
       />
       {!!txHash && (

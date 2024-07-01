@@ -236,16 +236,9 @@ type TunnelFormProps = {
   bottomSection?: ReactNode
   expectedChainId: RemoteChain['id']
   formContent: ReactNode
-  gas: {
-    amount: string
-    label: string
-    symbol: string
-  }
   onSubmit: () => void
-  operationSymbol: string
-  showReview: boolean
+  reviewSummary?: React.ReactNode
   submitButton?: ReactNode
-  total: string
   transactionsList?: {
     id: string
     status: React.ComponentProps<typeof TransactionStatus>['status']
@@ -258,16 +251,12 @@ export const TunnelForm = function ({
   bottomSection,
   expectedChainId,
   formContent,
-  gas,
   onSubmit,
-  operationSymbol,
-  showReview,
+  reviewSummary,
   submitButton,
-  total,
   transactionsList = [],
 }: TunnelFormProps) {
   const { isConnected } = useAccount()
-  const t = useTranslations()
   const { operation } = useTunnelOperation()
 
   return (
@@ -286,22 +275,7 @@ export const TunnelForm = function ({
           >
             {formContent}
             {isConnected ? submitButton : <ConnectWallet />}
-            {showReview && (
-              <div className="mt-2 flex flex-col gap-y-2 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-neutral-400">{gas.label}</span>
-                  <span>{`${getFormattedValue(gas.amount)} ${
-                    gas.symbol
-                  }`}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-neutral-400">{t('common.total')}</span>
-                  <span>{`${getFormattedValue(
-                    total,
-                  )} ${operationSymbol}`}</span>
-                </div>
-              </div>
-            )}
+            {reviewSummary}
           </form>
         </Card>
         {bottomSection}
@@ -318,6 +292,34 @@ export const TunnelForm = function ({
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+export const EvmSummary = function ({
+  gas,
+  operationSymbol,
+  total,
+}: {
+  gas: {
+    amount: string
+    label: string
+    symbol: string
+  }
+  operationSymbol: string
+  total: string
+}) {
+  const t = useTranslations()
+  return (
+    <div className="mt-2 flex flex-col gap-y-2 text-sm">
+      <div className="flex items-center justify-between">
+        <span className="text-neutral-400">{gas.label}</span>
+        <span>{`${getFormattedValue(gas.amount)} ${gas.symbol}`}</span>
+      </div>
+      <div className="flex items-center justify-between">
+        <span className="text-neutral-400">{t('common.total')}</span>
+        <span>{`${getFormattedValue(total)} ${operationSymbol}`}</span>
+      </div>
     </div>
   )
 }

@@ -27,7 +27,10 @@ import { useWithdraw } from '../_hooks/useWithdraw'
 import { FormContent, TunnelForm, canSubmit } from './form'
 
 const ReviewWithdrawal = dynamic(
-  () => import('./reviewWithdrawal').then(mod => mod.ReviewWithdrawal),
+  () =>
+    import('./reviewOperation/reviewWithdrawal').then(
+      mod => mod.ReviewWithdrawal,
+    ),
   {
     ssr: false,
   },

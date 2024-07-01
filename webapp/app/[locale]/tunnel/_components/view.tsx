@@ -10,7 +10,7 @@ import { useChains } from 'wagmi'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import { useTunnelState } from '../_hooks/useTunnelState'
 
-import { ReviewWithdrawal } from './reviewWithdrawal'
+import { ReviewWithdrawal } from './reviewOperation/reviewWithdrawal'
 
 type Props = {
   state: ReturnType<typeof useTunnelState>

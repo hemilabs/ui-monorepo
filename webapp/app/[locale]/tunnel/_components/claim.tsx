@@ -15,7 +15,7 @@ import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import { useTunnelState } from '../_hooks/useTunnelState'
 
-import { ReviewWithdrawal } from './reviewWithdrawal'
+import { ReviewWithdrawal } from './reviewOperation/reviewWithdrawal'
 
 const SubmitButton = function ({
   claimTxHash: inMemoryClaimTxHash,

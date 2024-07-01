@@ -279,11 +279,9 @@ export const ReviewEvmWithdrawal = function ({
             status={getClaimStatus()}
             text={t('tunnel-page.review-withdraw.claim-withdrawal')}
           />
-          {
-            <form className="mt-6" onSubmit={handleSubmit}>
-              {submitButton}
-            </form>
-          }
+          <form className="mt-6" onSubmit={handleSubmit}>
+            {submitButton}
+          </form>
         </Card>
         {transactionsList.length > 0 && (
           <div className="flex flex-col gap-y-4">

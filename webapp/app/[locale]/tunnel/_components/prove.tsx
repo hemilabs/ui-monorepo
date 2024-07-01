@@ -16,7 +16,7 @@ import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import { useTunnelState } from '../_hooks/useTunnelState'
 
-import { ReviewWithdrawal } from './reviewOperation/reviewWithdrawal'
+import { ReviewEvmWithdrawal } from './reviewOperation/reviewEvmWithdrawal'
 
 const SubmitButton = function ({
   isProving,
@@ -217,7 +217,7 @@ export const Prove = function ({ state }: Props) {
   )
 
   return (
-    <ReviewWithdrawal
+    <ReviewEvmWithdrawal
       gas={gas}
       isRunningOperation={isProving}
       onClose={resetStateAfterOperation}

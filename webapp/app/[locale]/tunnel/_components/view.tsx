@@ -10,7 +10,7 @@ import { useChains } from 'wagmi'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import { useTunnelState } from '../_hooks/useTunnelState'
 
-import { ReviewWithdrawal } from './reviewOperation/reviewWithdrawal'
+import { ReviewEvmWithdrawal } from './reviewOperation/reviewEvmWithdrawal'
 
 type Props = {
   state: ReturnType<typeof useTunnelState>
@@ -50,7 +50,7 @@ export const View = function ({ state }: Props) {
   )
 
   return (
-    <ReviewWithdrawal
+    <ReviewEvmWithdrawal
       isRunningOperation={false}
       onClose={resetStateAfterOperation}
       submitButton={

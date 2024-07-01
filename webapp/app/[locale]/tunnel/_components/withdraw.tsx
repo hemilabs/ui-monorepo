@@ -26,10 +26,10 @@ import { useWithdraw } from '../_hooks/useWithdraw'
 
 import { FormContent, TunnelForm, canSubmit } from './form'
 
-const ReviewWithdrawal = dynamic(
+const ReviewEvmWithdrawal = dynamic(
   () =>
-    import('./reviewOperation/reviewWithdrawal').then(
-      mod => mod.ReviewWithdrawal,
+    import('./reviewOperation/reviewEvmWithdrawal').then(
+      mod => mod.ReviewEvmWithdrawal,
     ),
   {
     ssr: false,
@@ -290,7 +290,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
         transactionsList={transactionsList}
       />
       {!!txHash && (
-        <ReviewWithdrawal
+        <ReviewEvmWithdrawal
           gas={gas}
           isRunningOperation={isWithdrawing}
           onClose={resetStateAfterOperation}

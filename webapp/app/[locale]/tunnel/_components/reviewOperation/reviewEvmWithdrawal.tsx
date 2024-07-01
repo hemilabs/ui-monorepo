@@ -258,7 +258,7 @@ const VerticalLine = () => (
   </div>
 )
 
-type ReviewWithdrawalProps = {
+type ReviewEvmWithdrawalProps = {
   gas?: {
     amount: string
     symbol: string
@@ -275,14 +275,14 @@ type ReviewWithdrawalProps = {
   }[]
 }
 
-export const ReviewWithdrawal = function ({
+export const ReviewEvmWithdrawal = function ({
   gas,
   isRunningOperation,
   onClose,
   onSubmit,
   submitButton,
   transactionsList = [],
-}: ReviewWithdrawalProps) {
+}: ReviewEvmWithdrawalProps) {
   const router = useRouter()
 
   const t = useTranslations()

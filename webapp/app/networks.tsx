@@ -7,7 +7,7 @@ import {
   bitcoinMainnet,
   type BtcChain,
 } from 'btc-wallet/chains'
-import { hemiMainnet, hemiTestnet } from 'hemi-metadata'
+import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { renderToString } from 'react-dom/server'
 import { HemiSymbolWhite } from 'ui-common/components/hemiLogo'
 import { mainnet, sepolia } from 'wagmi/chains'

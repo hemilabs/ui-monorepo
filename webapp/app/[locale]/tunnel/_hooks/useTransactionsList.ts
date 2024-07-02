@@ -92,9 +92,7 @@ export const useTransactionsList = function ({
         text: successMessage,
         txHash,
       })
-    }
-    // operation in progress
-    if (
+    } else if (
       !receipt ||
       !receipt?.status.confirmed ||
       withdrawalMessageStatus < expectedWithdrawSuccessfulMessageStatus

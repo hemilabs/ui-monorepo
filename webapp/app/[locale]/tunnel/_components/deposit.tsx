@@ -248,8 +248,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     depositBitcoin(satoshis, evmAddress)
   }
 
-  const fees =
-    feePrices?.[parseInt(process.env.NEXT_PUBLIC_BTC_FEE_BLOCKS)]?.toString()
+  const fees = feePrices?.fastestFee?.toString()
 
   return (
     <>

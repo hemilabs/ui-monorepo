@@ -12,6 +12,7 @@ import { Modal } from 'ui-common/components/modal'
 import { getFormattedValue } from 'utils/format'
 import { getL2TokenByBridgedAddress, getTokenByAddress } from 'utils/token'
 import { Address, formatUnits } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
 
@@ -152,6 +153,7 @@ export const ReviewEvmWithdrawal = function ({
   submitButton,
   transactionsList = [],
 }: ReviewEvmWithdrawalProps) {
+  const { chain } = useAccount()
   const router = useRouter()
 
   const t = useTranslations()
@@ -287,6 +289,7 @@ export const ReviewEvmWithdrawal = function ({
           <div className="flex flex-col gap-y-4">
             {transactionsList.map(transaction => (
               <TransactionStatus
+                explorerUrl={chain.blockExplorers.default.url}
                 key={transaction.id}
                 status={transaction.status}
                 text={transaction.text}

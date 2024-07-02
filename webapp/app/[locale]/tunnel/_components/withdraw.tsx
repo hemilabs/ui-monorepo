@@ -1,5 +1,5 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { RemoteChain, isEvmNetwork } from 'app/networks'
+import { RemoteChain, bitcoin, isEvmNetwork } from 'app/networks'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
@@ -61,6 +61,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   return (
     <TunnelForm
       expectedChainId={state.fromNetworkId}
+      explorerUrl={bitcoin.blockExplorers.default.url}
       formContent={
         <FormContent
           isRunningOperation={isWithdrawing}
@@ -236,7 +237,6 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       fromInput: getFormattedValue(fromInput),
       symbol: fromToken.symbol,
     }),
-    // @ts-expect-error string is `0x${string}`
     txHash,
     userConfirmationError: withdrawError,
   })
@@ -251,6 +251,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     <>
       <TunnelForm
         expectedChainId={fromNetworkId}
+        explorerUrl={fromChain?.blockExplorers.default.url}
         formContent={
           <FormContent
             isRunningOperation={isWithdrawing}

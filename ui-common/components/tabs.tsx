@@ -22,12 +22,12 @@ export const Tab = function ({
   ...props
 }: TabProps) {
   const isButton = tabIsButton(props)
-  const className = `px-5 md:px-6 py-2 text-sm font-medium inline-block ${
+  const className = `px-5 md:px-6 py-2 text-sm font-medium inline-block h-full ${
     selected ? 'text-orange-950' : 'text-slate-300'
   }
   ${disabled ? 'opacity-40' : 'opacity-100'}`
   return (
-    <li className="border-y border-l border-solid border-slate-100 bg-white shadow-sm first:rounded-l-xl last:rounded-r-xl last:border-r">
+    <li className="h-full border-y border-l border-solid border-slate-100 bg-white shadow-sm first:rounded-l-xl last:rounded-r-xl last:border-r">
       {(isButton || disabled) && (
         <button
           className={className}

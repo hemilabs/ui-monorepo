@@ -1,9 +1,18 @@
 'use client'
 
+import { TunnelHistoryProvider } from 'app/context/tunnelHistoryContext'
 import dynamic from 'next/dynamic'
 import { useSelectedLayoutSegment } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Tabs, Tab } from 'ui-common/components/tabs'
+
+const ActionableWithdrawals = dynamic(
+  () =>
+    import('./_components/actionableWithdrawals').then(
+      mod => mod.ActionableWithdrawals,
+    ),
+  { ssr: false },
+)
 
 const TunnelHistorySyncStatus = dynamic(
   () =>
@@ -24,22 +33,27 @@ export default function Layout({ children }: Props) {
   const isInTransactionHistory = segment === 'transaction-history'
 
   return (
-    <>
+    <TunnelHistoryProvider>
       <div className="mb-3 grid grid-cols-1 justify-items-center gap-y-4 lg:grid-cols-[1fr_400px_1fr] xl:gap-x-4">
         {isInTransactionHistory ? <TunnelHistorySyncStatus /> : <div />}
         <Tabs>
           <Tab href="/tunnel" selected={segment === null}>
-            {t('title')}
+            <span className="flex h-full min-h-7 items-center">
+              {t('title')}
+            </span>
           </Tab>
           <Tab
             href="/tunnel/transaction-history"
             selected={isInTransactionHistory}
           >
-            {t('transaction-history.title')}
+            <div className="flex min-h-7 items-center justify-between gap-x-2">
+              <span>{t('transaction-history.title')}</span>
+              <ActionableWithdrawals />
+            </div>
           </Tab>
         </Tabs>
       </div>
       {children}
-    </>
+    </TunnelHistoryProvider>
   )
 }

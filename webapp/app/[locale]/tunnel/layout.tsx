@@ -1,6 +1,5 @@
 'use client'
 
-import { TunnelHistoryProvider } from 'app/context/tunnelHistoryContext'
 import dynamic from 'next/dynamic'
 import { useSelectedLayoutSegment } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -33,7 +32,7 @@ export default function Layout({ children }: Props) {
   const isInTransactionHistory = segment === 'transaction-history'
 
   return (
-    <TunnelHistoryProvider>
+    <>
       <div className="mb-3 grid grid-cols-1 justify-items-center gap-y-4 lg:grid-cols-[1fr_400px_1fr] xl:gap-x-4">
         {isInTransactionHistory ? <TunnelHistorySyncStatus /> : <div />}
         <Tabs>
@@ -54,6 +53,6 @@ export default function Layout({ children }: Props) {
         </Tabs>
       </div>
       {children}
-    </TunnelHistoryProvider>
+    </>
   )
 }

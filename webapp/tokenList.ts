@@ -35,9 +35,7 @@ const l1HemiTokens = hemiTokens
           },
         },
       },
-      name: t.name
-        // Remove the "hemi tunneled" wording, as it is not part of L1
-        .replace(/hemi tunneled/i, ''),
+      name: t.name,
       symbol: t.symbol
         // Remove the ".e" suffix
         .replace('.e', '')

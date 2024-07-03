@@ -11,8 +11,8 @@ import {
 } from '@tanstack/react-table'
 import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
 import {
+  EvmWithdrawOperation,
   TunnelOperation,
-  WithdrawOperation,
 } from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
@@ -41,7 +41,7 @@ const DepositStatus = () => <TxStatus.Success />
 const WithdrawStatus = function ({
   withdrawal,
 }: {
-  withdrawal: WithdrawOperation
+  withdrawal: EvmWithdrawOperation
 }) {
   const t = useTranslations('transaction-history')
   const waitMinutes = useTranslations()(

@@ -106,6 +106,14 @@
         "plugins": [
           "@typescript-eslint"
         ],
+        "rules": {
+          "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+              "ignoreRestSiblings": true
+            }
+          ]
+        },
         "settings": {
           "next": {
             "rootDir": [

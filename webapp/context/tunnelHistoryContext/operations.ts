@@ -8,15 +8,17 @@ import { type Address, type Chain } from 'viem'
 import {
   TunnelOperation,
   RawTunnelOperation,
-  DepositOperation,
-  WithdrawOperation,
+  EvmDepositOperation,
+  EvmWithdrawOperation,
 } from './types'
 
 const throttlingOptions = { interval: 2000, limit: 1 }
 
-const toOperation = <T extends TunnelOperation>(
-  tunnelOperation: TokenBridgeMessage,
-) =>
+const toOperation = <T extends TunnelOperation>({
+  data,
+  logIndex,
+  ...tunnelOperation
+}: TokenBridgeMessage) =>
   ({
     ...tunnelOperation,
     // convert these types to something that we can serialize
@@ -62,7 +64,7 @@ export const getDeposits = pThrottle(throttlingOptions)(
         toBlock,
       })
       .then(deposits =>
-        deposits.map(deposit => toOperation<DepositOperation>(deposit)),
+        deposits.map(deposit => toOperation<EvmDepositOperation>(deposit)),
       ),
 )
 
@@ -85,7 +87,7 @@ export const getWithdrawals = pThrottle(throttlingOptions)(
       })
       .then(withdrawals =>
         withdrawals.map(withdrawal =>
-          toOperation<WithdrawOperation>(withdrawal),
+          toOperation<EvmWithdrawOperation>(withdrawal),
         ),
       ),
 )

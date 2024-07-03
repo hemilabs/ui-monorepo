@@ -1,23 +1,22 @@
-import { TokenBridgeMessage, MessageStatus } from '@eth-optimism/sdk'
+import { type TokenBridgeMessage, type MessageStatus } from '@eth-optimism/sdk'
 
-export type DepositOperation = Omit<
+type CommonOperation = Omit<
   TokenBridgeMessage,
-  'amount' | 'blockNumber'
-> & {
-  amount: string
-  blockNumber?: number
-  timestamp: number
+  'amount' | 'blockNumber' | 'data' | 'logIndex'
+> & { amount: string; timestamp: number }
+
+export type BtcDepositOperation = CommonOperation & {
+  blockNumber: number
 }
 
-export type WithdrawOperation = Omit<
-  TokenBridgeMessage,
-  'amount' | 'blockNumber'
-> & {
-  amount: string
+export type EvmDepositOperation = CommonOperation & {
+  blockNumber?: number
+}
+
+export type EvmWithdrawOperation = CommonOperation & {
   blockNumber?: number
   status?: MessageStatus
-  timestamp: number
 }
 
-export type TunnelOperation = DepositOperation | WithdrawOperation
+export type TunnelOperation = EvmDepositOperation | EvmWithdrawOperation
 export type RawTunnelOperation<T extends TunnelOperation> = Omit<T, 'timestamp'>

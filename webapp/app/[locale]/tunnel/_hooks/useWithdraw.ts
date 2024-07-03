@@ -58,14 +58,12 @@ export const useWithdraw = function ({
 
     addWithdrawalToTunnelHistory({
       amount: toWithdraw,
-      data: '0x', // not needed
       direction: MessageDirection.L2_TO_L1,
       from: address,
       l1Token: withdrawingNative ? zeroAddress : toToken.address,
       l2Token: withdrawingNative
         ? NativeTokenSpecialAddressOnL2
         : fromToken.address,
-      logIndex: 0, // not needed
       status: MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
       // "to" field uses the same address as from, which is user's address
       to: address,

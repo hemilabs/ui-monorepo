@@ -2,7 +2,7 @@ import { MessageStatus } from '@eth-optimism/sdk'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
-import { WithdrawOperation } from 'context/tunnelHistoryContext/types'
+import { EvmWithdrawOperation } from 'context/tunnelHistoryContext/types'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode, useContext } from 'react'
@@ -107,7 +107,11 @@ const ProveIcon = () => (
   </svg>
 )
 
-const Amount = function ({ withdrawal }: { withdrawal?: WithdrawOperation }) {
+const Amount = function ({
+  withdrawal,
+}: {
+  withdrawal?: EvmWithdrawOperation
+}) {
   if (!withdrawal) {
     return <Skeleton containerClassName="w-5" />
   }

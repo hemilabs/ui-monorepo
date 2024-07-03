@@ -5,7 +5,7 @@ import { bitcoin, isEvmNetwork } from 'app/networks'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
-import { DepositOperation } from 'context/tunnelHistoryContext/types'
+import { EvmDepositOperation } from 'context/tunnelHistoryContext/types'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
@@ -403,18 +403,16 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
           const isNative = isNativeToken(fromToken)
           // Handling of this error is needed https://github.com/BVM-priv/ui-monorepo/issues/322
           // eslint-disable-next-line promise/catch-or-return
-          addTimestampToOperation<DepositOperation>(
+          addTimestampToOperation<EvmDepositOperation>(
             {
               amount: parseUnits(fromInput, fromToken.decimals).toString(),
               blockNumber: Number(depositReceipt.blockNumber),
-              data: '0x', // not needed
               direction: MessageDirection.L1_TO_L2,
               from: depositReceipt.from,
               l1Token: isNative ? zeroAddress : fromToken.address,
               l2Token: isNative
                 ? NativeTokenSpecialAddressOnL2
                 : toToken.address,
-              logIndex: 0, // not needed
               // "to" field uses the same address as from, which is user's address
               to: depositReceipt.from,
               transactionHash: depositReceipt.transactionHash,

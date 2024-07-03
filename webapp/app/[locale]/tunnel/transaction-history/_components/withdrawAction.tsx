@@ -1,5 +1,5 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { WithdrawOperation } from 'context/tunnelHistoryContext/types'
+import { EvmWithdrawOperation } from 'context/tunnelHistoryContext/types'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import Skeleton from 'react-loading-skeleton'
@@ -24,7 +24,7 @@ const Action = ({
 )
 
 type Props = {
-  withdraw: WithdrawOperation
+  withdraw: EvmWithdrawOperation
 }
 
 export const WithdrawAction = function ({ withdraw }: Props) {

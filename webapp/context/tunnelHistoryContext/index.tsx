@@ -8,7 +8,7 @@ import { type SyncStatus } from 'ui-common/hooks/useSyncInBlockChunks'
 import { type Address, type Chain } from 'viem'
 
 import { getDeposits, getWithdrawals } from './operations'
-import { DepositOperation, WithdrawOperation } from './types'
+import { EvmDepositOperation, EvmWithdrawOperation } from './types'
 import { useSyncTunnelOperations } from './useSyncTunnelOperations'
 
 const WithdrawalsStatusUpdater = dynamic(
@@ -31,20 +31,20 @@ const getTunnelHistoryWithdrawStorageKey = (
 
 type TunnelHistoryContext = {
   addDepositToTunnelHistory: (
-    deposit: Omit<DepositOperation, 'timestamp'>,
+    deposit: Omit<EvmDepositOperation, 'timestamp'>,
   ) => void
   addWithdrawalToTunnelHistory: (
-    withdrawal: Omit<WithdrawOperation, 'timestamp'>,
+    withdrawal: Omit<EvmWithdrawOperation, 'timestamp'>,
   ) => void
-  deposits: DepositOperation[]
+  deposits: EvmDepositOperation[]
   depositSyncStatus: SyncStatus
   resumeSync: () => void
   updateWithdrawal: (
-    withdrawal: WithdrawOperation,
-    updates: Partial<WithdrawOperation>,
+    withdrawal: EvmWithdrawOperation,
+    updates: Partial<EvmWithdrawOperation>,
   ) => void
   withdrawSyncStatus: SyncStatus
-  withdrawals: WithdrawOperation[]
+  withdrawals: EvmWithdrawOperation[]
 }
 
 export const TunnelHistoryContext = createContext<TunnelHistoryContext>({
@@ -68,14 +68,14 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
 
   const queryClient = useQueryClient()
 
-  const depositState = useSyncTunnelOperations<DepositOperation>({
+  const depositState = useSyncTunnelOperations<EvmDepositOperation>({
     chainId: l1ChainId,
     getStorageKey: getTunnelHistoryDepositStorageKey,
     getTunnelOperations: getDeposits,
     l1ChainId,
   })
 
-  const withdrawalsState = useSyncTunnelOperations<WithdrawOperation>({
+  const withdrawalsState = useSyncTunnelOperations<EvmWithdrawOperation>({
     chainId: hemi.id,
     getStorageKey: getTunnelHistoryWithdrawStorageKey,
     getTunnelOperations: getWithdrawals,
@@ -94,8 +94,8 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
         withdrawalsState.resumeSync()
       },
       updateWithdrawal(
-        withdrawal: WithdrawOperation,
-        updates: Partial<WithdrawOperation>,
+        withdrawal: EvmWithdrawOperation,
+        updates: Partial<EvmWithdrawOperation>,
       ) {
         withdrawalsState.updateOperation(function (current) {
           const newState = {

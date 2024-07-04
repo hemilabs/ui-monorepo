@@ -2,6 +2,11 @@ import { Account, BtcTransaction, Satoshis } from 'btc-wallet/unisat'
 import camelCaseKeys from 'camelcase-keys'
 import fetch from 'fetch-plus-plus'
 
+const toCamelCase =
+  () =>
+  <T>(obj: T) =>
+    camelCaseKeys(obj, { deep: true })
+
 const apiUrl = process.env.NEXT_PUBLIC_MEMPOOL_API_URL
 
 type Utxo = {
@@ -16,7 +21,7 @@ type Utxo = {
 export const getAddressUtxo = (address: Account) =>
   fetch(
     `${process.env.NEXT_PUBLIC_MEMPOOL_API_URL}/address/${address}/utxo`,
-  ).then(camelCaseKeys) as Promise<Utxo[]>
+  ).then(toCamelCase()) as Promise<Utxo[]>
 
 // See https://mempool.space/docs/api/rest#get-block-tip-height
 export const getBlockTipHeight = () =>
@@ -56,7 +61,7 @@ export const getTransactionReceipt = (txId: BtcTransaction) =>
       }
       throw err
     })
-    .then(camelCaseKeys)
+    .then(toCamelCase())
     .then(({ txid, ...rest }) => ({
       txId: txid,
       ...rest,

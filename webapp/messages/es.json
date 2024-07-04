@@ -21,8 +21,11 @@
       "you-send": "Usted envía"
     },
     "review-deposit": {
+      "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de 2 horas regrese a esta pagina para reclamarlo manualmente.",
+      "claim-deposit": "Reclame su depósito de {symbol}",
       "heading": "Revisar Depósito",
       "initiate-deposit": "Iniciar depósito",
+      "wait-for-confirmation": "Espere por la confirmación en Hemi",
       "you-are-depositing": "Usted está depositando"
     },
     "review-withdraw": {
@@ -97,6 +100,7 @@
     "dex": "DEX",
     "explorer": "Explorador",
     "failed": "Falló",
+    "fees": "Tarifa",
     "get-started": "Comenzar",
     "hemidocs": "Documentacion de Hemi",
     "network-gas-fee": "Tarifa de gas de {network}",

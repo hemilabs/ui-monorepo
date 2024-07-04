@@ -21,8 +21,11 @@
       "you-send": "You send"
     },
     "review-deposit": {
+      "btc-deposit-come-back-delay-note": "If you do not receive your deposit after 2hrs return to this page to manually claim.",
+      "claim-deposit": "Claim your {symbol} deposit",
       "heading": "Review Deposit",
       "initiate-deposit": "Initiate deposit",
+      "wait-for-confirmation": "Wait for Hemi confirmation",
       "you-are-depositing": "You are depositing"
     },
     "review-withdraw": {
@@ -98,6 +101,7 @@
     "explorer": "Explorer",
     "get-started": "Get Started",
     "failed": "Failed",
+    "fees": "Fees",
     "hemidocs": "Hemi Docs",
     "network-gas-fee": "{network} gas fee",
     "networkstatus": "Network Status",

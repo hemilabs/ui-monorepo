@@ -1,8 +1,9 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
+import { BtcTransaction } from 'btc-wallet/unisat'
 import { useTranslations } from 'next-intl'
 import { useContext } from 'react'
-import { type Hash } from 'viem'
+import { type Hash, isHash } from 'viem'
 import { type UseWaitForTransactionReceiptReturnType } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelOperation'
@@ -19,7 +20,7 @@ type UseTransactionsList = {
   successMessage: string
   // used to see if there was an error while confirming the Tx
   userConfirmationError: Error | undefined
-  txHash: Hash | undefined
+  txHash: BtcTransaction | Hash | undefined
 }
 export const useTransactionsList = function ({
   expectedWithdrawSuccessfulMessageStatus,
@@ -36,10 +37,10 @@ export const useTransactionsList = function ({
 
   const { withdrawals } = useContext(TunnelHistoryContext)
   const { txHash: withdrawalTxHash } = useTunnelOperation()
-  // deposits won't have a withdrawalTxHash and no requests will run
-  const messageStatus = withdrawals.find(
-    w => w.transactionHash === withdrawalTxHash,
-  )?.status
+
+  const withdrawalMessageStatus = isHash(withdrawalTxHash)
+    ? withdrawals.find(w => w.transactionHash === withdrawalTxHash)?.status
+    : undefined
 
   const transactionsList = []
 
@@ -47,7 +48,7 @@ export const useTransactionsList = function ({
     // user rejected the request
     if (
       ['user rejected', 'denied transaction signature'].includes(
-        userConfirmationError.message,
+        userConfirmationError.message?.toLowerCase(),
       )
     ) {
       transactionsList.push({
@@ -78,10 +79,12 @@ export const useTransactionsList = function ({
     }
     // operation was successful if tx was confirmed
     // and status of operation is the expected one (withdrawal flow only)
+    const evmConfirmation = receipt?.status === 'success'
+    const btcConfirmation = receipt?.status.confirmed
     if (
-      receipt?.status === 'success' &&
+      (evmConfirmation || btcConfirmation) &&
       (expectedWithdrawSuccessfulMessageStatus === undefined ||
-        messageStatus >= expectedWithdrawSuccessfulMessageStatus)
+        withdrawalMessageStatus >= expectedWithdrawSuccessfulMessageStatus)
     ) {
       transactionsList.push({
         id: operation,
@@ -89,9 +92,11 @@ export const useTransactionsList = function ({
         text: successMessage,
         txHash,
       })
-    }
-    // operation in progress
-    if (!receipt || messageStatus < expectedWithdrawSuccessfulMessageStatus) {
+    } else if (
+      !receipt ||
+      !receipt?.status.confirmed ||
+      withdrawalMessageStatus < expectedWithdrawSuccessfulMessageStatus
+    ) {
       transactionsList.push({
         id: operation,
         status: 'loading',

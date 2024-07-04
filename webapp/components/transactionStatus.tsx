@@ -1,6 +1,5 @@
 import { useTranslations } from 'next-intl'
 import { Card } from 'ui-common/components/card'
-import { useAccount } from 'wagmi'
 
 const Error = () => (
   <svg
@@ -86,13 +85,18 @@ const ExternalLink = () => (
 )
 
 type Props = {
+  explorerUrl: string
   status: 'error' | 'loading' | 'success'
   text: string
   txHash: string | undefined
 }
 
-export const TransactionStatus = function ({ status, text, txHash }: Props) {
-  const { chain } = useAccount()
+export const TransactionStatus = function ({
+  explorerUrl,
+  status,
+  text,
+  txHash,
+}: Props) {
   const t = useTranslations('common.transaction-status')
 
   const statusMap = {
@@ -121,7 +125,7 @@ export const TransactionStatus = function ({ status, text, txHash }: Props) {
       className={`min-w-72 file:cursor-pointer ${
         !txHash ? 'pointer-events-none' : ''
       }`}
-      href={`${chain.blockExplorers.default.url}/tx/${txHash}`}
+      href={`${explorerUrl}/tx/${txHash}`}
       rel="noopener noreferrer"
       target="_blank"
     >

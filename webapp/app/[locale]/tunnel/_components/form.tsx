@@ -235,6 +235,7 @@ export const FormContent = function ({
 type TunnelFormProps = {
   bottomSection?: ReactNode
   expectedChainId: RemoteChain['id']
+  explorerUrl: string
   formContent: ReactNode
   onSubmit: () => void
   reviewSummary?: React.ReactNode
@@ -250,6 +251,7 @@ type TunnelFormProps = {
 export const TunnelForm = function ({
   bottomSection,
   expectedChainId,
+  explorerUrl,
   formContent,
   onSubmit,
   reviewSummary,
@@ -284,6 +286,7 @@ export const TunnelForm = function ({
         <div className="mx-auto flex w-full flex-col gap-y-4 md:max-w-96 xl:mx-0 xl:max-w-72">
           {transactionsList.map(transaction => (
             <TransactionStatus
+              explorerUrl={explorerUrl}
               key={transaction.id}
               status={transaction.status}
               text={transaction.text}
@@ -292,6 +295,18 @@ export const TunnelForm = function ({
           ))}
         </div>
       )}
+    </div>
+  )
+}
+
+export const BtcFees = function ({ fees }: { fees: string }) {
+  const t = useTranslations('common')
+  return (
+    <div className="mt-2 flex flex-col gap-y-2 text-sm">
+      <div className="flex items-center justify-between">
+        <span className="text-neutral-400">{t('fees')}</span>
+        <span>{`${fees ? getFormattedValue(fees) : '-'} sat/vB`}</span>
+      </div>
     </div>
   )
 }

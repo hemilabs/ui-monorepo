@@ -2,11 +2,15 @@
 
 import { MessageDirection } from '@eth-optimism/sdk'
 import { bitcoin, isEvmNetwork } from 'app/networks'
+import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import { DepositOperation } from 'context/tunnelHistoryContext/types'
+import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
+import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useContext, useEffect, useState } from 'react'
@@ -16,10 +20,11 @@ import { Button } from 'ui-common/components/button'
 import { formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
-import { useAccount } from 'wagmi'
+import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useDeposit } from '../_hooks/useDeposit'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
+import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import {
   type BtcToHemiTunneling,
   type EvmTunneling,
@@ -29,6 +34,7 @@ import {
 
 import { Erc20Approval } from './Erc20Approval'
 import {
+  BtcFees,
   EvmSummary,
   FormContent,
   TunnelForm,
@@ -38,6 +44,16 @@ import {
 import { ReceivingHemiAddress } from './receivingHemiAddress'
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
+
+const ReviewBtcDeposit = dynamic(
+  () =>
+    import('./reviewOperation/reviewBtcDeposit').then(
+      mod => mod.ReviewBtcDeposit,
+    ),
+  {
+    ssr: false,
+  },
+)
 
 const SetMaxBtcBalance = dynamic(
   () => import('./setMaxBalance').then(mod => mod.SetMaxBtcBalance),
@@ -120,42 +136,169 @@ type BtcDepositProps = {
 // but nothing is actually visible until BTC is enabled
 // https://github.com/BVM-priv/ui-monorepo/issues/342
 const BtcDeposit = function ({ state }: BtcDepositProps) {
-  const { fromToken, updateFromInput } = state
-  const isRunningOperation = false
-  // eslint-disable-next-line arrow-body-style
-  const handleDeposit = () => {}
+  // use this to avoid infinite loops in effects when resetting the form
+  const [hasClearedForm, setHasClearedForm] = useState(false)
+  // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
+  const [depositAmount, setDepositAmount] = useState('0')
+  const [isDepositing, setIsDepositing] = useState(false)
+
+  const {
+    fromInput,
+    fromNetworkId,
+    fromToken,
+    resetStateAfterOperation,
+    updateFromInput,
+  } = state
+
+  const { btcChainId, evmAddress } = useAccounts()
+  const { balance } = useBtcBalance()
+  const { txHash } = useTunnelOperation()
+
+  const canDeposit = canSubmit({
+    balance: BigInt(balance?.confirmed ?? 0),
+    chainId: btcChainId,
+    fromInput,
+    fromNetworkId,
+    fromToken,
+  })
+
+  const {
+    clearDepositState,
+    depositBitcoin,
+    depositError,
+    depositReceipt,
+    depositReceiptError,
+    depositTxId,
+  } = useDepositBitcoin()
+
   const t = useTranslations()
 
+  useEffect(
+    function handleDepositErrors() {
+      if (depositError || depositReceiptError) {
+        const timeoutId = setTimeout(clearDepositState, 7000)
+        if (!hasClearedForm) {
+          setHasClearedForm(true)
+          setIsDepositing(false)
+          resetStateAfterOperation()
+        }
+        return () => clearTimeout(timeoutId)
+      }
+      return undefined
+    },
+    [
+      clearDepositState,
+      depositError,
+      depositReceiptError,
+      hasClearedForm,
+      resetStateAfterOperation,
+      setHasClearedForm,
+      setIsDepositing,
+    ],
+  )
+
+  useEffect(
+    function handleDepositSuccess() {
+      if (depositReceipt?.status.confirmed) {
+        const timeoutId = setTimeout(clearDepositState, 7000)
+        if (!hasClearedForm) {
+          setHasClearedForm(true)
+          // TODO save bitcoin deposit to Tx history
+          // https://github.com/BVM-priv/ui-monorepo/issues/345
+        }
+        resetStateAfterOperation()
+        return () => clearTimeout(timeoutId)
+      }
+      return undefined
+    },
+    [
+      clearDepositState,
+      depositReceipt,
+      hasClearedForm,
+      resetStateAfterOperation,
+      setHasClearedForm,
+    ],
+  )
+
+  const transactionsList = useTransactionsList({
+    inProgressMessage: t('tunnel-page.transaction-status.depositing', {
+      fromInput: getFormattedValue(depositAmount),
+      symbol: fromToken.symbol,
+    }),
+    isOperating: isDepositing,
+    operation: 'deposit',
+    receipt: depositReceipt,
+    receiptError: depositReceiptError,
+    successMessage: t('tunnel-page.transaction-status.deposited', {
+      fromInput: getFormattedValue(depositAmount),
+      symbol: fromToken.symbol,
+    }),
+    txHash: depositTxId,
+    userConfirmationError: depositError,
+  })
+  const { feePrices } = useGetFeePrices()
+
+  const handleDeposit = function () {
+    if (!canDeposit) {
+      return
+    }
+    setDepositAmount(fromInput)
+    setIsDepositing(true)
+    const satoshis = Number(parseUnits(fromInput, fromToken.decimals))
+    depositBitcoin(satoshis, evmAddress)
+  }
+
+  const fees = feePrices?.fastestFee?.toString()
+
   return (
-    <TunnelForm
-      bottomSection={<WalletsConnected />}
-      expectedChainId={bitcoin.id}
-      formContent={
-        <FormContent
-          isRunningOperation={isRunningOperation}
-          setMaxBalanceButton={
-            <SetMaxBtcBalance
-              fromToken={fromToken}
-              isRunningOperation={isRunningOperation}
-              onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
-            />
+    <>
+      <TunnelForm
+        bottomSection={<WalletsConnected />}
+        expectedChainId={bitcoin.id}
+        explorerUrl={bitcoin.blockExplorers.default.url}
+        formContent={
+          <FormContent
+            isRunningOperation={isDepositing}
+            setMaxBalanceButton={
+              <SetMaxBtcBalance
+                fromToken={fromToken}
+                isRunningOperation={isDepositing}
+                onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+              />
+            }
+            tunnelState={state}
+          />
+        }
+        onSubmit={handleDeposit}
+        reviewSummary={fees !== undefined ? <BtcFees fees={fees} /> : null}
+        submitButton={
+          <>
+            <div className="mb-2">
+              <ReceivingHemiAddress token={state.fromToken} />
+            </div>
+            <Button disabled={!canDeposit} type="submit">
+              {t('tunnel-page.submit-button.deposit')}
+            </Button>
+          </>
+        }
+        transactionsList={transactionsList}
+      />
+      {!!txHash && (
+        <ReviewBtcDeposit
+          fees={
+            fees !== undefined
+              ? {
+                  amount: fees,
+                  symbol: 'sat/vB',
+                }
+              : undefined
           }
-          tunnelState={state}
+          isRunningOperation={isDepositing}
+          onClose={resetStateAfterOperation}
+          transactionsList={transactionsList}
         />
-      }
-      onSubmit={handleDeposit}
-      submitButton={
-        <>
-          <div className="mb-2">
-            <ReceivingHemiAddress token={state.fromToken} />
-          </div>
-          <Button disabled type="submit">
-            {t('tunnel-page.submit-button.deposit')}
-          </Button>
-        </>
-      }
-      transactionsList={[]}
-    />
+      )}
+    </>
   )
 }
 
@@ -187,7 +330,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     updateFromInput,
   } = state
 
-  const { chain } = useAccount()
+  const { chain } = useEvmAccount()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -406,6 +549,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
   return (
     <TunnelForm
       expectedChainId={fromNetworkId}
+      explorerUrl={fromChain.blockExplorers.default.url}
       formContent={
         <FormContent
           isRunningOperation={isRunningOperation}

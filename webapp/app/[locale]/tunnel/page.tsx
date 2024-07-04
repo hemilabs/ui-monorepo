@@ -1,12 +1,15 @@
 'use client'
 
 import { MessageStatus } from '@eth-optimism/sdk'
+import { featureFlags } from 'app/featureFlags'
+import { isBtcTxHash } from 'btc-wallet/utils/hash'
 import { ConnectWallet } from 'components/connectWallet'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTranslations } from 'next-intl'
 import { Suspense, useContext, useEffect } from 'react'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
+import { isHash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { Claim } from './_components/claim'
@@ -35,43 +38,25 @@ const OperationByMessageStatus = {
   [MessageStatus.RELAYED]: 'view',
 }
 
-const Tunnel = function () {
+const Operation = function ({
+  state,
+  stateLoaded,
+}: {
+  state: ReturnType<typeof useTunnelState>
+  stateLoaded: boolean
+}) {
   const { status } = useAccount()
-  const { withdrawals } = useContext(TunnelHistoryContext)
-  const tunnelState = useTunnelState()
-  const { operation, txHash } = useTunnelOperation()
   const t = useTranslations()
-  const { setQueryParams } = useQueryParams()
+  const { operation, txHash } = useTunnelOperation()
 
-  const messageStatus = withdrawals.find(w => w.transactionHash === txHash)
-    ?.status
-
-  useEffect(
-    function updateWithdrawOperationComponentPerMessageStatus() {
-      if (
-        operation === 'deposit' ||
-        !messageStatus ||
-        (!operation && !txHash)
-      ) {
-        return
-      }
-      const newOperation = OperationByMessageStatus[messageStatus]
-      if (operation !== newOperation) {
-        setQueryParams({ operation: newOperation })
-      }
-    },
-    [messageStatus, operation, setQueryParams, txHash],
-  )
+  const OperationComponent = stateLoaded ? OperationsComponent[operation] : null
 
   const connectedToUnsupportedChain = useConnectedToUnsupportedEvmChain()
 
-  const stateLoaded = !txHash || messageStatus !== undefined
-  const OperationComponent = stateLoaded ? OperationsComponent[operation] : null
-
   return (
-    <div className="h-fit-rest-screen">
+    <>
       {stateLoaded && OperationComponent && (
-        <OperationComponent state={tunnelState} />
+        <OperationComponent state={state} />
       )}
       {txHash && connectedToUnsupportedChain && (
         <ConnectWallet
@@ -87,6 +72,57 @@ const Tunnel = function () {
       )}
       {/* Add better loading indicator https://github.com/BVM-priv/ui-monorepo/issues/157 */}
       {!stateLoaded && <span>...</span>}
+    </>
+  )
+}
+
+const Tunnel = function () {
+  const { withdrawals } = useContext(TunnelHistoryContext)
+  const { setQueryParams } = useQueryParams()
+  const { operation, txHash } = useTunnelOperation()
+  const tunnelState = useTunnelState()
+
+  const isEvmTx = isHash(txHash)
+  const isBtcTx = featureFlags.btcTunnelEnabled && isBtcTxHash(txHash)
+
+  const withdrawalStatus = isEvmTx
+    ? withdrawals.find(w => w.transactionHash === txHash)?.status
+    : undefined
+
+  useEffect(
+    function updateWrongQueryParameters() {
+      if (!operation || (!isEvmTx && !isBtcTx)) {
+        // if none are defined, ignore
+        return
+      }
+
+      if (!isEvmTx && !isBtcTx) {
+        // If txHash is invalid, return.
+        // useTunnelOperation hook automatically takes care of clearing that query string value
+        return
+      }
+
+      if (isEvmTx) {
+        // for Evm Txs, we only need to validate the "operation" if it is not a deposit and the withdrawal status is defined
+        if (operation === 'deposit' || !withdrawalStatus) {
+          return
+        }
+        const newOperation = OperationByMessageStatus[withdrawalStatus]
+        if (operation !== newOperation) {
+          // auto correct the operation
+          setQueryParams({ operation: newOperation })
+        }
+      }
+    },
+    [isBtcTx, isEvmTx, withdrawalStatus, operation, setQueryParams],
+  )
+
+  const stateLoaded =
+    !txHash || isBtcTx || (isEvmTx && withdrawalStatus !== undefined)
+
+  return (
+    <div className="h-fit-rest-screen">
+      <Operation state={tunnelState} stateLoaded={stateLoaded} />
     </div>
   )
 }

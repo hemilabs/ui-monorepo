@@ -25,5 +25,10 @@ export interface Unisat {
     event: Event,
     handler: EventMap[Event],
   ): void
+  sendBitcoin: (
+    toAddress: Account,
+    satoshis: Satoshis,
+    options: object,
+  ) => Promise<BtcTransaction>
   switchNetwork: (network: BtcSupportedNetworks) => Promise<void>
 }

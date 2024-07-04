@@ -40,6 +40,10 @@ export const unisat: WalletConnector = {
     window.unisat.on('networkChanged', handler)
     return () => window.unisat.removeListener('networkChanged', handler)
   },
+  sendBitcoin(toAddress, satoshis, options) {
+    assertInstalled()
+    return window.unisat.sendBitcoin(toAddress, satoshis, options)
+  },
   switchNetwork(network) {
     assertInstalled()
     return window.unisat.switchNetwork(network)

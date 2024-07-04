@@ -22,6 +22,7 @@
     },
     "review-deposit": {
       "heading": "Review Deposit",
+      "initiate-deposit": "Initiate deposit",
       "you-are-depositing": "You are depositing"
     },
     "review-withdraw": {
@@ -29,10 +30,8 @@
       "heading": "Review Withdraw",
       "initiate-withdrawal": "Initiate withdrawal",
       "prove-withdrawal": "Prove withdrawal",
-      "total-amount": "Total Amount",
       "total-to-withdraw": "Total to withdraw",
       "view-tx": "View",
-      "wait-complete": "Wait complete",
       "wait-hours": "Wait up to {hours} hours",
       "wait-minutes": "Wait up to {minutes} minutes"
     },
@@ -107,6 +106,7 @@
     "swap": "Swap",
     "tools": "Tools",
     "total": "Total",
+    "total-amount": "Total Amount",
     "transaction-status": {
       "confirmed": "Tx confirmed",
       "error": "Tx failed",
@@ -117,6 +117,7 @@
     "unexpected-error": "An unexpected error has ocurred. Please try again.",
     "unsupported-chain-heading": "You're not connected to a supported chain",
     "view": "View",
+    "wait-complete": "Wait complete",
     "wallets-connected": "{count} Connected {count, plural, =1 {Wallet} other {Wallets}} ",
     "wrong-network": "Wrong Network"
   },

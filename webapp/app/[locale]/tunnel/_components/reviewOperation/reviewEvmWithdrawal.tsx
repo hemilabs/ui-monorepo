@@ -13,29 +13,13 @@ import { getFormattedValue } from 'utils/format'
 import { getL2TokenByBridgedAddress, getTokenByAddress } from 'utils/token'
 import { Address, formatUnits } from 'viem'
 
-import { useTunnelOperation } from '../_hooks/useTunnelOperation'
+import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
+
+import { Step, SubStep } from './steps'
+import { VerticalLine } from './verticalLine'
 
 const ExpectedWithdrawalWaitTimeMinutes = 20
 const ExpectedProofWaitTimeHours = 3
-
-type ProgressStatus = 'completed' | 'idle' | 'progress' | 'ready'
-
-const CheckIcon = () => (
-  <svg
-    fill="none"
-    height="17"
-    viewBox="0 0 17 17"
-    width="17"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M10.5 6.83333L7.5 10.5L6.16667 9.16667M14.5 8.5C14.5 11.8137 11.8137 14.5 8.5 14.5C5.18629 14.5 2.5 11.8137 2.5 8.5C2.5 5.18629 5.18629 2.5 8.5 2.5C11.8137 2.5 14.5 5.18629 14.5 8.5Z"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.33333"
-    />
-  </svg>
-)
 
 const ClaimIcon = () => (
   <svg
@@ -50,35 +34,6 @@ const ClaimIcon = () => (
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth="1.33333"
-    />
-  </svg>
-)
-
-const ClockIcon = () => (
-  <svg
-    fill="none"
-    height="17"
-    viewBox="0 0 17 17"
-    width="17"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M2.5 3.83337V6.50004H5.16667"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.5"
-    />
-    <path
-      d="M2.84113 10.5C3.6648 12.8304 5.88727 14.5 8.49971 14.5C11.8134 14.5 14.4997 11.8137 14.4997 8.5C14.4997 5.18629 11.8134 2.5 8.49971 2.5C6.01361 2.5 3.88066 4.01204 2.97032 6.16667"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.5"
-    />
-    <path
-      d="M8.5 5.83337V8.50004L10.5 10.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.5"
     />
   </svg>
 )
@@ -172,93 +127,7 @@ const Amount = function ({ withdrawal }: { withdrawal?: WithdrawOperation }) {
   )
 }
 
-const backgroundColors = {
-  completed: 'bg-green-500/20',
-  idle: 'bg-zinc-50',
-  progress: 'bg-orange-600/20',
-  // uses same color as progress :shrug:
-  ready: 'bg-orange-600/20',
-}
-
-const iconColors = {
-  completed: '[&>svg>path]:stroke-green-600',
-  idle: '[&>svg>path]:stroke-slate-500',
-  progress: '[&>svg>path]:stroke-orange-600',
-  // uses same color as progress :shrug:
-  ready: '[&>svg>path]:stroke-orange-600',
-}
-
-const textColors = {
-  completed: 'text-green-600',
-  idle: 'text-slate-500',
-  progress: 'text-orange-600',
-  ready: 'text-orange-600',
-}
-
-type StepProps = {
-  gas?: {
-    amount: string
-    symbol: string
-  }
-  icon: ReactNode
-  status: ProgressStatus
-  text: string
-}
-
-const Step = function ({ gas, icon, text, status }: StepProps) {
-  const border = status === 'idle' ? 'border border-solid border-slate-100' : ''
-  return (
-    <div
-      className={`flex items-center gap-x-2 rounded-lg p-2 text-xs font-medium md:text-sm ${backgroundColors[status]} ${border} ${textColors[status]}`}
-    >
-      <div className={iconColors[status]}>
-        {status === 'completed' ? <CheckIcon /> : icon}
-      </div>
-      <p className="mr-auto">{text}</p>
-      {gas && status !== 'completed' ? (
-        <>
-          <div className={iconColors[status]}>
-            <FuelIcon />
-          </div>
-          <span className="text-[10px] font-normal sm:text-xs">
-            {`${getFormattedValue(gas.amount)} ${gas.symbol}`}
-          </span>
-        </>
-      ) : null}
-    </div>
-  )
-}
-
-type SubStepProps = {
-  status: ProgressStatus
-  text: string
-}
-const SubStep = function ({ status, text }: SubStepProps) {
-  const t = useTranslations('tunnel-page.review-withdraw')
-
-  const completed = status === 'completed'
-  return (
-    <div
-      className={`flex items-center gap-x-2 px-2 text-xs font-medium ${
-        iconColors[status] ?? iconColors.idle
-      }`}
-    >
-      {completed ? <CheckIcon /> : <ClockIcon />}
-      <span className={textColors[status] ?? textColors.idle}>
-        {completed ? t('wait-complete') : text}
-      </span>
-    </div>
-  )
-}
-
-const VerticalLine = () => (
-  <div className="ml-4 py-1">
-    <div className="mb-3 h-2 w-[2px] bg-slate-100"></div>
-    <div className="h-2 w-[2px] bg-slate-100"></div>
-  </div>
-)
-
-type ReviewWithdrawalProps = {
+type ReviewEvmWithdrawalProps = {
   gas?: {
     amount: string
     symbol: string
@@ -275,17 +144,17 @@ type ReviewWithdrawalProps = {
   }[]
 }
 
-export const ReviewWithdrawal = function ({
+export const ReviewEvmWithdrawal = function ({
   gas,
   isRunningOperation,
   onClose,
   onSubmit,
   submitButton,
   transactionsList = [],
-}: ReviewWithdrawalProps) {
+}: ReviewEvmWithdrawalProps) {
   const router = useRouter()
 
-  const t = useTranslations('tunnel-page.review-withdraw')
+  const t = useTranslations()
   const { operation, txHash } = useTunnelOperation()
 
   const { withdrawals } = useContext(TunnelHistoryContext)
@@ -355,59 +224,64 @@ export const ReviewWithdrawal = function ({
     router.back()
   }
 
+  const feesIcon = <FuelIcon />
+
   return (
     <Modal onClose={closeModal}>
       <div className="flex w-96 flex-col gap-y-4">
         <Card padding="large">
           <div className="flex items-center justify-between pb-2">
             <h4 className="text-base font-medium text-slate-950 lg:text-xl">
-              {t('heading')}
+              {t('tunnel-page.review-withdraw.heading')}
             </h4>
             <CloseIcon className="cursor-pointer" onClick={closeModal} />
           </div>
           <div className="flex items-center justify-between py-4">
             <span className="text-xs font-medium text-slate-500">
-              {t('total-amount')}
+              {t('common.total-amount')}
             </span>
             <Amount withdrawal={foundWithdrawal} />
           </div>
           <Step
-            gas={isWithdraw && gas}
+            fees={isWithdraw && gas}
+            feesIcon={feesIcon}
             icon={<CursorIcon />}
             status={getWithdrawalProgress()}
-            text={t('initiate-withdrawal')}
+            text={t('tunnel-page.review-withdraw.initiate-withdrawal')}
           />
           <VerticalLine />
           <SubStep
             status={getWaitReadyToProveStatus()}
-            text={t('wait-minutes', {
+            text={t('tunnel-page.review-withdraw.wait-minutes', {
               minutes: ExpectedWithdrawalWaitTimeMinutes,
             })}
           />
           <VerticalLine />
           <Step
-            gas={isProve && gas}
+            fees={isProve && gas}
+            feesIcon={feesIcon}
             icon={<ProveIcon />}
             status={getProveStatus()}
-            text={t('prove-withdrawal')}
+            text={t('tunnel-page.review-withdraw.prove-withdrawal')}
           />
           <VerticalLine />
           <SubStep
             status={getWaitReadyToClaimStatus()}
-            text={t('wait-hours', { hours: ExpectedProofWaitTimeHours })}
+            text={t('tunnel-page.review-withdraw.wait-hours', {
+              hours: ExpectedProofWaitTimeHours,
+            })}
           />
           <VerticalLine />
           <Step
-            gas={isClaim && gas}
+            fees={isClaim && gas}
+            feesIcon={feesIcon}
             icon={<ClaimIcon />}
             status={getClaimStatus()}
-            text={t('claim-withdrawal')}
+            text={t('tunnel-page.review-withdraw.claim-withdrawal')}
           />
-          {
-            <form className="mt-6" onSubmit={handleSubmit}>
-              {submitButton}
-            </form>
-          }
+          <form className="mt-6" onSubmit={handleSubmit}>
+            {submitButton}
+          </form>
         </Card>
         {transactionsList.length > 0 && (
           <div className="flex flex-col gap-y-4">

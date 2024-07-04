@@ -22,6 +22,7 @@
     },
     "review-deposit": {
       "heading": "Revisar Depósito",
+      "initiate-deposit": "Iniciar depósito",
       "you-are-depositing": "Usted está depositando"
     },
     "review-withdraw": {
@@ -29,10 +30,8 @@
       "heading": "Revisar Retiro",
       "initiate-withdrawal": "Iniciar retiro",
       "prove-withdrawal": "Probar retiro",
-      "total-amount": "Monto Total",
       "total-to-withdraw": "Total a retirar",
       "view-tx": "View",
-      "wait-complete": "Espera completada",
       "wait-hours": "Espere hasta {hours} horas",
       "wait-minutes": "Espere hasta {minutes} minutos"
     },
@@ -107,6 +106,7 @@
     "swap": "Intercambiar",
     "tools": "Herramientas",
     "total": "Total",
+    "total-amount": "Monto Total",
     "transaction-status": {
       "confirmed": "Tx confirmada",
       "error": "La Tx falló",
@@ -117,6 +117,7 @@
     "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
     "unsupported-chain-heading": "Usted no se encuentra conectado a una red soportada",
     "view": "Ver",
+    "wait-complete": "Espera completada",
     "wallets-connected": "{count} {count, plural, =1 {Billtera Conectada} other {Billeteras Conectadas}} ",
     "wrong-network": "Red Incorrecta"
   },

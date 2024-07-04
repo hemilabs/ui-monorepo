@@ -8,8 +8,10 @@ export const useAccounts = function () {
   return {
     allConnected: btcAccount.isConnected && evmAccount.isConnected,
     allDisconnected: btcAccount.isDisconnected && evmAccount.isDisconnected,
+    btcAddress: btcAccount.address,
     btcChainId: btcAccount.chainId,
     btcWalletStatus: btcAccount.status,
+    evmAddress: evmAccount.address,
     evmChainId: evmAccount.chainId,
     evmWalletStatus: evmAccount.status,
   }

@@ -1,4 +1,10 @@
-import { Account, Balance, BtcSupportedNetworks } from '../unisat'
+import {
+  Account,
+  Balance,
+  BtcSupportedNetworks,
+  Satoshis,
+  BtcTransaction,
+} from '../unisat'
 
 export type WalletConnector = {
   connect: () => Promise<void>
@@ -12,6 +18,11 @@ export type WalletConnector = {
   onNetworkChanged: (
     handler: (network: BtcSupportedNetworks) => void,
   ) => () => void
+  sendBitcoin: (
+    to: Account,
+    satoshis: Satoshis,
+    options: object,
+  ) => Promise<BtcTransaction>
   switchNetwork: (network: BtcSupportedNetworks) => Promise<void>
 }
 

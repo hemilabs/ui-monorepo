@@ -176,7 +176,7 @@ const useTransactionsHistory = function () {
   }
 }
 
-const pageSize = 10
+const pageSize = 8
 
 const Body = function ({
   columns,

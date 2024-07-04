@@ -12,7 +12,7 @@ import {
   getTokenByAddress,
   isNativeToken,
 } from 'utils/token'
-import { isDeposit } from 'utils/tunnel'
+import { isEvmDeposit } from 'utils/tunnel'
 import { type Chain, formatUnits, Address } from 'viem'
 
 type Props = {
@@ -45,8 +45,8 @@ const InfoIcon = () => (
 const Logo = function ({ l1ChainId, operation }: Props) {
   const { l1Token, l2Token } = operation
 
-  const tokenAddress = (isDeposit(operation) ? l1Token : l2Token) as Address
-  const chainId = isDeposit(operation) ? l1ChainId : hemi.id
+  const tokenAddress = (isEvmDeposit(operation) ? l1Token : l2Token) as Address
+  const chainId = isEvmDeposit(operation) ? l1ChainId : hemi.id
   const token =
     getTokenByAddress(tokenAddress, chainId) ??
     getL2TokenByBridgedAddress(tokenAddress, chainId) ??
@@ -78,8 +78,8 @@ const Value = ({ amount, token }: ValueProps) => (
 export const Amount = function ({ l1ChainId, operation }: Props) {
   const { amount, l1Token, l2Token } = operation
 
-  const tokenAddress = (isDeposit(operation) ? l1Token : l2Token) as Address
-  const chainId = isDeposit(operation) ? l1ChainId : hemi.id
+  const tokenAddress = (isEvmDeposit(operation) ? l1Token : l2Token) as Address
+  const chainId = isEvmDeposit(operation) ? l1ChainId : hemi.id
   const token =
     getTokenByAddress(tokenAddress, chainId) ??
     getL2TokenByBridgedAddress(tokenAddress, chainId) ??

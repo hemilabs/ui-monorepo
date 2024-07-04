@@ -23,7 +23,7 @@ import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import { isDeposit } from 'utils/tunnel'
+import { isEvmDeposit } from 'utils/tunnel'
 import { Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -92,7 +92,7 @@ const columnsBuilder = (
     accessorKey: 'direction',
     cell: ({ row }) => (
       <span className="text-sm font-normal">
-        {t(isDeposit(row.original) ? 'deposit' : 'withdraw')}
+        {t(isEvmDeposit(row.original) ? 'deposit' : 'withdraw')}
       </span>
     ),
     header: () => <Header text={t('column-headers.type')} />,
@@ -108,14 +108,18 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) => (
-      <ChainComponent chainId={isDeposit(row.original) ? l1ChainId : hemi.id} />
+      <ChainComponent
+        chainId={isEvmDeposit(row.original) ? l1ChainId : hemi.id}
+      />
     ),
     header: () => <Header text={t('column-headers.from')} />,
     id: 'from',
   },
   {
     cell: ({ row }) => (
-      <ChainComponent chainId={isDeposit(row.original) ? hemi.id : l1ChainId} />
+      <ChainComponent
+        chainId={isEvmDeposit(row.original) ? hemi.id : l1ChainId}
+      />
     ),
     header: () => <Header text={t('column-headers.to')} />,
     id: 'to',
@@ -124,7 +128,7 @@ const columnsBuilder = (
     accessorKey: 'transactionHash',
     cell({ row }) {
       const { transactionHash } = row.original
-      const chainId = isDeposit(row.original) ? l1ChainId : hemi.id
+      const chainId = isEvmDeposit(row.original) ? l1ChainId : hemi.id
       return (
         <TxLink
           chainId={chainId}
@@ -139,7 +143,7 @@ const columnsBuilder = (
   {
     accessorKey: 'status',
     cell: ({ row }) =>
-      isDeposit(row.original) ? (
+      isEvmDeposit(row.original) ? (
         <DepositStatus />
       ) : (
         <WithdrawStatus withdrawal={row.original} />
@@ -149,7 +153,7 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) =>
-      isDeposit(row.original) ? (
+      isEvmDeposit(row.original) ? (
         // Deposits do not render an action, let's add a "-"
         <span className="opacity-40">-</span>
       ) : (

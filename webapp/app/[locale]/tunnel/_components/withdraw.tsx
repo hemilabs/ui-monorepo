@@ -24,6 +24,7 @@ import {
 } from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
 
+import { ConnectEvmWallet } from './connectEvmWallet'
 import { EvmSummary, FormContent, TunnelForm, canSubmit } from './form'
 
 const ReviewEvmWithdrawal = dynamic(
@@ -111,7 +112,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     updateFromInput,
   } = state
 
-  const { chainId } = useAccount()
+  const { chainId, isConnected } = useAccount()
   const { txHash } = useTunnelOperation()
 
   const operatesNativeToken = isNativeToken(fromToken)
@@ -277,13 +278,17 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
           ) : null
         }
         submitButton={
-          <Button disabled={!canWithdraw || isWithdrawing} type="submit">
-            {t(
-              `tunnel-page.submit-button.${
-                isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'
-              }`,
-            )}
-          </Button>
+          isConnected ? (
+            <Button disabled={!canWithdraw || isWithdrawing} type="submit">
+              {t(
+                `tunnel-page.submit-button.${
+                  isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'
+                }`,
+              )}
+            </Button>
+          ) : (
+            <ConnectEvmWallet />
+          )
         }
         transactionsList={transactionsList}
       />

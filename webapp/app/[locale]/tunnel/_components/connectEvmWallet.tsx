@@ -7,7 +7,7 @@ export const ConnectEvmWallet = function () {
   const { openConnectModal } = useConnectModal()
   return (
     <Button onClick={openConnectModal} type="button">
-      {t('common.connect-wallet')}
+      {t('tunnel-page.submit-button.connect-evm-wallet')}
     </Button>
   )
 }

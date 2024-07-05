@@ -18,7 +18,7 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useContext, useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
-import { type EvmToken, type Token } from 'types/token'
+import { BtcToken, type EvmToken, type Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
@@ -36,6 +36,8 @@ import {
   TypedTunnelState,
 } from '../_hooks/useTunnelState'
 
+import { ConnectBtcWallet } from './connectBtcWallet'
+import { ConnectEvmWallet } from './connectEvmWallet'
 import { Erc20Approval } from './Erc20Approval'
 import {
   BtcFees,
@@ -73,6 +75,41 @@ const WalletsConnected = dynamic(
   () => import('./walletsConnected').then(mod => mod.WalletsConnected),
   { ssr: false },
 )
+
+const SubmitBtcDeposit = function ({
+  disabled,
+  token,
+}: {
+  disabled: boolean
+  token: BtcToken
+}) {
+  const { allDisconnected, btcWalletStatus, evmWalletStatus } = useAccounts()
+  const t = useTranslations()
+
+  if (allDisconnected) {
+    // TODO we should open the drawer here
+    return <ConnectEvmWallet />
+  }
+
+  if (evmWalletStatus !== 'connected') {
+    return <ConnectEvmWallet />
+  }
+
+  if (btcWalletStatus !== 'connected') {
+    return <ConnectBtcWallet />
+  }
+
+  return (
+    <>
+      <div className="mb-2">
+        <ReceivingHemiAddress token={token} />
+      </div>
+      <Button disabled={disabled} type="submit">
+        {t('tunnel-page.submit-button.deposit')}
+      </Button>
+    </>
+  )
+}
 
 const SubmitEvmDeposit = function ({
   canDeposit,
@@ -287,14 +324,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
         onSubmit={handleDeposit}
         reviewSummary={fees !== undefined ? <BtcFees fees={fees} /> : null}
         submitButton={
-          <>
-            <div className="mb-2">
-              <ReceivingHemiAddress token={state.fromToken} />
-            </div>
-            <Button disabled={!canDeposit} type="submit">
-              {t('tunnel-page.submit-button.deposit')}
-            </Button>
-          </>
+          <SubmitBtcDeposit disabled={!canDeposit} token={state.fromToken} />
         }
         transactionsList={transactionsList}
       />
@@ -346,7 +376,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     updateFromInput,
   } = state
 
-  const { chain } = useEvmAccount()
+  const { chain, isConnected } = useEvmAccount()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -611,17 +641,21 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
         ) : null
       }
       submitButton={
-        <SubmitEvmDeposit
-          canDeposit={canDeposit}
-          extendedErc20Approval={extendedErc20Approval}
-          fromToken={fromToken}
-          isRunningOperation={isRunningOperation}
-          needsApproval={needsApproval}
-          operationRunning={operationRunning}
-          updateExtendedErc20Approval={() =>
-            setExtendedErc20Approval(prev => !prev)
-          }
-        />
+        isConnected ? (
+          <SubmitEvmDeposit
+            canDeposit={canDeposit}
+            extendedErc20Approval={extendedErc20Approval}
+            fromToken={fromToken}
+            isRunningOperation={isRunningOperation}
+            needsApproval={needsApproval}
+            operationRunning={operationRunning}
+            updateExtendedErc20Approval={() =>
+              setExtendedErc20Approval(prev => !prev)
+            }
+          />
+        ) : (
+          <ConnectEvmWallet />
+        )
       }
       transactionsList={transactionsList}
     />

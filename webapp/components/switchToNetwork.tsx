@@ -13,7 +13,8 @@ type Props = {
 }
 
 export const SwitchToNetwork = function ({ selectedNetworkId }: Props) {
-  const { btcChainId, evmChainId } = useAccounts()
+  const { btcChainId, btcWalletStatus, evmChainId, evmWalletStatus } =
+    useAccounts()
   const { switchChain: switchBtcChain } = useSwitchBtcChain()
   const { switchChain: switchEvmChain } = useSwitchEvmChain()
 
@@ -32,8 +33,18 @@ export const SwitchToNetwork = function ({ selectedNetworkId }: Props) {
     return null
   }
 
+  const expectedWalletIsEvm = isEvmNetwork(walletTargetNetwork)
+
+  // In order to switch, users must first connect their wallet
+  if (
+    (expectedWalletIsEvm && evmWalletStatus !== 'connected') ||
+    (!expectedWalletIsEvm && btcWalletStatus !== 'connected')
+  ) {
+    return null
+  }
+
   const switchToNetwork = function () {
-    if (isEvmNetwork(walletTargetNetwork)) {
+    if (expectedWalletIsEvm) {
       switchEvmChain({ chainId: walletTargetNetwork.id })
     } else {
       // We need to use viem's Chain definition instead of rainbow-kit's definition of Chain

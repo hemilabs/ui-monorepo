@@ -12,12 +12,10 @@ import { Card } from 'ui-common/components/card'
 import { getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits } from 'viem'
-import { useAccount } from 'wagmi'
 
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import { type TunnelState, useTunnelState } from '../_hooks/useTunnelState'
 
-import { ConnectWallet } from './connectWallet'
 import { ToggleButton } from './ToggleButton'
 
 const Balance = dynamic(
@@ -258,7 +256,6 @@ export const TunnelForm = function ({
   submitButton,
   transactionsList = [],
 }: TunnelFormProps) {
-  const { isConnected } = useAccount()
   const { operation } = useTunnelOperation()
 
   return (
@@ -276,7 +273,7 @@ export const TunnelForm = function ({
             }}
           >
             {formContent}
-            {isConnected ? submitButton : <ConnectWallet />}
+            {submitButton}
             {reviewSummary}
           </form>
         </Card>

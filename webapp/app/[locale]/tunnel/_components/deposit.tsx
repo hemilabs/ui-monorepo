@@ -74,7 +74,7 @@ const WalletsConnected = dynamic(
   { ssr: false },
 )
 
-const SubmitButton = function ({
+const SubmitEvmDeposit = function ({
   canDeposit,
   extendedErc20Approval,
   fromToken,
@@ -611,7 +611,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
         ) : null
       }
       submitButton={
-        <SubmitButton
+        <SubmitEvmDeposit
           canDeposit={canDeposit}
           extendedErc20Approval={extendedErc20Approval}
           fromToken={fromToken}

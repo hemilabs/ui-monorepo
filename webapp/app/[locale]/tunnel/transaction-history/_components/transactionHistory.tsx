@@ -23,7 +23,7 @@ import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import { isEvmDeposit } from 'utils/tunnel'
+import { isDeposit, isEvmDeposit } from 'utils/tunnel'
 import { Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -96,7 +96,7 @@ const columnsBuilder = (
     accessorKey: 'direction',
     cell: ({ row }) => (
       <span className="text-sm font-normal">
-        {t(isEvmDeposit(row.original) ? 'deposit' : 'withdraw')}
+        {t(isDeposit(row.original) ? 'deposit' : 'withdraw')}
       </span>
     ),
     header: () => <Header text={t('column-headers.type')} />,
@@ -104,16 +104,18 @@ const columnsBuilder = (
   },
   {
     accessorKey: 'amount',
-    cell: ({ row }) => (
-      <Amount l1ChainId={l1ChainId} operation={row.original} />
-    ),
+    cell: ({ row }) => <Amount operation={row.original} />,
     header: () => <Header text={t('column-headers.amount')} />,
     id: 'amount',
   },
   {
     cell: ({ row }) => (
       <ChainComponent
-        chainId={isEvmDeposit(row.original) ? l1ChainId : hemi.id}
+        chainId={
+          // See https://github.com/BVM-priv/ui-monorepo/issues/376
+          row.original.chainId ??
+          (isEvmDeposit(row.original) ? l1ChainId : hemi.id)
+        }
       />
     ),
     header: () => <Header text={t('column-headers.from')} />,
@@ -122,7 +124,10 @@ const columnsBuilder = (
   {
     cell: ({ row }) => (
       <ChainComponent
-        chainId={isEvmDeposit(row.original) ? hemi.id : l1ChainId}
+        chainId={
+          // See https://github.com/BVM-priv/ui-monorepo/issues/376
+          isDeposit(row.original) ? hemi.id : row.original.chainId ?? l1ChainId
+        }
       />
     ),
     header: () => <Header text={t('column-headers.to')} />,
@@ -132,14 +137,10 @@ const columnsBuilder = (
     accessorKey: 'transactionHash',
     cell({ row }) {
       const { transactionHash } = row.original
-      const chainId = isEvmDeposit(row.original) ? l1ChainId : hemi.id
-      return (
-        <TxLink
-          chainId={chainId}
-          // @ts-expect-error string is `0x${string}`
-          txHash={transactionHash}
-        />
-      )
+      // See https://github.com/BVM-priv/ui-monorepo/issues/376
+      const chainId =
+        row.original.chainId ?? (isDeposit(row.original) ? l1ChainId : hemi.id)
+      return <TxLink chainId={chainId} txHash={transactionHash} />
     },
     header: () => <Header text={t('column-headers.tx-hash')} />,
     id: 'transactionHash',
@@ -147,9 +148,12 @@ const columnsBuilder = (
   {
     accessorKey: 'status',
     cell: ({ row }) =>
-      isEvmDeposit(row.original) ? (
+      isDeposit(row.original) ? (
+        // TODO for btc deposits, we need to figure out how to pull the deposit state
+        // See https://github.com/BVM-priv/ui-monorepo/issues/345
         <DepositStatus />
       ) : (
+        // @ts-expect-error TS fails to infer that row.original is not a deposit
         <WithdrawStatus withdrawal={row.original} />
       ),
     header: () => <Header text={t('column-headers.status')} />,
@@ -157,10 +161,13 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) =>
-      isEvmDeposit(row.original) ? (
-        // Deposits do not render an action, let's add a "-"
+      // TODO for btc deposits, we need to define the proper CTA
+      // See https://github.com/BVM-priv/ui-monorepo/issues/345
+      isDeposit(row.original) ? (
+        // EVM Deposits do not render an action, let's add a "-"
         <span className="opacity-40">-</span>
       ) : (
+        // @ts-expect-error TS fails to infer that row.original is not a deposit
         <WithdrawAction withdraw={row.original} />
       ),
     header: () => <Header />,

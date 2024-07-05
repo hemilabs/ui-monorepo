@@ -1,11 +1,17 @@
 import { bitcoin } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
+import { BtcDepositStatus } from 'context/tunnelHistoryContext/types'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { Token } from 'types/token'
 import { Card } from 'ui-common/components/card'
 import { CloseIcon } from 'ui-common/components/closeIcon'
 import { Modal } from 'ui-common/components/modal'
 
+import { useBtcDeposits } from '../../_hooks/useBtcDeposits'
+import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
+
+import { Amount } from './amount'
 import { Step } from './steps'
 
 const DepositIcon = () => (
@@ -27,6 +33,7 @@ type ReviewBtcDeposit = {
   }
   isRunningOperation: boolean
   onClose?: () => void
+  token: Token
   transactionsList?: {
     id: string
     status: React.ComponentProps<typeof TransactionStatus>['status']
@@ -39,10 +46,17 @@ export const ReviewBtcDeposit = function ({
   fees,
   isRunningOperation,
   onClose,
+  token,
   transactionsList,
 }: ReviewBtcDeposit) {
+  const deposits = useBtcDeposits()
   const router = useRouter()
   const t = useTranslations()
+  const { txHash } = useTunnelOperation()
+
+  const foundDeposit = deposits.find(
+    deposit => deposit.transactionHash === txHash,
+  )
 
   const closeModal = function () {
     // prevent closing if running an operation
@@ -67,16 +81,16 @@ export const ReviewBtcDeposit = function ({
             <span className="text-xs font-medium text-slate-500">
               {t('common.total-amount')}
             </span>
-            {/* TODO read amount from context history https://github.com/BVM-priv/ui-monorepo/issues/345 */}
-            <span className="text-sm font-medium text-slate-950">
-              0.00001 tBTC
-            </span>
+            <Amount token={token} value={foundDeposit.amount} />
           </div>
           <Step
             fees={fees}
             icon={<DepositIcon />}
-            // TODO read status from context history https://github.com/BVM-priv/ui-monorepo/issues/345
-            status="progress"
+            status={
+              foundDeposit.status >= BtcDepositStatus.TX_CONFIRMED
+                ? 'completed'
+                : 'progress'
+            }
             text={t('tunnel-page.review-deposit.initiate-deposit')}
           />
           {/* TODO enable force claim https://github.com/BVM-priv/ui-monorepo/issues/346 */}

@@ -5,7 +5,10 @@ import { bitcoin, isEvmNetwork } from 'app/networks'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
-import { EvmDepositOperation } from 'context/tunnelHistoryContext/types'
+import {
+  BtcDepositStatus,
+  EvmDepositOperation,
+} from 'context/tunnelHistoryContext/types'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
@@ -22,6 +25,7 @@ import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
+import { useBtcDeposits } from '../_hooks/useBtcDeposits'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
@@ -132,10 +136,9 @@ type BtcDepositProps = {
   state: TypedTunnelState<BtcToHemiTunneling>
 }
 
-// TODO implement correctly, this only puts some props so it compiles
-// but nothing is actually visible until BTC is enabled
-// https://github.com/BVM-priv/ui-monorepo/issues/342
 const BtcDeposit = function ({ state }: BtcDepositProps) {
+  const deposits = useBtcDeposits()
+  const { updateBtcDeposit } = useContext(TunnelHistoryContext)
   // use this to avoid infinite loops in effects when resetting the form
   const [hasClearedForm, setHasClearedForm] = useState(false)
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
@@ -200,13 +203,22 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
   useEffect(
     function handleDepositSuccess() {
       if (depositReceipt?.status.confirmed) {
+        const deposit = deposits.find(
+          d =>
+            d.transactionHash === depositReceipt.txId &&
+            d.status === BtcDepositStatus.TX_PENDING,
+        )
         const timeoutId = setTimeout(clearDepositState, 7000)
         if (!hasClearedForm) {
           setHasClearedForm(true)
-          // TODO save bitcoin deposit to Tx history
-          // https://github.com/BVM-priv/ui-monorepo/issues/345
+          setIsDepositing(false)
+          resetStateAfterOperation()
+          updateBtcDeposit(deposit, {
+            blockNumber: depositReceipt.status.blockHeight,
+            status: BtcDepositStatus.TX_CONFIRMED,
+            timestamp: depositReceipt.status.blockTime,
+          })
         }
-        resetStateAfterOperation()
         return () => clearTimeout(timeoutId)
       }
       return undefined
@@ -214,9 +226,12 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     [
       clearDepositState,
       depositReceipt,
+      deposits,
       hasClearedForm,
       resetStateAfterOperation,
       setHasClearedForm,
+      setIsDepositing,
+      updateBtcDeposit,
     ],
   )
 
@@ -295,6 +310,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
           }
           isRunningOperation={isDepositing}
           onClose={resetStateAfterOperation}
+          token={fromToken}
           transactionsList={transactionsList}
         />
       )}
@@ -307,7 +323,7 @@ type EvmDepositProps = {
 }
 
 const EvmDeposit = function ({ state }: EvmDepositProps) {
-  const { addDepositToTunnelHistory } = useContext(TunnelHistoryContext)
+  const { addEvmDepositToTunnelHistory } = useContext(TunnelHistoryContext)
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
   const [depositAmount, setDepositAmount] = useState('0')
   // use this to avoid infinite loops in effects when resetting the form
@@ -407,6 +423,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
             {
               amount: parseUnits(fromInput, fromToken.decimals).toString(),
               blockNumber: Number(depositReceipt.blockNumber),
+              chainId: fromNetworkId,
               direction: MessageDirection.L1_TO_L2,
               from: depositReceipt.from,
               l1Token: isNative ? zeroAddress : fromToken.address,
@@ -418,17 +435,18 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
               transactionHash: depositReceipt.transactionHash,
             },
             fromToken.chainId,
-          ).then(addDepositToTunnelHistory)
+          ).then(addEvmDepositToTunnelHistory)
         }
         return () => clearTimeout(timeoutId)
       }
       return undefined
     },
     [
-      addDepositToTunnelHistory,
+      addEvmDepositToTunnelHistory,
       clearDepositState,
       depositReceipt,
       fromInput,
+      fromNetworkId,
       fromToken,
       hasClearedForm,
       resetStateAfterOperation,

@@ -1,9 +1,9 @@
+import { RemoteChain } from 'app/networks'
 import { ChainLogo } from 'components/chainLogo'
 import { useChain } from 'hooks/useChain'
-import { type Chain as ChainType } from 'viem'
 
 type Props = {
-  chainId: ChainType['id']
+  chainId: RemoteChain['id']
 }
 export const Chain = function ({ chainId }: Props) {
   const chain = useChain(chainId)

@@ -58,6 +58,7 @@ export const useWithdraw = function ({
 
     addWithdrawalToTunnelHistory({
       amount: toWithdraw,
+      chainId: l1ChainId,
       direction: MessageDirection.L2_TO_L1,
       from: address,
       l1Token: withdrawingNative ? zeroAddress : toToken.address,

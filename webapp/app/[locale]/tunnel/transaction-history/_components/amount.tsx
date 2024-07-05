@@ -1,5 +1,5 @@
 import { TunnelOperation } from 'app/context/tunnelHistoryContext/types'
-import { hemi } from 'app/networks'
+import { evmRemoteNetworks, hemi } from 'app/networks'
 import Big from 'big.js'
 import { ChainLogo } from 'components/chainLogo'
 import { TokenLogo } from 'components/tokenLogo'
@@ -10,13 +10,11 @@ import {
   getL2TokenByBridgedAddress,
   getNativeToken,
   getTokenByAddress,
-  isNativeToken,
 } from 'utils/token'
-import { isEvmDeposit } from 'utils/tunnel'
-import { type Chain, formatUnits, Address } from 'viem'
+import { isDeposit } from 'utils/tunnel'
+import { formatUnits, Address } from 'viem'
 
 type Props = {
-  l1ChainId: Chain['id']
   operation: TunnelOperation
 }
 
@@ -42,25 +40,14 @@ const InfoIcon = () => (
   </svg>
 )
 
-const Logo = function ({ l1ChainId, operation }: Props) {
-  const { l1Token, l2Token } = operation
-
-  const tokenAddress = (isEvmDeposit(operation) ? l1Token : l2Token) as Address
-  const chainId = isEvmDeposit(operation) ? l1ChainId : hemi.id
-  const token =
-    getTokenByAddress(tokenAddress, chainId) ??
-    getL2TokenByBridgedAddress(tokenAddress, chainId) ??
-    getNativeToken(chainId)
-
-  return isNativeToken(token) ? (
-    <ChainLogo chainId={chainId} />
-  ) : (
+const Logo = ({ token }: { token: Token }) =>
+  token.logoURI ? (
     <TokenLogo token={token} />
+  ) : (
+    <ChainLogo chainId={token.chainId} />
   )
-}
 
-// eslint-disable-next-line arrow-body-style
-const formatAmount = (amount, decimals) => {
+const formatAmount = function (amount: string, decimals: Token['decimals']) {
   const value = amount.replace(/,/g, '')
 
   if (Big(value).lt('0.000001')) {
@@ -75,11 +62,13 @@ const Value = ({ amount, token }: ValueProps) => (
   <span className="text-sm font-normal">{`${amount} ${token.symbol}`}</span>
 )
 
-export const Amount = function ({ l1ChainId, operation }: Props) {
+export const Amount = function ({ operation }: Props) {
   const { amount, l1Token, l2Token } = operation
 
-  const tokenAddress = (isEvmDeposit(operation) ? l1Token : l2Token) as Address
-  const chainId = isEvmDeposit(operation) ? l1ChainId : hemi.id
+  const tokenAddress = (isDeposit(operation) ? l1Token : l2Token) as Address
+  const chainId = isDeposit(operation)
+    ? operation.chainId ?? evmRemoteNetworks[0].id // See https://github.com/BVM-priv/ui-monorepo/issues/376
+    : hemi.id
   const token =
     getTokenByAddress(tokenAddress, chainId) ??
     getL2TokenByBridgedAddress(tokenAddress, chainId) ??
@@ -92,14 +81,14 @@ export const Amount = function ({ l1ChainId, operation }: Props) {
 
   return (
     <div className="flex items-center gap-x-1">
-      <Logo l1ChainId={l1ChainId} operation={operation} />
+      <Logo token={token} />
       <Value amount={formattedAmount} token={token} />
       {showTooltip && (
         <Tooltip
           id="amount-tooltip"
           overlay={
             <div className="flex items-center gap-x-1">
-              <Logo l1ChainId={l1ChainId} operation={operation} />
+              <Logo token={token} />
               <span className="text-sm font-normal">
                 {`${originalAmount} ${token.symbol}`}
               </span>

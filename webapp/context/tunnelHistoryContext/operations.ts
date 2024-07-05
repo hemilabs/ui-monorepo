@@ -46,48 +46,46 @@ export const addTimestampToOperation = <T extends TunnelOperation>(
       }) as T,
   )
 
-export const getDeposits = pThrottle(throttlingOptions)(
-  ({
-    address,
-    crossChainMessenger,
-    fromBlock,
-    toBlock,
-  }: {
-    address: Address
-    crossChainMessenger: CrossChainMessenger
-    fromBlock: number
-    toBlock: number
-  }) =>
-    crossChainMessenger
-      .getDepositsByAddress(address, {
-        fromBlock,
-        toBlock,
-      })
-      .then(deposits =>
-        deposits.map(deposit => toOperation<EvmDepositOperation>(deposit)),
-      ),
-)
-
-export const getWithdrawals = pThrottle(throttlingOptions)(
-  ({
-    address,
-    crossChainMessenger,
-    fromBlock,
-    toBlock,
-  }: {
-    address: Address
-    crossChainMessenger: CrossChainMessenger
-    fromBlock: number
-    toBlock: number
-  }) =>
-    crossChainMessenger
-      .getWithdrawalsByAddress(address, {
-        fromBlock,
-        toBlock,
-      })
-      .then(withdrawals =>
-        withdrawals.map(withdrawal =>
-          toOperation<EvmWithdrawOperation>(withdrawal),
+export const getDeposits = (crossChainMessenger: CrossChainMessenger) =>
+  pThrottle(throttlingOptions)(
+    ({
+      address,
+      fromBlock,
+      toBlock,
+    }: {
+      address: Address
+      fromBlock: number
+      toBlock: number
+    }) =>
+      crossChainMessenger
+        .getDepositsByAddress(address, {
+          fromBlock,
+          toBlock,
+        })
+        .then(deposits =>
+          deposits.map(deposit => toOperation<EvmDepositOperation>(deposit)),
         ),
-      ),
-)
+  )
+
+export const getWithdrawals = (crossChainMessenger: CrossChainMessenger) =>
+  pThrottle(throttlingOptions)(
+    ({
+      address,
+      fromBlock,
+      toBlock,
+    }: {
+      address: Address
+      fromBlock: number
+      toBlock: number
+    }) =>
+      crossChainMessenger
+        .getWithdrawalsByAddress(address, {
+          fromBlock,
+          toBlock,
+        })
+        .then(withdrawals =>
+          withdrawals.map(withdrawal =>
+            toOperation<EvmWithdrawOperation>(withdrawal),
+          ),
+        ),
+  )

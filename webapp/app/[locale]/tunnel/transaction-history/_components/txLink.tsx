@@ -1,9 +1,11 @@
+import { RemoteChain } from 'app/networks'
+import { BtcTransaction } from 'btc-wallet/unisat'
 import { useChain } from 'hooks/useChain'
-import { Chain, Hash } from 'viem'
+import { type Hash } from 'viem'
 
 type Props = {
-  chainId: Chain['id']
-  txHash: Hash
+  chainId: RemoteChain['id']
+  txHash: BtcTransaction | Hash
 }
 export const TxLink = function ({ chainId, txHash }: Props) {
   const chain = useChain(chainId)

@@ -84,11 +84,7 @@ const columnsBuilder = (
   l1ChainId: Chain['id'],
 ): ColumnDef<TunnelOperation>[] => [
   {
-    // Unconfirmed TXs won't have a timestamp
-    cell: ({ row }) =>
-      row.original.timestamp ? (
-        <TxTime timestamp={row.original.timestamp} />
-      ) : null,
+    cell: ({ row }) => <TxTime timestamp={row.original.timestamp} />,
     header: () => <Header text={t('column-headers.time')} />,
     id: 'time',
   },

@@ -10,6 +10,10 @@ type Props = {
 
 export const TxTime = function (props: Props) {
   const locale = useLocale()
+  // Unconfirmed TXs won't have a timestamp
+  if (!props.timestamp) {
+    return null
+  }
   return (
     <span className="text-sm">
       <TimeAgo locale={locale} {...props} />

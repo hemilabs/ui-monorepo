@@ -19,7 +19,7 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useContext, useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
-import { BtcToken, type EvmToken, type Token } from 'types/token'
+import { type EvmToken, type Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
@@ -77,48 +77,31 @@ const WalletsConnected = dynamic(
   { ssr: false },
 )
 
-const SubmitBtcDeposit = function ({
-  disabled,
-  token,
-}: {
-  disabled: boolean
-  token: BtcToken
-}) {
+const SubmitBtcDeposit = function ({ disabled }: { disabled: boolean }) {
   const { allDisconnected, btcWalletStatus, evmWalletStatus } = useAccounts()
   const { openDrawer } = useContext(ConnectWalletDrawerContext)
   const t = useTranslations('tunnel-page.submit-button')
 
-  const getButton = function () {
-    if (allDisconnected) {
-      return (
-        <Button onClick={openDrawer} type="button">
-          {t('connect-both-wallets')}
-        </Button>
-      )
-    }
-
-    if (evmWalletStatus !== 'connected') {
-      return <ConnectEvmWallet />
-    }
-
-    if (btcWalletStatus !== 'connected') {
-      return <ConnectBtcWallet />
-    }
-
+  if (allDisconnected) {
     return (
-      <Button disabled={disabled} type="submit">
-        {t('deposit')}
+      <Button onClick={openDrawer} type="button">
+        {t('connect-both-wallets')}
       </Button>
     )
   }
 
+  if (evmWalletStatus !== 'connected') {
+    return <ConnectEvmWallet />
+  }
+
+  if (btcWalletStatus !== 'connected') {
+    return <ConnectBtcWallet />
+  }
+
   return (
-    <>
-      <div className="mb-2">
-        <ReceivingHemiAddress token={token} />
-      </div>
-      {getButton()}
-    </>
+    <Button disabled={disabled} type="submit">
+      {t('deposit')}
+    </Button>
   )
 }
 
@@ -335,7 +318,12 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
         onSubmit={handleDeposit}
         reviewSummary={fees !== undefined ? <BtcFees fees={fees} /> : null}
         submitButton={
-          <SubmitBtcDeposit disabled={!canDeposit} token={state.fromToken} />
+          <>
+            <div className="mb-2">
+              <ReceivingHemiAddress token={state.fromToken} />
+            </div>
+            <SubmitBtcDeposit disabled={!canDeposit} />
+          </>
         }
         transactionsList={transactionsList}
       />

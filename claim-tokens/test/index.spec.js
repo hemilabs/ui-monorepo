@@ -591,8 +591,8 @@ describe('claim-tokens', function () {
   // eslint-disable-next-line mocha/no-setup-in-describe
   testSuccessfulEmails([
     validBody,
-    { ...validBody, profile: 'individual' },
     { ...validBody, profile: 'dev' },
+    { ...validBody, profile: 'explorers' },
     { ...validBody, receiveUpdates: false },
     { ...validBody, receiveUpdates: undefined },
   ])

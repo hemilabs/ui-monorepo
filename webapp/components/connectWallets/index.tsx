@@ -1,11 +1,15 @@
+import { ConnectButton } from '@rainbow-me/rainbowkit'
+import { featureFlags } from 'app/featureFlags'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import {
   ConnectedBtcChain,
   ConnectedEvmChain,
 } from 'components/connectedWallet/connectedAccount'
+import { ConnectWalletDrawerContext } from 'context/connectWalletDrawerContext'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { Fragment, useState } from 'react'
+import { Fragment, useContext } from 'react'
+import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { MetamaskLogo } from './metamaskLogo'
@@ -35,8 +39,10 @@ const WalletIcon = () => (
   </svg>
 )
 
-export const ConnectWallets = function () {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+const ConnectWallets = function () {
+  const { closeDrawer, isDrawerOpen, openDrawer } = useContext(
+    ConnectWalletDrawerContext,
+  )
   const t = useTranslations()
 
   const walletsConnected = []
@@ -64,7 +70,7 @@ export const ConnectWallets = function () {
       </div>
       <button
         className="flex h-10 items-center gap-x-2 rounded-xl border border-solid border-zinc-400/55 bg-white px-3 py-2 text-sm font-medium leading-normal shadow-sm"
-        onClick={() => setIsDrawerOpen(true)}
+        onClick={openDrawer}
       >
         {walletsConnected.length === 0 && (
           <>
@@ -87,9 +93,28 @@ export const ConnectWallets = function () {
           </>
         )}
       </button>
-      {isDrawerOpen && (
-        <ConnectWalletsDrawer closeDrawer={() => setIsDrawerOpen(false)} />
-      )}
+      {isDrawerOpen && <ConnectWalletsDrawer closeDrawer={closeDrawer} />}
+    </div>
+  )
+}
+
+export const WalletConnection = function ({
+  isMenuOpen,
+}: {
+  isMenuOpen: boolean
+}) {
+  const { width } = useWindowSize()
+  const connect = featureFlags.btcTunnelEnabled ? (
+    <ConnectWallets />
+  ) : (
+    <ConnectButton />
+  )
+
+  return (
+    <div className="ml-auto">
+      {width >= 768 && <div className="ml-auto mr-8 xl:mr-12">{connect}</div>}
+      {/* Only visible in the mobile view, if the nav bar menu is not open */}
+      {width < 768 && <>{!isMenuOpen && connect}</>}
     </div>
   )
 }

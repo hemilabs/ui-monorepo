@@ -3,6 +3,7 @@
 import { MessageDirection } from '@eth-optimism/sdk'
 import { bitcoin, isEvmNetwork } from 'app/networks'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
+import { ConnectWalletDrawerContext } from 'context/connectWalletDrawerContext'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import {
@@ -84,19 +85,31 @@ const SubmitBtcDeposit = function ({
   token: BtcToken
 }) {
   const { allDisconnected, btcWalletStatus, evmWalletStatus } = useAccounts()
-  const t = useTranslations()
+  const { openDrawer } = useContext(ConnectWalletDrawerContext)
+  const t = useTranslations('tunnel-page.submit-button')
 
-  if (allDisconnected) {
-    // TODO we should open the drawer here
-    return <ConnectEvmWallet />
-  }
+  const getButton = function () {
+    if (allDisconnected) {
+      return (
+        <Button onClick={openDrawer} type="button">
+          {t('connect-both-wallets')}
+        </Button>
+      )
+    }
 
-  if (evmWalletStatus !== 'connected') {
-    return <ConnectEvmWallet />
-  }
+    if (evmWalletStatus !== 'connected') {
+      return <ConnectEvmWallet />
+    }
 
-  if (btcWalletStatus !== 'connected') {
-    return <ConnectBtcWallet />
+    if (btcWalletStatus !== 'connected') {
+      return <ConnectBtcWallet />
+    }
+
+    return (
+      <Button disabled={disabled} type="submit">
+        {t('deposit')}
+      </Button>
+    )
   }
 
   return (
@@ -104,9 +117,7 @@ const SubmitBtcDeposit = function ({
       <div className="mb-2">
         <ReceivingHemiAddress token={token} />
       </div>
-      <Button disabled={disabled} type="submit">
-        {t('tunnel-page.submit-button.deposit')}
-      </Button>
+      {getButton()}
     </>
   )
 }

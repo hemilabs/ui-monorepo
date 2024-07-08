@@ -2,6 +2,7 @@ import 'styles/globals.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import 'react-loading-skeleton/dist/skeleton.css'
 
+import { ConnectWalletDrawerProvider } from 'app/context/connectWalletDrawerContext'
 import { TunnelHistoryProvider } from 'app/context/tunnelHistoryContext'
 import { locales, type Locale } from 'app/i18n'
 import { AppScreen } from 'components/appScreen'
@@ -43,14 +44,16 @@ export default async function RootLayout({
           <RecaptchaContext>
             <WalletsContext locale={locale}>
               <TunnelHistoryProvider>
-                <div className="flex h-dvh flex-nowrap justify-stretch">
-                  <div className="hidden w-1/4 max-w-56 md:block">
-                    <Navbar />
+                <ConnectWalletDrawerProvider>
+                  <div className="flex h-dvh flex-nowrap justify-stretch">
+                    <div className="hidden w-1/4 max-w-56 md:block">
+                      <Navbar />
+                    </div>
+                    <AppScreen>
+                      <ErrorBoundary>{children}</ErrorBoundary>
+                    </AppScreen>
                   </div>
-                  <AppScreen>
-                    <ErrorBoundary>{children}</ErrorBoundary>
-                  </AppScreen>
-                </div>
+                </ConnectWalletDrawerProvider>
               </TunnelHistoryProvider>
             </WalletsContext>
           </RecaptchaContext>

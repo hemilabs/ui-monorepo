@@ -78,7 +78,7 @@ const isReceiveUpdatesValid = receiveUpdates =>
   receiveUpdates === undefined || typeof receiveUpdates === 'boolean'
 
 const isValidProfile = profile =>
-  ['dev', 'individual', 'miner'].includes(profile)
+  ['dev', 'explorers', 'miner'].includes(profile)
 
 const verifyEmail = email =>
   createEmailRepository(db)

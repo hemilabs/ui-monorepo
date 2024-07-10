@@ -2,7 +2,7 @@ import { hemi } from 'app/networks'
 import { ChecklistIcon } from 'components/icons/checklistIcon'
 // import { CodeInsertIcon } from 'components/icons/codeInsertIcon'
 import { DexIcon } from 'components/icons/dexIcon'
-import { ElectroCardiogramIcon } from 'components/icons/electroCardiogramIcon'
+// import { ElectroCardiogramIcon } from 'components/icons/electroCardiogramIcon'
 import { ExplorerIcon } from 'components/icons/explorerIcon'
 import { FiletextIcon } from 'components/icons/filetextIcon'
 import { GraduateCapIcon } from 'components/icons/graduateCapIcon'
@@ -70,11 +70,13 @@ export const navItems: NavItemData[] = [
 ]
 
 export const navItemsBottom: NavItemData[] = [
-  {
-    href: '',
-    icon: ElectroCardiogramIcon,
-    id: 'networkstatus',
-  },
+  // The "network status" service/page is still not defined. Once it is up and
+  // the URL is defined, the following item should be updated and un-commented.
+  // {
+  //   href: '',
+  //   icon: ElectroCardiogramIcon,
+  //   id: 'networkstatus',
+  // },
   {
     href: 'https://docs.hemi.xyz',
     icon: FiletextIcon,

@@ -11,8 +11,8 @@ import {
 } from '@tanstack/react-table'
 import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
 import {
+  EvmWithdrawOperation,
   TunnelOperation,
-  WithdrawOperation,
 } from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
@@ -23,7 +23,7 @@ import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import { isDeposit } from 'utils/tunnel'
+import { isDeposit, isEvmDeposit } from 'utils/tunnel'
 import { Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -41,7 +41,7 @@ const DepositStatus = () => <TxStatus.Success />
 const WithdrawStatus = function ({
   withdrawal,
 }: {
-  withdrawal: WithdrawOperation
+  withdrawal: EvmWithdrawOperation
 }) {
   const t = useTranslations('transaction-history')
   const waitMinutes = useTranslations()(
@@ -100,22 +100,31 @@ const columnsBuilder = (
   },
   {
     accessorKey: 'amount',
-    cell: ({ row }) => (
-      <Amount l1ChainId={l1ChainId} operation={row.original} />
-    ),
+    cell: ({ row }) => <Amount operation={row.original} />,
     header: () => <Header text={t('column-headers.amount')} />,
     id: 'amount',
   },
   {
     cell: ({ row }) => (
-      <ChainComponent chainId={isDeposit(row.original) ? l1ChainId : hemi.id} />
+      <ChainComponent
+        chainId={
+          // See https://github.com/BVM-priv/ui-monorepo/issues/376
+          row.original.chainId ??
+          (isEvmDeposit(row.original) ? l1ChainId : hemi.id)
+        }
+      />
     ),
     header: () => <Header text={t('column-headers.from')} />,
     id: 'from',
   },
   {
     cell: ({ row }) => (
-      <ChainComponent chainId={isDeposit(row.original) ? hemi.id : l1ChainId} />
+      <ChainComponent
+        chainId={
+          // See https://github.com/BVM-priv/ui-monorepo/issues/376
+          isDeposit(row.original) ? hemi.id : row.original.chainId ?? l1ChainId
+        }
+      />
     ),
     header: () => <Header text={t('column-headers.to')} />,
     id: 'to',
@@ -124,14 +133,10 @@ const columnsBuilder = (
     accessorKey: 'transactionHash',
     cell({ row }) {
       const { transactionHash } = row.original
-      const chainId = isDeposit(row.original) ? l1ChainId : hemi.id
-      return (
-        <TxLink
-          chainId={chainId}
-          // @ts-expect-error string is `0x${string}`
-          txHash={transactionHash}
-        />
-      )
+      // See https://github.com/BVM-priv/ui-monorepo/issues/376
+      const chainId =
+        row.original.chainId ?? (isDeposit(row.original) ? l1ChainId : hemi.id)
+      return <TxLink chainId={chainId} txHash={transactionHash} />
     },
     header: () => <Header text={t('column-headers.tx-hash')} />,
     id: 'transactionHash',
@@ -140,8 +145,11 @@ const columnsBuilder = (
     accessorKey: 'status',
     cell: ({ row }) =>
       isDeposit(row.original) ? (
+        // TODO for btc deposits, we need to figure out how to pull the deposit state
+        // See https://github.com/BVM-priv/ui-monorepo/issues/345
         <DepositStatus />
       ) : (
+        // @ts-expect-error TS fails to infer that row.original is not a deposit
         <WithdrawStatus withdrawal={row.original} />
       ),
     header: () => <Header text={t('column-headers.status')} />,
@@ -149,10 +157,13 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) =>
+      // TODO for btc deposits, we need to define the proper CTA
+      // See https://github.com/BVM-priv/ui-monorepo/issues/345
       isDeposit(row.original) ? (
-        // Deposits do not render an action, let's add a "-"
+        // EVM Deposits do not render an action, let's add a "-"
         <span className="opacity-40">-</span>
       ) : (
+        // @ts-expect-error TS fails to infer that row.original is not a deposit
         <WithdrawAction withdraw={row.original} />
       ),
     header: () => <Header />,

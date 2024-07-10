@@ -1,6 +1,6 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
-import { WithdrawOperation } from 'app/context/tunnelHistoryContext/types'
+import { EvmWithdrawOperation } from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { useChain } from 'hooks/useChain'
 import { useTranslations } from 'next-intl'
@@ -29,7 +29,7 @@ const SubmitButton = function ({
   isReadyToProve: boolean
   l1ChainId: Chain['id']
   proveWithdrawalTxHash: Hash
-  withdrawal: WithdrawOperation
+  withdrawal: EvmWithdrawOperation
 }) {
   const t = useTranslations()
 

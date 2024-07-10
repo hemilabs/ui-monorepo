@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Chain } from 'viem'
 
 export type SyncStatus = 'error' | 'finished' | 'syncing'
 
 type UseSyncInBlockChunks<T> = {
   blockWindowSize: number
-  chainId: Chain['id']
   enabled: boolean
   lastBlockNumber: number | undefined
   mergeContent: (previousContent: T[], newContent: T[]) => T[]
@@ -44,7 +42,6 @@ export const defaultSyncState = <T>(): SyncState<T> => ({
 
 export const useSyncInBlockChunks = function <T>({
   blockWindowSize,
-  chainId,
   enabled,
   lastBlockNumber,
   mergeContent,
@@ -189,7 +186,6 @@ export const useSyncInBlockChunks = function <T>({
     },
     [
       blockWindowSize,
-      chainId,
       enabled,
       hasCheckedLocalStorage,
       lastBlockNumber,

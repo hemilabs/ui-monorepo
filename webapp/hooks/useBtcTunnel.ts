@@ -1,10 +1,14 @@
+import { MessageDirection } from '@eth-optimism/sdk'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { hemi } from 'app/networks'
+import { bitcoin, hemi } from 'app/networks'
 import { useAccount } from 'btc-wallet/hooks/useAccount'
 import { useSendBitcoin } from 'btc-wallet/hooks/useSendBitcoin'
 import { Satoshis } from 'btc-wallet/unisat'
-import { useCallback } from 'react'
+import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
+import { BtcDepositStatus } from 'context/tunnelHistoryContext/types'
+import { useCallback, useContext } from 'react'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
+import { getNativeToken } from 'utils/token'
 import {
   type Address,
   type ContractFunctionArgs,
@@ -23,7 +27,7 @@ const useBtcCustodialTunnel = function () {
     // in incoming iterations, the custodial address will be read programmatically
     // from bitcoin manager, once there's a determined way to get the "most adequate" custodial
     queryFn: () =>
-      Promise.resolve('0x281AC403EdCB48b597e3674f6969a8D7c13b4859' as Address),
+      Promise.resolve('0xfee2f1eD73051c0f910de83d221151d9D36Ae3de' as Address),
     queryKey: ['btc-custodial-tunnel-address', chainId],
   })
   return {
@@ -62,6 +66,8 @@ const useGetBitcoinCustodyAddress = function () {
 }
 
 export const useDepositBitcoin = function () {
+  const { addBtcDepositToTunnelHistory } = useContext(TunnelHistoryContext)
+  const { address } = useAccount()
   const { setQueryParams } = useQueryParams()
   const { bitcoinVaultAddress } = useGetBitcoinCustodyAddress()
   const queryClient = useQueryClient()
@@ -71,7 +77,21 @@ export const useDepositBitcoin = function () {
     sendBitcoin,
     txId,
   } = useSendBitcoin({
-    onSuccess: result => setQueryParams({ txHash: result }, 'push'),
+    onSuccess(txHash, { satoshis, to }) {
+      const btc = getNativeToken(bitcoin.id)
+      addBtcDepositToTunnelHistory({
+        amount: satoshis.toString(),
+        chainId: bitcoin.id,
+        direction: MessageDirection.L1_TO_L2,
+        from: address,
+        l1Token: btc.address,
+        l2Token: btc.extensions.bridgeInfo[hemi.id].tokenAddress,
+        status: BtcDepositStatus.TX_PENDING,
+        to,
+        transactionHash: txHash,
+      })
+      setQueryParams({ txHash }, 'push')
+    },
   })
 
   const depositBitcoin = (satoshis: Satoshis, hemiAddress: Address) =>

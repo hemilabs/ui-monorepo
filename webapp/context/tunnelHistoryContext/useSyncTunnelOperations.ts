@@ -1,20 +1,22 @@
-import { CrossChainMessenger } from '@eth-optimism/sdk'
-import { useQueryClient } from '@tanstack/react-query'
-import { hemi } from 'app/networks'
-import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { bitcoin, RemoteChain, hemi } from 'app/networks'
 import { usePathname } from 'next/navigation'
 import pAll from 'p-all'
 import pMemoize from 'promise-mem'
 import { useCallback, useMemo } from 'react'
 import { useSyncInBlockChunks } from 'ui-common/hooks/useSyncInBlockChunks'
-import { type Address, type Chain } from 'viem'
+import { type Address } from 'viem'
 import { sepolia } from 'viem/chains'
-import { useAccount, useBlockNumber } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { addTimestampToOperation } from './operations'
 import { TunnelOperation, RawTunnelOperation } from './types'
 
 const chainConfiguration = {
+  [bitcoin.id]: {
+    // TODO define proper block windows size https://github.com/BVM-priv/ui-monorepo/issues/345
+    blockWindowSize: 3500,
+  },
   [hemi.id]: {
     blockWindowSize: 3500, // Approximately 1/2 day
   },
@@ -34,50 +36,63 @@ const removeDuplicates = <T extends TunnelOperation>(operations: T[]) =>
     operations.find(operation => operation.transactionHash === transactionHash),
   )
 
-const mergeContent = function <T extends TunnelOperation>(
-  previousContent: T[],
-  newContent: T[],
-) {
-  const merged = previousContent.concat(newContent)
-  return removeDuplicates<T>(merged).sort((a, b) => b.timestamp - a.timestamp)
+const mergeContentByChainId = (chainId: RemoteChain['id']) =>
+  function <T extends TunnelOperation>(previousContent: T[], newContent: T[]) {
+    const merged = previousContent.concat(newContent)
+    return (
+      removeDuplicates<T>(merged)
+        .sort((a, b) => b.timestamp - a.timestamp)
+        // Adding this because our first testing users, before chainId was added due to bitcoin
+        // this field wasn't saved. So when syncing, it will add it to all existing operations.
+        // Eventually, probably once we launch, we can remove this, because we're now adding chainId
+        // after every deposit/withdrawal per chain in the correct places.
+        // See https://github.com/BVM-priv/ui-monorepo/issues/376
+        .map(c => ({
+          ...c,
+          chainId,
+        }))
+    )
+  }
+
+type SyncTunnelOperationArgs<T extends TunnelOperation> = {
+  chainId: RemoteChain['id']
+  enabled: boolean
+  getBlockNumber: () => Promise<number>
+  getStorageKey: (c: RemoteChain['id'], address: Address) => string
+  getTunnelOperations: (params: {
+    address: Address
+    fromBlock: number
+    toBlock: number
+  }) => Promise<RawTunnelOperation<T>[]>
 }
 
 export const useSyncTunnelOperations = function <T extends TunnelOperation>({
   chainId,
+  enabled,
+  getBlockNumber,
   getStorageKey,
   getTunnelOperations,
-  l1ChainId,
-}: {
-  chainId: Chain['id']
-
-  getStorageKey: (c: Chain['id'], address: Address) => string
-  getTunnelOperations: (params: {
-    address: Address
-    crossChainMessenger: CrossChainMessenger
-    fromBlock: number
-    toBlock: number
-  }) => Promise<RawTunnelOperation<T>[]>
-  l1ChainId: Chain['id']
-}) {
+}: SyncTunnelOperationArgs<T>) {
   const { address } = useAccount()
 
   const isTransactionHistoryPage = usePathname().endsWith(
     'transaction-history/',
   )
 
-  const { data: lastBlockNumber, queryKey } = useBlockNumber({
-    chainId,
-    query: {
-      refetchOnMount: 'always',
-    },
+  const blockNumberQueryKey = useMemo(
+    () => ['tunnel-history-block-number', chainId],
+    [chainId],
+  )
+
+  const { data: lastBlockNumber } = useQuery({
+    queryFn: getBlockNumber,
+    queryKey: blockNumberQueryKey,
+    refetchOnMount: 'always',
   })
 
   const storageKey = address ? getStorageKey(chainId, address) : undefined
 
   const queryClient = useQueryClient()
-
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useConnectedChainCrossChainMessenger(l1ChainId)
 
   // using "useCallback" here gives a warning due to pMemoize.
   // See https://stackoverflow.com/a/72637424/1437934
@@ -87,13 +102,15 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
         (fromBlock: number, toBlock: number) =>
           getTunnelOperations({
             address,
-            crossChainMessenger,
             fromBlock,
             toBlock,
           }).then(operations =>
             pAll(
               operations.map(
                 operation => () =>
+                  // valid for the time being, because reading past deposits for bitcoin is not enabled.
+                  // But this may need to be revisited once that happens (we still don't know how will work).
+                  // @ts-expect-error See https://github.com/BVM-priv/ui-monorepo/issues/345
                   addTimestampToOperation<T>(operation, chainId),
               ),
               { concurrency },
@@ -104,15 +121,16 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
             `${chainId}-${fromBlock}-${toBlock}`,
         },
       ),
-    [address, chainId, crossChainMessenger, getTunnelOperations],
+    [address, chainId, getTunnelOperations],
   )
+
+  const mergeContent = useMemo(() => mergeContentByChainId(chainId), [chainId])
 
   const state = useSyncInBlockChunks<T>({
     ...chainConfiguration[chainId],
-    chainId,
     enabled:
+      enabled &&
       !!storageKey &&
-      crossChainMessengerStatus === 'success' &&
       // only sync while in the Transaction History page
       isTransactionHistoryPage,
     lastBlockNumber:
@@ -134,7 +152,7 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
         }
       }),
 
-    [state],
+    [mergeContent, state],
   )
 
   return useMemo(
@@ -142,12 +160,12 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
       addOperationToTunnelHistory,
       operations: state.syncBlock.content,
       resumeSync() {
-        queryClient.invalidateQueries({ queryKey })
+        queryClient.invalidateQueries({ queryKey: blockNumberQueryKey })
         state.resumeSync()
       },
       syncStatus: state.syncStatus,
       updateOperation: state.setSyncBlock,
     }),
-    [addOperationToTunnelHistory, state, queryClient, queryKey],
+    [addOperationToTunnelHistory, blockNumberQueryKey, queryClient, state],
   )
 }

@@ -8,7 +8,7 @@ import PQueue from 'p-queue'
 import { useContext } from 'react'
 import { useAccount } from 'wagmi'
 
-import { WithdrawOperation } from './types'
+import { EvmWithdrawOperation } from './types'
 
 import { TunnelHistoryContext } from './index'
 
@@ -49,10 +49,10 @@ const pollUpdateWithdrawal = async ({
   crossChainMessenger: CrossChainMessenger
   queryClient: QueryClient
   updateWithdrawal: (
-    w: WithdrawOperation,
-    updates: Partial<WithdrawOperation>,
+    w: EvmWithdrawOperation,
+    updates: Partial<EvmWithdrawOperation>,
   ) => void
-  withdrawal: WithdrawOperation
+  withdrawal: EvmWithdrawOperation
 }) =>
   // Use a queue to avoid firing lots of requests. Throttling may also not work because it throttles
   // for a specific period of time and depending on load, requests may take up to 5 seconds to complete
@@ -89,7 +89,7 @@ const WithdrawalStatusUpdater = function ({
   withdrawal,
 }: {
   queryFn: () => Promise<MessageStatus>
-  withdrawal: WithdrawOperation
+  withdrawal: EvmWithdrawOperation
 }) {
   useQuery({
     queryFn,

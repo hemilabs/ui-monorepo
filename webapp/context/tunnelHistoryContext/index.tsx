@@ -1,14 +1,28 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { evmRemoteNetworks, hemi } from 'app/networks'
+import { featureFlags } from 'app/featureFlags'
+import {
+  bitcoin,
+  evmRemoteNetworks,
+  hemi,
+  type RemoteChain,
+} from 'app/networks'
+import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
 import dynamic from 'next/dynamic'
 import { createContext, useMemo, ReactNode } from 'react'
 import { type SyncStatus } from 'ui-common/hooks/useSyncInBlockChunks'
+import { getBlockTipHeight } from 'utils/btcApi'
 import { type Address, type Chain } from 'viem'
+import { Config, useConfig } from 'wagmi'
+import { getBlockNumber } from 'wagmi/actions'
 
 import { getDeposits, getWithdrawals } from './operations'
-import { DepositOperation, WithdrawOperation } from './types'
+import {
+  BtcDepositOperation,
+  EvmDepositOperation,
+  EvmWithdrawOperation,
+} from './types'
 import { useSyncTunnelOperations } from './useSyncTunnelOperations'
 
 const WithdrawalsStatusUpdater = dynamic(
@@ -20,7 +34,7 @@ const WithdrawalsStatusUpdater = dynamic(
 )
 
 const getTunnelHistoryDepositStorageKey = (
-  l1ChainId: Chain['id'],
+  l1ChainId: RemoteChain['id'],
   address: Address,
 ) => `portal.transaction-history-L1-${l1ChainId}-${address}-deposits`
 
@@ -29,30 +43,38 @@ const getTunnelHistoryWithdrawStorageKey = (
   address: Address,
 ) => `portal.transaction-history-L2-${l2ChainId}-${address}-withdrawals`
 
+const getEvmBlockNumberFn = (config: Config, chainId: Chain['id']) => () =>
+  getBlockNumber(config, { chainId }).then(blockNumber => Number(blockNumber))
+
 type TunnelHistoryContext = {
-  addDepositToTunnelHistory: (
-    deposit: Omit<DepositOperation, 'timestamp'>,
-  ) => void
+  addBtcDepositToTunnelHistory: (deposit: BtcDepositOperation) => void
+  addEvmDepositToTunnelHistory: (deposit: EvmDepositOperation) => void
   addWithdrawalToTunnelHistory: (
-    withdrawal: Omit<WithdrawOperation, 'timestamp'>,
+    withdrawal: Omit<EvmWithdrawOperation, 'timestamp'>,
   ) => void
-  deposits: DepositOperation[]
+  deposits: EvmDepositOperation[]
   depositSyncStatus: SyncStatus
   resumeSync: () => void
+  updateBtcDeposit: (
+    deposit: BtcDepositOperation,
+    updates: Partial<BtcDepositOperation>,
+  ) => void
   updateWithdrawal: (
-    withdrawal: WithdrawOperation,
-    updates: Partial<WithdrawOperation>,
+    withdrawal: EvmWithdrawOperation,
+    updates: Partial<EvmWithdrawOperation>,
   ) => void
   withdrawSyncStatus: SyncStatus
-  withdrawals: WithdrawOperation[]
+  withdrawals: EvmWithdrawOperation[]
 }
 
 export const TunnelHistoryContext = createContext<TunnelHistoryContext>({
-  addDepositToTunnelHistory: () => undefined,
+  addBtcDepositToTunnelHistory: () => undefined,
+  addEvmDepositToTunnelHistory: () => undefined,
   addWithdrawalToTunnelHistory: () => undefined,
   deposits: [],
   depositSyncStatus: 'syncing',
   resumeSync: () => undefined,
+  updateBtcDeposit: () => undefined,
   updateWithdrawal: () => undefined,
   withdrawals: [],
   withdrawSyncStatus: 'syncing',
@@ -65,37 +87,74 @@ type Props = {
 export const TunnelHistoryProvider = function ({ children }: Props) {
   // TODO https://github.com/BVM-priv/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id
+  const config = useConfig()
 
   const queryClient = useQueryClient()
 
-  const depositState = useSyncTunnelOperations<DepositOperation>({
-    chainId: l1ChainId,
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useConnectedChainCrossChainMessenger(l1ChainId)
+
+  const btcDepositState = useSyncTunnelOperations<BtcDepositOperation>({
+    chainId: bitcoin.id,
+    // TODO retrieve past operations https://github.com/BVM-priv/ui-monorepo/issues/345
+    enabled: false,
+    getBlockNumber: getBlockTipHeight,
     getStorageKey: getTunnelHistoryDepositStorageKey,
-    getTunnelOperations: getDeposits,
-    l1ChainId,
+    // TODO retrieve past operations https://github.com/BVM-priv/ui-monorepo/issues/345
+    getTunnelOperations: () => Promise.resolve([]),
   })
 
-  const withdrawalsState = useSyncTunnelOperations<WithdrawOperation>({
+  const evmDepositState = useSyncTunnelOperations<EvmDepositOperation>({
+    chainId: l1ChainId,
+    enabled: crossChainMessengerStatus === 'success',
+    getBlockNumber: getEvmBlockNumberFn(config, l1ChainId),
+    getStorageKey: getTunnelHistoryDepositStorageKey,
+    getTunnelOperations: getDeposits(crossChainMessenger),
+  })
+
+  const withdrawalsState = useSyncTunnelOperations<EvmWithdrawOperation>({
     chainId: hemi.id,
+    enabled: crossChainMessengerStatus === 'success',
+    getBlockNumber: getEvmBlockNumberFn(config, hemi.id),
     getStorageKey: getTunnelHistoryWithdrawStorageKey,
-    getTunnelOperations: getWithdrawals,
-    l1ChainId,
+    getTunnelOperations: getWithdrawals(crossChainMessenger),
   })
 
   const value = useMemo(
     () => ({
-      addDepositToTunnelHistory: depositState.addOperationToTunnelHistory,
+      addBtcDepositToTunnelHistory: btcDepositState.addOperationToTunnelHistory,
+      addEvmDepositToTunnelHistory: evmDepositState.addOperationToTunnelHistory,
       addWithdrawalToTunnelHistory:
         withdrawalsState.addOperationToTunnelHistory,
-      deposits: depositState.operations,
-      depositSyncStatus: depositState.syncStatus,
+      deposits: evmDepositState.operations.concat(
+        // Adding this so in local testing, when testing with flag disabled
+        // the history does not break with past operations from testing with the
+        // flag enabled
+        featureFlags.btcTunnelEnabled ? btcDepositState.operations : [],
+      ),
+      depositSyncStatus: evmDepositState.syncStatus,
       resumeSync() {
-        depositState.resumeSync()
+        evmDepositState.resumeSync()
         withdrawalsState.resumeSync()
       },
+      updateBtcDeposit: (
+        deposit: BtcDepositOperation,
+        updates: Partial<BtcDepositOperation>,
+      ) =>
+        btcDepositState.updateOperation(function (current) {
+          const newState = {
+            ...current,
+            content: current.content.map(o =>
+              o.transactionHash === deposit.transactionHash
+                ? { ...o, ...updates }
+                : o,
+            ),
+          }
+          return newState
+        }),
       updateWithdrawal(
-        withdrawal: WithdrawOperation,
-        updates: Partial<WithdrawOperation>,
+        withdrawal: EvmWithdrawOperation,
+        updates: Partial<EvmWithdrawOperation>,
       ) {
         withdrawalsState.updateOperation(function (current) {
           const newState = {
@@ -127,7 +186,13 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
       withdrawals: withdrawalsState.operations,
       withdrawSyncStatus: withdrawalsState.syncStatus,
     }),
-    [depositState, l1ChainId, queryClient, withdrawalsState],
+    [
+      btcDepositState,
+      evmDepositState,
+      l1ChainId,
+      queryClient,
+      withdrawalsState,
+    ],
   )
 
   return (

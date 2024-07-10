@@ -2,20 +2,20 @@ import { MessageStatus } from '@eth-optimism/sdk'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
-import { WithdrawOperation } from 'context/tunnelHistoryContext/types'
+import { EvmWithdrawOperation } from 'context/tunnelHistoryContext/types'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode, useContext } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { Modal } from 'ui-common/components/modal'
-import { getFormattedValue } from 'utils/format'
 import { getL2TokenByBridgedAddress, getTokenByAddress } from 'utils/token'
-import { Address, formatUnits } from 'viem'
+import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
 
+import { Amount } from './amount'
 import { Step, SubStep } from './steps'
 import { VerticalLine } from './verticalLine'
 
@@ -107,7 +107,11 @@ const ProveIcon = () => (
   </svg>
 )
 
-const Amount = function ({ withdrawal }: { withdrawal?: WithdrawOperation }) {
+const WithdrawAmount = function ({
+  withdrawal,
+}: {
+  withdrawal?: EvmWithdrawOperation
+}) {
   if (!withdrawal) {
     return <Skeleton containerClassName="w-5" />
   }
@@ -119,13 +123,7 @@ const Amount = function ({ withdrawal }: { withdrawal?: WithdrawOperation }) {
       evmRemoteNetworks[0].id,
     )
 
-  return (
-    <span className="text-sm font-medium text-slate-950">
-      {`${getFormattedValue(
-        formatUnits(BigInt(withdrawal.amount), token?.decimals ?? 18),
-      )} ${token?.symbol ?? ''}`}
-    </span>
-  )
+  return <Amount token={token} value={withdrawal.amount} />
 }
 
 type ReviewEvmWithdrawalProps = {
@@ -242,7 +240,7 @@ export const ReviewEvmWithdrawal = function ({
             <span className="text-xs font-medium text-slate-500">
               {t('common.total-amount')}
             </span>
-            <Amount withdrawal={foundWithdrawal} />
+            <WithdrawAmount withdrawal={foundWithdrawal} />
           </div>
           <Step
             fees={isWithdraw && gas}

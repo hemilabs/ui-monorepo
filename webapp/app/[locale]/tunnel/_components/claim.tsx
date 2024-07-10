@@ -1,6 +1,6 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
-import { WithdrawOperation } from 'app/context/tunnelHistoryContext/types'
+import { EvmWithdrawOperation } from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks } from 'app/networks'
 import { useChain } from 'hooks/useChain'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
@@ -28,7 +28,7 @@ const SubmitButton = function ({
   l1ChainId: Chain['id']
   isClaiming: boolean
   isReadyToClaim: boolean
-  withdrawal: WithdrawOperation
+  withdrawal: EvmWithdrawOperation
 }) {
   const t = useTranslations()
   const txHash = useTunnelOperation().txHash as Hash

@@ -8,15 +8,17 @@ import { type Address, type Chain } from 'viem'
 import {
   TunnelOperation,
   RawTunnelOperation,
-  DepositOperation,
-  WithdrawOperation,
+  EvmDepositOperation,
+  EvmWithdrawOperation,
 } from './types'
 
 const throttlingOptions = { interval: 2000, limit: 1 }
 
-const toOperation = <T extends TunnelOperation>(
-  tunnelOperation: TokenBridgeMessage,
-) =>
+const toOperation = <T extends TunnelOperation>({
+  data,
+  logIndex,
+  ...tunnelOperation
+}: TokenBridgeMessage) =>
   ({
     ...tunnelOperation,
     // convert these types to something that we can serialize
@@ -44,48 +46,46 @@ export const addTimestampToOperation = <T extends TunnelOperation>(
       }) as T,
   )
 
-export const getDeposits = pThrottle(throttlingOptions)(
-  ({
-    address,
-    crossChainMessenger,
-    fromBlock,
-    toBlock,
-  }: {
-    address: Address
-    crossChainMessenger: CrossChainMessenger
-    fromBlock: number
-    toBlock: number
-  }) =>
-    crossChainMessenger
-      .getDepositsByAddress(address, {
-        fromBlock,
-        toBlock,
-      })
-      .then(deposits =>
-        deposits.map(deposit => toOperation<DepositOperation>(deposit)),
-      ),
-)
-
-export const getWithdrawals = pThrottle(throttlingOptions)(
-  ({
-    address,
-    crossChainMessenger,
-    fromBlock,
-    toBlock,
-  }: {
-    address: Address
-    crossChainMessenger: CrossChainMessenger
-    fromBlock: number
-    toBlock: number
-  }) =>
-    crossChainMessenger
-      .getWithdrawalsByAddress(address, {
-        fromBlock,
-        toBlock,
-      })
-      .then(withdrawals =>
-        withdrawals.map(withdrawal =>
-          toOperation<WithdrawOperation>(withdrawal),
+export const getDeposits = (crossChainMessenger: CrossChainMessenger) =>
+  pThrottle(throttlingOptions)(
+    ({
+      address,
+      fromBlock,
+      toBlock,
+    }: {
+      address: Address
+      fromBlock: number
+      toBlock: number
+    }) =>
+      crossChainMessenger
+        .getDepositsByAddress(address, {
+          fromBlock,
+          toBlock,
+        })
+        .then(deposits =>
+          deposits.map(deposit => toOperation<EvmDepositOperation>(deposit)),
         ),
-      ),
-)
+  )
+
+export const getWithdrawals = (crossChainMessenger: CrossChainMessenger) =>
+  pThrottle(throttlingOptions)(
+    ({
+      address,
+      fromBlock,
+      toBlock,
+    }: {
+      address: Address
+      fromBlock: number
+      toBlock: number
+    }) =>
+      crossChainMessenger
+        .getWithdrawalsByAddress(address, {
+          fromBlock,
+          toBlock,
+        })
+        .then(withdrawals =>
+          withdrawals.map(withdrawal =>
+            toOperation<EvmWithdrawOperation>(withdrawal),
+          ),
+        ),
+  )

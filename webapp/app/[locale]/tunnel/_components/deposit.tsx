@@ -414,11 +414,12 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
   useEffect(
     function handleApprovalSuccess() {
       if (
-        approvalReceiptStatus === 'success' &&
-        operationRunning === 'approving'
+        approvalReceiptStatus !== 'success' ||
+        operationRunning !== 'approving'
       ) {
-        setOperationRunning('depositing')
+        return
       }
+      setOperationRunning('depositing')
     },
     [approvalReceiptStatus, operationRunning, setOperationRunning],
   )

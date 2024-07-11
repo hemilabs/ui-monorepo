@@ -84,13 +84,16 @@ const pollUpdateWithdrawal = async ({
     },
   )
 
-const WithdrawalStatusUpdater = function ({
+const WatchEvmWithdrawal = function ({
   queryFn,
   withdrawal,
 }: {
   queryFn: () => Promise<MessageStatus>
   withdrawal: EvmWithdrawOperation
 }) {
+  // This is a hacky usage of useQuery. I am using it this way because it provides automatic refetching,
+  // request deduping, and conditional refetch depending on the state of the withdrawal.
+  // I am not interested in the actual result of the query, but in the side effect of the queryFn
   useQuery({
     queryFn,
     queryKey: ['messageStatusUpdater', withdrawal.transactionHash],
@@ -143,7 +146,7 @@ export const WithdrawalsStatusUpdater = function () {
   return (
     <>
       {withdrawalsToWatch.map(w => (
-        <WithdrawalStatusUpdater
+        <WatchEvmWithdrawal
           key={w.transactionHash}
           queryFn={() =>
             // @ts-expect-error unsure why it adds void, but actual result is not needed

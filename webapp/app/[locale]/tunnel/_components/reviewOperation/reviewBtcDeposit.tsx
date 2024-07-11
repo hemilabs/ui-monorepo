@@ -1,6 +1,7 @@
 import { bitcoin } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
 import { BtcDepositStatus } from 'context/tunnelHistoryContext/types'
+import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
@@ -8,7 +9,6 @@ import { Card } from 'ui-common/components/card'
 import { CloseIcon } from 'ui-common/components/closeIcon'
 import { Modal } from 'ui-common/components/modal'
 
-import { useBtcDeposits } from '../../_hooks/useBtcDeposits'
 import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
 
 import { Amount } from './amount'

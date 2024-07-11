@@ -107,6 +107,17 @@ export const WithdrawalsStatusUpdater = function () {
 
   const unsupportedChain = useConnectedToUnsupportedEvmChain()
 
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useConnectedChainCrossChainMessenger(l1ChainId)
+
+  if (
+    !isConnected ||
+    crossChainMessengerStatus !== 'success' ||
+    unsupportedChain
+  ) {
+    return null
+  }
+
   const withdrawalsToWatch = withdrawals
     .filter(
       w =>
@@ -128,17 +139,6 @@ export const WithdrawalsStatusUpdater = function () {
       }
       return (a.status ?? -1) - (b.status ?? -1)
     })
-
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useConnectedChainCrossChainMessenger(l1ChainId)
-
-  if (
-    !isConnected ||
-    crossChainMessengerStatus !== 'success' ||
-    unsupportedChain
-  ) {
-    return null
-  }
 
   return (
     <>

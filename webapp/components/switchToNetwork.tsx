@@ -35,11 +35,13 @@ export const SwitchToNetwork = function ({ selectedNetworkId }: Props) {
 
   const expectedWalletIsEvm = isEvmNetwork(walletTargetNetwork)
 
+  const isWalletConnected = () =>
+    expectedWalletIsEvm
+      ? evmWalletStatus === 'connected'
+      : btcWalletStatus === 'connected'
+
   // In order to switch, users must first connect their wallet
-  if (
-    (expectedWalletIsEvm && evmWalletStatus !== 'connected') ||
-    (!expectedWalletIsEvm && btcWalletStatus !== 'connected')
-  ) {
+  if (!isWalletConnected()) {
     return null
   }
 

@@ -3,6 +3,7 @@
 import { MessageDirection } from '@eth-optimism/sdk'
 import { bitcoin, isEvmNetwork } from 'app/networks'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
+import { ConnectWalletDrawerContext } from 'context/connectWalletDrawerContext'
 import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import {
@@ -36,6 +37,8 @@ import {
   TypedTunnelState,
 } from '../_hooks/useTunnelState'
 
+import { ConnectBtcWallet } from './connectBtcWallet'
+import { ConnectEvmWallet } from './connectEvmWallet'
 import { Erc20Approval } from './Erc20Approval'
 import {
   BtcFees,
@@ -74,7 +77,35 @@ const WalletsConnected = dynamic(
   { ssr: false },
 )
 
-const SubmitButton = function ({
+const SubmitBtcDeposit = function ({ disabled }: { disabled: boolean }) {
+  const { allDisconnected, btcWalletStatus, evmWalletStatus } = useAccounts()
+  const { openDrawer } = useContext(ConnectWalletDrawerContext)
+  const t = useTranslations('tunnel-page.submit-button')
+
+  if (allDisconnected) {
+    return (
+      <Button onClick={openDrawer} type="button">
+        {t('connect-both-wallets')}
+      </Button>
+    )
+  }
+
+  if (evmWalletStatus !== 'connected') {
+    return <ConnectEvmWallet />
+  }
+
+  if (btcWalletStatus !== 'connected') {
+    return <ConnectBtcWallet />
+  }
+
+  return (
+    <Button disabled={disabled} type="submit">
+      {t('deposit')}
+    </Button>
+  )
+}
+
+const SubmitEvmDeposit = function ({
   canDeposit,
   extendedErc20Approval,
   fromToken,
@@ -291,9 +322,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
             <div className="mb-2">
               <ReceivingHemiAddress token={state.fromToken} />
             </div>
-            <Button disabled={!canDeposit} type="submit">
-              {t('tunnel-page.submit-button.deposit')}
-            </Button>
+            <SubmitBtcDeposit disabled={!canDeposit} />
           </>
         }
         transactionsList={transactionsList}
@@ -346,7 +375,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     updateFromInput,
   } = state
 
-  const { chain } = useEvmAccount()
+  const { chain, isConnected } = useEvmAccount()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -611,17 +640,21 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
         ) : null
       }
       submitButton={
-        <SubmitButton
-          canDeposit={canDeposit}
-          extendedErc20Approval={extendedErc20Approval}
-          fromToken={fromToken}
-          isRunningOperation={isRunningOperation}
-          needsApproval={needsApproval}
-          operationRunning={operationRunning}
-          updateExtendedErc20Approval={() =>
-            setExtendedErc20Approval(prev => !prev)
-          }
-        />
+        isConnected ? (
+          <SubmitEvmDeposit
+            canDeposit={canDeposit}
+            extendedErc20Approval={extendedErc20Approval}
+            fromToken={fromToken}
+            isRunningOperation={isRunningOperation}
+            needsApproval={needsApproval}
+            operationRunning={operationRunning}
+            updateExtendedErc20Approval={() =>
+              setExtendedErc20Approval(prev => !prev)
+            }
+          />
+        ) : (
+          <ConnectEvmWallet />
+        )
       }
       transactionsList={transactionsList}
     />

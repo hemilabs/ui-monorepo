@@ -4,7 +4,6 @@ import { MessageDirection } from '@eth-optimism/sdk'
 import { bitcoin, isEvmNetwork } from 'app/networks'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { ConnectWalletDrawerContext } from 'context/connectWalletDrawerContext'
-import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import {
   BtcDepositStatus,
@@ -16,6 +15,7 @@ import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useContext, useEffect, useState } from 'react'
@@ -169,7 +169,7 @@ type BtcDepositProps = {
 
 const BtcDeposit = function ({ state }: BtcDepositProps) {
   const deposits = useBtcDeposits()
-  const { updateBtcDeposit } = useContext(TunnelHistoryContext)
+  const { updateBtcDeposit } = useTunnelHistory()
   // use this to avoid infinite loops in effects when resetting the form
   const [hasClearedForm, setHasClearedForm] = useState(false)
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
@@ -352,7 +352,7 @@ type EvmDepositProps = {
 }
 
 const EvmDeposit = function ({ state }: EvmDepositProps) {
-  const { addEvmDepositToTunnelHistory } = useContext(TunnelHistoryContext)
+  const { addEvmDepositToTunnelHistory } = useTunnelHistory()
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
   const [depositAmount, setDepositAmount] = useState('0')
   // use this to avoid infinite loops in effects when resetting the form

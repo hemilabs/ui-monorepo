@@ -1,11 +1,11 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
-import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { EvmWithdrawOperation } from 'context/tunnelHistoryContext/types'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { FormEvent, ReactNode, useContext } from 'react'
+import { FormEvent, ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { Modal } from 'ui-common/components/modal'
@@ -156,8 +156,8 @@ export const ReviewEvmWithdrawal = function ({
 
   const t = useTranslations()
   const { operation, txHash } = useTunnelOperation()
+  const { withdrawals } = useTunnelHistory()
 
-  const { withdrawals } = useContext(TunnelHistoryContext)
   const foundWithdrawal = withdrawals.find(w => w.transactionHash === txHash)
   const messageStatus = foundWithdrawal.status
 

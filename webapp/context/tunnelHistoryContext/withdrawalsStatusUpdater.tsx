@@ -4,13 +4,11 @@ import { evmRemoteNetworks, hemi } from 'app/networks'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
-import { useContext } from 'react'
 import { useAccount } from 'wagmi'
 
 import { EvmWithdrawOperation } from './types'
-
-import { TunnelHistoryContext } from './index'
 
 const queue = new PQueue({ concurrency: 3 })
 
@@ -105,8 +103,7 @@ const WatchEvmWithdrawal = function ({
 
 export const WithdrawalsStatusUpdater = function () {
   const { isConnected } = useAccount()
-  const { updateWithdrawal, withdrawals = [] } =
-    useContext(TunnelHistoryContext)
+  const { updateWithdrawal, withdrawals = [] } = useTunnelHistory()
 
   const unsupportedChain = useConnectedToUnsupportedEvmChain()
 

@@ -4,9 +4,8 @@ import { bitcoin, hemi } from 'app/networks'
 import { useAccount } from 'btc-wallet/hooks/useAccount'
 import { useSendBitcoin } from 'btc-wallet/hooks/useSendBitcoin'
 import { Satoshis } from 'btc-wallet/unisat'
-import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { BtcDepositStatus } from 'context/tunnelHistoryContext/types'
-import { useCallback, useContext } from 'react'
+import { useCallback } from 'react'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { getNativeToken } from 'utils/token'
 import {
@@ -19,6 +18,7 @@ import {
 import { useReadContract, type UseReadContractParameters } from 'wagmi'
 
 import { custodianVaultAbi } from './btc-tunnel-abi/custodian-vault'
+import { useTunnelHistory } from './useTunnelHistory'
 import { useWaitForTransactionReceipt } from './useWaitForTransactionReceipt'
 
 const useBtcCustodialTunnel = function () {
@@ -66,7 +66,7 @@ const useGetBitcoinCustodyAddress = function () {
 }
 
 export const useDepositBitcoin = function () {
-  const { addBtcDepositToTunnelHistory } = useContext(TunnelHistoryContext)
+  const { addBtcDepositToTunnelHistory } = useTunnelHistory()
   const { address } = useAccount()
   const { setQueryParams } = useQueryParams()
   const { bitcoinVaultAddress } = useGetBitcoinCustodyAddress()

@@ -1,6 +1,5 @@
-import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
-import { useContext } from 'react'
 import { useAccount } from 'wagmi'
 
 const Spinner = () => (
@@ -53,9 +52,9 @@ const Spinner = () => (
 
 export const TunnelHistorySyncStatus = function () {
   const { isConnected } = useAccount()
-  const { depositSyncStatus, withdrawSyncStatus } =
-    useContext(TunnelHistoryContext)
+  const { depositSyncStatus, withdrawSyncStatus } = useTunnelHistory()
   const t = useTranslations('transaction-history')
+
   if (
     ![depositSyncStatus, withdrawSyncStatus].includes('syncing') ||
     !isConnected

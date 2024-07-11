@@ -1,12 +1,12 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { RemoteChain, bitcoin, isEvmNetwork } from 'app/networks'
-import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { getFormattedValue } from 'utils/format'
@@ -94,7 +94,7 @@ type EvmWithdrawProps = {
 }
 
 const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
-  const { updateWithdrawal, withdrawals } = useContext(TunnelHistoryContext)
+  const { updateWithdrawal, withdrawals } = useTunnelHistory()
   // use this to avoid infinite loops in effects when resetting the form
   const [hasClearedForm, setHasClearedForm] = useState(false)
   const [isWithdrawing, setIsWithdrawing] = useState(false)

@@ -1,10 +1,10 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
 import { EvmWithdrawOperation } from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { useChain } from 'hooks/useChain'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { getL2TokenByBridgedAddress, getTokenByAddress } from 'utils/token'
@@ -64,7 +64,7 @@ type Props = {
 }
 
 export const Prove = function ({ state }: Props) {
-  const { updateWithdrawal, withdrawals } = useContext(TunnelHistoryContext)
+  const { updateWithdrawal, withdrawals } = useTunnelHistory()
 
   const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =
     state

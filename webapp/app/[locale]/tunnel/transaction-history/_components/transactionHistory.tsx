@@ -9,7 +9,6 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
 import {
   EvmWithdrawOperation,
   TunnelOperation,
@@ -17,8 +16,9 @@ import {
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
-import { useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
@@ -173,7 +173,7 @@ const columnsBuilder = (
 
 const useTransactionsHistory = function () {
   const { deposits, depositSyncStatus, withdrawals, withdrawSyncStatus } =
-    useContext(TunnelHistoryContext)
+    useTunnelHistory()
 
   const data = useMemo(
     () =>

@@ -252,7 +252,7 @@ export const ReviewEvmWithdrawal = function ({
           <VerticalLine />
           <SubStep
             status={getWaitReadyToProveStatus()}
-            text={t('tunnel-page.review-withdraw.wait-minutes', {
+            text={t('common.wait-minutes', {
               minutes: ExpectedWithdrawalWaitTimeMinutes,
             })}
           />
@@ -267,7 +267,7 @@ export const ReviewEvmWithdrawal = function ({
           <VerticalLine />
           <SubStep
             status={getWaitReadyToClaimStatus()}
-            text={t('tunnel-page.review-withdraw.wait-hours', {
+            text={t('common.wait-hours', {
               hours: ExpectedProofWaitTimeHours,
             })}
           />

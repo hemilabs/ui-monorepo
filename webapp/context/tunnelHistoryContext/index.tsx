@@ -25,6 +25,14 @@ import {
 } from './types'
 import { useSyncTunnelOperations } from './useSyncTunnelOperations'
 
+const BitcoinDepositsStatusUpdater = dynamic(
+  () =>
+    import('./bitcoinDepositsStatusUpdater').then(
+      mod => mod.BitcoinDepositsStatusUpdater,
+    ),
+  { ssr: false },
+)
+
 const WithdrawalsStatusUpdater = dynamic(
   () =>
     import('./withdrawalsStatusUpdater').then(
@@ -197,6 +205,10 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
 
   return (
     <TunnelHistoryContext.Provider value={value}>
+      {/* This could be done in a background process https://github.com/BVM-priv/ui-monorepo/issues/390 */}
+      {/* Track updates on bitcoin deposits, in bitcoin or in Hemi */}
+      {featureFlags.btcTunnelEnabled && <BitcoinDepositsStatusUpdater />}
+      {/* Track updates on withdrawals from Hemi */}
       <WithdrawalsStatusUpdater />
       {children}
     </TunnelHistoryContext.Provider>

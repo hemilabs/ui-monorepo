@@ -235,9 +235,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     function handleDepositSuccess() {
       if (depositReceipt?.status.confirmed) {
         const deposit = deposits.find(
-          d =>
-            d.transactionHash === depositReceipt.txId &&
-            d.status === BtcDepositStatus.TX_PENDING,
+          d => d.transactionHash === depositReceipt.txId,
         )
         const timeoutId = setTimeout(clearDepositState, 7000)
         if (!hasClearedForm) {
@@ -290,8 +288,10 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     }
     setDepositAmount(fromInput)
     setIsDepositing(true)
-    const satoshis = Number(parseUnits(fromInput, fromToken.decimals))
-    depositBitcoin(satoshis, evmAddress)
+    depositBitcoin({
+      hemiAddress: evmAddress,
+      satoshis: Number(parseUnits(fromInput, fromToken.decimals)),
+    })
   }
 
   const fees = feePrices?.fastestFee?.toString()
@@ -322,7 +322,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
             <div className="mb-2">
               <ReceivingHemiAddress token={state.fromToken} />
             </div>
-            <SubmitBtcDeposit disabled={!canDeposit} />
+            <SubmitBtcDeposit disabled={!canDeposit || isDepositing} />
           </>
         }
         transactionsList={transactionsList}

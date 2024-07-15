@@ -1,27 +1,9 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { EvmWithdrawOperation } from 'context/tunnelHistoryContext/types'
 import { useTranslations } from 'next-intl'
-import Link from 'next-intl/link'
 import Skeleton from 'react-loading-skeleton'
 
-const Action = ({
-  className = 'bg-orange-950 text-white',
-  txHash,
-  operation,
-  text,
-}: {
-  className?: string
-  txHash: string
-  operation: string
-  text: string
-}) => (
-  <Link
-    className={`inline-block rounded-3xl px-5 py-3 text-xs ${className}`}
-    href={`/tunnel?txHash=${txHash}&operation=${operation}`}
-  >
-    {text}
-  </Link>
-)
+import { CallToAction } from './callToAction'
 
 type Props = {
   withdraw: EvmWithdrawOperation
@@ -35,7 +17,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
   }
 
   const Failed = (
-    <Action
+    <CallToAction
       operation="withdraw"
       text={t('retry')}
       txHash={withdraw.transactionHash}
@@ -43,7 +25,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
   )
 
   const Claim = (
-    <Action
+    <CallToAction
       operation="claim"
       text={t('claim')}
       txHash={withdraw.transactionHash}
@@ -51,7 +33,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
   )
 
   const Prove = (
-    <Action
+    <CallToAction
       operation="prove"
       text={t('prove')}
       txHash={withdraw.transactionHash}
@@ -59,7 +41,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
   )
 
   const getViewButton = (operation: string) => (
-    <Action
+    <CallToAction
       className="border border-solid border-slate-50 bg-slate-100 text-slate-950"
       operation={operation}
       text={t('view')}

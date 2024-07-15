@@ -1,5 +1,10 @@
-import { type TokenBridgeMessage, type MessageStatus } from '@eth-optimism/sdk'
-import { RemoteChain } from 'app/networks'
+import {
+  type TokenBridgeMessage,
+  type MessageDirection,
+  type MessageStatus,
+} from '@eth-optimism/sdk'
+import { BtcChain } from 'btc-wallet/chains'
+import { type Chain } from 'viem'
 
 export const enum BtcDepositStatus {
   // The tx is in the mempool, but hasn't been included in a mined block
@@ -16,25 +21,41 @@ export const enum BtcDepositStatus {
 
 type CommonOperation = Omit<
   TokenBridgeMessage,
-  'amount' | 'blockNumber' | 'data' | 'logIndex'
+  'amount' | 'blockNumber' | 'chainId' | 'data' | 'direction' | 'logIndex'
 > & {
   amount: string
   blockNumber?: number
-  chainId: RemoteChain['id']
   timestamp?: number
 }
 
-export type BtcDepositOperation = CommonOperation & {
-  status: BtcDepositStatus
+type DepositDirection = {
+  direction: MessageDirection.L1_TO_L2
 }
 
-export type EvmDepositOperation = CommonOperation
-
-export type EvmWithdrawOperation = CommonOperation & {
-  status?: MessageStatus
+type WithdrawDirection = {
+  direction: MessageDirection.L2_TO_L1
 }
 
-export type DepositTunnelOperation = EvmDepositOperation | BtcDepositOperation
+type BtcChainId = { chainId: BtcChain['id'] }
+type EvmChainId = { chainId: Chain['id'] }
+
+export type BtcDepositOperation = CommonOperation &
+  BtcChainId &
+  DepositDirection & {
+    status: BtcDepositStatus
+  }
+
+export type EvmDepositOperation = CommonOperation &
+  DepositDirection &
+  EvmChainId
+
+export type EvmWithdrawOperation = CommonOperation &
+  EvmChainId &
+  WithdrawDirection & {
+    status?: MessageStatus
+  }
+
+export type DepositTunnelOperation = BtcDepositOperation | EvmDepositOperation
 
 // TODO add BtcWithdrawals https://github.com/BVM-priv/ui-monorepo/issues/343
 export type WithdrawTunnelOperation = EvmWithdrawOperation

@@ -172,7 +172,6 @@ const columnsBuilder = (
       isDeposit(row.original) ? (
         <DepositStatus deposit={row.original} />
       ) : (
-        // @ts-expect-error TS fails to infer that row.original is not a deposit
         <WithdrawStatus withdrawal={row.original} />
       ),
     header: () => <Header text={t('column-headers.status')} />,
@@ -186,7 +185,6 @@ const columnsBuilder = (
         // EVM Deposits do not render an action, let's add a "-"
         <span className="opacity-40">-</span>
       ) : (
-        // @ts-expect-error TS fails to infer that row.original is not a deposit
         <WithdrawAction withdraw={row.original} />
       ),
     header: () => <Header />,
@@ -200,15 +198,17 @@ const useTransactionsHistory = function () {
 
   const data = useMemo(
     () =>
-      deposits.concat(withdrawals).sort(function (a, b) {
-        if (!a.timestamp) {
-          return -1
-        }
-        if (!b.timestamp) {
-          return 1
-        }
-        return b.timestamp - a.timestamp
-      }),
+      (deposits as TunnelOperation[])
+        .concat(withdrawals as TunnelOperation[])
+        .sort(function (a, b) {
+          if (!a.timestamp) {
+            return -1
+          }
+          if (!b.timestamp) {
+            return 1
+          }
+          return b.timestamp - a.timestamp
+        }),
     [deposits, withdrawals],
   )
   return {

@@ -194,11 +194,12 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
         }
         // Handling of this error is needed https://github.com/BVM-priv/ui-monorepo/issues/322
         // eslint-disable-next-line promise/catch-or-return
-        addTimestampToOperation(extendedWithdrawal, fromNetworkId).then(w =>
-          updateWithdrawal(extendedWithdrawal, {
-            ...w,
-            status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
-          }),
+        addTimestampToOperation(extendedWithdrawal, fromNetworkId).then(
+          ({ timestamp }) =>
+            updateWithdrawal(extendedWithdrawal, {
+              status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+              timestamp,
+            }),
         )
         // use this to show the TX confirmation in prove.tsx when mounting
         savePartialWithdrawal({

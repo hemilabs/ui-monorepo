@@ -1,4 +1,6 @@
+import { featureFlags } from 'app/featureFlags'
 import {
+  bitcoin,
   evmRemoteNetworks,
   hemi,
   networks,
@@ -10,7 +12,7 @@ import { tokenList } from 'tokenList'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { isNativeToken, getTokenByAddress } from 'utils/token'
-import { type Chain, type Hash } from 'viem'
+import { type Chain, type Hash, isHash } from 'viem'
 
 import { useTunnelOperation } from './useTunnelOperation'
 
@@ -153,6 +155,38 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
   }
 }
 
+const getDefaultNetworksOrder = function ({
+  operation,
+  txHash,
+}: ReturnType<typeof useTunnelOperation>) {
+  const defaultBtcDeposit = {
+    fromNetworkId: bitcoin.id,
+    toNetworkId: hemi.id,
+  }
+  const defaultEvmDeposit = {
+    fromNetworkId: evmRemoteNetworks[0].id,
+    toNetworkId: hemi.id,
+  }
+  const defaultEvmWithdrawal = {
+    fromNetworkId: hemi.id,
+    toNetworkId: evmRemoteNetworks[0].id,
+  }
+
+  if (!operation) {
+    // no operation in query string, default to EVM deposit
+    return defaultEvmDeposit
+  }
+  if (operation !== 'deposit') {
+    // for non-deposits, the withdrawals work ok
+    return defaultEvmWithdrawal
+  }
+  // if no hash, hash is an EVM one, or btc are disabled, return EVM deposit
+  if (!txHash || isHash(txHash) || !featureFlags.btcTunnelEnabled) {
+    return defaultEvmDeposit
+  }
+  return defaultBtcDeposit
+}
+
 export const useTunnelState = function (): TunnelState & {
   // will throw compile error if a proper function event is missing!
   [K in Actions['type']]: (
@@ -160,18 +194,9 @@ export const useTunnelState = function (): TunnelState & {
   ) => void
 } {
   const { setQueryParams, removeQueryParams } = useQueryParams()
-  const { operation } = useTunnelOperation()
+  const tunnelOperation = useTunnelOperation()
 
-  const initial =
-    !operation || operation === 'deposit'
-      ? {
-          fromNetworkId: evmRemoteNetworks[0].id,
-          toNetworkId: hemi.id,
-        }
-      : {
-          fromNetworkId: hemi.id,
-          toNetworkId: evmRemoteNetworks[0].id,
-        }
+  const initial = getDefaultNetworksOrder(tunnelOperation)
 
   const [state, dispatch] = useReducer(reducer, {
     fromInput: '0',
@@ -194,6 +219,8 @@ export const useTunnelState = function (): TunnelState & {
     },
     [dispatch],
   )
+
+  const { operation } = tunnelOperation
 
   return {
     ...state,

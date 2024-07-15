@@ -34,8 +34,11 @@ export type EvmWithdrawOperation = CommonOperation & {
   status?: MessageStatus
 }
 
-export type TunnelOperation =
-  | BtcDepositOperation
-  | EvmDepositOperation
-  | EvmWithdrawOperation
+export type DepositTunnelOperation = EvmDepositOperation | BtcDepositOperation
+
+// TODO add BtcWithdrawals https://github.com/BVM-priv/ui-monorepo/issues/343
+export type WithdrawTunnelOperation = EvmWithdrawOperation
+
+export type TunnelOperation = DepositTunnelOperation | WithdrawTunnelOperation
+
 export type RawTunnelOperation<T extends TunnelOperation> = Omit<T, 'timestamp'>

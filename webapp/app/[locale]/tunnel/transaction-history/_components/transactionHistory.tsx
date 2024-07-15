@@ -10,10 +10,9 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import {
-  BtcDepositOperation,
   BtcDepositStatus,
-  EvmDepositOperation,
   EvmWithdrawOperation,
+  DepositTunnelOperation,
   TunnelOperation,
 } from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
@@ -41,7 +40,7 @@ import { WithdrawAction } from './withdrawAction'
 const DepositStatus = function ({
   deposit,
 }: {
-  deposit: BtcDepositOperation | EvmDepositOperation
+  deposit: DepositTunnelOperation
 }) {
   const t = useTranslations()
 

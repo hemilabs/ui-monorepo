@@ -1,6 +1,6 @@
 'use client'
 
-import { type Chain as EvmChain } from '@rainbow-me/rainbowkit'
+import { type Chain as RainbowKitChain } from '@rainbow-me/rainbowkit'
 import { featureFlags } from 'app/featureFlags'
 import {
   bitcoinTestnet,
@@ -10,7 +10,11 @@ import {
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { renderToString } from 'react-dom/server'
 import { HemiSymbolWhite } from 'ui-common/components/hemiLogo'
+import { type Chain } from 'viem'
 import { mainnet, sepolia } from 'wagmi/chains'
+
+type EvmChain = Omit<Chain, 'fees' | 'serializers'> &
+  Pick<RainbowKitChain, 'iconBackground' | 'iconUrl'>
 
 export type OrderedChains = readonly [EvmChain, ...EvmChain[]]
 // Remote chains are those who can tunnel from/to Hemi

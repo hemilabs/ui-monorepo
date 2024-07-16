@@ -82,9 +82,8 @@ export const initiateBtcDeposit = function ({
   }
 
   return (
-    // in incoming iterations, the owner address will be determined programmatically
-    // from bitcoin manager, once there's a determined way to get the "most adequate" custodial
-    Promise.resolve('0xfee2f1eD73051c0f910de83d221151d9D36Ae3de' as Address)
+    hemiClient
+      .getOwner()
       // get vault address which will custody the btc
       .then(ownerAddress => hemiClient.getVaultAddressByOwner({ ownerAddress }))
       // get the bitcoin address which the vault will monitor

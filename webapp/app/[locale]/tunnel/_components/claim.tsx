@@ -46,7 +46,7 @@ const SubmitButton = function ({
 
   return (
     <SubmitWhenConnectedToChain
-      l1ChainId={l1ChainId}
+      chainId={l1ChainId}
       submitButton={
         <Button
           disabled={!isReadyToClaim || isClaiming || claimConfirmed}

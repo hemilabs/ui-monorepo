@@ -6,29 +6,27 @@ import { type Chain } from 'viem'
 import { useSwitchChain } from 'wagmi'
 
 type Props = {
-  l1ChainId: Chain['id']
+  chainId: Chain['id']
   submitButton: React.ReactNode
 }
 
 export const SubmitWhenConnectedToChain = function ({
-  l1ChainId,
+  chainId,
   submitButton,
 }: Props) {
   const { switchChain } = useSwitchChain()
 
   const t = useTranslations()
 
-  const connectedToL1 = useIsConnectedToExpectedNetwork(l1ChainId)
-  const targetChain = useChain(l1ChainId)
-
-  const switchToL1 = () => switchChain({ chainId: l1ChainId })
+  const connectedToL1 = useIsConnectedToExpectedNetwork(chainId)
+  const targetChain = useChain(chainId)
 
   return (
     <>
       {connectedToL1 && submitButton}
       {!connectedToL1 && (
         <div className="flex flex-col gap-y-2">
-          <Button onClick={switchToL1} type="button">
+          <Button onClick={() => switchChain({ chainId })} type="button">
             {t('common.connect-to-network', { network: targetChain.name })}
           </Button>
         </div>

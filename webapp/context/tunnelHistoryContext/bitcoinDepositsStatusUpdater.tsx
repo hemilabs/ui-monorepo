@@ -1,16 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
-import { bitcoin } from 'app/networks'
 import {
   BtcDepositOperation,
   BtcDepositStatus,
 } from 'context/tunnelHistoryContext/types'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useHemiClient } from 'hooks/useHemiClient'
-import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
 import { getTransactionReceipt } from 'utils/btcApi'
 import { getHemiStatusOfBtcDeposit } from 'utils/hemi'
+import { useAccount } from 'wagmi'
 
 // concurrently avoid overloading both blockchains
 const bitcoinQueue = new PQueue({ concurrency: 5 })
@@ -93,10 +92,10 @@ const byTimestampDesc = function (
 }
 
 export const BitcoinDepositsStatusUpdater = function () {
+  // Deposits are checked against Hemi network, but by being connected to any evm wallet
+  // we can retrieve the deposits, as they are made to an EVM address
+  const { isConnected } = useAccount()
   const deposits = useBtcDeposits()
-  // Deposits are checked against Hemi network, but we need to be connected to
-  // the bitcoin blockchain to retrieve the deposit list
-  const isConnected = useIsConnectedToExpectedNetwork(bitcoin.id)
 
   if (!isConnected) {
     return null

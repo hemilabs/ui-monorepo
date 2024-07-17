@@ -6,11 +6,7 @@ import {
 } from 'context/tunnelHistoryContext/types'
 import { type HemiPublicClient } from 'hooks/useHemiClient'
 import pMemoize from 'promise-mem'
-import {
-  type Address,
-  // Aliasing because I feel it better represents the intent I am using it for.
-  getAddress as toChecksum,
-} from 'viem'
+import { type Address } from 'viem'
 
 // Many vaults will likely share the same owner, so this can be memoized
 const getVaultOwnerByBtcAddress = pMemoize(
@@ -73,7 +69,7 @@ export const initiateBtcDeposit = function ({
   // Max Sanchez note: looks like if we pass in all lower-case hex, Unisat publishes the bytes instead of the string.
   // Tunnel for now is only validating the string representation, but update this in the future using
   // the all-lower-case-hex way to get the raw bytes published, which is more efficient.
-  const memo = toChecksum(hemiAddress).slice(2)
+  const memo = hemiAddress.toUpperCase().slice(2)
 
   if (satoshis <= 0) {
     return Promise.reject(

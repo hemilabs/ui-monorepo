@@ -22,8 +22,8 @@
       "you-send": "You send"
     },
     "review-deposit": {
-      "btc-deposit-come-back-delay-note": "If you do not receive your deposit after 2hrs return to this page to manually claim.",
-      "claim-deposit": "Claim your {symbol} deposit",
+      "btc-deposit-come-back-delay-note": "If you do not receive your deposit after {hours} hours return to this page to manually claim.",
+      "claim-deposit": "Claim deposit",
       "heading": "Review Deposit",
       "initiate-deposit": "Initiate deposit",
       "wait-for-confirmation": "Wait for Hemi confirmation",
@@ -40,7 +40,9 @@
     "submit-button": {
       "approve-and-deposit": "Approve and Deposit",
       "approving": "Approving...",
+      "claim-deposit": "Claim deposit",
       "claim-withdrawal": "Claim Withdrawal",
+      "claiming-deposit": "Claiming Deposit",
       "claiming-withdrawal": "Claiming Withdrawal",
       "connect-both-wallets": "Connect your BTC and EVM wallets",
       "connect-btc-wallet": "Connect your BTC wallet",
@@ -76,7 +78,9 @@
       "withdraw": "Withdraw"
     },
     "transaction-status": {
+      "claiming-deposit": "Claiming Deposit",
       "claiming-withdrawal": "Claiming Withdrawal",
+      "deposit-claimed": "Deposit Claimed",
       "deposited": "{fromInput} {symbol} deposited",
       "depositing": "Depositing {fromInput} {symbol}",
       "erc20-approved": "{symbol} approved",

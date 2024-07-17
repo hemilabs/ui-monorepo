@@ -19,6 +19,7 @@
   ],
   "devDependencies": {
     "@commitlint/cli": "18.4.3",
+    "@shopify/eslint-plugin": "^45.0.0",
     "@types/mocha": "10.0.6",
     "@typescript-eslint/eslint-plugin": "6.16.0",
     "@typescript-eslint/parser": "6.16.0",
@@ -104,10 +105,18 @@
         ],
         "parser": "@typescript-eslint/parser",
         "plugins": [
+          "@shopify",
           "@typescript-eslint"
         ],
         "rules": {
           "no-shadow": "off",
+          "no-useless-return": "warn",
+          "@shopify/prefer-early-return": [
+            "warn",
+            {
+              "maximumStatements": 0
+            }
+          ],
           "@typescript-eslint/no-shadow": "error",
           "@typescript-eslint/no-unused-vars": [
             "error",

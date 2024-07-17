@@ -23,8 +23,9 @@ import { type EvmToken, type Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
+import { watchAsset } from 'utils/watchAsset'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
-import { useAccount as useEvmAccount } from 'wagmi'
+import { useAccount as useEvmAccount, useWalletClient } from 'wagmi'
 
 import { useBtcDeposits } from '../_hooks/useBtcDeposits'
 import { useDeposit } from '../_hooks/useDeposit'
@@ -182,6 +183,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     fromToken,
     resetStateAfterOperation,
     updateFromInput,
+    toToken,
   } = state
 
   const { btcChainId, evmAddress } = useAccounts()
@@ -231,28 +233,39 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     ],
   )
 
+  const { data: walletClient } = useWalletClient({ chainId: toToken.chainId })
+
   useEffect(
     function handleDepositSuccess() {
-      if (depositReceipt?.status.confirmed) {
-        const deposit = deposits.find(
-          d =>
-            d.transactionHash === depositReceipt.txId &&
-            d.status === BtcDepositStatus.TX_PENDING,
-        )
-        const timeoutId = setTimeout(clearDepositState, 7000)
-        if (!hasClearedForm) {
-          setHasClearedForm(true)
-          setIsDepositing(false)
-          resetStateAfterOperation()
-          updateBtcDeposit(deposit, {
-            blockNumber: depositReceipt.status.blockHeight,
-            status: BtcDepositStatus.TX_CONFIRMED,
-            timestamp: depositReceipt.status.blockTime,
-          })
-        }
-        return () => clearTimeout(timeoutId)
+      if (!depositReceipt?.status.confirmed) {
+        return undefined
       }
-      return undefined
+
+      watchAsset(walletClient, toToken).catch(function (err) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Could not add ${toToken.symbol} to the wallet: ${err.message}`,
+        )
+      })
+
+      const deposit = deposits.find(
+        d =>
+          d.transactionHash === depositReceipt.txId &&
+          d.status === BtcDepositStatus.TX_PENDING,
+      )
+      if (!hasClearedForm) {
+        setHasClearedForm(true)
+        setIsDepositing(false)
+        resetStateAfterOperation()
+        updateBtcDeposit(deposit, {
+          blockNumber: depositReceipt.status.blockHeight,
+          status: BtcDepositStatus.TX_CONFIRMED,
+          timestamp: depositReceipt.status.blockTime,
+        })
+      }
+
+      const timeoutId = setTimeout(clearDepositState, 7000)
+      return () => clearTimeout(timeoutId)
     },
     [
       clearDepositState,
@@ -262,7 +275,9 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
       resetStateAfterOperation,
       setHasClearedForm,
       setIsDepositing,
+      toToken,
       updateBtcDeposit,
+      walletClient,
     ],
   )
 
@@ -428,47 +443,57 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
   useEffect(
     function handleApprovalSuccess() {
       if (
-        approvalReceiptStatus === 'success' &&
-        operationRunning === 'approving'
+        approvalReceiptStatus !== 'success' ||
+        operationRunning !== 'approving'
       ) {
-        setOperationRunning('depositing')
+        return
       }
+      setOperationRunning('depositing')
     },
     [approvalReceiptStatus, operationRunning, setOperationRunning],
   )
 
+  const { data: walletClient } = useWalletClient()
+
   useEffect(
     function handleDepositSuccess() {
-      if (depositReceipt?.status === 'success') {
-        const timeoutId = setTimeout(clearDepositState, 7000)
-        if (!hasClearedForm) {
-          setHasClearedForm(true)
-          setOperationRunning('idle')
-          resetStateAfterOperation()
-          const isNative = isNativeToken(fromToken)
-          // Handling of this error is needed https://github.com/BVM-priv/ui-monorepo/issues/322
-          // eslint-disable-next-line promise/catch-or-return
-          addTimestampToOperation<EvmDepositOperation>(
-            {
-              amount: parseUnits(fromInput, fromToken.decimals).toString(),
-              blockNumber: Number(depositReceipt.blockNumber),
-              chainId: fromNetworkId,
-              direction: MessageDirection.L1_TO_L2,
-              from: depositReceipt.from,
-              l1Token: isNative ? zeroAddress : fromToken.address,
-              l2Token: isNative
-                ? NativeTokenSpecialAddressOnL2
-                : toToken.address,
-              // "to" field uses the same address as from, which is user's address
-              to: depositReceipt.from,
-              transactionHash: depositReceipt.transactionHash,
-            },
-            fromToken.chainId,
-          ).then(addEvmDepositToTunnelHistory)
-        }
-        return () => clearTimeout(timeoutId)
+      if (depositReceipt?.status !== 'success') {
+        return undefined
       }
-      return undefined
+
+      watchAsset(walletClient, toToken).catch(function (err) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          `Could not add ${toToken.symbol} to the wallet: ${err.message}`,
+        )
+      })
+
+      if (!hasClearedForm) {
+        setHasClearedForm(true)
+        setOperationRunning('idle')
+        resetStateAfterOperation()
+        const isNative = isNativeToken(fromToken)
+        // Handling of this error is needed https://github.com/BVM-priv/ui-monorepo/issues/322
+        // eslint-disable-next-line promise/catch-or-return
+        addTimestampToOperation<EvmDepositOperation>(
+          {
+            amount: parseUnits(fromInput, fromToken.decimals).toString(),
+            blockNumber: Number(depositReceipt.blockNumber),
+            chainId: fromNetworkId,
+            direction: MessageDirection.L1_TO_L2,
+            from: depositReceipt.from,
+            l1Token: isNative ? zeroAddress : fromToken.address,
+            l2Token: isNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
+            // "to" field uses the same address as from, which is user's address
+            to: depositReceipt.from,
+            transactionHash: depositReceipt.transactionHash,
+          },
+          fromToken.chainId,
+        ).then(addEvmDepositToTunnelHistory)
+      }
+
+      const timeoutId = setTimeout(clearDepositState, 7000)
+      return () => clearTimeout(timeoutId)
     },
     [
       addEvmDepositToTunnelHistory,
@@ -479,9 +504,10 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
       fromToken,
       hasClearedForm,
       resetStateAfterOperation,
-      setOperationRunning,
       setHasClearedForm,
+      setOperationRunning,
       toToken,
+      walletClient,
     ],
   )
 

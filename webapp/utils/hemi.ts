@@ -4,7 +4,7 @@ import {
   BtcDepositOperation,
   BtcDepositStatus,
 } from 'context/tunnelHistoryContext/types'
-import { type HemiPublicClient } from 'hooks/useHemiClient'
+import { HemiWalletClient, type HemiPublicClient } from 'hooks/useHemiClient'
 import pMemoize from 'promise-mem'
 import { type Address } from 'viem'
 
@@ -98,3 +98,22 @@ export const initiateBtcDeposit = function ({
       )
   )
 }
+
+export const claimBtcDeposit = ({
+  deposit,
+  from,
+  hemiClient,
+  hemiWalletClient,
+}: {
+  deposit: BtcDepositOperation
+  from: Address
+  hemiClient: HemiPublicClient
+  hemiWalletClient: HemiWalletClient
+}) =>
+  getVaultOwnerByBtcAddress(hemiClient, deposit).then(ownerAddress =>
+    hemiWalletClient.confirmDeposit({
+      from,
+      ownerAddress,
+      txId: deposit.transactionHash,
+    }),
+  )

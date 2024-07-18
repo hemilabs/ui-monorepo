@@ -22,7 +22,7 @@
       "you-send": "Usted envía"
     },
     "review-deposit": {
-      "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de {horas} horas regrese a esta pagina para reclamarlo manualmente.",
+      "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de {hours} horas regrese a esta pagina para reclamarlo manualmente.",
       "claim-deposit": "Reclamar depósito",
       "heading": "Revisar Depósito",
       "initiate-deposit": "Iniciar depósito",

@@ -110,10 +110,22 @@ export const claimBtcDeposit = ({
   hemiClient: HemiPublicClient
   hemiWalletClient: HemiWalletClient
 }) =>
-  getVaultOwnerByBtcAddress(hemiClient, deposit).then(ownerAddress =>
-    hemiWalletClient.confirmDeposit({
+  Promise.all([
+    getVaultOwnerByBtcAddress(hemiClient, deposit),
+    // pull the status again, not from memory, but from reading the contracts
+    // in case it just happened to be confirmed outside of the app a few seconds before claiming
+    getHemiStatusOfBtcDeposit(hemiClient, deposit),
+  ]).then(function ([ownerAddress, currentStatus]) {
+    if (currentStatus === BtcDepositStatus.BTC_DEPOSITED) {
+      throw new Error('Bitcoin Deposit already confirmed')
+    }
+    if (currentStatus !== BtcDepositStatus.BTC_READY_CLAIM) {
+      throw new Error('Bitcoin Deposit is not ready for claim!')
+    }
+
+    return hemiWalletClient.confirmDeposit({
       from,
       ownerAddress,
       txId: deposit.transactionHash,
-    }),
-  )
+    })
+  })

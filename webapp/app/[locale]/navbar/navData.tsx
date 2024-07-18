@@ -65,7 +65,7 @@ export const navItems: NavItemData[] = [
   {
     href: 'https://docs.hemi.xyz/building-bitcoin-apps/hemi-bitcoin-kit-hbk',
     icon: CodeInsertIcon,
-    id: 'bitcoinhkit',
+    id: 'bitcoinkit',
   },
 ]
 

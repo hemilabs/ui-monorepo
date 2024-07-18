@@ -91,7 +91,7 @@
   },
   "common": {
     "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
-    "bitcoinhkit": "hKit de Bitcoin",
+    "bitcoinkit": "Kit de Hemi Bitcoin",
     "connect-to-network": "Conectarse a {network}",
     "connect-wallet": "Conectar Billetera",
     "connect-wallets": "Connectar Billeteras",

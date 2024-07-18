@@ -12,6 +12,7 @@ import { Address, Hash, formatUnits, type Chain } from 'viem'
 
 import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
 import { useProveTransaction } from '../_hooks/useProveTransaction'
+import { useShowTransactionFromPreviousStep } from '../_hooks/useShowTransactionFromPreviousStep'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import { useTunnelState } from '../_hooks/useTunnelState'
@@ -69,11 +70,6 @@ export const Prove = function ({ state }: Props) {
   const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =
     state
 
-  // If coming from the Withdraw form, show the withdrawal transaction briefly
-  // but if entering from the history, there's no need to show it
-  const [showWithdrawalTx, setShowWithdrawalTx] = useState(
-    !!partialWithdrawal?.withdrawalTxHash,
-  )
   const [isProving, setIsProving] = useState(false)
 
   // https://github.com/BVM-priv/ui-monorepo/issues/158
@@ -100,16 +96,10 @@ export const Prove = function ({ state }: Props) {
 
   const withdrawal = withdrawals.find(w => w.transactionHash === txHash)
 
-  useEffect(
-    function hideWithdrawalTxFromTransactionList() {
-      const timeoutId = setTimeout(function () {
-        if (showWithdrawalTx) {
-          setShowWithdrawalTx(false)
-        }
-      }, 7000)
-      return () => clearTimeout(timeoutId)
-    },
-    [setShowWithdrawalTx, showWithdrawalTx],
+  // If coming from the Withdraw form, show the withdrawal transaction briefly
+  // but if entering from the history, there's no need to show it
+  const showWithdrawalTx = useShowTransactionFromPreviousStep(
+    partialWithdrawal?.withdrawalTxHash,
   )
 
   useEffect(

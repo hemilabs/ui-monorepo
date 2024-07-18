@@ -146,7 +146,7 @@ const ManualConfiguration = function () {
         {t('rpc-url')}
       </ConfigurationPropTitle>
       <ExternalLink
-        href={hemi.rpcUrls.public.http[0]}
+        href={hemi.rpcUrls.default.http[0]}
         order="order-2 xl:order-5 2xl:order-3"
       />
       <ConfigurationPropTitle order="order-4 xl:order-7">

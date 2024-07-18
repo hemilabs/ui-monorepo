@@ -28,12 +28,12 @@ const giveAwayTokens = hemi.testnet
         symbol: sepolia.nativeCurrency.symbol,
       },
       {
-        amount: 0.01,
+        amount: 0.1,
         icon: <Btc />,
         symbol: bitcoinTestnet.nativeCurrency.symbol,
       },
       {
-        amount: 0.2,
+        amount: 1,
         icon: <Hemi />,
         symbol: 'tHEMI',
       },

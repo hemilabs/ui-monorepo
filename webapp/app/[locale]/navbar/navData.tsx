@@ -6,6 +6,7 @@ import { DexIcon } from 'components/icons/dexIcon'
 import { ExplorerIcon } from 'components/icons/explorerIcon'
 import { FiletextIcon } from 'components/icons/filetextIcon'
 import { GraduateCapIcon } from 'components/icons/graduateCapIcon'
+import { PoPMinerIcon } from 'components/icons/popMinerIcon'
 import { TunnelIcon } from 'components/icons/tunnelIcon'
 import dynamic from 'next/dynamic'
 
@@ -36,6 +37,16 @@ export const navItems: NavItemData[] = [
     id: 'dex',
   },
   {
+    href: 'https://docs.hemi.xyz/building-bitcoin-apps/hemi-bitcoin-kit-hbk',
+    icon: CodeInsertIcon,
+    id: 'bitcoinkit',
+  },
+  {
+    href: 'https://pop-miner.hemi.xyz',
+    icon: PoPMinerIcon,
+    id: 'web-pop-miner',
+  },
+  {
     href: hemi.blockExplorers.default.url,
     icon: ExplorerIcon,
     id: 'explorer',
@@ -61,11 +72,6 @@ export const navItems: NavItemData[] = [
         text: 'Faucet',
       },
     ],
-  },
-  {
-    href: 'https://docs.hemi.xyz/building-bitcoin-apps/hemi-bitcoin-kit-hbk',
-    icon: CodeInsertIcon,
-    id: 'bitcoinkit',
   },
 ]
 

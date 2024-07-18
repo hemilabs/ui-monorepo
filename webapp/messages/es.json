@@ -127,6 +127,7 @@
     "wait-hours": "Espere hasta {hours} horas",
     "wait-minutes": "Espere hasta {minutes} minutos",
     "wallets-connected": "{count} {count, plural, =1 {Billtera Conectada} other {Billeteras Conectadas}} ",
+    "web-pop-miner": "Minero Web PoP",
     "wrong-network": "Red Incorrecta"
   },
   "connect-wallets": {

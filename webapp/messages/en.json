@@ -127,7 +127,7 @@
     "wait-hours": "Wait up to {hours} hours",
     "wait-minutes": "Wait up to {minutes} minutes",
     "wallets-connected": "{count} Connected {count, plural, =1 {Wallet} other {Wallets}} ",
-    "web-pop-miner": "Web PoP miner",
+    "web-pop-miner": "Web PoP Miner",
     "wrong-network": "Wrong Network"
   },
   "connect-wallets": {

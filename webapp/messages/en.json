@@ -5,7 +5,8 @@
     "loading-transactions": "Loading transactions",
     "ready-to-claim": "Ready to claim",
     "ready-to-prove": "Ready to prove",
-    "unsupported-chain-subheading": "Connect to a supported chain to view your transaction history."
+    "unsupported-chain-subheading": "Connect to a supported chain to view your transaction history.",
+    "waiting-btc-confirmation": "Waiting for Bitcoin Confirmation"
   },
   "tunnel-page": {
     "connect-wallet-to-review": "Connect your wallet to continue the operation.",
@@ -34,9 +35,7 @@
       "initiate-withdrawal": "Initiate withdrawal",
       "prove-withdrawal": "Prove withdrawal",
       "total-to-withdraw": "Total to withdraw",
-      "view-tx": "View",
-      "wait-hours": "Wait up to {hours} hours",
-      "wait-minutes": "Wait up to {minutes} minutes"
+      "view-tx": "View"
     },
     "submit-button": {
       "approve-and-deposit": "Approve and Deposit",
@@ -125,6 +124,8 @@
     "unsupported-chain-heading": "You're not connected to a supported chain",
     "view": "View",
     "wait-complete": "Wait complete",
+    "wait-hours": "Wait up to {hours} hours",
+    "wait-minutes": "Wait up to {minutes} minutes",
     "wallets-connected": "{count} Connected {count, plural, =1 {Wallet} other {Wallets}} ",
     "wrong-network": "Wrong Network"
   },

@@ -9,21 +9,24 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
 import {
+  BtcDepositOperation,
+  BtcDepositStatus,
+  EvmDepositOperation,
   EvmWithdrawOperation,
   TunnelOperation,
 } from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
-import { useContext, useMemo } from 'react'
+import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import { isDeposit, isEvmDeposit } from 'utils/tunnel'
+import { isBtcDeposit, isDeposit, isEvmDeposit } from 'utils/tunnel'
 import { Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -35,19 +38,42 @@ import { TxStatus } from './txStatus'
 import { TxTime } from './txTime'
 import { WithdrawAction } from './withdrawAction'
 
-// deposits are always successful if listed
-const DepositStatus = () => <TxStatus.Success />
+const DepositStatus = function ({
+  deposit,
+}: {
+  deposit: BtcDepositOperation | EvmDepositOperation
+}) {
+  const t = useTranslations()
+
+  if (!isBtcDeposit(deposit)) {
+    // Evm deposits are always successful if listed
+    return <TxStatus.Success />
+  }
+  const statuses = {
+    [BtcDepositStatus.TX_PENDING]: (
+      <TxStatus.InStatus
+        text={t('transaction-history.waiting-btc-confirmation')}
+      />
+    ),
+    [BtcDepositStatus.TX_CONFIRMED]: (
+      <TxStatus.InStatus text={t('common.wait-hours', { hours: 2 })} />
+    ),
+    [BtcDepositStatus.BTC_READY_CLAIM]: (
+      <TxStatus.InStatus text={t('transaction-history.ready-to-claim')} />
+    ),
+    [BtcDepositStatus.BTC_DEPOSITED]: <TxStatus.Success />,
+  }
+
+  return statuses[deposit.status] ?? '-'
+}
 
 const WithdrawStatus = function ({
   withdrawal,
 }: {
   withdrawal: EvmWithdrawOperation
 }) {
-  const t = useTranslations('transaction-history')
-  const waitMinutes = useTranslations()(
-    'tunnel-page.review-withdraw.wait-minutes',
-    { minutes: 20 },
-  )
+  const t = useTranslations()
+  const waitMinutes = t('common.wait-minutes', { minutes: 20 })
   const statuses = {
     // This status should never be rendered, but just to be defensive
     // let's render the next status:
@@ -59,13 +85,13 @@ const WithdrawStatus = function ({
       <TxStatus.InStatus text={waitMinutes} />
     ),
     [MessageStatus.READY_TO_PROVE]: (
-      <TxStatus.InStatus text={t('ready-to-prove')} />
+      <TxStatus.InStatus text={t('transaction-history.ready-to-prove')} />
     ),
     [MessageStatus.IN_CHALLENGE_PERIOD]: (
-      <TxStatus.InStatus text={t('in-challenge-period')} />
+      <TxStatus.InStatus text={t('transaction-history.in-challenge-period')} />
     ),
     [MessageStatus.READY_FOR_RELAY]: (
-      <TxStatus.InStatus text={t('ready-to-claim')} />
+      <TxStatus.InStatus text={t('transaction-history.ready-to-claim')} />
     ),
     [MessageStatus.RELAYED]: <TxStatus.Success />,
   }
@@ -145,9 +171,7 @@ const columnsBuilder = (
     accessorKey: 'status',
     cell: ({ row }) =>
       isDeposit(row.original) ? (
-        // TODO for btc deposits, we need to figure out how to pull the deposit state
-        // See https://github.com/BVM-priv/ui-monorepo/issues/345
-        <DepositStatus />
+        <DepositStatus deposit={row.original} />
       ) : (
         // @ts-expect-error TS fails to infer that row.original is not a deposit
         <WithdrawStatus withdrawal={row.original} />
@@ -173,11 +197,19 @@ const columnsBuilder = (
 
 const useTransactionsHistory = function () {
   const { deposits, depositSyncStatus, withdrawals, withdrawSyncStatus } =
-    useContext(TunnelHistoryContext)
+    useTunnelHistory()
 
   const data = useMemo(
     () =>
-      deposits.concat(withdrawals).sort((a, b) => b.timestamp - a.timestamp),
+      deposits.concat(withdrawals).sort(function (a, b) {
+        if (!a.timestamp) {
+          return -1
+        }
+        if (!b.timestamp) {
+          return 1
+        }
+        return b.timestamp - a.timestamp
+      }),
     [deposits, withdrawals],
   )
   return {

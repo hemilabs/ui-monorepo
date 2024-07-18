@@ -5,7 +5,8 @@
     "loading-transactions": "Cargando transacciones",
     "ready-to-claim": "Listo para Reclamar",
     "ready-to-prove": "Listo para Probar",
-    "unsupported-chain-subheading": "Conéctese a una red soportada para ver su historial de transacciones."
+    "unsupported-chain-subheading": "Conéctese a una red soportada para ver su historial de transacciones.",
+    "waiting-btc-confirmation": "Esperando por la confirmación en Bitcoin"
   },
   "tunnel-page": {
     "connect-wallet-to-review": "Conecte su billetera para continuar la operacion.",
@@ -34,9 +35,7 @@
       "initiate-withdrawal": "Iniciar retiro",
       "prove-withdrawal": "Probar retiro",
       "total-to-withdraw": "Total a retirar",
-      "view-tx": "View",
-      "wait-hours": "Espere hasta {hours} horas",
-      "wait-minutes": "Espere hasta {minutes} minutos"
+      "view-tx": "View"
     },
     "submit-button": {
       "approve-and-deposit": "Aprobar y Depositar",
@@ -125,6 +124,8 @@
     "unsupported-chain-heading": "Usted no se encuentra conectado a una red soportada",
     "view": "Ver",
     "wait-complete": "Espera completada",
+    "wait-hours": "Espere hasta {hours} horas",
+    "wait-minutes": "Espere hasta {minutes} minutos",
     "wallets-connected": "{count} {count, plural, =1 {Billtera Conectada} other {Billeteras Conectadas}} ",
     "wrong-network": "Red Incorrecta"
   },

@@ -1,9 +1,8 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
-import { useContext } from 'react'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 
 export const ActionableWithdrawals = function () {
-  const { withdrawals } = useContext(TunnelHistoryContext)
+  const { withdrawals } = useTunnelHistory()
 
   const actionableWithdrawals = withdrawals.filter(w =>
     [MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(

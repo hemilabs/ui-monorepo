@@ -1,9 +1,9 @@
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
-import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { useWithdrawNativeToken, useWithdrawToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
-import { useCallback, useContext } from 'react'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useCallback } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken } from 'types/token'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
@@ -27,12 +27,13 @@ export const useWithdraw = function ({
   l1ChainId,
   toToken,
 }: UseWithdraw) {
-  const { addWithdrawalToTunnelHistory } = useContext(TunnelHistoryContext)
   const { address } = useAccount()
   const queryClient = useQueryClient()
-  const withdrawingNative = isNativeToken(fromToken)
-  const { txHash } = useTunnelOperation()
   const { setQueryParams } = useQueryParams()
+  const { addWithdrawalToTunnelHistory } = useTunnelHistory()
+  const { txHash } = useTunnelOperation()
+
+  const withdrawingNative = isNativeToken(fromToken)
 
   const toWithdraw = parseUnits(fromInput, fromToken.decimals).toString()
 

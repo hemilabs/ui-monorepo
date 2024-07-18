@@ -4,13 +4,11 @@ import { evmRemoteNetworks, hemi } from 'app/networks'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
-import { useContext } from 'react'
 import { useAccount } from 'wagmi'
 
 import { EvmWithdrawOperation } from './types'
-
-import { TunnelHistoryContext } from './index'
 
 const queue = new PQueue({ concurrency: 3 })
 
@@ -84,13 +82,16 @@ const pollUpdateWithdrawal = async ({
     },
   )
 
-const WithdrawalStatusUpdater = function ({
+const WatchEvmWithdrawal = function ({
   queryFn,
   withdrawal,
 }: {
   queryFn: () => Promise<MessageStatus>
   withdrawal: EvmWithdrawOperation
 }) {
+  // This is a hacky usage of useQuery. I am using it this way because it provides automatic refetching,
+  // request deduping, and conditional refetch depending on the state of the withdrawal.
+  // I am not interested in the actual result of the query, but in the side effect of the queryFn
   useQuery({
     queryFn,
     queryKey: ['messageStatusUpdater', withdrawal.transactionHash],
@@ -102,10 +103,20 @@ const WithdrawalStatusUpdater = function ({
 
 export const WithdrawalsStatusUpdater = function () {
   const { isConnected } = useAccount()
-  const { updateWithdrawal, withdrawals = [] } =
-    useContext(TunnelHistoryContext)
+  const { updateWithdrawal, withdrawals = [] } = useTunnelHistory()
 
   const unsupportedChain = useConnectedToUnsupportedEvmChain()
+
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useConnectedChainCrossChainMessenger(l1ChainId)
+
+  if (
+    !isConnected ||
+    crossChainMessengerStatus !== 'success' ||
+    unsupportedChain
+  ) {
+    return null
+  }
 
   const withdrawalsToWatch = withdrawals
     .filter(
@@ -129,21 +140,10 @@ export const WithdrawalsStatusUpdater = function () {
       return (a.status ?? -1) - (b.status ?? -1)
     })
 
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useConnectedChainCrossChainMessenger(l1ChainId)
-
-  if (
-    !isConnected ||
-    crossChainMessengerStatus !== 'success' ||
-    unsupportedChain
-  ) {
-    return null
-  }
-
   return (
     <>
       {withdrawalsToWatch.map(w => (
-        <WithdrawalStatusUpdater
+        <WatchEvmWithdrawal
           key={w.transactionHash}
           queryFn={() =>
             // @ts-expect-error unsure why it adds void, but actual result is not needed

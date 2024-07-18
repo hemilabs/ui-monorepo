@@ -4,7 +4,6 @@ import { MessageDirection } from '@eth-optimism/sdk'
 import { bitcoin, isEvmNetwork } from 'app/networks'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { ConnectWalletDrawerContext } from 'context/connectWalletDrawerContext'
-import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import {
   BtcDepositStatus,
@@ -12,9 +11,11 @@ import {
 } from 'context/tunnelHistoryContext/types'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useContext, useEffect, useState } from 'react'
@@ -26,7 +27,6 @@ import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
-import { useBtcDeposits } from '../_hooks/useBtcDeposits'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
@@ -169,7 +169,7 @@ type BtcDepositProps = {
 
 const BtcDeposit = function ({ state }: BtcDepositProps) {
   const deposits = useBtcDeposits()
-  const { updateBtcDeposit } = useContext(TunnelHistoryContext)
+  const { updateBtcDeposit } = useTunnelHistory()
   // use this to avoid infinite loops in effects when resetting the form
   const [hasClearedForm, setHasClearedForm] = useState(false)
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
@@ -235,9 +235,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     function handleDepositSuccess() {
       if (depositReceipt?.status.confirmed) {
         const deposit = deposits.find(
-          d =>
-            d.transactionHash === depositReceipt.txId &&
-            d.status === BtcDepositStatus.TX_PENDING,
+          d => d.transactionHash === depositReceipt.txId,
         )
         const timeoutId = setTimeout(clearDepositState, 7000)
         if (!hasClearedForm) {
@@ -290,8 +288,10 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     }
     setDepositAmount(fromInput)
     setIsDepositing(true)
-    const satoshis = Number(parseUnits(fromInput, fromToken.decimals))
-    depositBitcoin(satoshis, evmAddress)
+    depositBitcoin({
+      hemiAddress: evmAddress,
+      satoshis: Number(parseUnits(fromInput, fromToken.decimals)),
+    })
   }
 
   const fees = feePrices?.fastestFee?.toString()
@@ -322,7 +322,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
             <div className="mb-2">
               <ReceivingHemiAddress token={state.fromToken} />
             </div>
-            <SubmitBtcDeposit disabled={!canDeposit} />
+            <SubmitBtcDeposit disabled={!canDeposit || isDepositing} />
           </>
         }
         transactionsList={transactionsList}
@@ -352,7 +352,7 @@ type EvmDepositProps = {
 }
 
 const EvmDeposit = function ({ state }: EvmDepositProps) {
-  const { addEvmDepositToTunnelHistory } = useContext(TunnelHistoryContext)
+  const { addEvmDepositToTunnelHistory } = useTunnelHistory()
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
   const [depositAmount, setDepositAmount] = useState('0')
   // use this to avoid infinite loops in effects when resetting the form

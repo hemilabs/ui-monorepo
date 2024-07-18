@@ -4,10 +4,10 @@ import { MessageStatus } from '@eth-optimism/sdk'
 import { featureFlags } from 'app/featureFlags'
 import { isBtcTxHash } from 'btc-wallet/utils/hash'
 import { ConnectWallet } from 'components/connectWallet'
-import { TunnelHistoryContext } from 'context/tunnelHistoryContext'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
-import { Suspense, useContext, useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { isHash } from 'viem'
 import { useAccount } from 'wagmi'
@@ -77,8 +77,8 @@ const Operation = function ({
 }
 
 const Tunnel = function () {
-  const { withdrawals } = useContext(TunnelHistoryContext)
   const { setQueryParams } = useQueryParams()
+  const { withdrawals } = useTunnelHistory()
   const { operation, txHash } = useTunnelOperation()
   const tunnelState = useTunnelState()
 

@@ -1,8 +1,7 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { TunnelHistoryContext } from 'app/context/tunnelHistoryContext'
 import { BtcTransaction } from 'btc-wallet/unisat'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
-import { useContext } from 'react'
 import { type Hash, isHash } from 'viem'
 import { type UseWaitForTransactionReceiptReturnType } from 'wagmi'
 
@@ -35,7 +34,7 @@ export const useTransactionsList = function ({
 }: UseTransactionsList) {
   const t = useTranslations()
 
-  const { withdrawals } = useContext(TunnelHistoryContext)
+  const { withdrawals } = useTunnelHistory()
   const { txHash: withdrawalTxHash } = useTunnelOperation()
 
   const withdrawalMessageStatus = isHash(withdrawalTxHash)

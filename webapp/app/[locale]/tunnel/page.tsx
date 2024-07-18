@@ -1,9 +1,11 @@
 'use client'
 
 import { MessageStatus } from '@eth-optimism/sdk'
+import { BtcDepositStatus } from 'app/context/tunnelHistoryContext/types'
 import { featureFlags } from 'app/featureFlags'
 import { isBtcTxHash } from 'btc-wallet/utils/hash'
 import { ConnectWallet } from 'components/connectWallet'
+import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
@@ -28,7 +30,14 @@ const OperationsComponent = {
   withdraw: Withdraw,
 }
 
-const OperationByMessageStatus = {
+const BtcOperationByStatus = {
+  [BtcDepositStatus.TX_PENDING]: 'deposit',
+  [BtcDepositStatus.TX_CONFIRMED]: 'deposit',
+  [BtcDepositStatus.BTC_READY_CLAIM]: 'claim',
+  [BtcDepositStatus.BTC_DEPOSITED]: 'view',
+} as const
+
+const EvmOperationByMessageStatus = {
   [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: 'withdraw',
   [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: 'withdraw',
   [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: 'prove',
@@ -36,6 +45,31 @@ const OperationByMessageStatus = {
   [MessageStatus.IN_CHALLENGE_PERIOD]: 'claim',
   [MessageStatus.READY_FOR_RELAY]: 'claim',
   [MessageStatus.RELAYED]: 'view',
+} as const
+
+const updateOperationQueryParameter = function <
+  T extends BtcDepositStatus | MessageStatus,
+>({
+  operation,
+  operationByStatus,
+  operationToIgnore,
+  setQueryParams,
+  status,
+}: {
+  operation: string
+  operationByStatus: Record<T, string>
+  operationToIgnore: string
+  setQueryParams: ReturnType<typeof useQueryParams>['setQueryParams']
+  status: T | undefined
+}) {
+  if (operation === operationToIgnore || status === undefined) {
+    return
+  }
+  const newOperation = operationByStatus[status]
+  if (operation !== newOperation) {
+    // auto correct the operation
+    setQueryParams({ operation: newOperation })
+  }
 }
 
 const Operation = function ({
@@ -77,6 +111,7 @@ const Operation = function ({
 }
 
 const Tunnel = function () {
+  const deposits = useBtcDeposits()
   const { setQueryParams } = useQueryParams()
   const { withdrawals } = useTunnelHistory()
   const { operation, txHash } = useTunnelOperation()
@@ -84,6 +119,10 @@ const Tunnel = function () {
 
   const isEvmTx = isHash(txHash)
   const isBtcTx = featureFlags.btcTunnelEnabled && isBtcTxHash(txHash)
+
+  const depositBtcStatus = isBtcTx
+    ? deposits.find(d => d.transactionHash === txHash)?.status
+    : undefined
 
   const withdrawalStatus = isEvmTx
     ? withdrawals.find(w => w.transactionHash === txHash)?.status
@@ -103,18 +142,31 @@ const Tunnel = function () {
       }
 
       if (isEvmTx) {
-        // for Evm Txs, we only need to validate the "operation" if it is not a deposit and the withdrawal status is defined
-        if (operation === 'deposit' || !withdrawalStatus) {
-          return
-        }
-        const newOperation = OperationByMessageStatus[withdrawalStatus]
-        if (operation !== newOperation) {
-          // auto correct the operation
-          setQueryParams({ operation: newOperation })
-        }
+        updateOperationQueryParameter({
+          operation,
+          operationByStatus: EvmOperationByMessageStatus,
+          operationToIgnore: 'deposit',
+          setQueryParams,
+          status: withdrawalStatus,
+        })
+      } else {
+        updateOperationQueryParameter({
+          operation,
+          operationByStatus: BtcOperationByStatus,
+          operationToIgnore: 'withdraw',
+          setQueryParams,
+          status: depositBtcStatus,
+        })
       }
     },
-    [isBtcTx, isEvmTx, withdrawalStatus, operation, setQueryParams],
+    [
+      depositBtcStatus,
+      isBtcTx,
+      isEvmTx,
+      withdrawalStatus,
+      operation,
+      setQueryParams,
+    ],
   )
 
   const stateLoaded =

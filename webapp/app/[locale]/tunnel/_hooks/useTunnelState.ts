@@ -7,6 +7,7 @@ import {
   type RemoteChain,
 } from 'app/networks'
 import { type BtcChain } from 'btc-wallet/chains'
+import { BtcTransaction } from 'btc-wallet/unisat'
 import { useCallback, useReducer } from 'react'
 import { tokenList } from 'tokenList'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
@@ -25,6 +26,11 @@ export type TunnelState = {
   fromInput: string
   fromNetworkId: RemoteChain['id']
   fromToken: Token
+  partialDeposit?: Partial<{
+    depositTxHash: BtcTransaction
+    claimDepositTxHash: Hash
+  }>
+  // used for eth withdrawals
   partialWithdrawal?: Partial<{
     withdrawalTxHash: Hash
     claimWithdrawalTxHash: Hash
@@ -42,6 +48,9 @@ type NoPayload = { payload?: never }
 
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
 
+type SavePartialDeposit = Action<'savePartialDeposit'> & {
+  payload: TunnelState['partialDeposit']
+}
 type SavePartialWithdrawal = Action<'savePartialWithdrawal'> & {
   payload: TunnelState['partialWithdrawal']
 }
@@ -61,6 +70,7 @@ type UpdateToNetwork = Action<'updateToNetwork'> & {
 type ToggleInput = Action<'toggleInput'> & NoPayload
 type Actions =
   | ResetStateAfterOperation
+  | SavePartialDeposit
   | SavePartialWithdrawal
   | UpdateFromNetwork
   | UpdateFromInput
@@ -84,6 +94,15 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
       }
       delete newState.partialWithdrawal
       return newState
+    }
+    case 'savePartialDeposit': {
+      return {
+        ...state,
+        partialDeposit: {
+          ...(state.partialDeposit || {}),
+          ...action.payload,
+        },
+      }
     }
     case 'savePartialWithdrawal': {
       return {
@@ -159,32 +178,47 @@ const getDefaultNetworksOrder = function ({
   operation,
   txHash,
 }: ReturnType<typeof useTunnelOperation>) {
-  const defaultBtcDeposit = {
+  const bitcoinFromL1ToL2 = {
     fromNetworkId: bitcoin.id,
     toNetworkId: hemi.id,
   }
-  const defaultEvmDeposit = {
+  const evmFromL1ToL2 = {
     fromNetworkId: evmRemoteNetworks[0].id,
     toNetworkId: hemi.id,
   }
-  const defaultEvmWithdrawal = {
+  const evmFromL2ToL1 = {
     fromNetworkId: hemi.id,
     toNetworkId: evmRemoteNetworks[0].id,
   }
 
+  const pickOption = (
+    evmAlternative: Record<string, Chain['id']>,
+    btcAlternative: Record<string, BtcChain['id'] | Chain['id']>,
+  ) =>
+    // if no hash, hash is an EVM one, or btc are disabled, return EVM alternative
+    !txHash || isHash(txHash) || !featureFlags.btcTunnelEnabled
+      ? evmAlternative
+      : btcAlternative
+
   if (!operation) {
     // no operation in query string, default to EVM deposit
-    return defaultEvmDeposit
+    return evmFromL1ToL2
   }
-  if (operation !== 'deposit') {
+  if (!['claim', 'deposit'].includes(operation)) {
     // for non-deposits, the withdrawals work ok
-    return defaultEvmWithdrawal
+    // Needs to be updated once btc withdrawals are enabled
+    // https://github.com/BVM-priv/ui-monorepo/issues/343
+    return evmFromL2ToL1
   }
-  // if no hash, hash is an EVM one, or btc are disabled, return EVM deposit
-  if (!txHash || isHash(txHash) || !featureFlags.btcTunnelEnabled) {
-    return defaultEvmDeposit
+  if (operation === 'claim') {
+    return pickOption(evmFromL2ToL1, bitcoinFromL1ToL2)
   }
-  return defaultBtcDeposit
+  if (operation === 'deposit') {
+    return pickOption(evmFromL1ToL2, bitcoinFromL1ToL2)
+  }
+  // default just in case, but I think it is unreachable as all cases must be covered above.
+  // However, let's be defensive and prevent the app from crashing
+  return evmFromL1ToL2
 }
 
 export const useTunnelState = function (): TunnelState & {
@@ -226,6 +260,14 @@ export const useTunnelState = function (): TunnelState & {
     ...state,
     resetStateAfterOperation: useCallback(
       () => dispatch({ type: 'resetStateAfterOperation' }),
+      [dispatch],
+    ),
+    savePartialDeposit: useCallback(
+      (payload: SavePartialDeposit['payload']) =>
+        dispatch({
+          payload,
+          type: 'savePartialDeposit',
+        }),
       [dispatch],
     ),
     savePartialWithdrawal: useCallback(

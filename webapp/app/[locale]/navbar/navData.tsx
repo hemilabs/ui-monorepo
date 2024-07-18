@@ -12,10 +12,10 @@ import dynamic from 'next/dynamic'
 
 import { NavItemData } from './_components/navItems'
 
-const ActionableWithdrawals = dynamic(
+const ActionableOperations = dynamic(
   () =>
-    import('../tunnel/_components/actionableWithdrawals').then(
-      mod => mod.ActionableWithdrawals,
+    import('../tunnel/_components/actionableOperations').then(
+      mod => mod.ActionableOperations,
     ),
   { ssr: false },
 )
@@ -24,7 +24,7 @@ export const navItems: NavItemData[] = [
   {
     alertComponent: () => (
       <div className="-mt-1">
-        <ActionableWithdrawals />
+        <ActionableOperations />
       </div>
     ),
     href: '/tunnel',

@@ -158,7 +158,7 @@
         "1": {
           "title": "Para Comenzar",
           "text": "Explore los Fundamentos de la Red Hemi.",
-          "url": "https://docs.hemi.xyz/main/introduction"
+          "url": "https://docs.hemi.xyz"
         },
         "2": {
           "title": "Tunelización",
@@ -178,14 +178,14 @@
         "5": {
           "title": "Programa de Recompensas",
           "text": "Participe en actividades y gane recompensas.",
-          "url": "#"
+          "url": "https://docs.hemi.xyz/governance/incentives"
         }
       },
       "explorers": {
         "1": {
           "title": "Para Comenzar",
           "text": "Explore los Fundamentos de la Red Hemi.",
-          "url": "https://docs.hemi.xyz/main/introduction"
+          "url": "https://docs.hemi.xyz"
         },
         "2": {
           "title": "Tunelización",
@@ -195,7 +195,7 @@
         "3": {
           "title": "Programa de Recompensas",
           "text": "Participe en actividades y gane recompensas.",
-          "url": "https://www.app.fuul.xyz/incentives/hemi"
+          "url": "https://docs.hemi.xyz/governance/incentives"
         },
         "4": {
           "title": "Acceso a Discord",
@@ -215,14 +215,14 @@
           "url": "https://docs.hemi.xyz/foundational-topics/pop-mining"
         },
         "2": {
-          "title": "Solicite acceso minero",
-          "text": "Configure su sistema, genere su clave pública y envíela para su aprobación.",
-          "url": "https://docs.hemi.xyz/foundational-topics/pop-mining/setup-part-1"
+          "title": "Minero PoP Web",
+          "text": "Una aplicación fácil de usar para que los principiantes exploren la minería PoP.",
+          "url": "https://pop-miner.hemi.xyz"
         },
         "3": {
           "title": "Comprenda las recompensas",
           "text": "Aprenda cómo están estructuradas las recompensas.",
-          "url": "https://docs.hemi.xyz/foundational-topics/pop-mining#earning-rewards"
+          "url": "https://docs.hemi.xyz/how-to-tutorials/pop-mining#earning-rewards"
         },
         "4": {
           "title": "Acceso a Discord",

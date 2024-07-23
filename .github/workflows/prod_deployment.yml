@@ -16,15 +16,12 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          # Can't only bring commits since ${{ github.event.before }} yet https://github.com/actions/checkout/issues/1444
-          fetch-depth: 0
 
       - name: Setup env
         uses: ./.github/actions/setup-env
       
       - name: Deploy claim-tokens microservice
-        run: npx lerna run deploy --scope=claim-tokens --since=${{ github.event.before }}
+        run: npx lerna run deploy --scope=claim-tokens
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

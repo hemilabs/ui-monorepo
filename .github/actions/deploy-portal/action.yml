@@ -31,7 +31,7 @@ runs:
   using: composite
   steps:
     - name: Build site
-      run: npx lerna run deploy --scope=app --since=${{ github.event.before }}
+      run: npx lerna run deploy --scope=app
       shell: bash
       env:
         NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL }}

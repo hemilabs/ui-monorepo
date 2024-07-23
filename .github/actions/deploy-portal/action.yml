@@ -1,0 +1,33 @@
+name: Deploy portal
+description: Deploys the portal to Hostinger
+
+runs:
+  using: composite
+  steps:
+    - name: Build site
+      run: npx lerna run deploy --scope=app --since=${{ github.event.before }}
+      shell: bash
+      env:
+        NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL }}
+        NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ inputs.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }} 
+        NEXT_PUBLIC_CLAIM_TOKENS_URL: ${{ inputs.NEXT_PUBLIC_CLAIM_TOKENS_URL }}
+
+    - name: Check portal build
+      id: portal_build
+      uses: andstor/file-existence-action@v3
+      with:
+        files: "./webapp/out/"
+
+    - name: Copy portal files to Hostinger
+      # folder should only exists if portal was built
+      if: steps.portal_build.outputs.files_exists == 'true'
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ inputs.HOSTINGER_HOST }}
+        username: ${{ inputs.HOSTINGER_USER }}
+        port: ${{ inputs.HOSTINGER_PORT }}
+        key: ${{ inputs.HOSTINGER_SSH_KEY }}
+        source: webapp/out/*
+        target: ${{ inputs.HOSTINGER_TARGET }}
+        rm: true
+        strip_components: 2

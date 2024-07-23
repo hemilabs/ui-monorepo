@@ -37,7 +37,7 @@ const assertErrorResponse = function (response, expected) {
     }),
     headers: {
       'Access-Control-Allow-Credentials': false,
-      'Access-Control-Allow-Origin': config.get('marketing.url'),
+      'Access-Control-Allow-Origin': config.get('portal.url'),
     },
     statusCode: expected.statusCode,
   })

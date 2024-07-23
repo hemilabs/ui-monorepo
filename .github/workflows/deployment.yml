@@ -45,8 +45,8 @@ jobs:
           DEPLOY_POSTGRES_CONNECTION_USER: ${{ secrets.POSTGRES_CONNECTION_USER }}
           ENABLE_IP_CHECK: false
           HASH_SECRET_KEY: ${{ secrets.HASH_SECRET_KEY }}
-          MARKETING_DOMAIN_URL: https://app.letshamsterdance.xyz
           IP_QUALITY_SCORE_SECRET_KEY: ${{ secrets.IP_QUALITY_SCORE_SECRET_KEY }}
+          PORTAL_DOMAIN_URL: https://app.letshamsterdance.xyz
           RECAPTCHA_SECRET_KEY:  ${{ secrets.RECAPTCHA_SECRET_KEY }}
           STAGE: 'staging'
 

@@ -31,6 +31,7 @@
     "http-errors": "2.0.0",
     "http-status-codes": "2.3.0",
     "knex": "3.1.0",
+    "normalize-email": "1.1.1",
     "p-tap": "3.1.0",
     "pg": "8.11.3",
     "snakecase-keys": "8.0.0"

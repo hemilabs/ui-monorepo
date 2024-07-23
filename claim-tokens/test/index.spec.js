@@ -21,7 +21,7 @@ const defaultHeaders = {
   'Content-Type': 'application/json',
 }
 const validBody = {
-  email: 'test@email.com',
+  email: 'test@gmail.com',
   profile: 'miner',
   receiveUpdates: true,
   token: 'some-recaptcha-token',
@@ -229,6 +229,43 @@ describe('claim-tokens', function () {
     })
   })
 
+  it('should return Bad Request if the email is not sent', async function () {
+    const invalidBody = { ...validBody }
+    delete invalidBody.email
+
+    const event = getEvent({ body: JSON.stringify(invalidBody) })
+    const response = await post(event)
+
+    assertErrorResponse(response, {
+      detail: 'Invalid body',
+      statusCode: StatusCodes.BAD_REQUEST,
+    })
+  })
+
+  it('should return Bad Request if the email is not a string', async function () {
+    const invalidBody = { ...validBody, email: 123 }
+
+    const event = getEvent({ body: JSON.stringify(invalidBody) })
+    const response = await post(event)
+
+    assertErrorResponse(response, {
+      detail: 'Invalid body',
+      statusCode: StatusCodes.BAD_REQUEST,
+    })
+  })
+
+  it('should return Bad Request if the email is not an email', async function () {
+    const invalidBody = { ...validBody, email: 'not-email.com' }
+
+    const event = getEvent({ body: JSON.stringify(invalidBody) })
+    const response = await post(event)
+
+    assertErrorResponse(response, {
+      detail: 'Invalid body',
+      statusCode: StatusCodes.BAD_REQUEST,
+    })
+  })
+
   it('should return Conflict if the email has already been submitted', async function () {
     const event = getEvent({ body: JSON.stringify(validBody) })
     const emailRepository = createEmailRepository(db)
@@ -248,6 +285,46 @@ describe('claim-tokens', function () {
     let email
     try {
       email = await emailRepository.saveEmail({
+        email: validBody.email,
+        ip: event.requestContext.identity.sourceIp,
+        requestId: 'some-id',
+        submittedAt: await dbUtils.getTimestamp(),
+      })
+
+      const response = await post(event)
+
+      assertErrorResponse(response, {
+        detail: 'Email already submitted',
+        statusCode: StatusCodes.CONFLICT,
+      })
+    } finally {
+      await emailRepository.removeEmailById(email.id)
+    }
+  })
+
+  it('should return Conflict if the email after normalization has already been submitted', async function () {
+    const newBody = { ...validBody, email: 'test+123@gmail.com' }
+    const event = getEvent({
+      body: JSON.stringify(newBody),
+    })
+    const emailRepository = createEmailRepository(db)
+    const dbUtils = createUtils(db)
+
+    nockReCaptcha({
+      ip: event.requestContext.identity.sourceIp,
+      token: newBody.token,
+      ...nockRecaptchaSuccessfulResponse(),
+    })
+
+    nockIpQualityScore({
+      ip: event.requestContext.identity.sourceIp,
+      ...nockIpScoreSuccessfulResponse(),
+    })
+
+    let email
+    try {
+      email = await emailRepository.saveEmail({
+        // save the original email
         email: validBody.email,
         ip: event.requestContext.identity.sourceIp,
         requestId: 'some-id',

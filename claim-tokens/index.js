@@ -5,6 +5,7 @@ const camelCaseKeys = require('camelcase-keys')
 const fetch = require('fetch-plus-plus')
 const httpErrors = require('http-errors')
 const { getReasonPhrase, StatusCodes } = require('http-status-codes')
+const normalizeEmail = require('normalize-email')
 const pTap = require('p-tap')
 const snakeCaseKeys = require('snakecase-keys')
 
@@ -77,11 +78,19 @@ const parseBody = function (body) {
 const isReceiveUpdatesValid = receiveUpdates =>
   receiveUpdates === undefined || typeof receiveUpdates === 'boolean'
 
+// All regex end up leaving some type of email out - the only real way to see if an email is valid
+// is to send an email. As a quick check, let's just check for the presence of an @ symbol
+const isValidEmail = email => typeof email === 'string' && email.includes('@')
+
 const isValidProfile = profile =>
   ['dev', 'explorers', 'miner'].includes(profile)
 
-const verifyEmail = email =>
-  createEmailRepository(db)
+const verifyEmail = function (email) {
+  if (!config.get('email.enableDuplicatedCheck')) {
+    logger.debug('Email duplicate verification is disabled')
+    return Promise.resolve()
+  }
+  return createEmailRepository(db)
     .isEmailSubmitted(email)
     .then(function (submitted) {
       if (submitted) {
@@ -89,6 +98,7 @@ const verifyEmail = email =>
         throw new httpErrors.Conflict('Email already submitted')
       }
     })
+}
 
 const verifyRecaptcha = (token, userIp) =>
   fetchSiteVerify(token, userIp).then(function (response) {
@@ -187,13 +197,16 @@ const saveEmailAndIP =
   ({ email, ip, timestamp, transaction }) =>
   requestId =>
     Promise.all([
-      createEmailRepository(transaction).saveEmail({
-        email,
-        ip,
-        requestId,
-        submittedAt: timestamp,
-      }),
-      // do not save IP if check is not enabled
+      // do not save email if duplicated check if disabled
+      config.get('email.enableDuplicatedCheck')
+        ? createEmailRepository(transaction).saveEmail({
+            email,
+            ip,
+            requestId,
+            submittedAt: timestamp,
+          })
+        : Promise.resolve(),
+      // do not save IP if check is disabled
       config.get('ipQualityScore.enableCheck')
         ? createIpRepository(transaction).saveIp(ip, timestamp)
         : Promise.resolve(),
@@ -263,12 +276,15 @@ const claimTokens = async function ({
     !parsedBody?.token ||
     !parsedBody?.email ||
     !isValidProfile(parsedBody?.profile) ||
+    !isValidEmail(parsedBody?.email) ||
     !isReceiveUpdatesValid(parsedBody?.receiveUpdates)
   ) {
     logger.debug('Body sent is invalid')
     throw new httpErrors.BadRequest('Invalid body')
   }
   const ip = requestContext.identity.sourceIp
+
+  parsedBody.email = normalizeEmail(parsedBody.email)
 
   return Promise.all([
     verifyEmail(parsedBody.email),

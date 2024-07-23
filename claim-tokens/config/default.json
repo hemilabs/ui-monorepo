@@ -15,7 +15,7 @@
       "program": "hemi-claim-tokens-dev"
     }
   },
-  "marketing": {
+  "portal": {
     "url": "http://127.0.0.1:3001"
   },
   "postgres": {

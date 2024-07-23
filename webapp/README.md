@@ -18,7 +18,7 @@ The recaptcha v3 key can be generated [in this page](https://www.google.com/reca
 
 Inside the `webapp` folder, create a `.env.production` with the following configuration:
 
-```bash
+```sh
 NEXT_PUBLIC_CLAIM_TOKENS_URL="<claim-tokens-url>"
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<recaptcha-v3-key>"
 NEXT_PUBLIC_TESTNET_MODE=true|false # Depending on the network being deployed
@@ -26,7 +26,7 @@ NEXT_PUBLIC_TESTNET_MODE=true|false # Depending on the network being deployed
 
 and then run:
 
-```bash
+```sh
 npm run build
 ```
 

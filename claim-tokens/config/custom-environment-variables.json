@@ -20,8 +20,8 @@
       "program": "LOGGER_PAPERTRAIL_PROGRAM"
     }
   },
-  "marketing": {
-    "url": "MARKETING_DOMAIN_URL"
+  "portal": {
+    "url": "PORTAL_DOMAIN_URL"
   },
   "postgres": {
     "connection": {

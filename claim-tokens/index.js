@@ -16,7 +16,7 @@ const { logger } = require('./logger')
 
 const headers = {
   'Access-Control-Allow-Credentials': false,
-  'Access-Control-Allow-Origin': config.get('marketing.url'),
+  'Access-Control-Allow-Origin': config.get('portal.url'),
 }
 
 const errorResponse = function (error) {

@@ -1,4 +1,4 @@
-name: Deploy Hemi Webapp
+name: Deploy Hemi Webapp in staging
 
 # Will limit one workflow at the same time
 concurrency:

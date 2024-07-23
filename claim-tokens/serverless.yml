@@ -13,6 +13,7 @@ custom:
 functions:
   claim-tokens:
     environment:
+      ENABLE_EMAIL_CHECK: ${env:ENABLE_DUPLICATED_EMAIL_CHECK, 'true'}
       ENABLE_IP_CHECK: ${env:ENABLE_IP_CHECK, 'true'}
       HASH_SECRET_KEY: ${env:HASH_SECRET_KEY, ''}
       IP_QUALITY_SCORE_SECRET_KEY: ${env:IP_QUALITY_SCORE_SECRET_KEY, ''}

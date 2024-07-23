@@ -2,6 +2,12 @@
   "databaseHash": {
     "secretKey": "HASH_SECRET_KEY"
   },
+  "email": {
+    "enableDuplicatedCheck": {
+      "__format": "json",
+      "__name": "ENABLE_DUPLICATED_EMAIL_CHECK"
+    }
+  },
   "ipQualityScore": {
     "enableCheck": {
       "__format": "json",

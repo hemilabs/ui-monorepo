@@ -45,7 +45,7 @@ jobs:
           DEPLOY_POSTGRES_CONNECTION_USER: ${{ secrets.POSTGRES_CONNECTION_USER }}
           ENABLE_IP_CHECK: false
           HASH_SECRET_KEY: ${{ secrets.HASH_SECRET_KEY }}
-          MARKETING_DOMAIN_URL: https://hemi.xyz
+          MARKETING_DOMAIN_URL: https://app.letshamsterdance.xyz
           IP_QUALITY_SCORE_SECRET_KEY: ${{ secrets.IP_QUALITY_SCORE_SECRET_KEY }}
           RECAPTCHA_SECRET_KEY:  ${{ secrets.RECAPTCHA_SECRET_KEY }}
           STAGE: 'staging'
@@ -55,7 +55,6 @@ jobs:
         run: npx lerna run deploy --ignore=migrations-pg --ignore=claim-tokens --since=${{ github.event.before }} --concurrency=1
         env:
           # portal envs
-          BASE_PATH: "/app-testnet"
           NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: 'false'
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }} 
           NEXT_PUBLIC_CLAIM_TOKENS_URL: https://vj7c4dltid.execute-api.eu-central-1.amazonaws.com/staging
@@ -76,6 +75,6 @@ jobs:
           port: ${{ secrets.HOSTINGER_PORT }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
           source: webapp/out/*
-          target: public_html/app-testnet
+          target: domains/letshamsterdance.xyz/public_html/app
           rm: true
           strip_components: 2

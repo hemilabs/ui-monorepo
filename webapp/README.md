@@ -21,7 +21,7 @@ Inside the `webapp` folder, create a `.env.production` with the following config
 ```sh
 NEXT_PUBLIC_CLAIM_TOKENS_URL="<claim-tokens-url>"
 NEXT_PUBLIC_RECAPTCHA_SITE_KEY="<recaptcha-v3-key>"
-NEXT_PUBLIC_TESTNET_MODE=true|false # Depending on the network being deployed
+NEXT_PUBLIC_TESTNET_MODE=true|false # Depending on which network is being deployed
 ```
 
 and then run:

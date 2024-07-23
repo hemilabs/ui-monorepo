@@ -1,9 +1,10 @@
-import { bitcoin } from 'app/networks'
+import { RemoteChain } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
 import { BtcDepositStatus } from 'context/tunnelHistoryContext/types'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { type ComponentProps, type FormEvent, type ReactNode } from 'react'
 import { Token } from 'types/token'
 import { Card } from 'ui-common/components/card'
 import { CloseIcon } from 'ui-common/components/closeIcon'
@@ -12,7 +13,11 @@ import { Modal } from 'ui-common/components/modal'
 import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
 
 import { Amount } from './amount'
-import { Step } from './steps'
+import { ClaimIcon } from './claimIcon'
+import { Step, SubStep } from './steps'
+import { VerticalLine } from './verticalLine'
+
+const ExpectedClaimDepositTimeHours = 3
 
 const DepositIcon = () => (
   <svg fill="none" height={17} width={16} xmlns="http://www.w3.org/2000/svg">
@@ -27,36 +32,47 @@ const DepositIcon = () => (
 )
 
 type ReviewBtcDeposit = {
+  chain: RemoteChain
   fees?: {
     amount: string
     symbol: string
   }
   isRunningOperation: boolean
   onClose?: () => void
+  onSubmit?: () => void
+  submitButton?: ReactNode
   token: Token
   transactionsList?: {
     id: string
-    status: React.ComponentProps<typeof TransactionStatus>['status']
+    status: ComponentProps<typeof TransactionStatus>['status']
     text: string
     txHash: string
   }[]
 }
 
 export const ReviewBtcDeposit = function ({
+  chain,
   fees,
   isRunningOperation,
   onClose,
+  onSubmit,
+  submitButton,
   token,
   transactionsList,
 }: ReviewBtcDeposit) {
   const deposits = useBtcDeposits()
   const router = useRouter()
   const t = useTranslations()
-  const { txHash } = useTunnelOperation()
+  const { operation, txHash } = useTunnelOperation()
 
   const foundDeposit = deposits.find(
     deposit => deposit.transactionHash === txHash,
   )
+
+  const handleSubmit = function (e: FormEvent) {
+    e.preventDefault()
+    onSubmit()
+  }
 
   const closeModal = function () {
     // prevent closing if running an operation
@@ -66,6 +82,28 @@ export const ReviewBtcDeposit = function ({
     onClose?.()
     router.back()
   }
+
+  const getWaitReadyToClaimStatus = function () {
+    if (foundDeposit.status >= BtcDepositStatus.BTC_READY_CLAIM) {
+      return 'completed'
+    }
+    return foundDeposit.status === BtcDepositStatus.TX_CONFIRMED
+      ? 'progress'
+      : 'idle'
+  }
+
+  const getClaimStatus = function () {
+    if (foundDeposit.status === BtcDepositStatus.BTC_DEPOSITED) {
+      return 'completed'
+    }
+    if (foundDeposit.status === BtcDepositStatus.BTC_READY_CLAIM) {
+      return isRunningOperation ? 'progress' : 'ready'
+    }
+    return 'idle'
+  }
+
+  const isClaim = operation === 'claim'
+  const isDeposit = operation === 'deposit'
 
   return (
     <Modal onClose={closeModal}>
@@ -84,7 +122,7 @@ export const ReviewBtcDeposit = function ({
             <Amount token={token} value={foundDeposit.amount} />
           </div>
           <Step
-            fees={fees}
+            fees={isDeposit && fees}
             icon={<DepositIcon />}
             status={
               foundDeposit.status >= BtcDepositStatus.TX_CONFIRMED
@@ -93,16 +131,44 @@ export const ReviewBtcDeposit = function ({
             }
             text={t('tunnel-page.review-deposit.initiate-deposit')}
           />
-          {/* TODO enable force claim https://github.com/BVM-priv/ui-monorepo/issues/346 */}
-          <p className="mt-4 text-xs font-medium leading-snug text-slate-500">
-            {t('tunnel-page.review-deposit.btc-deposit-come-back-delay-note')}
-          </p>
+          <VerticalLine />
+          <SubStep
+            status={getWaitReadyToClaimStatus()}
+            text={t('common.wait-hours', {
+              hours: ExpectedClaimDepositTimeHours,
+            })}
+          />
+          <VerticalLine />
+          <Step
+            fees={isClaim && fees}
+            icon={<ClaimIcon />}
+            status={getClaimStatus()}
+            text={t('tunnel-page.review-deposit.claim-deposit')}
+          />
+          {![
+            BtcDepositStatus.BTC_READY_CLAIM,
+            BtcDepositStatus.BTC_DEPOSITED,
+          ].includes(foundDeposit.status) && (
+            <p className="mt-4 text-xs font-medium leading-snug text-slate-500">
+              {t(
+                'tunnel-page.review-deposit.btc-deposit-come-back-delay-note',
+                {
+                  hours: ExpectedClaimDepositTimeHours,
+                },
+              )}
+            </p>
+          )}
+          {submitButton && (
+            <form className="mt-6" onSubmit={handleSubmit}>
+              {submitButton}
+            </form>
+          )}
         </Card>
         {transactionsList.length > 0 && (
           <div className="flex flex-col gap-y-4">
             {transactionsList.map(transaction => (
               <TransactionStatus
-                explorerUrl={bitcoin.blockExplorers.default.url}
+                explorerUrl={chain.blockExplorers.default.url}
                 key={transaction.id}
                 status={transaction.status}
                 text={transaction.text}

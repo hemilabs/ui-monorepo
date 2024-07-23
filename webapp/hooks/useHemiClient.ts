@@ -3,10 +3,11 @@ import {
   hemiPublicBitcoinKitActions,
   hemiPublicBitcoinTunnelManagerActions,
   hemiPublicBitcoinVaultActions,
+  hemiWalletBitcoinTunnelManagerActions,
 } from 'hemi-viem'
 import { useMemo } from 'react'
 import { type Address, type Chain } from 'viem'
-import { usePublicClient } from 'wagmi'
+import { usePublicClient, useWalletClient } from 'wagmi'
 
 const localExtensions = () => ({
   // in incoming iterations, the owner address will be determined programmatically
@@ -29,5 +30,23 @@ export const useHemiClient = function (chainId: Chain['id'] = hemi.id) {
   )
 }
 
-// I wish there was a better way to infer this type, so it wouldn't depend on the hook
+export const useHemiWalletClient = function (chainId: Chain['id'] = hemi.id) {
+  const { data: hemiWalletClient, ...rest } = useWalletClient({
+    chainId,
+    query: {
+      select: walletClient =>
+        walletClient.extend(hemiWalletBitcoinTunnelManagerActions()),
+    },
+  })
+
+  return {
+    hemiWalletClient,
+    ...rest,
+  }
+}
+
+// I wish there was a better way to infer these types, so it wouldn't depend on the hook
 export type HemiPublicClient = ReturnType<typeof useHemiClient>
+export type HemiWalletClient = ReturnType<
+  typeof useHemiWalletClient
+>['hemiWalletClient']

@@ -10,10 +10,9 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import {
-  BtcDepositOperation,
   BtcDepositStatus,
-  EvmDepositOperation,
   EvmWithdrawOperation,
+  DepositTunnelOperation,
   TunnelOperation,
 } from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
@@ -26,12 +25,13 @@ import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import { isBtcDeposit, isDeposit, isEvmDeposit } from 'utils/tunnel'
+import { isBtcDeposit, isDeposit } from 'utils/tunnel'
 import { Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { Amount } from './amount'
 import { Chain as ChainComponent } from './chain'
+import { DepositAction } from './depositAction'
 import { Paginator } from './paginator'
 import { TxLink } from './txLink'
 import { TxStatus } from './txStatus'
@@ -41,7 +41,7 @@ import { WithdrawAction } from './withdrawAction'
 const DepositStatus = function ({
   deposit,
 }: {
-  deposit: BtcDepositOperation | EvmDepositOperation
+  deposit: DepositTunnelOperation
 }) {
   const t = useTranslations()
 
@@ -136,7 +136,7 @@ const columnsBuilder = (
         chainId={
           // See https://github.com/BVM-priv/ui-monorepo/issues/376
           row.original.chainId ??
-          (isEvmDeposit(row.original) ? l1ChainId : hemi.id)
+          (isDeposit(row.original) ? l1ChainId : hemi.id)
         }
       />
     ),
@@ -173,7 +173,6 @@ const columnsBuilder = (
       isDeposit(row.original) ? (
         <DepositStatus deposit={row.original} />
       ) : (
-        // @ts-expect-error TS fails to infer that row.original is not a deposit
         <WithdrawStatus withdrawal={row.original} />
       ),
     header: () => <Header text={t('column-headers.status')} />,
@@ -181,13 +180,9 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) =>
-      // TODO for btc deposits, we need to define the proper CTA
-      // See https://github.com/BVM-priv/ui-monorepo/issues/345
       isDeposit(row.original) ? (
-        // EVM Deposits do not render an action, let's add a "-"
-        <span className="opacity-40">-</span>
+        <DepositAction deposit={row.original} />
       ) : (
-        // @ts-expect-error TS fails to infer that row.original is not a deposit
         <WithdrawAction withdraw={row.original} />
       ),
     header: () => <Header />,
@@ -201,15 +196,18 @@ const useTransactionsHistory = function () {
 
   const data = useMemo(
     () =>
-      deposits.concat(withdrawals).sort(function (a, b) {
-        if (!a.timestamp) {
-          return -1
-        }
-        if (!b.timestamp) {
-          return 1
-        }
-        return b.timestamp - a.timestamp
-      }),
+      ([] as TunnelOperation[])
+        .concat(deposits)
+        .concat(withdrawals)
+        .sort(function (a, b) {
+          if (!a.timestamp) {
+            return -1
+          }
+          if (!b.timestamp) {
+            return 1
+          }
+          return b.timestamp - a.timestamp
+        }),
     [deposits, withdrawals],
   )
   return {

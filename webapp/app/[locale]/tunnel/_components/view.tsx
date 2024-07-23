@@ -1,29 +1,79 @@
-import { evmRemoteNetworks } from 'app/networks'
+import { bitcoin, evmRemoteNetworks, hemi } from 'app/networks'
+import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Button } from 'ui-common/components/button'
-import { Hash } from 'viem'
+import { getTokenByAddress } from 'utils/token'
+import { Hash, isHash } from 'viem'
 import { useChains } from 'wagmi'
 
+import { useShowTransactionFromPreviousStep } from '../_hooks/useShowTransactionFromPreviousStep'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
-import { useTunnelState } from '../_hooks/useTunnelState'
+import {
+  BtcToHemiTunneling,
+  EvmTunneling,
+  TypedTunnelState,
+  useTunnelState,
+} from '../_hooks/useTunnelState'
 
+import { ReviewBtcDeposit } from './reviewOperation/reviewBtcDeposit'
 import { ReviewEvmWithdrawal } from './reviewOperation/reviewEvmWithdrawal'
 
-type Props = {
+const BtcViewDeposit = function ({
+  state,
+}: {
+  state: TypedTunnelState<BtcToHemiTunneling>
+}) {
+  const { partialDeposit } = state
+  const deposits = useBtcDeposits()
+  const t = useTranslations()
+  const { txHash } = useTunnelOperation()
+
+  const deposit = deposits.find(d => d.transactionHash === txHash)
+
+  // If coming from the Claim form, show the Claim transaction briefly
+  // but if entering from the history, there's no need to show it
+  const showClaimDepositTx = useShowTransactionFromPreviousStep(
+    partialDeposit?.claimDepositTxHash,
+  )
+
+  return (
+    <ReviewBtcDeposit
+      chain={hemi}
+      isRunningOperation={false}
+      submitButton={
+        <a
+          href={`${bitcoin.blockExplorers.default.url}/tx/${txHash}`}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <Button type="button">{t('common.view')}</Button>
+        </a>
+      }
+      token={getTokenByAddress(deposit.l1Token, deposit.chainId)}
+      transactionsList={
+        showClaimDepositTx && partialDeposit?.claimDepositTxHash
+          ? [
+              {
+                id: 'claim',
+                status: 'success',
+                text: t('tunnel-page.transaction-status.deposit-claimed'),
+                txHash: partialDeposit.claimDepositTxHash,
+              },
+            ]
+          : []
+      }
+    />
+  )
+}
+
+type EvmViewWithdrawal = {
   state: ReturnType<typeof useTunnelState>
 }
 
-export const View = function ({ state }: Props) {
+const EvmViewWithdrawal = function ({ state }: EvmViewWithdrawal) {
   const { partialWithdrawal, resetStateAfterOperation } = state
-
-  // If coming from the Claim form, show the prove transaction briefly
-  // but if entering from the history, there's no need to show it
-  const [showClaimWithdrawalTx, setShowClaimWithdrawalTx] = useState(
-    !!partialWithdrawal?.claimWithdrawalTxHash,
-  )
 
   // https://github.com/BVM-priv/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id
@@ -37,16 +87,10 @@ export const View = function ({ state }: Props) {
 
   const hasTxHash = !!partialWithdrawal?.claimWithdrawalTxHash || !!claimTxHash
 
-  useEffect(
-    function hideClaimTxFromTransactionList() {
-      const timeoutId = setTimeout(function () {
-        if (showClaimWithdrawalTx) {
-          setShowClaimWithdrawalTx(false)
-        }
-      }, 7000)
-      return () => clearTimeout(timeoutId)
-    },
-    [setShowClaimWithdrawalTx, showClaimWithdrawalTx],
+  // If coming from the Claim form, show the prove transaction briefly
+  // but if entering from the history, there's no need to show it
+  const showClaimWithdrawalTx = useShowTransactionFromPreviousStep(
+    partialWithdrawal?.claimWithdrawalTxHash,
   )
 
   return (
@@ -79,5 +123,21 @@ export const View = function ({ state }: Props) {
           : []
       }
     />
+  )
+}
+
+export const View = function ({
+  state,
+}: {
+  state: ReturnType<typeof useTunnelState>
+}) {
+  const { txHash } = useTunnelOperation()
+
+  // Typescript can't infer it, but we can cast these safely
+  if (isHash(txHash)) {
+    return <EvmViewWithdrawal state={state as TypedTunnelState<EvmTunneling>} />
+  }
+  return (
+    <BtcViewDeposit state={state as TypedTunnelState<BtcToHemiTunneling>} />
   )
 }

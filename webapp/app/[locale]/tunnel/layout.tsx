@@ -5,10 +5,10 @@ import { useSelectedLayoutSegment } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Tabs, Tab } from 'ui-common/components/tabs'
 
-const ActionableWithdrawals = dynamic(
+const ActionableOperations = dynamic(
   () =>
-    import('./_components/actionableWithdrawals').then(
-      mod => mod.ActionableWithdrawals,
+    import('./_components/actionableOperations').then(
+      mod => mod.ActionableOperations,
     ),
   { ssr: false },
 )
@@ -47,7 +47,7 @@ export default function Layout({ children }: Props) {
           >
             <div className="flex min-h-7 items-center justify-between gap-x-2">
               <span>{t('transaction-history.title')}</span>
-              <ActionableWithdrawals />
+              <ActionableOperations />
             </div>
           </Tab>
         </Tabs>

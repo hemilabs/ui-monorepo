@@ -22,8 +22,8 @@
       "you-send": "Usted envía"
     },
     "review-deposit": {
-      "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de 2 horas regrese a esta pagina para reclamarlo manualmente.",
-      "claim-deposit": "Reclame su depósito de {symbol}",
+      "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de {hours} horas regrese a esta pagina para reclamarlo manualmente.",
+      "claim-deposit": "Reclamar depósito",
       "heading": "Revisar Depósito",
       "initiate-deposit": "Iniciar depósito",
       "wait-for-confirmation": "Espere por la confirmación en Hemi",
@@ -40,7 +40,9 @@
     "submit-button": {
       "approve-and-deposit": "Aprobar y Depositar",
       "approving": "Aprobando...",
+      "claim-deposit": "Reclamar depósito",
       "claim-withdrawal": "Reclamar Retiro",
+      "claiming-deposit": "Reclamando Depósito",
       "claiming-withdrawal": "Reclamando Retiro",
       "connect-both-wallets": "Conecte sus billeteras BTC y EVM",
       "connect-btc-wallet": "Conecte su billetera BTC",
@@ -76,7 +78,9 @@
       "withdraw": "Retiro"
     },
     "transaction-status": {
+      "claiming-deposit": "Reclamando Depósito",
       "claiming-withdrawal": "Reclamando Retiro",
+      "deposit-claimed": "Depósito Reclamado",
       "deposited": "{fromInput} {symbol} depositado",
       "depositing": "Depositando {fromInput} {symbol}",
       "erc20-approved": "{symbol} aprobado",

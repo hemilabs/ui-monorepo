@@ -181,11 +181,13 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     fromNetworkId,
     fromToken,
     resetStateAfterOperation,
+    savePartialDeposit,
     updateFromInput,
   } = state
 
   const { btcChainId, evmAddress } = useAccounts()
   const { balance } = useBtcBalance()
+  const chain = useChain(btcChainId)
   const { txHash } = useTunnelOperation()
 
   const canDeposit = canSubmit({
@@ -233,24 +235,27 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
 
   useEffect(
     function handleDepositSuccess() {
-      if (depositReceipt?.status.confirmed) {
+      if (!depositReceipt?.status.confirmed) {
+        return undefined
+      }
+
+      if (!hasClearedForm) {
         const deposit = deposits.find(
           d => d.transactionHash === depositReceipt.txId,
         )
-        const timeoutId = setTimeout(clearDepositState, 7000)
-        if (!hasClearedForm) {
-          setHasClearedForm(true)
-          setIsDepositing(false)
-          resetStateAfterOperation()
-          updateBtcDeposit(deposit, {
-            blockNumber: depositReceipt.status.blockHeight,
-            status: BtcDepositStatus.TX_CONFIRMED,
-            timestamp: depositReceipt.status.blockTime,
-          })
-        }
-        return () => clearTimeout(timeoutId)
+        setHasClearedForm(true)
+        setIsDepositing(false)
+        resetStateAfterOperation()
+        updateBtcDeposit(deposit, {
+          blockNumber: depositReceipt.status.blockHeight,
+          status: BtcDepositStatus.TX_CONFIRMED,
+          timestamp: depositReceipt.status.blockTime,
+        })
+        savePartialDeposit({ depositTxHash: depositReceipt.txId })
       }
-      return undefined
+
+      const timeoutId = setTimeout(clearDepositState, 7000)
+      return () => clearTimeout(timeoutId)
     },
     [
       clearDepositState,
@@ -258,6 +263,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
       deposits,
       hasClearedForm,
       resetStateAfterOperation,
+      savePartialDeposit,
       setHasClearedForm,
       setIsDepositing,
       updateBtcDeposit,
@@ -329,6 +335,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
       />
       {!!txHash && (
         <ReviewBtcDeposit
+          chain={chain}
           fees={
             fees !== undefined
               ? {

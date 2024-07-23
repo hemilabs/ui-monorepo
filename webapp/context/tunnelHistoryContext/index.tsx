@@ -20,6 +20,7 @@ import { getBlockNumber } from 'wagmi/actions'
 import { getDeposits, getWithdrawals } from './operations'
 import {
   BtcDepositOperation,
+  DepositTunnelOperation,
   EvmDepositOperation,
   EvmWithdrawOperation,
 } from './types'
@@ -60,7 +61,7 @@ type TunnelHistoryContext = {
   addWithdrawalToTunnelHistory: (
     withdrawal: Omit<EvmWithdrawOperation, 'timestamp'>,
   ) => void
-  deposits: EvmDepositOperation[]
+  deposits: DepositTunnelOperation[]
   depositSyncStatus: SyncStatus
   resumeSync: () => void
   updateBtcDeposit: (
@@ -134,12 +135,14 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
       addEvmDepositToTunnelHistory: evmDepositState.addOperationToTunnelHistory,
       addWithdrawalToTunnelHistory:
         withdrawalsState.addOperationToTunnelHistory,
-      deposits: evmDepositState.operations.concat(
-        // Adding this so in local testing, when testing with flag disabled
-        // the history does not break with past operations from testing with the
-        // flag enabled
-        featureFlags.btcTunnelEnabled ? btcDepositState.operations : [],
-      ),
+      deposits: ([] as DepositTunnelOperation[])
+        .concat(evmDepositState.operations)
+        .concat(
+          // Adding this so in local testing, when testing with flag disabled
+          // the history does not break with past operations from testing with the
+          // flag enabled
+          featureFlags.btcTunnelEnabled ? btcDepositState.operations : [],
+        ),
       depositSyncStatus: evmDepositState.syncStatus,
       resumeSync() {
         evmDepositState.resumeSync()

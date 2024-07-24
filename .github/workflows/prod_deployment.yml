@@ -19,7 +19,7 @@ jobs:
 
       - name: Setup env
         uses: ./.github/actions/setup-env
-      
+
       - name: Deploy claim-tokens microservice
         run: npx lerna run deploy --scope=claim-tokens
         env:
@@ -34,7 +34,7 @@ jobs:
           HASH_SECRET_KEY: ${{ secrets.HASH_SECRET_KEY }}
           IP_QUALITY_SCORE_SECRET_KEY: ${{ secrets.IP_QUALITY_SCORE_SECRET_KEY }}
           PORTAL_DOMAIN_URL: https://app.hemi.xyz
-          RECAPTCHA_SECRET_KEY:  ${{ secrets.RECAPTCHA_SECRET_KEY_PROD }}
+          RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY_PROD }}
           STAGE: 'prod'
 
       - name: Deploy portal

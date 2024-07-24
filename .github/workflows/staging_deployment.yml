@@ -32,7 +32,7 @@ jobs:
           DEPLOY_POSTGRES_CONNECTION_HOST: ${{ secrets.POSTGRES_CONNECTION_HOST }}
           DEPLOY_POSTGRES_CONNECTION_PASSWORD: ${{ secrets.POSTGRES_CONNECTION_PASSWORD }}
           DEPLOY_POSTGRES_CONNECTION_USER: ${{ secrets.POSTGRES_CONNECTION_USER }}
-      
+
       - name: Deploy claim-tokens microservice
         run: npx lerna run deploy --scope=claim-tokens --since=${{ github.event.before }}
         env:
@@ -47,7 +47,7 @@ jobs:
           HASH_SECRET_KEY: ${{ secrets.HASH_SECRET_KEY }}
           IP_QUALITY_SCORE_SECRET_KEY: ${{ secrets.IP_QUALITY_SCORE_SECRET_KEY }}
           PORTAL_DOMAIN_URL: https://app.letshamsterdance.xyz
-          RECAPTCHA_SECRET_KEY:  ${{ secrets.RECAPTCHA_SECRET_KEY }}
+          RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
           STAGE: 'staging'
 
       - name: Deploy portal
@@ -62,4 +62,4 @@ jobs:
           # next env variables to build the portal
           NEXT_PUBLIC_CLAIM_TOKENS_URL: 'https://vj7c4dltid.execute-api.eu-central-1.amazonaws.com/staging'
           NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: false
-          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }} 
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}

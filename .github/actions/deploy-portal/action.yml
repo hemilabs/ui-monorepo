@@ -4,28 +4,28 @@ description: Deploys the portal to Hostinger
 inputs:
   HOSTINGER_HOST:
     required: true
-    description: "Hostinger host"
+    description: 'Hostinger host'
   HOSTINGER_PORT:
     required: true
-    description: "Hostinger port"
+    description: 'Hostinger port'
   HOSTINGER_SSH_KEY:
     required: true
-    description: "Hostinger SSH key"
+    description: 'Hostinger SSH key'
   HOSTINGER_USER:
     required: true
-    description: "Hostinger user"
+    description: 'Hostinger user'
   HOSTINGER_TARGET:
     required: true
-    description: "Hostinger target"
+    description: 'Hostinger target'
   NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL:
     required: true
-    description: "Feature flag to enable BTC tunnel"
+    description: 'Feature flag to enable BTC tunnel'
   NEXT_PUBLIC_RECAPTCHA_SITE_KEY:
     required: true
-    description: "Recaptcha site key"
+    description: 'Recaptcha site key'
   NEXT_PUBLIC_CLAIM_TOKENS_URL:
     required: true
-    description: "Claim tokens microservice URL"
+    description: 'Claim tokens microservice URL'
 
 runs:
   using: composite
@@ -35,14 +35,14 @@ runs:
       shell: bash
       env:
         NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL }}
-        NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ inputs.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }} 
+        NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ inputs.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
         NEXT_PUBLIC_CLAIM_TOKENS_URL: ${{ inputs.NEXT_PUBLIC_CLAIM_TOKENS_URL }}
 
     - name: Check portal build
       id: portal_build
       uses: andstor/file-existence-action@v3
       with:
-        files: "./webapp/out/"
+        files: './webapp/out/'
 
     - name: Copy portal files to Hostinger
       # folder should only exists if portal was built

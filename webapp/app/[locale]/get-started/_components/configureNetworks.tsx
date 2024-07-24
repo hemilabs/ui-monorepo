@@ -1,7 +1,7 @@
 'use client'
 
 import { evmRemoteNetworks, hemi } from 'app/networks'
-import { discordUrl } from 'hemi-socials'
+import hemiSocials from 'hemi-socials'
 import dynamic from 'next/dynamic'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -233,7 +233,7 @@ export const ConfigureNetwork = function () {
           link: (chunk: string) => (
             <a
               className="cursor-pointer underline"
-              href={discordUrl}
+              href={hemiSocials.discordUrl}
               rel="noopener noreferrer"
               target="_blank"
             >

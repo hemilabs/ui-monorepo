@@ -1,3 +1,4 @@
+import { ExternalLink } from 'components/externalLink'
 import hemiSocials from 'hemi-socials'
 import React from 'react'
 
@@ -11,24 +12,24 @@ const { discordUrl, twitterUrl, githubUrl, linkedinUrl } = hemiSocials
 export const FooterSocials = () => (
   <div className="flex items-center">
     <div className="mr-3">
-      <a href={twitterUrl} rel="noopener noreferrer" target="_blank">
+      <ExternalLink href={twitterUrl}>
         <TwitterIcon className="text-slate-200" />
-      </a>
+      </ExternalLink>
     </div>
     <div className="mr-3">
-      <a href={discordUrl} rel="noopener noreferrer" target="_blank">
+      <ExternalLink href={discordUrl}>
         <DiscordIcon className="text-slate-200" />
-      </a>
+      </ExternalLink>
     </div>
     <div className="mr-3">
-      <a href={githubUrl} rel="noopener noreferrer" target="_blank">
+      <ExternalLink href={githubUrl}>
         <GithubIcon className="text-slate-200" />
-      </a>
+      </ExternalLink>
     </div>
     <div>
-      <a href={linkedinUrl} rel="noopener noreferrer" target="_blank">
+      <ExternalLink href={linkedinUrl}>
         <LinkedinIcon className="text-slate-200" />
-      </a>
+      </ExternalLink>
     </div>
   </div>
 )

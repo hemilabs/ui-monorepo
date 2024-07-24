@@ -1,5 +1,6 @@
 'use client'
 
+import { ExternalLink } from 'components/externalLink'
 import { AbstractIntlMessages, useMessages, useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import Skeleton from 'react-loading-skeleton'
@@ -55,14 +56,9 @@ const InfoBox = function ({
   const linkClassName = 'grid md:max-w-44 lg:max-w-56'
 
   return isExternalUrl ? (
-    <a
-      className={linkClassName}
-      href={url}
-      rel="noopener noreferrer"
-      target="_blank"
-    >
+    <ExternalLink className={linkClassName} href={url}>
       <InfoBoxCard text={text} title={title} />
-    </a>
+    </ExternalLink>
   ) : (
     <Link className={linkClassName} href={url}>
       <InfoBoxCard text={text} title={title} />

@@ -1,5 +1,6 @@
 'use client'
 
+import { ExternalLink } from 'components/externalLink'
 import Image, { StaticImageData } from 'next/image'
 import { Card } from 'ui-common/components/card'
 
@@ -30,7 +31,7 @@ export const DemoCard = ({
   heading,
   subHeading,
 }: Props) => (
-  <a href={href} rel="noopener noreferrer" target="_blank">
+  <ExternalLink href={href}>
     <Card borderColor="gray" padding="small" shadow="soft">
       <div className="h-60 max-w-64 cursor-pointer">
         <div className="overflow-hidden rounded-xl border border-solid border-slate-100">
@@ -52,5 +53,5 @@ export const DemoCard = ({
         <p className="my-1 text-xs text-neutral-400">{subHeading}</p>
       </div>
     </Card>
-  </a>
+  </ExternalLink>
 )

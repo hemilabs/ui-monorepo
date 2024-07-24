@@ -1,6 +1,8 @@
 import { useTranslations } from 'next-intl'
 import { Card } from 'ui-common/components/card'
 
+import { ExternalLink } from './externalLink'
+
 const Error = () => (
   <svg
     fill="none"
@@ -66,7 +68,7 @@ const Success = () => (
   </svg>
 )
 
-const ExternalLink = () => (
+const Arrow = () => (
   <svg
     fill="none"
     height="24"
@@ -121,13 +123,11 @@ export const TransactionStatus = function ({
   }
 
   return (
-    <a
+    <ExternalLink
       className={`min-w-72 file:cursor-pointer ${
         !txHash ? 'pointer-events-none' : ''
       }`}
       href={`${explorerUrl}/tx/${txHash}`}
-      rel="noopener noreferrer"
-      target="_blank"
     >
       <Card padding="medium">
         <div className="flex items-start gap-x-2">
@@ -143,10 +143,10 @@ export const TransactionStatus = function ({
             </div>
           </div>
           <div className={`${!txHash ? 'invisible' : ''}`}>
-            <ExternalLink />
+            <Arrow />
           </div>
         </div>
       </Card>
-    </a>
+    </ExternalLink>
   )
 }

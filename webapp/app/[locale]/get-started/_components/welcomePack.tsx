@@ -3,6 +3,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { hemi } from 'app/networks'
 import { bitcoinTestnet } from 'btc-wallet/chains'
+import { ExternalLink } from 'components/externalLink'
 import fetch from 'fetch-plus-plus'
 import hemiSocials from 'hemi-socials'
 import { useLocale, useTranslations } from 'next-intl'
@@ -256,24 +257,20 @@ export const WelcomePack = function () {
               {/* See https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed */}
               {t.rich('network.recaptcha-terms-and-conditions', {
                 privacy: (chunk: string) => (
-                  <a
+                  <ExternalLink
                     className={linksCss}
                     href={`https://policies.google.com/privacy?hl=${locale}`}
-                    rel="noopener noreferrer"
-                    target="_blank"
                   >
                     {chunk}
-                  </a>
+                  </ExternalLink>
                 ),
                 terms: (chunk: string) => (
-                  <a
+                  <ExternalLink
                     className={linksCss}
                     href={`https://policies.google.com/terms?hl=${locale}`}
-                    rel="noopener noreferrer"
-                    target="_blank"
                   >
                     {chunk}
-                  </a>
+                  </ExternalLink>
                 ),
               })}
             </div>
@@ -323,14 +320,12 @@ export const WelcomePack = function () {
               ),
               discord: () => <DiscordIcon />,
               link: (chunk: string) => (
-                <a
+                <ExternalLink
                   className="cursor-pointer font-medium text-slate-950 underline"
                   href={discordUrl}
-                  rel="noopener noreferrer"
-                  target="_blank"
                 >
                   {chunk}
-                </a>
+                </ExternalLink>
               ),
             })}
           </p>

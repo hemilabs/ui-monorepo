@@ -1,4 +1,5 @@
 import { bitcoin, evmRemoteNetworks, hemi } from 'app/networks'
+import { ExternalLink } from 'components/externalLink'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
@@ -43,13 +44,11 @@ const BtcViewDeposit = function ({
       chain={hemi}
       isRunningOperation={false}
       submitButton={
-        <a
+        <ExternalLink
           href={`${bitcoin.blockExplorers.default.url}/tx/${txHash}`}
-          rel="noopener noreferrer"
-          target="_blank"
         >
           <Button type="button">{t('common.view')}</Button>
-        </a>
+        </ExternalLink>
       }
       token={getTokenByAddress(deposit.l1Token, deposit.chainId)}
       transactionsList={
@@ -99,13 +98,11 @@ const EvmViewWithdrawal = function ({ state }: EvmViewWithdrawal) {
       onClose={resetStateAfterOperation}
       submitButton={
         hasTxHash ? (
-          <a
+          <ExternalLink
             href={`${chain.blockExplorers.default.url}/tx/${claimTxHash}`}
-            rel="noopener noreferrer"
-            target="_blank"
           >
             <Button type="button">{t('common.view')}</Button>
-          </a>
+          </ExternalLink>
         ) : (
           <Skeleton className="h-14 w-full" />
         )

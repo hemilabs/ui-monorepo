@@ -1,3 +1,4 @@
+import { ExternalLink } from 'components/externalLink'
 import Link from 'next-intl/link'
 import React from 'react'
 
@@ -17,11 +18,7 @@ export const NavRouterItem = function ({
   }
 
   if (isExternal) {
-    return (
-      <a href={href} rel="noopener noreferrer" target="_blank">
-        {children}
-      </a>
-    )
+    return <ExternalLink href={href}>{children}</ExternalLink>
   }
 
   return <Link href={href}>{children}</Link>

@@ -1,6 +1,7 @@
 'use client'
 
 import { evmRemoteNetworks, hemi } from 'app/networks'
+import { ExternalLink } from 'components/externalLink'
 import hemiSocials from 'hemi-socials'
 import dynamic from 'next/dynamic'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -70,7 +71,7 @@ const ConfigurationPropTitle = ({
   order: string
 }) => <p className={`text-zinc-500 ${order}`}>{children}</p>
 
-const ExternalLink = ({
+const NetworkLink = ({
   href,
   order,
   ...props
@@ -78,15 +79,13 @@ const ExternalLink = ({
   React.AnchorHTMLAttributes<HTMLAnchorElement>,
   HTMLAnchorElement
 >) => (
-  <a
+  <ExternalLink
     className={`cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap text-rose-400 ${order}`}
     href={href}
-    rel="noopener noreferrer"
-    target="_blank"
     {...props}
   >
     {href}
-  </a>
+  </ExternalLink>
 )
 
 type ChainRowProps = {
@@ -146,7 +145,7 @@ const ManualConfiguration = function () {
       <ConfigurationPropTitle order="order-2 xl:order-3">
         {t('rpc-url')}
       </ConfigurationPropTitle>
-      <ExternalLink
+      <NetworkLink
         href={hemi.rpcUrls.default.http[0]}
         order="order-2 xl:order-5 2xl:order-3"
       />
@@ -161,7 +160,7 @@ const ManualConfiguration = function () {
       <ConfigurationPropTitle order="order-8 xl:order-15">
         {t('block-explorer-url')}
       </ConfigurationPropTitle>
-      <ExternalLink
+      <NetworkLink
         href={hemi.blockExplorers.default.url}
         order="order-9 xl:order-17"
       />
@@ -173,7 +172,7 @@ const ManualConfiguration = function () {
       <ConfigurationPropTitle order="order-13 xl:order-4 2xl:hidden">
         {t('rpc-url')}
       </ConfigurationPropTitle>
-      <ExternalLink
+      <NetworkLink
         href={ethereum.rpcUrls.default.http[0]}
         order="order-14 xl:order-6"
       />
@@ -184,7 +183,7 @@ const ManualConfiguration = function () {
       <ConfigurationPropTitle order="order-17 xl:order-16 2xl:hidden">
         {t('block-explorer-url')}
       </ConfigurationPropTitle>
-      <ExternalLink
+      <NetworkLink
         href={ethereum.blockExplorers.default.url}
         order="order-18"
       />
@@ -231,14 +230,12 @@ export const ConfigureNetwork = function () {
       <p className="text-xs font-normal text-neutral-400">
         {t.rich('troubleshoot-other-errors', {
           link: (chunk: string) => (
-            <a
+            <ExternalLink
               className="cursor-pointer underline"
               href={hemiSocials.discordUrl}
-              rel="noopener noreferrer"
-              target="_blank"
             >
               {chunk}
-            </a>
+            </ExternalLink>
           ),
         })}
       </p>

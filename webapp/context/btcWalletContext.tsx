@@ -7,7 +7,7 @@ import React from 'react'
 
 const btcWalletConfig = {
   chains: [bitcoin],
-  connectors: [{ name: 'Unisat', wallet: unisat }],
+  connectors: [unisat],
 }
 
 type Props = {

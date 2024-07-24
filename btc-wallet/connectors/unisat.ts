@@ -1,4 +1,4 @@
-import { WalletConnector } from './types'
+import { ConnectorGroup, WalletConnector } from './types'
 
 const isInstalled = () => window?.unisat !== undefined
 
@@ -8,7 +8,7 @@ const assertInstalled = function () {
   }
 }
 
-export const unisat: WalletConnector = {
+const unisatWalletConnector = {
   async connect() {
     assertInstalled()
     // in order to connect to unisat, we just need to requests accounts and the user
@@ -48,4 +48,14 @@ export const unisat: WalletConnector = {
     assertInstalled()
     return window.unisat.switchNetwork(network)
   },
-}
+} satisfies WalletConnector
+
+export const unisat = {
+  downloadUrls: {
+    android: 'https://play.google.com/store/apps/details?id=io.unisat',
+    chrome:
+      'https://chromewebstore.google.com/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo?pli=1',
+  },
+  name: 'Unisat',
+  wallet: unisatWalletConnector,
+} satisfies ConnectorGroup

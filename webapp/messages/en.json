@@ -93,6 +93,7 @@
     }
   },
   "common": {
+    "add": "Add",
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
     "bitcoinkit": "Hemi Bitcoin Kit",
     "connect-to-network": "Connect to {network}",

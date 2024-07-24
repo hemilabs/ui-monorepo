@@ -1,4 +1,5 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { ConnectorGroup } from 'btc-wallet/connectors/types'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useConfig } from 'btc-wallet/hooks/useConfig'
 import { useConnect } from 'btc-wallet/hooks/useConnect'
@@ -8,8 +9,10 @@ import {
   ConnectedEvmAccount,
   ConnectedEvmChain,
 } from 'components/connectedWallet/connectedAccount'
+import { ExternalLink } from 'components/externalLink'
 import { Chevron } from 'components/icons/chevron'
 import { useTranslations } from 'next-intl'
+import { isAndroid } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
 import { Box } from 'ui-common/components/box'
 import { useAccount as useEvmAccount } from 'wagmi'
@@ -41,11 +44,13 @@ const ConnectWalletButton = ({
   hoverClassName,
   icon,
   onClick,
+  rightIcon,
   text,
 }: {
   hoverClassName: string
   icon: React.ReactNode
   onClick: () => void
+  rightIcon?: React.ReactNode
   text: string
 }) => (
   <button
@@ -57,11 +62,30 @@ const ConnectWalletButton = ({
     <span className="text-base font-medium leading-normal text-slate-950">
       {text}
     </span>
-    <div className="ml-auto">
-      <Chevron.Right />
-    </div>
+    {rightIcon || (
+      <div className="ml-auto">
+        <Chevron.Right />
+      </div>
+    )}
   </button>
 )
+
+const InstallUnisat = function ({ connector }: { connector: ConnectorGroup }) {
+  const t = useTranslations()
+  return (
+    <ExternalLink
+      className="ml-auto rounded-full bg-black px-3 py-1 text-sm font-medium leading-normal text-white"
+      href={
+        // Unisat only supports chrome and android - no other browser nor mobile OS - See https://unisat.io/
+        isAndroid
+          ? connector.downloadUrls.android
+          : connector.downloadUrls.chrome
+      }
+    >
+      {t('common.add')}
+    </ExternalLink>
+  )
+}
 
 export const BtcWallet = function () {
   const { connector, status } = useBtcAccount()
@@ -70,12 +94,17 @@ export const BtcWallet = function () {
 
   const t = useTranslations('connect-wallets')
 
+  const [unisat] = connectors
+
   if (status === 'disconnected') {
     return (
       <ConnectWalletButton
         hoverClassName="hover:bg-orange-950/5"
         icon={<BtcLogo />}
-        onClick={() => connect(connectors[0].wallet)}
+        onClick={() => connect(unisat.wallet)}
+        rightIcon={
+          !unisat.wallet.isInstalled() && <InstallUnisat connector={unisat} />
+        }
         text={t('connect-btc-wallet')}
       />
     )

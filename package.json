@@ -200,7 +200,7 @@
           "markdownlint/md004": [
             "warn",
             {
-              "style": "asterisk"
+              "style": "dash"
             }
           ],
           "markdownlint/md010": "warn",

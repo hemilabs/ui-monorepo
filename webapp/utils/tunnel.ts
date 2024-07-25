@@ -4,6 +4,7 @@ import {
   DepositTunnelOperation,
   EvmDepositOperation,
   TunnelOperation,
+  WithdrawTunnelOperation,
 } from 'app/context/tunnelHistoryContext/types'
 import { bitcoin } from 'app/networks'
 
@@ -19,3 +20,8 @@ export const isBtcDeposit = (
 export const isEvmDeposit = (
   operation: DepositTunnelOperation,
 ): operation is EvmDepositOperation => operation.chainId !== bitcoin.id
+
+export const isWithdraw = (
+  operation: TunnelOperation,
+): operation is WithdrawTunnelOperation =>
+  operation.direction === MessageDirection.L2_TO_L1

@@ -111,6 +111,7 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
     getStorageKey: getTunnelHistoryDepositStorageKey,
     // TODO retrieve past operations https://github.com/BVM-priv/ui-monorepo/issues/345
     getTunnelOperations: () => Promise.resolve([]),
+    operationChainId: bitcoin.id,
   })
 
   const evmDepositState = useSyncTunnelOperations<EvmDepositOperation>({
@@ -119,6 +120,7 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
     getBlockNumber: getEvmBlockNumberFn(config, l1ChainId),
     getStorageKey: getTunnelHistoryDepositStorageKey,
     getTunnelOperations: getDeposits(crossChainMessenger),
+    operationChainId: l1ChainId,
   })
 
   const withdrawalsState = useSyncTunnelOperations<EvmWithdrawOperation>({
@@ -127,6 +129,7 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
     getBlockNumber: getEvmBlockNumberFn(config, hemi.id),
     getStorageKey: getTunnelHistoryWithdrawStorageKey,
     getTunnelOperations: getWithdrawals(crossChainMessenger),
+    operationChainId: l1ChainId,
   })
 
   const value = useMemo(

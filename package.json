@@ -11,7 +11,6 @@
     "btc-wallet",
     "claim-tokens",
     "hemi-socials",
-    "landing",
     "migrations-pg",
     "ui-common",
     "wagmi-erc20-hooks",
@@ -25,7 +24,6 @@
     "chai": "4.4.1",
     "eslint": "8.56.0",
     "eslint-config-bloq": "4.1.0",
-    "eslint-plugin-html": "7.1.0",
     "eslint-plugin-markdownlint": "0.5.0",
     "husky": "4.3.8",
     "lerna": "8.1.2",
@@ -71,11 +69,6 @@
     "extends": [
       "bloq",
       "prettier"
-    ],
-    "ignorePatterns": [
-      "landing/fullview.*",
-      "landing/app.css",
-      "landing/globals.css"
     ],
     "overrides": [
       {
@@ -165,27 +158,6 @@
           "prefer-arrow/prefer-arrow-functions": "off",
           "promise/no-return-in-finally": "off"
         }
-      },
-      {
-        "env": {
-          "browser": true,
-          "jquery": true
-        },
-        "extends": [
-          "bloq",
-          "prettier"
-        ],
-        "files": [
-          "landing/**/*.{css,html,js}"
-        ],
-        "globals": {
-          "$": true,
-          "document": true,
-          "hbspt": true
-        },
-        "plugins": [
-          "eslint-plugin-html"
-        ]
       },
       {
         "files": [

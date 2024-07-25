@@ -25,7 +25,7 @@ jobs:
       - name: Build apps
         run: npm run build --workspaces --if-present
         env:
-          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: "fake-key"
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: 'fake-key'
 
   code_checks:
     name: Code Styling check

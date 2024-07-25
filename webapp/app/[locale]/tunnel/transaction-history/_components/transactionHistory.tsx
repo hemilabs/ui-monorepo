@@ -159,8 +159,9 @@ const columnsBuilder = (
     cell({ row }) {
       const { transactionHash } = row.original
       // See https://github.com/BVM-priv/ui-monorepo/issues/376
-      const chainId =
-        row.original.chainId ?? (isDeposit(row.original) ? l1ChainId : hemi.id)
+      const chainId = isWithdraw(row.original)
+        ? hemi.id
+        : row.original.chainId ?? l1ChainId
       return <TxLink chainId={chainId} txHash={transactionHash} />
     },
     header: () => <Header text={t('column-headers.tx-hash')} />,

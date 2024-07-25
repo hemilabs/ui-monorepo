@@ -25,7 +25,7 @@ import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
 import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import { isBtcDeposit, isDeposit } from 'utils/tunnel'
+import { isBtcDeposit, isDeposit, isWithdraw } from 'utils/tunnel'
 import { Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -135,8 +135,7 @@ const columnsBuilder = (
       <ChainComponent
         chainId={
           // See https://github.com/BVM-priv/ui-monorepo/issues/376
-          row.original.chainId ??
-          (isDeposit(row.original) ? l1ChainId : hemi.id)
+          isWithdraw(row.original) ? hemi.id : row.original.chainId ?? l1ChainId
         }
       />
     ),

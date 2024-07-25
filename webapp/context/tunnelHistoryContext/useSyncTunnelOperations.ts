@@ -64,6 +64,7 @@ type SyncTunnelOperationArgs<T extends TunnelOperation> = {
     fromBlock: number
     toBlock: number
   }) => Promise<RawTunnelOperation<T>[]>
+  operationChainId: RemoteChain['id']
 }
 
 export const useSyncTunnelOperations = function <T extends TunnelOperation>({
@@ -72,6 +73,7 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
   getBlockNumber,
   getStorageKey,
   getTunnelOperations,
+  operationChainId,
 }: SyncTunnelOperationArgs<T>) {
   const { address } = useAccount()
 
@@ -124,7 +126,13 @@ export const useSyncTunnelOperations = function <T extends TunnelOperation>({
     [address, chainId, getTunnelOperations],
   )
 
-  const mergeContent = useMemo(() => mergeContentByChainId(chainId), [chainId])
+  // Remove chain id once enough time has passed that data has auto-corrected for users
+  // See https://github.com/BVM-priv/ui-monorepo/issues/376 and
+  // https://github.com/BVM-priv/ui-monorepo/issues/431
+  const mergeContent = useMemo(
+    () => mergeContentByChainId(operationChainId),
+    [operationChainId],
+  )
 
   const state = useSyncInBlockChunks<T>({
     ...chainConfiguration[chainId],

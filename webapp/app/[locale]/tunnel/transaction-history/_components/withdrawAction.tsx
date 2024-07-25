@@ -54,7 +54,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: Failed,
     [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getViewButton('prove'),
     [MessageStatus.READY_TO_PROVE]: Prove,
-    [MessageStatus.IN_CHALLENGE_PERIOD]: Claim,
+    [MessageStatus.IN_CHALLENGE_PERIOD]: getViewButton('claim'),
     [MessageStatus.READY_FOR_RELAY]: Claim,
     [MessageStatus.RELAYED]: getViewButton('view'),
   }

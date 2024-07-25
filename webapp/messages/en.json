@@ -251,7 +251,7 @@
       "claim-my-tokens": "Claim",
       "configure-sepolia-testnet": "Configure for Sepolia testnet",
       "currency-symbol": "Currency symbol",
-      "did-not-receive-try-again": "Didn't receive this link? <button>Try again</button>",
+      "did-not-receive-try-again": "Didn't receive this email? <button>Try again</button>",
       "email-failed": "Error submitting email",
       "email-failed-retry": "<button>Retry</button> or <link>contact us</link> at Discord <discord></discord>",
       "email-placeholder": "youremail@mail.com",

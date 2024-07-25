@@ -58,7 +58,7 @@ const Demos = function () {
           <DemoCard
             altText="pure finance"
             heading={t('purefinance.heading')}
-            href="https://hemi.xyz/pure.finance"
+            href="https://purefinance.hemi.xyz"
             imageSrc={purefinanceImg}
             subHeading={t('purefinance.sub-heading')}
           />

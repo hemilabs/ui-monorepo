@@ -62,7 +62,7 @@ export const navItems: NavItemData[] = [
     id: 'tools',
     subMenus: [
       {
-        href: 'https://hemi.xyz/pure.finance',
+        href: 'https://purefinance.hemi.xyz',
         id: 'purefinance',
         text: 'Pure Finance',
       },

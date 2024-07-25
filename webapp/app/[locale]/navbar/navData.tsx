@@ -32,7 +32,7 @@ export const navItems: NavItemData[] = [
     id: 'tunnel',
   },
   {
-    href: 'https://hemi.xyz/swap',
+    href: 'https://swap.hemi.xyz',
     icon: DexIcon,
     id: 'dex',
   },

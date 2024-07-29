@@ -1,9 +1,12 @@
 import { CrossChainMessenger, TokenBridgeMessage } from '@eth-optimism/sdk'
-import { getBlock } from '@wagmi/core'
+import {
+  getBlock as wagmiGetBlock,
+  getTransactionReceipt as wagmiGetTransactionReceipt,
+} from '@wagmi/core'
 import { evmWalletConfig } from 'app/context/evmWalletContext'
 import pThrottle from 'p-throttle'
 import pMemoize from 'promise-mem'
-import { type Address, type Chain } from 'viem'
+import { type Address, type Chain, type Hash } from 'viem'
 
 import {
   TunnelOperation,
@@ -25,20 +28,29 @@ const toOperation = <T extends TunnelOperation>({
     amount: tunnelOperation.amount.toString(),
   }) as RawTunnelOperation<T>
 
-const pGetBlock = pMemoize(
+export const getBlock = pMemoize(
   (blockNumber: TunnelOperation['blockNumber'], chainId: Chain['id']) =>
-    getBlock(evmWalletConfig, {
+    wagmiGetBlock(evmWalletConfig, {
       blockNumber: BigInt(blockNumber),
       chainId,
     }),
   { resolver: (blockNumber, chainId) => `${blockNumber}-${chainId}` },
 )
 
+export const getTransactionReceipt = pMemoize(
+  (hash: Hash, chainId: Chain['id']) =>
+    wagmiGetTransactionReceipt(evmWalletConfig, {
+      chainId,
+      hash,
+    }),
+  { resolver: (hash, chainId) => `${hash}-${chainId}` },
+)
+
 export const addTimestampToOperation = <T extends TunnelOperation>(
   operation: RawTunnelOperation<T>,
   chainId: Chain['id'],
 ) =>
-  pGetBlock(operation.blockNumber, chainId).then(
+  getBlock(operation.blockNumber, chainId).then(
     blockNumber =>
       ({
         ...operation,

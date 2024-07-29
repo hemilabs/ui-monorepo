@@ -8,6 +8,7 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
 import { useAccount } from 'wagmi'
 
+import { getBlock, getTransactionReceipt } from './operations'
 import { EvmWithdrawOperation } from './types'
 
 const queue = new PQueue({ concurrency: 3 })
@@ -15,12 +16,13 @@ const queue = new PQueue({ concurrency: 3 })
 // https://github.com/BVM-priv/ui-monorepo/issues/158
 const l1ChainId = evmRemoteNetworks[0].id
 
-const getMinutes = (minutes: number) => minutes * 60 * 1000
+const getSeconds = (seconds: number) => seconds * 1000
+const getMinutes = (minutes: number) => getSeconds(minutes * 60)
 
 // use different refetch intervals depending on the status and chain
 const refetchInterval = {
   [hemiMainnet.id]: {
-    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: false,
+    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getSeconds(12),
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: false,
     [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(1),
     [MessageStatus.READY_TO_PROVE]: getMinutes(1),
@@ -29,7 +31,7 @@ const refetchInterval = {
     [MessageStatus.RELAYED]: false,
   },
   [hemiTestnet.id]: {
-    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: false,
+    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getSeconds(12),
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: false,
     [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(1),
     [MessageStatus.READY_TO_PROVE]: getMinutes(2),
@@ -38,6 +40,26 @@ const refetchInterval = {
     [MessageStatus.RELAYED]: false,
   },
 } satisfies { [chainId: number]: { [status: number]: number | false } }
+
+const getBlockTimestamp = (withdrawal: EvmWithdrawOperation) =>
+  function (blockNumber: number) {
+    if (withdrawal.timestamp) {
+      return Promise.resolve([blockNumber, withdrawal.timestamp])
+    }
+    return getBlock(blockNumber, hemi.id).then(({ timestamp }) => [
+      blockNumber,
+      Number(timestamp),
+    ])
+  }
+
+const getTransactionBlockNumber = function (withdrawal: EvmWithdrawOperation) {
+  if (withdrawal.blockNumber) {
+    return Promise.resolve(withdrawal.blockNumber)
+  }
+  return getTransactionReceipt(withdrawal.transactionHash, hemi.id).then(
+    ({ blockNumber }) => Number(blockNumber),
+  )
+}
 
 const pollUpdateWithdrawal = async ({
   crossChainMessenger,
@@ -56,29 +78,46 @@ const pollUpdateWithdrawal = async ({
   // for a specific period of time and depending on load, requests may take up to 5 seconds to complete
   // so this let us to query up to <concurrency> checks for status at the same time
   queue.add(
-    async function pollWithdrawalStatus() {
-      const status = await crossChainMessenger.getMessageStatus(
-        withdrawal.transactionHash,
-        // default value
-        0,
-        withdrawal.direction,
-      )
+    async function pollWithdrawalState() {
+      const [status, [blockNumber, timestamp]] = await Promise.all([
+        crossChainMessenger.getMessageStatus(
+          withdrawal.transactionHash,
+          // default value
+          0,
+          withdrawal.direction,
+        ),
+        getTransactionBlockNumber(withdrawal).then(
+          getBlockTimestamp(withdrawal),
+        ),
+      ])
+      const changes: Partial<EvmWithdrawOperation> = {}
       if (withdrawal.status !== status) {
-        updateWithdrawal(withdrawal, { status })
+        changes.status = status
+      }
+      if (withdrawal.blockNumber !== blockNumber) {
+        changes.blockNumber = blockNumber
+      }
+      if (withdrawal.timestamp !== timestamp) {
+        changes.timestamp = timestamp
+      }
+
+      if (Object.keys(changes).length > 0) {
+        updateWithdrawal(withdrawal, changes)
       }
 
       return status
     },
     {
-      // Give more priority to those that require polling and are not ready
+      // Give more priority to those that require polling and are not ready or are missing information
       // because if ready, after the operation they will change their status automatically and will have
       // the longest waiting period of all withdrawals, as the others have been waiting for longer
-      priority: [
-        MessageStatus.READY_TO_PROVE,
-        MessageStatus.READY_FOR_RELAY,
-      ].includes(withdrawal.status)
-        ? 0
-        : 1,
+      priority:
+        !withdrawal.timestamp ||
+        [MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
+          withdrawal.status,
+        )
+          ? 0
+          : 1,
     },
   )
 
@@ -94,14 +133,18 @@ const WatchEvmWithdrawal = function ({
   // I am not interested in the actual result of the query, but in the side effect of the queryFn
   useQuery({
     queryFn,
-    queryKey: ['messageStatusUpdater', withdrawal.transactionHash],
+    queryKey: [
+      'withdrawaStateUpdater',
+      withdrawal.chainId,
+      withdrawal.transactionHash,
+    ],
     refetchInterval: refetchInterval[hemi.id][withdrawal.status],
   })
 
   return null
 }
 
-export const WithdrawalsStatusUpdater = function () {
+export const WithdrawalsStateUpdater = function () {
   const { isConnected } = useAccount()
   const { updateWithdrawal, withdrawals = [] } = useTunnelHistory()
 
@@ -121,10 +164,9 @@ export const WithdrawalsStatusUpdater = function () {
   const withdrawalsToWatch = withdrawals
     .filter(
       w =>
-        // status never loaded
-        !w.status ||
-        // status needs watching
+        !w.timestamp ||
         [
+          MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
           MessageStatus.STATE_ROOT_NOT_PUBLISHED,
           MessageStatus.READY_TO_PROVE,
           MessageStatus.IN_CHALLENGE_PERIOD,

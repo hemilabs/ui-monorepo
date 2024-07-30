@@ -37,14 +37,11 @@ export const getBlock = pMemoize(
   { resolver: (blockNumber, chainId) => `${blockNumber}-${chainId}` },
 )
 
-export const getTransactionReceipt = pMemoize(
-  (hash: Hash, chainId: Chain['id']) =>
-    wagmiGetTransactionReceipt(evmWalletConfig, {
-      chainId,
-      hash,
-    }),
-  { resolver: (hash, chainId) => `${hash}-${chainId}` },
-)
+export const getTransactionReceipt = (hash: Hash, chainId: Chain['id']) =>
+  wagmiGetTransactionReceipt(evmWalletConfig, {
+    chainId,
+    hash,
+  })
 
 export const addTimestampToOperation = <T extends TunnelOperation>(
   operation: RawTunnelOperation<T>,

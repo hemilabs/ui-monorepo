@@ -42,14 +42,17 @@ const refetchInterval = {
 } satisfies { [chainId: number]: { [status: number]: number | false } }
 
 const getBlockTimestamp = (withdrawal: EvmWithdrawOperation) =>
-  function (blockNumber: number) {
-    if (withdrawal.timestamp) {
-      return Promise.resolve([blockNumber, withdrawal.timestamp])
+  async function (
+    blockNumber: number | undefined,
+  ): Promise<[number?, number?]> {
+    if (blockNumber === undefined) {
+      return []
     }
-    return getBlock(blockNumber, hemi.id).then(({ timestamp }) => [
-      blockNumber,
-      Number(timestamp),
-    ])
+    if (withdrawal.timestamp) {
+      return [blockNumber, withdrawal.timestamp]
+    }
+    const { timestamp } = await getBlock(blockNumber, hemi.id)
+    return [blockNumber, Number(timestamp)]
   }
 
 const getTransactionBlockNumber = function (withdrawal: EvmWithdrawOperation) {
@@ -57,7 +60,9 @@ const getTransactionBlockNumber = function (withdrawal: EvmWithdrawOperation) {
     return Promise.resolve(withdrawal.blockNumber)
   }
   return getTransactionReceipt(withdrawal.transactionHash, hemi.id).then(
-    ({ blockNumber }) => Number(blockNumber),
+    transactionReceipt =>
+      // return undefined if TX is not found - might have not been confirmed yet
+      transactionReceipt ? Number(transactionReceipt.blockNumber) : undefined,
   )
 }
 

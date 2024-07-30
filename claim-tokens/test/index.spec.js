@@ -641,7 +641,7 @@ describe('claim-tokens', function () {
         const [submission, access] = await Promise.all([
           db
             .from('email_submissions')
-            .where({ email: validBody.email })
+            .where({ email: bodyScenario.email })
             .first(),
           db.from('ip_accesses').where({ ip: hashedIp }).first(),
         ])
@@ -672,5 +672,6 @@ describe('claim-tokens', function () {
     { ...validBody, profile: 'explorers' },
     { ...validBody, receiveUpdates: false },
     { ...validBody, receiveUpdates: undefined },
+    { ...validBody, email: 'myemail@bloq.com' },
   ])
 })

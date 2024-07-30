@@ -4,7 +4,7 @@ import {
   type MessageStatus,
 } from '@eth-optimism/sdk'
 import { BtcChain } from 'btc-wallet/chains'
-import { type Chain } from 'viem'
+import { type Chain, type Hash } from 'viem'
 
 export const enum BtcDepositStatus {
   // The tx is in the mempool, but hasn't been included in a mined block
@@ -32,6 +32,10 @@ type DepositDirection = {
   direction: MessageDirection.L1_TO_L2
 }
 
+type EvmTransactionHash = {
+  transactionHash: Hash
+}
+
 type WithdrawDirection = {
   direction: MessageDirection.L2_TO_L1
 }
@@ -47,10 +51,12 @@ export type BtcDepositOperation = CommonOperation &
 
 export type EvmDepositOperation = CommonOperation &
   DepositDirection &
-  EvmChainId
+  EvmChainId &
+  EvmTransactionHash
 
 export type EvmWithdrawOperation = CommonOperation &
   EvmChainId &
+  EvmTransactionHash &
   WithdrawDirection & {
     status?: MessageStatus
   }

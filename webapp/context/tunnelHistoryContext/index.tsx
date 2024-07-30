@@ -34,10 +34,10 @@ const BitcoinDepositsStatusUpdater = dynamic(
   { ssr: false },
 )
 
-const WithdrawalsStatusUpdater = dynamic(
+const WithdrawalsStateUpdater = dynamic(
   () =>
-    import('./withdrawalsStatusUpdater').then(
-      mod => mod.WithdrawalsStatusUpdater,
+    import('./withdrawalsStateUpdater').then(
+      mod => mod.WithdrawalsStateUpdater,
     ),
   { ssr: false },
 )
@@ -215,7 +215,7 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
       {/* Track updates on bitcoin deposits, in bitcoin or in Hemi */}
       {featureFlags.btcTunnelEnabled && <BitcoinDepositsStatusUpdater />}
       {/* Track updates on withdrawals from Hemi */}
-      <WithdrawalsStatusUpdater />
+      <WithdrawalsStateUpdater />
       {children}
     </TunnelHistoryContext.Provider>
   )

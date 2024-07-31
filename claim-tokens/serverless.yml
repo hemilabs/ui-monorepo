@@ -13,6 +13,7 @@ custom:
 functions:
   claim-tokens:
     environment:
+      CLAIM_WELCOME_PACK_ZAPIER_WEBHOOK_URL: ${env:CLAIM_WELCOME_PACK_ZAPIER_WEBHOOK_URL, ''}
       ENABLE_DUPLICATED_EMAIL_CHECK: ${env:ENABLE_DUPLICATED_EMAIL_CHECK, 'true'}
       ENABLE_IP_CHECK: ${env:ENABLE_IP_CHECK, 'true'}
       HASH_SECRET_KEY: ${env:HASH_SECRET_KEY, ''}

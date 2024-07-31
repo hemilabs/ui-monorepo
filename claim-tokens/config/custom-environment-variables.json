@@ -6,7 +6,8 @@
     "enableDuplicatedCheck": {
       "__format": "json",
       "__name": "ENABLE_DUPLICATED_EMAIL_CHECK"
-    }
+    },
+    "webhook": "CLAIM_WELCOME_PACK_ZAPIER_WEBHOOK_URL"
   },
   "ipQualityScore": {
     "enableCheck": {

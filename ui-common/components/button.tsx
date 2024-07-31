@@ -1,3 +1,5 @@
+import { ComponentProps } from 'react'
+
 const sizes = {
   large: 'h-14',
   medium: 'h-11',
@@ -10,10 +12,10 @@ const variants = {
   tertiary: 'bg-orange-950 text-white rounded-xl',
 } as const
 
-type Props = React.DetailedHTMLProps<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  HTMLButtonElement
-> & { size?: keyof typeof sizes; variant?: keyof typeof variants }
+type Props = ComponentProps<'button'> & {
+  size?: keyof typeof sizes
+  variant?: keyof typeof variants
+}
 
 export const Button = ({ disabled, size = 'large', ...props }: Props) => (
   <button

@@ -3,8 +3,7 @@
     "secretKey": "secret-key"
   },
   "email": {
-    "enableDuplicatedCheck": true,
-    "webhook": "https://hooks.zapier.com/hooks/catch/17630282/3e9hj8q"
+    "enableDuplicatedCheck": true
   },
   "ipQualityScore": {
     "enableCheck": true,

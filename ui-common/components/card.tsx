@@ -1,4 +1,4 @@
-import React from 'react'
+import { ComponentProps } from 'react'
 
 const borderColors = {
   default: '',
@@ -24,10 +24,7 @@ const shadows = {
   soft: 'shadow-[0px_88px_25px_0px_#00000000,_0px_56px_23px_0px_#00000000,_0px_32px_19px_0px_#00000003,_0px_14px_14px_0px_#00000005,_0px_4px_8px_0px_#00000005]',
 } as const
 
-type CardProps = React.DetailedHTMLProps<
-  React.AllHTMLAttributes<HTMLDivElement>,
-  HTMLDivElement
-> & {
+type CardProps = ComponentProps<'div'> & {
   borderColor?: keyof typeof borderColors
   padding: keyof typeof paddingVariants
   radius?: keyof typeof radiusVariants

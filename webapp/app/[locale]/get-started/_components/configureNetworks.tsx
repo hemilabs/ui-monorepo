@@ -6,7 +6,7 @@ import hemiSocials from 'hemi-socials'
 import dynamic from 'next/dynamic'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import React, { useEffect } from 'react'
+import { ComponentProps, useEffect, ReactNode } from 'react'
 import { HemiSymbol } from 'ui-common/components/hemiLogo'
 import { Tabs, Tab } from 'ui-common/components/tabs'
 import { type Chain } from 'viem'
@@ -75,10 +75,7 @@ const NetworkLink = ({
   href,
   order,
   ...props
-}: { order: string } & React.DetailedHTMLProps<
-  React.AnchorHTMLAttributes<HTMLAnchorElement>,
-  HTMLAnchorElement
->) => (
+}: { order: string } & ComponentProps<'a'>) => (
   <ExternalLink
     className={`cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap text-rose-400 ${order}`}
     href={href}
@@ -91,7 +88,7 @@ const NetworkLink = ({
 type ChainRowProps = {
   chain: Chain
   layer: number
-  logo: React.ReactNode
+  logo: ReactNode
 }
 
 const ChainRow = function ({ chain, layer, logo }: ChainRowProps) {

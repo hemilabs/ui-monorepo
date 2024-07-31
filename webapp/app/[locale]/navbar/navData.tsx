@@ -1,7 +1,7 @@
 import { hemi } from 'app/networks'
 import { ChecklistIcon } from 'components/icons/checklistIcon'
 import { CodeInsertIcon } from 'components/icons/codeInsertIcon'
-// import { DexIcon } from 'components/icons/dexIcon'
+import { DexIcon } from 'components/icons/dexIcon'
 // import { ElectroCardiogramIcon } from 'components/icons/electroCardiogramIcon'
 import { ExplorerIcon } from 'components/icons/explorerIcon'
 import { FiletextIcon } from 'components/icons/filetextIcon'
@@ -31,11 +31,11 @@ export const navItems: NavItemData[] = [
     icon: TunnelIcon,
     id: 'tunnel',
   },
-  // {
-  //   href: 'https://swap.hemi.xyz',
-  //   icon: DexIcon,
-  //   id: 'dex',
-  // },
+  {
+    href: 'https://swap.hemi.xyz',
+    icon: DexIcon,
+    id: 'dex',
+  },
   {
     href: 'https://docs.hemi.xyz/building-bitcoin-apps/hemi-bitcoin-kit-hbk',
     icon: CodeInsertIcon,

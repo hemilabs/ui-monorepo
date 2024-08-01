@@ -34,7 +34,7 @@ jobs:
           ENABLE_IP_CHECK: true
           HASH_SECRET_KEY: ${{ secrets.HASH_SECRET_KEY }}
           IP_QUALITY_SCORE_SECRET_KEY: ${{ secrets.IP_QUALITY_SCORE_SECRET_KEY }}
-          PORTAL_DOMAIN_URL: https://app.hemi.xyz
+          PORTAL_DOMAIN_URL: https://app.${{ vars.HEMI_DOMAIN_PROD }}
           RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY_PROD }}
           STAGE: 'prod'
 
@@ -46,7 +46,7 @@ jobs:
           HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
           HOSTINGER_SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
           HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
-          HOSTINGER_TARGET: 'domains/hemi.xyz/public_html/app'
+          HOSTINGER_TARGET: 'domains/${{ vars.HEMI_DOMAIN_PROD }}/public_html/app'
           # next env variables to build the portal
           NEXT_PUBLIC_CLAIM_TOKENS_URL: 'https://tf27a29m9d.execute-api.eu-central-1.amazonaws.com/prod'
           NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: false

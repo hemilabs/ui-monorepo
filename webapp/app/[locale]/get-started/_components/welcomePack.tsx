@@ -26,22 +26,22 @@ const giveAwayTokens = hemi.testnet
       {
         amount: 0.2,
         icon: <Eth />,
-        symbol: `${sepolia.nativeCurrency.symbol} (Sepolia ether)`,
+        symbol: `${sepolia.nativeCurrency.symbol} (Sepolia Ether)`,
       },
       {
         amount: 0.2,
         icon: <Eth />,
-        symbol: `${hemi.nativeCurrency.symbol} (Tunneled Sepolia ether)`,
+        symbol: `${hemi.nativeCurrency.symbol} (Tunneled Sepolia Ether)`,
       },
       {
         amount: 0.1,
         icon: <Btc />,
-        symbol: `${bitcoinTestnet.nativeCurrency.symbol} (testnet Bitcoin)`,
+        symbol: `${bitcoinTestnet.nativeCurrency.symbol} (Testnet Bitcoin)`,
       },
       {
         amount: 1,
         icon: <Hemi />,
-        symbol: 'tHEMI (testnet Hemi)',
+        symbol: 'tHEMI (Testnet Hemi)',
       },
       {
         symbol: 'Hemi Hatchling NFT',

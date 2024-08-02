@@ -3,7 +3,6 @@
 import { MessageDirection } from '@eth-optimism/sdk'
 import { bitcoin, isEvmNetwork } from 'app/networks'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
-import { ConnectWalletDrawerContext } from 'context/connectWalletDrawerContext'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import {
   BtcDepositStatus,
@@ -18,7 +17,7 @@ import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken, type Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
@@ -37,7 +36,6 @@ import {
   TypedTunnelState,
 } from '../_hooks/useTunnelState'
 
-import { ConnectBtcWallet } from './connectBtcWallet'
 import { ConnectEvmWallet } from './connectEvmWallet'
 import { Erc20Approval } from './Erc20Approval'
 import {
@@ -49,6 +47,7 @@ import {
   getTotal,
 } from './form'
 import { ReceivingHemiAddress } from './receivingHemiAddress'
+import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
 
@@ -76,34 +75,6 @@ const WalletsConnected = dynamic(
   () => import('./walletsConnected').then(mod => mod.WalletsConnected),
   { ssr: false },
 )
-
-const SubmitBtcDeposit = function ({ disabled }: { disabled: boolean }) {
-  const { allDisconnected, btcWalletStatus, evmWalletStatus } = useAccounts()
-  const { openDrawer } = useContext(ConnectWalletDrawerContext)
-  const t = useTranslations('tunnel-page.submit-button')
-
-  if (allDisconnected) {
-    return (
-      <Button onClick={openDrawer} type="button">
-        {t('connect-both-wallets')}
-      </Button>
-    )
-  }
-
-  if (evmWalletStatus !== 'connected') {
-    return <ConnectEvmWallet />
-  }
-
-  if (btcWalletStatus !== 'connected') {
-    return <ConnectBtcWallet />
-  }
-
-  return (
-    <Button disabled={disabled} type="submit">
-      {t('deposit')}
-    </Button>
-  )
-}
 
 const SubmitEvmDeposit = function ({
   canDeposit,
@@ -328,7 +299,10 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
             <div className="mb-2">
               <ReceivingHemiAddress token={state.fromToken} />
             </div>
-            <SubmitBtcDeposit disabled={!canDeposit || isDepositing} />
+            <SubmitWithTwoWallets
+              disabled={!canDeposit || isDepositing}
+              text={t('tunnel-page.submit-button.deposit')}
+            />
           </>
         }
         transactionsList={transactionsList}

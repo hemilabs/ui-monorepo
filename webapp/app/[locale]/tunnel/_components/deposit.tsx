@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken, type Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
-import { formatNumber, getFormattedValue } from 'utils/format'
+import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
@@ -46,7 +46,7 @@ import {
   canSubmit,
   getTotal,
 } from './form'
-import { ReceivingHemiAddress } from './receivingHemiAddress'
+import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
@@ -297,7 +297,16 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
         submitButton={
           <>
             <div className="mb-2">
-              <ReceivingHemiAddress token={state.fromToken} />
+              <ReceivingAddress
+                address={evmAddress ? formatEvmAddress(evmAddress) : undefined}
+                receivingText={t('tunnel-page.form.hemi-receiving-address')}
+                tooltipText={t(
+                  'tunnel-page.form.hemi-receiving-address-description',
+                  {
+                    symbol: state.fromToken.symbol,
+                  },
+                )}
+              />
             </div>
             <SubmitWithTwoWallets
               disabled={!canDeposit || isDepositing}

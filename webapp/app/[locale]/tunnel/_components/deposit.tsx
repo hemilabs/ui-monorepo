@@ -17,7 +17,7 @@ import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken, type Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
@@ -26,6 +26,7 @@ import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
+import { useAfterTransaction } from '../_hooks/useAfterTransaction'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
@@ -141,8 +142,6 @@ type BtcDepositProps = {
 const BtcDeposit = function ({ state }: BtcDepositProps) {
   const deposits = useBtcDeposits()
   const { updateBtcDeposit } = useTunnelHistory()
-  // use this to avoid infinite loops in effects when resetting the form
-  const [hasClearedForm, setHasClearedForm] = useState(false)
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
   const [depositAmount, setDepositAmount] = useState('0')
   const [isDepositing, setIsDepositing] = useState(false)
@@ -180,66 +179,43 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
 
   const t = useTranslations()
 
-  useEffect(
-    function handleDepositErrors() {
-      if (depositError || depositReceiptError) {
-        const timeoutId = setTimeout(clearDepositState, 7000)
-        if (!hasClearedForm) {
-          setHasClearedForm(true)
-          setIsDepositing(false)
-          resetStateAfterOperation()
-        }
-        return () => clearTimeout(timeoutId)
-      }
-      return undefined
+  const resetFormState = useCallback(
+    function () {
+      setIsDepositing(false)
+      resetStateAfterOperation()
     },
-    [
-      clearDepositState,
-      depositError,
-      depositReceiptError,
-      hasClearedForm,
-      resetStateAfterOperation,
-      setHasClearedForm,
-      setIsDepositing,
-    ],
+    [resetStateAfterOperation, setIsDepositing],
   )
 
-  useEffect(
-    function handleDepositSuccess() {
-      if (!depositReceipt?.status.confirmed) {
-        return undefined
-      }
-
-      if (!hasClearedForm) {
-        const deposit = deposits.find(
-          d => d.transactionHash === depositReceipt.txId,
-        )
-        setHasClearedForm(true)
-        setIsDepositing(false)
-        resetStateAfterOperation()
-        updateBtcDeposit(deposit, {
-          blockNumber: depositReceipt.status.blockHeight,
-          status: BtcDepositStatus.TX_CONFIRMED,
-          timestamp: depositReceipt.status.blockTime,
-        })
-        savePartialDeposit({ depositTxHash: depositReceipt.txId })
-      }
-
-      const timeoutId = setTimeout(clearDepositState, 7000)
-      return () => clearTimeout(timeoutId)
+  const onSuccess = useCallback(
+    function () {
+      resetFormState()
+      const deposit = deposits.find(
+        d => d.transactionHash === depositReceipt.txId,
+      )
+      updateBtcDeposit(deposit, {
+        blockNumber: depositReceipt.status.blockHeight,
+        status: BtcDepositStatus.TX_CONFIRMED,
+        timestamp: depositReceipt.status.blockTime,
+      })
+      savePartialDeposit({ depositTxHash: depositReceipt.txId })
     },
     [
-      clearDepositState,
       depositReceipt,
       deposits,
-      hasClearedForm,
-      resetStateAfterOperation,
+      resetFormState,
       savePartialDeposit,
-      setHasClearedForm,
-      setIsDepositing,
       updateBtcDeposit,
     ],
   )
+
+  const { beforeTransaction } = useAfterTransaction({
+    clearState: clearDepositState,
+    errorReceipts: [depositError, depositReceiptError],
+    onError: resetFormState,
+    onSuccess,
+    transactionReceipt: depositReceipt,
+  })
 
   const transactionsList = useTransactionsList({
     inProgressMessage: t('tunnel-page.transaction-status.depositing', {
@@ -263,6 +239,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     if (!canDeposit) {
       return
     }
+    beforeTransaction()
     setDepositAmount(fromInput)
     setIsDepositing(true)
     depositBitcoin({
@@ -345,8 +322,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
   const { addEvmDepositToTunnelHistory } = useTunnelHistory()
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
   const [depositAmount, setDepositAmount] = useState('0')
-  // use this to avoid infinite loops in effects when resetting the form
-  const [hasClearedForm, setHasClearedForm] = useState(false)
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
@@ -427,94 +402,68 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     [approvalReceiptStatus, operationRunning, setOperationRunning],
   )
 
-  useEffect(
-    function handleDepositSuccess() {
-      if (depositReceipt?.status === 'success') {
-        const timeoutId = setTimeout(clearDepositState, 7000)
-        if (!hasClearedForm) {
-          setHasClearedForm(true)
-          setOperationRunning('idle')
-          resetStateAfterOperation()
-          const isNative = isNativeToken(fromToken)
-          // Handling of this error is needed https://github.com/BVM-priv/ui-monorepo/issues/322
-          // eslint-disable-next-line promise/catch-or-return
-          addTimestampToOperation<EvmDepositOperation>(
-            {
-              amount: parseUnits(fromInput, fromToken.decimals).toString(),
-              blockNumber: Number(depositReceipt.blockNumber),
-              chainId: fromNetworkId,
-              direction: MessageDirection.L1_TO_L2,
-              from: depositReceipt.from,
-              l1Token: isNative ? zeroAddress : fromToken.address,
-              l2Token: isNative
-                ? NativeTokenSpecialAddressOnL2
-                : toToken.address,
-              // "to" field uses the same address as from, which is user's address
-              to: depositReceipt.from,
-              transactionHash: depositReceipt.transactionHash,
-            },
-            fromToken.chainId,
-          ).then(addEvmDepositToTunnelHistory)
-        }
-        return () => clearTimeout(timeoutId)
-      }
-      return undefined
+  const resetFormState = useCallback(
+    function () {
+      resetStateAfterOperation()
+      setExtendedErc20Approval(false)
+      setOperationRunning('idle')
+    },
+    [resetStateAfterOperation, setExtendedErc20Approval, setOperationRunning],
+  )
+
+  const onSuccess = useCallback(
+    function () {
+      resetFormState()
+      const isNative = isNativeToken(fromToken)
+      // Handling of this error is needed https://github.com/hemilabsv/ui-monorepo/issues/322
+      // eslint-disable-next-line promise/catch-or-return
+      addTimestampToOperation<EvmDepositOperation>(
+        {
+          amount: parseUnits(fromInput, fromToken.decimals).toString(),
+          blockNumber: Number(depositReceipt.blockNumber),
+          chainId: fromNetworkId,
+          direction: MessageDirection.L1_TO_L2,
+          from: depositReceipt.from,
+          l1Token: isNative ? zeroAddress : fromToken.address,
+          l2Token: isNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
+          // "to" field uses the same address as from, which is user's address
+          to: depositReceipt.from,
+          transactionHash: depositReceipt.transactionHash,
+        },
+        fromToken.chainId,
+      ).then(addEvmDepositToTunnelHistory)
     },
     [
       addEvmDepositToTunnelHistory,
-      clearDepositState,
       depositReceipt,
       fromInput,
       fromNetworkId,
       fromToken,
-      hasClearedForm,
-      resetStateAfterOperation,
-      setOperationRunning,
-      setHasClearedForm,
+      resetFormState,
       toToken,
     ],
   )
 
-  useEffect(
-    function handleErrors() {
-      if (
-        approvalError ||
-        approvalReceiptError ||
-        depositError ||
-        depositReceiptError
-      ) {
-        const timeoutId = setTimeout(clearDepositState, 7000)
-        if (!hasClearedForm) {
-          setHasClearedForm(true)
-          setOperationRunning('idle')
-          resetStateAfterOperation()
-          setExtendedErc20Approval(false)
-        }
-        return () => clearTimeout(timeoutId)
-      }
-      return undefined
-    },
-    [
+  const { beforeTransaction } = useAfterTransaction({
+    clearState: clearDepositState,
+    errorReceipts: [
       approvalError,
       approvalReceiptError,
       depositError,
       depositReceiptError,
-      clearDepositState,
-      hasClearedForm,
-      resetStateAfterOperation,
-      setExtendedErc20Approval,
-      setOperationRunning,
-      setHasClearedForm,
     ],
-  )
+    onError: resetFormState,
+    onSuccess,
+    transactionReceipt: depositReceipt,
+  })
 
   const isRunningOperation = operationRunning !== 'idle'
 
   const handleDeposit = function () {
+    beforeTransaction()
     setDepositAmount(fromInput)
     clearDepositState()
     deposit()
-    setHasClearedForm(false)
     if (needsApproval) {
       setOperationRunning('approving')
     } else {

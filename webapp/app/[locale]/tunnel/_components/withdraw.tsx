@@ -6,7 +6,7 @@ import { useChain } from 'hooks/useChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
 import { getFormattedValue } from 'utils/format'
@@ -14,6 +14,7 @@ import { isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { useAfterTransaction } from '../_hooks/useAfterTransaction'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import {
@@ -95,8 +96,6 @@ type EvmWithdrawProps = {
 
 const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   const { updateWithdrawal, withdrawals } = useTunnelHistory()
-  // use this to avoid infinite loops in effects when resetting the form
-  const [hasClearedForm, setHasClearedForm] = useState(false)
   const [isWithdrawing, setIsWithdrawing] = useState(false)
 
   const t = useTranslations()
@@ -154,61 +153,42 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     toToken,
   })
 
-  useEffect(
-    function handleWithdrawErrors() {
-      if (withdrawError || withdrawReceiptError) {
-        const timeoutId = setTimeout(clearWithdrawState, 7000)
-        if (!hasClearedForm) {
-          setHasClearedForm(true)
-          setIsWithdrawing(false)
-          resetStateAfterOperation()
-        }
-        return () => clearTimeout(timeoutId)
-      }
-      return undefined
+  const resetFormState = useCallback(
+    function () {
+      setIsWithdrawing(false)
+      resetStateAfterOperation()
     },
-    [
-      clearWithdrawState,
-      hasClearedForm,
-      resetStateAfterOperation,
-      setHasClearedForm,
-      setIsWithdrawing,
-      withdrawError,
-      withdrawReceiptError,
-    ],
+    [setIsWithdrawing, resetStateAfterOperation],
   )
 
-  useEffect(
-    function handleWithdrawalSuccess() {
-      if (withdrawReceipt?.status !== 'success') {
-        return
-      }
+  const onSuccess = useCallback(
+    function () {
+      resetFormState()
       const withdrawalFound = withdrawals.find(
         w =>
           w.transactionHash === withdrawReceipt.transactionHash && !w.timestamp,
       )
-      if (withdrawalFound) {
-        const extendedWithdrawal = {
-          ...withdrawalFound,
-          blockNumber: Number(withdrawReceipt.blockNumber),
-        }
-        // Handling of this error is needed https://github.com/BVM-priv/ui-monorepo/issues/322
-        // eslint-disable-next-line promise/catch-or-return
-        addTimestampToOperation(extendedWithdrawal, fromNetworkId).then(
-          ({ timestamp }) =>
-            updateWithdrawal(extendedWithdrawal, {
-              status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
-              timestamp,
-            }),
-        )
-        // use this to show the TX confirmation in prove.tsx when mounting
-        savePartialWithdrawal({
-          withdrawalTxHash: withdrawReceipt.transactionHash,
-        })
+      const extendedWithdrawal = {
+        ...withdrawalFound,
+        blockNumber: Number(withdrawReceipt.blockNumber),
       }
+      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
+      // eslint-disable-next-line promise/catch-or-return
+      addTimestampToOperation(extendedWithdrawal, fromNetworkId).then(
+        ({ timestamp }) =>
+          updateWithdrawal(extendedWithdrawal, {
+            status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+            timestamp,
+          }),
+      )
+      // use this to show the TX confirmation in prove.tsx when mounting
+      savePartialWithdrawal({
+        withdrawalTxHash: withdrawReceipt.transactionHash,
+      })
     },
     [
       fromNetworkId,
+      resetFormState,
       savePartialWithdrawal,
       updateWithdrawal,
       withdrawals,
@@ -216,10 +196,18 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     ],
   )
 
+  const { beforeTransaction } = useAfterTransaction({
+    clearState: clearWithdrawState,
+    errorReceipts: [withdrawError, withdrawReceiptError],
+    onError: resetFormState,
+    onSuccess,
+    transactionReceipt: withdrawReceipt,
+  })
+
   const handleWithdraw = function () {
+    beforeTransaction()
     clearWithdrawState()
     withdraw()
-    setHasClearedForm(false)
     setIsWithdrawing(true)
   }
 

@@ -26,6 +26,11 @@ import {
 } from './types'
 import { useSyncTunnelOperations } from './useSyncTunnelOperations'
 
+const SyncHistoryWorker = dynamic(
+  () => import('./syncHistoryWorker').then(mod => mod.SyncHistoryWorker),
+  { ssr: false },
+)
+
 const BitcoinDepositsStatusUpdater = dynamic(
   () =>
     import('./bitcoinDepositsStatusUpdater').then(
@@ -217,6 +222,7 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
       {/* Track updates on withdrawals from Hemi */}
       <WithdrawalsStateUpdater />
       {children}
+      <SyncHistoryWorker />
     </TunnelHistoryContext.Provider>
   )
 }

@@ -1,7 +1,9 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { RemoteChain, bitcoin, isEvmNetwork } from 'app/networks'
+import { RemoteChain, hemi, isEvmNetwork } from 'app/networks'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
+import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
@@ -9,9 +11,9 @@ import { useTranslations } from 'next-intl'
 import { useCallback, useState } from 'react'
 import { Token } from 'types/token'
 import { Button } from 'ui-common/components/button'
-import { getFormattedValue } from 'utils/format'
+import { formatBtcAddress, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { formatUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useAfterTransaction } from '../_hooks/useAfterTransaction'
@@ -26,7 +28,15 @@ import {
 import { useWithdraw } from '../_hooks/useWithdraw'
 
 import { ConnectEvmWallet } from './connectEvmWallet'
-import { EvmSummary, FormContent, TunnelForm, canSubmit } from './form'
+import {
+  EvmSummary,
+  FormContent,
+  getTotal,
+  TunnelForm,
+  canSubmit,
+} from './form'
+import { ReceivingAddress } from './receivingAddress'
+import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 
 const ReviewEvmWithdrawal = dynamic(
   () =>
@@ -43,6 +53,11 @@ const SetMaxEvmBalance = dynamic(
   { ssr: false },
 )
 
+const WalletsConnected = dynamic(
+  () => import('./walletsConnected').then(mod => mod.WalletsConnected),
+  { ssr: false },
+)
+
 const hasBridgeConfiguration = (token: Token, l1ChainId: RemoteChain['id']) =>
   isNativeToken(token) ||
   token.extensions?.bridgeInfo[l1ChainId].tokenAddress !== undefined
@@ -51,19 +66,129 @@ type BtcWithdrawProps = {
   state: TypedTunnelState<HemiToBitcoinTunneling>
 }
 
-// TODO implement correctly, this only puts some props so it compiles
-// but nothing is actually visible until BTC is enabled
-// https://github.com/BVM-priv/ui-monorepo/issues/343
 const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
-  const { fromToken, updateFromInput } = state
+  // use this to hold the withdrawn amount for the Tx list after clearing the state upon confirmation
+  const [amountWithdrawn, setAmountWithdrawn] = useState('0')
+  const [isWithdrawing, setIsWithdrawing] = useState(false)
+
+  const {
+    fromInput,
+    fromNetworkId,
+    fromToken,
+    resetStateAfterOperation,
+    updateFromInput,
+  } = state
+
+  const { btcAddress, evmChainId } = useAccounts()
+  const fromChain = useChain(fromNetworkId)
+  const { balance: bitcoinBalance } = useTokenBalance(fromToken)
   const t = useTranslations()
-  const isWithdrawing = false
-  // eslint-disable-next-line arrow-body-style
-  const handleWithdraw = () => {}
+  const { updateWithdrawal, withdrawals } = useTunnelHistory()
+  const {
+    clearWithdrawBitcoinState,
+    withdrawBitcoin,
+    withdrawBitcoinReceipt,
+    withdrawBitcoinReceiptError,
+    withdrawError,
+    withdrawTxHash,
+  } = useWithdrawBitcoin()
+
+  const resetFormState = useCallback(
+    function () {
+      setIsWithdrawing(false)
+      resetStateAfterOperation()
+    },
+    [setIsWithdrawing, resetStateAfterOperation],
+  )
+
+  const onSuccess = useCallback(
+    function () {
+      resetFormState()
+
+      const withdrawalFound = withdrawals.find(
+        w =>
+          w.transactionHash === withdrawBitcoinReceipt.transactionHash &&
+          !w.timestamp,
+      )
+
+      const extendedWithdrawal = {
+        ...withdrawalFound,
+        blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
+      }
+
+      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
+      // eslint-disable-next-line promise/catch-or-return
+      addTimestampToOperation(extendedWithdrawal, fromNetworkId).then(
+        ({ timestamp }) =>
+          updateWithdrawal(extendedWithdrawal, {
+            status: MessageStatus.RELAYED,
+            timestamp,
+          }),
+      )
+    },
+    [
+      fromNetworkId,
+      resetFormState,
+      updateWithdrawal,
+      withdrawals,
+      withdrawBitcoinReceipt,
+    ],
+  )
+
+  const { beforeTransaction } = useAfterTransaction({
+    clearState: clearWithdrawBitcoinState,
+    errorReceipts: [withdrawError, withdrawBitcoinReceiptError],
+    onError: resetFormState,
+    onSuccess,
+    transactionReceipt: withdrawBitcoinReceipt,
+  })
+
+  const handleWithdraw = function () {
+    beforeTransaction()
+    setAmountWithdrawn(fromInput)
+    clearWithdrawBitcoinState()
+    withdrawBitcoin(parseUnits(fromInput, fromToken.decimals))
+    setIsWithdrawing(true)
+  }
+
+  const canWithdraw = canSubmit({
+    balance: bitcoinBalance,
+    chainId: evmChainId,
+    fromInput,
+    fromNetworkId,
+    fromToken,
+  })
+
+  const gas = {
+    // TODO GET gas estimation
+    amount: formatUnits(BigInt(0), fromChain?.nativeCurrency.decimals),
+    label: t('common.network-gas-fee', { network: fromChain?.name }),
+    symbol: fromChain?.nativeCurrency.symbol,
+  }
+
+  const transactionsList = useTransactionsList({
+    inProgressMessage: t('tunnel-page.transaction-status.withdrawing', {
+      fromInput: getFormattedValue(amountWithdrawn),
+      network: fromChain?.name,
+      symbol: fromToken.symbol,
+    }),
+    isOperating: isWithdrawing,
+    operation: 'withdraw',
+    receipt: withdrawBitcoinReceipt,
+    receiptError: withdrawBitcoinReceiptError,
+    successMessage: t('tunnel-page.transaction-status.withdrawn', {
+      fromInput: getFormattedValue(amountWithdrawn),
+      symbol: fromToken.symbol,
+    }),
+    txHash: withdrawTxHash,
+    userConfirmationError: withdrawError,
+  })
+
   return (
     <TunnelForm
+      bottomSection={<WalletsConnected />}
       expectedChainId={state.fromNetworkId}
-      explorerUrl={bitcoin.blockExplorers.default.url}
+      explorerUrl={hemi.blockExplorers.default.url}
       formContent={
         <FormContent
           isRunningOperation={isWithdrawing}
@@ -80,12 +205,43 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
         />
       }
       onSubmit={handleWithdraw}
-      submitButton={
-        <Button disabled type="submit">
-          {t('tunnel-page.submit-button.initiate-withdrawal')}
-        </Button>
+      reviewSummary={
+        canWithdraw ? (
+          <EvmSummary
+            gas={gas}
+            operationSymbol={fromToken.symbol}
+            total={getTotal({
+              fromInput,
+              fromToken,
+            })}
+          />
+        ) : null
       }
-      transactionsList={[]}
+      submitButton={
+        <>
+          <div className="mb-2">
+            <ReceivingAddress
+              address={btcAddress ? formatBtcAddress(btcAddress) : undefined}
+              receivingText={t('tunnel-page.form.bitcoin-receiving-address')}
+              tooltipText={t(
+                'tunnel-page.form.bitcoin-receiving-address-description',
+                {
+                  symbol: state.toToken.symbol,
+                },
+              )}
+            />
+          </div>
+          <SubmitWithTwoWallets
+            disabled={!canWithdraw || isWithdrawing}
+            text={
+              isWithdrawing
+                ? t('tunnel-page.submit-button.withdrawing')
+                : t('tunnel-page.submit-button.initiate-withdrawal')
+            }
+          />
+        </>
+      }
+      transactionsList={transactionsList}
     />
   )
 }

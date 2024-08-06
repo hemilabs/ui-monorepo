@@ -1,4 +1,4 @@
-import { MessageDirection } from '@eth-optimism/sdk'
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTunnelOperation } from 'app/[locale]/tunnel/_hooks/useTunnelOperation'
 import { bitcoin, hemi } from 'app/networks'
@@ -9,9 +9,13 @@ import {
   BtcDepositStatus,
 } from 'context/tunnelHistoryContext/types'
 import { useCallback } from 'react'
-import { claimBtcDeposit, initiateBtcDeposit } from 'utils/hemi'
+import {
+  claimBtcDeposit,
+  initiateBtcDeposit,
+  initiateBtcWithdrawal,
+} from 'utils/hemi'
 import { getNativeToken } from 'utils/token'
-import { type Address } from 'viem'
+import { zeroAddress, type Address } from 'viem'
 import {
   useAccount as useEvmAccount,
   useWaitForTransactionReceipt as useWaitForEvmTransactionReceipt,
@@ -138,5 +142,69 @@ export const useDepositBitcoin = function () {
     depositReceipt,
     depositReceiptError,
     depositTxId: txId,
+  }
+}
+
+export const useWithdrawBitcoin = function () {
+  const { address: btcAddress } = useBtcAccount()
+  const { address: hemiAddress } = useEvmAccount()
+  const hemiClient = useHemiClient()
+  const { hemiWalletClient } = useHemiWalletClient()
+  const { addWithdrawalToTunnelHistory } = useTunnelHistory()
+  const queryClient = useQueryClient()
+
+  const {
+    error: withdrawError,
+    reset: resetWithdrawBitcoin,
+    mutate: withdrawBitcoin,
+    data: withdrawTxHash,
+  } = useMutation({
+    mutationFn: (amount: bigint) =>
+      initiateBtcWithdrawal({
+        amount,
+        btcAddress,
+        from: hemiAddress,
+        hemiClient,
+        hemiWalletClient,
+      }),
+    onSuccess(transactionHash, amount) {
+      addWithdrawalToTunnelHistory({
+        amount: amount.toString(),
+        chainId: bitcoin.id,
+        direction: MessageDirection.L2_TO_L1,
+        from: hemiAddress,
+        l1Token: zeroAddress,
+        l2Token: getNativeToken(bitcoin.id).extensions.bridgeInfo[hemi.id]
+          .tokenAddress,
+        status: MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
+        to: btcAddress,
+        transactionHash,
+      })
+    },
+  })
+
+  const {
+    data: withdrawBitcoinReceipt,
+    error: withdrawBitcoinReceiptError,
+    queryKey: withdrawBitcoinQueryKey,
+  } = useWaitForEvmTransactionReceipt({ hash: withdrawTxHash })
+
+  const clearWithdrawBitcoinState = useCallback(
+    function () {
+      // reset the withdrawing state
+      resetWithdrawBitcoin()
+      // clear withdraw receipt state
+      queryClient.invalidateQueries({ queryKey: withdrawBitcoinQueryKey })
+    },
+    [queryClient, resetWithdrawBitcoin, withdrawBitcoinQueryKey],
+  )
+
+  return {
+    clearWithdrawBitcoinState,
+    withdrawBitcoin,
+    withdrawBitcoinReceipt,
+    withdrawBitcoinReceiptError,
+    withdrawError,
+    withdrawTxHash,
   }
 }

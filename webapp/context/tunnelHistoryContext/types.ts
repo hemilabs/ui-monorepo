@@ -3,6 +3,7 @@ import {
   type MessageDirection,
   type MessageStatus,
 } from '@eth-optimism/sdk'
+import { type RemoteChain } from 'app/networks'
 import { BtcChain } from 'btc-wallet/chains'
 import { type Chain, type Hash } from 'viem'
 
@@ -55,9 +56,9 @@ export type EvmDepositOperation = CommonOperation &
   EvmTransactionHash
 
 export type EvmWithdrawOperation = CommonOperation &
-  EvmChainId &
   EvmTransactionHash &
   WithdrawDirection & {
+    chainId: RemoteChain['id']
     status?: MessageStatus
   }
 

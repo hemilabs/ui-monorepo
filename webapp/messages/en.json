@@ -261,12 +261,11 @@
       "network-name": "Network name",
       "page-subtitle": "Add Ethereum Sepolia & Hemi testnet to your wallet",
       "page-title": "Add Hemi to your wallet",
-      "recaptcha-terms-and-conditions": "This site is protected by reCAPTCHA and the Google <privacy>Privacy Policy</privacy> and <terms>Terms of Service</terms> apply.",
       "receive-updates": "Receive marketing updates",
       "rpc-url": "RPC URL",
       "troubleshoot-other-errors": "Having issues? Contact the Hemi team on <link>Discord</link>.",
       "welcome-pack": "Welcome Pack",
-      "welcome-pack-description": "Sign up to receive our Hemi testnet welcome pack."
+      "welcome-pack-description": "Join our Discord server and visit the <channel>#claim-capsule</channel> channel to claim your onboarding Capsule."
     }
   },
   "token-selector": {

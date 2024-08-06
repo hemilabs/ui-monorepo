@@ -261,12 +261,11 @@
       "network-name": "Nombre de la red",
       "page-subtitle": "Añada Ethereum Sepolia y la red de prueba Hemi ahora a su billetera",
       "page-title": "Añada Hemi a su billetera",
-      "recaptcha-terms-and-conditions": "Este sitio está protegido por reCAPTCHA y se aplican la <privacy>Política de Privacidad</privacy> y los <terms>Términos y Condiciones</terms> del servicio de Google.",
       "receive-updates": "Quiero recibir actualizaciones de marketing",
       "rpc-url": "URL de RPC",
       "troubleshoot-other-errors": "¿Tiene problemas? Contacte al equipo de Hemi en<link>Discord</link>.",
       "welcome-pack": "Pack de Bienvenida",
-      "welcome-pack-description": "Suscríbase para recibir nuestro paquete de bienvenida de la red de prueba Hemi."
+      "welcome-pack-description": "Únase a nuestro servidor de Discord y visite el canal <channel>#claim-capsule</channel> para reclamar su Cápsula de incorporación."
     }
   },
   "token-selector": {

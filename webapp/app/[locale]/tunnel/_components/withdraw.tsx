@@ -1,5 +1,6 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { RemoteChain, hemi, isEvmNetwork } from 'app/networks'
+import { Big } from 'big.js'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
@@ -37,6 +38,8 @@ import {
 } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
+
+const MinBitcoinWithdraw = '0.005'
 
 const ReviewEvmWithdrawal = dynamic(
   () =>
@@ -151,13 +154,16 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     setIsWithdrawing(true)
   }
 
-  const canWithdraw = canSubmit({
-    balance: bitcoinBalance,
-    chainId: evmChainId,
-    fromInput,
-    fromNetworkId,
-    fromToken,
-  })
+  // TODO we need to let the user know about the min value to withdraw
+  // See https://github.com/hemilabs/ui-monorepo/issues/454
+  const canWithdraw =
+    canSubmit({
+      balance: bitcoinBalance,
+      chainId: evmChainId,
+      fromInput,
+      fromNetworkId,
+      fromToken,
+    }) && Big(fromInput).gte(MinBitcoinWithdraw)
 
   const gas = {
     // TODO GET gas estimation

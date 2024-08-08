@@ -32,12 +32,7 @@ export const useProveTransaction = function ({
   const isReadyToProve =
     transactionMessageStatus === MessageStatus.READY_TO_PROVE && connectedToL1
 
-  const {
-    proveWithdrawal,
-    proveWithdrawalMutationKey,
-    resetProveWithdrawal,
-    ...rest
-  } = useProveMessage({
+  const { proveWithdrawal, resetProveWithdrawal, ...rest } = useProveMessage({
     enabled: isReadyToProve,
     l1ChainId,
     withdrawTxHash,
@@ -46,6 +41,7 @@ export const useProveTransaction = function ({
   const {
     data: withdrawalProofReceipt,
     error: withdrawalProofReceiptError,
+    queryKey: withdrawalProofQueryKey,
     status: withdrawalProofTxStatus,
   } = useWaitForTransactionReceipt({
     hash: rest.proveWithdrawalTxHash,
@@ -62,9 +58,9 @@ export const useProveTransaction = function ({
       // clear the prof operation hash
       resetProveWithdrawal()
       // clear proof receipt state
-      queryClient.removeQueries({ queryKey: proveWithdrawalMutationKey })
+      queryClient.removeQueries({ queryKey: withdrawalProofQueryKey })
     },
-    [proveWithdrawalMutationKey, queryClient, resetProveWithdrawal],
+    [queryClient, resetProveWithdrawal, withdrawalProofQueryKey],
   )
 
   return {

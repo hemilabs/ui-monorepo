@@ -339,8 +339,6 @@ export const useDepositErc20Token = function ({
     walletConnectedToChain: l1ChainId,
   })
 
-  const depositErc20TokenMutationKey = [operation]
-
   const {
     data: depositErc20TokenTxHash,
     error: depositErc20TokenError,
@@ -364,7 +362,6 @@ export const useDepositErc20Token = function ({
       )
       return response.hash as Hash
     },
-    mutationKey: depositErc20TokenMutationKey,
   })
 
   return {
@@ -376,7 +373,6 @@ export const useDepositErc20Token = function ({
       }),
     depositErc20TokenError,
     depositErc20TokenGasFees,
-    depositErc20TokenMutationKey,
     depositErc20TokenTxHash,
     l1StandardBridgeAddress: l1Contracts.L1StandardBridge,
     resetDepositToken,
@@ -411,8 +407,6 @@ export const useDepositNativeToken = function ({
     walletConnectedToChain: l1ChainId,
   })
 
-  const depositNativeMutationKey = [operation]
-
   const {
     data: depositNativeTokenTxHash,
     error: depositNativeTokenError,
@@ -423,11 +417,9 @@ export const useDepositNativeToken = function ({
       const response = await crossChainMessenger.depositETH(amount)
       return response.hash as Hash
     },
-    mutationKey: depositNativeMutationKey,
   })
 
   return {
-    depositNativeMutationKey,
     depositNativeToken: () => depositNativeToken(toDeposit),
     depositNativeTokenError,
     depositNativeTokenGasFees,
@@ -468,8 +460,6 @@ export const useWithdrawNativeToken = function ({
     walletConnectedToChain: hemi.id,
   })
 
-  const withdrawNativeTokenMutationKey = [operation]
-
   const {
     error: withdrawNativeTokenError,
     mutate: withdrawNativeToken,
@@ -479,7 +469,6 @@ export const useWithdrawNativeToken = function ({
       const response = await crossChainMessenger.withdrawETH(toWithdraw)
       return response.hash as Hash
     },
-    mutationKey: withdrawNativeTokenMutationKey,
     ...options,
   })
 
@@ -488,7 +477,6 @@ export const useWithdrawNativeToken = function ({
     withdrawNativeToken: () => withdrawNativeToken(amount),
     withdrawNativeTokenError,
     withdrawNativeTokenGasFees,
-    withdrawNativeTokenMutationKey,
   }
 }
 
@@ -517,8 +505,6 @@ export const useFinalizeMessage = function ({
     walletConnectedToChain: l1ChainId,
   })
 
-  const finalizeWithdrawalMutationKey = [operation]
-
   const {
     data: finalizeWithdrawalTxHash,
     error: finalizeWithdrawalError,
@@ -529,14 +515,12 @@ export const useFinalizeMessage = function ({
       const response = await crossChainMessenger.finalizeMessage(toFinalize)
       return response.hash as Hash
     },
-    mutationKey: finalizeWithdrawalMutationKey,
     ...options,
   })
 
   return {
     finalizeWithdrawal: () => finalizeWithdrawal(withdrawTxHash),
     finalizeWithdrawalError,
-    finalizeWithdrawalMutationKey,
     finalizeWithdrawalTokenGasFees,
     finalizeWithdrawalTxHash,
     resetFinalizeWithdrawal,
@@ -567,8 +551,6 @@ export const useProveMessage = function ({
     walletConnectedToChain: l1ChainId,
   })
 
-  const proveWithdrawalMutationKey = [operation]
-
   const {
     data: proveWithdrawalTxHash,
     error: proveWithdrawalError,
@@ -579,13 +561,11 @@ export const useProveMessage = function ({
       const response = await crossChainMessenger.proveMessage(toProve)
       return response.hash as Hash
     },
-    mutationKey: proveWithdrawalMutationKey,
   })
 
   return {
     proveWithdrawal: () => proveWithdrawal(withdrawTxHash),
     proveWithdrawalError,
-    proveWithdrawalMutationKey,
     proveWithdrawalTokenGasFees,
     proveWithdrawalTxHash,
     resetProveWithdrawal,
@@ -625,8 +605,6 @@ export const useWithdrawToken = function ({
     walletConnectedToChain: hemi.id,
   })
 
-  const withdrawErc20TokenMutationKey = [operation]
-
   const {
     error: withdrawErc20TokenError,
     mutate: withdrawErc20Token,
@@ -640,7 +618,6 @@ export const useWithdrawToken = function ({
       )
       return response.hash as Hash
     },
-    mutationKey: withdrawErc20TokenMutationKey,
     ...options,
   })
 
@@ -649,7 +626,6 @@ export const useWithdrawToken = function ({
     withdrawErc20Token: () => withdrawErc20Token(amount),
     withdrawErc20TokenError,
     withdrawErc20TokenGasFees,
-    withdrawErc20TokenMutationKey,
   }
 }
 /**

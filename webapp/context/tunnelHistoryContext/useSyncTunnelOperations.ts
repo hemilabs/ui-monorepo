@@ -32,10 +32,10 @@ const mergeContentByChainId = (chainId: RemoteChain['id']) =>
         // this field wasn't saved. So when syncing, it will add it to all existing operations.
         // Eventually, probably once we launch, we can remove this, because we're now adding chainId
         // after every deposit/withdrawal per chain in the correct places.
-        // See https://github.com/BVM-priv/ui-monorepo/issues/376
+        // See https://github.com/hemilabs/ui-monorepo/issues/376
         .map(c => ({
           ...c,
-          chainId,
+          chainId: c.chainId ?? chainId,
         }))
     )
   }

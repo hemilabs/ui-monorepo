@@ -12,6 +12,8 @@
     "connect-wallet-to-review": "Connect your wallet to continue the operation.",
     "form": {
       "balance": "Balance",
+      "bitcoin-receiving-address": "Receiving Bitcoin address",
+      "bitcoin-receiving-address-description": "You will receive your {symbol} to the connected Bitcoin wallet address.",
       "from-network": "From Network",
       "hemi-receiving-address": "Receiving Hemi address",
       "hemi-receiving-address-description": "You will receive your tunneled {symbol} to the connected EVM wallet address.",

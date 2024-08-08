@@ -54,7 +54,6 @@ export const useClaimTransaction = function ({
   }
   const {
     finalizeWithdrawal,
-    finalizeWithdrawalMutationKey,
     resetFinalizeWithdrawal,
     finalizeWithdrawalTxHash,
     finalizeWithdrawalError,
@@ -67,10 +66,13 @@ export const useClaimTransaction = function ({
     withdrawTxHash,
   })
 
-  const { data: claimWithdrawalReceipt, error: claimWithdrawalReceiptError } =
-    useWaitForTransactionReceipt({
-      hash: finalizeWithdrawalTxHash,
-    })
+  const {
+    data: claimWithdrawalReceipt,
+    error: claimWithdrawalReceiptError,
+    queryKey: finalizeWithdrawalQueryKey,
+  } = useWaitForTransactionReceipt({
+    hash: finalizeWithdrawalTxHash,
+  })
 
   const handleClaimWithdrawal = function () {
     if (isReadyToClaim) {
@@ -83,9 +85,9 @@ export const useClaimTransaction = function ({
       // clear the claim operation hash
       resetFinalizeWithdrawal()
       // clear claim receipt state
-      queryClient.removeQueries({ queryKey: finalizeWithdrawalMutationKey })
+      queryClient.removeQueries({ queryKey: finalizeWithdrawalQueryKey })
     },
-    [finalizeWithdrawalMutationKey, queryClient, resetFinalizeWithdrawal],
+    [finalizeWithdrawalQueryKey, queryClient, resetFinalizeWithdrawal],
   )
 
   return {

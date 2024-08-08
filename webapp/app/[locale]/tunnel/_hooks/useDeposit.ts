@@ -29,7 +29,6 @@ export const useDeposit = function ({
   const toDeposit = parseUnits(fromInput, fromToken.decimals).toString()
 
   const {
-    depositNativeMutationKey,
     depositNativeToken,
     depositNativeTokenError,
     depositNativeTokenGasFees,
@@ -50,7 +49,6 @@ export const useDeposit = function ({
     approvalTxHash,
     depositErc20TokenError,
     depositErc20TokenGasFees,
-    depositErc20TokenMutationKey,
     depositErc20TokenTxHash,
     depositToken,
     needsApproval,
@@ -66,6 +64,7 @@ export const useDeposit = function ({
   const {
     data: depositReceipt,
     error: depositReceiptError,
+    queryKey: depositQueryKey,
     status: depositTxStatus,
   } = useWaitForTransactionReceipt({
     hash: depositingNative ? depositNativeTokenTxHash : depositErc20TokenTxHash,
@@ -88,10 +87,10 @@ export const useDeposit = function ({
     function () {
       // clear the deposit operation hash
       resetDepositNativeToken()
-      // clear deposit receipt state
-      queryClient.removeQueries({ queryKey: depositNativeMutationKey })
+      // clear transaction receipt state
+      queryClient.removeQueries({ queryKey: depositQueryKey })
     },
-    [depositNativeMutationKey, queryClient, resetDepositNativeToken],
+    [depositQueryKey, queryClient, resetDepositNativeToken],
   )
 
   const clearDepositTokenState = useCallback(
@@ -102,12 +101,12 @@ export const useDeposit = function ({
       resetDepositToken()
       // clear approval receipt state
       queryClient.removeQueries({ queryKey: approvalQueryKey })
-      // clear deposit token receipt state
-      queryClient.removeQueries({ queryKey: depositErc20TokenMutationKey })
+      // clear transaction receipt state
+      queryClient.removeQueries({ queryKey: depositQueryKey })
     },
     [
       approvalQueryKey,
-      depositErc20TokenMutationKey,
+      depositQueryKey,
       queryClient,
       resetApproval,
       resetDepositToken,

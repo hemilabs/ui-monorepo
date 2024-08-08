@@ -1,30 +1,16 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { bitcoin, RemoteChain, hemi } from 'app/networks'
+import { RemoteChain } from 'app/networks'
 import { usePathname } from 'next/navigation'
 import pAll from 'p-all'
 import pMemoize from 'promise-mem'
 import { useCallback, useMemo } from 'react'
 import { useSyncInBlockChunks } from 'ui-common/hooks/useSyncInBlockChunks'
+import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
 import { type Address } from 'viem'
-import { sepolia } from 'viem/chains'
 import { useAccount } from 'wagmi'
 
 import { addTimestampToOperation } from './operations'
 import { TunnelOperation, RawTunnelOperation } from './types'
-
-const chainConfiguration = {
-  [bitcoin.id]: {
-    // TODO define proper block windows size https://github.com/BVM-priv/ui-monorepo/issues/345
-    blockWindowSize: 3500,
-  },
-  [hemi.id]: {
-    blockWindowSize: 3500, // Approximately 1/2 day
-  },
-  [sepolia.id]: {
-    blockWindowSize: 3500, // Approximately 1/2 day
-    minBlockToSync: 5_294_649, // Approximately hemi testnet birth.
-  },
-}
 
 // When requesting data per deposit/withdraw, do not request more than 5 per type at a time.
 const concurrency = 3

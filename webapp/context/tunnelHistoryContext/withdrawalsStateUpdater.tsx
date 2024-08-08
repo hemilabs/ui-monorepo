@@ -118,6 +118,7 @@ const pollUpdateWithdrawal = async ({
       // the longest waiting period of all withdrawals, as the others have been waiting for longer
       priority:
         !withdrawal.timestamp ||
+        withdrawal.status === undefined ||
         [MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
           withdrawal.status,
         )
@@ -170,6 +171,7 @@ export const WithdrawalsStateUpdater = function () {
     .filter(
       w =>
         !w.timestamp ||
+        w.status === undefined ||
         [
           MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
           MessageStatus.STATE_ROOT_NOT_PUBLISHED,

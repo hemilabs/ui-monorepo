@@ -14,60 +14,14 @@ import { hemi } from 'app/networks'
 import { useJsonRpcProvider, useWeb3Provider } from 'hooks/useEthersSigner'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { Token } from 'types/token'
-import { type Address, type Chain, type Hash, isHash, zeroAddress } from 'viem'
+import {
+  getCrossChainMessenger,
+  getTunnelContracts,
+} from 'utils/crossChainMessenger'
+import { type Chain, type Hash, isHash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
-
-const sdkPromise = import('@eth-optimism/sdk')
-
-const l1Contracts = {
-  AddressManager: process.env.NEXT_PUBLIC_ADDRESS_MANAGER as Address,
-  BondManager: zeroAddress,
-  CanonicalTransactionChain: zeroAddress,
-  L1CrossDomainMessenger: process.env
-    .NEXT_PUBLIC_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER as Address,
-  L1StandardBridge: process.env
-    .NEXT_PUBLIC_PROXY_OVM_L1_STANDARD_BRIDGE as Address,
-  L2OutputOracle: process.env.NEXT_PUBLIC_L2_OUTPUT_ORACLE_PROXY as Address,
-  OptimismPortal: process.env.NEXT_PUBLIC_OPTIMISM_PORTAL_PROXY as Address,
-  StateCommitmentChain: zeroAddress,
-}
-
-async function getCrossChainMessenger({
-  l1ChainId,
-  l1Signer,
-  l2Signer,
-}: {
-  l1ChainId: Chain['id']
-  l1Signer: SignerOrProviderLike
-  l2Signer: SignerOrProviderLike
-}) {
-  const { CrossChainMessenger, ETHBridgeAdapter, StandardBridgeAdapter } =
-    await sdkPromise
-  return new CrossChainMessenger({
-    bedrock: true,
-    bridges: {
-      ETH: {
-        Adapter: ETHBridgeAdapter,
-        l1Bridge: l1Contracts.L1StandardBridge,
-        l2Bridge: process.env.NEXT_PUBLIC_L2_BRIDGE,
-      },
-      Standard: {
-        Adapter: StandardBridgeAdapter,
-        l1Bridge: l1Contracts.L1StandardBridge,
-        l2Bridge: process.env.NEXT_PUBLIC_L2_BRIDGE,
-      },
-    },
-    contracts: {
-      l1: l1Contracts,
-    },
-    l1ChainId,
-    l1SignerOrProvider: l1Signer,
-    l2ChainId: hemi.id,
-    l2SignerOrProvider: l2Signer,
-  })
-}
 
 type GasEstimationOperations = Extract<
   keyof CrossChainMessengerType['estimateGas'],
@@ -339,8 +293,6 @@ export const useDepositErc20Token = function ({
     walletConnectedToChain: l1ChainId,
   })
 
-  const depositErc20TokenMutationKey = [operation]
-
   const {
     data: depositErc20TokenTxHash,
     error: depositErc20TokenError,
@@ -364,7 +316,6 @@ export const useDepositErc20Token = function ({
       )
       return response.hash as Hash
     },
-    mutationKey: depositErc20TokenMutationKey,
   })
 
   return {
@@ -376,9 +327,8 @@ export const useDepositErc20Token = function ({
       }),
     depositErc20TokenError,
     depositErc20TokenGasFees,
-    depositErc20TokenMutationKey,
     depositErc20TokenTxHash,
-    l1StandardBridgeAddress: l1Contracts.L1StandardBridge,
+    l1StandardBridgeAddress: getTunnelContracts(l1ChainId).L1StandardBridge,
     resetDepositToken,
     status,
   }
@@ -411,8 +361,6 @@ export const useDepositNativeToken = function ({
     walletConnectedToChain: l1ChainId,
   })
 
-  const depositNativeMutationKey = [operation]
-
   const {
     data: depositNativeTokenTxHash,
     error: depositNativeTokenError,
@@ -423,11 +371,9 @@ export const useDepositNativeToken = function ({
       const response = await crossChainMessenger.depositETH(amount)
       return response.hash as Hash
     },
-    mutationKey: depositNativeMutationKey,
   })
 
   return {
-    depositNativeMutationKey,
     depositNativeToken: () => depositNativeToken(toDeposit),
     depositNativeTokenError,
     depositNativeTokenGasFees,
@@ -468,8 +414,6 @@ export const useWithdrawNativeToken = function ({
     walletConnectedToChain: hemi.id,
   })
 
-  const withdrawNativeTokenMutationKey = [operation]
-
   const {
     error: withdrawNativeTokenError,
     mutate: withdrawNativeToken,
@@ -479,7 +423,6 @@ export const useWithdrawNativeToken = function ({
       const response = await crossChainMessenger.withdrawETH(toWithdraw)
       return response.hash as Hash
     },
-    mutationKey: withdrawNativeTokenMutationKey,
     ...options,
   })
 
@@ -488,7 +431,6 @@ export const useWithdrawNativeToken = function ({
     withdrawNativeToken: () => withdrawNativeToken(amount),
     withdrawNativeTokenError,
     withdrawNativeTokenGasFees,
-    withdrawNativeTokenMutationKey,
   }
 }
 
@@ -517,8 +459,6 @@ export const useFinalizeMessage = function ({
     walletConnectedToChain: l1ChainId,
   })
 
-  const finalizeWithdrawalMutationKey = [operation]
-
   const {
     data: finalizeWithdrawalTxHash,
     error: finalizeWithdrawalError,
@@ -529,14 +469,12 @@ export const useFinalizeMessage = function ({
       const response = await crossChainMessenger.finalizeMessage(toFinalize)
       return response.hash as Hash
     },
-    mutationKey: finalizeWithdrawalMutationKey,
     ...options,
   })
 
   return {
     finalizeWithdrawal: () => finalizeWithdrawal(withdrawTxHash),
     finalizeWithdrawalError,
-    finalizeWithdrawalMutationKey,
     finalizeWithdrawalTokenGasFees,
     finalizeWithdrawalTxHash,
     resetFinalizeWithdrawal,
@@ -567,8 +505,6 @@ export const useProveMessage = function ({
     walletConnectedToChain: l1ChainId,
   })
 
-  const proveWithdrawalMutationKey = [operation]
-
   const {
     data: proveWithdrawalTxHash,
     error: proveWithdrawalError,
@@ -579,13 +515,11 @@ export const useProveMessage = function ({
       const response = await crossChainMessenger.proveMessage(toProve)
       return response.hash as Hash
     },
-    mutationKey: proveWithdrawalMutationKey,
   })
 
   return {
     proveWithdrawal: () => proveWithdrawal(withdrawTxHash),
     proveWithdrawalError,
-    proveWithdrawalMutationKey,
     proveWithdrawalTokenGasFees,
     proveWithdrawalTxHash,
     resetProveWithdrawal,
@@ -625,8 +559,6 @@ export const useWithdrawToken = function ({
     walletConnectedToChain: hemi.id,
   })
 
-  const withdrawErc20TokenMutationKey = [operation]
-
   const {
     error: withdrawErc20TokenError,
     mutate: withdrawErc20Token,
@@ -640,7 +572,6 @@ export const useWithdrawToken = function ({
       )
       return response.hash as Hash
     },
-    mutationKey: withdrawErc20TokenMutationKey,
     ...options,
   })
 
@@ -649,7 +580,6 @@ export const useWithdrawToken = function ({
     withdrawErc20Token: () => withdrawErc20Token(amount),
     withdrawErc20TokenError,
     withdrawErc20TokenGasFees,
-    withdrawErc20TokenMutationKey,
   }
 }
 /**

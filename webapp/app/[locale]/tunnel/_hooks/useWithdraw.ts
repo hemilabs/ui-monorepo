@@ -75,7 +75,6 @@ export const useWithdraw = function ({
 
   const {
     resetWithdrawNativeToken,
-    withdrawNativeTokenMutationKey,
     withdrawNativeToken,
     withdrawNativeTokenError,
     withdrawNativeTokenGasFees,
@@ -91,7 +90,6 @@ export const useWithdraw = function ({
     resetWithdrawErc20Token,
     withdrawErc20TokenError,
     withdrawErc20TokenGasFees,
-    withdrawErc20TokenMutationKey,
     withdrawErc20Token,
   } = useWithdrawToken({
     amount: toWithdraw,
@@ -105,6 +103,7 @@ export const useWithdraw = function ({
   const {
     data: withdrawReceipt,
     error: withdrawReceiptError,
+    queryKey: withdrawQueryKey,
     status: withdrawTxStatus,
     // @ts-expect-error string is `0x${string}`
   } = useWaitForTransactionReceipt({ hash: txHash })
@@ -126,9 +125,9 @@ export const useWithdraw = function ({
       // clear the withdrawal operation hash
       resetWithdrawNativeToken()
       // clear withdrawal receipt state
-      queryClient.removeQueries({ queryKey: withdrawNativeTokenMutationKey })
+      queryClient.removeQueries({ queryKey: withdrawQueryKey })
     },
-    [queryClient, resetWithdrawNativeToken, withdrawNativeTokenMutationKey],
+    [queryClient, resetWithdrawNativeToken, withdrawQueryKey],
   )
 
   const clearWithdrawErc20TokenState = useCallback(
@@ -136,9 +135,9 @@ export const useWithdraw = function ({
       // clear the withdrawal operation hash
       resetWithdrawErc20Token()
       // clear withdrawal receipt state
-      queryClient.removeQueries({ queryKey: withdrawErc20TokenMutationKey })
+      queryClient.removeQueries({ queryKey: withdrawQueryKey })
     },
-    [queryClient, resetWithdrawErc20Token, withdrawErc20TokenMutationKey],
+    [queryClient, resetWithdrawErc20Token, withdrawQueryKey],
   )
 
   if (withdrawingNative) {

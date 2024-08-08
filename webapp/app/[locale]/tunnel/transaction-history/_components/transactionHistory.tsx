@@ -17,6 +17,7 @@ import {
 } from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
+import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
@@ -340,6 +341,8 @@ export const TransactionHistory = function () {
     },
   })
 
+  // One is not the opposite of the other, as these consider if the user is connected to the wallet!
+  const connectedToSupportedChain = useConnectedToSupportedEvmChain()
   const connectedToUnsupportedChain = useConnectedToUnsupportedEvmChain()
 
   const pageCount = table.getPageCount()
@@ -348,7 +351,7 @@ export const TransactionHistory = function () {
 
   return (
     <>
-      {status === 'connected' && !connectedToUnsupportedChain && (
+      {connectedToSupportedChain && (
         <>
           <Card borderColor="gray" padding="medium" radius="large">
             <div className="overflow-x-auto">

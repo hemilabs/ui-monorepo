@@ -1,58 +1,63 @@
 import { type TokenBridgeMessage } from '@eth-optimism/sdk'
 import { JsonRpcProvider } from '@ethersproject/providers'
-import { EvmDepositOperation } from 'context/tunnelHistoryContext/types'
+import {
+  EvmDepositOperation,
+  EvmWithdrawOperation,
+  TunnelOperation,
+} from 'context/tunnelHistoryContext/types'
 import { Debugger } from 'debug'
 import pAll from 'p-all'
 import {
   createSlidingBlockWindow,
   CreateSlidingBlockWindow,
 } from 'sliding-block-window/src'
-import { getCrossChainMessenger } from 'utils/crossChainMessenger'
+import {
+  createCrossChainMessenger,
+  type CrossChainMessengerProxy,
+} from 'utils/crossChainMessenger'
 import { getEvmBlock } from 'utils/evmApi'
 import { createPublicProvider } from 'utils/providers'
 import { type Chain } from 'viem'
 
 import {
   type EvmSyncParameters,
-  type HistoryState,
+  type ExtendedSyncInfo,
   type SaveHistory,
+  type SyncInfo,
 } from './types'
 
 const toOperation =
-  (l1ChainId: Chain['id'], l2ChainId: Chain['id']) =>
-  (deposits: TokenBridgeMessage[]) =>
-    deposits.map(
+  <T extends TunnelOperation>(l1ChainId: Chain['id'], l2ChainId: Chain['id']) =>
+  (operations: TokenBridgeMessage[]) =>
+    operations.map(
       ({ data, logIndex, ...tunnelOperation }: TokenBridgeMessage) =>
         ({
           ...tunnelOperation,
           // convert the amount to something that we can serialize
           amount: tunnelOperation.amount.toString(),
-          // chainId: For backwards compatibility but will be deprecated
-          chainId: l1ChainId,
           l1ChainId,
           l2ChainId,
-        }) as EvmDepositOperation,
+        }) as T,
     )
 
 export const createEvmSync = function ({
   address,
   debug,
+  depositSyncInfo,
   l1Chain,
   l2Chain,
   saveHistory,
-  syncInfo,
+  withdrawSyncInfo,
 }: Pick<EvmSyncParameters, 'address'> & {
   debug: Debugger
+  depositSyncInfo: ExtendedSyncInfo
   l1Chain: Chain
   l2Chain: Chain
   saveHistory: SaveHistory
-  syncInfo: HistoryState['syncInfo'] & {
-    blockWindowSize: number
-    minBlockToSync?: number
-  }
+  withdrawSyncInfo: ExtendedSyncInfo
 }) {
   const getBlockNumber = async function (
-    { toBlock }: HistoryState['syncInfo'],
+    { toBlock }: SyncInfo,
     provider: JsonRpcProvider,
   ) {
     if (toBlock !== undefined) {
@@ -68,22 +73,45 @@ export const createEvmSync = function ({
     return blockNumber
   }
 
+  const getPayload = function ({
+    canMove,
+    fromBlock,
+    lastBlock,
+    nextState,
+  }: {
+    canMove: boolean
+    fromBlock: SyncInfo['fromBlock']
+    lastBlock: number
+    nextState: Parameters<CreateSlidingBlockWindow['onChange']>[0]['nextState']
+  }) {
+    const hasSyncToMinBlock = !canMove
+    return {
+      // if we finished, we should start from the beginning the next time with the new values
+      chunkIndex: hasSyncToMinBlock ? 0 : nextState.windowIndex,
+      // If we finished syncing, the upper bound is the last block we've synced up to
+      // so next time we should start from that block + 1 (the following one).
+      // If we haven't finished, we keep the same value
+      fromBlock: hasSyncToMinBlock ? lastBlock + 1 : fromBlock,
+      hasSyncToMinBlock,
+      // if we finished synced, the next "toBlock" value will be retrieved
+      // in runtime, so we must clear it. Otherwise, keep the existing value
+      toBlock: hasSyncToMinBlock ? undefined : lastBlock,
+    }
+  }
+
   const syncDeposits = async function (
-    l1Provider: JsonRpcProvider,
-    l2Provider: JsonRpcProvider,
+    chainProvider: JsonRpcProvider,
+    crossChainMessengerPromise: Promise<CrossChainMessengerProxy>,
   ) {
     debug('Starting process to sync deposits')
 
     const [lastBlock, crossChainMessenger] = await Promise.all([
-      getBlockNumber(syncInfo, l1Provider),
-      getCrossChainMessenger({
-        l1ChainId: l1Chain.id,
-        l1Signer: l1Provider,
-        l2Signer: l2Provider,
-      }),
+      getBlockNumber(depositSyncInfo, chainProvider),
+      crossChainMessengerPromise,
     ])
 
-    const initialBlock = syncInfo.fromBlock ?? syncInfo.minBlockToSync
+    const initialBlock =
+      depositSyncInfo.fromBlock ?? depositSyncInfo.minBlockToSync
 
     debug('Syncing deposits between blocks %s and %s', initialBlock, lastBlock)
 
@@ -107,7 +135,7 @@ export const createEvmSync = function ({
           fromBlock,
           toBlock,
         })
-        .then(toOperation(l1Chain.id, l2Chain.id))
+        .then(toOperation<EvmDepositOperation>(l1Chain.id, l2Chain.id))
         .then(deposits =>
           pAll(
             deposits.map(
@@ -135,23 +163,17 @@ export const createEvmSync = function ({
         windowIndex,
       )
 
-      // if it can't move, it means we've reached the last block we wanted to sync
-      const hasSyncToMinBlock = !canMove
       // save the deposits
       saveHistory({
         payload: {
+          ...getPayload({
+            canMove,
+            fromBlock: depositSyncInfo.fromBlock,
+            lastBlock,
+            nextState,
+          }),
           chainId: l1Chain.id,
-          // if we finished, we should start from the beginning the next time with the new values
-          chunkIndex: hasSyncToMinBlock ? 0 : nextState.windowIndex,
-          deposits: newDeposits,
-          // If we finished syncing, the upper bound is the last block we've synced up to
-          // so next time we should start from that block + 1 (the following one).
-          // If we haven't finished, we keep the same value
-          fromBlock: hasSyncToMinBlock ? lastBlock + 1 : syncInfo.fromBlock,
-          hasSyncToMinBlock,
-          // if we finished synced, the next "toBlock" value will be retrieved
-          // in runtime, so we must clear it. Otherwise, keep the existing value
-          toBlock: hasSyncToMinBlock ? undefined : lastBlock,
+          content: newDeposits,
         },
         type: 'sync-deposits',
       })
@@ -161,12 +183,109 @@ export const createEvmSync = function ({
       initialBlock,
       lastBlock,
       onChange,
-      windowIndex: syncInfo.chunkIndex,
-      windowSize: syncInfo.blockWindowSize,
+      windowIndex: depositSyncInfo.chunkIndex,
+      windowSize: depositSyncInfo.blockWindowSize,
     }).run()
   }
 
-  const syncWithdrawals = function () {}
+  const syncWithdrawals = async function (
+    chainProvider: JsonRpcProvider,
+    crossChainMessengerPromise: Promise<CrossChainMessengerProxy>,
+  ) {
+    debug('Starting process to sync withdrawals')
+
+    const [lastBlock, crossChainMessenger] = await Promise.all([
+      getBlockNumber(withdrawSyncInfo, chainProvider),
+      crossChainMessengerPromise,
+    ])
+
+    const initialBlock =
+      withdrawSyncInfo.fromBlock ?? withdrawSyncInfo.minBlockToSync ?? 0
+
+    debug(
+      'Syncing withdrawals between blocks %s and %s',
+      initialBlock,
+      lastBlock,
+    )
+
+    const onChange = async function ({
+      canMove,
+      nextState,
+      state,
+    }: Parameters<CreateSlidingBlockWindow['onChange']>[0]) {
+      // we walk the blockchain backwards, but OP API expects
+      // toBlock > fromBlock - so we must invert them
+      const { from: toBlock, to: fromBlock, windowIndex } = state
+
+      debug(
+        'Getting withdrawals from block %s to %s (windowIndex %s)',
+        fromBlock,
+        toBlock,
+        windowIndex,
+      )
+      const newWithdrawals = await crossChainMessenger
+        .getWithdrawalsByAddress(address, {
+          fromBlock,
+          toBlock,
+        })
+        .then(toOperation<EvmWithdrawOperation>(l1Chain.id, l2Chain.id))
+        .then(withdrawals =>
+          pAll(
+            withdrawals.map(
+              withdrawal =>
+                async function () {
+                  const [block, status] = await Promise.all([
+                    getEvmBlock(withdrawal.blockNumber, l1Chain.id),
+                    crossChainMessenger.getMessageStatus(
+                      withdrawal.transactionHash,
+                      // default value
+                      0,
+                      withdrawal.direction,
+                    ),
+                  ])
+                  return {
+                    ...withdrawal,
+                    status,
+                    timestamp: Number(block.timestamp),
+                  }
+                },
+            ),
+            { concurrency: 3 },
+          ),
+        )
+
+      debug(
+        'Got %s withdrawals from block %s to %s (windowIndex %s). Saving',
+        newWithdrawals.length,
+        fromBlock,
+        toBlock,
+        windowIndex,
+      )
+
+      // save the withdrawals
+      saveHistory({
+        payload: {
+          ...getPayload({
+            canMove,
+            fromBlock: withdrawSyncInfo.fromBlock,
+            lastBlock,
+            nextState,
+          }),
+          chainId: l1Chain.id,
+          content: newWithdrawals,
+        },
+        type: 'sync-withdrawals',
+      })
+    }
+
+    await createSlidingBlockWindow({
+      initialBlock,
+      lastBlock,
+      onChange,
+      windowIndex: withdrawSyncInfo.chunkIndex,
+      windowSize: withdrawSyncInfo.blockWindowSize,
+    }).run()
+  }
 
   const syncHistory = function () {
     debug('Creating providers')
@@ -180,9 +299,15 @@ export const createEvmSync = function ({
       l2Chain,
     )
 
+    const crossChainMessengerPromise = createCrossChainMessenger({
+      l1ChainId: l1Chain.id,
+      l1Signer: l1Provider,
+      l2Signer: l2Provider,
+    })
+
     return Promise.all([
-      syncDeposits(l1Provider, l2Provider),
-      syncWithdrawals(),
+      syncDeposits(l1Provider, crossChainMessengerPromise),
+      syncWithdrawals(l2Provider, crossChainMessengerPromise),
     ]).then(function () {
       debug('Sync process finished')
     })

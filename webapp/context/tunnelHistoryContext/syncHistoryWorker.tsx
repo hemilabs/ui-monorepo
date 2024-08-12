@@ -1,78 +1,105 @@
-import { featureFlags } from 'app/featureFlags'
+import { type RemoteChain } from 'app/networks'
 import {
-  bitcoin,
-  evmRemoteNetworks,
-  hemi,
-  type RemoteChain,
-} from 'app/networks'
-import { useAccounts } from 'hooks/useAccounts'
-import { useEffect, Children } from 'react'
-
-function processWebWorkerMessage(event: MessageEvent<string>) {
-  console.log(event.data)
-}
+  type HistoryActions,
+  type HistoryReducerState,
+} from 'hooks/useSyncHistory/types'
+import { type Dispatch, useEffect, useRef, useState } from 'react'
+import { type Address, type Chain } from 'viem'
 
 type Props = {
-  address: string
-  chainId: RemoteChain['id']
+  address: Address
+  dispatch: Dispatch<HistoryActions>
+  history: HistoryReducerState
+  l1ChainId: RemoteChain['id']
+  l2ChainId: Chain['id']
 }
 
-const WebWorker = function ({ address, chainId }: Props) {
+export const SyncHistoryWorker = function ({
+  address,
+  dispatch,
+  history,
+  l1ChainId,
+  l2ChainId,
+}: Props) {
+  const workerRef = useRef<Worker>(null)
+  const [workerLoaded, setWorkerLoaded] = useState(false)
+
   useEffect(
-    function loadWorker() {
-      console.log(
-        'starting worker for address %s and chainId %s',
-        address,
-        chainId,
-      )
-      const worker = new Worker(
+    function initWorker() {
+      // load the Worker
+      workerRef.current = new Worker(
         new URL(`../../workers/history.ts`, import.meta.url),
       )
-      worker.postMessage({ address, chainId })
-      worker.addEventListener('message', processWebWorkerMessage)
+
+      // listen for state updates and forward to our history reducer
+      const processWebWorkerMessage = (event: MessageEvent<HistoryActions>) =>
+        dispatch(event.data)
+
+      workerRef.current.addEventListener('message', processWebWorkerMessage)
+
+      // announce we're syncing
+      dispatch({ type: 'sync' })
 
       return function () {
-        console.log(
-          'terminating worker for address %s and chainId %s',
-          address,
-          chainId,
+        dispatch({ type: 'reset' })
+
+        setWorkerLoaded(false)
+        workerRef.current.removeEventListener(
+          'message',
+          processWebWorkerMessage,
         )
-        worker.removeEventListener('message', processWebWorkerMessage)
-        worker.terminate()
+        workerRef.current.terminate()
+        workerRef.current = null
       }
     },
-    [address, chainId],
+    [address, dispatch, l1ChainId, l2ChainId, setWorkerLoaded],
+  )
+
+  useEffect(
+    function startSyncing() {
+      if (!workerRef.current || workerLoaded) {
+        return
+      }
+      setWorkerLoaded(true)
+
+      if (process.env.NEXT_PUBLIC_WORKERS_DEBUG_ENABLE === 'true') {
+        // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
+        const debugString = localStorage.getItem('debug')
+        workerRef.current.postMessage({
+          payload: debugString,
+          type: 'enable-debug',
+        })
+      }
+
+      // Send the parameters the worker needs to start working - excluding deposits and withdrawals!
+      const { content: deposits, ...depositSyncInfo } = history.deposits.find(
+        chainDeposits => chainDeposits.chainId === l1ChainId,
+      )
+
+      const { content: withdrawals, ...withdrawSyncInfo } =
+        history.withdrawals.find(
+          chainWithdrawals => chainWithdrawals.chainId === l1ChainId,
+        )
+
+      workerRef.current.postMessage({
+        address,
+        depositSyncInfo,
+        l1ChainId,
+        l2ChainId,
+        type: 'start',
+        withdrawSyncInfo,
+      })
+    },
+    [
+      address,
+      history,
+      l1ChainId,
+      l2ChainId,
+      setWorkerLoaded,
+      workerLoaded,
+      workerRef,
+    ],
   )
 
   return null
-}
-
-export const SyncHistoryWorker = function () {
-  // TODO check evmChainId to ensure we're connected to a supported chain
-  const { evmChainId, evmAddress, btcAddress } = useAccounts()
-
-  const createWorker = (chainId: RemoteChain['id'], address) => (
-    <WebWorker
-      address={address}
-      chainId={chainId}
-      key={`${chainId}_${address}`}
-    />
-  )
-
-  const workers = []
-  // if we're connected to any supported EVM-compatible network, we can use that address as it is shared between
-  // all networks to get deposits in EVM L1s and withdrawals in EVM L2s
-  if (evmAddress) {
-    // sync withdrawals
-    workers.push(createWorker(hemi.id, evmAddress))
-    // sync deposits for L1 EVM-compatible chains
-    workers.push(
-      ...evmRemoteNetworks.map(l1Chain => createWorker(l1Chain.id, evmAddress)),
-    )
-  }
-  if (featureFlags.btcTunnelEnabled && btcAddress) {
-    workers.push(createWorker(bitcoin.id, btcAddress))
-  }
-
-  return <>{Children.toArray(workers)}</>
 }

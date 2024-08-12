@@ -1,17 +1,17 @@
 import { BtcChain } from 'btc-wallet/chains'
 import { type Account } from 'btc-wallet/unisat'
 import { TunnelOperation } from 'context/tunnelHistoryContext/types'
-import {
-  HistoryActions,
-  type StorageChain,
-} from 'context/tunnelHistoryContext/useSyncHistory'
+import { HistoryActions, type StorageChain } from 'hooks/useSyncHistory/types'
 import { type Address, type Chain } from 'viem'
 
-export type HistoryState = {
-  syncInfo: Pick<
-    StorageChain<TunnelOperation>,
-    'chunkIndex' | 'content' | 'fromBlock' | 'hasSyncToMinBlock' | 'toBlock'
-  >
+export type SyncInfo = Pick<
+  StorageChain<TunnelOperation>,
+  'chunkIndex' | 'content' | 'fromBlock' | 'hasSyncToMinBlock' | 'toBlock'
+>
+
+export type ExtendedSyncInfo = SyncInfo & {
+  blockWindowSize: number
+  minBlockToSync?: number
 }
 
 export type HistorySyncer = {
@@ -34,4 +34,4 @@ export type SaveHistory = (action: HistoryActions) => void
 
 export type SyncHistoryParameters = (EvmSyncParameters | BtcSyncParameters) & {
   l2ChainId: Chain['id']
-} & HistoryState
+} & { depositsSyncInfo: SyncInfo; withdrawalsSyncInfo: SyncInfo }

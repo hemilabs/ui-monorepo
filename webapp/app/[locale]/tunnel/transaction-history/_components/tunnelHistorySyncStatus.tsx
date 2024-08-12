@@ -52,13 +52,10 @@ const Spinner = () => (
 
 export const TunnelHistorySyncStatus = function () {
   const { isConnected } = useAccount()
-  const { depositSyncStatus, withdrawSyncStatus } = useTunnelHistory()
+  const { syncStatus } = useTunnelHistory()
   const t = useTranslations('transaction-history')
 
-  if (
-    ![depositSyncStatus, withdrawSyncStatus].includes('syncing') ||
-    !isConnected
-  ) {
+  if (syncStatus !== 'syncing' || !isConnected) {
     return <div />
   }
   return (

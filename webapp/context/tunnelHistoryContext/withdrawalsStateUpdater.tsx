@@ -1,4 +1,4 @@
-import { CrossChainMessenger, MessageStatus } from '@eth-optimism/sdk'
+import { MessageStatus } from '@eth-optimism/sdk'
 import { QueryClient, useQuery } from '@tanstack/react-query'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
@@ -6,6 +6,7 @@ import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupport
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
+import { CrossChainMessengerProxy } from 'utils/crossChainMessenger'
 import { useAccount } from 'wagmi'
 
 import { getBlock, getTransactionReceipt } from './operations'
@@ -71,7 +72,7 @@ const pollUpdateWithdrawal = async ({
   updateWithdrawal,
   withdrawal,
 }: {
-  crossChainMessenger: CrossChainMessenger
+  crossChainMessenger: CrossChainMessengerProxy
   queryClient: QueryClient
   updateWithdrawal: (
     w: EvmWithdrawOperation,
@@ -141,10 +142,11 @@ const WatchEvmWithdrawal = function ({
     queryFn,
     queryKey: [
       'withdrawaStateUpdater',
-      withdrawal.chainId,
+      withdrawal.l2ChainId ?? hemi.id,
       withdrawal.transactionHash,
     ],
-    refetchInterval: refetchInterval[hemi.id][withdrawal.status],
+    refetchInterval:
+      refetchInterval[withdrawal.l2ChainId ?? hemi.id][withdrawal.status],
   })
 
   return null

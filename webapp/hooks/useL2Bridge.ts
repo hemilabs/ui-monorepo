@@ -2,7 +2,6 @@ import {
   MessageDirection,
   MessageReceipt,
   MessageStatus,
-  type CrossChainMessenger as CrossChainMessengerType,
   type SignerOrProviderLike,
 } from '@eth-optimism/sdk'
 import {
@@ -14,14 +13,17 @@ import { hemi } from 'app/networks'
 import { useJsonRpcProvider, useWeb3Provider } from 'hooks/useEthersSigner'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { Token } from 'types/token'
-import { getCrossChainMessenger } from 'utils/crossChainMessenger'
+import {
+  createCrossChainMessenger,
+  type CrossChainMessengerProxy,
+} from 'utils/crossChainMessenger'
 import { type Chain, type Hash, isHash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
 
 type GasEstimationOperations = Extract<
-  keyof CrossChainMessengerType['estimateGas'],
+  keyof CrossChainMessengerProxy['estimateGas'],
   | 'depositERC20'
   | 'depositETH'
   | 'finalizeMessage'
@@ -54,7 +56,8 @@ const useCrossChainMessenger = function ({
   const { data: crossChainMessenger, status: crossChainMessengerStatus } =
     useQuery({
       enabled: isConnectedToCorrectChain && !!l1Signer && !!l2Signer,
-      queryFn: () => getCrossChainMessenger({ l1ChainId, l1Signer, l2Signer }),
+      queryFn: () =>
+        createCrossChainMessenger({ l1ChainId, l1Signer, l2Signer }),
       queryKey: [l1ChainId, walletConnectedToChain],
     })
 
@@ -65,8 +68,8 @@ const useCrossChainMessenger = function ({
 }
 
 type UseEstimateGasFees<T extends GasEstimationOperations> = {
-  args: Parameters<CrossChainMessengerType['estimateGas'][T]>
-  crossChainMessenger: CrossChainMessengerType
+  args: Parameters<CrossChainMessengerProxy['estimateGas'][T]>
+  crossChainMessenger: CrossChainMessengerProxy
   crossChainMessengerStatus: string
   enabled: boolean
   operation: T
@@ -180,7 +183,7 @@ export const useConnectedChainCrossChainMessenger = function (
 }
 
 type UseGetTransactionMessageStatus = {
-  crossChainMessenger: CrossChainMessengerType
+  crossChainMessenger: CrossChainMessengerProxy
   crossChainMessengerStatus: 'error' | 'pending' | 'success'
   direction?: MessageDirection
   enabled?: boolean

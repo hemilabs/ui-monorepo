@@ -8,13 +8,12 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
 import { EvmWithdrawOperation } from 'types/tunnel'
 import { CrossChainMessengerProxy } from 'utils/crossChainMessenger'
+import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { useAccount } from 'wagmi'
-
-import { getBlock, getTransactionReceipt } from './operations'
 
 const queue = new PQueue({ concurrency: 3 })
 
-// https://github.com/BVM-priv/ui-monorepo/issues/158
+// https://github.com/hemilabs/ui-monorepo/issues/158
 const l1ChainId = evmRemoteNetworks[0].id
 
 const getSeconds = (seconds: number) => seconds * 1000
@@ -52,7 +51,11 @@ const getBlockTimestamp = (withdrawal: EvmWithdrawOperation) =>
     if (withdrawal.timestamp) {
       return [blockNumber, withdrawal.timestamp]
     }
-    const { timestamp } = await getBlock(blockNumber, hemi.id)
+    const { timestamp } = await getEvmBlock(
+      blockNumber,
+      // See https://github.com/hemilabs/ui-monorepo/issues/462
+      withdrawal.l2ChainId ?? hemi.id,
+    )
     return [blockNumber, Number(timestamp)]
   }
 
@@ -60,10 +63,13 @@ const getTransactionBlockNumber = function (withdrawal: EvmWithdrawOperation) {
   if (withdrawal.blockNumber) {
     return Promise.resolve(withdrawal.blockNumber)
   }
-  return getTransactionReceipt(withdrawal.transactionHash, hemi.id).then(
-    transactionReceipt =>
-      // return undefined if TX is not found - might have not been confirmed yet
-      transactionReceipt ? Number(transactionReceipt.blockNumber) : undefined,
+  return getEvmTransactionReceipt(
+    withdrawal.transactionHash,
+    // See https://github.com/hemilabs/ui-monorepo/issues/462
+    withdrawal.l2ChainId ?? hemi.id,
+  ).then(transactionReceipt =>
+    // return undefined if TX is not found - might have not been confirmed yet
+    transactionReceipt ? Number(transactionReceipt.blockNumber) : undefined,
   )
 }
 

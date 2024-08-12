@@ -6,11 +6,11 @@ import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupport
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
+import { EvmWithdrawOperation } from 'types/tunnel'
 import { CrossChainMessengerProxy } from 'utils/crossChainMessenger'
 import { useAccount } from 'wagmi'
 
 import { getBlock, getTransactionReceipt } from './operations'
-import { EvmWithdrawOperation } from './types'
 
 const queue = new PQueue({ concurrency: 3 })
 

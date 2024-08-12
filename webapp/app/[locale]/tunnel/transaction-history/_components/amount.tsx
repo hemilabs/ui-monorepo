@@ -1,10 +1,10 @@
-import { TunnelOperation } from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import Big from 'big.js'
 import { ChainLogo } from 'components/chainLogo'
 import { TokenLogo } from 'components/tokenLogo'
 import smartRound from 'smart-round'
 import { Token } from 'types/token'
+import { TunnelOperation } from 'types/tunnel'
 import { Tooltip } from 'ui-common/components/tooltip'
 import {
   getL2TokenByBridgedAddress,

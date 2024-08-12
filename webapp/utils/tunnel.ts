@@ -1,12 +1,12 @@
 import { MessageDirection } from '@eth-optimism/sdk'
+import { bitcoin } from 'app/networks'
 import {
   BtcDepositOperation,
   DepositTunnelOperation,
   EvmDepositOperation,
   TunnelOperation,
   WithdrawTunnelOperation,
-} from 'app/context/tunnelHistoryContext/types'
-import { bitcoin } from 'app/networks'
+} from 'types/tunnel'
 
 export const isDeposit = (
   operation: TunnelOperation,

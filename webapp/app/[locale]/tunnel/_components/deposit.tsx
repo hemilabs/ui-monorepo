@@ -4,10 +4,6 @@ import { MessageDirection } from '@eth-optimism/sdk'
 import { bitcoin, isEvmNetwork } from 'app/networks'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
-import {
-  BtcDepositStatus,
-  EvmDepositOperation,
-} from 'context/tunnelHistoryContext/types'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
@@ -20,6 +16,7 @@ import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken, type Token } from 'types/token'
+import { BtcDepositStatus, EvmDepositOperation } from 'types/tunnel'
 import { Button } from 'ui-common/components/button'
 import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'

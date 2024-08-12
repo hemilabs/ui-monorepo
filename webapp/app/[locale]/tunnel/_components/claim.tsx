@@ -1,8 +1,4 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import {
-  BtcDepositStatus,
-  EvmWithdrawOperation,
-} from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useClaimBitcoinDeposit } from 'hooks/useBtcTunnel'
@@ -12,6 +8,7 @@ import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
+import { BtcDepositStatus, EvmWithdrawOperation } from 'types/tunnel'
 import { Button } from 'ui-common/components/button'
 import { getFormattedValue } from 'utils/format'
 import { getTokenByAddress } from 'utils/token'

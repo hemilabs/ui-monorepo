@@ -5,11 +5,8 @@ import { bitcoin, hemi } from 'app/networks'
 import { BtcChain } from 'btc-wallet/chains'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { Satoshis } from 'btc-wallet/unisat'
-import {
-  BtcDepositOperation,
-  BtcDepositStatus,
-} from 'context/tunnelHistoryContext/types'
 import { useCallback } from 'react'
+import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import {
   claimBtcDeposit,
   initiateBtcDeposit,

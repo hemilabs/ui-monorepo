@@ -1,9 +1,9 @@
+import { type RemoteChain } from 'app/networks'
 import {
   type DepositTunnelOperation,
   type TunnelOperation,
   type WithdrawTunnelOperation,
-} from 'app/context/tunnelHistoryContext/types'
-import { type RemoteChain } from 'app/networks'
+} from 'types/tunnel'
 
 export type StorageChain<T extends TunnelOperation = TunnelOperation> = {
   chainId: RemoteChain['id']

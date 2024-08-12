@@ -6,13 +6,12 @@ import { useSyncHistory } from 'hooks/useSyncHistory'
 import { type HistoryReducerState } from 'hooks/useSyncHistory/types'
 import dynamic from 'next/dynamic'
 import { createContext, useMemo, ReactNode } from 'react'
-import { useAccount } from 'wagmi'
-
 import {
   DepositTunnelOperation,
   EvmWithdrawOperation,
   WithdrawTunnelOperation,
-} from './types'
+} from 'types/tunnel'
+import { useAccount } from 'wagmi'
 
 const BitcoinDepositsStatusUpdater = dynamic(
   () =>

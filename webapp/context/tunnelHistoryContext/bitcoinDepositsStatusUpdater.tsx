@@ -1,12 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import {
-  BtcDepositOperation,
-  BtcDepositStatus,
-} from 'context/tunnelHistoryContext/types'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
+import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { getTransactionReceipt } from 'utils/btcApi'
 import { getHemiStatusOfBtcDeposit } from 'utils/hemi'
 import { useAccount } from 'wagmi'

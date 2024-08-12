@@ -1,7 +1,6 @@
 'use client'
 
 import { MessageStatus } from '@eth-optimism/sdk'
-import { BtcDepositStatus } from 'app/context/tunnelHistoryContext/types'
 import { featureFlags } from 'app/featureFlags'
 import { isBtcTxHash } from 'btc-wallet/utils/hash'
 import { ConnectWallet } from 'components/connectWallet'
@@ -10,6 +9,7 @@ import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupport
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { Suspense, useEffect } from 'react'
+import { BtcDepositStatus } from 'types/tunnel'
 import { isHash } from 'viem'
 import { useAccount } from 'wagmi'
 

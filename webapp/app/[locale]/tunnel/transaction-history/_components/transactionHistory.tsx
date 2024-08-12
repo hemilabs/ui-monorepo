@@ -9,12 +9,6 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import {
-  BtcDepositStatus,
-  EvmWithdrawOperation,
-  DepositTunnelOperation,
-  TunnelOperation,
-} from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
@@ -24,6 +18,12 @@ import { useTranslations } from 'next-intl'
 import { parseAsString, useQueryState } from 'nuqs'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import {
+  BtcDepositStatus,
+  EvmWithdrawOperation,
+  DepositTunnelOperation,
+  TunnelOperation,
+} from 'types/tunnel'
 import { Card } from 'ui-common/components/card'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { isBtcDeposit, isDeposit, isWithdraw } from 'utils/tunnel'

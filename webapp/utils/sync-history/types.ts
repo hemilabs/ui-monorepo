@@ -1,7 +1,7 @@
 import { BtcChain } from 'btc-wallet/chains'
 import { type Account } from 'btc-wallet/unisat'
-import { TunnelOperation } from 'context/tunnelHistoryContext/types'
 import { HistoryActions, type StorageChain } from 'hooks/useSyncHistory/types'
+import { TunnelOperation } from 'types/tunnel'
 import { type Address, type Chain } from 'viem'
 
 export type SyncInfo = Pick<

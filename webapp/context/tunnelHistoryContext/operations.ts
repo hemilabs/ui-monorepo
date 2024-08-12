@@ -6,14 +6,13 @@ import {
 import { evmWalletConfig } from 'app/context/evmWalletContext'
 import pThrottle from 'p-throttle'
 import pMemoize from 'promise-mem'
-import { type Address, type Chain, type Hash } from 'viem'
-
 import {
   TunnelOperation,
   RawTunnelOperation,
   EvmDepositOperation,
   EvmWithdrawOperation,
-} from './types'
+} from 'types/tunnel'
+import { type Address, type Chain, type Hash } from 'viem'
 
 const throttlingOptions = { interval: 2000, limit: 1 }
 

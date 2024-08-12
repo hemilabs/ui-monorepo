@@ -1,16 +1,16 @@
 import { type TokenBridgeMessage } from '@eth-optimism/sdk'
 import { JsonRpcProvider } from '@ethersproject/providers'
-import {
-  EvmDepositOperation,
-  EvmWithdrawOperation,
-  TunnelOperation,
-} from 'context/tunnelHistoryContext/types'
 import { Debugger } from 'debug'
 import pAll from 'p-all'
 import {
   createSlidingBlockWindow,
   CreateSlidingBlockWindow,
 } from 'sliding-block-window/src'
+import {
+  EvmDepositOperation,
+  EvmWithdrawOperation,
+  TunnelOperation,
+} from 'types/tunnel'
 import {
   createCrossChainMessenger,
   type CrossChainMessengerProxy,

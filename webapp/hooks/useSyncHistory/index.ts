@@ -1,12 +1,12 @@
 import { remoteNetworks, hemi, type RemoteChain } from 'app/networks'
+import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
+import debounce from 'lodash/debounce'
+import { useEffect, useReducer, useState } from 'react'
 import {
   type DepositTunnelOperation,
   type TunnelOperation,
   type WithdrawTunnelOperation,
-} from 'context/tunnelHistoryContext/types'
-import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
-import debounce from 'lodash/debounce'
-import { useEffect, useReducer, useState } from 'react'
+} from 'types/tunnel'
 import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
 import { type Address, type Chain } from 'viem'
 import { useAccount } from 'wagmi'

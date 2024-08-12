@@ -1,9 +1,6 @@
-import {
-  BtcDepositStatus,
-  DepositTunnelOperation,
-} from 'context/tunnelHistoryContext/types'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
+import { BtcDepositStatus, DepositTunnelOperation } from 'types/tunnel'
 import { isEvmDeposit } from 'utils/tunnel'
 
 import { CallToAction } from './callToAction'

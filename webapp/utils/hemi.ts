@@ -1,11 +1,8 @@
 import { WalletConnector } from 'btc-wallet/connectors/types'
 import { Account as BtcAccount, Satoshis } from 'btc-wallet/unisat'
-import {
-  BtcDepositOperation,
-  BtcDepositStatus,
-} from 'context/tunnelHistoryContext/types'
 import { HemiWalletClient, type HemiPublicClient } from 'hooks/useHemiClient'
 import pMemoize from 'promise-mem'
+import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { type Address } from 'viem'
 
 // Many vaults will likely share the same owner, so this can be memoized

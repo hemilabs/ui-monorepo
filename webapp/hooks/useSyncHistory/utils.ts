@@ -1,5 +1,5 @@
 import { type RemoteChain } from 'app/networks'
-import { type TunnelOperation } from 'context/tunnelHistoryContext/types'
+import { type TunnelOperation } from 'types/tunnel'
 import { type Address, type Chain } from 'viem'
 
 import {

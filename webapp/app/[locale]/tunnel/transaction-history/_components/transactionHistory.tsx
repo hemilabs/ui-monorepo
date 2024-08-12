@@ -136,7 +136,9 @@ const columnsBuilder = (
       <ChainComponent
         chainId={
           // See https://github.com/BVM-priv/ui-monorepo/issues/376
-          isWithdraw(row.original) ? hemi.id : row.original.chainId ?? l1ChainId
+          isWithdraw(row.original)
+            ? hemi.id
+            : row.original.l1ChainId ?? l1ChainId
         }
       />
     ),
@@ -147,8 +149,10 @@ const columnsBuilder = (
     cell: ({ row }) => (
       <ChainComponent
         chainId={
-          // See https://github.com/BVM-priv/ui-monorepo/issues/376
-          isDeposit(row.original) ? hemi.id : row.original.chainId ?? l1ChainId
+          // See https://github.com/hemilabs/ui-monorepo/issues/376
+          isDeposit(row.original)
+            ? row.original.l2ChainId ?? hemi.id
+            : row.original.l1ChainId ?? l1ChainId
         }
       />
     ),
@@ -159,10 +163,10 @@ const columnsBuilder = (
     accessorKey: 'transactionHash',
     cell({ row }) {
       const { transactionHash } = row.original
-      // See https://github.com/BVM-priv/ui-monorepo/issues/376
+      // See https://github.com/hemilabs/ui-monorepo/issues/376
       const chainId = isWithdraw(row.original)
-        ? hemi.id
-        : row.original.chainId ?? l1ChainId
+        ? row.original.l2ChainId ?? hemi.id
+        : row.original.l1ChainId ?? l1ChainId
       return <TxLink chainId={chainId} txHash={transactionHash} />
     },
     header: () => <Header text={t('column-headers.tx-hash')} />,
@@ -192,8 +196,7 @@ const columnsBuilder = (
 ]
 
 const useTransactionsHistory = function () {
-  const { deposits, depositSyncStatus, withdrawals, withdrawSyncStatus } =
-    useTunnelHistory()
+  const { deposits, syncStatus, withdrawals } = useTunnelHistory()
 
   const data = useMemo(
     () =>
@@ -213,8 +216,7 @@ const useTransactionsHistory = function () {
   )
   return {
     data,
-    loading:
-      depositSyncStatus === 'syncing' || withdrawSyncStatus === 'syncing',
+    loading: syncStatus === 'syncing',
   }
 }
 

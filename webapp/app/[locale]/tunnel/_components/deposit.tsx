@@ -141,7 +141,7 @@ type BtcDepositProps = {
 
 const BtcDeposit = function ({ state }: BtcDepositProps) {
   const deposits = useBtcDeposits()
-  const { updateBtcDeposit } = useTunnelHistory()
+  const { updateDeposit } = useTunnelHistory()
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
   const [depositAmount, setDepositAmount] = useState('0')
   const [isDepositing, setIsDepositing] = useState(false)
@@ -152,6 +152,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     fromToken,
     resetStateAfterOperation,
     savePartialDeposit,
+    toNetworkId,
     updateFromInput,
   } = state
 
@@ -193,7 +194,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
       const deposit = deposits.find(
         d => d.transactionHash === depositReceipt.txId,
       )
-      updateBtcDeposit(deposit, {
+      updateDeposit(deposit, {
         blockNumber: depositReceipt.status.blockHeight,
         status: BtcDepositStatus.TX_CONFIRMED,
         timestamp: depositReceipt.status.blockTime,
@@ -205,7 +206,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
       deposits,
       resetFormState,
       savePartialDeposit,
-      updateBtcDeposit,
+      updateDeposit,
     ],
   )
 
@@ -244,6 +245,8 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     setIsDepositing(true)
     depositBitcoin({
       hemiAddress: evmAddress,
+      l1ChainId: fromNetworkId,
+      l2ChainId: toNetworkId,
       satoshis: Number(parseUnits(fromInput, fromToken.decimals)),
     })
   }
@@ -319,7 +322,7 @@ type EvmDepositProps = {
 }
 
 const EvmDeposit = function ({ state }: EvmDepositProps) {
-  const { addEvmDepositToTunnelHistory } = useTunnelHistory()
+  const { addDepositToTunnelHistory } = useTunnelHistory()
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
   const [depositAmount, setDepositAmount] = useState('0')
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
@@ -337,6 +340,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     fromToken,
     resetStateAfterOperation,
     toToken,
+    toNetworkId,
     updateFromInput,
   } = state
 
@@ -415,31 +419,33 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     function () {
       resetFormState()
       const isNative = isNativeToken(fromToken)
-      // Handling of this error is needed https://github.com/hemilabsv/ui-monorepo/issues/322
+      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
       // eslint-disable-next-line promise/catch-or-return
       addTimestampToOperation<EvmDepositOperation>(
         {
           amount: parseUnits(fromInput, fromToken.decimals).toString(),
           blockNumber: Number(depositReceipt.blockNumber),
-          chainId: fromNetworkId,
           direction: MessageDirection.L1_TO_L2,
           from: depositReceipt.from,
+          l1ChainId: fromNetworkId,
           l1Token: isNative ? zeroAddress : fromToken.address,
+          l2ChainId: toNetworkId,
           l2Token: isNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
           // "to" field uses the same address as from, which is user's address
           to: depositReceipt.from,
           transactionHash: depositReceipt.transactionHash,
         },
         fromToken.chainId,
-      ).then(addEvmDepositToTunnelHistory)
+      ).then(addDepositToTunnelHistory)
     },
     [
-      addEvmDepositToTunnelHistory,
+      addDepositToTunnelHistory,
       depositReceipt,
       fromInput,
       fromNetworkId,
       fromToken,
       resetFormState,
+      toNetworkId,
       toToken,
     ],
   )

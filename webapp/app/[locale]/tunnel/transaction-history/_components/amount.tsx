@@ -67,8 +67,9 @@ export const Amount = function ({ operation }: Props) {
 
   const tokenAddress = (isDeposit(operation) ? l1Token : l2Token) as Address
   const chainId = isDeposit(operation)
-    ? operation.chainId ?? evmRemoteNetworks[0].id // See https://github.com/BVM-priv/ui-monorepo/issues/376
-    : hemi.id
+    ? // See https://github.com/hemilabs/ui-monorepo/issues/376
+      operation.l1ChainId ?? evmRemoteNetworks[0].id
+    : operation.l2ChainId ?? hemi.id
   const token =
     getTokenByAddress(tokenAddress, chainId) ??
     getL2TokenByBridgedAddress(tokenAddress, chainId) ??

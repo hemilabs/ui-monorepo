@@ -82,6 +82,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     fromNetworkId,
     fromToken,
     resetStateAfterOperation,
+    toNetworkId,
     updateFromInput,
   } = state
 
@@ -159,7 +160,11 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     beforeTransaction()
     setAmountWithdrawn(fromInput)
     clearWithdrawBitcoinState()
-    withdrawBitcoin(parseUnits(fromInput, fromToken.decimals))
+    withdrawBitcoin({
+      amount: parseUnits(fromInput, fromToken.decimals),
+      l1ChainId: toNetworkId,
+      l2ChainId: fromNetworkId,
+    })
     setIsWithdrawing(true)
   }
 
@@ -319,6 +324,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     fromInput,
     fromToken,
     l1ChainId: toNetworkId,
+    l2ChainId: fromNetworkId,
     toToken,
   })
 

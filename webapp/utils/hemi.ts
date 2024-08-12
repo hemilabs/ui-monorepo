@@ -12,7 +12,7 @@ import { type Address } from 'viem'
 const getVaultOwnerByBtcAddress = pMemoize(
   (hemiClient: HemiPublicClient, deposit: BtcDepositOperation) =>
     hemiClient.getVaultOwnerByBTCAddress({ btcAddress: deposit.to }),
-  { resolver: (_, deposit) => `${deposit.chainId}_${deposit.to}` },
+  { resolver: (_, deposit) => `${deposit.l1ChainId}_${deposit.to}` },
 )
 
 // Many deposits will likely share a vault, so this can be memoized

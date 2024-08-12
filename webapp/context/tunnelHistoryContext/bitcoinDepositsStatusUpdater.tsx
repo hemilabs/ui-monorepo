@@ -20,7 +20,7 @@ const WatchBitcoinBlockchain = function ({
 }: {
   deposit: BtcDepositOperation
 }) {
-  const { updateBtcDeposit } = useTunnelHistory()
+  const { updateDeposit } = useTunnelHistory()
   useQuery({
     // shouldn't be needed, but let's be safe and avoid extra requests
     // if somehow deposits that are not pending end up here
@@ -29,14 +29,14 @@ const WatchBitcoinBlockchain = function ({
       bitcoinQueue.add(() =>
         getTransactionReceipt(deposit.transactionHash).then(function (receipt) {
           if (receipt.status.confirmed) {
-            updateBtcDeposit(deposit, { status: BtcDepositStatus.TX_CONFIRMED })
+            updateDeposit(deposit, { status: BtcDepositStatus.TX_CONFIRMED })
           }
           return receipt.status.confirmed
         }),
       ),
     queryKey: [
       'btc-deposit-tx-status',
-      deposit.chainId,
+      deposit.l1ChainId,
       deposit.transactionHash,
     ],
     // every 30 seconds - once status changes, this component won't render anymore
@@ -52,7 +52,7 @@ const WatchHemiBlockchain = function ({
   deposit: BtcDepositOperation
 }) {
   const hemiClient = useHemiClient()
-  const { updateBtcDeposit } = useTunnelHistory()
+  const { updateDeposit } = useTunnelHistory()
 
   useQuery({
     // shouldn't be needed, but let's be safe and avoid extra requests
@@ -66,7 +66,7 @@ const WatchHemiBlockchain = function ({
         getHemiStatusOfBtcDeposit(hemiClient, deposit).then(
           function (newStatus) {
             if (deposit.status !== newStatus) {
-              updateBtcDeposit(deposit, { status: newStatus })
+              updateDeposit(deposit, { status: newStatus })
             }
             return newStatus
           },

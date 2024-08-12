@@ -130,7 +130,7 @@ export const BtcClaim = function ({
     overEstimation: 1.5,
   })
   const t = useTranslations()
-  const { updateBtcDeposit } = useTunnelHistory()
+  const { updateDeposit } = useTunnelHistory()
   const { txHash } = useTunnelOperation()
 
   const [isClaiming, setIsClaiming] = useState(false)
@@ -151,12 +151,12 @@ export const BtcClaim = function ({
       if (deposit.status !== BtcDepositStatus.BTC_READY_CLAIM) {
         return
       }
-      updateBtcDeposit(deposit, { status: BtcDepositStatus.BTC_DEPOSITED })
+      updateDeposit(deposit, { status: BtcDepositStatus.BTC_DEPOSITED })
       savePartialDeposit({
         claimDepositTxHash: claimBitcoinDepositReceipt.transactionHash,
       })
     },
-    [claimBitcoinDepositReceipt, deposit, savePartialDeposit, updateBtcDeposit],
+    [claimBitcoinDepositReceipt, deposit, savePartialDeposit, updateDeposit],
   )
 
   useEffect(
@@ -191,7 +191,7 @@ export const BtcClaim = function ({
     setIsClaiming(true)
   }
 
-  const depositedToken = getTokenByAddress(deposit.l1Token, deposit.chainId)
+  const depositedToken = getTokenByAddress(deposit.l1Token, deposit.l1ChainId)
 
   const getPartialDepositTxList = () => [
     {

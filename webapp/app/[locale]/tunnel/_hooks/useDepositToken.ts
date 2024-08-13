@@ -63,7 +63,7 @@ export const useDepositToken = function ({
   const depositReceiptStatus = depositReceipt?.status
   useEffect(
     function invalidateAllowance() {
-      if (depositReceiptStatus === 'status' || depositReceiptError) {
+      if (depositReceiptStatus === 'success' || depositReceiptError) {
         queryClient.invalidateQueries({ queryKey })
       }
     },

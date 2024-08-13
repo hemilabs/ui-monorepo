@@ -89,18 +89,18 @@ export type CrossChainMessengerProxy = Pick<
   (typeof throttledMethods)[number] | (typeof properties)[number]
 >
 
+// Run up to ${concurrency} async methods (which internally may have many calls) at the same time
+const queue = new PQueue({ concurrency: 3 })
+// and use throttling as some methods may run very fast and many quick calls may hit
+// rate limiting
+const throttle = pThrottle({ interval: 2000, limit: 2 })
+
 // This function creates a CrossChainMessenger and wraps its methods with a throttle
 // shared with all of its methods
 export const createCrossChainMessenger = async function (
   parameters: CrossChainMessengerParameters,
 ): Promise<CrossChainMessengerProxy> {
   const crossChainMessenger = await getCrossChainMessenger(parameters)
-
-  // Run up to 2 async methods (which internally may have many calls) at the same time
-  const queue = new PQueue({ concurrency: 3 })
-  // and use throttling as some methods may run very fast and many quick calls may hit
-  // rate limiting
-  const throttle = pThrottle({ interval: 2000, limit: 2 })
 
   // Can't use a proxy because it doesn't work well with Promises
   // See https://medium.com/@davidcallanan/a-peculiar-promises-and-proxy-bug-that-cost-me-5-hours-javascript-3a11e1fcd713

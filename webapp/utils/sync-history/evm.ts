@@ -179,7 +179,7 @@ export const createEvmSync = function ({
       })
     }
 
-    await createSlidingBlockWindow({
+    return createSlidingBlockWindow({
       initialBlock,
       lastBlock,
       onChange,
@@ -278,7 +278,7 @@ export const createEvmSync = function ({
       })
     }
 
-    await createSlidingBlockWindow({
+    return createSlidingBlockWindow({
       initialBlock,
       lastBlock,
       onChange,

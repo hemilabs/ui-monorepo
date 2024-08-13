@@ -42,8 +42,9 @@ export const SyncHistoryWorker = function ({
       dispatch({ type: 'sync' })
 
       return function () {
-        dispatch({ type: 'reset' })
-
+        if (!workerRef.current) {
+          return
+        }
         setWorkerLoaded(false)
         workerRef.current.removeEventListener(
           'message',
@@ -53,7 +54,7 @@ export const SyncHistoryWorker = function ({
         workerRef.current = null
       }
     },
-    [address, dispatch, l1ChainId, l2ChainId, setWorkerLoaded],
+    [address, dispatch, l1ChainId, l2ChainId, setWorkerLoaded, workerRef],
   )
 
   useEffect(
@@ -101,6 +102,5 @@ export const SyncHistoryWorker = function ({
       workerRef,
     ],
   )
-
   return null
 }

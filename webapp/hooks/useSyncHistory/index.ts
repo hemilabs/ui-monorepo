@@ -22,7 +22,6 @@ import {
   getTunnelHistoryDepositStorageKey,
   getTunnelHistoryWithdrawStorageKey,
   getTunnelHistoryWithdrawStorageKeyFallback,
-  hasFinishedSyncing,
   syncContent,
   updateOperation,
 } from './utils'
@@ -112,7 +111,12 @@ const historyReducer = function (
       return {
         ...state,
         deposits,
-        status: hasFinishedSyncing(state) ? 'finished' : state.status,
+      }
+    }
+    case 'sync-finished': {
+      return {
+        ...state,
+        status: 'finished',
       }
     }
     case 'sync-withdrawals': {
@@ -124,7 +128,6 @@ const historyReducer = function (
       )
       return {
         ...state,
-        status: hasFinishedSyncing(state) ? 'finished' : state.status,
         withdrawals,
       }
     }
@@ -315,8 +318,6 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
     },
     [address, history, l2ChainId, loadedFromLocalStorage, supportedEvmChain],
   )
-
-  // TODO should I need unmount effect telling that I need to idle sync status?
 
   return reducer
 }

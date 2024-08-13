@@ -70,10 +70,11 @@ const createSyncer = function ({
       throw new Error(`Unsupported syncer for L1 chainId ${l1ChainId}`)
   }
 }
-function syncTunnelHistory(parameters: SyncHistoryParameters) {
+async function syncTunnelHistory(parameters: SyncHistoryParameters) {
   const syncer = createSyncer(parameters)
 
-  return syncer.syncHistory()
+  await syncer.syncHistory()
+  worker.postMessage({ type: 'sync-finished' })
 }
 
 // wait for the UI to send chain and address once ready

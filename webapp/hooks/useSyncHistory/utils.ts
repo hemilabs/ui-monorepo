@@ -2,11 +2,7 @@ import { type RemoteChain } from 'app/networks'
 import { type TunnelOperation } from 'types/tunnel'
 import { type Address, type Chain } from 'viem'
 
-import {
-  type HistoryReducerState,
-  type StorageChain,
-  type SyncContentPayload,
-} from './types'
+import { type StorageChain, type SyncContentPayload } from './types'
 
 export const getTunnelHistoryDepositFallbackStorageKey = (
   l1ChainId: RemoteChain['id'],
@@ -98,10 +94,3 @@ export const updateOperation = <T extends TunnelOperation>(
       ),
     }
   })
-// we consider they finished syncing if all deposits/withdrawals have synced to the min block
-export const hasFinishedSyncing = ({
-  deposits,
-  withdrawals,
-}: HistoryReducerState) =>
-  deposits.every(chainDeposits => chainDeposits.hasSyncToMinBlock) &&
-  withdrawals.every(chainWithdrawals => chainWithdrawals.hasSyncToMinBlock)

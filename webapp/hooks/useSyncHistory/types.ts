@@ -46,6 +46,8 @@ export type SyncContentPayload<T extends TunnelOperation> = {
 type SyncDepositsAction = Action<'sync-deposits'> &
   Payload<SyncContentPayload<DepositTunnelOperation>>
 
+type SyncFinished = Action<'sync-finished'> & NoPayload
+
 type SyncWithdrawalsAction = Action<'sync-withdrawals'> &
   Payload<SyncContentPayload<WithdrawTunnelOperation>>
 
@@ -68,6 +70,7 @@ export type HistoryActions =
   | RestoreStateAction
   | SyncAction
   | SyncDepositsAction
+  | SyncFinished
   | SyncWithdrawalsAction
   | UpdateDepositAction
   | UpdateWithdrawAction

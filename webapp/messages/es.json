@@ -12,6 +12,8 @@
     "connect-wallet-to-review": "Conecte su billetera para continuar la operacion.",
     "form": {
       "balance": "Balance",
+      "bitcoin-receiving-address": "Dirección de recepción en Bitcoin",
+      "bitcoin-receiving-address-description": "Recibirá su {symbol} en la dirección de la billetera Bitcoin conectada.",
       "from-network": "Desde la Red",
       "hemi-receiving-address": "Dirección de recepción en Hemi",
       "hemi-receiving-address-description": "Recibirá su {symbol} tunelizado en la dirección de la billetera EVM conectada.",

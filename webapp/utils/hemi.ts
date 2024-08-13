@@ -1,5 +1,5 @@
 import { WalletConnector } from 'btc-wallet/connectors/types'
-import { Satoshis } from 'btc-wallet/unisat'
+import { Account as BtcAccount, Satoshis } from 'btc-wallet/unisat'
 import {
   BtcDepositOperation,
   BtcDepositStatus,
@@ -129,3 +129,25 @@ export const claimBtcDeposit = ({
       txId: deposit.transactionHash,
     })
   })
+
+export const initiateBtcWithdrawal = ({
+  amount,
+  btcAddress,
+  from,
+  hemiClient,
+  hemiWalletClient,
+}: {
+  amount: bigint
+  btcAddress: BtcAccount
+  from: Address
+  hemiClient: HemiPublicClient
+  hemiWalletClient: HemiWalletClient
+}) =>
+  hemiClient.getOwner().then(ownerAddress =>
+    hemiWalletClient.initiateWithdrawal({
+      amount,
+      btcAddress,
+      from,
+      ownerAddress,
+    }),
+  )

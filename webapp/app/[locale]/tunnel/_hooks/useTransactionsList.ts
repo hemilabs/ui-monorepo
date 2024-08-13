@@ -67,6 +67,10 @@ export const useTransactionsList = function ({
   }
 
   if (txHash || (isOperating && !userConfirmationError)) {
+    // operation was successful if tx was confirmed
+    // and status of operation is the expected one (withdrawal flow only)
+    const evmConfirmation = receipt?.status === 'success'
+    const btcConfirmation = receipt?.status.confirmed
     // tx failed for some reason
     if (receiptError) {
       transactionsList.push({
@@ -75,12 +79,7 @@ export const useTransactionsList = function ({
         text: t('common.transaction-status.error'),
         txHash,
       })
-    }
-    // operation was successful if tx was confirmed
-    // and status of operation is the expected one (withdrawal flow only)
-    const evmConfirmation = receipt?.status === 'success'
-    const btcConfirmation = receipt?.status.confirmed
-    if (
+    } else if (
       (evmConfirmation || btcConfirmation) &&
       (expectedWithdrawSuccessfulMessageStatus === undefined ||
         withdrawalMessageStatus >= expectedWithdrawSuccessfulMessageStatus)

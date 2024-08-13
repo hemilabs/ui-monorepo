@@ -6,6 +6,7 @@ import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -61,6 +62,8 @@ const WalletsConnected = dynamic(
   { ssr: false },
 )
 
+const WithdrawBtcGasUnits = BigInt(300_000)
+
 const hasBridgeConfiguration = (token: Token, l1ChainId: RemoteChain['id']) =>
   isNativeToken(token) ||
   token.extensions?.bridgeInfo[l1ChainId].tokenAddress !== undefined
@@ -82,8 +85,14 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     updateFromInput,
   } = state
 
-  const { btcAddress, evmChainId } = useAccounts()
+  const { btcAddress, evmChainId, evmWalletStatus } = useAccounts()
   const fromChain = useChain(fromNetworkId)
+  const estimatedFees = useEstimateFees({
+    chainId: fromNetworkId,
+    enabled: evmWalletStatus === 'connected',
+    gasUnits: WithdrawBtcGasUnits,
+    overEstimation: 1.5,
+  })
   const { balance: bitcoinBalance } = useTokenBalance(fromToken)
   const t = useTranslations()
   const { updateWithdrawal, withdrawals } = useTunnelHistory()
@@ -166,8 +175,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     }) && Big(fromInput).gte(MinBitcoinWithdraw)
 
   const gas = {
-    // TODO GET gas estimation
-    amount: formatUnits(BigInt(0), fromChain?.nativeCurrency.decimals),
+    amount: formatUnits(estimatedFees, fromChain?.nativeCurrency.decimals),
     label: t('common.network-gas-fee', { network: fromChain?.name }),
     symbol: fromChain?.nativeCurrency.symbol,
   }
@@ -201,8 +209,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           setMaxBalanceButton={
             <SetMaxEvmBalance
               fromToken={fromToken}
-              // Fees will be defined once btc withdraw is implemented
-              gas={BigInt(0)}
+              gas={estimatedFees}
               isRunningOperation={isWithdrawing}
               onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
             />

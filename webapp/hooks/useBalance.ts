@@ -7,12 +7,12 @@ export const useNativeTokenBalance = function (
   chainId: EvmToken['chainId'],
   enabled: boolean = true,
 ) {
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
   const { data, refetch, ...rest } = useWagmiBalance({
     address,
     chainId,
     query: {
-      enabled,
+      enabled: isConnected && enabled,
     },
   })
 
@@ -27,10 +27,10 @@ export const useTokenBalance = function (
   token: EvmToken,
   enabled: boolean = true,
 ) {
-  const { address } = useAccount()
+  const { address, isConnected } = useAccount()
   const { data, refetch, ...rest } = useBalanceOf(token.address as Address, {
     args: { account: address, chainId: token.chainId },
-    query: { enabled },
+    query: { enabled: isConnected && enabled },
   })
 
   return {

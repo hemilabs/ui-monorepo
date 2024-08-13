@@ -306,8 +306,12 @@ export const createEvmSync = function ({
     })
 
     return Promise.all([
-      syncDeposits(l1Provider, crossChainMessengerPromise),
-      syncWithdrawals(l2Provider, crossChainMessengerPromise),
+      syncDeposits(l1Provider, crossChainMessengerPromise).then(() =>
+        debug('Deposits sync finished'),
+      ),
+      syncWithdrawals(l2Provider, crossChainMessengerPromise).then(() =>
+        debug('Withdrawals sync finished'),
+      ),
     ]).then(function () {
       debug('Sync process finished')
     })

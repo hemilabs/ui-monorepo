@@ -6,7 +6,6 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useCallback } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken } from 'types/token'
-import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { isNativeToken } from 'utils/token'
 import { type Chain, parseUnits, Hash, zeroAddress } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
@@ -29,9 +28,8 @@ export const useWithdraw = function ({
 }: UseWithdraw) {
   const { address } = useAccount()
   const queryClient = useQueryClient()
-  const { setQueryParams } = useQueryParams()
   const { addWithdrawalToTunnelHistory } = useTunnelHistory()
-  const { txHash } = useTunnelOperation()
+  const { txHash, updateTxHash } = useTunnelOperation()
 
   const withdrawingNative = isNativeToken(fromToken)
 
@@ -50,7 +48,7 @@ export const useWithdraw = function ({
 
   const onSuccess = function (hash: Hash) {
     // add hash to query string
-    setQueryParams({ txHash: hash }, 'push')
+    updateTxHash(hash, { history: 'push' })
     // optimistically add the message status to the cache
     queryClient.setQueryData(
       [MessageDirection.L2_TO_L1, l1ChainId, hash, 'getMessageStatus'],

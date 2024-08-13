@@ -14,12 +14,8 @@ import { hemi } from 'app/networks'
 import { useJsonRpcProvider, useWeb3Provider } from 'hooks/useEthersSigner'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { Token } from 'types/token'
-import {
-  getCrossChainMessenger,
-  getTunnelContracts,
-} from 'utils/crossChainMessenger'
+import { getCrossChainMessenger } from 'utils/crossChainMessenger'
 import { type Chain, type Hash, isHash } from 'viem'
-import { sepolia } from 'viem/chains'
 import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
@@ -329,25 +325,6 @@ export const useDepositErc20Token = function ({
     depositErc20TokenError,
     depositErc20TokenGasFees,
     depositErc20TokenTxHash,
-    // It seems when updating query string and state in the same callback
-    // React renders first the state changes and then the query string change, which may cause an
-    // inconsistent state. For example, assume the following state: { fromNetworkId: sepolia.id, toNetworkId: hemi.id }
-    // and ?operation=deposit. When using the toggle function, we update first the query string, and then we dispatch
-    // an action to update the state. React renders
-    // 1.  { fromNetworkId: hemi.id, toNetworkId: sepolia.id } and ?operation=deposit - This is invalid!!
-    // After this commit
-    // https://github.com/hemilabs/ui-monorepo/commit/47de62ce9538db8880da1ba06d58bd7a584b88d0
-    // this became more evident, causing the app to break (before, it didn't because chainIds were hardcoded in many places).
-    // When toggling the tunnel form (From Deposit to Withdraw), the From Network is set to Hemi Sepolia and the
-    // operation is set to "withdraw" in query string (?operation=withdraw). However, although the query string is set first
-    // React must be batching the operations in some way that the state gets updated first and then the query string.
-    // This causes to send the wrong L1ChainId to the CrossChainMessenger, failing to get the L1 contracts for the bridge
-    // As a workaround, I'm hardcoding here the L1ChainId again (only here - it seems to work fine in other places where the L1ChainId is used
-    // after a user action, and not as part of the render.
-    // This doesn't happen when toggling from Withdraw to Deposit.
-    // This is a workaround until a proper fix is found (which may be moving the operation to the state)
-    // See https://github.com/hemilabs/ui-monorepo/issues/464
-    l1StandardBridgeAddress: getTunnelContracts(sepolia.id).L1StandardBridge,
     resetDepositToken,
     status,
   }

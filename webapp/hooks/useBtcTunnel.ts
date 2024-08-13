@@ -1,5 +1,6 @@
 import { MessageDirection } from '@eth-optimism/sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTunnelOperation } from 'app/[locale]/tunnel/_hooks/useTunnelOperation'
 import { bitcoin, hemi } from 'app/networks'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { Satoshis } from 'btc-wallet/unisat'
@@ -8,7 +9,6 @@ import {
   BtcDepositStatus,
 } from 'context/tunnelHistoryContext/types'
 import { useCallback } from 'react'
-import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { claimBtcDeposit, initiateBtcDeposit } from 'utils/hemi'
 import { getNativeToken } from 'utils/token'
 import { type Address } from 'viem'
@@ -73,7 +73,7 @@ export const useDepositBitcoin = function () {
   const { address, connector } = useBtcAccount()
   const hemiClient = useHemiClient()
   const { addBtcDepositToTunnelHistory } = useTunnelHistory()
-  const { setQueryParams } = useQueryParams()
+  const { updateTxHash } = useTunnelOperation()
   const queryClient = useQueryClient()
 
   const {
@@ -109,7 +109,7 @@ export const useDepositBitcoin = function () {
         to: bitcoinCustodyAddress,
         transactionHash: txHash,
       })
-      setQueryParams({ txHash }, 'push')
+      updateTxHash(txHash, { history: 'push' })
     },
   })
 

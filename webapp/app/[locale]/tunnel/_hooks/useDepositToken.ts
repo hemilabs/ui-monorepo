@@ -3,6 +3,7 @@ import { useApproveToken } from 'hooks/useApproveToken'
 import { useDepositErc20Token } from 'hooks/useL2Bridge'
 import { useEffect } from 'react'
 import { type EvmToken } from 'types/token'
+import { getTunnelContracts } from 'utils/crossChainMessenger'
 import { parseUnits } from 'viem'
 import {
   useAccount,
@@ -32,12 +33,15 @@ export const useDepositToken = function ({
 
   const { address: owner } = useAccount()
 
+  const l1StandardBridgeAddress = getTunnelContracts(
+    token.chainId,
+  ).L1StandardBridge
+
   const {
     depositErc20Token,
     depositErc20TokenError,
     depositErc20TokenGasFees,
     depositErc20TokenTxHash,
-    l1StandardBridgeAddress,
     resetDepositToken,
     status: depositStatus,
   } = useDepositErc20Token({

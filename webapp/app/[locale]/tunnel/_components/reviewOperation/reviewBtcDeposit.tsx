@@ -2,7 +2,6 @@ import { RemoteChain } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
 import { BtcDepositStatus } from 'context/tunnelHistoryContext/types'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
-import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { type ComponentProps, type FormEvent, type ReactNode } from 'react'
 import { Token } from 'types/token'
@@ -61,7 +60,6 @@ export const ReviewBtcDeposit = function ({
   transactionsList,
 }: ReviewBtcDeposit) {
   const deposits = useBtcDeposits()
-  const router = useRouter()
   const t = useTranslations()
   const { operation, txHash } = useTunnelOperation()
 
@@ -80,7 +78,7 @@ export const ReviewBtcDeposit = function ({
       return
     }
     onClose?.()
-    router.back()
+    window.history.back()
   }
 
   const getWaitReadyToClaimStatus = function () {

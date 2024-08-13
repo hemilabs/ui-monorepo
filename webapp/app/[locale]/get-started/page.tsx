@@ -2,10 +2,10 @@
 
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
+import { useQueryState, parseAsStringLiteral } from 'nuqs'
 import { Suspense, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
-import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 
 import { ConfigureNetwork } from './_components/configureNetworks'
 import { QuickStart, profiles, Profile } from './_components/quickStart'
@@ -22,8 +22,10 @@ const isProfileValid = (profile: string): profile is Profile =>
   profiles.includes(profile as Profile)
 
 const QuickStartSection = function () {
-  const { queryParams, setQueryParams } = useQueryParams<{ profile: string }>()
-  const { profile } = queryParams
+  const [profile, setProfile] = useQueryState(
+    'profile',
+    parseAsStringLiteral(profiles),
+  )
   const isValid = isProfileValid(profile)
   const [savedProfileChecked, setSavedProfileChecked] = useState(false)
 
@@ -34,13 +36,13 @@ const QuickStartSection = function () {
       }
       const savedProfile = localStorage.getItem('portal.get-started-profile')
       if (isProfileValid(savedProfile)) {
-        setQueryParams({ profile: savedProfile })
+        setProfile(savedProfile)
       } else {
         setSavedProfileChecked(true)
       }
       return
     },
-    [isValid, savedProfileChecked, setQueryParams, setSavedProfileChecked],
+    [isValid, savedProfileChecked, setProfile, setSavedProfileChecked],
   )
 
   return (

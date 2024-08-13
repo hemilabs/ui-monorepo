@@ -1,7 +1,12 @@
 import { featureFlags } from 'app/featureFlags'
 import { isBtcTxHash, type BtcTxHash } from 'btc-wallet/utils/hash'
+import {
+  useQueryState,
+  parseAsString,
+  parseAsStringLiteral,
+  Options,
+} from 'nuqs'
 import { useEffect } from 'react'
-import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { type Hash, isHash } from 'viem'
 
 import { type Operation } from './useTunnelState'
@@ -20,9 +25,17 @@ const isValidOperation = (value: string): value is Operation =>
 export const useTunnelOperation = function (): {
   operation: Operation
   txHash: BtcTxHash | Hash | undefined
+  updateOperation: (
+    newOperation: (typeof validOperations)[number],
+    options?: Options,
+  ) => void
+  updateTxHash: (newTxHash: string, options?: Options) => void
 } {
-  const { queryParams, removeQueryParams, setQueryParams } = useQueryParams()
-  const { operation, txHash } = queryParams
+  const [operation, setOperation] = useQueryState(
+    'operation',
+    parseAsStringLiteral(validOperations).withDefault('deposit'),
+  )
+  const [txHash, setTxHash] = useQueryState('txHash', parseAsString)
 
   const isValid = isValidOperation(operation)
   const isValidTxHash =
@@ -31,24 +44,20 @@ export const useTunnelOperation = function (): {
   useEffect(
     function updateDefaultParameters() {
       if (!isValid && !txHash) {
-        setQueryParams({ operation: 'deposit' })
+        setOperation('deposit')
       }
       if (!isValidTxHash && txHash) {
-        removeQueryParams('txHash')
+        setTxHash(null)
       }
     },
-    [
-      isValid,
-      isValidTxHash,
-      queryParams,
-      removeQueryParams,
-      setQueryParams,
-      txHash,
-    ],
+    [isValid, isValidTxHash, setOperation, setTxHash, txHash],
   )
 
   return {
     operation: isValid ? operation : undefined,
     txHash: isValidTxHash ? txHash : undefined,
+    updateOperation: (newOperation, options) =>
+      setOperation(newOperation, options),
+    updateTxHash: (newTxHash, options) => setTxHash(newTxHash, options),
   }
 }

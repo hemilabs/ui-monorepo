@@ -21,10 +21,10 @@ import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedCh
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
+import { parseAsString, useQueryState } from 'nuqs'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Card } from 'ui-common/components/card'
-import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { isBtcDeposit, isDeposit, isWithdraw } from 'utils/tunnel'
 import { Chain } from 'viem'
@@ -302,15 +302,16 @@ export const TransactionHistory = function () {
 
   const { width } = useWindowSize()
 
-  const { queryParams, setQueryParams } = useQueryParams<{
-    pageIndex: string
-  }>()
+  const [pageIndexFromUrl, setPageIndexFromUrl] = useQueryState(
+    'pageIndex',
+    parseAsString.withDefault('0'),
+  )
 
   // @ts-expect-error isNaN does accept string, TS error it works
-  const parsedPageIndex = isNaN(queryParams.pageIndex)
+  const parsedPageIndex = isNaN(pageIndexFromUrl)
     ? 0
     : // convert negative numbers to 0
-      Math.max(parseInt(queryParams.pageIndex), 0)
+      Math.max(parseInt(pageIndexFromUrl), 0)
 
   // if pageIndex from the URL exceeds the number of pages available, show the last page
   const pageIndex = Math.min(
@@ -376,9 +377,7 @@ export const TransactionHistory = function () {
           </Card>
           {pageCount > 1 && (
             <Paginator
-              onPageChange={page =>
-                setQueryParams({ pageIndex: page.toString() })
-              }
+              onPageChange={page => setPageIndexFromUrl(page.toString())}
               pageCount={pageCount}
               pageIndex={pageIndex}
               windowSize={width}

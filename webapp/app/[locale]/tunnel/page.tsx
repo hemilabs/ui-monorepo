@@ -10,7 +10,6 @@ import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupport
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { Suspense, useEffect } from 'react'
-import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { isHash } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -20,7 +19,7 @@ import { Prove } from './_components/prove'
 import { View } from './_components/view'
 import { Withdraw } from './_components/withdraw'
 import { useTunnelOperation } from './_hooks/useTunnelOperation'
-import { useTunnelState } from './_hooks/useTunnelState'
+import { useTunnelState, type Operation } from './_hooks/useTunnelState'
 
 const OperationsComponent = {
   claim: Claim,
@@ -53,14 +52,14 @@ const updateOperationQueryParameter = function <
   operation,
   operationByStatus,
   operationToIgnore,
-  setQueryParams,
   status,
+  updateOperation,
 }: {
-  operation: string
-  operationByStatus: Record<T, string>
+  operation: Operation
+  operationByStatus: Record<T, Operation>
   operationToIgnore: string
-  setQueryParams: ReturnType<typeof useQueryParams>['setQueryParams']
   status: T | undefined
+  updateOperation: ReturnType<typeof useTunnelOperation>['updateOperation']
 }) {
   if (operation === operationToIgnore || status === undefined) {
     return
@@ -68,7 +67,7 @@ const updateOperationQueryParameter = function <
   const newOperation = operationByStatus[status]
   if (operation !== newOperation) {
     // auto correct the operation
-    setQueryParams({ operation: newOperation })
+    updateOperation(newOperation)
   }
 }
 
@@ -112,9 +111,8 @@ const Operation = function ({
 
 const Tunnel = function () {
   const deposits = useBtcDeposits()
-  const { setQueryParams } = useQueryParams()
   const { withdrawals } = useTunnelHistory()
-  const { operation, txHash } = useTunnelOperation()
+  const { operation, txHash, updateOperation } = useTunnelOperation()
   const tunnelState = useTunnelState()
 
   const isEvmTx = isHash(txHash)
@@ -146,16 +144,16 @@ const Tunnel = function () {
           operation,
           operationByStatus: EvmOperationByMessageStatus,
           operationToIgnore: 'deposit',
-          setQueryParams,
           status: withdrawalStatus,
+          updateOperation,
         })
       } else {
         updateOperationQueryParameter({
           operation,
           operationByStatus: BtcOperationByStatus,
           operationToIgnore: 'withdraw',
-          setQueryParams,
           status: depositBtcStatus,
+          updateOperation,
         })
       }
     },
@@ -163,9 +161,9 @@ const Tunnel = function () {
       depositBtcStatus,
       isBtcTx,
       isEvmTx,
-      withdrawalStatus,
       operation,
-      setQueryParams,
+      updateOperation,
+      withdrawalStatus,
     ],
   )
 

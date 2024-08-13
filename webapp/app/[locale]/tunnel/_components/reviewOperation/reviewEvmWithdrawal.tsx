@@ -3,7 +3,6 @@ import { evmRemoteNetworks, hemi } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
 import { EvmWithdrawOperation } from 'context/tunnelHistoryContext/types'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -136,7 +135,6 @@ export const ReviewEvmWithdrawal = function ({
   transactionsList = [],
 }: ReviewEvmWithdrawalProps) {
   const { chain } = useAccount()
-  const router = useRouter()
 
   const t = useTranslations()
   const { operation, txHash } = useTunnelOperation()
@@ -205,7 +203,7 @@ export const ReviewEvmWithdrawal = function ({
       return
     }
     onClose?.()
-    router.back()
+    window.history.back()
   }
 
   const feesIcon = <FuelIcon />

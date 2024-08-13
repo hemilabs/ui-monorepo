@@ -11,7 +11,6 @@ import { BtcTransaction } from 'btc-wallet/unisat'
 import { useCallback, useReducer } from 'react'
 import { tokenList } from 'tokenList'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
-import { useQueryParams } from 'ui-common/hooks/useQueryParams'
 import { isNativeToken, getTokenByAddress } from 'utils/token'
 import { type Chain, type Hash, isHash } from 'viem'
 
@@ -227,7 +226,6 @@ export const useTunnelState = function (): TunnelState & {
     payload?: Extract<Actions, { type: K }>['payload'],
   ) => void
 } {
-  const { setQueryParams, removeQueryParams } = useQueryParams()
   const tunnelOperation = useTunnelOperation()
 
   const initial = getDefaultNetworksOrder(tunnelOperation)
@@ -281,11 +279,11 @@ export const useTunnelState = function (): TunnelState & {
     toggleInput: useCallback(
       function () {
         const newOperation = operation === 'deposit' ? 'withdraw' : 'deposit'
-        removeQueryParams('txHash', 'replace')
-        setQueryParams({ operation: newOperation })
+        tunnelOperation.updateTxHash(null)
+        tunnelOperation.updateOperation(newOperation)
         dispatch({ type: 'toggleInput' })
       },
-      [dispatch, operation, removeQueryParams, setQueryParams],
+      [dispatch, operation, tunnelOperation],
     ),
     updateFromInput,
     updateFromNetwork: useCallback(

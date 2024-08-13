@@ -9,11 +9,6 @@ export type SyncInfo = Pick<
   'chunkIndex' | 'content' | 'fromBlock' | 'hasSyncToMinBlock' | 'toBlock'
 >
 
-export type ExtendedSyncInfo = SyncInfo & {
-  blockWindowSize: number
-  minBlockToSync?: number
-}
-
 export type HistorySyncer = {
   syncHistory: () => Promise<void>
 }
@@ -34,4 +29,12 @@ export type SaveHistory = (action: HistoryActions) => void
 
 export type SyncHistoryParameters = (EvmSyncParameters | BtcSyncParameters) & {
   l2ChainId: Chain['id']
-} & { depositsSyncInfo: SyncInfo; withdrawalsSyncInfo: SyncInfo }
+} & {
+  depositsSyncInfo: Omit<SyncInfo, 'content'>
+  withdrawalsSyncInfo: Omit<SyncInfo, 'content'>
+}
+
+export type ExtendedSyncInfo = Omit<SyncInfo, 'content'> & {
+  blockWindowSize: number
+  minBlockToSync?: number
+}

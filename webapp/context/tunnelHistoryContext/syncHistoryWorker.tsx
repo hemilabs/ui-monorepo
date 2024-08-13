@@ -5,6 +5,7 @@ import {
 } from 'hooks/useSyncHistory/types'
 import { type Dispatch, useEffect, useRef, useState } from 'react'
 import { type Address, type Chain } from 'viem'
+import { SyncWebWorker } from 'workers/history'
 
 type Props = {
   address: Address
@@ -21,7 +22,7 @@ export const SyncHistoryWorker = function ({
   l1ChainId,
   l2ChainId,
 }: Props) {
-  const workerRef = useRef<Worker>(null)
+  const workerRef = useRef<SyncWebWorker>(null)
   const [workerLoaded, setWorkerLoaded] = useState(false)
 
   useEffect(
@@ -72,22 +73,22 @@ export const SyncHistoryWorker = function ({
       }
 
       // Send the parameters the worker needs to start working - excluding deposits and withdrawals!
-      const { content: deposits, ...depositSyncInfo } = history.deposits.find(
+      const { content: deposits, ...depositsSyncInfo } = history.deposits.find(
         chainDeposits => chainDeposits.chainId === l1ChainId,
       )
 
-      const { content: withdrawals, ...withdrawSyncInfo } =
+      const { content: withdrawals, ...withdrawalsSyncInfo } =
         history.withdrawals.find(
           chainWithdrawals => chainWithdrawals.chainId === l1ChainId,
         )
 
       workerRef.current.postMessage({
         address,
-        depositSyncInfo,
+        depositsSyncInfo,
         l1ChainId,
         l2ChainId,
         type: 'start',
-        withdrawSyncInfo,
+        withdrawalsSyncInfo,
       })
     },
     [

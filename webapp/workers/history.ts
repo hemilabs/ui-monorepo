@@ -1,5 +1,6 @@
 import { hemi, networks } from 'app/networks'
 import debugConstructor from 'debug'
+import { HistoryActions } from 'hooks/useSyncHistory/types'
 import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
 import { createEvmSync } from 'utils/sync-history/evm'
 import {
@@ -9,8 +10,21 @@ import {
 import { type Address, type Chain } from 'viem'
 import { sepolia } from 'viem/chains'
 
+type EnableDebug = { type: 'enable-debug'; payload: string }
+type StartSyncing = SyncHistoryParameters & { type: 'start' }
+
+type HistoryWorkerEvents = MessageEvent<
+  EnableDebug | HistoryActions | StartSyncing
+>
+
+// Worker is typed with "any", so force type safety for the messages
+// (as in runtime all types are stripped, this will continue to work)
+export type SyncWebWorker = Omit<Worker, 'postMessage'> & {
+  postMessage: (event: HistoryWorkerEvents['data']) => void
+}
+
 // See https://github.com/Microsoft/TypeScript/issues/20595#issuecomment-587297818
-const worker = self as unknown as Worker
+const worker = self as unknown as SyncWebWorker
 
 const createSyncer = function ({
   address,
@@ -40,14 +54,14 @@ const createSyncer = function ({
       return createEvmSync({
         address: address as Address,
         debug,
-        depositSyncInfo: {
+        depositsSyncInfo: {
           ...depositsSyncInfo,
           ...chainConfiguration[l1Chain.id],
         },
         l1Chain,
         l2Chain,
         saveHistory: action => worker.postMessage(action),
-        withdrawSyncInfo: {
+        withdrawalsSyncInfo: {
           ...withdrawalsSyncInfo,
           ...chainConfiguration[l2Chain.id],
         },
@@ -62,12 +76,8 @@ function syncTunnelHistory(parameters: SyncHistoryParameters) {
   return syncer.syncHistory()
 }
 
-type EnableDebug = { type: 'enable-debug'; payload: string }
-type StartSyncing = SyncHistoryParameters & { type: 'start' }
 // wait for the UI to send chain and address once ready
-worker.onmessage = function runWorker(
-  e: MessageEvent<EnableDebug | StartSyncing>,
-) {
+worker.onmessage = function runWorker(e: HistoryWorkerEvents) {
   if (e.data.type === 'start') {
     syncTunnelHistory(e.data)
   }

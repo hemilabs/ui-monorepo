@@ -43,21 +43,21 @@ const toOperation =
 export const createEvmSync = function ({
   address,
   debug,
-  depositSyncInfo,
+  depositsSyncInfo,
   l1Chain,
   l2Chain,
   saveHistory,
-  withdrawSyncInfo,
+  withdrawalsSyncInfo,
 }: Pick<EvmSyncParameters, 'address'> & {
   debug: Debugger
-  depositSyncInfo: ExtendedSyncInfo
+  depositsSyncInfo: ExtendedSyncInfo
   l1Chain: Chain
   l2Chain: Chain
   saveHistory: SaveHistory
-  withdrawSyncInfo: ExtendedSyncInfo
+  withdrawalsSyncInfo: ExtendedSyncInfo
 }) {
   const getBlockNumber = async function (
-    { toBlock }: SyncInfo,
+    toBlock: number,
     provider: JsonRpcProvider,
   ) {
     if (toBlock !== undefined) {
@@ -106,12 +106,12 @@ export const createEvmSync = function ({
     debug('Starting process to sync deposits')
 
     const [lastBlock, crossChainMessenger] = await Promise.all([
-      getBlockNumber(depositSyncInfo, chainProvider),
+      getBlockNumber(depositsSyncInfo.toBlock, chainProvider),
       crossChainMessengerPromise,
     ])
 
     const initialBlock =
-      depositSyncInfo.fromBlock ?? depositSyncInfo.minBlockToSync
+      depositsSyncInfo.fromBlock ?? depositsSyncInfo.minBlockToSync
 
     debug('Syncing deposits between blocks %s and %s', initialBlock, lastBlock)
 
@@ -168,7 +168,7 @@ export const createEvmSync = function ({
         payload: {
           ...getPayload({
             canMove,
-            fromBlock: depositSyncInfo.fromBlock,
+            fromBlock: depositsSyncInfo.fromBlock,
             lastBlock,
             nextState,
           }),
@@ -183,8 +183,8 @@ export const createEvmSync = function ({
       initialBlock,
       lastBlock,
       onChange,
-      windowIndex: depositSyncInfo.chunkIndex,
-      windowSize: depositSyncInfo.blockWindowSize,
+      windowIndex: depositsSyncInfo.chunkIndex,
+      windowSize: depositsSyncInfo.blockWindowSize,
     }).run()
   }
 
@@ -195,12 +195,12 @@ export const createEvmSync = function ({
     debug('Starting process to sync withdrawals')
 
     const [lastBlock, crossChainMessenger] = await Promise.all([
-      getBlockNumber(withdrawSyncInfo, chainProvider),
+      getBlockNumber(withdrawalsSyncInfo.toBlock, chainProvider),
       crossChainMessengerPromise,
     ])
 
     const initialBlock =
-      withdrawSyncInfo.fromBlock ?? withdrawSyncInfo.minBlockToSync ?? 0
+      withdrawalsSyncInfo.fromBlock ?? withdrawalsSyncInfo.minBlockToSync ?? 0
 
     debug(
       'Syncing withdrawals between blocks %s and %s',
@@ -267,7 +267,7 @@ export const createEvmSync = function ({
         payload: {
           ...getPayload({
             canMove,
-            fromBlock: withdrawSyncInfo.fromBlock,
+            fromBlock: withdrawalsSyncInfo.fromBlock,
             lastBlock,
             nextState,
           }),
@@ -282,8 +282,8 @@ export const createEvmSync = function ({
       initialBlock,
       lastBlock,
       onChange,
-      windowIndex: withdrawSyncInfo.chunkIndex,
-      windowSize: withdrawSyncInfo.blockWindowSize,
+      windowIndex: withdrawalsSyncInfo.chunkIndex,
+      windowSize: withdrawalsSyncInfo.blockWindowSize,
     }).run()
   }
 

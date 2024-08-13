@@ -3,6 +3,7 @@ import {
   type SignerOrProviderLike,
 } from '@eth-optimism/sdk'
 import { hemi } from 'app/networks'
+import PQueue from 'p-queue'
 import pThrottle from 'p-throttle'
 import { type Address, type Chain, zeroAddress } from 'viem'
 
@@ -94,7 +95,12 @@ export const createCrossChainMessenger = async function (
   parameters: CrossChainMessengerParameters,
 ): Promise<CrossChainMessengerProxy> {
   const crossChainMessenger = await getCrossChainMessenger(parameters)
-  const throttle = pThrottle({ interval: 1200, limit: 3 })
+
+  // Run up to 2 async methods (which internally may have many calls) at the same time
+  const queue = new PQueue({ concurrency: 3 })
+  // and use throttling as some methods may run very fast and many quick calls may hit
+  // rate limiting
+  const throttle = pThrottle({ interval: 2000, limit: 2 })
 
   // Can't use a proxy because it doesn't work well with Promises
   // See https://medium.com/@davidcallanan/a-peculiar-promises-and-proxy-bug-that-cost-me-5-hours-javascript-3a11e1fcd713
@@ -108,9 +114,15 @@ export const createCrossChainMessenger = async function (
     throttledMethods
       .map(method => [
         method,
-        throttle(crossChainMessenger[method].bind(crossChainMessenger)),
+        throttle((...args) =>
+          queue.add(() =>
+            crossChainMessenger[method].bind(crossChainMessenger)(...args),
+          ),
+        ),
       ])
       .concat(
+        // @ts-expect-error it infers the type of the array above (which are functions)
+        // so properties get rejected. This is expected due to native TS inference for array methods
         properties.map(property => [property, crossChainMessenger[property]]),
       ),
   )

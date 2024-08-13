@@ -151,7 +151,7 @@ export const createEvmSync = function ({
                   }
                 },
             ),
-            { concurrency: 3 },
+            { concurrency: 2 },
           ),
         )
 
@@ -250,7 +250,7 @@ export const createEvmSync = function ({
                   }
                 },
             ),
-            { concurrency: 3 },
+            { concurrency: 2 },
           ),
         )
 

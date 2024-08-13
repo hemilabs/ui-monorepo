@@ -11,7 +11,7 @@ import { CrossChainMessengerProxy } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { useAccount } from 'wagmi'
 
-const queue = new PQueue({ concurrency: 3 })
+const queue = new PQueue({ concurrency: 2 })
 
 // https://github.com/hemilabs/ui-monorepo/issues/158
 const l1ChainId = evmRemoteNetworks[0].id

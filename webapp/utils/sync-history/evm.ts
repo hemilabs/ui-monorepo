@@ -1,6 +1,5 @@
 import { type TokenBridgeMessage } from '@eth-optimism/sdk'
 import { JsonRpcProvider } from '@ethersproject/providers'
-import { Debugger } from 'debug'
 import pAll from 'p-all'
 import {
   createSlidingBlockWindow,
@@ -20,11 +19,7 @@ import { createPublicProvider } from 'utils/providers'
 import { type Chain } from 'viem'
 
 import { getPayload } from './common'
-import {
-  type EvmSyncParameters,
-  type ExtendedSyncInfo,
-  type SaveHistory,
-} from './types'
+import { type HistorySyncer } from './types'
 
 const toOperation =
   <T extends TunnelOperation>(l1ChainId: Chain['id'], l2ChainId: Chain['id']) =>
@@ -48,14 +43,7 @@ export const createEvmSync = function ({
   l2Chain,
   saveHistory,
   withdrawalsSyncInfo,
-}: Pick<EvmSyncParameters, 'address'> & {
-  debug: Debugger
-  depositsSyncInfo: ExtendedSyncInfo
-  l1Chain: Chain
-  l2Chain: Chain
-  saveHistory: SaveHistory
-  withdrawalsSyncInfo: ExtendedSyncInfo
-}) {
+}: HistorySyncer) {
   const getBlockNumber = async function (
     toBlock: number,
     provider: JsonRpcProvider,

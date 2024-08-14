@@ -3,10 +3,7 @@ import debugConstructor from 'debug'
 import { HistoryActions } from 'hooks/useSyncHistory/types'
 import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
 import { createEvmSync } from 'utils/sync-history/evm'
-import {
-  type HistorySyncer,
-  type SyncHistoryParameters,
-} from 'utils/sync-history/types'
+import { type SyncHistoryParameters } from 'utils/sync-history/types'
 import { type Address, type Chain } from 'viem'
 import { sepolia } from 'viem/chains'
 
@@ -32,7 +29,7 @@ const createSyncer = function ({
   l1ChainId,
   l2ChainId,
   withdrawalsSyncInfo,
-}: SyncHistoryParameters): HistorySyncer {
+}: SyncHistoryParameters) {
   const l1Chain = networks.find(n => n.id === l1ChainId)
   // L2 are always EVM
   const l2Chain = networks.find(n => n.id === l2ChainId) as Chain

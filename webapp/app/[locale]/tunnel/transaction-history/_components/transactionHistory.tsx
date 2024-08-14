@@ -135,7 +135,7 @@ const columnsBuilder = (
     cell: ({ row }) => (
       <ChainComponent
         chainId={
-          // See https://github.com/BVM-priv/ui-monorepo/issues/376
+          // See https://github.com/hemilabs/ui-monorepo/issues/376
           isWithdraw(row.original)
             ? hemi.id
             : row.original.l1ChainId ?? l1ChainId
@@ -279,7 +279,7 @@ const Body = function ({
 }
 
 export const TransactionHistory = function () {
-  // See https://github.com/BVM-priv/ui-monorepo/issues/158
+  // See https://github.com/hemilabs/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id
 
   const { status } = useAccount()

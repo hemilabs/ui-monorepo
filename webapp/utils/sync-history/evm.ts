@@ -250,6 +250,8 @@ export const createEvmSync = function ({
   }
 
   const syncHistory = function () {
+    // EVM chains use Ethers providers because that's what
+    // the cross-chain messenger expects
     debug('Creating providers')
     const l1Provider = createPublicProvider(
       l1Chain.rpcUrls.default.http[0],

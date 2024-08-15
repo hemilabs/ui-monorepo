@@ -65,7 +65,7 @@ export const SyncHistoryWorker = function ({
       setWorkerLoaded(true)
 
       if (process.env.NEXT_PUBLIC_WORKERS_DEBUG_ENABLE === 'true') {
-        // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
+        // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
         const debugString = localStorage.getItem('debug') ?? '*'
         workerRef.current.postMessage({
           payload: debugString,

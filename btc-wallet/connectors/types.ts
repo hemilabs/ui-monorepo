@@ -15,8 +15,8 @@ export type WalletConnector = {
   isInstalled: () => boolean
   name: string
   onAccountsChanged: (handler: (account: Account[]) => void) => () => void
-  onNetworkChanged: (
-    handler: (network: BtcSupportedNetworks) => void,
+  onChainChanged: (
+    handler: (args: { network: BtcSupportedNetworks }) => void,
   ) => () => void
   sendBitcoin: (
     to: Account,

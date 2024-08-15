@@ -11,7 +11,7 @@ export type BtcTransaction = string
 
 interface EventMap {
   accountsChanged: (accounts: Account[]) => void
-  networkChanged: (network: BtcSupportedNetworks) => void
+  chainChanged: (args: { network: BtcSupportedNetworks }) => void
 }
 
 // See https://docs.unisat.io/dev/unisat-developer-center/unisat-wallet#methods

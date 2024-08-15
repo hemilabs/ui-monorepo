@@ -209,7 +209,7 @@ export const createEvmSync = function ({
               withdrawal =>
                 async function () {
                   const [block, status] = await Promise.all([
-                    getEvmBlock(withdrawal.blockNumber, l1Chain.id),
+                    getEvmBlock(withdrawal.blockNumber, l2Chain.id),
                     crossChainMessenger.getMessageStatus(
                       withdrawal.transactionHash,
                       // default value

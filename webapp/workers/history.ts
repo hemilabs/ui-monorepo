@@ -1,4 +1,4 @@
-import { hemi, networks } from 'app/networks'
+import { networks } from 'app/networks'
 import debugConstructor from 'debug'
 import { HistoryActions } from 'hooks/useSyncHistory/types'
 import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
@@ -49,7 +49,6 @@ const createSyncer = function ({
     //     debug,
     //     chain,
     //   })
-    case hemi.id:
     case sepolia.id:
       return createEvmSync({
         address: address as Address,

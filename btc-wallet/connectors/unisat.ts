@@ -35,10 +35,12 @@ const unisatWalletConnector = {
     window.unisat.on('accountsChanged', handler)
     return () => window.unisat.removeListener('accountsChanged', handler)
   },
-  onNetworkChanged(handler) {
+  onChainChanged(handler) {
     assertInstalled()
-    window.unisat.on('networkChanged', handler)
-    return () => window.unisat.removeListener('networkChanged', handler)
+    // This event is not listed in the docs, but "networkChanged" doesn't fire
+    // See https://github.com/unisat-wallet/extension/issues/211#issuecomment-2290557037
+    window.unisat.on('chainChanged', handler)
+    return () => window.unisat.removeListener('chainChanged', handler)
   },
   sendBitcoin(toAddress, satoshis, options) {
     assertInstalled()

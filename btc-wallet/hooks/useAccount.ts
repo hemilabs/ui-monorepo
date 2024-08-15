@@ -4,6 +4,7 @@ import { useContext, useEffect, useMemo } from 'react'
 import { bitcoinChains } from '../chains'
 import { GlobalContext } from '../context/globalContext'
 
+import { getAccountsQueryKey, getNetworksQueryKey } from './queryKeys'
 import { useConfig } from './useConfig'
 
 export const useAccount = function () {
@@ -11,7 +12,7 @@ export const useAccount = function () {
   const { connectionStatus, currentConnector } = useContext(GlobalContext)
 
   const accountQueryKey = useMemo(
-    () => ['btc-wallet', 'accounts', currentConnector?.id],
+    () => getAccountsQueryKey(currentConnector),
     [currentConnector],
   )
 
@@ -39,7 +40,7 @@ export const useAccount = function () {
   )
 
   const networksQueryKey = useMemo(
-    () => ['btc-wallet', 'networks', currentConnector?.id],
+    () => getNetworksQueryKey(currentConnector),
     [currentConnector],
   )
 
@@ -54,7 +55,7 @@ export const useAccount = function () {
       if (!currentConnector) {
         return undefined
       }
-      return currentConnector.onNetworkChanged(network =>
+      return currentConnector.onChainChanged(({ network }) =>
         queryClient.setQueryData(networksQueryKey, () => network),
       )
     },

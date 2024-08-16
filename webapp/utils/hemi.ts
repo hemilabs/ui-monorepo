@@ -5,6 +5,19 @@ import pMemoize from 'promise-mem'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { type Address } from 'viem'
 
+// Max Sanchez note: looks like if we pass in all lower-case hex, Unisat publishes the bytes instead of the string.
+// Tunnel for now is only validating the string representation, but update this in the future using
+// the all-lower-case-hex way to get the raw bytes published, which is more efficient.
+export const hemiAddressToBitcoinOpReturn = (hemiAddress: Address) =>
+  hemiAddress.toUpperCase().slice(2)
+
+// Vaults will have only one custody address (at least with current implementation)
+export const getBitcoinCustodyAddress = pMemoize(
+  (hemiClient: HemiPublicClient, vaultAddress: Address) =>
+    hemiClient.getBitcoinCustodyAddress({ vaultAddress }),
+  { resolver: (_, vaultAddress) => vaultAddress },
+)
+
 // Many vaults will likely share the same owner, so this can be memoized
 const getVaultOwnerByBtcAddress = pMemoize(
   (hemiClient: HemiPublicClient, deposit: BtcDepositOperation) =>
@@ -13,13 +26,13 @@ const getVaultOwnerByBtcAddress = pMemoize(
 )
 
 // Many deposits will likely share a vault, so this can be memoized
-const getVaultAddressByOwner = pMemoize(
+export const getVaultAddressByOwner = pMemoize(
   (hemiClient: HemiPublicClient, ownerAddress: Address) =>
     hemiClient.getVaultAddressByOwner({ ownerAddress }),
   { resolver: (_, vaultOwner) => vaultOwner },
 )
 
-export const getHemiStatusOfBtcDeposit = (
+export const getVaultAddressByDeposit = (
   hemiClient: HemiPublicClient,
   deposit: BtcDepositOperation,
 ) =>
@@ -27,30 +40,39 @@ export const getHemiStatusOfBtcDeposit = (
   getVaultOwnerByBtcAddress(hemiClient, deposit)
     // with that, get the vault address in Hemi
     .then(ownerAddress => getVaultAddressByOwner(hemiClient, ownerAddress))
-    .then(vaultAddress =>
-      Promise.all([
-        // check if Hemi is aware of the btc transaction
-        hemiClient
-          .getTransactionByTxId({
-            txId: deposit.transactionHash,
-          })
-          // api throws if not found
-          .catch(() => undefined)
-          .then(txFound => !!txFound),
-        // check if the deposit's been confirmed
-        hemiClient.acknowledgedDeposits({
-          txId: deposit.transactionHash,
-          vaultAddress,
-        }),
-      ]),
-    )
-    .then(([hemiAwareOfBtcTx, claimed]) =>
-      hemiAwareOfBtcTx
-        ? claimed
-          ? BtcDepositStatus.BTC_DEPOSITED
-          : BtcDepositStatus.BTC_READY_CLAIM
-        : BtcDepositStatus.TX_CONFIRMED,
-    )
+
+export const getHemiStatusOfBtcDeposit = ({
+  deposit,
+  hemiClient,
+  vaultAddress,
+}: {
+  // Omit status so we can use this method for both getting the status the first time
+  // or updating it when it already exists
+  deposit: Omit<BtcDepositOperation, 'status'>
+  hemiClient: HemiPublicClient
+  vaultAddress: Address
+}) =>
+  Promise.all([
+    // check if Hemi is aware of the btc transaction
+    hemiClient
+      .getTransactionByTxId({
+        txId: deposit.transactionHash,
+      })
+      // api throws if not found
+      .catch(() => undefined)
+      .then(txFound => !!txFound),
+    // check if the deposit's been confirmed
+    hemiClient.acknowledgedDeposits({
+      txId: deposit.transactionHash,
+      vaultAddress,
+    }),
+  ]).then(([hemiAwareOfBtcTx, claimed]) =>
+    hemiAwareOfBtcTx
+      ? claimed
+        ? BtcDepositStatus.BTC_DEPOSITED
+        : BtcDepositStatus.BTC_READY_CLAIM
+      : BtcDepositStatus.TX_CONFIRMED,
+  )
 
 export const initiateBtcDeposit = function ({
   hemiAddress,
@@ -63,10 +85,7 @@ export const initiateBtcDeposit = function ({
   satoshis: Satoshis
   walletConnector: WalletConnector
 }) {
-  // Max Sanchez note: looks like if we pass in all lower-case hex, Unisat publishes the bytes instead of the string.
-  // Tunnel for now is only validating the string representation, but update this in the future using
-  // the all-lower-case-hex way to get the raw bytes published, which is more efficient.
-  const memo = hemiAddress.toUpperCase().slice(2)
+  const memo = hemiAddressToBitcoinOpReturn(hemiAddress)
 
   if (satoshis <= 0) {
     return Promise.reject(
@@ -78,11 +97,9 @@ export const initiateBtcDeposit = function ({
     hemiClient
       .getOwner()
       // get vault address which will custody the btc
-      .then(ownerAddress => hemiClient.getVaultAddressByOwner({ ownerAddress }))
+      .then(ownerAddress => getVaultAddressByOwner(hemiClient, ownerAddress))
       // get the bitcoin address which the vault will monitor
-      .then(vaultAddress =>
-        hemiClient.getBitcoinCustodyAddress({ vaultAddress }),
-      )
+      .then(vaultAddress => getBitcoinCustodyAddress(hemiClient, vaultAddress))
       .then(bitcoinCustodyAddress =>
         walletConnector
           .sendBitcoin(bitcoinCustodyAddress, satoshis, {
@@ -111,7 +128,9 @@ export const claimBtcDeposit = ({
     getVaultOwnerByBtcAddress(hemiClient, deposit),
     // pull the status again, not from memory, but from reading the contracts
     // in case it just happened to be confirmed outside of the app a few seconds before claiming
-    getHemiStatusOfBtcDeposit(hemiClient, deposit),
+    getVaultAddressByDeposit(hemiClient, deposit).then(vaultAddress =>
+      getHemiStatusOfBtcDeposit({ deposit, hemiClient, vaultAddress }),
+    ),
   ]).then(function ([ownerAddress, currentStatus]) {
     if (currentStatus === BtcDepositStatus.BTC_DEPOSITED) {
       throw new Error('Bitcoin Deposit already confirmed')

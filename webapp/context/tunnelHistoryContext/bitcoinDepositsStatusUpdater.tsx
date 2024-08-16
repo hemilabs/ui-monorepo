@@ -5,7 +5,7 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { getTransactionReceipt } from 'utils/btcApi'
-import { getHemiStatusOfBtcDeposit } from 'utils/hemi'
+import { getHemiStatusOfBtcDeposit, getVaultAddressByDeposit } from 'utils/hemi'
 import { useAccount } from 'wagmi'
 
 // concurrently avoid overloading both blockchains
@@ -60,14 +60,20 @@ const WatchHemiBlockchain = function ({
     ].includes(deposit.status),
     queryFn: () =>
       hemiQueue.add(() =>
-        getHemiStatusOfBtcDeposit(hemiClient, deposit).then(
-          function (newStatus) {
+        getVaultAddressByDeposit(hemiClient, deposit)
+          .then(vaultAddress =>
+            getHemiStatusOfBtcDeposit({
+              deposit,
+              hemiClient,
+              vaultAddress,
+            }),
+          )
+          .then(function (newStatus) {
             if (deposit.status !== newStatus) {
               updateDeposit(deposit, { status: newStatus })
             }
             return newStatus
-          },
-        ),
+          }),
       ),
     queryKey: ['btc-deposit-hemi-tx-status', deposit.transactionHash],
     // every 30 seconds - once status changes, this component won't render anymore

@@ -45,21 +45,10 @@ export const syncContent = function <T extends TunnelOperation>(
   { chainId, content }: StorageChain<T>,
   payload: SyncContentPayload<T>,
 ) {
-  const {
-    chunkIndex,
-    content: newContent,
-    fromBlock,
-    hasSyncToMinBlock,
-    toBlock,
-  } = payload
-
   return {
     chainId,
-    chunkIndex,
-    content: mergeContent(content, newContent),
-    fromBlock,
-    hasSyncToMinBlock,
-    toBlock,
+    content: mergeContent(content, payload.content),
+    ...payload,
   }
 }
 

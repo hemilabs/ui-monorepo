@@ -1,5 +1,6 @@
 import { type TokenBridgeMessage } from '@eth-optimism/sdk'
 import { JsonRpcProvider } from '@ethersproject/providers'
+import { BlockSyncType } from 'hooks/useSyncHistory/types'
 import pAll from 'p-all'
 import {
   createSlidingBlockWindow,
@@ -18,7 +19,7 @@ import { getEvmBlock } from 'utils/evmApi'
 import { createPublicProvider } from 'utils/providers'
 import { type Chain } from 'viem'
 
-import { getPayload } from './common'
+import { getBlockPayload } from './common'
 import { type HistorySyncer } from './types'
 
 const toOperation =
@@ -43,7 +44,7 @@ export const createEvmSync = function ({
   l2Chain,
   saveHistory,
   withdrawalsSyncInfo,
-}: HistorySyncer) {
+}: HistorySyncer<BlockSyncType>) {
   const getBlockNumber = async function (
     toBlock: number,
     provider: JsonRpcProvider,
@@ -128,7 +129,7 @@ export const createEvmSync = function ({
       // save the deposits
       saveHistory({
         payload: {
-          ...getPayload({
+          ...getBlockPayload({
             canMove,
             fromBlock: depositsSyncInfo.fromBlock,
             lastBlock,
@@ -227,7 +228,7 @@ export const createEvmSync = function ({
       // save the withdrawals
       saveHistory({
         payload: {
-          ...getPayload({
+          ...getBlockPayload({
             canMove,
             fromBlock: withdrawalsSyncInfo.fromBlock,
             lastBlock,

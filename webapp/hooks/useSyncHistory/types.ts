@@ -1,24 +1,43 @@
 import { type RemoteChain } from 'app/networks'
+import { BtcTransaction } from 'btc-wallet/unisat'
 import {
   type DepositTunnelOperation,
   type TunnelOperation,
   type WithdrawTunnelOperation,
 } from 'types/tunnel'
+import {
+  type DefinedFields,
+  type NoPayload,
+  type Payload,
+} from 'utils/typeUtilities'
 
-export type StorageChain<T extends TunnelOperation = TunnelOperation> = {
-  chainId: RemoteChain['id']
+export type BlockSyncType = {
   chunkIndex: number
-  content: T[]
   fromBlock: number
   hasSyncToMinBlock: boolean
   toBlock: number | undefined
 }
 
+export type TransactionListSyncType = {
+  fromKnownTx: BtcTransaction | undefined
+  hasSyncToMinTx: boolean
+  toKnownTx: BtcTransaction | undefined
+  txPivot: BtcTransaction | undefined
+}
+
+export type SyncType = BlockSyncType | TransactionListSyncType
+export type SyncStatus = 'idle' | 'ready' | 'syncing' | 'finished' | 'error'
+
+export type StorageChain<TOperation extends TunnelOperation = TunnelOperation> =
+  {
+    chainId: RemoteChain['id']
+    content: TOperation[]
+    status: SyncStatus
+  } & SyncType
+
 type Action<T extends string> = {
   type: T
 }
-type NoPayload = { payload?: never }
-type Payload<T> = { payload: T }
 
 type AddDepositAction = Action<'add-deposit'> & Payload<DepositTunnelOperation>
 type AddWithdrawAction = Action<'add-withdraw'> &
@@ -32,24 +51,29 @@ type RestoreStateAction = Action<'restore'> &
     withdrawals: StorageChain<WithdrawTunnelOperation>[]
   }>
 
-type SyncAction = Action<'sync'> & NoPayload
+type SyncAction = Action<'sync'> & Payload<{ chainId: RemoteChain['id'] }>
 
-export type SyncContentPayload<T extends TunnelOperation> = {
+export type SyncContentPayload<
+  TOperation extends TunnelOperation,
+  TSyncType extends SyncType,
+> = {
   chainId: RemoteChain['id']
-  chunkIndex: number
-  content: T[]
-  hasSyncToMinBlock: boolean
-  fromBlock: number
-  toBlock: number
-}
+  content: TOperation[]
+} & DefinedFields<TSyncType>
 
-type SyncDepositsAction = Action<'sync-deposits'> &
-  Payload<SyncContentPayload<DepositTunnelOperation>>
+export type SyncDepositsAction<
+  TOperation extends DepositTunnelOperation = DepositTunnelOperation,
+  TSyncType extends SyncType = SyncType,
+> = Action<'sync-deposits'> & Payload<SyncContentPayload<TOperation, TSyncType>>
 
-type SyncFinished = Action<'sync-finished'> & NoPayload
+export type SyncFinished = Action<'sync-finished'> &
+  Payload<{ chainId: RemoteChain['id'] }>
 
-type SyncWithdrawalsAction = Action<'sync-withdrawals'> &
-  Payload<SyncContentPayload<WithdrawTunnelOperation>>
+export type SyncWithdrawalsAction<
+  TOperation extends WithdrawTunnelOperation = WithdrawTunnelOperation,
+  TSyncType extends SyncType = SyncType,
+> = Action<'sync-withdrawals'> &
+  Payload<SyncContentPayload<TOperation, TSyncType>>
 
 type UpdateDepositAction = Action<'update-deposit'> &
   Payload<{
@@ -77,6 +101,6 @@ export type HistoryActions =
 
 export type HistoryReducerState = {
   deposits: StorageChain<DepositTunnelOperation>[]
-  status: 'idle' | 'ready' | 'syncing' | 'finished' | 'error'
+  status: SyncStatus
   withdrawals: StorageChain<WithdrawTunnelOperation>[]
 }

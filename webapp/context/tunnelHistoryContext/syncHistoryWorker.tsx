@@ -5,7 +5,7 @@ import {
 } from 'hooks/useSyncHistory/types'
 import { type Dispatch, useEffect, useRef, useState } from 'react'
 import { type Address, type Chain } from 'viem'
-import { SyncWebWorker } from 'workers/history'
+import { AppToWebWorker } from 'workers/history'
 
 type Props = {
   address: Address
@@ -22,7 +22,7 @@ export const SyncHistoryWorker = function ({
   l1ChainId,
   l2ChainId,
 }: Props) {
-  const workerRef = useRef<SyncWebWorker>(null)
+  const workerRef = useRef<AppToWebWorker>(null)
   const [workerLoaded, setWorkerLoaded] = useState(false)
 
   useEffect(
@@ -39,7 +39,7 @@ export const SyncHistoryWorker = function ({
       workerRef.current.addEventListener('message', processWebWorkerMessage)
 
       // announce we're syncing
-      dispatch({ type: 'sync' })
+      dispatch({ payload: { chainId: l1ChainId }, type: 'sync' })
 
       return function () {
         if (!workerRef.current) {

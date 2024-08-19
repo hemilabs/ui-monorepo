@@ -7,7 +7,6 @@ import {
 } from 'hooks/useHemiClient'
 import { TransactionListSyncType } from 'hooks/useSyncHistory/types'
 import pAll from 'p-all'
-import pDoWhilst from 'p-do-whilst'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { calculateDepositAmount } from 'utils/bitcoin'
 import {
@@ -23,6 +22,7 @@ import {
 import { getNativeToken } from 'utils/token'
 import { type Address, createPublicClient, http, toHex } from 'viem'
 
+import { createSlidingTransactionList } from './slidingTransactionList'
 import { type HistorySyncer } from './types'
 
 const discardKnownTransactions = (toKnownTx?: BtcTransaction) =>
@@ -97,11 +97,22 @@ export const createBitcoinSync = function ({
 
     debug('Found custody address %s', bitcoinCustodyAddress)
 
-    const getTransactionsBatch = (afterTxId?: string) =>
-      getAddressTransactions(
+    const getTransactionsBatch = async function (afterTxId?: string) {
+      const formattedTxId = afterTxId ?? 'last available transaction'
+      debug('Getting transactions batch starting from %s', formattedTxId)
+
+      const transactions = await getAddressTransactions(
         bitcoinCustodyAddress,
         afterTxId ? { afterTxId } : undefined,
       ).then(discardKnownTransactions(localDepositSyncInfo.toKnownTx))
+
+      debug(
+        'Found %s transactions starting from %s',
+        transactions.length,
+        formattedTxId,
+      )
+      return transactions
+    }
 
     const processTransactions = async function (
       unprocessedTransactions: MempoolJsBitcoinTransaction[],
@@ -149,6 +160,7 @@ export const createBitcoinSync = function ({
       )
       debug('Got %s new deposits', newDeposits.length)
 
+      // This means we finished requesting TXs from the history
       const hasSyncToMinTx = unprocessedTransactions.length === 0
 
       localDepositSyncInfo = {
@@ -157,9 +169,11 @@ export const createBitcoinSync = function ({
           ? undefined
           : localDepositSyncInfo.fromKnownTx ?? unprocessedTransactions[0].txId,
         hasSyncToMinTx,
+        // Once we sync up to the oldest transaction, next time we will only sync up to this point
         toKnownTx: hasSyncToMinTx
           ? localDepositSyncInfo.fromKnownTx ?? localDepositSyncInfo.toKnownTx
           : localDepositSyncInfo.toKnownTx,
+        // store it in case we need to restart the sync from a specific point, otherwise undefined
         txPivot: hasSyncToMinTx ? undefined : batchPivotTx,
       }
 
@@ -173,28 +187,12 @@ export const createBitcoinSync = function ({
       })
     }
 
-    let pivotTxId =
-      localDepositSyncInfo.txPivot ?? localDepositSyncInfo.fromKnownTx
-
-    return pDoWhilst(
-      async function () {
-        const formattedTxId = pivotTxId ?? 'last available transaction'
-        debug('Getting transactions batch starting from %s', formattedTxId)
-        const transactions = await getTransactionsBatch(pivotTxId)
-
-        debug(
-          'Found %s transactions starting from %s',
-          transactions.length,
-          formattedTxId,
-        )
-        pivotTxId =
-          transactions.length > 0 ? transactions.at(-1).txId : undefined
-
-        await processTransactions(transactions, pivotTxId)
-        return transactions
-      },
-      transactions => transactions.length > 0,
-    )
+    return createSlidingTransactionList({
+      getTransactionsBatch,
+      pivotTxId: depositsSyncInfo.txPivot ?? depositsSyncInfo.fromKnownTx,
+      processTransactions,
+      txIdGetter: transactions => transactions.at(-1).txId,
+    }).run()
   }
 
   const syncHistory = function () {

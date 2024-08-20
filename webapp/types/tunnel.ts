@@ -41,30 +41,32 @@ type WithdrawDirection = {
   direction: MessageDirection.L2_TO_L1
 }
 
-type BtcChainId = { chainId: BtcChain['id'] }
-type EvmChainId = { chainId: Chain['id'] }
-
 export type BtcDepositOperation = CommonOperation &
-  BtcChainId &
   DepositDirection & {
     status: BtcDepositStatus
+  } & {
+    l1ChainId: BtcChain['id']
+    l2ChainId: Chain['id']
   }
-
 export type EvmDepositOperation = CommonOperation &
   DepositDirection &
-  EvmChainId &
-  EvmTransactionHash
+  EvmTransactionHash & {
+    l1ChainId: Chain['id']
+    l2ChainId: Chain['id']
+  }
 
 export type EvmWithdrawOperation = CommonOperation &
   EvmTransactionHash &
   WithdrawDirection & {
-    chainId: RemoteChain['id']
     status?: MessageStatus
+  } & {
+    l1ChainId: RemoteChain['id']
+    l2ChainId: Chain['id']
   }
 
 export type DepositTunnelOperation = BtcDepositOperation | EvmDepositOperation
 
-// TODO add BtcWithdrawals https://github.com/BVM-priv/ui-monorepo/issues/343
+// TODO add BtcWithdrawals https://github.com/hemilabs/ui-monorepo/issues/343
 export type WithdrawTunnelOperation = EvmWithdrawOperation
 
 export type TunnelOperation = DepositTunnelOperation | WithdrawTunnelOperation

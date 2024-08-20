@@ -1,4 +1,4 @@
-import { CrossChainMessenger, MessageStatus } from '@eth-optimism/sdk'
+import { MessageStatus } from '@eth-optimism/sdk'
 import { QueryClient, useQuery } from '@tanstack/react-query'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
@@ -6,14 +6,14 @@ import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupport
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
+import { EvmWithdrawOperation } from 'types/tunnel'
+import { CrossChainMessengerProxy } from 'utils/crossChainMessenger'
+import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { useAccount } from 'wagmi'
 
-import { getBlock, getTransactionReceipt } from './operations'
-import { EvmWithdrawOperation } from './types'
+const queue = new PQueue({ concurrency: 2 })
 
-const queue = new PQueue({ concurrency: 3 })
-
-// https://github.com/BVM-priv/ui-monorepo/issues/158
+// https://github.com/hemilabs/ui-monorepo/issues/158
 const l1ChainId = evmRemoteNetworks[0].id
 
 const getSeconds = (seconds: number) => seconds * 1000
@@ -51,7 +51,11 @@ const getBlockTimestamp = (withdrawal: EvmWithdrawOperation) =>
     if (withdrawal.timestamp) {
       return [blockNumber, withdrawal.timestamp]
     }
-    const { timestamp } = await getBlock(blockNumber, hemi.id)
+    const { timestamp } = await getEvmBlock(
+      blockNumber,
+      // See https://github.com/hemilabs/ui-monorepo/issues/462
+      withdrawal.l2ChainId ?? hemi.id,
+    )
     return [blockNumber, Number(timestamp)]
   }
 
@@ -59,10 +63,13 @@ const getTransactionBlockNumber = function (withdrawal: EvmWithdrawOperation) {
   if (withdrawal.blockNumber) {
     return Promise.resolve(withdrawal.blockNumber)
   }
-  return getTransactionReceipt(withdrawal.transactionHash, hemi.id).then(
-    transactionReceipt =>
-      // return undefined if TX is not found - might have not been confirmed yet
-      transactionReceipt ? Number(transactionReceipt.blockNumber) : undefined,
+  return getEvmTransactionReceipt(
+    withdrawal.transactionHash,
+    // See https://github.com/hemilabs/ui-monorepo/issues/462
+    withdrawal.l2ChainId ?? hemi.id,
+  ).then(transactionReceipt =>
+    // return undefined if TX is not found - might have not been confirmed yet
+    transactionReceipt ? Number(transactionReceipt.blockNumber) : undefined,
   )
 }
 
@@ -71,7 +78,7 @@ const pollUpdateWithdrawal = async ({
   updateWithdrawal,
   withdrawal,
 }: {
-  crossChainMessenger: CrossChainMessenger
+  crossChainMessenger: CrossChainMessengerProxy
   queryClient: QueryClient
   updateWithdrawal: (
     w: EvmWithdrawOperation,
@@ -141,10 +148,11 @@ const WatchEvmWithdrawal = function ({
     queryFn,
     queryKey: [
       'withdrawaStateUpdater',
-      withdrawal.chainId,
+      withdrawal.l2ChainId ?? hemi.id,
       withdrawal.transactionHash,
     ],
-    refetchInterval: refetchInterval[hemi.id][withdrawal.status],
+    refetchInterval:
+      refetchInterval[withdrawal.l2ChainId ?? hemi.id][withdrawal.status],
   })
 
   return null

@@ -1,8 +1,6 @@
 'use client'
 
-import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
-import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 // using CSR because useWindowSize doesn't work on SSR
@@ -17,21 +15,6 @@ const TransactionHistory = dynamic(
   },
 )
 
-export default function Page() {
-  // We want to resume sync on the initial render of the page
-  // using state because otherwise, the effect fires multiple times and gets stuck on a loop!
-  const [initialRender, setInitialRender] = useState(true)
-  const { resumeSync } = useTunnelHistory()
+const Page = () => <TransactionHistory />
 
-  useEffect(
-    function resumeSyncingOfTunnelHistory() {
-      if (initialRender) {
-        resumeSync()
-        setInitialRender(false)
-      }
-    },
-    [initialRender, resumeSync, setInitialRender],
-  )
-
-  return <TransactionHistory />
-}
+export default Page

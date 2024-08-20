@@ -1,8 +1,4 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import {
-  BtcDepositStatus,
-  EvmWithdrawOperation,
-} from 'app/context/tunnelHistoryContext/types'
 import { evmRemoteNetworks, hemi } from 'app/networks'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useClaimBitcoinDeposit } from 'hooks/useBtcTunnel'
@@ -12,6 +8,7 @@ import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
+import { BtcDepositStatus, EvmWithdrawOperation } from 'types/tunnel'
 import { Button } from 'ui-common/components/button'
 import { getFormattedValue } from 'utils/format'
 import { getTokenByAddress } from 'utils/token'
@@ -130,7 +127,7 @@ export const BtcClaim = function ({
     overEstimation: 1.5,
   })
   const t = useTranslations()
-  const { updateBtcDeposit } = useTunnelHistory()
+  const { updateDeposit } = useTunnelHistory()
   const { txHash } = useTunnelOperation()
 
   const [isClaiming, setIsClaiming] = useState(false)
@@ -151,12 +148,12 @@ export const BtcClaim = function ({
       if (deposit.status !== BtcDepositStatus.BTC_READY_CLAIM) {
         return
       }
-      updateBtcDeposit(deposit, { status: BtcDepositStatus.BTC_DEPOSITED })
+      updateDeposit(deposit, { status: BtcDepositStatus.BTC_DEPOSITED })
       savePartialDeposit({
         claimDepositTxHash: claimBitcoinDepositReceipt.transactionHash,
       })
     },
-    [claimBitcoinDepositReceipt, deposit, savePartialDeposit, updateBtcDeposit],
+    [claimBitcoinDepositReceipt, deposit, savePartialDeposit, updateDeposit],
   )
 
   useEffect(
@@ -191,7 +188,7 @@ export const BtcClaim = function ({
     setIsClaiming(true)
   }
 
-  const depositedToken = getTokenByAddress(deposit.l1Token, deposit.chainId)
+  const depositedToken = getTokenByAddress(deposit.l1Token, deposit.l1ChainId)
 
   const getPartialDepositTxList = () => [
     {

@@ -17,6 +17,7 @@ type UseWithdraw = {
   fromInput: string
   fromToken: EvmToken
   l1ChainId: Chain['id']
+  l2ChainId: Chain['id']
   toToken: EvmToken
 }
 export const useWithdraw = function ({
@@ -24,6 +25,7 @@ export const useWithdraw = function ({
   fromInput,
   fromToken,
   l1ChainId,
+  l2ChainId,
   toToken,
 }: UseWithdraw) {
   const { address } = useAccount()
@@ -57,10 +59,11 @@ export const useWithdraw = function ({
 
     addWithdrawalToTunnelHistory({
       amount: toWithdraw,
-      chainId: l1ChainId,
       direction: MessageDirection.L2_TO_L1,
       from: address,
+      l1ChainId,
       l1Token: withdrawingNative ? zeroAddress : toToken.address,
+      l2ChainId,
       l2Token: withdrawingNative
         ? NativeTokenSpecialAddressOnL2
         : fromToken.address,

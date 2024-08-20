@@ -55,5 +55,3 @@ export const isChainSupported = (chainId: RemoteChain['id']) =>
 
 export const isEvmNetwork = (chain: RemoteChain): chain is EvmChain =>
   typeof chain.id === 'number'
-
-export const isL1Chain = (chain: RemoteChain) => chain.id !== hemi.id

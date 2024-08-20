@@ -1,7 +1,7 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { EvmWithdrawOperation } from 'context/tunnelHistoryContext/types'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
+import { EvmWithdrawOperation } from 'types/tunnel'
 
 import { CallToAction } from './callToAction'
 

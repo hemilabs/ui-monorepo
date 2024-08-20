@@ -50,7 +50,7 @@ const BtcViewDeposit = function ({
           <Button type="button">{t('common.view')}</Button>
         </ExternalLink>
       }
-      token={getTokenByAddress(deposit.l1Token, deposit.chainId)}
+      token={getTokenByAddress(deposit.l1Token, deposit.l1ChainId)}
       transactionsList={
         showClaimDepositTx && partialDeposit?.claimDepositTxHash
           ? [

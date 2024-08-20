@@ -1,12 +1,12 @@
 import { MessageDirection } from '@eth-optimism/sdk'
+import { bitcoin } from 'app/networks'
 import {
   BtcDepositOperation,
   DepositTunnelOperation,
   EvmDepositOperation,
   TunnelOperation,
   WithdrawTunnelOperation,
-} from 'app/context/tunnelHistoryContext/types'
-import { bitcoin } from 'app/networks'
+} from 'types/tunnel'
 
 export const isDeposit = (
   operation: TunnelOperation,
@@ -15,11 +15,11 @@ export const isDeposit = (
 
 export const isBtcDeposit = (
   operation: DepositTunnelOperation,
-): operation is BtcDepositOperation => operation.chainId === bitcoin.id
+): operation is BtcDepositOperation => operation.l1ChainId === bitcoin.id
 
 export const isEvmDeposit = (
   operation: DepositTunnelOperation,
-): operation is EvmDepositOperation => operation.chainId !== bitcoin.id
+): operation is EvmDepositOperation => operation.l1ChainId !== bitcoin.id
 
 export const isWithdraw = (
   operation: TunnelOperation,

@@ -1,5 +1,10 @@
-import { type SignerOrProviderLike } from '@eth-optimism/sdk'
+import {
+  type CrossChainMessenger as CrossChainMessengerType,
+  type SignerOrProviderLike,
+} from '@eth-optimism/sdk'
 import { hemi } from 'app/networks'
+import PQueue from 'p-queue'
+import pThrottle from 'p-throttle'
 import { type Address, type Chain, zeroAddress } from 'viem'
 
 const sdkPromise = import('@eth-optimism/sdk')
@@ -25,15 +30,17 @@ export const getTunnelContracts = (l1ChainId: Chain['id']) => ({
   StateCommitmentChain: zeroAddress,
 })
 
+type CrossChainMessengerParameters = {
+  l1ChainId: Chain['id']
+  l1Signer: SignerOrProviderLike
+  l2Signer: SignerOrProviderLike
+}
+
 export async function getCrossChainMessenger({
   l1ChainId,
   l1Signer,
   l2Signer,
-}: {
-  l1ChainId: Chain['id']
-  l1Signer: SignerOrProviderLike
-  l2Signer: SignerOrProviderLike
-}) {
+}: CrossChainMessengerParameters) {
   const { CrossChainMessenger, ETHBridgeAdapter, StandardBridgeAdapter } =
     await sdkPromise
 
@@ -60,4 +67,63 @@ export async function getCrossChainMessenger({
     l2ChainId: hemi.id,
     l2SignerOrProvider: l2Signer,
   })
+}
+
+const properties = ['estimateGas'] as const
+
+const throttledMethods = [
+  'depositERC20',
+  'depositETH',
+  'finalizeMessage',
+  'getDepositsByAddress',
+  'getMessageReceipt',
+  'getWithdrawalsByAddress',
+  'getMessageStatus',
+  'proveMessage',
+  'withdrawERC20',
+  'withdrawETH',
+] as const
+
+export type CrossChainMessengerProxy = Pick<
+  CrossChainMessengerType,
+  (typeof throttledMethods)[number] | (typeof properties)[number]
+>
+
+// Run up to ${concurrency} async methods (which internally may have many calls) at the same time
+const queue = new PQueue({ concurrency: 3 })
+// and use throttling as some methods may run very fast and many quick calls may hit
+// rate limiting
+const throttle = pThrottle({ interval: 2000, limit: 2 })
+
+// This function creates a CrossChainMessenger and wraps its methods with a throttle
+// shared with all of its methods
+export const createCrossChainMessenger = async function (
+  parameters: CrossChainMessengerParameters,
+): Promise<CrossChainMessengerProxy> {
+  const crossChainMessenger = await getCrossChainMessenger(parameters)
+
+  // Can't use a proxy because it doesn't work well with Promises
+  // See https://medium.com/@davidcallanan/a-peculiar-promises-and-proxy-bug-that-cost-me-5-hours-javascript-3a11e1fcd713
+  // although the solution in that post doesn't work for me, it explains the problems I had.
+  // I can't use Object.keys either, because some of the functions that we need
+  // are hidden behind the Prototype!. So the best option (at least with the time I wanted to spend in this problem)
+  // is to list them manually.
+  // With the definition of CrossChainMessengerProxy, we get at least type-safety
+  // if we try to use a method that wasn't listed.
+  return Object.fromEntries(
+    throttledMethods
+      .map(method => [
+        method,
+        throttle((...args) =>
+          queue.add(() =>
+            crossChainMessenger[method].bind(crossChainMessenger)(...args),
+          ),
+        ),
+      ])
+      .concat(
+        // @ts-expect-error it infers the type of the array above (which are functions)
+        // so properties get rejected. This is expected due to native TS inference for array methods
+        properties.map(property => [property, crossChainMessenger[property]]),
+      ),
+  )
 }

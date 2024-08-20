@@ -1,8 +1,8 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { featureFlags } from 'app/featureFlags'
-import { BtcDepositStatus } from 'context/tunnelHistoryContext/types'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { BtcDepositStatus } from 'types/tunnel'
 
 export const ActionableOperations = function () {
   const deposits = useBtcDeposits()

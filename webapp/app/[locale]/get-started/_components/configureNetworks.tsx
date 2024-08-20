@@ -6,10 +6,12 @@ import hemiSocials from 'hemi-socials'
 import dynamic from 'next/dynamic'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, useEffect, ReactNode } from 'react'
+import { useEffect, ReactNode } from 'react'
 import { HemiSymbol } from 'ui-common/components/hemiLogo'
 import { Tabs, Tab } from 'ui-common/components/tabs'
 import { type Chain } from 'viem'
+
+import { ConfigurationUrl } from './configurationUrl'
 
 const AddChain = dynamic(() => import('./addChain').then(mod => mod.AddChain), {
   ssr: false,
@@ -71,20 +73,6 @@ const ConfigurationPropTitle = ({
   order: string
 }) => <p className={`text-zinc-500 ${order}`}>{children}</p>
 
-const NetworkLink = ({
-  href,
-  order,
-  ...props
-}: { order: string } & ComponentProps<'a'>) => (
-  <ExternalLink
-    className={`cursor-pointer overflow-hidden text-ellipsis whitespace-nowrap text-rose-400 ${order}`}
-    href={href}
-    {...props}
-  >
-    {href}
-  </ExternalLink>
-)
-
 type ChainRowProps = {
   chain: Chain
   layer: number
@@ -142,7 +130,7 @@ const ManualConfiguration = function () {
       <ConfigurationPropTitle order="order-2 xl:order-3">
         {t('rpc-url')}
       </ConfigurationPropTitle>
-      <NetworkLink
+      <ConfigurationUrl
         href={hemi.rpcUrls.default.http[0]}
         order="order-2 xl:order-5 2xl:order-3"
       />
@@ -157,7 +145,7 @@ const ManualConfiguration = function () {
       <ConfigurationPropTitle order="order-8 xl:order-15">
         {t('block-explorer-url')}
       </ConfigurationPropTitle>
-      <NetworkLink
+      <ConfigurationUrl
         href={hemi.blockExplorers.default.url}
         order="order-9 xl:order-17"
       />
@@ -169,7 +157,7 @@ const ManualConfiguration = function () {
       <ConfigurationPropTitle order="order-13 xl:order-4 2xl:hidden">
         {t('rpc-url')}
       </ConfigurationPropTitle>
-      <NetworkLink
+      <ConfigurationUrl
         href={ethereum.rpcUrls.default.http[0]}
         order="order-14 xl:order-6"
       />
@@ -180,7 +168,7 @@ const ManualConfiguration = function () {
       <ConfigurationPropTitle order="order-17 xl:order-16 2xl:hidden">
         {t('block-explorer-url')}
       </ConfigurationPropTitle>
-      <NetworkLink
+      <ConfigurationUrl
         href={ethereum.blockExplorers.default.url}
         order="order-18"
       />

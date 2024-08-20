@@ -10,7 +10,12 @@ type GlobalState = {
   setCurrentConnector: (connector: WalletConnector | undefined) => void
 }
 
-export const GlobalContext = createContext<GlobalState>(undefined)
+export const GlobalContext = createContext<GlobalState>({
+  connectionStatus: 'disconnected',
+  currentConnector: undefined,
+  setConnectionStatus: () => undefined,
+  setCurrentConnector: () => undefined,
+})
 
 type Props = {
   children: React.ReactNode
@@ -19,8 +24,9 @@ type Props = {
 export const GlobalContextProvider = function ({ children }: Props) {
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>('disconnected')
-  const [currentConnector, setCurrentConnector] =
-    useState<WalletConnector>(undefined)
+  const [currentConnector, setCurrentConnector] = useState<
+    WalletConnector | undefined
+  >(undefined)
 
   return (
     <GlobalContext.Provider

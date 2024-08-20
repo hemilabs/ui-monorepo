@@ -13,8 +13,8 @@ type GlobalState = {
 export const GlobalContext = createContext<GlobalState>({
   connectionStatus: 'disconnected',
   currentConnector: undefined,
-  setConnectionStatus: () => {},
-  setCurrentConnector: () => {},
+  setConnectionStatus: () => undefined,
+  setCurrentConnector: () => undefined,
 })
 
 type Props = {

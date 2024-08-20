@@ -1,6 +1,8 @@
 import { useSyncExternalStore } from 'react'
 
-const subscribe = function (callback) {
+const subscribe = function (
+  callback: (this: Window, ev: WindowEventMap['resize']) => unknown,
+) {
   window.addEventListener('resize', callback)
   return () => window.removeEventListener('resize', callback)
 }

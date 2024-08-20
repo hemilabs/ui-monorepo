@@ -37,7 +37,8 @@ export const NavItem = function ({
   onClick,
   subMenuOpened,
 }: NavItemProps) {
-  const isExternalLink = url => url && !url.startsWith('/')
+  const isExternalLink = (url: string | undefined) =>
+    !!url && !url.startsWith('/')
 
   const colorVariants = {
     'slate-200':

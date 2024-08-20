@@ -10,8 +10,9 @@ export const useBalance = function () {
   const { currentConnector } = useContext(GlobalContext)
 
   const { data: balance, ...rest } = useQuery({
-    enabled: isConnected,
-    queryFn: () => currentConnector.getBalance(),
+    enabled: isConnected && currentConnector !== undefined,
+    // use "!" because "enabled" already checks currentConnector is defined
+    queryFn: () => currentConnector!.getBalance(),
     queryKey: ['btc-wallet', 'balance', address, chainId, currentConnector?.id],
     // 10 minutes
     refetchInterval: 1000 * 60 * 10,

@@ -21,7 +21,8 @@ export const useAccount = function () {
 
   const { data: accounts } = useQuery({
     enabled,
-    queryFn: () => currentConnector.getAccounts(),
+    // use "!" because "enabled" already checks currentConnector is defined
+    queryFn: () => currentConnector!.getAccounts(),
     queryKey: accountQueryKey,
   })
 
@@ -46,7 +47,8 @@ export const useAccount = function () {
 
   const { data: chain } = useQuery({
     enabled,
-    queryFn: () => currentConnector.getNetwork(),
+    // use "!" because "enabled" already checks currentConnector is defined
+    queryFn: () => currentConnector!.getNetwork(),
     queryKey: networksQueryKey,
   })
 

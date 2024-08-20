@@ -8,6 +8,7 @@ import {
 
 export type WalletConnector = {
   connect: () => Promise<void>
+  disconnect: () => Promise<void>
   getAccounts: () => Promise<Account[]>
   getBalance: () => Promise<Balance>
   getNetwork: () => Promise<BtcSupportedNetworks>

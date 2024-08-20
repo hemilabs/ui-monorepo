@@ -16,6 +16,7 @@ interface EventMap {
 
 // See https://docs.unisat.io/dev/unisat-developer-center/unisat-wallet#methods
 export interface Unisat {
+  disconnect(): Promise<void>
   getAccounts(): Promise<Account[]>
   getBalance(): Promise<Balance>
   getNetwork(): Promise<BtcSupportedNetworks>

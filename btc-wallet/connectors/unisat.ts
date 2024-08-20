@@ -15,15 +15,19 @@ const unisatWalletConnector = {
     // will be prompted to connect
     await window.unisat.requestAccounts()
   },
-  async getAccounts() {
+  disconnect() {
+    assertInstalled()
+    return window.unisat.disconnect()
+  },
+  getAccounts() {
     assertInstalled()
     return window.unisat.getAccounts()
   },
-  async getBalance() {
+  getBalance() {
     assertInstalled()
     return window.unisat.getBalance()
   },
-  async getNetwork() {
+  getNetwork() {
     assertInstalled()
     return window.unisat.getNetwork()
   },

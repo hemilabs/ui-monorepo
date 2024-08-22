@@ -9,18 +9,14 @@ import {
 import { type BtcChain } from 'btc-wallet/chains'
 import { BtcTransaction } from 'btc-wallet/unisat'
 import { useCallback, useReducer } from 'react'
-import { tokenList } from 'tokenList'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
-import { isNativeToken, getTokenByAddress } from 'utils/token'
+import { getNativeToken, getTokenByAddress } from 'utils/token'
 import { type NoPayload, type Payload } from 'utils/typeUtilities'
 import { type Chain, type Hash, isHash } from 'viem'
 
 import { useTunnelOperation } from './useTunnelOperation'
 
 export type Operation = 'claim' | 'deposit' | 'prove' | 'withdraw' | 'view'
-
-const getNativeToken = (chain: RemoteChain['id']) =>
-  tokenList.tokens.find(t => t.chainId === chain && isNativeToken(t))
 
 export type TunnelState = {
   fromInput: string

@@ -3,9 +3,11 @@
   "version": "1.0.0",
   "scripts": {
     "build": "next build",
+    "copy:htaccess": "cp .htaccess out/.htaccess",
     "dev": "next dev",
     "dev:wifi": "WIFI=true LOCAL_IP=$(ipconfig getifaddr en0) PORT=3000 npm run dev",
     "deploy": "npm run build",
+    "postbuild": "npm run copy:htaccess",
     "preserve": "npm run build",
     "serve": "serve out"
   },

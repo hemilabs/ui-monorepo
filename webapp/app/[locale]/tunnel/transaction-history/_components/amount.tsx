@@ -1,8 +1,8 @@
-import { evmRemoteNetworks } from 'app/networks'
 import Big from 'big.js'
 import { ChainLogo } from 'components/chainLogo'
 import { TokenLogo } from 'components/tokenLogo'
 import { useHemi } from 'hooks/useHemi'
+import { useNetworks } from 'hooks/useNetworks'
 import smartRound from 'smart-round'
 import { Token } from 'types/token'
 import { TunnelOperation } from 'types/tunnel'
@@ -66,6 +66,7 @@ const Value = ({ amount, token }: ValueProps) => (
 export const Amount = function ({ operation }: Props) {
   const { amount, l1Token, l2Token } = operation
   const hemi = useHemi()
+  const { evmRemoteNetworks } = useNetworks()
 
   const tokenAddress = (isDeposit(operation) ? l1Token : l2Token) as Address
   const chainId = isDeposit(operation)

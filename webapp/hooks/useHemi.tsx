@@ -1,14 +1,10 @@
-import { type Chain as RainbowKitChain } from '@rainbow-me/rainbowkit'
+import { type EvmChain } from 'app/networks'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useMemo } from 'react'
 import { renderToString } from 'react-dom/server'
 import { HemiSymbolWhite } from 'ui-common/components/hemiLogo'
-import { type Chain } from 'viem'
 
 import { useNetworkType } from './useNetworkType'
-
-type EvmChain = Omit<Chain, 'fees' | 'serializers'> &
-  Pick<RainbowKitChain, 'iconBackground' | 'iconUrl'>
 
 export const useHemi = function () {
   const [type] = useNetworkType()

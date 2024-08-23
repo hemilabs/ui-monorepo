@@ -9,11 +9,11 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { evmRemoteNetworks } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useHemi } from 'hooks/useHemi'
+import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { parseAsString, useQueryState } from 'nuqs'
@@ -281,6 +281,7 @@ const Body = function ({
 }
 
 export const TransactionHistory = function () {
+  const { evmRemoteNetworks } = useNetworks()
   // See https://github.com/hemilabs/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id
 

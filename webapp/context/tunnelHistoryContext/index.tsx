@@ -1,8 +1,9 @@
 'use client'
 
 import { featureFlags } from 'app/featureFlags'
-import { bitcoin, type RemoteChain, remoteNetworks } from 'app/networks'
+import { bitcoin, type RemoteChain } from 'app/networks'
 import { useHemi } from 'hooks/useHemi'
+import { useNetworks } from 'hooks/useNetworks'
 import { useSyncHistory } from 'hooks/useSyncHistory'
 import {
   SyncStatus,
@@ -86,6 +87,7 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
   const { address, isConnected } = useAccount()
 
   const l2ChainId = useHemi().id
+  const { remoteNetworks } = useNetworks()
 
   const [history, dispatch] = useSyncHistory(l2ChainId)
 

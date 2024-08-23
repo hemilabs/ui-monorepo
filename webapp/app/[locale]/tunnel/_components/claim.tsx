@@ -1,11 +1,11 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { evmRemoteNetworks } from 'app/networks'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useClaimBitcoinDeposit } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
+import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -253,13 +253,14 @@ type EvmClaimProps = {
 }
 
 export const EvmClaim = function ({ state }: EvmClaimProps) {
+  const { evmRemoteNetworks } = useNetworks()
   const { updateWithdrawal, withdrawals } = useTunnelHistory()
   const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =
     state
 
   const [isClaiming, setIsClaiming] = useState(false)
 
-  // https://github.com/BVM-priv/ui-monorepo/issues/158
+  // https://github.com/hemilabs/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id
 
   const txHash = useTunnelOperation().txHash as Hash

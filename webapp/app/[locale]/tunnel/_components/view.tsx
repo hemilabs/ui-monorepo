@@ -1,7 +1,8 @@
-import { bitcoin, evmRemoteNetworks } from 'app/networks'
+import { bitcoin } from 'app/networks'
 import { ExternalLink } from 'components/externalLink'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useHemi } from 'hooks/useHemi'
+import { useNetworks } from 'hooks/useNetworks'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
@@ -76,12 +77,13 @@ type EvmViewWithdrawal = {
 const EvmViewWithdrawal = function ({ state }: EvmViewWithdrawal) {
   const { partialWithdrawal, resetStateAfterOperation } = state
 
-  // https://github.com/BVM-priv/ui-monorepo/issues/158
-  const l1ChainId = evmRemoteNetworks[0].id
-
   const chains = useChains()
+  const { evmRemoteNetworks } = useNetworks()
   const t = useTranslations()
   const txHash = useTunnelOperation().txHash as Hash
+
+  // https://github.com/hemilabs/ui-monorepo/issues/158
+  const l1ChainId = evmRemoteNetworks[0].id
 
   const { claimTxHash } = useGetClaimWithdrawalTxHash(l1ChainId, txHash)
   const chain = chains.find(c => c.id === l1ChainId)

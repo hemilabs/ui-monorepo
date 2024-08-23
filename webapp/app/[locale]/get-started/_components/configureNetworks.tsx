@@ -1,9 +1,9 @@
 'use client'
 
-import { evmRemoteNetworks } from 'app/networks'
 import { ExternalLink } from 'components/externalLink'
 import hemiSocials from 'hemi-socials'
 import { useHemi } from 'hooks/useHemi'
+import { useNetworks } from 'hooks/useNetworks'
 import dynamic from 'next/dynamic'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -101,8 +101,10 @@ const ChainRow = function ({ chain, layer, logo }: ChainRowProps) {
 }
 
 const AutomaticConfiguration = function () {
-  const ethereum = evmRemoteNetworks.at(-1)
   const hemi = useHemi()
+  const { evmRemoteNetworks } = useNetworks()
+
+  const ethereum = evmRemoteNetworks.at(-1)
 
   return (
     <div className="flex flex-col gap-y-6 py-2 lg:gap-y-9">
@@ -122,6 +124,7 @@ const AutomaticConfiguration = function () {
 
 const ManualConfiguration = function () {
   const hemi = useHemi()
+  const { evmRemoteNetworks } = useNetworks()
   const t = useTranslations('get-started.network')
   const ethereum = evmRemoteNetworks.at(-1)
 

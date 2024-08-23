@@ -1,7 +1,7 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { evmRemoteNetworks } from 'app/networks'
 import { useChain } from 'hooks/useChain'
 import { useHemi } from 'hooks/useHemi'
+import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -66,6 +66,7 @@ type Props = {
 }
 
 export const Prove = function ({ state }: Props) {
+  const { evmRemoteNetworks } = useNetworks()
   const { updateWithdrawal, withdrawals } = useTunnelHistory()
 
   const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =

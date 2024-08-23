@@ -143,6 +143,7 @@ export const createBitcoinSync = function ({
                 l1Token: btc.address,
                 l2ChainId: l2Chain.id,
                 l2Token: btc.extensions.bridgeInfo[l2Chain.id].tokenAddress,
+                timestamp: bitcoinDeposit.status.blockTime,
                 to: bitcoinCustodyAddress,
                 transactionHash: bitcoinDeposit.txId,
               }

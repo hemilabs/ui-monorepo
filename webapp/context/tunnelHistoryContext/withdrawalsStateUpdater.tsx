@@ -55,7 +55,7 @@ const getBlockTimestamp = (withdrawal: EvmWithdrawOperation, hemi: Chain) =>
     }
     const { timestamp } = await getEvmBlock(
       blockNumber,
-      // See https://github.com/hemilabs/ui-monorepo/issues/462
+      // See https://github.com/hemilabs/ui-monorepo/issues/376
       withdrawal.l2ChainId ?? hemi.id,
     )
     return [blockNumber, Number(timestamp)]
@@ -160,7 +160,7 @@ const WatchEvmWithdrawal = function ({
       }),
     queryKey: [
       'withdrawaStateUpdater',
-      // See https://github.com/hemilabs/ui-monorepo/issues/462
+      // See https://github.com/hemilabs/ui-monorepo/issues/376
       withdrawal.l2ChainId ?? hemi.id,
       withdrawal.transactionHash,
     ],

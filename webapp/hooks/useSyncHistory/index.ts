@@ -78,7 +78,7 @@ const historyReducer = function (
           ...state,
           deposits: payload.deposits.map(chainDeposits => ({
             ...chainDeposits,
-            // See https://github.com/hemilabs/ui-monorepo/issues/462
+            // See https://github.com/hemilabs/ui-monorepo/issues/376
             content: chainDeposits.content.map(
               deposit =>
                 ({
@@ -91,7 +91,7 @@ const historyReducer = function (
           })),
           withdrawals: payload.withdrawals.map(chainWithdrawals => ({
             ...chainWithdrawals,
-            // See https://github.com/hemilabs/ui-monorepo/issues/462
+            // See https://github.com/hemilabs/ui-monorepo/issues/376
             content: chainWithdrawals.content.map(
               withdrawal =>
                 ({

@@ -1,7 +1,8 @@
 'use client'
 
 import { featureFlags } from 'app/featureFlags'
-import { bitcoin, hemi, type RemoteChain, remoteNetworks } from 'app/networks'
+import { bitcoin, type RemoteChain, remoteNetworks } from 'app/networks'
+import { useHemi } from 'hooks/useHemi'
 import { useSyncHistory } from 'hooks/useSyncHistory'
 import {
   SyncStatus,
@@ -84,8 +85,7 @@ type Props = {
 export const TunnelHistoryProvider = function ({ children }: Props) {
   const { address, isConnected } = useAccount()
 
-  // See https://github.com/hemilabs/ui-monorepo/issues/462
-  const l2ChainId = hemi.id
+  const l2ChainId = useHemi().id
 
   const [history, dispatch] = useSyncHistory(l2ChainId)
 

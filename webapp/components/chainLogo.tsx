@@ -1,29 +1,23 @@
-import {
-  bitcoin,
-  evmRemoteNetworks,
-  hemi,
-  type RemoteChain,
-} from 'app/networks'
+import { bitcoin, evmRemoteNetworks, type RemoteChain } from 'app/networks'
+import { hemi as hemiMainnet, hemiSepolia as hemiSepolia } from 'hemi-viem'
 import { BtcLogo } from 'ui-common/components/btcLogo'
 import { EthLogo } from 'ui-common/components/ethLogo'
 import { HemiTokenWithBackground } from 'ui-common/components/hemiLogo'
-
-const Logos = {
-  [bitcoin.id]: BtcLogo,
-  [hemi.id]: HemiTokenWithBackground,
-  // Extend with multichain support
-  // See https://github.com/BVM-priv/ui-monorepo/issues/158
-  [evmRemoteNetworks[0].id]: EthLogo,
-}
 
 export const ChainLogo = function ({
   chainId,
 }: {
   chainId: RemoteChain['id']
 }) {
-  const Logo = Logos[chainId]
-  if (!Logo) {
-    return <HemiTokenWithBackground />
+  switch (chainId) {
+    case bitcoin.id:
+      return <BtcLogo />
+    case hemiMainnet.id:
+    case hemiSepolia.id:
+      return <HemiTokenWithBackground />
+    case evmRemoteNetworks[0].id:
+      return <EthLogo />
+    default:
+      return <HemiTokenWithBackground />
   }
-  return <Logo />
 }

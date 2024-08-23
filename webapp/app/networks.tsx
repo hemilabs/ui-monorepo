@@ -22,7 +22,7 @@ export type RemoteChain = BtcChain | EvmChain
 
 const testnetMode = (process.env.NEXT_PUBLIC_TESTNET_MODE ?? 'false') === 'true'
 
-export const hemi: EvmChain = {
+const hemi: EvmChain = {
   ...(testnetMode ? hemiTestnet : hemiMainnet),
   iconBackground: '#FFFFFF',
   iconUrl: () =>

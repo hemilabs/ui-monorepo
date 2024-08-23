@@ -1,7 +1,8 @@
 import { TokenLogo } from 'app/components/tokenLogo'
 import { TokenSelector } from 'app/components/tokenSelector'
-import { hemi, networks, type RemoteChain } from 'app/networks'
+import { networks, type RemoteChain } from 'app/networks'
 import Big from 'big.js'
+import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
@@ -138,6 +139,7 @@ export const FormContent = function ({
     toToken,
   } = tunnelState
 
+  const hemi = useHemi()
   const t = useTranslations('tunnel-page')
 
   return (

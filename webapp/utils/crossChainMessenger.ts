@@ -2,7 +2,6 @@ import {
   type CrossChainMessenger as CrossChainMessengerType,
   type SignerOrProviderLike,
 } from '@eth-optimism/sdk'
-import { hemi } from 'app/networks'
 import PQueue from 'p-queue'
 import pThrottle from 'p-throttle'
 import { type Address, type Chain, zeroAddress } from 'viem'
@@ -11,40 +10,42 @@ const sdkPromise = import('@eth-optimism/sdk')
 
 // Read contracts from chain definition, but allow overriding them from .env variables.
 // Useful when using a devnet or a short-lived fork of the chain.
-export const getTunnelContracts = (l1ChainId: Chain['id']) => ({
+export const getTunnelContracts = (l2Chain: Chain, l1ChainId: Chain['id']) => ({
   AddressManager: (process.env.NEXT_PUBLIC_ADDRESS_MANAGER ??
-    hemi.contracts.addressManager[l1ChainId].address) as Address,
+    l2Chain.contracts.addressManager[l1ChainId].address) as Address,
   BondManager: zeroAddress,
   CanonicalTransactionChain: zeroAddress,
   L1CrossDomainMessenger: (process.env
     .NEXT_PUBLIC_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER ??
-    hemi.contracts.l1CrossDomainMessenger[l1ChainId].address) as Address,
+    l2Chain.contracts.l1CrossDomainMessenger[l1ChainId].address) as Address,
   L1StandardBridge: (process.env.NEXT_PUBLIC_PROXY_OVM_L1_STANDARD_BRIDGE ??
-    hemi.contracts.l1StandardBridge[l1ChainId].address) as Address,
+    l2Chain.contracts.l1StandardBridge[l1ChainId].address) as Address,
   L2Bridge: (process.env.NEXT_PUBLIC_L2_BRIDGE ??
-    hemi.contracts.l2Bridge[l1ChainId].address) as Address,
+    l2Chain.contracts.l2Bridge[l1ChainId].address) as Address,
   L2OutputOracle: (process.env.NEXT_PUBLIC_L2_OUTPUT_ORACLE_PROXY ??
-    hemi.contracts.l2OutputOracle[l1ChainId].address) as Address,
+    l2Chain.contracts.l2OutputOracle[l1ChainId].address) as Address,
   OptimismPortal: (process.env.NEXT_PUBLIC_OPTIMISM_PORTAL_PROXY ??
-    hemi.contracts.portal[l1ChainId].address) as Address,
+    l2Chain.contracts.portal[l1ChainId].address) as Address,
   StateCommitmentChain: zeroAddress,
 })
 
 type CrossChainMessengerParameters = {
   l1ChainId: Chain['id']
   l1Signer: SignerOrProviderLike
+  l2Chain: Chain
   l2Signer: SignerOrProviderLike
 }
 
 export async function getCrossChainMessenger({
   l1ChainId,
   l1Signer,
+  l2Chain,
   l2Signer,
 }: CrossChainMessengerParameters) {
   const { CrossChainMessenger, ETHBridgeAdapter, StandardBridgeAdapter } =
     await sdkPromise
 
-  const l1Contracts = getTunnelContracts(l1ChainId)
+  const l1Contracts = getTunnelContracts(l2Chain, l1ChainId)
   return new CrossChainMessenger({
     bedrock: true,
     bridges: {
@@ -64,7 +65,7 @@ export async function getCrossChainMessenger({
     },
     l1ChainId,
     l1SignerOrProvider: l1Signer,
-    l2ChainId: hemi.id,
+    l2ChainId: l2Chain.id,
     l2SignerOrProvider: l2Signer,
   })
 }

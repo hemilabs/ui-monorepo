@@ -1,6 +1,7 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { evmRemoteNetworks, hemi } from 'app/networks'
+import { evmRemoteNetworks } from 'app/networks'
 import { useChain } from 'hooks/useChain'
+import { useHemi } from 'hooks/useHemi'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -72,13 +73,14 @@ export const Prove = function ({ state }: Props) {
 
   const [isProving, setIsProving] = useState(false)
 
-  // https://github.com/BVM-priv/ui-monorepo/issues/158
+  // https://github.com/hemilabs/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id
 
   const t = useTranslations()
   const txHash = useTunnelOperation().txHash as Hash
 
   const fromChain = useChain(l1ChainId)
+  const hemi = useHemi()
 
   const {
     clearProveWithdrawalState,

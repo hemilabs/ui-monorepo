@@ -1,4 +1,3 @@
-import { hemi } from 'app/networks'
 import { ChecklistIcon } from 'components/icons/checklistIcon'
 import { CodeInsertIcon } from 'components/icons/codeInsertIcon'
 import { DexIcon } from 'components/icons/dexIcon'
@@ -9,6 +8,7 @@ import { GraduateCapIcon } from 'components/icons/graduateCapIcon'
 import { PoPMinerIcon } from 'components/icons/popMinerIcon'
 import { TunnelIcon } from 'components/icons/tunnelIcon'
 import dynamic from 'next/dynamic'
+import { type Chain } from 'viem'
 
 import { NavItemData } from './_components/navItems'
 
@@ -20,7 +20,7 @@ const ActionableOperations = dynamic(
   { ssr: false },
 )
 
-export const navItems: NavItemData[] = [
+export const getNavItems = (hemi: Chain): NavItemData[] => [
   {
     alertComponent: () => (
       <div className="-mt-1">

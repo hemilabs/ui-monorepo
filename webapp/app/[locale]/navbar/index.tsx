@@ -1,22 +1,24 @@
 'use client'
 
 import { FooterSocials } from 'components/footerSocials'
+import { useHemi } from 'hooks/useHemi'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
-import React from 'react'
+import React, { Suspense } from 'react'
 import { Button } from 'ui-common/components/button'
 import { HemiLogoFull } from 'ui-common/components/hemiLogo'
 
 import { NavGetStarted } from './_components/navGetStarted'
 import { NavItems, type NavItemData } from './_components/navItems'
-import { navItems, navItemsBottom } from './navData'
+import { getNavItems, navItemsBottom } from './navData'
 
 type Props = {
   onItemClick?: (item?: NavItemData) => void
 }
 
-export const Navbar = function ({ onItemClick }: Props) {
+const NavbarImplementation = function ({ onItemClick }: Props) {
+  const hemi = useHemi()
   const t = useTranslations('common')
   const pathname = usePathname()
 
@@ -44,7 +46,7 @@ export const Navbar = function ({ onItemClick }: Props) {
         <NavItems
           color="slate-200"
           isSelectable={true}
-          navItems={navItems}
+          navItems={getNavItems(hemi)}
           onItemClick={handleItemClick}
           selectedItem={getCurrentPath()}
         />
@@ -73,3 +75,9 @@ export const Navbar = function ({ onItemClick }: Props) {
     </div>
   )
 }
+
+export const Navbar = ({ onItemClick }: Props) => (
+  <Suspense>
+    <NavbarImplementation onItemClick={onItemClick} />
+  </Suspense>
+)

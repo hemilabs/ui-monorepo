@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useApproveToken } from 'hooks/useApproveToken'
+import { useHemi } from 'hooks/useHemi'
 import { useDepositErc20Token } from 'hooks/useL2Bridge'
 import { useEffect } from 'react'
 import { type EvmToken } from 'types/token'
@@ -28,12 +29,14 @@ export const useDepositToken = function ({
   extendedApproval = false,
   token,
 }: UseDepositToken) {
-  const toDeposit = parseUnits(amount, token.decimals).toString()
+  const { address: owner } = useAccount()
+  const hemi = useHemi()
   const queryClient = useQueryClient()
 
-  const { address: owner } = useAccount()
+  const toDeposit = parseUnits(amount, token.decimals).toString()
 
   const l1StandardBridgeAddress = getTunnelContracts(
+    hemi,
     token.chainId,
   ).L1StandardBridge
 

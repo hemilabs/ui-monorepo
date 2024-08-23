@@ -2,9 +2,9 @@ import {
   findChainById,
   isEvmNetwork,
   remoteNetworks,
-  hemi,
   type RemoteChain,
 } from 'app/networks'
+import { hemiSepolia } from 'hemi-viem'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import debounce from 'lodash/debounce'
 import { useEffect, useReducer, useState } from 'react'
@@ -84,7 +84,7 @@ const historyReducer = function (
                 ({
                   ...deposit,
                   l1ChainId: deposit.l1ChainId,
-                  l2ChainId: deposit.l2ChainId ?? hemi.id,
+                  l2ChainId: deposit.l2ChainId ?? hemiSepolia.id,
                 }) as DepositTunnelOperation,
             ),
             status: 'ready',
@@ -97,7 +97,7 @@ const historyReducer = function (
                 ({
                   ...withdrawal,
                   l1ChainId: withdrawal.l1ChainId,
-                  l2ChainId: withdrawal.l2ChainId ?? hemi.id,
+                  l2ChainId: withdrawal.l2ChainId ?? hemiSepolia.id,
                 }) as WithdrawTunnelOperation,
             ),
             status: 'ready',

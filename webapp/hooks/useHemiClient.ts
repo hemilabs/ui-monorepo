@@ -1,4 +1,3 @@
-import { hemi } from 'app/networks'
 import {
   hemiPublicBitcoinKitActions,
   hemiPublicBitcoinTunnelManagerActions,
@@ -6,8 +5,10 @@ import {
   hemiWalletBitcoinTunnelManagerActions,
 } from 'hemi-viem'
 import { useMemo } from 'react'
-import { type Address, type Chain, type PublicClient } from 'viem'
+import { type Address, type PublicClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
+
+import { useHemi } from './useHemi'
 
 const localExtensions = () => ({
   // in incoming iterations, the owner address will be determined programmatically
@@ -24,14 +25,16 @@ export const publicClientToHemiClient = (publicClient: PublicClient) =>
     .extend(hemiPublicBitcoinTunnelManagerActions())
     .extend(localExtensions)
 
-export const useHemiClient = function (chainId: Chain['id'] = hemi.id) {
-  const hemiClient = usePublicClient({ chainId })
+export const useHemiClient = function () {
+  const hemi = useHemi()
+  const hemiClient = usePublicClient({ chainId: hemi.id })
   return useMemo(() => publicClientToHemiClient(hemiClient), [hemiClient])
 }
 
-export const useHemiWalletClient = function (chainId: Chain['id'] = hemi.id) {
+export const useHemiWalletClient = function () {
+  const hemi = useHemi()
   const { data: hemiWalletClient, ...rest } = useWalletClient({
-    chainId,
+    chainId: hemi.id,
     query: {
       select: walletClient =>
         walletClient.extend(hemiWalletBitcoinTunnelManagerActions()),

@@ -1,15 +1,18 @@
-import { bitcoin, hemi } from 'app/networks'
+import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { sepolia } from 'viem/chains'
 
+// Approximately 1/2 day
+const opBasedEvmBlockWindowSize = 3500
+
 export const chainConfiguration = {
-  [bitcoin.id]: {
-    // bitcoin API doesn't allow to set a block window size
+  [hemiMainnet.id]: {
+    blockWindowSize: opBasedEvmBlockWindowSize,
   },
-  [hemi.id]: {
-    blockWindowSize: 3500, // Approximately 1/2 day
+  [hemiTestnet.id]: {
+    blockWindowSize: opBasedEvmBlockWindowSize,
   },
   [sepolia.id]: {
-    blockWindowSize: 3500, // Approximately 1/2 day
+    blockWindowSize: opBasedEvmBlockWindowSize,
     minBlockToSync: 5_294_649, // Approximately hemi testnet birth.
   },
 } as const

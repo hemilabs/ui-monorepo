@@ -1,7 +1,7 @@
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTunnelOperation } from 'app/[locale]/tunnel/_hooks/useTunnelOperation'
-import { bitcoin, hemi } from 'app/networks'
+import { bitcoin } from 'app/networks'
 import { BtcChain } from 'btc-wallet/chains'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { Satoshis } from 'btc-wallet/unisat'
@@ -184,8 +184,9 @@ export const useWithdrawBitcoin = function () {
         l1ChainId,
         l1Token: zeroAddress,
         l2ChainId,
-        l2Token: getNativeToken(bitcoin.id).extensions.bridgeInfo[hemi.id]
-          .tokenAddress,
+        l2Token: getNativeToken(bitcoin.id).extensions.bridgeInfo[
+          hemiClient.chain.id
+        ].tokenAddress,
         status: MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
         to: btcAddress,
         transactionHash,

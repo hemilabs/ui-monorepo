@@ -2,12 +2,12 @@ import { featureFlags } from 'app/featureFlags'
 import {
   bitcoin,
   evmRemoteNetworks,
-  hemi,
   networks,
   type RemoteChain,
 } from 'app/networks'
 import { type BtcChain } from 'btc-wallet/chains'
 import { BtcTransaction } from 'btc-wallet/unisat'
+import { useHemi } from 'hooks/useHemi'
 import { useCallback, useReducer } from 'react'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { getNativeToken, getTokenByAddress } from 'utils/token'
@@ -161,10 +161,10 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
   }
 }
 
-const getDefaultNetworksOrder = function ({
-  operation,
-  txHash,
-}: ReturnType<typeof useTunnelOperation>) {
+const getDefaultNetworksOrder = function (
+  { operation, txHash }: ReturnType<typeof useTunnelOperation>,
+  hemi: Chain,
+) {
   const bitcoinFromL1ToL2 = {
     fromNetworkId: bitcoin.id,
     toNetworkId: hemi.id,
@@ -214,9 +214,10 @@ export const useTunnelState = function (): TunnelState & {
     payload?: Extract<Actions, { type: K }>['payload'],
   ) => void
 } {
+  const hemi = useHemi()
   const tunnelOperation = useTunnelOperation()
 
-  const initial = getDefaultNetworksOrder(tunnelOperation)
+  const initial = getDefaultNetworksOrder(tunnelOperation, hemi)
 
   const [state, dispatch] = useReducer(reducer, {
     fromInput: '0',
@@ -326,7 +327,7 @@ export const useTunnelState = function (): TunnelState & {
 
         dispatch({ payload: newToken, type: 'updateFromToken' })
       },
-      [dispatch],
+      [dispatch, hemi.id],
     ),
   }
 }

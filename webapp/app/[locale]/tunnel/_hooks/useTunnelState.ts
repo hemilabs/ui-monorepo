@@ -12,6 +12,7 @@ import { useCallback, useReducer } from 'react'
 import { tokenList } from 'tokenList'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { isNativeToken, getTokenByAddress } from 'utils/token'
+import { type NoPayload, type Payload } from 'utils/typeUtilities'
 import { type Chain, type Hash, isHash } from 'viem'
 
 import { useTunnelOperation } from './useTunnelOperation'
@@ -43,30 +44,21 @@ type Action<T extends string> = {
   type: T
 }
 
-type NoPayload = { payload?: never }
-
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
 
-type SavePartialDeposit = Action<'savePartialDeposit'> & {
-  payload: TunnelState['partialDeposit']
-}
-type SavePartialWithdrawal = Action<'savePartialWithdrawal'> & {
-  payload: TunnelState['partialWithdrawal']
-}
-type UpdateFromNetwork = Action<'updateFromNetwork'> & {
-  payload: TunnelState['fromNetworkId']
-}
-type UpdateFromToken = Action<'updateFromToken'> & {
-  payload: TunnelState['fromToken']
-}
-type UpdateFromInput = Action<'updateFromInput'> & {
-  payload: string
-}
-type UpdateToNetwork = Action<'updateToNetwork'> & {
-  payload: TunnelState['toNetworkId']
-}
-
+type SavePartialDeposit = Action<'savePartialDeposit'> &
+  Payload<TunnelState['partialDeposit']>
+type SavePartialWithdrawal = Action<'savePartialWithdrawal'> &
+  Payload<TunnelState['partialWithdrawal']>
+type UpdateFromNetwork = Action<'updateFromNetwork'> &
+  Payload<TunnelState['fromNetworkId']>
+type UpdateFromToken = Action<'updateFromToken'> &
+  Payload<TunnelState['fromToken']>
+type UpdateFromInput = Action<'updateFromInput'> & Payload<string>
+type UpdateToNetwork = Action<'updateToNetwork'> &
+  Payload<TunnelState['toNetworkId']>
 type ToggleInput = Action<'toggleInput'> & NoPayload
+
 type Actions =
   | ResetStateAfterOperation
   | SavePartialDeposit

@@ -6,28 +6,27 @@ import {
   hemiWalletBitcoinTunnelManagerActions,
 } from 'hemi-viem'
 import { useMemo } from 'react'
-import { type Address, type Chain } from 'viem'
+import { type Address, type Chain, type PublicClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
 
 const localExtensions = () => ({
   // in incoming iterations, the owner address will be determined programmatically
   // from bitcoin manager, once there's a determined way to get the "most adequate" custodial
-  // See https://github.com/BVM-priv/ui-monorepo/issues/393
+  // See https://github.com/hemilabs/ui-monorepo/issues/393
   getOwner: () =>
     Promise.resolve('0xfee2f1eD73051c0f910de83d221151d9D36Ae3de' as Address),
 })
 
+export const publicClientToHemiClient = (publicClient: PublicClient) =>
+  publicClient
+    .extend(hemiPublicBitcoinKitActions())
+    .extend(hemiPublicBitcoinVaultActions())
+    .extend(hemiPublicBitcoinTunnelManagerActions())
+    .extend(localExtensions)
+
 export const useHemiClient = function (chainId: Chain['id'] = hemi.id) {
   const hemiClient = usePublicClient({ chainId })
-  return useMemo(
-    () =>
-      hemiClient
-        .extend(hemiPublicBitcoinKitActions())
-        .extend(hemiPublicBitcoinVaultActions())
-        .extend(hemiPublicBitcoinTunnelManagerActions())
-        .extend(localExtensions),
-    [hemiClient],
-  )
+  return useMemo(() => publicClientToHemiClient(hemiClient), [hemiClient])
 }
 
 export const useHemiWalletClient = function (chainId: Chain['id'] = hemi.id) {

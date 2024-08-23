@@ -6,19 +6,54 @@ const toCamelCase = <T>(obj: T) => camelCaseKeys(obj, { deep: true })
 
 const apiUrl = process.env.NEXT_PUBLIC_MEMPOOL_API_URL
 
+type TransactionStatus = {
+  confirmed: boolean
+}
+
+export type MempoolJsBitcoinTransaction = {
+  status: TransactionStatus
+  txId: string
+  vin: {
+    prevout: {
+      scriptpubkeyAddress: string
+    }
+  }[]
+  vout: {
+    scriptpubkeyAsm: string
+    scriptpubkeyAddress: string
+    scriptpubkeyType: string
+    value: number
+  }[]
+}
+
 type Utxo = {
-  status: {
-    confirmed: boolean
-  }
+  status: TransactionStatus
   txId: string
   value: Satoshis
 }
 
+// See https://mempool.space/docs/api/rest#get-address-transactions
+export const getAddressTransactions = (
+  address: Account,
+  queryString?: { afterTxId: string },
+) =>
+  fetch(
+    `${apiUrl}/address/${address}/txs`,
+    queryString
+      ? {
+          // eslint-disable-next-line camelcase
+          queryString: { after_txid: queryString.afterTxId },
+        }
+      : undefined,
+  ).then(txs =>
+    txs.map(tx => toCamelCase({ ...tx, txId: tx.txid })),
+  ) as Promise<MempoolJsBitcoinTransaction[]>
+
 // See https://mempool.space/docs/api/rest#get-address-utxo (we are converting to camelCase)
 export const getAddressUtxo = (address: Account) =>
-  fetch(
-    `${process.env.NEXT_PUBLIC_MEMPOOL_API_URL}/address/${address}/utxo`,
-  ).then(toCamelCase) as Promise<Utxo[]>
+  fetch(`${apiUrl}/address/${address}/utxo`).then(utxos =>
+    utxos.map(utxo => toCamelCase({ ...utxo, txId: utxo.txid })),
+  ) as Promise<Utxo[]>
 
 // See https://mempool.space/docs/api/rest#get-block-tip-height
 export const getBlockTipHeight = () =>

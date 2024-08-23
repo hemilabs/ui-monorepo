@@ -1,16 +1,15 @@
+import { type BlockSyncType } from 'hooks/useSyncHistory/types'
 import { CreateSlidingBlockWindow } from 'sliding-block-window/src'
 
-import { type SyncInfo } from './types'
-
-export const getPayload = function ({
+export const getBlockPayload = function ({
   canMove,
   fromBlock,
   lastBlock,
   nextState,
 }: {
   canMove: boolean
-  fromBlock: SyncInfo['fromBlock']
-  lastBlock: number
+  fromBlock: BlockSyncType['fromBlock']
+  lastBlock: BlockSyncType['toBlock']
   nextState: Parameters<CreateSlidingBlockWindow['onChange']>[0]['nextState']
 }) {
   const hasSyncToMinBlock = !canMove

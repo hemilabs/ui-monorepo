@@ -1,6 +1,6 @@
 import { type TokenBridgeMessage } from '@eth-optimism/sdk'
 import { JsonRpcProvider } from '@ethersproject/providers'
-import { Debugger } from 'debug'
+import { BlockSyncType } from 'hooks/useSyncHistory/types'
 import pAll from 'p-all'
 import {
   createSlidingBlockWindow,
@@ -19,12 +19,8 @@ import { getEvmBlock } from 'utils/evmApi'
 import { createPublicProvider } from 'utils/providers'
 import { type Chain } from 'viem'
 
-import { getPayload } from './common'
-import {
-  type EvmSyncParameters,
-  type ExtendedSyncInfo,
-  type SaveHistory,
-} from './types'
+import { getBlockPayload } from './common'
+import { type HistorySyncer } from './types'
 
 const toOperation =
   <T extends TunnelOperation>(l1ChainId: Chain['id'], l2ChainId: Chain['id']) =>
@@ -48,14 +44,7 @@ export const createEvmSync = function ({
   l2Chain,
   saveHistory,
   withdrawalsSyncInfo,
-}: Pick<EvmSyncParameters, 'address'> & {
-  debug: Debugger
-  depositsSyncInfo: ExtendedSyncInfo
-  l1Chain: Chain
-  l2Chain: Chain
-  saveHistory: SaveHistory
-  withdrawalsSyncInfo: ExtendedSyncInfo
-}) {
+}: HistorySyncer<BlockSyncType>) {
   const getBlockNumber = async function (
     toBlock: number,
     provider: JsonRpcProvider,
@@ -140,7 +129,7 @@ export const createEvmSync = function ({
       // save the deposits
       saveHistory({
         payload: {
-          ...getPayload({
+          ...getBlockPayload({
             canMove,
             fromBlock: depositsSyncInfo.fromBlock,
             lastBlock,
@@ -239,7 +228,7 @@ export const createEvmSync = function ({
       // save the withdrawals
       saveHistory({
         payload: {
-          ...getPayload({
+          ...getBlockPayload({
             canMove,
             fromBlock: withdrawalsSyncInfo.fromBlock,
             lastBlock,
@@ -262,6 +251,8 @@ export const createEvmSync = function ({
   }
 
   const syncHistory = function () {
+    // EVM chains use Ethers providers because that's what
+    // the cross-chain messenger expects
     debug('Creating providers')
     const l1Provider = createPublicProvider(
       l1Chain.rpcUrls.default.http[0],

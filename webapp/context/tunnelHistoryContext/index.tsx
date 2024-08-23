@@ -1,9 +1,12 @@
 'use client'
 
 import { featureFlags } from 'app/featureFlags'
-import { bitcoin, hemi, remoteNetworks } from 'app/networks'
+import { bitcoin, hemi, type RemoteChain, remoteNetworks } from 'app/networks'
 import { useSyncHistory } from 'hooks/useSyncHistory'
-import { type HistoryReducerState } from 'hooks/useSyncHistory/types'
+import {
+  SyncStatus,
+  type HistoryReducerState,
+} from 'hooks/useSyncHistory/types'
 import dynamic from 'next/dynamic'
 import { createContext, useMemo, ReactNode } from 'react'
 import {
@@ -33,6 +36,18 @@ const WithdrawalsStateUpdater = dynamic(
     ),
   { ssr: false },
 )
+
+const isReadyOrSyncing = (status: SyncStatus | undefined) =>
+  ['ready', 'syncing'].includes(status)
+
+const isChainReadyOrSyncing =
+  (history: HistoryReducerState) => (chain: RemoteChain) =>
+    isReadyOrSyncing(
+      history.deposits.find(d => d.chainId === chain.id)?.status,
+    ) ||
+    isReadyOrSyncing(
+      history.withdrawals.find(d => d.chainId === chain.id)?.status,
+    )
 
 type TunnelHistoryContext = {
   addDepositToTunnelHistory: (deposit: DepositTunnelOperation) => void
@@ -80,16 +95,18 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
   if (isConnected && ['ready', 'syncing'].includes(history.status)) {
     // Add workers for every pair L1-Hemi chain
     historyChainSync.push(
-      ...remoteNetworks.map(l1Chain => (
-        <SyncHistoryWorker
-          address={address}
-          dispatch={dispatch}
-          history={history}
-          key={`${l1Chain.id}_${l2ChainId}_${address}`}
-          l1ChainId={l1Chain.id}
-          l2ChainId={l2ChainId}
-        />
-      )),
+      ...remoteNetworks
+        .filter(isChainReadyOrSyncing(history))
+        .map(l1Chain => (
+          <SyncHistoryWorker
+            address={address}
+            dispatch={dispatch}
+            history={history}
+            key={`${l1Chain.id}_${l2ChainId}_${address}`}
+            l1ChainId={l1Chain.id}
+            l2ChainId={l2ChainId}
+          />
+        )),
     )
   }
 

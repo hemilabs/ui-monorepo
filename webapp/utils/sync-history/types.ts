@@ -1,40 +1,40 @@
-import { BtcChain } from 'btc-wallet/chains'
-import { type Account } from 'btc-wallet/unisat'
-import { HistoryActions, type StorageChain } from 'hooks/useSyncHistory/types'
+import { RemoteChain } from 'app/networks'
+import { Debugger } from 'debug'
+import {
+  type BlockSyncType,
+  type HistoryActions,
+  type SyncType,
+} from 'hooks/useSyncHistory/types'
 import { TunnelOperation } from 'types/tunnel'
 import { type Address, type Chain } from 'viem'
 
-export type SyncInfo = Pick<
-  StorageChain<TunnelOperation>,
-  'chunkIndex' | 'content' | 'fromBlock' | 'hasSyncToMinBlock' | 'toBlock'
->
+export type SyncInfo<TSyncType extends SyncType> = {
+  content: TunnelOperation[]
+} & TSyncType
 
-export type HistorySyncer = {
-  syncHistory: () => Promise<void>
-}
+export type ExtendedSyncInfo<TSyncType extends SyncType> = TSyncType &
+  (TSyncType extends BlockSyncType
+    ? {
+        blockWindowSize: number
+        minBlockToSync?: number
+      }
+    : Record<string, never>)
 
-export type BtcSyncParameters = {
-  address: Account
-  l1ChainId: BtcChain['id']
-  l2ChainId: Chain['id']
-}
-
-export type EvmSyncParameters = {
+export type HistorySyncer<TSyncType extends SyncType> = {
   address: Address
-  l1ChainId: Chain['id']
-  l2ChainId: Chain['id']
+  debug: Debugger
+  depositsSyncInfo: ExtendedSyncInfo<TSyncType>
+  l1Chain: Chain
+  l2Chain: Chain
+  saveHistory: (action: HistoryActions) => void
+  withdrawalsSyncInfo: ExtendedSyncInfo<TSyncType>
 }
 
-export type SaveHistory = (action: HistoryActions) => void
-
-export type SyncHistoryParameters = (EvmSyncParameters | BtcSyncParameters) & {
+export type SyncHistoryCombinations = {
+  l1ChainId: RemoteChain['id']
   l2ChainId: Chain['id']
+  address: Address
 } & {
-  depositsSyncInfo: Omit<SyncInfo, 'content'>
-  withdrawalsSyncInfo: Omit<SyncInfo, 'content'>
-}
-
-export type ExtendedSyncInfo = Omit<SyncInfo, 'content'> & {
-  blockWindowSize: number
-  minBlockToSync?: number
+  depositsSyncInfo: SyncType
+  withdrawalsSyncInfo: SyncType
 }

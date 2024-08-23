@@ -50,6 +50,9 @@ export const remoteNetworks: RemoteChain[] = evmRemoteNetworks.concat(
   featureFlags.btcTunnelEnabled ? [bitcoin] : [],
 )
 
+export const findChainById = (chainId: RemoteChain['id']) =>
+  networks.find(n => n.id === chainId)
+
 export const isChainSupported = (chainId: RemoteChain['id']) =>
   networks.some(({ id }) => id === chainId)
 

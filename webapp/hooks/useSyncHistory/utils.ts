@@ -2,7 +2,13 @@ import { type RemoteChain } from 'app/networks'
 import { type TunnelOperation } from 'types/tunnel'
 import { type Address, type Chain } from 'viem'
 
-import { type StorageChain, type SyncContentPayload } from './types'
+import {
+  type HistoryReducerState,
+  type StorageChain,
+  type SyncContentPayload,
+  type SyncStatus,
+  type SyncType,
+} from './types'
 
 export const getTunnelHistoryDepositFallbackStorageKey = (
   l1ChainId: RemoteChain['id'],
@@ -41,27 +47,20 @@ const mergeContent = <T extends TunnelOperation>(
     (a, b) => b.timestamp - a.timestamp,
   )
 
-export const syncContent = function <T extends TunnelOperation>(
-  { chainId, content }: StorageChain<T>,
-  payload: SyncContentPayload<T>,
-) {
-  const {
-    chunkIndex,
+export const syncContent = <
+  TOperation extends TunnelOperation,
+  TSyncType extends SyncType,
+>(
+  { content, ...stored }: StorageChain<TOperation>,
+  {
     content: newContent,
-    fromBlock,
-    hasSyncToMinBlock,
-    toBlock,
-  } = payload
-
-  return {
-    chainId,
-    chunkIndex,
-    content: mergeContent(content, newContent),
-    fromBlock,
-    hasSyncToMinBlock,
-    toBlock,
-  }
-}
+    ...payload
+  }: SyncContentPayload<TOperation, TSyncType>,
+) => ({
+  content: mergeContent(content, newContent),
+  ...stored,
+  ...payload,
+})
 
 export const addOperation = <T extends TunnelOperation>(
   operations: StorageChain<T>[],
@@ -76,6 +75,30 @@ export const addOperation = <T extends TunnelOperation>(
       content: mergeContent(chainOperations.content, [newItem]),
     }
   })
+
+export const updateChainSyncStatus = (
+  state: HistoryReducerState,
+  chainId: RemoteChain['id'],
+  newStatus: StorageChain['status'],
+) => ({
+  ...state,
+  deposits: state.deposits.map(chainDeposits =>
+    chainDeposits.chainId === chainId
+      ? {
+          ...chainDeposits,
+          status: newStatus,
+        }
+      : chainDeposits,
+  ),
+  withdrawals: state.withdrawals.map(chainWithdrawals =>
+    chainWithdrawals.chainId === chainId
+      ? {
+          ...chainWithdrawals,
+          status: newStatus,
+        }
+      : chainWithdrawals,
+  ),
+})
 
 export const updateOperation = <T extends TunnelOperation>(
   operations: StorageChain<T>[],
@@ -94,3 +117,41 @@ export const updateOperation = <T extends TunnelOperation>(
       ),
     }
   })
+
+const isChainFinishedSyncing = (chain: StorageChain) =>
+  chain.status === 'finished'
+const isChainReady = (chain: StorageChain) => chain.status === 'ready'
+const isChainSyncing = (chain: StorageChain) => chain.status === 'syncing'
+
+export const getSyncStatus = function (
+  state: Omit<HistoryReducerState, 'status'>,
+): SyncStatus {
+  if (
+    state.deposits.some(isChainSyncing) ||
+    state.withdrawals.some(isChainSyncing)
+  ) {
+    return 'syncing'
+  }
+
+  const hasLoaded = state.deposits.length > 0 || state.withdrawals.length > 0
+
+  if (!hasLoaded) {
+    return 'idle'
+  }
+
+  if (
+    state.deposits.every(isChainFinishedSyncing) &&
+    state.withdrawals.every(isChainFinishedSyncing)
+  ) {
+    return 'finished'
+  }
+
+  if (
+    state.deposits.every(isChainReady) &&
+    state.withdrawals.every(isChainReady)
+  ) {
+    return 'ready'
+  }
+
+  return 'idle'
+}

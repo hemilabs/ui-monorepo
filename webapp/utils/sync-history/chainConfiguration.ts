@@ -3,8 +3,7 @@ import { sepolia } from 'viem/chains'
 
 export const chainConfiguration = {
   [bitcoin.id]: {
-    // TODO define proper block windows size https://github.com/hemilabs/ui-monorepo/issues/345
-    blockWindowSize: 3500,
+    // bitcoin API doesn't allow to set a block window size
   },
   [hemi.id]: {
     blockWindowSize: 3500, // Approximately 1/2 day

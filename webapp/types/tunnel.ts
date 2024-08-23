@@ -5,6 +5,7 @@ import {
 } from '@eth-optimism/sdk'
 import { type RemoteChain } from 'app/networks'
 import { BtcChain } from 'btc-wallet/chains'
+import { BtcTransaction } from 'btc-wallet/unisat'
 import { type Chain, type Hash } from 'viem'
 
 export const enum BtcDepositStatus {
@@ -22,7 +23,13 @@ export const enum BtcDepositStatus {
 
 type CommonOperation = Omit<
   TokenBridgeMessage,
-  'amount' | 'blockNumber' | 'chainId' | 'data' | 'direction' | 'logIndex'
+  | 'amount'
+  | 'blockNumber'
+  | 'chainId'
+  | 'data'
+  | 'direction'
+  | 'logIndex'
+  | 'transactionHash'
 > & {
   amount: string
   blockNumber?: number
@@ -31,6 +38,10 @@ type CommonOperation = Omit<
 
 type DepositDirection = {
   direction: MessageDirection.L1_TO_L2
+}
+
+type BtcTransactionHash = {
+  transactionHash: BtcTransaction
 }
 
 type EvmTransactionHash = {
@@ -42,7 +53,8 @@ type WithdrawDirection = {
 }
 
 export type BtcDepositOperation = CommonOperation &
-  DepositDirection & {
+  DepositDirection &
+  BtcTransactionHash & {
     status: BtcDepositStatus
   } & {
     l1ChainId: BtcChain['id']

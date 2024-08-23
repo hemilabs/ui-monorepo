@@ -1,30 +1,40 @@
-import { networks } from 'app/networks'
+import { bitcoin, findChainById } from 'app/networks'
 import debugConstructor from 'debug'
-import { HistoryActions } from 'hooks/useSyncHistory/types'
+import {
+  type BlockSyncType,
+  type HistoryActions,
+  type TransactionListSyncType,
+} from 'hooks/useSyncHistory/types'
+import { createBitcoinSync } from 'utils/sync-history/bitcoin'
 import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
 import { createEvmSync } from 'utils/sync-history/evm'
 import {
-  type HistorySyncer,
-  type SyncHistoryParameters,
+  type ExtendedSyncInfo,
+  type SyncHistoryCombinations,
 } from 'utils/sync-history/types'
 import { type Address, type Chain } from 'viem'
 import { sepolia } from 'viem/chains'
 
 type EnableDebug = { type: 'enable-debug'; payload: string }
-type StartSyncing = SyncHistoryParameters & { type: 'start' }
+type StartSyncing = { type: 'start' } & SyncHistoryCombinations
 
-type HistoryWorkerEvents = MessageEvent<
-  EnableDebug | HistoryActions | StartSyncing
->
+type AppToWebWorkerActions = EnableDebug | StartSyncing
 
 // Worker is typed with "any", so force type safety for the messages
 // (as in runtime all types are stripped, this will continue to work)
-export type SyncWebWorker = Omit<Worker, 'postMessage'> & {
-  postMessage: (event: HistoryWorkerEvents['data']) => void
+export type AppToWebWorker = Omit<Worker, 'onmessage' | 'postMessage'> & {
+  onmessage: (event: MessageEvent<HistoryActions>) => void
+  postMessage: (message: AppToWebWorkerActions) => void
+}
+type SyncWebWorker = Omit<Worker, 'onmessage' | 'postMessage'> & {
+  onmessage: (event: MessageEvent<AppToWebWorkerActions>) => void
+  postMessage: (event: HistoryActions) => void
 }
 
 // See https://github.com/Microsoft/TypeScript/issues/20595#issuecomment-587297818
 const worker = self as unknown as SyncWebWorker
+
+const saveHistory = (action: HistoryActions) => worker.postMessage(action)
 
 const createSyncer = function ({
   address,
@@ -32,36 +42,41 @@ const createSyncer = function ({
   l1ChainId,
   l2ChainId,
   withdrawalsSyncInfo,
-}: SyncHistoryParameters): HistorySyncer {
-  const l1Chain = networks.find(n => n.id === l1ChainId)
+}: SyncHistoryCombinations) {
+  const l1Chain = findChainById(l1ChainId)
   // L2 are always EVM
-  const l2Chain = networks.find(n => n.id === l2ChainId) as Chain
+  const l2Chain = findChainById(l2ChainId) as Chain
 
   const debug = debugConstructor(
     `history-sync-worker:l1:${l1ChainId}:l2:${l2ChainId}`,
   )
 
   switch (l1Chain.id) {
-    // See https://github.com/hemilabs/ui-monorepo/issues/345
-    // case bitcoin.id:
-    //   return createBitcoinSync({
-    //     address,
-    //     debug,
-    //     chain,
-    //   })
+    case bitcoin.id:
+      return createBitcoinSync({
+        address,
+        debug,
+        depositsSyncInfo:
+          depositsSyncInfo as ExtendedSyncInfo<TransactionListSyncType>,
+        l1Chain,
+        l2Chain,
+        saveHistory,
+        withdrawalsSyncInfo:
+          withdrawalsSyncInfo as ExtendedSyncInfo<TransactionListSyncType>,
+      })
     case sepolia.id:
       return createEvmSync({
         address: address as Address,
         debug,
         depositsSyncInfo: {
-          ...depositsSyncInfo,
+          ...(depositsSyncInfo as BlockSyncType),
           ...chainConfiguration[l1Chain.id],
         },
         l1Chain,
         l2Chain,
-        saveHistory: action => worker.postMessage(action),
+        saveHistory,
         withdrawalsSyncInfo: {
-          ...withdrawalsSyncInfo,
+          ...(withdrawalsSyncInfo as BlockSyncType),
           ...chainConfiguration[l2Chain.id],
         },
       })
@@ -69,15 +84,18 @@ const createSyncer = function ({
       throw new Error(`Unsupported syncer for L1 chainId ${l1ChainId}`)
   }
 }
-async function syncTunnelHistory(parameters: SyncHistoryParameters) {
+async function syncTunnelHistory(parameters: StartSyncing) {
   const syncer = createSyncer(parameters)
 
   await syncer.syncHistory()
-  worker.postMessage({ type: 'sync-finished' })
+  worker.postMessage({
+    payload: { chainId: parameters.l1ChainId },
+    type: 'sync-finished',
+  })
 }
 
 // wait for the UI to send chain and address once ready
-worker.onmessage = function runWorker(e: HistoryWorkerEvents) {
+worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
   if (e.data.type === 'start') {
     syncTunnelHistory(e.data)
   }

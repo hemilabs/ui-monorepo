@@ -1,4 +1,3 @@
-import { findChainById, isEvmNetwork } from 'app/networks'
 import { hemiSepolia } from 'hemi-viem'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useNetworks } from 'hooks/useNetworks'
@@ -10,6 +9,7 @@ import {
   type TunnelOperation,
   type WithdrawTunnelOperation,
 } from 'types/tunnel'
+import { findChainById, isEvmNetwork } from 'utils/chain'
 import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
 import { type Address, type Chain } from 'viem'
 import { useAccount } from 'wagmi'

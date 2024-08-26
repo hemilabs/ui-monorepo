@@ -7,6 +7,7 @@ const toCamelCase = <T>(obj: T) => camelCaseKeys(obj, { deep: true })
 const apiUrl = process.env.NEXT_PUBLIC_MEMPOOL_API_URL
 
 type TransactionStatus = {
+  blockTime?: number
   confirmed: boolean
 }
 

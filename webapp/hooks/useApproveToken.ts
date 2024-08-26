@@ -1,9 +1,10 @@
-import { isChainSupported } from 'app/networks'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { type EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/token'
 import { useAccount } from 'wagmi'
 import { useAllowance, useApprove } from 'wagmi-erc20-hooks'
+
+import { useChainIsSupported } from './useChainIsSupported'
 
 const ApproveErc20TokenGas = BigInt(45_000)
 
@@ -16,11 +17,12 @@ export const useApproveToken = function (
   const { amount, spender } = args
   const erc20AddressToken = token.address as `0x${string}`
 
-  const { address: owner } = useAccount()
+  const { address: owner, isConnected } = useAccount()
+  const isSupported = useChainIsSupported(token.chainId)
 
   const approvalTokenGasFees = useEstimateFees({
     chainId: token.chainId,
-    enabled: isChainSupported(token.chainId),
+    enabled: isConnected && isSupported,
     gasUnits: ApproveErc20TokenGas,
   })
 
@@ -31,11 +33,7 @@ export const useApproveToken = function (
   } = useAllowance(erc20AddressToken, {
     args: { owner, spender },
     query: {
-      enabled:
-        isChainSupported(token.chainId) &&
-        !isNativeToken(token) &&
-        !!owner &&
-        !!spender,
+      enabled: isSupported && !isNativeToken(token) && !!owner && !!spender,
     },
   })
 

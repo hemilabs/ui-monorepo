@@ -1,5 +1,4 @@
 // See https://wagmi.sh/react/guides/ethers#connector-client-%E2%86%92-signer
-import { isChainSupported } from 'app/networks'
 import { useMemo } from 'react'
 import {
   createFallbackProvider,
@@ -8,6 +7,8 @@ import {
 } from 'utils/providers'
 import type { Chain, PublicClient } from 'viem'
 import { Config, useConnectorClient, usePublicClient } from 'wagmi'
+
+import { useChainIsSupported } from './useChainIsSupported'
 
 // See https://wagmi.sh/react/guides/ethers#client-%E2%86%92-provider
 function publicClientToProvider(publicClient: PublicClient) {
@@ -29,21 +30,22 @@ function clientToSigner(client: any) {
 
 export function useWeb3Provider(chainId: Chain['id']) {
   const { data: client } = useConnectorClient<Config>({ chainId })
+  const isSupported = useChainIsSupported(chainId)
   return useMemo(
-    () =>
-      client && isChainSupported(chainId) ? clientToSigner(client) : undefined,
-    [chainId, client],
+    () => (client && isSupported ? clientToSigner(client) : undefined),
+    [client, isSupported],
   )
 }
 
 export function useJsonRpcProvider(chainId: Chain['id']) {
   const publicClient = usePublicClient({ chainId })
+  const isSupported = useChainIsSupported(chainId)
   return useMemo(
     () =>
-      publicClient && isChainSupported(chainId)
+      publicClient && isSupported
         ? publicClientToProvider(publicClient)
         : undefined,
-    [chainId, publicClient],
+    [isSupported, publicClient],
   )
 }
 

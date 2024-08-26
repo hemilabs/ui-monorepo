@@ -1,18 +1,25 @@
 'use client'
 
-import { bitcoin } from 'app/networks'
 import { unisat } from 'btc-wallet/connectors/unisat'
 import { BtcWalletProvider } from 'btc-wallet/context/btcWalletContext'
-import React from 'react'
-
-const btcWalletConfig = {
-  chains: [bitcoin],
-  connectors: [unisat],
-}
+import { useBitcoin } from 'hooks/useBitcoin'
+import { type ReactNode, useMemo } from 'react'
 
 type Props = {
-  children: React.ReactNode
+  children: ReactNode
 }
-export const BtcWalletContext = ({ children }: Props) => (
-  <BtcWalletProvider config={btcWalletConfig}>{children}</BtcWalletProvider>
-)
+export const BtcWalletContext = function ({ children }: Props) {
+  const bitcoin = useBitcoin()
+
+  const btcWalletConfig = useMemo(
+    () => ({
+      chains: [bitcoin],
+      connectors: [unisat],
+    }),
+    [bitcoin],
+  )
+
+  return (
+    <BtcWalletProvider config={btcWalletConfig}>{children}</BtcWalletProvider>
+  )
+}

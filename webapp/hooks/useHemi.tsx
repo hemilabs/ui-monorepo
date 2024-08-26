@@ -9,18 +9,17 @@ import { useNetworkType } from './useNetworkType'
 export const useHemi = function () {
   const [type] = useNetworkType()
   return useMemo(
-    () =>
-      ({
-        ...(type === 'testnet' ? hemiTestnet : hemiMainnet),
-        // See https://github.com/hemilabs/ui-monorepo/issues/478 for when to remove
-        iconBackground: '#FFFFFF',
-        iconUrl: () =>
-          Promise.resolve(
-            `data:image/svg+xml;base64,${btoa(
-              renderToString(<HemiSymbolWhite />),
-            )}`,
-          ),
-      }) satisfies EvmChain,
+    (): EvmChain => ({
+      ...(type === 'testnet' ? hemiTestnet : hemiMainnet),
+      // See https://github.com/hemilabs/ui-monorepo/issues/478 for when to remove
+      iconBackground: '#FFFFFF',
+      iconUrl: () =>
+        Promise.resolve(
+          `data:image/svg+xml;base64,${btoa(
+            renderToString(<HemiSymbolWhite />),
+          )}`,
+        ),
+    }),
     [type],
   )
 }

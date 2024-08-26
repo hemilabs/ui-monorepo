@@ -1,7 +1,6 @@
 import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTunnelOperation } from 'app/[locale]/tunnel/_hooks/useTunnelOperation'
-import { bitcoin } from 'app/networks'
 import { BtcChain } from 'btc-wallet/chains'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { Satoshis } from 'btc-wallet/unisat'
@@ -19,6 +18,7 @@ import {
   useWaitForTransactionReceipt as useWaitForEvmTransactionReceipt,
 } from 'wagmi'
 
+import { useBitcoin } from './useBitcoin'
 import { useHemiClient, useHemiWalletClient } from './useHemiClient'
 import { useTunnelHistory } from './useTunnelHistory'
 import { useWaitForTransactionReceipt as useWaitForBtcTransactionReceipt } from './useWaitForTransactionReceipt'
@@ -72,6 +72,7 @@ export const useClaimBitcoinDeposit = function () {
 }
 
 export const useDepositBitcoin = function () {
+  const bitcoin = useBitcoin()
   const { address, connector } = useBtcAccount()
   const hemiClient = useHemiClient()
   const { addDepositToTunnelHistory } = useTunnelHistory()
@@ -102,7 +103,6 @@ export const useDepositBitcoin = function () {
       { bitcoinCustodyAddress, txHash },
       { l1ChainId, l2ChainId, satoshis },
     ) {
-      // See https://github.com/hemilabs/ui-monorepo/issues/462
       const btc = getNativeToken(bitcoin.id)
       addDepositToTunnelHistory({
         amount: satoshis.toString(),
@@ -149,6 +149,7 @@ export const useDepositBitcoin = function () {
 }
 
 export const useWithdrawBitcoin = function () {
+  const bitcoin = useBitcoin()
   const { address: btcAddress } = useBtcAccount()
   const { address: hemiAddress } = useEvmAccount()
   const hemiClient = useHemiClient()

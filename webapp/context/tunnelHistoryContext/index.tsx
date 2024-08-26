@@ -1,7 +1,7 @@
 'use client'
 
 import { featureFlags } from 'app/featureFlags'
-import { bitcoin, type RemoteChain } from 'app/networks'
+import { useBitcoin } from 'hooks/useBitcoin'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useSyncHistory } from 'hooks/useSyncHistory'
@@ -11,10 +11,11 @@ import {
 } from 'hooks/useSyncHistory/types'
 import dynamic from 'next/dynamic'
 import { createContext, useMemo, ReactNode } from 'react'
+import { type RemoteChain } from 'types/chain'
 import {
-  DepositTunnelOperation,
-  EvmWithdrawOperation,
-  WithdrawTunnelOperation,
+  type DepositTunnelOperation,
+  type EvmWithdrawOperation,
+  type WithdrawTunnelOperation,
 } from 'types/tunnel'
 import { useAccount } from 'wagmi'
 
@@ -85,6 +86,7 @@ type Props = {
 
 export const TunnelHistoryProvider = function ({ children }: Props) {
   const { address, isConnected } = useAccount()
+  const bitcoin = useBitcoin()
 
   const l2ChainId = useHemi().id
   const { remoteNetworks } = useNetworks()
@@ -138,9 +140,11 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
           payload: { updates, withdraw },
           type: 'update-withdraw',
         }),
-      withdrawals: history.withdrawals.flatMap(d => d.content),
+      withdrawals: history.withdrawals
+        .filter(w => featureFlags.btcTunnelEnabled || w.chainId !== bitcoin.id)
+        .flatMap(w => w.content),
     }),
-    [dispatch, history],
+    [bitcoin.id, dispatch, history],
   )
 
   return (

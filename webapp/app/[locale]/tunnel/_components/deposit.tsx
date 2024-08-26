@@ -1,11 +1,11 @@
 'use client'
 
 import { MessageDirection } from '@eth-optimism/sdk'
-import { bitcoin, isEvmNetwork } from 'app/networks'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useBitcoin } from 'hooks/useBitcoin'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
@@ -18,6 +18,7 @@ import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken, type Token } from 'types/token'
 import { BtcDepositStatus, EvmDepositOperation } from 'types/tunnel'
 import { Button } from 'ui-common/components/button'
+import { isEvmNetwork } from 'utils/chain'
 import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits, zeroAddress } from 'viem'
@@ -153,14 +154,15 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     updateFromInput,
   } = state
 
-  const { btcChainId, evmAddress } = useAccounts()
+  const { evmAddress } = useAccounts()
+  const bitcoin = useBitcoin()
   const { balance } = useBtcBalance()
-  const chain = useChain(btcChainId)
+  const chain = useChain(bitcoin.id)
   const { txHash } = useTunnelOperation()
 
   const canDeposit = canSubmit({
     balance: BigInt(balance?.confirmed ?? 0),
-    chainId: btcChainId,
+    chainId: bitcoin.id,
     fromInput,
     fromNetworkId,
     fromToken,
@@ -254,8 +256,8 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     <>
       <TunnelForm
         bottomSection={<WalletsConnected />}
-        expectedChainId={bitcoin.id}
-        explorerUrl={bitcoin.blockExplorers.default.url}
+        expectedChainId={chain.id}
+        explorerUrl={chain.blockExplorers.default.url}
         formContent={
           <FormContent
             isRunningOperation={isDepositing}

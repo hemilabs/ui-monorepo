@@ -1,5 +1,5 @@
-import { type RemoteChain } from 'app/networks'
 import { BtcTransaction } from 'btc-wallet/unisat'
+import { type RemoteChain } from 'types/chain'
 import {
   type DepositTunnelOperation,
   type TunnelOperation,

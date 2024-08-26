@@ -1,9 +1,10 @@
-import { findChainById, isEvmNetwork, type RemoteChain } from 'app/networks'
+import { findChainById, isEvmNetwork } from 'app/networks'
 import { hemiSepolia } from 'hemi-viem'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useNetworks } from 'hooks/useNetworks'
 import debounce from 'lodash/debounce'
 import { useEffect, useReducer, useState } from 'react'
+import { type RemoteChain } from 'types/chain'
 import {
   type DepositTunnelOperation,
   type TunnelOperation,

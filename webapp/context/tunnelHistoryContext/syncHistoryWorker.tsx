@@ -1,9 +1,9 @@
-import { type RemoteChain } from 'app/networks'
 import {
   type HistoryActions,
   type HistoryReducerState,
 } from 'hooks/useSyncHistory/types'
 import { type Dispatch, useEffect, useRef, useState } from 'react'
+import { type RemoteChain } from 'types/chain'
 import { type Address, type Chain } from 'viem'
 import { AppToWebWorker } from 'workers/history'
 

@@ -1,10 +1,10 @@
 'use client'
 
-import { type RemoteChain } from 'app/networks'
 import { ChainLogo } from 'components/chainLogo'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { useState } from 'react'
+import { type RemoteChain } from 'types/chain'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 
 import { Menu } from './menu'

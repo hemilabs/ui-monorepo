@@ -1,7 +1,7 @@
-import { RemoteChain } from 'app/networks'
 import { BtcTransaction } from 'btc-wallet/unisat'
 import { ExternalLink } from 'components/externalLink'
 import { useChain } from 'hooks/useChain'
+import { type RemoteChain } from 'types/chain'
 import { type Hash } from 'viem'
 
 type Props = {

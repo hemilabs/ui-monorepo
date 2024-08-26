@@ -1,7 +1,7 @@
-import { type EvmChain } from 'app/networks'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useMemo } from 'react'
 import { renderToString } from 'react-dom/server'
+import { type EvmChain } from 'types/chain'
 import { HemiSymbolWhite } from 'ui-common/components/hemiLogo'
 
 import { useNetworkType } from './useNetworkType'

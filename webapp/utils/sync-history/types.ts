@@ -1,10 +1,10 @@
-import { RemoteChain } from 'app/networks'
 import { Debugger } from 'debug'
 import {
   type BlockSyncType,
   type HistoryActions,
   type SyncType,
 } from 'hooks/useSyncHistory/types'
+import { type RemoteChain } from 'types/chain'
 import { TunnelOperation } from 'types/tunnel'
 import { type Address, type Chain } from 'viem'
 

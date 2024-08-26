@@ -1,9 +1,10 @@
-import { isEvmNetwork, type RemoteChain } from 'app/networks'
+import { isEvmNetwork } from 'app/networks'
 import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchChain'
 import { useAccounts } from 'hooks/useAccounts'
 import { useChain } from 'hooks/useChain'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
+import { type RemoteChain } from 'types/chain'
 import { useSwitchChain as useSwitchEvmChain } from 'wagmi'
 
 import { NotificationBox } from './notificationBox'

@@ -1,5 +1,5 @@
 import { featureFlags } from 'app/featureFlags'
-import { RemoteChain } from 'app/networks'
+import { type RemoteChain } from 'types/chain'
 
 import { useAccounts } from './useAccounts'
 

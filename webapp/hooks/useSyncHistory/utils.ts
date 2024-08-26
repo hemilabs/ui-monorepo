@@ -1,4 +1,4 @@
-import { type RemoteChain } from 'app/networks'
+import { type RemoteChain } from 'types/chain'
 import { type TunnelOperation } from 'types/tunnel'
 import { type Address, type Chain } from 'viem'
 

@@ -1,6 +1,7 @@
-import { bitcoin, evmRemoteNetworks, hemi } from 'app/networks'
+import { bitcoin, evmRemoteNetworks } from 'app/networks'
 import { ExternalLink } from 'components/externalLink'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
+import { useHemi } from 'hooks/useHemi'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
@@ -28,6 +29,7 @@ const BtcViewDeposit = function ({
 }) {
   const { partialDeposit } = state
   const deposits = useBtcDeposits()
+  const hemi = useHemi()
   const t = useTranslations()
   const { txHash } = useTunnelOperation()
 

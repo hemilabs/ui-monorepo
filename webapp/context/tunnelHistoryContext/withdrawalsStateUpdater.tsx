@@ -1,14 +1,16 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { QueryClient, useQuery } from '@tanstack/react-query'
-import { evmRemoteNetworks, hemi } from 'app/networks'
+import { useQuery } from '@tanstack/react-query'
+import { evmRemoteNetworks } from 'app/networks'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
+import { useHemi } from 'hooks/useHemi'
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
 import { EvmWithdrawOperation } from 'types/tunnel'
 import { CrossChainMessengerProxy } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
+import { type Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
 const queue = new PQueue({ concurrency: 2 })
@@ -41,7 +43,7 @@ const refetchInterval = {
   },
 } satisfies { [chainId: number]: { [status: number]: number | false } }
 
-const getBlockTimestamp = (withdrawal: EvmWithdrawOperation) =>
+const getBlockTimestamp = (withdrawal: EvmWithdrawOperation, hemi: Chain) =>
   async function (
     blockNumber: number | undefined,
   ): Promise<[number?, number?]> {
@@ -53,7 +55,7 @@ const getBlockTimestamp = (withdrawal: EvmWithdrawOperation) =>
     }
     const { timestamp } = await getEvmBlock(
       blockNumber,
-      // See https://github.com/hemilabs/ui-monorepo/issues/462
+      // See https://github.com/hemilabs/ui-monorepo/issues/376
       withdrawal.l2ChainId ?? hemi.id,
     )
     return [blockNumber, Number(timestamp)]
@@ -65,8 +67,7 @@ const getTransactionBlockNumber = function (withdrawal: EvmWithdrawOperation) {
   }
   return getEvmTransactionReceipt(
     withdrawal.transactionHash,
-    // See https://github.com/hemilabs/ui-monorepo/issues/462
-    withdrawal.l2ChainId ?? hemi.id,
+    withdrawal.l2ChainId,
   ).then(transactionReceipt =>
     // return undefined if TX is not found - might have not been confirmed yet
     transactionReceipt ? Number(transactionReceipt.blockNumber) : undefined,
@@ -75,11 +76,12 @@ const getTransactionBlockNumber = function (withdrawal: EvmWithdrawOperation) {
 
 const pollUpdateWithdrawal = async ({
   crossChainMessenger,
+  hemi,
   updateWithdrawal,
   withdrawal,
 }: {
   crossChainMessenger: CrossChainMessengerProxy
-  queryClient: QueryClient
+  hemi: Chain
   updateWithdrawal: (
     w: EvmWithdrawOperation,
     updates: Partial<EvmWithdrawOperation>,
@@ -99,7 +101,7 @@ const pollUpdateWithdrawal = async ({
           withdrawal.direction,
         ),
         getTransactionBlockNumber(withdrawal).then(
-          getBlockTimestamp(withdrawal),
+          getBlockTimestamp(withdrawal, hemi),
         ),
       ])
       const changes: Partial<EvmWithdrawOperation> = {}
@@ -135,19 +137,30 @@ const pollUpdateWithdrawal = async ({
   )
 
 const WatchEvmWithdrawal = function ({
-  queryFn,
   withdrawal,
 }: {
-  queryFn: () => Promise<MessageStatus>
   withdrawal: EvmWithdrawOperation
 }) {
+  const { crossChainMessenger, crossChainMessengerStatus } =
+    useConnectedChainCrossChainMessenger(l1ChainId)
+  const { updateWithdrawal } = useTunnelHistory()
+
+  const hemi = useHemi()
   // This is a hacky usage of useQuery. I am using it this way because it provides automatic refetching,
   // request deduping, and conditional refetch depending on the state of the withdrawal.
   // I am not interested in the actual result of the query, but in the side effect of the queryFn
   useQuery({
-    queryFn,
+    enabled: crossChainMessengerStatus === 'success',
+    queryFn: () =>
+      pollUpdateWithdrawal({
+        crossChainMessenger,
+        hemi,
+        updateWithdrawal,
+        withdrawal,
+      }),
     queryKey: [
       'withdrawaStateUpdater',
+      // See https://github.com/hemilabs/ui-monorepo/issues/376
       withdrawal.l2ChainId ?? hemi.id,
       withdrawal.transactionHash,
     ],
@@ -160,18 +173,11 @@ const WatchEvmWithdrawal = function ({
 
 export const WithdrawalsStateUpdater = function () {
   const { isConnected } = useAccount()
-  const { updateWithdrawal, withdrawals = [] } = useTunnelHistory()
+  const { withdrawals = [] } = useTunnelHistory()
 
   const unsupportedChain = useConnectedToUnsupportedEvmChain()
 
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useConnectedChainCrossChainMessenger(l1ChainId)
-
-  if (
-    !isConnected ||
-    crossChainMessengerStatus !== 'success' ||
-    unsupportedChain
-  ) {
+  if (!isConnected || unsupportedChain) {
     return null
   }
 
@@ -200,18 +206,7 @@ export const WithdrawalsStateUpdater = function () {
   return (
     <>
       {withdrawalsToWatch.map(w => (
-        <WatchEvmWithdrawal
-          key={w.transactionHash}
-          queryFn={() =>
-            // @ts-expect-error unsure why it adds void, but actual result is not needed
-            pollUpdateWithdrawal({
-              crossChainMessenger,
-              updateWithdrawal,
-              withdrawal: w,
-            })
-          }
-          withdrawal={w}
-        />
+        <WatchEvmWithdrawal key={w.transactionHash} withdrawal={w} />
       ))}
     </>
   )

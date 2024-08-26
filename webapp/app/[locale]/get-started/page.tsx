@@ -71,9 +71,11 @@ const NetworkPage = function () {
           </Suspense>
         </div>
         <div className="md:basis-1/3">
-          <Card borderColor="gray" padding="medium" radius="large">
-            <WelcomePack />
-          </Card>
+          <Suspense fallback={<Skeleton className="h-80 w-full" />}>
+            <Card borderColor="gray" padding="medium" radius="large">
+              <WelcomePack />
+            </Card>
+          </Suspense>
         </div>
       </main>
       <Suspense>

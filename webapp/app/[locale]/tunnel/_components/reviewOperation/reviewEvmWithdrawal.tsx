@@ -1,6 +1,7 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { evmRemoteNetworks, hemi } from 'app/networks'
+import { evmRemoteNetworks } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
+import { useHemi } from 'hooks/useHemi'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
@@ -95,15 +96,20 @@ const WithdrawAmount = function ({
 }: {
   withdrawal?: EvmWithdrawOperation
 }) {
+  const hemi = useHemi()
   if (!withdrawal) {
     return <Skeleton containerClassName="w-5" />
   }
   const token =
-    getTokenByAddress(withdrawal.l2Token as Address, hemi.id) ??
+    getTokenByAddress(
+      withdrawal.l2Token as Address,
+      // See https://github.com/hemilabs/ui-monorepo/issues/376
+      withdrawal.l2ChainId ?? hemi.id,
+    ) ??
     getL2TokenByBridgedAddress(
       withdrawal.l2Token as Address,
-      // TODO https://github.com/BVM-priv/ui-monorepo/issues/158
-      evmRemoteNetworks[0].id,
+      // TODO https://github.com/hemilabs/ui-monorepo/issues/158
+      withdrawal.l1ChainId ?? evmRemoteNetworks[0].id,
     )
 
   return <Amount token={token} value={withdrawal.amount} />

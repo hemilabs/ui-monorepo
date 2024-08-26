@@ -1,13 +1,33 @@
 'use client'
 
-import { hemi } from 'app/networks'
+import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
+import { Suspense } from 'react'
 
 import cryptochordsImg from '../../../public/demos/cryptochords.png'
 import hemihatchlingspixelatedImg from '../../../public/demos/hemihatchlingspixelated.png'
 import purefinanceImg from '../../../public/demos/purefinance.png'
 
 import { DemoCard } from './_components/demoCard'
+
+const HemiHatchlings = function () {
+  const hemi = useHemi()
+  const t = useTranslations('demos')
+
+  return (
+    <DemoCard
+      altText="hemi hatchlings"
+      heading={t('hemihatchlings.heading')}
+      href={
+        hemi.testnet
+          ? 'https://hemihatchlings-test.hemi.xyz'
+          : 'https://hemihatchlings.hemi.xyz'
+      }
+      imageSrc={hemihatchlingspixelatedImg}
+      subHeading={t('hemihatchlings.sub-heading')}
+    />
+  )
+}
 
 const GraduateCapIcon = () => (
   <svg fill="none" height="29" width="36" xmlns="http://www.w3.org/2000/svg">
@@ -37,17 +57,9 @@ const Demos = function () {
           className="flex flex-col gap-y-4 md:w-full 
           md:flex-row md:justify-center md:gap-x-4"
         >
-          <DemoCard
-            altText="hemi hatchlings"
-            heading={t('hemihatchlings.heading')}
-            href={
-              hemi.testnet
-                ? 'https://hemihatchlings-test.hemi.xyz'
-                : 'https://hemihatchlings.hemi.xyz'
-            }
-            imageSrc={hemihatchlingspixelatedImg}
-            subHeading={t('hemihatchlings.sub-heading')}
-          />
+          <Suspense>
+            <HemiHatchlings />
+          </Suspense>
           <DemoCard
             altText="cryptochords"
             heading={t('cryptochords.heading')}

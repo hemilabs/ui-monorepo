@@ -1,5 +1,5 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { RemoteChain, hemi, isEvmNetwork } from 'app/networks'
+import { RemoteChain, isEvmNetwork } from 'app/networks'
 import { Big } from 'big.js'
 import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import { useAccounts } from 'hooks/useAccounts'
@@ -207,7 +207,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     <TunnelForm
       bottomSection={<WalletsConnected />}
       expectedChainId={state.fromNetworkId}
-      explorerUrl={hemi.blockExplorers.default.url}
+      explorerUrl={fromChain.blockExplorers.default.url}
       formContent={
         <FormContent
           isRunningOperation={isWithdrawing}

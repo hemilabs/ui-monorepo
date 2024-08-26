@@ -1,9 +1,10 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { evmRemoteNetworks, hemi } from 'app/networks'
+import { evmRemoteNetworks } from 'app/networks'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useClaimBitcoinDeposit } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useHemi } from 'hooks/useHemi'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
@@ -85,6 +86,7 @@ const BtcSubmitButton = function ({
   isClaiming: boolean
   isReadyToClaim: boolean
 }) {
+  const hemi = useHemi()
   const t = useTranslations('tunnel-page.submit-button')
 
   const disabled = isClaiming || !isReadyToClaim
@@ -120,6 +122,7 @@ export const BtcClaim = function ({
     claimBitcoinDepositTxHash,
     clearClaimBitcoinDepositState,
   } = useClaimBitcoinDeposit()
+  const hemi = useHemi()
   const estimatedFees = useEstimateFees({
     chainId: hemi.id,
     enabled: isConnected,

@@ -9,10 +9,11 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { evmRemoteNetworks, hemi } from 'app/networks'
+import { evmRemoteNetworks } from 'app/networks'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
+import { useHemi } from 'hooks/useHemi'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { parseAsString, useQueryState } from 'nuqs'
@@ -109,6 +110,7 @@ const Header = ({ text }: { text?: string }) => (
 const columnsBuilder = (
   t: ReturnType<typeof useTranslations<'tunnel-page.transaction-history'>>,
   l1ChainId: Chain['id'],
+  l2Chain: Chain,
 ): ColumnDef<TunnelOperation>[] => [
   {
     cell: ({ row }) => <TxTime timestamp={row.original.timestamp} />,
@@ -137,7 +139,7 @@ const columnsBuilder = (
         chainId={
           // See https://github.com/hemilabs/ui-monorepo/issues/376
           isWithdraw(row.original)
-            ? hemi.id
+            ? row.original.l2ChainId ?? l2Chain.id
             : row.original.l1ChainId ?? l1ChainId
         }
       />
@@ -151,7 +153,7 @@ const columnsBuilder = (
         chainId={
           // See https://github.com/hemilabs/ui-monorepo/issues/376
           isDeposit(row.original)
-            ? row.original.l2ChainId ?? hemi.id
+            ? row.original.l2ChainId ?? l2Chain.id
             : row.original.l1ChainId ?? l1ChainId
         }
       />
@@ -165,7 +167,7 @@ const columnsBuilder = (
       const { transactionHash } = row.original
       // See https://github.com/hemilabs/ui-monorepo/issues/376
       const chainId = isWithdraw(row.original)
-        ? row.original.l2ChainId ?? hemi.id
+        ? row.original.l2ChainId ?? l2Chain.id
         : row.original.l1ChainId ?? l1ChainId
       return <TxLink chainId={chainId} txHash={transactionHash} />
     },
@@ -286,12 +288,13 @@ export const TransactionHistory = function () {
 
   const { data, loading } = useTransactionsHistory()
 
+  const hemi = useHemi()
   const t = useTranslations('tunnel-page.transaction-history')
   const translate = useTranslations()
 
   const columns = useMemo(
     () =>
-      columnsBuilder(t, l1ChainId).map(c =>
+      columnsBuilder(t, l1ChainId, hemi).map(c =>
         data.length === 0 && loading
           ? {
               ...c,
@@ -299,7 +302,7 @@ export const TransactionHistory = function () {
             }
           : c,
       ),
-    [data.length, loading, t, l1ChainId],
+    [data.length, hemi, loading, t, l1ChainId],
   )
 
   const { width } = useWindowSize()

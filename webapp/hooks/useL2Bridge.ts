@@ -9,7 +9,6 @@ import {
   useMutation,
   useQuery,
 } from '@tanstack/react-query'
-import { hemi } from 'app/networks'
 import { useJsonRpcProvider, useWeb3Provider } from 'hooks/useEthersSigner'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { Token } from 'types/token'
@@ -21,6 +20,7 @@ import { type Chain, type Hash, isHash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
+import { useHemi } from './useHemi'
 
 type GasEstimationOperations = Extract<
   keyof CrossChainMessengerProxy['estimateGas'],
@@ -47,6 +47,7 @@ const useCrossChainMessenger = function ({
   const isConnectedToCorrectChain = useIsConnectedToExpectedNetwork(
     walletConnectedToChain,
   )
+  const hemi = useHemi()
 
   // This Hook creates the dynamically loaded instance of the sdk's CrossChainMessenger
   // We can't use useMemo because it only works for synchronous code
@@ -57,8 +58,13 @@ const useCrossChainMessenger = function ({
     useQuery({
       enabled: isConnectedToCorrectChain && !!l1Signer && !!l2Signer,
       queryFn: () =>
-        createCrossChainMessenger({ l1ChainId, l1Signer, l2Signer }),
-      queryKey: [l1ChainId, walletConnectedToChain],
+        createCrossChainMessenger({
+          l1ChainId,
+          l1Signer,
+          l2Chain: hemi,
+          l2Signer,
+        }),
+      queryKey: [hemi.id, l1ChainId, walletConnectedToChain],
     })
 
   return {
@@ -121,6 +127,7 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
  * @returns
  */
 const useL1ToL2CrossChainMessenger = function (l1ChainId: Chain['id']) {
+  const hemi = useHemi()
   const l1Signer = useWeb3Provider(l1ChainId)
   const l2Signer = useJsonRpcProvider(hemi.id)
 
@@ -139,6 +146,8 @@ const useL1ToL2CrossChainMessenger = function (l1ChainId: Chain['id']) {
  * @returns
  */
 const useL2toL1CrossChainMessenger = function (l1ChainId: Chain['id']) {
+  const hemi = useHemi()
+
   const l1Signer = useJsonRpcProvider(l1ChainId)
   const l2Signer = useWeb3Provider(hemi.id)
 
@@ -160,6 +169,8 @@ export const useConnectedChainCrossChainMessenger = function (
   l1ChainId: Chain['id'],
 ) {
   const { chainId } = useAccount()
+  const hemi = useHemi()
+
   const isConnectedToL2 = chainId === hemi.id
 
   const web3Signer = useWeb3Provider(chainId)
@@ -205,6 +216,8 @@ const useGetTransactionMessageStatus = function ({
   refetchUntilStatus,
   transactionHash,
 }: UseGetTransactionMessageStatus) {
+  const hemi = useHemi()
+
   const { data: messageStatus, isLoading } = useQuery({
     // ensure correct chain was used
     enabled:
@@ -275,6 +288,7 @@ export const useDepositErc20Token = function ({
   token,
 }: UseDepositErc20Token) {
   const operation = 'depositERC20'
+  const hemi = useHemi()
   const { crossChainMessenger, crossChainMessengerStatus } =
     useL1ToL2CrossChainMessenger(l1ChainId)
 
@@ -395,6 +409,7 @@ export const useWithdrawNativeToken = function ({
 }: UseWithdrawNativeToken) {
   const operation = 'withdrawETH'
   const { address, isConnected } = useAccount()
+  const hemi = useHemi()
   const { crossChainMessenger, crossChainMessengerStatus } =
     useL2toL1CrossChainMessenger(l1ChainId)
 
@@ -541,6 +556,7 @@ export const useWithdrawToken = function ({
   const operation = 'withdrawERC20'
   const { crossChainMessenger, crossChainMessengerStatus } =
     useL2toL1CrossChainMessenger(l1ChainId)
+  const hemi = useHemi()
 
   const l1BridgeAddress = token.extensions?.bridgeInfo[l1ChainId].tokenAddress
   const l2BridgeAddress = token.address
@@ -590,6 +606,7 @@ export const useGetClaimWithdrawalTxHash = function (
 ) {
   const { crossChainMessenger, crossChainMessengerStatus } =
     useConnectedChainCrossChainMessenger(l1ChainId)
+  const hemi = useHemi()
 
   const { data: receipt, ...rest } = useQuery<
     Partial<Pick<MessageReceipt['transactionReceipt'], 'transactionHash'>>

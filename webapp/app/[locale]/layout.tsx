@@ -10,6 +10,7 @@ import { ErrorBoundary } from 'components/errorBoundary'
 import { WalletsContext } from 'context/walletsContext'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
+import { Suspense } from 'react'
 
 import { inter } from '../fonts'
 
@@ -40,20 +41,26 @@ export default async function RootLayout({
     <html lang={locale}>
       <body className={`${inter.className} w-svw overflow-y-hidden`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <WalletsContext locale={locale}>
-            <TunnelHistoryProvider>
-              <ConnectWalletDrawerProvider>
-                <div className="flex h-dvh flex-nowrap justify-stretch">
-                  <div className="hidden w-1/4 max-w-56 md:block">
-                    <Navbar />
+          {/* This suspense wrapper is needed because, from this point downwards, rendering depends on 
+          getting mainnet|testnet from query string, and using useSearchParams (through nuqs) requires so to compile.
+          However, there's no change at all in the UI, so no fallback seems to be needed, as it isn't an async request
+          or something that requires showing something. */}
+          <Suspense>
+            <WalletsContext locale={locale}>
+              <TunnelHistoryProvider>
+                <ConnectWalletDrawerProvider>
+                  <div className="flex h-dvh flex-nowrap justify-stretch">
+                    <div className="hidden w-1/4 max-w-56 md:block">
+                      <Navbar />
+                    </div>
+                    <AppScreen>
+                      <ErrorBoundary>{children}</ErrorBoundary>
+                    </AppScreen>
                   </div>
-                  <AppScreen>
-                    <ErrorBoundary>{children}</ErrorBoundary>
-                  </AppScreen>
-                </div>
-              </ConnectWalletDrawerProvider>
-            </TunnelHistoryProvider>
-          </WalletsContext>
+                </ConnectWalletDrawerProvider>
+              </TunnelHistoryProvider>
+            </WalletsContext>
+          </Suspense>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -1,44 +1,46 @@
 'use client'
 
-import { hemi } from 'app/networks'
 import { bitcoinTestnet } from 'btc-wallet/chains'
 import { ExternalLink } from 'components/externalLink'
 import hemiSocials from 'hemi-socials'
+import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
+import { type Chain } from 'viem'
 import { sepolia } from 'viem/chains'
 
 import { Btc } from './icons/btc'
 import { Eth } from './icons/eth'
 import { Hemi } from './icons/hemi'
 
-const giveAwayTokens = hemi.testnet
-  ? [
-      {
-        amount: 0.2,
-        icon: <Eth />,
-        symbol: `${sepolia.nativeCurrency.symbol} (Sepolia Ether)`,
-      },
-      {
-        amount: 0.2,
-        icon: <Eth />,
-        symbol: `${hemi.nativeCurrency.symbol} (Tunneled Sepolia Ether)`,
-      },
-      {
-        amount: 0.1,
-        icon: <Btc />,
-        symbol: `${bitcoinTestnet.nativeCurrency.symbol} (Testnet Bitcoin)`,
-      },
-      {
-        amount: 1,
-        icon: <Hemi />,
-        symbol: 'tHEMI (Testnet Hemi)',
-      },
-      {
-        symbol: 'Hemi Hatchling NFT',
-      },
-    ]
-  : // mainnet capsules not confirmed
-    []
+const giveAwayTokens = (chain: Chain) =>
+  chain.testnet
+    ? [
+        {
+          amount: 0.2,
+          icon: <Eth />,
+          symbol: `${sepolia.nativeCurrency.symbol} (Sepolia Ether)`,
+        },
+        {
+          amount: 0.2,
+          icon: <Eth />,
+          symbol: `${chain.nativeCurrency.symbol} (Tunneled Sepolia Ether)`,
+        },
+        {
+          amount: 0.1,
+          icon: <Btc />,
+          symbol: `${bitcoinTestnet.nativeCurrency.symbol} (Testnet Bitcoin)`,
+        },
+        {
+          amount: 1,
+          icon: <Hemi />,
+          symbol: 'tHEMI (Testnet Hemi)',
+        },
+        {
+          symbol: 'Hemi Hatchling NFT',
+        },
+      ]
+    : // mainnet capsules not confirmed
+      []
 
 const CoinRow = ({
   amount,
@@ -60,6 +62,7 @@ const CoinRow = ({
 const { discordUrl } = hemiSocials
 
 export const WelcomePack = function () {
+  const hemi = useHemi()
   const t = useTranslations('get-started')
 
   return (
@@ -75,7 +78,7 @@ export const WelcomePack = function () {
         })}
       </p>
       <div className="flex flex-col gap-y-2 py-8">
-        {giveAwayTokens.map(({ amount, icon, symbol }) => (
+        {giveAwayTokens(hemi).map(({ amount, icon, symbol }) => (
           <CoinRow amount={amount} icon={icon} key={symbol} symbol={symbol} />
         ))}
       </div>

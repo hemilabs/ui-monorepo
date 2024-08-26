@@ -267,6 +267,7 @@ export const createEvmSync = function ({
     const crossChainMessengerPromise = createCrossChainMessenger({
       l1ChainId: l1Chain.id,
       l1Signer: l1Provider,
+      l2Chain,
       l2Signer: l2Provider,
     })
 

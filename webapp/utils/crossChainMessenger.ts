@@ -36,7 +36,7 @@ type CrossChainMessengerParameters = {
   l2Signer: SignerOrProviderLike
 }
 
-export async function getCrossChainMessenger({
+export async function createIsolatedCrossChainMessenger({
   l1ChainId,
   l1Signer,
   l2Chain,
@@ -91,17 +91,19 @@ export type CrossChainMessengerProxy = Pick<
 >
 
 // Run up to ${concurrency} async methods (which internally may have many calls) at the same time
-const queue = new PQueue({ concurrency: 3 })
+const queue = new PQueue({ concurrency: 2 })
 // and use throttling as some methods may run very fast and many quick calls may hit
 // rate limiting
-const throttle = pThrottle({ interval: 2000, limit: 2 })
+const throttle = pThrottle({ interval: 5000, limit: 2, strict: true })
 
 // This function creates a CrossChainMessenger and wraps its methods with a throttle
-// shared with all of its methods
-export const createCrossChainMessenger = async function (
+// shared with all of its methods. Additionally, all instances created with it
+// share the same queue and throttling instance.
+export const createQueuedCrossChainMessenger = async function (
   parameters: CrossChainMessengerParameters,
 ): Promise<CrossChainMessengerProxy> {
-  const crossChainMessenger = await getCrossChainMessenger(parameters)
+  const crossChainMessenger =
+    await createIsolatedCrossChainMessenger(parameters)
 
   // Can't use a proxy because it doesn't work well with Promises
   // See https://medium.com/@davidcallanan/a-peculiar-promises-and-proxy-bug-that-cost-me-5-hours-javascript-3a11e1fcd713

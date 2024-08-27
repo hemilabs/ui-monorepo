@@ -13,8 +13,8 @@ import { useJsonRpcProvider, useWeb3Provider } from 'hooks/useEthersSigner'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { Token } from 'types/token'
 import {
-  createCrossChainMessenger,
   type CrossChainMessengerProxy,
+  createIsolatedCrossChainMessenger,
 } from 'utils/crossChainMessenger'
 import { type Chain, type Hash, isHash } from 'viem'
 import { useAccount } from 'wagmi'
@@ -58,7 +58,7 @@ const useCrossChainMessenger = function ({
     useQuery({
       enabled: isConnectedToCorrectChain && !!l1Signer && !!l2Signer,
       queryFn: () =>
-        createCrossChainMessenger({
+        createIsolatedCrossChainMessenger({
           l1ChainId,
           l1Signer,
           l2Chain: hemi,

@@ -2,6 +2,7 @@ import { type TokenBridgeMessage } from '@eth-optimism/sdk'
 import { JsonRpcProvider } from '@ethersproject/providers'
 import { BlockSyncType } from 'hooks/useSyncHistory/types'
 import pAll from 'p-all'
+import pThrottle from 'p-throttle'
 import {
   createSlidingBlockWindow,
   CreateSlidingBlockWindow,
@@ -12,7 +13,7 @@ import {
   TunnelOperation,
 } from 'types/tunnel'
 import {
-  createCrossChainMessenger,
+  createQueuedCrossChainMessenger,
   type CrossChainMessengerProxy,
 } from 'utils/crossChainMessenger'
 import { getEvmBlock } from 'utils/evmApi'
@@ -21,6 +22,8 @@ import { type Chain } from 'viem'
 
 import { getBlockPayload } from './common'
 import { type HistorySyncer } from './types'
+
+const throttlingOptions = { interval: 2000, limit: 1, strict: true }
 
 const toOperation =
   <T extends TunnelOperation>(l1ChainId: Chain['id'], l2ChainId: Chain['id']) =>
@@ -145,7 +148,7 @@ export const createEvmSync = function ({
     return createSlidingBlockWindow({
       initialBlock,
       lastBlock,
-      onChange,
+      onChange: pThrottle(throttlingOptions)(onChange),
       windowIndex: depositsSyncInfo.chunkIndex,
       windowSize: depositsSyncInfo.blockWindowSize,
     }).run()
@@ -213,7 +216,7 @@ export const createEvmSync = function ({
                   }
                 },
             ),
-            { concurrency: 2 },
+            { concurrency: 1 },
           ),
         )
 
@@ -244,7 +247,7 @@ export const createEvmSync = function ({
     return createSlidingBlockWindow({
       initialBlock,
       lastBlock,
-      onChange,
+      onChange: pThrottle(throttlingOptions)(onChange),
       windowIndex: withdrawalsSyncInfo.chunkIndex,
       windowSize: withdrawalsSyncInfo.blockWindowSize,
     }).run()
@@ -264,7 +267,7 @@ export const createEvmSync = function ({
       l2Chain,
     )
 
-    const crossChainMessengerPromise = createCrossChainMessenger({
+    const crossChainMessengerPromise = createQueuedCrossChainMessenger({
       l1ChainId: l1Chain.id,
       l1Signer: l1Provider,
       l2Chain,

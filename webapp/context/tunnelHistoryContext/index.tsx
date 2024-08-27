@@ -149,10 +149,11 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
 
   return (
     <TunnelHistoryContext.Provider value={value}>
-      {/* This could be done in a background process https://github.com/hemilabs/ui-monorepo/issues/390 */}
+      {/* Move to web worker https://github.com/hemilabs/ui-monorepo/issues/487 */}
       {/* Track updates on bitcoin deposits, in bitcoin or in Hemi */}
       {featureFlags.btcTunnelEnabled && <BitcoinDepositsStatusUpdater />}
       {/* Track updates on withdrawals from Hemi */}
+      {/* Move to web worker https://github.com/hemilabs/ui-monorepo/issues/486 */}
       <WithdrawalsStateUpdater />
       {children}
       {/* Sync the transaction history per chain in the background */}

@@ -1,18 +1,15 @@
-import {
-  findChainById,
-  isEvmNetwork,
-  remoteNetworks,
-  type RemoteChain,
-} from 'app/networks'
 import { hemiSepolia } from 'hemi-viem'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
+import { useNetworks } from 'hooks/useNetworks'
 import debounce from 'lodash/debounce'
 import { useEffect, useReducer, useState } from 'react'
+import { type RemoteChain } from 'types/chain'
 import {
   type DepositTunnelOperation,
   type TunnelOperation,
   type WithdrawTunnelOperation,
 } from 'types/tunnel'
+import { findChainById, isEvmNetwork } from 'utils/chain'
 import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
 import { type Address, type Chain } from 'viem'
 import { useAccount } from 'wagmi'
@@ -218,7 +215,17 @@ const readStateFromStorage = function <T extends TunnelOperation>({
 
 const debounceTime = 500
 const debouncedSaveToStorage = debounce(
-  (l2ChainId: Chain['id'], address: Address, history: HistoryReducerState) =>
+  ({
+    address,
+    history,
+    l2ChainId,
+    remoteNetworks,
+  }: {
+    address: Address
+    history: HistoryReducerState
+    l2ChainId: Chain['id']
+    remoteNetworks: RemoteChain[]
+  }) =>
     remoteNetworks
       .map(remoteNetwork => [
         history.deposits.find(
@@ -258,6 +265,7 @@ const debouncedSaveToStorage = debounce(
 
 export const useSyncHistory = function (l2ChainId: Chain['id']) {
   const { address } = useAccount()
+  const { remoteNetworks } = useNetworks()
 
   const [loadedFromLocalStorage, setLoadedFromLocalStorage] = useState(false)
   const reducer = useReducer(historyReducer, initialState)
@@ -329,6 +337,7 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
       dispatch,
       l2ChainId,
       loadedFromLocalStorage,
+      remoteNetworks,
       setLoadedFromLocalStorage,
       supportedEvmChain,
     ],
@@ -343,9 +352,16 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
       ) {
         return
       }
-      debouncedSaveToStorage(l2ChainId, address, history)
+      debouncedSaveToStorage({ address, history, l2ChainId, remoteNetworks })
     },
-    [address, history, l2ChainId, loadedFromLocalStorage, supportedEvmChain],
+    [
+      address,
+      history,
+      l2ChainId,
+      loadedFromLocalStorage,
+      remoteNetworks,
+      supportedEvmChain,
+    ],
   )
 
   return reducer

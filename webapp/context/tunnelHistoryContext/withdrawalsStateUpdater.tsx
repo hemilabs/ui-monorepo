@@ -1,10 +1,10 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useQuery } from '@tanstack/react-query'
-import { evmRemoteNetworks } from 'app/networks'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useHemi } from 'hooks/useHemi'
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
+import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
 import { EvmWithdrawOperation } from 'types/tunnel'
@@ -14,9 +14,6 @@ import { type Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
 const queue = new PQueue({ concurrency: 2 })
-
-// https://github.com/hemilabs/ui-monorepo/issues/158
-const l1ChainId = evmRemoteNetworks[0].id
 
 const getSeconds = (seconds: number) => seconds * 1000
 const getMinutes = (minutes: number) => getSeconds(minutes * 60)
@@ -141,8 +138,10 @@ const WatchEvmWithdrawal = function ({
 }: {
   withdrawal: EvmWithdrawOperation
 }) {
+  const { evmRemoteNetworks } = useNetworks()
+  // See https://github.com/hemilabs/ui-monorepo/issues/158
   const { crossChainMessenger, crossChainMessengerStatus } =
-    useConnectedChainCrossChainMessenger(l1ChainId)
+    useConnectedChainCrossChainMessenger(evmRemoteNetworks[0].id)
   const { updateWithdrawal } = useTunnelHistory()
 
   const hemi = useHemi()

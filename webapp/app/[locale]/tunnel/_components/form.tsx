@@ -1,13 +1,14 @@
 import { TokenLogo } from 'app/components/tokenLogo'
 import { TokenSelector } from 'app/components/tokenSelector'
-import { networks, type RemoteChain } from 'app/networks'
 import Big from 'big.js'
 import { useHemi } from 'hooks/useHemi'
+import { useNetworks } from 'hooks/useNetworks'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { tokenList } from 'tokenList'
+import { type RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { Card } from 'ui-common/components/card'
 import { getFormattedValue } from 'utils/format'
@@ -140,6 +141,7 @@ export const FormContent = function ({
   } = tunnelState
 
   const hemi = useHemi()
+  const { networks } = useNetworks()
   const t = useTranslations('tunnel-page')
 
   return (

@@ -1,14 +1,11 @@
 import { featureFlags } from 'app/featureFlags'
-import {
-  bitcoin,
-  evmRemoteNetworks,
-  networks,
-  type RemoteChain,
-} from 'app/networks'
 import { type BtcChain } from 'btc-wallet/chains'
 import { BtcTransaction } from 'btc-wallet/unisat'
+import { useBitcoin } from 'hooks/useBitcoin'
 import { useHemi } from 'hooks/useHemi'
+import { useNetworks } from 'hooks/useNetworks'
 import { useCallback, useReducer } from 'react'
+import { type RemoteChain } from 'types/chain'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { getNativeToken, getTokenByAddress } from 'utils/token'
 import { type NoPayload, type Payload } from 'utils/typeUtilities'
@@ -161,26 +158,34 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
   }
 }
 
-const getDefaultNetworksOrder = function (
-  { operation, txHash }: ReturnType<typeof useTunnelOperation>,
-  hemi: Chain,
-) {
+const getDefaultNetworksOrder = function ({
+  bitcoin,
+  hemi,
+  l1ChainId,
+  tunnelOperation,
+}: {
+  bitcoin: BtcChain
+  hemi: Chain
+  l1ChainId: Chain['id']
+  tunnelOperation: ReturnType<typeof useTunnelOperation>
+}) {
+  const { operation, txHash } = tunnelOperation
   const bitcoinFromL1ToL2 = {
     fromNetworkId: bitcoin.id,
     toNetworkId: hemi.id,
   }
   const evmFromL1ToL2 = {
-    fromNetworkId: evmRemoteNetworks[0].id,
+    fromNetworkId: l1ChainId,
     toNetworkId: hemi.id,
   }
   const evmFromL2ToL1 = {
     fromNetworkId: hemi.id,
-    toNetworkId: evmRemoteNetworks[0].id,
+    toNetworkId: l1ChainId,
   }
 
   const pickOption = (
     evmAlternative: Record<string, Chain['id']>,
-    btcAlternative: Record<string, BtcChain['id'] | Chain['id']>,
+    btcAlternative: Record<string, RemoteChain['id']>,
   ) =>
     // if no hash, hash is an EVM one, or btc are disabled, return EVM alternative
     !txHash || isHash(txHash) || !featureFlags.btcTunnelEnabled
@@ -214,10 +219,18 @@ export const useTunnelState = function (): TunnelState & {
     payload?: Extract<Actions, { type: K }>['payload'],
   ) => void
 } {
+  const bitcoin = useBitcoin()
   const hemi = useHemi()
+  const { evmRemoteNetworks, networks } = useNetworks()
   const tunnelOperation = useTunnelOperation()
 
-  const initial = getDefaultNetworksOrder(tunnelOperation, hemi)
+  const initial = getDefaultNetworksOrder({
+    bitcoin,
+    hemi,
+    // See https://github.com/hemilabs/ui-monorepo/issues/158
+    l1ChainId: evmRemoteNetworks[0].id,
+    tunnelOperation,
+  })
 
   const [state, dispatch] = useReducer(reducer, {
     fromInput: '0',
@@ -307,7 +320,7 @@ export const useTunnelState = function (): TunnelState & {
         }
         dispatch({ payload: fromToken, type: 'updateFromToken' })
       },
-      [dispatch, state],
+      [dispatch, networks, state],
     ),
     updateToNetwork: useCallback(
       function (toNetworkId: UpdateToNetwork['payload']) {

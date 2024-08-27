@@ -1,10 +1,11 @@
-import { bitcoin, findChainById } from 'app/networks'
+import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
 import debugConstructor from 'debug'
 import {
   type BlockSyncType,
   type HistoryActions,
   type TransactionListSyncType,
 } from 'hooks/useSyncHistory/types'
+import { findChainById } from 'utils/chain'
 import { createBitcoinSync } from 'utils/sync-history/bitcoin'
 import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
 import { createEvmSync } from 'utils/sync-history/evm'
@@ -52,7 +53,8 @@ const createSyncer = function ({
   )
 
   switch (l1Chain.id) {
-    case bitcoin.id:
+    case bitcoinMainnet.id:
+    case bitcoinTestnet.id:
       return createBitcoinSync({
         address,
         debug,

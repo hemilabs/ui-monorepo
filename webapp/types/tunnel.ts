@@ -3,9 +3,9 @@ import {
   type MessageDirection,
   type MessageStatus,
 } from '@eth-optimism/sdk'
-import { type RemoteChain } from 'app/networks'
 import { BtcChain } from 'btc-wallet/chains'
 import { BtcTransaction } from 'btc-wallet/unisat'
+import { type RemoteChain } from 'types/chain'
 import { type Chain, type Hash } from 'viem'
 
 export const enum BtcDepositStatus {

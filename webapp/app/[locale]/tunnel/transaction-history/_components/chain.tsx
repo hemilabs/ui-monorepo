@@ -1,6 +1,6 @@
-import { RemoteChain } from 'app/networks'
 import { ChainLogo } from 'components/chainLogo'
 import { useChain } from 'hooks/useChain'
+import { type RemoteChain } from 'types/chain'
 
 type Props = {
   chainId: RemoteChain['id']

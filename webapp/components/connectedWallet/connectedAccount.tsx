@@ -1,4 +1,3 @@
-import { bitcoin } from 'app/networks'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { useConfig as useBtcConfig } from 'btc-wallet/hooks/useConfig'
@@ -7,6 +6,7 @@ import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchC
 import { type Account } from 'btc-wallet/unisat'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
+import { useBitcoin } from 'hooks/useBitcoin'
 import {
   useConnectedToUnsupportedBtcChain,
   useConnectedToUnsupportedEvmChain,
@@ -184,6 +184,7 @@ export const ConnectedEvmAccount = function () {
 }
 
 export const ConnectedBtcAccount = function () {
+  const bitcoin = useBitcoin()
   const { address } = useBtcAccount()
   const { balance } = useBtcBalance()
   const { disconnect } = useBtcDisconnect()

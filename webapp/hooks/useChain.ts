@@ -1,5 +1,5 @@
-import { type RemoteChain } from 'app/networks'
 import { useConfig as useBtcConfig } from 'btc-wallet/hooks/useConfig'
+import { type RemoteChain } from 'types/chain'
 import { useChains as useEvmChains } from 'wagmi'
 
 export const useChain = function (chainId: RemoteChain['id']) {

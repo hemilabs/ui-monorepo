@@ -1,7 +1,7 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { evmRemoteNetworks } from 'app/networks'
 import { TransactionStatus } from 'components/transactionStatus'
 import { useHemi } from 'hooks/useHemi'
+import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
@@ -97,6 +97,7 @@ const WithdrawAmount = function ({
   withdrawal?: EvmWithdrawOperation
 }) {
   const hemi = useHemi()
+  const { evmRemoteNetworks } = useNetworks()
   if (!withdrawal) {
     return <Skeleton containerClassName="w-5" />
   }

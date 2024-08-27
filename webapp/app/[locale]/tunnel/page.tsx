@@ -103,7 +103,7 @@ const Operation = function ({
           subheading={t('tunnel-page.connect-wallet-to-review')}
         />
       )}
-      {/* Add better loading indicator https://github.com/BVM-priv/ui-monorepo/issues/157 */}
+      {/* Add better loading indicator https://github.com/hemilabs/ui-monorepo/issues/157 */}
       {!stateLoaded && <span>...</span>}
     </>
   )

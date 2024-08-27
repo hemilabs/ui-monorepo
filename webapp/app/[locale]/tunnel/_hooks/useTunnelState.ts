@@ -199,7 +199,7 @@ const getDefaultNetworksOrder = function ({
   if (!['claim', 'deposit'].includes(operation)) {
     // for non-deposits, the withdrawals work ok
     // Needs to be updated once btc withdrawals are enabled
-    // https://github.com/BVM-priv/ui-monorepo/issues/343
+    // https://github.com/hemilabs/ui-monorepo/issues/343
     return evmFromL2ToL1
   }
   if (operation === 'claim') {

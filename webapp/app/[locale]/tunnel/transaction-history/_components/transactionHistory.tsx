@@ -390,9 +390,7 @@ export const TransactionHistory = function () {
           )}
         </>
       )}
-      {['connecting', 'reconnecting'].includes(status) && (
-        <Skeleton className="h-4/5 w-full" />
-      )}
+      {status === 'connecting' && <Skeleton className="h-4/5 w-full" />}
       {status === 'disconnected' && (
         <ConnectWallet
           heading={translate('common.connect-your-wallet')}

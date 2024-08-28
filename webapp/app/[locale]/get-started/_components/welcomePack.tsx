@@ -35,9 +35,6 @@ const giveAwayTokens = (chain: Chain) =>
           icon: <Hemi />,
           symbol: 'tHEMI (Testnet Hemi)',
         },
-        {
-          symbol: 'Hemi Hatchling NFT',
-        },
       ]
     : // mainnet capsules not confirmed
       []

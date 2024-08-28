@@ -18,26 +18,20 @@ import { useAccount } from 'wagmi'
 import { historyReducer, initialState } from './reducer'
 import { type HistoryReducerState, type StorageChain } from './types'
 import {
-  getTunnelHistoryDepositFallbackStorageKey,
   getTunnelHistoryDepositStorageKey,
   getTunnelHistoryWithdrawStorageKey,
-  getTunnelHistoryWithdrawStorageKeyFallback,
 } from './utils'
 
 const readStateFromStorage = function <T extends TunnelOperation>({
   chainId,
   configChainId,
-  fallbackKey,
   key,
 }: {
   chainId: RemoteChain['id']
   configChainId: RemoteChain['id']
-  fallbackKey?: string
   key: string
 }) {
-  const restored =
-    localStorage.getItem(key) ||
-    (fallbackKey ? localStorage.getItem(fallbackKey) : null)
+  const restored = localStorage.getItem(key)
   if (!restored) {
     const chain = findChainById(chainId)
     if (isEvmNetwork(chain)) {
@@ -64,6 +58,24 @@ const readStateFromStorage = function <T extends TunnelOperation>({
     chainId,
   }
 }
+
+const clearHistoryInLocalStorage = ({
+  address,
+  l2ChainId,
+  remoteNetworks,
+}: {
+  address: Address
+  l2ChainId: Chain['id']
+  remoteNetworks: RemoteChain[]
+}) =>
+  remoteNetworks.forEach(function (remoteNetwork) {
+    localStorage.removeItem(
+      getTunnelHistoryWithdrawStorageKey(remoteNetwork.id, l2ChainId, address),
+    )
+    localStorage.removeItem(
+      getTunnelHistoryDepositStorageKey(remoteNetwork.id, l2ChainId, address),
+    )
+  })
 
 const debounceTime = 500
 const debouncedSaveToStorage = debounce(
@@ -120,7 +132,11 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
   const bitcoin = useBitcoin()
   const { remoteNetworks } = useNetworks()
 
+  // use this boolean to check if the past history was restored from local storage
   const [loadedFromLocalStorage, setLoadedFromLocalStorage] = useState(false)
+  // use this boolean to force a resync of the history
+  const [forceResync, setForceResync] = useState(false)
+
   const reducer = useReducer(historyReducer, initialState)
 
   const supportedEvmChain = useConnectedToSupportedEvmChain()
@@ -155,10 +171,6 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
             readStateFromStorage<DepositTunnelOperation>({
               chainId: id,
               configChainId: id,
-              fallbackKey: getTunnelHistoryDepositFallbackStorageKey(
-                id,
-                address,
-              ),
               key: getTunnelHistoryDepositStorageKey(id, l2ChainId, address),
             }) as StorageChain<DepositTunnelOperation>,
         )
@@ -170,10 +182,6 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
             readStateFromStorage<WithdrawTunnelOperation>({
               chainId: id,
               configChainId: l2ChainId,
-              fallbackKey: getTunnelHistoryWithdrawStorageKeyFallback(
-                l2ChainId,
-                address,
-              ),
               key: getTunnelHistoryWithdrawStorageKey(id, l2ChainId, address),
             }) as StorageChain<WithdrawTunnelOperation>,
         )
@@ -201,7 +209,9 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
       if (
         !supportedEvmChain ||
         !loadedFromLocalStorage ||
-        !['finished', 'syncing'].includes(history.status)
+        !['finished', 'syncing'].includes(history.status) ||
+        // if we started resync, do not save!
+        forceResync
       ) {
         return
       }
@@ -209,11 +219,42 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
     },
     [
       address,
+      forceResync,
       history,
       l2ChainId,
       loadedFromLocalStorage,
       remoteNetworks,
       supportedEvmChain,
+    ],
+  )
+
+  // re-sync needs to take place in an effect, because we need the workers to be tear down
+  // (so they start again from the last block), and then, clear the local storage
+  // (as local storage is saved in a debounce process, we need to ensure no other effect
+  // saves its sync data, overriding what we have just cleared). Once all that is completed
+  // we just reset the state of this hook so it starts all over.
+  useEffect(
+    function clearAndResyncHistory() {
+      if (!forceResync) {
+        return
+      }
+      // clear local storage
+      clearHistoryInLocalStorage({ address, l2ChainId, remoteNetworks })
+      // reset the history in memory
+      dispatch({ type: 'reset' })
+      // update flag so data is reloaded again
+      setLoadedFromLocalStorage(false)
+      // mark resync as finished
+      setForceResync(false)
+    },
+    [
+      address,
+      dispatch,
+      forceResync,
+      l2ChainId,
+      remoteNetworks,
+      setForceResync,
+      setLoadedFromLocalStorage,
     ],
   )
 
@@ -226,6 +267,7 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
       deposits: history.deposits
         .filter(d => featureFlags.btcTunnelEnabled || d.chainId !== bitcoin.id)
         .flatMap(d => d.content),
+      resyncHistory: () => setForceResync(true),
       syncStatus: history.status,
       updateDeposit: (
         deposit: DepositTunnelOperation,

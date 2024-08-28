@@ -56,6 +56,7 @@ type TunnelHistoryContext = {
     withdrawal: Omit<EvmWithdrawOperation, 'timestamp'>,
   ) => void
   deposits: DepositTunnelOperation[]
+  resyncHistory: () => void
   syncStatus: HistoryReducerState['status']
   updateDeposit: (
     deposit: DepositTunnelOperation,
@@ -72,6 +73,7 @@ export const TunnelHistoryContext = createContext<TunnelHistoryContext>({
   addDepositToTunnelHistory: () => undefined,
   addWithdrawalToTunnelHistory: () => undefined,
   deposits: [],
+  resyncHistory: () => undefined,
   syncStatus: 'idle',
   updateDeposit: () => undefined,
   updateWithdrawal: () => undefined,

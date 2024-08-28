@@ -1,7 +1,9 @@
+import { featureFlags } from 'app/featureFlags'
+import { useBitcoin } from 'hooks/useBitcoin'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useNetworks } from 'hooks/useNetworks'
 import debounce from 'lodash/debounce'
-import { useEffect, useReducer, useState } from 'react'
+import { useEffect, useMemo, useReducer, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
 import {
   type DepositTunnelOperation,
@@ -115,6 +117,7 @@ const debouncedSaveToStorage = debounce(
 
 export const useSyncHistory = function (l2ChainId: Chain['id']) {
   const { address } = useAccount()
+  const bitcoin = useBitcoin()
   const { remoteNetworks } = useNetworks()
 
   const [loadedFromLocalStorage, setLoadedFromLocalStorage] = useState(false)
@@ -214,5 +217,38 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
     ],
   )
 
-  return reducer
+  const historyContext = useMemo(
+    () => ({
+      addDepositToTunnelHistory: (deposit: DepositTunnelOperation) =>
+        dispatch({ payload: deposit, type: 'add-deposit' }),
+      addWithdrawalToTunnelHistory: (withdrawal: WithdrawTunnelOperation) =>
+        dispatch({ payload: withdrawal, type: 'add-withdraw' }),
+      deposits: history.deposits
+        .filter(d => featureFlags.btcTunnelEnabled || d.chainId !== bitcoin.id)
+        .flatMap(d => d.content),
+      syncStatus: history.status,
+      updateDeposit: (
+        deposit: DepositTunnelOperation,
+        updates: Partial<DepositTunnelOperation>,
+      ) =>
+        dispatch({
+          payload: { deposit, updates },
+          type: 'update-deposit',
+        }),
+      updateWithdrawal: (
+        withdraw: WithdrawTunnelOperation,
+        updates: Partial<WithdrawTunnelOperation>,
+      ) =>
+        dispatch({
+          payload: { updates, withdraw },
+          type: 'update-withdraw',
+        }),
+      withdrawals: history.withdrawals
+        .filter(w => featureFlags.btcTunnelEnabled || w.chainId !== bitcoin.id)
+        .flatMap(w => w.content),
+    }),
+    [bitcoin.id, dispatch, history],
+  )
+
+  return [...reducer, historyContext] as const
 }

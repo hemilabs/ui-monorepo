@@ -1,7 +1,6 @@
 'use client'
 
 import { featureFlags } from 'app/featureFlags'
-import { useBitcoin } from 'hooks/useBitcoin'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useSyncHistory } from 'hooks/useSyncHistory'
@@ -10,12 +9,11 @@ import {
   type HistoryReducerState,
 } from 'hooks/useSyncHistory/types'
 import dynamic from 'next/dynamic'
-import { createContext, useMemo, ReactNode } from 'react'
+import { createContext, ReactNode } from 'react'
 import { type RemoteChain } from 'types/chain'
 import {
   type DepositTunnelOperation,
   type EvmWithdrawOperation,
-  type WithdrawTunnelOperation,
 } from 'types/tunnel'
 import { useAccount } from 'wagmi'
 
@@ -86,12 +84,11 @@ type Props = {
 
 export const TunnelHistoryProvider = function ({ children }: Props) {
   const { address, isConnected } = useAccount()
-  const bitcoin = useBitcoin()
 
   const l2ChainId = useHemi().id
   const { remoteNetworks } = useNetworks()
 
-  const [history, dispatch] = useSyncHistory(l2ChainId)
+  const [history, dispatch, context] = useSyncHistory(l2ChainId)
 
   const historyChainSync = []
 
@@ -114,41 +111,8 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
     )
   }
 
-  const value = useMemo(
-    () => ({
-      addDepositToTunnelHistory: (deposit: DepositTunnelOperation) =>
-        dispatch({ payload: deposit, type: 'add-deposit' }),
-      addWithdrawalToTunnelHistory: (withdrawal: WithdrawTunnelOperation) =>
-        dispatch({ payload: withdrawal, type: 'add-withdraw' }),
-      deposits: history.deposits
-        .filter(d => featureFlags.btcTunnelEnabled || d.chainId !== bitcoin.id)
-        .flatMap(d => d.content),
-      syncStatus: history.status,
-      updateDeposit: (
-        deposit: DepositTunnelOperation,
-        updates: Partial<DepositTunnelOperation>,
-      ) =>
-        dispatch({
-          payload: { deposit, updates },
-          type: 'update-deposit',
-        }),
-      updateWithdrawal: (
-        withdraw: WithdrawTunnelOperation,
-        updates: Partial<WithdrawTunnelOperation>,
-      ) =>
-        dispatch({
-          payload: { updates, withdraw },
-          type: 'update-withdraw',
-        }),
-      withdrawals: history.withdrawals
-        .filter(w => featureFlags.btcTunnelEnabled || w.chainId !== bitcoin.id)
-        .flatMap(w => w.content),
-    }),
-    [bitcoin.id, dispatch, history],
-  )
-
   return (
-    <TunnelHistoryContext.Provider value={value}>
+    <TunnelHistoryContext.Provider value={context}>
       {/* Move to web worker https://github.com/hemilabs/ui-monorepo/issues/487 */}
       {/* Track updates on bitcoin deposits, in bitcoin or in Hemi */}
       {featureFlags.btcTunnelEnabled && <BitcoinDepositsStatusUpdater />}

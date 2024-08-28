@@ -35,6 +35,7 @@ import { Amount } from './amount'
 import { Chain as ChainComponent } from './chain'
 import { DepositAction } from './depositAction'
 import { Paginator } from './paginator'
+import { ReloadHistory } from './reloadHistory'
 import { TxLink } from './txLink'
 import { TxStatus } from './txStatus'
 import { TxTime } from './txTime'
@@ -192,7 +193,7 @@ const columnsBuilder = (
       ) : (
         <WithdrawAction withdraw={row.original} />
       ),
-    header: () => <Header />,
+    header: () => <ReloadHistory />,
     id: 'action',
   },
 ]

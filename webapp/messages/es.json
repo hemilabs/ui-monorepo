@@ -68,6 +68,7 @@
       "column-headers": {
         "amount": "Monto",
         "from": "Desde",
+        "reload": "Recargar",
         "status": "Estado",
         "time": "Hora",
         "to": "Hacia",

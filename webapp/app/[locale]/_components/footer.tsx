@@ -1,11 +1,14 @@
-export const SmallHemiIcon = (props: React.SVGProps<SVGSVGElement>) => (
+import { FooterSocials } from 'components/footerSocials'
+import React from 'react'
+
+const SmallHemiIcon = () => (
   <svg
+    className="text-slate-200"
     fill="none"
     height="22"
     viewBox="0 0 22 22"
     width="22"
     xmlns="http://www.w3.org/2000/svg"
-    {...props}
   >
     <path
       d="M12.7394 0.540354C12.6294 0.52059 12.5259 0.593055 12.5065 0.705046L11.1802 
@@ -21,4 +24,20 @@ export const SmallHemiIcon = (props: React.SVGProps<SVGSVGElement>) => (
       fillRule="evenodd"
     />
   </svg>
+)
+
+export const Footer = () => (
+  <div
+    className={`bg-hemi-color-footer flex w-full justify-between gap-6 
+    rounded-bl-3xl rounded-br-3xl border-y 
+    border-slate-200 border-opacity-50 px-9 py-4`}
+  >
+    <div className="flex select-none items-center">
+      <div className="mr-1">
+        <SmallHemiIcon />
+      </div>
+      <span className="text-lg text-slate-200">hemi</span>
+    </div>
+    <FooterSocials />
+  </div>
 )

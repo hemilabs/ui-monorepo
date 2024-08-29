@@ -68,6 +68,7 @@
       "column-headers": {
         "amount": "Amount",
         "from": "From",
+        "reload": "Reload",
         "status": "Status",
         "time": "Time",
         "to": "To",

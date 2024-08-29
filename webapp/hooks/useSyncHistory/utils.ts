@@ -10,11 +10,6 @@ import {
   type SyncType,
 } from './types'
 
-export const getTunnelHistoryDepositFallbackStorageKey = (
-  l1ChainId: RemoteChain['id'],
-  address: Address,
-) => `portal.transaction-history-L1-${l1ChainId}-${address}-deposits`
-
 export const getTunnelHistoryDepositStorageKey = (
   l1ChainId: RemoteChain['id'],
   l2ChainId: Chain['id'],
@@ -27,11 +22,6 @@ export const getTunnelHistoryWithdrawStorageKey = (
   address: Address,
 ) =>
   `portal.transaction-history-${l1ChainId}-${l2ChainId}-${address}-withdrawals`
-
-export const getTunnelHistoryWithdrawStorageKeyFallback = (
-  l2ChainId: Chain['id'],
-  address: Address,
-) => `portal.transaction-history-L2-${l2ChainId}-${address}-withdrawals`
 
 const removeDuplicates = <T extends TunnelOperation>(merged: T[]) =>
   Array.from(new Set(merged.map(({ transactionHash }) => transactionHash))).map(

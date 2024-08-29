@@ -7,11 +7,11 @@ import React, { useState } from 'react'
 import { Footer } from './footer'
 import { Header } from './header'
 
-type AppScreenProps = {
+type Props = {
   children: React.ReactNode
 }
 
-export const AppScreen = function ({ children }: AppScreenProps) {
+export const AppLayout = function ({ children }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   // Hide instead of not-rendering when the header is open, to avoid loosing state of the components when opening
   // and closing the header

@@ -49,7 +49,7 @@ const ConnectWalletButton = ({
 }: {
   hoverClassName: string
   icon: React.ReactNode
-  onClick: () => void
+  onClick: ReturnType<typeof useConnectModal>['openConnectModal']
   rightIcon?: React.ReactNode
   text: string
 }) => (
@@ -114,7 +114,7 @@ export const BtcWallet = function () {
     return (
       <Box
         description={
-          <ConnectedToWallet icon={<UnisatLogo />} wallet={connector?.name} />
+          <ConnectedToWallet icon={<UnisatLogo />} wallet={connector!.name} />
         }
         title={t('btc-wallet')}
       >

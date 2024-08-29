@@ -27,7 +27,7 @@ export const SubmitWhenConnectedToChain = function ({
       {!connectedToL1 && (
         <div className="flex flex-col gap-y-2">
           <Button onClick={() => switchChain({ chainId })} type="button">
-            {t('common.connect-to-network', { network: targetChain.name })}
+            {t('common.connect-to-network', { network: targetChain?.name })}
           </Button>
         </div>
       )}

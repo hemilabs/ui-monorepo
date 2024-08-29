@@ -24,9 +24,9 @@ const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
 const l1HemiTokens = hemiTokens
   .filter(t => !!t.extensions?.bridgeInfo)
   .flatMap(t =>
-    Object.keys(t.extensions.bridgeInfo).map(l1ChainId => ({
+    Object.keys(t.extensions!.bridgeInfo!).map(l1ChainId => ({
       ...t,
-      address: t.extensions.bridgeInfo[l1ChainId].tokenAddress,
+      address: t.extensions!.bridgeInfo![l1ChainId].tokenAddress,
       chainId: Number(l1ChainId),
       extensions: {
         bridgeInfo: {

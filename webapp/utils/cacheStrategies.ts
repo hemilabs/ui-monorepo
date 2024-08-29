@@ -42,7 +42,7 @@ const cachePerMethod = [
   },
 ]
 
-const cacheIndexedData = cachePerMethod.reduce(
+const cacheIndexedData: Record<string, string> = cachePerMethod.reduce(
   (acc, { method, strategy }) => ({
     ...acc,
     [getSignature(method)]: strategy,

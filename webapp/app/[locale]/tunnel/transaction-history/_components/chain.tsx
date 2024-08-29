@@ -10,7 +10,9 @@ export const Chain = function ({ chainId }: Props) {
   return (
     <div className="flex items-center gap-x-2">
       <ChainLogo chainId={chainId} />
-      <span className="text-sm font-normal capitalize">{chain.name}</span>
+      <span className="text-sm font-normal capitalize">
+        {chain?.name ?? '-'}
+      </span>
     </div>
   )
 }

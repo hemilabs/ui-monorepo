@@ -39,7 +39,7 @@ const WithdrawalsStateUpdater = dynamic(
 )
 
 const isReadyOrSyncing = (status: SyncStatus | undefined) =>
-  ['ready', 'syncing'].includes(status)
+  !!status && ['ready', 'syncing'].includes(status)
 
 const isChainReadyOrSyncing =
   (history: HistoryReducerState) => (chain: RemoteChain) =>
@@ -95,7 +95,7 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
   const historyChainSync = []
 
   // We need to be ready or syncing to return workers
-  if (isConnected && ['ready', 'syncing'].includes(history.status)) {
+  if (isConnected && address && ['ready', 'syncing'].includes(history.status)) {
     // Add workers for every pair L1-Hemi chain
     historyChainSync.push(
       ...remoteNetworks

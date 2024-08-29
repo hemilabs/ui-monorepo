@@ -49,7 +49,7 @@ export const createEvmSync = function ({
   withdrawalsSyncInfo,
 }: HistorySyncer<BlockSyncType>) {
   const getBlockNumber = async function (
-    toBlock: number,
+    toBlock: number | undefined,
     provider: JsonRpcProvider,
   ) {
     if (toBlock !== undefined) {
@@ -108,7 +108,7 @@ export const createEvmSync = function ({
               deposit =>
                 async function () {
                   const block = await getEvmBlock(
-                    deposit.blockNumber,
+                    deposit.blockNumber!,
                     l1Chain.id,
                   )
                   return {
@@ -201,7 +201,7 @@ export const createEvmSync = function ({
               withdrawal =>
                 async function () {
                   const [block, status] = await Promise.all([
-                    getEvmBlock(withdrawal.blockNumber, l2Chain.id),
+                    getEvmBlock(withdrawal.blockNumber!, l2Chain.id),
                     crossChainMessenger.getMessageStatus(
                       withdrawal.transactionHash,
                       // default value

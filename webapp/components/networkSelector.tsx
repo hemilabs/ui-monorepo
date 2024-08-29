@@ -11,7 +11,7 @@ import { Menu } from './menu'
 
 type Props = {
   disabled: boolean
-  networkId: RemoteChain['id'] | undefined
+  networkId: RemoteChain['id']
   networks: RemoteChain[]
   onSelectNetwork: (network: RemoteChain['id']) => void
   readonly?: boolean

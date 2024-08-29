@@ -160,7 +160,7 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
 
   useEffect(
     function restoreFromLocalStorage() {
-      if (loadedFromLocalStorage || !supportedEvmChain) {
+      if (!address || loadedFromLocalStorage || !supportedEvmChain) {
         return
       }
       setLoadedFromLocalStorage(true)
@@ -207,6 +207,7 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
   useEffect(
     function offloadToStorage() {
       if (
+        !address ||
         !supportedEvmChain ||
         !loadedFromLocalStorage ||
         !['finished', 'syncing'].includes(history.status) ||

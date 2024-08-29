@@ -5,7 +5,6 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { ConnectWalletDrawerProvider } from 'app/context/connectWalletDrawerContext'
 import { TunnelHistoryProvider } from 'app/context/tunnelHistoryContext'
 import { locales, type Locale } from 'app/i18n'
-import { AppScreen } from 'components/appScreen'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { WalletsContext } from 'context/walletsContext'
 import { notFound } from 'next/navigation'
@@ -14,6 +13,7 @@ import { Suspense } from 'react'
 
 import { inter } from '../fonts'
 
+import { AppLayout } from './_components/appLayout'
 import { Navbar } from './navbar'
 
 async function getMessages(locale: Locale) {
@@ -53,9 +53,9 @@ export default async function RootLayout({
                     <div className="hidden w-1/4 max-w-56 md:block">
                       <Navbar />
                     </div>
-                    <AppScreen>
+                    <AppLayout>
                       <ErrorBoundary>{children}</ErrorBoundary>
-                    </AppScreen>
+                    </AppLayout>
                   </div>
                 </ConnectWalletDrawerProvider>
               </TunnelHistoryProvider>

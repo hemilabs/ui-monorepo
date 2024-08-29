@@ -34,7 +34,8 @@ export const SwitchToNetwork = function ({ selectedNetworkId }: Props) {
     return null
   }
 
-  const expectedWalletIsEvm = isEvmNetwork(walletTargetNetwork)
+  const expectedWalletIsEvm =
+    !!walletTargetNetwork && isEvmNetwork(walletTargetNetwork)
 
   const isWalletConnected = () =>
     expectedWalletIsEvm
@@ -67,7 +68,7 @@ export const SwitchToNetwork = function ({ selectedNetworkId }: Props) {
           onClick={switchToNetwork}
           type="button"
         >
-          {t('connect-to-network', { network: walletTargetNetwork.name })}
+          {t('connect-to-network', { network: walletTargetNetwork?.name })}
         </button>
       }
       text={t('wrong-network')}

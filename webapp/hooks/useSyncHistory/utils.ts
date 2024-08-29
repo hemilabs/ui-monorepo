@@ -26,7 +26,7 @@ export const getTunnelHistoryWithdrawStorageKey = (
 const removeDuplicates = <T extends TunnelOperation>(merged: T[]) =>
   Array.from(new Set(merged.map(({ transactionHash }) => transactionHash))).map(
     transactionHash =>
-      merged.find(operation => operation.transactionHash === transactionHash),
+      merged.find(operation => operation.transactionHash === transactionHash)!,
   )
 
 const mergeContent = <T extends TunnelOperation>(
@@ -34,7 +34,7 @@ const mergeContent = <T extends TunnelOperation>(
   newContent: T[],
 ) =>
   removeDuplicates(oldContent.concat(newContent)).sort(
-    (a, b) => b.timestamp - a.timestamp,
+    (a, b) => b.timestamp ?? 0 - (a.timestamp ?? 0),
   )
 
 export const syncContent = <

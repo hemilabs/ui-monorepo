@@ -42,7 +42,7 @@ export const ConfigurationUrl = function ({
 
   const onClick = function () {
     setCopied(true)
-    window.navigator.clipboard.writeText(href)
+    window.navigator.clipboard.writeText(href!)
   }
 
   return (
@@ -65,7 +65,11 @@ export const ConfigurationUrl = function ({
         }}
         trigger={['hover', 'focus']}
       >
-        <button className="flex" onClick={onClick} type="button">
+        <button
+          className="flex"
+          onClick={href ? onClick : undefined}
+          type="button"
+        >
           <Clipboard />
         </button>
       </Tooltip>

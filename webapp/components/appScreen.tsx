@@ -19,7 +19,7 @@ export const AppScreen = function ({ children }: AppScreenProps) {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
-  const onNavBarMenuItemClick = function (item: NavItemData) {
+  const onNavBarMenuItemClick = function (item?: NavItemData) {
     // close the nav bar menu... unless we clicked an item with submenus
     if (!item?.subMenus) {
       toggleMenu()

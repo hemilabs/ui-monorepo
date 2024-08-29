@@ -23,7 +23,7 @@ const isValidOperation = (value: string): value is Operation =>
   validOperations.includes(value as Operation)
 
 export const useTunnelOperation = function (): {
-  operation: Operation
+  operation: Operation | undefined
   txHash: BtcTxHash | Hash | undefined
   updateOperation: (
     newOperation: (typeof validOperations)[number],
@@ -39,7 +39,8 @@ export const useTunnelOperation = function (): {
 
   const isValid = isValidOperation(operation)
   const isValidTxHash =
-    isHash(txHash) || (featureFlags.btcTunnelEnabled && isBtcTxHash(txHash))
+    !!txHash &&
+    (isHash(txHash) || (featureFlags.btcTunnelEnabled && isBtcTxHash(txHash)))
 
   useEffect(
     function updateDefaultParameters() {

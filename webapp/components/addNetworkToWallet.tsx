@@ -1,16 +1,18 @@
 'use client'
 
 import { useHemi } from 'hooks/useHemi'
+import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
 import { useAccount, useWalletClient } from 'wagmi'
 
 export function AddNetworkToWallet() {
-  const { chain, isConnected } = useAccount()
+  const { isConnected } = useAccount()
   const hemi = useHemi()
   const t = useTranslations()
   const { data: walletClient, status } = useWalletClient()
+  const isConnectedToHemi = useIsConnectedToExpectedNetwork(hemi.id)
 
-  if (!isConnected || chain.id === hemi.id || status !== 'success') {
+  if (!isConnected || isConnectedToHemi || status !== 'success') {
     return null
   }
 

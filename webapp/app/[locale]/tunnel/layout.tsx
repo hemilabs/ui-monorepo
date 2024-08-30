@@ -7,7 +7,7 @@ import { Tabs, Tab } from 'ui-common/components/tabs'
 
 const ActionableOperations = dynamic(
   () =>
-    import('./_components/actionableOperations').then(
+    import('components/actionableOperations').then(
       mod => mod.ActionableOperations,
     ),
   { ssr: false },

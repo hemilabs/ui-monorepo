@@ -2,7 +2,6 @@
 
 import { FooterSocials } from 'components/footerSocials'
 import { useHemi } from 'hooks/useHemi'
-import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import React, { Suspense } from 'react'
@@ -20,14 +19,6 @@ type Props = {
 const NavbarImplementation = function ({ onItemClick }: Props) {
   const hemi = useHemi()
   const t = useTranslations('common')
-  const pathname = usePathname()
-
-  function getCurrentPath() {
-    const cleanedUrl = pathname.replace(/^\/[a-z]{2}/, '').replace(/\/$/, '')
-    const firstPath = `/${cleanedUrl.split('/')[1]}`
-
-    return firstPath
-  }
 
   const handleItemClick = function (item: NavItemData) {
     onItemClick?.(item)
@@ -48,7 +39,6 @@ const NavbarImplementation = function ({ onItemClick }: Props) {
           isSelectable={true}
           navItems={getNavItems(hemi)}
           onItemClick={handleItemClick}
-          selectedItem={getCurrentPath()}
         />
         <div className="mt-auto">
           <Link href="/get-started" onClick={() => onItemClick?.()}>
@@ -65,7 +55,6 @@ const NavbarImplementation = function ({ onItemClick }: Props) {
             isSelectable={false}
             navItems={navItemsBottom}
             onItemClick={handleItemClick}
-            selectedItem={getCurrentPath()}
           />
         </div>
         <div className="block pb-6 pl-2 md:hidden">

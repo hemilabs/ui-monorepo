@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import React, { useState } from 'react'
 import { ColorType } from 'types/colortype'
@@ -18,8 +19,7 @@ type Props = {
   colorSelected?: ColorType
   navItems: NavItemData[]
   isSelectable: boolean
-  selectedItem: string
-  onItemClick: (selectedItem: NavItemData) => void
+  onItemClick: (item: NavItemData) => void
 }
 
 export const NavItems = function ({
@@ -27,13 +27,16 @@ export const NavItems = function ({
   colorSelected = 'orange-1',
   navItems,
   isSelectable,
-  selectedItem,
   onItemClick,
 }: Props) {
+  const pathname = usePathname()
   const t = useTranslations('common') as unknown as (key: string) => string
   const [openSubMenus, setOpenSubMenus] = useState<{ [key: string]: boolean }>(
     {},
   )
+
+  const cleanedUrl = pathname.replace(/^\/[a-z]{2}/, '').replace(/\/$/, '')
+  const selectedItem = `/${cleanedUrl.split('/')[1]}`
 
   const handleClick = function (item: NavItemData) {
     onItemClick(item)

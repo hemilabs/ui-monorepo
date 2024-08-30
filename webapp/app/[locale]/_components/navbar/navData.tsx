@@ -14,7 +14,7 @@ import { NavItemData } from './_components/navItems'
 
 const ActionableOperations = dynamic(
   () =>
-    import('../tunnel/_components/actionableOperations').then(
+    import('components/actionableOperations').then(
       mod => mod.ActionableOperations,
     ),
   { ssr: false },

@@ -1,11 +1,11 @@
 'use client'
 
-import { Navbar } from 'app/[locale]/navbar'
-import { NavItemData } from 'app/[locale]/navbar/_components/navItems'
 import React, { useState } from 'react'
 
 import { Footer } from './footer'
 import { Header } from './header'
+import { Navbar } from './navbar'
+import { NavItemData } from './navbar/_components/navItems'
 
 type Props = {
   children: React.ReactNode

@@ -1,100 +1,4 @@
 {
-  "transaction-history": {
-    "connect-wallet-to-review": "Connect your wallet to review transaction history.",
-    "in-challenge-period": "In Challenge period",
-    "loading-transactions": "Loading transactions",
-    "ready-to-claim": "Ready to claim",
-    "ready-to-prove": "Ready to prove",
-    "unsupported-chain-subheading": "Connect to a supported chain to view your transaction history.",
-    "waiting-btc-confirmation": "Waiting for Bitcoin Confirmation"
-  },
-  "tunnel-page": {
-    "connect-wallet-to-review": "Connect your wallet to continue the operation.",
-    "form": {
-      "balance": "Balance",
-      "bitcoin-receiving-address": "Receiving Bitcoin address",
-      "bitcoin-receiving-address-description": "You will receive your {symbol} to the connected Bitcoin wallet address.",
-      "from-network": "From Network",
-      "hemi-receiving-address": "Receiving Hemi address",
-      "hemi-receiving-address-description": "You will receive your tunneled {symbol} to the connected EVM wallet address.",
-      "max": "max",
-      "switch-to-prove": "Switch to {network} to complete transaction",
-      "to-network": "To Network",
-      "you-receive": "You receive",
-      "you-send": "You send"
-    },
-    "review-deposit": {
-      "btc-deposit-come-back-delay-note": "If you do not receive your deposit after {hours} hours return to this page to manually claim.",
-      "claim-deposit": "Claim deposit",
-      "heading": "Review Deposit",
-      "initiate-deposit": "Initiate deposit",
-      "wait-for-confirmation": "Wait for Hemi confirmation",
-      "you-are-depositing": "You are depositing"
-    },
-    "review-withdraw": {
-      "claim-withdrawal": "Claim withdrawal",
-      "heading": "Review Withdraw",
-      "initiate-withdrawal": "Initiate withdrawal",
-      "prove-withdrawal": "Prove withdrawal",
-      "total-to-withdraw": "Total to withdraw",
-      "view-tx": "View"
-    },
-    "submit-button": {
-      "approve-and-deposit": "Approve and Deposit",
-      "approving": "Approving...",
-      "claim-deposit": "Claim deposit",
-      "claim-withdrawal": "Claim Withdrawal",
-      "claiming-deposit": "Claiming Deposit",
-      "claiming-withdrawal": "Claiming Withdrawal",
-      "connect-both-wallets": "Connect your BTC and EVM wallets",
-      "connect-btc-wallet": "Connect your BTC wallet",
-      "connect-evm-wallet": "Connect your EVM Wallet",
-      "deposit": "Deposit",
-      "depositing": "Depositing...",
-      "initiate-withdrawal": "Initiate Withdrawal",
-      "prove-withdrawal": "Prove withdrawal",
-      "proving-withdrawal": "Proving...",
-      "withdrawing": "Withdrawing..."
-    },
-    "subtitle": "Move tokens to and from Hemi",
-    "title": "Tunnel",
-    "transaction-history": {
-      "actions": {
-        "claim": "Claim",
-        "prove": "Prove",
-        "retry": "Retry",
-        "view": "View"
-      },
-      "column-headers": {
-        "amount": "Amount",
-        "from": "From",
-        "reload": "Reload",
-        "status": "Status",
-        "time": "Time",
-        "to": "To",
-        "tx-hash": "Tx Hash",
-        "type": "Type"
-      },
-      "deposit": "Deposit",
-      "no-transactions": "There are no transactions",
-      "title": "Transaction History",
-      "withdraw": "Withdraw"
-    },
-    "transaction-status": {
-      "claiming-deposit": "Claiming Deposit",
-      "claiming-withdrawal": "Claiming Withdrawal",
-      "deposit-claimed": "Deposit Claimed",
-      "deposited": "{fromInput} {symbol} deposited",
-      "depositing": "Depositing {fromInput} {symbol}",
-      "erc20-approved": "{symbol} approved",
-      "erc20-approving": "Approving {symbol}",
-      "proving-withdrawal": "Proving withdrawal",
-      "withdrawal-claimed": "Withdrawal claimed",
-      "withdrawal-proved": "Withdrawal proved",
-      "withdrawing": "Withdrawing {fromInput} {symbol}",
-      "withdrawn": "{fromInput} {symbol} withdrawn"
-    }
-  },
   "common": {
     "add": "Add",
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
@@ -153,6 +57,22 @@
       "connecting": "Connecting",
       "disconnected": "Disconnected",
       "reconnecting": "Reconnecting"
+    }
+  },
+  "demos": {
+    "heading": "Demos",
+    "sub-heading": "Learn and explore with Hemi developer demos",
+    "hemihatchlings": {
+      "heading": "Hemi Hatchlings",
+      "sub-heading": "Learn how Ethereum & Bitcoin finality works"
+    },
+    "cryptochords": {
+      "heading": "Crypto Chords",
+      "sub-heading": "An audio-visual depiction of transactions on the Hemi Network"
+    },
+    "purefinance": {
+      "heading": "Pure Finance",
+      "sub-heading": "Utility and smart contract interaction built directly into the Hemi Network"
     }
   },
   "get-started": {
@@ -271,11 +191,6 @@
       "welcome-pack-description": "Join our Discord server and visit the <channel>#claim-capsule</channel> channel to claim your onboarding Capsule."
     }
   },
-  "token-selector": {
-    "choose-token": "Choose Token",
-    "no-tokens": "There are no tokens",
-    "search-tokens": "Search tokens"
-  },
   "get-started-page": {
     "heading": "Get Started with Hemi",
     "sub-heading": "To get started, select one of the options below",
@@ -285,20 +200,105 @@
       "miner": "I'm a Miner"
     }
   },
-  "demos": {
-    "heading": "Demos",
-    "sub-heading": "Learn and explore with Hemi developer demos",
-    "hemihatchlings": {
-      "heading": "Hemi Hatchlings",
-      "sub-heading": "Learn how Ethereum & Bitcoin finality works"
+  "token-selector": {
+    "choose-token": "Choose Token",
+    "no-tokens": "There are no tokens",
+    "search-tokens": "Search tokens"
+  },
+  "transaction-history": {
+    "connect-wallet-to-review": "Connect your wallet to review transaction history.",
+    "in-challenge-period": "In Challenge period",
+    "loading-transactions": "Loading transactions",
+    "ready-to-claim": "Ready to claim",
+    "ready-to-prove": "Ready to prove",
+    "unsupported-chain-subheading": "Connect to a supported chain to view your transaction history.",
+    "waiting-btc-confirmation": "Waiting for Bitcoin Confirmation"
+  },
+  "tunnel-page": {
+    "connect-wallet-to-review": "Connect your wallet to continue the operation.",
+    "form": {
+      "balance": "Balance",
+      "bitcoin-receiving-address": "Receiving Bitcoin address",
+      "bitcoin-receiving-address-description": "You will receive your {symbol} to the connected Bitcoin wallet address.",
+      "from-network": "From Network",
+      "hemi-receiving-address": "Receiving Hemi address",
+      "hemi-receiving-address-description": "You will receive your tunneled {symbol} to the connected EVM wallet address.",
+      "max": "max",
+      "switch-to-prove": "Switch to {network} to complete transaction",
+      "to-network": "To Network",
+      "you-receive": "You receive",
+      "you-send": "You send"
     },
-    "cryptochords": {
-      "heading": "Crypto Chords",
-      "sub-heading": "An audio-visual depiction of transactions on the Hemi Network"
+    "review-deposit": {
+      "btc-deposit-come-back-delay-note": "If you do not receive your deposit after {hours} hours return to this page to manually claim.",
+      "claim-deposit": "Claim deposit",
+      "heading": "Review Deposit",
+      "initiate-deposit": "Initiate deposit",
+      "wait-for-confirmation": "Wait for Hemi confirmation",
+      "you-are-depositing": "You are depositing"
     },
-    "purefinance": {
-      "heading": "Pure Finance",
-      "sub-heading": "Utility and smart contract interaction built directly into the Hemi Network"
+    "review-withdraw": {
+      "claim-withdrawal": "Claim withdrawal",
+      "heading": "Review Withdraw",
+      "initiate-withdrawal": "Initiate withdrawal",
+      "prove-withdrawal": "Prove withdrawal",
+      "total-to-withdraw": "Total to withdraw",
+      "view-tx": "View"
+    },
+    "submit-button": {
+      "approve-and-deposit": "Approve and Deposit",
+      "approving": "Approving...",
+      "claim-deposit": "Claim deposit",
+      "claim-withdrawal": "Claim Withdrawal",
+      "claiming-deposit": "Claiming Deposit",
+      "claiming-withdrawal": "Claiming Withdrawal",
+      "connect-both-wallets": "Connect your BTC and EVM wallets",
+      "connect-btc-wallet": "Connect your BTC wallet",
+      "connect-evm-wallet": "Connect your EVM Wallet",
+      "deposit": "Deposit",
+      "depositing": "Depositing...",
+      "initiate-withdrawal": "Initiate Withdrawal",
+      "prove-withdrawal": "Prove withdrawal",
+      "proving-withdrawal": "Proving...",
+      "withdrawing": "Withdrawing..."
+    },
+    "subtitle": "Move tokens to and from Hemi",
+    "title": "Tunnel",
+    "transaction-history": {
+      "actions": {
+        "claim": "Claim",
+        "prove": "Prove",
+        "retry": "Retry",
+        "view": "View"
+      },
+      "column-headers": {
+        "amount": "Amount",
+        "from": "From",
+        "reload": "Reload",
+        "status": "Status",
+        "time": "Time",
+        "to": "To",
+        "tx-hash": "Tx Hash",
+        "type": "Type"
+      },
+      "deposit": "Deposit",
+      "no-transactions": "There are no transactions",
+      "title": "Transaction History",
+      "withdraw": "Withdraw"
+    },
+    "transaction-status": {
+      "claiming-deposit": "Claiming Deposit",
+      "claiming-withdrawal": "Claiming Withdrawal",
+      "deposit-claimed": "Deposit Claimed",
+      "deposited": "{fromInput} {symbol} deposited",
+      "depositing": "Depositing {fromInput} {symbol}",
+      "erc20-approved": "{symbol} approved",
+      "erc20-approving": "Approving {symbol}",
+      "proving-withdrawal": "Proving withdrawal",
+      "withdrawal-claimed": "Withdrawal claimed",
+      "withdrawal-proved": "Withdrawal proved",
+      "withdrawing": "Withdrawing {fromInput} {symbol}",
+      "withdrawn": "{fromInput} {symbol} withdrawn"
     }
   }
 }

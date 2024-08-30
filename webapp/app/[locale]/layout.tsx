@@ -14,7 +14,7 @@ import { Suspense } from 'react'
 import { inter } from '../fonts'
 
 import { AppLayout } from './_components/appLayout'
-import { Navbar } from './navbar'
+import { Navbar } from './_components/navbar'
 
 async function getMessages(locale: Locale) {
   try {

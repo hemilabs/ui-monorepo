@@ -2,27 +2,20 @@
   "common": {
     "add": "Add",
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
-    "bitcoinkit": "Hemi Bitcoin Kit",
     "connect-to-network": "Connect to {network}",
     "connect-wallet": "Connect Wallet",
     "connect-wallets": "Connect Wallets",
     "connect-your-wallet": "Connect your Wallet",
-    "demos": "Demos",
-    "dex": "DEX",
     "erc20-approve-10x-deposits": "Approve 10x the amount of this deposit",
     "erc20-approve-10x-detailed-description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
     "erc20-extra-approval": "Approve 10x deposits",
     "explorer": "Explorer",
-    "get-started": "Get Started",
     "failed": "Failed",
     "fees": "Fees",
-    "hemidocs": "Hemi Docs",
     "network-gas-fee": "{network} gas fee",
-    "networkstatus": "Network Status",
     "select-network": "Select Network",
     "success": "Success",
     "swap": "Swap",
-    "tools": "Tools",
     "total": "Total",
     "total-amount": "Total Amount",
     "transaction-status": {
@@ -31,7 +24,6 @@
       "pending": "Pending",
       "rejected": "Tx rejected"
     },
-    "tunnel": "Tunnel",
     "unexpected-error": "An unexpected error has ocurred. Please try again.",
     "unsupported-chain-heading": "You're not connected to a supported chain",
     "view": "View",
@@ -39,7 +31,6 @@
     "wait-hours": "Wait up to {hours} hours",
     "wait-minutes": "Wait up to {minutes} minutes",
     "wallets-connected": "{count} Connected {count, plural, =1 {Wallet} other {Wallets}} ",
-    "web-pop-miner": "Web PoP Miner",
     "wrong-network": "Wrong Network"
   },
   "connect-wallets": {
@@ -199,6 +190,17 @@
       "explorer": "I'm an Explorer",
       "miner": "I'm a Miner"
     }
+  },
+  "navbar": {
+    "bitcoinkit": "Hemi Bitcoin Kit",
+    "demos": "Demos",
+    "dex": "DEX",
+    "get-started": "Get Started",
+    "hemidocs": "Hemi Docs",
+    "network-status": "Network Status",
+    "tools": "Tools",
+    "tunnel": "Tunnel",
+    "web-pop-miner": "Web PoP Miner"
   },
   "token-selector": {
     "choose-token": "Choose Token",

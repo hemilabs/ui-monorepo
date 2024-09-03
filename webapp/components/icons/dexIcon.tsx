@@ -1,17 +1,16 @@
-export const DexIcon = (props: React.SVGProps<SVGSVGElement>) => (
+import { ComponentProps } from 'react'
+
+export const DexIcon = (props: ComponentProps<'svg'>) => (
   <svg
     fill="none"
-    height="22"
-    viewBox="0 0 22 22"
-    width="22"
+    height={14}
+    width={14}
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <path
-      clipRule="evenodd"
-      d="m11 15.81 4.06-4.06L11 7.69 9.94 8.75 12.19 11H1.25v1.5h10.94l-2.25 2.25L11 15.81ZM6.06 7.25 3.81 5h10.94V3.5H3.81l2.25-2.25L5 .19.94 4.25 5 8.31l1.06-1.06Z"
-      fill="currentColor"
-      fillRule="evenodd"
+      d="M.7 2.975a2.613 2.613 0 0 1 1.575-.525h9.45c.591 0 1.136.196 1.575.525A1.574 1.574 0 0 0 11.725 1.4h-9.45A1.575 1.575 0 0 0 .7 2.975Zm0 2.1a2.613 2.613 0 0 1 1.575-.525h9.45c.591 0 1.136.196 1.575.525A1.574 1.574 0 0 0 11.725 3.5h-9.45A1.575 1.575 0 0 0 .7 5.075Zm4.2.525a.7.7 0 0 1 .7.7 1.4 1.4 0 0 0 2.8 0 .7.7 0 0 1 .7-.7h2.625A1.575 1.575 0 0 1 13.3 7.175v3.85a1.574 1.574 0 0 1-1.575 1.575h-9.45A1.575 1.575 0 0 1 .7 11.025v-3.85A1.575 1.575 0 0 1 2.275 5.6H4.9Z"
+      fill="#A3A3A3"
     />
   </svg>
 )

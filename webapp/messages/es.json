@@ -2,7 +2,6 @@
   "common": {
     "add": "Agregar",
     "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
-    "bitcoinkit": "Kit de Hemi Bitcoin",
     "connect-to-network": "Conectarse a {network}",
     "connect-wallet": "Conectar Billetera",
     "connect-wallets": "Connectar Billeteras",
@@ -10,19 +9,13 @@
     "erc20-approve-10x-deposits": "Aprobar 10x el monto de este depósito",
     "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
     "erc20-extra-approval": "Aprobar 10x este depósito",
-    "demos": "Demos",
-    "dex": "DEX",
     "explorer": "Explorador",
     "failed": "Falló",
     "fees": "Tarifa",
-    "get-started": "Comenzar",
-    "hemidocs": "Documentacion de Hemi",
     "network-gas-fee": "Tarifa de gas de {network}",
-    "networkstatus": "Estado de la red",
     "select-network": "Seleccione Red",
     "success": "Exitoso",
     "swap": "Intercambiar",
-    "tools": "Herramientas",
     "total": "Total",
     "total-amount": "Monto Total",
     "transaction-status": {
@@ -31,7 +24,6 @@
       "pending": "Pendiente",
       "rejected": "Tx rechazada"
     },
-    "tunnel": "Túnel",
     "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
     "unsupported-chain-heading": "Usted no se encuentra conectado a una red soportada",
     "view": "Ver",
@@ -39,7 +31,6 @@
     "wait-hours": "Espere hasta {hours} horas",
     "wait-minutes": "Espere hasta {minutes} minutos",
     "wallets-connected": "{count} {count, plural, =1 {Billtera Conectada} other {Billeteras Conectadas}} ",
-    "web-pop-miner": "Minero PoP Web",
     "wrong-network": "Red Incorrecta"
   },
   "connect-wallets": {
@@ -199,6 +190,17 @@
       "explorer": "Soy un Explorador",
       "miner": "Soy Minero"
     }
+  },
+  "navbar": {
+    "bitcoinkit": "Kit de Hemi Bitcoin",
+    "demos": "Demos",
+    "dex": "DEX",
+    "get-started": "Comenzar",
+    "hemidocs": "Documentacion de Hemi",
+    "network-status": "Estado de la red",
+    "tools": "Herramientas",
+    "tunnel": "Túnel",
+    "web-pop-miner": "Minero PoP Web"
   },
   "token-selector": {
     "choose-token": "Elegir Token",

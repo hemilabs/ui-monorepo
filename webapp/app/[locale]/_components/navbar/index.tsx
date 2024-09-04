@@ -44,7 +44,7 @@ export const Navbar = function () {
           </Link>
         </div>
       </div>
-      <ul className="flex h-full flex-col gap-y-1 overflow-y-auto [&>li>*]:px-3">
+      <ul className="flex h-full flex-col gap-y-1 overflow-y-auto [&>li>div]:px-3">
         <li className="order-1">
           <ItemLink
             href="/tunnel"

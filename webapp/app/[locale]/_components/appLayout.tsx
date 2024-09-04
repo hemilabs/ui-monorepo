@@ -39,7 +39,7 @@ export const AppLayout = function ({ children }: Props) {
         {children}
       </div>
       {isMenuOpen && (
-        <div className="md:hidden [&>*]:px-3">
+        <div className="md:hidden">
           <Navbar />
         </div>
       )}

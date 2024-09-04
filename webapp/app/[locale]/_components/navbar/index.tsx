@@ -110,6 +110,7 @@ export const Navbar = function () {
         <li className="order-9 mb-auto">
           <ItemLink href="/demos" icon={<DemosPageIcon />} text={t('demos')} />
         </li>
+        {/* TBD if network status will be available */}
         {/* <li className="order-10 md:order-11">
           <ItemLink
             href=""
@@ -124,6 +125,7 @@ export const Navbar = function () {
             text={t('hemidocs')}
           />
         </li>
+        {/* See https://github.com/hemilabs/ui-monorepo/issues/496 */}
         {/* <li className="order-12 md:order-13">
           Network Switch
         </li> */}

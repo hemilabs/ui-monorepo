@@ -25,7 +25,7 @@ const IconContainer = ({
     justify-center rounded-[4px] border py-1 shadow-md ${
       selected
         ? 'border-orange-700/55 bg-orange-500 [&>svg>path]:fill-white'
-        : 'border-neutral-300/55'
+        : 'border-neutral-300/55 bg-stone-50'
     }`}
   >
     {children}

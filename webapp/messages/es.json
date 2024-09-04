@@ -9,7 +9,6 @@
     "erc20-approve-10x-deposits": "Aprobar 10x el monto de este depósito",
     "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
     "erc20-extra-approval": "Aprobar 10x este depósito",
-    "explorer": "Explorador",
     "failed": "Falló",
     "fees": "Tarifa",
     "network-gas-fee": "Tarifa de gas de {network}",
@@ -192,9 +191,11 @@
     }
   },
   "navbar": {
+    "agree-to-terms-and-policy": "Al usar esta aplicación, usted acepta los <terms>Términos de Uso</terms> y la <policy>Política de Privacidad</policy>",
     "bitcoinkit": "Kit de Hemi Bitcoin",
     "demos": "Demos",
     "dex": "DEX",
+    "explorer": "Explorador",
     "get-started": "Comenzar",
     "hemidocs": "Documentacion de Hemi",
     "network-status": "Estado de la red",

@@ -36,10 +36,10 @@ export const Navbar = function () {
   const t = useTranslations('navbar')
 
   return (
-    <div className="md:h-98vh flex h-[calc(100dvh-64px)] flex-col pt-3 md:pt-0 [&>*]:md:ml-4 [&>*]:md:pr-4">
-      <div className="mt-8 hidden md:mb-6 md:block">
-        <div className="mt-4 hidden h-10 w-28 md:block">
-          <Link href="/tunnel">
+    <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col px-3 pt-3 md:pt-0 [&>*]:md:ml-4 [&>*]:md:pr-4">
+      <div className="hidden h-24 items-center justify-center md:flex">
+        <div className="flex h-1/3 w-1/3">
+          <Link className="w-full" href="/tunnel">
             <HemiLogoFull />
           </Link>
         </div>

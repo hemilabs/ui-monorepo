@@ -50,7 +50,7 @@ export default async function RootLayout({
               <TunnelHistoryProvider>
                 <ConnectWalletDrawerProvider>
                   <div className="flex h-dvh flex-nowrap justify-stretch">
-                    <div className="hidden w-1/4 max-w-56 md:block">
+                    <div className="hidden w-1/4 max-w-60 md:block">
                       <Navbar />
                     </div>
                     <AppLayout>

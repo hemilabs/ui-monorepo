@@ -9,7 +9,6 @@
     "erc20-approve-10x-deposits": "Approve 10x the amount of this deposit",
     "erc20-approve-10x-detailed-description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
     "erc20-extra-approval": "Approve 10x deposits",
-    "explorer": "Explorer",
     "failed": "Failed",
     "fees": "Fees",
     "network-gas-fee": "{network} gas fee",
@@ -192,9 +191,11 @@
     }
   },
   "navbar": {
+    "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
     "bitcoinkit": "Hemi Bitcoin Kit",
     "demos": "Demos",
     "dex": "DEX",
+    "explorer": "Explorer",
     "get-started": "Get Started",
     "hemidocs": "Hemi Docs",
     "network-status": "Network Status",

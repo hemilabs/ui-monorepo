@@ -1,17 +1,17 @@
 'use client'
 
-import React, { useState } from 'react'
+import { usePathname } from 'next/navigation'
+import React, { useEffect, useState } from 'react'
 
-import { Footer } from './footer'
 import { Header } from './header'
 import { Navbar } from './navbar'
-import { NavItemData } from './navbar/_components/navItems'
 
 type Props = {
   children: React.ReactNode
 }
 
 export const AppLayout = function ({ children }: Props) {
+  const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   // Hide instead of not-rendering when the header is open, to avoid loosing state of the components when opening
   // and closing the header
@@ -19,12 +19,13 @@ export const AppLayout = function ({ children }: Props) {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
-  const onNavBarMenuItemClick = function (item?: NavItemData) {
-    // close the nav bar menu... unless we clicked an item with submenus
-    if (!item?.subMenus) {
-      toggleMenu()
-    }
-  }
+  useEffect(
+    function closeNavBarOnUrlChange() {
+      setIsMenuOpen(false)
+    },
+    [pathname, setIsMenuOpen],
+  )
+
   return (
     <div
       className={`bg-hemi-layout bg-hemi-color-layout shadow-hemi-layout backdrop-blur-20 lg:100-dvh lg:h-97vh
@@ -37,12 +38,9 @@ export const AppLayout = function ({ children }: Props) {
       >
         {children}
       </div>
-      <div className={`-mb-px mt-auto hidden pt-3 md:block ${hiddenClass}`}>
-        <Footer />
-      </div>
       {isMenuOpen && (
         <div className="md:hidden [&>*]:px-3">
-          <Navbar onItemClick={onNavBarMenuItemClick} />
+          <Navbar />
         </div>
       )}
     </div>

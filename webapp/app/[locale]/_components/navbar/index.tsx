@@ -1,31 +1,42 @@
 'use client'
 
-import { FooterSocials } from 'components/footerSocials'
-import { useHemi } from 'hooks/useHemi'
+import { BitcoinKitIcon } from 'components/icons/bitcoinKit'
+import { DemosPageIcon } from 'components/icons/demosPageIcon'
+import { DexIcon } from 'components/icons/dexIcon'
+import { DocsIcon } from 'components/icons/docsIcon'
+// import { ElectroCardiogramIcon } from 'components/icons/electroCardiogramIcon'
+import { PoPMinerIcon } from 'components/icons/popMinerIcon'
+import { ToolsIcon } from 'components/icons/toolsIcon'
+import { TunnelIcon } from 'components/icons/tunnelIcon'
+import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import React, { Suspense } from 'react'
-import { Button } from 'ui-common/components/button'
 import { HemiLogoFull } from 'ui-common/components/hemiLogo'
 
-import { NavGetStarted } from './_components/navGetStarted'
-import { NavItems, type NavItemData } from './_components/navItems'
-import { getNavItems, navItemsBottom } from './navData'
+import { GetStarted } from './_components/getStarted'
+import { HemiExplorerLink } from './_components/hemiExplorerLink'
+import { ItemLink, ItemWithSubmenu } from './_components/navItem'
+import { SocialLinks } from './_components/socialLinks'
+import { TermsAndConditions } from './_components/termsAndConditions'
 
-type Props = {
-  onItemClick?: (item?: NavItemData) => void
-}
+const ActionableOperations = dynamic(
+  () =>
+    import('components/actionableOperations').then(
+      mod => mod.ActionableOperations,
+    ),
+  { ssr: false },
+)
 
-const NavbarImplementation = function ({ onItemClick }: Props) {
-  const hemi = useHemi()
-  const t = useTranslations('common')
+const Separator = () => (
+  <div className="my-2 h-px w-full bg-neutral-300/55 md:my-3" />
+)
 
-  const handleItemClick = function (item: NavItemData) {
-    onItemClick?.(item)
-  }
+export const Navbar = function () {
+  const t = useTranslations('navbar')
 
   return (
-    <div className="md:h-98vh flex h-[calc(100dvh-64px)] flex-col pt-3 md:pt-0 [&>*]:pr-4 [&>*]:md:ml-4">
+    <div className="md:h-98vh flex h-[calc(100dvh-64px)] flex-col pt-3 md:pt-0 [&>*]:md:ml-4 [&>*]:md:pr-4">
       <div className="mt-8 hidden md:mb-6 md:block">
         <div className="mt-4 hidden h-10 w-28 md:block">
           <Link href="/tunnel">
@@ -33,40 +44,105 @@ const NavbarImplementation = function ({ onItemClick }: Props) {
           </Link>
         </div>
       </div>
-      <div className="flex h-full flex-col overflow-y-auto pt-4">
-        <NavItems
-          color="slate-200"
-          isSelectable={true}
-          navItems={getNavItems(hemi)}
-          onItemClick={handleItemClick}
-        />
-        <div className="mt-auto">
-          <Link href="/get-started" onClick={() => onItemClick?.()}>
-            <NavGetStarted>
-              <Button size="medium" variant="secondary">
-                {t('get-started')}
-              </Button>
-            </NavGetStarted>
-          </Link>
-        </div>
-        <div className="mt-6">
-          <NavItems
-            color="slate-500"
-            isSelectable={false}
-            navItems={navItemsBottom}
-            onItemClick={handleItemClick}
+      <ul className="flex h-full flex-col gap-y-1 overflow-y-auto [&>li>*]:px-3">
+        <li className="order-1">
+          <ItemLink
+            href="/tunnel"
+            icon={<TunnelIcon />}
+            rightSection={
+              <div className="ml-auto">
+                <ActionableOperations />
+              </div>
+            }
+            text={t('tunnel')}
           />
-        </div>
-        <div className="block pb-6 pl-2 md:hidden">
-          <FooterSocials />
-        </div>
-      </div>
+        </li>
+        <li className="order-2">
+          <ItemLink
+            href="https://swap.hemi.xyz"
+            icon={<DexIcon />}
+            text={t('dex')}
+          />
+        </li>
+        <li className="order-3">
+          <Suspense>
+            <HemiExplorerLink />
+          </Suspense>
+        </li>
+        <li className="order-4">
+          <ItemLink
+            href="https://pop-miner.hemi.xyz"
+            icon={<PoPMinerIcon />}
+            text={t('web-pop-miner')}
+          />
+        </li>
+        <li className="order-5">
+          <Separator />
+        </li>
+        <li className="order-6">
+          <ItemLink
+            href="https://docs.hemi.xyz/building-bitcoin-apps/hemi-bitcoin-kit-hbk"
+            icon={<BitcoinKitIcon />}
+            text={t('bitcoinkit')}
+          />
+        </li>
+        <li className="order-7">
+          <ItemWithSubmenu
+            icon={<ToolsIcon />}
+            subMenu={
+              <ul>
+                <ItemLink
+                  href="https://purefinance.hemi.xyz"
+                  text="Pure Finance"
+                />
+                <ItemLink
+                  href="https://discord.com/channels/1202677849887080508/1230886659222929418"
+                  text="Faucet"
+                />
+              </ul>
+            }
+            text={t('tools')}
+          />
+        </li>
+        <li className="order-8">
+          <Separator />
+        </li>
+        <li className="order-9 mb-auto">
+          <ItemLink href="/demos" icon={<DemosPageIcon />} text={t('demos')} />
+        </li>
+        {/* <li className="order-10 md:order-11">
+          <ItemLink
+            href=""
+            icon={<ElectroCardiogramIcon />}
+            text={t('network-status')}
+          />
+        </li> */}
+        <li className="order-11 md:order-12">
+          <ItemLink
+            href="https://docs.hemi.xyz"
+            icon={<DocsIcon />}
+            text={t('hemidocs')}
+          />
+        </li>
+        {/* <li className="order-12 md:order-13">
+          Network Switch
+        </li> */}
+        <li className="order-13 md:hidden">
+          <Separator />
+        </li>
+        <li className="order-14 md:order-10">
+          <GetStarted />
+        </li>
+        <li className="order-15 md:order-14">
+          <SocialLinks />
+        </li>
+        <li className="order-16 md:hidden">
+          <Separator />
+        </li>
+        <li className="order-17 md:order-15">
+          <TermsAndConditions />
+        </li>
+      </ul>
     </div>
   )
 }
-
-export const Navbar = ({ onItemClick }: Props) => (
-  <Suspense>
-    <NavbarImplementation onItemClick={onItemClick} />
-  </Suspense>
-)

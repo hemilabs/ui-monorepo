@@ -25,7 +25,7 @@ export const ActionableOperations = function () {
   }
 
   return (
-    <div className="flex aspect-square min-w-6 items-center justify-center rounded-full bg-orange-950 p-1 text-center text-xs text-white">
+    <div className="flex aspect-square min-w-6 items-center justify-center rounded-full bg-orange-500 p-1 text-center text-xs text-white">
       {actionableOperations}
     </div>
   )

@@ -1,36 +1,51 @@
-const ChevronBase = (props: React.SVGProps<SVGSVGElement>) => (
+import { ComponentProps } from 'react'
+
+const Bottom = (props: ComponentProps<'svg'>) => (
   <svg
     fill="none"
-    height="16"
-    width="22"
+    height={16}
+    width={16}
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <path
-      d="m13 7.25-4 4-4-4"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeWidth={1.2}
+      clipRule="evenodd"
+      d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+      fill="#A3A3A3"
+      fillRule="evenodd"
     />
   </svg>
 )
 
 type Props = { className?: string }
 
-const Left = ({ className = '' }: Props) => (
-  <ChevronBase className={`rotate-90 ${className}"`} />
+const Right = (props: Props) => (
+  <svg
+    fill="none"
+    height={16}
+    width={17}
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      clipRule="evenodd"
+      d="M6.72 4.22a.75.75 0 0 1 1.06 0l3.25 3.25a.75.75 0 0 1 0 1.06l-3.25 3.25a.75.75 0 0 1-1.06-1.06L9.44 8 6.72 5.28a.75.75 0 0 1 0-1.06Z"
+      fill="#fff"
+      fillRule="evenodd"
+    />
+  </svg>
 )
 
-const Right = ({ className = '' }: Props) => (
-  <ChevronBase className={`-rotate-90 ${className}`} />
+const Left = ({ className = '' }: Props) => (
+  <Right className={`rotate-180 ${className}"`} />
 )
 
 const Up = ({ className = '' }: Props) => (
-  <ChevronBase className={`scale-y-[-1] ${className}`} />
+  <Bottom className={`scale-y-[-1] ${className}`} />
 )
 
 export const Chevron = {
-  Bottom: ChevronBase,
+  Bottom,
   Left,
   Right,
   Up,

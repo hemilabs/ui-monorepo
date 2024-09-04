@@ -90,7 +90,7 @@ export const Navbar = function () {
           <ItemWithSubmenu
             icon={<ToolsIcon />}
             subMenu={
-              <ul>
+              <>
                 <ItemLink
                   href="https://purefinance.hemi.xyz"
                   text="Pure Finance"
@@ -99,7 +99,7 @@ export const Navbar = function () {
                   href="https://discord.com/channels/1202677849887080508/1230886659222929418"
                   text="Faucet"
                 />
-              </ul>
+              </>
             }
             text={t('tools')}
           />

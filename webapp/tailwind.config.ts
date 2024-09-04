@@ -32,21 +32,20 @@ const config: Config = {
         'hemi-layout':
           '0px 110px 31px rgba(148, 148, 148, 0.00), 0px 71px 28px rgba(148, 148, 148, 0.00), 0px 40px 24px rgba(148, 148, 148, 0.00), 0px 18px 18px rgba(148, 148, 148, 0.01), 0px 4px 10px rgba(148, 148, 148, 0.01)',
       },
-      // See https://www.figma.com/file/4fVd9wneclsvYDYD95ApZ9/Hemi-Portal?node-id=8%3A5122&mode=dev
+      // See https://www.figma.com/design/4fVd9wneclsvYDYD95ApZ9/Hemi-Portal?node-id=3685-11596&node-type=FRAME&m=dev
       colors: {
         orange: {
-          1: '#FF4D00',
-          50: '#FFFBF8',
-          100: '#FFF0E8',
-          200: '#FFE2D0',
-          300: '#FFD3B9',
-          400: '#FFC4A1',
-          500: '#FFB58A',
-          600: '#FFA773',
-          700: '#FF985B',
-          800: '#FF7D33',
-          900: '#FF7B2C',
-          950: '#FF6C15',
+          50: '#FFF6ED',
+          100: '#FFEBD4',
+          200: '#FFD4A8',
+          300: '#FFB570',
+          400: '#FF8937',
+          500: '#FF6C15',
+          600: '#F04D06',
+          700: '#C73807',
+          800: '#9e2d0E',
+          900: '#7F280F',
+          950: '#451105',
           hemi: '#FF5F00',
         },
         slate: {

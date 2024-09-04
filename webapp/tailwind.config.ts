@@ -63,6 +63,9 @@ const config: Config = {
       fontFamily: {
         inter: '--font-inter',
       },
+      fontSize: {
+        ms: '0.8125rem',
+      },
       height: {
         '97vh': '97vh',
         '98vh': '98vh',

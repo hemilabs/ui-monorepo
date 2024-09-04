@@ -53,7 +53,7 @@ const ConnectedChain = function ({
   return (
     <div className="relative" ref={ref}>
       <div
-        className={`flex h-10 w-fit items-center gap-x-2 rounded-md bg-neutral-200/30 p-2 ${
+        className={`flex h-8 w-fit items-center gap-x-2 rounded-md bg-neutral-200/30 p-2 ${
           openMenu ? 'cursor-pointer' : ''
         }`}
         onClick={openMenu}
@@ -92,7 +92,7 @@ const ConnectedWallet = function ({
 
   return (
     <div
-      className="relative flex h-10 w-fit items-center rounded-lg border border-solid border-slate-600/45 bg-white pr-1 text-sm font-medium leading-normal text-slate-950"
+      className="relative flex h-8 w-fit items-center rounded-lg border border-solid border-slate-600/45 bg-white pr-1 text-sm font-medium leading-normal text-slate-950"
       ref={ref}
     >
       <span className="p-2">{balance}</span>

@@ -8,19 +8,24 @@ import React from 'react'
 
 const { discordUrl, twitterUrl, githubUrl, linkedinUrl } = hemiSocials
 
+const svgCss = 'scale-125 [&_path]:hover:fill-black'
+
 export const SocialLinks = () => (
-  <div className="mb-1 mt-4 flex items-center justify-center gap-x-6 rounded-lg bg-transparent md:h-14 md:gap-x-4 md:bg-neutral-50">
+  <div
+    className="mb-1 mt-4 flex items-center justify-center gap-x-6
+    rounded-lg bg-transparent md:h-14 md:gap-x-4 md:bg-neutral-50"
+  >
     <ExternalLink href={twitterUrl}>
-      <TwitterIcon className="scale-125" />
+      <TwitterIcon className={svgCss} />
     </ExternalLink>
     <ExternalLink href={discordUrl}>
-      <DiscordIcon className="scale-125" />
+      <DiscordIcon className={svgCss} />
     </ExternalLink>
     <ExternalLink href={githubUrl}>
-      <GithubIcon className="scale-125" />
+      <GithubIcon className={svgCss} />
     </ExternalLink>
     <ExternalLink href={linkedinUrl}>
-      <LinkedinIcon className="scale-125" />
+      <LinkedinIcon className={svgCss} />
     </ExternalLink>
   </div>
 )

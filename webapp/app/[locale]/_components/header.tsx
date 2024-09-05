@@ -19,7 +19,10 @@ type Props = {
 }
 
 export const Header = ({ isMenuOpen, toggleMenu }: Props) => (
-  <header className="flex h-14 items-center border-b border-solid border-slate-100 bg-white px-3 py-3 md:h-auto md:border-b-0 md:bg-transparent md:px-0">
+  <header
+    className="md:h-17 md:py-4.5 flex h-14 items-center border-b border-solid
+     border-slate-100 bg-white px-3 py-3 md:border-b-0 md:bg-transparent md:px-0"
+  >
     <div className="h-6 w-6 md:hidden">
       <Link href="/tunnel">
         <HemiSymbol />

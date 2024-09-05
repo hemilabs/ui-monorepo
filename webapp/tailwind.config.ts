@@ -64,6 +64,7 @@ const config: Config = {
         ms: '0.8125rem',
       },
       height: {
+        '17': '4.25rem',
         '97vh': '97vh',
         '98vh': '98vh',
         // 96px from header (height + padding), 40px from container's padding top in > md screns
@@ -81,6 +82,9 @@ const config: Config = {
         '16': '16',
         '17': '17',
         '18': '18',
+      },
+      padding: {
+        '4.5': '1.125rem',
       },
     },
   },

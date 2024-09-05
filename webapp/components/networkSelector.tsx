@@ -64,30 +64,34 @@ export const NetworkSelector = function ({
         <span>{network.name}</span>
         {networks.length > 1 && <Chevron.Bottom />}
         {showNetworkDropdown && (
-          <Menu
-            items={networks
-              .sort((a, b) =>
-                a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
-              )
-              .map(n => ({
-                content: (
-                  <div
-                    className="flex items-center gap-x-2 py-1"
-                    onClick={function (e) {
-                      e.stopPropagation()
-                      selectNetwork(n)
-                    }}
-                  >
-                    <ChainLogo chainId={n.id} />
-                    <span className="whitespace-nowrap">{n.name}</span>
-                    <div className={networkId === n.id ? 'block' : 'invisible'}>
-                      <CheckMark />
+          <div className="absolute bottom-0 right-0 z-10 translate-y-[calc(100%+5px)]">
+            <Menu
+              items={networks
+                .sort((a, b) =>
+                  a.name.toLowerCase().localeCompare(b.name.toLowerCase()),
+                )
+                .map(n => ({
+                  content: (
+                    <div
+                      className="flex items-center gap-x-2 py-1"
+                      onClick={function (e) {
+                        e.stopPropagation()
+                        selectNetwork(n)
+                      }}
+                    >
+                      <ChainLogo chainId={n.id} />
+                      <span className="whitespace-nowrap">{n.name}</span>
+                      <div
+                        className={networkId === n.id ? 'block' : 'invisible'}
+                      >
+                        <CheckMark />
+                      </div>
                     </div>
-                  </div>
-                ),
-                id: n.id.toString(),
-              }))}
-          />
+                  ),
+                  id: n.id.toString(),
+                }))}
+            />
+          </div>
         )}
       </button>
     </>

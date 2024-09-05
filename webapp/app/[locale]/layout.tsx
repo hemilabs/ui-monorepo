@@ -49,7 +49,7 @@ export default async function RootLayout({
             <WalletsContext locale={locale}>
               <TunnelHistoryProvider>
                 <ConnectWalletDrawerProvider>
-                  <div className="flex h-dvh flex-nowrap justify-stretch">
+                  <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
                     <div className="hidden w-1/4 max-w-64 md:block">
                       <Navbar />
                     </div>

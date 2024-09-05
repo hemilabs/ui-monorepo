@@ -104,31 +104,36 @@ const ConnectedWallet = function ({
         <Chevron.Bottom />
       </div>
       {menuOpen && (
-        <Menu
-          items={[
-            {
-              content: (
-                <div
-                  className="flex items-center gap-x-2"
-                  onClick={copyAddress}
-                >
-                  <CopyLogo />
-                  <span>{t('copy-address')}</span>
-                </div>
-              ),
-              id: 'copy',
-            },
-            {
-              content: (
-                <div className="flex items-center gap-x-2" onClick={disconnect}>
-                  <DisconnectLogo />
-                  <span>{t('disconnect')}</span>
-                </div>
-              ),
-              id: 'disconnect',
-            },
-          ]}
-        />
+        <div className="absolute bottom-0 right-0 z-10 translate-y-[calc(100%+5px)]">
+          <Menu
+            items={[
+              {
+                content: (
+                  <div
+                    className="flex items-center gap-x-2"
+                    onClick={copyAddress}
+                  >
+                    <CopyLogo />
+                    <span>{t('copy-address')}</span>
+                  </div>
+                ),
+                id: 'copy',
+              },
+              {
+                content: (
+                  <div
+                    className="flex items-center gap-x-2"
+                    onClick={disconnect}
+                  >
+                    <DisconnectLogo />
+                    <span>{t('disconnect')}</span>
+                  </div>
+                ),
+                id: 'disconnect',
+              },
+            ]}
+          />
+        </div>
       )}
     </div>
   )

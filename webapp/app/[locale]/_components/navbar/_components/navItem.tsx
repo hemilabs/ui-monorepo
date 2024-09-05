@@ -1,6 +1,14 @@
 import { ExternalLink as AnchorTag } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
+import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
+import { NetworkIcon } from 'components/icons/networkIcon'
+import { Menu } from 'components/menu'
+import {
+  networkTypes,
+  type NetworkType,
+  useNetworkType,
+} from 'hooks/useNetworkType'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import Link from 'next-intl/link'
@@ -78,7 +86,7 @@ const ItemText = ({
   text,
 }: Pick<Props, 'text'> & Selectable) => (
   <span
-    className={`md:text-ms text-base font-medium leading-5 transition-colors
+    className={`md:text-ms text-base font-medium capitalize leading-5 transition-colors
       duration-300 group-hover/item:text-neutral-950 ${
         selected ? 'text-neutral-950' : 'text-neutral-600'
       }`}
@@ -146,6 +154,65 @@ export const ItemWithSubmenu = function ({
         )}
       </Row>
       {isOpen && <ul className="mt-2 flex flex-col">{subMenu}</ul>}
+    </MenuContainer>
+  )
+}
+
+export const NetworkSwitch = function () {
+  const [networkType, setNetworkType] = useNetworkType()
+  const [isOpen, setIsOpen] = useState(false)
+  const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
+
+  const selectNetwork = function (type: NetworkType) {
+    setNetworkType(type)
+    setIsOpen(false)
+  }
+
+  return (
+    <MenuContainer
+      isOpen={isOpen}
+      onClick={() => setIsOpen(true)}
+      refProp={ref}
+    >
+      <div className="relative">
+        <Row onClick={() => setIsOpen(!isOpen)}>
+          <IconContainer>
+            <NetworkIcon />
+          </IconContainer>
+          <ItemText selected={isOpen} text={networkType} />
+          <Chevron.Bottom className="ml-auto" />
+        </Row>
+        {isOpen && (
+          <div className="absolute right-0 top-0 z-20 -translate-y-full translate-x-3">
+            <Menu
+              items={networkTypes.map(function (type) {
+                const selected = type === networkType
+                return {
+                  content: (
+                    <button
+                      className={`flex items-center gap-x-2 ${
+                        selected ? 'text-neutral-950' : ''
+                      }`}
+                      disabled={selected}
+                      key={type}
+                      onClick={function (e) {
+                        e.stopPropagation()
+                        selectNetwork(type)
+                      }}
+                    >
+                      <span className="capitalize">{type}</span>
+                      <div className={selected ? 'block' : 'invisible'}>
+                        <CheckMark className="[&>path]:stroke-emerald-500" />
+                      </div>
+                    </button>
+                  ),
+                  id: type,
+                }
+              })}
+            />
+          </div>
+        )}
+      </div>
     </MenuContainer>
   )
 }

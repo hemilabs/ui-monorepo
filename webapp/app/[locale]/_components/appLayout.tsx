@@ -1,5 +1,6 @@
 'use client'
 
+import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
@@ -11,6 +12,7 @@ type Props = {
 }
 
 export const AppLayout = function ({ children }: Props) {
+  const [networkType] = useNetworkType()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   // Hide instead of not-rendering when the header is open, to avoid loosing state of the components when opening
@@ -23,7 +25,7 @@ export const AppLayout = function ({ children }: Props) {
     function closeNavBarOnUrlChange() {
       setIsMenuOpen(false)
     },
-    [pathname, setIsMenuOpen],
+    [networkType, pathname, setIsMenuOpen],
   )
 
   return (

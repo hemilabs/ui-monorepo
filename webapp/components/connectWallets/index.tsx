@@ -1,14 +1,12 @@
 import { featureFlags } from 'app/featureFlags'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
-import {
-  ConnectedBtcChain,
-  ConnectedEvmChain,
-} from 'components/connectedWallet/connectedAccount'
 import { ConnectWalletDrawerContext } from 'context/connectWalletDrawerContext'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useContext } from 'react'
 import { useAccount as useEvmAccount } from 'wagmi'
+
+import { ConnectedChains } from '../connectedWallet/connectedChains'
 
 import { MetamaskLogo } from './metamaskLogo'
 import { UnisatLogo } from './unisatLogo'
@@ -50,16 +48,8 @@ export const WalletConnection = function () {
   return (
     <div className="ml-auto mr-2 md:mr-8 xl:mr-12">
       <div className="flex items-center gap-x-3">
-        <div className="hidden md:flex md:items-center md:gap-x-3">
-          {isEvmWalletConnected && <ConnectedEvmChain />}
-          {walletsConnected.length > 1 && (
-            <span className="text-base font-medium leading-normal text-slate-700">
-              &
-            </span>
-          )}
-          {isBtcWalletConnected && featureFlags.btcTunnelEnabled && (
-            <ConnectedBtcChain />
-          )}
+        <div className="hidden md:block">
+          <ConnectedChains />
         </div>
         <button
           className="flex h-8 items-center gap-x-2 rounded-lg border border-solid border-neutral-500/55 bg-white px-3 py-2 text-sm font-medium leading-normal shadow-sm"

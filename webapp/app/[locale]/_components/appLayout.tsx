@@ -5,6 +5,7 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 
+import { Footer } from './footer'
 import { Header } from './header'
 import { Navbar } from './navbar'
 
@@ -67,8 +68,8 @@ export const AppLayout = function ({ children }: Props) {
       </div>
       <Header isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
       <div
-        // 7rem comes from header (3.5) + footer (3.5) heights
         className={`box-border ${
+          // 7rem comes from header (3.5) + footer (3.5) heights
           showFooter
             ? 'max-h-[calc(100dvh-7rem)]'
             : 'max-h-[calc(100dvh-3.5rem)]'
@@ -87,16 +88,12 @@ export const AppLayout = function ({ children }: Props) {
         <div className="h-full overflow-y-auto px-5 pb-3 pt-4">{children}</div>
       </div>
 
-      {showFooter && (
-        <div className="h-14 md:hidden">
-          {/* See https://github.com/hemilabs/ui-monorepo/issues/502 */}
-          <footer></footer>
-        </div>
-      )}
-      {isMenuOpen && (
+      {isMenuOpen ? (
         <div className="md:hidden">
           <Navbar />
         </div>
+      ) : (
+        showFooter && <Footer />
       )}
     </div>
   )

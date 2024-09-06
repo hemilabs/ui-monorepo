@@ -20,7 +20,7 @@ type Props = {
 export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
   const { accountModalOpen } = useAccountModal()
   const { chainModalOpen } = useChainModal()
-  const { openConnectModal } = useConnectModal()
+  const { connectModalOpen } = useConnectModal()
   const t = useTranslations()
 
   // Rainbow kit's modals appear on top of the drawer. By clicking on those
@@ -29,7 +29,7 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
   // Luckily, there are some hooks to detect that those modals are opened,
   // and prevent this scenario.
   const onClose = function () {
-    if (accountModalOpen || chainModalOpen || openConnectModal) {
+    if (accountModalOpen || chainModalOpen || connectModalOpen) {
       return
     }
     closeDrawer()

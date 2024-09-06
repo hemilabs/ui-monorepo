@@ -1,5 +1,6 @@
 'use client'
 
+import { useAccounts } from 'hooks/useAccounts'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -28,6 +29,7 @@ const TestnetIndicator = function () {
 }
 
 export const AppLayout = function ({ children }: Props) {
+  const { allDisconnected } = useAccounts()
   const [networkType] = useNetworkType()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -43,6 +45,11 @@ export const AppLayout = function ({ children }: Props) {
     },
     [networkType, pathname, setIsMenuOpen],
   )
+
+  {
+    /* Footer is only visible if at least one chain is connected */
+  }
+  const showFooter = !allDisconnected
 
   return (
     <div
@@ -60,8 +67,12 @@ export const AppLayout = function ({ children }: Props) {
       </div>
       <Header isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
       <div
-        // 7rem comes from header + footer heights
-        className={`box-border max-h-[calc(100dvh-7rem)]
+        // 7rem comes from header (3.5) + footer (3.5) heights
+        className={`box-border ${
+          showFooter
+            ? 'max-h-[calc(100dvh-7rem)]'
+            : 'max-h-[calc(100dvh-3.5rem)]'
+        }
           flex-grow md:max-h-[calc(100dvh-1rem)]
           ${hiddenClass}
           ${
@@ -75,10 +86,13 @@ export const AppLayout = function ({ children }: Props) {
         </div>
         <div className="h-full overflow-y-auto px-5 pb-3 pt-4">{children}</div>
       </div>
-      <div className="h-14 md:hidden">
-        {/* See https://github.com/hemilabs/ui-monorepo/issues/502 */}
-        <footer></footer>
-      </div>
+
+      {showFooter && (
+        <div className="h-14 md:hidden">
+          {/* See https://github.com/hemilabs/ui-monorepo/issues/502 */}
+          <footer></footer>
+        </div>
+      )}
       {isMenuOpen && (
         <div className="md:hidden">
           <Navbar />

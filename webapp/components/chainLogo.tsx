@@ -1,10 +1,10 @@
 import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
+import { BtcLogo } from 'components/icons/btcLogo'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
 import { sepolia } from 'networks/sepolia'
 import { type RemoteChain } from 'types/chain'
-import { BtcLogo } from 'ui-common/components/btcLogo'
 import { EthLogo } from 'ui-common/components/ethLogo'
 import { HemiTokenWithBackground } from 'ui-common/components/hemiLogo'
 

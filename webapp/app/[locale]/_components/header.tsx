@@ -31,7 +31,7 @@ export const Header = ({ isMenuOpen, toggleMenu }: Props) => (
     <WalletConnection />
     <button
       className="flex h-8 w-8 cursor-pointer items-center
-      justify-center rounded-lg border border-neutral-500/55 md:hidden"
+      justify-center rounded-lg border border-neutral-300/55 md:hidden"
       onClick={toggleMenu}
       type="button"
     >

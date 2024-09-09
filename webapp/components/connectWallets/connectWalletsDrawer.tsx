@@ -3,6 +3,7 @@ import {
   useChainModal,
   useConnectModal,
 } from '@rainbow-me/rainbowkit'
+import { featureFlags } from 'app/featureFlags'
 import { useTranslations } from 'next-intl'
 import { CloseIcon } from 'ui-common/components/closeIcon'
 import { Drawer } from 'ui-common/components/drawer'
@@ -47,10 +48,16 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
               <CloseIcon />
             </button>
           </div>
-          <P text={t('connect-wallets.description')} />
+          {featureFlags.btcTunnelEnabled && (
+            <P text={t('connect-wallets.description')} />
+          )}
           <EvmWallet />
-          <BtcWallet />
-          <P text={t('connect-wallets.btc-wallet-requirement')} />
+          {featureFlags.btcTunnelEnabled && (
+            <>
+              <BtcWallet />
+              <P text={t('connect-wallets.btc-wallet-requirement')} />
+            </>
+          )}
         </div>
       </div>
     </Drawer>

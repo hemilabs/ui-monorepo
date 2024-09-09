@@ -11,7 +11,7 @@ export const ConnectedChains = function () {
   return (
     <div className="flex items-center gap-x-3">
       {evmWalletStatus === 'connected' && <ConnectedEvmChain />}
-      {allConnected && <Separator />}
+      {allConnected && featureFlags.btcTunnelEnabled && <Separator />}
       {btcWalletStatus === 'connected' && featureFlags.btcTunnelEnabled && (
         <ConnectedBtcChain />
       )}

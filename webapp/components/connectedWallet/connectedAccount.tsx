@@ -26,7 +26,8 @@ import {
   useDisconnect as useEvmDisconnect,
 } from 'wagmi'
 
-import { BtcLogo } from './btcLogo'
+import { BtcLogo } from '../icons/btcLogo'
+
 import { CopyLogo } from './copyLogo'
 import { DisconnectLogo } from './disconnectLogo'
 import { EvmChainsMenu } from './evmChainsMenu'
@@ -53,14 +54,18 @@ const ConnectedChain = function ({
   return (
     <div className="relative" ref={ref}>
       <div
-        className={`flex h-8 w-fit items-center gap-x-2 rounded-md bg-neutral-200/30 p-2 ${
+        className={`flex h-8 items-center gap-x-2 p-2 ${
           openMenu ? 'cursor-pointer' : ''
         }`}
         onClick={openMenu}
       >
         {icon}
-        <span className="min-w-24">{name}</span>
-        {menu !== undefined && <Chevron.Bottom />}
+        <span className="text-ms mr-2 font-medium leading-5 text-neutral-950">
+          {name}
+        </span>
+        {menu !== undefined && (
+          <Chevron.Bottom className="[&>path]:fill-neutral-500" />
+        )}
       </div>
       {menuOpen && menu}
     </div>
@@ -109,25 +114,25 @@ const ConnectedWallet = function ({
             items={[
               {
                 content: (
-                  <div
+                  <button
                     className="flex items-center gap-x-2"
                     onClick={copyAddress}
                   >
                     <CopyLogo />
                     <span>{t('copy-address')}</span>
-                  </div>
+                  </button>
                 ),
                 id: 'copy',
               },
               {
                 content: (
-                  <div
+                  <button
                     className="flex items-center gap-x-2"
                     onClick={disconnect}
                   >
                     <DisconnectLogo />
                     <span>{t('disconnect')}</span>
-                  </div>
+                  </button>
                 ),
                 id: 'disconnect',
               },

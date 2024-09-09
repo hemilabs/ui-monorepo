@@ -1,7 +1,7 @@
 import { featureFlags } from 'app/featureFlags'
-import { ConnectedBtcChain, ConnectedEvmChain } from './connectedAccount'
-
 import { useAccounts } from 'hooks/useAccounts'
+
+import { ConnectedBtcChain, ConnectedEvmChain } from './connectedAccount'
 
 const Separator = () => <div className="h-3 w-px bg-neutral-300/55" />
 

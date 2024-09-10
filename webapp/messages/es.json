@@ -37,7 +37,7 @@
     "btc-wallet": "Billetera BTC",
     "connect-btc-wallet": "Conecte su billetera Unisat de BTC",
     "connect-evm-wallet": "Conecte su billetera EVM",
-    "connected-with-wallet": "Conectado con {wallet}",
+    "connected-with-wallet": "Conectado con <wallet></wallet>",
     "copy-address": "Copiar dirección",
     "description": "Conecte sus billeteras EVM y BTC para transferir activos de manera fluida. Para una mejor experiencia, use billeteras de ambas redes.",
     "disconnect": "Desconectar",

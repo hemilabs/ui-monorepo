@@ -12,7 +12,7 @@ export const EvmChainsMenu = function ({
   const { chainId } = useAccount()
   const { chains, switchChain } = useSwitchEvmChain()
   return (
-    <div className="absolute right-0 top-0 z-20 -translate-y-full translate-x-3">
+    <div className="absolute bottom-0 right-0 z-20 translate-y-[calc(100%-5px)]">
       <Menu
         items={chains.map(c => ({
           content: (

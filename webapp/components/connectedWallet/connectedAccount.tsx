@@ -1,12 +1,10 @@
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
-import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { useConfig as useBtcConfig } from 'btc-wallet/hooks/useConfig'
 import { useDisconnect as useBtcDisconnect } from 'btc-wallet/hooks/useDisconnect'
 import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchChain'
 import { type Account } from 'btc-wallet/unisat'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
-import { useBitcoin } from 'hooks/useBitcoin'
 import {
   useConnectedToUnsupportedBtcChain,
   useConnectedToUnsupportedEvmChain,
@@ -14,17 +12,9 @@ import {
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
-import {
-  formatBtcAddress,
-  formatEvmAddress,
-  getFormattedValue,
-} from 'utils/format'
-import { Address, formatUnits } from 'viem'
-import {
-  useAccount,
-  useBalance,
-  useDisconnect as useEvmDisconnect,
-} from 'wagmi'
+import { formatBtcAddress, formatEvmAddress } from 'utils/format'
+import { type Address } from 'viem'
+import { useAccount, useDisconnect as useEvmDisconnect } from 'wagmi'
 
 import { BtcLogo } from '../icons/btcLogo'
 
@@ -51,21 +41,30 @@ const ConnectedChain = function ({
 }) {
   const ref = useOnClickOutside<HTMLDivElement>(closeMenu)
 
+  const chevronCss =
+    '[&>path]:fill-neutral-500 [&>path]:group-hover/connected-account:fill-neutral-950'
+
   return (
-    <div className="relative" ref={ref}>
-      <div
-        className={`flex h-8 items-center gap-x-2 p-2 ${
-          openMenu ? 'cursor-pointer' : ''
-        }`}
-        onClick={openMenu}
-      >
+    <div
+      className={`relative flex h-8 items-center gap-x-2 rounded-lg p-2 ${
+        openMenu
+          ? 'group/connected-account cursor-pointer hover:bg-neutral-100'
+          : ''
+      }`}
+      onClick={openMenu}
+      ref={ref}
+    >
+      <div className="flex cursor-pointer items-center justify-between gap-x-1 rounded-md">
         {icon}
         <span className="text-ms mr-2 font-medium leading-5 text-neutral-950">
           {name}
         </span>
-        {menu !== undefined && (
-          <Chevron.Bottom className="[&>path]:fill-neutral-500" />
-        )}
+        {menu !== undefined &&
+          (menuOpen ? (
+            <Chevron.Up className={chevronCss} />
+          ) : (
+            <Chevron.Bottom className={chevronCss} />
+          ))}
       </div>
       {menuOpen && menu}
     </div>
@@ -74,12 +73,10 @@ const ConnectedChain = function ({
 
 const ConnectedWallet = function ({
   address,
-  balance,
   disconnect,
   formattedAddress,
 }: {
   address: Address | Account
-  balance: string
   disconnect: () => void
   formattedAddress: string
 }) {
@@ -95,31 +92,38 @@ const ConnectedWallet = function ({
     closeMenu()
   }
 
+  const chevronCss =
+    '[&>path]:fill-neutral-500 [&>path]:group-hover/connected-wallet:fill-neutral-950'
+
   return (
     <div
-      className="relative flex h-8 w-fit items-center rounded-lg border border-solid border-slate-600/45 bg-white pr-1 text-sm font-medium leading-normal text-slate-950"
+      className="group/connected-wallet relative flex h-8 cursor-pointer items-center rounded-lg
+        pr-1 text-sm font-medium leading-normal text-neutral-950 hover:bg-neutral-100"
       ref={ref}
     >
-      <span className="p-2">{balance}</span>
       <div
-        className="flex cursor-pointer items-center justify-between rounded-md bg-neutral-200/65 py-1 pl-2"
-        onClick={() => setMenuOpen(true)}
+        className="flex cursor-pointer items-center justify-between gap-x-1 rounded-md"
+        onClick={() => setMenuOpen(prev => !prev)}
       >
-        <span>{formattedAddress}</span>
-        <Chevron.Bottom />
+        <span className="text-ms">{formattedAddress}</span>
+        {menuOpen ? (
+          <Chevron.Up className={chevronCss} />
+        ) : (
+          <Chevron.Bottom className={chevronCss} />
+        )}
       </div>
       {menuOpen && (
-        <div className="absolute bottom-0 right-0 z-10 translate-y-[calc(100%+5px)]">
+        <div className="absolute bottom-0 right-0 z-10 translate-x-[calc(100%-20px)] translate-y-[calc(100%-5px)]">
           <Menu
             items={[
               {
                 content: (
                   <button
-                    className="flex items-center gap-x-2"
+                    className="flex items-center gap-x-1"
                     onClick={copyAddress}
                   >
-                    <CopyLogo />
-                    <span>{t('copy-address')}</span>
+                    <CopyLogo className="[&>path]:group-hover/menu-item:fill-neutral-950" />
+                    <span className="text-ms w-max">{t('copy-address')}</span>
                   </button>
                 ),
                 id: 'copy',
@@ -127,11 +131,11 @@ const ConnectedWallet = function ({
               {
                 content: (
                   <button
-                    className="flex items-center gap-x-2"
+                    className="flex items-center gap-x-1"
                     onClick={disconnect}
                   >
-                    <DisconnectLogo />
-                    <span>{t('disconnect')}</span>
+                    <DisconnectLogo className="[&>g>path]:group-hover/menu-item:fill-neutral-950" />
+                    <span className="text-ms">{t('disconnect')}</span>
                   </button>
                 ),
                 id: 'disconnect',
@@ -166,7 +170,7 @@ export const ConnectedEvmChain = function () {
       menu={<EvmChainsMenu onSwitchChain={closeMenu} />}
       menuOpen={menuOpen}
       name={chain.name}
-      openMenu={() => setMenuOpen(true)}
+      openMenu={() => setMenuOpen(prev => !prev)}
     />
   )
 }
@@ -175,18 +179,9 @@ export const ConnectedEvmAccount = function () {
   const { address } = useAccount()
   const { disconnect } = useEvmDisconnect()
 
-  const { data: balance } = useBalance({ address })
-
-  const formattedBalance =
-    balance !== undefined
-      ? `${getFormattedValue(formatUnits(balance.value, balance.decimals))} ${
-          balance.symbol
-        }`
-      : undefined
   return (
     <ConnectedWallet
       address={address}
-      balance={formattedBalance}
       disconnect={disconnect}
       formattedAddress={address ? formatEvmAddress(address) : '...'}
     />
@@ -194,29 +189,12 @@ export const ConnectedEvmAccount = function () {
 }
 
 export const ConnectedBtcAccount = function () {
-  const bitcoin = useBitcoin()
   const { address } = useBtcAccount()
-  const { balance } = useBtcBalance()
   const { disconnect } = useBtcDisconnect()
-
-  const getBalance = function () {
-    if (balance.confirmed === 0) {
-      return 0
-    }
-    return getFormattedValue(
-      formatUnits(BigInt(balance.confirmed), bitcoin.nativeCurrency.decimals),
-    )
-  }
-
-  const formattedBalance =
-    balance !== undefined
-      ? `${getBalance()} ${bitcoin.nativeCurrency.symbol}`
-      : undefined
 
   return (
     <ConnectedWallet
       address={address}
-      balance={formattedBalance}
       disconnect={disconnect}
       formattedAddress={address ? formatBtcAddress(address) : '...'}
     />

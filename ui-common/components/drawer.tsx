@@ -18,8 +18,13 @@ export const Drawer = function ({ children, onClose }: Props) {
 
   return ReactDOM.createPortal(
     <div
-      className="fixed bottom-0 left-0 right-0 w-full overflow-y-auto bg-transparent md:bottom-5 md:left-auto md:right-5 md:top-5 md:h-[calc(100dvh-40px)] md:w-fit"
+      className="fixed bottom-0 left-0 right-0 w-full overflow-y-auto rounded-t-lg border border-solid 
+        border-neutral-300/55 bg-transparent md:bottom-5 md:left-auto md:right-5 md:top-5 md:h-[calc(100dvh-40px)] md:w-fit md:rounded-lg"
       ref={drawerRef}
+      style={{
+        boxShadow:
+          '0px 1px 1px 0px rgba(0, 0, 0, 0.02), 0px 8px 16px -4px rgba(0, 0, 0, 0.04), -12px 0px 32px -8px rgba(0, 0, 0, 0.06)',
+      }}
     >
       {children}
     </div>,

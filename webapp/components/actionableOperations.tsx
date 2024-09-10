@@ -24,9 +24,17 @@ export const ActionableOperations = function () {
     return null
   }
 
+  // Styles differ for single-digit
+  const extraStyles =
+    actionableOperations < 10
+      ? 'aspect-square px-[3.5px] py-[1.5px]'
+      : 'px-1.5 py-0.5'
+
   return (
-    <div className="flex aspect-square min-w-6 items-center justify-center rounded-full bg-orange-500 p-1 text-center text-xs text-white">
+    <span
+      className={`text-ms flex ${extraStyles} h-4 items-center justify-center rounded-full bg-orange-500 text-center font-medium leading-3 text-white`}
+    >
       {actionableOperations}
-    </div>
+    </span>
   )
 }

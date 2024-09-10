@@ -52,7 +52,8 @@ export const WalletConnection = function () {
           <ConnectedChains />
         </div>
         <button
-          className="flex h-8 items-center gap-x-2 rounded-lg border border-solid border-neutral-500/55 bg-white px-3 py-2 text-sm font-medium leading-normal shadow-sm"
+          className="text-ms flex h-8 items-center gap-x-2 rounded-lg border border-solid border-neutral-300/55 
+          bg-white py-1.5 pl-2 pr-4 font-medium leading-normal shadow-sm"
           onClick={openDrawer}
         >
           {walletsConnected.length === 0 && (

@@ -1,17 +1,18 @@
-export const CloseIcon = (props: React.SVGProps<SVGSVGElement>) => (
+import { ComponentProps } from 'react'
+
+export const CloseIcon = (props: ComponentProps<'svg'>) => (
   <svg
     fill="none"
-    height="24"
-    viewBox="0 0 24 24"
-    width="24"
+    height={20}
+    width={20}
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
     <path
-      clipRule="evenodd"
-      d="M19.5303 5.53014C19.8232 5.23724 19.8232 4.76237 19.5303 4.46948C19.2374 4.17659 18.7626 4.1766 18.4697 4.46949L12 10.9393L5.53034 4.46949C5.23745 4.1766 4.76258 4.17659 4.46968 4.46948C4.17678 4.76237 4.17677 5.23724 4.46966 5.53014L10.9394 12L4.46966 18.4699C4.17677 18.7628 4.17678 19.2377 4.46968 19.5306C4.76258 19.8234 5.23745 19.8234 5.53034 19.5305L12 13.0607L18.4697 19.5305C18.7626 19.8234 19.2374 19.8234 19.5303 19.5306C19.8232 19.2377 19.8232 18.7628 19.5303 18.4699L13.0606 12L19.5303 5.53014Z"
-      fill="#666767"
-      fillRule="evenodd"
+      d="m4.167 4.166 11.666 11.667m0-11.667L4.167 15.833"
+      stroke="#737373"
+      strokeLinecap="round"
+      strokeWidth={2}
     />
   </svg>
 )

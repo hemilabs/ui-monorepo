@@ -37,7 +37,7 @@
     "btc-wallet": "BTC Wallet",
     "connect-btc-wallet": "Connect your Unisat BTC Wallet",
     "connect-evm-wallet": "Connect your EVM Wallet",
-    "connected-with-wallet": "Connected with {wallet}",
+    "connected-with-wallet": "Connected with <wallet></wallet>",
     "copy-address": "Copy Address",
     "description": "Connect your EVM and BTC wallets to transfer assets seamlessly. For the best experience, use wallets from both networks.",
     "disconnect": "Disconnect",

@@ -1,9 +1,8 @@
 import { featureFlags } from 'app/featureFlags'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
-import { ConnectWalletDrawerContext } from 'context/connectWalletDrawerContext'
+import { useDrawerContext } from 'hooks/useDrawerContext'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useContext } from 'react'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { ConnectedChains } from '../connectedWallet/connectedChains'
@@ -28,9 +27,7 @@ const WalletIcon = () => (
 )
 
 export const WalletConnection = function () {
-  const { closeDrawer, isDrawerOpen, openDrawer } = useContext(
-    ConnectWalletDrawerContext,
-  )
+  const { closeDrawer, isDrawerOpen, openDrawer } = useDrawerContext()
   const t = useTranslations()
 
   const walletsConnected = []

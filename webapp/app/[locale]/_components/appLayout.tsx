@@ -1,6 +1,7 @@
 'use client'
 
 import { useAccounts } from 'hooks/useAccounts'
+import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -29,8 +30,17 @@ const TestnetIndicator = function () {
   )
 }
 
+const MobileOverlay = () => (
+  <div className="absolute bottom-0 left-0 right-0 top-0 z-20 h-full w-full bg-neutral-950 bg-opacity-[0.08] md:hidden" />
+)
+
+const DesktopOverlay = () => (
+  <div className="absolute bottom-0 left-0 right-0 top-0 z-20 hidden h-full w-full bg-neutral-950 bg-opacity-[0.08] md:block" />
+)
+
 export const AppLayout = function ({ children }: Props) {
   const { allDisconnected } = useAccounts()
+  const { isDrawerOpen } = useDrawerContext()
   const [networkType] = useNetworkType()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -53,8 +63,8 @@ export const AppLayout = function ({ children }: Props) {
   return (
     <div
       className={`
-        shadow-hemi-layout backdrop-blur-20 flex h-full
-        w-3/4 flex-1 flex-col self-stretch overflow-y-hidden bg-neutral-50 md:border-solid lg:h-[calc(100dvh-16px)]
+        shadow-hemi-layout backdrop-blur-20 relative flex h-full
+        w-3/4 flex-1 flex-col self-stretch overflow-y-hidden bg-neutral-50 md:h-[calc(100dvh-16px)] md:border-solid
         ${
           networkType === 'testnet'
             ? 'md:border-2 md:border-orange-500'
@@ -84,9 +94,12 @@ export const AppLayout = function ({ children }: Props) {
         <div className="relative md:hidden">
           <TestnetIndicator />
         </div>
-        <div className="h-full overflow-y-auto px-5 pb-3 pt-4">{children}</div>
+        <div className="relative h-full overflow-y-auto px-5 pb-3 pt-4">
+          {isDrawerOpen && <MobileOverlay />}
+          {children}
+        </div>
       </div>
-
+      {isDrawerOpen && <DesktopOverlay />}
       {isMenuOpen ? (
         <div className="md:hidden">
           <Navbar />

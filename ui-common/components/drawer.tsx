@@ -18,7 +18,7 @@ export const Drawer = function ({ children, onClose }: Props) {
 
   return ReactDOM.createPortal(
     <div
-      className="fixed bottom-0 left-0 right-0 w-full overflow-y-auto bg-transparent md:bottom-4 md:left-auto md:right-4 md:top-4 md:h-[calc(100dvh-32px)] md:w-fit"
+      className="fixed bottom-0 left-0 right-0 w-full overflow-y-auto bg-transparent md:bottom-5 md:left-auto md:right-5 md:top-5 md:h-[calc(100dvh-40px)] md:w-fit"
       ref={drawerRef}
     >
       {children}

@@ -43,7 +43,7 @@ export const WalletConnection = function () {
   }
 
   return (
-    <div className="ml-auto mr-2 md:mr-8 xl:mr-12">
+    <div className="ml-auto mr-2 md:mr-6">
       <div className="flex items-center gap-x-3">
         <div className="hidden md:block">
           <ConnectedChains />

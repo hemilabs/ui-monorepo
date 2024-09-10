@@ -52,14 +52,15 @@ export const AppLayout = function ({ children }: Props) {
 
   return (
     <div
-      className={`shadow-hemi-layout backdrop-blur-20 lg:h-97vh flex
-        h-full w-3/4 flex-1 flex-col self-stretch overflow-y-hidden bg-neutral-50 md:border-solid
-    ${
-      networkType === 'testnet'
-        ? 'md:border-2 md:border-orange-500'
-        : 'md:border'
-    }
-    md:my-3 md:mr-2 md:w-[calc(75%-8px)] md:rounded-2xl md:pb-0`}
+      className={`
+        shadow-hemi-layout backdrop-blur-20 flex h-full
+        w-3/4 flex-1 flex-col self-stretch overflow-y-hidden bg-neutral-50 md:border-solid lg:h-[calc(100dvh-16px)]
+        ${
+          networkType === 'testnet'
+            ? 'md:border-2 md:border-orange-500'
+            : 'border-neutral-300/55 md:border'
+        }
+        md:my-2 md:mr-2 md:w-[calc(75%-8px)] md:rounded-2xl`}
     >
       <div className="relative hidden md:block">
         <TestnetIndicator />

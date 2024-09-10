@@ -1,5 +1,6 @@
 import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
+import { TunnelTabs } from 'components/tunnelTabs'
 import dynamic from 'next/dynamic'
 import Link from 'next-intl/link'
 import { HemiSymbol } from 'ui-common/components/hemiLogo'
@@ -21,12 +22,15 @@ type Props = {
 export const Header = ({ isMenuOpen, toggleMenu }: Props) => (
   <header
     className="md:h-17 md:py-4.5 flex h-14 items-center border-b border-solid
-     border-slate-100 bg-white px-3 py-3 md:border-b-0 md:bg-transparent md:px-0"
+     border-neutral-300/55 bg-white px-3 py-3 md:bg-transparent md:px-0"
   >
     <div className="h-6 w-6 md:hidden">
       <Link href="/tunnel">
         <HemiSymbol />
       </Link>
+    </div>
+    <div className="hidden pl-6 md:block">
+      <TunnelTabs />
     </div>
     <WalletConnection />
     <button

@@ -61,7 +61,8 @@ const config: Config = {
         inter: '--font-inter',
       },
       fontSize: {
-        ms: '0.8125rem',
+        '3.25xl': '2rem',
+        'ms': '0.8125rem',
       },
       height: {
         '17': '4.25rem',
@@ -84,7 +85,9 @@ const config: Config = {
         '18': '18',
       },
       padding: {
+        '1.5': '0.375rem',
         '4.5': '1.125rem',
+        '18': '4.5rem',
       },
     },
   },

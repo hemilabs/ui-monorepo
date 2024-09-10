@@ -7,7 +7,7 @@ export const Menu = ({ items }: Props) => (
     <ul className="flex flex-col gap-y-1">
       {items.map(({ content, id }) => (
         <li
-          className="w-full cursor-pointer rounded px-2 py-1 text-slate-500 hover:bg-neutral-50 hover:text-neutral-950"
+          className="group/menu-item w-full cursor-pointer rounded px-2 py-1 text-slate-500 hover:bg-neutral-50 hover:text-neutral-950"
           key={id}
         >
           {content}

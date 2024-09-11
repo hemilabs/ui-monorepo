@@ -56,23 +56,6 @@ const TransactionStatus = dynamic(
   },
 )
 
-const ArrowsIcon = () => (
-  <svg
-    fill="none"
-    height="26"
-    viewBox="0 0 26 26"
-    width="26"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      className="fill-orange-950"
-      clipRule="evenodd"
-      d="M17.3339 24.2817L23.1993 18.4162L17.3339 12.5508L15.8017 14.0829L19.0517 17.3329H3.25049V19.4995H19.0517L15.8017 22.7495L17.3339 24.2817ZM10.1992 11.9162L6.94921 8.66626H22.7505V6.49959H6.94921L10.1992 3.24959L8.66715 1.71753L2.80176 7.58292L8.66715 13.4484L10.1992 11.9162Z"
-      fillRule="evenodd"
-    />
-  </svg>
-)
-
 type InputEnoughInBalance = Pick<
   TunnelState,
   'fromNetworkId' | 'fromToken' | 'fromInput'
@@ -147,7 +130,6 @@ export const FormContent = function ({
   return (
     <>
       <div className="flex items-center gap-x-2">
-        <ArrowsIcon />
         <h3 className="text-xl font-medium capitalize text-black">
           {t('title')}
         </h3>

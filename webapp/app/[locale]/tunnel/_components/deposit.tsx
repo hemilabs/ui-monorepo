@@ -35,10 +35,10 @@ import {
   TypedTunnelState,
 } from '../_hooks/useTunnelState'
 
+import { BtcFees } from './btcFees'
 import { ConnectEvmWallet } from './connectEvmWallet'
 import { Erc20Approval } from './Erc20Approval'
 import {
-  BtcFees,
   EvmSummary,
   FormContent,
   TunnelForm,

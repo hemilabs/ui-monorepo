@@ -5,6 +5,7 @@ import {
   type HistoryActions,
   type TransactionListSyncType,
 } from 'hooks/useSyncHistory/types'
+import { sepolia } from 'networks/sepolia'
 import { findChainById } from 'utils/chain'
 import { createBitcoinSync } from 'utils/sync-history/bitcoin'
 import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
@@ -14,7 +15,6 @@ import {
   type SyncHistoryCombinations,
 } from 'utils/sync-history/types'
 import { type Address, type Chain } from 'viem'
-import { sepolia } from 'viem/chains'
 
 type EnableDebug = { type: 'enable-debug'; payload: string }
 type StartSyncing = { type: 'start' } & SyncHistoryCombinations

@@ -49,5 +49,7 @@ jobs:
           HOSTINGER_TARGET: 'domains/${{ vars.HEMI_DOMAIN_PROD }}/public_html/app'
           # next env variables to build the portal
           NEXT_PUBLIC_CLAIM_TOKENS_URL: 'https://tf27a29m9d.execute-api.eu-central-1.amazonaws.com/prod'
+          NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET: ${{ vars.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET_STAGING }}
+          NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA: ${{ vars.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA_STAGING }}
           NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: false
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_PROD }}

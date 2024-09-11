@@ -1,8 +1,5 @@
 import { featureFlags } from 'app/featureFlags'
-import {
-  mainnetEvmRemoteNetworks,
-  testnetEvmRemoteNetworks,
-} from 'app/networks'
+import { mainnetEvmRemoteNetworks, testnetEvmRemoteNetworks } from 'networks'
 import { useMemo } from 'react'
 import { type OrderedChains, RemoteChain } from 'types/chain'
 

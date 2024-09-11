@@ -1,4 +1,4 @@
-import { allNetworks } from 'app/networks'
+import { allNetworks } from 'networks'
 import { type EvmChain, type RemoteChain } from 'types/chain'
 
 export const findChainById = (chainId: RemoteChain['id']) =>

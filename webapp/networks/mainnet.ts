@@ -1,4 +1,4 @@
-import { overrideRpcUrl } from 'utils/chain'
+import { overrideRpcUrl } from 'networks/utils'
 import { mainnet as mainnetDefinition } from 'viem/chains'
 
 export const mainnet = overrideRpcUrl(

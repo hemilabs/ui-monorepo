@@ -152,7 +152,6 @@ export const FormContent = function ({
           {t('title')}
         </h3>
       </div>
-      <h4 className="text-sm font-normal text-slate-500">{t('subtitle')}</h4>
       <div className="flex w-full items-center justify-between text-sm">
         <span>{t('form.from-network')}</span>
         <NetworkSelector

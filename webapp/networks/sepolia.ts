@@ -1,4 +1,4 @@
-import { overrideRpcUrl } from 'utils/chain'
+import { overrideRpcUrl } from 'networks/utils'
 import { sepolia as sepoliaDefinition } from 'viem/chains'
 
 export const sepolia = overrideRpcUrl(

@@ -1,5 +1,5 @@
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
-import { sepolia } from 'viem/chains'
+import { sepolia } from 'networks/sepolia'
 
 // Approximately 1/2 day
 const opBasedEvmBlockWindowSize = 3500

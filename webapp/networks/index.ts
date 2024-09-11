@@ -4,7 +4,9 @@ import { featureFlags } from 'app/featureFlags'
 import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { type OrderedChains, type RemoteChain } from 'types/chain'
-import { mainnet, sepolia } from 'wagmi/chains'
+
+import { mainnet } from './mainnet'
+import { sepolia } from './sepolia'
 
 export const testnetEvmRemoteNetworks: OrderedChains = [sepolia]
 export const mainnetEvmRemoteNetworks: OrderedChains = [mainnet]

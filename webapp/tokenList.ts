@@ -2,9 +2,10 @@ import hemilabsTokenList from '@hemilabs/token-list'
 import { featureFlags } from 'app/featureFlags'
 import { bitcoinTestnet } from 'btc-wallet/chains'
 import { hemi as hemiMainnet, hemiSepolia } from 'hemi-viem'
+import { mainnet } from 'networks/mainnet'
+import { sepolia } from 'networks/sepolia'
 import { type EvmToken, type Token } from 'types/token'
 import { Address } from 'viem'
-import { mainnet, sepolia } from 'wagmi/chains'
 
 // Special address used by OP to store bridged eth
 // See https://github.com/ethereum-optimism/optimism/blob/fa19f9aa250c0f548e0fdd226114aebf2c4c3fed/packages/contracts-bedrock/src/libraries/Predeploys.sol#L51

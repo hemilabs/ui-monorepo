@@ -17,6 +17,12 @@ inputs:
   HOSTINGER_TARGET:
     required: true
     description: 'Hostinger target'
+  NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET:
+    required: false
+    description: 'Custom RPC URL for Mainnet'
+  NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA:
+    required: false
+    description: 'Custom RPC URL for Sepolia'
   NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL:
     required: true
     description: 'Feature flag to enable BTC tunnel'
@@ -34,6 +40,8 @@ runs:
       run: npx lerna run deploy --scope=app
       shell: bash
       env:
+        NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET }}
+        NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA }}
         NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL }}
         NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ inputs.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
         NEXT_PUBLIC_CLAIM_TOKENS_URL: ${{ inputs.NEXT_PUBLIC_CLAIM_TOKENS_URL }}

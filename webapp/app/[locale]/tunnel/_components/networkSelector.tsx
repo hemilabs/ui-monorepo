@@ -1,16 +1,26 @@
-'use client'
-
 import { ChainLogo } from 'components/chainLogo'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
-import { useState } from 'react'
+import { Menu } from 'components/menu'
+import { type ReactNode, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 
-import { Menu } from './menu'
+const Container = ({ children }: { children: ReactNode }) => (
+  <div className="flex flex-col gap-y-2">{children}</div>
+)
+
+const Label = ({ text }: { text: string }) => (
+  <span className="text-ms font-medium leading-5 text-neutral-500">{text}</span>
+)
+
+const Network = ({ children }: { children: string }) => (
+  <span className="overflow-hidden text-ellipsis text-nowrap">{children}</span>
+)
 
 type Props = {
   disabled: boolean
+  label: string
   networkId: RemoteChain['id']
   networks: RemoteChain[]
   onSelectNetwork: (network: RemoteChain['id']) => void
@@ -19,6 +29,7 @@ type Props = {
 
 export const NetworkSelector = function ({
   disabled,
+  label,
   networkId,
   networks = [],
   onSelectNetwork,
@@ -41,18 +52,25 @@ export const NetworkSelector = function ({
     onSelectNetwork(id)
   }
 
-  const commonCss = 'flex items-center rounded-xl bg-zinc-50 p-2 gap-x-2'
+  const commonCss = `flex items-center border border-solid border-neutral-300/56
+    text-ms font-medium leading-5 text-neutral-950 rounded-lg bg-white p-2 gap-x-2`
 
   if (readonly || networks.length === 1) {
     return (
-      <div className={commonCss}>
-        <ChainLogo chainId={networkId} />
-        <span className="font-medium">{network.name}</span>
-      </div>
+      <Container>
+        <Label text={label} />
+        <div className={commonCss}>
+          <div className="flex-shrink-0">
+            <ChainLogo chainId={networkId} />
+          </div>
+          <Network>{network.name}</Network>
+        </div>
+      </Container>
     )
   }
   return (
-    <>
+    <Container>
+      <Label text={label} />
       <button
         className={`${commonCss} relative cursor-pointer`}
         disabled={disabled || networks.length < 2}
@@ -60,9 +78,11 @@ export const NetworkSelector = function ({
         ref={ref}
         type="button"
       >
-        <ChainLogo chainId={networkId} />
-        <span>{network.name}</span>
-        {networks.length > 1 && <Chevron.Bottom />}
+        <div className="flex-shrink-0">
+          <ChainLogo chainId={networkId} />
+        </div>
+        <Network>{network.name}</Network>
+        {networks.length > 1 && <Chevron.Bottom className="ml-auto" />}
         {showNetworkDropdown && (
           <div className="absolute bottom-0 right-0 z-10 translate-y-[calc(100%+5px)]">
             <Menu
@@ -94,6 +114,6 @@ export const NetworkSelector = function ({
           </div>
         )}
       </button>
-    </>
+    </Container>
   )
 }

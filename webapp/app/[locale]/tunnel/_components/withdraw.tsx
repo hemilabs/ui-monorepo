@@ -29,15 +29,10 @@ import {
   type TypedTunnelState,
 } from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
+import { canSubmit, getTotal } from '../_utils'
 
 import { ConnectEvmWallet } from './connectEvmWallet'
-import {
-  EvmSummary,
-  FormContent,
-  getTotal,
-  TunnelForm,
-  canSubmit,
-} from './form'
+import { EvmSummary, FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 

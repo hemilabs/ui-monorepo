@@ -34,17 +34,12 @@ import {
   useTunnelState,
   TypedTunnelState,
 } from '../_hooks/useTunnelState'
+import { canSubmit, getTotal } from '../_utils'
 
 import { BtcFees } from './btcFees'
 import { ConnectEvmWallet } from './connectEvmWallet'
 import { Erc20Approval } from './Erc20Approval'
-import {
-  EvmSummary,
-  FormContent,
-  TunnelForm,
-  canSubmit,
-  getTotal,
-} from './form'
+import { EvmSummary, FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 

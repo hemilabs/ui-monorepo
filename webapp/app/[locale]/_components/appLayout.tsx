@@ -94,7 +94,7 @@ export const AppLayout = function ({ children }: Props) {
         <div className="relative md:hidden">
           <TestnetIndicator />
         </div>
-        <div className="relative h-full overflow-y-auto px-5 pb-3 pt-4">
+        <div className="relative h-full overflow-y-auto px-4 pb-3 pt-4 md:pt-8">
           {isDrawerOpen && <MobileOverlay />}
           {children}
         </div>

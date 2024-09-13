@@ -252,7 +252,6 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
           </div>
         }
         bottomSection={<WalletsConnected />}
-        expectedChainId={chain.id}
         explorerUrl={chain.blockExplorers.default.url}
         formContent={
           <FormContent
@@ -527,7 +526,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
           />
         ) : null
       }
-      expectedChainId={fromNetworkId}
       explorerUrl={fromChain.blockExplorers.default.url}
       formContent={
         <FormContent

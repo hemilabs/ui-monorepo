@@ -1,6 +1,6 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { Button } from 'components/button'
 import { useTranslations } from 'next-intl'
-import { Button } from 'ui-common/components/button'
 
 export const ConnectEvmWallet = function () {
   const t = useTranslations()

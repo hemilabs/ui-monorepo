@@ -1,7 +1,7 @@
+import { Button } from 'components/button'
 import { useAccounts } from 'hooks/useAccounts'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useTranslations } from 'next-intl'
-import { Button } from 'ui-common/components/button'
 
 import { ConnectBtcWallet } from './connectBtcWallet'
 import { ConnectEvmWallet } from './connectEvmWallet'

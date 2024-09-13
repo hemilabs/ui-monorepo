@@ -1,7 +1,7 @@
 import { useConfig } from 'btc-wallet/hooks/useConfig'
 import { useConnect } from 'btc-wallet/hooks/useConnect'
+import { Button } from 'components/button'
 import { useTranslations } from 'next-intl'
-import { Button } from 'ui-common/components/button'
 
 export const ConnectBtcWallet = function () {
   const config = useConfig()

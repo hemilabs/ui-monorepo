@@ -236,6 +236,21 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
   return (
     <>
       <TunnelForm
+        belowForm={
+          <div className="relative -z-10 -translate-y-7">
+            <ReceivingAddress
+              address={evmAddress ? formatEvmAddress(evmAddress) : undefined}
+              receivingText={t('tunnel-page.form.hemi-receiving-address')}
+              tooltipText={t(
+                'tunnel-page.form.hemi-receiving-address-description',
+                {
+                  symbol: state.fromToken.symbol,
+                },
+              )}
+            />
+            {fees !== undefined ? <BtcFees fees={fees} /> : null}
+          </div>
+        }
         bottomSection={<WalletsConnected />}
         expectedChainId={chain.id}
         explorerUrl={chain.blockExplorers.default.url}
@@ -253,26 +268,11 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
           />
         }
         onSubmit={handleDeposit}
-        reviewSummary={fees !== undefined ? <BtcFees fees={fees} /> : null}
         submitButton={
-          <>
-            <div className="mb-2">
-              <ReceivingAddress
-                address={evmAddress ? formatEvmAddress(evmAddress) : undefined}
-                receivingText={t('tunnel-page.form.hemi-receiving-address')}
-                tooltipText={t(
-                  'tunnel-page.form.hemi-receiving-address-description',
-                  {
-                    symbol: state.fromToken.symbol,
-                  },
-                )}
-              />
-            </div>
-            <SubmitWithTwoWallets
-              disabled={!canDeposit || isDepositing}
-              text={t('tunnel-page.submit-button.deposit')}
-            />
-          </>
+          <SubmitWithTwoWallets
+            disabled={!canDeposit || isDepositing}
+            text={t('tunnel-page.submit-button.deposit')}
+          />
         }
         transactionsList={transactionsList}
       />
@@ -518,6 +518,15 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   return (
     <TunnelForm
+      belowForm={
+        canDeposit ? (
+          <EvmSummary
+            gas={gas}
+            operationSymbol={fromToken.symbol}
+            total={totalDeposit}
+          />
+        ) : null
+      }
       expectedChainId={fromNetworkId}
       explorerUrl={fromChain.blockExplorers.default.url}
       formContent={
@@ -564,15 +573,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
         />
       }
       onSubmit={handleDeposit}
-      reviewSummary={
-        canDeposit ? (
-          <EvmSummary
-            gas={gas}
-            operationSymbol={fromToken.symbol}
-            total={totalDeposit}
-          />
-        ) : null
-      }
       submitButton={
         isConnected ? (
           <SubmitEvmDeposit

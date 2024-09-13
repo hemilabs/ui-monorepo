@@ -68,13 +68,17 @@ export const NetworkSelector = function ({
       </Container>
     )
   }
+
+  const chevronCss =
+    'ml-auto [&>path]:group-hover/network-selector:fill-neutral-950'
+
   return (
     <Container>
       <Label text={label} />
       <button
-        className={`${commonCss} relative cursor-pointer`}
+        className={`${commonCss} group/network-selector shadow-soft relative cursor-pointer hover:bg-neutral-100`}
         disabled={disabled || networks.length < 2}
-        onClick={() => setShowNetworkDropdown(true)}
+        onClick={() => setShowNetworkDropdown(prev => !prev)}
         ref={ref}
         type="button"
       >
@@ -82,7 +86,12 @@ export const NetworkSelector = function ({
           <ChainLogo chainId={networkId} />
         </div>
         <Network>{network.name}</Network>
-        {networks.length > 1 && <Chevron.Bottom className="ml-auto" />}
+        {networks.length > 1 &&
+          (showNetworkDropdown ? (
+            <Chevron.Up className={chevronCss} />
+          ) : (
+            <Chevron.Bottom className={chevronCss} />
+          ))}
         {showNetworkDropdown && (
           <div className="absolute bottom-0 right-0 z-10 translate-y-[calc(100%+5px)]">
             <Menu

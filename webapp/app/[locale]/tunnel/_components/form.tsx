@@ -71,10 +71,11 @@ export const FormContent = function ({
         value={fromInput}
       />
       <TokenInput
+        // Tunnelling goes 1:1, so output equals input
         isRunningOperation={isRunningOperation}
         label={t('form.receive')}
+        onChange={updateFromInput}
         token={toToken}
-        // Tunnelling goes 1:1, so output equals input
         value={fromInput}
       />
     </>

@@ -17,7 +17,7 @@ type Props = {
 
 export const ToggleButton = ({ disabled, toggle }: Props) => (
   <button
-    className={`mx-auto rounded-lg border border-solid border-neutral-300/55 bg-white p-2 shadow-sm ${
+    className={`mx-auto rounded-lg border border-solid border-neutral-300/55 bg-white p-2 shadow-sm hover:bg-neutral-100 ${
       disabled ? 'cursor-not-allowed' : 'cursor-pointer'
     }`}
     disabled={disabled}

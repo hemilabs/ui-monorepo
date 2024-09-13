@@ -26,28 +26,32 @@ type Props = {
 }
 
 const Toggle = ({ checked, disabled, onCheckedChange }: Props) => (
-  <div className="relative ml-auto inline-block w-10 rounded-full bg-gray-300 align-middle">
-    <input
-      checked={checked}
-      className={`absolute ${
-        checked ? 'right-1' : 'left-1'
-      } top-1 block h-3 w-3 appearance-none rounded-full bg-white ${
-        disabled ? 'cursor-default opacity-50' : 'cursor-pointer'
-      }`}
-      disabled={disabled}
-      id="erc20-approval-toggle"
-      name="erc20-approval-toggle"
-      onChange={e =>
-        disabled ? e.preventDefault() : onCheckedChange(e.target.checked)
-      }
-      type="checkbox"
-    />
+  <div
+    className={`ml-auto h-5 w-9 rounded-full bg-neutral-100 ${
+      checked ? 'bg-orange-500' : 'bg-neutral-100'
+    } ${disabled ? 'opacity-40' : ''}`}
+    style={{ boxShadow: '0px 0px 3px 0px rgba(0, 0, 0, 0.12) inset' }}
+  >
     <label
-      className={`block h-4 rounded-full ${
-        checked ? 'bg-orange-500' : 'bg-neutral-100'
-      } ${disabled ? 'cursor-default' : 'cursor-pointer'}`}
+      className={disabled ? 'cursor-not-allowed' : 'cursor-pointer'}
       htmlFor="erc20-approval-toggle"
-    ></label>
+    >
+      <input
+        checked={checked}
+        className={`border-neutral-300/56 mt-0.5 border-[0.6px] border-solid ${
+          checked ? 'ml-auto mr-0.5' : 'ml-0.5 mr-auto'
+        } ${
+          disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+        } block h-4 w-4 appearance-none rounded-full bg-white`}
+        disabled={disabled}
+        id="erc20-approval-toggle"
+        name="erc20-approval-toggle"
+        onChange={e =>
+          disabled ? e.preventDefault() : onCheckedChange(e.target.checked)
+        }
+        type="checkbox"
+      />
+    </label>
   </div>
 )
 
@@ -57,17 +61,14 @@ export const Erc20TokenApproval = function ({
   onCheckedChange,
 }: Props) {
   const t = useTranslations('common')
-  // TODO disabled vs non-render?
   return (
-    <div className="flex items-center gap-x-2">
-      <div className="flex items-center">
-        <span
-          className={`text-ms font-medium leading-5 text-neutral-950 ${
-            disabled ? 'text-opacity-30' : ''
-          }`}
-        >
-          {t('erc20-extra-approval')}
-        </span>
+    <div
+      className={`text-ms ${
+        disabled ? 'cursor-not-allowed' : ''
+      } flex items-center gap-x-2 font-medium leading-5 text-neutral-950`}
+    >
+      <div className="flex items-center gap-x-1">
+        <span>{t('erc20-extra-approval')}</span>
         <Tooltip
           disabled={disabled}
           id="erc20-approval-tooltip"

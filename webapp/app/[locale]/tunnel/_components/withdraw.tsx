@@ -202,6 +202,30 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
 
   return (
     <TunnelForm
+      belowForm={
+        <div className="relative -z-10 -translate-y-7">
+          <ReceivingAddress
+            address={btcAddress ? formatBtcAddress(btcAddress) : undefined}
+            receivingText={t('tunnel-page.form.bitcoin-receiving-address')}
+            tooltipText={t(
+              'tunnel-page.form.bitcoin-receiving-address-description',
+              {
+                symbol: state.toToken.symbol,
+              },
+            )}
+          />
+          {canWithdraw ? (
+            <EvmSummary
+              gas={gas}
+              operationSymbol={fromToken.symbol}
+              total={getTotal({
+                fromInput,
+                fromToken,
+              })}
+            />
+          ) : null}
+        </div>
+      }
       bottomSection={<WalletsConnected />}
       expectedChainId={state.fromNetworkId}
       explorerUrl={fromChain.blockExplorers.default.url}
@@ -220,41 +244,15 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
         />
       }
       onSubmit={handleWithdraw}
-      reviewSummary={
-        canWithdraw ? (
-          <EvmSummary
-            gas={gas}
-            operationSymbol={fromToken.symbol}
-            total={getTotal({
-              fromInput,
-              fromToken,
-            })}
-          />
-        ) : null
-      }
       submitButton={
-        <>
-          <div className="mb-2">
-            <ReceivingAddress
-              address={btcAddress ? formatBtcAddress(btcAddress) : undefined}
-              receivingText={t('tunnel-page.form.bitcoin-receiving-address')}
-              tooltipText={t(
-                'tunnel-page.form.bitcoin-receiving-address-description',
-                {
-                  symbol: state.toToken.symbol,
-                },
-              )}
-            />
-          </div>
-          <SubmitWithTwoWallets
-            disabled={!canWithdraw || isWithdrawing}
-            text={
-              isWithdrawing
-                ? t('tunnel-page.submit-button.withdrawing')
-                : t('tunnel-page.submit-button.initiate-withdrawal')
-            }
-          />
-        </>
+        <SubmitWithTwoWallets
+          disabled={!canWithdraw || isWithdrawing}
+          text={
+            isWithdrawing
+              ? t('tunnel-page.submit-button.withdrawing')
+              : t('tunnel-page.submit-button.initiate-withdrawal')
+          }
+        />
       }
       transactionsList={transactionsList}
     />
@@ -412,6 +410,15 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   return (
     <>
       <TunnelForm
+        belowForm={
+          canWithdraw ? (
+            <EvmSummary
+              gas={gas}
+              operationSymbol={fromToken.symbol}
+              total={fromInput}
+            />
+          ) : null
+        }
         expectedChainId={fromNetworkId}
         explorerUrl={fromChain?.blockExplorers.default.url}
         formContent={
@@ -429,15 +436,6 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
           />
         }
         onSubmit={handleWithdraw}
-        reviewSummary={
-          canWithdraw ? (
-            <EvmSummary
-              gas={gas}
-              operationSymbol={fromToken.symbol}
-              total={fromInput}
-            />
-          ) : null
-        }
         submitButton={
           isConnected ? (
             <Button disabled={!canWithdraw || isWithdrawing} type="submit">

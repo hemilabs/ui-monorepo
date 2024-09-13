@@ -226,10 +226,10 @@
       "hemi-receiving-address": "Dirección de recepción en Hemi",
       "hemi-receiving-address-description": "Recibirá su {symbol} tunelizado en la dirección de la billetera EVM conectada.",
       "max": "max",
+      "receive": "Recibir",
+      "send": "Enviar",
       "switch-to-prove": "Cambie a {network} para completar la transacción",
-      "to-network": "Hacia la Red",
-      "you-receive": "Usted recibe",
-      "you-send": "Usted envía"
+      "to-network": "Hacia la Red"
     },
     "review-deposit": {
       "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de {hours} horas regrese a esta pagina para reclamarlo manualmente.",

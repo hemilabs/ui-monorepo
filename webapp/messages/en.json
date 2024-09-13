@@ -227,10 +227,10 @@
       "hemi-receiving-address": "Receiving Hemi address",
       "hemi-receiving-address-description": "You will receive your tunneled {symbol} to the connected EVM wallet address.",
       "max": "max",
+      "receive": "Receive",
+      "send": "Send",
       "switch-to-prove": "Switch to {network} to complete transaction",
-      "to-network": "To Network",
-      "you-receive": "You receive",
-      "you-send": "You send"
+      "to-network": "To Network"
     },
     "review-deposit": {
       "btc-deposit-come-back-delay-note": "If you do not receive your deposit after {hours} hours return to this page to manually claim.",

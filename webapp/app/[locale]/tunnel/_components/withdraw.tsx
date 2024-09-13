@@ -227,7 +227,6 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
         </div>
       }
       bottomSection={<WalletsConnected />}
-      expectedChainId={state.fromNetworkId}
       explorerUrl={fromChain.blockExplorers.default.url}
       formContent={
         <FormContent
@@ -419,7 +418,6 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             />
           ) : null
         }
-        expectedChainId={fromNetworkId}
         explorerUrl={fromChain?.blockExplorers.default.url}
         formContent={
           <FormContent

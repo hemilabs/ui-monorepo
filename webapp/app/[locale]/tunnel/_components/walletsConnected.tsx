@@ -12,11 +12,11 @@ const Wallet = function ({
   const t = useTranslations('connect-wallets.status')
 
   return (
-    <div className="flex items-center gap-x-1 text-xs font-medium leading-normal">
-      <span className="text-slate-600">{`${title}:`}</span>
+    <div className="text-ms flex items-center gap-x-1 font-medium leading-5">
+      <span className="text-neutral-600">{`${title}:`}</span>
       <span
         className={
-          status === 'disconnected' ? 'text-slate-950' : 'text-emerald-500'
+          status === 'disconnected' ? 'text-rose-600' : 'text-emerald-600'
         }
       >
         {t(status)}
@@ -29,7 +29,10 @@ export const WalletsConnected = function () {
   const { btcWalletStatus, evmWalletStatus } = useAccounts()
   const t = useTranslations('connect-wallets')
   return (
-    <div className="flex flex-nowrap items-center justify-between px-6 md:px-9">
+    <div
+      className="flex flex-nowrap items-center justify-between
+      gap-x-7 md:justify-center"
+    >
       <Wallet status={evmWalletStatus} title={t('evm-wallet')} />
       <Wallet status={btcWalletStatus} title={t('btc-wallet')} />
     </div>

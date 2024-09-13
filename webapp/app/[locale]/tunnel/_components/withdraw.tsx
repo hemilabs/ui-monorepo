@@ -33,7 +33,8 @@ import { useWithdraw } from '../_hooks/useWithdraw'
 import { canSubmit, getTotal } from '../_utils'
 
 import { ConnectEvmWallet } from './connectEvmWallet'
-import { EvmSummary, FormContent, TunnelForm } from './form'
+import { EvmSummary } from './evmSummary'
+import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 

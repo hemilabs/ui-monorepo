@@ -24,6 +24,13 @@ const config: Config = {
         '3': '3px',
       },
       boxShadow: {
+        'button-primary':
+          '0px 1px 2px 0px rgba(10, 10, 10, 0.04), 0px 0px 6px 0px rgba(255, 246, 237, 0.24) inset',
+        'button-primary-focused':
+          '0px 0px 0px 2px #FFF, 0px 0px 0px 4px var(--Color-Orange-500, #FF6C15), 0px 1px 2px 0px rgba(10, 10, 10, 0.04), 0px 0px 6px 0px rgba(255, 246, 237, 0.24) inset',
+        'button-secondary': '0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
+        'button-secondary-focused':
+          '0px 0px 0px 2px #FFF, 0px 0px 0px 4px var(--Color-Orange-500, #FF6C15), 0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
         'hemi-layout':
           '0px 2px 2px 0px rgba(10, 10, 10, 0.04), 0px 8px 16px -4px rgba(10, 10, 10, 0.04)',
       },
@@ -74,6 +81,9 @@ const config: Config = {
         'fit-rest-screen-desktop': 'calc(100vh - 67px - 24px - 28px - 28px)',
         // same as above, but header is now 32px
         'fit-rest-screen-mobile': 'calc(100vh - 32px - 24px - 28px - 28px)',
+      },
+      lineHeight: {
+        '6.5': '1.625rem',
       },
       // Tailwind order-x classes go up to 12 - https://tailwindcss.com/docs/order
       order: {

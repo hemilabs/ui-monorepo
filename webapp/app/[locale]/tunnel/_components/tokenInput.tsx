@@ -1,3 +1,4 @@
+import Big from 'big.js'
 import { TokenLogo } from 'components/tokenLogo'
 import { TokenSelector } from 'components/tokenSelector'
 import dynamic from 'next/dynamic'
@@ -23,10 +24,10 @@ type Props = {
   isRunningOperation: boolean
   label: string
   maxBalanceButton?: ReactNode
+  onChange: (value: string) => void
   token: Token
   value: string
 } & AllOrNone<{
-  onChange: (value: string) => void
   fromNetworkId: RemoteChain['id']
   onSelectToken: (token: Token) => void
 }>
@@ -53,19 +54,16 @@ export const TokenInput = function ({
           <input
             className={`
             text-3.25xl max-w-1/2 w-full bg-transparent leading-10 ${
-              value.length > 0 ? 'text-neutral-950' : 'text-neutral-600'
+              Big(value).gt(0) ? 'text-neutral-950' : 'text-neutral-600'
             }
             outline-none focus:text-neutral-950`}
-            disabled={isRunningOperation || readOnly}
-            onChange={
-              readOnly ? undefined : e => props.onChange(e.target.value)
-            }
-            readOnly={readOnly}
+            disabled={isRunningOperation}
+            onChange={e => props.onChange(e.target.value)}
             type="text"
             value={value}
           />
         </div>
-        <div className="text-ms flex flex-col items-end gap-y-6">
+        <div className="text-ms flex h-full flex-col items-end justify-end gap-y-3">
           {readOnly ? (
             <div className="flex items-center justify-between gap-x-2">
               <TokenLogo token={token} />

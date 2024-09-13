@@ -16,7 +16,7 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
-import { type EvmToken, type Token } from 'types/token'
+import { type EvmToken } from 'types/token'
 import { BtcDepositStatus, EvmDepositOperation } from 'types/tunnel'
 import { isEvmNetwork } from 'utils/chain'
 import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
@@ -38,7 +38,7 @@ import { canSubmit, getTotal } from '../_utils'
 
 import { BtcFees } from './btcFees'
 import { ConnectEvmWallet } from './connectEvmWallet'
-import { Erc20Approval } from './Erc20Approval'
+import { Erc20TokenApproval } from './erc20TokenApproval'
 import { EvmSummary, FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
@@ -72,20 +72,14 @@ const WalletsConnected = dynamic(
 
 const SubmitEvmDeposit = function ({
   canDeposit,
-  extendedErc20Approval,
-  fromToken,
   isRunningOperation,
   needsApproval,
   operationRunning,
-  updateExtendedErc20Approval,
 }: {
   canDeposit: boolean
-  extendedErc20Approval: boolean
-  fromToken: Token
   isRunningOperation: boolean
   needsApproval: boolean
   operationRunning: OperationRunning
-  updateExtendedErc20Approval: () => void
 }) {
   const t = useTranslations()
 
@@ -113,18 +107,9 @@ const SubmitEvmDeposit = function ({
   }
 
   return (
-    <>
-      <Erc20Approval
-        checked={extendedErc20Approval}
-        disabled={
-          isNativeToken(fromToken) || !needsApproval || isRunningOperation
-        }
-        onCheckedChange={updateExtendedErc20Approval}
-      />
-      <Button disabled={!canDeposit || isRunningOperation} type="submit">
-        {getOperationButtonText()}
-      </Button>
-    </>
+    <Button disabled={!canDeposit || isRunningOperation} type="submit">
+      {getOperationButtonText()}
+    </Button>
   )
 }
 
@@ -545,6 +530,15 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
               onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
             />
           }
+          tokenApproval={
+            operatesNativeToken ? null : (
+              <Erc20TokenApproval
+                checked={extendedErc20Approval}
+                disabled={!needsApproval || isRunningOperation}
+                onCheckedChange={() => setExtendedErc20Approval(prev => !prev)}
+              />
+            )
+          }
           tunnelState={{
             ...state,
             // patch these events to update the extendedErc20Approval state
@@ -582,14 +576,9 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
         isConnected ? (
           <SubmitEvmDeposit
             canDeposit={canDeposit}
-            extendedErc20Approval={extendedErc20Approval}
-            fromToken={fromToken}
             isRunningOperation={isRunningOperation}
             needsApproval={needsApproval}
             operationRunning={operationRunning}
-            updateExtendedErc20Approval={() =>
-              setExtendedErc20Approval(prev => !prev)
-            }
           />
         ) : (
           <ConnectEvmWallet />

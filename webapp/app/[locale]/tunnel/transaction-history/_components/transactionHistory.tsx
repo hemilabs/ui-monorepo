@@ -1,6 +1,5 @@
 'use client'
 
-import { MessageStatus } from '@eth-optimism/sdk'
 import {
   ColumnDef,
   Row,
@@ -19,99 +18,23 @@ import { useTranslations } from 'next-intl'
 import { parseAsString, useQueryState } from 'nuqs'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import {
-  BtcDepositStatus,
-  DepositTunnelOperation,
-  TunnelOperation,
-  WithdrawTunnelOperation,
-} from 'types/tunnel'
+import { TunnelOperation } from 'types/tunnel'
 import { Card } from 'ui-common/components/card'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import {
-  isBtcDeposit,
-  isDeposit,
-  isToEvmWithdraw,
-  isWithdraw,
-} from 'utils/tunnel'
+import { isDeposit, isWithdraw } from 'utils/tunnel'
 import { Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { Amount } from './amount'
 import { Chain as ChainComponent } from './chain'
 import { DepositAction } from './depositAction'
+import { DepositStatus } from './depositStatus'
 import { Paginator } from './paginator'
 import { ReloadHistory } from './reloadHistory'
 import { TxLink } from './txLink'
-import { TxStatus } from './txStatus'
 import { TxTime } from './txTime'
 import { WithdrawAction } from './withdrawAction'
-
-const DepositStatus = function ({
-  deposit,
-}: {
-  deposit: DepositTunnelOperation
-}) {
-  const t = useTranslations()
-
-  if (!isBtcDeposit(deposit)) {
-    // Evm deposits are always successful if listed
-    return <TxStatus.Success />
-  }
-  const statuses = {
-    [BtcDepositStatus.TX_PENDING]: (
-      <TxStatus.InStatus
-        text={t('transaction-history.waiting-btc-confirmation')}
-      />
-    ),
-    [BtcDepositStatus.TX_CONFIRMED]: (
-      <TxStatus.InStatus text={t('common.wait-hours', { hours: 2 })} />
-    ),
-    [BtcDepositStatus.BTC_READY_CLAIM]: (
-      <TxStatus.InStatus text={t('transaction-history.ready-to-claim')} />
-    ),
-    [BtcDepositStatus.BTC_DEPOSITED]: <TxStatus.Success />,
-  }
-
-  return statuses[deposit.status] ?? '-'
-}
-
-const WithdrawStatus = function ({
-  withdrawal,
-}: {
-  withdrawal: WithdrawTunnelOperation
-}) {
-  const t = useTranslations()
-  const waitMinutes = t('common.wait-minutes', { minutes: 20 })
-
-  if (!isToEvmWithdraw(withdrawal)) {
-    // Bitcoin withdrawals are always successful if tx was confirmed
-    return <TxStatus.Success />
-  }
-
-  const statuses = {
-    // This status should never be rendered, but just to be defensive
-    // let's render the next status:
-    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: (
-      <TxStatus.InStatus text={waitMinutes} />
-    ),
-    [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: <TxStatus.Failed />,
-    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: (
-      <TxStatus.InStatus text={waitMinutes} />
-    ),
-    [MessageStatus.READY_TO_PROVE]: (
-      <TxStatus.InStatus text={t('transaction-history.ready-to-prove')} />
-    ),
-    [MessageStatus.IN_CHALLENGE_PERIOD]: (
-      <TxStatus.InStatus text={t('transaction-history.in-challenge-period')} />
-    ),
-    [MessageStatus.READY_FOR_RELAY]: (
-      <TxStatus.InStatus text={t('transaction-history.ready-to-claim')} />
-    ),
-    [MessageStatus.RELAYED]: <TxStatus.Success />,
-  }
-
-  return statuses[withdrawal.status]
-}
+import { WithdrawStatus } from './withdrawStatus'
 
 const Header = ({ text }: { text?: string }) => (
   <span className="block px-2 text-left text-sm font-medium text-neutral-400">

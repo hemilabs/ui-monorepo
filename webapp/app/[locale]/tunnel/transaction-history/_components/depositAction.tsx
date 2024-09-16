@@ -12,31 +12,29 @@ type Props = {
 export const DepositAction = function ({ deposit }: Props) {
   const t = useTranslations('tunnel-page.transaction-history.actions')
 
+  const getViewButton = (operation: string) => (
+    <CallToAction
+      operation={operation}
+      text={t('view')}
+      txHash={deposit.transactionHash}
+      variant="secondary"
+    />
+  )
+
   if (isEvmDeposit(deposit)) {
-    return (
-      // EVM Deposits do not render an action, rendering a "-"
-      <span className="opacity-40">-</span>
-    )
+    return getViewButton('view')
   }
 
   if (deposit.status === undefined) {
     return <Skeleton className="h-9 w-24" />
   }
 
-  const getViewButton = (operation: string) => (
-    <CallToAction
-      className="border border-solid border-slate-50 bg-slate-100 text-slate-950"
-      operation={operation}
-      text={t('view')}
-      txHash={deposit.transactionHash}
-    />
-  )
-
   const Claim = (
     <CallToAction
       operation="claim"
       text={t('claim')}
       txHash={deposit.transactionHash}
+      variant="primary"
     />
   )
 

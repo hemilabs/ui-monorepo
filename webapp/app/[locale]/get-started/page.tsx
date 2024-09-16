@@ -9,7 +9,6 @@ import { Card } from 'ui-common/components/card'
 
 import { ConfigureNetwork } from './_components/configureNetworks'
 import { QuickStart, profiles, Profile } from './_components/quickStart'
-import { WelcomePack } from './_components/welcomePack'
 
 const SelectProfile = dynamic(
   () => import('./_components/selectProfile').then(mod => mod.SelectProfile),
@@ -67,13 +66,6 @@ const NetworkPage = function () {
           <Suspense fallback={<Skeleton className="h-80 w-full" />}>
             <Card borderColor="gray" padding="medium" radius="large">
               <ConfigureNetwork />
-            </Card>
-          </Suspense>
-        </div>
-        <div className="md:basis-1/3">
-          <Suspense fallback={<Skeleton className="h-80 w-full" />}>
-            <Card borderColor="gray" padding="medium" radius="large">
-              <WelcomePack />
             </Card>
           </Suspense>
         </div>

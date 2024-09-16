@@ -274,9 +274,9 @@
         "view": "View"
       },
       "column-headers": {
+        "action": "Action",
         "amount": "Amount",
         "from": "From",
-        "reload": "Reload",
         "status": "Status",
         "time": "Time",
         "to": "To",
@@ -285,7 +285,14 @@
       },
       "deposit": "Deposit",
       "no-transactions": "There are no transactions",
+      "subtitle": "View and track your Hemi transaction history",
       "title": "Transaction History",
+      "top-bar": {
+        "all": "All",
+        "bitcoin": "Bitcoin",
+        "ethereum": "Ethereum",
+        "recent-transactions": "Recent Transactions"
+      },
       "withdraw": "Withdraw"
     },
     "transaction-status": {

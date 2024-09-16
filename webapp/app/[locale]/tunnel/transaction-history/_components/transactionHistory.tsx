@@ -8,6 +8,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { Card } from 'components/card'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
@@ -16,12 +17,16 @@ import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { parseAsString, useQueryState } from 'nuqs'
-import { useMemo } from 'react'
+import { ComponentProps, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { TunnelOperation } from 'types/tunnel'
-import { Card } from 'ui-common/components/card'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import { isDeposit, isWithdraw } from 'utils/tunnel'
+import {
+  isBtcOperation,
+  isEvmOperation,
+  isDeposit,
+  isWithdraw,
+} from 'utils/tunnel'
 import { Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -30,16 +35,35 @@ import { Chain as ChainComponent } from './chain'
 import { DepositAction } from './depositAction'
 import { DepositStatus } from './depositStatus'
 import { Paginator } from './paginator'
-import { ReloadHistory } from './reloadHistory'
+import { type FilterOptions, TopBar } from './topBar'
 import { TxLink } from './txLink'
 import { TxTime } from './txTime'
 import { WithdrawAction } from './withdrawAction'
 import { WithdrawStatus } from './withdrawStatus'
 
+const columnWidthCss = `first:min-w-15 md:first:min-w-28 [&:nth-child(2)]:min-w-32
+  [&:nth-child(3)]:min-w-16 [&:nth-child(4)]:min-w-16 [&:nth-child(5)]:min-w-24 last:min-w-24
+  `
+
+const ColumnHeader = ({ className = '', children }: ComponentProps<'th'>) => (
+  <th
+    className={`border-color-neutral/55 ${className} ${columnWidthCss} h-8 border-b border-t border-solid bg-neutral-50
+    font-medium first:rounded-l-lg first:border-l last:rounded-r-lg last:border-r first:[&>span]:pl-4 last:[&>span]:pl-5`}
+  >
+    {children}
+  </th>
+)
+
+const Column = (props: ComponentProps<'td'>) => (
+  <td
+    className={`h-[52px] border-b border-solid border-neutral-300/55
+    py-2.5 ${columnWidthCss} last:pr-2.5 first:[&>*]:pl-4 last:[&>*]:pl-5`}
+    {...props}
+  />
+)
+
 const Header = ({ text }: { text?: string }) => (
-  <span className="block px-2 text-left text-sm font-medium text-neutral-400">
-    {text}
-  </span>
+  <span className="block py-2 text-left text-neutral-600">{text}</span>
 )
 
 const columnsBuilder = (
@@ -55,7 +79,7 @@ const columnsBuilder = (
   {
     accessorKey: 'direction',
     cell: ({ row }) => (
-      <span className="text-sm font-normal">
+      <span className="text-neutral-950">
         {t(isDeposit(row.original) ? 'deposit' : 'withdraw')}
       </span>
     ),
@@ -121,18 +145,21 @@ const columnsBuilder = (
     id: 'status',
   },
   {
-    cell: ({ row }) =>
-      isDeposit(row.original) ? (
-        <DepositAction deposit={row.original} />
-      ) : (
-        <WithdrawAction withdraw={row.original} />
-      ),
-    header: () => <ReloadHistory />,
+    cell: ({ row }) => (
+      <div className="max-w-20">
+        {isDeposit(row.original) ? (
+          <DepositAction deposit={row.original} />
+        ) : (
+          <WithdrawAction withdraw={row.original} />
+        )}
+      </div>
+    ),
+    header: () => <Header text={t('column-headers.action')} />,
     id: 'action',
   },
 ]
 
-const useTransactionsHistory = function () {
+const useTransactionsHistory = function (filter: FilterOptions) {
   const { deposits, syncStatus, withdrawals } = useTunnelHistory()
 
   const data = useMemo(
@@ -140,6 +167,12 @@ const useTransactionsHistory = function () {
       ([] as TunnelOperation[])
         .concat(deposits)
         .concat(withdrawals)
+        .filter(
+          operation =>
+            filter === 'all' ||
+            (filter === 'bitcoin' && isBtcOperation(operation)) ||
+            (filter === 'ethereum' && isEvmOperation(operation)),
+        )
         .sort(function (a, b) {
           if (!a.timestamp) {
             return -1
@@ -149,7 +182,7 @@ const useTransactionsHistory = function () {
           }
           return b.timestamp - a.timestamp
         }),
-    [deposits, withdrawals],
+    [deposits, filter, withdrawals],
   )
   return {
     data,
@@ -176,10 +209,10 @@ const Body = function ({
         Array.from(Array(pageSize).keys()).map(index => (
           <tr key={index}>
             {columns.map((c, i) => (
-              <td className="px-2 py-2" key={c.id || i}>
+              <Column key={c.id || i}>
                 {/* @ts-expect-error it works */}
                 {c.cell()}
-              </td>
+              </Column>
             ))}
           </tr>
         ))}
@@ -187,25 +220,18 @@ const Body = function ({
         <>
           {rows.length === 0 && (
             <tr>
-              <td
-                className="px-2 py-2 text-center text-neutral-700"
-                colSpan={columns.length}
-              >
-                {t('no-transactions')}
-              </td>
+              <Column colSpan={columns.length}>{t('no-transactions')}</Column>
             </tr>
           )}
           {rows.map(row => (
             <tr key={row.id}>
               {row.getVisibleCells().map(cell => (
-                <td
-                  className={`px-2 py-2 text-neutral-700 ${
-                    cell.column.columnDef.id === 'action' ? 'text-center' : ''
-                  }`}
+                <Column
+                  // cell.column.columnDef.id === 'action' ? 'text-center' : ''
                   key={cell.id}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
+                </Column>
               ))}
             </tr>
           ))}
@@ -221,8 +247,8 @@ export const TransactionHistory = function () {
   const l1ChainId = evmRemoteNetworks[0].id
 
   const { status } = useAccount()
-
-  const { data, loading } = useTransactionsHistory()
+  const [filterOption, setFilterOption] = useState<FilterOptions>('all')
+  const { data, loading } = useTransactionsHistory(filterOption)
 
   const hemi = useHemi()
   const t = useTranslations('tunnel-page.transaction-history')
@@ -293,21 +319,22 @@ export const TransactionHistory = function () {
 
   return (
     <>
-      {connectedToSupportedChain && (
-        <>
-          <Card borderColor="gray" padding="medium" radius="large">
-            <div className="overflow-x-auto">
-              <table className="w-full whitespace-nowrap">
+      <div className="rounded-2.5xl text-ms mt-6 bg-neutral-100 p-1 font-medium leading-5 md:mt-8">
+        <TopBar filter={filterOption} onFilterChange={setFilterOption} />
+        {connectedToSupportedChain && (
+          <Card>
+            <div className="overflow-x-auto p-2">
+              <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
                 <thead>
                   {table.getHeaderGroups().map(headerGroup => (
                     <tr key={headerGroup.id}>
                       {headerGroup.headers.map(header => (
-                        <th key={header.id}>
+                        <ColumnHeader key={header.id}>
                           {flexRender(
                             header.column.columnDef.header,
                             header.getContext(),
                           )}
-                        </th>
+                        </ColumnHeader>
                       ))}
                     </tr>
                   ))}
@@ -316,29 +343,31 @@ export const TransactionHistory = function () {
               </table>
             </div>
           </Card>
-          {pageCount > 1 && (
-            <Paginator
-              onPageChange={page => setPageIndexFromUrl(page.toString())}
-              pageCount={pageCount}
-              pageIndex={pageIndex}
-              windowSize={width}
-            />
-          )}
-        </>
-      )}
-      {status === 'connecting' && <Skeleton className="h-4/5 w-full" />}
-      {status === 'disconnected' && (
-        <ConnectWallet
-          heading={translate('common.connect-your-wallet')}
-          subheading={translate('transaction-history.connect-wallet-to-review')}
-        />
-      )}
-      {connectedToUnsupportedChain && (
-        <ConnectWallet
-          heading={translate('common.unsupported-chain-heading')}
-          subheading={translate(
-            'transaction-history.unsupported-chain-subheading',
-          )}
+        )}
+        {status === 'connecting' && <Skeleton className="h-4/5 w-full" />}
+        {status === 'disconnected' && (
+          <ConnectWallet
+            heading={translate('common.connect-your-wallet')}
+            subheading={translate(
+              'transaction-history.connect-wallet-to-review',
+            )}
+          />
+        )}
+        {connectedToUnsupportedChain && (
+          <ConnectWallet
+            heading={translate('common.unsupported-chain-heading')}
+            subheading={translate(
+              'transaction-history.unsupported-chain-subheading',
+            )}
+          />
+        )}
+      </div>
+      {pageCount > 1 && (
+        <Paginator
+          onPageChange={page => setPageIndexFromUrl(page.toString())}
+          pageCount={pageCount}
+          pageIndex={pageIndex}
+          windowSize={width}
         />
       )}
     </>

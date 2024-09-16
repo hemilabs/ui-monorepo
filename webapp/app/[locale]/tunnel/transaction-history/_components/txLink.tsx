@@ -14,7 +14,7 @@ export const TxLink = function ({ chainId, txHash }: Props) {
   const href = `${chain?.blockExplorers?.default.url}/tx/${txHash}`
   return (
     <ExternalLink
-      className="cursor-pointer text-sm font-normal underline"
+      className="cursor-pointer text-neutral-600 hover:text-neutral-950"
       href={href}
     >
       {hash}

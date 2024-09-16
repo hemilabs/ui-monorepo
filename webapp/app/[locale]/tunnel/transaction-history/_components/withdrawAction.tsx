@@ -20,7 +20,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
   }
 
   if (withdraw.status === undefined) {
-    return <Skeleton className="h-9 w-24" />
+    return <Skeleton className="w-15 h-8" />
   }
 
   const Failed = (
@@ -28,6 +28,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
       operation="withdraw"
       text={t('retry')}
       txHash={withdraw.transactionHash}
+      variant="secondary"
     />
   )
 
@@ -36,6 +37,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
       operation="claim"
       text={t('claim')}
       txHash={withdraw.transactionHash}
+      variant="primary"
     />
   )
 
@@ -44,15 +46,16 @@ export const WithdrawAction = function ({ withdraw }: Props) {
       operation="prove"
       text={t('prove')}
       txHash={withdraw.transactionHash}
+      variant="primary"
     />
   )
 
   const getViewButton = (operation: string) => (
     <CallToAction
-      className="border border-solid border-slate-50 bg-slate-100 text-slate-950"
       operation={operation}
       text={t('view')}
       txHash={withdraw.transactionHash}
+      variant="secondary"
     />
   )
 

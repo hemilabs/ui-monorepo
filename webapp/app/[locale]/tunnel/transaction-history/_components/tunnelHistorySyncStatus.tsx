@@ -55,17 +55,16 @@ export const TunnelHistorySyncStatus = function () {
   const { syncStatus } = useTunnelHistory()
   const t = useTranslations('transaction-history')
 
-  if (syncStatus !== 'syncing' || !isConnected) {
-    return <div />
-  }
+  const hide = syncStatus !== 'syncing' || !isConnected
+
   return (
-    <div className="flex items-center gap-x-2 lg:mr-auto">
+    <div
+      className={`flex items-center gap-x-1 ${hide ? 'invisible' : 'block'}`}
+    >
       <div className="relative h-6 w-6 rounded-full border border-slate-300/50 bg-white">
         <Spinner />
       </div>
-      <span className="ml-px text-xs font-medium text-slate-500">
-        {t('loading-transactions')}
-      </span>
+      <span className="text-neutral-600">{t('loading-transactions')}</span>
     </div>
   )
 }

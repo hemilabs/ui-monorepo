@@ -20,6 +20,9 @@ const config: Config = {
         'hemi-gradient':
           'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',
       },
+      borderRadius: {
+        '2.5xl': '1.25rem',
+      },
       borderWidth: {
         '3': '3px',
       },
@@ -86,6 +89,9 @@ const config: Config = {
       lineHeight: {
         '6.5': '1.625rem',
       },
+      minWidth: {
+        15: '3.75rem',
+      },
       // Tailwind order-x classes go up to 12 - https://tailwindcss.com/docs/order
       order: {
         '13': '13',
@@ -100,6 +106,9 @@ const config: Config = {
         '1.5': '0.375rem',
         '4.5': '1.125rem',
         '18': '4.5rem',
+      },
+      width: {
+        '15': '3.75rem',
       },
     },
   },

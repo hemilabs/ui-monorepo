@@ -1,6 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import '../app/[locale]/tunnel/transaction-history/_components/transactionHistory.css';
+@import 'tailwindcss/utilities';
 
 @keyframes withdraw-progress {
   0% {

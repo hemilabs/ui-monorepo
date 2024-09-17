@@ -17,7 +17,7 @@ import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { parseAsString, useQueryState } from 'nuqs'
-import { ComponentProps, useMemo, useState } from 'react'
+import { ComponentProps, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { TunnelOperation } from 'types/tunnel'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
@@ -35,7 +35,7 @@ import { Chain as ChainComponent } from './chain'
 import { DepositAction } from './depositAction'
 import { DepositStatus } from './depositStatus'
 import { Paginator } from './paginator'
-import { type FilterOptions, TopBar } from './topBar'
+import { type FilterOptions } from './topBar'
 import { TxLink } from './txLink'
 import { TxTime } from './txTime'
 import { WithdrawAction } from './withdrawAction'
@@ -241,13 +241,16 @@ const Body = function ({
   )
 }
 
-export const TransactionHistory = function () {
+export const TransactionHistory = function ({
+  filterOption,
+}: {
+  filterOption: FilterOptions
+}) {
   const { evmRemoteNetworks } = useNetworks()
   // See https://github.com/hemilabs/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id
 
   const { status } = useAccount()
-  const [filterOption, setFilterOption] = useState<FilterOptions>('all')
   const { data, loading } = useTransactionsHistory(filterOption)
 
   const hemi = useHemi()
@@ -319,49 +322,46 @@ export const TransactionHistory = function () {
 
   return (
     <>
-      <div className="rounded-2.5xl text-ms mt-6 bg-neutral-100 p-1 font-medium leading-5 md:mt-8">
-        <TopBar filter={filterOption} onFilterChange={setFilterOption} />
-        {connectedToSupportedChain && (
-          <Card>
-            <div className="overflow-x-auto p-2">
-              <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
-                <thead>
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map(header => (
-                        <ColumnHeader key={header.id}>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                        </ColumnHeader>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <Body columns={columns} loading={loading} rows={rows} />
-              </table>
-            </div>
-          </Card>
-        )}
-        {status === 'connecting' && <Skeleton className="h-4/5 w-full" />}
-        {status === 'disconnected' && (
-          <ConnectWallet
-            heading={translate('common.connect-your-wallet')}
-            subheading={translate(
-              'transaction-history.connect-wallet-to-review',
-            )}
-          />
-        )}
-        {connectedToUnsupportedChain && (
-          <ConnectWallet
-            heading={translate('common.unsupported-chain-heading')}
-            subheading={translate(
-              'transaction-history.unsupported-chain-subheading',
-            )}
-          />
-        )}
-      </div>
+      {connectedToSupportedChain && (
+        <Card>
+          <div className="overflow-x-auto p-2">
+            <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
+              <thead>
+                {table.getHeaderGroups().map(headerGroup => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <ColumnHeader key={header.id}>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                      </ColumnHeader>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <Body columns={columns} loading={loading} rows={rows} />
+            </table>
+          </div>
+        </Card>
+      )}
+      {status === 'connecting' && (
+        <Skeleton className="h-80 w-full rounded-2xl md:h-[500px]" />
+      )}
+      {status === 'disconnected' && (
+        <ConnectWallet
+          heading={translate('common.connect-your-wallet')}
+          subheading={translate('transaction-history.connect-wallet-to-review')}
+        />
+      )}
+      {connectedToUnsupportedChain && (
+        <ConnectWallet
+          heading={translate('common.unsupported-chain-heading')}
+          subheading={translate(
+            'transaction-history.unsupported-chain-subheading',
+          )}
+        />
+      )}
       {pageCount > 1 && (
         <Paginator
           onPageChange={page => setPageIndexFromUrl(page.toString())}

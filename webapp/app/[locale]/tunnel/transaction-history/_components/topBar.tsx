@@ -30,11 +30,11 @@ const SwitchButton = ({
 )
 
 type Props = {
-  filter: FilterOptions
-  onFilterChange: (filter: FilterOptions) => void
+  filterOption: FilterOptions
+  onFilterOptionChange: (filter: FilterOptions) => void
 }
 
-export const TopBar = function ({ filter, onFilterChange }: Props) {
+export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
   const t = useTranslations('tunnel-page.transaction-history.top-bar')
   return (
     <div className="flex w-full flex-wrap items-center gap-x-2 gap-y-2 px-3.5 py-2 md:flex-nowrap md:px-3">
@@ -51,22 +51,22 @@ export const TopBar = function ({ filter, onFilterChange }: Props) {
         <>
           <div className="order-4 ml-auto">
             <SwitchButton
-              onClick={() => onFilterChange('all')}
-              selected={filter === 'all'}
+              onClick={() => onFilterOptionChange('all')}
+              selected={filterOption === 'all'}
               text={t('all')}
             />
           </div>
           <div className="order-5">
             <SwitchButton
-              onClick={() => onFilterChange('ethereum')}
-              selected={filter === 'ethereum'}
+              onClick={() => onFilterOptionChange('ethereum')}
+              selected={filterOption === 'ethereum'}
               text={t('ethereum')}
             />
           </div>
           <div className="order-6">
             <SwitchButton
-              onClick={() => onFilterChange('bitcoin')}
-              selected={filter === 'bitcoin'}
+              onClick={() => onFilterOptionChange('bitcoin')}
+              selected={filterOption === 'bitcoin'}
               text={t('bitcoin')}
             />
           </div>

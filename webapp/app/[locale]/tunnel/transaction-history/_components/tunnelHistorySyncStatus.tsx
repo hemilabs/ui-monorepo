@@ -23,7 +23,7 @@ const Spinner = () => (
         <stop offset="100%" stopColor="#C73807" stopOpacity="0.3" />
       </linearGradient>
     </defs>
-    <g strokeWidth="8">
+    <g strokeWidth="14">
       <path
         d="M 4 100 A 96 96 0 0 1 196 100"
         stroke="url(#spinner-secondHalf)"
@@ -61,7 +61,7 @@ export const TunnelHistorySyncStatus = function () {
     <div
       className={`flex items-center gap-x-1 ${hide ? 'invisible' : 'block'}`}
     >
-      <div className="relative h-6 w-6 rounded-full border border-slate-300/50 bg-white">
+      <div className="relative h-6 w-6">
         <Spinner />
       </div>
       <span className="text-neutral-600">{t('loading-transactions')}</span>

@@ -76,7 +76,6 @@ const config: Config = {
         'ms': '0.8125rem',
       },
       height: {
-        '17': '4.25rem',
         '97vh': '97vh',
         '98vh': '98vh',
         // 96px from header (height + padding), 40px from container's padding top in > md screns
@@ -89,9 +88,6 @@ const config: Config = {
       lineHeight: {
         '6.5': '1.625rem',
       },
-      minWidth: {
-        15: '3.75rem',
-      },
       // Tailwind order-x classes go up to 12 - https://tailwindcss.com/docs/order
       order: {
         '13': '13',
@@ -101,14 +97,16 @@ const config: Config = {
         '17': '17',
         '18': '18',
       },
-      padding: {
+      spacing: {
         '0.5': '0.125rem',
         '1.5': '0.375rem',
         '4.5': '1.125rem',
-        '18': '4.5rem',
-      },
-      width: {
+        '13': '3.25rem',
         '15': '3.75rem',
+        '17': '4.25rem',
+        '18': '4.5rem',
+        '26': '6.5rem',
+        '30': '7.5rem',
       },
     },
   },

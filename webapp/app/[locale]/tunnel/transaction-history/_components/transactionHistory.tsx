@@ -5,9 +5,9 @@ import {
   Row,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import { Card } from 'components/card'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
@@ -16,8 +16,7 @@ import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
-import { parseAsString, useQueryState } from 'nuqs'
-import { ComponentProps, useMemo } from 'react'
+import { ComponentProps, MutableRefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { TunnelOperation } from 'types/tunnel'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
@@ -34,20 +33,18 @@ import { Amount } from './amount'
 import { Chain as ChainComponent } from './chain'
 import { DepositAction } from './depositAction'
 import { DepositStatus } from './depositStatus'
-import { Paginator } from './paginator'
 import { type FilterOptions } from './topBar'
 import { TxLink } from './txLink'
 import { TxTime } from './txTime'
 import { WithdrawAction } from './withdrawAction'
 import { WithdrawStatus } from './withdrawStatus'
 
-const columnWidthCss = `first:min-w-15 md:first:min-w-28 [&:nth-child(2)]:min-w-32
-  [&:nth-child(3)]:min-w-16 [&:nth-child(4)]:min-w-16 [&:nth-child(5)]:min-w-24 last:min-w-24
-  `
+// To keep in mind: There's a file "transactionHistory.css" whose imports comes from app/styles/global.css
+// with some classes defined there to avoid very long classes definitions in the HTML classNames
 
 const ColumnHeader = ({ className = '', children }: ComponentProps<'th'>) => (
   <th
-    className={`border-color-neutral/55 ${className} ${columnWidthCss} h-8 border-b border-t border-solid bg-neutral-50
+    className={`border-color-neutral/55 transaction-history-cell ${className} h-8 border-b border-t border-solid bg-neutral-50
     font-medium first:rounded-l-lg first:border-l last:rounded-r-lg last:border-r first:[&>span]:pl-4 last:[&>span]:pl-5`}
   >
     {children}
@@ -56,8 +53,8 @@ const ColumnHeader = ({ className = '', children }: ComponentProps<'th'>) => (
 
 const Column = (props: ComponentProps<'td'>) => (
   <td
-    className={`h-[52px] border-b border-solid border-neutral-300/55
-    py-2.5 ${columnWidthCss} last:pr-2.5 first:[&>*]:pl-4 last:[&>*]:pl-5`}
+    className={`h-13 transaction-history-cell border-b border-solid
+    border-neutral-300/55 py-2.5 last:pr-2.5 first:[&>*]:pl-4 last:[&>*]:pl-5`}
     {...props}
   />
 )
@@ -190,24 +187,36 @@ const useTransactionsHistory = function (filter: FilterOptions) {
   }
 }
 
-const pageSize = 8
+const pageSize = 7
 
 const Body = function ({
   columns,
+  containerRef,
   loading,
   rows,
 }: {
   columns: ColumnDef<TunnelOperation>[]
+  containerRef: MutableRefObject<HTMLDivElement>
   loading: boolean
   rows: Row<TunnelOperation>[]
 }) {
   const t = useTranslations('tunnel-page.transaction-history')
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    estimateSize: () => 52,
+    getScrollElement: () => containerRef.current,
+    overscan: 10,
+  })
+
   return (
-    <tbody>
+    <tbody
+      className="relative"
+      style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
+    >
       {loading &&
         rows.length === 0 &&
         Array.from(Array(pageSize).keys()).map(index => (
-          <tr key={index}>
+          <tr className="flex items-center" key={index}>
             {columns.map((c, i) => (
               <Column key={c.id || i}>
                 {/* @ts-expect-error it works */}
@@ -219,22 +228,30 @@ const Body = function ({
       {(!loading || rows.length > 0) && (
         <>
           {rows.length === 0 && (
-            <tr>
+            <tr className="flex items-center">
               <Column colSpan={columns.length}>{t('no-transactions')}</Column>
             </tr>
           )}
-          {rows.map(row => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <Column
-                  // cell.column.columnDef.id === 'action' ? 'text-center' : ''
-                  key={cell.id}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Column>
-              ))}
-            </tr>
-          ))}
+          {rowVirtualizer.getVirtualItems().map(function (virtualRow) {
+            const row = rows[virtualRow.index] as Row<TunnelOperation>
+            return (
+              <tr
+                className="absolute flex w-full items-center"
+                data-index={virtualRow.index}
+                key={row.id}
+                style={{
+                  height: `${virtualRow.size}px`,
+                  transform: `translateY(${virtualRow.start}px)`,
+                }}
+              >
+                {row.getVisibleCells().map(cell => (
+                  <Column key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Column>
+                ))}
+              </tr>
+            )
+          })}
         </>
       )}
     </tbody>
@@ -272,28 +289,12 @@ export const TransactionHistory = function ({
 
   const { width } = useWindowSize()
 
-  const [pageIndexFromUrl, setPageIndexFromUrl] = useQueryState(
-    'pageIndex',
-    parseAsString.withDefault('0'),
-  )
-
-  // @ts-expect-error isNaN does accept string, TS error it works
-  const parsedPageIndex = isNaN(pageIndexFromUrl)
-    ? 0
-    : // convert negative numbers to 0
-      Math.max(parseInt(pageIndexFromUrl), 0)
-
-  // if pageIndex from the URL exceeds the number of pages available, show the last page
-  const pageIndex = Math.min(
-    parsedPageIndex,
-    Math.floor(data.length / pageSize),
-  )
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     state: {
       columnOrder:
         // move "action" and "status" to the left in small devices
@@ -305,10 +306,6 @@ export const TransactionHistory = function ({
                 .map(c => c.id),
             )
           : undefined,
-      pagination: {
-        pageIndex,
-        pageSize,
-      },
     },
   })
 
@@ -316,19 +313,20 @@ export const TransactionHistory = function ({
   const connectedToSupportedChain = useConnectedToSupportedEvmChain()
   const connectedToUnsupportedChain = useConnectedToUnsupportedEvmChain()
 
-  const pageCount = table.getPageCount()
-
   const { rows } = table.getRowModel()
 
   return (
     <>
       {connectedToSupportedChain && (
         <Card>
-          <div className="overflow-x-auto p-2">
+          <div
+            className="transaction-history-container overflow-x-auto  p-2"
+            ref={containerRef}
+          >
             <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
-              <thead>
+              <thead className="sticky top-0 z-10">
                 {table.getHeaderGroups().map(headerGroup => (
-                  <tr key={headerGroup.id}>
+                  <tr className="flex w-full items-center" key={headerGroup.id}>
                     {headerGroup.headers.map(header => (
                       <ColumnHeader key={header.id}>
                         {flexRender(
@@ -340,7 +338,12 @@ export const TransactionHistory = function ({
                   </tr>
                 ))}
               </thead>
-              <Body columns={columns} loading={loading} rows={rows} />
+              <Body
+                columns={columns}
+                containerRef={containerRef}
+                loading={loading}
+                rows={rows}
+              />
             </table>
           </div>
         </Card>
@@ -360,14 +363,6 @@ export const TransactionHistory = function ({
           subheading={translate(
             'transaction-history.unsupported-chain-subheading',
           )}
-        />
-      )}
-      {pageCount > 1 && (
-        <Paginator
-          onPageChange={page => setPageIndexFromUrl(page.toString())}
-          pageCount={pageCount}
-          pageIndex={pageIndex}
-          windowSize={width}
         />
       )}
     </>

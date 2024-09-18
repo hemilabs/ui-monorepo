@@ -10,7 +10,7 @@ import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { ComponentProps, MutableRefObject, useMemo, useRef } from 'react'
+import { ComponentProps, MutableRefObject, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { TunnelOperation } from 'types/tunnel'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
@@ -235,14 +235,14 @@ const columnsBuilder = (
 ]
 
 type TableProps = {
+  containerRef: MutableRefObject<HTMLDivElement>
   data: TunnelOperation[]
   loading: boolean
 }
 
-export const Table = function ({ data, loading }: TableProps) {
+export const Table = function ({ containerRef, data, loading }: TableProps) {
   const hemi = useHemi()
   const { evmRemoteNetworks } = useNetworks()
-  const containerRef = useRef<HTMLDivElement>(null)
   const t = useTranslations('tunnel-page.transaction-history')
   const { width } = useWindowSize()
 

@@ -15,12 +15,15 @@ import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupport
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
+import { useLocale, useTranslations } from 'next-intl'
 import { ComponentProps, MutableRefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { TunnelOperation } from 'types/tunnel'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import {
+  getOperationFromDeposit,
+  getOperationFromWithdraw,
   isBtcOperation,
   isEvmOperation,
   isDeposit,
@@ -30,6 +33,7 @@ import { Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { Amount } from './amount'
+import { getCallToActionUrl } from './callToAction'
 import { Chain as ChainComponent } from './chain'
 import { DepositAction } from './depositAction'
 import { DepositStatus } from './depositStatus'
@@ -39,13 +43,14 @@ import { TxTime } from './txTime'
 import { WithdrawAction } from './withdrawAction'
 import { WithdrawStatus } from './withdrawStatus'
 
-// To keep in mind: There's a file "transactionHistory.css" whose imports comes from app/styles/global.css
+// Note: There's a file "transactionHistory.css" whose imports comes from app/styles/global.css
 // with some classes defined there to avoid very long classes definitions in the HTML classNames
 
 const ColumnHeader = ({ className = '', children }: ComponentProps<'th'>) => (
   <th
-    className={`border-color-neutral/55 transaction-history-cell ${className} h-8 border-b border-t border-solid bg-neutral-50
-    font-medium first:rounded-l-lg first:border-l last:rounded-r-lg last:border-r first:[&>span]:pl-4 last:[&>span]:pl-5`}
+    className={`border-color-neutral/55 transaction-history-cell ${className} h-8 border-b
+    border-t border-solid bg-neutral-50 font-medium first:rounded-l-lg first:border-l last:rounded-r-lg
+    last:border-r first:[&>span]:pl-4 last:[&>span]:pl-5`}
   >
     {children}
   </th>
@@ -53,8 +58,8 @@ const ColumnHeader = ({ className = '', children }: ComponentProps<'th'>) => (
 
 const Column = (props: ComponentProps<'td'>) => (
   <td
-    className={`h-13 transaction-history-cell border-b border-solid
-    border-neutral-300/55 py-2.5 last:pr-2.5 first:[&>*]:pl-4 last:[&>*]:pl-5`}
+    className={`h-13 transaction-history-cell cursor-pointer border-b border-solid border-neutral-300/55
+    py-2.5 last:pr-2.5 group-hover/history-row:bg-neutral-50 first:[&>*]:pl-4 last:[&>*]:pl-5`}
     {...props}
   />
 )
@@ -200,6 +205,8 @@ const Body = function ({
   loading: boolean
   rows: Row<TunnelOperation>[]
 }) {
+  const locale = useLocale()
+  const router = useRouter()
   const t = useTranslations('tunnel-page.transaction-history')
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
@@ -207,6 +214,18 @@ const Body = function ({
     getScrollElement: () => containerRef.current,
     overscan: 10,
   })
+
+  const openTransaction = function (tunnelOperation: TunnelOperation) {
+    const operation = isDeposit(tunnelOperation)
+      ? getOperationFromDeposit(tunnelOperation)
+      : getOperationFromWithdraw(tunnelOperation)
+
+    const url = `/${locale}${getCallToActionUrl(
+      tunnelOperation.transactionHash,
+      operation,
+    )}`
+    router.push(url)
+  }
 
   return (
     <tbody
@@ -236,9 +255,10 @@ const Body = function ({
             const row = rows[virtualRow.index] as Row<TunnelOperation>
             return (
               <tr
-                className="absolute flex w-full items-center"
+                className="group/history-row absolute flex w-full items-center"
                 data-index={virtualRow.index}
                 key={row.id}
+                onClick={() => openTransaction(row.original)}
                 style={{
                   height: `${virtualRow.size}px`,
                   transform: `translateY(${virtualRow.start}px)`,

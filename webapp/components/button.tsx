@@ -1,4 +1,6 @@
+import Link from 'next-intl/link'
 import { ComponentProps } from 'react'
+import { isRelativeUrl } from 'utils/url'
 
 const commonCss = `text-ms box-content flex items-center justify-center
   rounded-lg border border-solid px-3 py-1.5 font-medium leading-5 disabled:opacity-40`
@@ -22,7 +24,9 @@ type Variant = {
 
 type ButtonProps = ComponentProps<'button'> & Variant & Height
 
-type ButtonLinkProps = ComponentProps<'a'> & Variant
+type ButtonLinkProps = Omit<ComponentProps<'a'>, 'href' | 'ref'> &
+  Required<Pick<ComponentProps<'a'>, 'href'>> &
+  Variant
 
 export const Button = ({ height = 'h-8', variant, ...props }: ButtonProps) => (
   <button
@@ -31,9 +35,11 @@ export const Button = ({ height = 'h-8', variant, ...props }: ButtonProps) => (
   />
 )
 
-export const ButtonLink = ({ variant, ...props }: ButtonLinkProps) => (
-  <a
-    className={`${commonCss} px-2 ${variants[variant ?? 'primary']}`}
-    {...props}
-  />
-)
+export const ButtonLink = function ({ variant, ...props }: ButtonLinkProps) {
+  const className = `${commonCss} px-2 ${variants[variant ?? 'primary']}`
+
+  if (!props.href || !isRelativeUrl(props.href)) {
+    return <a className={className} {...props} />
+  }
+  return <Link className={className} {...props} />
+}

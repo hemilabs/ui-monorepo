@@ -3,6 +3,7 @@
     "add": "Agregar",
     "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
     "connect-to-network": "Conectarse a {network}",
+    "connect-to-supported-network": "Conectarse a una red soportada",
     "connect-wallet": "Conectar Billetera",
     "connect-wallets": "Connectar Billeteras",
     "connect-your-wallet": "Conecte su Billetera",
@@ -26,6 +27,7 @@
     "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
     "unsupported-chain-heading": "Usted no se encuentra conectado a una red soportada",
     "view": "Ver",
+    "your-wallet-not-connected": "Tu billetera no está conectada",
     "wait-complete": "Espera completada",
     "wait-hours": "Espere hasta {hours} horas",
     "wait-minutes": "Espere hasta {minutes} minutos",
@@ -283,7 +285,8 @@
         "type": "Tipo"
       },
       "deposit": "Depósito",
-      "no-transactions": "No hay transacciones",
+      "no-transactions": "No se han realizado transacciones",
+      "no-transactions-get-started": "Comience tunelizando activos desde y hacia hemi.",
       "subtitle": "Vea y revise su historial de transacciones en Hemi",
       "title": "Historial de Transacciones",
       "top-bar": {
@@ -292,6 +295,7 @@
         "ethereum": "Ethereum",
         "recent-transactions": "Transacciones Recientes"
       },
+      "tunnel-assets": "Tunelizar activos",
       "withdraw": "Retiro"
     },
     "transaction-status": {

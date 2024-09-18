@@ -10,6 +10,7 @@ import { WalletsContext } from 'context/walletsContext'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 import { Suspense } from 'react'
+import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { inter } from '../fonts'
 
@@ -41,26 +42,28 @@ export default async function RootLayout({
     <html lang={locale}>
       <body className={`${inter.className} w-svw overflow-y-hidden`}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          {/* This suspense wrapper is needed because, from this point downwards, rendering depends on 
+          <SkeletonTheme baseColor="#E5E5E5" highlightColor="#FAFAFA">
+            {/* This suspense wrapper is needed because, from this point downwards, rendering depends on 
           getting mainnet|testnet from query string, and using useSearchParams (through nuqs) requires so to compile.
           However, there's no change at all in the UI, so no fallback seems to be needed, as it isn't an async request
           or something that requires showing something. */}
-          <Suspense>
-            <WalletsContext locale={locale}>
-              <TunnelHistoryProvider>
-                <ConnectWalletDrawerProvider>
-                  <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
-                    <div className="hidden w-1/4 max-w-64 md:block">
-                      <Navbar />
+            <Suspense>
+              <WalletsContext locale={locale}>
+                <TunnelHistoryProvider>
+                  <ConnectWalletDrawerProvider>
+                    <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
+                      <div className="hidden w-1/4 max-w-64 md:block">
+                        <Navbar />
+                      </div>
+                      <AppLayout>
+                        <ErrorBoundary>{children}</ErrorBoundary>
+                      </AppLayout>
                     </div>
-                    <AppLayout>
-                      <ErrorBoundary>{children}</ErrorBoundary>
-                    </AppLayout>
-                  </div>
-                </ConnectWalletDrawerProvider>
-              </TunnelHistoryProvider>
-            </WalletsContext>
-          </Suspense>
+                  </ConnectWalletDrawerProvider>
+                </TunnelHistoryProvider>
+              </WalletsContext>
+            </Suspense>
+          </SkeletonTheme>
         </NextIntlClientProvider>
       </body>
     </html>

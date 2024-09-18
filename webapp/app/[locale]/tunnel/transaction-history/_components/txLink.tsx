@@ -16,6 +16,8 @@ export const TxLink = function ({ chainId, txHash }: Props) {
     <ExternalLink
       className="cursor-pointer text-neutral-600 hover:text-neutral-950"
       href={href}
+      // needed as there's event delegation in the row
+      onClick={e => e.stopPropagation()}
     >
       {hash}
     </ExternalLink>

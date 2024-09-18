@@ -1,6 +1,9 @@
 import { ButtonLink } from 'components/button'
 import { ComponentProps } from 'react'
 
+export const getCallToActionUrl = (txHash: string, operation: string) =>
+  `/tunnel?txHash=${txHash}&operation=${operation}`
+
 type Props = {
   txHash: string
   operation: string
@@ -9,7 +12,9 @@ type Props = {
 
 export const CallToAction = ({ txHash, operation, text, variant }: Props) => (
   <ButtonLink
-    href={`/tunnel?txHash=${txHash}&operation=${operation}`}
+    href={getCallToActionUrl(txHash, operation)}
+    // needed as there's event delegation in the row
+    onClick={e => e.stopPropagation()}
     variant={variant}
   >
     {text}

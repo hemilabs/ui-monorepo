@@ -16,9 +16,9 @@ export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
   const t = useTranslations('tunnel-page.transaction-history.top-bar')
   return (
     <div className="flex w-full flex-wrap items-center gap-x-2 gap-y-2 px-3.5 py-2 md:flex-nowrap md:px-3">
-      <span className="order-1 flex-shrink-0 flex-grow basis-2/5 md:flex-grow-0 md:basis-auto">
+      <h5 className="order-1 flex-shrink-0 flex-grow basis-2/5 md:flex-grow-0 md:basis-auto">
         {t('recent-transactions')}
-      </span>
+      </h5>
       <div className="order-3 basis-1/5 md:order-2 md:basis-auto">
         <ReloadHistory />
       </div>

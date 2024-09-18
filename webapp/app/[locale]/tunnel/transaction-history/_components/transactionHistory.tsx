@@ -70,7 +70,7 @@ export const TransactionHistory = function ({
         ref={containerRef}
       >
         {connectedToSupportedChain && showTable && (
-          <Table data={data} loading={loading} />
+          <Table containerRef={containerRef} data={data} loading={loading} />
         )}
         {connectedToSupportedChain && !showTable && <NoTransactions />}
         {connectedToUnsupportedChain && <UnsupportedChain />}

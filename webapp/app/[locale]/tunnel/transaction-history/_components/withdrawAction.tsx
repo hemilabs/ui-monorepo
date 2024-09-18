@@ -2,7 +2,7 @@ import { MessageStatus } from '@eth-optimism/sdk'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { type WithdrawTunnelOperation } from 'types/tunnel'
-import { isToEvmWithdraw } from 'utils/tunnel'
+import { getOperationFromWithdraw, isToEvmWithdraw } from 'utils/tunnel'
 
 import { CallToAction } from './callToAction'
 
@@ -23,9 +23,11 @@ export const WithdrawAction = function ({ withdraw }: Props) {
     return <Skeleton className="w-15 h-8" />
   }
 
+  const operation = getOperationFromWithdraw(withdraw)
+
   const Failed = (
     <CallToAction
-      operation="withdraw"
+      operation={operation}
       text={t('retry')}
       txHash={withdraw.transactionHash}
       variant="secondary"
@@ -34,7 +36,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
 
   const Claim = (
     <CallToAction
-      operation="claim"
+      operation={operation}
       text={t('claim')}
       txHash={withdraw.transactionHash}
       variant="primary"
@@ -43,14 +45,14 @@ export const WithdrawAction = function ({ withdraw }: Props) {
 
   const Prove = (
     <CallToAction
-      operation="prove"
+      operation={operation}
       text={t('prove')}
       txHash={withdraw.transactionHash}
       variant="primary"
     />
   )
 
-  const getViewButton = (operation: string) => (
+  const getViewButton = () => (
     <CallToAction
       operation={operation}
       text={t('view')}
@@ -60,13 +62,13 @@ export const WithdrawAction = function ({ withdraw }: Props) {
   )
 
   const actions = {
-    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getViewButton('withdraw'),
+    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getViewButton(),
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: Failed,
-    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getViewButton('prove'),
+    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getViewButton(),
     [MessageStatus.READY_TO_PROVE]: Prove,
-    [MessageStatus.IN_CHALLENGE_PERIOD]: getViewButton('claim'),
+    [MessageStatus.IN_CHALLENGE_PERIOD]: getViewButton(),
     [MessageStatus.READY_FOR_RELAY]: Claim,
-    [MessageStatus.RELAYED]: getViewButton('view'),
+    [MessageStatus.RELAYED]: getViewButton(),
   }
   return actions[withdraw.status]
 }

@@ -1,0 +1,74 @@
+@layer components {
+  .transaction-history-container {
+    /* 
+    This hacky styling is needed because we're implementing a table with infinite scrolling with dynamic size (depending on the screen's height).
+    However, the virtual table needs a fixed height to limit how much elements would be shown (because, otherwise, it would render all!).
+    In order to style it properly, the height is defined as the difference between the whole body and the main vertical spaces
+    (luckily, they are just a few). Some useful readings to update this (I'm assuming a basic tailwind knowledge)
+    - How to use the theme function https://tailwindcss.com/docs/functions-and-directives#theme
+    - Default spacing scale https://tailwindcss.com/docs/customizing-spacing#default-spacing-scale
+      (note that the tailwind.config.ts adds some custom spacing values)
+    - How to use @apply https://tailwindcss.com/docs/reusing-styles#extracting-classes-with-apply
+
+    Below here there's a list (which I hope it won't get out of date) of each element considered to calculate the height of the table.
+    They are sorted ascending
+    Mobile:
+      - 6px come from the testnet's border warning (not available in mainnet, hope it's not noticeable)
+      - spacing.2 is the padding around the table  
+      - spacing.3 is padding bottom of body
+      - spacing.4 is padding top of body
+      - spacing.6 is the separation between the table and the page title
+      - spacing.14 is the footer's height
+      - spacing.14 is the header's height
+      - spacing.14 is the title/subtitle
+      - spacing.16 is the tunnel/tx-history tabs
+      - spacing.24 is the filter bar at the top of the table
+    md:
+      - spacing.2 (x2) is the margin top and bottom around the body
+      - spacing.2 is the padding around the table
+      - spacing.3 is the padding bottom of body
+      - spacing.8 is the separation between the table and the page title
+      - spacing.12 is the filter bar at the top of the table
+      - spacing.12 is the padding top of body
+      - spacing.14 is the title/subtitle of the page
+      - spacing.17 is the header's height
+    xl:
+      - spacing.2 (x2) is the margin top and bottom around the body
+      - spacing.2 is the padding around the table
+      - spacing.8 is the top separation of the table
+      - spacing.12 is the filter bar at the top of the table
+      - spacing.12 is the padding top of body
+      - spacing.14 is the title/subtitle of the page
+      - spacing.17 is the header's height
+      - spacing.30 is the bottom padding of the body
+     */
+    @apply h-[calc(100dvh-6px-theme(spacing.2)-theme(spacing.3)-theme(spacing.4)-theme(spacing.6)-theme(spacing.14)-theme(spacing.14)-theme(spacing.14)-theme(spacing.16)-theme(spacing.24))]
+      md:h-[calc(100dvh-theme(spacing.2)*2-theme(spacing.2)-theme(spacing.3)-theme(spacing.8)-theme(spacing.12)-theme(spacing.12)-theme(spacing.14)-theme(spacing.17))]
+      xl:h-[calc(100dvh-theme(spacing.2)*2-theme(spacing.2)-theme(spacing.8)-theme(spacing.12)-theme(spacing.12)-theme(spacing.14)-theme(spacing.17)-theme(spacing.30))];
+  }
+
+  /* This should be applied on every th and td cells.
+  Columns are  reordered depending on screen size */
+  /* prettier-ignore */
+  .transaction-history-cell {
+    @apply flex w-full flex-shrink-0
+      flex-grow
+      items-center
+      [&:nth-child(1)]:basis-24
+      [&:nth-child(1)]:lg:basis-28
+      [&:nth-child(2)]:basis-32
+      [&:nth-child(2)]:lg:basis-24
+      [&:nth-child(3)]:basis-30
+      [&:nth-child(3)]:lg:basis-44
+      [&:nth-child(4)]:basis-20
+      [&:nth-child(4)]:lg:basis-30
+      [&:nth-child(5)]:basis-44
+      [&:nth-child(5)]:lg:basis-30
+      [&:nth-child(6)]:basis-30
+      [&:nth-child(6)]:lg:basis-32
+      [&:nth-child(7)]:basis-30
+      [&:nth-child(7)]:lg:basis-32
+      [&:nth-child(8)]:basis-32
+      [&:nth-child(8)]:lg:basis-24
+  }
+}

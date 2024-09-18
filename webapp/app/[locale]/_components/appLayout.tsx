@@ -78,12 +78,11 @@ export const AppLayout = function ({ children }: Props) {
       <Header isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
       <div
         className={`box-border ${
-          // 7rem comes from header (3.5) + footer (3.5) heights
-          showFooter
-            ? 'max-h-[calc(100dvh-7rem)]'
-            : 'max-h-[calc(100dvh-3.5rem)]'
+          // 7rem comes from header (3.5) + footer (3.5) heights in mobile
+          // 4.25 is the header desktop height
+          showFooter ? 'h-[calc(100dvh-7rem)]' : 'h-[calc(100dvh-3.5rem)]'
         }
-          flex-grow md:max-h-[calc(100dvh-1rem)]
+          flex-grow md:h-[calc(100dvh-4.25rem-1rem)]
           ${hiddenClass}
           ${
             networkType === 'testnet'
@@ -94,7 +93,7 @@ export const AppLayout = function ({ children }: Props) {
         <div className="relative md:hidden">
           <TestnetIndicator />
         </div>
-        <div className="relative h-full overflow-y-auto px-4 pb-3 pt-4 md:pt-8">
+        <div className="xl:px-30 xl:pb-30 relative h-full overflow-y-auto px-4 pb-3 pt-4 md:pt-12">
           {isDrawerOpen && <MobileOverlay />}
           {children}
         </div>

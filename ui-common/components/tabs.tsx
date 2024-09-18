@@ -7,6 +7,7 @@ type Button = { onClick?: () => void }
 type Anchor = { href: string }
 
 type TabProps = {
+  border?: boolean
   children: ReactNode
   disabled?: boolean
   selected?: boolean
@@ -17,6 +18,7 @@ const tabIsButton = (value: Button | Anchor): value is Button =>
 
 export const Tab = function ({
   children,
+  border = false,
   disabled = false,
   selected = false,
   ...props
@@ -29,7 +31,9 @@ export const Tab = function ({
       ${
         selected
           ? 'border border-solid border-neutral-300/55 bg-white text-neutral-950 shadow-sm'
-          : 'cursor-pointer bg-neutral-100 text-neutral-600 hover:text-neutral-950'
+          : `${
+              border ? 'border border-solid border-neutral-300/55' : ''
+            } cursor-pointer bg-neutral-100 text-neutral-600 hover:text-neutral-950`
       }
     `}
     >

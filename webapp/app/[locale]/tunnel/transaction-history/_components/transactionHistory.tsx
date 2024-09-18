@@ -1,111 +1,71 @@
 'use client'
 
-import { MessageStatus } from '@eth-optimism/sdk'
 import {
   ColumnDef,
   Row,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useVirtualizer } from '@tanstack/react-virtual'
+import { Card } from 'components/card'
 import { ConnectWallet } from 'components/connectWallet'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useTranslations } from 'next-intl'
-import { parseAsString, useQueryState } from 'nuqs'
-import { useMemo } from 'react'
+import { useRouter } from 'next/navigation'
+import { useLocale, useTranslations } from 'next-intl'
+import { ComponentProps, MutableRefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import {
-  BtcDepositStatus,
-  EvmWithdrawOperation,
-  DepositTunnelOperation,
-  TunnelOperation,
-} from 'types/tunnel'
-import { Card } from 'ui-common/components/card'
+import { TunnelOperation } from 'types/tunnel'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import { isBtcDeposit, isDeposit, isWithdraw } from 'utils/tunnel'
+import {
+  getOperationFromDeposit,
+  getOperationFromWithdraw,
+  isBtcOperation,
+  isEvmOperation,
+  isDeposit,
+  isWithdraw,
+} from 'utils/tunnel'
 import { Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { Amount } from './amount'
+import { getCallToActionUrl } from './callToAction'
 import { Chain as ChainComponent } from './chain'
 import { DepositAction } from './depositAction'
-import { Paginator } from './paginator'
-import { ReloadHistory } from './reloadHistory'
+import { DepositStatus } from './depositStatus'
+import { type FilterOptions } from './topBar'
 import { TxLink } from './txLink'
-import { TxStatus } from './txStatus'
 import { TxTime } from './txTime'
 import { WithdrawAction } from './withdrawAction'
+import { WithdrawStatus } from './withdrawStatus'
 
-const DepositStatus = function ({
-  deposit,
-}: {
-  deposit: DepositTunnelOperation
-}) {
-  const t = useTranslations()
+// Note: There's a file "transactionHistory.css" whose imports comes from app/styles/global.css
+// with some classes defined there to avoid very long classes definitions in the HTML classNames
 
-  if (!isBtcDeposit(deposit)) {
-    // Evm deposits are always successful if listed
-    return <TxStatus.Success />
-  }
-  const statuses = {
-    [BtcDepositStatus.TX_PENDING]: (
-      <TxStatus.InStatus
-        text={t('transaction-history.waiting-btc-confirmation')}
-      />
-    ),
-    [BtcDepositStatus.TX_CONFIRMED]: (
-      <TxStatus.InStatus text={t('common.wait-hours', { hours: 2 })} />
-    ),
-    [BtcDepositStatus.BTC_READY_CLAIM]: (
-      <TxStatus.InStatus text={t('transaction-history.ready-to-claim')} />
-    ),
-    [BtcDepositStatus.BTC_DEPOSITED]: <TxStatus.Success />,
-  }
+const ColumnHeader = ({ className = '', children }: ComponentProps<'th'>) => (
+  <th
+    className={`border-color-neutral/55 transaction-history-cell ${className} h-8 border-b
+    border-t border-solid bg-neutral-50 font-medium first:rounded-l-lg first:border-l last:rounded-r-lg
+    last:border-r first:[&>span]:pl-4 last:[&>span]:pl-5`}
+  >
+    {children}
+  </th>
+)
 
-  return statuses[deposit.status] ?? '-'
-}
-
-const WithdrawStatus = function ({
-  withdrawal,
-}: {
-  withdrawal: EvmWithdrawOperation
-}) {
-  const t = useTranslations()
-  const waitMinutes = t('common.wait-minutes', { minutes: 20 })
-  const statuses = {
-    // This status should never be rendered, but just to be defensive
-    // let's render the next status:
-    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: (
-      <TxStatus.InStatus text={waitMinutes} />
-    ),
-    [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: <TxStatus.Failed />,
-    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: (
-      <TxStatus.InStatus text={waitMinutes} />
-    ),
-    [MessageStatus.READY_TO_PROVE]: (
-      <TxStatus.InStatus text={t('transaction-history.ready-to-prove')} />
-    ),
-    [MessageStatus.IN_CHALLENGE_PERIOD]: (
-      <TxStatus.InStatus text={t('transaction-history.in-challenge-period')} />
-    ),
-    [MessageStatus.READY_FOR_RELAY]: (
-      <TxStatus.InStatus text={t('transaction-history.ready-to-claim')} />
-    ),
-    [MessageStatus.RELAYED]: <TxStatus.Success />,
-  }
-
-  return statuses[withdrawal.status]
-}
+const Column = (props: ComponentProps<'td'>) => (
+  <td
+    className={`h-13 transaction-history-cell cursor-pointer border-b border-solid border-neutral-300/55
+    py-2.5 last:pr-2.5 group-hover/history-row:bg-neutral-50 first:[&>*]:pl-4 last:[&>*]:pl-5`}
+    {...props}
+  />
+)
 
 const Header = ({ text }: { text?: string }) => (
-  <span className="block px-2 text-left text-sm font-medium text-neutral-400">
-    {text}
-  </span>
+  <span className="block py-2 text-left text-neutral-600">{text}</span>
 )
 
 const columnsBuilder = (
@@ -121,7 +81,7 @@ const columnsBuilder = (
   {
     accessorKey: 'direction',
     cell: ({ row }) => (
-      <span className="text-sm font-normal">
+      <span className="text-neutral-950">
         {t(isDeposit(row.original) ? 'deposit' : 'withdraw')}
       </span>
     ),
@@ -187,18 +147,21 @@ const columnsBuilder = (
     id: 'status',
   },
   {
-    cell: ({ row }) =>
-      isDeposit(row.original) ? (
-        <DepositAction deposit={row.original} />
-      ) : (
-        <WithdrawAction withdraw={row.original} />
-      ),
-    header: () => <ReloadHistory />,
+    cell: ({ row }) => (
+      <div className="max-w-20">
+        {isDeposit(row.original) ? (
+          <DepositAction deposit={row.original} />
+        ) : (
+          <WithdrawAction withdraw={row.original} />
+        )}
+      </div>
+    ),
+    header: () => <Header text={t('column-headers.action')} />,
     id: 'action',
   },
 ]
 
-const useTransactionsHistory = function () {
+const useTransactionsHistory = function (filter: FilterOptions) {
   const { deposits, syncStatus, withdrawals } = useTunnelHistory()
 
   const data = useMemo(
@@ -206,6 +169,12 @@ const useTransactionsHistory = function () {
       ([] as TunnelOperation[])
         .concat(deposits)
         .concat(withdrawals)
+        .filter(
+          operation =>
+            filter === 'all' ||
+            (filter === 'bitcoin' && isBtcOperation(operation)) ||
+            (filter === 'ethereum' && isEvmOperation(operation)),
+        )
         .sort(function (a, b) {
           if (!a.timestamp) {
             return -1
@@ -215,7 +184,7 @@ const useTransactionsHistory = function () {
           }
           return b.timestamp - a.timestamp
         }),
-    [deposits, withdrawals],
+    [deposits, filter, withdrawals],
   )
   return {
     data,
@@ -223,72 +192,103 @@ const useTransactionsHistory = function () {
   }
 }
 
-const pageSize = 8
+const pageSize = 7
 
 const Body = function ({
   columns,
+  containerRef,
   loading,
   rows,
 }: {
   columns: ColumnDef<TunnelOperation>[]
+  containerRef: MutableRefObject<HTMLDivElement>
   loading: boolean
   rows: Row<TunnelOperation>[]
 }) {
+  const locale = useLocale()
+  const router = useRouter()
   const t = useTranslations('tunnel-page.transaction-history')
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    estimateSize: () => 52,
+    getScrollElement: () => containerRef.current,
+    overscan: 10,
+  })
+
+  const openTransaction = function (tunnelOperation: TunnelOperation) {
+    const operation = isDeposit(tunnelOperation)
+      ? getOperationFromDeposit(tunnelOperation)
+      : getOperationFromWithdraw(tunnelOperation)
+
+    const url = `/${locale}${getCallToActionUrl(
+      tunnelOperation.transactionHash,
+      operation,
+    )}`
+    router.push(url)
+  }
+
   return (
-    <tbody>
+    <tbody
+      className="relative"
+      style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
+    >
       {loading &&
         rows.length === 0 &&
         Array.from(Array(pageSize).keys()).map(index => (
-          <tr key={index}>
+          <tr className="flex items-center" key={index}>
             {columns.map((c, i) => (
-              <td className="px-2 py-2" key={c.id || i}>
+              <Column key={c.id || i}>
                 {/* @ts-expect-error it works */}
                 {c.cell()}
-              </td>
+              </Column>
             ))}
           </tr>
         ))}
       {(!loading || rows.length > 0) && (
         <>
           {rows.length === 0 && (
-            <tr>
-              <td
-                className="px-2 py-2 text-center text-neutral-700"
-                colSpan={columns.length}
-              >
-                {t('no-transactions')}
-              </td>
+            <tr className="flex items-center">
+              <Column colSpan={columns.length}>{t('no-transactions')}</Column>
             </tr>
           )}
-          {rows.map(row => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <td
-                  className={`px-2 py-2 text-neutral-700 ${
-                    cell.column.columnDef.id === 'action' ? 'text-center' : ''
-                  }`}
-                  key={cell.id}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {rowVirtualizer.getVirtualItems().map(function (virtualRow) {
+            const row = rows[virtualRow.index] as Row<TunnelOperation>
+            return (
+              <tr
+                className="group/history-row absolute flex w-full items-center"
+                data-index={virtualRow.index}
+                key={row.id}
+                onClick={() => openTransaction(row.original)}
+                style={{
+                  height: `${virtualRow.size}px`,
+                  transform: `translateY(${virtualRow.start}px)`,
+                }}
+              >
+                {row.getVisibleCells().map(cell => (
+                  <Column key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Column>
+                ))}
+              </tr>
+            )
+          })}
         </>
       )}
     </tbody>
   )
 }
 
-export const TransactionHistory = function () {
+export const TransactionHistory = function ({
+  filterOption,
+}: {
+  filterOption: FilterOptions
+}) {
   const { evmRemoteNetworks } = useNetworks()
   // See https://github.com/hemilabs/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id
 
   const { status } = useAccount()
-
-  const { data, loading } = useTransactionsHistory()
+  const { data, loading } = useTransactionsHistory(filterOption)
 
   const hemi = useHemi()
   const t = useTranslations('tunnel-page.transaction-history')
@@ -309,28 +309,12 @@ export const TransactionHistory = function () {
 
   const { width } = useWindowSize()
 
-  const [pageIndexFromUrl, setPageIndexFromUrl] = useQueryState(
-    'pageIndex',
-    parseAsString.withDefault('0'),
-  )
-
-  // @ts-expect-error isNaN does accept string, TS error it works
-  const parsedPageIndex = isNaN(pageIndexFromUrl)
-    ? 0
-    : // convert negative numbers to 0
-      Math.max(parseInt(pageIndexFromUrl), 0)
-
-  // if pageIndex from the URL exceeds the number of pages available, show the last page
-  const pageIndex = Math.min(
-    parsedPageIndex,
-    Math.floor(data.length / pageSize),
-  )
+  const containerRef = useRef<HTMLDivElement>(null)
 
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     state: {
       columnOrder:
         // move "action" and "status" to the left in small devices
@@ -342,10 +326,6 @@ export const TransactionHistory = function () {
                 .map(c => c.id),
             )
           : undefined,
-      pagination: {
-        pageIndex,
-        pageSize,
-      },
     },
   })
 
@@ -353,46 +333,44 @@ export const TransactionHistory = function () {
   const connectedToSupportedChain = useConnectedToSupportedEvmChain()
   const connectedToUnsupportedChain = useConnectedToUnsupportedEvmChain()
 
-  const pageCount = table.getPageCount()
-
   const { rows } = table.getRowModel()
 
   return (
     <>
       {connectedToSupportedChain && (
-        <>
-          <Card borderColor="gray" padding="medium" radius="large">
-            <div className="overflow-x-auto">
-              <table className="w-full whitespace-nowrap">
-                <thead>
-                  {table.getHeaderGroups().map(headerGroup => (
-                    <tr key={headerGroup.id}>
-                      {headerGroup.headers.map(header => (
-                        <th key={header.id}>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
-                </thead>
-                <Body columns={columns} loading={loading} rows={rows} />
-              </table>
-            </div>
-          </Card>
-          {pageCount > 1 && (
-            <Paginator
-              onPageChange={page => setPageIndexFromUrl(page.toString())}
-              pageCount={pageCount}
-              pageIndex={pageIndex}
-              windowSize={width}
-            />
-          )}
-        </>
+        <Card>
+          <div
+            className="transaction-history-container overflow-x-auto  p-2"
+            ref={containerRef}
+          >
+            <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
+              <thead className="sticky top-0 z-10">
+                {table.getHeaderGroups().map(headerGroup => (
+                  <tr className="flex w-full items-center" key={headerGroup.id}>
+                    {headerGroup.headers.map(header => (
+                      <ColumnHeader key={header.id}>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                      </ColumnHeader>
+                    ))}
+                  </tr>
+                ))}
+              </thead>
+              <Body
+                columns={columns}
+                containerRef={containerRef}
+                loading={loading}
+                rows={rows}
+              />
+            </table>
+          </div>
+        </Card>
       )}
-      {status === 'connecting' && <Skeleton className="h-4/5 w-full" />}
+      {status === 'connecting' && (
+        <Skeleton className="h-80 w-full rounded-2xl md:h-[500px]" />
+      )}
       {status === 'disconnected' && (
         <ConnectWallet
           heading={translate('common.connect-your-wallet')}

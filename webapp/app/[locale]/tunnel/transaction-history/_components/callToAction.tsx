@@ -1,22 +1,22 @@
-import Link from 'next-intl/link'
+import { ButtonLink } from 'components/button'
+import { ComponentProps } from 'react'
+
+export const getCallToActionUrl = (txHash: string, operation: string) =>
+  `/tunnel?txHash=${txHash}&operation=${operation}`
 
 type Props = {
-  className?: string
   txHash: string
   operation: string
   text: string
-}
+} & Required<Pick<ComponentProps<typeof ButtonLink>, 'variant'>>
 
-export const CallToAction = ({
-  className = 'bg-orange-950 text-white',
-  txHash,
-  operation,
-  text,
-}: Props) => (
-  <Link
-    className={`inline-block rounded-3xl px-5 py-3 text-xs ${className}`}
-    href={`/tunnel?txHash=${txHash}&operation=${operation}`}
+export const CallToAction = ({ txHash, operation, text, variant }: Props) => (
+  <ButtonLink
+    href={getCallToActionUrl(txHash, operation)}
+    // needed as there's event delegation in the row
+    onClick={e => e.stopPropagation()}
+    variant={variant}
   >
     {text}
-  </Link>
+  </ButtonLink>
 )

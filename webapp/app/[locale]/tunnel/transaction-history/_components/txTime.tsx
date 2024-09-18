@@ -15,7 +15,7 @@ export const TxTime = function (props: Props) {
     return null
   }
   return (
-    <span className="text-sm">
+    <span className="text-neutral-600">
       <TimeAgo locale={locale} {...props} />
     </span>
   )

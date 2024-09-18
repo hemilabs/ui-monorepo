@@ -47,23 +47,28 @@
       xl:h-[calc(100dvh-theme(spacing.2)*2-theme(spacing.2)-theme(spacing.8)-theme(spacing.12)-theme(spacing.12)-theme(spacing.14)-theme(spacing.17)-theme(spacing.30))];
   }
 
-  /* prettier-ignore Disable because tailwind reorders nth-child(n) in a worse way*/
+  /* This should be applied on every th and td cells.
+  Columns are  reordered depending on screen size */
+  /* prettier-ignore */
   .transaction-history-cell {
-    /* This should be applied on every th and td cells.
-    Columns are  reordered depending on screen size */
-    @apply [&:nth-child(6)]:basis-30 [&:nth-child(8)]:basis-30 flex w-full flex-shrink-0
+    @apply flex w-full flex-shrink-0
       flex-grow
       items-center
       [&:nth-child(1)]:basis-24
       [&:nth-child(1)]:lg:basis-28
       [&:nth-child(2)]:basis-32
       [&:nth-child(2)]:lg:basis-24
-      [&:nth-child(3)]:basis-32
-      [&:nth-child(3)]:lg:basis-32
-      [&:nth-child(4)]:basis-32
-      [&:nth-child(5)]:basis-32
-      [&:nth-child(7)]:basis-32
+      [&:nth-child(3)]:basis-30
+      [&:nth-child(3)]:lg:basis-44
+      [&:nth-child(4)]:basis-20
+      [&:nth-child(4)]:lg:basis-30
+      [&:nth-child(5)]:basis-44
+      [&:nth-child(5)]:lg:basis-30
+      [&:nth-child(6)]:basis-30
+      [&:nth-child(6)]:lg:basis-32
+      [&:nth-child(7)]:basis-30
       [&:nth-child(7)]:lg:basis-32
-      [&:nth-child(8)]:lg:basis-24;
+      [&:nth-child(8)]:basis-32
+      [&:nth-child(8)]:lg:basis-24
   }
 }

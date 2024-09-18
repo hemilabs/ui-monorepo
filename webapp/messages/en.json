@@ -3,6 +3,7 @@
     "add": "Add",
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
     "connect-to-network": "Connect to {network}",
+    "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",
     "connect-wallets": "Connect Wallets",
     "connect-your-wallet": "Connect your Wallet",
@@ -26,6 +27,7 @@
     "unexpected-error": "An unexpected error has ocurred. Please try again.",
     "unsupported-chain-heading": "You're not connected to a supported chain",
     "view": "View",
+    "your-wallet-not-connected": "Your wallet is not connected",
     "wait-complete": "Wait complete",
     "wait-hours": "Wait up to {hours} hours",
     "wait-minutes": "Wait up to {minutes} minutes",
@@ -284,7 +286,8 @@
         "type": "Type"
       },
       "deposit": "Deposit",
-      "no-transactions": "There are no transactions",
+      "no-transactions": "No transactions made",
+      "no-transactions-get-started": "Get started by tunneling assets from and to hemi",
       "subtitle": "View and track your Hemi transaction history",
       "title": "Transaction History",
       "top-bar": {
@@ -293,6 +296,7 @@
         "ethereum": "Ethereum",
         "recent-transactions": "Recent Transactions"
       },
+      "tunnel-assets": "Tunnel assets",
       "withdraw": "Withdraw"
     },
     "transaction-status": {

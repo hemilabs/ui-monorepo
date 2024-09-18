@@ -1,33 +1,11 @@
 import { featureFlags } from 'app/featureFlags'
 import { useTranslations } from 'next-intl'
+import { Tabs, Tab } from 'ui-common/components/tabs'
 
 import { ReloadHistory } from './reloadHistory'
 import { TunnelHistorySyncStatus } from './tunnelHistorySyncStatus'
 
 export type FilterOptions = 'all' | 'bitcoin' | 'ethereum'
-
-const SwitchButton = ({
-  onClick,
-  selected,
-  text,
-}: {
-  onClick: () => void
-  selected: boolean
-  text: string
-}) => (
-  <button
-    className={`
-    cursor-pointer rounded-md border border-solid border-neutral-300/55 px-2 py-1
-    ${
-      selected ? 'bg-white text-neutral-950' : 'bg-neutral-100 text-neutral-600'
-    }
-  `}
-    onClick={onClick}
-    type="button"
-  >
-    {text}
-  </button>
-)
 
 type Props = {
   filterOption: FilterOptions
@@ -48,29 +26,31 @@ export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
         <TunnelHistorySyncStatus />
       </div>
       {featureFlags.btcTunnelEnabled && (
-        <>
-          <div className="order-4 ml-auto">
-            <SwitchButton
+        <div className="order-4 ml-auto">
+          <Tabs>
+            <Tab
+              border
               onClick={() => onFilterOptionChange('all')}
               selected={filterOption === 'all'}
-              text={t('all')}
-            />
-          </div>
-          <div className="order-5">
-            <SwitchButton
+            >
+              {t('all')}
+            </Tab>
+            <Tab
+              border
               onClick={() => onFilterOptionChange('ethereum')}
               selected={filterOption === 'ethereum'}
-              text={t('ethereum')}
-            />
-          </div>
-          <div className="order-6">
-            <SwitchButton
+            >
+              {t('ethereum')}
+            </Tab>
+            <Tab
+              border
               onClick={() => onFilterOptionChange('bitcoin')}
               selected={filterOption === 'bitcoin'}
-              text={t('bitcoin')}
-            />
-          </div>
-        </>
+            >
+              {t('bitcoin')}
+            </Tab>
+          </Tabs>
+        </div>
       )}
     </div>
   )

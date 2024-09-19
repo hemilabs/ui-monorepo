@@ -32,13 +32,15 @@
     "wait-hours": "Wait up to {hours} hours",
     "wait-minutes": "Wait up to {minutes} minutes",
     "wallets-connected": "{count} Connected {count, plural, =1 {Wallet} other {Wallets}} ",
-    "wrong-network": "Wrong Network"
+    "wrong-network": "Wrong Network",
+    "wrong-type-network": "Wrong {type} Network"
   },
   "connect-wallets": {
     "btc-wallet-requirement": "A Bitcoin wallet is only required if moving assets between Bitcoin and Hemi.",
     "btc-wallet": "BTC Wallet",
     "connect-btc-wallet": "Connect your Unisat BTC Wallet",
     "connect-evm-wallet": "Connect your EVM Wallet",
+    "connect-to-see-balance": "Connect to a supported network to see your balance",
     "connected-with-wallet": "Connected with <wallet></wallet>",
     "copy-address": "Copy Address",
     "description": "Connect your EVM and BTC wallets to transfer assets seamlessly. For the best experience, use wallets from both networks.",

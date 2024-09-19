@@ -34,7 +34,7 @@ export const Box = function ({
         <div className="flex w-full items-center justify-between rounded-md border border-solid bg-neutral-300/55 bg-neutral-50 px-2 py-1">
           {topContent}
         </div>
-        <div className="px-2 pb-2 pt-8 md:pb-0 md:pt-12">{children}</div>
+        <div className="h-24">{children}</div>
       </div>
     </div>
   )

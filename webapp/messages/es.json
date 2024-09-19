@@ -32,13 +32,15 @@
     "wait-hours": "Espere hasta {hours} horas",
     "wait-minutes": "Espere hasta {minutes} minutos",
     "wallets-connected": "{count} {count, plural, =1 {Billtera Conectada} other {Billeteras Conectadas}} ",
-    "wrong-network": "Red Incorrecta"
+    "wrong-network": "Red Incorrecta",
+    "wrong-type-network": "Red {type} Incorrecta"
   },
   "connect-wallets": {
     "btc-wallet-requirement": "Una billetera de Bitcoin solo es necesaria si se transfieren activos entre Bitcoin y Hemi.",
     "btc-wallet": "Billetera BTC",
     "connect-btc-wallet": "Conecte su billetera Unisat de BTC",
     "connect-evm-wallet": "Conecte su billetera EVM",
+    "connect-to-see-balance": "Conéctese a una red soportada para ver su balance",
     "connected-with-wallet": "Conectado con <wallet></wallet>",
     "copy-address": "Copiar dirección",
     "description": "Conecte sus billeteras EVM y BTC para transferir activos de manera fluida. Para una mejor experiencia, use billeteras de ambas redes.",

@@ -88,6 +88,9 @@ const config: Config = {
       lineHeight: {
         '6.5': '1.625rem',
       },
+      opacity: {
+        '88': '.88',
+      },
       // Tailwind order-x classes go up to 12 - https://tailwindcss.com/docs/order
       order: {
         '13': '13',

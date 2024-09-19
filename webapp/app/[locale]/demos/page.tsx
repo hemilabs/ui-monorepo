@@ -1,14 +1,17 @@
 'use client'
 
+import { PageTitle } from 'components/pageTitle'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 
-import cryptochordsImg from '../../../public/demos/cryptochords.png'
-import hemihatchlingspixelatedImg from '../../../public/demos/hemihatchlingspixelated.png'
-import purefinanceImg from '../../../public/demos/purefinance.png'
-
 import { DemoCard } from './_components/demoCard'
+import cryptoChordsImg from './_images/crypto_chords_large.png'
+import cryptoChordsIcon from './_images/crypto_chords_small.svg'
+import hemiHatchlingsImg from './_images/hemi_hatchlings_large.png'
+import hemiHatchlingsIcon from './_images/hemi_hatchlings_small.png'
+import pureFinanceImg from './_images/pure_finance_large.png'
+import pureFinanceIcon from './_images/pure_finance_small.svg'
 
 const HemiHatchlings = function () {
   const hemi = useHemi()
@@ -17,66 +20,51 @@ const HemiHatchlings = function () {
   return (
     <DemoCard
       altText="hemi hatchlings"
+      bgImage={hemiHatchlingsImg}
       heading={t('hemihatchlings.heading')}
+      headingColor="white"
       href={
         hemi.testnet
           ? 'https://hemihatchlings-test.hemi.xyz'
           : 'https://hemihatchlings.hemi.xyz'
       }
-      imageSrc={hemihatchlingspixelatedImg}
+      icon={hemiHatchlingsIcon}
       subHeading={t('hemihatchlings.sub-heading')}
     />
   )
 }
 
-const GraduateCapIcon = () => (
-  <svg fill="none" height="29" width="36" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M7.5 13v8.25l10.499 5.25L28.5 21.25V13m5.999-1.5v9m-16.5-18L3.299 10l14.7 7.5 14.7-7.5-14.7-7.5Z"
-      stroke="#FF6C15"
-      strokeLinecap="square"
-      strokeWidth="3"
-    />
-  </svg>
-)
-
 const Demos = function () {
   const t = useTranslations('demos')
 
   return (
-    <div className="mx-auto max-w-4xl">
-      <div className="flex flex-col items-start">
-        <div className="flex items-center">
-          <GraduateCapIcon />
-          <h1 className="ml-2 text-4xl font-medium">{t('heading')}</h1>
-        </div>
-        <p className="mb-14 mt-3 text-sm text-neutral-400">
-          {t('sub-heading')}
-        </p>
-        <main
-          className="flex flex-col gap-y-4 md:w-full 
-          md:flex-row md:justify-center md:gap-x-4"
-        >
-          <Suspense>
-            <HemiHatchlings />
-          </Suspense>
-          <DemoCard
-            altText="cryptochords"
-            heading={t('cryptochords.heading')}
-            href="https://cryptochords.hemi.xyz"
-            imageSrc={cryptochordsImg}
-            subHeading={t('cryptochords.sub-heading')}
-          />
-          <DemoCard
-            altText="pure finance"
-            heading={t('purefinance.heading')}
-            href="https://purefinance.hemi.xyz"
-            imageSrc={purefinanceImg}
-            subHeading={t('purefinance.sub-heading')}
-          />
-        </main>
+    <>
+      <PageTitle subtitle={t('sub-heading')} title={t('heading')} />
+      <div className="mt-6 flex flex-col flex-wrap gap-x-6 gap-y-4 md:mt-8 md:flex-row md:gap-y-6">
+        <Suspense>
+          <HemiHatchlings />
+        </Suspense>
+        <DemoCard
+          altText="cryptochords"
+          bgImage={cryptoChordsImg}
+          heading={t('cryptochords.heading')}
+          headingColor="white"
+          href="https://cryptochords.hemi.xyz"
+          icon={cryptoChordsIcon}
+          subHeading={t('cryptochords.sub-heading')}
+        />
+        <DemoCard
+          altText="pure finance"
+          bgImage={pureFinanceImg}
+          heading={t('purefinance.heading')}
+          headingColor="black"
+          href="https://purefinance.hemi.xyz"
+          icon={pureFinanceIcon}
+          subHeading={t('purefinance.sub-heading')}
+          subHeadingColor="gray"
+        />
       </div>
-    </div>
+    </>
   )
 }
 

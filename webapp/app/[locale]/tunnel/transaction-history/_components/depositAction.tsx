@@ -1,3 +1,4 @@
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 import { DepositTunnelOperation } from 'types/tunnel'
 import { getOperationFromDeposit } from 'utils/tunnel'
@@ -9,6 +10,7 @@ type Props = {
 }
 
 export const DepositAction = function ({ deposit }: Props) {
+  const [networkType] = useNetworkType()
   const t = useTranslations('tunnel-page.transaction-history.actions')
 
   const operation = getOperationFromDeposit(deposit)
@@ -17,6 +19,7 @@ export const DepositAction = function ({ deposit }: Props) {
   if (operation === 'claim') {
     return (
       <CallToAction
+        networkType={networkType}
         operation={operation}
         text={t('claim')}
         txHash={deposit.transactionHash}
@@ -27,6 +30,7 @@ export const DepositAction = function ({ deposit }: Props) {
 
   return (
     <CallToAction
+      networkType={networkType}
       operation={operation}
       text={t('view')}
       txHash={deposit.transactionHash}

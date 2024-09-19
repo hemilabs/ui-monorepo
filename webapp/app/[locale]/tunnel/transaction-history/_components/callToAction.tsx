@@ -1,18 +1,34 @@
 import { ButtonLink } from 'components/button'
+import { NetworkType } from 'hooks/useNetworkType'
 import { ComponentProps } from 'react'
 
-export const getCallToActionUrl = (txHash: string, operation: string) =>
-  `/tunnel?txHash=${txHash}&operation=${operation}`
+import { Operation } from '../../_hooks/useTunnelState'
 
-type Props = {
+type QueryStringOptions = {
+  networkType: NetworkType
+  operation: Operation
   txHash: string
-  operation: string
-  text: string
-} & Required<Pick<ComponentProps<typeof ButtonLink>, 'variant'>>
+}
 
-export const CallToAction = ({ txHash, operation, text, variant }: Props) => (
+export const getCallToActionUrl = function (options: QueryStringOptions) {
+  const searchParams = new URLSearchParams()
+  Object.entries(options).forEach(([key, value]) =>
+    searchParams.append(key, value),
+  )
+  return `/tunnel?${searchParams.toString()}`
+}
+
+type Props = QueryStringOptions & { text: string } & Required<
+    Pick<ComponentProps<typeof ButtonLink>, 'variant'>
+  >
+
+export const CallToAction = ({
+  text,
+  variant,
+  ...queryStringOptions
+}: Props) => (
   <ButtonLink
-    href={getCallToActionUrl(txHash, operation)}
+    href={getCallToActionUrl(queryStringOptions)}
     // needed as there's event delegation in the row
     onClick={e => e.stopPropagation()}
     variant={variant}

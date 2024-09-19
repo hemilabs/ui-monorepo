@@ -8,6 +8,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { ComponentProps, MutableRefObject, useMemo } from 'react'
@@ -69,6 +70,7 @@ const Body = function ({
   rows: Row<TunnelOperation>[]
 }) {
   const locale = useLocale()
+  const [networkType] = useNetworkType()
   const router = useRouter()
   const t = useTranslations('tunnel-page.transaction-history')
   const rowVirtualizer = useVirtualizer({
@@ -83,10 +85,11 @@ const Body = function ({
       ? getOperationFromDeposit(tunnelOperation)
       : getOperationFromWithdraw(tunnelOperation)
 
-    const url = `/${locale}${getCallToActionUrl(
-      tunnelOperation.transactionHash,
+    const url = `/${locale}${getCallToActionUrl({
+      networkType,
       operation,
-    )}`
+      txHash: tunnelOperation.transactionHash,
+    })}`
     router.push(url)
   }
 

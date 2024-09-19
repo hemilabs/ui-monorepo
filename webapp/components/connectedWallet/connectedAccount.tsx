@@ -218,7 +218,10 @@ export const ConnectedBtcChain = function () {
     // Once there are multiple chains, we may need to show a dropdown or something
     // to select the chain to connect to.
     return (
-      <WrongNetwork onClick={() => switchChain({ chainId: chains[0].id })} />
+      <WrongNetwork
+        onClick={() => switchChain({ chainId: chains[0].id })}
+        type="BTC"
+      />
     )
   }
   return <ConnectedChain icon={<BtcLogo />} name={chain.name} />

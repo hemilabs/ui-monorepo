@@ -9,11 +9,12 @@ export const WrongNetwork = function ({ onClick }: { onClick: () => void }) {
   const t = useTranslations('common')
   return (
     <button
-      className="flex items-center gap-x-2 rounded-xl bg-red-500 px-[10px] py-2 text-base font-bold text-white shadow-md duration-150 hover:scale-105"
+      className="flex items-center gap-x-2 rounded-xl bg-red-500 px-[10px] py-2 text-base
+        font-bold text-white shadow-md duration-150 hover:scale-105"
       onClick={onClick}
     >
       <span>{t('wrong-network')}</span>
-      <Chevron.Bottom />
+      <Chevron.Bottom className="[&>path]:fill-white" />
     </button>
   )
 }

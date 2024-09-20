@@ -2,56 +2,65 @@
 
 import { ExternalLink } from 'components/externalLink'
 import Image, { StaticImageData } from 'next/image'
-import { Card } from 'ui-common/components/card'
+
+const colorVariants = {
+  black: 'text-neutral-950',
+  gray: 'text-neutral-500',
+  white: 'text-white',
+} as const
+
+type ColorVariant = keyof typeof colorVariants
 
 interface Props {
-  href: string
-  imageSrc: StaticImageData
   altText: string
+  bgImage: StaticImageData
+  href: string
   heading: string
+  headingColor: ColorVariant
+  icon: StaticImageData
   subHeading: string
+  subHeadingColor?: ColorVariant
 }
 
-const ArrowDownLeftIcon = () => (
-  <svg fill="none" height="25" width="24" xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M16 14.628V8.5H9.872M8 16.5l7.32-7.32"
-      stroke="#000"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.5"
-    />
-  </svg>
-)
-
 export const DemoCard = ({
+  bgImage,
   href,
-  imageSrc,
   altText,
   heading,
+  headingColor,
+  icon,
   subHeading,
+  subHeadingColor,
 }: Props) => (
-  <ExternalLink href={href}>
-    <Card borderColor="gray" padding="small" shadow="soft">
-      <div className="h-60 max-w-64 cursor-pointer">
-        <div className="overflow-hidden rounded-xl border border-solid border-slate-100">
-          <Image
-            alt={altText}
-            priority={true}
-            src={imageSrc}
-            style={{
-              height: 'auto',
-              objectFit: 'cover',
-              width: '100%',
-            }}
-          />
-        </div>
-        <div className="mt-3 flex justify-between">
-          <h4 className="text-base font-medium">{heading}</h4>
-          <ArrowDownLeftIcon />
-        </div>
-        <p className="my-1 text-xs text-neutral-400">{subHeading}</p>
-      </div>
-    </Card>
-  </ExternalLink>
+  <div
+    className="solid group/demo-card relative h-[270px] flex-shrink
+    flex-grow rounded-[17px] border border-neutral-300/55
+    hover:cursor-pointer md:h-56 md:w-[295px] md:flex-shrink-0 md:flex-grow-0"
+  >
+    <div className="absolute left-6 top-5 -z-10 h-12 w-12">
+      <Image alt={altText} fill priority={true} src={icon} />
+    </div>
+    <Image
+      alt={altText}
+      className="group-hover/demo-card:opacity-88 -z-20 rounded-2xl duration-150"
+      fill
+      priority={true}
+      src={bgImage}
+      style={{ objectFit: 'cover' }}
+    />
+    <div className="h-full">
+      <ExternalLink className="flex h-full flex-col gap-y-1 p-6" href={href}>
+        <h4 className={`mt-auto text-base ${colorVariants[headingColor]}`}>
+          {heading}
+        </h4>
+        <p
+          className={`text-ms mt-1 leading-5 ${
+            colorVariants[subHeadingColor] ?? colorVariants[headingColor]
+          }`}
+        >
+          {subHeading}
+        </p>
+      </ExternalLink>
+    </div>
+  </div>
 )

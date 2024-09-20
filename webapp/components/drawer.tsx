@@ -22,7 +22,7 @@ export const Drawer = function ({ children, onClose }: Props) {
     <>
       <div
         className="fixed bottom-0 left-0 right-0 z-30 w-full overflow-y-auto rounded-t-lg border border-solid 
-        border-neutral-300/55 bg-transparent md:bottom-5 md:left-auto md:right-5 md:top-5 md:h-[calc(100dvh-40px)] md:w-fit md:rounded-lg"
+        border-neutral-300/55 bg-transparent md:bottom-3 md:left-auto md:right-3 md:top-3 md:h-[calc(100%-theme(spacing.3)*2)] md:w-fit md:rounded-lg"
         ref={drawerRef}
         style={{
           boxShadow:
@@ -33,6 +33,6 @@ export const Drawer = function ({ children, onClose }: Props) {
       </div>
       <Overlay />
     </>,
-    document.body,
+    document.getElementById('app-layout-container'),
   )
 }

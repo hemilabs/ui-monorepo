@@ -1,7 +1,6 @@
 'use client'
 
 import { useAccounts } from 'hooks/useAccounts'
-import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -30,17 +29,8 @@ const TestnetIndicator = function () {
   )
 }
 
-const MobileOverlay = () => (
-  <div className="absolute bottom-0 left-0 right-0 top-0 z-20 h-full w-full bg-neutral-950 bg-opacity-[0.08] md:hidden" />
-)
-
-const DesktopOverlay = () => (
-  <div className="absolute bottom-0 left-0 right-0 top-0 z-20 hidden h-full w-full bg-neutral-950 bg-opacity-[0.08] md:block" />
-)
-
 export const AppLayout = function ({ children }: Props) {
   const { allDisconnected } = useAccounts()
-  const { isDrawerOpen } = useDrawerContext()
   const [networkType] = useNetworkType()
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -94,11 +84,9 @@ export const AppLayout = function ({ children }: Props) {
           <TestnetIndicator />
         </div>
         <div className="xl:px-30 xl:pb-30 relative h-full overflow-y-auto px-4 pb-3 pt-4 md:pt-12">
-          {isDrawerOpen && <MobileOverlay />}
           {children}
         </div>
       </div>
-      {isDrawerOpen && <DesktopOverlay />}
       {isMenuOpen ? (
         <div className="md:hidden">
           <Navbar />

@@ -4,9 +4,9 @@ import {
   useConnectModal,
 } from '@rainbow-me/rainbowkit'
 import { featureFlags } from 'app/featureFlags'
+import { Drawer } from 'components/drawer'
 import { useTranslations } from 'next-intl'
 import { CloseIcon } from 'ui-common/components/closeIcon'
-import { Drawer } from 'ui-common/components/drawer'
 
 import { BtcWallet, EvmWallet } from './wallets'
 

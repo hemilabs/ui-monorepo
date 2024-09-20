@@ -2,6 +2,8 @@ import ReactDOM from 'react-dom'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 import { useOnKeyUp } from 'ui-common/hooks/useOnKeyUp'
 
+import { Overlay } from './overlay'
+
 type Props = {
   children: React.ReactNode
   onClose?: () => void
@@ -17,17 +19,20 @@ export const Drawer = function ({ children, onClose }: Props) {
   }, drawerRef)
 
   return ReactDOM.createPortal(
-    <div
-      className="fixed bottom-0 left-0 right-0 z-30 w-full overflow-y-auto rounded-t-lg border border-solid 
+    <>
+      <div
+        className="fixed bottom-0 left-0 right-0 z-30 w-full overflow-y-auto rounded-t-lg border border-solid 
         border-neutral-300/55 bg-transparent md:bottom-5 md:left-auto md:right-5 md:top-5 md:h-[calc(100dvh-40px)] md:w-fit md:rounded-lg"
-      ref={drawerRef}
-      style={{
-        boxShadow:
-          '0px 1px 1px 0px rgba(0, 0, 0, 0.02), 0px 8px 16px -4px rgba(0, 0, 0, 0.04), -12px 0px 32px -8px rgba(0, 0, 0, 0.06)',
-      }}
-    >
-      {children}
-    </div>,
+        ref={drawerRef}
+        style={{
+          boxShadow:
+            '0px 1px 1px 0px rgba(0, 0, 0, 0.02), 0px 8px 16px -4px rgba(0, 0, 0, 0.04), -12px 0px 32px -8px rgba(0, 0, 0, 0.06)',
+        }}
+      >
+        {children}
+      </div>
+      <Overlay />
+    </>,
     document.body,
   )
 }

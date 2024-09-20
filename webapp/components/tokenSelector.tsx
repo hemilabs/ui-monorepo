@@ -18,12 +18,9 @@ const CloseIcon = dynamic(
   },
 )
 
-const Modal = dynamic(
-  () => import('ui-common/components/modal').then(mod => mod.Modal),
-  {
-    ssr: false,
-  },
-)
+const Modal = dynamic(() => import('components/modal').then(mod => mod.Modal), {
+  ssr: false,
+})
 
 const MagnifyingGlass = () => (
   <svg

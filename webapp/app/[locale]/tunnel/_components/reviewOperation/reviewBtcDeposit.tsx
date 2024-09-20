@@ -1,3 +1,4 @@
+import { Modal } from 'components/modal'
 import { TransactionStatus } from 'components/transactionStatus'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useTranslations } from 'next-intl'
@@ -7,7 +8,6 @@ import { Token } from 'types/token'
 import { BtcDepositStatus } from 'types/tunnel'
 import { Card } from 'ui-common/components/card'
 import { CloseIcon } from 'ui-common/components/closeIcon'
-import { Modal } from 'ui-common/components/modal'
 
 import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
 

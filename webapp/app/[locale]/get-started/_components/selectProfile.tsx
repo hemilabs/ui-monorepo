@@ -1,11 +1,11 @@
 'use client'
 
+import { Modal } from 'components/modal'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { Button } from 'ui-common/components/button'
 import { Card } from 'ui-common/components/card'
-import { Modal } from 'ui-common/components/modal'
 
 import { DeveloperIcon } from './icons/developer'
 import { ExplorersIcon } from './icons/explorers'

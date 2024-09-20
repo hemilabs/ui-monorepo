@@ -61,6 +61,7 @@ export const AppLayout = function ({ children }: Props) {
             : 'border-neutral-300/55 md:border'
         }
         md:my-2 md:mr-2 md:w-[calc(75%-8px)] md:rounded-2xl`}
+      id="app-layout-container"
     >
       <div className="relative hidden md:block">
         <TestnetIndicator />

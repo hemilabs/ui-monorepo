@@ -13,6 +13,7 @@ import {
 import { ExternalLink } from 'components/externalLink'
 import { Chevron } from 'components/icons/chevron'
 import { useBitcoin } from 'hooks/useBitcoin'
+import { useChainIsSupported } from 'hooks/useChainIsSupported'
 import { useTranslations } from 'next-intl'
 import { isAndroid } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
@@ -23,6 +24,7 @@ import { useAccount as useEvmAccount, useBalance as useEvmBalance } from 'wagmi'
 import { Balance } from './balance'
 import { Box } from './box'
 import { BtcLogo } from './btcLogo'
+import { ConnectToSupportedChain } from './connectToSupportedChain'
 import { EthLogo } from './ethLogo'
 
 const ConnectWalletButton = ({
@@ -73,9 +75,10 @@ const InstallUnisat = function ({ connector }: { connector: ConnectorGroup }) {
 }
 
 export const BtcWallet = function () {
-  const { connector, status } = useBtcAccount()
+  const { chainId, connector, status } = useBtcAccount()
   const bitcoin = useBitcoin()
   const { balance } = useBtcBalance()
+  const chainSupported = useChainIsSupported(chainId)
   const { connect } = useConnect()
   const { connectors } = useConfig()
 
@@ -107,8 +110,6 @@ export const BtcWallet = function () {
       )
     }
 
-    const formattedBalance = balance !== undefined ? getBalance() : undefined
-
     return (
       <Box
         topContent={
@@ -120,10 +121,14 @@ export const BtcWallet = function () {
         walletName={connector!.name}
         walletType={t('btc-wallet')}
       >
-        <Balance
-          balance={formattedBalance}
-          symbol={bitcoin.nativeCurrency.symbol}
-        />
+        {chainSupported ? (
+          <Balance
+            balance={balance !== undefined ? getBalance() : undefined}
+            symbol={bitcoin.nativeCurrency.symbol}
+          />
+        ) : (
+          <ConnectToSupportedChain />
+        )}
       </Box>
     )
   }
@@ -132,17 +137,13 @@ export const BtcWallet = function () {
 }
 
 export const EvmWallet = function () {
-  const { address, chain, connector, status } = useEvmAccount()
+  const { address, chain, chainId, connector, status } = useEvmAccount()
+  const chainSupported = useChainIsSupported(chainId)
   const { data: balance } = useEvmBalance({ address })
   const { openConnectModal } = useConnectModal()
   const t = useTranslations('connect-wallets')
 
   if (status === 'connected') {
-    const formattedBalance =
-      balance !== undefined
-        ? getFormattedValue(formatUnits(balance.value, balance.decimals))
-        : undefined
-
     return (
       <Box
         topContent={
@@ -154,10 +155,20 @@ export const EvmWallet = function () {
         walletName={connector!.name}
         walletType={t('evm-wallet')}
       >
-        <Balance
-          balance={formattedBalance}
-          symbol={chain.nativeCurrency.symbol}
-        />
+        {chainSupported ? (
+          <Balance
+            balance={
+              balance !== undefined
+                ? getFormattedValue(
+                    formatUnits(balance.value, balance.decimals),
+                  )
+                : undefined
+            }
+            symbol={chain.nativeCurrency.symbol}
+          />
+        ) : (
+          <ConnectToSupportedChain />
+        )}
       </Box>
     )
   }

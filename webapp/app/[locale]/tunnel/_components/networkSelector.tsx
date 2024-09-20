@@ -52,7 +52,7 @@ export const NetworkSelector = function ({
     onSelectNetwork(id)
   }
 
-  const commonCss = `flex items-center border border-solid border-neutral-300/56
+  const commonCss = `flex items-center border border-solid border-neutral-300/55
     text-ms font-medium leading-5 text-neutral-950 rounded-lg bg-white p-2 gap-x-2`
 
   if (readonly || networks.length === 1) {

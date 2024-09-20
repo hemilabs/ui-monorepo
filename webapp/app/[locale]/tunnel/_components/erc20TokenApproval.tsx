@@ -21,7 +21,7 @@ const Toggle = ({ checked, disabled, onCheckedChange }: Props) => (
     >
       <input
         checked={checked}
-        className={`border-neutral-300/56 mt-0.5 border-[0.6px] border-solid ${
+        className={`mt-0.5 border-[0.6px] border-solid border-neutral-300/55 ${
           checked ? 'ml-auto mr-0.5' : 'ml-0.5 mr-auto'
         } ${
           disabled ? 'cursor-not-allowed' : 'cursor-pointer'

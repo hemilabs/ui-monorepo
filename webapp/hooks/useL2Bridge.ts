@@ -11,6 +11,7 @@ import {
 } from '@tanstack/react-query'
 import { useJsonRpcProvider, useWeb3Provider } from 'hooks/useEthersSigner'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
+import merge from 'lodash/merge'
 import { Token } from 'types/token'
 import {
   type CrossChainMessengerProxy,
@@ -21,6 +22,11 @@ import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
 import { useHemi } from './useHemi'
+
+const tunnelOverrides = {
+  // enable usage of EIP-1559
+  overrides: { type: 2 },
+}
 
 type GasEstimationOperations = Extract<
   keyof CrossChainMessengerProxy['estimateGas'],
@@ -296,7 +302,7 @@ export const useDepositErc20Token = function ({
   const l2BridgeAddress = token.extensions?.bridgeInfo[hemi.id]?.tokenAddress
 
   const depositErc20TokenGasFees = useEstimateGasFees({
-    args: [l1BridgeAddress, l2BridgeAddress, toDeposit],
+    args: [l1BridgeAddress, l2BridgeAddress, toDeposit, tunnelOverrides],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled:
@@ -327,6 +333,7 @@ export const useDepositErc20Token = function ({
         l1Address,
         l2Address,
         amount,
+        tunnelOverrides,
       )
       return response.hash as Hash
     },
@@ -362,7 +369,7 @@ export const useDepositNativeToken = function ({
     useL1ToL2CrossChainMessenger(l1ChainId)
 
   const depositNativeTokenGasFees = useEstimateGasFees({
-    args: [toDeposit],
+    args: [toDeposit, tunnelOverrides],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled:
@@ -381,7 +388,10 @@ export const useDepositNativeToken = function ({
     reset: resetDepositNativeToken,
   } = useMutation({
     async mutationFn(amount: string) {
-      const response = await crossChainMessenger.depositETH(amount)
+      const response = await crossChainMessenger.depositETH(
+        amount,
+        tunnelOverrides,
+      )
       return response.hash as Hash
     },
   })
@@ -415,7 +425,7 @@ export const useWithdrawNativeToken = function ({
 
   const withdrawNativeTokenGasFees = useEstimateGasFees({
     // Need to manually override from address - See https://github.com/ethereum-optimism/optimism/issues/8952
-    args: [amount, { overrides: { from: address } }],
+    args: [amount, merge(tunnelOverrides, { overrides: { from: address } })],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled:
@@ -434,7 +444,10 @@ export const useWithdrawNativeToken = function ({
     reset: resetWithdrawNativeToken,
   } = useMutation<Hash, Error, string>({
     async mutationFn(toWithdraw: string) {
-      const response = await crossChainMessenger.withdrawETH(toWithdraw)
+      const response = await crossChainMessenger.withdrawETH(
+        toWithdraw,
+        tunnelOverrides,
+      )
       return response.hash as Hash
     },
     ...options,
@@ -465,7 +478,7 @@ export const useFinalizeMessage = function ({
     useL1ToL2CrossChainMessenger(l1ChainId)
 
   const finalizeWithdrawalTokenGasFees = useEstimateGasFees({
-    args: [withdrawTxHash],
+    args: [withdrawTxHash, tunnelOverrides],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled: enabled && isHash(withdrawTxHash),
@@ -480,7 +493,10 @@ export const useFinalizeMessage = function ({
     reset: resetFinalizeWithdrawal,
   } = useMutation({
     async mutationFn(toFinalize: Hash) {
-      const response = await crossChainMessenger.finalizeMessage(toFinalize)
+      const response = await crossChainMessenger.finalizeMessage(
+        toFinalize,
+        tunnelOverrides,
+      )
       return response.hash as Hash
     },
     ...options,
@@ -511,7 +527,7 @@ export const useProveMessage = function ({
     useL1ToL2CrossChainMessenger(l1ChainId)
 
   const proveWithdrawalTokenGasFees = useEstimateGasFees({
-    args: [withdrawTxHash],
+    args: [withdrawTxHash, tunnelOverrides],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled: enabled && isHash(withdrawTxHash),
@@ -526,7 +542,10 @@ export const useProveMessage = function ({
     reset: resetProveWithdrawal,
   } = useMutation({
     async mutationFn(toProve: Hash) {
-      const response = await crossChainMessenger.proveMessage(toProve)
+      const response = await crossChainMessenger.proveMessage(
+        toProve,
+        tunnelOverrides,
+      )
       return response.hash as Hash
     },
   })
@@ -562,7 +581,7 @@ export const useWithdrawToken = function ({
   const l2BridgeAddress = token.address
 
   const withdrawErc20TokenGasFees = useEstimateGasFees({
-    args: [l1BridgeAddress, l2BridgeAddress, amount],
+    args: [l1BridgeAddress, l2BridgeAddress, amount, tunnelOverrides],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled:
@@ -584,6 +603,7 @@ export const useWithdrawToken = function ({
         l1BridgeAddress,
         l2BridgeAddress,
         toWithdraw,
+        tunnelOverrides,
       )
       return response.hash as Hash
     },

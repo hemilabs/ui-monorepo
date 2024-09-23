@@ -14,9 +14,27 @@ index 743d4b4..6eafe8d 100644
      waitForMessageReceipt(message: MessageLike, opts?: {
          fromBlockOrBlockHash?: BlockTag;
 diff --git a/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.js b/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.js
-index 01ac898..bc760d9 100644
+index 01ac898..fcaeb3c 100644
 --- a/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.js
 +++ b/node_modules/@eth-optimism/sdk/dist/cross-chain-messenger.js
+@@ -113,7 +113,7 @@ class CrossChainMessenger {
+                     return legacyL1XDM.populateTransaction.relayMessage(resolved.target, resolved.sender, resolved.message, resolved.messageNonce, proof, (opts === null || opts === void 0 ? void 0 : opts.overrides) || {});
+                 }
+             },
+-            depositETH: async (amount, opts, isEstimatingGas = false) => {
++            depositETH: async (amount, opts, isEstimatingGas = true) => {
+                 const getOpts = async () => {
+                     if (isEstimatingGas) {
+                         return opts;
+@@ -130,7 +130,7 @@ class CrossChainMessenger {
+                 const bridge = await this.getBridgeForTokenPair(l1Token, l2Token);
+                 return bridge.populateTransaction.approve(l1Token, l2Token, amount, opts);
+             },
+-            depositERC20: async (l1Token, l2Token, amount, opts, isEstimatingGas = false) => {
++            depositERC20: async (l1Token, l2Token, amount, opts, isEstimatingGas = true) => {
+                 const bridge = await this.getBridgeForTokenPair(l1Token, l2Token);
+                 const getOpts = async () => {
+                     var _a, _b, _c, _d;
 @@ -439,7 +439,7 @@ class CrossChainMessenger {
              return b.blockNumber - a.blockNumber;
          });
@@ -56,7 +74,7 @@ index 01ac898..bc760d9 100644
          const messageHashV1 = (0, core_utils_1.hashCrossDomainMessagev1)(resolved.messageNonce, resolved.sender, resolved.target, resolved.value, resolved.minGasLimit, resolved.message);
          const messenger = resolved.direction === interfaces_1.MessageDirection.L1_TO_L2
 diff --git a/node_modules/@eth-optimism/sdk/src/cross-chain-messenger.ts b/node_modules/@eth-optimism/sdk/src/cross-chain-messenger.ts
-index 7d17f33..60a9f9e 100644
+index 7d17f33..61f6ee6 100644
 --- a/node_modules/@eth-optimism/sdk/src/cross-chain-messenger.ts
 +++ b/node_modules/@eth-optimism/sdk/src/cross-chain-messenger.ts
 @@ -620,7 +620,8 @@ export class CrossChainMessenger {
@@ -102,3 +120,21 @@ index 7d17f33..60a9f9e 100644
      // legacy withdrawals relayed prebedrock are v1
      const messageHashV0 = hashCrossDomainMessagev0(
        resolved.target,
+@@ -2150,7 +2154,7 @@ export class CrossChainMessenger {
+         l2GasLimit?: NumberLike
+         overrides?: PayableOverrides
+       },
+-      isEstimatingGas: boolean = false
++      isEstimatingGas: boolean = true
+     ): Promise<TransactionRequest> => {
+       const getOpts = async () => {
+         if (isEstimatingGas) {
+@@ -2240,7 +2244,7 @@ export class CrossChainMessenger {
+         l2GasLimit?: NumberLike
+         overrides?: CallOverrides
+       },
+-      isEstimatingGas: boolean = false
++      isEstimatingGas: boolean = true
+     ): Promise<TransactionRequest> => {
+       const bridge = await this.getBridgeForTokenPair(l1Token, l2Token)
+       // we need extra buffer for gas limit

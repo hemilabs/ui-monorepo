@@ -23,10 +23,25 @@ import { useAccount } from 'wagmi'
 import { useEstimateFees } from './useEstimateFees'
 import { useHemi } from './useHemi'
 
+// Adding a cap to gasLimit for L1 operations in the tunnel, as the SDK overestimates
+// the gas estimation by many orders of magnitude, causing the app to show a extremely high gas estimation that is later not paid
+// This number was calculated by Max after analyzing several Tunnel operations in Sepolia, and may be removed in the future
+// See https://github.com/hemilabs/ui-monorepo/issues/539
+const l1GasLimitOverride = 2_000_000
+
 const tunnelOverrides = {
   // enable usage of EIP-1559
   overrides: { type: 2 },
 }
+
+const l1Overrides = merge(
+  {
+    overrides: {
+      gasLimit: l1GasLimitOverride,
+    },
+  },
+  tunnelOverrides,
+)
 
 type GasEstimationOperations = Extract<
   keyof CrossChainMessengerProxy['estimateGas'],
@@ -99,6 +114,13 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
     walletConnectedToChain,
   )
 
+  const hardcodedOps = [
+    'depositERC20',
+    'depositETH',
+    'finalizeMessage',
+    'proveMessage',
+  ]
+
   const { data = BigInt(0), status } = useQuery({
     enabled:
       enabled &&
@@ -106,6 +128,10 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
       crossChainMessengerStatus === 'success' &&
       Object.keys(crossChainMessenger.estimateGas).length > 0,
     async queryFn() {
+      if (hardcodedOps.includes(operation)) {
+        // See https://github.com/hemilabs/ui-monorepo/issues/539
+        return BigInt(l1GasLimitOverride)
+      }
       // @ts-expect-error this works, unsure why TS is not picking it up
       const estimate = await crossChainMessenger.estimateGas[operation](...args)
       return estimate.toBigInt()
@@ -123,6 +149,10 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
     chainId: walletConnectedToChain,
     enabled: status === 'success',
     gasUnits: data,
+    // As the gas limit is hardcoded for some operations, we don't need an overestimation
+    // use 1 to get the exact same value
+    // See https://github.com/hemilabs/ui-monorepo/issues/539
+    overEstimation: hardcodedOps.includes(operation) ? 1 : undefined,
   })
 }
 
@@ -333,7 +363,7 @@ export const useDepositErc20Token = function ({
         l1Address,
         l2Address,
         amount,
-        tunnelOverrides,
+        l1Overrides,
       )
       return response.hash as Hash
     },
@@ -388,10 +418,7 @@ export const useDepositNativeToken = function ({
     reset: resetDepositNativeToken,
   } = useMutation({
     async mutationFn(amount: string) {
-      const response = await crossChainMessenger.depositETH(
-        amount,
-        tunnelOverrides,
-      )
+      const response = await crossChainMessenger.depositETH(amount, l1Overrides)
       return response.hash as Hash
     },
   })
@@ -495,7 +522,7 @@ export const useFinalizeMessage = function ({
     async mutationFn(toFinalize: Hash) {
       const response = await crossChainMessenger.finalizeMessage(
         toFinalize,
-        tunnelOverrides,
+        l1Overrides,
       )
       return response.hash as Hash
     },
@@ -544,7 +571,7 @@ export const useProveMessage = function ({
     async mutationFn(toProve: Hash) {
       const response = await crossChainMessenger.proveMessage(
         toProve,
-        tunnelOverrides,
+        l1Overrides,
       )
       return response.hash as Hash
     },

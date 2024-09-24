@@ -1,6 +1,5 @@
 'use client'
 
-import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 
@@ -11,18 +10,13 @@ import purefinanceImg from '../../../public/demos/purefinance.png'
 import { DemoCard } from './_components/demoCard'
 
 const HemiHatchlings = function () {
-  const hemi = useHemi()
   const t = useTranslations('demos')
 
   return (
     <DemoCard
       altText="hemi hatchlings"
       heading={t('hemihatchlings.heading')}
-      href={
-        hemi.testnet
-          ? 'https://hemihatchlings-test.hemi.xyz'
-          : 'https://hemihatchlings.hemi.xyz'
-      }
+      href="https://testnet.hatchlings.hemi.xyz"
       imageSrc={hemihatchlingspixelatedImg}
       subHeading={t('hemihatchlings.sub-heading')}
     />

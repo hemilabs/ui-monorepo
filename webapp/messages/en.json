@@ -208,9 +208,9 @@
     "web-pop-miner": "Web PoP Miner"
   },
   "token-selector": {
-    "choose-token": "Choose Token",
-    "no-tokens": "There are no tokens",
-    "search-tokens": "Search tokens"
+    "no-results-for": "No results found for <search></search>",
+    "search-tokens": "Search tokens...",
+    "select-token": "Select token"
   },
   "transaction-history": {
     "connect-wallet-to-review": "Connect your wallet to review transaction history.",

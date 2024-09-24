@@ -208,8 +208,9 @@
     "web-pop-miner": "Minero PoP Web"
   },
   "token-selector": {
-    "choose-token": "Elegir Token",
-    "no-tokens": "No hay tokens"
+    "no-results-for": "No se encontraron resultados para <search></search>",
+    "search-tokens": "Buscar tokens...",
+    "select-token": "Seleccione un token"
   },
   "transaction-history": {
     "connect-wallet-to-review": "Conecte su billetera para revisar su historial de transacciones.",

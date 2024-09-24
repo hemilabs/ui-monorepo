@@ -69,7 +69,9 @@ export const Amount = function ({ operation }: Props) {
 
   return (
     <div className="flex items-center gap-x-1.5">
-      <Logo token={token} />
+      <div className="h-5 w-5">
+        <Logo token={token} />
+      </div>
       <Value amount={formattedAmount} token={token} />
       {showTooltip && (
         <Tooltip

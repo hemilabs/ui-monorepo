@@ -2,7 +2,8 @@
 
 import { featureFlags } from 'app/featureFlags'
 import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
-import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
+import { hemiMainnet } from 'networks/hemiMainnet'
+import { hemiTestnet } from 'networks/hemiTestnet'
 import { type OrderedChains, type RemoteChain } from 'types/chain'
 
 import { mainnet } from './mainnet'

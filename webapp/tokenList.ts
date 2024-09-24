@@ -1,7 +1,8 @@
 import hemilabsTokenList from '@hemilabs/token-list'
 import { featureFlags } from 'app/featureFlags'
 import { bitcoinTestnet } from 'btc-wallet/chains'
-import { hemi as hemiMainnet, hemiSepolia } from 'hemi-viem'
+import { hemiMainnet } from 'networks/hemiMainnet'
+import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
 import { sepolia } from 'networks/sepolia'
 import { type EvmToken, type Token } from 'types/token'
@@ -17,7 +18,7 @@ const btcLogoUri = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
 const ethLogoUri = `data:image/svg+xml,%3Csvg fill='none' height='24' width='25' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23627EEA' d='M12.5 24c6.627 0 12-5.373 12-12s-5.373-12-12-12S.5 5.373.5 12s5.373 12 12 12Z' /%3E%3Cg fill='%23fff'%3E%3Cpath d='M12.873 3v6.652l5.623 2.513L12.873 3Z' fill-opacity='0.602' /%3E%3Cpath d='M12.873 3 7.25 12.165l5.623-2.512V3Z' /%3E%3Cpath d='M12.873 16.476v4.52l5.627-7.784-5.627 3.264Z' fill-opacity='0.602' /%3E%3Cpath d='M12.873 20.996v-4.52L7.25 13.211l5.623 7.784Z' /%3E%3Cpath d='m12.873 15.43 5.623-3.265-5.623-2.51v5.775Z' fill-opacity='0.2' /%3E%3Cpath d='m7.25 12.165 5.623 3.265V9.654L7.25 12.165Z' fill-opacity='0.602' /%3E%3C/g%3E%3C/svg%3E`
 
 const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
-  .filter(t => t.chainId === hemiMainnet.id || t.chainId === hemiSepolia.id)
+  .filter(t => t.chainId === hemiMainnet.id || t.chainId === hemiTestnet.id)
   // WETH cannot be tunneled, so we must exclude it
   .filter(t => t.symbol !== 'WETH')
 
@@ -68,7 +69,7 @@ const nativeTokens: Token[] = [
     extensions: {
       bridgeInfo: {
         // Leaving intentionally empty as there's no token address for native ETH in hemi
-        [hemiSepolia.id]: {},
+        [hemiTestnet.id]: {},
       },
     },
     logoURI: ethLogoUri,
@@ -90,9 +91,9 @@ const nativeTokens: Token[] = [
     symbol: hemiMainnet.nativeCurrency.symbol,
   },
   {
-    address: hemiSepolia.nativeCurrency.symbol,
-    chainId: hemiSepolia.id,
-    decimals: hemiSepolia.nativeCurrency.decimals,
+    address: hemiTestnet.nativeCurrency.symbol,
+    chainId: hemiTestnet.id,
+    decimals: hemiTestnet.nativeCurrency.decimals,
     extensions: {
       bridgeInfo: {
         [sepolia.id]: {
@@ -100,8 +101,8 @@ const nativeTokens: Token[] = [
         },
       },
     },
-    name: hemiSepolia.nativeCurrency.name,
-    symbol: hemiSepolia.nativeCurrency.symbol,
+    name: hemiTestnet.nativeCurrency.name,
+    symbol: hemiTestnet.nativeCurrency.symbol,
   },
 ]
 
@@ -114,7 +115,7 @@ if (featureFlags.btcTunnelEnabled) {
     decimals: bitcoinTestnet.nativeCurrency.decimals,
     extensions: {
       bridgeInfo: {
-        [hemiSepolia.id]: {
+        [hemiTestnet.id]: {
           tokenAddress: btcTokenAddress,
         },
       },
@@ -125,7 +126,7 @@ if (featureFlags.btcTunnelEnabled) {
   })
   tokens.push({
     address: btcTokenAddress,
-    chainId: hemiSepolia.id,
+    chainId: hemiTestnet.id,
     decimals: 8,
     extensions: {
       bridgeInfo: {

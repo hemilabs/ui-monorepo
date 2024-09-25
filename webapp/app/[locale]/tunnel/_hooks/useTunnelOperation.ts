@@ -29,7 +29,7 @@ export const useTunnelOperation = function (): {
     newOperation: (typeof validOperations)[number],
     options?: Options,
   ) => void
-  updateTxHash: (newTxHash: string, options?: Options) => void
+  updateTxHash: (newTxHash: string | null, options?: Options) => void
 } {
   const [operation, setOperation] = useQueryState(
     'operation',

@@ -1,4 +1,4 @@
-import { hemiSepolia } from 'hemi-viem'
+import { hemiTestnet } from 'networks/hemiTestnet'
 import {
   type DepositTunnelOperation,
   type WithdrawTunnelOperation,
@@ -63,7 +63,7 @@ export const historyReducer = function (
                 ({
                   ...deposit,
                   l1ChainId: deposit.l1ChainId,
-                  l2ChainId: deposit.l2ChainId ?? hemiSepolia.id,
+                  l2ChainId: deposit.l2ChainId ?? hemiTestnet.id,
                 }) as DepositTunnelOperation,
             ),
             status: 'ready',
@@ -76,7 +76,7 @@ export const historyReducer = function (
                 ({
                   ...withdrawal,
                   l1ChainId: withdrawal.l1ChainId,
-                  l2ChainId: withdrawal.l2ChainId ?? hemiSepolia.id,
+                  l2ChainId: withdrawal.l2ChainId ?? hemiTestnet.id,
                 }) as WithdrawTunnelOperation,
             ),
             status: 'ready',

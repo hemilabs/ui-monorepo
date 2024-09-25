@@ -1,5 +1,6 @@
 import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
-import { hemi as hemiMainnet, hemiSepolia as hemiSepolia } from 'hemi-viem'
+import { hemiMainnet } from 'networks/hemiMainnet'
+import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
 import { sepolia } from 'networks/sepolia'
 import { type RemoteChain } from 'types/chain'
@@ -17,7 +18,7 @@ export const ChainLogo = function ({
     case bitcoinTestnet.id:
       return <BtcLogo />
     case hemiMainnet.id:
-    case hemiSepolia.id:
+    case hemiTestnet.id:
       return <HemiTokenWithBackground />
     case mainnet.id:
     case sepolia.id:

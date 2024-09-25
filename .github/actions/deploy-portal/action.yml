@@ -17,6 +17,12 @@ inputs:
   HOSTINGER_TARGET:
     required: true
     description: 'Hostinger target'
+  NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET:
+    required: false
+    description: 'Custom RPC URL for Hemi Mainnet'
+  NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA:
+    required: false
+    description: 'Custom RPC URL for Hemi Sepolia'
   NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET:
     required: false
     description: 'Custom RPC URL for Mainnet'
@@ -40,6 +46,8 @@ runs:
       run: npx lerna run deploy --scope=app
       shell: bash
       env:
+        NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET }}
+        NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA }}
         NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL }}

@@ -1,4 +1,5 @@
-import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
+import { hemiMainnet } from 'networks/hemiMainnet'
+import { hemiTestnet } from 'networks/hemiTestnet'
 import { useMemo } from 'react'
 import { renderToString } from 'react-dom/server'
 import { type EvmChain } from 'types/chain'

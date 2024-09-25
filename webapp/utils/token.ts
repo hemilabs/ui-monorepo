@@ -1,4 +1,5 @@
-import { hemi, hemiSepolia } from 'hemi-viem'
+import { hemiMainnet } from 'networks/hemiMainnet'
+import { hemiTestnet } from 'networks/hemiTestnet'
 import { tokenList } from 'tokenList'
 import { EvmToken, Token } from 'types/token'
 import { Address, isAddressEqual } from 'viem'
@@ -29,7 +30,7 @@ export const getL2TokenByBridgedAddress = (
 ) =>
   tokenList.tokens.find(
     token =>
-      (token.chainId === hemi.id || token.chainId === hemiSepolia.id) &&
+      (token.chainId === hemiMainnet.id || token.chainId === hemiTestnet.id) &&
       token.extensions?.bridgeInfo?.[l1ChainId]?.tokenAddress &&
       isAddressEqual(
         token.extensions.bridgeInfo[l1ChainId].tokenAddress,

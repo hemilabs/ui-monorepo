@@ -1,4 +1,5 @@
-import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
+import { hemiMainnet } from 'networks/hemiMainnet'
+import { hemiTestnet } from 'networks/hemiTestnet'
 import { sepolia } from 'networks/sepolia'
 
 // Approximately 1/2 day

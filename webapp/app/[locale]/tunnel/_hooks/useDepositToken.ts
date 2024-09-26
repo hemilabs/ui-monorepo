@@ -5,7 +5,7 @@ import { useDepositErc20Token } from 'hooks/useL2Bridge'
 import { useEffect } from 'react'
 import { type EvmToken } from 'types/token'
 import { getTunnelContracts } from 'utils/crossChainMessenger'
-import { parseUnits } from 'viem'
+import { parseUnits, type Hash } from 'viem'
 import {
   useAccount,
   useSimulateContract,
@@ -21,12 +21,14 @@ type UseDepositToken = Pick<
 > & {
   amount: string
   extendedApproval?: boolean
+  onSuccess: (hash: Hash) => void
   token: EvmToken
 }
 export const useDepositToken = function ({
   amount,
   enabled,
   extendedApproval = false,
+  onSuccess,
   token,
 }: UseDepositToken) {
   const { address: owner } = useAccount()
@@ -50,6 +52,7 @@ export const useDepositToken = function ({
   } = useDepositErc20Token({
     enabled,
     l1ChainId: token.chainId,
+    onSuccess,
     toDeposit,
     token,
   })

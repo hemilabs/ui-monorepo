@@ -316,12 +316,25 @@ type UseDepositErc20Token = {
   l1ChainId: Chain['id']
   toDeposit: string
   token: Token
-}
+} & Pick<
+  UseMutationOptions<
+    Hash,
+    Error,
+    {
+      amount: string
+      l1Address: string
+      l2Address: string
+    }
+  >,
+  'onSettled' | 'onSuccess'
+>
+
 export const useDepositErc20Token = function ({
   enabled,
   l1ChainId,
   toDeposit,
   token,
+  ...options
 }: UseDepositErc20Token) {
   const operation = 'depositERC20'
   const hemi = useHemi()
@@ -367,6 +380,7 @@ export const useDepositErc20Token = function ({
       )
       return response.hash as Hash
     },
+    ...options,
   })
 
   return {
@@ -388,11 +402,12 @@ type UseDepositNativeToken = {
   enabled: boolean
   l1ChainId: Chain['id']
   toDeposit: string
-}
+} & Pick<UseMutationOptions<Hash, Error, string>, 'onSettled' | 'onSuccess'>
 export const useDepositNativeToken = function ({
   enabled,
   l1ChainId,
   toDeposit,
+  ...options
 }: UseDepositNativeToken) {
   const operation = 'depositETH'
   const { crossChainMessenger, crossChainMessengerStatus } =
@@ -421,6 +436,7 @@ export const useDepositNativeToken = function ({
       const response = await crossChainMessenger.depositETH(amount, l1Overrides)
       return response.hash as Hash
     },
+    ...options,
   })
 
   return {

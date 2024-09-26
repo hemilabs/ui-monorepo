@@ -1,9 +1,7 @@
 'use client'
 
-import { MessageDirection } from '@eth-optimism/sdk'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { Button } from 'components/button'
-import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useBitcoin } from 'hooks/useBitcoin'
@@ -15,13 +13,13 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
-import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken } from 'types/token'
-import { BtcDepositStatus, EvmDepositOperation } from 'types/tunnel'
+import { BtcDepositStatus } from 'types/tunnel'
 import { isEvmNetwork } from 'utils/chain'
+import { getEvmBlock } from 'utils/evmApi'
 import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { formatUnits, parseUnits, zeroAddress } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useAfterTransaction } from '../_hooks/useAfterTransaction'
@@ -301,7 +299,7 @@ type EvmDepositProps = {
 }
 
 const EvmDeposit = function ({ state }: EvmDepositProps) {
-  const { addDepositToTunnelHistory } = useTunnelHistory()
+  const { deposits, updateDeposit } = useTunnelHistory()
   // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
   const [depositAmount, setDepositAmount] = useState('0')
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
@@ -319,7 +317,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     fromToken,
     resetStateAfterOperation,
     toToken,
-    toNetworkId,
     updateFromInput,
   } = state
 
@@ -397,36 +394,24 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
   const onSuccess = useCallback(
     function () {
       resetFormState()
-      const isNative = isNativeToken(fromToken)
+
+      const depositFound = deposits.find(
+        d =>
+          d.transactionHash === depositReceipt.transactionHash &&
+          d.l1ChainId === fromNetworkId &&
+          !d.timestamp,
+      )
+
       // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
       // eslint-disable-next-line promise/catch-or-return
-      addTimestampToOperation<EvmDepositOperation>(
-        {
-          amount: parseUnits(fromInput, fromToken.decimals).toString(),
+      getEvmBlock(depositReceipt.blockNumber, fromNetworkId).then(block =>
+        updateDeposit(depositFound, {
           blockNumber: Number(depositReceipt.blockNumber),
-          direction: MessageDirection.L1_TO_L2,
-          from: depositReceipt.from,
-          l1ChainId: fromNetworkId,
-          l1Token: isNative ? zeroAddress : fromToken.address,
-          l2ChainId: toNetworkId,
-          l2Token: isNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
-          // "to" field uses the same address as from, which is user's address
-          to: depositReceipt.from,
-          transactionHash: depositReceipt.transactionHash,
-        },
-        fromToken.chainId,
-      ).then(addDepositToTunnelHistory)
+          timestamp: Number(block.timestamp),
+        }),
+      )
     },
-    [
-      addDepositToTunnelHistory,
-      depositReceipt,
-      fromInput,
-      fromNetworkId,
-      fromToken,
-      resetFormState,
-      toNetworkId,
-      toToken,
-    ],
+    [depositReceipt, deposits, fromNetworkId, resetFormState, updateDeposit],
   )
 
   const { beforeTransaction } = useAfterTransaction({

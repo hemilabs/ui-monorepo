@@ -2,6 +2,7 @@
 
 import { ExternalLink } from 'components/externalLink'
 import hemiSocials from 'hemi-socials'
+import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import dynamic from 'next/dynamic'
@@ -106,11 +107,15 @@ const AutomaticConfiguration = function () {
 
   const ethereum = evmRemoteNetworks.at(-1)
 
+  // as the tunnel may be using a custom RPC, we want users to add the public original one.
+  // For that, use the original hemi definition from hemi-viem
+  const hemiToAdd = hemi.id === hemiTestnet.id ? hemiTestnet : hemiMainnet
+
   return (
     <div className="flex flex-col gap-y-6 py-2 lg:gap-y-9">
       <ChainRow chain={ethereum} layer={1} logo={<EthLogo />} />
       <ChainRow
-        chain={hemi}
+        chain={hemiToAdd}
         layer={2}
         logo={
           <div className="h-6 w-6">
@@ -128,6 +133,10 @@ const ManualConfiguration = function () {
   const t = useTranslations('get-started.network')
   const ethereum = evmRemoteNetworks.at(-1)
 
+  // as the tunnel may be using a custom RPC, we want users to add the public original one.
+  // For that, use the original hemi definition from hemi-viem
+  const hemiToAdd = hemi.id === hemiTestnet.id ? hemiTestnet : hemiMainnet
+
   return (
     <div className="grid grid-cols-1 gap-y-4 rounded-lg bg-white text-black xl:grid-cols-2 2xl:grid-cols-3 [&>a]:text-sm [&>h5]:text-base xl:[&>h5]:text-lg [&>p]:text-sm xl:[&>p]:text-base">
       {/* By not adding order, when visible, this is shown first */}
@@ -137,7 +146,7 @@ const ManualConfiguration = function () {
         {t('rpc-url')}
       </ConfigurationPropTitle>
       <ConfigurationUrl
-        href={hemi.rpcUrls.default.http[0]}
+        href={hemiToAdd.rpcUrls.default.http[0]}
         order="order-2 xl:order-5 2xl:order-3"
       />
       <ConfigurationPropTitle order="order-4 xl:order-7">

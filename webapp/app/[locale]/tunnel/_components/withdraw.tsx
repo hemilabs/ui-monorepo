@@ -1,7 +1,6 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { Big } from 'big.js'
 import { Button } from 'components/button'
-import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
@@ -14,6 +13,7 @@ import { useCallback, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { isEvmNetwork } from 'utils/chain'
+import { getEvmBlock } from 'utils/evmApi'
 import { formatBtcAddress, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits } from 'viem'
@@ -121,18 +121,14 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           !w.timestamp,
       )
 
-      const extendedWithdrawal = {
-        ...withdrawalFound,
-        blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
-      }
-
       // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
       // eslint-disable-next-line promise/catch-or-return
-      addTimestampToOperation(extendedWithdrawal, fromNetworkId).then(
-        ({ timestamp }) =>
-          updateWithdrawal(extendedWithdrawal, {
+      getEvmBlock(withdrawBitcoinReceipt.blockNumber, fromNetworkId).then(
+        block =>
+          updateWithdrawal(withdrawalFound, {
+            blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
             status: MessageStatus.RELAYED,
-            timestamp,
+            timestamp: Number(block.timestamp),
           }),
       )
     },
@@ -337,18 +333,15 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
         w =>
           w.transactionHash === withdrawReceipt.transactionHash && !w.timestamp,
       )
-      const extendedWithdrawal = {
-        ...withdrawalFound,
-        blockNumber: Number(withdrawReceipt.blockNumber),
-      }
+
       // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
       // eslint-disable-next-line promise/catch-or-return
-      addTimestampToOperation(extendedWithdrawal, fromNetworkId).then(
-        ({ timestamp }) =>
-          updateWithdrawal(extendedWithdrawal, {
-            status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
-            timestamp,
-          }),
+      getEvmBlock(withdrawReceipt.blockNumber, fromNetworkId).then(block =>
+        updateWithdrawal(withdrawalFound, {
+          blockNumber: Number(withdrawReceipt.blockNumber),
+          status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+          timestamp: Number(block.timestamp),
+        }),
       )
       // use this to show the TX confirmation in prove.tsx when mounting
       savePartialWithdrawal({

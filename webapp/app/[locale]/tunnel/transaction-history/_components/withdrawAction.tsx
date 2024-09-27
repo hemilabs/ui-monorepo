@@ -3,7 +3,7 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { type WithdrawTunnelOperation } from 'types/tunnel'
-import { getOperationFromWithdraw, isToEvmWithdraw } from 'utils/tunnel'
+import { isToEvmWithdraw } from 'utils/tunnel'
 
 import { CallToAction } from './callToAction'
 
@@ -25,12 +25,9 @@ export const WithdrawAction = function ({ withdraw }: Props) {
     return <Skeleton className="w-15 h-8" />
   }
 
-  const operation = getOperationFromWithdraw(withdraw)
-
   const Failed = (
     <CallToAction
       networkType={networkType}
-      operation={operation}
       text={t('retry')}
       txHash={withdraw.transactionHash}
       variant="secondary"
@@ -40,7 +37,6 @@ export const WithdrawAction = function ({ withdraw }: Props) {
   const Claim = (
     <CallToAction
       networkType={networkType}
-      operation={operation}
       text={t('claim')}
       txHash={withdraw.transactionHash}
       variant="primary"
@@ -50,7 +46,6 @@ export const WithdrawAction = function ({ withdraw }: Props) {
   const Prove = (
     <CallToAction
       networkType={networkType}
-      operation={operation}
       text={t('prove')}
       txHash={withdraw.transactionHash}
       variant="primary"
@@ -60,7 +55,6 @@ export const WithdrawAction = function ({ withdraw }: Props) {
   const getViewButton = () => (
     <CallToAction
       networkType={networkType}
-      operation={operation}
       text={t('view')}
       txHash={withdraw.transactionHash}
       variant="secondary"

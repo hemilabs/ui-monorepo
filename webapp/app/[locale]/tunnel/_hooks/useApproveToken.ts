@@ -1,10 +1,11 @@
+import { useQueryClient } from '@tanstack/react-query'
+import { useChainIsSupported } from 'hooks/useChainIsSupported'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { type EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/token'
+import { Hash } from 'viem'
 import { useAccount } from 'wagmi'
 import { useAllowance, useApprove } from 'wagmi-erc20-hooks'
-
-import { useChainIsSupported } from './useChainIsSupported'
 
 const ApproveErc20TokenGas = BigInt(45_000)
 
@@ -13,6 +14,7 @@ export const useApproveToken = function (
   args: Pick<Parameters<typeof useAllowance>['1']['args'], 'spender'> & {
     amount: bigint
   },
+  onSuccess?: (hash: Hash) => void,
 ) {
   const { amount, spender } = args
   const erc20AddressToken = token.address as `0x${string}`
@@ -26,10 +28,12 @@ export const useApproveToken = function (
     gasUnits: ApproveErc20TokenGas,
   })
 
+  const queryClient = useQueryClient()
+
   const {
     data: allowance = BigInt(0),
     status: allowanceStatus,
-    refetch: refetchAllowance,
+    queryKey: allowanceQueryKey,
   } = useAllowance(erc20AddressToken, {
     args: { owner, spender },
     query: {
@@ -46,8 +50,12 @@ export const useApproveToken = function (
     writeContract,
   } = useApprove(erc20AddressToken, {
     args: { amount, spender },
-    query: {
-      onSuccess: () => refetchAllowance(),
+    mutation: {
+      onSuccess(approvalTxHash) {
+        // optimistically update the allowance
+        queryClient.setQueryData(allowanceQueryKey, () => amount)
+        onSuccess?.(approvalTxHash)
+      },
     },
   })
 

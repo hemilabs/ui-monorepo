@@ -20,7 +20,6 @@ export const DepositAction = function ({ deposit }: Props) {
     return (
       <CallToAction
         networkType={networkType}
-        operation={operation}
         text={t('claim')}
         txHash={deposit.transactionHash}
         variant="primary"
@@ -31,7 +30,6 @@ export const DepositAction = function ({ deposit }: Props) {
   return (
     <CallToAction
       networkType={networkType}
-      operation={operation}
       text={t('view')}
       txHash={deposit.transactionHash}
       variant="secondary"

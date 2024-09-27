@@ -8,23 +8,17 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
-import { useNetworkType } from 'hooks/useNetworkType'
-import { useRouter } from 'next/navigation'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { ComponentProps, MutableRefObject, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { TunnelOperation } from 'types/tunnel'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import {
-  getOperationFromDeposit,
-  getOperationFromWithdraw,
-  isDeposit,
-  isWithdraw,
-} from 'utils/tunnel'
+import { isDeposit, isWithdraw } from 'utils/tunnel'
 import { Chain } from 'viem'
 
+import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
+
 import { Amount } from './amount'
-import { getCallToActionUrl } from './callToAction'
 import { Chain as ChainComponent } from './chain'
 import { DepositAction } from './depositAction'
 import { DepositStatus } from './depositStatus'
@@ -69,9 +63,6 @@ const Body = function ({
   loading: boolean
   rows: Row<TunnelOperation>[]
 }) {
-  const locale = useLocale()
-  const [networkType] = useNetworkType()
-  const router = useRouter()
   const t = useTranslations('tunnel-page.transaction-history')
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
@@ -79,19 +70,10 @@ const Body = function ({
     getScrollElement: () => containerRef.current,
     overscan: 10,
   })
+  const { updateTxHash } = useTunnelOperation()
 
-  const openTransaction = function (tunnelOperation: TunnelOperation) {
-    const operation = isDeposit(tunnelOperation)
-      ? getOperationFromDeposit(tunnelOperation)
-      : getOperationFromWithdraw(tunnelOperation)
-
-    const url = `/${locale}${getCallToActionUrl({
-      networkType,
-      operation,
-      txHash: tunnelOperation.transactionHash,
-    })}`
-    router.push(url)
-  }
+  const openTransaction = (tunnelOperation: TunnelOperation) =>
+    updateTxHash(tunnelOperation.transactionHash)
 
   return (
     <tbody

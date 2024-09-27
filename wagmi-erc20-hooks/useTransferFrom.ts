@@ -13,16 +13,16 @@ type Amount = TransferArgs[2]
 
 type Options = {
   args: { amount: Amount; recipient: Recipient; sender: Sender }
-  query?: WriteQueryOptions
+  mutation?: WriteQueryOptions
 }
 
 export const useTransferFrom = (
   erc20Address: Address,
-  { args: { amount, recipient, sender }, query }: Options,
+  { args: { amount, recipient, sender }, mutation }: Options,
 ) =>
   useWriteErc20({
     address: erc20Address,
     args: [sender, recipient, amount],
     functionName: 'transferFrom',
-    query,
+    mutation,
   })

@@ -203,7 +203,17 @@
         }
       }
     ],
-    "root": true
+    "root": true,
+    "rules": {
+      "camelcase": [
+        "warn",
+        {
+          "allow": [
+            "after_txid"
+          ]
+        }
+      ]
+    }
   },
   "husky": {
     "hooks": {

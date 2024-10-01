@@ -2,9 +2,11 @@ import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { tokenList } from 'tokenList'
 import { EvmToken, Token } from 'types/token'
-import { Address, isAddressEqual } from 'viem'
+import { Address, isAddress, isAddressEqual, zeroAddress } from 'viem'
 
-const isNativeAddress = (address: string) => !address.startsWith('0x')
+const isNativeAddress = (address: string) =>
+  address === zeroAddress || !address.startsWith('0x')
+
 export const isNativeToken = (token: Token) => isNativeAddress(token.address)
 
 export const getNativeToken = (chainId: Token['chainId']) =>
@@ -20,7 +22,11 @@ export const getTokenByAddress = function (
     return getNativeToken(chainId)
   }
   return tokenList.tokens.find(
-    token => token.chainId === chainId && token.address === address,
+    token =>
+      token.chainId === chainId &&
+      isAddress(token.address) &&
+      // @ts-expect-error we already checked "address" is not native, so string is `0x${string}`
+      isAddressEqual(token.address, address),
   )
 }
 

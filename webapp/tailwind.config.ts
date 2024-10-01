@@ -85,6 +85,13 @@ const config: Config = {
         // same as above, but header is now 32px
         'fit-rest-screen-mobile': 'calc(100vh - 32px - 24px - 28px - 28px)',
       },
+      inset: {
+        '2.25': '0.563rem',
+        // sort-keys flags this as an error, incorrectly. However, I cannot reproduce it in the Eslint playground,
+        // so it must be something that was fixed in newer versions
+        // eslint-disable-next-line sort-keys
+        '2.5': '0.625rem',
+      },
       lineHeight: {
         '6.5': '1.625rem',
       },

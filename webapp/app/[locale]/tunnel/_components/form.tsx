@@ -84,11 +84,13 @@ export const FormContent = function ({
 
 type TunnelFormProps = {
   bottomSection?: ReactNode
-  explorerUrl: string
+  // TODO remove after all modals are replaced with drawers
+  explorerUrl?: string
   formContent: ReactNode
   onSubmit: () => void
   belowForm?: React.ReactNode
   submitButton?: ReactNode
+  // TODO remove after all modals are replaced with drawers
   transactionsList?: {
     id: string
     status: React.ComponentProps<typeof TransactionStatus>['status']

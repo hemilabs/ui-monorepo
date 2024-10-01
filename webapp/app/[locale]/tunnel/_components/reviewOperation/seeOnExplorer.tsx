@@ -9,8 +9,13 @@ type Props = {
   txHash: string
 }
 export const SeeOnExplorer = function ({ chainId, txHash }: Props) {
-  const t = useTranslations('tunnel-page.transaction-status')
   const blockExplorer = useChain(chainId).blockExplorers.default
+  const t = useTranslations('tunnel-page.transaction-status')
+
+  if (!txHash) {
+    return null
+  }
+
   return (
     <ExternalLink
       className="text-ms group/see-on-explorer flex items-center gap-x-1 font-medium leading-5 text-orange-500"

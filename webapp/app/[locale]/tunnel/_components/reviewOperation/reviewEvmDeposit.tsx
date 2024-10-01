@@ -81,7 +81,7 @@ export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
     return {
       description:
         depositStatus === EvmDepositStatus.DEPOSIT_TX_CONFIRMED
-          ? t('deposit-initiated')
+          ? t('deposit-completed')
           : t('initiate-deposit'),
       explorerChainId: deposit.l1ChainId,
       fees: [
@@ -118,7 +118,7 @@ export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
       steps={steps}
       subtitle={
         depositStatus === EvmDepositStatus.DEPOSIT_TX_CONFIRMED
-          ? t('deposit-completed')
+          ? t('your-deposit-is-complete')
           : t('deposit-on-its-way')
       }
       title={t('review-deposit')}

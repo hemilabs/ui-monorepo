@@ -14,7 +14,7 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
 import { type EvmToken } from 'types/token'
-import { BtcDepositStatus } from 'types/tunnel'
+import { BtcDepositStatus, EvmDepositStatus } from 'types/tunnel'
 import { isEvmNetwork } from 'utils/chain'
 import { getEvmBlock } from 'utils/evmApi'
 import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
@@ -300,8 +300,6 @@ type EvmDepositProps = {
 
 const EvmDeposit = function ({ state }: EvmDepositProps) {
   const { deposits, updateDeposit } = useTunnelHistory()
-  // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
-  const [depositAmount, setDepositAmount] = useState('0')
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
@@ -349,7 +347,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     approvalError,
     approvalReceipt,
     approvalReceiptError,
-    approvalTxHash,
     approvalTokenGasFees = BigInt(0),
     clearDepositState,
     needsApproval,
@@ -358,7 +355,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     depositGasFees,
     depositReceipt,
     depositReceiptError,
-    depositTxHash,
   } = useDeposit({
     canDeposit,
     extendedErc20Approval: operatesNativeToken
@@ -407,6 +403,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
       getEvmBlock(depositReceipt.blockNumber, fromNetworkId).then(block =>
         updateDeposit(depositFound, {
           blockNumber: Number(depositReceipt.blockNumber),
+          status: EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
           timestamp: Number(block.timestamp),
         }),
       )
@@ -431,7 +428,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const handleDeposit = function () {
     beforeTransaction()
-    setDepositAmount(fromInput)
     clearDepositState()
     deposit()
     if (needsApproval) {
@@ -451,42 +447,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
         fromInput,
         fromToken,
       })
-
-  const approvalTransactionList = useTransactionsList({
-    inProgressMessage: t('tunnel-page.transaction-status.erc20-approving', {
-      symbol: fromToken.symbol,
-    }),
-    isOperating: operationRunning === 'approving',
-    operation: 'approve',
-    receipt: approvalReceipt,
-    receiptError: approvalReceiptError,
-    successMessage: t('tunnel-page.transaction-status.erc20-approved', {
-      symbol: fromToken.symbol,
-    }),
-    txHash: approvalTxHash,
-    userConfirmationError: approvalError,
-  })
-
-  const depositTransactionList = useTransactionsList({
-    inProgressMessage: t('tunnel-page.transaction-status.depositing', {
-      fromInput: getFormattedValue(depositAmount),
-      symbol: fromToken.symbol,
-    }),
-    isOperating: operationRunning === 'depositing',
-    operation: 'deposit',
-    receipt: depositReceipt,
-    receiptError: depositReceiptError,
-    successMessage: t('tunnel-page.transaction-status.deposited', {
-      fromInput: getFormattedValue(depositAmount),
-      symbol: fromToken.symbol,
-    }),
-    txHash: depositTxHash,
-    userConfirmationError: depositError,
-  })
-
-  const transactionsList = approvalTransactionList.concat(
-    depositTransactionList,
-  )
 
   const gas = {
     amount: formatNumber(
@@ -511,7 +471,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
           />
         ) : null
       }
-      explorerUrl={fromChain.blockExplorers.default.url}
       formContent={
         <FormContent
           isRunningOperation={isRunningOperation}
@@ -568,7 +527,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
           <ConnectEvmWallet />
         )
       }
-      transactionsList={transactionsList}
     />
   )
 }

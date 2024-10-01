@@ -7,7 +7,7 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useCallback, useContext } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken } from 'types/token'
-import { DepositTunnelOperation } from 'types/tunnel'
+import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
 import { isNativeToken } from 'utils/token'
 import { type Hash, parseUnits, zeroAddress } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
@@ -35,29 +35,46 @@ export const useDeposit = function ({
   )
   const queryClient = useQueryClient()
   const { addDepositToTunnelHistory } = useTunnelHistory()
-  const { updateTxHash } = useTunnelOperation()
+  const { updateTxHash, txHash: currentTxHash } = useTunnelOperation()
 
   const depositingNative = isNativeToken(fromToken)
   const toDeposit = parseUnits(fromInput, fromToken.decimals).toString()
 
-  const getDeposit = (hash: Hash): DepositTunnelOperation => ({
+  const getDeposit = ({
+    approvalTxHash,
+    status,
+    transactionHash,
+  }: {
+    approvalTxHash?: Hash
+    status: EvmDepositStatus
+    transactionHash: Hash
+  }): EvmDepositOperation => ({
     amount: toDeposit,
+    approvalTxHash,
     direction: MessageDirection.L1_TO_L2,
     from: address,
     l1ChainId: fromToken.chainId,
     l1Token: depositingNative ? zeroAddress : fromToken.address,
     l2ChainId: toToken.chainId,
     l2Token: depositingNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
+    status,
     // "to" field uses the same address as from, which is user's address
     to: address,
-    transactionHash: hash,
+    transactionHash,
   })
 
-  const onSuccess = function (hash: Hash) {
-    // add hash to query string
-    updateTxHash(hash)
+  const onSuccess = function (depositTxHash: Hash) {
+    const depositToAdd = getDeposit({
+      // if exists, it's the Approval Tx Hash.
+      approvalTxHash: currentTxHash as Hash | undefined,
+      status: EvmDepositStatus.DEPOSIT_TX_PENDING,
+      transactionHash: depositTxHash,
+    })
 
-    addDepositToTunnelHistory(getDeposit(hash))
+    // add hash to query string
+    updateTxHash(depositTxHash, { history: currentTxHash ? 'replace' : 'push' })
+
+    addDepositToTunnelHistory(depositToAdd)
     // Clear, if any, the approval txs in memory
     clearTransactionsInMemory()
   }
@@ -65,7 +82,14 @@ export const useDeposit = function ({
   const onApprovalSuccess = function (approvalTxHash: Hash) {
     // save the Approval Transaction hash to the list of transactions in progress
     // so the drawer can be shown until we get our deposit TX hash
-    addTransaction(getDeposit(approvalTxHash))
+    addTransaction(
+      getDeposit({
+        approvalTxHash,
+        status: EvmDepositStatus.APPROVAL_TX_PENDING,
+        // until there's a deposit hash, use the approval. After all, this is only in memory
+        transactionHash: approvalTxHash,
+      }),
+    )
     // and now, add that hash to the url. It will be used until the Deposit hash is generated
     updateTxHash(approvalTxHash, { history: 'push' })
   }

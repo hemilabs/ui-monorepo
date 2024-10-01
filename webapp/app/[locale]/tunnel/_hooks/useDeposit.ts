@@ -17,7 +17,7 @@ import { useTunnelOperation } from './useTunnelOperation'
 
 type UseDeposit = {
   canDeposit: boolean
-  extendedErc20Approval: boolean | undefined
+  extendedErc20Approval?: boolean | undefined
   fromInput: string
   fromToken: EvmToken
   toToken: EvmToken

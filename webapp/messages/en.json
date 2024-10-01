@@ -241,14 +241,14 @@
       "approve-confirmed": "Approve confirmed",
       "btc-deposit-come-back-delay-note": "If you do not receive your deposit after {hours} hours return to this page to manually claim.",
       "claim-deposit": "Claim deposit",
-      "deposit-completed": "Your deposit is complete.",
+      "deposit-completed": "Deposit completed",
       "deposit-on-its-way": "Your deposit is on its way! Please wait while the blockchain finalizes the transaction.",
-      "deposit-initiated": "Deposit initiated",
       "heading": "Review Deposit",
       "initiate-deposit": "Initiate deposit",
       "review-deposit": "Review Deposit",
       "wait-for-confirmation": "Wait for Hemi confirmation",
-      "you-are-depositing": "You are depositing"
+      "you-are-depositing": "You are depositing",
+      "your-deposit-is-complete": "Your deposit is complete."
     },
     "review-withdraw": {
       "claim-withdrawal": "Claim withdrawal",

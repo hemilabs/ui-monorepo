@@ -241,13 +241,14 @@
       "approve-confirmed": "Aprobación confirmada",
       "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de {hours} horas regrese a esta pagina para reclamarlo manualmente.",
       "claim-deposit": "Reclamar depósito",
-      "deposit-completed": "Su depósito ha sido completado",
+      "deposit-completed": "Depósito completado",
       "deposit-on-its-way": "¡Su depósito está en camino! Por favor espere mientras la blockchain confirma la transacción.",
       "heading": "Revisar Depósito",
       "initiate-deposit": "Iniciar depósito",
       "review-deposit": "Revisar Depósito",
       "wait-for-confirmation": "Espere por la confirmación en Hemi",
-      "you-are-depositing": "Usted está depositando"
+      "you-are-depositing": "Usted está depositando",
+      "your-deposit-is-complete": "Su depósito ha sido completado"
     },
     "review-withdraw": {
       "claim-withdrawal": "Reclamar retiro",

@@ -237,10 +237,15 @@
       "to-network": "Hacia la Red"
     },
     "review-deposit": {
+      "approve-initiated": "Aprobación iniciada",
+      "approve-confirmed": "Aprobación confirmada",
       "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de {hours} horas regrese a esta pagina para reclamarlo manualmente.",
       "claim-deposit": "Reclamar depósito",
+      "deposit-completed": "Su depósito ha sido completado",
+      "deposit-on-its-way": "¡Su depósito está en camino! Por favor espere mientras la blockchain confirma la transacción.",
       "heading": "Revisar Depósito",
       "initiate-deposit": "Iniciar depósito",
+      "review-deposit": "Revisar Depósito",
       "wait-for-confirmation": "Espere por la confirmación en Hemi",
       "you-are-depositing": "Usted está depositando"
     },
@@ -310,6 +315,7 @@
       "erc20-approved": "{symbol} aprobado",
       "erc20-approving": "Aprobando {symbol}",
       "proving-withdrawal": "Probando retiro",
+      "see-on-explorer": "Ver en {explorer}",
       "withdrawal-claimed": "Retiro Reclamado",
       "withdrawal-proved": "Retiro probado",
       "withdrawing": "Retirando {fromInput} {symbol}",

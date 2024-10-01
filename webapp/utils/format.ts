@@ -1,6 +1,6 @@
 import Big from 'big.js'
 import { type Account } from 'btc-wallet/unisat'
-import { Address } from 'viem'
+import { Address, formatUnits } from 'viem'
 
 export const formatBtcAddress = (account: Account) =>
   `${account.slice(0, 5)}...${account.slice(-5)}`
@@ -22,3 +22,6 @@ export const formatNumber = (
 
 export const getFormattedValue = (value: string) =>
   Big(value.replace(/,/g, '')).lt('0.001') ? '< 0.001' : formatNumber(value, 3)
+
+export const formatGasFees = (gasFees: bigint, decimals: number) =>
+  formatNumber(formatUnits(gasFees, decimals), 3)

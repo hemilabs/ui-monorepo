@@ -37,7 +37,7 @@ type WriteOptions<
   address: Address
   args: Args
   functionName: FunctionName
-} & { query?: UseWriteContractParameters['mutation'] }
+} & { mutation?: UseWriteContractParameters['mutation'] }
 
 export const useWriteErc20 = function <
   FunctionName extends ContractFunctionName<Erc20Abi, 'nonpayable' | 'payable'>,
@@ -46,8 +46,10 @@ export const useWriteErc20 = function <
     'nonpayable' | 'payable',
     FunctionName
   >,
->({ address, args, functionName }: WriteOptions<FunctionName, Args>) {
-  const { writeContract, writeContractAsync, ...rest } = useWriteContract()
+>({ address, args, functionName, mutation }: WriteOptions<FunctionName, Args>) {
+  const { writeContract, writeContractAsync, ...rest } = useWriteContract({
+    mutation,
+  })
 
   const writeParams = { abi: erc20Abi, address, args, functionName }
   return {

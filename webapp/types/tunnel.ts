@@ -21,6 +21,17 @@ export const enum BtcDepositStatus {
   BTC_DEPOSITED = 3,
 }
 
+export const enum EvmDepositStatus {
+  // Only used for ERC20 deposits that require an approval. Otherwise, start on ${DEPOSIT_TX_PENDING}
+  APPROVAL_TX_PENDING = 0,
+  // Once the Approval TX is confirmed, but the user hasn't sent the Deposit Transaction
+  APPROVAL_TX_COMPLETED = 1,
+  // The user has confirmed the TX in their wallet, but it hasn't been included in a block
+  DEPOSIT_TX_PENDING = 2,
+  // Transaction deposit confirmed
+  DEPOSIT_TX_CONFIRMED = 3,
+}
+
 type CommonOperation = Omit<
   TokenBridgeMessage,
   | 'amount'
@@ -63,8 +74,10 @@ export type BtcDepositOperation = CommonOperation &
 export type EvmDepositOperation = CommonOperation &
   DepositDirection &
   EvmTransactionHash & {
+    approvalTxHash?: Hash // only used for ERC20 deposits
     l1ChainId: Chain['id']
     l2ChainId: Chain['id']
+    status?: EvmDepositStatus // If undefined, assume completed
   }
 
 export type EvmWithdrawOperation = CommonOperation &

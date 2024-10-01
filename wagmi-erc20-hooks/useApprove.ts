@@ -12,16 +12,16 @@ type Amount = ApproveArgs[1]
 
 type Options = {
   args: { amount: Amount; spender: Spender }
-  query?: WriteQueryOptions
+  mutation?: WriteQueryOptions
 }
 
 export const useApprove = (
   erc20Address: Address,
-  { args: { amount, spender }, query }: Options,
+  { args: { amount, spender }, mutation }: Options,
 ) =>
   useWriteErc20({
     address: erc20Address,
     args: [spender, amount],
     functionName: 'approve',
-    query,
+    mutation,
   })

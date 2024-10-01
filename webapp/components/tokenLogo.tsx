@@ -13,12 +13,12 @@ export const TokenLogo = ({ token }: Props) =>
     // eslint-disable-next-line @next/next/no-img-element
     <img
       alt={`${token.symbol} Logo`}
-      className="h-5 w-5"
+      className="w-full"
       height={20}
       src={token.logoURI}
       width={20}
     />
   ) : (
     // use Hemi logo by default if no image was provided
-    <HemiTokenWithBackground />
+    <HemiTokenWithBackground className="h-full w-full" />
   )

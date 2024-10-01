@@ -208,9 +208,9 @@
     "web-pop-miner": "Web PoP Miner"
   },
   "token-selector": {
-    "choose-token": "Choose Token",
-    "no-tokens": "There are no tokens",
-    "search-tokens": "Search tokens"
+    "no-results-for": "No results found for <search></search>",
+    "search-tokens": "Search tokens...",
+    "select-token": "Select token"
   },
   "transaction-history": {
     "connect-wallet-to-review": "Connect your wallet to review transaction history.",
@@ -237,12 +237,18 @@
       "to-network": "To Network"
     },
     "review-deposit": {
+      "approve-initiated": "Approve initiated",
+      "approve-confirmed": "Approve confirmed",
       "btc-deposit-come-back-delay-note": "If you do not receive your deposit after {hours} hours return to this page to manually claim.",
       "claim-deposit": "Claim deposit",
+      "deposit-completed": "Deposit completed",
+      "deposit-on-its-way": "Your deposit is on its way! Please wait while the blockchain finalizes the transaction.",
       "heading": "Review Deposit",
       "initiate-deposit": "Initiate deposit",
+      "review-deposit": "Review Deposit",
       "wait-for-confirmation": "Wait for Hemi confirmation",
-      "you-are-depositing": "You are depositing"
+      "you-are-depositing": "You are depositing",
+      "your-deposit-is-complete": "Your deposit is complete."
     },
     "review-withdraw": {
       "claim-withdrawal": "Claim withdrawal",
@@ -310,6 +316,7 @@
       "erc20-approved": "{symbol} approved",
       "erc20-approving": "Approving {symbol}",
       "proving-withdrawal": "Proving withdrawal",
+      "see-on-explorer": "See on {explorer}",
       "withdrawal-claimed": "Withdrawal claimed",
       "withdrawal-proved": "Withdrawal proved",
       "withdrawing": "Withdrawing {fromInput} {symbol}",

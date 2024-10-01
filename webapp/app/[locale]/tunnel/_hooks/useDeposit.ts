@@ -1,17 +1,23 @@
+import { MessageDirection } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
+import { TransactionsInProgressContext } from 'context/transactionsInProgressContext'
 import { useDepositNativeToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
-import { useCallback } from 'react'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useCallback, useContext } from 'react'
+import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken } from 'types/token'
+import { DepositTunnelOperation } from 'types/tunnel'
 import { isNativeToken } from 'utils/token'
-import { parseUnits } from 'viem'
-import { useWaitForTransactionReceipt } from 'wagmi'
+import { type Hash, parseUnits, zeroAddress } from 'viem'
+import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
 
 import { useDepositToken } from './useDepositToken'
+import { useTunnelOperation } from './useTunnelOperation'
 
 type UseDeposit = {
   canDeposit: boolean
-  extendedErc20Approval: boolean | undefined
+  extendedErc20Approval?: boolean | undefined
   fromInput: string
   fromToken: EvmToken
   toToken: EvmToken
@@ -23,10 +29,46 @@ export const useDeposit = function ({
   fromToken,
   toToken,
 }: UseDeposit) {
+  const { address } = useAccount()
+  const { addTransaction, clearTransactionsInMemory } = useContext(
+    TransactionsInProgressContext,
+  )
   const queryClient = useQueryClient()
-  const depositingNative = isNativeToken(fromToken)
+  const { addDepositToTunnelHistory } = useTunnelHistory()
+  const { updateTxHash } = useTunnelOperation()
 
+  const depositingNative = isNativeToken(fromToken)
   const toDeposit = parseUnits(fromInput, fromToken.decimals).toString()
+
+  const getDeposit = (hash: Hash): DepositTunnelOperation => ({
+    amount: toDeposit,
+    direction: MessageDirection.L1_TO_L2,
+    from: address,
+    l1ChainId: fromToken.chainId,
+    l1Token: depositingNative ? zeroAddress : fromToken.address,
+    l2ChainId: toToken.chainId,
+    l2Token: depositingNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
+    // "to" field uses the same address as from, which is user's address
+    to: address,
+    transactionHash: hash,
+  })
+
+  const onSuccess = function (hash: Hash) {
+    // add hash to query string
+    updateTxHash(hash)
+
+    addDepositToTunnelHistory(getDeposit(hash))
+    // Clear, if any, the approval txs in memory
+    clearTransactionsInMemory()
+  }
+
+  const onApprovalSuccess = function (approvalTxHash: Hash) {
+    // save the Approval Transaction hash to the list of transactions in progress
+    // so the drawer can be shown until we get our deposit TX hash
+    addTransaction(getDeposit(approvalTxHash))
+    // and now, add that hash to the url. It will be used until the Deposit hash is generated
+    updateTxHash(approvalTxHash, { history: 'push' })
+  }
 
   const {
     depositNativeToken,
@@ -37,6 +79,7 @@ export const useDeposit = function ({
   } = useDepositNativeToken({
     enabled: depositingNative && canDeposit,
     l1ChainId: fromToken.chainId,
+    onSuccess,
     toDeposit,
   })
 
@@ -58,6 +101,8 @@ export const useDeposit = function ({
     amount: fromInput,
     enabled: !depositingNative && canDeposit,
     extendedApproval: extendedErc20Approval,
+    onApprovalSuccess,
+    onSuccess,
     token: fromToken,
   })
 

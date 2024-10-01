@@ -208,8 +208,9 @@
     "web-pop-miner": "Minero PoP Web"
   },
   "token-selector": {
-    "choose-token": "Elegir Token",
-    "no-tokens": "No hay tokens"
+    "no-results-for": "No se encontraron resultados para <search></search>",
+    "search-tokens": "Buscar tokens...",
+    "select-token": "Seleccione un token"
   },
   "transaction-history": {
     "connect-wallet-to-review": "Conecte su billetera para revisar su historial de transacciones.",
@@ -236,12 +237,18 @@
       "to-network": "Hacia la Red"
     },
     "review-deposit": {
+      "approve-initiated": "Aprobación iniciada",
+      "approve-confirmed": "Aprobación confirmada",
       "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de {hours} horas regrese a esta pagina para reclamarlo manualmente.",
       "claim-deposit": "Reclamar depósito",
+      "deposit-completed": "Depósito completado",
+      "deposit-on-its-way": "¡Su depósito está en camino! Por favor espere mientras la blockchain confirma la transacción.",
       "heading": "Revisar Depósito",
       "initiate-deposit": "Iniciar depósito",
+      "review-deposit": "Revisar Depósito",
       "wait-for-confirmation": "Espere por la confirmación en Hemi",
-      "you-are-depositing": "Usted está depositando"
+      "you-are-depositing": "Usted está depositando",
+      "your-deposit-is-complete": "Su depósito ha sido completado"
     },
     "review-withdraw": {
       "claim-withdrawal": "Reclamar retiro",
@@ -309,6 +316,7 @@
       "erc20-approved": "{symbol} aprobado",
       "erc20-approving": "Aprobando {symbol}",
       "proving-withdrawal": "Probando retiro",
+      "see-on-explorer": "Ver en {explorer}",
       "withdrawal-claimed": "Retiro Reclamado",
       "withdrawal-proved": "Retiro probado",
       "withdrawing": "Retirando {fromInput} {symbol}",

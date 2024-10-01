@@ -1,22 +1,52 @@
 import { ButtonLink } from 'components/button'
+import { NetworkType } from 'hooks/useNetworkType'
+import { usePathname } from 'next/navigation'
+import { useLocale } from 'next-intl'
 import { ComponentProps } from 'react'
 
-export const getCallToActionUrl = (txHash: string, operation: string) =>
-  `/tunnel?txHash=${txHash}&operation=${operation}`
+import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
 
-type Props = {
+type QueryStringOptions = {
+  networkType: NetworkType
   txHash: string
-  operation: string
-  text: string
-} & Required<Pick<ComponentProps<typeof ButtonLink>, 'variant'>>
+}
 
-export const CallToAction = ({ txHash, operation, text, variant }: Props) => (
-  <ButtonLink
-    href={getCallToActionUrl(txHash, operation)}
-    // needed as there's event delegation in the row
-    onClick={e => e.stopPropagation()}
-    variant={variant}
+const getCallToActionQueryString = function (options: QueryStringOptions) {
+  const searchParams = new URLSearchParams()
+  Object.entries(options).forEach(([key, value]) =>
+    searchParams.append(key, value),
+  )
+  return `?${searchParams.toString()}`
+}
+
+type Props = QueryStringOptions & { text: string } & Required<
+    Pick<ComponentProps<typeof ButtonLink>, 'variant'>
   >
-    {text}
-  </ButtonLink>
-)
+
+export const CallToAction = function ({
+  text,
+  variant,
+  ...queryStringOptions
+}: Props) {
+  const locale = useLocale()
+  const pathname = usePathname().replace(`/${locale}`, '')
+  const { updateTxHash } = useTunnelOperation()
+
+  const queryString = getCallToActionQueryString(queryStringOptions)
+  const href = `${pathname}${queryString}`
+  return (
+    <ButtonLink
+      href={href}
+      onClick={function (e) {
+        // needed as there's event delegation in the row
+        e.stopPropagation()
+        // prevent full navigation - we want a shallow navigation to open the drawer
+        e.preventDefault()
+        updateTxHash(queryStringOptions.txHash)
+      }}
+      variant={variant}
+    >
+      {text}
+    </ButtonLink>
+  )
+}

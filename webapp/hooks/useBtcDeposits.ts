@@ -1,9 +1,9 @@
 import { useMemo } from 'react'
 import { isBtcDeposit } from 'utils/tunnel'
 
-import { useTunnelHistory } from './useTunnelHistory'
+import { useDeposits } from './useDeposits'
 
 export const useBtcDeposits = function () {
-  const { deposits } = useTunnelHistory()
+  const deposits = useDeposits()
   return useMemo(() => deposits.filter(isBtcDeposit), [deposits])
 }

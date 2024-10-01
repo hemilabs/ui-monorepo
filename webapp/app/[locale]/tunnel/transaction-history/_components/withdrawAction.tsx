@@ -1,8 +1,8 @@
 import { MessageStatus } from '@eth-optimism/sdk'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { EvmWithdrawOperation } from 'types/tunnel'
-import { getOperationFromWithdraw } from 'utils/tunnel'
 
 import { CallToAction } from './callToAction'
 
@@ -11,17 +11,16 @@ type Props = {
 }
 
 export const WithdrawAction = function ({ withdraw }: Props) {
+  const [networkType] = useNetworkType()
   const t = useTranslations('tunnel-page.transaction-history.actions')
 
   if (withdraw.status === undefined) {
     return <Skeleton className="w-15 h-8" />
   }
 
-  const operation = getOperationFromWithdraw(withdraw)
-
   const Failed = (
     <CallToAction
-      operation={operation}
+      networkType={networkType}
       text={t('retry')}
       txHash={withdraw.transactionHash}
       variant="secondary"
@@ -30,7 +29,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
 
   const Claim = (
     <CallToAction
-      operation={operation}
+      networkType={networkType}
       text={t('claim')}
       txHash={withdraw.transactionHash}
       variant="primary"
@@ -39,7 +38,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
 
   const Prove = (
     <CallToAction
-      operation={operation}
+      networkType={networkType}
       text={t('prove')}
       txHash={withdraw.transactionHash}
       variant="primary"
@@ -48,7 +47,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
 
   const getViewButton = () => (
     <CallToAction
-      operation={operation}
+      networkType={networkType}
       text={t('view')}
       txHash={withdraw.transactionHash}
       variant="secondary"

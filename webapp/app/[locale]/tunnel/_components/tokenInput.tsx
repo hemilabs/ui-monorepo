@@ -66,7 +66,9 @@ export const TokenInput = function ({
         <div className="text-ms flex h-full flex-col items-end justify-end gap-y-3">
           {readOnly ? (
             <div className="flex items-center justify-between gap-x-2">
-              <TokenLogo token={token} />
+              <div className="h-5 w-5">
+                <TokenLogo token={token} />
+              </div>
               <span className="font-medium text-neutral-950">
                 {token.symbol}
               </span>

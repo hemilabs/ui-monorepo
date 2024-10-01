@@ -41,10 +41,8 @@ export const CallToAction = function ({
         // needed as there's event delegation in the row
         e.stopPropagation()
         // prevent full navigation - we want a shallow navigation to open the drawer
-        // See https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating#using-the-native-history-api
         e.preventDefault()
         updateTxHash(queryStringOptions.txHash)
-        window.history.pushState(null, '', queryString)
       }}
       variant={variant}
     >

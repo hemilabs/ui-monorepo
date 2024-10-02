@@ -9,7 +9,7 @@ import {
 } from 'sliding-block-window/src'
 import {
   EvmDepositOperation,
-  EvmWithdrawOperation,
+  ToEvmWithdrawOperation,
   TunnelOperation,
 } from 'types/tunnel'
 import {
@@ -194,7 +194,7 @@ export const createEvmSync = function ({
           fromBlock,
           toBlock,
         })
-        .then(toOperation<EvmWithdrawOperation>(l1Chain.id, l2Chain.id))
+        .then(toOperation<ToEvmWithdrawOperation>(l1Chain.id, l2Chain.id))
         .then(withdrawals =>
           pAll(
             withdrawals.map(
@@ -209,6 +209,8 @@ export const createEvmSync = function ({
                       withdrawal.direction,
                     ),
                   ])
+                  // TODO Bring the Prove and Claim transaction hashes.
+                  // See https://github.com/hemilabs/ui-monorepo/issues/558
                   return {
                     ...withdrawal,
                     status,

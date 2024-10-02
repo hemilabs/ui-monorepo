@@ -21,13 +21,18 @@ import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
   BtcDepositStatus,
-  EvmWithdrawOperation,
   DepositTunnelOperation,
   TunnelOperation,
+  WithdrawTunnelOperation,
 } from 'types/tunnel'
 import { Card } from 'ui-common/components/card'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import { isBtcDeposit, isDeposit, isWithdraw } from 'utils/tunnel'
+import {
+  isBtcDeposit,
+  isDeposit,
+  isToEvmWithdraw,
+  isWithdraw,
+} from 'utils/tunnel'
 import { Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -73,10 +78,16 @@ const DepositStatus = function ({
 const WithdrawStatus = function ({
   withdrawal,
 }: {
-  withdrawal: EvmWithdrawOperation
+  withdrawal: WithdrawTunnelOperation
 }) {
   const t = useTranslations()
   const waitMinutes = t('common.wait-minutes', { minutes: 20 })
+
+  if (!isToEvmWithdraw(withdrawal)) {
+    // Bitcoin withdrawals are always successful if tx was confirmed
+    return <TxStatus.Success />
+  }
+
   const statuses = {
     // This status should never be rendered, but just to be defensive
     // let's render the next status:

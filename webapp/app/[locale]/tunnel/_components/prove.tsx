@@ -2,10 +2,11 @@ import { MessageStatus } from '@eth-optimism/sdk'
 import { useChain } from 'hooks/useChain'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
+import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
-import { EvmWithdrawOperation } from 'types/tunnel'
+import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { Button } from 'ui-common/components/button'
 import { formatNumber } from 'utils/format'
 import { getL2TokenByBridgedAddress, getTokenByAddress } from 'utils/token'
@@ -31,7 +32,7 @@ const SubmitButton = function ({
   isReadyToProve: boolean
   l1ChainId: Chain['id']
   proveWithdrawalTxHash: Hash
-  withdrawal: EvmWithdrawOperation
+  withdrawal: ToEvmWithdrawOperation
 }) {
   const t = useTranslations()
 
@@ -67,7 +68,8 @@ type Props = {
 
 export const Prove = function ({ state }: Props) {
   const { evmRemoteNetworks } = useNetworks()
-  const { updateWithdrawal, withdrawals } = useTunnelHistory()
+  const { updateWithdrawal } = useTunnelHistory()
+  const withdrawals = useToEvmWithdrawals()
 
   const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =
     state
@@ -114,6 +116,7 @@ export const Prove = function ({ state }: Props) {
         return
       }
       updateWithdrawal(withdrawal, {
+        proveTxHash: withdrawalProofReceipt.transactionHash,
         status: MessageStatus.IN_CHALLENGE_PERIOD,
       })
       savePartialWithdrawal({

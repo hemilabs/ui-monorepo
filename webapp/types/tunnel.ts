@@ -5,7 +5,6 @@ import {
 } from '@eth-optimism/sdk'
 import { BtcChain } from 'btc-wallet/chains'
 import { BtcTransaction } from 'btc-wallet/unisat'
-import { type RemoteChain } from 'types/chain'
 import { type Chain, type Hash } from 'viem'
 
 export const enum BtcDepositStatus {
@@ -19,6 +18,24 @@ export const enum BtcDepositStatus {
   BTC_READY_CLAIM = 2,
   // The erc20 bitcoin version in Hemi has been minted
   BTC_DEPOSITED = 3,
+}
+
+export const enum BtcWithdrawStatus {
+  // The user has confirmed the TX in their wallet, but it hasn't been included in a block
+  TX_PENDING = 0,
+  // Transaction withdraw confirmed
+  TX_CONFIRMED = 1,
+}
+
+export const enum EvmDepositStatus {
+  // Only used for ERC20 deposits that require an approval. Otherwise, start on ${DEPOSIT_TX_PENDING}
+  APPROVAL_TX_PENDING = 0,
+  // Once the Approval TX is confirmed, but the user hasn't sent the Deposit Transaction
+  APPROVAL_TX_COMPLETED = 1,
+  // The user has confirmed the TX in their wallet, but it hasn't been included in a block
+  DEPOSIT_TX_PENDING = 2,
+  // Transaction deposit confirmed
+  DEPOSIT_TX_CONFIRMED = 3,
 }
 
 type CommonOperation = Omit<
@@ -63,23 +80,38 @@ export type BtcDepositOperation = CommonOperation &
 export type EvmDepositOperation = CommonOperation &
   DepositDirection &
   EvmTransactionHash & {
+    approvalTxHash?: Hash // only used for ERC20 deposits
     l1ChainId: Chain['id']
     l2ChainId: Chain['id']
+    status?: EvmDepositStatus // If undefined, assume completed
   }
 
-export type EvmWithdrawOperation = CommonOperation &
+export type ToEvmWithdrawOperation = CommonOperation &
   EvmTransactionHash &
   WithdrawDirection & {
-    status?: MessageStatus
+    status: MessageStatus
   } & {
-    l1ChainId: RemoteChain['id']
+    l1ChainId: Chain['id']
     l2ChainId: Chain['id']
+  } & {
+    claimTxHash?: Hash
+    proveTxHash?: Hash
+  }
+
+export type ToBtcWithdrawOperation = CommonOperation &
+  EvmTransactionHash &
+  WithdrawDirection & {
+    l1ChainId: BtcChain['id']
+    l2ChainId: Chain['id']
+  } & {
+    status: BtcWithdrawStatus
   }
 
 export type DepositTunnelOperation = BtcDepositOperation | EvmDepositOperation
 
-// TODO add BtcWithdrawals https://github.com/hemilabs/ui-monorepo/issues/343
-export type WithdrawTunnelOperation = EvmWithdrawOperation
+export type WithdrawTunnelOperation =
+  | ToEvmWithdrawOperation
+  | ToBtcWithdrawOperation
 
 export type TunnelOperation = DepositTunnelOperation | WithdrawTunnelOperation
 

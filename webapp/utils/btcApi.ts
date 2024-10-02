@@ -1,10 +1,11 @@
 import { Account, BtcTransaction, Satoshis } from 'btc-wallet/unisat'
 import camelCaseKeys from 'camelcase-keys'
-import fetch from 'fetch-plus-plus'
+import { esploraClient } from 'esplora-client'
 
 const toCamelCase = <T>(obj: T) => camelCaseKeys(obj, { deep: true })
 
-const apiUrl = process.env.NEXT_PUBLIC_MEMPOOL_API_URL
+const network = process.env.NEXT_PUBLIC_BITCOIN_NETWORK
+const { bitcoin } = esploraClient({ network })
 
 type TransactionStatus = {
   blockTime?: number
@@ -38,27 +39,23 @@ export const getAddressTransactions = (
   address: Account,
   queryString?: { afterTxId: string },
 ) =>
-  fetch(
-    `${apiUrl}/address/${address}/txs`,
-    queryString
-      ? {
-          // eslint-disable-next-line camelcase
-          queryString: { after_txid: queryString.afterTxId },
-        }
-      : undefined,
-  ).then(txs =>
-    txs.map(tx => toCamelCase({ ...tx, txId: tx.txid })),
-  ) as Promise<MempoolJsBitcoinTransaction[]>
+  bitcoin.addresses
+    .getAddressTxs({ address, after_txid: queryString?.afterTxId })
+    .then(txs =>
+      txs.map(tx => toCamelCase({ ...tx, txId: tx.txid })),
+    ) as Promise<MempoolJsBitcoinTransaction[]>
 
 // See https://mempool.space/docs/api/rest#get-address-utxo (we are converting to camelCase)
 export const getAddressUtxo = (address: Account) =>
-  fetch(`${apiUrl}/address/${address}/utxo`).then(utxos =>
-    utxos.map(utxo => toCamelCase({ ...utxo, txId: utxo.txid })),
-  ) as Promise<Utxo[]>
+  bitcoin.addresses
+    .getAddressUtxo({ address })
+    .then(utxos =>
+      utxos.map(utxo => toCamelCase({ ...utxo, txId: utxo.txid })),
+    ) as Promise<Utxo[]>
 
 // See https://mempool.space/docs/api/rest#get-block-tip-height
 export const getBlockTipHeight = () =>
-  fetch(`${apiUrl}/blocks/tip/height`) as Promise<number>
+  bitcoin.blocks.getBlocksTipHeight() as Promise<number>
 
 type Fees = {
   fastestFee: number
@@ -69,7 +66,7 @@ type Fees = {
 }
 // See https://mempool.space/docs/api/rest#get-recommended-fees
 export const getRecommendedFees = () =>
-  fetch(`${apiUrl}/v1/fees/recommended`) as Promise<Fees>
+  bitcoin.fees.getFeesRecommended() as Promise<Fees>
 
 type TransactionReceipt = {
   txId: BtcTransaction
@@ -82,7 +79,8 @@ type TransactionReceipt = {
 
 // See https://mempool.space/testnet/docs/api/rest#get-transaction (we are converting the keys to camelCase)
 export const getTransactionReceipt = (txId: BtcTransaction) =>
-  fetch(`${apiUrl}/tx/${txId}`)
+  bitcoin.transactions
+    .getTx({ txid: txId })
     .catch(function (err) {
       if (err?.message.includes('not found')) {
         // It seems it takes a couple of seconds for the Tx for being picked up

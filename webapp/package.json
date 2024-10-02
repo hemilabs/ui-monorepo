@@ -22,6 +22,7 @@
     "btc-wallet": "1.0.0",
     "camelcase-keys": "7.0.2",
     "debug": "4.3.6",
+    "esplora-client": "1.1.0",
     "hemi-socials": "1.0.0",
     "hemi-viem": "1.5.0",
     "javascript-time-ago": "2.5.10",

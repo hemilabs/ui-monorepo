@@ -1,16 +1,23 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
-import { EvmWithdrawOperation } from 'types/tunnel'
+import { type WithdrawTunnelOperation } from 'types/tunnel'
+import { isToEvmWithdraw } from 'utils/tunnel'
 
 import { CallToAction } from './callToAction'
 
 type Props = {
-  withdraw: EvmWithdrawOperation
+  withdraw: WithdrawTunnelOperation
 }
 
 export const WithdrawAction = function ({ withdraw }: Props) {
   const t = useTranslations('tunnel-page.transaction-history.actions')
+
+  if (!isToEvmWithdraw(withdraw)) {
+    // Bitcoin withdrawals do not have a view option, just like EVM deposits
+    // this will change in the design, though.
+    return null
+  }
 
   if (withdraw.status === undefined) {
     return <Skeleton className="h-9 w-24" />

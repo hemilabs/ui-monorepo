@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl'
 import { useCallback, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
+import { BtcWithdrawStatus } from 'types/tunnel'
 import { Button } from 'ui-common/components/button'
 import { isEvmNetwork } from 'utils/chain'
 import { formatBtcAddress, getFormattedValue } from 'utils/format'
@@ -134,8 +135,9 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       // eslint-disable-next-line promise/catch-or-return
       addTimestampToOperation(extendedWithdrawal, fromNetworkId).then(
         ({ timestamp }) =>
-          updateWithdrawal(extendedWithdrawal, {
-            status: MessageStatus.RELAYED,
+          updateWithdrawal(withdrawalFound, {
+            blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
+            status: BtcWithdrawStatus.TX_CONFIRMED,
             timestamp,
           }),
       )

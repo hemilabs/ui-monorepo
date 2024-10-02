@@ -1,11 +1,15 @@
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
+import { MessageDirection } from '@eth-optimism/sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTunnelOperation } from 'app/[locale]/tunnel/_hooks/useTunnelOperation'
 import { BtcChain } from 'btc-wallet/chains'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { Satoshis } from 'btc-wallet/unisat'
 import { useCallback } from 'react'
-import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
+import {
+  BtcDepositOperation,
+  BtcDepositStatus,
+  BtcWithdrawStatus,
+} from 'types/tunnel'
 import {
   claimBtcDeposit,
   initiateBtcDeposit,
@@ -188,7 +192,7 @@ export const useWithdrawBitcoin = function () {
         l2Token: getNativeToken(bitcoin.id).extensions.bridgeInfo[
           hemiClient.chain.id
         ].tokenAddress,
-        status: MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
+        status: BtcWithdrawStatus.TX_PENDING,
         to: btcAddress,
         transactionHash,
       })

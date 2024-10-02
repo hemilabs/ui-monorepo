@@ -13,7 +13,7 @@ import { createContext, ReactNode } from 'react'
 import { type RemoteChain } from 'types/chain'
 import {
   type DepositTunnelOperation,
-  type EvmWithdrawOperation,
+  type WithdrawTunnelOperation,
 } from 'types/tunnel'
 import { useAccount } from 'wagmi'
 
@@ -53,7 +53,7 @@ const isChainReadyOrSyncing =
 type TunnelHistoryContext = {
   addDepositToTunnelHistory: (deposit: DepositTunnelOperation) => void
   addWithdrawalToTunnelHistory: (
-    withdrawal: Omit<EvmWithdrawOperation, 'timestamp'>,
+    withdrawal: Omit<WithdrawTunnelOperation, 'timestamp'>,
   ) => void
   deposits: DepositTunnelOperation[]
   resyncHistory: () => void
@@ -63,10 +63,10 @@ type TunnelHistoryContext = {
     updates: Partial<DepositTunnelOperation>,
   ) => void
   updateWithdrawal: (
-    withdrawal: EvmWithdrawOperation,
-    updates: Partial<EvmWithdrawOperation>,
+    withdrawal: WithdrawTunnelOperation,
+    updates: Partial<WithdrawTunnelOperation>,
   ) => void
-  withdrawals: EvmWithdrawOperation[]
+  withdrawals: WithdrawTunnelOperation[]
 }
 
 export const TunnelHistoryContext = createContext<TunnelHistoryContext>({

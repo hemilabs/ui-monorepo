@@ -6,7 +6,7 @@ import { isBtcTxHash } from 'btc-wallet/utils/hash'
 import { ConnectWallet } from 'components/connectWallet'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
-import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTranslations } from 'next-intl'
 import { Suspense, useEffect } from 'react'
 import { BtcDepositStatus } from 'types/tunnel'
@@ -111,7 +111,7 @@ const Operation = function ({
 
 const Tunnel = function () {
   const deposits = useBtcDeposits()
-  const { withdrawals } = useTunnelHistory()
+  const withdrawals = useToEvmWithdrawals()
   const { operation, txHash, updateOperation } = useTunnelOperation()
   const tunnelState = useTunnelState()
 

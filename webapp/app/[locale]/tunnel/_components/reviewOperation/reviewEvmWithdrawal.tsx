@@ -2,11 +2,11 @@ import { MessageStatus } from '@eth-optimism/sdk'
 import { TransactionStatus } from 'components/transactionStatus'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
-import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { EvmWithdrawOperation } from 'types/tunnel'
+import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { Card } from 'ui-common/components/card'
 import { Modal } from 'ui-common/components/modal'
 import { getL2TokenByBridgedAddress, getTokenByAddress } from 'utils/token'
@@ -94,7 +94,7 @@ const ProveIcon = () => (
 const WithdrawAmount = function ({
   withdrawal,
 }: {
-  withdrawal?: EvmWithdrawOperation
+  withdrawal?: ToEvmWithdrawOperation
 }) {
   const hemi = useHemi()
   const { evmRemoteNetworks } = useNetworks()
@@ -145,7 +145,7 @@ export const ReviewEvmWithdrawal = function ({
 
   const t = useTranslations()
   const { operation, txHash } = useTunnelOperation()
-  const { withdrawals } = useTunnelHistory()
+  const withdrawals = useToEvmWithdrawals()
 
   const foundWithdrawal = withdrawals.find(w => w.transactionHash === txHash)
   const messageStatus = foundWithdrawal.status

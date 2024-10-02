@@ -4,11 +4,12 @@ import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupport
 import { useHemi } from 'hooks/useHemi'
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
 import { useNetworks } from 'hooks/useNetworks'
+import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import PQueue from 'p-queue'
-import { EvmWithdrawOperation } from 'types/tunnel'
+import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { CrossChainMessengerProxy } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { type Chain } from 'viem'
@@ -41,7 +42,7 @@ const refetchInterval = {
   },
 } satisfies { [chainId: number]: { [status: number]: number | false } }
 
-const getBlockTimestamp = (withdrawal: EvmWithdrawOperation, hemi: Chain) =>
+const getBlockTimestamp = (withdrawal: ToEvmWithdrawOperation, hemi: Chain) =>
   async function (
     blockNumber: number | undefined,
   ): Promise<[number?, number?]> {
@@ -59,7 +60,9 @@ const getBlockTimestamp = (withdrawal: EvmWithdrawOperation, hemi: Chain) =>
     return [blockNumber, Number(timestamp)]
   }
 
-const getTransactionBlockNumber = function (withdrawal: EvmWithdrawOperation) {
+const getTransactionBlockNumber = function (
+  withdrawal: ToEvmWithdrawOperation,
+) {
   if (withdrawal.blockNumber) {
     return Promise.resolve(withdrawal.blockNumber)
   }
@@ -81,10 +84,10 @@ const pollUpdateWithdrawal = async ({
   crossChainMessenger: CrossChainMessengerProxy
   hemi: Chain
   updateWithdrawal: (
-    w: EvmWithdrawOperation,
-    updates: Partial<EvmWithdrawOperation>,
+    w: ToEvmWithdrawOperation,
+    updates: Partial<ToEvmWithdrawOperation>,
   ) => void
-  withdrawal: EvmWithdrawOperation
+  withdrawal: ToEvmWithdrawOperation
 }) =>
   // Use a queue to avoid firing lots of requests. Throttling may also not work because it throttles
   // for a specific period of time and depending on load, requests may take up to 5 seconds to complete
@@ -102,7 +105,7 @@ const pollUpdateWithdrawal = async ({
           getBlockTimestamp(withdrawal, hemi),
         ),
       ])
-      const changes: Partial<EvmWithdrawOperation> = {}
+      const changes: Partial<ToEvmWithdrawOperation> = {}
       if (withdrawal.status !== status) {
         changes.status = status
       }
@@ -137,7 +140,7 @@ const pollUpdateWithdrawal = async ({
 const WatchEvmWithdrawal = function ({
   withdrawal,
 }: {
-  withdrawal: EvmWithdrawOperation
+  withdrawal: ToEvmWithdrawOperation
 }) {
   const { evmRemoteNetworks } = useNetworks()
   // See https://github.com/hemilabs/ui-monorepo/issues/158
@@ -173,7 +176,7 @@ const WatchEvmWithdrawal = function ({
 
 export const WithdrawalsStateUpdater = function () {
   const { isConnected } = useAccount()
-  const { withdrawals = [] } = useTunnelHistory()
+  const withdrawals = useToEvmWithdrawals()
 
   const unsupportedChain = useConnectedToUnsupportedEvmChain()
 

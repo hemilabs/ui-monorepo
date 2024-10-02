@@ -1,12 +1,12 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { featureFlags } from 'app/featureFlags'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
-import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { BtcDepositStatus } from 'types/tunnel'
 
 export const ActionableOperations = function () {
   const deposits = useBtcDeposits()
-  const { withdrawals } = useTunnelHistory()
+  const withdrawals = useToEvmWithdrawals()
 
   const actionableWithdrawals = withdrawals.filter(w =>
     [MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(

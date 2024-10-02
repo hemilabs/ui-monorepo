@@ -6,10 +6,11 @@ import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
 import { useNetworks } from 'hooks/useNetworks'
+import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
-import { BtcDepositStatus, EvmWithdrawOperation } from 'types/tunnel'
+import { BtcDepositStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { Button } from 'ui-common/components/button'
 import { getFormattedValue } from 'utils/format'
 import { getTokenByAddress } from 'utils/token'
@@ -42,7 +43,7 @@ const EvmSubmitButton = function ({
   l1ChainId: Chain['id']
   isClaiming: boolean
   isReadyToClaim: boolean
-  withdrawal: EvmWithdrawOperation
+  withdrawal: ToEvmWithdrawOperation
 }) {
   const t = useTranslations()
   const txHash = useTunnelOperation().txHash as Hash
@@ -254,7 +255,8 @@ type EvmClaimProps = {
 
 export const EvmClaim = function ({ state }: EvmClaimProps) {
   const { evmRemoteNetworks } = useNetworks()
-  const { updateWithdrawal, withdrawals } = useTunnelHistory()
+  const { updateWithdrawal } = useTunnelHistory()
+  const withdrawals = useToEvmWithdrawals()
   const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =
     state
 
@@ -299,7 +301,10 @@ export const EvmClaim = function ({ state }: EvmClaimProps) {
       if (withdrawal?.status === MessageStatus.RELAYED) {
         return
       }
-      updateWithdrawal(withdrawal, { status: MessageStatus.RELAYED })
+      updateWithdrawal(withdrawal, {
+        claimTxHash: claimWithdrawalReceipt.transactionHash,
+        status: MessageStatus.RELAYED,
+      })
       savePartialWithdrawal({
         claimWithdrawalTxHash: claimWithdrawalReceipt.transactionHash,
       })

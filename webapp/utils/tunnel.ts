@@ -1,10 +1,11 @@
 import { MessageDirection } from '@eth-optimism/sdk'
 import {
-  BtcDepositOperation,
-  DepositTunnelOperation,
-  EvmDepositOperation,
-  TunnelOperation,
-  WithdrawTunnelOperation,
+  type BtcDepositOperation,
+  type DepositTunnelOperation,
+  type EvmDepositOperation,
+  type ToEvmWithdrawOperation,
+  type TunnelOperation,
+  type WithdrawTunnelOperation,
 } from 'types/tunnel'
 
 export const isDeposit = (
@@ -12,15 +13,25 @@ export const isDeposit = (
 ): operation is DepositTunnelOperation =>
   operation.direction === MessageDirection.L1_TO_L2
 
+export const isBtcOperation = (operation: TunnelOperation) =>
+  typeof operation.l1ChainId === 'string'
+
+export const isEvmOperation = (operation: TunnelOperation) =>
+  typeof operation.l1ChainId === 'number'
+
 export const isBtcDeposit = (
   operation: DepositTunnelOperation,
-): operation is BtcDepositOperation => typeof operation.l1ChainId === 'string'
+): operation is BtcDepositOperation => isBtcOperation(operation)
 
 export const isEvmDeposit = (
   operation: DepositTunnelOperation,
-): operation is EvmDepositOperation => typeof operation.l1ChainId === 'number'
+): operation is EvmDepositOperation => isEvmOperation(operation)
 
 export const isWithdraw = (
   operation: TunnelOperation,
 ): operation is WithdrawTunnelOperation =>
   operation.direction === MessageDirection.L2_TO_L1
+
+export const isToEvmWithdraw = (
+  withdraw: WithdrawTunnelOperation,
+): withdraw is ToEvmWithdrawOperation => isEvmOperation(withdraw)

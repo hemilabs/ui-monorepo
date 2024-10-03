@@ -56,7 +56,7 @@ const Operation = function () {
         {isDeposit(tunnelOperation) ? (
           <ViewDeposit deposit={tunnelOperation} onClose={onClose} />
         ) : (
-          <ViewWithdrawal withdrawal={tunnelOperation} />
+          <ViewWithdrawal onClose={onClose} withdrawal={tunnelOperation} />
         )}
       </div>
     </Drawer>

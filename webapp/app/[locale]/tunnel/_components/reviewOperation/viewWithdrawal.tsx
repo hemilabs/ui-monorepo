@@ -1,28 +1,17 @@
-'use client'
-
-import { Drawer } from 'components/drawer'
 import { WithdrawTunnelOperation } from 'types/tunnel'
-import { isEvmOperation } from 'utils/tunnel'
+import { isToEvmWithdraw } from 'utils/tunnel'
 
-import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
+import { ReviewEvmWithdrawal } from './reviewEvmWithdrawal'
 
 type Props = {
+  onClose: () => void
   withdrawal: WithdrawTunnelOperation
 }
 
-// TODO will be implemented in incoming PRs
-export const ViewWithdrawal = function ({ withdrawal }: Props) {
-  const { updateTxHash } = useTunnelOperation()
-
-  const onClose = function () {
-    updateTxHash(null)
+export const ViewWithdrawal = function ({ onClose, withdrawal }: Props) {
+  if (isToEvmWithdraw(withdrawal)) {
+    return <ReviewEvmWithdrawal onClose={onClose} withdrawal={withdrawal} />
   }
-
-  return (
-    <Drawer onClose={onClose}>
-      <div className="h-full w-80 bg-white">{`${
-        isEvmOperation(withdrawal) ? 'EVM' : 'BTC'
-      } Withdrawal ${withdrawal.transactionHash}`}</div>
-    </Drawer>
-  )
+  // Bitcoin withdrawals Will be implemented in incoming PRs
+  return null
 }

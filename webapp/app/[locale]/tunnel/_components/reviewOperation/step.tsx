@@ -47,6 +47,7 @@ const Completed = function ({
   description,
   explorerChainId,
   position,
+  postAction,
   txHash,
 }: Props) {
   const t = useTranslations('common.transaction-status')
@@ -68,6 +69,11 @@ const Completed = function ({
           <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
         </div>
       </div>
+      {!!postAction && (
+        <div className="left-2.25 absolute bottom-6">
+          <LongVerticalLine stroke="stroke-orange-500" />
+        </div>
+      )}
     </>
   )
 }

@@ -21,7 +21,7 @@ import {
 } from '../_hooks/useTunnelState'
 
 import { ReviewBtcDeposit } from './reviewOperation/reviewBtcDeposit'
-import { ReviewEvmWithdrawal } from './reviewOperation/reviewEvmWithdrawal'
+import { ReviewEvmWithdrawal } from './reviewOperation/reviewEvmWithdrawalOld'
 
 const BtcViewDeposit = function ({
   state,

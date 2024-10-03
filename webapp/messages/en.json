@@ -256,7 +256,9 @@
       "initiate-withdrawal": "Initiate withdrawal",
       "prove-withdrawal": "Prove withdrawal",
       "total-to-withdraw": "Total to withdraw",
-      "view-tx": "View"
+      "view-tx": "View",
+      "withdraw-completed": "Your withdrawal is complete.",
+      "withdraw-on-its-way": "You're almost there! Complete the remaining steps to claim your withdrawal."
     },
     "submit-button": {
       "approve-and-deposit": "Approve and Deposit",

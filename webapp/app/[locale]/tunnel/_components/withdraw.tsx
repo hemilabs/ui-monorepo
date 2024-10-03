@@ -42,7 +42,7 @@ const MinBitcoinWithdraw = '0.005'
 
 const ReviewEvmWithdrawal = dynamic(
   () =>
-    import('./reviewOperation/reviewEvmWithdrawal').then(
+    import('./reviewOperation/reviewEvmWithdrawalOld').then(
       mod => mod.ReviewEvmWithdrawal,
     ),
   {

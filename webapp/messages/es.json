@@ -256,7 +256,9 @@
       "initiate-withdrawal": "Iniciar retiro",
       "prove-withdrawal": "Probar retiro",
       "total-to-withdraw": "Total a retirar",
-      "view-tx": "View"
+      "view-tx": "View",
+      "withdraw-completed": "Su retiro ha sido completado.",
+      "withdraw-on-its-way": "¡Ya falta poco! Complete el resto de los pasos para reclamar su retiro."
     },
     "submit-button": {
       "approve-and-deposit": "Aprobar y Depositar",

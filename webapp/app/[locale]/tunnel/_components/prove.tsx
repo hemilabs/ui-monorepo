@@ -19,7 +19,7 @@ import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import { useTunnelState } from '../_hooks/useTunnelState'
 
-import { ReviewEvmWithdrawal } from './reviewOperation/reviewEvmWithdrawal'
+import { ReviewEvmWithdrawal } from './reviewOperation/reviewEvmWithdrawalOld'
 
 const SubmitButton = function ({
   isProving,

@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl'
+import { ComponentProps } from 'react'
 import { RemoteChain } from 'types/chain'
 import { getFormattedValue } from 'utils/format'
 
@@ -177,3 +178,8 @@ export const Step = function ({
     </div>
   )
 }
+
+export type StepPropsWithoutPosition = Omit<
+  ComponentProps<typeof Step>,
+  'position'
+>

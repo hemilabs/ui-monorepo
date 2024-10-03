@@ -2,7 +2,6 @@
 
 import { useChain } from 'hooks/useChain'
 import { useTranslations } from 'next-intl'
-import { ComponentProps } from 'react'
 import { EvmToken } from 'types/token'
 import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
 import { formatGasFees } from 'utils/format'
@@ -13,7 +12,7 @@ import { useDeposit } from '../../_hooks/useDeposit'
 
 import { Operation } from './operation'
 import { ProgressStatus } from './progressStatus'
-import { Step } from './step'
+import { type StepPropsWithoutPosition } from './step'
 
 type Props = {
   deposit: EvmDepositOperation
@@ -46,9 +45,9 @@ export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
   })
   const t = useTranslations('tunnel-page.review-deposit')
 
-  const steps: Omit<ComponentProps<typeof Step>, 'position'>[] = []
+  const steps: StepPropsWithoutPosition[] = []
 
-  const getApprovalStep = () => ({
+  const getApprovalStep = (): StepPropsWithoutPosition => ({
     description:
       depositStatus >= EvmDepositStatus.APPROVAL_TX_COMPLETED
         ? t('approve-confirmed')
@@ -71,7 +70,7 @@ export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
     txHash: deposit.approvalTxHash,
   })
 
-  const getDepositStep = function () {
+  const getDepositStep = function (): StepPropsWithoutPosition {
     const statusMap = {
       [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.COMPLETED,
       [EvmDepositStatus.DEPOSIT_TX_PENDING]: ProgressStatus.PROGRESS,

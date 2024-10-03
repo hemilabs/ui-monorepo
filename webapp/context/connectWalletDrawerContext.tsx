@@ -8,11 +8,12 @@ type ConnectWalletDrawerContext = {
   openDrawer: () => void
 }
 
-export const ConnectWalletDrawerContext = createContext({
-  closeDrawer: () => undefined,
-  isDrawerOpen: false,
-  openDrawer: () => undefined,
-})
+export const ConnectWalletDrawerContext =
+  createContext<ConnectWalletDrawerContext>({
+    closeDrawer: () => undefined,
+    isDrawerOpen: false,
+    openDrawer: () => undefined,
+  })
 
 export const ConnectWalletDrawerProvider = function ({
   children,

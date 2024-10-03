@@ -1,41 +1,27 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
-import {
-  useL1GetTransactionMessageStatus,
-  useProveMessage,
-} from 'hooks/useL2Bridge'
-import { useCallback } from 'react'
-import type { Chain, Hash } from 'viem'
+import { useProveMessage } from 'hooks/useL2Bridge'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useCallback, useEffect } from 'react'
+import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { useWaitForTransactionReceipt } from 'wagmi'
 
-type UseProveTransaction = {
-  l1ChainId: Chain['id']
-  withdrawTxHash: Hash
-}
-
-export const useProveTransaction = function ({
-  l1ChainId,
-  withdrawTxHash,
-}: UseProveTransaction) {
+export const useProveTransaction = function (
+  withdrawal: ToEvmWithdrawOperation,
+) {
+  const connectedToL1 = useIsConnectedToExpectedNetwork(withdrawal.l1ChainId)
   const queryClient = useQueryClient()
-
-  const connectedToL1 = useIsConnectedToExpectedNetwork(l1ChainId)
-
-  const { messageStatus: transactionMessageStatus } =
-    useL1GetTransactionMessageStatus({
-      l1ChainId,
-      refetchUntilStatus: MessageStatus.READY_TO_PROVE,
-      transactionHash: withdrawTxHash,
-    })
+  const { updateWithdrawal } = useTunnelHistory()
 
   const isReadyToProve =
-    transactionMessageStatus === MessageStatus.READY_TO_PROVE && connectedToL1
+    withdrawal.status === MessageStatus.READY_TO_PROVE && connectedToL1
 
   const { proveWithdrawal, resetProveWithdrawal, ...rest } = useProveMessage({
     enabled: isReadyToProve,
-    l1ChainId,
-    withdrawTxHash,
+    l1ChainId: withdrawal.l1ChainId,
+    onSuccess: proveTxHash => updateWithdrawal(withdrawal, { proveTxHash }),
+    withdrawTxHash: withdrawal.transactionHash,
   })
 
   const {
@@ -47,12 +33,6 @@ export const useProveTransaction = function ({
     hash: rest.proveWithdrawalTxHash,
   })
 
-  const handleProveWithdrawal = function () {
-    if (isReadyToProve) {
-      proveWithdrawal()
-    }
-  }
-
   const clearProveWithdrawalState = useCallback(
     function () {
       // clear the prof operation hash
@@ -62,6 +42,36 @@ export const useProveTransaction = function ({
     },
     [queryClient, resetProveWithdrawal, withdrawalProofQueryKey],
   )
+
+  useEffect(
+    function updateWithdrawalAfterProveConfirmation() {
+      if (withdrawalProofReceipt?.status !== 'success') {
+        return
+      }
+      if (withdrawal?.status === MessageStatus.IN_CHALLENGE_PERIOD) {
+        return
+      }
+
+      updateWithdrawal(withdrawal, {
+        proveTxHash: withdrawalProofReceipt.transactionHash,
+        status: MessageStatus.IN_CHALLENGE_PERIOD,
+      })
+
+      clearProveWithdrawalState()
+    },
+    [
+      clearProveWithdrawalState,
+      updateWithdrawal,
+      withdrawal,
+      withdrawalProofReceipt,
+    ],
+  )
+
+  const handleProveWithdrawal = function () {
+    if (isReadyToProve) {
+      proveWithdrawal()
+    }
+  }
 
   return {
     clearProveWithdrawalState,

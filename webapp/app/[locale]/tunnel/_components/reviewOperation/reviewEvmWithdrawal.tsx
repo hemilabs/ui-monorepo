@@ -1,30 +1,52 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useChain } from 'hooks/useChain'
 import { useTranslations } from 'next-intl'
-import { ComponentProps } from 'react'
+import { useContext } from 'react'
 import { EvmToken } from 'types/token'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { formatGasFees } from 'utils/format'
 import { getNativeToken, getTokenByAddress, isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 
+import {
+  ToEvmWithdrawalContext,
+  ToEvmWithdrawalProvider,
+} from '../../_context/toEvmWithdrawalContext'
 import { useClaimTransaction } from '../../_hooks/useClaimTransaction'
 import { useProveTransaction } from '../../_hooks/useProveTransaction'
 import { useWithdraw } from '../../_hooks/useWithdraw'
+import { ClaimEvmWithdrawal } from '../claimEvmWithdrawal'
+import { ProveWithdrawal } from '../proveEvmWithdrawal'
 
 import { Operation } from './operation'
 import { ProgressStatus } from './progressStatus'
-import { Step } from './step'
+import { type StepPropsWithoutPosition } from './step'
 
 const ExpectedWithdrawalWaitTimeMinutes = 20
 const ExpectedProofWaitTimeHours = 3
+
+const getCallToAction = function (withdrawal: ToEvmWithdrawOperation) {
+  if (
+    ![MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
+      withdrawal.status,
+    )
+  ) {
+    return null
+  }
+
+  return withdrawal.status === MessageStatus.READY_TO_PROVE ? (
+    <ProveWithdrawal withdrawal={withdrawal} />
+  ) : (
+    <ClaimEvmWithdrawal withdrawal={withdrawal} />
+  )
+}
 
 type Props = {
   onClose: () => void
   withdrawal: ToEvmWithdrawOperation
 }
 
-export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
+const ReviewContent = function ({ onClose, withdrawal }: Props) {
   const toToken = getTokenByAddress(
     withdrawal.l1Token,
     withdrawal.l1ChainId,
@@ -39,18 +61,13 @@ export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
 
   const fromChain = useChain(withdrawal.l2ChainId)
   const toChain = useChain(withdrawal.l1ChainId)
+  const [operationRunning] = useContext(ToEvmWithdrawalContext)
   const t = useTranslations('tunnel-page.review-withdraw')
   const tCommon = useTranslations('common')
 
-  const { claimWithdrawalTokenGasFees } = useClaimTransaction({
-    l1ChainId: withdrawal.l1ChainId,
-    withdrawTxHash: withdrawal.transactionHash,
-  })
+  const { claimWithdrawalTokenGasFees } = useClaimTransaction(withdrawal)
 
-  const { proveWithdrawalTokenGasFees } = useProveTransaction({
-    l1ChainId: withdrawal.l1ChainId,
-    withdrawTxHash: withdrawal.transactionHash,
-  })
+  const { proveWithdrawalTokenGasFees } = useProveTransaction(withdrawal)
 
   const { withdrawGasFees } = useWithdraw({
     // only estimate fees for the first step
@@ -63,9 +80,9 @@ export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
     toToken,
   })
 
-  const steps: Omit<ComponentProps<typeof Step>, 'position'>[] = []
+  const steps: StepPropsWithoutPosition[] = []
 
-  const getInitiateWithdrawStep = () => ({
+  const getInitiateWithdrawStep = (): StepPropsWithoutPosition => ({
     description: t('initiate-withdrawal'),
     explorerChainId: withdrawal.l2ChainId,
     fees:
@@ -83,11 +100,11 @@ export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
         minutes: ExpectedWithdrawalWaitTimeMinutes,
       }),
       status:
-        withdrawal.status >= MessageStatus.READY_TO_PROVE
-          ? ProgressStatus.COMPLETED
-          : withdrawal.status === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE
+        withdrawal.status === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE
+          ? ProgressStatus.NOT_READY
+          : withdrawal.status === MessageStatus.STATE_ROOT_NOT_PUBLISHED
             ? ProgressStatus.PROGRESS
-            : ProgressStatus.NOT_READY,
+            : ProgressStatus.COMPLETED,
     },
     status:
       withdrawal.status >= MessageStatus.STATE_ROOT_NOT_PUBLISHED
@@ -96,15 +113,31 @@ export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
     txHash: withdrawal.transactionHash,
   })
 
+  const getClaimStatus = function () {
+    if (withdrawal.status === MessageStatus.RELAYED) {
+      return ProgressStatus.COMPLETED
+    }
+    if (operationRunning === 'claim') {
+      return ProgressStatus.PROGRESS
+    }
+    return withdrawal.status === MessageStatus.READY_FOR_RELAY
+      ? ProgressStatus.READY
+      : ProgressStatus.NOT_READY
+  }
+
   const getProveStatus = function () {
     if (withdrawal.status < MessageStatus.READY_TO_PROVE)
       return ProgressStatus.NOT_READY
-    if (withdrawal.status === MessageStatus.READY_TO_PROVE)
+    if (operationRunning === 'prove') {
+      return ProgressStatus.PROGRESS
+    }
+    if (withdrawal.status === MessageStatus.READY_TO_PROVE) {
       return ProgressStatus.READY
+    }
     return ProgressStatus.COMPLETED
   }
 
-  const getProveStep = () => ({
+  const getProveStep = (): StepPropsWithoutPosition => ({
     description: t('prove-withdrawal'),
     explorerChainId: withdrawal.l1ChainId,
     fees:
@@ -124,15 +157,15 @@ export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
       status:
         withdrawal.status >= MessageStatus.READY_FOR_RELAY
           ? ProgressStatus.COMPLETED
-          : getProveStatus() === ProgressStatus.COMPLETED
-            ? ProgressStatus.READY
+          : withdrawal.status === MessageStatus.IN_CHALLENGE_PERIOD
+            ? ProgressStatus.PROGRESS
             : ProgressStatus.NOT_READY,
     },
     status: getProveStatus(),
-    transactionHash: withdrawal.proveTxHash,
+    txHash: withdrawal.proveTxHash,
   })
 
-  const getClaimStep = () => ({
+  const getClaimStep = (): StepPropsWithoutPosition => ({
     description: t('claim-withdrawal'),
     explorerChainId: withdrawal.l1ChainId,
     fees:
@@ -145,13 +178,8 @@ export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
             symbol: toChain.nativeCurrency.symbol,
           }
         : undefined,
-    status:
-      withdrawal.status === MessageStatus.RELAYED
-        ? ProgressStatus.COMPLETED
-        : withdrawal.status === MessageStatus.READY_FOR_RELAY
-          ? ProgressStatus.READY
-          : ProgressStatus.NOT_READY,
-    transactionHash: withdrawal.claimTxHash,
+    status: getClaimStatus(),
+    txHash: withdrawal.claimTxHash,
   })
 
   steps.push(getInitiateWithdrawStep())
@@ -161,6 +189,7 @@ export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
   return (
     <Operation
       amount={withdrawal.amount}
+      callToAction={getCallToAction(withdrawal)}
       onClose={onClose}
       steps={steps}
       subtitle={
@@ -173,3 +202,9 @@ export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
     />
   )
 }
+
+export const ReviewEvmWithdrawal = ({ onClose, withdrawal }: Props) => (
+  <ToEvmWithdrawalProvider>
+    <ReviewContent onClose={onClose} withdrawal={withdrawal} />
+  </ToEvmWithdrawalProvider>
+)

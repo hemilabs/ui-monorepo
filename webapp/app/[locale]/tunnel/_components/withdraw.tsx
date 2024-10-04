@@ -1,4 +1,3 @@
-import { MessageStatus } from '@eth-optimism/sdk'
 import { Big } from 'big.js'
 import { Button } from 'components/button'
 import { useAccounts } from 'hooks/useAccounts'
@@ -22,7 +21,6 @@ import { useAccount } from 'wagmi'
 
 import { useAfterTransaction } from '../_hooks/useAfterTransaction'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
-import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import {
   type EvmTunneling,
   type HemiToBitcoinTunneling,
@@ -39,16 +37,6 @@ import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 
 const MinBitcoinWithdraw = '0.005'
-
-const ReviewEvmWithdrawal = dynamic(
-  () =>
-    import('./reviewOperation/reviewEvmWithdrawalOld').then(
-      mod => mod.ReviewEvmWithdrawal,
-    ),
-  {
-    ssr: false,
-  },
-)
 
 const SetMaxEvmBalance = dynamic(
   () => import('./setMaxBalance').then(mod => mod.SetMaxEvmBalance),
@@ -260,7 +248,6 @@ type EvmWithdrawProps = {
 }
 
 const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
-  const { updateWithdrawal, withdrawals } = useTunnelHistory()
   const [isWithdrawing, setIsWithdrawing] = useState(false)
 
   const t = useTranslations()
@@ -270,14 +257,12 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     fromNetworkId,
     fromToken,
     resetStateAfterOperation,
-    savePartialWithdrawal,
     toNetworkId,
     toToken,
     updateFromInput,
   } = state
 
   const { chainId, isConnected } = useAccount()
-  const { txHash } = useTunnelOperation()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -327,43 +312,11 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     [setIsWithdrawing, resetStateAfterOperation],
   )
 
-  const onSuccess = useCallback(
-    function () {
-      resetFormState()
-      const withdrawalFound = withdrawals.find(
-        w =>
-          w.transactionHash === withdrawReceipt.transactionHash && !w.timestamp,
-      )
-
-      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
-      // eslint-disable-next-line promise/catch-or-return
-      getEvmBlock(withdrawReceipt.blockNumber, fromNetworkId).then(block =>
-        updateWithdrawal(withdrawalFound, {
-          blockNumber: Number(withdrawReceipt.blockNumber),
-          status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
-          timestamp: Number(block.timestamp),
-        }),
-      )
-      // use this to show the TX confirmation in prove.tsx when mounting
-      savePartialWithdrawal({
-        withdrawalTxHash: withdrawReceipt.transactionHash,
-      })
-    },
-    [
-      fromNetworkId,
-      resetFormState,
-      savePartialWithdrawal,
-      updateWithdrawal,
-      withdrawals,
-      withdrawReceipt,
-    ],
-  )
-
   const { beforeTransaction } = useAfterTransaction({
     clearState: clearWithdrawState,
     errorReceipts: [withdrawError, withdrawReceiptError],
     onError: resetFormState,
-    onSuccess,
+    onSuccess: resetFormState,
     transactionReceipt: withdrawReceipt,
   })
 
@@ -373,27 +326,6 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     withdraw()
     setIsWithdrawing(true)
   }
-
-  const transactionsList = useTransactionsList({
-    expectedWithdrawSuccessfulMessageStatus:
-      MessageStatus.STATE_ROOT_NOT_PUBLISHED,
-    inProgressMessage: t('tunnel-page.transaction-status.withdrawing', {
-      fromInput: getFormattedValue(fromInput),
-      network: fromChain?.name,
-      symbol: fromToken.symbol,
-    }),
-    isOperating: isWithdrawing,
-    operation: 'withdraw',
-    receipt: withdrawReceipt,
-    receiptError: withdrawReceiptError,
-    successMessage: t('tunnel-page.transaction-status.withdrawn', {
-      fromInput: getFormattedValue(fromInput),
-      symbol: fromToken.symbol,
-    }),
-    txHash,
-    userConfirmationError: withdrawError,
-  })
-
   const gas = {
     amount: formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals),
     label: t('common.network-gas-fee', { network: fromChain?.name }),
@@ -412,7 +344,6 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             />
           ) : null
         }
-        explorerUrl={fromChain?.blockExplorers.default.url}
         formContent={
           <FormContent
             isRunningOperation={isWithdrawing}
@@ -441,16 +372,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             <ConnectEvmWallet />
           )
         }
-        transactionsList={transactionsList}
       />
-      {!!txHash && (
-        <ReviewEvmWithdrawal
-          gas={gas}
-          isRunningOperation={isWithdrawing}
-          onClose={resetStateAfterOperation}
-          transactionsList={transactionsList}
-        />
-      )}
     </>
   )
 }

@@ -1,4 +1,4 @@
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
+import { MessageDirection } from '@eth-optimism/sdk'
 import {
   type BtcDepositOperation,
   BtcDepositStatus,
@@ -53,22 +53,4 @@ export const getOperationFromDeposit = function (
   } as const
 
   return btcDepositStatusToAction[deposit.status]
-}
-
-export const getOperationFromWithdraw = function (
-  withdraw: WithdrawTunnelOperation,
-) {
-  if (isToEvmWithdraw(withdraw)) {
-    const evmWithdrawStatusAction = {
-      [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: 'withdraw',
-      [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: 'withdraw',
-      [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: 'prove',
-      [MessageStatus.READY_TO_PROVE]: 'prove',
-      [MessageStatus.IN_CHALLENGE_PERIOD]: 'claim',
-      [MessageStatus.READY_FOR_RELAY]: 'claim',
-      [MessageStatus.RELAYED]: 'view',
-    } as const
-    return evmWithdrawStatusAction[withdraw.status]
-  }
-  return 'view'
 }

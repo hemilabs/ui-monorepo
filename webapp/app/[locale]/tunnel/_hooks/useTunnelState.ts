@@ -23,12 +23,6 @@ export type TunnelState = {
     depositTxHash: BtcTransaction
     claimDepositTxHash: Hash
   }>
-  // used for eth withdrawals
-  partialWithdrawal?: Partial<{
-    withdrawalTxHash: Hash
-    claimWithdrawalTxHash: Hash
-    proveWithdrawalTxHash: Hash
-  }>
   toNetworkId: RemoteChain['id']
   toToken: Token
 }
@@ -41,8 +35,6 @@ type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
 
 type SavePartialDeposit = Action<'savePartialDeposit'> &
   Payload<TunnelState['partialDeposit']>
-type SavePartialWithdrawal = Action<'savePartialWithdrawal'> &
-  Payload<TunnelState['partialWithdrawal']>
 type UpdateFromNetwork = Action<'updateFromNetwork'> &
   Payload<TunnelState['fromNetworkId']>
 type UpdateFromToken = Action<'updateFromToken'> &
@@ -55,7 +47,6 @@ type ToggleInput = Action<'toggleInput'> & NoPayload
 type Actions =
   | ResetStateAfterOperation
   | SavePartialDeposit
-  | SavePartialWithdrawal
   | UpdateFromNetwork
   | UpdateFromInput
   | UpdateFromToken
@@ -76,7 +67,6 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
         ...state,
         fromInput: '0',
       }
-      delete newState.partialWithdrawal
       return newState
     }
     case 'savePartialDeposit': {
@@ -84,15 +74,6 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
         ...state,
         partialDeposit: {
           ...(state.partialDeposit || {}),
-          ...action.payload,
-        },
-      }
-    }
-    case 'savePartialWithdrawal': {
-      return {
-        ...state,
-        partialWithdrawal: {
-          ...(state.partialWithdrawal || {}),
           ...action.payload,
         },
       }
@@ -147,7 +128,6 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
         toNetworkId: state.fromNetworkId,
         toToken: state.fromToken,
       }
-      delete newState.partialWithdrawal
 
       return newState
     }
@@ -267,14 +247,6 @@ export const useTunnelState = function (): TunnelState & {
         dispatch({
           payload,
           type: 'savePartialDeposit',
-        }),
-      [dispatch],
-    ),
-    savePartialWithdrawal: useCallback(
-      (payload: SavePartialWithdrawal['payload']) =>
-        dispatch({
-          payload,
-          type: 'savePartialWithdrawal',
         }),
       [dispatch],
     ),

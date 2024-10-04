@@ -1,11 +1,12 @@
-import { ComponentProps } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 
 import { Amount } from './amount'
 import { Header } from './header'
-import { Step } from './step'
+import { Step, type StepPropsWithoutPosition } from './step'
 
 type Props = {
-  steps: Omit<ComponentProps<typeof Step>, 'position'>[]
+  callToAction?: ReactNode
+  steps: StepPropsWithoutPosition[]
 } & ComponentProps<typeof Header> &
   Omit<ComponentProps<typeof Amount>, 'value'> & {
     // rename value to amount
@@ -14,6 +15,7 @@ type Props = {
 
 export const Operation = ({
   amount,
+  callToAction,
   onClose,
   steps,
   subtitle,
@@ -38,5 +40,6 @@ export const Operation = ({
         ))}
       </div>
     </div>
+    {!!callToAction && <div className="px-4 pt-12">{callToAction}</div>}
   </div>
 )

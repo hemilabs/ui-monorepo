@@ -1,84 +1,28 @@
-import { MessageStatus } from '@eth-optimism/sdk'
 import { Button } from 'components/button'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useClaimBitcoinDeposit } from 'hooks/useBtcTunnel'
-import { useChain } from 'hooks/useChain'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
-import { useGetClaimWithdrawalTxHash } from 'hooks/useL2Bridge'
-import { useNetworks } from 'hooks/useNetworks'
-import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
-import { BtcDepositStatus, ToEvmWithdrawOperation } from 'types/tunnel'
+import { BtcDepositStatus } from 'types/tunnel'
 import { getFormattedValue } from 'utils/format'
 import { getTokenByAddress } from 'utils/token'
-import { Chain, formatUnits, type Hash, isHash } from 'viem'
+import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { SubmitWhenConnectedToChain } from '../_components/submitWhenConnectedToChain'
-import { useClaimTransaction } from '../_hooks/useClaimTransaction'
 import { useShowTransactionFromPreviousStep } from '../_hooks/useShowTransactionFromPreviousStep'
 import { useTransactionsList } from '../_hooks/useTransactionsList'
 import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import {
-  type EvmTunneling,
   type BtcToHemiTunneling,
   useTunnelState,
   TypedTunnelState,
 } from '../_hooks/useTunnelState'
 
 import { ReviewBtcDeposit } from './reviewOperation/reviewBtcDeposit'
-import { ReviewEvmWithdrawal } from './reviewOperation/reviewEvmWithdrawalOld'
-
-const EvmSubmitButton = function ({
-  claimTxHash: inMemoryClaimTxHash,
-  l1ChainId,
-  isClaiming,
-  isReadyToClaim,
-  withdrawal,
-}: {
-  claimTxHash: Hash | undefined
-  l1ChainId: Chain['id']
-  isClaiming: boolean
-  isReadyToClaim: boolean
-  withdrawal: ToEvmWithdrawOperation
-}) {
-  const t = useTranslations()
-  const txHash = useTunnelOperation().txHash as Hash
-
-  const { claimTxHash } = useGetClaimWithdrawalTxHash(l1ChainId, txHash)
-  const { status: messageStatus } = withdrawal
-
-  const hasClaimTxHash = !!inMemoryClaimTxHash || !!claimTxHash
-
-  // Even though the Tx is confirmed, it takes a while to the OP-SDK
-  // to confirm that the message was relayed, even after revalidating the queries
-  // so it is better to check for this instead of the existence of the claimTxHash
-  const claimConfirmed =
-    messageStatus === MessageStatus.RELAYED && hasClaimTxHash
-
-  return (
-    <SubmitWhenConnectedToChain
-      chainId={l1ChainId}
-      submitButton={
-        <Button
-          disabled={!isReadyToClaim || isClaiming || claimConfirmed}
-          type="submit"
-        >
-          {t(
-            `tunnel-page.submit-button.${
-              isClaiming || (!claimConfirmed && hasClaimTxHash)
-                ? 'claiming-withdrawal'
-                : 'claim-withdrawal'
-            }`,
-          )}
-        </Button>
-      }
-    />
-  )
-}
 
 const BtcSubmitButton = function ({
   isClaiming,
@@ -249,168 +193,8 @@ export const BtcClaim = function ({
   )
 }
 
-type EvmClaimProps = {
-  state: TypedTunnelState<EvmTunneling>
-}
-
-export const EvmClaim = function ({ state }: EvmClaimProps) {
-  const { evmRemoteNetworks } = useNetworks()
-  const { updateWithdrawal } = useTunnelHistory()
-  const withdrawals = useToEvmWithdrawals()
-  const { partialWithdrawal, resetStateAfterOperation, savePartialWithdrawal } =
-    state
-
-  const [isClaiming, setIsClaiming] = useState(false)
-
-  // https://github.com/hemilabs/ui-monorepo/issues/158
-  const l1ChainId = evmRemoteNetworks[0].id
-
-  const txHash = useTunnelOperation().txHash as Hash
-  const t = useTranslations()
-
-  const fromChain = useChain(l1ChainId)
-
-  const {
-    claimWithdrawal,
-    claimWithdrawalError,
-    claimWithdrawalReceipt,
-    claimWithdrawalReceiptError,
-    claimWithdrawalTokenGasFees,
-    claimWithdrawalTxHash,
-    clearClaimWithdrawalState,
-    isReadyToClaim,
-  } = useClaimTransaction({
-    l1ChainId,
-    withdrawTxHash: txHash,
-  })
-
-  const withdrawal = withdrawals.find(w => w.transactionHash === txHash)
-
-  // If coming from the Prove form, show the prove transaction briefly
-  // but if entering from the history, there's no need to show it
-  const showProveWithdrawalTx = useShowTransactionFromPreviousStep(
-    partialWithdrawal?.proveWithdrawalTxHash,
-  )
-
-  useEffect(
-    function updateWithdrawalAfterConfirmation() {
-      if (claimWithdrawalReceipt?.status !== 'success') {
-        return
-      }
-
-      if (withdrawal?.status === MessageStatus.RELAYED) {
-        return
-      }
-      updateWithdrawal(withdrawal, {
-        claimTxHash: claimWithdrawalReceipt.transactionHash,
-        status: MessageStatus.RELAYED,
-      })
-      savePartialWithdrawal({
-        claimWithdrawalTxHash: claimWithdrawalReceipt.transactionHash,
-      })
-    },
-    [
-      claimWithdrawalReceipt,
-      savePartialWithdrawal,
-      txHash,
-      updateWithdrawal,
-      withdrawal,
-      withdrawals,
-    ],
-  )
-
-  useEffect(
-    function handleClaimErrors() {
-      if (isClaiming && (claimWithdrawalError || claimWithdrawalReceiptError)) {
-        const timeoutId = setTimeout(clearClaimWithdrawalState, 7000)
-        setIsClaiming(false)
-        return () => clearTimeout(timeoutId)
-      }
-      return undefined
-    },
-    [
-      claimWithdrawalError,
-      claimWithdrawalReceiptError,
-      clearClaimWithdrawalState,
-      isClaiming,
-      isReadyToClaim,
-      setIsClaiming,
-    ],
-  )
-
-  const handleClaim = function () {
-    if (!isReadyToClaim) {
-      return
-    }
-    clearClaimWithdrawalState()
-    claimWithdrawal()
-    setIsClaiming(true)
-  }
-
-  const transactionsList = useTransactionsList({
-    expectedWithdrawSuccessfulMessageStatus: MessageStatus.RELAYED,
-    inProgressMessage: t('tunnel-page.transaction-status.claiming-withdrawal'),
-    isOperating: isClaiming,
-    operation: 'claim',
-    receipt: claimWithdrawalReceipt,
-    receiptError: claimWithdrawalReceiptError,
-    successMessage: t('tunnel-page.transaction-status.withdrawal-claimed'),
-    txHash: claimWithdrawalTxHash,
-    userConfirmationError: claimWithdrawalError,
-  })
-
-  const gas = {
-    amount: formatUnits(
-      claimWithdrawalTokenGasFees,
-      fromChain?.nativeCurrency.decimals,
-    ),
-    label: t('common.network-gas-fee', { network: fromChain?.name }),
-    symbol: fromChain?.nativeCurrency.symbol,
-  }
-
-  const submitButton = (
-    <EvmSubmitButton
-      claimTxHash={claimWithdrawalTxHash}
-      isClaiming={isClaiming}
-      isReadyToClaim={isReadyToClaim}
-      l1ChainId={l1ChainId}
-      withdrawal={withdrawal}
-    />
-  )
-
-  return (
-    <ReviewEvmWithdrawal
-      gas={gas}
-      isRunningOperation={isClaiming}
-      onClose={resetStateAfterOperation}
-      onSubmit={handleClaim}
-      submitButton={submitButton}
-      transactionsList={
-        showProveWithdrawalTx
-          ? [
-              {
-                id: 'prove',
-                status: 'success',
-                text: t('tunnel-page.transaction-status.withdrawal-proved'),
-                txHash: partialWithdrawal?.proveWithdrawalTxHash,
-              },
-            ]
-          : transactionsList
-      }
-    />
-  )
-}
-
-export const Claim = function ({
+export const Claim = ({
   state,
 }: {
   state: ReturnType<typeof useTunnelState>
-}) {
-  const { txHash } = useTunnelOperation()
-
-  // Typescript can't infer it, but we can cast these safely
-  if (isHash(txHash)) {
-    return <EvmClaim state={state as TypedTunnelState<EvmTunneling>} />
-  }
-  return <BtcClaim state={state as TypedTunnelState<BtcToHemiTunneling>} />
-}
+}) => <BtcClaim state={state as TypedTunnelState<BtcToHemiTunneling>} />

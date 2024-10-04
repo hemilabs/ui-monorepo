@@ -4,6 +4,7 @@ import { createContext, ReactNode, useState } from 'react'
 
 type ToEvmWithdrawOperationStatuses =
   | 'idle'
+  | 'withdrawing'
   | 'proving'
   | 'claiming'
   | 'failed'

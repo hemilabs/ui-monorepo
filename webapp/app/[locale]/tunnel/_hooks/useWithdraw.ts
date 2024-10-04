@@ -146,7 +146,8 @@ export const useWithdraw = function ({
       }
       const withdrawal = withdrawals.find(
         w =>
-          w.transactionHash === withdrawReceipt.transactionHash && !w.timestamp,
+          w.transactionHash === withdrawReceipt.transactionHash &&
+          !w.blockNumber,
       )
 
       if (!withdrawal) {

@@ -17,6 +17,7 @@ import { useProveTransaction } from '../../_hooks/useProveTransaction'
 import { useWithdraw } from '../../_hooks/useWithdraw'
 import { ClaimEvmWithdrawal } from '../claimEvmWithdrawal'
 import { ProveWithdrawal } from '../proveEvmWithdrawal'
+import { RetryEvmWithdrawal } from '../retryEvmWithdrawal'
 
 import { Operation } from './operation'
 import { ProgressStatus } from './progressStatus'
@@ -25,21 +26,16 @@ import { type StepPropsWithoutPosition } from './step'
 const ExpectedWithdrawalWaitTimeMinutes = 20
 const ExpectedProofWaitTimeHours = 3
 
-const getCallToAction = function (withdrawal: ToEvmWithdrawOperation) {
-  if (
-    ![MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
-      withdrawal.status,
-    )
-  ) {
-    return null
-  }
-
-  return withdrawal.status === MessageStatus.READY_TO_PROVE ? (
-    <ProveWithdrawal withdrawal={withdrawal} />
-  ) : (
-    <ClaimEvmWithdrawal withdrawal={withdrawal} />
-  )
-}
+const getCallToAction = (withdrawal: ToEvmWithdrawOperation) =>
+  ({
+    [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: (
+      <RetryEvmWithdrawal withdrawal={withdrawal} />
+    ),
+    [MessageStatus.READY_TO_PROVE]: <ProveWithdrawal withdrawal={withdrawal} />,
+    [MessageStatus.READY_FOR_RELAY]: (
+      <ClaimEvmWithdrawal withdrawal={withdrawal} />
+    ),
+  })[withdrawal.status]
 
 type Props = {
   onClose: () => void

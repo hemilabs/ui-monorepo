@@ -39,9 +39,12 @@ export const useClaimTransaction = function (
   })
 
   const handleClaimWithdrawal = function () {
-    if (isReadyToClaim) {
-      finalizeWithdrawal()
+    if (!isReadyToClaim) {
+      return
     }
+    // clear any previous transaction hash, which may come from failed attempts
+    updateWithdrawal(withdrawal, { claimTxHash: undefined })
+    finalizeWithdrawal()
   }
 
   const clearClaimWithdrawalState = useCallback(

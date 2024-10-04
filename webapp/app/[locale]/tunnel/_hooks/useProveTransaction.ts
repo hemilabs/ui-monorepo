@@ -68,9 +68,12 @@ export const useProveTransaction = function (
   )
 
   const handleProveWithdrawal = function () {
-    if (isReadyToProve) {
-      proveWithdrawal()
+    if (!isReadyToProve) {
+      return
     }
+    // clear any previous transaction hash, which may come from failed attempts
+    updateWithdrawal(withdrawal, { proveTxHash: undefined })
+    proveWithdrawal()
   }
 
   return {

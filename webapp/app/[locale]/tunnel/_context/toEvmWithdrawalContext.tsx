@@ -2,7 +2,12 @@
 
 import { createContext, ReactNode, useState } from 'react'
 
-type ToEvmWithdrawOperationStatuses = 'idle' | 'proving' | 'claiming'
+type ToEvmWithdrawOperationStatuses =
+  | 'idle'
+  | 'proving'
+  | 'claiming'
+  | 'failed'
+  | 'rejected'
 
 type ToEvmWithdrawalContext = ReturnType<
   typeof useState<ToEvmWithdrawOperationStatuses>

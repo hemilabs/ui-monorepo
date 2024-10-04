@@ -13,12 +13,19 @@ type Props = {
 }
 
 export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
-  const { claimWithdrawal, claimWithdrawalReceipt, isReadyToClaim } =
-    useClaimTransaction(withdrawal)
+  const {
+    claimWithdrawal,
+    claimWithdrawalReceipt,
+    claimWithdrawalReceiptError,
+    claimWithdrawalError,
+    isReadyToClaim,
+  } = useClaimTransaction(withdrawal)
   const [operationStatus, setOperationStatus] = useContext(
     ToEvmWithdrawalContext,
   )
-  const t = useTranslations()
+  const t = useTranslations('tunnel-page.submit-button')
+
+  const isClaiming = operationStatus === 'claiming'
 
   useEffect(
     function clearAfterSuccessfulClaim() {
@@ -33,13 +40,39 @@ export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
     [claimWithdrawalReceipt, operationStatus, setOperationStatus],
   )
 
+  useEffect(
+    function handleUserRejection() {
+      if (claimWithdrawalError && isClaiming) {
+        setOperationStatus('rejected')
+      }
+    },
+    [claimWithdrawalError, isClaiming, setOperationStatus],
+  )
+
+  useEffect(
+    function handleTransactionFailure() {
+      if (claimWithdrawalReceiptError && isClaiming) {
+        setOperationStatus('failed')
+      }
+    },
+    [claimWithdrawalReceiptError, isClaiming, setOperationStatus],
+  )
+
   const handleClaim = function (e: FormEvent) {
     e.preventDefault()
     setOperationStatus('claiming')
     claimWithdrawal()
   }
 
-  const isClaiming = operationStatus === 'claiming'
+  const getText = function () {
+    if (isClaiming) {
+      return 'claiming-withdrawal'
+    }
+    if (['failed', 'rejected'].includes(operationStatus)) {
+      return 'try-again'
+    }
+    return 'claim-withdrawal'
+  }
 
   return (
     <form className="flex [&>button]:w-full" onSubmit={handleClaim}>
@@ -47,11 +80,7 @@ export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
         chainId={withdrawal.l1ChainId}
         submitButton={
           <Button disabled={!isReadyToClaim || isClaiming} type="submit">
-            {t(
-              `tunnel-page.submit-button.${
-                isClaiming ? 'claiming-withdrawal' : 'claim-withdrawal'
-              }`,
-            )}
+            {t(getText())}
           </Button>
         }
       />

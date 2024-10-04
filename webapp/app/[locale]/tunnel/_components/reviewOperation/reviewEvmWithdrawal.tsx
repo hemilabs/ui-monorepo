@@ -61,7 +61,7 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
 
   const fromChain = useChain(withdrawal.l2ChainId)
   const toChain = useChain(withdrawal.l1ChainId)
-  const [operationRunning] = useContext(ToEvmWithdrawalContext)
+  const [operationStatus] = useContext(ToEvmWithdrawalContext)
   const t = useTranslations('tunnel-page.review-withdraw')
   const tCommon = useTranslations('common')
 
@@ -117,24 +117,31 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
     if (withdrawal.status === MessageStatus.RELAYED) {
       return ProgressStatus.COMPLETED
     }
-    if (operationRunning === 'claiming') {
-      return ProgressStatus.PROGRESS
+    if (withdrawal.status !== MessageStatus.READY_FOR_RELAY) {
+      return ProgressStatus.NOT_READY
     }
-    return withdrawal.status === MessageStatus.READY_FOR_RELAY
-      ? ProgressStatus.READY
-      : ProgressStatus.NOT_READY
+
+    const map = {
+      claiming: ProgressStatus.PROGRESS,
+      failed: ProgressStatus.FAILED,
+      rejected: ProgressStatus.REJECTED,
+    }
+    return map[operationStatus] ?? ProgressStatus.READY
   }
 
   const getProveStatus = function () {
-    if (withdrawal.status < MessageStatus.READY_TO_PROVE)
+    if (withdrawal.status < MessageStatus.READY_TO_PROVE) {
       return ProgressStatus.NOT_READY
-    if (operationRunning === 'proving') {
-      return ProgressStatus.PROGRESS
     }
-    if (withdrawal.status === MessageStatus.READY_TO_PROVE) {
-      return ProgressStatus.READY
+    if (withdrawal.status >= MessageStatus.IN_CHALLENGE_PERIOD) {
+      return ProgressStatus.COMPLETED
     }
-    return ProgressStatus.COMPLETED
+    const map = {
+      failed: ProgressStatus.FAILED,
+      proving: ProgressStatus.PROGRESS,
+      rejected: ProgressStatus.REJECTED,
+    }
+    return map[operationStatus] ?? ProgressStatus.READY
   }
 
   const getProveStep = (): StepPropsWithoutPosition => ({

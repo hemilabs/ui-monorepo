@@ -99,40 +99,6 @@ export const useWithdraw = function ({
     toToken,
   })
 
-  useEffect(
-    function updateWithdrawalStatusAfterConfirmation() {
-      if (withdrawReceipt?.status !== 'success') {
-        return
-      }
-      const withdrawal = withdrawals.find(
-        w =>
-          w.transactionHash === withdrawReceipt.transactionHash && !w.timestamp,
-      )
-
-      if (!withdrawal) {
-        return
-      }
-
-      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
-      // eslint-disable-next-line promise/catch-or-return
-      getEvmBlock(withdrawReceipt.blockNumber, l2ChainId).then(block =>
-        updateWithdrawal(withdrawal, {
-          blockNumber: Number(withdrawReceipt.blockNumber),
-          status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
-          timestamp: Number(block.timestamp),
-        }),
-      )
-    },
-    [l2ChainId, updateWithdrawal, withdrawals, withdrawReceipt],
-  )
-
-  const handleWithdraw = (withdrawCallback: () => void) =>
-    function () {
-      if (canWithdraw) {
-        withdrawCallback()
-      }
-    }
-
   const clearWithdrawNativeState = useCallback(
     function () {
       // clear the withdrawal operation hash
@@ -153,10 +119,82 @@ export const useWithdraw = function ({
     [queryClient, resetWithdrawErc20Token, withdrawQueryKey],
   )
 
+  useEffect(
+    function updateWithdrawalStatusAfterFailure() {
+      if (!withdrawReceiptError) {
+        return
+      }
+      const withdrawal = withdrawals.find(
+        w =>
+          w.transactionHash === txHash &&
+          w.status !== MessageStatus.FAILED_L1_TO_L2_MESSAGE,
+      )
+      if (!withdrawal) {
+        return
+      }
+      updateWithdrawal(withdrawal, {
+        status: MessageStatus.FAILED_L1_TO_L2_MESSAGE,
+      })
+    },
+    [txHash, updateWithdrawal, withdrawals, withdrawReceiptError],
+  )
+
+  useEffect(
+    function updateWithdrawalStatusAfterConfirmation() {
+      if (withdrawReceipt?.status !== 'success') {
+        return
+      }
+      const withdrawal = withdrawals.find(
+        w =>
+          w.transactionHash === withdrawReceipt.transactionHash && !w.timestamp,
+      )
+
+      if (!withdrawal) {
+        return
+      }
+
+      clearWithdrawErc20TokenState()
+      clearWithdrawNativeState()
+
+      // update here so next iteration of the effect doesn't reach this point
+      updateWithdrawal(withdrawal, {
+        blockNumber: Number(withdrawReceipt.blockNumber),
+        status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+      })
+
+      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
+      // eslint-disable-next-line promise/catch-or-return
+      getEvmBlock(withdrawReceipt.blockNumber, l2ChainId).then(block =>
+        updateWithdrawal(withdrawal, {
+          timestamp: Number(block.timestamp),
+        }),
+      )
+    },
+    [
+      clearWithdrawErc20TokenState,
+      clearWithdrawNativeState,
+      l2ChainId,
+      updateWithdrawal,
+      withdrawals,
+      withdrawReceipt,
+      withdrawReceiptError,
+    ],
+  )
+
+  const handleWithdraw = (withdrawCallback: () => void) =>
+    function () {
+      if (canWithdraw) {
+        withdrawCallback()
+      }
+    }
+
   if (withdrawingNative) {
     return {
       clearWithdrawState: clearWithdrawNativeState,
-      withdraw: handleWithdraw(withdrawNativeToken),
+      withdraw: handleWithdraw(function () {
+        clearWithdrawNativeState()
+        withdrawNativeToken()
+      }),
       withdrawError: withdrawNativeTokenError,
       withdrawGasFees: withdrawNativeTokenGasFees,
       withdrawReceipt,
@@ -166,7 +204,10 @@ export const useWithdraw = function ({
   }
   return {
     clearWithdrawState: clearWithdrawErc20TokenState,
-    withdraw: handleWithdraw(withdrawErc20Token),
+    withdraw: handleWithdraw(function () {
+      clearWithdrawErc20TokenState()
+      withdrawErc20Token()
+    }),
     withdrawError: withdrawErc20TokenError,
     withdrawGasFees: withdrawErc20TokenGasFees,
     withdrawReceipt,

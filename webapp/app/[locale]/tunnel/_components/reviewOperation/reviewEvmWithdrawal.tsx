@@ -80,6 +80,15 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
     toToken,
   })
 
+  const getWithdrawalStatus = function () {
+    const map = {
+      [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: ProgressStatus.NOT_READY,
+      [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: ProgressStatus.PROGRESS,
+      [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: ProgressStatus.FAILED,
+    }
+    return map[withdrawal.status] ?? ProgressStatus.COMPLETED
+  }
+
   const steps: StepPropsWithoutPosition[] = []
 
   const getInitiateWithdrawStep = (): StepPropsWithoutPosition => ({
@@ -99,17 +108,14 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
       description: tCommon('wait-minutes', {
         minutes: ExpectedWithdrawalWaitTimeMinutes,
       }),
-      status:
-        withdrawal.status === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE
-          ? ProgressStatus.NOT_READY
-          : withdrawal.status === MessageStatus.STATE_ROOT_NOT_PUBLISHED
-            ? ProgressStatus.PROGRESS
-            : ProgressStatus.COMPLETED,
+      status: getWithdrawalStatus(),
     },
     status:
-      withdrawal.status >= MessageStatus.STATE_ROOT_NOT_PUBLISHED
-        ? ProgressStatus.COMPLETED
-        : ProgressStatus.PROGRESS,
+      withdrawal.status === MessageStatus.FAILED_L1_TO_L2_MESSAGE
+        ? ProgressStatus.FAILED
+        : withdrawal.status >= MessageStatus.STATE_ROOT_NOT_PUBLISHED
+          ? ProgressStatus.COMPLETED
+          : ProgressStatus.PROGRESS,
     txHash: withdrawal.transactionHash,
   })
 

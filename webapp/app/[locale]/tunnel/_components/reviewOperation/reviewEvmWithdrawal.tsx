@@ -117,7 +117,7 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
     if (withdrawal.status === MessageStatus.RELAYED) {
       return ProgressStatus.COMPLETED
     }
-    if (operationRunning === 'claim') {
+    if (operationRunning === 'claiming') {
       return ProgressStatus.PROGRESS
     }
     return withdrawal.status === MessageStatus.READY_FOR_RELAY
@@ -128,7 +128,7 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
   const getProveStatus = function () {
     if (withdrawal.status < MessageStatus.READY_TO_PROVE)
       return ProgressStatus.NOT_READY
-    if (operationRunning === 'prove') {
+    if (operationRunning === 'proving') {
       return ProgressStatus.PROGRESS
     }
     if (withdrawal.status === MessageStatus.READY_TO_PROVE) {

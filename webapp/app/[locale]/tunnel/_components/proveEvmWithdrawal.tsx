@@ -13,7 +13,7 @@ type Props = {
 }
 
 export const ProveWithdrawal = function ({ withdrawal }: Props) {
-  const [operationRunning, setOperationRunning] = useContext(
+  const [operationStatus, setOperationStatus] = useContext(
     ToEvmWithdrawalContext,
   )
   const { isReadyToProve, proveWithdrawal, withdrawalProofReceipt } =
@@ -24,20 +24,20 @@ export const ProveWithdrawal = function ({ withdrawal }: Props) {
     function clearAfterSuccessfulProve() {
       if (
         withdrawalProofReceipt?.status !== 'success' ||
-        operationRunning !== 'prove'
+        operationStatus !== 'proving'
       ) {
         return
       }
-      setOperationRunning('idle')
+      setOperationStatus('idle')
     },
-    [operationRunning, setOperationRunning, withdrawalProofReceipt],
+    [operationStatus, setOperationStatus, withdrawalProofReceipt],
   )
 
-  const isProving = operationRunning === 'prove'
+  const isProving = operationStatus === 'proving'
 
   const handleProve = function (e: FormEvent) {
     e.preventDefault()
-    setOperationRunning('prove')
+    setOperationStatus('proving')
     proveWithdrawal()
   }
 

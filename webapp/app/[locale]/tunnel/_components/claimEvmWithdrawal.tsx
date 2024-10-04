@@ -15,7 +15,7 @@ type Props = {
 export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
   const { claimWithdrawal, claimWithdrawalReceipt, isReadyToClaim } =
     useClaimTransaction(withdrawal)
-  const [operationRunning, setOperationRunning] = useContext(
+  const [operationStatus, setOperationStatus] = useContext(
     ToEvmWithdrawalContext,
   )
   const t = useTranslations()
@@ -24,22 +24,22 @@ export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
     function clearAfterSuccessfulClaim() {
       if (
         claimWithdrawalReceipt?.status !== 'success' ||
-        operationRunning !== 'claim'
+        operationStatus !== 'claiming'
       ) {
         return
       }
-      setOperationRunning('idle')
+      setOperationStatus('idle')
     },
-    [claimWithdrawalReceipt, operationRunning, setOperationRunning],
+    [claimWithdrawalReceipt, operationStatus, setOperationStatus],
   )
 
   const handleClaim = function (e: FormEvent) {
     e.preventDefault()
-    setOperationRunning('claim')
+    setOperationStatus('claiming')
     claimWithdrawal()
   }
 
-  const isClaiming = operationRunning === 'claim'
+  const isClaiming = operationStatus === 'claiming'
 
   return (
     <form className="flex [&>button]:w-full" onSubmit={handleClaim}>

@@ -285,7 +285,6 @@
       "actions": {
         "claim": "Reclamar",
         "prove": "Probar",
-        "retry": "Reintentar",
         "view": "Ver"
       },
       "column-headers": {

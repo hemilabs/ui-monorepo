@@ -28,7 +28,7 @@ export const WithdrawAction = function ({ withdraw }: Props) {
   const Failed = (
     <CallToAction
       networkType={networkType}
-      text={t('retry')}
+      text={t('view')}
       txHash={withdraw.transactionHash}
       variant="secondary"
     />

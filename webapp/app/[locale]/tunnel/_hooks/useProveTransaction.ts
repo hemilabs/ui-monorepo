@@ -28,7 +28,6 @@ export const useProveTransaction = function (
     data: withdrawalProofReceipt,
     error: withdrawalProofReceiptError,
     queryKey: withdrawalProofQueryKey,
-    status: withdrawalProofTxStatus,
   } = useWaitForTransactionReceipt({
     hash: rest.proveWithdrawalTxHash,
   })
@@ -77,12 +76,10 @@ export const useProveTransaction = function (
   }
 
   return {
-    clearProveWithdrawalState,
     isReadyToProve,
     proveWithdrawal: handleProveWithdrawal,
     withdrawalProofReceipt,
     withdrawalProofReceiptError,
-    withdrawalProofTxStatus,
     ...rest,
   }
 }

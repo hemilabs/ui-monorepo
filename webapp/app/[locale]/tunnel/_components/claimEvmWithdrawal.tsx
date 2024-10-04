@@ -6,7 +6,7 @@ import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { ToEvmWithdrawalContext } from '../_context/toEvmWithdrawalContext'
 import { useClaimTransaction } from '../_hooks/useClaimTransaction'
 
-import { SubmitWhenConnectedToChain } from './submitWhenConnectedToChain'
+import { DrawerCallToAction } from './reviewOperation/drawerCallToAction'
 
 type Props = {
   withdrawal: ToEvmWithdrawOperation
@@ -75,15 +75,14 @@ export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
   }
 
   return (
-    <form className="flex [&>button]:w-full" onSubmit={handleClaim}>
-      <SubmitWhenConnectedToChain
-        chainId={withdrawal.l1ChainId}
-        submitButton={
-          <Button disabled={!isReadyToClaim || isClaiming} type="submit">
-            {t(getText())}
-          </Button>
-        }
-      />
-    </form>
+    <DrawerCallToAction
+      expectedChainId={withdrawal.l1ChainId}
+      onSubmit={handleClaim}
+      submitButton={
+        <Button disabled={!isReadyToClaim || isClaiming} type="submit">
+          {t(getText())}
+        </Button>
+      }
+    />
   )
 }

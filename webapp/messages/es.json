@@ -12,10 +12,12 @@
     "erc20-extra-approval": "Aprobar 10x este depósito",
     "failed": "Falló",
     "fees": "Tarifa",
+    "network-does-not-match": "Esta red no coincide con la seleccionada en su billetera.",
     "network-gas-fee": "Tarifa de gas de {network}",
     "select-network": "Seleccione Red",
     "success": "Exitoso",
     "swap": "Intercambiar",
+    "switch-to-network": "Cambiar a {network}",
     "total": "Total",
     "total-amount": "Monto Total",
     "transaction-status": {

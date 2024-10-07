@@ -1,8 +1,10 @@
 import { Card } from 'components/card'
+import { SwitchToNetworkToast } from 'components/switchToNetworkToast'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 
+import { useToastIfNotConnectedTo } from '../_hooks/useToastIfNotConnectedTo'
 import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { NetworkSelectors } from './networkSelectors'
@@ -44,8 +46,11 @@ export const FormContent = function ({
 
   const t = useTranslations('tunnel-page')
 
+  const showToast = useToastIfNotConnectedTo(fromNetworkId)
+
   return (
     <>
+      {showToast && <SwitchToNetworkToast chainId={fromNetworkId} />}
       <div className="flex items-center justify-between gap-x-2">
         <h3 className="leading-6.5 text-xl font-medium capitalize text-neutral-950">
           {t('title')}

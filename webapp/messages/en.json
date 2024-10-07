@@ -12,10 +12,12 @@
     "erc20-extra-approval": "Approve 10x deposits",
     "failed": "Failed",
     "fees": "Fees",
+    "network-does-not-match": "This network doesn’t match the one selected in your wallet.",
     "network-gas-fee": "{network} gas fee",
     "select-network": "Select Network",
     "success": "Success",
     "swap": "Swap",
+    "switch-to-network": "Switch to {network}",
     "total": "Total",
     "total-amount": "Total Amount",
     "transaction-status": {

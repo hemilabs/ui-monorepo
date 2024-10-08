@@ -10,7 +10,9 @@ export const ConnectedChains = function () {
 
   return (
     <div className="flex items-center gap-x-3">
-      {evmWalletStatus === 'connected' && <ConnectedEvmChain />}
+      {['connected', 'reconnecting'].includes(evmWalletStatus) && (
+        <ConnectedEvmChain />
+      )}
       {allConnected && featureFlags.btcTunnelEnabled && <Separator />}
       {btcWalletStatus === 'connected' && featureFlags.btcTunnelEnabled && (
         <ConnectedBtcChain />

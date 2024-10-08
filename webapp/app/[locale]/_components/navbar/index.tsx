@@ -16,7 +16,7 @@ import { HemiLogoFull } from 'ui-common/components/hemiLogo'
 
 import { GetStarted } from './_components/getStarted'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
-import { ItemLink, ItemWithSubmenu, NetworkSwitch } from './_components/navItem'
+import { ItemLink, ItemWithSubmenu } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
 import { TermsAndConditions } from './_components/termsAndConditions'
 
@@ -125,9 +125,9 @@ export const Navbar = function () {
             text={t('hemidocs')}
           />
         </li>
-        <li className="md:order-13 order-12">
+        {/* <li className="md:order-13 order-12">
           <NetworkSwitch />
-        </li>
+        </li> */}
         <li className="order-13 md:hidden">
           <Separator />
         </li>

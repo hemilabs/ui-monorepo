@@ -48,8 +48,11 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
               <CloseIcon className="[&>path]:hover:stroke-black" />
             </button>
           </div>
-          {featureFlags.btcTunnelEnabled && (
+          {featureFlags.btcTunnelEnabled ? (
             <P text={t('connect-wallets.description')} />
+          ) : (
+            // Prevent layout shift when text is not shown
+            <div className="invisible min-w-[400px]"></div>
           )}
           <div className="mb-3 mt-5">
             <EvmWallet />

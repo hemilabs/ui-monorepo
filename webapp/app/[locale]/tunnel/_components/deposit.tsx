@@ -14,9 +14,8 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
 import { type EvmToken } from 'types/token'
-import { BtcDepositStatus, EvmDepositStatus } from 'types/tunnel'
+import { BtcDepositStatus } from 'types/tunnel'
 import { isEvmNetwork } from 'utils/chain'
-import { getEvmBlock } from 'utils/evmApi'
 import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { formatUnits, parseUnits } from 'viem'
@@ -299,7 +298,6 @@ type EvmDepositProps = {
 }
 
 const EvmDeposit = function ({ state }: EvmDepositProps) {
-  const { deposits, updateDeposit } = useTunnelHistory()
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
@@ -378,56 +376,49 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     [approvalReceiptStatus, operationRunning, setOperationRunning],
   )
 
-  const resetFormState = useCallback(
-    function () {
+  useEffect(
+    function handleSuccess() {
+      if (depositReceipt?.status !== 'success' || operationRunning !== 'idle') {
+        return
+      }
+      setOperationRunning('idle')
       resetStateAfterOperation()
       setExtendedErc20Approval(false)
-      setOperationRunning('idle')
     },
-    [resetStateAfterOperation, setExtendedErc20Approval, setOperationRunning],
+    [
+      depositReceipt,
+      operationRunning,
+      resetStateAfterOperation,
+      setExtendedErc20Approval,
+      setOperationRunning,
+    ],
   )
 
-  const onSuccess = useCallback(
-    function () {
-      resetFormState()
-
-      const depositFound = deposits.find(
-        d =>
-          d.transactionHash === depositReceipt.transactionHash &&
-          d.l1ChainId === fromNetworkId &&
-          !d.timestamp,
-      )
-
-      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
-      // eslint-disable-next-line promise/catch-or-return
-      getEvmBlock(depositReceipt.blockNumber, fromNetworkId).then(block =>
-        updateDeposit(depositFound, {
-          blockNumber: Number(depositReceipt.blockNumber),
-          status: EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
-          timestamp: Number(block.timestamp),
-        }),
-      )
+  useEffect(
+    function handleRejectionOrFailure() {
+      if (
+        (approvalError ||
+          approvalReceiptError ||
+          depositError ||
+          depositReceiptError) &&
+        operationRunning !== 'idle'
+      ) {
+        setOperationRunning('idle')
+      }
     },
-    [depositReceipt, deposits, fromNetworkId, resetFormState, updateDeposit],
-  )
-
-  const { beforeTransaction } = useAfterTransaction({
-    clearState: clearDepositState,
-    errorReceipts: [
+    [
       approvalError,
       approvalReceiptError,
       depositError,
       depositReceiptError,
+      operationRunning,
+      setOperationRunning,
     ],
-    onError: resetFormState,
-    onSuccess,
-    transactionReceipt: depositReceipt,
-  })
+  )
 
   const isRunningOperation = operationRunning !== 'idle'
 
   const handleDeposit = function () {
-    beforeTransaction()
     clearDepositState()
     deposit()
     if (needsApproval) {

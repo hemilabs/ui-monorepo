@@ -1,13 +1,15 @@
 import { MessageDirection } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { TransactionsInProgressContext } from 'context/transactionsInProgressContext'
+import { useEvmDeposits } from 'hooks/useEvmDeposits'
 import { useDepositNativeToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useCallback, useContext } from 'react'
+import { useCallback, useContext, useEffect } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken } from 'types/token'
 import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
+import { getEvmBlock } from 'utils/evmApi'
 import { isNativeToken } from 'utils/token'
 import { type Hash, parseUnits, zeroAddress } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
@@ -33,8 +35,9 @@ export const useDeposit = function ({
   const { addTransaction, clearTransactionsInMemory } = useContext(
     TransactionsInProgressContext,
   )
+  const deposits = useEvmDeposits()
   const queryClient = useQueryClient()
-  const { addDepositToTunnelHistory } = useTunnelHistory()
+  const { addDepositToTunnelHistory, updateDeposit } = useTunnelHistory()
   const { updateTxHash, txHash: currentTxHash } = useTunnelOperation()
 
   const depositingNative = isNativeToken(fromToken)
@@ -63,10 +66,12 @@ export const useDeposit = function ({
     transactionHash,
   })
 
-  const onSuccess = function (depositTxHash: Hash) {
+  const onUserAcceptingDeposit = function (depositTxHash: Hash) {
     const depositToAdd = getDeposit({
       // if exists, it's the Approval Tx Hash.
-      approvalTxHash: currentTxHash as Hash | undefined,
+      approvalTxHash: depositingNative
+        ? undefined
+        : (currentTxHash as Hash | undefined),
       status: EvmDepositStatus.DEPOSIT_TX_PENDING,
       transactionHash: depositTxHash,
     })
@@ -103,7 +108,7 @@ export const useDeposit = function ({
   } = useDepositNativeToken({
     enabled: depositingNative && canDeposit,
     l1ChainId: fromToken.chainId,
-    onSuccess,
+    onSuccess: onUserAcceptingDeposit,
     toDeposit,
   })
 
@@ -126,7 +131,7 @@ export const useDeposit = function ({
     enabled: !depositingNative && canDeposit,
     extendedApproval: extendedErc20Approval,
     onApprovalSuccess,
-    onSuccess,
+    onSuccess: onUserAcceptingDeposit,
     token: fromToken,
   })
 
@@ -136,7 +141,8 @@ export const useDeposit = function ({
     queryKey: depositQueryKey,
     status: depositTxStatus,
   } = useWaitForTransactionReceipt({
-    hash: depositingNative ? depositNativeTokenTxHash : depositErc20TokenTxHash,
+    // @ts-expect-error string is `0x${string}`
+    hash: currentTxHash,
   })
 
   useReloadBalances({
@@ -144,13 +150,6 @@ export const useDeposit = function ({
     status: depositTxStatus,
     toToken,
   })
-
-  const handleDeposit = (depositCallback: () => void) =>
-    function () {
-      if (canDeposit) {
-        depositCallback()
-      }
-    }
 
   const clearDepositNativeState = useCallback(
     function () {
@@ -182,10 +181,94 @@ export const useDeposit = function ({
     ],
   )
 
+  useEffect(
+    function updateDepositStatusAfterFailure() {
+      if (!depositReceiptError) {
+        return
+      }
+      const deposit = deposits.find(
+        d =>
+          d.transactionHash === currentTxHash &&
+          d.status === EvmDepositStatus.DEPOSIT_TX_PENDING,
+      )
+      if (!deposit) {
+        return
+      }
+      clearDepositNativeState()
+      clearDepositTokenState()
+
+      updateDeposit(deposit, {
+        status: EvmDepositStatus.DEPOSIT_TX_FAILED,
+      })
+    },
+    [
+      clearDepositNativeState,
+      clearDepositTokenState,
+      currentTxHash,
+      deposits,
+      depositReceiptError,
+      updateDeposit,
+    ],
+  )
+
+  useEffect(
+    function updateDepositAfterConfirmation() {
+      if (depositReceipt?.status !== 'success') {
+        return
+      }
+
+      const deposit = deposits.find(
+        d =>
+          d.transactionHash === depositReceipt.transactionHash &&
+          d.l1ChainId === fromToken.chainId &&
+          !d.blockNumber,
+      )
+
+      if (!deposit) {
+        return
+      }
+
+      clearDepositNativeState()
+      clearDepositTokenState()
+
+      // update here so next iteration of the effect doesn't reach this point
+      updateDeposit(deposit, {
+        blockNumber: Number(depositReceipt.blockNumber),
+        status: EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
+      })
+
+      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
+      // eslint-disable-next-line promise/catch-or-return
+      getEvmBlock(depositReceipt.blockNumber, fromToken.chainId).then(block =>
+        updateDeposit(deposit, {
+          timestamp: Number(block.timestamp),
+        }),
+      )
+    },
+    [
+      clearDepositNativeState,
+      clearDepositTokenState,
+      depositReceipt,
+      deposits,
+      fromToken.chainId,
+      updateDeposit,
+    ],
+  )
+
+  const handleDeposit = (depositCallback: () => void) =>
+    function () {
+      if (canDeposit) {
+        depositCallback()
+      }
+    }
+
   if (depositingNative) {
     return {
       clearDepositState: clearDepositNativeState,
-      deposit: handleDeposit(depositNativeToken),
+      deposit: handleDeposit(function () {
+        clearDepositNativeState()
+        depositNativeToken()
+      }),
       depositError: depositNativeTokenError,
       depositGasFees: depositNativeTokenGasFees,
       depositReceipt,
@@ -202,7 +285,10 @@ export const useDeposit = function ({
     approvalTokenGasFees,
     approvalTxHash,
     clearDepositState: clearDepositTokenState,
-    deposit: handleDeposit(depositToken),
+    deposit: handleDeposit(function () {
+      clearDepositTokenState()
+      depositToken()
+    }),
     depositError: depositErc20TokenError,
     depositGasFees: depositErc20TokenGasFees,
     depositReceipt,

@@ -67,9 +67,7 @@ const Completed = function ({
         top={{
           bgColor: 'bg-neutral-50',
           children: (
-            <>
-              <span className="mr-auto text-neutral-600">{description}</span>
-            </>
+            <span className="mr-auto text-neutral-600">{description}</span>
           ),
         }}
       />

@@ -32,9 +32,8 @@ export const useDeposit = function ({
   toToken,
 }: UseDeposit) {
   const { address } = useAccount()
-  const { addTransaction, clearTransactionsInMemory } = useContext(
-    TransactionsInProgressContext,
-  )
+  const { addTransaction, clearTransactionsInMemory, transactions } =
+    useContext(TransactionsInProgressContext)
   const deposits = useEvmDeposits()
   const queryClient = useQueryClient()
   const { addDepositToTunnelHistory, updateDeposit } = useTunnelHistory()
@@ -67,11 +66,15 @@ export const useDeposit = function ({
   })
 
   const onUserAcceptingDeposit = function (depositTxHash: Hash) {
+    // value may come from different places: If there was a successful approval, it's the hash in memory
+    // if not, it could come from the retry tx hash
+    // if not defined, then there is no approval
+    const approvalTxHash = (transactions[0]?.transactionHash ??
+      deposits.find(d => d.transactionHash === currentTxHash)
+        ?.approvalTxHash) as Hash | undefined
+
     const depositToAdd = getDeposit({
-      // if exists, it's the Approval Tx Hash.
-      approvalTxHash: depositingNative
-        ? undefined
-        : (currentTxHash as Hash | undefined),
+      approvalTxHash,
       status: EvmDepositStatus.DEPOSIT_TX_PENDING,
       transactionHash: depositTxHash,
     })

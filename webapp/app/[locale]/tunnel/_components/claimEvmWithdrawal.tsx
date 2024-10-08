@@ -6,55 +6,83 @@ import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { ToEvmWithdrawalContext } from '../_context/toEvmWithdrawalContext'
 import { useClaimTransaction } from '../_hooks/useClaimTransaction'
 
-import { SubmitWhenConnectedToChain } from './submitWhenConnectedToChain'
+import { DrawerCallToAction } from './reviewOperation/drawerCallToAction'
 
 type Props = {
   withdrawal: ToEvmWithdrawOperation
 }
 
 export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
-  const { claimWithdrawal, claimWithdrawalReceipt, isReadyToClaim } =
-    useClaimTransaction(withdrawal)
-  const [operationRunning, setOperationRunning] = useContext(
+  const {
+    claimWithdrawal,
+    claimWithdrawalReceipt,
+    claimWithdrawalReceiptError,
+    claimWithdrawalError,
+    isReadyToClaim,
+  } = useClaimTransaction(withdrawal)
+  const [operationStatus, setOperationStatus] = useContext(
     ToEvmWithdrawalContext,
   )
-  const t = useTranslations()
+  const t = useTranslations('tunnel-page.submit-button')
+
+  const isClaiming = operationStatus === 'claiming'
 
   useEffect(
     function clearAfterSuccessfulClaim() {
       if (
         claimWithdrawalReceipt?.status !== 'success' ||
-        operationRunning !== 'claim'
+        operationStatus !== 'claiming'
       ) {
         return
       }
-      setOperationRunning('idle')
+      setOperationStatus('idle')
     },
-    [claimWithdrawalReceipt, operationRunning, setOperationRunning],
+    [claimWithdrawalReceipt, operationStatus, setOperationStatus],
+  )
+
+  useEffect(
+    function handleUserRejection() {
+      if (claimWithdrawalError && isClaiming) {
+        setOperationStatus('rejected')
+      }
+    },
+    [claimWithdrawalError, isClaiming, setOperationStatus],
+  )
+
+  useEffect(
+    function handleTransactionFailure() {
+      if (claimWithdrawalReceiptError && isClaiming) {
+        setOperationStatus('failed')
+      }
+    },
+    [claimWithdrawalReceiptError, isClaiming, setOperationStatus],
   )
 
   const handleClaim = function (e: FormEvent) {
     e.preventDefault()
-    setOperationRunning('claim')
+    setOperationStatus('claiming')
     claimWithdrawal()
   }
 
-  const isClaiming = operationRunning === 'claim'
+  const getText = function () {
+    if (isClaiming) {
+      return 'claiming-withdrawal'
+    }
+    if (['failed', 'rejected'].includes(operationStatus)) {
+      return 'try-again'
+    }
+    return 'claim-withdrawal'
+  }
 
   return (
-    <form className="flex [&>button]:w-full" onSubmit={handleClaim}>
-      <SubmitWhenConnectedToChain
-        chainId={withdrawal.l1ChainId}
-        submitButton={
-          <Button disabled={!isReadyToClaim || isClaiming} type="submit">
-            {t(
-              `tunnel-page.submit-button.${
-                isClaiming ? 'claiming-withdrawal' : 'claim-withdrawal'
-              }`,
-            )}
-          </Button>
-        }
-      />
-    </form>
+    <DrawerCallToAction
+      expectedChainId={withdrawal.l1ChainId}
+      onSubmit={handleClaim}
+      submitButton={
+        <Button disabled={!isReadyToClaim || isClaiming} type="submit">
+          {t(getText())}
+        </Button>
+      }
+    />
   )
 }

@@ -8,18 +8,25 @@ import { formatGasFees } from 'utils/format'
 import { getNativeToken, getTokenByAddress, isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 
+import { EvmDepositProvider } from '../../_context/evmDepositContext'
 import { useDeposit } from '../../_hooks/useDeposit'
+import { RetryEvmDeposit } from '../retryEvmDeposit'
 
 import { Operation } from './operation'
 import { ProgressStatus } from './progressStatus'
 import { type StepPropsWithoutPosition } from './step'
+
+const getCallToAction = (deposit: EvmDepositOperation) =>
+  deposit.status === EvmDepositStatus.DEPOSIT_TX_FAILED ? (
+    <RetryEvmDeposit deposit={deposit} />
+  ) : null
 
 type Props = {
   deposit: EvmDepositOperation
   onClose: () => void
 }
 
-export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
+const ReviewContent = function ({ deposit, onClose }: Props) {
   const fromToken = getTokenByAddress(
     deposit.l1Token,
     deposit.l1ChainId,
@@ -72,10 +79,11 @@ export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
 
   const getDepositStep = function (): StepPropsWithoutPosition {
     const statusMap = {
-      [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.COMPLETED,
-      [EvmDepositStatus.DEPOSIT_TX_PENDING]: ProgressStatus.PROGRESS,
       [EvmDepositStatus.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,
       [EvmDepositStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
+      [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.COMPLETED,
+      [EvmDepositStatus.DEPOSIT_TX_FAILED]: ProgressStatus.FAILED,
+      [EvmDepositStatus.DEPOSIT_TX_PENDING]: ProgressStatus.PROGRESS,
     }
     return {
       description:
@@ -86,6 +94,7 @@ export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
       fees: [
         EvmDepositStatus.APPROVAL_TX_COMPLETED,
         EvmDepositStatus.DEPOSIT_TX_PENDING,
+        EvmDepositStatus.DEPOSIT_TX_FAILED,
       ].includes(depositStatus)
         ? {
             amount: formatGasFees(
@@ -113,6 +122,7 @@ export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
   return (
     <Operation
       amount={deposit.amount}
+      callToAction={getCallToAction(deposit)}
       onClose={onClose}
       steps={steps}
       subtitle={
@@ -125,3 +135,9 @@ export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
     />
   )
 }
+
+export const ReviewEvmDeposit = ({ deposit, onClose }: Props) => (
+  <EvmDepositProvider>
+    <ReviewContent deposit={deposit} onClose={onClose} />
+  </EvmDepositProvider>
+)

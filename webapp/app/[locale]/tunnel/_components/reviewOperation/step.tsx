@@ -3,7 +3,9 @@ import { ComponentProps } from 'react'
 import { RemoteChain } from 'types/chain'
 import { getFormattedValue } from 'utils/format'
 
+import { OneRowBox, TwoRowBox } from './box'
 import { ClockIcon } from './icons/clockIcon'
+import { ErrorIcon } from './icons/error'
 import { FeesIcon } from './icons/feesIcon'
 import { GreenCheckIcon } from './icons/greenCheckIcon'
 import { PositionStatus } from './positionStatus'
@@ -28,12 +30,6 @@ type Props = {
   }
   txHash?: string
 }
-
-const upperBoxCommonCss =
-  'rounded-lg border border-solid border-neutral-300/55 bg-neutral-100 p-4 h-13 w-full'
-
-const bottomBoxCommonCss = `flex h-14 items-center rounded-lg w-full gap-x-1
-  border border-solid border-neutral-300/55 bg-neutral-100 px-4 pt-6 pb-4`
 
 const Fees = ({ amount, symbol }: Props['fees']) => (
   <>
@@ -60,16 +56,21 @@ const Completed = function ({
       <div className="mt-4">
         <PositionStatus position={position} status={ProgressStatus.COMPLETED} />
       </div>
-      <div className="flex w-full flex-col">
-        <div className={`${upperBoxCommonCss} z-10 -mb-3 bg-neutral-50`}>
-          <span className="mr-auto text-neutral-500">{description}</span>
-        </div>
-        <div className={bottomBoxCommonCss}>
-          <GreenCheckIcon />
-          <span className="mr-auto text-emerald-500">{t('confirmed')}</span>
-          <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
-        </div>
-      </div>
+      <TwoRowBox
+        bottom={
+          <>
+            <GreenCheckIcon />
+            <span className="mr-auto text-emerald-500">{t('confirmed')}</span>
+            <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+          </>
+        }
+        top={{
+          bgColor: 'bg-neutral-50',
+          children: (
+            <span className="mr-auto text-neutral-600">{description}</span>
+          ),
+        }}
+      />
       {!!postAction && (
         <div className="left-2.25 absolute bottom-6">
           <LongVerticalLine stroke="stroke-orange-500" />
@@ -87,9 +88,9 @@ const NotReady = ({ description, position, postAction }: Props) => (
     <div className="mt-4">
       <PositionStatus position={position} status={ProgressStatus.NOT_READY} />
     </div>
-    <div className={`${upperBoxCommonCss} bg-neutral-100`}>
+    <OneRowBox bgColor="bg-neutral-100">
       <span className="text-neutral-600">{description}</span>
-    </div>
+    </OneRowBox>
     {!!postAction && (
       <div className="left-2.25 absolute bottom-6">
         <ShortVerticalLine stroke="stroke-neutral-300/55" />
@@ -115,19 +116,24 @@ const Progress = function ({
       <div className="mt-4">
         <PositionStatus position={position} status={ProgressStatus.PROGRESS} />
       </div>
-      <div className="flex w-full flex-col">
-        <div
-          className={`${upperBoxCommonCss} z-10 -mb-3 flex items-center justify-between bg-white`}
-        >
-          <span className="mr-auto text-orange-500">{description}</span>
-          {fees && <Fees {...fees} />}
-        </div>
-        <div className={bottomBoxCommonCss}>
-          <ClockIcon />
-          <span className="mr-auto text-neutral-500">{t('pending')}</span>
-          <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
-        </div>
-      </div>
+      <TwoRowBox
+        bottom={
+          <>
+            <ClockIcon />
+            <span className="mr-auto text-neutral-500">{t('pending')}</span>
+            <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+          </>
+        }
+        top={{
+          bgColor: 'bg-white',
+          children: (
+            <>
+              <span className="mr-auto text-orange-500">{description}</span>
+              {fees && <Fees {...fees} />}
+            </>
+          ),
+        }}
+      />
       {!!postAction && (
         <div className="left-2.25 absolute bottom-6">
           <LongVerticalLine stroke="stroke-neutral-300/55" />
@@ -145,10 +151,10 @@ const Ready = ({ description, fees, position, postAction }: Props) => (
     <div className="mt-4">
       <PositionStatus position={position} status={ProgressStatus.READY} />
     </div>
-    <div className={`${upperBoxCommonCss} flex items-center bg-white`}>
+    <OneRowBox bgColor="bg-white">
       <span className="mr-auto text-orange-500">{description}</span>
       {fees && <Fees {...fees} />}
-    </div>
+    </OneRowBox>
     {!!postAction && (
       <div className="left-2.25 absolute bottom-6">
         <ShortVerticalLine stroke="stroke-neutral-300/55" />
@@ -157,11 +163,93 @@ const Ready = ({ description, fees, position, postAction }: Props) => (
   </>
 )
 
+const Failed = function ({
+  description,
+  explorerChainId,
+  fees,
+  position,
+  postAction,
+  txHash,
+}: Props) {
+  const t = useTranslations('common.transaction-status')
+  return (
+    <>
+      <div className="left-2.25 absolute top-0.5">
+        <ShortVerticalLine stroke="stroke-orange-500" />
+      </div>
+      <div className="mt-4">
+        <PositionStatus position={position} status={ProgressStatus.FAILED} />
+      </div>
+      <TwoRowBox
+        bottom={
+          <>
+            <ErrorIcon />
+            <span className="mr-auto text-rose-500">{t('error')}</span>
+            <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+          </>
+        }
+        top={{
+          bgColor: 'bg-white',
+          children: (
+            <>
+              <span className="mr-auto text-orange-500">{description}</span>
+              {fees && <Fees {...fees} />}
+            </>
+          ),
+        }}
+      />
+      {!!postAction && (
+        <div className="left-2.25 absolute bottom-6">
+          <ShortVerticalLine stroke="stroke-neutral-300/55" />
+        </div>
+      )}
+    </>
+  )
+}
+
+const Rejected = function ({ description, fees, position, postAction }: Props) {
+  const t = useTranslations('common.transaction-status')
+  return (
+    <>
+      <div className="left-2.25 absolute top-0.5">
+        <ShortVerticalLine stroke="stroke-orange-500" />
+      </div>
+      <div className="mt-4">
+        <PositionStatus position={position} status={ProgressStatus.REJECTED} />
+      </div>
+      <TwoRowBox
+        bottom={
+          <>
+            <ErrorIcon />
+            <span className="mr-auto text-rose-500">{t('rejected')}</span>
+          </>
+        }
+        top={{
+          bgColor: 'bg-white',
+          children: (
+            <>
+              <span className="mr-auto text-orange-500">{description}</span>
+              {fees && <Fees {...fees} />}
+            </>
+          ),
+        }}
+      />
+      {!!postAction && (
+        <div className="left-2.25 absolute bottom-6">
+          <ShortVerticalLine stroke="stroke-neutral-300/55" />
+        </div>
+      )}
+    </>
+  )
+}
+
 const statusMap = {
   [ProgressStatus.NOT_READY]: NotReady,
   [ProgressStatus.READY]: Ready,
   [ProgressStatus.PROGRESS]: Progress,
   [ProgressStatus.COMPLETED]: Completed,
+  [ProgressStatus.FAILED]: Failed,
+  [ProgressStatus.REJECTED]: Rejected,
 }
 
 export const Step = function ({

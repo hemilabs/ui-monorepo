@@ -8,7 +8,7 @@ import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { BtcWithdrawStatus } from 'types/tunnel'
@@ -304,24 +304,32 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     toToken,
   })
 
-  const resetFormState = useCallback(
-    function () {
+  useEffect(
+    function handleSuccess() {
+      if (withdrawReceipt?.status !== 'success' || !isWithdrawing) {
+        return
+      }
       setIsWithdrawing(false)
       resetStateAfterOperation()
     },
-    [setIsWithdrawing, resetStateAfterOperation],
+    [
+      isWithdrawing,
+      resetStateAfterOperation,
+      setIsWithdrawing,
+      withdrawReceipt,
+    ],
   )
 
-  const { beforeTransaction } = useAfterTransaction({
-    clearState: clearWithdrawState,
-    errorReceipts: [withdrawError, withdrawReceiptError],
-    onError: resetFormState,
-    onSuccess: resetFormState,
-    transactionReceipt: withdrawReceipt,
-  })
+  useEffect(
+    function handleRejectionOrFailure() {
+      if ((withdrawError || withdrawReceiptError) && isWithdrawing) {
+        setIsWithdrawing(false)
+      }
+    },
+    [isWithdrawing, setIsWithdrawing, withdrawError, withdrawReceiptError],
+  )
 
   const handleWithdraw = function () {
-    beforeTransaction()
     clearWithdrawState()
     withdraw()
     setIsWithdrawing(true)

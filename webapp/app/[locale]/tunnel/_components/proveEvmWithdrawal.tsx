@@ -6,55 +6,83 @@ import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { ToEvmWithdrawalContext } from '../_context/toEvmWithdrawalContext'
 import { useProveTransaction } from '../_hooks/useProveTransaction'
 
-import { SubmitWhenConnectedToChain } from './submitWhenConnectedToChain'
+import { DrawerCallToAction } from './reviewOperation/drawerCallToAction'
 
 type Props = {
   withdrawal: ToEvmWithdrawOperation
 }
 
 export const ProveWithdrawal = function ({ withdrawal }: Props) {
-  const [operationRunning, setOperationRunning] = useContext(
+  const [operationStatus, setOperationStatus] = useContext(
     ToEvmWithdrawalContext,
   )
-  const { isReadyToProve, proveWithdrawal, withdrawalProofReceipt } =
-    useProveTransaction(withdrawal)
-  const t = useTranslations()
+  const {
+    isReadyToProve,
+    proveWithdrawal,
+    withdrawalProofReceipt,
+    proveWithdrawalError,
+    withdrawalProofReceiptError,
+  } = useProveTransaction(withdrawal)
+  const t = useTranslations('tunnel-page.submit-button')
+
+  const isProving = operationStatus === 'proving'
 
   useEffect(
     function clearAfterSuccessfulProve() {
       if (
         withdrawalProofReceipt?.status !== 'success' ||
-        operationRunning !== 'prove'
+        operationStatus !== 'proving'
       ) {
         return
       }
-      setOperationRunning('idle')
+      setOperationStatus('idle')
     },
-    [operationRunning, setOperationRunning, withdrawalProofReceipt],
+    [operationStatus, setOperationStatus, withdrawalProofReceipt],
   )
 
-  const isProving = operationRunning === 'prove'
+  useEffect(
+    function handleUserRejection() {
+      if (proveWithdrawalError && isProving) {
+        setOperationStatus('rejected')
+      }
+    },
+    [isProving, proveWithdrawalError, setOperationStatus],
+  )
+
+  useEffect(
+    function handleTransactionFailure() {
+      if (withdrawalProofReceiptError && isProving) {
+        setOperationStatus('failed')
+      }
+    },
+    [isProving, withdrawalProofReceiptError, setOperationStatus],
+  )
 
   const handleProve = function (e: FormEvent) {
     e.preventDefault()
-    setOperationRunning('prove')
+    setOperationStatus('proving')
     proveWithdrawal()
   }
 
+  const getText = function () {
+    if (isProving) {
+      return 'proving-withdrawal'
+    }
+    if (['failed', 'rejected'].includes(operationStatus)) {
+      return 'try-again'
+    }
+    return 'prove-withdrawal'
+  }
+
   return (
-    <form className="flex [&>button]:w-full" onSubmit={handleProve}>
-      <SubmitWhenConnectedToChain
-        chainId={withdrawal.l1ChainId}
-        submitButton={
-          <Button disabled={!isReadyToProve || isProving} type="submit">
-            {t(
-              `tunnel-page.submit-button.${
-                isProving ? 'proving-withdrawal' : 'prove-withdrawal'
-              }`,
-            )}
-          </Button>
-        }
-      />
-    </form>
+    <DrawerCallToAction
+      expectedChainId={withdrawal.l1ChainId}
+      onSubmit={handleProve}
+      submitButton={
+        <Button disabled={!isReadyToProve || isProving} type="submit">
+          {t(getText())}
+        </Button>
+      }
+    />
   )
 }

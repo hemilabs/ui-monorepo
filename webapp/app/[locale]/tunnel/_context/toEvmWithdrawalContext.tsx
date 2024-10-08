@@ -2,10 +2,16 @@
 
 import { createContext, ReactNode, useState } from 'react'
 
-type ToEvmWithdrawOperations = 'idle' | 'prove' | 'claim'
+type ToEvmWithdrawOperationStatuses =
+  | 'idle'
+  | 'withdrawing'
+  | 'proving'
+  | 'claiming'
+  | 'failed'
+  | 'rejected'
 
 type ToEvmWithdrawalContext = ReturnType<
-  typeof useState<ToEvmWithdrawOperations>
+  typeof useState<ToEvmWithdrawOperationStatuses>
 >
 
 export const ToEvmWithdrawalContext = createContext<ToEvmWithdrawalContext>([
@@ -18,7 +24,7 @@ export const ToEvmWithdrawalProvider = function ({
 }: {
   children: ReactNode
 }) {
-  const state = useState<ToEvmWithdrawOperations>('idle')
+  const state = useState<ToEvmWithdrawOperationStatuses>('idle')
 
   return (
     <ToEvmWithdrawalContext.Provider value={state}>

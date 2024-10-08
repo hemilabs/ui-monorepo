@@ -36,6 +36,10 @@ export const enum EvmDepositStatus {
   DEPOSIT_TX_PENDING = 2,
   // Transaction deposit confirmed
   DEPOSIT_TX_CONFIRMED = 3,
+  // Deposit tx reverted
+  DEPOSIT_TX_FAILED = 4,
+  // Approval failed
+  APPROVAL_TX_FAILED = 5,
 }
 
 type CommonOperation = Omit<

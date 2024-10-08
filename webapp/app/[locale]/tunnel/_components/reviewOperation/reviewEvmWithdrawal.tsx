@@ -17,6 +17,7 @@ import { useProveTransaction } from '../../_hooks/useProveTransaction'
 import { useWithdraw } from '../../_hooks/useWithdraw'
 import { ClaimEvmWithdrawal } from '../claimEvmWithdrawal'
 import { ProveWithdrawal } from '../proveEvmWithdrawal'
+import { RetryEvmWithdrawal } from '../retryEvmWithdrawal'
 
 import { Operation } from './operation'
 import { ProgressStatus } from './progressStatus'
@@ -25,21 +26,16 @@ import { type StepPropsWithoutPosition } from './step'
 const ExpectedWithdrawalWaitTimeMinutes = 20
 const ExpectedProofWaitTimeHours = 3
 
-const getCallToAction = function (withdrawal: ToEvmWithdrawOperation) {
-  if (
-    ![MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
-      withdrawal.status,
-    )
-  ) {
-    return null
-  }
-
-  return withdrawal.status === MessageStatus.READY_TO_PROVE ? (
-    <ProveWithdrawal withdrawal={withdrawal} />
-  ) : (
-    <ClaimEvmWithdrawal withdrawal={withdrawal} />
-  )
-}
+const getCallToAction = (withdrawal: ToEvmWithdrawOperation) =>
+  ({
+    [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: (
+      <RetryEvmWithdrawal withdrawal={withdrawal} />
+    ),
+    [MessageStatus.READY_TO_PROVE]: <ProveWithdrawal withdrawal={withdrawal} />,
+    [MessageStatus.READY_FOR_RELAY]: (
+      <ClaimEvmWithdrawal withdrawal={withdrawal} />
+    ),
+  })[withdrawal.status]
 
 type Props = {
   onClose: () => void
@@ -61,7 +57,7 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
 
   const fromChain = useChain(withdrawal.l2ChainId)
   const toChain = useChain(withdrawal.l1ChainId)
-  const [operationRunning] = useContext(ToEvmWithdrawalContext)
+  const [operationStatus] = useContext(ToEvmWithdrawalContext)
   const t = useTranslations('tunnel-page.review-withdraw')
   const tCommon = useTranslations('common')
 
@@ -79,6 +75,15 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
     l2ChainId: fromToken.chainId,
     toToken,
   })
+
+  const getWithdrawalStatus = function () {
+    const map = {
+      [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: ProgressStatus.NOT_READY,
+      [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: ProgressStatus.PROGRESS,
+      [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: ProgressStatus.FAILED,
+    }
+    return map[withdrawal.status] ?? ProgressStatus.COMPLETED
+  }
 
   const steps: StepPropsWithoutPosition[] = []
 
@@ -99,17 +104,14 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
       description: tCommon('wait-minutes', {
         minutes: ExpectedWithdrawalWaitTimeMinutes,
       }),
-      status:
-        withdrawal.status === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE
-          ? ProgressStatus.NOT_READY
-          : withdrawal.status === MessageStatus.STATE_ROOT_NOT_PUBLISHED
-            ? ProgressStatus.PROGRESS
-            : ProgressStatus.COMPLETED,
+      status: getWithdrawalStatus(),
     },
     status:
-      withdrawal.status >= MessageStatus.STATE_ROOT_NOT_PUBLISHED
-        ? ProgressStatus.COMPLETED
-        : ProgressStatus.PROGRESS,
+      withdrawal.status === MessageStatus.FAILED_L1_TO_L2_MESSAGE
+        ? ProgressStatus.FAILED
+        : withdrawal.status >= MessageStatus.STATE_ROOT_NOT_PUBLISHED
+          ? ProgressStatus.COMPLETED
+          : ProgressStatus.PROGRESS,
     txHash: withdrawal.transactionHash,
   })
 
@@ -117,24 +119,31 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
     if (withdrawal.status === MessageStatus.RELAYED) {
       return ProgressStatus.COMPLETED
     }
-    if (operationRunning === 'claim') {
-      return ProgressStatus.PROGRESS
+    if (withdrawal.status !== MessageStatus.READY_FOR_RELAY) {
+      return ProgressStatus.NOT_READY
     }
-    return withdrawal.status === MessageStatus.READY_FOR_RELAY
-      ? ProgressStatus.READY
-      : ProgressStatus.NOT_READY
+
+    const map = {
+      claiming: ProgressStatus.PROGRESS,
+      failed: ProgressStatus.FAILED,
+      rejected: ProgressStatus.REJECTED,
+    }
+    return map[operationStatus] ?? ProgressStatus.READY
   }
 
   const getProveStatus = function () {
-    if (withdrawal.status < MessageStatus.READY_TO_PROVE)
+    if (withdrawal.status < MessageStatus.READY_TO_PROVE) {
       return ProgressStatus.NOT_READY
-    if (operationRunning === 'prove') {
-      return ProgressStatus.PROGRESS
     }
-    if (withdrawal.status === MessageStatus.READY_TO_PROVE) {
-      return ProgressStatus.READY
+    if (withdrawal.status >= MessageStatus.IN_CHALLENGE_PERIOD) {
+      return ProgressStatus.COMPLETED
     }
-    return ProgressStatus.COMPLETED
+    const map = {
+      failed: ProgressStatus.FAILED,
+      proving: ProgressStatus.PROGRESS,
+      rejected: ProgressStatus.REJECTED,
+    }
+    return map[operationStatus] ?? ProgressStatus.READY
   }
 
   const getProveStep = (): StepPropsWithoutPosition => ({

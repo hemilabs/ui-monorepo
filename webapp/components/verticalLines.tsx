@@ -1,5 +1,5 @@
 type Props = {
-  stroke: 'stroke-neutral-300/55' | 'stroke-orange-500'
+  stroke: 'stroke-neutral-300' | 'stroke-neutral-300/55' | 'stroke-orange-500'
 }
 
 export const ShortVerticalLine = ({ stroke }: Props) => (

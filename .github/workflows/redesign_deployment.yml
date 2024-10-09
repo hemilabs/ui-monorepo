@@ -36,5 +36,5 @@ jobs:
           HOSTINGER_TARGET: 'domains/${{ vars.HEMI_DOMAIN_STAGING }}/public_html/test'
           # next env variables to build the portal
           NEXT_PUBLIC_CLAIM_TOKENS_URL: 'https://vj7c4dltid.execute-api.eu-central-1.amazonaws.com/staging'
-          NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: true
+          NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: false
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}

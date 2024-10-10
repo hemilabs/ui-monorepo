@@ -73,6 +73,7 @@
     }
   },
   "get-started": {
+    "add-funds-to-your-wallet": "Add funds to your wallet",
     "add-hemi-to-your-wallet": "Add Hemi to your wallet",
     "add-networks": {
       "automatic": "Automatic",
@@ -85,12 +86,19 @@
     "block-explorer-url": "Block explorer URL",
     "chain-id": "Chain ID",
     "currency-symbol": "Currency symbol",
+    "deploy-a-smart-contract": "Deploy a Smart Contract",
+    "fund-your-wallets": "Fund your wallets",
     "header": {
       "documentation": "Documentation",
       "network": "Network"
     },
     "heading": "Get started on Hemi",
+    "hemi-faucet": "Hemi Discord Faucet",
+    "here-are-some-options": "Here are some faucets you might want to explore.",
+    "get-testnet-tokens": "Get testnet tokens",
     "layer": "Layer {layer}",
+    "learn-about-tunneling": "Learn about tunneling assets to and from Hemi.",
+    "learn-to-deploy-smart-contract": "Beginner friendly! Learn how to deploy smart contracts.",
     "subheading": "Get ready to feel superior scaling, security and interoperability.",
     "network": {
       "claiming": "Claiming...",
@@ -109,7 +117,10 @@
       "welcome-pack": "Welcome Pack",
       "welcome-pack-description": "Join our Discord server and visit the <channel>#claim-capsule</channel> channel to claim your onboarding Capsule."
     },
-    "rpc-url": "RPC URL"
+    "rpc-url": "RPC URL",
+    "start-using-hemi": "Start using Hemi",
+    "swap-tokens": "Swap tokens on Hemi",
+    "tunnel-assets": "Tunnel assets"
   },
   "get-started-page": {
     "heading": "Get Started with Hemi",

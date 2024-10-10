@@ -73,6 +73,7 @@
     }
   },
   "get-started": {
+    "add-funds-to-your-wallet": "Agregie fondos a su billetera",
     "add-hemi-to-your-wallet": "Agregue hemi a su billetera",
     "add-networks": {
       "automatic": "Automático",
@@ -85,12 +86,19 @@
     "block-explorer-url": "URL del explorador de bloques",
     "chain-id": "ID de la red",
     "currency-symbol": "Símbolo de la moneda nativa",
+    "deploy-a-smart-contract": "Despliegue un contrato inteligente",
+    "fund-your-wallets": "Fondee sus billeteras",
     "header": {
       "documentation": "Documentación",
       "network": "Red"
     },
     "heading": "Comience con Hemi",
+    "hemi-faucet": "Faucet en Discord de Hemi",
+    "here-are-some-options": "Aqui hay algunos faucets que podría explorar.",
+    "get-testnet-tokens": "Obtenga tokens de testnet",
     "layer": "Capa {layer}",
+    "learn-about-tunneling": "Aprenda sobre la tunelización de activos hacia y desde Hemi.",
+    "learn-to-deploy-smart-contract": "¡Amistoso para principiantes! Aprenda cómo publicar contratos inteligentes.",
     "subheading": "Prepárese para experimentar una escalabilidad, seguridad e interoperabilidad superiores.",
     "network": {
       "claiming": "Reclamando...",
@@ -109,7 +117,10 @@
       "welcome-pack": "Pack de Bienvenida",
       "welcome-pack-description": "Únase a nuestro servidor de Discord y visite el canal <channel>#claim-capsule</channel> para reclamar su Cápsula de incorporación."
     },
-    "rpc-url": "URL de RPC"
+    "rpc-url": "URL de RPC",
+    "start-using-hemi": "Comience a usar Hemi",
+    "swap-tokens": "Intercambie tokens en Hemi",
+    "tunnel-assets": "Tunelice activos"
   },
   "get-started-page": {
     "heading": "Comience con Hemi",

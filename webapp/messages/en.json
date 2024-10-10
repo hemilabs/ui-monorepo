@@ -1,6 +1,7 @@
 {
   "common": {
     "add": "Add",
+    "added": "Added",
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
     "connect-to-network": "Connect to {network}",
     "connect-to-supported-network": "Connect to supported network",
@@ -72,38 +73,43 @@
     }
   },
   "get-started": {
+    "add-hemi-to-your-wallet": "Add Hemi to your wallet",
+    "add-networks": {
+      "automatic": "Automatic",
+      "manual": "Manual"
+    },
+    "add-networks-mainnet": "Add Hemi to your wallet.",
+    "add-networks-testnet": "Add Ethereum Sepolia & Hemi testnet to your wallet.",
+    "add-networks-to-wallet": "Add networks to your wallet",
+    "add-to-wallet": "Add to wallet",
+    "block-explorer-url": "Block explorer URL",
+    "chain-id": "Chain ID",
+    "currency-symbol": "Currency symbol",
     "header": {
       "documentation": "Documentation",
       "network": "Network"
     },
     "heading": "Get started on Hemi",
+    "layer": "Layer {layer}",
     "subheading": "Get ready to feel superior scaling, security and interoperability.",
     "network": {
-      "added": "Network Added",
-      "add-to-wallet": "Add to wallet",
-      "automatic": "Automatic",
-      "block-explorer-url": "Block explorer URL",
-      "chain-id": "Chain ID",
       "claiming": "Claiming...",
       "claim-my-tokens": "Claim",
       "configure-sepolia-testnet": "Configure for Sepolia testnet",
-      "currency-symbol": "Currency symbol",
       "did-not-receive-try-again": "Didn't receive this email? <button>Try again</button>",
       "email-failed": "Error submitting email",
       "email-failed-retry": "<button>Retry</button> or <link>contact us</link> at Discord <discord></discord>",
       "email-placeholder": "youremail@mail.com",
       "email-sent": "Email has been sent.",
-      "layer": "Layer {layer}",
-      "manual": "Manual",
       "network-name": "Network name",
       "page-subtitle": "Add Ethereum Sepolia & Hemi testnet to your wallet",
       "page-title": "Add Hemi to your wallet",
       "receive-updates": "Receive marketing updates",
-      "rpc-url": "RPC URL",
       "troubleshoot-other-errors": "Having issues? Contact the Hemi team on <link>Discord</link>.",
       "welcome-pack": "Welcome Pack",
       "welcome-pack-description": "Join our Discord server and visit the <channel>#claim-capsule</channel> channel to claim your onboarding Capsule."
-    }
+    },
+    "rpc-url": "RPC URL"
   },
   "get-started-page": {
     "heading": "Get Started with Hemi",

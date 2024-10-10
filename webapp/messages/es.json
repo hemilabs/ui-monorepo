@@ -1,6 +1,7 @@
 {
   "common": {
     "add": "Agregar",
+    "added": "Agregada",
     "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
     "connect-to-network": "Conectarse a {network}",
     "connect-to-supported-network": "Conectarse a una red soportada",
@@ -72,38 +73,43 @@
     }
   },
   "get-started": {
+    "add-hemi-to-your-wallet": "Agregue hemi a su billetera",
+    "add-networks": {
+      "automatic": "Automático",
+      "manual": "Manual"
+    },
+    "add-networks-mainnet": "Añada Hemi a su billetera.",
+    "add-networks-testnet": "Añada Ethereum Sepolia y Hemi testnet a su billetera.",
+    "add-networks-to-wallet": "Agregue las redes a su billetera",
+    "add-to-wallet": "Añadir a la billetera",
+    "block-explorer-url": "URL del explorador de bloques",
+    "chain-id": "ID de la red",
+    "currency-symbol": "Símbolo de la moneda nativa",
     "header": {
       "documentation": "Documentación",
       "network": "Red"
     },
     "heading": "Comience con Hemi",
+    "layer": "Capa {layer}",
     "subheading": "Prepárese para experimentar una escalabilidad, seguridad e interoperabilidad superiores.",
     "network": {
-      "added": "Red Añadida",
-      "add-to-wallet": "Añadir a la billetera",
-      "automatic": "Automático",
-      "block-explorer-url": "URL del explorador de bloques",
-      "chain-id": "ID de la red",
       "claiming": "Reclamando...",
       "claim-my-tokens": "Reclamar",
       "configure-sepolia-testnet": "Configurar la red de prueba Sepolia",
-      "currency-symbol": "Símbolo de la moneda nativa",
       "did-not-receive-try-again": "¿No recibiste este email? <button>Inténtalo de nuevo.</button>",
       "email-failed": "Error al enviar el correo electrónico",
       "email-failed-retry": "<button>Inténtelo de nuevo</button> o <link>contáctenos</link> en Discord <discord></discord>.",
       "email-placeholder": "suemail@mail.com",
       "email-sent": "El correo electrónico ha sido enviado.",
-      "layer": "Capa {layer}",
-      "manual": "Manual",
       "network-name": "Nombre de la red",
       "page-subtitle": "Añada Ethereum Sepolia y la red de prueba Hemi ahora a su billetera",
       "page-title": "Añada Hemi a su billetera",
       "receive-updates": "Quiero recibir actualizaciones de marketing",
-      "rpc-url": "URL de RPC",
       "troubleshoot-other-errors": "¿Tiene problemas? Contacte al equipo de Hemi en<link>Discord</link>.",
       "welcome-pack": "Pack de Bienvenida",
       "welcome-pack-description": "Únase a nuestro servidor de Discord y visite el canal <channel>#claim-capsule</channel> para reclamar su Cápsula de incorporación."
-    }
+    },
+    "rpc-url": "URL de RPC"
   },
   "get-started-page": {
     "heading": "Comience con Hemi",

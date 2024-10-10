@@ -1,25 +1,14 @@
 import { ExternalLink } from 'components/externalLink'
+import { CheckMark } from 'components/icons/checkMark'
 import { ComponentProps, useEffect, useState } from 'react'
 import { Tooltip } from 'ui-common/components/tooltip'
 
 import { Clipboard } from './icons/clipboard'
 
-const GreenCheck = () => (
-  <svg fill="none" height={9} width={10} xmlns="http://www.w3.org/2000/svg">
-    <path
-      clipRule="evenodd"
-      d="M8.864.954a.656.656 0 0 1 .182.91L4.671 8.427a.656.656 0 0 1-1.01.1L1.036 5.9a.656.656 0 0 1 .928-.927l2.059 2.059 3.931-5.898a.656.656 0 0 1 .91-.18Z"
-      fill="#10B981"
-      fillRule="evenodd"
-    />
-  </svg>
-)
-
 export const ConfigurationUrl = function ({
   href,
-  order,
   ...props
-}: { order: string } & ComponentProps<'a'>) {
+}: ComponentProps<'a'>) {
   const [copied, setCopied] = useState(false)
 
   useEffect(
@@ -35,7 +24,7 @@ export const ConfigurationUrl = function ({
 
   const overlay = (
     <div className="flex items-center gap-x-1">
-      {copied && <GreenCheck />}
+      {copied && <CheckMark className="[&>path]:stroke-emerald-500" />}
       {copied ? 'Copied' : 'Copy'}
     </div>
   )
@@ -46,9 +35,9 @@ export const ConfigurationUrl = function ({
   }
 
   return (
-    <div className={`flex cursor-pointer items-center gap-x-1 ${order}`}>
+    <>
       <ExternalLink
-        className="overflow-hidden text-ellipsis whitespace-nowrap text-rose-400"
+        className="mr-auto overflow-hidden text-ellipsis whitespace-nowrap text-orange-500 hover:text-orange-700 md:basis-auto"
         href={href}
         {...props}
       >
@@ -66,13 +55,13 @@ export const ConfigurationUrl = function ({
         trigger={['hover', 'focus']}
       >
         <button
-          className="flex"
+          className="flex cursor-pointer"
           onClick={href ? onClick : undefined}
           type="button"
         >
           <Clipboard />
         </button>
       </Tooltip>
-    </div>
+    </>
   )
 }

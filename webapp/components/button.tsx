@@ -2,6 +2,8 @@ import Link from 'next-intl/link'
 import { ComponentProps } from 'react'
 import { isRelativeUrl } from 'utils/url'
 
+import { ExternalLink } from './externalLink'
+
 const commonCss = `text-ms box-content flex items-center justify-center
   rounded-lg border border-solid px-3 py-1.5 font-medium leading-5 disabled:opacity-40`
 
@@ -39,7 +41,7 @@ export const ButtonLink = function ({ variant, ...props }: ButtonLinkProps) {
   const className = `${commonCss} px-2 ${variants[variant ?? 'primary']}`
 
   if (!props.href || !isRelativeUrl(props.href)) {
-    return <a className={className} {...props} />
+    return <ExternalLink className={className} {...props} />
   }
   return <Link className={className} {...props} />
 }

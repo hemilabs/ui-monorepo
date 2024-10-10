@@ -17,7 +17,7 @@ export const FundWallet = function () {
       }}
       subheading={t('here-are-some-options')}
     >
-      <div className="text-ms flex items-center gap-x-2 rounded-xl border border-solid border-neutral-300/55 p-4 font-medium leading-5">
+      <div className="text-ms flex items-center gap-x-2 rounded-xl border border-solid border-neutral-300/55 p-4 font-medium leading-5 md:w-1/2">
         <DiscordFaucetIcon />
         <span className="text-neutral-950">{t('hemi-faucet')}</span>
         <ExternalLink

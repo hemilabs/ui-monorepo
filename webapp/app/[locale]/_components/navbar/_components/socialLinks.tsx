@@ -3,10 +3,12 @@ import { DiscordIcon } from 'components/icons/discordIcon'
 import { GithubIcon } from 'components/icons/githubIcon'
 import { LinkedinIcon } from 'components/icons/linkedinIcon'
 import { TwitterIcon } from 'components/icons/twitterIcon'
+import { YoutubeIcon } from 'components/icons/youtubeIcon'
 import hemiSocials from 'hemi-socials'
 import React from 'react'
 
-const { discordUrl, twitterUrl, githubUrl, linkedinUrl } = hemiSocials
+const { discordUrl, linkedinUrl, githubUrl, twitterUrl, youtubeUrl } =
+  hemiSocials
 
 const svgCss = 'scale-125 [&_path]:hover:fill-black'
 
@@ -26,6 +28,9 @@ export const SocialLinks = () => (
     </ExternalLink>
     <ExternalLink href={linkedinUrl}>
       <LinkedinIcon className={svgCss} />
+    </ExternalLink>
+    <ExternalLink href={youtubeUrl}>
+      <YoutubeIcon className={svgCss} />
     </ExternalLink>
   </div>
 )

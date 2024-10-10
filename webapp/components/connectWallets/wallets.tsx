@@ -1,6 +1,7 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { ConnectorGroup } from 'btc-wallet/connectors/types'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
+import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { useConfig } from 'btc-wallet/hooks/useConfig'
 import { useConnect } from 'btc-wallet/hooks/useConnect'
 import {
@@ -11,34 +12,20 @@ import {
 } from 'components/connectedWallet/connectedAccount'
 import { ExternalLink } from 'components/externalLink'
 import { Chevron } from 'components/icons/chevron'
+import { useBitcoin } from 'hooks/useBitcoin'
+import { useChainIsSupported } from 'hooks/useChainIsSupported'
 import { useTranslations } from 'next-intl'
 import { isAndroid } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
-import { Box } from 'ui-common/components/box'
-import { useAccount as useEvmAccount } from 'wagmi'
+import { getFormattedValue } from 'utils/format'
+import { formatUnits } from 'viem'
+import { useAccount as useEvmAccount, useBalance as useEvmBalance } from 'wagmi'
 
+import { Balance } from './balance'
+import { Box } from './box'
 import { BtcLogo } from './btcLogo'
+import { ConnectToSupportedChain } from './connectToSupportedChain'
 import { EthLogo } from './ethLogo'
-import { MetamaskLogo } from './metamaskLogo'
-import { UnisatLogo } from './unisatLogo'
-
-const ConnectedToWallet = function ({
-  icon,
-  wallet,
-}: {
-  icon: React.ReactNode
-  wallet: string
-}) {
-  const t = useTranslations('connect-wallets')
-  return (
-    <div className="flex items-center gap-x-2">
-      {icon}
-      <span className="text-sm font-medium text-slate-600">
-        {t('connected-with-wallet', { wallet })}
-      </span>
-    </div>
-  )
-}
 
 const ConnectWalletButton = ({
   hoverClassName,
@@ -59,7 +46,7 @@ const ConnectWalletButton = ({
     onClick={onClick}
   >
     {icon}
-    <span className="text-base font-medium leading-normal text-slate-950">
+    <span className="text-base font-medium leading-normal text-neutral-950">
       {text}
     </span>
     {rightIcon || (
@@ -88,7 +75,10 @@ const InstallUnisat = function ({ connector }: { connector: ConnectorGroup }) {
 }
 
 export const BtcWallet = function () {
-  const { connector, status } = useBtcAccount()
+  const { chainId, connector, status } = useBtcAccount()
+  const bitcoin = useBitcoin()
+  const { balance } = useBtcBalance()
+  const chainSupported = useChainIsSupported(chainId)
   const { connect } = useConnect()
   const { connectors } = useConfig()
 
@@ -99,7 +89,7 @@ export const BtcWallet = function () {
   if (status === 'disconnected') {
     return (
       <ConnectWalletButton
-        hoverClassName="hover:bg-orange-950/5"
+        hoverClassName="hover:bg-orange-50 hover:border-orange-300/55"
         icon={<BtcLogo />}
         onClick={() => connect(unisat.wallet)}
         rightIcon={
@@ -111,17 +101,34 @@ export const BtcWallet = function () {
   }
 
   if (status === 'connected') {
+    const getBalance = function () {
+      if (balance.confirmed === 0) {
+        return '0'
+      }
+      return getFormattedValue(
+        formatUnits(BigInt(balance.confirmed), bitcoin.nativeCurrency.decimals),
+      )
+    }
+
     return (
       <Box
-        description={
-          <ConnectedToWallet icon={<UnisatLogo />} wallet={connector!.name} />
+        topContent={
+          <>
+            <ConnectedBtcAccount />
+            <ConnectedBtcChain />
+          </>
         }
-        title={t('btc-wallet')}
+        walletName={connector!.name}
+        walletType={t('btc-wallet')}
       >
-        <div className="flex flex-wrap items-center gap-4">
-          <ConnectedBtcAccount />
-          <ConnectedBtcChain />
-        </div>
+        {chainSupported ? (
+          <Balance
+            balance={balance !== undefined ? getBalance() : undefined}
+            symbol={bitcoin.nativeCurrency.symbol}
+          />
+        ) : (
+          <ConnectToSupportedChain />
+        )}
       </Box>
     )
   }
@@ -130,29 +137,45 @@ export const BtcWallet = function () {
 }
 
 export const EvmWallet = function () {
-  const { connector, status } = useEvmAccount()
+  const { address, chain, chainId, connector, status } = useEvmAccount()
+  const chainSupported = useChainIsSupported(chainId)
+  const { data: balance } = useEvmBalance({ address })
   const { openConnectModal } = useConnectModal()
   const t = useTranslations('connect-wallets')
 
   if (status === 'connected') {
     return (
       <Box
-        description={
-          <ConnectedToWallet icon={<MetamaskLogo />} wallet={connector.name} />
+        topContent={
+          <>
+            <ConnectedEvmAccount />
+            <ConnectedEvmChain />
+          </>
         }
-        title={t('evm-wallet')}
+        walletName={connector!.name}
+        walletType={t('evm-wallet')}
       >
-        <div className="flex flex-wrap items-center gap-4">
-          <ConnectedEvmAccount />
-          <ConnectedEvmChain />
-        </div>
+        {chainSupported ? (
+          <Balance
+            balance={
+              balance !== undefined
+                ? getFormattedValue(
+                    formatUnits(balance.value, balance.decimals),
+                  )
+                : undefined
+            }
+            symbol={chain.nativeCurrency.symbol}
+          />
+        ) : (
+          <ConnectToSupportedChain />
+        )}
       </Box>
     )
   }
   if (status === 'disconnected') {
     return (
       <ConnectWalletButton
-        hoverClassName="hover:bg-indigo-400/5"
+        hoverClassName="hover:bg-blue-50 hover:border-blue-300/55"
         icon={<EthLogo />}
         onClick={openConnectModal}
         text={t('connect-evm-wallet')}

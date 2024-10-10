@@ -1,16 +1,11 @@
-import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { featureFlags } from 'app/featureFlags'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
-import {
-  ConnectedBtcChain,
-  ConnectedEvmChain,
-} from 'components/connectedWallet/connectedAccount'
-import { ConnectWalletDrawerContext } from 'context/connectWalletDrawerContext'
+import { useDrawerContext } from 'hooks/useDrawerContext'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { Fragment, useContext } from 'react'
-import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { useAccount as useEvmAccount } from 'wagmi'
+
+import { ConnectedChains } from '../connectedWallet/connectedChains'
 
 import { MetamaskLogo } from './metamaskLogo'
 import { UnisatLogo } from './unisatLogo'
@@ -25,24 +20,14 @@ const ConnectWalletsDrawer = dynamic(
 const WalletIcon = () => (
   <svg fill="none" height={16} width={16} xmlns="http://www.w3.org/2000/svg">
     <path
-      d="M10.666 6H4.333a1.667 1.667 0 0 1 0-3.334h6.333v3.333Zm0 0h2.667v7.333H4.667a2 2 0 0 1-2-2V4.999"
-      stroke="#000202"
-      strokeLinecap="square"
-      strokeWidth={1.333}
-    />
-    <path
-      d="M10.333 10.25a.583.583 0 1 0 0-1.167.583.583 0 0 0 0 1.167Z"
-      fill="#000202"
-      stroke="#000202"
-      strokeWidth={0.5}
+      d="M2 3.5A1.5 1.5 0 0 1 3.5 2h9A1.5 1.5 0 0 1 14 3.5v.401a2.986 2.986 0 0 0-1.5-.401h-9c-.546 0-1.059.146-1.5.401V3.5ZM3.5 5A1.5 1.5 0 0 0 2 6.5v.401A2.986 2.986 0 0 1 3.5 6.5h9c.546 0 1.059.146 1.5.401V6.5A1.5 1.5 0 0 0 12.5 5h-9ZM8 10a2 2 0 0 0 1.938-1.505c.068-.268.286-.495.562-.495h2A1.5 1.5 0 0 1 14 9.5v3a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 12.5v-3A1.5 1.5 0 0 1 3.5 8h2c.276 0 .494.227.562.495A2 2 0 0 0 8 10Z"
+      fill="#0A0A0A"
     />
   </svg>
 )
 
-const ConnectWallets = function () {
-  const { closeDrawer, isDrawerOpen, openDrawer } = useContext(
-    ConnectWalletDrawerContext,
-  )
+export const WalletConnection = function () {
+  const { closeDrawer, isDrawerOpen, openDrawer } = useDrawerContext()
   const t = useTranslations()
 
   const walletsConnected = []
@@ -53,68 +38,47 @@ const ConnectWallets = function () {
   if (isEvmWalletConnected) {
     walletsConnected.push({ icon: <MetamaskLogo /> })
   }
-  if (isBtcWalletConnected) {
+  if (featureFlags.btcTunnelEnabled && isBtcWalletConnected) {
     walletsConnected.push({ icon: <UnisatLogo /> })
   }
 
   return (
-    <div className="flex items-center gap-x-3">
-      <div className="hidden md:flex md:items-center md:gap-x-3">
-        {isEvmWalletConnected && <ConnectedEvmChain />}
-        {walletsConnected.length > 1 && (
-          <span className="text-base font-medium leading-normal text-slate-700">
-            &
-          </span>
-        )}
-        {isBtcWalletConnected && <ConnectedBtcChain />}
-      </div>
-      <button
-        className="flex h-10 items-center gap-x-2 rounded-xl border border-solid border-zinc-400/55 bg-white px-3 py-2 text-sm font-medium leading-normal shadow-sm"
-        onClick={openDrawer}
-      >
-        {walletsConnected.length === 0 && (
-          <>
-            <WalletIcon />
-            <span>{t('common.connect-wallets')}</span>
-          </>
-        )}
-        {walletsConnected.length > 0 && (
-          <>
-            <div className="flex items-center justify-between rounded-full border border-solid border-orange-700/45 bg-orange-200 p-px">
+    <div className="ml-auto mr-2 md:mr-6">
+      <div className="flex items-center gap-x-3">
+        <div className="hidden md:block">
+          <ConnectedChains />
+        </div>
+        <button
+          className="text-ms flex h-8 items-center gap-x-2 rounded-lg border border-solid border-neutral-300/55 
+          bg-white py-1.5 pl-2 pr-4 font-medium leading-normal shadow-sm"
+          onClick={openDrawer}
+        >
+          {walletsConnected.length === 0 && (
+            <>
+              <WalletIcon />
+              <span>{t('common.connect-wallets')}</span>
+            </>
+          )}
+          {walletsConnected.length > 0 && (
+            <div className="flex items-center justify-between gap-x-1 border-neutral-500/55">
               {walletsConnected.map(({ icon }, index) => (
-                <Fragment key={index}>{icon}</Fragment>
+                <div
+                  className="flex items-center justify-center rounded-full border border-solid p-1"
+                  key={index}
+                >
+                  {icon}
+                </div>
               ))}
+              <span>
+                {t('common.wallets-connected', {
+                  count: walletsConnected.length,
+                })}
+              </span>
             </div>
-            <span>
-              {t('common.wallets-connected', {
-                count: walletsConnected.length,
-              })}
-            </span>
-          </>
-        )}
-      </button>
-      {isDrawerOpen && <ConnectWalletsDrawer closeDrawer={closeDrawer} />}
-    </div>
-  )
-}
-
-export const WalletConnection = function ({
-  isMenuOpen,
-}: {
-  isMenuOpen: boolean
-}) {
-  const { width } = useWindowSize()
-  const connect = featureFlags.btcTunnelEnabled ? (
-    <ConnectWallets />
-  ) : (
-    <ConnectButton />
-  )
-
-  return (
-    <div className="ml-auto">
-      {width >= 768 && <div className="ml-auto mr-8 xl:mr-12">{connect}</div>}
-      {/* Only visible in the mobile view, if the nav bar menu is not open */}
-      {width < 768 && <>{!isMenuOpen && connect}</>}
+          )}
+        </button>
+        {isDrawerOpen && <ConnectWalletsDrawer closeDrawer={closeDrawer} />}
+      </div>
     </div>
   )
 }

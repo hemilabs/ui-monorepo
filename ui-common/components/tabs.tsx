@@ -7,6 +7,7 @@ type Button = { onClick?: () => void }
 type Anchor = { href: string }
 
 type TabProps = {
+  border?: boolean
   children: ReactNode
   disabled?: boolean
   selected?: boolean
@@ -17,20 +18,27 @@ const tabIsButton = (value: Button | Anchor): value is Button =>
 
 export const Tab = function ({
   children,
+  border = false,
   disabled = false,
   selected = false,
   ...props
 }: TabProps) {
   const isButton = tabIsButton(props)
-  const className = `px-5 md:px-6 py-2 text-sm font-medium inline-block h-full ${
-    selected ? 'text-orange-950' : 'text-slate-300'
-  }
-  ${disabled ? 'opacity-40' : 'opacity-100'}`
   return (
-    <li className="h-full border-y border-l border-solid border-slate-100 bg-white shadow-sm first:rounded-l-xl last:rounded-r-xl last:border-r">
+    <li
+      className={`
+      text-ms box-border flex h-7 items-center rounded-md px-2 py-1 font-medium
+      ${
+        selected
+          ? 'border border-solid border-neutral-300/55 bg-white text-neutral-950 shadow-sm'
+          : `${
+              border ? 'border border-solid border-neutral-300/55' : ''
+            } cursor-pointer bg-neutral-100 text-neutral-600 hover:text-neutral-950`
+      }
+    `}
+    >
       {(isButton || disabled) && (
         <button
-          className={className}
           disabled={disabled || selected}
           onClick={isButton && !disabled ? props.onClick : undefined}
           type="button"
@@ -38,11 +46,7 @@ export const Tab = function ({
           {children}
         </button>
       )}
-      {!isButton && props.href && (
-        <Link className={className} href={props.href}>
-          {children}
-        </Link>
-      )}
+      {!isButton && props.href && <Link href={props.href}>{children}</Link>}
     </li>
   )
 }
@@ -52,7 +56,5 @@ type TabsProps = {
 }
 
 export const Tabs = ({ children }: TabsProps) => (
-  <ul className="flex flex-wrap items-center border-gray-200 text-center text-sm font-medium text-gray-500">
-    {children}
-  </ul>
+  <ul className="flex flex-wrap items-center gap-x-2">{children}</ul>
 )

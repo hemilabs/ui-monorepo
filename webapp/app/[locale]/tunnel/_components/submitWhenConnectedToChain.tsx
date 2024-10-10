@@ -1,7 +1,7 @@
+import { Button } from 'components/button'
 import { useChain } from 'hooks/useChain'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
-import { Button } from 'ui-common/components/button'
 import { type Chain } from 'viem'
 import { useSwitchChain } from 'wagmi'
 
@@ -18,18 +18,16 @@ export const SubmitWhenConnectedToChain = function ({
 
   const t = useTranslations()
 
-  const connectedToL1 = useIsConnectedToExpectedNetwork(chainId)
+  const connectedToChain = useIsConnectedToExpectedNetwork(chainId)
   const targetChain = useChain(chainId)
 
   return (
     <>
-      {connectedToL1 && submitButton}
-      {!connectedToL1 && (
-        <div className="flex flex-col gap-y-2">
-          <Button onClick={() => switchChain({ chainId })} type="button">
-            {t('common.connect-to-network', { network: targetChain?.name })}
-          </Button>
-        </div>
+      {connectedToChain && submitButton}
+      {!connectedToChain && (
+        <Button onClick={() => switchChain({ chainId })} type="button">
+          {t('common.connect-to-network', { network: targetChain?.name })}
+        </Button>
       )}
     </>
   )

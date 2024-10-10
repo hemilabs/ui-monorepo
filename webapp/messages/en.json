@@ -2,27 +2,22 @@
   "common": {
     "add": "Add",
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
-    "bitcoinkit": "Hemi Bitcoin Kit",
     "connect-to-network": "Connect to {network}",
+    "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",
     "connect-wallets": "Connect Wallets",
     "connect-your-wallet": "Connect your Wallet",
-    "demos": "Demos",
-    "dex": "DEX",
     "erc20-approve-10x-deposits": "Approve 10x the amount of this deposit",
     "erc20-approve-10x-detailed-description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
     "erc20-extra-approval": "Approve 10x deposits",
-    "explorer": "Explorer",
-    "get-started": "Get Started",
     "failed": "Failed",
     "fees": "Fees",
-    "hemidocs": "Hemi Docs",
+    "network-does-not-match": "This network doesn’t match the one selected in your wallet.",
     "network-gas-fee": "{network} gas fee",
-    "networkstatus": "Network Status",
     "select-network": "Select Network",
     "success": "Success",
     "swap": "Swap",
-    "tools": "Tools",
+    "switch-to-network": "Switch to {network}",
     "total": "Total",
     "total-amount": "Total Amount",
     "transaction-status": {
@@ -31,23 +26,24 @@
       "pending": "Pending",
       "rejected": "Tx rejected"
     },
-    "tunnel": "Tunnel",
     "unexpected-error": "An unexpected error has ocurred. Please try again.",
     "unsupported-chain-heading": "You're not connected to a supported chain",
     "view": "View",
+    "your-wallet-not-connected": "Your wallet is not connected",
     "wait-complete": "Wait complete",
     "wait-hours": "Wait up to {hours} hours",
     "wait-minutes": "Wait up to {minutes} minutes",
     "wallets-connected": "{count} Connected {count, plural, =1 {Wallet} other {Wallets}} ",
-    "web-pop-miner": "Web PoP Miner",
-    "wrong-network": "Wrong Network"
+    "wrong-network": "Wrong Network",
+    "wrong-type-network": "Wrong {type} Network"
   },
   "connect-wallets": {
     "btc-wallet-requirement": "A Bitcoin wallet is only required if moving assets between Bitcoin and Hemi.",
     "btc-wallet": "BTC Wallet",
     "connect-btc-wallet": "Connect your Unisat BTC Wallet",
     "connect-evm-wallet": "Connect your EVM Wallet",
-    "connected-with-wallet": "Connected with {wallet}",
+    "connect-to-see-balance": "Connect to a supported network to see your balance",
+    "connected-with-wallet": "Connected with <wallet></wallet>",
     "copy-address": "Copy Address",
     "description": "Connect your EVM and BTC wallets to transfer assets seamlessly. For the best experience, use wallets from both networks.",
     "disconnect": "Disconnect",
@@ -200,10 +196,23 @@
       "miner": "I'm a Miner"
     }
   },
+  "navbar": {
+    "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
+    "bitcoinkit": "Hemi Bitcoin Kit",
+    "demos": "Demos",
+    "dex": "DEX",
+    "explorer": "Explorer",
+    "get-started": "Get Started",
+    "hemidocs": "Hemi Docs",
+    "network-status": "Network Status",
+    "tools": "Tools",
+    "tunnel": "Tunnel",
+    "web-pop-miner": "Web PoP Miner"
+  },
   "token-selector": {
-    "choose-token": "Choose Token",
-    "no-tokens": "There are no tokens",
-    "search-tokens": "Search tokens"
+    "no-results-for": "No results found for <search></search>",
+    "search-tokens": "Search tokens...",
+    "select-token": "Select token"
   },
   "transaction-history": {
     "connect-wallet-to-review": "Connect your wallet to review transaction history.",
@@ -224,18 +233,24 @@
       "hemi-receiving-address": "Receiving Hemi address",
       "hemi-receiving-address-description": "You will receive your tunneled {symbol} to the connected EVM wallet address.",
       "max": "max",
+      "receive": "Receive",
+      "send": "Send",
       "switch-to-prove": "Switch to {network} to complete transaction",
-      "to-network": "To Network",
-      "you-receive": "You receive",
-      "you-send": "You send"
+      "to-network": "To Network"
     },
     "review-deposit": {
+      "approve-initiated": "Approve initiated",
+      "approve-confirmed": "Approve confirmed",
       "btc-deposit-come-back-delay-note": "If you do not receive your deposit after {hours} hours return to this page to manually claim.",
       "claim-deposit": "Claim deposit",
+      "deposit-completed": "Deposit completed",
+      "deposit-on-its-way": "Your deposit is on its way! Please wait while the blockchain finalizes the transaction.",
       "heading": "Review Deposit",
       "initiate-deposit": "Initiate deposit",
+      "review-deposit": "Review Deposit",
       "wait-for-confirmation": "Wait for Hemi confirmation",
-      "you-are-depositing": "You are depositing"
+      "you-are-depositing": "You are depositing",
+      "your-deposit-is-complete": "Your deposit is complete."
     },
     "review-withdraw": {
       "claim-withdrawal": "Claim withdrawal",
@@ -243,7 +258,9 @@
       "initiate-withdrawal": "Initiate withdrawal",
       "prove-withdrawal": "Prove withdrawal",
       "total-to-withdraw": "Total to withdraw",
-      "view-tx": "View"
+      "view-tx": "View",
+      "withdraw-completed": "Your withdrawal is complete.",
+      "withdraw-on-its-way": "You're almost there! Complete the remaining steps to claim your withdrawal."
     },
     "submit-button": {
       "approve-and-deposit": "Approve and Deposit",
@@ -260,21 +277,20 @@
       "initiate-withdrawal": "Initiate Withdrawal",
       "prove-withdrawal": "Prove withdrawal",
       "proving-withdrawal": "Proving...",
+      "try-again": "Try again",
       "withdrawing": "Withdrawing..."
     },
-    "subtitle": "Move tokens to and from Hemi",
     "title": "Tunnel",
     "transaction-history": {
       "actions": {
         "claim": "Claim",
         "prove": "Prove",
-        "retry": "Retry",
         "view": "View"
       },
       "column-headers": {
+        "action": "Action",
         "amount": "Amount",
         "from": "From",
-        "reload": "Reload",
         "status": "Status",
         "time": "Time",
         "to": "To",
@@ -282,8 +298,17 @@
         "type": "Type"
       },
       "deposit": "Deposit",
-      "no-transactions": "There are no transactions",
+      "no-transactions": "No transactions made",
+      "no-transactions-get-started": "Get started by tunneling assets from and to hemi",
+      "subtitle": "View and track your Hemi transaction history",
       "title": "Transaction History",
+      "top-bar": {
+        "all": "All",
+        "bitcoin": "Bitcoin",
+        "ethereum": "Ethereum",
+        "recent-transactions": "Recent Transactions"
+      },
+      "tunnel-assets": "Tunnel assets",
       "withdraw": "Withdraw"
     },
     "transaction-status": {
@@ -295,6 +320,7 @@
       "erc20-approved": "{symbol} approved",
       "erc20-approving": "Approving {symbol}",
       "proving-withdrawal": "Proving withdrawal",
+      "see-on-explorer": "See on {explorer}",
       "withdrawal-claimed": "Withdrawal claimed",
       "withdrawal-proved": "Withdrawal proved",
       "withdrawing": "Withdrawing {fromInput} {symbol}",

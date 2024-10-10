@@ -5,15 +5,24 @@ import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 
 import { EvmChainsMenu } from './evmChainsMenu'
 
-export const WrongNetwork = function ({ onClick }: { onClick: () => void }) {
+type NetworkType = 'BTC' | 'ETH'
+
+export const WrongNetwork = function ({
+  onClick,
+  type,
+}: {
+  onClick: () => void
+  type: NetworkType
+}) {
   const t = useTranslations('common')
   return (
     <button
-      className="flex items-center gap-x-2 rounded-xl bg-red-500 px-[10px] py-2 text-base font-bold text-white shadow-md duration-150 hover:scale-105"
+      className="text-ms group/wrong-network flex items-center gap-x-2 bg-transparent py-2 font-medium
+        leading-5 text-rose-600 duration-150 hover:scale-105 hover:text-rose-700"
       onClick={onClick}
     >
-      <span>{t('wrong-network')}</span>
-      <Chevron.Bottom />
+      <span>{t('wrong-type-network', { type })}</span>
+      <Chevron.Bottom className="[&>path]:fill-neutral-500 [&>path]:group-hover/wrong-network:fill-neutral-950" />
     </button>
   )
 }
@@ -27,7 +36,7 @@ export const WrongEvmNetwork = function () {
 
   return (
     <div className="relative" ref={ref}>
-      <WrongNetwork onClick={() => setMenuOpen(true)} />
+      <WrongNetwork onClick={() => setMenuOpen(true)} type="ETH" />
       {menuOpen && <EvmChainsMenu onSwitchChain={closeMenu} />}
     </div>
   )

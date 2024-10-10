@@ -1,8 +1,7 @@
 'use client'
 
-import { MessageDirection } from '@eth-optimism/sdk'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
-import { addTimestampToOperation } from 'context/tunnelHistoryContext/operations'
+import { Button } from 'components/button'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useBitcoin } from 'hooks/useBitcoin'
@@ -14,14 +13,12 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
-import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
-import { type EvmToken, type Token } from 'types/token'
-import { BtcDepositStatus, EvmDepositOperation } from 'types/tunnel'
-import { Button } from 'ui-common/components/button'
+import { type EvmToken } from 'types/token'
+import { BtcDepositStatus } from 'types/tunnel'
 import { isEvmNetwork } from 'utils/chain'
 import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
-import { formatUnits, parseUnits, zeroAddress } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useAfterTransaction } from '../_hooks/useAfterTransaction'
@@ -34,17 +31,13 @@ import {
   useTunnelState,
   TypedTunnelState,
 } from '../_hooks/useTunnelState'
+import { canSubmit, getTotal } from '../_utils'
 
+import { BtcFees } from './btcFees'
 import { ConnectEvmWallet } from './connectEvmWallet'
-import { Erc20Approval } from './Erc20Approval'
-import {
-  BtcFees,
-  EvmSummary,
-  FormContent,
-  TunnelForm,
-  canSubmit,
-  getTotal,
-} from './form'
+import { Erc20TokenApproval } from './erc20TokenApproval'
+import { EvmSummary } from './evmSummary'
+import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 
@@ -77,20 +70,14 @@ const WalletsConnected = dynamic(
 
 const SubmitEvmDeposit = function ({
   canDeposit,
-  extendedErc20Approval,
-  fromToken,
   isRunningOperation,
   needsApproval,
   operationRunning,
-  updateExtendedErc20Approval,
 }: {
   canDeposit: boolean
-  extendedErc20Approval: boolean
-  fromToken: Token
   isRunningOperation: boolean
   needsApproval: boolean
   operationRunning: OperationRunning
-  updateExtendedErc20Approval: () => void
 }) {
   const t = useTranslations()
 
@@ -118,18 +105,9 @@ const SubmitEvmDeposit = function ({
   }
 
   return (
-    <>
-      <Erc20Approval
-        checked={extendedErc20Approval}
-        disabled={
-          isNativeToken(fromToken) || !needsApproval || isRunningOperation
-        }
-        onCheckedChange={updateExtendedErc20Approval}
-      />
-      <Button disabled={!canDeposit || isRunningOperation} type="submit">
-        {getOperationButtonText()}
-      </Button>
-    </>
+    <Button disabled={!canDeposit || isRunningOperation} type="submit">
+      {getOperationButtonText()}
+    </Button>
   )
 }
 
@@ -255,8 +233,22 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
   return (
     <>
       <TunnelForm
+        belowForm={
+          <div className="relative -z-10 -translate-y-7">
+            <ReceivingAddress
+              address={evmAddress ? formatEvmAddress(evmAddress) : undefined}
+              receivingText={t('tunnel-page.form.hemi-receiving-address')}
+              tooltipText={t(
+                'tunnel-page.form.hemi-receiving-address-description',
+                {
+                  symbol: state.fromToken.symbol,
+                },
+              )}
+            />
+            {fees !== undefined ? <BtcFees fees={fees} /> : null}
+          </div>
+        }
         bottomSection={<WalletsConnected />}
-        expectedChainId={chain.id}
         explorerUrl={chain.blockExplorers.default.url}
         formContent={
           <FormContent
@@ -272,26 +264,11 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
           />
         }
         onSubmit={handleDeposit}
-        reviewSummary={fees !== undefined ? <BtcFees fees={fees} /> : null}
         submitButton={
-          <>
-            <div className="mb-2">
-              <ReceivingAddress
-                address={evmAddress ? formatEvmAddress(evmAddress) : undefined}
-                receivingText={t('tunnel-page.form.hemi-receiving-address')}
-                tooltipText={t(
-                  'tunnel-page.form.hemi-receiving-address-description',
-                  {
-                    symbol: state.fromToken.symbol,
-                  },
-                )}
-              />
-            </div>
-            <SubmitWithTwoWallets
-              disabled={!canDeposit || isDepositing}
-              text={t('tunnel-page.submit-button.deposit')}
-            />
-          </>
+          <SubmitWithTwoWallets
+            disabled={!canDeposit || isDepositing}
+            text={t('tunnel-page.submit-button.deposit')}
+          />
         }
         transactionsList={transactionsList}
       />
@@ -321,9 +298,6 @@ type EvmDepositProps = {
 }
 
 const EvmDeposit = function ({ state }: EvmDepositProps) {
-  const { addDepositToTunnelHistory } = useTunnelHistory()
-  // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
-  const [depositAmount, setDepositAmount] = useState('0')
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
@@ -339,7 +313,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     fromToken,
     resetStateAfterOperation,
     toToken,
-    toNetworkId,
     updateFromInput,
   } = state
 
@@ -372,7 +345,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     approvalError,
     approvalReceipt,
     approvalReceiptError,
-    approvalTxHash,
     approvalTokenGasFees = BigInt(0),
     clearDepositState,
     needsApproval,
@@ -381,7 +353,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     depositGasFees,
     depositReceipt,
     depositReceiptError,
-    depositTxHash,
   } = useDeposit({
     canDeposit,
     extendedErc20Approval: operatesNativeToken
@@ -405,68 +376,49 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     [approvalReceiptStatus, operationRunning, setOperationRunning],
   )
 
-  const resetFormState = useCallback(
-    function () {
+  useEffect(
+    function handleSuccess() {
+      if (depositReceipt?.status !== 'success' || operationRunning !== 'idle') {
+        return
+      }
+      setOperationRunning('idle')
       resetStateAfterOperation()
       setExtendedErc20Approval(false)
-      setOperationRunning('idle')
-    },
-    [resetStateAfterOperation, setExtendedErc20Approval, setOperationRunning],
-  )
-
-  const onSuccess = useCallback(
-    function () {
-      resetFormState()
-      const isNative = isNativeToken(fromToken)
-      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
-      // eslint-disable-next-line promise/catch-or-return
-      addTimestampToOperation<EvmDepositOperation>(
-        {
-          amount: parseUnits(fromInput, fromToken.decimals).toString(),
-          blockNumber: Number(depositReceipt.blockNumber),
-          direction: MessageDirection.L1_TO_L2,
-          from: depositReceipt.from,
-          l1ChainId: fromNetworkId,
-          l1Token: isNative ? zeroAddress : fromToken.address,
-          l2ChainId: toNetworkId,
-          l2Token: isNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
-          // "to" field uses the same address as from, which is user's address
-          to: depositReceipt.from,
-          transactionHash: depositReceipt.transactionHash,
-        },
-        fromToken.chainId,
-      ).then(addDepositToTunnelHistory)
     },
     [
-      addDepositToTunnelHistory,
       depositReceipt,
-      fromInput,
-      fromNetworkId,
-      fromToken,
-      resetFormState,
-      toNetworkId,
-      toToken,
+      operationRunning,
+      resetStateAfterOperation,
+      setExtendedErc20Approval,
+      setOperationRunning,
     ],
   )
 
-  const { beforeTransaction } = useAfterTransaction({
-    clearState: clearDepositState,
-    errorReceipts: [
+  useEffect(
+    function handleRejectionOrFailure() {
+      if (
+        (approvalError ||
+          approvalReceiptError ||
+          depositError ||
+          depositReceiptError) &&
+        operationRunning !== 'idle'
+      ) {
+        setOperationRunning('idle')
+      }
+    },
+    [
       approvalError,
       approvalReceiptError,
       depositError,
       depositReceiptError,
+      operationRunning,
+      setOperationRunning,
     ],
-    onError: resetFormState,
-    onSuccess,
-    transactionReceipt: depositReceipt,
-  })
+  )
 
   const isRunningOperation = operationRunning !== 'idle'
 
   const handleDeposit = function () {
-    beforeTransaction()
-    setDepositAmount(fromInput)
     clearDepositState()
     deposit()
     if (needsApproval) {
@@ -487,42 +439,6 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
         fromToken,
       })
 
-  const approvalTransactionList = useTransactionsList({
-    inProgressMessage: t('tunnel-page.transaction-status.erc20-approving', {
-      symbol: fromToken.symbol,
-    }),
-    isOperating: operationRunning === 'approving',
-    operation: 'approve',
-    receipt: approvalReceipt,
-    receiptError: approvalReceiptError,
-    successMessage: t('tunnel-page.transaction-status.erc20-approved', {
-      symbol: fromToken.symbol,
-    }),
-    txHash: approvalTxHash,
-    userConfirmationError: approvalError,
-  })
-
-  const depositTransactionList = useTransactionsList({
-    inProgressMessage: t('tunnel-page.transaction-status.depositing', {
-      fromInput: getFormattedValue(depositAmount),
-      symbol: fromToken.symbol,
-    }),
-    isOperating: operationRunning === 'depositing',
-    operation: 'deposit',
-    receipt: depositReceipt,
-    receiptError: depositReceiptError,
-    successMessage: t('tunnel-page.transaction-status.deposited', {
-      fromInput: getFormattedValue(depositAmount),
-      symbol: fromToken.symbol,
-    }),
-    txHash: depositTxHash,
-    userConfirmationError: depositError,
-  })
-
-  const transactionsList = approvalTransactionList.concat(
-    depositTransactionList,
-  )
-
   const gas = {
     amount: formatNumber(
       formatUnits(
@@ -537,8 +453,15 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   return (
     <TunnelForm
-      expectedChainId={fromNetworkId}
-      explorerUrl={fromChain.blockExplorers.default.url}
+      belowForm={
+        canDeposit ? (
+          <EvmSummary
+            gas={gas}
+            operationSymbol={fromToken.symbol}
+            total={totalDeposit}
+          />
+        ) : null
+      }
       formContent={
         <FormContent
           isRunningOperation={isRunningOperation}
@@ -549,6 +472,15 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
               isRunningOperation={isRunningOperation}
               onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
             />
+          }
+          tokenApproval={
+            operatesNativeToken ? null : (
+              <Erc20TokenApproval
+                checked={extendedErc20Approval}
+                disabled={!needsApproval || isRunningOperation}
+                onCheckedChange={() => setExtendedErc20Approval(prev => !prev)}
+              />
+            )
           }
           tunnelState={{
             ...state,
@@ -574,33 +506,18 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
         />
       }
       onSubmit={handleDeposit}
-      reviewSummary={
-        canDeposit ? (
-          <EvmSummary
-            gas={gas}
-            operationSymbol={fromToken.symbol}
-            total={totalDeposit}
-          />
-        ) : null
-      }
       submitButton={
         isConnected ? (
           <SubmitEvmDeposit
             canDeposit={canDeposit}
-            extendedErc20Approval={extendedErc20Approval}
-            fromToken={fromToken}
             isRunningOperation={isRunningOperation}
             needsApproval={needsApproval}
             operationRunning={operationRunning}
-            updateExtendedErc20Approval={() =>
-              setExtendedErc20Approval(prev => !prev)
-            }
           />
         ) : (
           <ConnectEvmWallet />
         )
       }
-      transactionsList={transactionsList}
     />
   )
 }

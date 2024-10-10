@@ -1,9 +1,4 @@
-import {
-  MessageDirection,
-  MessageReceipt,
-  MessageStatus,
-  type SignerOrProviderLike,
-} from '@eth-optimism/sdk'
+import { type SignerOrProviderLike } from '@eth-optimism/sdk'
 import {
   UseMutationOptions,
   useMutation,
@@ -229,99 +224,30 @@ export const useConnectedChainCrossChainMessenger = function (
   })
 }
 
-type UseGetTransactionMessageStatus = {
-  crossChainMessenger: CrossChainMessengerProxy
-  crossChainMessengerStatus: 'error' | 'pending' | 'success'
-  direction?: MessageDirection
-  enabled?: boolean
-  initialData?: MessageStatus
-  l1ChainId: Chain['id']
-  refetchInterval?: number | false
-  refetchUntilStatus?: MessageStatus
-  transactionHash: Hash
-}
-
-const useGetTransactionMessageStatus = function ({
-  crossChainMessenger,
-  crossChainMessengerStatus,
-  direction,
-  enabled = true,
-  initialData,
-  l1ChainId,
-  refetchInterval = 60 * 1000,
-  refetchUntilStatus,
-  transactionHash,
-}: UseGetTransactionMessageStatus) {
-  const hemi = useHemi()
-
-  const { data: messageStatus, isLoading } = useQuery({
-    // ensure correct chain was used
-    enabled:
-      enabled &&
-      crossChainMessengerStatus === 'success' &&
-      l1ChainId !== hemi.id &&
-      !!transactionHash,
-    initialData,
-    queryFn: () =>
-      crossChainMessenger.getMessageStatus(
-        transactionHash,
-        // default value
-        0,
-        direction,
-      ),
-    queryKey: [direction, l1ChainId, transactionHash, 'getMessageStatus'],
-    refetchInterval(query) {
-      // if message status is ready to prove, or no refetch was requested, stop polling
-      if (query.state.data === refetchUntilStatus) {
-        return false
-      }
-      return refetchInterval
-    },
-    refetchIntervalInBackground: true,
-  })
-
-  return {
-    isLoadingMessageStatus: isLoading,
-    messageStatus,
-  }
-}
-
-/**
- * Use this method to query the status of a transaction message
- * while connected to the L1 chain
- */
-export const useL1GetTransactionMessageStatus = function ({
-  direction,
-  l1ChainId,
-  refetchUntilStatus,
-  transactionHash,
-}: Omit<
-  UseGetTransactionMessageStatus,
-  'crossChainMessenger' | 'crossChainMessengerStatus'
->) {
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useL1ToL2CrossChainMessenger(l1ChainId)
-  return useGetTransactionMessageStatus({
-    crossChainMessenger,
-    crossChainMessengerStatus,
-    direction,
-    l1ChainId,
-    refetchUntilStatus,
-    transactionHash,
-  })
-}
-
 type UseDepositErc20Token = {
   enabled: boolean
   l1ChainId: Chain['id']
   toDeposit: string
   token: Token
-}
+} & Pick<
+  UseMutationOptions<
+    Hash,
+    Error,
+    {
+      amount: string
+      l1Address: string
+      l2Address: string
+    }
+  >,
+  'onSettled' | 'onSuccess'
+>
+
 export const useDepositErc20Token = function ({
   enabled,
   l1ChainId,
   toDeposit,
   token,
+  ...options
 }: UseDepositErc20Token) {
   const operation = 'depositERC20'
   const hemi = useHemi()
@@ -367,6 +293,7 @@ export const useDepositErc20Token = function ({
       )
       return response.hash as Hash
     },
+    ...options,
   })
 
   return {
@@ -388,11 +315,12 @@ type UseDepositNativeToken = {
   enabled: boolean
   l1ChainId: Chain['id']
   toDeposit: string
-}
+} & Pick<UseMutationOptions<Hash, Error, string>, 'onSettled' | 'onSuccess'>
 export const useDepositNativeToken = function ({
   enabled,
   l1ChainId,
   toDeposit,
+  ...options
 }: UseDepositNativeToken) {
   const operation = 'depositETH'
   const { crossChainMessenger, crossChainMessengerStatus } =
@@ -421,6 +349,7 @@ export const useDepositNativeToken = function ({
       const response = await crossChainMessenger.depositETH(amount, l1Overrides)
       return response.hash as Hash
     },
+    ...options,
   })
 
   return {
@@ -492,7 +421,7 @@ type UseFinalizeMessage = {
   enabled: boolean
   l1ChainId: Chain['id']
   withdrawTxHash: Hash
-} & Pick<UseMutationOptions<Hash, Error, string>, 'onSettled' | 'onSuccess'>
+} & Omit<UseMutationOptions<Hash, Error, string>, 'mutationFn'>
 
 export const useFinalizeMessage = function ({
   enabled,
@@ -542,12 +471,13 @@ type UseProveMessage = {
   enabled: boolean
   l1ChainId: Chain['id']
   withdrawTxHash: Hash
-}
+} & Omit<UseMutationOptions<Hash, Error, string>, 'mutationFn'>
 
 export const useProveMessage = function ({
   enabled,
   l1ChainId,
   withdrawTxHash,
+  ...options
 }: UseProveMessage) {
   const operation = 'proveMessage'
   const { crossChainMessenger, crossChainMessengerStatus } =
@@ -575,6 +505,7 @@ export const useProveMessage = function ({
       )
       return response.hash as Hash
     },
+    ...options,
   })
 
   return {
@@ -642,35 +573,5 @@ export const useWithdrawToken = function ({
     withdrawErc20Token: () => withdrawErc20Token(amount),
     withdrawErc20TokenError,
     withdrawErc20TokenGasFees,
-  }
-}
-/**
- **Returns the Claim TX hash on the L1 or undefined if the withdrawal is not finalized
- */
-export const useGetClaimWithdrawalTxHash = function (
-  l1ChainId: Chain['id'],
-  withdrawalTxHash: Hash,
-) {
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useConnectedChainCrossChainMessenger(l1ChainId)
-  const hemi = useHemi()
-
-  const { data: receipt, ...rest } = useQuery<
-    Partial<Pick<MessageReceipt['transactionReceipt'], 'transactionHash'>>
-  >({
-    enabled: crossChainMessengerStatus === 'success' && l1ChainId !== hemi.id,
-    // return undefined for withdrawals not claimed yet
-    queryFn: () =>
-      crossChainMessenger
-        .getMessageReceipt(withdrawalTxHash)
-        // react-query doesn't allow saving undefined values in its cache
-        // so we must return an object...
-        .catch(() => ({ transactionReceipt: { transactionHash: undefined } }))
-        .then(({ transactionReceipt }) => transactionReceipt),
-    queryKey: [l1ChainId, withdrawalTxHash, 'getMessageReceipt'],
-  })
-  return {
-    claimTxHash: receipt?.transactionHash as Hash | undefined,
-    ...rest,
   }
 }

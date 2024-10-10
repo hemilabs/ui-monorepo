@@ -12,26 +12,28 @@ export const EvmChainsMenu = function ({
   const { chainId } = useAccount()
   const { chains, switchChain } = useSwitchEvmChain()
   return (
-    <Menu
-      items={chains.map(c => ({
-        content: (
-          <button
-            className="flex items-center gap-x-2"
-            disabled={chainId === c.id}
-            onClick={function () {
-              switchChain({ chainId: c.id })
-              onSwitchChain()
-            }}
-          >
-            <EvmLogo chainId={c.id} />
-            <span className="whitespace-nowrap">{c.name}</span>
-            <div className={chainId === c.id ? 'block' : 'invisible'}>
-              <CheckMark />
-            </div>
-          </button>
-        ),
-        id: c.id.toString(),
-      }))}
-    />
+    <div className="absolute bottom-0 right-0 z-20 translate-y-[calc(100%-5px)]">
+      <Menu
+        items={chains.map(c => ({
+          content: (
+            <button
+              className="flex items-center gap-x-2"
+              disabled={chainId === c.id}
+              onClick={function () {
+                switchChain({ chainId: c.id })
+                onSwitchChain()
+              }}
+            >
+              <EvmLogo chainId={c.id} />
+              <span className="whitespace-nowrap">{c.name}</span>
+              <div className={chainId === c.id ? 'block' : 'invisible'}>
+                <CheckMark />
+              </div>
+            </button>
+          ),
+          id: c.id.toString(),
+        }))}
+      />
+    </div>
   )
 }

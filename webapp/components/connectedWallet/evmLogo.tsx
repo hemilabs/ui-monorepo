@@ -1,8 +1,7 @@
+import { EthLogo } from 'components/icons/ethLogo'
+import { HemiLogo } from 'components/icons/hemiLogo'
 import { useHemi } from 'hooks/useHemi'
 import { Chain } from 'viem'
-
-import { EthLogo } from './ethLogo'
-import { HemiLogo } from './hemiLogo'
 
 type Props = {
   chainId: Chain['id']

@@ -1,3 +1,15 @@
+const DoubleArrow = () => (
+  <svg fill="none" height={20} width={20} xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="M6.25 17.5 2.5 13.75m0 0L6.25 10M2.5 13.75h11.25m0-11.25 3.75 3.75m0 0L13.75 10m3.75-3.75H6.25"
+      stroke="#0A0A0A"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={1.5}
+    />
+  </svg>
+)
+
 type Props = {
   disabled: boolean
   toggle: () => void
@@ -5,24 +17,13 @@ type Props = {
 
 export const ToggleButton = ({ disabled, toggle }: Props) => (
   <button
-    className={`border-gray-1 mx-auto rounded-lg border border-solid bg-slate-50 p-2 shadow-xl ${
+    className={`mx-auto rounded-lg border border-solid border-neutral-300/55 bg-white p-2 shadow-sm hover:bg-neutral-100 ${
       disabled ? 'cursor-not-allowed' : 'cursor-pointer'
     }`}
     disabled={disabled}
     onClick={toggle}
     type="button"
   >
-    <svg
-      fill="none"
-      height="16"
-      viewBox="0 0 22 16"
-      width="22"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M3 7.99023H1.20711C0.761654 7.99023 0.538571 8.52881 0.853553 8.84379L3.64645 11.6367C3.84171 11.8319 4.15829 11.8319 4.35355 11.6367L7.14645 8.84379C7.46143 8.5288 7.23835 7.99023 6.79289 7.99023H5C5 4.68023 7.69 1.99023 11 1.99023C11.8773 1.99023 12.7169 2.17887 13.4663 2.52336C13.6675 2.6158 13.9073 2.5829 14.0638 2.42639L14.8193 1.67095C15.0455 1.44478 15.0041 1.06659 14.7216 0.916569C13.5783 0.309435 12.3008 -0.0101273 11 -0.00976532C6.58 -0.00976532 3 3.57023 3 7.99023ZM17 7.99023C17 11.3002 14.31 13.9902 11 13.9902C10.1471 13.9931 9.30537 13.8102 8.53281 13.4558C8.33221 13.3638 8.09316 13.3971 7.9371 13.5531L7.18072 14.3095C6.95454 14.5357 6.99594 14.9139 7.27843 15.0639C8.42167 15.671 9.69924 15.9906 11 15.9902C15.42 15.9902 19 12.4102 19 7.99023H20.7929C21.2383 7.99023 21.4614 7.45166 21.1464 7.13668L18.3536 4.34379C18.1583 4.14853 17.8417 4.14853 17.6464 4.34379L14.8536 7.13668C14.5386 7.45166 14.7617 7.99023 15.2071 7.99023H17Z"
-        fill="black"
-      />
-    </svg>
+    <DoubleArrow />
   </button>
 )

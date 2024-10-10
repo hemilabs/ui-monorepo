@@ -3,11 +3,11 @@ type Props = {
 }
 
 export const Menu = ({ items }: Props) => (
-  <div className="absolute bottom-0 right-0 z-10 translate-y-[calc(100%+5px)] rounded-lg border border-solid border-slate-600/45 bg-white p-1 text-sm shadow-sm">
+  <div className="rounded-lg border border-solid border-neutral-300/55 bg-white p-1 text-sm shadow-md">
     <ul className="flex flex-col gap-y-1">
       {items.map(({ content, id }) => (
         <li
-          className="w-full cursor-pointer px-2 py-1 text-slate-500 hover:bg-neutral-100 hover:text-slate-950"
+          className="group/menu-item w-full cursor-pointer rounded px-2 py-1 text-slate-500 hover:bg-neutral-50 hover:text-neutral-950"
           key={id}
         >
           {content}

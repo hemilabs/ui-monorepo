@@ -2,10 +2,12 @@ import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { useWithdrawNativeToken, useWithdrawToken } from 'hooks/useL2Bridge'
 import { useReloadBalances } from 'hooks/useReloadBalances'
+import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { type EvmToken } from 'types/token'
+import { getEvmBlock } from 'utils/evmApi'
 import { isNativeToken } from 'utils/token'
 import { type Chain, parseUnits, Hash, zeroAddress } from 'viem'
 import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
@@ -30,32 +32,17 @@ export const useWithdraw = function ({
 }: UseWithdraw) {
   const { address } = useAccount()
   const queryClient = useQueryClient()
-  const { addWithdrawalToTunnelHistory } = useTunnelHistory()
+  const { addWithdrawalToTunnelHistory, updateWithdrawal } = useTunnelHistory()
+  const withdrawals = useToEvmWithdrawals()
   const { txHash, updateTxHash } = useTunnelOperation()
 
   const withdrawingNative = isNativeToken(fromToken)
 
   const toWithdraw = parseUnits(fromInput, fromToken.decimals).toString()
 
-  const onSettled = (hash: Hash) =>
-    // revalidate message status
-    queryClient.invalidateQueries({
-      queryKey: [
-        MessageDirection.L2_TO_L1,
-        l1ChainId,
-        hash,
-        'getMessageStatus',
-      ],
-    })
-
   const onSuccess = function (hash: Hash) {
     // add hash to query string
     updateTxHash(hash, { history: 'push' })
-    // optimistically add the message status to the cache
-    queryClient.setQueryData(
-      [MessageDirection.L2_TO_L1, l1ChainId, hash, 'getMessageStatus'],
-      MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
-    )
 
     addWithdrawalToTunnelHistory({
       amount: toWithdraw,
@@ -83,7 +70,6 @@ export const useWithdraw = function ({
     amount: toWithdraw,
     enabled: withdrawingNative && canWithdraw,
     l1ChainId,
-    onSettled,
     onSuccess,
   })
 
@@ -96,7 +82,6 @@ export const useWithdraw = function ({
     amount: toWithdraw,
     enabled: !withdrawingNative && canWithdraw,
     l1ChainId,
-    onSettled,
     onSuccess,
     token: fromToken,
   })
@@ -113,13 +98,6 @@ export const useWithdraw = function ({
     status: withdrawTxStatus,
     toToken,
   })
-
-  const handleWithdraw = (withdrawCallback: () => void) =>
-    function () {
-      if (canWithdraw) {
-        withdrawCallback()
-      }
-    }
 
   const clearWithdrawNativeState = useCallback(
     function () {
@@ -141,10 +119,83 @@ export const useWithdraw = function ({
     [queryClient, resetWithdrawErc20Token, withdrawQueryKey],
   )
 
+  useEffect(
+    function updateWithdrawalStatusAfterFailure() {
+      if (!withdrawReceiptError) {
+        return
+      }
+      const withdrawal = withdrawals.find(
+        w =>
+          w.transactionHash === txHash &&
+          w.status !== MessageStatus.FAILED_L1_TO_L2_MESSAGE,
+      )
+      if (!withdrawal) {
+        return
+      }
+      updateWithdrawal(withdrawal, {
+        status: MessageStatus.FAILED_L1_TO_L2_MESSAGE,
+      })
+    },
+    [txHash, updateWithdrawal, withdrawals, withdrawReceiptError],
+  )
+
+  useEffect(
+    function updateWithdrawalStatusAfterConfirmation() {
+      if (withdrawReceipt?.status !== 'success') {
+        return
+      }
+      const withdrawal = withdrawals.find(
+        w =>
+          w.transactionHash === withdrawReceipt.transactionHash &&
+          !w.blockNumber,
+      )
+
+      if (!withdrawal) {
+        return
+      }
+
+      clearWithdrawErc20TokenState()
+      clearWithdrawNativeState()
+
+      // update here so next iteration of the effect doesn't reach this point
+      updateWithdrawal(withdrawal, {
+        blockNumber: Number(withdrawReceipt.blockNumber),
+        status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+      })
+
+      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
+      // eslint-disable-next-line promise/catch-or-return
+      getEvmBlock(withdrawReceipt.blockNumber, l2ChainId).then(block =>
+        updateWithdrawal(withdrawal, {
+          timestamp: Number(block.timestamp),
+        }),
+      )
+    },
+    [
+      clearWithdrawErc20TokenState,
+      clearWithdrawNativeState,
+      l2ChainId,
+      updateWithdrawal,
+      withdrawals,
+      withdrawReceipt,
+      withdrawReceiptError,
+    ],
+  )
+
+  const handleWithdraw = (withdrawCallback: () => void) =>
+    function () {
+      if (canWithdraw) {
+        withdrawCallback()
+      }
+    }
+
   if (withdrawingNative) {
     return {
       clearWithdrawState: clearWithdrawNativeState,
-      withdraw: handleWithdraw(withdrawNativeToken),
+      withdraw: handleWithdraw(function () {
+        clearWithdrawNativeState()
+        withdrawNativeToken()
+      }),
       withdrawError: withdrawNativeTokenError,
       withdrawGasFees: withdrawNativeTokenGasFees,
       withdrawReceipt,
@@ -154,7 +205,10 @@ export const useWithdraw = function ({
   }
   return {
     clearWithdrawState: clearWithdrawErc20TokenState,
-    withdraw: handleWithdraw(withdrawErc20Token),
+    withdraw: handleWithdraw(function () {
+      clearWithdrawErc20TokenState()
+      withdrawErc20Token()
+    }),
     withdrawError: withdrawErc20TokenError,
     withdrawGasFees: withdrawErc20TokenGasFees,
     withdrawReceipt,

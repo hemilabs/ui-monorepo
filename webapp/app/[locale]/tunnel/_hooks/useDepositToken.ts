@@ -1,17 +1,18 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { useApproveToken } from 'hooks/useApproveToken'
 import { useHemi } from 'hooks/useHemi'
 import { useDepositErc20Token } from 'hooks/useL2Bridge'
 import { useEffect } from 'react'
 import { type EvmToken } from 'types/token'
 import { getTunnelContracts } from 'utils/crossChainMessenger'
-import { parseUnits } from 'viem'
+import { parseUnits, type Hash } from 'viem'
 import {
   useAccount,
   useSimulateContract,
   useWaitForTransactionReceipt,
 } from 'wagmi'
 import { useAllowance } from 'wagmi-erc20-hooks'
+
+import { useApproveToken } from './useApproveToken'
 
 const ExtraApprovalTimesAmount = 10
 
@@ -21,12 +22,16 @@ type UseDepositToken = Pick<
 > & {
   amount: string
   extendedApproval?: boolean
+  onApprovalSuccess: (hash: Hash) => void
+  onSuccess: (hash: Hash) => void
   token: EvmToken
 }
 export const useDepositToken = function ({
   amount,
   enabled,
   extendedApproval = false,
+  onApprovalSuccess,
+  onSuccess,
   token,
 }: UseDepositToken) {
   const { address: owner } = useAccount()
@@ -50,6 +55,7 @@ export const useDepositToken = function ({
   } = useDepositErc20Token({
     enabled,
     l1ChainId: token.chainId,
+    onSuccess,
     toDeposit,
     token,
   })
@@ -84,12 +90,16 @@ export const useDepositToken = function ({
     approve,
     needsApproval,
     resetApproval,
-  } = useApproveToken(token, {
-    amount:
-      BigInt(toDeposit) *
-      BigInt(extendedApproval ? ExtraApprovalTimesAmount : 1),
-    spender: l1StandardBridgeAddress,
-  })
+  } = useApproveToken(
+    token,
+    {
+      amount:
+        BigInt(toDeposit) *
+        BigInt(extendedApproval ? ExtraApprovalTimesAmount : 1),
+      spender: l1StandardBridgeAddress,
+    },
+    onApprovalSuccess,
+  )
 
   const {
     data: approvalReceipt,

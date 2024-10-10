@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
 import { getFormattedValue } from 'utils/format'
 import { formatUnits } from 'viem'
@@ -7,10 +10,16 @@ type Props = {
   value: string
 }
 
-export const Amount = ({ token, value }: Props) => (
-  <span className="text-sm font-medium text-slate-950">
-    {`${getFormattedValue(formatUnits(BigInt(value), token?.decimals ?? 18))} ${
-      token?.symbol ?? ''
-    }`}
-  </span>
-)
+export const Amount = function ({ token, value }: Props) {
+  const t = useTranslations('common')
+  return (
+    <div className="text-ms flex items-center justify-between font-medium leading-5">
+      <span className="text-neutral-500">{t('total-amount')}</span>
+      <span className="text-neutral-950">
+        {`${getFormattedValue(
+          formatUnits(BigInt(value), token?.decimals ?? 18),
+        )} ${token?.symbol ?? ''}`}
+      </span>
+    </div>
+  )
+}

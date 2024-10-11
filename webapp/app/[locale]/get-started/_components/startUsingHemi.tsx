@@ -34,12 +34,12 @@ const Box = function ({
   }
 
   return (
-    <div className="flex-1 cursor-pointer" onClick={handleClick}>
+    <div className="group/image flex-1 cursor-pointer" onClick={handleClick}>
       <Card>
         <div className="text-ms flex flex-col gap-y-4 p-2 pb-4 font-medium leading-5">
           <Image
             alt={alt}
-            className="rounded-2xl"
+            className="rounded-2xl opacity-60 group-hover/image:opacity-100"
             height={300}
             priority={true}
             src={image}

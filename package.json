@@ -1,27 +1,17 @@
 {
   "name": "ui-monorepo",
   "version": "1.0.0",
-  "private": true,
   "scripts": {
     "format:check": "prettier --check .",
-    "lint": "eslint --cache .",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "lint": "eslint --cache ."
   },
-  "workspaces": [
-    "btc-wallet",
-    "claim-tokens",
-    "hemi-socials",
-    "migrations-pg",
-    "sliding-block-window",
-    "ui-common",
-    "wagmi-erc20-hooks",
-    "webapp"
-  ],
   "devDependencies": {
     "@commitlint/cli": "18.4.3",
     "@types/mocha": "10.0.6",
     "@typescript-eslint/eslint-plugin": "6.16.0",
     "@typescript-eslint/parser": "6.16.0",
+    "better-sort-package-json": "^1.0.0",
     "chai": "4.4.1",
     "eslint": "8.56.0",
     "eslint-config-bloq": "4.1.0",
@@ -34,6 +24,17 @@
     "prettier": "3.1.1",
     "prettier-plugin-tailwindcss": "0.5.9"
   },
+  "private": true,
+  "workspaces": [
+    "btc-wallet",
+    "claim-tokens",
+    "hemi-socials",
+    "migrations-pg",
+    "sliding-block-window",
+    "ui-common",
+    "wagmi-erc20-hooks",
+    "webapp"
+  ],
   "commitlint": {
     "rules": {
       "body-case": [
@@ -47,11 +48,6 @@
         1,
         "always"
       ],
-      "header-max-length": [
-        2,
-        "always",
-        50
-      ],
       "header-case": [
         2,
         "always",
@@ -63,6 +59,11 @@
         2,
         "never",
         "."
+      ],
+      "header-max-length": [
+        2,
+        "always",
+        50
       ]
     }
   },
@@ -102,14 +103,14 @@
           "@typescript-eslint"
         ],
         "rules": {
-          "no-shadow": "off",
           "@typescript-eslint/no-shadow": "error",
           "@typescript-eslint/no-unused-vars": [
             "error",
             {
               "ignoreRestSiblings": true
             }
-          ]
+          ],
+          "no-shadow": "off"
         },
         "settings": {
           "next": {
@@ -147,12 +148,12 @@
         ]
       },
       {
-        "files": [
-          "*.spec.js"
-        ],
         "extends": [
           "bloq/mocha",
           "prettier"
+        ],
+        "files": [
+          "*.spec.js"
         ],
         "rules": {
           "mocha/no-exclusive-tests": "error",
@@ -162,11 +163,11 @@
         }
       },
       {
-        "files": [
-          "*.md"
-        ],
         "extends": [
           "plugin:markdownlint/recommended"
+        ],
+        "files": [
+          "*.md"
         ],
         "parser": "eslint-plugin-markdownlint/parser",
         "rules": {
@@ -222,19 +223,28 @@
     }
   },
   "lint-staged": {
-    "*.{js,md,ts,tsx}": "eslint --cache --fix --quiet",
-    "*.{css,html,js,json,md,ts,tsx,vue,yaml,yml}": "prettier --write"
-  },
-  "prettier": {
-    "arrowParens": "avoid",
-    "quoteProps": "consistent",
-    "semi": false,
-    "singleQuote": true,
-    "plugins": [
-      "prettier-plugin-tailwindcss"
+    "*,!*.{js,md,ts,tsx},!package.json": [
+      "prettier --ignore-unknown --write"
+    ],
+    "*.{js,md,ts,tsx}": [
+      "eslint --cache --fix --quiet",
+      "prettier --write"
+    ],
+    "package.json": [
+      "better-sort-package-json",
+      "prettier --write"
     ]
   },
   "mocha": {
     "timeout": 5000
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "plugins": [
+      "prettier-plugin-tailwindcss"
+    ],
+    "quoteProps": "consistent",
+    "semi": false,
+    "singleQuote": true
   }
 }

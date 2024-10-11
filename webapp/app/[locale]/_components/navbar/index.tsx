@@ -4,7 +4,7 @@ import { BitcoinKitIcon } from 'components/icons/bitcoinKit'
 import { DemosPageIcon } from 'components/icons/demosPageIcon'
 import { DexIcon } from 'components/icons/dexIcon'
 import { DocsIcon } from 'components/icons/docsIcon'
-// import { ElectroCardiogramIcon } from 'components/icons/electroCardiogramIcon'
+import { ElectroCardiogramIcon } from 'components/icons/electroCardiogramIcon'
 import { PoPMinerIcon } from 'components/icons/popMinerIcon'
 import { ToolsIcon } from 'components/icons/toolsIcon'
 import { TunnelIcon } from 'components/icons/tunnelIcon'
@@ -110,14 +110,13 @@ export const Navbar = function () {
         <li className="order-9 mb-auto">
           <ItemLink href="/demos" icon={<DemosPageIcon />} text={t('demos')} />
         </li>
-        {/* TBD if network status will be available */}
-        {/* <li className="order-10 md:order-11">
+        <li className="order-10 md:order-11">
           <ItemLink
-            href=""
+            href="https://hemistatus.com"
             icon={<ElectroCardiogramIcon />}
             text={t('network-status')}
           />
-        </li> */}
+        </li>
         <li className="order-11 md:order-12">
           <ItemLink
             href="https://docs.hemi.xyz"

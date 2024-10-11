@@ -84,8 +84,18 @@ export const AppLayout = function ({ children }: Props) {
         <div className="relative md:hidden">
           <TestnetIndicator />
         </div>
-        <div className="xl:px-30 xl:pb-30 relative h-full overflow-y-auto px-4 pb-3 pt-4 md:pt-12">
-          {children}
+        <div className="relative h-full overflow-y-auto">
+          <div
+            className={`mx-auto px-4 pb-3 pt-4 md:pt-12
+            ${
+              // transaction history page uses a different layout
+              pathname.endsWith('transaction-history/')
+                ? 'xl:px-30 xl:pb-30'
+                : 'max-w-5xl'
+            }`}
+          >
+            {children}
+          </div>
         </div>
       </div>
       {isMenuOpen ? (

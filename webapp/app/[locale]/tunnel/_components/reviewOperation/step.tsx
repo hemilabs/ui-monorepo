@@ -1,3 +1,4 @@
+import { ShortVerticalLine, LongVerticalLine } from 'components/verticalLines'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
 import { RemoteChain } from 'types/chain'
@@ -12,7 +13,6 @@ import { PositionStatus } from './positionStatus'
 import { ProgressStatus } from './progressStatus'
 import { SeeOnExplorer } from './seeOnExplorer'
 import { SubStep } from './subStep'
-import { ShortVerticalLine, LongVerticalLine } from './verticalLines'
 
 type Props = {
   description: string

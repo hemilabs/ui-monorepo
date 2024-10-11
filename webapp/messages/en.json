@@ -1,6 +1,7 @@
 {
   "common": {
     "add": "Add",
+    "added": "Added",
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
     "connect-to-network": "Connect to {network}",
     "connect-to-supported-network": "Connect to supported network",
@@ -12,6 +13,7 @@
     "erc20-extra-approval": "Approve 10x deposits",
     "failed": "Failed",
     "fees": "Fees",
+    "learn-more": "Learn more",
     "network-does-not-match": "This network doesn’t match the one selected in your wallet.",
     "network-gas-fee": "{network} gas fee",
     "select-network": "Select Network",
@@ -72,120 +74,84 @@
     }
   },
   "get-started": {
+    "add-funds-to-your-wallet": "Add funds to your wallet",
+    "add-hemi-to-your-wallet": "Add Hemi to your wallet",
+    "add-networks": {
+      "automatic": "Automatic",
+      "manual": "Manual"
+    },
+    "add-networks-mainnet": "Add Hemi to your wallet.",
+    "add-networks-testnet": "Add Ethereum Sepolia & Hemi testnet to your wallet.",
+    "add-networks-to-wallet": "Add networks to your wallet",
+    "add-to-wallet": "Add to wallet",
+    "block-explorer-url": "Block explorer URL",
+    "chain-id": "Chain ID",
+    "currency-symbol": "Currency symbol",
+    "deploy-a-smart-contract": "Deploy a Smart Contract",
+    "fund-your-wallets": "Fund your wallets",
     "header": {
       "documentation": "Documentation",
       "network": "Network"
     },
-    "steps": {
-      "heading": "Get Started With Hemi",
-      "dev": {
-        "1": {
-          "title": "Getting Started",
-          "text": "Explore the Basics of Hemi Network.",
-          "url": "https://docs.hemi.xyz"
-        },
-        "2": {
-          "title": "Tunneling",
-          "text": "Learn about tunneling and how to send funds to and from Hemi.",
-          "url": "https://docs.hemi.xyz/how-to-tutorials/tunnel-eth-to-hemi"
-        },
-        "3": {
-          "title": "GitHub",
-          "text": "Propose new features or improvements and earn rewards.",
-          "url": "https://github.com/hemilabs/heminetwork"
-        },
-        "4": {
-          "title": "Discord Access",
-          "text": "Connect with peers and get direct faucet access.",
-          "url": "https://discord.com/invite/hemixyz"
-        },
-        "5": {
-          "title": "Rewards Program",
-          "text": "Participate in activities and earn rewards.",
-          "url": "https://points.absinthe.network/hemi/start"
-        }
-      },
-      "explorers": {
-        "1": {
-          "title": "Getting Started",
-          "text": "Explore the Basics of Hemi Network.",
-          "url": "https://docs.hemi.xyz"
-        },
-        "2": {
-          "title": "Tunneling",
-          "text": "Learn about tunneling and how to send funds to and from Hemi.",
-          "url": "https://docs.hemi.xyz/how-to-tutorials/tunnel-eth-to-hemi"
-        },
-        "3": {
-          "title": "Rewards Program",
-          "text": "Participate in activities and earn rewards.",
-          "url": "https://points.absinthe.network/hemi/start"
-        },
-        "4": {
-          "title": "Discord Access",
-          "text": "Connect with peers and chat with our team.",
-          "url": "https://discord.com/invite/hemixyz"
-        },
-        "5": {
-          "title": "Deploy a Smart Contract",
-          "text": "Beginner friendly! Learn how to deploy smart contracts.",
-          "url": "https://docs.hemi.xyz/how-to-tutorials/using-remix-ide"
-        }
-      },
-      "miner": {
-        "1": {
-          "title": "Getting Started",
-          "text": "Earn rewards by running a PoP Miner.",
-          "url": "https://docs.hemi.xyz/foundational-topics/pop-mining"
-        },
-        "2": {
-          "title": "Web PoP Miner",
-          "text": "A user-friendly app for beginners to explore PoP mining.",
-          "url": "https://pop-miner.hemi.xyz"
-        },
-        "3": {
-          "title": "Understand Rewards",
-          "text": "Learn how rewards are structured.",
-          "url": "https://docs.hemi.xyz/how-to-tutorials/pop-mining#earning-rewards"
-        },
-        "4": {
-          "title": "Discord Access",
-          "text": "Engage and share insights with other miners.",
-          "url": "https://discord.com/invite/hemixyz"
-        },
-        "5": {
-          "title": "Network Details",
-          "text": "Get detailed information about the network.",
-          "url": "https://docs.hemi.xyz/main/network-details/testnet"
-        }
-      }
+    "heading": "Get started on Hemi",
+    "hemi-faucet": "Hemi Discord Faucet",
+    "here-are-some-options": "Here are some faucets you might want to explore.",
+    "get-testnet-tokens": "Get testnet tokens",
+    "layer": "Layer {layer}",
+    "learn-more-tutorials": {
+      "add-themi-wallet": "Add tHEMI to MetaMask",
+      "create-a-capsule": "Create a Capsule",
+      "developer-tooling": "Developer Tooling",
+      "deploy-erc20": "Deploy an ERC-20",
+      "get-bitcoin-balance": "Get Bitcoin Balance with Remix",
+      "get-started-with-web-pop-miner": "Get started with PoP mining and explore the beginner web app.",
+      "hello-world": "HelloWorld.sol",
+      "learn-about-capsules": "Learn about gasless transactions, re-routing/recalling, and configurable security with Capsules on Hemi.",
+      "learn-about-multisig-wallet": "Learn about multi-sig wallets and set up a Safe Wallet on Hemi.",
+      "learn-to-add-themi-wallet": "Earning tHEMI rewards from PoP mining? Add the token contract address and view rewards.",
+      "learn-to-deploy-erc20": "Learn how to deploy an ERC-20 token on Hemi using Hardhat.",
+      "learn-to-develop-hello-world": "Learn how to develop and deploy a HelloWorld smart contract on Hemi using Remix IDE.",
+      "learn-to-get-bitcoin-balance": "Deploy a small contract in Remix IDE with a single method which calls the Bitcoin Balance precompile and returns the balance.",
+      "learn-to-setup-btc-wallet": "Learn how to set up and get started with a BTC (UniSat) wallet.",
+      "learn-to-setup-evm-wallet": "Learn how to set up and get started with an EVM (MetaMask) wallet.",
+      "learn-to-tunnel-to-hemi": "Learn how to tunnel (bridge) your ETH assets to and from Hemi.",
+      "pop-miner": "PoP Miner",
+      "run-cli-pop-miner": "Run the CLI PoP Miner",
+      "run-web-pop-miner": "Run the PoP Miner Web App",
+      "set-up-btc-wallet": "Set Up a BTC Wallet",
+      "set-up-cli-pop-miner": "Set up and run your PoP miner, either by downloading pre-built binaries or by building from source.",
+      "set-up-evm-wallet": "Set Up an EVM Wallet",
+      "set-up-safe": "Set Up a Safe Wallet",
+      "tunnel-eth-to-hemi": "Tunnel ETH to Hemi",
+      "wallet-setup": "Wallet setup"
     },
+    "learn-about-tunneling": "Learn about tunneling assets to and from Hemi.",
+    "learn-more-about-hemi": "Learn more about Hemi",
+    "learn-to-deploy-smart-contract": "Beginner friendly! Learn how to deploy smart contracts.",
+    "subheading": "Get ready to feel superior scaling, security and interoperability.",
     "network": {
-      "added": "Network Added",
-      "add-to-wallet": "Add to wallet",
-      "automatic": "Automatic",
-      "block-explorer-url": "Block explorer URL",
-      "chain-id": "Chain ID",
       "claiming": "Claiming...",
       "claim-my-tokens": "Claim",
       "configure-sepolia-testnet": "Configure for Sepolia testnet",
-      "currency-symbol": "Currency symbol",
       "did-not-receive-try-again": "Didn't receive this email? <button>Try again</button>",
       "email-failed": "Error submitting email",
       "email-failed-retry": "<button>Retry</button> or <link>contact us</link> at Discord <discord></discord>",
       "email-placeholder": "youremail@mail.com",
       "email-sent": "Email has been sent.",
-      "layer": "Layer {layer}",
-      "manual": "Manual",
       "network-name": "Network name",
       "page-subtitle": "Add Ethereum Sepolia & Hemi testnet to your wallet",
       "page-title": "Add Hemi to your wallet",
       "receive-updates": "Receive marketing updates",
-      "rpc-url": "RPC URL",
       "troubleshoot-other-errors": "Having issues? Contact the Hemi team on <link>Discord</link>.",
       "welcome-pack": "Welcome Pack",
       "welcome-pack-description": "Join our Discord server and visit the <channel>#claim-capsule</channel> channel to claim your onboarding Capsule."
-    }
+    },
+    "rpc-url": "RPC URL",
+    "start-using-hemi": "Start using Hemi",
+    "swap-tokens": "Swap tokens on Hemi",
+    "tunnel-assets": "Tunnel assets",
+    "tutorials": "Tutorials",
+    "tutorials-subheading": "Follow along with some of the tutorials to help you get a head start when building your first Hemi project."
   },
   "get-started-page": {
     "heading": "Get Started with Hemi",

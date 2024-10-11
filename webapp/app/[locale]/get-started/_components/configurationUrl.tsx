@@ -6,9 +6,10 @@ import { Tooltip } from 'ui-common/components/tooltip'
 import { Clipboard } from './icons/clipboard'
 
 export const ConfigurationUrl = function ({
+  clickableLink = true,
   href,
   ...props
-}: ComponentProps<'a'>) {
+}: ComponentProps<'a'> & { clickableLink?: boolean }) {
   const [copied, setCopied] = useState(false)
 
   useEffect(
@@ -36,13 +37,17 @@ export const ConfigurationUrl = function ({
 
   return (
     <>
-      <ExternalLink
-        className="mr-auto overflow-hidden text-ellipsis whitespace-nowrap text-orange-500 hover:text-orange-700 md:basis-auto"
-        href={href}
-        {...props}
-      >
-        {href}
-      </ExternalLink>
+      {clickableLink ? (
+        <ExternalLink
+          className="mr-auto overflow-hidden text-ellipsis whitespace-nowrap text-orange-500 hover:text-orange-700 md:basis-auto"
+          href={href}
+          {...props}
+        >
+          {href}
+        </ExternalLink>
+      ) : (
+        <span className="mr-auto text-neutral-950">{href}</span>
+      )}
       <Tooltip
         id={`copy-${href}`}
         overlay={overlay}

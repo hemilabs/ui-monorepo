@@ -9,7 +9,15 @@ type Props = {
   layer: number
 }
 
-const DataSection = ({ label, value }: { label: string; value: string }) => (
+const DataSection = ({
+  clickableLink,
+  label,
+  value,
+}: {
+  clickableLink?: boolean
+  label: string
+  value: string
+}) => (
   <div
     className="text-ms flex flex-row flex-wrap items-center gap-x-2 gap-y-2 border-t border-solid
       border-neutral-300/55 py-6 font-medium leading-5 last:pb-0 md:flex-nowrap md:py-4"
@@ -19,7 +27,7 @@ const DataSection = ({ label, value }: { label: string; value: string }) => (
     </span>
     {value.startsWith('https') ? (
       <div className="flex w-full items-center">
-        <ConfigurationUrl href={value} />
+        <ConfigurationUrl clickableLink={clickableLink} href={value} />
       </div>
     ) : (
       <span className="text-neutral-950">{value}</span>
@@ -38,6 +46,7 @@ export const AddChainManually = function ({ chain, layer }: Props) {
       </div>
       <div className="mt-6 md:mt-4">
         <DataSection
+          clickableLink={false}
           label={t('rpc-url')}
           value={chain.rpcUrls.default.http[0]}
         />

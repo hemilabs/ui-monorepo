@@ -123,7 +123,7 @@ export const LearnMore = function () {
             className="h-24 rounded-lg md:h-auto"
             loop
             muted
-            src="/hemi.mp4"
+            src="/get-started/hemi.mp4"
           />
           <div className="mt-4 flex flex-col gap-y-2 px-2 md:mt-6 md:flex-row md:gap-x-6">
             <div className="mb-6">

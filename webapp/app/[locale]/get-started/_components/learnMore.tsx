@@ -12,7 +12,7 @@ type Props = {
 }
 
 const Box = ({ heading, href, subheading }: Props) => (
-  <div className="rounded-2xl border border-solid border-neutral-300/55 bg-white">
+  <div className="rounded-2xl border border-solid border-neutral-300/55 bg-white hover:bg-gray-50">
     <ExternalLink
       className="text-ms block cursor-pointer p-4 font-medium leading-5"
       href={href}

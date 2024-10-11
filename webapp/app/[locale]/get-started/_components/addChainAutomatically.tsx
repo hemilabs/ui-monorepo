@@ -1,5 +1,6 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useMutation } from '@tanstack/react-query'
+import { ChainLogo } from 'components/chainLogo'
 import { CheckMark } from 'components/icons/checkMark'
 import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
@@ -8,9 +9,10 @@ import { useAccount, useWalletClient } from 'wagmi'
 
 type Props = {
   chain: Chain
+  layer: number
 }
 
-export const AddChainAutomatically = function ({ chain }: Props) {
+export const AddChainAutomatically = function ({ chain, layer }: Props) {
   const { openConnectModal } = useConnectModal()
   const tCommon = useTranslations('common')
   const t = useTranslations('get-started')
@@ -46,31 +48,58 @@ export const AddChainAutomatically = function ({ chain }: Props) {
     [connectedChain],
   )
 
-  if (!isConnected) {
+  const getButton = function () {
+    if (!isConnected) {
+      return (
+        <button
+          className="cursor-pointer text-orange-500 hover:text-orange-700"
+          type="button"
+        >
+          {tCommon('connect-wallet')}
+        </button>
+      )
+    }
+    if (isChainAdded || connectedToChain) {
+      return (
+        <div className="flex items-center gap-x-1">
+          <span className="text-neutral-500">{tCommon('added')}</span>
+          <CheckMark className="[&>path]:stroke-emerald-500" />
+        </div>
+      )
+    }
     return (
       <button
         className="cursor-pointer text-orange-500 hover:text-orange-700"
-        onClick={openConnectModal}
+        disabled={status === 'pending'}
         type="button"
       >
-        {tCommon('connect-wallet')}
+        {t('add-to-wallet')}
       </button>
     )
   }
 
-  return isChainAdded || connectedToChain ? (
-    <div className="flex items-center gap-x-1">
-      <span className="text-neutral-500">{tCommon('added')}</span>
-      <CheckMark className="[&>path]:stroke-emerald-500" />
-    </div>
-  ) : (
-    <button
-      className="cursor-pointer text-orange-500 hover:text-orange-700"
-      disabled={status === 'pending'}
-      onClick={() => addChain(chain)}
-      type="button"
+  const onClick = function () {
+    if (!isConnected) {
+      openConnectModal()
+      return
+    }
+    if (!isChainAdded && !connectedToChain) {
+      addChain(chain)
+    }
+  }
+
+  return (
+    <div
+      className="border-neutral/55 text-ms flex cursor-pointer flex-col rounded-xl border
+      border-solid p-4 font-medium leading-5 hover:bg-gray-50"
+      onClick={onClick}
     >
-      {t('add-to-wallet')}
-    </button>
+      <div className="flex flex-row gap-x-1">
+        <ChainLogo chainId={chain.id} />
+        <span className="ml-1 text-neutral-950">{chain.name}</span>
+        <span className="text-neutral-500">{t('layer', { layer })}</span>
+        <div className="ml-auto">{getButton()}</div>
+      </div>
+    </div>
   )
 }

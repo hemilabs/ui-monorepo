@@ -1,4 +1,3 @@
-import { ChainLogo } from 'components/chainLogo'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -20,29 +19,12 @@ type ChainProps = {
   networkConfiguration: (typeof AddWalletConfigurations)[number]
 }
 
-const ChainRow = function ({ chain, layer, networkConfiguration }: ChainProps) {
-  const t = useTranslations('get-started')
-
-  return (
-    <div className="border-neutral/55 text-ms flex flex-col rounded-xl border border-solid p-4 font-medium leading-5">
-      <div className="flex flex-row gap-x-1">
-        <ChainLogo chainId={chain.id} />
-        <span className="ml-1 text-neutral-950">{chain.name}</span>
-        <span className="text-neutral-500">{t('layer', { layer })}</span>
-        {networkConfiguration === 'automatic' && (
-          <div className="ml-auto">
-            <AddChainAutomatically chain={chain} />
-          </div>
-        )}
-      </div>
-      {networkConfiguration === 'manual' && (
-        <div className="mt-6 md:mt-4">
-          <AddChainManually chain={chain} />
-        </div>
-      )}
-    </div>
+const ChainRow = ({ chain, layer, networkConfiguration }: ChainProps) =>
+  networkConfiguration === 'automatic' ? (
+    <AddChainAutomatically chain={chain} layer={layer} />
+  ) : (
+    <AddChainManually chain={chain} layer={layer} />
   )
-}
 
 const AddSection = function ({
   networkConfiguration,

@@ -17,17 +17,16 @@ export const FundWallet = function () {
       }}
       subheading={t('here-are-some-options')}
     >
-      <div className="text-ms flex items-center gap-x-2 rounded-xl border border-solid border-neutral-300/55 p-4 font-medium leading-5 md:w-1/2">
+      <ExternalLink
+        className="group/link text-ms flex items-center gap-x-1 rounded-xl border border-solid border-neutral-300/55
+        p-4 font-medium leading-5 text-orange-500 hover:bg-neutral-50 hover:text-orange-700 md:basis-1/2"
+        href={hemiSocials.discordUrl}
+      >
         <DiscordFaucetIcon />
-        <span className="text-neutral-950">{t('hemi-faucet')}</span>
-        <ExternalLink
-          className="group/link ml-auto flex items-center justify-between gap-x-1 text-orange-500 hover:text-orange-700"
-          href={hemiSocials.discordUrl}
-        >
-          <span>{t('get-testnet-tokens')}</span>
-          <ArrowDownLeftIcon className="group-hover/link:text-orange-70 [&>path]:fill-orange-500" />
-        </ExternalLink>
-      </div>
+        <span className="mr-auto text-neutral-950">{t('hemi-faucet')}</span>
+        <span>{t('get-testnet-tokens')}</span>
+        <ArrowDownLeftIcon className="group-hover/link:text-orange-70 [&>path]:fill-orange-500" />
+      </ExternalLink>
     </Section>
   )
 }

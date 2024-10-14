@@ -53,10 +53,6 @@ export const getAddressUtxo = (address: Account) =>
       utxos.map(utxo => toCamelCase({ ...utxo, txId: utxo.txid })),
     ) as Promise<Utxo[]>
 
-// See https://mempool.space/docs/api/rest#get-block-tip-height
-export const getBlockTipHeight = () =>
-  bitcoin.blocks.getBlocksTipHeight() as Promise<number>
-
 type Fees = {
   fastestFee: number
   halfHourFee: number

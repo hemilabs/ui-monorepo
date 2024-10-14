@@ -50,7 +50,7 @@ export const WalletConnection = function () {
         </div>
         <button
           className="text-ms flex h-8 items-center gap-x-2 rounded-lg border border-solid border-neutral-300/55 
-          bg-white py-1.5 pl-2 pr-4 font-medium leading-normal shadow-sm"
+          bg-white py-1.5 pl-2 pr-4 font-medium leading-normal shadow-sm hover:bg-neutral-100"
           onClick={openDrawer}
         >
           {walletsConnected.length === 0 && (

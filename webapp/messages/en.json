@@ -84,10 +84,12 @@
     "add-networks-testnet": "Add Ethereum Sepolia & Hemi testnet to your wallet.",
     "add-networks-to-wallet": "Add networks to your wallet",
     "add-to-wallet": "Add to wallet",
+    "bitcoin-faucet": "Bitcoin Faucet",
     "block-explorer-url": "Block explorer URL",
     "chain-id": "Chain ID",
     "currency-symbol": "Currency symbol",
     "deploy-a-smart-contract": "Deploy a Smart Contract",
+    "ethereum-faucet": "Ethereum Faucet",
     "fund-your-wallets": "Fund your wallets",
     "header": {
       "documentation": "Documentation",

@@ -20,11 +20,6 @@ type Props = {
   operation: TunnelOperation
 }
 
-type ValueProps = {
-  amount: string
-  token: Token
-}
-
 const Logo = ({ token }: { token: Token }) =>
   token.logoURI ? (
     <TokenLogo token={token} />
@@ -42,10 +37,6 @@ const formatAmount = function (amount: string, decimals: Token['decimals']) {
 
   return rounder(value, true)
 }
-
-const Value = ({ amount, token }: ValueProps) => (
-  <span className="text-neutral-950">{`${amount} ${token.symbol}`}</span>
-)
 
 export const Amount = function ({ operation }: Props) {
   const { amount, l1Token, l2Token } = operation
@@ -72,14 +63,16 @@ export const Amount = function ({ operation }: Props) {
       <div className="h-5 w-5">
         <Logo token={token} />
       </div>
-      <Value amount={formattedAmount} token={token} />
+      <span className="text-neutral-950">{`${formattedAmount} ${token.symbol}`}</span>
       {showTooltip && (
         <Tooltip
           id="amount-tooltip"
           overlay={
-            <div className="flex items-center gap-x-1">
-              <Logo token={token} />
-              <Value amount={originalAmount} token={token} />
+            <div className="text-ms flex items-center gap-x-1 px-2 font-medium leading-5 text-white">
+              <div className="h-4 w-4">
+                <Logo token={token} />
+              </div>
+              <span>{`${originalAmount} ${token.symbol}`}</span>
             </div>
           }
         >

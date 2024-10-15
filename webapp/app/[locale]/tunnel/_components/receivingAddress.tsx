@@ -21,10 +21,13 @@ export const ReceivingAddress = ({
     <div className="flex items-center gap-x-2">
       <span className="text-neutral-600">{receivingText}</span>
       <Tooltip
+        borderRadius="12px"
         id="target-address"
         overlay={
-          <div className="w-60">
-            <p className="text-xs text-gray-600">{tooltipText}</p>
+          <div className="max-w-64 p-4">
+            <p className="text-ms font-medium leading-5 text-white">
+              {tooltipText}
+            </p>
           </div>
         }
       >

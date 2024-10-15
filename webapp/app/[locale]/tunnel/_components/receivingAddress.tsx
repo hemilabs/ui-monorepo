@@ -1,5 +1,5 @@
 import { InfoIcon } from 'components/icons/infoIcon'
-import { Tooltip } from 'ui-common/components/tooltip'
+import { Tooltip } from 'components/tooltip'
 
 type Props = {
   address: string | undefined

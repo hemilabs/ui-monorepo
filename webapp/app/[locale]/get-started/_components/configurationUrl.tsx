@@ -1,7 +1,7 @@
 import { ExternalLink } from 'components/externalLink'
 import { CheckMark } from 'components/icons/checkMark'
+import { Tooltip } from 'components/tooltip'
 import { ComponentProps, useEffect, useState } from 'react'
-import { Tooltip } from 'ui-common/components/tooltip'
 
 import { Clipboard } from './icons/clipboard'
 

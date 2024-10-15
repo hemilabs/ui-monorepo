@@ -2,12 +2,12 @@ import Big from 'big.js'
 import { ChainLogo } from 'components/chainLogo'
 import { InfoIcon } from 'components/icons/infoIcon'
 import { TokenLogo } from 'components/tokenLogo'
+import { Tooltip } from 'components/tooltip'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import smartRound from 'smart-round'
 import { Token } from 'types/token'
 import { TunnelOperation } from 'types/tunnel'
-import { Tooltip } from 'ui-common/components/tooltip'
 import {
   getL2TokenByBridgedAddress,
   getNativeToken,

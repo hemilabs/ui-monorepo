@@ -1,6 +1,6 @@
 import { InfoIcon } from 'components/icons/infoIcon'
+import { Tooltip } from 'components/tooltip'
 import { useTranslations } from 'next-intl'
-import { Tooltip } from 'ui-common/components/tooltip'
 
 type Props = {
   checked: boolean

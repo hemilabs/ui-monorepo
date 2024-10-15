@@ -34,10 +34,6 @@ type Props = Omit<ComponentProps<'input'>, 'className' | 'type'> & {
   icon?: ReactNode
 }
 
-export const InputText = (props: Props) => (
-  <input {...props} className={inputCss} type="text" />
-)
-
 export const SearchInput = ({
   onClear,
   ...props

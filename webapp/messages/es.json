@@ -84,10 +84,12 @@
     "add-networks-testnet": "Añada Ethereum Sepolia y Hemi testnet a su billetera.",
     "add-networks-to-wallet": "Agregue las redes a su billetera",
     "add-to-wallet": "Añadir a la billetera",
+    "bitcoin-faucet": "Faucet de Bitcoin",
     "block-explorer-url": "URL del explorador de bloques",
     "chain-id": "ID de la red",
     "currency-symbol": "Símbolo de la moneda nativa",
     "deploy-a-smart-contract": "Despliegue un contrato inteligente",
+    "ethereum-faucet": "Faucet de Ethereum",
     "fund-your-wallets": "Fondee sus billeteras",
     "header": {
       "documentation": "Documentación",

@@ -1,7 +1,8 @@
 import { ExternalLink } from 'components/externalLink'
 import { CheckMark } from 'components/icons/checkMark'
+import { Tooltip } from 'components/tooltip'
+import { useTranslations } from 'next-intl'
 import { ComponentProps, useEffect, useState } from 'react'
-import { Tooltip } from 'ui-common/components/tooltip'
 
 import { Clipboard } from './icons/clipboard'
 
@@ -11,6 +12,7 @@ export const ConfigurationUrl = function ({
   ...props
 }: ComponentProps<'a'> & { clickableLink?: boolean }) {
   const [copied, setCopied] = useState(false)
+  const t = useTranslations('common')
 
   useEffect(
     function restoreCopied() {
@@ -24,9 +26,9 @@ export const ConfigurationUrl = function ({
   )
 
   const overlay = (
-    <div className="flex items-center gap-x-1">
+    <div className="text-ms flex items-center gap-x-1 px-2 font-medium leading-5 text-white">
+      <span>{t(`${copied ? 'copied' : 'copy'}`)}</span>
       {copied && <CheckMark className="[&>path]:stroke-emerald-500" />}
-      {copied ? 'Copied' : 'Copy'}
     </div>
   )
 
@@ -51,12 +53,6 @@ export const ConfigurationUrl = function ({
       <Tooltip
         id={`copy-${href}`}
         overlay={overlay}
-        overlayInnerStyle={{
-          background: 'black',
-          border: '0',
-          borderRadius: '8px',
-          color: 'white',
-        }}
         trigger={['hover', 'focus']}
       >
         <button

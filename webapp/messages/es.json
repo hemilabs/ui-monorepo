@@ -8,6 +8,8 @@
     "connect-wallet": "Conectar Billetera",
     "connect-wallets": "Connectar Billeteras",
     "connect-your-wallet": "Conecte su Billetera",
+    "copied": "Copiado",
+    "copy": "Copiar",
     "erc20-approve-10x-deposits": "Aprobar 10x el monto de este depósito",
     "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
     "erc20-extra-approval": "Aprobar 10x este depósito",

@@ -55,7 +55,8 @@ export const EvmChainsMenu = function ({
             <button
               className="flex items-center gap-x-2"
               disabled={chainId === c.id}
-              onClick={function () {
+              onClick={function (e) {
+                e.stopPropagation()
                 switchChain({ chainId: c.id })
                 onSwitchChain()
               }}

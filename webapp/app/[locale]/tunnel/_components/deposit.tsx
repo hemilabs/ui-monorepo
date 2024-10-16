@@ -378,7 +378,10 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   useEffect(
     function handleSuccess() {
-      if (depositReceipt?.status !== 'success' || operationRunning !== 'idle') {
+      if (
+        depositReceipt?.status !== 'success' ||
+        operationRunning !== 'depositing'
+      ) {
         return
       }
       setOperationRunning('idle')

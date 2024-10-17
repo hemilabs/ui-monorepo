@@ -1,0 +1,25 @@
+name: JS Checks
+
+on:
+  pull_request:
+  push:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  run-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-env
+      - run: npm run tsc:check --workspaces --if-present
+      - run: npm run build --workspaces --if-present
+        env:
+          NEXT_PUBLIC_RECAPTCHA_SITE_KEY: fake-key
+      - run: npm run format:check
+      - run: npm run lint
+      # Enable once there are more deps installed
+      # - run: npm run lerna:run deps:check
+      - run: npm test --workspaces --if-present

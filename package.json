@@ -223,7 +223,7 @@
     }
   },
   "lint-staged": {
-    "*,!*.{js,md,ts,tsx},!package.json": [
+    "!(*.{js,md,ts,tsx}|package.json)": [
       "prettier --ignore-unknown --write"
     ],
     "*.{js,md,ts,tsx}": [

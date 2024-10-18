@@ -37,7 +37,7 @@ const Right = (props: Props) => (
 )
 
 const Left = ({ className = '' }: Props) => (
-  <Right className={`rotate-180 ${className}"`} />
+  <Right className={`rotate-180 ${className}`} />
 )
 
 const Up = ({ className = '' }: Props) => (

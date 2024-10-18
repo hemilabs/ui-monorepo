@@ -5,6 +5,8 @@ import {
 } from '@rainbow-me/rainbowkit'
 import { featureFlags } from 'app/featureFlags'
 import { Drawer } from 'components/drawer'
+import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { CloseIcon } from 'ui-common/components/closeIcon'
 
@@ -22,7 +24,9 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
   const { accountModalOpen } = useAccountModal()
   const { chainModalOpen } = useChainModal()
   const { connectModalOpen } = useConnectModal()
+  const [networkType] = useNetworkType()
   const t = useTranslations()
+  const { track } = useUmami()
 
   // Rainbow kit's modals appear on top of the drawer. By clicking on those
   // technically we're clicking outside of the drawer, which would close it,
@@ -33,6 +37,8 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
     if (accountModalOpen || chainModalOpen || connectModalOpen) {
       return
     }
+    track?.('close wallet drawer', { chain: networkType })
+
     closeDrawer()
   }
 

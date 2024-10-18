@@ -21,6 +21,7 @@ const Demos = function () {
         <DemoCard
           altText="hemi hatchlings"
           bgImage={hemiHatchlingsImg}
+          event="demos - hatchlings"
           heading={t('hemihatchlings.heading')}
           headingColor="white"
           href="https://testnet.hatchlings.hemi.xyz"
@@ -30,6 +31,7 @@ const Demos = function () {
         <DemoCard
           altText="cryptochords"
           bgImage={cryptoChordsImg}
+          event="demos - cryptochords"
           heading={t('cryptochords.heading')}
           headingColor="white"
           href="https://cryptochords.hemi.xyz"
@@ -39,6 +41,7 @@ const Demos = function () {
         <DemoCard
           altText="pure finance"
           bgImage={pureFinanceImg}
+          event="demos - pure finance"
           heading={t('purefinance.heading')}
           headingColor="black"
           href="https://purefinance.hemi.xyz"

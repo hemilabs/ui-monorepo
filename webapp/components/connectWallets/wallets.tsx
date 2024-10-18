@@ -1,4 +1,5 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { AnalyticsEventsWithChain } from 'app/analyticsEvents'
 import { ConnectorGroup } from 'btc-wallet/connectors/types'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
@@ -14,6 +15,8 @@ import { ExternalLink } from 'components/externalLink'
 import { Chevron } from 'components/icons/chevron'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useChainIsSupported } from 'hooks/useChainIsSupported'
+import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { isAndroid } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
@@ -27,35 +30,44 @@ import { BtcLogo } from './btcLogo'
 import { ConnectToSupportedChain } from './connectToSupportedChain'
 import { EthLogo } from './ethLogo'
 
-const ConnectWalletButton = ({
+const ConnectWalletButton = function ({
+  event,
   hoverClassName,
   icon,
   onClick,
   rightIcon,
   text,
 }: {
+  event: AnalyticsEventsWithChain
   hoverClassName: string
   icon: React.ReactNode
   onClick: ReturnType<typeof useConnectModal>['openConnectModal']
   rightIcon?: React.ReactNode
   text: string
-}) => (
-  <button
-    className={`group flex w-full cursor-pointer items-center gap-x-2 rounded-xl border
+}) {
+  const [networkType] = useNetworkType()
+  const { track } = useUmami()
+  return (
+    <button
+      className={`group flex w-full cursor-pointer items-center gap-x-2 rounded-xl border
        border-solid border-slate-200 bg-white p-3 shadow-sm ${hoverClassName}`}
-    onClick={onClick}
-  >
-    {icon}
-    <span className="text-base font-medium leading-normal text-neutral-950">
-      {text}
-    </span>
-    {rightIcon || (
-      <div className="ml-auto">
-        <Chevron.Right />
-      </div>
-    )}
-  </button>
-)
+      onClick={function () {
+        track?.(event, { chain: networkType })
+        onClick()
+      }}
+    >
+      {icon}
+      <span className="text-base font-medium leading-normal text-neutral-950">
+        {text}
+      </span>
+      {rightIcon || (
+        <div className="ml-auto">
+          <Chevron.Right />
+        </div>
+      )}
+    </button>
+  )
+}
 
 const InstallUnisat = function ({ connector }: { connector: ConnectorGroup }) {
   const t = useTranslations()
@@ -89,6 +101,7 @@ export const BtcWallet = function () {
   if (status === 'disconnected') {
     return (
       <ConnectWalletButton
+        event="btc connect"
         hoverClassName="hover:bg-orange-50 hover:border-orange-300/55"
         icon={<BtcLogo />}
         onClick={() => connect(unisat.wallet)}
@@ -175,6 +188,7 @@ export const EvmWallet = function () {
   if (status === 'disconnected') {
     return (
       <ConnectWalletButton
+        event="evm connect"
         hoverClassName="hover:bg-blue-50 hover:border-blue-300/55"
         icon={<EthLogo />}
         onClick={openConnectModal}

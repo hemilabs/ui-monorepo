@@ -32,6 +32,7 @@ export const NetworkSelectors = function ({
       <div className="w-[calc(50%-38px-0.75rem)] flex-grow">
         <NetworkSelector
           disabled={isRunningOperation}
+          eventName="from network"
           label={t('form.from-network')}
           networkId={fromNetworkId}
           networks={networks.filter(chain => chain.id !== toNetworkId)}
@@ -43,6 +44,7 @@ export const NetworkSelectors = function ({
       <div className="w-[calc(50%-38px-0.75rem)] flex-grow">
         <NetworkSelector
           disabled={isRunningOperation}
+          eventName="to network"
           label={t('form.to-network')}
           networkId={toNetworkId}
           networks={networks.filter(chain => chain.id !== fromNetworkId)}

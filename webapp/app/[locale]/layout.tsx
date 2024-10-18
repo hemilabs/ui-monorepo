@@ -14,6 +14,7 @@ import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { inter } from '../fonts'
 
+import { Analytics } from './_components/analytics'
 import { AppLayout } from './_components/appLayout'
 import { Navbar } from './_components/navbar'
 
@@ -51,14 +52,16 @@ export default async function RootLayout({
               <WalletsContext locale={locale}>
                 <TunnelHistoryProvider>
                   <ConnectWalletDrawerProvider>
-                    <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
-                      <div className="hidden w-1/4 max-w-64 md:block">
-                        <Navbar />
+                    <Analytics>
+                      <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
+                        <div className="hidden w-1/4 max-w-64 md:block">
+                          <Navbar />
+                        </div>
+                        <AppLayout>
+                          <ErrorBoundary>{children}</ErrorBoundary>
+                        </AppLayout>
                       </div>
-                      <AppLayout>
-                        <ErrorBoundary>{children}</ErrorBoundary>
-                      </AppLayout>
-                    </div>
+                    </Analytics>
                   </ConnectWalletDrawerProvider>
                 </TunnelHistoryProvider>
               </WalletsContext>

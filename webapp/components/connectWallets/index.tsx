@@ -1,6 +1,8 @@
 import { featureFlags } from 'app/featureFlags'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useDrawerContext } from 'hooks/useDrawerContext'
+import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useAccount as useEvmAccount } from 'wagmi'
@@ -28,18 +30,25 @@ const WalletIcon = () => (
 
 export const WalletConnection = function () {
   const { closeDrawer, isDrawerOpen, openDrawer } = useDrawerContext()
+  const [networkType] = useNetworkType()
   const t = useTranslations()
-
-  const walletsConnected = []
 
   const { isConnected: isEvmWalletConnected } = useEvmAccount()
   const { isConnected: isBtcWalletConnected } = useBtcAccount()
+  const { track } = useUmami()
+
+  const walletsConnected = []
 
   if (isEvmWalletConnected) {
     walletsConnected.push({ icon: <MetamaskLogo /> })
   }
   if (featureFlags.btcTunnelEnabled && isBtcWalletConnected) {
     walletsConnected.push({ icon: <UnisatLogo /> })
+  }
+
+  const onConnectWalletsClick = function () {
+    openDrawer()
+    track?.('connect wallets', { chain: networkType })
   }
 
   return (
@@ -51,7 +60,7 @@ export const WalletConnection = function () {
         <button
           className="text-ms flex h-8 items-center gap-x-2 rounded-lg border border-solid border-neutral-300/55 
           bg-white py-1.5 pl-2 pr-4 font-medium leading-normal shadow-sm hover:bg-neutral-100"
-          onClick={openDrawer}
+          onClick={onConnectWalletsClick}
         >
           {walletsConnected.length === 0 && (
             <>

@@ -1,10 +1,13 @@
 'use client'
 
 import Link from 'next-intl/link'
-import { ReactNode } from 'react'
+import { MouseEvent, ReactNode } from 'react'
 
-type Button = { onClick?: () => void }
-type Anchor = { href: string }
+type Button = { onClick?: (e: MouseEvent<HTMLButtonElement>) => void }
+type Anchor = {
+  href: string
+  onClick?: (e: MouseEvent<HTMLAnchorElement>) => void
+}
 
 type TabProps = {
   border?: boolean
@@ -13,8 +16,8 @@ type TabProps = {
   selected?: boolean
 } & (Anchor | Button)
 
-const tabIsButton = (value: Button | Anchor): value is Button =>
-  (value as Button).onClick !== undefined
+const tabIsLink = (value: Button | Anchor): value is Anchor =>
+  (value as Anchor).href !== undefined
 
 export const Tab = function ({
   children,
@@ -23,7 +26,7 @@ export const Tab = function ({
   selected = false,
   ...props
 }: TabProps) {
-  const isButton = tabIsButton(props)
+  const isLink = tabIsLink(props)
   return (
     <li
       className={`
@@ -37,16 +40,20 @@ export const Tab = function ({
       }
     `}
     >
-      {(isButton || disabled) && (
+      {(!isLink || disabled) && (
         <button
           disabled={disabled || selected}
-          onClick={isButton && !disabled ? props.onClick : undefined}
+          onClick={!isLink && !disabled ? props.onClick : undefined}
           type="button"
         >
           {children}
         </button>
       )}
-      {!isButton && props.href && <Link href={props.href}>{children}</Link>}
+      {isLink && props.href && (
+        <Link href={props.href} onClick={props.onClick}>
+          {children}
+        </Link>
+      )}
     </li>
   )
 }

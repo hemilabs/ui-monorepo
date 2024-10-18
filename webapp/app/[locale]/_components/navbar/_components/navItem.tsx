@@ -1,3 +1,4 @@
+import { type AnalyticsEventsWithChain } from 'app/analyticsEvents'
 import { ExternalLink as AnchorTag } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { CheckMark } from 'components/icons/checkMark'
@@ -9,6 +10,7 @@ import {
   type NetworkType,
   useNetworkType,
 } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import Link from 'next-intl/link'
@@ -17,6 +19,7 @@ import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 import { isRelativeUrl } from 'utils/url'
 
 type Props = {
+  event: AnalyticsEventsWithChain
   icon?: ReactNode
   rightSection?: ReactNode
   text: string
@@ -97,24 +100,43 @@ const ItemText = ({
 
 type ItemLinkProps = Props & Required<Pick<ComponentProps<'a'>, 'href'>>
 
-const ExternalLink = ({ href, icon, text }: ItemLinkProps) => (
-  <ItemContainer>
-    <AnchorTag href={href}>
-      <Row>
-        {icon && <IconContainer>{icon}</IconContainer>}
-        <ItemText text={text} />
-        <ArrowDownLeftIcon className="ml-auto" />
-      </Row>
-    </AnchorTag>
-  </ItemContainer>
-)
-
-const PageLink = function ({ href, icon, rightSection, text }: ItemLinkProps) {
-  const locale = useLocale()
-  const pathname = usePathname()
-  const selected = pathname.startsWith(`/${locale}${href}`)
+const ExternalLink = function ({ event, href, icon, text }: ItemLinkProps) {
+  const [networkType] = useNetworkType()
+  const { track } = useUmami()
+  const addTracking = () =>
+    track ? () => track(event, { chain: networkType }) : undefined
   return (
-    <ItemContainer selected={selected}>
+    <ItemContainer>
+      <AnchorTag href={href} onClick={addTracking()}>
+        <Row>
+          {icon && <IconContainer>{icon}</IconContainer>}
+          <ItemText text={text} />
+          <ArrowDownLeftIcon className="ml-auto" />
+        </Row>
+      </AnchorTag>
+    </ItemContainer>
+  )
+}
+
+const PageLink = function ({
+  event,
+  href,
+  icon,
+  rightSection,
+  text,
+}: ItemLinkProps) {
+  const locale = useLocale()
+  const [networkType] = useNetworkType()
+  const pathname = usePathname()
+  const { track } = useUmami()
+
+  const selected = pathname.startsWith(`/${locale}${href}`)
+
+  return (
+    <ItemContainer
+      onClick={track ? () => track(event, { chain: networkType }) : undefined}
+      selected={selected}
+    >
       <Link href={href}>
         <Row>
           <IconContainer selected={selected}>{icon}</IconContainer>
@@ -134,17 +156,25 @@ export const ItemLink = (props: ItemLinkProps) =>
   )
 
 export const ItemWithSubmenu = function ({
+  event,
   icon,
   subMenu,
   text,
 }: Props & { subMenu: ReactNode }) {
+  const [networkType] = useNetworkType()
   const [isOpen, setIsOpen] = useState(false)
+  const { track } = useUmami()
 
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
 
+  const onClick = function () {
+    setIsOpen(!isOpen)
+    track?.(event, { chain: networkType })
+  }
+
   return (
     <MenuContainer isOpen={isOpen} refProp={ref}>
-      <Row onClick={() => setIsOpen(!isOpen)}>
+      <Row onClick={onClick}>
         <IconContainer>{icon}</IconContainer>
         <ItemText selected={isOpen} text={text} />
         {isOpen ? (
@@ -162,9 +192,12 @@ export const NetworkSwitch = function () {
   const [networkType, setNetworkType] = useNetworkType()
   const [isOpen, setIsOpen] = useState(false)
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
+  const { track } = useUmami()
 
   const selectNetwork = function (type: NetworkType) {
     setNetworkType(type)
+    // @ts-expect-error Typescript fails to generate the correct string interpolation
+    track?.(`nav - ${type === 'mainnet' ? 'testnet' : 'mainnet'} to ${type}`)
     setIsOpen(false)
   }
 

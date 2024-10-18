@@ -1,4 +1,6 @@
 import { Chevron } from 'components/icons/chevron'
+import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
@@ -7,8 +9,12 @@ import React from 'react'
 import backgroundImg from './nav-get-started-background.png'
 
 export const GetStarted = function () {
+  const [networkType] = useNetworkType()
   const t = useTranslations('navbar')
+  const { track } = useUmami()
+
   const href = '/get-started'
+  const onClick = () => track('nav - get started', { chain: networkType })
 
   return (
     <>
@@ -17,11 +23,16 @@ export const GetStarted = function () {
         rounded-lg bg-orange-500 py-3 text-sm text-white md:hidden
         `}
         href={href}
+        onClick={track ? onClick : undefined}
       >
         <span>{t('get-started')}</span>
         <Chevron.Right />
       </Link>
-      <Link className="hidden cursor-pointer md:block" href={href}>
+      <Link
+        className="hidden cursor-pointer md:block"
+        href={href}
+        onClick={track ? onClick : undefined}
+      >
         <div
           className="relative flex h-20 w-full overflow-hidden 
           rounded-xl border border-neutral-300

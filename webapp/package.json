@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "scripts": {
     "build": "next build",
+    "postbuild": "npm run copy:htaccess",
     "copy:htaccess": "cp .htaccess out/.htaccess",
+    "deploy": "npm run build",
     "dev": "next dev",
     "dev:wifi": "WIFI=true LOCAL_IP=$(ipconfig getifaddr en0) PORT=3000 npm run dev",
-    "deploy": "npm run build",
-    "postbuild": "npm run copy:htaccess",
     "preserve": "npm run build",
     "serve": "serve out"
   },
@@ -44,6 +44,7 @@
     "sliding-block-window": "1.0.0",
     "smart-round": "1.0.0",
     "ui-common": "1.0.0",
+    "umami-analytics-next": "1.0.0",
     "viem": "2.7.19",
     "wagmi": "2.5.7",
     "wagmi-erc20-hooks": "1.0.0"

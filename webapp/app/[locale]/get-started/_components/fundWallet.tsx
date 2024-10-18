@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { ExternalLink } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import hemiSocials from 'hemi-socials'
@@ -55,11 +56,13 @@ export const FundWallet = function () {
           name={t('ethereum-faucet')}
           url="https://sepolia-faucet.pk910.de"
         />
-        <Faucet
-          icon={<BtcFaucetIcon />}
-          name={t('bitcoin-faucet')}
-          url="https://coinfaucet.eu/en/btc-testnet/"
-        />
+        {featureFlags.btcTunnelEnabled && (
+          <Faucet
+            icon={<BtcFaucetIcon />}
+            name={t('bitcoin-faucet')}
+            url="https://coinfaucet.eu/en/btc-testnet/"
+          />
+        )}
       </div>
     </Section>
   )

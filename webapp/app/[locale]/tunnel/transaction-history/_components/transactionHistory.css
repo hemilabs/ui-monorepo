@@ -56,19 +56,19 @@
       items-center
       [&:nth-child(1)]:basis-24
       [&:nth-child(1)]:lg:basis-28
-      [&:nth-child(2)]:basis-32
+      [&:nth-child(2)]:basis-42
       [&:nth-child(2)]:lg:basis-24
       [&:nth-child(3)]:basis-30
       [&:nth-child(3)]:lg:basis-44
-      [&:nth-child(4)]:basis-20
-      [&:nth-child(4)]:lg:basis-30
+      [&:nth-child(4)]:basis-24
+      [&:nth-child(4)]:lg:basis-32
       [&:nth-child(5)]:basis-44
-      [&:nth-child(5)]:lg:basis-30
-      [&:nth-child(6)]:basis-30
+      [&:nth-child(5)]:lg:basis-32
+      [&:nth-child(6)]:basis-32
       [&:nth-child(6)]:lg:basis-32
-      [&:nth-child(7)]:basis-30
-      [&:nth-child(7)]:lg:basis-32
-      [&:nth-child(8)]:basis-32
+      [&:nth-child(7)]:basis-32
+      [&:nth-child(7)]:lg:basis-42
+      [&:nth-child(8)]:basis-34
       [&:nth-child(8)]:lg:basis-24
   }
 }

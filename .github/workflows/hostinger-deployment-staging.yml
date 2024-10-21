@@ -14,10 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          # Can't only bring commits since ${{ github.event.before }} yet https://github.com/actions/checkout/issues/1444
-          fetch-depth: 0
-      - uses: ./.github/actions/setup-node-env
+      - uses: hemilabs/actions/setup-node-env@main
       # Migrations must be manually run before deploying the portal
       - name: Run migrations
         run: npx lerna run deploy --scope=migrations-pg --since=${{ github.event.before }}

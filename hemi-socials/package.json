@@ -1,6 +1,0 @@
-{
-  "name": "hemi-socials",
-  "version": "1.0.0",
-  "description": "Tiny package containing Hemi social links",
-  "main": "socials.json"
-}

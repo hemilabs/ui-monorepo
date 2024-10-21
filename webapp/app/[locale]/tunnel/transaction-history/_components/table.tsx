@@ -240,7 +240,7 @@ export const Table = function ({ containerRef, data, loading }: TableProps) {
         data.length === 0 && loading
           ? {
               ...c,
-              cell: () => <Skeleton className="w-24" />,
+              cell: () => <Skeleton className="w-16" />,
             }
           : c,
       ),

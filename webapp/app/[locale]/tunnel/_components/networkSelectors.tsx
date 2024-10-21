@@ -6,7 +6,7 @@ import { RemoteChain } from 'types/chain'
 import { type TunnelState } from '../_hooks/useTunnelState'
 
 import { NetworkSelector } from './networkSelector'
-import { ToggleButton } from './ToggleButton'
+import { ToggleNetwork } from './toggleNetwork'
 
 type Props = {
   isRunningOperation: boolean
@@ -39,7 +39,7 @@ export const NetworkSelectors = function ({
           readonly={fromNetworkId === hemi.id}
         />
       </div>
-      <ToggleButton disabled={isRunningOperation} toggle={toggleInput} />
+      <ToggleNetwork disabled={isRunningOperation} toggle={toggleInput} />
       <div className="w-[calc(50%-38px-0.75rem)] flex-grow">
         <NetworkSelector
           disabled={isRunningOperation}

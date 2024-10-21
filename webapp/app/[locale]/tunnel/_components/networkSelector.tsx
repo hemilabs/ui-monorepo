@@ -52,7 +52,7 @@ export const NetworkSelector = function ({
     onSelectNetwork(id)
   }
 
-  const commonCss = `flex items-center border border-solid border-neutral-300/55
+  const commonCss = `flex items-center border border-solid border-neutral-300/55 shadow-soft
     text-ms font-medium leading-5 text-neutral-950 rounded-lg bg-white p-2 gap-x-2`
 
   if (readonly || networks.length === 1) {
@@ -76,7 +76,7 @@ export const NetworkSelector = function ({
     <Container>
       <Label text={label} />
       <button
-        className={`${commonCss} group/network-selector shadow-soft relative cursor-pointer hover:bg-neutral-100`}
+        className={`${commonCss} group/network-selector relative cursor-pointer hover:bg-neutral-100`}
         disabled={disabled || networks.length < 2}
         onClick={() => setShowNetworkDropdown(prev => !prev)}
         ref={ref}

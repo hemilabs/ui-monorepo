@@ -15,9 +15,9 @@ type Props = {
   toggle: () => void
 }
 
-export const ToggleButton = ({ disabled, toggle }: Props) => (
+export const ToggleNetwork = ({ disabled, toggle }: Props) => (
   <button
-    className={`mx-auto rounded-lg border border-solid border-neutral-300/55 bg-white p-2 shadow-sm hover:bg-neutral-100 ${
+    className={`shadow-soft mx-auto rounded-lg border border-solid border-neutral-300/55 bg-white p-2 hover:bg-neutral-100 ${
       disabled ? 'cursor-not-allowed' : 'cursor-pointer'
     }`}
     disabled={disabled}

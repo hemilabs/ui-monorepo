@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "build": "next build",
-    "postbuild": "npm run copy:htaccess",
-    "copy:htaccess": "cp .htaccess out/.htaccess",
+    "postbuild": "npm run generate:htaccess",
+    "generate:htaccess": "NEXT_PUBLIC_ENABLE_ANALYTICS=${NEXT_PUBLIC_ENABLE_ANALYTICS:-false} NEXT_PUBLIC_ANALYTICS_URL=${NEXT_PUBLIC_ANALYTICS_URL:-''} node ./scripts/generateHeaders.js",
     "deploy": "npm run build",
     "dev": "next dev",
     "dev:wifi": "WIFI=true LOCAL_IP=$(ipconfig getifaddr en0) PORT=3000 npm run dev",
@@ -63,5 +63,8 @@
     "serve": "14.2.3",
     "tailwindcss": "3.4.0",
     "typescript": "5.3.3"
+  },
+  "engines": {
+    "node": ">=16"
   }
 }

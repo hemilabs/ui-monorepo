@@ -122,6 +122,15 @@
       },
       {
         "extends": [
+          "bloq/node",
+          "prettier"
+        ],
+        "files": [
+          "webapp/scripts/*.js"
+        ]
+      },
+      {
+        "extends": [
           "plugin:@typescript-eslint/eslint-recommended",
           "plugin:@typescript-eslint/recommended",
           "prettier"

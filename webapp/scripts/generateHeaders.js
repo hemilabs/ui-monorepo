@@ -49,6 +49,9 @@ const domain = getDomain(process.env.NEXT_PUBLIC_ANALYTICS_URL)
 if (process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true' && domain !== null) {
   htaccess += `
 <IfModule mod_headers.c>
+    Header always set Access-Control-Allow-Origin "https://${domain}"
+    Header always set Access-Control-Allow-Methods "POST, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type"
     Header always set Content-Security-Policy "script-src 'self' "${domain}"
 </IfModule>`
 }

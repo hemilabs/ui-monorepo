@@ -83,10 +83,6 @@ const GlobalTracking = function () {
 export const Analytics = function ({ children }: { children: ReactNode }) {
   const locale = useLocale()
 
-  if (process.env.NEXT_PUBLIC_ENABLE_ANALYTICS !== 'true') {
-    return <>{children}</>
-  }
-
   const removeLocaleAndTrailingSlash = (url: string) =>
     (url.endsWith('/') ? url.slice(0, -1) : url).replace(`/${locale}`, '')
 
@@ -94,8 +90,10 @@ export const Analytics = function ({ children }: { children: ReactNode }) {
     <UmamiAnalyticsProvider
       autoTrack={false}
       processUrl={removeLocaleAndTrailingSlash}
-      src={process.env.NEXT_PUBLIC_ANALYTICS_URL}
-      websiteId={process.env.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID}
+      {...(process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true' && {
+        src: process.env.NEXT_PUBLIC_ANALYTICS_URL,
+        websiteId: process.env.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID,
+      })}
     >
       <GlobalTracking />
       {children}

@@ -17,32 +17,23 @@ const getDomain = function (url) {
 }
 
 let htaccess = `<IfModule mod_headers.c>
-    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-</IfModule>
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 
-<IfModule mod_headers.c>
-    Header always set X-Frame-Options "SAMEORIGIN"
-</IfModule>
+  Header always set X-Frame-Options "SAMEORIGIN"
+  
+  Header always set X-Content-Type-Options "nosniff"
+  
+  Header always set X-XSS-Protection "1; mode=block"
+  
+  Header always set X-Download-Options "noopen"
 
-<IfModule mod_headers.c>
-    Header always set X-Content-Type-Options "nosniff"
-</IfModule>
+  Header always set Expect-CT "max-age=86400, enforce"
 
-<IfModule mod_headers.c>
-    Header always set X-XSS-Protection "1; mode=block"
-</IfModule>
+  Header always set Referrer-Policy "no-referrer-when-downgrade"
 
-<IfModule mod_headers.c>
-    Header always set X-Download-Options "noopen"
+  Header always set Permissions-Policy: geolocation=(), microphone=()
 </IfModule>
-
-<IfModule mod_headers.c>
-    Header always set Expect-CT "max-age=86400, enforce"
-</IfModule>
-
-<IfModule mod_headers.c>
-    Header always set Referrer-Policy "no-referrer-when-downgrade"
-</IfModule>`
+`
 
 const domain = getDomain(process.env.NEXT_PUBLIC_ANALYTICS_URL)
 

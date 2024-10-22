@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "scripts": {
     "build": "next build",
-    "copy:htaccess": "cp .htaccess out/.htaccess",
+    "postbuild": "npm run generate:htaccess",
+    "generate:htaccess": "NEXT_PUBLIC_ENABLE_ANALYTICS=${NEXT_PUBLIC_ENABLE_ANALYTICS:-false} NEXT_PUBLIC_ANALYTICS_URL=${NEXT_PUBLIC_ANALYTICS_URL:-''} node ./scripts/generateHeaders.js",
+    "deploy": "npm run build",
     "dev": "next dev",
     "dev:wifi": "WIFI=true LOCAL_IP=$(ipconfig getifaddr en0) PORT=3000 npm run dev",
-    "deploy": "npm run build",
-    "postbuild": "npm run copy:htaccess",
     "preserve": "npm run build",
     "serve": "serve out"
   },
@@ -44,6 +44,7 @@
     "sliding-block-window": "1.0.0",
     "smart-round": "1.0.0",
     "ui-common": "1.0.0",
+    "umami-analytics-next": "1.0.0",
     "viem": "2.7.19",
     "wagmi": "2.5.7",
     "wagmi-erc20-hooks": "1.0.0"
@@ -62,5 +63,8 @@
     "serve": "14.2.3",
     "tailwindcss": "3.4.0",
     "typescript": "5.3.3"
+  },
+  "engines": {
+    "node": ">=16"
   }
 }

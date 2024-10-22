@@ -1,5 +1,7 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 
 import { EmptyState } from './emptyState'
@@ -47,11 +49,19 @@ const WalletIcon = () => (
 
 export const ConnectWallet = function () {
   const { openConnectModal } = useConnectModal()
+  const [networkType] = useNetworkType()
   const t = useTranslations()
+  const { track } = useUmami()
+
+  const onClick = function () {
+    openConnectModal()
+    track?.('evm connect', { chain: networkType })
+  }
+
   return (
     <EmptyState
       action={
-        <Button height="h-6" onClick={openConnectModal} type="button">
+        <Button height="h-6" onClick={onClick} type="button">
           {t('common.connect-wallet')}
         </Button>
       }

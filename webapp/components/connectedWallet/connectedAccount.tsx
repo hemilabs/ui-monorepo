@@ -1,3 +1,4 @@
+import { useUmami } from 'app/analyticsEvents'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useConfig as useBtcConfig } from 'btc-wallet/hooks/useConfig'
 import { useDisconnect as useBtcDisconnect } from 'btc-wallet/hooks/useDisconnect'
@@ -9,6 +10,7 @@ import {
   useConnectedToUnsupportedBtcChain,
   useConnectedToUnsupportedEvmChain,
 } from 'hooks/useConnectedToUnsupportedChain'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
@@ -73,15 +75,21 @@ const ConnectedChain = function ({
 
 const ConnectedWallet = function ({
   address,
+  connectorName,
+  copyEvent,
   disconnect,
   formattedAddress,
 }: {
   address: Address | Account
+  connectorName: string
+  copyEvent: 'btc copy' | 'evm copy'
   disconnect: () => void
   formattedAddress: string
 }) {
+  const [networkType] = useNetworkType()
   const [menuOpen, setMenuOpen] = useState(false)
   const t = useTranslations('connect-wallets')
+  const { track } = useUmami()
 
   const closeMenu = () => setMenuOpen(false)
 
@@ -89,6 +97,7 @@ const ConnectedWallet = function ({
 
   const copyAddress = function () {
     navigator.clipboard.writeText(address)
+    track?.(copyEvent, { chain: networkType, wallet: connectorName })
     closeMenu()
   }
 
@@ -176,12 +185,14 @@ export const ConnectedEvmChain = function () {
 }
 
 export const ConnectedEvmAccount = function () {
-  const { address } = useAccount()
+  const { address, connector } = useAccount()
   const { disconnect } = useEvmDisconnect()
 
   return (
     <ConnectedWallet
       address={address}
+      connectorName={connector.name}
+      copyEvent="evm copy"
       disconnect={disconnect}
       formattedAddress={address ? formatEvmAddress(address) : '...'}
     />
@@ -189,12 +200,14 @@ export const ConnectedEvmAccount = function () {
 }
 
 export const ConnectedBtcAccount = function () {
-  const { address } = useBtcAccount()
+  const { address, connector } = useBtcAccount()
   const { disconnect } = useBtcDisconnect()
 
   return (
     <ConnectedWallet
       address={address}
+      connectorName={connector.name}
+      copyEvent="btc copy"
       disconnect={disconnect}
       formattedAddress={address ? formatBtcAddress(address) : '...'}
     />

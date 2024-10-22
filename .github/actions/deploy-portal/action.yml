@@ -18,6 +18,12 @@ inputs:
   HOSTINGER_TARGET:
     required: true
     description: Hostinger target
+  NEXT_PUBLIC_ANALYTICS_URL:
+    required: false
+    description: Analytics URL
+  NEXT_PUBLIC_ANALYTICS_WEBSITE_ID:
+    required: false
+    description: Analytics website ID
   NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET:
     required: false
     description: Custom RPC URL for Hemi Mainnet
@@ -30,6 +36,9 @@ inputs:
   NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA:
     required: false
     description: Custom RPC URL for Sepolia
+  NEXT_PUBLIC_ENABLE_ANALYTICS:
+    required: false
+    description: Flag to enable or not analytics
   NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL:
     required: true
     description: Feature flag to enable BTC tunnel
@@ -47,11 +56,14 @@ runs:
       shell: bash
       name: Build site
       env:
+        NEXT_PUBLIC_ANALYTICS_URL: ${{ inputs.NEXT_PUBLIC_ANALYTICS_URL }}
+        NEXT_PUBLIC_ANALYTICS_WEBSITE_ID: ${{ inputs.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID }}
         NEXT_PUBLIC_CLAIM_TOKENS_URL: ${{ inputs.NEXT_PUBLIC_CLAIM_TOKENS_URL }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA }}
+        NEXT_PUBLIC_ENABLE_ANALYTICS: ${{ inputs.NEXT_PUBLIC_ENABLE_ANALYTICS }}
         NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL }}
         NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ inputs.NEXT_PUBLIC_RECAPTCHA_SITE_KEY }}
     - name: Check portal build

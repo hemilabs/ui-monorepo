@@ -1,3 +1,4 @@
+import { useUmami } from 'app/analyticsEvents'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -57,6 +58,7 @@ const AddSection = function ({
 export const AddHemiWallet = function () {
   const [networkType] = useNetworkType()
   const t = useTranslations('get-started')
+  const { track } = useUmami()
 
   const [networkConfiguration, setNetworkConfiguration] = useQueryState(
     'networkConfiguration',
@@ -64,6 +66,16 @@ export const AddHemiWallet = function () {
       AddWalletConfigurations[0],
     ),
   )
+
+  const onSelectAutomatic = function () {
+    setNetworkConfiguration('automatic')
+    track?.('network - automatic')
+  }
+
+  const onSelectManual = function () {
+    setNetworkConfiguration('manual')
+    track?.('network - manual')
+  }
 
   return (
     <Section
@@ -78,13 +90,13 @@ export const AddHemiWallet = function () {
         <div className="md:self-end">
           <Tabs>
             <Tab
-              onClick={() => setNetworkConfiguration('automatic')}
+              onClick={onSelectAutomatic}
               selected={networkConfiguration === 'automatic'}
             >
               {t('add-networks.automatic')}
             </Tab>
             <Tab
-              onClick={() => setNetworkConfiguration('manual')}
+              onClick={onSelectManual}
               selected={networkConfiguration === 'manual'}
             >
               {t('add-networks.manual')}

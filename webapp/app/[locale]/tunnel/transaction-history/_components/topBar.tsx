@@ -1,4 +1,6 @@
+import { useUmami } from 'app/analyticsEvents'
 import { featureFlags } from 'app/featureFlags'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 import { Tabs, Tab } from 'ui-common/components/tabs'
 
@@ -13,7 +15,9 @@ type Props = {
 }
 
 export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
+  const [networkType] = useNetworkType()
   const t = useTranslations('tunnel-page.transaction-history.top-bar')
+  const { track } = useUmami()
   return (
     <div className="flex w-full flex-wrap items-center gap-x-2 gap-y-2 px-3.5 py-2 md:flex-nowrap md:px-3">
       <h5 className="order-1 flex-shrink-0 flex-grow basis-2/5 md:flex-grow-0 md:basis-auto">
@@ -30,21 +34,30 @@ export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
           <Tabs>
             <Tab
               border
-              onClick={() => onFilterOptionChange('all')}
+              onClick={function () {
+                onFilterOptionChange('all')
+                track?.('txn filter - all', { chain: networkType })
+              }}
               selected={filterOption === 'all'}
             >
               {t('all')}
             </Tab>
             <Tab
               border
-              onClick={() => onFilterOptionChange('ethereum')}
+              onClick={function () {
+                onFilterOptionChange('ethereum')
+                track?.('txn filter - eth', { chain: networkType })
+              }}
               selected={filterOption === 'ethereum'}
             >
               {t('ethereum')}
             </Tab>
             <Tab
               border
-              onClick={() => onFilterOptionChange('bitcoin')}
+              onClick={function () {
+                onFilterOptionChange('bitcoin')
+                track?.('txn filter - btc', { chain: networkType })
+              }}
               selected={filterOption === 'bitcoin'}
             >
               {t('bitcoin')}

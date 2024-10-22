@@ -1,7 +1,10 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useMutation } from '@tanstack/react-query'
+import { useUmami } from 'app/analyticsEvents'
 import { ChainLogo } from 'components/chainLogo'
 import { CheckMark } from 'components/icons/checkMark'
+import { hemiTestnet } from 'networks/hemiTestnet'
+import { sepolia } from 'networks/sepolia'
 import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
 import { type Chain } from 'viem'
@@ -16,6 +19,7 @@ export const AddChainAutomatically = function ({ chain, layer }: Props) {
   const { openConnectModal } = useConnectModal()
   const tCommon = useTranslations('common')
   const t = useTranslations('get-started')
+  const { track } = useUmami()
 
   const { chain: connectedChain, isConnected } = useAccount()
   const { data: walletClient } = useWalletClient()
@@ -27,6 +31,12 @@ export const AddChainAutomatically = function ({ chain, layer }: Props) {
         `portal.get-started.configure-networks-added-${chain.id}`,
         'true',
       )
+      if (chain.id === sepolia.id) {
+        track?.('add to wallet - sepolia')
+      }
+      if (chain.id === hemiTestnet.id) {
+        track?.('add to wallet - hemi sepolia')
+      }
     },
   })
 

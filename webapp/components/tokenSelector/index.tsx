@@ -1,3 +1,5 @@
+import { useUmami } from 'app/analyticsEvents'
+import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import { Token } from 'types/token'
@@ -22,10 +24,17 @@ export const TokenSelector = function ({
   selectedToken,
   tokens,
 }: Props) {
+  const [networkType] = useNetworkType()
   const [showTokenSelector, setShowTokenSelector] = useState(false)
+  const { track } = useUmami()
 
   const closeModal = () => setShowTokenSelector(false)
   const openModal = () => setShowTokenSelector(true)
+
+  const handleSelection = function (token: Token) {
+    onSelectToken(token)
+    track?.('select token', { chain: networkType })
+  }
 
   return (
     <>
@@ -47,7 +56,7 @@ export const TokenSelector = function ({
       {showTokenSelector && (
         <TokenList
           closeModal={closeModal}
-          onSelectToken={onSelectToken}
+          onSelectToken={handleSelection}
           tokens={tokens}
         />
       )}

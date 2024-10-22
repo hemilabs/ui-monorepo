@@ -10,6 +10,7 @@ export const HemiExplorerLink = function () {
 
   return (
     <ItemLink
+      event="nav - explorer"
       href={hemi.blockExplorers.default.url}
       icon={<ExplorerIcon />}
       text={t('explorer')}

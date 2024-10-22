@@ -1,5 +1,6 @@
 'use client'
 
+import { useUmami } from 'app/analyticsEvents'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { Button } from 'components/button'
 import { useAccounts } from 'hooks/useAccounts'
@@ -9,6 +10,7 @@ import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -298,6 +300,7 @@ type EvmDepositProps = {
 }
 
 const EvmDeposit = function ({ state }: EvmDepositProps) {
+  const [networkType] = useNetworkType()
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
@@ -306,6 +309,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
   const [extendedErc20Approval, setExtendedErc20Approval] = useState(false)
 
   const t = useTranslations()
+  const { track } = useUmami()
 
   const {
     fromInput,
@@ -387,13 +391,16 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
       setOperationRunning('idle')
       resetStateAfterOperation()
       setExtendedErc20Approval(false)
+      track?.('evm - dep success', { chain: networkType })
     },
     [
       depositReceipt,
+      networkType,
       operationRunning,
       resetStateAfterOperation,
       setExtendedErc20Approval,
       setOperationRunning,
+      track,
     ],
   )
 
@@ -407,15 +414,18 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
         operationRunning !== 'idle'
       ) {
         setOperationRunning('idle')
+        track?.('evm - dep failed', { chain: networkType })
       }
     },
     [
       approvalError,
       approvalReceiptError,
+      networkType,
       depositError,
       depositReceiptError,
       operationRunning,
       setOperationRunning,
+      track,
     ],
   )
 
@@ -429,6 +439,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     } else {
       setOperationRunning('depositing')
     }
+    track?.('evm - dep started', { chain: networkType })
   }
 
   const totalDeposit = operatesNativeToken

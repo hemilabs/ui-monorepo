@@ -1,7 +1,9 @@
+import { useUmami } from 'app/analyticsEvents'
 import { ChainLogo } from 'components/chainLogo'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { type ReactNode, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
@@ -20,6 +22,7 @@ const Network = ({ children }: { children: string }) => (
 
 type Props = {
   disabled: boolean
+  eventName: 'from network' | 'to network'
   label: string
   networkId: RemoteChain['id']
   networks: RemoteChain[]
@@ -29,13 +32,16 @@ type Props = {
 
 export const NetworkSelector = function ({
   disabled,
+  eventName,
   label,
   networkId,
   networks = [],
   onSelectNetwork,
   readonly,
 }: Props) {
+  const [networkType] = useNetworkType()
   const [showNetworkDropdown, setShowNetworkDropdown] = useState(false)
+  const { track } = useUmami()
 
   const closeNetworkMenu = () => setShowNetworkDropdown(false)
 
@@ -50,6 +56,7 @@ export const NetworkSelector = function ({
   const selectNetwork = function ({ id }: RemoteChain) {
     setShowNetworkDropdown(false)
     onSelectNetwork(id)
+    track?.(eventName, { chain: networkType })
   }
 
   const commonCss = `flex items-center border border-solid border-neutral-300/55 shadow-soft

@@ -47,6 +47,7 @@ export const Navbar = function () {
       <ul className="flex h-full flex-col gap-y-1 overflow-y-auto [&>li>div]:px-3">
         <li className="order-1">
           <ItemLink
+            event="nav - tunnel"
             href="/tunnel"
             icon={<TunnelIcon />}
             rightSection={
@@ -59,6 +60,7 @@ export const Navbar = function () {
         </li>
         <li className="order-2">
           <ItemLink
+            event="nav - dex"
             href="https://swap.hemi.xyz"
             icon={<DexIcon />}
             text={t('dex')}
@@ -71,6 +73,7 @@ export const Navbar = function () {
         </li>
         <li className="order-4">
           <ItemLink
+            event="nav - web pop miner"
             href="https://pop-miner.hemi.xyz"
             icon={<PoPMinerIcon />}
             text={t('web-pop-miner')}
@@ -81,6 +84,7 @@ export const Navbar = function () {
         </li>
         <li className="order-6">
           <ItemLink
+            event="nav - hbk"
             href="https://docs.hemi.xyz/building-bitcoin-apps/hemi-bitcoin-kit-hbk"
             icon={<BitcoinKitIcon />}
             text={t('bitcoinkit')}
@@ -88,14 +92,17 @@ export const Navbar = function () {
         </li>
         <li className="order-7">
           <ItemWithSubmenu
+            event="nav - tools"
             icon={<ToolsIcon />}
             subMenu={
               <>
                 <ItemLink
+                  event="nav - pure finance"
                   href="https://purefinance.hemi.xyz"
                   text="Pure Finance"
                 />
                 <ItemLink
+                  event="nav - faucet"
                   href="https://discord.com/channels/1202677849887080508/1230886659222929418"
                   text="Faucet"
                 />
@@ -108,10 +115,16 @@ export const Navbar = function () {
           <Separator />
         </li>
         <li className="order-9 mb-auto">
-          <ItemLink href="/demos" icon={<DemosPageIcon />} text={t('demos')} />
+          <ItemLink
+            event="nav - demos"
+            href="/demos"
+            icon={<DemosPageIcon />}
+            text={t('demos')}
+          />
         </li>
         <li className="order-10 md:order-11">
           <ItemLink
+            event="nav - network status"
             href="https://hemistatus.com"
             icon={<ElectroCardiogramIcon />}
             text={t('network-status')}
@@ -119,6 +132,7 @@ export const Navbar = function () {
         </li>
         <li className="order-11 md:order-12">
           <ItemLink
+            event="nav - docs"
             href="https://docs.hemi.xyz"
             icon={<DocsIcon />}
             text={t('hemidocs')}

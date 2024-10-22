@@ -1,4 +1,6 @@
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useUmami } from 'hooks/useUmami'
 import { ComponentProps } from 'react'
 
 const ReloadIcon = (props: ComponentProps<'svg'>) => (
@@ -19,12 +21,19 @@ const ReloadIcon = (props: ComponentProps<'svg'>) => (
 )
 
 export const ReloadHistory = function () {
+  const [networkType] = useNetworkType()
   const { resyncHistory } = useTunnelHistory()
+  const { track } = useUmami()
+
+  const onResync = function () {
+    resyncHistory()
+    track?.('txn refresh', { chain: networkType })
+  }
 
   return (
     <button
       className="shadow-soft group/reload-history rounded-md border border-solid border-neutral-300/55 bg-white p-1 hover:bg-neutral-100"
-      onClick={resyncHistory}
+      onClick={onResync}
       type="button"
     >
       <ReloadIcon className="[&>path]:group-hover/reload-history:fill-neutral-950" />

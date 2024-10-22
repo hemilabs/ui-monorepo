@@ -1,3 +1,4 @@
+import { useUmami } from 'app/analyticsEvents'
 import { Card } from 'components/card'
 import Image, { StaticImageData } from 'next/image'
 import { useRouter } from 'next/navigation'
@@ -12,25 +13,29 @@ import { Section } from './section'
 
 const Box = function ({
   alt,
+  event,
   heading,
   href,
   image,
   subheading,
 }: {
   alt: string
+  event: 'tut - deploy contract' | 'tut - swap tokens' | 'tut - tunnel assets'
   heading: string
   href: string
   image: StaticImageData
   subheading: string
 }) {
   const router = useRouter()
+  const { track } = useUmami()
 
   const handleClick = function () {
+    track?.(event)
     if (isRelativeUrl(href)) {
       router.push(href)
       return
     }
-    window.open(href, '_blank')
+    window.open(href, '_blank', 'noopener,noreferrer')
   }
 
   return (
@@ -68,6 +73,7 @@ export const StartUsingHemi = function () {
       <div className="flex max-w-full flex-col gap-y-4 md:flex-row md:justify-between md:gap-x-6">
         <Box
           alt="Tunnel form"
+          event="tut - tunnel assets"
           heading={t('tunnel-assets')}
           href={`/${locale}/tunnel`}
           image={tunnelAssets}
@@ -75,6 +81,7 @@ export const StartUsingHemi = function () {
         />
         <Box
           alt="Swap form"
+          event="tut - swap tokens"
           heading={t('swap-tokens')}
           href="https://swap.hemi.xyz"
           image={swapTokens}
@@ -82,6 +89,7 @@ export const StartUsingHemi = function () {
         />
         <Box
           alt="Button with the text 'Deploy'"
+          event="tut - swap tokens"
           heading={t('deploy-a-smart-contract')}
           href="https://docs.hemi.xyz/how-to-tutorials/tutorials/using-remix-ide"
           image={deployContracts}

@@ -1,20 +1,23 @@
 import { Chevron } from 'components/icons/chevron'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
-import Image from 'next/image'
+import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import Link from 'next-intl/link'
 import React from 'react'
 
-import backgroundImg from './nav-get-started-background.png'
+import { GetStartedBackground } from './getStartedBackground'
+import { HemiLogo } from './hemiLogo'
 
 export const GetStarted = function () {
   const [networkType] = useNetworkType()
+  const pathname = usePathname()
   const t = useTranslations('navbar')
   const { track } = useUmami()
 
   const href = '/get-started'
   const onClick = () => track('nav - get started', { chain: networkType })
+  const active = pathname.endsWith('/get-started/')
 
   return (
     <>
@@ -29,28 +32,31 @@ export const GetStarted = function () {
         <Chevron.Right />
       </Link>
       <Link
-        className="hidden cursor-pointer md:block"
+        className={`hidden ${active ? '' : 'cursor-pointer'} md:block`}
         href={href}
         onClick={track ? onClick : undefined}
       >
         <div
-          className="relative flex h-20 w-full overflow-hidden 
-          rounded-xl border border-neutral-300
-          border-opacity-50 transition-colors duration-300"
+          className={`shadow-soft h-30 relative flex w-full overflow-hidden
+          rounded-xl border border-solid transition-colors duration-300
+          ${
+            active
+              ? 'border-orange-300/55 bg-orange-100'
+              : 'border-neutral-300/55 bg-orange-50 hover:bg-orange-100'
+          }
+          `}
         >
-          <div className="absolute inset-0 z-10 bg-[radial-gradient(circle_at_right,transparent,#FFF6ED_48%)] hover:bg-slate-500 hover:bg-opacity-5"></div>
-          <div className="relative ml-auto h-full w-7/12">
-            <Image
-              alt="Get started background image"
-              fill
-              src={backgroundImg}
-              style={{ objectFit: 'fill' }}
-            />
-          </div>
-          <div className="absolute top-1/4 z-20 flex items-center gap-x-1 text-sm">
-            <span className="ml-3 text-orange-500">{t('get-started')}</span>
+          <GetStartedBackground className="h-20 w-full" />
+          <div className="absolute left-4 top-4 z-20 flex items-center gap-x-1 text-sm">
+            <HemiLogo />
+            <span className="text-orange-500">{t('get-started')}</span>
             <Chevron.Right className="[&>path]:fill-orange-500" />
           </div>
+          <p className="text-ms absolute bottom-4 left-4 leading-5 text-neutral-600">
+            {t.rich('get-started-description', {
+              break: () => <wbr />,
+            })}
+          </p>
         </div>
       </Link>
     </>

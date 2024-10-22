@@ -107,7 +107,7 @@ const ConnectedWallet = function ({
   return (
     <div
       className="group/connected-wallet relative flex h-8 cursor-pointer items-center rounded-lg
-        pr-1 text-sm font-medium leading-normal text-neutral-950 hover:bg-neutral-100"
+        p-2 text-sm font-medium leading-normal text-neutral-950 hover:bg-neutral-100"
       ref={ref}
     >
       <div

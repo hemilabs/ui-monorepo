@@ -28,7 +28,6 @@
   "workspaces": [
     "btc-wallet",
     "claim-tokens",
-    "hemi-socials",
     "migrations-pg",
     "sliding-block-window",
     "ui-common",
@@ -92,7 +91,6 @@
         ],
         "files": [
           "btc-wallet/**/*.{js,ts,tsx}",
-          "hemi-socials/**/*.{js,ts,tsx}",
           "sliding-block-window/**/*.{js,ts}",
           "ui-common/**/*.{js,ts,tsx}",
           "wagmi-erc20-hooks/**/*.{js,ts,tsx}",

@@ -20,6 +20,7 @@
         "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
         "webapp/**/*.{js,ts,tsx}"
       ],
+      "excludedFiles": ["webapp/scripts/*.js"],
       "rules": {
         "@typescript-eslint/no-shadow": "error",
         "@typescript-eslint/no-unused-vars": [

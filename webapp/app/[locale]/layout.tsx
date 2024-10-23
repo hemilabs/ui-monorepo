@@ -21,6 +21,7 @@ import { Navbar } from './_components/navbar'
 async function getMessages(locale: Locale) {
   try {
     return (await import(`../../messages/${locale}.json`)).default
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     notFound()
   }

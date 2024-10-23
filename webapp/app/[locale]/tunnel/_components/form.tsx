@@ -1,5 +1,6 @@
 import { Card } from 'components/card'
 import { SwitchToNetworkToast } from 'components/switchToNetworkToast'
+import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 
@@ -8,6 +9,15 @@ import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { NetworkSelectors } from './networkSelectors'
 import { TokenInput } from './tokenInput'
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const TransactionStatus = dynamic(
+  () =>
+    import('components/transactionStatus').then(mod => mod.TransactionStatus),
+  {
+    ssr: false,
+  },
+)
 
 type FormContentProps = {
   setMaxBalanceButton: ReactNode

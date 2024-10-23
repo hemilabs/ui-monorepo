@@ -1,21 +1,15 @@
 {
-  "extends": [
-    "bloq",
-    "prettier"
-  ],
+  "extends": ["bloq", "prettier"],
   "overrides": [
     {
-      "extends": [
-        "bloq/node",
-        "prettier"
-      ],
-      "files": [
-        "claim-tokens/**/*.js"
-      ]
+      "extends": ["bloq/node", "prettier"],
+      "files": ["claim-tokens/**/*.js"]
     },
     {
       "excludedFiles": [
-        "webapp/scripts/*.js"
+        "webapp/scripts/*.js",
+        "webapp/next.config.js",
+        "webapp/postcss.config.js"
       ],
       "extends": [
         "bloq/next",
@@ -43,50 +37,32 @@
       },
       "settings": {
         "next": {
-          "rootDir": [
-            "webapp"
-          ]
+          "rootDir": ["webapp"]
         }
       }
     },
     {
-      "extends": [
-        "bloq/node",
-        "prettier"
-      ],
+      "extends": ["bloq/node", "prettier"],
       "files": [
-        "webapp/scripts/*.js"
+        "webapp/scripts/*.js",
+        "webapp/next.config.js",
+        "webapp/postcss.config.js"
       ]
     },
     {
-      "extends": [
-        "bloq/typescript",
-        "prettier"
-      ],
-      "files": [
-        "migrations-pg/**/*.{js,ts}"
-      ],
+      "extends": ["bloq/typescript", "prettier"],
+      "files": ["migrations-pg/**/*.{js,ts}"],
       "rules": {
         "no-console": "off"
       }
     },
     {
-      "extends": [
-        "bloq/typescript",
-        "prettier"
-      ],
-      "files": [
-        "*.d.ts"
-      ]
+      "extends": ["bloq/typescript", "prettier"],
+      "files": ["*.d.ts"]
     },
     {
-      "extends": [
-        "bloq/mocha",
-        "prettier"
-      ],
-      "files": [
-        "*.spec.js"
-      ],
+      "extends": ["bloq/mocha", "prettier"],
+      "files": ["*.spec.js"],
       "rules": {
         "mocha/no-exclusive-tests": "error",
         "no-unsafe-finally": "off",
@@ -95,12 +71,8 @@
       }
     },
     {
-      "extends": [
-        "bloq/markdown"
-      ],
-      "files": [
-        "*.md"
-      ],
+      "extends": ["bloq/markdown"],
+      "files": ["*.md"],
       "rules": {
         "markdownlint/md001": "warn",
         "markdownlint/md004": [
@@ -123,9 +95,7 @@
         "markdownlint/md033": [
           "warn",
           {
-            "allowed_elements": [
-              "img"
-            ]
+            "allowed_elements": ["img"]
           }
         ],
         "markdownlint/md034": "warn",
@@ -140,9 +110,7 @@
     "camelcase": [
       "warn",
       {
-        "allow": [
-          "after_txid"
-        ]
+        "allow": ["after_txid"]
       }
     ]
   }

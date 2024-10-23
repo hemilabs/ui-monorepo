@@ -1,7 +1,6 @@
-// @typescript-eslint expects usage of imports
-/* eslint-disable @typescript-eslint/no-var-requires */
+'use strict'
+
 const { withSentryConfig } = require('@sentry/nextjs')
-/* eslint-enable @typescript-eslint/no-var-requires */
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {

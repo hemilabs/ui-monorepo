@@ -1,0 +1,149 @@
+{
+  "extends": [
+    "bloq",
+    "prettier"
+  ],
+  "overrides": [
+    {
+      "extends": [
+        "bloq/node",
+        "prettier"
+      ],
+      "files": [
+        "claim-tokens/**/*.js"
+      ]
+    },
+    {
+      "excludedFiles": [
+        "webapp/scripts/*.js"
+      ],
+      "extends": [
+        "bloq/next",
+        "next/core-web-vitals",
+        "bloq/typescript",
+        "prettier"
+      ],
+      "files": [
+        "btc-wallet/**/*.{js,ts,tsx}",
+        "hemi-socials/**/*.{js,ts,tsx}",
+        "sliding-block-window/**/*.{js,ts}",
+        "ui-common/**/*.{js,ts,tsx}",
+        "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
+        "webapp/**/*.{js,ts,tsx}"
+      ],
+      "rules": {
+        "@typescript-eslint/no-shadow": "error",
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "ignoreRestSiblings": true
+          }
+        ],
+        "no-shadow": "off"
+      },
+      "settings": {
+        "next": {
+          "rootDir": [
+            "webapp"
+          ]
+        }
+      }
+    },
+    {
+      "extends": [
+        "bloq/node",
+        "prettier"
+      ],
+      "files": [
+        "webapp/scripts/*.js"
+      ]
+    },
+    {
+      "extends": [
+        "bloq/typescript",
+        "prettier"
+      ],
+      "files": [
+        "migrations-pg/**/*.{js,ts}"
+      ],
+      "rules": {
+        "no-console": "off"
+      }
+    },
+    {
+      "extends": [
+        "bloq/typescript",
+        "prettier"
+      ],
+      "files": [
+        "*.d.ts"
+      ]
+    },
+    {
+      "extends": [
+        "bloq/mocha",
+        "prettier"
+      ],
+      "files": [
+        "*.spec.js"
+      ],
+      "rules": {
+        "mocha/no-exclusive-tests": "error",
+        "no-unsafe-finally": "off",
+        "prefer-arrow/prefer-arrow-functions": "off",
+        "promise/no-return-in-finally": "off"
+      }
+    },
+    {
+      "extends": [
+        "bloq/markdown"
+      ],
+      "files": [
+        "*.md"
+      ],
+      "rules": {
+        "markdownlint/md001": "warn",
+        "markdownlint/md004": [
+          "warn",
+          {
+            "style": "dash"
+          }
+        ],
+        "markdownlint/md010": "warn",
+        "markdownlint/md013": "off",
+        "markdownlint/md014": "warn",
+        "markdownlint/md024": [
+          "warn",
+          {
+            "siblings_only": true
+          }
+        ],
+        "markdownlint/md028": "warn",
+        "markdownlint/md029": "warn",
+        "markdownlint/md033": [
+          "warn",
+          {
+            "allowed_elements": [
+              "img"
+            ]
+          }
+        ],
+        "markdownlint/md034": "warn",
+        "markdownlint/md040": "warn",
+        "markdownlint/md041": "warn",
+        "markdownlint/md045": "warn"
+      }
+    }
+  ],
+  "root": true,
+  "rules": {
+    "camelcase": [
+      "warn",
+      {
+        "allow": [
+          "after_txid"
+        ]
+      }
+    ]
+  }
+}

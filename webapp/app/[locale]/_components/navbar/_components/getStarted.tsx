@@ -37,7 +37,7 @@ export const GetStarted = function () {
         onClick={track ? onClick : undefined}
       >
         <div
-          className={`shadow-soft h-30 relative flex w-full overflow-hidden
+          className={`shadow-soft h-13 relative flex w-full overflow-hidden
           rounded-xl border border-solid transition-colors duration-300
           ${
             active
@@ -46,17 +46,12 @@ export const GetStarted = function () {
           }
           `}
         >
-          <GetStartedBackground className="h-20 w-full" />
-          <div className="absolute left-4 top-4 z-20 flex items-center gap-x-1 text-sm">
+          <GetStartedBackground className="w-full" />
+          <div className="absolute left-3 top-4 z-20 flex items-center gap-x-1 text-sm">
             <HemiLogo />
             <span className="text-orange-500">{t('get-started')}</span>
             <Chevron.Right className="[&>path]:fill-orange-500" />
           </div>
-          <p className="text-ms absolute bottom-4 left-4 leading-5 text-neutral-600">
-            {t.rich('get-started-description', {
-              break: () => <wbr />,
-            })}
-          </p>
         </div>
       </Link>
     </>

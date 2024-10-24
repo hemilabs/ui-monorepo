@@ -7,7 +7,7 @@
     "deploy": "npm run build",
     "dev": "next dev",
     "dev:wifi": "WIFI=true LOCAL_IP=$(ipconfig getifaddr en0) PORT=3000 npm run dev",
-    "generate:htaccess": "NEXT_PUBLIC_ENABLE_ANALYTICS=${NEXT_PUBLIC_ENABLE_ANALYTICS:-false} NEXT_PUBLIC_ANALYTICS_URL=${NEXT_PUBLIC_ANALYTICS_URL:-''} node ./scripts/generateHeaders.js",
+    "generate:htaccess": "node ./scripts/generateHeaders.js",
     "preserve": "npm run build",
     "serve": "serve out"
   },
@@ -15,6 +15,7 @@
     "@eth-optimism/sdk": "3.2.1",
     "@hemilabs/token-list": "1.0.2",
     "@rainbow-me/rainbowkit": "2.0.1",
+    "@sentry/nextjs": "8.35.0",
     "@tanstack/react-query": "5.24.8",
     "@tanstack/react-table": "8.20.5",
     "@tanstack/react-virtual": "3.10.8",

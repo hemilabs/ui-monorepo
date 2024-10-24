@@ -31,8 +31,8 @@ const allowedDomains = [
   'https://int02.testnet.rpc.hemi.network',
   'https://testnet.rpc.hemi.network',
   // Hemi Mainnet
-  // Mainnet
   'https://cloudflare-eth.com',
+  // Ethereum Mainnet
   'https://rpc.hemi.network',
   // Sepolia
   'https://rpc.sepolia.org',

@@ -22,7 +22,9 @@ const getDomain = function (url) {
 // the RPC urls, we would need to import from webapp/networks/* which uses the import syntax, but is transpiled
 // to commonJs per nextjs... Making this whole thing very complex. As not to lose more time with this
 // (I already tried using node with custom loaders, ts-node, tsx, etc), I'm just hardcoding the domains here.
-const allowedDomains = [
+
+// These are scripts called with fetch()
+const fetchDomains = [
   // bitcoin APIs from esplora-client
   'https://blockstream.info',
   'https://mempool.space',
@@ -42,18 +44,25 @@ const allowedDomains = [
   'wss://relay.walletconnect.org',
 ]
 
+// Domains allowed to download scripts from
+const downloadScriptsDomains = []
+
 // analytics
 const analyticsDomain = getDomain(process.env.NEXT_PUBLIC_ANALYTICS_URL)
 if (
   process.env.NEXT_PUBLIC_ENABLE_ANALYTICS === 'true' &&
   analyticsDomain !== null
 ) {
-  allowedDomains.push(`https://${analyticsDomain}`)
+  const url = `https://${analyticsDomain}`
+  fetchDomains.push(url)
+  downloadScriptsDomains.push(url)
 }
 // error-tracking
 const errorTrackingDomain = getDomain(process.env.NEXT_PUBLIC_SENTRY_DSN)
 if (errorTrackingDomain !== null) {
-  allowedDomains.push(`https://${errorTrackingDomain}`)
+  const url = `https://${errorTrackingDomain}`
+  fetchDomains.push(url)
+  downloadScriptsDomains.push(url)
 }
 
 const serveJson = {
@@ -94,9 +103,9 @@ const serveJson = {
         },
         {
           key: 'Content-Security-Policy',
-          value: `script-src 'self' 'unsafe-inline' ${allowedDomains.join(
+          value: `script-src 'self' 'unsafe-inline' ${downloadScriptsDomains.join(
             ' ',
-          )}; connect-src 'self' ${allowedDomains.join(' ')}`,
+          )}; connect-src 'self' ${fetchDomains.join(' ')}`,
         },
       ],
       source: '**/*.*',

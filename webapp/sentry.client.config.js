@@ -18,5 +18,9 @@ Sentry.init({
     }),
   ],
   release: `portal@${process.env.NEXT_PUBLIC_RELEASE_VERSION}`,
-  tracesSampleRate: 1.0,
+  tracesSampleRate:
+    process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE &&
+    !Number.isNaN(process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE)
+      ? Number(process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE)
+      : undefined,
 })

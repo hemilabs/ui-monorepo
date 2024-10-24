@@ -57,6 +57,9 @@ inputs:
   NEXT_PUBLIC_SENTRY_ENVIRONMENT:
     required: false
     description: Sentry environment
+  NEXT_PUBLIC_TRACES_SAMPLE_RATE:
+    required: false
+    description: Sentry traces sample rate
   SENTRY_AUTH_TOKEN:
     required: false
     description: Sentry auth token
@@ -87,6 +90,7 @@ runs:
         NEXT_PUBLIC_RELEASE_VERSION: ${{ inputs.NEXT_PUBLIC_RELEASE_VERSION }}
         NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.NEXT_PUBLIC_SENTRY_DSN }}
         NEXT_PUBLIC_SENTRY_ENVIRONMENT: ${{ inputs.NEXT_PUBLIC_SENTRY_ENVIRONMENT }}
+        NEXT_PUBLIC_TRACES_SAMPLE_RATE: ${{ inputs.NEXT_PUBLIC_TRACES_SAMPLE_RATE }}
         SENTRY_AUTH_TOKEN: ${{ inputs.SENTRY_AUTH_TOKEN }}
         SENTRY_ORG: ${{ inputs.SENTRY_ORG }}
         SENTRY_PROJECT: ${{ inputs.SENTRY_PROJECT }}

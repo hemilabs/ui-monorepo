@@ -82,6 +82,9 @@
         ]
       },
       {
+        "excludedFiles": [
+          "webapp/scripts/*.js"
+        ],
         "extends": [
           "bloq/next",
           "plugin:@typescript-eslint/eslint-recommended",

@@ -1,5 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  eslint: {
+    // The liner is already running in the pre-commit git hook and in the GitHub
+    // Actions checks. So we don't need to run it again here.
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     instrumentationHook: true,
   },

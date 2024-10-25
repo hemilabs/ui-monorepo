@@ -57,9 +57,7 @@ const ConnectWalletButton = function ({
       }}
     >
       {icon}
-      <span className="text-base font-medium leading-normal text-neutral-950">
-        {text}
-      </span>
+      <span className="text-base font-medium text-neutral-950">{text}</span>
       {rightIcon || (
         <div className="ml-auto">
           <Chevron.Right />
@@ -73,7 +71,7 @@ const InstallUnisat = function ({ connector }: { connector: ConnectorGroup }) {
   const t = useTranslations()
   return (
     <ExternalLink
-      className="ml-auto rounded-full bg-black px-3 py-1 text-sm font-medium leading-normal text-white"
+      className="ml-auto rounded-full bg-black px-3 py-1 text-sm font-medium text-white"
       href={
         // Unisat only supports chrome and android - no other browser nor mobile OS - See https://unisat.io/
         isAndroid

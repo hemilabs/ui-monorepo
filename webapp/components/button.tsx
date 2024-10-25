@@ -4,8 +4,8 @@ import { isRelativeUrl } from 'utils/url'
 
 import { ExternalLink } from './externalLink'
 
-const commonCss = `text-ms box-content flex items-center justify-center
-  rounded-lg border border-solid px-3 py-1.5 font-medium leading-5 disabled:opacity-40`
+const commonCss = `text-sm box-content flex items-center justify-center
+  rounded-lg border border-solid px-3 py-1.5 font-medium disabled:opacity-40`
 
 const variants = {
   primary: `border-orange-700/55 from-orange-500 to-orange-600 text-white hover:border-orange-700/70  

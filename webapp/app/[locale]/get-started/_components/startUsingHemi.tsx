@@ -41,7 +41,7 @@ const Box = function ({
   return (
     <div className="group/image flex-1 cursor-pointer" onClick={handleClick}>
       <Card>
-        <div className="text-ms flex flex-col gap-y-4 p-2 pb-4 font-medium leading-5">
+        <div className="flex flex-col gap-y-4 p-2 pb-4 text-sm font-medium">
           <Image
             alt={alt}
             className="rounded-2xl opacity-60 group-hover/image:opacity-100"

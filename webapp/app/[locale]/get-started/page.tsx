@@ -12,12 +12,10 @@ const GetStarted = function () {
 
   return (
     <>
-      <h1 className="mb-1 text-2xl font-medium leading-8 text-neutral-950">
+      <h1 className="mb-1 text-2xl font-medium text-neutral-950">
         {t('heading')}
       </h1>
-      <p className="text-ms font-medium leading-5 text-neutral-600">
-        {t('subheading')}
-      </p>
+      <p className="text-sm font-medium text-neutral-600">{t('subheading')}</p>
       <AddHemiWallet />
       <FundWallet />
       <StartUsingHemi />

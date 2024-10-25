@@ -46,9 +46,9 @@ export const Erc20TokenApproval = function ({
   const t = useTranslations('common')
   return (
     <div
-      className={`text-ms ${
+      className={`text-sm ${
         disabled ? 'cursor-not-allowed' : ''
-      } flex items-center gap-x-2 font-medium leading-5 text-neutral-950`}
+      } flex items-center gap-x-2 font-medium text-neutral-950`}
     >
       <div className="flex items-center gap-x-1">
         <span>{t('erc20-extra-approval')}</span>
@@ -58,7 +58,7 @@ export const Erc20TokenApproval = function ({
           id="erc20-approval-tooltip"
           overlay={
             <div className="p-4 font-medium">
-              <h5 className="mb-1.5 text-base leading-5 text-white">
+              <h5 className="mb-1.5 text-base text-white">
                 {t('erc20-approve-10x-deposits')}
               </h5>
               <p className="text-xs text-neutral-400">

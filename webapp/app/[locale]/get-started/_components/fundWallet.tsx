@@ -29,8 +29,8 @@ const Faucet = function ({
 
   return (
     <ExternalLink
-      className="group/link text-ms flex w-full items-center gap-x-1 rounded-xl border border-solid
-        border-neutral-300/55 p-4 font-medium leading-5 text-orange-500 hover:bg-neutral-50 hover:text-orange-700"
+      className="group/link flex w-full items-center gap-x-1 rounded-xl border border-solid border-neutral-300/55
+        p-4 text-sm font-medium text-orange-500 hover:bg-neutral-50 hover:text-orange-700"
       href={url}
       onClick={addTracking()}
     >

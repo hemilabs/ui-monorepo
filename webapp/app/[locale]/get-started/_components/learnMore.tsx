@@ -21,7 +21,7 @@ const Box = function ({ event, heading, href, subheading }: Props) {
   return (
     <div className="rounded-2xl border border-solid border-neutral-300/55 bg-white hover:bg-gray-50">
       <ExternalLink
-        className="text-ms block cursor-pointer p-4 font-medium leading-5"
+        className="block cursor-pointer p-4 text-sm font-medium"
         href={href}
         onClick={addTracking()}
       >
@@ -136,10 +136,10 @@ export const LearnMore = function () {
 
   return (
     <>
-      <h2 className="leading-6.5 text-xl font-medium text-neutral-950">
+      <h2 className="text-xl font-medium text-neutral-950">
         {t('learn-more-about-hemi')}
       </h2>
-      <p className="text-ms mb-6 font-medium leading-5 text-neutral-600 md:mb-8">
+      <p className="mb-6 text-sm font-medium text-neutral-600 md:mb-8">
         {t('subheading')}
       </p>
       <Card>
@@ -154,7 +154,7 @@ export const LearnMore = function () {
           <div className="mt-4 flex flex-col gap-y-2 px-2 md:mt-6 md:flex-row md:gap-x-6">
             <div className="mb-6">
               <h4 className="text-base text-neutral-950">{t('tutorials')}</h4>
-              <p className="text-ms leading-5 text-neutral-600">
+              <p className="text-sm text-neutral-600">
                 {t('tutorials-subheading')}
               </p>
               <div className="mt-3 hidden w-fit md:block">

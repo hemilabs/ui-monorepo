@@ -59,13 +59,15 @@ export const SwitchToNetworkToast = function ({ chainId }: Props) {
 
   return (
     <div
-      className="text-ms shadow-soft fixed bottom-20 left-4 right-4 z-10 flex justify-between gap-x-3 rounded-xl
-    border border-solid border-black/85 bg-neutral-800 p-3.5 font-medium leading-5
-    text-white md:bottom-auto md:left-auto md:right-8 md:top-20"
+      className="shadow-soft fixed bottom-20 left-4 right-4 z-10 flex justify-between
+      gap-x-3 rounded-xl border border-solid border-black/85 bg-neutral-800 p-3.5
+    text-sm font-medium text-white md:bottom-auto md:left-auto md:right-8 md:top-20"
     >
-      <WarningIcon />
+      <div className="mt-[5px]">
+        <WarningIcon />
+      </div>
       <div className="flex flex-col items-start gap-y-1.5">
-        <h5 className="text-base leading-4">{t('wrong-network')}</h5>
+        <h5 className="text-base">{t('wrong-network')}</h5>
         <p className="text-neutral-400 md:max-w-72">
           {t('network-does-not-match')}
         </p>

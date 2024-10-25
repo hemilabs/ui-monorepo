@@ -26,7 +26,7 @@ export const ConfigurationUrl = function ({
   )
 
   const overlay = (
-    <div className="text-ms flex items-center gap-x-1 px-2 font-medium leading-5 text-white">
+    <div className="flex items-center gap-x-1 px-2 text-sm font-medium text-white">
       <span>{t(`${copied ? 'copied' : 'copy'}`)}</span>
       {copied && <CheckMark className="[&>path]:stroke-emerald-500" />}
     </div>

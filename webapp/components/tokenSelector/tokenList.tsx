@@ -48,7 +48,7 @@ const List = function ({ onSelectToken, tokens }: Omit<Props, 'closeModal'>) {
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >
-              <div className="text-ms flex items-center gap-x-3 p-2 font-medium leading-5 text-neutral-950">
+              <div className="flex items-center gap-x-3 p-2 text-sm font-medium text-neutral-950">
                 <div className="h-8 w-8 flex-shrink-0 flex-grow-0">
                   <TokenLogo token={token} />
                 </div>
@@ -91,7 +91,7 @@ export const TokenList = function ({
   const content = (
     <div className="flex h-[357px] w-full flex-col gap-x-3 bg-white p-6 px-4 md:w-96 md:px-6">
       <div className="flex items-center justify-between">
-        <h3 className="leading-6.5 text-xl font-medium text-neutral-950">
+        <h3 className="text-xl font-medium text-neutral-950">
           {t('select-token')}
         </h3>
         <CloseIcon
@@ -116,7 +116,7 @@ export const TokenList = function ({
           tokens={tokensToList}
         />
       ) : (
-        <span className="text-ms text-center font-medium leading-5 text-neutral-500">
+        <span className="text-center text-sm font-medium text-neutral-500">
           {t.rich('no-results-for', {
             search: () => (
               <span className="text-neutral-950">{searchText}</span>

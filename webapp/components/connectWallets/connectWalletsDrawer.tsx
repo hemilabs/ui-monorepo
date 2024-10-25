@@ -13,7 +13,7 @@ import { CloseIcon } from 'ui-common/components/closeIcon'
 import { BtcWallet, EvmWallet } from './wallets'
 
 const P = ({ text }: { text: string }) => (
-  <p className="text-ms font-medium leading-5 text-neutral-500">{text}</p>
+  <p className="text-sm font-medium text-neutral-500">{text}</p>
 )
 
 type Props = {
@@ -47,7 +47,7 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
       <div className="pb-18 h-full bg-white px-4 pt-6 md:max-w-md md:p-6 md:px-6">
         <div className="flex h-full flex-col gap-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-medium leading-8 text-neutral-950">
+            <h2 className="text-2xl font-medium text-neutral-950">
               {t('common.connect-wallets')}
             </h2>
             <button className="cursor-pointer" onClick={closeDrawer}>

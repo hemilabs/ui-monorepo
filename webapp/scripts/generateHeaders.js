@@ -55,6 +55,11 @@ if (
   const url = `https://${analyticsDomain}`
   fetchDomains.push(url)
   downloadScriptsDomains.push(url)
+  // these are needed for analytics
+  downloadScriptsDomains.push('https://static.cloudflareinsights.com')
+  downloadScriptsDomains.push('https://challenges.cloudflare.com')
+  downloadScriptsDomains.push('https://ajax.cloudflare.com')
+  fetchDomains.push('https://cloudflareinsights.com')
 }
 // error-tracking
 const errorTrackingDomain = getDomain(process.env.NEXT_PUBLIC_SENTRY_DSN)
@@ -102,9 +107,11 @@ const serveJson = {
         },
         {
           key: 'Content-Security-Policy',
-          value: `script-src 'self' 'unsafe-inline' ${downloadScriptsDomains.join(
+          value: `default-src 'self'; script-src 'self' 'unsafe-inline' ${downloadScriptsDomains.join(
             ' ',
-          )}; connect-src 'self' ${fetchDomains.join(' ')}`,
+          )}; connect-src 'self' ${fetchDomains.join(
+            ' ',
+          )}; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests`,
         },
       ],
       source: '**/*.*',

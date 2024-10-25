@@ -149,6 +149,9 @@
       "miner": "Soy Minero"
     }
   },
+  "metadata": {
+    "title": "Portal de Hemi"
+  },
   "navbar": {
     "agree-to-terms-and-policy": "Al usar esta aplicación, usted acepta los <terms>Términos de Uso</terms> y la <policy>Política de Privacidad</policy>",
     "bitcoinkit": "Kit de Hemi Bitcoin",

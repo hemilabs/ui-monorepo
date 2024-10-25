@@ -149,6 +149,9 @@
       "miner": "I'm a Miner"
     }
   },
+  "metadata": {
+    "title": "Hemi Portal"
+  },
   "navbar": {
     "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
     "bitcoinkit": "Hemi Bitcoin Kit",

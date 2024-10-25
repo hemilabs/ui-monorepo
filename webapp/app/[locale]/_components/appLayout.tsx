@@ -21,8 +21,8 @@ const TestnetIndicator = function () {
 
   return (
     <span
-      className="text-ms absolute left-1/2 z-10 -translate-x-1/2 rounded-b
-    bg-orange-500 px-2 font-medium leading-5 text-white"
+      className="absolute left-1/2 z-10 -translate-x-1/2 rounded-b bg-orange-500
+    px-2 text-sm font-medium text-white"
     >
       Testnet
     </span>

@@ -39,8 +39,8 @@ export const TokenSelector = function ({
   return (
     <>
       <button
-        className="text-ms shadow-soft group/token-selector flex items-center gap-x-2 rounded-lg
-        border border-solid border-neutral-300/55 bg-white p-2 font-medium hover:bg-neutral-100"
+        className="shadow-soft group/token-selector flex items-center gap-x-2 rounded-lg border
+        border-solid border-neutral-300/55 bg-white p-2 text-sm font-medium hover:bg-neutral-100"
         disabled={disabled || tokens.length < 2}
         onClick={openModal}
         type="button"

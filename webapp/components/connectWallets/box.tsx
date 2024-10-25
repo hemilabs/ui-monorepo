@@ -20,7 +20,7 @@ export const Box = function ({
 
   return (
     <div className="flex flex-col gap-y-2">
-      <div className="text-ms flex items-center justify-between leading-5 text-neutral-500">
+      <div className="flex items-center justify-between text-sm text-neutral-500">
         <span>{walletType}</span>
         <span>
           {t.rich('connected-with-wallet', {

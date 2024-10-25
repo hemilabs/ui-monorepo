@@ -100,8 +100,8 @@ export const AddChainAutomatically = function ({ chain, layer }: Props) {
 
   return (
     <div
-      className={`border-neutral/55 text-ms flex flex-col rounded-xl border
-      border-solid p-4 font-medium leading-5 ${
+      className={`border-neutral/55 flex flex-col rounded-xl border border-solid
+      p-4 text-sm font-medium ${
         isConnected && (isChainAdded || connectedToChain)
           ? ''
           : 'cursor-pointer hover:bg-gray-50'

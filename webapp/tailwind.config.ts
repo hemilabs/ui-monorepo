@@ -72,13 +72,112 @@ const config: Config = {
         inter: '--font-inter',
       },
       fontSize: {
-        '3.25xl': '2rem',
-        'ms': '0.8125rem',
+        // Prefer ordering by font size instead of keys
+        /* eslint-disable sort-keys */
+        'xs': [
+          '0.75rem', // 12px,
+          {
+            letterSpacing: '-0.24px',
+            lineHeight: '16px',
+          },
+        ],
+        'sm': [
+          '0.8125rem', // 13px
+          {
+            letterSpacing: '-0.28px',
+            lineHeight: '20px',
+          },
+        ],
+        'base': [
+          '1rem', // 16px
+          {
+            letterSpacing: '-0.32px',
+            lineHeight: '24px',
+          },
+        ],
+        'lg': [
+          '1.125rem', // 18px
+          {
+            letterSpacing: '-0.36px',
+            lineHeight: '24px',
+          },
+        ],
+        'xl': [
+          '1.25rem', // 20px
+          {
+            letterSpacing: '-0.4px',
+            lineHeight: '26px',
+          },
+        ],
+        '2xl': [
+          '1.5rem', // 24px
+          {
+            letterSpacing: '-0.48px',
+            lineHeight: '32px',
+          },
+        ],
+        '3xl': [
+          '1.875rem', // 30px
+          {
+            letterSpacing: '-0.6px',
+            lineHeight: '40px',
+          },
+        ],
+        '3.25xl': [
+          '2rem', // 32px
+          {
+            letterSpacing: '-0.64px',
+            lineHeight: '40px',
+          },
+        ],
+        '4xl': [
+          '2.25rem', // 40px
+          {
+            letterSpacing: '-0.72px',
+            lineHeight: '44px',
+          },
+        ],
+        '5xl': [
+          '3rem', // 48px
+          {
+            letterSpacing: '-0.96px',
+            lineHeight: '56px',
+          },
+        ],
+        '6xl': [
+          '3.75rem', // 60px
+          {
+            letterSpacing: '-1.2px',
+            lineHeight: '60px',
+          },
+        ],
+        '7xl': [
+          '4.5rem', // 72px
+          {
+            letterSpacing: '-1.44px',
+            lineHeight: '72px',
+          },
+        ],
+        '8xl': [
+          '6rem', // 96px
+          {
+            letterSpacing: '-1.92px',
+            lineHeight: '96px',
+          },
+        ],
+        '9xl': [
+          '8rem', // 128px
+          {
+            letterSpacing: '-2.56px',
+            lineHeight: '128px',
+          },
+        ],
+        /* eslint-enable sort-keys */
       },
       height: {
         '97vh': '97vh',
         '98vh': '98vh',
-        // 96px from header (height + padding), 40px from container's padding top in > md screns
+        // 96px from header (height + padding), 40px from container's padding top in > md screens
         'fit-rest-screen': 'calc(100dvh - 96px) md:calc(100dvh - 96px - 40px)',
         // 67px from header, 24px from container margin's top, and 28px twice from body y-padding
         'fit-rest-screen-desktop': 'calc(100vh - 67px - 24px - 28px - 28px)',

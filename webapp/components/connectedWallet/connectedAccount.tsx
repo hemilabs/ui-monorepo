@@ -58,7 +58,7 @@ const ConnectedChain = function ({
     >
       <div className="flex cursor-pointer items-center justify-between gap-x-1 rounded-md">
         {icon}
-        <span className="text-ms mr-2 font-medium leading-5 text-neutral-950">
+        <span className="mr-2 text-sm font-medium text-neutral-950">
           {name}
         </span>
         {menu !== undefined &&
@@ -107,14 +107,14 @@ const ConnectedWallet = function ({
   return (
     <div
       className="group/connected-wallet relative flex h-8 cursor-pointer items-center rounded-lg
-        p-2 text-sm font-medium leading-normal text-neutral-950 hover:bg-neutral-100"
+        p-2 text-sm font-medium text-neutral-950 hover:bg-neutral-100"
       ref={ref}
     >
       <div
         className="flex cursor-pointer items-center justify-between gap-x-1 rounded-md"
         onClick={() => setMenuOpen(prev => !prev)}
       >
-        <span className="text-ms">{formattedAddress}</span>
+        <span className="text-sm">{formattedAddress}</span>
         {menuOpen ? (
           <Chevron.Up className={chevronCss} />
         ) : (
@@ -132,7 +132,7 @@ const ConnectedWallet = function ({
                     onClick={copyAddress}
                   >
                     <CopyLogo className="[&>path]:group-hover/menu-item:fill-neutral-950" />
-                    <span className="text-ms w-max">{t('copy-address')}</span>
+                    <span className="w-max text-sm">{t('copy-address')}</span>
                   </button>
                 ),
                 id: 'copy',
@@ -144,7 +144,7 @@ const ConnectedWallet = function ({
                     onClick={disconnect}
                   >
                     <DisconnectLogo className="[&>g>path]:group-hover/menu-item:fill-neutral-950" />
-                    <span className="text-ms">{t('disconnect')}</span>
+                    <span className="text-sm">{t('disconnect')}</span>
                   </button>
                 ),
                 id: 'disconnect',

@@ -68,7 +68,7 @@ export const Amount = function ({ operation }: Props) {
         <Tooltip
           id="amount-tooltip"
           overlay={
-            <div className="text-ms flex items-center gap-x-1 px-2 font-medium leading-5 text-white">
+            <div className="flex items-center gap-x-1 px-2 text-sm font-medium text-white">
               <div className="h-4 w-4">
                 <Logo token={token} />
               </div>

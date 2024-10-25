@@ -17,8 +17,8 @@ export const WrongNetwork = function ({
   const t = useTranslations('common')
   return (
     <button
-      className="text-ms group/wrong-network flex items-center gap-x-2 bg-transparent py-2 font-medium
-        leading-5 text-rose-600 duration-150 hover:scale-105 hover:text-rose-700"
+      className="group/wrong-network flex items-center gap-x-2 bg-transparent py-2 text-sm font-medium
+        text-rose-600 duration-150 hover:scale-105 hover:text-rose-700"
       onClick={onClick}
     >
       <span>{t('wrong-type-network', { type })}</span>

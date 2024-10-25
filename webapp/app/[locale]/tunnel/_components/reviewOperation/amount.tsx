@@ -13,7 +13,7 @@ type Props = {
 export const Amount = function ({ token, value }: Props) {
   const t = useTranslations('common')
   return (
-    <div className="text-ms flex items-center justify-between font-medium leading-5">
+    <div className="flex items-center justify-between text-sm font-medium">
       <span className="text-neutral-500">{t('total-amount')}</span>
       <span className="text-neutral-950">
         {`${getFormattedValue(

@@ -46,14 +46,14 @@ export const TokenInput = function ({
   return (
     <div
       className="h-[120px] rounded-lg border border-solid border-transparent bg-neutral-50
-      p-4 font-medium leading-5 text-neutral-500 hover:border-neutral-300/55"
+      p-4 font-medium text-neutral-500 hover:border-neutral-300/55"
     >
       <div className="flex h-full items-center justify-between">
         <div className="flex flex-shrink flex-grow flex-col items-start">
-          <span className="text-ms">{label}</span>
+          <span className="text-sm">{label}</span>
           <input
             className={`
-            text-3.25xl max-w-1/2 w-full bg-transparent leading-10 ${
+            text-3.25xl max-w-1/2 w-full bg-transparent ${
               Big(value).gt(0) ? 'text-neutral-950' : 'text-neutral-600'
             }
             outline-none focus:text-neutral-950`}
@@ -63,7 +63,7 @@ export const TokenInput = function ({
             value={value}
           />
         </div>
-        <div className="text-ms flex h-full flex-col items-end justify-end gap-y-3">
+        <div className="flex h-full flex-col items-end justify-end gap-y-3 text-sm">
           {readOnly ? (
             <div className="flex items-center justify-between gap-x-2">
               <div className="h-5 w-5">
@@ -83,7 +83,7 @@ export const TokenInput = function ({
               )}
             />
           )}
-          <div className="text-ms flex items-center justify-end gap-x-2">
+          <div className="flex items-center justify-end gap-x-2 text-sm">
             <span className="text-neutral-500">{t('form.balance')}:</span>
             <span className="text-neutral-950">
               <Balance token={token} />

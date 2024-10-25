@@ -32,7 +32,7 @@ export const ActionableOperations = function () {
 
   return (
     <span
-      className={`text-ms flex ${extraStyles} h-4 items-center justify-center rounded-full bg-orange-500 text-center font-medium leading-3 text-white`}
+      className={`flex text-sm ${extraStyles} h-4 items-center justify-center rounded-full bg-orange-500 text-center font-medium leading-3 text-white`}
     >
       {actionableOperations}
     </span>

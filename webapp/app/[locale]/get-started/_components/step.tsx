@@ -16,9 +16,7 @@ export const Step = ({ description, position }: Props) => (
           {position}
         </span>
       </div>
-      <h4 className="text-ms font-medium leading-5 text-orange-500">
-        {description}
-      </h4>
+      <h4 className="text-sm font-medium text-orange-500">{description}</h4>
     </div>
   </div>
 )

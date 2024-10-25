@@ -12,7 +12,7 @@ const Wallet = function ({
   const t = useTranslations('connect-wallets.status')
 
   return (
-    <div className="text-ms flex items-center gap-x-1 font-medium leading-5">
+    <div className="flex items-center gap-x-1 text-sm font-medium">
       <span className="text-neutral-600">{`${title}:`}</span>
       <span
         className={

@@ -13,7 +13,7 @@ const Container = ({ children }: { children: ReactNode }) => (
 )
 
 const Label = ({ text }: { text: string }) => (
-  <span className="text-ms font-medium leading-5 text-neutral-500">{text}</span>
+  <span className="text-sm font-medium text-neutral-500">{text}</span>
 )
 
 const Network = ({ children }: { children: string }) => (
@@ -60,7 +60,7 @@ export const NetworkSelector = function ({
   }
 
   const commonCss = `flex items-center border border-solid border-neutral-300/55 shadow-soft
-    text-ms font-medium leading-5 text-neutral-950 rounded-lg bg-white p-2 gap-x-2`
+    text-sm font-medium text-neutral-950 rounded-lg bg-white p-2 gap-x-2`
 
   if (readonly || networks.length === 1) {
     return (

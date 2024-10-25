@@ -258,7 +258,7 @@ export const Step = function ({
 }: Props & { status: ProgressStatus }) {
   const StatusStep = statusMap[status]
   return (
-    <div className="text-ms relative flex flex-col gap-y-1 font-medium leading-5">
+    <div className="relative flex flex-col gap-y-1 text-sm font-medium">
       <div className="flex items-start gap-x-3 py-3">
         <StatusStep {...props} />
       </div>

@@ -16,7 +16,7 @@ export const EvmSummary = function ({
 }) {
   const t = useTranslations()
   return (
-    <div className="text-ms flex flex-col gap-y-1 px-8 py-4 md:px-10">
+    <div className="flex flex-col gap-y-1 px-8 py-4 text-sm md:px-10">
       <div className="flex items-center justify-between">
         <span className="text-neutral-500">{gas.label}</span>
         <span className="text-neutral-950">{`${getFormattedValue(gas.amount)} ${

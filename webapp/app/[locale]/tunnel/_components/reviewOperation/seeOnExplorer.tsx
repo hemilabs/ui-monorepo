@@ -18,7 +18,7 @@ export const SeeOnExplorer = function ({ chainId, txHash }: Props) {
 
   return (
     <ExternalLink
-      className="text-ms group/see-on-explorer flex items-center gap-x-1 font-medium leading-5 text-orange-500"
+      className="group/see-on-explorer flex items-center gap-x-1 text-sm font-medium text-orange-500"
       href={`${blockExplorer.url}/tx/${txHash}`}
     >
       <span className="group-hover/see-on-explorer:text-orange-700">

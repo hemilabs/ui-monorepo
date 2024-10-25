@@ -52,7 +52,7 @@ export const FormContent = function ({
     <>
       {showToast && <SwitchToNetworkToast chainId={fromNetworkId} />}
       <div className="flex items-center justify-between gap-x-2">
-        <h3 className="leading-6.5 text-xl font-medium capitalize text-neutral-950">
+        <h3 className="text-xl font-medium capitalize text-neutral-950">
           {t('title')}
         </h3>
         {tokenApproval}

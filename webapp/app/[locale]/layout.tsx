@@ -7,9 +7,10 @@ import { TunnelHistoryProvider } from 'app/context/tunnelHistoryContext'
 import { locales, type Locale } from 'app/i18n'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { WalletsContext } from 'context/walletsContext'
+import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
-import { Suspense } from 'react'
+import { PropsWithChildren, Suspense } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { inter } from '../fonts'
@@ -17,6 +18,10 @@ import { inter } from '../fonts'
 import { Analytics } from './_components/analytics'
 import { AppLayout } from './_components/appLayout'
 import { Navbar } from './_components/navbar'
+
+type PageProps = {
+  params: { locale: Locale }
+}
 
 async function getMessages(locale: Locale) {
   try {
@@ -27,16 +32,23 @@ async function getMessages(locale: Locale) {
   return undefined
 }
 
+export async function generateMetadata({
+  params: { locale },
+}: PageProps): Promise<Metadata> {
+  const { metadata } = await getMessages(locale)
+
+  return {
+    title: metadata.title,
+  }
+}
+
 export const generateStaticParams = async () =>
   locales.map(locale => ({ locale }))
 
 export default async function RootLayout({
   children,
   params: { locale },
-}: {
-  children: React.ReactNode
-  params: { locale: Locale }
-}) {
+}: PropsWithChildren<PageProps>) {
   const messages = await getMessages(locale)
 
   return (

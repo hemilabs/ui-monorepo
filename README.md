@@ -8,6 +8,10 @@ This repository contains the various apps and websites related to the Hemi Netwo
 
 [portal](./webapp) The portal app living in `https://app.hemi.xyz`.
 
+[sliding-block-window](./sliding-block-window) A tiny package to walkthrough a range of blocks and run async functions for each.
+
+[wagmi-erc20-hooks](./wagmi-erc20-hooks) A set of hooks to interact with ERC20 contracts using wagmi.
+
 ## Deployment
 
 Deploys to staging are triggered when merging changes to the `main` branch.

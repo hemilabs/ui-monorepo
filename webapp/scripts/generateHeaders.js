@@ -43,6 +43,9 @@ const fetchDomains = [
   'wss://relay.walletconnect.org',
 ]
 
+// these are domains where we download images from
+const imageSrcUrls = ['https://raw.githubusercontent.com']
+
 // Domains allowed to download scripts from
 const downloadScriptsDomains = []
 
@@ -109,7 +112,9 @@ const serveJson = {
           key: 'Content-Security-Policy',
           value: `default-src 'self'; script-src 'self' 'unsafe-inline' ${downloadScriptsDomains.join(
             ' ',
-          )}; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self' ${fetchDomains.join(
+          )}; style-src 'self' 'unsafe-inline'; img-src 'self' ${imageSrcUrls.join(
+            ' ',
+          )} blob: data:; connect-src 'self' ${fetchDomains.join(
             ' ',
           )}; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests`,
         },

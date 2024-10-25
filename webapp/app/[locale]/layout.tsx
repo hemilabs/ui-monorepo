@@ -26,6 +26,7 @@ type PageProps = {
 async function getMessages(locale: Locale) {
   try {
     return (await import(`../../messages/${locale}.json`)).default
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     notFound()
   }

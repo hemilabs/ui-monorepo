@@ -10,6 +10,7 @@ import { useTunnelState } from '../_hooks/useTunnelState'
 import { NetworkSelectors } from './networkSelectors'
 import { TokenInput } from './tokenInput'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TransactionStatus = dynamic(
   () =>
     import('components/transactionStatus').then(mod => mod.TransactionStatus),

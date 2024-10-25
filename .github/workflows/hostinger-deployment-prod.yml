@@ -45,7 +45,7 @@ jobs:
           HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
           # next env variables to build the portal
           NEXT_PUBLIC_ANALYTICS_URL: ${{ vars.NEXT_PUBLIC_ANALYTICS_URL }}
-          NEXT_PUBLIC_ANALYTICS_WEBSITE_ID: ${{ secrets.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID }}
+          NEXT_PUBLIC_ANALYTICS_WEBSITE_ID: ${{ secrets.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID_PROD }}
           NEXT_PUBLIC_CLAIM_TOKENS_URL: https://tf27a29m9d.execute-api.eu-central-1.amazonaws.com/prod
           NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET: ${{ vars.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET_PROD }}
           NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA: ${{ vars.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA_PROD }}
@@ -55,10 +55,10 @@ jobs:
           NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: false
           NEXT_PUBLIC_RECAPTCHA_SITE_KEY: ${{ secrets.NEXT_PUBLIC_RECAPTCHA_SITE_KEY_PROD }}
           NEXT_PUBLIC_RELEASE_VERSION: ${{ github.event.release.name }}
-          NEXT_PUBLIC_SENTRY_DSN: ${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
+          NEXT_PUBLIC_SENTRY_DSN: ${{ vars.NEXT_PUBLIC_SENTRY_DSN_PROD }}
           NEXT_PUBLIC_SENTRY_ENVIRONMENT: production
           NEXT_PUBLIC_TRACES_SAMPLE_RATE: 1.0
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_PROD }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
       - name: Create Sentry release

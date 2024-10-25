@@ -6,11 +6,7 @@
       "files": ["claim-tokens/**/*.js"]
     },
     {
-      "excludedFiles": [
-        "webapp/scripts/*.js",
-        "webapp/next.config.js",
-        "webapp/postcss.config.js"
-      ],
+      "excludedFiles": ["webapp/scripts/*.js", "webapp/*.config.js"],
       "extends": [
         "bloq/next",
         "next/core-web-vitals",
@@ -19,7 +15,6 @@
       ],
       "files": [
         "btc-wallet/**/*.{js,ts,tsx}",
-        "hemi-socials/**/*.{js,ts,tsx}",
         "sliding-block-window/**/*.{js,ts}",
         "ui-common/**/*.{js,ts,tsx}",
         "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
@@ -43,11 +38,7 @@
     },
     {
       "extends": ["bloq/node", "prettier"],
-      "files": [
-        "webapp/scripts/*.js",
-        "webapp/next.config.js",
-        "webapp/postcss.config.js"
-      ]
+      "files": ["webapp/scripts/*.js", "webapp/*.config.js"]
     },
     {
       "extends": ["bloq/typescript", "prettier"],
@@ -82,7 +73,6 @@
           }
         ],
         "markdownlint/md010": "warn",
-        "markdownlint/md013": "off",
         "markdownlint/md014": "warn",
         "markdownlint/md024": [
           "warn",
@@ -98,7 +88,6 @@
             "allowed_elements": ["img"]
           }
         ],
-        "markdownlint/md034": "warn",
         "markdownlint/md040": "warn",
         "markdownlint/md041": "warn",
         "markdownlint/md045": "warn"

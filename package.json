@@ -4,7 +4,7 @@
   "scripts": {
     "format:check": "prettier --check .",
     "postinstall": "patch-package",
-    "lint": "eslint --cache ."
+    "lint": "eslint --cache --quiet ."
   },
   "devDependencies": {
     "@commitlint/cli": "18.6.0",

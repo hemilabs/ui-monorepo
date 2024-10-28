@@ -144,8 +144,7 @@ export const useDeposit = function ({
     queryKey: depositQueryKey,
     status: depositTxStatus,
   } = useWaitForTransactionReceipt({
-    // @ts-expect-error string is `0x${string}`
-    hash: currentTxHash,
+    hash: depositingNative ? depositNativeTokenTxHash : depositErc20TokenTxHash,
   })
 
   useReloadBalances({

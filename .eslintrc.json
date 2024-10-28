@@ -2,10 +2,6 @@
   "extends": ["bloq", "prettier"],
   "overrides": [
     {
-      "extends": ["bloq/node", "prettier"],
-      "files": ["claim-tokens/**/*.js"]
-    },
-    {
       "excludedFiles": ["webapp/scripts/*.js", "webapp/*.config.js"],
       "extends": [
         "bloq/next",
@@ -39,13 +35,6 @@
     {
       "extends": ["bloq/node", "prettier"],
       "files": ["webapp/scripts/*.js", "webapp/*.config.js"]
-    },
-    {
-      "extends": ["bloq/typescript", "prettier"],
-      "files": ["migrations-pg/**/*.{js,ts}"],
-      "rules": {
-        "no-console": "off"
-      }
     },
     {
       "extends": ["bloq/typescript", "prettier"],

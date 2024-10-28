@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "baseUrl": "./",
-    "module": "commonjs"
-  },
-  "extends": "../tsconfig.base.json",
-  "exclude": ["node_modules"],
-  "include": ["**/*.ts"]
-}

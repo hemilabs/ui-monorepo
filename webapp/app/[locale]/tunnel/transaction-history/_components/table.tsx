@@ -6,15 +6,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { useHemi } from 'hooks/useHemi'
-import { useNetworks } from 'hooks/useNetworks'
 import { useTranslations } from 'next-intl'
 import { ComponentProps, MutableRefObject, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { TunnelOperation } from 'types/tunnel'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { isDeposit, isWithdraw } from 'utils/tunnel'
-import { Chain } from 'viem'
 
 import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
 
@@ -128,8 +125,6 @@ const Body = function ({
 
 const columnsBuilder = (
   t: ReturnType<typeof useTranslations<'tunnel-page.transaction-history'>>,
-  l1ChainId: Chain['id'],
-  l2Chain: Chain,
 ): ColumnDef<TunnelOperation>[] => [
   {
     cell: ({ row }) => <TxTime timestamp={row.original.timestamp} />,
@@ -156,10 +151,9 @@ const columnsBuilder = (
     cell: ({ row }) => (
       <ChainComponent
         chainId={
-          // See https://github.com/hemilabs/ui-monorepo/issues/376
           isWithdraw(row.original)
-            ? row.original.l2ChainId ?? l2Chain.id
-            : row.original.l1ChainId ?? l1ChainId
+            ? row.original.l2ChainId
+            : row.original.l1ChainId
         }
       />
     ),
@@ -170,10 +164,9 @@ const columnsBuilder = (
     cell: ({ row }) => (
       <ChainComponent
         chainId={
-          // See https://github.com/hemilabs/ui-monorepo/issues/376
           isDeposit(row.original)
-            ? row.original.l2ChainId ?? l2Chain.id
-            : row.original.l1ChainId ?? l1ChainId
+            ? row.original.l2ChainId
+            : row.original.l1ChainId
         }
       />
     ),
@@ -184,10 +177,9 @@ const columnsBuilder = (
     accessorKey: 'transactionHash',
     cell({ row }) {
       const { transactionHash } = row.original
-      // See https://github.com/hemilabs/ui-monorepo/issues/376
       const chainId = isWithdraw(row.original)
-        ? row.original.l2ChainId ?? l2Chain.id
-        : row.original.l1ChainId ?? l1ChainId
+        ? row.original.l2ChainId
+        : row.original.l1ChainId
       return <TxLink chainId={chainId} txHash={transactionHash} />
     },
     header: () => <Header text={t('column-headers.tx-hash')} />,
@@ -226,17 +218,12 @@ type TableProps = {
 }
 
 export const Table = function ({ containerRef, data, loading }: TableProps) {
-  const hemi = useHemi()
-  const { evmRemoteNetworks } = useNetworks()
   const t = useTranslations('tunnel-page.transaction-history')
   const { width } = useWindowSize()
 
-  // See https://github.com/hemilabs/ui-monorepo/issues/158
-  const l1ChainId = evmRemoteNetworks[0].id
-
   const columns = useMemo(
     () =>
-      columnsBuilder(t, l1ChainId, hemi).map(c =>
+      columnsBuilder(t).map(c =>
         data.length === 0 && loading
           ? {
               ...c,
@@ -244,7 +231,7 @@ export const Table = function ({ containerRef, data, loading }: TableProps) {
             }
           : c,
       ),
-    [data.length, hemi, loading, t, l1ChainId],
+    [data.length, loading, t],
   )
 
   const table = useReactTable({

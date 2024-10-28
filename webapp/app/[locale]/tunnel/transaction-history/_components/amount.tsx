@@ -3,8 +3,6 @@ import { ChainLogo } from 'components/chainLogo'
 import { InfoIcon } from 'components/icons/infoIcon'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
-import { useHemi } from 'hooks/useHemi'
-import { useNetworks } from 'hooks/useNetworks'
 import smartRound from 'smart-round'
 import { Token } from 'types/token'
 import { TunnelOperation } from 'types/tunnel'
@@ -40,14 +38,11 @@ const formatAmount = function (amount: string, decimals: Token['decimals']) {
 
 export const Amount = function ({ operation }: Props) {
   const { amount, l1Token, l2Token } = operation
-  const hemi = useHemi()
-  const { evmRemoteNetworks } = useNetworks()
 
   const tokenAddress = (isDeposit(operation) ? l1Token : l2Token) as Address
   const chainId = isDeposit(operation)
-    ? // See https://github.com/hemilabs/ui-monorepo/issues/376
-      operation.l1ChainId ?? evmRemoteNetworks[0].id
-    : operation.l2ChainId ?? hemi.id
+    ? operation.l1ChainId
+    : operation.l2ChainId
   const token =
     getTokenByAddress(tokenAddress, chainId) ??
     getL2TokenByBridgedAddress(tokenAddress, chainId) ??

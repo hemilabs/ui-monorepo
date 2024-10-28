@@ -1,4 +1,3 @@
-import { hemiTestnet } from 'networks/hemiTestnet'
 import {
   type DepositTunnelOperation,
   type WithdrawTunnelOperation,
@@ -57,26 +56,24 @@ export const historyReducer = function (
           ...state,
           deposits: payload.deposits.map(chainDeposits => ({
             ...chainDeposits,
-            // See https://github.com/hemilabs/ui-monorepo/issues/376
             content: chainDeposits.content.map(
               deposit =>
                 ({
                   ...deposit,
                   l1ChainId: deposit.l1ChainId,
-                  l2ChainId: deposit.l2ChainId ?? hemiTestnet.id,
+                  l2ChainId: deposit.l2ChainId,
                 }) as DepositTunnelOperation,
             ),
             status: 'ready',
           })),
           withdrawals: payload.withdrawals.map(chainWithdrawals => ({
             ...chainWithdrawals,
-            // See https://github.com/hemilabs/ui-monorepo/issues/376
             content: chainWithdrawals.content.map(
               withdrawal =>
                 ({
                   ...withdrawal,
                   l1ChainId: withdrawal.l1ChainId,
-                  l2ChainId: withdrawal.l2ChainId ?? hemiTestnet.id,
+                  l2ChainId: withdrawal.l2ChainId,
                 }) as WithdrawTunnelOperation,
             ),
             status: 'ready',

@@ -50,4 +50,4 @@ jobs:
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
         with:
           environment: production
-          version: ${{ github.event.release.name }}
+          version: ${{ format('{0}@{1}', vars.SENTRY_PROJECT, github.event.release.name) }}

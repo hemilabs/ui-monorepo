@@ -1,5 +1,6 @@
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
+import { mainnet } from 'networks/mainnet'
 import { sepolia } from 'networks/sepolia'
 
 // Approximately 1/2 day
@@ -11,6 +12,10 @@ export const chainConfiguration = {
   },
   [hemiTestnet.id]: {
     blockWindowSize: opBasedEvmBlockWindowSize,
+  },
+  [mainnet.id]: {
+    blockWindowSize: 800, // Eth RPC only allows up to 800 blocks per request
+    minBlockToSync: 20_711_548, // Eth block of hemi mainnet birth
   },
   [sepolia.id]: {
     blockWindowSize: opBasedEvmBlockWindowSize,

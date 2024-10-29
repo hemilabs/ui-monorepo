@@ -1,5 +1,6 @@
 import { featureFlags } from 'app/featureFlags'
 import { useAccounts } from 'hooks/useAccounts'
+import { walletIsConnected } from 'utils/wallet'
 
 import { ConnectedBtcChain, ConnectedEvmChain } from './connectedAccount'
 
@@ -10,11 +11,9 @@ export const ConnectedChains = function () {
 
   return (
     <div className="flex items-center gap-x-3">
-      {['connected', 'reconnecting'].includes(evmWalletStatus) && (
-        <ConnectedEvmChain />
-      )}
+      {walletIsConnected(evmWalletStatus) && <ConnectedEvmChain />}
       {allConnected && featureFlags.btcTunnelEnabled && <Separator />}
-      {btcWalletStatus === 'connected' && featureFlags.btcTunnelEnabled && (
+      {featureFlags.btcTunnelEnabled && walletIsConnected(btcWalletStatus) && (
         <ConnectedBtcChain />
       )}
     </div>

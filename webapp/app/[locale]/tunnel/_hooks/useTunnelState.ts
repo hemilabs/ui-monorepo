@@ -4,9 +4,11 @@ import { BtcTransaction } from 'btc-wallet/unisat'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
-import { useCallback, useReducer } from 'react'
+import { useNetworkType } from 'hooks/useNetworkType'
+import { useCallback, useEffect, useMemo, useReducer } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
+import { findChainById } from 'utils/chain'
 import { getNativeToken, getTokenByAddress } from 'utils/token'
 import { type NoPayload, type Payload } from 'utils/typeUtilities'
 import { type Chain, type Hash, isHash } from 'viem'
@@ -43,6 +45,8 @@ type UpdateFromInput = Action<'updateFromInput'> & Payload<string>
 type UpdateToNetwork = Action<'updateToNetwork'> &
   Payload<TunnelState['toNetworkId']>
 type ToggleInput = Action<'toggleInput'> & NoPayload
+type ToggleTestnetMainnet = Action<'toggleTestnetMainnet'> &
+  Payload<Pick<TunnelState, 'fromNetworkId' | 'toNetworkId'>>
 
 type Actions =
   | ResetStateAfterOperation
@@ -52,6 +56,7 @@ type Actions =
   | UpdateFromToken
   | UpdateToNetwork
   | ToggleInput
+  | ToggleTestnetMainnet
 
 // the _:never is used to fail compilation if a case is missing
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -131,6 +136,14 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
 
       return newState
     }
+    case 'toggleTestnetMainnet': {
+      return {
+        ...state,
+        ...action.payload,
+        fromToken: getNativeToken(action.payload.fromNetworkId),
+        toToken: getNativeToken(action.payload.toNetworkId),
+      }
+    }
     default:
       // if a switch statement is missing on all possible actions
       // this will fail on compile time
@@ -193,24 +206,34 @@ const getDefaultNetworksOrder = function ({
   return evmFromL1ToL2
 }
 
-export const useTunnelState = function (): TunnelState & {
-  // will throw compile error if a proper function event is missing!
-  [K in Actions['type']]: (
+// This will throw compile error if a proper function event is missing!
+// But toggleTestnetMainnet is internal for a useEffect, no need to expose it
+type TunnelFunctionEvents = {
+  [K in Exclude<Actions['type'], 'toggleTestnetMainnet'>]: (
     payload?: Extract<Actions, { type: K }>['payload'],
   ) => void
-} {
+}
+
+export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   const bitcoin = useBitcoin()
   const hemi = useHemi()
   const { evmRemoteNetworks, networks } = useNetworks()
+  const [networkType] = useNetworkType()
   const tunnelOperation = useTunnelOperation()
 
-  const initial = getDefaultNetworksOrder({
-    bitcoin,
-    hemi,
-    // See https://github.com/hemilabs/ui-monorepo/issues/158
-    l1ChainId: evmRemoteNetworks[0].id,
-    tunnelOperation,
-  })
+  // See https://github.com/hemilabs/ui-monorepo/issues/158
+  const l1ChainId = evmRemoteNetworks[0].id
+
+  const initial = useMemo(
+    () =>
+      getDefaultNetworksOrder({
+        bitcoin,
+        hemi,
+        l1ChainId,
+        tunnelOperation,
+      }),
+    [bitcoin, hemi, l1ChainId, tunnelOperation],
+  )
 
   const [state, dispatch] = useReducer(reducer, {
     fromInput: '0',
@@ -235,6 +258,23 @@ export const useTunnelState = function (): TunnelState & {
   )
 
   const { operation } = tunnelOperation
+
+  const isTestnet = findChainById(state.fromNetworkId)?.testnet ?? false
+
+  useEffect(
+    function () {
+      if ((networkType === 'testnet') !== isTestnet) {
+        dispatch({
+          payload: {
+            fromNetworkId: initial.fromNetworkId,
+            toNetworkId: initial.toNetworkId,
+          },
+          type: 'toggleTestnetMainnet',
+        })
+      }
+    },
+    [dispatch, initial, isTestnet, networkType],
+  )
 
   return {
     ...state,

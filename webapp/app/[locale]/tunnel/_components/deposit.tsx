@@ -17,9 +17,10 @@ import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
 import { type EvmToken } from 'types/token'
 import { BtcDepositStatus } from 'types/tunnel'
-import { isEvmNetwork } from 'utils/chain'
+import { findChainById, isEvmNetwork } from 'utils/chain'
 import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
+import { walletIsConnected } from 'utils/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
@@ -320,8 +321,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
     updateFromInput,
   } = state
 
-  const { chain, isConnected } = useEvmAccount()
-
+  const { chain, status } = useEvmAccount()
   const operatesNativeToken = isNativeToken(fromToken)
 
   const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
@@ -521,7 +521,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
       }
       onSubmit={handleDeposit}
       submitButton={
-        isConnected ? (
+        walletIsConnected(status) ? (
           <SubmitEvmDeposit
             canDeposit={canDeposit}
             isRunningOperation={isRunningOperation}
@@ -542,7 +542,7 @@ export const Deposit = function ({
   state: ReturnType<typeof useTunnelState>
 }) {
   const { fromNetworkId } = state
-  const chain = useChain(fromNetworkId)
+  const chain = findChainById(fromNetworkId)
 
   // Typescript can't infer it, but we can cast these safely
   if (isEvmNetwork(chain)) {

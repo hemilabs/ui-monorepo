@@ -1,5 +1,6 @@
 import { CheckMark } from 'components/icons/checkMark'
 import { Menu } from 'components/menu'
+import { useNetworks } from 'hooks/useNetworks'
 import { useLayoutEffect, useRef, useState } from 'react'
 import { useAccount, useSwitchChain as useSwitchEvmChain } from 'wagmi'
 
@@ -11,7 +12,8 @@ export const EvmChainsMenu = function ({
   onSwitchChain: () => void
 }) {
   const { chainId } = useAccount()
-  const { chains, switchChain } = useSwitchEvmChain()
+  const { evmNetworks } = useNetworks()
+  const { switchChain } = useSwitchEvmChain()
 
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState({ bottom: 0 })
@@ -29,7 +31,7 @@ export const EvmChainsMenu = function ({
           // Container is using h-8, which is 32px. And each chain is 32px.
           // If we overflow the bottom container (only scenario possible, due to location of the component)
           // we want to move "up" the size of the menu (which is N chains * 32px) + the size of the button that opens the menu (32px)
-          newPosition.bottom = 32 + chains.length * 32
+          newPosition.bottom = 32 + evmNetworks.length * 32
         }
 
         setPosition(newPosition)
@@ -40,7 +42,7 @@ export const EvmChainsMenu = function ({
 
       return () => window.removeEventListener('resize', adjustPosition)
     },
-    [chains.length, menuContainerRef, setPosition],
+    [evmNetworks.length, menuContainerRef, setPosition],
   )
 
   return (
@@ -50,7 +52,7 @@ export const EvmChainsMenu = function ({
       style={{ bottom: position.bottom }}
     >
       <Menu
-        items={chains.map(c => ({
+        items={evmNetworks.map(c => ({
           content: (
             <button
               className="flex items-center gap-x-2"

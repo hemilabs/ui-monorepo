@@ -12,10 +12,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { BtcWithdrawStatus } from 'types/tunnel'
-import { isEvmNetwork } from 'utils/chain'
+import { findChainById, isEvmNetwork } from 'utils/chain'
 import { getEvmBlock } from 'utils/evmApi'
 import { formatBtcAddress, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
+import { walletIsConnected } from 'utils/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -262,7 +263,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     updateFromInput,
   } = state
 
-  const { chainId, isConnected } = useAccount()
+  const { chainId, status } = useAccount()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -368,7 +369,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
         }
         onSubmit={handleWithdraw}
         submitButton={
-          isConnected ? (
+          walletIsConnected(status) ? (
             <Button disabled={!canWithdraw || isWithdrawing} type="submit">
               {t(
                 `tunnel-page.submit-button.${
@@ -391,7 +392,7 @@ export const Withdraw = function ({
   state: ReturnType<typeof useTunnelState>
 }) {
   const { toNetworkId } = state
-  const toChain = useChain(toNetworkId)
+  const toChain = findChainById(toNetworkId)
 
   // Typescript can't infer it, but we can cast these safely
   if (isEvmNetwork(toChain)) {

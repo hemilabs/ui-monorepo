@@ -5,6 +5,7 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
+import { walletIsConnected } from 'utils/wallet'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { ConnectedChains } from '../connectedWallet/connectedChains'
@@ -33,16 +34,15 @@ export const WalletConnection = function () {
   const [networkType] = useNetworkType()
   const t = useTranslations()
 
-  const { isConnected: isEvmWalletConnected } = useEvmAccount()
-  const { isConnected: isBtcWalletConnected } = useBtcAccount()
+  const { status: btcStatus } = useBtcAccount()
+  const { status: evmStatus } = useEvmAccount()
   const { track } = useUmami()
 
   const walletsConnected = []
-
-  if (isEvmWalletConnected) {
+  if (walletIsConnected(evmStatus)) {
     walletsConnected.push({ icon: <MetamaskLogo /> })
   }
-  if (featureFlags.btcTunnelEnabled && isBtcWalletConnected) {
+  if (featureFlags.btcTunnelEnabled && walletIsConnected(btcStatus)) {
     walletsConnected.push({ icon: <UnisatLogo /> })
   }
 

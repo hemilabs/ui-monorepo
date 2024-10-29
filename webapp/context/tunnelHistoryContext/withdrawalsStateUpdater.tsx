@@ -1,7 +1,6 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useQuery } from '@tanstack/react-query'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
-import { useHemi } from 'hooks/useHemi'
 import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
 import { useNetworks } from 'hooks/useNetworks'
 import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
@@ -12,7 +11,6 @@ import PQueue from 'p-queue'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { CrossChainMessengerProxy } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
-import { type Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
 const queue = new PQueue({ concurrency: 2 })
@@ -42,7 +40,7 @@ const refetchInterval = {
   },
 } satisfies { [chainId: number]: { [status: number]: number | false } }
 
-const getBlockTimestamp = (withdrawal: ToEvmWithdrawOperation, hemi: Chain) =>
+const getBlockTimestamp = (withdrawal: ToEvmWithdrawOperation) =>
   async function (
     blockNumber: number | undefined,
   ): Promise<[number?, number?]> {
@@ -52,11 +50,7 @@ const getBlockTimestamp = (withdrawal: ToEvmWithdrawOperation, hemi: Chain) =>
     if (withdrawal.timestamp) {
       return [blockNumber, withdrawal.timestamp]
     }
-    const { timestamp } = await getEvmBlock(
-      blockNumber,
-      // See https://github.com/hemilabs/ui-monorepo/issues/376
-      withdrawal.l2ChainId ?? hemi.id,
-    )
+    const { timestamp } = await getEvmBlock(blockNumber, withdrawal.l2ChainId)
     return [blockNumber, Number(timestamp)]
   }
 
@@ -77,12 +71,10 @@ const getTransactionBlockNumber = function (
 
 const pollUpdateWithdrawal = async ({
   crossChainMessenger,
-  hemi,
   updateWithdrawal,
   withdrawal,
 }: {
   crossChainMessenger: CrossChainMessengerProxy
-  hemi: Chain
   updateWithdrawal: (
     w: ToEvmWithdrawOperation,
     updates: Partial<ToEvmWithdrawOperation>,
@@ -102,7 +94,7 @@ const pollUpdateWithdrawal = async ({
           withdrawal.direction,
         ),
         getTransactionBlockNumber(withdrawal).then(
-          getBlockTimestamp(withdrawal, hemi),
+          getBlockTimestamp(withdrawal),
         ),
       ])
       const changes: Partial<ToEvmWithdrawOperation> = {}
@@ -148,7 +140,6 @@ const WatchEvmWithdrawal = function ({
     useConnectedChainCrossChainMessenger(evmRemoteNetworks[0].id)
   const { updateWithdrawal } = useTunnelHistory()
 
-  const hemi = useHemi()
   // This is a hacky usage of useQuery. I am using it this way because it provides automatic refetching,
   // request deduping, and conditional refetch depending on the state of the withdrawal.
   // I am not interested in the actual result of the query, but in the side effect of the queryFn
@@ -157,18 +148,15 @@ const WatchEvmWithdrawal = function ({
     queryFn: () =>
       pollUpdateWithdrawal({
         crossChainMessenger,
-        hemi,
         updateWithdrawal,
         withdrawal,
       }),
     queryKey: [
       'withdrawaStateUpdater',
-      // See https://github.com/hemilabs/ui-monorepo/issues/376
-      withdrawal.l2ChainId ?? hemi.id,
+      withdrawal.l2ChainId,
       withdrawal.transactionHash,
     ],
-    refetchInterval:
-      refetchInterval[withdrawal.l2ChainId ?? hemi.id][withdrawal.status],
+    refetchInterval: refetchInterval[withdrawal.l2ChainId][withdrawal.status],
   })
 
   return null

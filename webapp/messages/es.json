@@ -140,7 +140,9 @@
     "start-using-hemi": "Comience a usar Hemi",
     "subheading": "Prepárese para experimentar una escalabilidad, seguridad e interoperabilidad superiores.",
     "sushi-swap": "Sushi Swap",
-    "swap-tokens": "Intercambie tokens en Hemi",
+    "swap-tokens": "Intercambie tokens",
+    "swap-tokens-mainnet": "Intercambie tokens en Sushi",
+    "swap-tokens-testnet": "Intercambie tokens en Hemi",
     "tunnel-assets": "Tunelice activos",
     "tutorials": "Tutoriales",
     "tutorials-subheading": "Siga algunos de los tutoriales para tomar ventaja al construir tu primer proyecto con Hemi."

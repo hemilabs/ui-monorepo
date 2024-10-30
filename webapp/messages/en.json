@@ -140,7 +140,9 @@
     "start-using-hemi": "Start using Hemi",
     "subheading": "Get ready to feel superior scaling, security and interoperability.",
     "sushi-swap": "Sushi Swap",
-    "swap-tokens": "Swap tokens on Hemi",
+    "swap-tokens": "Swap tokens",
+    "swap-tokens-mainnet": "Swap tokens on Sushi",
+    "swap-tokens-testnet": "Swap tokens on Hemi",
     "tunnel-assets": "Tunnel assets",
     "tutorials": "Tutorials",
     "tutorials-subheading": "Follow along with some of the tutorials to help you get a head start when building your first Hemi project."

@@ -5,6 +5,7 @@ import {
   type HistoryActions,
   type TransactionListSyncType,
 } from 'hooks/useSyncHistory/types'
+import { mainnet } from 'networks/mainnet'
 import { sepolia } from 'networks/sepolia'
 import { findChainById } from 'utils/chain'
 import { createBitcoinSync } from 'utils/sync-history/bitcoin'
@@ -66,6 +67,7 @@ const createSyncer = function ({
         withdrawalsSyncInfo:
           withdrawalsSyncInfo as ExtendedSyncInfo<TransactionListSyncType>,
       })
+    case mainnet.id:
     case sepolia.id:
       return createEvmSync({
         address: address as Address,

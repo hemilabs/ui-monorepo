@@ -11,10 +11,14 @@ export const analyticsEvents = [
   'header - tunnel',
   'header - txn history',
   // /get-started
+  'add to wallet - hemi mainnet',
   'add to wallet - hemi sepolia',
   'add to wallet - sepolia',
   'bitcoin faucet',
   'ethereum faucet',
+  'fund wallet - moonpay',
+  'fund wallet - oku',
+  'fund wallet - sushi',
   'hemi discord faucet',
   'network - automatic',
   'network - manual',
@@ -104,10 +108,14 @@ export type AnalyticsEventsWithChain = Exclude<
   Exclude<
     AnalyticsEvent,
     // These are not tracking by anything
+    | 'add to wallet - hemi mainnet'
     | 'add to wallet - hemi sepolia'
     | 'add to wallet - sepolia'
     | 'bitcoin faucet'
     | 'ethereum faucet'
+    | 'fund wallet - moonpay'
+    | 'fund wallet - oku'
+    | 'fund wallet - sushi'
     | 'hemi discord faucet'
     | 'nav - discord'
     | 'nav - gitHub'

@@ -10,14 +10,16 @@ import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
+import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { type EvmToken } from 'types/token'
 import { BtcDepositStatus } from 'types/tunnel'
-import { findChainById, isEvmNetwork } from 'utils/chain'
+import { isEvmNetwork } from 'utils/chain'
 import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
@@ -542,7 +544,16 @@ export const Deposit = function ({
   state: ReturnType<typeof useTunnelState>
 }) {
   const { fromNetworkId } = state
-  const chain = findChainById(fromNetworkId)
+  const chain = useNetworks().remoteNetworks.find(n => n.id === fromNetworkId)
+
+  if (!chain) {
+    return (
+      <Skeleton
+        className="h-[475px] max-w-[536px]"
+        containerClassName="flex justify-center"
+      />
+    )
+  }
 
   // Typescript can't infer it, but we can cast these safely
   if (isEvmNetwork(chain)) {

@@ -5,14 +5,16 @@ import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { type RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { BtcWithdrawStatus } from 'types/tunnel'
-import { findChainById, isEvmNetwork } from 'utils/chain'
+import { isEvmNetwork } from 'utils/chain'
 import { getEvmBlock } from 'utils/evmApi'
 import { formatBtcAddress, getFormattedValue } from 'utils/format'
 import { isNativeToken } from 'utils/token'
@@ -392,7 +394,16 @@ export const Withdraw = function ({
   state: ReturnType<typeof useTunnelState>
 }) {
   const { toNetworkId } = state
-  const toChain = findChainById(toNetworkId)
+  const toChain = useNetworks().remoteNetworks.find(n => n.id === toNetworkId)
+
+  if (!toChain) {
+    return (
+      <Skeleton
+        className="h-[475px] max-w-[536px]"
+        containerClassName="flex justify-center"
+      />
+    )
+  }
 
   // Typescript can't infer it, but we can cast these safely
   if (isEvmNetwork(toChain)) {

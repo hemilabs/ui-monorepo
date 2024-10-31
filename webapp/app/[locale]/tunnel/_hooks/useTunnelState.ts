@@ -262,7 +262,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   const isTestnet = findChainById(state.fromNetworkId)?.testnet ?? false
 
   useEffect(
-    function () {
+    function updateStateOnNetworkSwitch() {
       if ((networkType === 'testnet') !== isTestnet) {
         dispatch({
           payload: {

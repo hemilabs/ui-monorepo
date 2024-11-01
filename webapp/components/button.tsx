@@ -1,4 +1,4 @@
-import Link from 'next-intl/link'
+import { Link } from 'components/link'
 import { ComponentProps } from 'react'
 import { isRelativeUrl } from 'utils/url'
 

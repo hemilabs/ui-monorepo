@@ -1,8 +1,8 @@
 import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
+import { Link } from 'components/link'
 import { TunnelTabs } from 'components/tunnelTabs'
 import dynamic from 'next/dynamic'
-import Link from 'next-intl/link'
 import { HemiSymbol } from 'ui-common/components/hemiLogo'
 
 const WalletConnection = dynamic(

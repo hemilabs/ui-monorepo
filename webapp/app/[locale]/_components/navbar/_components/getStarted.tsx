@@ -1,9 +1,9 @@
 import { Chevron } from 'components/icons/chevron'
+import { Link } from 'components/link'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-import Link from 'next-intl/link'
 import React from 'react'
 
 import { GetStartedBackground } from './getStartedBackground'

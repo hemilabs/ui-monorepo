@@ -3,15 +3,15 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "tsc:check": "tsc --noEmit",
+    "build": "tsc --noEmit",
     "test": "vitest run"
+  },
+  "dependencies": {
+    "p-do-whilst": "2.1.0"
   },
   "devDependencies": {
     "@types/sinon": "17.0.3",
     "sinon": "18.0.0",
     "vitest": "2.0.5"
-  },
-  "dependencies": {
-    "p-do-whilst": "2.0.0"
   }
 }

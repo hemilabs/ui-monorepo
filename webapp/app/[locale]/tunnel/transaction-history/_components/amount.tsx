@@ -20,9 +20,11 @@ type Props = {
 
 const Logo = ({ token }: { token: Token }) =>
   token.logoURI ? (
-    <TokenLogo token={token} />
+    <TokenLogo size="small" token={token} />
   ) : (
-    <ChainLogo chainId={token.chainId} />
+    <div className="h-5 w-5">
+      <ChainLogo chainId={token.chainId} />
+    </div>
   )
 
 const formatAmount = function (amount: string, decimals: Token['decimals']) {
@@ -55,18 +57,14 @@ export const Amount = function ({ operation }: Props) {
 
   return (
     <div className="flex items-center gap-x-1.5">
-      <div className="h-5 w-5">
-        <Logo token={token} />
-      </div>
+      <Logo token={token} />
       <span className="text-neutral-950">{`${formattedAmount} ${token.symbol}`}</span>
       {showTooltip && (
         <Tooltip
           id="amount-tooltip"
           overlay={
-            <div className="flex items-center gap-x-1 px-2 text-sm font-medium text-white">
-              <div className="h-4 w-4">
-                <Logo token={token} />
-              </div>
+            <div className="flex items-center gap-x-1 px-2 py-1 text-sm font-medium text-white">
+              <Logo token={token} />
               <span>{`${originalAmount} ${token.symbol}`}</span>
             </div>
           }

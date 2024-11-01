@@ -146,5 +146,7 @@ export const tokenList = {
   name: 'Uniswap Labs Default',
   tags: {},
   timestamp: '2023-12-13T18:25:25.830Z',
-  tokens: tokens.concat(nativeTokens),
+  tokens: tokens
+    .concat(nativeTokens)
+    .sort((a, b) => a.symbol.localeCompare(b.symbol)),
 }

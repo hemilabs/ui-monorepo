@@ -49,8 +49,8 @@ const List = function ({ onSelectToken, tokens }: Omit<Props, 'closeModal'>) {
               }}
             >
               <div className="flex items-center gap-x-3 p-2 text-sm font-medium text-neutral-950">
-                <div className="h-8 w-8 flex-shrink-0 flex-grow-0">
-                  <TokenLogo token={token} />
+                <div className="flex-shrink-0 flex-grow-0">
+                  <TokenLogo size="medium" token={token} />
                 </div>
                 <div className="flex w-full flex-col">
                   <div className="flex items-center justify-between">

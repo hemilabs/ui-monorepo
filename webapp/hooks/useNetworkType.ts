@@ -11,5 +11,5 @@ export const useNetworkType = () =>
     'networkType',
     parseAsStringLiteral(
       featureFlags.mainnetEnabled ? networkTypes : (['testnet'] as const),
-    ).withDefault(networkTypes[0]),
+    ).withDefault(featureFlags.mainnetEnabled ? 'mainnet' : 'testnet'),
   )

@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next-intl/link'
+import { Link } from 'components/link'
 import { MouseEvent, ReactNode } from 'react'
 
 type Button = { onClick?: (e: MouseEvent<HTMLButtonElement>) => void }

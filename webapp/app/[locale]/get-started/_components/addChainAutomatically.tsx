@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useUmami } from 'app/analyticsEvents'
 import { ChainLogo } from 'components/chainLogo'
 import { CheckMark } from 'components/icons/checkMark'
+import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { sepolia } from 'networks/sepolia'
 import { useTranslations } from 'next-intl'
@@ -31,11 +32,16 @@ export const AddChainAutomatically = function ({ chain, layer }: Props) {
         `portal.get-started.configure-networks-added-${chain.id}`,
         'true',
       )
-      if (chain.id === sepolia.id) {
-        track?.('add to wallet - sepolia')
-      }
-      if (chain.id === hemiTestnet.id) {
-        track?.('add to wallet - hemi sepolia')
+      switch (chain.id) {
+        case sepolia.id:
+          track?.('add to wallet - sepolia')
+          break
+        case hemiMainnet.id:
+          track?.('add to wallet - hemi mainnet')
+          break
+        case hemiTestnet.id:
+          track?.('add to wallet - hemi sepolia')
+          break
       }
     },
   })

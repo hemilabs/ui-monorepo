@@ -1,12 +1,14 @@
 import { useUmami } from 'app/analyticsEvents'
 import { Card } from 'components/card'
+import { useNetworkType } from 'hooks/useNetworkType'
 import Image, { StaticImageData } from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { isRelativeUrl } from 'utils/url'
 
 import deployContracts from '../_assets/deployContracts.png'
-import swapTokens from '../_assets/swapTokens.png'
+import swapTokensMainnet from '../_assets/swapTokens-mainnet.png'
+import swapTokensTestnet from '../_assets/swapTokens-testnet.png'
 import tunnelAssets from '../_assets/tunnelAssets.png'
 
 import { Section } from './section'
@@ -39,7 +41,10 @@ const Box = function ({
   }
 
   return (
-    <div className="group/image flex-1 cursor-pointer" onClick={handleClick}>
+    <div
+      className="group/image flex-1 basis-0 cursor-pointer [&>div]:h-full"
+      onClick={handleClick}
+    >
       <Card>
         <div className="flex flex-col gap-y-4 p-2 pb-4 text-sm font-medium">
           <Image
@@ -60,8 +65,10 @@ const Box = function ({
   )
 }
 export const StartUsingHemi = function () {
-  const t = useTranslations('get-started')
+  const [networkType] = useNetworkType()
   const locale = useLocale()
+  const t = useTranslations('get-started')
+
   return (
     <Section
       card={false}
@@ -83,9 +90,12 @@ export const StartUsingHemi = function () {
           alt="Swap form"
           event="tut - swap tokens"
           heading={t('swap-tokens')}
+          // TBD URL for mainnet https://github.com/hemilabs/ui-monorepo/issues/586
           href="https://swap.hemi.xyz"
-          image={swapTokens}
-          subheading={t('learn-about-tunneling')}
+          image={
+            networkType === 'testnet' ? swapTokensTestnet : swapTokensMainnet
+          }
+          subheading={t(`swap-tokens-${networkType}`)}
         />
         <Box
           alt="Button with the text 'Deploy'"

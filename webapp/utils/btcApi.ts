@@ -2,7 +2,8 @@ import { Account, BtcTransaction, Satoshis } from 'btc-wallet/unisat'
 import camelCaseKeys from 'camelcase-keys'
 import { esploraClient } from 'esplora-client'
 
-const toCamelCase = <T>(obj: T) => camelCaseKeys(obj, { deep: true })
+const toCamelCase = <T extends Record<string, unknown>>(obj: T) =>
+  camelCaseKeys(obj, { deep: true })
 
 const network = process.env.NEXT_PUBLIC_BITCOIN_NETWORK
 const { bitcoin } = esploraClient({ network })

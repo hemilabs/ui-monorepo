@@ -82,11 +82,22 @@ export const TokenList = function ({
 
   const { width } = useWindowSize()
 
-  const tokensToList = tokens.filter(
-    token =>
-      token.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      token.symbol.toLowerCase().includes(searchText.toLowerCase()),
-  )
+  const tokensToList = tokens
+    .filter(
+      token =>
+        token.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        token.symbol.toLowerCase().includes(searchText.toLowerCase()),
+    )
+    .sort(function (a, b) {
+      if (a.symbol === 'ETH') return -1
+      if (b.symbol === 'ETH') return 1
+      // using startsWith due to .e symbol version in Hemi
+      if (a.symbol.startsWith('USDC')) return -1
+      if (b.symbol.startsWith('USDC')) return 1
+      if (a.symbol.startsWith('USDT')) return -1
+      if (b.symbol.startsWith('USDT')) return 1
+      return a.name.localeCompare(b.name)
+    })
 
   const content = (
     <div className="flex h-[357px] w-full flex-col gap-x-3 bg-white p-6 px-4 md:w-96 md:px-6">

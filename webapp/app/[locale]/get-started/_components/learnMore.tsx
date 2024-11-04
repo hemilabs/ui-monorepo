@@ -2,9 +2,9 @@ import { useUmami, AnalyticsEvent } from 'app/analyticsEvents'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { ExternalLink } from 'components/externalLink'
+import { Tab, Tabs } from 'components/tabs'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { Tab, Tabs } from 'ui-common/components/tabs'
 
 type Props = {
   event: AnalyticsEvent // There are too many too list, just allow all of them

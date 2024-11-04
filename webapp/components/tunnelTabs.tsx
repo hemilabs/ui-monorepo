@@ -1,13 +1,13 @@
 'use client'
 
 import { type AnalyticsEventsWithChain } from 'app/analyticsEvents'
+import { Tab, Tabs } from 'components/tabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { Suspense } from 'react'
-import { Tabs, Tab } from 'ui-common/components/tabs'
 
 const ActionableOperations = dynamic(
   () =>

@@ -1,8 +1,8 @@
 import { useUmami } from 'app/analyticsEvents'
 import { featureFlags } from 'app/featureFlags'
+import { Tab, Tabs } from 'components/tabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
-import { Tabs, Tab } from 'ui-common/components/tabs'
 
 import { ReloadHistory } from './reloadHistory'
 import { TunnelHistorySyncStatus } from './tunnelHistorySyncStatus'

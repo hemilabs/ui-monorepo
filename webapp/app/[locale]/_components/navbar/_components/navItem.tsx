@@ -4,6 +4,7 @@ import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { NetworkIcon } from 'components/icons/networkIcon'
+import { Link } from 'components/link'
 import { Menu } from 'components/menu'
 import {
   networkTypes,
@@ -13,7 +14,6 @@ import {
 import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
-import Link from 'next-intl/link'
 import { ComponentProps, MutableRefObject, ReactNode, useState } from 'react'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 import { isRelativeUrl } from 'utils/url'

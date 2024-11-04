@@ -1,11 +1,11 @@
 import { useUmami } from 'app/analyticsEvents'
+import { Tab, Tabs } from 'components/tabs'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { sepolia } from 'networks/sepolia'
 import { useTranslations } from 'next-intl'
 import { useQueryState, parseAsStringLiteral } from 'nuqs'
-import { Tab, Tabs } from 'ui-common/components/tabs'
 import { type Chain } from 'viem'
 
 import { AddChainAutomatically } from './addChainAutomatically'

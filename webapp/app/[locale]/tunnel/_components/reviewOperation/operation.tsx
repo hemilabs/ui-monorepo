@@ -22,7 +22,7 @@ export const Operation = ({
   title,
   token,
 }: Props) => (
-  <div className="flex h-full flex-col py-6">
+  <div className="flex h-full flex-col">
     <div className="mb-6 px-4">
       <Header onClose={onClose} subtitle={subtitle} title={title} />
     </div>
@@ -40,6 +40,6 @@ export const Operation = ({
         ))}
       </div>
     </div>
-    {!!callToAction && <div className="mt-auto px-4">{callToAction}</div>}
+    {!!callToAction && <div className="mt-auto px-4 py-6">{callToAction}</div>}
   </div>
 )

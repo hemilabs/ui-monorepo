@@ -45,9 +45,7 @@ export const TokenSelector = function ({
         onClick={openModal}
         type="button"
       >
-        <div className="h-5 w-5">
-          <TokenLogo token={selectedToken} />
-        </div>
+        <TokenLogo size="small" token={selectedToken} />
         <span className="text-neutral-950">{selectedToken.symbol}</span>
         {tokens.length > 1 && (
           <Chevron.Bottom className="ml-auto flex-shrink-0 [&>path]:fill-neutral-500 [&>path]:group-hover/token-selector:fill-neutral-950" />

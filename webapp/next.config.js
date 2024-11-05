@@ -14,6 +14,13 @@ const nextConfig = {
   },
   // images are exported on demand, which is incompatible with static export
   images: {
+    remotePatterns: [
+      {
+        hostname: 'raw.githubusercontent.com',
+        pathname: '/hemilabs/token-list/**',
+        protocol: 'https',
+      },
+    ],
     unoptimized: true,
   },
   output: 'export',

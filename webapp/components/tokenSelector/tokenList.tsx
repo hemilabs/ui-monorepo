@@ -6,6 +6,7 @@ import { Drawer } from 'components/drawer'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { SearchInput } from 'components/inputText'
 import { Modal } from 'components/modal'
+import partition from 'lodash/partition'
 import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import { Token } from 'types/token'
@@ -72,6 +73,8 @@ const List = function ({ onSelectToken, tokens }: Omit<Props, 'closeModal'>) {
   )
 }
 
+const bySymbol = (a: Token, b: Token) => a.symbol.localeCompare(b.symbol)
+
 export const TokenList = function ({
   closeModal,
   onSelectToken,
@@ -82,22 +85,23 @@ export const TokenList = function ({
 
   const { width } = useWindowSize()
 
-  const tokensToList = tokens
-    .filter(
-      token =>
-        token.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        token.symbol.toLowerCase().includes(searchText.toLowerCase()),
-    )
-    .sort(function (a, b) {
-      if (a.symbol === 'ETH') return -1
-      if (b.symbol === 'ETH') return 1
-      // using startsWith due to .e symbol version in Hemi
-      if (a.symbol.startsWith('USDC')) return -1
-      if (b.symbol.startsWith('USDC')) return 1
-      if (a.symbol.startsWith('USDT')) return -1
-      if (b.symbol.startsWith('USDT')) return 1
-      return a.name.localeCompare(b.name)
-    })
+  const tokensToList = tokens.filter(
+    token =>
+      token.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      token.symbol.toLowerCase().includes(searchText.toLowerCase()),
+  )
+
+  const [pinnedTokens, restOfTokens] = partition(
+    tokensToList,
+    token =>
+      token.symbol === 'ETH' ||
+      token.symbol.includes('USDC') ||
+      token.symbol.includes('USDT'),
+  )
+
+  const sortedTokens = pinnedTokens
+    .sort(bySymbol)
+    .concat(restOfTokens.sort(bySymbol))
 
   const content = (
     <div className="flex h-[357px] w-full flex-col gap-x-3 bg-white p-6 px-4 md:w-96 md:px-6">
@@ -118,13 +122,13 @@ export const TokenList = function ({
           value={searchText}
         />
       </div>
-      {tokensToList.length > 0 ? (
+      {sortedTokens.length > 0 ? (
         <List
           onSelectToken={function (token) {
             onSelectToken(token)
             closeModal()
           }}
-          tokens={tokensToList}
+          tokens={sortedTokens}
         />
       ) : (
         <span className="text-center text-sm font-medium text-neutral-500">

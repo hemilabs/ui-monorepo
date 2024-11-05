@@ -45,9 +45,6 @@ inputs:
   NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET:
     required: true
     description: Feature flag to enable Mainnet
-  NEXT_PUBLIC_RELEASE_VERSION:
-    required: false
-    description: Release version
   NEXT_PUBLIC_SENTRY_DSN:
     required: false
     description: Sentry DSN URL
@@ -66,6 +63,9 @@ inputs:
   SENTRY_PROJECT:
     required: false
     description: Sentry project
+  SENTRY_RELEASE:
+    required: false
+    description: Sentry Release version
 
 runs:
   using: composite
@@ -83,13 +83,13 @@ runs:
         NEXT_PUBLIC_ENABLE_ANALYTICS: ${{ inputs.NEXT_PUBLIC_ENABLE_ANALYTICS }}
         NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL }}
         NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET }}
-        NEXT_PUBLIC_RELEASE_VERSION: ${{ inputs.NEXT_PUBLIC_RELEASE_VERSION }}
         NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.NEXT_PUBLIC_SENTRY_DSN }}
         NEXT_PUBLIC_SENTRY_ENVIRONMENT: ${{ inputs.NEXT_PUBLIC_SENTRY_ENVIRONMENT }}
         NEXT_PUBLIC_TRACES_SAMPLE_RATE: ${{ inputs.NEXT_PUBLIC_TRACES_SAMPLE_RATE }}
         SENTRY_AUTH_TOKEN: ${{ inputs.SENTRY_AUTH_TOKEN }}
         SENTRY_ORG: ${{ inputs.SENTRY_ORG }}
         SENTRY_PROJECT: ${{ inputs.SENTRY_PROJECT }}
+        SENTRY_RELEASE: ${{ inputs.SENTRY_RELEASE }}
     - name: Check portal build
       id: portal_build
       uses: andstor/file-existence-action@v3

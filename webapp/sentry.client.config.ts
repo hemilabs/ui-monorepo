@@ -26,7 +26,6 @@ function enableSentry() {
         },
       }),
     ],
-    release: `portal@${process.env.NEXT_PUBLIC_RELEASE_VERSION}`,
     tracesSampleRate:
       process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE &&
       !Number.isNaN(process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE)

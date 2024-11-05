@@ -2,7 +2,6 @@ import { useHemi } from 'hooks/useHemi'
 import Image from 'next/image'
 import { Token } from 'types/token'
 import { HemiTokenWithBackground } from 'ui-common/components/hemiLogo'
-import { isNativeToken } from 'utils/token'
 
 const HemiLogo = () => (
   <svg
@@ -66,7 +65,7 @@ export const TokenLogo = function ({ size, token }: Props) {
       ) : (
         <HemiTokenWithBackground className="h-full w-full" />
       )}
-      {!isNativeToken(token) && token.chainId === hemi.id && (
+      {token.chainId === hemi.id && (
         <div className="absolute -bottom-0.5 -right-0.5">
           <HemiLogo />
         </div>

@@ -1,5 +1,3 @@
-import { renderToString } from 'react-dom/server'
-
 export const EthLogo = () => (
   <svg fill="none" height={20} width={20} xmlns="http://www.w3.org/2000/svg">
     <path
@@ -30,7 +28,3 @@ export const EthLogo = () => (
     />
   </svg>
 )
-
-export const inlineEthLogo = `data:image/svg+xml;base64,${btoa(
-  renderToString(<EthLogo />),
-)}`

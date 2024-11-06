@@ -29,7 +29,7 @@ const tunnelOverrides = {
   overrides: { type: 2 },
 }
 
-const l1Overrides = merge(
+const l1OverridesTestnet = merge(
   {
     overrides: {
       gasLimit: l1GasLimitOverride,
@@ -108,6 +108,7 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
   const isConnectedToExpectedChain = useIsConnectedToExpectedNetwork(
     walletConnectedToChain,
   )
+  const hemi = useHemi()
 
   const hardcodedOps = [
     'depositERC20',
@@ -123,7 +124,7 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
       crossChainMessengerStatus === 'success' &&
       Object.keys(crossChainMessenger.estimateGas).length > 0,
     async queryFn() {
-      if (hardcodedOps.includes(operation)) {
+      if (hardcodedOps.includes(operation) && hemi.testnet) {
         // See https://github.com/hemilabs/ui-monorepo/issues/539
         return BigInt(l1GasLimitOverride)
       }
@@ -135,6 +136,7 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
       operation,
       ...Object.keys(crossChainMessenger?.estimateGas ?? {}),
       ...args,
+      hemi.testnet,
     ],
     // update gas fees every 15 seconds
     refetchInterval: 15 * 1000,
@@ -257,8 +259,10 @@ export const useDepositErc20Token = function ({
   const l1BridgeAddress = token.address
   const l2BridgeAddress = token.extensions?.bridgeInfo[hemi.id]?.tokenAddress
 
+  const overrides = hemi.testnet ? l1OverridesTestnet : tunnelOverrides
+
   const depositErc20TokenGasFees = useEstimateGasFees({
-    args: [l1BridgeAddress, l2BridgeAddress, toDeposit, tunnelOverrides],
+    args: [l1BridgeAddress, l2BridgeAddress, toDeposit, overrides],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled:
@@ -289,7 +293,7 @@ export const useDepositErc20Token = function ({
         l1Address,
         l2Address,
         amount,
-        l1Overrides,
+        overrides,
       )
       return response.hash as Hash
     },
@@ -323,11 +327,14 @@ export const useDepositNativeToken = function ({
   ...options
 }: UseDepositNativeToken) {
   const operation = 'depositETH'
+  const hemi = useHemi()
   const { crossChainMessenger, crossChainMessengerStatus } =
     useL1ToL2CrossChainMessenger(l1ChainId)
 
+  const overrides = hemi.testnet ? l1OverridesTestnet : tunnelOverrides
+
   const depositNativeTokenGasFees = useEstimateGasFees({
-    args: [toDeposit, tunnelOverrides],
+    args: [toDeposit, overrides],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled:
@@ -346,7 +353,7 @@ export const useDepositNativeToken = function ({
     reset: resetDepositNativeToken,
   } = useMutation({
     async mutationFn(amount: string) {
-      const response = await crossChainMessenger.depositETH(amount, l1Overrides)
+      const response = await crossChainMessenger.depositETH(amount, overrides)
       return response.hash as Hash
     },
     ...options,
@@ -430,11 +437,14 @@ export const useFinalizeMessage = function ({
   ...options
 }: UseFinalizeMessage) {
   const operation = 'finalizeMessage'
+  const hemi = useHemi()
   const { crossChainMessenger, crossChainMessengerStatus } =
     useL1ToL2CrossChainMessenger(l1ChainId)
 
+  const overrides = hemi.testnet ? l1OverridesTestnet : tunnelOverrides
+
   const finalizeWithdrawalTokenGasFees = useEstimateGasFees({
-    args: [withdrawTxHash, tunnelOverrides],
+    args: [withdrawTxHash, overrides],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled: enabled && isHash(withdrawTxHash),
@@ -451,7 +461,7 @@ export const useFinalizeMessage = function ({
     async mutationFn(toFinalize: Hash) {
       const response = await crossChainMessenger.finalizeMessage(
         toFinalize,
-        l1Overrides,
+        overrides,
       )
       return response.hash as Hash
     },
@@ -480,11 +490,14 @@ export const useProveMessage = function ({
   ...options
 }: UseProveMessage) {
   const operation = 'proveMessage'
+  const hemi = useHemi()
   const { crossChainMessenger, crossChainMessengerStatus } =
     useL1ToL2CrossChainMessenger(l1ChainId)
 
+  const overrides = hemi.testnet ? l1OverridesTestnet : tunnelOverrides
+
   const proveWithdrawalTokenGasFees = useEstimateGasFees({
-    args: [withdrawTxHash, tunnelOverrides],
+    args: [withdrawTxHash, overrides],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled: enabled && isHash(withdrawTxHash),
@@ -501,7 +514,7 @@ export const useProveMessage = function ({
     async mutationFn(toProve: Hash) {
       const response = await crossChainMessenger.proveMessage(
         toProve,
-        l1Overrides,
+        overrides,
       )
       return response.hash as Hash
     },

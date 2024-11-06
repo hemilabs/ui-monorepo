@@ -32,6 +32,16 @@ const nextConfig = {
   },
 }
 
+const release =
+  process.env.SENTRY_ENVIRONMENT && process.env.SENTRY_RELEASE
+    ? {
+        deploy: {
+          env: process.env.SENTRY_ENVIRONMENT,
+        },
+        name: process.env.SENTRY_RELEASE,
+      }
+    : { create: false, finalize: false }
+
 /** @type {import('@sentry/nextjs').SentryBuildOptions} */
 const sentryOptions = {
   authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -40,12 +50,7 @@ const sentryOptions = {
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#widen-the-upload-scope
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
-  release: {
-    deploy: {
-      env: process.env.SENTRY_ENVIRONMENT,
-    },
-    name: process.env.SENTRY_RELEASE,
-  },
+  release,
   widenClientFileUpload: true,
 }
 

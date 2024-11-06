@@ -49,16 +49,4 @@ const sentryOptions = {
   widenClientFileUpload: true,
 }
 
-// building with missing flags throws a bunch of warnings, better to conditionally apply sentry config
-// only if everything is set
-if (
-  !!process.env.SENTRY_AUTH_TOKEN &&
-  !!process.env.SENTRY_ORG &&
-  !!process.env.SENTRY_PROJECT &&
-  !!process.env.SENTRY_ENVIRONMENT &&
-  !!process.env.SENTRY_RELEASE
-) {
-  module.exports = withSentryConfig(nextConfig, sentryOptions)
-} else {
-  module.exports = nextConfig
-}
+module.exports = withSentryConfig(nextConfig, sentryOptions)

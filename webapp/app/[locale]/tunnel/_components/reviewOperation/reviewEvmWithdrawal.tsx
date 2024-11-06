@@ -1,5 +1,6 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useChain } from 'hooks/useChain'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 import { useContext } from 'react'
 import { EvmToken } from 'types/token'
@@ -24,8 +25,10 @@ import { Operation } from './operation'
 import { ProgressStatus } from './progressStatus'
 import { type StepPropsWithoutPosition } from './step'
 
-const ExpectedWithdrawalWaitTimeMinutes = 20
-const ExpectedProofWaitTimeHours = 3
+const ExpectedWithdrawalWaitTimeMinutesTestnet = 20
+const ExpectedWithdrawalWaitTimeMinutesMainnet = 30
+const ExpectedProofWaitTimeHoursTestnet = 3
+const ExpectedProofWaitTimeHoursMainnet = 24
 
 const getCallToAction = (withdrawal: ToEvmWithdrawOperation) =>
   ({
@@ -60,6 +63,7 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
   const fromChain = useChain(withdrawal.l2ChainId)
   const toChain = useChain(withdrawal.l1ChainId)
   const [operationStatus] = useContext(ToEvmWithdrawalContext)
+  const [networkType] = useNetworkType()
   const t = useTranslations('tunnel-page.review-withdraw')
   const tCommon = useTranslations('common')
 
@@ -104,7 +108,10 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
         : undefined,
     postAction: {
       description: tCommon('wait-minutes', {
-        minutes: ExpectedWithdrawalWaitTimeMinutes,
+        minutes:
+          networkType === 'mainnet'
+            ? ExpectedWithdrawalWaitTimeMinutesMainnet
+            : ExpectedWithdrawalWaitTimeMinutesTestnet,
       }),
       status: getWithdrawalStatus(),
     },
@@ -164,7 +171,10 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
         : undefined,
     postAction: {
       description: tCommon('wait-hours', {
-        hours: ExpectedProofWaitTimeHours,
+        hours:
+          networkType === 'mainnet'
+            ? ExpectedProofWaitTimeHoursMainnet
+            : ExpectedProofWaitTimeHoursTestnet,
       }),
       status:
         withdrawal.status >= MessageStatus.READY_FOR_RELAY

@@ -40,6 +40,12 @@ const sentryOptions = {
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#widen-the-upload-scope
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
+  release: {
+    deploy: {
+      env: process.env.SENTRY_ENVIRONMENT,
+    },
+    name: process.env.SENTRY_RELEASE,
+  },
   widenClientFileUpload: true,
 }
 
@@ -48,7 +54,9 @@ const sentryOptions = {
 if (
   !!process.env.SENTRY_AUTH_TOKEN &&
   !!process.env.SENTRY_ORG &&
-  !!process.env.SENTRY_PROJECT
+  !!process.env.SENTRY_PROJECT &&
+  !!process.env.SENTRY_ENVIRONMENT &&
+  !!process.env.SENTRY_RELEASE
 ) {
   module.exports = withSentryConfig(nextConfig, sentryOptions)
 } else {

@@ -11,7 +11,6 @@ function enableSentry() {
   Sentry.init({
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
     enabled,
-    environment: process.env.NEXT_PUBLIC_SENTRY_ENVIRONMENT || 'staging',
     ignoreErrors,
     integrations: [
       // This overrides the default implementation of the RewriteFrames

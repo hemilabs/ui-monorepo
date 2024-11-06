@@ -48,15 +48,15 @@ inputs:
   NEXT_PUBLIC_SENTRY_DSN:
     required: false
     description: Sentry DSN URL
-  NEXT_PUBLIC_SENTRY_ENVIRONMENT:
-    required: false
-    description: Sentry environment
   NEXT_PUBLIC_TRACES_SAMPLE_RATE:
     required: false
     description: Sentry traces sample rate
   SENTRY_AUTH_TOKEN:
     required: false
     description: Sentry auth token
+  SENTRY_ENVIRONMENT:
+    required: false
+    description: Sentry environment
   SENTRY_ORG:
     required: false
     description: Sentry organization
@@ -84,9 +84,9 @@ runs:
         NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL }}
         NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET }}
         NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.NEXT_PUBLIC_SENTRY_DSN }}
-        NEXT_PUBLIC_SENTRY_ENVIRONMENT: ${{ inputs.NEXT_PUBLIC_SENTRY_ENVIRONMENT }}
         NEXT_PUBLIC_TRACES_SAMPLE_RATE: ${{ inputs.NEXT_PUBLIC_TRACES_SAMPLE_RATE }}
         SENTRY_AUTH_TOKEN: ${{ inputs.SENTRY_AUTH_TOKEN }}
+        SENTRY_ENVIRONMENT: ${{ inputs.SENTRY_ENVIRONMENT }}
         SENTRY_ORG: ${{ inputs.SENTRY_ORG }}
         SENTRY_PROJECT: ${{ inputs.SENTRY_PROJECT }}
         SENTRY_RELEASE: ${{ inputs.SENTRY_RELEASE }}

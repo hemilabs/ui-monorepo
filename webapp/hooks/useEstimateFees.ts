@@ -2,9 +2,7 @@ import Big from 'big.js'
 import { useFeeHistory } from 'wagmi'
 
 const defaultBlockCount = 4
-// Overestimation for L1 gas limit used by OP/SDK
-// See https://github.com/ethereum-optimism/optimism/blob/592daa704a56f5b3df21b41ea7cc294ab63b95ff/packages/sdk/src/cross-chain-messenger.ts#L2060
-const defaultOverEstimation = 1.5
+const defaultOverEstimation = 1
 
 const mean = function (rewards: bigint[] = []) {
   if (rewards.length === 0) {

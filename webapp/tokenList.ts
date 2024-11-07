@@ -2,7 +2,6 @@ import hemilabsTokenList from '@hemilabs/token-list'
 import { featureFlags } from 'app/featureFlags'
 import { bitcoinTestnet } from 'btc-wallet/chains'
 import { inlineBtcLogo } from 'components/icons/btcLogo'
-import { inlineEthLogo } from 'components/icons/ethLogo'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
@@ -15,6 +14,9 @@ import { Address } from 'viem'
 // While it is legacy, it is still being used
 export const NativeTokenSpecialAddressOnL2 =
   '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000' as Address
+
+export const ethLogoUri =
+  'https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/eth.svg'
 
 const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
   .filter(t => t.chainId === hemiMainnet.id || t.chainId === hemiTestnet.id)
@@ -57,7 +59,7 @@ const nativeTokens: Token[] = [
         [hemiMainnet.id]: {},
       },
     },
-    logoURI: inlineEthLogo,
+    logoURI: ethLogoUri,
     name: mainnet.nativeCurrency.name,
     symbol: mainnet.nativeCurrency.symbol,
   },
@@ -71,7 +73,7 @@ const nativeTokens: Token[] = [
         [hemiTestnet.id]: {},
       },
     },
-    logoURI: inlineEthLogo,
+    logoURI: ethLogoUri,
     name: sepolia.nativeCurrency.name,
     symbol: sepolia.nativeCurrency.symbol,
   },
@@ -86,6 +88,7 @@ const nativeTokens: Token[] = [
         },
       },
     },
+    logoURI: ethLogoUri,
     name: hemiMainnet.nativeCurrency.name,
     symbol: hemiMainnet.nativeCurrency.symbol,
   },
@@ -100,6 +103,7 @@ const nativeTokens: Token[] = [
         },
       },
     },
+    logoURI: ethLogoUri,
     name: hemiTestnet.nativeCurrency.name,
     symbol: hemiTestnet.nativeCurrency.symbol,
   },

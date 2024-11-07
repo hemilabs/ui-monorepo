@@ -36,19 +36,10 @@ jobs:
           NEXT_PUBLIC_ENABLE_ANALYTICS: true
           NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: false
           NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET: false
-          NEXT_PUBLIC_RELEASE_VERSION: ${{ github.event.release.name }}
           NEXT_PUBLIC_SENTRY_DSN: ${{ vars.NEXT_PUBLIC_SENTRY_DSN_PROD }}
-          NEXT_PUBLIC_SENTRY_ENVIRONMENT: production
           NEXT_PUBLIC_TRACES_SAMPLE_RATE: 1.0
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN_PROD }}
+          SENTRY_ENVIRONMENT: production
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
-      - name: Create Sentry release
-        uses: getsentry/action-release@v1
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_INTEGRATION_TOKEN }}
-          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
-          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
-        with:
-          environment: production
-          version: ${{ format('{0}@{1}', vars.SENTRY_PROJECT, github.event.release.name) }}
+          SENTRY_RELEASE: ${{ format('{0}@{1}', vars.SENTRY_PROJECT, github.event.release.name) }}

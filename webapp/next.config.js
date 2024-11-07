@@ -39,6 +39,16 @@ const nextConfig = {
   },
 }
 
+const release =
+  process.env.SENTRY_ENVIRONMENT && process.env.SENTRY_RELEASE
+    ? {
+        deploy: {
+          env: process.env.SENTRY_ENVIRONMENT,
+        },
+        name: process.env.SENTRY_RELEASE,
+      }
+    : { create: false, finalize: false }
+
 /** @type {import('@sentry/nextjs').SentryBuildOptions} */
 const sentryOptions = {
   authToken: process.env.SENTRY_AUTH_TOKEN,
@@ -47,17 +57,8 @@ const sentryOptions = {
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#widen-the-upload-scope
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
+  release,
   widenClientFileUpload: true,
 }
 
-// building with missing flags throws a bunch of warnings, better to conditionally apply sentry config
-// only if everything is set
-if (
-  !!process.env.SENTRY_AUTH_TOKEN &&
-  !!process.env.SENTRY_ORG &&
-  !!process.env.SENTRY_PROJECT
-) {
-  module.exports = withSentryConfig(nextConfig, sentryOptions)
-} else {
-  module.exports = nextConfig
-}
+module.exports = withSentryConfig(nextConfig, sentryOptions)

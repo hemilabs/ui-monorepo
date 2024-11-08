@@ -6,6 +6,7 @@ import { Drawer } from 'components/drawer'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { SearchInput } from 'components/inputText'
 import { Modal } from 'components/modal'
+import { useDebounce } from 'hooks/useDebounce'
 import partition from 'lodash/partition'
 import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
@@ -82,13 +83,13 @@ export const TokenList = function ({
 }: Props) {
   const t = useTranslations('token-selector')
   const [searchText, setSearchText] = useState('')
-
+  const debouncedSearchText = useDebounce(searchText)
   const { width } = useWindowSize()
 
   const tokensToList = tokens.filter(
     token =>
-      token.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      token.symbol.toLowerCase().includes(searchText.toLowerCase()),
+      token.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
+      token.symbol.toLowerCase().includes(debouncedSearchText.toLowerCase()),
   )
 
   const [pinnedTokens, restOfTokens] = partition(
@@ -134,7 +135,7 @@ export const TokenList = function ({
         <span className="text-center text-sm font-medium text-neutral-500">
           {t.rich('no-results-for', {
             search: () => (
-              <span className="text-neutral-950">{searchText}</span>
+              <span className="text-neutral-950">{debouncedSearchText}</span>
             ),
           })}
         </span>

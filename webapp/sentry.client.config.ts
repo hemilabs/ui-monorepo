@@ -6,6 +6,16 @@ function enableSentry() {
   const ignoreErrors = [
     // user rejected a confirmation in the wallet
     'rejected the request',
+    // React internal error thrown when something outside react modifies the DOM
+    // This is usually because of a browser extension or Chrome's built-in translate. There's no action to do.
+    // See https://blog.sentry.io/making-your-javascript-projects-less-noisy/#ignore-un-actionable-errors
+    'The node to be removed is not a child of this node.',
+    'The node before which the new node is to be inserted is not a child of this node.',
+    // Thrown when firefox prevents an add-on from referencing a DOM element that has been removed.
+    `TypeError: can't access dead object`,
+    // Disable until WalletConnect is enabled, as it will fail for all users
+    // See https://github.com/hemilabs/ui-monorepo/issues/633
+    'connection failed for host: wss://relay.walletconnect.org',
   ]
 
   Sentry.init({

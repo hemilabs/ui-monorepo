@@ -146,10 +146,6 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
     chainId: walletConnectedToChain,
     enabled: status === 'success',
     gasUnits: data,
-    // As the gas limit is hardcoded for some operations, we don't need an overestimation
-    // use 1 to get the exact same value
-    // See https://github.com/hemilabs/ui-monorepo/issues/539
-    overEstimation: hardcodedOps.includes(operation) ? 1 : undefined,
   })
 }
 
@@ -327,6 +323,7 @@ export const useDepositNativeToken = function ({
   ...options
 }: UseDepositNativeToken) {
   const operation = 'depositETH'
+  const { address } = useAccount()
   const hemi = useHemi()
   const { crossChainMessenger, crossChainMessengerStatus } =
     useL1ToL2CrossChainMessenger(l1ChainId)
@@ -334,7 +331,8 @@ export const useDepositNativeToken = function ({
   const overrides = hemi.testnet ? l1OverridesTestnet : tunnelOverrides
 
   const depositNativeTokenGasFees = useEstimateGasFees({
-    args: [toDeposit, overrides],
+    // Need to manually override from address - See https://github.com/ethereum-optimism/optimism/issues/8952
+    args: [toDeposit, merge(overrides, { overrides: { from: address } })],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled:

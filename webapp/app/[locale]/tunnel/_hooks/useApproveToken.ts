@@ -26,6 +26,7 @@ export const useApproveToken = function (
     chainId: token.chainId,
     enabled: isConnected && isSupported,
     gasUnits: ApproveErc20TokenGas,
+    overEstimation: 1.5,
   })
 
   const queryClient = useQueryClient()

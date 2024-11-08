@@ -458,7 +458,7 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
   const gas = {
     amount: formatNumber(
       formatUnits(
-        depositGasFees + approvalTokenGasFees,
+        depositGasFees + (needsApproval ? approvalTokenGasFees : BigInt(0)),
         fromChain?.nativeCurrency.decimals,
       ),
       3,

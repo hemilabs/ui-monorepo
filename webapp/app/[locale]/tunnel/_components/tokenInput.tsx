@@ -5,7 +5,6 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { tokenList } from 'tokenList'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { AllOrNone } from 'utils/typeUtilities'
@@ -73,12 +72,10 @@ export const TokenInput = function ({
             </div>
           ) : (
             <TokenSelector
+              chainId={props.fromNetworkId}
               disabled={isRunningOperation}
               onSelectToken={props.onSelectToken}
               selectedToken={token}
-              tokens={tokenList.tokens.filter(
-                ({ chainId }) => chainId === props.fromNetworkId,
-              )}
             />
           )}
           <div className="flex items-center justify-end gap-x-2 text-sm">

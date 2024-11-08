@@ -2,6 +2,8 @@ import { useUmami } from 'app/analyticsEvents'
 import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
+import { tokenList } from 'tokenList'
+import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 
 import { Chevron } from '../icons/chevron'
@@ -12,17 +14,17 @@ const TokenList = dynamic(() =>
 )
 
 type Props = {
+  chainId: RemoteChain['id']
   disabled: boolean
   onSelectToken: (token: Token) => void
   selectedToken: Token
-  tokens: Token[]
 }
 
 export const TokenSelector = function ({
+  chainId,
   disabled,
   onSelectToken,
   selectedToken,
-  tokens,
 }: Props) {
   const [networkType] = useNetworkType()
   const [showTokenSelector, setShowTokenSelector] = useState(false)
@@ -35,6 +37,8 @@ export const TokenSelector = function ({
     onSelectToken(token)
     track?.('select token', { chain: networkType })
   }
+
+  const tokens = tokenList.tokens.filter(t => t.chainId === chainId)
 
   return (
     <>

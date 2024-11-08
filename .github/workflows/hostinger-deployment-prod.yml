@@ -12,7 +12,17 @@ concurrency:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    environment: production
     steps:
+      - uses: ./.github/actions/slack-notification
+        with:
+          app-name: Hemi Portal
+          environment: ${{ github.environment }}
+          reference: github.event.release.tag_name
+          slack-channel: ${{ vars.SLACK_CHANNEL }}
+          slack-mention: ${{ vars.SLACK_MENTION }}
+          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          status: started
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -43,3 +53,12 @@ jobs:
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
           SENTRY_RELEASE: ${{ format('{0}@{1}', vars.SENTRY_PROJECT, github.event.release.name) }}
+      - if: ${{ !cancelled() }}
+        uses: ./.github/actions/slack-notification
+        with:
+          app-name: Hemi Portal
+          environment: ${{ github.environment }}
+          slack-channel: ${{ vars.SLACK_CHANNEL }}
+          slack-mention: ${{ vars.SLACK_MENTION }}
+          slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          status: ${{ job.status == 'failure' && 'failed' || 'finished' }}

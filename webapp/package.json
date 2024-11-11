@@ -51,6 +51,7 @@
   },
   "devDependencies": {
     "@types/big.js": "6.2.2",
+    "@types/lodash": "4.17.13",
     "@types/node": "20.12.12",
     "@types/qrcode-terminal": "0.12.2",
     "@types/rc-tooltip": "3.7.14",

@@ -6,19 +6,20 @@ import { Drawer } from 'components/drawer'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { SearchInput } from 'components/inputText'
 import { Modal } from 'components/modal'
+import { useDebounce } from 'hooks/useDebounce'
 import partition from 'lodash/partition'
 import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
-import { Token } from 'types/token'
+import { Token as TokenType } from 'types/token'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
+import { isAddress, isAddressEqual } from 'viem'
 
-import { Balance } from '../balance'
-import { TokenLogo } from '../tokenLogo'
+import { Token } from './token'
 
 type Props = {
   closeModal: () => void
-  onSelectToken: (token: Token) => void
-  tokens: Token[]
+  onSelectToken: (token: TokenType) => void
+  tokens: TokenType[]
 }
 
 const List = function ({ onSelectToken, tokens }: Omit<Props, 'closeModal'>) {
@@ -49,22 +50,7 @@ const List = function ({ onSelectToken, tokens }: Omit<Props, 'closeModal'>) {
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >
-              <div className="flex items-center gap-x-3 p-2 text-sm font-medium text-neutral-950">
-                <div className="flex-shrink-0 flex-grow-0">
-                  <TokenLogo size="medium" token={token} />
-                </div>
-                <div className="flex w-full flex-col">
-                  <div className="flex items-center justify-between">
-                    <span>{token.name}</span>
-                    <Balance token={token} />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-neutral-500">{token.symbol}</span>
-                    {/*  Hiding as there are no usd rates so far*/}
-                    {/* <span>$1,234.12</span> */}
-                  </div>
-                </div>
-              </div>
+              <Token token={token} />
             </li>
           )
         })}
@@ -73,7 +59,20 @@ const List = function ({ onSelectToken, tokens }: Omit<Props, 'closeModal'>) {
   )
 }
 
-const bySymbol = (a: Token, b: Token) => a.symbol.localeCompare(b.symbol)
+const NoTokensMatch = function ({ searchText }: { searchText: string }) {
+  const t = useTranslations('token-selector')
+
+  return (
+    <span className="text-center text-sm font-medium text-neutral-500">
+      {t.rich('no-results-for', {
+        search: () => <span className="text-neutral-950">{searchText}</span>,
+      })}
+    </span>
+  )
+}
+
+const bySymbol = (a: TokenType, b: TokenType) =>
+  a.symbol.localeCompare(b.symbol)
 
 export const TokenList = function ({
   closeModal,
@@ -82,13 +81,20 @@ export const TokenList = function ({
 }: Props) {
   const t = useTranslations('token-selector')
   const [searchText, setSearchText] = useState('')
-
+  const debouncedSearchText = useDebounce(searchText)
   const { width } = useWindowSize()
+
+  const userTypedAddress = isAddress(debouncedSearchText)
 
   const tokensToList = tokens.filter(
     token =>
-      token.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      token.symbol.toLowerCase().includes(searchText.toLowerCase()),
+      token.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
+      token.symbol.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
+      // allow only exact match for addresses. In most cases, they will be pasted, rather than typed
+      // so no user will partially type an address
+      (userTypedAddress &&
+        isAddress(token.address) &&
+        isAddressEqual(token.address, debouncedSearchText)),
   )
 
   const [pinnedTokens, restOfTokens] = partition(
@@ -131,13 +137,7 @@ export const TokenList = function ({
           tokens={sortedTokens}
         />
       ) : (
-        <span className="text-center text-sm font-medium text-neutral-500">
-          {t.rich('no-results-for', {
-            search: () => (
-              <span className="text-neutral-950">{searchText}</span>
-            ),
-          })}
-        </span>
+        <NoTokensMatch searchText={debouncedSearchText} />
       )}
     </div>
   )

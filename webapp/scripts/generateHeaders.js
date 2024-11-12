@@ -31,10 +31,11 @@ const fetchDomains = [
   // Hemi Sepolia
   'https://int02.testnet.rpc.hemi.network',
   'https://testnet.rpc.hemi.network',
-  // Hemi Mainnet
-  'https://cloudflare-eth.com',
   // Ethereum Mainnet
-  'https://rpc.hemi.network',
+  'https://cloudflare-eth.com',
+  // Hemi Mainnet
+  'https://*.hemi.network',
+  'https://*.rpc.hemi.network',
   // Sepolia
   'https://rpc.sepolia.org',
   'https://rpc2.sepolia.org',

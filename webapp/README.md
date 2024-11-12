@@ -5,7 +5,7 @@
 ### Environment variables
 
 The environment variables are defined in the `.env` file at the root of the project.
-The prefix `NEXT_PUBLIC_` is required for the variables to be available in the browser. A few variables can be set locally (in a `.env.local`), in addition to the ones already defined in the `.env`
+The prefix `NEXT_PUBLIC_` is required for the variables to be available in the browser. A few variables can be set locally (in a `.env.local`), in addition to the ones already defined in the `.env`.
 
 ```sh
 NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA=<url> # Optional - Used to override the Hemi Sepolia RPC URL

@@ -64,7 +64,7 @@ export const Navbar = function () {
             event="nav - dex"
             href="https://swap.hemi.xyz"
             icon={<DexIcon />}
-            text={t('dex')}
+            text={t('swap')}
           />
         </li>
         <li className="order-3">

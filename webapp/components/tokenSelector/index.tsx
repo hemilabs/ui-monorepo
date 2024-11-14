@@ -55,8 +55,9 @@ export const TokenSelector = function ({
           <Chevron.Bottom className="ml-auto flex-shrink-0 [&>path]:fill-neutral-500 [&>path]:group-hover/token-selector:fill-neutral-950" />
         )}
       </button>
-      {showTokenSelector && (
+      {showTokenSelector && typeof chainId === 'number' && (
         <TokenList
+          chainId={chainId}
           closeModal={closeModal}
           onSelectToken={handleSelection}
           tokens={tokens}

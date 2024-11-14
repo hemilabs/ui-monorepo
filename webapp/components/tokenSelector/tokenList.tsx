@@ -12,17 +12,22 @@ import { useTranslations } from 'next-intl'
 import { useRef, useState } from 'react'
 import { Token as TokenType } from 'types/token'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import { isAddress, isAddressEqual } from 'viem'
+import { type Chain, isAddress, isAddressEqual } from 'viem'
 
+import { NoTokensMatch } from './noTokensMatch'
 import { Token } from './token'
 
 type Props = {
+  chainId: Chain['id']
   closeModal: () => void
   onSelectToken: (token: TokenType) => void
   tokens: TokenType[]
 }
 
-const List = function ({ onSelectToken, tokens }: Omit<Props, 'closeModal'>) {
+const List = function ({
+  onSelectToken,
+  tokens,
+}: Omit<Props, 'chainId' | 'closeModal'>) {
   const parentRef = useRef<HTMLDivElement>(null)
 
   const rowVirtualizer = useVirtualizer({
@@ -59,22 +64,11 @@ const List = function ({ onSelectToken, tokens }: Omit<Props, 'closeModal'>) {
   )
 }
 
-const NoTokensMatch = function ({ searchText }: { searchText: string }) {
-  const t = useTranslations('token-selector')
-
-  return (
-    <span className="text-center text-sm font-medium text-neutral-500">
-      {t.rich('no-results-for', {
-        search: () => <span className="text-neutral-950">{searchText}</span>,
-      })}
-    </span>
-  )
-}
-
 const bySymbol = (a: TokenType, b: TokenType) =>
   a.symbol.localeCompare(b.symbol)
 
 export const TokenList = function ({
+  chainId,
   closeModal,
   onSelectToken,
   tokens,
@@ -137,7 +131,11 @@ export const TokenList = function ({
           tokens={sortedTokens}
         />
       ) : (
-        <NoTokensMatch searchText={debouncedSearchText} />
+        <NoTokensMatch
+          chainId={chainId}
+          closeModal={closeModal}
+          searchText={debouncedSearchText}
+        />
       )}
     </div>
   )

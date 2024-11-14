@@ -4,7 +4,7 @@ import { tokenList } from 'tokenList'
 import { EvmToken, Token } from 'types/token'
 import { Address, isAddress, isAddressEqual, zeroAddress } from 'viem'
 
-const isNativeAddress = (address: string) =>
+export const isNativeAddress = (address: string) =>
   address === zeroAddress || !address.startsWith('0x')
 
 export const isNativeToken = (token: Token) => isNativeAddress(token.address)

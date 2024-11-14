@@ -172,10 +172,25 @@
     "tunnel": "Túnel",
     "web-pop-miner": "Minero PoP Web"
   },
+  "token-custom-drawer": {
+    "add-contract-to-preview": "Añada una dirección de contrato para previsualizar el token...",
+    "add-this-pair": "Agregue este par a la lista de tokens de Hemi para que todos puedan tunelizarlos",
+    "add-token": "Añadir token",
+    "add-token-on-chain": "Añada la dirección del contrato del token en la red de Capa {network}",
+    "heading": "Tunelizar un token ERC-20 existente",
+    "i-am-sure-to-tunnel": "Estoy seguro que quiero tunelizar este token.",
+    "layer-token-address": "Dirección de contrado del token de capa {layer}",
+    "make-a-request-to-add": "Si deseas agregar este par de tokens ERC-20 a la lista de tokens aprobados de Hemi, <link>haz una solicitud</link>.",
+    "see-on-explorer": "Ver en {explorer}",
+    "subheading": "Necesitas ingresar el par de direcciones de contrato tanto de Ethereum como de Hemi para tunelear con este token.",
+    "this-address-is-not-valid": "Esta dirección es inválida",
+    "this-address-is-valid": "Esta dirección es válida"
+  },
   "token-selector": {
     "no-results-for": "No se encontraron resultados para <search></search>",
     "search-tokens": "Buscar tokens...",
-    "select-token": "Seleccione un token"
+    "select-token": "Seleccione un token",
+    "validating-token-address": "Validando dirección del token..."
   },
   "transaction-history": {
     "connect-wallet-to-review": "Conecte su billetera para revisar su historial de transacciones.",

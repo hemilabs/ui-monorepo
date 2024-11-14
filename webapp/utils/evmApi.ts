@@ -1,10 +1,14 @@
 import {
   getBlock,
   getTransactionReceipt as wagmiGetTransactionReceipt,
+  readContract,
 } from '@wagmi/core'
 import { allEvmNetworksWalletConfig } from 'app/context/evmWalletContext'
 import pMemoize from 'promise-mem'
-import { type Chain, type Hash } from 'viem'
+import { type L2Token, Token } from 'types/token'
+import { type Address, type Chain, type Hash, erc20Abi } from 'viem'
+
+import { opErc20Abi } from './opErc20Abi'
 
 export const getEvmBlock = pMemoize(
   (blockNumber: bigint | number, chainId: Chain['id']) =>
@@ -20,3 +24,48 @@ export const getEvmTransactionReceipt = (hash: Hash, chainId: Chain['id']) =>
     chainId,
     hash,
   })
+
+export const getErc20Token = pMemoize(
+  async function (address: Address, chainId: Chain['id']) {
+    const read = <T extends 'decimals' | 'name' | 'symbol'>(functionName: T) =>
+      // @ts-expect-error should work, but can't make it work
+      readContract(allEvmNetworksWalletConfig, {
+        abi: erc20Abi,
+        address,
+        chainId,
+        functionName,
+      })
+
+    return Promise.all([read('decimals'), read('name'), read('symbol')]).then(
+      ([decimals, name, symbol]) =>
+        ({
+          address,
+          chainId,
+          decimals,
+          name,
+          symbol,
+        }) satisfies Token,
+    )
+  },
+  { resolver: (address, chainId) => `${address}-${chainId}` },
+)
+
+export const getL2Erc20Token = pMemoize(
+  async (address: Address, chainId: Chain['id']) =>
+    Promise.all([
+      getErc20Token(address, chainId),
+      readContract(allEvmNetworksWalletConfig, {
+        abi: opErc20Abi,
+        address,
+        chainId,
+        functionName: 'l1Token',
+      }),
+    ]).then(
+      ([token, l1Token]) =>
+        ({
+          ...token,
+          l1Token,
+        }) as L2Token,
+    ),
+  { resolver: (address, chainId) => `${address}-${chainId}` },
+)

@@ -1,6 +1,8 @@
 import { allNetworks } from 'networks'
+import { hemiMainnet } from 'networks/hemiMainnet'
+import { hemiTestnet } from 'networks/hemiTestnet'
 import { type EvmChain, type RemoteChain } from 'types/chain'
-import { type Chain as ViemChain } from 'viem'
+import { type Chain } from 'viem'
 import { defineChain } from 'viem/utils'
 
 export const findChainById = (chainId: RemoteChain['id']) =>
@@ -9,7 +11,10 @@ export const findChainById = (chainId: RemoteChain['id']) =>
 export const isEvmNetwork = (chain: RemoteChain): chain is EvmChain =>
   typeof chain.id === 'number'
 
-export const overrideRpcUrl = function (chain: ViemChain, rpcUrl?: string) {
+export const isL2Network = (chain: Chain) =>
+  [hemiMainnet.id, hemiTestnet.id].includes(chain.id)
+
+export const overrideRpcUrl = function (chain: Chain, rpcUrl?: string) {
   const isValidCustomSepoliaRpc = !!rpcUrl && rpcUrl.startsWith('https')
   if (isValidCustomSepoliaRpc) {
     return defineChain({

@@ -1,4 +1,5 @@
 import { GreenCheckIcon } from 'components/icons/greenCheckIcon'
+import { RedErrorIcon } from 'components/icons/redErrorIcon'
 import { ShortVerticalLine, LongVerticalLine } from 'components/verticalLines'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
@@ -7,7 +8,6 @@ import { getFormattedValue } from 'utils/format'
 
 import { OneRowBox, TwoRowBox } from './box'
 import { ClockIcon } from './icons/clockIcon'
-import { ErrorIcon } from './icons/error'
 import { FeesIcon } from './icons/feesIcon'
 import { PositionStatus } from './positionStatus'
 import { ProgressStatus } from './progressStatus'
@@ -183,7 +183,7 @@ const Failed = function ({
       <TwoRowBox
         bottom={
           <>
-            <ErrorIcon />
+            <RedErrorIcon />
             <span className="mr-auto text-rose-500">{t('error')}</span>
             <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
           </>
@@ -220,7 +220,7 @@ const Rejected = function ({ description, fees, position, postAction }: Props) {
       <TwoRowBox
         bottom={
           <>
-            <ErrorIcon />
+            <RedErrorIcon />
             <span className="mr-auto text-rose-500">{t('rejected')}</span>
           </>
         }

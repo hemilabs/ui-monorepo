@@ -1,4 +1,4 @@
-export const ErrorIcon = () => (
+export const RedErrorIcon = () => (
   <svg fill="none" height={16} width={16} xmlns="http://www.w3.org/2000/svg">
     <rect fill="#fff" height={16} rx={8} width={16} />
     <path

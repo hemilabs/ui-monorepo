@@ -6,7 +6,13 @@ import {
 import { allEvmNetworksWalletConfig } from 'app/context/evmWalletContext'
 import pMemoize from 'promise-mem'
 import { type L2Token, Token } from 'types/token'
-import { type Address, type Chain, type Hash, erc20Abi } from 'viem'
+import {
+  type Address,
+  type Chain,
+  type Hash,
+  erc20Abi,
+  getAddress as toChecksum,
+} from 'viem'
 
 import { opErc20Abi } from './opErc20Abi'
 
@@ -39,7 +45,7 @@ export const getErc20Token = pMemoize(
     return Promise.all([read('decimals'), read('name'), read('symbol')]).then(
       ([decimals, name, symbol]) =>
         ({
-          address,
+          address: toChecksum(address, chainId),
           chainId,
           decimals,
           name,
@@ -64,7 +70,8 @@ export const getL2Erc20Token = pMemoize(
       ([token, l1Token]) =>
         ({
           ...token,
-          l1Token,
+          address,
+          l1Token: toChecksum(l1Token, chainId),
         }) as L2Token,
     ),
   { resolver: (address, chainId) => `${address}-${chainId}` },

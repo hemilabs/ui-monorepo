@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import { Token } from 'types/token'
-import { HemiTokenWithBackground } from 'ui-common/components/hemiLogo'
 
+import { CustomTokenLogo } from './customTokenLogo'
 import { HemiSubLogo } from './hemiSubLogo'
 
 const sizes = {
@@ -17,9 +17,9 @@ type Props = {
 }
 
 // for hemi tokens, we add a hemi logo at the bottom right
-export const TokenLogo = ({ size, token }: Props) => (
-  <div className={`relative ${sizes[size]}`}>
-    {token.logoURI ? (
+export const TokenLogo = ({ size, token }: Props) =>
+  token.logoURI ? (
+    <div className={`relative ${sizes[size]}`}>
       <Image
         alt={`${token.symbol} Logo`}
         className="w-full"
@@ -27,9 +27,11 @@ export const TokenLogo = ({ size, token }: Props) => (
         src={token.logoURI}
         width={20}
       />
-    ) : (
-      <HemiTokenWithBackground className="h-full w-full" />
-    )}
-    <HemiSubLogo token={token} />
-  </div>
-)
+      {/* for custom tokens, it is already included in the component */}
+      <HemiSubLogo token={token} />
+    </div>
+  ) : (
+    <div className={`relative ${sizes[size]}`}>
+      <CustomTokenLogo size={size} token={token} />
+    </div>
+  )

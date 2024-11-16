@@ -1,4 +1,4 @@
-import { HemiSubLogo } from 'components/hemiSubLogo'
+import { CustomTokenLogo } from 'components/customTokenLogo'
 import Skeleton from 'react-loading-skeleton'
 import { Token as TokenType } from 'types/token'
 import { formatEvmAddress } from 'utils/format'
@@ -6,23 +6,13 @@ import { formatEvmAddress } from 'utils/format'
 import { Balance } from '../balance'
 import { TokenLogo } from '../tokenLogo'
 
-const CustomTokenLogo = ({ token }: { token: TokenType }) => (
-  <div className="relative">
-    <div
-      className="flex h-8 w-8 items-center justify-center rounded-full
-      border border-solid border-white bg-neutral-50 text-[8px] font-bold text-neutral-700"
-    >
-      {token.symbol}
-    </div>
-    <HemiSubLogo token={token} />
-  </div>
-)
-
 export const CustomToken = ({ token }: { token: TokenType }) => (
   <div className="flex items-center gap-x-3 p-2 px-1.5 text-sm font-medium text-neutral-950">
     <div className="flex-shrink-0 flex-grow-0">
       {token ? (
-        <CustomTokenLogo token={token} />
+        <div className="relative">
+          <CustomTokenLogo size="medium" token={token} />
+        </div>
       ) : (
         <Skeleton className="h-8 w-8 rounded-full" />
       )}

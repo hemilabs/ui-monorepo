@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react'
 
-const inputCss = `shadow-soft text-sm placeholder:text-sm w-full cursor-pointer rounded-lg border
+const inputCss = `shadow-soft text-sm placeholder:text-sm w-full cursor-pointer rounded-lg border disabled:cursor-auto
   border-solid border-neutral-300/55 bg-white px-3 py-2 font-medium text-neutral-950 hover:border-neutral-300/90
  placeholder:font-medium placeholder:text-neutral-500 focus:border-orange-500 focus:outline-none`
 

@@ -15,7 +15,8 @@ export const SeeOnExplorer = function ({ address, chainId }: Props) {
   return (
     <ExternalLink
       className="group/see-on-explorer flex items-center gap-x-1 text-sm font-medium text-neutral-500"
-      {...(isAddress(address)
+      // using strict: false because this is a user input, and may not be a checksum address
+      {...(isAddress(address, { strict: false })
         ? { href: `${blockExplorer.url}/address/${address}` }
         : {})}
     >

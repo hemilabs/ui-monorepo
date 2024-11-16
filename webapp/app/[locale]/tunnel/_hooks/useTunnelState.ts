@@ -5,11 +5,12 @@ import { useBitcoin } from 'hooks/useBitcoin'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useTokenList } from 'hooks/useTokenList'
 import { useCallback, useEffect, useMemo, useReducer } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { findChainById } from 'utils/chain'
-import { getNativeToken, getTokenByAddress } from 'utils/token'
+import { getNativeToken, getTokenByAddress, isNativeToken } from 'utils/token'
 import { type NoPayload, type Payload } from 'utils/typeUtilities'
 import { type Chain, type Hash, isHash } from 'viem'
 
@@ -40,7 +41,10 @@ type SavePartialDeposit = Action<'savePartialDeposit'> &
 type UpdateFromNetwork = Action<'updateFromNetwork'> &
   Payload<TunnelState['fromNetworkId']>
 type UpdateFromToken = Action<'updateFromToken'> &
-  Payload<TunnelState['fromToken']>
+  Payload<{
+    fromToken: TunnelState['fromToken']
+    toToken: TunnelState['toToken']
+  }>
 type UpdateFromInput = Action<'updateFromInput'> & Payload<string>
 type UpdateToNetwork = Action<'updateToNetwork'> &
   Payload<TunnelState['toNetworkId']>
@@ -91,19 +95,11 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
       }
     }
     case 'updateFromToken': {
-      const { payload: fromToken } = action
-      const { toNetworkId } = state
+      const { fromToken, toToken } = action.payload
 
-      const bridgeAddress =
-        fromToken.extensions?.bridgeInfo[toNetworkId]?.tokenAddress
-      // find the tunneled pair of the token, or go with the native if missing
-      const toToken =
-        (bridgeAddress && getTokenByAddress(bridgeAddress, toNetworkId)) ??
-        getNativeToken(toNetworkId)
       return {
         ...state,
         fromToken,
-        toNetworkId,
         toToken,
       }
     }
@@ -208,9 +204,15 @@ const getDefaultNetworksOrder = function ({
 
 // This will throw compile error if a proper function event is missing!
 // But toggleTestnetMainnet is internal for a useEffect, no need to expose it
+// and updateFromToken uses a different interface
 type TunnelFunctionEvents = {
-  [K in Exclude<Actions['type'], 'toggleTestnetMainnet'>]: (
+  [K in Exclude<Actions['type'], 'toggleTestnetMainnet' | 'updateFromToken'>]: (
     payload?: Extract<Actions, { type: K }>['payload'],
+  ) => void
+} & {
+  updateFromToken: (
+    fromToken: TunnelState['fromToken'],
+    toToken?: TunnelState['toToken'],
   ) => void
 }
 
@@ -220,6 +222,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   const { evmRemoteNetworks, networks } = useNetworks()
   const [networkType] = useNetworkType()
   const tunnelOperation = useTunnelOperation()
+  const tokenList = useTokenList()
 
   // See https://github.com/hemilabs/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id
@@ -276,6 +279,21 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
     [dispatch, initial, isTestnet, networkType],
   )
 
+  const getTunnelToken = useCallback(
+    function (fromToken: Token, toNetworkId: RemoteChain['id']) {
+      const bridgeAddress =
+        fromToken.extensions?.bridgeInfo[toNetworkId]?.tokenAddress
+      // find the tunneled pair of the token, or go with the native if missing
+      const toToken = isNativeToken(fromToken)
+        ? getNativeToken(toNetworkId)
+        : tokenList.find(
+            t => t.address === bridgeAddress && t.chainId === toNetworkId,
+          )
+      return toToken
+    },
+    [tokenList],
+  )
+
   return {
     ...state,
     resetStateAfterOperation: useCallback(
@@ -305,34 +323,56 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
         // update network
         dispatch({ payload: fromNetworkId, type: 'updateFromNetwork' })
         // given the upload, we may need to update the tokens
-        const nativeToken = getNativeToken(fromNetworkId)
-        dispatch({ payload: nativeToken, type: 'updateFromToken' })
+        const fromToken = getNativeToken(fromNetworkId)
+        // the "current" fromNetwork is going to be the next toNetwork
+        const toToken = getNativeToken(state.toNetworkId)
+        dispatch({ payload: { fromToken, toToken }, type: 'updateFromToken' })
       },
-      [dispatch],
+      [dispatch, state.toNetworkId],
     ),
     updateFromToken: useCallback(
-      function (fromToken: UpdateFromToken['payload']) {
+      function (fromToken, toToken) {
+        // if token is defined use that one. This is needed for the scenarios where
+        // the token is not saved yet in the custom list
+        if (toToken) {
+          dispatch({ payload: { fromToken, toToken }, type: 'updateFromToken' })
+          return
+        }
+
         // if the selected token can't be tunneled to the target chain
         // we need to first update the target network
+        // just grab the first available network that's enabled
         if (!fromToken.extensions?.bridgeInfo[state.toNetworkId]) {
-          // just grab the first available network that's enabled
-          const [newFromNetworkId] = Object.keys(
+          const [newToNetworkId] = Object.keys(
             fromToken.extensions.bridgeInfo,
           ).filter(id => networks.some(n => n.id.toString() === id))
           // parse as int or keep as string, depending on the id
           const payload = (
-            isNaN(parseInt(newFromNetworkId))
-              ? newFromNetworkId
-              : parseInt(newFromNetworkId)
+            isNaN(parseInt(newToNetworkId))
+              ? newToNetworkId
+              : parseInt(newToNetworkId)
           ) as TunnelState['fromNetworkId']
           dispatch({
             payload,
             type: 'updateToNetwork',
           })
+
+          dispatch({
+            payload: { fromToken, toToken: getTunnelToken(fromToken, payload) },
+            type: 'updateFromToken',
+          })
+          return
         }
-        dispatch({ payload: fromToken, type: 'updateFromToken' })
+
+        dispatch({
+          payload: {
+            fromToken,
+            toToken: getTunnelToken(fromToken, state.toNetworkId),
+          },
+          type: 'updateFromToken',
+        })
       },
-      [dispatch, networks, state],
+      [dispatch, getTunnelToken, networks, state.toNetworkId],
     ),
     updateToNetwork: useCallback(
       function (toNetworkId: UpdateToNetwork['payload']) {
@@ -342,7 +382,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
         // so the "From" must be updated to the tunnel equivalent in Hemi.
         const tunneledEthHemi = getNativeToken(hemi.id)
         const nativeToken = getNativeToken(toNetworkId)
-        const newToken = nativeToken.extensions?.bridgeInfo[hemi.id]
+        const fromToken = nativeToken.extensions?.bridgeInfo[hemi.id]
           ?.tokenAddress
           ? getTokenByAddress(
               nativeToken.extensions.bridgeInfo[hemi.id].tokenAddress,
@@ -350,9 +390,11 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
             ) ?? tunneledEthHemi
           : tunneledEthHemi
 
-        dispatch({ payload: newToken, type: 'updateFromToken' })
+        const toToken = getTunnelToken(fromToken, toNetworkId)
+
+        dispatch({ payload: { fromToken, toToken }, type: 'updateFromToken' })
       },
-      [dispatch, hemi.id],
+      [dispatch, getTunnelToken, hemi.id],
     ),
   }
 }

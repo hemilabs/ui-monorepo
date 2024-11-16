@@ -1,16 +1,20 @@
 'use client'
 
+import { useQueryClient } from '@tanstack/react-query'
 import { Button } from 'components/button'
 import { Drawer } from 'components/drawer'
 import { useChain } from 'hooks/useChain'
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useL2Token } from 'hooks/useL2Token'
-import { useToken } from 'hooks/useToken'
+import { getUseTokenQueryKey, useToken } from 'hooks/useToken'
+import { useUserTokenList } from 'hooks/useUserTokenList'
 import { useTranslations } from 'next-intl'
-import { FormEvent, useState } from 'react'
+import { type FormEvent, useState } from 'react'
+import { getRemoteTokens } from 'tokenList'
+import { EvmToken, L2Token, Token } from 'types/token'
 import { CloseIcon } from 'ui-common/components/closeIcon'
 import { isL2Network } from 'utils/chain'
-import { type Chain } from 'viem'
+import { type Chain, checksumAddress } from 'viem'
 
 import { AddPairToHemi } from './addPairToHemi'
 import { TokenSection } from './tokenSection'
@@ -19,18 +23,22 @@ type Props = {
   fromNetworkId: Chain['id']
   l1ChainId: Chain['id']
   l2ChainId: Chain['id']
+  onSelectToken(fromToken: Token, toToken: Token)
 }
 
 export const CustomTokenDrawer = function ({
   fromNetworkId,
   l1ChainId,
   l2ChainId,
+  onSelectToken,
 }: Props) {
   // as fromNetworkId, it will never be a BtcChain
   const fromChain = useChain(fromNetworkId) as Chain
   const isL2 = isL2Network(fromChain)
 
   const [customTokenAddress, setCustomTokenAddress] = useCustomTokenAddress()
+  const queryClient = useQueryClient()
+  const { addToken } = useUserTokenList()
   const [tunneledCustomTokenAddress, setTunneledCustomTokenAddress] =
     useState('')
 
@@ -39,6 +47,14 @@ export const CustomTokenDrawer = function ({
     chainId: l2ChainId,
     options: {
       enabled: isL2 || !!tunneledCustomTokenAddress,
+      // we may have an incomplete view in the cache of this, useful when
+      // reading the L2 token
+      placeholderData: queryClient.getQueryData<L2Token>(
+        getUseTokenQueryKey(
+          isL2 ? customTokenAddress : tunneledCustomTokenAddress,
+          l2ChainId,
+        ),
+      ),
       retry: 1,
     },
   })
@@ -63,9 +79,43 @@ export const CustomTokenDrawer = function ({
 
   const handleSubmit = function (e: FormEvent) {
     e.preventDefault()
+    // although they are not direct children in the DOM, in React this component
+    // is used inside deposit/withdrawal/etc which contain a form.
+    // so submitting will trigger the submit. So we need to stop the propagation!
+    e.stopPropagation()
     if (!canSubmit) {
       return
     }
+
+    const { l1Token, ...tokenData } = l2customToken
+    // the token list is saved with chainId from Hemi, and then the opposite is generated
+    // from the tunnel info. See https://github.com/hemilabs/token-list/blob/master/src/hemi.tokenlist.json
+    // for examples
+    const l2TokenAdded = {
+      ...tokenData,
+      extensions: {
+        bridgeInfo: {
+          [l1ChainId]: {
+            tokenAddress: checksumAddress(l1Token, l1ChainId),
+          },
+        },
+      },
+    } satisfies EvmToken
+
+    addToken(l2TokenAdded)
+
+    const l1TokenAdded = getRemoteTokens(l2TokenAdded).find(
+      token => token.chainId === l1ChainId,
+    )
+    // however, as we close the drawer and auto-select this token to tunnel
+    // chances are that the state from local storage is not synced
+    // so for this particular scenario we will use the token from memory
+    onSelectToken(
+      isL2 ? l2TokenAdded : l1TokenAdded,
+      isL2 ? l1TokenAdded : l2TokenAdded,
+    )
+
+    closeDrawer()
   }
 
   return (

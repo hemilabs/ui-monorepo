@@ -1,8 +1,8 @@
 import { useUmami } from 'app/analyticsEvents'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useTokenList } from 'hooks/useTokenList'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
-import { tokenList } from 'tokenList'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 
@@ -38,7 +38,7 @@ export const TokenSelector = function ({
     track?.('select token', { chain: networkType })
   }
 
-  const tokens = tokenList.tokens.filter(t => t.chainId === chainId)
+  const tokens = useTokenList(chainId)
 
   return (
     <>

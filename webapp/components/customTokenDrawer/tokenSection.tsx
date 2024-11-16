@@ -82,7 +82,7 @@ export const TokenSection = function ({
                 <>
                   <AddressValidity isValid={!!token} />
                   {!!token && (
-                    <SeeOnExplorer address={addressValue} chainId={chainId} />
+                    <SeeOnExplorer address={token.address} chainId={chainId} />
                   )}
                 </>
               ) : (

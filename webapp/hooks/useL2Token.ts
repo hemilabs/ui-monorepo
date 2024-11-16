@@ -10,6 +10,10 @@ type Params = {
   options?: Omit<UseQueryOptions<L2Token, Error>, 'queryKey' | 'queryFn'>
 }
 
+/**
+ * For most scenarios, prefer useToken hook instead. This token should be used if
+ * the info from the RemoteToken (L1) is needed
+ */
 export const useL2Token = ({ address, chainId, options = {} }: Params) =>
   useQuery({
     ...options,
@@ -17,5 +21,4 @@ export const useL2Token = ({ address, chainId, options = {} }: Params) =>
     queryFn: () =>
       getL2Erc20Token(address as Address, chainId) satisfies Promise<L2Token>,
     queryKey: ['l2-erc20-token-complete', address, chainId],
-    retry: 1,
   })

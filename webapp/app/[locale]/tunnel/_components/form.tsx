@@ -106,6 +106,7 @@ export const FormContent = function ({
           l1ChainId={l1ChainId}
           // @ts-expect-error TS fails to check these, but they are checked above by evmTunneling
           l2ChainId={l2ChainId}
+          onSelectToken={updateFromToken}
         />
       )}
     </>

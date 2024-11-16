@@ -7,7 +7,33 @@ import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
 import { sepolia } from 'networks/sepolia'
 import { type EvmToken, type Token } from 'types/token'
-import { Address } from 'viem'
+import { type Address } from 'viem'
+
+export const getRemoteTokens = function (token: EvmToken) {
+  if (!token.extensions?.bridgeInfo) {
+    return [] satisfies EvmToken[]
+  }
+  return Object.keys(token.extensions!.bridgeInfo!).map(l1ChainId => ({
+    ...token,
+    address: token.extensions!.bridgeInfo![l1ChainId].tokenAddress,
+    chainId: Number(l1ChainId),
+    extensions: {
+      bridgeInfo: {
+        [token.chainId]: {
+          tokenAddress: token.address as Address,
+        },
+      },
+    },
+    name: token.name
+      // Remove the ".e" suffix
+      .replace('.e', '')
+      .trim(),
+    symbol: token.symbol
+      // Remove the ".e" suffix
+      .replace('.e', '')
+      .trim(),
+  })) satisfies EvmToken[]
+}
 
 // Special address used by OP to store bridged eth
 // See https://github.com/ethereum-optimism/optimism/blob/fa19f9aa250c0f548e0fdd226114aebf2c4c3fed/packages/contracts-bedrock/src/libraries/Predeploys.sol#L51
@@ -24,29 +50,7 @@ const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
   .filter(t => t.symbol !== 'WETH')
 
 // the hemiTokens only contains definitions for Hemi tokens, but we can create the L1 version with the extensions field info
-const l1HemiTokens = hemiTokens
-  .filter(t => !!t.extensions?.bridgeInfo)
-  .flatMap(t =>
-    Object.keys(t.extensions!.bridgeInfo!).map(l1ChainId => ({
-      ...t,
-      address: t.extensions!.bridgeInfo![l1ChainId].tokenAddress,
-      chainId: Number(l1ChainId),
-      extensions: {
-        bridgeInfo: {
-          [t.chainId]: {
-            tokenAddress: t.address as Address,
-          },
-        },
-      },
-      name: t.name,
-      symbol: t.symbol
-        // Remove the ".e" suffix
-        .replace('.e', '')
-        .trim(),
-    })),
-  )
-
-const tokens: Token[] = hemiTokens.concat(l1HemiTokens)
+const tokens: Token[] = hemiTokens.concat(hemiTokens.flatMap(getRemoteTokens))
 
 const nativeTokens: Token[] = [
   {

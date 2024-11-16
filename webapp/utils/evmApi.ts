@@ -11,7 +11,7 @@ import {
   type Chain,
   type Hash,
   erc20Abi,
-  getAddress as toChecksum,
+  checksumAddress as toChecksum,
 } from 'viem'
 
 import { opErc20Abi } from './opErc20Abi'

@@ -20,6 +20,9 @@ export const NoTokensMatch = function ({
   const { data: customToken, status } = useToken({
     address: searchText,
     chainId,
+    options: {
+      retry: 1,
+    },
   })
 
   const userTypedAddress = isAddress(searchText)

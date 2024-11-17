@@ -1,12 +1,12 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useChain } from 'hooks/useChain'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import { useContext } from 'react'
 import { EvmToken } from 'types/token'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { formatGasFees } from 'utils/format'
-import { getNativeToken, getTokenByAddress, isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -46,19 +46,15 @@ type Props = {
   withdrawal: ToEvmWithdrawOperation
 }
 
-const ReviewContent = function ({ onClose, withdrawal }: Props) {
-  const toToken = getTokenByAddress(
-    withdrawal.l1Token,
-    withdrawal.l1ChainId,
-  ) as EvmToken
-
-  // L2 native tunneled token is on a special address, so it is easier to get the native token
-  const fromToken = (
-    isNativeToken(toToken)
-      ? getNativeToken(withdrawal.l2ChainId)
-      : getTokenByAddress(withdrawal.l2Token, withdrawal.l2ChainId)
-  ) as EvmToken
-
+const ReviewContent = function ({
+  fromToken,
+  onClose,
+  toToken,
+  withdrawal,
+}: Props & {
+  fromToken: EvmToken
+  toToken: EvmToken
+}) {
   const { chainId: connectedChainId } = useAccount()
   const fromChain = useChain(withdrawal.l2ChainId)
   const toChain = useChain(withdrawal.l1ChainId)
@@ -226,8 +222,29 @@ const ReviewContent = function ({ onClose, withdrawal }: Props) {
   )
 }
 
-export const ReviewEvmWithdrawal = ({ onClose, withdrawal }: Props) => (
-  <ToEvmWithdrawalProvider>
-    <ReviewContent onClose={onClose} withdrawal={withdrawal} />
-  </ToEvmWithdrawalProvider>
-)
+export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
+  const { data: toToken } = useToken({
+    address: withdrawal.l1Token,
+    chainId: withdrawal.l1ChainId,
+  })
+
+  const { data: fromToken } = useToken({
+    address: withdrawal.l2Token,
+    chainId: withdrawal.l2ChainId,
+  })
+
+  const tokensLoaded = !!fromToken && !!toToken
+
+  return (
+    <ToEvmWithdrawalProvider>
+      {tokensLoaded ? (
+        <ReviewContent
+          fromToken={fromToken as EvmToken}
+          onClose={onClose}
+          toToken={toToken as EvmToken}
+          withdrawal={withdrawal}
+        />
+      ) : null}
+    </ToEvmWithdrawalProvider>
+  )
+}

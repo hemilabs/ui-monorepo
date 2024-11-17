@@ -1,11 +1,11 @@
-import { hemiMainnet } from 'networks/hemiMainnet'
-import { hemiTestnet } from 'networks/hemiTestnet'
-import { tokenList } from 'tokenList'
+import { tokenList, NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { EvmToken, Token } from 'types/token'
-import { Address, isAddress, isAddressEqual, zeroAddress } from 'viem'
+import { isAddress, isAddressEqual, zeroAddress } from 'viem'
 
 export const isNativeAddress = (address: string) =>
-  address === zeroAddress || !address.startsWith('0x')
+  address === zeroAddress ||
+  !address.startsWith('0x') ||
+  (isAddress(address) && isAddressEqual(address, NativeTokenSpecialAddressOnL2))
 
 export const isNativeToken = (token: Token) => isNativeAddress(token.address)
 
@@ -29,20 +29,6 @@ export const getTokenByAddress = function (
       isAddressEqual(token.address, address),
   )
 }
-
-export const getL2TokenByBridgedAddress = (
-  address: Address,
-  l1ChainId: Token['chainId'],
-) =>
-  tokenList.tokens.find(
-    token =>
-      (token.chainId === hemiMainnet.id || token.chainId === hemiTestnet.id) &&
-      token.extensions?.bridgeInfo?.[l1ChainId]?.tokenAddress &&
-      isAddressEqual(
-        token.extensions.bridgeInfo[l1ChainId].tokenAddress,
-        address,
-      ),
-  )
 
 export const isEvmToken = (token: Token): token is EvmToken =>
   typeof token.chainId === 'number'

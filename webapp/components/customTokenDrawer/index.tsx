@@ -14,8 +14,9 @@ import { getRemoteTokens } from 'tokenList'
 import { EvmToken, L2Token, Token } from 'types/token'
 import { CloseIcon } from 'ui-common/components/closeIcon'
 import { isL2Network } from 'utils/chain'
-import { type Chain, checksumAddress } from 'viem'
+import { type Chain, checksumAddress, isAddress, isAddressEqual } from 'viem'
 
+import { Acknowledge } from './acknowledge'
 import { AddPairToHemi } from './addPairToHemi'
 import { TokenSection } from './tokenSection'
 
@@ -25,6 +26,21 @@ type Props = {
   l2ChainId: Chain['id']
   onSelectToken(fromToken: Token, toToken: Token)
 }
+
+const canSubmit = ({
+  acknowledged,
+  l1CustomToken,
+  l2customToken,
+}: {
+  acknowledged: boolean
+  l1CustomToken: Token | undefined
+  l2customToken: L2Token | undefined
+}) =>
+  acknowledged &&
+  !!l1CustomToken &&
+  !!l2customToken &&
+  isAddress(l1CustomToken.address) &&
+  isAddressEqual(l2customToken.l1Token, l1CustomToken.address)
 
 export const CustomTokenDrawer = function ({
   fromNetworkId,
@@ -71,7 +87,11 @@ export const CustomTokenDrawer = function ({
   const [acknowledged, setAcknowledged] = useState(false)
   const t = useTranslations('token-custom-drawer')
 
-  const canSubmit = acknowledged && !!l1CustomToken && !!l2customToken
+  const submitEnabled = canSubmit({
+    acknowledged,
+    l1CustomToken,
+    l2customToken,
+  })
 
   const closeDrawer = () => setCustomTokenAddress(null)
   const onTunneledCustomTokenAddressChange = (str: string) =>
@@ -83,7 +103,7 @@ export const CustomTokenDrawer = function ({
     // is used inside deposit/withdrawal/etc which contain a form.
     // so submitting will trigger the submit. So we need to stop the propagation!
     e.stopPropagation()
-    if (!canSubmit) {
+    if (!submitEnabled) {
       return
     }
 
@@ -163,41 +183,9 @@ export const CustomTokenDrawer = function ({
         />
         <AddPairToHemi />
         <div className="mt-auto flex flex-col gap-y-3">
-          <label
-            className="relative flex cursor-pointer items-center gap-x-2"
-            htmlFor="custom-token-acknowledged"
-          >
-            <input
-              checked={acknowledged}
-              className="shadow-soft checkbox h-4 w-4 cursor-pointer appearance-none rounded border border-solid border-neutral-300/55 bg-white
-              transition-all checked:border-0 checked:bg-orange-500 focus:ring-2 focus:ring-orange-500"
-              id="custom-token-acknowledged"
-              onChange={e => setAcknowledged(e.target.checked)}
-              type="checkbox"
-            />
-            {acknowledged && (
-              <div className="pointer-events-none absolute left-0.5 top-1">
-                <svg
-                  className="h-3 w-3 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  viewBox="0 0 12 12"
-                >
-                  <path
-                    d="M2 6.5l2.5 2.5L10 3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </div>
-            )}
-            <span className="text-sm font-medium text-neutral-500">
-              {t('i-am-sure-to-tunnel')}
-            </span>
-          </label>
+          <Acknowledge acknowledged={acknowledged} onChange={setAcknowledged} />
           <div className="flex [&>*]:basis-full">
-            <Button disabled={!canSubmit} type="submit" variant="primary">
+            <Button disabled={!submitEnabled} type="submit" variant="primary">
               {t('add-token')}
             </Button>
           </div>

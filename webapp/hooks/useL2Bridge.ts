@@ -12,7 +12,7 @@ import {
   type CrossChainMessengerProxy,
   createIsolatedCrossChainMessenger,
 } from 'utils/crossChainMessenger'
-import { type Chain, type Hash, isHash } from 'viem'
+import { type Chain, type Hash, checksumAddress, isHash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
@@ -224,9 +224,9 @@ export const useConnectedChainCrossChainMessenger = function (
 
 type UseDepositErc20Token = {
   enabled: boolean
-  l1ChainId: Chain['id']
+  fromToken: Token
   toDeposit: string
-  token: Token
+  toToken: Token
 } & Pick<
   UseMutationOptions<
     Hash,
@@ -242,18 +242,21 @@ type UseDepositErc20Token = {
 
 export const useDepositErc20Token = function ({
   enabled,
-  l1ChainId,
+  fromToken,
   toDeposit,
-  token,
+  toToken,
   ...options
 }: UseDepositErc20Token) {
   const operation = 'depositERC20'
+  const l1ChainId = fromToken.chainId as Chain['id']
   const hemi = useHemi()
   const { crossChainMessenger, crossChainMessengerStatus } =
     useL1ToL2CrossChainMessenger(l1ChainId)
 
-  const l1BridgeAddress = token.address
-  const l2BridgeAddress = token.extensions?.bridgeInfo[hemi.id]?.tokenAddress
+  // @ts-expect-error string is `0x${string}`
+  const l1BridgeAddress = checksumAddress(fromToken.address)
+  // @ts-expect-error string is `0x${string}`
+  const l2BridgeAddress = checksumAddress(toToken.address)
 
   const overrides = hemi.testnet ? l1OverridesTestnet : tunnelOverrides
 
@@ -532,13 +535,15 @@ type UseWithdrawToken = {
   amount: string
   enabled: boolean
   l1ChainId: Chain['id']
-  token: Token
+  fromToken: Token
+  toToken: Token
 } & Pick<UseMutationOptions<Hash, Error, string>, 'onSettled' | 'onSuccess'>
 export const useWithdrawToken = function ({
   amount,
   enabled,
+  fromToken,
   l1ChainId,
-  token,
+  toToken,
   ...options
 }: UseWithdrawToken) {
   const operation = 'withdrawERC20'
@@ -546,8 +551,10 @@ export const useWithdrawToken = function ({
     useL2toL1CrossChainMessenger(l1ChainId)
   const hemi = useHemi()
 
-  const l1BridgeAddress = token.extensions?.bridgeInfo[l1ChainId].tokenAddress
-  const l2BridgeAddress = token.address
+  // @ts-expect-error string is `0x${string}`
+  const l1BridgeAddress = checksumAddress(toToken.address)
+  // @ts-expect-error string is `0x${string}`
+  const l2BridgeAddress = checksumAddress(fromToken.address)
 
   const withdrawErc20TokenGasFees = useEstimateGasFees({
     args: [l1BridgeAddress, l2BridgeAddress, amount, tunnelOverrides],

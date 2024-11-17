@@ -81,9 +81,10 @@ export const useWithdraw = function ({
   } = useWithdrawToken({
     amount: toWithdraw,
     enabled: !withdrawingNative && canWithdraw,
+    fromToken,
     l1ChainId,
     onSuccess,
-    token: fromToken,
+    toToken,
   })
 
   const {

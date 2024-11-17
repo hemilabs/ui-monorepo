@@ -22,27 +22,29 @@ type UseDepositToken = Pick<
 > & {
   amount: string
   extendedApproval?: boolean
+  fromToken: EvmToken
   onApprovalSuccess: (hash: Hash) => void
   onSuccess: (hash: Hash) => void
-  token: EvmToken
+  toToken: EvmToken
 }
 export const useDepositToken = function ({
   amount,
   enabled,
   extendedApproval = false,
+  fromToken,
   onApprovalSuccess,
   onSuccess,
-  token,
+  toToken,
 }: UseDepositToken) {
   const { address: owner } = useAccount()
   const hemi = useHemi()
   const queryClient = useQueryClient()
 
-  const toDeposit = parseUnits(amount, token.decimals).toString()
+  const toDeposit = parseUnits(amount, fromToken.decimals).toString()
 
   const l1StandardBridgeAddress = getTunnelContracts(
     hemi,
-    token.chainId,
+    fromToken.chainId,
   ).L1StandardBridge
 
   const {
@@ -54,10 +56,10 @@ export const useDepositToken = function ({
     status: depositStatus,
   } = useDepositErc20Token({
     enabled,
-    l1ChainId: token.chainId,
+    fromToken,
     onSuccess,
     toDeposit,
-    token,
+    toToken,
   })
 
   const { data: depositReceipt, error: depositReceiptError } =
@@ -66,7 +68,7 @@ export const useDepositToken = function ({
     })
 
   // @ts-expect-error string is `0x${string}`
-  const { queryKey } = useAllowance(token.address, {
+  const { queryKey } = useAllowance(fromToken.address, {
     args: {
       owner,
       spender: l1StandardBridgeAddress,
@@ -91,7 +93,7 @@ export const useDepositToken = function ({
     needsApproval,
     resetApproval,
   } = useApproveToken(
-    token,
+    fromToken,
     {
       amount:
         BigInt(toDeposit) *

@@ -15,6 +15,7 @@ import { TokenPreview } from './tokenPreview'
 
 type Props = {
   addressDisabled: boolean
+  addressValidity: AddressValidity | undefined
   chainId: Chain['id']
   isLoading: boolean
   token: Token
@@ -29,6 +30,7 @@ type Props = {
 
 export const TokenSection = function ({
   addressDisabled,
+  addressValidity,
   chainId,
   isLoading,
   layer,
@@ -80,7 +82,7 @@ export const TokenSection = function ({
             <div className="flex items-center justify-between">
               {!isLoading && (addressValue.length > 0 || hasFocused) ? (
                 <>
-                  <AddressValidity isValid={!!token} />
+                  <AddressValidity validity={addressValidity} />
                   {!!token && (
                     <SeeOnExplorer address={token.address} chainId={chainId} />
                   )}

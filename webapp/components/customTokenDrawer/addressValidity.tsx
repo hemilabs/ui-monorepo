@@ -2,12 +2,21 @@ import { GreenCheckIcon } from 'components/icons/greenCheckIcon'
 import { RedErrorIcon } from 'components/icons/redErrorIcon'
 import { useTranslations } from 'next-intl'
 
+export type AddressValidity =
+  | 'this-address-is-valid'
+  | 'this-address-is-not-valid'
+  | 'address-does-not-match-l2'
+
 type Props = {
-  isValid: boolean
+  validity: AddressValidity | undefined
 }
 
-export const AddressValidity = function ({ isValid }: Props) {
+export const AddressValidity = function ({ validity }: Props) {
   const t = useTranslations('token-custom-drawer')
+  if (!validity) {
+    return <div />
+  }
+  const isValid = validity === 'this-address-is-valid'
   return (
     <div className="flex items-center gap-x-1">
       {isValid ? <GreenCheckIcon /> : <RedErrorIcon />}
@@ -16,7 +25,7 @@ export const AddressValidity = function ({ isValid }: Props) {
           isValid ? 'text-emerald-500' : 'text-rose-500'
         }`}
       >
-        {t(isValid ? 'this-address-is-valid' : 'this-address-is-not-valid')}
+        {t(validity)}
       </span>
     </div>
   )

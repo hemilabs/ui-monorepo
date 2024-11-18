@@ -177,6 +177,7 @@
     "add-this-pair": "Agregue este par a la lista de tokens de Hemi para que todos puedan tunelizarlos",
     "add-token": "Añadir token",
     "add-token-on-chain": "Añada la dirección del contrato del token en la red de Capa {network}",
+    "address-does-not-match-l2": "No coincide con el par de L1",
     "heading": "Tunelizar un token ERC-20 existente",
     "i-am-sure-to-tunnel": "Estoy seguro que quiero tunelizar este token.",
     "layer-token-address": "Dirección de contrado del token de capa {layer}",

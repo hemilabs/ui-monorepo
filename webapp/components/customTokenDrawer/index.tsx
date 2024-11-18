@@ -14,7 +14,13 @@ import { getRemoteTokens } from 'tokenList'
 import { EvmToken, L2Token, Token } from 'types/token'
 import { CloseIcon } from 'ui-common/components/closeIcon'
 import { isL2Network } from 'utils/chain'
-import { type Chain, checksumAddress, isAddress, isAddressEqual } from 'viem'
+import {
+  type Address,
+  type Chain,
+  checksumAddress,
+  isAddress,
+  isAddressEqual,
+} from 'viem'
 
 import { Acknowledge } from './acknowledge'
 import { AddPairToHemi } from './addPairToHemi'
@@ -41,6 +47,27 @@ const canSubmit = ({
   !!l2customToken &&
   isAddress(l1CustomToken.address) &&
   isAddressEqual(l2customToken.l1Token, l1CustomToken.address)
+
+const getL1AddressValidity = (l1CustomToken: Token | undefined) =>
+  l1CustomToken ? 'this-address-is-valid' : 'this-address-is-not-valid'
+
+const getL2AddressValidity = function (
+  l1CustomToken: Token | undefined,
+  l2customToken: L2Token | undefined,
+) {
+  if (!l2customToken) {
+    return 'this-address-is-not-valid'
+  }
+  if (!l1CustomToken) {
+    return undefined
+  }
+  if (
+    !isAddressEqual(l2customToken.l1Token, l1CustomToken.address as Address)
+  ) {
+    return 'address-does-not-match-l2'
+  }
+  return 'this-address-is-valid'
+}
 
 export const CustomTokenDrawer = function ({
   fromNetworkId,
@@ -161,6 +188,7 @@ export const CustomTokenDrawer = function ({
         </p>
         <TokenSection
           addressDisabled
+          addressValidity={getL1AddressValidity(l1CustomToken)}
           chainId={l1ChainId}
           isLoading={isLoadingL1Token}
           layer={1}
@@ -168,6 +196,7 @@ export const CustomTokenDrawer = function ({
         />
         <TokenSection
           addressDisabled={isL2}
+          addressValidity={getL2AddressValidity(l1CustomToken, l2customToken)}
           chainId={l2ChainId}
           isLoading={isLoadingL2Token}
           layer={2}

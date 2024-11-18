@@ -177,6 +177,7 @@
     "add-this-pair": "Add this pair to Hemi’s token list for everyone to tunnel",
     "add-token": "Add token",
     "add-token-on-chain": "Add the token contract address on the {network} network",
+    "address-does-not-match-l2": "Doesn't match the L1 pair",
     "heading": "Tunnel an existing ERC-20 token",
     "i-am-sure-to-tunnel": "I'm sure I want to tunnel with this token.",
     "layer-token-address": "Layer {layer} token address",

@@ -42,6 +42,11 @@ export const Amount = function ({ operation }: Props) {
     return <Skeleton className="w-16" />
   }
 
+  // This point should not be reachable, but in case it is, this will give a better handling error
+  if (!token) {
+    throw new Error(`Missing token ${tokenAddress} in chain ${chainId}`)
+  }
+
   const originalAmount = formatUnits(BigInt(amount), token.decimals).toString()
 
   const formattedAmount = formatAmount(originalAmount, token.decimals)

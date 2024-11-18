@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { getRemoteTokens, tokenList } from 'tokenList'
+import { tokenList } from 'tokenList'
 import { RemoteChain } from 'types/chain'
 
 import { useUserTokenList } from './useUserTokenList'
@@ -9,9 +9,8 @@ export const useTokenList = function (chainId?: RemoteChain['id']) {
   return useMemo(
     () =>
       tokenList.tokens
-        .concat(userTokenList.tokens)
-        .concat(userTokenList.tokens.flatMap(getRemoteTokens))
+        .concat(userTokenList)
         .filter(t => !chainId || t.chainId === chainId),
-    [chainId, userTokenList.tokens],
+    [chainId, userTokenList],
   )
 }

@@ -187,6 +187,7 @@
     "this-address-is-valid": "Esta dirección es válida"
   },
   "token-selector": {
+    "manually-added-tokens": "Tokens agregados manualmente",
     "no-results-for": "No se encontraron resultados para <search></search>",
     "search-tokens": "Buscar tokens...",
     "select-token": "Seleccione un token",

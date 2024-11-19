@@ -61,7 +61,7 @@ export const FormContent = function ({
     typeof fromNetworkId === 'number' && typeof toNetworkId === 'number'
 
   const l1ChainId = fromNetworkId === hemi.id ? toNetworkId : fromNetworkId
-  const l2ChainId = fromNetworkId === l1ChainId ? toNetworkId : fromNetworkId
+  const l2ChainId = hemi.id
 
   return (
     <>
@@ -104,7 +104,6 @@ export const FormContent = function ({
           fromNetworkId={fromNetworkId}
           // @ts-expect-error TS fails to check these, but they are checked above by evmTunneling
           l1ChainId={l1ChainId}
-          // @ts-expect-error TS fails to check these, but they are checked above by evmTunneling
           l2ChainId={l2ChainId}
           onSelectToken={updateFromToken}
         />

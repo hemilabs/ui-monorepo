@@ -1,11 +1,9 @@
-import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchChain'
 import { useChain } from 'hooks/useChain'
+import { useSwitchChain } from 'hooks/useSwitchChain'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { CloseIcon } from 'ui-common/components/closeIcon'
-import { isEvmNetwork } from 'utils/chain'
-import { useSwitchChain as useSwitchEvmChain } from 'wagmi'
 
 const WarningIcon = () => (
   <svg
@@ -30,8 +28,7 @@ type Props = {
 
 export const SwitchToNetworkToast = function ({ chainId }: Props) {
   const [closedToast, setClosedToast] = useState(false)
-  const { switchChain: switchBtcChain } = useSwitchBtcChain()
-  const { switchChain: switchEvmChain } = useSwitchEvmChain()
+  const { switchChain } = useSwitchChain()
 
   const t = useTranslations('common')
 
@@ -39,22 +36,6 @@ export const SwitchToNetworkToast = function ({ chainId }: Props) {
 
   if (closedToast) {
     return null
-  }
-
-  const expectedWalletIsEvm =
-    !!walletTargetNetwork && isEvmNetwork(walletTargetNetwork)
-
-  const switchToNetwork = function () {
-    if (expectedWalletIsEvm) {
-      switchEvmChain({ chainId: walletTargetNetwork.id })
-    } else {
-      // We need to use viem's Chain definition instead of rainbow-kit's definition of Chain
-      // for this to work. But we still need to use rainbow-kit's Chain for showing the proper logos
-      // when switching the chain when the feature toggle is off. Once we drop rainbow-kit for switching chains
-      // and we use Chain from viem's in network.tsx, this will work automatically.
-      // @ts-expect-error once we drop rainbow kit for switching chains, this will work automatically
-      switchBtcChain({ chainId: walletTargetNetwork.id })
-    }
   }
 
   return (
@@ -73,7 +54,7 @@ export const SwitchToNetworkToast = function ({ chainId }: Props) {
         </p>
         <button
           className="mt-1.5 cursor-pointer underline hover:text-neutral-200"
-          onClick={switchToNetwork}
+          onClick={() => switchChain({ chainId })}
           type="button"
         >
           {t('switch-to-network', { network: walletTargetNetwork?.name })}

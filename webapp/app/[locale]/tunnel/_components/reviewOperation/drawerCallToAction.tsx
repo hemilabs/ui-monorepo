@@ -1,10 +1,10 @@
 import { FormEvent, ReactNode } from 'react'
-import { type Chain } from 'viem'
+import { RemoteChain } from 'types/chain'
 
 import { SubmitWhenConnectedToChain } from '../submitWhenConnectedToChain'
 
 type Props = {
-  expectedChainId: Chain['id']
+  expectedChainId: RemoteChain['id']
   onSubmit: (e: FormEvent) => void
   submitButton: ReactNode
 }

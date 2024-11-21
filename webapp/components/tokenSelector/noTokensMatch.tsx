@@ -44,22 +44,20 @@ export const NoTokensMatch = function ({
   }
 
   return (
-    <>
-      <div className="flex h-full flex-col items-center justify-between">
-        <div
-          className={`w-full rounded-lg hover:bg-neutral-100 ${
-            customToken ? 'cursor-pointer' : ''
-          }`}
-          onClick={customToken ? onClick : undefined}
-        >
-          <CustomToken token={customToken} />
-        </div>
-        {status === 'pending' && (
-          <span className="text-sm text-neutral-500">
-            {t('validating-token-address')}
-          </span>
-        )}
+    <div className="flex h-full flex-col items-center justify-between">
+      <div
+        className={`w-full rounded-lg hover:bg-neutral-100 ${
+          customToken ? 'cursor-pointer' : ''
+        }`}
+        onClick={customToken ? onClick : undefined}
+      >
+        <CustomToken token={customToken} />
       </div>
-    </>
+      {status === 'pending' && (
+        <span className="text-sm text-neutral-500">
+          {t('validating-token-address')}
+        </span>
+      )}
+    </div>
   )
 }

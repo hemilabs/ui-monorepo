@@ -7,23 +7,37 @@ import { CloseIcon } from 'components/icons/closeIcon'
 import { SearchInput } from 'components/inputText'
 import { Modal } from 'components/modal'
 import { useDebounce } from 'hooks/useDebounce'
+import { useUserTokenList } from 'hooks/useUserTokenList'
 import partition from 'lodash/partition'
 import { useTranslations } from 'next-intl'
-import { useRef, useState } from 'react'
+import { type JSX, useRef, useState } from 'react'
 import { Token as TokenType } from 'types/token'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
-import { isAddress, isAddressEqual } from 'viem'
+import { type Chain, isAddress, isAddressEqual } from 'viem'
 
+import { NoTokensMatch } from './noTokensMatch'
 import { Token } from './token'
 
+const isCustomToken = (userTokenList: TokenType[], token: TokenType) =>
+  userTokenList.some(
+    t => t.address === token.address && t.chainId === token.chainId,
+  )
+
 type Props = {
+  chainId: Chain['id']
   closeModal: () => void
   onSelectToken: (token: TokenType) => void
   tokens: TokenType[]
 }
 
-const List = function ({ onSelectToken, tokens }: Omit<Props, 'closeModal'>) {
+const List = function ({
+  hasCustomTokens,
+  onSelectToken,
+  tokens,
+}: Omit<Props, 'chainId' | 'closeModal'> & { hasCustomTokens: boolean }) {
   const parentRef = useRef<HTMLDivElement>(null)
+  const t = useTranslations('token-selector')
+  const { userTokenList } = useUserTokenList()
 
   const rowVirtualizer = useVirtualizer({
     count: tokens.length,
@@ -32,42 +46,68 @@ const List = function ({ onSelectToken, tokens }: Omit<Props, 'closeModal'>) {
     overscan: 5,
   })
 
+  const customTokensLabelHeight = 28
+
+  const getList = function () {
+    const rows: JSX.Element[] = []
+    const virtualItems = rowVirtualizer.getVirtualItems()
+    let hasAddedCustomTokensLabel = false
+
+    for (let rowIndex = 0; rowIndex < virtualItems.length; rowIndex++) {
+      const virtualItem = virtualItems[rowIndex]
+      const token = tokens[virtualItem.index]
+
+      if (!hasAddedCustomTokensLabel && isCustomToken(userTokenList, token)) {
+        rows.push(
+          <div
+            className="absolute left-0 top-0 w-full"
+            style={{
+              height: customTokensLabelHeight,
+              transform: `translateY(${virtualItem.start}px)`,
+            }}
+          >
+            <h6 className="py-3 pb-1.5 text-sm font-medium text-neutral-500">
+              {t('manually-added-tokens')}
+            </h6>
+          </div>,
+        )
+        hasAddedCustomTokensLabel = true
+      }
+      rows.push(
+        <li
+          className="absolute left-0 top-0 w-full cursor-pointer rounded-lg hover:bg-neutral-100"
+          key={virtualItem.index}
+          onClick={() => onSelectToken(token)}
+          style={{
+            height: '52px',
+            // After showing the custom tokens label, we need to adjust the position of all the following tokens to consider it
+            transform: `translateY(${
+              virtualItem.start +
+              (hasAddedCustomTokensLabel ? customTokensLabelHeight : 0)
+            }px)`,
+          }}
+        >
+          <Token token={token} />
+        </li>,
+      )
+    }
+    return rows
+  }
+
   return (
     <div className="h-[212px] w-full overflow-y-auto" ref={parentRef}>
       <ul
         className="relative w-full"
-        style={{ height: `${rowVirtualizer.getTotalSize()}px` }}
+        style={{
+          height: `${
+            rowVirtualizer.getTotalSize() +
+            (hasCustomTokens ? customTokensLabelHeight : 0)
+          }px`,
+        }}
       >
-        {rowVirtualizer.getVirtualItems().map(function (virtualItem) {
-          const token = tokens[virtualItem.index]
-          return (
-            <li
-              className="absolute left-0 top-0 w-full cursor-pointer rounded-lg hover:bg-neutral-100"
-              key={virtualItem.index}
-              onClick={() => onSelectToken(token)}
-              style={{
-                height: `${virtualItem.size}px`,
-                transform: `translateY(${virtualItem.start}px)`,
-              }}
-            >
-              <Token token={token} />
-            </li>
-          )
-        })}
+        {getList()}
       </ul>
     </div>
-  )
-}
-
-const NoTokensMatch = function ({ searchText }: { searchText: string }) {
-  const t = useTranslations('token-selector')
-
-  return (
-    <span className="text-center text-sm font-medium text-neutral-500">
-      {t.rich('no-results-for', {
-        search: () => <span className="text-neutral-950">{searchText}</span>,
-      })}
-    </span>
   )
 }
 
@@ -75,6 +115,7 @@ const bySymbol = (a: TokenType, b: TokenType) =>
   a.symbol.localeCompare(b.symbol)
 
 export const TokenList = function ({
+  chainId,
   closeModal,
   onSelectToken,
   tokens,
@@ -82,6 +123,7 @@ export const TokenList = function ({
   const t = useTranslations('token-selector')
   const [searchText, setSearchText] = useState('')
   const debouncedSearchText = useDebounce(searchText)
+  const { userTokenList } = useUserTokenList()
   const { width } = useWindowSize()
 
   const userTypedAddress = isAddress(debouncedSearchText)
@@ -97,8 +139,12 @@ export const TokenList = function ({
         isAddressEqual(token.address, debouncedSearchText)),
   )
 
+  const [customTokens, supportedTokens] = partition(tokensToList, token =>
+    isCustomToken(userTokenList, token),
+  )
+
   const [pinnedTokens, restOfTokens] = partition(
-    tokensToList,
+    supportedTokens,
     token =>
       token.symbol === 'ETH' ||
       token.symbol.includes('USDC') ||
@@ -108,6 +154,7 @@ export const TokenList = function ({
   const sortedTokens = pinnedTokens
     .sort(bySymbol)
     .concat(restOfTokens.sort(bySymbol))
+    .concat(customTokens.sort(bySymbol))
 
   const content = (
     <div className="flex h-[357px] w-full flex-col gap-x-3 bg-white p-6 px-4 md:w-96 md:px-6">
@@ -130,6 +177,7 @@ export const TokenList = function ({
       </div>
       {sortedTokens.length > 0 ? (
         <List
+          hasCustomTokens={customTokens.length > 0}
           onSelectToken={function (token) {
             onSelectToken(token)
             closeModal()
@@ -137,7 +185,11 @@ export const TokenList = function ({
           tokens={sortedTokens}
         />
       ) : (
-        <NoTokensMatch searchText={debouncedSearchText} />
+        <NoTokensMatch
+          chainId={chainId}
+          closeModal={closeModal}
+          searchText={debouncedSearchText}
+        />
       )}
     </div>
   )

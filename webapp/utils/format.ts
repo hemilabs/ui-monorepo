@@ -1,12 +1,13 @@
 import Big from 'big.js'
 import { type Account } from 'btc-wallet/unisat'
+import { shorten } from 'crypto-shortener'
 import { Address, formatUnits } from 'viem'
 
 export const formatBtcAddress = (account: Account) =>
-  `${account.slice(0, 5)}...${account.slice(-5)}`
+  shorten(account, { length: 5 })
 
 export const formatEvmAddress = (address: Address) =>
-  `${address.slice(0, 6)}...${address.slice(-4)}`
+  shorten(address, { length: 4, prefixes: ['0x'] })
 
 export const formatNumber = (
   value: bigint | number | string,

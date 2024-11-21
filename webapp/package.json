@@ -22,6 +22,7 @@
     "big.js": "6.2.2",
     "btc-wallet": "1.0.0",
     "camelcase-keys": "9.1.3",
+    "crypto-shortener": "1.1.0",
     "debug": "4.3.7",
     "esplora-client": "1.1.0",
     "hemi-socials": "1.0.0",
@@ -45,6 +46,7 @@
     "smart-round": "1.0.0",
     "ui-common": "1.0.0",
     "umami-analytics-next": "1.0.1",
+    "use-local-storage-state": "19.5.0",
     "viem": "2.7.19",
     "wagmi": "2.5.7",
     "wagmi-erc20-hooks": "1.0.0"

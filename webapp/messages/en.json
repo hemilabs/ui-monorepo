@@ -172,10 +172,27 @@
     "tunnel": "Tunnel",
     "web-pop-miner": "Web PoP Miner"
   },
+  "token-custom-drawer": {
+    "add-contract-to-preview": "Add a contract address to preview the token...",
+    "add-this-pair": "Add this pair to Hemi’s token list for everyone to tunnel",
+    "add-token": "Add token",
+    "add-token-on-chain": "Add the token contract address on the {network} network",
+    "address-does-not-match-l2": "Doesn't match the L1 pair",
+    "heading": "Tunnel an existing ERC-20 token",
+    "i-am-sure-to-tunnel": "I'm sure I want to tunnel with this token.",
+    "layer-token-address": "Layer {layer} token address",
+    "make-a-request-to-add": "If you'd like to add this ERC-20 token pair to Hemi's approved tokens list, <link>make a request</link>.",
+    "see-on-explorer": "See on {explorer}",
+    "subheading": "You need to input the pair of contract addresses from both Ethereum and Hemi to tunnel with this token.",
+    "this-address-is-not-valid": "This address is not valid",
+    "this-address-is-valid": "This address is valid"
+  },
   "token-selector": {
+    "manually-added-tokens": "Manually added tokens",
     "no-results-for": "No results found for <search></search>",
     "search-tokens": "Search tokens...",
-    "select-token": "Select token"
+    "select-token": "Select token",
+    "validating-token-address": "Validating token address..."
   },
   "transaction-history": {
     "connect-wallet-to-review": "Connect your wallet to review transaction history.",

@@ -1,5 +1,7 @@
 import { Card } from 'components/card'
 import { SwitchToNetworkToast } from 'components/switchToNetworkToast'
+import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
+import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
@@ -9,6 +11,10 @@ import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { NetworkSelectors } from './networkSelectors'
 import { TokenInput } from './tokenInput'
+
+const CustomTokenDrawer = dynamic(() =>
+  import('components/customTokenDrawer').then(mod => mod.CustomTokenDrawer),
+)
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const TransactionStatus = dynamic(
@@ -45,9 +51,17 @@ export const FormContent = function ({
     toToken,
   } = tunnelState
 
+  const [customTokenAddress] = useCustomTokenAddress()
+  const hemi = useHemi()
   const t = useTranslations('tunnel-page')
 
   const showToast = useToastIfNotConnectedTo(fromNetworkId)
+
+  const evmTunneling =
+    typeof fromNetworkId === 'number' && typeof toNetworkId === 'number'
+
+  const l1ChainId = fromNetworkId === hemi.id ? toNetworkId : fromNetworkId
+  const l2ChainId = hemi.id
 
   return (
     <>
@@ -84,6 +98,16 @@ export const FormContent = function ({
         token={toToken}
         value={fromInput}
       />
+
+      {!!customTokenAddress && evmTunneling && (
+        <CustomTokenDrawer
+          fromNetworkId={fromNetworkId}
+          // @ts-expect-error TS fails to check these, but they are checked above by evmTunneling
+          l1ChainId={l1ChainId}
+          l2ChainId={l2ChainId}
+          onSelectToken={updateFromToken}
+        />
+      )}
     </>
   )
 }

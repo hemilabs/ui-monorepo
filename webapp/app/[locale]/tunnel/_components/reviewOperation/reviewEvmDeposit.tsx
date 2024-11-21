@@ -1,11 +1,13 @@
 'use client'
 
 import { useChain } from 'hooks/useChain'
+import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
+import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
 import { formatGasFees } from 'utils/format'
-import { getNativeToken, getTokenByAddress, isNativeToken } from 'utils/token'
+import { isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import { EvmDepositProvider } from '../../_context/evmDepositContext'
@@ -26,19 +28,12 @@ type Props = {
   onClose: () => void
 }
 
-const ReviewContent = function ({ deposit, onClose }: Props) {
-  const fromToken = getTokenByAddress(
-    deposit.l1Token,
-    deposit.l1ChainId,
-  ) as EvmToken
-
-  // L2 native tunneled token is on a special address, so it is easier to get the native token
-  const toToken = (
-    isNativeToken(fromToken)
-      ? getNativeToken(deposit.l2ChainId)
-      : getTokenByAddress(deposit.l2Token, deposit.l2ChainId)
-  ) as EvmToken
-
+const ReviewContent = function ({
+  deposit,
+  fromToken,
+  onClose,
+  toToken,
+}: Props & { fromToken: EvmToken; toToken: EvmToken }) {
   const depositStatus = deposit.status ?? EvmDepositStatus.DEPOSIT_TX_CONFIRMED
 
   const fromChain = useChain(deposit.l1ChainId)
@@ -136,8 +131,31 @@ const ReviewContent = function ({ deposit, onClose }: Props) {
   )
 }
 
-export const ReviewEvmDeposit = ({ deposit, onClose }: Props) => (
-  <EvmDepositProvider>
-    <ReviewContent deposit={deposit} onClose={onClose} />
-  </EvmDepositProvider>
-)
+export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
+  const { data: fromToken } = useToken({
+    address: deposit.l1Token,
+    chainId: deposit.l1ChainId,
+  })
+
+  const { data: toToken } = useToken({
+    address: deposit.l2Token,
+    chainId: deposit.l2ChainId,
+  })
+
+  const tokensLoaded = !!fromToken && !!toToken
+
+  return (
+    <EvmDepositProvider>
+      {tokensLoaded ? (
+        <ReviewContent
+          deposit={deposit}
+          fromToken={fromToken as EvmToken}
+          onClose={onClose}
+          toToken={toToken as EvmToken}
+        />
+      ) : (
+        <Skeleton className="h-full" />
+      )}
+    </EvmDepositProvider>
+  )
+}

@@ -1,5 +1,13 @@
 {
   "arrowParens": "avoid",
+  "overrides": [
+    {
+      "files": "*.svg",
+      "options": {
+        "parser": "html"
+      }
+    }
+  ],
   "plugins": ["prettier-plugin-tailwindcss"],
   "quoteProps": "consistent",
   "semi": false,

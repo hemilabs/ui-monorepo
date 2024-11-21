@@ -1,9 +1,10 @@
 import { Button } from 'components/button'
+import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useContext, useEffect } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
-import { getNativeToken, getTokenByAddress, isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import { ToEvmWithdrawalContext } from '../_context/toEvmWithdrawalContext'
@@ -15,24 +16,19 @@ type Props = {
   withdrawal: ToEvmWithdrawOperation
 }
 
-export const RetryEvmWithdrawal = function ({ withdrawal }: Props) {
+const Retry = function ({
+  fromToken,
+  toToken,
+  withdrawal,
+}: Props & {
+  fromToken: EvmToken
+  toToken: EvmToken
+}) {
   const [operationStatus, setOperationStatus] = useContext(
     ToEvmWithdrawalContext,
   )
 
   const t = useTranslations('tunnel-page.submit-button')
-
-  const toToken = getTokenByAddress(
-    withdrawal.l1Token,
-    withdrawal.l1ChainId,
-  ) as EvmToken
-
-  // L2 native tunneled token is on a special address, so it is easier to get the native token
-  const fromToken = (
-    isNativeToken(toToken)
-      ? getNativeToken(withdrawal.l2ChainId)
-      : getTokenByAddress(withdrawal.l2Token, withdrawal.l2ChainId)
-  ) as EvmToken
 
   // this component tries to initiate a new withdrawal, based on the failed one
   const { withdraw, withdrawError } = useWithdraw({
@@ -75,6 +71,30 @@ export const RetryEvmWithdrawal = function ({ withdrawal }: Props) {
           {t(isWithdrawing ? 'withdrawing' : 'try-again')}
         </Button>
       }
+    />
+  )
+}
+
+export const RetryEvmWithdrawal = function ({ withdrawal }: Props) {
+  const { data: toToken } = useToken({
+    address: withdrawal.l1Token,
+    chainId: withdrawal.l1ChainId,
+  })
+
+  const { data: fromToken } = useToken({
+    address: withdrawal.l2Token,
+    chainId: withdrawal.l2ChainId,
+  })
+
+  if (!fromToken || !toToken) {
+    return <Skeleton className="h-8 w-full" />
+  }
+
+  return (
+    <Retry
+      fromToken={fromToken as EvmToken}
+      toToken={toToken as EvmToken}
+      withdrawal={withdrawal}
     />
   )
 }

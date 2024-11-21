@@ -6,6 +6,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
+import { ErrorBoundary } from 'components/errorBoundary'
 import { useTranslations } from 'next-intl'
 import { ComponentProps, MutableRefObject, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -143,7 +144,13 @@ const columnsBuilder = (
   },
   {
     accessorKey: 'amount',
-    cell: ({ row }) => <Amount operation={row.original} />,
+    cell: ({ row }) => (
+      <ErrorBoundary
+        fallback={<span className="text-sm text-neutral-950">-</span>}
+      >
+        <Amount operation={row.original} />
+      </ErrorBoundary>
+    ),
     header: () => <Header text={t('column-headers.amount')} />,
     id: 'amount',
   },

@@ -133,9 +133,10 @@ export const useDeposit = function ({
     amount: fromInput,
     enabled: !depositingNative && canDeposit,
     extendedApproval: extendedErc20Approval,
+    fromToken,
     onApprovalSuccess,
     onSuccess: onUserAcceptingDeposit,
-    token: fromToken,
+    toToken,
   })
 
   const {

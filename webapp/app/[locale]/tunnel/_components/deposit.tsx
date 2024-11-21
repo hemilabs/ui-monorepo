@@ -17,7 +17,6 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { type EvmToken } from 'types/token'
 import { BtcDepositStatus } from 'types/tunnel'
 import { isEvmNetwork } from 'utils/chain'
 import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
@@ -512,11 +511,11 @@ const EvmDeposit = function ({ state }: EvmDepositProps) {
               setExtendedErc20Approval(false)
               state.updateFromNetwork(payload)
             },
-            updateFromToken(payload: EvmToken) {
-              if (isNativeToken(payload)) {
+            updateFromToken(from, to) {
+              if (isNativeToken(from)) {
                 setExtendedErc20Approval(false)
               }
-              state.updateFromToken(payload)
+              state.updateFromToken(from, to)
             },
           }}
         />

@@ -1,6 +1,6 @@
-import { ComponentProps, ReactNode } from 'react'
+import { ComponentProps } from 'react'
 
-const inputCss = `shadow-soft text-sm placeholder:text-sm w-full cursor-pointer rounded-lg border
+const inputCss = `shadow-soft text-sm placeholder:text-sm w-full cursor-pointer rounded-lg border disabled:cursor-auto
   border-solid border-neutral-300/55 bg-white px-3 py-2 font-medium text-neutral-950 hover:border-neutral-300/90
  placeholder:font-medium placeholder:text-neutral-500 focus:border-orange-500 focus:outline-none`
 
@@ -31,25 +31,38 @@ const MagnifyingGlass = () => (
 )
 
 type Props = Omit<ComponentProps<'input'>, 'className' | 'type'> & {
-  icon?: ReactNode
+  onClear?: () => void
+  showMagnifyingGlass?: boolean
 }
 
-export const SearchInput = ({
+export const SearchInput = function ({
   onClear,
+  showMagnifyingGlass = true,
   ...props
-}: Props & { onClear: () => void }) => (
-  <div className="relative flex items-center">
-    <div className="absolute translate-x-3">
-      <MagnifyingGlass />
+}: Props) {
+  const showCloseIcon = (props.value?.toString().length ?? 0) > 0 && !!onClear
+  return (
+    <div className="relative flex items-center">
+      {showMagnifyingGlass && (
+        <div className="absolute translate-x-3">
+          <MagnifyingGlass />
+        </div>
+      )}
+      {showCloseIcon && (
+        <div className="absolute right-0 -translate-x-3">
+          <CloseIcon
+            className="cursor-pointer [&>path]:hover:fill-neutral-950"
+            onClick={onClear}
+          />
+        </div>
+      )}
+      <input
+        {...props}
+        className={`${inputCss} ${showMagnifyingGlass ? 'pl-8' : ''} ${
+          showCloseIcon ? 'pr-8' : ''
+        }`}
+        type="text"
+      />
     </div>
-    {(props.value?.toString().length ?? 0) > 0 && (
-      <div className="absolute right-0 -translate-x-3">
-        <CloseIcon
-          className="cursor-pointer [&>path]:hover:fill-neutral-950"
-          onClick={onClear}
-        />
-      </div>
-    )}
-    <input {...props} className={`${inputCss} pl-8 pr-8`} type="text" />
-  </div>
-)
+  )
+}

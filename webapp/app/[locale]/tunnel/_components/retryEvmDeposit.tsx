@@ -1,9 +1,10 @@
 import { Button } from 'components/button'
+import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useContext, useEffect } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { EvmDepositOperation } from 'types/tunnel'
-import { getNativeToken, getTokenByAddress, isNativeToken } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import { EvmDepositContext } from '../_context/evmDepositContext'
@@ -15,22 +16,17 @@ type Props = {
   deposit: EvmDepositOperation
 }
 
-export const RetryEvmDeposit = function ({ deposit }: Props) {
+const Retry = function ({
+  deposit,
+  fromToken,
+  toToken,
+}: Props & {
+  fromToken: EvmToken
+  toToken: EvmToken
+}) {
   const [operationStatus, setOperationStatus] = useContext(EvmDepositContext)
 
   const t = useTranslations('tunnel-page.submit-button')
-
-  const fromToken = getTokenByAddress(
-    deposit.l1Token,
-    deposit.l1ChainId,
-  ) as EvmToken
-
-  // L2 native tunneled token is on a special address, so it is easier to get the native token
-  const toToken = (
-    isNativeToken(fromToken)
-      ? getNativeToken(deposit.l2ChainId)
-      : getTokenByAddress(deposit.l2Token, deposit.l2ChainId)
-  ) as EvmToken
 
   // this component tries to initiate a new deposit, based on the failed one
   const { deposit: runDeposit, depositError } = useDeposit({
@@ -44,13 +40,13 @@ export const RetryEvmDeposit = function ({ deposit }: Props) {
     toToken,
   })
 
+  const isDepositing = operationStatus === 'depositing'
+
   useEffect(
     // on unmounting the component, reset the context
     () => () => setOperationStatus('idle'),
     [setOperationStatus],
   )
-
-  const isDepositing = operationStatus === 'depositing'
 
   // Success and failure are not needed to be handled here, as a new tx hash is generated, so this component
   // is unmounted and a "new" withdrawal cycle starts
@@ -78,6 +74,30 @@ export const RetryEvmDeposit = function ({ deposit }: Props) {
           {t(isDepositing ? 'depositing' : 'try-again')}
         </Button>
       }
+    />
+  )
+}
+
+export const RetryEvmDeposit = function ({ deposit }: Props) {
+  const { data: fromToken } = useToken({
+    address: deposit.l1Token,
+    chainId: deposit.l1ChainId,
+  })
+
+  const { data: toToken } = useToken({
+    address: deposit.l2Token,
+    chainId: deposit.l2ChainId,
+  })
+
+  if (!fromToken || !toToken) {
+    return <Skeleton className="h-8 w-full" />
+  }
+
+  return (
+    <Retry
+      deposit={deposit}
+      fromToken={fromToken as EvmToken}
+      toToken={toToken as EvmToken}
     />
   )
 }

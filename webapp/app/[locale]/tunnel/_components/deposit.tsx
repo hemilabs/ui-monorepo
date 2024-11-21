@@ -40,7 +40,7 @@ import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 
-const MinBitcoinDeposit = '0.01'
+const minBitcoinDeposit = '0.01'
 
 type OperationRunning = 'idle' | 'approving' | 'depositing'
 
@@ -131,7 +131,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
       fromInput,
       fromNetworkId,
       fromToken,
-    }) && Big(fromInput).gte(MinBitcoinDeposit)
+    }) && Big(fromInput).gte(minBitcoinDeposit)
 
   const {
     clearDepositState,

@@ -9,6 +9,7 @@ import {
   BtcDepositOperation,
   BtcDepositStatus,
   BtcWithdrawStatus,
+  ToBtcWithdrawOperation,
 } from 'types/tunnel'
 import { getEvmBlock } from 'utils/evmApi'
 import {
@@ -351,6 +352,8 @@ export const useWithdrawBitcoin = function () {
 
       clearWithdrawBitcoinState()
 
+      // TODO we need to get the transaction receipt, get the WithdrawalInitiated event
+      // extract the uuid (bigint) and save it to the withdrawal
       // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
       // eslint-disable-next-line promise/catch-or-return
       getEvmBlock(
@@ -377,5 +380,85 @@ export const useWithdrawBitcoin = function () {
     withdrawBitcoinReceiptError,
     withdrawError,
     withdrawTxHash,
+  }
+}
+
+export const useChallengeBitcoinWithdrawal = function (
+  withdrawal: ToBtcWithdrawOperation,
+) {
+  const { address: hemiAddress } = useEvmAccount()
+  const { hemiWalletClient } = useHemiWalletClient()
+  const { updateWithdrawal } = useTunnelHistory()
+  const queryClient = useQueryClient()
+
+  const {
+    data: challengeTransactionHash,
+    error: challengeError,
+    mutate: challengeWithdrawal,
+    reset: resetChallengeWithdrawal,
+  } = useMutation({
+    mutationFn: () =>
+      hemiWalletClient.challengeWithdrawal({
+        from: hemiAddress,
+        uuid: BigInt(withdrawal.uuid),
+      }),
+    onSuccess: challengeTxHash =>
+      updateWithdrawal(withdrawal, { challengeTxHash }),
+  })
+
+  const {
+    data: challengeReceipt,
+    error: challengeReceiptError,
+    queryKey: challengeQueryKey,
+  } = useWaitForEvmTransactionReceipt({
+    hash: challengeTransactionHash,
+  })
+
+  const clearChallengeWithdrawalState = useCallback(
+    function () {
+      // clear the challenge operation hash
+      resetChallengeWithdrawal()
+      // clear the challenge state
+      queryClient.invalidateQueries({ queryKey: challengeQueryKey })
+    },
+    [challengeQueryKey, queryClient, resetChallengeWithdrawal],
+  )
+
+  useEffect(
+    function updateWithdrawalAfterChallengeConfirmation() {
+      if (challengeReceipt?.status !== 'success') {
+        return
+      }
+
+      if (withdrawal.status === BtcWithdrawStatus.WITHDRAWN) {
+        return
+      }
+
+      clearChallengeWithdrawalState()
+
+      updateWithdrawal(withdrawal, {
+        status: BtcWithdrawStatus.WITHDRAWN,
+      })
+    },
+    [
+      challengeReceipt,
+      clearChallengeWithdrawalState,
+      updateWithdrawal,
+      withdrawal,
+    ],
+  )
+
+  const handleChallengeWithdrawal = function () {
+    // TODO validate if withdrawal is ready to challenge
+    // clear any previous transaction hash, which may come from failed attempts
+    updateWithdrawal(withdrawal, { challengeTxHash: undefined })
+    challengeWithdrawal()
+  }
+
+  return {
+    challengeError,
+    challengeReceipt,
+    challengeReceiptError,
+    challengeWithdrawal: handleChallengeWithdrawal,
   }
 }

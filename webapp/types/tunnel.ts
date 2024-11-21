@@ -27,7 +27,6 @@ export const enum BtcWithdrawStatus {
   TX_PENDING = 0,
   // Transaction withdraw confirmed
   TX_CONFIRMED = 1,
-  // TODO confirm these below are correct
   READY_CHALLENGE = 2,
   WITHDRAWN = 3,
   WITHDRAWAL_FAILED = 4,
@@ -115,7 +114,9 @@ export type ToBtcWithdrawOperation = CommonOperation &
     l1ChainId: BtcChain['id']
     l2ChainId: Chain['id']
   } & {
+    challengeTxHash?: Hash
     status: BtcWithdrawStatus
+    uuid?: string // bigint can't be serialized into local storage
   }
 
 export type DepositTunnelOperation = BtcDepositOperation | EvmDepositOperation

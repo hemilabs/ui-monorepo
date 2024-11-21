@@ -235,6 +235,7 @@
       "your-deposit-is-complete": "Su depósito ha sido completado"
     },
     "review-withdraw": {
+      "challenge-withdrawal": "Disputar Retiro",
       "claim-withdrawal": "Reclamar retiro",
       "heading": "Revisar Retiro",
       "initiate-withdrawal": "Iniciar retiro",
@@ -247,6 +248,8 @@
     "submit-button": {
       "approve-and-deposit": "Aprobar y Depositar",
       "approving": "Aprobando...",
+      "challenge-withdrawal": "Disputar Retiro",
+      "challenging": "Disputando...",
       "claim-deposit": "Reclamar depósito",
       "claim-withdrawal": "Reclamar Retiro",
       "claiming-deposit": "Reclamando Depósito",

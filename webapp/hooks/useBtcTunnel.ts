@@ -4,12 +4,13 @@ import { useTunnelOperation } from 'app/[locale]/tunnel/_hooks/useTunnelOperatio
 import { BtcChain } from 'btc-wallet/chains'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { Satoshis } from 'btc-wallet/unisat'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import {
   BtcDepositOperation,
   BtcDepositStatus,
   BtcWithdrawStatus,
 } from 'types/tunnel'
+import { getEvmBlock } from 'utils/evmApi'
 import {
   claimBtcDeposit,
   initiateBtcDeposit,
@@ -23,15 +24,18 @@ import {
 } from 'wagmi'
 
 import { useBitcoin } from './useBitcoin'
+import { useBtcDeposits } from './useBtcDeposits'
+import { useBtcWithdrawals } from './useBtcWithdrawals'
 import { useHemiClient, useHemiWalletClient } from './useHemiClient'
 import { useTunnelHistory } from './useTunnelHistory'
 import { useWaitForTransactionReceipt as useWaitForBtcTransactionReceipt } from './useWaitForTransactionReceipt'
 
-export const useClaimBitcoinDeposit = function () {
+export const useClaimBitcoinDeposit = function (deposit: BtcDepositOperation) {
   const { address } = useEvmAccount()
   const hemiClient = useHemiClient()
   const queryClient = useQueryClient()
   const { hemiWalletClient } = useHemiWalletClient()
+  const { updateDeposit } = useTunnelHistory()
 
   const {
     error: claimBitcoinDepositError,
@@ -39,7 +43,7 @@ export const useClaimBitcoinDeposit = function () {
     mutate: claimBitcoinDeposit,
     data: claimBitcoinDepositTxHash,
   } = useMutation({
-    mutationFn: (deposit: BtcDepositOperation) =>
+    mutationFn: () =>
       claimBtcDeposit({
         deposit,
         from: address,
@@ -47,6 +51,8 @@ export const useClaimBitcoinDeposit = function () {
         hemiWalletClient,
       }),
     mutationKey: [hemiClient, hemiWalletClient],
+    onSuccess: claimTransactionHash =>
+      updateDeposit(deposit, { claimTransactionHash }),
   })
 
   const {
@@ -65,8 +71,34 @@ export const useClaimBitcoinDeposit = function () {
     [claimBitcoinDepositQueryKey, queryClient, resetClaimBitcoinDeposit],
   )
 
+  useEffect(
+    function handleClaimSuccess() {
+      if (claimBitcoinDepositReceipt?.status !== 'success') {
+        return
+      }
+      if (deposit.status !== BtcDepositStatus.BTC_READY_CLAIM) {
+        return
+      }
+      updateDeposit(deposit, {
+        claimTransactionHash: claimBitcoinDepositReceipt.transactionHash,
+        status: BtcDepositStatus.BTC_DEPOSITED,
+      })
+    },
+    [claimBitcoinDepositReceipt, deposit, updateDeposit],
+  )
+
+  const handleClaim = function () {
+    if (deposit.status !== BtcDepositStatus.BTC_READY_CLAIM) {
+      return
+    }
+    clearClaimBitcoinDepositState()
+    // clear any previous transaction hash, which may come from failed attempts
+    updateDeposit(deposit, { claimTransactionHash: undefined })
+    claimBitcoinDeposit()
+  }
+
   return {
-    claimBitcoinDeposit,
+    claimBitcoinDeposit: handleClaim,
     claimBitcoinDepositError,
     claimBitcoinDepositReceipt,
     claimBitcoinDepositReceiptError,
@@ -78,9 +110,10 @@ export const useClaimBitcoinDeposit = function () {
 export const useDepositBitcoin = function () {
   const bitcoin = useBitcoin()
   const { address, connector } = useBtcAccount()
+  const deposits = useBtcDeposits()
   const hemiClient = useHemiClient()
-  const { addDepositToTunnelHistory } = useTunnelHistory()
-  const { updateTxHash } = useTunnelOperation()
+  const { addDepositToTunnelHistory, updateDeposit } = useTunnelHistory()
+  const { updateTxHash, txHash: currentTxHash } = useTunnelOperation()
   const queryClient = useQueryClient()
 
   const {
@@ -142,6 +175,62 @@ export const useDepositBitcoin = function () {
     [depositQueryKey, queryClient, resetSendBitcoin],
   )
 
+  useEffect(
+    function updateDepositStatusAfterFailure() {
+      if (!depositReceiptError) {
+        return
+      }
+
+      const deposit = deposits.find(
+        d =>
+          d.transactionHash === currentTxHash &&
+          d.status === BtcDepositStatus.TX_PENDING,
+      )
+      if (!deposit) {
+        return
+      }
+
+      clearDepositState()
+
+      updateDeposit(deposit, {
+        status: BtcDepositStatus.DEPOSIT_TX_FAILED,
+      })
+    },
+    [
+      clearDepositState,
+      currentTxHash,
+      depositReceiptError,
+      deposits,
+      updateDeposit,
+    ],
+  )
+
+  useEffect(
+    function updateDepositAfterConfirmation() {
+      if (!depositReceipt?.status.confirmed) {
+        return
+      }
+
+      const deposit = deposits.find(
+        d =>
+          d.transactionHash === depositReceipt.txId &&
+          d.l1ChainId === bitcoin.id &&
+          !d.blockNumber,
+      )
+
+      if (!deposit) {
+        return
+      }
+
+      updateDeposit(deposit, {
+        blockNumber: depositReceipt.status.blockHeight,
+        status: BtcDepositStatus.TX_CONFIRMED,
+        timestamp: depositReceipt.status.blockTime,
+      })
+    },
+    [bitcoin, depositReceipt, deposits, updateDeposit],
+  )
+
   return {
     clearDepositState,
     depositBitcoin,
@@ -158,8 +247,10 @@ export const useWithdrawBitcoin = function () {
   const { address: hemiAddress } = useEvmAccount()
   const hemiClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
-  const { addWithdrawalToTunnelHistory } = useTunnelHistory()
+  const { addWithdrawalToTunnelHistory, updateWithdrawal } = useTunnelHistory()
+  const { txHash, updateTxHash } = useTunnelOperation()
   const queryClient = useQueryClient()
+  const withdrawals = useBtcWithdrawals()
 
   const {
     error: withdrawError,
@@ -196,6 +287,7 @@ export const useWithdrawBitcoin = function () {
         to: btcAddress,
         transactionHash,
       })
+      updateTxHash(transactionHash, { history: 'push' })
     },
   })
 
@@ -213,6 +305,69 @@ export const useWithdrawBitcoin = function () {
       queryClient.invalidateQueries({ queryKey: withdrawBitcoinQueryKey })
     },
     [queryClient, resetWithdrawBitcoin, withdrawBitcoinQueryKey],
+  )
+
+  useEffect(
+    function updateWithdrawalStatusAfterFailure() {
+      if (!withdrawBitcoinReceiptError) {
+        return
+      }
+      const withdrawal = withdrawals.find(
+        w =>
+          w.transactionHash === txHash &&
+          w.status === BtcWithdrawStatus.TX_PENDING,
+      )
+      if (!withdrawal) {
+        return
+      }
+      updateWithdrawal(withdrawal, {
+        status: BtcWithdrawStatus.WITHDRAWAL_FAILED,
+      })
+    },
+    [txHash, updateWithdrawal, withdrawals, withdrawBitcoinReceiptError],
+  )
+
+  useEffect(
+    function updateWithdrawalStatusAfterConfirmation() {
+      if (withdrawBitcoinReceipt?.status !== 'success') {
+        return
+      }
+
+      const withdrawal = withdrawals.find(
+        w =>
+          w.transactionHash === withdrawBitcoinReceipt.transactionHash &&
+          !w.blockNumber,
+      )
+
+      if (!withdrawal) {
+        return
+      }
+
+      // update here so next iteration of the effect doesn't reach this point
+      updateWithdrawal(withdrawal, {
+        blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
+        status: BtcWithdrawStatus.TX_CONFIRMED,
+      })
+
+      clearWithdrawBitcoinState()
+
+      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
+      // eslint-disable-next-line promise/catch-or-return
+      getEvmBlock(
+        withdrawBitcoinReceipt.blockNumber,
+        withdrawal.l2ChainId,
+      ).then(block =>
+        updateWithdrawal(withdrawal, {
+          timestamp: Number(block.timestamp),
+        }),
+      )
+    },
+    [
+      clearWithdrawBitcoinState,
+      updateWithdrawal,
+      withdrawals,
+      withdrawBitcoinReceipt,
+    ],
   )
 
   return {

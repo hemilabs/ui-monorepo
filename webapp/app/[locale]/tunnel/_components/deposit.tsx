@@ -1,34 +1,29 @@
 'use client'
 
 import { useUmami } from 'app/analyticsEvents'
+import { Big } from 'big.js'
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { Button } from 'components/button'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useBitcoin } from 'hooks/useBitcoin'
-import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { BtcDepositStatus } from 'types/tunnel'
 import { isEvmNetwork } from 'utils/chain'
-import { formatEvmAddress, formatNumber, getFormattedValue } from 'utils/format'
+import { formatEvmAddress, formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
-import { useAfterTransaction } from '../_hooks/useAfterTransaction'
 import { useDeposit } from '../_hooks/useDeposit'
-import { useTransactionsList } from '../_hooks/useTransactionsList'
-import { useTunnelOperation } from '../_hooks/useTunnelOperation'
 import {
   type BtcToHemiTunneling,
   type EvmTunneling,
@@ -45,17 +40,9 @@ import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 
-type OperationRunning = 'idle' | 'approving' | 'depositing'
+const minBitcoinDeposit = '0.01'
 
-const ReviewBtcDeposit = dynamic(
-  () =>
-    import('./reviewOperation/reviewBtcDeposit').then(
-      mod => mod.ReviewBtcDeposit,
-    ),
-  {
-    ssr: false,
-  },
-)
+type OperationRunning = 'idle' | 'approving' | 'depositing'
 
 const SetMaxBtcBalance = dynamic(
   () => import('./setMaxBalance').then(mod => mod.SetMaxBtcBalance),
@@ -120,10 +107,6 @@ type BtcDepositProps = {
 }
 
 const BtcDeposit = function ({ state }: BtcDepositProps) {
-  const deposits = useBtcDeposits()
-  const { updateDeposit } = useTunnelHistory()
-  // use this to hold the deposited amount for the Tx list after clearing the state upon confirmation
-  const [depositAmount, setDepositAmount] = useState('0')
   const [isDepositing, setIsDepositing] = useState(false)
 
   const {
@@ -131,7 +114,6 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     fromNetworkId,
     fromToken,
     resetStateAfterOperation,
-    savePartialDeposit,
     toNetworkId,
     updateFromInput,
   } = state
@@ -139,16 +121,17 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
   const { evmAddress } = useAccounts()
   const bitcoin = useBitcoin()
   const { balance } = useBtcBalance()
-  const chain = useChain(bitcoin.id)
-  const { txHash } = useTunnelOperation()
 
-  const canDeposit = canSubmit({
-    balance: BigInt(balance?.confirmed ?? 0),
-    chainId: bitcoin.id,
-    fromInput,
-    fromNetworkId,
-    fromToken,
-  })
+  // TODO we need to let the user know about the min value to deposit
+  // See https://github.com/hemilabs/ui-monorepo/issues/454
+  const canDeposit =
+    canSubmit({
+      balance: BigInt(balance?.confirmed ?? 0),
+      chainId: bitcoin.id,
+      fromInput,
+      fromNetworkId,
+      fromToken,
+    }) && Big(fromInput).gte(minBitcoinDeposit)
 
   const {
     clearDepositState,
@@ -156,73 +139,37 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
     depositError,
     depositReceipt,
     depositReceiptError,
-    depositTxId,
   } = useDepositBitcoin()
 
   const t = useTranslations()
 
-  const resetFormState = useCallback(
-    function () {
+  useEffect(
+    function handleSuccess() {
+      if (!depositReceipt?.status.confirmed || !isDepositing) {
+        return
+      }
       setIsDepositing(false)
       resetStateAfterOperation()
     },
-    [resetStateAfterOperation, setIsDepositing],
+    [depositReceipt, isDepositing, resetStateAfterOperation, setIsDepositing],
   )
 
-  const onSuccess = useCallback(
-    function () {
-      resetFormState()
-      const deposit = deposits.find(
-        d => d.transactionHash === depositReceipt.txId,
-      )
-      updateDeposit(deposit, {
-        blockNumber: depositReceipt.status.blockHeight,
-        status: BtcDepositStatus.TX_CONFIRMED,
-        timestamp: depositReceipt.status.blockTime,
-      })
-      savePartialDeposit({ depositTxHash: depositReceipt.txId })
+  useEffect(
+    function handleRejectionOrFailure() {
+      if (isDepositing && (depositError || depositReceiptError)) {
+        setIsDepositing(false)
+      }
     },
-    [
-      depositReceipt,
-      deposits,
-      resetFormState,
-      savePartialDeposit,
-      updateDeposit,
-    ],
+    [depositError, depositReceiptError, isDepositing, setIsDepositing],
   )
 
-  const { beforeTransaction } = useAfterTransaction({
-    clearState: clearDepositState,
-    errorReceipts: [depositError, depositReceiptError],
-    onError: resetFormState,
-    onSuccess,
-    transactionReceipt: depositReceipt,
-  })
-
-  const transactionsList = useTransactionsList({
-    inProgressMessage: t('tunnel-page.transaction-status.depositing', {
-      fromInput: getFormattedValue(depositAmount),
-      symbol: fromToken.symbol,
-    }),
-    isOperating: isDepositing,
-    operation: 'deposit',
-    receipt: depositReceipt,
-    receiptError: depositReceiptError,
-    successMessage: t('tunnel-page.transaction-status.deposited', {
-      fromInput: getFormattedValue(depositAmount),
-      symbol: fromToken.symbol,
-    }),
-    txHash: depositTxId,
-    userConfirmationError: depositError,
-  })
   const { feePrices } = useGetFeePrices()
 
   const handleDeposit = function () {
     if (!canDeposit) {
       return
     }
-    beforeTransaction()
-    setDepositAmount(fromInput)
+    clearDepositState()
     setIsDepositing(true)
     depositBitcoin({
       hemiAddress: evmAddress,
@@ -253,7 +200,6 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
           </div>
         }
         bottomSection={<WalletsConnected />}
-        explorerUrl={chain.blockExplorers.default.url}
         formContent={
           <FormContent
             isRunningOperation={isDepositing}
@@ -274,25 +220,7 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
             text={t('tunnel-page.submit-button.deposit')}
           />
         }
-        transactionsList={transactionsList}
       />
-      {!!txHash && (
-        <ReviewBtcDeposit
-          chain={chain}
-          fees={
-            fees !== undefined
-              ? {
-                  amount: fees,
-                  symbol: 'sat/vB',
-                }
-              : undefined
-          }
-          isRunningOperation={isDepositing}
-          onClose={resetStateAfterOperation}
-          token={fromToken}
-          transactionsList={transactionsList}
-        />
-      )}
     </>
   )
 }

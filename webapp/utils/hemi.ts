@@ -5,6 +5,9 @@ import pMemoize from 'promise-mem'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { type Address } from 'viem'
 
+import { calculateDepositOutputIndex } from './bitcoin'
+import { getTransactionReceipt } from './btcApi'
+
 // Max Sanchez note: looks like if we pass in all lower-case hex, Unisat publishes the bytes instead of the string.
 // Tunnel for now is only validating the string representation, but update this in the future using
 // the all-lower-case-hex way to get the raw bytes published, which is more efficient.
@@ -18,28 +21,29 @@ export const getBitcoinCustodyAddress = pMemoize(
   { resolver: (_, vaultAddress) => vaultAddress },
 )
 
-// Many vaults will likely share the same owner, so this can be memoized
-const getVaultOwnerByBtcAddress = pMemoize(
-  (hemiClient: HemiPublicClient, deposit: BtcDepositOperation) =>
-    hemiClient.getVaultOwnerByBTCAddress({ btcAddress: deposit.to }),
-  { resolver: (_, deposit) => `${deposit.l1ChainId}_${deposit.to}` },
+export const getVaultAddressByIndex = pMemoize(
+  (hemiClient: HemiPublicClient, vaultIndex: number) =>
+    hemiClient.getVaultByIndex({ vaultIndex }),
+  { resolver: (_, vaultIndex) => vaultIndex },
 )
 
-// Many deposits will likely share a vault, so this can be memoized
-export const getVaultAddressByOwner = pMemoize(
-  (hemiClient: HemiPublicClient, ownerAddress: Address) =>
-    hemiClient.getVaultAddressByOwner({ ownerAddress }),
-  { resolver: (_, vaultOwner) => vaultOwner },
+export const getVaultIndexByBTCAddress = pMemoize(
+  // remove once se use getVaultIndexByBTCAddress
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  (hemiClient: HemiPublicClient, deposit: BtcDepositOperation) =>
+    // See https://github.com/hemilabs/ui-monorepo/issues/393
+    // We should use hemiClient.getVaultIndexByBTCAddress({ btcAddress: deposit.to }),
+    hemiClient.getVaultChildIndex(),
+  { resolver: (_, deposit) => `${deposit.l1ChainId}_${deposit.to}` },
 )
 
 export const getVaultAddressByDeposit = (
   hemiClient: HemiPublicClient,
   deposit: BtcDepositOperation,
 ) =>
-  // from the address where the user sends its bitcoin, get the Owner of the vault address in Hemi
-  getVaultOwnerByBtcAddress(hemiClient, deposit)
-    // with that, get the vault address in Hemi
-    .then(ownerAddress => getVaultAddressByOwner(hemiClient, ownerAddress))
+  getVaultIndexByBTCAddress(hemiClient, deposit).then(vaultIndex =>
+    getVaultAddressByIndex(hemiClient, vaultIndex),
+  )
 
 export const getHemiStatusOfBtcDeposit = ({
   deposit,
@@ -53,19 +57,27 @@ export const getHemiStatusOfBtcDeposit = ({
   vaultAddress: Address
 }) =>
   Promise.all([
-    // check if Hemi is aware of the btc transaction
-    hemiClient
-      .getTransactionByTxId({
-        txId: deposit.transactionHash,
-      })
-      // api throws if not found
-      .catch(() => undefined)
-      .then(txFound => !!txFound),
+    // @ts-expect-error needs to be fixed https://github.com/hemilabs/hemi-viem/issues/30
+    hemiClient.getBitcoinKitAddress().then(bitcoinKitAddress =>
+      // check if Hemi is aware of the btc transaction
+      hemiClient
+        .getTransactionByTxId({
+          bitcoinKitAddress,
+          txId: deposit.transactionHash,
+        })
+        // api throws if not found
+        .catch(() => undefined)
+        .then(txFound => !!txFound),
+    ),
     // check if the deposit's been confirmed
-    hemiClient.acknowledgedDeposits({
-      txId: deposit.transactionHash,
-      vaultAddress,
-    }),
+    hemiClient
+      .getBitcoinVaultStateAddress({ vaultAddress })
+      .then(vaultStateAddress =>
+        hemiClient.acknowledgedDeposits({
+          txId: deposit.transactionHash,
+          vaultStateAddress,
+        }),
+      ),
   ]).then(([hemiAwareOfBtcTx, claimed]) =>
     hemiAwareOfBtcTx
       ? claimed
@@ -95,10 +107,10 @@ export const initiateBtcDeposit = function ({
 
   return (
     hemiClient
-      .getOwner()
+      .getVaultChildIndex()
       // get vault address which will custody the btc
-      .then(ownerAddress => getVaultAddressByOwner(hemiClient, ownerAddress))
-      // get the bitcoin address which the vault will monitor
+      .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
+      // get the bitcoin address which the vault uses
       .then(vaultAddress => getBitcoinCustodyAddress(hemiClient, vaultAddress))
       .then(bitcoinCustodyAddress =>
         walletConnector
@@ -125,13 +137,14 @@ export const claimBtcDeposit = ({
   hemiWalletClient: HemiWalletClient
 }) =>
   Promise.all([
-    getVaultOwnerByBtcAddress(hemiClient, deposit),
-    // pull the status again, not from memory, but from reading the contracts
-    // in case it just happened to be confirmed outside of the app a few seconds before claiming
+    getVaultIndexByBTCAddress(hemiClient, deposit),
     getVaultAddressByDeposit(hemiClient, deposit).then(vaultAddress =>
       getHemiStatusOfBtcDeposit({ deposit, hemiClient, vaultAddress }),
     ),
-  ]).then(function ([ownerAddress, currentStatus]) {
+    getTransactionReceipt(deposit.transactionHash).then(receipt =>
+      calculateDepositOutputIndex(receipt, deposit.to),
+    ),
+  ]).then(function ([vaultIndex, currentStatus, outputIndex]) {
     if (currentStatus === BtcDepositStatus.BTC_DEPOSITED) {
       throw new Error('Bitcoin Deposit already confirmed')
     }
@@ -140,9 +153,13 @@ export const claimBtcDeposit = ({
     }
 
     return hemiWalletClient.confirmDeposit({
+      // For current vault implementations, the field is not used... but required by
+      // the abi
+      extraInfo: '0x',
       from,
-      ownerAddress,
+      outputIndex: BigInt(outputIndex),
       txId: deposit.transactionHash,
+      vaultIndex,
     })
   })
 
@@ -159,11 +176,11 @@ export const initiateBtcWithdrawal = ({
   hemiClient: HemiPublicClient
   hemiWalletClient: HemiWalletClient
 }) =>
-  hemiClient.getOwner().then(ownerAddress =>
+  hemiClient.getVaultChildIndex().then(vaultIndex =>
     hemiWalletClient.initiateWithdrawal({
       amount,
       btcAddress,
       from,
-      ownerAddress,
+      vaultIndex,
     }),
   )

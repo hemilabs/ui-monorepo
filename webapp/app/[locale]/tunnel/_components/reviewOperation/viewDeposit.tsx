@@ -1,6 +1,7 @@
 import { DepositTunnelOperation } from 'types/tunnel'
 import { isBtcDeposit } from 'utils/tunnel'
 
+import { ReviewBtcDeposit } from './reviewBtcDeposit'
 import { ReviewEvmDeposit } from './reviewEvmDeposit'
 
 type Props = {
@@ -10,8 +11,7 @@ type Props = {
 
 export const ViewDeposit = function ({ deposit, onClose }: Props) {
   if (isBtcDeposit(deposit)) {
-    // Will be implemented in incoming PRs
-    return null
+    return <ReviewBtcDeposit deposit={deposit} onClose={onClose} />
   }
   return <ReviewEvmDeposit deposit={deposit} onClose={onClose} />
 }

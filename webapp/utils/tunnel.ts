@@ -4,6 +4,7 @@ import {
   BtcDepositStatus,
   type DepositTunnelOperation,
   type EvmDepositOperation,
+  type ToBtcWithdrawOperation,
   type ToEvmWithdrawOperation,
   type TunnelOperation,
   type WithdrawTunnelOperation,
@@ -32,6 +33,10 @@ export const isWithdraw = (
   operation: TunnelOperation,
 ): operation is WithdrawTunnelOperation =>
   operation.direction === MessageDirection.L2_TO_L1
+
+export const isToBtcWithdraw = (
+  withdraw: WithdrawTunnelOperation,
+): withdraw is ToBtcWithdrawOperation => isBtcOperation(withdraw)
 
 export const isToEvmWithdraw = (
   withdraw: WithdrawTunnelOperation,

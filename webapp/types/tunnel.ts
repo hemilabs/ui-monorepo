@@ -18,6 +18,8 @@ export const enum BtcDepositStatus {
   BTC_READY_CLAIM = 2,
   // The erc20 bitcoin version in Hemi has been minted
   BTC_DEPOSITED = 3,
+  // Deposit tx reverted
+  DEPOSIT_TX_FAILED = 4,
 }
 
 export const enum BtcWithdrawStatus {
@@ -25,6 +27,10 @@ export const enum BtcWithdrawStatus {
   TX_PENDING = 0,
   // Transaction withdraw confirmed
   TX_CONFIRMED = 1,
+  // TODO confirm these below are correct
+  READY_CHALLENGE = 2,
+  WITHDRAWN = 3,
+  WITHDRAWAL_FAILED = 4,
 }
 
 export const enum EvmDepositStatus {
@@ -62,6 +68,7 @@ type DepositDirection = {
 }
 
 type BtcTransactionHash = {
+  claimTransactionHash?: Hash
   transactionHash: BtcTransaction
 }
 

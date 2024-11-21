@@ -40,6 +40,6 @@ export const Operation = ({
         ))}
       </div>
     </div>
-    {!!callToAction && <div className="mt-auto px-4 py-6">{callToAction}</div>}
+    {!!callToAction && <div className="h-full px-4 py-6">{callToAction}</div>}
   </div>
 )

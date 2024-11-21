@@ -15,7 +15,7 @@ import {
 } from 'utils/btcApi'
 import {
   getBitcoinCustodyAddress,
-  getVaultAddressByOwner,
+  getVaultAddressByIndex,
   getHemiStatusOfBtcDeposit,
   hemiAddressToBitcoinOpReturn,
 } from 'utils/hemi'
@@ -87,8 +87,8 @@ export const createBitcoinSync = function ({
     }
     debug('Getting bitcoin custody address')
     const vaultAddress = await hemiClient
-      .getOwner()
-      .then(owner => getVaultAddressByOwner(hemiClient, owner))
+      .getVaultChildIndex()
+      .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
 
     const bitcoinCustodyAddress = await getBitcoinCustodyAddress(
       hemiClient,

@@ -1,12 +1,12 @@
 import { Button } from 'components/button'
 import { useChain } from 'hooks/useChain'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
+import { useSwitchChain } from 'hooks/useSwitchChain'
 import { useTranslations } from 'next-intl'
-import { type Chain } from 'viem'
-import { useSwitchChain } from 'wagmi'
+import { RemoteChain } from 'types/chain'
 
 type Props = {
-  chainId: Chain['id']
+  chainId: RemoteChain['id']
   submitButton: React.ReactNode
 }
 

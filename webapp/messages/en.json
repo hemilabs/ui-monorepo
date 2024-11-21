@@ -235,6 +235,7 @@
       "your-deposit-is-complete": "Your deposit is complete."
     },
     "review-withdraw": {
+      "challenge-withdrawal": "Challenge Withdrawal",
       "claim-withdrawal": "Claim withdrawal",
       "heading": "Review Withdraw",
       "initiate-withdrawal": "Initiate withdrawal",
@@ -247,6 +248,8 @@
     "submit-button": {
       "approve-and-deposit": "Approve and Deposit",
       "approving": "Approving...",
+      "challenge-withdrawal": "Challenge Withdrawal",
+      "challenging": "Challenging...",
       "claim-deposit": "Claim deposit",
       "claim-withdrawal": "Claim Withdrawal",
       "claiming-deposit": "Claiming Deposit",

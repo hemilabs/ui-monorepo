@@ -1,6 +1,5 @@
 import { featureFlags } from 'app/featureFlags'
 import { type BtcChain } from 'btc-wallet/chains'
-import { BtcTransaction } from 'btc-wallet/unisat'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
@@ -12,7 +11,7 @@ import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { findChainById } from 'utils/chain'
 import { getNativeToken, getTokenByAddress, isNativeToken } from 'utils/token'
 import { type NoPayload, type Payload } from 'utils/typeUtilities'
-import { type Chain, type Hash, isHash } from 'viem'
+import { type Chain, isHash } from 'viem'
 
 import { useTunnelOperation } from './useTunnelOperation'
 
@@ -22,10 +21,6 @@ export type TunnelState = {
   fromInput: string
   fromNetworkId: RemoteChain['id']
   fromToken: Token
-  partialDeposit?: Partial<{
-    depositTxHash: BtcTransaction
-    claimDepositTxHash: Hash
-  }>
   toNetworkId: RemoteChain['id']
   toToken: Token
 }
@@ -36,8 +31,6 @@ type Action<T extends string> = {
 
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
 
-type SavePartialDeposit = Action<'savePartialDeposit'> &
-  Payload<TunnelState['partialDeposit']>
 type UpdateFromNetwork = Action<'updateFromNetwork'> &
   Payload<TunnelState['fromNetworkId']>
 type UpdateFromToken = Action<'updateFromToken'> &
@@ -54,7 +47,6 @@ type ToggleTestnetMainnet = Action<'toggleTestnetMainnet'> &
 
 type Actions =
   | ResetStateAfterOperation
-  | SavePartialDeposit
   | UpdateFromNetwork
   | UpdateFromInput
   | UpdateFromToken
@@ -77,15 +69,6 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
         fromInput: '0',
       }
       return newState
-    }
-    case 'savePartialDeposit': {
-      return {
-        ...state,
-        partialDeposit: {
-          ...(state.partialDeposit || {}),
-          ...action.payload,
-        },
-      }
     }
     case 'updateFromNetwork': {
       const { payload: fromNetworkId } = action
@@ -284,28 +267,33 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
       const bridgeAddress =
         fromToken.extensions?.bridgeInfo[toNetworkId]?.tokenAddress
       // find the tunneled pair of the token, or go with the native if missing
-      const toToken = isNativeToken(fromToken)
-        ? getNativeToken(toNetworkId)
-        : tokenList.find(
-            t => t.address === bridgeAddress && t.chainId === toNetworkId,
-          )
+      // bitcoin is a special case as it tunnels a native token (btc) into an erc20
+      if (fromToken.chainId === bitcoin.id) {
+        const bitcoinNativeToken = getNativeToken(fromToken.chainId)
+        return tokenList.find(
+          t =>
+            t.chainId === toNetworkId &&
+            t.address ===
+              bitcoinNativeToken.extensions.bridgeInfo[toNetworkId]
+                .tokenAddress,
+        )
+      }
+
+      const toToken =
+        isNativeToken(fromToken) || bitcoin.id === toNetworkId
+          ? getNativeToken(toNetworkId)
+          : tokenList.find(
+              t => t.address === bridgeAddress && t.chainId === toNetworkId,
+            )
       return toToken
     },
-    [tokenList],
+    [bitcoin.id, tokenList],
   )
 
   return {
     ...state,
     resetStateAfterOperation: useCallback(
       () => dispatch({ type: 'resetStateAfterOperation' }),
-      [dispatch],
-    ),
-    savePartialDeposit: useCallback(
-      (payload: SavePartialDeposit['payload']) =>
-        dispatch({
-          payload,
-          type: 'savePartialDeposit',
-        }),
       [dispatch],
     ),
     toggleInput: useCallback(
@@ -324,11 +312,11 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
         dispatch({ payload: fromNetworkId, type: 'updateFromNetwork' })
         // given the upload, we may need to update the tokens
         const fromToken = getNativeToken(fromNetworkId)
-        // the "current" fromNetwork is going to be the next toNetwork
-        const toToken = getNativeToken(state.toNetworkId)
+        // the "current" fromNetwork is going to be the next toNetwork.
+        const toToken = getTunnelToken(fromToken, state.toNetworkId)
         dispatch({ payload: { fromToken, toToken }, type: 'updateFromToken' })
       },
-      [dispatch, state.toNetworkId],
+      [dispatch, getTunnelToken, state.toNetworkId],
     ),
     updateFromToken: useCallback(
       function (fromToken, toToken) {
@@ -351,7 +339,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
             isNaN(parseInt(newToNetworkId))
               ? newToNetworkId
               : parseInt(newToNetworkId)
-          ) as TunnelState['fromNetworkId']
+          ) as TunnelState['toNetworkId']
           dispatch({
             payload,
             type: 'updateToNetwork',

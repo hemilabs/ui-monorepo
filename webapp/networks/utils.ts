@@ -1,7 +1,7 @@
-import { type Chain as ViemChain } from 'viem'
+import { type Chain } from 'viem'
 import { defineChain } from 'viem/utils'
 
-export const overrideRpcUrl = function (chain: ViemChain, rpcUrl?: string) {
+export const overrideRpcUrl = function (chain: Chain, rpcUrl?: string) {
   const isValidCustomSepoliaRpc = !!rpcUrl && rpcUrl.startsWith('https')
   if (isValidCustomSepoliaRpc) {
     return defineChain({

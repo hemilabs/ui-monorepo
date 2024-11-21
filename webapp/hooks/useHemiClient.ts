@@ -1,27 +1,28 @@
 import {
   hemiPublicBitcoinKitActions,
   hemiPublicBitcoinTunnelManagerActions,
-  hemiPublicBitcoinVaultActions,
+  hemiPublicSimpleBitcoinVaultActions,
+  hemiPublicSimpleBitcoinVaultStateActions,
   hemiWalletBitcoinTunnelManagerActions,
 } from 'hemi-viem'
 import { useMemo } from 'react'
-import { type Address, type PublicClient } from 'viem'
+import { type PublicClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
 
 import { useHemi } from './useHemi'
 
 const localExtensions = () => ({
-  // in incoming iterations, the owner address will be determined programmatically
-  // from bitcoin manager, once there's a determined way to get the "most adequate" custodial
-  // See https://github.com/hemilabs/ui-monorepo/issues/393
-  getOwner: () =>
-    Promise.resolve('0xfee2f1eD73051c0f910de83d221151d9D36Ae3de' as Address),
+  // in incoming iterations, the vault index will be determined programmatically
+  // once there's a determined way to get the "most adequate" custodial and support multiple types
+  // of vaults - See https://github.com/hemilabs/ui-monorepo/issues/393
+  getVaultChildIndex: () => Promise.resolve(1), // Talk to max if we can remove this hardcoded
 })
 
 export const publicClientToHemiClient = (publicClient: PublicClient) =>
   publicClient
     .extend(hemiPublicBitcoinKitActions())
-    .extend(hemiPublicBitcoinVaultActions())
+    .extend(hemiPublicSimpleBitcoinVaultActions())
+    .extend(hemiPublicSimpleBitcoinVaultStateActions())
     .extend(hemiPublicBitcoinTunnelManagerActions())
     .extend(localExtensions)
 

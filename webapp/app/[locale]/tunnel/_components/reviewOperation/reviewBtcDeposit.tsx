@@ -1,181 +1,164 @@
-import { Modal } from 'components/modal'
-import { TransactionStatus } from 'components/transactionStatus'
-import { useBtcDeposits } from 'hooks/useBtcDeposits'
+import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
+import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useHemi } from 'hooks/useHemi'
+import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
-import { type ComponentProps, type FormEvent, type ReactNode } from 'react'
-import { type RemoteChain } from 'types/chain'
-import { Token } from 'types/token'
-import { BtcDepositStatus } from 'types/tunnel'
-import { Card } from 'ui-common/components/card'
-import { CloseIcon } from 'ui-common/components/closeIcon'
+import { useContext } from 'react'
+import Skeleton from 'react-loading-skeleton'
+import { type BtcToken } from 'types/token'
+import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
+import { formatGasFees, getFormattedValue } from 'utils/format'
+import { useAccount } from 'wagmi'
 
-import { useTunnelOperation } from '../../_hooks/useTunnelOperation'
+import {
+  BtcToEvmDepositContext,
+  BtcToEvmDepositProvider,
+} from '../../_context/btcToEvmContext'
+import { ClaimBtcDeposit } from '../claimBtcDeposit'
+import { RetryBtcDeposit } from '../retryBtcDeposit'
 
-import { Amount } from './amount'
-import { ClaimIcon } from './claimIcon'
-import { Step, SubStep } from './steps'
-import { VerticalLine } from './verticalLine'
+import { Operation } from './operation'
+import { ProgressStatus } from './progressStatus'
+import { type StepPropsWithoutPosition } from './step'
 
-const ExpectedClaimDepositTimeHours = 3
-
-const DepositIcon = () => (
-  <svg fill="none" height={17} width={16} xmlns="http://www.w3.org/2000/svg">
-    <path
-      d="M8.752 14.602c.169.647 1.078.67 1.28.034l3.413-10.742a.667.667 0 0 0-.838-.837L1.866 6.469c-.637.202-.613 1.112.033 1.28l5.057 1.32c.234.06.416.243.477.476l1.32 5.057Z"
-      stroke="#4D4E4E"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={1.5}
-    />
-  </svg>
-)
-
-type ReviewBtcDeposit = {
-  chain: RemoteChain
-  fees?: {
-    amount: string
-    symbol: string
+const getCallToAction = function (deposit: BtcDepositOperation) {
+  switch (deposit.status) {
+    case BtcDepositStatus.DEPOSIT_TX_FAILED:
+      return <RetryBtcDeposit deposit={deposit} />
+    case BtcDepositStatus.BTC_READY_CLAIM:
+      return <ClaimBtcDeposit deposit={deposit} />
+    default:
+      return null
   }
-  isRunningOperation: boolean
-  onClose?: () => void
-  onSubmit?: () => void
-  submitButton?: ReactNode
-  token: Token
-  transactionsList?: {
-    id: string
-    status: ComponentProps<typeof TransactionStatus>['status']
-    text: string
-    txHash: string
-  }[]
 }
 
-export const ReviewBtcDeposit = function ({
-  chain,
-  fees,
-  isRunningOperation,
+const ConfirmBtcDepositGasUnits = BigInt(400_000)
+const ExpectedClaimDepositTimeHours = 3
+
+type Props = {
+  deposit: BtcDepositOperation
+  onClose: () => void
+}
+
+const ReviewContent = function ({
+  deposit,
+  fromToken,
   onClose,
-  onSubmit,
-  submitButton,
-  token,
-  transactionsList,
-}: ReviewBtcDeposit) {
-  const deposits = useBtcDeposits()
-  const t = useTranslations()
-  const { operation, txHash } = useTunnelOperation()
+}: Props & { fromToken: BtcToken }) {
+  const depositStatus = deposit.status ?? BtcDepositStatus.TX_PENDING
 
-  const foundDeposit = deposits.find(
-    deposit => deposit.transactionHash === txHash,
-  )
+  const { isConnected } = useAccount()
+  const [operationStatus] = useContext(BtcToEvmDepositContext)
+  // fees for bitcoin claiming
+  const showClaimingFees =
+    isConnected && BtcDepositStatus.BTC_READY_CLAIM === depositStatus
+  const estimatedFees = useEstimateFees({
+    chainId: deposit.l2ChainId,
+    enabled: showClaimingFees,
+    gasUnits: ConfirmBtcDepositGasUnits,
+    overEstimation: 1.5,
+  })
+  const hemi = useHemi()
 
-  const handleSubmit = function (e: FormEvent) {
-    e.preventDefault()
-    onSubmit()
-  }
+  // Fees for bitcoin deposit
+  const { feePrices } = useGetFeePrices()
+  const t = useTranslations('tunnel-page.review-deposit')
 
-  const closeModal = function () {
-    // prevent closing if running an operation
-    if (isRunningOperation) {
-      return
-    }
-    onClose?.()
-    window.history.back()
-  }
-
-  const getWaitReadyToClaimStatus = function () {
-    if (foundDeposit.status >= BtcDepositStatus.BTC_READY_CLAIM) {
-      return 'completed'
-    }
-    return foundDeposit.status === BtcDepositStatus.TX_CONFIRMED
-      ? 'progress'
-      : 'idle'
-  }
+  const steps: StepPropsWithoutPosition[] = []
 
   const getClaimStatus = function () {
-    if (foundDeposit.status === BtcDepositStatus.BTC_DEPOSITED) {
-      return 'completed'
+    if (deposit.status === BtcDepositStatus.BTC_DEPOSITED) {
+      return ProgressStatus.COMPLETED
     }
-    if (foundDeposit.status === BtcDepositStatus.BTC_READY_CLAIM) {
-      return isRunningOperation ? 'progress' : 'ready'
+    if (deposit.status !== BtcDepositStatus.BTC_READY_CLAIM) {
+      return ProgressStatus.NOT_READY
     }
-    return 'idle'
+    const map = {
+      claiming: ProgressStatus.PROGRESS,
+      failed: ProgressStatus.FAILED,
+      rejected: ProgressStatus.REJECTED,
+    }
+    return map[operationStatus] ?? ProgressStatus.READY
   }
 
-  const isClaim = operation === 'claim'
-  const isDeposit = operation === 'deposit'
+  const getDepositStep = function (): StepPropsWithoutPosition {
+    const statusMap = {
+      [BtcDepositStatus.TX_PENDING]: ProgressStatus.PROGRESS,
+      [BtcDepositStatus.DEPOSIT_TX_FAILED]: ProgressStatus.FAILED,
+    }
+
+    return {
+      description: t('initiate-deposit'),
+      explorerChainId: deposit.l1ChainId,
+      fees:
+        [
+          BtcDepositStatus.TX_PENDING,
+          BtcDepositStatus.DEPOSIT_TX_FAILED,
+        ].includes(depositStatus) && feePrices?.fastestFee
+          ? {
+              amount: getFormattedValue(feePrices?.fastestFee?.toString()),
+              symbol: 'sat/vB',
+            }
+          : undefined,
+      status: statusMap[depositStatus] ?? ProgressStatus.COMPLETED,
+      txHash: deposit.transactionHash,
+    }
+  }
+
+  const getClaimStep = (): StepPropsWithoutPosition => ({
+    description: t('claim-deposit'),
+    explorerChainId: deposit.l2ChainId,
+    fees: showClaimingFees
+      ? {
+          amount: formatGasFees(estimatedFees, hemi.nativeCurrency.decimals),
+          symbol: hemi.nativeCurrency.symbol,
+        }
+      : undefined,
+    status: getClaimStatus(),
+    txHash: deposit.claimTransactionHash,
+  })
+
+  steps.push(getDepositStep())
+  steps.push(getClaimStep())
 
   return (
-    <Modal onClose={closeModal}>
-      <div className="flex w-96 flex-col gap-y-4">
-        <Card padding="large">
-          <div className="flex items-center justify-between pb-2">
-            <h4 className="text-base font-medium text-slate-950 lg:text-xl">
-              {t('tunnel-page.review-deposit.heading')}
-            </h4>
-            <CloseIcon className="cursor-pointer" onClick={closeModal} />
-          </div>
-          <div className="flex items-center justify-between py-4">
-            <span className="text-xs font-medium text-slate-500">
-              {t('common.total-amount')}
-            </span>
-            <Amount token={token} value={foundDeposit.amount} />
-          </div>
-          <Step
-            fees={isDeposit && fees}
-            icon={<DepositIcon />}
-            status={
-              foundDeposit.status >= BtcDepositStatus.TX_CONFIRMED
-                ? 'completed'
-                : 'progress'
-            }
-            text={t('tunnel-page.review-deposit.initiate-deposit')}
-          />
-          <VerticalLine />
-          <SubStep
-            status={getWaitReadyToClaimStatus()}
-            text={t('common.wait-hours', {
+    <Operation
+      amount={deposit.amount}
+      callToAction={getCallToAction(deposit)}
+      onClose={onClose}
+      steps={steps}
+      subtitle={
+        depositStatus === BtcDepositStatus.BTC_DEPOSITED
+          ? t('your-deposit-is-complete')
+          : t('btc-deposit-come-back-delay-note', {
               hours: ExpectedClaimDepositTimeHours,
-            })}
-          />
-          <VerticalLine />
-          <Step
-            fees={isClaim && fees}
-            icon={<ClaimIcon />}
-            status={getClaimStatus()}
-            text={t('tunnel-page.review-deposit.claim-deposit')}
-          />
-          {![
-            BtcDepositStatus.BTC_READY_CLAIM,
-            BtcDepositStatus.BTC_DEPOSITED,
-          ].includes(foundDeposit.status) && (
-            <p className="mt-4 text-xs font-medium leading-snug text-slate-500">
-              {t(
-                'tunnel-page.review-deposit.btc-deposit-come-back-delay-note',
-                {
-                  hours: ExpectedClaimDepositTimeHours,
-                },
-              )}
-            </p>
-          )}
-          {submitButton && (
-            <form className="mt-6" onSubmit={handleSubmit}>
-              {submitButton}
-            </form>
-          )}
-        </Card>
-        {transactionsList.length > 0 && (
-          <div className="flex flex-col gap-y-4">
-            {transactionsList.map(transaction => (
-              <TransactionStatus
-                explorerUrl={chain.blockExplorers.default.url}
-                key={transaction.id}
-                status={transaction.status}
-                text={transaction.text}
-                txHash={transaction.txHash}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </Modal>
+            })
+      }
+      title={t('review-deposit')}
+      token={fromToken}
+    />
+  )
+}
+
+export const ReviewBtcDeposit = function ({ deposit, onClose }: Props) {
+  const { data: fromToken } = useToken({
+    address: deposit.l1Token,
+    chainId: deposit.l1ChainId,
+  })
+
+  const tokensLoaded = !!fromToken
+
+  return (
+    <BtcToEvmDepositProvider>
+      {tokensLoaded ? (
+        <ReviewContent
+          deposit={deposit}
+          fromToken={fromToken as BtcToken}
+          onClose={onClose}
+        />
+      ) : (
+        <Skeleton className="h-full" />
+      )}
+    </BtcToEvmDepositProvider>
   )
 }

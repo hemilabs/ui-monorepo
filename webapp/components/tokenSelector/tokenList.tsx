@@ -61,6 +61,7 @@ const List = function ({
         rows.push(
           <div
             className="absolute left-0 top-0 w-full"
+            key="manually_added"
             style={{
               height: customTokensLabelHeight,
               transform: `translateY(${virtualItem.start}px)`,

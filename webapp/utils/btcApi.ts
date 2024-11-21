@@ -13,6 +13,13 @@ type TransactionStatus = {
   confirmed: boolean
 }
 
+type Vout = {
+  scriptpubkeyAsm: string
+  scriptpubkeyAddress: string
+  scriptpubkeyType: string
+  value: number
+}
+
 export type MempoolJsBitcoinTransaction = {
   status: TransactionStatus
   txId: string
@@ -21,12 +28,7 @@ export type MempoolJsBitcoinTransaction = {
       scriptpubkeyAddress: string
     }
   }[]
-  vout: {
-    scriptpubkeyAsm: string
-    scriptpubkeyAddress: string
-    scriptpubkeyType: string
-    value: number
-  }[]
+  vout: Vout[]
 }
 
 type Utxo = {
@@ -65,13 +67,14 @@ type Fees = {
 export const getRecommendedFees = () =>
   bitcoin.fees.getFeesRecommended() as Promise<Fees>
 
-type TransactionReceipt = {
+export type TransactionReceipt = {
   txId: BtcTransaction
   status: {
     blockHeight?: number
     blockTime?: number
     confirmed: boolean
   }
+  vout: Vout[]
 }
 
 // See https://mempool.space/testnet/docs/api/rest#get-transaction (we are converting the keys to camelCase)

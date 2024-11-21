@@ -26,7 +26,7 @@
     "debug": "4.3.7",
     "esplora-client": "1.1.0",
     "hemi-socials": "1.0.0",
-    "hemi-viem": "1.6.1",
+    "hemi-viem": "2.0.0-alpha.1",
     "javascript-time-ago": "2.5.10",
     "lodash": "4.17.21",
     "next": "14.2.16",

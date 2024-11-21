@@ -115,7 +115,7 @@ const nativeTokens: Token[] = [
 
 if (featureFlags.btcTunnelEnabled) {
   // TODO needs to be added to the token list https://github.com/hemilabs/ui-monorepo/issues/356
-  const btcTokenAddress = '0x1b70FbDf46EB3e0AD5B34706d1984dc7e0265907'
+  const btcTokenAddress = '0xAe9a1bc9F9787D26CA2D85FEd07e590502538CFA'
   nativeTokens.push({
     address: bitcoinTestnet.nativeCurrency.symbol,
     chainId: bitcoinTestnet.id,

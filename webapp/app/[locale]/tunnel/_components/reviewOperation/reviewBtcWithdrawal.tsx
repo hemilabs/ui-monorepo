@@ -5,6 +5,7 @@ import { useEstimateBtcWithdrawFees } from 'hooks/useEstimateBtcWithdrawFees'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import { useContext } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
 import { formatUnits } from 'viem'
@@ -139,7 +140,9 @@ export const ReviewBtcWithdrawal = function ({ onClose, withdrawal }: Props) {
           onClose={onClose}
           withdrawal={withdrawal}
         />
-      ) : null}
+      ) : (
+        <Skeleton className="h-full" />
+      )}
     </EvmToBtcWithdrawalProvider>
   )
 }

@@ -344,16 +344,30 @@ export const useWithdrawBitcoin = function () {
         return
       }
 
+      // The withdrawal uuid is a 64-bit number needed to challenge the
+      // operation if the operator does not process it timely, within 12 hours.
+      // It is an argument of the WithdrawalInitiated event and can be easily
+      // read from the receipt logs. The logs must be decoded as viem does not
+      // seem to do so automatically. And since the BitcoinTunnelManager ABI is
+      // required for decoding, it has to be done through the public hemiClient
+      // as hemi-viem does not expose such ABI. If it were exposed, viem's
+      // parseEventLogs could have been used. The hemiClient is not actually
+      // needed as the decoding happens synchronously and in the client, without
+      // any need to call the RPC node.
+      const uuid = hemiClient
+        .decodeBitcoinTunnelManagerLogs(withdrawBitcoinReceipt.logs)
+        .find(event => event.eventName === 'WithdrawalInitiated').args
+        .uuid as bigint
+
       // update here so next iteration of the effect doesn't reach this point
       updateWithdrawal(withdrawal, {
         blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
         status: BtcWithdrawStatus.TX_CONFIRMED,
+        uuid: uuid.toString(),
       })
 
       clearWithdrawBitcoinState()
 
-      // TODO we need to get the transaction receipt, get the WithdrawalInitiated event
-      // extract the uuid (bigint) and save it to the withdrawal
       // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
       // eslint-disable-next-line promise/catch-or-return
       getEvmBlock(
@@ -367,6 +381,7 @@ export const useWithdrawBitcoin = function () {
     },
     [
       clearWithdrawBitcoinState,
+      hemiClient,
       updateWithdrawal,
       withdrawals,
       withdrawBitcoinReceipt,

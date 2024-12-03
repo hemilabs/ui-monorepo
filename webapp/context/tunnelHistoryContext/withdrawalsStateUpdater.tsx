@@ -152,7 +152,7 @@ const WatchEvmWithdrawal = function ({
         withdrawal,
       }),
     queryKey: [
-      'withdrawaStateUpdater',
+      'withdrawalStateUpdater',
       withdrawal.l2ChainId,
       withdrawal.transactionHash,
     ],

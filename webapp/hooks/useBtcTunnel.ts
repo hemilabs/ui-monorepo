@@ -445,14 +445,14 @@ export const useChallengeBitcoinWithdrawal = function (
         return
       }
 
-      if (withdrawal.status === BtcWithdrawStatus.WITHDRAWN) {
+      if (withdrawal.status === BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED) {
         return
       }
 
       clearChallengeWithdrawalState()
 
       updateWithdrawal(withdrawal, {
-        status: BtcWithdrawStatus.WITHDRAWN,
+        status: BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED,
       })
     },
     [

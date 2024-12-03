@@ -90,7 +90,7 @@ export const AppLayout = function ({ children }: Props) {
             ${
               // transaction history page uses a different layout
               pathname.endsWith('transaction-history/')
-                ? 'xl:px-30 xl:pb-30'
+                ? 'xl:px-12 xl:pb-12'
                 : 'max-w-5xl'
             }`}
           >

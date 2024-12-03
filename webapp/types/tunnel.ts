@@ -23,13 +23,18 @@ export const enum BtcDepositStatus {
 }
 
 export const enum BtcWithdrawStatus {
-  // The user has confirmed the TX in their wallet, but it hasn't been included in a block
+  // The user has initiated the withdrawal but the tx hasn't been included in a block
   TX_PENDING = 0,
-  // Transaction withdraw confirmed
+  // The withdrawal transaction is confirmed
   TX_CONFIRMED = 1,
-  READY_CHALLENGE = 2,
-  WITHDRAWN = 3,
+  // The challenge period is over without the operator having completed the withdrawal
+  CHALLENGE_READY = 2,
+  // Withdrawal completed
+  WITHDRAWAL_SUCCEEDED = 3,
+  // The withdrawal transaction failed
   WITHDRAWAL_FAILED = 4,
+  // The challenge is in progress
+  CHALLENGE_IN_PROGRESS = 5,
 }
 
 export const enum EvmDepositStatus {

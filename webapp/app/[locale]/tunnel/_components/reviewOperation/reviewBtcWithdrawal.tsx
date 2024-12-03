@@ -25,7 +25,7 @@ const getCallToAction = function (withdrawal: ToBtcWithdrawOperation) {
   switch (withdrawal.status) {
     case BtcWithdrawStatus.WITHDRAWAL_FAILED:
       return <RetryBtcWithdraw withdrawal={withdrawal} />
-    case BtcWithdrawStatus.READY_CHALLENGE:
+    case BtcWithdrawStatus.CHALLENGE_READY:
       return <ChallengeBtcWithdrawal withdrawal={withdrawal} />
     default:
       return null
@@ -80,10 +80,10 @@ const ReviewContent = function ({
 
   const addChallengeStep = function (): StepPropsWithoutPosition {
     const getChallengeStatus = function () {
-      if (withdrawal.status < BtcWithdrawStatus.READY_CHALLENGE) {
+      if (withdrawal.status < BtcWithdrawStatus.CHALLENGE_READY) {
         return ProgressStatus.NOT_READY
       }
-      if (withdrawal.status >= BtcWithdrawStatus.WITHDRAWN) {
+      if (withdrawal.status >= BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED) {
         return ProgressStatus.COMPLETED
       }
       const map = {
@@ -114,7 +114,7 @@ const ReviewContent = function ({
       onClose={onClose}
       steps={steps}
       subtitle={
-        withdrawal.status === BtcWithdrawStatus.WITHDRAWN
+        withdrawal.status === BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED
           ? t('withdraw-completed')
           : t('withdraw-on-its-way')
       }

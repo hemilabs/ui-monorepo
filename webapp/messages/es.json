@@ -195,8 +195,9 @@
     "validating-token-address": "Validando dirección del token..."
   },
   "transaction-history": {
+    "challenge-in-progress": "Desafío en progreso",
     "connect-wallet-to-review": "Conecte su billetera para revisar su historial de transacciones.",
-    "in-challenge-period": "En período de desafío",
+    "in-challenge-period": "Listo para desafiar",
     "loading-transactions": "Cargando transacciones",
     "ready-to-claim": "Listo para reclamar",
     "ready-to-prove": "Listo para probar",

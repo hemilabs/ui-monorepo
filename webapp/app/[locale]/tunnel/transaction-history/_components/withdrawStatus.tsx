@@ -1,6 +1,6 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useTranslations } from 'next-intl'
-import { WithdrawTunnelOperation } from 'types/tunnel'
+import { BtcWithdrawStatus, WithdrawTunnelOperation } from 'types/tunnel'
 import { isToEvmWithdraw } from 'utils/tunnel'
 
 import { TxStatus } from './txStatus'
@@ -9,14 +9,9 @@ type Props = {
   withdrawal: WithdrawTunnelOperation
 }
 
-export const WithdrawStatus = function ({ withdrawal }: Props) {
+const EvmWithdrawStatus = function ({ withdrawal }: Props) {
   const t = useTranslations()
   const waitMinutes = t('common.wait-minutes', { minutes: 20 })
-
-  if (!isToEvmWithdraw(withdrawal)) {
-    // Bitcoin withdrawals are always successful if tx was confirmed
-    return <TxStatus.Success />
-  }
 
   const statuses = {
     // This status should never be rendered, but just to be defensive
@@ -42,3 +37,43 @@ export const WithdrawStatus = function ({ withdrawal }: Props) {
 
   return statuses[withdrawal.status]
 }
+
+// After the withdrawal is initiated, the operation is in a wait state for up to
+// 12 hours. Past that time, if not completed, the operation can be challenged.
+// Either way, it can be successful or have failed.
+const BitcoinWithdrawStatus = function ({ withdrawal }: Props) {
+  const t = useTranslations()
+
+  const statuses = {
+    // Happy path
+    [BtcWithdrawStatus.TX_PENDING]: (
+      <TxStatus.InStatus text={t('common.wait-minutes', { minutes: 10 })} />
+    ),
+    [BtcWithdrawStatus.TX_CONFIRMED]: (
+      <TxStatus.InStatus text={t('common.wait-hours', { hours: 12 })} />
+    ),
+    [BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED]: <TxStatus.Success />,
+    // Initiate error path
+    [BtcWithdrawStatus.WITHDRAWAL_FAILED]: <TxStatus.Failed />,
+    // Challenge path
+    [BtcWithdrawStatus.CHALLENGE_READY]: (
+      <TxStatus.InStatus text={t('transaction-history.in-challenge-period')} />
+    ),
+    [BtcWithdrawStatus.CHALLENGE_IN_PROGRESS]: (
+      <TxStatus.InStatus
+        text={t('transaction-history.challenge-in-progress')}
+      />
+    ),
+  }
+
+  return statuses[withdrawal.status]
+}
+
+// This is the component rendering the content of the Status column in the
+// transactions history table.
+export const WithdrawStatus = ({ withdrawal }: Props) =>
+  isToEvmWithdraw(withdrawal) ? (
+    <EvmWithdrawStatus withdrawal={withdrawal} />
+  ) : (
+    <BitcoinWithdrawStatus withdrawal={withdrawal} />
+  )

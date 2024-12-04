@@ -25,6 +25,14 @@ const BitcoinDepositsStatusUpdater = dynamic(
   { ssr: false },
 )
 
+const BitcoinWithdrawalsStatusUpdater = dynamic(
+  () =>
+    import('./bitcoinWithdrawalsStatusUpdater').then(
+      mod => mod.BitcoinWithdrawalsStatusUpdater,
+    ),
+  { ssr: false },
+)
+
 const SyncHistoryWorker = dynamic(
   () => import('./syncHistoryWorker').then(mod => mod.SyncHistoryWorker),
   { ssr: false },
@@ -118,6 +126,9 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
       {/* Move to web worker https://github.com/hemilabs/ui-monorepo/issues/487 */}
       {/* Track updates on bitcoin deposits, in bitcoin or in Hemi */}
       {featureFlags.btcTunnelEnabled && <BitcoinDepositsStatusUpdater />}
+      {/* Track updates on bitcoin withdrawals, from Hemi to Bitcoin */}
+      {/* TODO: Move to web worker */}
+      {featureFlags.btcTunnelEnabled && <BitcoinWithdrawalsStatusUpdater />}
       {/* Track updates on withdrawals from Hemi */}
       {/* Move to web worker https://github.com/hemilabs/ui-monorepo/issues/486 */}
       <WithdrawalsStateUpdater />

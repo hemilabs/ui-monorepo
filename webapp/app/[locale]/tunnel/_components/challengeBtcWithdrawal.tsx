@@ -55,7 +55,7 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
     [challengeReceiptError, isChallenging, setOperationStatus],
   )
 
-  const handleClaim = function (e: FormEvent) {
+  const handleChallenge = function (e: FormEvent) {
     e.preventDefault()
     setOperationStatus('challenging')
     challengeWithdrawal()
@@ -73,8 +73,8 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
 
   return (
     <DrawerCallToAction
-      expectedChainId={withdrawal.l1ChainId}
-      onSubmit={handleClaim}
+      expectedChainId={withdrawal.l2ChainId}
+      onSubmit={handleChallenge}
       submitButton={
         <Button disabled={isChallenging} type="submit">
           {t(getText())}

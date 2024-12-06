@@ -4,6 +4,8 @@ import {
   hemiPublicSimpleBitcoinVaultActions,
   hemiPublicSimpleBitcoinVaultStateActions,
   hemiWalletBitcoinTunnelManagerActions,
+  hemi as hemiMainnet,
+  hemiSepolia,
 } from 'hemi-viem'
 import { useMemo } from 'react'
 import { hemiPublicExtraActions } from 'utils/hemiClientExtraActions'
@@ -12,13 +14,20 @@ import { usePublicClient, useWalletClient } from 'wagmi'
 
 import { useHemi } from './useHemi'
 
+const defaultBitcoinVaults = {
+  [hemiMainnet.id]:
+    Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET) || 1,
+  [hemiSepolia.id]:
+    Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA) || 1,
+}
+
 export const publicClientToHemiClient = (publicClient: PublicClient) =>
   publicClient
     .extend(hemiPublicBitcoinKitActions())
     .extend(hemiPublicSimpleBitcoinVaultActions())
     .extend(hemiPublicSimpleBitcoinVaultStateActions())
     .extend(hemiPublicBitcoinTunnelManagerActions())
-    .extend(hemiPublicExtraActions())
+    .extend(hemiPublicExtraActions({ defaultBitcoinVaults }))
 
 export const useHemiClient = function () {
   const hemi = useHemi()

@@ -62,7 +62,7 @@ const GlobalTracking = function () {
   })
 
   // The onDisconnect event from useEvmAccountEffect does not return
-  // the connector the user disconnected from. This way we can access to it
+  // the connector the user disconnected from. This way we can access it
   useEffect(
     () =>
       watchAccount(config, {

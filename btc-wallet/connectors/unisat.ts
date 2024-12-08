@@ -11,7 +11,7 @@ const assertInstalled = function () {
 const unisatWalletConnector = {
   async connect() {
     assertInstalled()
-    // in order to connect to unisat, we just need to requests accounts and the user
+    // in order to connect to unisat, we just need to request accounts and the user
     // will be prompted to connect
     await window.unisat.requestAccounts()
   },

@@ -21,10 +21,10 @@ export type CreateSlidingBlockWindow = {
 }
 
 /**
- * The Sliding Block Window is a package use to walkthrough a list of consecutive-numbered blocks backwards
+ * The Sliding Block Window is a package used to walk through a list of consecutive-numbered blocks backwards
  * (from a specified block, to another block, where the latter comes before the former), which allows to call a function
  * on every chunk of blocks.
- * The implementation is not tied to blockchain specifics, but to a list of a descending consecutive numbers
+ * The implementation is not tied to blockchain specifics, but to a list of descending consecutive numbers
  * (defined by {@link options.initialBlock} and * {@link options.lastBlock}).
  *
  * Example usage: Let's assume the blockchain has the following blocks, being 10 the newest block, and 0 the genesis block.

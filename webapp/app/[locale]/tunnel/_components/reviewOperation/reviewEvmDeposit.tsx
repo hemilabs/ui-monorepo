@@ -39,7 +39,7 @@ const ReviewContent = function ({
   const fromChain = useChain(deposit.l1ChainId)
 
   const { approvalTokenGasFees, depositGasFees } = useDeposit({
-    // this is just for  fees estimation, so we just assume it's true unless deposit is confirmed
+    // this is just for fee estimation, so we just assume it's true unless the deposit is confirmed
     canDeposit: depositStatus !== EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
     fromInput: formatUnits(BigInt(deposit.amount), fromToken.decimals),
     fromToken,
@@ -107,7 +107,7 @@ const ReviewContent = function ({
   // Show the approval only if it's a not native token and there is a approval.
   // Note that for past re-sync transactions, the approvalHash won't be available,
   // as we can't see if a user has approved a token before the actual deposit (they are different transactions
-  // and for the time being it's not worth to scan the user wallet)
+  // and for the time being it's not worth scanning the user's wallet)
   if (!isNativeToken(fromToken) && deposit.approvalTxHash) {
     steps.push(getApprovalStep())
   }

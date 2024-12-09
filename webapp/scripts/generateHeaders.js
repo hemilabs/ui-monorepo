@@ -44,6 +44,22 @@ const fetchDomains = [
   'wss://relay.walletconnect.org',
 ]
 
+// If any RPC URL is customized through these env vars, the origin has to be
+// added to the allow list for the client to get the responses. Since the URLs
+// may contain a port or a path, those need to be removed as only the "origin"
+// part is required.
+const customRpcOrigins = [
+  process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET,
+  process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA,
+  process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET,
+  process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA,
+]
+customRpcOrigins.forEach(function (url) {
+  if (url) {
+    fetchDomains.concat(new URL(url).origin)
+  }
+})
+
 // these are domains where we download images from
 const imageSrcUrls = ['https://raw.githubusercontent.com']
 

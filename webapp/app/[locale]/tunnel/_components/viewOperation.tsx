@@ -28,9 +28,9 @@ const useGetTunnelOperation = function () {
   return (
     deposits.find(d => d.transactionHash === txHash) ??
     withdrawals.find(d => d.transactionHash === txHash) ??
-    // For erc20 deposits which include a approval tx operation, we temporarily use that hash
+    // For erc20 deposits which include an approval tx operation, we temporarily use that hash
     // to be able to show the operation in the drawer. Note that it is not in the tunnel history as
-    // if the ERC20 approval step fails, we don't want to show in the history.
+    // if the ERC20 approval step fails, we don't want to show it in the history.
     transactions.find(d => d.transactionHash === txHash)
   )
 }

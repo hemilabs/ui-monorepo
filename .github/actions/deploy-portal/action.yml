@@ -95,7 +95,7 @@ runs:
       uses: andstor/file-existence-action@v3
       with:
         files: ./webapp/out/
-    # folder should only exists if portal was built
+    # folder should only exist if portal was built
     - if: steps.portal_build.outputs.files_exists == 'true'
       name: Copy portal files to Hostinger
       uses: appleboy/scp-action@master

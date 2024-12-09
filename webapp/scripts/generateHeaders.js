@@ -24,25 +24,38 @@ const getDomain = function (url) {
 
 // These are scripts called with fetch()
 const fetchDomains = [
-  // bitcoin APIs from esplora-client
+  // esplora-client - https://github.com/hemilabs/esplora-client/blob/master/src/index.js#L15
   'https://blockstream.info',
   'https://mempool.space',
-  // EVM rpc urls
-  // Hemi Sepolia
-  'https://int02.testnet.rpc.hemi.network',
-  'https://testnet.rpc.hemi.network',
-  // Ethereum Mainnet
+  // Ethereum RPC - https://github.com/wevm/viem/blob/main/src/chains/definitions/mainnet.ts#L9
   'https://cloudflare-eth.com',
-  // Hemi Mainnet
+  'https://eth.drpc.org',
+  // Sepolia RPC - https://github.com/wevm/viem/blob/main/src/chains/definitions/sepolia.ts#L9
+  'https://rpc.sepolia.org',
+  'https://sepolia.drpc.org',
+  // Hemi and Hemi Sepolia RPCs
   'https://*.hemi.network',
   'https://*.rpc.hemi.network',
-  // Sepolia
-  'https://rpc.sepolia.org',
-  'https://rpc2.sepolia.org',
-  // Needed for rainbow kit
+  // RainbowKit
   'wss://relay.walletconnect.com',
   'wss://relay.walletconnect.org',
 ]
+
+// If any RPC URL is customized through these env vars, the origin has to be
+// added to the allow list for the client to get the responses. Since the URLs
+// may contain a port or a path, those need to be removed as only the "origin"
+// part is required.
+const customRpcOrigins = [
+  process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET,
+  process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA,
+  process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET,
+  process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA,
+]
+customRpcOrigins.forEach(function (url) {
+  if (url) {
+    fetchDomains.push(new URL(url).origin)
+  }
+})
 
 // these are domains where we download images from
 const imageSrcUrls = ['https://raw.githubusercontent.com']

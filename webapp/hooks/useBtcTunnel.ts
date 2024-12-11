@@ -14,11 +14,12 @@ import {
 import { getEvmBlock } from 'utils/evmApi'
 import {
   claimBtcDeposit,
+  getBitcoinWithdrawalUuid,
   initiateBtcDeposit,
   initiateBtcWithdrawal,
 } from 'utils/hemi'
 import { getNativeToken } from 'utils/token'
-import { Chain, zeroAddress, type Address } from 'viem'
+import { type Chain, zeroAddress, type Address } from 'viem'
 import {
   useAccount as useEvmAccount,
   useWaitForTransactionReceipt as useWaitForEvmTransactionReceipt,
@@ -344,20 +345,10 @@ export const useWithdrawBitcoin = function () {
         return
       }
 
-      // The withdrawal uuid is a 64-bit number needed to challenge the
-      // operation if the operator does not process it timely, within 12 hours.
-      // It is an argument of the WithdrawalInitiated event and can be easily
-      // read from the receipt logs. The logs must be decoded as viem does not
-      // seem to do so automatically. And since the BitcoinTunnelManager ABI is
-      // required for decoding, it has to be done through the public hemiClient
-      // as hemi-viem does not expose such ABI. If it were exposed, viem's
-      // parseEventLogs could have been used. The hemiClient is not actually
-      // needed as the decoding happens synchronously and in the client, without
-      // any need to call the RPC node.
-      const uuid = hemiClient
-        .decodeBitcoinTunnelManagerLogs(withdrawBitcoinReceipt.logs)
-        .find(event => event.eventName === 'WithdrawalInitiated').args
-        .uuid as bigint
+      const uuid = getBitcoinWithdrawalUuid(
+        // @ts-expect-error it seems typings are not correct in wagmi
+        withdrawBitcoinReceipt,
+      )
 
       // update here so next iteration of the effect doesn't reach this point
       updateWithdrawal(withdrawal, {

@@ -1,41 +1,25 @@
 import { WalletConnector } from 'btc-wallet/connectors/types'
 import { Account as BtcAccount, Satoshis } from 'btc-wallet/unisat'
+import { bitcoinTunnelManagerAbi } from 'hemi-viem/contracts'
 import { HemiWalletClient, type HemiPublicClient } from 'hooks/useHemiClient'
-import pMemoize from 'promise-mem'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
-import { type Address } from 'viem'
+import { type Address, parseEventLogs, type TransactionReceipt } from 'viem'
 
 import { calculateDepositOutputIndex } from './bitcoin'
 import { getTransactionReceipt } from './btcApi'
+import {
+  getBitcoinCustodyAddress,
+  getBitcoinVaultGracePeriod,
+  getBitcoinVaultStateAddress,
+  getVaultAddressByIndex,
+  getVaultIndexByBTCAddress,
+} from './hemiMemoized'
 
 // Max Sanchez note: looks like if we pass in all lower-case hex, Unisat publishes the bytes instead of the string.
 // Tunnel for now is only validating the string representation, but update this in the future using
 // the all-lower-case-hex way to get the raw bytes published, which is more efficient.
 export const hemiAddressToBitcoinOpReturn = (hemiAddress: Address) =>
   hemiAddress.toUpperCase().slice(2)
-
-// Vaults will have only one custody address (at least with current implementation)
-export const getBitcoinCustodyAddress = pMemoize(
-  (hemiClient: HemiPublicClient, vaultAddress: Address) =>
-    hemiClient.getBitcoinCustodyAddress({ vaultAddress }),
-  { resolver: (_, vaultAddress) => vaultAddress },
-)
-
-export const getVaultAddressByIndex = pMemoize(
-  (hemiClient: HemiPublicClient, vaultIndex: number) =>
-    hemiClient.getVaultByIndex({ vaultIndex }),
-  { resolver: (_, vaultIndex) => vaultIndex },
-)
-
-export const getVaultIndexByBTCAddress = pMemoize(
-  // remove once se use getVaultIndexByBTCAddress
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  (hemiClient: HemiPublicClient, deposit: BtcDepositOperation) =>
-    // See https://github.com/hemilabs/ui-monorepo/issues/393
-    // We should use hemiClient.getVaultIndexByBTCAddress({ btcAddress: deposit.to }),
-    hemiClient.getVaultChildIndex(),
-  { resolver: (_, deposit) => `${deposit.l1ChainId}_${deposit.to}` },
-)
 
 export const getVaultAddressByDeposit = (
   hemiClient: HemiPublicClient,
@@ -162,6 +146,48 @@ export const claimBtcDeposit = ({
       vaultIndex,
     })
   })
+
+// With the vault id, get its address from the tunnel manager, then get its
+// state address, and with the uuid, check if the bitcoin transaction was
+// sent. It will return 0 if the transaction was not posted yet.
+export const getBitcoinWithdrawalBitcoinTxId = ({
+  hemiClient,
+  vaultIndex,
+  uuid,
+}: {
+  hemiClient: HemiPublicClient
+  vaultIndex: number
+  uuid: bigint
+}) =>
+  getVaultAddressByIndex(hemiClient, vaultIndex)
+    .then(vaultAddress => getBitcoinVaultStateAddress(hemiClient, vaultAddress))
+    .then(vaultStateAddress =>
+      hemiClient.getBitcoinWithdrawalBitcoinTxId({
+        uuid,
+        vaultStateAddress,
+      }),
+    )
+
+export const getBitcoinWithdrawalGracePeriod = ({
+  hemiClient,
+  vaultIndex,
+}: {
+  hemiClient: HemiPublicClient
+  vaultIndex: number
+}) =>
+  getVaultAddressByIndex(hemiClient, vaultIndex).then(vaultAddress =>
+    getBitcoinVaultGracePeriod(hemiClient, vaultAddress),
+  )
+
+// The withdrawal uuid is a 64-bit number needed to challenge the
+// operation if the operator does not process it timely, within 12 hours.
+// It is an argument of the WithdrawalInitiated event and can be easily
+// read from the receipt logs. The logs must be decoded as viem does not
+// seem to do so automatically.
+export const getBitcoinWithdrawalUuid = (receipt: TransactionReceipt) =>
+  parseEventLogs({ abi: bitcoinTunnelManagerAbi, logs: receipt.logs }).find(
+    event => event.eventName === 'WithdrawalInitiated',
+  ).args.uuid satisfies bigint
 
 export const initiateBtcWithdrawal = ({
   amount,

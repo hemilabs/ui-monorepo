@@ -4,9 +4,13 @@ import { useHemiClient } from 'hooks/useHemiClient'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import PQueue from 'p-queue'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
-
-const ZERO =
-  '0x0000000000000000000000000000000000000000000000000000000000000000'
+import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
+import {
+  getBitcoinWithdrawalBitcoinTxId,
+  getBitcoinWithdrawalGracePeriod,
+  getBitcoinWithdrawalUuid,
+} from 'utils/hemi'
+import { zeroAddress } from 'viem'
 
 const hemiQueue = new PQueue({ concurrency: 2 })
 
@@ -26,9 +30,10 @@ function WatchInitiatedBitcoinWithdrawal({
     // block and the status must be updated in the tunnel history. The UUID can
     // also be added here if missing by reading it from the receipt logs.
     if (withdrawal.status === BtcWithdrawStatus.TX_PENDING) {
-      const receipt = await hemiClient.getTransactionReceipt({
-        hash: withdrawal.transactionHash,
-      })
+      const receipt = await getEvmTransactionReceipt(
+        withdrawal.transactionHash,
+        withdrawal.l2ChainId,
+      )
       if (!receipt) {
         return false
       }
@@ -39,21 +44,19 @@ function WatchInitiatedBitcoinWithdrawal({
           ? BtcWithdrawStatus.TX_CONFIRMED
           : BtcWithdrawStatus.WITHDRAWAL_FAILED
 
-      if (!withdrawal.timestamp) {
-        const block = await hemiClient.getBlock({
-          blockHash: receipt.blockHash,
-        })
-        updates.timestamp = Number(block.timestamp)
+      if (!withdrawal.uuid) {
+        updates.uuid = getBitcoinWithdrawalUuid(
+          // @ts-expect-error wagmi seems to be wrongly typed
+          receipt,
+        ).toString()
       }
 
-      if (!withdrawal.uuid) {
-        // This is copied from useBtcTunnel. May be better to consolidate the
-        // logic is in a single place instead.
-        const uuid = hemiClient
-          .decodeBitcoinTunnelManagerLogs(receipt.logs)
-          .find(event => event.eventName === 'WithdrawalInitiated').args
-          .uuid as bigint
-        updates.uuid = uuid.toString()
+      if (!withdrawal.timestamp) {
+        const block = await getEvmBlock(
+          receipt.blockNumber,
+          withdrawal.l2ChainId,
+        )
+        updates.timestamp = Number(block.timestamp)
       }
 
       updateWithdrawal(withdrawal, updates)
@@ -64,22 +67,23 @@ function WatchInitiatedBitcoinWithdrawal({
     // present, move it to WITHDRAWAL_SUCCEEDED but if not and the withdrawal is
     // more than 12 hours old, move it to CHALLENGE_READY.
     if (withdrawal.status === BtcWithdrawStatus.TX_CONFIRMED) {
-      // TODO The vault index shall be stored in the state!
-      const vaultIndex =
-        withdrawal.vaultIndex || (await hemiClient.getVaultChildIndex())
-      const bitcoinTxId = await hemiClient.getBitcoinWithdrawalBitcoinTxId(
+      const vaultIndex = await hemiClient.getVaultChildIndex()
+      const bitcoinTxId = await getBitcoinWithdrawalBitcoinTxId({
+        hemiClient,
+        uuid: BigInt(withdrawal.uuid),
         vaultIndex,
-        BigInt(withdrawal.uuid),
-      )
-      if (bitcoinTxId !== ZERO) {
+      })
+      if (bitcoinTxId !== zeroAddress) {
         updateWithdrawal(withdrawal, {
           status: BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED,
         })
         return true
       }
 
-      const gracePeriod =
-        await hemiClient.getBitcoinWithdrawalGracePeriod(vaultIndex)
+      const gracePeriod = await getBitcoinWithdrawalGracePeriod({
+        hemiClient,
+        vaultIndex,
+      })
       const age = Math.floor(new Date().getTime() / 1000) - withdrawal.timestamp
       if (age > gracePeriod) {
         updateWithdrawal(withdrawal, {
@@ -107,9 +111,10 @@ function WatchInitiatedBitcoinWithdrawal({
     // While the challenge is in progress, if the tx succeeds, the withdrawal is
     // terminated. Otherwise it can be retried.
     if (withdrawal.status === BtcWithdrawStatus.CHALLENGE_IN_PROGRESS) {
-      const receipt = await hemiClient.getTransactionReceipt({
-        hash: withdrawal.challengeTxHash,
-      })
+      const receipt = await getEvmTransactionReceipt(
+        withdrawal.challengeTxHash,
+        withdrawal.l2ChainId,
+      )
       if (!receipt) {
         return false
       }

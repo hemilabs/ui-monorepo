@@ -90,7 +90,7 @@ export const analyticsEvents = [
 type AnalyticsEvents = typeof analyticsEvents
 export type AnalyticsEvent = (typeof analyticsEvents)[number]
 
-// These requires chain and wallet info
+// These require chain and wallet info
 type AnalyticsEventsWithWallet = Extract<
   AnalyticsEvent,
   | 'btc connected'

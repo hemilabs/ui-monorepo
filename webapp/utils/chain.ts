@@ -11,8 +11,10 @@ export const findChainById = (chainId: RemoteChain['id']) =>
 export const isEvmNetwork = (chain: RemoteChain): chain is EvmChain =>
   typeof chain.id === 'number'
 
-export const isL2Network = (chain: Chain) =>
-  [hemiMainnet.id, hemiTestnet.id].includes(chain.id)
+export const isL2NetworkId = (chainId: number) =>
+  [hemiMainnet.id, hemiTestnet.id].includes(chainId)
+
+export const isL2Network = (chain: Chain) => isL2NetworkId(chain.id)
 
 export const overrideRpcUrl = function (chain: Chain, rpcUrl?: string) {
   const isValidCustomSepoliaRpc = !!rpcUrl && rpcUrl.startsWith('https')

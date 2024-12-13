@@ -10,6 +10,7 @@ import { PoPMinerIcon } from 'components/icons/popMinerIcon'
 import { ToolsIcon } from 'components/icons/toolsIcon'
 import { TunnelIcon } from 'components/icons/tunnelIcon'
 import { Link } from 'components/link'
+import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import React, { Suspense } from 'react'
@@ -36,11 +37,13 @@ const Separator = () => (
 export const Navbar = function () {
   const t = useTranslations('navbar')
 
+  const href = useTunnelOperationByConnectedWallet()
+
   return (
     <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col px-3 pt-3 md:pt-0 [&>*]:md:ml-4 [&>*]:md:pr-4">
       <div className="hidden h-24 items-center justify-center md:flex">
         <div className="flex h-1/3 w-1/3">
-          <Link className="w-full" href="/tunnel">
+          <Link className="w-full" href={href}>
             <HemiLogoFull />
           </Link>
         </div>
@@ -49,7 +52,7 @@ export const Navbar = function () {
         <li className="order-1">
           <ItemLink
             event="nav - tunnel"
-            href="/tunnel"
+            href={href}
             icon={<TunnelIcon />}
             rightSection={
               <div className="ml-auto">

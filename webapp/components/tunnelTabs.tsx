@@ -3,6 +3,7 @@
 import { type AnalyticsEventsWithChain } from 'app/analyticsEvents'
 import { Tab, Tabs } from 'components/tabs'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { usePathname } from 'next/navigation'
@@ -24,6 +25,8 @@ const TunnelTabsImpl = function () {
   const t = useTranslations('tunnel-page')
   const { track } = useUmami()
 
+  const tunnelHref = useTunnelOperationByConnectedWallet()
+
   if (!pathname.startsWith(`/${locale}/tunnel/`)) {
     return null
   }
@@ -38,7 +41,7 @@ const TunnelTabsImpl = function () {
     <div className="flex items-center justify-center gap-x-4">
       <Tabs>
         <Tab
-          href="/tunnel"
+          href={tunnelHref}
           onClick={addTracking('header - tunnel')}
           selected={pathname === `/${locale}/tunnel/`}
         >

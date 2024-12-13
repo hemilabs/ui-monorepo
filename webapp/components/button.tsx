@@ -27,7 +27,7 @@ type Variant = {
 type ButtonProps = ComponentProps<'button'> & Variant & Height
 
 type ButtonLinkProps = Omit<ComponentProps<'a'>, 'href' | 'ref'> &
-  Required<Pick<ComponentProps<'a'>, 'href'>> &
+  Required<Pick<ComponentProps<typeof Link>, 'href'>> &
   Variant
 
 export const Button = ({ height = 'h-8', variant, ...props }: ButtonProps) => (
@@ -40,8 +40,17 @@ export const Button = ({ height = 'h-8', variant, ...props }: ButtonProps) => (
 export const ButtonLink = function ({ variant, ...props }: ButtonLinkProps) {
   const className = `${commonCss} px-2 ${variants[variant ?? 'primary']}`
 
-  if (!props.href || !isRelativeUrl(props.href)) {
-    return <ExternalLink className={className} {...props} />
+  if (
+    !props.href ||
+    (typeof props.href === 'string' && !isRelativeUrl(props.href))
+  ) {
+    return (
+      <ExternalLink
+        className={className}
+        {...props}
+        href={props.href as string | undefined}
+      />
+    )
   }
   return <Link className={className} {...props} />
 }

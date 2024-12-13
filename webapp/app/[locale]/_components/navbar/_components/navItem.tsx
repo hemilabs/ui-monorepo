@@ -98,9 +98,14 @@ const ItemText = ({
   </span>
 )
 
-type ItemLinkProps = Props & Required<Pick<ComponentProps<'a'>, 'href'>>
+type ItemLinkProps = Props & Required<Pick<ComponentProps<typeof Link>, 'href'>>
 
-const ExternalLink = function ({ event, href, icon, text }: ItemLinkProps) {
+const ExternalLink = function ({
+  event,
+  href,
+  icon,
+  text,
+}: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
   const [networkType] = useNetworkType()
   const { track } = useUmami()
   const addTracking = () =>
@@ -149,10 +154,11 @@ const PageLink = function ({
 }
 
 export const ItemLink = (props: ItemLinkProps) =>
-  isRelativeUrl(props.href) ? (
-    <PageLink {...props} />
-  ) : (
+  typeof props.href === 'string' && !isRelativeUrl(props.href) ? (
+    // @ts-expect-error Typescript fails to detect that props.href must be a string
     <ExternalLink {...props} />
+  ) : (
+    <PageLink {...props} />
   )
 
 export const ItemWithSubmenu = function ({

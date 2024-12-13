@@ -1,19 +1,16 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { useQuery } from '@tanstack/react-query'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
-import { useConnectedChainCrossChainMessenger } from 'hooks/useL2Bridge'
-import { useNetworks } from 'hooks/useNetworks'
 import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
-import PQueue from 'p-queue'
+import { useEffect, useRef } from 'react'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
-import { CrossChainMessengerProxy } from 'utils/crossChainMessenger'
-import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { useAccount } from 'wagmi'
-
-const queue = new PQueue({ concurrency: 2 })
+import {
+  type AppToWorker,
+  getUpdateWithdrawalKey,
+} from 'workers/watchEvmWithdrawals'
 
 const getSeconds = (seconds: number) => seconds * 1000
 const getMinutes = (minutes: number) => getSeconds(minutes * 60)
@@ -40,130 +37,135 @@ const refetchInterval = {
   },
 } satisfies { [chainId: number]: { [status: number]: number | false } }
 
-const getBlockTimestamp = (withdrawal: ToEvmWithdrawOperation) =>
-  async function (
-    blockNumber: number | undefined,
-  ): Promise<[number?, number?]> {
-    if (blockNumber === undefined) {
-      return []
-    }
-    if (withdrawal.timestamp) {
-      return [blockNumber, withdrawal.timestamp]
-    }
-    const { timestamp } = await getEvmBlock(blockNumber, withdrawal.l2ChainId)
-    return [blockNumber, Number(timestamp)]
-  }
-
-const getTransactionBlockNumber = function (
-  withdrawal: ToEvmWithdrawOperation,
-) {
-  if (withdrawal.blockNumber) {
-    return Promise.resolve(withdrawal.blockNumber)
-  }
-  return getEvmTransactionReceipt(
-    withdrawal.transactionHash,
-    withdrawal.l2ChainId,
-  ).then(transactionReceipt =>
-    // return undefined if TX is not found - might have not been confirmed yet
-    transactionReceipt ? Number(transactionReceipt.blockNumber) : undefined,
-  )
-}
-
-const pollUpdateWithdrawal = async ({
-  crossChainMessenger,
-  updateWithdrawal,
-  withdrawal,
-}: {
-  crossChainMessenger: CrossChainMessengerProxy
-  updateWithdrawal: (
-    w: ToEvmWithdrawOperation,
-    updates: Partial<ToEvmWithdrawOperation>,
-  ) => void
-  withdrawal: ToEvmWithdrawOperation
-}) =>
-  // Use a queue to avoid firing lots of requests. Throttling may also not work because it throttles
-  // for a specific period of time and depending on load, requests may take up to 5 seconds to complete
-  // so this let us to query up to <concurrency> checks for status at the same time
-  queue.add(
-    async function pollWithdrawalState() {
-      const [status, [blockNumber, timestamp]] = await Promise.all([
-        crossChainMessenger.getMessageStatus(
-          withdrawal.transactionHash,
-          // default value
-          0,
-          withdrawal.direction,
-        ),
-        getTransactionBlockNumber(withdrawal).then(
-          getBlockTimestamp(withdrawal),
-        ),
-      ])
-      const changes: Partial<ToEvmWithdrawOperation> = {}
-      if (withdrawal.status !== status) {
-        changes.status = status
-      }
-      if (withdrawal.blockNumber !== blockNumber) {
-        changes.blockNumber = blockNumber
-      }
-      if (withdrawal.timestamp !== timestamp) {
-        changes.timestamp = timestamp
-      }
-
-      if (Object.keys(changes).length > 0) {
-        updateWithdrawal(withdrawal, changes)
-      }
-
-      return status
-    },
-    {
-      // Give more priority to those that require polling and are not ready or are missing information
-      // because if ready, after the operation they will change their status automatically and will have
-      // the longest waiting period of all withdrawals, as the others have been waiting for longer
-      priority:
-        !withdrawal.timestamp ||
-        withdrawal.status === undefined ||
-        [MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
-          withdrawal.status,
-        )
-          ? 0
-          : 1,
-    },
-  )
-
 const WatchEvmWithdrawal = function ({
   withdrawal,
+  worker,
 }: {
   withdrawal: ToEvmWithdrawOperation
+  worker: AppToWorker
 }) {
-  const { evmRemoteNetworks } = useNetworks()
-  // See https://github.com/hemilabs/ui-monorepo/issues/158
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useConnectedChainCrossChainMessenger(evmRemoteNetworks[0].id)
   const { updateWithdrawal } = useTunnelHistory()
 
-  // This is a hacky usage of useQuery. I am using it this way because it provides automatic refetching,
-  // request deduping, and conditional refetch depending on the state of the withdrawal.
-  // I am not interested in the actual result of the query, but in the side effect of the queryFn
-  useQuery({
-    enabled: crossChainMessengerStatus === 'success',
-    queryFn: () =>
-      pollUpdateWithdrawal({
-        crossChainMessenger,
-        updateWithdrawal,
-        withdrawal,
-      }),
-    queryKey: [
-      'withdrawaStateUpdater',
-      withdrawal.l2ChainId,
-      withdrawal.transactionHash,
-    ],
-    refetchInterval: refetchInterval[withdrawal.l2ChainId][withdrawal.status],
-  })
+  useEffect(
+    function watchWithdrawalUpdates() {
+      // Not using useState as 1. this value is local to the effect and
+      // 2. to avoid unsubscribing and resubscribing when the state value changes
+      let hasWorkedPostedBack = false
+      const saveUpdates = function (
+        event: MessageEvent<{
+          updates: Partial<ToEvmWithdrawOperation>
+          type: string
+        }>,
+      ) {
+        // This is needed because this component is rendered per-withdrawal, so each component will receive the posted message
+        // for every withdrawal, as there are many withdrawals but only one worker.
+        // Of all components, this "if" clause below will be true for only one rendered component - the one belonging to the withdrawal
+        const { type, updates } = event.data
+        if (type !== getUpdateWithdrawalKey(withdrawal)) {
+          return
+        }
+        updateWithdrawal(withdrawal, updates)
+        // next interval will poll again
+        hasWorkedPostedBack = true
+      }
+
+      worker.addEventListener('message', saveUpdates)
+
+      const interval = refetchInterval[withdrawal.l2ChainId][withdrawal.status]
+
+      let intervalId
+      // skip polling for disabled states (those whose interval is "false")
+      if (typeof interval === 'number') {
+        worker.postMessage({
+          type: 'watch-withdrawal',
+          withdrawal,
+        })
+        intervalId = setInterval(function () {
+          if (!hasWorkedPostedBack) {
+            return
+          }
+          worker.postMessage({
+            type: 'watch-withdrawal',
+            withdrawal,
+          })
+          // Block posting until a response is received
+          hasWorkedPostedBack = false
+        }, interval)
+      }
+
+      return function cleanup() {
+        worker.removeEventListener('message', saveUpdates)
+        if (intervalId) {
+          clearInterval(intervalId)
+        }
+      }
+    },
+    [updateWithdrawal, withdrawal, worker],
+  )
 
   return null
 }
 
+const Watcher = function ({
+  withdrawals,
+}: {
+  withdrawals: ToEvmWithdrawOperation[]
+}) {
+  const workerRef = useRef<AppToWorker>(null)
+
+  // This must be done here because there's some weird issue when moving it into a custom hook that prevents
+  // the worker from being loaded. It seems that by loading this component dynamically (Which we do), it doesn't get blocked
+  // as a different origin when running in localhost. When loading statically from a hook, the error
+  // "Failed to construct 'Worker': Script at <path> cannot be accessed from origin localhost" is logged
+  useEffect(
+    function initWorker() {
+      // load the Worker
+      workerRef.current = new Worker(
+        new URL('../../workers/watchEvmWithdrawals.ts', import.meta.url),
+      )
+
+      if (process.env.NEXT_PUBLIC_WORKERS_DEBUG_ENABLE === 'true') {
+        // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
+        const debugString = localStorage.getItem('debug') ?? '*'
+        workerRef.current.postMessage({
+          payload: debugString,
+          type: 'enable-debug',
+        })
+      }
+
+      return function terminateWorker() {
+        if (!workerRef.current) {
+          return
+        }
+        workerRef.current.terminate()
+        workerRef.current = null
+      }
+    },
+    [workerRef],
+  )
+
+  if (!workerRef.current) {
+    return null
+  }
+
+  // once the only worker is loaded, render these components that will post to the worker
+  // the withdrawal to watch on intervals
+  return (
+    <>
+      {withdrawals.map(w => (
+        <WatchEvmWithdrawal
+          key={w.transactionHash}
+          withdrawal={w}
+          worker={workerRef.current}
+        />
+      ))}
+    </>
+  )
+}
+
 export const WithdrawalsStateUpdater = function () {
   const { isConnected } = useAccount()
+
   const withdrawals = useToEvmWithdrawals()
 
   const unsupportedChain = useConnectedToUnsupportedEvmChain()
@@ -172,33 +174,18 @@ export const WithdrawalsStateUpdater = function () {
     return null
   }
 
-  const withdrawalsToWatch = withdrawals
-    .filter(
-      w =>
-        !w.timestamp ||
-        w.status === undefined ||
-        [
-          MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
-          MessageStatus.STATE_ROOT_NOT_PUBLISHED,
-          MessageStatus.READY_TO_PROVE,
-          MessageStatus.IN_CHALLENGE_PERIOD,
-          MessageStatus.READY_FOR_RELAY,
-        ].includes(w.status),
-    )
-    // put those undefined statuses first
-    // but then sorted by timestamp (newest first)
-    .sort(function (a, b) {
-      if (a.status === b.status) {
-        return b.timestamp - a.timestamp
-      }
-      return (a.status ?? -1) - (b.status ?? -1)
-    })
-
-  return (
-    <>
-      {withdrawalsToWatch.map(w => (
-        <WatchEvmWithdrawal key={w.transactionHash} withdrawal={w} />
-      ))}
-    </>
+  const withdrawalsToWatch = withdrawals.filter(
+    w =>
+      !w.timestamp ||
+      w.status === undefined ||
+      [
+        MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
+        MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+        MessageStatus.READY_TO_PROVE,
+        MessageStatus.IN_CHALLENGE_PERIOD,
+        MessageStatus.READY_FOR_RELAY,
+      ].includes(w.status),
   )
+
+  return <Watcher withdrawals={withdrawalsToWatch} />
 }

@@ -25,11 +25,16 @@ export const SyncHistoryWorker = function ({
   const workerRef = useRef<AppToWebWorker>(null)
   const [workerLoaded, setWorkerLoaded] = useState(false)
 
+  // This must be done here because there's some weird issue when moving it into a custom hook that prevents
+  // the worker from being loaded. It seems that by loading this component dynamically (Which we do), it doesn't get blocked
+  // as a different origin when running in localhost. When loading statically from a hook, the error
+  // Failed to construct 'Worker': Script at 'cannot be accessed from origin localhost
+  // is logged
   useEffect(
     function initWorker() {
       // load the Worker
       workerRef.current = new Worker(
-        new URL(`../../workers/history.ts`, import.meta.url),
+        new URL('../../workers/history.ts', import.meta.url),
       )
 
       // listen for state updates and forward to our history reducer

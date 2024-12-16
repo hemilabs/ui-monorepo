@@ -119,7 +119,6 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
       {/* Track updates on bitcoin deposits, in bitcoin or in Hemi */}
       {featureFlags.btcTunnelEnabled && <BitcoinDepositsStatusUpdater />}
       {/* Track updates on withdrawals from Hemi */}
-      {/* Move to web worker https://github.com/hemilabs/ui-monorepo/issues/486 */}
       <WithdrawalsStateUpdater />
       {children}
       {/* Sync the transaction history per chain in the background */}

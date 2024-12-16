@@ -37,7 +37,7 @@ export const Header = function ({ isMenuOpen, toggleMenu }: Props) {
       </div>
       <WalletConnection />
       <button
-        className="flex h-8 w-8 cursor-pointer items-center
+        className="flex size-8 cursor-pointer items-center
       justify-center rounded-lg border border-neutral-300/55 md:hidden"
         onClick={toggleMenu}
         type="button"

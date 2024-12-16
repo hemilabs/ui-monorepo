@@ -83,7 +83,7 @@ const ReviewContent = function ({
       if (withdrawal.status < BtcWithdrawStatus.CHALLENGE_READY) {
         return ProgressStatus.NOT_READY
       }
-      if (withdrawal.status >= BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED) {
+      if (withdrawal.status === BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED) {
         return ProgressStatus.COMPLETED
       }
       const map = {

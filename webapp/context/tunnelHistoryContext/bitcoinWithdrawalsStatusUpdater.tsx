@@ -10,7 +10,9 @@ import {
   getBitcoinWithdrawalGracePeriod,
   getBitcoinWithdrawalUuid,
 } from 'utils/hemi'
-import { zeroAddress } from 'viem'
+
+const bitcoinZeroAddress =
+  '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 const hemiQueue = new PQueue({ concurrency: 2 })
 
@@ -68,12 +70,13 @@ function WatchInitiatedBitcoinWithdrawal({
     // more than 12 hours old, move it to CHALLENGE_READY.
     if (withdrawal.status === BtcWithdrawStatus.TX_CONFIRMED) {
       const vaultIndex = await hemiClient.getVaultChildIndex()
+      // if the bitcoinTxId doesn't exists, it returns 0x...0
       const bitcoinTxId = await getBitcoinWithdrawalBitcoinTxId({
         hemiClient,
         uuid: BigInt(withdrawal.uuid),
         vaultIndex,
       })
-      if (bitcoinTxId !== zeroAddress) {
+      if (bitcoinTxId !== bitcoinZeroAddress) {
         updateWithdrawal(withdrawal, {
           status: BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED,
         })

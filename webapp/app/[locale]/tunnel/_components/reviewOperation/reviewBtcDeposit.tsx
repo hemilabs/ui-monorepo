@@ -7,7 +7,7 @@ import { useContext } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken } from 'types/token'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
-import { formatGasFees, getFormattedValue } from 'utils/format'
+import { formatGasFees } from 'utils/format'
 import { useAccount } from 'wagmi'
 
 import {
@@ -96,7 +96,7 @@ const ReviewContent = function ({
           BtcDepositStatus.DEPOSIT_TX_FAILED,
         ].includes(depositStatus) && feePrices?.fastestFee
           ? {
-              amount: getFormattedValue(feePrices?.fastestFee?.toString()),
+              amount: feePrices?.fastestFee?.toString(),
               symbol: 'sat/vB',
             }
           : undefined,

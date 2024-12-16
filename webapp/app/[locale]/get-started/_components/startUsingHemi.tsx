@@ -1,10 +1,11 @@
 import { useUmami } from 'app/analyticsEvents'
 import { Card } from 'components/card'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import Image, { StaticImageData } from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { isRelativeUrl } from 'utils/url'
+import { isRelativeUrl, queryStringObjectToString } from 'utils/url'
 
 import deployContracts from '../_assets/deployContracts.png'
 import swapTokensMainnet from '../_assets/swapTokens-mainnet.png'
@@ -68,6 +69,7 @@ export const StartUsingHemi = function () {
   const [networkType] = useNetworkType()
   const locale = useLocale()
   const t = useTranslations('get-started')
+  const href = useTunnelOperationByConnectedWallet()
 
   return (
     <Section
@@ -82,7 +84,10 @@ export const StartUsingHemi = function () {
           alt="Tunnel form"
           event="tut - tunnel assets"
           heading={t('tunnel-assets')}
-          href={`/${locale}/tunnel`}
+          href={`/${locale}${href.pathname}${queryStringObjectToString({
+            ...href.query,
+            networkType,
+          })}`}
           image={tunnelAssets}
           subheading={t('learn-about-tunneling')}
         />

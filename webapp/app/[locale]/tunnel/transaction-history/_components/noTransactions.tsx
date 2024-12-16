@@ -1,4 +1,5 @@
 import { ButtonLink } from 'components/button'
+import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { useTranslations } from 'next-intl'
 
 import { EmptyState } from './emptyState'
@@ -48,9 +49,10 @@ const InboxIcon = () => (
 
 export const NoTransactions = function () {
   const t = useTranslations('tunnel-page.transaction-history')
+  const href = useTunnelOperationByConnectedWallet()
   return (
     <EmptyState
-      action={<ButtonLink href="/tunnel">{t('tunnel-assets')}</ButtonLink>}
+      action={<ButtonLink href={href}>{t('tunnel-assets')}</ButtonLink>}
       icon={<InboxIcon />}
       subtitle={t('no-transactions-get-started')}
       title={t('no-transactions')}

@@ -1,11 +1,11 @@
 'use client'
 
 import { Link } from 'components/link'
-import { MouseEvent, ReactNode } from 'react'
+import { type ComponentProps, type MouseEvent, type ReactNode } from 'react'
 
 type Button = { onClick?: (e: MouseEvent<HTMLButtonElement>) => void }
 type Anchor = {
-  href: string
+  href: ComponentProps<typeof Link>['href']
   onClick?: (e: MouseEvent<HTMLAnchorElement>) => void
 }
 

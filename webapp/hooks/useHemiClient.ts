@@ -15,10 +15,12 @@ import { usePublicClient, useWalletClient } from 'wagmi'
 import { useHemi } from './useHemi'
 
 const defaultBitcoinVaults = {
-  [hemiMainnet.id]:
-    Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET) || 1,
-  [hemiSepolia.id]:
-    Number.parseInt(process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA) || 1,
+  [hemiMainnet.id]: Number.parseInt(
+    process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET || '1',
+  ),
+  [hemiSepolia.id]: Number.parseInt(
+    process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA || '0',
+  ),
 }
 
 export const publicClientToHemiClient = (publicClient: PublicClient) =>

@@ -12,6 +12,7 @@ import {
   type CrossChainMessengerProxy,
   createIsolatedCrossChainMessenger,
 } from 'utils/crossChainMessenger'
+import { hasKeys } from 'utils/utilities'
 import { type Chain, type Hash, checksumAddress, isHash } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -122,7 +123,7 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
       enabled &&
       isConnectedToExpectedChain &&
       crossChainMessengerStatus === 'success' &&
-      Object.keys(crossChainMessenger.estimateGas).length > 0,
+      hasKeys(crossChainMessenger.estimateGas),
     async queryFn() {
       if (hardcodedOps.includes(operation) && hemi.testnet) {
         // See https://github.com/hemilabs/ui-monorepo/issues/539

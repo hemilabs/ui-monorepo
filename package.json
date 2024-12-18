@@ -14,7 +14,7 @@
     "chai": "4.4.1",
     "commitlint-config-bloq": "1.1.0",
     "eslint": "8.57.0",
-    "eslint-config-bloq": "4.3.0",
+    "eslint-config-bloq": "4.4.1",
     "husky": "9.1.6",
     "lerna": "8.1.2",
     "lint-staged": "15.2.10",

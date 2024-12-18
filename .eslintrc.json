@@ -51,6 +51,10 @@
       }
     },
     {
+      "extends": ["bloq/vitest"],
+      "files": ["*.test.ts"]
+    },
+    {
       "extends": ["bloq/markdown"],
       "files": ["*.md"],
       "rules": {

@@ -54,7 +54,7 @@
     @apply flex w-full flex-shrink-0
       flex-grow
       items-center
-      [&:nth-child(1)]:basis-24
+      [&:nth-child(1)]:basis-28
       [&:nth-child(1)]:lg:basis-28
       [&:nth-child(2)]:basis-42
       [&:nth-child(2)]:lg:basis-24
@@ -69,6 +69,6 @@
       [&:nth-child(7)]:basis-32
       [&:nth-child(7)]:lg:basis-42
       [&:nth-child(8)]:basis-34
-      [&:nth-child(8)]:lg:basis-24
+      [&:nth-child(8)]:lg:basis-28
   }
 }

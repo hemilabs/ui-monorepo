@@ -6,13 +6,9 @@ import PQueue from 'p-queue'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import {
-  getBitcoinWithdrawalBitcoinTxId,
-  getBitcoinWithdrawalGracePeriod,
   getBitcoinWithdrawalUuid,
+  getHemiStatusOfBtcWithdrawal,
 } from 'utils/hemi'
-
-const bitcoinZeroAddress =
-  '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 const hemiQueue = new PQueue({ concurrency: 2 })
 
@@ -27,32 +23,35 @@ function WatchInitiatedBitcoinWithdrawal({
   const { updateWithdrawal } = useTunnelHistory()
 
   async function updateWithdrawalDataAndStatus() {
-    // When a withdrawal is just initiated, the status of that tx shall be
-    // monitored. If confirmed, a timestamp will be available through the
-    // block and the status must be updated in the tunnel history. The UUID can
-    // also be added here if missing by reading it from the receipt logs.
-    if (withdrawal.status === BtcWithdrawStatus.TX_PENDING) {
+    const updates: Partial<ToBtcWithdrawOperation> = {}
+    const newStatus = await getHemiStatusOfBtcWithdrawal({
+      hemiClient,
+      withdrawal,
+    })
+    if (withdrawal.status !== newStatus) {
+      updates.status = newStatus
+    }
+
+    if (
+      newStatus >= BtcWithdrawStatus.TX_CONFIRMED &&
+      (withdrawal.uuid === undefined || withdrawal.timestamp)
+    ) {
       const receipt = await getEvmTransactionReceipt(
         withdrawal.transactionHash,
         withdrawal.l2ChainId,
       )
       if (!receipt) {
-        return false
+        throw new Error(
+          `Receipt not found  for tx ${withdrawal.transactionHash}`,
+        )
       }
 
-      const updates: Partial<ToBtcWithdrawOperation> = {}
-      updates.status =
-        receipt.status === 'success'
-          ? BtcWithdrawStatus.TX_CONFIRMED
-          : BtcWithdrawStatus.WITHDRAWAL_FAILED
-
-      if (!withdrawal.uuid) {
+      if (withdrawal.uuid === undefined) {
         updates.uuid = getBitcoinWithdrawalUuid(
           // @ts-expect-error wagmi seems to be wrongly typed
           receipt,
         ).toString()
       }
-
       if (!withdrawal.timestamp) {
         const block = await getEvmBlock(
           receipt.blockNumber,
@@ -60,79 +59,10 @@ function WatchInitiatedBitcoinWithdrawal({
         )
         updates.timestamp = Number(block.timestamp)
       }
-
+    }
+    if (Object.keys(updates).length > 0) {
       updateWithdrawal(withdrawal, updates)
-      return true
     }
-
-    // If the initiation succeeded, the BTC transaction must be monitored. If
-    // present, move it to WITHDRAWAL_SUCCEEDED but if not and the withdrawal is
-    // more than 12 hours old, move it to CHALLENGE_READY.
-    if (withdrawal.status === BtcWithdrawStatus.TX_CONFIRMED) {
-      const vaultIndex = await hemiClient.getVaultChildIndex()
-      // if the bitcoinTxId doesn't exists, it returns 0x...0
-      const bitcoinTxId = await getBitcoinWithdrawalBitcoinTxId({
-        hemiClient,
-        uuid: BigInt(withdrawal.uuid),
-        vaultIndex,
-      })
-      if (bitcoinTxId !== bitcoinZeroAddress) {
-        updateWithdrawal(withdrawal, {
-          status: BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED,
-        })
-        return true
-      }
-
-      const gracePeriod = await getBitcoinWithdrawalGracePeriod({
-        hemiClient,
-        vaultIndex,
-      })
-      const age = Math.floor(new Date().getTime() / 1000) - withdrawal.timestamp
-      if (age > gracePeriod) {
-        updateWithdrawal(withdrawal, {
-          status: BtcWithdrawStatus.CHALLENGE_READY,
-        })
-        return true
-      }
-
-      return false
-    }
-
-    // If the challenging period started, the challenge tx must be monitored. If
-    // there is one, the state must be changed to IN_PROGRESS.
-    if (withdrawal.status === BtcWithdrawStatus.CHALLENGE_READY) {
-      if (!withdrawal.challengeTxHash) {
-        return false
-      }
-
-      updateWithdrawal(withdrawal, {
-        status: BtcWithdrawStatus.CHALLENGE_IN_PROGRESS,
-      })
-      return true
-    }
-
-    // While the challenge is in progress, if the tx succeeds, the withdrawal is
-    // terminated. Otherwise it can be retried.
-    if (withdrawal.status === BtcWithdrawStatus.CHALLENGE_IN_PROGRESS) {
-      const receipt = await getEvmTransactionReceipt(
-        withdrawal.challengeTxHash,
-        withdrawal.l2ChainId,
-      )
-      if (!receipt) {
-        return false
-      }
-
-      updateWithdrawal(withdrawal, {
-        status:
-          receipt.status === 'success'
-            ? BtcWithdrawStatus.WITHDRAWAL_FAILED
-            : BtcWithdrawStatus.CHALLENGE_READY,
-      })
-      return true
-    }
-
-    // Should never reach this line so let's throw just in case.
-    throw new Error(`Unknown withdrawal state: ${withdrawal.status}`)
   }
 
   const queryFn = () => hemiQueue.add(updateWithdrawalDataAndStatus)

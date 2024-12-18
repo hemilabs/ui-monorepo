@@ -65,7 +65,7 @@ const createSyncer = function ({
         l2Chain,
         saveHistory,
         withdrawalsSyncInfo:
-          withdrawalsSyncInfo as ExtendedSyncInfo<TransactionListSyncType>,
+          withdrawalsSyncInfo as ExtendedSyncInfo<BlockSyncType>,
       })
     case mainnet.id:
     case sepolia.id:

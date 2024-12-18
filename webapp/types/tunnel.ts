@@ -123,7 +123,6 @@ export type ToBtcWithdrawOperation = CommonOperation &
     challengeTxHash?: Hash
     status: BtcWithdrawStatus
     uuid?: string // bigint can't be serialized into local storage
-    vaultIndex?: number
   }
 
 export type DepositTunnelOperation = BtcDepositOperation | EvmDepositOperation

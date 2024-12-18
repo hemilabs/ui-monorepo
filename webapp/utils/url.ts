@@ -1,9 +1,11 @@
+import { hasKeys } from './utilities'
+
 export const isRelativeUrl = (url: string) => url.startsWith('/')
 
 export const queryStringObjectToString = function (
   queryString: Record<string, string> = {},
 ) {
-  if (Object.keys(queryString).length === 0) {
+  if (!hasKeys(queryString)) {
     return ''
   }
   const searchParams = new URLSearchParams()

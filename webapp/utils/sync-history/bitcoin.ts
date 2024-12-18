@@ -1,6 +1,7 @@
 import { MessageDirection } from '@eth-optimism/sdk'
 import { BtcChain } from 'btc-wallet/chains'
 import { Account, BtcTransaction } from 'btc-wallet/unisat'
+import { bitcoinTunnelManagerAbi } from 'hemi-viem/contracts'
 import { publicClientToHemiClient } from 'hooks/useHemiClient'
 import {
   type BlockSyncType,
@@ -38,6 +39,7 @@ import { getNativeToken } from 'utils/token'
 import {
   type Address,
   createPublicClient,
+  decodeFunctionData,
   http,
   parseAbiItem,
   toHex,
@@ -149,10 +151,9 @@ export const createBitcoinSync = function ({
               ].tokenAddress,
               // as logs are found, the tx is confirmed. So TX_CONFIRMED is the min status.
               status: BtcWithdrawStatus.TX_CONFIRMED,
-              to: 'TODO',
               transactionHash,
               uuid: args.uuid.toString(),
-            }) satisfies ToBtcWithdrawOperation,
+            }) satisfies Omit<ToBtcWithdrawOperation, 'to'>,
         ),
       )
       .then(withdrawals =>
@@ -161,14 +162,29 @@ export const createBitcoinSync = function ({
             // pAll only infers the return type correctly if the function is async
             w => async () =>
               Promise.all([
+                hemiClient
+                  .getTransaction({ hash: w.transactionHash })
+                  .then(({ input }) =>
+                    decodeFunctionData({
+                      abi: bitcoinTunnelManagerAbi,
+                      data: input,
+                    }),
+                  )
+                  // the bitcoin address can be retrieve from the input data call - it's the 2nd parameter
+                  .then(args => args[1] as string),
                 getEvmBlock(w.blockNumber, w.l2ChainId),
-                getHemiStatusOfBtcWithdrawal({ hemiClient, withdrawal: w }),
+                getHemiStatusOfBtcWithdrawal({
+                  hemiClient,
+                  // only value missing is "to", which is not used internally.
+                  withdrawal: w as ToBtcWithdrawOperation,
+                }),
               ]).then(
-                ([block, status]) =>
+                ([btcAddress, block, status]) =>
                   ({
                     ...w,
                     status,
                     timestamp: block.timestamp,
+                    to: btcAddress,
                   }) satisfies ToBtcWithdrawOperation,
               ),
           ),

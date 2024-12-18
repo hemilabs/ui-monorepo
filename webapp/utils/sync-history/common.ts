@@ -1,5 +1,17 @@
+import { JsonRpcProvider } from '@ethersproject/providers'
 import { type BlockSyncType } from 'hooks/useSyncHistory/types'
 import { CreateSlidingBlockWindow } from 'sliding-block-window/src'
+
+export const getBlockNumber = async function (
+  toBlock: number | undefined,
+  provider: JsonRpcProvider,
+) {
+  if (toBlock !== undefined) {
+    return toBlock
+  }
+  const blockNumber = Number(await provider.getBlockNumber())
+  return blockNumber
+}
 
 export const getBlockPayload = function ({
   canMove,

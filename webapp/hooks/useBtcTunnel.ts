@@ -409,7 +409,10 @@ export const useChallengeBitcoinWithdrawal = function (
         uuid: BigInt(withdrawal.uuid),
       }),
     onSuccess: challengeTxHash =>
-      updateWithdrawal(withdrawal, { challengeTxHash }),
+      updateWithdrawal(withdrawal, {
+        challengeTxHash,
+        status: BtcWithdrawStatus.CHALLENGE_IN_PROGRESS,
+      }),
   })
 
   const {

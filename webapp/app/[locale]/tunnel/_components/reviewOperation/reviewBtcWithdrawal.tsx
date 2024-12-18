@@ -87,8 +87,8 @@ const ReviewContent = function ({
         return ProgressStatus.COMPLETED
       }
       const map = {
+        challenging: ProgressStatus.PROGRESS,
         failed: ProgressStatus.FAILED,
-        proving: ProgressStatus.PROGRESS,
         rejected: ProgressStatus.REJECTED,
       }
       return map[operationStatus] ?? ProgressStatus.READY

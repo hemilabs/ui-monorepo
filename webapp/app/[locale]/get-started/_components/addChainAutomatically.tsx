@@ -115,8 +115,8 @@ export const AddChainAutomatically = function ({ chain, layer }: Props) {
       onClick={onClick}
     >
       <div className="flex flex-row gap-x-1">
-        <ChainLogo chainId={chain.id} />
-        <span className="ml-1 text-neutral-950">{chain.name}</span>
+        <div className="w-7"><ChainLogo chainId={chain.id} /></div>
+        <span className="text-neutral-950">{chain.name}</span>
         <span className="text-neutral-500">{t('layer', { layer })}</span>
         <div className="ml-auto">{getButton()}</div>
       </div>

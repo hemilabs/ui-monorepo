@@ -22,7 +22,7 @@ export const SocialLinks = function () {
 
   return (
     <div
-      className="mb-1 mt-4 flex items-center justify-center gap-x-6
+      className="mb-1 mt-4 flex items-center flex-wrap justify-center gap-x-6
     rounded-lg bg-transparent md:h-14 md:gap-x-4 md:bg-neutral-50"
     >
       <ExternalLink href={twitterUrl} onClick={addTracking('nav - x')}>

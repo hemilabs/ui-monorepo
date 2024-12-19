@@ -45,7 +45,7 @@ const FundMethod = function ({
       href={url}
       onClick={addTracking()}
     >
-      {icon}
+      <div className="w-7">{icon}</div>
       <span className="mr-auto text-neutral-950">{name}</span>
       <span className="mr-1">
         {networkType === 'testnet'

@@ -11,6 +11,7 @@ import { findChainById } from 'utils/chain'
 import { createQueuedCrossChainMessenger } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { createPublicProvider } from 'utils/providers'
+import { hasKeys } from 'utils/utilities'
 import { type Chain, type Hash } from 'viem'
 
 const queue = new PQueue({ concurrency: 2 })
@@ -172,7 +173,7 @@ const watchWithdrawal = (withdrawal: ToEvmWithdrawOperation) =>
         updates.timestamp = timestamp
       }
 
-      if (Object.keys(updates).length > 0) {
+      if (hasKeys(updates)) {
         debug('Sending changes for withdrawal %s', withdrawal.transactionHash)
         worker.postMessage({
           type: getUpdateWithdrawalKey(withdrawal),

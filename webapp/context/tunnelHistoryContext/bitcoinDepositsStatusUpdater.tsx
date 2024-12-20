@@ -1,7 +1,10 @@
+'use client'
+
+import { WithWorker } from 'components/withWorker'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { hasKeys } from 'utils/utilities'
 import { useAccount as useEvmAccount } from 'wagmi'
@@ -91,58 +94,10 @@ const WatchBtcDeposit = function ({
   return null
 }
 
-const Watcher = function ({ deposits }: { deposits: BtcDepositOperation[] }) {
-  const workerRef = useRef<AppToWorker>(null)
-
-  // This must be done here because there's some weird issue when moving it into a custom hook that prevents
-  // the worker from being loaded. It seems that by loading this component dynamically (Which we do), it doesn't get blocked
-  // as a different origin when running in localhost. When loading statically from a hook, the error
-  // "Failed to construct 'Worker': Script at <path> cannot be accessed from origin localhost" is logged
-  useEffect(
-    function initWorker() {
-      // load the Worker
-      workerRef.current = new Worker(
-        new URL('../../workers/watchBitcoinDeposits.ts', import.meta.url),
-      )
-
-      if (process.env.NEXT_PUBLIC_WORKERS_DEBUG_ENABLE === 'true') {
-        // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
-        const debugString = localStorage.getItem('debug') ?? '*'
-        workerRef.current.postMessage({
-          payload: debugString,
-          type: 'enable-debug',
-        })
-      }
-
-      return function terminateWorker() {
-        if (!workerRef.current) {
-          return
-        }
-        workerRef.current.terminate()
-        workerRef.current = null
-      }
-    },
-    [workerRef],
-  )
-
-  if (!workerRef.current) {
-    return null
-  }
-
-  // once the only worker is loaded, render these components that will post to the worker
-  // the deposits to watch on intervals
-  return (
-    <>
-      {deposits.map(deposit => (
-        <WatchBtcDeposit
-          deposit={deposit}
-          key={deposit.transactionHash}
-          worker={workerRef.current}
-        />
-      ))}
-    </>
-  )
-}
+// See https://github.com/vercel/next.js/issues/31009#issuecomment-11463441611
+// and https://github.com/vercel/next.js/issues/31009#issuecomment-1338645354
+const getWorker = () =>
+  new Worker(new URL('../../workers/watchBitcoinDeposits.ts', import.meta.url))
 
 export const BitcoinDepositsStatusUpdater = function () {
   // Deposits are checked against an hemi address
@@ -169,5 +124,21 @@ export const BitcoinDepositsStatusUpdater = function () {
     )
     .sort(byTimestampDesc)
 
-  return <Watcher deposits={depositsToWatch} />
+  return (
+    <WithWorker getWorker={getWorker}>
+      {(worker: AppToWorker) => (
+        // once the only worker is loaded, render these components that will post to the worker
+        // the deposits to watch on intervals
+        <>
+          {depositsToWatch.map(deposit => (
+            <WatchBtcDeposit
+              deposit={deposit}
+              key={deposit.transactionHash}
+              worker={worker}
+            />
+          ))}
+        </>
+      )}
+    </WithWorker>
+  )
 }

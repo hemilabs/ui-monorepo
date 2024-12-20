@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useReducer } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { findChainById } from 'utils/chain'
+import joi from 'utils/notJoi'
 import { getNativeToken, getTokenByAddress, isNativeToken } from 'utils/token'
 import { type NoPayload, type Payload } from 'utils/typeUtilities'
 import { type Chain, isHash } from 'viem'
@@ -228,13 +229,25 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
     ...initial,
   } as TunnelState)
 
+  // This function cleans up the user input, only allowing strings representing
+  // numbers to go through and alter the state.
   const updateFromInput = useCallback(
     function (payload: UpdateFromInput['payload']) {
-      // verify if input is a valid number
-      const validationRegex = /^\d*\.?\d*$/
-      if (!validationRegex.test(payload)) {
+      // If the user cleared the input, just set it to "0".
+      if (!payload) {
+        dispatch({
+          payload: '0',
+          type: 'updateFromInput',
+        })
         return
       }
+      // Verify the input can be parsed as a valid number.
+      const schema = joi.number().positive().unsafe()
+      if (schema.validate(payload).error) {
+        return
+      }
+      // And remove any leading zeroes to address cases like "01", that must be
+      // converted to "1".
       dispatch({
         payload: payload.replace(/^0+/, ''),
         type: 'updateFromInput',

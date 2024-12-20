@@ -1,89 +1,17 @@
-import { useQuery } from '@tanstack/react-query'
+'use client'
+
+import { WithWorker } from 'components/withWorker'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
-import { useHemiClient } from 'hooks/useHemiClient'
+import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import PQueue from 'p-queue'
+import { useEffect } from 'react'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
-import { getTransactionReceipt } from 'utils/btcApi'
-import { getHemiStatusOfBtcDeposit, getVaultAddressByDeposit } from 'utils/hemi'
-import { useAccount } from 'wagmi'
+import { hasKeys } from 'utils/utilities'
+import { useAccount as useEvmAccount } from 'wagmi'
+import { type AppToWorker, getDepositKey } from 'workers/watchBitcoinDeposits'
 
-// concurrently avoid overloading both blockchains
-const bitcoinQueue = new PQueue({ concurrency: 5 })
-const hemiQueue = new PQueue({ concurrency: 5 })
-
-const WatchBitcoinBlockchain = function ({
-  deposit,
-}: {
-  deposit: BtcDepositOperation
-}) {
-  const { updateDeposit } = useTunnelHistory()
-  useQuery({
-    // shouldn't be needed, but let's be safe and avoid extra requests
-    // if somehow deposits that are not pending end up here
-    enabled: deposit.status === BtcDepositStatus.TX_PENDING,
-    queryFn: () =>
-      bitcoinQueue.add(() =>
-        getTransactionReceipt(deposit.transactionHash).then(function (receipt) {
-          if (receipt.status.confirmed) {
-            updateDeposit(deposit, { status: BtcDepositStatus.TX_CONFIRMED })
-          }
-          return receipt.status.confirmed
-        }),
-      ),
-    queryKey: [
-      'btc-deposit-tx-status',
-      deposit.l1ChainId,
-      deposit.transactionHash,
-    ],
-    // every 30 seconds - once status changes, this component won't render anymore
-    // so this hook won't need to "refetch"
-    refetchInterval: 30 * 1000,
-  })
-  return null
-}
-
-const WatchHemiBlockchain = function ({
-  deposit,
-}: {
-  deposit: BtcDepositOperation
-}) {
-  const hemiClient = useHemiClient()
-  const { updateDeposit } = useTunnelHistory()
-
-  useQuery({
-    // shouldn't be needed, but let's be safe and avoid extra requests
-    // if somehow deposits that are not pending end up here
-    enabled: [
-      BtcDepositStatus.TX_CONFIRMED,
-      BtcDepositStatus.BTC_READY_CLAIM,
-    ].includes(deposit.status),
-    queryFn: () =>
-      hemiQueue.add(() =>
-        getVaultAddressByDeposit(hemiClient, deposit)
-          .then(vaultAddress =>
-            getHemiStatusOfBtcDeposit({
-              deposit,
-              hemiClient,
-              vaultAddress,
-            }),
-          )
-          .then(function (newStatus) {
-            if (deposit.status !== newStatus) {
-              updateDeposit(deposit, { status: newStatus })
-            }
-            return newStatus
-          }),
-      ),
-    queryKey: ['btc-deposit-hemi-tx-status', deposit.transactionHash],
-    // every 30 seconds - once status changes, this component won't render anymore
-    // so this hook won't need to "refetch"
-    refetchInterval: 30 * 1000,
-  })
-
-  return null
-}
-
+// put those undefined statuses first
+// but then sorted by timestamp (newest first)
 const byTimestampDesc = function (
   a: BtcDepositOperation,
   b: BtcDepositOperation,
@@ -94,29 +22,102 @@ const byTimestampDesc = function (
   return (a.status ?? -1) - (b.status ?? -1)
 }
 
+const WatchBtcDeposit = function ({
+  deposit,
+  worker,
+}: {
+  deposit: BtcDepositOperation
+  worker: AppToWorker
+}) {
+  const { updateDeposit } = useTunnelHistory()
+
+  useEffect(
+    function watchDepositUpdates() {
+      // Not using useState as 1. this value is local to the effect and
+      // 2. to avoid unsubscribing and resubscribing when the state value changes
+      let hasWorkedPostedBack = false
+      const saveUpdates = function (
+        event: MessageEvent<{
+          updates: Partial<BtcDepositOperation>
+          type: string
+        }>,
+      ) {
+        // This is needed because this component is rendered per-withdrawal, so each component will receive the posted message
+        // for every withdrawal, as there are many withdrawals but only one worker.
+        // Of all components, this "if" clause below will be true for only one rendered component - the one belonging to the withdrawal
+        const { type, updates } = event.data
+        if (type !== getDepositKey(deposit)) {
+          return
+        }
+        // next interval will poll again
+        hasWorkedPostedBack = true
+        if (hasKeys(updates)) {
+          updateDeposit(deposit, updates)
+        }
+      }
+
+      worker.addEventListener('message', saveUpdates)
+
+      // refetch every 30 seconds
+      const interval = 30 * 1000
+
+      let intervalId
+      // skip polling for disabled states (those whose interval is "false")
+      if (typeof interval === 'number') {
+        worker.postMessage({
+          deposit,
+          type: 'watch-btc-deposit',
+        })
+        intervalId = setInterval(function () {
+          if (!hasWorkedPostedBack) {
+            return
+          }
+          worker.postMessage({
+            deposit,
+            type: 'watch-btc-deposit',
+          })
+          // Block posting until a response is received
+          hasWorkedPostedBack = false
+        }, interval)
+      }
+
+      return function cleanup() {
+        worker.removeEventListener('message', saveUpdates)
+        if (intervalId) {
+          clearInterval(intervalId)
+        }
+      }
+    },
+    [deposit, updateDeposit, worker],
+  )
+
+  return null
+}
+
+// See https://github.com/vercel/next.js/issues/31009#issuecomment-11463441611
+// and https://github.com/vercel/next.js/issues/31009#issuecomment-1338645354
+const getWorker = () =>
+  new Worker(new URL('../../workers/watchBitcoinDeposits.ts', import.meta.url))
+
 export const BitcoinDepositsStatusUpdater = function () {
-  // Deposits are checked against Hemi network, but by being connected to any evm wallet
-  // we can retrieve the deposits, as they are made to an EVM address
-  const { isConnected } = useAccount()
+  // Deposits are checked against an hemi address
+  const { isConnected } = useEvmAccount()
   const deposits = useBtcDeposits()
 
-  if (!isConnected) {
+  const unsupportedChain = useConnectedToUnsupportedEvmChain()
+
+  if (!isConnected || unsupportedChain) {
     return null
   }
 
   // Here, btc transactions have not been confirmed, so we must check it
   // in the bitcoin blockchain
-  const depositsToWatchInBitcoin = deposits
-    .filter(deposit => deposit.status === BtcDepositStatus.TX_PENDING)
-    // put those undefined statuses first
-    // but then sorted by timestamp (newest first)
-    .sort(byTimestampDesc)
-
-  // Here, bitcoin transactions have been confirmed, so we must watch
-  // on the Hemi network for its status
-  const depositsToWatchInHemi = deposits
+  const depositsToWatch = deposits
     .filter(deposit =>
       [
+        // Unconfirmed btc transactions, to be watched  in the bitcoin blockchain
+        BtcDepositStatus.TX_PENDING,
+        // Btc transactions confirmed, to be watched in the hemi blockchain
         BtcDepositStatus.TX_CONFIRMED,
         BtcDepositStatus.BTC_READY_CLAIM,
       ].includes(deposit.status),
@@ -124,16 +125,20 @@ export const BitcoinDepositsStatusUpdater = function () {
     .sort(byTimestampDesc)
 
   return (
-    <>
-      {depositsToWatchInBitcoin.map(deposit => (
-        <WatchBitcoinBlockchain
-          deposit={deposit}
-          key={deposit.transactionHash}
-        />
-      ))}
-      {depositsToWatchInHemi.map(deposit => (
-        <WatchHemiBlockchain deposit={deposit} key={deposit.transactionHash} />
-      ))}
-    </>
+    <WithWorker getWorker={getWorker}>
+      {(worker: AppToWorker) => (
+        // once the only worker is loaded, render these components that will post to the worker
+        // the deposits to watch on intervals
+        <>
+          {depositsToWatch.map(deposit => (
+            <WatchBtcDeposit
+              deposit={deposit}
+              key={deposit.transactionHash}
+              worker={worker}
+            />
+          ))}
+        </>
+      )}
+    </WithWorker>
   )
 }

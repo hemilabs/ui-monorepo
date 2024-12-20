@@ -115,7 +115,6 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
 
   return (
     <TunnelHistoryContext.Provider value={context}>
-      {/* Move to web worker https://github.com/hemilabs/ui-monorepo/issues/487 */}
       {/* Track updates on bitcoin deposits, in bitcoin or in Hemi */}
       {featureFlags.btcTunnelEnabled && <BitcoinDepositsStatusUpdater />}
       {/* Track updates on withdrawals from Hemi */}

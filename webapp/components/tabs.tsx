@@ -30,7 +30,7 @@ export const Tab = function ({
   return (
     <li
       className={`
-      box-border flex h-7 items-center rounded-md px-2 py-1 mb-1 text-sm font-medium
+      box-border flex h-7 items-center rounded-md px-2 py-1 text-sm font-medium
       ${
         selected
           ? 'border border-solid border-neutral-300/55 bg-white text-neutral-950 shadow-sm'
@@ -63,5 +63,5 @@ type TabsProps = {
 }
 
 export const Tabs = ({ children }: TabsProps) => (
-  <ul className="flex flex-wrap items-center gap-x-2">{children}</ul>
+  <ul className="flex flex-wrap items-center gap-y-1 gap-x-2">{children}</ul>
 )

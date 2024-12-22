@@ -1,16 +1,15 @@
-# ui-monorepo
+# UI Monorepo
 
-This repository contains the various apps and websites related to the Hemi Network along with reusable UI components.
+A comprehensive collection of UI components and utilities for blockchain applications by Hemi Labs.
 
-## Major Components
+## 📦 Packages
 
-[btc-wallet](./btc-wallet) The React components to integrate btc wallets (Currently, only Unisat is supported).
+This monorepo contains the following packages:
 
-[portal](./webapp) The portal app living in `https://app.hemi.xyz`.
-
-[sliding-block-window](./sliding-block-window) A tiny package to walkthrough a range of blocks and run async functions for each.
-
-[wagmi-erc20-hooks](./wagmi-erc20-hooks) A set of hooks to interact with ERC20 contracts using wagmi.
+- **@hemilabs/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported)
+- **@hemilabs/sliding-block-window**: UI components for block visualization and walkthrough of block ranges
+- **@hemilabs/wagmi-erc20-hooks**: React hooks for ERC20 token interactions using wagmi
+- **@hemilabs/webapp**: Portal app living at https://app.hemi.xyz
 
 ## Deployment
 

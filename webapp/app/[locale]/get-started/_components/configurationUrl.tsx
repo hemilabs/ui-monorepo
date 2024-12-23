@@ -48,7 +48,9 @@ export const ConfigurationUrl = function ({
           {href}
         </ExternalLink>
       ) : (
-        <span className="mr-auto text-neutral-950">{href}</span>
+        <span className="mr-auto overflow-hidden text-ellipsis whitespace-nowrap text-neutral-950">
+          {href}
+        </span>
       )}
       <Tooltip
         id={`copy-${href}`}

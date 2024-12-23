@@ -40,7 +40,9 @@ export const AddChainManually = function ({ chain, layer }: Props) {
   return (
     <div className="border-neutral/55 flex flex-col rounded-xl border border-solid p-4 text-sm font-medium">
       <div className="flex flex-row gap-x-1">
-        <ChainLogo chainId={chain.id} />
+        <div className="w-5">
+          <ChainLogo chainId={chain.id} />
+        </div>
         <span className="ml-1 text-neutral-950">{chain.name}</span>
         <span className="text-neutral-500">{t('layer', { layer })}</span>
       </div>

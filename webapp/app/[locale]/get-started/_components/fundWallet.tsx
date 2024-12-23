@@ -46,7 +46,7 @@ const FundMethod = function ({
       onClick={addTracking()}
     >
       <div className="w-5">{icon}</div>
-      <span className="mr-auto text-neutral-950 ml-1">{name}</span>
+      <span className="ml-1 mr-auto text-neutral-950">{name}</span>
       <span className="mr-1">
         {networkType === 'testnet'
           ? t('get-testnet-tokens')

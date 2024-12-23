@@ -15,12 +15,12 @@ import {
   type ExtendedSyncInfo,
   type SyncHistoryCombinations,
 } from 'utils/sync-history/types'
+import { type EnableWorkersDebug } from 'utils/typeUtilities'
 import { type Address, type Chain } from 'viem'
 
-type EnableDebug = { type: 'enable-debug'; payload: string }
 type StartSyncing = { type: 'start' } & SyncHistoryCombinations
 
-type AppToWebWorkerActions = EnableDebug | StartSyncing
+type AppToWebWorkerActions = EnableWorkersDebug | StartSyncing
 
 // Worker is typed with "any", so force type safety for the messages
 // (as in runtime all types are stripped, this will continue to work)

@@ -11,6 +11,7 @@ import { findChainById } from 'utils/chain'
 import { createQueuedCrossChainMessenger } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { createPublicProvider } from 'utils/providers'
+import { type EnableWorkersDebug } from 'utils/typeUtilities'
 import { hasKeys } from 'utils/utilities'
 import { type Chain, type Hash } from 'viem'
 
@@ -21,13 +22,12 @@ const debug = debugConstructor('watch-evm-withdrawals-worker')
 export const getUpdateWithdrawalKey = (withdrawal: WithdrawTunnelOperation) =>
   `update-withdrawal-${withdrawal.l2ChainId}-${withdrawal.transactionHash}` as const
 
-type EnableDebug = { type: 'enable-debug'; payload: string }
 type WatchWithdrawal = {
   type: 'watch-withdrawal'
   withdrawal: ToEvmWithdrawOperation
 }
 
-type AppToWebWorkerActions = EnableDebug | WatchWithdrawal
+type AppToWebWorkerActions = EnableWorkersDebug | WatchWithdrawal
 
 export type AppToWorker = Omit<Worker, 'onmessage' | 'postMessage'> & {
   postMessage: (message: AppToWebWorkerActions) => void

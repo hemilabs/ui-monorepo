@@ -175,13 +175,14 @@ const watchWithdrawal = (withdrawal: ToEvmWithdrawOperation) =>
 
       if (hasKeys(updates)) {
         debug('Sending changes for withdrawal %s', withdrawal.transactionHash)
-        worker.postMessage({
-          type: getUpdateWithdrawalKey(withdrawal),
-          updates,
-        })
       } else {
         debug('No changes for withdrawal %s', withdrawal.transactionHash)
       }
+
+      worker.postMessage({
+        type: getUpdateWithdrawalKey(withdrawal),
+        updates,
+      })
     },
     {
       // Give more priority to those that require polling and are not ready or are missing information

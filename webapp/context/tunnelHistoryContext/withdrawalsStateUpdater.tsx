@@ -7,6 +7,7 @@ import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { useEffect } from 'react'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
+import { hasKeys } from 'utils/utilities'
 import { useAccount } from 'wagmi'
 import {
   type AppToWorker,
@@ -65,9 +66,11 @@ const WatchEvmWithdrawal = function ({
         if (type !== getUpdateWithdrawalKey(withdrawal)) {
           return
         }
-        updateWithdrawal(withdrawal, updates)
         // next interval will poll again
         hasWorkedPostedBack = true
+        if (hasKeys(updates)) {
+          updateWithdrawal(withdrawal, updates)
+        }
       }
 
       worker.addEventListener('message', saveUpdates)

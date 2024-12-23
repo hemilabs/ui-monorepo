@@ -1,10 +1,11 @@
 import { MessageStatus } from '@eth-optimism/sdk'
+import { WithWorker } from 'components/withWorker'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { useAccount } from 'wagmi'
 import {
@@ -106,62 +107,10 @@ const WatchEvmWithdrawal = function ({
   return null
 }
 
-const Watcher = function ({
-  withdrawals,
-}: {
-  withdrawals: ToEvmWithdrawOperation[]
-}) {
-  const workerRef = useRef<AppToWorker>(null)
-
-  // This must be done here because there's some weird issue when moving it into a custom hook that prevents
-  // the worker from being loaded. It seems that by loading this component dynamically (Which we do), it doesn't get blocked
-  // as a different origin when running in localhost. When loading statically from a hook, the error
-  // "Failed to construct 'Worker': Script at <path> cannot be accessed from origin localhost" is logged
-  useEffect(
-    function initWorker() {
-      // load the Worker
-      workerRef.current = new Worker(
-        new URL('../../workers/watchEvmWithdrawals.ts', import.meta.url),
-      )
-
-      if (process.env.NEXT_PUBLIC_WORKERS_DEBUG_ENABLE === 'true') {
-        // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
-        const debugString = localStorage.getItem('debug') ?? '*'
-        workerRef.current.postMessage({
-          payload: debugString,
-          type: 'enable-debug',
-        })
-      }
-
-      return function terminateWorker() {
-        if (!workerRef.current) {
-          return
-        }
-        workerRef.current.terminate()
-        workerRef.current = null
-      }
-    },
-    [workerRef],
-  )
-
-  if (!workerRef.current) {
-    return null
-  }
-
-  // once the only worker is loaded, render these components that will post to the worker
-  // the withdrawal to watch on intervals
-  return (
-    <>
-      {withdrawals.map(w => (
-        <WatchEvmWithdrawal
-          key={w.transactionHash}
-          withdrawal={w}
-          worker={workerRef.current}
-        />
-      ))}
-    </>
-  )
-}
+// See https://github.com/vercel/next.js/issues/31009#issuecomment-11463441611
+// and https://github.com/vercel/next.js/issues/31009#issuecomment-1338645354
+const getWorker = () =>
+  new Worker(new URL('../../workers/watchEvmWithdrawals.ts', import.meta.url))
 
 export const WithdrawalsStateUpdater = function () {
   const { isConnected } = useAccount()
@@ -187,5 +136,21 @@ export const WithdrawalsStateUpdater = function () {
       ].includes(w.status),
   )
 
-  return <Watcher withdrawals={withdrawalsToWatch} />
+  return (
+    <WithWorker getWorker={getWorker}>
+      {(worker: AppToWorker) => (
+        // once the only worker is loaded, render these components that will post to the worker
+        // the withdrawals to watch on intervals
+        <>
+          {withdrawalsToWatch.map(w => (
+            <WatchEvmWithdrawal
+              key={w.transactionHash}
+              withdrawal={w}
+              worker={worker}
+            />
+          ))}
+        </>
+      )}
+    </WithWorker>
+  )
 }

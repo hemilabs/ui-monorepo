@@ -2,6 +2,7 @@ import debugConstructor from 'debug'
 import { publicClientToHemiClient } from 'hooks/useHemiClient'
 import pMemoize from 'promise-mem'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
+import { getBitcoinTimestamp } from 'utils/bitcoin'
 import { getTransactionReceipt } from 'utils/btcApi'
 import { findChainById } from 'utils/chain'
 import { getHemiStatusOfBtcDeposit, getVaultAddressByDeposit } from 'utils/hemi'
@@ -41,7 +42,7 @@ export const watchDepositOnBitcoin = async function (
       deposit.transactionHash,
     )
     updates.blockNumber = receipt.status.blockHeight
-    updates.timestamp = receipt.status.blockTime
+    updates.timestamp = getBitcoinTimestamp(receipt.status.blockTime)
   }
 
   if (!hasKeys(updates)) {

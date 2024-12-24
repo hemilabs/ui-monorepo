@@ -10,6 +10,7 @@ import {
   BtcDepositStatus,
   BtcWithdrawStatus,
 } from 'types/tunnel'
+import { getBitcoinTimestamp } from 'utils/bitcoin'
 import { getEvmBlock } from 'utils/evmApi'
 import {
   claimBtcDeposit,
@@ -225,7 +226,7 @@ export const useDepositBitcoin = function () {
       updateDeposit(deposit, {
         blockNumber: depositReceipt.status.blockHeight,
         status: BtcDepositStatus.TX_CONFIRMED,
-        timestamp: depositReceipt.status.blockTime,
+        timestamp: getBitcoinTimestamp(depositReceipt.status.blockTime),
       })
     },
     [bitcoin, depositReceipt, deposits, updateDeposit],

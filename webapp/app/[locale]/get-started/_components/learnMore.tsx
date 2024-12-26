@@ -3,8 +3,11 @@ import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { ExternalLink } from 'components/externalLink'
 import { Tab, Tabs } from 'components/tabs'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+
+import hemiBannerMobile from '../_assets/hemi-banner.svg'
 
 type Props = {
   event: AnalyticsEvent // There are too many too list, just allow all of them
@@ -144,12 +147,11 @@ export const LearnMore = function () {
       </p>
       <Card>
         <div className="p-1 pb-2 font-medium md:p-3 md:pb-6">
-          <video
-            autoPlay
-            className="h-24 rounded-lg md:h-auto"
-            loop
-            muted
-            src="/get-started/hemi.mp4"
+          <Image
+            alt="Hemi banner"
+            className="h-24 w-full rounded-lg md:h-auto"
+            src={hemiBannerMobile}
+            style={{ objectFit: 'cover' }}
           />
           <div className="mt-4 flex flex-col gap-y-2 px-2 md:mt-6 md:flex-row md:gap-x-6">
             <div className="mb-6">

@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { type Account } from 'btc-wallet/unisat'
-import { getAddressTxsUtxo, getRecommendedFees } from 'utils/btcApi'
+import { createBtcApi } from 'utils/btcApi'
+
+import { useNetworkType } from './useNetworkType'
 
 const btcInputsSize = parseInt(process.env.NEXT_PUBLIC_BTC_INPUTS_SIZE)
 const btcOutputsSize = parseInt(process.env.NEXT_PUBLIC_BTC_OUTPUTS_SIZE)
@@ -8,8 +10,9 @@ const btcOutputsSize = parseInt(process.env.NEXT_PUBLIC_BTC_OUTPUTS_SIZE)
 const expectedOutputs = 2
 
 export const useGetFeePrices = function () {
+  const [networkType] = useNetworkType()
   const { data: feePrices, ...rest } = useQuery({
-    queryFn: getRecommendedFees,
+    queryFn: () => createBtcApi(networkType).getRecommendedFees(),
     queryKey: ['btc-recommended-fees'],
     // refetch every minute
     refetchInterval: 1000 * 60,
@@ -21,10 +24,11 @@ export const useGetFeePrices = function () {
 }
 
 const useGetUtxos = function (account: Account) {
+  const [networkType] = useNetworkType()
   const { data: utxos, ...rest } = useQuery({
     enabled: !!account,
-    queryFn: () => getAddressTxsUtxo(account),
-    queryKey: ['btc-utxos', account],
+    queryFn: () => createBtcApi(networkType).getAddressTxsUtxo(account),
+    queryKey: ['btc-utxos', account, networkType],
   })
   return {
     utxos,

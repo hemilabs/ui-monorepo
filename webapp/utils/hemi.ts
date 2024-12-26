@@ -6,7 +6,7 @@ import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { type Address } from 'viem'
 
 import { calculateDepositOutputIndex } from './bitcoin'
-import { getTransactionReceipt } from './btcApi'
+import { createBtcApi, mapBitcoinNetwork } from './btcApi'
 
 // Max Sanchez note: looks like if we pass in all lower-case hex, Unisat publishes the bytes instead of the string.
 // Tunnel for now is only validating the string representation, but update this in the future using
@@ -141,9 +141,9 @@ export const claimBtcDeposit = ({
     getVaultAddressByDeposit(hemiClient, deposit).then(vaultAddress =>
       getHemiStatusOfBtcDeposit({ deposit, hemiClient, vaultAddress }),
     ),
-    getTransactionReceipt(deposit.transactionHash).then(receipt =>
-      calculateDepositOutputIndex(receipt, deposit.to),
-    ),
+    createBtcApi(mapBitcoinNetwork(deposit.l1ChainId))
+      .getTransactionReceipt(deposit.transactionHash)
+      .then(receipt => calculateDepositOutputIndex(receipt, deposit.to)),
   ]).then(function ([vaultIndex, currentStatus, outputIndex]) {
     if (currentStatus === BtcDepositStatus.BTC_DEPOSITED) {
       throw new Error('Bitcoin Deposit already confirmed')

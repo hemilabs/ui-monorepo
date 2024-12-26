@@ -49,9 +49,9 @@ export const getAddressTransactions = (
     ) as Promise<MempoolJsBitcoinTransaction[]>
 
 // See https://mempool.space/docs/api/rest#get-address-utxo (we are converting to camelCase)
-export const getAddressUtxo = (address: Account) =>
+export const getAddressTxsUtxo = (address: Account) =>
   bitcoin.addresses
-    .getAddressUtxo({ address })
+    .getAddressTxsUtxo({ address })
     .then(utxos =>
       utxos.map(utxo => toCamelCase({ ...utxo, txId: utxo.txid })),
     ) as Promise<Utxo[]>

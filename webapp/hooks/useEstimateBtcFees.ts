@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { type Account } from 'btc-wallet/unisat'
-import { getAddressUtxo, getRecommendedFees } from 'utils/btcApi'
+import { getAddressTxsUtxo, getRecommendedFees } from 'utils/btcApi'
 
 const btcInputsSize = parseInt(process.env.NEXT_PUBLIC_BTC_INPUTS_SIZE)
 const btcOutputsSize = parseInt(process.env.NEXT_PUBLIC_BTC_OUTPUTS_SIZE)
@@ -23,7 +23,7 @@ export const useGetFeePrices = function () {
 const useGetUtxos = function (account: Account) {
   const { data: utxos, ...rest } = useQuery({
     enabled: !!account,
-    queryFn: () => getAddressUtxo(account),
+    queryFn: () => getAddressTxsUtxo(account),
     queryKey: ['btc-utxos', account],
   })
   return {

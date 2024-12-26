@@ -31,8 +31,8 @@ export const calculateDepositOutputIndex = (
  * If the user ever resyncs, and the timestamp appeared in the past, then we save that.
  * See https://github.com/hemilabs/ui-monorepo/issues/692
  */
-export const getBitcoinTimestamp = function (timestamp: bigint | number) {
+export const getBitcoinTimestamp = function (timestamp: number) {
   // timestamps from btc are saved in unix format
   const now = Math.floor(new Date().getTime() / 1000)
-  return Math.min(now, Number(timestamp))
+  return Math.min(now, timestamp)
 }

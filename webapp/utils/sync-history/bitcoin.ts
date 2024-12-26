@@ -8,7 +8,7 @@ import {
 import { TransactionListSyncType } from 'hooks/useSyncHistory/types'
 import pAll from 'p-all'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
-import { calculateDepositAmount } from 'utils/bitcoin'
+import { calculateDepositAmount, getBitcoinTimestamp } from 'utils/bitcoin'
 import {
   getAddressTransactions,
   MempoolJsBitcoinTransaction,
@@ -143,7 +143,7 @@ export const createBitcoinSync = function ({
                 l1Token: btc.address,
                 l2ChainId: l2Chain.id,
                 l2Token: btc.extensions.bridgeInfo[l2Chain.id].tokenAddress,
-                timestamp: bitcoinDeposit.status.blockTime,
+                timestamp: getBitcoinTimestamp(bitcoinDeposit.status.blockTime),
                 to: bitcoinCustodyAddress,
                 transactionHash: bitcoinDeposit.txId,
               }

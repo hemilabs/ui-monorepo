@@ -23,3 +23,16 @@ export const calculateDepositOutputIndex = (
   transactionReceipt.vout.findIndex(
     equalsBitcoinCustodyAddress(bitcoinCustodyAddress),
   )
+
+/**
+ * The Bitcoin API we're using (esplora-client) sometimes returns data with +- 1 hour of range.
+ * This means that under certain conditions, the timestamp may be visible to the user as "in X minutes",
+ * meaning the date looks like it is in the future. This function caps the timestamp to "now".
+ * If the user ever resyncs, and the timestamp appeared in the past, then we save that.
+ * See https://github.com/hemilabs/ui-monorepo/issues/692
+ */
+export const getBitcoinTimestamp = function (timestamp: number) {
+  // timestamps from btc are saved in unix format
+  const now = Math.floor(new Date().getTime() / 1000)
+  return Math.min(now, timestamp)
+}

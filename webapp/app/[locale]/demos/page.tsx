@@ -1,9 +1,12 @@
 'use client'
 
 import { PageTitle } from 'components/pageTitle'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 
 import { DemoCard } from './_components/demoCard'
+import bitcoinKitImg from './_images/bitcoin_kit_large.png'
+import bitcoinKitIcon from './_images/bitcoin_kit_small.svg'
 import cryptoChordsImg from './_images/crypto_chords_large.png'
 import cryptoChordsIcon from './_images/crypto_chords_small.svg'
 import hemiHatchlingsImg from './_images/hemi_hatchlings_large.png'
@@ -13,6 +16,7 @@ import pureFinanceIcon from './_images/pure_finance_small.svg'
 
 const Demos = function () {
   const t = useTranslations('demos')
+  const [networkType] = useNetworkType()
 
   return (
     <>
@@ -47,6 +51,17 @@ const Demos = function () {
           href="https://purefinance.hemi.xyz"
           icon={pureFinanceIcon}
           subHeading={t('purefinance.sub-heading')}
+          subHeadingColor="gray"
+        />
+        <DemoCard
+          altText="Bitcoin Kit Demo"
+          bgImage={bitcoinKitImg}
+          event="demos - bitcoinkit"
+          heading={t('bitcoin-kit.heading')}
+          headingColor="black"
+          href={`https://bitcoin-kit.hemi.xyz/code-editor?networkType=${networkType}`}
+          icon={bitcoinKitIcon}
+          subHeading={t('bitcoin-kit.sub-heading')}
           subHeadingColor="gray"
         />
       </div>

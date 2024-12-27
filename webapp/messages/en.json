@@ -213,6 +213,8 @@
       "hemi-receiving-address": "Receiving Hemi address",
       "hemi-receiving-address-description": "You will receive your tunneled {symbol} to the connected EVM wallet address.",
       "max": "max",
+      "min-deposit": "Minimum deposit is {amount} {symbol}",
+      "min-withdraw": "Minimum withdraw is {amount} {symbol}",
       "receive": "Receive",
       "send": "Send",
       "switch-to-prove": "Switch to {network} to complete transaction",

@@ -213,6 +213,8 @@
       "hemi-receiving-address": "Dirección de recepción en Hemi",
       "hemi-receiving-address-description": "Recibirá su {symbol} tunelizado en la dirección de la billetera EVM conectada.",
       "max": "max",
+      "min-deposit": "El monto mínimo para depositar es {amount} {symbol}",
+      "min-withdraw": "El monto mínimo para retirar es {amount} {symbol}",
       "receive": "Recibir",
       "send": "Enviar",
       "switch-to-prove": "Cambie a {network} para completar la transacción",

@@ -62,7 +62,7 @@
   "demos": {
     "bitcoin-kit": {
       "heading": "Demo de Kit de Hemi Bitcoin",
-      "sub-heading": "Aprenda como funciona la finalidad de Ethereum y Bitcoin"
+      "sub-heading": "Demostración de construcción en Bitcoin con Hemi utilizando el Bitcoin Kit"
     },
     "cryptochords": {
       "heading": "Crypto Chords",

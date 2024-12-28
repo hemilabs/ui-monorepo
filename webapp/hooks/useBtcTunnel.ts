@@ -41,7 +41,7 @@ export const useClaimBitcoinDeposit = function (deposit: BtcDepositOperation) {
   const {
     error: claimBitcoinDepositError,
     reset: resetClaimBitcoinDeposit,
-    mutate: claimBitcoinDeposit,
+    mutate: confirmBtcDeposit,
     data: claimBitcoinDepositTxHash,
   } = useMutation({
     mutationFn: () =>
@@ -95,11 +95,11 @@ export const useClaimBitcoinDeposit = function (deposit: BtcDepositOperation) {
     clearClaimBitcoinDepositState()
     // clear any previous transaction hash, which may come from failed attempts
     updateDeposit(deposit, { claimTransactionHash: undefined })
-    claimBitcoinDeposit()
+    confirmBtcDeposit()
   }
 
   return {
-    claimBitcoinDeposit: handleClaim,
+    confirmBtcDeposit: handleClaim,
     claimBitcoinDepositError,
     claimBitcoinDepositReceipt,
     claimBitcoinDepositReceiptError,

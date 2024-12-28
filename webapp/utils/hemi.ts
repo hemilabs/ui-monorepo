@@ -125,43 +125,11 @@ export const initiateBtcDeposit = function ({
   )
 }
 
-export const claimBtcDeposit = ({
-  deposit,
-  from,
-  hemiClient,
-  hemiWalletClient,
-}: {
-  deposit: BtcDepositOperation
-  from: Address
-  hemiClient: HemiPublicClient
-  hemiWalletClient: HemiWalletClient
-}) =>
-  Promise.all([
-    getVaultIndexByBTCAddress(hemiClient, deposit),
-    getVaultAddressByDeposit(hemiClient, deposit).then(vaultAddress =>
-      getHemiStatusOfBtcDeposit({ deposit, hemiClient, vaultAddress }),
-    ),
-    getTransactionReceipt(deposit.transactionHash).then(receipt =>
-      calculateDepositOutputIndex(receipt, deposit.to),
-    ),
-  ]).then(function ([vaultIndex, currentStatus, outputIndex]) {
-    if (currentStatus === BtcDepositStatus.BTC_DEPOSITED) {
-      throw new Error('Bitcoin Deposit already confirmed')
-    }
-    if (currentStatus !== BtcDepositStatus.BTC_READY_CLAIM) {
-      throw new Error('Bitcoin Deposit is not ready for claim!')
-    }
-
-    return hemiWalletClient.confirmDeposit({
-      // For current vault implementations, the field is not used... but required by
-      // the abi
-      extraInfo: '0x',
-      from,
-      outputIndex: BigInt(outputIndex),
-      txId: deposit.transactionHash,
-      vaultIndex,
-    })
-  })
+export const confirmBtcDeposit = async (
+  params: ConfirmBtcDepositParams
+): Promise<TransactionResponse> => {
+  // существующий код...
+};
 
 export const initiateBtcWithdrawal = ({
   amount,

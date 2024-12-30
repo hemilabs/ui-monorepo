@@ -122,8 +122,6 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
   const bitcoin = useBitcoin()
   const { balance } = useBtcBalance()
 
-  // TODO we need to let the user know about the min value to deposit
-  // See https://github.com/hemilabs/ui-monorepo/issues/454
   const canDeposit =
     canSubmit({
       balance: BigInt(balance?.confirmed ?? 0),
@@ -203,6 +201,10 @@ const BtcDeposit = function ({ state }: BtcDepositProps) {
         formContent={
           <FormContent
             isRunningOperation={isDepositing}
+            minInputMsg={t('tunnel-page.form.min-deposit', {
+              amount: minBitcoinDeposit,
+              symbol: bitcoin.nativeCurrency.symbol,
+            })}
             setMaxBalanceButton={
               <SetMaxBtcBalance
                 fromToken={fromToken}

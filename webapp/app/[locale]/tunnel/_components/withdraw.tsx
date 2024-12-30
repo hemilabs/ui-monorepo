@@ -39,7 +39,7 @@ import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 
-const MinBitcoinWithdraw = '0.005'
+const minBitcoinWithdraw = '0.01'
 
 const SetMaxEvmBalance = dynamic(
   () => import('./setMaxBalance').then(mod => mod.SetMaxEvmBalance),
@@ -153,8 +153,6 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     setIsWithdrawing(true)
   }
 
-  // TODO we need to let the user know about the min value to withdraw
-  // See https://github.com/hemilabs/ui-monorepo/issues/454
   const canWithdraw =
     canSubmit({
       balance: bitcoinBalance,
@@ -162,7 +160,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       fromInput,
       fromNetworkId,
       fromToken,
-    }) && Big(fromInput).gte(MinBitcoinWithdraw)
+    }) && Big(fromInput).gte(minBitcoinWithdraw)
 
   const gas = {
     amount: formatUnits(estimatedFees, fromChain?.nativeCurrency.decimals),
@@ -219,6 +217,10 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       formContent={
         <FormContent
           isRunningOperation={isWithdrawing}
+          minInputMsg={t('tunnel-page.form.min-withdraw', {
+            amount: minBitcoinWithdraw,
+            symbol: fromToken.symbol,
+          })}
           setMaxBalanceButton={
             <SetMaxEvmBalance
               fromToken={fromToken}

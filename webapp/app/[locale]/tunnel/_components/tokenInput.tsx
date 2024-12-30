@@ -23,6 +23,7 @@ type Props = {
   isRunningOperation: boolean
   label: string
   maxBalanceButton?: ReactNode
+  minInputMsg?: string
   onChange: (value: string) => void
   token: Token
   value: string
@@ -35,6 +36,7 @@ export const TokenInput = function ({
   isRunningOperation,
   label,
   maxBalanceButton,
+  minInputMsg,
   token,
   value,
   ...props
@@ -48,7 +50,7 @@ export const TokenInput = function ({
       p-4 font-medium text-neutral-500 hover:border-neutral-300/55"
     >
       <div className="flex h-full items-center justify-between">
-        <div className="flex flex-shrink flex-grow flex-col items-start">
+        <div className="flex h-full flex-shrink flex-grow flex-col items-start">
           <span className="text-sm">{label}</span>
           <input
             className={`
@@ -61,6 +63,11 @@ export const TokenInput = function ({
             type="text"
             value={value}
           />
+          {!!minInputMsg && (
+            <span className="mt-auto text-sm font-medium text-neutral-500">
+              {minInputMsg}
+            </span>
+          )}
         </div>
         <div className="flex h-full flex-col items-end justify-end gap-y-3 text-sm">
           {readOnly ? (

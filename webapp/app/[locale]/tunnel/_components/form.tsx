@@ -26,17 +26,19 @@ const TransactionStatus = dynamic(
 )
 
 type FormContentProps = {
+  isRunningOperation: boolean
+  minInputMsg?: string
   setMaxBalanceButton: ReactNode
   tokenApproval?: ReactNode
   tunnelState: ReturnType<typeof useTunnelState>
-  isRunningOperation: boolean
 }
 
 export const FormContent = function ({
+  isRunningOperation,
+  minInputMsg,
   setMaxBalanceButton,
   tokenApproval,
   tunnelState,
-  isRunningOperation,
 }: FormContentProps) {
   const {
     fromNetworkId,
@@ -85,6 +87,7 @@ export const FormContent = function ({
         isRunningOperation={isRunningOperation}
         label={t('form.send')}
         maxBalanceButton={setMaxBalanceButton}
+        minInputMsg={minInputMsg}
         onChange={updateFromInput}
         onSelectToken={updateFromToken}
         token={fromToken}

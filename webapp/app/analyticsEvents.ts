@@ -4,8 +4,9 @@ import { umamiAnalyticsContextFactory } from 'umami-analytics-next'
 // all analytic events
 export const analyticsEvents = [
   // /demos
-  'demos - hatchlings',
+  'demos - bitcoinkit',
   'demos - cryptochords',
+  'demos - hatchlings',
   'demos - pure finance',
   // header
   'header - tunnel',

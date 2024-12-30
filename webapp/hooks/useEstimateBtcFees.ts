@@ -13,7 +13,7 @@ export const useGetFeePrices = function () {
   const [networkType] = useNetworkType()
   const { data: feePrices, ...rest } = useQuery({
     queryFn: () => createBtcApi(networkType).getRecommendedFees(),
-    queryKey: ['btc-recommended-fees'],
+    queryKey: ['btc-recommended-fees', networkType],
     // refetch every minute
     refetchInterval: 1000 * 60,
   })

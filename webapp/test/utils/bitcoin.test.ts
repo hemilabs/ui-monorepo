@@ -9,11 +9,11 @@ describe('utils/bitcoin', function () {
 
       const utxos = [
         // amount sent to the custody address
-        { value: 10000, scriptpubkeyAddress: bitcoinCustodyAddress },
+        { scriptpubkeyAddress: bitcoinCustodyAddress, value: 10000 },
         // OP_RETURN
         { value: 0 },
         // change
-        { value: 300000, scriptpubkeyAddress: userAddress },
+        { scriptpubkeyAddress: userAddress, value: 300000 },
       ]
 
       expect(calculateDepositAmount(utxos, bitcoinCustodyAddress)).toBe(10000)

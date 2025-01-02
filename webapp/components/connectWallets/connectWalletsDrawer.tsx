@@ -4,17 +4,13 @@ import {
   useConnectModal,
 } from '@rainbow-me/rainbowkit'
 import { featureFlags } from 'app/featureFlags'
-import { Drawer, DrawerTitle } from 'components/drawer'
+import { Drawer, DrawerParagraph, DrawerTitle } from 'components/drawer'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { CloseIcon } from 'ui-common/components/closeIcon'
 
 import { BtcWallet, EvmWallet } from './wallets'
-
-const P = ({ text }: { text: string }) => (
-  <p className="text-sm font-medium text-neutral-500">{text}</p>
-)
 
 type Props = {
   closeDrawer: () => void
@@ -53,7 +49,9 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
             </button>
           </div>
           {featureFlags.btcTunnelEnabled ? (
-            <P text={t('connect-wallets.description')} />
+            <DrawerParagraph>
+              {t('connect-wallets.description')}
+            </DrawerParagraph>
           ) : (
             // Prevent layout shift when text is not shown
             <div className="invisible min-w-[400px]"></div>
@@ -64,7 +62,9 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
           {featureFlags.btcTunnelEnabled && (
             <>
               <BtcWallet />
-              <P text={t('connect-wallets.btc-wallet-requirement')} />
+              <DrawerParagraph>
+                {t('connect-wallets.btc-wallet-requirement')}
+              </DrawerParagraph>
             </>
           )}
         </div>

@@ -1,5 +1,6 @@
 'use client'
 
+import { DrawerParagraph } from 'components/drawer'
 import { SearchInput } from 'components/inputText'
 import { ShortVerticalLine } from 'components/verticalLines'
 import { useChain } from 'hooks/useChain'
@@ -49,9 +50,7 @@ export const TokenSection = function ({
 
   return (
     <>
-      <p className="text-sm font-medium text-neutral-500">
-        {t('layer-token-address', { layer })}
-      </p>
+      <DrawerParagraph>{t('layer-token-address', { layer })}</DrawerParagraph>
       <div>
         <div className="left-2.25 relative top-0.5">
           <ShortVerticalLine stroke="stroke-neutral-300/55" />

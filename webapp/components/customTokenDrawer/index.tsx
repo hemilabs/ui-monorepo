@@ -2,7 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from 'components/button'
-import { Drawer } from 'components/drawer'
+import { Drawer, DrawerTitle } from 'components/drawer'
 import { useChain } from 'hooks/useChain'
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useL2Token } from 'hooks/useL2Token'
@@ -172,9 +172,7 @@ export const CustomTokenDrawer = function ({
         onSubmit={handleSubmit}
       >
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-medium text-neutral-950">
-            {t('heading')}
-          </h2>
+          <DrawerTitle>{t('heading')}</DrawerTitle>
           <button
             className="cursor-pointer"
             onClick={closeDrawer}

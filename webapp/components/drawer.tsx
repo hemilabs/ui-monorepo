@@ -38,3 +38,7 @@ export const Drawer = function ({ children, onClose }: Props) {
     document.getElementById('app-layout-container'),
   )
 }
+
+export const DrawerTitle = ({ children }: { children: string }) => (
+  <h2 className="text-2xl font-medium text-neutral-950">{children}</h2>
+)

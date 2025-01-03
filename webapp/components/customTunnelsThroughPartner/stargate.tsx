@@ -18,7 +18,7 @@ export const Stargate = function () {
         />
       }
       text={t('tunnel-with-stargate')}
-      // URL is TBD, see https://github.com/hemilabs/ui-monorepo/issues/719
+      // TODO URL is TBD, see https://github.com/hemilabs/ui-monorepo/issues/719
       url="https://stargate.finance"
     />
   )

@@ -2,7 +2,7 @@ import { bitcoinTestnet } from 'btc-wallet/chains'
 import { hemiSepolia } from 'hemi-viem'
 import { publicClientToHemiClient } from 'hooks/useHemiClient'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
-import { getTransactionReceipt } from 'utils/btcApi'
+import { createBtcApi } from 'utils/btcApi'
 import { getHemiStatusOfBtcDeposit, getVaultAddressByDeposit } from 'utils/hemi'
 import {
   watchDepositOnBitcoin,
@@ -27,9 +27,14 @@ vi.mock('hooks/useHemiClient', () => ({
   publicClientToHemiClient: vi.fn(),
 }))
 
-vi.mock('utils/btcApi', () => ({
-  getTransactionReceipt: vi.fn(),
-}))
+// mock createBtcApi but keep the original mapBitcoinNetwork
+vi.mock(import('utils/btcApi'), async function (importOriginal) {
+  const btcApi = await importOriginal()
+  return {
+    ...btcApi,
+    createBtcApi: vi.fn(),
+  }
+})
 
 vi.mock('utils/hemi', () => ({
   getHemiStatusOfBtcDeposit: vi.fn(),
@@ -43,9 +48,10 @@ describe('utils/watch/bitcoinDeposits', function () {
 
   describe('watchDepositOnBitcoin', function () {
     it('should not return changes if the receipt show it is still not confirmed', async function () {
-      vi.mocked(getTransactionReceipt).mockResolvedValue({
+      const getTransactionReceipt = vi.fn().mockResolvedValue({
         status: { confirmed: false },
       })
+      vi.mocked(createBtcApi).mockReturnValue({ getTransactionReceipt })
 
       const updates = await watchDepositOnBitcoin(deposit)
 
@@ -59,9 +65,10 @@ describe('utils/watch/bitcoinDeposits', function () {
     it('should return the new status, timestamp and block height if the receipt shows confirmation', async function () {
       const blockHeight = 123
       const blockTime = 456
-      vi.mocked(getTransactionReceipt).mockResolvedValue({
+      const getTransactionReceipt = vi.fn().mockResolvedValue({
         status: { blockHeight, blockTime, confirmed: true },
       })
+      vi.mocked(createBtcApi).mockReturnValue({ getTransactionReceipt })
 
       const updates = await watchDepositOnBitcoin(deposit)
 

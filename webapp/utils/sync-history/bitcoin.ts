@@ -10,8 +10,9 @@ import pAll from 'p-all'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { calculateDepositAmount, getBitcoinTimestamp } from 'utils/bitcoin'
 import {
-  getAddressTransactions,
-  MempoolJsBitcoinTransaction,
+  createBtcApi,
+  mapBitcoinNetwork,
+  type MempoolJsBitcoinTransaction,
 } from 'utils/btcApi'
 import {
   getBitcoinCustodyAddress,
@@ -101,10 +102,12 @@ export const createBitcoinSync = function ({
       const formattedTxId = afterTxId ?? 'last available transaction'
       debug('Getting transactions batch starting from %s', formattedTxId)
 
-      const transactions = await getAddressTransactions(
-        bitcoinCustodyAddress,
-        afterTxId ? { afterTxId } : undefined,
-      ).then(discardKnownTransactions(localDepositSyncInfo.toKnownTx))
+      const transactions = await createBtcApi(mapBitcoinNetwork(l1Chain.id))
+        .getAddressTransactions(
+          bitcoinCustodyAddress,
+          afterTxId ? { afterTxId } : undefined,
+        )
+        .then(discardKnownTransactions(localDepositSyncInfo.toKnownTx))
 
       debug(
         'Found %s transactions starting from %s',

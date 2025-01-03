@@ -3,7 +3,7 @@ import { publicClientToHemiClient } from 'hooks/useHemiClient'
 import pMemoize from 'promise-mem'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { getBitcoinTimestamp } from 'utils/bitcoin'
-import { getTransactionReceipt } from 'utils/btcApi'
+import { createBtcApi, mapBitcoinNetwork } from 'utils/btcApi'
 import { findChainById } from 'utils/chain'
 import { getHemiStatusOfBtcDeposit, getVaultAddressByDeposit } from 'utils/hemi'
 import { hasKeys } from 'utils/utilities'
@@ -15,7 +15,9 @@ export const watchDepositOnBitcoin = async function (
   deposit: BtcDepositOperation,
 ) {
   debug('Watching deposit %s', deposit.transactionHash)
-  const receipt = await getTransactionReceipt(deposit.transactionHash)
+  const receipt = await createBtcApi(
+    mapBitcoinNetwork(deposit.l1ChainId),
+  ).getTransactionReceipt(deposit.transactionHash)
   if (!receipt) {
     debug('Receipt not found for deposit %s', deposit.transactionHash)
     return {}

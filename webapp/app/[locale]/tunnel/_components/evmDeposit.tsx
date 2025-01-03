@@ -2,6 +2,10 @@
 
 import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
+import {
+  CustomTunnelsThroughPartner,
+  tunnelsThroughPartner,
+} from 'components/customTunnelsThroughPartner'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -85,6 +89,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   // use this state to toggle the Erc20 token approval
   const [extendedErc20Approval, setExtendedErc20Approval] = useState(false)
+  const [isPartnersDrawerOpen, setIsPartnersDrawerOpen] = useState(false)
 
   const t = useTranslations()
   const { track } = useUmami()
@@ -242,73 +247,97 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     symbol: fromChain?.nativeCurrency.symbol,
   }
 
-  return (
-    <TunnelForm
-      belowForm={
-        canDeposit ? (
-          <EvmSummary
-            gas={gas}
-            operationSymbol={fromToken.symbol}
-            total={totalDeposit}
-          />
-        ) : null
-      }
-      formContent={
-        <FormContent
+  const getSubmitButton = function () {
+    if (tunnelsThroughPartner(fromToken)) {
+      return (
+        <Button onClick={() => setIsPartnersDrawerOpen(true)} type="button">
+          {t('tunnel-page.tunnel-partners.tunnel-with-our-partners')}
+        </Button>
+      )
+    }
+    if (walletIsConnected(status)) {
+      return (
+        <SubmitEvmDeposit
+          canDeposit={canDeposit}
           isRunningOperation={isRunningOperation}
-          setMaxBalanceButton={
-            <SetMaxEvmBalance
-              fromToken={fromToken}
-              gas={depositGasFees}
-              isRunningOperation={isRunningOperation}
-              onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
-            />
-          }
-          tokenApproval={
-            operatesNativeToken ? null : (
-              <Erc20TokenApproval
-                checked={extendedErc20Approval}
-                disabled={!needsApproval || isRunningOperation}
-                onCheckedChange={() => setExtendedErc20Approval(prev => !prev)}
-              />
-            )
-          }
-          tunnelState={{
-            ...state,
-            // patch these events to update the extendedErc20Approval state
-            toggleInput() {
-              // toToken becomes fromToken, so we must check that one
-              if (isNativeToken(state.toToken)) {
-                setExtendedErc20Approval(false)
-              }
-              state.toggleInput()
-            },
-            updateFromNetwork(payload: number) {
-              setExtendedErc20Approval(false)
-              state.updateFromNetwork(payload)
-            },
-            updateFromToken(from, to) {
-              if (isNativeToken(from)) {
-                setExtendedErc20Approval(false)
-              }
-              state.updateFromToken(from, to)
-            },
-          }}
+          needsApproval={needsApproval}
+          operationRunning={operationRunning}
         />
-      }
-      onSubmit={handleDeposit}
-      submitButton={
-        walletIsConnected(status) ? (
-          <SubmitEvmDeposit
-            canDeposit={canDeposit}
+      )
+    }
+    return <ConnectEvmWallet />
+  }
+
+  return (
+    <>
+      <TunnelForm
+        belowForm={
+          canDeposit ? (
+            <EvmSummary
+              gas={gas}
+              operationSymbol={fromToken.symbol}
+              total={totalDeposit}
+            />
+          ) : null
+        }
+        formContent={
+          <FormContent
             isRunningOperation={isRunningOperation}
-            needsApproval={needsApproval}
-            operationRunning={operationRunning}
+            setMaxBalanceButton={
+              <SetMaxEvmBalance
+                fromToken={fromToken}
+                gas={depositGasFees}
+                isRunningOperation={isRunningOperation}
+                onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+              />
+            }
+            tokenApproval={
+              operatesNativeToken ? null : (
+                <Erc20TokenApproval
+                  checked={extendedErc20Approval}
+                  disabled={!needsApproval || isRunningOperation}
+                  onCheckedChange={() =>
+                    setExtendedErc20Approval(prev => !prev)
+                  }
+                />
+              )
+            }
+            tunnelState={{
+              ...state,
+              // patch these events to update the extendedErc20Approval state
+              toggleInput() {
+                // toToken becomes fromToken, so we must check that one
+                if (isNativeToken(state.toToken)) {
+                  setExtendedErc20Approval(false)
+                }
+                state.toggleInput()
+              },
+              updateFromNetwork(payload: number) {
+                setExtendedErc20Approval(false)
+                state.updateFromNetwork(payload)
+              },
+              updateFromToken(from, to) {
+                if (isNativeToken(from)) {
+                  setExtendedErc20Approval(false)
+                }
+                if (tunnelsThroughPartner(from)) {
+                  setIsPartnersDrawerOpen(true)
+                }
+                state.updateFromToken(from, to)
+              },
+            }}
           />
-        ) : (
-          <ConnectEvmWallet />
-        )
-      }
-    />
+        }
+        onSubmit={handleDeposit}
+        submitButton={getSubmitButton()}
+      />
+      {isPartnersDrawerOpen && (
+        <CustomTunnelsThroughPartner
+          onClose={() => setIsPartnersDrawerOpen(false)}
+          operation="deposit"
+          token={fromToken}
+        />
+      )}
+    </>
   )
 }

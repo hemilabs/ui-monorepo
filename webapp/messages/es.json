@@ -313,6 +313,19 @@
       "withdrawal-proved": "Retiro probado",
       "withdrawing": "Retirando {fromInput} {symbol}",
       "withdrawn": "{fromInput} {symbol} retirado"
+    },
+    "tunnel-partners": {
+      "deposit": {
+        "heading": "Depositar {symbol}",
+        "subheading": "Para depositar {symbol}, será redirigido a uno de nuestros puentes asociados de confianza. Elija un puente a continuación para continuar."
+      },
+      "description": "Una vez seleccionado, será redirigido para completar su depósito. Para asistencia, <contact>contáctenos</contact>.",
+      "tunnel-with-our-partners": "Tunelizar con nuestros socios",
+      "tunnel-with-stargate": "Tunelizar con nuestro socio Stargate",
+      "withdraw": {
+        "heading": "Retirar {symbol}",
+        "subheading": "Para retirar {symbol}, será redirigido a uno de nuestros puentes asociados de confianza. Elija un puente a continuación para continuar."
+      }
     }
   }
 }

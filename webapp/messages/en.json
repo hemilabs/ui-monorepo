@@ -313,6 +313,19 @@
       "withdrawal-proved": "Withdrawal proved",
       "withdrawing": "Withdrawing {fromInput} {symbol}",
       "withdrawn": "{fromInput} {symbol} withdrawn"
+    },
+    "tunnel-partners": {
+      "deposit": {
+        "heading": "Deposit {symbol}",
+        "subheading": "To deposit {symbol}, you’ll be redirected to one of our trusted partner bridges. Choose a bridge below to continue."
+      },
+      "description": "Once selected, you’ll be redirected to complete your deposit. For assistance, <contact>contact us</contact>.",
+      "tunnel-with-our-partners": "Tunnel with our partners",
+      "tunnel-with-stargate": "Tunnel with our partner Stargate",
+      "withdraw": {
+        "heading": "Withdraw {symbol}",
+        "subheading": "To withdraw {symbol}, you’ll be redirected to one of our trusted partner bridges. Choose a bridge below to continue."
+      }
     }
   }
 }

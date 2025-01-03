@@ -2,7 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from 'components/button'
-import { Drawer, DrawerTitle } from 'components/drawer'
+import { Drawer, DrawerParagraph, DrawerTitle } from 'components/drawer'
 import { useChain } from 'hooks/useChain'
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useL2Token } from 'hooks/useL2Token'
@@ -181,9 +181,7 @@ export const CustomTokenDrawer = function ({
             <CloseIcon className="[&>path]:hover:stroke-black" />
           </button>
         </div>
-        <p className="text-sm font-medium text-neutral-500">
-          {t('subheading')}
-        </p>
+        <DrawerParagraph>{t('subheading')}</DrawerParagraph>
         <TokenSection
           addressDisabled
           addressValidity={getL1AddressValidity(l1CustomToken)}

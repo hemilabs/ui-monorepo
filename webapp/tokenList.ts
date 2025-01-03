@@ -48,6 +48,7 @@ const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
   .filter(t => t.chainId === hemiMainnet.id || t.chainId === hemiTestnet.id)
   // WETH cannot be tunneled, so we must exclude it
   .filter(t => t.symbol !== 'WETH')
+  .map(t => ({ ...t, symbol: t.symbol.replace('.e', '').trim() }))
 
 // the hemiTokens only contains definitions for Hemi tokens, but we can create the L1 version with the extensions field info
 const tokens: Token[] = hemiTokens.concat(hemiTokens.flatMap(getRemoteTokens))

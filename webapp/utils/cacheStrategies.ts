@@ -1,6 +1,6 @@
 // This strategy is used to cache some of the requests done by the OP sdk
 // when fetching data for withdrawals
-import { Hash, keccak256, isHash, toHex } from 'viem'
+import { Hash, keccak256, isHex, toHex } from 'viem'
 
 type RpcCallParam = {
   data: Hash
@@ -9,7 +9,7 @@ type RpcCallParam = {
 
 const isWithdrawalEthCall = function (obj: unknown): obj is RpcCallParam {
   const casted = obj as RpcCallParam
-  return casted !== undefined && isHash(casted.data)
+  return casted !== undefined && isHex(casted.data)
 }
 
 const getSignature = (method: string) => keccak256(toHex(method)).slice(0, 10)

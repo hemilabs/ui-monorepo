@@ -39,6 +39,10 @@ export const Drawer = function ({ children, onClose }: Props) {
   )
 }
 
+export const DrawerParagraph = ({ children }: { children: string }) => (
+  <p className="text-sm font-medium text-neutral-500">{children}</p>
+)
+
 export const DrawerTitle = ({ children }: { children: string }) => (
   <h2 className="text-2xl font-medium text-neutral-950">{children}</h2>
 )

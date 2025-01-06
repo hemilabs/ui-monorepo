@@ -1,5 +1,9 @@
 import { Big } from 'big.js'
 import { Button } from 'components/button'
+import {
+  CustomTunnelsThroughPartner,
+  tunnelsThroughPartner,
+} from 'components/customTunnelsThroughPartner'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
@@ -254,6 +258,7 @@ type EvmWithdrawProps = {
 
 const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   const [isWithdrawing, setIsWithdrawing] = useState(false)
+  const [isPartnersDrawerOpen, setIsPartnersDrawerOpen] = useState(false)
 
   const t = useTranslations()
 
@@ -345,6 +350,30 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     symbol: fromChain?.nativeCurrency.symbol,
   }
 
+  const getSubmitButton = function () {
+    if (tunnelsThroughPartner(fromToken)) {
+      return (
+        <Button onClick={() => setIsPartnersDrawerOpen(true)} type="button">
+          {t('tunnel-page.tunnel-partners.tunnel-with-our-partners')}
+        </Button>
+      )
+    }
+
+    if (walletIsConnected(status)) {
+      return (
+        <Button disabled={!canWithdraw || isWithdrawing} type="submit">
+          {t(
+            `tunnel-page.submit-button.${
+              isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'
+            }`,
+          )}
+        </Button>
+      )
+    }
+
+    return <ConnectEvmWallet />
+  }
+
   return (
     <>
       <TunnelForm
@@ -368,24 +397,27 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
                 onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
               />
             }
-            tunnelState={state}
+            tunnelState={{
+              ...state,
+              updateFromToken(from, to) {
+                if (tunnelsThroughPartner(from)) {
+                  setIsPartnersDrawerOpen(true)
+                }
+                state.updateFromToken(from, to)
+              },
+            }}
           />
         }
         onSubmit={handleWithdraw}
-        submitButton={
-          walletIsConnected(status) ? (
-            <Button disabled={!canWithdraw || isWithdrawing} type="submit">
-              {t(
-                `tunnel-page.submit-button.${
-                  isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'
-                }`,
-              )}
-            </Button>
-          ) : (
-            <ConnectEvmWallet />
-          )
-        }
+        submitButton={getSubmitButton()}
       />
+      {isPartnersDrawerOpen && (
+        <CustomTunnelsThroughPartner
+          onClose={() => setIsPartnersDrawerOpen(false)}
+          operation="withdraw"
+          token={fromToken}
+        />
+      )}
     </>
   )
 }

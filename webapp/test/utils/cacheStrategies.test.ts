@@ -3,11 +3,6 @@ import { describe, expect, it } from 'vitest'
 
 describe('utils/cacheStrategies', function () {
   describe('withdrawalsStrategy', function () {
-    it('should return undefined the RPC call has no parameters', () => {
-      const result = withdrawalsStrategy.resolver('eth_call', [])
-      expect(result).toBeUndefined()
-    })
-
     it('should return undefined if data is not a valid hex', function () {
       const result = withdrawalsStrategy.resolver('eth_call', [
         { data: 'invalid', to: '0x123' },

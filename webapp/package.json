@@ -26,6 +26,7 @@
     "crypto-shortener": "1.1.0",
     "debug": "4.3.7",
     "esplora-client": "1.2.0",
+    "eth-rpc-cache": "2.0.0",
     "hemi-socials": "1.0.0",
     "hemi-viem": "2.0.0-alpha.1",
     "javascript-time-ago": "2.5.10",
@@ -53,6 +54,7 @@
     "wagmi-erc20-hooks": "1.0.0"
   },
   "devDependencies": {
+    "@ethersproject/providers": "5.7.2",
     "@types/big.js": "6.2.2",
     "@types/lodash": "4.17.13",
     "@types/node": "20.12.12",

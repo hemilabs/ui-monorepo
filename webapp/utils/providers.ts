@@ -1,7 +1,31 @@
+import {
+  type JsonRpcProvider,
+  type Web3Provider,
+} from '@ethersproject/providers'
+import {
+  createEthRpcCache,
+  perBlockStrategy,
+  permanentStrategy,
+} from 'eth-rpc-cache'
 import { providers } from 'ethers'
-import { cacheProvider } from 'ui-common/utils/cache'
 import { withdrawalsStrategy } from 'utils/cacheStrategies'
 import { type Account, type Chain, type HttpTransport } from 'viem'
+
+const cacheProvider = function <T extends JsonRpcProvider | Web3Provider>(
+  provider: T,
+  strategies: (typeof permanentStrategy)[] = [],
+) {
+  const cached = createEthRpcCache(
+    (method, params) => provider.send(method, params),
+    { strategies: [perBlockStrategy, permanentStrategy, ...strategies] },
+  )
+  const newProvider: T = {
+    ...provider,
+    send: (method, params) => cached(method, params),
+  }
+  Object.setPrototypeOf(newProvider, Object.getPrototypeOf(provider))
+  return newProvider
+}
 
 const toNetwork = (chain: Chain) => ({
   chainId: chain.id,

@@ -54,8 +54,8 @@ export const useConfirmBitcoinDeposit = function (
         hemiWalletClient,
       }),
     mutationKey: [hemiClient, hemiWalletClient],
-    onSuccess: claimTransactionHash =>
-      updateDeposit(deposit, { claimTransactionHash }),
+    onSuccess: confirmationTransactionHash =>
+      updateDeposit(deposit, { confirmationTransactionHash }),
   })
 
   const {
@@ -83,7 +83,8 @@ export const useConfirmBitcoinDeposit = function (
         return
       }
       updateDeposit(deposit, {
-        claimTransactionHash: confirmBitcoinDepositReceipt.transactionHash,
+        confirmationTransactionHash:
+          confirmBitcoinDepositReceipt.transactionHash,
         status: BtcDepositStatus.BTC_DEPOSITED,
       })
     },
@@ -96,7 +97,7 @@ export const useConfirmBitcoinDeposit = function (
     }
     clearConfirmBitcoinDepositState()
     // clear any previous transaction hash, which may come from failed attempts
-    updateDeposit(deposit, { claimTransactionHash: undefined })
+    updateDeposit(deposit, { confirmationTransactionHash: undefined })
     confirmBitcoinDeposit()
   }
 

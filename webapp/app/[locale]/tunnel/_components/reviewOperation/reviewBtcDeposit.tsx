@@ -115,7 +115,7 @@ const ReviewContent = function ({
         }
       : undefined,
     status: getClaimStatus(),
-    txHash: deposit.claimTransactionHash,
+    txHash: deposit.confirmationTransactionHash,
   })
 
   steps.push(getDepositStep())

@@ -14,7 +14,7 @@ import {
   BtcToEvmDepositContext,
   BtcToEvmDepositProvider,
 } from '../../_context/btcToEvmContext'
-import { ClaimBtcDeposit } from '../claimBtcDeposit'
+import { ConfirmBtcDeposit } from '../confirmBtcDeposit'
 import { RetryBtcDeposit } from '../retryBtcDeposit'
 
 import { Operation } from './operation'
@@ -26,7 +26,7 @@ const getCallToAction = function (deposit: BtcDepositOperation) {
     case BtcDepositStatus.DEPOSIT_TX_FAILED:
       return <RetryBtcDeposit deposit={deposit} />
     case BtcDepositStatus.BTC_READY_CLAIM:
-      return <ClaimBtcDeposit deposit={deposit} />
+      return <ConfirmBtcDeposit deposit={deposit} />
     default:
       return null
   }

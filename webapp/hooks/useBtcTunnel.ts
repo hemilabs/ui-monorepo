@@ -13,7 +13,7 @@ import {
 import { getBitcoinTimestamp } from 'utils/bitcoin'
 import { getEvmBlock } from 'utils/evmApi'
 import {
-  claimBtcDeposit,
+  confirmBtcDeposit,
   initiateBtcDeposit,
   initiateBtcWithdrawal,
 } from 'utils/hemi'
@@ -31,7 +31,9 @@ import { useHemiClient, useHemiWalletClient } from './useHemiClient'
 import { useTunnelHistory } from './useTunnelHistory'
 import { useWaitForTransactionReceipt as useWaitForBtcTransactionReceipt } from './useWaitForTransactionReceipt'
 
-export const useClaimBitcoinDeposit = function (deposit: BtcDepositOperation) {
+export const useConfirmBitcoinDeposit = function (
+  deposit: BtcDepositOperation,
+) {
   const { address } = useEvmAccount()
   const hemiClient = useHemiClient()
   const queryClient = useQueryClient()
@@ -39,13 +41,13 @@ export const useClaimBitcoinDeposit = function (deposit: BtcDepositOperation) {
   const { updateDeposit } = useTunnelHistory()
 
   const {
-    error: claimBitcoinDepositError,
-    reset: resetClaimBitcoinDeposit,
-    mutate: claimBitcoinDeposit,
-    data: claimBitcoinDepositTxHash,
+    error: confirmBitcoinDepositError,
+    reset: resetConfirmBitcoinDeposit,
+    mutate: confirmBitcoinDeposit,
+    data: confirmBitcoinDepositTxHash,
   } = useMutation({
     mutationFn: () =>
-      claimBtcDeposit({
+      confirmBtcDeposit({
         deposit,
         from: address,
         hemiClient,
@@ -57,54 +59,54 @@ export const useClaimBitcoinDeposit = function (deposit: BtcDepositOperation) {
   })
 
   const {
-    data: claimBitcoinDepositReceipt,
-    error: claimBitcoinDepositReceiptError,
-    queryKey: claimBitcoinDepositQueryKey,
-  } = useWaitForEvmTransactionReceipt({ hash: claimBitcoinDepositTxHash })
+    data: confirmBitcoinDepositReceipt,
+    error: confirmBitcoinDepositReceiptError,
+    queryKey: confirmBitcoinDepositQueryKey,
+  } = useWaitForEvmTransactionReceipt({ hash: confirmBitcoinDepositTxHash })
 
-  const clearClaimBitcoinDepositState = useCallback(
+  const clearConfirmBitcoinDepositState = useCallback(
     function () {
       // reset the claiming state
-      resetClaimBitcoinDeposit()
+      resetConfirmBitcoinDeposit()
       // clear deposit receipt state
-      queryClient.invalidateQueries({ queryKey: claimBitcoinDepositQueryKey })
+      queryClient.invalidateQueries({ queryKey: confirmBitcoinDepositQueryKey })
     },
-    [claimBitcoinDepositQueryKey, queryClient, resetClaimBitcoinDeposit],
+    [confirmBitcoinDepositQueryKey, queryClient, resetConfirmBitcoinDeposit],
   )
 
   useEffect(
     function handleClaimSuccess() {
-      if (claimBitcoinDepositReceipt?.status !== 'success') {
+      if (confirmBitcoinDepositReceipt?.status !== 'success') {
         return
       }
       if (deposit.status !== BtcDepositStatus.BTC_READY_CLAIM) {
         return
       }
       updateDeposit(deposit, {
-        claimTransactionHash: claimBitcoinDepositReceipt.transactionHash,
+        claimTransactionHash: confirmBitcoinDepositReceipt.transactionHash,
         status: BtcDepositStatus.BTC_DEPOSITED,
       })
     },
-    [claimBitcoinDepositReceipt, deposit, updateDeposit],
+    [confirmBitcoinDepositReceipt, deposit, updateDeposit],
   )
 
   const handleClaim = function () {
     if (deposit.status !== BtcDepositStatus.BTC_READY_CLAIM) {
       return
     }
-    clearClaimBitcoinDepositState()
+    clearConfirmBitcoinDepositState()
     // clear any previous transaction hash, which may come from failed attempts
     updateDeposit(deposit, { claimTransactionHash: undefined })
-    claimBitcoinDeposit()
+    confirmBitcoinDeposit()
   }
 
   return {
-    claimBitcoinDeposit: handleClaim,
-    claimBitcoinDepositError,
-    claimBitcoinDepositReceipt,
-    claimBitcoinDepositReceiptError,
-    claimBitcoinDepositTxHash,
-    clearClaimBitcoinDepositState,
+    clearConfirmBitcoinDepositState,
+    confirmBitcoinDeposit: handleClaim,
+    confirmBitcoinDepositError,
+    confirmBitcoinDepositReceipt,
+    confirmBitcoinDepositReceiptError,
+    confirmBitcoinDepositTxHash,
   }
 }
 

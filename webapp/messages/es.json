@@ -319,9 +319,11 @@
         "heading": "Depositar {symbol}",
         "subheading": "Para depositar {symbol}, será redirigido a uno de nuestros puentes asociados de confianza. Elija un puente a continuación para continuar."
       },
-      "description": "Una vez seleccionado, será redirigido para completar su depósito. Para asistencia, <contact>contáctenos</contact>.",
+      "description": "Una vez seleccionado, será redirigido para completar su depósito. Para asistencia, contacte directamente al puente asociado.",
+      "hemi-bears-no-responsibility": "Hemi no se responsabiliza por su operación.",
       "tunnel-with-our-partners": "Tunelizar con nuestros socios",
       "tunnel-with-stargate": "Tunelizar con nuestro socio Stargate",
+      "use-at-your-own-risk": "Use los puentes de socios bajo su propio riesgo",
       "withdraw": {
         "heading": "Retirar {symbol}",
         "subheading": "Para retirar {symbol}, será redirigido a uno de nuestros puentes asociados de confianza. Elija un puente a continuación para continuar."

@@ -1,6 +1,5 @@
 import { Drawer, DrawerParagraph, DrawerTitle } from 'components/drawer'
-import { ExternalLink } from 'components/externalLink'
-import hemiSocials from 'hemi-socials'
+import { WarningBox } from 'components/warningBox'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { mainnet } from 'networks/mainnet'
 import { useTranslations } from 'next-intl'
@@ -41,22 +40,19 @@ export const CustomTunnelsThroughPartner = function ({
             <CloseIcon className="[&>path]:hover:stroke-black" />
           </button>
         </div>
-        <DrawerParagraph>
-          {t(`${operation}.subheading`, { symbol: token.symbol })}
-        </DrawerParagraph>
+        <div className="mb-3">
+          <DrawerParagraph>
+            {t(`${operation}.subheading`, { symbol: token.symbol })}
+          </DrawerParagraph>
+        </div>
         <Stargate />
-        <p className="text-sm font-medium text-zinc-500">
-          {t.rich('description', {
-            contact: (chunk: string) => (
-              <ExternalLink
-                className="text-orange-500 hover:text-orange-700"
-                href={hemiSocials.discordUrl}
-              >
-                {chunk}
-              </ExternalLink>
-            ),
-          })}
+        <p className="mb-3 text-sm font-medium text-zinc-500">
+          {t('description')}
         </p>
+        <WarningBox
+          heading={t('use-at-your-own-risk')}
+          subheading={t('hemi-bears-no-responsibility')}
+        />
       </div>
     </Drawer>
   )

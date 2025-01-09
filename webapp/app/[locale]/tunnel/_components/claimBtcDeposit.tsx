@@ -1,5 +1,5 @@
 import { Button } from 'components/button'
-import { WarningIcon } from 'components/icons/warningIcon'
+import { WarningBox } from 'components/warningBox'
 import { useClaimBitcoinDeposit } from 'hooks/useBtcTunnel'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useContext, useEffect } from 'react'
@@ -81,17 +81,12 @@ export const ClaimBtcDeposit = function ({ deposit }: Props) {
 
   return (
     <div className="flex h-full flex-col justify-between">
-      <div className="flex flex-col gap-y-1 rounded-lg bg-neutral-50 p-4 text-sm font-medium">
-        <div className="flex items-center gap-x-1">
-          <WarningIcon />
-          <p className="text-neutral-900">
-            {t('tunnel-page.review-deposit.we-could-not-process-this-deposit')}
-          </p>
-        </div>
-        <p className="text-neutral-500">
-          {t('tunnel-page.review-deposit.click-to-claim')}
-        </p>
-      </div>
+      <WarningBox
+        heading={t(
+          'tunnel-page.review-deposit.we-could-not-process-this-deposit',
+        )}
+        subheading={t('tunnel-page.review-deposit.click-to-claim')}
+      />
       <DrawerCallToAction
         expectedChainId={deposit.l2ChainId}
         onSubmit={handleClaim}

@@ -8,8 +8,14 @@ import { defineChain } from 'viem/utils'
 export const findChainById = (chainId: RemoteChain['id']) =>
   allNetworks.find(n => n.id === chainId)
 
+export const isBtcNetworkId = (chainId: RemoteChain['id']) =>
+  typeof chainId === 'string'
+
+export const isEvmNetworkId = (chainId: RemoteChain['id']) =>
+  typeof chainId === 'number'
+
 export const isEvmNetwork = (chain: RemoteChain): chain is EvmChain =>
-  typeof chain.id === 'number'
+  isEvmNetworkId(chain.id)
 
 export const isL2NetworkId = (chainId: number) =>
   [hemiMainnet.id, hemiTestnet.id].includes(chainId)

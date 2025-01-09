@@ -1,6 +1,8 @@
+import { featureFlags } from 'app/featureFlags'
 import { useAccounts } from 'hooks/useAccounts'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
-import { RemoteChain } from 'types/chain'
+import { type RemoteChain } from 'types/chain'
+import { isBtcNetworkId } from 'utils/chain'
 
 export const useToastIfNotConnectedTo = function (
   expectedChainId: RemoteChain['id'],
@@ -10,9 +12,13 @@ export const useToastIfNotConnectedTo = function (
   const isConnectedToExpectedNetwork =
     useIsConnectedToExpectedNetwork(expectedChainId)
 
-  // status has different internal status to account for. If "chainId" is undefined, it is disconnected.
-  // If defined, it is connected to anything (status may go through to reconnecting, which would briefly
-  // show the notification box)
-  const disconnected = btcChainId === undefined && evmChainId === undefined
-  return !disconnected && !isConnectedToExpectedNetwork
+  const tunnelingFromOrToBtc = isBtcNetworkId(expectedChainId)
+
+  if (tunnelingFromOrToBtc && featureFlags.btcTunnelEnabled) {
+    const connected = btcChainId !== undefined
+    return connected && !isConnectedToExpectedNetwork
+  }
+
+  const connected = evmChainId !== undefined
+  return connected && !isConnectedToExpectedNetwork
 }

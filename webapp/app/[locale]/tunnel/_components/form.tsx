@@ -5,6 +5,7 @@ import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
+import { isEvmNetworkId } from 'utils/chain'
 
 import { useToastIfNotConnectedTo } from '../_hooks/useToastIfNotConnectedTo'
 import { useTunnelState } from '../_hooks/useTunnelState'
@@ -57,17 +58,26 @@ export const FormContent = function ({
   const hemi = useHemi()
   const t = useTranslations('tunnel-page')
 
-  const showToast = useToastIfNotConnectedTo(fromNetworkId)
+  const showFromToast = useToastIfNotConnectedTo(fromNetworkId)
+  const showToToast = useToastIfNotConnectedTo(toNetworkId)
 
   const evmTunneling =
-    typeof fromNetworkId === 'number' && typeof toNetworkId === 'number'
+    isEvmNetworkId(fromNetworkId) && isEvmNetworkId(toNetworkId)
 
   const l1ChainId = fromNetworkId === hemi.id ? toNetworkId : fromNetworkId
   const l2ChainId = hemi.id
 
   return (
     <>
-      {showToast && <SwitchToNetworkToast chainId={fromNetworkId} />}
+      {/* For Evm<->Evm tunneling, the relevant chain is the "from" - as the user must be connected
+        to that chain, and nothing else. For Evm<->Btc, the user needs to be connected to 2 wallets.
+        So we must check that the connected EVM wallet is a hemi one (And the correct one)
+        and that the BTC wallet connected is the appropriate. */}
+      {showFromToast && <SwitchToNetworkToast chainId={fromNetworkId} />}
+      {/* adding !showFromToast so we don't show 2 toast at the same */}
+      {showToToast && !showFromToast && !evmTunneling && (
+        <SwitchToNetworkToast chainId={toNetworkId} />
+      )}
       <div className="flex items-center justify-between gap-x-2">
         <h3 className="text-xl font-medium capitalize text-neutral-950">
           {t('title')}

@@ -15,11 +15,13 @@ import {
   type MempoolJsBitcoinTransaction,
 } from 'utils/btcApi'
 import {
-  getBitcoinCustodyAddress,
-  getVaultAddressByIndex,
   getHemiStatusOfBtcDeposit,
   hemiAddressToBitcoinOpReturn,
 } from 'utils/hemi'
+import {
+  getBitcoinCustodyAddress,
+  getVaultAddressByIndex,
+} from 'utils/hemiMemoized'
 import { getNativeToken } from 'utils/token'
 import { type Address, createPublicClient, http, toHex } from 'viem'
 

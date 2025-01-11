@@ -4,10 +4,28 @@ import {
   BtcWithdrawStatus,
   EvmDepositStatus,
 } from 'types/tunnel'
-import { isPendingOperation } from 'utils/tunnel'
+import { isDeposit, isPendingOperation } from 'utils/tunnel'
 import { describe, it, expect } from 'vitest'
 
 describe('utils/tunnel', function () {
+  describe('isDeposit', function () {
+    it(`should identify deposit operations if the direction is ${MessageDirection.L1_TO_L2}`, function () {
+      const operation = {
+        direction: MessageDirection.L1_TO_L2,
+      }
+      // @ts-expect-error Ignore operation fields not required for this test
+      expect(isDeposit(operation)).toBe(true)
+    })
+
+    it(`should not identify operations as deposit if the direction is not ${MessageDirection.L1_TO_L2}`, function () {
+      const operation = {
+        direction: MessageDirection.L2_TO_L1,
+      }
+      // @ts-expect-error Ignore operation fields not required for this test
+      expect(isDeposit(operation)).toBe(false)
+    })
+  })
+
   describe('isPendingOperation', function () {
     describe('when the operation is a deposit', function () {
       describe('BTC', function () {

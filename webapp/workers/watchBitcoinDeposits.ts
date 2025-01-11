@@ -3,18 +3,18 @@ import { BtcTransaction } from 'btc-wallet/unisat'
 import debugConstructor from 'debug'
 import PQueue from 'p-queue'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
+import { type EnableWorkersDebug } from 'utils/typeUtilities'
 import {
   watchDepositOnBitcoin,
   watchDepositOnHemi,
 } from 'utils/watch/bitcoinDeposits'
 
-type EnableDebug = { type: 'enable-debug'; payload: string }
 type WatchBtcDeposit = {
   deposit: BtcDepositOperation
   type: 'watch-btc-deposit'
 }
 
-type AppToWebWorkerActions = EnableDebug | WatchBtcDeposit
+type AppToWebWorkerActions = EnableWorkersDebug | WatchBtcDeposit
 
 export type AppToWorker = Omit<Worker, 'onmessage' | 'postMessage'> & {
   postMessage: (message: AppToWebWorkerActions) => void

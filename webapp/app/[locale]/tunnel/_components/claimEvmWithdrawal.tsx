@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from 'components/button'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useContext, useEffect } from 'react'

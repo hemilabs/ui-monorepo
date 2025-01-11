@@ -123,7 +123,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
         block =>
           updateWithdrawal(withdrawalFound, {
             blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
-            status: BtcWithdrawStatus.TX_CONFIRMED,
+            status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
             timestamp: Number(block.timestamp),
           }),
       )

@@ -284,7 +284,7 @@ export const useWithdrawBitcoin = function () {
         l2Token: getNativeToken(bitcoin.id).extensions.bridgeInfo[
           hemiClient.chain.id
         ].tokenAddress,
-        status: BtcWithdrawStatus.TX_PENDING,
+        status: BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
         to: btcAddress,
         transactionHash,
       })
@@ -316,7 +316,7 @@ export const useWithdrawBitcoin = function () {
       const withdrawal = withdrawals.find(
         w =>
           w.transactionHash === txHash &&
-          w.status === BtcWithdrawStatus.TX_PENDING,
+          w.status === BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
       )
       if (!withdrawal) {
         return
@@ -347,7 +347,7 @@ export const useWithdrawBitcoin = function () {
       // update here so next iteration of the effect doesn't reach this point
       updateWithdrawal(withdrawal, {
         blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
-        status: BtcWithdrawStatus.TX_CONFIRMED,
+        status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
       })
 
       clearWithdrawBitcoinState()

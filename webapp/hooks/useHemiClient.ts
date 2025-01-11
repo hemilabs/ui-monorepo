@@ -4,19 +4,24 @@ import {
   hemiPublicSimpleBitcoinVaultActions,
   hemiPublicSimpleBitcoinVaultStateActions,
   hemiWalletBitcoinTunnelManagerActions,
+  hemi as hemiMainnet,
+  hemiSepolia,
 } from 'hemi-viem'
 import { useMemo } from 'react'
-import { type PublicClient } from 'viem'
+import { hemiPublicExtraActions } from 'utils/hemiClientExtraActions'
+import { type WalletClient, type PublicClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
 
 import { useHemi } from './useHemi'
 
-const localExtensions = () => ({
-  // in incoming iterations, the vault index will be determined programmatically
-  // once there's a determined way to get the "most adequate" custodial and support multiple types
-  // of vaults - See https://github.com/hemilabs/ui-monorepo/issues/393
-  getVaultChildIndex: () => Promise.resolve(1), // Talk to max if we can remove this hardcoded
-})
+const defaultBitcoinVaults = {
+  [hemiMainnet.id]: Number.parseInt(
+    process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET || '1',
+  ),
+  [hemiSepolia.id]: Number.parseInt(
+    process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA || '0',
+  ),
+}
 
 export const publicClientToHemiClient = (publicClient: PublicClient) =>
   publicClient
@@ -24,7 +29,7 @@ export const publicClientToHemiClient = (publicClient: PublicClient) =>
     .extend(hemiPublicSimpleBitcoinVaultActions())
     .extend(hemiPublicSimpleBitcoinVaultStateActions())
     .extend(hemiPublicBitcoinTunnelManagerActions())
-    .extend(localExtensions)
+    .extend(hemiPublicExtraActions({ defaultBitcoinVaults }))
 
 export const useHemiClient = function () {
   const hemi = useHemi()
@@ -32,14 +37,14 @@ export const useHemiClient = function () {
   return useMemo(() => publicClientToHemiClient(hemiClient), [hemiClient])
 }
 
+const walletClientToHemiClient = (walletClient: WalletClient) =>
+  walletClient.extend(hemiWalletBitcoinTunnelManagerActions())
+
 export const useHemiWalletClient = function () {
   const hemi = useHemi()
   const { data: hemiWalletClient, ...rest } = useWalletClient({
     chainId: hemi.id,
-    query: {
-      select: walletClient =>
-        walletClient.extend(hemiWalletBitcoinTunnelManagerActions()),
-    },
+    query: { select: walletClientToHemiClient },
   })
 
   return {

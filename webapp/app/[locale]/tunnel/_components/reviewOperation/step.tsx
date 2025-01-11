@@ -12,6 +12,7 @@ import { FeesIcon } from './icons/feesIcon'
 import { PositionStatus } from './positionStatus'
 import { ProgressStatus } from './progressStatus'
 import { SeeOnExplorer } from './seeOnExplorer'
+import { Separator } from './separator'
 import { SubStep } from './subStep'
 
 type Props = {
@@ -28,6 +29,7 @@ type Props = {
     description: string
     status: ProgressStatus
   }
+  separator?: boolean
   txHash?: string
 }
 
@@ -58,11 +60,13 @@ const Completed = function ({
       </div>
       <TwoRowBox
         bottom={
-          <>
-            <GreenCheckIcon />
-            <span className="mr-auto text-emerald-500">{t('confirmed')}</span>
-            <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
-          </>
+          txHash ? (
+            <>
+              <GreenCheckIcon />
+              <span className="mr-auto text-emerald-500">{t('confirmed')}</span>
+              <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+            </>
+          ) : null
         }
         top={{
           bgColor: 'bg-neutral-50',
@@ -182,17 +186,19 @@ const Failed = function ({
       </div>
       <TwoRowBox
         bottom={
-          <>
-            <RedErrorIcon />
-            <span className="mr-auto text-rose-500">{t('error')}</span>
-            <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
-          </>
+          txHash ? (
+            <>
+              <RedErrorIcon />
+              <span className="mr-auto text-rose-500">{t('error')}</span>
+              <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+            </>
+          ) : null
         }
         top={{
           bgColor: 'bg-white',
           children: (
             <>
-              <span className="mr-auto text-orange-500">{description}</span>
+              <span className="mr-auto text-rose-500">{description}</span>
               {fees && <Fees {...fees} />}
             </>
           ),
@@ -258,12 +264,15 @@ export const Step = function ({
 }: Props & { status: ProgressStatus }) {
   const StatusStep = statusMap[status]
   return (
-    <div className="relative flex flex-col gap-y-1 text-sm font-medium">
-      <div className="flex items-start gap-x-3 py-3">
-        <StatusStep {...props} />
+    <>
+      {props.separator && <Separator />}
+      <div className="relative flex flex-col gap-y-1 text-sm font-medium">
+        <div className="flex items-start gap-x-3 py-3">
+          <StatusStep {...props} />
+        </div>
+        {props.postAction ? <SubStep {...props.postAction} /> : null}
       </div>
-      {props.postAction ? <SubStep {...props.postAction} /> : null}
-    </div>
+    </>
   )
 }
 

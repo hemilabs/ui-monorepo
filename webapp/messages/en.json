@@ -1,8 +1,8 @@
 {
   "common": {
     "add": "Add",
-    "added": "Added",
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
+    "added": "Added",
     "connect-to-network": "Connect to {network}",
     "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",
@@ -33,17 +33,17 @@
     "unexpected-error": "An unexpected error has ocurred. Please try again.",
     "unsupported-chain-heading": "You're not connected to a supported chain",
     "view": "View",
-    "your-wallet-not-connected": "Your wallet is not connected",
     "wait-complete": "Wait complete",
     "wait-hours": "Wait up to {hours} hours",
     "wait-minutes": "Wait up to {minutes} minutes",
     "wallets-connected": "{count} Connected {count, plural, =1 {Wallet} other {Wallets}} ",
     "wrong-network": "Wrong Network",
-    "wrong-type-network": "Wrong {type} Network"
+    "wrong-type-network": "Wrong {type} Network",
+    "your-wallet-not-connected": "Your wallet is not connected"
   },
   "connect-wallets": {
-    "btc-wallet-requirement": "A Bitcoin wallet is only required if moving assets between Bitcoin and Hemi.",
     "btc-wallet": "BTC Wallet",
+    "btc-wallet-requirement": "A Bitcoin wallet is only required if moving assets between Bitcoin and Hemi.",
     "connect-btc-wallet": "Connect your Unisat BTC Wallet",
     "connect-evm-wallet": "Connect your EVM Wallet",
     "connect-to-see-balance": "Connect to a supported network to see your balance",
@@ -98,6 +98,7 @@
     "deploy-a-smart-contract": "Deploy a Smart Contract",
     "ethereum-faucet": "Ethereum Faucet",
     "fund-your-wallets": "Fund your wallets",
+    "get-testnet-tokens": "Get testnet tokens",
     "header": {
       "documentation": "Documentation",
       "network": "Network"
@@ -106,13 +107,14 @@
     "hemi-faucet": "Hemi Discord Faucet",
     "here-are-some-options-mainnet": "Here are some DEXs you might want to explore.",
     "here-are-some-options-testnet": "Here are some faucets you might want to explore.",
-    "get-testnet-tokens": "Get testnet tokens",
     "layer": "Layer {layer}",
+    "learn-about-tunneling": "Learn about tunneling assets to and from Hemi.",
+    "learn-more-about-hemi": "Learn more about Hemi",
     "learn-more-tutorials": {
       "add-themi-wallet": "Add tHEMI to MetaMask",
       "create-a-capsule": "Create a Capsule",
-      "developer-tooling": "Developer Tooling",
       "deploy-erc20": "Deploy an ERC-20",
+      "developer-tooling": "Developer Tooling",
       "get-bitcoin-balance": "Get Bitcoin Balance with Remix",
       "get-started-with-web-pop-miner": "Get started with PoP mining and explore the beginner web app.",
       "hello-world": "HelloWorld.sol",
@@ -135,8 +137,6 @@
       "tunnel-eth-to-hemi": "Tunnel ETH to Hemi",
       "wallet-setup": "Wallet setup"
     },
-    "learn-about-tunneling": "Learn about tunneling assets to and from Hemi.",
-    "learn-more-about-hemi": "Learn more about Hemi",
     "learn-to-deploy-smart-contract": "Beginner friendly! Learn how to deploy smart contracts.",
     "moonpay": "MoonPay",
     "oku": "Oku",
@@ -153,12 +153,12 @@
   },
   "get-started-page": {
     "heading": "Get Started with Hemi",
-    "sub-heading": "To get started, select one of the options below",
     "options": {
       "developer": "I'm a Developer",
       "explorer": "I'm an Explorer",
       "miner": "I'm a Miner"
-    }
+    },
+    "sub-heading": "To get started, select one of the options below"
   },
   "metadata": {
     "title": "Hemi Portal"
@@ -199,13 +199,15 @@
     "validating-token-address": "Validating token address..."
   },
   "transaction-history": {
+    "challenge-in-progress": "Challenge in progress",
     "connect-wallet-to-review": "Connect your wallet to review transaction history.",
     "in-challenge-period": "In Challenge period",
     "loading-transactions": "Loading transactions",
     "ready-to-claim": "Ready to claim",
     "ready-to-prove": "Ready to prove",
     "unsupported-chain-subheading": "Connect to a supported chain to view your transaction history.",
-    "waiting-btc-confirmation": "Waiting for Bitcoin Confirmation"
+    "waiting-confirmation": "Waiting confirmation",
+    "withdrawal-challenged": "Withdrawal challenged"
   },
   "tunnel-page": {
     "connect-wallet-to-review": "Connect your wallet to continue the operation.",
@@ -225,8 +227,8 @@
       "to-network": "To Network"
     },
     "review-deposit": {
-      "approve-initiated": "Approve initiated",
       "approve-confirmed": "Approve confirmed",
+      "approve-initiated": "Approve initiated",
       "btc-deposit-come-back-delay-note": "If you do not receive your deposit after {hours} hours return to this page to manually claim.",
       "claim-deposit": "Claim deposit",
       "click-to-claim": "Click on the ‘Claim Deposit’ button to receive your deposit.",
@@ -241,18 +243,24 @@
       "your-deposit-is-complete": "Your deposit is complete."
     },
     "review-withdraw": {
+      "challenge-to-get-bitcoins-back": "Click on the 'Challenge withdraw' to receive your bitcoins back in Hemi",
+      "challenge-withdrawal": "Challenge Withdrawal",
       "claim-withdrawal": "Claim withdrawal",
       "heading": "Review Withdraw",
       "initiate-withdrawal": "Initiate withdrawal",
       "prove-withdrawal": "Prove withdrawal",
       "total-to-withdraw": "Total to withdraw",
       "view-tx": "View",
-      "withdraw-completed": "Your withdrawal is complete.",
-      "withdraw-on-its-way": "You're almost there! Complete the remaining steps to claim your withdrawal."
+      "we-could-not-process-this-withdraw": "We couldn't process this withdraw automatically",
+      "withdraw-completed": "Withdrawal completed",
+      "withdraw-on-its-way": "You're almost there! Complete the remaining steps to claim your withdrawal.",
+      "your-withdraw-is-completed": "Your withdrawal is complete."
     },
     "submit-button": {
       "approve-and-deposit": "Approve and Deposit",
       "approving": "Approving...",
+      "challenge-withdrawal": "Challenge Withdrawal",
+      "challenging": "Challenging...",
       "claim-deposit": "Claim deposit",
       "claim-withdrawal": "Claim Withdrawal",
       "claiming-deposit": "Claiming Deposit",
@@ -271,6 +279,7 @@
     "title": "Tunnel",
     "transaction-history": {
       "actions": {
+        "challenge": "Challenge",
         "claim": "Claim",
         "prove": "Prove",
         "view": "View"

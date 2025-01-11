@@ -23,11 +23,13 @@ export const TwoRowBox = ({
     <div className={`${commonCss} z-10 -mb-3 justify-between ${top.bgColor}`}>
       {top.children}
     </div>
-    <div
-      className="flex h-14 w-full items-center gap-x-1 rounded-lg
+    {bottom && (
+      <div
+        className="flex h-14 w-full items-center gap-x-1 rounded-lg
   border border-solid border-neutral-300/55 bg-neutral-100 px-4 pb-4 pt-6"
-    >
-      {bottom}
-    </div>
+      >
+        {bottom}
+      </div>
+    )}
   </div>
 )

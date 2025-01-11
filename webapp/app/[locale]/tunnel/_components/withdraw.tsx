@@ -168,7 +168,6 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
         </div>
       }
       bottomSection={<WalletsConnected />}
-      explorerUrl={fromChain.blockExplorers.default.url}
       formContent={
         <FormContent
           isRunningOperation={isWithdrawing}

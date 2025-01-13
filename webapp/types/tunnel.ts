@@ -68,7 +68,7 @@ type DepositDirection = {
 }
 
 type BtcTransactionHash = {
-  claimTransactionHash?: Hash
+  confirmationTransactionHash?: Hash
   transactionHash: BtcTransaction
 }
 

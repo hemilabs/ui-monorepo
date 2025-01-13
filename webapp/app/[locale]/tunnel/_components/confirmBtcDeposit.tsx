@@ -1,6 +1,6 @@
 import { Button } from 'components/button'
 import { WarningBox } from 'components/warningBox'
-import { useClaimBitcoinDeposit } from 'hooks/useBtcTunnel'
+import { useConfirmBitcoinDeposit } from 'hooks/useBtcTunnel'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useContext, useEffect } from 'react'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
@@ -13,13 +13,13 @@ type Props = {
   deposit: BtcDepositOperation
 }
 
-export const ClaimBtcDeposit = function ({ deposit }: Props) {
+export const ConfirmBtcDeposit = function ({ deposit }: Props) {
   const {
-    claimBitcoinDeposit,
-    claimBitcoinDepositReceipt,
-    claimBitcoinDepositError,
-    claimBitcoinDepositReceiptError,
-  } = useClaimBitcoinDeposit(deposit)
+    confirmBitcoinDeposit,
+    confirmBitcoinDepositReceipt,
+    confirmBitcoinDepositError,
+    confirmBitcoinDepositReceiptError,
+  } = useConfirmBitcoinDeposit(deposit)
   const [operationStatus, setOperationStatus] = useContext(
     BtcToEvmDepositContext,
   )
@@ -30,32 +30,32 @@ export const ClaimBtcDeposit = function ({ deposit }: Props) {
   useEffect(
     function clearAfterSuccessfulClaim() {
       if (
-        claimBitcoinDepositReceipt?.status !== 'success' ||
+        confirmBitcoinDepositReceipt?.status !== 'success' ||
         operationStatus !== 'claiming'
       ) {
         return
       }
       setOperationStatus('idle')
     },
-    [claimBitcoinDepositReceipt, operationStatus, setOperationStatus],
+    [confirmBitcoinDepositReceipt, operationStatus, setOperationStatus],
   )
 
   useEffect(
     function handleUserRejection() {
-      if (claimBitcoinDepositError && isClaiming) {
+      if (confirmBitcoinDepositError && isClaiming) {
         setOperationStatus('rejected')
       }
     },
-    [claimBitcoinDepositError, isClaiming, setOperationStatus],
+    [confirmBitcoinDepositError, isClaiming, setOperationStatus],
   )
 
   useEffect(
     function handleTransactionFailure() {
-      if (claimBitcoinDepositReceiptError && isClaiming) {
+      if (confirmBitcoinDepositReceiptError && isClaiming) {
         setOperationStatus('failed')
       }
     },
-    [claimBitcoinDepositReceiptError, isClaiming, setOperationStatus],
+    [confirmBitcoinDepositReceiptError, isClaiming, setOperationStatus],
   )
 
   const isReadyToClaim = deposit.status === BtcDepositStatus.BTC_READY_CLAIM
@@ -65,7 +65,7 @@ export const ClaimBtcDeposit = function ({ deposit }: Props) {
     if (!isReadyToClaim) {
       return
     }
-    claimBitcoinDeposit()
+    confirmBitcoinDeposit()
     setOperationStatus('claiming')
   }
 

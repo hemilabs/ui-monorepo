@@ -125,7 +125,7 @@ export const initiateBtcDeposit = function ({
   )
 }
 
-export const claimBtcDeposit = ({
+export const confirmBtcDeposit = ({
   deposit,
   from,
   hemiClient,

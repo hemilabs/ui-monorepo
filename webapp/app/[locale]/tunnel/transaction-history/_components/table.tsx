@@ -205,7 +205,7 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) => (
-      <div className="max-w-20">
+      <div className="max-w-24">
         {isDeposit(row.original) ? (
           <DepositAction deposit={row.original} />
         ) : (

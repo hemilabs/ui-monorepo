@@ -1,0 +1,33 @@
+diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
+index 0bf309d..541c990 100644
+--- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
++++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
+@@ -339,7 +339,7 @@
+         }
+       },
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/usdc.svg",
+-      "name": "Bridged USDC (Stargate)",
++      "name": "USDC",
+       "symbol": "USDC.e"
+     },
+     {
+@@ -347,11 +347,16 @@
+       "chainId": 743111,
+       "decimals": 8,
+       "extensions": {
+-        "birthBlock": 2165818
++        "birthBlock": 2165818,
++        "bridgeInfo": {
++          "testnet": {
++            "tokenAddress": "tBTC"
++          }
++        }
+       },
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/hbtc.svg",
+-      "name": "HemiBitcoin",
+-      "symbol": "hBTC"
++      "name": "Testnet Bitcoin",
++      "symbol": "tBTC"
+     }
+   ]
+ }

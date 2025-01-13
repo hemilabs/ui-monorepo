@@ -1,7 +1,6 @@
 import hemilabsTokenList from '@hemilabs/token-list'
 import { featureFlags } from 'app/featureFlags'
 import { bitcoinTestnet } from 'btc-wallet/chains'
-import { inlineBtcLogo } from 'components/icons/btcLogo'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
@@ -48,6 +47,8 @@ const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
   .filter(t => t.chainId === hemiMainnet.id || t.chainId === hemiTestnet.id)
   // WETH cannot be tunneled, so we must exclude it
   .filter(t => t.symbol !== 'WETH')
+  // TODO the following line once bitcoin is enabled https://github.com/hemilabs/ui-monorepo/issues/738
+  .filter(t => t.symbol !== 'tBTC' || featureFlags.btcTunnelEnabled)
   .map(t => ({ ...t, symbol: t.symbol.replace('.e', '').trim() }))
 
 // the hemiTokens only contains definitions for Hemi tokens, but we can create the L1 version with the extensions field info
@@ -115,38 +116,24 @@ const nativeTokens: Token[] = [
 ]
 
 if (featureFlags.btcTunnelEnabled) {
-  // TODO needs to be added to the token list https://github.com/hemilabs/ui-monorepo/issues/356
-  const btcTokenAddress = '0xAe9a1bc9F9787D26CA2D85FEd07e590502538CFA'
+  const btcToken = tokens.find(
+    t => t.chainId === hemiTestnet.id && t.symbol === 'tBTC',
+  )
+
   nativeTokens.push({
-    address: bitcoinTestnet.nativeCurrency.symbol,
+    address: btcToken.symbol,
     chainId: bitcoinTestnet.id,
-    decimals: bitcoinTestnet.nativeCurrency.decimals,
+    decimals: btcToken.decimals,
     extensions: {
       bridgeInfo: {
         [hemiTestnet.id]: {
-          tokenAddress: btcTokenAddress,
+          tokenAddress: btcToken.address as Address,
         },
       },
     },
-    logoURI: inlineBtcLogo,
-    name: bitcoinTestnet.name,
-    symbol: bitcoinTestnet.nativeCurrency.symbol,
-  })
-  tokens.push({
-    address: btcTokenAddress,
-    chainId: hemiTestnet.id,
-    decimals: 8,
-    extensions: {
-      bridgeInfo: {
-        // Leaving intentionally empty as there's no token address to bridge to in bitcoin
-        // but we use this field to know the erc20 token address of btc in Hemi can be tunneled
-        // to the Bitcoin network
-        [bitcoinTestnet.id]: {},
-      },
-    },
-    logoURI: inlineBtcLogo,
-    name: bitcoinTestnet.name,
-    symbol: bitcoinTestnet.nativeCurrency.symbol,
+    logoURI: btcToken.logoURI,
+    name: btcToken.name,
+    symbol: btcToken.symbol,
   })
 }
 

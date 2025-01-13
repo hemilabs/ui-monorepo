@@ -1,5 +1,3 @@
-import { renderToString } from 'react-dom/server'
-
 export const BtcLogo = () => (
   <svg fill="none" height={20} width={20} xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#btc_logo_a)">
@@ -19,7 +17,3 @@ export const BtcLogo = () => (
     </defs>
   </svg>
 )
-
-export const inlineBtcLogo = `data:image/svg+xml;base64,${btoa(
-  renderToString(<BtcLogo />),
-)}`

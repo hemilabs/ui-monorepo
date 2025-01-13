@@ -40,11 +40,11 @@
       - spacing.12 is the padding top of body
       - spacing.14 is the title/subtitle of the page
       - spacing.17 is the header's height
-      - spacing.30 is the bottom padding of the body
+      - spacing.12 is the bottom padding of the body
      */
     @apply h-[calc(100dvh-6px-theme(spacing.2)-theme(spacing.3)-theme(spacing.4)-theme(spacing.6)-theme(spacing.14)-theme(spacing.14)-theme(spacing.14)-theme(spacing.16)-theme(spacing.24))]
       md:h-[calc(100dvh-theme(spacing.2)*2-theme(spacing.2)-theme(spacing.3)-theme(spacing.8)-theme(spacing.12)-theme(spacing.12)-theme(spacing.14)-theme(spacing.17))]
-      xl:h-[calc(100dvh-theme(spacing.2)*2-theme(spacing.2)-theme(spacing.8)-theme(spacing.12)-theme(spacing.12)-theme(spacing.14)-theme(spacing.17)-theme(spacing.30))];
+      xl:h-[calc(100dvh-theme(spacing.2)*2-theme(spacing.2)-theme(spacing.8)-theme(spacing.12)-theme(spacing.12)-theme(spacing.14)-theme(spacing.17)-theme(spacing.12))];
   }
 
   /* This should be applied on every th and td cells.
@@ -54,7 +54,7 @@
     @apply flex w-full flex-shrink-0
       flex-grow
       items-center
-      [&:nth-child(1)]:basis-24
+      [&:nth-child(1)]:basis-28
       [&:nth-child(1)]:lg:basis-28
       [&:nth-child(2)]:basis-42
       [&:nth-child(2)]:lg:basis-24
@@ -69,6 +69,6 @@
       [&:nth-child(7)]:basis-32
       [&:nth-child(7)]:lg:basis-42
       [&:nth-child(8)]:basis-34
-      [&:nth-child(8)]:lg:basis-24
+      [&:nth-child(8)]:lg:basis-28
   }
 }

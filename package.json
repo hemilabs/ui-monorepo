@@ -4,7 +4,7 @@
   "scripts": {
     "format:check": "prettier --check .",
     "postinstall": "patch-package",
-    "lint": "eslint --cache --quiet .",
+    "lint": "eslint --cache .",
     "prepare": "husky"
   },
   "devDependencies": {

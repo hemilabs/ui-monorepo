@@ -9,6 +9,7 @@ import {
 } from 'sliding-block-window/src'
 import {
   EvmDepositOperation,
+  EvmDepositStatus,
   ToEvmWithdrawOperation,
   TunnelOperation,
 } from 'types/tunnel'
@@ -36,6 +37,10 @@ const toOperation =
           amount: tunnelOperation.amount.toString(),
           l1ChainId,
           l2ChainId,
+          // If deposits are found, it means they are confirmed. There's no other possible status
+          // This may not be the case if we Get txs from the user's account, instead of checking logs
+          // as failed deposits will also appear https://github.com/hemilabs/ui-monorepo/issues/743
+          status: EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
         }) as T,
     )
 

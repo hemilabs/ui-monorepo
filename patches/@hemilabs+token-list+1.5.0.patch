@@ -1,7 +1,18 @@
 diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
-index 0bf309d..541c990 100644
+index 0bf309d..1cc3e79 100644
 --- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 +++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
+@@ -12,8 +12,8 @@
+       "chainId": 743111,
+       "decimals": 18,
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/hdai.svg",
+-      "name": "Hemi Tunneled DAI",
+-      "symbol": "hDAI",
++      "name": "Dai Stablecoin",
++      "symbol": "DAI",
+       "extensions": {
+         "birthBlock": 71589,
+         "bridgeInfo": {
 @@ -339,7 +339,7 @@
          }
        },

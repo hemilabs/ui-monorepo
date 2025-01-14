@@ -23,7 +23,12 @@ const TransactionHistory = dynamic(
 )
 
 const Page = function () {
-  const [filterOption, setFilterOption] = useState<FilterOptions>('all')
+  const [filterOption, setFilterOption] = useState<FilterOptions>({
+    action: 'all',
+    operation: 'all',
+    timeDesc: true,
+    type: 'all',
+  })
   const t = useTranslations('tunnel-page')
 
   return (
@@ -37,7 +42,10 @@ const Page = function () {
           filterOption={filterOption}
           onFilterOptionChange={setFilterOption}
         />
-        <TransactionHistory filterOption={filterOption} />
+        <TransactionHistory
+          filterOption={filterOption}
+          setFilterOption={setFilterOption}
+        />
       </div>
     </>
   )

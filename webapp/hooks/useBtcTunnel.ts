@@ -9,16 +9,18 @@ import {
   BtcDepositOperation,
   BtcDepositStatus,
   BtcWithdrawStatus,
+  ToBtcWithdrawOperation,
 } from 'types/tunnel'
 import { getBitcoinTimestamp } from 'utils/bitcoin'
 import { getEvmBlock } from 'utils/evmApi'
 import {
   confirmBtcDeposit,
+  getBitcoinWithdrawalUuid,
   initiateBtcDeposit,
   initiateBtcWithdrawal,
 } from 'utils/hemi'
 import { getNativeToken } from 'utils/token'
-import { Chain, zeroAddress, type Address } from 'viem'
+import { type Chain, zeroAddress, type Address } from 'viem'
 import {
   useAccount as useEvmAccount,
   useWaitForTransactionReceipt as useWaitForEvmTransactionReceipt,
@@ -347,10 +349,16 @@ export const useWithdrawBitcoin = function () {
         return
       }
 
+      const uuid = getBitcoinWithdrawalUuid(
+        // @ts-expect-error it seems typings are not correct in wagmi
+        withdrawBitcoinReceipt,
+      )
+
       // update here so next iteration of the effect doesn't reach this point
       updateWithdrawal(withdrawal, {
         blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
         status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
+        uuid: uuid.toString(),
       })
 
       clearWithdrawBitcoinState()
@@ -368,6 +376,7 @@ export const useWithdrawBitcoin = function () {
     },
     [
       clearWithdrawBitcoinState,
+      hemiClient,
       updateWithdrawal,
       withdrawals,
       withdrawBitcoinReceipt,
@@ -381,5 +390,92 @@ export const useWithdrawBitcoin = function () {
     withdrawBitcoinReceiptError,
     withdrawError,
     withdrawTxHash,
+  }
+}
+
+export const useChallengeBitcoinWithdrawal = function (
+  withdrawal: ToBtcWithdrawOperation,
+) {
+  const { address: hemiAddress } = useEvmAccount()
+  const { hemiWalletClient } = useHemiWalletClient()
+  const { updateWithdrawal } = useTunnelHistory()
+  const queryClient = useQueryClient()
+
+  const {
+    data: challengeTransactionHash,
+    error: challengeError,
+    mutate: challengeWithdrawal,
+    reset: resetChallengeWithdrawal,
+  } = useMutation({
+    mutationFn: () =>
+      hemiWalletClient.challengeWithdrawal({
+        from: hemiAddress,
+        uuid: BigInt(withdrawal.uuid),
+      }),
+    onError: () =>
+      updateWithdrawal(withdrawal, {
+        // Error here means rejection and that the TX wasn't generated
+        status: BtcWithdrawStatus.READY_TO_CHALLENGE,
+      }),
+    onSuccess: challengeTxHash =>
+      updateWithdrawal(withdrawal, {
+        challengeTxHash,
+        status: BtcWithdrawStatus.CHALLENGE_IN_PROGRESS,
+      }),
+  })
+
+  const {
+    data: challengeReceipt,
+    error: challengeReceiptError,
+    queryKey: challengeQueryKey,
+  } = useWaitForEvmTransactionReceipt({
+    hash: challengeTransactionHash,
+  })
+
+  const clearChallengeWithdrawalState = useCallback(
+    function () {
+      // clear the challenge operation hash
+      resetChallengeWithdrawal()
+      // clear the challenge state
+      queryClient.invalidateQueries({ queryKey: challengeQueryKey })
+    },
+    [challengeQueryKey, queryClient, resetChallengeWithdrawal],
+  )
+
+  useEffect(
+    function updateWithdrawalAfterChallengeConfirmation() {
+      if (challengeReceipt?.status !== 'success') {
+        return
+      }
+
+      if (withdrawal.status === BtcWithdrawStatus.WITHDRAWAL_CHALLENGED) {
+        return
+      }
+
+      clearChallengeWithdrawalState()
+
+      updateWithdrawal(withdrawal, {
+        status: BtcWithdrawStatus.WITHDRAWAL_CHALLENGED,
+      })
+    },
+    [
+      challengeReceipt,
+      clearChallengeWithdrawalState,
+      updateWithdrawal,
+      withdrawal,
+    ],
+  )
+
+  const handleChallengeWithdrawal = function () {
+    // Clear any previous transaction hash, which may come from failed attempts
+    updateWithdrawal(withdrawal, { challengeTxHash: undefined })
+    challengeWithdrawal()
+  }
+
+  return {
+    challengeError,
+    challengeReceipt,
+    challengeReceiptError,
+    challengeWithdrawal: handleChallengeWithdrawal,
   }
 }

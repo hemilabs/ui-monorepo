@@ -1,3 +1,5 @@
+'use client'
+
 import { Big } from 'big.js'
 import { Button } from 'components/button'
 import {
@@ -8,26 +10,21 @@ import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useEstimateBtcWithdrawFees } from 'hooks/useEstimateBtcWithdrawFees'
 import { useNetworks } from 'hooks/useNetworks'
-import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
-import { BtcWithdrawStatus } from 'types/tunnel'
 import { isEvmNetwork } from 'utils/chain'
-import { getEvmBlock } from 'utils/evmApi'
-import { formatBtcAddress, getFormattedValue } from 'utils/format'
+import { formatBtcAddress } from 'utils/format'
 import { isNativeToken } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { useAfterTransaction } from '../_hooks/useAfterTransaction'
-import { useTransactionsList } from '../_hooks/useTransactionsList'
 import {
   type EvmTunneling,
   type HemiToBitcoinTunneling,
@@ -55,8 +52,6 @@ const WalletsConnected = dynamic(
   { ssr: false },
 )
 
-const WithdrawBtcGasUnits = BigInt(300_000)
-
 const hasBridgeConfiguration = (token: Token, l1ChainId: RemoteChain['id']) =>
   isNativeToken(token) ||
   token.extensions?.bridgeInfo[l1ChainId].tokenAddress !== undefined
@@ -66,8 +61,6 @@ type BtcWithdrawProps = {
 }
 
 const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
-  // use this to hold the withdrawn amount for the Tx list after clearing the state upon confirmation
-  const [amountWithdrawn, setAmountWithdrawn] = useState('0')
   const [isWithdrawing, setIsWithdrawing] = useState(false)
 
   const {
@@ -76,78 +69,54 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     fromToken,
     resetStateAfterOperation,
     toNetworkId,
+    toToken,
     updateFromInput,
   } = state
 
-  const { btcAddress, evmChainId, evmWalletStatus } = useAccounts()
+  const { btcAddress, evmChainId } = useAccounts()
   const fromChain = useChain(fromNetworkId)
-  const estimatedFees = useEstimateFees({
-    chainId: fromNetworkId,
-    enabled: evmWalletStatus === 'connected',
-    gasUnits: WithdrawBtcGasUnits,
-    overEstimation: 1.5,
-  })
+  const estimatedFees = useEstimateBtcWithdrawFees(fromNetworkId)
   const { balance: bitcoinBalance } = useTokenBalance(fromToken)
   const t = useTranslations()
-  const { updateWithdrawal, withdrawals } = useTunnelHistory()
   const {
     clearWithdrawBitcoinState,
     withdrawBitcoin,
     withdrawBitcoinReceipt,
     withdrawBitcoinReceiptError,
     withdrawError,
-    withdrawTxHash,
   } = useWithdrawBitcoin()
 
-  const resetFormState = useCallback(
-    function () {
+  useEffect(
+    function handleSuccess() {
+      if (withdrawBitcoinReceipt?.status !== 'success' || !isWithdrawing) {
+        return
+      }
       setIsWithdrawing(false)
       resetStateAfterOperation()
     },
-    [setIsWithdrawing, resetStateAfterOperation],
-  )
-
-  const onSuccess = useCallback(
-    function () {
-      resetFormState()
-
-      const withdrawalFound = withdrawals.find(
-        w =>
-          w.transactionHash === withdrawBitcoinReceipt.transactionHash &&
-          !w.timestamp,
-      )
-
-      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
-      // eslint-disable-next-line promise/catch-or-return
-      getEvmBlock(withdrawBitcoinReceipt.blockNumber, fromNetworkId).then(
-        block =>
-          updateWithdrawal(withdrawalFound, {
-            blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
-            status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
-            timestamp: Number(block.timestamp),
-          }),
-      )
-    },
     [
-      fromNetworkId,
-      resetFormState,
-      updateWithdrawal,
-      withdrawals,
+      resetStateAfterOperation,
+      setIsWithdrawing,
+      isWithdrawing,
       withdrawBitcoinReceipt,
     ],
   )
 
-  const { beforeTransaction } = useAfterTransaction({
-    clearState: clearWithdrawBitcoinState,
-    errorReceipts: [withdrawError, withdrawBitcoinReceiptError],
-    onError: resetFormState,
-    onSuccess,
-    transactionReceipt: withdrawBitcoinReceipt,
-  })
+  useEffect(
+    function handleRejectionOrFailure() {
+      if ((withdrawError || withdrawBitcoinReceiptError) && isWithdrawing) {
+        setIsWithdrawing(false)
+      }
+    },
+    [
+      isWithdrawing,
+      setIsWithdrawing,
+      withdrawBitcoinReceiptError,
+      withdrawError,
+    ],
+  )
 
   const handleWithdraw = function () {
-    beforeTransaction()
-    setAmountWithdrawn(fromInput)
     clearWithdrawBitcoinState()
     withdrawBitcoin({
       amount: parseUnits(fromInput, fromToken.decimals),
@@ -172,24 +141,6 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     symbol: fromChain?.nativeCurrency.symbol,
   }
 
-  const transactionsList = useTransactionsList({
-    inProgressMessage: t('tunnel-page.transaction-status.withdrawing', {
-      fromInput: getFormattedValue(amountWithdrawn),
-      network: fromChain?.name,
-      symbol: fromToken.symbol,
-    }),
-    isOperating: isWithdrawing,
-    operation: 'withdraw',
-    receipt: withdrawBitcoinReceipt,
-    receiptError: withdrawBitcoinReceiptError,
-    successMessage: t('tunnel-page.transaction-status.withdrawn', {
-      fromInput: getFormattedValue(amountWithdrawn),
-      symbol: fromToken.symbol,
-    }),
-    txHash: withdrawTxHash,
-    userConfirmationError: withdrawError,
-  })
-
   return (
     <TunnelForm
       belowForm={
@@ -200,7 +151,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
             tooltipText={t(
               'tunnel-page.form.bitcoin-receiving-address-description',
               {
-                symbol: state.toToken.symbol,
+                symbol: toToken.symbol,
               },
             )}
           />
@@ -217,7 +168,6 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
         </div>
       }
       bottomSection={<WalletsConnected />}
-      explorerUrl={fromChain.blockExplorers.default.url}
       formContent={
         <FormContent
           isRunningOperation={isWithdrawing}
@@ -247,7 +197,6 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           }
         />
       }
-      transactionsList={transactionsList}
     />
   )
 }

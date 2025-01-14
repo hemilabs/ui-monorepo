@@ -213,7 +213,7 @@ const ReviewContent = function ({
       steps={steps}
       subtitle={
         withdrawal.status === MessageStatus.RELAYED
-          ? t('withdraw-completed')
+          ? t('your-withdraw-is-completed')
           : t('withdraw-on-its-way')
       }
       title={t('heading')}

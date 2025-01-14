@@ -1,12 +1,12 @@
 {
   "common": {
     "add": "Agregar",
-    "added": "Agregada",
     "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
+    "added": "Agregada",
     "connect-to-network": "Conectarse a {network}",
     "connect-to-supported-network": "Conectarse a una red soportada",
     "connect-wallet": "Conectar Billetera",
-    "connect-wallets": "Connectar Billeteras",
+    "connect-wallets": "Conectar Billeteras",
     "connect-your-wallet": "Conecte su Billetera",
     "copied": "Copiado",
     "copy": "Copiar",
@@ -33,17 +33,17 @@
     "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
     "unsupported-chain-heading": "Usted no se encuentra conectado a una red soportada",
     "view": "Ver",
-    "your-wallet-not-connected": "Tu billetera no está conectada",
     "wait-complete": "Espera completada",
     "wait-hours": "Espere hasta {hours} horas",
     "wait-minutes": "Espere hasta {minutes} minutos",
-    "wallets-connected": "{count} {count, plural, =1 {Billtera Conectada} other {Billeteras Conectadas}} ",
+    "wallets-connected": "{count} {count, plural, =1 {Billetera Conectada} other {Billeteras Conectadas}} ",
     "wrong-network": "Red Incorrecta",
-    "wrong-type-network": "Red {type} Incorrecta"
+    "wrong-type-network": "Red {type} Incorrecta",
+    "your-wallet-not-connected": "Tu billetera no está conectada"
   },
   "connect-wallets": {
-    "btc-wallet-requirement": "Una billetera de Bitcoin solo es necesaria si se transfieren activos entre Bitcoin y Hemi.",
     "btc-wallet": "Billetera BTC",
+    "btc-wallet-requirement": "Una billetera de Bitcoin solo es necesaria si se transfieren activos entre Bitcoin y Hemi.",
     "connect-btc-wallet": "Conecte su billetera Unisat de BTC",
     "connect-evm-wallet": "Conecte su billetera EVM",
     "connect-to-see-balance": "Conéctese a una red soportada para ver su balance",
@@ -80,7 +80,7 @@
     "sub-heading": "Aprenda y explore con las Demos de desarrolladores de Hemi"
   },
   "get-started": {
-    "add-funds-to-your-wallet": "Agregie fondos a su billetera",
+    "add-funds-to-your-wallet": "Agregue fondos a su billetera",
     "add-hemi-to-your-wallet": "Agregue hemi a su billetera",
     "add-networks": {
       "automatic": "Automático",
@@ -98,16 +98,18 @@
     "deploy-a-smart-contract": "Despliegue un contrato inteligente",
     "ethereum-faucet": "Faucet de Ethereum",
     "fund-your-wallets": "Fondee sus billeteras",
+    "get-testnet-tokens": "Obtenga tokens de testnet",
     "header": {
       "documentation": "Documentación",
       "network": "Red"
     },
     "heading": "Comience con Hemi",
     "hemi-faucet": "Faucet en Discord de Hemi",
-    "here-are-some-options-mainnet": "Aqui hay algunos Exchanges Descentralizados que podría explorar.",
-    "here-are-some-options-testnet": "Aqui hay algunos faucets que podría explorar.",
-    "get-testnet-tokens": "Obtenga tokens de testnet",
+    "here-are-some-options-mainnet": "Aquí hay algunos Exchanges Descentralizados que podría explorar.",
+    "here-are-some-options-testnet": "Aquí hay algunos faucets que podría explorar.",
     "layer": "Capa {layer}",
+    "learn-about-tunneling": "Aprenda sobre la tunelización de activos hacia y desde Hemi.",
+    "learn-more-about-hemi": "Learn more about Hemi",
     "learn-more-tutorials": {
       "add-themi-wallet": "Agregue tHEMI a MetaMask",
       "create-a-capsule": "Cree una Cápsula",
@@ -116,12 +118,12 @@
       "get-bitcoin-balance": "Obtenga Balance de Bitcoin con Remix",
       "get-started-with-web-pop-miner": "Comience con la minería PoP y explore las aplicaciones de principiantes.",
       "hello-world": "HelloWorld.sol",
-      "learn-about-capsules": "Aprenda sobre transacciones sin gas, re-routeo/re-llamado y seguridad configutable con Cápsulas en Hemi.",
+      "learn-about-capsules": "Aprenda sobre transacciones sin gas, re-routeo/re-llamado y seguridad configurable con Cápsulas en Hemi.",
       "learn-about-multisig-wallet": "Aprenda sobre billeteras multi-firma y configure una Billetera Safe en Hemi.",
       "learn-to-add-themi-wallet": "¿Ganar recompensas de tHEMI por minería PoP? Agregue la dirección del contrato del token y vea sus recompensas.",
       "learn-to-deploy-erc20": "Aprenda como desplegar un token ERC-20 en Hemi usando Hardhat.",
-      "learn-to-develop-hello-world": "Aprenda como desarrollar y desplear un contrato inteligente de HolaMundo en Hemi usando el IDE Remix.",
-      "learn-to-get-bitcoin-balance": "Despliegue un pequeño contrato inteligente con el IDE Remix con un único metodo que utiliza la llamada de Balance de Bitcoin precompilada y retorna el balance.",
+      "learn-to-develop-hello-world": "Aprenda como desarrollar y desplegar un contrato inteligente de HolaMundo en Hemi usando el IDE Remix.",
+      "learn-to-get-bitcoin-balance": "Despliegue un pequeño contrato inteligente con el IDE Remix con un único método que utiliza la llamada de Balance de Bitcoin precompilada y retorna el balance.",
       "learn-to-setup-btc-wallet": "Aprenda como configurar y comenzar con una billetera (UniSat) de BTC.",
       "learn-to-setup-evm-wallet": "Aprenda como configurar y comenzar con una billetera (MetaMask) EVM.",
       "learn-to-tunnel-to-hemi": "Aprenda como tunelizar (puentear) sus activos de Ethereum hacia y desde Hemi.",
@@ -135,8 +137,6 @@
       "tunnel-eth-to-hemi": "Tunelice ETH a Hemi",
       "wallet-setup": "Configuración de la Billetera"
     },
-    "learn-about-tunneling": "Aprenda sobre la tunelización de activos hacia y desde Hemi.",
-    "learn-more-about-hemi": "Learn more about Hemi",
     "learn-to-deploy-smart-contract": "¡Amistoso para principiantes! Aprenda cómo publicar contratos inteligentes.",
     "moonpay": "MoonPay",
     "oku": "Oku",
@@ -153,12 +153,12 @@
   },
   "get-started-page": {
     "heading": "Comience con Hemi",
-    "sub-heading": "Para comenzar, seleccione una de las siguientes opciones",
     "options": {
       "developer": "Soy Desarrollador",
       "explorer": "Soy un Explorador",
       "miner": "Soy Minero"
-    }
+    },
+    "sub-heading": "Para comenzar, seleccione una de las siguientes opciones"
   },
   "metadata": {
     "title": "Portal de Hemi"
@@ -169,7 +169,7 @@
     "demos": "Demos",
     "explorer": "Explorador",
     "get-started": "Comenzar",
-    "hemidocs": "Documentacion de Hemi",
+    "hemidocs": "Documentación de Hemi",
     "network-status": "Estado de la red",
     "swap": "Intercambiar",
     "tools": "Herramientas",
@@ -184,7 +184,7 @@
     "address-does-not-match-l2": "No coincide con el par de L1",
     "heading": "Tunelizar un token ERC-20 existente",
     "i-am-sure-to-tunnel": "Estoy seguro que quiero tunelizar este token.",
-    "layer-token-address": "Dirección de contrado del token de capa {layer}",
+    "layer-token-address": "Dirección de contrato del token de capa {layer}",
     "make-a-request-to-add": "Si deseas agregar este par de tokens ERC-20 a la lista de tokens aprobados de Hemi, <link>haz una solicitud</link>.",
     "see-on-explorer": "Ver en {explorer}",
     "subheading": "Necesitas ingresar el par de direcciones de contrato tanto de Ethereum como de Hemi para tunelear con este token.",
@@ -199,16 +199,18 @@
     "validating-token-address": "Validando dirección del token..."
   },
   "transaction-history": {
+    "challenge-in-progress": "Desafío en progreso",
     "connect-wallet-to-review": "Conecte su billetera para revisar su historial de transacciones.",
     "in-challenge-period": "En período de Desafío",
     "loading-transactions": "Cargando transacciones",
-    "ready-to-claim": "Listo para Reclamar",
-    "ready-to-prove": "Listo para Probar",
+    "ready-to-claim": "Listo para reclamar",
+    "ready-to-prove": "Listo para probar",
     "unsupported-chain-subheading": "Conéctese a una red soportada para ver su historial de transacciones.",
-    "waiting-btc-confirmation": "Esperando por la confirmación en Bitcoin"
+    "waiting-confirmation": "Esperando confirmación",
+    "withdrawal-challenged": "Retiro desafiado"
   },
   "tunnel-page": {
-    "connect-wallet-to-review": "Conecte su billetera para continuar la operacion.",
+    "connect-wallet-to-review": "Conecte su billetera para continuar la operación.",
     "form": {
       "balance": "Balance",
       "bitcoin-receiving-address": "Dirección de recepción en Bitcoin",
@@ -225,8 +227,8 @@
       "to-network": "Hacia la Red"
     },
     "review-deposit": {
-      "approve-initiated": "Aprobación iniciada",
       "approve-confirmed": "Aprobación confirmada",
+      "approve-initiated": "Aprobación iniciada",
       "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de {hours} horas regrese a esta pagina para reclamarlo manualmente.",
       "claim-deposit": "Reclamar depósito",
       "click-to-claim": "Haga click en el botón de 'Reclamar Depósito' para recibir su depósito.",
@@ -235,24 +237,30 @@
       "heading": "Revisar Depósito",
       "initiate-deposit": "Iniciar depósito",
       "review-deposit": "Revisar Depósito",
-      "we-could-not-process-this-deposit": "No pudimos procesar su depósito automáticamente",
       "wait-for-confirmation": "Espere por la confirmación en Hemi",
+      "we-could-not-process-this-deposit": "No pudimos procesar su depósito automáticamente",
       "you-are-depositing": "Usted está depositando",
       "your-deposit-is-complete": "Su depósito ha sido completado"
     },
     "review-withdraw": {
+      "challenge-to-get-bitcoins-back": "Haga clic en 'Disputar Retiro' para recibir sus bitcoins de vuelta en Hemi",
+      "challenge-withdrawal": "Disputar Retiro",
       "claim-withdrawal": "Reclamar retiro",
       "heading": "Revisar Retiro",
       "initiate-withdrawal": "Iniciar retiro",
       "prove-withdrawal": "Probar retiro",
       "total-to-withdraw": "Total a retirar",
-      "view-tx": "View",
-      "withdraw-completed": "Su retiro ha sido completado.",
-      "withdraw-on-its-way": "¡Ya falta poco! Complete el resto de los pasos para reclamar su retiro."
+      "view-tx": "Ver",
+      "we-could-not-process-this-withdraw": "No pudimos procesar este retiro automáticamente",
+      "withdraw-completed": "Retiro completado",
+      "withdraw-on-its-way": "¡Ya falta poco! Complete el resto de los pasos para reclamar su retiro.",
+      "your-withdraw-is-completed": "Su retiro ha sido completado."
     },
     "submit-button": {
       "approve-and-deposit": "Aprobar y Depositar",
       "approving": "Aprobando...",
+      "challenge-withdrawal": "Disputar Retiro",
+      "challenging": "Disputando...",
       "claim-deposit": "Reclamar depósito",
       "claim-withdrawal": "Reclamar Retiro",
       "claiming-deposit": "Reclamando Depósito",
@@ -271,6 +279,7 @@
     "title": "Túnel",
     "transaction-history": {
       "actions": {
+        "challenge": "Desafiar",
         "claim": "Reclamar",
         "prove": "Probar",
         "view": "Ver"

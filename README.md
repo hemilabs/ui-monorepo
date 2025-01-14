@@ -9,7 +9,7 @@ This monorepo contains the following packages:
 - **@hemilabs/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported)
 - **@hemilabs/sliding-block-window**: UI components for block visualization and walkthrough of block ranges
 - **@hemilabs/wagmi-erc20-hooks**: React hooks for ERC20 token interactions using wagmi
-- **@hemilabs/webapp**: Portal app living at https://app.hemi.xyz
+- **@hemilabs/webapp**: Portal app living at [https://app.hemi.xyz](https://app.hemi.xyz)
 
 ## Deployment
 

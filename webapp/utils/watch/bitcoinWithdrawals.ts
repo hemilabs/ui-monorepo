@@ -4,7 +4,7 @@ import {
   getBitcoinWithdrawalUuid,
   getHemiStatusOfBtcWithdrawal,
 } from 'utils/hemi'
-import { isBtcWithdrawalInFinalState } from 'utils/tunnel'
+import { isPendingOperation } from 'utils/tunnel'
 
 import { getHemiClient } from './common'
 
@@ -42,12 +42,12 @@ export const watchBitcoinWithdrawal = async function (
   const hemiClient = await getHemiClient(withdrawal.l2ChainId)
 
   // if the withdrawal is on a final state, it won't change, so there's no need to re-check it
-  const newStatus = isBtcWithdrawalInFinalState(withdrawal)
-    ? withdrawal.status
-    : await getHemiStatusOfBtcWithdrawal({
+  const newStatus = isPendingOperation(withdrawal)
+    ? await getHemiStatusOfBtcWithdrawal({
         hemiClient,
         withdrawal,
       })
+    : withdrawal.status
 
   if (withdrawal.status !== newStatus) {
     updates.status = newStatus

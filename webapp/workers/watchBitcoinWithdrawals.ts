@@ -2,7 +2,7 @@ import { type BtcChain } from 'btc-wallet/chains'
 import debugConstructor from 'debug'
 import PQueue from 'p-queue'
 import { BtcWithdrawStatus, type ToBtcWithdrawOperation } from 'types/tunnel'
-import { isBtcWithdrawalInFinalState } from 'utils/tunnel'
+import { isPendingOperation } from 'utils/tunnel'
 import { type EnableWorkersDebug } from 'utils/typeUtilities'
 import { watchBitcoinWithdrawal } from 'utils/watch/bitcoinWithdrawals'
 
@@ -45,7 +45,7 @@ const getPriority = function (withdrawal: ToBtcWithdrawOperation) {
   }
   // if a final withdrawal reached this point, it is for missing information.
   // Let's give them priority, so they are removed forever from the queue
-  return isBtcWithdrawalInFinalState(withdrawal) ? 1 : 0
+  return isPendingOperation(withdrawal) ? 0 : 1
 }
 
 export const getWithdrawalKey = (withdrawal: ToBtcWithdrawOperation) =>

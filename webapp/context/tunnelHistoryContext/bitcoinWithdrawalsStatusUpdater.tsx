@@ -6,7 +6,7 @@ import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupport
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useEffect } from 'react'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
-import { isBtcWithdrawalInFinalState } from 'utils/tunnel'
+import { isPendingOperation } from 'utils/tunnel'
 import { hasKeys } from 'utils/utilities'
 import { useAccount as useEvmAccount } from 'wagmi'
 import {
@@ -107,8 +107,7 @@ export function BitcoinWithdrawalsStatusUpdater() {
 
   const withdrawalsToWatch = withdrawals.filter(
     withdrawal =>
-      !isBtcWithdrawalInFinalState(withdrawal) ||
-      missingInformation(withdrawal),
+      isPendingOperation(withdrawal) || missingInformation(withdrawal),
   )
 
   return (

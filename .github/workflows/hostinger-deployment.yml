@@ -13,9 +13,35 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  deploy-partners:
+    environment: partners
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: hemilabs/actions/setup-node-env@main
+      - uses: ./.github/actions/deploy-portal
+        with:
+          HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
+          HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
+          HOSTINGER_SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
+          HOSTINGER_TARGET: domains/${{ vars[vars.HEMI_DOMAIN] }}/public_html/${{ secrets.HEMI_SUBDOMAIN }}
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+          NEXT_PUBLIC_ANALYTICS_URL: ${{ vars.NEXT_PUBLIC_ANALYTICS_URL }}
+          NEXT_PUBLIC_ANALYTICS_WEBSITE_ID: ${{ vars.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID }}
+          NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET: ${{ vars.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET }}
+          NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA: ${{ vars.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA }}
+          NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET: ${{ vars.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET }}
+          NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA: ${{ vars.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA }}
+          NEXT_PUBLIC_ENABLE_ANALYTICS: false
+          NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: ${{ vars.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL || 'false' }}
+          NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET: ${{ vars.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET || 'false' }}'
+
+  deploy:
     environment: ${{ github.event_name == 'release' && 'production' || 'staging' }}
+    runs-on: ubuntu-latest
     steps:
       - uses: bloq/actions/notify-deploy-to-slack@v1
         with:

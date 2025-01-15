@@ -1,6 +1,7 @@
 import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
 import { Link } from 'components/link'
+import { StakeTabs } from 'components/stakeTabs'
 import { TunnelTabs } from 'components/tunnelTabs'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import dynamic from 'next/dynamic'
@@ -31,6 +32,9 @@ export const Header = function ({ isMenuOpen, toggleMenu }: Props) {
         <Link href={href}>
           <HemiSymbol />
         </Link>
+      </div>
+      <div className="hidden pl-6 md:block">
+        <StakeTabs />
       </div>
       <div className="hidden pl-6 md:block">
         <TunnelTabs />

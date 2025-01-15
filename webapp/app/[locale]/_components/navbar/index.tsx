@@ -7,6 +7,7 @@ import { DexIcon } from 'components/icons/dexIcon'
 import { DocsIcon } from 'components/icons/docsIcon'
 import { ElectroCardiogramIcon } from 'components/icons/electroCardiogramIcon'
 import { PoPMinerIcon } from 'components/icons/popMinerIcon'
+import { StakeIcon } from 'components/icons/stakeIcon'
 import { ToolsIcon } from 'components/icons/toolsIcon'
 import { TunnelIcon } from 'components/icons/tunnelIcon'
 import { Link } from 'components/link'
@@ -63,6 +64,16 @@ export const Navbar = function () {
           />
         </li>
         <li className="order-2">
+          {featureFlags.stakeCampaignEnabled && (
+            <ItemLink
+              href="/stake/dashboard"
+              icon={<StakeIcon />}
+              text={t('stake')}
+              urlToBeSelected="/stake"
+            />
+          )}
+        </li>
+        <li className="order-3">
           <ItemLink
             event="nav - dex"
             href="https://swap.hemi.xyz"
@@ -70,12 +81,12 @@ export const Navbar = function () {
             text={t('swap')}
           />
         </li>
-        <li className="order-3">
+        <li className="order-4">
           <Suspense>
             <HemiExplorerLink />
           </Suspense>
         </li>
-        <li className="order-4">
+        <li className="order-5">
           <ItemLink
             event="nav - web pop miner"
             href="https://pop-miner.hemi.xyz"
@@ -83,10 +94,10 @@ export const Navbar = function () {
             text={t('web-pop-miner')}
           />
         </li>
-        <li className="order-5">
+        <li className="order-6">
           <Separator />
         </li>
-        <li className="order-6">
+        <li className="order-7">
           <ItemLink
             event="nav - hbk"
             href="https://docs.hemi.xyz/building-bitcoin-apps/hemi-bitcoin-kit-hbk"
@@ -94,7 +105,7 @@ export const Navbar = function () {
             text={t('bitcoinkit')}
           />
         </li>
-        <li className="order-7">
+        <li className="order-8">
           <ItemWithSubmenu
             event="nav - tools"
             icon={<ToolsIcon />}
@@ -115,10 +126,10 @@ export const Navbar = function () {
             text={t('tools')}
           />
         </li>
-        <li className="order-8">
+        <li className="order-9">
           <Separator />
         </li>
-        <li className="order-9 mb-auto">
+        <li className="order-10 mb-auto">
           <ItemLink
             event="nav - demos"
             href="/demos"
@@ -126,7 +137,7 @@ export const Navbar = function () {
             text={t('demos')}
           />
         </li>
-        <li className="order-10 md:order-11">
+        <li className="order-11 md:order-12">
           <ItemLink
             event="nav - network status"
             href="https://hemistatus.com"
@@ -134,7 +145,7 @@ export const Navbar = function () {
             text={t('network-status')}
           />
         </li>
-        <li className="order-11 md:order-12">
+        <li className="md:order-13 order-12">
           <ItemLink
             event="nav - docs"
             href="https://docs.hemi.xyz"
@@ -143,23 +154,23 @@ export const Navbar = function () {
           />
         </li>
         {featureFlags.mainnetEnabled && (
-          <li className="md:order-13 order-12">
+          <li className="md:order-14 order-13">
             <NetworkSwitch />
           </li>
         )}
-        <li className="order-13 md:hidden">
+        <li className="order-15 md:hidden">
           <Separator />
         </li>
-        <li className="order-14 md:order-10">
+        <li className="order-16 md:order-11">
           <GetStarted />
         </li>
-        <li className="order-15 md:order-14">
+        <li className="order-17 md:order-15">
           <SocialLinks />
         </li>
-        <li className="order-16 md:hidden">
+        <li className="order-17 md:hidden">
           <Separator />
         </li>
-        <li className="order-17 md:order-15">
+        <li className="order-18 md:order-16">
           <TermsAndConditions />
         </li>
       </ul>

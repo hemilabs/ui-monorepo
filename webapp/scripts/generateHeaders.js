@@ -124,11 +124,11 @@ const serveJson = {
         },
         {
           key: 'Content-Security-Policy',
-          value: `default-src 'self'; script-src 'self' 'unsafe-inline' ${downloadScriptsDomains.join(
+          value: `default-src 'self'; script-src 'self' ${downloadScriptsDomains.join(
             ' ',
-          )}; style-src 'self' 'unsafe-inline'; img-src 'self' ${imageSrcUrls.join(
+          )}; style-src 'self'; img-src 'self' ${imageSrcUrls.join(
             ' ',
-          )} blob: data:; connect-src 'self' ${fetchDomains.join(
+          )} blob:; connect-src 'self' ${fetchDomains.join(
             ' ',
           )}; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests`,
         },

@@ -1,9 +1,11 @@
-import { MessageDirection } from '@eth-optimism/sdk'
+import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import {
   type BtcDepositOperation,
   BtcDepositStatus,
+  BtcWithdrawStatus,
   type DepositTunnelOperation,
   type EvmDepositOperation,
+  EvmDepositStatus,
   type ToBtcWithdrawOperation,
   type ToEvmWithdrawOperation,
   type TunnelOperation,
@@ -58,4 +60,53 @@ export const getOperationFromDeposit = function (
   } as const
 
   return btcDepositStatusToAction[deposit.status]
+}
+
+const btcDepositCompletedActions = [
+  BtcDepositStatus.BTC_DEPOSITED,
+  BtcDepositStatus.DEPOSIT_TX_FAILED,
+]
+
+const btcWithdrawCompletedActions = [
+  BtcWithdrawStatus.WITHDRAWAL_FAILED,
+  BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED,
+  BtcWithdrawStatus.WITHDRAWAL_CHALLENGED,
+  BtcWithdrawStatus.CHALLENGE_FAILED,
+]
+
+const evmDepositCompletedActions = [
+  EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
+  EvmDepositStatus.DEPOSIT_TX_FAILED,
+]
+
+const evmWithdrawCompletedActions = [MessageStatus.RELAYED]
+
+const isDepositPendingOperation = function (
+  operation: DepositTunnelOperation,
+): boolean {
+  if (isBtcDeposit(operation)) {
+    return !btcDepositCompletedActions.includes(operation.status)
+  }
+
+  return !evmDepositCompletedActions.includes(operation.status)
+}
+
+const isWithdrawPendingOperation = function (
+  operation: WithdrawTunnelOperation,
+): boolean {
+  if (isToEvmWithdraw(operation)) {
+    return !evmWithdrawCompletedActions.includes(operation.status)
+  }
+
+  return !btcWithdrawCompletedActions.includes(operation.status)
+}
+
+export const isPendingOperation = function (
+  operation: TunnelOperation,
+): boolean {
+  if (isDeposit(operation)) {
+    return isDepositPendingOperation(operation)
+  }
+
+  return isWithdrawPendingOperation(operation)
 }

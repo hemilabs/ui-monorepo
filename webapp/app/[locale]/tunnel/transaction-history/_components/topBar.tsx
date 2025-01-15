@@ -7,7 +7,12 @@ import { useTranslations } from 'next-intl'
 import { ReloadHistory } from './reloadHistory'
 import { TunnelHistorySyncStatus } from './tunnelHistorySyncStatus'
 
-export type FilterOptions = 'all' | 'bitcoin' | 'ethereum'
+export type FilterOptions = {
+  action: 'all' | 'pending'
+  timeDesc: boolean
+  type: 'all' | 'withdrawals' | 'deposits'
+  operation: 'all' | 'bitcoin' | 'ethereum'
+}
 
 type Props = {
   filterOption: FilterOptions
@@ -35,30 +40,30 @@ export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
             <Tab
               border
               onClick={function () {
-                onFilterOptionChange('all')
+                onFilterOptionChange({ ...filterOption, operation: 'all' })
                 track?.('txn filter - all', { chain: networkType })
               }}
-              selected={filterOption === 'all'}
+              selected={filterOption.operation === 'all'}
             >
               {t('all')}
             </Tab>
             <Tab
               border
               onClick={function () {
-                onFilterOptionChange('ethereum')
+                onFilterOptionChange({ ...filterOption, operation: 'ethereum' })
                 track?.('txn filter - eth', { chain: networkType })
               }}
-              selected={filterOption === 'ethereum'}
+              selected={filterOption.operation === 'ethereum'}
             >
               {t('ethereum')}
             </Tab>
             <Tab
               border
               onClick={function () {
-                onFilterOptionChange('bitcoin')
+                onFilterOptionChange({ ...filterOption, operation: 'bitcoin' })
                 track?.('txn filter - btc', { chain: networkType })
               }}
-              selected={filterOption === 'bitcoin'}
+              selected={filterOption.operation === 'bitcoin'}
             >
               {t('bitcoin')}
             </Tab>

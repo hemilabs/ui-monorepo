@@ -7,7 +7,13 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { TunnelOperation } from 'types/tunnel'
-import { isBtcOperation, isEvmOperation } from 'utils/tunnel'
+import {
+  isBtcOperation,
+  isDeposit,
+  isEvmOperation,
+  isPendingOperation,
+  isWithdraw,
+} from 'utils/tunnel'
 import { useAccount } from 'wagmi'
 
 import { ConnectWallet } from './connectWallet'
@@ -26,9 +32,20 @@ const useTransactionsHistory = function (filter: FilterOptions) {
         .concat(withdrawals)
         .filter(
           operation =>
-            filter === 'all' ||
-            (filter === 'bitcoin' && isBtcOperation(operation)) ||
-            (filter === 'ethereum' && isEvmOperation(operation)),
+            filter.operation === 'all' ||
+            (filter.operation === 'bitcoin' && isBtcOperation(operation)) ||
+            (filter.operation === 'ethereum' && isEvmOperation(operation)),
+        )
+        .filter(
+          operation =>
+            filter.type === 'all' ||
+            (filter.type === 'withdrawals' && isWithdraw(operation)) ||
+            (filter.type === 'deposits' && isDeposit(operation)),
+        )
+        .filter(
+          operation =>
+            filter.action === 'all' ||
+            (filter.action === 'pending' && isPendingOperation(operation)),
         )
         .sort(function (a, b) {
           if (!a.timestamp) {
@@ -37,6 +54,11 @@ const useTransactionsHistory = function (filter: FilterOptions) {
           if (!b.timestamp) {
             return 1
           }
+
+          if (!filter.timeDesc) {
+            return a.timestamp - b.timestamp
+          }
+
           return b.timestamp - a.timestamp
         }),
     [deposits, filter, withdrawals],
@@ -49,8 +71,10 @@ const useTransactionsHistory = function (filter: FilterOptions) {
 
 export const TransactionHistory = function ({
   filterOption,
+  setFilterOption,
 }: {
   filterOption: FilterOptions
+  setFilterOption: (filter: FilterOptions) => void
 }) {
   const { status } = useAccount()
   const { data, loading } = useTransactionsHistory(filterOption)
@@ -70,7 +94,13 @@ export const TransactionHistory = function ({
         ref={containerRef}
       >
         {connectedToSupportedChain && showTable && (
-          <Table containerRef={containerRef} data={data} loading={loading} />
+          <Table
+            containerRef={containerRef}
+            data={data}
+            filterOption={filterOption}
+            loading={loading}
+            setFilterOption={setFilterOption}
+          />
         )}
         {connectedToSupportedChain && !showTable && <NoTransactions />}
         {connectedToUnsupportedChain && <UnsupportedChain />}

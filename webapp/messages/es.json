@@ -305,6 +305,17 @@
         "ethereum": "Ethereum",
         "recent-transactions": "Transacciones Recientes"
       },
+      "filters": {
+        "actions": {
+          "all": "Todas las Acciones",
+          "pending": "Acciones Pendientes"
+        },
+        "types": {
+          "all": "Todos",
+          "deposits": "Depósitos",
+          "withdrawals": "Retiros"
+        }
+      },
       "tunnel-assets": "Tunelizar activos",
       "withdraw": "Retiro"
     },

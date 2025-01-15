@@ -37,7 +37,7 @@ jobs:
           NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA: ${{ vars.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA }}
           NEXT_PUBLIC_ENABLE_ANALYTICS: false
           NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL: ${{ vars.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL || 'false' }}
-          NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET: ${{ vars.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET || 'false' }}'
+          NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET: ${{ vars.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET || 'false' }}
 
   deploy:
     environment: ${{ github.event_name == 'release' && 'production' || 'staging' }}

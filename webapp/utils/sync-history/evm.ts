@@ -21,7 +21,7 @@ import { getEvmBlock } from 'utils/evmApi'
 import { createPublicProvider } from 'utils/providers'
 import { type Chain } from 'viem'
 
-import { getBlockPayload } from './common'
+import { getBlockNumber, getBlockPayload } from './common'
 import { type HistorySyncer } from './types'
 
 const throttlingOptions = { interval: 2000, limit: 1, strict: true }
@@ -53,23 +53,6 @@ export const createEvmSync = function ({
   saveHistory,
   withdrawalsSyncInfo,
 }: HistorySyncer<BlockSyncType>) {
-  const getBlockNumber = async function (
-    toBlock: number | undefined,
-    provider: JsonRpcProvider,
-  ) {
-    if (toBlock !== undefined) {
-      return toBlock
-    }
-    debug('Getting block number for chain %s', provider.network.chainId)
-    const blockNumber = Number(await provider.getBlockNumber())
-    debug(
-      'Last block number for chain %s is %s',
-      provider.network.chainId,
-      blockNumber,
-    )
-    return blockNumber
-  }
-
   const syncDeposits = async function (
     chainProvider: JsonRpcProvider,
     crossChainMessengerPromise: Promise<CrossChainMessengerProxy>,

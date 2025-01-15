@@ -11,6 +11,7 @@ import {
   type Chain,
   type Hash,
   erc20Abi,
+  type TransactionReceipt,
   checksumAddress as toChecksum,
 } from 'viem'
 
@@ -25,10 +26,19 @@ export const getEvmBlock = pMemoize(
   { resolver: (blockNumber, chainId) => `${blockNumber}-${chainId}` },
 )
 
-export const getEvmTransactionReceipt = (hash: Hash, chainId: Chain['id']) =>
+export const getEvmTransactionReceipt = (
+  hash: Hash,
+  chainId: Chain['id'],
+): Promise<TransactionReceipt | null> =>
   wagmiGetTransactionReceipt(allEvmNetworksWalletConfig, {
     chainId,
     hash,
+  }).catch(function (err) {
+    // Do nothing if the TX was not found, as that throws
+    if (err.name === 'TransactionReceiptNotFoundError') {
+      return null
+    }
+    throw err
   })
 
 export const getErc20Token = pMemoize(

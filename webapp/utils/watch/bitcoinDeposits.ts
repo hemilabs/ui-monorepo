@@ -1,13 +1,11 @@
 import debugConstructor from 'debug'
-import { publicClientToHemiClient } from 'hooks/useHemiClient'
-import pMemoize from 'promise-mem'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { getBitcoinTimestamp } from 'utils/bitcoin'
 import { createBtcApi, mapBitcoinNetwork } from 'utils/btcApi'
-import { findChainById } from 'utils/chain'
 import { getHemiStatusOfBtcDeposit, getVaultAddressByDeposit } from 'utils/hemi'
 import { hasKeys } from 'utils/utilities'
-import { type Chain, createPublicClient, http } from 'viem'
+
+import { getHemiClient } from './common'
 
 const debug = debugConstructor('watch-btc-deposits-worker')
 
@@ -53,16 +51,6 @@ export const watchDepositOnBitcoin = async function (
 
   return updates
 }
-
-const getHemiClient = pMemoize(async function (chainId: Chain['id']) {
-  // L2 are always EVM
-  const l2Chain = findChainById(chainId) as Chain
-  const publicClient = createPublicClient({
-    chain: l2Chain,
-    transport: http(),
-  })
-  return publicClientToHemiClient(publicClient)
-})
 
 export const watchDepositOnHemi = async function (
   deposit: BtcDepositOperation,

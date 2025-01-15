@@ -5,6 +5,8 @@ export type DefinedFields<T extends object> = {
   [P in keyof T]-?: Exclude<T[P], null | undefined>
 }
 
+export type EnableWorkersDebug = { type: 'enable-debug'; payload: string }
+
 export type NoPayload = { payload?: never }
 
 export type Payload<T> = { payload: T }

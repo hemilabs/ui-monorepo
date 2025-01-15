@@ -25,6 +25,14 @@ const BitcoinDepositsStatusUpdater = dynamic(
   { ssr: false },
 )
 
+const BitcoinWithdrawalsStatusUpdater = dynamic(
+  () =>
+    import('./bitcoinWithdrawalsStatusUpdater').then(
+      mod => mod.BitcoinWithdrawalsStatusUpdater,
+    ),
+  { ssr: false },
+)
+
 const SyncHistoryWorker = dynamic(
   () => import('./syncHistoryWorker').then(mod => mod.SyncHistoryWorker),
   { ssr: false },
@@ -117,6 +125,8 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
     <TunnelHistoryContext.Provider value={context}>
       {/* Track updates on bitcoin deposits, in bitcoin or in Hemi */}
       {featureFlags.btcTunnelEnabled && <BitcoinDepositsStatusUpdater />}
+      {/* Track updates on bitcoin withdrawals, from Hemi to Bitcoin */}
+      {featureFlags.btcTunnelEnabled && <BitcoinWithdrawalsStatusUpdater />}
       {/* Track updates on withdrawals from Hemi */}
       <WithdrawalsStateUpdater />
       {children}

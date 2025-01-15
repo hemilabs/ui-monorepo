@@ -2,7 +2,7 @@ import { MessageStatus } from '@eth-optimism/sdk'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
-import { type WithdrawTunnelOperation } from 'types/tunnel'
+import { BtcWithdrawStatus, type WithdrawTunnelOperation } from 'types/tunnel'
 import { isToEvmWithdraw } from 'utils/tunnel'
 
 import { CallToAction } from './callToAction'
@@ -11,19 +11,9 @@ type Props = {
   withdraw: WithdrawTunnelOperation
 }
 
-export const WithdrawAction = function ({ withdraw }: Props) {
+function EvmWithdrawAction({ withdraw }: Props) {
   const [networkType] = useNetworkType()
   const t = useTranslations('tunnel-page.transaction-history.actions')
-
-  if (!isToEvmWithdraw(withdraw)) {
-    // Bitcoin withdrawals do not have a view option, just like EVM deposits
-    // this will change in the design, though.
-    return null
-  }
-
-  if (withdraw.status === undefined) {
-    return <Skeleton className="w-15 h-8" />
-  }
 
   const Failed = (
     <CallToAction
@@ -72,3 +62,44 @@ export const WithdrawAction = function ({ withdraw }: Props) {
   }
   return actions[withdraw.status]
 }
+
+// The action button in a bitcoin withdrawal row is always a "View" that opens
+// the drawer with the steps and details, except when the operator fails to
+// complete the withdrawal within 12 hours. In that case, the user can challenge
+// the operation.
+function BitcoinWithdrawAction({ withdraw }: Props) {
+  const [networkType] = useNetworkType()
+  const t = useTranslations('tunnel-page.transaction-history.actions')
+
+  if (withdraw.status === BtcWithdrawStatus.READY_TO_CHALLENGE) {
+    return (
+      <CallToAction
+        networkType={networkType}
+        text={t('challenge')}
+        txHash={withdraw.transactionHash}
+        variant="primary"
+      />
+    )
+  }
+
+  return (
+    <CallToAction
+      networkType={networkType}
+      text={t('view')}
+      txHash={withdraw.transactionHash}
+      variant="secondary"
+    />
+  )
+}
+
+// This is the component rendering the content of the Action column in the
+// transactions history table. It renders a button that will open the drawer with
+// different content depending on the withdrawal parameters.
+export const WithdrawAction = ({ withdraw }: Props) =>
+  withdraw.status === undefined ? (
+    <Skeleton className="w-15 h-8" />
+  ) : isToEvmWithdraw(withdraw) ? (
+    <EvmWithdrawAction withdraw={withdraw} />
+  ) : (
+    <BitcoinWithdrawAction withdraw={withdraw} />
+  )

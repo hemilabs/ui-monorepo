@@ -25,7 +25,7 @@ const Failed = function () {
 const InStatus = ({ text }: { text: string }) => (
   <Container>
     <Dot className="border-amber-800/25 bg-amber-400" />
-    <span className="text-[#F59E0B]">{text}</span>
+    <span className="text-amber-600">{text}</span>
   </Container>
 )
 
@@ -39,8 +39,16 @@ const Success = function () {
   )
 }
 
+const Finished = ({ text }: { text: string }) => (
+  <Container>
+    <Dot className="border-neutral-800/25 bg-neutral-500" />
+    <span className="text-neutral-500">{text}</span>
+  </Container>
+)
+
 export const TxStatus = {
   Failed,
+  Finished,
   InStatus,
   Success,
 }

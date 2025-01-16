@@ -22,13 +22,9 @@ export const Modal = function ({ children, onClose }: Props) {
     <>
       <Overlay />
       <dialog
-        className="pointer-event-auto fixed inset-0 z-50 flex items-center justify-center overflow-y-auto
-        overflow-x-hidden rounded-2xl outline-none focus:outline-none"
+        className="pointer-event-auto shadow-large fixed inset-0 z-50 flex items-center justify-center
+        overflow-y-auto overflow-x-hidden rounded-2xl outline-none focus:outline-none"
         onTouchStart={e => e.stopPropagation()}
-        style={{
-          boxShadow:
-            '0px 2px 4px 0px rgba(0, 2, 2, 0.04), 0px 8px 24px -4px rgba(0, 2, 2, 0.04)',
-        }}
       >
         <div ref={modalRef}>{children}</div>
       </dialog>

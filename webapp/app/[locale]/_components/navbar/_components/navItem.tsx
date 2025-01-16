@@ -16,13 +16,15 @@ import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
 import { ComponentProps, MutableRefObject, ReactNode, useState } from 'react'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
+import { UrlObject } from 'url'
 import { isRelativeUrl } from 'utils/url'
 
 type Props = {
-  event: AnalyticsEventsWithChain
+  event?: AnalyticsEventsWithChain
   icon?: ReactNode
   rightSection?: ReactNode
   text: string
+  urlToBeSelected?: string | UrlObject
 }
 
 type Selectable = { selected?: boolean }
@@ -129,13 +131,17 @@ const PageLink = function ({
   icon,
   rightSection,
   text,
+  urlToBeSelected = href,
 }: ItemLinkProps) {
   const locale = useLocale()
   const [networkType] = useNetworkType()
   const pathname = usePathname()
   const { track } = useUmami()
 
-  const selected = pathname.startsWith(`/${locale}${href}`)
+  const selected =
+    typeof urlToBeSelected === 'string'
+      ? pathname.startsWith(`/${locale}${urlToBeSelected}`)
+      : pathname.startsWith(`/${locale}${urlToBeSelected.pathname}`)
 
   return (
     <ItemContainer

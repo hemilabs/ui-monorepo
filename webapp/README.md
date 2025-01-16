@@ -16,6 +16,11 @@ NEXT_PUBLIC_WORKERS_DEBUG_ENABLE=<true|false> # enable logging on web workers
 NEXT_PUBLIC_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
 NEXT_PUBLIC_ANALYTICS_URL=<url> # Umami analytics URL
 NEXT_PUBLIC_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
+# These env variables are required for Enabling the fallowing features
+NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL=<true|false> # Enable BTC tunnel
+NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET=<true|false> # Enable mainnet network
+NEXT_PUBLIC_FEATURE_FLAG_ENABLE_STAKE_CAMPAIGN=<true|false> # Enable Staking Campaign
+
 # The following variables could be used to customize the contracts addresses used by Hemi (for example, for testing with a forked blockchain):
 NEXT_PUBLIC_ADDRESS_MANAGER=<address>
 NEXT_PUBLIC_L2_BRIDGE=<address>

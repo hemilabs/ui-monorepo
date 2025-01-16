@@ -172,9 +172,20 @@
     "hemidocs": "Hemi Docs",
     "network-status": "Network Status",
     "swap": "Swap",
+    "stake": "Stake",
     "tools": "Tools",
     "tunnel": "Tunnel",
     "web-pop-miner": "Web PoP Miner"
+  },
+  "stake-page": {
+    "dashboard": {
+      "subtitle": "Stake your assets to earn rewards and boost your points.",
+      "title": "Dashboard"
+    },
+    "stake": {
+      "subtitle": "Stake assets to earn points and rewards.",
+      "title": "Stake"
+    }
   },
   "token-custom-drawer": {
     "add-contract-to-preview": "Add a contract address to preview the token...",

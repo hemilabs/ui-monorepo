@@ -17,15 +17,6 @@ const CustomTokenDrawer = dynamic(() =>
   import('components/customTokenDrawer').then(mod => mod.CustomTokenDrawer),
 )
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const TransactionStatus = dynamic(
-  () =>
-    import('components/transactionStatus').then(mod => mod.TransactionStatus),
-  {
-    ssr: false,
-  },
-)
-
 type FormContentProps = {
   isRunningOperation: boolean
   minInputMsg?: string

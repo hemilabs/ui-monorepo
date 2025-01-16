@@ -36,6 +36,8 @@ const Container = ({ children }: { children: ReactNode }) => (
 
 export const EarnedPoints = function () {
   const t = useTranslations('stake-page.dashboard')
+  // TODO TBD how to load this data https://github.com/hemilabs/ui-monorepo/issues/750
+  const points = '60.300'
   return (
     <Container>
       <div className="p-2">
@@ -48,7 +50,7 @@ export const EarnedPoints = function () {
           }}
         >
           <Heading heading={t('total-earned-points')} />
-          <Points color="text-orange-500" points="60.300" />
+          <Points color="text-orange-500" points={points} />
         </div>
       </div>
       <Image
@@ -64,11 +66,13 @@ export const EarnedPoints = function () {
 
 export const TotalStaked = function () {
   const t = useTranslations('stake-page.dashboard')
+  // TODO TBD how to load this data https://github.com/hemilabs/ui-monorepo/issues/750
+  const points = '$ 1,626,271,246.98'
   return (
     <Container>
       <div className="flex flex-shrink-0 flex-col gap-y-3 p-6">
         <Heading heading={t('total-staked')} />
-        <Points points="$ 1,626,271,246.98" />
+        <Points points={points} />
       </div>
       <Image
         alt="Community icon"
@@ -83,11 +87,13 @@ export const TotalStaked = function () {
 
 export const YourStake = function () {
   const t = useTranslations('stake-page.dashboard')
+  // TODO TBD how to load this data https://github.com/hemilabs/ui-monorepo/issues/750
+  const points = '$ 962.163'
   return (
     <Container>
       <div className="flex flex-shrink-0 flex-col gap-y-3 p-6">
         <Heading heading={t('your-stake')} />
-        <Points points="$ 962.163" />
+        <Points points={points} />
       </div>
       <Image
         alt="Stake icon"

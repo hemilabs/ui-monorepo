@@ -64,8 +64,11 @@ const createSyncer = function ({
         l1Chain,
         l2Chain,
         saveHistory,
-        withdrawalsSyncInfo:
-          withdrawalsSyncInfo as ExtendedSyncInfo<TransactionListSyncType>,
+        withdrawalsSyncInfo: {
+          ...(withdrawalsSyncInfo as ExtendedSyncInfo<BlockSyncType>),
+          // depending on L1 (bitcoin) chain, get config for L2 (Hemi)
+          ...chainConfiguration[l1Chain.id],
+        },
       })
     case mainnet.id:
     case sepolia.id:

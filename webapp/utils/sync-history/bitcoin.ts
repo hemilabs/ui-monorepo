@@ -1,32 +1,60 @@
 import { MessageDirection } from '@eth-optimism/sdk'
 import { BtcChain } from 'btc-wallet/chains'
 import { Account, BtcTransaction } from 'btc-wallet/unisat'
+import { bitcoinTunnelManagerAbi } from 'hemi-viem/contracts'
+import { HemiPublicClient, publicClientToHemiClient } from 'hooks/useHemiClient'
 import {
-  type HemiPublicClient,
-  publicClientToHemiClient,
-} from 'hooks/useHemiClient'
-import { TransactionListSyncType } from 'hooks/useSyncHistory/types'
+  type BlockSyncType,
+  type TransactionListSyncType,
+} from 'hooks/useSyncHistory/types'
 import pAll from 'p-all'
-import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
+import pThrottle from 'p-throttle'
+import {
+  createSlidingBlockWindow,
+  CreateSlidingBlockWindow,
+} from 'sliding-block-window/src'
+import { type EvmChain } from 'types/chain'
+import {
+  type BtcDepositOperation,
+  BtcDepositStatus,
+  BtcWithdrawStatus,
+  type ToBtcWithdrawOperation,
+} from 'types/tunnel'
 import { calculateDepositAmount, getBitcoinTimestamp } from 'utils/bitcoin'
 import {
   createBtcApi,
   mapBitcoinNetwork,
   type MempoolJsBitcoinTransaction,
 } from 'utils/btcApi'
+import { getEvmBlock } from 'utils/evmApi'
 import {
   getHemiStatusOfBtcDeposit,
+  getHemiStatusOfBtcWithdrawal,
   hemiAddressToBitcoinOpReturn,
 } from 'utils/hemi'
 import {
   getBitcoinCustodyAddress,
   getVaultAddressByIndex,
 } from 'utils/hemiMemoized'
+import { createPublicProvider } from 'utils/providers'
 import { getNativeToken } from 'utils/token'
-import { type Address, createPublicClient, http, toHex } from 'viem'
+import {
+  type Address,
+  createPublicClient,
+  decodeFunctionData,
+  type Hash,
+  http,
+  type Log,
+  parseAbiItem,
+  toHex,
+  zeroAddress,
+} from 'viem'
 
+import { getBlockNumber, getBlockPayload } from './common'
 import { createSlidingTransactionList } from './slidingTransactionList'
 import { type HistorySyncer } from './types'
+
+const throttlingOptions = { interval: 2000, limit: 1, strict: true }
 
 const discardKnownTransactions = (toKnownTx?: BtcTransaction) =>
   function (transactions: MempoolJsBitcoinTransaction[]) {
@@ -39,6 +67,24 @@ const discardKnownTransactions = (toKnownTx?: BtcTransaction) =>
     }
     return transactions.filter((_, i) => i < toIndex)
   }
+
+const getWithdrawerBitcoinAddress = ({
+  hash,
+  hemiClient,
+}: {
+  hash: Hash
+  hemiClient: HemiPublicClient
+}) =>
+  hemiClient
+    .getTransaction({ hash })
+    .then(({ input }) =>
+      decodeFunctionData({
+        abi: bitcoinTunnelManagerAbi,
+        data: input,
+      }),
+    )
+    // the bitcoin address can be retrieve from the input data call - it's the 2nd parameter
+    .then(args => args[1] as string)
 
 const isValidDeposit = (
   hemiAddress: Address,
@@ -74,6 +120,100 @@ const filterDeposits = (
     return isValidDeposit(hemiAddress, opReturnUtxo)
   })
 
+const addAdditionalInfo =
+  (hemiClient: HemiPublicClient) =>
+  (withdrawals: Omit<ToBtcWithdrawOperation, 'to'>[]) =>
+    pAll(
+      withdrawals.map(
+        // pAll only infers the return type correctly if the function is async
+        w => async () =>
+          Promise.all([
+            getWithdrawerBitcoinAddress({
+              hash: w.transactionHash,
+              hemiClient,
+            }),
+            getEvmBlock(w.blockNumber, w.l2ChainId),
+          ])
+            .then(
+              ([btcAddress, block]) =>
+                ({
+                  ...w,
+                  timestamp: Number(block.timestamp),
+                  to: btcAddress,
+                }) satisfies ToBtcWithdrawOperation,
+            )
+            .then(withdrawal =>
+              // status requires the timestamp to be defined, so this step must be done at last
+              getHemiStatusOfBtcWithdrawal({
+                hemiClient,
+                // only value missing is "to", which is not used internally.
+                withdrawal: withdrawal as ToBtcWithdrawOperation,
+              }).then(
+                status =>
+                  ({
+                    ...withdrawal,
+                    status,
+                  }) satisfies ToBtcWithdrawOperation,
+              ),
+            ),
+      ),
+      { concurrency: 2 },
+    )
+
+const withdrawalInitiatedAbiEvent = parseAbiItem(
+  'event WithdrawalInitiated(address indexed vault, address indexed withdrawer, string indexed btcAddress, uint256 withdrawalSats, uint256 netSatsAfterFee, uint64 uuid)',
+)
+
+const getWithdrawalsLogs = ({
+  fromBlock,
+  hemiAddress,
+  hemiClient,
+  toBlock,
+}: {
+  fromBlock: number
+  hemiAddress: Address
+  hemiClient: HemiPublicClient
+  toBlock: number
+}) =>
+  hemiClient.getLogs({
+    args: {
+      withdrawer: hemiAddress,
+    },
+    event: withdrawalInitiatedAbiEvent,
+    fromBlock: BigInt(fromBlock),
+    toBlock: BigInt(toBlock),
+  })
+
+const logsToWithdrawals =
+  ({
+    hemiAddress,
+    l1Chain,
+    l2Chain,
+  }: {
+    hemiAddress: Address
+    l1Chain: BtcChain
+    l2Chain: EvmChain
+  }) =>
+  (logs: Log<bigint, number, false, typeof withdrawalInitiatedAbiEvent>[]) =>
+    logs.map(
+      ({ args, blockNumber, transactionHash }) =>
+        ({
+          amount: args.withdrawalSats.toString(),
+          blockNumber: Number(blockNumber),
+          direction: MessageDirection.L2_TO_L1,
+          from: hemiAddress,
+          l1ChainId: l1Chain.id,
+          l1Token: zeroAddress,
+          l2ChainId: l2Chain.id,
+          l2Token: getNativeToken(l1Chain.id).extensions.bridgeInfo[l2Chain.id]
+            .tokenAddress,
+          // as logs are found, the tx is confirmed. So TX_CONFIRMED is the min status.
+          status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
+          transactionHash,
+          uuid: args.uuid.toString(),
+        }) satisfies Omit<ToBtcWithdrawOperation, 'to'>,
+    )
+
 export const createBitcoinSync = function ({
   address: hemiAddress,
   debug,
@@ -81,10 +221,37 @@ export const createBitcoinSync = function ({
   l1Chain,
   l2Chain,
   saveHistory,
-}: Omit<HistorySyncer<TransactionListSyncType>, 'l1Chain'> & {
+  withdrawalsSyncInfo,
+}: Omit<
+  HistorySyncer<TransactionListSyncType>,
+  'l1Chain' | 'withdrawalsSyncInfo'
+> & {
   l1Chain: BtcChain
-}) {
-  const syncDeposits = async function (hemiClient: HemiPublicClient) {
+} & Pick<HistorySyncer<BlockSyncType>, 'withdrawalsSyncInfo'>) {
+  const l2PublicClient = createPublicClient({
+    chain: l2Chain,
+    transport: http(),
+  })
+
+  const hemiClient = publicClientToHemiClient(l2PublicClient)
+
+  const getBitcoinWithdrawals = ({
+    fromBlock,
+    toBlock,
+  }: {
+    fromBlock: number
+    toBlock: number
+  }) =>
+    getWithdrawalsLogs({
+      fromBlock,
+      hemiAddress,
+      hemiClient,
+      toBlock,
+    })
+      .then(logsToWithdrawals({ hemiAddress, l1Chain, l2Chain }))
+      .then(addAdditionalInfo(hemiClient))
+
+  const syncDeposits = async function () {
     let localDepositSyncInfo: TransactionListSyncType = {
       ...depositsSyncInfo,
     }
@@ -201,20 +368,82 @@ export const createBitcoinSync = function ({
     }).run()
   }
 
-  const syncHistory = function () {
-    const l2PublicClient = createPublicClient({
-      chain: l2Chain,
-      transport: http(),
-    })
+  const syncWithdrawals = async function () {
+    const lastBlock = await getBlockNumber(
+      withdrawalsSyncInfo.toBlock,
+      createPublicProvider(l2Chain.rpcUrls.default.http[0], l2Chain),
+    )
 
-    const hemiClient = publicClientToHemiClient(l2PublicClient)
+    const initialBlock =
+      withdrawalsSyncInfo.fromBlock ?? withdrawalsSyncInfo.minBlockToSync ?? 0
 
-    return Promise.all([
-      syncDeposits(hemiClient).then(() => debug('Deposits sync finished')),
-      // syncWithdrawals().then(() => debug('Withdrawals sync finished')),
-    ]).then(function () {
-      debug('Sync process finished')
-    })
+    debug(
+      'Syncing withdrawals between blocks %s and %s',
+      initialBlock,
+      lastBlock,
+    )
+
+    const onChange = async function ({
+      canMove,
+      nextState,
+      state,
+    }: Parameters<CreateSlidingBlockWindow['onChange']>[0]) {
+      // we walk the blockchain backwards, but OP API expects
+      // toBlock > fromBlock - so we must invert them
+      const { from: toBlock, to: fromBlock, windowIndex } = state
+
+      debug(
+        'Getting deposits from block %s to %s (windowIndex %s)',
+        fromBlock,
+        toBlock,
+        windowIndex,
+      )
+
+      const newWithdrawals = await getBitcoinWithdrawals({
+        fromBlock,
+        toBlock,
+      })
+
+      debug(
+        'Got %s withdrawals from block %s to %s (windowIndex %s). Saving',
+        newWithdrawals.length,
+        fromBlock,
+        toBlock,
+        windowIndex,
+      )
+
+      // save the withdrawals
+      saveHistory({
+        payload: {
+          ...getBlockPayload({
+            canMove,
+            fromBlock: withdrawalsSyncInfo.fromBlock,
+            lastBlock,
+            nextState,
+          }),
+          chainId: l1Chain.id,
+          content: newWithdrawals,
+        },
+        type: 'sync-withdrawals',
+      })
+    }
+
+    return createSlidingBlockWindow({
+      initialBlock,
+      lastBlock,
+      onChange: pThrottle(throttlingOptions)(onChange),
+      windowIndex: withdrawalsSyncInfo.chunkIndex,
+      windowSize: withdrawalsSyncInfo.blockWindowSize,
+    }).run()
+  }
+
+  const syncHistory = async function () {
+    await Promise.all([
+      syncDeposits().then(() => debug('Deposits sync finished')),
+      syncWithdrawals().then(() => debug('Withdrawals sync finished')),
+    ])
+
+    debug('Sync process finished')
   }
 
   return { syncHistory }

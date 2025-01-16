@@ -132,7 +132,7 @@ export const LearnMore = function () {
   const t = useTranslations('get-started')
   const { track } = useUmami()
 
-  const tutorialsUrl = 'https://docs.hemi.xyz/how-to-tutorials/tutorials'
+  const tutorialsUrl = 'https://docs.hemi.xyz/main/start-here'
 
   const addTracking = () =>
     track ? () => track('tut - learn more') : undefined

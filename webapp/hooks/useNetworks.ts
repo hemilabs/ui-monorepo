@@ -27,17 +27,24 @@ export const useNetworks = function () {
 
   // All enabled networks
   const networks: RemoteChain[] = useMemo(
-    // @ts-expect-error .concat() automatically casts the result type to evmNetworks' type.
-    () => evmNetworks.concat(featureFlags.btcTunnelEnabled ? [bitcoin] : []),
-    [bitcoin, evmNetworks],
+    // TODO bitcoin is only enabled for testnet https://github.com/hemilabs/ui-monorepo/issues/738
+    () =>
+      evmNetworks.concat(
+        // @ts-expect-error .concat() automatically casts the result type to evmNetworks' type.
+        featureFlags.btcTunnelEnabled && type === 'testnet' ? [bitcoin] : [],
+      ),
+    [bitcoin, evmNetworks, type],
   )
 
   // All enabled networks that can tunnel to/from Hemi
   const remoteNetworks: RemoteChain[] = useMemo(
+    // TODO bitcoin is only enabled for testnet https://github.com/hemilabs/ui-monorepo/issues/738
     () =>
-      // @ts-expect-error .concat() automatically casts the result type to evmNetworks' type.
-      evmRemoteNetworks.concat(featureFlags.btcTunnelEnabled ? [bitcoin] : []),
-    [bitcoin, evmRemoteNetworks],
+      evmRemoteNetworks.concat(
+        // @ts-expect-error .concat() automatically casts the result type to evmNetworks' type.
+        featureFlags.btcTunnelEnabled && type === 'testnet' ? [bitcoin] : [],
+      ),
+    [bitcoin, evmRemoteNetworks, type],
   )
 
   return {

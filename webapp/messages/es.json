@@ -180,7 +180,10 @@
   "stake-page": {
     "dashboard": {
       "subtitle": "Apueste sus activos para ganar recompensas y aumentar tus puntos.",
-      "title": "Panel"
+      "title": "Panel",
+      "total-earned-points": "Total de puntos Hemi ganados",
+      "total-staked": "Total Apostado",
+      "your-stake": "Su Apuesta"
     },
     "stake": {
       "subtitle": "Apueste activos para ganar puntos y recompensas.",

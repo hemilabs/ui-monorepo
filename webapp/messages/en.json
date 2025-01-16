@@ -180,7 +180,10 @@
   "stake-page": {
     "dashboard": {
       "subtitle": "Stake your assets to earn rewards and boost your points.",
-      "title": "Dashboard"
+      "title": "Dashboard",
+      "total-earned-points": "Total Hemi points earned",
+      "total-staked": "Total Staked",
+      "your-stake": "Your Stake"
     },
     "stake": {
       "subtitle": "Stake assets to earn points and rewards.",

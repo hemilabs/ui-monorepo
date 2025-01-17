@@ -20,6 +20,8 @@ NEXT_PUBLIC_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL=<true|false> # Enable BTC tunnel
 NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET=<true|false> # Enable mainnet network
 NEXT_PUBLIC_FEATURE_FLAG_ENABLE_STAKE_CAMPAIGN=<true|false> # Enable Staking Campaign
+# Bitcoin configuring
+NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=1 # Vault index to use for bitcoin. Defaults to 0
 
 # The following variables could be used to customize the contracts addresses used by Hemi (for example, for testing with a forked blockchain):
 NEXT_PUBLIC_ADDRESS_MANAGER=<address>

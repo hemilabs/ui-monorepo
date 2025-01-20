@@ -1,6 +1,14 @@
 import { tokenList, NativeTokenSpecialAddressOnL2 } from 'tokenList'
 import { EvmToken, Token } from 'types/token'
-import { isAddress, isAddressEqual, zeroAddress } from 'viem'
+import {
+  type Address,
+  type Client,
+  erc20Abi,
+  isAddress,
+  isAddressEqual,
+  zeroAddress,
+} from 'viem'
+import { readContract } from 'viem/actions'
 
 export const isNativeAddress = (address: string) =>
   address === zeroAddress ||
@@ -32,3 +40,19 @@ export const getTokenByAddress = function (
 
 export const isEvmToken = (token: Token): token is EvmToken =>
   typeof token.chainId === 'number'
+
+export const getErc20TokenBalance = ({
+  address,
+  client,
+  token,
+}: {
+  address: Address
+  client: Client
+  token: EvmToken
+}) =>
+  readContract(client, {
+    abi: erc20Abi,
+    address: token.address as Address,
+    args: [address],
+    functionName: 'balanceOf',
+  })

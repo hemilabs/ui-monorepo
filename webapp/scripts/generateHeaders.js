@@ -50,7 +50,7 @@ const customRpcOrigins = [
   process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA,
   process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET,
   process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA,
-]
+].flatMap((p = '') => p.split('+'))
 customRpcOrigins.forEach(function (url) {
   if (url) {
     fetchDomains.push(new URL(url).origin)

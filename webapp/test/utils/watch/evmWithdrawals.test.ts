@@ -3,7 +3,7 @@ import { hemiSepolia } from 'hemi-viem'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { createQueuedCrossChainMessenger } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
-import { createPublicProvider } from 'utils/providers'
+import { createProvider } from 'utils/providers'
 // import { watchEvmWithdrawal } from 'utils/watch/evmWithdrawals'
 import { sepolia } from 'viem/chains'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -26,7 +26,7 @@ vi.mock('utils/evmApi', () => ({
 }))
 
 vi.mock('utils/providers', () => ({
-  createPublicProvider: vi.fn(),
+  createProvider: vi.fn(),
 }))
 
 describe('utils/watch/evmWithdrawals', function () {
@@ -40,7 +40,7 @@ describe('utils/watch/evmWithdrawals', function () {
     it('should return no changes if the withdrawal is pending', async function () {
       const { watchEvmWithdrawal } = await import('utils/watch/evmWithdrawals')
       vi.mocked(createQueuedCrossChainMessenger).mockResolvedValue({})
-      vi.mocked(createPublicProvider).mockResolvedValue({})
+      vi.mocked(createProvider).mockResolvedValue({})
       vi.mocked(getEvmTransactionReceipt).mockResolvedValue(null)
 
       const updates = await watchEvmWithdrawal(withdrawal)

@@ -1,7 +1,7 @@
 import { hemi } from 'hemi-viem'
-import { overrideRpcUrl } from 'networks/utils'
+import { updateRpcUrls } from 'networks/utils'
 
-export const hemiMainnet = overrideRpcUrl(
+export const hemiMainnet = updateRpcUrls(
   hemi,
   process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET,
 )

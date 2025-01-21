@@ -2,10 +2,9 @@ import debugConstructor from 'debug'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { getBitcoinTimestamp } from 'utils/bitcoin'
 import { createBtcApi, mapBitcoinNetwork } from 'utils/btcApi'
+import { getHemiClient } from 'utils/chainClients'
 import { getHemiStatusOfBtcDeposit, getVaultAddressByDeposit } from 'utils/hemi'
 import { hasKeys } from 'utils/utilities'
-
-import { getHemiClient } from './common'
 
 const debug = debugConstructor('watch-btc-deposits-worker')
 
@@ -55,7 +54,7 @@ export const watchDepositOnBitcoin = async function (
 export const watchDepositOnHemi = async function (
   deposit: BtcDepositOperation,
 ) {
-  const hemiClient = await getHemiClient(deposit.l2ChainId)
+  const hemiClient = getHemiClient(deposit.l2ChainId)
 
   const newStatus = await getVaultAddressByDeposit(hemiClient, deposit).then(
     vaultAddress =>

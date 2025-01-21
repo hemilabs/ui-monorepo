@@ -1,10 +1,10 @@
-import { JsonRpcProvider } from '@ethersproject/providers'
+import { type BaseProvider } from '@ethersproject/providers'
 import { type BlockSyncType } from 'hooks/useSyncHistory/types'
 import { CreateSlidingBlockWindow } from 'sliding-block-window/src'
 
 export const getBlockNumber = async function (
   toBlock: number | undefined,
-  provider: JsonRpcProvider,
+  provider: BaseProvider,
 ) {
   if (toBlock !== undefined) {
     return toBlock

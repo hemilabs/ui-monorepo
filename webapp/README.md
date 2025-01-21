@@ -8,10 +8,14 @@ The environment variables are defined in the `.env` file at the root of the proj
 The prefix `NEXT_PUBLIC_` is required for the variables to be available in the browser. A few variables can be set locally (in a `.env.local`), in addition to the ones already defined in the `.env`.
 
 ```sh
-NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA=<url> # Optional - Used to override the Hemi Sepolia RPC URL
-NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA=<url> # Optional - Used to override the Sepolia RPC URL
-NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL=<true|false> # Enable the bitcoin tunnel feature
-NEXT_PUBLIC_WORKERS_DEBUG_ENABLE=<true|false> # enable logging on web workers
+# Use this variables to override RPC urls per chain. In order to join multiple RPC urls, join them with the "+" character.
+# For example NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA="https://rpc1.testnet.com/rpc+https://rpc2.testnet.com/rpc"
+NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET=<urls>
+NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA=<urls>
+NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET=<urls>
+NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA=<urls>
+# enable logging on web workers
+NEXT_PUBLIC_WORKERS_DEBUG_ENABLE=<true|false>
 # These env variables are required for Enabling Analytics
 NEXT_PUBLIC_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
 NEXT_PUBLIC_ANALYTICS_URL=<url> # Umami analytics URL

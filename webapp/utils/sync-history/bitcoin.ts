@@ -2,7 +2,7 @@ import { MessageDirection } from '@eth-optimism/sdk'
 import { BtcChain } from 'btc-wallet/chains'
 import { Account, BtcTransaction } from 'btc-wallet/unisat'
 import { bitcoinTunnelManagerAbi } from 'hemi-viem/contracts'
-import { HemiPublicClient, publicClientToHemiClient } from 'hooks/useHemiClient'
+import { type HemiPublicClient } from 'hooks/useHemiClient'
 import {
   type BlockSyncType,
   type TransactionListSyncType,
@@ -26,6 +26,7 @@ import {
   mapBitcoinNetwork,
   type MempoolJsBitcoinTransaction,
 } from 'utils/btcApi'
+import { getHemiClient } from 'utils/chainClients'
 import { getEvmBlock } from 'utils/evmApi'
 import {
   getHemiStatusOfBtcDeposit,
@@ -36,14 +37,12 @@ import {
   getBitcoinCustodyAddress,
   getVaultAddressByIndex,
 } from 'utils/hemiMemoized'
-import { createPublicProvider } from 'utils/providers'
+import { createProvider } from 'utils/providers'
 import { getNativeToken } from 'utils/token'
 import {
   type Address,
-  createPublicClient,
   decodeFunctionData,
   type Hash,
-  http,
   type Log,
   parseAbiItem,
   toHex,
@@ -228,12 +227,7 @@ export const createBitcoinSync = function ({
 > & {
   l1Chain: BtcChain
 } & Pick<HistorySyncer<BlockSyncType>, 'withdrawalsSyncInfo'>) {
-  const l2PublicClient = createPublicClient({
-    chain: l2Chain,
-    transport: http(),
-  })
-
-  const hemiClient = publicClientToHemiClient(l2PublicClient)
+  const hemiClient = getHemiClient(l2Chain.id)
 
   const getBitcoinWithdrawals = ({
     fromBlock,
@@ -371,7 +365,7 @@ export const createBitcoinSync = function ({
   const syncWithdrawals = async function () {
     const lastBlock = await getBlockNumber(
       withdrawalsSyncInfo.toBlock,
-      createPublicProvider(l2Chain.rpcUrls.default.http[0], l2Chain),
+      createProvider(l2Chain),
     )
 
     const initialBlock =

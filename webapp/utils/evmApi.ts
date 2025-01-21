@@ -44,7 +44,6 @@ export const getEvmTransactionReceipt = (
 export const getErc20Token = pMemoize(
   async function (address: Address, chainId: Chain['id']) {
     const read = <T extends 'decimals' | 'name' | 'symbol'>(functionName: T) =>
-      // @ts-expect-error should work, but can't make it work
       readContract(allEvmNetworksWalletConfig, {
         abi: erc20Abi,
         address,

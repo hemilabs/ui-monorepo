@@ -1,23 +1,10 @@
 // See https://wagmi.sh/react/guides/ethers#connector-client-%E2%86%92-signer
 import { useMemo } from 'react'
-import {
-  createFallbackProvider,
-  createPublicProvider,
-  createSignerProvider,
-} from 'utils/providers'
-import type { Chain, PublicClient } from 'viem'
+import { createSignerProvider, createProvider } from 'utils/providers'
+import type { Chain } from 'viem'
 import { Config, useConnectorClient, usePublicClient } from 'wagmi'
 
 import { useChainIsSupported } from './useChainIsSupported'
-
-// See https://wagmi.sh/react/guides/ethers#client-%E2%86%92-provider
-function publicClientToProvider(publicClient: PublicClient) {
-  const { chain, transport } = publicClient
-  if (transport.type === 'fallback') {
-    return createFallbackProvider(chain, transport.transports)
-  }
-  return createPublicProvider(transport.url, chain)
-}
 
 // https://wagmi.sh/react/guides/ethers#connector-client-%E2%86%92-signer
 // Types provided by docs do not work, unless [strict](https://www.typescriptlang.org/tsconfig#strict) is enabled.
@@ -43,13 +30,8 @@ export function useJsonRpcProvider(chainId: Chain['id']) {
   return useMemo(
     () =>
       publicClient && isSupported
-        ? publicClientToProvider(publicClient)
+        ? createProvider(publicClient.chain)
         : undefined,
     [isSupported, publicClient],
   )
 }
-
-export type Provider =
-  | ReturnType<typeof useWeb3Provider>
-  | ReturnType<typeof useJsonRpcProvider>
-  | undefined

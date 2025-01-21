@@ -9,7 +9,7 @@ import {
 import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { allEvmNetworks } from 'networks'
-import { http } from 'viem'
+import { buildTransports } from 'utils/transport'
 import { WagmiProvider, createConfig } from 'wagmi'
 
 type Props = {
@@ -36,14 +36,7 @@ const connectors = connectorsForWallets(
 export const allEvmNetworksWalletConfig = createConfig({
   chains: allEvmNetworks,
   connectors,
-  transports: Object.fromEntries(
-    allEvmNetworks.map(n => [
-      n.id,
-      http(n.rpcUrls.default.http[0], {
-        batch: { wait: 1000 },
-      }),
-    ]),
-  ),
+  transports: buildTransports(allEvmNetworks),
 })
 
 export const EvmWalletContext = ({ children, locale }: Props) => (

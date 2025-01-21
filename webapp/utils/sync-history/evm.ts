@@ -1,5 +1,5 @@
 import { type TokenBridgeMessage } from '@eth-optimism/sdk'
-import { JsonRpcProvider } from '@ethersproject/providers'
+import { type BaseProvider } from '@ethersproject/providers'
 import { BlockSyncType } from 'hooks/useSyncHistory/types'
 import pAll from 'p-all'
 import pThrottle from 'p-throttle'
@@ -18,7 +18,7 @@ import {
   type CrossChainMessengerProxy,
 } from 'utils/crossChainMessenger'
 import { getEvmBlock } from 'utils/evmApi'
-import { createPublicProvider } from 'utils/providers'
+import { createProvider } from 'utils/providers'
 import { type Chain } from 'viem'
 
 import { getBlockNumber, getBlockPayload } from './common'
@@ -54,7 +54,7 @@ export const createEvmSync = function ({
   withdrawalsSyncInfo,
 }: HistorySyncer<BlockSyncType>) {
   const syncDeposits = async function (
-    chainProvider: JsonRpcProvider,
+    chainProvider: BaseProvider,
     crossChainMessengerPromise: Promise<CrossChainMessengerProxy>,
   ) {
     debug('Starting process to sync deposits')
@@ -143,7 +143,7 @@ export const createEvmSync = function ({
   }
 
   const syncWithdrawals = async function (
-    chainProvider: JsonRpcProvider,
+    chainProvider: BaseProvider,
     crossChainMessengerPromise: Promise<CrossChainMessengerProxy>,
   ) {
     debug('Starting process to sync withdrawals')
@@ -247,15 +247,9 @@ export const createEvmSync = function ({
     // EVM chains use Ethers providers because that's what
     // the cross-chain messenger expects
     debug('Creating providers')
-    const l1Provider = createPublicProvider(
-      l1Chain.rpcUrls.default.http[0],
-      l1Chain,
-    )
+    const l1Provider = createProvider(l1Chain)
 
-    const l2Provider = createPublicProvider(
-      l2Chain.rpcUrls.default.http[0],
-      l2Chain,
-    )
+    const l2Provider = createProvider(l2Chain)
 
     const crossChainMessengerPromise = createQueuedCrossChainMessenger({
       l1ChainId: l1Chain.id,

@@ -37,7 +37,7 @@ import {
   getBitcoinCustodyAddress,
   getVaultAddressByIndex,
 } from 'utils/hemiMemoized'
-import { createPublicProvider } from 'utils/providers'
+import { createProvider } from 'utils/providers'
 import { getNativeToken } from 'utils/token'
 import {
   type Address,
@@ -365,7 +365,7 @@ export const createBitcoinSync = function ({
   const syncWithdrawals = async function () {
     const lastBlock = await getBlockNumber(
       withdrawalsSyncInfo.toBlock,
-      createPublicProvider(l2Chain.rpcUrls.default.http[0], l2Chain),
+      createProvider(l2Chain),
     )
 
     const initialBlock =

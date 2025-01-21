@@ -3,21 +3,15 @@ import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { findChainById } from 'utils/chain'
 import { createQueuedCrossChainMessenger } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
-import { createPublicProvider } from 'utils/providers'
+import { createProvider } from 'utils/providers'
 import { Chain } from 'viem'
 
 // Memoized cross chain messenger as this will be created by many withdrawals
 const getCrossChainMessenger = pMemoize(
   function (l1Chain: Chain, l2Chain: Chain) {
-    const l1Provider = createPublicProvider(
-      l1Chain.rpcUrls.default.http[0],
-      l1Chain,
-    )
+    const l1Provider = createProvider(l1Chain)
 
-    const l2Provider = createPublicProvider(
-      l2Chain.rpcUrls.default.http[0],
-      l2Chain,
-    )
+    const l2Provider = createProvider(l2Chain)
 
     return createQueuedCrossChainMessenger({
       l1ChainId: l1Chain.id,

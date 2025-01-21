@@ -9,7 +9,7 @@ import {
 } from 'eth-rpc-cache'
 import { providers } from 'ethers'
 import { withdrawalsStrategy } from 'utils/cacheStrategies'
-import { type Account, type Chain, type HttpTransport } from 'viem'
+import { type Account, type Chain } from 'viem'
 
 const cacheProvider = function <T extends JsonRpcProvider | Web3Provider>(
   provider: T,
@@ -33,18 +33,22 @@ const toNetwork = (chain: Chain) => ({
   name: chain.name,
 })
 
-export const createPublicProvider = (url: string | undefined, chain: Chain) =>
+const createPublicProvider = (
+  chain: Chain,
+  url: string = chain.rpcUrls.default.http[0],
+) =>
   cacheProvider(new providers.JsonRpcProvider(url, toNetwork(chain)), [
     withdrawalsStrategy,
   ])
 
-export const createFallbackProvider = (
-  chain: Chain,
-  transports: ReturnType<HttpTransport>[],
-) =>
-  new providers.FallbackProvider(
-    transports.map(({ value }) => createPublicProvider(value?.url, chain)),
-  )
+export const createProvider = function (chain: Chain) {
+  if (chain.rpcUrls.default.http.length > 1) {
+    return new providers.FallbackProvider(
+      chain.rpcUrls.default.http.map(url => createPublicProvider(chain, url)),
+    )
+  }
+  return createPublicProvider(chain)
+}
 
 // https://wagmi.sh/react/guides/ethers#connector-client-%E2%86%92-signer
 export const createSignerProvider = function (

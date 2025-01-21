@@ -4,11 +4,16 @@ import { type Chain, fallback, http } from 'viem'
 export const buildTransport = function (network: Chain) {
   const httpConfig = {
     batch: { wait: 1000 },
+    retryCount: 2,
   }
   const rpcUrls = network.rpcUrls.default.http
   if (rpcUrls.length > 1) {
     return fallback(
-      rpcUrls.map(rpcUrl => http(rpcUrl, httpConfig), { rank: true }),
+      rpcUrls.map(rpcUrl => http(rpcUrl, httpConfig), {
+        // rank every 10 seconds
+        rank: { interval: 10_000 },
+        retryCount: 2,
+      }),
     )
   }
   return http(rpcUrls[0], httpConfig)

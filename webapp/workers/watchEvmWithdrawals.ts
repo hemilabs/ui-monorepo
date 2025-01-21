@@ -135,6 +135,23 @@ const watchWithdrawal = (withdrawal: ToEvmWithdrawOperation) =>
 
       const crossChainMessenger = await getCrossChainMessenger(l1Chain, l2Chain)
       debug('Checking withdrawal %s', withdrawal.transactionHash)
+
+      const updates: Partial<ToEvmWithdrawOperation> = {}
+
+      const receipt = await getEvmTransactionReceipt(
+        withdrawal.transactionHash,
+        withdrawal.l2ChainId,
+      )
+
+      if (!receipt) {
+        debug('Withdrawal %s is not confirmed yet', withdrawal.transactionHash)
+        worker.postMessage({
+          type: getUpdateWithdrawalKey(withdrawal),
+          updates,
+        })
+        return
+      }
+
       const [status, [blockNumber, timestamp]] = await Promise.all([
         crossChainMessenger.getMessageStatus(
           withdrawal.transactionHash,
@@ -146,7 +163,7 @@ const watchWithdrawal = (withdrawal: ToEvmWithdrawOperation) =>
           getBlockTimestamp(withdrawal),
         ),
       ])
-      const updates: Partial<ToEvmWithdrawOperation> = {}
+
       if (withdrawal.status !== status) {
         debug(
           'Withdrawal %s status changed from %s to %s',

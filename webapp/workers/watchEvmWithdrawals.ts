@@ -9,6 +9,7 @@ import {
 import { type EnableWorkersDebug } from 'utils/typeUtilities'
 import { hasKeys } from 'utils/utilities'
 import { watchEvmWithdrawal } from 'utils/watch/evmWithdrawals'
+import { typeWorker } from 'utils/workers'
 import { type Hash } from 'viem'
 
 const queue = new PQueue({ concurrency: 2 })
@@ -39,8 +40,7 @@ type WatchEvmWithdrawalsWorker = Omit<Worker, 'onmessage' | 'postMessage'> & {
   }) => void
 }
 
-// See https://github.com/Microsoft/TypeScript/issues/20595#issuecomment-587297818
-const worker = self as unknown as WatchEvmWithdrawalsWorker
+const worker = typeWorker<WatchEvmWithdrawalsWorker>(self)
 
 // See https://www.npmjs.com/package/p-queue#priority
 const getPriority = function (withdrawal: ToEvmWithdrawOperation) {

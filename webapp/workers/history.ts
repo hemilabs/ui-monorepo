@@ -16,6 +16,7 @@ import {
   type SyncHistoryCombinations,
 } from 'utils/sync-history/types'
 import { type EnableWorkersDebug } from 'utils/typeUtilities'
+import { typeWorker } from 'utils/workers'
 import { type Address, type Chain } from 'viem'
 
 type StartSyncing = { type: 'start' } & SyncHistoryCombinations
@@ -33,8 +34,7 @@ type SyncWebWorker = Omit<Worker, 'onmessage' | 'postMessage'> & {
   postMessage: (event: HistoryActions) => void
 }
 
-// See https://github.com/Microsoft/TypeScript/issues/20595#issuecomment-587297818
-const worker = self as unknown as SyncWebWorker
+const worker = typeWorker<SyncWebWorker>(self)
 
 const saveHistory = (action: HistoryActions) => worker.postMessage(action)
 

@@ -8,6 +8,7 @@ import {
   watchDepositOnBitcoin,
   watchDepositOnHemi,
 } from 'utils/watch/bitcoinDeposits'
+import { typeWorker } from 'utils/workers'
 
 type WatchBtcDeposit = {
   deposit: BtcDepositOperation
@@ -30,8 +31,7 @@ type WatchBtcDepositsWorker = Omit<Worker, 'onmessage' | 'postMessage'> & {
   }) => void
 }
 
-// See https://github.com/Microsoft/TypeScript/issues/20595#issuecomment-587297818
-const worker = self as unknown as WatchBtcDepositsWorker
+const worker = typeWorker<WatchBtcDepositsWorker>(self)
 
 // concurrently avoid overloading both blockchains
 const bitcoinQueue = new PQueue({ concurrency: 3 })

@@ -1,8 +1,10 @@
 // See https://wagmi.sh/react/guides/ethers#connector-client-%E2%86%92-signer
+import memoize from 'lodash/memoize'
 import { useMemo } from 'react'
+import { findChainById, isEvmNetwork } from 'utils/chain'
 import { createSignerProvider, createProvider } from 'utils/providers'
 import type { Chain } from 'viem'
-import { Config, useConnectorClient, usePublicClient } from 'wagmi'
+import { Config, useConnectorClient } from 'wagmi'
 
 import { useChainIsSupported } from './useChainIsSupported'
 
@@ -24,14 +26,17 @@ export function useWeb3Provider(chainId: Chain['id']) {
   )
 }
 
+// No need to pass a resolver function, as it defaults to the first argument value,
+// and "supported" is derived from the chainId
+const memoized = memoize(function (id: Chain['id'], supported: boolean) {
+  const chain = findChainById(id)
+  if (!chain || !supported || !isEvmNetwork(chain)) {
+    return undefined
+  }
+  return createProvider(chain)
+})
+
 export function useJsonRpcProvider(chainId: Chain['id']) {
-  const publicClient = usePublicClient({ chainId })
   const isSupported = useChainIsSupported(chainId)
-  return useMemo(
-    () =>
-      publicClient && isSupported
-        ? createProvider(publicClient.chain)
-        : undefined,
-    [isSupported, publicClient],
-  )
+  return memoized(chainId, isSupported)
 }

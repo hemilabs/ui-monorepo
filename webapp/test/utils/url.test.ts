@@ -1,4 +1,4 @@
-import { isRelativeUrl, queryStringObjectToString } from 'utils/url'
+import { isRelativeUrl, isValidUrl, queryStringObjectToString } from 'utils/url'
 import { describe, expect, it } from 'vitest'
 
 describe('utils/url', function () {
@@ -9,6 +9,22 @@ describe('utils/url', function () {
 
     it('should return false for full urls', function () {
       expect(isRelativeUrl('https://google.com.ar/')).toBe(false)
+    })
+  })
+
+  describe('isValidUrl', function () {
+    describe('isValidUrl', function () {
+      it('should return true for a valid URL', function () {
+        expect(isValidUrl('https://example.com/path?name=value')).toBe(true)
+      })
+
+      it('should return false for an invalid URL', function () {
+        expect(isValidUrl('invalid-url')).toBe(false)
+      })
+
+      it('should return false for an empty string', function () {
+        expect(isValidUrl('')).toBe(false)
+      })
     })
   })
 

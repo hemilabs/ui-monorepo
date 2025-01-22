@@ -5,6 +5,15 @@ import { PageTitle } from 'components/pageTitle'
 import { useTranslations } from 'next-intl'
 
 import {
+  DiamondTag,
+  HemiTag,
+  PointsTag,
+  SolvXpTag,
+} from '../_components/rewardTag'
+import { stakeTokens } from '../tokens'
+
+import { StakeAssetsTable } from './_components/stakeAssetsTable'
+import {
   EarnedPoints,
   TotalStaked,
   YourStake,
@@ -16,7 +25,7 @@ const Page = function () {
   if (!featureFlags.stakeCampaignEnabled) return null
 
   return (
-    <div className="h-fit-rest-screen">
+    <div className="h-fit-rest-screen w-full">
       <PageTitle
         subtitle={t('dashboard.subtitle')}
         title={t('dashboard.title')}
@@ -25,6 +34,39 @@ const Page = function () {
         <TotalStaked />
         <YourStake />
         <EarnedPoints />
+      </div>
+      <div className="mt-6 md:mt-8">
+        <StakeAssetsTable
+          // TODO - This is a mock data, replace it with the real data
+          // Related to the issue #774 - https://github.com/hemilabs/ui-monorepo/issues/774
+          data={[
+            {
+              rewards: [<HemiTag key="hemiTag" />],
+              staked: { monetaryValue: '112', quantity: '0.24' },
+              token: stakeTokens.find(item => item.name === 'Merlin BTC')!,
+            },
+            {
+              rewards: [
+                <HemiTag key="hemiTag" />,
+                <SolvXpTag key="solvXpTag" />,
+                <PointsTag key="pointsTag" />,
+              ],
+              staked: { monetaryValue: '105', quantity: '0.50' },
+              token: stakeTokens.find(item => item.name === 'pumpBTC')!,
+            },
+            {
+              rewards: [
+                <HemiTag key="hemiTag" />,
+                <DiamondTag key="diamondTag" />,
+              ],
+              staked: { monetaryValue: '220', quantity: '1.25' },
+              token: stakeTokens.find(
+                item => item.name === 'Lorenzo Wrapped Bitcoin',
+              )!,
+            },
+          ]}
+          loading={false}
+        />
       </div>
     </div>
   )

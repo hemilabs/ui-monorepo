@@ -183,7 +183,14 @@
       "title": "Panel",
       "total-earned-points": "Total de puntos Hemi ganados",
       "total-staked": "Total Apostado",
-      "your-stake": "Su Apuesta"
+      "your-stake": "Su Apuesta",
+      "protocol": "Protocolo",
+      "asset": "Activo",
+      "staked": "Apostado",
+      "rewards": "Recompensas",
+      "stake-more": "Apuesta más",
+      "stake": "Apuesta",
+      "stake-earn-points-label": "Apuesta y|ganar p|untos"
     },
     "stake": {
       "subtitle": "Apueste activos para ganar puntos y recompensas.",

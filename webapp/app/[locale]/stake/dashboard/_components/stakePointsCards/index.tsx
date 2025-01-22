@@ -27,7 +27,7 @@ const Points = ({
 >) => <p className={`text-xl font-semibold ${color}`}>{points}</p>
 
 const Container = ({ children }: { children: ReactNode }) => (
-  <div className="h-24 w-full lg:max-w-72 [&>div]:overflow-hidden">
+  <div className="h-24 w-full [&>div]:overflow-hidden">
     <Card shadow="shadow-soft">
       <div className="relative">{children}</div>
     </Card>

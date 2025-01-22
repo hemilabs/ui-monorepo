@@ -2,6 +2,7 @@
 
 const { writeFile } = require('fs/promises')
 const path = require('path')
+const { sepolia, mainnet } = require('viem/chains')
 
 const getDomain = function (url) {
   if (!url) {
@@ -22,24 +23,22 @@ const getDomain = function (url) {
 // to commonJs per nextjs... Making this whole thing very complex. As not to lose more time with this
 // (I already tried using node with custom loaders, ts-node, tsx, etc), I'm just hardcoding the domains here.
 
-// These are scripts called with fetch()
-const fetchDomains = [
+// These are scripts called with fetch(). Using a Set as env variables may add already existing domains
+const fetchDomains = new Set([
   // esplora-client - https://github.com/hemilabs/esplora-client/blob/master/src/index.js#L15
   'https://blockstream.info',
   'https://mempool.space',
-  // Ethereum RPC - https://github.com/wevm/viem/blob/main/src/chains/definitions/mainnet.ts#L9
-  'https://cloudflare-eth.com',
-  'https://eth.drpc.org',
-  // Sepolia RPC - https://github.com/wevm/viem/blob/main/src/chains/definitions/sepolia.ts#L9
-  'https://rpc.sepolia.org',
-  'https://sepolia.drpc.org',
+  // Ethereum RPCs
+  ...mainnet.rpcUrls.default.http,
+  // Sepolia RPCs
+  ...sepolia.rpcUrls.default.http,
   // Hemi and Hemi Sepolia RPCs
   'https://*.hemi.network',
   'https://*.rpc.hemi.network',
   // RainbowKit
   'wss://relay.walletconnect.com',
   'wss://relay.walletconnect.org',
-]
+])
 
 // If any RPC URL is customized through these env vars, the origin has to be
 // added to the allow list for the client to get the responses. Since the URLs
@@ -53,7 +52,7 @@ const customRpcOrigins = [
 ].flatMap((p = '') => p.split('+'))
 customRpcOrigins.forEach(function (url) {
   if (url) {
-    fetchDomains.push(new URL(url).origin)
+    fetchDomains.add(new URL(url).origin)
   }
 })
 
@@ -61,7 +60,7 @@ customRpcOrigins.forEach(function (url) {
 const imageSrcUrls = ['https://raw.githubusercontent.com']
 
 // Domains allowed to download scripts from
-const downloadScriptsDomains = []
+const downloadScriptsDomains = new Set()
 
 // analytics
 const analyticsDomain = getDomain(process.env.NEXT_PUBLIC_ANALYTICS_URL)
@@ -70,20 +69,20 @@ if (
   analyticsDomain !== null
 ) {
   const url = `https://${analyticsDomain}`
-  fetchDomains.push(url)
-  downloadScriptsDomains.push(url)
+  fetchDomains.add(url)
+  downloadScriptsDomains.add(url)
   // these are needed for analytics
-  downloadScriptsDomains.push('https://static.cloudflareinsights.com')
-  downloadScriptsDomains.push('https://challenges.cloudflare.com')
-  downloadScriptsDomains.push('https://ajax.cloudflare.com')
-  fetchDomains.push('https://cloudflareinsights.com')
+  downloadScriptsDomains.add('https://static.cloudflareinsights.com')
+  downloadScriptsDomains.add('https://challenges.cloudflare.com')
+  downloadScriptsDomains.add('https://ajax.cloudflare.com')
+  fetchDomains.add('https://cloudflareinsights.com')
 }
 // error-tracking
 const errorTrackingDomain = getDomain(process.env.NEXT_PUBLIC_SENTRY_DSN)
 if (errorTrackingDomain !== null) {
   const url = `https://${errorTrackingDomain}`
-  fetchDomains.push(url)
-  downloadScriptsDomains.push(url)
+  fetchDomains.add(url)
+  downloadScriptsDomains.add(url)
 }
 
 const serveJson = {
@@ -124,11 +123,13 @@ const serveJson = {
         },
         {
           key: 'Content-Security-Policy',
-          value: `default-src 'self'; script-src 'self' 'unsafe-inline' ${downloadScriptsDomains.join(
+          value: `default-src 'self'; script-src 'self' 'unsafe-inline' ${Array.from(
+            downloadScriptsDomains,
+          ).join(
             ' ',
           )}; style-src 'self' 'unsafe-inline'; img-src 'self' ${imageSrcUrls.join(
             ' ',
-          )} blob: data:; connect-src 'self' ${fetchDomains.join(
+          )} blob: data:; connect-src 'self' ${Array.from(fetchDomains).join(
             ' ',
           )}; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests`,
         },

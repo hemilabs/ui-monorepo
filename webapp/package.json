@@ -49,8 +49,8 @@
     "ui-common": "1.0.0",
     "umami-analytics-next": "1.0.1",
     "use-local-storage-state": "19.5.0",
-    "viem": "2.7.19",
-    "wagmi": "2.5.7",
+    "viem": "2.22.10",
+    "wagmi": "2.14.8",
     "wagmi-erc20-hooks": "1.0.0"
   },
   "devDependencies": {

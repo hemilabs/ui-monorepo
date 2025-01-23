@@ -14,9 +14,9 @@ const notJoi = {
         // Do nothing as we are coercing the input to `Number` in `validate()`
         return this
       },
-      validate(value) {
+      validate(value: string) {
         // Coerce from string
-        let _value = value.trim()
+        let _value: string | number = value.trim()
         if (!_value.match(positiveFixedPointNumberRx)) {
           return { error: 'Must be a positive number', value }
         }

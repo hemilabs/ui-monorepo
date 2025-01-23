@@ -1,7 +1,8 @@
 'use client'
 
-import { watchAccount } from '@wagmi/core'
+import { Connector, watchAccount } from '@wagmi/core'
 import { featureFlags } from 'app/featureFlags'
+import { WalletConnector } from 'btc-wallet/connectors/types'
 import { useAccountEffect as useBtcAccountEffect } from 'btc-wallet/hooks/useAccountEffect'
 import { UmamiAnalyticsProvider } from 'components/umamiAnalyticsProvider'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -28,7 +29,7 @@ const GlobalTracking = function () {
 
   useBtcAccountEffect({
     onConnect: useCallback(
-      function ({ connector }) {
+      function ({ connector }: { connector: WalletConnector }) {
         if (featureFlags.btcTunnelEnabled) {
           track?.('btc connected', {
             chain: networkType,
@@ -39,7 +40,7 @@ const GlobalTracking = function () {
       [networkType, track],
     ),
     onDisconnect: useCallback(
-      function ({ connector }) {
+      function ({ connector }: { connector: WalletConnector }) {
         if (featureFlags.btcTunnelEnabled)
           track?.('btc disconnected', {
             chain: networkType,
@@ -52,7 +53,7 @@ const GlobalTracking = function () {
 
   useEvmAccountEffect({
     onConnect: useCallback(
-      ({ connector }) =>
+      ({ connector }: { connector: Connector }) =>
         track?.('evm connected', {
           chain: networkType,
           wallet: connector.name,

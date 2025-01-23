@@ -22,7 +22,7 @@ export function useAccountEffect(parameters: Parameters = {}) {
 
   useEffect(
     function watchConnectionStatus() {
-      if (connectionStatus === 'connected') {
+      if (connectionStatus === 'connected' && currentConnector) {
         onConnect?.({ connector: currentConnector })
       }
       // once disconnected, currentConnector is null, so we need to manually persist

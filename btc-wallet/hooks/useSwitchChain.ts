@@ -17,7 +17,8 @@ export const useSwitchChain = function () {
     reset,
     status,
   } = useMutation({
-    mutationFn: (c: BtcChain['id']) => currentConnector.switchNetwork(c),
+    // currentConnector must be defined, checked in switchChain function
+    mutationFn: (c: BtcChain['id']) => currentConnector!.switchNetwork(c),
     mutationKey: ['btc-wallet', 'switch'],
   })
 

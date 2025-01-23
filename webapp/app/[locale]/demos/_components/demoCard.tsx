@@ -71,7 +71,7 @@ export const DemoCard = function ({
           </h4>
           <p
             className={`mt-1 text-sm font-medium ${
-              colorVariants[subHeadingColor] ?? colorVariants[headingColor]
+              colorVariants[subHeadingColor ?? headingColor]
             }`}
           >
             {subHeading}

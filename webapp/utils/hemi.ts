@@ -269,7 +269,7 @@ export const confirmBtcDeposit = ({
     ),
     createBtcApi(mapBitcoinNetwork(deposit.l1ChainId))
       .getTransactionReceipt(deposit.transactionHash)
-      .then(receipt => calculateDepositOutputIndex(receipt, deposit.to)),
+      .then(receipt => calculateDepositOutputIndex(receipt!, deposit.to)),
   ]).then(function ([vaultIndex, currentStatus, outputIndex]) {
     if (currentStatus === BtcDepositStatus.BTC_DEPOSITED) {
       throw new Error('Bitcoin Deposit already confirmed')

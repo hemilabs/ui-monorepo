@@ -2,7 +2,7 @@ import { useRef } from 'react'
 
 export const usePrevious = function <TValue>(
   value: TValue,
-  isEqualFunc: (prev: TValue, next: TValue) => boolean,
+  isEqualFunc: (prev: TValue | null, next: TValue | null) => boolean,
 ) {
   const ref = useRef<{ prev: TValue | null; value: TValue | null }>({
     prev: null,

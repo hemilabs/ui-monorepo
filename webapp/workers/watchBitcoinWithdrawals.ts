@@ -5,6 +5,7 @@ import { BtcWithdrawStatus, type ToBtcWithdrawOperation } from 'types/tunnel'
 import { isPendingOperation } from 'utils/tunnel'
 import { type EnableWorkersDebug } from 'utils/typeUtilities'
 import { watchBitcoinWithdrawal } from 'utils/watch/bitcoinWithdrawals'
+import { typeWorker } from 'utils/workers'
 
 type WatchBtcWithdrawal = {
   type: 'watch-btc-withdrawal'
@@ -27,8 +28,7 @@ type WatchBtcWithdrawalsWorker = Omit<Worker, 'onmessage' | 'postMessage'> & {
   }) => void
 }
 
-// See https://github.com/Microsoft/TypeScript/issues/20595#issuecomment-587297818
-const worker = self as unknown as WatchBtcWithdrawalsWorker
+const worker = typeWorker<WatchBtcWithdrawalsWorker>(self)
 
 const hemiQueue = new PQueue({ concurrency: 3 })
 

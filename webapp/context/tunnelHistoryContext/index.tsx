@@ -33,6 +33,14 @@ const BitcoinWithdrawalsStatusUpdater = dynamic(
   { ssr: false },
 )
 
+const EvmDepositsStatusUpdater = dynamic(
+  () =>
+    import('./evmDepositsStatusUpdater').then(
+      mod => mod.EvmDepositsStatusUpdater,
+    ),
+  { ssr: false },
+)
+
 const SyncHistoryWorker = dynamic(
   () => import('./syncHistoryWorker').then(mod => mod.SyncHistoryWorker),
   { ssr: false },
@@ -129,6 +137,8 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
       {featureFlags.btcTunnelEnabled && <BitcoinWithdrawalsStatusUpdater />}
       {/* Track updates on withdrawals from Hemi */}
       <WithdrawalsStateUpdater />
+      {/* Track updates on deposits to Hemi, tracking any missing info */}
+      <EvmDepositsStatusUpdater />
       {children}
       {/* Sync the transaction history per chain in the background */}
       {historyChainSync}

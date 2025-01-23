@@ -4,7 +4,6 @@ import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { createQueuedCrossChainMessenger } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { createProvider } from 'utils/providers'
-// import { watchEvmWithdrawal } from 'utils/watch/evmWithdrawals'
 import { sepolia } from 'viem/chains'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 

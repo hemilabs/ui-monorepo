@@ -362,9 +362,10 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       />
       {isPartnersDrawerOpen && (
         <CustomTunnelsThroughPartner
+          fromToken={fromToken}
           onClose={() => setIsPartnersDrawerOpen(false)}
           operation="withdraw"
-          token={fromToken}
+          toToken={toToken}
         />
       )}
     </>

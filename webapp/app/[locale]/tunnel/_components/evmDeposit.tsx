@@ -333,9 +333,10 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       />
       {isPartnersDrawerOpen && (
         <CustomTunnelsThroughPartner
+          fromToken={fromToken}
           onClose={() => setIsPartnersDrawerOpen(false)}
           operation="deposit"
-          token={fromToken}
+          toToken={toToken}
         />
       )}
     </>

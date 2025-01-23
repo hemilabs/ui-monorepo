@@ -46,3 +46,9 @@ export const DrawerParagraph = ({ children }: { children: string }) => (
 export const DrawerTitle = ({ children }: { children: string }) => (
   <h2 className="text-2xl font-medium text-neutral-950">{children}</h2>
 )
+
+export const DrawerSection = ({ children }: { children: React.ReactNode }) => (
+  <div className="border-y border-solid border-neutral-300/55 bg-neutral-50 p-6">
+    {children}
+  </div>
+)

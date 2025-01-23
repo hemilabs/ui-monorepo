@@ -16,7 +16,7 @@ export const GetStarted = function () {
   const { track } = useUmami()
 
   const href = '/get-started'
-  const onClick = () => track('nav - get started', { chain: networkType })
+  const onClick = () => track?.('nav - get started', { chain: networkType })
   const active = pathname.endsWith('/get-started/')
 
   return (

@@ -1,4 +1,6 @@
-export const GetStartedBackground = props => (
+import { ComponentProps } from 'react'
+
+export const GetStartedBackground = (props: ComponentProps<'svg'>) => (
   <svg
     fill="none"
     height={52}

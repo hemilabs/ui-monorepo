@@ -145,7 +145,11 @@ const PageLink = function ({
 
   return (
     <ItemContainer
-      onClick={track ? () => track(event, { chain: networkType }) : undefined}
+      onClick={
+        track && !!event
+          ? () => track(event, { chain: networkType })
+          : undefined
+      }
       selected={selected}
     >
       <Link href={href}>

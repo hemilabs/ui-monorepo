@@ -11,11 +11,3 @@
     height: 100%;
   }
 }
-
-/*
-  Hide the reCaptcha badge
-  See https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed
-*/
-.grecaptcha-badge {
-  visibility: hidden;
-}

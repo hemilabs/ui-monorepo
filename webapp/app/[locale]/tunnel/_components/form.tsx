@@ -1,5 +1,6 @@
 import { Card } from 'components/card'
 import { SwitchToNetworkToast } from 'components/switchToNetworkToast'
+import { TokenInput } from 'components/tokenInput'
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
@@ -11,7 +12,6 @@ import { useToastIfNotConnectedTo } from '../_hooks/useToastIfNotConnectedTo'
 import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { NetworkSelectors } from './networkSelectors'
-import { TokenInput } from './tokenInput'
 
 const CustomTokenDrawer = dynamic(() =>
   import('components/customTokenDrawer').then(mod => mod.CustomTokenDrawer),
@@ -84,7 +84,7 @@ export const FormContent = function ({
         updateToNetwork={updateToNetwork}
       />
       <TokenInput
-        fromNetworkId={fromNetworkId}
+        chainId={fromNetworkId}
         isRunningOperation={isRunningOperation}
         label={t('form.send')}
         maxBalanceButton={setMaxBalanceButton}

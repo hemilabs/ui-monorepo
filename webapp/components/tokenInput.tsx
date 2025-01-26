@@ -28,7 +28,7 @@ type Props = {
   token: Token
   value: string
 } & AllOrNone<{
-  fromNetworkId: RemoteChain['id']
+  chainId: RemoteChain['id']
   onSelectToken: (token: Token) => void
 }>
 
@@ -41,7 +41,7 @@ export const TokenInput = function ({
   value,
   ...props
 }: Props) {
-  const readOnly = !('fromNetworkId' in props)
+  const readOnly = !('chainId' in props)
 
   const t = useTranslations('tunnel-page')
   return (
@@ -79,7 +79,7 @@ export const TokenInput = function ({
             </div>
           ) : (
             <TokenSelector
-              chainId={props.fromNetworkId}
+              chainId={props.chainId}
               disabled={isRunningOperation}
               onSelectToken={props.onSelectToken}
               selectedToken={token}

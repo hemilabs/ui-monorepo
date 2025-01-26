@@ -1,0 +1,11 @@
+@layer components {
+  .drawer-content {
+    @apply flex flex-col gap-y-3 overflow-y-auto bg-white py-6;
+  }
+
+  /* Use the .skip-parent-padding-x for elements that should not have the px-* applied. For example, components
+  that must stretch with some background along the entire drawer, and should not have the drawer's padding. */
+  .drawer-content > *:not(.skip-parent-padding-x) {
+    @apply px-4 md:px-6;
+  }
+}

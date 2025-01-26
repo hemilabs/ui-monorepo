@@ -17,19 +17,21 @@ export const AddPairToHemi = function () {
   }
 
   return (
-    <WarningBox
-      heading={t('add-this-pair')}
-      onClose={() => setHideWarning(true)}
-      subheading={t.rich('make-a-request-to-add', {
-        link: (chunk: string) => (
-          <ExternalLink
-            className="text-orange-500 hover:text-orange-700"
-            href="https://github.com/hemilabs/token-list/issues/new"
-          >
-            {chunk}
-          </ExternalLink>
-        ),
-      })}
-    />
+    <div>
+      <WarningBox
+        heading={t('add-this-pair')}
+        onClose={() => setHideWarning(true)}
+        subheading={t.rich('make-a-request-to-add', {
+          link: (chunk: string) => (
+            <ExternalLink
+              className="text-orange-500 hover:text-orange-700"
+              href="https://github.com/hemilabs/token-list/issues/new"
+            >
+              {chunk}
+            </ExternalLink>
+          ),
+        })}
+      />
+    </div>
   )
 }

@@ -40,7 +40,7 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
 
   return (
     <Drawer onClose={onClose}>
-      <div className="pb-18 h-full bg-white px-4 pt-6 md:max-w-md md:p-6">
+      <div className="drawer-content max-md:pb-18 h-full md:max-w-md">
         <div className="flex h-full flex-col gap-y-3">
           <div className="flex items-center justify-between">
             <DrawerTitle>{t('common.connect-wallets')}</DrawerTitle>

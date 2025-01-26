@@ -96,7 +96,11 @@ const List = function ({
   }
 
   return (
-    <div className="h-[212px] w-full overflow-y-auto" ref={parentRef}>
+    <div
+      className="skip-parent-padding-x mx-auto h-[212px] w-[calc(100%-theme(spacing.4)*2)]
+      overflow-y-auto md:w-[calc(100%-theme(spacing.6)*2)]"
+      ref={parentRef}
+    >
       <ul
         className="relative w-full"
         style={{
@@ -158,7 +162,7 @@ export const TokenList = function ({
     .concat(customTokens.sort(bySymbol))
 
   const content = (
-    <div className="flex h-[357px] w-full flex-col gap-x-3 bg-white p-6 px-4 md:w-96 md:px-6">
+    <div className="drawer-content h-[357px] w-full gap-x-3 gap-y-0 md:w-96">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-medium text-neutral-950">
           {t('select-token')}

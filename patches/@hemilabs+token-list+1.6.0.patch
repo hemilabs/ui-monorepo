@@ -1,5 +1,5 @@
 diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
-index 0bf309d..1cc3e79 100644
+index 65f4177..7d704a3 100644
 --- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 +++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 @@ -12,8 +12,8 @@
@@ -39,6 +39,6 @@ index 0bf309d..1cc3e79 100644
 -      "symbol": "hBTC"
 +      "name": "Testnet Bitcoin",
 +      "symbol": "tBTC"
-     }
-   ]
- }
+     },
+     {
+       "address": "0x9BFA177621119e64CecbEabE184ab9993E2ef727",

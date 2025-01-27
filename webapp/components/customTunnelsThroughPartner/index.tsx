@@ -33,7 +33,7 @@ export const CustomTunnelsThroughPartner = function ({
 
   return (
     <Drawer onClose={onClose}>
-      <div className="drawer-content w-full max-md:pb-16 md:h-full md:w-[450px] md:max-w-md">
+      <div className="drawer-content max-md:pb-16 md:h-full">
         <div className="flex items-center justify-between">
           <DrawerTitle>
             {t(`${operation}.heading`, { symbol: fromToken.symbol })}

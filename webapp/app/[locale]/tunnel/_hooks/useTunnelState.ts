@@ -9,7 +9,7 @@ import { useCallback, useEffect, useMemo, useReducer } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { findChainById } from 'utils/chain'
-import joi from 'utils/notJoi'
+import { sanitizeAmount } from 'utils/form'
 import { getNativeToken, getTokenByAddress, isNativeToken } from 'utils/token'
 import { type NoPayload, type Payload } from 'utils/typeUtilities'
 import { type Chain, isHash } from 'viem'
@@ -88,12 +88,10 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
       }
     }
     case 'updateFromInput': {
-      const { payload: value } = action
-      // if input ends with a dot, add a zero so it is a valid number.
-      const fromInput = value === '' ? '0' : value
+      const { payload: fromInput } = action
       return {
         ...state,
-        fromInput: fromInput.startsWith('.') ? `0${fromInput}` : fromInput,
+        fromInput,
       }
     }
     case 'updateToNetwork': {
@@ -233,25 +231,10 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   // numbers to go through and alter the state.
   const updateFromInput = useCallback(
     function (payload: UpdateFromInput['payload']) {
-      // If the user cleared the input, just set it to "0".
-      if (!payload) {
-        dispatch({
-          payload: '0',
-          type: 'updateFromInput',
-        })
-        return
+      const { error, value } = sanitizeAmount(payload)
+      if (!error) {
+        dispatch({ payload: value, type: 'updateFromInput' })
       }
-      // Verify the input can be parsed as a valid number.
-      const schema = joi.number().positive().unsafe()
-      if (schema.validate(payload).error) {
-        return
-      }
-      // And remove any leading zeroes to address cases like "01", that must be
-      // converted to "1".
-      dispatch({
-        payload: payload.replace(/^0+/, ''),
-        type: 'updateFromInput',
-      })
     },
     [dispatch],
   )

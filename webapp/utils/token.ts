@@ -56,3 +56,6 @@ export const getErc20TokenBalance = ({
     args: [address],
     functionName: 'balanceOf',
   })
+
+export const isStakeToken = (token: Token) =>
+  token.extensions?.protocol !== undefined

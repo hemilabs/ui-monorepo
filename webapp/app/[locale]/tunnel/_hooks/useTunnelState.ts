@@ -4,7 +4,7 @@ import { useBitcoin } from 'hooks/useBitcoin'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useTokenList } from 'hooks/useTokenList'
+import { useTunnelTokens } from 'hooks/useTunnelTokens'
 import { useCallback, useEffect, useMemo, useReducer } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
@@ -206,7 +206,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   const { evmRemoteNetworks, networks } = useNetworks()
   const [networkType] = useNetworkType()
   const tunnelOperation = useTunnelOperation()
-  const tokenList = useTokenList()
+  const tokenList = useTunnelTokens()
 
   // See https://github.com/hemilabs/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id

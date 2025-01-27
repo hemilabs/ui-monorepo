@@ -1,6 +1,6 @@
 import { useUmami } from 'app/analyticsEvents'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useTokenList } from 'hooks/useTokenList'
+import { useTunnelTokens } from 'hooks/useTunnelTokens'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import { RemoteChain } from 'types/chain'
@@ -38,7 +38,7 @@ export const TokenSelector = function ({
     track?.('select token', { chain: networkType })
   }
 
-  const tokens = useTokenList(chainId)
+  const tokens = useTunnelTokens(chainId)
 
   return (
     <>

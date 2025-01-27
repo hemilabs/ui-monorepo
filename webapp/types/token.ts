@@ -8,6 +8,7 @@ type Extensions = {
       tokenAddress?: Address
     }
   }
+  protocol?: string
 }
 
 type BaseToken = {

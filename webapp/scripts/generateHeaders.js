@@ -35,9 +35,10 @@ const fetchDomains = new Set([
   // Hemi and Hemi Sepolia RPCs
   'https://*.hemi.network',
   'https://*.rpc.hemi.network',
-  // RainbowKit
-  'wss://relay.walletconnect.com',
+  // Reown (Ex WalletConnect), through RainbowKit
+  'wss://*.walletconnect.com',
   'wss://relay.walletconnect.org',
+  'https://*.walletconnect.org',
 ])
 
 // If any RPC URL is customized through these env vars, the origin has to be

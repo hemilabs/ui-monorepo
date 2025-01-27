@@ -31,13 +31,13 @@ const MaxButton = function ({
 }
 
 type Props<T extends Token = Token> = {
-  fromToken: T
+  token: T
   isRunningOperation: boolean
   onSetMaxBalance: (maxBalance: string) => void
 }
 
 export const SetMaxEvmBalance = function ({
-  fromToken,
+  token,
   gas,
   isRunningOperation,
   onSetMaxBalance,
@@ -45,19 +45,19 @@ export const SetMaxEvmBalance = function ({
   const {
     balance: walletNativeTokenBalance,
     isLoading: isLoadingNativeTokenBalance,
-  } = useNativeTokenBalance(fromToken.chainId)
+  } = useNativeTokenBalance(token.chainId)
 
   const { balance: walletTokenBalance } = useTokenBalance(
-    fromToken,
-    !isNativeToken(fromToken),
+    token,
+    !isNativeToken(token),
   )
 
   // gas is paid in native token. So we must deduct gas for native tokens, but not for erc20 tokens
-  const finalBalance = isNativeToken(fromToken)
+  const finalBalance = isNativeToken(token)
     ? walletNativeTokenBalance - gas
     : walletTokenBalance
 
-  const maxBalance = formatUnits(finalBalance, fromToken.decimals)
+  const maxBalance = formatUnits(finalBalance, token.decimals)
 
   const handleClick = () => onSetMaxBalance(maxBalance)
 
@@ -68,7 +68,7 @@ export const SetMaxEvmBalance = function ({
 }
 
 export const SetMaxBtcBalance = function ({
-  fromToken,
+  token,
   isRunningOperation,
   onSetMaxBalance,
 }: Props<BtcToken>) {
@@ -86,7 +86,7 @@ export const SetMaxBtcBalance = function ({
     btcBalance <= fees
 
   const handleClick = () =>
-    onSetMaxBalance(formatUnits(BigInt(btcBalance - fees), fromToken.decimals))
+    onSetMaxBalance(formatUnits(BigInt(btcBalance - fees), token.decimals))
 
   return <MaxButton disabled={disabled} onClick={handleClick} />
 }

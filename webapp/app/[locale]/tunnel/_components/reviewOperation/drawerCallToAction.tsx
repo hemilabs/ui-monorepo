@@ -1,7 +1,6 @@
+import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { FormEvent, ReactNode } from 'react'
 import { RemoteChain } from 'types/chain'
-
-import { SubmitWhenConnectedToChain } from '../submitWhenConnectedToChain'
 
 type Props = {
   expectedChainId: RemoteChain['id']

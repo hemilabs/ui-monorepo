@@ -43,7 +43,7 @@ import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 const minBitcoinWithdraw = '0.01'
 
 const SetMaxEvmBalance = dynamic(
-  () => import('./setMaxBalance').then(mod => mod.SetMaxEvmBalance),
+  () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),
   { ssr: false },
 )
 
@@ -177,10 +177,10 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           })}
           setMaxBalanceButton={
             <SetMaxEvmBalance
-              fromToken={fromToken}
               gas={estimatedFees}
               isRunningOperation={isWithdrawing}
               onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+              token={fromToken}
             />
           }
           tunnelState={state}
@@ -340,10 +340,10 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             isRunningOperation={isWithdrawing}
             setMaxBalanceButton={
               <SetMaxEvmBalance
-                fromToken={fromToken}
                 gas={withdrawGasFees}
                 isRunningOperation={isWithdrawing}
                 onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+                token={fromToken}
               />
             }
             tunnelState={{

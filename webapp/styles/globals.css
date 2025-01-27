@@ -1,6 +1,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import '../app/[locale]/tunnel/transaction-history/_components/transactionHistory.css';
+@import '../components/drawer/drawer.css';
 @import 'tailwindcss/utilities';
 
 @keyframes withdraw-progress {
@@ -10,12 +11,4 @@
   100% {
     height: 100%;
   }
-}
-
-/*
-  Hide the reCaptcha badge
-  See https://developers.google.com/recaptcha/docs/faq#id-like-to-hide-the-recaptcha-badge.-what-is-allowed
-*/
-.grecaptcha-badge {
-  visibility: hidden;
 }

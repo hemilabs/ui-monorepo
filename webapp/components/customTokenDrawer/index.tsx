@@ -168,7 +168,7 @@ export const CustomTokenDrawer = function ({
   return (
     <Drawer onClose={closeDrawer}>
       <form
-        className="flex h-[80dvh] w-full flex-col gap-y-3 overflow-y-auto bg-white px-4 py-6 md:h-full md:w-[450px] md:max-w-md md:px-6"
+        className="drawer-content h-[80dvh] md:h-full"
         onSubmit={handleSubmit}
       >
         <div className="flex items-center justify-between">

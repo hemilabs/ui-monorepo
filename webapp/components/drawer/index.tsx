@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 import { useOnKeyUp } from 'ui-common/hooks/useOnKeyUp'
 
-import { Overlay } from './overlay'
+import { Overlay } from '../overlay'
 
 type Props = {
   children: React.ReactNode
@@ -45,4 +45,10 @@ export const DrawerParagraph = ({ children }: { children: string }) => (
 
 export const DrawerTitle = ({ children }: { children: string }) => (
   <h2 className="text-2xl font-medium text-neutral-950">{children}</h2>
+)
+
+export const DrawerSection = ({ children }: { children: React.ReactNode }) => (
+  <div className="skip-parent-padding-x border-y border-solid border-neutral-300/55 bg-neutral-50 p-6">
+    {children}
+  </div>
 )

@@ -33,7 +33,7 @@ export const CustomTunnelsThroughPartner = function ({
 
   return (
     <Drawer onClose={onClose}>
-      <div className="flex w-full flex-col gap-y-3 overflow-y-auto bg-white px-4 pb-16 pt-6 md:h-full md:w-[450px] md:max-w-md md:px-6 md:pb-6">
+      <div className="drawer-content max-md:pb-16 md:h-full">
         <div className="flex items-center justify-between">
           <DrawerTitle>
             {t(`${operation}.heading`, { symbol: fromToken.symbol })}
@@ -47,14 +47,18 @@ export const CustomTunnelsThroughPartner = function ({
             {t(`${operation}.subheading`, { symbol: fromToken.symbol })}
           </DrawerParagraph>
         </div>
-        <Stargate fromToken={fromToken} toToken={toToken} />
+        <div>
+          <Stargate fromToken={fromToken} toToken={toToken} />
+        </div>
         <p className="mb-3 text-sm font-medium text-zinc-500">
           {t('description')}
         </p>
-        <WarningBox
-          heading={t('use-at-your-own-risk')}
-          subheading={t('hemi-bears-no-responsibility')}
-        />
+        <div>
+          <WarningBox
+            heading={t('use-at-your-own-risk')}
+            subheading={t('hemi-bears-no-responsibility')}
+          />
+        </div>
       </div>
     </Drawer>
   )

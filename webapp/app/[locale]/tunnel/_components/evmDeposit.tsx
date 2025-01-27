@@ -28,7 +28,7 @@ import { EvmSummary } from './evmSummary'
 import { FormContent, TunnelForm } from './form'
 
 const SetMaxEvmBalance = dynamic(
-  () => import('./setMaxBalance').then(mod => mod.SetMaxEvmBalance),
+  () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),
   { ssr: false },
 )
 
@@ -285,10 +285,10 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
             isRunningOperation={isRunningOperation}
             setMaxBalanceButton={
               <SetMaxEvmBalance
-                fromToken={fromToken}
                 gas={depositGasFees}
                 isRunningOperation={isRunningOperation}
                 onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+                token={fromToken}
               />
             }
             tokenApproval={

@@ -1,3 +1,4 @@
+import { DrawerSection } from 'components/drawer'
 import { ComponentProps, ReactNode } from 'react'
 
 import { Amount } from './amount'
@@ -22,11 +23,11 @@ export const Operation = ({
   title,
   token,
 }: Props) => (
-  <div className="flex h-full flex-col">
-    <div className="mb-6 px-4">
+  <>
+    <div className="mb-3">
       <Header onClose={onClose} subtitle={subtitle} title={title} />
     </div>
-    <div className="border-y border-solid border-neutral-300/55 bg-neutral-50 p-6">
+    <DrawerSection>
       <Amount token={token} value={amount} />
       <div
         className="mt-4 flex flex-col gap-y-8"
@@ -39,7 +40,7 @@ export const Operation = ({
           <Step key={index} position={index + 1} {...stepProps} />
         ))}
       </div>
-    </div>
-    {!!callToAction && <div className="h-full px-4 py-6">{callToAction}</div>}
-  </div>
+    </DrawerSection>
+    {!!callToAction && <div className="h-full py-3">{callToAction}</div>}
+  </>
 )

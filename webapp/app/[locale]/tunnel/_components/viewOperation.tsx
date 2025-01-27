@@ -52,7 +52,7 @@ const Operation = function () {
 
   return (
     <Drawer onClose={onClose}>
-      <div className="h-[80dvh] w-full overflow-y-auto bg-white py-6 md:h-full md:w-[450px]">
+      <div className="drawer-content h-[80dvh] md:h-full">
         {isDeposit(tunnelOperation) ? (
           <ViewDeposit deposit={tunnelOperation} onClose={onClose} />
         ) : (

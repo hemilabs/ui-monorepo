@@ -1,4 +1,5 @@
 import { tokenList, NativeTokenSpecialAddressOnL2 } from 'tokenList'
+import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
 import { EvmToken, Token } from 'types/token'
 import {
   type Address,
@@ -57,5 +58,8 @@ export const getErc20TokenBalance = ({
     functionName: 'balanceOf',
   })
 
-export const isStakeToken = (token: Token) =>
-  token.extensions?.protocol !== undefined
+export const isStakeToken = (token: Token): token is StakeToken =>
+  token.extensions?.protocol !== undefined &&
+  // using cast here because we're trying to determine if a token's protocol
+  // is a stake one
+  stakeProtocols.includes(token.extensions.protocol as StakeProtocols)

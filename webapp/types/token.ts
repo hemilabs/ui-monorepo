@@ -1,7 +1,7 @@
 import { BtcChain } from 'btc-wallet/chains'
 import { Address, Chain } from 'viem'
 
-type Extensions = {
+export type Extensions = {
   birthBlock?: number
   bridgeInfo?: {
     [keyof: string]: {

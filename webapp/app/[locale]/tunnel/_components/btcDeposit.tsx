@@ -21,7 +21,7 @@ import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
 
 const SetMaxBtcBalance = dynamic(
-  () => import('./setMaxBalance').then(mod => mod.SetMaxBtcBalance),
+  () => import('components/setMaxBalance').then(mod => mod.SetMaxBtcBalance),
   { ssr: false },
 )
 
@@ -138,9 +138,9 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
             })}
             setMaxBalanceButton={
               <SetMaxBtcBalance
-                fromToken={fromToken}
                 isRunningOperation={isDepositing}
                 onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+                token={fromToken}
               />
             }
             tunnelState={state}

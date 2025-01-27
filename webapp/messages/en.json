@@ -183,7 +183,15 @@
       "title": "Dashboard",
       "total-earned-points": "Total Hemi points earned",
       "total-staked": "Total Staked",
-      "your-stake": "Your Stake"
+      "your-stake": "Your Stake",
+      "staking-assets": "Staking assets",
+      "protocol": "Protocol",
+      "asset": "Asset",
+      "staked": "Staked",
+      "rewards": "Rewards",
+      "stake-more": "Stake more",
+      "stake": "Stake",
+      "stake-earn-points-label": "Stake and|earn po|ints"
     },
     "stake": {
       "subtitle": "Stake assets to earn points and rewards.",

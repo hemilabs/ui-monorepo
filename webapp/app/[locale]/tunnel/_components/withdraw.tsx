@@ -180,8 +180,8 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           })}
           setMaxBalanceButton={
             <SetMaxEvmBalance
+              disabled={isWithdrawing}
               gas={estimatedFees}
-              isRunningOperation={isWithdrawing}
               onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
               token={fromToken}
             />
@@ -345,8 +345,8 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             isRunningOperation={isWithdrawing}
             setMaxBalanceButton={
               <SetMaxEvmBalance
+                disabled={isWithdrawing}
                 gas={withdrawGasFees}
-                isRunningOperation={isWithdrawing}
                 onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
                 token={fromToken}
               />

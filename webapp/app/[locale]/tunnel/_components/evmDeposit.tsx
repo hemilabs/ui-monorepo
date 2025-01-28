@@ -288,8 +288,8 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
             isRunningOperation={isRunningOperation}
             setMaxBalanceButton={
               <SetMaxEvmBalance
+                disabled={isRunningOperation}
                 gas={depositGasFees}
-                isRunningOperation={isRunningOperation}
                 onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
                 token={fromToken}
               />

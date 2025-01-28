@@ -154,7 +154,7 @@ export const ManageStake = function ({
           )}
           <SubmitButton
             // TODO disable when submitting https://github.com/hemilabs/ui-monorepo/issues/774
-            disabled={!canSubmit}
+            disabled={submitDisabled}
             onSubmit={handleSubmit}
             text={tCommon(operation)}
           />

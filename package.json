@@ -9,7 +9,6 @@
   },
   "devDependencies": {
     "@commitlint/cli": "19.5.0",
-    "@types/mocha": "10.0.6",
     "better-sort-package-json": "1.1.0",
     "chai": "4.4.1",
     "commitlint-config-bloq": "1.1.0",
@@ -18,7 +17,6 @@
     "husky": "9.1.6",
     "lerna": "8.1.2",
     "lint-staged": "15.2.10",
-    "mocha": "10.3.0",
     "patch-package": "8.0.0",
     "prettier": "3.1.1",
     "prettier-plugin-tailwindcss": "0.5.9"

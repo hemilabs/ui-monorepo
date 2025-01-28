@@ -41,18 +41,8 @@
       "files": ["*.d.ts"]
     },
     {
-      "extends": ["bloq/mocha", "prettier"],
-      "files": ["*.spec.js"],
-      "rules": {
-        "mocha/no-exclusive-tests": "error",
-        "no-unsafe-finally": "off",
-        "prefer-arrow/prefer-arrow-functions": "off",
-        "promise/no-return-in-finally": "off"
-      }
-    },
-    {
       "extends": ["bloq/vitest"],
-      "files": ["*.test.ts"]
+      "files": ["*.{spec,test}.{js,ts}"]
     },
     {
       "extends": ["bloq/markdown"],

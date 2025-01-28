@@ -7,7 +7,6 @@ import { ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
-import { AllOrNone } from 'utils/typeUtilities'
 
 const Balance = dynamic(
   () => import('components/balance').then(mod => mod.Balance),
@@ -20,29 +19,33 @@ const Balance = dynamic(
 )
 
 type Props = {
-  isRunningOperation: boolean
+  disabled: boolean
   label: string
   maxBalanceButton?: ReactNode
   minInputMsg?: string
   onChange: (value: string) => void
+  onSelectToken?: (token: Token) => void
+  readOnly?: boolean
   token: Token
   value: string
-} & AllOrNone<{
-  chainId: RemoteChain['id']
-  onSelectToken: (token: Token) => void
-}>
+} & ( // only set chainId and list of tokens if the input is not read only
+  | { chainId: RemoteChain['id']; readOnly?: false; tokens: Token[] }
+  | { chainId?: never; readOnly: true; tokens?: never }
+)
 
 export const TokenInput = function ({
-  isRunningOperation,
+  chainId,
+  disabled,
   label,
   maxBalanceButton,
   minInputMsg,
+  onChange,
+  onSelectToken,
+  readOnly = false,
   token,
+  tokens,
   value,
-  ...props
 }: Props) {
-  const readOnly = !('chainId' in props)
-
   const t = useTranslations('tunnel-page')
   return (
     <div
@@ -58,8 +61,8 @@ export const TokenInput = function ({
               Big(value).gt(0) ? 'text-neutral-950' : 'text-neutral-600'
             }
             outline-none focus:text-neutral-950`}
-            disabled={isRunningOperation}
-            onChange={e => props.onChange(e.target.value)}
+            disabled={disabled}
+            onChange={e => onChange(e.target.value)}
             type="text"
             value={value}
           />
@@ -79,10 +82,11 @@ export const TokenInput = function ({
             </div>
           ) : (
             <TokenSelector
-              chainId={props.chainId}
-              disabled={isRunningOperation}
-              onSelectToken={props.onSelectToken}
+              chainId={chainId}
+              disabled={disabled}
+              onSelectToken={onSelectToken}
               selectedToken={token}
+              tokens={tokens}
             />
           )}
           <div className="flex items-center justify-end gap-x-2 text-sm">

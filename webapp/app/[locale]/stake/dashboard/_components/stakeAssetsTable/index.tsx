@@ -8,6 +8,7 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { Button, ButtonLink } from 'components/button'
 import { Card } from 'components/card'
+import { TokenLogo } from 'components/tokenLogo'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import {
@@ -161,8 +162,8 @@ const columnsBuilder = (
     cell: ({ row }) => (
       <div className="flex items-center space-x-2">
         <Image
-          alt={row.original.token.protocol}
-          src={protocolImages[row.original.token.protocol]}
+          alt={row.original.token.extensions.protocol}
+          src={protocolImages[row.original.token.extensions.protocol]}
         />
       </div>
     ),
@@ -173,7 +174,7 @@ const columnsBuilder = (
   {
     cell: ({ row }) => (
       <div className="flex items-center justify-center space-x-2">
-        <Image alt={row.original.token.name} src={row.original.token.logo} />
+        <TokenLogo size="small" token={row.original.token} />
         <span className="text-neutral-950">{row.original.token.symbol}</span>
       </div>
     ),

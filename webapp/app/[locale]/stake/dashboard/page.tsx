@@ -2,6 +2,7 @@
 
 import { featureFlags } from 'app/featureFlags'
 import { PageTitle } from 'components/pageTitle'
+import { useStakeTokens } from 'hooks/useStakeTokens'
 import { useTranslations } from 'next-intl'
 
 import {
@@ -10,7 +11,6 @@ import {
   PointsTag,
   SolvXpTag,
 } from '../_components/rewardTag'
-import { stakeTokens } from '../tokens'
 
 import { StakeAssetsTable } from './_components/stakeAssetsTable'
 import {
@@ -21,6 +21,8 @@ import {
 
 const Page = function () {
   const t = useTranslations('stake-page')
+
+  const stakeTokens = useStakeTokens()
 
   if (!featureFlags.stakeCampaignEnabled) return null
 

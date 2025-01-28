@@ -1,5 +1,5 @@
 diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
-index 0bf309d..1cc3e79 100644
+index 71aeeba..a16441b 100644
 --- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 +++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 @@ -12,8 +12,8 @@
@@ -13,8 +13,28 @@ index 0bf309d..1cc3e79 100644
        "extensions": {
          "birthBlock": 71589,
          "bridgeInfo": {
-@@ -339,7 +339,7 @@
-         }
+@@ -320,6 +320,11 @@
+       "decimals": 6,
+       "extensions": {
+         "birthBlock": 666946,
++        "bridgeInfo": {
++          "1": {
++            "tokenAddress": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
++          }
++        },
+         "tunnel": "stargate"
+       },
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/usdt.svg",
+@@ -332,22 +337,30 @@
+       "decimals": 6,
+       "extensions": {
+         "birthBlock": 623077,
++        "bridgeInfo": {
++          "1": {
++            "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
++          }
++        },
+         "tunnel": "stargate"
        },
        "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/usdc.svg",
 -      "name": "Bridged USDC (Stargate)",
@@ -22,16 +42,15 @@ index 0bf309d..1cc3e79 100644
        "symbol": "USDC.e"
      },
      {
-@@ -347,11 +347,16 @@
+       "address": "0x36Ab5Dba83d5d470F670BC4c06d7Da685d9afAe7",
        "chainId": 743111,
        "decimals": 8,
-       "extensions": {
+-      "extensions": {
 -        "birthBlock": 2165818
-+        "birthBlock": 2165818,
-+        "bridgeInfo": {
-+          "testnet": {
-+            "tokenAddress": "tBTC"
-+          }
++      "birthBlock": 2165818,
++      "bridgeInfo": {
++        "testnet": {
++          "tokenAddress": "tBTC"
 +        }
        },
        "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/hbtc.svg",
@@ -39,6 +58,6 @@ index 0bf309d..1cc3e79 100644
 -      "symbol": "hBTC"
 +      "name": "Testnet Bitcoin",
 +      "symbol": "tBTC"
-     }
-   ]
- }
+     },
+     {
+       "address": "0x9BFA177621119e64CecbEabE184ab9993E2ef727",

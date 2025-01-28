@@ -3,6 +3,7 @@ import { SwitchToNetworkToast } from 'components/switchToNetworkToast'
 import { TokenInput } from 'components/tokenInput'
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useHemi } from 'hooks/useHemi'
+import { useTunnelTokens } from 'hooks/useTunnelTokens'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
@@ -51,6 +52,7 @@ export const FormContent = function ({
 
   const showFromToast = useToastIfNotConnectedTo(fromNetworkId)
   const showToToast = useToastIfNotConnectedTo(toNetworkId)
+  const fromTokens = useTunnelTokens(fromNetworkId)
 
   const evmTunneling =
     isEvmNetworkId(fromNetworkId) && isEvmNetworkId(toNetworkId)
@@ -85,21 +87,23 @@ export const FormContent = function ({
       />
       <TokenInput
         chainId={fromNetworkId}
-        isRunningOperation={isRunningOperation}
+        disabled={isRunningOperation}
         label={t('form.send')}
         maxBalanceButton={setMaxBalanceButton}
         minInputMsg={minInputMsg}
         onChange={updateFromInput}
         onSelectToken={updateFromToken}
         token={fromToken}
+        tokens={fromTokens}
         value={fromInput}
       />
       <TokenInput
-        // Tunnelling goes 1:1, so output equals input
-        isRunningOperation={isRunningOperation}
+        disabled={isRunningOperation}
         label={t('form.receive')}
         onChange={updateFromInput}
+        readOnly
         token={toToken}
+        // Tunnelling goes 1:1, so output equals input
         value={fromInput}
       />
 

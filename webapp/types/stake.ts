@@ -1,20 +1,23 @@
-import { StaticImageData } from 'next/image'
+import { type EvmToken, type Extensions } from './token'
 
-import { EvmToken } from './token'
+export const stakeProtocols = [
+  'bedRock',
+  'bitFi',
+  'exSat',
+  'hemi',
+  'lorenzo',
+  'merlinChain',
+  'nodeDao',
+  'pumpBtc',
+  'solv',
+  'stakeStone',
+  'uniRouter',
+] as const
 
-export type StakeProtocols =
-  | 'bedRock'
-  | 'bitFi'
-  | 'exSat'
-  | 'hemi'
-  | 'lorenzo'
-  | 'merlinChain'
-  | 'pumpBtc'
-  | 'solv'
-  | 'stakeStone'
-  | 'uniRouter'
+export type StakeProtocols = (typeof stakeProtocols)[number]
 
 export type StakeToken = EvmToken & {
-  logo: StaticImageData
-  protocol: StakeProtocols
+  // EvmToken has a broad definition of "protocol", but for StakeToken let's make a
+  // defined list of protocols that make a token a Stake one.
+  extensions: Omit<Extensions, 'protocol'> & { protocol: StakeProtocols }
 }

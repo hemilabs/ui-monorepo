@@ -13,18 +13,16 @@ describe('utils/url', function () {
   })
 
   describe('isValidUrl', function () {
-    describe('isValidUrl', function () {
-      it('should return true for a valid URL', function () {
-        expect(isValidUrl('https://example.com/path?name=value')).toBe(true)
-      })
+    it('should return true for a valid URL', function () {
+      expect(isValidUrl('https://example.com/path?name=value')).toBe(true)
+    })
 
-      it('should return false for an invalid URL', function () {
-        expect(isValidUrl('invalid-url')).toBe(false)
-      })
+    it('should return false for an invalid URL', function () {
+      expect(isValidUrl('invalid-url')).toBe(false)
+    })
 
-      it('should return false for an empty string', function () {
-        expect(isValidUrl('')).toBe(false)
-      })
+    it('should return false for an empty string', function () {
+      expect(isValidUrl('')).toBe(false)
     })
   })
 

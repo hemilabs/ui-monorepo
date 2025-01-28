@@ -17,18 +17,18 @@ const RewardTag = ({
   style,
 }: Props) => (
   <div
-    className={`inline-flex items-center rounded-full px-2 py-1 ${backgroundColor} text-white`}
+    className={`inline-flex items-center gap-x-1 rounded-full py-0.5 pl-1 pr-2 ${backgroundColor} text-white`}
     style={style}
   >
-    <div className="mr-2 flex items-center">{icon}</div>
-    <span className="mr-1 font-normal">{label}</span>
+    <div className="flex items-center">{icon}</div>
+    <span className="font-normal">{label}</span>
   </div>
 )
 
 export const HemiTag = () => (
   <RewardTag
     backgroundColor="bg-orange-500"
-    icon={<HemiPointsIcon className="h-4 w-4" />}
+    icon={<HemiPointsIcon />}
     label="Points"
   />
 )
@@ -36,7 +36,7 @@ export const HemiTag = () => (
 export const SolvXpTag = () => (
   <RewardTag
     backgroundColor="bg-purple-900/70"
-    icon={<SolvXpPointsIcon className="h-4 w-4" />}
+    icon={<SolvXpPointsIcon />}
     label="Solv XP"
   />
 )
@@ -44,7 +44,7 @@ export const SolvXpTag = () => (
 export const PointsTag = () => (
   <RewardTag
     backgroundColor="bg-neutral-950"
-    icon={<PointsIcon className="h-4 w-4" />}
+    icon={<PointsIcon />}
     label="Points"
   />
 )
@@ -52,7 +52,7 @@ export const PointsTag = () => (
 export const DiamondTag = () => (
   <RewardTag
     backgroundColor="bg-neutral-950"
-    icon={<DiamondPointsIcon className="h-4 w-4" />}
+    icon={<DiamondPointsIcon />}
     label="Diamond"
     style={{
       background:

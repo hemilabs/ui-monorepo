@@ -143,7 +143,7 @@ export const LearnMore = function () {
         {t('learn-more-about-hemi')}
       </h2>
       <p className="mb-6 text-sm font-medium text-neutral-600 md:mb-8">
-        {t('subheading')}
+        {t('tutorials-and-tools')}
       </p>
       <Card>
         <div className="p-1 pb-2 font-medium md:p-3 md:pb-6">

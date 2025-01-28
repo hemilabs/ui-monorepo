@@ -3,6 +3,7 @@
     "add": "Agregar",
     "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
     "added": "Agregada",
+    "amount": "Monto",
     "connect-to-network": "Conectarse a {network}",
     "connect-to-supported-network": "Conectarse a una red soportada",
     "connect-wallet": "Conectar Billetera",
@@ -18,7 +19,9 @@
     "learn-more": "Aprenda más",
     "network-does-not-match": "Esta red no coincide con la seleccionada en su billetera.",
     "network-gas-fee": "Tarifa de gas de {network}",
+    "open": "Abrir",
     "select-network": "Seleccione Red",
+    "stake": "Apostar",
     "success": "Exitoso",
     "swap": "Intercambiar",
     "switch-to-network": "Cambiar a {network}",
@@ -31,6 +34,7 @@
       "rejected": "Tx rechazada"
     },
     "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
+    "unstake": "Desbloquear",
     "unsupported-chain-heading": "Usted no se encuentra conectado a una red soportada",
     "view": "Ver",
     "wait-complete": "Espera completada",
@@ -194,6 +198,19 @@
       "total-earned-points": "Total de puntos Hemi ganados",
       "total-staked": "Total Apostado",
       "your-stake": "Su Apuesta"
+    },
+    "drawer": {
+      "description-manage-stake": "Recargue su apuesta o retire en cualquier momento— ¡Usted tiene el control total!",
+      "manage-your-stake": "Gestione su apuesta",
+      "stake-and-earn-rewards": "¡Apueste {symbol} y gane recompensas!",
+      "stake-token": "Apostar {symbol}",
+      "strategy-details": {
+        "heading": "Detalles de la Estrategia",
+        "rewards": "Recompensas",
+        "tvl": "TVL (en Hemi)",
+        "website": "Sitio web"
+      },
+      "you-can-stake-anytime": "Puede retirar en cualquier momento y conservar los puntos ya ganados."
     },
     "protocol": "Protocolo",
     "rewards": "Recompensas",

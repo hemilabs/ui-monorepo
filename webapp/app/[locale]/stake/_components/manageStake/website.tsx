@@ -7,15 +7,15 @@ const websitesMap: Partial<
   Record<StakeToken['extensions']['protocol'], string>
 > = {
   bedRock: 'https://www.bedrock.technology',
-  bitFi: 'https://www.bitfi.one/#waitlist',
-  exSat: 'https://exsat.network/app/bridge',
-  lorenzo: 'https://app.lorenzo-protocol.xyz/staking',
-  merlinChain: 'https://merlinchain.io/bridge',
-  // TODO add nodeDao website https://github.com/hemilabs/ui-monorepo/issues/794
+  bitFi: 'https://www.bitfi.one',
+  exSat: 'https://exsat.network',
+  lorenzo: 'https://lorenzo-protocol.xyz',
+  merlinChain: 'https://merlinchain.io',
+  nodeDao: 'https://www.nodedao.com',
   pumpBtc: 'https://mainnet.pumpbtc.xyz',
-  solv: 'https://app.solv.finance/solvbtc?network=bitcoin-mainnet',
-  stakeStone: 'https://app.stakestone.io/u/sbtc/stake',
-  uniRouter: 'https://app.unirouter.io',
+  solv: 'https://solv.finance',
+  stakeStone: 'https://stakestone.io/#/home',
+  uniRouter: 'https://www.unirouter.io/#',
 }
 
 type Props = {

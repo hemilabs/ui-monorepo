@@ -180,18 +180,19 @@
   },
   "stake-page": {
     "dashboard": {
+      "asset": "Activo",
+      "protocol": "Protocolo",
+      "rewards": "Recompensas",
+      "stake": "Apuesta",
+      "staked": "Apostado",
+      "stake-more": "Apuesta más",
+      "stake-earn-points-label": "Apuesta y|ganar p|untos",
+      "staking-assets": "Activos en apuesta",
       "subtitle": "Apueste sus activos para ganar recompensas y aumentar tus puntos.",
       "title": "Panel",
       "total-earned-points": "Total de puntos Hemi ganados",
       "total-staked": "Total Apostado",
-      "your-stake": "Su Apuesta",
-      "protocol": "Protocolo",
-      "asset": "Activo",
-      "staked": "Apostado",
-      "rewards": "Recompensas",
-      "stake-more": "Apuesta más",
-      "stake": "Apuesta",
-      "stake-earn-points-label": "Apuesta y|ganar p|untos"
+      "your-stake": "Su Apuesta"
     },
     "stake": {
       "subtitle": "Apueste activos para ganar puntos y recompensas.",

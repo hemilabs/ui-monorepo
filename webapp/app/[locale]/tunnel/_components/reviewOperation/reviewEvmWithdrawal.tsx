@@ -60,7 +60,7 @@ const ReviewContent = function ({
   const toChain = useChain(withdrawal.l1ChainId)
   const [operationStatus] = useContext(ToEvmWithdrawalContext)
   const [networkType] = useNetworkType()
-  const t = useTranslations('tunnel-page.review-withdraw')
+  const t = useTranslations('tunnel-page.review-withdrawal')
   const tCommon = useTranslations('common')
 
   const { claimWithdrawalTokenGasFees } = useClaimTransaction(withdrawal)

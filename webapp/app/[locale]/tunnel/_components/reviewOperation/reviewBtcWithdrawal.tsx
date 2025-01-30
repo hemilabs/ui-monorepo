@@ -49,7 +49,7 @@ const ReviewContent = function ({
   )
   const challengeWithdrawalEstimatedFees =
     useEstimateChallengeBtcWithdrawalFees(withdrawal.l2ChainId)
-  const t = useTranslations('tunnel-page.review-withdraw')
+  const t = useTranslations('tunnel-page.review-withdrawal')
   const tCommon = useTranslations('common')
 
   const shouldAddChallengeStep = () =>

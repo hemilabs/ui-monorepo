@@ -72,8 +72,8 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
   return (
     <div className="flex h-full flex-col justify-between gap-y-24">
       <WarningBox
-        heading={t('review-withdraw.we-could-not-process-this-withdraw')}
-        subheading={t('review-withdraw.challenge-to-get-bitcoins-back')}
+        heading={t('review-withdrawal.we-could-not-process-this-withdraw')}
+        subheading={t('review-withdrawal.challenge-to-get-bitcoins-back')}
       />
       <DrawerCallToAction
         expectedChainId={withdrawal.l2ChainId}

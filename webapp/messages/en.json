@@ -266,7 +266,7 @@
       "your-deposit-is-complete": "Your deposit is complete."
     },
     "review-withdraw": {
-      "challenge-to-get-bitcoins-back": "Click on the 'Challenge withdraw' to receive your bitcoins back in Hemi",
+      "challenge-to-get-bitcoins-back": "Click 'Challenge withdrawal' yo reclaim your BTC and send it back to your Hemi address.",
       "challenge-withdrawal": "Challenge Withdrawal",
       "claim-withdrawal": "Claim withdrawal",
       "heading": "Review Withdraw",
@@ -274,7 +274,7 @@
       "prove-withdrawal": "Prove withdrawal",
       "total-to-withdraw": "Total to withdraw",
       "view-tx": "View",
-      "we-could-not-process-this-withdraw": "We couldn't process this withdraw automatically",
+      "we-could-not-process-this-withdraw": "We couldn't process this withdrawal",
       "withdraw-completed": "Withdrawal completed",
       "withdraw-on-its-way": "You're almost there! Complete the remaining steps to claim your withdrawal.",
       "your-withdraw-is-completed": "Your withdrawal is complete."

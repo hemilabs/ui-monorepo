@@ -265,7 +265,7 @@
       "your-deposit-is-complete": "Su depósito ha sido completado"
     },
     "review-withdraw": {
-      "challenge-to-get-bitcoins-back": "Haga clic en 'Disputar Retiro' para recibir sus bitcoins de vuelta en Hemi",
+      "challenge-to-get-bitcoins-back": "Haga clic en 'Disputar Retiro' para reclamar su BTC y enviarlo de vuelta a su dirección de Hemi.",
       "challenge-withdrawal": "Disputar Retiro",
       "claim-withdrawal": "Reclamar retiro",
       "heading": "Revisar Retiro",
@@ -273,7 +273,7 @@
       "prove-withdrawal": "Probar retiro",
       "total-to-withdraw": "Total a retirar",
       "view-tx": "Ver",
-      "we-could-not-process-this-withdraw": "No pudimos procesar este retiro automáticamente",
+      "we-could-not-process-this-withdraw": "No pudimos procesar este retiro",
       "withdraw-completed": "Retiro completado",
       "withdraw-on-its-way": "¡Ya falta poco! Complete el resto de los pasos para reclamar su retiro.",
       "your-withdraw-is-completed": "Su retiro ha sido completado."

@@ -5,13 +5,6 @@ import { PageTitle } from 'components/pageTitle'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import { useTranslations } from 'next-intl'
 
-import {
-  DiamondTag,
-  HemiTag,
-  PointsTag,
-  SolvXpTag,
-} from '../_components/rewardTag'
-
 import { StakeAssetsTable } from './_components/stakeAssetsTable'
 import {
   EarnedPoints,
@@ -43,24 +36,14 @@ const Page = function () {
           // Related to the issue #774 - https://github.com/hemilabs/ui-monorepo/issues/774
           data={[
             {
-              rewards: [<HemiTag key="hemiTag" />],
               staked: { monetaryValue: '112', quantity: '0.24' },
               token: stakeTokens.find(item => item.name === 'Merlin BTC')!,
             },
             {
-              rewards: [
-                <HemiTag key="hemiTag" />,
-                <SolvXpTag key="solvXpTag" />,
-                <PointsTag key="pointsTag" />,
-              ],
               staked: { monetaryValue: '105', quantity: '0.50' },
               token: stakeTokens.find(item => item.name === 'pumpBTC')!,
             },
             {
-              rewards: [
-                <HemiTag key="hemiTag" />,
-                <DiamondTag key="diamondTag" />,
-              ],
               staked: { monetaryValue: '220', quantity: '1.25' },
               token: stakeTokens.find(
                 item => item.name === 'Lorenzo Wrapped Bitcoin',

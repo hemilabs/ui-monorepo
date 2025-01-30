@@ -1,0 +1,224 @@
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from '@tanstack/react-table'
+import { Button } from 'components/button'
+import { Card } from 'components/card'
+import { Link } from 'components/link'
+import { TokenLogo } from 'components/tokenLogo'
+import Image from 'next/image'
+import { useTranslations } from 'next-intl'
+import { useMemo } from 'react'
+import Skeleton from 'react-loading-skeleton'
+import { StakeToken } from 'types/stake'
+import { useWindowSize } from 'ui-common/hooks/useWindowSize'
+
+import { protocolImages } from '../../protocols/protocolImages'
+import { Column, ColumnHeader, Header } from '../table'
+import { TokenRewards } from '../tokenRewards'
+
+type WalletBalanceValues = {
+  quantity: string
+  monetaryValue: string
+}
+
+export type StakeStrategyColumns = {
+  token: StakeToken
+  walletBalance: WalletBalanceValues
+}
+
+const columnsBuilder = (
+  t: ReturnType<typeof useTranslations<'stake-page'>>,
+): ColumnDef<StakeStrategyColumns>[] => [
+  {
+    cell: ({ row }) => (
+      <div className="flex items-center space-x-2">
+        <Image
+          alt={row.original.token.extensions.protocol}
+          src={protocolImages[row.original.token.extensions.protocol]}
+        />
+      </div>
+    ),
+    header: () => <Header text={t('protocol')} />,
+    id: 'protocol',
+    meta: { width: '150px' },
+  },
+  {
+    cell: ({ row }) => (
+      <div className="flex items-center justify-center space-x-2">
+        <TokenLogo size="small" token={row.original.token} />
+        <span className="text-neutral-950">{row.original.token.symbol}</span>
+      </div>
+    ),
+    header: () => <Header text={t('asset')} />,
+    id: 'asset',
+    meta: { width: '120px' },
+  },
+  {
+    cell: ({ row }) => (
+      <div className="flex flex-col justify-end">
+        <span className="text-neutral-950">
+          {row.original.walletBalance.quantity}
+        </span>
+        <p className="text-neutral-500">
+          <span className="mr-1">$</span>
+          {row.original.walletBalance.monetaryValue}
+        </p>
+      </div>
+    ),
+    header: () => <Header text={t('wallet-balance')} />,
+    id: 'wallet-balance',
+    meta: { width: '100px' },
+  },
+  {
+    cell: ({ row }) => (
+      <div className="flex flex-wrap items-center gap-2 overflow-hidden">
+        <TokenRewards rewards={row.original.token.extensions.rewards} />
+      </div>
+    ),
+    header: () => <Header text={t('rewards')} />,
+    id: 'rewards',
+    meta: { width: '350px' },
+  },
+  {
+    cell: () => (
+      <div className="max-w-24">
+        <Button height="h-4" type="button">
+          <p>{t('stake.title')}</p>
+        </Button>
+      </div>
+    ),
+    header: () => <Header text={t('stake.action')} />,
+    id: 'action',
+    meta: { width: '80px' },
+  },
+]
+
+type StakeStrategyTableImpProps = {
+  data: StakeStrategyColumns[]
+  loading: boolean
+}
+
+const StakeStrategyTableImp = function ({
+  data,
+  loading,
+}: StakeStrategyTableImpProps) {
+  const t = useTranslations('stake-page')
+  const { width } = useWindowSize()
+
+  const columns = useMemo(
+    () =>
+      columnsBuilder(t).map(c =>
+        data.length === 0 && loading
+          ? {
+              ...c,
+              cell: () => <Skeleton className="w-16" />,
+            }
+          : c,
+      ),
+    [data.length, loading, t],
+  )
+
+  const table = useReactTable({
+    columns,
+    data: data.length === 0 ? new Array(4).fill(null) : data,
+    getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnOrder:
+        // move "action" to the left in small devices
+        // and keep original order in larger devices
+        width < 1024
+          ? ['action'].concat(
+              columns.map(c => c.id).filter(id => id !== 'action'),
+            )
+          : undefined,
+    },
+  })
+
+  const { rows } = table.getRowModel()
+
+  return (
+    <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
+      <thead className="sticky top-0 z-10">
+        {table.getHeaderGroups().map(headerGroup => (
+          <tr className="flex w-full items-center" key={headerGroup.id}>
+            {headerGroup.headers.map(header => (
+              <ColumnHeader
+                key={header.id}
+                style={{ width: header.column.columnDef.meta?.width }}
+              >
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext(),
+                )}
+              </ColumnHeader>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody className="relative">
+        {rows.map(row => (
+          <tr className="flex items-center" key={row.id}>
+            {row.getVisibleCells().map(cell => (
+              <Column
+                key={cell.id}
+                style={{ width: cell.column.columnDef.meta?.width }}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </Column>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+type Props = {
+  data: StakeToken[]
+  loading: boolean
+}
+
+export const StakeStrategyTable = function ({ data, loading }: Props) {
+  const t = useTranslations('stake-page.stake')
+
+  // TODO - We need to define quantity and monetaryValue for the walletBalance
+  // Related to the issue #796 - https://github.com/hemilabs/ui-monorepo/issues/796
+  const mapStakeTokensToColumns = (tokens): StakeStrategyColumns[] =>
+    tokens.map(token => ({
+      token,
+      walletBalance: {
+        monetaryValue: '125',
+        quantity: '0.08',
+      },
+    }))
+
+  // TODO - The learn how to stake on hemi link is TBD
+  return (
+    <div className="rounded-2.5xl relative z-20 -translate-y-32 bg-neutral-100 p-1 text-sm font-medium md:-translate-y-24">
+      <div className="flex w-full flex-wrap items-center justify-between gap-x-2 gap-y-2 px-3.5 py-2 md:flex-nowrap md:px-3">
+        <h5 className="flex-shrink-0 md:flex-grow-0 md:basis-auto">
+          {t('strategy')}
+        </h5>
+        <p className="flex text-sm font-normal text-neutral-600">
+          {t('new-here')}
+          <Link href={'https://hemi.xyz/'}>
+            <span className="ml-1 text-orange-500">
+              {t('learn-how-to-stake-on-hemi')}
+            </span>
+          </Link>
+        </p>
+      </div>
+      <Card>
+        <div className="max-h-[48dvh] overflow-x-auto p-2">
+          <StakeStrategyTableImp
+            data={mapStakeTokensToColumns(data)}
+            loading={loading}
+          />
+        </div>
+      </Card>
+    </div>
+  )
+}

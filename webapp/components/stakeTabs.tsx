@@ -22,17 +22,13 @@ const StakeTabsImpl = function () {
   const isInStake = pathname === `/${locale}/stake/`
 
   return (
-    <div className="flex items-center justify-center gap-x-4">
+    <div className="relative z-20 flex items-center justify-center gap-x-4 sm:flex-col sm:gap-y-4">
       <Tabs>
         <Tab href="/stake/dashboard" selected={isInDashboard}>
-          <div className="flex items-center justify-between gap-x-2">
-            <span>{t('dashboard.title')}</span>
-          </div>
+          <span className="flex justify-center">{t('dashboard.title')}</span>
         </Tab>
         <Tab href="/stake" selected={isInStake}>
-          <span className="flex h-full min-h-7 items-center">
-            {t('stake.title')}
-          </span>
+          <span className="flex justify-center">{t('stake.title')}</span>
         </Tab>
       </Tabs>
     </div>

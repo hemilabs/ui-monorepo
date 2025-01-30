@@ -179,6 +179,7 @@
     "web-pop-miner": "Minero PoP Web"
   },
   "stake-page": {
+    "asset": "Activo",
     "dashboard": {
       "asset": "Activo",
       "protocol": "Protocolo",
@@ -194,10 +195,17 @@
       "total-staked": "Total Apostado",
       "your-stake": "Su Apuesta"
     },
+    "protocol": "Protocolo",
+    "rewards": "Recompensas",
     "stake": {
+      "action": "Acción",
+      "learn-how-to-stake-on-hemi": "Aprenda como apostar en Hemi",
+      "new-here": "¿Nuevo aquí?",
+      "strategy": "Estrategia",
       "subtitle": "Apueste activos para ganar puntos y recompensas.",
       "title": "Apostar"
-    }
+    },
+    "wallet-balance": "Saldo de la billetera"
   },
   "token-custom-drawer": {
     "add-contract-to-preview": "Añada una dirección de contrato para previsualizar el token...",

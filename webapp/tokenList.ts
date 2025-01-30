@@ -138,10 +138,9 @@ if (featureFlags.btcTunnelEnabled) {
 }
 
 export const tokenList = {
-  keywords: ['default', 'uniswap'],
-  name: 'Uniswap Labs Default',
+  name: hemilabsTokenList.name,
   tags: {},
-  timestamp: '2023-12-13T18:25:25.830Z',
+  timestamp: hemilabsTokenList.timestamp,
   tokens: tokens
     .concat(nativeTokens)
     .sort((a, b) => a.symbol.localeCompare(b.symbol)),

@@ -138,7 +138,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
             })}
             setMaxBalanceButton={
               <SetMaxBtcBalance
-                isRunningOperation={isDepositing}
+                disabled={isDepositing}
                 onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
                 token={fromToken}
               />

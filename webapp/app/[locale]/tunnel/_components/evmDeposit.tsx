@@ -6,6 +6,7 @@ import {
   CustomTunnelsThroughPartner,
   tunnelsThroughPartner,
 } from 'components/customTunnelsThroughPartner'
+import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -24,7 +25,7 @@ import { canSubmit, getTotal } from '../_utils'
 
 import { ConnectEvmWallet } from './connectEvmWallet'
 import { Erc20TokenApproval } from './erc20TokenApproval'
-import { EvmSummary } from './evmSummary'
+import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
 
 const SetMaxEvmBalance = dynamic(
@@ -273,11 +274,13 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       <TunnelForm
         belowForm={
           canDeposit ? (
-            <EvmSummary
-              gas={gas}
-              operationSymbol={fromToken.symbol}
-              total={totalDeposit}
-            />
+            <FeesContainer>
+              <EvmFeesSummary
+                gas={gas}
+                operationSymbol={fromToken.symbol}
+                total={totalDeposit}
+              />
+            </FeesContainer>
           ) : null
         }
         formContent={
@@ -285,8 +288,8 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
             isRunningOperation={isRunningOperation}
             setMaxBalanceButton={
               <SetMaxEvmBalance
+                disabled={isRunningOperation}
                 gas={depositGasFees}
-                isRunningOperation={isRunningOperation}
                 onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
                 token={fromToken}
               />

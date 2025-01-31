@@ -1,6 +1,8 @@
 import { Card } from 'components/card'
 import { SwitchToNetworkToast } from 'components/switchToNetworkToast'
 import { TokenInput } from 'components/tokenInput'
+import { TokenSelector } from 'components/tokenSelector'
+import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useHemi } from 'hooks/useHemi'
 import { useTunnelTokens } from 'hooks/useTunnelTokens'
@@ -86,23 +88,29 @@ export const FormContent = function ({
         updateToNetwork={updateToNetwork}
       />
       <TokenInput
-        chainId={fromNetworkId}
         disabled={isRunningOperation}
         label={t('form.send')}
         maxBalanceButton={setMaxBalanceButton}
         minInputMsg={minInputMsg}
         onChange={updateFromInput}
-        onSelectToken={updateFromToken}
         token={fromToken}
-        tokens={fromTokens}
+        tokenSelector={
+          <TokenSelector
+            chainId={fromNetworkId}
+            disabled={isRunningOperation}
+            onSelectToken={updateFromToken}
+            selectedToken={fromToken}
+            tokens={fromTokens}
+          />
+        }
         value={fromInput}
       />
       <TokenInput
         disabled={isRunningOperation}
         label={t('form.receive')}
         onChange={updateFromInput}
-        readOnly
         token={toToken}
+        tokenSelector={<TokenSelectorReadOnly token={toToken} />}
         // Tunnelling goes 1:1, so output equals input
         value={fromInput}
       />

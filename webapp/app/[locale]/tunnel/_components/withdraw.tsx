@@ -6,6 +6,7 @@ import {
   CustomTunnelsThroughPartner,
   tunnelsThroughPartner,
 } from 'components/customTunnelsThroughPartner'
+import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
@@ -35,7 +36,7 @@ import { useWithdraw } from '../_hooks/useWithdraw'
 import { canSubmit, getTotal } from '../_utils'
 
 import { ConnectEvmWallet } from './connectEvmWallet'
-import { EvmSummary } from './evmSummary'
+import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
@@ -156,14 +157,16 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
             )}
           />
           {canWithdraw ? (
-            <EvmSummary
-              gas={gas}
-              operationSymbol={fromToken.symbol}
-              total={getTotal({
-                fromInput,
-                fromToken,
-              })}
-            />
+            <FeesContainer>
+              <EvmFeesSummary
+                gas={gas}
+                operationSymbol={fromToken.symbol}
+                total={getTotal({
+                  fromInput,
+                  fromToken,
+                })}
+              />
+            </FeesContainer>
           ) : null}
         </div>
       }
@@ -177,8 +180,8 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           })}
           setMaxBalanceButton={
             <SetMaxEvmBalance
+              disabled={isWithdrawing}
               gas={estimatedFees}
-              isRunningOperation={isWithdrawing}
               onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
               token={fromToken}
             />
@@ -328,11 +331,13 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       <TunnelForm
         belowForm={
           canWithdraw ? (
-            <EvmSummary
-              gas={gas}
-              operationSymbol={fromToken.symbol}
-              total={fromInput}
-            />
+            <FeesContainer>
+              <EvmFeesSummary
+                gas={gas}
+                operationSymbol={fromToken.symbol}
+                total={fromInput}
+              />
+            </FeesContainer>
           ) : null
         }
         formContent={
@@ -340,8 +345,8 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             isRunningOperation={isWithdrawing}
             setMaxBalanceButton={
               <SetMaxEvmBalance
+                disabled={isWithdrawing}
                 gas={withdrawGasFees}
-                isRunningOperation={isWithdrawing}
                 onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
                 token={fromToken}
               />

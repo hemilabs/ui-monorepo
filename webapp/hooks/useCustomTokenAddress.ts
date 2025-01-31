@@ -1,10 +1,5 @@
-import { createParser, useQueryState } from 'nuqs'
-import { isAddress } from 'viem'
-
-const parseAsEvmAddress = createParser({
-  parse: (queryValue: string) => (isAddress(queryValue) ? queryValue : null),
-  serialize: value => value,
-})
+import { useQueryState } from 'nuqs'
+import { parseAsEvmAddress } from 'utils/url'
 
 export const useCustomTokenAddress = () =>
   useQueryState('customTokenAddress', parseAsEvmAddress.withDefault(null))

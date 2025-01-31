@@ -31,16 +31,16 @@ const MaxButton = function ({
 }
 
 type Props<T extends Token = Token> = {
-  token: T
-  isRunningOperation: boolean
+  disabled: boolean
   onSetMaxBalance: (maxBalance: string) => void
+  token: T
 }
 
 export const SetMaxEvmBalance = function ({
-  token,
+  disabled,
   gas,
-  isRunningOperation,
   onSetMaxBalance,
+  token,
 }: Props<EvmToken> & { gas: bigint }) {
   const {
     balance: walletNativeTokenBalance,
@@ -61,15 +61,15 @@ export const SetMaxEvmBalance = function ({
 
   const handleClick = () => onSetMaxBalance(maxBalance)
 
-  const disabled =
-    isLoadingNativeTokenBalance || isRunningOperation || Big(maxBalance).lte(0)
+  const maxButtonDisabled =
+    disabled || isLoadingNativeTokenBalance || Big(maxBalance).lte(0)
 
-  return <MaxButton disabled={disabled} onClick={handleClick} />
+  return <MaxButton disabled={maxButtonDisabled} onClick={handleClick} />
 }
 
 export const SetMaxBtcBalance = function ({
   token,
-  isRunningOperation,
+  disabled,
   onSetMaxBalance,
 }: Props<BtcToken>) {
   const { address } = useBtcAccount()
@@ -78,8 +78,8 @@ export const SetMaxBtcBalance = function ({
 
   const { fees, isLoading: isLoadingFees } = useEstimateBtcFees(address)
 
-  const disabled =
-    isRunningOperation ||
+  const maxButtonDisabled =
+    disabled ||
     isLoadingBalance ||
     isLoadingFees ||
     btcBalance === 0 ||
@@ -88,5 +88,5 @@ export const SetMaxBtcBalance = function ({
   const handleClick = () =>
     onSetMaxBalance(formatUnits(BigInt(btcBalance - fees), token.decimals))
 
-  return <MaxButton disabled={disabled} onClick={handleClick} />
+  return <MaxButton disabled={maxButtonDisabled} onClick={handleClick} />
 }

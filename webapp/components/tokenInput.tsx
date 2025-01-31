@@ -1,11 +1,8 @@
 import Big from 'big.js'
-import { TokenLogo } from 'components/tokenLogo'
-import { TokenSelector } from 'components/tokenSelector'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 
 const Balance = dynamic(
@@ -24,26 +21,19 @@ type Props = {
   maxBalanceButton?: ReactNode
   minInputMsg?: string
   onChange: (value: string) => void
-  onSelectToken?: (token: Token) => void
-  readOnly?: boolean
   token: Token
+  tokenSelector: ReactNode
   value: string
-} & ( // only set chainId and list of tokens if the input is not read only
-  | { chainId: RemoteChain['id']; readOnly?: false; tokens: Token[] }
-  | { chainId?: never; readOnly: true; tokens?: never }
-)
+}
 
 export const TokenInput = function ({
-  chainId,
   disabled,
   label,
   maxBalanceButton,
   minInputMsg,
   onChange,
-  onSelectToken,
-  readOnly = false,
   token,
-  tokens,
+  tokenSelector,
   value,
 }: Props) {
   const t = useTranslations('tunnel-page')
@@ -73,22 +63,7 @@ export const TokenInput = function ({
           )}
         </div>
         <div className="flex h-full flex-col items-end justify-end gap-y-3 text-sm">
-          {readOnly ? (
-            <div className="flex items-center justify-between gap-x-2">
-              <TokenLogo size="small" token={token} />
-              <span className="font-medium text-neutral-950">
-                {token.symbol}
-              </span>
-            </div>
-          ) : (
-            <TokenSelector
-              chainId={chainId}
-              disabled={disabled}
-              onSelectToken={onSelectToken}
-              selectedToken={token}
-              tokens={tokens}
-            />
-          )}
+          {tokenSelector}
           <div className="flex items-center justify-end gap-x-2 text-sm">
             <span className="text-neutral-500">{t('form.balance')}:</span>
             <span className="text-neutral-950">

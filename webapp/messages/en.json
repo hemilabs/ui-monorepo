@@ -3,6 +3,7 @@
     "add": "Add",
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
     "added": "Added",
+    "amount": "Amount",
     "connect-to-network": "Connect to {network}",
     "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",
@@ -18,7 +19,9 @@
     "learn-more": "Learn more",
     "network-does-not-match": "This network doesn’t match the one selected in your wallet.",
     "network-gas-fee": "{network} gas fee",
+    "open": "Open",
     "select-network": "Select Network",
+    "stake": "Stake",
     "success": "Success",
     "swap": "Swap",
     "switch-to-network": "Switch to {network}",
@@ -31,6 +34,7 @@
       "rejected": "Tx rejected"
     },
     "unexpected-error": "An unexpected error has ocurred. Please try again.",
+    "unstake": "Unstake",
     "unsupported-chain-heading": "You're not connected to a supported chain",
     "view": "View",
     "wait-complete": "Wait complete",
@@ -194,6 +198,19 @@
       "total-earned-points": "Total Hemi points earned",
       "total-staked": "Total Staked",
       "your-stake": "Your Stake"
+    },
+    "drawer": {
+      "description-manage-stake": "Top up your stake, or withdraw anytime—you're in full control!",
+      "manage-your-stake": "Manage your stake",
+      "stake-and-earn-rewards": "Stake {symbol} and earn rewards!",
+      "stake-token": "Stake {symbol}",
+      "strategy-details": {
+        "heading": "Strategy Details",
+        "rewards": "Rewards",
+        "tvl": "TVL (on Hemi)",
+        "website": "Website"
+      },
+      "you-can-stake-anytime": "You can withdraw any time and keep the points already earned."
     },
     "protocol": "Protocol",
     "rewards": "Rewards",

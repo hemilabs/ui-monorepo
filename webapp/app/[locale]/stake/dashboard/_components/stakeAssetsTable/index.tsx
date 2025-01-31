@@ -1,3 +1,5 @@
+'use client'
+
 import {
   ColumnDef,
   flexRender,
@@ -6,15 +8,17 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { Button, ButtonLink } from 'components/button'
+import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl'
+import { usePathname } from 'next/navigation'
+import { useLocale, useTranslations } from 'next-intl'
 import { MutableRefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakeToken } from 'types/stake'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
+import { queryStringObjectToString } from 'utils/url'
 
 import {
   Column,
@@ -22,6 +26,7 @@ import {
   Header,
 } from '../../../../stake/_components/table'
 import { TokenRewards } from '../../../../stake/_components/tokenRewards'
+import { useDrawerStakeQueryString } from '../../../_hooks/useDrawerStakeQueryString'
 import { protocolImages } from '../../../protocols/protocolImages'
 
 import { WelcomeStake } from './welcomeStake'
@@ -51,12 +56,17 @@ const Body = function ({
   loading: boolean
   rows: Row<StakeAssetsColumns>[]
 }) {
+  const { setDrawerQueryString } = useDrawerStakeQueryString()
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     estimateSize: () => 52,
     getScrollElement: () => containerRef.current,
     overscan: 10,
   })
+
+  // TODO add analytics for this event https://github.com/hemilabs/ui-monorepo/issues/765
+  const openDrawer = ({ token }: StakeAssetsColumns) =>
+    setDrawerQueryString('manage', token.address)
 
   return (
     <tbody
@@ -84,6 +94,7 @@ const Body = function ({
                 className="group/stake-row absolute flex w-full items-center"
                 data-index={virtualRow.index}
                 key={row.id}
+                onClick={() => openDrawer(row.original)}
                 style={{
                   height: `${virtualRow.size}px`,
                   transform: `translateY(${virtualRow.start}px)`,
@@ -106,26 +117,32 @@ const Body = function ({
   )
 }
 
-// TODO - implement this function
-// Related to the issue #774 - https://github.com/hemilabs/ui-monorepo/issues/774
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const CallToAction = ({ stake }: ActionProps) => (
-  <ButtonLink
-    className="border-none"
-    href={''}
-    onClick={function (e) {
-      // needed as there's event delegation in the row
-      e.stopPropagation()
-      // prevent full navigation - we want a shallow navigation to open the drawer
-      e.preventDefault()
-    }}
-    variant="secondary"
-  >
-    <span className="text-lg font-normal text-neutral-500 transition duration-300 hover:text-neutral-950">
-      ...
-    </span>
-  </ButtonLink>
-)
+const CallToAction = function ({ stake }: ActionProps) {
+  const locale = useLocale()
+  const pathname = usePathname().replace(`/${locale}`, '')
+
+  const queryString = queryStringObjectToString({
+    mode: 'manage',
+    tokenAddress: stake.token.address,
+  })
+
+  return (
+    <ButtonLink
+      className="border-none"
+      href={`${pathname}${queryString}`}
+      onClick={function (e) {
+        // prevent full navigation - we want a shallow navigation to open the drawer
+        e.preventDefault()
+        // navigation is done in event delegation, in the row
+      }}
+      variant="secondary"
+    >
+      <span className="text-lg font-normal text-neutral-500 transition duration-300 hover:text-neutral-950">
+        ...
+      </span>
+    </ButtonLink>
+  )
+}
 
 const columnsBuilder = (
   t: ReturnType<typeof useTranslations<'stake-page'>>,
@@ -282,12 +299,11 @@ export const StakeAssetsTable = function ({
         <h5 className="flex-shrink-0 flex-grow basis-2/5 md:flex-grow-0 md:basis-auto">
           {t('dashboard.staking-assets')}
         </h5>
-        <Button height="h-4" onClick={stakeMore} type="button">
-          <p>
-            <span className="mr-1">+</span>
-            {t('dashboard.stake-more')}
-          </p>
-        </Button>
+        <div className="[&>a]:py-1">
+          <ButtonLink href="/stake">
+            <span className="mr-1">+{t('dashboard.stake-more')}</span>
+          </ButtonLink>
+        </div>
       </div>
       <Card>
         <div className="max-h-[50dvh] overflow-x-auto p-2" ref={containerRef}>

@@ -5,6 +5,7 @@ import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByC
 import Image, { StaticImageData } from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
+import { getSwapUrl } from 'utils/swap'
 import { isRelativeUrl, queryStringObjectToString } from 'utils/url'
 
 import deployContracts from '../_assets/deployContracts.png'
@@ -95,8 +96,7 @@ export const StartUsingHemi = function () {
           alt="Swap form"
           event="tut - swap tokens"
           heading={t('swap-tokens')}
-          // TBD URL for mainnet https://github.com/hemilabs/ui-monorepo/issues/586
-          href="https://swap.hemi.xyz"
+          href={getSwapUrl(networkType)}
           image={
             networkType === 'testnet' ? swapTokensTestnet : swapTokensMainnet
           }

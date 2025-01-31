@@ -11,11 +11,13 @@ import { StakeIcon } from 'components/icons/stakeIcon'
 import { ToolsIcon } from 'components/icons/toolsIcon'
 import { TunnelIcon } from 'components/icons/tunnelIcon'
 import { Link } from 'components/link'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import React, { Suspense } from 'react'
 import { HemiLogoFull } from 'ui-common/components/hemiLogo'
+import { getSwapUrl } from 'utils/swap'
 
 import { GetStarted } from './_components/getStarted'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
@@ -36,6 +38,7 @@ const Separator = () => (
 )
 
 export const Navbar = function () {
+  const [networkType] = useNetworkType()
   const t = useTranslations('navbar')
 
   const href = useTunnelOperationByConnectedWallet()
@@ -76,7 +79,7 @@ export const Navbar = function () {
         <li className="order-3">
           <ItemLink
             event="nav - dex"
-            href="https://swap.hemi.xyz"
+            href={getSwapUrl(networkType)}
             icon={<DexIcon />}
             text={t('swap')}
           />

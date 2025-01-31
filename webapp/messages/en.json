@@ -180,19 +180,19 @@
   },
   "stake-page": {
     "dashboard": {
+      "asset": "Asset",
+      "protocol": "Protocol",
+      "rewards": "Rewards",
+      "stake": "Stake",
+      "staked": "Staked",
+      "stake-more": "Stake more",
+      "stake-earn-points-label": "Stake and|earn po|ints",
+      "staking-assets": "Staking assets",
       "subtitle": "Stake your assets to earn rewards and boost your points.",
       "title": "Dashboard",
       "total-earned-points": "Total Hemi points earned",
       "total-staked": "Total Staked",
-      "your-stake": "Your Stake",
-      "staking-assets": "Staking assets",
-      "protocol": "Protocol",
-      "asset": "Asset",
-      "staked": "Staked",
-      "rewards": "Rewards",
-      "stake-more": "Stake more",
-      "stake": "Stake",
-      "stake-earn-points-label": "Stake and|earn po|ints"
+      "your-stake": "Your Stake"
     },
     "stake": {
       "subtitle": "Stake assets to earn points and rewards.",
@@ -265,16 +265,16 @@
       "you-are-depositing": "You are depositing",
       "your-deposit-is-complete": "Your deposit is complete."
     },
-    "review-withdraw": {
-      "challenge-to-get-bitcoins-back": "Click on the 'Challenge withdraw' to receive your bitcoins back in Hemi",
+    "review-withdrawal": {
+      "challenge-to-get-bitcoins-back": "Click 'Challenge withdrawal' yo reclaim your BTC and send it back to your Hemi address.",
       "challenge-withdrawal": "Challenge Withdrawal",
       "claim-withdrawal": "Claim withdrawal",
-      "heading": "Review Withdraw",
+      "heading": "Review Withdrawal",
       "initiate-withdrawal": "Initiate withdrawal",
       "prove-withdrawal": "Prove withdrawal",
       "total-to-withdraw": "Total to withdraw",
       "view-tx": "View",
-      "we-could-not-process-this-withdraw": "We couldn't process this withdraw automatically",
+      "we-could-not-process-this-withdraw": "We couldn't process this withdrawal",
       "withdraw-completed": "Withdrawal completed",
       "withdraw-on-its-way": "You're almost there! Complete the remaining steps to claim your withdrawal.",
       "your-withdraw-is-completed": "Your withdrawal is complete."

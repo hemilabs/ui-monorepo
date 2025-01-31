@@ -180,18 +180,19 @@
   },
   "stake-page": {
     "dashboard": {
+      "asset": "Activo",
+      "protocol": "Protocolo",
+      "rewards": "Recompensas",
+      "stake": "Apuesta",
+      "staked": "Apostado",
+      "stake-more": "Apuesta más",
+      "stake-earn-points-label": "Apuesta y|ganar p|untos",
+      "staking-assets": "Activos en apuesta",
       "subtitle": "Apueste sus activos para ganar recompensas y aumentar tus puntos.",
       "title": "Panel",
       "total-earned-points": "Total de puntos Hemi ganados",
       "total-staked": "Total Apostado",
-      "your-stake": "Su Apuesta",
-      "protocol": "Protocolo",
-      "asset": "Activo",
-      "staked": "Apostado",
-      "rewards": "Recompensas",
-      "stake-more": "Apuesta más",
-      "stake": "Apuesta",
-      "stake-earn-points-label": "Apuesta y|ganar p|untos"
+      "your-stake": "Su Apuesta"
     },
     "stake": {
       "subtitle": "Apueste activos para ganar puntos y recompensas.",
@@ -264,8 +265,8 @@
       "you-are-depositing": "Usted está depositando",
       "your-deposit-is-complete": "Su depósito ha sido completado"
     },
-    "review-withdraw": {
-      "challenge-to-get-bitcoins-back": "Haga clic en 'Disputar Retiro' para recibir sus bitcoins de vuelta en Hemi",
+    "review-withdrawal": {
+      "challenge-to-get-bitcoins-back": "Haga clic en 'Disputar Retiro' para reclamar su BTC y enviarlo de vuelta a su dirección de Hemi.",
       "challenge-withdrawal": "Disputar Retiro",
       "claim-withdrawal": "Reclamar retiro",
       "heading": "Revisar Retiro",
@@ -273,7 +274,7 @@
       "prove-withdrawal": "Probar retiro",
       "total-to-withdraw": "Total a retirar",
       "view-tx": "Ver",
-      "we-could-not-process-this-withdraw": "No pudimos procesar este retiro automáticamente",
+      "we-could-not-process-this-withdraw": "No pudimos procesar este retiro",
       "withdraw-completed": "Retiro completado",
       "withdraw-on-its-way": "¡Ya falta poco! Complete el resto de los pasos para reclamar su retiro.",
       "your-withdraw-is-completed": "Su retiro ha sido completado."

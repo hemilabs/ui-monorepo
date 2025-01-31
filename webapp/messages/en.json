@@ -179,6 +179,7 @@
     "web-pop-miner": "Web PoP Miner"
   },
   "stake-page": {
+    "asset": "Asset",
     "dashboard": {
       "asset": "Asset",
       "protocol": "Protocol",
@@ -194,10 +195,17 @@
       "total-staked": "Total Staked",
       "your-stake": "Your Stake"
     },
+    "protocol": "Protocol",
+    "rewards": "Rewards",
     "stake": {
+      "action": "Action",
+      "learn-how-to-stake-on-hemi": "Learn how to stake on Hemi",
+      "new-here": "New here?",
+      "strategy": "Strategy",
       "subtitle": "Stake assets to earn points and rewards.",
       "title": "Stake"
-    }
+    },
+    "wallet-balance": "Wallet balance"
   },
   "token-custom-drawer": {
     "add-contract-to-preview": "Add a contract address to preview the token...",

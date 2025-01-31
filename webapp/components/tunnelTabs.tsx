@@ -45,14 +45,16 @@ const TunnelTabsImpl = function () {
           onClick={addTracking('header - tunnel')}
           selected={pathname === `/${locale}/tunnel/`}
         >
-          <span className="flex h-full min-h-7 items-center">{t('title')}</span>
+          <span className="flex h-full min-h-7 items-center justify-center">
+            {t('title')}
+          </span>
         </Tab>
         <Tab
           href="/tunnel/transaction-history"
           onClick={addTracking('header - txn history')}
           selected={isInTransactionHistory}
         >
-          <div className="flex items-center justify-between gap-x-2">
+          <div className="flex items-center justify-center gap-x-2">
             <span>{t('transaction-history.title')}</span>
             <ActionableOperations />
           </div>

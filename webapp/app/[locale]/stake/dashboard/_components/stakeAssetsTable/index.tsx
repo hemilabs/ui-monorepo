@@ -11,17 +11,17 @@ import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
-import {
-  ComponentProps,
-  MutableRefObject,
-  ReactNode,
-  useMemo,
-  useRef,
-} from 'react'
+import { MutableRefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakeToken } from 'types/stake'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 
+import {
+  Column,
+  ColumnHeader,
+  Header,
+} from '../../../../stake/_components/table'
+import { TokenRewards } from '../../../../stake/_components/tokenRewards'
 import { protocolImages } from '../../../protocols/protocolImages'
 
 import { WelcomeStake } from './welcomeStake'
@@ -34,39 +34,11 @@ type StakedValues = {
 type StakeAssetsColumns = {
   token: StakeToken
   staked: StakedValues
-  rewards: ReactNode[]
 }
 
 type ActionProps = {
   stake: StakeAssetsColumns
 }
-
-const ColumnHeader = ({
-  className = '',
-  children,
-  style,
-}: ComponentProps<'th'>) => (
-  <th
-    className={`border-color-neutral/55 flex w-full flex-grow items-center ${className} h-10 border-b
-    border-t border-solid bg-neutral-50 font-medium first:rounded-l-lg first:border-l last:rounded-r-lg
-    last:border-r first:[&>span]:pl-4 last:[&>span]:pl-5`}
-    style={style}
-  >
-    {children}
-  </th>
-)
-
-const Column = (props: ComponentProps<'td'>) => (
-  <td
-    className={`h-13 flex w-full flex-grow cursor-pointer items-center border-b border-solid border-neutral-300/55
-    py-2.5 last:pr-2.5 group-hover/stake-row:bg-neutral-50 first:[&>*]:pl-4 last:[&>*]:pl-5`}
-    {...props}
-  />
-)
-
-const Header = ({ text }: { text?: string }) => (
-  <span className="block py-2 text-left text-neutral-600">{text}</span>
-)
 
 const Body = function ({
   columns,
@@ -156,7 +128,7 @@ const CallToAction = ({ stake }: ActionProps) => (
 )
 
 const columnsBuilder = (
-  t: ReturnType<typeof useTranslations<'stake-page.dashboard'>>,
+  t: ReturnType<typeof useTranslations<'stake-page'>>,
 ): ColumnDef<StakeAssetsColumns>[] => [
   {
     cell: ({ row }) => (
@@ -192,16 +164,14 @@ const columnsBuilder = (
         </p>
       </div>
     ),
-    header: () => <Header text={t('staked')} />,
+    header: () => <Header text={t('dashboard.staked')} />,
     id: 'staked',
     meta: { width: '100px' },
   },
   {
     cell: ({ row }) => (
       <div className="flex flex-wrap items-center gap-2 overflow-hidden">
-        {row.original.rewards.map((reward, index) => (
-          <div key={index}>{reward}</div>
-        ))}
+        <TokenRewards rewards={row.original.token.extensions.rewards} />
       </div>
     ),
     header: () => <Header text={t('rewards')} />,
@@ -226,7 +196,7 @@ type Props = {
 }
 
 const StakeAssetsTableImp = function ({ containerRef, data, loading }: Props) {
-  const t = useTranslations('stake-page.dashboard')
+  const t = useTranslations('stake-page')
   const { width } = useWindowSize()
 
   const columns = useMemo(
@@ -320,7 +290,7 @@ export const StakeAssetsTable = function ({
         </Button>
       </div>
       <Card>
-        <div className="overflow-x-auto p-2" ref={containerRef}>
+        <div className="max-h-[50dvh] overflow-x-auto p-2" ref={containerRef}>
           <StakeAssetsTableImp
             containerRef={containerRef}
             data={data}

@@ -2,6 +2,7 @@ import { featureFlags } from 'app/featureFlags'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useNetworks } from 'hooks/useNetworks'
+import { useNetworkType } from 'hooks/useNetworkType'
 import debounce from 'lodash/debounce'
 import { useEffect, useMemo, useReducer, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
@@ -13,6 +14,7 @@ import {
 import { findChainById, isEvmNetwork } from 'utils/chain'
 import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
 import { type Address, type Chain } from 'viem'
+import { mainnet, sepolia } from 'viem/chains'
 import { useAccount } from 'wagmi'
 
 import { historyReducer, initialState } from './reducer'
@@ -131,6 +133,7 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
   const { address } = useAccount()
   const bitcoin = useBitcoin()
   const { remoteNetworks } = useNetworks()
+  const [networkType] = useNetworkType()
 
   // use this boolean to check if the past history was restored from local storage
   const [loadedFromLocalStorage, setLoadedFromLocalStorage] = useState(false)
@@ -257,6 +260,36 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
       setForceResync,
       setLoadedFromLocalStorage,
     ],
+  )
+
+  // TODO this effect is restricted to sepolia and mainnet only until the feature flag
+  // for subgraphs are removed. Once all chains use subgraphs, it can be simplified. Note that
+  // if the withdrawals are still syncing this won't have any effect :( but once a pair L1:L2 uses a subgraph
+  // for both deposits and withdrawals, this will work correctly
+  // See https://github.com/hemilabs/ui-monorepo/issues/743
+  const chainIdToUpdate = networkType === 'testnet' ? sepolia.id : mainnet.id
+  const depositStatus = history.deposits.find(
+    ({ chainId }) => chainId === chainIdToUpdate,
+  )?.status
+  useEffect(
+    function pollEvmDepositsInIntervals() {
+      if (!featureFlags.syncHistoryWithSubgraph) {
+        return undefined
+      }
+      // worker is still running, do nothing.
+      if (!['ready', 'syncing'].includes(depositStatus)) {
+        return undefined
+      }
+      // force spin up of worker to bring new operations
+      const intervalId = setInterval(
+        () => dispatch({ payload: { chainId: chainIdToUpdate }, type: 'sync' }),
+        // every 2 minutes
+        1000 * 60 * 2,
+      )
+
+      return () => clearInterval(intervalId)
+    },
+    [chainIdToUpdate, depositStatus, dispatch],
   )
 
   const historyContext = useMemo(

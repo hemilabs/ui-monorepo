@@ -35,6 +35,8 @@ const fetchDomains = new Set([
   // Hemi and Hemi Sepolia RPCs
   'https://*.hemi.network',
   'https://*.rpc.hemi.network',
+  // The Graph studio url
+  'https://api.studio.thegraph.com/',
   // Reown (Ex WalletConnect), through RainbowKit
   'wss://*.walletconnect.com',
   'wss://relay.walletconnect.org',

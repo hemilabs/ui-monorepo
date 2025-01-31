@@ -59,4 +59,4 @@ npm run deploy-studio:mainnet
 
 Note that the version label of the deployment is read from the `package.json` file, so if it is not updated, the deploy will fail. Either update the `package.json` version, or remove the subgraph and re-create it.
 
-Once deployed, the URL for querying the subgraph will be logged in the terminal. It should look like `https://api.studio.thegraph.com/query/{user-id}/{subgraph-name}/{version}`
+Once deployed, the URL for querying the subgraph will be logged in the terminal. It should look like `https://api.studio.thegraph.com/query/{user-id}/{subgraph-name}/{version}`. If needed, the endpoint can be retrieved from the Dashboard.

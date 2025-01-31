@@ -8,7 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { Button, ButtonLink } from 'components/button'
+import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
 import Image from 'next/image'
@@ -299,12 +299,11 @@ export const StakeAssetsTable = function ({
         <h5 className="flex-shrink-0 flex-grow basis-2/5 md:flex-grow-0 md:basis-auto">
           {t('dashboard.staking-assets')}
         </h5>
-        <Button height="h-4" onClick={stakeMore} type="button">
-          <p>
-            <span className="mr-1">+</span>
-            {t('dashboard.stake-more')}
-          </p>
-        </Button>
+        <div className="[&>a]:py-1">
+          <ButtonLink href="/stake">
+            <span className="mr-1">+{t('dashboard.stake-more')}</span>
+          </ButtonLink>
+        </div>
       </div>
       <Card>
         <div className="max-h-[50dvh] overflow-x-auto p-2" ref={containerRef}>

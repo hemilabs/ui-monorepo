@@ -4,7 +4,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Button } from 'components/button'
+import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { Link } from 'components/link'
 import { TokenLogo } from 'components/tokenLogo'
@@ -15,6 +15,7 @@ import Skeleton from 'react-loading-skeleton'
 import { StakeToken } from 'types/stake'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 
+import { useDrawerStakeQueryString } from '../../_hooks/useDrawerStakeQueryString'
 import { protocolImages } from '../../protocols/protocolImages'
 import { Column, ColumnHeader, Header } from '../table'
 import { TokenRewards } from '../tokenRewards'
@@ -83,13 +84,30 @@ const columnsBuilder = (
     meta: { width: '350px' },
   },
   {
-    cell: () => (
-      <div className="max-w-24">
-        <Button height="h-4" type="button">
-          <p>{t('stake.title')}</p>
-        </Button>
-      </div>
-    ),
+    cell: function CallToAction({ row }) {
+      const { setDrawerQueryString } = useDrawerStakeQueryString()
+
+      return (
+        <div className="max-w-24">
+          <ButtonLink
+            href={{
+              pathname: '/stake',
+              query: {
+                address: row.original.token.address,
+                mode: 'stake',
+              },
+            }}
+            onClick={function (e) {
+              e.preventDefault()
+              e.stopPropagation()
+              setDrawerQueryString('stake', row.original.token.address)
+            }}
+          >
+            {t('stake.title')}
+          </ButtonLink>
+        </div>
+      )
+    },
     header: () => <Header text={t('stake.action')} />,
     id: 'action',
     meta: { width: '80px' },

@@ -25,6 +25,7 @@
   "workspaces": [
     "btc-wallet",
     "sliding-block-window",
+    "subgraphs/*",
     "ui-common",
     "wagmi-erc20-hooks",
     "webapp"

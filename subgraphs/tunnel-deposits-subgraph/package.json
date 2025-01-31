@@ -1,0 +1,23 @@
+{
+  "name": "tunnel-deposits-subgraph",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "graph build",
+    "build:mainnet": "npm run build -- --network mainnet",
+    "build:sepolia": "npm run build -- --network sepolia",
+    "codegen": "graph codegen",
+    "create-local": "graph create --node http://localhost:8020/ $(jq -r .name package.json)",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 $(jq -r .name package.json) --version-label $(jq -r .version package.json)",
+    "deploy-local:mainnet": "npm run deploy-local -- --network mainnet",
+    "deploy-local:sepolia": "npm run deploy-local -- --network sepolia",
+    "deploy-studio:mainnet": "graph deploy --node https://api.studio.thegraph.com/deploy/ $(jq -r .name package.json)-mainnet  --version-label $(jq -r .version package.json) --network mainnet",
+    "deploy-studio:sepolia": "graph deploy --node https://api.studio.thegraph.com/deploy/ $(jq -r .name package.json)-sepolia  --version-label $(jq -r .version package.json) --network sepolia",
+    "graph:auth": "graph auth",
+    "prepare": "npm run codegen",
+    "remove-local": "graph remove --node http://localhost:8020/ tunnel-deposits-subgraph"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.95.0",
+    "@graphprotocol/graph-ts": "0.36.0"
+  }
+}

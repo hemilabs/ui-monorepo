@@ -2,7 +2,12 @@
   "extends": ["bloq", "prettier"],
   "overrides": [
     {
-      "excludedFiles": ["webapp/scripts/*.js", "webapp/*.config.js"],
+      "excludedFiles": [
+        "subgraphs/*/build/**/*.ts",
+        "subgraphs/*/generated/**/*.ts",
+        "webapp/scripts/*.js",
+        "webapp/*.config.js"
+      ],
       "extends": [
         "bloq/next",
         "next/core-web-vitals",
@@ -12,6 +17,7 @@
       "files": [
         "btc-wallet/**/*.{js,ts,tsx}",
         "sliding-block-window/**/*.{js,ts}",
+        "subgraphs/**/*.{js,ts}",
         "ui-common/**/*.{js,ts,tsx}",
         "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
         "webapp/**/*.{js,ts,tsx}"

@@ -1,0 +1,29 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: L1StandardBridge
+    network: sepolia
+    source:
+      abi: L1StandardBridge
+      address: '0xc94b1BEe63A3e101FE5F71C80F912b4F4b055925'
+      startBlock: 5294649
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Deposit
+      abis:
+        - name: L1StandardBridge
+          file: ./abis/L1StandardBridge.json
+      eventHandlers:
+        - event: ETHDepositInitiated(indexed address,indexed address,uint256,bytes)
+          handler: handleETHDeposit
+        - event: ERC20DepositInitiated(indexed address,indexed address,indexed
+            address,address,uint256,bytes)
+          handler: handleERC20Deposit
+      file: ./src/mappings/l1-standard-bridge.ts

@@ -1,0 +1,14 @@
+type Deposit @entity(immutable: true) {
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  direction: Int! #  number
+  from: Bytes! # address
+  l1ChainId: Int! # number
+  l1Token: Bytes! # address
+  l2ChainId: Int! # number
+  l2Token: Bytes! # address
+  id: Bytes!
+  timestamp: BigInt!
+  to: Bytes! # address
+  transactionHash: Bytes!
+}

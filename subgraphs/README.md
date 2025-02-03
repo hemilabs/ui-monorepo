@@ -1,11 +1,11 @@
 # Subgraphs
 
-This Readme includes a list of common commands that should be used for all subgraphs. This documentation assumes the monorepo is already setup (deps are installed).
+This document includes a list of common commands that should be used for all subgraphs. It the monorepo is already set up (deps are installed).
 
 ## Running Locally
 
-There's a docker compose file in this folder. It spins up a graph node, a postgresql instance, and a local IPFS instance.  
-A pair `chain:rpc_url` needs to be to allow the subgraph to index the chain.
+There's a docker compose file in this folder. It spins up a [graph-node](https://github.com/graphprotocol/graph-node), a PostgreSQL instance, and a local IPFS instance.  
+A pair `chain:rpc_url` needs to be set to allow the subgraph to index the chain.
 Use the following command to start the container.
 
 ```sh
@@ -33,17 +33,15 @@ npm run deploy-local:mainnet
 
 After deploying, the terminal will output the URL for querying the subgraph through HTTP requests.
 
-## Deploying to Subgraph studio
+## Deploying to Subgraph Studio
 
-The following commands are to deploy a subgraph in [the graph studio](https://thegraph.com/studio/). This environment is intended for testing and staging. Note that subgraphs deployed here are archived after 45 days if a newer version isn't published, so they are considered short term. [Further info](https://thegraph.com/docs/en/subgraphs/developing/deploying/multiple-networks/#subgraph-studio-subgraph-archive-policy).
+The following commands deploy a subgraph in [The Subgraph Studio](https://thegraph.com/studio/). This environment is intended for testing and staging. Note that subgraphs deployed there are archived after 45 days unless a newer version is published, so they are considered short term. Read their [archive policy](https://thegraph.com/docs/en/subgraphs/developing/deploying/multiple-networks/#subgraph-studio-subgraph-archive-policy).
 
-[See Graph studio docs](https://thegraph.com/docs/en/subgraphs/developing/deploying/using-subgraph-studio/) for further info. Here's a quick summary:
+[See the Subgraph Studio docs](https://thegraph.com/docs/en/subgraphs/developing/deploying/using-subgraph-studio/) for further info. Here's a quick summary:
 
-First, an account in the graph studio needs to be created. Once there, a subgraph needs to be manually created. A subgraph in The Graph Studio needs to be created per subgraph/chain defined here in the code.
+First, an account in the Subgraph Studio needs to be created. Once there, a subgraph needs to be manually created. A subgraph in The Subgraph Studio needs to be created per subgraph/chain defined here in the code.
 
-The subgraph naming convention should be
-
-`${package.json}.name-${chain}`. For example, in order to deploy the subgraph `tunnel-deposits-subgraph` in Sepolia, the subgraph `tunnel-deposits-subgraph-sepolia` must be created in the Graph Studio.
+The subgraph naming convention should be `${package.json}.name-${chain}`. For example, in order to deploy the subgraph `tunnel-deposits-subgraph` in Sepolia, the subgraph `tunnel-deposits-subgraph-sepolia` must be created in the Subgraph Studio.
 
 After created, a Deploy API Key is listed in the "Dashboard". Authorize the graph-cli by running
 
@@ -54,9 +52,9 @@ npm run graph:auth <API_KEY>
 Once authorized, deploy the subgraph by running
 
 ```sh
-# deploy sepolia in The Graph Studio
+# deploy sepolia in The Subgraph Studio
 npm run deploy-studio:sepolia
-# deploy mainnet in The Graph Studio
+# deploy mainnet in The Subgraph Studio
 npm run deploy-studio:mainnet
 ```
 

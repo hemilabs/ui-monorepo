@@ -12,12 +12,12 @@ services:
       - postgres
     environment:
       postgres_host: postgres
-      postgres_user: graph-node
-      postgres_pass: let-me-in
+      postgres_user: ${POSTGRES_USER:-graph-node}
+      postgres_pass: ${POSTGRESS_PASSWORD:-let-me-in}
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
       GRAPH_ALLOW__NON_DETERMINISTIC_IPFS: 1
-      ethereum: ${CHAIN_RPC}
+      ethereum: ${NETWORK_NAME:-mainnet}:${ETHEREUM_RPC_URL:-http://host.docker.internal:8545}
       GRAPH_LOG: info, error
   ipfs:
     image: ipfs/go-ipfs:v0.17.0
@@ -27,12 +27,10 @@ services:
       - ./data/ipfs:/data/ipfs
   postgres:
     image: postgres
-    ports:
-      - '5432:5432'
     command: ['postgres', '-cshared_preload_libraries=pg_stat_statements']
     environment:
-      POSTGRES_USER: graph-node
-      POSTGRES_PASSWORD: let-me-in
+      POSTGRES_USER: ${POSTGRES_USER:-graph-node}
+      POSTGRES_PASSWORD: ${POSTGRESS_PASSWORD:-let-me-in}
       POSTGRES_DB: graph-node
       POSTGRES_INITDB_ARGS: '-E UTF8 --locale=C'
     volumes:

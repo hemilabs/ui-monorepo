@@ -5,12 +5,15 @@ This Readme includes a list of common commands that should be used for all subgr
 ## Running Locally
 
 There's a docker compose file in this folder. It spins up a graph node, a postgresql instance, and a local IPFS instance.  
-A pair `chain:rpc_url` needs to be set as an environment variable - this RPC will be used to index the chain.
+A pair `chain:rpc_url` needs to be to allow the subgraph to index the chain.
 Use the following command to start the container.
 
 ```sh
 # Example for sepolia
-CHAIN_RPC="sepolia:https://sepolia.drpc.org" docker-compose up -d
+NETWORK_NAME="sepolia" ETHEREUM_RPC_URL="https://sepolia.drpc.org" docker-compose up -d
+# Other env vars available to set
+POSTGRES_USER=<postgres-user>
+POSTGRESS_PASSWORD=<postgres-password>
 ```
 
 Once the container is up, if it is the first time the subgraph is going to be run, it first needs to be created. For that, use (**Note that the following commands must be run in the appropriate subgraph folder**)

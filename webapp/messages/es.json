@@ -248,12 +248,12 @@
   },
   "transaction-history": {
     "challenge-in-progress": "Desafío en progreso",
-    "connect-wallet-to-review": "Conecte su billetera para revisar su historial de transacciones.",
+    "connect-wallet-to-review": "Conecte su billetera para revisar su historical de transacciones.",
     "in-challenge-period": "En período de Desafío",
     "loading-transactions": "Cargando transacciones",
     "ready-to-claim": "Listo para reclamar",
     "ready-to-prove": "Listo para probar",
-    "unsupported-chain-subheading": "Conéctese a una red soportada para ver su historial de transacciones.",
+    "unsupported-chain-subheading": "Conéctese a una red soportada para ver su historical de transacciones.",
     "waiting-confirmation": "Esperando confirmación",
     "withdrawal-challenged": "Retiro desafiado"
   },
@@ -345,8 +345,8 @@
       "deposit": "Depósito",
       "no-transactions": "No se han realizado transacciones",
       "no-transactions-get-started": "Comience tunelizando activos desde y hacia hemi.",
-      "subtitle": "Vea y revise su historial de transacciones en Hemi",
-      "title": "Historial de Transacciones",
+      "subtitle": "Vea y revise su historical de transacciones en Hemi",
+      "title": "Historical de Transacciones",
       "top-bar": {
         "all": "Todos",
         "bitcoin": "Bitcoin",

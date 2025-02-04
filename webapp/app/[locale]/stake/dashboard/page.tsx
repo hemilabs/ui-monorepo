@@ -34,22 +34,10 @@ const Page = function () {
         <StakeAssetsTable
           // TODO - This is a mock data, replace it with the real data
           // Related to the issue #774 - https://github.com/hemilabs/ui-monorepo/issues/774
-          data={[
-            {
-              staked: { monetaryValue: '112', quantity: '0.24' },
-              token: stakeTokens.find(item => item.name === 'Merlin BTC')!,
-            },
-            {
-              staked: { monetaryValue: '105', quantity: '0.50' },
-              token: stakeTokens.find(item => item.name === 'pumpBTC')!,
-            },
-            {
-              staked: { monetaryValue: '220', quantity: '1.25' },
-              token: stakeTokens.find(
-                item => item.name === 'Lorenzo Wrapped Bitcoin',
-              )!,
-            },
-          ]}
+          data={stakeTokens.map(token => ({
+            staked: { monetaryValue: '112', quantity: '0.24' },
+            token,
+          }))}
           loading={false}
         />
       </div>

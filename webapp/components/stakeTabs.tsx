@@ -1,19 +1,21 @@
 'use client'
 
-import { featureFlags } from 'app/featureFlags'
 import { Tab, Tabs } from 'components/tabs'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathname } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { Suspense } from 'react'
+import { isStakeEnabledOnTestnet } from 'utils/stake'
 
 const StakeTabsImpl = function () {
   const locale = useLocale()
+  const [networkType] = useNetworkType()
   const pathname = usePathname()
   const t = useTranslations('stake-page')
 
   if (
     !pathname.startsWith(`/${locale}/stake/`) ||
-    !featureFlags.stakeCampaignEnabled
+    !isStakeEnabledOnTestnet(networkType)
   ) {
     return null
   }

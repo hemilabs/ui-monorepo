@@ -1,6 +1,5 @@
 'use client'
 
-import { featureFlags } from 'app/featureFlags'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 
 import { StakeAndEarnPointsGraphSmallIcon } from './_components/icons/stakeAndEarnPointsGraphSmall'
@@ -10,8 +9,6 @@ import welcomeStakeBackgroundImg from './_images/welcome_stake_background.png'
 
 const Stake = function () {
   const stakeTokens = useStakeTokens()
-
-  if (!featureFlags.stakeCampaignEnabled) return null
 
   return (
     <>

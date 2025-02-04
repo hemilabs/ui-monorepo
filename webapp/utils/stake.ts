@@ -2,9 +2,14 @@ import {
   type HemiPublicClient,
   type HemiWalletClient,
 } from 'hooks/useHemiClient'
+import { NetworkType } from 'hooks/useNetworkType'
 import { EvmToken } from 'types/token'
 import { getErc20TokenBalance } from 'utils/token'
 import { type Address, Chain, parseUnits } from 'viem'
+
+export const isStakeEnabledOnTestnet = (networkType: NetworkType) =>
+  networkType !== 'testnet' ||
+  process.env.NEXT_PUBLIC_ENABLE_STAKE_TESTNET === 'true'
 
 /**
  * Determines if a user is able to stake or unstake a token

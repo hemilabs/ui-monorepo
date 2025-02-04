@@ -1,8 +1,8 @@
 diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
-index 71aeeba..a16441b 100644
+index 71aeeba..df22f73 100644
 --- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 +++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
-@@ -12,8 +12,8 @@
+@@ -12,15 +12,16 @@
        "chainId": 743111,
        "decimals": 18,
        "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/hdai.svg",
@@ -13,7 +13,36 @@ index 71aeeba..a16441b 100644
        "extensions": {
          "birthBlock": 71589,
          "bridgeInfo": {
-@@ -320,6 +320,11 @@
+           "11155111": {
+             "tokenAddress": "0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357"
+           }
+-        }
++        },
++        "protocol": "hemi"
+       }
+     },
+     {
+@@ -31,7 +32,8 @@
+       "name": "Wrapped Ether",
+       "symbol": "WETH",
+       "extensions": {
+-        "birthBlock": 195484
++        "birthBlock": 195484,
++        "protocol": "hemi"
+       }
+     },
+     {
+@@ -44,7 +46,8 @@
+           "11155111": {
+             "tokenAddress": "0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0"
+           }
+-        }
++        },
++        "protocol": "hemi"
+       },
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/usdt.svg",
+       "name": "USDT.e",
+@@ -320,6 +323,11 @@
        "decimals": 6,
        "extensions": {
          "birthBlock": 666946,
@@ -25,7 +54,7 @@ index 71aeeba..a16441b 100644
          "tunnel": "stargate"
        },
        "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/usdt.svg",
-@@ -332,22 +337,30 @@
+@@ -332,22 +340,30 @@
        "decimals": 6,
        "extensions": {
          "birthBlock": 623077,

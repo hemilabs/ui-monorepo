@@ -1,6 +1,5 @@
 'use client'
 
-import { featureFlags } from 'app/featureFlags'
 import { PageTitle } from 'components/pageTitle'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import { useTranslations } from 'next-intl'
@@ -17,8 +16,6 @@ const Page = function () {
 
   const stakeTokens = useStakeTokens()
 
-  if (!featureFlags.stakeCampaignEnabled) return null
-
   return (
     <div className="h-fit-rest-screen w-full">
       <PageTitle
@@ -34,22 +31,10 @@ const Page = function () {
         <StakeAssetsTable
           // TODO - This is a mock data, replace it with the real data
           // Related to the issue #774 - https://github.com/hemilabs/ui-monorepo/issues/774
-          data={[
-            {
-              staked: { monetaryValue: '112', quantity: '0.24' },
-              token: stakeTokens.find(item => item.name === 'Merlin BTC')!,
-            },
-            {
-              staked: { monetaryValue: '105', quantity: '0.50' },
-              token: stakeTokens.find(item => item.name === 'pumpBTC')!,
-            },
-            {
-              staked: { monetaryValue: '220', quantity: '1.25' },
-              token: stakeTokens.find(
-                item => item.name === 'Lorenzo Wrapped Bitcoin',
-              )!,
-            },
-          ]}
+          data={stakeTokens.map(token => ({
+            staked: { monetaryValue: '112', quantity: '0.24' },
+            token,
+          }))}
           loading={false}
         />
       </div>

@@ -1,6 +1,8 @@
+import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
 import { WarningBox } from 'components/warningBox'
 import { useConfirmBitcoinDeposit } from 'hooks/useBtcTunnel'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useContext, useEffect } from 'react'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
@@ -23,7 +25,9 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
   const [operationStatus, setOperationStatus] = useContext(
     BtcToEvmDepositContext,
   )
+  const [networkType] = useNetworkType()
   const t = useTranslations()
+  const { track } = useUmami()
 
   const isClaiming = operationStatus === 'claiming'
 
@@ -36,8 +40,15 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
         return
       }
       setOperationStatus('idle')
+      track?.('btc - confirm dep success', { chain: networkType })
     },
-    [confirmBitcoinDepositReceipt, operationStatus, setOperationStatus],
+    [
+      confirmBitcoinDepositReceipt,
+      networkType,
+      operationStatus,
+      setOperationStatus,
+      track,
+    ],
   )
 
   useEffect(
@@ -53,9 +64,16 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
     function handleTransactionFailure() {
       if (confirmBitcoinDepositReceiptError && isClaiming) {
         setOperationStatus('failed')
+        track?.('btc - confirm dep failed', { chain: networkType })
       }
     },
-    [confirmBitcoinDepositReceiptError, isClaiming, setOperationStatus],
+    [
+      confirmBitcoinDepositReceiptError,
+      networkType,
+      isClaiming,
+      setOperationStatus,
+      track,
+    ],
   )
 
   const isReadyToClaim = deposit.status === BtcDepositStatus.BTC_READY_CLAIM
@@ -67,6 +85,7 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
     }
     confirmBitcoinDeposit()
     setOperationStatus('claiming')
+    track?.('btc - confirm dep started', { chain: networkType })
   }
 
   const getText = function () {

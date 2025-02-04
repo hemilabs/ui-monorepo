@@ -1,5 +1,6 @@
 'use client'
 
+import { useUmami } from 'app/analyticsEvents'
 import { Big } from 'big.js'
 import { Button } from 'components/button'
 import {
@@ -13,6 +14,7 @@ import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useEstimateBtcWithdrawFees } from 'hooks/useEstimateBtcWithdrawFees'
 import { useNetworks } from 'hooks/useNetworks'
+import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -77,8 +79,10 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   const { btcAddress, evmChainId } = useAccounts()
   const fromChain = useChain(fromNetworkId)
   const estimatedFees = useEstimateBtcWithdrawFees(fromNetworkId)
+  const [networkType] = useNetworkType()
   const { balance: bitcoinBalance } = useTokenBalance(fromToken)
   const t = useTranslations()
+  const { track } = useUmami()
   const {
     clearWithdrawBitcoinState,
     withdrawBitcoin,
@@ -94,11 +98,14 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       }
       setIsWithdrawing(false)
       resetStateAfterOperation()
+      track?.('btc - withdraw success', { chain: networkType })
     },
     [
+      isWithdrawing,
+      networkType,
       resetStateAfterOperation,
       setIsWithdrawing,
-      isWithdrawing,
+      track,
       withdrawBitcoinReceipt,
     ],
   )
@@ -107,11 +114,16 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     function handleRejectionOrFailure() {
       if ((withdrawError || withdrawBitcoinReceiptError) && isWithdrawing) {
         setIsWithdrawing(false)
+        if (withdrawBitcoinReceiptError) {
+          track?.('btc - withdraw failed', { chain: networkType })
+        }
       }
     },
     [
       isWithdrawing,
+      networkType,
       setIsWithdrawing,
+      track,
       withdrawBitcoinReceiptError,
       withdrawError,
     ],
@@ -125,6 +137,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       l2ChainId: fromNetworkId,
     })
     setIsWithdrawing(true)
+    track?.('btc - withdraw started', { chain: networkType })
   }
 
   const canWithdraw =

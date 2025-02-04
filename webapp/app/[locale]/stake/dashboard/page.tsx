@@ -28,15 +28,7 @@ const Page = function () {
         <EarnedPoints />
       </div>
       <div className="mt-6 md:mt-8">
-        <StakeAssetsTable
-          // TODO - This is a mock data, replace it with the real data
-          // Related to the issue #774 - https://github.com/hemilabs/ui-monorepo/issues/774
-          data={stakeTokens.map(token => ({
-            staked: { monetaryValue: '112', quantity: '0.24' },
-            token,
-          }))}
-          loading={false}
-        />
+        <StakeAssetsTable data={stakeTokens} loading={false} />
       </div>
     </div>
   )

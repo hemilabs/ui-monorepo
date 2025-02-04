@@ -12,7 +12,7 @@ type Props<T extends Token = Token> = {
   token: T
 }
 
-const RenderBalance = ({
+export const RenderBalance = ({
   balance,
   fetchStatus,
   status,

@@ -1,6 +1,5 @@
 'use client'
 
-import { featureFlags } from 'app/featureFlags'
 import { PageTitle } from 'components/pageTitle'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import { useTranslations } from 'next-intl'
@@ -16,8 +15,6 @@ const Page = function () {
   const t = useTranslations('stake-page')
 
   const stakeTokens = useStakeTokens()
-
-  if (!featureFlags.stakeCampaignEnabled) return null
 
   return (
     <div className="h-fit-rest-screen w-full">

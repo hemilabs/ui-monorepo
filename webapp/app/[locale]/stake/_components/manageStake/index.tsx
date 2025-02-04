@@ -9,6 +9,7 @@ import {
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useTokenBalance } from 'hooks/useBalance'
+import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
 import { FormEvent, useState } from 'react'
 import { StakeToken } from 'types/stake'
@@ -45,6 +46,9 @@ export const ManageStake = function ({
 
   const { chainId } = useAccount()
   const [amount, setAmount] = useAmount()
+  const connectedToExpectedChain = useIsConnectedToExpectedNetwork(
+    token.chainId,
+  )
   const [operation, setOperation] = useState<StakeOperations>(() =>
     isManaging ? props.initialOperation : 'stake',
   )
@@ -121,13 +125,17 @@ export const ManageStake = function ({
                   maxBalanceButton={
                     isStaking ? (
                       <StakeMaxBalance
-                        disabled={submitDisabled || balance === BigInt(0)}
+                        disabled={
+                          !connectedToExpectedChain || balance === BigInt(0)
+                        }
                         onSetMaxBalance={setAmount}
                         token={token}
                       />
                     ) : (
                       <UnstakeMaxBalance
-                        disabled={submitDisabled || balance === BigInt(0)}
+                        disabled={
+                          !connectedToExpectedChain || balance === BigInt(0)
+                        }
                         onSetMaxBalance={setAmount}
                         token={token}
                       />

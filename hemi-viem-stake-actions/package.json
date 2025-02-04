@@ -1,0 +1,30 @@
+{
+  "name": "hemi-viem-stake-actions",
+  "version": "1.0.0",
+  "description": "Hemi Viem Stake Actions",
+  "keywords": [
+    "eth",
+    "ethereum",
+    "hemi",
+    "stake",
+    "viem",
+    "wagmi"
+  ],
+  "license": "MIT",
+  "author": {
+    "email": "artur@bloq.com",
+    "name": "Artur Dolzan Neto"
+  },
+  "scripts": {
+    "tsc:check": "tsc"
+  },
+  "devDependencies": {
+    "viem": "2.22.10"
+  },
+  "peerDependencies": {
+    "viem": "^2.x"
+  },
+  "exports": {
+    ".": "./index.ts"
+  }
+}

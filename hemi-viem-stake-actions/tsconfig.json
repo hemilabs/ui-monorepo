@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "strictNullChecks": true
+  },
+  "extends": "../tsconfig.base.json",
+  "exclude": ["node_modules"],
+  "include": ["**/*.ts"]
+}

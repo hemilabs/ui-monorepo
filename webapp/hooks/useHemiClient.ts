@@ -7,6 +7,7 @@ import {
   hemi as hemiMainnet,
   hemiSepolia,
 } from 'hemi-viem'
+import { hemiPublicStakeActions } from 'hemi-viem-stake-actions'
 import { useMemo } from 'react'
 import {
   hemiPublicExtraActions,
@@ -32,6 +33,7 @@ export const publicClientToHemiClient = (publicClient: PublicClient) =>
     .extend(hemiPublicSimpleBitcoinVaultActions())
     .extend(hemiPublicSimpleBitcoinVaultStateActions())
     .extend(hemiPublicBitcoinTunnelManagerActions())
+    .extend(hemiPublicStakeActions())
     .extend(hemiPublicExtraActions({ defaultBitcoinVaults }))
 
 export const useHemiClient = function () {

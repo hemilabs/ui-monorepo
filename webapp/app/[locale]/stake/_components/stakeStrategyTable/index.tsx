@@ -20,25 +20,17 @@ import { protocolImages } from '../../protocols/protocolImages'
 import { Column, ColumnHeader, Header } from '../table'
 import { TokenRewards } from '../tokenRewards'
 
-type WalletBalanceValues = {
-  quantity: string
-  monetaryValue: string
-}
-
-export type StakeStrategyColumns = {
-  token: StakeToken
-  walletBalance: WalletBalanceValues
-}
+import { WalletBalance } from './walletBalance'
 
 const columnsBuilder = (
   t: ReturnType<typeof useTranslations<'stake-page'>>,
-): ColumnDef<StakeStrategyColumns>[] => [
+): ColumnDef<StakeToken>[] => [
   {
     cell: ({ row }) => (
       <div className="flex items-center space-x-2">
         <Image
-          alt={row.original.token.extensions.protocol}
-          src={protocolImages[row.original.token.extensions.protocol]}
+          alt={row.original.extensions.protocol}
+          src={protocolImages[row.original.extensions.protocol]}
         />
       </div>
     ),
@@ -49,8 +41,8 @@ const columnsBuilder = (
   {
     cell: ({ row }) => (
       <div className="flex items-center justify-center space-x-2">
-        <TokenLogo size="small" token={row.original.token} />
-        <span className="text-neutral-950">{row.original.token.symbol}</span>
+        <TokenLogo size="small" token={row.original} />
+        <span className="text-neutral-950">{row.original.symbol}</span>
       </div>
     ),
     header: () => <Header text={t('asset')} />,
@@ -58,17 +50,7 @@ const columnsBuilder = (
     meta: { width: '120px' },
   },
   {
-    cell: ({ row }) => (
-      <div className="flex flex-col justify-end">
-        <span className="text-neutral-950">
-          {row.original.walletBalance.quantity}
-        </span>
-        <p className="text-neutral-500">
-          <span className="mr-1">$</span>
-          {row.original.walletBalance.monetaryValue}
-        </p>
-      </div>
-    ),
+    cell: ({ row }) => <WalletBalance token={row.original} />,
     header: () => <Header text={t('wallet-balance')} />,
     id: 'wallet-balance',
     meta: { width: '100px' },
@@ -76,7 +58,7 @@ const columnsBuilder = (
   {
     cell: ({ row }) => (
       <div className="flex flex-wrap items-center gap-2 overflow-hidden">
-        <TokenRewards rewards={row.original.token.extensions.rewards} />
+        <TokenRewards rewards={row.original.extensions.rewards} />
       </div>
     ),
     header: () => <Header text={t('rewards')} />,
@@ -93,14 +75,14 @@ const columnsBuilder = (
             href={{
               pathname: '/stake',
               query: {
-                address: row.original.token.address,
+                address: row.original.address,
                 mode: 'stake',
               },
             }}
             onClick={function (e) {
               e.preventDefault()
               e.stopPropagation()
-              setDrawerQueryString('stake', row.original.token.address)
+              setDrawerQueryString('stake', row.original.address)
             }}
           >
             {t('stake.title')}
@@ -115,7 +97,7 @@ const columnsBuilder = (
 ]
 
 type StakeStrategyTableImpProps = {
-  data: StakeStrategyColumns[]
+  data: StakeToken[]
   loading: boolean
 }
 
@@ -202,17 +184,6 @@ type Props = {
 export const StakeStrategyTable = function ({ data, loading }: Props) {
   const t = useTranslations('stake-page.stake')
 
-  // TODO - We need to define quantity and monetaryValue for the walletBalance
-  // Related to the issue #796 - https://github.com/hemilabs/ui-monorepo/issues/796
-  const mapStakeTokensToColumns = (tokens): StakeStrategyColumns[] =>
-    tokens.map(token => ({
-      token,
-      walletBalance: {
-        monetaryValue: '125',
-        quantity: '0.08',
-      },
-    }))
-
   // TODO - The learn how to stake on hemi link is TBD
   return (
     <div className="rounded-2.5xl relative z-20 -translate-y-32 bg-neutral-100 p-1 text-sm font-medium md:-translate-y-24">
@@ -231,10 +202,7 @@ export const StakeStrategyTable = function ({ data, loading }: Props) {
       </div>
       <Card>
         <div className="max-h-[48dvh] overflow-x-auto p-2">
-          <StakeStrategyTableImp
-            data={mapStakeTokensToColumns(data)}
-            loading={loading}
-          />
+          <StakeStrategyTableImp data={data} loading={loading} />
         </div>
       </Card>
     </div>

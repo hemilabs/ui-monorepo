@@ -20,29 +20,17 @@ import { StakeToken } from 'types/stake'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { queryStringObjectToString } from 'utils/url'
 
-import {
-  Column,
-  ColumnHeader,
-  Header,
-} from '../../../../stake/_components/table'
-import { TokenRewards } from '../../../../stake/_components/tokenRewards'
+import { Column, ColumnHeader, Header } from '../../../_components/table'
+import { TokenBalance } from '../../../_components/tokenBalance'
+import { TokenRewards } from '../../../_components/tokenRewards'
 import { useDrawerStakeQueryString } from '../../../_hooks/useDrawerStakeQueryString'
 import { protocolImages } from '../../../protocols/protocolImages'
 
+import { StakedBalance } from './stakedBalance'
 import { WelcomeStake } from './welcomeStake'
 
-type StakedValues = {
-  quantity: string
-  monetaryValue: string
-}
-
-type StakeAssetsColumns = {
-  token: StakeToken
-  staked: StakedValues
-}
-
 type ActionProps = {
-  stake: StakeAssetsColumns
+  stake: StakeToken
 }
 
 const Body = function ({
@@ -51,10 +39,10 @@ const Body = function ({
   loading,
   rows,
 }: {
-  columns: ColumnDef<StakeAssetsColumns>[]
+  columns: ColumnDef<StakeToken>[]
   containerRef: MutableRefObject<HTMLDivElement>
   loading: boolean
-  rows: Row<StakeAssetsColumns>[]
+  rows: Row<StakeToken>[]
 }) {
   const { setDrawerQueryString } = useDrawerStakeQueryString()
   const rowVirtualizer = useVirtualizer({
@@ -65,7 +53,7 @@ const Body = function ({
   })
 
   // TODO add analytics for this event https://github.com/hemilabs/ui-monorepo/issues/765
-  const openDrawer = ({ token }: StakeAssetsColumns) =>
+  const openDrawer = (token: StakeToken) =>
     setDrawerQueryString('manage', token.address)
 
   return (
@@ -88,7 +76,7 @@ const Body = function ({
       {(!loading || rows.length > 0) && (
         <>
           {rowVirtualizer.getVirtualItems().map(function (virtualRow) {
-            const row = rows[virtualRow.index] as Row<StakeAssetsColumns>
+            const row = rows[virtualRow.index] as Row<StakeToken>
             return (
               <tr
                 className="group/stake-row absolute flex w-full items-center"
@@ -123,7 +111,7 @@ const CallToAction = function ({ stake }: ActionProps) {
 
   const queryString = queryStringObjectToString({
     mode: 'manage',
-    tokenAddress: stake.token.address,
+    tokenAddress: stake.address,
   })
 
   return (
@@ -146,13 +134,13 @@ const CallToAction = function ({ stake }: ActionProps) {
 
 const columnsBuilder = (
   t: ReturnType<typeof useTranslations<'stake-page'>>,
-): ColumnDef<StakeAssetsColumns>[] => [
+): ColumnDef<StakeToken>[] => [
   {
     cell: ({ row }) => (
       <div className="flex items-center space-x-2">
         <Image
-          alt={row.original.token.extensions.protocol}
-          src={protocolImages[row.original.token.extensions.protocol]}
+          alt={row.original.extensions.protocol}
+          src={protocolImages[row.original.extensions.protocol]}
         />
       </div>
     ),
@@ -163,8 +151,8 @@ const columnsBuilder = (
   {
     cell: ({ row }) => (
       <div className="flex items-center justify-center space-x-2">
-        <TokenLogo size="small" token={row.original.token} />
-        <span className="text-neutral-950">{row.original.token.symbol}</span>
+        <TokenLogo size="small" token={row.original} />
+        <span className="text-neutral-950">{row.original.symbol}</span>
       </div>
     ),
     header: () => <Header text={t('asset')} />,
@@ -173,13 +161,7 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) => (
-      <div className="flex flex-col justify-end">
-        <span className="text-neutral-950">{row.original.staked.quantity}</span>
-        <p className="text-neutral-500">
-          <span className="mr-1">$</span>
-          {row.original.staked.monetaryValue}
-        </p>
-      </div>
+      <TokenBalance balance={<StakedBalance token={row.original} />} />
     ),
     header: () => <Header text={t('dashboard.staked')} />,
     id: 'staked',
@@ -188,7 +170,7 @@ const columnsBuilder = (
   {
     cell: ({ row }) => (
       <div className="flex flex-wrap items-center gap-2 overflow-hidden">
-        <TokenRewards rewards={row.original.token.extensions.rewards} />
+        <TokenRewards rewards={row.original.extensions.rewards} />
       </div>
     ),
     header: () => <Header text={t('rewards')} />,
@@ -208,7 +190,7 @@ const columnsBuilder = (
 
 type Props = {
   containerRef: MutableRefObject<HTMLDivElement>
-  data: StakeAssetsColumns[]
+  data: StakeToken[]
   loading: boolean
 }
 

@@ -4,6 +4,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { Balance } from 'components/balance'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { Link } from 'components/link'
@@ -18,9 +19,8 @@ import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { useDrawerStakeQueryString } from '../../_hooks/useDrawerStakeQueryString'
 import { protocolImages } from '../../protocols/protocolImages'
 import { Column, ColumnHeader, Header } from '../table'
+import { TokenBalance } from '../tokenBalance'
 import { TokenRewards } from '../tokenRewards'
-
-import { WalletBalance } from './walletBalance'
 
 const columnsBuilder = (
   t: ReturnType<typeof useTranslations<'stake-page'>>,
@@ -50,7 +50,9 @@ const columnsBuilder = (
     meta: { width: '120px' },
   },
   {
-    cell: ({ row }) => <WalletBalance token={row.original} />,
+    cell: ({ row }) => (
+      <TokenBalance balance={<Balance token={row.original} />} />
+    ),
     header: () => <Header text={t('wallet-balance')} />,
     id: 'wallet-balance',
     meta: { width: '100px' },

@@ -1,15 +1,12 @@
-import { Balance } from 'components/balance'
-import { StakeToken } from 'types/stake'
+import { ReactNode } from 'react'
 
 type Props = {
-  token: StakeToken
+  balance: ReactNode
 }
 
-export const WalletBalance = ({ token }: Props) => (
+export const TokenBalance = ({ balance }: Props) => (
   <div className="flex flex-col justify-end">
-    <span className="text-neutral-950">
-      <Balance token={token} />
-    </span>
+    <span className="text-neutral-950">{balance}</span>
     <p className="text-neutral-500">
       <span className="mr-1">$</span>
       {/* TODO - TBD how to calculate monetaryValue - https://github.com/hemilabs/ui-monorepo/issues/796 */}

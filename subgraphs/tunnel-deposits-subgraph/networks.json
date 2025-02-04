@@ -1,0 +1,14 @@
+{
+  "mainnet": {
+    "L1StandardBridge": {
+      "address": "0x5eaa10F99e7e6D177eF9F74E519E319aa49f191e",
+      "startBlock": 20711548
+    }
+  },
+  "sepolia": {
+    "L1StandardBridge": {
+      "address": "0xc94b1BEe63A3e101FE5F71C80F912b4F4b055925",
+      "startBlock": 5294649
+    }
+  }
+}

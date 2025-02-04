@@ -1,7 +1,9 @@
 import { type TokenBridgeMessage } from '@eth-optimism/sdk'
 import { type BaseProvider } from '@ethersproject/providers'
+import { featureFlags } from 'app/featureFlags'
 import { BlockSyncType } from 'hooks/useSyncHistory/types'
 import pAll from 'p-all'
+import pDoWhilst from 'p-do-whilst'
 import pThrottle from 'p-throttle'
 import {
   createSlidingBlockWindow,
@@ -19,8 +21,10 @@ import {
 } from 'utils/crossChainMessenger'
 import { getEvmBlock } from 'utils/evmApi'
 import { createProvider } from 'utils/providers'
+import { getEvmDeposits, getLastIndexedBlock } from 'utils/subgraph'
 import { type Chain } from 'viem'
 
+import { chainConfiguration } from './chainConfiguration'
 import { getBlockNumber, getBlockPayload } from './common'
 import { type HistorySyncer } from './types'
 
@@ -53,7 +57,7 @@ export const createEvmSync = function ({
   saveHistory,
   withdrawalsSyncInfo,
 }: HistorySyncer<BlockSyncType>) {
-  const syncDeposits = async function (
+  const syncDepositsWithOpSdk = async function (
     chainProvider: BaseProvider,
     crossChainMessengerPromise: Promise<CrossChainMessengerProxy>,
   ) {
@@ -141,6 +145,96 @@ export const createEvmSync = function ({
       windowSize: depositsSyncInfo.blockWindowSize,
     }).run()
   }
+
+  const syncDepositsSubgraph = async function () {
+    // Get this before reading the Subgraph, to ensure next time we don't miss some blocks due
+    // to some race condition.
+    const lastIndexedBlock = await getLastIndexedBlock(l1Chain.id)
+
+    const shouldQueryDeposits = (limit: number, depositsAmount: number) =>
+      limit === depositsAmount
+
+    const fromBlock =
+      depositsSyncInfo.fromBlock ??
+      // or the oldest block configured for this chain, if it is the first time
+      chainConfiguration[l1Chain.id].minBlockToSync ??
+      // or bring everything! (just for type-safety, but should never occur)
+      0
+
+    // As awful as it is, graph-node doesn't support cursor pagination (which is the
+    // recommended way to paginate in graphQL). It also doesn't support a way to natively get
+    // the amount of Entities saved in the subgraph. As the UI use a infinite scrolling pagination,
+    // we don't need to "list" the total of operations. However, in order to load deposits, our best option
+    // is to use limit/skip and keep querying until less entities than the $limit are returned.
+    // See https://github.com/graphprotocol/graph-node/issues/613 and
+    // https://github.com/graphprotocol/graph-node/issues/1309
+    await pDoWhilst(
+      async function ({
+        limit,
+        skip,
+      }: {
+        deposits: EvmDepositOperation[]
+        limit: number
+        skip: number
+      }) {
+        const newDeposits = await getEvmDeposits({
+          address,
+          chainId: l1Chain.id,
+          // from the oldest block we've queried before
+          fromBlock,
+          limit,
+          skip,
+        }).then(deps =>
+          deps.map(
+            d =>
+              ({
+                // if found, it's a confirmed deposit
+                ...d,
+                status: EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
+              }) satisfies EvmDepositOperation,
+          ),
+        )
+
+        // save the deposits
+        saveHistory({
+          payload: {
+            chainId: l1Chain.id,
+            // TODO once feature flag is removed, this field is no longer needed.
+            // See https://github.com/hemilabs/ui-monorepo/issues/743
+            chunkIndex: 0,
+            content: newDeposits,
+            // only update the "fromBlock" if we have finished querying all deposits. Otherwise
+            // we may miss some deposits. Once all were loaded, and saved in local storage, next time
+            // we can start querying again from the current last indexed block of the subgraph
+            fromBlock: shouldQueryDeposits(limit, newDeposits.length)
+              ? fromBlock
+              : lastIndexedBlock + 1,
+            // TODO once feature flag is removed, this field is no longer needed.
+            // See https://github.com/hemilabs/ui-monorepo/issues/743
+            hasSyncToMinBlock: true,
+            toBlock: undefined,
+          },
+          type: 'sync-deposits',
+        })
+
+        return {
+          deposits: newDeposits,
+          limit,
+          skip: skip + limit,
+        }
+      },
+      ({ deposits, limit }) => shouldQueryDeposits(limit, deposits.length),
+      { deposits: [], limit: 100, skip: 0 },
+    )
+  }
+
+  const syncDeposits = (
+    chainProvider: BaseProvider,
+    crossChainMessengerPromise: Promise<CrossChainMessengerProxy>,
+  ) =>
+    featureFlags.syncHistoryWithSubgraph
+      ? syncDepositsSubgraph()
+      : syncDepositsWithOpSdk(chainProvider, crossChainMessengerPromise)
 
   const syncWithdrawals = async function (
     chainProvider: BaseProvider,

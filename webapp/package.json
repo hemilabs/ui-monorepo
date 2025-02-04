@@ -27,6 +27,7 @@
     "debug": "4.3.7",
     "esplora-client": "1.2.0",
     "eth-rpc-cache": "2.0.0",
+    "fetch-plus-plus": "1.0.0",
     "hemi-socials": "1.0.0",
     "hemi-viem": "2.0.0",
     "javascript-time-ago": "2.5.10",

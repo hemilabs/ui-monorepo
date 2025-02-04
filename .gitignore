@@ -10,3 +10,8 @@ lerna-debug.log
 node_modules
 out
 tsconfig.tsbuildinfo
+# information from docker-compose
+subgraphs/data
+# Graph CLI generated artifacts
+subgraphs/tunnel-deposits-subgraph/build
+subgraphs/tunnel-deposits-subgraph/generated

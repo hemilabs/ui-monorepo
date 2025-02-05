@@ -12,9 +12,10 @@ import { useUmami } from 'app/analyticsEvents'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
+import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { MouseEvent, MutableRefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -109,8 +110,7 @@ const Body = function ({
 }
 
 const CallToAction = function ({ stake }: ActionProps) {
-  const locale = useLocale()
-  const pathname = usePathname().replace(`/${locale}`, '')
+  const pathname = usePathnameWithoutLocale()
 
   const queryString = queryStringObjectToString({
     mode: 'manage',

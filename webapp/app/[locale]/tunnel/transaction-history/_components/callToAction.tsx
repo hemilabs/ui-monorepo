@@ -1,7 +1,6 @@
 import { ButtonLink } from 'components/button'
 import { NetworkType } from 'hooks/useNetworkType'
-import { usePathname } from 'next/navigation'
-import { useLocale } from 'next-intl'
+import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { ComponentProps } from 'react'
 import { queryStringObjectToString } from 'utils/url'
 
@@ -21,8 +20,7 @@ export const CallToAction = function ({
   variant,
   ...queryStringOptions
 }: Props) {
-  const locale = useLocale()
-  const pathname = usePathname().replace(`/${locale}`, '')
+  const pathname = usePathnameWithoutLocale()
   const { updateTxHash } = useTunnelOperation()
 
   const queryString = queryStringObjectToString(queryStringOptions)

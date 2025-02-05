@@ -184,6 +184,7 @@
   },
   "stake-page": {
     "asset": "Activo",
+    "change-to-mainnet": "Cambie a Mainnet y apueste",
     "dashboard": {
       "asset": "Activo",
       "protocol": "Protocolo",

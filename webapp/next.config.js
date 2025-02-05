@@ -28,6 +28,7 @@ const nextConfig = {
   trailingSlash: true,
   transpilePackages: [
     'btc-wallet',
+    'hemi-viem-stake-actions',
     'sliding-block-window',
     'ui-common',
     'wagmi-erc20-hooks',

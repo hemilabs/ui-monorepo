@@ -16,6 +16,7 @@
       ],
       "files": [
         "btc-wallet/**/*.{js,ts,tsx}",
+        "hemi-viem-stake-actions/**/*.{js,ts}",
         "sliding-block-window/**/*.{js,ts}",
         "subgraphs/**/*.{js,ts}",
         "ui-common/**/*.{js,ts,tsx}",

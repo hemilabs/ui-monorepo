@@ -24,6 +24,7 @@
   "private": true,
   "workspaces": [
     "btc-wallet",
+    "hemi-viem-stake-actions",
     "sliding-block-window",
     "subgraphs/*",
     "ui-common",

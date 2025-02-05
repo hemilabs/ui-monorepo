@@ -1,11 +1,13 @@
 'use client'
 
+import { useUmami } from 'app/analyticsEvents'
 import { Big } from 'big.js'
 import { useBalance } from 'btc-wallet/hooks/useBalance'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
+import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -52,6 +54,8 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
   const { evmAddress } = useAccounts()
   const bitcoin = useBitcoin()
   const { balance } = useBalance()
+  const [networkType] = useNetworkType()
+  const { track } = useUmami()
 
   const canDeposit =
     canSubmit({
@@ -79,17 +83,35 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
       }
       setIsDepositing(false)
       resetStateAfterOperation()
+      track?.('btc - dep success', { chain: networkType })
     },
-    [depositReceipt, isDepositing, resetStateAfterOperation, setIsDepositing],
+    [
+      depositReceipt,
+      isDepositing,
+      networkType,
+      resetStateAfterOperation,
+      setIsDepositing,
+      track,
+    ],
   )
 
   useEffect(
     function handleRejectionOrFailure() {
       if (isDepositing && (depositError || depositReceiptError)) {
         setIsDepositing(false)
+        if (depositReceiptError) {
+          track?.('btc - dep failed', { chain: networkType })
+        }
       }
     },
-    [depositError, depositReceiptError, isDepositing, setIsDepositing],
+    [
+      depositError,
+      depositReceiptError,
+      networkType,
+      isDepositing,
+      setIsDepositing,
+      track,
+    ],
   )
 
   const { feePrices } = useGetFeePrices()
@@ -106,6 +128,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
       l2ChainId: toNetworkId,
       satoshis: Number(parseUnits(fromInput, fromToken.decimals)),
     })
+    track?.('btc - dep started', { chain: networkType })
   }
 
   const fees = feePrices?.fastestFee?.toString()

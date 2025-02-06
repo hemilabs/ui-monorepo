@@ -8,10 +8,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('utils/token', () => ({
   getErc20TokenBalance: vi.fn(),
+  isNativeToken: vi.fn(token => token.symbol === 'ETH'),
 }))
 
 // @ts-expect-error Adding minimal properties needed
 const token: EvmToken = {
+  address: zeroAddress,
   chainId: hemiSepolia.id,
   decimals: 18,
   symbol: 'fakeToken',
@@ -89,7 +91,8 @@ describe('utils/stake', function () {
     const hemiPublicClient: HemiPublicClient = { chain: hemiSepolia }
     // @ts-expect-error only add the minimum values required
     const hemiWalletClient: HemiWalletClient = {
-      stakeToken: vi.fn(),
+      stakeERC20Token: vi.fn(),
+      stakeETHToken: vi.fn(),
     }
 
     it('should throw error if the consumer can not stake', async function () {
@@ -97,7 +100,7 @@ describe('utils/stake', function () {
       await expect(
         stake({
           amount: '1',
-          from: zeroAddress,
+          forAccount: zeroAddress,
           hemiPublicClient,
           hemiWalletClient,
           token,
@@ -109,15 +112,15 @@ describe('utils/stake', function () {
       getErc20TokenBalance.mockResolvedValue(parseUnits('10', token.decimals))
       await stake({
         amount: '1',
-        from: zeroAddress,
+        forAccount: zeroAddress,
         hemiPublicClient,
         hemiWalletClient,
         token,
       })
-      expect(hemiWalletClient.stakeToken).toHaveBeenCalledWith({
+      expect(hemiWalletClient.stakeERC20Token).toHaveBeenCalledWith({
         amount: parseUnits('1', token.decimals),
-        from: zeroAddress,
-        token,
+        forAccount: zeroAddress,
+        tokenAddress: token.address,
       })
     })
   })

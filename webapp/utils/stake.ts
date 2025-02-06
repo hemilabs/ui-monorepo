@@ -1,10 +1,11 @@
+import hemilabsTokenList from '@hemilabs/token-list'
 import {
   type HemiPublicClient,
   type HemiWalletClient,
 } from 'hooks/useHemiClient'
 import { NetworkType } from 'hooks/useNetworkType'
 import { EvmToken } from 'types/token'
-import { getErc20TokenBalance } from 'utils/token'
+import { getErc20TokenBalance, isNativeToken } from 'utils/token'
 import { type Address, Chain, parseUnits } from 'viem'
 
 export const isStakeEnabledOnTestnet = (networkType: NetworkType) =>
@@ -50,17 +51,17 @@ export const canSubmit = function ({
 
 const validateOperation = async function ({
   amount,
-  from,
+  forAccount,
   hemiPublicClient,
   token,
 }: {
   amount: bigint
-  from: Address
+  forAccount: Address
   hemiPublicClient: HemiPublicClient
   token: EvmToken
 }) {
   const balance = await getErc20TokenBalance({
-    address: from,
+    address: forAccount,
     // It works in runtime, but Typescript fails to interpret HemiPublicClient as a Client.
     // I've seen that the typings change in future viem's version, so this may be soon fixed
     // @ts-expect-error hemiPublicClient is Client
@@ -79,23 +80,46 @@ const validateOperation = async function ({
 }
 
 /**
+ * Retrieves the appropriate token address based on whether the token is native or ERC-20.
+ * If the token is native, it fetches the WETH address from the provided token list.
+ * Throws an error if WETH is not found in the token list.
+ *
+ * @param token - The token for which the address is needed.
+ * @returns The address of the token as a string in the `Address` type format.
+ * @throws Error if the token is native but WETH is not found in the token list.
+ */
+function getTokenAddress(token: EvmToken): Address {
+  if (isNativeToken(token)) {
+    const wethToken = hemilabsTokenList.tokens.find(
+      item => item.chainId === token.chainId && item.symbol === 'WETH',
+    )
+    if (!wethToken) {
+      throw new Error('WETH token not found')
+    }
+    return wethToken.address as Address
+  }
+
+  return token.address as Address
+}
+
+/**
  * Stakes an amount of a token in Hemi.
  * @param params All the parameters needed to determine if a user can stake a token
  * @param amount The amount of tokens to stake
- * @param from The address of the user that will stake
+ * @param forAccount The address of the user that will stake
  * @param hemiPublicClient Hemi public client for read-only calls
  * @param hemiWalletClient Hemi Wallet client for signing transactions
  * @param token The token to stake
  */
 export const stake = async function ({
   amount,
-  from,
+  forAccount,
   hemiPublicClient,
   hemiWalletClient,
   token,
 }: {
   amount: string
-  from: Address
+  forAccount: Address
   hemiPublicClient: HemiPublicClient
   hemiWalletClient: HemiWalletClient
   token: EvmToken
@@ -103,15 +127,22 @@ export const stake = async function ({
   const amountUnits = parseUnits(amount, token.decimals)
   await validateOperation({
     amount: amountUnits,
-    from,
+    forAccount,
     hemiPublicClient,
     token,
   })
 
-  return hemiWalletClient.stakeToken({
+  if (isNativeToken(token)) {
+    return hemiWalletClient.stakeETHToken({
+      amount: amountUnits,
+      forAccount,
+    })
+  }
+
+  return hemiWalletClient.stakeERC20Token({
     amount: amountUnits,
-    from,
-    token,
+    forAccount,
+    tokenAddress: token.address as Address,
   })
 }
 
@@ -119,20 +150,20 @@ export const stake = async function ({
  * Unstakes an amount of a token in Hemi.
  * @param params All the parameters needed to determine if a user can unstake a token
  * @param amount The amount of tokens to stake
- * @param from The address of the user that will unstake
+ * @param forAccount The address of the user that will unstake
  * @param hemiPublicClient Hemi public client for read-only calls
  * @param hemiWalletClient Hemi Wallet client for signing transactions
  * @param token The token to stake
  */
 export const unstake = async function ({
   amount,
-  from,
+  forAccount,
   hemiPublicClient,
   hemiWalletClient,
   token,
 }: {
   amount: string
-  from: Address
+  forAccount: Address
   hemiPublicClient: HemiPublicClient
   hemiWalletClient: HemiWalletClient
   token: EvmToken
@@ -140,15 +171,17 @@ export const unstake = async function ({
   const amountUnits = parseUnits(amount, token.decimals)
   // Here I am assuming that when the user stakes, we get a staked token
   // that can later be used to withdraw. That's why we need to check the balance of this staked token inside "validate operation"
+
   await validateOperation({
     amount: amountUnits,
-    from,
+    forAccount,
     hemiPublicClient,
     token,
   })
+
   return hemiWalletClient.unstakeToken({
     amount: amountUnits,
-    from,
-    token,
+    forAccount,
+    tokenAddress: getTokenAddress(token),
   })
 }

@@ -4,14 +4,15 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useUmami } from 'app/analyticsEvents'
 import { Balance } from 'components/balance'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
-import { Link } from 'components/link'
+import { ExternalLink } from 'components/externalLink'
 import { TokenLogo } from 'components/tokenLogo'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
-import { useMemo } from 'react'
+import { MouseEvent, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakeToken } from 'types/stake'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
@@ -185,8 +186,19 @@ type Props = {
 
 export const StakeStrategyTable = function ({ data, loading }: Props) {
   const t = useTranslations('stake-page.stake')
+  const { track } = useUmami()
 
-  // TODO - The learn how to stake on hemi link is TBD
+  // TODO - Link is TBD https://github.com/hemilabs/ui-monorepo/issues/819
+  const learnHowToStakeLink = 'https://hemi.xyz/'
+
+  const trackLinkClick = function (e: MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    track?.('stake - learn stake')
+    // open external link
+    window.open(learnHowToStakeLink, '_blank')
+  }
+
   return (
     <div className="rounded-2.5xl relative z-20 -translate-y-32 bg-neutral-100 p-1 text-sm font-medium md:-translate-y-24">
       <div className="flex w-full flex-wrap items-center justify-between gap-x-2 gap-y-2 px-3.5 py-2 md:flex-nowrap md:px-3">
@@ -195,11 +207,11 @@ export const StakeStrategyTable = function ({ data, loading }: Props) {
         </h5>
         <p className="flex text-sm font-normal text-neutral-600">
           {t('new-here')}
-          <Link href={'https://hemi.xyz/'}>
+          <ExternalLink href={learnHowToStakeLink} onClick={trackLinkClick}>
             <span className="ml-1 text-orange-500">
               {t('learn-how-to-stake-on-hemi')}
             </span>
-          </Link>
+          </ExternalLink>
         </p>
       </div>
       <Card>

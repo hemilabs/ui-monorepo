@@ -1,5 +1,6 @@
 'use client'
 
+import { useUmami } from 'app/analyticsEvents'
 import {
   Drawer,
   DrawerParagraph,
@@ -56,6 +57,7 @@ export const ManageStake = function ({
 
   const t = useTranslations('stake-page.drawer')
   const tCommon = useTranslations('common')
+  const { track } = useUmami()
 
   const { heading, subheading } = {
     manage: {
@@ -70,6 +72,7 @@ export const ManageStake = function ({
 
   const handleSubmit = function (e: FormEvent) {
     e.preventDefault()
+    track?.(`stake - ${operation}`)
     // TODO implement submit https://github.com/hemilabs/ui-monorepo/issues/774
   }
 

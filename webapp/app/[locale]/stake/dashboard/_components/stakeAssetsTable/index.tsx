@@ -8,13 +8,14 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
+import { useUmami } from 'app/analyticsEvents'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { MutableRefObject, useMemo, useRef } from 'react'
+import { MouseEvent, MutableRefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakeToken } from 'types/stake'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
@@ -267,12 +268,23 @@ export const StakeAssetsTable = function ({
   data,
   loading,
 }: Omit<Props, 'containerRef'>) {
-  const t = useTranslations('stake-page')
-
+  const locale = useLocale()
   const containerRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
+  const t = useTranslations('stake-page')
+  const { track } = useUmami()
 
   if (data.length === 0 && !loading) {
     return <WelcomeStake onClick={stakeMore} />
+  }
+
+  const stakeMoreUrl = '/stake'
+
+  function goToStakePage(e: MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+    track?.('stake - stake more')
+    router.push(`/${locale}${stakeMoreUrl}`)
   }
 
   return (
@@ -282,7 +294,7 @@ export const StakeAssetsTable = function ({
           {t('dashboard.staking-assets')}
         </h5>
         <div className="[&>a]:py-1">
-          <ButtonLink href="/stake">
+          <ButtonLink href={stakeMoreUrl} onClick={goToStakePage}>
             <span className="mr-1">+{t('dashboard.stake-more')}</span>
           </ButtonLink>
         </div>

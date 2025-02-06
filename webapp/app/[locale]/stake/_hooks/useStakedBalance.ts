@@ -1,32 +1,96 @@
-import { useQuery } from '@tanstack/react-query'
-import { useHemiClient } from 'hooks/useHemiClient'
-import { useNetworkType } from 'hooks/useNetworkType'
+import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query'
+import { HemiPublicClient, useHemiClient } from 'hooks/useHemiClient'
+import { NetworkType, useNetworkType } from 'hooks/useNetworkType'
+import { useStakeTokens } from 'hooks/useStakeTokens'
 import { StakeToken } from 'types/stake'
+import { Address } from 'viem'
 import { useAccount } from 'wagmi'
+
+const getStakedBalance = ({
+  address,
+  hemiClient,
+  token,
+}: {
+  address: Address
+  hemiClient: HemiPublicClient
+  token: StakeToken
+}) =>
+  function () {
+    if (!hemiClient) {
+      return Promise.resolve(BigInt(0))
+    }
+    return hemiClient.stakedBalance({
+      address,
+      tokenAddress: token.address,
+    })
+  }
+
+const getQuery = ({
+  address,
+  hemiClient,
+  isConnected,
+  networkType,
+  token,
+}: {
+  address: Address
+  hemiClient: HemiPublicClient
+  isConnected: boolean
+  networkType: NetworkType
+  token: StakeToken
+}) => ({
+  enabled: isConnected && !!address,
+  queryFn: getStakedBalance({ address, hemiClient, token }),
+  queryKey: [
+    'staked-token-balance',
+    address,
+    networkType,
+    token.chainId,
+    token.address,
+  ],
+})
 
 export const useStakedBalance = function (token: StakeToken) {
   const { address, isConnected } = useAccount()
-  const [networkType] = useNetworkType()
   const hemiClient = useHemiClient()
+  const [networkType] = useNetworkType()
 
-  function getStakedBalance() {
-    if (!hemiClient || !address) return Promise.resolve(BigInt(0))
-    return hemiClient.stakedBalance({ address, tokenAddress: token.address })
-  }
-
-  const { data: balance, ...rest } = useQuery({
-    enabled: isConnected,
-    queryFn: getStakedBalance,
-    queryKey: [
-      'staked-token-balance',
+  const { data: balance, ...rest } = useQuery(
+    getQuery({
       address,
+      hemiClient,
+      isConnected,
       networkType,
-      token.chainId,
-      token.address,
-    ],
-  })
+      token,
+    }),
+  )
   return {
     balance,
     ...rest,
   }
+}
+
+const combine = (results: UseQueryResult<bigint, Error>[]) => ({
+  hasPositions: results.some(({ data }) => data > BigInt(0)),
+  loading: results.some(({ isPending }) => isPending),
+})
+
+export const useUserHasPositions = function () {
+  const { address, isConnected } = useAccount()
+  const hemiClient = useHemiClient()
+  const [networkType] = useNetworkType()
+  const stakeTokens = useStakeTokens()
+
+  return useQueries({
+    combine,
+    queries: stakeTokens.map(token =>
+      // By using the same query as useStakedBalance, when useStakedBalance is used, balance will be preloaded already!
+      getQuery({
+        address,
+        hemiClient,
+        isConnected,
+        networkType,
+        token,
+      }),
+    ),
+  })
 }

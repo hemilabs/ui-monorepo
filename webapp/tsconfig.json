@@ -6,8 +6,9 @@
   },
   "extends": "../tsconfig.base.json",
   "include": [
-    "global.d.ts",
+    "intl.d.ts",
     "next-env.d.ts",
+    "react-table.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",

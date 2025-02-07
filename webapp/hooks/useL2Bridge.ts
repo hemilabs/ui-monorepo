@@ -13,7 +13,7 @@ import {
   createIsolatedCrossChainMessenger,
 } from 'utils/crossChainMessenger'
 import { hasKeys } from 'utils/utilities'
-import { type Chain, type Hash, checksumAddress, isHash } from 'viem'
+import { type Chain, type Hash, isHash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
@@ -254,15 +254,10 @@ export const useDepositErc20Token = function ({
   const { crossChainMessenger, crossChainMessengerStatus } =
     useL1ToL2CrossChainMessenger(l1ChainId)
 
-  // @ts-expect-error string is `0x${string}`
-  const l1BridgeAddress = checksumAddress(fromToken.address)
-  // @ts-expect-error string is `0x${string}`
-  const l2BridgeAddress = checksumAddress(toToken.address)
-
   const overrides = hemi.testnet ? l1OverridesTestnet : tunnelOverrides
 
   const depositErc20TokenGasFees = useEstimateGasFees({
-    args: [l1BridgeAddress, l2BridgeAddress, toDeposit, overrides],
+    args: [fromToken.address, toToken.address, toDeposit, overrides],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled:
@@ -304,8 +299,8 @@ export const useDepositErc20Token = function ({
     depositErc20Token: () =>
       depositErc20Token({
         amount: toDeposit,
-        l1Address: l1BridgeAddress,
-        l2Address: l2BridgeAddress,
+        l1Address: fromToken.address,
+        l2Address: toToken.address,
       }),
     depositErc20TokenError,
     depositErc20TokenGasFees,
@@ -552,13 +547,8 @@ export const useWithdrawToken = function ({
     useL2toL1CrossChainMessenger(l1ChainId)
   const hemi = useHemi()
 
-  // @ts-expect-error string is `0x${string}`
-  const l1BridgeAddress = checksumAddress(toToken.address)
-  // @ts-expect-error string is `0x${string}`
-  const l2BridgeAddress = checksumAddress(fromToken.address)
-
   const withdrawErc20TokenGasFees = useEstimateGasFees({
-    args: [l1BridgeAddress, l2BridgeAddress, amount, tunnelOverrides],
+    args: [toToken.address, fromToken.address, amount, tunnelOverrides],
     crossChainMessenger,
     crossChainMessengerStatus,
     enabled:
@@ -577,8 +567,8 @@ export const useWithdrawToken = function ({
   } = useMutation<Hash, Error, string>({
     async mutationFn(toWithdraw: string) {
       const response = await crossChainMessenger.withdrawERC20(
-        l1BridgeAddress,
-        l2BridgeAddress,
+        toToken.address,
+        fromToken.address,
         toWithdraw,
         tunnelOverrides,
       )

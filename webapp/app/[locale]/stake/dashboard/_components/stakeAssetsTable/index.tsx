@@ -12,6 +12,7 @@ import { useUmami } from 'app/analyticsEvents'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
+import { useStakeTokens } from 'hooks/useStakeTokens'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
@@ -25,6 +26,7 @@ import { Column, ColumnHeader, Header } from '../../../_components/table'
 import { TokenBalance } from '../../../_components/tokenBalance'
 import { TokenRewards } from '../../../_components/tokenRewards'
 import { useDrawerStakeQueryString } from '../../../_hooks/useDrawerStakeQueryString'
+import { useUserHasPositions } from '../../../_hooks/useStakedBalance'
 import { protocolImages } from '../../../protocols/protocolImages'
 
 import { StakedBalance } from './stakedBalance'
@@ -264,17 +266,18 @@ function stakeMore() {
   // Related to the issue #774 - https://github.com/hemilabs/ui-monorepo/issues/774
 }
 
-export const StakeAssetsTable = function ({
-  data,
-  loading,
-}: Omit<Props, 'containerRef'>) {
+export const StakeAssetsTable = function () {
   const locale = useLocale()
   const containerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+  const stakeTokens = useStakeTokens()
   const t = useTranslations('stake-page')
   const { track } = useUmami()
+  const result = useUserHasPositions()
 
-  if (data.length === 0 && !loading) {
+  const { hasPositions, loading } = result
+
+  if (!hasPositions) {
     return <WelcomeStake onClick={stakeMore} />
   }
 
@@ -303,7 +306,7 @@ export const StakeAssetsTable = function ({
         <div className="max-h-[50dvh] overflow-x-auto p-2" ref={containerRef}>
           <StakeAssetsTableImp
             containerRef={containerRef}
-            data={data}
+            data={stakeTokens}
             loading={loading}
           />
         </div>

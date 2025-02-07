@@ -54,6 +54,7 @@ export const analyticsEvents = [
   'nav - tools',
   'nav - faucet',
   'nav - pure finance',
+  'nav - stake',
   'nav - tunnel',
   'nav - web pop miner',
   // socials
@@ -62,6 +63,11 @@ export const analyticsEvents = [
   'nav - linkedIn',
   'nav - youtube',
   'nav - x',
+  // /stake
+  'stake - learn stake',
+  'stake - stake',
+  'stake - stake more',
+  'stake - unstake',
   // /transaction-history
   'txn refresh',
   'txn filter - all',

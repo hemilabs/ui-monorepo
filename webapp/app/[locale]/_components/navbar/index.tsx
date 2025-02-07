@@ -69,6 +69,7 @@ export const Navbar = function () {
         <li className="order-2">
           {featureFlags.stakeCampaignEnabled && (
             <ItemLink
+              event="nav - stake"
               href="/stake/dashboard"
               icon={<StakeIcon />}
               text={t('stake')}

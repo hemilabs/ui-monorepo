@@ -2,42 +2,40 @@
 
 import { useStakeTokens } from 'hooks/useStakeTokens'
 
-import { StakeAndEarnPointsGraphSmallIcon } from './_components/icons/stakeAndEarnPointsGraphSmall'
-import { StakeAndEarnPointsSpecialLabel } from './_components/stakeAndEarnPointsSpecialLabel'
+import { StakeGraph } from './_components/icons/stakeGraph'
+import { StakeAndEarn } from './_components/stakeAndEarn'
 import { StakeStrategyTable } from './_components/stakeStrategyTable'
-import welcomeStakeBackgroundImg from './_images/welcome_stake_background.png'
 
-const Stake = function () {
+const PageBackground = () => (
+  <>
+    <div
+      className="absolute inset-0 -z-10"
+      style={{
+        background:
+          'radial-gradient(100% 100% at 50% 0%, rgba(253, 239, 232, 0.16) 11.7%, rgba(255, 111, 26, 0.16) 37.02%, rgba(255, 24, 20, 0.03) 60.34%), #FAFAFA',
+      }}
+    ></div>
+
+    <div className="relative flex w-full flex-col items-center justify-between lg:flex-row lg:items-start">
+      <div className="[&>div>svg]:-translate-x-36 [&>div>svg]:-translate-y-2 [&>div>svg]:scale-75 lg:[&>div>svg]:-translate-x-8">
+        <StakeAndEarn />
+      </div>
+      <div className="[&>svg]:lg:scale-80 [&>svg]:lg:-translate-y-25 [&>svg]:-translate-y-20 [&>svg]:scale-75 [&>svg]:lg:translate-x-12 [&>svg]:xl:translate-x-16">
+        <StakeGraph />
+      </div>
+    </div>
+  </>
+)
+
+export default function Page() {
   const stakeTokens = useStakeTokens()
 
   return (
-    <>
-      <div
-        className="absolute inset-0 z-10 opacity-80 mix-blend-overlay"
-        style={{
-          background: `url(${welcomeStakeBackgroundImg.src}) lightgray 50% / cover no-repeat`,
-        }}
-      ></div>
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          background:
-            'radial-gradient(circle at top left, rgba(255, 102, 51, 0.2) 0%, rgba(255, 204, 153, 0.1) 50%, rgba(255, 255, 255, 0) 100%), ' +
-            'radial-gradient(circle at top right, rgba(255, 102, 51, 0.2) 0%, rgba(255, 204, 153, 0.1) 50%, rgba(255, 255, 255, 0) 100%)',
-        }}
-      />
-      <div className="flex flex-col items-center justify-center md:flex-row md:items-start md:justify-between">
-        <StakeAndEarnPointsSpecialLabel
-          gradientMode="secondary"
-          textSize="text-4xl"
-        />
-        <StakeAndEarnPointsGraphSmallIcon />
+    <div className="h-[calc(100vh-theme(spacing.48))]">
+      <PageBackground />
+      <div className="relative z-20 -translate-y-60 md:-translate-y-48">
+        <StakeStrategyTable data={stakeTokens} loading={false} />
       </div>
-      <StakeStrategyTable data={stakeTokens} loading={false} />
-    </>
+    </div>
   )
-}
-
-export default function Page() {
-  return <Stake />
 }

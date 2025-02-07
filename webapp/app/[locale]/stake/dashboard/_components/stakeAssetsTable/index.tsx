@@ -261,11 +261,6 @@ const StakeAssetsTableImp = function ({ containerRef, data, loading }: Props) {
   )
 }
 
-function stakeMore() {
-  // TODO - implement this function
-  // Related to the issue #774 - https://github.com/hemilabs/ui-monorepo/issues/774
-}
-
 export const StakeAssetsTable = function () {
   const locale = useLocale()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -278,7 +273,7 @@ export const StakeAssetsTable = function () {
   const { hasPositions, loading } = result
 
   if (!hasPositions) {
-    return <WelcomeStake onClick={stakeMore} />
+    return <WelcomeStake />
   }
 
   const stakeMoreUrl = '/stake'

@@ -84,9 +84,9 @@ export const AppLayout = function ({ children }: Props) {
         <div className="relative md:hidden">
           <TestnetIndicator />
         </div>
-        <div className="relative h-full overflow-y-auto">
+        <div className="h-full overflow-y-auto">
           <div
-            className={`mx-auto px-4 pb-3 pt-4 md:pt-12
+            className={`relative mx-auto h-full px-4 pb-3 pt-4 md:pt-12
             ${
               // transaction history, and stake pages page use a different layout
               pathname.endsWith('transaction-history/') ||

@@ -212,6 +212,10 @@
       },
       "you-can-stake-anytime": "You can withdraw any time and keep the points already earned."
     },
+    "points": {
+      "diamonds": "Diamonds",
+      "points": "Points"
+    },
     "protocol": "Protocol",
     "rewards": "Rewards",
     "stake": {

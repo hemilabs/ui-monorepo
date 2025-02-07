@@ -7,19 +7,19 @@ import { isStakeToken } from 'utils/token'
 import { useHemi } from './useHemi'
 import { useNetworkType } from './useNetworkType'
 
-// TODO: It's pending to implement some missing badges
-// Issue #799 https://github.com/hemilabs/ui-monorepo/issues/799
+// TODO: Some tokens are not deployed, so their rewards can't be configured
+// https://github.com/hemilabs/ui-monorepo/issues/752#issuecomment-2616916547
 const tokenRewardMap: Record<
   StakeToken['symbol'],
   StakeToken['extensions']['rewards']
 > = {
-  'enzoBTC': ['hemi'],
+  'enzoBTC': ['hemi', 'lorenzo'],
   'iBTC': ['hemi'],
   'M-BTC': ['hemi'],
   'oBTC': ['hemi'],
-  'pumpBTC': ['hemi'],
-  'stBTC': ['hemi'],
-  'uBTC': ['hemi'],
+  'pumpBTC': ['hemi', 'pumpbtc'],
+  'stBTC': ['hemi', 'lorenzo'],
+  'uBTC': ['hemi', 'unirouter', 'bsquared'],
 }
 
 export const useStakeTokens = function () {

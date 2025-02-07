@@ -21,7 +21,6 @@ import { useAccount } from 'wagmi'
 
 import { useAmount } from '../../_hooks/useAmount'
 import { type DrawerModes } from '../../_hooks/useDrawerStakeQueryString'
-import { DiamondTag, HemiTag, PointsTag } from '../rewardTag'
 
 import { StakeFees, UnstakeFees } from './fees'
 import { StakeMaxBalance, UnstakeMaxBalance } from './maxBalance'
@@ -77,17 +76,6 @@ export const ManageStake = function ({
   }
 
   const isStaking = mode === 'stake' || operation === 'stake'
-
-  // TODO define how to get these https://github.com/hemilabs/ui-monorepo/issues/794
-  const strategyDetails = {
-    rewards: [
-      <DiamondTag key="diamond" />,
-      <HemiTag key="hemi" />,
-      <PointsTag key="points" />,
-    ],
-    token,
-    tvl: ' $ 129M',
-  }
 
   const submitDisabled = !!canSubmit({
     amount: parseUnits(amount, token.decimals),
@@ -156,7 +144,8 @@ export const ManageStake = function ({
         </div>
         {isStaking && (
           <div className="mt-1">
-            <StrategyDetails {...strategyDetails} />
+            {/* TODO define how to get TVL https://github.com/hemilabs/ui-monorepo/issues/794 */}
+            <StrategyDetails token={token} tvl=" $ 129M" />
           </div>
         )}
         <div className="mt-auto flex flex-col gap-y-3 text-center">

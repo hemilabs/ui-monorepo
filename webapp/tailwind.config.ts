@@ -56,6 +56,12 @@ const config: Config = {
           950: '#451105',
           hemi: '#FF5F00',
         },
+        points: {
+          'bsquared': '#FFB852',
+          'pump-btc': '#69DFFA',
+          'solv': '#EDE5FB',
+          'unirouter': '#9600FF',
+        },
         slate: {
           50: '#F7F7F7',
           100: '#E5E6E6',

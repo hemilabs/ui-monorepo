@@ -1,3 +1,5 @@
+'use client'
+
 import {
   ColumnDef,
   flexRender,
@@ -60,7 +62,7 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) => (
-      <div className="flex flex-wrap items-center gap-2 overflow-hidden">
+      <div className="flex flex-wrap items-center gap-1 overflow-hidden">
         <TokenRewards rewards={row.original.extensions.rewards} />
       </div>
     ),

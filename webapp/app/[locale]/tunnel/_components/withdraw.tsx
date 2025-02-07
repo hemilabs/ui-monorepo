@@ -12,7 +12,7 @@ import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
-import { useEstimateBtcWithdrawFees } from 'hooks/useEstimateBtcWithdrawFees'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
@@ -78,7 +78,10 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
 
   const { btcAddress, evmChainId } = useAccounts()
   const fromChain = useChain(fromNetworkId)
-  const estimatedFees = useEstimateBtcWithdrawFees(fromNetworkId)
+  const estimatedFees = useEstimateFees({
+    chainId: fromNetworkId,
+    operation: 'withdraw-btc',
+  })
   const [networkType] = useNetworkType()
   const { balance: bitcoinBalance } = useTokenBalance(fromToken)
   const t = useTranslations()

@@ -32,7 +32,6 @@ const getCallToAction = function (deposit: BtcDepositOperation) {
   }
 }
 
-const ConfirmBtcDepositGasUnits = BigInt(400_000)
 const ExpectedClaimDepositTimeHours = 3
 
 type Props = {
@@ -54,8 +53,7 @@ const ReviewContent = function ({
     isConnected && BtcDepositStatus.BTC_READY_CLAIM === depositStatus
   const estimatedFees = useEstimateFees({
     chainId: deposit.l2ChainId,
-    enabled: showClaimingFees,
-    gasUnits: ConfirmBtcDepositGasUnits,
+    operation: 'confirm-btc-deposit',
     overEstimation: 1.5,
   })
   const hemi = useHemi()

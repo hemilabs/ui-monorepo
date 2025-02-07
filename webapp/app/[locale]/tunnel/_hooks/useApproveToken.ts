@@ -1,13 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { useChainIsSupported } from 'hooks/useChainIsSupported'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { type EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/token'
 import { Hash } from 'viem'
 import { useAccount } from 'wagmi'
 import { useAllowance, useApprove } from 'wagmi-erc20-hooks'
-
-const ApproveErc20TokenGas = BigInt(45_000)
 
 export const useApproveToken = function (
   token: EvmToken,
@@ -19,13 +16,11 @@ export const useApproveToken = function (
   const { amount, spender } = args
   const erc20AddressToken = token.address as `0x${string}`
 
-  const { address: owner, isConnected } = useAccount()
-  const isSupported = useChainIsSupported(token.chainId)
+  const { address: owner } = useAccount()
 
   const approvalTokenGasFees = useEstimateFees({
     chainId: token.chainId,
-    enabled: isConnected && isSupported,
-    gasUnits: ApproveErc20TokenGas,
+    operation: 'approve-erc20',
     overEstimation: 1.5,
   })
 
@@ -38,7 +33,7 @@ export const useApproveToken = function (
   } = useAllowance(erc20AddressToken, {
     args: { owner, spender },
     query: {
-      enabled: isSupported && !isNativeToken(token) && !!owner && !!spender,
+      enabled: !isNativeToken(token) && !!owner && !!spender,
     },
   })
 

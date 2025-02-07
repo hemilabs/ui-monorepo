@@ -1,15 +1,28 @@
 import { SetMaxEvmBalance } from 'components/setMaxBalance'
+import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useHemi } from 'hooks/useHemi'
 import { ComponentProps } from 'react'
-
-import { useEstimateStakeFees } from '../../_hooks/useEstimateStakeFees'
-import { useEstimateUnstakeFees } from '../../_hooks/useEstimateUnstakeFees'
 
 type Props = Omit<ComponentProps<typeof SetMaxEvmBalance>, 'gas'>
 
+const MaxBalance = function ({
+  operation,
+  ...props
+}: Props & {
+  operation: 'stake' | 'unstake'
+}) {
+  const hemi = useHemi()
+  const estimateFees = useEstimateFees({
+    chainId: hemi.id,
+    operation,
+  })
+  return <SetMaxEvmBalance {...props} gas={estimateFees} />
+}
+
 export const StakeMaxBalance = (props: Props) => (
-  <SetMaxEvmBalance {...props} gas={useEstimateStakeFees()} />
+  <MaxBalance {...props} operation="stake" />
 )
 
 export const UnstakeMaxBalance = (props: Props) => (
-  <SetMaxEvmBalance {...props} gas={useEstimateUnstakeFees()} />
+  <MaxBalance {...props} operation="unstake" />
 )

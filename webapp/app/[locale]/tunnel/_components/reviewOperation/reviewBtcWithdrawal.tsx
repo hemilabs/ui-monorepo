@@ -1,8 +1,7 @@
 'use client'
 
 import { useChain } from 'hooks/useChain'
-import { useEstimateBtcWithdrawFees } from 'hooks/useEstimateBtcWithdrawFees'
-import { useEstimateChallengeBtcWithdrawalFees } from 'hooks/useEstimateChallengeBtcWithdrawalFees'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useSimpleVaultGracePeriod } from 'hooks/useSimpleVaultGracePeriod'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
@@ -44,11 +43,14 @@ const ReviewContent = function ({
   withdrawal,
 }: Props & { fromToken: EvmToken; vaultGracePeriod: bigint }) {
   const fromChain = useChain(withdrawal.l2ChainId)
-  const bitcoinWithdrawalEstimatedFees = useEstimateBtcWithdrawFees(
-    withdrawal.l2ChainId,
-  )
-  const challengeWithdrawalEstimatedFees =
-    useEstimateChallengeBtcWithdrawalFees(withdrawal.l2ChainId)
+  const bitcoinWithdrawalEstimatedFees = useEstimateFees({
+    chainId: withdrawal.l2ChainId,
+    operation: 'withdraw-btc',
+  })
+  const challengeWithdrawalEstimatedFees = useEstimateFees({
+    chainId: withdrawal.l2ChainId,
+    operation: 'challenge-btc-withdrawal',
+  })
   const t = useTranslations('tunnel-page.review-withdrawal')
   const tCommon = useTranslations('common')
 

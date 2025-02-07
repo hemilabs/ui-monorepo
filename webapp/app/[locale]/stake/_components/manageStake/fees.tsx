@@ -1,10 +1,8 @@
 import { EvmFeesSummary } from 'components/evmFeesSummary'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { formatUnits } from 'viem'
-
-import { useEstimateStakeFees } from '../../_hooks/useEstimateStakeFees'
-import { useEstimateUnstakeFees } from '../../_hooks/useEstimateUnstakeFees'
 
 const Fees = function ({ estimatedFees }: { estimatedFees: bigint }) {
   const hemi = useHemi()
@@ -23,8 +21,22 @@ const Fees = function ({ estimatedFees }: { estimatedFees: bigint }) {
   )
 }
 
-export const StakeFees = () => <Fees estimatedFees={useEstimateStakeFees()} />
+export const StakeFees = function () {
+  const hemi = useHemi()
+  const estimatedFees = useEstimateFees({
+    chainId: hemi.id,
+    operation: 'stake',
+    overEstimation: 1.5,
+  })
+  return <Fees estimatedFees={estimatedFees} />
+}
 
-export const UnstakeFees = () => (
-  <Fees estimatedFees={useEstimateUnstakeFees()} />
-)
+export const UnstakeFees = function () {
+  const hemi = useHemi()
+  const estimatedFees = useEstimateFees({
+    chainId: hemi.id,
+    operation: 'unstake',
+    overEstimation: 1.5,
+  })
+  return <Fees estimatedFees={estimatedFees} />
+}

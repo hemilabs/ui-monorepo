@@ -71,7 +71,7 @@ export const useConfirmBitcoinDeposit = function (
 
   const clearConfirmBitcoinDepositState = useCallback(
     function () {
-      // reset the claiming state
+      // reset the confirm state
       resetConfirmBitcoinDeposit()
       // clear deposit receipt state
       queryClient.invalidateQueries({ queryKey: confirmBitcoinDepositQueryKey })

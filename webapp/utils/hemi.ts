@@ -275,7 +275,7 @@ export const confirmBtcDeposit = ({
       throw new Error('Bitcoin Deposit already confirmed')
     }
     if (currentStatus !== BtcDepositStatus.READY_TO_MANUAL_CONFIRM) {
-      throw new Error('Bitcoin Deposit is not ready for claim!')
+      throw new Error('Bitcoin Deposit is not ready for confirmation!')
     }
 
     return hemiWalletClient.confirmDeposit({

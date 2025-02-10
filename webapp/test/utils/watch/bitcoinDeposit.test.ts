@@ -86,7 +86,7 @@ describe('utils/watch/bitcoinDeposits', function () {
   })
 
   describe('watchDepositOnHemi', function () {
-    it('should not return changes if the deposit is confirmed only on bitcoin and is not ready for claiming', async function () {
+    it('should not return changes if the deposit is confirmed only on bitcoin and is not ready for confirming', async function () {
       const mock = {}
       vi.mocked(getHemiStatusOfBtcDeposit).mockResolvedValue(
         BtcDepositStatus.BTC_TX_CONFIRMED,
@@ -99,7 +99,7 @@ describe('utils/watch/bitcoinDeposits', function () {
       expect(updates).toEqual({})
     })
 
-    it('should return changes if the deposit is confirmed on bitcoin and is ready for claiming', async function () {
+    it('should return changes if the deposit is confirmed on bitcoin and is ready for confirming', async function () {
       const mock = {}
       vi.mocked(getHemiStatusOfBtcDeposit).mockResolvedValue(
         BtcDepositStatus.READY_TO_MANUAL_CONFIRM,

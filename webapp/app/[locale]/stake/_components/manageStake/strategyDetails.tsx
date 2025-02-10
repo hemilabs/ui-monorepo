@@ -2,10 +2,11 @@ import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import { StakeToken } from 'types/stake'
 
+import { TokenRewards } from '../tokenRewards'
+
 import { Website } from './website'
 
 type Props = {
-  rewards: ReactNode[]
   token: StakeToken
   tvl: string
 }
@@ -20,7 +21,7 @@ const Subtitle = ({ text }: { text: string }) => (
   <h6 className="text-sm font-medium text-neutral-500">{text}</h6>
 )
 
-export const StrategyDetails = function ({ rewards, tvl, token }: Props) {
+export const StrategyDetails = function ({ tvl, token }: Props) {
   const t = useTranslations('stake-page.drawer.strategy-details')
   return (
     <div className="flex flex-col">
@@ -30,9 +31,7 @@ export const StrategyDetails = function ({ rewards, tvl, token }: Props) {
       <Container>
         <Subtitle text={t('rewards')} />
         <div className="flex h-6 flex-wrap gap-x-1">
-          {rewards.map((reward, index) => (
-            <div key={index}>{reward}</div>
-          ))}
+          <TokenRewards rewards={token.extensions.rewards} />
         </div>
       </Container>
       <Container>

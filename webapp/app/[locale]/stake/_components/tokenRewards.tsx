@@ -1,17 +1,30 @@
 import { Fragment, ReactNode } from 'react'
 import { Reward, StakeToken } from 'types/stake'
 
-import { HemiTag, PointsTag } from './rewardTag'
+import {
+  BedrockPoints,
+  BitFiPoints,
+  BsquaredPoints,
+  LorenzoPoints,
+  HemiPoints,
+  PumpBtcPoints,
+  SolvPoints,
+  UnirouterPoints,
+} from './pointsTag'
 
-interface Props {
+type Props = {
   rewards: StakeToken['extensions']['rewards']
 }
 
-// TODO: It's pending to implement some missing tags
-// Issue #799 https://github.com/hemilabs/ui-monorepo/issues/799
 const rewardComponentMap: Record<Reward, ReactNode> = {
-  hemi: <HemiTag />,
-  points: <PointsTag />,
+  bedrock: <BedrockPoints />,
+  bitfi: <BitFiPoints />,
+  bsquared: <BsquaredPoints />,
+  hemi: <HemiPoints />,
+  lorenzo: <LorenzoPoints />,
+  pumpbtc: <PumpBtcPoints />,
+  solv: <SolvPoints />,
+  unirouter: <UnirouterPoints />,
 }
 
 export function TokenRewards({ rewards }: Props) {

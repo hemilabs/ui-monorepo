@@ -14,7 +14,6 @@ import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useStakeTokens } from 'hooks/useStakeTokens'
-import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { MouseEvent, MutableRefObject, useMemo, useRef } from 'react'
@@ -23,12 +22,12 @@ import { StakeToken } from 'types/stake'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { queryStringObjectToString } from 'utils/url'
 
+import { ProtocolImage } from '../../../_components/protocolImage'
 import { Column, ColumnHeader, Header } from '../../../_components/table'
 import { TokenBalance } from '../../../_components/tokenBalance'
 import { TokenRewards } from '../../../_components/tokenRewards'
 import { useDrawerStakeQueryString } from '../../../_hooks/useDrawerStakeQueryString'
 import { useUserHasPositions } from '../../../_hooks/useStakedBalance'
-import { protocolImages } from '../../../protocols/protocolImages'
 
 import { StakedBalance } from './stakedBalance'
 import { WelcomeStake } from './welcomeStake'
@@ -141,10 +140,7 @@ const columnsBuilder = (
   {
     cell: ({ row }) => (
       <div className="flex items-center space-x-2">
-        <Image
-          alt={row.original.extensions.protocol}
-          src={protocolImages[row.original.extensions.protocol]}
-        />
+        <ProtocolImage protocol={row.original.extensions.protocol} />
       </div>
     ),
     header: () => <Header text={t('protocol')} />,

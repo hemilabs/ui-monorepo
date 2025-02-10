@@ -319,7 +319,7 @@ export const createBitcoinSync = function ({
                     hemiClient,
                     vaultAddress,
                   })
-                : BtcDepositStatus.TX_PENDING
+                : BtcDepositStatus.BTC_TX_PENDING
               return { ...partialDeposit, status }
             },
         ),

@@ -3,13 +3,14 @@ import { Button } from 'components/button'
 import { WarningBox } from 'components/warningBox'
 import { useConfirmBitcoinDeposit } from 'hooks/useBtcTunnel'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
-import { type FormEvent, useContext, useEffect } from 'react'
+import { type FormEvent, useEffect, useState } from 'react'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 
-import { BtcToEvmDepositContext } from '../_context/btcToEvmContext'
-
 import { DrawerCallToAction } from './reviewOperation/drawerCallToAction'
+
+type OperationStatus = 'idle' | 'rejected'
 
 type Props = {
   deposit: BtcDepositOperation
@@ -22,95 +23,102 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
     confirmBitcoinDepositError,
     confirmBitcoinDepositReceiptError,
   } = useConfirmBitcoinDeposit(deposit)
-  const [operationStatus, setOperationStatus] = useContext(
-    BtcToEvmDepositContext,
-  )
+
   const [networkType] = useNetworkType()
+  const [operationStatus, setOperationStatus] =
+    useState<OperationStatus>('idle')
   const t = useTranslations()
+  const { updateDeposit } = useTunnelHistory()
   const { track } = useUmami()
 
-  const isClaiming = operationStatus === 'claiming'
+  const isConfirming =
+    deposit.status === BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING
 
+  // No need to handle the success case, as in that case, this component will be unmounted
+  // and nothing gets rendered. But we do want to track in analytics!
   useEffect(
-    function clearAfterSuccessfulClaim() {
-      if (
-        confirmBitcoinDepositReceipt?.status !== 'success' ||
-        operationStatus !== 'claiming'
-      ) {
-        return
+    function trackAnalyticsOnSuccess() {
+      if (confirmBitcoinDepositReceipt?.status === 'success') {
+        track?.('btc - confirm dep success', { chain: networkType })
       }
-      setOperationStatus('idle')
-      track?.('btc - confirm dep success', { chain: networkType })
     },
-    [
-      confirmBitcoinDepositReceipt,
-      networkType,
-      operationStatus,
-      setOperationStatus,
-      track,
-    ],
+    [confirmBitcoinDepositReceipt, networkType, track],
   )
 
   useEffect(
     function handleUserRejection() {
-      if (confirmBitcoinDepositError && isClaiming) {
+      if (confirmBitcoinDepositError && isConfirming) {
         setOperationStatus('rejected')
       }
     },
-    [confirmBitcoinDepositError, isClaiming, setOperationStatus],
+    [confirmBitcoinDepositError, isConfirming, setOperationStatus],
   )
 
   useEffect(
     function handleTransactionFailure() {
-      if (confirmBitcoinDepositReceiptError && isClaiming) {
-        setOperationStatus('failed')
+      if (confirmBitcoinDepositReceiptError && isConfirming) {
+        updateDeposit(deposit, {
+          status: BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
+        })
         track?.('btc - confirm dep failed', { chain: networkType })
       }
     },
     [
       confirmBitcoinDepositReceiptError,
+      deposit,
       networkType,
-      isClaiming,
-      setOperationStatus,
+      isConfirming,
       track,
+      updateDeposit,
     ],
   )
 
-  const isReadyToClaim = deposit.status === BtcDepositStatus.BTC_READY_CLAIM
+  const isReadyToConfirm = [
+    BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
+    BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
+  ].includes(deposit.status)
 
-  const handleClaim = function (e: FormEvent) {
+  const handleConfirm = function (e: FormEvent) {
     e.preventDefault()
-    if (!isReadyToClaim) {
+    if (!isReadyToConfirm) {
       return
     }
+    updateDeposit(deposit, {
+      // clear any past confirmation transaction hashes, in case user is retrying.
+      confirmationTransactionHash: undefined,
+      status: BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING,
+    })
     confirmBitcoinDeposit()
-    setOperationStatus('claiming')
+
     track?.('btc - confirm dep started', { chain: networkType })
   }
 
   const getText = function () {
-    if (isClaiming) {
-      return 'claiming-deposit'
+    if (isConfirming) {
+      return 'confirming-deposit-manually'
     }
-    if (['failed', 'rejected'].includes(operationStatus)) {
+    if (
+      operationStatus === 'rejected' ||
+      deposit.status === BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED
+    ) {
       return 'try-again'
     }
-    return 'claim-deposit'
+    return 'confirm-deposit-manually'
   }
 
   return (
-    <div className="flex h-full flex-col justify-between">
+    <div className="flex h-full flex-col justify-between gap-y-24">
       <WarningBox
         heading={t(
           'tunnel-page.review-deposit.we-could-not-process-this-deposit',
         )}
-        subheading={t('tunnel-page.review-deposit.click-to-claim')}
+        subheading={t('tunnel-page.review-deposit.click-to-confirm')}
       />
       <DrawerCallToAction
         expectedChainId={deposit.l2ChainId}
-        onSubmit={handleClaim}
+        onSubmit={handleConfirm}
         submitButton={
-          <Button disabled={!isReadyToClaim || isClaiming} type="submit">
+          <Button disabled={!isReadyToConfirm || isConfirming} type="submit">
             {t(`tunnel-page.submit-button.${getText()}`)}
           </Button>
         }

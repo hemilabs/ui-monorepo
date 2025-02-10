@@ -68,12 +68,12 @@ export const getHemiStatusOfBtcDeposit = ({
           vaultStateAddress,
         }),
       ),
-  ]).then(([hemiAwareOfBtcTx, claimed]) =>
+  ]).then(([hemiAwareOfBtcTx, confirmed]) =>
     hemiAwareOfBtcTx
-      ? claimed
+      ? confirmed
         ? BtcDepositStatus.BTC_DEPOSITED
-        : BtcDepositStatus.BTC_READY_CLAIM
-      : BtcDepositStatus.TX_CONFIRMED,
+        : BtcDepositStatus.READY_TO_MANUAL_CONFIRM
+      : BtcDepositStatus.BTC_TX_CONFIRMED,
   )
 
 /**
@@ -274,7 +274,7 @@ export const confirmBtcDeposit = ({
     if (currentStatus === BtcDepositStatus.BTC_DEPOSITED) {
       throw new Error('Bitcoin Deposit already confirmed')
     }
-    if (currentStatus !== BtcDepositStatus.BTC_READY_CLAIM) {
+    if (currentStatus !== BtcDepositStatus.READY_TO_MANUAL_CONFIRM) {
       throw new Error('Bitcoin Deposit is not ready for claim!')
     }
 

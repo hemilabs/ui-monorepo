@@ -16,12 +16,12 @@ const deposit: BtcDepositOperation = {
   amount: '100000000',
   l1ChainId: bitcoinTestnet.id,
   l2ChainId: hemiSepolia.id,
-  status: BtcDepositStatus.TX_PENDING,
+  status: BtcDepositStatus.BTC_TX_PENDING,
   transactionHash:
     '4cabca8f8b711c9d6946d737034545879a964c374a193ef9bb15ec966b826a01',
 }
 
-const depositOnHemi = { ...deposit, status: BtcDepositStatus.TX_CONFIRMED }
+const depositOnHemi = { ...deposit, status: BtcDepositStatus.BTC_TX_CONFIRMED }
 
 vi.mock('hooks/useHemiClient', () => ({
   publicClientToHemiClient: vi.fn(),
@@ -74,7 +74,7 @@ describe('utils/watch/bitcoinDeposits', function () {
 
       expect(updates).toEqual({
         blockNumber: blockHeight,
-        status: BtcDepositStatus.TX_CONFIRMED,
+        status: BtcDepositStatus.BTC_TX_CONFIRMED,
         timestamp: blockTime,
       })
 
@@ -89,7 +89,7 @@ describe('utils/watch/bitcoinDeposits', function () {
     it('should not return changes if the deposit is confirmed only on bitcoin and is not ready for claiming', async function () {
       const mock = {}
       vi.mocked(getHemiStatusOfBtcDeposit).mockResolvedValue(
-        BtcDepositStatus.TX_CONFIRMED,
+        BtcDepositStatus.BTC_TX_CONFIRMED,
       )
       vi.mocked(getVaultAddressByDeposit).mockResolvedValue(vaultAddress)
       vi.mocked(publicClientToHemiClient).mockResolvedValue(mock)
@@ -102,14 +102,16 @@ describe('utils/watch/bitcoinDeposits', function () {
     it('should return changes if the deposit is confirmed on bitcoin and is ready for claiming', async function () {
       const mock = {}
       vi.mocked(getHemiStatusOfBtcDeposit).mockResolvedValue(
-        BtcDepositStatus.BTC_READY_CLAIM,
+        BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
       )
       vi.mocked(getVaultAddressByDeposit).mockResolvedValue(vaultAddress)
       vi.mocked(publicClientToHemiClient).mockResolvedValue(mock)
 
       const updates = await watchDepositOnHemi(depositOnHemi)
 
-      expect(updates).toEqual({ status: BtcDepositStatus.BTC_READY_CLAIM })
+      expect(updates).toEqual({
+        status: BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
+      })
     })
   })
 })

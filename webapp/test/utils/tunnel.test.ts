@@ -33,7 +33,7 @@ describe('utils/tunnel', function () {
           const operation = {
             direction: MessageDirection.L1_TO_L2,
             l1ChainId: '123456',
-            status: BtcDepositStatus.BTC_READY_CLAIM,
+            status: BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
           }
           // @ts-expect-error Ignore operation fields not required for this test
           expect(isPendingOperation(operation)).toBe(true)
@@ -53,7 +53,7 @@ describe('utils/tunnel', function () {
           const operation = {
             direction: MessageDirection.L1_TO_L2,
             l1ChainId: '123456',
-            status: BtcDepositStatus.DEPOSIT_TX_FAILED,
+            status: BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
           }
           // @ts-expect-error Ignore operation fields not required for this test
           expect(isPendingOperation(operation)).toBe(false)

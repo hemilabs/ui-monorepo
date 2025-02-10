@@ -7,19 +7,42 @@ import { BtcChain } from 'btc-wallet/chains'
 import { BtcTransaction } from 'btc-wallet/unisat'
 import { type Chain, type Hash } from 'viem'
 
+/**
+ * This enum follows the steps for running a bitcoin deposit. In the ideal flow,
+ * the user sends the bitcoin into a bitcoin address controlled by the vault operator.
+ * After some time, the vault operator confirms the deposit, and the erc20 bitcoins
+ * in Hemi are minted. However, if enough time has passed and the vault operator hasn't confirmed
+ * the deposit, the user can confirm it manually on their own, causing the erc20 bitcoins
+ * to be mined without the vault operation intervention. Having this in consideration,
+ * the flow of state changes for this enum looks like this:
+ * BTC_TX_PENDING
+ *  |_BTC_TX_FAILED
+ *  |_BTC_TX_CONFIRMED
+ *   |_BTC_DEPOSITED (Arrives here if vault operator does its work)
+ *   |_READY_TO_MANUAL_CONFIRM
+ *      |_DEPOSIT_MANUAL_CONFIRMING
+ *        |_DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED
+ *        |BTC_DEPOSITED_MANUALLY (Arrives here after manual confirmation)
+ */
 export const enum BtcDepositStatus {
   // The tx is in the mempool, but hasn't been included in a mined block
-  TX_PENDING = 0,
+  BTC_TX_PENDING = 0,
   // The tx is part of a block that has been mined, but it doesn't have enough
   // confirmations for the erc20 bitcoin to be minted in Hemi
-  TX_CONFIRMED = 1,
-  // The bitcoin is ready to be claimed in Hemi, either by the custodial
-  // or the owner of those bitcoins
-  BTC_READY_CLAIM = 2,
-  // The erc20 bitcoin version in Hemi has been minted
-  BTC_DEPOSITED = 3,
+  BTC_TX_CONFIRMED = 1,
+  // The vault operator hasn't confirmed the deposit yet. The user can now
+  // confirm the deposit manually
+  READY_TO_MANUAL_CONFIRM = 2,
+  // The user is confirming
+  DEPOSIT_MANUAL_CONFIRMING = 3,
   // Deposit tx reverted
-  DEPOSIT_TX_FAILED = 4,
+  DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED = 4,
+  // The erc20 bitcoin version in Hemi has been minted
+  BTC_DEPOSITED = 5,
+  // The erc20 bitcoin version in Hemi has been minted, after manual confirmation
+  BTC_DEPOSITED_MANUALLY = 6,
+  // The initial bitcoin transaction failed
+  BTC_TX_FAILED = 7,
 }
 
 /**

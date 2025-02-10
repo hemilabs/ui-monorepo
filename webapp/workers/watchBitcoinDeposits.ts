@@ -49,7 +49,7 @@ const postUpdates =
     })
 
 const watchDeposit = function (deposit: BtcDepositOperation) {
-  if (deposit.status === BtcDepositStatus.TX_PENDING) {
+  if (deposit.status === BtcDepositStatus.BTC_TX_PENDING) {
     bitcoinQueue.add(() =>
       watchDepositOnBitcoin(deposit).then(postUpdates(deposit)),
     )

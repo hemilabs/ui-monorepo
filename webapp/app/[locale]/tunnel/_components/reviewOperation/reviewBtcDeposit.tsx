@@ -3,17 +3,12 @@ import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
-import { useContext } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken } from 'types/token'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { formatGasFees } from 'utils/format'
 import { useAccount } from 'wagmi'
 
-import {
-  BtcToEvmDepositContext,
-  BtcToEvmDepositProvider,
-} from '../../_context/btcToEvmContext'
 import { ConfirmBtcDeposit } from '../confirmBtcDeposit'
 import { RetryBtcDeposit } from '../retryBtcDeposit'
 
@@ -23,16 +18,18 @@ import { type StepPropsWithoutPosition } from './step'
 
 const getCallToAction = function (deposit: BtcDepositOperation) {
   switch (deposit.status) {
-    case BtcDepositStatus.DEPOSIT_TX_FAILED:
+    case BtcDepositStatus.BTC_TX_FAILED:
       return <RetryBtcDeposit deposit={deposit} />
-    case BtcDepositStatus.BTC_READY_CLAIM:
+    case BtcDepositStatus.READY_TO_MANUAL_CONFIRM:
+    case BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING:
+    case BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED:
       return <ConfirmBtcDeposit deposit={deposit} />
     default:
       return null
   }
 }
 
-const ExpectedClaimDepositTimeHours = 3
+const ExpectedManualConfirmationDepositTimeHours = 3
 
 type Props = {
   deposit: BtcDepositOperation
@@ -44,13 +41,10 @@ const ReviewContent = function ({
   fromToken,
   onClose,
 }: Props & { fromToken: BtcToken }) {
-  const depositStatus = deposit.status ?? BtcDepositStatus.TX_PENDING
+  const depositStatus = deposit.status ?? BtcDepositStatus.BTC_TX_PENDING
 
   const { isConnected } = useAccount()
-  const [operationStatus] = useContext(BtcToEvmDepositContext)
-  // fees for bitcoin claiming
-  const showClaimingFees =
-    isConnected && BtcDepositStatus.BTC_READY_CLAIM === depositStatus
+  // fees for bitcoin deposit confirmation
   const estimatedFees = useEstimateFees({
     chainId: deposit.l2ChainId,
     operation: 'confirm-btc-deposit',
@@ -60,29 +54,37 @@ const ReviewContent = function ({
 
   // Fees for bitcoin deposit
   const { feePrices } = useGetFeePrices()
+  const tCommon = useTranslations('common')
   const t = useTranslations('tunnel-page.review-deposit')
+
+  const showDepositConfirmationFees =
+    isConnected &&
+    [
+      BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING,
+      BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
+      BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
+    ].includes(depositStatus)
+
+  const shouldAddManualConfirmationStep = () =>
+    [
+      BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING,
+      BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
+      BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
+      BtcDepositStatus.BTC_DEPOSITED_MANUALLY,
+    ].includes(deposit.status) || deposit.confirmationTransactionHash
 
   const steps: StepPropsWithoutPosition[] = []
 
-  const getClaimStatus = function () {
-    if (deposit.status === BtcDepositStatus.BTC_DEPOSITED) {
-      return ProgressStatus.COMPLETED
-    }
-    if (deposit.status !== BtcDepositStatus.BTC_READY_CLAIM) {
-      return ProgressStatus.NOT_READY
-    }
-    const map = {
-      claiming: ProgressStatus.PROGRESS,
-      failed: ProgressStatus.FAILED,
-      rejected: ProgressStatus.REJECTED,
-    }
-    return map[operationStatus] ?? ProgressStatus.READY
-  }
-
   const getDepositStep = function (): StepPropsWithoutPosition {
     const statusMap = {
-      [BtcDepositStatus.TX_PENDING]: ProgressStatus.PROGRESS,
-      [BtcDepositStatus.DEPOSIT_TX_FAILED]: ProgressStatus.FAILED,
+      [BtcDepositStatus.BTC_TX_PENDING]: ProgressStatus.PROGRESS,
+      [BtcDepositStatus.BTC_TX_FAILED]: ProgressStatus.FAILED,
+    }
+
+    const postActionStatusMap = {
+      [BtcDepositStatus.BTC_TX_PENDING]: ProgressStatus.NOT_READY,
+      [BtcDepositStatus.BTC_TX_CONFIRMED]: ProgressStatus.PROGRESS,
+      [BtcDepositStatus.BTC_TX_FAILED]: ProgressStatus.NOT_READY,
     }
 
     return {
@@ -90,34 +92,78 @@ const ReviewContent = function ({
       explorerChainId: deposit.l1ChainId,
       fees:
         [
-          BtcDepositStatus.TX_PENDING,
-          BtcDepositStatus.DEPOSIT_TX_FAILED,
+          BtcDepositStatus.BTC_TX_PENDING,
+          BtcDepositStatus.BTC_TX_FAILED,
         ].includes(depositStatus) && feePrices?.fastestFee
           ? {
               amount: feePrices?.fastestFee?.toString(),
               symbol: 'sat/vB',
             }
           : undefined,
+      postAction: {
+        description: tCommon('wait-hours', {
+          hours: ExpectedManualConfirmationDepositTimeHours,
+        }),
+        status: postActionStatusMap[depositStatus] ?? ProgressStatus.COMPLETED,
+      },
       status: statusMap[depositStatus] ?? ProgressStatus.COMPLETED,
       txHash: deposit.transactionHash,
     }
   }
 
-  const getClaimStep = (): StepPropsWithoutPosition => ({
-    description: t('claim-deposit'),
-    explorerChainId: deposit.l2ChainId,
-    fees: showClaimingFees
-      ? {
-          amount: formatGasFees(estimatedFees, hemi.nativeCurrency.decimals),
-          symbol: hemi.nativeCurrency.symbol,
-        }
-      : undefined,
-    status: getClaimStatus(),
-    txHash: deposit.confirmationTransactionHash,
-  })
+  const getDepositFinalizedStep = function (): StepPropsWithoutPosition {
+    const statusMap = {
+      [BtcDepositStatus.READY_TO_MANUAL_CONFIRM]: ProgressStatus.FAILED,
+      [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING]: ProgressStatus.FAILED,
+      [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED]:
+        ProgressStatus.FAILED,
+      [BtcDepositStatus.BTC_DEPOSITED]: ProgressStatus.COMPLETED,
+      [BtcDepositStatus.BTC_DEPOSITED_MANUALLY]: ProgressStatus.FAILED,
+      [BtcDepositStatus.BTC_TX_FAILED]: ProgressStatus.FAILED,
+    }
+
+    return {
+      description: t('deposit-finalized'),
+      status: statusMap[depositStatus] ?? ProgressStatus.NOT_READY,
+    }
+  }
+
+  const getManualConfirmationStep = function (): StepPropsWithoutPosition {
+    const getConfirmDepositStatus = function () {
+      if (deposit.status === BtcDepositStatus.BTC_DEPOSITED_MANUALLY) {
+        return ProgressStatus.COMPLETED
+      }
+      const map = {
+        [BtcDepositStatus.READY_TO_MANUAL_CONFIRM]: ProgressStatus.READY,
+        [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING]: ProgressStatus.PROGRESS,
+        [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED]:
+          ProgressStatus.FAILED,
+        [BtcDepositStatus.BTC_DEPOSITED_MANUALLY]: ProgressStatus.COMPLETED,
+      }
+      return map[deposit.status] ?? ProgressStatus.NOT_READY
+    }
+
+    return {
+      description: t('confirm-deposit'),
+      explorerChainId: deposit.l2ChainId,
+      fees: showDepositConfirmationFees
+        ? {
+            amount: formatGasFees(estimatedFees, hemi.nativeCurrency.decimals),
+            symbol: hemi.nativeCurrency.symbol,
+          }
+        : undefined,
+      separator: true,
+      status: getConfirmDepositStatus(),
+      txHash: deposit.confirmationTransactionHash,
+    }
+  }
 
   steps.push(getDepositStep())
-  steps.push(getClaimStep())
+  steps.push(getDepositFinalizedStep())
+
+  if (shouldAddManualConfirmationStep()) {
+    steps.push(getManualConfirmationStep())
+  }
 
   return (
     <Operation
@@ -129,7 +175,7 @@ const ReviewContent = function ({
         depositStatus === BtcDepositStatus.BTC_DEPOSITED
           ? t('your-deposit-is-complete')
           : t('btc-deposit-come-back-delay-note', {
-              hours: ExpectedClaimDepositTimeHours,
+              hours: ExpectedManualConfirmationDepositTimeHours,
             })
       }
       title={t('review-deposit')}
@@ -147,7 +193,7 @@ export const ReviewBtcDeposit = function ({ deposit, onClose }: Props) {
   const tokensLoaded = !!fromToken
 
   return (
-    <BtcToEvmDepositProvider>
+    <>
       {tokensLoaded ? (
         <ReviewContent
           deposit={deposit}
@@ -157,6 +203,6 @@ export const ReviewBtcDeposit = function ({ deposit, onClose }: Props) {
       ) : (
         <Skeleton className="h-full" />
       )}
-    </BtcToEvmDepositProvider>
+    </>
   )
 }

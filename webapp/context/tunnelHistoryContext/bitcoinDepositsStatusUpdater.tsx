@@ -116,10 +116,11 @@ export const BitcoinDepositsStatusUpdater = function () {
     .filter(deposit =>
       [
         // Unconfirmed btc transactions, to be watched  in the bitcoin blockchain
-        BtcDepositStatus.TX_PENDING,
-        // Btc transactions confirmed, to be watched in the hemi blockchain
-        BtcDepositStatus.TX_CONFIRMED,
-        BtcDepositStatus.BTC_READY_CLAIM,
+        BtcDepositStatus.BTC_TX_PENDING,
+        // Btc transactions on Bitcoin confirmed, to be watched in the hemi blockchain
+        BtcDepositStatus.BTC_TX_CONFIRMED,
+        BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
+        BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING,
       ].includes(deposit.status),
     )
     .sort(byTimestampDesc)

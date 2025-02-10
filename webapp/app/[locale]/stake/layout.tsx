@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 import { isStakeEnabledOnTestnet } from 'utils/stake'
 
+import { StakeDisabledTestnet } from './_components/stakeDisabledTestnet'
 import { useDrawerStakeQueryString } from './_hooks/useDrawerStakeQueryString'
 
 const ManageStake = dynamic(
@@ -53,10 +54,8 @@ const Layout = function ({ children }: Props) {
     // TODO redirect to 404 page, which should be implemented - See https://github.com/hemilabs/ui-monorepo/issues/620
     return null
   }
-
   if (!isStakeEnabledOnTestnet(networkType)) {
-    // TODO Add custom staking page - See https://github.com/hemilabs/ui-monorepo/issues/806
-    return null
+    return <StakeDisabledTestnet />
   }
 
   return (

@@ -2,7 +2,7 @@
 
 import { useAccounts } from 'hooks/useAccounts'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { usePathname } from 'next/navigation'
+import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import React, { useEffect, useState } from 'react'
 
 import { Footer } from './footer'
@@ -32,7 +32,7 @@ const TestnetIndicator = function () {
 export const AppLayout = function ({ children }: Props) {
   const { allDisconnected } = useAccounts()
   const [networkType] = useNetworkType()
-  const pathname = usePathname()
+  const pathname = usePathnameWithoutLocale()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   // Hide instead of not-rendering when the header is open, to avoid loosing state of the components when opening
   // and closing the header
@@ -84,12 +84,13 @@ export const AppLayout = function ({ children }: Props) {
         <div className="relative md:hidden">
           <TestnetIndicator />
         </div>
-        <div className="relative h-full overflow-y-auto">
+        <div className="h-full overflow-y-auto">
           <div
-            className={`mx-auto px-4 pb-3 pt-4 md:pt-12
+            className={`relative mx-auto h-full px-4 pb-3 pt-4 md:pt-12
             ${
-              // transaction history page uses a different layout
-              pathname.endsWith('transaction-history/')
+              // transaction history, and stake pages page use a different layout
+              pathname.endsWith('transaction-history/') ||
+              pathname.startsWith('/stake')
                 ? 'xl:px-12 xl:pb-12'
                 : 'max-w-5xl'
             }`}

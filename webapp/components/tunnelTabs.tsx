@@ -3,11 +3,11 @@
 import { type AnalyticsEventsWithChain } from 'app/analyticsEvents'
 import { Tab, Tabs } from 'components/tabs'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
-import { usePathname } from 'next/navigation'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 
 const ActionableOperations = dynamic(
@@ -19,20 +19,18 @@ const ActionableOperations = dynamic(
 )
 
 const TunnelTabsImpl = function () {
-  const locale = useLocale()
   const [networkType] = useNetworkType()
-  const pathname = usePathname()
+  const pathname = usePathnameWithoutLocale()
   const t = useTranslations('tunnel-page')
   const { track } = useUmami()
 
   const tunnelHref = useTunnelOperationByConnectedWallet()
 
-  if (!pathname.startsWith(`/${locale}/tunnel/`)) {
+  if (!pathname.startsWith(`/tunnel/`)) {
     return null
   }
 
-  const isInTransactionHistory =
-    pathname === `/${locale}/tunnel/transaction-history/`
+  const isInTransactionHistory = pathname === `/tunnel/transaction-history/`
 
   const addTracking = (eventName: AnalyticsEventsWithChain) =>
     track ? () => track(eventName, { chain: networkType }) : undefined
@@ -43,7 +41,7 @@ const TunnelTabsImpl = function () {
         <Tab
           href={tunnelHref}
           onClick={addTracking('header - tunnel')}
-          selected={pathname === `/${locale}/tunnel/`}
+          selected={pathname === '/tunnel/'}
         >
           <span className="flex h-full min-h-7 items-center justify-center">
             {t('title')}

@@ -184,6 +184,7 @@
   },
   "stake-page": {
     "asset": "Activo",
+    "change-to-mainnet": "Cambie a Mainnet y apueste",
     "dashboard": {
       "asset": "Activo",
       "protocol": "Protocolo",
@@ -191,7 +192,6 @@
       "stake": "Apuesta",
       "staked": "Apostado",
       "stake-more": "Apuesta más",
-      "stake-earn-points-label": "Apuesta y|ganar p|untos",
       "staking-assets": "Activos en apuesta",
       "subtitle": "Apueste sus activos para ganar recompensas y aumentar tus puntos.",
       "title": "Panel",

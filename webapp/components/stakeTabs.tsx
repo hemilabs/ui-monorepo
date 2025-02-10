@@ -2,26 +2,25 @@
 
 import { Tab, Tabs } from 'components/tabs'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { usePathname } from 'next/navigation'
-import { useLocale, useTranslations } from 'next-intl'
+import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
+import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 import { isStakeEnabledOnTestnet } from 'utils/stake'
 
 const StakeTabsImpl = function () {
-  const locale = useLocale()
   const [networkType] = useNetworkType()
-  const pathname = usePathname()
+  const pathname = usePathnameWithoutLocale()
   const t = useTranslations('stake-page')
 
   if (
-    !pathname.startsWith(`/${locale}/stake/`) ||
+    !pathname.startsWith(`/stake/`) ||
     !isStakeEnabledOnTestnet(networkType)
   ) {
     return null
   }
 
-  const isInDashboard = pathname === `/${locale}/stake/dashboard/`
-  const isInStake = pathname === `/${locale}/stake/`
+  const isInDashboard = pathname === `/stake/dashboard/`
+  const isInStake = pathname === `/stake/`
 
   return (
     <div className="relative z-20 flex items-center justify-center gap-x-4 sm:flex-col sm:gap-y-4">

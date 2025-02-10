@@ -12,9 +12,10 @@ import { useUmami } from 'app/analyticsEvents'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
+import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { MouseEvent, MutableRefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -109,8 +110,7 @@ const Body = function ({
 }
 
 const CallToAction = function ({ stake }: ActionProps) {
-  const locale = useLocale()
-  const pathname = usePathname().replace(`/${locale}`, '')
+  const pathname = usePathnameWithoutLocale()
 
   const queryString = queryStringObjectToString({
     mode: 'manage',
@@ -261,11 +261,6 @@ const StakeAssetsTableImp = function ({ containerRef, data, loading }: Props) {
   )
 }
 
-function stakeMore() {
-  // TODO - implement this function
-  // Related to the issue #774 - https://github.com/hemilabs/ui-monorepo/issues/774
-}
-
 export const StakeAssetsTable = function () {
   const locale = useLocale()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -278,7 +273,7 @@ export const StakeAssetsTable = function () {
   const { hasPositions, loading } = result
 
   if (!hasPositions) {
-    return <WelcomeStake onClick={stakeMore} />
+    return <WelcomeStake />
   }
 
   const stakeMoreUrl = '/stake'

@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react'
 
-export const StakeAndEarnPointsGraphIcon = (props: ComponentProps<'svg'>) => (
+export const StakeGraph = (props: ComponentProps<'svg'>) => (
   <svg
     fill="none"
     height={320}

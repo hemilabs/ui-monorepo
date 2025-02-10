@@ -200,7 +200,7 @@ export const StakeStrategyTable = function ({ data, loading }: Props) {
   }
 
   return (
-    <div className="rounded-2.5xl relative z-20 -translate-y-32 bg-neutral-100 p-1 text-sm font-medium md:-translate-y-24">
+    <div className="rounded-2.5xl bg-neutral-100 p-1 text-sm font-medium">
       <div className="flex w-full flex-wrap items-center justify-between gap-x-2 gap-y-2 px-3.5 py-2 md:flex-nowrap md:px-3">
         <h5 className="flex-shrink-0 md:flex-grow-0 md:basis-auto">
           {t('strategy')}

@@ -23,8 +23,8 @@ export const watchDepositOnBitcoin = async function (
   const updates: Partial<BtcDepositOperation> = {}
 
   const newStatus = receipt.status.confirmed
-    ? BtcDepositStatus.TX_CONFIRMED
-    : BtcDepositStatus.TX_PENDING
+    ? BtcDepositStatus.BTC_TX_CONFIRMED
+    : BtcDepositStatus.BTC_TX_PENDING
 
   if (deposit.status !== newStatus) {
     debug(

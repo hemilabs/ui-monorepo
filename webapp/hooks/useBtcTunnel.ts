@@ -57,7 +57,10 @@ export const useConfirmBitcoinDeposit = function (
       }),
     mutationKey: [hemiClient, hemiWalletClient],
     onSuccess: confirmationTransactionHash =>
-      updateDeposit(deposit, { confirmationTransactionHash }),
+      updateDeposit(deposit, {
+        confirmationTransactionHash,
+        status: BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING,
+      }),
   })
 
   const {
@@ -68,7 +71,7 @@ export const useConfirmBitcoinDeposit = function (
 
   const clearConfirmBitcoinDepositState = useCallback(
     function () {
-      // reset the claiming state
+      // reset the confirm state
       resetConfirmBitcoinDeposit()
       // clear deposit receipt state
       queryClient.invalidateQueries({ queryKey: confirmBitcoinDepositQueryKey })
@@ -77,11 +80,29 @@ export const useConfirmBitcoinDeposit = function (
   )
 
   useEffect(
-    function handleClaimSuccess() {
+    function handleConfirmDepositFailure() {
+      if (!confirmBitcoinDepositReceiptError) {
+        return
+      }
+      if (
+        deposit.status ===
+        BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED
+      ) {
+        return
+      }
+      updateDeposit(deposit, {
+        status: BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
+      })
+    },
+    [confirmBitcoinDepositReceiptError, deposit, updateDeposit],
+  )
+
+  useEffect(
+    function handleConfirmDepositSuccess() {
       if (confirmBitcoinDepositReceipt?.status !== 'success') {
         return
       }
-      if (deposit.status !== BtcDepositStatus.BTC_READY_CLAIM) {
+      if (deposit.status === BtcDepositStatus.BTC_DEPOSITED) {
         return
       }
       updateDeposit(deposit, {
@@ -93,8 +114,8 @@ export const useConfirmBitcoinDeposit = function (
     [confirmBitcoinDepositReceipt, deposit, updateDeposit],
   )
 
-  const handleClaim = function () {
-    if (deposit.status !== BtcDepositStatus.BTC_READY_CLAIM) {
+  const handleConfirmManually = function () {
+    if (deposit.status !== BtcDepositStatus.READY_TO_MANUAL_CONFIRM) {
       return
     }
     clearConfirmBitcoinDepositState()
@@ -105,7 +126,7 @@ export const useConfirmBitcoinDeposit = function (
 
   return {
     clearConfirmBitcoinDepositState,
-    confirmBitcoinDeposit: handleClaim,
+    confirmBitcoinDeposit: handleConfirmManually,
     confirmBitcoinDepositError,
     confirmBitcoinDepositReceipt,
     confirmBitcoinDepositReceiptError,
@@ -155,7 +176,7 @@ export const useDepositBitcoin = function () {
         l1Token: btc.address,
         l2ChainId,
         l2Token: btc.extensions.bridgeInfo[l2ChainId].tokenAddress,
-        status: BtcDepositStatus.TX_PENDING,
+        status: BtcDepositStatus.BTC_TX_PENDING,
         to: bitcoinCustodyAddress,
         transactionHash: txHash,
       })
@@ -190,7 +211,7 @@ export const useDepositBitcoin = function () {
       const deposit = deposits.find(
         d =>
           d.transactionHash === currentTxHash &&
-          d.status === BtcDepositStatus.TX_PENDING,
+          d.status === BtcDepositStatus.BTC_TX_PENDING,
       )
       if (!deposit) {
         return
@@ -199,7 +220,7 @@ export const useDepositBitcoin = function () {
       clearDepositState()
 
       updateDeposit(deposit, {
-        status: BtcDepositStatus.DEPOSIT_TX_FAILED,
+        status: BtcDepositStatus.BTC_TX_FAILED,
       })
     },
     [
@@ -230,7 +251,7 @@ export const useDepositBitcoin = function () {
 
       updateDeposit(deposit, {
         blockNumber: depositReceipt.status.blockHeight,
-        status: BtcDepositStatus.TX_CONFIRMED,
+        status: BtcDepositStatus.BTC_TX_CONFIRMED,
         timestamp: getBitcoinTimestamp(depositReceipt.status.blockTime),
       })
     },

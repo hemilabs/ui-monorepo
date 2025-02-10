@@ -1,17 +1,17 @@
 import { StaticImageData } from 'next/image'
 import { StakeProtocols } from 'types/stake'
 
-import bedRock from './images/bedRock.png'
-import bitFi from './images/bitFi.png'
-import exSat from './images/exSat.png'
-import hemi from './images/hemi.png'
-import lorenzo from './images/lorenzo.png'
-import merlinChain from './images/merlinChain.png'
-import nodeDao from './images/nodeDao.png'
-import pumpBtc from './images/pumpBtc.png'
-import solv from './images/solv.png'
-import stakeStone from './images/stakeStone.png'
-import uniRouter from './images/uniRouter.png'
+import bedRock from './images/bedRock.svg'
+import bitFi from './images/bitFi.svg'
+import exSat from './images/exSat.svg'
+import hemi from './images/hemi.svg'
+import lorenzo from './images/lorenzo.svg'
+import merlinChain from './images/merlinChain.svg'
+import nodeDao from './images/nodeDao.svg'
+import pumpBtc from './images/pumpBtc.svg'
+import solv from './images/solv.svg'
+import stakeStone from './images/stakeStone.svg'
+import uniRouter from './images/uniRouter.svg'
 
 export const protocolImages: Record<StakeProtocols, StaticImageData> = {
   bedRock,

@@ -248,10 +248,12 @@
   },
   "transaction-history": {
     "challenge-in-progress": "Challenge in progress",
+    "confirming": "Confirming...",
     "connect-wallet-to-review": "Connect your wallet to review transaction history.",
     "in-challenge-period": "In Challenge period",
     "loading-transactions": "Loading transactions",
     "ready-to-claim": "Ready to claim",
+    "ready-to-confirm": "Ready to confirm",
     "ready-to-prove": "Ready to prove",
     "unsupported-chain-subheading": "Connect to a supported chain to view your transaction history.",
     "waiting-confirmation": "Waiting confirmation",
@@ -330,6 +332,7 @@
       "actions": {
         "challenge": "Challenge",
         "claim": "Claim",
+        "confirm": "Confirm",
         "prove": "Prove",
         "view": "View"
       },

@@ -16,15 +16,23 @@ export const DepositStatus = function ({ deposit }: Props) {
     return <TxStatus.Success />
   }
   const statuses = {
-    [BtcDepositStatus.TX_PENDING]: (
+    [BtcDepositStatus.BTC_TX_PENDING]: (
       <TxStatus.InStatus text={t('transaction-history.waiting-confirmation')} />
     ),
-    [BtcDepositStatus.TX_CONFIRMED]: (
-      <TxStatus.InStatus text={t('common.wait-hours', { hours: 2 })} />
+    [BtcDepositStatus.BTC_TX_CONFIRMED]: (
+      <TxStatus.InStatus text={t('common.wait-hours', { hours: 3 })} />
     ),
-    [BtcDepositStatus.BTC_READY_CLAIM]: (
-      <TxStatus.InStatus text={t('transaction-history.ready-to-claim')} />
+    [BtcDepositStatus.READY_TO_MANUAL_CONFIRM]: (
+      <TxStatus.InStatus text={t('transaction-history.ready-to-confirm')} />
     ),
+    [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING]: (
+      <TxStatus.InStatus text={t('transaction-history.confirming')} />
+    ),
+    [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED]: (
+      <TxStatus.Failed />
+    ),
+    [BtcDepositStatus.BTC_TX_FAILED]: <TxStatus.Failed />,
+    [BtcDepositStatus.BTC_DEPOSITED_MANUALLY]: <TxStatus.Success />,
     [BtcDepositStatus.BTC_DEPOSITED]: <TxStatus.Success />,
   }
 

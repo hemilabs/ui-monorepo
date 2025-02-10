@@ -248,10 +248,12 @@
   },
   "transaction-history": {
     "challenge-in-progress": "Desafío en progreso",
+    "confirming": "Confirmando...",
     "connect-wallet-to-review": "Conecte su billetera para revisar su historial de transacciones.",
     "in-challenge-period": "En período de Desafío",
     "loading-transactions": "Cargando transacciones",
     "ready-to-claim": "Listo para reclamar",
+    "ready-to-confirm": "Listo para confirmar",
     "ready-to-prove": "Listo para probar",
     "unsupported-chain-subheading": "Conéctese a una red soportada para ver su historial de transacciones.",
     "waiting-confirmation": "Esperando confirmación",
@@ -330,6 +332,7 @@
       "actions": {
         "challenge": "Desafiar",
         "claim": "Reclamar",
+        "confirm": "Confirmar",
         "prove": "Probar",
         "view": "Ver"
       },

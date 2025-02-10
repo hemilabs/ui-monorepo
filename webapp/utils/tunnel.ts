@@ -44,27 +44,9 @@ export const isToEvmWithdraw = (
   withdraw: WithdrawTunnelOperation,
 ): withdraw is ToEvmWithdrawOperation => isEvmOperation(withdraw)
 
-export const getOperationFromDeposit = function (
-  deposit: DepositTunnelOperation,
-) {
-  if (isEvmDeposit(deposit)) {
-    // only action available for EVM deposits is view
-    return 'view'
-  }
-
-  const btcDepositStatusToAction = {
-    [BtcDepositStatus.TX_PENDING]: 'deposit',
-    [BtcDepositStatus.TX_CONFIRMED]: 'deposit',
-    [BtcDepositStatus.BTC_READY_CLAIM]: 'claim',
-    [BtcDepositStatus.BTC_DEPOSITED]: 'view',
-  } as const
-
-  return btcDepositStatusToAction[deposit.status]
-}
-
 const btcDepositCompletedActions = [
   BtcDepositStatus.BTC_DEPOSITED,
-  BtcDepositStatus.DEPOSIT_TX_FAILED,
+  BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
 ]
 
 const btcWithdrawCompletedActions = [

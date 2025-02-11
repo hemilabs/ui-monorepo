@@ -12,7 +12,6 @@ import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { ExternalLink } from 'components/externalLink'
 import { TokenLogo } from 'components/tokenLogo'
-import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { MouseEvent, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -20,7 +19,7 @@ import { StakeToken } from 'types/stake'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 
 import { useDrawerStakeQueryString } from '../../_hooks/useDrawerStakeQueryString'
-import { protocolImages } from '../../protocols/protocolImages'
+import { ProtocolImage } from '../protocolImage'
 import { Column, ColumnHeader, Header } from '../table'
 import { TokenBalance } from '../tokenBalance'
 import { TokenRewards } from '../tokenRewards'
@@ -31,10 +30,7 @@ const columnsBuilder = (
   {
     cell: ({ row }) => (
       <div className="flex items-center space-x-2">
-        <Image
-          alt={row.original.extensions.protocol}
-          src={protocolImages[row.original.extensions.protocol]}
-        />
+        <ProtocolImage protocol={row.original.extensions.protocol} />
       </div>
     ),
     header: () => <Header text={t('protocol')} />,

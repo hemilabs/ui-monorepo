@@ -7,12 +7,12 @@ import {
   hemi as hemiMainnet,
   hemiSepolia,
 } from 'hemi-viem'
-import { hemiPublicStakeActions } from 'hemi-viem-stake-actions'
-import { useMemo } from 'react'
 import {
-  hemiPublicExtraActions,
-  hemiWalletExtraActions,
-} from 'utils/hemiClientExtraActions'
+  hemiPublicStakeActions,
+  hemiWalletStakeActions,
+} from 'hemi-viem-stake-actions'
+import { useMemo } from 'react'
+import { hemiPublicExtraActions } from 'utils/hemiClientExtraActions'
 import { type WalletClient, type PublicClient } from 'viem'
 import { usePublicClient, useWalletClient } from 'wagmi'
 
@@ -45,7 +45,7 @@ export const useHemiClient = function () {
 const walletClientToHemiClient = (walletClient: WalletClient) =>
   walletClient
     .extend(hemiWalletBitcoinTunnelManagerActions())
-    .extend(hemiWalletExtraActions())
+    .extend(hemiWalletStakeActions())
 
 export const useHemiWalletClient = function () {
   const hemi = useHemi()

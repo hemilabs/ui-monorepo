@@ -1,5 +1,5 @@
-import { ClockIcon } from './icons/clockIcon'
-import { OrangeCheckIcon } from './icons/orangeCheckIcon'
+import { ClockIcon } from './_icons/clockIcon'
+import { OrangeCheckIcon } from './_icons/orangeCheckIcon'
 import { ProgressStatus } from './progressStatus'
 
 type Props = {

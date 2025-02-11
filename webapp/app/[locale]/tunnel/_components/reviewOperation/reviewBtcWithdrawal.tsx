@@ -1,5 +1,7 @@
 'use client'
 
+import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useSimpleVaultGracePeriod } from 'hooks/useSimpleVaultGracePeriod'
@@ -15,8 +17,6 @@ import { ChallengeBtcWithdrawal } from '../challengeBtcWithdrawal'
 import { RetryBtcWithdraw } from '../retryBtcWithdraw'
 
 import { Operation } from './operation'
-import { ProgressStatus } from './progressStatus'
-import { type StepPropsWithoutPosition } from './step'
 
 const getCallToAction = function (withdrawal: ToBtcWithdrawOperation) {
   switch (withdrawal.status) {

@@ -1,3 +1,5 @@
+import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
@@ -13,8 +15,6 @@ import { ConfirmBtcDeposit } from '../confirmBtcDeposit'
 import { RetryBtcDeposit } from '../retryBtcDeposit'
 
 import { Operation } from './operation'
-import { ProgressStatus } from './progressStatus'
-import { type StepPropsWithoutPosition } from './step'
 
 const getCallToAction = function (deposit: BtcDepositOperation) {
   switch (deposit.status) {

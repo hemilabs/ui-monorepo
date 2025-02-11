@@ -1,6 +1,7 @@
 'use client'
 
 import ReactDOM from 'react-dom'
+import { CloseIcon } from 'ui-common/components/closeIcon'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 import { useOnKeyUp } from 'ui-common/hooks/useOnKeyUp'
 
@@ -45,6 +46,23 @@ export const DrawerParagraph = ({ children }: { children: string }) => (
 
 export const DrawerTitle = ({ children }: { children: string }) => (
   <h2 className="text-2xl font-medium text-neutral-950">{children}</h2>
+)
+
+export const DrawerTopSection = ({
+  heading,
+  onClose,
+}: {
+  heading: string
+  onClose?: () => void
+}) => (
+  <div className="flex items-center justify-between">
+    <DrawerTitle>{heading}</DrawerTitle>
+    {!!onClose && (
+      <button className="cursor-pointer" onClick={onClose} type="button">
+        <CloseIcon className="[&>path]:hover:stroke-black" />
+      </button>
+    )}
+  </div>
 )
 
 export const DrawerSection = ({ children }: { children: React.ReactNode }) => (

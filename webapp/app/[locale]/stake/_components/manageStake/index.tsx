@@ -5,7 +5,7 @@ import {
   Drawer,
   DrawerParagraph,
   DrawerSection,
-  DrawerTitle,
+  DrawerTopSection,
 } from 'components/drawer'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
@@ -14,7 +14,6 @@ import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedN
 import { useTranslations } from 'next-intl'
 import { FormEvent, useState } from 'react'
 import { StakeToken } from 'types/stake'
-import { CloseIcon } from 'ui-common/components/closeIcon'
 import { canSubmit } from 'utils/stake'
 import { parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -90,16 +89,7 @@ export const ManageStake = function ({
         className="drawer-content h-[95dvh] md:h-full"
         onSubmit={handleSubmit}
       >
-        <div className="flex items-center justify-between">
-          <DrawerTitle>{heading}</DrawerTitle>
-          <button
-            className="cursor-pointer"
-            onClick={closeDrawer}
-            type="button"
-          >
-            <CloseIcon className="[&>path]:hover:stroke-black" />
-          </button>
-        </div>
+        <DrawerTopSection heading={heading} onClose={closeDrawer} />
         <div className="mb-5">
           <DrawerParagraph>{subheading}</DrawerParagraph>
         </div>

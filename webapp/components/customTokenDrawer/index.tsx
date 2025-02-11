@@ -2,7 +2,7 @@
 
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from 'components/button'
-import { Drawer, DrawerParagraph, DrawerTitle } from 'components/drawer'
+import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { useChain } from 'hooks/useChain'
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useL2Token } from 'hooks/useL2Token'
@@ -12,7 +12,6 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { getRemoteTokens } from 'tokenList'
 import { EvmToken, L2Token, Token } from 'types/token'
-import { CloseIcon } from 'ui-common/components/closeIcon'
 import { isL2Network } from 'utils/chain'
 import {
   type Address,
@@ -171,16 +170,7 @@ export const CustomTokenDrawer = function ({
         className="drawer-content h-[80dvh] md:h-full"
         onSubmit={handleSubmit}
       >
-        <div className="flex items-center justify-between">
-          <DrawerTitle>{t('heading')}</DrawerTitle>
-          <button
-            className="cursor-pointer"
-            onClick={closeDrawer}
-            type="button"
-          >
-            <CloseIcon className="[&>path]:hover:stroke-black" />
-          </button>
-        </div>
+        <DrawerTopSection heading={t('heading')} onClose={closeDrawer} />
         <DrawerParagraph>{t('subheading')}</DrawerParagraph>
         <TokenSection
           addressDisabled

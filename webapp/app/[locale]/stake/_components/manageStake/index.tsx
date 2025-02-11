@@ -13,7 +13,7 @@ import { useTokenBalance } from 'hooks/useBalance'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
 import { FormEvent, useState } from 'react'
-import { StakeToken } from 'types/stake'
+import { type StakeOperations, type StakeToken } from 'types/stake'
 import { canSubmit } from 'utils/stake'
 import { parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -26,7 +26,6 @@ import { StakeMaxBalance, UnstakeMaxBalance } from './maxBalance'
 import { StrategyDetails } from './strategyDetails'
 import { SubmitButton } from './submitButton'
 import { Tabs } from './tabs'
-import { StakeOperations } from './types'
 
 type Props = {
   closeDrawer: () => void

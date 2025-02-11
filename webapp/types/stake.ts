@@ -39,3 +39,5 @@ export type StakeToken = Omit<EvmToken, 'address'> & {
     rewards: Reward[]
   }
 }
+
+export type StakeOperations = 'stake' | 'unstake'

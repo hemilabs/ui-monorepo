@@ -1,6 +1,5 @@
 import { useTranslations } from 'next-intl'
-
-import { type StakeOperations } from './types'
+import { type StakeOperations } from 'types/stake'
 
 const Tab = ({
   onSelect,

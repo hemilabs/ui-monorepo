@@ -86,7 +86,10 @@ export const ManageStake = function ({
 
   return (
     <Drawer onClose={closeDrawer}>
-      <form className="drawer-content h-[95dvh] md:h-full">
+      <form
+        className="drawer-content h-[95dvh] md:h-full"
+        onSubmit={handleSubmit}
+      >
         <div className="flex items-center justify-between">
           <DrawerTitle>{heading}</DrawerTitle>
           <button
@@ -155,7 +158,6 @@ export const ManageStake = function ({
           <SubmitButton
             // TODO disable when submitting https://github.com/hemilabs/ui-monorepo/issues/774
             disabled={submitDisabled}
-            onSubmit={handleSubmit}
             text={tCommon(operation)}
           />
         </div>

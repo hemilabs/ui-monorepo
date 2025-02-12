@@ -1,4 +1,7 @@
 import hemilabsTokenList from '@hemilabs/token-list'
+import { waitForTransactionReceipt } from '@wagmi/core'
+import { allEvmNetworksWalletConfig } from 'context/evmWalletContext'
+import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import {
   type HemiPublicClient,
   type HemiWalletClient,
@@ -6,8 +9,12 @@ import {
 import { NetworkType } from 'hooks/useNetworkType'
 import { EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
-import { getErc20TokenBalance } from 'utils/token'
-import { type Address, Chain, parseUnits } from 'viem'
+import {
+  approveErc20Token,
+  getErc20TokenAllowance,
+  getErc20TokenBalance,
+} from 'utils/token'
+import { type Address, Chain, Hash, parseUnits } from 'viem'
 
 export const isStakeEnabledOnTestnet = (networkType: NetworkType) =>
   networkType !== 'testnet' ||
@@ -103,48 +110,154 @@ function getTokenAddress(token: EvmToken): Address {
   return token.address as Address
 }
 
+export type StakeEvents = Partial<{
+  onStake: () => void
+  onStakeConfirmed: () => void
+  onStakeFailed: () => void
+  onStakeTokenApprovalFailed: () => void
+  onStakeTokenApproved: () => void
+  onTokenApprove: () => void
+  onUserRejectedStake: () => void
+  onUserRejectedTokenApproval: () => void
+  onUserSignedStake: (hash: Hash) => void
+  onUserSignedTokenApproval: (hash: Hash) => void
+}>
+
 /**
  * Stakes an amount of a token in Hemi.
  * @param params All the parameters needed to determine if a user can stake a token
- * @param amount The amount of tokens to stake
- * @param forAccount The address of the user that will stake
- * @param hemiPublicClient Hemi public client for read-only calls
- * @param hemiWalletClient Hemi Wallet client for signing transactions
- * @param token The token to stake
+ * @param params.amount The amount of tokens to stake
+ * @param params.forAccount The address of the user that will stake
+ * @param params.hemiPublicClient Hemi public client for read-only calls
+ * @param params.hemiWalletClient Hemi Wallet client for signing transactions
+ * @param params.onStake Optional callback to run prior to prompt the user to sign a Stake transaction
+ * @param params.onStakeConfirmed Optional callback for the Stake transaction confirmation
+ * @param params.onStakeFailed Optional callback for the Stake transaction failure
+ * @param params.onStakeTokenApprovalFailed Optional callback for the Token approval transaction failure
+ * @param params.onStakeTokenApproved Optional callback after the token is approved
+ * @param params.onTokenApprove Optional callback to run prior to prompt the user to sign the Token approval transaction
+ * @param params.onUserRejectedStake Optional callback for the user rejecting to sign the Stake transaction
+ * @param params.onUserRejectedTokenApproval Optional callback for the user rejecting to sign the Token approval transaction
+ * @param params.onUserSignedStake Optional callback for the user signing the Stake transaction
+ * @param params.onUserSignedTokenApproval Optional callback for the user signing the Token approval transaction
+ * @param params.token The token to stake
  */
 export const stake = async function ({
   amount,
   forAccount,
   hemiPublicClient,
   hemiWalletClient,
+  onStake,
+  onStakeConfirmed,
+  onStakeFailed,
+  onStakeTokenApprovalFailed,
+  onStakeTokenApproved,
+  onTokenApprove,
+  onUserRejectedStake,
+  onUserRejectedTokenApproval,
+  onUserSignedStake,
+  onUserSignedTokenApproval,
   token,
 }: {
-  amount: string
+  amount: bigint
   forAccount: Address
   hemiPublicClient: HemiPublicClient
   hemiWalletClient: HemiWalletClient
   token: EvmToken
-}) {
-  const amountUnits = parseUnits(amount, token.decimals)
+} & StakeEvents) {
   await validateOperation({
-    amount: amountUnits,
+    amount,
     forAccount,
     hemiPublicClient,
     token,
   })
 
+  let stakePromise: Promise<Hash> | undefined
+
   if (isNativeToken(token)) {
-    return hemiWalletClient.stakeETHToken({
-      amount: amountUnits,
+    onStake?.()
+    stakePromise = hemiWalletClient.stakeETHToken({
+      amount,
       forAccount,
+    })
+  } else {
+    const spender = stakeManagerAddresses[token.chainId]
+    const tokenAddress = token.address as Address
+    const allowance = await getErc20TokenAllowance({
+      // It works in runtime, but Typescript fails to interpret HemiPublicClient as a Client.
+      // I've seen that the typings change in future viem's version, so this may be soon fixed
+      // @ts-expect-error hemiPublicClient is Client
+      client: hemiPublicClient,
+      owner: forAccount,
+      spender,
+      token,
+    })
+
+    if (allowance < amount) {
+      // first, we need to approve the token to be spent by the stake manager
+      onTokenApprove?.()
+      const approveTxHash = await approveErc20Token({
+        address: tokenAddress,
+        amount,
+        // @ts-expect-error hemiWalletClient is Client
+        client: hemiWalletClient,
+        spender: stakeManagerAddresses[token.chainId],
+      }).catch(onUserRejectedTokenApproval)
+
+      if (!approveTxHash) {
+        return
+      }
+      // up to this point, the user has accepted the approval
+      onUserSignedTokenApproval?.(approveTxHash)
+
+      const approvalReceipt = await waitForTransactionReceipt(
+        allEvmNetworksWalletConfig,
+        {
+          chainId: token.chainId,
+          hash: approveTxHash,
+        },
+      ).catch(onStakeTokenApprovalFailed)
+
+      if (!approvalReceipt) {
+        return
+      }
+
+      if (approvalReceipt.status === 'success') {
+        onStakeTokenApproved?.()
+      } else {
+        onStakeTokenApprovalFailed?.()
+      }
+    }
+    onStake?.()
+    stakePromise = hemiWalletClient.stakeERC20Token({
+      amount,
+      forAccount,
+      tokenAddress,
     })
   }
 
-  return hemiWalletClient.stakeERC20Token({
-    amount: amountUnits,
-    forAccount,
-    tokenAddress: token.address as Address,
-  })
+  const stakeTransactionHash = await stakePromise.catch(onUserRejectedStake)
+
+  if (!stakeTransactionHash) {
+    return
+  }
+  // up to this point, the user has signed the Transaction
+  onUserSignedStake?.(stakeTransactionHash)
+
+  const receipt = await waitForTransactionReceipt(allEvmNetworksWalletConfig, {
+    chainId: token.chainId,
+    hash: stakeTransactionHash,
+  }).catch(onStakeFailed)
+  // if receipt is null, it's already handled on the .catch() above
+  if (!receipt) {
+    return
+  }
+
+  if (receipt.status === 'success') {
+    onStakeConfirmed?.()
+  } else {
+    onStakeFailed?.()
+  }
 }
 
 /**

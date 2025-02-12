@@ -8,7 +8,7 @@ import {
   isAddress,
   isAddressEqual,
 } from 'viem'
-import { readContract } from 'viem/actions'
+import { readContract, writeContract } from 'viem/actions'
 
 import { getNativeToken, isNativeAddress } from './nativeToken'
 
@@ -30,6 +30,44 @@ export const getTokenByAddress = function (
 
 export const isEvmToken = (token: Token): token is EvmToken =>
   typeof token.chainId === 'number'
+
+export const approveErc20Token = ({
+  address,
+  amount,
+  client,
+  spender,
+}: {
+  address: Address
+  amount: bigint
+  client: Client
+  spender: Address
+}) =>
+  writeContract(client, {
+    abi: erc20Abi,
+    address,
+    args: [spender, amount],
+    // @ts-expect-error: TS is complaining about client.chain definition, but this works
+    chain: client.chain,
+    functionName: 'approve',
+  })
+
+export const getErc20TokenAllowance = ({
+  client,
+  owner,
+  spender,
+  token,
+}: {
+  client: Client
+  owner: Address
+  spender: Address
+  token: EvmToken
+}) =>
+  readContract(client, {
+    abi: erc20Abi,
+    address: token.address as Address,
+    args: [owner, spender],
+    functionName: 'allowance',
+  })
 
 export const getErc20TokenBalance = ({
   address,

@@ -10,7 +10,7 @@ type Props = {
 export const SubmitButton = function ({ disabled, text }: Props) {
   const hemi = useHemi()
   return (
-    <div className="flex [&>button]:w-full">
+    <div className="mt-2 flex px-4 md:px-6 [&>button]:w-full">
       <SubmitWhenConnectedToChain
         chainId={hemi.id}
         submitButton={

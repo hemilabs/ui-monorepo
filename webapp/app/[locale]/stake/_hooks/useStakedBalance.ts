@@ -6,6 +6,22 @@ import { StakeToken } from 'types/stake'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
+export const getStakedBalanceQueryKey = ({
+  address,
+  networkType,
+  token,
+}: {
+  address: Address
+  networkType: NetworkType
+  token: StakeToken
+}) => [
+  'staked-token-balance',
+  address,
+  networkType,
+  token.chainId,
+  token.address,
+]
+
 const getStakedBalance = ({
   address,
   hemiClient,
@@ -40,13 +56,7 @@ const getQuery = ({
 }) => ({
   enabled: isConnected && !!address,
   queryFn: getStakedBalance({ address, hemiClient, token }),
-  queryKey: [
-    'staked-token-balance',
-    address,
-    networkType,
-    token.chainId,
-    token.address,
-  ],
+  queryKey: getStakedBalanceQueryKey({ address, networkType, token }),
 })
 
 export const useStakedBalance = function (token: StakeToken) {

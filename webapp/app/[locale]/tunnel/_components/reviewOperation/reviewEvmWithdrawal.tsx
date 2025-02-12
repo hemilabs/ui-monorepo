@@ -1,4 +1,6 @@
 import { MessageStatus } from '@eth-optimism/sdk'
+import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useToken } from 'hooks/useToken'
@@ -22,8 +24,6 @@ import { ProveWithdrawal } from '../proveEvmWithdrawal'
 import { RetryEvmWithdrawal } from '../retryEvmWithdrawal'
 
 import { Operation } from './operation'
-import { ProgressStatus } from './progressStatus'
-import { type StepPropsWithoutPosition } from './step'
 
 const ExpectedWithdrawalWaitTimeMinutesTestnet = 20
 const ExpectedWithdrawalWaitTimeMinutesMainnet = 30

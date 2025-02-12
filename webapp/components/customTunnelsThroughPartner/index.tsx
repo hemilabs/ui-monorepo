@@ -1,10 +1,9 @@
-import { Drawer, DrawerParagraph, DrawerTitle } from 'components/drawer'
+import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { WarningBox } from 'components/warningBox'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { mainnet } from 'networks/mainnet'
 import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
-import { CloseIcon } from 'ui-common/components/closeIcon'
 import { isEvmToken } from 'utils/token'
 
 import { Stargate } from './stargate'
@@ -35,12 +34,10 @@ export const CustomTunnelsThroughPartner = function ({
     <Drawer onClose={onClose}>
       <div className="drawer-content max-md:pb-16 md:h-full">
         <div className="flex items-center justify-between">
-          <DrawerTitle>
-            {t(`${operation}.heading`, { symbol: fromToken.symbol })}
-          </DrawerTitle>
-          <button className="cursor-pointer" onClick={onClose}>
-            <CloseIcon className="[&>path]:hover:stroke-black" />
-          </button>
+          <DrawerTopSection
+            heading={t(`${operation}.heading`, { symbol: fromToken.symbol })}
+            onClose={onClose}
+          />
         </div>
         <div className="mb-3">
           <DrawerParagraph>

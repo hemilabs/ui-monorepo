@@ -1,5 +1,7 @@
 'use client'
 
+import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
@@ -15,8 +17,6 @@ import { useDeposit } from '../../_hooks/useDeposit'
 import { RetryEvmDeposit } from '../retryEvmDeposit'
 
 import { Operation } from './operation'
-import { ProgressStatus } from './progressStatus'
-import { type StepPropsWithoutPosition } from './step'
 
 const getCallToAction = (deposit: EvmDepositOperation) =>
   deposit.status === EvmDepositStatus.DEPOSIT_TX_FAILED ? (

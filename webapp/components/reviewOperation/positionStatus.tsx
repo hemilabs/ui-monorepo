@@ -1,5 +1,5 @@
-import { ErrorIcon } from './icons/errorIcon'
-import { OrangeCheckIcon } from './icons/orangeCheckIcon'
+import { ErrorIcon } from './_icons/errorIcon'
+import { OrangeCheckIcon } from './_icons/orangeCheckIcon'
 import { ProgressStatus } from './progressStatus'
 
 type Props = {

@@ -4,11 +4,10 @@ import {
   useConnectModal,
 } from '@rainbow-me/rainbowkit'
 import { featureFlags } from 'app/featureFlags'
-import { Drawer, DrawerParagraph, DrawerTitle } from 'components/drawer'
+import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { CloseIcon } from 'ui-common/components/closeIcon'
 
 import { BtcWallet, EvmWallet } from './wallets'
 
@@ -42,12 +41,10 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
     <Drawer onClose={onClose}>
       <div className="drawer-content max-md:pb-18 h-full md:max-w-md">
         <div className="flex h-full flex-col gap-y-3">
-          <div className="flex items-center justify-between">
-            <DrawerTitle>{t('common.connect-wallets')}</DrawerTitle>
-            <button className="cursor-pointer" onClick={closeDrawer}>
-              <CloseIcon className="[&>path]:hover:stroke-black" />
-            </button>
-          </div>
+          <DrawerTopSection
+            heading={t('common.connect-wallets')}
+            onClose={closeDrawer}
+          />
           {featureFlags.btcTunnelEnabled ? (
             <DrawerParagraph>
               {t('connect-wallets.description')}

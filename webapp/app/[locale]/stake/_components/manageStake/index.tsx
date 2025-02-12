@@ -5,7 +5,7 @@ import {
   Drawer,
   DrawerParagraph,
   DrawerSection,
-  DrawerTitle,
+  DrawerTopSection,
 } from 'components/drawer'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
@@ -13,8 +13,7 @@ import { useTokenBalance } from 'hooks/useBalance'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
 import { FormEvent, useState } from 'react'
-import { StakeToken } from 'types/stake'
-import { CloseIcon } from 'ui-common/components/closeIcon'
+import { type StakeOperations, type StakeToken } from 'types/stake'
 import { canSubmit } from 'utils/stake'
 import { parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -27,7 +26,6 @@ import { StakeMaxBalance, UnstakeMaxBalance } from './maxBalance'
 import { StrategyDetails } from './strategyDetails'
 import { SubmitButton } from './submitButton'
 import { Tabs } from './tabs'
-import { StakeOperations } from './types'
 
 type Props = {
   closeDrawer: () => void
@@ -86,17 +84,11 @@ export const ManageStake = function ({
 
   return (
     <Drawer onClose={closeDrawer}>
-      <form className="drawer-content h-[95dvh] md:h-full">
-        <div className="flex items-center justify-between">
-          <DrawerTitle>{heading}</DrawerTitle>
-          <button
-            className="cursor-pointer"
-            onClick={closeDrawer}
-            type="button"
-          >
-            <CloseIcon className="[&>path]:hover:stroke-black" />
-          </button>
-        </div>
+      <form
+        className="drawer-content h-[95dvh] md:h-full"
+        onSubmit={handleSubmit}
+      >
+        <DrawerTopSection heading={heading} onClose={closeDrawer} />
         <div className="mb-5">
           <DrawerParagraph>{subheading}</DrawerParagraph>
         </div>
@@ -155,7 +147,6 @@ export const ManageStake = function ({
           <SubmitButton
             // TODO disable when submitting https://github.com/hemilabs/ui-monorepo/issues/774
             disabled={submitDisabled}
-            onSubmit={handleSubmit}
             text={tCommon(operation)}
           />
         </div>

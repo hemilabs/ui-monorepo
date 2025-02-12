@@ -40,7 +40,7 @@ export const getRemoteTokens = function (token: EvmToken) {
 export const NativeTokenSpecialAddressOnL2 =
   '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000' as Address
 
-export const ethLogoUri =
+const ethLogoUri =
   'https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/eth.svg'
 
 const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])

@@ -1,5 +1,5 @@
+import { getRemoteTokens } from 'app/tokenList'
 import { useMemo } from 'react'
-import { getRemoteTokens } from 'tokenList'
 import { type EvmToken } from 'types/token'
 import useLocalStorageState from 'use-local-storage-state'
 import { isAddress, isAddressEqual } from 'viem'

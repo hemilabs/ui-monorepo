@@ -1,4 +1,4 @@
-import { tokenList, NativeTokenSpecialAddressOnL2 } from 'tokenList'
+import { tokenList, NativeTokenSpecialAddressOnL2 } from 'app/tokenList'
 import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
 import { EvmToken, Token } from 'types/token'
 import {

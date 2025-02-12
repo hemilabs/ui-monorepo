@@ -12,6 +12,7 @@ import { useUmami } from 'app/analyticsEvents'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import { useRouter } from 'next/navigation'
@@ -259,6 +260,7 @@ const StakeAssetsTableImp = function ({ containerRef, data, loading }: Props) {
 
 export const StakeAssetsTable = function () {
   const locale = useLocale()
+  const [networkType] = useNetworkType()
   const containerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const stakeTokens = useStakeTokens()
@@ -278,7 +280,8 @@ export const StakeAssetsTable = function () {
     e.preventDefault()
     e.stopPropagation()
     track?.('stake - stake more')
-    router.push(`/${locale}${stakeMoreUrl}`)
+    const queryString = queryStringObjectToString({ networkType })
+    router.push(`/${locale}${stakeMoreUrl}${queryString}`)
   }
 
   return (

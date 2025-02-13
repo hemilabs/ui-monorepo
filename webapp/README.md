@@ -30,6 +30,12 @@ NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=1 # Vault index to use for bitcoin. De
 # Enable subgraphs for syncing history
 NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH=<true|false>
 # Subgraph configuration per chain
+# Use this for querying a published decentralized subgraph - the API key works for all chains
+NEXT_PUBLIC_SUBGRAPH_API_KEY=<api-key>
+# Use this for querying a published decentralized subgraph
+NEXT_PUBLIC_SUBGRAPH_MAINNET_ID=<subgraph-id>
+NEXT_PUBLIC_SUBGRAPH_SEPOLIA_ID=<subgraph-id>
+# Use this to configure a complete Subgraph Endpoint URL (for example, when running locally)
 NEXT_PUBLIC_SUBGRAPH_MAINNET_URL=<url>
 NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL=<url>
 

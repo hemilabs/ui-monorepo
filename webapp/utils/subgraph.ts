@@ -3,19 +3,40 @@ import { EvmDepositOperation } from 'types/tunnel'
 import { type Address, type Chain, checksumAddress as toChecksum } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
 
+/**
+ * Use this to override the full url - for example, when using subgraph studio
+ * or a local subgraph
+ */
 const subgraphUrls = {
   [mainnet.id]: process.env.NEXT_PUBLIC_SUBGRAPH_MAINNET_URL,
   [sepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL,
+}
+
+/**
+ * Subgraph Ids from the subgraphs published in Arbitrum
+ */
+const subgraphIds = {
+  [mainnet.id]: process.env.NEXT_PUBLIC_SUBGRAPH_MAINNET_ID,
+  [sepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_ID,
 }
 
 type GraphResponse<T> = { data: T }
 
 const getGraphUrl = function (chainId: Chain['id']) {
   const url = subgraphUrls[chainId]
-  if (!url) {
+  if (url) {
+    return url
+  }
+  const subgraphId = subgraphIds[chainId]
+  if (!subgraphId) {
     throw new Error(`Unsupported subgraph for chain Id ${chainId}`)
   }
-  return url
+  const subgraphApiKey = process.env.NEXT_PUBLIC_SUBGRAPH_API_KEY
+  if (!subgraphApiKey) {
+    throw new Error('Missing The Graph API key for querying subgraphs')
+  }
+
+  return `${process.env.NEXT_PUBLIC_THE_GRAPH_API_URL}/${subgraphApiKey}/subgraphs/id/${subgraphId}`
 }
 
 /**

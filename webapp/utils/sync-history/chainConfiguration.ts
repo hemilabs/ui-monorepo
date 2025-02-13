@@ -1,4 +1,4 @@
-import { bitcoinTestnet } from 'btc-wallet/chains'
+import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
@@ -8,6 +8,11 @@ import { sepolia } from 'networks/sepolia'
 const opBasedEvmBlockWindowSize = 3500
 
 export const chainConfiguration = {
+  [bitcoinMainnet.id]: {
+    // this block window is on hemi, based on bitcoin testnet.
+    blockWindowSize: opBasedEvmBlockWindowSize,
+    minBlockToSync: 1_125_154, // BitcoinTunnelManager deployment block
+  },
   [bitcoinTestnet.id]: {
     // this block window is on hemi, based on bitcoin testnet.
     blockWindowSize: opBasedEvmBlockWindowSize,

@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@eth-optimism/sdk": "3.2.1",
-    "@hemilabs/token-list": "1.7.0",
+    "@hemilabs/token-list": "1.9.0",
     "@rainbow-me/rainbowkit": "2.0.1",
     "@sentry/nextjs": "8.35.0",
     "@tanstack/react-query": "5.24.8",
@@ -29,7 +29,7 @@
     "eth-rpc-cache": "2.0.0",
     "fetch-plus-plus": "1.0.0",
     "hemi-socials": "1.0.0",
-    "hemi-viem": "2.0.0",
+    "hemi-viem": "2.1.0",
     "hemi-viem-stake-actions": "1.0.0",
     "javascript-time-ago": "2.5.10",
     "lodash": "4.17.21",

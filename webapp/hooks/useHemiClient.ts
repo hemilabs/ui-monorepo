@@ -20,7 +20,7 @@ import { useHemi } from './useHemi'
 
 const defaultBitcoinVaults = {
   [hemiMainnet.id]: Number.parseInt(
-    process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET || '1',
+    process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET || '0',
   ),
   [hemiSepolia.id]: Number.parseInt(
     process.env.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA || '0',

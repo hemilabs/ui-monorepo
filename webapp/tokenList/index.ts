@@ -61,7 +61,11 @@ const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
   // WETH cannot be tunneled, so we must exclude it
   .filter(t => t.symbol !== 'WETH')
   // TODO the following line once bitcoin is enabled https://github.com/hemilabs/ui-monorepo/issues/738
-  .filter(t => t.symbol !== 'tBTC' || featureFlags.btcTunnelEnabled)
+  .filter(
+    t =>
+      (t.symbol !== 'hemiBTC' && t.symbol !== 'tBTC') ||
+      featureFlags.btcTunnelEnabled,
+  )
   .map(t => ({ ...t, symbol: t.symbol.replace('.e', '').trim() }))
 
 // the hemiTokens only contains definitions for Hemi tokens, but we can create the L1 version with the extensions field info

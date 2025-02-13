@@ -1,12 +1,16 @@
 import hemilabsTokenList from '@hemilabs/token-list'
 import { featureFlags } from 'app/featureFlags'
-import { bitcoinTestnet } from 'btc-wallet/chains'
+import {
+  bitcoinTestnet,
+  bitcoinMainnet,
+  type BtcChain,
+} from 'btc-wallet/chains'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { mainnet } from 'networks/mainnet'
 import { sepolia } from 'networks/sepolia'
 import { Token } from 'types/token'
-import { Address } from 'viem'
+import { type Address, type Chain } from 'viem'
 
 // Special address used by OP to store bridged eth
 // See https://github.com/ethereum-optimism/optimism/blob/fa19f9aa250c0f548e0fdd226114aebf2c4c3fed/packages/contracts-bedrock/src/libraries/Predeploys.sol#L51
@@ -79,27 +83,48 @@ const nativeTokens: Token[] = [
 ]
 
 if (featureFlags.btcTunnelEnabled) {
-  const btcToken = hemilabsTokenList.tokens.find(
-    t =>
-      t.chainId === hemiTestnet.id &&
-      // hemi testnet address of testnet bitcoin
-      t.address === '0x36Ab5Dba83d5d470F670BC4c06d7Da685d9afAe7',
-  )
+  const addBitcoinTokens = function ({
+    btcChain,
+    hemiBtcAddress,
+    hemiChain,
+  }: {
+    btcChain: BtcChain
+    hemiBtcAddress: Address
+    hemiChain: Chain
+  }) {
+    const btcToken = hemilabsTokenList.tokens.find(
+      t => t.chainId === hemiChain.id && t.address === hemiBtcAddress,
+    )
 
-  nativeTokens.push({
-    address: bitcoinTestnet.nativeCurrency.symbol,
-    chainId: bitcoinTestnet.id,
-    decimals: bitcoinTestnet.nativeCurrency.decimals,
-    extensions: {
-      bridgeInfo: {
-        [hemiTestnet.id]: {
-          tokenAddress: btcToken.address as Address,
+    nativeTokens.push({
+      address: btcChain.nativeCurrency.symbol,
+      chainId: btcChain.id,
+      decimals: btcChain.nativeCurrency.decimals,
+      extensions: {
+        bridgeInfo: {
+          [hemiChain.id]: {
+            tokenAddress: hemiBtcAddress,
+          },
         },
       },
-    },
-    logoURI: btcToken.logoURI,
-    name: bitcoinTestnet.name,
-    symbol: bitcoinTestnet.nativeCurrency.symbol,
+      logoURI: btcToken.logoURI,
+      name: btcChain.name,
+      symbol: btcChain.nativeCurrency.symbol,
+    })
+  }
+
+  addBitcoinTokens({
+    btcChain: bitcoinTestnet,
+    hemiBtcAddress:
+      '0x36Ab5Dba83d5d470F670BC4c06d7Da685d9afAe7' satisfies Address,
+    hemiChain: hemiTestnet,
+  })
+
+  addBitcoinTokens({
+    btcChain: bitcoinMainnet,
+    hemiBtcAddress:
+      '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28' satisfies Address,
+    hemiChain: hemiMainnet,
   })
 }
 

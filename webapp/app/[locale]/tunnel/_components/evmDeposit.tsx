@@ -2,10 +2,7 @@
 
 import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
-import {
-  CustomTunnelsThroughPartner,
-  tunnelsThroughPartner,
-} from 'components/customTunnelsThroughPartner'
+import { CustomTunnelsThroughPartner } from 'components/customTunnelsThroughPartner'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
@@ -15,6 +12,7 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
+import { tunnelsThroughPartner } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'

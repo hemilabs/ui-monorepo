@@ -3,10 +3,7 @@
 import { useUmami } from 'app/analyticsEvents'
 import { Big } from 'big.js'
 import { Button } from 'components/button'
-import {
-  CustomTunnelsThroughPartner,
-  tunnelsThroughPartner,
-} from 'components/customTunnelsThroughPartner'
+import { CustomTunnelsThroughPartner } from 'components/customTunnelsThroughPartner'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
@@ -24,6 +21,7 @@ import { Token } from 'types/token'
 import { isEvmNetwork } from 'utils/chain'
 import { formatBtcAddress } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
+import { tunnelsThroughPartner } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'

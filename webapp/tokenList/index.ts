@@ -6,6 +6,7 @@ import { type RemoteChain } from 'types/chain'
 import { type EvmToken, type Token } from 'types/token'
 import { type Address } from 'viem'
 
+import { customTunnelPartnersWhitelist } from './customTunnelPartnersWhitelist'
 import { nativeTokens } from './nativeTokens'
 import { stakeWhiteList } from './stakeTokens'
 import { tunnelWhiteList } from './tunnelTokens'
@@ -74,5 +75,6 @@ export const tokenList = {
     .concat(nativeTokens)
     .map(extendWithWhiteList(stakeWhiteList))
     .map(extendWithWhiteList(tunnelWhiteList))
+    .map(extendWithWhiteList(customTunnelPartnersWhitelist))
     .sort((a, b) => a.symbol.localeCompare(b.symbol)),
 }

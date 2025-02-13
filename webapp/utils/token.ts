@@ -54,3 +54,6 @@ export const isStakeToken = (token: Token): token is StakeToken =>
   stakeProtocols.includes(token.extensions.protocol as StakeProtocols)
 
 export const isTunnelToken = (token: Token) => token.extensions?.tunnel === true
+
+export const tunnelsThroughPartner = (token: Token) =>
+  token.extensions?.tunnelPartner !== undefined

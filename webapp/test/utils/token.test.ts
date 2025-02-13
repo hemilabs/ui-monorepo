@@ -1,4 +1,9 @@
-import { isStakeToken, isTunnelToken, isEvmToken } from 'utils/token'
+import {
+  isStakeToken,
+  isTunnelToken,
+  isEvmToken,
+  tunnelsThroughPartner,
+} from 'utils/token'
 import { describe, expect, it } from 'vitest'
 
 describe('utils/token', function () {
@@ -71,6 +76,37 @@ describe('utils/token', function () {
         symbol: 'TOKEN',
       }
       expect(isTunnelToken(token)).toBe(false)
+    })
+  })
+
+  describe('tunnelsThroughPartner', function () {
+    it('should return true if token tunnels through a partner', function () {
+      const token = {
+        address: '0x123',
+        chainId: 1,
+        decimals: 18,
+        extensions: {
+          tunnel: true,
+          tunnelPartner: 'partner',
+        },
+        symbol: 'TOKEN',
+      }
+
+      expect(tunnelsThroughPartner(token)).toBe(true)
+    })
+
+    it('should return false if token does not tunnel through a partner', function () {
+      const token = {
+        address: '0x123',
+        chainId: 1,
+        decimals: 18,
+        extensions: {
+          tunnel: true,
+        },
+        symbol: 'TOKEN',
+      }
+
+      expect(tunnelsThroughPartner(token)).toBe(false)
     })
   })
 })

@@ -1,19 +1,9 @@
 import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { WarningBox } from 'components/warningBox'
-import { hemiMainnet } from 'networks/hemiMainnet'
-import { mainnet } from 'networks/mainnet'
 import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
-import { isEvmToken } from 'utils/token'
 
 import { Stargate } from './stargate'
-
-const customTunnelTokens = ['USDC', 'USDT']
-
-export const tunnelsThroughPartner = (token: Token) =>
-  customTunnelTokens.includes(token.symbol) &&
-  isEvmToken(token) &&
-  [hemiMainnet.id, mainnet.id].includes(token.chainId)
 
 type Props = {
   fromToken: Token

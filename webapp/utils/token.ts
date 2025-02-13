@@ -1,4 +1,4 @@
-import { tokenList, NativeTokenSpecialAddressOnL2 } from 'app/tokenList'
+import { tokenList } from 'app/tokenList/'
 import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
 import { EvmToken, Token } from 'types/token'
 import {
@@ -7,21 +7,10 @@ import {
   erc20Abi,
   isAddress,
   isAddressEqual,
-  zeroAddress,
 } from 'viem'
 import { readContract } from 'viem/actions'
 
-export const isNativeAddress = (address: string) =>
-  address === zeroAddress ||
-  !address.startsWith('0x') ||
-  (isAddress(address) && isAddressEqual(address, NativeTokenSpecialAddressOnL2))
-
-export const isNativeToken = (token: Token) => isNativeAddress(token.address)
-
-export const getNativeToken = (chainId: Token['chainId']) =>
-  tokenList.tokens.find(
-    token => token.chainId === chainId && isNativeToken(token),
-  )
+import { getNativeToken, isNativeAddress } from './nativeToken'
 
 export const getTokenByAddress = function (
   address: Token['address'],
@@ -63,3 +52,5 @@ export const isStakeToken = (token: Token): token is StakeToken =>
   // using cast here because we're trying to determine if a token's protocol
   // is a stake one
   stakeProtocols.includes(token.extensions.protocol as StakeProtocols)
+
+export const isTunnelToken = (token: Token) => token.extensions?.tunnel === true

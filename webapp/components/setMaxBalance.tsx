@@ -5,7 +5,7 @@ import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useEstimateBtcFees } from 'hooks/useEstimateBtcFees'
 import { useTranslations } from 'next-intl'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
-import { isNativeToken } from 'utils/token'
+import { isNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
 const MaxButton = function ({

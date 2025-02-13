@@ -1,12 +1,11 @@
 import hemilabsTokenList from '@hemilabs/token-list'
 import { featureFlags } from 'app/featureFlags'
-import { bitcoinTestnet } from 'btc-wallet/chains'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
-import { mainnet } from 'networks/mainnet'
-import { sepolia } from 'networks/sepolia'
 import { type EvmToken, type Token } from 'types/token'
 import { type Address } from 'viem'
+
+import { nativeTokens } from './nativeTokens'
 
 export const getRemoteTokens = function (token: EvmToken) {
   if (!token.extensions?.bridgeInfo) {
@@ -34,15 +33,6 @@ export const getRemoteTokens = function (token: EvmToken) {
   })) satisfies EvmToken[]
 }
 
-// Special address used by OP to store bridged eth
-// See https://github.com/ethereum-optimism/optimism/blob/fa19f9aa250c0f548e0fdd226114aebf2c4c3fed/packages/contracts-bedrock/src/libraries/Predeploys.sol#L51
-// While it is legacy, it is still being used
-export const NativeTokenSpecialAddressOnL2 =
-  '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000' as Address
-
-const ethLogoUri =
-  'https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/eth.svg'
-
 const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
   .filter(t => t.chainId === hemiMainnet.id || t.chainId === hemiTestnet.id)
   // WETH cannot be tunneled, so we must exclude it
@@ -53,89 +43,6 @@ const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
 
 // the hemiTokens only contains definitions for Hemi tokens, but we can create the L1 version with the extensions field info
 const tokens: Token[] = hemiTokens.concat(hemiTokens.flatMap(getRemoteTokens))
-
-const nativeTokens: Token[] = [
-  {
-    address: mainnet.nativeCurrency.symbol,
-    chainId: mainnet.id,
-    decimals: mainnet.nativeCurrency.decimals,
-    extensions: {
-      bridgeInfo: {
-        // Leaving intentionally empty as there's no token address for native ETH in hemi
-        [hemiMainnet.id]: {},
-      },
-    },
-    logoURI: ethLogoUri,
-    name: mainnet.nativeCurrency.name,
-    symbol: mainnet.nativeCurrency.symbol,
-  },
-  {
-    address: sepolia.nativeCurrency.symbol,
-    chainId: sepolia.id,
-    decimals: sepolia.nativeCurrency.decimals,
-    extensions: {
-      bridgeInfo: {
-        // Leaving intentionally empty as there's no token address for native ETH in hemi
-        [hemiTestnet.id]: {},
-      },
-    },
-    logoURI: ethLogoUri,
-    name: sepolia.nativeCurrency.name,
-    symbol: sepolia.nativeCurrency.symbol,
-  },
-  {
-    address: hemiMainnet.nativeCurrency.symbol,
-    chainId: hemiMainnet.id,
-    decimals: hemiMainnet.nativeCurrency.decimals,
-    extensions: {
-      bridgeInfo: {
-        [mainnet.id]: {
-          tokenAddress: NativeTokenSpecialAddressOnL2,
-        },
-      },
-    },
-    logoURI: ethLogoUri,
-    name: hemiMainnet.nativeCurrency.name,
-    symbol: hemiMainnet.nativeCurrency.symbol,
-  },
-  {
-    address: hemiTestnet.nativeCurrency.symbol,
-    chainId: hemiTestnet.id,
-    decimals: hemiTestnet.nativeCurrency.decimals,
-    extensions: {
-      bridgeInfo: {
-        [sepolia.id]: {
-          tokenAddress: NativeTokenSpecialAddressOnL2,
-        },
-      },
-    },
-    logoURI: ethLogoUri,
-    name: hemiTestnet.nativeCurrency.name,
-    symbol: hemiTestnet.nativeCurrency.symbol,
-  },
-]
-
-if (featureFlags.btcTunnelEnabled) {
-  const btcToken = tokens.find(
-    t => t.chainId === hemiTestnet.id && t.symbol === 'tBTC',
-  )
-
-  nativeTokens.push({
-    address: btcToken.symbol,
-    chainId: bitcoinTestnet.id,
-    decimals: btcToken.decimals,
-    extensions: {
-      bridgeInfo: {
-        [hemiTestnet.id]: {
-          tokenAddress: btcToken.address as Address,
-        },
-      },
-    },
-    logoURI: btcToken.logoURI,
-    name: btcToken.name,
-    symbol: btcToken.symbol,
-  })
-}
 
 export const tokenList = {
   name: hemilabsTokenList.name,

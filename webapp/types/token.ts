@@ -9,6 +9,7 @@ export type Extensions = {
     }
   }
   protocol?: string
+  tunnel?: boolean
 }
 
 type BaseToken = {

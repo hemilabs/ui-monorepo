@@ -56,7 +56,6 @@ export const analyticsEvents = [
   'nav - pure finance',
   'nav - stake',
   'nav - tunnel',
-  'nav - web pop miner',
   // socials
   'nav - discord',
   'nav - gitHub',

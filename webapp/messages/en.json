@@ -179,8 +179,7 @@
     "swap": "Swap",
     "stake": "Stake",
     "tools": "Tools",
-    "tunnel": "Tunnel",
-    "web-pop-miner": "Web PoP Miner"
+    "tunnel": "Tunnel"
   },
   "stake-page": {
     "asset": "Asset",

@@ -9,7 +9,7 @@ import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
 import { formatGasFees } from 'utils/format'
-import { isNativeToken } from 'utils/token'
+import { isNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
 import { EvmDepositProvider } from '../../_context/evmDepositContext'

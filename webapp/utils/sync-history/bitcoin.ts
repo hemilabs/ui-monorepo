@@ -37,8 +37,8 @@ import {
   getBitcoinCustodyAddress,
   getVaultAddressByIndex,
 } from 'utils/hemiMemoized'
+import { getNativeToken } from 'utils/nativeToken'
 import { createProvider } from 'utils/providers'
-import { getNativeToken } from 'utils/token'
 import {
   type Address,
   decodeFunctionData,

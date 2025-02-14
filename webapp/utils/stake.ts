@@ -5,7 +5,8 @@ import {
 } from 'hooks/useHemiClient'
 import { NetworkType } from 'hooks/useNetworkType'
 import { EvmToken } from 'types/token'
-import { getErc20TokenBalance, isNativeToken } from 'utils/token'
+import { isNativeToken } from 'utils/nativeToken'
+import { getErc20TokenBalance } from 'utils/token'
 import { type Address, Chain, parseUnits } from 'viem'
 
 export const isStakeEnabledOnTestnet = (networkType: NetworkType) =>

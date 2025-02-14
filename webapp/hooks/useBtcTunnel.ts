@@ -19,7 +19,7 @@ import {
   initiateBtcDeposit,
   initiateBtcWithdrawal,
 } from 'utils/hemi'
-import { getNativeToken } from 'utils/token'
+import { getNativeToken } from 'utils/nativeToken'
 import { type Chain, zeroAddress, type Address } from 'viem'
 import {
   useAccount as useEvmAccount,

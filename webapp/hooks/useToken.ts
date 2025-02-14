@@ -2,7 +2,8 @@ import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { getErc20Token } from 'utils/evmApi'
-import { getTokenByAddress, isNativeAddress } from 'utils/token'
+import { isNativeAddress } from 'utils/nativeToken'
+import { getTokenByAddress } from 'utils/token'
 import { type Address, type Chain, isAddress } from 'viem'
 
 type Params = {

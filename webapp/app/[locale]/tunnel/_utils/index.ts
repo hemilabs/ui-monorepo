@@ -1,6 +1,6 @@
 import Big from 'big.js'
 import { Token } from 'types/token'
-import { isNativeToken } from 'utils/token'
+import { isNativeToken } from 'utils/nativeToken'
 import { formatUnits, parseUnits } from 'viem'
 
 import { type TunnelState } from '../_hooks/useTunnelState'

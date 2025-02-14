@@ -6,9 +6,12 @@ import { getErc20TokenBalance } from 'utils/token'
 import { parseUnits, zeroAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+vi.mock('utils/nativeToken', () => ({
+  isNativeToken: vi.fn(token => token.symbol === 'ETH'),
+}))
+
 vi.mock('utils/token', () => ({
   getErc20TokenBalance: vi.fn(),
-  isNativeToken: vi.fn(token => token.symbol === 'ETH'),
 }))
 
 // @ts-expect-error Adding minimal properties needed

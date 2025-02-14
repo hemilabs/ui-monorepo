@@ -116,7 +116,7 @@ export const StakeOperation = function ({
     ].includes(stakeStatus)
 
     return {
-      description: t('finish-deposit'),
+      description: t('stake-token', { symbol: token.symbol }),
       explorerChainId: token.chainId,
       fees: showFees
         ? {

@@ -26,7 +26,8 @@ NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET=<true|false> # Enable mainnet network
 NEXT_PUBLIC_FEATURE_FLAG_ENABLE_STAKE_CAMPAIGN=<true|false> # Enable Stake Campaign
 NEXT_PUBLIC_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
 # Bitcoin configuring
-NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=1 # Vault index to use for bitcoin. Defaults to 0
+NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET=2 # Vault index to use for bitcoin in hemi mainnet. Defaults to 0
+NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=1 # Vault index to use for bitcoin in hemi sepolia. Defaults to 0
 # Enable subgraphs for syncing history
 NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH=<true|false>
 # Subgraph configuration per chain

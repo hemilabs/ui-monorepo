@@ -1,0 +1,149 @@
+diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
+index 4323ddb..bc5d810 100644
+--- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
++++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
+@@ -151,8 +151,7 @@
+       "name": "Lorenzo Wrapped Bitcoin",
+       "symbol": "enzoBTC",
+       "extensions": {
+-        "birthBlock": 734357,
+-        "protocol": "lorenzo"
++        "birthBlock": 734357
+       }
+     },
+     {
+@@ -195,8 +194,7 @@
+       "name": "uBTC",
+       "symbol": "uBTC",
+       "extensions": {
+-        "birthBlock": 792952,
+-        "protocol": "uniRouter"
++        "birthBlock": 792952
+       }
+     },
+     {
+@@ -207,8 +205,7 @@
+       "name": "iBTC",
+       "symbol": "iBTC",
+       "extensions": {
+-        "birthBlock": 629450,
+-        "protocol": "exSat"
++        "birthBlock": 629450
+       }
+     },
+     {
+@@ -232,8 +229,7 @@
+       "chainId": 43111,
+       "decimals": 18,
+       "extensions": {
+-        "birthBlock": 849309,
+-        "protocol": "merlinChain"
++        "birthBlock": 849309
+       },
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/m-btc.svg",
+       "name": "Merlin BTC",
+@@ -244,7 +240,12 @@
+       "chainId": 43111,
+       "decimals": 8,
+       "extensions": {
+-        "birthBlock": 1125154
++        "birthBlock": 1125154,
++        "bridgeInfo": {
++          "livenet": {
++           "tokenAddress": "BTC"
++          }
++        }
+       },
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/hemibtc.svg",
+       "name": "Hemi Bitcoin",
+@@ -256,10 +257,14 @@
+       "decimals": 6,
+       "extensions": {
+         "birthBlock": 623077,
+-        "tunnel": "stargate"
++        "bridgeInfo": {
++          "1": {
++            "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
++          }
++        }
+       },
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/usdc.svg",
+-      "name": "Bridged USDC (Stargate)",
++      "name": "USDC",
+       "symbol": "USDC.e"
+     },
+     {
+@@ -284,7 +289,11 @@
+       "decimals": 6,
+       "extensions": {
+         "birthBlock": 666946,
+-        "tunnel": "stargate"
++        "bridgeInfo": {
++          "1": {
++            "tokenAddress": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
++          }
++        }
+       },
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/usdt.svg",
+       "name": "USDT",
+@@ -343,8 +352,7 @@
+       "chainId": 43111,
+       "decimals": 8,
+       "extensions": {
+-        "birthBlock": 914253,
+-        "protocol": "nodeDao"
++        "birthBlock": 914253
+       },
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/obtc.svg",
+       "name": "Obelisk BTC",
+@@ -358,8 +366,7 @@
+       "name": "pumpBTC",
+       "symbol": "pumpBTC",
+       "extensions": {
+-        "birthBlock": 595343,
+-        "protocol": "pumpBtc"
++        "birthBlock": 595343
+       }
+     },
+     {
+@@ -370,8 +377,7 @@
+       "name": "Lorenzo stBTC",
+       "symbol": "stBTC",
+       "extensions": {
+-        "birthBlock": 619947,
+-        "protocol": "lorenzo"
++        "birthBlock": 619947
+       }
+     },
+     {
+@@ -390,11 +396,16 @@
+       "chainId": 743111,
+       "decimals": 8,
+       "extensions": {
+-        "birthBlock": 2165818
++        "birthBlock": 2165818,
++        "bridgeInfo": {
++          "testnet": {
++           "tokenAddress": "tBTC"
++          }
++        }
+       },
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/hemibtc.svg",
+-      "name": "HemiBitcoin",
+-      "symbol": "hBTC"
++      "name": "Testnet Bitcoin",
++      "symbol": "tBTC"
+     },
+     {
+       "address": "0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298",
+@@ -433,8 +444,8 @@
+       "chainId": 743111,
+       "decimals": 18,
+       "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/hdai.svg",
+-      "name": "Hemi Tunneled DAI",
+-      "symbol": "hDAI",
++      "name": "Dai Stablecoin",
++      "symbol": "DAI",
+       "extensions": {
+         "birthBlock": 71589,
+         "bridgeInfo": {

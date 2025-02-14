@@ -22,7 +22,10 @@ const CustomTokenDrawer = dynamic(() =>
 
 type FormContentProps = {
   isRunningOperation: boolean
-  minInputMsg?: string
+  minInputMsg?: {
+    loading: boolean
+    value: string
+  }
   setMaxBalanceButton: ReactNode
   tokenApproval?: ReactNode
   tunnelState: ReturnType<typeof useTunnelState>

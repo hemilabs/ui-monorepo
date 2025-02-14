@@ -1,0 +1,15 @@
+{
+  "coinGeckoIds": [
+    "bitcoin",
+    "lorenzo-stbtc",
+    "merlin-s-seal-btc",
+    "pumpbtc",
+    "wrapped-bitcoin"
+  ],
+  "coinMarketCapIds": [
+    "bitcoin",
+    "merlin-chain-m-btc",
+    "pumpbtc",
+    "wrapped-bitcoin"
+  ]
+}

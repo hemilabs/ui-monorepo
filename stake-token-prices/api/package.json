@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "promise-limit-one": "1.1.0",
+    "redis": "4.7.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

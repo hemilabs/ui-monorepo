@@ -3,6 +3,7 @@
   "overrides": [
     {
       "excludedFiles": [
+        "stake-token-prices/**/*",
         "subgraphs/*/build/**/*.ts",
         "subgraphs/*/generated/**/*.ts",
         "webapp/scripts/*.js",
@@ -82,6 +83,10 @@
         "markdownlint/md041": "warn",
         "markdownlint/md045": "warn"
       }
+    },
+    {
+      "extends": ["bloq/node", "prettier"],
+      "files": ["stake-token-prices/**/*.js"]
     }
   ],
   "root": true,

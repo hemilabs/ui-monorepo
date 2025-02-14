@@ -26,6 +26,7 @@ import { walletIsConnected } from 'utils/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { useMinWithdrawalSats } from '../_hooks/useMinWithdrawalSats'
 import {
   type EvmTunneling,
   type HemiToBitcoinTunneling,
@@ -40,8 +41,6 @@ import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
-
-const minBitcoinWithdraw = '0.01'
 
 const SetMaxEvmBalance = dynamic(
   () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),
@@ -80,6 +79,8 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     chainId: fromNetworkId,
     operation: 'withdraw-btc',
   })
+  const { minWithdrawalFormattedSats, isPending: isLoadingMinWithdrawalSats } =
+    useMinWithdrawalSats(fromToken)
   const [networkType] = useNetworkType()
   const { balance: bitcoinBalance } = useTokenBalance(fromToken)
   const t = useTranslations()
@@ -142,13 +143,15 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   }
 
   const canWithdraw =
+    !isLoadingMinWithdrawalSats &&
     canSubmit({
       balance: bitcoinBalance,
       chainId: evmChainId,
       fromInput,
       fromNetworkId,
       fromToken,
-    }) && Big(fromInput).gte(minBitcoinWithdraw)
+    }) &&
+    Big(fromInput).gte(minWithdrawalFormattedSats)
 
   const gas = {
     amount: formatUnits(estimatedFees, fromChain?.nativeCurrency.decimals),
@@ -188,10 +191,15 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       formContent={
         <FormContent
           isRunningOperation={isWithdrawing}
-          minInputMsg={t('tunnel-page.form.min-withdraw', {
-            amount: minBitcoinWithdraw,
-            symbol: fromToken.symbol,
-          })}
+          minInputMsg={{
+            loading: isLoadingMinWithdrawalSats,
+            value: isLoadingMinWithdrawalSats
+              ? ''
+              : t('tunnel-page.form.min-withdrawal', {
+                  amount: minWithdrawalFormattedSats,
+                  symbol: fromToken.symbol,
+                }),
+          }}
           setMaxBalanceButton={
             <SetMaxEvmBalance
               disabled={isWithdrawing}

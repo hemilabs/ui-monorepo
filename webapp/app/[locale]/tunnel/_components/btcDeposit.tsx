@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { formatEvmAddress } from 'utils/format'
 import { parseUnits } from 'viem'
 
+import { useMinDepositSats } from '../_hooks/useMinDepositSats'
 import { BtcToHemiTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
 import { canSubmit } from '../_utils'
 
@@ -31,9 +32,6 @@ const WalletsConnected = dynamic(
   () => import('./walletsConnected').then(mod => mod.WalletsConnected),
   { ssr: false },
 )
-
-// See https://github.com/hemilabs/ui-monorepo/issues/725
-const minBitcoinDeposit = '0.01'
 
 type BtcDepositProps = {
   state: TypedTunnelState<BtcToHemiTunneling>
@@ -54,17 +52,21 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
   const { evmAddress } = useAccounts()
   const bitcoin = useBitcoin()
   const { balance } = useBalance()
+  const { minDepositFormattedSats, isPending: isMinDepositsSatsLoading } =
+    useMinDepositSats()
   const [networkType] = useNetworkType()
   const { track } = useUmami()
 
   const canDeposit =
+    !isMinDepositsSatsLoading &&
     canSubmit({
       balance: BigInt(balance?.confirmed ?? 0),
       chainId: bitcoin.id,
       fromInput,
       fromNetworkId,
       fromToken,
-    }) && Big(fromInput).gte(minBitcoinDeposit)
+    }) &&
+    Big(fromInput).gte(minDepositFormattedSats)
 
   const {
     clearDepositState,
@@ -155,10 +157,15 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
         formContent={
           <FormContent
             isRunningOperation={isDepositing}
-            minInputMsg={t('tunnel-page.form.min-deposit', {
-              amount: minBitcoinDeposit,
-              symbol: bitcoin.nativeCurrency.symbol,
-            })}
+            minInputMsg={{
+              loading: isMinDepositsSatsLoading,
+              value: isDepositing
+                ? ''
+                : t('tunnel-page.form.min-deposit', {
+                    amount: minDepositFormattedSats,
+                    symbol: bitcoin.nativeCurrency.symbol,
+                  }),
+            }}
             setMaxBalanceButton={
               <SetMaxBtcBalance
                 disabled={isDepositing}
@@ -172,7 +179,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
         onSubmit={handleDeposit}
         submitButton={
           <SubmitWithTwoWallets
-            disabled={!canDeposit || isDepositing}
+            disabled={!canDeposit || isDepositing || isMinDepositsSatsLoading}
             text={t('tunnel-page.submit-button.deposit')}
           />
         }

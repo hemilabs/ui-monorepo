@@ -214,6 +214,8 @@
         "tvl": "TVL (en Hemi)",
         "website": "Sitio web"
       },
+      "unstake-token": "Desbloquear {symbol}",
+      "unstaking": "Desbloqueando...",
       "you-can-stake-anytime": "Puede retirar en cualquier momento y conservar los puntos ya ganados."
     },
     "points": {

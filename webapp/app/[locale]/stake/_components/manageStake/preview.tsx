@@ -2,7 +2,7 @@ import { DrawerSection } from 'components/drawer'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useTranslations } from 'next-intl'
-import { ReactNode } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 import { StakeOperations, StakeToken } from 'types/stake'
 
 import { Tabs } from './tabs'
@@ -19,9 +19,11 @@ type Props = {
   strategyDetails?: ReactNode
   submitButton: ReactNode
   token: StakeToken
-}
+} & Pick<ComponentProps<typeof TokenInput>, 'balanceComponent'>
+
 export const Preview = function ({
   amount,
+  balanceComponent,
   fees,
   isOperating,
   maxBalance,
@@ -46,6 +48,7 @@ export const Preview = function ({
         <div className="flex flex-col gap-y-4">
           <div className="[&>*]:hover:shadow-large [&>*]:border-neutral-300/55 [&>*]:bg-white">
             <TokenInput
+              balanceComponent={balanceComponent}
               disabled={isOperating}
               label={t('amount')}
               maxBalanceButton={maxBalance}

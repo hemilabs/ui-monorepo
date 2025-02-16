@@ -14,7 +14,7 @@ import {
   getErc20TokenAllowance,
   getErc20TokenBalance,
 } from 'utils/token'
-import { type Address, Chain, Hash, parseUnits } from 'viem'
+import { type Address, type Chain, type Hash } from 'viem'
 
 export const isStakeEnabledOnTestnet = (networkType: NetworkType) =>
   networkType !== 'testnet' ||
@@ -57,7 +57,7 @@ export const canSubmit = function ({
   return {}
 }
 
-const validateOperation = async function ({
+const validateStakeOperation = async function ({
   amount,
   forAccount,
   hemiPublicClient,
@@ -96,18 +96,17 @@ const validateOperation = async function ({
  * @returns The address of the token as a string in the `Address` type format.
  * @throws Error if the token is native but WETH is not found in the token list.
  */
-function getTokenAddress(token: EvmToken): Address {
-  if (isNativeToken(token)) {
-    const wethToken = hemilabsTokenList.tokens.find(
-      item => item.chainId === token.chainId && item.symbol === 'WETH',
-    )
-    if (!wethToken) {
-      throw new Error('WETH token not found')
-    }
-    return wethToken.address as Address
+function getTokenAddress(token: EvmToken) {
+  if (!isNativeToken(token)) {
+    return token.address as Address
   }
-
-  return token.address as Address
+  const wethToken = hemilabsTokenList.tokens.find(
+    item => item.chainId === token.chainId && item.symbol === 'WETH',
+  )
+  if (!wethToken) {
+    throw new Error('WETH token not found')
+  }
+  return wethToken.address as Address
 }
 
 export type StakeEvents = Partial<{
@@ -165,7 +164,7 @@ export const stake = async function ({
   hemiWalletClient: HemiWalletClient
   token: EvmToken
 } & StakeEvents) {
-  await validateOperation({
+  await validateStakeOperation({
     amount,
     forAccount,
     hemiPublicClient,
@@ -260,42 +259,108 @@ export const stake = async function ({
   }
 }
 
+const validateUnstakeOperation = async function ({
+  amount,
+  forAccount,
+  hemiPublicClient,
+  token,
+}: {
+  amount: bigint
+  forAccount: Address
+  hemiPublicClient: HemiPublicClient
+  token: EvmToken
+}) {
+  const balance = await hemiPublicClient.stakedBalance({
+    address: forAccount,
+    tokenAddress: getTokenAddress(token),
+  })
+  const { error } = canSubmit({
+    amount,
+    balance,
+    connectedChainId: hemiPublicClient.chain.id,
+    token,
+  })
+  if (error) {
+    throw new Error(error)
+  }
+}
+
+export type UnstakeEvents = Partial<{
+  onUnstake: () => void
+  onUnstakeConfirmed: () => void
+  onUnstakeFailed: () => void
+  onUserRejectedUnstake: () => void
+  onUserSignedUnstake: (hash: Hash) => void
+}>
+
 /**
  * Unstakes an amount of a token in Hemi.
  * @param params All the parameters needed to determine if a user can unstake a token
- * @param amount The amount of tokens to stake
- * @param forAccount The address of the user that will unstake
- * @param hemiPublicClient Hemi public client for read-only calls
- * @param hemiWalletClient Hemi Wallet client for signing transactions
- * @param token The token to stake
+ * @param params.amount The amount of tokens to stake
+ * @param params.forAccount The address of the user that will unstake
+ * @param params.hemiPublicClient Hemi public client for read-only calls
+ * @param params.hemiWalletClient Hemi Wallet client for signing transactions
+ * @param params.onUnstake Optional callback to run prior to prompt the user to sign a Unstake transaction
+ * @param params.onUnstakeConfirmed Optional callback for the Unstake transaction confirmation
+ * @param params.onUnstakeFailed Optional callback for the Unstake transaction failure
+ * @param params.onUserRejectedUnstake Optional callback for the user rejecting to sign the Unstake transaction
+ * @param params.onUserSignedUnstake Optional callback for the user signing the Unstake transaction
+ * @param params.token The token to stake
  */
 export const unstake = async function ({
   amount,
   forAccount,
   hemiPublicClient,
   hemiWalletClient,
+  onUnstake,
+  onUnstakeConfirmed,
+  onUnstakeFailed,
+  onUserRejectedUnstake,
+  onUserSignedUnstake,
   token,
 }: {
-  amount: string
+  amount: bigint
   forAccount: Address
   hemiPublicClient: HemiPublicClient
   hemiWalletClient: HemiWalletClient
   token: EvmToken
-}) {
-  const amountUnits = parseUnits(amount, token.decimals)
-  // Here I am assuming that when the user stakes, we get a staked token
-  // that can later be used to withdraw. That's why we need to check the balance of this staked token inside "validate operation"
-
-  await validateOperation({
-    amount: amountUnits,
+} & UnstakeEvents) {
+  await validateUnstakeOperation({
+    amount,
     forAccount,
     hemiPublicClient,
     token,
   })
 
-  return hemiWalletClient.unstakeToken({
-    amount: amountUnits,
-    forAccount,
-    tokenAddress: getTokenAddress(token),
-  })
+  onUnstake?.()
+
+  const unstakeTransactionHash = await hemiWalletClient
+    .unstakeToken({
+      amount,
+      forAccount,
+      tokenAddress: getTokenAddress(token),
+    })
+    .catch(onUserRejectedUnstake)
+
+  if (!unstakeTransactionHash) {
+    return
+  }
+
+  onUserSignedUnstake?.(unstakeTransactionHash)
+
+  const receipt = await waitForTransactionReceipt(allEvmNetworksWalletConfig, {
+    chainId: token.chainId,
+    hash: unstakeTransactionHash,
+  }).catch(onUnstakeFailed)
+
+  // if receipt is null, it's already handled on the .catch() above
+  if (!receipt) {
+    return
+  }
+
+  if (receipt.status === 'success') {
+    onUnstakeConfirmed?.()
+  } else {
+    onUnstakeFailed?.()
+  }
 }

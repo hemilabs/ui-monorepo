@@ -71,3 +71,12 @@ export const enum StakeStatusEnum {
   // Transaction deposit confirmed
   STAKE_TX_CONFIRMED = 5,
 }
+
+export const enum UnstakeStatusEnum {
+  // The user has confirmed the TX in their wallet, but it hasn't been included in a block
+  UNSTAKE_TX_PENDING = 0,
+  // The unstake transaction reverted
+  UNSTAKE_TX_FAILED = 1,
+  // Unstake transaction confirmed
+  UNSTAKE_TX_CONFIRMED = 2,
+}

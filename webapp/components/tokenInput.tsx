@@ -16,6 +16,9 @@ const Balance = dynamic(
 )
 
 type Props = {
+  balanceComponent?: React.ComponentType<{
+    token: Token
+  }>
   disabled: boolean
   label: string
   maxBalanceButton?: ReactNode
@@ -39,6 +42,7 @@ const MinInputMsg = ({ loading, value }: Required<Props['minInputMsg']>) =>
   )
 
 export const TokenInput = function ({
+  balanceComponent: BalanceComponent = Balance,
   disabled,
   label,
   maxBalanceButton,
@@ -75,7 +79,7 @@ export const TokenInput = function ({
           <div className="flex items-center justify-end gap-x-2 text-sm">
             <span className="text-neutral-500">{t('form.balance')}:</span>
             <span className="text-neutral-950">
-              <Balance token={token} />
+              <BalanceComponent token={token} />
             </span>
             {maxBalanceButton}
           </div>

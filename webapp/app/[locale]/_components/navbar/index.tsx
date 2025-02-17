@@ -111,11 +111,6 @@ export const Navbar = function () {
                   href="https://purefinance.hemi.xyz"
                   text="Pure Finance"
                 />
-                <ItemLink
-                  event="nav - faucet"
-                  href="https://discord.com/channels/1202677849887080508/1230886659222929418"
-                  text="Faucet"
-                />
               </>
             }
             text={t('tools')}

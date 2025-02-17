@@ -2,13 +2,11 @@ import { useUmami } from 'app/analyticsEvents'
 import { featureFlags } from 'app/featureFlags'
 import { ExternalLink } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
-import hemiSocials from 'hemi-socials'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 
 import { BtcFaucetIcon } from './icons/btcFaucet'
-import { DiscordFaucetIcon } from './icons/discordFaucet'
 import { EthFaucetIcon } from './icons/ethFaucet'
 import { MoonPay } from './icons/moonPay'
 import { OkuDex } from './icons/okuDex'
@@ -24,7 +22,6 @@ const FundMethod = function ({
   event:
     | 'bitcoin faucet'
     | 'ethereum faucet'
-    | 'hemi discord faucet'
     | 'fund wallet - moonpay'
     | 'fund wallet - oku'
     | 'fund wallet - sushi'
@@ -72,12 +69,6 @@ export const FundWallet = function () {
       <div className="flex flex-col gap-y-3 md:basis-1/2">
         {networkType === 'testnet' ? (
           <>
-            <FundMethod
-              event="hemi discord faucet"
-              icon={<DiscordFaucetIcon />}
-              name={t('hemi-faucet')}
-              url={hemiSocials.discordUrl}
-            />
             <FundMethod
               event="ethereum faucet"
               icon={<EthFaucetIcon />}

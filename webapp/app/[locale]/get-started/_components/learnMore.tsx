@@ -73,6 +73,26 @@ const DeveloperTooling = function () {
   )
 }
 
+const PoPMiner = function () {
+  const t = useTranslations('get-started.learn-more-tutorials')
+  return (
+    <div className="flex flex-col gap-y-3">
+      <Box
+        event="tut - pop miner cli"
+        heading={t('run-cli-pop-miner')}
+        href="https://docs.hemi.xyz/how-to-tutorials/tutorials/setup-part-1"
+        subheading={t('set-up-cli-pop-miner')}
+      />
+      <Box
+        event="tut - add hemi"
+        heading={t('add-themi-wallet')}
+        href="https://docs.hemi.xyz/how-to-tutorials/tutorials/add-themi-to-metamask"
+        subheading={t('learn-to-add-themi-wallet')}
+      />
+    </div>
+  )
+}
+
 const WalletSetup = function () {
   const t = useTranslations('get-started.learn-more-tutorials')
   return (
@@ -101,7 +121,7 @@ const WalletSetup = function () {
 
 export const LearnMore = function () {
   const [selectedTab, setSelectedTab] = useState<
-    'wallet' | 'dev-tooling'
+    'wallet' | 'dev-tooling' | 'PoP-miner'
   >('wallet')
   const tCommon = useTranslations('common')
   const t = useTranslations('get-started')
@@ -160,8 +180,18 @@ export const LearnMore = function () {
                 >
                   {t('learn-more-tutorials.developer-tooling')}
                 </Tab>
+                <Tab
+                  onClick={function () {
+                    setSelectedTab('PoP-miner')
+                    track?.('tut - pop miner')
+                  }}
+                  selected={selectedTab === 'PoP-miner'}
+                >
+                  {t('learn-more-tutorials.pop-miner')}
+                </Tab>
               </Tabs>
               {selectedTab === 'dev-tooling' && <DeveloperTooling />}
+              {selectedTab === 'PoP-miner' && <PoPMiner />}
               {selectedTab === 'wallet' && <WalletSetup />}
             </div>
           </div>

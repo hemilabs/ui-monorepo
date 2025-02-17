@@ -30,6 +30,8 @@ export const analyticsEvents = [
   'tut - hello world',
   'tut - get btc balance',
   'tut - learn more',
+  'tut - pop miner',
+  'tut - pop miner cli',
   'tut - setup btc',
   'tut - setup evm',
   'tut - setup safe',
@@ -147,6 +149,8 @@ export type AnalyticsEventsWithChain = Exclude<
     | 'tut - hello world'
     | 'tut - get btc balance'
     | 'tut - learn more'
+    | 'tut - pop miner'
+    | 'tut - pop miner cli'
     | 'tut - setup btc'
     | 'tut - setup evm'
     | 'tut - setup safe'

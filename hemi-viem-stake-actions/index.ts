@@ -10,6 +10,8 @@ import {
   unstakeToken,
 } from './actions/wallet/stakeManager'
 
+export { stakeManagerAddresses } from './contracts/stakeManager'
+
 /**
  * Extends a Viem `Client` with staking-related public actions.
  *

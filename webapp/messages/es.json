@@ -4,6 +4,8 @@
     "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
     "added": "Agregada",
     "amount": "Monto",
+    "approving": "Aprobando...",
+    "approving-token": "Aprobando {symbol}",
     "connect-to-network": "Conectarse a {network}",
     "connect-to-supported-network": "Conectarse a una red soportada",
     "connect-wallet": "Conectar Billetera",
@@ -33,6 +35,7 @@
       "pending": "Pendiente",
       "rejected": "Tx rechazada"
     },
+    "try-again": "Intente Nuevamente",
     "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
     "unstake": "Desbloquear",
     "unsupported-chain-heading": "Usted no se encuentra conectado a una red soportada",
@@ -199,10 +202,12 @@
       "your-stake": "Su Apuesta"
     },
     "drawer": {
+      "approve-and-stake": "Aprobar y Apostar",
       "description-manage-stake": "Recargue su apuesta o retire en cualquier momento— ¡Usted tiene el control total!",
       "manage-your-stake": "Gestione su apuesta",
       "stake-and-earn-rewards": "¡Apueste {symbol} y gane recompensas!",
       "stake-token": "Apostar {symbol}",
+      "staking": "Apostando...",
       "strategy-details": {
         "heading": "Detalles de la Estrategia",
         "rewards": "Recompensas",

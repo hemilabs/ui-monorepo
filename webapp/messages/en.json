@@ -4,6 +4,8 @@
     "add-hemi-to-wallet": "Add Hemi Network to your wallet",
     "added": "Added",
     "amount": "Amount",
+    "approving": "Approving...",
+    "approving-token": "Approving {symbol}",
     "connect-to-network": "Connect to {network}",
     "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",
@@ -33,6 +35,7 @@
       "pending": "Pending",
       "rejected": "Tx rejected"
     },
+    "try-again": "Try again",
     "unexpected-error": "An unexpected error has ocurred. Please try again.",
     "unstake": "Unstake",
     "unsupported-chain-heading": "You're not connected to a supported chain",
@@ -199,10 +202,12 @@
       "your-stake": "Your Stake"
     },
     "drawer": {
+      "approve-and-stake": "Approve and Stake",
       "description-manage-stake": "Top up your stake, or withdraw anytime—you're in full control!",
       "manage-your-stake": "Manage your stake",
       "stake-and-earn-rewards": "Stake {symbol} and earn rewards!",
       "stake-token": "Stake {symbol}",
+      "staking": "Staking...",
       "strategy-details": {
         "heading": "Strategy Details",
         "rewards": "Rewards",

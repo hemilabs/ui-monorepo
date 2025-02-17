@@ -2,8 +2,11 @@ import { SetMaxEvmBalance } from 'components/setMaxBalance'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { ComponentProps } from 'react'
+import { StakeToken } from 'types/stake'
 
-type Props = Omit<ComponentProps<typeof SetMaxEvmBalance>, 'gas'>
+type Props = Omit<ComponentProps<typeof SetMaxEvmBalance>, 'gas'> & {
+  token: StakeToken
+}
 
 const MaxBalance = function ({
   operation,

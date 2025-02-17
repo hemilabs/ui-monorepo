@@ -272,10 +272,10 @@
     "form": {
       "balance": "Balance",
       "bitcoin-receiving-address": "Receiving Bitcoin address",
-      "bitcoin-receiving-address-description": "You will receive your {symbol} to the connected Bitcoin wallet address.",
+      "bitcoin-receiving-address-description": "Deposited {symbol} is sent to the address associated with your connected Ethereum wallet.",
       "from-network": "From Network",
       "hemi-receiving-address": "Receiving Hemi address",
-      "hemi-receiving-address-description": "You will receive your tunneled {symbol} to the connected EVM wallet address.",
+      "hemi-receiving-address-description": "Deposited {symbol} is sent to the address associated with your connected EVM wallet.",
       "max": "max",
       "min-deposit": "Minimum deposit is {amount} {symbol}",
       "min-withdrawal": "Minimum withdrawal is {amount} {symbol}",

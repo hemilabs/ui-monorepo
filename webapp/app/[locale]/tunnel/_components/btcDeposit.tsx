@@ -139,7 +139,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     <>
       <TunnelForm
         belowForm={
-          <div className="relative -z-10 -translate-y-7">
+          <div className="relative -translate-y-7">
             <ReceivingAddress
               address={evmAddress ? formatEvmAddress(evmAddress) : undefined}
               receivingText={t('tunnel-page.form.hemi-receiving-address')}

@@ -146,7 +146,7 @@ export const TunnelForm = ({
   belowForm,
   submitButton,
 }: TunnelFormProps) => (
-  <div className="mx-auto max-w-[536px]">
+  <div className="relative mx-auto max-w-[536px] [&>.card-container]:first:relative [&>.card-container]:first:z-10">
     <Card>
       <form
         className="flex flex-col gap-y-3 p-4 md:p-6"

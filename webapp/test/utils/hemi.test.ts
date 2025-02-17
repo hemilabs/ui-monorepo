@@ -1,8 +1,16 @@
 import { hemiSepolia } from 'hemi-viem'
 import { HemiPublicClient } from 'hooks/useHemiClient'
-import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
+import {
+  BtcDepositOperation,
+  BtcDepositStatus,
+  BtcWithdrawStatus,
+  ToBtcWithdrawOperation,
+} from 'types/tunnel'
 import { getEvmTransactionReceipt } from 'utils/evmApi'
-import { getHemiStatusOfBtcWithdrawal } from 'utils/hemi'
+import {
+  getHemiStatusOfBtcDeposit,
+  getHemiStatusOfBtcWithdrawal,
+} from 'utils/hemi'
 import { zeroAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -11,14 +19,22 @@ vi.mock('utils/evmApi', () => ({
 }))
 
 const hemiClient: HemiPublicClient = {
+  acknowledgedDeposits: vi.fn(),
   chain: hemiSepolia,
-  getBitcoinVaultStateAddress: vi.fn(),
+  getBitcoinKitAddress: vi
+    .fn()
+    .mockResolvedValue('0x0000000000000000000000000000000000000123'),
+  getBitcoinVaultStateAddress: vi.fn().mockResolvedValue(zeroAddress),
   getBitcoinWithdrawalGracePeriod: vi.fn(),
+  getTransactionByTxId: vi.fn(),
+  getTxConfirmations: vi.fn(),
   getVaultByIndex: vi.fn(),
   getVaultChildIndex: vi.fn(),
   isBitcoinWithdrawalChallenged: vi.fn(),
   isBitcoinWithdrawalFulfilled: vi.fn(),
 }
+
+const deposit: Omit<BtcDepositOperation, 'status'> = {}
 
 const withdrawal: ToBtcWithdrawOperation = {
   l2ChainId: hemiSepolia.id,
@@ -31,6 +47,64 @@ const withdrawal: ToBtcWithdrawOperation = {
 describe('utils/hemi', function () {
   beforeEach(function () {
     vi.clearAllMocks()
+  })
+
+  describe('getHemiStatusOfBtcDeposit', function () {
+    it(`should return ${BtcDepositStatus.BTC_TX_CONFIRMED} if Hemi is not aware of the bitcoin transaction`, async function () {
+      hemiClient.acknowledgedDeposits.mockResolvedValue(false)
+      hemiClient.getTransactionByTxId.mockRejectedValue(undefined)
+      hemiClient.getTxConfirmations.mockRejectedValue(undefined)
+
+      const newStatus = await getHemiStatusOfBtcDeposit({
+        deposit,
+        hemiClient,
+        vaultAddress: zeroAddress,
+      })
+
+      expect(newStatus).toBe(BtcDepositStatus.BTC_TX_CONFIRMED)
+    })
+
+    it(`should return ${BtcDepositStatus.BTC_DEPOSITED} if Hemi is aware of the bitcoin transaction and the deposit is marked as acknowledged`, async function () {
+      hemiClient.acknowledgedDeposits.mockResolvedValue(true)
+      hemiClient.getTransactionByTxId.mockResolvedValue({ found: true })
+      hemiClient.getTxConfirmations.mockResolvedValue(9)
+
+      const newStatus = await getHemiStatusOfBtcDeposit({
+        deposit,
+        hemiClient,
+        vaultAddress: zeroAddress,
+      })
+
+      expect(newStatus).toBe(BtcDepositStatus.BTC_DEPOSITED)
+    })
+
+    it(`should return ${BtcDepositStatus.READY_TO_MANUAL_CONFIRM} if the deposit has more than 6 confirmations and it hasn't been acknowledged`, async function () {
+      hemiClient.acknowledgedDeposits.mockResolvedValue(false)
+      hemiClient.getTransactionByTxId.mockResolvedValue({ found: true })
+      hemiClient.getTxConfirmations.mockResolvedValue(7)
+
+      const newStatus = await getHemiStatusOfBtcDeposit({
+        deposit,
+        hemiClient,
+        vaultAddress: zeroAddress,
+      })
+
+      expect(newStatus).toBe(BtcDepositStatus.READY_TO_MANUAL_CONFIRM)
+    })
+
+    it(`should return ${BtcDepositStatus.BTC_TX_CONFIRMED} if the deposit does not have enough confirmations`, async function () {
+      hemiClient.acknowledgedDeposits.mockResolvedValue(false)
+      hemiClient.getTransactionByTxId.mockResolvedValue({ found: true })
+      hemiClient.getTxConfirmations.mockResolvedValue(5)
+
+      const newStatus = await getHemiStatusOfBtcDeposit({
+        deposit,
+        hemiClient,
+        vaultAddress: zeroAddress,
+      })
+
+      expect(newStatus).toBe(BtcDepositStatus.BTC_TX_CONFIRMED)
+    })
   })
 
   describe('getHemiStatusOfBtcWithdrawal', function () {
@@ -73,7 +147,6 @@ describe('utils/hemi', function () {
 
     it(`should return ${BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED} if the withdrawal was fulfilled`, async function () {
       hemiClient.getVaultByIndex.mockResolvedValue(zeroAddress)
-      hemiClient.getBitcoinVaultStateAddress.mockResolvedValue(zeroAddress)
       hemiClient.getVaultChildIndex.mockResolvedValue(1)
       hemiClient.isBitcoinWithdrawalFulfilled.mockResolvedValue(true)
       hemiClient.isBitcoinWithdrawalChallenged.mockResolvedValue(false)
@@ -96,7 +169,6 @@ describe('utils/hemi', function () {
 
     it(`should return ${BtcWithdrawStatus.WITHDRAWAL_CHALLENGED} if the withdrawal has been challenged`, async function () {
       hemiClient.getVaultByIndex.mockResolvedValue(zeroAddress)
-      hemiClient.getBitcoinVaultStateAddress.mockResolvedValue(zeroAddress)
       hemiClient.getVaultChildIndex.mockResolvedValue(1)
       hemiClient.isBitcoinWithdrawalFulfilled.mockResolvedValue(false)
       hemiClient.isBitcoinWithdrawalChallenged.mockResolvedValue(true)
@@ -121,7 +193,6 @@ describe('utils/hemi', function () {
 
     it(`should return ${BtcWithdrawStatus.READY_TO_CHALLENGE} if the withdrawal has not been challenged nor fulfilled, and the grace period has passed`, async function () {
       hemiClient.getVaultByIndex.mockResolvedValue(zeroAddress)
-      hemiClient.getBitcoinVaultStateAddress.mockResolvedValue(zeroAddress)
       hemiClient.getVaultChildIndex.mockResolvedValue(1)
       hemiClient.isBitcoinWithdrawalFulfilled.mockResolvedValue(false)
       hemiClient.isBitcoinWithdrawalChallenged.mockResolvedValue(false)

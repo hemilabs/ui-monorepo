@@ -15,6 +15,7 @@ import { calculateDepositOutputIndex } from './bitcoin'
 import { createBtcApi, mapBitcoinNetwork } from './btcApi'
 import {
   getBitcoinCustodyAddress,
+  getBitcoinKitAddress,
   getBitcoinVaultGracePeriod,
   getBitcoinVaultStateAddress,
   getVaultAddressByIndex,
@@ -35,6 +36,8 @@ export const getVaultAddressByDeposit = (
     getVaultAddressByIndex(hemiClient, vaultIndex),
   )
 
+const BitcoinConfirmationsOnHemi = 6
+
 export const getHemiStatusOfBtcDeposit = ({
   deposit,
   hemiClient,
@@ -47,8 +50,7 @@ export const getHemiStatusOfBtcDeposit = ({
   vaultAddress: Address
 }) =>
   Promise.all([
-    // @ts-expect-error needs to be fixed https://github.com/hemilabs/hemi-viem/issues/30
-    hemiClient.getBitcoinKitAddress().then(bitcoinKitAddress =>
+    getBitcoinKitAddress(hemiClient).then(bitcoinKitAddress =>
       // check if Hemi is aware of the btc transaction
       hemiClient
         .getTransactionByTxId({
@@ -68,13 +70,30 @@ export const getHemiStatusOfBtcDeposit = ({
           vaultStateAddress,
         }),
       ),
-  ]).then(([hemiAwareOfBtcTx, confirmed]) =>
-    hemiAwareOfBtcTx
-      ? confirmed
-        ? BtcDepositStatus.BTC_DEPOSITED
-        : BtcDepositStatus.READY_TO_MANUAL_CONFIRM
-      : BtcDepositStatus.BTC_TX_CONFIRMED,
-  )
+    // check the number of confirmations of the deposit
+    getBitcoinKitAddress(hemiClient).then(bitcoinKitAddress =>
+      hemiClient
+        .getTxConfirmations({
+          bitcoinKitAddress,
+          txId: deposit.transactionHash,
+        })
+        // api throws if the tx Id is not found, which is the same as 0 confirmations from our POV.
+        .catch(() => 0),
+    ),
+  ]).then(function ([hemiAwareOfBtcTx, confirmed, confirmations]) {
+    if (!hemiAwareOfBtcTx) {
+      return BtcDepositStatus.BTC_TX_CONFIRMED
+    }
+    if (confirmed) {
+      return BtcDepositStatus.BTC_DEPOSITED
+    }
+    // Hemi requires 6 confirmations before a deposit is manually processed. If that doesn't happen
+    // it should allow the user to manually confirm the deposit.
+    if (confirmations > BitcoinConfirmationsOnHemi) {
+      return BtcDepositStatus.READY_TO_MANUAL_CONFIRM
+    }
+    return BtcDepositStatus.BTC_TX_CONFIRMED
+  })
 
 /**
  * Returns true if a withdrawal was marked as successfully challenged

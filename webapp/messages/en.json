@@ -302,7 +302,7 @@
       "your-deposit-is-complete": "Your deposit is complete."
     },
     "review-withdrawal": {
-      "challenge-to-get-bitcoins-back": "Click 'Challenge withdrawal' yo reclaim your BTC and send it back to your Hemi address.",
+      "challenge-to-get-bitcoins-back": "Click 'Challenge withdrawal' to reclaim your BTC and send it back to your Hemi address.",
       "challenge-withdrawal": "Challenge Withdrawal",
       "claim-withdrawal": "Claim withdrawal",
       "heading": "Review Withdrawal",

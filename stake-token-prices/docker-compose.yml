@@ -6,7 +6,6 @@ services:
       context: cron
     environment:
       CACHE_EXPIRATION_SEC: ${CACHE_EXPIRATION_SEC}
-      COIN_GECKO_API_KEY: ${COIN_GECKO_API_KEY}
       COIN_MARKET_CAP_API_KEY: ${COIN_MARKET_CAP_API_KEY}
       NODE_ENV: production
       REDIS_URL: redis://cache:6379

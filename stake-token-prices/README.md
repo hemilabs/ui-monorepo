@@ -1,6 +1,6 @@
 # Stake Token Price Service
 
-This service periodically collects token prices (in USD) from CoinGecko or CoinMarketCap, stores those in a key/value store and exposes an HTTP endpoint to easily get the stored prices.
+This service periodically collects token prices (in USD) from CoinMarketCap, stores those in a key/value store and exposes an HTTP endpoint to easily get the stored prices.
 
 ## Components
 
@@ -16,12 +16,12 @@ This architecture allows making very few calls to the price APIs, scales well wi
 
 These environment variables control how the `cron` job behaves:
 
-| Variable                                     | Description                                                                         | Default               |
-| -------------------------------------------- | ----------------------------------------------------------------------------------- | --------------------- |
-| CACHE_EXPIRATION_SEC                         | How long the prices will be kept in the cache.                                      | 3600                  |
-| REFRESH_INTERVAL_SEC                         | How frequently the cache will be refreshed. If set to 0, it will run once and exit. | 300                   |
-| COIN_MARKET_CAP_API_KEY / COIN_GECKO_API_KEY | The price API keys. One must be set. CoinMarketCap has precedence.                  |                       |
-| REDIS_URL                                    | The URL of the Redis database.                                                      | http://localhost:6379 |
+| Variable                | Description                                                                         | Default               |
+| ----------------------- | ----------------------------------------------------------------------------------- | --------------------- |
+| CACHE_EXPIRATION_SEC    | How long the prices will be kept in the cache.                                      | 3600                  |
+| REFRESH_INTERVAL_SEC    | How frequently the cache will be refreshed. If set to 0, it will run once and exit. | 300                   |
+| COIN_MARKET_CAP_API_KEY | The CoinMarketCap API key.                                                          |                       |
+| REDIS_URL               | The URL of the Redis database.                                                      | http://localhost:6379 |
 
 These control the `api` server:
 
@@ -40,10 +40,10 @@ In addition, a `time` key is also stored every time the cache is refreshed.
 To start all the services, run:
 
 ```sh
-COIN_GECKO_API_KEY=MY_API_KEY docker compose up -d
+COIN_MARKET_CAP_API_KEY=MY_API_KEY docker compose up -d
 ```
 
-Alternatively, if the environment variable are stored in a `.env.local` file, run:
+Alternatively, if the environment variables are stored in a `.env.local` file, run:
 
 ```sh
 docker compose --env-file=.env.local up
@@ -53,5 +53,5 @@ Then the prices can be obtained as follows:
 
 ```console
 $ curl http://localhost:3000
-{"prices":{"bitcoin":"97324","lorenzo-stbtc":"97334","merlin-s-seal-btc":"94216","pumpbtc":"97175","wrapped-bitcoin":"96443"},"time":"2025-02-14T21:05:36.599Z"}
+{"prices":{"BTC":"94514.79193898945","M-BTC":"95894.52612269788","PUMPBTC":"95990.74415080296","WBTC":"95797.80677773379"},"time":"2025-02-17T23:12:35.803Z"}
 ```

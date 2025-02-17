@@ -3,7 +3,6 @@
   "overrides": [
     {
       "excludedFiles": [
-        "stake-token-prices/**/*",
         "subgraphs/*/build/**/*.ts",
         "subgraphs/*/generated/**/*.ts",
         "webapp/scripts/*.js",

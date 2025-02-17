@@ -162,7 +162,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   return (
     <TunnelForm
       belowForm={
-        <div className="relative -z-10 -translate-y-7">
+        <div className="relative -translate-y-7">
           <ReceivingAddress
             address={btcAddress ? formatBtcAddress(btcAddress) : undefined}
             receivingText={t('tunnel-page.form.bitcoin-receiving-address')}

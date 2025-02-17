@@ -267,10 +267,10 @@
     "form": {
       "balance": "Balance",
       "bitcoin-receiving-address": "Dirección de recepción en Bitcoin",
-      "bitcoin-receiving-address-description": "Recibirá su {symbol} en la dirección de la billetera Bitcoin conectada.",
+      "bitcoin-receiving-address-description": "El {symbol} depositado se envía a la dirección asociada con su billetera Ethereum conectada.",
       "from-network": "Desde la Red",
       "hemi-receiving-address": "Dirección de recepción en Hemi",
-      "hemi-receiving-address-description": "Recibirá su {symbol} tunelizado en la dirección de la billetera EVM conectada.",
+      "hemi-receiving-address-description": "El {symbol} depositado se envía a la dirección asociada con su billetera EVM conectada.",
       "max": "max",
       "min-deposit": "El depósito mínimo {amount} {symbol}",
       "min-withdrawal": "El retiro mínimo es {amount} {symbol}",

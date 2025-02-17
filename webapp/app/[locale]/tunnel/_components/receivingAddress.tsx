@@ -22,7 +22,7 @@ export const ReceivingAddress = ({
         borderRadius="12px"
         id="target-address"
         overlay={
-          <div className="max-w-64 p-4">
+          <div className="max-w-64 p-3.5">
             <p className="text-sm font-medium text-white">{tooltipText}</p>
           </div>
         }

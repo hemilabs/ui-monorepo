@@ -139,8 +139,8 @@ const useEstimateGasFees = function <T extends GasEstimationOperations>({
       ...args,
       hemi.testnet,
     ],
-    // update gas fees every 15 seconds
-    refetchInterval: 15 * 1000,
+    // update gas fees every minute
+    refetchInterval: 60 * 1000,
   })
 
   return useEstimateFees({

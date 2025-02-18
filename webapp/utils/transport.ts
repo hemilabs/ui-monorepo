@@ -10,9 +10,9 @@ export const buildTransport = function (network: Chain) {
   if (rpcUrls.length > 1) {
     return fallback(
       rpcUrls.map(rpcUrl => http(rpcUrl, httpConfig), {
-        // rank every 10 seconds
-        rank: { interval: 10_000 },
-        retryCount: 2,
+        // rank every 30 seconds
+        rank: { interval: 30_000 },
+        retryCount: 1,
       }),
     )
   }

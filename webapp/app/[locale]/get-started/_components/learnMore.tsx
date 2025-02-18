@@ -78,12 +78,6 @@ const PoPMiner = function () {
   return (
     <div className="flex flex-col gap-y-3">
       <Box
-        event="tut - pop miner app"
-        heading={t('run-web-pop-miner')}
-        href="https://docs.hemi.xyz/how-to-tutorials/tutorials/web-based-pop-miner"
-        subheading={t('get-started-with-web-pop-miner')}
-      />
-      <Box
         event="tut - pop miner cli"
         heading={t('run-cli-pop-miner')}
         href="https://docs.hemi.xyz/how-to-tutorials/tutorials/setup-part-1"
@@ -98,6 +92,7 @@ const PoPMiner = function () {
     </div>
   )
 }
+
 const WalletSetup = function () {
   const t = useTranslations('get-started.learn-more-tutorials')
   return (

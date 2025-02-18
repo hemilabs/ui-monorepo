@@ -111,7 +111,6 @@
       "network": "Red"
     },
     "heading": "Comience con Hemi",
-    "hemi-faucet": "Faucet en Discord de Hemi",
     "here-are-some-options-mainnet": "Aquí hay algunos Exchanges Descentralizados que podría explorar.",
     "here-are-some-options-testnet": "Aquí hay algunos faucets que podría explorar.",
     "layer": "Capa {layer}",
@@ -123,7 +122,6 @@
       "deploy-erc20": "Despliegue un ERC-20",
       "developer-tooling": "Herramientas del Desarrollador",
       "get-bitcoin-balance": "Obtenga Balance de Bitcoin con Remix",
-      "get-started-with-web-pop-miner": "Comience con la minería PoP y explore las aplicaciones de principiantes.",
       "hello-world": "HelloWorld.sol",
       "learn-about-capsules": "Aprenda sobre transacciones sin gas, re-routeo/re-llamado y seguridad configurable con Cápsulas en Hemi.",
       "learn-about-multisig-wallet": "Aprenda sobre billeteras multi-firma y configure una Billetera Safe en Hemi.",
@@ -136,7 +134,6 @@
       "learn-to-tunnel-to-hemi": "Aprenda como tunelizar (puentear) sus activos de Ethereum hacia y desde Hemi.",
       "pop-miner": "Minero PoP",
       "run-cli-pop-miner": "Ejecute el Minero PoP por CLI",
-      "run-web-pop-miner": "Ejecute el Minero PoP Web",
       "set-up-btc-wallet": "Configure una Billetera de BTC",
       "set-up-cli-pop-miner": "Configure y ejecute su minero PoP, ya sea descargando binarios pre-compilados o compilando desde el código fuente.",
       "set-up-evm-wallet": "Configure una Billetera EVM",

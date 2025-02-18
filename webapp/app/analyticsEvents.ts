@@ -20,7 +20,6 @@ export const analyticsEvents = [
   'fund wallet - moonpay',
   'fund wallet - oku',
   'fund wallet - sushi',
-  'hemi discord faucet',
   'network - automatic',
   'network - manual',
   'tut - add hemi',
@@ -32,7 +31,6 @@ export const analyticsEvents = [
   'tut - get btc balance',
   'tut - learn more',
   'tut - pop miner',
-  'tut - pop miner app',
   'tut - pop miner cli',
   'tut - setup btc',
   'tut - setup evm',
@@ -134,7 +132,6 @@ export type AnalyticsEventsWithChain = Exclude<
     | 'fund wallet - moonpay'
     | 'fund wallet - oku'
     | 'fund wallet - sushi'
-    | 'hemi discord faucet'
     | 'nav - discord'
     | 'nav - gitHub'
     | 'nav - linkedIn'
@@ -153,7 +150,6 @@ export type AnalyticsEventsWithChain = Exclude<
     | 'tut - get btc balance'
     | 'tut - learn more'
     | 'tut - pop miner'
-    | 'tut - pop miner app'
     | 'tut - pop miner cli'
     | 'tut - setup btc'
     | 'tut - setup evm'

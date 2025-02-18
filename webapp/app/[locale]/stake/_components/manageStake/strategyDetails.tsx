@@ -26,7 +26,7 @@ export const StrategyDetails = function ({ tvl, token }: Props) {
   return (
     <div className="flex flex-col">
       <Container>
-        <h5>{t('heading')}</h5>
+        <h5 className="font-medium">{t('heading')}</h5>
       </Container>
       <Container>
         <Subtitle text={t('rewards')} />

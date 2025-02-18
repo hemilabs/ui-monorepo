@@ -161,7 +161,7 @@ const StakeStrategyTableImp = function ({
       </thead>
       <tbody className="relative">
         {rows.map(row => (
-          <tr className="flex items-center" key={row.id}>
+          <tr className="group/stake-row flex items-center" key={row.id}>
             {row.getVisibleCells().map(cell => (
               <Column
                 key={cell.id}
@@ -206,7 +206,7 @@ export const StakeStrategyTable = function ({ data, loading }: Props) {
         <p className="flex text-sm font-normal text-neutral-600">
           {t('new-here')}
           <ExternalLink href={learnHowToStakeLink} onClick={trackLinkClick}>
-            <span className="ml-1 text-orange-500">
+            <span className="ml-1 text-orange-500 hover:text-orange-700">
               {t('learn-how-to-stake-on-hemi')}
             </span>
           </ExternalLink>

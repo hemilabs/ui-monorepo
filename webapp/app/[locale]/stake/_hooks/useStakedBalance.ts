@@ -1,4 +1,4 @@
-import { useQueries, useQuery, UseQueryResult } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { HemiPublicClient, useHemiClient } from 'hooks/useHemiClient'
 import { NetworkType, useNetworkType } from 'hooks/useNetworkType'
 import { useStakeTokens } from 'hooks/useStakeTokens'
@@ -79,28 +79,32 @@ export const useStakedBalance = function (token: StakeToken) {
   }
 }
 
-const combine = (results: UseQueryResult<bigint, Error>[]) => ({
-  hasPositions: results.some(({ data }) => data > BigInt(0)),
-  loading: results.some(({ isPending }) => isPending),
-})
-
-export const useUserHasPositions = function () {
+export const useStakePositions = function () {
   const { address, isConnected } = useAccount()
   const hemiClient = useHemiClient()
   const [networkType] = useNetworkType()
   const stakeTokens = useStakeTokens()
 
   return useQueries({
-    combine,
-    queries: stakeTokens.map(token =>
+    combine: results => ({
+      loading: results.some(({ isPending }) => isPending),
+      tokensWithPosition: results
+        .filter(
+          ({ data, status }) =>
+            status === 'success' && data.balance > BigInt(0),
+        )
+        .map(({ data }) => data),
+    }),
+    queries: stakeTokens.map(token => ({
       // By using the same query as useStakedBalance, when useStakedBalance is used, balance will be preloaded already!
-      getQuery({
+      ...getQuery({
         address,
         hemiClient,
         isConnected,
         networkType,
         token,
       }),
-    ),
+      select: (balance: bigint) => ({ ...token, balance }) satisfies StakeToken,
+    })),
   })
 }

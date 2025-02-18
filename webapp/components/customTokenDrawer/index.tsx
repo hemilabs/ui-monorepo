@@ -1,7 +1,6 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { getRemoteTokens } from 'app/tokenList'
 import { Button } from 'components/button'
 import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { useChain } from 'hooks/useChain'
@@ -11,6 +10,7 @@ import { getUseTokenQueryKey, useToken } from 'hooks/useToken'
 import { useUserTokenList } from 'hooks/useUserTokenList'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
+import { getRemoteTokens } from 'token-list'
 import { EvmToken, L2Token, Token } from 'types/token'
 import { isL2Network } from 'utils/chain'
 import {

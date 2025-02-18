@@ -1,13 +1,12 @@
-import { getRemoteTokens } from 'app/tokenList'
 import { useMemo } from 'react'
-import { type EvmToken } from 'types/token'
+import { getRemoteTokens, type Token } from 'token-list'
 import useLocalStorageState from 'use-local-storage-state'
 import { isAddress, isAddressEqual } from 'viem'
 
 import { useNetworkType } from './useNetworkType'
 
 type CustomTokenList = {
-  tokens: EvmToken[]
+  tokens: Token[]
 }
 
 export const useUserTokenList = function () {
@@ -21,7 +20,7 @@ export const useUserTokenList = function () {
     )
   return useMemo(
     () => ({
-      addToken(token: EvmToken) {
+      addToken(token: Token) {
         setUserTokenList(function (prevList) {
           const found = prevList.tokens.some(
             t =>
@@ -40,7 +39,7 @@ export const useUserTokenList = function () {
         })
       },
       userTokenList: userTokenList.tokens.concat(
-        userTokenList.tokens.flatMap(getRemoteTokens),
+        userTokenList.tokens.flatMap(t => getRemoteTokens(t)),
       ),
     }),
     [userTokenList, setUserTokenList],

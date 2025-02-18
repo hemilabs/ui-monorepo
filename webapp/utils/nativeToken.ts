@@ -1,7 +1,4 @@
-import {
-  nativeTokens,
-  NativeTokenSpecialAddressOnL2,
-} from 'app/tokenList/nativeTokens'
+import { NativeTokenSpecialAddressOnL2, tokenList } from 'token-list'
 import { Token } from 'types/token'
 import { isAddress, isAddressEqual, zeroAddress } from 'viem'
 
@@ -13,4 +10,6 @@ export const isNativeAddress = (address: string) =>
 export const isNativeToken = (token: Token) => isNativeAddress(token.address)
 
 export const getNativeToken = (chainId: Token['chainId']) =>
-  nativeTokens.find(token => token.chainId === chainId && isNativeToken(token))
+  tokenList.tokens.find(
+    token => token.chainId === chainId && isNativeToken(token),
+  )

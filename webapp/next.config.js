@@ -30,6 +30,7 @@ const nextConfig = {
     'btc-wallet',
     'hemi-viem-stake-actions',
     'sliding-block-window',
+    'token-list',
     'ui-common',
     'wagmi-erc20-hooks',
   ],

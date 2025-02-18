@@ -60,8 +60,8 @@ export const useEstimateFees = function ({
     chainId,
     query: {
       enabled: isConnected && isConnectedToExpectedChain && enabled,
-      // refetch every 12 seconds
-      refetchInterval: 12 * 1000,
+      // refetch every minute
+      refetchInterval: 60 * 1000,
     },
     rewardPercentiles: [30],
   })

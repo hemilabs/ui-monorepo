@@ -214,6 +214,8 @@
         "tvl": "TVL (on Hemi)",
         "website": "Website"
       },
+      "unstake-token": "Unstake {symbol}",
+      "unstaking": "Unstaking...",
       "you-can-stake-anytime": "You can withdraw any time and keep the points already earned."
     },
     "points": {

@@ -144,11 +144,10 @@ export const StakeOperation = function ({
 
   const requiresApproval = allowance < parseUnits(amount, token.decimals)
 
-  const handleStake = function () {
+  const handleStake = () =>
     stake({
       amount,
     })
-  }
 
   const isOperating = stakeStatus !== undefined
 

@@ -8,7 +8,7 @@ import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
-const MaxButton = function ({
+export const MaxButton = function ({
   disabled,
   onClick,
 }: {

@@ -24,13 +24,13 @@ import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { queryStringObjectToString } from 'utils/url'
 
 import { ProtocolImage } from '../../../_components/protocolImage'
+import { StakedBalance } from '../../../_components/stakedBalance'
 import { Column, ColumnHeader, Header } from '../../../_components/table'
 import { TokenBalance } from '../../../_components/tokenBalance'
 import { TokenRewards } from '../../../_components/tokenRewards'
 import { useDrawerStakeQueryString } from '../../../_hooks/useDrawerStakeQueryString'
 import { useUserHasPositions } from '../../../_hooks/useStakedBalance'
 
-import { StakedBalance } from './stakedBalance'
 import { WelcomeStake } from './welcomeStake'
 
 type ActionProps = {

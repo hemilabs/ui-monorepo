@@ -60,7 +60,6 @@ export const ManageStake = function ({
           closeDrawer={closeDrawer}
           heading={heading}
           onOperationChange={setOperation}
-          showTabs
           subheading={subheading}
           token={token}
         />

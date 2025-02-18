@@ -11,7 +11,7 @@ import { useUserTokenList } from 'hooks/useUserTokenList'
 import partition from 'lodash/partition'
 import { useTranslations } from 'next-intl'
 import { type JSX, useRef, useState } from 'react'
-import { Token as TokenType } from 'types/token'
+import { Token as TokenType } from 'token-list'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
 import { type Chain, isAddress, isAddressEqual } from 'viem'
 

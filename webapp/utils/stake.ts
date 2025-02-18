@@ -7,7 +7,7 @@ import {
   type HemiWalletClient,
 } from 'hooks/useHemiClient'
 import { NetworkType } from 'hooks/useNetworkType'
-import { EvmToken } from 'types/token'
+import { type EvmToken } from 'token-list'
 import { isNativeToken } from 'utils/nativeToken'
 import {
   approveErc20Token,

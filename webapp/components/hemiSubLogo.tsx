@@ -1,7 +1,7 @@
 'use client'
 
 import { useHemi } from 'hooks/useHemi'
-import { Token } from 'types/token'
+import { type Token } from 'token-list'
 
 const HemiLogo = () => (
   <svg

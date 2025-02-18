@@ -1,5 +1,5 @@
 import { HemiSubLogo } from 'components/hemiSubLogo'
-import { Token } from 'types/token'
+import { type Token } from 'token-list'
 
 const sizes = {
   medium: 'h-8 w-8 text-[8px]',

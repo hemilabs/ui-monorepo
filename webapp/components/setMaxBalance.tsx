@@ -4,7 +4,7 @@ import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useEstimateBtcFees } from 'hooks/useEstimateBtcFees'
 import { useTranslations } from 'next-intl'
-import { type BtcToken, type EvmToken, type Token } from 'types/token'
+import { type BtcToken, type EvmToken, type Token } from 'token-list'
 import { isNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 

@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { Token } from 'token-list'
 import { RemoteChain } from 'types/chain'
-import { Token } from 'types/token'
 import { getErc20Token } from 'utils/evmApi'
 import { isNativeAddress } from 'utils/nativeToken'
 import { getTokenByAddress } from 'utils/token'

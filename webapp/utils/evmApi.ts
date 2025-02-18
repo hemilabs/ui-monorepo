@@ -5,7 +5,7 @@ import {
 } from '@wagmi/core'
 import { allEvmNetworksWalletConfig } from 'app/context/evmWalletContext'
 import pMemoize from 'promise-mem'
-import { type L2Token, Token } from 'types/token'
+import { type L2Token, Token } from 'token-list'
 import {
   type Address,
   type Chain,

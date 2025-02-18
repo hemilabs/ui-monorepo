@@ -1,6 +1,6 @@
 import { tokenList } from 'app/tokenList/'
+import { EvmToken, Token } from 'token-list'
 import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
-import { EvmToken, Token } from 'types/token'
 import {
   type Address,
   type Client,

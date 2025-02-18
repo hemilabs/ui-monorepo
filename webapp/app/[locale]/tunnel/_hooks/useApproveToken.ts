@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { type EvmToken } from 'types/token'
+import { type EvmToken } from 'token-list'
 import { isNativeToken } from 'utils/nativeToken'
 import { Hash } from 'viem'
 import { useAccount } from 'wagmi'

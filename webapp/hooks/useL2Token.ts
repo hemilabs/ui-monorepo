@@ -1,5 +1,5 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { L2Token } from 'types/token'
+import { L2Token } from 'token-list'
 import { getL2Erc20Token } from 'utils/evmApi'
 import { isAddress, type Address, type Chain } from 'viem'
 

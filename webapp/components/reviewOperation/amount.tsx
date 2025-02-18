@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { Token } from 'types/token'
+import { type Token } from 'token-list'
 import { getFormattedValue } from 'utils/format'
 import { formatUnits } from 'viem'
 

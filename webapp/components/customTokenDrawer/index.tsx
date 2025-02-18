@@ -10,8 +10,12 @@ import { getUseTokenQueryKey, useToken } from 'hooks/useToken'
 import { useUserTokenList } from 'hooks/useUserTokenList'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
-import { getRemoteTokens } from 'token-list'
-import { EvmToken, L2Token, Token } from 'types/token'
+import {
+  type EvmToken,
+  getRemoteTokens,
+  type L2Token,
+  type Token,
+} from 'token-list'
 import { isL2Network } from 'utils/chain'
 import {
   type Address,

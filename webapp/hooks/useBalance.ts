@@ -1,4 +1,4 @@
-import { EvmToken } from 'types/token'
+import { type EvmToken } from 'token-list'
 import { type Address } from 'viem'
 import { useAccount, useBalance as useWagmiBalance } from 'wagmi'
 import { useBalanceOf } from 'wagmi-erc20-hooks'

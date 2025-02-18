@@ -1,6 +1,6 @@
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useEffect } from 'react'
-import { type EvmToken } from 'types/token'
+import { type EvmToken } from 'token-list'
 import { isNativeToken } from 'utils/nativeToken'
 
 type UseReloadBalances = {

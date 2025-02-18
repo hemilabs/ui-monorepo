@@ -3,7 +3,7 @@ import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useContext, useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { EvmToken } from 'types/token'
+import { type EvmToken } from 'token-list'
 import { EvmDepositOperation } from 'types/tunnel'
 import { formatUnits } from 'viem'
 

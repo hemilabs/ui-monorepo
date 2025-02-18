@@ -3,7 +3,7 @@
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { useTokenBalance, useNativeTokenBalance } from 'hooks/useBalance'
 import Skeleton from 'react-loading-skeleton'
-import { type BtcToken, type EvmToken, type Token } from 'types/token'
+import { type BtcToken, type EvmToken, type Token } from 'token-list'
 import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
 import { isEvmToken } from 'utils/token'

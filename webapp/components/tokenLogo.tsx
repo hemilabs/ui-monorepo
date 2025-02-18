@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { Token } from 'types/token'
+import { type Token } from 'token-list'
 
 import { CustomTokenLogo } from './customTokenLogo'
 import { HemiSubLogo } from './hemiSubLogo'

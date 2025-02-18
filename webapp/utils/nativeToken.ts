@@ -1,5 +1,5 @@
 import { NativeTokenSpecialAddressOnL2, tokenList } from 'token-list'
-import { Token } from 'types/token'
+import { Token } from 'token-list'
 import { isAddress, isAddressEqual, zeroAddress } from 'viem'
 
 export const isNativeAddress = (address: string) =>

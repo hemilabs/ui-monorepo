@@ -1,6 +1,6 @@
 import { CustomTokenLogo } from 'components/customTokenLogo'
 import Skeleton from 'react-loading-skeleton'
-import { Token as TokenType } from 'types/token'
+import { Token as TokenType } from 'token-list'
 import { formatEvmAddress } from 'utils/format'
 
 import { Balance } from '../balance'

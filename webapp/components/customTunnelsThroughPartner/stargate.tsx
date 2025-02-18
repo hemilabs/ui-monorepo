@@ -1,7 +1,7 @@
 import { hemi } from 'hemi-viem'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
-import { Token } from 'types/token'
+import { type Token } from 'token-list'
 import { queryStringObjectToString } from 'utils/url'
 import { mainnet } from 'viem/chains'
 

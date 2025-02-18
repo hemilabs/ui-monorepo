@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemiClient } from 'hooks/useHemiClient'
-import { EvmToken } from 'types/token'
+import { type EvmToken } from 'token-list'
 import { getVaultAddressByIndex } from 'utils/hemiMemoized'
 import { formatUnits } from 'viem'
 

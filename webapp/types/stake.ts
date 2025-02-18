@@ -1,6 +1,5 @@
+import { type EvmToken, type Extensions } from 'token-list'
 import { Address } from 'viem'
-
-import { type EvmToken, type Extensions } from './token'
 
 export const stakeProtocols = [
   'bedRock',

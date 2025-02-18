@@ -1,5 +1,5 @@
 import Big from 'big.js'
-import { Token } from 'types/token'
+import { type Token } from 'token-list'
 import { isNativeToken } from 'utils/nativeToken'
 import { formatUnits, parseUnits } from 'viem'
 

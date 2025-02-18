@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { Token } from 'types/token'
+import { Token } from 'token-list'
 
 const Balance = dynamic(
   () => import('components/balance').then(mod => mod.Balance),

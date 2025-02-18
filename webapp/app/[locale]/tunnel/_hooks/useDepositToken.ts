@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useDepositErc20Token } from 'hooks/useL2Bridge'
 import { useEffect } from 'react'
-import { type EvmToken } from 'types/token'
+import { type EvmToken } from 'token-list'
 import { getTunnelContracts } from 'utils/crossChainMessenger'
 import { parseUnits, type Hash } from 'viem'
 import {

@@ -1,5 +1,5 @@
 import { TokenLogo } from 'components/tokenLogo'
-import { Token } from 'types/token'
+import { type Token } from 'token-list'
 
 type Props = {
   token: Token

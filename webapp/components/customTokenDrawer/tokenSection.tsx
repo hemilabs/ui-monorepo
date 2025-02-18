@@ -6,7 +6,7 @@ import { ShortVerticalLine } from 'components/verticalLines'
 import { useChain } from 'hooks/useChain'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { Token } from 'types/token'
+import { type Token } from 'token-list'
 import { Chain } from 'viem'
 
 import { AddressValidity } from './addressValidity'

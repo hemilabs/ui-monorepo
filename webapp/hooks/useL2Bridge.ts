@@ -7,7 +7,7 @@ import {
 import { useJsonRpcProvider, useWeb3Provider } from 'hooks/useEthersSigner'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import merge from 'lodash/merge'
-import { Token } from 'types/token'
+import { Token } from 'token-list'
 import {
   type CrossChainMessengerProxy,
   createIsolatedCrossChainMessenger,

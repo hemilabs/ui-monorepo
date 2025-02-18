@@ -2,7 +2,7 @@ import { waitForTransactionReceipt } from '@wagmi/core'
 import { hemi, hemiSepolia } from 'hemi-viem'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { HemiPublicClient, HemiWalletClient } from 'hooks/useHemiClient'
-import { EvmToken } from 'types/token'
+import { type EvmToken } from 'token-list'
 import { canSubmit, stake, unstake } from 'utils/stake'
 import {
   approveErc20Token,

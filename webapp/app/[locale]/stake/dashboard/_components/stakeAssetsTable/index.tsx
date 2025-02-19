@@ -14,7 +14,6 @@ import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
-import { useStakeTokens } from 'hooks/useStakeTokens'
 import { useRouter } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { MouseEvent, MutableRefObject, useMemo, useRef } from 'react'
@@ -29,7 +28,7 @@ import { Column, ColumnHeader, Header } from '../../../_components/table'
 import { TokenBalance } from '../../../_components/tokenBalance'
 import { TokenRewards } from '../../../_components/tokenRewards'
 import { useDrawerStakeQueryString } from '../../../_hooks/useDrawerStakeQueryString'
-import { useUserHasPositions } from '../../../_hooks/useStakedBalance'
+import { useStakePositions } from '../../../_hooks/useStakedBalance'
 
 import { WelcomeStake } from './welcomeStake'
 
@@ -263,14 +262,11 @@ export const StakeAssetsTable = function () {
   const [networkType] = useNetworkType()
   const containerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
-  const stakeTokens = useStakeTokens()
   const t = useTranslations('stake-page')
   const { track } = useUmami()
-  const result = useUserHasPositions()
+  const { loading, tokensWithPosition } = useStakePositions()
 
-  const { hasPositions, loading } = result
-
-  if (!hasPositions) {
+  if (tokensWithPosition.length === 0) {
     return <WelcomeStake />
   }
 
@@ -300,7 +296,7 @@ export const StakeAssetsTable = function () {
         <div className="max-h-[50dvh] overflow-x-auto p-2" ref={containerRef}>
           <StakeAssetsTableImp
             containerRef={containerRef}
-            data={stakeTokens}
+            data={tokensWithPosition}
             loading={loading}
           />
         </div>

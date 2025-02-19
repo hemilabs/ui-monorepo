@@ -33,6 +33,8 @@ export const ReviewOperation = ({
         ))}
       </div>
     </DrawerSection>
-    {!!callToAction && <div className="h-full py-3">{callToAction}</div>}
+    {!!callToAction && (
+      <div className="flex h-full items-end pt-3">{callToAction}</div>
+    )}
   </>
 )

@@ -13,7 +13,7 @@ export const DrawerCallToAction = ({
   onSubmit,
   submitButton,
 }: Props) => (
-  <form className="mt-auto flex [&>button]:w-full" onSubmit={onSubmit}>
+  <form className="mt-auto flex w-full [&>button]:w-full" onSubmit={onSubmit}>
     <SubmitWhenConnectedToChain
       chainId={expectedChainId}
       submitButton={submitButton}

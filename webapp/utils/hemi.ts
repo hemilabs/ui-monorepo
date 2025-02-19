@@ -89,7 +89,7 @@ export const getHemiStatusOfBtcDeposit = ({
     }
     // Hemi requires 6 confirmations before a deposit is manually processed. If that doesn't happen
     // it should allow the user to manually confirm the deposit.
-    if (confirmations > BitcoinConfirmationsOnHemi) {
+    if (confirmations >= BitcoinConfirmationsOnHemi) {
       return BtcDepositStatus.READY_TO_MANUAL_CONFIRM
     }
     return BtcDepositStatus.BTC_TX_CONFIRMED

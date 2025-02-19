@@ -19,7 +19,7 @@ const GetStarted = function () {
       <AddHemiWallet />
       <FundWallet />
       <StartUsingHemi />
-      <div className="mt-12">
+      <div className="mt-12 pb-14">
         <LearnMore />
       </div>
     </>

@@ -2,7 +2,7 @@ import { type NetworkType } from 'hooks/useNetworkType'
 import { umamiAnalyticsContextFactory } from 'umami-analytics-next'
 
 // all analytic events
-export const analyticsEvents = [
+const analyticsEvents = [
   // /demos
   'demos - bitcoinkit',
   'demos - cryptochords',
@@ -62,9 +62,13 @@ export const analyticsEvents = [
   'nav - x',
   // /stake
   'stake - learn stake',
-  'stake - stake',
+  'stake - stake failed',
+  'stake - stake started',
+  'stake - stake success',
   'stake - stake more',
-  'stake - unstake',
+  'stake - unstake failed',
+  'stake - unstake started',
+  'stake - unstake success',
   // /transaction-history
   'txn refresh',
   'txn filter - all',

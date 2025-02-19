@@ -49,7 +49,7 @@ export const useStake = function (token: StakeToken) {
   const { mutate } = useMutation({
     async mutationFn({ amount }: { amount: string }) {
       setIsSubmitting(true)
-      track?.('stake - stake')
+      track?.('stake - stake started', { chain: networkType })
 
       const amountUnits = parseUnits(amount, token.decimals)
 
@@ -71,8 +71,13 @@ export const useStake = function (token: StakeToken) {
             stakedBalanceQueryKey,
             (old: bigint) => old + amountUnits,
           )
+
+          track?.('stake - stake success', { chain: networkType })
         },
-        onStakeFailed: () => setStakeStatus(StakeStatusEnum.STAKE_TX_FAILED),
+        onStakeFailed() {
+          setStakeStatus(StakeStatusEnum.STAKE_TX_FAILED)
+          track?.('stake - stake failed', { chain: networkType })
+        },
         onStakeTokenApprovalFailed: () =>
           setStakeStatus(StakeStatusEnum.APPROVAL_TX_FAILED),
         onStakeTokenApproved() {

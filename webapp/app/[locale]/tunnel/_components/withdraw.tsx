@@ -231,10 +231,12 @@ type EvmWithdrawProps = {
 }
 
 const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
+  const [networkType] = useNetworkType()
   const [isWithdrawing, setIsWithdrawing] = useState(false)
   const [isPartnersDrawerOpen, setIsPartnersDrawerOpen] = useState(false)
 
   const t = useTranslations()
+  const { track } = useUmami()
 
   const {
     fromInput,
@@ -295,11 +297,14 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       }
       setIsWithdrawing(false)
       resetStateAfterOperation()
+      track?.('evm - init withdraw success', { chain: networkType })
     },
     [
       isWithdrawing,
+      networkType,
       resetStateAfterOperation,
       setIsWithdrawing,
+      track,
       withdrawReceipt,
     ],
   )
@@ -308,15 +313,26 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     function handleRejectionOrFailure() {
       if ((withdrawError || withdrawReceiptError) && isWithdrawing) {
         setIsWithdrawing(false)
+        if (withdrawReceiptError) {
+          track?.('evm - init withdraw failed', { chain: networkType })
+        }
       }
     },
-    [isWithdrawing, setIsWithdrawing, withdrawError, withdrawReceiptError],
+    [
+      isWithdrawing,
+      networkType,
+      setIsWithdrawing,
+      track,
+      withdrawError,
+      withdrawReceiptError,
+    ],
   )
 
   const handleWithdraw = function () {
     clearWithdrawState()
     withdraw()
     setIsWithdrawing(true)
+    track?.('evm - init withdraw started', { chain: networkType })
   }
   const gas = {
     amount: formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals),

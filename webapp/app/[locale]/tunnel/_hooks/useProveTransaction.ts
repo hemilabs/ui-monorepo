@@ -1,7 +1,9 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
+import { useUmami } from 'app/analyticsEvents'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useProveMessage } from 'hooks/useL2Bridge'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useCallback, useEffect } from 'react'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
@@ -11,8 +13,10 @@ export const useProveTransaction = function (
   withdrawal: ToEvmWithdrawOperation,
 ) {
   const connectedToL1 = useIsConnectedToExpectedNetwork(withdrawal.l1ChainId)
+  const [networkType] = useNetworkType()
   const queryClient = useQueryClient()
   const { updateWithdrawal } = useTunnelHistory()
+  const { track } = useUmami()
 
   const isReadyToProve =
     withdrawal.status === MessageStatus.READY_TO_PROVE && connectedToL1
@@ -57,13 +61,26 @@ export const useProveTransaction = function (
       })
 
       clearProveWithdrawalState()
+
+      track?.('evm - prove success', { chain: networkType })
     },
     [
       clearProveWithdrawalState,
+      networkType,
+      track,
       updateWithdrawal,
       withdrawal,
       withdrawalProofReceipt,
     ],
+  )
+
+  useEffect(
+    function trackOnProveFailure() {
+      if (withdrawalProofReceiptError) {
+        track?.('evm - prove failed', { chain: networkType })
+      }
+    },
+    [withdrawalProofReceiptError, networkType, track],
   )
 
   const handleProveWithdrawal = function () {
@@ -73,6 +90,7 @@ export const useProveTransaction = function (
     // clear any previous transaction hash, which may come from failed attempts
     updateWithdrawal(withdrawal, { proveTxHash: undefined })
     proveWithdrawal()
+    track?.('evm - prove started', { chain: networkType })
   }
 
   return {

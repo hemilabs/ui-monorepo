@@ -85,7 +85,7 @@
     },
     {
       "extends": ["bloq/node", "prettier"],
-      "files": ["stake-token-prices/**/*.js"]
+      "files": ["token-prices/**/*.js"]
     }
   ],
   "root": true,

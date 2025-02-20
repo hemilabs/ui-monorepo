@@ -26,8 +26,8 @@
     "btc-wallet",
     "hemi-viem-stake-actions",
     "sliding-block-window",
-    "stake-token-prices/*",
     "subgraphs/*",
+    "token-prices/*",
     "ui-common",
     "wagmi-erc20-hooks",
     "webapp"

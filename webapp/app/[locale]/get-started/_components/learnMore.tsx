@@ -161,35 +161,37 @@ export const LearnMore = function () {
               </div>
             </div>
             <div className="flex basis-full flex-col gap-y-4 xl:basis-1/2">
-              <Tabs>
-                <Tab
-                  onClick={function () {
-                    setSelectedTab('wallet')
-                    track?.('tut - wallet setup')
-                  }}
-                  selected={selectedTab === 'wallet'}
-                >
-                  {t('learn-more-tutorials.wallet-setup')}
-                </Tab>
-                <Tab
-                  onClick={function () {
-                    setSelectedTab('dev-tooling')
-                    track?.('tut - dev tooling')
-                  }}
-                  selected={selectedTab === 'dev-tooling'}
-                >
-                  {t('learn-more-tutorials.developer-tooling')}
-                </Tab>
-                <Tab
-                  onClick={function () {
-                    setSelectedTab('PoP-miner')
-                    track?.('tut - pop miner')
-                  }}
-                  selected={selectedTab === 'PoP-miner'}
-                >
-                  {t('learn-more-tutorials.pop-miner')}
-                </Tab>
-              </Tabs>
+              <div className="md:self-start">
+                <Tabs>
+                  <Tab
+                    onClick={function () {
+                      setSelectedTab('wallet')
+                      track?.('tut - wallet setup')
+                    }}
+                    selected={selectedTab === 'wallet'}
+                  >
+                    {t('learn-more-tutorials.wallet-setup')}
+                  </Tab>
+                  <Tab
+                    onClick={function () {
+                      setSelectedTab('dev-tooling')
+                      track?.('tut - dev tooling')
+                    }}
+                    selected={selectedTab === 'dev-tooling'}
+                  >
+                    {t('learn-more-tutorials.developer-tooling')}
+                  </Tab>
+                  <Tab
+                    onClick={function () {
+                      setSelectedTab('PoP-miner')
+                      track?.('tut - pop miner')
+                    }}
+                    selected={selectedTab === 'PoP-miner'}
+                  >
+                    {t('learn-more-tutorials.pop-miner')}
+                  </Tab>
+                </Tabs>
+              </div>
               {selectedTab === 'dev-tooling' && <DeveloperTooling />}
               {selectedTab === 'PoP-miner' && <PoPMiner />}
               {selectedTab === 'wallet' && <WalletSetup />}

@@ -16,20 +16,20 @@ This architecture allows making very few calls to the price APIs, scales well wi
 
 These environment variables control how the `cron` job behaves:
 
-| Variable                | Description                                                                         | Default               |
-| ----------------------- | ----------------------------------------------------------------------------------- | --------------------- |
-| CACHE_EXPIRATION_SEC    | How long the prices will be kept in the cache.                                      | 3600                  |
-| REFRESH_INTERVAL_SEC    | How frequently the cache will be refreshed. If set to 0, it will run once and exit. | 300                   |
-| COIN_MARKET_CAP_API_KEY | The CoinMarketCap API key.                                                          |                       |
-| COIN_MARKET_CAP_SLUGS   | String of comma separated token slugs. I.e. "bitcoin,ethereum"                      | bitcoin               |
-| REDIS_URL               | The URL of the Redis database.                                                      | http://localhost:6379 |
+| Variable                | Description                                                                         | Default                 |
+| ----------------------- | ----------------------------------------------------------------------------------- | ----------------------- |
+| CACHE_EXPIRATION_SEC    | How long the prices will be kept in the cache.                                      | 3600                    |
+| REFRESH_INTERVAL_SEC    | How frequently the cache will be refreshed. If set to 0, it will run once and exit. | 300                     |
+| COIN_MARKET_CAP_API_KEY | The CoinMarketCap API key.                                                          |                         |
+| COIN_MARKET_CAP_SLUGS   | String of comma separated token slugs. I.e. "bitcoin,ethereum"                      | bitcoin                 |
+| REDIS_URL               | The URL of the Redis database.                                                      | `http://localhost:6379` |
 
 These control the `api` server:
 
-| Variable  | Description                                    | Default               |
-| --------- | ---------------------------------------------- | --------------------- |
-| PORT      | The HTTP port the server listens for requests. | 3000                  |
-| REDIS_URL | The URL of the Redis database.                 | http://localhost:6379 |
+| Variable  | Description                                    | Default                 |
+| --------- | ---------------------------------------------- | ----------------------- |
+| PORT      | The HTTP port the server listens for requests. | 3000                    |
+| REDIS_URL | The URL of the Redis database.                 | `http://localhost:6379` |
 
 ### Stored data
 

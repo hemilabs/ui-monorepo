@@ -249,7 +249,7 @@
   "token-selector": {
     "manually-added-tokens": "Tokens agregados manualmente",
     "no-results-for": "No se encontraron resultados para <search></search>",
-    "search-tokens": "Buscar tokens...",
+    "search-tokens": "Buscar por nombre de token o dirección...",
     "select-token": "Seleccione un token",
     "validating-token-address": "Validando dirección del token..."
   },

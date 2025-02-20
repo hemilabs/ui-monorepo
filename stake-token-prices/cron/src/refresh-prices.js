@@ -3,11 +3,10 @@
 const redis = require('redis')
 const startInterval = require('startinterval2')
 
-const { coinMarketCapIds } = require('./token-ids.json')
-
 const cacheExpirationStr = process.env.CACHE_EXPIRATION_SEC || '3600' // 1h
 const cacheExpiration = parseInt(cacheExpirationStr)
 const coinMarketCapApiKey = process.env.COIN_MARKET_CAP_API_KEY || ''
+const coinMarketCapSlugs = process.env.COIN_MARKET_CAP_SLUGS || 'bitcoin'
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379'
 const refreshIntervalStr = process.env.REFRESH_INTERVAL_SEC || '300' // 5m
 const refreshInterval = parseInt(refreshIntervalStr)
@@ -34,9 +33,7 @@ async function fetchJson(url, params, headers) {
 async function fetchPrices() {
   const url =
     'https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest'
-  const params = {
-    slug: coinMarketCapIds.join(','),
-  }
+  const params = { slug: coinMarketCapSlugs }
   const headers = {
     'Accept-Encoding': 'deflate, gzip',
     'X-CMC_PRO_API_KEY': coinMarketCapApiKey,

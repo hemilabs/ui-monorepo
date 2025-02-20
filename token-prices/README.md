@@ -1,4 +1,4 @@
-# Stake Token Price Service
+# Token Price Service
 
 This service periodically collects token prices (in USD) from CoinMarketCap, stores those in a key/value store and exposes an HTTP endpoint to easily get the stored prices.
 

@@ -3,7 +3,7 @@ import { type Chain, fallback, http } from 'viem'
 
 export const buildTransport = function (network: Chain) {
   const httpConfig = {
-    batch: { wait: 1000 },
+    batch: { batchSize: 3, wait: 1000 },
     retryCount: 2,
   }
   const rpcUrls = network.rpcUrls.default.http

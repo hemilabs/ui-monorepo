@@ -14,7 +14,7 @@ const Page = function () {
   const t = useTranslations('stake-page')
 
   return (
-    <div className="h-fit-rest-screen w-full pb-4">
+    <div className="h-fit-rest-screen w-full pb-4 md:pb-0">
       <PageTitle
         subtitle={t('dashboard.subtitle')}
         title={t('dashboard.title')}

@@ -10,9 +10,8 @@ import {
   type StakeOperations,
   type StakeToken,
 } from 'types/stake'
-import { formatGasFees } from 'utils/format'
 import { canSubmit } from 'utils/stake'
-import { parseUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 
 import { useAmount } from '../../_hooks/useAmount'
 import { useStakedBalance } from '../../_hooks/useStakedBalance'
@@ -85,7 +84,7 @@ export const UnstakeOperation = function ({
     fees:
       unstakeStatus === UnstakeStatusEnum.UNSTAKE_TX_PENDING
         ? {
-            amount: formatGasFees(
+            amount: formatUnits(
               unstakeEstimatedFees,
               hemi.nativeCurrency.decimals,
             ),

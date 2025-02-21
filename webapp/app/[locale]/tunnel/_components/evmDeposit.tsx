@@ -10,10 +10,10 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
-import { formatGasFees } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
 import { tunnelsThroughPartner } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
+import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useDeposit } from '../_hooks/useDeposit'
@@ -234,7 +234,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       })
 
   const gas = {
-    amount: formatGasFees(
+    amount: formatUnits(
       depositGasFees + (needsApproval ? approvalTokenGasFees : BigInt(0)),
       fromChain?.nativeCurrency.decimals,
     ),

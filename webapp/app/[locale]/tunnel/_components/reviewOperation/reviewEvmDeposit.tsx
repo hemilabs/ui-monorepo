@@ -8,7 +8,6 @@ import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
-import { formatGasFees } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
@@ -58,7 +57,7 @@ const ReviewContent = function ({
     fees:
       depositStatus === EvmDepositStatus.APPROVAL_TX_PENDING
         ? {
-            amount: formatGasFees(
+            amount: formatUnits(
               approvalTokenGasFees,
               fromChain.nativeCurrency.decimals,
             ),
@@ -92,7 +91,7 @@ const ReviewContent = function ({
         EvmDepositStatus.DEPOSIT_TX_FAILED,
       ].includes(depositStatus)
         ? {
-            amount: formatGasFees(
+            amount: formatUnits(
               depositGasFees,
               fromChain.nativeCurrency.decimals,
             ),

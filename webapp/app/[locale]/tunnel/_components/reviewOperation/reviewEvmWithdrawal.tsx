@@ -8,7 +8,6 @@ import { useTranslations } from 'next-intl'
 import { useContext } from 'react'
 import { EvmToken } from 'types/token'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
-import { formatGasFees } from 'utils/format'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -95,7 +94,7 @@ const ReviewContent = function ({
     fees:
       withdrawGasFees !== undefined
         ? {
-            amount: formatGasFees(
+            amount: formatUnits(
               withdrawGasFees,
               fromChain.nativeCurrency.decimals,
             ),
@@ -158,7 +157,7 @@ const ReviewContent = function ({
       connectedChainId === withdrawal.l1ChainId &&
       proveWithdrawalTokenGasFees !== BigInt(0)
         ? {
-            amount: formatGasFees(
+            amount: formatUnits(
               proveWithdrawalTokenGasFees,
               toChain.nativeCurrency.decimals,
             ),
@@ -190,7 +189,7 @@ const ReviewContent = function ({
       connectedChainId === withdrawal.l1ChainId &&
       claimWithdrawalTokenGasFees !== BigInt(0)
         ? {
-            amount: formatGasFees(
+            amount: formatUnits(
               claimWithdrawalTokenGasFees,
               toChain.nativeCurrency.decimals,
             ),

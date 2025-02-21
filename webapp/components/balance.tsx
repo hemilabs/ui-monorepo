@@ -1,10 +1,10 @@
 'use client'
 
 import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
+import { DisplayAmount } from 'components/displayAmount'
 import { useTokenBalance, useNativeTokenBalance } from 'hooks/useBalance'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
-import { formatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
 import { isEvmToken } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -29,8 +29,13 @@ export const RenderBalance = ({
     )}
     {(status === 'error' || (status === 'pending' && fetchStatus === 'idle')) &&
       '-'}
-    {status === 'success' &&
-      formatNumber(formatUnits(balance, token.decimals), 2)}
+    {status === 'success' && (
+      <DisplayAmount
+        amount={formatUnits(balance, token.decimals)}
+        showSymbol={false}
+        token={token}
+      />
+    )}
   </>
 )
 
@@ -58,11 +63,11 @@ const TokenBalance = function ({ token }: Props<EvmToken>) {
   )
 }
 
-const EvmBalance = ({ token }: Props<EvmToken>) =>
-  isNativeToken(token) ? (
-    <NativeTokenBalance token={token} />
+const EvmBalance = (props: Props<EvmToken>) =>
+  isNativeToken(props.token) ? (
+    <NativeTokenBalance {...props} />
   ) : (
-    <TokenBalance token={token} />
+    <TokenBalance {...props} />
   )
 
 const BtcBalance = function ({ token }: Props<BtcToken>) {

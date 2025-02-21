@@ -1,7 +1,8 @@
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
-import { getFormattedValue } from 'utils/format'
 import { useAccount } from 'wagmi'
+
+import { DisplayAmount } from './displayAmount'
 
 export const EvmFeesSummary = function ({
   gas,
@@ -27,11 +28,13 @@ export const EvmFeesSummary = function ({
         {isConnected && isLoading ? (
           <Skeleton className="w-12" />
         ) : (
-          <span className="text-neutral-950">
-            {isConnected
-              ? `${getFormattedValue(gas.amount)} ${gas.symbol}`
-              : '-'}
-          </span>
+          <div className="text-neutral-950">
+            {isConnected ? (
+              <DisplayAmount amount={gas.amount} symbol={gas.symbol} />
+            ) : (
+              <span>-</span>
+            )}
+          </div>
         )}
       </div>
       {total !== undefined && (
@@ -40,11 +43,13 @@ export const EvmFeesSummary = function ({
           {isConnected && isLoading ? (
             <Skeleton className="w-12" />
           ) : (
-            <span className="text-neutral-950">
-              {isConnected
-                ? `${getFormattedValue(total)} ${operationSymbol}`
-                : '-'}
-            </span>
+            <div className="text-neutral-950">
+              {isConnected ? (
+                <DisplayAmount amount={total} symbol={operationSymbol} />
+              ) : (
+                <span>-</span>
+              )}
+            </div>
           )}
         </div>
       )}

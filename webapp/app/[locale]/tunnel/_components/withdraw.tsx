@@ -340,6 +340,17 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     symbol: fromChain?.nativeCurrency.symbol,
   }
 
+  const totalDeposit = operatesNativeToken
+    ? getTotal({
+        fees: withdrawGasFees,
+        fromInput,
+        fromToken,
+      })
+    : getTotal({
+        fromInput,
+        fromToken,
+      })
+
   const getSubmitButton = function () {
     if (tunnelsThroughPartner(fromToken)) {
       return (
@@ -373,7 +384,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
               <EvmFeesSummary
                 gas={gas}
                 operationSymbol={fromToken.symbol}
-                total={fromInput}
+                total={totalDeposit}
               />
             </FeesContainer>
           ) : null

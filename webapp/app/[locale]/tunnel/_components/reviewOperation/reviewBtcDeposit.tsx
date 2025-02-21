@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken } from 'types/token'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
-import { formatGasFees } from 'utils/format'
+import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { ConfirmBtcDeposit } from '../confirmBtcDeposit'
@@ -148,7 +148,7 @@ const ReviewContent = function ({
       explorerChainId: deposit.l2ChainId,
       fees: showDepositConfirmationFees
         ? {
-            amount: formatGasFees(estimatedFees, hemi.nativeCurrency.decimals),
+            amount: formatUnits(estimatedFees, hemi.nativeCurrency.decimals),
             symbol: hemi.nativeCurrency.symbol,
           }
         : undefined,

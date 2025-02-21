@@ -1,7 +1,9 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
+import { useUmami } from 'app/analyticsEvents'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useFinalizeMessage } from 'hooks/useL2Bridge'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useCallback, useEffect } from 'react'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
@@ -11,8 +13,10 @@ export const useClaimTransaction = function (
   withdrawal: ToEvmWithdrawOperation,
 ) {
   const connectedToL1 = useIsConnectedToExpectedNetwork(withdrawal.l1ChainId)
+  const [networkType] = useNetworkType()
   const queryClient = useQueryClient()
   const { updateWithdrawal } = useTunnelHistory()
+  const { track } = useUmami()
 
   const isReadyToClaim =
     withdrawal.status === MessageStatus.READY_FOR_RELAY && connectedToL1
@@ -45,6 +49,7 @@ export const useClaimTransaction = function (
     // clear any previous transaction hash, which may come from failed attempts
     updateWithdrawal(withdrawal, { claimTxHash: undefined })
     finalizeWithdrawal()
+    track?.('evm - claim started', { chain: networkType })
   }
 
   const clearClaimWithdrawalState = useCallback(
@@ -72,13 +77,26 @@ export const useClaimTransaction = function (
       })
 
       clearClaimWithdrawalState()
+
+      track?.('evm - claim success', { chain: networkType })
     },
     [
       claimWithdrawalReceipt,
       clearClaimWithdrawalState,
+      networkType,
+      track,
       updateWithdrawal,
       withdrawal,
     ],
+  )
+
+  useEffect(
+    function trackOnClaimFailure() {
+      if (claimWithdrawalReceiptError) {
+        track?.('evm - claim failed', { chain: networkType })
+      }
+    },
+    [claimWithdrawalReceiptError, networkType, track],
   )
 
   return {

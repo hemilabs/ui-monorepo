@@ -10,6 +10,7 @@ import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
+import { getNativeToken } from 'utils/nativeToken'
 import { secondsToHours } from 'utils/time'
 import { formatUnits } from 'viem'
 
@@ -88,7 +89,7 @@ const ReviewContent = function ({
               bitcoinWithdrawalEstimatedFees,
               fromChain?.nativeCurrency.decimals,
             ),
-            symbol: fromChain?.nativeCurrency.symbol,
+            token: getNativeToken(fromChain.id),
           }
         : undefined,
       postAction: {
@@ -130,7 +131,7 @@ const ReviewContent = function ({
               challengeWithdrawalEstimatedFees,
               fromChain?.nativeCurrency.decimals,
             ),
-            symbol: fromChain?.nativeCurrency.symbol,
+            token: getNativeToken(fromChain.id),
           }
         : undefined,
       separator: true,

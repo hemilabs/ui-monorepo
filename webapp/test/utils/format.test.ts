@@ -1,8 +1,4 @@
-import {
-  formatBtcAddress,
-  formatEvmAddress,
-  getFormattedValue,
-} from 'utils/format'
+import { formatBtcAddress, formatEvmAddress } from 'utils/format'
 import { describe, expect, it } from 'vitest'
 
 describe('utils/format', function () {
@@ -19,12 +15,6 @@ describe('utils/format', function () {
       expect(
         formatEvmAddress('0x4675C7e5BaAFBFFbca748158bEcBA61ef3b0a263'),
       ).toBe('0x4675...a263')
-    })
-  })
-
-  describe('getFormattedValue', function () {
-    it('should return "< 0.001" if the value is less than that', function () {
-      expect(getFormattedValue('0.00001')).toBe('< 0.001')
     })
   })
 })

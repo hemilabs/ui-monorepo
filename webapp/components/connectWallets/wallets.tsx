@@ -20,7 +20,7 @@ import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { isAndroid } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
-import { getFormattedValue } from 'utils/format'
+import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount, useBalance as useEvmBalance } from 'wagmi'
 
@@ -112,14 +112,8 @@ export const BtcWallet = function () {
   }
 
   if (status === 'connected') {
-    const getBalance = function () {
-      if (balance.confirmed === 0) {
-        return '0'
-      }
-      return getFormattedValue(
-        formatUnits(BigInt(balance.confirmed), bitcoin.nativeCurrency.decimals),
-      )
-    }
+    const getBalance = () =>
+      formatUnits(BigInt(balance.confirmed), bitcoin.nativeCurrency.decimals)
 
     return (
       <Box
@@ -135,7 +129,7 @@ export const BtcWallet = function () {
         {chainSupported ? (
           <Balance
             balance={balance !== undefined ? getBalance() : undefined}
-            symbol={bitcoin.nativeCurrency.symbol}
+            token={getNativeToken(bitcoin.id)}
           />
         ) : (
           <ConnectToSupportedChain />
@@ -170,12 +164,10 @@ export const EvmWallet = function () {
           <Balance
             balance={
               balance !== undefined
-                ? getFormattedValue(
-                    formatUnits(balance.value, balance.decimals),
-                  )
+                ? formatUnits(balance.value, balance.decimals)
                 : undefined
             }
-            symbol={chain.nativeCurrency.symbol}
+            token={getNativeToken(chain.id)}
           />
         ) : (
           <ConnectToSupportedChain />

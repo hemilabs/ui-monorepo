@@ -7,9 +7,9 @@ import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { StakeOperations, StakeStatusEnum, type StakeToken } from 'types/stake'
-import { formatGasFees } from 'utils/format'
+import { getNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
-import { parseUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
 import { useAllowance } from 'wagmi-erc20-hooks'
 
@@ -88,11 +88,11 @@ export const StakeOperation = function ({
       explorerChainId: token.chainId,
       fees: showFees
         ? {
-            amount: formatGasFees(
+            amount: formatUnits(
               approvalEstimatedFees,
               hemi.nativeCurrency.decimals,
             ),
-            symbol: hemi.nativeCurrency.symbol,
+            token: getNativeToken(hemi.id),
           }
         : undefined,
       status: statusMap[stakeStatus] ?? ProgressStatus.COMPLETED,
@@ -120,11 +120,11 @@ export const StakeOperation = function ({
       explorerChainId: token.chainId,
       fees: showFees
         ? {
-            amount: formatGasFees(
+            amount: formatUnits(
               stakeEstimatedFees,
               hemi.nativeCurrency.decimals,
             ),
-            symbol: hemi.nativeCurrency.symbol,
+            token: getNativeToken(hemi.id),
           }
         : undefined,
       status: statusMap[stakeStatus] ?? ProgressStatus.NOT_READY,

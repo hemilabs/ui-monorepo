@@ -1,5 +1,6 @@
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { useBitcoin } from 'hooks/useBitcoin'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
@@ -8,7 +9,8 @@ import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken } from 'types/token'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
-import { formatGasFees } from 'utils/format'
+import { getNativeToken } from 'utils/nativeToken'
+import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { ConfirmBtcDeposit } from '../confirmBtcDeposit'
@@ -44,6 +46,7 @@ const ReviewContent = function ({
   const depositStatus = deposit.status ?? BtcDepositStatus.BTC_TX_PENDING
 
   const { isConnected } = useAccount()
+  const bitcoin = useBitcoin()
   // fees for bitcoin deposit confirmation
   const estimatedFees = useEstimateFees({
     chainId: deposit.l2ChainId,
@@ -97,7 +100,8 @@ const ReviewContent = function ({
         ].includes(depositStatus) && feePrices?.fastestFee
           ? {
               amount: feePrices?.fastestFee?.toString(),
-              symbol: 'sat/vB',
+              // Bitcoin fees use a special symbol
+              token: { ...getNativeToken(bitcoin.id), symbol: 'sat/vB' },
             }
           : undefined,
       postAction: {
@@ -148,8 +152,8 @@ const ReviewContent = function ({
       explorerChainId: deposit.l2ChainId,
       fees: showDepositConfirmationFees
         ? {
-            amount: formatGasFees(estimatedFees, hemi.nativeCurrency.decimals),
-            symbol: hemi.nativeCurrency.symbol,
+            amount: formatUnits(estimatedFees, hemi.nativeCurrency.decimals),
+            token: getNativeToken(hemi.id),
           }
         : undefined,
       separator: true,

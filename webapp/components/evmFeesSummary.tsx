@@ -1,19 +1,21 @@
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
-import { getFormattedValue } from 'utils/format'
+import { Token } from 'types/token'
 import { useAccount } from 'wagmi'
+
+import { DisplayAmount } from './displayAmount'
 
 export const EvmFeesSummary = function ({
   gas,
-  operationSymbol,
+  operationToken,
   total,
 }: {
   gas: {
     amount: string
     label: string
-    symbol: string
+    token: Token
   }
-  operationSymbol: string
+  operationToken: Token
   total?: string
 }) {
   const { isConnected } = useAccount()
@@ -27,11 +29,17 @@ export const EvmFeesSummary = function ({
         {isConnected && isLoading ? (
           <Skeleton className="w-12" />
         ) : (
-          <span className="text-neutral-950">
-            {isConnected
-              ? `${getFormattedValue(gas.amount)} ${gas.symbol}`
-              : '-'}
-          </span>
+          <div className="text-neutral-950">
+            {isConnected ? (
+              <DisplayAmount
+                amount={gas.amount}
+                showTokenLogo={false}
+                token={gas.token}
+              />
+            ) : (
+              <span>-</span>
+            )}
+          </div>
         )}
       </div>
       {total !== undefined && (
@@ -40,11 +48,17 @@ export const EvmFeesSummary = function ({
           {isConnected && isLoading ? (
             <Skeleton className="w-12" />
           ) : (
-            <span className="text-neutral-950">
-              {isConnected
-                ? `${getFormattedValue(total)} ${operationSymbol}`
-                : '-'}
-            </span>
+            <div className="text-neutral-950">
+              {isConnected ? (
+                <DisplayAmount
+                  amount={total}
+                  showTokenLogo={false}
+                  token={operationToken}
+                />
+              ) : (
+                <span>-</span>
+              )}
+            </div>
           )}
         </div>
       )}

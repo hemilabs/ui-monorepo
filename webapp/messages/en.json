@@ -13,6 +13,7 @@
     "connect-your-wallet": "Connect your Wallet",
     "copied": "Copied",
     "copy": "Copy",
+    "data-attribution": "Data provided by",
     "erc20-approve-10x-deposits": "Approve 10x the amount of this deposit",
     "erc20-approve-10x-detailed-description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
     "erc20-extra-approval": "Approve 10x deposits",

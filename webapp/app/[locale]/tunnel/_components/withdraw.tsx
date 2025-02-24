@@ -20,7 +20,7 @@ import { type RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { isEvmNetwork } from 'utils/chain'
 import { formatBtcAddress } from 'utils/format'
-import { isNativeToken } from 'utils/nativeToken'
+import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { tunnelsThroughPartner } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits, parseUnits } from 'viem'
@@ -156,7 +156,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   const gas = {
     amount: formatUnits(estimatedFees, fromChain?.nativeCurrency.decimals),
     label: t('common.network-gas-fee', { network: fromChain?.name }),
-    symbol: fromChain?.nativeCurrency.symbol,
+    token: getNativeToken(fromChain.id),
   }
 
   return (
@@ -177,7 +177,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
             <FeesContainer>
               <EvmFeesSummary
                 gas={gas}
-                operationSymbol={fromToken.symbol}
+                operationToken={fromToken}
                 total={getTotal({
                   fromInput,
                   fromToken,
@@ -337,7 +337,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   const gas = {
     amount: formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals),
     label: t('common.network-gas-fee', { network: fromChain?.name }),
-    symbol: fromChain?.nativeCurrency.symbol,
+    token: getNativeToken(fromChain.id),
   }
 
   const totalDeposit = operatesNativeToken
@@ -383,7 +383,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             <FeesContainer>
               <EvmFeesSummary
                 gas={gas}
-                operationSymbol={fromToken.symbol}
+                operationToken={fromToken}
                 total={totalDeposit}
               />
             </FeesContainer>

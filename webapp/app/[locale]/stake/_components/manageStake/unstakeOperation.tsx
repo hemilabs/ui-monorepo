@@ -10,6 +10,7 @@ import {
   type StakeOperations,
   type StakeToken,
 } from 'types/stake'
+import { getNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
 import { formatUnits, parseUnits } from 'viem'
 
@@ -88,7 +89,7 @@ export const UnstakeOperation = function ({
               unstakeEstimatedFees,
               hemi.nativeCurrency.decimals,
             ),
-            symbol: hemi.nativeCurrency.symbol,
+            token: getNativeToken(hemi.id),
           }
         : undefined,
     status: statusMap[unstakeStatus] ?? ProgressStatus.NOT_READY,

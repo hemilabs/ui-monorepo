@@ -7,6 +7,7 @@ import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { StakeOperations, StakeStatusEnum, type StakeToken } from 'types/stake'
+import { getNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -91,7 +92,7 @@ export const StakeOperation = function ({
               approvalEstimatedFees,
               hemi.nativeCurrency.decimals,
             ),
-            symbol: hemi.nativeCurrency.symbol,
+            token: getNativeToken(hemi.id),
           }
         : undefined,
       status: statusMap[stakeStatus] ?? ProgressStatus.COMPLETED,
@@ -123,7 +124,7 @@ export const StakeOperation = function ({
               stakeEstimatedFees,
               hemi.nativeCurrency.decimals,
             ),
-            symbol: hemi.nativeCurrency.symbol,
+            token: getNativeToken(hemi.id),
           }
         : undefined,
       status: statusMap[stakeStatus] ?? ProgressStatus.NOT_READY,

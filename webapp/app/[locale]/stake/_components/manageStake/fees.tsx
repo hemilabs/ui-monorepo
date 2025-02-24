@@ -2,21 +2,24 @@ import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
+import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
 const Fees = function ({ estimatedFees }: { estimatedFees: bigint }) {
   const hemi = useHemi()
   const t = useTranslations('common')
 
+  const nativeToken = getNativeToken(hemi.id)
+
   const gas = {
     amount: formatUnits(estimatedFees, hemi.nativeCurrency.decimals),
     label: t('network-gas-fee', { network: hemi.name }),
-    symbol: hemi.nativeCurrency.symbol,
+    token: nativeToken,
   }
 
   return (
     <div className="px-4">
-      <EvmFeesSummary gas={gas} operationSymbol={hemi.nativeCurrency.symbol} />
+      <EvmFeesSummary gas={gas} operationToken={nativeToken} />
     </div>
   )
 }

@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl'
 import { useContext } from 'react'
 import { EvmToken } from 'types/token'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
+import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -98,7 +99,7 @@ const ReviewContent = function ({
               withdrawGasFees,
               fromChain.nativeCurrency.decimals,
             ),
-            symbol: fromChain.nativeCurrency.symbol,
+            token: getNativeToken(fromChain.id),
           }
         : undefined,
     postAction: {
@@ -161,7 +162,7 @@ const ReviewContent = function ({
               proveWithdrawalTokenGasFees,
               toChain.nativeCurrency.decimals,
             ),
-            symbol: toChain.nativeCurrency.symbol,
+            token: getNativeToken(toChain.id),
           }
         : undefined,
     postAction: {
@@ -193,7 +194,7 @@ const ReviewContent = function ({
               claimWithdrawalTokenGasFees,
               toChain.nativeCurrency.decimals,
             ),
-            symbol: toChain.nativeCurrency.symbol,
+            token: getNativeToken(toChain.id),
           }
         : undefined,
     status: getClaimStatus(),

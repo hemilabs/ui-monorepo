@@ -10,7 +10,7 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
-import { isNativeToken } from 'utils/nativeToken'
+import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { tunnelsThroughPartner } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
@@ -239,7 +239,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       fromChain?.nativeCurrency.decimals,
     ),
     label: t('common.network-gas-fee', { network: fromChain?.name }),
-    symbol: fromChain?.nativeCurrency.symbol,
+    token: getNativeToken(fromChain.id),
   }
 
   const getSubmitButton = function () {
@@ -271,7 +271,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
             <FeesContainer>
               <EvmFeesSummary
                 gas={gas}
-                operationSymbol={fromToken.symbol}
+                operationToken={fromToken}
                 total={totalDeposit}
               />
             </FeesContainer>

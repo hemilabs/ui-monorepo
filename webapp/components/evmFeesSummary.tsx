@@ -1,20 +1,21 @@
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
+import { Token } from 'types/token'
 import { useAccount } from 'wagmi'
 
 import { DisplayAmount } from './displayAmount'
 
 export const EvmFeesSummary = function ({
   gas,
-  operationSymbol,
+  operationToken,
   total,
 }: {
   gas: {
     amount: string
     label: string
-    symbol: string
+    token: Token
   }
-  operationSymbol: string
+  operationToken: Token
   total?: string
 }) {
   const { isConnected } = useAccount()
@@ -30,7 +31,11 @@ export const EvmFeesSummary = function ({
         ) : (
           <div className="text-neutral-950">
             {isConnected ? (
-              <DisplayAmount amount={gas.amount} symbol={gas.symbol} />
+              <DisplayAmount
+                amount={gas.amount}
+                showTokenLogo={false}
+                token={gas.token}
+              />
             ) : (
               <span>-</span>
             )}
@@ -45,7 +50,11 @@ export const EvmFeesSummary = function ({
           ) : (
             <div className="text-neutral-950">
               {isConnected ? (
-                <DisplayAmount amount={total} symbol={operationSymbol} />
+                <DisplayAmount
+                  amount={total}
+                  showTokenLogo={false}
+                  token={operationToken}
+                />
               ) : (
                 <span>-</span>
               )}

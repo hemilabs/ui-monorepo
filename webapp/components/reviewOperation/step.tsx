@@ -5,6 +5,7 @@ import { ShortVerticalLine, LongVerticalLine } from 'components/verticalLines'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
 import { RemoteChain } from 'types/chain'
+import { Token } from 'types/token'
 
 import { ClockIcon } from './_icons/clockIcon'
 import { FeesIcon } from './_icons/feesIcon'
@@ -20,7 +21,7 @@ type Props = {
   fees?:
     | {
         amount: string
-        symbol: string
+        token: Token
       }
     | undefined
   explorerChainId?: RemoteChain['id']
@@ -33,11 +34,11 @@ type Props = {
   txHash?: string
 }
 
-const Fees = ({ amount, symbol }: Props['fees']) => (
+const Fees = ({ amount, token }: Props['fees']) => (
   <>
     <FeesIcon />
     <div className="ml-1 text-neutral-950">
-      <DisplayAmount amount={amount} symbol={symbol} />
+      <DisplayAmount amount={amount} showTokenLogo={false} token={token} />
     </div>
   </>
 )

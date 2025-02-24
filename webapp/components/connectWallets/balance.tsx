@@ -1,10 +1,6 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { ReactNode } from 'react'
-
-type Props = {
-  balance: string | undefined
-  symbol: string
-}
+import { Token } from 'types/token'
 
 const Container = ({ children }: { children: ReactNode }) => (
   <div
@@ -19,14 +15,20 @@ const SymbolContainer = ({ children }: { children: ReactNode }) => (
   <span className="text-sm text-neutral-500">{children}</span>
 )
 
-export const Balance = ({ balance, symbol }: Props) => (
+export const Balance = ({
+  balance,
+  token,
+}: {
+  balance: string | undefined
+  token: Token
+}) => (
   <div className="px-2 pb-2 pt-8 md:pb-0 md:pt-12">
     {balance ? (
       <DisplayAmount
         amount={balance}
         container={Container}
-        symbol={symbol}
         symbolContainer={SymbolContainer}
+        token={token}
       />
     ) : (
       <span className="text-3.25xl text-neutral-950">...</span>

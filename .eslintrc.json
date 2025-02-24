@@ -3,8 +3,7 @@
   "overrides": [
     {
       "excludedFiles": [
-        "subgraphs/*/build/**/*.ts",
-        "subgraphs/*/generated/**/*.ts",
+        "subgraphs/**/*.ts",
         "webapp/scripts/*.js",
         "webapp/*.config.js"
       ],
@@ -18,7 +17,6 @@
         "btc-wallet/**/*.{js,ts,tsx}",
         "hemi-viem-stake-actions/**/*.{js,ts}",
         "sliding-block-window/**/*.{js,ts}",
-        "subgraphs/**/*.{js,ts}",
         "ui-common/**/*.{js,ts,tsx}",
         "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
         "webapp/**/*.{js,ts,tsx}"

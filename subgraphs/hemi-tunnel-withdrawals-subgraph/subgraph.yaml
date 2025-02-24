@@ -1,0 +1,49 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: L2Bridge
+    network: hemi-sepolia
+    source:
+      abi: L2Bridge
+      address: '0x4200000000000000000000000000000000000010'
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - EvmWithdrawal
+        - WithdrawalInitiated
+      abis:
+        - name: L2Bridge
+          file: ./abis/L2Bridge.json
+      eventHandlers:
+        - event: WithdrawalInitiated(indexed address,indexed address,indexed
+            address,address,uint256,bytes)
+          handler: handleWithdrawalInitiated
+      file: ./src/mappings/l-2-bridge.ts
+  - kind: ethereum
+    name: BitcoinTunnelManager
+    network: hemi-sepolia
+    source:
+      abi: BitcoinTunnelManager
+      address: '0x8221CFD3Eca3c5F9FA27b2AE774151642f1C449e'
+      startBlock: 2165818
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - WithdrawalInitiated
+      abis:
+        - name: BitcoinTunnelManager
+          file: ./abis/BitcoinTunnelManager.json
+      eventHandlers:
+        - event: WithdrawalInitiated(indexed address,indexed address,indexed
+            string,uint256,uint256,uint64)
+          handler: handleWithdrawalInitiated
+      file: ./src/mappings/bitcoin-tunnel-manager.ts

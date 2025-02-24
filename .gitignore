@@ -15,3 +15,5 @@ subgraphs/data
 # Graph CLI generated artifacts
 subgraphs/tunnel-deposits-subgraph/build
 subgraphs/tunnel-deposits-subgraph/generated
+subgraphs/hemi-tunnel-withdrawals-subgraph/build
+subgraphs/hemi-tunnel-withdrawals-subgraph/generated

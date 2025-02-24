@@ -36,9 +36,8 @@ export const DisplayAmount = function ({
 
   const bigAmount = Big(amount)
   const notZero = !bigAmount.eq(0)
-  // Only show dots for small numbers, less than the max 6 digits we're showing
-  // for formatted numbers.
-  const showDots = bigAmount.lt(0.000001) && notZero
+  // Only show dots for small numbers (x < 1), if the amount is not zero and we're truncating decimals
+  const showDots = bigAmount.lt(1) && notZero && formattedAmount !== amount
   return (
     <Tooltip
       id={`amount-tooltip-${token.symbol}`}

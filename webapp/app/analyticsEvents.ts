@@ -6,6 +6,7 @@ const analyticsEvents = [
   // /demos
   'demos - bitcoinkit',
   'demos - cryptochords',
+  'demos - DEMOS',
   'demos - hatchlings',
   'demos - pure finance',
   // header

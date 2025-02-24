@@ -35,8 +35,6 @@ export const Header = function ({ isMenuOpen, toggleMenu }: Props) {
       </div>
       <div className="hidden pl-6 md:block">
         <StakeTabs />
-      </div>
-      <div className="hidden pl-6 md:block">
         <TunnelTabs />
       </div>
       <WalletConnection />

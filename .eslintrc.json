@@ -82,6 +82,10 @@
         "markdownlint/md041": "warn",
         "markdownlint/md045": "warn"
       }
+    },
+    {
+      "extends": ["bloq/node", "prettier"],
+      "files": ["token-prices/**/*.js"]
     }
   ],
   "root": true,

@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "refresh-prices": "node src/refresh-prices.js"
+  },
+  "dependencies": {
+    "redis": "4.7.0",
+    "startinterval2": "1.0.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

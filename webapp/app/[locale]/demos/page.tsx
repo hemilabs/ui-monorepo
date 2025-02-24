@@ -23,6 +23,28 @@ const Demos = function () {
       <PageTitle subtitle={t('sub-heading')} title={t('heading')} />
       <div className="mt-6 flex flex-col flex-wrap gap-x-6 gap-y-4 md:mt-8 md:flex-row md:gap-y-6">
         <DemoCard
+          altText="Bitcoin Kit Demo"
+          bgImage={bitcoinKitImg}
+          event="demos - bitcoinkit"
+          heading={t('bitcoin-kit.heading')}
+          headingColor="black"
+          href={`https://bitcoin-kit.hemi.xyz/code-editor?networkType=${networkType}`}
+          icon={bitcoinKitIcon}
+          subHeading={t('bitcoin-kit.sub-heading')}
+          subHeadingColor="gray"
+        />
+        <DemoCard
+          altText="pure finance"
+          bgImage={pureFinanceImg}
+          event="demos - pure finance"
+          heading={t('purefinance.heading')}
+          headingColor="black"
+          href="https://purefinance.hemi.xyz"
+          icon={pureFinanceIcon}
+          subHeading={t('purefinance.sub-heading')}
+          subHeadingColor="gray"
+        />
+        <DemoCard
           altText="hemi hatchlings"
           bgImage={hemiHatchlingsImg}
           event="demos - hatchlings"
@@ -41,28 +63,6 @@ const Demos = function () {
           href="https://cryptochords.hemi.xyz"
           icon={cryptoChordsIcon}
           subHeading={t('cryptochords.sub-heading')}
-        />
-        <DemoCard
-          altText="pure finance"
-          bgImage={pureFinanceImg}
-          event="demos - pure finance"
-          heading={t('purefinance.heading')}
-          headingColor="black"
-          href="https://purefinance.hemi.xyz"
-          icon={pureFinanceIcon}
-          subHeading={t('purefinance.sub-heading')}
-          subHeadingColor="gray"
-        />
-        <DemoCard
-          altText="Bitcoin Kit Demo"
-          bgImage={bitcoinKitImg}
-          event="demos - bitcoinkit"
-          heading={t('bitcoin-kit.heading')}
-          headingColor="black"
-          href={`https://bitcoin-kit.hemi.xyz/code-editor?networkType=${networkType}`}
-          icon={bitcoinKitIcon}
-          subHeading={t('bitcoin-kit.sub-heading')}
-          subHeadingColor="gray"
         />
       </div>
     </>

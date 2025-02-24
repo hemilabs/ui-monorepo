@@ -233,7 +233,7 @@ const ActionHeader = function ({
         <Chevron.Bottom className={showActionDropdown ? 'rotate-180' : ''} />
       </span>
       {showActionDropdown && (
-        <div className="absolute top-9">
+        <div className="absolute top-9 -ml-5 lg:-ml-12">
           <Menu
             items={actions.map(action => ({
               content: (

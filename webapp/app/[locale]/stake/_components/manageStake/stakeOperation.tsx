@@ -195,7 +195,7 @@ export const StakeOperation = function ({
           }
           submitButton={
             <>
-              <DrawerParagraph>{t('you-can-stake-anytime')}</DrawerParagraph>
+              <DrawerParagraph>{t('you-can-unstake-anytime')}</DrawerParagraph>
               <SubmitButton
                 disabled={!canStake}
                 text={

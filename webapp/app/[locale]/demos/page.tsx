@@ -9,6 +9,8 @@ import bitcoinKitImg from './_images/bitcoin_kit_large.png'
 import bitcoinKitIcon from './_images/bitcoin_kit_small.svg'
 import cryptoChordsImg from './_images/crypto_chords_large.png'
 import cryptoChordsIcon from './_images/crypto_chords_small.svg'
+import demosImg from './_images/demos_large.png'
+import demosIcon from './_images/demos_small.png'
 import hemiHatchlingsImg from './_images/hemi_hatchlings_large.png'
 import hemiHatchlingsIcon from './_images/hemi_hatchlings_small.png'
 import pureFinanceImg from './_images/pure_finance_large.png'
@@ -22,6 +24,18 @@ const Demos = function () {
     <>
       <PageTitle subtitle={t('sub-heading')} title={t('heading')} />
       <div className="mt-6 flex flex-col flex-wrap gap-x-6 gap-y-4 md:mt-8 md:flex-row md:gap-y-6">
+        <DemoCard
+          altText="DEMOS - Biometric Verification"
+          bgImage={demosImg}
+          event="demos - DEMOS"
+          heading={t('demos.heading')}
+          headingColor="white"
+          // Same url for both Mainnet and Testnet
+          href="https://app.demos.global/"
+          icon={demosIcon}
+          subHeading={t('demos.sub-heading')}
+          subHeadingColor="white"
+        />
         <DemoCard
           altText="Bitcoin Kit Demo"
           bgImage={bitcoinKitImg}

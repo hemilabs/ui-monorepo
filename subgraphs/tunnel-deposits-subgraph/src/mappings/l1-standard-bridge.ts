@@ -26,6 +26,7 @@ export function handleERC20Deposit(event: ERC20DepositInitiated): void {
 
   entity.amount = event.params.amount
   entity.blockNumber = event.block.number
+  // 0 is direction from L1 to L2
   entity.direction = 0
   entity.from = event.params.from
   entity.l1ChainId = chainMap.get(dataSource.network())

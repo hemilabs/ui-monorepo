@@ -14,7 +14,7 @@
     "deploy-studio:sepolia": "graph deploy --node https://api.studio.thegraph.com/deploy/ $(jq -r .name package.json)-sepolia  --version-label $(jq -r .version package.json) --network sepolia",
     "graph:auth": "graph auth",
     "prepare": "npm run codegen",
-    "remove-local": "graph remove --node http://localhost:8020/ tunnel-deposits-subgraph"
+    "remove-local": "graph remove --node http://localhost:8020/ $(jq -r .name package.json)"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.95.0",

@@ -9,7 +9,7 @@ export const stakeProtocols = [
   'hemi',
   'lorenzo',
   'merlinChain',
-  'nodeDao',
+  'obeliskNodeDao',
   'pumpBtc',
   'solv',
   'stakeStone',

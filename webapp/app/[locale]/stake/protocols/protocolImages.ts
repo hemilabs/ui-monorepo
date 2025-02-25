@@ -7,7 +7,7 @@ import exSat from './images/exSat.svg'
 import hemi from './images/hemi.svg'
 import lorenzo from './images/lorenzo.svg'
 import merlinChain from './images/merlinChain.svg'
-import nodeDao from './images/nodeDao.svg'
+import obeliskNodeDao from './images/obeliskNodeDao.svg'
 import pumpBtc from './images/pumpBtc.svg'
 import solv from './images/solv.svg'
 import stakeStone from './images/stakeStone.svg'
@@ -20,7 +20,7 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
   hemi,
   lorenzo,
   merlinChain,
-  nodeDao,
+  obeliskNodeDao,
   pumpBtc,
   solv,
   stakeStone,

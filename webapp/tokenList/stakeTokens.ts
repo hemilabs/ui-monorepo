@@ -10,7 +10,7 @@ const websitesMap: Partial<Record<StakeExtensions['protocol'], string>> = {
   hemi: 'https://www.hemi.xyz',
   lorenzo: 'https://lorenzo-protocol.xyz',
   merlinChain: 'https://merlinchain.io',
-  nodeDao: 'https://www.nodedao.com',
+  obeliskNodeDao: 'https://obelisk.nodedao.com/',
   pumpBtc: 'https://mainnet.pumpbtc.xyz',
   solv: 'https://solv.finance',
   stakeStone: 'https://stakestone.io/#/home',
@@ -52,9 +52,9 @@ export const stakeWhiteList: Partial<
     },
     // oBTC
     '0xe3C0FF176eF92FC225096C6d1788cCB818808b35': {
-      protocol: 'nodeDao',
+      protocol: 'obeliskNodeDao',
       rewards: ['hemi'],
-      website: websitesMap.nodeDao,
+      website: websitesMap.obeliskNodeDao,
     },
     // pumpBTC
     '0xF469fBD2abcd6B9de8E169d128226C0Fc90a012e': {

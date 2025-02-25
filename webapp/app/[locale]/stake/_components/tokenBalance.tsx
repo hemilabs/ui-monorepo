@@ -2,15 +2,15 @@ import { ReactNode } from 'react'
 
 type Props = {
   balance: ReactNode
+  balanceUsd: ReactNode
 }
 
-export const TokenBalance = ({ balance }: Props) => (
+export const TokenBalance = ({ balance, balanceUsd }: Props) => (
   <div className="flex flex-col justify-end">
     <span className="text-neutral-950">{balance}</span>
-    <p className="text-neutral-500">
+    <div className="flex items-center text-neutral-500">
       <span className="mr-1">$</span>
-      {/* TODO - TBD how to calculate monetaryValue - https://github.com/hemilabs/ui-monorepo/issues/796 */}
-      125
-    </p>
+      {balanceUsd}
+    </div>
   </div>
 )

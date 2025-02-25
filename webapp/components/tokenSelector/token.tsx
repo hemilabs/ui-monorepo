@@ -3,7 +3,7 @@ import Skeleton from 'react-loading-skeleton'
 import { Token as TokenType } from 'types/token'
 import { formatEvmAddress } from 'utils/format'
 
-import { Balance } from '../balance'
+import { Balance } from '../cryptoBalance'
 import { TokenLogo } from '../tokenLogo'
 
 export const CustomToken = ({ token }: { token: TokenType }) => (

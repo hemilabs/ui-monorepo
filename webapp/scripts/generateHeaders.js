@@ -46,6 +46,9 @@ const fetchDomains = new Set([
 if (process.env.NEXT_PUBLIC_THE_GRAPH_API_URL) {
   fetchDomains.add(new URL(process.env.NEXT_PUBLIC_THE_GRAPH_API_URL).origin)
 }
+if (process.env.NEXT_PUBLIC_TOKEN_PRICES_URL) {
+  fetchDomains.add(new URL(process.env.NEXT_PUBLIC_TOKEN_PRICES_URL).origin)
+}
 
 // If any RPC URL is customized through these env vars, the origin has to be
 // added to the allow list for the client to get the responses. Since the URLs

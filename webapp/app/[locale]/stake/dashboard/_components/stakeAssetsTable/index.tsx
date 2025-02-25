@@ -24,6 +24,7 @@ import { queryStringObjectToString } from 'utils/url'
 
 import { ProtocolImage } from '../../../_components/protocolImage'
 import { StakedBalance } from '../../../_components/stakedBalance'
+import { StakedBalanceUsd } from '../../../_components/stakedBalanceUsd'
 import { Column, ColumnHeader, Header } from '../../../_components/table'
 import { TokenBalance } from '../../../_components/tokenBalance'
 import { TokenRewards } from '../../../_components/tokenRewards'
@@ -160,7 +161,10 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) => (
-      <TokenBalance balance={<StakedBalance token={row.original} />} />
+      <TokenBalance
+        balance={<StakedBalance token={row.original} />}
+        balanceUsd={<StakedBalanceUsd token={row.original} />}
+      />
     ),
     header: () => <Header text={t('dashboard.staked')} />,
     id: 'staked',

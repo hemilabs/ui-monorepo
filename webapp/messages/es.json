@@ -217,7 +217,7 @@
       },
       "unstake-token": "Desbloquear {symbol}",
       "unstaking": "Desbloqueando...",
-      "you-can-stake-anytime": "Puede retirar en cualquier momento y conservar los puntos ya ganados."
+      "you-can-unstake-anytime": "Puede retirar en cualquier momento y conservar los puntos ya ganados."
     },
     "points": {
       "diamonds": "Diamantes",

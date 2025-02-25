@@ -25,7 +25,7 @@ const getPricesFromCache = pLimitOne(async function () {
   if (time) {
     data['time'] = new Date(Number.parseInt(time)).toISOString()
   }
-  keys.sort().forEach(function (key, i) {
+  keys.forEach(function (key, i) {
     data.prices[key.slice(prefix.length)] = values[i]
   })
   return data

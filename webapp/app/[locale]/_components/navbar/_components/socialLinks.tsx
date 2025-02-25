@@ -12,7 +12,7 @@ import React from 'react'
 const { discordUrl, linkedinUrl, githubUrl, twitterUrl, youtubeUrl } =
   hemiSocials
 
-const svgCss = 'scale-125 [&_path]:hover:fill-black'
+const svgCss = '[&_path]:hover:fill-black'
 
 export const SocialLinks = function () {
   const { track } = useUmami()

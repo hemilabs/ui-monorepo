@@ -234,6 +234,14 @@
       "subtitle": "Apueste activos para ganar puntos y recompensas.",
       "title": "Apostar"
     },
+    "toast": {
+      "go-staking-dashboard": "Vea su panel de control de sus apuestas",
+      "here-your-stake-tx": "Aquí está su transacción de {type}:",
+      "staking": "apuesta",
+      "staking-successful": "Apuesta exitosa",
+      "unstaking": "retiro",
+      "unstaking-successful": "Retiro exitoso"
+    },
     "wallet-balance": "Saldo de la billetera"
   },
   "token-custom-drawer": {

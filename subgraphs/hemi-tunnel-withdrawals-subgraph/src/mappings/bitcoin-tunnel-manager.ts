@@ -49,24 +49,30 @@ export function handleWithdrawalInitiated(
 
   entity.uuid = event.params.uuid
 
+  // Decoding the input data is not that stable for The Graph. There are
+  // several issues, and the tool they use (https://github.com/rust-ethereum/ethabi)
+  // is deprecated.
   // This is the only way I managed to decode the input, by excluding the signature hash.
   // See https://github.com/graphprotocol/graph-tooling/issues/1088
+  // However, for some fields, this doesn't work, so I'm marking it as an optional field.
+  // For those cases, the consumer of the graph will need to manually parse the input
+  // and add the missing fields.
   const dec = ethereum.decode(
     initiateWithdrawalFn,
     Bytes.fromHexString('0x' + event.transaction.input.toHexString().slice(10)),
   )
 
   if (!dec) {
-    log.error('Failed to decode BtcWithdrawal input {} for {}', [
+    log.debug('Failed to decode BtcWithdrawal input {} for {}', [
       event.transaction.input.toHexString(),
       entity.transactionHash.toHexString(),
     ])
-    return
-  }
-  const decodedTuple = dec.toTuple()
+  } else {
+    const decodedTuple = dec.toTuple()
 
-  // Here this parameter is the bitcoin address that the vault operator owns
-  entity.to = decodedTuple[1].toString()
+    // Here this parameter is the bitcoin address that the vault operator owns
+    entity.to = decodedTuple[1].toString()
+  }
 
   log.debug('Saving BtcWithdrawal', [])
   entity.save()

@@ -18,6 +18,7 @@ services:
       context: api
     environment:
       NODE_ENV: production
+      ORIGIN: ${ORIGIN}
       PORT: ${PORT}
       REDIS_URL: redis://cache:6379
     depends_on:

@@ -4,7 +4,7 @@ This document includes a list of common commands that should be used for all sub
 
 ## Running Locally
 
-There's a docker compose file in this folder. It spins up a [graph-node](https://github.com/graphprotocol/graph-node), a PostgreSQL instance, and a local IPFS instance.  
+There's a docker compose file in this folder. It spins up a [graph-node](https://github.com/graphprotocol/graph-node), a PostgreSQL instance, and a local IPFS instance.
 A pair `chain:rpc_url` needs to be set to allow the subgraph to index the chain.
 Use the following command to start the container.
 
@@ -41,7 +41,7 @@ The following commands deploy a subgraph in [The Subgraph Studio](https://thegra
 
 First, an account in the Subgraph Studio needs to be created. Once there, a subgraph needs to be manually created. A subgraph in The Subgraph Studio needs to be created per subgraph/chain defined here in the code.
 
-The subgraph naming convention should be `${package.json}.name-${chain}`. For example, in order to deploy the subgraph `tunnel-deposits-subgraph` in Sepolia, the subgraph `tunnel-deposits-subgraph-sepolia` must be created in the Subgraph Studio.
+The subgraph naming convention should be `hemi-${package.json}.name-${chain}`. For example, in order to deploy the subgraph `tunnel-deposits-subgraph` in Sepolia, the subgraph `hemi-tunnel-deposits-subgraph-sepolia` must be created in the Subgraph Studio.
 
 After created, a Deploy API Key is listed in the "Dashboard". Authorize the graph-cli by running
 

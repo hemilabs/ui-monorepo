@@ -49,7 +49,7 @@ export const GetStarted = function () {
           <GetStartedBackground className="w-full" />
           <div className="absolute left-3 top-4 z-20 flex items-center gap-x-1 text-sm">
             <HemiLogo />
-            <span className="text-orange-500">{t('get-started')}</span>
+            <span className="pl-1 text-orange-500">{t('get-started')}</span>
             <Chevron.Right className="[&>path]:fill-orange-500" />
           </div>
         </div>

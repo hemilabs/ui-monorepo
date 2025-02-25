@@ -1,18 +1,14 @@
-import { hemiSepolia } from 'hemi-viem'
+import { hemi, hemiSepolia } from 'hemi-viem'
 import { type Address, type Chain } from 'viem'
 
 export const stakeManagerAddresses: Record<Chain['id'], Address> = {
+  [hemi.id]: '0x4F5E928763CBFaF5fFD8907ebbB0DAbd5f78bA83',
   [hemiSepolia.id]: '0x935CC431313C52427ccf45385138a136580bf59f',
 }
 
 export const stakeManagerAbi = [
   {
     inputs: [
-      {
-        internalType: 'address',
-        name: '_signer',
-        type: 'address',
-      },
       {
         internalType: 'address[]',
         name: '_tokensAllowed',
@@ -29,12 +25,43 @@ export const stakeManagerAbi = [
   },
   {
     inputs: [],
+    name: 'ArrayLengthCannotBeZero',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ArrayLengthNotMatch',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ArrayLengthsDoNotMatch',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'bytes',
+        name: 'result',
+        type: 'bytes',
+      },
+    ],
+    name: 'CallExecutionFailed',
+    type: 'error',
+  },
+  {
+    inputs: [],
     name: 'CannotDepositForZeroAddress',
     type: 'error',
   },
   {
     inputs: [],
     name: 'CannotRenounceOwnership',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'ContractAddressCannotBeZeroAddress',
     type: 'error',
   },
   {
@@ -58,6 +85,16 @@ export const stakeManagerAbi = [
     type: 'error',
   },
   {
+    inputs: [],
+    name: 'FunctionAlreadyWhitelisted',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'FunctionNotWhitelisted',
+    type: 'error',
+  },
+  {
     inputs: [
       {
         internalType: 'address',
@@ -75,22 +112,52 @@ export const stakeManagerAbi = [
   },
   {
     inputs: [],
+    name: 'InvalidMerkleProof',
+    type: 'error',
+  },
+  {
+    inputs: [],
     name: 'InvalidShortString',
     type: 'error',
   },
   {
     inputs: [],
-    name: 'MigratorAlreadyAllowedOrBlocked',
+    name: 'LeafAlreadyClaimed',
     type: 'error',
   },
   {
     inputs: [],
-    name: 'MigratorBlocked',
+    name: 'LeafAmountCannotBeZero',
     type: 'error',
   },
   {
     inputs: [],
-    name: 'MigratorCannotBeZeroAddress',
+    name: 'MerkleRootAlreadySet',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'MerkleRootCannotBeSetToZero',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'MerkleRootDisabledForClaiming',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'MerkleRootIndexCannotBeZero',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'MerkleRootNotSet',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'MerkleRootStatusAlreadySet',
     type: 'error',
   },
   {
@@ -116,6 +183,32 @@ export const stakeManagerAbi = [
     type: 'error',
   },
   {
+    inputs: [],
+    name: 'ReentrancyGuardReentrantCall',
+    type: 'error',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: 'user',
+        type: 'address',
+      },
+      {
+        internalType: 'uint256',
+        name: 'requestedTokens',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'totalBalance',
+        type: 'uint256',
+      },
+    ],
+    name: 'RemainingTokensLessThanTotalBalance',
+    type: 'error',
+  },
+  {
     inputs: [
       {
         internalType: 'address',
@@ -134,16 +227,6 @@ export const stakeManagerAbi = [
   {
     inputs: [],
     name: 'SignatureInvalid',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'SignerAlreadySetToAddress',
-    type: 'error',
-  },
-  {
-    inputs: [],
-    name: 'SignerCannotBeZeroAddress',
     type: 'error',
   },
   {
@@ -175,6 +258,21 @@ export const stakeManagerAbi = [
   {
     inputs: [],
     name: 'TokenNotAllowedForStaking',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'TransferAmountCannotBeMoreThanLeafAmount',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'TransferAmountCannotBeZero',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'UserArrayCannotBeEmpty',
     type: 'error',
   },
   {
@@ -253,15 +351,84 @@ export const stakeManagerAbi = [
     inputs: [
       {
         indexed: true,
+        internalType: 'address',
+        name: 'contractAddress',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes4',
+        name: 'functionSignature',
+        type: 'bytes4',
+      },
+    ],
+    name: 'FunctionAdded',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'contractAddress',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes4',
+        name: 'functionSignature',
+        type: 'bytes4',
+      },
+    ],
+    name: 'FunctionRemoved',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: 'uint256',
-        name: 'eventId',
+        name: 'index',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'bytes32',
+        name: 'merkleRoot',
+        type: 'bytes32',
+      },
+    ],
+    name: 'MerkleRootSet',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
       {
         indexed: true,
         internalType: 'address',
         name: 'user',
         type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'contractAddress',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes4',
+        name: 'functionSignature',
+        type: 'bytes4',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes',
+        name: 'data',
+        type: 'bytes',
       },
       {
         indexed: false,
@@ -271,24 +438,85 @@ export const stakeManagerAbi = [
       },
       {
         indexed: false,
+        internalType: 'uint256[]',
+        name: 'amountsSpent',
+        type: 'uint256[]',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'eventId',
+        type: 'uint256',
+      },
+    ],
+    name: 'MoveToDapp',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
         internalType: 'address',
-        name: 'destination',
+        name: 'user',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'contractAddress',
         type: 'address',
       },
       {
         indexed: false,
-        internalType: 'address',
-        name: 'migrator',
-        type: 'address',
+        internalType: 'bytes4',
+        name: 'functionSignature',
+        type: 'bytes4',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes',
+        name: 'data',
+        type: 'bytes',
+      },
+      {
+        indexed: false,
+        internalType: 'address[]',
+        name: 'tokens',
+        type: 'address[]',
       },
       {
         indexed: false,
         internalType: 'uint256[]',
-        name: 'amounts',
+        name: 'amountsSpent',
+        type: 'uint256[]',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'eventId',
+        type: 'uint256',
+      },
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'rootIndex',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256[]',
+        name: 'leafAmounts',
+        type: 'uint256[]',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256[]',
+        name: 'migrationEventIds',
         type: 'uint256[]',
       },
     ],
-    name: 'Migrate',
+    name: 'MoveToDappMerkle',
     type: 'event',
   },
   {
@@ -346,13 +574,38 @@ export const stakeManagerAbi = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'index',
+        type: 'uint256',
+      },
+      {
         indexed: false,
-        internalType: 'address',
-        name: 'newSigner',
-        type: 'address',
+        internalType: 'bool',
+        name: 'disabled',
+        type: 'bool',
       },
     ],
-    name: 'SignerChanged',
+    name: 'RootStatusSet',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'index',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes32',
+        name: 'leaf',
+        type: 'bytes32',
+      },
+    ],
+    name: 'SetLeafClaimed',
     type: 'event',
   },
   {
@@ -419,8 +672,101 @@ export const stakeManagerAbi = [
     type: 'event',
   },
   {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'user',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'rootIndex',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'address[]',
+        name: 'tokens',
+        type: 'address[]',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256[]',
+        name: 'leafAmounts',
+        type: 'uint256[]',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256[]',
+        name: 'transferAmounts',
+        type: 'uint256[]',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256[]',
+        name: 'migrationEventIds',
+        type: 'uint256[]',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'eventId',
+        type: 'uint256',
+      },
+    ],
+    name: 'WithdrawMerkle',
+    type: 'event',
+  },
+  {
+    inputs: [],
+    name: 'MOVE_TO_DAPP_MERKLE_TYPEHASH',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'MOVE_TO_DAPP_TYPEHASH',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'acceptOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_contractAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'bytes4',
+        name: '_functionSignature',
+        type: 'bytes4',
+      },
+    ],
+    name: 'addFunction',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -452,19 +798,48 @@ export const stakeManagerAbi = [
   {
     inputs: [
       {
-        internalType: 'address',
-        name: '_migrator',
-        type: 'address',
+        internalType: 'address[]',
+        name: '_tokens',
+        type: 'address[]',
       },
       {
+        internalType: 'address[]',
+        name: '_for',
+        type: 'address[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_amounts',
+        type: 'uint256[]',
+      },
+    ],
+    name: 'batchDepositFor',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    name: 'claimed',
+    outputs: [
+      {
         internalType: 'bool',
-        name: '_blocklisted',
+        name: '',
         type: 'bool',
       },
     ],
-    name: 'blockMigrator',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -547,74 +922,16 @@ export const stakeManagerAbi = [
     type: 'function',
   },
   {
-    inputs: [
-      {
-        internalType: 'address[]',
-        name: '_tokens',
-        type: 'address[]',
-      },
-      {
-        internalType: 'address',
-        name: '_migratorContract',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_destination',
-        type: 'address',
-      },
+    inputs: [],
+    name: 'eventId',
+    outputs: [
       {
         internalType: 'uint256',
-        name: '_signatureExpiry',
+        name: '',
         type: 'uint256',
       },
-      {
-        internalType: 'bytes',
-        name: '_authorizationSignatureFromZircuit',
-        type: 'bytes',
-      },
     ],
-    name: 'migrate',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_user',
-        type: 'address',
-      },
-      {
-        internalType: 'address[]',
-        name: '_tokens',
-        type: 'address[]',
-      },
-      {
-        internalType: 'address',
-        name: '_migratorContract',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '_destination',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: '_signatureExpiry',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes',
-        name: '_stakerSignature',
-        type: 'bytes',
-      },
-    ],
-    name: 'migrateWithSig',
-    outputs: [],
-    stateMutability: 'nonpayable',
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -624,8 +941,13 @@ export const stakeManagerAbi = [
         name: '',
         type: 'address',
       },
+      {
+        internalType: 'bytes4',
+        name: '',
+        type: 'bytes4',
+      },
     ],
-    name: 'migratorBlocklist',
+    name: 'functionAllowlist',
     outputs: [
       {
         internalType: 'bool',
@@ -634,6 +956,380 @@ export const stakeManagerAbi = [
       },
     ],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 'merkleRootDisabled',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    name: 'merkleRoots',
+    outputs: [
+      {
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'contractAddress',
+            type: 'address',
+          },
+          {
+            internalType: 'bytes4',
+            name: 'functionSignature',
+            type: 'bytes4',
+          },
+          {
+            internalType: 'bytes',
+            name: 'data',
+            type: 'bytes',
+          },
+          {
+            internalType: 'address[]',
+            name: 'tokens',
+            type: 'address[]',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'amounts',
+            type: 'uint256[]',
+          },
+        ],
+        internalType: 'struct ILaunchPool.ContractCall',
+        name: '_contractCall',
+        type: 'tuple',
+      },
+    ],
+    name: 'moveToDapp',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'address[]',
+            name: 'tokens',
+            type: 'address[]',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'amounts',
+            type: 'uint256[]',
+          },
+          {
+            internalType: 'bytes',
+            name: 'result',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct ILaunchPool.CallResult',
+        name: 'result',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'contractAddress',
+            type: 'address',
+          },
+          {
+            internalType: 'bytes4',
+            name: 'functionSignature',
+            type: 'bytes4',
+          },
+          {
+            internalType: 'bytes',
+            name: 'data',
+            type: 'bytes',
+          },
+          {
+            components: [
+              {
+                internalType: 'uint256',
+                name: 'rootIndex',
+                type: 'uint256',
+              },
+              {
+                internalType: 'address[]',
+                name: 'tokens',
+                type: 'address[]',
+              },
+              {
+                internalType: 'uint256[]',
+                name: 'leafAmounts',
+                type: 'uint256[]',
+              },
+              {
+                internalType: 'uint256[]',
+                name: 'transferAmounts',
+                type: 'uint256[]',
+              },
+              {
+                internalType: 'bytes32[][]',
+                name: 'proofs',
+                type: 'bytes32[][]',
+              },
+              {
+                internalType: 'uint256[]',
+                name: 'migrationEventIds',
+                type: 'uint256[]',
+              },
+            ],
+            internalType: 'struct ILaunchPool.MerkleClaim',
+            name: 'claim',
+            type: 'tuple',
+          },
+        ],
+        internalType: 'struct ILaunchPool.ContractCallMerkle',
+        name: '_contractCall',
+        type: 'tuple',
+      },
+    ],
+    name: 'moveToDappMerkle',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'address[]',
+            name: 'tokens',
+            type: 'address[]',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'amounts',
+            type: 'uint256[]',
+          },
+          {
+            internalType: 'bytes',
+            name: 'result',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct ILaunchPool.CallResult',
+        name: '',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: '_users',
+        type: 'address[]',
+      },
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'contractAddress',
+            type: 'address',
+          },
+          {
+            internalType: 'bytes4',
+            name: 'functionSignature',
+            type: 'bytes4',
+          },
+          {
+            internalType: 'bytes',
+            name: 'data',
+            type: 'bytes',
+          },
+          {
+            components: [
+              {
+                internalType: 'uint256',
+                name: 'rootIndex',
+                type: 'uint256',
+              },
+              {
+                internalType: 'address[]',
+                name: 'tokens',
+                type: 'address[]',
+              },
+              {
+                internalType: 'uint256[]',
+                name: 'leafAmounts',
+                type: 'uint256[]',
+              },
+              {
+                internalType: 'uint256[]',
+                name: 'transferAmounts',
+                type: 'uint256[]',
+              },
+              {
+                internalType: 'bytes32[][]',
+                name: 'proofs',
+                type: 'bytes32[][]',
+              },
+              {
+                internalType: 'uint256[]',
+                name: 'migrationEventIds',
+                type: 'uint256[]',
+              },
+            ],
+            internalType: 'struct ILaunchPool.MerkleClaim',
+            name: 'claim',
+            type: 'tuple',
+          },
+        ],
+        internalType: 'struct ILaunchPool.ContractCallMerkle[]',
+        name: '_contractCalls',
+        type: 'tuple[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_signatureExpiries',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'bytes[]',
+        name: '_signatures',
+        type: 'bytes[]',
+      },
+    ],
+    name: 'moveToDappMerkleWithSig',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'address[]',
+            name: 'tokens',
+            type: 'address[]',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'amounts',
+            type: 'uint256[]',
+          },
+          {
+            internalType: 'bytes',
+            name: 'result',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct ILaunchPool.CallResult[]',
+        name: '',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address[]',
+        name: '_users',
+        type: 'address[]',
+      },
+      {
+        components: [
+          {
+            internalType: 'address',
+            name: 'contractAddress',
+            type: 'address',
+          },
+          {
+            internalType: 'bytes4',
+            name: 'functionSignature',
+            type: 'bytes4',
+          },
+          {
+            internalType: 'bytes',
+            name: 'data',
+            type: 'bytes',
+          },
+          {
+            internalType: 'address[]',
+            name: 'tokens',
+            type: 'address[]',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'amounts',
+            type: 'uint256[]',
+          },
+        ],
+        internalType: 'struct ILaunchPool.ContractCall[]',
+        name: '_contractCalls',
+        type: 'tuple[]',
+      },
+      {
+        internalType: 'uint256[]',
+        name: '_signatureExpiries',
+        type: 'uint256[]',
+      },
+      {
+        internalType: 'bytes[]',
+        name: '_signatures',
+        type: 'bytes[]',
+      },
+    ],
+    name: 'moveToDappWithSig',
+    outputs: [
+      {
+        components: [
+          {
+            internalType: 'address[]',
+            name: 'tokens',
+            type: 'address[]',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'amounts',
+            type: 'uint256[]',
+          },
+          {
+            internalType: 'bytes',
+            name: 'result',
+            type: 'bytes',
+          },
+        ],
+        internalType: 'struct ILaunchPool.CallResult[]',
+        name: '',
+        type: 'tuple[]',
+      },
+    ],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -702,8 +1398,80 @@ export const stakeManagerAbi = [
     type: 'function',
   },
   {
+    inputs: [
+      {
+        internalType: 'address',
+        name: '_contractAddress',
+        type: 'address',
+      },
+      {
+        internalType: 'bytes4',
+        name: '_functionSignature',
+        type: 'bytes4',
+      },
+    ],
+    name: 'removeFunction',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'renounceOwnership',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_index',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_leaf',
+        type: 'bytes32',
+      },
+    ],
+    name: 'setLeafClaimed',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_index',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bytes32',
+        name: '_merkleRoot',
+        type: 'bytes32',
+      },
+    ],
+    name: 'setMerkleRoot',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: '_index',
+        type: 'uint256',
+      },
+      {
+        internalType: 'bool',
+        name: '_disabled',
+        type: 'bool',
+      },
+    ],
+    name: 'setRootStatus',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -722,19 +1490,6 @@ export const stakeManagerAbi = [
       },
     ],
     name: 'setStakable',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '_signer',
-        type: 'address',
-      },
-    ],
-    name: 'setZircuitSigner',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -762,6 +1517,25 @@ export const stakeManagerAbi = [
     inputs: [
       {
         internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    name: 'totalBalance',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'address',
         name: 'newOwner',
         type: 'address',
       },
@@ -776,6 +1550,19 @@ export const stakeManagerAbi = [
     name: 'unpause',
     outputs: [],
     stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'weth',
+    outputs: [
+      {
+        internalType: 'address',
+        name: '',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
     type: 'function',
   },
   {
@@ -797,16 +1584,48 @@ export const stakeManagerAbi = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'zircuitSigner',
-    outputs: [
+    inputs: [
       {
-        internalType: 'address',
-        name: '',
-        type: 'address',
+        components: [
+          {
+            internalType: 'uint256',
+            name: 'rootIndex',
+            type: 'uint256',
+          },
+          {
+            internalType: 'address[]',
+            name: 'tokens',
+            type: 'address[]',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'leafAmounts',
+            type: 'uint256[]',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'transferAmounts',
+            type: 'uint256[]',
+          },
+          {
+            internalType: 'bytes32[][]',
+            name: 'proofs',
+            type: 'bytes32[][]',
+          },
+          {
+            internalType: 'uint256[]',
+            name: 'migrationEventIds',
+            type: 'uint256[]',
+          },
+        ],
+        internalType: 'struct ILaunchPool.MerkleClaim',
+        name: '_claim',
+        type: 'tuple',
       },
     ],
-    stateMutability: 'view',
+    name: 'withdrawMerkle',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
 ] as const

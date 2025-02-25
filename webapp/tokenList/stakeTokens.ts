@@ -26,6 +26,12 @@ export const stakeWhiteList: Partial<
     // Prefer ordering by symbol in comments, instead of by address, which makes it harder
     // to search for a specific token.
     /* eslint-disable sort-keys */
+    // hemiBTC
+    '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28': {
+      protocol: 'hemi',
+      rewards: ['hemi'],
+      website: websitesMap.hemi,
+    },
     // enzoBTC
     '0x6A9A65B84843F5fD4aC9a0471C4fc11AFfFBce4a': {
       protocol: 'lorenzo',

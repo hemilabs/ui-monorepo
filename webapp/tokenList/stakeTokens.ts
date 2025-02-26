@@ -29,18 +29,21 @@ export const stakeWhiteList: Partial<
     // hemiBTC
     '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28': {
       protocol: 'hemi',
+      priceSymbol: 'btc',
       rewards: ['hemi'],
       website: websitesMap.hemi,
     },
     // enzoBTC
     '0x6A9A65B84843F5fD4aC9a0471C4fc11AFfFBce4a': {
       protocol: 'lorenzo',
+      priceSymbol: 'btc',
       rewards: ['hemi', 'lorenzo'],
       website: websitesMap.lorenzo,
     },
     // iBTC
     '0x8154Aaf094c2f03Ad550B6890E1d4264B5DdaD9A': {
       protocol: 'exSat',
+      priceSymbol: 'btc',
       rewards: ['hemi'],
       website: websitesMap.exSat,
     },
@@ -53,6 +56,7 @@ export const stakeWhiteList: Partial<
     // oBTC
     '0xe3C0FF176eF92FC225096C6d1788cCB818808b35': {
       protocol: 'obeliskNodeDao',
+      priceSymbol: 'btc',
       rewards: ['hemi'],
       website: websitesMap.obeliskNodeDao,
     },
@@ -65,12 +69,14 @@ export const stakeWhiteList: Partial<
     // stBTC
     '0xf6718b2701D4a6498eF77D7c152b2137Ab28b8A3': {
       protocol: 'lorenzo',
+      priceSymbol: 'btc',
       rewards: ['hemi', 'lorenzo'],
       website: websitesMap.lorenzo,
     },
     // uBTC
     '0x78E26E8b953C7c78A58d69d8B9A91745C2BbB258': {
       protocol: 'uniRouter',
+      priceSymbol: 'btc',
       rewards: ['hemi', 'unirouter', 'bsquared'],
       website: websitesMap.uniRouter,
     },

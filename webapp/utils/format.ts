@@ -9,6 +9,11 @@ export const formatBtcAddress = (account: Account) =>
 export const formatEvmAddress = (address: Address) =>
   shorten(address, { length: 4, prefixes: ['0x'] })
 
-const rounder = smartRound(6, 0, 6)
+const cryptoRounder = smartRound(6, 0, 6)
+const fiatRounder = smartRound(6, 2, 2)
+
 export const formatNumber = (value: number | string) =>
-  rounder(value, { roundingMode: 'round-down', shouldFormat: true })
+  cryptoRounder(value, { roundingMode: 'round-down', shouldFormat: true })
+
+export const formatFiatNumber = (value: number | string) =>
+  fiatRounder(value, { shouldFormat: true })

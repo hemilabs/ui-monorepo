@@ -37,8 +37,10 @@ const RenderFiatBalanceUnsafe = function ({
 
   const stringBalance = formatUnits(balance, token.decimals)
 
-  const price =
-    data?.[(token.extensions?.priceSymbol ?? token.symbol).toUpperCase()] ?? '0'
+  const priceSymbol = (
+    token.extensions?.priceSymbol ?? token.symbol
+  ).toUpperCase()
+  const price = data?.[priceSymbol] ?? '0'
 
   const mergedFetchStatuses = function () {
     const fetchStatuses = [fetchStatus, tokenPricesFetchStatus]

@@ -5,9 +5,10 @@ const pLimitOne = require('promise-limit-one')
 const redis = require('redis')
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379'
-const portStr = process.env.PORT || '3000'
+const portStr = process.env.PORT || '3001'
 const port = parseInt(portStr)
-const origin = process.env.ORIGIN || '*.hemi.xyz'
+const originsStr = process.env.ORIGINS || 'http://localhost:3000'
+const origins = originsStr.split(',')
 
 const client = redis.createClient({ url: redisUrl })
 client.connect()
@@ -32,10 +33,14 @@ const getPricesFromCache = pLimitOne(async function () {
   return data
 })
 
-async function requestHandler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', origin)
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+async function handleRequest(req, res) {
+  const { 'access-control-request-headers': headers, origin } = req.headers
+  if (headers) {
+    res.setHeader('Access-Control-Allow-Headers', headers)
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET')
+  const allowOrigin = origins.includes(origin) ? origin : false
+  res.setHeader('Access-Control-Allow-Origin', allowOrigin)
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204)
@@ -64,4 +69,4 @@ async function requestHandler(req, res) {
   res.end(JSON.stringify(data))
 }
 
-http.createServer(requestHandler).listen(port)
+http.createServer(handleRequest).listen(port)

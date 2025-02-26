@@ -26,10 +26,11 @@ These environment variables control how the `cron` job behaves:
 
 These control the `api` server:
 
-| Variable  | Description                                    | Default                 |
-| --------- | ---------------------------------------------- | ----------------------- |
-| PORT      | The HTTP port the server listens for requests. | 3000                    |
-| REDIS_URL | The URL of the Redis database.                 | `http://localhost:6379` |
+| Variable  | Description                                                     | Default                 |
+| --------- | --------------------------------------------------------------- | ----------------------- |
+| ORIGINS   | Comma-separated list of allowed origins. '\*' is not supported. | `http://localhos:3001`  |
+| PORT      | The HTTP port the server listens for requests.                  | 3001                    |
+| REDIS_URL | The URL of the Redis database.                                  | `http://localhost:6379` |
 
 ### Stored data
 

@@ -7,10 +7,11 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useUmami } from 'app/analyticsEvents'
-import { Balance } from 'components/balance'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
+import { Balance } from 'components/cryptoBalance'
 import { ExternalLink } from 'components/externalLink'
+import { FiatBalance } from 'components/fiatBalance'
 import { TokenLogo } from 'components/tokenLogo'
 import { useTranslations } from 'next-intl'
 import { MouseEvent, useMemo } from 'react'
@@ -50,7 +51,10 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) => (
-      <TokenBalance balance={<Balance token={row.original} />} />
+      <TokenBalance
+        balance={<Balance token={row.original} />}
+        balanceUsd={<FiatBalance token={row.original} />}
+      />
     ),
     header: () => <Header text={t('wallet-balance')} />,
     id: 'wallet-balance',

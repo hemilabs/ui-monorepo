@@ -6,7 +6,7 @@ import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
 
 const Balance = dynamic(
-  () => import('components/balance').then(mod => mod.Balance),
+  () => import('components/cryptoBalance').then(mod => mod.Balance),
   {
     loading: () => (
       <Skeleton className="h-full" containerClassName="basis-1/3" />

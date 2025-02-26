@@ -60,6 +60,9 @@ inputs:
   NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH:
     required: false
     description: Feature flag to enable syncing the user history with Subgraphs
+  NEXT_PUBLIC_TOKEN_PRICES_URL:
+    required: false
+    description: Token prices URL
   NEXT_PUBLIC_SENTRY_DSN:
     required: false
     description: Sentry DSN URL
@@ -118,6 +121,7 @@ runs:
         NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET }}
         NEXT_PUBLIC_FEATURE_FLAG_ENABLE_STAKE_CAMPAIGN: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_STAKE_CAMPAIGN }}
         NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH }}
+        NEXT_PUBLIC_TOKEN_PRICES_URL: ${{ inputs.NEXT_PUBLIC_TOKEN_PRICES_URL }}
         NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.NEXT_PUBLIC_SENTRY_DSN }}
         NEXT_PUBLIC_SUBGRAPH_API_KEY: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_API_KEY }}
         NEXT_PUBLIC_SUBGRAPH_MAINNET_ID: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_MAINNET_ID }}

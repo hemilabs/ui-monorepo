@@ -13,7 +13,7 @@ type Props<T extends Token = Token> = {
   token: T
 }
 
-export const RenderBalance = ({
+export const RenderCryptoBalance = ({
   balance,
   fetchStatus,
   status,
@@ -42,7 +42,7 @@ export const RenderBalance = ({
 const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
   const { balance, fetchStatus, status } = useNativeTokenBalance(token.chainId)
   return (
-    <RenderBalance
+    <RenderCryptoBalance
       balance={balance}
       fetchStatus={fetchStatus}
       status={status}
@@ -54,7 +54,7 @@ const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
 const TokenBalance = function ({ token }: Props<EvmToken>) {
   const { balance, fetchStatus, status } = useTokenBalance(token)
   return (
-    <RenderBalance
+    <RenderCryptoBalance
       balance={balance}
       fetchStatus={fetchStatus}
       status={status}
@@ -73,7 +73,7 @@ const EvmBalance = (props: Props<EvmToken>) =>
 const BtcBalance = function ({ token }: Props<BtcToken>) {
   const { balance, fetchStatus, status } = useBtcBalance()
   return (
-    <RenderBalance
+    <RenderCryptoBalance
       balance={BigInt(balance?.confirmed ?? 0)}
       fetchStatus={fetchStatus}
       status={status}

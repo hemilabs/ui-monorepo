@@ -1,4 +1,4 @@
-import { RenderBalance } from 'components/balance'
+import { RenderCryptoBalance } from 'components/cryptoBalance'
 import { StakeToken } from 'types/stake'
 
 import { useStakedBalance } from '../_hooks/useStakedBalance'
@@ -8,5 +8,5 @@ type Props = {
 }
 
 export const StakedBalance = ({ token }: Props) => (
-  <RenderBalance {...useStakedBalance(token)} token={token} />
+  <RenderCryptoBalance {...useStakedBalance(token)} token={token} />
 )

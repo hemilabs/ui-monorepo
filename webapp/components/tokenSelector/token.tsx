@@ -3,7 +3,8 @@ import Skeleton from 'react-loading-skeleton'
 import { Token as TokenType } from 'types/token'
 import { formatEvmAddress } from 'utils/format'
 
-import { Balance } from '../balance'
+import { Balance } from '../cryptoBalance'
+import { FiatBalance } from '../fiatBalance'
 import { TokenLogo } from '../tokenLogo'
 
 export const CustomToken = ({ token }: { token: TokenType }) => (
@@ -51,10 +52,12 @@ export const Token = ({ token }: { token: TokenType }) => (
         <span>{token.name}</span>
         <Balance token={token} />
       </div>
-      <div className="flex items-center justify-between">
-        <span className="text-neutral-500">{token.symbol}</span>
-        {/*  Hiding as there are no usd rates so far*/}
-        {/* <span>$1,234.12</span> */}
+      <div className="flex items-center justify-between text-neutral-500">
+        <span>{token.symbol}</span>
+        <div className="flex items-center gap-x-1 font-normal">
+          <span>$</span>
+          <FiatBalance token={token} />
+        </div>
       </div>
     </div>
   </div>

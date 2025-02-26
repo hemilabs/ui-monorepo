@@ -4,11 +4,11 @@ import { StakeToken } from 'types/stake'
 
 import { TokenRewards } from '../tokenRewards'
 
+import { Tvl } from './tvl'
 import { Website } from './website'
 
 type Props = {
   token: StakeToken
-  tvl: string
 }
 
 const Container = ({ children }: { children: ReactNode }) => (
@@ -21,7 +21,7 @@ const Subtitle = ({ text }: { text: string }) => (
   <h6 className="text-sm font-medium text-neutral-500">{text}</h6>
 )
 
-export const StrategyDetails = function ({ tvl, token }: Props) {
+export const StrategyDetails = function ({ token }: Props) {
   const t = useTranslations('stake-page.drawer.strategy-details')
   return (
     <div className="flex flex-col">
@@ -36,7 +36,12 @@ export const StrategyDetails = function ({ tvl, token }: Props) {
       </Container>
       <Container>
         <Subtitle text={t('tvl')} />
-        <span className="text-base font-semibold text-neutral-950">{tvl}</span>
+        <div className="flex items-center gap-x-1 text-base font-semibold text-neutral-950">
+          <span>$</span>
+          <span className="min-w-8">
+            <Tvl token={token} />
+          </span>
+        </div>
       </Container>
       <Container>
         <Subtitle text={t('website')} />

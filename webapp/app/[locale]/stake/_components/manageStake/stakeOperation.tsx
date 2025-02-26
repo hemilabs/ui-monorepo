@@ -187,12 +187,7 @@ export const StakeOperation = function ({
           setAmount={setAmount}
           setOperation={() => onOperationChange('unstake')}
           showTabs={showTabs}
-          strategyDetails={
-            <>
-              {/* TODO define how to get TVL https://github.com/hemilabs/ui-monorepo/issues/794 */}
-              <StrategyDetails token={token} tvl=" $ 129M" />
-            </>
-          }
+          strategyDetails={<StrategyDetails token={token} />}
           submitButton={
             <>
               <DrawerParagraph>{t('you-can-unstake-anytime')}</DrawerParagraph>

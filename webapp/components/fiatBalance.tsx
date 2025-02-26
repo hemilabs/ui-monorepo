@@ -5,8 +5,8 @@ import { useTokenBalance, useNativeTokenBalance } from 'hooks/useBalance'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { ComponentProps } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { smartRound } from 'smart-round'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
+import { formatFiatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
 import { isEvmToken } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -17,15 +17,15 @@ type Props<T extends Token = Token> = {
   token: T
 }
 
-const fiatRounder = smartRound(6, 2, 2)
-
 const RenderFiatBalanceUnsafe = function ({
   balance = BigInt(0),
+  customFormatter = formatFiatNumber,
   fetchStatus,
   queryStatus,
   token,
 }: Props & {
   balance: bigint | undefined
+  customFormatter?: (amount: string) => string
   fetchStatus: FetchStatus
   queryStatus: QueryStatus
 }) {
@@ -77,9 +77,9 @@ const RenderFiatBalanceUnsafe = function ({
           '-'}
         {status === 'success' && (
           <>
-            {fiatRounder(Big(stringBalance).times(price).toFixed(2), {
-              shouldFormat: true,
-            })}
+            {customFormatter(
+              Big(stringBalance).times(price).toFixed(token.decimals),
+            )}
           </>
         )}
       </>

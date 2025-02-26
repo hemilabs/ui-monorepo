@@ -5,9 +5,9 @@ const pLimitOne = require('promise-limit-one')
 const redis = require('redis')
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379'
-const portStr = process.env.PORT || '3000'
+const portStr = process.env.PORT || '3001'
 const port = parseInt(portStr)
-const originsStr = process.env.ORIGINS || `http://localhost:${portStr}`
+const originsStr = process.env.ORIGINS || 'http://localhost:3000'
 const origins = originsStr.split(',')
 
 const client = redis.createClient({ url: redisUrl })

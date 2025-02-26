@@ -24,4 +24,4 @@ services:
     depends_on:
       - cache
     ports:
-      - 3000:3000
+      - 3001:3001

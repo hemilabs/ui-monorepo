@@ -28,7 +28,7 @@ These control the `api` server:
 
 | Variable  | Description                                                     | Default                 |
 | --------- | --------------------------------------------------------------- | ----------------------- |
-| ORIGINS   | Comma-separated list of allowed origins. '\*' is not supported. | `http://localhos:3001`  |
+| ORIGINS   | Comma-separated list of allowed origins. '\*' is not supported. | `http://localhos:3000`  |
 | PORT      | The HTTP port the server listens for requests.                  | 3001                    |
 | REDIS_URL | The URL of the Redis database.                                  | `http://localhost:6379` |
 
@@ -54,6 +54,6 @@ docker compose --env-file=.env.local up
 Then the prices can be obtained as follows:
 
 ```console
-$ curl http://localhost:3000
+$ curl http://localhost:3001
 {"prices":{"BTC":"94514.79193898945","M-BTC":"95894.52612269788","PUMPBTC":"95990.74415080296","WBTC":"95797.80677773379"},"time":"2025-02-17T23:12:35.803Z"}
 ```

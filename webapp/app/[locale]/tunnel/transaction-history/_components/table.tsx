@@ -55,7 +55,7 @@ const Column = (props: ComponentProps<'td'>) => (
 const Header = ({ text }: { text?: string }) => (
   <span className="block py-2 text-left text-neutral-600">{text}</span>
 )
-
+const rowSize = 52
 const Body = function ({
   columns,
   containerRef,
@@ -70,8 +70,14 @@ const Body = function ({
   const t = useTranslations('tunnel-page.transaction-history')
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
-    estimateSize: () => 52,
+    estimateSize: () => rowSize,
     getScrollElement: () => containerRef.current,
+    initialRect: {
+      // Estimation to fix the initial render that's broken. See https://github.com/TanStack/virtual/issues/871
+      height: rows.length * rowSize,
+      // Not relevant, but type mandatory
+      width: 0,
+    },
     overscan: 10,
   })
   const { updateTxHash } = useTunnelOperation()

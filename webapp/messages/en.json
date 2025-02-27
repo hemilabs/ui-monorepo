@@ -234,6 +234,14 @@
       "subtitle": "Stake assets to earn points and rewards.",
       "title": "Stake"
     },
+    "toast": {
+      "go-staking-dashboard": "View your staking dashboard",
+      "here-your-stake-tx": "Here’s your {type} transaction:",
+      "staking": "staking",
+      "staking-successful": "Staking successful",
+      "unstaking": "unstaking",
+      "unstaking-successful": "Unstaking successful"
+    },
     "wallet-balance": "Wallet balance"
   },
   "token-custom-drawer": {

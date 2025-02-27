@@ -17,6 +17,7 @@ import { formatUnits, parseUnits } from 'viem'
 import { useAmount } from '../../_hooks/useAmount'
 import { useStakedBalance } from '../../_hooks/useStakedBalance'
 import { useUnstake } from '../../_hooks/useUnstake'
+import { StakeToast } from '../stakeToast'
 
 import { UnstakeFees } from './fees'
 import { UnstakeMaxBalance } from './maxBalance'
@@ -101,51 +102,60 @@ export const UnstakeOperation = function ({
   const isOperating = unstakeStatus !== undefined
 
   return (
-    <Operation
-      amount={amount}
-      callToAction={
-        <UnstakeCallToAction
-          isSubmitting={isSubmitting}
-          unstakeStatus={unstakeStatus}
+    <>
+      {unstakeStatus === UnstakeStatusEnum.UNSTAKE_TX_CONFIRMED && (
+        <StakeToast
+          chainId={token.chainId}
+          txHash={unStakeTransactionHash}
+          type="unstake"
         />
-      }
-      closeDrawer={closeDrawer}
-      heading={heading}
-      isOperating={isOperating}
-      onSubmit={handleUnstake}
-      preview={
-        <Preview
-          amount={amount}
-          balanceComponent={StakedBalance}
-          fees={<UnstakeFees />}
-          isOperating={isOperating}
-          maxBalance={
-            <UnstakeMaxBalance
-              disabled={isSubmitting}
-              onSetMaxBalance={setAmount}
-              token={token}
-            />
-          }
-          operation="unstake"
-          setAmount={setAmount}
-          setOperation={() => onOperationChange('stake')}
-          showTabs
-          submitButton={
-            <SubmitButton
-              disabled={!canUnstake}
-              text={
-                isStakedPositionPending || isSubmitting
-                  ? '...'
-                  : tCommon('unstake')
-              }
-            />
-          }
-          token={token}
-        />
-      }
-      steps={[unstakeStep]}
-      subheading={subheading}
-      token={token}
-    />
+      )}
+      <Operation
+        amount={amount}
+        callToAction={
+          <UnstakeCallToAction
+            isSubmitting={isSubmitting}
+            unstakeStatus={unstakeStatus}
+          />
+        }
+        closeDrawer={closeDrawer}
+        heading={heading}
+        isOperating={isOperating}
+        onSubmit={handleUnstake}
+        preview={
+          <Preview
+            amount={amount}
+            balanceComponent={StakedBalance}
+            fees={<UnstakeFees />}
+            isOperating={isOperating}
+            maxBalance={
+              <UnstakeMaxBalance
+                disabled={isSubmitting}
+                onSetMaxBalance={setAmount}
+                token={token}
+              />
+            }
+            operation="unstake"
+            setAmount={setAmount}
+            setOperation={() => onOperationChange('stake')}
+            showTabs
+            submitButton={
+              <SubmitButton
+                disabled={!canUnstake}
+                text={
+                  isStakedPositionPending || isSubmitting
+                    ? '...'
+                    : tCommon('unstake')
+                }
+              />
+            }
+            token={token}
+          />
+        }
+        steps={[unstakeStep]}
+        subheading={subheading}
+        token={token}
+      />
+    </>
   )
 }

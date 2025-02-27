@@ -15,6 +15,7 @@ import { useAllowance } from 'wagmi-erc20-hooks'
 
 import { useAmount } from '../../_hooks/useAmount'
 import { useStake } from '../../_hooks/useStake'
+import { StakeToast } from '../stakeToast'
 
 import { StakeFees } from './fees'
 import { StakeMaxBalance } from './maxBalance'
@@ -159,56 +160,67 @@ export const StakeOperation = function ({
   }
 
   return (
-    <Operation
-      amount={amount}
-      callToAction={
-        <StakeCallToAction
-          isSubmitting={isSubmitting}
-          stakeStatus={stakeStatus}
+    <>
+      {stakeStatus === StakeStatusEnum.STAKE_TX_CONFIRMED && (
+        <StakeToast
+          chainId={token.chainId}
+          txHash={stakeTransactionHash}
+          type="stake"
         />
-      }
-      closeDrawer={closeDrawer}
-      heading={heading}
-      isOperating={isOperating}
-      onSubmit={handleStake}
-      preview={
-        <Preview
-          amount={amount}
-          fees={<StakeFees />}
-          isOperating={isOperating}
-          maxBalance={
-            <StakeMaxBalance
-              disabled={isSubmitting}
-              onSetMaxBalance={setAmount}
-              token={token}
-            />
-          }
-          operation="stake"
-          setAmount={setAmount}
-          setOperation={() => onOperationChange('unstake')}
-          showTabs={showTabs}
-          strategyDetails={<StrategyDetails token={token} />}
-          submitButton={
-            <>
-              <DrawerParagraph>{t('you-can-unstake-anytime')}</DrawerParagraph>
-              <SubmitButton
-                disabled={!canStake}
-                text={
-                  isPending || isSubmitting
-                    ? '...'
-                    : requiresApproval
-                      ? t('approve-and-stake')
-                      : tCommon('stake')
-                }
+      )}
+      <Operation
+        amount={amount}
+        callToAction={
+          <StakeCallToAction
+            isSubmitting={isSubmitting}
+            stakeStatus={stakeStatus}
+          />
+        }
+        closeDrawer={closeDrawer}
+        heading={heading}
+        isOperating={isOperating}
+        onSubmit={handleStake}
+        preview={
+          <Preview
+            amount={amount}
+            fees={<StakeFees />}
+            isOperating={isOperating}
+            maxBalance={
+              <StakeMaxBalance
+                disabled={isSubmitting}
+                onSetMaxBalance={setAmount}
+                token={token}
               />
-            </>
-          }
-          token={token}
-        />
-      }
-      steps={steps}
-      subheading={subheading}
-      token={token}
-    />
+            }
+            operation="stake"
+            setAmount={setAmount}
+            setOperation={() => onOperationChange('unstake')}
+            showTabs={showTabs}
+            strategyDetails={<StrategyDetails token={token} />}
+            submitButton={
+              <>
+                <DrawerParagraph>
+                  {t('you-can-unstake-anytime')}
+                </DrawerParagraph>
+                <SubmitButton
+                  disabled={!canStake}
+                  text={
+                    isPending || isSubmitting
+                      ? '...'
+                      : requiresApproval
+                        ? t('approve-and-stake')
+                        : tCommon('stake')
+                  }
+                />
+              </>
+            }
+            token={token}
+          />
+        }
+        steps={steps}
+        subheading={subheading}
+        token={token}
+      />
+    </>
   )
 }

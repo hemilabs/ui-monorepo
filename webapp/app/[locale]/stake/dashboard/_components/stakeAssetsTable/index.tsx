@@ -36,7 +36,7 @@ import { WelcomeStake } from './welcomeStake'
 type ActionProps = {
   stake: StakeToken
 }
-
+const rowSize = 52
 const Body = function ({
   columns,
   containerRef,
@@ -51,8 +51,14 @@ const Body = function ({
   const { setDrawerQueryString } = useDrawerStakeQueryString()
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
-    estimateSize: () => 52,
+    estimateSize: () => rowSize,
     getScrollElement: () => containerRef.current,
+    initialRect: {
+      // Estimation to fix the initial render that's broken. See https://github.com/TanStack/virtual/issues/871
+      height: rows.length * rowSize,
+      // Not relevant, but type mandatory
+      width: 0,
+    },
     overscan: 10,
   })
 

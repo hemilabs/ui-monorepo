@@ -16,6 +16,9 @@ chainMap.set('hemi-sepolia', hemiSepoliaId)
 export const getBitcoinChainId = (chainId: i32): string =>
   chainId === hemiSepoliaId ? 'testnet' : 'livenet'
 
+export const getEthereumChainId = (l2ChainId: i32): i32 =>
+  l2ChainId === hemiMainnetId ? ethereumMainnetId : sepoliaId
+
 export const getEvmChainId = (chain: string): i32 => chainMap.get(chain)
 
 export const getHemiChainId = (l1ChainId: i32): i32 =>

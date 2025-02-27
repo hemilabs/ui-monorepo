@@ -3,17 +3,9 @@
 // and many js/ts operations are not supported
 import { dataSource, log } from '@graphprotocol/graph-ts'
 
+import { getEthereumChainId, getEvmChainId } from '../../../utils'
 import { WithdrawalInitiated as WithdrawalInitiatedEvent } from '../../generated/L2Bridge/L2Bridge'
 import { EvmWithdrawal } from '../entities/evmWithdrawal'
-
-const ethereumMainnetId = 1
-const hemiMainnetId = 43111
-const hemiSepoliaId = 743111
-const sepoliaId = 11155111
-
-const chainMap = new Map<string, i32>()
-chainMap.set('hemi', hemiMainnetId)
-chainMap.set('hemi-sepolia', hemiSepoliaId)
 
 export function handleWithdrawalInitiated(
   event: WithdrawalInitiatedEvent,
@@ -30,9 +22,8 @@ export function handleWithdrawalInitiated(
   entity.l1Token = event.params.l1Token
   entity.l2Token = event.params.l2Token
 
-  entity.l2ChainId = chainMap.get(dataSource.network())
-  entity.l1ChainId =
-    entity.l2ChainId == hemiMainnetId ? ethereumMainnetId : sepoliaId
+  entity.l2ChainId = getEvmChainId(dataSource.network())
+  entity.l1ChainId = getEthereumChainId(entity.l2ChainId)
 
   entity.to = event.params.to
   entity.timestamp = event.block.timestamp

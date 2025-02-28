@@ -62,6 +62,8 @@ const analyticsEvents = [
   'nav - youtube',
   'nav - x',
   // /stake
+  'stake - click stake and earn card',
+  'stake - close stake and earn card',
   'stake - learn stake',
   'stake - stake failed',
   'stake - stake started',

@@ -100,6 +100,8 @@ export const stakeWhiteList: Partial<
     },
     // USDC
     '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA': {
+      // token symbol in hemi mainnet is usdc.e
+      priceSymbol: 'usdc.e',
       protocol: 'circle',
       rewards: ['hemi'],
       website: websitesMap.circle,
@@ -137,12 +139,16 @@ export const stakeWhiteList: Partial<
     },
     // USDC
     '0xD47971C7F5B1067d25cd45d30b2c9eb60de96443': {
+      // token symbol in Hemi Sepolia is usdc.e
+      priceSymbol: 'usdc',
       protocol: 'hemi',
       rewards: [],
       website: websitesMap.hemi,
     },
     // USDT
     '0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298': {
+      // token symbol in Hemi Sepolia is usdt.e
+      priceSymbol: 'usdt',
       protocol: 'hemi',
       rewards: [],
       website: websitesMap.hemi,

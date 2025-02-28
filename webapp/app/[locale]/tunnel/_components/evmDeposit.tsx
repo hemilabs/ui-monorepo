@@ -17,7 +17,7 @@ import { tunnelsThroughPartner } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
-import { useAllowance } from 'wagmi-erc20-hooks/useAllowance'
+import { useAllowance } from 'wagmi-erc20-hooks'
 
 import { useDeposit } from '../_hooks/useDeposit'
 import { EvmTunneling, TypedTunnelState } from '../_hooks/useTunnelState'

@@ -10,7 +10,6 @@ import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
@@ -20,14 +19,12 @@ import Skeleton from 'react-loading-skeleton'
 import { type RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { isEvmNetwork } from 'utils/chain'
-import { getTunnelContracts } from 'utils/crossChainMessenger'
 import { formatBtcAddress } from 'utils/format'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { tunnelsThroughPartner } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
-import { useAllowance } from 'wagmi-erc20-hooks/useAllowance'
 
 import { useMinWithdrawalSats } from '../_hooks/useMinWithdrawalSats'
 import {
@@ -237,7 +234,6 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   const [networkType] = useNetworkType()
   const [isWithdrawing, setIsWithdrawing] = useState(false)
   const [isPartnersDrawerOpen, setIsPartnersDrawerOpen] = useState(false)
-  const hemi = useHemi()
 
   const t = useTranslations()
   const { track } = useUmami()
@@ -252,7 +248,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     updateFromInput,
   } = state
 
-  const { chainId, status, address } = useAccount()
+  const { chainId, status } = useAccount()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -267,25 +263,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     !operatesNativeToken,
   )
 
-  const l1StandardBridgeAddress = getTunnelContracts(
-    hemi,
-    fromToken.chainId,
-  ).L1StandardBridge
-
-  const { data: allowance, isPending } = useAllowance(
-    fromToken.address as `0x${string}`,
-    {
-      args: {
-        owner: address,
-        spender: l1StandardBridgeAddress,
-      },
-    },
-  )
-
-  const isAllowanceLoading = isPending || !allowance
-
   const canWithdraw =
-    !isAllowanceLoading &&
     canSubmit({
       balance: operatesNativeToken
         ? walletNativeTokenBalance
@@ -294,8 +272,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       fromInput,
       fromNetworkId,
       fromToken,
-    }) &&
-    hasBridgeConfiguration(fromToken, toNetworkId)
+    }) && hasBridgeConfiguration(fromToken, toNetworkId)
 
   const {
     clearWithdrawState,
@@ -385,17 +362,12 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
 
     if (walletIsConnected(status)) {
       return (
-        <Button
-          disabled={!canWithdraw || isWithdrawing || isAllowanceLoading}
-          type="submit"
-        >
-          {isAllowanceLoading
-            ? '...'
-            : t(
-                `tunnel-page.submit-button.${
-                  isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'
-                }`,
-              )}
+        <Button disabled={!canWithdraw || isWithdrawing} type="submit">
+          {t(
+            `tunnel-page.submit-button.${
+              isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'
+            }`,
+          )}
         </Button>
       )
     }

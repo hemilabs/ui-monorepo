@@ -20,7 +20,7 @@ const subgraphIds = {
   [sepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_ID,
 }
 
-type GraphResponse<T> = { data: T }
+type GraphResponse<T> = { data: T; errors?: Array<{ message: string }> }
 
 const getGraphUrl = function (chainId: Chain['id']) {
   const url = subgraphUrls[chainId]
@@ -37,6 +37,37 @@ const getGraphUrl = function (chainId: Chain['id']) {
   }
 
   return `${process.env.NEXT_PUBLIC_THE_GRAPH_API_URL}/${subgraphApiKey}/subgraphs/id/${subgraphId}`
+}
+
+/**
+ * Helper function to ensure the response is properly parsed as JSON
+ * @param response The response that might be a string or already parsed
+ * @returns The parsed JSON response
+ */
+function ensureJsonParsed<T>(response: string | T): T {
+  if (typeof response === 'string') {
+    return JSON.parse(response)
+  }
+  return response as T
+}
+
+/**
+ * Helper function to check for errors in GraphQL responses
+ * @param response The GraphQL response to check
+ * @throws Error if the response contains errors
+ */
+function checkGraphQLErrors<T>(response: GraphResponse<T>): T {
+  if (response.errors && response.errors.length > 0) {
+    // Extract error messages and join them
+    const errorMessages = response.errors.map(e => e.message).join(', ')
+    throw new Error(`GraphQL Error: ${errorMessages}`)
+  }
+
+  if (!response.data) {
+    throw new Error('GraphQL response is missing data')
+  }
+
+  return response.data
 }
 
 /**
@@ -61,10 +92,12 @@ export const getLastIndexedBlock = function (chainId: Chain['id']) {
       'Content-Type': 'application/json',
     },
     method: 'POST',
-  }).then(
-    (r: GraphResponse<{ _meta: { block: { number: number } } }>) =>
-      r.data._meta.block.number,
-  )
+  })
+    .then(response => ensureJsonParsed(response))
+    .then(
+      (response: GraphResponse<{ _meta: { block: { number: number } } }>) =>
+        checkGraphQLErrors(response)._meta.block.number,
+    )
 }
 
 type GetEvmDepositsQueryResponse = GraphResponse<{
@@ -131,22 +164,24 @@ export const getEvmDeposits = function ({
       'Content-Type': 'application/json',
     },
     method: 'POST',
-  }).then(({ data }: GetEvmDepositsQueryResponse) =>
-    data.deposits.map(d => ({
-      // The Subgraph lowercases all the addresses when saving, so better convert them
-      // into checksum format to avoid errors when trying to get balances or other operations.
-      // GraphQL also converts BigInt as strings
-      ...d,
-      blockNumber: Number(d.blockNumber),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      from: toChecksum(d.from),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      l1Token: toChecksum(d.l1Token),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      l2Token: toChecksum(d.l2Token),
-      timestamp: Number(d.timestamp),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      to: toChecksum(d.to),
-    })),
-  ) satisfies Promise<EvmDepositOperation[]>
+  })
+    .then(response => ensureJsonParsed(response))
+    .then((response: GetEvmDepositsQueryResponse) =>
+      checkGraphQLErrors(response).deposits.map(d => ({
+        // The Subgraph lowercases all the addresses when saving, so better convert them
+        // into checksum format to avoid errors when trying to get balances or other operations.
+        // GraphQL also converts BigInt as strings
+        ...d,
+        blockNumber: Number(d.blockNumber),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        from: toChecksum(d.from),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        l1Token: toChecksum(d.l1Token),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        l2Token: toChecksum(d.l2Token),
+        timestamp: Number(d.timestamp),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        to: toChecksum(d.to),
+      })),
+    ) satisfies Promise<EvmDepositOperation[]>
 }

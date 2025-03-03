@@ -9,19 +9,21 @@ on:
   workflow_dispatch:
 
 jobs:
-  token-prices:
+  build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        context:
+          - token-prices/api
+          - token-prices/cron
+        image:
+          - hemilabs/token-prices-api
+          - hemilabs/token-prices-cron
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/docker-build-push
         with:
-          context: token-prices/cron
+          context: ${{ matrix.context }}
           dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
           dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
-          images: hemilabs/token-prices-cron
-      - uses: ./.github/actions/docker-build-push
-        with:
-          context: token-prices/api
-          dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
-          dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
-          images: hemilabs/token-prices-api
+          images: ${{ matrix.image }}

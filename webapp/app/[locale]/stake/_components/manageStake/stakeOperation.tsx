@@ -2,12 +2,12 @@ import { DrawerParagraph } from 'components/drawer'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
-import { useTokenBalance } from 'hooks/useBalance'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { StakeOperations, StakeStatusEnum, type StakeToken } from 'types/stake'
-import { getNativeToken } from 'utils/nativeToken'
+import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -32,6 +32,17 @@ type Props = {
   showTabs: boolean
   subheading: string
   token: StakeToken
+}
+
+const useBalance = function (token: StakeToken) {
+  const nativeBalance = useNativeTokenBalance(token.chainId)
+  const tokenBalance = useTokenBalance(token)
+
+  const balance = isNativeToken(token)
+    ? nativeBalance.balance
+    : tokenBalance.balance
+
+  return balance
 }
 
 export const StakeOperation = function ({
@@ -69,7 +80,7 @@ export const StakeOperation = function ({
   } = useStake(token)
   const t = useTranslations('stake-page.drawer')
   const tCommon = useTranslations('common')
-  const { balance } = useTokenBalance(token)
+  const balance = useBalance(token)
 
   const steps: StepPropsWithoutPosition[] = []
 

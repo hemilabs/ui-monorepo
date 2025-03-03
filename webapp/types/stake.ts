@@ -6,6 +6,7 @@ export const stakeProtocols = [
   'bedRock',
   'bitFi',
   'circle',
+  'ethereum',
   'exSat',
   'hemi',
   'lorenzo',

@@ -8,7 +8,7 @@ import Skeleton from 'react-loading-skeleton'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { formatFiatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
-import { isEvmToken } from 'utils/token'
+import { getTokenPrice, isEvmToken } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import { ErrorBoundary } from './errorBoundary'
@@ -37,10 +37,7 @@ const RenderFiatBalanceUnsafe = function ({
 
   const stringBalance = formatUnits(balance, token.decimals)
 
-  const priceSymbol = (
-    token.extensions?.priceSymbol ?? token.symbol
-  ).toUpperCase()
-  const price = data?.[priceSymbol] ?? '0'
+  const price = getTokenPrice(token, data)
 
   const mergedFetchStatuses = function () {
     const fetchStatuses = [fetchStatus, tokenPricesFetchStatus]

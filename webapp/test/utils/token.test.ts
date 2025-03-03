@@ -1,4 +1,5 @@
 import {
+  getTokenPrice,
   isStakeToken,
   isTunnelToken,
   isEvmToken,
@@ -7,6 +8,20 @@ import {
 import { describe, expect, it } from 'vitest'
 
 describe('utils/token', function () {
+  describe('getTokenPrice', function () {
+    it('should return the price based in the token symbol', function () {
+      const token = { symbol: 'usdt' }
+      const prices = { USDT: '0.99' }
+      expect(getTokenPrice(token, prices)).toBe('0.99')
+    })
+
+    it('should return the price based in the token priceSymbol if defined', function () {
+      const token = { extensions: { priceSymbol: 'usdt' }, symbol: 'usdt.e' }
+      const prices = { USDT: '0.99' }
+      expect(getTokenPrice(token, prices)).toBe('0.99')
+    })
+  })
+
   describe('isEvmToken', function () {
     it('should return true if token is an EVM token', function () {
       const token = {

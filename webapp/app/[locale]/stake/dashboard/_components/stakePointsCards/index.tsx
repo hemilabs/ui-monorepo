@@ -1,7 +1,14 @@
+import Big from 'big.js'
 import { Card } from 'components/card'
+import { useTokenPrices } from 'hooks/useTokenPrices'
 import Image, { StaticImageData } from 'next/image'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
+import { formatFiatNumber } from 'utils/format'
+import { getTokenPrice } from 'utils/token'
+import { formatUnits } from 'viem'
+
+import { useStakePositions } from '../../../_hooks/useStakedBalance'
 
 import communityIcon from './icons/community.svg'
 import stakeIcon from './icons/stake.svg'
@@ -86,14 +93,34 @@ export const TotalStaked = function () {
 }
 
 export const YourStake = function () {
+  const { data: prices, isPending: loadingPrices } = useTokenPrices()
+  const { loading: loadingPosition, tokensWithPosition } = useStakePositions()
   const t = useTranslations('stake-page.dashboard')
-  // TODO TBD how to load this data https://github.com/hemilabs/ui-monorepo/issues/750
-  const points = '$ 962.163'
+
+  const getPosition = function () {
+    if (prices === undefined) {
+      // if Prices API is missing, return "-"
+      return '-'
+    }
+    const userPosition = tokensWithPosition.reduce(
+      (acc, staked) =>
+        acc.plus(
+          Big(formatUnits(staked.balance, staked.decimals)).times(
+            getTokenPrice(staked, prices),
+          ),
+        ),
+      Big(0),
+    )
+    return formatFiatNumber(userPosition.toFixed())
+  }
+
   return (
     <Container>
       <div className="flex flex-shrink-0 flex-col gap-y-3 p-6">
         <Heading heading={t('your-stake')} />
-        <Points points={points} />
+        <Points
+          points={loadingPosition || loadingPrices ? '...' : getPosition()}
+        />
       </div>
       <Image
         alt="Stake icon"

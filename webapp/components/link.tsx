@@ -1,5 +1,4 @@
-import { featureFlags } from 'app/featureFlags'
-import { useNetworkType } from 'hooks/useNetworkType'
+import { defaultNetworkType, useNetworkType } from 'hooks/useNetworkType'
 import BaseLink from 'next-intl/link'
 import { ComponentProps } from 'react'
 import { type UrlObject } from 'url'
@@ -29,7 +28,6 @@ const getQuery = function (q: UrlObject['query']): Record<string, string> {
 // between mainnet and testnet when explicitly selected.
 export const Link = function (props: ComponentProps<typeof BaseLink>) {
   const [networkType] = useNetworkType()
-  const defaultNetworkType = featureFlags.mainnetEnabled ? 'mainnet' : 'testnet'
 
   let href = props.href
 

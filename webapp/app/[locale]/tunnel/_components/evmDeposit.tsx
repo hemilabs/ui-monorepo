@@ -130,7 +130,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     fromToken.chainId,
   ).L1StandardBridge
 
-  const { data: allowance, isPending } = useAllowance(
+  const { isLoading: isAllowanceLoading } = useAllowance(
     fromToken.address as `0x${string}`,
     {
       args: {
@@ -139,8 +139,6 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       },
     },
   )
-
-  const isAllowanceLoading = isPending || !allowance
 
   const canDeposit = canSubmit({
     balance: operatesNativeToken

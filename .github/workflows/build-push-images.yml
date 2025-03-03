@@ -1,0 +1,27 @@
+name: Publish Docker image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'token-prices/**'
+  workflow_dispatch:
+
+jobs:
+  token-prices:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-push
+        with:
+          context: token-prices/cron
+          dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
+          images: hemilabs/token-prices-cron
+      - uses: ./.github/actions/docker-build-push
+        with:
+          context: token-prices/api
+          dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
+          images: hemilabs/token-prices-api

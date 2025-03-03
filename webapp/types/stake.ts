@@ -5,15 +5,20 @@ import { type EvmToken, type Extensions } from './token'
 export const stakeProtocols = [
   'bedRock',
   'bitFi',
+  'circle',
   'exSat',
   'hemi',
   'lorenzo',
+  'makerDao',
   'merlinChain',
   'obeliskNodeDao',
   'pumpBtc',
   'solv',
   'stakeStone',
+  'tether',
+  'threshold',
   'uniRouter',
+  'wbtc',
 ] as const
 
 export type StakeProtocols = (typeof stakeProtocols)[number]

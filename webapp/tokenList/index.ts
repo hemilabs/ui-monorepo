@@ -66,7 +66,6 @@ const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
       (t.symbol !== 'hemiBTC' && t.symbol !== 'tBTC') ||
       featureFlags.btcTunnelEnabled,
   )
-  .map(t => ({ ...t, symbol: t.symbol.replace('.e', '').trim() }))
 
 // the hemiTokens only contains definitions for Hemi tokens, but we can create the L1 version with the extensions field info
 const tokens: Token[] = hemiTokens.concat(hemiTokens.flatMap(getRemoteTokens))

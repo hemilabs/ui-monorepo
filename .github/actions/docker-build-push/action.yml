@@ -32,7 +32,6 @@ runs:
     - uses: docker/build-push-action@v6
       with:
         context: ${{ inputs.context }}
-        file: ./Dockerfile
         labels: ${{ steps.meta.outputs.labels }}
         platforms: linux/amd64
         push: true

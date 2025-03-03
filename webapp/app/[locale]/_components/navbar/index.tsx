@@ -15,11 +15,11 @@ import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByC
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import React, { Suspense } from 'react'
-import { HemiLogoFull } from 'ui-common/components/hemiLogo'
 import { getSwapUrl } from 'utils/swap'
 
 import { GetStarted } from './_components/getStarted'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
+import { HemiLogoFull } from './_components/hemiLogo'
 import { ItemLink, ItemWithSubmenu, NetworkSwitch } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
 import { TermsAndConditions } from './_components/termsAndConditions'

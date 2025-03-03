@@ -6,10 +6,14 @@ import { useQueryState, parseAsStringLiteral } from 'nuqs'
 export const networkTypes = ['mainnet', 'testnet'] as const
 export type NetworkType = (typeof networkTypes)[number]
 
+export const defaultNetworkType = featureFlags.mainnetEnabled
+  ? 'mainnet'
+  : 'testnet'
+
 export const useNetworkType = () =>
   useQueryState(
     'networkType',
     parseAsStringLiteral(
       featureFlags.mainnetEnabled ? networkTypes : (['testnet'] as const),
-    ).withDefault(featureFlags.mainnetEnabled ? 'mainnet' : 'testnet'),
+    ).withDefault(defaultNetworkType),
   )

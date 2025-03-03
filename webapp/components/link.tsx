@@ -1,4 +1,4 @@
-import { useNetworkType } from 'hooks/useNetworkType'
+import { defaultNetworkType, useNetworkType } from 'hooks/useNetworkType'
 import BaseLink from 'next-intl/link'
 import { ComponentProps } from 'react'
 import { type UrlObject } from 'url'
@@ -22,14 +22,30 @@ const getQuery = function (q: UrlObject['query']): Record<string, string> {
   return query
 }
 
-// When using link to navigate between pages, we need to persist the query string
-// for network type; otherwise, when navigating, users would switch between mainnet and testnet
-// due to the loss of this value
+// When using link to navigate between pages, we only persist the networkType
+// query parameter when it differs from the default network type. This keeps
+// the URL clean for the default network while still allowing navigation
+// between mainnet and testnet when explicitly selected.
 export const Link = function (props: ComponentProps<typeof BaseLink>) {
   const [networkType] = useNetworkType()
-  const href =
-    typeof props.href === 'string'
-      ? { pathname: props.href, query: { networkType } }
-      : { ...props.href, query: { ...getQuery(props.href.query), networkType } }
+
+  let href = props.href
+
+  if (networkType !== defaultNetworkType) {
+    if (typeof href === 'string') {
+      href = { pathname: href, query: { networkType } }
+    } else {
+      href = {
+        ...href,
+        query: { ...getQuery(href.query), networkType },
+      }
+    }
+  } else if (typeof href !== 'string') {
+    href = {
+      ...href,
+      query: getQuery(href.query),
+    }
+  }
+
   return <BaseLink {...props} href={href} />
 }

@@ -60,6 +60,8 @@ const customRpcOrigins = [
   process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET,
   process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA,
   // Custom RPCs for Subgraphs
+  process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_URL,
+  process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_URL,
   process.env.NEXT_PUBLIC_SUBGRAPH_MAINNET_URL,
   process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL,
 ].flatMap((p = '') => p.split('+'))

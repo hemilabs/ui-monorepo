@@ -20,7 +20,7 @@ const getMinutes = (minutes: number) => getSeconds(minutes * 60)
 // use different refetch intervals depending on the status and chain
 const refetchInterval = {
   [hemiMainnet.id]: {
-    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getSeconds(12),
+    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getSeconds(24),
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: false,
     [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(1),
     [MessageStatus.READY_TO_PROVE]: getMinutes(1),
@@ -29,7 +29,7 @@ const refetchInterval = {
     [MessageStatus.RELAYED]: false,
   },
   [hemiTestnet.id]: {
-    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getSeconds(12),
+    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getSeconds(24),
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: false,
     [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(1),
     [MessageStatus.READY_TO_PROVE]: getMinutes(2),
@@ -75,7 +75,12 @@ const WatchEvmWithdrawal = function ({
 
       worker.addEventListener('message', saveUpdates)
 
-      const interval = refetchInterval[withdrawal.l2ChainId][withdrawal.status]
+      const interval =
+        refetchInterval[withdrawal.l2ChainId][withdrawal.status] ??
+        // This should be the case only for not-defined status. The value is not relevant
+        // as once the status is retrieved, in the next interval, it should be defined in the
+        // refetchInterval object.
+        getSeconds(12)
 
       let intervalId
       // skip polling for disabled states (those whose interval is "false")

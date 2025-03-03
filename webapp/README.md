@@ -30,15 +30,21 @@ NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET=2 # Vault index to use for bitcoin in 
 NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=1 # Vault index to use for bitcoin in hemi sepolia. Defaults to 0
 # Pricing URL
 NEXT_PUBLIC_TOKEN_PRICES_URL="<url>" # URL to retrieve usd prices for tokens
-# Enable subgraphs for syncing history
+# Enable subgraphs for syncing deposit history
 NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH=<true|false>
+# Enable subgraphs for syncing withdrawals history
+NEXT_PUBLIC_FEATURE_FLAG_SYNC_WITHDRAWALS_SUBGRAPH=<true|false>
 # Subgraph configuration per chain
 # Use this for querying a published decentralized subgraph - the API key works for all chains
 NEXT_PUBLIC_SUBGRAPH_API_KEY=<api-key>
 # Use this for querying a published decentralized subgraph
+NEXT_PUBLIC_SUBGRAPH_HEMI_ID=<subgraph-id>
+NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_ID=<subgraph-id>
 NEXT_PUBLIC_SUBGRAPH_MAINNET_ID=<subgraph-id>
 NEXT_PUBLIC_SUBGRAPH_SEPOLIA_ID=<subgraph-id>
 # Use this to configure a complete Subgraph Endpoint URL (for example, when running locally)
+NEXT_PUBLIC_SUBGRAPH_HEMI_URL=<url>
+NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_URL=<url>
 NEXT_PUBLIC_SUBGRAPH_MAINNET_URL=<url>
 NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL=<url>
 

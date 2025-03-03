@@ -95,3 +95,14 @@ export const isTunnelToken = (token: Token) => token.extensions?.tunnel === true
 
 export const tunnelsThroughPartner = (token: Token) =>
   token.extensions?.tunnelPartner !== undefined
+
+export const getTokenPrice = function (
+  token: Token,
+  prices: Record<string, string>,
+) {
+  const priceSymbol = (
+    token.extensions?.priceSymbol ?? token.symbol
+  ).toUpperCase()
+  const price = prices?.[priceSymbol] ?? '0'
+  return price
+}

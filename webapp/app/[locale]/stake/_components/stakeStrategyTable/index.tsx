@@ -190,8 +190,8 @@ export const StakeStrategyTable = function ({ data, loading }: Props) {
   const t = useTranslations('stake-page.stake')
   const { track } = useUmami()
 
-  // TODO - Link is TBD https://github.com/hemilabs/ui-monorepo/issues/819
-  const learnHowToStakeLink = 'https://hemi.xyz/'
+  const learnHowToStakeLink =
+    'https://docs.hemi.xyz/how-to-tutorials/using-hemi/stake'
 
   const trackLinkClick = function (e: MouseEvent<HTMLAnchorElement>) {
     e.preventDefault()

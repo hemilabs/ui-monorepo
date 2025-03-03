@@ -1,5 +1,4 @@
-import { parseAsStringLiteral, useQueryState } from 'nuqs'
-import { parseAsEvmAddress } from 'utils/url'
+import { parseAsString, parseAsStringLiteral, useQueryState } from 'nuqs'
 import { Address } from 'viem'
 
 const drawerModes = ['manage', 'stake'] as const
@@ -8,7 +7,7 @@ export type DrawerModes = (typeof drawerModes)[number]
 export const useDrawerStakeQueryString = function () {
   const [tokenAddress, setTokenAddress] = useQueryState(
     'tokenAddress',
-    parseAsEvmAddress.withOptions({ clearOnDefault: true }),
+    parseAsString.withOptions({ clearOnDefault: true }),
   )
 
   const [drawerMode, setDrawerMode] = useQueryState(

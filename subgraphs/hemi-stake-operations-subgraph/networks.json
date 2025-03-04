@@ -1,0 +1,14 @@
+{
+  "hemi": {
+    "ZtakingPool": {
+      "address": "0x4F5E928763CBFaF5fFD8907ebbB0DAbd5f78bA83",
+      "startBlock": 1220463
+    }
+  },
+  "hemi-sepolia": {
+    "ZtakingPool": {
+      "address": "0x935CC431313C52427ccf45385138a136580bf59f",
+      "startBlock": 2511452
+    }
+  }
+}

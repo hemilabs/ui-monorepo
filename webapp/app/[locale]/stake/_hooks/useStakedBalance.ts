@@ -3,6 +3,8 @@ import { HemiPublicClient, useHemiClient } from 'hooks/useHemiClient'
 import { NetworkType, useNetworkType } from 'hooks/useNetworkType'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import { StakeToken } from 'types/stake'
+import { isNativeToken } from 'utils/nativeToken'
+import { getWrappedEther } from 'utils/token'
 import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -37,7 +39,10 @@ const getStakedBalance = ({
     }
     return hemiClient.stakedBalance({
       address,
-      tokenAddress: token.address,
+      // @ts-expect-error tokenAddress is a string Address
+      tokenAddress: isNativeToken(token)
+        ? getWrappedEther(token.chainId).address
+        : token.address,
     })
   }
 

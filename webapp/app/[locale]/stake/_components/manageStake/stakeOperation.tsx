@@ -55,11 +55,14 @@ export const StakeOperation = function ({
 }: Props) {
   const { address } = useAccount()
   const [amount, setAmount] = useAmount()
+  const operatesNativeToken = isNativeToken(token)
+  // @ts-expect-error token.address is a string Address
   const { data: allowance, isPending } = useAllowance(token.address, {
     args: {
       owner: address,
       spender: stakeManagerAddresses[token.chainId],
     },
+    query: { enabled: !operatesNativeToken },
   })
   const approvalEstimatedFees = useEstimateFees({
     chainId: token.chainId,
@@ -144,8 +147,10 @@ export const StakeOperation = function ({
     }
   }
 
+  const allowanceLoaded = !isPending || operatesNativeToken
+
   const canStake =
-    !isPending &&
+    allowanceLoaded &&
     !isSubmitting &&
     !canSubmit({
       amount: parseUnits(amount, token.decimals),
@@ -168,6 +173,17 @@ export const StakeOperation = function ({
       steps.push(addApprovalStep())
     }
     steps.push(addStakingStep())
+  }
+
+  const getSubmitButtonText = function () {
+    if (!allowanceLoaded || isSubmitting) {
+      return '...'
+    }
+    if (requiresApproval) {
+      return t('approve-and-stake')
+    }
+
+    return tCommon('stake')
   }
 
   return (
@@ -215,13 +231,7 @@ export const StakeOperation = function ({
                 </DrawerParagraph>
                 <SubmitButton
                   disabled={!canStake}
-                  text={
-                    isPending || isSubmitting
-                      ? '...'
-                      : requiresApproval
-                        ? t('approve-and-stake')
-                        : tCommon('stake')
-                  }
+                  text={getSubmitButtonText()}
                 />
               </>
             }

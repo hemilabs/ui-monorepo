@@ -1,5 +1,5 @@
 import hemilabsTokenList from '@hemilabs/token-list'
-import { waitForTransactionReceipt } from '@wagmi/core'
+import { getBalance, waitForTransactionReceipt } from '@wagmi/core'
 import { allEvmNetworksWalletConfig } from 'context/evmWalletContext'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import {
@@ -68,14 +68,22 @@ const validateStakeOperation = async function ({
   hemiPublicClient: HemiPublicClient
   token: EvmToken
 }) {
-  const balance = await getErc20TokenBalance({
-    address: forAccount,
-    // It works in runtime, but Typescript fails to interpret HemiPublicClient as a Client.
-    // I've seen that the typings change in future viem's version, so this may be soon fixed
-    // @ts-expect-error hemiPublicClient is Client
-    client: hemiPublicClient,
-    token,
-  })
+  const balance = isNativeToken(token)
+    ? (
+        await getBalance(allEvmNetworksWalletConfig, {
+          address: forAccount,
+          chainId: token.chainId,
+        })
+      ).value
+    : await getErc20TokenBalance({
+        address: forAccount,
+        // It works in runtime, but Typescript fails to interpret HemiPublicClient as a Client.
+        // I've seen that the typings change in future viem's version, so this may be soon fixed
+        // @ts-expect-error hemiPublicClient is Client
+        client: hemiPublicClient,
+        token,
+      })
+
   const { error } = canSubmit({
     amount,
     balance,

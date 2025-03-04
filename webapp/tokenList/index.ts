@@ -58,8 +58,6 @@ export const getRemoteTokens = function (token: EvmToken) {
 
 const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
   .filter(t => t.chainId === hemiMainnet.id || t.chainId === hemiTestnet.id)
-  // WETH cannot be tunneled, so we must exclude it
-  .filter(t => t.symbol !== 'WETH')
   // TODO the following line once bitcoin is enabled https://github.com/hemilabs/ui-monorepo/issues/738
   .filter(
     t =>

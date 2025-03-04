@@ -29,7 +29,10 @@ const PageBackground = () => (
 )
 
 export default function Page() {
-  const stakeTokens = useStakeTokens()
+  // Removing WETH from the list of tokens to stake
+  // here instead of in the tokenList file
+  // It has to be rendered on dashbord page though
+  const stakeTokens = useStakeTokens().filter(t => t.symbol !== 'WETH')
 
   return (
     <div className="h-[calc(100vh-theme(spacing.48))]">

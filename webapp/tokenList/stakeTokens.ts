@@ -1,12 +1,13 @@
 import { hemi, hemiSepolia } from 'hemi-viem'
 import { StakeExtensions } from 'types/stake'
 import { Token } from 'types/token'
-import { Address } from 'viem'
+import { mainnet, sepolia } from 'viem/chains'
 
 const websitesMap: Partial<Record<StakeExtensions['protocol'], string>> = {
   bedRock: 'https://www.bedrock.technology',
   bitFi: 'https://www.bitfi.one',
   circle: 'https://www.circle.com',
+  ethereum: 'https://ethereum.org/en',
   exSat: 'https://exsat.network',
   hemi: 'https://www.hemi.xyz',
   lorenzo: 'https://lorenzo-protocol.xyz',
@@ -25,7 +26,7 @@ const websitesMap: Partial<Record<StakeExtensions['protocol'], string>> = {
 // TODO: Some tokens are not deployed, so their rewards can't be configured
 // https://github.com/hemilabs/ui-monorepo/issues/752#issuecomment-2616916547
 export const stakeWhiteList: Partial<
-  Record<Token['chainId'], Record<Address, StakeExtensions>>
+  Record<Token['chainId'], Record<string, StakeExtensions>>
 > = {
   [hemi.id]: {
     // Prefer ordering by symbol in comments, instead of by address, which makes it harder
@@ -36,6 +37,12 @@ export const stakeWhiteList: Partial<
       protocol: 'makerDao',
       rewards: ['hemi'],
       website: websitesMap.makerDao,
+    },
+    // ETH
+    [mainnet.nativeCurrency.symbol]: {
+      protocol: 'ethereum',
+      rewards: ['hemi'],
+      website: websitesMap.ethereum,
     },
     // enzoBTC
     '0x6A9A65B84843F5fD4aC9a0471C4fc11AFfFBce4a': {
@@ -125,6 +132,12 @@ export const stakeWhiteList: Partial<
       rewards: ['hemi'],
       website: websitesMap.wbtc,
     },
+    // WETH
+    '0x4200000000000000000000000000000000000006': {
+      protocol: 'hemi',
+      rewards: ['hemi'],
+      website: websitesMap.hemi,
+    },
     /* eslint-enable sort-keys */
   },
   [hemiSepolia.id]: {
@@ -136,6 +149,12 @@ export const stakeWhiteList: Partial<
       protocol: 'hemi',
       rewards: [],
       website: websitesMap.hemi,
+    },
+    // Sepolia
+    [sepolia.nativeCurrency.symbol]: {
+      protocol: 'ethereum',
+      rewards: [],
+      website: websitesMap.ethereum,
     },
     // USDC
     '0xD47971C7F5B1067d25cd45d30b2c9eb60de96443': {
@@ -149,6 +168,12 @@ export const stakeWhiteList: Partial<
     '0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298': {
       // token symbol in Hemi Sepolia is usdt.e
       priceSymbol: 'usdt',
+      protocol: 'hemi',
+      rewards: [],
+      website: websitesMap.hemi,
+    },
+    // WETH
+    '0x0C8aFD1b58aa2A5bAd2414B861D8A7fF898eDC3A': {
       protocol: 'hemi',
       rewards: [],
       website: websitesMap.hemi,

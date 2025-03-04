@@ -85,7 +85,7 @@ export const TotalStaked = function () {
     if (prices === undefined) {
       return '-'
     }
-    return formatLargeFiatNumber(totalStake)
+    return `$ ${formatLargeFiatNumber(totalStake)}`
   }
 
   return (
@@ -124,7 +124,7 @@ export const YourStake = function () {
         ),
       Big(0),
     )
-    return formatFiatNumber(userPosition.toFixed())
+    return `$ ${formatFiatNumber(userPosition.toFixed())}`
   }
 
   return (

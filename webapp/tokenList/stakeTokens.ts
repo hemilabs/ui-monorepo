@@ -142,7 +142,7 @@ export const stakeWhiteList: Partial<
     // USDC
     '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA': {
       // token symbol in hemi mainnet is usdc.e
-      priceSymbol: 'usdc.e',
+      priceSymbol: 'usdc',
       protocol: 'circle',
       rewards: ['hemi'],
       website: websitesMap.circle,

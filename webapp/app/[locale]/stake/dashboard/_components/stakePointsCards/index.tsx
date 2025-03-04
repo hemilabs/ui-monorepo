@@ -4,11 +4,12 @@ import { useTokenPrices } from 'hooks/useTokenPrices'
 import Image, { StaticImageData } from 'next/image'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
-import { formatFiatNumber } from 'utils/format'
+import { formatFiatNumber, formatLargeFiatNumber } from 'utils/format'
 import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import { useStakePositions } from '../../../_hooks/useStakedBalance'
+import { useTotalStaked } from '../../../_hooks/useTotalStaked'
 
 import communityIcon from './icons/community.svg'
 import stakeIcon from './icons/stake.svg'
@@ -72,14 +73,25 @@ export const EarnedPoints = function () {
 }
 
 export const TotalStaked = function () {
+  const { data: prices } = useTokenPrices()
+  const { isPending, totalStake } = useTotalStaked()
   const t = useTranslations('stake-page.dashboard')
-  // TODO TBD how to load this data https://github.com/hemilabs/ui-monorepo/issues/750
-  const points = '$ 1,626,271,246.98'
+
+  const getPoints = function () {
+    if (isPending) {
+      return '...'
+    }
+    if (prices === undefined) {
+      return '-'
+    }
+    return formatLargeFiatNumber(totalStake)
+  }
+
   return (
     <Container>
       <div className="flex flex-shrink-0 flex-col gap-y-3 p-6">
-        <Heading heading={t('total-staked')} />
-        <Points points={points} />
+        <Heading heading={t('total-staked-on-hemi')} />
+        <Points points={getPoints()} />
       </div>
       <Image
         alt="Community icon"

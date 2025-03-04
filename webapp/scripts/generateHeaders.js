@@ -64,6 +64,8 @@ const customRpcOrigins = [
   process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_URL,
   process.env.NEXT_PUBLIC_SUBGRAPH_MAINNET_URL,
   process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL,
+  process.env.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_URL,
+  process.env.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_URL,
 ].flatMap((p = '') => p.split('+'))
 customRpcOrigins.forEach(function (url) {
   if (url) {

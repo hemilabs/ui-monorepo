@@ -10,7 +10,32 @@ import { mainnet, sepolia } from 'viem/chains'
 
 type Schema = {
   query: string
-  variables: Record<string, string | number>
+  variables?: Record<string, string | number>
+}
+
+const getSubgraphUrl = function ({
+  chainId,
+  subgraphIds,
+  subgraphUrls,
+}: {
+  chainId: Chain['id']
+  subgraphIds: Record<Chain['id'], string>
+  subgraphUrls: Record<Chain['id'], string>
+}) {
+  const url = subgraphUrls[chainId]
+  if (url) {
+    return url
+  }
+  const subgraphId = subgraphIds[chainId]
+  if (!subgraphId) {
+    throw new Error(`Unsupported subgraph for chain Id ${chainId}`)
+  }
+  const subgraphApiKey = process.env.NEXT_PUBLIC_SUBGRAPH_API_KEY
+  if (!subgraphApiKey) {
+    throw new Error('Missing The Graph API key for querying subgraphs')
+  }
+
+  return `${process.env.NEXT_PUBLIC_THE_GRAPH_API_URL}/${subgraphApiKey}/subgraphs/id/${subgraphId}`
 }
 
 const request = <TResponse, TSchema extends Schema = Schema>(
@@ -49,20 +74,11 @@ const getTunnelSubgraphUrl = function (chainId: Chain['id']) {
     [sepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_ID,
   }
 
-  const url = subgraphUrls[chainId]
-  if (url) {
-    return url
-  }
-  const subgraphId = subgraphIds[chainId]
-  if (!subgraphId) {
-    throw new Error(`Unsupported subgraph for chain Id ${chainId}`)
-  }
-  const subgraphApiKey = process.env.NEXT_PUBLIC_SUBGRAPH_API_KEY
-  if (!subgraphApiKey) {
-    throw new Error('Missing The Graph API key for querying subgraphs')
-  }
-
-  return `${process.env.NEXT_PUBLIC_THE_GRAPH_API_URL}/${subgraphApiKey}/subgraphs/id/${subgraphId}`
+  return getSubgraphUrl({
+    chainId,
+    subgraphIds,
+    subgraphUrls,
+  })
 }
 
 /**
@@ -329,5 +345,55 @@ export const getEvmWithdrawals = function ({
       // @ts-expect-error OP-SDK does not properly type addresses as Address
       to: toChecksum(d.to),
     })),
+  )
+}
+
+type GetTotalStakedBalancesQueryResponse = GraphResponse<{
+  tokenStakeBalances: {
+    id: Address
+    totalStaked: string
+  }[]
+}>
+
+export const getTotalStaked = function (hemiId: Chain['id']) {
+  /**
+   * Use this to override the full url - for example, when using subgraph studio
+   * or a local subgraph
+   */
+  const subgraphUrls = {
+    [hemi.id]: process.env.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_URL,
+    [hemiSepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_URL,
+  }
+
+  /**
+   * Subgraph Ids from the subgraphs published in Arbitrum
+   */
+  const subgraphIds = {
+    [hemi.id]: process.env.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_ID,
+    [hemiSepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_ID,
+  }
+
+  const subgraphUrl = getSubgraphUrl({
+    chainId: hemiId,
+    subgraphIds,
+    subgraphUrls,
+  })
+
+  const schema = {
+    query: `{
+      tokenStakeBalances {
+        id,
+        totalStaked
+      }
+    }`,
+  }
+
+  return request<GetTotalStakedBalancesQueryResponse>(subgraphUrl, schema).then(
+    ({ data }) =>
+      data.tokenStakeBalances.map(({ id, ...rest }) => ({
+        ...rest,
+        // By default, The Graph store addresses as lowercase
+        id: toChecksum(id),
+      })),
   )
 }

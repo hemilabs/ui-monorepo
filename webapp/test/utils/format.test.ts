@@ -1,4 +1,9 @@
-import { formatBtcAddress, formatEvmAddress, formatEvmHash } from 'utils/format'
+import {
+  formatBtcAddress,
+  formatEvmAddress,
+  formatEvmHash,
+  formatLargeFiatNumber,
+} from 'utils/format'
 import { describe, expect, it } from 'vitest'
 
 describe('utils/format', function () {
@@ -25,6 +30,34 @@ describe('utils/format', function () {
           '0x5a3f5c2b87c9e4d1e3e0e5c27691d3a04e94f08b3f6a1d4b4d6b96e20b91c8e6',
         ),
       ).toBe('0x5a3f...c8e6')
+    })
+  })
+
+  describe('formatLargeFiatNumber', function () {
+    describe('formatLargeFiatNumber', function () {
+      it('should format a number less than one million correctly', function () {
+        expect(formatLargeFiatNumber(999999)).toBe('999,999.00')
+      })
+
+      it('should format a number equal to one million correctly', function () {
+        expect(formatLargeFiatNumber(1000000)).toBe('1M')
+      })
+
+      it('should format a number greater than one million correctly', function () {
+        expect(formatLargeFiatNumber(2500000)).toBe('2.5M')
+      })
+
+      it('should format a string number less than one million correctly', function () {
+        expect(formatLargeFiatNumber('999999')).toBe('999,999.00')
+      })
+
+      it('should format a string number equal to one million correctly', function () {
+        expect(formatLargeFiatNumber('1000000')).toBe('1M')
+      })
+
+      it('should format a string number greater than one million correctly', function () {
+        expect(formatLargeFiatNumber('2500000')).toBe('2.5M')
+      })
     })
   })
 })

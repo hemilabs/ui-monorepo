@@ -11,6 +11,7 @@ const websitesMap: Partial<Record<StakeExtensions['protocol'], string>> = {
   ethereum: 'https://ethereum.org/en',
   exSat: 'https://exsat.network',
   hemi: 'https://www.hemi.xyz',
+  kelp: 'https://kerneldao.com/kelp',
   lorenzo: 'https://lorenzo-protocol.xyz',
   makerDao: 'https://makerdao.com/en',
   mbtc: 'https://www.babylon.magpiexyz.io/stake',
@@ -109,6 +110,13 @@ export const stakeWhiteList: Partial<
       protocol: 'pumpBtc',
       rewards: ['hemi', 'pumpbtc'],
       website: websitesMap.pumpBtc,
+    },
+    // rsETH
+    '0xc3eACf0612346366Db554C991D7858716db09f58': {
+      protocol: 'kelp',
+      priceSymbol: 'eth',
+      rewards: ['hemi'],
+      website: websitesMap.kelp,
     },
     // stBTC
     '0xf6718b2701D4a6498eF77D7c152b2137Ab28b8A3': {

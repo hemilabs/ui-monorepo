@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUmami } from 'app/analyticsEvents'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
-import { useTokenBalance } from 'hooks/useBalance'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useState } from 'react'
 import { StakeStatusEnum, StakeToken } from 'types/stake'
+import { isNativeToken } from 'utils/nativeToken'
 import { stake } from 'utils/stake'
 import { Hash, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -14,14 +15,24 @@ import { useAllowance } from 'wagmi-erc20-hooks'
 import { getStakedBalanceQueryKey } from './useStakedBalance'
 
 export const useStake = function (token: StakeToken) {
+  const operatesNativeToken = isNativeToken(token)
   const { address } = useAccount()
+  // @ts-expect-error token.address is a string Address
   const { queryKey: allowanceQueryKey } = useAllowance(token.address, {
     args: { owner: address, spender: stakeManagerAddresses[token.chainId] },
+    query: { enabled: !operatesNativeToken },
   })
   const [networkType] = useNetworkType()
   const hemiPublicClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
-  const { queryKey: balanceQueryKey } = useTokenBalance(token)
+  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(token)
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+    token.chainId,
+  )
+
+  const balanceQueryKey = operatesNativeToken
+    ? nativeTokenBalanceQueryKey
+    : erc20BalanceQueryKey
 
   // Use this state to prevent multiple submissions, and force the animation to run
   // as quickly as the user clicks the button
@@ -82,8 +93,10 @@ export const useStake = function (token: StakeToken) {
           setStakeStatus(StakeStatusEnum.APPROVAL_TX_FAILED),
         onStakeTokenApproved() {
           setStakeStatus(StakeStatusEnum.APPROVAL_TX_COMPLETED)
-          // invalidate allowance after an erc20 approval took place
-          queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
+          if (!operatesNativeToken) {
+            // invalidate allowance after an erc20 approval took place
+            queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
+          }
         },
         onTokenApprove: () =>
           setStakeStatus(StakeStatusEnum.APPROVAL_TX_PENDING),
@@ -102,7 +115,7 @@ export const useStake = function (token: StakeToken) {
     onSettled() {
       setIsSubmitting(false)
       return Promise.all([
-        // invalidate the erc20 balance
+        // invalidate the wallet balance
         queryClient.invalidateQueries({ queryKey: balanceQueryKey }),
         // Invalidate the staked balance query to refetch the new balance
         queryClient.invalidateQueries({

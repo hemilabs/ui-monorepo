@@ -3,6 +3,7 @@ import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
 import { EvmToken, Token } from 'types/token'
 import {
   type Address,
+  type Chain,
   type Client,
   erc20Abi,
   isAddress,
@@ -106,3 +107,8 @@ export const getTokenPrice = function (
   const price = prices?.[priceSymbol] ?? '0'
   return price
 }
+
+export const getWrappedEther = (chainId: Chain['id']) =>
+  tokenList.tokens.find(
+    t => t.symbol === 'WETH' && t.chainId === chainId,
+  ) as EvmToken

@@ -1,5 +1,3 @@
-import { Address } from 'viem'
-
 import { type EvmToken, type Extensions } from './token'
 
 export const stakeProtocols = [
@@ -40,10 +38,7 @@ export type StakeExtensions = Omit<Extensions, 'protocol'> & {
   website: string
 }
 
-export type StakeToken = Omit<EvmToken, 'address'> & {
-  // we can override Address because we only stake erc20 (native tokens excluded), so we know for sure
-  // that address is of Address type
-  address: Address
+export type StakeToken = EvmToken & {
   balance?: bigint
   // EvmToken has a broad definition of "protocol", but for StakeToken let's make a
   // defined list of protocols that make a token a Stake one.

@@ -3,9 +3,9 @@
 import 'styles/globals.css'
 import { ExclamationMark } from 'components/icons/exclamationMark'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 
 import Error404 from '../_images/404.svg'
-import { useTranslations } from 'next-intl'
 
 export default function NotFound() {
   const t = useTranslations('error-pages')

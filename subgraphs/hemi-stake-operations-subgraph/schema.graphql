@@ -1,0 +1,26 @@
+type Deposit @entity(immutable: true) {
+  id: Bytes!
+  eventId: BigInt! # uint256
+  depositor: Bytes! # address
+  token: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Withdraw @entity(immutable: true) {
+  id: Bytes!
+  eventId: BigInt! # uint256
+  withdrawer: Bytes! # address
+  token: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type TokenStakeBalance @entity {
+  id: Bytes! # token address
+  totalStaked: BigInt!
+}

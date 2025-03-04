@@ -25,30 +25,30 @@ const request = <TResponse, TSchema extends Schema = Schema>(
     method: 'POST',
   }) satisfies Promise<TResponse>
 
-/**
- * Use this to override the full url - for example, when using subgraph studio
- * or a local subgraph
- */
-const subgraphUrls = {
-  [hemi.id]: process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_URL,
-  [hemiSepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_URL,
-  [mainnet.id]: process.env.NEXT_PUBLIC_SUBGRAPH_MAINNET_URL,
-  [sepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL,
-}
-
-/**
- * Subgraph Ids from the subgraphs published in Arbitrum
- */
-const subgraphIds = {
-  [hemi.id]: process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_ID,
-  [hemiSepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_ID,
-  [mainnet.id]: process.env.NEXT_PUBLIC_SUBGRAPH_MAINNET_ID,
-  [sepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_ID,
-}
-
 type GraphResponse<T> = { data: T }
 
-const getGraphUrl = function (chainId: Chain['id']) {
+const getTunnelSubgraphUrl = function (chainId: Chain['id']) {
+  /**
+   * Use this to override the full url - for example, when using subgraph studio
+   * or a local subgraph
+   */
+  const subgraphUrls = {
+    [hemi.id]: process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_URL,
+    [hemiSepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_URL,
+    [mainnet.id]: process.env.NEXT_PUBLIC_SUBGRAPH_MAINNET_URL,
+    [sepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL,
+  }
+
+  /**
+   * Subgraph Ids from the subgraphs published in Arbitrum
+   */
+  const subgraphIds = {
+    [hemi.id]: process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_ID,
+    [hemiSepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_ID,
+    [mainnet.id]: process.env.NEXT_PUBLIC_SUBGRAPH_MAINNET_ID,
+    [sepolia.id]: process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_ID,
+  }
+
   const url = subgraphUrls[chainId]
   if (url) {
     return url
@@ -71,7 +71,7 @@ const getGraphUrl = function (chainId: Chain['id']) {
  * @returns A Promise that resolves into the last indexed block.
  */
 export const getLastIndexedBlock = function (chainId: Chain['id']) {
-  const url = getGraphUrl(chainId)
+  const url = getTunnelSubgraphUrl(chainId)
   const schema = {
     query: `{
       _meta {
@@ -135,7 +135,7 @@ export const getBtcWithdrawals = function ({
   orderDirection?: 'asc' | 'desc'
   skip?: number
 }) {
-  const url = getGraphUrl(chainId)
+  const url = getTunnelSubgraphUrl(chainId)
   // By default, graphql is capped to 100 elements. See https://github.com/directus/directus/issues/3667#issuecomment-758854070
   // Bring everything - either way, for most cases, the blockNumber will filter and only a few handful withdrawals will be brought
   const schema = {
@@ -212,7 +212,7 @@ export const getEvmDeposits = function ({
   orderDirection?: 'asc' | 'desc'
   skip?: number
 }) {
-  const url = getGraphUrl(chainId)
+  const url = getTunnelSubgraphUrl(chainId)
   // By default, graphql is capped to 100 elements. See https://github.com/directus/directus/issues/3667#issuecomment-758854070
   // Bring everything - either way, for most cases, the blockNumber will filter and only a few handful deposits will be brought
   const schema = {
@@ -290,7 +290,7 @@ export const getEvmWithdrawals = function ({
   orderDirection?: 'asc' | 'desc'
   skip?: number
 }) {
-  const url = getGraphUrl(chainId)
+  const url = getTunnelSubgraphUrl(chainId)
   // By default, graphql is capped to 100 elements. See https://github.com/directus/directus/issues/3667#issuecomment-758854070
   // Bring everything - either way, for most cases, the blockNumber will filter and only a few handful deposits will be brought
   const schema = {

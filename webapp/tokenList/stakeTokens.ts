@@ -7,11 +7,13 @@ const websitesMap: Partial<Record<StakeExtensions['protocol'], string>> = {
   bedRock: 'https://www.bedrock.technology',
   bitFi: 'https://www.bitfi.one',
   circle: 'https://www.circle.com',
+  egEth: 'https://www.eigenlayer.magpiexyz.io/restake',
   ethereum: 'https://ethereum.org/en',
   exSat: 'https://exsat.network',
   hemi: 'https://www.hemi.xyz',
   lorenzo: 'https://lorenzo-protocol.xyz',
   makerDao: 'https://makerdao.com/en',
+  mbtc: 'https://www.babylon.magpiexyz.io/stake',
   merlinChain: 'https://merlinchain.io',
   obeliskNodeDao: 'https://obelisk.nodedao.com/',
   pumpBtc: 'https://mainnet.pumpbtc.xyz',
@@ -32,17 +34,27 @@ export const stakeWhiteList: Partial<
     // Prefer ordering by symbol in comments, instead of by address, which makes it harder
     // to search for a specific token.
     /* eslint-disable sort-keys */
+    // brBTC
+    '0x93919784C523f39CACaa98Ee0a9d96c3F32b593e': {
+      protocol: 'bedRock',
+      priceSymbol: 'btc',
+      rewards: ['hemi', 'bedrock'],
+      stakeSymbol: 'brBTC',
+      website: websitesMap.bedRock,
+    },
     // DAI
     '0x6c851F501a3F24E29A8E39a29591cddf09369080': {
       protocol: 'makerDao',
       rewards: ['hemi'],
       website: websitesMap.makerDao,
     },
-    // ETH
-    [mainnet.nativeCurrency.symbol]: {
-      protocol: 'ethereum',
-      rewards: ['hemi'],
-      website: websitesMap.ethereum,
+    // egETH
+    '0x027a9d301FB747cd972CFB29A63f3BDA551DFc5c': {
+      protocol: 'egEth',
+      priceSymbol: 'eth',
+      rewards: ['hemi', 'eigenpie'],
+      stakeSymbol: 'egETH',
+      website: websitesMap.egEth,
     },
     // enzoBTC
     '0x6A9A65B84843F5fD4aC9a0471C4fc11AFfFBce4a': {
@@ -50,6 +62,12 @@ export const stakeWhiteList: Partial<
       priceSymbol: 'btc',
       rewards: ['hemi', 'lorenzo'],
       website: websitesMap.lorenzo,
+    },
+    // ETH
+    [mainnet.nativeCurrency.symbol]: {
+      protocol: 'ethereum',
+      rewards: ['hemi'],
+      website: websitesMap.ethereum,
     },
     // hemiBTC
     '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28': {
@@ -64,6 +82,14 @@ export const stakeWhiteList: Partial<
       priceSymbol: 'btc',
       rewards: ['hemi'],
       website: websitesMap.exSat,
+    },
+    // MBTC - Liquid Staked BTC
+    '0x0Af3EC6F9592C193196bEf220BC0Ce4D9311527D': {
+      protocol: 'mbtc',
+      priceSymbol: 'btc',
+      rewards: ['hemi', 'magpie'],
+      stakeSymbol: 'mBTC',
+      website: websitesMap.mbtc,
     },
     // M-BTC
     '0x9BFA177621119e64CecbEabE184ab9993E2ef727': {

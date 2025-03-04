@@ -10,6 +10,8 @@ import {
   PumpBtcPoints,
   SolvPoints,
   UnirouterPoints,
+  EigenpiePoints,
+  MagpiePoints,
 } from './pointsTag'
 
 type Props = {
@@ -20,8 +22,10 @@ const rewardComponentMap: Record<Reward, ReactNode> = {
   bedrock: <BedrockPoints />,
   bitfi: <BitFiPoints />,
   bsquared: <BsquaredPoints />,
+  eigenpie: <EigenpiePoints />,
   hemi: <HemiPoints />,
   lorenzo: <LorenzoPoints />,
+  magpie: <MagpiePoints />,
   pumpbtc: <PumpBtcPoints />,
   solv: <SolvPoints />,
   unirouter: <UnirouterPoints />,

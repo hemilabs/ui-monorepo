@@ -11,6 +11,8 @@ export type Extensions = {
   protocol?: string
   // Use this to map which symbol should be used to map prices
   priceSymbol?: string
+  // Custom token symbol to show in the Stake
+  stakeSymbol?: string
   tunnel?: boolean
   // Custom token symbol to show in the Tunnel
   tunnelSymbol?: string

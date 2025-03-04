@@ -6,6 +6,7 @@ import { CSSProperties, ReactNode } from 'react'
 import { BitFiPointsIcon } from './icons/bitFiPointsIcon'
 import { BsquaredPointsIcon } from './icons/bsquaredPointsIcon'
 import { DiamondPointsIcon } from './icons/diamondPointsIcon'
+import { EigenpiePointsIcon } from './icons/eigenpiePointsIcon'
 import { HemiPointsIcon } from './icons/hemiPointsIcon'
 import { LorenzoPointsIcon } from './icons/lorenzoPointsIcon'
 import { PumpBtcPointsIcon } from './icons/pumpBtcPointsIcon'
@@ -19,12 +20,13 @@ type Props = {
     | 'bg-orange-500'
     | 'bg-points-solv'
   borderColor?: 'border-black' | 'border-transparent'
-  label: 'diamonds' | 'points'
+  label: 'diamonds' | 'points' | 'x2-eigenpie-points' | 'x2-magpie-points'
   icon: ReactNode
   style?: CSSProperties
   textColor:
     | 'text-black'
     | 'text-neutral-950'
+    | 'text-points-eigenpie'
     | 'text-points-bsquared'
     | 'text-points-pump-btc'
     | 'text-points-unirouter'
@@ -88,6 +90,17 @@ export const BsquaredPoints = () => (
   />
 )
 
+export const EigenpiePoints = () => (
+  <PointsTag
+    icon={<EigenpiePointsIcon />}
+    label="x2-eigenpie-points"
+    style={{
+      background: 'rgba(215, 226, 235, 1)',
+    }}
+    textColor="text-points-eigenpie"
+  />
+)
+
 export const HemiPoints = () => (
   <PointsTag
     backgroundColor="bg-orange-500"
@@ -103,6 +116,17 @@ export const LorenzoPoints = () => (
     icon={<LorenzoPointsIcon />}
     label="points"
     textColor="text-white"
+  />
+)
+
+export const MagpiePoints = () => (
+  <PointsTag
+    icon={<EigenpiePointsIcon />}
+    label="x2-magpie-points"
+    style={{
+      background: 'rgba(215, 226, 235, 1)',
+    }}
+    textColor="text-points-eigenpie"
   />
 )
 

@@ -58,6 +58,7 @@ const config: Config = {
         },
         points: {
           'bsquared': '#FFB852',
+          'eigenpie': '#131247',
           'pump-btc': '#69DFFA',
           'solv': '#EDE5FB',
           'unirouter': '#9600FF',

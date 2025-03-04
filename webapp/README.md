@@ -34,6 +34,8 @@ NEXT_PUBLIC_TOKEN_PRICES_URL="<url>" # URL to retrieve usd prices for tokens
 NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH=<true|false>
 # Enable subgraphs for syncing withdrawals history
 NEXT_PUBLIC_FEATURE_FLAG_SYNC_WITHDRAWALS_SUBGRAPH=<true|false>
+# Enable or not loading absinthe points
+NEXT_PUBLIC_FEATURE_FLAG_ENABLE_STAKE_POINTS=<true|false>
 # Subgraph configuration per chain
 # Use this for querying a published decentralized subgraph - the API key works for all chains
 NEXT_PUBLIC_SUBGRAPH_API_KEY=<api-key>

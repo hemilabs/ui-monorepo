@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import Big from 'big.js'
 import { Card } from 'components/card'
 import { useTokenPrices } from 'hooks/useTokenPrices'
@@ -43,8 +44,8 @@ const Container = ({ children }: { children: ReactNode }) => (
 
 export const EarnedPoints = function () {
   const t = useTranslations('stake-page.dashboard')
-  // TODO TBD how to load this data https://github.com/hemilabs/ui-monorepo/issues/750
-  const points = '60.300'
+  // TODO load points - See https://github.com/hemilabs/ui-monorepo/issues/750
+  const points = featureFlags.stakePointsEnabled ? '-' : t('coming-soon')
   return (
     <Container>
       <div className="p-2">

@@ -191,6 +191,7 @@
     "change-to-mainnet": "Cambie a Mainnet y apueste",
     "dashboard": {
       "asset": "Activo",
+      "coming-soon": "Próximamente",
       "protocol": "Protocolo",
       "rewards": "Recompensas",
       "stake": "Apuesta",

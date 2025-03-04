@@ -91,6 +91,13 @@
     },
     "sub-heading": "Learn and explore with Hemi developer demos"
   },
+  "error-pages": {
+    "not-found": {
+      "title": "Oops! Page not found",
+      "description": "We can't find the page you're looking for.",
+      "action": "Go back home"
+    }
+  },
   "get-started": {
     "add-funds-to-your-wallet": "Add funds to your wallet",
     "add-hemi-to-your-wallet": "Add Hemi to your wallet",

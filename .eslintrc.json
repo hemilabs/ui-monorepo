@@ -83,7 +83,7 @@
     },
     {
       "extends": ["bloq/node", "prettier"],
-      "files": ["token-prices/**/*.js"]
+      "files": ["staking-points/**/*.js", "token-prices/**/*.js"]
     }
   ],
   "root": true,

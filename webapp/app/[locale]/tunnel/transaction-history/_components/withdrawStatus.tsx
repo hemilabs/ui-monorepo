@@ -1,5 +1,6 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useTranslations } from 'next-intl'
+import Skeleton from 'react-loading-skeleton'
 import { BtcWithdrawStatus, WithdrawTunnelOperation } from 'types/tunnel'
 import { isToEvmWithdraw } from 'utils/tunnel'
 
@@ -35,7 +36,7 @@ const EvmWithdrawStatus = function ({ withdrawal }: Props) {
     [MessageStatus.RELAYED]: <TxStatus.Success />,
   }
 
-  return statuses[withdrawal.status]
+  return statuses[withdrawal.status] ?? <Skeleton className="w-12" />
 }
 
 // After the withdrawal is initiated, the operation is in a wait state for up to

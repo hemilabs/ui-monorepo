@@ -1,4 +1,5 @@
 import { MessageDirection } from '@eth-optimism/sdk'
+import { featureFlags } from 'app/featureFlags'
 import { BtcChain } from 'btc-wallet/chains'
 import { Account, BtcTransaction } from 'btc-wallet/unisat'
 import { bitcoinTunnelManagerAbi } from 'hemi-viem/contracts'
@@ -8,6 +9,7 @@ import {
   type TransactionListSyncType,
 } from 'hooks/useSyncHistory/types'
 import pAll from 'p-all'
+import pDoWhilst from 'p-do-whilst'
 import pThrottle from 'p-throttle'
 import {
   createSlidingBlockWindow,
@@ -39,6 +41,7 @@ import {
 } from 'utils/hemiMemoized'
 import { getNativeToken } from 'utils/nativeToken'
 import { createProvider } from 'utils/providers'
+import { getBtcWithdrawals, getLastIndexedBlock } from 'utils/subgraph'
 import {
   type Address,
   decodeFunctionData,
@@ -49,6 +52,7 @@ import {
   zeroAddress,
 } from 'viem'
 
+import { chainConfiguration } from './chainConfiguration'
 import { getBlockNumber, getBlockPayload } from './common'
 import { createSlidingTransactionList } from './slidingTransactionList'
 import { type HistorySyncer } from './types'
@@ -118,6 +122,37 @@ const filterDeposits = (
     // we need to confirm it has the correct format.
     return isValidDeposit(hemiAddress, opReturnUtxo)
   })
+
+const addMissingInfoFromSubgraph =
+  (hemiClient: HemiPublicClient) => (withdrawals: ToBtcWithdrawOperation[]) =>
+    pAll(
+      withdrawals.map(
+        w => async () =>
+          Promise.all([
+            // Due to a bug in The graph's ability to parse TXs inputs, some withdrawals may not have
+            // the "to" field set. For those, we need to add them here
+            w.to
+              ? Promise.resolve(w.to)
+              : getWithdrawerBitcoinAddress({
+                  hash: w.transactionHash,
+                  hemiClient,
+                }),
+            // status is always calculated at the present time, so it is not something that's indexed.
+            // However, the mere fact that the transaction is indexed, it means that at least, it is
+            // on status ${BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED}.
+            getHemiStatusOfBtcWithdrawal({
+              hemiClient,
+              withdrawal: {
+                ...w,
+                status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
+              },
+            }),
+          ]).then(
+            ([to, status]) => ({ ...w, status, to }) as ToBtcWithdrawOperation,
+          ),
+      ),
+      { concurrency: 2 },
+    )
 
 const addAdditionalInfo =
   (hemiClient: HemiPublicClient) =>
@@ -362,7 +397,7 @@ export const createBitcoinSync = function ({
     }).run()
   }
 
-  const syncWithdrawals = async function () {
+  const syncWithdrawalsWithOpSdk = async function () {
     const lastBlock = await getBlockNumber(
       withdrawalsSyncInfo.toBlock,
       createProvider(l2Chain),
@@ -430,6 +465,89 @@ export const createBitcoinSync = function ({
       windowSize: withdrawalsSyncInfo.blockWindowSize,
     }).run()
   }
+
+  const syncWithdrawalsWithSubgraph = async function () {
+    // Get this before reading the Subgraph, to ensure next time we don't miss some blocks due
+    // to some race condition.
+    const lastIndexedBlock = await getLastIndexedBlock(l2Chain.id)
+
+    const shouldQueryWithdrawals = (limit: number, withdrawalsAmount: number) =>
+      limit === withdrawalsAmount
+
+    const fromBlock =
+      withdrawalsSyncInfo.fromBlock ??
+      // or the oldest block configured for this chain, if it is the first time
+      chainConfiguration[l2Chain.id].minBlockToSync ??
+      // or bring everything! (just for type-safety, but should never occur)
+      0
+
+    // As awful as it is, graph-node doesn't support cursor pagination (which is the
+    // recommended way to paginate in graphQL). It also doesn't support a way to natively get
+    // the amount of Entities saved in the subgraph. As the UI use a infinite scrolling pagination,
+    // we don't need to "list" the total of operations. However, in order to load deposits, our best option
+    // is to use limit/skip and keep querying until less entities than the $limit are returned.
+    // See https://github.com/graphprotocol/graph-node/issues/613 and
+    // https://github.com/graphprotocol/graph-node/issues/1309
+
+    await pDoWhilst(
+      async function ({
+        limit,
+        skip,
+      }: {
+        limit: number
+        skip: number
+        withdrawals: ToBtcWithdrawOperation[]
+      }) {
+        const newWithdrawals = await getBtcWithdrawals({
+          address: hemiAddress,
+          chainId: l2Chain.id,
+          // from the oldest block we've queried before
+          fromBlock,
+          limit,
+          skip,
+        }).then(addMissingInfoFromSubgraph(hemiClient))
+
+        saveHistory({
+          payload: {
+            chainId: l1Chain.id,
+            chunkIndex: shouldQueryWithdrawals(limit, newWithdrawals.length)
+              ? skip
+              : 0,
+            content: newWithdrawals,
+            // only update the "fromBlock" if we have finished querying all deposits. Otherwise
+            // we may miss some deposits. Once all were loaded, and saved in local storage, next time
+            // we can start querying again from the current last indexed block of the subgraph
+            fromBlock: shouldQueryWithdrawals(limit, newWithdrawals.length)
+              ? fromBlock
+              : lastIndexedBlock + 1,
+            // TODO once feature flag is removed, this field is no longer needed.
+            // See https://github.com/hemilabs/ui-monorepo/issues/743
+            hasSyncToMinBlock: true,
+            toBlock: undefined,
+          },
+          type: 'sync-withdrawals',
+        })
+
+        return {
+          limit,
+          skip: skip + limit,
+          withdrawals: newWithdrawals,
+        }
+      },
+      ({ limit, withdrawals }) =>
+        shouldQueryWithdrawals(limit, withdrawals.length),
+      {
+        limit: 100,
+        skip: withdrawalsSyncInfo.chunkIndex ?? 0,
+        withdrawals: [],
+      },
+    )
+  }
+
+  const syncWithdrawals = () =>
+    featureFlags.syncHistoryWithdrawalsWithSubgraph
+      ? syncWithdrawalsWithSubgraph()
+      : syncWithdrawalsWithOpSdk()
 
   const syncHistory = async function () {
     await Promise.all([

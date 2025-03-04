@@ -8,6 +8,7 @@ export const stakeProtocols = [
   'ethereum',
   'exSat',
   'hemi',
+  'kelp',
   'lorenzo',
   'makerDao',
   'mbtc',

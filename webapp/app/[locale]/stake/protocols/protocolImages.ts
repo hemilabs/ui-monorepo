@@ -8,6 +8,7 @@ import eigenpie from './images/eigenpie.svg'
 import ethereum from './images/ethereum.svg'
 import exSat from './images/exSat.svg'
 import hemi from './images/hemi.svg'
+import kelp from './images/kelp.svg'
 import lorenzo from './images/lorenzo.svg'
 import magpie from './images/magpie.svg'
 import makerDao from './images/makerDao.svg'
@@ -29,6 +30,7 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
   ethereum,
   exSat,
   hemi,
+  kelp,
   lorenzo,
   makerDao,
   mbtc: magpie,

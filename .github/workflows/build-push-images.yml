@@ -7,11 +7,18 @@ on:
     paths:
       - 'staking-points/**'
       - 'token-prices/**'
-  workflow_dispatch:
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-push
+        with:
+          context: ${{ matrix.context }}
+          dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
+          images: ${{ matrix.image }}
     strategy:
       matrix:
         include:
@@ -21,11 +28,3 @@ jobs:
             image: hemilabs/token-prices-api
           - context: token-prices/cron
             image: hemilabs/token-prices-cron
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/docker-build-push
-        with:
-          context: ${{ matrix.context }}
-          dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
-          dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
-          images: ${{ matrix.image }}

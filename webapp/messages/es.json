@@ -222,7 +222,9 @@
     },
     "points": {
       "diamonds": "Diamantes",
-      "points": "Puntos"
+      "points": "Puntos",
+      "x2-eigenpie-points": "x2 Eigenpie Puntos",
+      "x2-magpie-points": "x2 Magpie Puntos"
     },
     "protocol": "Protocolo",
     "rewards": "Recompensas",

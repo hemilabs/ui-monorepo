@@ -6,11 +6,13 @@ export const stakeProtocols = [
   'bedRock',
   'bitFi',
   'circle',
+  'egEth',
   'ethereum',
   'exSat',
   'hemi',
   'lorenzo',
   'makerDao',
+  'mbtc',
   'merlinChain',
   'obeliskNodeDao',
   'pumpBtc',
@@ -28,8 +30,10 @@ export type Reward =
   | 'bedrock'
   | 'bitfi'
   | 'bsquared'
+  | 'eigenpie'
   | 'hemi'
   | 'lorenzo'
+  | 'magpie'
   | 'pumpbtc'
   | 'solv'
   | 'unirouter'

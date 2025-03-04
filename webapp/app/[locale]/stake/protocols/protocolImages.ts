@@ -4,10 +4,12 @@ import { StakeProtocols } from 'types/stake'
 import bedRock from './images/bedRock.svg'
 import bitFi from './images/bitFi.svg'
 import circle from './images/circle.svg'
+import eigenpie from './images/eigenpie.svg'
 import ethereum from './images/ethereum.svg'
 import exSat from './images/exSat.svg'
 import hemi from './images/hemi.svg'
 import lorenzo from './images/lorenzo.svg'
+import magpie from './images/magpie.svg'
 import makerDao from './images/makerDao.svg'
 import merlinChain from './images/merlinChain.svg'
 import obeliskNodeDao from './images/obeliskNodeDao.svg'
@@ -23,11 +25,13 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
   bedRock,
   bitFi,
   circle,
+  egEth: eigenpie,
   ethereum,
   exSat,
   hemi,
   lorenzo,
   makerDao,
+  mbtc: magpie,
   merlinChain,
   obeliskNodeDao,
   pumpBtc,

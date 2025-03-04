@@ -1,6 +1,6 @@
 FROM node:20.18.3-alpine
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 WORKDIR /app
 
@@ -11,4 +11,4 @@ USER node
 
 COPY . .
 
-CMD npm run refresh-prices
+CMD ["npm", "run", "refresh-prices"]

@@ -13,12 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        context:
-          - token-prices/api
-          - token-prices/cron
-        image:
-          - hemilabs/token-prices-api
-          - hemilabs/token-prices-cron
+        include:
+          - context: token-prices/api
+            image: hemilabs/token-prices-api
+          - context: token-prices/cron
+            image: hemilabs/token-prices-cron
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/docker-build-push

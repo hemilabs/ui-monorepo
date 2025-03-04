@@ -2,11 +2,11 @@
 
 import * as Sentry from '@sentry/nextjs'
 import { ExclamationMark } from 'components/icons/exclamationMark'
+import hemiSocials from 'hemi-socials'
 import Image from 'next/image'
 import { useEffect } from 'react'
 
 import Error500 from './_images/500.svg'
-import hemiSocials from 'hemi-socials'
 
 const { discordUrl } = hemiSocials
 

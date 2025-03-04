@@ -98,6 +98,8 @@ export const useStakePositions = function () {
           ({ data, status }) =>
             status === 'success' && data.balance > BigInt(0),
         )
+        // Exclude ETH, as WETH will appear already
+        .filter(({ data }) => !isNativeToken(data))
         .map(({ data }) => data),
     }),
     queries: stakeTokens.map(token => ({

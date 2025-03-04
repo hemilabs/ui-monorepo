@@ -19,7 +19,7 @@ These environment variables control how the API works:
 To start the service, run:
 
 ```sh
-COIN_MARKET_CAP_API_KEY=MY_API_KEY docker compose up -d
+ABSINTHE_API_KEY=MY_API_KEY docker compose up -d
 ```
 
 Alternatively, if the environment variables are stored in a `.env.local` file, run:

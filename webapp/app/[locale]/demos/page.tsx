@@ -64,7 +64,11 @@ const Demos = function () {
           event="demos - hatchlings"
           heading={t('hemihatchlings.heading')}
           headingColor="white"
-          href="https://testnet.hatchlings.hemi.xyz"
+          href={
+            networkType === 'mainnet'
+              ? 'https://hemihatchlings.hemi.xyz'
+              : 'https://testnet.hatchlings.hemi.xyz'
+          }
           icon={hemiHatchlingsIcon}
           subHeading={t('hemihatchlings.sub-heading')}
         />

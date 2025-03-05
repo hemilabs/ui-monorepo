@@ -39,6 +39,7 @@ const fetchDomains = new Set([
   'https://api.studio.thegraph.com/',
   // Reown (Ex WalletConnect), through RainbowKit
   'wss://*.walletconnect.com',
+  'https://*.walletconnect.com',
   'wss://relay.walletconnect.org',
   'https://*.walletconnect.org',
 ])

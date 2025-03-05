@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { ComponentProps, ReactNode } from 'react'
 import { StakeOperations, StakeToken } from 'types/stake'
 
+import { DisclaimerEth } from './disclaimerEth'
 import { Tabs } from './tabs'
 
 type Props = {
@@ -37,6 +38,8 @@ export const Preview = function ({
 }: Props) {
   const t = useTranslations('common')
 
+  const showEthDisclaimer = ['ETH', 'WETH'].includes(token.symbol)
+
   return (
     <>
       {showTabs && (
@@ -62,6 +65,11 @@ export const Preview = function ({
         </div>
       </DrawerSection>
       <div className="px-4 md:px-6">{strategyDetails}</div>
+      {operation === 'unstake' && showEthDisclaimer && (
+        <div className="px-4 md:px-6">
+          <DisclaimerEth />
+        </div>
+      )}
       <div className="mt-auto flex flex-col gap-y-3 text-center">
         {submitButton}
       </div>

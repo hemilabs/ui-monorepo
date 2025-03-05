@@ -4,14 +4,20 @@ export const stakeProtocols = [
   'bedRock',
   'bitFi',
   'circle',
+<<<<<<< Updated upstream
   'egEth',
+=======
+>>>>>>> Stashed changes
   'ethereum',
   'exSat',
   'hemi',
   'kelp',
   'lorenzo',
   'makerDao',
+<<<<<<< Updated upstream
   'mbtc',
+=======
+>>>>>>> Stashed changes
   'merlinChain',
   'obeliskNodeDao',
   'pumpBtc',

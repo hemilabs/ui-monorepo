@@ -107,8 +107,11 @@ export const getTokenPrice = function (
   const price = prices?.[priceSymbol] ?? '0'
   return price
 }
+<<<<<<< Updated upstream
 
 export const getWrappedEther = (chainId: Chain['id']) =>
   tokenList.tokens.find(
     t => t.symbol === 'WETH' && t.chainId === chainId,
   ) as EvmToken
+=======
+>>>>>>> Stashed changes

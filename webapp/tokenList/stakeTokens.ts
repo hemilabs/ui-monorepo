@@ -7,14 +7,20 @@ const websitesMap: Partial<Record<StakeExtensions['protocol'], string>> = {
   bedRock: 'https://www.bedrock.technology',
   bitFi: 'https://www.bitfi.one',
   circle: 'https://www.circle.com',
+<<<<<<< Updated upstream
   egEth: 'https://www.eigenlayer.magpiexyz.io/restake',
+=======
+>>>>>>> Stashed changes
   ethereum: 'https://ethereum.org/en',
   exSat: 'https://exsat.network',
   hemi: 'https://www.hemi.xyz',
   kelp: 'https://kerneldao.com/kelp',
   lorenzo: 'https://lorenzo-protocol.xyz',
   makerDao: 'https://makerdao.com/en',
+<<<<<<< Updated upstream
   mbtc: 'https://www.babylon.magpiexyz.io/stake',
+=======
+>>>>>>> Stashed changes
   merlinChain: 'https://merlinchain.io',
   obeliskNodeDao: 'https://obelisk.nodedao.com/',
   pumpBtc: 'https://mainnet.pumpbtc.xyz',
@@ -35,6 +41,7 @@ export const stakeWhiteList: Partial<
     // Prefer ordering by symbol in comments, instead of by address, which makes it harder
     // to search for a specific token.
     /* eslint-disable sort-keys */
+<<<<<<< Updated upstream
     // brBTC
     '0x93919784C523f39CACaa98Ee0a9d96c3F32b593e': {
       protocol: 'bedRock',
@@ -43,12 +50,15 @@ export const stakeWhiteList: Partial<
       stakeSymbol: 'brBTC',
       website: websitesMap.bedRock,
     },
+=======
+>>>>>>> Stashed changes
     // DAI
     '0x6c851F501a3F24E29A8E39a29591cddf09369080': {
       protocol: 'makerDao',
       rewards: ['hemi'],
       website: websitesMap.makerDao,
     },
+<<<<<<< Updated upstream
     // egETH
     '0x027a9d301FB747cd972CFB29A63f3BDA551DFc5c': {
       protocol: 'egEth',
@@ -56,6 +66,13 @@ export const stakeWhiteList: Partial<
       rewards: ['hemi', 'eigenpie'],
       stakeSymbol: 'egETH',
       website: websitesMap.egEth,
+=======
+    // ETH
+    [mainnet.nativeCurrency.symbol]: {
+      protocol: 'ethereum',
+      rewards: ['hemi'],
+      website: websitesMap.ethereum,
+>>>>>>> Stashed changes
     },
     // enzoBTC
     '0x6A9A65B84843F5fD4aC9a0471C4fc11AFfFBce4a': {
@@ -64,12 +81,15 @@ export const stakeWhiteList: Partial<
       rewards: ['hemi', 'lorenzo'],
       website: websitesMap.lorenzo,
     },
+<<<<<<< Updated upstream
     // ETH
     [mainnet.nativeCurrency.symbol]: {
       protocol: 'ethereum',
       rewards: ['hemi'],
       website: websitesMap.ethereum,
     },
+=======
+>>>>>>> Stashed changes
     // hemiBTC
     '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28': {
       protocol: 'hemi',
@@ -142,7 +162,11 @@ export const stakeWhiteList: Partial<
     // USDC
     '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA': {
       // token symbol in hemi mainnet is usdc.e
+<<<<<<< Updated upstream
       priceSymbol: 'usdc',
+=======
+      priceSymbol: 'usdc.e',
+>>>>>>> Stashed changes
       protocol: 'circle',
       rewards: ['hemi'],
       website: websitesMap.circle,

@@ -7,10 +7,15 @@ on:
     paths:
       - 'staking-points/**'
       - 'token-prices/**'
+<<<<<<< Updated upstream
+=======
+  workflow_dispatch:
+>>>>>>> Stashed changes
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+<<<<<<< Updated upstream
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/docker-build-push
@@ -19,6 +24,8 @@ jobs:
           dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
           dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
           images: ${{ matrix.image }}
+=======
+>>>>>>> Stashed changes
     strategy:
       matrix:
         include:
@@ -28,3 +35,14 @@ jobs:
             image: hemilabs/token-prices-api
           - context: token-prices/cron
             image: hemilabs/token-prices-cron
+<<<<<<< Updated upstream
+=======
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/docker-build-push
+        with:
+          context: ${{ matrix.context }}
+          dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
+          dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
+          images: ${{ matrix.image }}
+>>>>>>> Stashed changes

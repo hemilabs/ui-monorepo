@@ -129,6 +129,9 @@ inputs:
   SENTRY_RELEASE:
     required: false
     description: Sentry Release version
+  NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID:
+    required: false
+    description: Wallet Connect project ID
 
 runs:
   using: composite
@@ -174,6 +177,7 @@ runs:
         SENTRY_ORG: ${{ inputs.SENTRY_ORG }}
         SENTRY_PROJECT: ${{ inputs.SENTRY_PROJECT }}
         SENTRY_RELEASE: ${{ inputs.SENTRY_RELEASE }}
+        NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ inputs.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
     - name: Check portal build
       id: portal_build
       uses: andstor/file-existence-action@v3

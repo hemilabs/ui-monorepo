@@ -60,6 +60,8 @@ NEXT_PUBLIC_L2_OUTPUT_ORACLE_PROXY=<address>
 NEXT_PUBLIC_OPTIMISM_PORTAL_PROXY=<address>
 NEXT_PUBLIC_PROXY_OVM_L1_CROSS_DOMAIN_MESSENGER=<address>
 NEXT_PUBLIC_PROXY_OVM_L1_STANDARD_BRIDGE=<address>
+# Use it to enable wallet connect
+NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
 ```
 
 If not defined, the contracts addresses used will be the ones defined in [hemi-viem](https://github.com/hemilabs/hemi-viem).

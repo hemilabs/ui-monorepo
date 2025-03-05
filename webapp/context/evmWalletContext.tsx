@@ -6,7 +6,10 @@ import {
   lightTheme,
   type Locale,
 } from '@rainbow-me/rainbowkit'
-import { metaMaskWallet } from '@rainbow-me/rainbowkit/wallets'
+import {
+  metaMaskWallet,
+  walletConnectWallet,
+} from '@rainbow-me/rainbowkit/wallets'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { allEvmNetworks } from 'networks'
 import { buildTransports } from 'utils/transport'
@@ -23,13 +26,15 @@ const connectors = connectorsForWallets(
   [
     {
       groupName: 'Wallets',
-      wallets: [metaMaskWallet],
+      wallets: [metaMaskWallet, walletConnectWallet],
     },
   ],
   {
-    // These values are required but not actually used, unless wallet connect is enabled
-    appName: 'My RainbowKit App',
-    projectId: 'YOUR_PROJECT_ID',
+    appName: 'Hemi Portal',
+    projectId:
+      // the ?? is needed to compile - if undefined, throws an error. When building
+      // to deploy, this variable will be set.
+      process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? 'YOUR_PROJECT_ID',
   },
 )
 

@@ -16,6 +16,10 @@ vi.mock('@wagmi/core', () => ({
   waitForTransactionReceipt: vi.fn(),
 }))
 
+vi.mock('context/evmWalletContext', () => ({
+  allEvmNetworksWalletConfig: {},
+}))
+
 vi.mock('utils/nativeToken', () => ({
   isNativeToken: vi.fn(token => token.symbol === 'ETH'),
 }))

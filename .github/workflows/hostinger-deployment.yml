@@ -59,6 +59,7 @@ jobs:
           NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_URL: ${{ vars.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_URL }}
           NEXT_PUBLIC_SUBGRAPH_MAINNET_URL: ${{ vars.NEXT_PUBLIC_SUBGRAPH_MAINNET_URL }}
           NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL: ${{ vars.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL }}
+          NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ vars.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
 
   deploy:
     environment: ${{ github.event_name == 'release' && 'production' || 'staging' }}
@@ -120,6 +121,7 @@ jobs:
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
           SENTRY_RELEASE: ${{ format('{0}@{1}', vars.SENTRY_PROJECT, github.event.release.name) }}
+          NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ vars.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
       - if: ${{ !cancelled() }}
         uses: bloq/actions/notify-deploy-to-slack@v1
         with:

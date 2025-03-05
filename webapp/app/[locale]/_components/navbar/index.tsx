@@ -17,6 +17,7 @@ import { useTranslations } from 'next-intl'
 import React, { Suspense } from 'react'
 import { getSwapUrl } from 'utils/swap'
 
+import { CmcAttribution } from './_components/cmcAttribution'
 import { GetStarted } from './_components/getStarted'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiLogoFull } from './_components/hemiLogo'
@@ -157,10 +158,13 @@ export const Navbar = function () {
         <li className="order-16 md:order-14">
           <SocialLinks />
         </li>
-        <li className="order-16 md:hidden">
+        <li className="order-16 md:order-15">
+          <CmcAttribution />
+        </li>
+        <li className="order-17 md:order-16">
           <Separator />
         </li>
-        <li className="order-17 md:order-15">
+        <li className="order-18 md:order-17">
           <TermsAndConditions />
         </li>
       </ul>

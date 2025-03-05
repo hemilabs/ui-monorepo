@@ -37,7 +37,6 @@ export const StrategyDetails = function ({ token }: Props) {
       <Container>
         <Subtitle text={t('tvl')} />
         <div className="flex items-center gap-x-1 text-base font-semibold text-neutral-950">
-          <span>$</span>
           <span className="min-w-8">
             <Tvl token={token} />
           </span>

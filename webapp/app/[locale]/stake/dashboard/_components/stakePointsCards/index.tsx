@@ -5,7 +5,7 @@ import { useTokenPrices } from 'hooks/useTokenPrices'
 import Image, { StaticImageData } from 'next/image'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
-import { formatFiatNumber, formatLargeFiatNumber } from 'utils/format'
+import { formatFiatNumber, formatTVL } from 'utils/format'
 import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
 
@@ -85,7 +85,7 @@ export const TotalStaked = function () {
     if (prices === undefined) {
       return '-'
     }
-    return `$ ${formatLargeFiatNumber(totalStake)}`
+    return formatTVL(totalStake)
   }
 
   return (

@@ -2,7 +2,7 @@ import {
   formatBtcAddress,
   formatEvmAddress,
   formatEvmHash,
-  formatLargeFiatNumber,
+  formatTVL,
 } from 'utils/format'
 import { describe, expect, it } from 'vitest'
 
@@ -33,31 +33,29 @@ describe('utils/format', function () {
     })
   })
 
-  describe('formatLargeFiatNumber', function () {
-    describe('formatLargeFiatNumber', function () {
-      it('should format a number less than one million correctly', function () {
-        expect(formatLargeFiatNumber(999999)).toBe('999,999.00')
-      })
+  describe('formatTVL', function () {
+    it('should format a number less than one hundred thousand correctly', function () {
+      expect(formatTVL(99_999)).toBe('< $100K')
+    })
 
-      it('should format a number equal to one million correctly', function () {
-        expect(formatLargeFiatNumber(1000000)).toBe('1M')
-      })
+    it('should format a number equal to one hundred thousand correctly', function () {
+      expect(formatTVL(100_000)).toBe('$100,000.00')
+    })
 
-      it('should format a number greater than one million correctly', function () {
-        expect(formatLargeFiatNumber(2500000)).toBe('2.5M')
-      })
+    it('should format a number greater than one hundred thousand correctly', function () {
+      expect(formatTVL(2500000)).toBe('$2,500,000.00')
+    })
 
-      it('should format a string number less than one million correctly', function () {
-        expect(formatLargeFiatNumber('999999')).toBe('999,999.00')
-      })
+    it('should format a string number less than one hundred thousand correctly', function () {
+      expect(formatTVL('99999')).toBe('< $100K')
+    })
 
-      it('should format a string number equal to one million correctly', function () {
-        expect(formatLargeFiatNumber('1000000')).toBe('1M')
-      })
+    it('should format a string number equal to one hundred thousand correctly', function () {
+      expect(formatTVL('100000')).toBe('$100,000.00')
+    })
 
-      it('should format a string number greater than one million correctly', function () {
-        expect(formatLargeFiatNumber('2500000')).toBe('2.5M')
-      })
+    it('should format a string number greater than one hundred thousand correctly', function () {
+      expect(formatTVL('2500000')).toBe('$2,500,000.00')
     })
   })
 })

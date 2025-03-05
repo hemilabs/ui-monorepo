@@ -22,14 +22,14 @@ export const formatNumber = (value: number | string) =>
 export const formatFiatNumber = (value: number | string) =>
   fiatRounder(value, { shouldFormat: true })
 
-export const formatLargeFiatNumber = function (amount: number | string) {
-  // for less than one million, use the regular format.
-  if (Big(amount).lt(1_000_000)) {
-    return formatFiatNumber(amount)
+export const formatTVL = function (amount: number | string) {
+  if (Big(amount).lt(100_000)) {
+    // for less than 100k, return "< 100k"
+    const formatted = new Intl.NumberFormat('en-US', {
+      notation: 'compact',
+    }).format(100_000)
+    return `< $${formatted}`
   }
-  // for larger than that, use the million format.
-  return new Intl.NumberFormat('en-US', { notation: 'compact' }).format(
-    // @ts-expect-error NumberFormat.format accept strings, typings are wrong. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/format#parameters
-    amount,
-  )
+  // For the rest, show the full format
+  return `$${formatFiatNumber(amount)}`
 }

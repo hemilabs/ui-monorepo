@@ -28,6 +28,9 @@ export const historyReducer = function (
   state: HistoryReducerState,
   action: HistoryActions,
 ): HistoryReducerState {
+  // Disabling "complexity" rule as this comes from being many actions for the reducer.
+  // I don't think using an object mapping (which would pass the rule) would make this more readable.
+  // eslint-disable-next-line complexity
   const getNewState = function (): Omit<HistoryReducerState, 'status'> {
     const { type } = action
     switch (type) {

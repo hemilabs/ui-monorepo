@@ -225,7 +225,7 @@
         "website": "Sitio web"
       },
       "unstake-eth-as-weth-heading": "El ETH desbloqueado se recibirá como WETH",
-      "unstake-eth-as-weth-subheading": "Cuando apuesta ETH, Hemi automáticamente lo convierte a WETH. Al desbloquear, recibirá WETH, que puede convertir de nuevo a ETH si lo desea.",
+      "unstake-eth-as-weth-subheading": "Cuando apuesta ETH, automáticamente es convertido a WETH. Al desbloquear, recibirá WETH, que puede convertir de nuevo a ETH si lo desea.",
       "unstake-token": "Desbloquear {symbol}",
       "unstaking": "Desbloqueando...",
       "unwrap": "Convertir",

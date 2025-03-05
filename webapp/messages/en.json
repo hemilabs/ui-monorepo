@@ -225,7 +225,7 @@
         "website": "Website"
       },
       "unstake-eth-as-weth-heading": "Unstaked ETH will be received as WETH",
-      "unstake-eth-as-weth-subheading": "When you stake ETH, Hemi automatically wraps it as WETH. Upon unstaking, you’ll receive WETH, which you can unwrap back to ETH if desired.",
+      "unstake-eth-as-weth-subheading": "When you stake ETH, it is automatically converted to WETH. Upon unstaking, you’ll receive WETH, which you can unwrap back to ETH if desired.",
       "unstake-token": "Unstake {symbol}",
       "unstaking": "Unstaking...",
       "unwrap": "Unwrap",

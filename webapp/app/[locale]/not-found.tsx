@@ -3,10 +3,13 @@
 import 'styles/globals.css'
 import { ExclamationMark } from 'components/icons/exclamationMark'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 
-import Error404 from './_images/404.svg'
+import Error404 from '../_images/404.svg'
 
 export default function NotFound() {
+  const t = useTranslations('error-pages')
+
   return (
     <div className="flex h-screen">
       <Image
@@ -18,14 +21,14 @@ export default function NotFound() {
         <ExclamationMark />
         <div className="text-center">
           <h1 className="text-lg font-medium text-neutral-950">
-            Oops! Page not found
+            {t('not-found.title')}
           </h1>
           <h3 className="mt-1 text-base font-medium text-neutral-500">
-            We can&apos;t find the page you&apos;re looking for.
+            {t('not-found.description')}
           </h3>
         </div>
         <a className="button button--primary" href="/">
-          Go back home
+          {t('not-found.action')}
         </a>
       </div>
     </div>

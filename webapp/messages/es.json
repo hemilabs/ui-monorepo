@@ -91,6 +91,13 @@
     },
     "sub-heading": "Aprenda y explore con las Demos de desarrolladores de Hemi"
   },
+  "error-pages": {
+    "not-found": {
+      "title": "¡Ups! Página no encontrada",
+      "description": "No podemos encontrar la página que estás buscando.",
+      "action": "Volver al inicio"
+    }
+  },
   "get-started": {
     "add-funds-to-your-wallet": "Agregue fondos a su billetera",
     "add-hemi-to-your-wallet": "Agregue hemi a su billetera",

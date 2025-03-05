@@ -24,11 +24,8 @@ export const formatFiatNumber = (value: number | string) =>
 
 export const formatTVL = function (amount: number | string) {
   if (Big(amount).lt(100_000)) {
-    // for less than 100k, return "< 100k"
-    const formatted = new Intl.NumberFormat('en-US', {
-      notation: 'compact',
-    }).format(100_000)
-    return `< $${formatted}`
+    // for less than 100k, return "< $100k"
+    return `< $100K`
   }
   // For the rest, show the full format
   return `$${formatFiatNumber(amount)}`

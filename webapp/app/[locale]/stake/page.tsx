@@ -2,7 +2,6 @@
 
 import { useStakeTokens } from 'hooks/useStakeTokens'
 
-import { CmcAttribution } from './_components/cmcAttribution'
 import { StakeGraph } from './_components/icons/stakeGraph'
 import { StakeAndEarn } from './_components/stakeAndEarn'
 import { StakeStrategyTable } from './_components/stakeStrategyTable'
@@ -39,9 +38,6 @@ export default function Page() {
       <PageBackground />
       <div className="relative z-20 -translate-y-60 md:-translate-y-48">
         <StakeStrategyTable data={stakeTokens} loading={false} />
-        <div className="mt-6">
-          <CmcAttribution />
-        </div>
       </div>
     </div>
   )

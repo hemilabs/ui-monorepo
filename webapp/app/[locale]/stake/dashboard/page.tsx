@@ -3,8 +3,6 @@
 import { PageTitle } from 'components/pageTitle'
 import { useTranslations } from 'next-intl'
 
-import { CmcAttribution } from '../_components/cmcAttribution'
-
 import { StakeAssetsTable } from './_components/stakeAssetsTable'
 import {
   EarnedPoints,
@@ -28,9 +26,6 @@ const Page = function () {
       </div>
       <div className="mt-6 md:mt-8">
         <StakeAssetsTable />
-      </div>
-      <div className="mt-6">
-        <CmcAttribution />
       </div>
     </div>
   )

@@ -17,13 +17,13 @@ import { useTranslations } from 'next-intl'
 import React, { Suspense } from 'react'
 import { getSwapUrl } from 'utils/swap'
 
+import { CmcAttribution } from './_components/cmcAttribution'
 import { GetStarted } from './_components/getStarted'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiLogoFull } from './_components/hemiLogo'
 import { ItemLink, ItemWithSubmenu, NetworkSwitch } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
 import { TermsAndConditions } from './_components/termsAndConditions'
-import { CmcAttribution } from './_components/cmcAttribution'
 
 const ActionableOperations = dynamic(
   () =>

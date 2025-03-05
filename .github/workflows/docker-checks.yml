@@ -1,0 +1,35 @@
+name: Docker Checks
+
+on:
+  pull_request:
+    paths:
+      - 'staking-points/**'
+      - 'token-prices/**'
+  push:
+    paths:
+      - 'staking-points/**'
+      - 'token-prices/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  docker-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build --tag ${{ github.repository }}:${{ github.sha }} ${{ matrix.context }}
+      - uses: aquasecurity/trivy-action@0.29.0
+        with:
+          exit-code: 1
+          ignore-unfixed: true
+          image-ref: ${{ github.repository }}:${{ github.sha }}
+          severity: HIGH,CRITICAL
+          skip-dirs: /root/.npm
+    strategy:
+      matrix:
+        context:
+          - staking-points
+          - token-prices/api
+          - token-prices/cron

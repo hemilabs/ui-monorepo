@@ -1,15 +1,10 @@
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { useTotalSupply } from 'hooks/useTotalSupply'
-<<<<<<< Updated upstream
 import { type StakeToken } from 'types/stake'
 import { type EvmToken } from 'types/token'
 import { formatLargeFiatNumber } from 'utils/format'
 import { isNativeAddress } from 'utils/nativeToken'
 import { getWrappedEther } from 'utils/token'
-=======
-import { StakeToken } from 'types/stake'
-import { formatLargeFiatNumber } from 'utils/format'
->>>>>>> Stashed changes
 
 const TokenTvl = function ({ token }: { token: EvmToken }) {
   const {

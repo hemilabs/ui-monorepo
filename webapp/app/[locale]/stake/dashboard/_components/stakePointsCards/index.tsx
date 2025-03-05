@@ -85,11 +85,7 @@ export const TotalStaked = function () {
     if (prices === undefined) {
       return '-'
     }
-<<<<<<< Updated upstream
     return `$ ${formatLargeFiatNumber(totalStake)}`
-=======
-    return formatLargeFiatNumber(totalStake)
->>>>>>> Stashed changes
   }
 
   return (
@@ -128,11 +124,7 @@ export const YourStake = function () {
         ),
       Big(0),
     )
-<<<<<<< Updated upstream
     return `$ ${formatFiatNumber(userPosition.toFixed())}`
-=======
-    return formatFiatNumber(userPosition.toFixed())
->>>>>>> Stashed changes
   }
 
   return (

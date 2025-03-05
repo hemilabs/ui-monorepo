@@ -1,8 +1,4 @@
 import { parseAsString, parseAsStringLiteral, useQueryState } from 'nuqs'
-<<<<<<< Updated upstream
-=======
-import { Address } from 'viem'
->>>>>>> Stashed changes
 
 const drawerModes = ['manage', 'stake'] as const
 export type DrawerModes = (typeof drawerModes)[number]

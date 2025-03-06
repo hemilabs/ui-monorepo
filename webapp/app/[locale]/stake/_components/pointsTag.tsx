@@ -7,6 +7,7 @@ import { BitFiPointsIcon } from './icons/bitFiPointsIcon'
 import { BsquaredPointsIcon } from './icons/bsquaredPointsIcon'
 import { DiamondPointsIcon } from './icons/diamondPointsIcon'
 import { EigenpiePointsIcon } from './icons/eigenpiePointsIcon'
+import { Hemi2xPointsIcon } from './icons/hemi2xPointsIcon'
 import { HemiPointsIcon } from './icons/hemiPointsIcon'
 import { LorenzoPointsIcon } from './icons/lorenzoPointsIcon'
 import { PumpBtcPointsIcon } from './icons/pumpBtcPointsIcon'
@@ -105,6 +106,15 @@ export const HemiPoints = () => (
   <PointsTag
     backgroundColor="bg-orange-500"
     icon={<HemiPointsIcon />}
+    label="points"
+    textColor="text-white"
+  />
+)
+
+export const Hemi2xPoints = () => (
+  <PointsTag
+    backgroundColor="bg-orange-500"
+    icon={<Hemi2xPointsIcon />}
     label="points"
     textColor="text-white"
   />

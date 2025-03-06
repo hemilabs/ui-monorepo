@@ -44,7 +44,7 @@ export const Navbar = function () {
   const href = useTunnelOperationByConnectedWallet()
 
   return (
-    <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col px-3 pt-3 md:pt-0 [&>*]:md:ml-4 [&>*]:md:pr-4">
+    <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col px-3 pt-3 md:pt-0 [&>*]:md:ml-3 [&>*]:md:pr-3">
       <div className="hidden h-24 items-center justify-center md:flex">
         <div className="flex h-1/3 w-1/3">
           <Link className="w-full" href={href}>

@@ -11,6 +11,7 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { getTunnelContracts } from 'utils/crossChainMessenger'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { tunnelsThroughPartner } from 'utils/token'
@@ -65,11 +66,11 @@ const SubmitEvmDeposit = function ({
         loading: t('tunnel-page.submit-button.depositing'),
       },
     }
+    if (isAllowanceLoading) {
+      return <Skeleton className="h-2 w-[60px]" />
+    }
     if (!isRunningOperation) {
       return texts[needsApproval ? 'approve' : 'deposit'].idle
-    }
-    if (isAllowanceLoading) {
-      return '...'
     }
     if (operationRunning === 'approving') {
       return texts.approve.loading

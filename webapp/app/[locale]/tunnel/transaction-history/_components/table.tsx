@@ -356,12 +356,15 @@ const columnsBuilder = (
   },
   {
     accessorKey: 'status',
-    cell: ({ row }) =>
-      isDeposit(row.original) ? (
-        <DepositStatus deposit={row.original} />
-      ) : (
-        <WithdrawStatus withdrawal={row.original} />
-      ),
+    cell: ({ row }) => (
+      <div className="w-36 text-wrap 2xl:w-48">
+        {isDeposit(row.original) ? (
+          <DepositStatus deposit={row.original} />
+        ) : (
+          <WithdrawStatus withdrawal={row.original} />
+        )}
+      </div>
+    ),
     header: () => <Header text={t('column-headers.status')} />,
     id: 'status',
   },

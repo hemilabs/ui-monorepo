@@ -13,7 +13,11 @@ export const useTotalStaked = function () {
   const hemi = useHemi()
   const { data: prices, isPending: isLoadingPrices } = useTokenPrices()
 
-  const { data: totalPerToken, isPending: isLoadingTotalStaked } = useQuery({
+  const {
+    data: totalPerToken = [],
+    isPending: isLoadingTotalStaked,
+    isError,
+  } = useQuery({
     queryFn: () => getTotalStaked(hemi.id),
     queryKey: ['total-staked', hemi.id],
     // every 2 minutes
@@ -41,6 +45,7 @@ export const useTotalStaked = function () {
       .toFixed()
 
   return {
+    isError,
     isPending,
     totalStake: prices === undefined || isPending ? '0' : calculateTotalStake(),
   }

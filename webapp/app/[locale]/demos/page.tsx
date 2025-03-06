@@ -78,7 +78,7 @@ const Demos = function () {
           event="demos - cryptochords"
           heading={t('cryptochords.heading')}
           headingColor="white"
-          href="https://cryptochords.hemi.xyz"
+          href={`https://cryptochords.hemi.xyz?networkType=${networkType}`}
           icon={cryptoChordsIcon}
           subHeading={t('cryptochords.sub-heading')}
         />

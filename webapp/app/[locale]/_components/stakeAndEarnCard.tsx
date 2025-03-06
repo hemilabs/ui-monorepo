@@ -82,7 +82,7 @@ export const StakeAndEarnCard = function () {
   }
 
   return (
-    <div className="group/card-image h-22 fixed bottom-8 right-8 max-w-64 cursor-pointer">
+    <div className="group/card-image h-22 fixed bottom-8 right-8 z-10 max-w-64 cursor-pointer">
       <Link href="/stake" onClick={navigate}>
         <Image
           alt="Stake and Earn"

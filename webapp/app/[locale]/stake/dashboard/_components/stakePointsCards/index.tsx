@@ -75,15 +75,15 @@ export const EarnedPoints = function () {
 
 export const TotalStaked = function () {
   const { data: prices } = useTokenPrices()
-  const { isPending, totalStake } = useTotalStaked()
+  const { isError, isPending, totalStake } = useTotalStaked()
   const t = useTranslations('stake-page.dashboard')
 
   const getPoints = function () {
+    if (isError || prices === undefined) {
+      return '-'
+    }
     if (isPending) {
       return '...'
-    }
-    if (prices === undefined) {
-      return '-'
     }
     return formatTVL(totalStake)
   }

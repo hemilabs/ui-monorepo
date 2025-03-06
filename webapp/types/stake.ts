@@ -1,6 +1,7 @@
 import { type EvmToken, type Extensions } from './token'
 
 export const stakeProtocols = [
+  'babypie',
   'bedRock',
   'bitFi',
   'circle',
@@ -11,7 +12,6 @@ export const stakeProtocols = [
   'kelp',
   'lorenzo',
   'makerDao',
-  'mbtc',
   'merlinChain',
   'obeliskNodeDao',
   'pumpBtc',
@@ -26,6 +26,7 @@ export const stakeProtocols = [
 export type StakeProtocols = (typeof stakeProtocols)[number]
 
 export type Reward =
+  | 'babypie'
   | 'bedrock'
   | 'bitfi'
   | 'bsquared'
@@ -33,7 +34,6 @@ export type Reward =
   | 'hemi'
   | 'hemi2x'
   | 'lorenzo'
-  | 'magpie'
   | 'pumpbtc'
   | 'solv'
   | 'unirouter'

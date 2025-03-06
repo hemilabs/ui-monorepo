@@ -2,6 +2,7 @@ import { Fragment, ReactNode } from 'react'
 import { Reward, StakeToken } from 'types/stake'
 
 import {
+  BabypiePoints,
   BedrockPoints,
   BitFiPoints,
   BsquaredPoints,
@@ -12,7 +13,6 @@ import {
   SolvPoints,
   UnirouterPoints,
   EigenpiePoints,
-  MagpiePoints,
 } from './pointsTag'
 
 type Props = {
@@ -20,6 +20,7 @@ type Props = {
 }
 
 const rewardComponentMap: Record<Reward, ReactNode> = {
+  babypie: <BabypiePoints />,
   bedrock: <BedrockPoints />,
   bitfi: <BitFiPoints />,
   bsquared: <BsquaredPoints />,
@@ -27,7 +28,6 @@ const rewardComponentMap: Record<Reward, ReactNode> = {
   hemi: <HemiPoints />,
   hemi2x: <Hemi2xPoints />,
   lorenzo: <LorenzoPoints />,
-  magpie: <MagpiePoints />,
   pumpbtc: <PumpBtcPoints />,
   solv: <SolvPoints />,
   unirouter: <UnirouterPoints />,

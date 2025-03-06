@@ -4,6 +4,7 @@ import { Token } from 'types/token'
 import { mainnet, sepolia } from 'viem/chains'
 
 const websitesMap: Partial<Record<StakeExtensions['protocol'], string>> = {
+  babypie: 'https://www.babylon.magpiexyz.io/stake',
   bedRock: 'https://www.bedrock.technology',
   bitFi: 'https://www.bitfi.one',
   circle: 'https://www.circle.com',
@@ -14,7 +15,6 @@ const websitesMap: Partial<Record<StakeExtensions['protocol'], string>> = {
   kelp: 'https://kerneldao.com/kelp',
   lorenzo: 'https://lorenzo-protocol.xyz',
   makerDao: 'https://makerdao.com/en',
-  mbtc: 'https://www.babylon.magpiexyz.io/stake',
   merlinChain: 'https://merlinchain.io',
   obeliskNodeDao: 'https://obelisk.nodedao.com/',
   pumpBtc: 'https://mainnet.pumpbtc.xyz',
@@ -86,11 +86,11 @@ export const stakeWhiteList: Partial<
     },
     // MBTC - Liquid Staked BTC
     '0x0Af3EC6F9592C193196bEf220BC0Ce4D9311527D': {
-      protocol: 'mbtc',
+      protocol: 'babypie',
       priceSymbol: 'btc',
-      rewards: ['hemi', 'magpie'],
+      rewards: ['hemi', 'babypie'],
       stakeSymbol: 'mBTC',
-      website: websitesMap.mbtc,
+      website: websitesMap.babypie,
     },
     // M-BTC
     '0x9BFA177621119e64CecbEabE184ab9993E2ef727': {

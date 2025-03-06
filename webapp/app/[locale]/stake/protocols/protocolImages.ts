@@ -1,6 +1,7 @@
 import { StaticImageData } from 'next/image'
 import { StakeProtocols } from 'types/stake'
 
+import babypie from './images/babypie.svg'
 import bedRock from './images/bedRock.svg'
 import bitFi from './images/bitFi.svg'
 import circle from './images/circle.svg'
@@ -10,7 +11,6 @@ import exSat from './images/exSat.svg'
 import hemi from './images/hemi.svg'
 import kelp from './images/kelp.svg'
 import lorenzo from './images/lorenzo.svg'
-import magpie from './images/magpie.svg'
 import makerDao from './images/makerDao.svg'
 import merlinChain from './images/merlinChain.svg'
 import obeliskNodeDao from './images/obeliskNodeDao.svg'
@@ -23,6 +23,7 @@ import uniRouter from './images/uniRouter.svg'
 import wbtc from './images/wbtc.svg'
 
 export const protocolImages: Record<StakeProtocols, StaticImageData> = {
+  babypie,
   bedRock,
   bitFi,
   circle,
@@ -33,7 +34,6 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
   kelp,
   lorenzo,
   makerDao,
-  mbtc: magpie,
   merlinChain,
   obeliskNodeDao,
   pumpBtc,

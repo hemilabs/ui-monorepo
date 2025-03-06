@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl'
 import { CSSProperties, ReactNode } from 'react'
 
+import { BabypieJewelsIcon } from './icons/babypieJewelsIcon'
 import { BitFiPointsIcon } from './icons/bitFiPointsIcon'
 import { BsquaredPointsIcon } from './icons/bsquaredPointsIcon'
 import { DiamondPointsIcon } from './icons/diamondPointsIcon'
@@ -21,7 +22,7 @@ type Props = {
     | 'bg-orange-500'
     | 'bg-points-solv'
   borderColor?: 'border-black' | 'border-transparent'
-  label: 'diamonds' | 'points' | 'x2-eigenpie-points' | 'x2-magpie-points'
+  label: 'diamonds' | 'points' | 'x2-eigenpie-points' | 'x2-babypie-jewels'
   icon: ReactNode
   style?: CSSProperties
   textColor:
@@ -129,10 +130,10 @@ export const LorenzoPoints = () => (
   />
 )
 
-export const MagpiePoints = () => (
+export const BabypiePoints = () => (
   <PointsTag
-    icon={<EigenpiePointsIcon />}
-    label="x2-magpie-points"
+    icon={<BabypieJewelsIcon />}
+    label="x2-babypie-jewels"
     style={{
       background: 'rgba(215, 226, 235, 1)',
     }}

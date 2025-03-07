@@ -6,6 +6,8 @@ import { TunnelTabs } from 'components/tunnelTabs'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import dynamic from 'next/dynamic'
 
+import { Badge } from './navbar/_components/badge'
+
 const WalletConnection = dynamic(
   () =>
     import('app/components/connectWallets').then(mod => mod.WalletConnection),
@@ -41,10 +43,11 @@ export const Header = function ({ isMenuOpen, toggleMenu }: Props) {
       className="md:h-17 md:py-4.5 flex h-14 items-center border-b border-solid
      border-neutral-300/55 bg-white px-3 py-3 md:bg-transparent md:px-0"
     >
-      <div className="h-6 w-6 md:hidden">
-        <Link href={href}>
+      <div className="flex items-center gap-x-2 md:hidden">
+        <Link className="h-6 w-6" href={href}>
           <HemiSymbol />
         </Link>
+        <Badge />
       </div>
       <div className="hidden pl-6 md:block">
         <StakeTabs />

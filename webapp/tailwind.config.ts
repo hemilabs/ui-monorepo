@@ -83,6 +83,13 @@ const config: Config = {
       fontSize: {
         // Prefer ordering by font size instead of keys
         /* eslint-disable sort-keys */
+        'xxs': [
+          '0.688rem', // 11px,
+          {
+            letterSpacing: '-0.22px',
+            lineHeight: '11px',
+          },
+        ],
         'xs': [
           '0.75rem', // 12px,
           {

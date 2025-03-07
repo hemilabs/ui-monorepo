@@ -17,6 +17,7 @@ import { useTranslations } from 'next-intl'
 import React, { Suspense } from 'react'
 import { getSwapUrl } from 'utils/swap'
 
+import { Badge } from './_components/badge'
 import { CmcAttribution } from './_components/cmcAttribution'
 import { GetStarted } from './_components/getStarted'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
@@ -47,10 +48,11 @@ export const Navbar = function () {
     <>
       <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col bg-white px-3 pt-3 md:pt-0 [&>*]:md:ml-3 [&>*]:md:pr-3">
         <div className="hidden h-24 items-center justify-center md:flex">
-          <div className="flex h-1/3 w-1/3">
+          <div className="flex items-center gap-x-2">
             <Link className="w-full" href={href}>
               <HemiLogoFull />
             </Link>
+            <Badge />
           </div>
         </div>
         <ul className="flex h-[calc(100dvh-275px)] flex-col gap-y-1 overflow-y-auto md:h-full [&>li>div]:px-3">

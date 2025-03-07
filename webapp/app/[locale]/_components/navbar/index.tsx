@@ -44,130 +44,146 @@ export const Navbar = function () {
   const href = useTunnelOperationByConnectedWallet()
 
   return (
-    <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col px-3 pt-3 md:pt-0 [&>*]:md:ml-3 [&>*]:md:pr-3">
-      <div className="hidden h-24 items-center justify-center md:flex">
-        <div className="flex h-1/3 w-1/3">
-          <Link className="w-full" href={href}>
-            <HemiLogoFull />
-          </Link>
+    <>
+      <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col bg-white px-3 pt-3 md:pt-0 [&>*]:md:ml-3 [&>*]:md:pr-3">
+        <div className="hidden h-24 items-center justify-center md:flex">
+          <div className="flex h-1/3 w-1/3">
+            <Link className="w-full" href={href}>
+              <HemiLogoFull />
+            </Link>
+          </div>
         </div>
-      </div>
-      <ul className="flex h-full flex-col gap-y-1 overflow-y-auto [&>li>div]:px-3">
-        <li className="order-1">
-          <ItemLink
-            event="nav - tunnel"
-            href={href}
-            icon={<TunnelIcon />}
-            rightSection={
-              <div className="ml-auto">
-                <ActionableOperations />
-              </div>
-            }
-            text={t('tunnel')}
-          />
-        </li>
-        <li className="order-2">
-          {featureFlags.stakeCampaignEnabled && (
+        <ul className="flex h-[calc(100dvh-275px)] flex-col gap-y-1 overflow-y-auto md:h-full [&>li>div]:px-3">
+          <li className="order-1">
             <ItemLink
-              event="nav - stake"
-              href="/stake/dashboard"
-              icon={<StakeIcon />}
-              text={t('stake')}
-              urlToBeSelected="/stake"
+              event="nav - tunnel"
+              href={href}
+              icon={<TunnelIcon />}
+              rightSection={
+                <div className="ml-auto">
+                  <ActionableOperations />
+                </div>
+              }
+              text={t('tunnel')}
             />
-          )}
-        </li>
-        <li className="order-3">
-          <ItemLink
-            event="nav - dex"
-            href={getSwapUrl(networkType)}
-            icon={<DexIcon />}
-            text={t('swap')}
-          />
-        </li>
-        <li className="order-4">
-          <Suspense>
-            <HemiExplorerLink />
-          </Suspense>
-        </li>
-        <li className="order-5">
-          <Separator />
-        </li>
-        <li className="order-6">
-          <ItemLink
-            event="nav - hbk"
-            href="https://docs.hemi.xyz/building-bitcoin-apps/hemi-bitcoin-kit-hbk"
-            icon={<BitcoinKitIcon />}
-            text={t('bitcoinkit')}
-          />
-        </li>
-        <li className="order-7">
-          <ItemWithSubmenu
-            event="nav - tools"
-            icon={<ToolsIcon />}
-            subMenu={
-              <>
-                <ItemLink
-                  event="nav - pure finance"
-                  href="https://purefinance.hemi.xyz"
-                  text="Pure Finance"
-                />
-              </>
-            }
-            text={t('tools')}
-          />
-        </li>
-        <li className="order-8">
-          <Separator />
-        </li>
-        <li className="order-9 mb-auto">
-          <ItemLink
-            event="nav - demos"
-            href="/demos"
-            icon={<DemosPageIcon />}
-            text={t('demos')}
-          />
-        </li>
-        <li className="order-10 md:order-11">
-          <ItemLink
-            event="nav - network status"
-            href="https://hemistatus.com"
-            icon={<ElectroCardiogramIcon />}
-            text={t('network-status')}
-          />
-        </li>
-        <li className="order-11 md:order-12">
-          <ItemLink
-            event="nav - docs"
-            href="https://docs.hemi.xyz"
-            icon={<DocsIcon />}
-            text={t('hemidocs')}
-          />
-        </li>
-        {featureFlags.mainnetEnabled && (
-          <li className="md:order-13 order-12">
-            <NetworkSwitch />
           </li>
-        )}
-        <li className="order-14 md:hidden">
-          <Separator />
-        </li>
-        <li className="order-15 md:order-10">
+          <li className="order-2">
+            {featureFlags.stakeCampaignEnabled && (
+              <ItemLink
+                event="nav - stake"
+                href="/stake/dashboard"
+                icon={<StakeIcon />}
+                text={t('stake')}
+                urlToBeSelected="/stake"
+              />
+            )}
+          </li>
+          <li className="order-3">
+            <ItemLink
+              event="nav - dex"
+              href={getSwapUrl(networkType)}
+              icon={<DexIcon />}
+              text={t('swap')}
+            />
+          </li>
+          <li className="order-4">
+            <Suspense>
+              <HemiExplorerLink />
+            </Suspense>
+          </li>
+          <li className="order-5">
+            <Separator />
+          </li>
+          <li className="order-6">
+            <ItemLink
+              event="nav - hbk"
+              href="https://docs.hemi.xyz/building-bitcoin-apps/hemi-bitcoin-kit-hbk"
+              icon={<BitcoinKitIcon />}
+              text={t('bitcoinkit')}
+            />
+          </li>
+          <li className="order-7">
+            <ItemWithSubmenu
+              event="nav - tools"
+              icon={<ToolsIcon />}
+              subMenu={
+                <>
+                  <ItemLink
+                    event="nav - pure finance"
+                    href="https://purefinance.hemi.xyz"
+                    text="Pure Finance"
+                  />
+                </>
+              }
+              text={t('tools')}
+            />
+          </li>
+          <li className="order-8">
+            <Separator />
+          </li>
+          <li className="order-9 mb-auto">
+            <ItemLink
+              event="nav - demos"
+              href="/demos"
+              icon={<DemosPageIcon />}
+              text={t('demos')}
+            />
+          </li>
+          <li className="order-10 md:order-11">
+            <ItemLink
+              event="nav - network status"
+              href="https://hemistatus.com"
+              icon={<ElectroCardiogramIcon />}
+              text={t('network-status')}
+            />
+          </li>
+          <li className="order-11 md:order-12">
+            <ItemLink
+              event="nav - docs"
+              href="https://docs.hemi.xyz"
+              icon={<DocsIcon />}
+              text={t('hemidocs')}
+            />
+          </li>
+          {featureFlags.mainnetEnabled && (
+            <li className="md:order-13 order-12">
+              <NetworkSwitch />
+            </li>
+          )}
+          <li className="hidden md:order-10 md:block">
+            <GetStarted />
+          </li>
+          <li className="md:order-14 hidden md:block">
+            <SocialLinks />
+          </li>
+          <li className="md:order-15 hidden md:block">
+            <CmcAttribution />
+          </li>
+          <li className="md:order-16 hidden md:block">
+            <Separator />
+          </li>
+          <li className="md:order-17 hidden md:block">
+            <TermsAndConditions />
+          </li>
+        </ul>
+      </div>
+      <ul className="fixed bottom-0 w-full border-t border-neutral-300 bg-neutral-50 px-3 pt-4 md:hidden">
+        <li>
           <GetStarted />
         </li>
-        <li className="order-16 md:order-14">
+        <li>
           <SocialLinks />
         </li>
-        <li className="order-16 md:order-15">
+        <li>
           <CmcAttribution />
         </li>
-        <li className="order-17 md:order-16">
+        <li>
           <Separator />
         </li>
-        <li className="order-18 md:order-17">
+        <li>
           <TermsAndConditions />
         </li>
       </ul>
-    </div>
+    </>
   )
 }

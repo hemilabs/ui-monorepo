@@ -1,5 +1,6 @@
 'use client'
 
+import { ComponentType } from 'react'
 import ReactDOM from 'react-dom'
 import { CloseIcon } from 'ui-common/components/closeIcon'
 import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
@@ -9,10 +10,17 @@ import { Overlay } from '../overlay'
 
 type Props = {
   children: React.ReactNode
+  container?: HTMLElement
   onClose?: () => void
+  overlay?: ComponentType
 }
 
-export const Drawer = function ({ children, onClose }: Props) {
+export const Drawer = function ({
+  children,
+  container,
+  onClose,
+  overlay: OverlayComponent = Overlay,
+}: Props) {
   const drawerRef = useOnClickOutside<HTMLDivElement>(onClose)
 
   useOnKeyUp(function (e) {
@@ -34,9 +42,9 @@ export const Drawer = function ({ children, onClose }: Props) {
       >
         {children}
       </div>
-      <Overlay />
+      <OverlayComponent />
     </>,
-    document.getElementById('app-layout-container'),
+    container ?? document.getElementById('app-layout-container'),
   )
 }
 

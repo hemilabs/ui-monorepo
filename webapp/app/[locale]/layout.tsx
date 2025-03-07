@@ -21,6 +21,13 @@ import { Analytics } from './_components/analytics'
 import { AppLayout } from './_components/appLayout'
 import { Navbar } from './_components/navbar'
 
+const MainnetLiveModal = dynamic(
+  () => import('components/mainnetLiveModal').then(mod => mod.MainnetLiveModal),
+  {
+    ssr: false,
+  },
+)
+
 const StakeAndEarnCard = dynamic(
   () =>
     import('./_components/stakeAndEarnCard').then(mod => mod.StakeAndEarnCard),
@@ -86,6 +93,7 @@ export default async function RootLayout({
                           {featureFlags.stakeCampaignEnabled && (
                             <StakeAndEarnCard />
                           )}
+                          {featureFlags.mainnetEnabled && <MainnetLiveModal />}
                         </AppLayout>
                       </div>
                     </Analytics>

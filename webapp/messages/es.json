@@ -1,7 +1,7 @@
 {
   "common": {
     "add": "Agregar",
-    "add-hemi-to-wallet": "Añadir la red Hemi a su billetera",
+    "add-hemi-to-wallet": "Añadir Hemi a su billetera",
     "added": "Agregada",
     "amount": "Monto",
     "approving": "Aprobando...",
@@ -73,7 +73,7 @@
     },
     "cryptochords": {
       "heading": "Crypto Chords",
-      "sub-heading": "Una representación audiovisual de transacciones en la Red Hemi"
+      "sub-heading": "Una representación audiovisual de transacciones en la red Hemi"
     },
     "demos": {
       "heading": "DEMOS",
@@ -86,7 +86,7 @@
     },
     "purefinance": {
       "heading": "Pure Finance",
-      "sub-heading": "Utilidad e interacciones de contratos inteligentes integrados directamente en la Red Hemi"
+      "sub-heading": "Utilidad e interacciones de contratos inteligentes integrados directamente en la red Hemi"
     },
     "sub-heading": "Aprenda y explore con las Demos de desarrolladores de Hemi"
   },

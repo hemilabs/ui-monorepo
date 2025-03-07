@@ -14,17 +14,14 @@ import { isStakeEnabledOnTestnet } from 'utils/stake'
 import stakeAndEarn from '../_images/stakeAndEarn.png'
 import stakeAndEarnHovered from '../_images/stakeAndEarnHovered.png'
 
-const appearingElementsCss =
-  'opacity-0 transition-opacity duration-300 group-hover/card-image:visible group-hover/card-image:opacity-100'
-
 const CloseButton = ({
   onClick,
 }: {
   onClick: (e: MouseEvent<HTMLButtonElement>) => void
 }) => (
   <button
-    className={`${appearingElementsCss} group/close-button absolute right-2.5 top-2 z-10 flex h-5
-    w-5 items-center justify-center rounded-full bg-white/50 backdrop-blur-sm`}
+    className="group/close-button absolute right-2.5 top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full bg-white/50
+    backdrop-blur-sm md:opacity-0 md:transition-opacity md:duration-300 md:group-hover/card-image:visible md:group-hover/card-image:opacity-100"
     onClick={onClick}
     type="button"
   >
@@ -82,7 +79,7 @@ export const StakeAndEarnCard = function () {
   }
 
   return (
-    <div className="group/card-image h-22 fixed bottom-8 right-8 max-w-64 cursor-pointer">
+    <div className="group/card-image h-22 fixed bottom-8 right-8 z-10 max-w-64 cursor-pointer">
       <Link href="/stake" onClick={navigate}>
         <Image
           alt="Stake and Earn"
@@ -92,7 +89,7 @@ export const StakeAndEarnCard = function () {
         />
         <Image
           alt="Stake and Earn"
-          className={appearingElementsCss}
+          className="opacity-0 transition-opacity duration-300 group-hover/card-image:visible group-hover/card-image:opacity-100"
           quality={100}
           src={stakeAndEarnHovered}
         />

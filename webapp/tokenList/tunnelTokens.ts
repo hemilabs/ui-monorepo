@@ -67,7 +67,7 @@ const testnetAddresses = [
  * Given a list of addresses on Hemi, it returns a whitelist object to enable tunneling for these addresses and their L1 counterparts
  */
 const whitelistTunnel = function (hemiChain: Chain, addresses: string[]) {
-  // native tokens, if enabled, don't check for a bridge extension. They're straigth marked as enabled
+  // native tokens, if enabled, don't check for a bridge extension. They're straight marked as enabled
   const [nativeTokens, erc20Tokens] = partition(addresses, isNativeAddress)
 
   const l1Addresses = erc20Tokens

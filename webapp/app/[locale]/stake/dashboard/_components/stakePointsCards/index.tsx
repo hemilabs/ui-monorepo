@@ -10,6 +10,7 @@ import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { useHemiPoints } from '../../../_hooks/useHemiPoints'
 import { useStakePositions } from '../../../_hooks/useStakedBalance'
 import { useTotalStaked } from '../../../_hooks/useTotalStaked'
 
@@ -45,9 +46,23 @@ const Container = ({ children }: { children: ReactNode }) => (
 )
 
 export const EarnedPoints = function () {
+  const { isConnected } = useAccount()
+  const { data: points, isError, isLoading } = useHemiPoints()
   const t = useTranslations('stake-page.dashboard')
-  // TODO load points - See https://github.com/hemilabs/ui-monorepo/issues/750
-  const points = featureFlags.stakePointsEnabled ? '-' : t('coming-soon')
+
+  const getPoints = function () {
+    if (!featureFlags.stakePointsEnabled) {
+      return t('coming-soon')
+    }
+    if (!isConnected || isError) {
+      return '-'
+    }
+    if (isLoading) {
+      return '...'
+    }
+    return points.toString()
+  }
+
   return (
     <Container>
       <div className="p-2">
@@ -60,7 +75,7 @@ export const EarnedPoints = function () {
           }}
         >
           <Heading heading={t('total-earned-points')} />
-          <Points color="text-orange-500" points={points} />
+          <Points color="text-orange-500" points={getPoints()} />
         </div>
       </div>
       <Image

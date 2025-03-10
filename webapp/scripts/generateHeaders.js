@@ -51,6 +51,10 @@ if (process.env.NEXT_PUBLIC_TOKEN_PRICES_URL) {
   fetchDomains.add(new URL(process.env.NEXT_PUBLIC_TOKEN_PRICES_URL).origin)
 }
 
+if (process.env.NEXT_PUBLIC_POINTS_URL) {
+  fetchDomains.add(new URL(process.env.NEXT_PUBLIC_POINTS_URL).origin)
+}
+
 // If any RPC URL is customized through these env vars, the origin has to be
 // added to the allow list for the client to get the responses. Since the URLs
 // may contain a port or a path, those need to be removed as only the "origin"

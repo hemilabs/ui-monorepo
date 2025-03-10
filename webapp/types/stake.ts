@@ -19,6 +19,7 @@ export const stakeProtocols = [
   'stakeStone',
   'tether',
   'threshold',
+  'uniBtc',
   'uniRouter',
   'wbtc',
 ] as const

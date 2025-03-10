@@ -22,6 +22,7 @@ const websitesMap: Partial<Record<StakeExtensions['protocol'], string>> = {
   stakeStone: 'https://stakestone.io/#/home',
   tether: 'https://tether.to/en',
   threshold: 'https://threshold.network',
+  uniBtc: 'https://app.bedrock.technology/unibtc?tab=swap_deposit',
   uniRouter: 'https://www.unirouter.io/#',
   wbtc: 'https://www.wbtc.network',
 }
@@ -138,6 +139,13 @@ export const stakeWhiteList: Partial<
       priceSymbol: 'btc',
       rewards: ['hemi', 'unirouter', 'bsquared'],
       website: websitesMap.uniRouter,
+    },
+    // uniBTC
+    '0xF9775085d726E782E83585033B58606f7731AB18': {
+      protocol: 'uniBtc',
+      priceSymbol: 'btc',
+      rewards: ['hemi', 'bedrock'],
+      website: websitesMap.uniBtc,
     },
     // USDC
     '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA': {

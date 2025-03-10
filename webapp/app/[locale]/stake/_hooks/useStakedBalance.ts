@@ -92,7 +92,7 @@ export const useStakePositions = function () {
 
   return useQueries({
     combine: results => ({
-      loading: results.some(({ isPending }) => isPending),
+      loading: results.some(({ isLoading }) => isLoading),
       tokensWithPosition: results
         .filter(
           ({ data, status }) =>

@@ -8,6 +8,7 @@ import { ReactNode } from 'react'
 import { formatFiatNumber, formatTVL } from 'utils/format'
 import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { useStakePositions } from '../../../_hooks/useStakedBalance'
 import { useTotalStaked } from '../../../_hooks/useTotalStaked'
@@ -106,15 +107,12 @@ export const TotalStaked = function () {
 }
 
 export const YourStake = function () {
+  const { isConnected } = useAccount()
   const { data: prices, isPending: loadingPrices } = useTokenPrices()
   const { loading: loadingPosition, tokensWithPosition } = useStakePositions()
   const t = useTranslations('stake-page.dashboard')
 
   const getPosition = function () {
-    if (prices === undefined) {
-      // if Prices API is missing, return "-"
-      return '-'
-    }
     const userPosition = tokensWithPosition.reduce(
       (acc, staked) =>
         acc.plus(
@@ -127,13 +125,25 @@ export const YourStake = function () {
     return `$ ${formatFiatNumber(userPosition.toFixed())}`
   }
 
+  const getPoints = function () {
+    if (!isConnected) {
+      return '-'
+    }
+    if (loadingPosition || loadingPrices) {
+      return '...'
+    }
+    if (prices === undefined) {
+      // if Prices API is missing, return "-"
+      return '-'
+    }
+    return getPosition()
+  }
+
   return (
     <Container>
       <div className="flex flex-shrink-0 flex-col gap-y-3 p-6">
         <Heading heading={t('your-stake')} />
-        <Points
-          points={loadingPosition || loadingPrices ? '...' : getPosition()}
-        />
+        <Points points={getPoints()} />
       </div>
       <Image
         alt="Stake icon"

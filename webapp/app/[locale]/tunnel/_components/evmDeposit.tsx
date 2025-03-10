@@ -4,6 +4,7 @@ import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
 import { CustomTunnelsThroughPartner } from 'components/customTunnelsThroughPartner'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
+import Spinner from 'components/Spinner'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useHemi } from 'hooks/useHemi'
@@ -11,7 +12,6 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
-import Skeleton from 'react-loading-skeleton'
 import { getTunnelContracts } from 'utils/crossChainMessenger'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { tunnelsThroughPartner } from 'utils/token'
@@ -67,7 +67,7 @@ const SubmitEvmDeposit = function ({
       },
     }
     if (isAllowanceLoading) {
-      return <Skeleton className="h-2 w-[60px]" />
+      return <Spinner size={'small'} />
     }
     if (!isRunningOperation) {
       return texts[needsApproval ? 'approve' : 'deposit'].idle

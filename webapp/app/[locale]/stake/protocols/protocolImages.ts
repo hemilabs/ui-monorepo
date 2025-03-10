@@ -41,6 +41,7 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
   stakeStone,
   tether,
   threshold,
+  uniBtc: bedRock,
   uniRouter,
   wbtc,
 }

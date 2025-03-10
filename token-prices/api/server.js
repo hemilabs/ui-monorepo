@@ -54,6 +54,12 @@ async function handleRequest(req, res) {
     return
   }
 
+  if (req.url !== '/') {
+    res.writeHead(404, { 'Content-Type': 'application/json' })
+    res.end(JSON.stringify({ error: 'Not Found' }))
+    return
+  }
+
   let statusCode, data
   try {
     statusCode = 200

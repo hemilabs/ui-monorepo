@@ -17,7 +17,7 @@ const variants = {
 } as const
 
 type Height = {
-  height?: 'h-4' | 'h-6' | 'h-8'
+  height?: 'h-4' | 'h-5' | 'h-6' | 'h-8'
 }
 
 type Variant = {

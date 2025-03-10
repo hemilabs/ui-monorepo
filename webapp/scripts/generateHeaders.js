@@ -75,7 +75,10 @@ customRpcOrigins.forEach(function (url) {
 })
 
 // these are domains where we download images from
-const imageSrcUrls = ['https://raw.githubusercontent.com']
+const imageSrcUrls = [
+  'https://raw.githubusercontent.com',
+  'https://*.walletconnect.com',
+]
 
 // Domains allowed to download scripts from
 const downloadScriptsDomains = new Set()

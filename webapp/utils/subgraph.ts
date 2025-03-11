@@ -13,6 +13,10 @@ type Schema = {
   variables?: Record<string, string | number>
 }
 
+type SuccessResponse<T> = { data: T }
+type ErrorResponse = { errors: { message: string }[] }
+type GraphResponse<T> = SuccessResponse<T> | ErrorResponse
+
 const getSubgraphUrl = function ({
   chainId,
   subgraphIds,
@@ -50,8 +54,6 @@ const request = <TResponse, TSchema extends Schema = Schema>(
     method: 'POST',
   }) satisfies Promise<TResponse>
 
-type GraphResponse<T> = { data: T }
-
 const getTunnelSubgraphUrl = function (chainId: Chain['id']) {
   /**
    * Use this to override the full url - for example, when using subgraph studio
@@ -82,6 +84,22 @@ const getTunnelSubgraphUrl = function (chainId: Chain['id']) {
 }
 
 /**
+ * Helper function to check for errors in GraphQL responses
+ * @param response The GraphQL response to check
+ * @throws Error if the response contains errors
+ */
+function checkGraphQLErrors<T>(
+  response: GraphResponse<T>,
+): asserts response is SuccessResponse<T> {
+  // Check if response has errors
+  if ('errors' in response && response.errors.length > 0) {
+    // Extract error messages and join them
+    const errorMessages = response.errors.map(e => e.message).join(', ')
+    throw new Error(`GraphQL Error: ${errorMessages}`)
+  }
+}
+
+/**
  * Retrieves the Last indexed block by the subgraph for the given chain.
  * @param chainId Id of the chain whose subgraph is going to be queried.
  * @returns A Promise that resolves into the last indexed block.
@@ -97,16 +115,13 @@ export const getLastIndexedBlock = function (chainId: Chain['id']) {
       }
     }`,
   }
-  return fetch(url, {
-    body: JSON.stringify(schema),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    method: 'POST',
-  }).then(
-    (r: GraphResponse<{ _meta: { block: { number: number } } }>) =>
-      r.data._meta.block.number,
-  )
+  return request<GraphResponse<{ _meta: { block: { number: number } } }>>(
+    url,
+    schema,
+  ).then(function (response) {
+    checkGraphQLErrors(response)
+    return response.data._meta.block.number
+  })
 }
 
 type GetBtcWithdrawalsQueryResponse = GraphResponse<{
@@ -174,21 +189,24 @@ export const getBtcWithdrawals = function ({
     variables: { address, fromBlock, limit, orderBy, orderDirection, skip },
   }
 
-  return request<GetBtcWithdrawalsQueryResponse>(url, schema).then(({ data }) =>
-    data.btcWithdrawals.map(d => ({
-      // The Subgraph lowercases all the addresses when saving, so better convert them
-      // into checksum format to avoid errors when trying to get balances or other operations.
-      // GraphQL also converts BigInt as strings
-      ...d,
-      blockNumber: Number(d.blockNumber),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      from: toChecksum(d.from),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      l1Token: toChecksum(d.l1Token),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      l2Token: toChecksum(d.l2Token),
-      timestamp: Number(d.timestamp),
-    })),
+  return request<GetBtcWithdrawalsQueryResponse>(url, schema).then(
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.btcWithdrawals.map(d => ({
+        // The Subgraph lowercases all the addresses when saving, so better convert them
+        // into checksum format to avoid errors when trying to get balances or other operations.
+        // GraphQL also converts BigInt as strings
+        ...d,
+        blockNumber: Number(d.blockNumber),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        from: toChecksum(d.from),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        l1Token: toChecksum(d.l1Token),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        l2Token: toChecksum(d.l2Token),
+        timestamp: Number(d.timestamp),
+      }))
+    },
   ) satisfies Promise<ToBtcWithdrawOperation[]>
 }
 
@@ -250,23 +268,26 @@ export const getEvmDeposits = function ({
     variables: { address, fromBlock, limit, orderBy, orderDirection, skip },
   }
 
-  return request<GetEvmDepositsQueryResponse>(url, schema).then(({ data }) =>
-    data.deposits.map(d => ({
-      // The Subgraph lowercases all the addresses when saving, so better convert them
-      // into checksum format to avoid errors when trying to get balances or other operations.
-      // GraphQL also converts BigInt as strings
-      ...d,
-      blockNumber: Number(d.blockNumber),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      from: toChecksum(d.from),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      l1Token: toChecksum(d.l1Token),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      l2Token: toChecksum(d.l2Token),
-      timestamp: Number(d.timestamp),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      to: toChecksum(d.to),
-    })),
+  return request<GetEvmDepositsQueryResponse>(url, schema).then(
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.deposits.map(d => ({
+        // The Subgraph lowercases all the addresses when saving, so better convert them
+        // into checksum format to avoid errors when trying to get balances or other operations.
+        // GraphQL also converts BigInt as strings
+        ...d,
+        blockNumber: Number(d.blockNumber),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        from: toChecksum(d.from),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        l1Token: toChecksum(d.l1Token),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        l2Token: toChecksum(d.l2Token),
+        timestamp: Number(d.timestamp),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        to: toChecksum(d.to),
+      }))
+    },
   ) satisfies Promise<EvmDepositOperation[]>
 }
 
@@ -328,23 +349,26 @@ export const getEvmWithdrawals = function ({
     variables: { address, fromBlock, limit, orderBy, orderDirection, skip },
   }
 
-  return request<GetEvmWithdrawalsQueryResponse>(url, schema).then(({ data }) =>
-    data.evmWithdrawals.map(d => ({
-      // The Subgraph lowercases all the addresses when saving, so better convert them
-      // into checksum format to avoid errors when trying to get balances or other operations.
-      // GraphQL also converts BigInt as strings
-      ...d,
-      blockNumber: Number(d.blockNumber),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      from: toChecksum(d.from),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      l1Token: toChecksum(d.l1Token),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      l2Token: toChecksum(d.l2Token),
-      timestamp: Number(d.timestamp),
-      // @ts-expect-error OP-SDK does not properly type addresses as Address
-      to: toChecksum(d.to),
-    })),
+  return request<GetEvmWithdrawalsQueryResponse>(url, schema).then(
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.evmWithdrawals.map(d => ({
+        // The Subgraph lowercases all the addresses when saving, so better convert them
+        // into checksum format to avoid errors when trying to get balances or other operations.
+        // GraphQL also converts BigInt as strings
+        ...d,
+        blockNumber: Number(d.blockNumber),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        from: toChecksum(d.from),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        l1Token: toChecksum(d.l1Token),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        l2Token: toChecksum(d.l2Token),
+        timestamp: Number(d.timestamp),
+        // @ts-expect-error OP-SDK does not properly type addresses as Address
+        to: toChecksum(d.to),
+      }))
+    },
   )
 }
 
@@ -389,11 +413,13 @@ export const getTotalStaked = function (hemiId: Chain['id']) {
   }
 
   return request<GetTotalStakedBalancesQueryResponse>(subgraphUrl, schema).then(
-    ({ data }) =>
-      data.tokenStakeBalances.map(({ id, ...rest }) => ({
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.tokenStakeBalances.map(({ id, ...rest }) => ({
         ...rest,
         // By default, The Graph store addresses as lowercase
         id: toChecksum(id),
-      })),
+      }))
+    },
   )
 }

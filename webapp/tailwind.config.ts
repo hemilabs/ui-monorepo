@@ -78,7 +78,8 @@ const config: Config = {
         },
       },
       fontFamily: {
-        inter: '--font-inter',
+        'inter-display': ['var(--font-inter-display)'],
+        'inter-variable': ['var(--font-inter-variable)'],
       },
       fontSize: {
         // Prefer ordering by font size instead of keys

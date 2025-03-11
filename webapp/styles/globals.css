@@ -31,3 +31,16 @@ like "next/router" or "next/navigation" inside the error pages.
   duration-300 hover:border-orange-700/70 hover:from-orange-600 hover:to-orange-600
   disabled:bg-orange-600;
 }
+
+* {
+  @apply font-inter-variable;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-inter-display;
+}

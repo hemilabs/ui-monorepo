@@ -25,8 +25,8 @@ type Props = {
   points: string
 }
 
-const Heading = ({ heading }: Pick<Props, 'heading'>) => (
-  <h6 className="text-sm font-medium text-neutral-500">{heading}</h6>
+const Text = ({ heading }: Pick<Props, 'heading'>) => (
+  <p className="text-sm font-medium text-neutral-500">{heading}</p>
 )
 
 const Points = ({
@@ -74,7 +74,7 @@ export const EarnedPoints = function () {
               'radial-gradient(100% 100% at 50% 0%, rgba(253, 239, 232, 0.08) 14.89%, rgba(255, 108, 21, 0.08) 54.52%, rgba(255, 24, 20, 0.02) 98.87%), #FFF',
           }}
         >
-          <Heading heading={t('total-earned-points')} />
+          <Text heading={t('total-earned-points')} />
           <Points color="text-orange-500" points={getPoints()} />
         </div>
       </div>
@@ -107,7 +107,7 @@ export const TotalStaked = function () {
   return (
     <Container>
       <div className="flex flex-shrink-0 flex-col gap-y-3 p-6">
-        <Heading heading={t('total-staked-on-hemi')} />
+        <Text heading={t('total-staked-on-hemi')} />
         <Points points={getPoints()} />
       </div>
       <Image
@@ -157,7 +157,7 @@ export const YourStake = function () {
   return (
     <Container>
       <div className="flex flex-shrink-0 flex-col gap-y-3 p-6">
-        <Heading heading={t('your-stake')} />
+        <Text heading={t('your-stake')} />
         <Points points={getPoints()} />
       </div>
       <Image

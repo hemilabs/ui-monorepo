@@ -118,11 +118,10 @@ export const getLastIndexedBlock = function (chainId: Chain['id']) {
   return request<GraphResponse<{ _meta: { block: { number: number } } }>>(
     url,
     schema,
-  ).then(
-    response => (
-      checkGraphQLErrors(response), response.data._meta.block.number
-    ),
-  )
+  ).then(function (response) {
+    checkGraphQLErrors(response)
+    return response.data._meta.block.number
+  })
 }
 
 type GetBtcWithdrawalsQueryResponse = GraphResponse<{
@@ -191,9 +190,9 @@ export const getBtcWithdrawals = function ({
   }
 
   return request<GetBtcWithdrawalsQueryResponse>(url, schema).then(
-    response => (
-      checkGraphQLErrors(response),
-      response.data.btcWithdrawals.map(d => ({
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.btcWithdrawals.map(d => ({
         // The Subgraph lowercases all the addresses when saving, so better convert them
         // into checksum format to avoid errors when trying to get balances or other operations.
         // GraphQL also converts BigInt as strings
@@ -207,7 +206,7 @@ export const getBtcWithdrawals = function ({
         l2Token: toChecksum(d.l2Token),
         timestamp: Number(d.timestamp),
       }))
-    ),
+    },
   ) satisfies Promise<ToBtcWithdrawOperation[]>
 }
 
@@ -270,9 +269,9 @@ export const getEvmDeposits = function ({
   }
 
   return request<GetEvmDepositsQueryResponse>(url, schema).then(
-    response => (
-      checkGraphQLErrors(response),
-      response.data.deposits.map(d => ({
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.deposits.map(d => ({
         // The Subgraph lowercases all the addresses when saving, so better convert them
         // into checksum format to avoid errors when trying to get balances or other operations.
         // GraphQL also converts BigInt as strings
@@ -288,7 +287,7 @@ export const getEvmDeposits = function ({
         // @ts-expect-error OP-SDK does not properly type addresses as Address
         to: toChecksum(d.to),
       }))
-    ),
+    },
   ) satisfies Promise<EvmDepositOperation[]>
 }
 
@@ -351,9 +350,9 @@ export const getEvmWithdrawals = function ({
   }
 
   return request<GetEvmWithdrawalsQueryResponse>(url, schema).then(
-    response => (
-      checkGraphQLErrors(response),
-      response.data.evmWithdrawals.map(d => ({
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.evmWithdrawals.map(d => ({
         // The Subgraph lowercases all the addresses when saving, so better convert them
         // into checksum format to avoid errors when trying to get balances or other operations.
         // GraphQL also converts BigInt as strings
@@ -369,7 +368,7 @@ export const getEvmWithdrawals = function ({
         // @ts-expect-error OP-SDK does not properly type addresses as Address
         to: toChecksum(d.to),
       }))
-    ),
+    },
   )
 }
 
@@ -414,13 +413,13 @@ export const getTotalStaked = function (hemiId: Chain['id']) {
   }
 
   return request<GetTotalStakedBalancesQueryResponse>(subgraphUrl, schema).then(
-    response => (
-      checkGraphQLErrors(response),
-      response.data.tokenStakeBalances.map(({ id, ...rest }) => ({
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.tokenStakeBalances.map(({ id, ...rest }) => ({
         ...rest,
         // By default, The Graph store addresses as lowercase
         id: toChecksum(id),
       }))
-    ),
+    },
   )
 }

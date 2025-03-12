@@ -15,6 +15,7 @@ export const stakeProtocols = [
   'merlinChain',
   'obeliskNodeDao',
   'pumpBtc',
+  'sumer',
   'solv',
   'stakeStone',
   'tether',

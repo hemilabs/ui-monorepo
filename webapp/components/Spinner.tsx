@@ -1,4 +1,3 @@
-/* eslint-disable sort-keys */
 import React, { useId } from 'react'
 
 type SpinnerProps = {
@@ -7,7 +6,7 @@ type SpinnerProps = {
   className?: string
 }
 
-function Spinner({
+export const Spinner = function ({
   size = 'medium',
   color = '#FFF7F0',
   className = '',
@@ -26,9 +25,9 @@ function Spinner({
     }
 
     const sizeMap = {
-      small: 24,
-      medium: 40,
       large: 60,
+      medium: 40,
+      small: 24,
     }
 
     return sizeMap[size]
@@ -96,5 +95,3 @@ function Spinner({
     </div>
   )
 }
-
-export default Spinner

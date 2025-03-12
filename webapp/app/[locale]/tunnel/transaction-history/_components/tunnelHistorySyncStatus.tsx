@@ -1,4 +1,4 @@
-import Spinner from 'components/Spinner'
+import { Spinner } from 'components/spinner'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { useAccount } from 'wagmi'

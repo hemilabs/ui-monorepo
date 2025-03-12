@@ -4,7 +4,8 @@ import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
 import { CustomTunnelsThroughPartner } from 'components/customTunnelsThroughPartner'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
-import Spinner from 'components/Spinner'
+import { Spinner } from 'components/spinner'
+import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useHemi } from 'hooks/useHemi'
@@ -14,11 +15,11 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { getTunnelContracts } from 'utils/crossChainMessenger'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
+import { isNativeAddress } from 'utils/nativeToken'
 import { tunnelsThroughPartner } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
-import { useAllowance } from 'wagmi-erc20-hooks'
 
 import { useDeposit } from '../_hooks/useDeposit'
 import { EvmTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
@@ -137,6 +138,9 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       args: {
         owner: address,
         spender: l1StandardBridgeAddress,
+      },
+      query: {
+        enabled: !isNativeAddress(address),
       },
     },
   )

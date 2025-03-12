@@ -20,6 +20,7 @@ const websitesMap: Partial<Record<StakeExtensions['protocol'], string>> = {
   pumpBtc: 'https://mainnet.pumpbtc.xyz',
   solv: 'https://solv.finance',
   stakeStone: 'https://stakestone.io/#/home',
+  sumer: 'https://sumer.money',
   tether: 'https://tether.to/en',
   threshold: 'https://threshold.network',
   uniBtc: 'https://app.bedrock.technology/unibtc?tab=swap_deposit',
@@ -125,6 +126,13 @@ export const stakeWhiteList: Partial<
       priceSymbol: 'btc',
       rewards: ['hemi', 'lorenzo'],
       website: websitesMap.lorenzo,
+    },
+    // suBTC
+    '0xe85411C030fB32A9D8b14Bbbc6CB19417391F711': {
+      protocol: 'sumer',
+      priceSymbol: 'btc',
+      rewards: ['hemi'],
+      website: websitesMap.sumer,
     },
     // tBTC v2
     '0x12B6e6FC45f81cDa81d2656B974E8190e4ab8D93': {

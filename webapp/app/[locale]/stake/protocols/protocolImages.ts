@@ -17,6 +17,7 @@ import obeliskNodeDao from './images/obeliskNodeDao.svg'
 import pumpBtc from './images/pumpBtc.svg'
 import solv from './images/solv.svg'
 import stakeStone from './images/stakeStone.svg'
+import sumer from './images/sumer.svg'
 import tether from './images/tether.svg'
 import threshold from './images/threshold.svg'
 import uniRouter from './images/uniRouter.svg'
@@ -39,6 +40,7 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
   pumpBtc,
   solv,
   stakeStone,
+  sumer,
   tether,
   threshold,
   uniBtc: bedRock,

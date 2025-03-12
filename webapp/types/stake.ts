@@ -33,6 +33,7 @@ export type Reward =
   | 'bsquared'
   | 'eigenpie'
   | 'hemi'
+  | 'hemi2x'
   | 'lorenzo'
   | 'pumpbtc'
   | 'solv'

@@ -54,7 +54,7 @@ export const stakeWhiteList: Partial<
     '0x027a9d301FB747cd972CFB29A63f3BDA551DFc5c': {
       protocol: 'egEth',
       priceSymbol: 'eth',
-      rewards: ['hemi', 'eigenpie'],
+      rewards: ['hemi2x', 'eigenpie'],
       stakeSymbol: 'egETH',
       website: websitesMap.egEth,
     },
@@ -75,7 +75,7 @@ export const stakeWhiteList: Partial<
     '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28': {
       protocol: 'hemi',
       priceSymbol: 'btc',
-      rewards: ['hemi'],
+      rewards: ['hemi2x'],
       website: websitesMap.hemi,
     },
     // iBTC
@@ -89,7 +89,7 @@ export const stakeWhiteList: Partial<
     '0x0Af3EC6F9592C193196bEf220BC0Ce4D9311527D': {
       protocol: 'babypie',
       priceSymbol: 'btc',
-      rewards: ['hemi', 'babypie'],
+      rewards: ['hemi2x', 'babypie'],
       stakeSymbol: 'mBTC',
       website: websitesMap.babypie,
     },
@@ -152,13 +152,13 @@ export const stakeWhiteList: Partial<
       // token symbol in hemi mainnet is usdc.e
       priceSymbol: 'usdc',
       protocol: 'circle',
-      rewards: ['hemi'],
+      rewards: ['hemi2x'],
       website: websitesMap.circle,
     },
     // USDT
     '0xbB0D083fb1be0A9f6157ec484b6C79E0A4e31C2e': {
       protocol: 'tether',
-      rewards: ['hemi'],
+      rewards: ['hemi2x'],
       website: websitesMap.tether,
     },
     // VUSD

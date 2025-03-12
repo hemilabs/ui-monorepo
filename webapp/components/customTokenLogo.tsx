@@ -17,7 +17,7 @@ export const CustomTokenLogo = ({ token, size }: Props) => (
   <>
     <div
       className={`flex items-center justify-center rounded-full ${sizes[size]} overflow-hidden text-ellipsis whitespace-nowrap
-      border border-solid border-white bg-neutral-50 text-[8px] font-bold text-neutral-700`}
+      border border-solid border-white bg-neutral-50 text-[8px] font-semibold text-neutral-700`}
     >
       {token.symbol}
     </div>

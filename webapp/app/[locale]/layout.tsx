@@ -5,6 +5,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { ConnectWalletDrawerProvider } from 'app/context/connectWalletDrawerContext'
 import { TunnelHistoryProvider } from 'app/context/tunnelHistoryContext'
 import { featureFlags } from 'app/featureFlags'
+import { interDisplay, interVariable } from 'app/fonts/index'
 import { locales, type Locale } from 'app/i18n'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { WalletsContext } from 'context/walletsContext'
@@ -14,8 +15,6 @@ import { notFound } from 'next/navigation'
 import { NextIntlClientProvider } from 'next-intl'
 import { PropsWithChildren, Suspense } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
-
-import { inter } from '../fonts'
 
 import { Analytics } from './_components/analytics'
 import { AppLayout } from './_components/appLayout'
@@ -71,7 +70,9 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className={`${inter.className} w-svw overflow-y-hidden`}>
+      <body
+        className={`${interVariable.variable} ${interDisplay.variable} w-svw overflow-y-hidden`}
+      >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SkeletonTheme baseColor="#E5E5E5" highlightColor="#FAFAFA">
             {/* This suspense wrapper is needed because, from this point downwards, rendering depends on 

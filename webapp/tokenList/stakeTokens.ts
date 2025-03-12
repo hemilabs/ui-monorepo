@@ -54,7 +54,7 @@ export const stakeWhiteList: Partial<
     '0x027a9d301FB747cd972CFB29A63f3BDA551DFc5c': {
       protocol: 'egEth',
       priceSymbol: 'eth',
-      rewards: ['hemi', 'eigenpie'],
+      rewards: ['hemi2x', 'eigenpie'],
       stakeSymbol: 'egETH',
       website: websitesMap.egEth,
     },
@@ -89,7 +89,7 @@ export const stakeWhiteList: Partial<
     '0x0Af3EC6F9592C193196bEf220BC0Ce4D9311527D': {
       protocol: 'babypie',
       priceSymbol: 'btc',
-      rewards: ['hemi', 'babypie'],
+      rewards: ['hemi2x', 'babypie'],
       stakeSymbol: 'mBTC',
       website: websitesMap.babypie,
     },

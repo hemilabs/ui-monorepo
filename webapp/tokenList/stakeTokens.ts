@@ -75,7 +75,7 @@ export const stakeWhiteList: Partial<
     '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28': {
       protocol: 'hemi',
       priceSymbol: 'btc',
-      rewards: ['hemi'],
+      rewards: ['hemi2x'],
       website: websitesMap.hemi,
     },
     // iBTC
@@ -152,13 +152,13 @@ export const stakeWhiteList: Partial<
       // token symbol in hemi mainnet is usdc.e
       priceSymbol: 'usdc',
       protocol: 'circle',
-      rewards: ['hemi'],
+      rewards: ['hemi2x'],
       website: websitesMap.circle,
     },
     // USDT
     '0xbB0D083fb1be0A9f6157ec484b6C79E0A4e31C2e': {
       protocol: 'tether',
-      rewards: ['hemi'],
+      rewards: ['hemi2x'],
       website: websitesMap.tether,
     },
     // VUSD

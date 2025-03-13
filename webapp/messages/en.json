@@ -62,11 +62,16 @@
     "description": "Connect your EVM and BTC wallets to transfer assets seamlessly. For the best experience, use wallets from both networks.",
     "disconnect": "Disconnect",
     "evm-wallet": "EVM Wallet",
+    "how-to-create-unisat-wallet": "How to create a Unisat wallet",
     "status": {
       "connected": "Connected",
       "connecting": "Connecting",
       "disconnected": "Disconnected",
       "reconnecting": "Reconnecting"
+    },
+    "unisat-is-the-only-supported-wallet": {
+      "first-line": "UniSat is currently the only BTC supported wallet.",
+      "second-line": "Use all other BTC wallets at your own risk."
     }
   },
   "demos": {

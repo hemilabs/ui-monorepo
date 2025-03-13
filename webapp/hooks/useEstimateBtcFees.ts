@@ -47,7 +47,7 @@ export const useEstimateBtcFees = function (from: Account) {
 
   return {
     fees:
-      isLoading || utxos === undefined
+      isLoading || utxos === undefined || feePrices === undefined
         ? undefined
         : Math.ceil(feePrices.fastestFee * calculateTxSize(utxos)),
     isLoading,

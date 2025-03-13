@@ -60,6 +60,13 @@ export const EarnedPoints = function () {
     if (isLoading) {
       return '...'
     }
+    // technically, this should never happen, but a few reports in Sentry
+    // show that it if somehow the user is connected, but the app failed to retrieve
+    // the Address, it will reach this point, where the user is connected, but without any error
+    // as the query is disabled. This line is a safety net.
+    if (points === undefined) {
+      return '-'
+    }
     return points.toString()
   }
 

@@ -62,11 +62,16 @@
     "description": "Conecte sus billeteras EVM y BTC para transferir activos de manera fluida. Para una mejor experiencia, use billeteras de ambas redes.",
     "disconnect": "Desconectar",
     "evm-wallet": "Billetera EVM",
+    "how-to-create-unisat-wallet": "Cómo crear una billetera Unisat",
     "status": {
       "connected": "Conectada",
       "connecting": "Conectando",
       "disconnected": "Desconectada",
       "reconnecting": "Reconectando"
+    },
+    "unisat-is-the-only-supported-wallet": {
+      "first-line": "UniSat es actualmente la única billetera BTC soportada.",
+      "second-line": "Use todas las demás billeteras BTC bajo su propio riesgo."
     }
   },
   "demos": {

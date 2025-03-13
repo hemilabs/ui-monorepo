@@ -19,8 +19,8 @@ export const Box = function ({
   const t = useTranslations('connect-wallets')
 
   return (
-    <div className="flex flex-col gap-y-2">
-      <div className="flex items-center justify-between text-sm text-neutral-500">
+    <div className="flex w-full flex-col gap-y-2">
+      <div className="flex items-center justify-between px-3 pt-1 text-sm text-neutral-500">
         <span>{walletType}</span>
         <span>
           {t.rich('connected-with-wallet', {

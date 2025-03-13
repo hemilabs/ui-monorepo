@@ -140,7 +140,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
         spender: l1StandardBridgeAddress,
       },
       query: {
-        enabled: !isNativeAddress(address),
+        enabled: !isNativeAddress(fromToken.address),
       },
     },
   )

@@ -13,9 +13,12 @@ export const sanitizeAmount = function (input: string) {
     return { error }
   }
 
-  // Remove any leading zeroes to address cases like "01", that must be
-  // converted to "1".
-  const _value = input.replace(/^0+/, '')
+  const _value = input
+    // Remove any leading zeroes to address cases like "01", that must be
+    // converted to "1".
+    .replace(/^0+/, '')
+    // Remove any empty spaces at the beginning or end of the input
+    .trim()
   // if input ends with a dot, add a zero so it is a valid number.
   if (_value.startsWith('.')) {
     return { value: `0${_value}` }

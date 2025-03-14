@@ -1,6 +1,7 @@
 {
   "common": {
     "add": "Add",
+    "added": "Added",
     "amount": "Amount",
     "approving": "Approving...",
     "connect-to-network": "Connect to {network}",

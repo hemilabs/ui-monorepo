@@ -1,6 +1,7 @@
 {
   "common": {
     "add": "Agregar",
+    "added": "Agregada",
     "amount": "Monto",
     "approving": "Aprobando...",
     "connect-to-network": "Conectarse a {network}",

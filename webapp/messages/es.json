@@ -4,10 +4,13 @@
     "added": "Agregada",
     "amount": "Monto",
     "approving": "Aprobando...",
+    "approving-token": "Aprobando {symbol}",
     "connect-to-network": "Conectarse a {network}",
     "connect-to-supported-network": "Conectarse a una red soportada",
     "connect-wallet": "Conectar Billetera",
     "connect-wallets": "Conectar Billeteras",
+    "copied": "Copiado",
+    "copy": "Copiar",
     "erc20-approve-10x-deposits": "Aprobar 10x el monto de este depósito",
     "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
     "erc20-extra-approval": "Aprobar 10x este depósito",
@@ -54,7 +57,12 @@
     "disconnect": "Desconectar",
     "evm-wallet": "Billetera EVM",
     "how-to-create-unisat-wallet": "Cómo crear una billetera Unisat",
-    "status": {},
+    "status": {
+      "connected": "Conectada",
+      "connecting": "Conectando",
+      "disconnected": "Desconectada",
+      "reconnecting": "Reconectando"
+    },
     "unisat-is-the-only-supported-wallet": {
       "first-line": "UniSat es actualmente la única billetera BTC soportada.",
       "second-line": "Use todas las demás billeteras BTC bajo su propio riesgo."
@@ -98,6 +106,8 @@
       "automatic": "Automático",
       "manual": "Manual"
     },
+    "add-networks-mainnet": "Añada Hemi a su billetera.",
+    "add-networks-testnet": "Añada Ethereum Sepolia y Hemi testnet a su billetera.",
     "add-networks-to-wallet": "Agregue las redes a su billetera",
     "add-to-wallet": "Añadir a la billetera",
     "bitcoin-faucet": "Faucet de Bitcoin",
@@ -111,6 +121,8 @@
     "get-testnet-tokens": "Obtenga tokens de testnet",
     "header": {},
     "heading": "Comience con Hemi",
+    "here-are-some-options-mainnet": "Aquí hay algunos Exchanges Descentralizados que podría explorar.",
+    "here-are-some-options-testnet": "Aquí hay algunos faucets que podría explorar.",
     "layer": "Capa {layer}",
     "learn-about-tunneling": "Aprenda sobre la tunelización de activos hacia y desde Hemi.",
     "learn-more-about-hemi": "Learn more about Hemi",
@@ -147,6 +159,8 @@
     "subheading": "Una red, impulsada por Bitcoin y Ethereum.",
     "sushi-swap": "Sushi Swap",
     "swap-tokens": "Intercambie tokens",
+    "swap-tokens-mainnet": "Intercambie tokens en Sushi",
+    "swap-tokens-testnet": "Intercambie tokens en Hemi",
     "tunnel-assets": "Tunelice activos",
     "tutorials": "Tutoriales",
     "tutorials-and-tools": "Tutoriales y herramientas para comenzar rápidamente.",
@@ -202,7 +216,12 @@
       "unwrap": "Convertir",
       "you-can-unstake-anytime": "Puede retirar en cualquier momento y conservar los puntos ya ganados."
     },
-    "points": {},
+    "points": {
+      "diamonds": "Diamantes",
+      "points": "Puntos",
+      "x2-babypie-jewels": "x2 Joyas Babypie",
+      "x2-eigenpie-points": "x2 Eigenpie Puntos"
+    },
     "protocol": "Protocolo",
     "rewards": "Recompensas",
     "stake": {
@@ -215,7 +234,9 @@
     "toast": {
       "go-staking-dashboard": "Vea su panel de control de sus apuestas",
       "here-your-stake-tx": "Aquí está su transacción de {type}:",
+      "staking": "apuesta",
       "staking-successful": "Apuesta exitosa",
+      "unstaking": "retiro",
       "unstaking-successful": "Retiro exitoso"
     },
     "wallet-balance": "Saldo de la billetera"
@@ -225,12 +246,15 @@
     "add-this-pair": "Agregue este par a la lista de tokens de Hemi para que todos puedan tunelizarlos",
     "add-token": "Añadir token",
     "add-token-on-chain": "Añada la dirección del contrato del token en la red de Capa {network}",
+    "address-does-not-match-l2": "No coincide con el par de L1",
     "heading": "Tunelizar un token ERC-20 existente",
     "i-am-sure-to-tunnel": "Estoy seguro que quiero tunelizar este token.",
     "layer-token-address": "Dirección de contrato del token de capa {layer}",
     "make-a-request-to-add": "Si deseas agregar este par de tokens ERC-20 a la lista de tokens aprobados de Hemi, <link>haz una solicitud</link>.",
     "see-on-explorer": "Ver en {explorer}",
-    "subheading": "Necesitas ingresar el par de direcciones de contrato tanto de Ethereum como de Hemi para tunelear con este token."
+    "subheading": "Necesitas ingresar el par de direcciones de contrato tanto de Ethereum como de Hemi para tunelear con este token.",
+    "this-address-is-not-valid": "Esta dirección es inválida",
+    "this-address-is-valid": "Esta dirección es válida"
   },
   "token-selector": {
     "manually-added-tokens": "Tokens agregados manualmente",
@@ -285,6 +309,7 @@
       "challenge-to-get-bitcoins-back": "Haga clic en 'Disputar Retiro' para reclamar su BTC y enviarlo de vuelta a su dirección de Hemi.",
       "challenge-withdrawal": "Disputar Retiro",
       "claim-withdrawal": "Reclamar retiro",
+      "heading": "Revisar Retiro",
       "initiate-withdrawal": "Iniciar retiro",
       "prove-withdrawal": "Probar retiro",
       "we-could-not-process-this-withdraw": "No pudimos procesar este retiro",
@@ -295,12 +320,21 @@
     "submit-button": {
       "approve-and-deposit": "Aprobar y Depositar",
       "approving": "Aprobando...",
+      "challenge-withdrawal": "Disputar Retiro",
+      "challenging": "Disputando...",
+      "claim-withdrawal": "Reclamar Retiro",
+      "claiming-withdrawal": "Reclamando Retiro",
+      "confirming-deposit-manually": "Confirmando depósito manualmente...",
+      "confirm-deposit-manually": "Confirmar depósito manualmente",
       "connect-both-wallets": "Conecte sus billeteras BTC y EVM",
       "connect-btc-wallet": "Conecte su billetera BTC",
       "connect-evm-wallet": "Conecte su billetera EVM",
       "deposit": "Depositar",
       "depositing": "Depositando...",
       "initiate-withdrawal": "Iniciar Retiro",
+      "prove-withdrawal": "Probar retiro",
+      "proving-withdrawal": "Probando...",
+      "try-again": "Intentar de nuevo",
       "withdrawing": "Retirando..."
     },
     "title": "Túnel",
@@ -322,6 +356,7 @@
         "tx-hash": "Hash de la Tx",
         "type": "Tipo"
       },
+      "deposit": "Depósito",
       "no-transactions": "No se han realizado transacciones",
       "no-transactions-get-started": "Comience tunelizando activos desde y hacia hemi.",
       "subtitle": "Vea y revise su historial de transacciones en Hemi",
@@ -332,17 +367,49 @@
         "ethereum": "Ethereum",
         "recent-transactions": "Transacciones Recientes"
       },
-      "tunnel-assets": "Tunelizar activos"
+      "filters": {
+        "actions": {
+          "all": "Todas las Acciones",
+          "pending": "Acciones Pendientes"
+        },
+        "types": {
+          "all": "Todos",
+          "deposits": "Depósitos",
+          "withdrawals": "Retiros"
+        }
+      },
+      "tunnel-assets": "Tunelizar activos",
+      "withdraw": "Retiro"
     },
     "transaction-status": {
-      "see-on-explorer": "Ver en {explorer}"
+      "claiming-deposit": "Reclamando Depósito",
+      "claiming-withdrawal": "Reclamando Retiro",
+      "deposit-claimed": "Depósito Reclamado",
+      "deposited": "{fromInput} {symbol} depositado",
+      "depositing": "Depositando {fromInput} {symbol}",
+      "erc20-approved": "{symbol} aprobado",
+      "erc20-approving": "Aprobando {symbol}",
+      "proving-withdrawal": "Probando retiro",
+      "see-on-explorer": "Ver en {explorer}",
+      "withdrawal-claimed": "Retiro Reclamado",
+      "withdrawal-proved": "Retiro probado",
+      "withdrawing": "Retirando {fromInput} {symbol}",
+      "withdrawn": "{fromInput} {symbol} retirado"
     },
     "tunnel-partners": {
+      "deposit": {
+        "heading": "Depositar {symbol}",
+        "subheading": "Para depositar {symbol}, será redirigido a uno de nuestros puentes asociados de confianza. Elija un puente a continuación para continuar."
+      },
       "description": "Una vez seleccionado, será redirigido para completar su depósito. Para asistencia, contacte directamente al puente asociado.",
       "hemi-bears-no-responsibility": "Hemi no se responsabiliza por su operación.",
       "tunnel-with-our-partners": "Tunelizar con nuestros socios",
       "tunnel-with-stargate": "Tunelizar con nuestro socio Stargate",
-      "use-at-your-own-risk": "Use los puentes de socios bajo su propio riesgo"
+      "use-at-your-own-risk": "Use los puentes de socios bajo su propio riesgo",
+      "withdraw": {
+        "heading": "Retirar {symbol}",
+        "subheading": "Para retirar {symbol}, será redirigido a uno de nuestros puentes asociados de confianza. Elija un puente a continuación para continuar."
+      }
     }
   }
 }

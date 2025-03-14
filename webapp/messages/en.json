@@ -4,10 +4,13 @@
     "added": "Added",
     "amount": "Amount",
     "approving": "Approving...",
+    "approving-token": "Approving {symbol}",
     "connect-to-network": "Connect to {network}",
     "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",
     "connect-wallets": "Connect Wallets",
+    "copied": "Copied",
+    "copy": "Copy",
     "erc20-approve-10x-deposits": "Approve 10x the amount of this deposit",
     "erc20-approve-10x-detailed-description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
     "erc20-extra-approval": "Approve 10x deposits",
@@ -54,7 +57,12 @@
     "disconnect": "Disconnect",
     "evm-wallet": "EVM Wallet",
     "how-to-create-unisat-wallet": "How to create a Unisat wallet",
-    "status": {},
+    "status": {
+      "connected": "Connected",
+      "connecting": "Connecting",
+      "disconnected": "Disconnected",
+      "reconnecting": "Reconnecting"
+    },
     "unisat-is-the-only-supported-wallet": {
       "first-line": "UniSat is currently the only BTC supported wallet.",
       "second-line": "Use all other BTC wallets at your own risk."
@@ -98,6 +106,8 @@
       "automatic": "Automatic",
       "manual": "Manual"
     },
+    "add-networks-mainnet": "Add Hemi to your wallet.",
+    "add-networks-testnet": "Add Ethereum Sepolia & Hemi testnet to your wallet.",
     "add-networks-to-wallet": "Add networks to your wallet",
     "add-to-wallet": "Add to wallet",
     "bitcoin-faucet": "Bitcoin Faucet",
@@ -111,6 +121,8 @@
     "get-testnet-tokens": "Get testnet tokens",
     "header": {},
     "heading": "Get started on Hemi",
+    "here-are-some-options-mainnet": "Here are some DEXs you might want to explore.",
+    "here-are-some-options-testnet": "Here are some faucets you might want to explore.",
     "layer": "Layer {layer}",
     "learn-about-tunneling": "Learn about tunneling assets to and from Hemi.",
     "learn-more-about-hemi": "Learn more about Hemi",
@@ -147,6 +159,8 @@
     "subheading": "One network, powered by Bitcoin & Ethereum.",
     "sushi-swap": "Sushi Swap",
     "swap-tokens": "Swap tokens",
+    "swap-tokens-mainnet": "Swap tokens on Sushi",
+    "swap-tokens-testnet": "Swap tokens on Hemi",
     "tunnel-assets": "Tunnel assets",
     "tutorials": "Tutorials",
     "tutorials-and-tools": "Tutorials and tools to get you started quickly.",
@@ -201,7 +215,12 @@
       "unwrap": "Unwrap",
       "you-can-unstake-anytime": "You can unstake any time and keep the points already earned."
     },
-    "points": {},
+    "points": {
+      "diamonds": "Diamonds",
+      "points": "Points",
+      "x2-babypie-jewels": "x2 Babypie Jewels",
+      "x2-eigenpie-points": "x2 Eigenpie Points"
+    },
     "protocol": "Protocol",
     "rewards": "Rewards",
     "stake": {
@@ -213,8 +232,10 @@
     },
     "toast": {
       "go-staking-dashboard": "View your staking dashboard",
-      "here-your-stake-tx": "Here's your {type} transaction:",
+      "here-your-stake-tx": "Here’s your {type} transaction:",
+      "staking": "staking",
       "staking-successful": "Staking successful",
+      "unstaking": "unstaking",
       "unstaking-successful": "Unstaking successful"
     },
     "wallet-balance": "Wallet balance"
@@ -224,12 +245,15 @@
     "add-this-pair": "Add this pair to Hemi's token list for everyone to tunnel",
     "add-token": "Add token",
     "add-token-on-chain": "Add the token contract address on the {network} network",
+    "address-does-not-match-l2": "Doesn't match the L1 pair",
     "heading": "Tunnel an existing ERC-20 token",
     "i-am-sure-to-tunnel": "I'm sure I want to tunnel with this token.",
     "layer-token-address": "Layer {layer} token address",
     "make-a-request-to-add": "If you'd like to add this ERC-20 token pair to Hemi's approved tokens list, <link>make a request</link>.",
     "see-on-explorer": "See on {explorer}",
-    "subheading": "You need to input the pair of contract addresses from both Ethereum and Hemi to tunnel with this token."
+    "subheading": "You need to input the pair of contract addresses from both Ethereum and Hemi to tunnel with this token.",
+    "this-address-is-not-valid": "This address is not valid",
+    "this-address-is-valid": "This address is valid"
   },
   "token-selector": {
     "manually-added-tokens": "Manually added tokens",
@@ -284,6 +308,7 @@
       "challenge-to-get-bitcoins-back": "Click 'Challenge withdrawal' to reclaim your BTC and send it back to your Hemi address.",
       "challenge-withdrawal": "Challenge Withdrawal",
       "claim-withdrawal": "Claim withdrawal",
+      "heading": "Review Withdrawal",
       "initiate-withdrawal": "Initiate withdrawal",
       "prove-withdrawal": "Prove withdrawal",
       "we-could-not-process-this-withdraw": "We couldn't process this withdrawal",
@@ -294,12 +319,21 @@
     "submit-button": {
       "approve-and-deposit": "Approve and Deposit",
       "approving": "Approving...",
+      "challenge-withdrawal": "Challenge Withdrawal",
+      "challenging": "Challenging...",
+      "claim-withdrawal": "Claim Withdrawal",
+      "claiming-withdrawal": "Claiming Withdrawal",
+      "confirming-deposit-manually": "Confirming deposit manually...",
+      "confirm-deposit-manually": "Confirm deposit manually",
       "connect-both-wallets": "Connect your BTC and EVM wallets",
       "connect-btc-wallet": "Connect your BTC wallet",
       "connect-evm-wallet": "Connect your EVM Wallet",
       "deposit": "Deposit",
       "depositing": "Depositing...",
       "initiate-withdrawal": "Initiate Withdrawal",
+      "prove-withdrawal": "Prove withdrawal",
+      "proving-withdrawal": "Proving...",
+      "try-again": "Try again",
       "withdrawing": "Withdrawing..."
     },
     "title": "Tunnel",
@@ -321,6 +355,7 @@
         "tx-hash": "Tx Hash",
         "type": "Type"
       },
+      "deposit": "Deposit",
       "no-transactions": "No transactions made",
       "no-transactions-get-started": "Get started by tunneling assets from and to hemi",
       "subtitle": "View and track your Hemi transaction history",
@@ -331,17 +366,49 @@
         "ethereum": "Ethereum",
         "recent-transactions": "Recent Transactions"
       },
-      "tunnel-assets": "Tunnel assets"
+      "filters": {
+        "actions": {
+          "all": "All actions",
+          "pending": "Pending actions"
+        },
+        "types": {
+          "all": "All",
+          "deposits": "Deposits",
+          "withdrawals": "Withdrawals"
+        }
+      },
+      "tunnel-assets": "Tunnel assets",
+      "withdraw": "Withdraw"
     },
     "transaction-status": {
-      "see-on-explorer": "See on {explorer}"
+      "claiming-deposit": "Claiming Deposit",
+      "claiming-withdrawal": "Claiming Withdrawal",
+      "deposit-claimed": "Deposit Claimed",
+      "deposited": "{fromInput} {symbol} deposited",
+      "depositing": "Depositing {fromInput} {symbol}",
+      "erc20-approved": "{symbol} approved",
+      "erc20-approving": "Approving {symbol}",
+      "proving-withdrawal": "Proving withdrawal",
+      "see-on-explorer": "See on {explorer}",
+      "withdrawal-claimed": "Withdrawal claimed",
+      "withdrawal-proved": "Withdrawal proved",
+      "withdrawing": "Withdrawing {fromInput} {symbol}",
+      "withdrawn": "{fromInput} {symbol} withdrawn"
     },
     "tunnel-partners": {
+      "deposit": {
+        "heading": "Deposit {symbol}",
+        "subheading": "To deposit {symbol}, you’ll be redirected to one of our trusted partner bridges. Choose a bridge below to continue."
+      },
       "description": "Once selected, you'll be redirected to complete your deposit. For assistance, contact the partner bridge directly.",
       "hemi-bears-no-responsibility": "Hemi bears no responsibility for their operation.",
       "tunnel-with-our-partners": "Tunnel with our partners",
       "tunnel-with-stargate": "Tunnel with our partner Stargate",
-      "use-at-your-own-risk": "Use partner bridges at your own risk"
+      "use-at-your-own-risk": "Use partner bridges at your own risk",
+      "withdraw": {
+        "heading": "Withdraw {symbol}",
+        "subheading": "To withdraw {symbol}, you’ll be redirected to one of our trusted partner bridges. Choose a bridge below to continue."
+      }
     }
   }
 }

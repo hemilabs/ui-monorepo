@@ -1,7 +1,6 @@
 {
   "common": {
     "add": "Agregar",
-    "add-hemi-to-wallet": "Añadir Hemi a su billetera",
     "added": "Agregada",
     "amount": "Monto",
     "approving": "Aprobando...",
@@ -10,7 +9,6 @@
     "connect-to-supported-network": "Conectarse a una red soportada",
     "connect-wallet": "Conectar Billetera",
     "connect-wallets": "Conectar Billeteras",
-    "connect-your-wallet": "Conecte su Billetera",
     "copied": "Copiado",
     "copy": "Copiar",
     "erc20-approve-10x-deposits": "Aprobar 10x el monto de este depósito",
@@ -24,11 +22,9 @@
     "network-does-not-match": "Esta red no coincide con la seleccionada en su billetera.",
     "network-gas-fee": "Tarifa de gas de {network}",
     "open": "Abrir",
-    "select-network": "Seleccione Red",
     "stake": "Apostar",
     "start-using-mainnet": "Usar Mainnet",
     "success": "Exitoso",
-    "swap": "Intercambiar",
     "switch-to-network": "Cambiar a {network}",
     "total": "Total",
     "total-amount": "Monto Total",
@@ -42,8 +38,6 @@
     "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
     "unstake": "Desbloquear",
     "unsupported-chain-heading": "Usted no se encuentra conectado a una red soportada",
-    "view": "Ver",
-    "wait-complete": "Espera completada",
     "wait-hours": "Espere hasta {hours} horas",
     "wait-minutes": "Espere hasta {minutes} minutos",
     "wallets-connected": "{count} {count, plural, =1 {Billetera Conectada} other {Billeteras Conectadas}} ",
@@ -125,10 +119,6 @@
     "ethereum-faucet": "Faucet de Ethereum",
     "fund-your-wallets": "Fondee sus billeteras",
     "get-testnet-tokens": "Obtenga tokens de testnet",
-    "header": {
-      "documentation": "Documentación",
-      "network": "Red"
-    },
     "heading": "Comience con Hemi",
     "here-are-some-options-mainnet": "Aquí hay algunos Exchanges Descentralizados que podría explorar.",
     "here-are-some-options-testnet": "Aquí hay algunos faucets que podría explorar.",
@@ -175,15 +165,6 @@
     "tutorials-and-tools": "Tutoriales y herramientas para comenzar rápidamente.",
     "tutorials-subheading": "Siga algunos de los tutoriales para tomar ventaja al construir tu primer proyecto con Hemi."
   },
-  "get-started-page": {
-    "heading": "Comience con Hemi",
-    "options": {
-      "developer": "Soy Desarrollador",
-      "explorer": "Soy un Explorador",
-      "miner": "Soy Minero"
-    },
-    "sub-heading": "Para comenzar, seleccione una de las siguientes opciones"
-  },
   "metadata": {
     "title": "Portal de Hemi"
   },
@@ -205,11 +186,7 @@
     "asset": "Activo",
     "change-to-mainnet": "Cambie a Mainnet y apueste",
     "dashboard": {
-      "asset": "Activo",
       "coming-soon": "Próximamente",
-      "protocol": "Protocolo",
-      "rewards": "Recompensas",
-      "stake": "Apuesta",
       "staked": "Apostado",
       "stake-more": "Apuesta más",
       "staking-assets": "Activos en apuesta",
@@ -252,7 +229,6 @@
       "learn-how-to-stake-on-hemi": "Aprenda como apostar en Hemi",
       "new-here": "¿Nuevo aquí?",
       "strategy": "Estrategia",
-      "subtitle": "Apueste activos para ganar puntos y recompensas.",
       "title": "Apostar"
     },
     "toast": {
@@ -301,7 +277,6 @@
     "withdrawal-challenged": "Retiro desafiado"
   },
   "tunnel-page": {
-    "connect-wallet-to-review": "Conecte su billetera para continuar la operación.",
     "form": {
       "balance": "Balance",
       "bitcoin-receiving-address": "Dirección de recepción en Bitcoin",
@@ -314,7 +289,6 @@
       "min-withdrawal": "El retiro mínimo es {amount} {symbol}",
       "receive": "Recibir",
       "send": "Enviar",
-      "switch-to-prove": "Cambie a {network} para completar la transacción",
       "to-network": "Hacia la Red"
     },
     "review-deposit": {
@@ -322,16 +296,13 @@
       "approve-initiated": "Aprobación iniciada",
       "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de {hours} horas regrese a esta pagina para reclamarlo manualmente.",
       "deposit-completed": "Depósito completado",
-      "click-to-confirm": "Haga clic en ’Confirmar Depósito Manualmente’ para depositar su Bitcoin en Hemi.",
+      "click-to-confirm": "Haga clic en 'Confirmar Depósito Manualmente' para depositar su Bitcoin en Hemi.",
       "confirm-deposit": "Confirmar depósito",
       "deposit-finalized": "Depósito finalizado",
       "deposit-on-its-way": "¡Su depósito está en camino! Por favor espere mientras la blockchain confirma la transacción.",
-      "heading": "Revisar Depósito",
       "initiate-deposit": "Iniciar depósito",
       "review-deposit": "Revisar Depósito",
-      "wait-for-confirmation": "Espere por la confirmación en Hemi",
       "we-could-not-process-this-deposit": "No pudimos procesar su depósito automáticamente",
-      "you-are-depositing": "Usted está depositando",
       "your-deposit-is-complete": "Su depósito ha sido completado"
     },
     "review-withdrawal": {
@@ -341,8 +312,6 @@
       "heading": "Revisar Retiro",
       "initiate-withdrawal": "Iniciar retiro",
       "prove-withdrawal": "Probar retiro",
-      "total-to-withdraw": "Total a retirar",
-      "view-tx": "Ver",
       "we-could-not-process-this-withdraw": "No pudimos procesar este retiro",
       "withdraw-completed": "Retiro completado",
       "withdraw-on-its-way": "¡Ya falta poco! Complete el resto de los pasos para reclamar su retiro.",

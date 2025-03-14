@@ -119,7 +119,6 @@
     "ethereum-faucet": "Ethereum Faucet",
     "fund-your-wallets": "Fund your wallets",
     "get-testnet-tokens": "Get testnet tokens",
-    "header": {},
     "heading": "Get started on Hemi",
     "here-are-some-options-mainnet": "Here are some DEXs you might want to explore.",
     "here-are-some-options-testnet": "Here are some faucets you might want to explore.",
@@ -166,7 +165,6 @@
     "tutorials-and-tools": "Tutorials and tools to get you started quickly.",
     "tutorials-subheading": "Follow along with some of the tutorials to help you get a head start when building your first Hemi project."
   },
-  "get-started-page": {},
   "navbar": {
     "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
     "bitcoinkit": "Hemi Bitcoin Kit",

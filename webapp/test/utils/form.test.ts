@@ -46,4 +46,14 @@ describe('sanitizeAmount', function () {
     const result = sanitizeAmount('00.123')
     expect(result).toEqual({ value: '0.123' })
   })
+
+  it('should return 0.123 if input is "0.123 " (Trailing spaces)', function () {
+    const result = sanitizeAmount('0.123   ')
+    expect(result).toEqual({ value: '0.123' })
+  })
+
+  it('should return 0.123 if input is " 0.123 " (Leading spaces)', function () {
+    const result = sanitizeAmount('    0.123')
+    expect(result).toEqual({ value: '0.123' })
+  })
 })

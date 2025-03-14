@@ -1,10 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { useAllowance } from 'hooks/useAllowance'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { type EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
 import { Hash } from 'viem'
 import { useAccount } from 'wagmi'
-import { useAllowance, useApprove } from 'wagmi-erc20-hooks'
+import { useApprove } from 'wagmi-erc20-hooks'
 
 export const useApproveToken = function (
   token: EvmToken,

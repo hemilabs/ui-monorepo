@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query'
+import { useAllowance } from 'hooks/useAllowance'
 import { useHemi } from 'hooks/useHemi'
 import { useDepositErc20Token } from 'hooks/useL2Bridge'
 import { useEffect } from 'react'
@@ -10,7 +11,6 @@ import {
   useSimulateContract,
   useWaitForTransactionReceipt,
 } from 'wagmi'
-import { useAllowance } from 'wagmi-erc20-hooks'
 
 import { useApproveToken } from './useApproveToken'
 

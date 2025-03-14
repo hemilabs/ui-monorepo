@@ -2,7 +2,7 @@
 
 import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
-import { CustomTunnelsThroughPartner } from 'components/customTunnelsThroughPartner'
+import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPartners'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
-import { tunnelsThroughPartner } from 'utils/token'
+import { tunnelsThroughPartners } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
@@ -243,7 +243,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   }
 
   const getSubmitButton = function () {
-    if (tunnelsThroughPartner(fromToken)) {
+    if (tunnelsThroughPartners(fromToken)) {
       return (
         <Button onClick={() => setIsPartnersDrawerOpen(true)} type="button">
           {t('tunnel-page.tunnel-partners.tunnel-with-our-partners')}
@@ -317,7 +317,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
                 if (isNativeToken(from)) {
                   setExtendedErc20Approval(false)
                 }
-                if (tunnelsThroughPartner(from)) {
+                if (tunnelsThroughPartners(from)) {
                   setIsPartnersDrawerOpen(true)
                 }
                 state.updateFromToken(from, to)
@@ -329,7 +329,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
         submitButton={getSubmitButton()}
       />
       {isPartnersDrawerOpen && (
-        <CustomTunnelsThroughPartner
+        <CustomTunnelsThroughPartners
           fromToken={fromToken}
           onClose={() => setIsPartnersDrawerOpen(false)}
           operation="deposit"

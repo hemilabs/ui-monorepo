@@ -3,6 +3,7 @@ import { WarningBox } from 'components/warningBox'
 import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
 
+import { Meson } from './meson'
 import { Stargate } from './stargate'
 
 type Props = {
@@ -12,7 +13,7 @@ type Props = {
   toToken: Token
 }
 
-export const CustomTunnelsThroughPartner = function ({
+export const CustomTunnelsThroughPartners = function ({
   fromToken,
   onClose,
   operation,
@@ -32,8 +33,9 @@ export const CustomTunnelsThroughPartner = function ({
             {t(`${operation}.subheading`, { symbol: fromToken.symbol })}
           </DrawerParagraph>
         </div>
-        <div>
+        <div className="space-y-4">
           <Stargate fromToken={fromToken} toToken={toToken} />
+          <Meson />
         </div>
         <p className="mb-3 text-sm font-medium text-zinc-500">
           {t('description')}

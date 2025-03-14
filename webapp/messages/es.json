@@ -165,6 +165,9 @@
     "tutorials-and-tools": "Tutoriales y herramientas para comenzar rápidamente.",
     "tutorials-subheading": "Siga algunos de los tutoriales para tomar ventaja al construir tu primer proyecto con Hemi."
   },
+  "metadata": {
+    "title": "Portal de Hemi"
+  },
   "navbar": {
     "agree-to-terms-and-policy": "Al usar esta aplicación, usted acepta los <terms>Términos de Uso</terms> y la <policy>Política de Privacidad</policy>",
     "bitcoinkit": "Kit de Hemi Bitcoin",

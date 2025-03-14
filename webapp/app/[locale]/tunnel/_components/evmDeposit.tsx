@@ -15,7 +15,6 @@ import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { getTunnelContracts } from 'utils/crossChainMessenger'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
-import { isNativeAddress } from 'utils/nativeToken'
 import { tunnelsThroughPartner } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
@@ -138,9 +137,6 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       args: {
         owner: address,
         spender: l1StandardBridgeAddress,
-      },
-      query: {
-        enabled: !isNativeAddress(fromToken.address),
       },
     },
   )

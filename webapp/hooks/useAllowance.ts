@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { isNativeAddress } from 'utils/nativeToken'
 import { type Address, type ContractFunctionArgs, erc20Abi } from 'viem'
 import { type UseReadContractParameters, useReadContract } from 'wagmi'
 
@@ -17,8 +18,16 @@ export const useAllowance = (
   { args: { owner, spender }, query }: Options,
 ) =>
   useReadContract({
+    abi: erc20Abi,
     address: erc20Address,
     args: useMemo(() => [owner, spender], [owner, spender]),
     functionName: 'allowance',
-    query,
+    query: {
+      ...query,
+      enabled:
+        !isNativeAddress(erc20Address) &&
+        !!owner &&
+        !!spender &&
+        query?.enabled !== false,
+    },
   })

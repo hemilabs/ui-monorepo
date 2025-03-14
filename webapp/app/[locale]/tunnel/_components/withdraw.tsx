@@ -3,7 +3,7 @@
 import { useUmami } from 'app/analyticsEvents'
 import { Big } from 'big.js'
 import { Button } from 'components/button'
-import { CustomTunnelsThroughPartner } from 'components/customTunnelsThroughPartner'
+import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPartners'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
@@ -21,7 +21,7 @@ import { Token } from 'types/token'
 import { isEvmNetwork } from 'utils/chain'
 import { formatBtcAddress } from 'utils/format'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
-import { tunnelsThroughPartner } from 'utils/token'
+import { tunnelsThroughPartners } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -352,7 +352,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       })
 
   const getSubmitButton = function () {
-    if (tunnelsThroughPartner(fromToken)) {
+    if (tunnelsThroughPartners(fromToken)) {
       return (
         <Button onClick={() => setIsPartnersDrawerOpen(true)} type="button">
           {t('tunnel-page.tunnel-partners.tunnel-with-our-partners')}
@@ -403,7 +403,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             tunnelState={{
               ...state,
               updateFromToken(from, to) {
-                if (tunnelsThroughPartner(from)) {
+                if (tunnelsThroughPartners(from)) {
                   setIsPartnersDrawerOpen(true)
                 }
                 state.updateFromToken(from, to)
@@ -415,7 +415,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
         submitButton={getSubmitButton()}
       />
       {isPartnersDrawerOpen && (
-        <CustomTunnelsThroughPartner
+        <CustomTunnelsThroughPartners
           fromToken={fromToken}
           onClose={() => setIsPartnersDrawerOpen(false)}
           operation="withdraw"

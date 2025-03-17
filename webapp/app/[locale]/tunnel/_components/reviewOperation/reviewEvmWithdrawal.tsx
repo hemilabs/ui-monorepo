@@ -26,7 +26,7 @@ import { RetryEvmWithdrawal } from '../retryEvmWithdrawal'
 import { Operation } from './operation'
 
 const ExpectedWithdrawalWaitTimeMinutesTestnet = 20
-const ExpectedWithdrawalWaitTimeMinutesMainnet = 30
+const ExpectedWithdrawalWaitTimeMinutesMainnet = 40
 const ExpectedProofWaitTimeHoursTestnet = 3
 const ExpectedProofWaitTimeHoursMainnet = 24
 

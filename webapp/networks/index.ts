@@ -1,6 +1,5 @@
 'use client'
 
-import { featureFlags } from 'app/featureFlags'
 import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
@@ -24,7 +23,8 @@ export const allEvmNetworks: OrderedChains = [
   ...mainnetEvmRemoteNetworks,
 ]
 
-export const allNetworks: RemoteChain[] = allEvmNetworks.concat(
-  //@ts-expect-error .concat() automatically casts the result type to evmNetworks' type.
-  featureFlags.btcTunnelEnabled ? [bitcoinTestnet, bitcoinMainnet] : [],
-)
+//@ts-expect-error .concat() automatically casts the result type to evmNetworks' type.
+export const allNetworks: RemoteChain[] = allEvmNetworks.concat([
+  bitcoinTestnet,
+  bitcoinMainnet,
+])

@@ -299,7 +299,7 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
       addWithdrawalToTunnelHistory: (withdrawal: WithdrawTunnelOperation) =>
         dispatch({ payload: withdrawal, type: 'add-withdraw' }),
       deposits: history.deposits
-        .filter(d => featureFlags.btcTunnelEnabled || d.chainId !== bitcoin.id)
+        .filter(d => d.chainId !== bitcoin.id)
         .flatMap(d => d.content),
       resyncHistory: () => setForceResync(true),
       syncStatus: history.status,
@@ -320,7 +320,7 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
           type: 'update-withdraw',
         }),
       withdrawals: history.withdrawals
-        .filter(w => featureFlags.btcTunnelEnabled || w.chainId !== bitcoin.id)
+        .filter(w => w.chainId !== bitcoin.id)
         .flatMap(w => w.content),
     }),
     [bitcoin.id, dispatch, history],

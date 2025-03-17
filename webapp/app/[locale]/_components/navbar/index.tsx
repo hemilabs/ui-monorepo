@@ -147,11 +147,9 @@ export const Navbar = function () {
               text={t('hemidocs')}
             />
           </li>
-          {featureFlags.mainnetEnabled && (
-            <li className="md:order-13 order-12">
-              <NetworkSwitch />
-            </li>
-          )}
+          <li className="md:order-13 order-12">
+            <NetworkSwitch />
+          </li>
           <li className="hidden md:order-10 md:block">
             <GetStarted />
           </li>

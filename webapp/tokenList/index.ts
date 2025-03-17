@@ -1,5 +1,4 @@
 import hemilabsTokenList from '@hemilabs/token-list'
-import { featureFlags } from 'app/featureFlags'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { type RemoteChain } from 'types/chain'
@@ -59,11 +58,7 @@ export const getRemoteTokens = function (token: EvmToken) {
 const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[])
   .filter(t => t.chainId === hemiMainnet.id || t.chainId === hemiTestnet.id)
   // TODO the following line once bitcoin is enabled https://github.com/hemilabs/ui-monorepo/issues/738
-  .filter(
-    t =>
-      (t.symbol !== 'hemiBTC' && t.symbol !== 'tBTC') ||
-      featureFlags.btcTunnelEnabled,
-  )
+  .filter(t => t.symbol !== 'hemiBTC' && t.symbol !== 'tBTC')
 
 // the hemiTokens only contains definitions for Hemi tokens, but we can create the L1 version with the extensions field info
 const tokens: Token[] = hemiTokens.concat(hemiTokens.flatMap(getRemoteTokens))

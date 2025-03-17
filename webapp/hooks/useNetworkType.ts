@@ -1,4 +1,3 @@
-import { featureFlags } from 'app/featureFlags'
 import { useQueryState, parseAsStringLiteral } from 'nuqs'
 
 // Once mainnet goes live, default should be changed to mainnet
@@ -6,14 +5,10 @@ import { useQueryState, parseAsStringLiteral } from 'nuqs'
 export const networkTypes = ['mainnet', 'testnet'] as const
 export type NetworkType = (typeof networkTypes)[number]
 
-export const defaultNetworkType = featureFlags.mainnetEnabled
-  ? 'mainnet'
-  : 'testnet'
+export const defaultNetworkType = 'mainnet'
 
 export const useNetworkType = () =>
   useQueryState(
     'networkType',
-    parseAsStringLiteral(
-      featureFlags.mainnetEnabled ? networkTypes : (['testnet'] as const),
-    ).withDefault(defaultNetworkType),
+    parseAsStringLiteral(networkTypes).withDefault(defaultNetworkType),
   )

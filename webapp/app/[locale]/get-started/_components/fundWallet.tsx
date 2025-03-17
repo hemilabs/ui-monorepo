@@ -1,5 +1,4 @@
 import { useUmami } from 'app/analyticsEvents'
-import { featureFlags } from 'app/featureFlags'
 import { ExternalLink } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -75,14 +74,12 @@ export const FundWallet = function () {
               name={t('ethereum-faucet')}
               url="https://sepolia-faucet.pk910.de"
             />
-            {featureFlags.btcTunnelEnabled && (
-              <FundMethod
-                event="bitcoin faucet"
-                icon={<BtcFaucetIcon />}
-                name={t('bitcoin-faucet')}
-                url="https://coinfaucet.eu/en/btc-testnet/"
-              />
-            )}
+            <FundMethod
+              event="bitcoin faucet"
+              icon={<BtcFaucetIcon />}
+              name={t('bitcoin-faucet')}
+              url="https://coinfaucet.eu/en/btc-testnet/"
+            />
           </>
         ) : (
           <>

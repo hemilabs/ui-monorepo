@@ -1,4 +1,3 @@
-import { featureFlags } from 'app/featureFlags'
 import { type BtcChain } from 'btc-wallet/chains'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useHemi } from 'hooks/useHemi'
@@ -160,9 +159,7 @@ const getDefaultNetworksOrder = function ({
     btcAlternative: Record<string, RemoteChain['id']>,
   ) =>
     // if no hash, hash is an EVM one, or btc are disabled, return EVM alternative
-    !txHash || isHash(txHash) || !featureFlags.btcTunnelEnabled
-      ? evmAlternative
-      : btcAlternative
+    !txHash || isHash(txHash) ? evmAlternative : btcAlternative
 
   if (!operation) {
     // no operation in query string, default to EVM deposit

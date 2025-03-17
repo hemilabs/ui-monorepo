@@ -1,6 +1,5 @@
 'use client'
 
-import { featureFlags } from 'app/featureFlags'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useSyncHistory } from 'hooks/useSyncHistory'
@@ -132,9 +131,9 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
   return (
     <TunnelHistoryContext.Provider value={context}>
       {/* Track updates on bitcoin deposits, in bitcoin or in Hemi */}
-      {featureFlags.btcTunnelEnabled && <BitcoinDepositsStatusUpdater />}
+      {<BitcoinDepositsStatusUpdater />}
       {/* Track updates on bitcoin withdrawals, from Hemi to Bitcoin */}
-      {featureFlags.btcTunnelEnabled && <BitcoinWithdrawalsStatusUpdater />}
+      {<BitcoinWithdrawalsStatusUpdater />}
       {/* Track updates on withdrawals from Hemi */}
       <WithdrawalsStateUpdater />
       {/* Track updates on deposits to Hemi, tracking any missing info */}

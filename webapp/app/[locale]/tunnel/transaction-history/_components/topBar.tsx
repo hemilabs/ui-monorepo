@@ -1,5 +1,4 @@
 import { useUmami } from 'app/analyticsEvents'
-import { featureFlags } from 'app/featureFlags'
 import { Tab, Tabs } from 'components/tabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
@@ -34,42 +33,40 @@ export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
       <div className="order-2 flex-grow basis-2/5 md:order-3 md:basis-auto">
         <TunnelHistorySyncStatus />
       </div>
-      {featureFlags.btcTunnelEnabled && (
-        <div className="order-4 ml-auto">
-          <Tabs>
-            <Tab
-              border
-              onClick={function () {
-                onFilterOptionChange({ ...filterOption, operation: 'all' })
-                track?.('txn filter - all', { chain: networkType })
-              }}
-              selected={filterOption.operation === 'all'}
-            >
-              {t('all')}
-            </Tab>
-            <Tab
-              border
-              onClick={function () {
-                onFilterOptionChange({ ...filterOption, operation: 'ethereum' })
-                track?.('txn filter - eth', { chain: networkType })
-              }}
-              selected={filterOption.operation === 'ethereum'}
-            >
-              {t('ethereum')}
-            </Tab>
-            <Tab
-              border
-              onClick={function () {
-                onFilterOptionChange({ ...filterOption, operation: 'bitcoin' })
-                track?.('txn filter - btc', { chain: networkType })
-              }}
-              selected={filterOption.operation === 'bitcoin'}
-            >
-              {t('bitcoin')}
-            </Tab>
-          </Tabs>
-        </div>
-      )}
+      <div className="order-4 ml-auto">
+        <Tabs>
+          <Tab
+            border
+            onClick={function () {
+              onFilterOptionChange({ ...filterOption, operation: 'all' })
+              track?.('txn filter - all', { chain: networkType })
+            }}
+            selected={filterOption.operation === 'all'}
+          >
+            {t('all')}
+          </Tab>
+          <Tab
+            border
+            onClick={function () {
+              onFilterOptionChange({ ...filterOption, operation: 'ethereum' })
+              track?.('txn filter - eth', { chain: networkType })
+            }}
+            selected={filterOption.operation === 'ethereum'}
+          >
+            {t('ethereum')}
+          </Tab>
+          <Tab
+            border
+            onClick={function () {
+              onFilterOptionChange({ ...filterOption, operation: 'bitcoin' })
+              track?.('txn filter - btc', { chain: networkType })
+            }}
+            selected={filterOption.operation === 'bitcoin'}
+          >
+            {t('bitcoin')}
+          </Tab>
+        </Tabs>
+      </div>
     </div>
   )
 }

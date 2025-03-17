@@ -21,8 +21,6 @@ NEXT_PUBLIC_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
 NEXT_PUBLIC_ANALYTICS_URL=<url> # Umami analytics URL
 NEXT_PUBLIC_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for Enabling the fallowing features
-NEXT_PUBLIC_FEATURE_FLAG_ENABLE_BTC_TUNNEL=<true|false> # Enable BTC tunnel
-NEXT_PUBLIC_FEATURE_FLAG_ENABLE_MAINNET=<true|false> # Enable mainnet network
 NEXT_PUBLIC_FEATURE_FLAG_ENABLE_STAKE_CAMPAIGN=<true|false> # Enable Stake Campaign
 NEXT_PUBLIC_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
 # Bitcoin configuring

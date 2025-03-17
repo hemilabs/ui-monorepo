@@ -1,4 +1,3 @@
-import { featureFlags } from 'app/featureFlags'
 import { isL2NetworkId } from 'utils/chain'
 
 import { useAccounts } from './useAccounts'
@@ -27,7 +26,7 @@ export const useTunnelOperationByConnectedWallet = function () {
   }
   // here we are connected to hemi.
   // It means that the valid operations are either a withdraw, or a bitcoin deposit (if we're connected to a btc wallet)
-  if (!featureFlags.btcTunnelEnabled || bitcoin.id !== btcChainId) {
+  if (bitcoin.id !== btcChainId) {
     return { pathname: '/tunnel', query: { operation: 'withdraw' } }
   }
   return { pathname: '/tunnel', query: { operation: 'deposit' } }

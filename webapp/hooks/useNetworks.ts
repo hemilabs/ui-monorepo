@@ -1,4 +1,3 @@
-import { featureFlags } from 'app/featureFlags'
 import { mainnetEvmRemoteNetworks, testnetEvmRemoteNetworks } from 'networks'
 import { useMemo } from 'react'
 import { type OrderedChains, RemoteChain } from 'types/chain'
@@ -30,7 +29,7 @@ export const useNetworks = function () {
     () =>
       evmNetworks.concat(
         // @ts-expect-error .concat() automatically casts the result type to evmNetworks' type.
-        featureFlags.btcTunnelEnabled ? [bitcoin] : [],
+        [bitcoin],
       ),
     [bitcoin, evmNetworks],
   )
@@ -40,7 +39,7 @@ export const useNetworks = function () {
     () =>
       evmRemoteNetworks.concat(
         // @ts-expect-error .concat() automatically casts the result type to evmNetworks' type.
-        featureFlags.btcTunnelEnabled ? [bitcoin] : [],
+        [bitcoin],
       ),
     [bitcoin, evmRemoteNetworks],
   )

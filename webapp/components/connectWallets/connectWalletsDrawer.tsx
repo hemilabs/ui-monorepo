@@ -3,7 +3,6 @@ import {
   useChainModal,
   useConnectModal,
 } from '@rainbow-me/rainbowkit'
-import { featureFlags } from 'app/featureFlags'
 import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { ExternalLink } from 'components/externalLink'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -51,52 +50,41 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
             heading={t('common.connect-wallets')}
             onClose={closeDrawer}
           />
-          {featureFlags.btcTunnelEnabled ? (
-            <DrawerParagraph>
-              {t('connect-wallets.description')}
-            </DrawerParagraph>
-          ) : (
-            // Prevent layout shift when text is not shown
-            <div className="invisible min-w-[400px]"></div>
-          )}
+          <DrawerParagraph>{t('connect-wallets.description')}</DrawerParagraph>
           <div className="mb-3 mt-5">
             <EvmWallet />
           </div>
-          {featureFlags.btcTunnelEnabled && (
-            <>
-              <div className="flex flex-col items-center gap-y-3 rounded-2xl bg-neutral-50 px-1 pb-3 pt-1">
-                <BtcWallet />
-                <div
-                  className="shadow-soft mt-1 flex size-6 items-center justify-center rounded-full border
-              border-solid border-rose-100 bg-rose-50"
-                >
-                  <WarningIcon />
-                </div>
-                <div>
-                  <P>
-                    {t(
-                      'connect-wallets.unisat-is-the-only-supported-wallet.first-line',
-                    )}
-                  </P>
-                  <P>
-                    {t(
-                      'connect-wallets.unisat-is-the-only-supported-wallet.second-line',
-                    )}
-                  </P>
-                </div>
-                <ExternalLink
-                  className="rounded-md bg-neutral-100 px-2 py-1.5 text-center
-                    text-sm font-semibold text-neutral-600 hover:text-neutral-950"
-                  href="https://docs.hemi.xyz/how-to-tutorials/using-hemi/wallet-setup/btc-wallet-setup"
-                >
-                  {t('connect-wallets.how-to-create-unisat-wallet')}
-                </ExternalLink>
-              </div>
-              <DrawerParagraph>
-                {t('connect-wallets.btc-wallet-requirement')}
-              </DrawerParagraph>
-            </>
-          )}
+          <div className="flex flex-col items-center gap-y-3 rounded-2xl bg-neutral-50 px-1 pb-3 pt-1">
+            <BtcWallet />
+            <div
+              className="shadow-soft mt-1 flex size-6 items-center justify-center rounded-full border
+          border-solid border-rose-100 bg-rose-50"
+            >
+              <WarningIcon />
+            </div>
+            <div>
+              <P>
+                {t(
+                  'connect-wallets.unisat-is-the-only-supported-wallet.first-line',
+                )}
+              </P>
+              <P>
+                {t(
+                  'connect-wallets.unisat-is-the-only-supported-wallet.second-line',
+                )}
+              </P>
+            </div>
+            <ExternalLink
+              className="rounded-md bg-neutral-100 px-2 py-1.5 text-center
+                text-sm font-semibold text-neutral-600 hover:text-neutral-950"
+              href="https://docs.hemi.xyz/how-to-tutorials/using-hemi/wallet-setup/btc-wallet-setup"
+            >
+              {t('connect-wallets.how-to-create-unisat-wallet')}
+            </ExternalLink>
+          </div>
+          <DrawerParagraph>
+            {t('connect-wallets.btc-wallet-requirement')}
+          </DrawerParagraph>
         </div>
       </div>
     </Drawer>

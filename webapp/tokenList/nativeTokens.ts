@@ -1,5 +1,4 @@
 import hemilabsTokenList from '@hemilabs/token-list'
-import { featureFlags } from 'app/featureFlags'
 import {
   bitcoinTestnet,
   bitcoinMainnet,
@@ -82,50 +81,48 @@ const nativeTokens: Token[] = [
   },
 ]
 
-if (featureFlags.btcTunnelEnabled) {
-  const addBitcoinTokens = function ({
-    btcChain,
-    hemiBtcAddress,
-    hemiChain,
-  }: {
-    btcChain: BtcChain
-    hemiBtcAddress: Address
-    hemiChain: Chain
-  }) {
-    const btcToken = hemilabsTokenList.tokens.find(
-      t => t.chainId === hemiChain.id && t.address === hemiBtcAddress,
-    )
+const addBitcoinTokens = function ({
+  btcChain,
+  hemiBtcAddress,
+  hemiChain,
+}: {
+  btcChain: BtcChain
+  hemiBtcAddress: Address
+  hemiChain: Chain
+}) {
+  const btcToken = hemilabsTokenList.tokens.find(
+    t => t.chainId === hemiChain.id && t.address === hemiBtcAddress,
+  )
 
-    nativeTokens.push({
-      address: btcChain.nativeCurrency.symbol,
-      chainId: btcChain.id,
-      decimals: btcChain.nativeCurrency.decimals,
-      extensions: {
-        bridgeInfo: {
-          [hemiChain.id]: {
-            tokenAddress: hemiBtcAddress,
-          },
+  nativeTokens.push({
+    address: btcChain.nativeCurrency.symbol,
+    chainId: btcChain.id,
+    decimals: btcChain.nativeCurrency.decimals,
+    extensions: {
+      bridgeInfo: {
+        [hemiChain.id]: {
+          tokenAddress: hemiBtcAddress,
         },
       },
-      logoURI: btcToken.logoURI,
-      name: btcChain.name,
-      symbol: btcChain.nativeCurrency.symbol,
-    })
-  }
-
-  addBitcoinTokens({
-    btcChain: bitcoinTestnet,
-    hemiBtcAddress:
-      '0x36Ab5Dba83d5d470F670BC4c06d7Da685d9afAe7' satisfies Address,
-    hemiChain: hemiTestnet,
-  })
-
-  addBitcoinTokens({
-    btcChain: bitcoinMainnet,
-    hemiBtcAddress:
-      '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28' satisfies Address,
-    hemiChain: hemiMainnet,
+    },
+    logoURI: btcToken.logoURI,
+    name: btcChain.name,
+    symbol: btcChain.nativeCurrency.symbol,
   })
 }
+
+addBitcoinTokens({
+  btcChain: bitcoinTestnet,
+  hemiBtcAddress:
+    '0x36Ab5Dba83d5d470F670BC4c06d7Da685d9afAe7' satisfies Address,
+  hemiChain: hemiTestnet,
+})
+
+addBitcoinTokens({
+  btcChain: bitcoinMainnet,
+  hemiBtcAddress:
+    '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28' satisfies Address,
+  hemiChain: hemiMainnet,
+})
 
 export { nativeTokens }

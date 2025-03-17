@@ -1,4 +1,3 @@
-import { featureFlags } from 'app/featureFlags'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -42,7 +41,7 @@ export const WalletConnection = function () {
   if (walletIsConnected(evmStatus)) {
     walletsConnected.push({ icon: <MetamaskLogo /> })
   }
-  if (featureFlags.btcTunnelEnabled && walletIsConnected(btcStatus)) {
+  if (walletIsConnected(btcStatus)) {
     walletsConnected.push({ icon: <UnisatLogo /> })
   }
 

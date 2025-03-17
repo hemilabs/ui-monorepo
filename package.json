@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
     "postinstall": "patch-package",
     "lint": "eslint --cache .",
     "prepare": "husky"

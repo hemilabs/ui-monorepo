@@ -39,11 +39,11 @@ describe('utils/format', function () {
     })
 
     it('should format a number equal to one hundred thousand correctly', function () {
-      expect(formatTVL(100_000)).toBe('$100,000.00')
+      expect(formatTVL(100_000)).toBe('$100,000')
     })
 
     it('should format a number greater than one hundred thousand correctly', function () {
-      expect(formatTVL(2500000)).toBe('$2,500,000.00')
+      expect(formatTVL(2500000)).toBe('$2,500,000')
     })
 
     it('should format a string number less than one hundred thousand correctly', function () {
@@ -51,11 +51,15 @@ describe('utils/format', function () {
     })
 
     it('should format a string number equal to one hundred thousand correctly', function () {
-      expect(formatTVL('100000')).toBe('$100,000.00')
+      expect(formatTVL('100000')).toBe('$100,000')
     })
 
     it('should format a string number greater than one hundred thousand correctly', function () {
-      expect(formatTVL('2500000')).toBe('$2,500,000.00')
+      expect(formatTVL('2500000')).toBe('$2,500,000')
+    })
+
+    it('should format a string number greater than one hundred thousand without decimals', function () {
+      expect(formatTVL('2500000.13')).toBe('$2,500,000')
     })
   })
 })

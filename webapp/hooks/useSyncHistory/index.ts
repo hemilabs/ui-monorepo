@@ -1,5 +1,4 @@
 import { featureFlags } from 'app/featureFlags'
-import { useBitcoin } from 'hooks/useBitcoin'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -131,7 +130,6 @@ const debouncedSaveToStorage = debounce(
 
 export const useSyncHistory = function (l2ChainId: Chain['id']) {
   const { address } = useAccount()
-  const bitcoin = useBitcoin()
   const { remoteNetworks } = useNetworks()
   const [networkType] = useNetworkType()
 
@@ -298,9 +296,7 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
         dispatch({ payload: deposit, type: 'add-deposit' }),
       addWithdrawalToTunnelHistory: (withdrawal: WithdrawTunnelOperation) =>
         dispatch({ payload: withdrawal, type: 'add-withdraw' }),
-      deposits: history.deposits
-        .filter(d => d.chainId !== bitcoin.id)
-        .flatMap(d => d.content),
+      deposits: history.deposits.flatMap(d => d.content),
       resyncHistory: () => setForceResync(true),
       syncStatus: history.status,
       updateDeposit: (
@@ -319,11 +315,9 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
           payload: { updates, withdraw },
           type: 'update-withdraw',
         }),
-      withdrawals: history.withdrawals
-        .filter(w => w.chainId !== bitcoin.id)
-        .flatMap(w => w.content),
+      withdrawals: history.withdrawals.flatMap(w => w.content),
     }),
-    [bitcoin.id, dispatch, history],
+    [dispatch, history],
   )
 
   return [...reducer, historyContext] as const

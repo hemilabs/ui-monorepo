@@ -158,7 +158,7 @@ const getDefaultNetworksOrder = function ({
     evmAlternative: Record<string, Chain['id']>,
     btcAlternative: Record<string, RemoteChain['id']>,
   ) =>
-    // if no hash, hash is an EVM one, or btc are disabled, return EVM alternative
+    // if no hash or hash is an EVM one, return EVM alternative
     !txHash || isHash(txHash) ? evmAlternative : btcAlternative
 
   if (!operation) {

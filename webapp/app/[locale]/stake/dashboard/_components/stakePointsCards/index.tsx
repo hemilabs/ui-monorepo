@@ -1,4 +1,3 @@
-import { featureFlags } from 'app/featureFlags'
 import Big from 'big.js'
 import { Card } from 'components/card'
 import { useTokenPrices } from 'hooks/useTokenPrices'
@@ -51,9 +50,6 @@ export const EarnedPoints = function () {
   const t = useTranslations('stake-page.dashboard')
 
   const getPoints = function () {
-    if (!featureFlags.stakePointsEnabled) {
-      return t('coming-soon')
-    }
     if (!isConnected || isError) {
       return '-'
     }

@@ -1,6 +1,5 @@
 import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
-import { WarningBox } from 'components/warningBox'
 import { useChallengeBitcoinWithdrawal } from 'hooks/useBtcTunnel'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
@@ -96,20 +95,14 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
   }
 
   return (
-    <div className="flex h-full flex-col justify-between gap-y-24">
-      <WarningBox
-        heading={t('review-withdrawal.we-could-not-process-this-withdraw')}
-        subheading={t('review-withdrawal.challenge-to-get-bitcoins-back')}
-      />
-      <DrawerCallToAction
-        expectedChainId={withdrawal.l2ChainId}
-        onSubmit={handleChallenge}
-        submitButton={
-          <Button disabled={isChallenging} type="submit">
-            {t(`submit-button.${getText()}`)}
-          </Button>
-        }
-      />
-    </div>
+    <DrawerCallToAction
+      expectedChainId={withdrawal.l2ChainId}
+      onSubmit={handleChallenge}
+      submitButton={
+        <Button disabled={isChallenging} type="submit">
+          {t(`submit-button.${getText()}`)}
+        </Button>
+      }
+    />
   )
 }

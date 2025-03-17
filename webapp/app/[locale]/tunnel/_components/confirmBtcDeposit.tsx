@@ -1,6 +1,5 @@
 import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
-import { WarningBox } from 'components/warningBox'
 import { useConfirmBitcoinDeposit } from 'hooks/useBtcTunnel'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
@@ -107,22 +106,14 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
   }
 
   return (
-    <div className="flex h-full flex-col justify-between gap-y-24">
-      <WarningBox
-        heading={t(
-          'tunnel-page.review-deposit.we-could-not-process-this-deposit',
-        )}
-        subheading={t('tunnel-page.review-deposit.click-to-confirm')}
-      />
-      <DrawerCallToAction
-        expectedChainId={deposit.l2ChainId}
-        onSubmit={handleConfirm}
-        submitButton={
-          <Button disabled={!isReadyToConfirm || isConfirming} type="submit">
-            {t(`tunnel-page.submit-button.${getText()}`)}
-          </Button>
-        }
-      />
-    </div>
+    <DrawerCallToAction
+      expectedChainId={deposit.l2ChainId}
+      onSubmit={handleConfirm}
+      submitButton={
+        <Button disabled={!isReadyToConfirm || isConfirming} type="submit">
+          {t(`tunnel-page.submit-button.${getText()}`)}
+        </Button>
+      }
+    />
   )
 }

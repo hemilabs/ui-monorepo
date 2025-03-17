@@ -2,6 +2,7 @@
 
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { WarningBox } from 'components/warningBox'
 import { useChain } from 'hooks/useChain'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useSimpleVaultGracePeriod } from 'hooks/useSimpleVaultGracePeriod'
@@ -163,9 +164,30 @@ const ReviewContent = function ({
     steps.push(addChallengeStep())
   }
 
+  const getBottomSection = function () {
+    if (
+      [
+        BtcWithdrawStatus.CHALLENGE_FAILED,
+        BtcWithdrawStatus.CHALLENGE_IN_PROGRESS,
+        BtcWithdrawStatus.READY_TO_CHALLENGE,
+      ].includes(withdrawal.status)
+    ) {
+      return (
+        <div className="px-4 py-4 md:px-6">
+          <WarningBox
+            heading={t('we-could-not-process-this-withdraw')}
+            subheading={t('challenge-to-get-bitcoins-back')}
+          />
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
     <Operation
       amount={withdrawal.amount}
+      bottomSection={getBottomSection()}
       callToAction={getCallToAction(withdrawal)}
       onClose={onClose}
       steps={steps}

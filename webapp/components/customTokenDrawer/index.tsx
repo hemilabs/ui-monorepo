@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { getRemoteTokens } from 'app/tokenList'
 import { Button } from 'components/button'
 import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
+import { CallToActionContainer } from 'components/reviewOperation/callToActionContainer'
 import { useChain } from 'hooks/useChain'
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useL2Token } from 'hooks/useL2Token'
@@ -170,41 +171,50 @@ export const CustomTokenDrawer = function ({
         className="drawer-content h-[80dvh] md:h-full"
         onSubmit={handleSubmit}
       >
-        <DrawerTopSection heading={t('heading')} onClose={closeDrawer} />
-        <DrawerParagraph>{t('subheading')}</DrawerParagraph>
-        <TokenSection
-          addressDisabled
-          addressValidity={getL1AddressValidity(l1CustomToken)}
-          chainId={l1ChainId}
-          isLoading={isLoadingL1Token}
-          layer={1}
-          token={l1CustomToken}
-        />
-        <TokenSection
-          addressDisabled={isL2}
-          addressValidity={getL2AddressValidity(l1CustomToken, l2customToken)}
-          chainId={l2ChainId}
-          isLoading={isLoadingL2Token}
-          layer={2}
-          token={l2customToken}
-          // the address field of this section is only editable
-          // if the user originally entered an address for an L1
-          {...(isL2
-            ? {}
-            : {
-                onTunneledCustomTokenAddressChange,
-                tunneledCustomTokenAddress,
-              })}
-        />
-        <AddPairToHemi />
-        <div className="mt-auto flex flex-col gap-y-3">
-          <Acknowledge acknowledged={acknowledged} onChange={setAcknowledged} />
-          <div className="flex [&>*]:basis-full">
-            <Button disabled={!submitEnabled} type="submit" variant="primary">
-              {t('add-token')}
-            </Button>
-          </div>
+        <div className="flex flex-col gap-y-3">
+          <DrawerTopSection heading={t('heading')} onClose={closeDrawer} />
+          <DrawerParagraph>{t('subheading')}</DrawerParagraph>
         </div>
+        <div className="skip-parent-padding-x flex flex-1 flex-col overflow-y-auto">
+          <TokenSection
+            addressDisabled
+            addressValidity={getL1AddressValidity(l1CustomToken)}
+            chainId={l1ChainId}
+            isLoading={isLoadingL1Token}
+            layer={1}
+            token={l1CustomToken}
+          />
+          <TokenSection
+            addressDisabled={isL2}
+            addressValidity={getL2AddressValidity(l1CustomToken, l2customToken)}
+            chainId={l2ChainId}
+            isLoading={isLoadingL2Token}
+            layer={2}
+            token={l2customToken}
+            // the address field of this section is only editable
+            // if the user originally entered an address for an L1
+            {...(isL2
+              ? {}
+              : {
+                  onTunneledCustomTokenAddressChange,
+                  tunneledCustomTokenAddress,
+                })}
+          />
+          <AddPairToHemi />
+        </div>
+        <CallToActionContainer>
+          <div className="flex w-full flex-col gap-y-3">
+            <Acknowledge
+              acknowledged={acknowledged}
+              onChange={setAcknowledged}
+            />
+            <div className="flex [&>*]:basis-full">
+              <Button disabled={!submitEnabled} type="submit" variant="primary">
+                {t('add-token')}
+              </Button>
+            </div>
+          </div>
+        </CallToActionContainer>
       </form>
     </Drawer>
   )

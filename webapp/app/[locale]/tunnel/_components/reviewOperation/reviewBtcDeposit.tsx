@@ -1,5 +1,6 @@
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { WarningBox } from 'components/warningBox'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
@@ -169,9 +170,30 @@ const ReviewContent = function ({
     steps.push(getManualConfirmationStep())
   }
 
+  const getBottomSection = function () {
+    if (
+      [
+        BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
+        BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING,
+        BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
+      ].includes(deposit.status)
+    ) {
+      return (
+        <div className="px-4 py-4 md:px-6">
+          <WarningBox
+            heading={t('we-could-not-process-this-deposit')}
+            subheading={t('click-to-confirm')}
+          />
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
     <Operation
       amount={deposit.amount}
+      bottomSection={getBottomSection()}
       callToAction={getCallToAction(deposit)}
       onClose={onClose}
       steps={steps}

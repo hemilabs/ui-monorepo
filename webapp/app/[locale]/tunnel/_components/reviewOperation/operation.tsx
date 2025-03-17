@@ -7,6 +7,7 @@ import { Header } from './header'
 
 type Props = {
   callToAction?: ReactNode
+  bottomSection?: ReactNode
   steps: StepPropsWithoutPosition[]
 } & ComponentProps<typeof Header> &
   Omit<ComponentProps<typeof Amount>, 'value'> & {
@@ -16,6 +17,7 @@ type Props = {
 
 export const Operation = ({
   amount,
+  bottomSection,
   callToAction,
   onClose,
   steps,
@@ -29,6 +31,7 @@ export const Operation = ({
     </div>
     <ReviewOperation
       amount={amount}
+      bottomSection={bottomSection}
       callToAction={callToAction}
       steps={steps}
       token={token}

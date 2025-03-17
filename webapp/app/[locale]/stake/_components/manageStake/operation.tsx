@@ -33,13 +33,13 @@ export const Operation = ({
   token,
 }: Props) => (
   <Form onSubmit={onSubmit}>
-    <DrawerTopSection heading={heading} onClose={closeDrawer} />
-    <div className="mb-5">
+    <div className="mb-8 flex flex-col gap-y-3">
+      <DrawerTopSection heading={heading} onClose={closeDrawer} />
       <DrawerParagraph>{subheading}</DrawerParagraph>
     </div>
     <div className="skip-parent-padding-x relative h-full overflow-hidden">
       <div
-        className={`absolute inset-0 flex flex-col gap-y-3 overflow-auto pb-1 transition-transform duration-500 ${
+        className={`absolute inset-0 flex flex-col overflow-y-hidden transition-transform duration-500 ${
           isOperating ? 'invisible -translate-x-full' : 'translate-x-0'
         }`}
       >

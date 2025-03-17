@@ -17,7 +17,7 @@ export const AddPairToHemi = function () {
   }
 
   return (
-    <div>
+    <div className="px-4 py-3 md:px-6">
       <WarningBox
         heading={t('add-this-pair')}
         onClose={() => setHideWarning(true)}

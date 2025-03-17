@@ -225,7 +225,7 @@ export const StakeOperation = function ({
             showTabs={showTabs}
             strategyDetails={<StrategyDetails token={token} />}
             submitButton={
-              <>
+              <div className="flex w-full flex-col gap-y-3 text-center">
                 <DrawerParagraph>
                   {t('you-can-unstake-anytime')}
                 </DrawerParagraph>
@@ -233,7 +233,7 @@ export const StakeOperation = function ({
                   disabled={!canStake}
                   text={getSubmitButtonText()}
                 />
-              </>
+              </div>
             }
             token={token}
           />

@@ -12,6 +12,7 @@ export const formatEvmAddress = (address: Address) =>
 
 const cryptoRounder = smartRound(6, 0, 6)
 const fiatRounder = smartRound(6, 2, 2)
+const fiatRounderTVL = smartRound(6, 0, 0)
 
 export const formatEvmHash = (txHash: Hash) =>
   shorten(txHash, { length: 4, prefixes: ['0x'] })
@@ -22,11 +23,14 @@ export const formatNumber = (value: number | string) =>
 export const formatFiatNumber = (value: number | string) =>
   fiatRounder(value, { shouldFormat: true })
 
+const formatFiatNumberTVL = (value: number | string) =>
+  fiatRounderTVL(value, { shouldFormat: true })
+
 export const formatTVL = function (amount: number | string) {
   if (Big(amount).lt(100_000)) {
     // for less than 100k, return "< $100k"
     return `< $100K`
   }
   // For the rest, show the full format
-  return `$${formatFiatNumber(amount)}`
+  return `$${formatFiatNumberTVL(amount)}`
 }

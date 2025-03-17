@@ -10,7 +10,7 @@ type Props = { isLoading: boolean; token: Token }
 export const TokenPreview = function ({ isLoading, token }: Props) {
   const t = useTranslations('token-custom-drawer')
   return (
-    <div className="skip-parent-padding-x relative my-1 border-b border-t border-dashed border-neutral-300/55 bg-neutral-50">
+    <div className="relative z-0 border-b border-t border-dashed border-neutral-300/55 bg-neutral-50">
       <div className="absolute bottom-0 left-0 right-0 top-0">
         <Image alt="Token Preview background" fill src={background} />
       </div>

@@ -50,8 +50,12 @@ export const TokenSection = function ({
 
   return (
     <>
-      <DrawerParagraph>{t('layer-token-address', { layer })}</DrawerParagraph>
-      <div>
+      <div className="px-4 md:px-6">
+        <div className="py-3">
+          <DrawerParagraph>
+            {t('layer-token-address', { layer })}
+          </DrawerParagraph>
+        </div>
         <div className="left-2.25 relative top-0.5">
           <ShortVerticalLine stroke="stroke-neutral-300/55" />
         </div>
@@ -93,7 +97,9 @@ export const TokenSection = function ({
           </div>
         </div>
       </div>
-      <TokenPreview isLoading={isLoading} token={token} />
+      <div className="mt-4">
+        <TokenPreview isLoading={isLoading} token={token} />
+      </div>
     </>
   )
 }

@@ -19,13 +19,13 @@ export const TwoRowBox = ({
   bottom: ReactNode
   top: BoxProps
 }) => (
-  <div className="flex w-full flex-col">
-    <div className={`${commonCss} z-10 -mb-3 justify-between ${top.bgColor}`}>
+  <div className={`relative z-0 flex w-full flex-col ${bottom ? '-mb-3' : ''}`}>
+    <div className={`${commonCss} z-10 justify-between ${top.bgColor}`}>
       {top.children}
     </div>
     {bottom && (
       <div
-        className="flex h-14 w-full items-center gap-x-1 rounded-lg
+        className="relative flex h-14 w-full -translate-y-3 items-center gap-x-1 rounded-lg
   border border-solid border-neutral-300/55 bg-neutral-100 px-4 pb-4 pt-6"
       >
         {bottom}

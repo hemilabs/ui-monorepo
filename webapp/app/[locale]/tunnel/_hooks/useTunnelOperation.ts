@@ -1,4 +1,3 @@
-import { featureFlags } from 'app/featureFlags'
 import { isBtcTxHash, type BtcTxHash } from 'btc-wallet/utils/hash'
 import {
   useQueryState,
@@ -38,9 +37,7 @@ export const useTunnelOperation = function (): {
   const [txHash, setTxHash] = useQueryState('txHash', parseAsString)
 
   const isValid = isValidOperation(operation)
-  const isValidTxHash =
-    !!txHash &&
-    (isHash(txHash) || (featureFlags.btcTunnelEnabled && isBtcTxHash(txHash)))
+  const isValidTxHash = !!txHash && (isHash(txHash) || isBtcTxHash(txHash))
 
   useEffect(
     function updateDefaultParameters() {

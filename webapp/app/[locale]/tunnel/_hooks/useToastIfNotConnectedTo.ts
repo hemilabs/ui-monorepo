@@ -1,4 +1,3 @@
-import { featureFlags } from 'app/featureFlags'
 import { useAccounts } from 'hooks/useAccounts'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { type RemoteChain } from 'types/chain'
@@ -14,7 +13,7 @@ export const useToastIfNotConnectedTo = function (
 
   const tunnelingFromOrToBtc = isBtcNetworkId(expectedChainId)
 
-  if (tunnelingFromOrToBtc && featureFlags.btcTunnelEnabled) {
+  if (tunnelingFromOrToBtc) {
     const connected = btcChainId !== undefined
     return connected && !isConnectedToExpectedNetwork
   }

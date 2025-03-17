@@ -94,7 +94,7 @@ export default async function RootLayout({
                           {featureFlags.stakeCampaignEnabled && (
                             <StakeAndEarnCard />
                           )}
-                          {featureFlags.mainnetEnabled && <MainnetLiveModal />}
+                          <MainnetLiveModal />
                         </AppLayout>
                       </div>
                     </Analytics>

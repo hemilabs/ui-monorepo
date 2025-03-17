@@ -1,5 +1,4 @@
 import { MessageStatus } from '@eth-optimism/sdk'
-import { featureFlags } from 'app/featureFlags'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { BtcDepositStatus } from 'types/tunnel'
@@ -14,11 +13,9 @@ export const ActionableOperations = function () {
     ),
   ).length
 
-  const actionableDeposits = featureFlags.btcTunnelEnabled
-    ? deposits.filter(
-        d => d.status === BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
-      ).length
-    : 0
+  const actionableDeposits = deposits.filter(
+    d => d.status === BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
+  ).length
 
   const actionableOperations = actionableWithdrawals + actionableDeposits
 

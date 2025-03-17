@@ -1,6 +1,5 @@
 'use client'
 
-import { featureFlags } from 'app/featureFlags'
 import { isBtcTxHash } from 'btc-wallet/utils/hash'
 import { Drawer } from 'components/drawer'
 import { TransactionsInProgressContext } from 'context/transactionsInProgressContext'
@@ -40,7 +39,7 @@ const Operation = function () {
   const { txHash, updateTxHash } = useTunnelOperation()
 
   const isEvmTx = isHash(txHash)
-  const isBtcTx = featureFlags.btcTunnelEnabled && isBtcTxHash(txHash)
+  const isBtcTx = isBtcTxHash(txHash)
 
   if (!txHash || (!isEvmTx && !isBtcTx) || !tunnelOperation) {
     return null

@@ -3,6 +3,7 @@ import { Token } from 'types/token'
 
 import { CustomTokenLogo } from './customTokenLogo'
 import { HemiSubLogo } from './hemiSubLogo'
+import { BtcLogo } from './icons/btcLogo'
 
 const sizes = {
   medium: 'h-8 w-8',
@@ -17,8 +18,20 @@ type Props = {
 }
 
 // for hemi tokens, we add a hemi logo at the bottom right
-export const TokenLogo = ({ size, token }: Props) =>
-  token.logoURI ? (
+export function TokenLogo({ size, token }: Props) {
+  // BTC and tBTC are special cases
+  // We use a preset logo for them
+  if (['btc', 'tbtc'].includes(token.symbol.toLowerCase())) {
+    return (
+      <div className={`relative ${sizes[size]}`}>
+        <div className="flex h-full w-full items-center justify-center">
+          <BtcLogo className="h-full w-full" />
+        </div>
+      </div>
+    )
+  }
+
+  return token.logoURI ? (
     <div className={`relative ${sizes[size]}`}>
       <Image
         alt={`${token.symbol} Logo`}
@@ -35,3 +48,4 @@ export const TokenLogo = ({ size, token }: Props) =>
       <CustomTokenLogo size={size} token={token} />
     </div>
   )
+}

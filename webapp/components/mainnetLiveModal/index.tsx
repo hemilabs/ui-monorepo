@@ -40,8 +40,10 @@ const Content = function ({ img: Img }: { img: ComponentType }) {
   const [, setNetworkType] = useNetworkType()
 
   return (
-    <div className="flex h-[70dvh] flex-col items-center gap-y-6 overflow-x-hidden bg-white px-4 md:h-[470px] md:w-[530px]">
-      <Img />
+    <div className="flex h-[70dvh] flex-col items-center gap-y-6 bg-white px-4 md:h-[470px] md:w-[530px]">
+      <div className="w-full max-md:max-w-[360px] max-md:overflow-hidden">
+        <Img />
+      </div>
       <div className="mt-4 flex flex-col gap-y-3">
         <h2 className="md:text-3.25xl text-center text-2xl font-semibold text-neutral-950">
           {t('mainnet-is-now-live')}
@@ -50,7 +52,7 @@ const Content = function ({ img: Img }: { img: ComponentType }) {
           {t('mainnet-is-now-live-description')}
         </p>
       </div>
-      <div className="flex items-center justify-center gap-x-3 [&>*]:w-36">
+      <div className="flex items-center justify-center gap-3 max-[368px]:flex-col [&>*]:w-36">
         <ButtonLink
           href="/get-started"
           onClick={() => setHideMainnetLiveModal(true)}

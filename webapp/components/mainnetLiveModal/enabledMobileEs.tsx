@@ -1,5 +1,12 @@
 export const EnabledMobileEs = () => (
-  <svg fill="none" height={237} width={393} xmlns="http://www.w3.org/2000/svg">
+  <svg
+    fill="none"
+    height="auto"
+    preserveAspectRatio="xMidYMid meet"
+    viewBox="0 0 393 237"
+    width="100%"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <g opacity={0.8}>
       <rect
         fill="#F7F7F7"

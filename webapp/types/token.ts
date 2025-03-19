@@ -1,6 +1,8 @@
 import { BtcChain } from 'btc-wallet/chains'
 import { Address, Chain } from 'viem'
 
+type TunnelPartners = 'meson' | 'stargate'
+
 export type Extensions = {
   birthBlock?: number
   bridgeInfo?: {
@@ -16,7 +18,7 @@ export type Extensions = {
   tunnel?: boolean
   // Custom token symbol to show in the Tunnel
   tunnelSymbol?: string
-  tunnelPartner?: string
+  tunnelPartners?: TunnelPartners[]
 }
 
 type BaseToken = {

@@ -3,7 +3,7 @@ import {
   isStakeToken,
   isTunnelToken,
   isEvmToken,
-  tunnelsThroughPartner,
+  tunnelsThroughPartners,
 } from 'utils/token'
 import { describe, expect, it } from 'vitest'
 
@@ -102,12 +102,12 @@ describe('utils/token', function () {
         decimals: 18,
         extensions: {
           tunnel: true,
-          tunnelPartner: 'partner',
+          tunnelPartners: ['partner'],
         },
         symbol: 'TOKEN',
       }
 
-      expect(tunnelsThroughPartner(token)).toBe(true)
+      expect(tunnelsThroughPartners(token)).toBe(true)
     })
 
     it('should return false if token does not tunnel through a partner', function () {
@@ -121,7 +121,7 @@ describe('utils/token', function () {
         symbol: 'TOKEN',
       }
 
-      expect(tunnelsThroughPartner(token)).toBe(false)
+      expect(tunnelsThroughPartners(token)).toBe(false)
     })
   })
 })

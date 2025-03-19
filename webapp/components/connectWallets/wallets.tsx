@@ -12,6 +12,7 @@ import {
   ConnectedEvmChain,
 } from 'components/connectedWallet/connectedAccount'
 import { ExternalLink } from 'components/externalLink'
+import { FiatBalance } from 'components/fiatBalance'
 import { Chevron } from 'components/icons/chevron'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useChainIsSupported } from 'hooks/useChainIsSupported'
@@ -161,14 +162,20 @@ export const EvmWallet = function () {
         walletType={t('evm-wallet')}
       >
         {chainSupported ? (
-          <Balance
-            balance={
-              balance !== undefined
-                ? formatUnits(balance.value, balance.decimals)
-                : undefined
-            }
-            token={getNativeToken(chain.id)}
-          />
+          <div className="flex items-end justify-between">
+            <Balance
+              balance={
+                balance !== undefined
+                  ? formatUnits(balance.value, balance.decimals)
+                  : undefined
+              }
+              token={getNativeToken(chain.id)}
+            />
+            <div className="flex items-center gap-x-1 pr-2 font-normal text-neutral-500">
+              <span>$</span>
+              <FiatBalance token={getNativeToken(chain.id)} />
+            </div>
+          </div>
         ) : (
           <ConnectToSupportedChain />
         )}

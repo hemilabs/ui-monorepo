@@ -4,6 +4,7 @@ import { Button, ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { Drawer } from 'components/drawer'
 import { Modal } from 'components/modal'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useLocale, useTranslations } from 'next-intl'
 import { ComponentType } from 'react'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
@@ -36,9 +37,13 @@ const DrawerOverlay = () => (
 const Content = function ({ img: Img }: { img: ComponentType }) {
   const t = useTranslations('common')
   const [, setHideMainnetLiveModal] = useHideMainnetLiveModal()
+  const [, setNetworkType] = useNetworkType()
+
   return (
     <div className="flex h-[70dvh] flex-col items-center gap-y-6 bg-white px-4 md:h-[470px] md:w-[530px]">
-      <Img />
+      <div className="w-full max-md:max-w-[360px] max-md:overflow-hidden">
+        <Img />
+      </div>
       <div className="mt-4 flex flex-col gap-y-3">
         <h2 className="md:text-3.25xl text-center text-2xl font-semibold text-neutral-950">
           {t('mainnet-is-now-live')}
@@ -47,7 +52,7 @@ const Content = function ({ img: Img }: { img: ComponentType }) {
           {t('mainnet-is-now-live-description')}
         </p>
       </div>
-      <div className="flex items-center justify-center gap-x-3 [&>*]:w-36">
+      <div className="flex items-center justify-center gap-3 max-[368px]:flex-col [&>*]:w-36">
         <ButtonLink
           href="/get-started"
           onClick={() => setHideMainnetLiveModal(true)}
@@ -57,7 +62,10 @@ const Content = function ({ img: Img }: { img: ComponentType }) {
         </ButtonLink>
         <Button
           height="h-5"
-          onClick={() => setHideMainnetLiveModal(true)}
+          onClick={function () {
+            setHideMainnetLiveModal(true)
+            setNetworkType('mainnet')
+          }}
           type="button"
         >
           {t('start-using-mainnet')}

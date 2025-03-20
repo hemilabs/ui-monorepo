@@ -1,6 +1,7 @@
 'use client'
 
 import { useStakeTokens } from 'hooks/useStakeTokens'
+import { sortTokens } from 'utils/sortTokens'
 
 import { StakeGraph } from './_components/icons/stakeGraph'
 import { StakeAndEarn } from './_components/stakeAndEarn'
@@ -31,7 +32,9 @@ export default function Page() {
   // Removing WETH from the list of tokens to stake
   // here instead of in the tokenList file
   // It has to be rendered on dashboard page though
-  const stakeTokens = useStakeTokens().filter(t => t.symbol !== 'WETH')
+  const unsortedStakeTokens = useStakeTokens().filter(t => t.symbol !== 'WETH')
+
+  const stakeTokens = sortTokens(unsortedStakeTokens)
 
   return (
     <div className="h-[calc(100vh-theme(spacing.48))]">

@@ -23,9 +23,8 @@ export const Amount = function ({ token, value }: Props) {
             token={token}
           />
         </div>
-        <div className="flex items-center gap-x-1 font-normal text-neutral-500">
-          <span>($</span>
-          <FiatBalance token={token} />)
+        <div className="font-normal text-neutral-500">
+          <span>(${<FiatBalance token={token} />})</span>
         </div>
       </div>
     </div>

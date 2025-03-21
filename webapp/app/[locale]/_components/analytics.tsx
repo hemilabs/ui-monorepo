@@ -8,7 +8,7 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'next/navigation'
 import { useLocale } from 'next-intl'
-import { ReactNode, useCallback, useEffect } from 'react'
+import { ComponentProps, useCallback, useEffect } from 'react'
 import { useConfig, useAccountEffect as useEvmAccountEffect } from 'wagmi'
 
 const GlobalTracking = function () {
@@ -77,7 +77,9 @@ const GlobalTracking = function () {
   return null
 }
 
-export const Analytics = function ({ children }: { children: ReactNode }) {
+export const Analytics = function ({
+  children,
+}: Pick<ComponentProps<typeof UmamiAnalyticsProvider>, 'children'>) {
   const locale = useLocale()
 
   const removeLocaleAndTrailingSlash = (url: string) =>

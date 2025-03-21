@@ -20,6 +20,7 @@ import { MouseEvent, MutableRefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakeToken } from 'types/stake'
 import { useWindowSize } from 'ui-common/hooks/useWindowSize'
+import { sortTokens } from 'utils/sortTokens'
 import { queryStringObjectToString } from 'utils/url'
 
 import { ProtocolImage } from '../../../_components/protocolImage'
@@ -276,6 +277,8 @@ export const StakeAssetsTable = function () {
   const { track } = useUmami()
   const { loading, tokensWithPosition } = useStakePositions()
 
+  const sortedTokensWithPosition = sortTokens(tokensWithPosition)
+
   if (tokensWithPosition.length === 0) {
     return <WelcomeStake />
   }
@@ -306,7 +309,7 @@ export const StakeAssetsTable = function () {
         <div className="max-h-[50dvh] overflow-x-auto p-2" ref={containerRef}>
           <StakeAssetsTableImp
             containerRef={containerRef}
-            data={tokensWithPosition}
+            data={sortedTokensWithPosition}
             loading={loading}
           />
         </div>

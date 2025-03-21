@@ -4,9 +4,9 @@ import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { type ReactNode, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
-import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 
 const Container = ({ children }: { children: ReactNode }) => (
   <div className="flex flex-col gap-y-2">{children}</div>

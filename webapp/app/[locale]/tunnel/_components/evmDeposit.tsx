@@ -4,12 +4,16 @@ import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
 import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPartners'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
+import { Spinner } from 'components/spinner'
+import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
+import { useHemi } from 'hooks/useHemi'
 import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
+import { getTunnelContracts } from 'utils/crossChainMessenger'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { tunnelsThroughPartners } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
@@ -41,11 +45,13 @@ const SubmitEvmDeposit = function ({
   isRunningOperation,
   needsApproval,
   operationRunning,
+  isAllowanceLoading,
 }: {
   canDeposit: boolean
   isRunningOperation: boolean
   needsApproval: boolean
   operationRunning: OperationRunning
+  isAllowanceLoading: boolean
 }) {
   const t = useTranslations()
 
@@ -60,6 +66,9 @@ const SubmitEvmDeposit = function ({
         loading: t('tunnel-page.submit-button.depositing'),
       },
     }
+    if (isAllowanceLoading) {
+      return <Spinner size={'small'} />
+    }
     if (!isRunningOperation) {
       return texts[needsApproval ? 'approve' : 'deposit'].idle
     }
@@ -73,7 +82,10 @@ const SubmitEvmDeposit = function ({
   }
 
   return (
-    <Button disabled={!canDeposit || isRunningOperation} type="submit">
+    <Button
+      disabled={!canDeposit || isRunningOperation || isAllowanceLoading}
+      type="submit"
+    >
       {getOperationButtonText()}
     </Button>
   )
@@ -91,6 +103,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const t = useTranslations()
   const { track } = useUmami()
+  const hemi = useHemi()
 
   const {
     fromInput,
@@ -101,7 +114,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     updateFromInput,
   } = state
 
-  const { chain, status } = useEvmAccount()
+  const { chain, status, address } = useEvmAccount()
   const operatesNativeToken = isNativeToken(fromToken)
 
   const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
@@ -111,6 +124,21 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   const { balance: walletTokenBalance } = useTokenBalance(
     fromToken,
     !operatesNativeToken,
+  )
+
+  const l1StandardBridgeAddress = getTunnelContracts(
+    hemi,
+    fromToken.chainId,
+  ).L1StandardBridge
+
+  const { isLoading: isAllowanceLoading } = useAllowance(
+    fromToken.address as `0x${string}`,
+    {
+      args: {
+        owner: address,
+        spender: l1StandardBridgeAddress,
+      },
+    },
   )
 
   const canDeposit = canSubmit({
@@ -254,6 +282,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       return (
         <SubmitEvmDeposit
           canDeposit={canDeposit}
+          isAllowanceLoading={isAllowanceLoading}
           isRunningOperation={isRunningOperation}
           needsApproval={needsApproval}
           operationRunning={operationRunning}

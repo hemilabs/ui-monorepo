@@ -64,8 +64,8 @@
       "reconnecting": "Reconectando"
     },
     "unisat-is-the-only-supported-wallet": {
-      "first-line": "UniSat es actualmente la única billetera BTC soportada.",
-      "second-line": "Use todas las demás billeteras BTC bajo su propio riesgo."
+      "first-line": "La extensión web de UniSat es la única billetera BTC soportada.",
+      "second-line": "No use la aplicación móvil de UniSat."
     }
   },
   "demos": {

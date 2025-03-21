@@ -1,7 +1,7 @@
 'use client'
 
 import { defaultLocale, locales } from 'app/i18n'
-import { useRedirectToDefaultLocale } from 'ui-common/hooks/useRedirectToDefaultLocale'
+import { useRedirectToDefaultLocale } from 'hooks/useRedirectToDefaultLocale'
 
 type Props = {
   redirectPage: `/${string}`

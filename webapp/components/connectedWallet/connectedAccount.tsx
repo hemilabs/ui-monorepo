@@ -11,9 +11,9 @@ import {
   useConnectedToUnsupportedEvmChain,
 } from 'hooks/useConnectedToUnsupportedChain'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 import { formatBtcAddress, formatEvmAddress } from 'utils/format'
 import { type Address } from 'viem'
 import { useAccount, useDisconnect as useEvmDisconnect } from 'wagmi'

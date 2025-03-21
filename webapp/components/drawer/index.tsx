@@ -1,10 +1,10 @@
 'use client'
 
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
+import { useOnKeyUp } from 'hooks/useOnKeyUp'
 import { ComponentType } from 'react'
 import ReactDOM from 'react-dom'
 import { CloseIcon } from 'ui-common/components/closeIcon'
-import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
-import { useOnKeyUp } from 'ui-common/hooks/useOnKeyUp'
 
 import { Overlay } from '../overlay'
 

@@ -1,18 +1,13 @@
 'use client'
 
 import { useUmami } from 'app/analyticsEvents'
-import { Link } from 'components/link'
+import { ExternalLink } from 'components/externalLink'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
-import { useLocale } from 'next-intl'
 import { type MouseEvent } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
 import { isStakeEnabledOnTestnet } from 'utils/stake'
 
-import stakeAndEarn from '../_images/stakeAndEarn.png'
-import stakeAndEarnHovered from '../_images/stakeAndEarnHovered.png'
+import { EarnPoints, EarnPointsHovered } from './earnPoints'
 
 const CloseButton = ({
   onClick,
@@ -34,27 +29,20 @@ const CloseButton = ({
   </button>
 )
 
-export const StakeAndEarnCard = function () {
-  const locale = useLocale()
+export const EarnCard = function () {
   const [hideEarnAndStakeLink, setHideEarnAndStakeLink] = useLocalStorageState(
-    'portal.hide-earn-and-stake-link',
+    'portal.hide-earn-points-card',
     {
       defaultValue: false,
     },
   )
   const [networkType] = useNetworkType()
-  const pathname = usePathnameWithoutLocale()
-  const router = useRouter()
   const { track } = useUmami()
 
   const stakeEnabledOnTestnet = isStakeEnabledOnTestnet(networkType)
 
   // No need to show this on Stake pages, nor on testnet, unless enabled
-  if (
-    hideEarnAndStakeLink ||
-    pathname.startsWith('/stake') ||
-    !stakeEnabledOnTestnet
-  ) {
+  if (hideEarnAndStakeLink || !stakeEnabledOnTestnet) {
     return null
   }
 
@@ -67,34 +55,29 @@ export const StakeAndEarnCard = function () {
 
   const close = function (e: MouseEvent<HTMLButtonElement>) {
     hideCard(e)
-    track?.('stake - close stake and earn card')
+    track?.('stake - close earn points card')
   }
 
+  const absintheUrl = 'https://boost.absinthe.network/hemi-mainnet/dashboard'
+
   const navigate = function (e: MouseEvent<HTMLAnchorElement>) {
+    e.preventDefault()
+    e.stopPropagation()
+
     hideCard(e)
 
-    track?.('stake - click stake and earn card')
+    track?.('stake - click earn points card')
 
-    router.push(`/${locale}/stake`)
+    window.open(absintheUrl, '_blank', 'noopener,noreferrer')
   }
 
   return (
     <div className="group/card-image h-22 fixed bottom-8 right-8 z-10 max-w-64 cursor-pointer">
-      <Link href="/stake" onClick={navigate}>
-        <Image
-          alt="Stake and Earn"
-          className="absolute opacity-100 transition-opacity duration-300 group-hover/card-image:opacity-0"
-          quality={100}
-          src={stakeAndEarn}
-        />
-        <Image
-          alt="Stake and Earn"
-          className="opacity-0 transition-opacity duration-300 group-hover/card-image:visible group-hover/card-image:opacity-100"
-          quality={100}
-          src={stakeAndEarnHovered}
-        />
+      <ExternalLink href={absintheUrl} onClick={navigate}>
+        <EarnPoints className="absolute opacity-100 transition-opacity duration-300 group-hover/card-image:opacity-0" />
+        <EarnPointsHovered className="opacity-0 transition-opacity duration-300 group-hover/card-image:visible group-hover/card-image:opacity-100" />
         <CloseButton onClick={close} />
-      </Link>
+      </ExternalLink>
     </div>
   )
 }

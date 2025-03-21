@@ -11,7 +11,7 @@ const MainnetLiveModal = dynamic(
 )
 
 const StakeAndEarnCard = dynamic(
-  () => import('./stakeAndEarnCard').then(mod => mod.StakeAndEarnCard),
+  () => import('./earnCard').then(mod => mod.EarnCard),
   {
     ssr: false,
   },

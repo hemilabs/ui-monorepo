@@ -1,6 +1,8 @@
 'use client'
 
+import { routing } from 'i18n/routing'
 import { useRouter } from 'next/navigation'
+import { hasLocale } from 'next-intl'
 import { useEffect } from 'react'
 
 export const useRedirectToDefaultLocale = function ({
@@ -17,7 +19,7 @@ export const useRedirectToDefaultLocale = function ({
   useEffect(
     function () {
       const [language] = navigator.language.split('-')
-      const enabledLanguage = locales.includes(language)
+      const enabledLanguage = hasLocale(routing.locales, language)
       router.replace(
         `/${enabledLanguage ? language : defaultLocale}${
           redirectPage

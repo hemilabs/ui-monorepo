@@ -13,7 +13,7 @@ import {
 } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'i18n/navigation'
 import { useLocale } from 'next-intl'
 import { ComponentProps, MutableRefObject, ReactNode, useState } from 'react'
 import { UrlObject } from 'url'

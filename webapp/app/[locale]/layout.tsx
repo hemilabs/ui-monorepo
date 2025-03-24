@@ -5,12 +5,13 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { ConnectWalletDrawerProvider } from 'app/context/connectWalletDrawerContext'
 import { TunnelHistoryProvider } from 'app/context/tunnelHistoryContext'
 import { interDisplay, interVariable } from 'app/fonts/index'
-import { locales, type Locale } from 'app/i18n'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { WalletsContext } from 'context/walletsContext'
+import { type Locale, routing } from 'i18n/routing'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { NextIntlClientProvider } from 'next-intl'
+import { NextIntlClientProvider, hasLocale } from 'next-intl'
+import { setRequestLocale } from 'next-intl/server'
 import { PropsWithChildren, Suspense } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
@@ -24,6 +25,14 @@ type PageProps = {
 }
 
 async function getMessages(locale: Locale) {
+  if (!hasLocale(routing.locales, locale)) {
+    notFound()
+    return undefined
+  }
+  // See https://github.com/amannn/next-intl/issues/663
+  // and https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing#add-setrequestlocale-to-all-relevant-layouts-and-pages
+  setRequestLocale(locale)
+
   try {
     return (await import(`../../messages/${locale}.json`)).default
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,7 +53,7 @@ export async function generateMetadata({
 }
 
 export const generateStaticParams = async () =>
-  locales.map(locale => ({ locale }))
+  routing.locales.map(locale => ({ locale }))
 
 export default async function RootLayout({
   children,

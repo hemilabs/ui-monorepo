@@ -52,15 +52,12 @@ export const EarnCard = function () {
     return null
   }
 
-  const hideCard = function <T extends MouseEvent>(e: T) {
+  const close = function (e: MouseEvent<HTMLButtonElement>) {
     e.preventDefault()
     e.stopPropagation()
 
     setHideEarnAndStakeLink(true)
-  }
 
-  const close = function (e: MouseEvent<HTMLButtonElement>) {
-    hideCard(e)
     track?.('stake - close earn points card')
   }
 
@@ -69,8 +66,6 @@ export const EarnCard = function () {
   const navigate = function (e: MouseEvent<HTMLAnchorElement>) {
     e.preventDefault()
     e.stopPropagation()
-
-    hideCard(e)
 
     track?.('stake - click earn points card')
 

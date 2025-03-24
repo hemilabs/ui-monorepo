@@ -1,6 +1,11 @@
 'use strict'
 
 const { withSentryConfig } = require('@sentry/nextjs')
+// The plugin is part of next-intl, unsure why it is not detected
+// eslint-disable-next-line node/no-missing-require
+const createNextIntlPlugin = require('next-intl/plugin')
+
+const withNextIntl = createNextIntlPlugin()
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -66,4 +71,4 @@ const sentryOptions = {
   widenClientFileUpload: true,
 }
 
-module.exports = withSentryConfig(nextConfig, sentryOptions)
+module.exports = withSentryConfig(withNextIntl(nextConfig), sentryOptions)

@@ -28,6 +28,7 @@ type Props = {
   position: number
   postAction?: {
     description: string
+    loading?: boolean
     status: ProgressStatus
   }
   separator?: boolean

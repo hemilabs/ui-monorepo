@@ -2,7 +2,7 @@ import { Chevron } from 'components/icons/chevron'
 import { Link } from 'components/link'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 

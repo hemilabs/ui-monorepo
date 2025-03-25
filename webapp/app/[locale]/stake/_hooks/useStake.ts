@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUmami } from 'app/analyticsEvents'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
+import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -10,7 +11,6 @@ import { isNativeToken } from 'utils/nativeToken'
 import { stake } from 'utils/stake'
 import { Hash, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
-import { useAllowance } from 'wagmi-erc20-hooks'
 
 import { getStakedBalanceQueryKey } from './useStakedBalance'
 

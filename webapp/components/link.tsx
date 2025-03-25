@@ -1,5 +1,5 @@
 import { defaultNetworkType, useNetworkType } from 'hooks/useNetworkType'
-import BaseLink from 'next-intl/link'
+import { Link as BaseLink } from 'i18n/navigation'
 import { ComponentProps } from 'react'
 import { type UrlObject } from 'url'
 

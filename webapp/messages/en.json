@@ -64,8 +64,8 @@
       "reconnecting": "Reconnecting"
     },
     "unisat-is-the-only-supported-wallet": {
-      "first-line": "UniSat is currently the only BTC supported wallet.",
-      "second-line": "Use all other BTC wallets at your own risk."
+      "first-line": "The UniSat Web Extension is the only supported BTC wallet.",
+      "second-line": "Do not use the UniSat mobile app."
     }
   },
   "demos": {

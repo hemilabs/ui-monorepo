@@ -1,7 +1,7 @@
 import { Chevron } from 'components/icons/chevron'
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 
 import { EvmChainsMenu } from './evmChainsMenu'
 

@@ -11,11 +11,11 @@ import {
   type NetworkType,
   useNetworkType,
 } from 'hooks/useNetworkType'
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'i18n/navigation'
 import { useLocale } from 'next-intl'
 import { ComponentProps, MutableRefObject, ReactNode, useState } from 'react'
-import { useOnClickOutside } from 'ui-common/hooks/useOnClickOutside'
 import { UrlObject } from 'url'
 import { isRelativeUrl } from 'utils/url'
 

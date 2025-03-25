@@ -1,6 +1,5 @@
 'use client'
 
-import { featureFlags } from 'app/featureFlags'
 import { BitcoinKitIcon } from 'components/icons/bitcoinKit'
 import { DemosPageIcon } from 'components/icons/demosPageIcon'
 import { DexIcon } from 'components/icons/dexIcon'
@@ -70,15 +69,13 @@ export const Navbar = function () {
             />
           </li>
           <li className="order-2">
-            {featureFlags.stakeCampaignEnabled && (
-              <ItemLink
-                event="nav - stake"
-                href="/stake/dashboard"
-                icon={<StakeIcon />}
-                text={t('stake')}
-                urlToBeSelected="/stake"
-              />
-            )}
+            <ItemLink
+              event="nav - stake"
+              href="/stake/dashboard"
+              icon={<StakeIcon />}
+              text={t('stake')}
+              urlToBeSelected="/stake"
+            />
           </li>
           <li className="order-3">
             <ItemLink

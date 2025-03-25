@@ -48,9 +48,6 @@ inputs:
   NEXT_PUBLIC_ENABLE_STAKE_TESTNET:
     required: false
     description: Flag to enable or not stake on testnet
-  NEXT_PUBLIC_FEATURE_FLAG_ENABLE_STAKE_CAMPAIGN:
-    required: true
-    description: Feature flag to enable Stake Campaign
   NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH:
     required: false
     description: Feature flag to enable syncing the user history with Subgraphs
@@ -108,6 +105,9 @@ inputs:
   NEXT_PUBLIC_TRACES_SAMPLE_RATE:
     required: false
     description: Sentry traces sample rate
+  NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID:
+    required: false
+    description: Wallet Connect project ID
   SENTRY_AUTH_TOKEN:
     required: false
     description: Sentry auth token
@@ -123,9 +123,6 @@ inputs:
   SENTRY_RELEASE:
     required: false
     description: Sentry Release version
-  NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID:
-    required: false
-    description: Wallet Connect project ID
 
 runs:
   using: composite
@@ -144,7 +141,6 @@ runs:
         NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA: ${{ inputs.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA}}
         NEXT_PUBLIC_ENABLE_ANALYTICS: ${{ inputs.NEXT_PUBLIC_ENABLE_ANALYTICS }}
         NEXT_PUBLIC_ENABLE_STAKE_TESTNET: ${{ inputs.NEXT_PUBLIC_ENABLE_STAKE_TESTNET }}
-        NEXT_PUBLIC_FEATURE_FLAG_ENABLE_STAKE_CAMPAIGN: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_ENABLE_STAKE_CAMPAIGN }}
         NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH }}
         NEXT_PUBLIC_FEATURE_FLAG_SYNC_WITHDRAWALS_SUBGRAPH: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_SYNC_WITHDRAWALS_SUBGRAPH }}
         NEXT_PUBLIC_POINTS_URL: ${{ inputs.NEXT_PUBLIC_POINTS_URL }}
@@ -164,12 +160,12 @@ runs:
         NEXT_PUBLIC_SUBGRAPH_MAINNET_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_MAINNET_URL }}
         NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL }}
         NEXT_PUBLIC_TRACES_SAMPLE_RATE: ${{ inputs.NEXT_PUBLIC_TRACES_SAMPLE_RATE }}
+        NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ inputs.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
         SENTRY_AUTH_TOKEN: ${{ inputs.SENTRY_AUTH_TOKEN }}
         SENTRY_ENVIRONMENT: ${{ inputs.SENTRY_ENVIRONMENT }}
         SENTRY_ORG: ${{ inputs.SENTRY_ORG }}
         SENTRY_PROJECT: ${{ inputs.SENTRY_PROJECT }}
         SENTRY_RELEASE: ${{ inputs.SENTRY_RELEASE }}
-        NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ inputs.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
     - name: Check portal build
       id: portal_build
       uses: andstor/file-existence-action@v3

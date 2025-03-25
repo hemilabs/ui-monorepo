@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/nextjs'
 const enabled = !!process.env.NEXT_PUBLIC_SENTRY_DSN
 
 const unsupportedWalletErrors = [
+  "Backpack couldn't override `window.ethereum`.",
   'shouldSetPelagusForCurrentProvider is not a function',
   'shouldSetTallyForCurrentProvider is not a function',
   'Talisman extension has not been configured yet',

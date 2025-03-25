@@ -10,9 +10,6 @@ const unsupportedWalletErrors = [
 
 function enableSentry() {
   const ignoreErrors = [
-    // Disable until WalletConnect is enabled, as it will fail for all users
-    // See https://github.com/hemilabs/ui-monorepo/issues/633
-    'connection failed for host: wss://relay.walletconnect.org',
     // user rejected a confirmation in the wallet
     'rejected the request',
     // React internal error thrown when something outside react modifies the DOM

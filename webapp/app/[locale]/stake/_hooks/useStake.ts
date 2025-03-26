@@ -20,7 +20,6 @@ export const useStake = function (token: StakeToken) {
   // @ts-expect-error token.address is a string Address
   const { queryKey: allowanceQueryKey } = useAllowance(token.address, {
     args: { owner: address, spender: stakeManagerAddresses[token.chainId] },
-    query: { enabled: !operatesNativeToken },
   })
   const [networkType] = useNetworkType()
   const hemiPublicClient = useHemiClient()

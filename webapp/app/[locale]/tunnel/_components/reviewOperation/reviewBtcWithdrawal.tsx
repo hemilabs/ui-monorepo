@@ -40,10 +40,9 @@ type Props = {
 
 const ReviewContent = function ({
   fromToken,
-  vaultGracePeriod,
   onClose,
   withdrawal,
-}: Props & { fromToken: EvmToken; vaultGracePeriod: bigint }) {
+}: Props & { fromToken: EvmToken }) {
   const fromChain = useChain(withdrawal.l2ChainId)
   const bitcoinWithdrawalEstimatedFees = useEstimateFees({
     chainId: withdrawal.l2ChainId,
@@ -53,6 +52,8 @@ const ReviewContent = function ({
     chainId: withdrawal.l2ChainId,
     operation: 'challenge-btc-withdrawal',
   })
+  const { vaultGracePeriod = BigInt(0), isLoading: isLoadingVaultGracePeriod } =
+    useSimpleVaultGracePeriod()
   const t = useTranslations('tunnel-page.review-withdrawal')
   const tCommon = useTranslations('common')
 
@@ -94,8 +95,18 @@ const ReviewContent = function ({
           }
         : undefined,
       postAction: {
-        description: tCommon('wait-hours', {
-          hours: secondsToHours(Number(vaultGracePeriod)).toString(),
+        description: tCommon.rich('wait-hours', {
+          hours: () =>
+            isLoadingVaultGracePeriod ? (
+              <Skeleton
+                className="h-full w-12"
+                containerClassName="h-5 inline-table"
+              />
+            ) : (
+              tCommon('hours', {
+                hours: secondsToHours(Number(vaultGracePeriod)).toString(),
+              })
+            ),
         }),
         status: postActionStatus[withdrawal.status] ?? ProgressStatus.COMPLETED,
       },
@@ -208,9 +219,7 @@ export const ReviewBtcWithdrawal = function ({ onClose, withdrawal }: Props) {
     chainId: withdrawal.l2ChainId,
   })
 
-  const { vaultGracePeriod } = useSimpleVaultGracePeriod()
-
-  const tokensLoaded = !!fromToken && vaultGracePeriod !== undefined
+  const tokensLoaded = !!fromToken
 
   return (
     <>
@@ -218,7 +227,6 @@ export const ReviewBtcWithdrawal = function ({ onClose, withdrawal }: Props) {
         <ReviewContent
           fromToken={fromToken as EvmToken}
           onClose={onClose}
-          vaultGracePeriod={vaultGracePeriod}
           withdrawal={withdrawal}
         />
       ) : (

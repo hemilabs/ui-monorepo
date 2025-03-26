@@ -1,9 +1,11 @@
+import { ReactNode } from 'react'
+
 import { ClockIcon } from './_icons/clockIcon'
 import { OrangeCheckIcon } from './_icons/orangeCheckIcon'
 import { ProgressStatus } from './progressStatus'
 
 type Props = {
-  description: string
+  description: ReactNode
   status: ProgressStatus
 }
 

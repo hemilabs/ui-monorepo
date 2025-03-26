@@ -25,7 +25,10 @@ export const useStake = function (token: StakeToken) {
   const [networkType] = useNetworkType()
   const hemiPublicClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
-  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(token)
+  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
+    token.chainId,
+    token.address,
+  )
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
     token.chainId,
   )

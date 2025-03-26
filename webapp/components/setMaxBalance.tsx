@@ -48,8 +48,8 @@ export const SetMaxEvmBalance = function ({
   } = useNativeTokenBalance(token.chainId)
 
   const { balance: walletTokenBalance } = useTokenBalance(
-    token,
-    !isNativeToken(token),
+    token.chainId,
+    token.address,
   )
 
   // gas is paid in native token. So we must deduct gas for native tokens, but not for erc20 tokens

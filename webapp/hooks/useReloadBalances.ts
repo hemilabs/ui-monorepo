@@ -19,7 +19,8 @@ export const useReloadBalances = function ({
     fromToken.chainId,
   )
   const { refetchTokenBalance: refetchFromTokenBalance } = useTokenBalance(
-    fromToken,
+    fromToken.chainId,
+    fromToken.address,
     !operatesNativeToken,
   )
 
@@ -29,7 +30,8 @@ export const useReloadBalances = function ({
   )
 
   const { refetchTokenBalance: refetchToTokenBalance } = useTokenBalance(
-    toToken,
+    toToken.chainId,
+    toToken.address,
     !operatesNativeToken,
   )
 

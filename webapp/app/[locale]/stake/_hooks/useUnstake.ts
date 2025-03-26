@@ -16,7 +16,10 @@ export const useUnstake = function (token: StakeToken) {
   const hemiPublicClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
   const [networkType] = useNetworkType()
-  const { queryKey: balanceQueryKey } = useTokenBalance(token)
+  const { queryKey: balanceQueryKey } = useTokenBalance(
+    token.chainId,
+    token.address,
+  )
 
   // Use this state to prevent multiple submissions, and force the animation to run
   // as quickly as the user clicks the button

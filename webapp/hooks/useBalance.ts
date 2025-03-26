@@ -1,5 +1,6 @@
 import { EvmToken } from 'types/token'
-import { type Address } from 'viem'
+import { isNativeAddress } from 'utils/nativeToken'
+import { isAddress, type Address } from 'viem'
 import { useAccount, useBalance as useWagmiBalance } from 'wagmi'
 import { useBalanceOf } from 'wagmi-erc20-hooks'
 
@@ -24,13 +25,20 @@ export const useNativeTokenBalance = function (
 }
 
 export const useTokenBalance = function (
-  token: EvmToken,
+  chainId: EvmToken['chainId'],
+  tokenAddress: string,
   enabled: boolean = true,
 ) {
   const { address, isConnected } = useAccount()
-  const { data, refetch, ...rest } = useBalanceOf(token.address as Address, {
-    args: { account: address, chainId: token.chainId },
-    query: { enabled: isConnected && enabled },
+  const { data, refetch, ...rest } = useBalanceOf(tokenAddress as Address, {
+    args: { account: address, chainId },
+    query: {
+      enabled:
+        isConnected &&
+        isAddress(address) &&
+        !isNativeAddress(address) &&
+        enabled,
+    },
   })
 
   return {

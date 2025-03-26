@@ -60,9 +60,13 @@ const sentryOptions = {
   authToken: process.env.SENTRY_AUTH_TOKEN,
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#use-hidden-source-map,
   hideSourceMaps: true,
+  normalizeDepth: 6,
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#widen-the-upload-scope
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
+  reactComponentAnnotation: {
+    enabled: true,
+  },
   release,
   // eslint-disable-next-line camelcase
   unstable_sentryWebpackPluginOptions: {

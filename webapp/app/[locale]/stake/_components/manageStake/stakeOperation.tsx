@@ -62,7 +62,6 @@ export const StakeOperation = function ({
       owner: address,
       spender: stakeManagerAddresses[token.chainId],
     },
-    query: { enabled: !operatesNativeToken },
   })
   const approvalEstimatedFees = useEstimateFees({
     chainId: token.chainId,

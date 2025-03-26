@@ -2,7 +2,6 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useAllowance } from 'hooks/useAllowance'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { type EvmToken } from 'types/token'
-import { isNativeToken } from 'utils/nativeToken'
 import { Hash } from 'viem'
 import { useAccount } from 'wagmi'
 import { useApprove } from 'wagmi-erc20-hooks'
@@ -33,9 +32,6 @@ export const useApproveToken = function (
     queryKey: allowanceQueryKey,
   } = useAllowance(erc20AddressToken, {
     args: { owner, spender },
-    query: {
-      enabled: !isNativeToken(token) && !!owner && !!spender,
-    },
   })
 
   const needsApproval = amount > allowance && allowanceStatus === 'success'

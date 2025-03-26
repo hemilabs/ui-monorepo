@@ -1,6 +1,5 @@
 'use client'
 
-import { featureFlags } from 'app/featureFlags'
 import { StakeTabs } from 'components/stakeTabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useStakeTokens } from 'hooks/useStakeTokens'
@@ -50,10 +49,6 @@ type Props = {
 const Layout = function ({ children }: Props) {
   const [networkType] = useNetworkType()
 
-  if (!featureFlags.stakeCampaignEnabled) {
-    // TODO redirect to 404 page, which should be implemented - See https://github.com/hemilabs/ui-monorepo/issues/620
-    return null
-  }
   if (!isStakeEnabledOnTestnet(networkType)) {
     return <StakeDisabledTestnet />
   }

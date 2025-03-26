@@ -1,6 +1,5 @@
 'use client'
 
-import { featureFlags } from 'app/featureFlags'
 import dynamic from 'next/dynamic'
 
 const MainnetLiveModal = dynamic(
@@ -19,7 +18,7 @@ const StakeAndEarnCard = dynamic(
 
 export const AppOverlays = () => (
   <>
-    {featureFlags.stakeCampaignEnabled && <StakeAndEarnCard />}
+    <StakeAndEarnCard />
     <MainnetLiveModal />
   </>
 )

@@ -20,8 +20,7 @@ NEXT_PUBLIC_WORKERS_DEBUG_ENABLE=<true|false>
 NEXT_PUBLIC_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
 NEXT_PUBLIC_ANALYTICS_URL=<url> # Umami analytics URL
 NEXT_PUBLIC_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
-# These env variables are required for Enabling the fallowing features
-NEXT_PUBLIC_FEATURE_FLAG_ENABLE_STAKE_CAMPAIGN=<true|false> # Enable Stake Campaign
+# These env variables are required for enabling the following features
 NEXT_PUBLIC_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
 # Bitcoin configuring
 NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET=2 # Vault index to use for bitcoin in hemi mainnet. Defaults to 0

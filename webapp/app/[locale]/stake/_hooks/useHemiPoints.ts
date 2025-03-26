@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { featureFlags } from 'app/featureFlags'
 import fetch from 'fetch-plus-plus'
 import { useAccount } from 'wagmi'
 
@@ -9,7 +8,7 @@ export const useHemiPoints = function () {
   const { address, isConnected } = useAccount()
 
   return useQuery({
-    enabled: isConnected && !!address && featureFlags.stakeCampaignEnabled,
+    enabled: isConnected && !!address,
     queryFn: () =>
       fetch(`${hemiPointsUrl}/${address}`).then(
         ({ points }) => points,

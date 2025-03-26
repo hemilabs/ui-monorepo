@@ -3,7 +3,7 @@ import { GreenCheckIcon } from 'components/icons/greenCheckIcon'
 import { RedErrorIcon } from 'components/icons/redErrorIcon'
 import { ShortVerticalLine, LongVerticalLine } from 'components/verticalLines'
 import { useTranslations } from 'next-intl'
-import { ComponentProps } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 
@@ -27,8 +27,7 @@ type Props = {
   explorerChainId?: RemoteChain['id']
   position: number
   postAction?: {
-    description: string
-    loading?: boolean
+    description: ReactNode
     status: ProgressStatus
   }
   separator?: boolean

@@ -95,10 +95,19 @@ const ReviewContent = function ({
           }
         : undefined,
       postAction: {
-        description: tCommon('wait-hours', {
-          hours: secondsToHours(Number(vaultGracePeriod)).toString(),
+        description: tCommon.rich('wait-hours', {
+          hours: () =>
+            isLoadingVaultGracePeriod ? (
+              <Skeleton
+                className="h-full w-12"
+                containerClassName="h-5 inline-table"
+              />
+            ) : (
+              tCommon('hours', {
+                hours: secondsToHours(Number(vaultGracePeriod)).toString(),
+              })
+            ),
         }),
-        loading: isLoadingVaultGracePeriod,
         status: postActionStatus[withdrawal.status] ?? ProgressStatus.COMPLETED,
       },
       status: statusMap[withdrawal.status] ?? ProgressStatus.COMPLETED,

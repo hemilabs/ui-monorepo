@@ -9,6 +9,12 @@ const unsupportedWalletErrors = [
   'Talisman extension has not been configured yet',
 ]
 
+const walletConnectErrors = [
+  "No matching key. session topic doesn't exist",
+  // See https://github.com/hemilabs/ui-monorepo/issues/1081
+  'this.provider.disconnect is not a function',
+]
+
 function enableSentry() {
   const ignoreErrors = [
     // user rejected a confirmation in the wallet
@@ -21,6 +27,7 @@ function enableSentry() {
     // Thrown when firefox prevents an add-on from referencing a DOM element that has been removed.
     `TypeError: can't access dead object`,
     ...unsupportedWalletErrors,
+    ...walletConnectErrors,
   ]
 
   Sentry.init({

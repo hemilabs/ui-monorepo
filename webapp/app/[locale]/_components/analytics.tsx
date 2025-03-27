@@ -1,5 +1,6 @@
 'use client'
 
+import * as Sentry from '@sentry/nextjs'
 import { Connector, watchAccount } from '@wagmi/core'
 import { WalletConnector } from 'btc-wallet/connectors/types'
 import { useAccountEffect as useBtcAccountEffect } from 'btc-wallet/hooks/useAccountEffect'
@@ -49,11 +50,13 @@ const GlobalTracking = function () {
 
   useEvmAccountEffect({
     onConnect: useCallback(
-      ({ connector }: { connector: Connector }) =>
+      function ({ connector }: { connector: Connector }) {
         track?.('evm connected', {
           chain: networkType,
           wallet: connector.name,
-        }),
+        })
+        Sentry.setTag('evm wallet', connector.name)
+      },
       [networkType, track],
     ),
   })
@@ -64,11 +67,16 @@ const GlobalTracking = function () {
     () =>
       watchAccount(config, {
         onChange(data, prevData) {
-          if (prevData.status === 'connected' && data.status === 'disconnected')
+          if (
+            prevData.status === 'connected' &&
+            data.status === 'disconnected'
+          ) {
             track?.('evm disconnected', {
               chain: networkType,
               wallet: prevData.connector.name,
             })
+            Sentry.setTag('evm wallet', undefined)
+          }
         },
       }),
     [config, networkType, track],

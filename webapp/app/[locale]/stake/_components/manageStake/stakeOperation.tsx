@@ -36,7 +36,7 @@ type Props = {
 
 const useBalance = function (token: StakeToken) {
   const nativeBalance = useNativeTokenBalance(token.chainId)
-  const tokenBalance = useTokenBalance(token)
+  const tokenBalance = useTokenBalance(token.chainId, token.address)
 
   const balance = isNativeToken(token)
     ? nativeBalance.balance

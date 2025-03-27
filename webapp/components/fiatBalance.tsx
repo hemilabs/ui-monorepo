@@ -108,7 +108,10 @@ const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
 }
 
 const TokenBalance = function ({ token }: Props<EvmToken>) {
-  const { balance, fetchStatus, status } = useTokenBalance(token)
+  const { balance, fetchStatus, status } = useTokenBalance(
+    token.chainId,
+    token.address,
+  )
   return (
     <RenderFiatBalance
       balance={balance}

@@ -122,8 +122,8 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   )
 
   const { balance: walletTokenBalance } = useTokenBalance(
-    fromToken,
-    !operatesNativeToken,
+    fromToken.chainId,
+    fromToken.address,
   )
 
   const l1StandardBridgeAddress = getTunnelContracts(

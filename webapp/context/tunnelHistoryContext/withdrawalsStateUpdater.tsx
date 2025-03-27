@@ -1,5 +1,7 @@
 import { MessageStatus } from '@eth-optimism/sdk'
+import { useQueryClient } from '@tanstack/react-query'
 import { WithWorker } from 'components/withWorker'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
@@ -7,6 +9,7 @@ import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { useEffect } from 'react'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
+import { isNativeAddress } from 'utils/nativeToken'
 import { hasKeys } from 'utils/utilities'
 import { useAccount } from 'wagmi'
 import {
@@ -47,6 +50,14 @@ const WatchEvmWithdrawal = function ({
   worker: AppToWorker
 }) {
   const { updateWithdrawal } = useTunnelHistory()
+  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
+    withdrawal.l1ChainId,
+    withdrawal.l1Token,
+  )
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+    withdrawal.l1ChainId,
+  )
+  const queryClient = useQueryClient()
 
   useEffect(
     function watchWithdrawalUpdates() {
@@ -69,6 +80,15 @@ const WatchEvmWithdrawal = function ({
         // next interval will poll again
         hasWorkedPostedBack = true
         if (hasKeys(updates)) {
+          // This is needed to invalidate the balance query when the withdrawal is relayed
+          // so the balance is updated in the UI instantly
+          if (updates.status === MessageStatus.RELAYED) {
+            const balanceQueryKey = isNativeAddress(withdrawal.l1Token)
+              ? nativeTokenBalanceQueryKey
+              : erc20BalanceQueryKey
+
+            queryClient.invalidateQueries({ queryKey: balanceQueryKey })
+          }
           updateWithdrawal(withdrawal, updates)
         }
       }
@@ -109,7 +129,14 @@ const WatchEvmWithdrawal = function ({
         }
       }
     },
-    [updateWithdrawal, withdrawal, worker],
+    [
+      erc20BalanceQueryKey,
+      nativeTokenBalanceQueryKey,
+      queryClient,
+      updateWithdrawal,
+      withdrawal,
+      worker,
+    ],
   )
 
   return null

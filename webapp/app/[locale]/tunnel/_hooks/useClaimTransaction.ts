@@ -1,18 +1,28 @@
 import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUmami } from 'app/analyticsEvents'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useFinalizeMessage } from 'hooks/useL2Bridge'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useCallback, useEffect } from 'react'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
+import { isNativeAddress } from 'utils/nativeToken'
 import { useWaitForTransactionReceipt } from 'wagmi'
 
 export const useClaimTransaction = function (
   withdrawal: ToEvmWithdrawOperation,
 ) {
   const connectedToL1 = useIsConnectedToExpectedNetwork(withdrawal.l1ChainId)
+
+  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
+    withdrawal.l1ChainId,
+    withdrawal.l1Token,
+  )
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+    withdrawal.l1ChainId,
+  )
   const [networkType] = useNetworkType()
   const queryClient = useQueryClient()
   const { updateWithdrawal } = useTunnelHistory()
@@ -52,14 +62,37 @@ export const useClaimTransaction = function (
     track?.('evm - claim started', { chain: networkType })
   }
 
+  const invalidateBalanceQuery = useCallback(
+    function invalidateQuery() {
+      const balanceQueryKey = isNativeAddress(withdrawal.l1Token)
+        ? nativeTokenBalanceQueryKey
+        : erc20BalanceQueryKey
+
+      queryClient.invalidateQueries({ queryKey: balanceQueryKey })
+    },
+    [
+      nativeTokenBalanceQueryKey,
+      erc20BalanceQueryKey,
+      queryClient,
+      withdrawal.l1Token,
+    ],
+  )
+
   const clearClaimWithdrawalState = useCallback(
     function () {
       // clear the claim operation hash
       resetFinalizeWithdrawal()
+      // invalidate the balance query
+      invalidateBalanceQuery()
       // clear claim receipt state
       queryClient.removeQueries({ queryKey: finalizeWithdrawalQueryKey })
     },
-    [finalizeWithdrawalQueryKey, queryClient, resetFinalizeWithdrawal],
+    [
+      finalizeWithdrawalQueryKey,
+      invalidateBalanceQuery,
+      queryClient,
+      resetFinalizeWithdrawal,
+    ],
   )
 
   useEffect(

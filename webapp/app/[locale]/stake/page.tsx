@@ -1,6 +1,7 @@
 'use client'
 
 import { useStakeTokens } from 'hooks/useStakeTokens'
+import { useTokenPrices } from 'hooks/useTokenPrices'
 import { sortTokens } from 'utils/sortTokens'
 
 import { StakeGraph } from './_components/icons/stakeGraph'
@@ -34,7 +35,8 @@ export default function Page() {
   // It has to be rendered on dashboard page though
   const unsortedStakeTokens = useStakeTokens().filter(t => t.symbol !== 'WETH')
 
-  const stakeTokens = sortTokens(unsortedStakeTokens)
+  const { data: prices } = useTokenPrices()
+  const stakeTokens = sortTokens(unsortedStakeTokens, prices)
 
   return (
     <div className="h-[calc(100vh-theme(spacing.48))]">

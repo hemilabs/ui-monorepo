@@ -14,6 +14,7 @@ import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
+import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useRouter } from 'i18n/navigation'
 import { useLocale, useTranslations } from 'next-intl'
@@ -277,7 +278,8 @@ export const StakeAssetsTable = function () {
   const { track } = useUmami()
   const { loading, tokensWithPosition } = useStakePositions()
 
-  const sortedTokensWithPosition = sortTokens(tokensWithPosition)
+  const { data: prices } = useTokenPrices()
+  const sortedTokensWithPosition = sortTokens(tokensWithPosition, prices)
 
   if (tokensWithPosition.length === 0) {
     return <WelcomeStake />

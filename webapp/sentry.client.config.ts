@@ -28,13 +28,14 @@ function enableSentry() {
     enabled,
     ignoreErrors,
     integrations: [
-      // See https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/filtering/#using-thirdpartyerrorfilterintegration
-      Sentry.thirdPartyErrorFilterIntegration({
-        // Should skip all errors that are entirely made of third party frames in the stack trace.
-        // Let's start with this, we can make it more strict if needed.
-        behaviour: 'drop-error-if-exclusively-contains-third-party-frames',
-        filterKeys: [process.env.NEXT_PUBLIC_SENTRY_FILTER_KEY_ID],
+      // See https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/integrations/captureconsole/
+      Sentry.captureConsoleIntegration({
+        levels: ['error', 'warn'],
       }),
+      // See https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/integrations/extraerrordata/
+      Sentry.extraErrorDataIntegration(),
+      // See https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/integrations/httpclient/
+      Sentry.httpClientIntegration(),
       // This overrides the default implementation of the RewriteFrames
       // integration from sentry/nextjs. It adds the decodeURI() to fix a mismatch
       // of sourceMaps in reported issues.
@@ -45,6 +46,13 @@ function enableSentry() {
           frame.filename = decodeURI(frame.filename.replace(origin, 'app://'))
           return frame
         },
+      }),
+      // See https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/filtering/#using-thirdpartyerrorfilterintegration
+      Sentry.thirdPartyErrorFilterIntegration({
+        // Should skip all errors that are entirely made of third party frames in the stack trace.
+        // Let's start with this, we can make it more strict if needed.
+        behaviour: 'drop-error-if-exclusively-contains-third-party-frames',
+        filterKeys: [process.env.NEXT_PUBLIC_SENTRY_FILTER_KEY_ID],
       }),
     ],
     tracesSampleRate:

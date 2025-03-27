@@ -16,7 +16,7 @@
     "@eth-optimism/sdk": "3.2.1",
     "@hemilabs/token-list": "1.13.1",
     "@rainbow-me/rainbowkit": "2.0.1",
-    "@sentry/nextjs": "8.35.0",
+    "@sentry/nextjs": "9.9.0",
     "@tanstack/react-query": "5.69.0",
     "@tanstack/react-table": "8.21.2",
     "@tanstack/react-virtual": "3.13.4",

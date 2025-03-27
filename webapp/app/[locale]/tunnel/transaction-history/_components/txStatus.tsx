@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl'
+import { ReactNode } from 'react'
 
 const Container = ({ children }: { children: React.ReactNode }) => (
   <div className="flex items-center gap-x-1.5">{children}</div>
@@ -22,7 +23,7 @@ const Failed = function () {
   )
 }
 
-const InStatus = ({ text }: { text: string }) => (
+const InStatus = ({ text }: { text: ReactNode }) => (
   <Container>
     <Dot className="border-amber-800/25 bg-amber-400" />
     <span className="text-amber-600">{text}</span>

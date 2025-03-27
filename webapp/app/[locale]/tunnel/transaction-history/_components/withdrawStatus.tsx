@@ -51,7 +51,14 @@ const BitcoinWithdrawStatus = function ({ withdrawal }: Props) {
       <TxStatus.InStatus text={t('common.wait-minutes', { minutes: 10 })} />
     ),
     [BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED]: (
-      <TxStatus.InStatus text={t('common.wait-hours', { hours: 12 })} />
+      <TxStatus.InStatus
+        text={t.rich('common.wait-hours', {
+          hours: () =>
+            t('common.hours', {
+              hours: 12,
+            }),
+        })}
+      />
     ),
     [BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED]: <TxStatus.Success />,
     // Initiate error path

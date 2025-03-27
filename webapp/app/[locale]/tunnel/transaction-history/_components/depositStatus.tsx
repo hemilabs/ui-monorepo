@@ -20,7 +20,14 @@ export const DepositStatus = function ({ deposit }: Props) {
       <TxStatus.InStatus text={t('transaction-history.waiting-confirmation')} />
     ),
     [BtcDepositStatus.BTC_TX_CONFIRMED]: (
-      <TxStatus.InStatus text={t('common.wait-hours', { hours: 3 })} />
+      <TxStatus.InStatus
+        text={t.rich('common.wait-hours', {
+          hours: () =>
+            t('common.hours', {
+              hours: 3,
+            }),
+        })}
+      />
     ),
     [BtcDepositStatus.READY_TO_MANUAL_CONFIRM]: (
       <TxStatus.InStatus text={t('transaction-history.ready-to-confirm')} />

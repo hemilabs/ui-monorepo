@@ -166,11 +166,14 @@ const ReviewContent = function ({
           }
         : undefined,
     postAction: {
-      description: tCommon('wait-hours', {
-        hours:
-          networkType === 'mainnet'
-            ? ExpectedProofWaitTimeHoursMainnet
-            : ExpectedProofWaitTimeHoursTestnet,
+      description: tCommon.rich('wait-hours', {
+        hours: () =>
+          tCommon('hours', {
+            hours:
+              networkType === 'mainnet'
+                ? ExpectedProofWaitTimeHoursMainnet
+                : ExpectedProofWaitTimeHoursTestnet,
+          }),
       }),
       status:
         withdrawal.status >= MessageStatus.READY_FOR_RELAY

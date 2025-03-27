@@ -37,7 +37,7 @@ const CloseButton = ({
 
 export const EarnCard = function () {
   const [hideEarnAndStakeLink, setHideEarnAndStakeLink] = useLocalStorageState(
-    'portal.hide-earn-points-card',
+    'portal.hide-earn-points-on-hemi-card',
     {
       defaultValue: false,
     },

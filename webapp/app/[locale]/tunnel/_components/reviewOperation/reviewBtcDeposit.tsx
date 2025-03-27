@@ -106,8 +106,11 @@ const ReviewContent = function ({
             }
           : undefined,
       postAction: {
-        description: tCommon('wait-hours', {
-          hours: ExpectedManualConfirmationDepositTimeHours,
+        description: tCommon.rich('wait-hours', {
+          hours: () =>
+            tCommon('hours', {
+              hours: ExpectedManualConfirmationDepositTimeHours,
+            }),
         }),
         status: postActionStatusMap[depositStatus] ?? ProgressStatus.COMPLETED,
       },

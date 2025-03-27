@@ -84,6 +84,9 @@ const imageSrcUrls = [
   'https://*.walletconnect.com',
 ]
 
+// these are domains where frames are allowed
+const frameSrcUrls = ['https://*.walletconnect.org']
+
 // Domains allowed to download scripts from
 const downloadScriptsDomains = new Set()
 
@@ -155,6 +158,8 @@ const serveJson = {
           )}; style-src 'self' 'unsafe-inline'; img-src 'self' ${imageSrcUrls.join(
             ' ',
           )} blob: data:; connect-src 'self' ${Array.from(fetchDomains).join(
+            ' ',
+          )}; frame-src 'self' ${frameSrcUrls.join(
             ' ',
           )}; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests`,
         },

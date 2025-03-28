@@ -1,7 +1,8 @@
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
+import { MessageDirection } from '@eth-optimism/sdk'
 import {
   BtcDepositStatus,
   BtcWithdrawStatus,
+  MessageStatus,
   EvmDepositStatus,
 } from 'types/tunnel'
 import { isDeposit, isPendingOperation } from 'utils/tunnel'

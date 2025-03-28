@@ -1,6 +1,6 @@
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
+import { MessageDirection } from '@eth-optimism/sdk'
 import { hemiSepolia } from 'hemi-viem'
-import { ToEvmWithdrawOperation } from 'types/tunnel'
+import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { createQueuedCrossChainMessenger } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { createProvider } from 'utils/providers'

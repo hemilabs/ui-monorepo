@@ -1,7 +1,6 @@
-import { MessageStatus } from '@eth-optimism/sdk'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
-import { BtcDepositStatus } from 'types/tunnel'
+import { BtcDepositStatus, MessageStatus } from 'types/tunnel'
 
 export const ActionableOperations = function () {
   const deposits = useBtcDeposits()
@@ -9,6 +8,7 @@ export const ActionableOperations = function () {
 
   const actionableWithdrawals = withdrawals.filter(w =>
     [MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
+      // @ts-expect-error status is of type MessageStatus
       w.status,
     ),
   ).length

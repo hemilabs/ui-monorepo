@@ -1,4 +1,3 @@
-import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUmami } from 'app/analyticsEvents'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
@@ -7,7 +6,7 @@ import { useFinalizeMessage } from 'hooks/useL2Bridge'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useCallback, useEffect } from 'react'
-import { ToEvmWithdrawOperation } from 'types/tunnel'
+import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
 import { useWaitForTransactionReceipt } from 'wagmi'
 

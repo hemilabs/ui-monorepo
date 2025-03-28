@@ -1,9 +1,9 @@
-import { MessageStatus } from '@eth-optimism/sdk'
 import debugConstructor from 'debug'
 import PQueue from 'p-queue'
 import { RemoteChain } from 'types/chain'
 import {
   type ToEvmWithdrawOperation,
+  MessageStatus,
   type WithdrawTunnelOperation,
 } from 'types/tunnel'
 import { type EnableWorkersDebug } from 'utils/typeUtilities'
@@ -50,6 +50,7 @@ const getPriority = function (withdrawal: ToEvmWithdrawOperation) {
   }
   if (
     [MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
+      // @ts-expect-error status is of type MessageStatus
       withdrawal.status,
     )
   ) {

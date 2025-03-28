@@ -1,4 +1,4 @@
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
+import { MessageDirection } from '@eth-optimism/sdk'
 import {
   type BtcDepositOperation,
   BtcDepositStatus,
@@ -6,6 +6,7 @@ import {
   type DepositTunnelOperation,
   type EvmDepositOperation,
   EvmDepositStatus,
+  MessageStatus,
   type ToBtcWithdrawOperation,
   type ToEvmWithdrawOperation,
   type TunnelOperation,
@@ -78,6 +79,7 @@ const isWithdrawPendingOperation = function (
   operation: WithdrawTunnelOperation,
 ): boolean {
   if (isToEvmWithdraw(operation)) {
+    // @ts-expect-error status is of type MessageStatus
     return !evmWithdrawCompletedActions.includes(operation.status)
   }
 

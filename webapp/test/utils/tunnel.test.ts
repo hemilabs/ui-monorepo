@@ -1,7 +1,7 @@
-import { MessageDirection } from '@eth-optimism/sdk'
 import {
   BtcDepositStatus,
   BtcWithdrawStatus,
+  MessageDirection,
   MessageStatus,
   EvmDepositStatus,
 } from 'types/tunnel'

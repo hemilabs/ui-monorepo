@@ -1,7 +1,4 @@
-import {
-  type TokenBridgeMessage,
-  type MessageDirection,
-} from '@eth-optimism/sdk'
+import { type TokenBridgeMessage } from '@eth-optimism/sdk'
 import { BtcChain } from 'btc-wallet/chains'
 import { BtcTransaction } from 'btc-wallet/unisat'
 import { type Chain, type Hash } from 'viem'
@@ -23,6 +20,11 @@ export const MessageStatus = {
 // Convert object key in a type
 export type MessageStatusType =
   (typeof MessageStatus)[keyof typeof MessageStatus]
+
+export const MessageDirection = {
+  L1_TO_L2: 0,
+  L2_TO_L1: 1,
+} as const
 
 /**
  * This enum follows the steps for running a bitcoin deposit. In the ideal flow,
@@ -128,7 +130,7 @@ type CommonOperation = Omit<
 }
 
 type DepositDirection = {
-  direction: MessageDirection.L1_TO_L2
+  direction: typeof MessageDirection.L1_TO_L2
 }
 
 type BtcTransactionHash = {
@@ -141,7 +143,7 @@ type EvmTransactionHash = {
 }
 
 type WithdrawDirection = {
-  direction: MessageDirection.L2_TO_L1
+  direction: typeof MessageDirection.L2_TO_L1
 }
 
 export type BtcDepositOperation = CommonOperation &

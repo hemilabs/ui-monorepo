@@ -1,4 +1,3 @@
-import { MessageDirection } from '@eth-optimism/sdk'
 import {
   type BtcDepositOperation,
   BtcDepositStatus,
@@ -6,6 +5,7 @@ import {
   type DepositTunnelOperation,
   type EvmDepositOperation,
   EvmDepositStatus,
+  MessageDirection,
   MessageStatus,
   type ToBtcWithdrawOperation,
   type ToEvmWithdrawOperation,

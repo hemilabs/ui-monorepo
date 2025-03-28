@@ -29,7 +29,7 @@ describe('utils/tunnel', function () {
   describe('isPendingOperation', function () {
     describe('when the operation is a deposit', function () {
       describe('BTC', function () {
-        it('should return true if status is not BTC_DEPOSITED or DEPOSIT_TX_FAILED', function () {
+        it('should return true if status is not BTC_DEPOSITED, BTC_DEPOSITED_MANUALLY or DEPOSIT_TX_FAILED', function () {
           const operation = {
             direction: MessageDirection.L1_TO_L2,
             l1ChainId: '123456',
@@ -54,6 +54,16 @@ describe('utils/tunnel', function () {
             direction: MessageDirection.L1_TO_L2,
             l1ChainId: '123456',
             status: BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
+          }
+          // @ts-expect-error Ignore operation fields not required for this test
+          expect(isPendingOperation(operation)).toBe(false)
+        })
+
+        it('should return false if status is BTC_DEPOSITED_MANUALLY', function () {
+          const operation = {
+            direction: MessageDirection.L1_TO_L2,
+            l1ChainId: '123456',
+            status: BtcDepositStatus.BTC_DEPOSITED_MANUALLY,
           }
           // @ts-expect-error Ignore operation fields not required for this test
           expect(isPendingOperation(operation)).toBe(false)

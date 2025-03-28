@@ -1,4 +1,6 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useUmami } from 'app/analyticsEvents'
+import { useBalance } from 'btc-wallet/hooks/useBalance'
 import { Button } from 'components/button'
 import { useConfirmBitcoinDeposit } from 'hooks/useBtcTunnel'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -29,19 +31,28 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
   const t = useTranslations()
   const { updateDeposit } = useTunnelHistory()
   const { track } = useUmami()
+  const { queryKey: btcBalanceQueryKey } = useBalance()
+  const queryClient = useQueryClient()
 
   const isConfirming =
     deposit.status === BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING
 
-  // No need to handle the success case, as in that case, this component will be unmounted
-  // and nothing gets rendered. But we do want to track in analytics!
   useEffect(
-    function trackAnalyticsOnSuccess() {
+    function handleTransactionSuccess() {
       if (confirmBitcoinDepositReceipt?.status === 'success') {
+        // This is needed to invalidate the balance query
+        // so the balance is updated in the UI instantly
+        queryClient.invalidateQueries({ queryKey: btcBalanceQueryKey })
         track?.('btc - confirm dep success', { chain: networkType })
       }
     },
-    [confirmBitcoinDepositReceipt, networkType, track],
+    [
+      btcBalanceQueryKey,
+      confirmBitcoinDepositReceipt,
+      networkType,
+      queryClient,
+      track,
+    ],
   )
 
   useEffect(

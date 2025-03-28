@@ -1,0 +1,22 @@
+{
+  "scripts": {
+    "start": "ts-node server.ts"
+  },
+  "dependencies": {
+    "config": "3.3.12",
+    "cors": "2.8.5",
+    "dotenv": "16.4.7",
+    "express": "4.21.2",
+    "fetch-plus-plus": "1.0.0",
+    "hemi-viem": "2.3.2",
+    "ts-node": "10.9.2",
+    "viem": "2.24.1"
+  },
+  "devDependencies": {
+    "@eth-optimism/sdk": "^3.3.3",
+    "@types/express": "^5.0.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

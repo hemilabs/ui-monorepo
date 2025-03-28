@@ -1,0 +1,21 @@
+{
+  "originList": ["http://localhost:3000"],
+  "port": 3003,
+  "subgraph": {
+    "apiUrl": "https://gateway.thegraph.com/api",
+    "stake": {
+      "mainnet": "7qiewFZ7UyDpj3gyNaCDUk55NqHLdbjWQLduS5dcYfQ4",
+      "testnet": "DNdeC2WA2bYLJx3qAv2VXG2qmW7AsgVT5byGnPjzAnY5"
+    },
+    "tunnel": {
+      "deposits": {
+        "mainnet": "443cSh2tPs3qSCvNehnGd7hkya4MPoH7FEYdsDXQeYeY",
+        "testnet": "6UZDgKugh5wBXwPeJ7K5EfFmvaH8dvEv5s8XNwgWo934"
+      },
+      "withdrawals": {
+        "mainnet": "77x4fbDsVMm66pGUWBfVMzsUDec71eNSfHb1PeMhxKco",
+        "testnet": "VNKvTQZiMR4awsoKuB7eRYJBrrQ1Aq3yvCKhW7N22a6"
+      }
+    }
+  }
+}

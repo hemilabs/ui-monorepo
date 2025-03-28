@@ -1,6 +1,6 @@
-# Staking Points API
+# Hemi Points API
 
-This service provides the amount of points any user has earned through the Hemi Staking Campaign.
+This service provides the amount of Hemi points any user has earned through the **Incentivized Testnet**, **Hemi Staking** campaigns, etc.
 Data is provided by [Absinthe](https://absinthe.network/).
 
 ## Configuration
@@ -16,13 +16,7 @@ These environment variables control how the API works:
 
 ## Local development and testing
 
-To start the service, run:
-
-```sh
-ABSINTHE_API_KEY=MY_API_KEY docker compose up -d
-```
-
-Alternatively, if the environment variables are stored in a `.env.local` file, run:
+To start the service, the environment variables are stored in i.e. a `.env.local` file and run the following commands:
 
 ```sh
 docker build --tag staking-points-api:local .

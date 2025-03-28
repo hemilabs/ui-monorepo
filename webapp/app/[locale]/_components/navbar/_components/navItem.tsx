@@ -14,7 +14,7 @@ import {
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'i18n/navigation'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { ComponentProps, MutableRefObject, ReactNode, useState } from 'react'
 import { UrlObject } from 'url'
 import { isRelativeUrl } from 'utils/url'
@@ -209,6 +209,7 @@ export const NetworkSwitch = function () {
   const [isOpen, setIsOpen] = useState(false)
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
   const { track } = useUmami()
+  const t = useTranslations('navbar')
 
   const selectNetwork = function (type: NetworkType) {
     setNetworkType(type)
@@ -228,8 +229,11 @@ export const NetworkSwitch = function () {
           <IconContainer>
             <NetworkIcon />
           </IconContainer>
-          <ItemText selected={isOpen} text={networkType} />
-          <Chevron.Bottom className="ml-auto" />
+          <ItemText text={t('network')} />
+          <div className="ml-auto flex items-center gap-x-1">
+            <ItemText selected={isOpen} text={networkType} />
+            <Chevron.Bottom />
+          </div>
         </Row>
         {isOpen && (
           <div className="absolute right-0 top-0 z-20 -translate-y-full translate-x-3">

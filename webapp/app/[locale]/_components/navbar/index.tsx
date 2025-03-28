@@ -54,7 +54,7 @@ export const Navbar = function () {
             <Badge />
           </div>
         </div>
-        <ul className="flex h-[calc(100dvh-275px)] flex-col gap-y-1 overflow-y-auto md:h-full [&>li>div]:px-3">
+        <ul className="flex h-[calc(100dvh-335px)] flex-col gap-y-1 overflow-y-auto md:h-full [&>li>div]:px-3">
           <li className="order-1">
             <ItemLink
               event="nav - tunnel"
@@ -144,7 +144,7 @@ export const Navbar = function () {
               text={t('hemidocs')}
             />
           </li>
-          <li className="md:order-13 order-12">
+          <li className="md:order-13 hidden md:block">
             <NetworkSwitch />
           </li>
           <li className="hidden md:order-10 md:block">
@@ -165,7 +165,10 @@ export const Navbar = function () {
         </ul>
       </div>
       <ul className="fixed bottom-0 w-full border-t border-neutral-300 bg-neutral-50 px-3 pt-4 md:hidden">
-        <li>
+        <li className="rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1">
+          <NetworkSwitch />
+        </li>
+        <li className="mt-3">
           <GetStarted />
         </li>
         <li>

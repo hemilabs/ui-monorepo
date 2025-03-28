@@ -1,4 +1,3 @@
-import { type TokenBridgeMessage } from '@eth-optimism/sdk'
 import { BtcChain } from 'btc-wallet/chains'
 import { BtcTransaction } from 'btc-wallet/unisat'
 import { type Chain, type Hash } from 'viem'
@@ -114,19 +113,14 @@ export const enum EvmDepositStatus {
   APPROVAL_TX_FAILED = 5,
 }
 
-type CommonOperation = Omit<
-  TokenBridgeMessage,
-  | 'amount'
-  | 'blockNumber'
-  | 'chainId'
-  | 'data'
-  | 'direction'
-  | 'logIndex'
-  | 'transactionHash'
-> & {
+type CommonOperation = {
   amount: string
   blockNumber?: number
+  from: string
+  l1Token: string
+  l2Token: string
   timestamp?: number
+  to: string
 }
 
 type DepositDirection = {

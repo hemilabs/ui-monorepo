@@ -38,7 +38,24 @@
     },
     {
       "extends": ["bloq/node", "prettier"],
-      "files": ["webapp/scripts/*.js", "webapp/*.config.js"]
+      "files": [
+        "staking-points/**/*.js",
+        "token-prices/**/*.js",
+        "webapp/scripts/*.js",
+        "webapp/*.config.js"
+      ]
+    },
+    {
+      "extends": ["bloq/node", "bloq/typescript", "prettier"],
+      "files": ["subgraph-api/**/*.ts"],
+      "rules": {
+        "node/no-unsupported-features/es-syntax": [
+          "error",
+          {
+            "ignores": ["modules"]
+          }
+        ]
+      }
     },
     {
       "extends": ["bloq/typescript", "prettier"],
@@ -79,10 +96,6 @@
         "markdownlint/md041": "warn",
         "markdownlint/md045": "warn"
       }
-    },
-    {
-      "extends": ["bloq/node", "prettier"],
-      "files": ["staking-points/**/*.js", "token-prices/**/*.js"]
     }
   ],
   "root": true,
@@ -93,5 +106,10 @@
         "allow": ["after_txid"]
       }
     ]
+  },
+  "settings": {
+    "node": {
+      "tryExtensions": [".js", ".ts"]
+    }
   }
 }

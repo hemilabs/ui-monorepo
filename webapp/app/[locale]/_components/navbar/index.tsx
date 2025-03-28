@@ -165,7 +165,7 @@ export const Navbar = function () {
         </ul>
       </div>
       <ul className="fixed bottom-0 w-full border-t border-neutral-300 bg-neutral-50 px-3 pt-4 md:hidden">
-        <li className="rounded-lg border border-neutral-300 bg-neutral-100 px-2 py-1">
+        <li className="rounded-lg border border-neutral-300 bg-neutral-100 px-3 py-1">
           <NetworkSwitch />
         </li>
         <li className="mt-3">

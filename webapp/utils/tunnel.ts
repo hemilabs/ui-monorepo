@@ -46,6 +46,7 @@ export const isToEvmWithdraw = (
 
 const btcDepositCompletedActions = [
   BtcDepositStatus.BTC_DEPOSITED,
+  BtcDepositStatus.BTC_DEPOSITED_MANUALLY,
   BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
 ]
 

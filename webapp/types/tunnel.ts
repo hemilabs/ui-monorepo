@@ -22,7 +22,7 @@ import { type Chain, type Hash } from 'viem'
  *   |_READY_TO_MANUAL_CONFIRM
  *      |_DEPOSIT_MANUAL_CONFIRMING
  *        |_DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED
- *        |BTC_DEPOSITED_MANUALLY (Arrives here after manual confirmation)
+ *        |_BTC_DEPOSITED_MANUALLY (Arrives here after manual confirmation)
  */
 export const enum BtcDepositStatus {
   // The tx is in the mempool, but hasn't been included in a mined block

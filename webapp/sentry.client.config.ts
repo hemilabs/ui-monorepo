@@ -3,7 +3,10 @@ import * as Sentry from '@sentry/nextjs'
 const enabled = !!process.env.NEXT_PUBLIC_SENTRY_DSN
 
 const unsupportedWalletErrors = [
+  '@polkadot/keyring requires direct dependencies',
   "Backpack couldn't override `window.ethereum`.",
+  // Nightly wallet
+  'Cannot set property ethereum of #<Window> which has only a getter',
   'shouldSetPelagusForCurrentProvider is not a function',
   'shouldSetTallyForCurrentProvider is not a function',
   'Talisman extension has not been configured yet',
@@ -17,6 +20,10 @@ const walletConnectErrors = [
 
 function enableSentry() {
   const ignoreErrors = [
+    // Nextjs errors when pre-fetching is aborted due to user navigation.
+    // See https://github.com/vercel/next.js/pull/73975 and https://github.com/vercel/next.js/pull/73985
+    // should not happen anymore after Next 15.3
+    'Falling back to browser navigation',
     // user rejected a confirmation in the wallet
     'rejected the request',
     // React internal error thrown when something outside react modifies the DOM

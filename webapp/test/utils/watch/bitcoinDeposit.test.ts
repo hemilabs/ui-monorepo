@@ -36,6 +36,10 @@ vi.mock(import('utils/btcApi'), async function (importOriginal) {
   }
 })
 
+vi.mock('utils/chainClients', () => ({
+  getHemiClient: vi.fn(),
+}))
+
 vi.mock('utils/hemi', () => ({
   getHemiStatusOfBtcDeposit: vi.fn(),
   getVaultAddressByDeposit: vi.fn(),

@@ -23,6 +23,7 @@ export const stakeProtocols = [
   'uniBtc',
   'uniRouter',
   'wbtc',
+  'yieldNest',
 ] as const
 
 export type StakeProtocols = (typeof stakeProtocols)[number]

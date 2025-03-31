@@ -61,6 +61,8 @@ const testnetAddresses = [
   '0xD47971C7F5B1067d25cd45d30b2c9eb60de96443',
   // USDT
   '0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298',
+  // rUSDC-hemi
+  '0x931d9e210530184C321EA4ee6238cCB4D0AB5236',
 ]
 
 /**

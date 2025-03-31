@@ -13,17 +13,24 @@ const unsupportedWalletErrors = [
 ]
 
 const walletConnectErrors = [
+  'Error: emitting session_request',
   "No matching key. session topic doesn't exist",
+  'Record was recently deleted - session',
   // See https://github.com/hemilabs/ui-monorepo/issues/1081
   'this.provider.disconnect is not a function',
 ]
 
 function enableSentry() {
   const ignoreErrors = [
+    'Deprecation warning: tabReply will be removed',
+    // Coming from an extension probably, we don't use anything related to this
+    `Failed to execute 'transaction' on 'IDBDatabase'`,
     // Nextjs errors when pre-fetching is aborted due to user navigation.
     // See https://github.com/vercel/next.js/pull/73975 and https://github.com/vercel/next.js/pull/73985
     // should not happen anymore after Next 15.3
     'Falling back to browser navigation',
+    // user has not enough gas
+    'insufficient funds for gas * price + value',
     // user rejected a confirmation in the wallet
     'rejected the request',
     // React internal error thrown when something outside react modifies the DOM
@@ -33,6 +40,7 @@ function enableSentry() {
     'The node before which the new node is to be inserted is not a child of this node.',
     // Thrown when firefox prevents an add-on from referencing a DOM element that has been removed.
     `TypeError: can't access dead object`,
+    'User denied transaction signature',
     ...unsupportedWalletErrors,
     ...walletConnectErrors,
   ]

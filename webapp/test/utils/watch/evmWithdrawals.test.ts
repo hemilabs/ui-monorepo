@@ -4,9 +4,8 @@ import {
   MessageStatus,
   ToEvmWithdrawOperation,
 } from 'types/tunnel'
-import { createQueuedCrossChainMessenger } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
-import { createProvider } from 'utils/providers'
+import { getEvmWithdrawalStatus } from 'utils/tunnel'
 import { sepolia } from 'viem/chains'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -18,17 +17,13 @@ const withdrawal: ToEvmWithdrawOperation = {
   transactionHash: '0x0000000000000000000000000000000000000004',
 }
 
-vi.mock('utils/crossChainMessenger', () => ({
-  createQueuedCrossChainMessenger: vi.fn(),
-}))
-
 vi.mock('utils/evmApi', () => ({
   getEvmBlock: vi.fn(),
   getEvmTransactionReceipt: vi.fn(),
 }))
 
-vi.mock('utils/providers', () => ({
-  createProvider: vi.fn(),
+vi.mock('utils/tunnel', () => ({
+  getEvmWithdrawalStatus: vi.fn(),
 }))
 
 describe('utils/watch/evmWithdrawals', function () {
@@ -41,8 +36,6 @@ describe('utils/watch/evmWithdrawals', function () {
   describe('watchEvmWithdrawal', async function () {
     it('should return no changes if the withdrawal is pending', async function () {
       const { watchEvmWithdrawal } = await import('utils/watch/evmWithdrawals')
-      vi.mocked(createQueuedCrossChainMessenger).mockResolvedValue({})
-      vi.mocked(createProvider).mockResolvedValue({})
       vi.mocked(getEvmTransactionReceipt).mockResolvedValue(null)
 
       const updates = await watchEvmWithdrawal(withdrawal)
@@ -55,10 +48,7 @@ describe('utils/watch/evmWithdrawals', function () {
       const blockNumber = BigInt(123)
       const newStatus = MessageStatus.READY_TO_PROVE
       const timestamp = BigInt(new Date().getTime())
-      const getMessageStatus = vi.fn().mockResolvedValue(newStatus)
-      vi.mocked(createQueuedCrossChainMessenger).mockResolvedValue({
-        getMessageStatus,
-      })
+      vi.mocked(getEvmWithdrawalStatus).mockResolvedValue(newStatus)
       vi.mocked(getEvmBlock).mockResolvedValue({ timestamp })
       vi.mocked(getEvmTransactionReceipt).mockResolvedValue({
         blockNumber,
@@ -74,12 +64,7 @@ describe('utils/watch/evmWithdrawals', function () {
         status: newStatus,
         timestamp: Number(timestamp),
       })
-      expect(getMessageStatus).toHaveBeenCalledOnce()
-      expect(getMessageStatus).toHaveBeenCalledWith(
-        withdrawal.transactionHash,
-        0,
-        withdrawal.direction,
-      )
+      expect(getEvmWithdrawalStatus).toHaveBeenCalledOnce()
     })
 
     it('should return no updates if the withdrawal has not changed', async function () {
@@ -89,9 +74,7 @@ describe('utils/watch/evmWithdrawals', function () {
         timestamp: new Date().getTime(),
       }
       const { watchEvmWithdrawal } = await import('utils/watch/evmWithdrawals')
-      vi.mocked(createQueuedCrossChainMessenger).mockResolvedValue({
-        getMessageStatus: vi.fn().mockResolvedValue(newWithdrawal.status),
-      })
+      vi.mocked(getEvmWithdrawalStatus).mockResolvedValue(newWithdrawal.status)
       vi.mocked(getEvmBlock).mockResolvedValue({
         timestamp: BigInt(newWithdrawal.timestamp),
       })

@@ -1,27 +1,7 @@
-import pMemoize from 'promise-mem'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
-import { findChainById } from 'utils/chain'
-import { createQueuedCrossChainMessenger } from 'utils/crossChainMessenger'
+import { getEvmL1PublicClient } from 'utils/chainClients'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
-import { createProvider } from 'utils/providers'
-import { Chain } from 'viem'
-
-// Memoized cross chain messenger as this will be created by many withdrawals
-const getCrossChainMessenger = pMemoize(
-  function (l1Chain: Chain, l2Chain: Chain) {
-    const l1Provider = createProvider(l1Chain)
-
-    const l2Provider = createProvider(l2Chain)
-
-    return createQueuedCrossChainMessenger({
-      l1ChainId: l1Chain.id,
-      l1Signer: l1Provider,
-      l2Chain,
-      l2Signer: l2Provider,
-    })
-  },
-  { resolver: (l1Chain, l2Chain) => `${l1Chain.id}-${l2Chain.id}` },
-)
+import { getEvmWithdrawalStatus } from 'utils/tunnel'
 
 const getTransactionBlockNumber = function (
   withdrawal: ToEvmWithdrawOperation,
@@ -59,12 +39,8 @@ export const watchEvmWithdrawal = async function (
 ) {
   const updates: Partial<ToEvmWithdrawOperation> = {}
 
-  // as this worker watches withdrawals to EVM chains, l1Chain will be (EVM) Chain
-  const l1Chain = findChainById(withdrawal.l1ChainId) as Chain
-  // L2 are always EVM
-  const l2Chain = findChainById(withdrawal.l2ChainId) as Chain
+  const l1publicClient = getEvmL1PublicClient(withdrawal.l1ChainId)
 
-  const crossChainMessenger = await getCrossChainMessenger(l1Chain, l2Chain)
   const receipt = await getEvmTransactionReceipt(
     withdrawal.transactionHash,
     withdrawal.l2ChainId,
@@ -75,12 +51,11 @@ export const watchEvmWithdrawal = async function (
   }
 
   const [status, [blockNumber, timestamp]] = await Promise.all([
-    crossChainMessenger.getMessageStatus(
-      withdrawal.transactionHash,
-      // default value, but we want to set direction
-      0,
-      withdrawal.direction,
-    ),
+    getEvmWithdrawalStatus({
+      l1publicClient,
+      l2ChainId: withdrawal.l2ChainId,
+      receipt,
+    }),
     getTransactionBlockNumber(withdrawal).then(getBlockTimestamp(withdrawal)),
   ])
 

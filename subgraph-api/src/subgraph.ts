@@ -7,7 +7,7 @@ import {
   type EvmDepositOperation,
   type ToBtcWithdrawOperation,
   type ToEvmWithdrawOperation,
-} from '../types/tunnel'
+} from '../types/tunnel.ts'
 import { type Address, type Chain, checksumAddress as toChecksum } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
 

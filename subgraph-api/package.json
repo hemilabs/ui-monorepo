@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "ts-node server.ts"
+    "start": "node --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"ts-node/esm\", pathToFileURL(\"./\"));' server.ts"
   },
   "dependencies": {
     "config": "3.3.12",
@@ -18,5 +18,6 @@
   },
   "engines": {
     "node": ">=20"
-  }
+  },
+  "type": "module"
 }

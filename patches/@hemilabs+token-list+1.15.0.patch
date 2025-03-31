@@ -1,5 +1,5 @@
 diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
-index b3955a4..732bbb1 100644
+index 0f3955d..4aa3177 100644
 --- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 +++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 @@ -173,8 +173,7 @@
@@ -32,7 +32,7 @@ index b3955a4..732bbb1 100644
        }
      },
      {
-@@ -280,8 +277,7 @@
+@@ -291,8 +288,7 @@
        "chainId": 43111,
        "decimals": 18,
        "extensions": {
@@ -42,7 +42,7 @@ index b3955a4..732bbb1 100644
        },
        "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/m-btc.svg",
        "name": "Merlin BTC",
-@@ -292,7 +288,12 @@
+@@ -303,7 +299,12 @@
        "chainId": 43111,
        "decimals": 8,
        "extensions": {
@@ -56,7 +56,7 @@ index b3955a4..732bbb1 100644
        },
        "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/hemibtc.svg",
        "name": "Hemi Bitcoin",
-@@ -304,10 +305,14 @@
+@@ -315,10 +316,14 @@
        "decimals": 6,
        "extensions": {
          "birthBlock": 623077,
@@ -73,7 +73,7 @@ index b3955a4..732bbb1 100644
        "symbol": "USDC.e"
      },
      {
-@@ -332,7 +337,11 @@
+@@ -343,7 +348,11 @@
        "decimals": 6,
        "extensions": {
          "birthBlock": 666946,
@@ -86,7 +86,7 @@ index b3955a4..732bbb1 100644
        },
        "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/usdt.svg",
        "name": "USDT",
-@@ -402,8 +411,7 @@
+@@ -413,8 +422,7 @@
        "chainId": 43111,
        "decimals": 8,
        "extensions": {
@@ -96,7 +96,7 @@ index b3955a4..732bbb1 100644
        },
        "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/obtc.svg",
        "name": "Obelisk BTC",
-@@ -428,8 +436,7 @@
+@@ -439,8 +447,7 @@
        "name": "pumpBTC",
        "symbol": "pumpBTC",
        "extensions": {
@@ -106,7 +106,7 @@ index b3955a4..732bbb1 100644
        }
      },
      {
-@@ -440,8 +447,7 @@
+@@ -451,8 +458,7 @@
        "name": "Lorenzo stBTC",
        "symbol": "stBTC",
        "extensions": {
@@ -116,7 +116,7 @@ index b3955a4..732bbb1 100644
        }
      },
      {
-@@ -471,11 +477,16 @@
+@@ -482,11 +488,16 @@
        "chainId": 743111,
        "decimals": 8,
        "extensions": {
@@ -136,7 +136,7 @@ index b3955a4..732bbb1 100644
      },
      {
        "address": "0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298",
-@@ -514,8 +525,8 @@
+@@ -541,8 +552,8 @@
        "chainId": 743111,
        "decimals": 18,
        "logoURI": "https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/hdai.svg",

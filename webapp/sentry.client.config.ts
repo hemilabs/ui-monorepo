@@ -13,8 +13,9 @@ const unsupportedWalletErrors = [
 ]
 
 const walletConnectErrors = [
+  'Decoded payload on topic',
   'Error: emitting session_request',
-  "No matching key. session topic doesn't exist",
+  'No matching key',
   'Record was recently deleted - session',
   // See https://github.com/hemilabs/ui-monorepo/issues/1081
   'this.provider.disconnect is not a function',
@@ -23,6 +24,7 @@ const walletConnectErrors = [
 function enableSentry() {
   const ignoreErrors = [
     'Deprecation warning: tabReply will be removed',
+    'Error redefining provider into window.ethereum',
     // Coming from an extension probably, we don't use anything related to this
     `Failed to execute 'transaction' on 'IDBDatabase'`,
     // Nextjs errors when pre-fetching is aborted due to user navigation.
@@ -31,6 +33,10 @@ function enableSentry() {
     'Falling back to browser navigation',
     // user has not enough gas
     'insufficient funds for gas * price + value',
+    // Metamask error
+    "MetaMask: 'eth_accounts' unexpectedly updated accounts. Please report this bug",
+    // From "TronWeb: 'tronWeb.sidechain' is deprecated and may be removed in the future. Please use the 'sunweb' sdk instead...",
+    "Please use the 'sunweb' sdk instead",
     // user rejected a confirmation in the wallet
     'rejected the request',
     // React internal error thrown when something outside react modifies the DOM

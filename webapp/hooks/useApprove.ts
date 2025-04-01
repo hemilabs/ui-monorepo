@@ -5,9 +5,11 @@ import {
   type UseWriteContractParameters,
 } from 'wagmi'
 
-import { type Erc20Abi } from './baseErc20'
-
-type ApproveArgs = ContractFunctionArgs<Erc20Abi, 'nonpayable', 'approve'>
+type ApproveArgs = ContractFunctionArgs<
+  typeof erc20Abi,
+  'nonpayable',
+  'approve'
+>
 type Spender = ApproveArgs[0]
 type Amount = ApproveArgs[1]
 

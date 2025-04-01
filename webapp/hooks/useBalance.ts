@@ -1,8 +1,12 @@
+import { useMemo } from 'react'
 import { EvmToken } from 'types/token'
 import { isNativeAddress } from 'utils/nativeToken'
-import { isAddress, type Address } from 'viem'
-import { useAccount, useBalance as useWagmiBalance } from 'wagmi'
-import { useBalanceOf } from 'wagmi-erc20-hooks'
+import { type Address, erc20Abi, isAddress } from 'viem'
+import {
+  useAccount,
+  useBalance as useWagmiBalance,
+  useReadContract,
+} from 'wagmi'
 
 export const useNativeTokenBalance = function (
   chainId: EvmToken['chainId'],
@@ -27,17 +31,22 @@ export const useNativeTokenBalance = function (
 export const useTokenBalance = function (
   chainId: EvmToken['chainId'],
   tokenAddress: string,
-  enabled: boolean = true,
 ) {
   const { address, isConnected } = useAccount()
-  const { data, refetch, ...rest } = useBalanceOf(tokenAddress as Address, {
-    args: { account: address, chainId },
+
+  const { data, refetch, ...rest } = useReadContract({
+    abi: erc20Abi,
+    address: tokenAddress as Address,
+    args: useMemo(() => [address], [address]),
+    chainId,
+    functionName: 'balanceOf',
     query: {
       enabled:
         isConnected &&
+        !!address &&
         isAddress(address) &&
-        !isNativeAddress(address) &&
-        enabled,
+        isAddress(tokenAddress) &&
+        !isNativeAddress(tokenAddress),
     },
   })
 

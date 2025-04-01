@@ -18,7 +18,6 @@
         "hemi-viem-stake-actions/**/*.{js,ts}",
         "sliding-block-window/**/*.{js,ts}",
         "ui-common/**/*.{js,ts,tsx}",
-        "wagmi-erc20-hooks/**/*.{js,ts,tsx}",
         "webapp/**/*.{js,ts,tsx}"
       ],
       "rules": {

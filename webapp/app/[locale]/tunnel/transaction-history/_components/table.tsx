@@ -14,7 +14,7 @@ import { Menu } from 'components/menu'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, MutableRefObject, useMemo, useState } from 'react'
+import { ComponentProps, RefObject, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { TunnelOperation } from 'types/tunnel'
 import { isDeposit, isWithdraw } from 'utils/tunnel'
@@ -63,7 +63,7 @@ const Body = function ({
   rows,
 }: {
   columns: ColumnDef<TunnelOperation>[]
-  containerRef: MutableRefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLDivElement>
   loading: boolean
   rows: Row<TunnelOperation>[]
 }) {
@@ -390,7 +390,7 @@ const columnsBuilder = (
 ]
 
 type TableProps = {
-  containerRef: MutableRefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLDivElement>
   data: TunnelOperation[]
   loading: boolean
   filterOption: FilterOptions

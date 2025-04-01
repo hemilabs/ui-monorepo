@@ -1,8 +1,8 @@
-import { useRef, useEffect, MutableRefObject } from 'react'
+import { useRef, useEffect, RefObject } from 'react'
 
 export const useOnClickOutside = function <T extends HTMLElement>(
   handler?: (e: MouseEvent | TouchEvent) => void,
-  initialRef?: MutableRefObject<T>,
+  initialRef?: RefObject<T>,
 ) {
   const internalRef = useRef<T>(null)
   const ref = initialRef ?? internalRef

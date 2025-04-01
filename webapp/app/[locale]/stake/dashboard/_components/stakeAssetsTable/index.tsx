@@ -17,7 +17,7 @@ import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useRouter } from 'i18n/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { MouseEvent, MutableRefObject, useMemo, useRef } from 'react'
+import { MouseEvent, RefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakeToken } from 'types/stake'
 import { queryStringObjectToString } from 'utils/url'
@@ -44,7 +44,7 @@ const Body = function ({
   rows,
 }: {
   columns: ColumnDef<StakeToken>[]
-  containerRef: MutableRefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLDivElement>
   loading: boolean
   rows: Row<StakeToken>[]
 }) {
@@ -198,7 +198,7 @@ const columnsBuilder = (
 ]
 
 type Props = {
-  containerRef: MutableRefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLDivElement>
   data: StakeToken[]
   loading: boolean
 }

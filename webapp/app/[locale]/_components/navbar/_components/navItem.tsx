@@ -15,7 +15,7 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'i18n/navigation'
 import { useLocale, useTranslations } from 'next-intl'
-import { ComponentProps, MutableRefObject, ReactNode, useState } from 'react'
+import { ComponentProps, RefObject, ReactNode, useState } from 'react'
 import { UrlObject } from 'url'
 import { isRelativeUrl } from 'utils/url'
 
@@ -73,7 +73,7 @@ const MenuContainer = ({
   ...props
 }: { children: ReactNode } & {
   isOpen: boolean
-  refProp: MutableRefObject<HTMLDivElement>
+  refProp: RefObject<HTMLDivElement>
 } & ComponentProps<'div'>) => (
   <div
     {...props}

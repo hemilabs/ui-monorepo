@@ -1,9 +1,12 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { WithWorker } from 'components/withWorker'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useEvmDeposits } from 'hooks/useEvmDeposits'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useEffect } from 'react'
-import { EvmDepositOperation } from 'types/tunnel'
+import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
+import { isNativeAddress } from 'utils/nativeToken'
 import { isPendingOperation } from 'utils/tunnel'
 import { hasKeys } from 'utils/utilities'
 import { useAccount } from 'wagmi'
@@ -17,6 +20,14 @@ const WatchEvmDeposit = function ({
   worker: AppToWorker
 }) {
   const { updateDeposit } = useTunnelHistory()
+  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
+    deposit.l2ChainId,
+    deposit.l2Token,
+  )
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+    deposit.l2ChainId,
+  )
+  const queryClient = useQueryClient()
 
   useEffect(
     function watchDepositUpdates() {
@@ -39,6 +50,15 @@ const WatchEvmDeposit = function ({
         // next interval will poll again
         hasWorkedPostedBack = true
         if (hasKeys(updates)) {
+          // This is needed to invalidate the balance query when the deposit is done
+          // so the balance is updated in the UI instantly
+          if (updates.status === EvmDepositStatus.DEPOSIT_RELAYED) {
+            const balanceQueryKey = isNativeAddress(deposit.l1Token)
+              ? nativeTokenBalanceQueryKey
+              : erc20BalanceQueryKey
+
+            queryClient.invalidateQueries({ queryKey: balanceQueryKey })
+          }
           updateDeposit(deposit, updates)
         }
       }
@@ -70,7 +90,14 @@ const WatchEvmDeposit = function ({
         clearInterval(intervalId)
       }
     },
-    [deposit, updateDeposit, worker],
+    [
+      erc20BalanceQueryKey,
+      deposit,
+      nativeTokenBalanceQueryKey,
+      queryClient,
+      updateDeposit,
+      worker,
+    ],
   )
 
   return null

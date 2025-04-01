@@ -111,7 +111,11 @@ export const enum EvmDepositStatus {
   DEPOSIT_TX_FAILED = 4,
   // Approval failed
   APPROVAL_TX_FAILED = 5,
+  // Funds have been minted in Hemi
+  DEPOSIT_RELAYED = 6,
 }
+
+export const ExpectedWaitTimeMinutesGetFundsHemi = 3
 
 type CommonOperation = {
   amount: string

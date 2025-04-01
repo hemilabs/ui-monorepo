@@ -65,7 +65,9 @@ const Completed = function ({
             <>
               <GreenCheckIcon />
               <span className="mr-auto text-emerald-500">{t('confirmed')}</span>
-              <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+              {explorerChainId && txHash && (
+                <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+              )}
             </>
           ) : null
         }
@@ -126,7 +128,9 @@ const Progress = function ({
           <>
             <ClockIcon />
             <span className="mr-auto text-neutral-500">{t('pending')}</span>
-            <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+            {explorerChainId && txHash && (
+              <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+            )}
           </>
         }
         top={{
@@ -191,7 +195,9 @@ const Failed = function ({
             <>
               <RedErrorIcon />
               <span className="mr-auto text-rose-500">{t('error')}</span>
-              <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+              {explorerChainId && txHash && (
+                <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
+              )}
             </>
           ) : null
         }

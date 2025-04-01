@@ -29,6 +29,10 @@ const block = {
 
 const uuid = BigInt(1)
 
+vi.mock('utils/chainClients', () => ({
+  getHemiClient: vi.fn(),
+}))
+
 vi.mock('utils/evmApi', () => ({
   getEvmBlock: vi.fn(),
   getEvmTransactionReceipt: vi.fn(),

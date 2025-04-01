@@ -193,7 +193,7 @@ export const stakeWhiteList: Partial<
     '0x8970a6A9Eae065aA81a94E86ebCAF4F3d4dd6DA1': {
       priceSymbol: 'btc',
       protocol: 'yieldNest',
-      rewards: ['hemi'],
+      rewards: ['hemi', 'kernel', 'yieldnest'],
       website: websitesMap.yieldNest,
     },
     /* eslint-enable sort-keys */

@@ -13,6 +13,8 @@ import {
   SolvPoints,
   UnirouterPoints,
   EigenpiePoints,
+  KernelPoints,
+  YieldNestPoints,
 } from './pointsTag'
 
 type Props = {
@@ -27,10 +29,12 @@ const rewardComponentMap: Record<Reward, ReactNode> = {
   eigenpie: <EigenpiePoints />,
   hemi: <HemiPoints />,
   hemi2x: <Hemi2xPoints />,
+  kernel: <KernelPoints />,
   lorenzo: <LorenzoPoints />,
   pumpbtc: <PumpBtcPoints />,
   solv: <SolvPoints />,
   unirouter: <UnirouterPoints />,
+  yieldnest: <YieldNestPoints />,
 }
 
 export function TokenRewards({ rewards }: Props) {

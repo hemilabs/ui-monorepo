@@ -10,10 +10,12 @@ import { DiamondPointsIcon } from './icons/diamondPointsIcon'
 import { EigenpiePointsIcon } from './icons/eigenpiePointsIcon'
 import { Hemi2xPointsIcon } from './icons/hemi2xPointsIcon'
 import { HemiPointsIcon } from './icons/hemiPointsIcon'
+import { KernelIcon } from './icons/kernelIcon'
 import { LorenzoPointsIcon } from './icons/lorenzoPointsIcon'
 import { PumpBtcPointsIcon } from './icons/pumpBtcPointsIcon'
 import { SolvPointsIcon } from './icons/solvPointsIcon'
 import { UnirouterPointsIcon } from './icons/unirouterPointsIcon'
+import { YieldNestIcon } from './icons/yieldNestIcon'
 
 type Props = {
   backgroundColor?:
@@ -170,5 +172,28 @@ export const UnirouterPoints = () => (
         'linear-gradient(118deg, rgba(194, 107, 255, 0.16) -2.63%, rgba(150, 0, 255, 0.16) 89.01%)',
     }}
     textColor="text-points-unirouter"
+  />
+)
+
+export const KernelPoints = () => (
+  <PointsTag
+    icon={<KernelIcon />}
+    label="points"
+    style={{
+      background: '#FF8063',
+    }}
+    textColor="text-neutral-950"
+  />
+)
+
+export const YieldNestPoints = () => (
+  <PointsTag
+    backgroundColor="bg-black"
+    icon={<YieldNestIcon />}
+    label="points"
+    style={{
+      background: '#e8c887',
+    }}
+    textColor="text-neutral-950"
   />
 )

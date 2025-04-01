@@ -36,10 +36,12 @@ export type Reward =
   | 'eigenpie'
   | 'hemi'
   | 'hemi2x'
+  | 'kernel'
   | 'lorenzo'
   | 'pumpbtc'
   | 'solv'
   | 'unirouter'
+  | 'yieldnest'
 
 export type StakeExtensions = Omit<Extensions, 'protocol'> & {
   protocol: StakeProtocols

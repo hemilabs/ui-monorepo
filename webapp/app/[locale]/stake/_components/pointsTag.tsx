@@ -24,7 +24,12 @@ type Props = {
     | 'bg-orange-500'
     | 'bg-points-solv'
   borderColor?: 'border-black' | 'border-transparent'
-  label: 'diamonds' | 'points' | 'x2-eigenpie-points' | 'x2-babypie-jewels'
+  label:
+    | 'diamonds'
+    | 'points'
+    | 'x2-eigenpie-points'
+    | 'x2-babypie-jewels'
+    | 'seeds'
   icon: ReactNode
   style?: CSSProperties
   textColor:
@@ -190,7 +195,7 @@ export const YieldNestPoints = () => (
   <PointsTag
     backgroundColor="bg-black"
     icon={<YieldNestIcon />}
-    label="points"
+    label="seeds"
     style={{
       background: '#e8c887',
     }}

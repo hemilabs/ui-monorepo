@@ -22,6 +22,7 @@ import tether from './images/tether.svg'
 import threshold from './images/threshold.svg'
 import uniRouter from './images/uniRouter.svg'
 import wbtc from './images/wbtc.svg'
+import yieldNest from './images/yieldNest.svg'
 
 export const protocolImages: Record<StakeProtocols, StaticImageData> = {
   babypie,
@@ -46,4 +47,5 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
   uniBtc: bedRock,
   uniRouter,
   wbtc,
+  yieldNest,
 }

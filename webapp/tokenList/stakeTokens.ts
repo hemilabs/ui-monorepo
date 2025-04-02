@@ -26,6 +26,7 @@ const websitesMap: Partial<Record<StakeExtensions['protocol'], string>> = {
   uniBtc: 'https://app.bedrock.technology/unibtc?tab=swap_deposit',
   uniRouter: 'https://www.unirouter.io/#',
   wbtc: 'https://www.wbtc.network',
+  yieldNest: 'https://app.yieldnest.finance/restake/ynCoBTCk',
 }
 
 // TODO: Some tokens are not deployed, so their rewards can't be configured
@@ -187,6 +188,13 @@ export const stakeWhiteList: Partial<
       protocol: 'hemi',
       rewards: ['hemi'],
       website: websitesMap.hemi,
+    },
+    // ynCoBTCk
+    '0x8970a6A9Eae065aA81a94E86ebCAF4F3d4dd6DA1': {
+      priceSymbol: 'btc',
+      protocol: 'yieldNest',
+      rewards: ['hemi', 'kernel', 'yieldnest'],
+      website: websitesMap.yieldNest,
     },
     /* eslint-enable sort-keys */
   },

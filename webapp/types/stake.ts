@@ -23,6 +23,7 @@ export const stakeProtocols = [
   'uniBtc',
   'uniRouter',
   'wbtc',
+  'yieldNest',
 ] as const
 
 export type StakeProtocols = (typeof stakeProtocols)[number]
@@ -35,10 +36,12 @@ export type Reward =
   | 'eigenpie'
   | 'hemi'
   | 'hemi2x'
+  | 'kernel'
   | 'lorenzo'
   | 'pumpbtc'
   | 'solv'
   | 'unirouter'
+  | 'yieldnest'
 
 export type StakeExtensions = Omit<Extensions, 'protocol'> & {
   protocol: StakeProtocols

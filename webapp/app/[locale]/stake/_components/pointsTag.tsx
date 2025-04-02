@@ -27,9 +27,9 @@ type Props = {
   label:
     | 'diamonds'
     | 'points'
+    | 'seeds'
     | 'x2-eigenpie-points'
     | 'x2-babypie-jewels'
-    | 'seeds'
   icon: ReactNode
   style?: CSSProperties
   textColor:

@@ -2,13 +2,48 @@
 
 /* eslint-disable node/no-unpublished-import */
 
-import {
-  type TokenBridgeMessage,
-  type MessageDirection,
-  type MessageStatus,
-} from '@eth-optimism/sdk'
 import { type Chain, type Hash } from 'viem'
 
+// Prefer ordering by value instead of keys
+/* eslint-disable sort-keys */
+// Based on https://sdk.optimism.io/classes/crosschainmessenger#getMessageStatus
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const MessageStatus = {
+  UNCONFIRMED_L1_TO_L2_MESSAGE: 0,
+  FAILED_L1_TO_L2_MESSAGE: 1,
+  STATE_ROOT_NOT_PUBLISHED: 2,
+  READY_TO_PROVE: 3,
+  IN_CHALLENGE_PERIOD: 4,
+  READY_FOR_RELAY: 5,
+  RELAYED: 6,
+} as const
+/* eslint-enable sort-keys */
+
+// Convert object key in a type
+type MessageStatusType = (typeof MessageStatus)[keyof typeof MessageStatus]
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const MessageDirection = {
+  L1_TO_L2: 0,
+  L2_TO_L1: 1,
+} as const
+
+/**
+ * The first step for a Bitcoin withdrawal consists of doing a Hemi TX. This sets the state
+ * TX_PENDING
+ *  The first transaction can fail
+ *  |_WITHDRAWAL_FAILED
+ *  Or it can be successful, confirming the initiation of the withdrawal.
+ *  |_TX_CONFIRMED
+ * From here, vault operators should confirm the withdrawal, send the bitcoins and confirm it,
+ *      |_WITHDRAWAL_SUCCEEDED
+ * However, after the grace period, if there are no news, the withdrawal moves to CHALLENGE_READY
+ * where they can reset the withdraw and get the Bitcoin back on hemi, for a new withdrawal.
+ *      |_CHALLENGE_READY
+ *        |_CHALLENGE_IN_PROGRESS
+ *          |_WITHDRAWAL_CHALLENGED
+ *          |_CHALLENGE_FAILED
+ */
 const enum BtcWithdrawStatus {
   // The user has confirmed the TX in their wallet, but it hasn't been included in a block
   INITIATE_WITHDRAW_PENDING = 0,
@@ -43,23 +78,18 @@ const enum EvmDepositStatus {
   APPROVAL_TX_FAILED = 5,
 }
 
-type CommonOperation = Omit<
-  TokenBridgeMessage,
-  | 'amount'
-  | 'blockNumber'
-  | 'chainId'
-  | 'data'
-  | 'direction'
-  | 'logIndex'
-  | 'transactionHash'
-> & {
+type CommonOperation = {
   amount: string
   blockNumber?: number
+  from: string
+  l1Token: string
+  l2Token: string
   timestamp?: number
+  to: string
 }
 
 type DepositDirection = {
-  direction: MessageDirection.L1_TO_L2
+  direction: typeof MessageDirection.L1_TO_L2
 }
 
 type EvmTransactionHash = {
@@ -67,7 +97,7 @@ type EvmTransactionHash = {
 }
 
 type WithdrawDirection = {
-  direction: MessageDirection.L2_TO_L1
+  direction: typeof MessageDirection.L2_TO_L1
 }
 
 export type EvmDepositOperation = CommonOperation &
@@ -82,7 +112,7 @@ export type EvmDepositOperation = CommonOperation &
 export type ToEvmWithdrawOperation = CommonOperation &
   EvmTransactionHash &
   WithdrawDirection & {
-    status: MessageStatus
+    status: MessageStatusType
   } & {
     l1ChainId: Chain['id']
     l2ChainId: Chain['id']

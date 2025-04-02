@@ -12,19 +12,20 @@ import {
   getTotalStaked,
 } from './subgraph.ts'
 
-function sendJsonResponse(res, statusCode, data) {
+function sendJsonResponse(res, statusCode: number, data) {
   res.writeHead(statusCode, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify(data))
 }
 
 function parseChainId(req, res, next) {
   const { chainIdStr } = req.params
-  req.params.chainId = parseInt(chainIdStr)
+  req.data = req.data || {}
+  req.data.chainId = parseInt(chainIdStr)
   next()
 }
 
 function validateChainIsEthereum(req, res, next) {
-  if ([mainnet.id, sepolia.id].includes(req.params.chainId)) {
+  if ([mainnet.id, sepolia.id].includes(req.data.chainId)) {
     next()
   } else {
     next('route')
@@ -32,7 +33,7 @@ function validateChainIsEthereum(req, res, next) {
 }
 
 function validateChainIsHemi(req, res, next) {
-  if ([hemi.id, hemiSepolia.id].includes(req.params.chainId)) {
+  if ([hemi.id, hemiSepolia.id].includes(req.data.chainId)) {
     next()
   } else {
     next('route')
@@ -49,22 +50,27 @@ function parseAsInteger(req, property) {
     throw new Error(`${property} must be a number`)
   }
 
-  req.validatedQuery[property] = Number.parseInt(string)
+  req.data[property] = Number.parseInt(string)
 }
 
 function validateQueryParams(req, res, next) {
   try {
-    req.validatedQuery = {}
+    req.data = req.data || {}
     parseAsInteger(req, 'fromBlock')
     parseAsInteger(req, 'limit')
     parseAsInteger(req, 'skip')
     next()
   } catch (err) {
+    if (!(err instanceof Error)) {
+      next(err)
+      return
+    }
+
     sendJsonResponse(res, 400, { error: err.message })
   }
 }
 
-export function createServer() {
+export function createApiServer() {
   const app = express()
 
   app.use(cors({ origin: config.get('originList') }))
@@ -81,9 +87,9 @@ export function createServer() {
       }
     },
     function (req, res, next) {
-      const { chainId } = req.params
+      // @ts-expect-error: req.data.chainId is set in parseChainId
+      const { chainId } = req.data
 
-      // @ts-expect-error: chainId is a number
       getLastIndexedBlock(chainId)
         .then(function (number) {
           sendJsonResponse(res, 200, { number })
@@ -99,10 +105,10 @@ export function createServer() {
     validateChainIsEthereum,
     validateQueryParams,
     function (req, res, next) {
-      const { chainId, address } = req.params
+      const { address } = req.params
 
-      // @ts-expect-error: req.validatedQuery is populated by parseQueryParams
-      getEvmDeposits({ address, chainId, ...req.validatedQuery })
+      // @ts-expect-error: req.data is populated by parseQueryParams
+      getEvmDeposits({ address, ...req.data })
         .then(function (deposits) {
           sendJsonResponse(res, 200, { deposits })
         })
@@ -117,7 +123,7 @@ export function createServer() {
     validateChainIsHemi,
     validateQueryParams,
     function (req, res, next) {
-      const { chainId, address, type } = req.params
+      const { address, type } = req.params
 
       let getWithdrawals
       if (type === 'evm') {
@@ -126,8 +132,8 @@ export function createServer() {
         getWithdrawals = getBtcWithdrawals
       }
 
-      // @ts-expect-error: req.validatedQuery is populated by parseQueryParams
-      getWithdrawals({ address, chainId, ...req.validatedQuery })
+      // @ts-expect-error: req.data is populated by parseQueryParams
+      getWithdrawals({ address, ...req.data })
         .then(function (withdrawals) {
           sendJsonResponse(res, 200, { withdrawals })
         })
@@ -141,9 +147,9 @@ export function createServer() {
     parseChainId,
     validateChainIsHemi,
     function (req, res, next) {
-      const { chainId } = req.params
+      // @ts-expect-error: req.data.chainId is set in parseChainId
+      const { chainId } = req.data
 
-      // @ts-expect-error: chainId is a number
       getTotalStaked(chainId)
         .then(function (staked) {
           sendJsonResponse(res, 200, { staked })
@@ -163,9 +169,7 @@ export function createServer() {
       // eslint-disable-next-line no-console
       console.log(err)
     }
-    sendJsonResponse(res, 500, {
-      error: 'Internal Server Error',
-    })
+    sendJsonResponse(res, 500, { error: 'Internal Server Error' })
   })
 
   return app

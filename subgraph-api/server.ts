@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import config from 'config'
 
-import { createServer } from './src/server.ts'
+import { createApiServer } from './src/api-server.ts'
 
-createServer().listen(config.get('port'))
+createApiServer().listen(config.get('port'))

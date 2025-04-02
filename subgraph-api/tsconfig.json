@@ -1,9 +1,10 @@
 {
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "ts-node": {
+    "transpileOnly": true
+  },
   "compilerOptions": {
     "allowImportingTsExtensions": true,
-    "esModuleInterop": true,
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
     "noEmit": true
   }
 }

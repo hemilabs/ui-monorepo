@@ -3,6 +3,7 @@
     "start": "node --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"ts-node/esm\", pathToFileURL(\"./\"));' server.ts"
   },
   "dependencies": {
+    "@tsconfig/node20": "20.1.5",
     "config": "3.3.12",
     "cors": "2.8.5",
     "dotenv": "16.4.7",
@@ -13,8 +14,10 @@
     "viem": "2.24.1"
   },
   "devDependencies": {
-    "@eth-optimism/sdk": "^3.3.3",
-    "@types/express": "^5.0.1"
+    "@eth-optimism/sdk": "3.3.3",
+    "@types/config": "3.3.5",
+    "@types/cors": "2.8.17",
+    "@types/express": "5.0.1"
   },
   "engines": {
     "node": ">=20"

@@ -17,6 +17,10 @@ const withdrawal: ToEvmWithdrawOperation = {
   transactionHash: '0x0000000000000000000000000000000000000004',
 }
 
+vi.mock('utils/chainClients', () => ({
+  getEvmL1PublicClient: vi.fn(),
+}))
+
 vi.mock('utils/evmApi', () => ({
   getEvmBlock: vi.fn(),
   getEvmTransactionReceipt: vi.fn(),

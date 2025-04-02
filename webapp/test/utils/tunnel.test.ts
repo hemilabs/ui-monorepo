@@ -82,11 +82,11 @@ describe('utils/tunnel', function () {
           expect(isPendingOperation(operation)).toBe(true)
         })
 
-        it('should return false if status is DEPOSIT_TX_CONFIRMED', function () {
+        it('should return false if status is DEPOSIT_RELAYED', function () {
           const operation = {
             direction: MessageDirection.L1_TO_L2,
             l1ChainId: 123456,
-            status: EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
+            status: EvmDepositStatus.DEPOSIT_RELAYED,
           }
           // @ts-expect-error Ignore operation fields not required for this test
           expect(isPendingOperation(operation)).toBe(false)

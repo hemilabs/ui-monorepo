@@ -1,5 +1,10 @@
 import { useTranslations } from 'next-intl'
-import { BtcDepositStatus, DepositTunnelOperation } from 'types/tunnel'
+import {
+  BtcDepositStatus,
+  DepositTunnelOperation,
+  EvmDepositStatus,
+  ExpectedWaitTimeMinutesGetFundsHemi,
+} from 'types/tunnel'
 import { isBtcDeposit } from 'utils/tunnel'
 
 import { TxStatus } from './txStatus'
@@ -12,9 +17,21 @@ export const DepositStatus = function ({ deposit }: Props) {
   const t = useTranslations()
 
   if (!isBtcDeposit(deposit)) {
-    // Evm deposits are always successful if listed
-    return <TxStatus.Success />
+    const evmStatuses = {
+      [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: (
+        <TxStatus.InStatus
+          text={t('common.wait-minutes', {
+            minutes: ExpectedWaitTimeMinutesGetFundsHemi,
+          })}
+        />
+      ),
+      // Check if funds have been minted in Hemi
+      [EvmDepositStatus.DEPOSIT_RELAYED]: <TxStatus.Success />,
+    }
+
+    return evmStatuses[deposit.status] ?? '-'
   }
+
   const statuses = {
     [BtcDepositStatus.BTC_TX_PENDING]: (
       <TxStatus.InStatus text={t('transaction-history.waiting-confirmation')} />

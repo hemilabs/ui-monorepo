@@ -105,7 +105,7 @@ const btcWithdrawCompletedActions = [
 ]
 
 const evmDepositCompletedActions = [
-  EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
+  EvmDepositStatus.DEPOSIT_RELAYED,
   EvmDepositStatus.DEPOSIT_TX_FAILED,
 ]
 

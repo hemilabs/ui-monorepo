@@ -7,7 +7,11 @@ import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
-import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
+import {
+  EvmDepositOperation,
+  EvmDepositStatus,
+  ExpectedWaitTimeMinutesGetFundsHemi,
+} from 'types/tunnel'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
@@ -45,6 +49,7 @@ const ReviewContent = function ({
     toToken,
   })
   const t = useTranslations('tunnel-page.review-deposit')
+  const tCommon = useTranslations('common')
 
   const steps: StepPropsWithoutPosition[] = []
 
@@ -78,10 +83,17 @@ const ReviewContent = function ({
       [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.COMPLETED,
       [EvmDepositStatus.DEPOSIT_TX_FAILED]: ProgressStatus.FAILED,
       [EvmDepositStatus.DEPOSIT_TX_PENDING]: ProgressStatus.PROGRESS,
+      [EvmDepositStatus.DEPOSIT_RELAYED]: ProgressStatus.COMPLETED,
+    }
+
+    const postStatusMap = {
+      [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.PROGRESS,
+      [EvmDepositStatus.DEPOSIT_RELAYED]: ProgressStatus.COMPLETED,
     }
     return {
       description:
-        depositStatus === EvmDepositStatus.DEPOSIT_TX_CONFIRMED
+        depositStatus === EvmDepositStatus.DEPOSIT_TX_CONFIRMED ||
+        EvmDepositStatus.DEPOSIT_RELAYED
           ? t('deposit-completed')
           : t('initiate-deposit'),
       explorerChainId: deposit.l1ChainId,
@@ -98,10 +110,24 @@ const ReviewContent = function ({
             token: getNativeToken(fromChain.id),
           }
         : undefined,
+      postAction: {
+        description: tCommon('wait-minutes', {
+          minutes: ExpectedWaitTimeMinutesGetFundsHemi,
+        }),
+        status: postStatusMap[depositStatus],
+      },
       status: statusMap[depositStatus],
       txHash: deposit.transactionHash,
     }
   }
+
+  const getFundsHemiStep = (): StepPropsWithoutPosition => ({
+    description: t('get-your-funds-on-hemi'),
+    status:
+      depositStatus === EvmDepositStatus.DEPOSIT_RELAYED
+        ? ProgressStatus.COMPLETED
+        : ProgressStatus.NOT_READY,
+  })
 
   // Show the approval only if it's a not native token and there is a approval.
   // Note that for past re-sync transactions, the approvalHash won't be available,
@@ -112,6 +138,7 @@ const ReviewContent = function ({
   }
 
   steps.push(getDepositStep())
+  steps.push(getFundsHemiStep())
 
   return (
     <Operation

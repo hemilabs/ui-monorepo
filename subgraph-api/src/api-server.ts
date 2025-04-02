@@ -12,7 +12,7 @@ import {
   getTotalStaked,
 } from './subgraph.ts'
 
-function sendJsonResponse(res, statusCode: number, data) {
+function sendJsonResponse(res, statusCode: number, data: object) {
   res.writeHead(statusCode, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify(data))
 }
@@ -40,34 +40,36 @@ function validateChainIsHemi(req, res, next) {
   }
 }
 
-function parseAsInteger(req, property) {
-  const string = req.query[property]
-  if (!string) {
-    return
-  }
-
-  if (!/^\d+$/.test(string)) {
-    throw new Error(`${property} must be a number`)
-  }
-
-  req.data[property] = Number.parseInt(string)
-}
+const isInteger = string => /^\d+$/.test(string)
 
 function validateQueryParams(req, res, next) {
-  try {
-    req.data = req.data || {}
-    parseAsInteger(req, 'fromBlock')
-    parseAsInteger(req, 'limit')
-    parseAsInteger(req, 'skip')
-    next()
-  } catch (err) {
-    if (!(err instanceof Error)) {
-      next(err)
+  const { fromBlock, limit, skip } = req.query
+
+  req.data = req.data || {}
+
+  if (!isInteger(fromBlock)) {
+    sendJsonResponse(res, 400, { error: 'fromBlock must be a number' })
+    return
+  }
+  req.data.fromBlock = Number.parseInt(fromBlock)
+
+  if (limit) {
+    if (!isInteger(limit)) {
+      sendJsonResponse(res, 400, { error: 'limit must be a number' })
       return
     }
-
-    sendJsonResponse(res, 400, { error: err.message })
+    req.data.limit = Number.parseInt(limit)
   }
+
+  if (skip) {
+    if (!isInteger(skip)) {
+      sendJsonResponse(res, 400, { error: 'skip must be a number' })
+      return
+    }
+    req.data.skip = Number.parseInt(skip)
+  }
+
+  next()
 }
 
 export function createApiServer() {

@@ -3,6 +3,7 @@
   "originList": ["http://localhost:3000"],
   "port": 3003,
   "subgraph": {
+    "apiKey": "",
     "apiUrl": "https://gateway.thegraph.com/api",
     "stake": {
       "mainnet": "7qiewFZ7UyDpj3gyNaCDUk55NqHLdbjWQLduS5dcYfQ4",

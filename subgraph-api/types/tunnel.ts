@@ -85,7 +85,7 @@ type CommonOperation = {
   l1Token: string
   l2Token: string
   timestamp?: number
-  to: string
+  to: string | null
 }
 
 type DepositDirection = {

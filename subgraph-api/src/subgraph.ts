@@ -20,7 +20,9 @@ type SuccessResponse<T> = { data: T }
 type ErrorResponse = { errors: { message: string }[] }
 type GraphResponse<T> = SuccessResponse<T> | ErrorResponse
 
-const subgraph = config.get('subgraph')
+type ConfigType = typeof import('../config/default.json')
+
+const subgraph: ConfigType['subgraph'] = config.get('subgraph')
 
 const getSubgraphUrl = function ({
   chainId,

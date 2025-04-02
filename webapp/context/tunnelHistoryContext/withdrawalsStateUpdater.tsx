@@ -1,4 +1,3 @@
-import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { WithWorker } from 'components/withWorker'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
@@ -8,7 +7,7 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { useEffect } from 'react'
-import { ToEvmWithdrawOperation } from 'types/tunnel'
+import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
 import { hasKeys } from 'utils/utilities'
 import { useAccount } from 'wagmi'
@@ -168,6 +167,7 @@ export const WithdrawalsStateUpdater = function () {
         MessageStatus.READY_TO_PROVE,
         MessageStatus.IN_CHALLENGE_PERIOD,
         MessageStatus.READY_FOR_RELAY,
+        // @ts-expect-error status is of type MessageStatus
       ].includes(w.status),
   )
 

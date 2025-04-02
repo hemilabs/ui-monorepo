@@ -1,4 +1,3 @@
-import { MessageDirection } from '@eth-optimism/sdk'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTunnelOperation } from 'app/[locale]/tunnel/_hooks/useTunnelOperation'
 import { BtcChain } from 'btc-wallet/chains'
@@ -9,6 +8,7 @@ import {
   BtcDepositOperation,
   BtcDepositStatus,
   BtcWithdrawStatus,
+  MessageDirection,
   ToBtcWithdrawOperation,
 } from 'types/tunnel'
 import { getBitcoinTimestamp } from 'utils/bitcoin'

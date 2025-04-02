@@ -1,4 +1,3 @@
-import { MessageDirection, MessageStatus } from '@eth-optimism/sdk'
 import {
   type BtcDepositOperation,
   BtcDepositStatus,
@@ -6,11 +5,59 @@ import {
   type DepositTunnelOperation,
   type EvmDepositOperation,
   EvmDepositStatus,
+  MessageDirection,
+  MessageStatus,
+  type MessageStatusType,
   type ToBtcWithdrawOperation,
   type ToEvmWithdrawOperation,
   type TunnelOperation,
   type WithdrawTunnelOperation,
 } from 'types/tunnel'
+import { Chain, PublicClient, type TransactionReceipt } from 'viem'
+import {
+  GetWithdrawalStatusReturnType,
+  getWithdrawalStatus,
+} from 'viem/op-stack'
+
+import { findChainById } from './chain'
+
+// The portal works with the old MessageStatus from the @eth-optimism/sdk
+// so we must map the new status to the old one. See definition of MessageStatus
+// here https://sdk.optimism.io/enums/messagestatus
+const mapStatusToOpMessageStatus = function (
+  status: GetWithdrawalStatusReturnType,
+): MessageStatusType {
+  switch (status) {
+    case 'finalized':
+      return MessageStatus.RELAYED
+    case 'ready-to-finalize':
+      return MessageStatus.READY_FOR_RELAY
+    case 'ready-to-prove':
+      return MessageStatus.READY_TO_PROVE
+    case 'waiting-to-finalize':
+      return MessageStatus.IN_CHALLENGE_PERIOD
+    case 'waiting-to-prove':
+      return MessageStatus.STATE_ROOT_NOT_PUBLISHED
+    default:
+      throw new Error(`Unexpected withdrawal status ${status}`)
+  }
+}
+
+export const getEvmWithdrawalStatus = async ({
+  l1publicClient,
+  l2ChainId,
+  receipt,
+}: {
+  l1publicClient: PublicClient
+  l2ChainId: Chain['id']
+  receipt: TransactionReceipt
+}) =>
+  // @ts-expect-error Can't make the viem types to work. This works on runtime
+  getWithdrawalStatus(l1publicClient, {
+    chain: l1publicClient.chain,
+    receipt,
+    targetChain: findChainById(l2ChainId),
+  }).then(mapStatusToOpMessageStatus)
 
 export const isDeposit = (
   operation: TunnelOperation,
@@ -62,7 +109,7 @@ const evmDepositCompletedActions = [
   EvmDepositStatus.DEPOSIT_TX_FAILED,
 ]
 
-const evmWithdrawCompletedActions = [MessageStatus.RELAYED]
+const evmWithdrawCompletedActions: MessageStatusType[] = [MessageStatus.RELAYED]
 
 const isDepositPendingOperation = function (
   operation: DepositTunnelOperation,

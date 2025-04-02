@@ -15,17 +15,19 @@ import {
   ToEvmWithdrawOperation,
   TunnelOperation,
 } from 'types/tunnel'
+import { getEvmL1PublicClient } from 'utils/chainClients'
 import {
   createQueuedCrossChainMessenger,
   type CrossChainMessengerProxy,
 } from 'utils/crossChainMessenger'
-import { getEvmBlock } from 'utils/evmApi'
+import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { createProvider } from 'utils/providers'
 import {
   getEvmDeposits,
   getEvmWithdrawals,
   getLastIndexedBlock,
 } from 'utils/subgraph'
+import { getEvmWithdrawalStatus } from 'utils/tunnel'
 import { type Chain } from 'viem'
 
 import { chainConfiguration } from './chainConfiguration'
@@ -260,6 +262,8 @@ export const createEvmSync = function ({
       lastBlock,
     )
 
+    const l1publicClient = getEvmL1PublicClient(l1Chain.id)
+
     const onChange = async function ({
       canMove,
       nextState,
@@ -288,11 +292,15 @@ export const createEvmSync = function ({
                 async function () {
                   const [block, status] = await Promise.all([
                     getEvmBlock(withdrawal.blockNumber!, l2Chain.id),
-                    crossChainMessenger.getMessageStatus(
+                    getEvmTransactionReceipt(
                       withdrawal.transactionHash,
-                      // default value
-                      0,
-                      withdrawal.direction,
+                      withdrawal.l2ChainId,
+                    ).then(receipt =>
+                      getEvmWithdrawalStatus({
+                        l1publicClient,
+                        l2ChainId: l2Chain.id,
+                        receipt,
+                      }),
                     ),
                   ])
                   // TODO Bring the Prove and Claim transaction hashes.

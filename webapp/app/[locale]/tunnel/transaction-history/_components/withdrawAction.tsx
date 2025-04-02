@@ -1,8 +1,11 @@
-import { MessageStatus } from '@eth-optimism/sdk'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
-import { BtcWithdrawStatus, type WithdrawTunnelOperation } from 'types/tunnel'
+import {
+  BtcWithdrawStatus,
+  MessageStatus,
+  type WithdrawTunnelOperation,
+} from 'types/tunnel'
 import { isToEvmWithdraw } from 'utils/tunnel'
 
 import { CallToAction } from './callToAction'

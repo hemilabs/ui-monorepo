@@ -1,4 +1,3 @@
-import { MessageDirection } from '@eth-optimism/sdk'
 import { featureFlags } from 'app/featureFlags'
 import { BtcChain } from 'btc-wallet/chains'
 import { Account, BtcTransaction } from 'btc-wallet/unisat'
@@ -20,6 +19,7 @@ import {
   type BtcDepositOperation,
   BtcDepositStatus,
   BtcWithdrawStatus,
+  MessageDirection,
   type ToBtcWithdrawOperation,
 } from 'types/tunnel'
 import { calculateDepositAmount, getBitcoinTimestamp } from 'utils/bitcoin'

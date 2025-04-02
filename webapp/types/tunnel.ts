@@ -1,11 +1,29 @@
-import {
-  type TokenBridgeMessage,
-  type MessageDirection,
-  type MessageStatus,
-} from '@eth-optimism/sdk'
 import { BtcChain } from 'btc-wallet/chains'
 import { BtcTransaction } from 'btc-wallet/unisat'
 import { type Chain, type Hash } from 'viem'
+
+// Prefer ordering by value instead of keys
+/* eslint-disable sort-keys */
+// Based on https://sdk.optimism.io/classes/crosschainmessenger#getMessageStatus
+export const MessageStatus = {
+  UNCONFIRMED_L1_TO_L2_MESSAGE: 0,
+  FAILED_L1_TO_L2_MESSAGE: 1,
+  STATE_ROOT_NOT_PUBLISHED: 2,
+  READY_TO_PROVE: 3,
+  IN_CHALLENGE_PERIOD: 4,
+  READY_FOR_RELAY: 5,
+  RELAYED: 6,
+} as const
+/* eslint-enable sort-keys */
+
+// Convert object key in a type
+export type MessageStatusType =
+  (typeof MessageStatus)[keyof typeof MessageStatus]
+
+export const MessageDirection = {
+  L1_TO_L2: 0,
+  L2_TO_L1: 1,
+} as const
 
 /**
  * This enum follows the steps for running a bitcoin deposit. In the ideal flow,
@@ -95,23 +113,18 @@ export const enum EvmDepositStatus {
   APPROVAL_TX_FAILED = 5,
 }
 
-type CommonOperation = Omit<
-  TokenBridgeMessage,
-  | 'amount'
-  | 'blockNumber'
-  | 'chainId'
-  | 'data'
-  | 'direction'
-  | 'logIndex'
-  | 'transactionHash'
-> & {
+type CommonOperation = {
   amount: string
   blockNumber?: number
+  from: string
+  l1Token: string
+  l2Token: string
   timestamp?: number
+  to: string
 }
 
 type DepositDirection = {
-  direction: MessageDirection.L1_TO_L2
+  direction: typeof MessageDirection.L1_TO_L2
 }
 
 type BtcTransactionHash = {
@@ -124,7 +137,7 @@ type EvmTransactionHash = {
 }
 
 type WithdrawDirection = {
-  direction: MessageDirection.L2_TO_L1
+  direction: typeof MessageDirection.L2_TO_L1
 }
 
 export type BtcDepositOperation = CommonOperation &
@@ -147,7 +160,7 @@ export type EvmDepositOperation = CommonOperation &
 export type ToEvmWithdrawOperation = CommonOperation &
   EvmTransactionHash &
   WithdrawDirection & {
-    status: MessageStatus
+    status: MessageStatusType
   } & {
     l1ChainId: Chain['id']
     l2ChainId: Chain['id']

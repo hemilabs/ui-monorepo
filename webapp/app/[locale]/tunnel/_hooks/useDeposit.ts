@@ -1,4 +1,3 @@
-import { MessageDirection } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { TransactionsInProgressContext } from 'context/transactionsInProgressContext'
 import { useEvmDeposits } from 'hooks/useEvmDeposits'
@@ -8,7 +7,11 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useCallback, useContext, useEffect } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
 import { type EvmToken } from 'types/token'
-import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
+import {
+  EvmDepositOperation,
+  EvmDepositStatus,
+  MessageDirection,
+} from 'types/tunnel'
 import { getEvmBlock } from 'utils/evmApi'
 import { isNativeToken } from 'utils/nativeToken'
 import { type Hash, parseUnits, zeroAddress } from 'viem'

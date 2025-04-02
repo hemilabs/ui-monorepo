@@ -1,4 +1,3 @@
-import { MessageStatus } from '@eth-optimism/sdk'
 import { useQueryClient } from '@tanstack/react-query'
 import { useUmami } from 'app/analyticsEvents'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
@@ -6,7 +5,7 @@ import { useProveMessage } from 'hooks/useL2Bridge'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useCallback, useEffect } from 'react'
-import { ToEvmWithdrawOperation } from 'types/tunnel'
+import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { useWaitForTransactionReceipt } from 'wagmi'
 
 export const useProveTransaction = function (

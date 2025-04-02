@@ -158,6 +158,7 @@ export type EvmDepositOperation = CommonOperation &
     approvalTxHash?: Hash // only used for ERC20 deposits
     l1ChainId: Chain['id']
     l2ChainId: Chain['id']
+    l2TransactionHash?: Hash // The transaction hash of tokens minted in the L2 chain
     status?: EvmDepositStatus // If undefined, assume completed
   }
 

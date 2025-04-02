@@ -1,70 +1,75 @@
-import { MessageStatus } from '@eth-optimism/sdk'
-import pMemoize from 'promise-mem'
 import { EvmDepositStatus, type EvmDepositOperation } from 'types/tunnel'
-import { findChainById } from 'utils/chain'
-import { createQueuedCrossChainMessenger } from 'utils/crossChainMessenger'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
-import { createProvider } from 'utils/providers'
-import { Chain } from 'viem'
+import { type TransactionReceipt } from 'viem'
+import { getL2TransactionHashes } from 'viem/op-stack'
 
-const getCrossChainMessenger = pMemoize(
-  function (l1Chain: Chain, l2Chain: Chain) {
-    const l1Provider = createProvider(l1Chain)
+const calculateNewStatus = async function ({
+  deposit,
+  receipt,
+}: {
+  deposit: EvmDepositOperation
+  receipt: TransactionReceipt | undefined
+}) {
+  // if receipt was not found, it means the transaction is still pending8
+  if (!receipt) {
+    return {}
+  }
 
-    const l2Provider = createProvider(l2Chain)
+  if (receipt.status === 'reverted') {
+    return { newStatus: EvmDepositStatus.DEPOSIT_TX_FAILED }
+  }
+  // deposit was successful, calculate the L2 hash
+  const [l2TransactionHash] = getL2TransactionHashes(receipt)
 
-    return createQueuedCrossChainMessenger({
-      l1ChainId: l1Chain.id,
-      l1Signer: l1Provider,
-      l2Chain,
-      l2Signer: l2Provider,
-    })
-  },
-  { resolver: (l1Chain, l2Chain) => `${l1Chain.id}-${l2Chain.id}` },
-)
+  const l2Receipt = await getEvmTransactionReceipt(
+    l2TransactionHash,
+    deposit.l2ChainId,
+  )
+  // if not found, it means the tokens have not been minted in L2 yet
+  // This means the status is L1 confirmed, which is the previous step
+  if (!l2Receipt) {
+    return { newStatus: EvmDepositStatus.DEPOSIT_TX_CONFIRMED }
+  }
+
+  if (l2Receipt.status === 'success') {
+    return { l2TransactionHash, newStatus: EvmDepositStatus.DEPOSIT_RELAYED }
+  }
+
+  // L2 transaction failed. Unusual case.
+  return { newStatus: EvmDepositStatus.DEPOSIT_TX_FAILED }
+}
 
 export const watchEvmDeposit = async function (deposit: EvmDepositOperation) {
   const updates: Partial<EvmDepositOperation> = {}
-
-  const l1Chain = findChainById(deposit.l1ChainId) as Chain
-  const l2Chain = findChainById(deposit.l2ChainId) as Chain
-
-  const crossChainMessenger = await getCrossChainMessenger(l1Chain, l2Chain)
 
   // check if it has completed on the background
   const receipt = await getEvmTransactionReceipt(
     deposit.transactionHash,
     deposit.l1ChainId,
   )
-  // if receipt was not found, it means the transaction is still pending - return here
+  const { newStatus, l2TransactionHash } = await calculateNewStatus({
+    deposit,
+    receipt,
+  })
+
+  if (deposit.l2TransactionHash !== l2TransactionHash) {
+    updates.l2TransactionHash = l2TransactionHash
+  }
+
+  if (newStatus !== undefined && deposit.status !== newStatus) {
+    // if the status has changed, save the update
+    updates.status = newStatus
+  }
+
   if (!receipt) {
     return updates
   }
 
-  const status = await crossChainMessenger.getMessageStatus(
-    deposit.transactionHash,
-    0,
-    deposit.direction,
-  )
-
-  let newStatus: EvmDepositStatus
-  if (status === MessageStatus.RELAYED) {
-    newStatus = EvmDepositStatus.DEPOSIT_RELAYED
-  } else if (receipt.status === 'success') {
-    newStatus = EvmDepositStatus.DEPOSIT_TX_CONFIRMED
-  } else {
-    newStatus = EvmDepositStatus.DEPOSIT_TX_FAILED
-  }
-
-  // if the status has changed, save the update
-  if (deposit.status !== newStatus) {
-    updates.status = newStatus
-  }
-
-  if (!updates.blockNumber) {
+  if (!deposit.blockNumber) {
     updates.blockNumber = Number(receipt.blockNumber)
   }
-  if (!updates.timestamp) {
+
+  if (!deposit.timestamp) {
     updates.timestamp = await getEvmBlock(
       receipt.blockNumber,
       deposit.l1ChainId,

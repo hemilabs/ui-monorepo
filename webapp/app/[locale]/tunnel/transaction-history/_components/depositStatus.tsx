@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl'
+import Skeleton from 'react-loading-skeleton'
 import {
   BtcDepositStatus,
   DepositTunnelOperation,
@@ -29,7 +30,7 @@ export const DepositStatus = function ({ deposit }: Props) {
       [EvmDepositStatus.DEPOSIT_RELAYED]: <TxStatus.Success />,
     }
 
-    return evmStatuses[deposit.status] ?? '-'
+    return evmStatuses[deposit.status] ?? <Skeleton className="w-15 h-8" />
   }
 
   const statuses = {

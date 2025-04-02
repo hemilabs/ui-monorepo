@@ -146,15 +146,13 @@ export const useDeposit = function ({
     data: depositReceipt,
     error: depositReceiptError,
     queryKey: depositQueryKey,
-    status: depositTxStatus,
   } = useWaitForTransactionReceipt({
     hash: depositingNative ? depositNativeTokenTxHash : depositErc20TokenTxHash,
   })
 
   useReloadBalances({
     fromToken,
-    status: depositTxStatus,
-    toToken,
+    status: depositReceipt?.status,
   })
 
   const clearDepositNativeState = useCallback(

@@ -91,13 +91,12 @@ export const useWithdraw = function ({
     data: withdrawReceipt,
     error: withdrawReceiptError,
     queryKey: withdrawQueryKey,
-    status: withdrawTxStatus,
     // @ts-expect-error string is `0x${string}`
   } = useWaitForTransactionReceipt({ hash: txHash })
+
   useReloadBalances({
     fromToken,
-    status: withdrawTxStatus,
-    toToken,
+    status: withdrawReceipt?.status,
   })
 
   const clearWithdrawNativeState = useCallback(
@@ -201,7 +200,6 @@ export const useWithdraw = function ({
       withdrawGasFees: withdrawNativeTokenGasFees,
       withdrawReceipt,
       withdrawReceiptError,
-      withdrawStatus: withdrawTxStatus,
     }
   }
   return {
@@ -214,6 +212,5 @@ export const useWithdraw = function ({
     withdrawGasFees: withdrawErc20TokenGasFees,
     withdrawReceipt,
     withdrawReceiptError,
-    withdrawStatus: withdrawTxStatus,
   }
 }

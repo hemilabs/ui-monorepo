@@ -190,16 +190,7 @@ export const createEvmSync = function ({
           fromBlock,
           limit,
           skip,
-        }).then(deps =>
-          deps.map(
-            d =>
-              ({
-                // if found, it's a confirmed deposit
-                ...d,
-                status: EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
-              }) satisfies EvmDepositOperation,
-          ),
-        )
+        })
 
         // save the deposits
         saveHistory({

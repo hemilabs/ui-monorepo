@@ -123,10 +123,12 @@ const ReviewContent = function ({
 
   const getFundsHemiStep = (): StepPropsWithoutPosition => ({
     description: t('get-your-funds-on-hemi'),
+    explorerChainId: deposit.l2ChainId,
     status:
       depositStatus === EvmDepositStatus.DEPOSIT_RELAYED
         ? ProgressStatus.COMPLETED
         : ProgressStatus.NOT_READY,
+    txHash: deposit.l2TransactionHash,
   })
 
   // Show the approval only if it's a not native token and there is a approval.

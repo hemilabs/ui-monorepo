@@ -5,12 +5,10 @@ import { isNativeToken } from 'utils/nativeToken'
 
 type UseReloadBalances = {
   fromToken: EvmToken
-  toToken: EvmToken
-  status: string
+  status: string | undefined
 }
 export const useReloadBalances = function ({
   fromToken,
-  toToken,
   status,
 }: UseReloadBalances) {
   const operatesNativeToken = isNativeToken(fromToken)
@@ -23,29 +21,17 @@ export const useReloadBalances = function ({
     fromToken.address,
   )
 
-  const { refetchBalance: refetchToToken } = useNativeTokenBalance(
-    toToken.chainId,
-    operatesNativeToken,
-  )
-
-  const { refetchTokenBalance: refetchToTokenBalance } = useTokenBalance(
-    toToken.chainId,
-    toToken.address,
-  )
-
   useEffect(
     function refetchBalances() {
-      if (!['error', 'success'].includes(status)) {
+      if (status === undefined) {
         return undefined
       }
       // Native token balance in "From" should always reload
+      // as fees were paid
       refetchFromNativeToken()
 
-      if (operatesNativeToken) {
-        refetchToToken()
-      } else {
+      if (!operatesNativeToken) {
         refetchFromTokenBalance()
-        refetchToTokenBalance()
       }
       return undefined
     },
@@ -53,8 +39,6 @@ export const useReloadBalances = function ({
       operatesNativeToken,
       refetchFromNativeToken,
       refetchFromTokenBalance,
-      refetchToToken,
-      refetchToTokenBalance,
       status,
     ],
   )

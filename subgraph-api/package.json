@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node --import 'data:text/javascript,import { register } from \"node:module\"; import { pathToFileURL } from \"node:url\"; register(\"ts-node/esm\", pathToFileURL(\"./\"));' server.ts"
+    "start": "tsx server.ts"
   },
   "dependencies": {
     "@tsconfig/node20": "20.1.5",
@@ -10,7 +10,7 @@
     "express": "4.21.2",
     "fetch-plus-plus": "1.0.0",
     "hemi-viem": "2.3.2",
-    "ts-node": "10.9.2",
+    "tsx": "4.19.3",
     "viem": "2.24.1"
   },
   "devDependencies": {

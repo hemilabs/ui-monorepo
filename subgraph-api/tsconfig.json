@@ -1,8 +1,5 @@
 {
   "extends": "@tsconfig/node20/tsconfig.json",
-  "ts-node": {
-    "transpileOnly": true
-  },
   "compilerOptions": {
     "allowImportingTsExtensions": true,
     "noEmit": true

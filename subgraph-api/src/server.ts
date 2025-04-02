@@ -12,8 +12,6 @@ import {
   getTotalStaked,
 } from './subgraph.ts'
 
-const { originList } = config
-
 function sendJsonResponse(res, statusCode, data) {
   res.writeHead(statusCode, { 'Content-Type': 'application/json' })
   res.end(JSON.stringify(data))
@@ -69,7 +67,7 @@ function validateQueryParams(req, res, next) {
 export function createServer() {
   const app = express()
 
-  app.use(cors({ origin: originList }))
+  app.use(cors({ origin: config.get('originList') }))
 
   app.get(
     '/:chainIdStr(\\d+)/:operation(deposits|withdrawals)/meta',
@@ -161,6 +159,10 @@ export function createServer() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use(function (err, req, res, next) {
+    if (config.get('DEBUG')) {
+      // eslint-disable-next-line no-console
+      console.log(err)
+    }
     sendJsonResponse(res, 500, {
       error: 'Internal Server Error',
     })

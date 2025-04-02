@@ -1,4 +1,8 @@
 {
+  "debug": {
+    "__format": "json",
+    "__name": "DEBUG"
+  },
   "originList": {
     "__format": "json",
     "__name": "ORIGIN_LIST"

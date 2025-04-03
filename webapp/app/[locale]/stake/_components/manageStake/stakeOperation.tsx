@@ -56,7 +56,6 @@ export const StakeOperation = function ({
   const { address } = useAccount()
   const [amount, setAmount] = useAmount()
   const operatesNativeToken = isNativeToken(token)
-  // @ts-expect-error token.address is a string Address
   const { data: allowance, isPending } = useAllowance(token.address, {
     args: {
       owner: address,

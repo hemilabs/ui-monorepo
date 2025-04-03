@@ -1,5 +1,7 @@
 'use client'
 
+import { useQueryClient } from '@tanstack/react-query'
+import { useBalance } from 'btc-wallet/hooks/useBalance'
 import { WithWorker } from 'components/withWorker'
 import { useBtcWithdrawals } from 'hooks/useBtcWithdrawals'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
@@ -22,6 +24,8 @@ function WatchBitcoinWithdrawal({
   worker: AppToWorker
 }) {
   const { updateWithdrawal } = useTunnelHistory()
+  const { queryKey: btcBalanceQueryKey } = useBalance()
+  const queryClient = useQueryClient()
 
   useEffect(
     function watchWithdrawalUpdates() {
@@ -45,6 +49,11 @@ function WatchBitcoinWithdrawal({
         // next interval will poll again
         hasWorkedPostedBack = true
         if (hasKeys(updates)) {
+          // This is needed to invalidate the balance query
+          // so the balance is updated in the UI instantly
+          if (updates.status === BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED) {
+            queryClient.invalidateQueries({ queryKey: btcBalanceQueryKey })
+          }
           updateWithdrawal(withdrawal, updates)
         }
       }
@@ -76,7 +85,7 @@ function WatchBitcoinWithdrawal({
         clearInterval(intervalId)
       }
     },
-    [updateWithdrawal, withdrawal, worker],
+    [btcBalanceQueryKey, queryClient, updateWithdrawal, withdrawal, worker],
   )
 
   return null

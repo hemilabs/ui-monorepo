@@ -1,6 +1,7 @@
 'use client'
 
 import { useLocale } from 'next-intl'
+import Skeleton from 'react-loading-skeleton'
 
 import { TimeAgo } from './timeAgo'
 
@@ -12,7 +13,7 @@ export const TxTime = function (props: Props) {
   const locale = useLocale()
   // Unconfirmed TXs won't have a timestamp
   if (!props.timestamp) {
-    return null
+    return <Skeleton className="w-15 h-8" />
   }
   return (
     <span className="text-neutral-600">

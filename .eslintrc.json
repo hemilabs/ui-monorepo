@@ -49,6 +49,18 @@
       "extends": ["bloq/node", "bloq/typescript", "prettier"],
       "files": ["subgraph-api/**/*.ts"],
       "rules": {
+        "import/order": [
+          "warn",
+          {
+            "alphabetize": { "caseInsensitive": true, "order": "asc" },
+            "groups": [
+              ["builtin", "external"],
+              ["internal", "parent"],
+              "sibling"
+            ],
+            "newlines-between": "always"
+          }
+        ],
         "node/no-unsupported-features/es-syntax": [
           "error",
           {

@@ -1,8 +1,10 @@
-import { hemi, hemiSepolia } from 'hemi-viem'
-import { mainnet, sepolia } from 'viem/chains'
+/* eslint-disable promise/no-callback-in-promise */
+
 import config from 'config'
 import cors from 'cors'
 import express from 'express'
+import { hemi, hemiSepolia } from 'hemi-viem'
+import { mainnet, sepolia } from 'viem/chains'
 
 import {
   getBtcWithdrawals,
@@ -96,7 +98,6 @@ export function createApiServer() {
         .then(function (number) {
           sendJsonResponse(res, 200, { number })
         })
-        // eslint-disable-next-line promise/no-callback-in-promise
         .catch(next)
     },
   )
@@ -109,12 +110,11 @@ export function createApiServer() {
     function (req, res, next) {
       const { address } = req.params
 
-      // @ts-expect-error: req.data is populated by parseQueryParams
+      // @ts-expect-error: req.data is populated by parseChainId and validateQueryParams
       getEvmDeposits({ address, ...req.data })
         .then(function (deposits) {
           sendJsonResponse(res, 200, { deposits })
         })
-        // eslint-disable-next-line promise/no-callback-in-promise
         .catch(next)
     },
   )
@@ -134,12 +134,11 @@ export function createApiServer() {
         getWithdrawals = getBtcWithdrawals
       }
 
-      // @ts-expect-error: req.data is populated by parseQueryParams
+      // @ts-expect-error: req.data is populated by parseChainId and validateQueryParams
       getWithdrawals({ address, ...req.data })
         .then(function (withdrawals) {
           sendJsonResponse(res, 200, { withdrawals })
         })
-        // eslint-disable-next-line promise/no-callback-in-promise
         .catch(next)
     },
   )
@@ -156,7 +155,6 @@ export function createApiServer() {
         .then(function (staked) {
           sendJsonResponse(res, 200, { staked })
         })
-        // eslint-disable-next-line promise/no-callback-in-promise
         .catch(next)
     },
   )

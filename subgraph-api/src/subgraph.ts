@@ -1,15 +1,16 @@
-// Copied from webapp/utils/subgraph.ts and slightly modified
+// Copied from https://github.com/hemilabs/ui-monorepo/blob/853f366d/webapp/utils/subgraph.ts and slightly modified
 
 import config from 'config'
 import fetch from 'fetch-plus-plus'
 import { hemi, hemiSepolia } from 'hemi-viem'
+import { type Address, type Chain, checksumAddress as toChecksum } from 'viem'
+import { mainnet, sepolia } from 'viem/chains'
+
 import {
   type EvmDepositOperation,
   type ToBtcWithdrawOperation,
   type ToEvmWithdrawOperation,
 } from '../types/tunnel.ts'
-import { type Address, type Chain, checksumAddress as toChecksum } from 'viem'
-import { mainnet, sepolia } from 'viem/chains'
 
 type Schema = {
   query: string
@@ -22,7 +23,7 @@ type GraphResponse<T> = SuccessResponse<T> | ErrorResponse
 
 type ConfigType = typeof import('../config/default.json')
 
-const subgraph: ConfigType['subgraph'] = config.get('subgraph')
+const subgraphConfig: ConfigType['subgraph'] = config.get('subgraph')
 
 const getSubgraphUrl = function ({
   chainId,
@@ -36,7 +37,7 @@ const getSubgraphUrl = function ({
     throw new Error(`Unsupported subgraph for chain Id ${chainId}`)
   }
 
-  return `${subgraph.apiUrl}/${subgraph.apiKey}/subgraphs/id/${subgraphId}`
+  return `${subgraphConfig.apiUrl}/${subgraphConfig.apiKey}/subgraphs/id/${subgraphId}`
 }
 
 const request = <TResponse, TSchema extends Schema = Schema>(
@@ -47,7 +48,7 @@ const request = <TResponse, TSchema extends Schema = Schema>(
     body: JSON.stringify(schema),
     headers: {
       'Content-Type': 'application/json',
-      'Origin': 'https://app.hemi.xyz',
+      'Origin': subgraphConfig.origin,
     },
     method: 'POST',
   }) satisfies Promise<TResponse>
@@ -57,10 +58,10 @@ const getTunnelSubgraphUrl = function (chainId: Chain['id']) {
    * Subgraph Ids from the subgraphs published in Arbitrum
    */
   const subgraphIds = {
-    [hemi.id]: subgraph.tunnel.withdrawals.mainnet,
-    [hemiSepolia.id]: subgraph.tunnel.withdrawals.testnet,
-    [mainnet.id]: subgraph.tunnel.deposits.mainnet,
-    [sepolia.id]: subgraph.tunnel.deposits.testnet,
+    [hemi.id]: subgraphConfig.tunnel.withdrawals.mainnet,
+    [hemiSepolia.id]: subgraphConfig.tunnel.withdrawals.testnet,
+    [mainnet.id]: subgraphConfig.tunnel.deposits.mainnet,
+    [sepolia.id]: subgraphConfig.tunnel.deposits.testnet,
   }
 
   return getSubgraphUrl({
@@ -370,8 +371,8 @@ export const getTotalStaked = function (hemiId: Chain['id']) {
    * Subgraph Ids from the subgraphs published in Arbitrum
    */
   const subgraphIds = {
-    [hemi.id]: subgraph.stake.mainnet,
-    [hemiSepolia.id]: subgraph.stake.testnet,
+    [hemi.id]: subgraphConfig.stake.mainnet,
+    [hemiSepolia.id]: subgraphConfig.stake.testnet,
   }
 
   const subgraphUrl = getSubgraphUrl({

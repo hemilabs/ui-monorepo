@@ -6,10 +6,12 @@ This service provides access to the different subgraphs that index information n
 
 These environment variables control how the API works:
 
-| Variable    | Description                                                     | Default                |
-| ----------- | --------------------------------------------------------------- | ---------------------- |
-| ORIGIN_LIST | Comma-separated list of allowed origins. '\*' is not supported. | `http://localhos:3000` |
-| PORT        | The HTTP port the server listens for requests.                  | 3003                   |
+| Variable         | Description                                                     | Default                |
+| ---------------- | --------------------------------------------------------------- | ---------------------- |
+| ORIGIN_LIST      | Comma-separated list of allowed origins. '\*' is not supported. | `http://localhos:3000` |
+| PORT             | The HTTP port the server listens for requests.                  | 3003                   |
+| SUBGRAPH_API_KEY | The API key needed to query the subgraphs.                      | -                      |
+| SUBGRAPH_ORIGIN  | The "origin" allowed by the subgraph API.                       | `https://app.hemi.xyz` |
 
 ## Supported routes
 

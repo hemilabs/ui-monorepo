@@ -17,7 +17,6 @@ import { getStakedBalanceQueryKey } from './useStakedBalance'
 export const useStake = function (token: StakeToken) {
   const operatesNativeToken = isNativeToken(token)
   const { address } = useAccount()
-  // @ts-expect-error token.address is a string Address
   const { queryKey: allowanceQueryKey } = useAllowance(token.address, {
     args: { owner: address, spender: stakeManagerAddresses[token.chainId] },
   })

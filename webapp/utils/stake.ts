@@ -9,11 +9,6 @@ import {
 import { NetworkType } from 'hooks/useNetworkType'
 import { EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
-import {
-  approveErc20Token,
-  getErc20TokenAllowance,
-  getErc20TokenBalance,
-} from 'utils/token'
 import { type Address, type Chain, type Hash } from 'viem'
 
 export const isStakeEnabledOnTestnet = (networkType: NetworkType) =>
@@ -75,13 +70,10 @@ const validateStakeOperation = async function ({
           chainId: token.chainId,
         })
       ).value
-    : await getErc20TokenBalance({
-        address: forAccount,
-        // It works in runtime, but Typescript fails to interpret HemiPublicClient as a Client.
-        // I've seen that the typings change in future viem's version, so this may be soon fixed
-        // @ts-expect-error hemiPublicClient is Client
-        client: hemiPublicClient,
-        token,
+    : await hemiPublicClient.getErc20TokenBalance({
+        account: forAccount,
+        // @ts-expect-error token is not native, so token.address is address
+        address: token.address,
       })
 
   const { error } = canSubmit({
@@ -190,26 +182,22 @@ export const stake = async function ({
   } else {
     const spender = stakeManagerAddresses[token.chainId]
     const tokenAddress = token.address as Address
-    const allowance = await getErc20TokenAllowance({
-      // It works in runtime, but Typescript fails to interpret HemiPublicClient as a Client.
-      // I've seen that the typings change in future viem's version, so this may be soon fixed
-      // @ts-expect-error hemiPublicClient is Client
-      client: hemiPublicClient,
+    const allowance = await hemiPublicClient.getErc20TokenAllowance({
+      address: tokenAddress,
       owner: forAccount,
       spender,
-      token,
     })
 
     if (allowance < amount) {
       // first, we need to approve the token to be spent by the stake manager
       onTokenApprove?.()
-      const approveTxHash = await approveErc20Token({
-        address: tokenAddress,
-        amount,
-        // @ts-expect-error hemiWalletClient is Client
-        client: hemiWalletClient,
-        spender: stakeManagerAddresses[token.chainId],
-      }).catch(onUserRejectedTokenApproval)
+      const approveTxHash = await hemiWalletClient
+        .approveErc20Token({
+          address: tokenAddress,
+          amount,
+          spender: stakeManagerAddresses[token.chainId],
+        })
+        .catch(onUserRejectedTokenApproval)
 
       if (!approveTxHash) {
         return

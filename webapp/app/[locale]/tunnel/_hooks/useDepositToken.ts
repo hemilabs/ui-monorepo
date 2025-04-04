@@ -67,7 +67,6 @@ export const useDepositToken = function ({
       hash: depositErc20TokenTxHash,
     })
 
-  // @ts-expect-error string is `0x${string}`
   const { queryKey } = useAllowance(fromToken.address, {
     args: {
       owner,

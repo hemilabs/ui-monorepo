@@ -36,6 +36,7 @@ const nextConfig = {
     'hemi-viem-stake-actions',
     'sliding-block-window',
     'ui-common',
+    'viem-erc20',
   ],
   webpack(config) {
     config.resolve.fallback = { fs: false, net: false, tls: false }

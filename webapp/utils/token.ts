@@ -1,15 +1,7 @@
 import { tokenList } from 'app/tokenList/'
 import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
 import { EvmToken, Token } from 'types/token'
-import {
-  type Address,
-  type Chain,
-  type Client,
-  erc20Abi,
-  isAddress,
-  isAddressEqual,
-} from 'viem'
-import { readContract, writeContract } from 'viem/actions'
+import { type Chain, isAddress, isAddressEqual } from 'viem'
 
 import { getNativeToken, isNativeAddress } from './nativeToken'
 
@@ -31,60 +23,6 @@ export const getTokenByAddress = function (
 
 export const isEvmToken = (token: Token): token is EvmToken =>
   typeof token.chainId === 'number'
-
-export const approveErc20Token = ({
-  address,
-  amount,
-  client,
-  spender,
-}: {
-  address: Address
-  amount: bigint
-  client: Client
-  spender: Address
-}) =>
-  writeContract(client, {
-    abi: erc20Abi,
-    address,
-    args: [spender, amount],
-    // @ts-expect-error: TS is complaining about client.chain definition, but this works
-    chain: client.chain,
-    functionName: 'approve',
-  })
-
-export const getErc20TokenAllowance = ({
-  client,
-  owner,
-  spender,
-  token,
-}: {
-  client: Client
-  owner: Address
-  spender: Address
-  token: EvmToken
-}) =>
-  readContract(client, {
-    abi: erc20Abi,
-    address: token.address as Address,
-    args: [owner, spender],
-    functionName: 'allowance',
-  })
-
-export const getErc20TokenBalance = ({
-  address,
-  client,
-  token,
-}: {
-  address: Address
-  client: Client
-  token: EvmToken
-}) =>
-  readContract(client, {
-    abi: erc20Abi,
-    address: token.address as Address,
-    args: [address],
-    functionName: 'balanceOf',
-  })
 
 export const isStakeToken = (token: Token): token is StakeToken =>
   token.extensions?.protocol !== undefined &&

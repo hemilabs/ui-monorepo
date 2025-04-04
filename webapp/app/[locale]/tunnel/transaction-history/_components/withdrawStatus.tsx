@@ -39,7 +39,7 @@ const EvmWithdrawStatus = function ({ withdrawal }: Props) {
     [MessageStatus.RELAYED]: <TxStatus.Success />,
   }
 
-  return statuses[withdrawal.status] ?? <Skeleton className="w-12" />
+  return statuses[withdrawal.status] ?? <Skeleton className="w-15 h-8" />
 }
 
 // After the withdrawal is initiated, the operation is in a wait state for up to

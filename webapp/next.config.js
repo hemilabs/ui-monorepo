@@ -34,7 +34,6 @@ const nextConfig = {
   transpilePackages: [
     'btc-wallet',
     'hemi-viem-stake-actions',
-    'sliding-block-window',
     'ui-common',
     'viem-erc20',
   ],

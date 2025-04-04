@@ -1,4 +1,3 @@
-import { featureFlags } from 'app/featureFlags'
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -18,6 +17,7 @@ import { useAccount } from 'wagmi'
 
 import { historyReducer, initialState } from './reducer'
 import { type HistoryReducerState, type StorageChain } from './types'
+import { usePollHistory } from './usePollHistory'
 import {
   getTunnelHistoryDepositStorageKey,
   getTunnelHistoryWithdrawStorageKey,
@@ -41,8 +41,6 @@ const readStateFromStorage = function <T extends TunnelOperation>({
         chunkIndex: 0,
         content: [],
         fromBlock: chainConfiguration[configChainId].minBlockToSync ?? 0,
-        hasSyncToMinBlock: false,
-        toBlock: undefined,
       }
     }
     return {
@@ -260,35 +258,17 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
     ],
   )
 
-  // TODO this effect is restricted to sepolia and mainnet only until the feature flag
-  // for subgraphs are removed. Once all chains use subgraphs, it can be simplified. Note that
-  // if the withdrawals are still syncing this won't have any effect :( but once a pair L1:L2 uses a subgraph
-  // for both deposits and withdrawals, this will work correctly
-  // See https://github.com/hemilabs/ui-monorepo/issues/743
-  const chainIdToUpdate = networkType === 'testnet' ? sepolia.id : mainnet.id
-  const depositStatus = history.deposits.find(
-    ({ chainId }) => chainId === chainIdToUpdate,
-  )?.status
-  useEffect(
-    function pollEvmDepositsInIntervals() {
-      if (!featureFlags.syncHistoryWithSubgraph) {
-        return undefined
-      }
-      // worker is still running, do nothing.
-      if (!['ready', 'syncing'].includes(depositStatus)) {
-        return undefined
-      }
-      // force spin up of worker to bring new operations
-      const intervalId = setInterval(
-        () => dispatch({ payload: { chainId: chainIdToUpdate }, type: 'sync' }),
-        // every 2 minutes
-        1000 * 60 * 2,
-      )
+  usePollHistory({
+    chainId: networkType === 'testnet' ? sepolia.id : mainnet.id,
+    dispatch,
+    history,
+  })
 
-      return () => clearInterval(intervalId)
-    },
-    [chainIdToUpdate, depositStatus, dispatch],
-  )
+  usePollHistory({
+    chainId: l2ChainId,
+    dispatch,
+    history,
+  })
 
   const historyContext = useMemo(
     () => ({

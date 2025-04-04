@@ -48,12 +48,6 @@ inputs:
   NEXT_PUBLIC_ENABLE_STAKE_TESTNET:
     required: false
     description: Flag to enable or not stake on testnet
-  NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH:
-    required: false
-    description: Feature flag to enable syncing the user history with Subgraphs
-  NEXT_PUBLIC_FEATURE_FLAG_SYNC_WITHDRAWALS_SUBGRAPH:
-    required: false
-    description: Feature flag to enable syncing withdrawals with the Subgraph
   NEXT_PUBLIC_POINTS_URL:
     required: false
     description: Hemi Points URL
@@ -63,45 +57,9 @@ inputs:
   NEXT_PUBLIC_SENTRY_DSN:
     required: false
     description: Sentry DSN URL
-  NEXT_PUBLIC_SUBGRAPH_API_KEY:
+  NEXT_PUBLIC_SUBGRAPHS_API_URL:
     required: false
-    description: Subgraph API key
-  NEXT_PUBLIC_SUBGRAPH_HEMI_URL:
-    required: false
-    description: Hemi subgraph URL
-  NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_URL:
-    required: false
-    description: Hemi Sepolia subgraph URL
-  NEXT_PUBLIC_SUBGRAPH_HEMI_ID:
-    required: false
-    description: Hemi subgraph ID
-  NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_ID:
-    required: false
-    description: Hemi Sepolia subgraph ID
-  NEXT_PUBLIC_SUBGRAPH_MAINNET_ID:
-    required: false
-    description: Mainnet subgraph ID
-  NEXT_PUBLIC_SUBGRAPH_SEPOLIA_ID:
-    required: false
-    description: Sepolia subgraph ID
-  NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_ID:
-    required: false
-    description: Hemi Stake subgraph ID
-  NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_ID:
-    required: false
-    description: Hemi Sepolia Stake subgraph ID
-  NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_URL:
-    required: false
-    description: Hemi Stake subgraph URL
-  NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_URL:
-    required: false
-    description: Hemi Sepolia Stake subgraph URL
-  NEXT_PUBLIC_SUBGRAPH_MAINNET_URL:
-    required: false
-    description: Mainnet subgraph URL
-  NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL:
-    required: false
-    description: Sepolia Subgraph URL
+    description: Subgraphs API URL
   NEXT_PUBLIC_TRACES_SAMPLE_RATE:
     required: false
     description: Sentry traces sample rate
@@ -141,24 +99,10 @@ runs:
         NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA: ${{ inputs.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA}}
         NEXT_PUBLIC_ENABLE_ANALYTICS: ${{ inputs.NEXT_PUBLIC_ENABLE_ANALYTICS }}
         NEXT_PUBLIC_ENABLE_STAKE_TESTNET: ${{ inputs.NEXT_PUBLIC_ENABLE_STAKE_TESTNET }}
-        NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH }}
-        NEXT_PUBLIC_FEATURE_FLAG_SYNC_WITHDRAWALS_SUBGRAPH: ${{ inputs.NEXT_PUBLIC_FEATURE_FLAG_SYNC_WITHDRAWALS_SUBGRAPH }}
         NEXT_PUBLIC_POINTS_URL: ${{ inputs.NEXT_PUBLIC_POINTS_URL }}
         NEXT_PUBLIC_TOKEN_PRICES_URL: ${{ inputs.NEXT_PUBLIC_TOKEN_PRICES_URL }}
         NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.NEXT_PUBLIC_SENTRY_DSN }}
-        NEXT_PUBLIC_SUBGRAPH_API_KEY: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_API_KEY }}
-        NEXT_PUBLIC_SUBGRAPH_HEMI_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_HEMI_URL }}
-        NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_URL }}
-        NEXT_PUBLIC_SUBGRAPH_HEMI_ID: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_HEMI_ID }}
-        NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_ID: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_ID }}
-        NEXT_PUBLIC_SUBGRAPH_MAINNET_ID: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_MAINNET_ID }}
-        NEXT_PUBLIC_SUBGRAPH_SEPOLIA_ID: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_ID }}
-        NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_ID: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_ID }}
-        NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_ID: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_ID }}
-        NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_URL }}
-        NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_URL }}
-        NEXT_PUBLIC_SUBGRAPH_MAINNET_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_MAINNET_URL }}
-        NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL }}
+        NEXT_PUBLIC_SUBGRAPHS_API_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPHS_API_URL }}
         NEXT_PUBLIC_TRACES_SAMPLE_RATE: ${{ inputs.NEXT_PUBLIC_TRACES_SAMPLE_RATE }}
         NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ inputs.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
         SENTRY_AUTH_TOKEN: ${{ inputs.SENTRY_AUTH_TOKEN }}

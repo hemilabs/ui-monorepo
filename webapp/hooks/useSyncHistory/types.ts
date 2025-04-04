@@ -14,8 +14,6 @@ import {
 export type BlockSyncType = {
   chunkIndex: number
   fromBlock: number
-  hasSyncToMinBlock: boolean
-  toBlock: number | undefined
 }
 
 export type TransactionListSyncType = {

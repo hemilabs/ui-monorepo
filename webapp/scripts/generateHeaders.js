@@ -55,6 +55,10 @@ if (process.env.NEXT_PUBLIC_POINTS_URL) {
   fetchDomains.add(new URL(process.env.NEXT_PUBLIC_POINTS_URL).origin)
 }
 
+if (process.NEXT_PUBLIC_SUBGRAPHS_API_URL) {
+  fetchDomains.add(new URL(process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL).origin)
+}
+
 // If any RPC URL is customized through these env vars, the origin has to be
 // added to the allow list for the client to get the responses. Since the URLs
 // may contain a port or a path, those need to be removed as only the "origin"
@@ -64,13 +68,6 @@ const customRpcOrigins = [
   process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA,
   process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET,
   process.env.NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA,
-  // Custom RPCs for Subgraphs
-  process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_URL,
-  process.env.NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_URL,
-  process.env.NEXT_PUBLIC_SUBGRAPH_MAINNET_URL,
-  process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL,
-  process.env.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_URL,
-  process.env.NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_URL,
 ].flatMap((p = '') => p.split('+'))
 customRpcOrigins.forEach(function (url) {
   if (url) {

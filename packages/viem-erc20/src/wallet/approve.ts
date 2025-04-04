@@ -29,7 +29,7 @@ export const approveErc20Token = async function (
     account: client.account,
     address,
     args: [spender, amount] as const,
-    // @ts-expect-error: TS is complaining about client.account definition, but this works
+    // @ts-expect-error: TS is complaining about client.chain definition, but this works
     chain: client.chain,
     functionName: 'approve',
   })

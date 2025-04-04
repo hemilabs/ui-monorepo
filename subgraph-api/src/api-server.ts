@@ -44,7 +44,7 @@ function validateChainIsHemi(req, res, next) {
 
 const isInteger = string => /^\d+$/.test(string)
 
-function validateQueryParams(req, res, next) {
+function parseQueryParams(req, res, next) {
   const { fromBlock = '0', limit, skip } = req.query
 
   req.data = req.data || {}
@@ -106,11 +106,11 @@ export function createApiServer() {
     '/:chainIdStr(\\d+)/deposits/:address(0x[0-9a-fA-F]{40})',
     parseChainId,
     validateChainIsEthereum,
-    validateQueryParams,
+    parseQueryParams,
     function (req, res, next) {
       const { address } = req.params
 
-      // @ts-expect-error: req.data is populated by parseChainId and validateQueryParams
+      // @ts-expect-error: req.data is populated by parseChainId and parseQueryParams
       getEvmDeposits({ address, ...req.data })
         .then(function (deposits) {
           sendJsonResponse(res, 200, { deposits })
@@ -123,7 +123,7 @@ export function createApiServer() {
     '/:chainIdStr(\\d+)/withdrawals/:address(0x[0-9a-fA-F]{40})/:type(btc|evm)',
     parseChainId,
     validateChainIsHemi,
-    validateQueryParams,
+    parseQueryParams,
     function (req, res, next) {
       const { address, type } = req.params
 
@@ -134,7 +134,7 @@ export function createApiServer() {
         getWithdrawals = getBtcWithdrawals
       }
 
-      // @ts-expect-error: req.data is populated by parseChainId and validateQueryParams
+      // @ts-expect-error: req.data is populated by parseChainId and parseQueryParams
       getWithdrawals({ address, ...req.data })
         .then(function (withdrawals) {
           sendJsonResponse(res, 200, { withdrawals })

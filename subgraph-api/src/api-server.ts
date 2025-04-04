@@ -45,7 +45,7 @@ function validateChainIsHemi(req, res, next) {
 const isInteger = string => /^\d+$/.test(string)
 
 function validateQueryParams(req, res, next) {
-  const { fromBlock, limit, skip } = req.query
+  const { fromBlock = '0', limit, skip } = req.query
 
   req.data = req.data || {}
 

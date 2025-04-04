@@ -165,7 +165,7 @@ export function createApiServer() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use(function (err, req, res, next) {
-    if (config.get('DEBUG')) {
+    if (config.get('debug')) {
       // eslint-disable-next-line no-console
       console.log(err)
     }

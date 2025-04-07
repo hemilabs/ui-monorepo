@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'staking-points/**'
+      - 'subgraph-api/**'
       - 'token-prices/**'
 
 jobs:
@@ -24,6 +25,8 @@ jobs:
         include:
           - context: staking-points
             image: hemilabs/staking-points-api
+          - context: subgraph-api
+            image: hemilabs/subgraph-api
           - context: token-prices/api
             image: hemilabs/token-prices-api
           - context: token-prices/cron

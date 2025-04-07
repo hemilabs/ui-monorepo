@@ -1,4 +1,5 @@
 {
+  "name": "subgraph-api",
   "scripts": {
     "start": "tsx server.ts"
   },

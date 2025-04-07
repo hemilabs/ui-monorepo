@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "strict": false
+  },
+  "extends": "@tsconfig/node20/tsconfig.json"
+}

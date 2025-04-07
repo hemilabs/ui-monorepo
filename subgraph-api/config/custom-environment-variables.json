@@ -1,0 +1,15 @@
+{
+  "debug": {
+    "__format": "json",
+    "__name": "DEBUG"
+  },
+  "originList": {
+    "__format": "json",
+    "__name": "ORIGIN_LIST"
+  },
+  "port": "PORT",
+  "subgraph": {
+    "apiKey": "SUBGRAPH_API_KEY",
+    "origin": "SUBGRAPH_ORIGIN"
+  }
+}

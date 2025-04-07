@@ -26,6 +26,7 @@
     "btc-wallet",
     "hemi-viem-stake-actions",
     "sliding-block-window",
+    "subgraph-api",
     "subgraphs/*",
     "token-prices/*",
     "ui-common",

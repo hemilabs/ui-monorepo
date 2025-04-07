@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import {
+  encodeFunctionData,
   type Address,
   type Chain,
   type PublicClient,
@@ -184,3 +185,19 @@ const runDepositErc20 = ({
 
 export const depositErc20 = (...args: Parameters<typeof runDepositErc20>) =>
   toPromiseEvent<DepositErc20Events>(runDepositErc20(...args))
+
+export const encodeDepositErc20 = ({
+  amount = BigInt(0),
+  l1TokenAddress,
+  l2TokenAddress,
+}: {
+  amount: bigint | undefined
+  l1TokenAddress: Address
+  l2TokenAddress: Address
+}) =>
+  encodeFunctionData({
+    abi: l1StandardBridgeAbi,
+    // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/standard-bridge.ts#L295
+    args: [l1TokenAddress, l2TokenAddress, amount, 200_000, '0x'],
+    functionName: 'depositERC20',
+  })

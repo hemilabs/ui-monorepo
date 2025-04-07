@@ -1,10 +1,17 @@
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useUmami } from 'app/analyticsEvents'
 import { TransactionsInProgressContext } from 'context/transactionsInProgressContext'
-import { useEvmDeposits } from 'hooks/useEvmDeposits'
-import { useDepositNativeToken } from 'hooks/useL2Bridge'
-import { useReloadBalances } from 'hooks/useReloadBalances'
+import { EventEmitter } from 'events'
+import { depositErc20, depositEth } from 'hemi-tunnel-actions'
+import { DepositErc20Events } from 'hemi-tunnel-actions/src/types'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
+import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
+import { useL1WalletClient } from 'hooks/useL1WalletClient'
+import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useCallback, useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
 import { type EvmToken } from 'types/token'
 import {
@@ -12,292 +19,203 @@ import {
   EvmDepositStatus,
   MessageDirection,
 } from 'types/tunnel'
-import { getEvmBlock } from 'utils/evmApi'
-import { isNativeToken } from 'utils/nativeToken'
-import { type Hash, parseUnits, zeroAddress } from 'viem'
-import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
+import { findChainById } from 'utils/chain'
+import { getEvmL1PublicClient } from 'utils/chainClients'
+import { isNativeAddress } from 'utils/nativeToken'
+import { Chain, parseUnits, zeroAddress } from 'viem'
+import { useAccount } from 'wagmi'
 
-import { useDepositToken } from './useDepositToken'
 import { useTunnelOperation } from './useTunnelOperation'
+const ExtraApprovalTimesAmount = 10
 
 type UseDeposit = {
-  canDeposit: boolean
   extendedErc20Approval?: boolean | undefined
   fromInput: string
   fromToken: EvmToken
+  on?: (emitter: EventEmitter<DepositErc20Events>) => void
   toToken: EvmToken
 }
+
 export const useDeposit = function ({
-  canDeposit,
   extendedErc20Approval,
   fromInput,
   fromToken,
+  on,
   toToken,
 }: UseDeposit) {
+  const amount = parseUnits(fromInput, fromToken.decimals)
+
   const { address } = useAccount()
-  const { addTransaction, clearTransactionsInMemory, transactions } =
-    useContext(TransactionsInProgressContext)
-  const deposits = useEvmDeposits()
+  const { addTransaction, clearTransactionsInMemory } = useContext(
+    TransactionsInProgressContext,
+  )
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+    fromToken.chainId,
+  )
+  const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
+  const [networkType] = useNetworkType()
   const queryClient = useQueryClient()
+  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
+    fromToken.chainId,
+    fromToken.address,
+  )
+
   const { addDepositToTunnelHistory, updateDeposit } = useTunnelHistory()
   const { updateTxHash, txHash: currentTxHash } = useTunnelOperation()
-
-  const depositingNative = isNativeToken(fromToken)
-  const toDeposit = parseUnits(fromInput, fromToken.decimals).toString()
-
-  const getDeposit = ({
-    approvalTxHash,
-    status,
-    transactionHash,
-  }: {
-    approvalTxHash?: Hash
-    status: EvmDepositStatus
-    transactionHash: Hash
-  }): EvmDepositOperation => ({
-    amount: toDeposit,
-    approvalTxHash,
-    direction: MessageDirection.L1_TO_L2,
-    from: address,
-    l1ChainId: fromToken.chainId,
-    l1Token: depositingNative ? zeroAddress : fromToken.address,
-    l2ChainId: toToken.chainId,
-    l2Token: depositingNative ? NativeTokenSpecialAddressOnL2 : toToken.address,
-    status,
-    // "to" field uses the same address as from, which is user's address
-    to: address,
-    transactionHash,
-  })
-
-  const onUserAcceptingDeposit = function (depositTxHash: Hash) {
-    // value may come from different places: If there was a successful approval, it's the hash in memory
-    // if not, it could come from the retry tx hash
-    // if not defined, then there is no approval
-    const approvalTxHash = (transactions[0]?.transactionHash ??
-      deposits.find(d => d.transactionHash === currentTxHash)
-        ?.approvalTxHash) as Hash | undefined
-
-    const depositToAdd = getDeposit({
-      approvalTxHash,
-      status: EvmDepositStatus.DEPOSIT_TX_PENDING,
-      transactionHash: depositTxHash,
-    })
-
-    // add hash to query string
-    updateTxHash(depositTxHash, { history: currentTxHash ? 'replace' : 'push' })
-
-    addDepositToTunnelHistory(depositToAdd)
-    // Clear, if any, the approval txs in memory
-    clearTransactionsInMemory()
-  }
-
-  const onApprovalSuccess = function (approvalTxHash: Hash) {
-    // save the Approval Transaction hash to the list of transactions in progress
-    // so the drawer can be shown until we get our deposit TX hash
-    addTransaction(
-      getDeposit({
-        approvalTxHash,
-        status: EvmDepositStatus.APPROVAL_TX_PENDING,
-        // until there's a deposit hash, use the approval. After all, this is only in memory
-        transactionHash: approvalTxHash,
-      }),
-    )
-    // and now, add that hash to the url. It will be used until the Deposit hash is generated
-    updateTxHash(approvalTxHash, { history: 'push' })
-  }
-
-  const {
-    depositNativeToken,
-    depositNativeTokenError,
-    depositNativeTokenGasFees,
-    depositNativeTokenTxHash,
-    resetDepositNativeToken,
-  } = useDepositNativeToken({
-    enabled: depositingNative && canDeposit,
-    l1ChainId: fromToken.chainId,
-    onSuccess: onUserAcceptingDeposit,
-    toDeposit,
-  })
-
-  const {
-    approvalError,
-    approvalQueryKey,
-    approvalReceipt,
-    approvalReceiptError,
-    approvalTokenGasFees,
-    approvalTxHash,
-    depositErc20TokenError,
-    depositErc20TokenGasFees,
-    depositErc20TokenTxHash,
-    depositToken,
-    needsApproval,
-    resetApproval,
-    resetDepositToken,
-  } = useDepositToken({
-    amount: fromInput,
-    enabled: !depositingNative && canDeposit,
-    extendedApproval: extendedErc20Approval,
-    fromToken,
-    onApprovalSuccess,
-    onSuccess: onUserAcceptingDeposit,
-    toToken,
-  })
-
-  const {
-    data: depositReceipt,
-    error: depositReceiptError,
-    queryKey: depositQueryKey,
-  } = useWaitForTransactionReceipt({
-    hash: depositingNative ? depositNativeTokenTxHash : depositErc20TokenTxHash,
-  })
-
-  useReloadBalances({
-    fromToken,
-    status: depositReceipt?.status,
-  })
-
-  const clearDepositNativeState = useCallback(
-    function () {
-      // clear the deposit operation hash
-      resetDepositNativeToken()
-      // clear transaction receipt state
-      queryClient.removeQueries({ queryKey: depositQueryKey })
-    },
-    [depositQueryKey, queryClient, resetDepositNativeToken],
+  const { track } = useUmami()
+  const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
+    fromToken.chainId,
   )
+  const { l1WalletClient } = useL1WalletClient(fromToken.chainId)
 
-  const clearDepositTokenState = useCallback(
-    function () {
-      // clear the approval operation hash, if any
-      resetApproval?.()
-      // clear the deposit operation hash
-      resetDepositToken()
-      // clear approval receipt state
-      queryClient.removeQueries({ queryKey: approvalQueryKey })
-      // clear transaction receipt state
-      queryClient.removeQueries({ queryKey: depositQueryKey })
-    },
-    [
-      approvalQueryKey,
-      depositQueryKey,
-      queryClient,
-      resetApproval,
-      resetDepositToken,
-    ],
-  )
+  const depositingNative = isNativeAddress(fromToken.address)
 
-  useEffect(
-    function updateDepositStatusAfterFailure() {
-      if (!depositReceiptError) {
-        return
-      }
-      const deposit = deposits.find(
-        d =>
-          d.transactionHash === currentTxHash &&
-          d.status === EvmDepositStatus.DEPOSIT_TX_PENDING,
-      )
-      if (!deposit) {
-        return
-      }
-      clearDepositNativeState()
-      clearDepositTokenState()
+  const { allowanceQueryKey } = useNeedsApproval({
+    address: fromToken.address,
+    amount,
+    spender: l1StandardBridgeAddress,
+  })
 
-      updateDeposit(deposit, {
-        status: EvmDepositStatus.DEPOSIT_TX_FAILED,
-      })
-    },
-    [
-      clearDepositNativeState,
-      clearDepositTokenState,
-      currentTxHash,
-      deposits,
-      depositReceiptError,
-      updateDeposit,
-    ],
-  )
+  return useMutation({
+    mutationFn() {
+      track?.('evm - dep started', { chain: networkType })
 
-  useEffect(
-    function updateDepositAfterConfirmation() {
-      if (depositReceipt?.status !== 'success') {
-        return
-      }
+      const { promise, emitter } = depositingNative
+        ? depositEth({
+            account: address,
+            amount,
+            // here both chains are always EVM
+            l1Chain: findChainById(fromToken.chainId) as Chain,
+            l1PublicClient: getEvmL1PublicClient(fromToken.chainId),
+            l1WalletClient,
+            l2Chain: findChainById(toToken.chainId) as Chain,
+          })
+        : depositErc20({
+            account: address,
+            amount,
+            approvalAmount:
+              !depositingNative && extendedErc20Approval
+                ? amount * BigInt(ExtraApprovalTimesAmount)
+                : amount,
+            l1Chain: findChainById(fromToken.chainId) as Chain,
+            l1PublicClient: getEvmL1PublicClient(fromToken.chainId),
+            // @ts-expect-error string is Address
+            l1TokenAddress: fromToken.address,
+            l1WalletClient,
+            l2Chain: findChainById(toToken.chainId) as Chain,
+            // @ts-expect-error string is Address
+            l2TokenAddress: toToken.address,
+          })
 
-      const deposit = deposits.find(
-        d =>
-          d.transactionHash === depositReceipt.transactionHash &&
-          d.l1ChainId === fromToken.chainId &&
-          !d.blockNumber,
-      )
+      let deposit: EvmDepositOperation | undefined
 
-      if (!deposit) {
-        return
-      }
-
-      clearDepositNativeState()
-      clearDepositTokenState()
-
-      // update here so next iteration of the effect doesn't reach this point
-      updateDeposit(deposit, {
-        blockNumber: Number(depositReceipt.blockNumber),
-        status: EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
+      const getDeposit = () => ({
+        amount: amount.toString(),
+        direction: MessageDirection.L1_TO_L2,
+        from: address,
+        l1ChainId: fromToken.chainId,
+        l1Token: depositingNative ? zeroAddress : fromToken.address,
+        l2ChainId: toToken.chainId,
+        l2Token: depositingNative
+          ? NativeTokenSpecialAddressOnL2
+          : toToken.address,
+        // "to" field uses the same address as from, which is user's address
+        to: address,
       })
 
-      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
-      // eslint-disable-next-line promise/catch-or-return
-      getEvmBlock(depositReceipt.blockNumber, fromToken.chainId).then(block =>
+      emitter.on('user-signed-approve', function (approvalTxHash) {
+        deposit = {
+          ...getDeposit(),
+          approvalTxHash,
+          status: EvmDepositStatus.APPROVAL_TX_PENDING,
+          transactionHash: approvalTxHash,
+        }
+        // save the Approval Transaction hash to the list of transactions in progress
+        // so the drawer can be shown until we get our deposit TX hash
+        addTransaction(deposit)
+        // and now, add that hash to the url. It will be used until the Deposit hash is generated
+        updateTxHash(approvalTxHash, { history: 'push' })
+      })
+      emitter.on('approve-transaction-reverted', function (receipt) {
+        updateNativeBalanceAfterFees(receipt)
+      })
+      emitter.on('approve-transaction-succeeded', function (receipt) {
+        updateNativeBalanceAfterFees(receipt)
+        queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
+      })
+      emitter.on('user-signed-deposit', function (transactionHash) {
+        const updates = {
+          status: EvmDepositStatus.DEPOSIT_TX_PENDING,
+          transactionHash,
+        }
+        if (deposit) {
+          Object.assign(deposit, updates)
+        } else {
+          deposit = {
+            ...getDeposit(),
+            ...updates,
+          }
+        }
+        addDepositToTunnelHistory(deposit)
+        // add hash to query string. If a hash was in place before, it should be replaced.
+        updateTxHash(transactionHash, {
+          history: currentTxHash ? 'replace' : 'push',
+        })
+        // Clear, if any, the approval txs in memory
+        clearTransactionsInMemory()
+      })
+      emitter.on('deposit-transaction-succeeded', function (receipt) {
+        const { blockNumber } = receipt
+        // timestamp will be loaded by background workers
         updateDeposit(deposit, {
-          timestamp: Number(block.timestamp),
-        }),
-      )
+          blockNumber: Number(blockNumber),
+          status: EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
+        })
+        track?.('evm - dep success', { chain: networkType })
+        // update balances, they will be revalidated on background.
+        // We update the native token considering the gas spent, and the token deposited
+        if (depositingNative) {
+          // deposited + fees
+          updateNativeBalanceAfterFees(receipt, amount)
+        } else {
+          // fees
+          updateNativeBalanceAfterFees(receipt)
+          // deposited
+          queryClient.setQueryData(
+            erc20BalanceQueryKey,
+            (old: bigint) => old - amount,
+          )
+        }
+      })
+      emitter.on('deposit-transaction-reverted', function (receipt) {
+        updateDeposit(deposit, {
+          status: EvmDepositStatus.DEPOSIT_TX_FAILED,
+        })
+
+        track?.('evm - dep failed', { chain: networkType })
+        // Although the transaction was reverted, the gas was paid.
+        updateNativeBalanceAfterFees(receipt)
+      })
+
+      on?.(emitter)
+
+      return promise
     },
-    [
-      clearDepositNativeState,
-      clearDepositTokenState,
-      depositReceipt,
-      deposits,
-      fromToken.chainId,
-      updateDeposit,
-    ],
-  )
-
-  const handleDeposit = (depositCallback: () => void) =>
-    function () {
-      if (canDeposit) {
-        depositCallback()
-      }
-    }
-
-  if (depositingNative) {
-    return {
-      clearDepositState: clearDepositNativeState,
-      deposit: handleDeposit(function () {
-        clearDepositNativeState()
-        depositNativeToken()
-      }),
-      depositError: depositNativeTokenError,
-      depositGasFees: depositNativeTokenGasFees,
-      depositReceipt,
-      depositReceiptError,
-      depositTxHash: depositNativeTokenTxHash,
-      needsApproval: false,
-    }
-  }
-
-  return {
-    approvalError,
-    approvalReceipt,
-    approvalReceiptError,
-    approvalTokenGasFees,
-    approvalTxHash,
-    clearDepositState: clearDepositTokenState,
-    deposit: handleDeposit(function () {
-      clearDepositTokenState()
-      depositToken()
-    }),
-    depositError: depositErc20TokenError,
-    depositGasFees: depositErc20TokenGasFees,
-    depositReceipt,
-    depositReceiptError,
-    depositTxHash: depositErc20TokenTxHash,
-    needsApproval,
-  }
+    onSettled: () =>
+      Promise.all([
+        // gas was paid in the L1 chain, so we need to invalidate the balance
+        queryClient.invalidateQueries({
+          queryKey: nativeTokenBalanceQueryKey,
+        }),
+        // if we deposited an ERC20 token, we must invalidate the allowance and balance as well
+        ...(depositingNative
+          ? []
+          : [
+              queryClient.invalidateQueries({
+                queryKey: erc20BalanceQueryKey,
+              }),
+              queryClient.invalidateQueries({ queryKey: allowanceQueryKey }),
+            ]),
+      ]),
+  })
 }

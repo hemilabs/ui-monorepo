@@ -1,26 +1,25 @@
 'use client'
 
-import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
 import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPartners'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { Spinner } from 'components/spinner'
-import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
-import { useHemi } from 'hooks/useHemi'
-import { useNetworkType } from 'hooks/useNetworkType'
+import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
+import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
-import { getTunnelContracts } from 'utils/crossChainMessenger'
+import { useState } from 'react'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { tunnelsThroughPartners } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
-import { formatUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useDeposit } from '../_hooks/useDeposit'
+import { useEstimateDepositFees } from '../_hooks/useEstimateDepositFees'
 import { EvmTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
 import { canSubmit, getTotal } from '../_utils'
 
@@ -92,7 +91,6 @@ const SubmitEvmDeposit = function ({
 }
 
 export const EvmDeposit = function ({ state }: EvmDepositProps) {
-  const [networkType] = useNetworkType()
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
@@ -102,8 +100,6 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   const [isPartnersDrawerOpen, setIsPartnersDrawerOpen] = useState(false)
 
   const t = useTranslations()
-  const { track } = useUmami()
-  const hemi = useHemi()
 
   const {
     fromInput,
@@ -114,31 +110,27 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     updateFromInput,
   } = state
 
-  const { chain, status, address } = useEvmAccount()
+  const amount = parseUnits(fromInput, fromToken.decimals)
+
+  const { chain, status } = useEvmAccount()
+
   const operatesNativeToken = isNativeToken(fromToken)
 
   const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
     fromToken.chainId,
   )
 
+  const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
+
+  const { isLoadingAllowance, needsApproval } = useNeedsApproval({
+    address: fromToken.address,
+    amount,
+    spender: l1StandardBridgeAddress,
+  })
+
   const { balance: walletTokenBalance } = useTokenBalance(
     fromToken.chainId,
     fromToken.address,
-  )
-
-  const l1StandardBridgeAddress = getTunnelContracts(
-    hemi,
-    fromToken.chainId,
-  ).L1StandardBridge
-
-  const { isLoading: isAllowanceLoading } = useAllowance(
-    fromToken.address as `0x${string}`,
-    {
-      args: {
-        owner: address,
-        spender: l1StandardBridgeAddress,
-      },
-    },
   )
 
   const canDeposit = canSubmit({
@@ -153,101 +145,42 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const fromChain = useChain(fromNetworkId)
 
-  const {
-    approvalError,
-    approvalReceipt,
-    approvalReceiptError,
-    approvalTokenGasFees = BigInt(0),
-    clearDepositState,
-    needsApproval,
-    deposit,
-    depositError,
-    depositGasFees,
-    depositReceipt,
-    depositReceiptError,
-  } = useDeposit({
-    canDeposit,
-    extendedErc20Approval: operatesNativeToken
-      ? undefined
-      : extendedErc20Approval,
-    fromInput,
+  const approvalTokenGasFees = useEstimateFees({
+    chainId: fromToken.chainId,
+    operation: 'approve-erc20',
+    overEstimation: 1.5,
+  })
+
+  const depositGasFees = useEstimateDepositFees({
+    amount,
     fromToken,
     toToken,
   })
 
-  const approvalReceiptStatus = approvalReceipt?.status
-  useEffect(
-    function handleApprovalSuccess() {
-      if (
-        approvalReceiptStatus === 'success' &&
-        operationRunning === 'approving'
-      ) {
-        setOperationRunning('depositing')
-      }
+  const { isPending: isRunningOperation, mutate: deposit } = useDeposit({
+    extendedErc20Approval,
+    fromInput,
+    fromToken,
+    on(emitter) {
+      emitter.on('approve-transaction-succeeded', () =>
+        setOperationRunning('depositing'),
+      )
+      emitter.on('deposit-transaction-succeeded', function () {
+        resetStateAfterOperation()
+        setExtendedErc20Approval(false)
+      })
+      emitter.on('deposit-settled', () => setOperationRunning('idle'))
     },
-    [approvalReceiptStatus, operationRunning, setOperationRunning],
-  )
-
-  useEffect(
-    function handleSuccess() {
-      if (
-        depositReceipt?.status !== 'success' ||
-        operationRunning !== 'depositing'
-      ) {
-        return
-      }
-      setOperationRunning('idle')
-      resetStateAfterOperation()
-      setExtendedErc20Approval(false)
-      track?.('evm - dep success', { chain: networkType })
-    },
-    [
-      depositReceipt,
-      networkType,
-      operationRunning,
-      resetStateAfterOperation,
-      setExtendedErc20Approval,
-      setOperationRunning,
-      track,
-    ],
-  )
-
-  useEffect(
-    function handleRejectionOrFailure() {
-      if (
-        (approvalError ||
-          approvalReceiptError ||
-          depositError ||
-          depositReceiptError) &&
-        operationRunning !== 'idle'
-      ) {
-        setOperationRunning('idle')
-        track?.('evm - dep failed', { chain: networkType })
-      }
-    },
-    [
-      approvalError,
-      approvalReceiptError,
-      networkType,
-      depositError,
-      depositReceiptError,
-      operationRunning,
-      setOperationRunning,
-      track,
-    ],
-  )
-
-  const isRunningOperation = operationRunning !== 'idle'
+    toToken,
+  })
 
   const handleDeposit = function () {
-    clearDepositState()
     deposit()
     if (needsApproval) {
       setOperationRunning('approving')
     } else {
       setOperationRunning('depositing')
     }
-    track?.('evm - dep started', { chain: networkType })
   }
 
   const totalDeposit = operatesNativeToken
@@ -282,7 +215,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       return (
         <SubmitEvmDeposit
           canDeposit={canDeposit}
-          isAllowanceLoading={isAllowanceLoading}
+          isAllowanceLoading={isLoadingAllowance}
           isRunningOperation={isRunningOperation}
           needsApproval={needsApproval}
           operationRunning={operationRunning}

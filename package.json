@@ -25,6 +25,7 @@
   "workspaces": [
     "btc-wallet",
     "hemi-viem-stake-actions",
+    "packages/*",
     "sliding-block-window",
     "subgraph-api",
     "subgraphs/*",

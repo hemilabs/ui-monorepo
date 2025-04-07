@@ -52,6 +52,7 @@
     "umami-analytics-next": "1.0.1",
     "use-local-storage-state": "19.5.0",
     "viem": "2.22.10",
+    "viem-erc20": "1.0.0",
     "wagmi": "2.14.8"
   },
   "devDependencies": {

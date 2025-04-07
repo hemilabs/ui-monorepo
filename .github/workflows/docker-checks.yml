@@ -4,10 +4,12 @@ on:
   pull_request:
     paths:
       - 'staking-points/**'
+      - 'subgraph-api/**'
       - 'token-prices/**'
   push:
     paths:
       - 'staking-points/**'
+      - 'subgraph-api/**'
       - 'token-prices/**'
 
 concurrency:
@@ -31,5 +33,6 @@ jobs:
       matrix:
         context:
           - staking-points
+          - subgraph-api
           - token-prices/api
           - token-prices/cron

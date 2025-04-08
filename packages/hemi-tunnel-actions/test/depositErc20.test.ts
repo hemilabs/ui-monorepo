@@ -161,6 +161,41 @@ describe('depositErc20', function () {
     )
   })
 
+  it('should emit "approve-failed" when the approval transaction receipt fails', async function () {
+    const l1PublicClient = getL1PublicClientMock()
+    const l1WalletClient = getL1WalletClientMock()
+
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
+    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockRejectedValue(
+      new Error('Transaction receipt error'),
+    )
+
+    const { emitter, promise } = depositErc20({
+      account: zeroAddress,
+      amount: BigInt(100),
+      l1Chain: sepolia,
+      l1PublicClient,
+      l1TokenAddress: zeroAddress,
+      l1WalletClient,
+      l2Chain: hemiSepolia,
+      l2TokenAddress: zeroAddress,
+    })
+
+    const onApproveFailed = vi.fn()
+    const onSettled = vi.fn()
+
+    emitter.on('approve-failed', onApproveFailed)
+    emitter.on('deposit-settled', onSettled)
+
+    await promise
+
+    expect(onApproveFailed).toHaveBeenCalledExactlyOnceWith(expect.any(Error))
+    expect(onSettled).toHaveBeenCalledOnce()
+  })
+
   it('should emit "approve-transaction-succeeded" and "deposit-transaction-succeeded" when approval and deposit succeeds', async function () {
     const l1PublicClient = getL1PublicClientMock()
     const l1WalletClient = getL1WalletClientMock()

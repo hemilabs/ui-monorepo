@@ -81,88 +81,96 @@ const runDepositErc20 = ({
   l2TokenAddress: Address
 }) =>
   async function (emitter: EventEmitter<DepositErc20Events>) {
-    const extendedL1PublicClient = l1PublicClient.extend(erc20PublicActions())
-    const extendedL1WalletClient = l1WalletClient.extend(erc20WalletActions())
+    try {
+      const extendedL1PublicClient = l1PublicClient.extend(erc20PublicActions())
+      const extendedL1WalletClient = l1WalletClient.extend(erc20WalletActions())
 
-    const { canDeposit, reason } = await canDepositErc20({
-      account,
-      amount,
-      l1Chain,
-      l1PublicClient,
-      l2Chain,
-      tokenAddress: l1TokenAddress,
-    })
+      const { canDeposit, reason } = await canDepositErc20({
+        account,
+        amount,
+        l1Chain,
+        l1PublicClient,
+        l2Chain,
+        tokenAddress: l1TokenAddress,
+      })
 
-    if (!canDeposit) {
-      // reason must be defined because canDeposit is false
-      emitter.emit('deposit-failed-validation', reason!)
-      return
-    }
-
-    const l1StandardBridge = getL1StandardBridgeAddress({ l1Chain, l2Chain })
-
-    const allowance = await extendedL1PublicClient.getErc20TokenAllowance({
-      address: l1TokenAddress,
-      owner: account,
-      spender: l1StandardBridge,
-    })
-
-    if (amount > allowance) {
-      emitter.emit('pre-approve')
-      const approveHash = await extendedL1WalletClient
-        .approveErc20Token({
-          address: l1TokenAddress,
-          amount: approvalAmount ?? amount,
-          spender: l1StandardBridge,
-        })
-        .catch(function (error) {
-          emitter.emit('user-signing-approve-error', error)
-        })
-
-      if (!approveHash) {
-        emitter.emit('deposit-settled')
+      if (!canDeposit) {
+        // reason must be defined because canDeposit is false
+        emitter.emit('deposit-failed-validation', reason!)
         return
       }
 
-      emitter.emit('user-signed-approve', approveHash)
+      const l1StandardBridge = getL1StandardBridgeAddress({ l1Chain, l2Chain })
 
-      const approveReceipt =
-        await extendedL1PublicClient.waitForTransactionReceipt({
-          hash: approveHash,
-        })
+      const allowance = await extendedL1PublicClient.getErc20TokenAllowance({
+        address: l1TokenAddress,
+        owner: account,
+        spender: l1StandardBridge,
+      })
 
-      emitter.emit(
-        approveReceipt.status === 'success'
-          ? 'approve-transaction-succeeded'
-          : 'approve-transaction-reverted',
-        approveReceipt,
-      )
+      if (amount > allowance) {
+        emitter.emit('pre-approve')
+        const approveHash = await extendedL1WalletClient
+          .approveErc20Token({
+            address: l1TokenAddress,
+            amount: approvalAmount ?? amount,
+            spender: l1StandardBridge,
+          })
+          .catch(function (error) {
+            emitter.emit('user-signing-approve-error', error)
+          })
+
+        if (!approveHash) {
+          return
+        }
+
+        emitter.emit('user-signed-approve', approveHash)
+
+        const approveReceipt = await extendedL1PublicClient
+          .waitForTransactionReceipt({
+            hash: approveHash,
+          })
+          .catch(function (error) {
+            emitter.emit('approve-failed', error)
+          })
+
+        if (!approveReceipt) {
+          return
+        }
+
+        emitter.emit(
+          approveReceipt.status === 'success'
+            ? 'approve-transaction-succeeded'
+            : 'approve-transaction-reverted',
+          approveReceipt,
+        )
+      }
+
+      emitter.emit('pre-deposit')
+
+      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+      const depositHash = await writeContract(l1WalletClient, {
+        abi: l1StandardBridgeAbi,
+        account,
+        address: l1StandardBridge,
+        // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/standard-bridge.ts#L295
+        args: [l1TokenAddress, l2TokenAddress, amount, 200_000, '0x'],
+        chain: l1Chain,
+        functionName: 'depositERC20',
+      }).catch(function (error) {
+        emitter.emit('user-signing-deposit-error', error)
+      })
+
+      await handleWaitDeposit({
+        emitter,
+        hash: depositHash,
+        publicClient: extendedL1PublicClient,
+      })
+    } finally {
+      emitter.emit('deposit-settled')
     }
-
-    emitter.emit('pre-deposit')
-
-    // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
-    const depositHash = await writeContract(l1WalletClient, {
-      abi: l1StandardBridgeAbi,
-      account,
-      address: l1StandardBridge,
-      // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/standard-bridge.ts#L295
-      args: [l1TokenAddress, l2TokenAddress, amount, 200_000, '0x'],
-      chain: l1Chain,
-      functionName: 'depositERC20',
-    }).catch(function (error) {
-      emitter.emit('user-signing-deposit-error', error)
-    })
-
-    await handleWaitDeposit({
-      emitter,
-      hash: depositHash,
-      publicClient: extendedL1PublicClient,
-    })
-
-    emitter.emit('deposit-settled')
   }
 
 export const depositErc20 = (...args: Parameters<typeof runDepositErc20>) =>

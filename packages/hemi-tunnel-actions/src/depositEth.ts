@@ -66,47 +66,49 @@ const runDepositEth = ({
   l2Chain: Chain
 }) =>
   async function (emitter: EventEmitter<DepositEvents>) {
-    const { canDeposit, reason } = await canDepositEth({
-      account,
-      amount,
-      l1Chain,
-      l1PublicClient,
-      l2Chain,
-    })
+    try {
+      const { canDeposit, reason } = await canDepositEth({
+        account,
+        amount,
+        l1Chain,
+        l1PublicClient,
+        l2Chain,
+      })
 
-    if (!canDeposit) {
-      // reason must be defined because canDeposit is false
-      emitter.emit('deposit-failed-validation', reason!)
-      return
+      if (!canDeposit) {
+        // reason must be defined because canDeposit is false
+        emitter.emit('deposit-failed-validation', reason!)
+        return
+      }
+
+      emitter.emit('pre-deposit')
+
+      const l1StandardBridge = getL1StandardBridgeAddress({ l1Chain, l2Chain })
+
+      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+      const depositHash = await writeContract(l1WalletClient, {
+        abi: l1StandardBridgeAbi,
+        account,
+        address: l1StandardBridge,
+        // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/eth-bridge.ts#L144
+        args: [200_000, '0x'],
+        chain: l1Chain,
+        functionName: 'depositETH',
+        value: amount,
+      }).catch(function (error) {
+        emitter.emit('user-signing-deposit-error', error)
+      })
+
+      await handleWaitDeposit({
+        emitter,
+        hash: depositHash,
+        publicClient: l1PublicClient,
+      })
+    } finally {
+      emitter.emit('deposit-settled')
     }
-
-    emitter.emit('pre-deposit')
-
-    const l1StandardBridge = getL1StandardBridgeAddress({ l1Chain, l2Chain })
-
-    // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
-    const depositHash = await writeContract(l1WalletClient, {
-      abi: l1StandardBridgeAbi,
-      account,
-      address: l1StandardBridge,
-      // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/eth-bridge.ts#L144
-      args: [200_000, '0x'],
-      chain: l1Chain,
-      functionName: 'depositETH',
-      value: amount,
-    }).catch(function (error) {
-      emitter.emit('user-signing-deposit-error', error)
-    })
-
-    await handleWaitDeposit({
-      emitter,
-      hash: depositHash,
-      publicClient: l1PublicClient,
-    })
-
-    emitter.emit('deposit-settled')
   }
 
 export const depositEth = (...args: Parameters<typeof runDepositEth>) =>

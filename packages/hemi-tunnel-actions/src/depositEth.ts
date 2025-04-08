@@ -80,7 +80,7 @@ const runDepositEth = ({
       return
     }
 
-    emitter.emit('on-deposit')
+    emitter.emit('pre-deposit')
 
     const l1StandardBridge = getL1StandardBridgeAddress({ l1Chain, l2Chain })
 
@@ -106,7 +106,7 @@ const runDepositEth = ({
       publicClient: l1PublicClient,
     })
 
-    emitter.emit('on-deposit-settled')
+    emitter.emit('deposit-settled')
   }
 
 export const depositEth = (...args: Parameters<typeof runDepositEth>) =>

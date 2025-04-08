@@ -188,11 +188,11 @@ describe('depositEth', function () {
     const onDepositTransactionReverted = vi.fn()
     const onSettled = vi.fn()
 
-    emitter.on('on-deposit', onDeposit)
+    emitter.on('pre-deposit', onDeposit)
     emitter.on('user-signed-deposit', userSignedTransaction)
     emitter.on('deposit-transaction-succeeded', depositTransactionSucceeded)
     emitter.on('deposit-transaction-reverted', onDepositTransactionReverted)
-    emitter.on('on-deposit-settled', onSettled)
+    emitter.on('deposit-settled', onSettled)
 
     await promise
 
@@ -238,9 +238,9 @@ describe('depositEth', function () {
     const onSigningError = vi.fn()
     const onSettled = vi.fn()
 
-    emitter.on('on-deposit', onDepositCallback)
+    emitter.on('pre-deposit', onDepositCallback)
     emitter.on('user-signing-deposit-error', onSigningError)
-    emitter.on('on-deposit-settled', onSettled)
+    emitter.on('deposit-settled', onSettled)
 
     await promise
 
@@ -279,10 +279,10 @@ describe('depositEth', function () {
     const onDepositFailed = vi.fn()
     const onSettled = vi.fn()
 
-    emitter.on('on-deposit', onDeposit)
+    emitter.on('pre-deposit', onDeposit)
     emitter.on('user-signed-deposit', onUserSignedTransaction)
     emitter.on('deposit-failed', onDepositFailed)
-    emitter.on('on-deposit-settled', onSettled)
+    emitter.on('deposit-settled', onSettled)
 
     await promise
 
@@ -323,11 +323,11 @@ describe('depositEth', function () {
     const onDepositTransactionReverted = vi.fn()
     const onSettled = vi.fn()
 
-    emitter.on('on-deposit', onDeposit)
+    emitter.on('pre-deposit', onDeposit)
     emitter.on('user-signed-deposit', onUserSignedTransaction)
     emitter.on('deposit-transaction-succeeded', depositTransactionSucceeded)
     emitter.on('deposit-transaction-reverted', onDepositTransactionReverted)
-    emitter.on('on-deposit-settled', onSettled)
+    emitter.on('deposit-settled', onSettled)
 
     await promise
 

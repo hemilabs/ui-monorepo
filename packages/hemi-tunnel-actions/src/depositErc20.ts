@@ -108,7 +108,7 @@ const runDepositErc20 = ({
     })
 
     if (amount > allowance) {
-      emitter.emit('on-approve')
+      emitter.emit('pre-approve')
       const approveHash = await extendedL1WalletClient
         .approveErc20Token({
           address: l1TokenAddress,
@@ -120,7 +120,7 @@ const runDepositErc20 = ({
         })
 
       if (!approveHash) {
-        emitter.emit('on-deposit-settled')
+        emitter.emit('deposit-settled')
         return
       }
 
@@ -139,7 +139,7 @@ const runDepositErc20 = ({
       )
     }
 
-    emitter.emit('on-deposit')
+    emitter.emit('pre-deposit')
 
     // Using @ts-expect-error fails to compile so I need to use @ts-ignore
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -162,7 +162,7 @@ const runDepositErc20 = ({
       publicClient: extendedL1PublicClient,
     })
 
-    emitter.emit('on-deposit-settled')
+    emitter.emit('deposit-settled')
   }
 
 export const depositErc20 = (...args: Parameters<typeof runDepositErc20>) =>

@@ -49,6 +49,26 @@ export const getL1StandardBridgeAddress = function ({
   return l1StandardBridge
 }
 
+export const getL2BridgeAddress = function ({
+  l1Chain,
+  l2Chain,
+}: {
+  l1Chain: Chain
+  l2Chain: Chain
+}) {
+  const l2Bridge = (
+    l2Chain.contracts?.l2Bridge as {
+      [sourceId: number]: ChainContract
+    }
+  )?.[l1Chain.id].address as Address | undefined
+  if (!l2Bridge) {
+    throw new Error(
+      `Chain ${l2Chain.id} is missing L2Bridge contract for source chain ${l1Chain.id}`,
+    )
+  }
+  return l2Bridge
+}
+
 export const handleWaitDeposit = async function <T extends DepositEvents>({
   emitter,
   hash,

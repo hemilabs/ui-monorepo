@@ -3,6 +3,7 @@ import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { ExternalLink } from 'components/externalLink'
 import { Tab, Tabs } from 'components/tabs'
+import { useNetworkType } from 'hooks/useNetworkType'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
@@ -75,6 +76,9 @@ const DeveloperTooling = function () {
 
 const PoPMiner = function () {
   const t = useTranslations('get-started.learn-more-tutorials')
+  const [networkType] = useNetworkType()
+  const isTestnet = networkType === 'testnet'
+
   return (
     <div className="flex flex-col gap-y-3">
       <Box
@@ -83,12 +87,14 @@ const PoPMiner = function () {
         href="https://docs.hemi.xyz/how-to-tutorials/tutorials/setup-part-1"
         subheading={t('set-up-cli-pop-miner')}
       />
-      <Box
-        event="tut - add hemi"
-        heading={t('add-themi-wallet')}
-        href="https://docs.hemi.xyz/how-to-tutorials/tutorials/add-themi-to-metamask"
-        subheading={t('learn-to-add-themi-wallet')}
-      />
+      {isTestnet && (
+        <Box
+          event="tut - add hemi"
+          heading={t('add-themi-wallet')}
+          href="https://docs.hemi.xyz/how-to-tutorials/tutorials/add-themi-to-metamask"
+          subheading={t('learn-to-add-themi-wallet')}
+        />
+      )}
     </div>
   )
 }

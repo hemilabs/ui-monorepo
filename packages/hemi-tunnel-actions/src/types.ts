@@ -7,6 +7,7 @@ export type DepositEvents = {
   'deposit-transaction-reverted': [TransactionReceipt]
   'deposit-transaction-succeeded': [TransactionReceipt]
   'pre-deposit': []
+  'unexpected-error': [Error]
   'user-signed-deposit': [Hash]
   'user-signing-deposit-error': [Error]
 }

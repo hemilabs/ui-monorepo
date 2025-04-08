@@ -32,14 +32,14 @@ const canDepositEth = async function ({
   canDeposit: boolean
   reason?: string
 }> {
-  const validation = validateInputs({
+  const reason = validateInputs({
     account,
     amount,
     l1Chain,
     l2Chain,
   })
-  if (validation) {
-    return validation
+  if (reason) {
+    return { canDeposit: false, reason }
   }
 
   const balance = await l1PublicClient.getBalance({ address: account })
@@ -73,7 +73,10 @@ const runDepositEth = ({
         l1Chain,
         l1PublicClient,
         l2Chain,
-      })
+      }).catch(() => ({
+        canDeposit: false,
+        reason: 'failed to validate inputs',
+      }))
 
       if (!canDeposit) {
         // reason must be defined because canDeposit is false
@@ -110,6 +113,8 @@ const runDepositEth = ({
         hash: depositHash,
         publicClient: l1PublicClient,
       })
+    } catch (error) {
+      emitter.emit('unexpected-error', error as Error)
     } finally {
       emitter.emit('deposit-settled')
     }

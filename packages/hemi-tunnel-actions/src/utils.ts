@@ -91,16 +91,16 @@ export const validateInputs = function ({
   l2Chain: Chain
 }) {
   if (!isAddress(account)) {
-    return { canDeposit: false, reason: 'account is not a valid address' }
+    return 'account is not a valid address'
   }
   if (typeof amount !== 'bigint') {
-    return { canDeposit: false, reason: 'amount is not a bigint' }
+    return 'amount is not a bigint'
   }
   if (amount <= BigInt(0)) {
-    return { canDeposit: false, reason: 'amount is not greater than 0' }
+    return 'amount is not greater than 0'
   }
   if (l1Chain.id === l2Chain.id) {
-    return { canDeposit: false, reason: 'l1 and l2 chains are the same' }
+    return 'l1 and l2 chains are the same'
   }
   return undefined
 }

@@ -22,7 +22,7 @@ export const SeeOnExplorer = function ({ chainId, txHash }: Props) {
       href={`${blockExplorer.url}/tx/${txHash}`}
     >
       <span className="group-hover/see-on-explorer:text-orange-700">
-        {t('see-on-explorer', { explorer: blockExplorer.name })}
+        {t('see-in-explorer')}
       </span>
       <ArrowDownLeftIcon className="[&>path]:fill-orange-500 [&>path]:group-hover/see-on-explorer:fill-orange-700" />
     </ExternalLink>

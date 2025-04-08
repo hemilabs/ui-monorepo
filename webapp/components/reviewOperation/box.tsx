@@ -25,8 +25,8 @@ export const TwoRowBox = ({
     </div>
     {bottom && (
       <div
-        className="relative flex h-14 w-full -translate-y-3 items-center gap-x-1 rounded-lg
-  border border-solid border-neutral-300/55 bg-neutral-100 px-4 pb-4 pt-6"
+        className="pt-4.5 relative flex h-[50px] w-full -translate-y-2 items-center gap-x-1
+  rounded-b-lg border border-solid border-neutral-300/55 bg-neutral-100 px-4 pb-2.5"
       >
         {bottom}
       </div>

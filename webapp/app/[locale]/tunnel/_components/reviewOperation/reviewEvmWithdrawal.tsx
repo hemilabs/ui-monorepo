@@ -22,6 +22,7 @@ import { ClaimEvmWithdrawal } from '../claimEvmWithdrawal'
 import { ProveWithdrawal } from '../proveEvmWithdrawal'
 import { RetryEvmWithdrawal } from '../retryEvmWithdrawal'
 
+import { ChainLabel } from './chainLabel'
 import { Operation } from './operation'
 
 const ExpectedWithdrawalWaitTimeMinutesTestnet = 20
@@ -83,7 +84,15 @@ const ReviewContent = function ({
   const steps: StepPropsWithoutPosition[] = []
 
   const getInitiateWithdrawStep = (): StepPropsWithoutPosition => ({
-    description: t('initiate-withdrawal'),
+    description: (
+      <ChainLabel
+        active={
+          withdrawal.status === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE
+        }
+        chainId={fromChain.id}
+        label={t('start-on', { networkName: fromChain.name })}
+      />
+    ),
     explorerChainId: withdrawal.l2ChainId,
     fees:
       withdrawGasFees !== undefined
@@ -145,7 +154,13 @@ const ReviewContent = function ({
   }
 
   const getProveStep = (): StepPropsWithoutPosition => ({
-    description: t('prove-withdrawal'),
+    description: (
+      <ChainLabel
+        active={withdrawal.status === MessageStatus.READY_TO_PROVE}
+        chainId={toChain.id}
+        label={t('prove-on', { networkName: toChain.name })}
+      />
+    ),
     explorerChainId: withdrawal.l1ChainId,
     fees:
       connectedChainId === withdrawal.l1ChainId &&
@@ -180,7 +195,13 @@ const ReviewContent = function ({
   })
 
   const getClaimStep = (): StepPropsWithoutPosition => ({
-    description: t('claim-withdrawal'),
+    description: (
+      <ChainLabel
+        active={withdrawal.status === MessageStatus.READY_FOR_RELAY}
+        chainId={toChain.id}
+        label={t('claim-your-funds', { networkName: toChain.name })}
+      />
+    ),
     explorerChainId: withdrawal.l1ChainId,
     fees:
       connectedChainId === withdrawal.l1ChainId &&

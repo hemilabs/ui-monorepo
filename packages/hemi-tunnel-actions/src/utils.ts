@@ -55,13 +55,9 @@ export const handleWaitDeposit = async function <T extends DepositEvents>({
   publicClient,
 }: {
   emitter: EventEmitter<EventMap<T>>
-  hash: Hash | undefined | void
+  hash: Hash
   publicClient: PublicClient
 }) {
-  if (!hash) {
-    return
-  }
-
   emitter.emit('user-signed-deposit', hash)
 
   const depositReceipt = await publicClient

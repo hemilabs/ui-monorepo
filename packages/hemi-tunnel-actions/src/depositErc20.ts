@@ -163,6 +163,10 @@ const runDepositErc20 = ({
         emitter.emit('user-signing-deposit-error', error)
       })
 
+      if (!depositHash) {
+        return
+      }
+
       await handleWaitDeposit({
         emitter,
         hash: depositHash,

@@ -19,6 +19,8 @@ import { EvmDepositProvider } from '../../_context/evmDepositContext'
 import { useDeposit } from '../../_hooks/useDeposit'
 import { RetryEvmDeposit } from '../retryEvmDeposit'
 
+import { ChainIcon } from './chainIcon'
+import { ChainLabel } from './chainLabel'
 import { Operation } from './operation'
 
 const getCallToAction = (deposit: EvmDepositOperation) =>
@@ -40,6 +42,7 @@ const ReviewContent = function ({
   const depositStatus = deposit.status ?? EvmDepositStatus.DEPOSIT_TX_CONFIRMED
 
   const fromChain = useChain(deposit.l1ChainId)
+  const toChain = useChain(deposit.l2ChainId)
 
   const { approvalTokenGasFees, depositGasFees } = useDeposit({
     // this is just for fee estimation, so we just assume it's true unless the deposit is confirmed
@@ -54,10 +57,13 @@ const ReviewContent = function ({
   const steps: StepPropsWithoutPosition[] = []
 
   const getApprovalStep = (): StepPropsWithoutPosition => ({
-    description:
-      depositStatus >= EvmDepositStatus.APPROVAL_TX_COMPLETED
-        ? t('approve-confirmed')
-        : t('approve-initiated'),
+    description: (
+      <ChainLabel
+        active={depositStatus === EvmDepositStatus.APPROVAL_TX_PENDING}
+        chainId={fromChain.id}
+        label={t('prove-on', { networkName: fromChain.name })}
+      />
+    ),
     explorerChainId: deposit.l1ChainId,
     fees:
       depositStatus === EvmDepositStatus.APPROVAL_TX_PENDING
@@ -91,11 +97,13 @@ const ReviewContent = function ({
       [EvmDepositStatus.DEPOSIT_RELAYED]: ProgressStatus.COMPLETED,
     }
     return {
-      description:
-        depositStatus === EvmDepositStatus.DEPOSIT_TX_CONFIRMED ||
-        EvmDepositStatus.DEPOSIT_RELAYED
-          ? t('deposit-completed')
-          : t('initiate-deposit'),
+      description: (
+        <ChainLabel
+          active={depositStatus === EvmDepositStatus.DEPOSIT_TX_PENDING}
+          chainId={fromChain.id}
+          label={t('start-on', { networkName: fromChain.name })}
+        />
+      ),
       explorerChainId: deposit.l1ChainId,
       fees: [
         EvmDepositStatus.APPROVAL_TX_COMPLETED,
@@ -122,7 +130,14 @@ const ReviewContent = function ({
   }
 
   const getFundsHemiStep = (): StepPropsWithoutPosition => ({
-    description: t('get-your-funds-on-hemi'),
+    description: (
+      <div className="flex items-center gap-x-2">
+        <ChainIcon chainId={toChain.id} />
+        <span className="text-sm font-normal text-neutral-500">
+          {t('get-your-funds-on-hemi', { networkName: toChain.name })}
+        </span>
+      </div>
+    ),
     explorerChainId: deposit.l2ChainId,
     status:
       depositStatus === EvmDepositStatus.DEPOSIT_RELAYED

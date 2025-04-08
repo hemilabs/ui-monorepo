@@ -11,7 +11,7 @@ export type DepositEvents = {
   'user-signing-deposit-error': [Error]
 }
 
-export type DepositErc20TokenEvents = DepositEvents & {
+export type DepositErc20Events = DepositEvents & {
   'approve-failed': [Error]
   'approve-transaction-succeeded': [TransactionReceipt]
   'approve-transaction-reverted': [TransactionReceipt]

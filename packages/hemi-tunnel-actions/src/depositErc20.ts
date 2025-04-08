@@ -9,7 +9,7 @@ import { writeContract } from 'viem/actions'
 import { erc20PublicActions, erc20WalletActions } from 'viem-erc20'
 
 import { l1StandardBridgeAbi } from './abis'
-import { DepositErc20TokenEvents } from './types'
+import { DepositErc20Events } from './types'
 import {
   getL1StandardBridgeAddress,
   handleWaitDeposit,
@@ -17,7 +17,7 @@ import {
   validateInputs,
 } from './utils'
 
-const canDepositErc20Token = async function ({
+const canDepositErc20 = async function ({
   account,
   amount,
   l1Chain,
@@ -59,7 +59,7 @@ const canDepositErc20Token = async function ({
   return { canDeposit: true }
 }
 
-const runDepositErc20Token = ({
+const runDepositErc20 = ({
   account,
   amount,
   approvalAmount,
@@ -80,11 +80,11 @@ const runDepositErc20Token = ({
   l2Chain: Chain
   l2TokenAddress: Address
 }) =>
-  async function (emitter: EventEmitter<DepositErc20TokenEvents>) {
+  async function (emitter: EventEmitter<DepositErc20Events>) {
     const extendedL1PublicClient = l1PublicClient.extend(erc20PublicActions())
     const extendedL1WalletClient = l1WalletClient.extend(erc20WalletActions())
 
-    const { canDeposit, reason } = await canDepositErc20Token({
+    const { canDeposit, reason } = await canDepositErc20({
       account,
       amount,
       l1Chain,
@@ -165,6 +165,5 @@ const runDepositErc20Token = ({
     emitter.emit('on-deposit-settled')
   }
 
-export const depositErc20Token = (
-  ...args: Parameters<typeof runDepositErc20Token>
-) => toPromiseEvent<DepositErc20TokenEvents>(runDepositErc20Token(...args))
+export const depositErc20 = (...args: Parameters<typeof runDepositErc20>) =>
+  toPromiseEvent<DepositErc20Events>(runDepositErc20(...args))

@@ -4,13 +4,13 @@ import { writeContract } from 'viem/actions'
 import { sepolia } from 'viem/chains'
 import { beforeEach, describe, it, expect, vi } from 'vitest'
 
-import { depositErc20Token } from '../src/depositErc20Token'
+import { depositErc20 } from '../src/depositErc20'
 
 vi.mock('viem/actions', () => ({
   writeContract: vi.fn(),
 }))
 
-describe('depositErc20Token', function () {
+describe('depositErc20', function () {
   const getErc20TokenAllowance = vi.fn()
   const getErc20TokenBalance = vi.fn()
   const waitForTransactionReceipt = vi.fn()
@@ -38,7 +38,7 @@ describe('depositErc20Token', function () {
     const l1PublicClient = getL1PublicClientMock()
     const l1WalletClient = getL1WalletClientMock()
 
-    const { emitter, promise } = depositErc20Token({
+    const { emitter, promise } = depositErc20({
       account: 'invalid-address',
       amount: BigInt(100),
       l1Chain: sepolia,
@@ -63,7 +63,7 @@ describe('depositErc20Token', function () {
     const l1PublicClient = getL1PublicClientMock()
     const l1WalletClient = getL1WalletClientMock()
 
-    const { emitter, promise } = depositErc20Token({
+    const { emitter, promise } = depositErc20({
       account: zeroAddress,
       amount: 'not-a-bigint',
       l1Chain: sepolia,
@@ -88,7 +88,7 @@ describe('depositErc20Token', function () {
     const l1PublicClient = getL1PublicClientMock()
     const l1WalletClient = getL1WalletClientMock()
 
-    const { emitter, promise } = depositErc20Token({
+    const { emitter, promise } = depositErc20({
       account: zeroAddress,
       amount: BigInt(0),
       l1Chain: sepolia,
@@ -113,7 +113,7 @@ describe('depositErc20Token', function () {
     const l1PublicClient = getL1PublicClientMock()
     const l1WalletClient = getL1WalletClientMock()
 
-    const { emitter, promise } = depositErc20Token({
+    const { emitter, promise } = depositErc20({
       account: zeroAddress,
       amount: BigInt(100),
       l1Chain: sepolia,
@@ -140,7 +140,7 @@ describe('depositErc20Token', function () {
 
     vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(50))
 
-    const { emitter, promise } = depositErc20Token({
+    const { emitter, promise } = depositErc20({
       account: zeroAddress,
       amount: BigInt(100),
       l1Chain: sepolia,
@@ -173,7 +173,7 @@ describe('depositErc20Token', function () {
       status: 'success',
     })
 
-    const { emitter, promise } = depositErc20Token({
+    const { emitter, promise } = depositErc20({
       account: zeroAddress,
       amount: BigInt(100),
       l1Chain: sepolia,
@@ -217,7 +217,7 @@ describe('depositErc20Token', function () {
 
     const approvalAmount = BigInt(1000)
 
-    const { emitter, promise } = depositErc20Token({
+    const { emitter, promise } = depositErc20({
       account: zeroAddress,
       amount: BigInt(100),
       approvalAmount,
@@ -261,7 +261,7 @@ describe('depositErc20Token', function () {
     vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
     vi.mocked(approveErc20Token).mockRejectedValue(new Error('Approval error'))
 
-    const { emitter, promise } = depositErc20Token({
+    const { emitter, promise } = depositErc20({
       account: zeroAddress,
       amount: BigInt(100),
       l1Chain: sepolia,
@@ -300,7 +300,7 @@ describe('depositErc20Token', function () {
       status: 'reverted',
     })
 
-    const { emitter, promise } = depositErc20Token({
+    const { emitter, promise } = depositErc20({
       account: zeroAddress,
       amount: BigInt(100),
       l1Chain: sepolia,
@@ -336,7 +336,7 @@ describe('depositErc20Token', function () {
     vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
     vi.mocked(writeContract).mockRejectedValue(new Error('Signing error'))
 
-    const { emitter, promise } = depositErc20Token({
+    const { emitter, promise } = depositErc20({
       account: zeroAddress,
       amount: BigInt(100),
       l1Chain: sepolia,
@@ -374,7 +374,7 @@ describe('depositErc20Token', function () {
       status: 'reverted',
     })
 
-    const { emitter, promise } = depositErc20Token({
+    const { emitter, promise } = depositErc20({
       account: zeroAddress,
       amount: BigInt(100),
       l1Chain: sepolia,

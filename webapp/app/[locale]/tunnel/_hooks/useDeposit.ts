@@ -93,10 +93,9 @@ export const useDeposit = function ({
         : depositErc20({
             account: address,
             amount,
-            approvalAmount:
-              !depositingNative && extendedErc20Approval
-                ? amount * BigInt(ExtraApprovalTimesAmount)
-                : amount,
+            approvalAmount: extendedErc20Approval
+              ? amount * BigInt(ExtraApprovalTimesAmount)
+              : amount,
             l1Chain: findChainById(fromToken.chainId) as Chain,
             l1PublicClient: getEvmL1PublicClient(fromToken.chainId),
             // @ts-expect-error string is Address

@@ -9,10 +9,13 @@ import { BsquaredPointsIcon } from './icons/bsquaredPointsIcon'
 import { DiamondPointsIcon } from './icons/diamondPointsIcon'
 import { EigenpiePointsIcon } from './icons/eigenpiePointsIcon'
 import { Hemi2xPointsIcon } from './icons/hemi2xPointsIcon'
+import { Hemi3xPointsIcon } from './icons/hemi3xPointsIcon'
 import { HemiPointsIcon } from './icons/hemiPointsIcon'
 import { KernelIcon } from './icons/kernelIcon'
 import { LorenzoPointsIcon } from './icons/lorenzoPointsIcon'
+import { PellPointsIcon } from './icons/PellPointsIcon'
 import { PumpBtcPointsIcon } from './icons/pumpBtcPointsIcon'
+import { SatoshiPointsIcon } from './icons/satoshiPointsIcon'
 import { SolvPointsIcon } from './icons/solvPointsIcon'
 import { UnirouterPointsIcon } from './icons/unirouterPointsIcon'
 import { YieldNestIcon } from './icons/yieldNestIcon'
@@ -128,6 +131,15 @@ export const Hemi2xPoints = () => (
   />
 )
 
+export const Hemi3xPoints = () => (
+  <PointsTag
+    backgroundColor="bg-orange-500"
+    icon={<Hemi3xPointsIcon />}
+    label="points"
+    textColor="text-white"
+  />
+)
+
 export const LorenzoPoints = () => (
   <PointsTag
     backgroundColor="bg-black"
@@ -200,5 +212,25 @@ export const YieldNestPoints = () => (
       background: '#e8c887',
     }}
     textColor="text-neutral-950"
+  />
+)
+
+export const SatoshiPoints = () => (
+  <PointsTag
+    backgroundColor="bg-black"
+    icon={<SatoshiPointsIcon />}
+    label="points"
+    textColor="text-white"
+  />
+)
+
+export const PellPoints = () => (
+  <PointsTag
+    icon={<PellPointsIcon />}
+    label="points"
+    style={{
+      background: '#4C67EF',
+    }}
+    textColor="text-white"
   />
 )

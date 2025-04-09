@@ -7,7 +7,6 @@ import { EvmToken } from 'types/token'
 import { EvmDepositOperation } from 'types/tunnel'
 import { formatUnits } from 'viem'
 
-// import { EvmDepositContext } from '../_context/evmDepositContext'
 import { useDeposit } from '../_hooks/useDeposit'
 
 import { DrawerCallToAction } from './reviewOperation/drawerCallToAction'
@@ -57,23 +56,6 @@ const Retry = function ({
   })
 
   const isDepositing = operationStatus === 'depositing'
-
-  // useEffect(
-  //   // on unmounting the component, reset the context
-  //   () => () => setOperationStatus('idle'),
-  //   [setOperationStatus],
-  // )
-
-  // Success and failure are not needed to be handled here, as a new tx hash is generated, so this component
-  // is unmounted and a "new" withdrawal cycle starts
-  // useEffect(
-  //   function handleUserRejection() {
-  //     if (depositError && isDepositing) {
-  //       setOperationStatus('rejected')
-  //     }
-  //   },
-  //   [depositError, isDepositing, setOperationStatus],
-  // )
 
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()

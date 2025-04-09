@@ -7,7 +7,6 @@ import { DepositErc20Events } from 'hemi-tunnel-actions/src/types'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
-import { useL1WalletClient } from 'hooks/useL1WalletClient'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
@@ -23,7 +22,7 @@ import { findChainById } from 'utils/chain'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { isNativeAddress } from 'utils/nativeToken'
 import { Chain, parseUnits, zeroAddress } from 'viem'
-import { useAccount } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelOperation'
 const ExtraApprovalTimesAmount = 10
@@ -66,7 +65,9 @@ export const useDeposit = function ({
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     fromToken.chainId,
   )
-  const { l1WalletClient } = useL1WalletClient(fromToken.chainId)
+  const { data: l1WalletClient } = useWalletClient({
+    chainId: fromToken.chainId,
+  })
 
   const depositingNative = isNativeAddress(fromToken.address)
 

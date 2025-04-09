@@ -41,16 +41,16 @@ type EvmDepositProps = {
 
 const SubmitEvmDeposit = function ({
   canDeposit,
+  isAllowanceLoading,
   isRunningOperation,
   needsApproval,
   operationRunning,
-  isAllowanceLoading,
 }: {
   canDeposit: boolean
+  isAllowanceLoading: boolean
   isRunningOperation: boolean
   needsApproval: boolean
   operationRunning: OperationRunning
-  isAllowanceLoading: boolean
 }) {
   const t = useTranslations()
 
@@ -68,6 +68,7 @@ const SubmitEvmDeposit = function ({
     if (isAllowanceLoading) {
       return <Spinner size={'small'} />
     }
+    // TODO Se need to handle allowanceStatus === 'error, see https://github.com/hemilabs/ui-monorepo/pull/1125
     if (!isRunningOperation) {
       return texts[needsApproval ? 'approve' : 'deposit'].idle
     }
@@ -122,7 +123,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
 
-  const { isLoadingAllowance, needsApproval } = useNeedsApproval({
+  const { isAllowanceLoading, needsApproval } = useNeedsApproval({
     address: fromToken.address,
     amount,
     spender: l1StandardBridgeAddress,
@@ -215,7 +216,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       return (
         <SubmitEvmDeposit
           canDeposit={canDeposit}
-          isAllowanceLoading={isLoadingAllowance}
+          isAllowanceLoading={isAllowanceLoading}
           isRunningOperation={isRunningOperation}
           needsApproval={needsApproval}
           operationRunning={operationRunning}

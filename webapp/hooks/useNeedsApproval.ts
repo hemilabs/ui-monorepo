@@ -16,15 +16,17 @@ export const useNeedsApproval = function ({
   const {
     data: allowance = BigInt(0),
     isLoading,
-    status: allowanceStatus,
+    isError,
     queryKey: allowanceQueryKey,
+    status: allowanceStatus,
   } = useAllowance(address, {
     args: { owner, spender },
   })
 
   return {
     allowanceQueryKey,
-    isLoadingAllowance: isLoading,
+    isAllowanceError: isError,
+    isAllowanceLoading: isLoading,
     needsApproval: amount > allowance && allowanceStatus === 'success',
   }
 }

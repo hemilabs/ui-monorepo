@@ -77,7 +77,7 @@ export const useDeposit = function ({
   })
 
   return useMutation({
-    mutationFn() {
+    mutationFn: function runDeposit() {
       track?.('evm - dep started', { chain: networkType })
 
       const { promise, emitter } = depositingNative

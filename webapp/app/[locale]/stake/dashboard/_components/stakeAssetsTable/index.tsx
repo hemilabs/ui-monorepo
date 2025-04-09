@@ -16,7 +16,7 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useRouter } from 'i18n/navigation'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { MouseEvent, RefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakeToken } from 'types/stake'
@@ -268,7 +268,6 @@ const StakeAssetsTableImp = function ({ containerRef, data, loading }: Props) {
 }
 
 export const StakeAssetsTable = function () {
-  const locale = useLocale()
   const [networkType] = useNetworkType()
   const containerRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
@@ -287,7 +286,7 @@ export const StakeAssetsTable = function () {
     e.stopPropagation()
     track?.('stake - stake more')
     const queryString = queryStringObjectToString({ networkType })
-    router.push(`/${locale}${stakeMoreUrl}${queryString}`)
+    router.push(`/${stakeMoreUrl}${queryString}`)
   }
 
   return (

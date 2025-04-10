@@ -29,27 +29,8 @@ NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=1 # Vault index to use for bitcoin in 
 NEXT_PUBLIC_POINTS_URL=<url>
 # Pricing URL
 NEXT_PUBLIC_TOKEN_PRICES_URL=<url> # URL to retrieve usd prices for tokens
-# Enable subgraphs for syncing deposit history
-NEXT_PUBLIC_FEATURE_FLAG_SYNC_SUBGRAPH=<true|false>
-# Enable subgraphs for syncing withdrawals history
-NEXT_PUBLIC_FEATURE_FLAG_SYNC_WITHDRAWALS_SUBGRAPH=<true|false>
-# Subgraph configuration per chain
-# Use this for querying a published decentralized subgraph - the API key works for all chains
-NEXT_PUBLIC_SUBGRAPH_API_KEY=<api-key>
-# Use this for querying a published decentralized subgraph
-NEXT_PUBLIC_SUBGRAPH_HEMI_ID=<subgraph-id>
-NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_ID=<subgraph-id>
-NEXT_PUBLIC_SUBGRAPH_MAINNET_ID=<subgraph-id>
-NEXT_PUBLIC_SUBGRAPH_SEPOLIA_ID=<subgraph-id>
-NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_ID=<subgraph-id>
-NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_ID=<subgraph-id>
-# Use this to configure a complete Subgraph Endpoint URL (for example, when running locally)
-NEXT_PUBLIC_SUBGRAPH_HEMI_URL=<url>
-NEXT_PUBLIC_SUBGRAPH_HEMI_SEPOLIA_URL=<url>
-NEXT_PUBLIC_SUBGRAPH_MAINNET_URL=<url>
-NEXT_PUBLIC_SUBGRAPH_SEPOLIA_URL=<url>
-NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_URL=<url>
-NEXT_PUBLIC_SUBGRAPH_STAKE_HEMI_SEPOLIA_URL=<url>
+# Subgraphs endpoint ID
+NEXT_PUBLIC_SUBGRAPHS_API_URL=<url>
 # The following variables could be used to customize the contracts addresses used by Hemi (for example, for testing with a forked blockchain):
 NEXT_PUBLIC_ADDRESS_MANAGER=<address>
 NEXT_PUBLIC_L2_BRIDGE=<address>

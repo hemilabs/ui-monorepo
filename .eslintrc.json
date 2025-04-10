@@ -17,7 +17,6 @@
         "btc-wallet/**/*.{js,ts,tsx}",
         "hemi-viem-stake-actions/**/*.{js,ts}",
         "packages/**/**/*.{js,ts,tsx}",
-        "sliding-block-window/**/*.{js,ts}",
         "ui-common/**/*.{js,ts,tsx}",
         "webapp/**/*.{js,ts,tsx}"
       ],

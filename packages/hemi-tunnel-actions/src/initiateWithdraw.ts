@@ -215,13 +215,22 @@ export const initiateWithdrawErc20 = ({
       account,
       amount,
       async checkBalance() {
-        const balance = await getErc20Balance({
-          account,
-          publicClient: l2PublicClient,
-          tokenAddress: l2TokenAddress,
-        })
-        if (amount > balance) {
+        const [erc20Balance, ethBalance] = await Promise.all([
+          getErc20Balance({
+            account,
+            publicClient: l2PublicClient,
+            tokenAddress: l2TokenAddress,
+          }),
+          getEthBalance({
+            account,
+            publicClient: l2PublicClient,
+          }),
+        ])
+        if (amount > erc20Balance) {
           return 'insufficient balance'
+        }
+        if (ethBalance === BigInt(0)) {
+          return 'insufficient balance to pay for gas'
         }
         return undefined
       },

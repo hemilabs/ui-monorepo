@@ -359,5 +359,30 @@ describe('withdraw', function () {
       )
       expect(onSettled).toHaveBeenCalledOnce()
     })
+
+    it('should emit "withdraw-failed-validation" if the account ETH balance is zero', async function () {
+      const l2PublicClient = createL2PublicClient({
+        getBalance: vi.fn().mockResolvedValue(BigInt(0)),
+        getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(100)),
+      })
+
+      const { emitter, promise } = initiateWithdrawErc20({
+        ...validParameters,
+        l2PublicClient,
+      })
+
+      const failedValidation = vi.fn()
+      const onSettled = vi.fn()
+
+      emitter.on('withdraw-failed-validation', failedValidation)
+      emitter.on('withdraw-settled', onSettled)
+
+      await promise
+
+      expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+        'insufficient balance to pay for gas',
+      )
+      expect(onSettled).toHaveBeenCalledOnce()
+    })
   })
 })

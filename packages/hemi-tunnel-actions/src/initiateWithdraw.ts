@@ -13,7 +13,7 @@ import { l2BridgeAbi } from './abis'
 import { WithdrawEvents } from './types'
 import { getL2BridgeAddress, toPromiseEvent, validateInputs } from './utils'
 
-const hasErc20Balance = ({
+const getErc20Balance = ({
   account,
   publicClient,
   tokenAddress,
@@ -27,7 +27,7 @@ const hasErc20Balance = ({
     address: tokenAddress,
   })
 
-const hasEthBalance = ({
+const getEthBalance = ({
   account,
   publicClient,
 }: {
@@ -186,7 +186,7 @@ export const initiateWithdrawEth = ({
       account,
       amount,
       async checkBalance() {
-        const balance = await hasEthBalance({
+        const balance = await getEthBalance({
           account,
           publicClient: l2PublicClient,
         })
@@ -215,7 +215,7 @@ export const initiateWithdrawErc20 = ({
       account,
       amount,
       async checkBalance() {
-        const balance = await hasErc20Balance({
+        const balance = await getErc20Balance({
           account,
           publicClient: l2PublicClient,
           tokenAddress: l2TokenAddress,

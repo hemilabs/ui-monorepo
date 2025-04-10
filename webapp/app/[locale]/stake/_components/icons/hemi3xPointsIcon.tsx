@@ -5,8 +5,8 @@ export const Hemi3xPointsIcon = () => (
       height="15.2"
       rx="7.6"
       stroke="url(#paint0_linear_11619_12898)"
-      stroke-opacity="0.16"
-      stroke-width="0.8"
+      strokeOpacity="0.16"
+      strokeWidth="0.8"
       width="25.2"
       x="0.4"
       y="0.4"
@@ -35,7 +35,7 @@ export const Hemi3xPointsIcon = () => (
         x="5.67578"
         y="2.15234"
       >
-        <feFlood flood-opacity="0" result="BackgroundImageFix" />
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
         <feColorMatrix
           in="SourceAlpha"
           result="hardAlpha"
@@ -69,8 +69,8 @@ export const Hemi3xPointsIcon = () => (
         y1="0"
         y2="1.92459e-10"
       >
-        <stop stop-color="#FF6C15" />
-        <stop offset="1" stop-color="#FF1814" />
+        <stop stopColor="#FF6C15" />
+        <stop offset="1" stopColor="#FF1814" />
       </linearGradient>
       <linearGradient
         gradientUnits="userSpaceOnUse"
@@ -80,8 +80,8 @@ export const Hemi3xPointsIcon = () => (
         y1="2"
         y2="2"
       >
-        <stop stop-color="#FF6C15" />
-        <stop offset="1" stop-color="#FF1814" />
+        <stop stopColor="#FF6C15" />
+        <stop offset="1" stopColor="#FF1814" />
       </linearGradient>
     </defs>
   </svg>

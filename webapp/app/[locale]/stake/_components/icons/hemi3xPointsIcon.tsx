@@ -27,7 +27,7 @@ export const Hemi3xPointsIcon = () => (
     />
     <defs>
       <filter
-        color-interpolation-filters="sRGB"
+        colorInterpolationFilters="sRGB"
         filterUnits="userSpaceOnUse"
         height="10.9648"
         id="filter0_d_11619_12898"

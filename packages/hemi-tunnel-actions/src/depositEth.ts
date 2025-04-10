@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import {
+  encodeFunctionData,
   type Address,
   type Chain,
   type PublicClient,
@@ -122,3 +123,12 @@ const runDepositEth = ({
 
 export const depositEth = (...args: Parameters<typeof runDepositEth>) =>
   toPromiseEvent<DepositEvents>(runDepositEth(...args))
+
+export const encodeDepositEth = () =>
+  // Depositing ETH does not depend on the amount sent, it costs always the same!
+  encodeFunctionData({
+    abi: l1StandardBridgeAbi,
+    // See https://github.com/ethereum-optimism/ecosystem/blob/8da00d3b9044dcb58558df28bae278b613562725/packages/sdk/src/adapters/eth-bridge.ts#L144
+    args: [200_000, '0x'],
+    functionName: 'depositETH',
+  })

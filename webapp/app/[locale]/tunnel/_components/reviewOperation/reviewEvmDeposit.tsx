@@ -3,6 +3,7 @@
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
@@ -15,14 +16,16 @@ import {
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
-import { EvmDepositProvider } from '../../_context/evmDepositContext'
-import { useDeposit } from '../../_hooks/useDeposit'
+import { useEstimateDepositFees } from '../../_hooks/useEstimateDepositFees'
 import { RetryEvmDeposit } from '../retryEvmDeposit'
 
 import { Operation } from './operation'
 
 const getCallToAction = (deposit: EvmDepositOperation) =>
-  deposit.status === EvmDepositStatus.DEPOSIT_TX_FAILED ? (
+  [
+    EvmDepositStatus.APPROVAL_TX_FAILED,
+    EvmDepositStatus.DEPOSIT_TX_FAILED,
+  ].includes(deposit.status) ? (
     <RetryEvmDeposit deposit={deposit} />
   ) : null
 
@@ -41,13 +44,27 @@ const ReviewContent = function ({
 
   const fromChain = useChain(deposit.l1ChainId)
 
-  const { approvalTokenGasFees, depositGasFees } = useDeposit({
-    // this is just for fee estimation, so we just assume it's true unless the deposit is confirmed
-    canDeposit: depositStatus !== EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
-    fromInput: formatUnits(BigInt(deposit.amount), fromToken.decimals),
+  const approvalTokenGasFees = useEstimateFees({
+    chainId: deposit.l1ChainId,
+    enabled: [
+      EvmDepositStatus.APPROVAL_TX_FAILED,
+      EvmDepositStatus.APPROVAL_TX_PENDING,
+    ].includes(depositStatus),
+    operation: 'approve-erc20',
+    overEstimation: 1.5,
+  })
+
+  const depositGasFees = useEstimateDepositFees({
+    amount: BigInt(deposit.amount),
+    enabled: [
+      EvmDepositStatus.APPROVAL_TX_COMPLETED,
+      EvmDepositStatus.DEPOSIT_TX_PENDING,
+      EvmDepositStatus.DEPOSIT_TX_FAILED,
+    ].includes(depositStatus),
     fromToken,
     toToken,
   })
+
   const t = useTranslations('tunnel-page.review-deposit')
   const tCommon = useTranslations('common')
 
@@ -172,18 +189,14 @@ export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
 
   const tokensLoaded = !!fromToken && !!toToken
 
-  return (
-    <EvmDepositProvider>
-      {tokensLoaded ? (
-        <ReviewContent
-          deposit={deposit}
-          fromToken={fromToken as EvmToken}
-          onClose={onClose}
-          toToken={toToken as EvmToken}
-        />
-      ) : (
-        <Skeleton className="h-full" />
-      )}
-    </EvmDepositProvider>
+  return tokensLoaded ? (
+    <ReviewContent
+      deposit={deposit}
+      fromToken={fromToken as EvmToken}
+      onClose={onClose}
+      toToken={toToken as EvmToken}
+    />
+  ) : (
+    <Skeleton className="h-full" />
   )
 }

@@ -1,16 +1,17 @@
 import { Button } from 'components/button'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
-import { type FormEvent, useContext, useEffect } from 'react'
+import { type FormEvent, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { EvmDepositOperation } from 'types/tunnel'
 import { formatUnits } from 'viem'
 
-import { EvmDepositContext } from '../_context/evmDepositContext'
 import { useDeposit } from '../_hooks/useDeposit'
 
 import { DrawerCallToAction } from './reviewOperation/drawerCallToAction'
+
+type EvmDepositOperationStatuses = 'idle' | 'depositing' | 'failed' | 'rejected'
 
 type Props = {
   deposit: EvmDepositOperation
@@ -24,40 +25,37 @@ const Retry = function ({
   fromToken: EvmToken
   toToken: EvmToken
 }) {
-  const [operationStatus, setOperationStatus] = useContext(EvmDepositContext)
+  const [operationStatus, setOperationStatus] =
+    useState<EvmDepositOperationStatuses>('idle')
 
   const t = useTranslations('tunnel-page.submit-button')
 
   // this component tries to initiate a new deposit, based on the failed one
-  const { deposit: runDeposit, depositError } = useDeposit({
-    canDeposit: true,
-    extendedErc20Approval: false,
+  const { mutate: runDeposit } = useDeposit({
     fromInput: formatUnits(
       BigInt(deposit.amount),
       fromToken.decimals,
     ).toString(),
     fromToken,
+    on(emitter) {
+      emitter.on('user-signing-approve-error', () =>
+        setOperationStatus('rejected'),
+      )
+      emitter.on('user-signing-deposit-error', () =>
+        setOperationStatus('rejected'),
+      )
+      emitter.on('approve-transaction-reverted', () =>
+        setOperationStatus('failed'),
+      )
+      emitter.on('deposit-transaction-reverted', () =>
+        setOperationStatus('failed'),
+      )
+      emitter.on('deposit-settled', () => setOperationStatus('idle'))
+    },
     toToken,
   })
 
   const isDepositing = operationStatus === 'depositing'
-
-  useEffect(
-    // on unmounting the component, reset the context
-    () => () => setOperationStatus('idle'),
-    [setOperationStatus],
-  )
-
-  // Success and failure are not needed to be handled here, as a new tx hash is generated, so this component
-  // is unmounted and a "new" withdrawal cycle starts
-  useEffect(
-    function handleUserRejection() {
-      if (depositError && isDepositing) {
-        setOperationStatus('rejected')
-      }
-    },
-    [depositError, isDepositing, setOperationStatus],
-  )
 
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()

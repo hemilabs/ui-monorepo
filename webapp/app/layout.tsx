@@ -1,13 +1,8 @@
 import { locales } from 'app/i18n'
-import type { Metadata } from 'next'
 import { ReactNode } from 'react'
 
 type Props = {
   children: ReactNode
-}
-
-export const metadata: Metadata = {
-  title: 'Hemi Portal',
 }
 
 export const generateStaticParams = async () =>

@@ -55,7 +55,7 @@ if (process.env.NEXT_PUBLIC_POINTS_URL) {
   fetchDomains.add(new URL(process.env.NEXT_PUBLIC_POINTS_URL).origin)
 }
 
-if (process.NEXT_PUBLIC_SUBGRAPHS_API_URL) {
+if (process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL) {
   fetchDomains.add(new URL(process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL).origin)
 }
 

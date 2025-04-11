@@ -5,3 +5,4 @@ export {
   initiateWithdrawEth,
   initiateWithdrawErc20,
 } from './src/initiateWithdraw'
+export { prepareProveWithdrawal, proveWithdrawal } from './src/proveWithdrawal'

@@ -15,6 +15,7 @@ export const stakeProtocols = [
   'merlinChain',
   'obeliskNodeDao',
   'pumpBtc',
+  'satoshi',
   'sumer',
   'solv',
   'stakeStone',
@@ -36,9 +37,12 @@ export type Reward =
   | 'eigenpie'
   | 'hemi'
   | 'hemi2x'
+  | 'hemi3x'
   | 'kernel'
   | 'lorenzo'
+  | 'pell'
   | 'pumpbtc'
+  | 'satoshi'
   | 'solv'
   | 'unirouter'
   | 'yieldnest'

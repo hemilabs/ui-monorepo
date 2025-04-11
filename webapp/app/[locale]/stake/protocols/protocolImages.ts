@@ -15,6 +15,7 @@ import makerDao from './images/makerDao.svg'
 import merlinChain from './images/merlinChain.svg'
 import obeliskNodeDao from './images/obeliskNodeDao.svg'
 import pumpBtc from './images/pumpBtc.svg'
+import satoshi from './images/satoshi.png'
 import solv from './images/solv.svg'
 import stakeStone from './images/stakeStone.svg'
 import sumer from './images/sumer.svg'
@@ -39,6 +40,7 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
   merlinChain,
   obeliskNodeDao,
   pumpBtc,
+  satoshi,
   solv,
   stakeStone,
   sumer,

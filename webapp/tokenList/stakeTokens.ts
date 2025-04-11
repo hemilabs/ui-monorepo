@@ -95,6 +95,13 @@ export const stakeWhiteList: Partial<
       rewards: ['hemi'],
       website: 'https://kerneldao.com/kelp',
     },
+    // satUSD
+    '0xb4818BB69478730EF4e33Cc068dD94278e2766cB': {
+      protocol: 'satoshi',
+      priceSymbol: 'usdc',
+      rewards: ['hemi3x', 'satoshi', 'pell'],
+      website: 'https://www.satoshiprotocol.org',
+    },
     // stBTC
     '0xf6718b2701D4a6498eF77D7c152b2137Ab28b8A3': {
       protocol: 'lorenzo',

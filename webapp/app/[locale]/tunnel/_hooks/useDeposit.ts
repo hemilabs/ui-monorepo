@@ -201,21 +201,20 @@ export const useDeposit = function ({
 
       return promise
     },
-    onSettled: () =>
-      Promise.all([
-        // gas was paid in the L1 chain, so we need to invalidate the balance
+    onSettled() {
+      // Do not return the promises here. Doing so will delay the resolution of
+      // the mutation, which will cause the UI to be out of sync until balances are re-validated.
+      // Query invalidation here must work as fire and forget, as, after all, it runs in the background!
+      if (!depositingNative) {
         queryClient.invalidateQueries({
-          queryKey: nativeTokenBalanceQueryKey,
-        }),
-        // if we deposited an ERC20 token, we must invalidate the allowance and balance as well
-        ...(depositingNative
-          ? []
-          : [
-              queryClient.invalidateQueries({
-                queryKey: erc20BalanceQueryKey,
-              }),
-              queryClient.invalidateQueries({ queryKey: allowanceQueryKey }),
-            ]),
-      ]),
+          queryKey: erc20BalanceQueryKey,
+        })
+        queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
+      }
+      // gas was paid in the L1 chain, so we need to invalidate the balance
+      queryClient.invalidateQueries({
+        queryKey: nativeTokenBalanceQueryKey,
+      })
+    },
   })
 }

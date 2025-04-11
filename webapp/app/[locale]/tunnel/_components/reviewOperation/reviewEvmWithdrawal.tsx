@@ -16,8 +16,8 @@ import {
   ToEvmWithdrawalProvider,
 } from '../../_context/toEvmWithdrawalContext'
 import { useClaimTransaction } from '../../_hooks/useClaimTransaction'
+import { useEstimateWithdrawFees } from '../../_hooks/useEstimateWithdrawFees'
 import { useProveTransaction } from '../../_hooks/useProveTransaction'
-import { useWithdraw } from '../../_hooks/useWithdraw'
 import { ClaimEvmWithdrawal } from '../claimEvmWithdrawal'
 import { ProveWithdrawal } from '../proveEvmWithdrawal'
 import { RetryEvmWithdrawal } from '../retryEvmWithdrawal'
@@ -48,11 +48,9 @@ type Props = {
 const ReviewContent = function ({
   fromToken,
   onClose,
-  toToken,
   withdrawal,
 }: Props & {
   fromToken: EvmToken
-  toToken: EvmToken
 }) {
   const { chainId: connectedChainId } = useAccount()
   const fromChain = useChain(withdrawal.l2ChainId)
@@ -66,15 +64,11 @@ const ReviewContent = function ({
 
   const { proveWithdrawalTokenGasFees } = useProveTransaction(withdrawal)
 
-  const { withdrawGasFees } = useWithdraw({
-    // only estimate fees for the first step
-    canWithdraw:
-      withdrawal.status === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
-    fromInput: formatUnits(BigInt(withdrawal.amount), fromToken.decimals),
+  const withdrawGasFees = useEstimateWithdrawFees({
+    amount: BigInt(withdrawal.amount),
+    enabled: withdrawal.status === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
     fromToken,
-    l1ChainId: toToken.chainId,
-    l2ChainId: fromToken.chainId,
-    toToken,
+    l1ChainId: withdrawal.l1ChainId,
   })
 
   const getWithdrawalStatus = function () {
@@ -225,17 +219,12 @@ const ReviewContent = function ({
 }
 
 export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
-  const { data: toToken } = useToken({
-    address: withdrawal.l1Token,
-    chainId: withdrawal.l1ChainId,
-  })
-
   const { data: fromToken } = useToken({
     address: withdrawal.l2Token,
     chainId: withdrawal.l2ChainId,
   })
 
-  const tokensLoaded = !!fromToken && !!toToken
+  const tokensLoaded = !!fromToken
 
   return (
     <ToEvmWithdrawalProvider>
@@ -243,7 +232,6 @@ export const ReviewEvmWithdrawal = function ({ onClose, withdrawal }: Props) {
         <ReviewContent
           fromToken={fromToken as EvmToken}
           onClose={onClose}
-          toToken={toToken as EvmToken}
           withdrawal={withdrawal}
         />
       ) : null}

@@ -26,6 +26,7 @@ import { walletIsConnected } from 'utils/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { useEstimateWithdrawFees } from '../_hooks/useEstimateWithdrawFees'
 import { useMinWithdrawalSats } from '../_hooks/useMinWithdrawalSats'
 import {
   type EvmTunneling,
@@ -234,12 +235,9 @@ type EvmWithdrawProps = {
 }
 
 const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
-  const [networkType] = useNetworkType()
-  const [isWithdrawing, setIsWithdrawing] = useState(false)
   const [isPartnersDrawerOpen, setIsPartnersDrawerOpen] = useState(false)
 
   const t = useTranslations()
-  const { track } = useUmami()
 
   const {
     fromInput,
@@ -277,66 +275,23 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       fromToken,
     }) && hasBridgeConfiguration(fromToken, toNetworkId)
 
-  const {
-    clearWithdrawState,
-    withdraw,
-    withdrawError,
-    withdrawGasFees,
-    withdrawReceipt,
-    withdrawReceiptError,
-  } = useWithdraw({
-    canWithdraw,
+  const withdrawGasFees = useEstimateWithdrawFees({
+    amount: parseUnits(fromInput, fromToken.decimals),
+    fromToken,
+    l1ChainId: toToken.chainId,
+  })
+
+  const { isPending: isWithdrawing, mutate: withdraw } = useWithdraw({
     fromInput,
     fromToken,
-    l1ChainId: toNetworkId,
-    l2ChainId: fromNetworkId,
+    on(emitter) {
+      emitter.on('withdraw-transaction-succeeded', () =>
+        resetStateAfterOperation(),
+      )
+    },
     toToken,
   })
 
-  useEffect(
-    function handleSuccess() {
-      if (withdrawReceipt?.status !== 'success' || !isWithdrawing) {
-        return
-      }
-      setIsWithdrawing(false)
-      resetStateAfterOperation()
-      track?.('evm - init withdraw success', { chain: networkType })
-    },
-    [
-      isWithdrawing,
-      networkType,
-      resetStateAfterOperation,
-      setIsWithdrawing,
-      track,
-      withdrawReceipt,
-    ],
-  )
-
-  useEffect(
-    function handleRejectionOrFailure() {
-      if ((withdrawError || withdrawReceiptError) && isWithdrawing) {
-        setIsWithdrawing(false)
-        if (withdrawReceiptError) {
-          track?.('evm - init withdraw failed', { chain: networkType })
-        }
-      }
-    },
-    [
-      isWithdrawing,
-      networkType,
-      setIsWithdrawing,
-      track,
-      withdrawError,
-      withdrawReceiptError,
-    ],
-  )
-
-  const handleWithdraw = function () {
-    clearWithdrawState()
-    withdraw()
-    setIsWithdrawing(true)
-    track?.('evm - init withdraw started', { chain: networkType })
-  }
   const gas = {
     amount: formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals),
     label: t('common.network-gas-fee', { network: fromChain?.name }),
@@ -414,7 +369,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             }}
           />
         }
-        onSubmit={handleWithdraw}
+        onSubmit={withdraw}
         submitButton={getSubmitButton()}
       />
       {isPartnersDrawerOpen && (

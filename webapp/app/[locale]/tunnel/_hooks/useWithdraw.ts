@@ -1,216 +1,157 @@
-import { useQueryClient } from '@tanstack/react-query'
-import { useWithdrawNativeToken, useWithdrawToken } from 'hooks/useL2Bridge'
-import { useReloadBalances } from 'hooks/useReloadBalances'
-import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useUmami } from 'app/analyticsEvents'
+import EventEmitter from 'events'
+import { initiateWithdrawErc20, initiateWithdrawEth } from 'hemi-tunnel-actions'
+import { WithdrawEvents } from 'hemi-tunnel-actions/src/types'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
+import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useCallback, useEffect } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
 import { type EvmToken } from 'types/token'
-import { MessageDirection, MessageStatus } from 'types/tunnel'
-import { getEvmBlock } from 'utils/evmApi'
+import {
+  MessageDirection,
+  MessageStatus,
+  ToEvmWithdrawOperation,
+} from 'types/tunnel'
+import { findChainById } from 'utils/chain'
 import { isNativeToken } from 'utils/nativeToken'
-import { type Chain, parseUnits, Hash, zeroAddress } from 'viem'
-import { useAccount, useWaitForTransactionReceipt } from 'wagmi'
+import { type Chain, parseUnits, zeroAddress, Address } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelOperation'
 
 type UseWithdraw = {
-  canWithdraw: boolean
   fromInput: string
   fromToken: EvmToken
-  l1ChainId: Chain['id']
-  l2ChainId: Chain['id']
+  on?: (emitter: EventEmitter<WithdrawEvents>) => void
   toToken: EvmToken
 }
+
 export const useWithdraw = function ({
-  canWithdraw,
   fromInput,
   fromToken,
-  l1ChainId,
-  l2ChainId,
+  on,
   toToken,
 }: UseWithdraw) {
-  const { address } = useAccount()
+  const amount = parseUnits(fromInput, fromToken.decimals)
+
+  const { address: account } = useAccount()
+  const hemiPublicClient = useHemiClient()
+  const { hemiWalletClient } = useHemiWalletClient()
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+    fromToken.chainId,
+  )
+  const [networkType] = useNetworkType()
   const queryClient = useQueryClient()
+  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
+    fromToken.chainId,
+    fromToken.address,
+  )
   const { addWithdrawalToTunnelHistory, updateWithdrawal } = useTunnelHistory()
-  const withdrawals = useToEvmWithdrawals()
-  const { txHash, updateTxHash } = useTunnelOperation()
+  const { updateTxHash } = useTunnelOperation()
+  const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
+    fromToken.chainId,
+  )
+
+  const { track } = useUmami()
 
   const withdrawingNative = isNativeToken(fromToken)
 
-  const toWithdraw = parseUnits(fromInput, fromToken.decimals).toString()
+  return useMutation({
+    mutationFn: function runWithdraw() {
+      track?.('evm - init withdraw started', { chain: networkType })
 
-  const onSuccess = function (hash: Hash) {
-    // add hash to query string
-    updateTxHash(hash, { history: 'push' })
-
-    addWithdrawalToTunnelHistory({
-      amount: toWithdraw,
-      direction: MessageDirection.L2_TO_L1,
-      from: address,
-      l1ChainId,
-      l1Token: withdrawingNative ? zeroAddress : toToken.address,
-      l2ChainId,
-      l2Token: withdrawingNative
+      const l2TokenAddress = withdrawingNative
         ? NativeTokenSpecialAddressOnL2
-        : fromToken.address,
-      status: MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
-      // "to" field uses the same address as from, which is user's address
-      to: address,
-      transactionHash: hash,
-    })
-  }
+        : (fromToken.address as Address)
 
-  const {
-    resetWithdrawNativeToken,
-    withdrawNativeToken,
-    withdrawNativeTokenError,
-    withdrawNativeTokenGasFees,
-  } = useWithdrawNativeToken({
-    amount: toWithdraw,
-    enabled: withdrawingNative && canWithdraw,
-    l1ChainId,
-    onSuccess,
-  })
+      const l1Chain = findChainById(toToken.chainId) as Chain
+      const l2Chain = findChainById(fromToken.chainId) as Chain
 
-  const {
-    resetWithdrawErc20Token,
-    withdrawErc20TokenError,
-    withdrawErc20TokenGasFees,
-    withdrawErc20Token,
-  } = useWithdrawToken({
-    amount: toWithdraw,
-    enabled: !withdrawingNative && canWithdraw,
-    fromToken,
-    l1ChainId,
-    onSuccess,
-    toToken,
-  })
-
-  const {
-    data: withdrawReceipt,
-    error: withdrawReceiptError,
-    queryKey: withdrawQueryKey,
-    // @ts-expect-error string is `0x${string}`
-  } = useWaitForTransactionReceipt({ hash: txHash })
-
-  useReloadBalances({
-    fromToken,
-    status: withdrawReceipt?.status,
-  })
-
-  const clearWithdrawNativeState = useCallback(
-    function () {
-      // clear the withdrawal operation hash
-      resetWithdrawNativeToken()
-      // clear withdrawal receipt state
-      queryClient.removeQueries({ queryKey: withdrawQueryKey })
-    },
-    [queryClient, resetWithdrawNativeToken, withdrawQueryKey],
-  )
-
-  const clearWithdrawErc20TokenState = useCallback(
-    function () {
-      // clear the withdrawal operation hash
-      resetWithdrawErc20Token()
-      // clear withdrawal receipt state
-      queryClient.removeQueries({ queryKey: withdrawQueryKey })
-    },
-    [queryClient, resetWithdrawErc20Token, withdrawQueryKey],
-  )
-
-  useEffect(
-    function updateWithdrawalStatusAfterFailure() {
-      if (!withdrawReceiptError) {
-        return
-      }
-      const withdrawal = withdrawals.find(
-        w =>
-          w.transactionHash === txHash &&
-          w.status !== MessageStatus.FAILED_L1_TO_L2_MESSAGE,
-      )
-      if (!withdrawal) {
-        return
-      }
-      updateWithdrawal(withdrawal, {
-        status: MessageStatus.FAILED_L1_TO_L2_MESSAGE,
-      })
-    },
-    [txHash, updateWithdrawal, withdrawals, withdrawReceiptError],
-  )
-
-  useEffect(
-    function updateWithdrawalStatusAfterConfirmation() {
-      if (withdrawReceipt?.status !== 'success') {
-        return
-      }
-      const withdrawal = withdrawals.find(
-        w =>
-          w.transactionHash === withdrawReceipt.transactionHash &&
-          !w.blockNumber,
-      )
-
-      if (!withdrawal) {
-        return
+      const args = {
+        account,
+        amount,
+        l1Chain,
+        l2Chain,
+        l2PublicClient: hemiPublicClient,
+        l2TokenAddress,
+        l2WalletClient: hemiWalletClient,
       }
 
-      clearWithdrawErc20TokenState()
-      clearWithdrawNativeState()
+      const { promise, emitter } = withdrawingNative
+        ? initiateWithdrawEth(args)
+        : initiateWithdrawErc20(args)
 
-      // update here so next iteration of the effect doesn't reach this point
-      updateWithdrawal(withdrawal, {
-        blockNumber: Number(withdrawReceipt.blockNumber),
-        status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+      let withdrawal: ToEvmWithdrawOperation | undefined
+
+      emitter.on('user-signed-withdraw', function (transactionHash) {
+        withdrawal = {
+          amount: amount.toString(),
+          direction: MessageDirection.L2_TO_L1,
+          from: account,
+          l1ChainId: toToken.chainId,
+          l1Token: withdrawingNative ? zeroAddress : toToken.address,
+          l2ChainId: fromToken.chainId,
+          l2Token: l2TokenAddress,
+          status: MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
+          // "to" field uses the same address as from, which is user's address
+          to: account,
+          transactionHash,
+        }
+        addWithdrawalToTunnelHistory(withdrawal)
+        // add hash to query string
+        updateTxHash(transactionHash, { history: 'push' })
       })
 
-      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
-      // eslint-disable-next-line promise/catch-or-return
-      getEvmBlock(withdrawReceipt.blockNumber, l2ChainId).then(block =>
+      emitter.on('withdraw-transaction-reverted', function (receipt) {
+        // regardless, fees were paid
+        updateNativeBalanceAfterFees(receipt)
+        track?.('evm - init withdraw failed', { chain: networkType })
+
         updateWithdrawal(withdrawal, {
-          timestamp: Number(block.timestamp),
-        }),
-      )
+          status: MessageStatus.FAILED_L1_TO_L2_MESSAGE,
+        })
+      })
+
+      emitter.on('withdraw-transaction-succeeded', function (receipt) {
+        track?.('evm - init withdraw success', { chain: networkType })
+
+        updateNativeBalanceAfterFees(
+          receipt,
+          withdrawingNative ? amount : undefined,
+        )
+
+        // if erc20 was withdrawn, we need to update the balance
+        if (!withdrawingNative) {
+          queryClient.setQueryData(
+            erc20BalanceQueryKey,
+            (old: bigint) => old - amount,
+          )
+        }
+
+        updateWithdrawal(withdrawal, {
+          blockNumber: Number(receipt.blockNumber),
+          status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+        })
+      })
+
+      on?.(emitter)
+
+      return promise
     },
-    [
-      clearWithdrawErc20TokenState,
-      clearWithdrawNativeState,
-      l2ChainId,
-      updateWithdrawal,
-      withdrawals,
-      withdrawReceipt,
-      withdrawReceiptError,
-    ],
-  )
-
-  const handleWithdraw = (withdrawCallback: () => void) =>
-    function () {
-      if (canWithdraw) {
-        withdrawCallback()
+    onSettled() {
+      // Do not return the promises here. Doing so will delay the resolution of
+      // the mutation, which will cause the UI to be out of sync until balances are re-validated.
+      // Query invalidation here must work as fire and forget, as, after all, it runs in the background!
+      if (!withdrawingNative) {
+        queryClient.invalidateQueries({ queryKey: erc20BalanceQueryKey })
       }
-    }
-
-  if (withdrawingNative) {
-    return {
-      clearWithdrawState: clearWithdrawNativeState,
-      withdraw: handleWithdraw(function () {
-        clearWithdrawNativeState()
-        withdrawNativeToken()
-      }),
-      withdrawError: withdrawNativeTokenError,
-      withdrawGasFees: withdrawNativeTokenGasFees,
-      withdrawReceipt,
-      withdrawReceiptError,
-    }
-  }
-  return {
-    clearWithdrawState: clearWithdrawErc20TokenState,
-    withdraw: handleWithdraw(function () {
-      clearWithdrawErc20TokenState()
-      withdrawErc20Token()
-    }),
-    withdrawError: withdrawErc20TokenError,
-    withdrawGasFees: withdrawErc20TokenGasFees,
-    withdrawReceipt,
-    withdrawReceiptError,
-  }
+      // gas was paid in the L2 chain, so we need to invalidate the balance
+      queryClient.invalidateQueries({
+        queryKey: nativeTokenBalanceQueryKey,
+      })
+    },
+  })
 }

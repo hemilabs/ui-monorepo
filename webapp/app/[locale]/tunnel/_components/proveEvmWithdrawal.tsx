@@ -2,8 +2,8 @@
 
 import { Button } from 'components/button'
 import { useTranslations } from 'next-intl'
-import { type FormEvent, useContext, useEffect } from 'react'
-import { ToEvmWithdrawOperation } from 'types/tunnel'
+import { type FormEvent, useContext } from 'react'
+import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 
 import { ToEvmWithdrawalContext } from '../_context/toEvmWithdrawalContext'
 import { useProveTransaction } from '../_hooks/useProveTransaction'
@@ -18,47 +18,24 @@ export const ProveWithdrawal = function ({ withdrawal }: Props) {
   const [operationStatus, setOperationStatus] = useContext(
     ToEvmWithdrawalContext,
   )
-  const {
-    isReadyToProve,
-    proveWithdrawal,
-    withdrawalProofReceipt,
-    proveWithdrawalError,
-    withdrawalProofReceiptError,
-  } = useProveTransaction(withdrawal)
+  const { mutate: proveWithdrawal } = useProveTransaction({
+    on(emitter) {
+      emitter.on('user-signed-prove-error', () =>
+        setOperationStatus('rejected'),
+      )
+      emitter.on('prove-transaction-succeeded', () =>
+        setOperationStatus('idle'),
+      )
+      emitter.on('prove-transaction-reverted', () =>
+        setOperationStatus('failed'),
+      )
+      emitter.on('unexpected-error', () => setOperationStatus('failed'))
+    },
+    withdrawal,
+  })
   const t = useTranslations('tunnel-page.submit-button')
 
   const isProving = operationStatus === 'proving'
-
-  useEffect(
-    function clearAfterSuccessfulProve() {
-      if (
-        withdrawalProofReceipt?.status !== 'success' ||
-        operationStatus !== 'proving'
-      ) {
-        return
-      }
-      setOperationStatus('idle')
-    },
-    [operationStatus, setOperationStatus, withdrawalProofReceipt],
-  )
-
-  useEffect(
-    function handleUserRejection() {
-      if (proveWithdrawalError && isProving) {
-        setOperationStatus('rejected')
-      }
-    },
-    [isProving, proveWithdrawalError, setOperationStatus],
-  )
-
-  useEffect(
-    function handleTransactionFailure() {
-      if (withdrawalProofReceiptError && isProving) {
-        setOperationStatus('failed')
-      }
-    },
-    [isProving, withdrawalProofReceiptError, setOperationStatus],
-  )
 
   const handleProve = function (e: FormEvent) {
     e.preventDefault()
@@ -75,6 +52,8 @@ export const ProveWithdrawal = function ({ withdrawal }: Props) {
     }
     return 'prove-withdrawal'
   }
+
+  const isReadyToProve = withdrawal.status === MessageStatus.READY_TO_PROVE
 
   return (
     <DrawerCallToAction

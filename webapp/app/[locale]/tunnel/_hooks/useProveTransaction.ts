@@ -1,102 +1,80 @@
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUmami } from 'app/analyticsEvents'
-import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
-import { useProveMessage } from 'hooks/useL2Bridge'
+import EventEmitter from 'events'
+import { proveWithdrawal } from 'hemi-tunnel-actions'
+import { ProveEvents } from 'hemi-tunnel-actions/src/types'
+import { useNativeTokenBalance } from 'hooks/useBalance'
+import { useHemiClient } from 'hooks/useHemiClient'
+import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useCallback, useEffect } from 'react'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
-import { useWaitForTransactionReceipt } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 
-export const useProveTransaction = function (
-  withdrawal: ToEvmWithdrawOperation,
-) {
-  const connectedToL1 = useIsConnectedToExpectedNetwork(withdrawal.l1ChainId)
+type UseProveTransaction = {
+  on?: (emitter: EventEmitter<ProveEvents>) => void
+  withdrawal: ToEvmWithdrawOperation
+}
+
+export const useProveTransaction = function ({
+  on,
+  withdrawal,
+}: UseProveTransaction) {
+  const { address: account } = useAccount()
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+    withdrawal.l1ChainId,
+  )
   const [networkType] = useNetworkType()
+  const hemiPublicClient = useHemiClient()
   const queryClient = useQueryClient()
   const { updateWithdrawal } = useTunnelHistory()
   const { track } = useUmami()
-
-  const isReadyToProve =
-    withdrawal.status === MessageStatus.READY_TO_PROVE && connectedToL1
-
-  const { proveWithdrawal, resetProveWithdrawal, ...rest } = useProveMessage({
-    enabled: isReadyToProve,
-    l1ChainId: withdrawal.l1ChainId,
-    onSuccess: proveTxHash => updateWithdrawal(withdrawal, { proveTxHash }),
-    withdrawTxHash: withdrawal.transactionHash,
-  })
-
-  const {
-    data: withdrawalProofReceipt,
-    error: withdrawalProofReceiptError,
-    queryKey: withdrawalProofQueryKey,
-  } = useWaitForTransactionReceipt({
-    hash: rest.proveWithdrawalTxHash,
-  })
-
-  const clearProveWithdrawalState = useCallback(
-    function () {
-      // clear the prof operation hash
-      resetProveWithdrawal()
-      // clear proof receipt state
-      queryClient.removeQueries({ queryKey: withdrawalProofQueryKey })
-    },
-    [queryClient, resetProveWithdrawal, withdrawalProofQueryKey],
+  const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
+    withdrawal.l1ChainId,
   )
+  const { data: l1WalletClient } = useWalletClient()
 
-  useEffect(
-    function updateWithdrawalAfterProveConfirmation() {
-      if (withdrawalProofReceipt?.status !== 'success') {
-        return
-      }
-      if (withdrawal?.status === MessageStatus.IN_CHALLENGE_PERIOD) {
-        return
-      }
-
-      updateWithdrawal(withdrawal, {
-        proveTxHash: withdrawalProofReceipt.transactionHash,
-        status: MessageStatus.IN_CHALLENGE_PERIOD,
+  return useMutation({
+    mutationFn: function prove() {
+      const { emitter, promise } = proveWithdrawal({
+        account,
+        l1WalletClient,
+        l2PublicClient: hemiPublicClient,
+        withdrawalTransactionHash: withdrawal.transactionHash,
       })
 
-      clearProveWithdrawalState()
-
-      track?.('evm - prove success', { chain: networkType })
-    },
-    [
-      clearProveWithdrawalState,
-      networkType,
-      track,
-      updateWithdrawal,
-      withdrawal,
-      withdrawalProofReceipt,
-    ],
-  )
-
-  useEffect(
-    function trackOnProveFailure() {
-      if (withdrawalProofReceiptError) {
+      emitter.on(
+        'pre-prove',
+        () => track?.('evm - prove started', { chain: networkType }),
+      )
+      emitter.on('user-signed-prove', proveTxHash =>
+        updateWithdrawal(withdrawal, { proveTxHash }),
+      )
+      emitter.on('prove-transaction-reverted', function (receipt) {
         track?.('evm - prove failed', { chain: networkType })
-      }
+
+        updateNativeBalanceAfterFees(receipt)
+      })
+      emitter.on('prove-transaction-succeeded', function (receipt) {
+        updateWithdrawal(withdrawal, {
+          proveTxHash: receipt.transactionHash,
+          status: MessageStatus.IN_CHALLENGE_PERIOD,
+        })
+
+        track?.('evm - prove success', { chain: networkType })
+
+        updateNativeBalanceAfterFees(receipt)
+      })
+
+      on?.(emitter)
+
+      return promise
     },
-    [withdrawalProofReceiptError, networkType, track],
-  )
-
-  const handleProveWithdrawal = function () {
-    if (!isReadyToProve) {
-      return
-    }
-    // clear any previous transaction hash, which may come from failed attempts
-    updateWithdrawal(withdrawal, { proveTxHash: undefined })
-    proveWithdrawal()
-    track?.('evm - prove started', { chain: networkType })
-  }
-
-  return {
-    isReadyToProve,
-    proveWithdrawal: handleProveWithdrawal,
-    withdrawalProofReceipt,
-    withdrawalProofReceiptError,
-    ...rest,
-  }
+    onSettled() {
+      // Do not return the promises here. Doing so will delay the resolution of
+      // the mutation, which will cause the UI to be out of sync until balances are re-validated.
+      // Query invalidation here must work as fire and forget, as, after all, it runs in the background!
+      queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
+    },
+  })
 }

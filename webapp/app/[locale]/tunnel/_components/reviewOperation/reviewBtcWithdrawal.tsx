@@ -18,6 +18,7 @@ import { formatUnits } from 'viem'
 import { ChallengeBtcWithdrawal } from '../challengeBtcWithdrawal'
 import { RetryBtcWithdraw } from '../retryBtcWithdraw'
 
+import { ChainLabel } from './chainLabel'
 import { Operation } from './operation'
 
 const getCallToAction = function (withdrawal: ToBtcWithdrawOperation) {
@@ -80,7 +81,15 @@ const ReviewContent = function ({
     }
 
     return {
-      description: t('initiate-withdrawal'),
+      description: (
+        <ChainLabel
+          active={
+            withdrawal.status === BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING
+          }
+          chainId={withdrawal.l2ChainId}
+          label={t('start-on', { networkName: fromChain.name })}
+        />
+      ),
       explorerChainId: withdrawal.l2ChainId,
       fees: [
         BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
@@ -131,7 +140,13 @@ const ReviewContent = function ({
       return map[withdrawal.status]
     }
     return {
-      description: t('challenge-withdrawal'),
+      description: (
+        <ChainLabel
+          active={withdrawal.status === BtcWithdrawStatus.READY_TO_CHALLENGE}
+          chainId={withdrawal.l2ChainId}
+          label={t('challenge-on', { networkName: fromChain.name })}
+        />
+      ),
       explorerChainId: withdrawal.l2ChainId,
       fees: [
         BtcWithdrawStatus.CHALLENGE_FAILED,
@@ -164,7 +179,13 @@ const ReviewContent = function ({
       [BtcWithdrawStatus.WITHDRAWAL_FAILED]: ProgressStatus.NOT_READY,
     }
     return {
-      description: t('withdraw-completed'),
+      description: (
+        <ChainLabel
+          active={withdrawal.status === BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED}
+          chainId={withdrawal.l2ChainId}
+          label={t('claim-your-funds', { networkName: fromChain.name })}
+        />
+      ),
       status: status[withdrawal.status],
     }
   }

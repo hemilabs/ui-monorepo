@@ -20,3 +20,15 @@ export type DepositErc20Events = DepositEvents & {
   'user-signed-approve': [Hash]
   'user-signing-approve-error': [Error]
 }
+
+export type WithdrawEvents = {
+  'pre-withdraw': []
+  'unexpected-error': [Error]
+  'user-signed-withdraw': [Hash]
+  'user-signing-withdraw-error': [Error]
+  'withdraw-failed': [Error]
+  'withdraw-settled': []
+  'withdraw-transaction-reverted': [TransactionReceipt]
+  'withdraw-transaction-succeeded': [TransactionReceipt]
+  'withdraw-failed-validation': [string]
+}

@@ -1,5 +1,7 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChallengeBitcoinWithdrawal } from 'hooks/useBtcTunnel'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
@@ -29,19 +31,39 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
 
   const t = useTranslations('tunnel-page')
   const { track } = useUmami()
+  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
+    withdrawal.l2ChainId,
+    withdrawal.l2Token,
+  )
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+    withdrawal.l2ChainId,
+  )
+  const queryClient = useQueryClient()
 
   const isChallenging =
     withdrawal.status === BtcWithdrawStatus.CHALLENGE_IN_PROGRESS
 
-  // No need to handle the success case, as in that case, this component will be unmounted
-  // and nothing gets rendered. But we do want to track in analytics!
   useEffect(
-    function trackAnalyticsOnSuccess() {
+    function handleTxSuccess() {
       if (challengeReceipt?.status === 'success') {
+        // This is needed to invalidate the balance query
+        // so the balance is updated in the UI instantly
+        queryClient.invalidateQueries({ queryKey: erc20BalanceQueryKey })
+        queryClient.invalidateQueries({
+          queryKey: nativeTokenBalanceQueryKey,
+        })
+
         track?.('btc - challenge success', { chain: networkType })
       }
     },
-    [challengeReceipt, networkType, track],
+    [
+      erc20BalanceQueryKey,
+      challengeReceipt,
+      nativeTokenBalanceQueryKey,
+      networkType,
+      queryClient,
+      track,
+    ],
   )
 
   useEffect(

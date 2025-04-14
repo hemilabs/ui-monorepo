@@ -7,14 +7,12 @@ import {
 import { useJsonRpcProvider, useWeb3Provider } from 'hooks/useEthersSigner'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import merge from 'lodash/merge'
-import { Token } from 'types/token'
 import {
   type CrossChainMessengerProxy,
   createIsolatedCrossChainMessenger,
 } from 'utils/crossChainMessenger'
 import { hasKeys } from 'utils/utilities'
 import { type Chain, type Hash, isHash } from 'viem'
-import { useAccount } from 'wagmi'
 
 import { useEstimateFees } from './useEstimateFees'
 import { useHemi } from './useHemi'
@@ -169,82 +167,6 @@ const useL1ToL2CrossChainMessenger = function (l1ChainId: Chain['id']) {
   })
 }
 
-/**
- * This hook returns an instance of crossChainMessenger in which the wallet is connected to the L2
- * and uses a JsonRpcProvider to connect to the L1
- * @param l1ChainId
- * @returns
- */
-const useL2toL1CrossChainMessenger = function (l1ChainId: Chain['id']) {
-  const hemi = useHemi()
-
-  const l1Signer = useJsonRpcProvider(l1ChainId)
-  const l2Signer = useWeb3Provider(hemi.id)
-
-  return useCrossChainMessenger({
-    l1ChainId,
-    l1Signer,
-    l2Signer,
-    walletConnectedToChain: hemi.id,
-  })
-}
-
-type UseWithdrawNativeToken = {
-  amount: string
-  enabled: boolean
-  l1ChainId: Chain['id']
-} & Pick<UseMutationOptions<Hash, Error, string>, 'onSettled' | 'onSuccess'>
-
-export const useWithdrawNativeToken = function ({
-  amount,
-  enabled,
-  l1ChainId,
-  ...options
-}: UseWithdrawNativeToken) {
-  const operation = 'withdrawETH'
-  const { address, isConnected } = useAccount()
-  const hemi = useHemi()
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useL2toL1CrossChainMessenger(l1ChainId)
-
-  const withdrawNativeTokenGasFees = useEstimateGasFees({
-    // Need to manually override from address - See https://github.com/ethereum-optimism/optimism/issues/8952
-    args: [amount, merge(tunnelOverrides, { overrides: { from: address } })],
-    crossChainMessenger,
-    crossChainMessengerStatus,
-    enabled:
-      enabled &&
-      isConnected &&
-      // @ts-expect-error isNaN also accepts strings!
-      !isNaN(amount) &&
-      BigInt(amount) > BigInt(0),
-    operation,
-    walletConnectedToChain: hemi.id,
-  })
-
-  const {
-    error: withdrawNativeTokenError,
-    mutate: withdrawNativeToken,
-    reset: resetWithdrawNativeToken,
-  } = useMutation<Hash, Error, string>({
-    async mutationFn(toWithdraw: string) {
-      const response = await crossChainMessenger.withdrawETH(
-        toWithdraw,
-        tunnelOverrides,
-      )
-      return response.hash as Hash
-    },
-    ...options,
-  })
-
-  return {
-    resetWithdrawNativeToken,
-    withdrawNativeToken: () => withdrawNativeToken(amount),
-    withdrawNativeTokenError,
-    withdrawNativeTokenGasFees,
-  }
-}
-
 type UseFinalizeMessage = {
   enabled: boolean
   l1ChainId: Chain['id']
@@ -348,63 +270,5 @@ export const useProveMessage = function ({
     proveWithdrawalTokenGasFees,
     proveWithdrawalTxHash,
     resetProveWithdrawal,
-  }
-}
-
-type UseWithdrawToken = {
-  amount: string
-  enabled: boolean
-  l1ChainId: Chain['id']
-  fromToken: Token
-  toToken: Token
-} & Pick<UseMutationOptions<Hash, Error, string>, 'onSettled' | 'onSuccess'>
-export const useWithdrawToken = function ({
-  amount,
-  enabled,
-  fromToken,
-  l1ChainId,
-  toToken,
-  ...options
-}: UseWithdrawToken) {
-  const operation = 'withdrawERC20'
-  const { crossChainMessenger, crossChainMessengerStatus } =
-    useL2toL1CrossChainMessenger(l1ChainId)
-  const hemi = useHemi()
-
-  const withdrawErc20TokenGasFees = useEstimateGasFees({
-    args: [toToken.address, fromToken.address, amount, tunnelOverrides],
-    crossChainMessenger,
-    crossChainMessengerStatus,
-    enabled:
-      enabled &&
-      // @ts-expect-error isNaN also accepts strings!
-      !isNaN(amount) &&
-      BigInt(amount) > BigInt(0),
-    operation,
-    walletConnectedToChain: hemi.id,
-  })
-
-  const {
-    error: withdrawErc20TokenError,
-    mutate: withdrawErc20Token,
-    reset: resetWithdrawErc20Token,
-  } = useMutation<Hash, Error, string>({
-    async mutationFn(toWithdraw: string) {
-      const response = await crossChainMessenger.withdrawERC20(
-        toToken.address,
-        fromToken.address,
-        toWithdraw,
-        tunnelOverrides,
-      )
-      return response.hash as Hash
-    },
-    ...options,
-  })
-
-  return {
-    resetWithdrawErc20Token,
-    withdrawErc20Token: () => withdrawErc20Token(amount),
-    withdrawErc20TokenError,
-    withdrawErc20TokenGasFees,
   }
 }

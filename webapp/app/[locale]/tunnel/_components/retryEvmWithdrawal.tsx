@@ -1,7 +1,7 @@
 import { Button } from 'components/button'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
-import { type FormEvent, useContext, useEffect } from 'react'
+import { type FormEvent, useContext } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
@@ -31,30 +31,24 @@ const Retry = function ({
   const t = useTranslations('tunnel-page.submit-button')
 
   // this component tries to initiate a new withdrawal, based on the failed one
-  const { withdraw, withdrawError } = useWithdraw({
-    canWithdraw: true,
+  const { mutate: withdraw } = useWithdraw({
     fromInput: formatUnits(
       BigInt(withdrawal.amount),
       fromToken.decimals,
     ).toString(),
     fromToken,
-    l1ChainId: withdrawal.l1ChainId,
-    l2ChainId: withdrawal.l2ChainId,
+    on(emitter) {
+      emitter.on('user-signing-withdraw-error', () =>
+        setOperationStatus('rejected'),
+      )
+      emitter.on('withdraw-transaction-reverted', () =>
+        setOperationStatus('failed'),
+      )
+    },
     toToken,
   })
 
   const isWithdrawing = operationStatus === 'withdrawing'
-
-  // Success and failure are not needed to be handled here, as a new tx hash is generated, so this component
-  // is unmounted and a "new" withdrawal cycle starts
-  useEffect(
-    function handleUserRejection() {
-      if (withdrawError && isWithdrawing) {
-        setOperationStatus('rejected')
-      }
-    },
-    [isWithdrawing, setOperationStatus, withdrawError],
-  )
 
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()

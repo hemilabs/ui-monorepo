@@ -45,3 +45,14 @@ export type ProveEvents = CommonEvents & {
   'user-signed-prove': [Hash]
   'user-signed-prove-error': [Error]
 }
+
+export type FinalizeEvents = CommonEvents & {
+  'finalize-failed-validation': [string]
+  'finalize-failed': [Error]
+  'finalize-settled': []
+  'finalize-transaction-reverted': [TransactionReceipt]
+  'finalize-transaction-succeeded': [TransactionReceipt]
+  'pre-finalize': []
+  'user-signed-finalize': [Hash]
+  'user-signed-finalize-error': [Error]
+}

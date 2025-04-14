@@ -1,142 +1,100 @@
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useUmami } from 'app/analyticsEvents'
+import EventEmitter from 'events'
+import { finalizeWithdrawal } from 'hemi-tunnel-actions'
+import { FinalizeEvents } from 'hemi-tunnel-actions/src/types'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
-import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
-import { useFinalizeMessage } from 'hooks/useL2Bridge'
+import { useHemiClient } from 'hooks/useHemiClient'
+import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { useCallback, useEffect } from 'react'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
-import { useWaitForTransactionReceipt } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 
-export const useClaimTransaction = function (
-  withdrawal: ToEvmWithdrawOperation,
-) {
-  const connectedToL1 = useIsConnectedToExpectedNetwork(withdrawal.l1ChainId)
-
-  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
-    withdrawal.l1ChainId,
-    withdrawal.l1Token,
-  )
+export const useClaimTransaction = function ({
+  on,
+  withdrawal,
+}: {
+  on?: (emitter: EventEmitter<FinalizeEvents>) => void
+  withdrawal: ToEvmWithdrawOperation
+}) {
+  const { address: account } = useAccount()
+  const hemiClient = useHemiClient()
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
     withdrawal.l1ChainId,
   )
   const [networkType] = useNetworkType()
   const queryClient = useQueryClient()
+  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
+    withdrawal.l1ChainId,
+    withdrawal.l1Token,
+  )
   const { updateWithdrawal } = useTunnelHistory()
   const { track } = useUmami()
-
-  const isReadyToClaim =
-    withdrawal.status === MessageStatus.READY_FOR_RELAY && connectedToL1
-
-  const {
-    finalizeWithdrawal,
-    resetFinalizeWithdrawal,
-    finalizeWithdrawalTxHash,
-    finalizeWithdrawalError,
-    finalizeWithdrawalTokenGasFees,
-  } = useFinalizeMessage({
-    enabled: isReadyToClaim,
-    l1ChainId: withdrawal.l1ChainId,
-    onSuccess: claimTxHash => updateWithdrawal(withdrawal, { claimTxHash }),
-    withdrawTxHash: withdrawal.transactionHash,
-  })
-
-  const {
-    data: claimWithdrawalReceipt,
-    error: claimWithdrawalReceiptError,
-    queryKey: finalizeWithdrawalQueryKey,
-  } = useWaitForTransactionReceipt({
-    hash: finalizeWithdrawalTxHash,
-  })
-
-  const handleClaimWithdrawal = function () {
-    if (!isReadyToClaim) {
-      return
-    }
-    // clear any previous transaction hash, which may come from failed attempts
-    updateWithdrawal(withdrawal, { claimTxHash: undefined })
-    finalizeWithdrawal()
-    track?.('evm - claim started', { chain: networkType })
-  }
-
-  const invalidateBalanceQuery = useCallback(
-    function invalidateQuery() {
-      const balanceQueryKey = isNativeAddress(withdrawal.l1Token)
-        ? nativeTokenBalanceQueryKey
-        : erc20BalanceQueryKey
-
-      queryClient.invalidateQueries({ queryKey: balanceQueryKey })
-    },
-    [
-      nativeTokenBalanceQueryKey,
-      erc20BalanceQueryKey,
-      queryClient,
-      withdrawal.l1Token,
-    ],
+  const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
+    withdrawal.l1ChainId,
   )
+  const { data: l1WalletClient } = useWalletClient()
 
-  const clearClaimWithdrawalState = useCallback(
-    function () {
-      // clear the claim operation hash
-      resetFinalizeWithdrawal()
-      // invalidate the balance query
-      invalidateBalanceQuery()
-      // clear claim receipt state
-      queryClient.removeQueries({ queryKey: finalizeWithdrawalQueryKey })
-    },
-    [
-      finalizeWithdrawalQueryKey,
-      invalidateBalanceQuery,
-      queryClient,
-      resetFinalizeWithdrawal,
-    ],
-  )
+  const claimingNativeToken = isNativeAddress(withdrawal.l1Token)
 
-  useEffect(
-    function updateWithdrawalAfterConfirmation() {
-      if (claimWithdrawalReceipt?.status !== 'success') {
-        return
-      }
+  return useMutation({
+    mutationFn: function claim() {
+      // clear any previous transaction hash, which may come from failed attempts
+      updateWithdrawal(withdrawal, { claimTxHash: undefined })
 
-      if (withdrawal.status === MessageStatus.RELAYED) {
-        return
-      }
-      updateWithdrawal(withdrawal, {
-        claimTxHash: claimWithdrawalReceipt.transactionHash,
-        status: MessageStatus.RELAYED,
+      const { emitter, promise } = finalizeWithdrawal({
+        account,
+        l1WalletClient,
+        l2PublicClient: hemiClient,
+        withdrawalTransactionHash: withdrawal.transactionHash,
       })
 
-      clearClaimWithdrawalState()
+      emitter.on(
+        'pre-finalize',
+        () => track?.('evm - claim started', { chain: networkType }),
+      )
+      emitter.on('user-signed-finalize', claimTxHash =>
+        updateWithdrawal(withdrawal, {
+          claimTxHash,
+        }),
+      )
+      emitter.on('finalize-transaction-succeeded', function (receipt) {
+        updateWithdrawal(withdrawal, {
+          status: MessageStatus.RELAYED,
+        })
 
-      track?.('evm - claim success', { chain: networkType })
-    },
-    [
-      claimWithdrawalReceipt,
-      clearClaimWithdrawalState,
-      networkType,
-      track,
-      updateWithdrawal,
-      withdrawal,
-    ],
-  )
+        if (claimingNativeToken) {
+          // Use negative, because the balance would be reduced by fees, but incremented by <amount>
+          // TODO revert the "-1"
+          updateNativeBalanceAfterFees(receipt, -BigInt(withdrawal.amount))
+        } else {
+          // update native token due to fees
+          updateNativeBalanceAfterFees(receipt)
 
-  useEffect(
-    function trackOnClaimFailure() {
-      if (claimWithdrawalReceiptError) {
+          // the erc20 balance amount gets credited
+          queryClient.setQueryData(
+            erc20BalanceQueryKey,
+            (old: bigint) => old + BigInt(withdrawal.amount),
+          )
+        }
+
+        track?.('evm - claim success', { chain: networkType })
+      })
+      emitter.on('finalize-transaction-reverted', function () {
         track?.('evm - claim failed', { chain: networkType })
+      })
+
+      on?.(emitter)
+
+      return promise
+    },
+    onSettled() {
+      queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
+      if (!claimingNativeToken) {
+        queryClient.invalidateQueries({ queryKey: erc20BalanceQueryKey })
       }
     },
-    [claimWithdrawalReceiptError, networkType, track],
-  )
-
-  return {
-    claimWithdrawal: handleClaimWithdrawal,
-    claimWithdrawalError: finalizeWithdrawalError,
-    claimWithdrawalReceipt,
-    claimWithdrawalReceiptError,
-    claimWithdrawalTokenGasFees: finalizeWithdrawalTokenGasFees,
-    isReadyToClaim,
-  }
+  })
 }

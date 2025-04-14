@@ -17,7 +17,6 @@ export const getHemiClient = function (chainId: Chain['id']) {
 
 export const getEvmL1PublicClient = function (chainId: Chain['id']) {
   const l1Chain = findChainById(chainId) as Chain
-  // @ts-expect-error Fails to infer the types appropriately
   return createPublicClient({
     chain: l1Chain,
     transport: buildTransport(l1Chain),

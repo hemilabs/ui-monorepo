@@ -13,7 +13,6 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@eth-optimism/sdk": "3.2.1",
     "@hemilabs/token-list": "1.16.0",
     "@rainbow-me/rainbowkit": "2.2.4",
     "@sentry/nextjs": "9.9.0",
@@ -56,7 +55,6 @@
     "wagmi": "2.14.8"
   },
   "devDependencies": {
-    "@ethersproject/providers": "5.7.2",
     "@types/big.js": "6.2.2",
     "@types/lodash": "4.17.16",
     "@types/node": "20.12.12",

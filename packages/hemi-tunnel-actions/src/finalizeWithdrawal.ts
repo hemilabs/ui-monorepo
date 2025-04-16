@@ -61,12 +61,14 @@ const canFinalizeWithdrawal = async function ({
     chain: l1WalletClient.chain,
     receipt,
     targetChain: l2PublicClient.chain,
-  })
+  }).catch(() => null)
 
   if (withdrawalStatus !== 'ready-to-finalize') {
     return {
       canFinalize: false,
-      reason: `Withdrawal status is not ready-to-finalize, current status: ${withdrawalStatus}`,
+      reason: withdrawalStatus
+        ? `Withdrawal status is not ready-to-finalize, current status: ${withdrawalStatus}`
+        : 'Failed to get Withdrawal status',
     }
   }
 

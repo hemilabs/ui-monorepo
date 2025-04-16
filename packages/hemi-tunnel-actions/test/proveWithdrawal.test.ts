@@ -156,6 +156,24 @@ describe('proveWithdrawal', function () {
     expect(onSettled).toHaveBeenCalledOnce()
   })
 
+  it('should emit "prove-failed-validation" if it fails to get Withdrawal status', async function () {
+    const { emitter, promise } = proveWithdrawal(validParameters)
+    vi.mocked(getWithdrawalStatus).mockRejectedValue(new Error())
+
+    const failedValidation = vi.fn()
+    const onSettled = vi.fn()
+
+    emitter.on('prove-failed-validation', failedValidation)
+    emitter.on('prove-settled', onSettled)
+
+    await promise
+
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'Failed to get Withdrawal status',
+    )
+    expect(onSettled).toHaveBeenCalledOnce()
+  })
+
   it('should emit "user-signed-prove-error" if the user rejects signing the prove transaction', async function () {
     const l1WalletClient = createL1WalletClient({
       proveWithdrawal: vi.fn().mockRejectedValue(new Error('User rejected')),

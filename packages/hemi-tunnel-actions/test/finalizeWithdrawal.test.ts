@@ -151,6 +151,24 @@ describe('finalizeWithdrawal', function () {
     expect(onSettled).toHaveBeenCalledOnce()
   })
 
+  it('should emit "finalize-failed-validation" if it fails to get Withdrawal status', async function () {
+    const { emitter, promise } = finalizeWithdrawal(validParameters)
+    vi.mocked(getWithdrawalStatus).mockRejectedValue(new Error())
+
+    const failedValidation = vi.fn()
+    const onSettled = vi.fn()
+
+    emitter.on('finalize-failed-validation', failedValidation)
+    emitter.on('finalize-settled', onSettled)
+
+    await promise
+
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'Failed to get Withdrawal status',
+    )
+    expect(onSettled).toHaveBeenCalledOnce()
+  })
+
   it('should emit "user-signed-finalize-error" if the user rejects signing the finalize transaction', async function () {
     const withdrawal = {}
     const l1WalletClient = createL1WalletClient({

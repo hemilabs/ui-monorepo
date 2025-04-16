@@ -43,7 +43,7 @@ const mapStatusToOpMessageStatus = function (
   }
 }
 
-export const getEvmWithdrawalStatus = async ({
+export const getEvmWithdrawalStatus = async function ({
   l1publicClient,
   l2ChainId,
   receipt,
@@ -51,13 +51,17 @@ export const getEvmWithdrawalStatus = async ({
   l1publicClient: PublicClient
   l2ChainId: Chain['id']
   receipt: TransactionReceipt
-}) =>
+}) {
+  if (receipt.status === 'reverted') {
+    return MessageStatus.FAILED_L1_TO_L2_MESSAGE
+  }
   // @ts-expect-error Can't make the viem types to work. This works on runtime
-  getWithdrawalStatus(l1publicClient, {
+  return getWithdrawalStatus(l1publicClient, {
     chain: l1publicClient.chain,
     receipt,
     targetChain: findChainById(l2ChainId),
   }).then(mapStatusToOpMessageStatus)
+}
 
 export const isDeposit = (
   operation: TunnelOperation,

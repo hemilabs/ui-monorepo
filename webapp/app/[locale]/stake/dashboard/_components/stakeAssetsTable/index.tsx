@@ -135,7 +135,7 @@ const CallToAction = function ({ stake }: ActionProps) {
       variant="secondary"
     >
       <span className="text-lg font-normal text-neutral-500 transition duration-300 hover:text-neutral-950">
-        ...
+        ···
       </span>
     </ButtonLink>
   )

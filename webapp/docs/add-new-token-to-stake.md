@@ -23,7 +23,7 @@ Update the [hemilabs/token-list](https://github.com/hemilabs/token-list) package
 
 ## Step 2 - Add the token to stakeTokens file
 
-Add the new token to the [stakeTokens.ts](../tokenList/stakeTokens.ts) file in the `stakeWhiteList` object and under the appropiate chain id (mainnet or testnet) as below:
+Add the new token to the [stakeTokens.ts](../tokenList/stakeTokens.ts) file in the `stakeWhiteList` object and under the appropriate chain id (mainnet or testnet) as shown below:
 
 ```ts
 // webapp/tokenList/stakeTokens.ts
@@ -48,7 +48,7 @@ export const stakeWhiteList: Partial<
 
 ## Step 3 - Add the protocol logo image (if needed)
 
-If the new token protocol is not already in the [protocolImages.ts](../app/[locale]/stake/protocols/protocolImages.ts) file you need to add the protocol logo image to the [/stake/protocols/images](webapp/app/[locale]/stake/protocols/images) folder and add it to the `protocolImages` list as below:
+If the new token protocol is not already in the [protocolImages.ts](../app/[locale]/stake/protocols/protocolImages.ts) file you need to add the protocol logo image to the [/stake/protocols/images](../app/[locale]/stake/protocols/images) folder and add it to the `protocolImages` list as below:
 
 ```ts
 // webapp/app/[locale]/stake/protocols/protocolImages.ts
@@ -66,7 +66,7 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
 
 ## Step 4 - Add the new rewards icon images (if needed)
 
-If the new token you added have rewards that is not already in the [tokenRewards.tsx](../app/[locale]/stake/_components/tokenRewards.tsx) list you must add the icon image file to the [rewards icons](webapp/app/[locale]/stake/_components/icons) folder and create the reward points tag component as following:
+If the new token you added have rewards that are not already in the [tokenRewards.tsx](../app/[locale]/stake/_components/tokenRewards.tsx) list you must add the icon image file to the [rewards icons](../app/[locale]/stake/_components/icons) folder and create the reward points tag component as follows:
 
 ```ts
 // webapp/app/[locale]/stake/_components/pointsTag.tsx
@@ -105,23 +105,8 @@ const rewardComponentMap: Record<Reward, ReactNode> = {
 
 ## Step 5 - Check if token is whitelisted
 
-Before merging your changes to the `main` branch you need to make sure the new token you added is already whitelisted to staking and you can do that by calling `tokenAllowlist` method in the [staking pool smart contract](https://explorer.hemi.xyz/address/0x4F5E928763CBFaF5fFD8907ebbB0DAbd5f78bA83) as follows:
+Before merging your changes to the `main` branch you need to make sure the new token you added is already whitelisted to staking and you can do that by calling `tokenAllowlist` method in the [staking pool smart contract](https://explorer.hemi.xyz/address/0x4F5E928763CBFaF5fFD8907ebbB0DAbd5f78bA83) as shown in the screenshot below:
 
-```sh
-$ curl -X POST -H "Content-Type: application/json" \
-      -d '{
-          "jsonrpc": "2.0",
-          "id": 1,
-          "method": "eth_call",
-          "params": [
-              {
-                  "to": "0x4F5E928763CBFaF5fFD8907ebbB0DAbd5f78bA83",
-                  "data": "0x8135369a000000000000000000000000b4818bb69478730ef4e33cc068dd94278e2766cb"
-              },
-              "latest"
-          ]
-      }' \
-      https://rpc.hemi.network/rpc
-```
+![Token Allowlist Call](./img/token-allowlist-call.png)
 
 If the answer is `true` you can proceed and merge your changes to the main branch and the token will be available to stake.

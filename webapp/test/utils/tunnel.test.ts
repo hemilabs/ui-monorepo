@@ -5,10 +5,84 @@ import {
   MessageStatus,
   EvmDepositStatus,
 } from 'types/tunnel'
-import { isDeposit, isPendingOperation } from 'utils/tunnel'
-import { describe, it, expect } from 'vitest'
+import {
+  getEvmWithdrawalStatus,
+  isDeposit,
+  isPendingOperation,
+} from 'utils/tunnel'
+import { hemiSepolia } from 'viem/chains'
+import { getWithdrawalStatus } from 'viem/op-stack'
+import { beforeEach, describe, it, expect, vi } from 'vitest'
+
+vi.mock('viem/op-stack', () => ({
+  getWithdrawalStatus: vi.fn(),
+}))
 
 describe('utils/tunnel', function () {
+  beforeEach(function () {
+    vi.clearAllMocks()
+  })
+
+  describe('getEvmWithdrawalStatus', function () {
+    const parameters = {
+      l1publicClient: {},
+      l2ChainId: hemiSepolia.id,
+      receipt: { status: 'success' },
+    }
+
+    it('should return RELAYED when the withdrawal status is finalized', async function () {
+      vi.mocked(getWithdrawalStatus).mockResolvedValue('finalized')
+
+      const status = await getEvmWithdrawalStatus(parameters)
+
+      expect(status).toBe(MessageStatus.RELAYED)
+    })
+
+    it('should return READY_FOR_RELAY when the withdrawal status is ready-to-finalize', async function () {
+      vi.mocked(getWithdrawalStatus).mockResolvedValue('ready-to-finalize')
+
+      const status = await getEvmWithdrawalStatus(parameters)
+
+      expect(status).toBe(MessageStatus.READY_FOR_RELAY)
+    })
+
+    it('should return READY_TO_PROVE when the withdrawal status is ready-to-prove', async function () {
+      vi.mocked(getWithdrawalStatus).mockResolvedValue('ready-to-prove')
+
+      const status = await getEvmWithdrawalStatus(parameters)
+
+      expect(status).toBe(MessageStatus.READY_TO_PROVE)
+    })
+
+    it('should return IN_CHALLENGE_PERIOD when the withdrawal status is waiting-to-finalize', async function () {
+      vi.mocked(getWithdrawalStatus).mockResolvedValue('waiting-to-finalize')
+
+      const status = await getEvmWithdrawalStatus(parameters)
+
+      expect(status).toBe(MessageStatus.IN_CHALLENGE_PERIOD)
+    })
+
+    it('should return STATE_ROOT_NOT_PUBLISHED when the withdrawal status is waiting-to-prove', async function () {
+      vi.mocked(getWithdrawalStatus).mockResolvedValue('waiting-to-prove')
+
+      const status = await getEvmWithdrawalStatus(parameters)
+
+      expect(status).toBe(MessageStatus.STATE_ROOT_NOT_PUBLISHED)
+    })
+
+    it('should return FAILED_L1_TO_L2_MESSAGE when the receipt status is reverted', async function () {
+      vi.mocked(getWithdrawalStatus).mockRejectedValue(
+        new Error('should not be reached'),
+      )
+      const status = await getEvmWithdrawalStatus({
+        ...parameters,
+        receipt: { status: 'reverted' },
+      })
+
+      expect(status).toBe(MessageStatus.FAILED_L1_TO_L2_MESSAGE)
+    })
+  })
+
   describe('isDeposit', function () {
     it(`should identify deposit operations if the direction is ${MessageDirection.L1_TO_L2}`, function () {
       const operation = {

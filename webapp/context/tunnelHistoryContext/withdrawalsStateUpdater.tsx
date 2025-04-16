@@ -23,21 +23,21 @@ const getMinutes = (minutes: number) => getSeconds(minutes * 60)
 const refetchInterval = {
   [hemiMainnet.id]: {
     [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getSeconds(24),
-    [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: false,
+    [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: getMinutes(3),
     [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(1),
     [MessageStatus.READY_TO_PROVE]: getMinutes(1),
     [MessageStatus.IN_CHALLENGE_PERIOD]: getMinutes(3),
     [MessageStatus.READY_FOR_RELAY]: getMinutes(3),
-    [MessageStatus.RELAYED]: false,
+    [MessageStatus.RELAYED]: getMinutes(3),
   },
   [hemiTestnet.id]: {
     [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getSeconds(24),
-    [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: false,
+    [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: getMinutes(3),
     [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(1),
     [MessageStatus.READY_TO_PROVE]: getMinutes(2),
     [MessageStatus.IN_CHALLENGE_PERIOD]: getMinutes(2),
     [MessageStatus.READY_FOR_RELAY]: getMinutes(2),
-    [MessageStatus.RELAYED]: false,
+    [MessageStatus.RELAYED]: getMinutes(3),
   },
 } satisfies { [chainId: number]: { [status: number]: number | false } }
 

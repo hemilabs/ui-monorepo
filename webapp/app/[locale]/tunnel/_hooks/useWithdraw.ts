@@ -111,6 +111,7 @@ export const useWithdraw = function ({
         track?.('evm - init withdraw failed', { chain: networkType })
 
         updateWithdrawal(withdrawal, {
+          blockNumber: Number(receipt.blockNumber),
           status: MessageStatus.FAILED_L1_TO_L2_MESSAGE,
         })
       })

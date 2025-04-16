@@ -129,7 +129,7 @@ export const BtcWallet = function () {
       >
         {chainSupported ? (
           <Balance
-            balance={balance !== undefined ? getBalance() : undefined}
+            balance={balance ? getBalance() : undefined}
             token={getNativeToken(bitcoin.id)}
           />
         ) : (

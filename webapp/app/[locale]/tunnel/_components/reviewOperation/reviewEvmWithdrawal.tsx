@@ -16,8 +16,8 @@ import {
   ToEvmWithdrawalProvider,
 } from '../../_context/toEvmWithdrawalContext'
 import { useClaimTransaction } from '../../_hooks/useClaimTransaction'
+import { useEstimateProveWithdrawalFees } from '../../_hooks/useEstimateProveWithdrawalFees'
 import { useEstimateWithdrawFees } from '../../_hooks/useEstimateWithdrawFees'
-import { useProveTransaction } from '../../_hooks/useProveTransaction'
 import { ClaimEvmWithdrawal } from '../claimEvmWithdrawal'
 import { ProveWithdrawal } from '../proveEvmWithdrawal'
 import { RetryEvmWithdrawal } from '../retryEvmWithdrawal'
@@ -62,7 +62,10 @@ const ReviewContent = function ({
 
   const { claimWithdrawalTokenGasFees } = useClaimTransaction(withdrawal)
 
-  const { proveWithdrawalTokenGasFees } = useProveTransaction(withdrawal)
+  const proveWithdrawalTokenGasFees = useEstimateProveWithdrawalFees({
+    enabled: withdrawal.status === MessageStatus.READY_TO_PROVE,
+    withdrawal,
+  })
 
   const withdrawGasFees = useEstimateWithdrawFees({
     amount: BigInt(withdrawal.amount),

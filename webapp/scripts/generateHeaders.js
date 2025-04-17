@@ -1,5 +1,6 @@
 'use strict'
 
+require('dotenv').config()
 const { writeFile } = require('fs/promises')
 const path = require('path')
 const { sepolia, mainnet } = require('viem/chains')

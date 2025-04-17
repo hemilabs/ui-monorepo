@@ -1,6 +1,6 @@
 'use strict'
 
-require('dotenv').config()
+require('dotenv').config({ override: true, path: ['../.env', '.env.local'] })
 const { writeFile } = require('fs/promises')
 const path = require('path')
 const { sepolia, mainnet } = require('viem/chains')

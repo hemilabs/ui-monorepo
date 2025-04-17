@@ -66,12 +66,14 @@ const canProveWithdrawal = async function ({
     chain: l1WalletClient.chain,
     receipt,
     targetChain: l2PublicClient.chain,
-  })
+  }).catch(() => null)
 
   if (withdrawalStatus !== 'ready-to-prove') {
     return {
       canProve: false,
-      reason: `Withdrawal status is not ready-to-prove, current status: ${withdrawalStatus}`,
+      reason: withdrawalStatus
+        ? `Withdrawal status is not ready-to-prove, current status: ${withdrawalStatus}`
+        : 'Failed to get Withdrawal status',
     }
   }
 

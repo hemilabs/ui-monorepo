@@ -5,8 +5,10 @@ const enabled = !!process.env.NEXT_PUBLIC_SENTRY_DSN
 const unsupportedWalletErrors = [
   '@polkadot/keyring requires direct dependencies',
   "Backpack couldn't override `window.ethereum`.",
+  'message: Cannot redefine property: ethereum',
   // Nightly wallet
   'Cannot set property ethereum of #<Window> which has only a getter',
+  'sendRequest() -> core.crypto.encode()',
   'shouldSetPelagusForCurrentProvider is not a function',
   'shouldSetTallyForCurrentProvider is not a function',
   'Talisman extension has not been configured yet',
@@ -15,8 +17,10 @@ const unsupportedWalletErrors = [
 const walletConnectErrors = [
   'Decoded payload on topic',
   'Error: emitting session_request',
+  'Expired. pairing topic',
   'No matching key',
-  'Record was recently deleted - session',
+  // there are a few possible different errors after "Record was recently deleted"
+  'Record was recently deleted',
   // See https://github.com/hemilabs/ui-monorepo/issues/1081
   'this.provider.disconnect is not a function',
 ]
@@ -27,6 +31,7 @@ function enableSentry() {
     'Error redefining provider into window.ethereum',
     // Coming from an extension probably, we don't use anything related to this
     `Failed to execute 'transaction' on 'IDBDatabase'`,
+    'Database deleted by request of the user',
     // Nextjs errors when pre-fetching is aborted due to user navigation.
     // See https://github.com/vercel/next.js/pull/73975 and https://github.com/vercel/next.js/pull/73985
     // should not happen anymore after Next 15.3
@@ -35,6 +40,8 @@ function enableSentry() {
     'insufficient funds for gas * price + value',
     // Metamask error
     "MetaMask: 'eth_accounts' unexpectedly updated accounts. Please report this bug",
+    // Another Metamask error
+    'MetaMetrics.getInstance().createEventBuilder is not a function.',
     // From "TronWeb: 'tronWeb.sidechain' is deprecated and may be removed in the future. Please use the 'sunweb' sdk instead...",
     "Please use the 'sunweb' sdk instead",
     // user rejected a confirmation in the wallet

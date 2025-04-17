@@ -1,4 +1,4 @@
-import { getTunnelContracts } from 'utils/crossChainMessenger'
+import { getTunnelContracts } from 'utils/chain'
 import { Chain } from 'viem'
 
 import { useHemi } from './useHemi'

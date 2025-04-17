@@ -15,7 +15,7 @@ import {
   ToEvmWithdrawalContext,
   ToEvmWithdrawalProvider,
 } from '../../_context/toEvmWithdrawalContext'
-import { useClaimTransaction } from '../../_hooks/useClaimTransaction'
+import { useEstimateFinalizeWithdrawalFees } from '../../_hooks/useEstimateFinalizeWithdrawalFees'
 import { useEstimateProveWithdrawalFees } from '../../_hooks/useEstimateProveWithdrawalFees'
 import { useEstimateWithdrawFees } from '../../_hooks/useEstimateWithdrawFees'
 import { ClaimEvmWithdrawal } from '../claimEvmWithdrawal'
@@ -60,7 +60,9 @@ const ReviewContent = function ({
   const t = useTranslations('tunnel-page.review-withdrawal')
   const tCommon = useTranslations('common')
 
-  const { claimWithdrawalTokenGasFees } = useClaimTransaction(withdrawal)
+  const claimWithdrawalTokenGasFees = useEstimateFinalizeWithdrawalFees({
+    withdrawal,
+  })
 
   const proveWithdrawalTokenGasFees = useEstimateProveWithdrawalFees({
     enabled: withdrawal.status === MessageStatus.READY_TO_PROVE,

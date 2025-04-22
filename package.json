@@ -26,10 +26,10 @@
     "btc-wallet",
     "hemi-viem-stake-actions",
     "packages/*",
+    "portal",
     "subgraph-api",
     "subgraphs/*",
     "token-prices/*",
-    "ui-common",
-    "webapp"
+    "ui-common"
   ]
 }

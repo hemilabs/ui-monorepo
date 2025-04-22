@@ -4,8 +4,8 @@
     {
       "excludedFiles": [
         "subgraphs/**/*.ts",
-        "webapp/scripts/*.js",
-        "webapp/*.config.js"
+        "portal/scripts/*.js",
+        "portal/*.config.js"
       ],
       "extends": [
         "bloq/next",
@@ -18,7 +18,7 @@
         "hemi-viem-stake-actions/**/*.{js,ts}",
         "packages/**/**/*.{js,ts,tsx}",
         "ui-common/**/*.{js,ts,tsx}",
-        "webapp/**/*.{js,ts,tsx}"
+        "portal/**/*.{js,ts,tsx}"
       ],
       "rules": {
         "@typescript-eslint/no-shadow": "error",
@@ -32,7 +32,7 @@
       },
       "settings": {
         "next": {
-          "rootDir": ["webapp"]
+          "rootDir": ["portal"]
         }
       }
     },
@@ -41,8 +41,8 @@
       "files": [
         "staking-points/**/*.js",
         "token-prices/**/*.js",
-        "webapp/scripts/*.js",
-        "webapp/*.config.js"
+        "portal/scripts/*.js",
+        "portal/*.config.js"
       ]
     },
     {

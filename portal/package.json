@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "portal",
   "version": "1.0.0",
   "scripts": {
     "build": "next build",

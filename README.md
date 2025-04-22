@@ -7,8 +7,7 @@ A comprehensive collection of UI components and utilities for blockchain applica
 This monorepo contains the following packages:
 
 - **@hemilabs/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported)
-- **@hemilabs/sliding-block-window**: UI components for block visualization and walkthrough of block ranges
-- **@hemilabs/webapp**: Portal app living at [https://app.hemi.xyz](https://app.hemi.xyz)
+- **portal**: Portal app living at [https://app.hemi.xyz](https://app.hemi.xyz)
 
 ## Deployment
 

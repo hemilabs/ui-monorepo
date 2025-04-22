@@ -10,7 +10,7 @@ Proceed with this tutorial only when the token is available in a released versio
 
 ## Step 1 - Bump the Token List package version
 
-Update the [hemilabs/token-list](https://github.com/hemilabs/token-list) package version in `webapp/package.json` file for the version that have the token you want to add to stake.
+Update the [hemilabs/token-list](https://github.com/hemilabs/token-list) package version in `portal/package.json` file for the version that have the token you want to add to stake.
 
 ```jsonc
 "dependencies": {
@@ -26,7 +26,7 @@ Update the [hemilabs/token-list](https://github.com/hemilabs/token-list) package
 Add the new token to the [stakeTokens.ts](../tokenList/stakeTokens.ts) file in the `stakeWhiteList` object and under the appropriate chain id (mainnet or testnet) as shown below:
 
 ```ts
-// webapp/tokenList/stakeTokens.ts
+// portal/tokenList/stakeTokens.ts
 
 export const stakeWhiteList: Partial<
   Record<Token['chainId'], Record<string, StakeExtensions>>
@@ -51,7 +51,7 @@ export const stakeWhiteList: Partial<
 If the new token protocol is not already in the [protocolImages.ts](../app/[locale]/stake/protocols/protocolImages.ts) file you need to add the protocol logo image to the [/stake/protocols/images](../app/[locale]/stake/protocols/images) folder and add it to the `protocolImages` list as below:
 
 ```ts
-// webapp/app/[locale]/stake/protocols/protocolImages.ts
+// portal/app/[locale]/stake/protocols/protocolImages.ts
 
 import satoshi from './images/satoshi.png'
 
@@ -69,7 +69,7 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
 If the new token you added have rewards that are not already in the [tokenRewards.tsx](../app/[locale]/stake/_components/tokenRewards.tsx) list you must add the icon image file to the [rewards icons](../app/[locale]/stake/_components/icons) folder and create the reward points tag component as follows:
 
 ```ts
-// webapp/app/[locale]/stake/_components/pointsTag.tsx
+// portal/app/[locale]/stake/_components/pointsTag.tsx
 
 import { SatoshiPointsIcon } from './icons/satoshiPointsIcon'
 
@@ -88,7 +88,7 @@ export const SatoshiPoints = () => (
 After that you just need to add the reward points tag component to the [tokenRewards.tsx](../app/[locale]/stake/_components/tokenRewards.tsx) list:
 
 ```ts
-// webapp/app/[locale]/stake/_components/tokenRewards.tsx
+// portal/app/[locale]/stake/_components/tokenRewards.tsx
 
 import {
   ...

@@ -1,4 +1,4 @@
-# Webapp
+# Portal
 
 ## Project setup
 

@@ -85,7 +85,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: npx lerna run deploy --scope=app
+    - run: npx lerna run deploy --scope=portal
       shell: bash
       name: Build site
       env:
@@ -114,7 +114,7 @@ runs:
       id: portal_build
       uses: andstor/file-existence-action@v3
       with:
-        files: ./webapp/out/
+        files: ./portal/out/
     # folder should only exist if portal was built
     - if: steps.portal_build.outputs.files_exists == 'true'
       name: Copy portal files to Hostinger
@@ -124,7 +124,7 @@ runs:
         key: ${{ inputs.HOSTINGER_SSH_KEY }}
         port: ${{ inputs.HOSTINGER_PORT }}
         rm: true
-        source: webapp/out/*
+        source: portal/out/*
         strip_components: 2
         target: ${{ inputs.HOSTINGER_TARGET }}
         username: ${{ inputs.HOSTINGER_USER }}

@@ -20,7 +20,7 @@ const getDomain = function (url) {
 // For security reasons, we need set the Content-Security-Policy to only fetch to these domains
 // or only download from these domains. Ideally, we would read from viem/hemi-viem, but there's a conflict
 // between ESM and commonjs (hemi-viem is esm-only and this runs in a commonjs context). Plus, as we can override
-// the RPC urls, we would need to import from webapp/networks/* which uses the import syntax, but is transpiled
+// the RPC urls, we would need to import from portal/networks/* which uses the import syntax, but is transpiled
 // to commonJs per nextjs... Making this whole thing very complex. As not to lose more time with this
 // (I already tried using node with custom loaders, ts-node, tsx, etc), I'm just hardcoding the domains here.
 

@@ -1,4 +1,4 @@
-import { locales } from 'app/i18n'
+import { locales } from 'i18n/routing'
 import { Metadata } from 'next'
 import { ReactNode } from 'react'
 

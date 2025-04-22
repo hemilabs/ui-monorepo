@@ -1,5 +1,5 @@
-import { tokenList } from 'app/tokenList'
 import { useMemo } from 'react'
+import { tokenList } from 'tokenList'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { isTunnelToken } from 'utils/token'

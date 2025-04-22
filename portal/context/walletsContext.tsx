@@ -1,4 +1,4 @@
-import { type Locale } from 'app/i18n'
+import { type Locale } from 'i18n/routing'
 
 import { BtcWalletContext } from './btcWalletContext'
 import { EvmWalletContext } from './evmWalletContext'

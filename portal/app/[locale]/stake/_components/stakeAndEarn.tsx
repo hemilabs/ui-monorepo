@@ -1,6 +1,6 @@
 'use client'
 
-import { Locale } from 'app/i18n'
+import { Locale } from 'i18n/routing'
 import { useLocale } from 'next-intl'
 import { ReactElement } from 'react'
 

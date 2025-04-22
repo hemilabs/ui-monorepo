@@ -1,7 +1,7 @@
 import {
   nativeTokens,
   NativeTokenSpecialAddressOnL2,
-} from 'app/tokenList/nativeTokens'
+} from 'tokenList/nativeTokens'
 import { Token } from 'types/token'
 import { isAddress, isAddressEqual, zeroAddress } from 'viem'
 

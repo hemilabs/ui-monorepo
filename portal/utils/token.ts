@@ -1,4 +1,4 @@
-import { tokenList } from 'app/tokenList/'
+import { tokenList } from 'tokenList'
 import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
 import { EvmToken, Token } from 'types/token'
 import { type Chain, isAddress, isAddressEqual } from 'viem'

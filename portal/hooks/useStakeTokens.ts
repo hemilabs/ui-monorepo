@@ -1,5 +1,5 @@
-import { tokenList } from 'app/tokenList'
 import { useMemo } from 'react'
+import { tokenList } from 'tokenList'
 import { StakeToken } from 'types/stake'
 import { isStakeEnabledOnTestnet } from 'utils/stake'
 import { isStakeToken } from 'utils/token'

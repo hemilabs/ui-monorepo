@@ -9,8 +9,7 @@ import dynamic from 'next/dynamic'
 import { Badge } from './navbar/_components/badge'
 
 const WalletConnection = dynamic(
-  () =>
-    import('app/components/connectWallets').then(mod => mod.WalletConnection),
+  () => import('components/connectWallets').then(mod => mod.WalletConnection),
   {
     loading: () => <div className="ml-auto" />,
     ssr: false,

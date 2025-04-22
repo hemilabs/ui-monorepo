@@ -2,6 +2,7 @@ import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { WarningBox } from 'components/warningBox'
 import { useBitcoin } from 'hooks/useBitcoin'
+import { useChain } from 'hooks/useChain'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
@@ -17,6 +18,7 @@ import { useAccount } from 'wagmi'
 import { ConfirmBtcDeposit } from '../confirmBtcDeposit'
 import { RetryBtcDeposit } from '../retryBtcDeposit'
 
+import { ChainLabel } from './chainLabel'
 import { Operation } from './operation'
 
 const getCallToAction = function (deposit: BtcDepositOperation) {
@@ -55,6 +57,7 @@ const ReviewContent = function ({
     overEstimation: 1.5,
   })
   const hemi = useHemi()
+  const l2chain = useChain(deposit.l2ChainId)
 
   // Fees for bitcoin deposit
   const { feePrices } = useGetFeePrices()
@@ -92,7 +95,13 @@ const ReviewContent = function ({
     }
 
     return {
-      description: t('initiate-deposit'),
+      description: (
+        <ChainLabel
+          active={depositStatus === BtcDepositStatus.BTC_TX_PENDING}
+          chainId={bitcoin.id}
+          label={t('start-on', { networkName: bitcoin.name })}
+        />
+      ),
       explorerChainId: deposit.l1ChainId,
       fees:
         [
@@ -131,7 +140,13 @@ const ReviewContent = function ({
     }
 
     return {
-      description: t('deposit-finalized'),
+      description: (
+        <ChainLabel
+          active={depositStatus === BtcDepositStatus.BTC_TX_CONFIRMED}
+          chainId={deposit.l2ChainId}
+          label={t('get-your-funds-on', { networkName: l2chain.name })}
+        />
+      ),
       status: statusMap[depositStatus] ?? ProgressStatus.NOT_READY,
     }
   }
@@ -152,7 +167,13 @@ const ReviewContent = function ({
     }
 
     return {
-      description: t('confirm-deposit'),
+      description: (
+        <ChainLabel
+          active={depositStatus === BtcDepositStatus.READY_TO_MANUAL_CONFIRM}
+          chainId={deposit.l2ChainId}
+          label={t('confirm-deposit-on', { networkName: l2chain.name })}
+        />
+      ),
       explorerChainId: deposit.l2ChainId,
       fees: showDepositConfirmationFees
         ? {

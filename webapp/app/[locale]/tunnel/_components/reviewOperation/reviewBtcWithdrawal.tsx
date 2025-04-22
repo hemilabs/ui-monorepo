@@ -18,6 +18,7 @@ import { formatUnits } from 'viem'
 import { ChallengeBtcWithdrawal } from '../challengeBtcWithdrawal'
 import { RetryBtcWithdraw } from '../retryBtcWithdraw'
 
+import { ChainLabel } from './chainLabel'
 import { Operation } from './operation'
 
 const getCallToAction = function (withdrawal: ToBtcWithdrawOperation) {
@@ -44,6 +45,7 @@ const ReviewContent = function ({
   withdrawal,
 }: Props & { fromToken: EvmToken }) {
   const fromChain = useChain(withdrawal.l2ChainId)
+  const toChain = useChain(withdrawal.l1ChainId)
   const bitcoinWithdrawalEstimatedFees = useEstimateFees({
     chainId: withdrawal.l2ChainId,
     operation: 'withdraw-btc',
@@ -80,7 +82,15 @@ const ReviewContent = function ({
     }
 
     return {
-      description: t('initiate-withdrawal'),
+      description: (
+        <ChainLabel
+          active={
+            withdrawal.status === BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING
+          }
+          chainId={withdrawal.l2ChainId}
+          label={t('start-on', { networkName: fromChain.name })}
+        />
+      ),
       explorerChainId: withdrawal.l2ChainId,
       fees: [
         BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
@@ -131,7 +141,13 @@ const ReviewContent = function ({
       return map[withdrawal.status]
     }
     return {
-      description: t('challenge-withdrawal'),
+      description: (
+        <ChainLabel
+          active={withdrawal.status === BtcWithdrawStatus.READY_TO_CHALLENGE}
+          chainId={withdrawal.l2ChainId}
+          label={t('get-funds-back', { networkName: fromChain.name })}
+        />
+      ),
       explorerChainId: withdrawal.l2ChainId,
       fees: [
         BtcWithdrawStatus.CHALLENGE_FAILED,
@@ -164,7 +180,13 @@ const ReviewContent = function ({
       [BtcWithdrawStatus.WITHDRAWAL_FAILED]: ProgressStatus.NOT_READY,
     }
     return {
-      description: t('withdraw-completed'),
+      description: (
+        <ChainLabel
+          active={withdrawal.status === BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED}
+          chainId={withdrawal.l1ChainId}
+          label={t('receive-funds-on', { networkName: toChain.name })}
+        />
+      ),
       status: status[withdrawal.status],
     }
   }

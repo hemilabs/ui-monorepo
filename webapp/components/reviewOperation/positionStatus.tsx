@@ -1,5 +1,8 @@
+import Image from 'next/image'
+
 import { ErrorIcon } from './_icons/errorIcon'
 import { OrangeCheckIcon } from './_icons/orangeCheckIcon'
+import gradientLoadingImg from './_images/gradient_loading.png'
 import { ProgressStatus } from './progressStatus'
 
 type Props = {
@@ -14,17 +17,24 @@ export const PositionStatus = function ({ position, status }: Props) {
   if (status === ProgressStatus.FAILED) {
     return <ErrorIcon />
   }
+
+  const isNotReady = status === ProgressStatus.NOT_READY
+  const isInProgress = status === ProgressStatus.PROGRESS
+
   return (
     <div
-      className={`flex aspect-square h-5 items-center justify-center rounded-full ${
-        status === ProgressStatus.NOT_READY
-          ? 'bg-neutral-300/55 text-neutral-500'
-          : 'bg-orange-500 text-white'
+      className={`relative h-5 w-5 rounded-full ${
+        isNotReady ? 'bg-neutral-300/50' : 'bg-orange-100'
       }`}
     >
-      <span className="flex-shrink-0 flex-grow-0 text-center lining-nums tabular-nums">
+      {isInProgress && <Image alt="Loading icon" src={gradientLoadingImg} />}
+      <div
+        className={`absolute inset-0 flex items-center justify-center text-[11px] font-medium leading-none ${
+          isNotReady ? 'text-neutral-500' : 'text-orange-500'
+        }`}
+      >
         {position}
-      </span>
+      </div>
     </div>
   )
 }

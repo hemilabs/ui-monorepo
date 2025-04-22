@@ -1,13 +1,10 @@
 import { DisplayAmount } from 'components/displayAmount'
-import { GreenCheckIcon } from 'components/icons/greenCheckIcon'
-import { RedErrorIcon } from 'components/icons/redErrorIcon'
 import { ShortVerticalLine, LongVerticalLine } from 'components/verticalLines'
 import { useTranslations } from 'next-intl'
 import { ComponentProps, ReactNode } from 'react'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 
-import { ClockIcon } from './_icons/clockIcon'
 import { FeesIcon } from './_icons/feesIcon'
 import { OneRowBox, TwoRowBox } from './box'
 import { PositionStatus } from './positionStatus'
@@ -17,7 +14,7 @@ import { Separator } from './separator'
 import { SubStep } from './subStep'
 
 type Props = {
-  description: string
+  description: ReactNode
   fees?:
     | {
         amount: string
@@ -37,7 +34,7 @@ type Props = {
 const Fees = ({ amount, token }: Props['fees']) => (
   <>
     <FeesIcon />
-    <div className="ml-1 text-neutral-950">
+    <div className="ml-1 text-neutral-500">
       <DisplayAmount amount={amount} showTokenLogo={false} token={token} />
     </div>
   </>
@@ -54,7 +51,7 @@ const Completed = function ({
   return (
     <>
       <div className="left-2.25 absolute top-0.5">
-        <ShortVerticalLine stroke="stroke-orange-500" />
+        <ShortVerticalLine dashed={false} stroke="stroke-orange-500" />
       </div>
       <div className="mt-4">
         <PositionStatus position={position} status={ProgressStatus.COMPLETED} />
@@ -63,7 +60,6 @@ const Completed = function ({
         bottom={
           txHash ? (
             <>
-              <GreenCheckIcon />
               <span className="mr-auto text-emerald-500">{t('confirmed')}</span>
               {explorerChainId && txHash && (
                 <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
@@ -72,7 +68,7 @@ const Completed = function ({
           ) : null
         }
         top={{
-          bgColor: 'bg-neutral-50',
+          bgColor: 'bg-white',
           children: (
             <span className="mr-auto text-neutral-600">{description}</span>
           ),
@@ -80,7 +76,7 @@ const Completed = function ({
       />
       {!!postAction && (
         <div className="left-2.25 absolute bottom-6">
-          <LongVerticalLine stroke="stroke-orange-500" />
+          <LongVerticalLine dashed={false} stroke="stroke-orange-500" />
         </div>
       )}
     </>
@@ -95,7 +91,7 @@ const NotReady = ({ description, position, postAction }: Props) => (
     <div className="mt-4">
       <PositionStatus position={position} status={ProgressStatus.NOT_READY} />
     </div>
-    <OneRowBox bgColor="bg-neutral-100">
+    <OneRowBox bgColor="bg-white">
       <span className="text-neutral-600">{description}</span>
     </OneRowBox>
     {!!postAction && (
@@ -118,7 +114,7 @@ const Progress = function ({
   return (
     <>
       <div className="left-2.25 absolute top-0.5">
-        <ShortVerticalLine stroke="stroke-orange-500" />
+        <ShortVerticalLine dashed={false} stroke="stroke-orange-500" />
       </div>
       <div className="mt-4">
         <PositionStatus position={position} status={ProgressStatus.PROGRESS} />
@@ -126,7 +122,6 @@ const Progress = function ({
       <TwoRowBox
         bottom={
           <>
-            <ClockIcon />
             <span className="mr-auto text-neutral-500">{t('pending')}</span>
             {explorerChainId && txHash && (
               <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
@@ -155,7 +150,7 @@ const Progress = function ({
 const Ready = ({ description, fees, position, postAction }: Props) => (
   <>
     <div className="left-2.25 absolute top-0.5">
-      <ShortVerticalLine stroke="stroke-orange-500" />
+      <ShortVerticalLine dashed={false} stroke="stroke-orange-500" />
     </div>
     <div className="mt-4">
       <PositionStatus position={position} status={ProgressStatus.READY} />
@@ -184,7 +179,7 @@ const Failed = function ({
   return (
     <>
       <div className="left-2.25 absolute top-0.5">
-        <ShortVerticalLine stroke="stroke-orange-500" />
+        <ShortVerticalLine dashed={false} stroke="stroke-rose-500" />
       </div>
       <div className="mt-4">
         <PositionStatus position={position} status={ProgressStatus.FAILED} />
@@ -193,7 +188,6 @@ const Failed = function ({
         bottom={
           txHash ? (
             <>
-              <RedErrorIcon />
               <span className="mr-auto text-rose-500">{t('error')}</span>
               {explorerChainId && txHash && (
                 <SeeOnExplorer chainId={explorerChainId} txHash={txHash} />
@@ -225,7 +219,7 @@ const Rejected = function ({ description, fees, position, postAction }: Props) {
   return (
     <>
       <div className="left-2.25 absolute top-0.5">
-        <ShortVerticalLine stroke="stroke-orange-500" />
+        <ShortVerticalLine dashed={false} stroke="stroke-orange-500" />
       </div>
       <div className="mt-4">
         <PositionStatus position={position} status={ProgressStatus.REJECTED} />
@@ -233,7 +227,6 @@ const Rejected = function ({ description, fees, position, postAction }: Props) {
       <TwoRowBox
         bottom={
           <>
-            <RedErrorIcon />
             <span className="mr-auto text-rose-500">{t('rejected')}</span>
           </>
         }

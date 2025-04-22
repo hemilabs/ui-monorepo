@@ -2,8 +2,8 @@
 
 import { Button } from 'components/button'
 import { useTranslations } from 'next-intl'
-import { type FormEvent, useContext, useEffect } from 'react'
-import { ToEvmWithdrawOperation } from 'types/tunnel'
+import { type FormEvent, useContext } from 'react'
+import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 
 import { ToEvmWithdrawalContext } from '../_context/toEvmWithdrawalContext'
 import { useClaimTransaction } from '../_hooks/useClaimTransaction'
@@ -15,50 +15,29 @@ type Props = {
 }
 
 export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
-  const {
-    claimWithdrawal,
-    claimWithdrawalReceipt,
-    claimWithdrawalReceiptError,
-    claimWithdrawalError,
-    isReadyToClaim,
-  } = useClaimTransaction(withdrawal)
   const [operationStatus, setOperationStatus] = useContext(
     ToEvmWithdrawalContext,
   )
+
+  const { mutate: claimWithdrawal } = useClaimTransaction({
+    on(emitter) {
+      emitter.on('user-signed-finalize-error', () =>
+        setOperationStatus('rejected'),
+      )
+      emitter.on('finalize-transaction-succeeded', () =>
+        setOperationStatus('idle'),
+      )
+      emitter.on('finalize-transaction-reverted', () =>
+        setOperationStatus('failed'),
+      )
+      emitter.on('unexpected-error', () => setOperationStatus('failed'))
+    },
+    withdrawal,
+  })
+
   const t = useTranslations('tunnel-page.submit-button')
 
   const isClaiming = operationStatus === 'claiming'
-
-  useEffect(
-    function clearAfterSuccessfulClaim() {
-      if (
-        claimWithdrawalReceipt?.status !== 'success' ||
-        operationStatus !== 'claiming'
-      ) {
-        return
-      }
-      setOperationStatus('idle')
-    },
-    [claimWithdrawalReceipt, operationStatus, setOperationStatus],
-  )
-
-  useEffect(
-    function handleUserRejection() {
-      if (claimWithdrawalError && isClaiming) {
-        setOperationStatus('rejected')
-      }
-    },
-    [claimWithdrawalError, isClaiming, setOperationStatus],
-  )
-
-  useEffect(
-    function handleTransactionFailure() {
-      if (claimWithdrawalReceiptError && isClaiming) {
-        setOperationStatus('failed')
-      }
-    },
-    [claimWithdrawalReceiptError, isClaiming, setOperationStatus],
-  )
 
   const handleClaim = function (e: FormEvent) {
     e.preventDefault()
@@ -75,6 +54,8 @@ export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
     }
     return 'claim-withdrawal'
   }
+
+  const isReadyToClaim = withdrawal.status === MessageStatus.READY_FOR_RELAY
 
   return (
     <DrawerCallToAction

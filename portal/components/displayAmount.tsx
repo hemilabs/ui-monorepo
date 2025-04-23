@@ -24,9 +24,9 @@ type Props = {
 }
 
 export const DisplayAmount = function ({
+  amount,
   amountContainer: AmountContainer = DefaultTextContainer,
   container: Container = Fragment,
-  amount,
   showSymbol = true,
   showTokenLogo = true,
   symbolContainer: SymbolContainer = DefaultTextContainer,

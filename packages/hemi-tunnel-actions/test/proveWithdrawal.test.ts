@@ -13,8 +13,8 @@ vi.mock('viem/op-stack', async function (importOriginal) {
 })
 
 const createL2PublicClient = ({
-  getTransactionReceipt = vi.fn().mockResolvedValue({ status: 'success' }),
   buildProveWithdrawal = vi.fn().mockResolvedValue({}),
+  getTransactionReceipt = vi.fn().mockResolvedValue({ status: 'success' }),
 } = {}): PublicClient =>
   ({
     extend: vi.fn().mockReturnValue({

@@ -80,7 +80,7 @@ export const useWithdraw = function ({
         l2WalletClient: hemiWalletClient,
       }
 
-      const { promise, emitter } = withdrawingNative
+      const { emitter, promise } = withdrawingNative
         ? initiateWithdrawEth(args)
         : initiateWithdrawErc20(args)
 

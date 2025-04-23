@@ -47,7 +47,7 @@ export const watchEvmDeposit = async function (deposit: EvmDepositOperation) {
     deposit.transactionHash,
     deposit.l1ChainId,
   )
-  const { newStatus, l2TransactionHash } = await calculateNewStatus({
+  const { l2TransactionHash, newStatus } = await calculateNewStatus({
     deposit,
     receipt,
   })

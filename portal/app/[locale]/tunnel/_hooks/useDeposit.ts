@@ -60,7 +60,7 @@ export const useDeposit = function ({
   )
 
   const { addDepositToTunnelHistory, updateDeposit } = useTunnelHistory()
-  const { updateTxHash, txHash: currentTxHash } = useTunnelOperation()
+  const { txHash: currentTxHash, updateTxHash } = useTunnelOperation()
   const { track } = useUmami()
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     fromToken.chainId,
@@ -81,7 +81,7 @@ export const useDeposit = function ({
     mutationFn: function runDeposit() {
       track?.('evm - dep started', { chain: networkType })
 
-      const { promise, emitter } = depositingNative
+      const { emitter, promise } = depositingNative
         ? depositEth({
             account: address,
             amount,

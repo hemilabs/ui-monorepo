@@ -49,8 +49,8 @@ export const StakeOperation = function ({
   closeDrawer,
   heading,
   onOperationChange,
-  subheading,
   showTabs,
+  subheading,
   token,
 }: Props) {
   const { address } = useAccount()

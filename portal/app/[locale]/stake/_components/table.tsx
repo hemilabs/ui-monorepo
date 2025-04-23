@@ -1,8 +1,8 @@
 import { ComponentProps } from 'react'
 
 export const ColumnHeader = ({
-  className = '',
   children,
+  className = '',
   style,
 }: ComponentProps<'th'>) => (
   <th

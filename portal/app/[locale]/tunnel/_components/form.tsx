@@ -39,16 +39,16 @@ export const FormContent = function ({
   tunnelState,
 }: FormContentProps) {
   const {
-    fromNetworkId,
     fromInput,
+    fromNetworkId,
     fromToken,
-    updateFromNetwork,
-    updateFromInput,
-    updateFromToken,
-    toNetworkId,
-    updateToNetwork,
     toggleInput,
+    toNetworkId,
     toToken,
+    updateFromInput,
+    updateFromNetwork,
+    updateFromToken,
+    updateToNetwork,
   } = tunnelState
 
   const [customTokenAddress] = useCustomTokenAddress()
@@ -140,10 +140,10 @@ type TunnelFormProps = {
 }
 
 export const TunnelForm = ({
+  belowForm,
   bottomSection,
   formContent,
   onSubmit,
-  belowForm,
   submitButton,
 }: TunnelFormProps) => (
   <div className="relative mx-auto max-w-[536px] [&>.card-container]:first:relative [&>.card-container]:first:z-10">

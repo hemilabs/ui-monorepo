@@ -13,7 +13,7 @@ type Props = {
   token: Token
 }
 
-export const CustomTokenLogo = ({ token, size }: Props) => (
+export const CustomTokenLogo = ({ size, token }: Props) => (
   <>
     <div
       className={`flex items-center justify-center rounded-full ${sizes[size]} overflow-hidden text-ellipsis whitespace-nowrap

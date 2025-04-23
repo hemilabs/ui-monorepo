@@ -34,7 +34,7 @@ import { WithdrawStatus } from './withdrawStatus'
 // Note: There's a file "transactionHistory.css" whose imports comes from app/styles/global.css
 // with some classes defined there to avoid very long classes definitions in the HTML classNames
 
-const ColumnHeader = ({ className = '', children }: ComponentProps<'th'>) => (
+const ColumnHeader = ({ children, className = '' }: ComponentProps<'th'>) => (
   <th
     className={`border-color-neutral/55 transaction-history-cell ${className} h-8 border-b
     border-t border-solid bg-neutral-50 font-medium first:rounded-l-lg first:border-l last:rounded-r-lg
@@ -137,9 +137,9 @@ const Body = function ({
 }
 
 const TimeHeader = ({
-  text,
   filterOption,
   setFilterOption,
+  text,
 }: {
   text: string
   filterOption: FilterOptions
@@ -157,9 +157,9 @@ const TimeHeader = ({
 )
 
 const TypeHeader = function ({
-  t,
   filterOption,
   setFilterOption,
+  t,
 }: {
   t: ReturnType<typeof useTranslations<'tunnel-page.transaction-history'>>
   filterOption: FilterOptions
@@ -215,9 +215,9 @@ const TypeHeader = function ({
 }
 
 const ActionHeader = function ({
-  t,
   filterOption,
   setFilterOption,
+  t,
 }: {
   t: ReturnType<typeof useTranslations<'tunnel-page.transaction-history'>>
   filterOption: FilterOptions
@@ -400,8 +400,8 @@ type TableProps = {
 export const Table = function ({
   containerRef,
   data,
-  loading,
   filterOption,
+  loading,
   setFilterOption,
 }: TableProps) {
   const t = useTranslations('tunnel-page.transaction-history')

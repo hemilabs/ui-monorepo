@@ -52,7 +52,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
   const { evmAddress } = useAccounts()
   const bitcoin = useBitcoin()
   const { balance } = useBalance()
-  const { minDepositFormattedSats, isPending: isMinDepositsSatsLoading } =
+  const { isPending: isMinDepositsSatsLoading, minDepositFormattedSats } =
     useMinDepositSats()
   const [networkType] = useNetworkType()
   const { track } = useUmami()

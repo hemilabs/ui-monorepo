@@ -47,8 +47,8 @@ type Props = {
 export const UnstakeOperation = function ({
   closeDrawer,
   heading,
-  subheading,
   onOperationChange,
+  subheading,
   token,
 }: Props) {
   const [amount, setAmount] = useAmount()
@@ -61,7 +61,7 @@ export const UnstakeOperation = function ({
     useStakedBalance(token)
   const t = useTranslations('stake-page.drawer')
   const tCommon = useTranslations('common')
-  const { isSubmitting, unstakeStatus, unStakeTransactionHash, unstake } =
+  const { isSubmitting, unstake, unstakeStatus, unStakeTransactionHash } =
     useUnstake(token)
 
   const canUnstake =

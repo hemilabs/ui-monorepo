@@ -15,8 +15,8 @@ export const useTotalStaked = function () {
 
   const {
     data: totalPerToken = [],
-    isPending: isLoadingTotalStaked,
     isError,
+    isPending: isLoadingTotalStaked,
   } = useQuery({
     queryFn: () => getTotalStaked(hemi.id),
     queryKey: ['total-staked', hemi.id],

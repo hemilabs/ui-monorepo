@@ -7,7 +7,7 @@ type Props = {
     | 'stroke-rose-500'
 }
 
-export const ShortVerticalLine = ({ stroke, dashed = true }: Props) => (
+export const ShortVerticalLine = ({ dashed = true, stroke }: Props) => (
   <svg fill="none" height="24" viewBox="0 0 2 24" width="2">
     <path
       className={stroke}
@@ -17,7 +17,7 @@ export const ShortVerticalLine = ({ stroke, dashed = true }: Props) => (
   </svg>
 )
 
-export const LongVerticalLine = ({ stroke, dashed = true }: Props) => (
+export const LongVerticalLine = ({ dashed = true, stroke }: Props) => (
   <svg fill="none" height="68" viewBox="0 0 2 68" width="2">
     <path
       className={stroke}

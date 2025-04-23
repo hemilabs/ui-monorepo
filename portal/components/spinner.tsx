@@ -7,9 +7,9 @@ type SpinnerProps = {
 }
 
 export const Spinner = function ({
-  size = 'medium',
-  color = '#FFF7F0',
   className = '',
+  color = '#FFF7F0',
+  size = 'medium',
 }: SpinnerProps) {
   // IMPORTANT: We generate a unique ID for each spinner instance using React's useId() hook.
   // This ensures that when multiple spinners are used on the same page, each has its own

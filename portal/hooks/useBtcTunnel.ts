@@ -43,10 +43,10 @@ export const useConfirmBitcoinDeposit = function (
   const { updateDeposit } = useTunnelHistory()
 
   const {
-    error: confirmBitcoinDepositError,
-    reset: resetConfirmBitcoinDeposit,
-    mutate: confirmBitcoinDeposit,
     data: confirmBitcoinDepositTxHash,
+    error: confirmBitcoinDepositError,
+    mutate: confirmBitcoinDeposit,
+    reset: resetConfirmBitcoinDeposit,
   } = useMutation({
     mutationFn: () =>
       confirmBtcDeposit({
@@ -140,14 +140,14 @@ export const useDepositBitcoin = function () {
   const deposits = useBtcDeposits()
   const hemiClient = useHemiClient()
   const { addDepositToTunnelHistory, updateDeposit } = useTunnelHistory()
-  const { updateTxHash, txHash: currentTxHash } = useTunnelOperation()
+  const { txHash: currentTxHash, updateTxHash } = useTunnelOperation()
   const queryClient = useQueryClient()
 
   const {
-    error: depositError,
-    reset: resetSendBitcoin,
-    mutate: depositBitcoin,
     data: depositResponse,
+    error: depositError,
+    mutate: depositBitcoin,
+    reset: resetSendBitcoin,
   } = useMutation({
     mutationFn: ({
       hemiAddress,
@@ -280,10 +280,10 @@ export const useWithdrawBitcoin = function () {
   const withdrawals = useBtcWithdrawals()
 
   const {
-    error: withdrawError,
-    reset: resetWithdrawBitcoin,
-    mutate: withdrawBitcoin,
     data: withdrawTxHash,
+    error: withdrawError,
+    mutate: withdrawBitcoin,
+    reset: resetWithdrawBitcoin,
   } = useMutation({
     mutationFn: ({
       amount,

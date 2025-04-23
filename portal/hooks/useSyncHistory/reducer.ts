@@ -129,7 +129,7 @@ export const historyReducer = function (
         }
       }
       case 'update-withdraw': {
-        const { withdraw, updates } = action.payload
+        const { updates, withdraw } = action.payload
         const withdrawals = updateOperation(state.withdrawals, {
           operation: withdraw,
           updates,

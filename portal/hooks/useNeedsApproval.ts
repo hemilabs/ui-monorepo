@@ -15,8 +15,8 @@ export const useNeedsApproval = function ({
 
   const {
     data: allowance = BigInt(0),
-    isLoading,
     isError,
+    isLoading,
     queryKey: allowanceQueryKey,
     status: allowanceStatus,
   } = useAllowance(address, {

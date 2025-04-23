@@ -20,8 +20,8 @@ type Props = {
 export const ConfirmBtcDeposit = function ({ deposit }: Props) {
   const {
     confirmBitcoinDeposit,
-    confirmBitcoinDepositReceipt,
     confirmBitcoinDepositError,
+    confirmBitcoinDepositReceipt,
     confirmBitcoinDepositReceiptError,
   } = useConfirmBitcoinDeposit(deposit)
 

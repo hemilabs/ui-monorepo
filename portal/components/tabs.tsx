@@ -20,8 +20,8 @@ const tabIsLink = (value: Button | Anchor): value is Anchor =>
   (value as Anchor).href !== undefined
 
 export const Tab = function ({
-  children,
   border = false,
+  children,
   disabled = false,
   selected = false,
   ...props

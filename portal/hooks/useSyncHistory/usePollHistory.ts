@@ -6,8 +6,8 @@ import { HistoryActions, HistoryReducerState } from './types'
 
 export const usePollHistory = function ({
   chainId,
-  history,
   dispatch,
+  history,
 }: {
   chainId: Chain['id']
   history: HistoryReducerState

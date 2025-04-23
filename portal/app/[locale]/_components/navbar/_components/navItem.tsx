@@ -12,9 +12,9 @@ import {
   useNetworkType,
 } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
+import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
-import { usePathname } from 'i18n/navigation'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { ComponentProps, RefObject, ReactNode, useState } from 'react'
 import { UrlObject } from 'url'
 import { isRelativeUrl } from 'utils/url'
@@ -133,15 +133,14 @@ const PageLink = function ({
   text,
   urlToBeSelected = href,
 }: ItemLinkProps) {
-  const locale = useLocale()
   const [networkType] = useNetworkType()
-  const pathname = usePathname()
+  const pathname = usePathnameWithoutLocale()
   const { track } = useUmami()
 
   const selected =
     typeof urlToBeSelected === 'string'
-      ? pathname.startsWith(`/${locale}${urlToBeSelected}`)
-      : pathname.startsWith(`/${locale}${urlToBeSelected.pathname}`)
+      ? pathname.startsWith(urlToBeSelected)
+      : pathname.startsWith(urlToBeSelected.pathname)
 
   return (
     <ItemContainer

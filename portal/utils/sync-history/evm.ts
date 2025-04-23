@@ -8,6 +8,7 @@ import {
 } from 'utils/subgraph'
 
 import { chainConfiguration } from './chainConfiguration'
+import { calculateSkip } from './common'
 import { type HistorySyncer } from './types'
 
 export const createEvmSync = function ({
@@ -27,7 +28,7 @@ export const createEvmSync = function ({
     const shouldQueryDeposits = (limit: number, depositsAmount: number) =>
       limit === depositsAmount
 
-    const fromBlock =
+    const initialFromBlock =
       depositsSyncInfo.fromBlock ??
       // or the oldest block configured for this chain, if it is the first time
       chainConfiguration[l1Chain.id].minBlockToSync ??
@@ -43,9 +44,11 @@ export const createEvmSync = function ({
     // https://github.com/graphprotocol/graph-node/issues/1309
     await pDoWhilst(
       async function ({
+        fromBlock,
         limit,
         skip,
       }: {
+        fromBlock: number
         deposits: EvmDepositOperation[]
         limit: number
         skip: number
@@ -76,12 +79,17 @@ export const createEvmSync = function ({
 
         return {
           deposits: newDeposits,
+          fromBlock,
           limit,
-          skip: skip + limit,
+          ...calculateSkip({
+            limit,
+            operations: newDeposits,
+            skip,
+          }),
         }
       },
       ({ deposits, limit }) => shouldQueryDeposits(limit, deposits.length),
-      { deposits: [], limit: 100, skip: 0 },
+      { deposits: [], fromBlock: initialFromBlock, limit: 100, skip: 0 },
     )
   }
 
@@ -94,7 +102,7 @@ export const createEvmSync = function ({
     const shouldQueryWithdrawals = (limit: number, withdrawalsAmount: number) =>
       limit === withdrawalsAmount
 
-    const fromBlock =
+    const initialFromBlock =
       withdrawalsSyncInfo.fromBlock ??
       // or the oldest block configured for this chain, if it is the first time
       chainConfiguration[l2Chain.id].minBlockToSync ??
@@ -110,9 +118,11 @@ export const createEvmSync = function ({
     // https://github.com/graphprotocol/graph-node/issues/1309
     await pDoWhilst(
       async function ({
+        fromBlock,
         limit,
         skip,
       }: {
+        fromBlock: number
         limit: number
         skip: number
         withdrawals: ToEvmWithdrawOperation[]
@@ -149,14 +159,20 @@ export const createEvmSync = function ({
         })
 
         return {
+          fromBlock,
           limit,
-          skip: skip + limit,
           withdrawals: newWithdrawals,
+          ...calculateSkip({
+            limit,
+            operations: newWithdrawals,
+            skip,
+          }),
         }
       },
       ({ limit, withdrawals }) =>
         shouldQueryWithdrawals(limit, withdrawals.length),
       {
+        fromBlock: initialFromBlock,
         limit: withdrawalsPageSize,
         skip: withdrawalsSyncInfo.chunkIndex ?? 0,
         withdrawals: [],

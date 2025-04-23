@@ -36,6 +36,7 @@ import { getBtcWithdrawals, getLastIndexedBlock } from 'utils/subgraph'
 import { type Address, decodeFunctionData, type Hash, toHex } from 'viem'
 
 import { chainConfiguration } from './chainConfiguration'
+import { calculateSkip } from './common'
 import { createSlidingTransactionList } from './slidingTransactionList'
 import { type HistorySyncer } from './types'
 
@@ -275,7 +276,7 @@ export const createBitcoinSync = function ({
     const shouldQueryWithdrawals = (limit: number, withdrawalsAmount: number) =>
       limit === withdrawalsAmount
 
-    const fromBlock =
+    const initialFromBlock =
       withdrawalsSyncInfo.fromBlock ??
       // or the oldest block configured for this chain, if it is the first time
       chainConfiguration[l2Chain.id].minBlockToSync ??
@@ -292,9 +293,11 @@ export const createBitcoinSync = function ({
 
     await pDoWhilst(
       async function ({
+        fromBlock,
         limit,
         skip,
       }: {
+        fromBlock: number
         limit: number
         skip: number
         withdrawals: ToBtcWithdrawOperation[]
@@ -326,14 +329,20 @@ export const createBitcoinSync = function ({
         })
 
         return {
+          fromBlock,
           limit,
-          skip: skip + limit,
           withdrawals: newWithdrawals,
+          ...calculateSkip({
+            limit,
+            operations: newWithdrawals,
+            skip,
+          }),
         }
       },
       ({ limit, withdrawals }) =>
         shouldQueryWithdrawals(limit, withdrawals.length),
       {
+        fromBlock: initialFromBlock,
         limit: 100,
         skip: withdrawalsSyncInfo.chunkIndex ?? 0,
         withdrawals: [],

@@ -27,7 +27,13 @@ export const PositionStatus = function ({ position, status }: Props) {
         isNotReady ? 'bg-neutral-300/50' : 'bg-orange-100'
       }`}
     >
-      {isInProgress && <Image alt="Loading icon" src={gradientLoadingImg} />}
+      {isInProgress && (
+        <Image
+          alt="Loading icon"
+          className="animate-spin"
+          src={gradientLoadingImg}
+        />
+      )}
       <div
         className={`absolute inset-0 flex items-center justify-center text-[11px] font-medium leading-none ${
           isNotReady ? 'text-neutral-500' : 'text-orange-500'

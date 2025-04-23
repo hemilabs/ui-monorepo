@@ -30,7 +30,7 @@ export function SubStep({ description, status }: Props) {
           {isProgress && (
             <Image
               alt="Loading indicator"
-              className="object-contain"
+              className="animate-spin object-contain"
               fill
               priority
               src={gradientLoadingImg}

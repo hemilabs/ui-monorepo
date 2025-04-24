@@ -13,7 +13,6 @@ import { Hemi3xPointsIcon } from './icons/hemi3xPointsIcon'
 import { HemiPointsIcon } from './icons/hemiPointsIcon'
 import { KernelIcon } from './icons/kernelIcon'
 import { LorenzoPointsIcon } from './icons/lorenzoPointsIcon'
-import { PellPointsIcon } from './icons/PellPointsIcon'
 import { PumpBtcPointsIcon } from './icons/pumpBtcPointsIcon'
 import { SatoshiPointsIcon } from './icons/satoshiPointsIcon'
 import { SolvPointsIcon } from './icons/solvPointsIcon'
@@ -220,17 +219,6 @@ export const SatoshiPoints = () => (
     backgroundColor="bg-black"
     icon={<SatoshiPointsIcon />}
     label="points"
-    textColor="text-white"
-  />
-)
-
-export const PellPoints = () => (
-  <PointsTag
-    icon={<PellPointsIcon />}
-    label="points"
-    style={{
-      background: '#4C67EF',
-    }}
     textColor="text-white"
   />
 )

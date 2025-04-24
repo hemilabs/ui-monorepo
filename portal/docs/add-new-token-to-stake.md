@@ -37,7 +37,7 @@ export const stakeWhiteList: Partial<
         '0xb4818BB69478730EF4e33Cc068dD94278e2766cB': {
             protocol: 'satoshi',
             priceSymbol: 'usdc',
-            rewards: ['hemi3x', 'satoshi', 'pell'],
+            rewards: ['hemi3x', 'satoshi'],
             website: 'https://www.satoshiprotocol.org',
         },
         ...

@@ -1,12 +1,9 @@
 {
   "extends": ["bloq", "prettier"],
+  "ignorePatterns": ["subgraphs/**"],
   "overrides": [
     {
-      "excludedFiles": [
-        "subgraphs/**/*.ts",
-        "portal/scripts/*.js",
-        "portal/*.config.js"
-      ],
+      "excludedFiles": ["portal/scripts/*.js", "portal/*.config.js"],
       "extends": [
         "bloq/next",
         "next/core-web-vitals",
@@ -17,8 +14,8 @@
         "btc-wallet/**/*.{js,ts,tsx}",
         "hemi-viem-stake-actions/**/*.{js,ts}",
         "packages/**/**/*.{js,ts,tsx}",
-        "ui-common/**/*.{js,ts,tsx}",
-        "portal/**/*.{js,ts,tsx}"
+        "portal/**/*.{js,ts,tsx}",
+        "ui-common/**/*.{js,ts,tsx}"
       ],
       "rules": {
         "@typescript-eslint/no-shadow": "error",

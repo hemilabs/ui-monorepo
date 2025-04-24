@@ -1,5 +1,5 @@
 {
-  "name": "tunnel-deposits-subgraph",
+  "name": "hemi-tunnel-deposits-subgraph",
   "version": "1.0.0",
   "scripts": {
     "build": "graph build",

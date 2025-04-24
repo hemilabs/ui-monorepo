@@ -40,7 +40,6 @@ export type Reward =
   | 'hemi3x'
   | 'kernel'
   | 'lorenzo'
-  | 'pell'
   | 'pumpbtc'
   | 'satoshi'
   | 'solv'

@@ -41,7 +41,7 @@ const calculateTxSize = utxos =>
 
 export const useEstimateBtcFees = function (from: Account) {
   const { feePrices, isLoading: isLoadingFeePrices } = useGetFeePrices()
-  const { utxos, isLoading: isLoadingUtxos } = useGetUtxos(from)
+  const { isLoading: isLoadingUtxos, utxos } = useGetUtxos(from)
 
   const isLoading = isLoadingFeePrices || isLoadingUtxos
 

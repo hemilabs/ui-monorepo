@@ -2,8 +2,8 @@ import { TunnelOperation } from 'types/tunnel'
 
 export const calculateSkip = function ({
   limit,
-  skip,
   operations,
+  skip,
 }: {
   limit: number
   skip: number

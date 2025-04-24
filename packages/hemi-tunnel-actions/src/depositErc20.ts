@@ -66,10 +66,10 @@ const runDepositErc20 = ({
   approvalAmount,
   l1Chain,
   l1PublicClient,
+  l1TokenAddress,
   l1WalletClient,
   l2Chain,
   l2TokenAddress,
-  l1TokenAddress,
 }: {
   account: Address
   amount: bigint

@@ -54,7 +54,7 @@ const ReviewContent = function ({
     chainId: withdrawal.l2ChainId,
     operation: 'challenge-btc-withdrawal',
   })
-  const { vaultGracePeriod = BigInt(0), isLoading: isLoadingVaultGracePeriod } =
+  const { isLoading: isLoadingVaultGracePeriod, vaultGracePeriod = BigInt(0) } =
     useSimpleVaultGracePeriod()
   const t = useTranslations('tunnel-page.review-withdrawal')
   const tCommon = useTranslations('common')

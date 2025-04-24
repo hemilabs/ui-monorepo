@@ -29,12 +29,12 @@ export const Preview = function ({
   fees,
   isOperating,
   maxBalance,
-  setOperation,
+  operation,
   setAmount,
+  setOperation,
   showTabs,
   strategyDetails,
   submitButton,
-  operation,
   token,
 }: Props) {
   const t = useTranslations('common')

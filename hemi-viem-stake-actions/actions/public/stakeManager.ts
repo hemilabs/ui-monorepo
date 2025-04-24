@@ -19,7 +19,7 @@ export function stakedBalance(
   client: Client,
   parameters: { tokenAddress: Address; address: Address },
 ) {
-  const { tokenAddress, address } = parameters
+  const { address, tokenAddress } = parameters
   return readContract(client, {
     abi: stakeManagerAbi,
     // @ts-expect-error: TS is complaining about client.chain!.id definition, but this works

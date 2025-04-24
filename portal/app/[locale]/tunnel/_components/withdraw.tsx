@@ -80,7 +80,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     chainId: fromNetworkId,
     operation: 'withdraw-btc',
   })
-  const { minWithdrawalFormattedSats, isPending: isLoadingMinWithdrawalSats } =
+  const { isPending: isLoadingMinWithdrawalSats, minWithdrawalFormattedSats } =
     useMinWithdrawalSats(fromToken)
   const [networkType] = useNetworkType()
   const { balance: bitcoinBalance } = useTokenBalance(

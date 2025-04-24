@@ -27,12 +27,12 @@ type Props = {
 }
 
 export const DemoCard = function ({
+  altText,
   bgImage,
   event,
-  href,
-  altText,
   heading,
   headingColor,
+  href,
   icon,
   subHeading,
   subHeadingColor,

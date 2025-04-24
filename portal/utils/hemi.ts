@@ -100,8 +100,8 @@ export const getHemiStatusOfBtcDeposit = ({
  */
 const getIsBitcoinWithdrawalChallenged = ({
   hemiClient,
-  vaultIndex,
   uuid,
+  vaultIndex,
 }: {
   hemiClient: HemiPublicClient
   vaultIndex: number
@@ -122,8 +122,8 @@ const getIsBitcoinWithdrawalChallenged = ({
  */
 const getIsBitcoinWithdrawalFulfilled = ({
   hemiClient,
-  vaultIndex,
   uuid,
+  vaultIndex,
 }: {
   hemiClient: HemiPublicClient
   vaultIndex: number

@@ -68,9 +68,9 @@ export const SetMaxEvmBalance = function ({
 }
 
 export const SetMaxBtcBalance = function ({
-  token,
   disabled,
   onSetMaxBalance,
+  token,
 }: Props<BtcToken>) {
   const { address } = useBtcAccount()
   const { balance, isLoading: isLoadingBalance } = useBtcBalance()

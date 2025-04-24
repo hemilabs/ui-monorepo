@@ -5,10 +5,10 @@ import 'rc-tooltip/assets/bootstrap_white.css'
 
 export const Tooltip = function ({
   borderRadius = '4px',
-  disabled = false,
-  overlay,
   children,
+  disabled = false,
   id,
+  overlay,
   placement = 'top',
   trigger = ['click', 'hover', 'focus'],
 }: TooltipProps & { borderRadius?: '4px' | '12px'; disabled?: boolean }) {

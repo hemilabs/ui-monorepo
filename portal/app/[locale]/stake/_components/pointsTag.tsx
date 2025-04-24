@@ -47,8 +47,8 @@ type Props = {
 const PointsTag = function ({
   backgroundColor,
   borderColor = 'border-transparent',
-  label,
   icon,
+  label,
   style,
   textColor,
 }: Props) {

@@ -25,7 +25,7 @@ export const AddChainAutomatically = function ({ chain, layer }: Props) {
   const { chain: connectedChain, isConnected } = useAccount()
   const { data: walletClient } = useWalletClient()
 
-  const { status, mutate: addChain } = useMutation({
+  const { mutate: addChain, status } = useMutation({
     mutationFn: (c: Chain) => walletClient?.addChain({ chain: c }),
     onSuccess() {
       localStorage.setItem(

@@ -9,7 +9,7 @@ import hemiSocials from 'hemi-socials'
 import { useUmami } from 'hooks/useUmami'
 import React from 'react'
 
-const { discordUrl, linkedinUrl, githubUrl, twitterUrl, youtubeUrl } =
+const { discordUrl, githubUrl, linkedinUrl, twitterUrl, youtubeUrl } =
   hemiSocials
 
 const svgCss = '[&_path]:hover:fill-black'

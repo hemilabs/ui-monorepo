@@ -1,5 +1,6 @@
 {
   "name": "token-prices-api",
+  "version": "1.0.0",
   "dependencies": {
     "promise-limit-one": "1.1.0",
     "redis": "4.7.0"

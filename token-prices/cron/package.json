@@ -1,5 +1,6 @@
 {
   "name": "token-prices-cron",
+  "version": "1.0.0",
   "scripts": {
     "refresh-prices": "node src/refresh-prices.js"
   },

@@ -14,12 +14,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: |
+          version=$(jq -r '.version' ${{ matrix.context }}/package.json)
+          echo "VERSION=$version" >> $GITHUB_ENV
       - uses: ./.github/actions/docker-build-push
         with:
           context: ${{ matrix.context }}
           dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
           dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
           images: ${{ matrix.image }}
+          version: ${{ env.VERSION }}
     strategy:
       matrix:
         include:

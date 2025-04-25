@@ -8,8 +8,9 @@ import { Token } from 'types/token'
 import { Chevron } from '../icons/chevron'
 import { TokenLogo } from '../tokenLogo'
 
-const TokenList = dynamic(() =>
-  import('./tokenList').then(mod => mod.TokenList),
+const TokenList = dynamic(
+  () => import('./tokenList').then(mod => mod.TokenList),
+  { ssr: false },
 )
 
 type Props = {

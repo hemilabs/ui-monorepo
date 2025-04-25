@@ -2,14 +2,15 @@ import { useUmami } from 'app/analyticsEvents'
 import { ExternalLink } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { useNetworkType } from 'hooks/useNetworkType'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 
-import { BtcFaucetIcon } from './icons/btcFaucet'
-import { EthFaucetIcon } from './icons/ethFaucet'
-import { MoonPay } from './icons/moonPay'
-import { OkuDex } from './icons/okuDex'
-import { SushiDex } from './icons/sushiDex'
+import btcFaucet from './icons/btcFaucet.png'
+import ethFaucet from './icons/ethFaucet.png'
+import moonPay from './icons/moonPay.png'
+import okuDex from './icons/okuDex.png'
+import sushiDex from './icons/sushiDex.png'
 import { Section } from './section'
 
 const FundMethod = function ({
@@ -70,13 +71,29 @@ export const FundWallet = function () {
           <>
             <FundMethod
               event="ethereum faucet"
-              icon={<EthFaucetIcon />}
+              icon={
+                <Image
+                  alt="Eth Faucet icon"
+                  height={21}
+                  priority
+                  src={ethFaucet}
+                  width={21}
+                />
+              }
               name={t('ethereum-faucet')}
               url="https://sepolia-faucet.pk910.de"
             />
             <FundMethod
               event="bitcoin faucet"
-              icon={<BtcFaucetIcon />}
+              icon={
+                <Image
+                  alt="Btc Faucet icon"
+                  height={21}
+                  priority
+                  src={btcFaucet}
+                  width={21}
+                />
+              }
               name={t('bitcoin-faucet')}
               url="https://coinfaucet.eu/en/btc-testnet/"
             />
@@ -85,19 +102,43 @@ export const FundWallet = function () {
           <>
             <FundMethod
               event="fund wallet - sushi"
-              icon={<SushiDex />}
+              icon={
+                <Image
+                  alt="Sushi Dex logo"
+                  height={16}
+                  priority
+                  src={sushiDex}
+                  width={18}
+                />
+              }
               name={t('sushi-swap')}
               url="https://www.sushi.com/ethereum/swap"
             />
             <FundMethod
               event="fund wallet - oku"
-              icon={<OkuDex />}
+              icon={
+                <Image
+                  alt="Oku Dex logo"
+                  height={20}
+                  priority
+                  src={okuDex}
+                  width={20}
+                />
+              }
               name={t('oku')}
               url="https://oku.trade/app/ethereum/ramp"
             />
             <FundMethod
               event="fund wallet - moonpay"
-              icon={<MoonPay />}
+              icon={
+                <Image
+                  alt="Moonpay logo"
+                  height={20}
+                  priority
+                  src={moonPay}
+                  width={20}
+                />
+              }
               name={t('moonpay')}
               url="https://www.moonpay.com/"
             />

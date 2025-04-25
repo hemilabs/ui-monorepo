@@ -1,5 +1,4 @@
 import { Card } from 'components/card'
-import { SwitchToNetworkToast } from 'components/switchToNetworkToast'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelector } from 'components/tokenSelector'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
@@ -16,8 +15,18 @@ import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { NetworkSelectors } from './networkSelectors'
 
-const CustomTokenDrawer = dynamic(() =>
-  import('components/customTokenDrawer').then(mod => mod.CustomTokenDrawer),
+const CustomTokenDrawer = dynamic(
+  () =>
+    import('components/customTokenDrawer').then(mod => mod.CustomTokenDrawer),
+  { ssr: false },
+)
+
+const SwitchToNetworkToast = dynamic(
+  () =>
+    import('components/switchToNetworkToast').then(
+      mod => mod.SwitchToNetworkToast,
+    ),
+  { ssr: false },
 )
 
 type FormContentProps = {

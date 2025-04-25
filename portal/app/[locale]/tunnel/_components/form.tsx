@@ -16,8 +16,10 @@ import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { NetworkSelectors } from './networkSelectors'
 
-const CustomTokenDrawer = dynamic(() =>
-  import('components/customTokenDrawer').then(mod => mod.CustomTokenDrawer),
+const CustomTokenDrawer = dynamic(
+  () =>
+    import('components/customTokenDrawer').then(mod => mod.CustomTokenDrawer),
+  { ssr: false },
 )
 
 type FormContentProps = {

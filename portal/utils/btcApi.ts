@@ -5,7 +5,6 @@ import {
   Satoshis,
 } from 'btc-wallet/unisat'
 import camelCaseKeys from 'camelcase-keys'
-import { esploraClient } from 'esplora-client'
 import { NetworkType } from 'hooks/useNetworkType'
 
 const toCamelCase = <T extends Record<string, unknown>>(obj: T) =>
@@ -62,51 +61,64 @@ export const mapBitcoinNetwork = (network: BtcSupportedNetworks) =>
   network === 'livenet' ? 'mainnet' : 'testnet'
 
 export const createBtcApi = function (network: NetworkType) {
-  const { bitcoin } = esploraClient({ network })
+  const bitcoinPromise = import('esplora-client').then(
+    ({ esploraClient }) => esploraClient({ network }).bitcoin,
+  )
 
   // See https://mempool.space/docs/api/rest#get-address-transactions
   const getAddressTransactions = (
     address: Account,
     queryString?: { afterTxId: string },
   ) =>
-    bitcoin.addresses
-      .getAddressTxs({ address, after_txid: queryString?.afterTxId })
-      .then(txs =>
-        txs.map(tx => toCamelCase({ ...tx, txId: tx.txid })),
-      ) as Promise<MempoolJsBitcoinTransaction[]>
+    bitcoinPromise.then(
+      bitcoin =>
+        bitcoin.addresses
+          .getAddressTxs({ address, after_txid: queryString?.afterTxId })
+          .then(txs =>
+            txs.map(tx => toCamelCase({ ...tx, txId: tx.txid })),
+          ) as Promise<MempoolJsBitcoinTransaction[]>,
+    )
 
   // See https://mempool.space/docs/api/rest#get-address-utxo (we are converting to camelCase)
   const getAddressTxsUtxo = (address: Account) =>
-    bitcoin.addresses
-      .getAddressTxsUtxo({ address })
-      .then(utxos =>
-        utxos.map(utxo => toCamelCase({ ...utxo, txId: utxo.txid })),
-      ) as Promise<Utxo[]>
+    bitcoinPromise.then(
+      bitcoin =>
+        bitcoin.addresses
+          .getAddressTxsUtxo({ address })
+          .then(utxos =>
+            utxos.map(utxo => toCamelCase({ ...utxo, txId: utxo.txid })),
+          ) as Promise<Utxo[]>,
+    )
 
   // See https://mempool.space/docs/api/rest#get-recommended-fees
   const getRecommendedFees = () =>
-    bitcoin.fees.getFeesRecommended() as Promise<Fees>
+    bitcoinPromise.then(
+      bitcoin => bitcoin.fees.getFeesRecommended() as Promise<Fees>,
+    )
 
   // See https://mempool.space/testnet/docs/api/rest#get-transaction (we are converting the keys to camelCase)
   const getTransactionReceipt = (txId: BtcTransaction) =>
-    bitcoin.transactions
-      .getTx({ txid: txId })
-      .catch(function (err) {
-        if (err?.message.includes('not found')) {
-          // It seems it takes a couple of seconds for the Tx for being picked up
-          // react-query doesn't let us to return undefined data, so we must
-          // return an unconfirmed status
-          // Once it appears in the mempool, it will return the full object
-          // with the same confirmation status as false.
-          return { status: { confirmed: false } }
-        }
-        throw err
-      })
-      .then(toCamelCase)
-      .then(({ txid, ...rest }) => ({
-        txId: txid,
-        ...rest,
-      })) as Promise<TransactionReceipt | undefined>
+    bitcoinPromise.then(
+      bitcoin =>
+        bitcoin.transactions
+          .getTx({ txid: txId })
+          .catch(function (err) {
+            if (err?.message.includes('not found')) {
+              // It seems it takes a couple of seconds for the Tx for being picked up
+              // react-query doesn't let us to return undefined data, so we must
+              // return an unconfirmed status
+              // Once it appears in the mempool, it will return the full object
+              // with the same confirmation status as false.
+              return { status: { confirmed: false } }
+            }
+            throw err
+          })
+          .then(toCamelCase)
+          .then(({ txid, ...rest }) => ({
+            txId: txid,
+            ...rest,
+          })) as Promise<TransactionReceipt | undefined>,
+    )
 
   return {
     getAddressTransactions,

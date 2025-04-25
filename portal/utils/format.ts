@@ -43,7 +43,7 @@ export const formatPastTime = function (
     minute: 59, // 59 seconds
     second: 1, // 1 second
   }
-  /* eslint-disable sort-keys */
+  /* eslint-enable sort-keys */
 
   const rtf = new Intl.RelativeTimeFormat(locale, { style: 'long' })
 

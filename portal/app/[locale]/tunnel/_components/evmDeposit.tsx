@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from 'components/button'
-import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPartners'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { Spinner } from 'components/spinner'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
@@ -27,6 +26,14 @@ import { ConnectEvmWallet } from './connectEvmWallet'
 import { Erc20TokenApproval } from './erc20TokenApproval'
 import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
+
+const CustomTunnelsThroughPartners = dynamic(
+  () =>
+    import('components/customTunnelsThroughPartners').then(
+      mod => mod.CustomTunnelsThroughPartners,
+    ),
+  { ssr: false },
+)
 
 const SetMaxEvmBalance = dynamic(
   () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),

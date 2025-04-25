@@ -3,7 +3,6 @@
 import { useUmami } from 'app/analyticsEvents'
 import { Big } from 'big.js'
 import { Button } from 'components/button'
-import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPartners'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
@@ -42,6 +41,14 @@ import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
+
+const CustomTunnelsThroughPartners = dynamic(
+  () =>
+    import('components/customTunnelsThroughPartners').then(
+      mod => mod.CustomTunnelsThroughPartners,
+    ),
+  { ssr: false },
+)
 
 const SetMaxEvmBalance = dynamic(
   () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),

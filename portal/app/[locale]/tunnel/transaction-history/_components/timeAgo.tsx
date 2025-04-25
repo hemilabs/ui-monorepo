@@ -1,10 +1,5 @@
-import JsTimeAgo from 'javascript-time-ago'
-import enLocale from 'javascript-time-ago/locale/en'
-import esLocale from 'javascript-time-ago/locale/es'
-import { useEffect, useMemo, useState } from 'react'
-
-const modules = [enLocale, esLocale]
-modules.forEach(module => JsTimeAgo.addLocale(module))
+import { useEffect, useState } from 'react'
+import { formatPastTime } from 'utils/format'
 
 const second = 1
 const minute = second * 60
@@ -19,6 +14,10 @@ const getTimeoutInterval = function (timestamp: number, now: number) {
   // render every second if less than 60 seconds
   if (difference <= toMs(second * 60)) {
     return toMs(second)
+  }
+  // render every 30 seconds if less than 10 minutes
+  if (difference <= toMs(toSeconds(10))) {
+    return toMs(toSeconds(minute))
   }
   // render every minute if less than one hour
   if (difference <= toMs(toSeconds(toMinutes(hour)))) {
@@ -49,15 +48,11 @@ type Props = {
 }
 
 export const TimeAgo = function ({ locale, timestamp }: Props) {
-  const timeAgo = useMemo(() => new JsTimeAgo(locale), [locale])
-
-  // timestamp is unix format
-  const date = timestamp * 1000
-  const formattedDate = timeAgo.format(date, 'round')
-
+  const milliseconds = timestamp * 1000
   // force rerender depending on how old the timestamp is
-  // for better ux
-  useRerender(date)
+  useRerender(milliseconds)
 
-  return <>{formattedDate}</>
+  const difference = Math.floor((new Date().getTime() - milliseconds) / 1000)
+
+  return <>{formatPastTime(difference, locale)}</>
 }

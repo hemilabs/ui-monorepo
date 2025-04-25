@@ -6,7 +6,7 @@ import { sortTokens } from 'utils/sortTokens'
 import { StakeGraph } from './_components/icons/stakeGraph'
 import { StakeAndEarn } from './_components/stakeAndEarn'
 import { StakeStrategyTable } from './_components/stakeStrategyTable'
-import { useWalletPositions } from './_hooks/useWalletBalance'
+import { useWalletBalances } from './_hooks/useWalletBalances'
 
 const PageBackground = () => (
   <>
@@ -33,7 +33,7 @@ export default function Page() {
   // Removing WETH from the list of tokens to stake
   // here instead of in the tokenList file
   // It has to be rendered on dashboard page though
-  const { loading, tokensWalletBalance } = useWalletPositions()
+  const { loading, tokensWalletBalance } = useWalletBalances()
   const tokensFiltered = tokensWalletBalance.filter(t => t.symbol !== 'WETH')
 
   const { data: prices } = useTokenPrices()

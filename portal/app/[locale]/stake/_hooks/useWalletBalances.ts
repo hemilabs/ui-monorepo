@@ -4,7 +4,7 @@ import { useStakeTokens } from 'hooks/useStakeTokens'
 import { StakeToken } from 'types/stake'
 import { useAccount } from 'wagmi'
 
-export const useWalletPositions = function () {
+export const useWalletBalances = function () {
   const { address: account } = useAccount()
   const hemiClient = useHemiClient()
   const stakeTokens = useStakeTokens()

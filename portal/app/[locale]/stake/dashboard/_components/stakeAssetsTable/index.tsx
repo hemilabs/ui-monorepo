@@ -14,12 +14,14 @@ import { Card } from 'components/card'
 import { TokenLogo } from 'components/tokenLogo'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
+import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useRouter } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { MouseEvent, RefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakeToken } from 'types/stake'
+import { sortTokens } from 'utils/sortTokens'
 import { queryStringObjectToString } from 'utils/url'
 
 import { ProtocolImage } from '../../../_components/protocolImage'
@@ -275,6 +277,9 @@ export const StakeAssetsTable = function () {
   const { track } = useUmami()
   const { loading, tokensWithPosition } = useStakePositions()
 
+  const { data: prices } = useTokenPrices()
+  const sortedStakeTokens = sortTokens(tokensWithPosition, prices)
+
   if (tokensWithPosition.length === 0) {
     return <WelcomeStake />
   }
@@ -305,7 +310,7 @@ export const StakeAssetsTable = function () {
         <div className="max-h-[50dvh] overflow-x-auto p-2" ref={containerRef}>
           <StakeAssetsTableImp
             containerRef={containerRef}
-            data={tokensWithPosition}
+            data={sortedStakeTokens}
             loading={loading}
           />
         </div>

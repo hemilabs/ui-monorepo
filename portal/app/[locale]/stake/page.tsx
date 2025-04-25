@@ -1,10 +1,12 @@
 'use client'
 
-import { useStakeTokens } from 'hooks/useStakeTokens'
+import { useTokenPrices } from 'hooks/useTokenPrices'
+import { sortTokens } from 'utils/sortTokens'
 
 import { StakeGraph } from './_components/icons/stakeGraph'
 import { StakeAndEarn } from './_components/stakeAndEarn'
 import { StakeStrategyTable } from './_components/stakeStrategyTable'
+import { useWalletPositions } from './_hooks/useWalletBalance'
 
 const PageBackground = () => (
   <>
@@ -31,13 +33,17 @@ export default function Page() {
   // Removing WETH from the list of tokens to stake
   // here instead of in the tokenList file
   // It has to be rendered on dashboard page though
-  const stakeTokens = useStakeTokens().filter(t => t.symbol !== 'WETH')
+  const { loading, tokensWalletBalance } = useWalletPositions()
+  const tokensFiltered = tokensWalletBalance.filter(t => t.symbol !== 'WETH')
+
+  const { data: prices } = useTokenPrices()
+  const sortedStakeTokens = sortTokens(tokensFiltered, prices)
 
   return (
     <div className="h-[calc(100vh-theme(spacing.48))]">
       <PageBackground />
       <div className="relative z-20 -translate-y-60 md:-translate-y-48">
-        <StakeStrategyTable data={stakeTokens} loading={false} />
+        <StakeStrategyTable data={sortedStakeTokens} loading={loading} />
       </div>
     </div>
   )

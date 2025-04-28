@@ -4,6 +4,7 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
@@ -56,16 +57,21 @@ export const StakeOperation = function ({
   const { address } = useAccount()
   const [amount, setAmount] = useAmount()
   const operatesNativeToken = isNativeToken(token)
+  const spender = stakeManagerAddresses[token.chainId]
+
   const { data: allowance, isPending } = useAllowance(token.address, {
     args: {
       owner: address,
-      spender: stakeManagerAddresses[token.chainId],
+      spender,
     },
   })
-  const approvalEstimatedFees = useEstimateFees({
-    chainId: token.chainId,
-    operation: 'approve-erc20',
+
+  const approvalEstimatedFees = useEstimateApproveErc20Fees({
+    amount: parseUnits(amount, token.decimals),
+    spender,
+    token,
   })
+
   const stakeEstimatedFees = useEstimateFees({
     chainId: token.chainId,
     operation: 'stake',

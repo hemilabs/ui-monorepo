@@ -17,7 +17,6 @@ const mean = function (rewards: bigint[] = []) {
 }
 
 type OperationsToEstimate =
-  | 'approve-erc20'
   | 'challenge-btc-withdrawal'
   | 'confirm-btc-deposit'
   | 'stake'
@@ -25,7 +24,6 @@ type OperationsToEstimate =
   | 'withdraw-btc'
 
 const GasUnitsEstimations: Record<OperationsToEstimate, bigint> = {
-  'approve-erc20': BigInt(45_000),
   // TODO review estimations https://github.com/hemilabs/ui-monorepo/issues/826
   'challenge-btc-withdrawal': BigInt(400_000),
   // TODO review estimations https://github.com/hemilabs/ui-monorepo/issues/826

@@ -3,7 +3,8 @@
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
+import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
@@ -47,14 +48,15 @@ const ReviewContent = function ({
   const fromChain = useChain(deposit.l1ChainId)
   const toChain = useChain(deposit.l2ChainId)
 
-  const approvalTokenGasFees = useEstimateFees({
-    chainId: deposit.l1ChainId,
+  const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
+  const approvalTokenGasFees = useEstimateApproveErc20Fees({
+    amount: BigInt(deposit.amount),
     enabled: [
       EvmDepositStatus.APPROVAL_TX_FAILED,
       EvmDepositStatus.APPROVAL_TX_PENDING,
     ].includes(depositStatus),
-    operation: 'approve-erc20',
-    overEstimation: 1.5,
+    spender: l1StandardBridgeAddress,
+    token: fromToken,
   })
 
   const depositGasFees = useEstimateDepositFees({

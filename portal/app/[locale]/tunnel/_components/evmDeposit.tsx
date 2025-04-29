@@ -5,7 +5,7 @@ import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { Spinner } from 'components/spinner'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import dynamic from 'next/dynamic'
@@ -153,10 +153,10 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const fromChain = useChain(fromNetworkId)
 
-  const approvalTokenGasFees = useEstimateFees({
-    chainId: fromToken.chainId,
-    operation: 'approve-erc20',
-    overEstimation: 1.5,
+  const approvalTokenGasFees = useEstimateApproveErc20Fees({
+    amount,
+    spender: l1StandardBridgeAddress,
+    token: fromToken,
   })
 
   const depositGasFees = useEstimateDepositFees({

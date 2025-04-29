@@ -5,7 +5,7 @@ import { StakeToken } from 'types/stake'
 import { useAccount } from 'wagmi'
 
 export const useWalletBalances = function () {
-  const { address: account } = useAccount()
+  const { address: account, isConnected } = useAccount()
   const hemiClient = useHemiClient()
   const stakeTokens = useStakeTokens()
 
@@ -18,10 +18,12 @@ export const useWalletBalances = function () {
     }),
     queries: stakeTokens.map(token => ({
       queryFn: async () =>
-        hemiClient.getErc20TokenBalance({
-          account,
-          address: token.address as `0x${string}`,
-        }),
+        isConnected
+          ? hemiClient.getErc20TokenBalance({
+              account,
+              address: token.address as `0x${string}`,
+            })
+          : 0,
       queryKey: ['wallet-token-balance', token.chainId, token.address],
       select: (balance: bigint) => ({ ...token, balance }) satisfies StakeToken,
     })),

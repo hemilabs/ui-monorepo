@@ -159,12 +159,10 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
             isRunningOperation={isDepositing}
             minInputMsg={{
               loading: isMinDepositsSatsLoading,
-              value: isDepositing
-                ? ''
-                : t('tunnel-page.form.min-deposit', {
-                    amount: minDepositFormattedSats,
-                    symbol: bitcoin.nativeCurrency.symbol,
-                  }),
+              value: t('tunnel-page.form.min-deposit', {
+                amount: minDepositFormattedSats,
+                symbol: bitcoin.nativeCurrency.symbol,
+              }),
             }}
             setMaxBalanceButton={
               <SetMaxBtcBalance

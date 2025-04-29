@@ -1,4 +1,4 @@
-import { type Address, type Client } from 'viem'
+import { encodeFunctionData, type Address, type Client } from 'viem'
 import { writeContract } from 'viem/actions'
 
 import {
@@ -100,3 +100,43 @@ export function unstakeToken(
     functionName: 'withdraw',
   })
 }
+
+/**
+ * Encodes the transaction data for staking an ERC-20 token using the `depositFor` function.
+ *
+ * @param {Object} parameters - The transaction parameters for staking.
+ * @param {bigint} [parameters.amount=BigInt(0)] - The amount of tokens to be staked.
+ * @param {Address} parameters.forAccount - The address for which the tokens are being staked.
+ * @param {Address} parameters.tokenAddress - The ERC-20 token address to be staked.
+ *
+ * @returns {Hex} - The encoded transaction data.
+ */
+export const encodeStakeErc20 = ({
+  amount = BigInt(0),
+  forAccount,
+  tokenAddress,
+}: {
+  amount: bigint
+  forAccount: Address
+  tokenAddress: Address
+}) =>
+  encodeFunctionData({
+    abi: stakeManagerAbi,
+    args: [tokenAddress, forAccount, amount],
+    functionName: 'depositFor',
+  })
+
+/**
+ * Encodes the transaction data for staking native ETH using the `depositETHFor` function.
+ *
+ * @param {Object} parameters - The transaction parameters for staking.
+ * @param {Address} parameters.forAccount - The address for which the ETH is being staked.
+ *
+ * @returns {Hex} - The encoded transaction data.
+ */
+export const encodeStakeEth = ({ forAccount }: { forAccount: Address }) =>
+  encodeFunctionData({
+    abi: stakeManagerAbi,
+    args: [forAccount],
+    functionName: 'depositETHFor',
+  })

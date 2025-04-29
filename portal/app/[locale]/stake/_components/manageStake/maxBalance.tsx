@@ -1,9 +1,6 @@
 import { MaxButton, SetMaxEvmBalance } from 'components/setMaxBalance'
-import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useHemi } from 'hooks/useHemi'
 import { ComponentProps } from 'react'
 import { StakeToken } from 'types/stake'
-import { isNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
 import { useStakedBalance } from '../../_hooks/useStakedBalance'
@@ -12,16 +9,11 @@ type Props = Omit<ComponentProps<typeof SetMaxEvmBalance>, 'gas'> & {
   token: StakeToken
 }
 
-export const StakeMaxBalance = function (props: Props) {
-  const hemi = useHemi()
-  // we really only need to exclude fees for native tokens from the "max" option
-  const estimateFees = useEstimateFees({
-    chainId: hemi.id,
-    enabled: isNativeToken(props.token),
-    operation: 'stake',
-  })
-  return <SetMaxEvmBalance {...props} gas={estimateFees} />
-}
+export const StakeMaxBalance = (
+  props: Props & {
+    estimateFees: bigint
+  },
+) => <SetMaxEvmBalance {...props} gas={props.estimateFees} />
 
 export const UnstakeMaxBalance = function ({
   disabled,

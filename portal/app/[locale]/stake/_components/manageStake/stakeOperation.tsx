@@ -5,7 +5,6 @@ import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { StakeOperations, StakeStatusEnum, type StakeToken } from 'types/stake'
@@ -15,10 +14,11 @@ import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useAmount } from '../../_hooks/useAmount'
+import { useEstimateStakeFees } from '../../_hooks/useEstimateStakeFees'
 import { useStake } from '../../_hooks/useStake'
 import { StakeToast } from '../stakeToast'
 
-import { StakeFees } from './fees'
+import { Fees } from './fees'
 import { StakeMaxBalance } from './maxBalance'
 import { Operation } from './operation'
 import { Preview } from './preview'
@@ -72,10 +72,13 @@ export const StakeOperation = function ({
     token,
   })
 
-  const stakeEstimatedFees = useEstimateFees({
-    chainId: token.chainId,
-    operation: 'stake',
+  const stakeEstimatedFees = useEstimateStakeFees({
+    amount: parseUnits(amount, token.decimals),
+    enabled: allowance > 0 || operatesNativeToken,
+    forAccount: address,
+    token,
   })
+
   const hemi = useHemi()
 
   const {
@@ -214,11 +217,12 @@ export const StakeOperation = function ({
         preview={
           <Preview
             amount={amount}
-            fees={<StakeFees />}
+            fees={<Fees estimatedFees={stakeEstimatedFees} />}
             isOperating={isOperating}
             maxBalance={
               <StakeMaxBalance
                 disabled={isSubmitting}
+                estimateFees={stakeEstimatedFees}
                 onSetMaxBalance={setAmount}
                 token={token}
               />

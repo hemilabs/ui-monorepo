@@ -1,5 +1,6 @@
 'use client'
 
+import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { StakeTabs } from 'components/stakeTabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useStakeTokens } from 'hooks/useStakeTokens'
@@ -14,6 +15,7 @@ import { StakeDisabledTestnet } from './stakeDisabledTestnet'
 const ManageStake = dynamic(
   () => import('./manageStake').then(mod => mod.ManageStake),
   {
+    loading: () => <DrawerLoader className="h-[95dvh] md:h-full" />,
     ssr: false,
   },
 )

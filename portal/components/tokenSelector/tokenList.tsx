@@ -162,7 +162,7 @@ export const TokenList = function ({
     .concat(customTokens.sort(bySymbol))
 
   const content = (
-    <div className="drawer-content h-[357px] gap-x-3 gap-y-0 md:w-96">
+    <div className="drawer-content h-90 gap-x-3 gap-y-0 md:w-96">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-medium text-neutral-950">
           {t('select-token')}

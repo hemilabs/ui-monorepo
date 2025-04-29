@@ -1,4 +1,5 @@
 import { Card } from 'components/card'
+import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelector } from 'components/tokenSelector'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
@@ -18,7 +19,10 @@ import { NetworkSelectors } from './networkSelectors'
 const CustomTokenDrawer = dynamic(
   () =>
     import('components/customTokenDrawer').then(mod => mod.CustomTokenDrawer),
-  { ssr: false },
+  {
+    loading: () => <DrawerLoader className="h-[80dvh] md:h-full" />,
+    ssr: false,
+  },
 )
 
 const SwitchToNetworkToast = dynamic(
@@ -126,7 +130,6 @@ export const FormContent = function ({
         // Tunnelling goes 1:1, so output equals input
         value={fromInput}
       />
-
       {!!customTokenAddress && evmTunneling && (
         <CustomTokenDrawer
           fromNetworkId={fromNetworkId}

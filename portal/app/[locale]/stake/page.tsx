@@ -33,17 +33,19 @@ export default function Page() {
   // Removing WETH from the list of tokens to stake
   // here instead of in the tokenList file
   // It has to be rendered on dashboard page though
-  const { loading, tokensWalletBalance } = useWalletBalances()
+  const { tokensWalletBalance, loading: isLoadingBalance } = useWalletBalances()
   const tokensFiltered = tokensWalletBalance.filter(t => t.symbol !== 'WETH')
 
-  const { data: prices } = useTokenPrices()
+  const { data: prices, isPending: isLoadingPrices } = useTokenPrices()
   const sortedStakeTokens = sortTokens(tokensFiltered, prices)
+
+  const isLoading = isLoadingBalance && isLoadingPrices
 
   return (
     <div className="h-[calc(100vh-theme(spacing.48))]">
       <PageBackground />
       <div className="relative z-20 -translate-y-60 md:-translate-y-48">
-        <StakeStrategyTable data={sortedStakeTokens} loading={loading} />
+        <StakeStrategyTable data={sortedStakeTokens} loading={isLoading} />
       </div>
     </div>
   )

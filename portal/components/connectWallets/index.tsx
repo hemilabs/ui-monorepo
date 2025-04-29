@@ -1,4 +1,5 @@
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
+import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
@@ -15,6 +16,7 @@ import { UnisatLogo } from './unisatLogo'
 const ConnectWalletsDrawer = dynamic(
   () => import('./connectWalletsDrawer').then(mod => mod.ConnectWalletsDrawer),
   {
+    loading: () => <DrawerLoader className="h-[55dvh] md:h-full" />,
     ssr: false,
   },
 )

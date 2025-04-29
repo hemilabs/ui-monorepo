@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from 'components/button'
+import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { Spinner } from 'components/spinner'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
@@ -32,7 +33,10 @@ const CustomTunnelsThroughPartners = dynamic(
     import('components/customTunnelsThroughPartners').then(
       mod => mod.CustomTunnelsThroughPartners,
     ),
-  { ssr: false },
+  {
+    loading: () => <DrawerLoader className="h-[45dvh] md:h-full" />,
+    ssr: false,
+  },
 )
 
 const SetMaxEvmBalance = dynamic(

@@ -1,16 +1,34 @@
 import { useUmami } from 'app/analyticsEvents'
+import { DrawerLoader } from 'components/drawer/drawerLoader'
+import { Modal } from 'components/modal'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useWindowSize } from 'hooks/useWindowSize'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 
 import { Chevron } from '../icons/chevron'
 import { TokenLogo } from '../tokenLogo'
 
+const TokenListLoading = function () {
+  const { width } = useWindowSize()
+  return width > 768 ? (
+    <Modal>
+      <Skeleton className="h-90 w-96" containerClassName="flex" />
+    </Modal>
+  ) : (
+    <DrawerLoader className="h-90 md:hidden" />
+  )
+}
+
 const TokenList = dynamic(
   () => import('./tokenList').then(mod => mod.TokenList),
-  { ssr: false },
+  {
+    loading: TokenListLoading,
+    ssr: false,
+  },
 )
 
 type Props = {

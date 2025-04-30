@@ -275,16 +275,16 @@ export const StakeAssetsTable = function () {
   const router = useRouter()
   const t = useTranslations('stake-page')
   const { track } = useUmami()
-  const { tokensWithPosition, loading: isLoadingBalance } = useStakePositions()
+  const { loading: isLoadingBalance, tokensWithPosition } = useStakePositions()
 
   const { data: prices, isPending: isLoadingPrices } = useTokenPrices()
-  const sortedStakeTokens = sortTokens(tokensWithPosition, prices)
+  const isLoading = isLoadingBalance || isLoadingPrices
+  const sortedTokens = isLoading ? [] : sortTokens(tokensWithPosition, prices)
 
   if (tokensWithPosition.length === 0) {
     return <WelcomeStake />
   }
 
-  const isLoading = isLoadingBalance && isLoadingPrices
   const stakeMoreUrl = '/stake'
 
   function goToStakePage(e: MouseEvent<HTMLAnchorElement>) {
@@ -311,7 +311,7 @@ export const StakeAssetsTable = function () {
         <div className="max-h-[50dvh] overflow-x-auto p-2" ref={containerRef}>
           <StakeAssetsTableImp
             containerRef={containerRef}
-            data={sortedStakeTokens}
+            data={sortedTokens}
             loading={isLoading}
           />
         </div>

@@ -39,3 +39,5 @@ export const hemiWalletStakeActions = () => (client: Client) => ({
   unstakeToken: (params: Parameters<typeof unstakeToken>[1]) =>
     unstakeToken(client, params),
 })
+
+export { encodeStakeErc20, encodeStakeEth } from './actions/wallet/stakeManager'

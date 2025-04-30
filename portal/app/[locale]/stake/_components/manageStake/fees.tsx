@@ -5,7 +5,11 @@ import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
-const Fees = function ({ estimatedFees }: { estimatedFees: bigint }) {
+type Props = {
+  estimatedFees: bigint
+}
+
+export const Fees = function ({ estimatedFees }: Props) {
   const hemi = useHemi()
   const t = useTranslations('common')
 
@@ -22,16 +26,6 @@ const Fees = function ({ estimatedFees }: { estimatedFees: bigint }) {
       <EvmFeesSummary gas={gas} operationToken={nativeToken} />
     </div>
   )
-}
-
-export const StakeFees = function () {
-  const hemi = useHemi()
-  const estimatedFees = useEstimateFees({
-    chainId: hemi.id,
-    operation: 'stake',
-    overEstimation: 1.5,
-  })
-  return <Fees estimatedFees={estimatedFees} />
 }
 
 export const UnstakeFees = function () {

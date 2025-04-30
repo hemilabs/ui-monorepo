@@ -1,6 +1,4 @@
 import hemilabsTokenList from '@hemilabs/token-list'
-import { getBalance, waitForTransactionReceipt } from '@wagmi/core'
-import { allEvmNetworksWalletConfig } from 'context/evmWalletContext'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import {
   type HemiPublicClient,
@@ -64,12 +62,9 @@ const validateStakeOperation = async function ({
   token: EvmToken
 }) {
   const balance = isNativeToken(token)
-    ? (
-        await getBalance(allEvmNetworksWalletConfig, {
-          address: forAccount,
-          chainId: token.chainId,
-        })
-      ).value
+    ? await hemiPublicClient.getBalance({
+        address: forAccount,
+      })
     : await hemiPublicClient.getErc20TokenBalance({
         account: forAccount,
         // @ts-expect-error token is not native, so token.address is address
@@ -205,13 +200,11 @@ export const stake = async function ({
       // up to this point, the user has accepted the approval
       onUserSignedTokenApproval?.(approveTxHash)
 
-      const approvalReceipt = await waitForTransactionReceipt(
-        allEvmNetworksWalletConfig,
-        {
-          chainId: token.chainId,
+      const approvalReceipt = await hemiPublicClient
+        .waitForTransactionReceipt({
           hash: approveTxHash,
-        },
-      ).catch(onStakeTokenApprovalFailed)
+        })
+        .catch(onStakeTokenApprovalFailed)
 
       if (!approvalReceipt) {
         return
@@ -239,10 +232,11 @@ export const stake = async function ({
   // up to this point, the user has signed the Transaction
   onUserSignedStake?.(stakeTransactionHash)
 
-  const receipt = await waitForTransactionReceipt(allEvmNetworksWalletConfig, {
-    chainId: token.chainId,
-    hash: stakeTransactionHash,
-  }).catch(onStakeFailed)
+  const receipt = await hemiPublicClient
+    .waitForTransactionReceipt({
+      hash: stakeTransactionHash,
+    })
+    .catch(onStakeFailed)
   // if receipt is null, it's already handled on the .catch() above
   if (!receipt) {
     return
@@ -344,10 +338,11 @@ export const unstake = async function ({
 
   onUserSignedUnstake?.(unstakeTransactionHash)
 
-  const receipt = await waitForTransactionReceipt(allEvmNetworksWalletConfig, {
-    chainId: token.chainId,
-    hash: unstakeTransactionHash,
-  }).catch(onUnstakeFailed)
+  const receipt = await hemiPublicClient
+    .waitForTransactionReceipt({
+      hash: unstakeTransactionHash,
+    })
+    .catch(onUnstakeFailed)
 
   // if receipt is null, it's already handled on the .catch() above
   if (!receipt) {

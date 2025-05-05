@@ -140,3 +140,25 @@ export const encodeStakeEth = ({ forAccount }: { forAccount: Address }) =>
     args: [forAccount],
     functionName: 'depositETHFor',
   })
+
+/**
+ * Encodes the transaction data for unstaking a token using the `withdraw` function.
+ *
+ * @param {Object} parameters - The transaction parameters for unstaking.
+ * @param {bigint} parameters.amount - The amount of tokens to be withdrawn.
+ * @param {Address} parameters.tokenAddress - The ERC-20 token address to be withdrawn.
+ *
+ * @returns {Hex} - The encoded transaction data.
+ */
+export const encodeUnstake = ({
+  amount,
+  tokenAddress,
+}: {
+  amount: bigint
+  tokenAddress: Address
+}) =>
+  encodeFunctionData({
+    abi: stakeManagerAbi,
+    args: [tokenAddress, amount],
+    functionName: 'withdraw',
+  })

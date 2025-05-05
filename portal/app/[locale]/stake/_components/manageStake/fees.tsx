@@ -1,5 +1,4 @@
 import { EvmFeesSummary } from 'components/evmFeesSummary'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
@@ -26,14 +25,4 @@ export const Fees = function ({ estimatedFees }: Props) {
       <EvmFeesSummary gas={gas} operationToken={nativeToken} />
     </div>
   )
-}
-
-export const UnstakeFees = function () {
-  const hemi = useHemi()
-  const estimatedFees = useEstimateFees({
-    chainId: hemi.id,
-    operation: 'unstake',
-    overEstimation: 1.5,
-  })
-  return <Fees estimatedFees={estimatedFees} />
 }

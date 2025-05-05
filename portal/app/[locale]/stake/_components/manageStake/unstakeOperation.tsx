@@ -1,6 +1,5 @@
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { StepPropsWithoutPosition } from 'components/reviewOperation/step'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -15,11 +14,12 @@ import { canSubmit } from 'utils/stake'
 import { formatUnits, parseUnits } from 'viem'
 
 import { useAmount } from '../../_hooks/useAmount'
+import { useEstimateUnstakeFees } from '../../_hooks/useEstimateUnstakeFees'
 import { useStakedBalance } from '../../_hooks/useStakedBalance'
 import { useUnstake } from '../../_hooks/useUnstake'
 import { StakeToast } from '../stakeToast'
 
-import { UnstakeFees } from './fees'
+import { Fees } from './fees'
 import { UnstakeMaxBalance } from './maxBalance'
 import { Operation } from './operation'
 import { Preview } from './preview'
@@ -52,10 +52,7 @@ export const UnstakeOperation = function ({
   token,
 }: Props) {
   const [amount, setAmount] = useAmount()
-  const unstakeEstimatedFees = useEstimateFees({
-    chainId: token.chainId,
-    operation: 'unstake',
-  })
+
   const hemi = useHemi()
   const { balance, isPending: isStakedPositionPending } =
     useStakedBalance(token)
@@ -73,6 +70,12 @@ export const UnstakeOperation = function ({
       connectedChainId: token.chainId,
       token,
     }).error
+
+  const unstakeEstimatedFees = useEstimateUnstakeFees({
+    amount: parseUnits(amount, token.decimals),
+    enabled: canUnstake,
+    token,
+  })
 
   const statusMap = {
     [UnstakeStatusEnum.UNSTAKE_TX_PENDING]: ProgressStatus.PROGRESS,
@@ -126,7 +129,7 @@ export const UnstakeOperation = function ({
           <Preview
             amount={amount}
             balanceComponent={StakedBalance}
-            fees={<UnstakeFees />}
+            fees={<Fees estimatedFees={unstakeEstimatedFees} />}
             isOperating={isOperating}
             maxBalance={
               <UnstakeMaxBalance

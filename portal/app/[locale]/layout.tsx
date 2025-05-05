@@ -72,8 +72,8 @@ export default async function RootLayout({
           getting mainnet|testnet from query string, and using useSearchParams (through nuqs) requires so to compile.
           However, there's no change at all in the UI, so no fallback seems to be needed, as it isn't an async request
           or something that requires showing something. */}
-            <Suspense>
-              <WalletsContext locale={locale}>
+            <WalletsContext locale={locale}>
+              <Suspense>
                 <TunnelHistoryProvider>
                   <ConnectWalletDrawerProvider>
                     <Analytics>
@@ -89,8 +89,8 @@ export default async function RootLayout({
                     </Analytics>
                   </ConnectWalletDrawerProvider>
                 </TunnelHistoryProvider>
-              </WalletsContext>
-            </Suspense>
+              </Suspense>
+            </WalletsContext>
           </SkeletonTheme>
         </NextIntlClientProvider>
       </body>

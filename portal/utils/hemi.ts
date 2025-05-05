@@ -8,7 +8,6 @@ import {
   BtcWithdrawStatus,
   type ToBtcWithdrawOperation,
 } from 'types/tunnel'
-import { getEvmTransactionReceipt } from 'utils/evmApi'
 import { type Address, parseEventLogs, type TransactionReceipt } from 'viem'
 
 import { calculateDepositOutputIndex } from './bitcoin'
@@ -149,13 +148,22 @@ export const getBitcoinWithdrawalGracePeriod = ({
     getBitcoinVaultGracePeriod(hemiClient, vaultAddress),
   )
 
-const getInitiatedWithdrawalStatus = async function (
-  withdrawal: ToBtcWithdrawOperation,
-) {
-  const receipt = await getEvmTransactionReceipt(
-    withdrawal.transactionHash,
-    withdrawal.l2ChainId,
-  )
+const getInitiatedWithdrawalStatus = async function ({
+  hemiClient,
+  withdrawal,
+}: {
+  hemiClient: HemiPublicClient
+  withdrawal: ToBtcWithdrawOperation
+}) {
+  const receipt = await hemiClient
+    .getTransactionReceipt({ hash: withdrawal.transactionHash })
+    .catch(function (err) {
+      // Do nothing if the TX was not found, as that throws
+      if (err.name === 'TransactionReceiptNotFoundError') {
+        return null
+      }
+      throw err
+    })
 
   if (!receipt) {
     // keep same status as before
@@ -174,7 +182,7 @@ export const getHemiStatusOfBtcWithdrawal = async function ({
   withdrawal: ToBtcWithdrawOperation
 }) {
   if (withdrawal.status === BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING) {
-    return getInitiatedWithdrawalStatus(withdrawal)
+    return getInitiatedWithdrawalStatus({ hemiClient, withdrawal })
   }
 
   const uuid = BigInt(withdrawal.uuid)
@@ -216,10 +224,15 @@ export const getHemiStatusOfBtcWithdrawal = async function ({
     withdrawal.status === BtcWithdrawStatus.READY_TO_CHALLENGE &&
     withdrawal.challengeTxHash
   ) {
-    const receipt = await getEvmTransactionReceipt(
-      withdrawal.challengeTxHash,
-      withdrawal.l2ChainId,
-    )
+    const receipt = await hemiClient
+      .getTransactionReceipt({ hash: withdrawal.challengeTxHash })
+      .catch(function (err) {
+        // Do nothing if the TX was not found, as that throws
+        if (err.name === 'TransactionReceiptNotFoundError') {
+          return null
+        }
+        throw err
+      })
     if (!receipt) {
       return BtcWithdrawStatus.CHALLENGE_IN_PROGRESS
     }

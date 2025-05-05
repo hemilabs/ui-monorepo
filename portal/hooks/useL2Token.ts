@@ -1,7 +1,8 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { L2Token } from 'types/token'
-import { getL2Erc20Token } from 'utils/evmApi'
+import { getL2Erc20Token } from 'utils/token'
 import { isAddress, type Address, type Chain } from 'viem'
+import { useConfig } from 'wagmi'
 
 type Params = {
   address: string
@@ -14,11 +15,21 @@ type Params = {
  * For most scenarios, prefer useToken hook instead. This token should be used if
  * the info from the RemoteToken (L1) is needed
  */
-export const useL2Token = ({ address, chainId, options = {} }: Params) =>
-  useQuery({
+export const useL2Token = function ({
+  address,
+  chainId,
+  options = {},
+}: Params) {
+  const config = useConfig()
+  return useQuery({
     ...options,
     enabled: (options.enabled ?? true) && isAddress(address),
     queryFn: () =>
-      getL2Erc20Token(address as Address, chainId) satisfies Promise<L2Token>,
+      getL2Erc20Token({
+        address: address as Address,
+        chainId,
+        config,
+      }) satisfies Promise<L2Token>,
     queryKey: ['l2-erc20-token-complete', address, chainId],
   })
+}

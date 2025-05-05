@@ -1,9 +1,10 @@
-import { type Chain as RainbowKitChain } from '@rainbow-me/rainbowkit'
 import { type BtcChain } from 'btc-wallet/chains'
 import { type Chain } from 'viem'
 
-export type EvmChain = Omit<Chain, 'fees' | 'serializers'> &
-  Pick<RainbowKitChain, 'iconBackground' | 'iconUrl'>
+export type EvmChain = Omit<Chain, 'fees' | 'serializers'> & {
+  iconUrl?: string | (() => Promise<string>) | null
+  iconBackground?: string
+}
 
 export type OrderedChains = readonly [EvmChain, ...EvmChain[]]
 

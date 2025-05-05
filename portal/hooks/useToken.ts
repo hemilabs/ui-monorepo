@@ -1,10 +1,10 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
-import { getErc20Token } from 'utils/evmApi'
 import { isNativeAddress } from 'utils/nativeToken'
-import { getTokenByAddress } from 'utils/token'
+import { getErc20Token, getTokenByAddress } from 'utils/token'
 import { type Address, type Chain, isAddress } from 'viem'
+import { useConfig } from 'wagmi'
 
 type Params = {
   address: string
@@ -17,8 +17,10 @@ export const getUseTokenQueryKey = (
   chainId: Params['chainId'],
 ) => ['erc20-token-complete', address, chainId]
 
-export const useToken = ({ address, chainId, options = {} }: Params) =>
-  useQuery<Token, Error>({
+export const useToken = function ({ address, chainId, options = {} }: Params) {
+  const config = useConfig()
+
+  return useQuery<Token, Error>({
     ...options,
     enabled:
       (options.enabled ?? true) &&
@@ -26,9 +28,11 @@ export const useToken = ({ address, chainId, options = {} }: Params) =>
     queryFn: async () =>
       getTokenByAddress(address, chainId) ??
       // up to this point, chainId must be an EVM one because we checked for native addresses
-      (getErc20Token(
-        address as Address,
-        chainId as Chain['id'],
-      ) satisfies Promise<Token>),
+      (getErc20Token({
+        address: address as Address,
+        chainId: chainId as Chain['id'],
+        config,
+      }) satisfies Promise<Token>),
     queryKey: getUseTokenQueryKey(address, chainId),
   })
+}

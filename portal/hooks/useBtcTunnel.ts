@@ -12,7 +12,6 @@ import {
   ToBtcWithdrawOperation,
 } from 'types/tunnel'
 import { getBitcoinTimestamp } from 'utils/bitcoin'
-import { getEvmBlock } from 'utils/evmApi'
 import {
   confirmBtcDeposit,
   getBitcoinWithdrawalUuid,
@@ -384,16 +383,15 @@ export const useWithdrawBitcoin = function () {
 
       clearWithdrawBitcoinState()
 
-      // Handling of this error is needed https://github.com/hemilabs/ui-monorepo/issues/322
-      // eslint-disable-next-line promise/catch-or-return
-      getEvmBlock(
-        withdrawBitcoinReceipt.blockNumber,
-        withdrawal.l2ChainId,
-      ).then(block =>
-        updateWithdrawal(withdrawal, {
-          timestamp: Number(block.timestamp),
-        }),
-      )
+      // If this call fails, the watcher web-workers will retry them
+      hemiClient
+        .getBlock({ blockNumber: withdrawBitcoinReceipt.blockNumber })
+        .then(block =>
+          updateWithdrawal(withdrawal, {
+            timestamp: Number(block.timestamp),
+          }),
+        )
+        .catch(() => null)
     },
     [
       clearWithdrawBitcoinState,

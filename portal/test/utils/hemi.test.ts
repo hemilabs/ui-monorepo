@@ -6,17 +6,12 @@ import {
   BtcWithdrawStatus,
   ToBtcWithdrawOperation,
 } from 'types/tunnel'
-import { getEvmTransactionReceipt } from 'utils/evmApi'
 import {
   getHemiStatusOfBtcDeposit,
   getHemiStatusOfBtcWithdrawal,
 } from 'utils/hemi'
 import { zeroAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-
-vi.mock('utils/evmApi', () => ({
-  getEvmTransactionReceipt: vi.fn(),
-}))
 
 const hemiClient: HemiPublicClient = {
   acknowledgedDeposits: vi.fn(),
@@ -27,6 +22,7 @@ const hemiClient: HemiPublicClient = {
   getBitcoinVaultStateAddress: vi.fn().mockResolvedValue(zeroAddress),
   getBitcoinWithdrawalGracePeriod: vi.fn(),
   getTransactionByTxId: vi.fn(),
+  getTransactionReceipt: vi.fn(),
   getTxConfirmations: vi.fn(),
   getVaultByIndex: vi.fn(),
   getVaultChildIndex: vi.fn(),
@@ -109,7 +105,7 @@ describe('utils/hemi', function () {
 
   describe('getHemiStatusOfBtcWithdrawal', function () {
     it(`should return ${BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING} if the transaction receipt is not found`, async function () {
-      vi.mocked(getEvmTransactionReceipt).mockResolvedValue(null)
+      hemiClient.getTransactionReceipt.mockResolvedValue(null)
 
       const status = await getHemiStatusOfBtcWithdrawal({
         hemiClient,
@@ -120,7 +116,7 @@ describe('utils/hemi', function () {
     })
 
     it(`should return ${BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED} if the transaction receipt is found and successful`, async function () {
-      vi.mocked(getEvmTransactionReceipt).mockResolvedValue({
+      hemiClient.getTransactionReceipt.mockResolvedValue({
         status: 'success',
       })
 
@@ -133,7 +129,7 @@ describe('utils/hemi', function () {
     })
 
     it(`should return ${BtcWithdrawStatus.WITHDRAWAL_FAILED} if the transaction receipt is found and failed`, async function () {
-      vi.mocked(getEvmTransactionReceipt).mockResolvedValue({
+      hemiClient.getTransactionReceipt.mockResolvedValue({
         status: 'failed',
       })
 

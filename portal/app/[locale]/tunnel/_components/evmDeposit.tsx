@@ -1,6 +1,7 @@
 'use client'
 
 import { Button } from 'components/button'
+import { ButtonLoader } from 'components/buttonLoader'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { Spinner } from 'components/spinner'
@@ -23,10 +24,17 @@ import { useEstimateDepositFees } from '../_hooks/useEstimateDepositFees'
 import { EvmTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
 import { canSubmit, getTotal } from '../_utils'
 
-import { ConnectEvmWallet } from './connectEvmWallet'
 import { Erc20TokenApproval } from './erc20TokenApproval'
 import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
+
+const ConnectEvmWallet = dynamic(
+  () => import('./connectEvmWallet').then(mod => mod.ConnectEvmWallet),
+  {
+    loading: () => <ButtonLoader />,
+    ssr: false,
+  },
+)
 
 const CustomTunnelsThroughPartners = dynamic(
   () =>

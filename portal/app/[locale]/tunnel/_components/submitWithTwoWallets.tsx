@@ -1,17 +1,26 @@
 import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
+import { ButtonLoader } from 'components/buttonLoader'
 import { useAccounts } from 'hooks/useAccounts'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useNetworkType } from 'hooks/useNetworkType'
+import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 
 import { ConnectBtcWallet } from './connectBtcWallet'
-import { ConnectEvmWallet } from './connectEvmWallet'
 
 type Props = {
   disabled: boolean
   text: string
 }
+
+const ConnectEvmWallet = dynamic(
+  () => import('./connectEvmWallet').then(mod => mod.ConnectEvmWallet),
+  {
+    loading: () => <ButtonLoader />,
+    ssr: false,
+  },
+)
 
 export const SubmitWithTwoWallets = function ({ disabled, text }: Props) {
   const { allDisconnected, btcWalletStatus, evmWalletStatus } = useAccounts()

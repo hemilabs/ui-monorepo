@@ -1,9 +1,19 @@
+import { type Config, readContract } from '@wagmi/core'
+import pMemoize from 'promise-mem'
 import { tokenList } from 'tokenList'
 import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
-import { EvmToken, Token } from 'types/token'
-import { type Chain, isAddress, isAddressEqual } from 'viem'
+import { EvmToken, L2Token, Token } from 'types/token'
+import {
+  type Address,
+  type Chain,
+  erc20Abi,
+  isAddress,
+  isAddressEqual,
+  checksumAddress as toChecksum,
+} from 'viem'
 
 import { getNativeToken, isNativeAddress } from './nativeToken'
+import { opErc20Abi } from './opErc20Abi'
 
 export const getTokenByAddress = function (
   address: Token['address'],
@@ -50,3 +60,64 @@ export const getWrappedEther = (chainId: Chain['id']) =>
   tokenList.tokens.find(
     t => t.symbol === 'WETH' && t.chainId === chainId,
   ) as EvmToken
+
+export const getErc20Token = pMemoize(
+  async function ({
+    address,
+    chainId,
+    config,
+  }: {
+    address: Address
+    chainId: Chain['id']
+    config: Config
+  }) {
+    const read = <T extends 'decimals' | 'name' | 'symbol'>(functionName: T) =>
+      readContract(config, {
+        abi: erc20Abi,
+        address,
+        chainId,
+        functionName,
+      })
+
+    return Promise.all([read('decimals'), read('name'), read('symbol')]).then(
+      ([decimals, name, symbol]) =>
+        ({
+          address: toChecksum(address, chainId),
+          chainId,
+          decimals,
+          name,
+          symbol,
+        }) satisfies Token,
+    )
+  },
+  { resolver: ({ address, chainId }) => `${address}-${chainId}` },
+)
+
+export const getL2Erc20Token = pMemoize(
+  async ({
+    address,
+    chainId,
+    config,
+  }: {
+    address: Address
+    chainId: Chain['id']
+    config: Config
+  }) =>
+    Promise.all([
+      getErc20Token({ address, chainId, config }),
+      readContract(config, {
+        abi: opErc20Abi,
+        address,
+        chainId,
+        functionName: 'l1Token',
+      }),
+    ]).then(
+      ([token, l1Token]) =>
+        ({
+          ...token,
+          address,
+          l1Token: toChecksum(l1Token, chainId),
+        }) as L2Token,
+    ),
+  { resolver: ({ address, chainId }) => `${address}-${chainId}` },
+)

@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
+import { useHemiClient } from 'hooks/useHemiClient'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { getEvmL1PublicClient } from 'utils/chainClients'
-import { getEvmTransactionReceipt } from 'utils/evmApi'
 import { type Chain } from 'viem'
 import { getWithdrawals } from 'viem/op-stack'
 import { useAccount } from 'wagmi'
@@ -19,12 +19,14 @@ export const useEstimateFinalizeWithdrawalFees = function ({
 
   const { address: account } = useAccount()
   const hemi = useHemi()
+  const hemiClient = useHemiClient()
 
   const { data: gasUnits, isSuccess } = useQuery({
     enabled,
     async queryFn() {
       const publicClient = getEvmL1PublicClient(l1ChainId)
-      return getEvmTransactionReceipt(transactionHash, l2ChainId)
+      return hemiClient
+        .getTransactionReceipt({ hash: transactionHash })
         .then(receipt => getWithdrawals(receipt))
         .then(([w]) =>
           publicClient.estimateFinalizeWithdrawalGas({

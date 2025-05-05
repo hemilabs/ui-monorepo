@@ -3,6 +3,7 @@
 import { useUmami } from 'app/analyticsEvents'
 import { Big } from 'big.js'
 import { Button } from 'components/button'
+import { ButtonLoader } from 'components/buttonLoader'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useAccounts } from 'hooks/useAccounts'
@@ -37,11 +38,18 @@ import {
 import { useWithdraw } from '../_hooks/useWithdraw'
 import { canSubmit, getTotal } from '../_utils'
 
-import { ConnectEvmWallet } from './connectEvmWallet'
 import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
+
+const ConnectEvmWallet = dynamic(
+  () => import('./connectEvmWallet').then(mod => mod.ConnectEvmWallet),
+  {
+    loading: () => <ButtonLoader />,
+    ssr: false,
+  },
+)
 
 const CustomTunnelsThroughPartners = dynamic(
   () =>

@@ -1,53 +1,54 @@
 import { StaticImageData } from 'next/image'
 import { StakeProtocols } from 'types/stake'
 
-import babypie from './images/babypie.svg'
+import babypie from './images/babypie.png'
 import bedRock from './images/bedRock.svg'
 import bitFi from './images/bitFi.svg'
 import circle from './images/circle.svg'
-import eigenpie from './images/eigenpie.svg'
+import eigenpie from './images/eigenpie.png'
 import ethereum from './images/ethereum.svg'
 import exSat from './images/exSat.svg'
 import hemi from './images/hemi.svg'
 import kelp from './images/kelp.svg'
 import lorenzo from './images/lorenzo.svg'
-import makerDao from './images/makerDao.svg'
-import merlinChain from './images/merlinChain.svg'
+import makerDao from './images/makerDao.png'
+import merlinChain from './images/merlinChain.png'
 import obeliskNodeDao from './images/obeliskNodeDao.svg'
-import pumpBtc from './images/pumpBtc.svg'
+import pumpBtc from './images/pumpBtc.png'
 import satoshi from './images/satoshi.png'
 import solv from './images/solv.svg'
-import stakeStone from './images/stakeStone.svg'
-import sumer from './images/sumer.svg'
+import sumer from './images/sumer.png'
 import tether from './images/tether.svg'
 import threshold from './images/threshold.svg'
-import uniRouter from './images/uniRouter.svg'
+import uniRouter from './images/uniRouter.png'
 import wbtc from './images/wbtc.svg'
 import yieldNest from './images/yieldNest.svg'
 
-export const protocolImages: Record<StakeProtocols, StaticImageData> = {
-  babypie,
-  bedRock,
-  bitFi,
-  circle,
-  egEth: eigenpie,
-  ethereum,
-  exSat,
-  hemi,
-  kelp,
-  lorenzo,
-  makerDao,
-  merlinChain,
-  obeliskNodeDao,
-  pumpBtc,
-  satoshi,
-  solv,
-  stakeStone,
-  sumer,
-  tether,
-  threshold,
-  uniBtc: bedRock,
-  uniRouter,
-  wbtc,
-  yieldNest,
+export const protocolImages: Record<
+  StakeProtocols,
+  { src: StaticImageData; className?: string }
+> = {
+  babypie: { className: 'w-20', src: babypie },
+  bedRock: { src: bedRock },
+  bitFi: { src: bitFi },
+  circle: { src: circle },
+  egEth: { className: 'w-21', src: eigenpie },
+  ethereum: { src: ethereum },
+  exSat: { src: exSat },
+  hemi: { src: hemi },
+  kelp: { src: kelp },
+  lorenzo: { src: lorenzo },
+  makerDao: { className: 'w-21', src: makerDao },
+  merlinChain: { className: 'w-29', src: merlinChain },
+  obeliskNodeDao: { src: obeliskNodeDao },
+  pumpBtc: { className: 'w-24', src: pumpBtc },
+  satoshi: { src: satoshi },
+  solv: { src: solv },
+  sumer: { className: 'w-15', src: sumer },
+  tether: { src: tether },
+  threshold: { src: threshold },
+  uniBtc: { src: bedRock },
+  uniRouter: { className: 'w-21', src: uniRouter },
+  wbtc: { src: wbtc },
+  yieldNest: { src: yieldNest },
 }

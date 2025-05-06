@@ -75,7 +75,6 @@ export const StakeOperation = function ({
   const stakeEstimatedFees = useEstimateStakeFees({
     amount: parseUnits(amount, token.decimals),
     enabled: allowance > 0 || operatesNativeToken,
-    forAccount: address,
     token,
   })
 

@@ -25,6 +25,9 @@ import { Column, ColumnHeader, Header } from '../table'
 import { TokenBalance } from '../tokenBalance'
 import { TokenRewards } from '../tokenRewards'
 
+// created here so there's a stable reference between renders when using it
+const emptyData = new Array(4).fill(null)
+
 const columnsBuilder = (
   t: ReturnType<typeof useTranslations<'stake-page'>>,
 ): ColumnDef<StakeToken>[] => [
@@ -128,7 +131,7 @@ const StakeStrategyTableImp = function ({
 
   const table = useReactTable({
     columns,
-    data: data.length === 0 ? new Array(4).fill(null) : data,
+    data: data.length === 0 ? emptyData : data,
     getCoreRowModel: getCoreRowModel(),
     state: {
       columnOrder:

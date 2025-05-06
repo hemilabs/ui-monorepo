@@ -7,6 +7,7 @@ type Props = {
   protocol: StakeProtocols
 }
 
-export const ProtocolImage = ({ protocol }: Props) => (
-  <Image alt={protocol} src={protocolImages[protocol]} />
-)
+export const ProtocolImage = function ({ protocol }: Props) {
+  const { className, src } = protocolImages[protocol]
+  return <Image alt={protocol} className={className} src={src} />
+}

@@ -18,7 +18,6 @@ export const stakeProtocols = [
   'satoshi',
   'sumer',
   'solv',
-  'stakeStone',
   'tether',
   'threshold',
   'uniBtc',

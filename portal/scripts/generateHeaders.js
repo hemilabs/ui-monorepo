@@ -98,11 +98,16 @@ if (
   const url = `https://${analyticsDomain}`
   fetchDomains.add(url)
   downloadScriptsDomains.add(url)
-  // these are needed for analytics
+  // these are needed for Cloudflare analytics
   downloadScriptsDomains.add('https://static.cloudflareinsights.com')
   downloadScriptsDomains.add('https://challenges.cloudflare.com')
   downloadScriptsDomains.add('https://ajax.cloudflare.com')
   fetchDomains.add('https://cloudflareinsights.com')
+}
+const cookie3Domain = getDomain(process.env.NEXT_PUBLIC_COOKIE3_URL)
+if (process.env.NEXT_PUBLIC_ENABLE_COOKIE3 === 'true' && cookie3Domain) {
+  fetchDomains.add(`https://${cookie3Domain}`)
+  downloadScriptsDomains.add(`https://${cookie3Domain}`)
 }
 // error-tracking
 const errorTrackingDomain = getDomain(process.env.NEXT_PUBLIC_SENTRY_DSN)

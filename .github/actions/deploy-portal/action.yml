@@ -24,6 +24,9 @@ inputs:
   NEXT_PUBLIC_ANALYTICS_WEBSITE_ID:
     required: false
     description: Analytics website ID
+  NEXT_PUBLIC_COOKIE3_SITE_ID:
+    required: false
+    description: Cookie3 site ID
   NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET:
     required: false
     description: Custom RPC URL for Hemi Mainnet
@@ -45,6 +48,9 @@ inputs:
   NEXT_PUBLIC_ENABLE_ANALYTICS:
     required: false
     description: Flag to enable or not analytics
+  NEXT_PUBLIC_ENABLE_COOKIE3:
+    required: false
+    description: Flag to enable or not Cookie3
   NEXT_PUBLIC_ENABLE_STAKE_TESTNET:
     required: false
     description: Flag to enable or not stake on testnet
@@ -91,6 +97,7 @@ runs:
       env:
         NEXT_PUBLIC_ANALYTICS_URL: ${{ inputs.NEXT_PUBLIC_ANALYTICS_URL }}
         NEXT_PUBLIC_ANALYTICS_WEBSITE_ID: ${{ inputs.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID }}
+        NEXT_PUBLIC_COOKIE3_SITE_ID: ${{ inputs.NEXT_PUBLIC_COOKIE3_SITE_ID }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET }}
@@ -98,6 +105,7 @@ runs:
         NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET: ${{ inputs.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET }}
         NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA: ${{ inputs.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA}}
         NEXT_PUBLIC_ENABLE_ANALYTICS: ${{ inputs.NEXT_PUBLIC_ENABLE_ANALYTICS }}
+        NEXT_PUBLIC_ENABLE_COOKIE3: ${{ inputs.NEXT_PUBLIC_ENABLE_COOKIE3 }}
         NEXT_PUBLIC_ENABLE_STAKE_TESTNET: ${{ inputs.NEXT_PUBLIC_ENABLE_STAKE_TESTNET }}
         NEXT_PUBLIC_POINTS_URL: ${{ inputs.NEXT_PUBLIC_POINTS_URL }}
         NEXT_PUBLIC_TOKEN_PRICES_URL: ${{ inputs.NEXT_PUBLIC_TOKEN_PRICES_URL }}

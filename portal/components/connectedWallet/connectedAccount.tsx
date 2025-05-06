@@ -12,6 +12,7 @@ import {
 } from 'hooks/useConnectedToUnsupportedChain'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
+import { usePathname } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { formatBtcAddress, formatEvmAddress } from 'utils/format'
@@ -160,10 +161,10 @@ const ConnectedWallet = function ({
 export const ConnectedEvmChain = function () {
   const { chain, isConnected } = useAccount()
   const isChainUnsupported = useConnectedToUnsupportedEvmChain()
-
+  const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
 
-  if (!isConnected) {
+  if (!isConnected || !pathname.includes('tunnel')) {
     return null
   }
 

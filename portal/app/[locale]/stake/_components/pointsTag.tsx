@@ -69,7 +69,7 @@ const PointsTag = function ({
 export const BedrockPoints = () => (
   <PointsTag
     icon={
-      <div className="h-4 w-4">
+      <div className="relative top-px">
         <DiamondPointsIcon />
       </div>
     }

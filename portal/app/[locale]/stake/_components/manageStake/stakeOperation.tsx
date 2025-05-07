@@ -1,6 +1,7 @@
 import { DrawerParagraph } from 'components/drawer'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { Spinner } from 'components/spinner'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
@@ -184,7 +185,7 @@ export const StakeOperation = function ({
 
   const getSubmitButtonText = function () {
     if (!allowanceLoaded || isSubmitting) {
-      return '...'
+      return <Spinner size={'small'} />
     }
     if (requiresApproval) {
       return t('approve-and-stake')

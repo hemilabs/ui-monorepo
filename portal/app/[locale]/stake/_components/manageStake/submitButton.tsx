@@ -1,10 +1,11 @@
 import { Button } from 'components/button'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
+import { ReactNode } from 'react'
 
 type Props = {
   disabled: boolean
-  text: string
+  text: ReactNode
 }
 
 export const SubmitButton = function ({ disabled, text }: Props) {

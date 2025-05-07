@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import { Token } from 'types/token'
 
 import { CustomTokenLogo } from './customTokenLogo'
@@ -17,8 +18,31 @@ type Props = {
   token: Token
 }
 
+type ImageState = 'idle' | 'loaded' | 'error'
+
+const MaxRetries = 5
+
 // for hemi tokens, we add a hemi logo at the bottom right
 export function TokenLogo({ size, token }: Props) {
+  const [imageState, setImageState] = useState<ImageState>('idle')
+  const [retry, setRetry] = useState(0)
+
+  useEffect(
+    function retryImageEffect() {
+      let timer: NodeJS.Timeout | null = null
+      if (imageState === 'error' && retry <= MaxRetries) {
+        timer = setTimeout(function forceReload() {
+          setImageState('idle')
+          setRetry(r => r + 1)
+        }, 10 * 1000)
+      }
+      return function () {
+        if (timer) clearTimeout(timer)
+      }
+    },
+    [imageState, retry, setRetry, setImageState],
+  )
+
   // BTC and tBTC are special cases
   // We use a preset logo for them
   if (['btc', 'tbtc'].includes(token.symbol.toLowerCase())) {
@@ -31,13 +55,15 @@ export function TokenLogo({ size, token }: Props) {
     )
   }
 
-  return token.logoURI ? (
+  return token.logoURI && imageState !== 'error' ? (
     <div className={`relative ${sizes[size]}`}>
       <Image
         alt={`${token.symbol} Logo`}
         className="w-full"
         height={20}
-        src={token.logoURI}
+        onError={() => setImageState('error')}
+        onLoad={() => setImageState('loaded')}
+        src={`${token.logoURI}${retry === 0 ? '' : `?retry=${retry}`}`}
         width={20}
       />
       {/* for custom tokens, it is already included in the component */}

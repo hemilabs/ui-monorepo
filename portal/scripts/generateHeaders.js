@@ -43,6 +43,8 @@ const fetchDomains = new Set([
   'https://*.walletconnect.com',
   'wss://relay.walletconnect.org',
   'https://*.walletconnect.org',
+  // cookie3
+  'https://a.markfi.xyz',
 ])
 
 if (process.env.NEXT_PUBLIC_THE_GRAPH_API_URL) {

@@ -16,40 +16,8 @@ import {
 } from 'types/tunnel'
 import { useAccount } from 'wagmi'
 
-const BitcoinDepositsStatusUpdater = dynamic(
-  () =>
-    import('./bitcoinDepositsStatusUpdater').then(
-      mod => mod.BitcoinDepositsStatusUpdater,
-    ),
-  { ssr: false },
-)
-
-const BitcoinWithdrawalsStatusUpdater = dynamic(
-  () =>
-    import('./bitcoinWithdrawalsStatusUpdater').then(
-      mod => mod.BitcoinWithdrawalsStatusUpdater,
-    ),
-  { ssr: false },
-)
-
-const EvmDepositsStatusUpdater = dynamic(
-  () =>
-    import('./evmDepositsStatusUpdater').then(
-      mod => mod.EvmDepositsStatusUpdater,
-    ),
-  { ssr: false },
-)
-
 const SyncHistoryWorker = dynamic(
   () => import('./syncHistoryWorker').then(mod => mod.SyncHistoryWorker),
-  { ssr: false },
-)
-
-const WithdrawalsStateUpdater = dynamic(
-  () =>
-    import('./withdrawalsStateUpdater').then(
-      mod => mod.WithdrawalsStateUpdater,
-    ),
   { ssr: false },
 )
 
@@ -130,14 +98,6 @@ export const TunnelHistoryProvider = function ({ children }: Props) {
 
   return (
     <TunnelHistoryContext.Provider value={context}>
-      {/* Track updates on bitcoin deposits, in bitcoin or in Hemi */}
-      {<BitcoinDepositsStatusUpdater />}
-      {/* Track updates on bitcoin withdrawals, from Hemi to Bitcoin */}
-      {<BitcoinWithdrawalsStatusUpdater />}
-      {/* Track updates on withdrawals from Hemi */}
-      <WithdrawalsStateUpdater />
-      {/* Track updates on deposits to Hemi, tracking any missing info */}
-      <EvmDepositsStatusUpdater />
       {children}
       {/* Sync the transaction history per chain in the background */}
       {historyChainSync}

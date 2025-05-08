@@ -19,6 +19,7 @@ import { Analytics } from './_components/analytics'
 import { AppLayout } from './_components/appLayout'
 import { AppOverlays } from './_components/appOverlays'
 import { Navbar } from './_components/navbar'
+import { Workers } from './_components/workers'
 
 type PageProps = {
   params: { locale: Locale }
@@ -84,6 +85,7 @@ export default async function RootLayout({
                         <AppLayout>
                           <ErrorBoundary>{children}</ErrorBoundary>
                           <AppOverlays />
+                          <Workers />
                         </AppLayout>
                       </div>
                     </Analytics>

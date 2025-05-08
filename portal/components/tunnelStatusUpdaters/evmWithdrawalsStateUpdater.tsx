@@ -146,7 +146,7 @@ const WatchEvmWithdrawal = function ({
 const getWorker = () =>
   new Worker(new URL('../../workers/watchEvmWithdrawals.ts', import.meta.url))
 
-export const WithdrawalsStateUpdater = function () {
+export const EvmWithdrawalsStateUpdater = function () {
   const { isConnected } = useAccount()
 
   const withdrawals = useToEvmWithdrawals()

@@ -35,7 +35,6 @@ const nextConfig = {
     'btc-wallet',
     'hemi-tunnel-actions',
     'hemi-viem-stake-actions',
-    'ui-common',
     'viem-erc20',
   ],
   webpack(config) {

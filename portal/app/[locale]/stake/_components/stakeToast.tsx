@@ -1,11 +1,11 @@
 import { ExternalLink } from 'components/externalLink'
 import { CheckMark } from 'components/icons/checkMark'
+import { CloseIcon } from 'components/icons/closeIcon'
 import { Link } from 'components/link'
 import { useChain } from 'hooks/useChain'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { RemoteChain } from 'types/chain'
-import { CloseIcon } from 'ui-common/components/closeIcon'
 import { formatEvmHash } from 'utils/format'
 import { type Hash } from 'viem'
 
@@ -81,8 +81,8 @@ export const StakeToast = function ({
           </Link>
         )}
       </div>
-      <button className="h-fit" onClick={() => setClosedToast(true)}>
-        <CloseIcon className="[&>path]:hover:stroke-white" />
+      <button className="h-5 w-5" onClick={() => setClosedToast(true)}>
+        <CloseIcon className="h-full w-full [&>path]:hover:stroke-white" />
       </button>
     </div>
   )

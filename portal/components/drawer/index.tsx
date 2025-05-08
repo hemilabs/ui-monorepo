@@ -1,10 +1,10 @@
 'use client'
 
+import { CloseIcon } from 'components/icons/closeIcon'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useOnKeyUp } from 'hooks/useOnKeyUp'
 import { ComponentType } from 'react'
 import ReactDOM from 'react-dom'
-import { CloseIcon } from 'ui-common/components/closeIcon'
 
 import { Overlay } from '../overlay'
 
@@ -66,8 +66,12 @@ export const DrawerTopSection = ({
   <div className="flex items-center justify-between">
     <DrawerTitle>{heading}</DrawerTitle>
     {!!onClose && (
-      <button className="cursor-pointer" onClick={onClose} type="button">
-        <CloseIcon className="[&>path]:hover:stroke-black" />
+      <button
+        className="h-5 w-5 cursor-pointer"
+        onClick={onClose}
+        type="button"
+      >
+        <CloseIcon className="h-full w-full [&>path]:hover:stroke-black" />
       </button>
     )}
   </div>

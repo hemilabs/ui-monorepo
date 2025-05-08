@@ -27,7 +27,6 @@
     "portal",
     "subgraph-api",
     "subgraphs/*",
-    "token-prices/*",
-    "ui-common"
+    "token-prices/*"
   ]
 }

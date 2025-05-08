@@ -222,14 +222,14 @@ const ReviewContent = function ({
       amount={withdrawal.amount}
       bottomSection={getBottomSection()}
       callToAction={getCallToAction(withdrawal)}
+      heading={t('heading')}
       onClose={onClose}
       steps={steps}
-      subtitle={
+      subheading={
         withdrawal.status === BtcWithdrawStatus.WITHDRAWAL_SUCCEEDED
           ? t('your-withdraw-is-completed')
           : t('withdraw-on-its-way')
       }
-      title={t('heading')}
       token={fromToken}
     />
   )

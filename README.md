@@ -15,7 +15,6 @@ This monorepo contains the following projects:
 - **subgraph-api**: API for querying hemi subgraphs needed for the portal.
 - **subgraphs/\***: The different subgraphs needed for the portal, such as tunneling operations.
 - **token-prices**: The Token Prices API.
-- **ui-common**: Package with shared components and hooks.
 
 ## Deployment
 

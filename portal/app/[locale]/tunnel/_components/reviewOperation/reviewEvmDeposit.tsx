@@ -180,14 +180,14 @@ const ReviewContent = function ({
     <Operation
       amount={deposit.amount}
       callToAction={getCallToAction(deposit)}
+      heading={t('review-deposit')}
       onClose={onClose}
       steps={steps}
-      subtitle={
+      subheading={
         depositStatus === EvmDepositStatus.DEPOSIT_TX_CONFIRMED
           ? t('your-deposit-is-complete')
           : t('deposit-on-its-way')
       }
-      title={t('review-deposit')}
       token={fromToken}
     />
   )

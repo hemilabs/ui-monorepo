@@ -10,11 +10,7 @@
         "bloq/typescript",
         "prettier"
       ],
-      "files": [
-        "packages/**/**/*.{js,ts,tsx}",
-        "portal/**/*.{js,ts,tsx}",
-        "ui-common/**/*.{js,ts,tsx}"
-      ],
+      "files": ["packages/**/**/*.{js,ts,tsx}", "portal/**/*.{js,ts,tsx}"],
       "rules": {
         "@typescript-eslint/no-shadow": "error",
         "@typescript-eslint/no-unused-vars": [

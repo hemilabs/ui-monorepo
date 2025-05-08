@@ -1,6 +1,6 @@
+import { CloseIcon } from 'components/icons/closeIcon'
 import { WarningIcon } from 'components/icons/warningIcon'
 import { ComponentProps, ReactNode } from 'react'
-import { CloseIcon } from 'ui-common/components/closeIcon'
 
 type Props = {
   children?: ReactNode
@@ -24,7 +24,7 @@ export const WarningBox = ({
       <p className="text-neutral-900">{heading}</p>
       {!!onClose && (
         <CloseIcon
-          className="cursor-pointer [&>path]:hover:stroke-neutral-950"
+          className="h-5 w-5 cursor-pointer [&>path]:hover:stroke-neutral-950"
           onClick={onClose}
         />
       )}

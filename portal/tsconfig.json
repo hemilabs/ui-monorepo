@@ -12,6 +12,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "../btc-wallet/global.d.ts"
+    "../packages/btc-wallet/global.d.ts"
   ]
 }

@@ -23,8 +23,6 @@
   },
   "private": true,
   "workspaces": [
-    "btc-wallet",
-    "hemi-viem-stake-actions",
     "packages/*",
     "portal",
     "subgraph-api",

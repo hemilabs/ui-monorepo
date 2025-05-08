@@ -11,8 +11,6 @@
         "prettier"
       ],
       "files": [
-        "btc-wallet/**/*.{js,ts,tsx}",
-        "hemi-viem-stake-actions/**/*.{js,ts}",
         "packages/**/**/*.{js,ts,tsx}",
         "portal/**/*.{js,ts,tsx}",
         "ui-common/**/*.{js,ts,tsx}"

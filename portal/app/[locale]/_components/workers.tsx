@@ -2,6 +2,12 @@
 
 import dynamic from 'next/dynamic'
 
+const SyncHistoryWorkers = dynamic(
+  () =>
+    import('components/syncHistoryWorkers').then(mod => mod.SyncHistoryWorkers),
+  { ssr: false },
+)
+
 const TunnelStatusUpdaters = dynamic(
   () =>
     import('components/tunnelStatusUpdaters').then(
@@ -12,4 +18,9 @@ const TunnelStatusUpdaters = dynamic(
   },
 )
 
-export const Workers = () => <TunnelStatusUpdaters />
+export const Workers = () => (
+  <>
+    <SyncHistoryWorkers />
+    <TunnelStatusUpdaters />
+  </>
+)

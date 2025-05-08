@@ -1,4 +1,5 @@
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
+import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
 import debounce from 'lodash/debounce'
@@ -126,8 +127,9 @@ const debouncedSaveToStorage = debounce(
   { leading: true },
 )
 
-export const useSyncHistory = function (l2ChainId: Chain['id']) {
+export const useSyncHistory = function () {
   const { address } = useAccount()
+  const l2ChainId = useHemi().id
   const { remoteNetworks } = useNetworks()
   const [networkType] = useNetworkType()
 
@@ -277,6 +279,8 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
       addWithdrawalToTunnelHistory: (withdrawal: WithdrawTunnelOperation) =>
         dispatch({ payload: withdrawal, type: 'add-withdraw' }),
       deposits: history.deposits.flatMap(d => d.content),
+      dispatch,
+      history,
       resyncHistory: () => setForceResync(true),
       syncStatus: history.status,
       updateDeposit: (
@@ -300,5 +304,5 @@ export const useSyncHistory = function (l2ChainId: Chain['id']) {
     [dispatch, history],
   )
 
-  return [...reducer, historyContext] as const
+  return historyContext
 }

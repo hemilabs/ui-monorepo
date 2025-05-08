@@ -75,9 +75,9 @@ export default async function RootLayout({
           or something that requires showing something. */}
             <WalletsContext locale={locale}>
               <ConnectWalletDrawerProvider>
-                <Suspense>
-                  <TunnelHistoryProvider>
-                    <Analytics>
+                <Analytics>
+                  <Suspense>
+                    <TunnelHistoryProvider>
                       <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
                         <div className="hidden w-1/4 max-w-64 md:block">
                           <Navbar />
@@ -88,9 +88,9 @@ export default async function RootLayout({
                           <Workers />
                         </AppLayout>
                       </div>
-                    </Analytics>
-                  </TunnelHistoryProvider>
-                </Suspense>
+                    </TunnelHistoryProvider>
+                  </Suspense>
+                </Analytics>
               </ConnectWalletDrawerProvider>
             </WalletsContext>
           </SkeletonTheme>

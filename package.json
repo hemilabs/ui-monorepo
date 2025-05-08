@@ -23,7 +23,6 @@
   },
   "private": true,
   "workspaces": [
-    "hemi-viem-stake-actions",
     "packages/*",
     "portal",
     "subgraph-api",

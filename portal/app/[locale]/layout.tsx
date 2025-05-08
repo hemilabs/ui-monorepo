@@ -73,9 +73,9 @@ export default async function RootLayout({
           However, there's no change at all in the UI, so no fallback seems to be needed, as it isn't an async request
           or something that requires showing something. */}
             <WalletsContext locale={locale}>
-              <Suspense>
-                <TunnelHistoryProvider>
-                  <ConnectWalletDrawerProvider>
+              <ConnectWalletDrawerProvider>
+                <Suspense>
+                  <TunnelHistoryProvider>
                     <Analytics>
                       <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
                         <div className="hidden w-1/4 max-w-64 md:block">
@@ -87,9 +87,9 @@ export default async function RootLayout({
                         </AppLayout>
                       </div>
                     </Analytics>
-                  </ConnectWalletDrawerProvider>
-                </TunnelHistoryProvider>
-              </Suspense>
+                  </TunnelHistoryProvider>
+                </Suspense>
+              </ConnectWalletDrawerProvider>
             </WalletsContext>
           </SkeletonTheme>
         </NextIntlClientProvider>

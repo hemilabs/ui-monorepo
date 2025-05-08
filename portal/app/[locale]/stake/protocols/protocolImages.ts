@@ -19,6 +19,7 @@ import satoshi from './images/satoshi.png'
 import solv from './images/solv.svg'
 import sumer from './images/sumer.png'
 import tether from './images/tether.svg'
+import tetherGold from './images/tetherGold.svg'
 import threshold from './images/threshold.svg'
 import uniRouter from './images/uniRouter.png'
 import wbtc from './images/wbtc.svg'
@@ -46,6 +47,7 @@ export const protocolImages: Record<
   solv: { src: solv },
   sumer: { className: 'w-15', src: sumer },
   tether: { src: tether },
+  tetherGold: { src: tetherGold },
   threshold: { src: threshold },
   uniBtc: { src: bedRock },
   uniRouter: { className: 'w-21', src: uniRouter },

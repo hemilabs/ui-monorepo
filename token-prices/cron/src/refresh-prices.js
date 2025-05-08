@@ -41,7 +41,7 @@ async function fetchPrices() {
   const res = await fetchJson(url, params, headers)
   return Object.fromEntries(
     Object.values(res.data).map(({ quote, symbol }) => [
-      symbol,
+      symbol.toUpperCase(),
       quote.USD.price,
     ]),
   )

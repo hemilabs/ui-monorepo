@@ -170,6 +170,12 @@ export const stakeWhiteList: Partial<
       rewards: ['hemi'],
       website: 'https://www.hemi.xyz',
     },
+    // XAUt
+    '0x028DE74e2fE336511A8E5FAb0426D1cfD5110DBb': {
+      protocol: 'tetherGold',
+      rewards: ['hemi3x'],
+      website: 'https://gold.tether.to/',
+    },
     // ynCoBTCk
     '0x8970a6A9Eae065aA81a94E86ebCAF4F3d4dd6DA1': {
       priceSymbol: 'btc',

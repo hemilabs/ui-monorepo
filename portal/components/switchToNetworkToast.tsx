@@ -1,9 +1,9 @@
+import { CloseIcon } from 'components/icons/closeIcon'
 import { useChain } from 'hooks/useChain'
 import { useSwitchChain } from 'hooks/useSwitchChain'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { type RemoteChain } from 'types/chain'
-import { CloseIcon } from 'ui-common/components/closeIcon'
 
 const WarningIcon = () => (
   <svg
@@ -60,8 +60,8 @@ export const SwitchToNetworkToast = function ({ chainId }: Props) {
           {t('switch-to-network', { network: walletTargetNetwork?.name })}
         </button>
       </div>
-      <button className="h-fit" onClick={() => setClosedToast(true)}>
-        <CloseIcon className="[&>path]:hover:stroke-white" />
+      <button className="h-5 w-5" onClick={() => setClosedToast(true)}>
+        <CloseIcon className="h-full w-full [&>path]:hover:stroke-white" />
       </button>
     </div>
   )

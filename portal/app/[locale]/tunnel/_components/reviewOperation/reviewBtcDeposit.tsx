@@ -219,16 +219,16 @@ const ReviewContent = function ({
       amount={deposit.amount}
       bottomSection={getBottomSection()}
       callToAction={getCallToAction(deposit)}
+      heading={t('review-deposit')}
       onClose={onClose}
       steps={steps}
-      subtitle={
+      subheading={
         depositStatus === BtcDepositStatus.BTC_DEPOSITED
           ? t('your-deposit-is-complete')
           : t('btc-deposit-come-back-delay-note', {
               hours: ExpectedManualConfirmationDepositTimeHours,
             })
       }
-      title={t('review-deposit')}
       token={fromToken}
     />
   )

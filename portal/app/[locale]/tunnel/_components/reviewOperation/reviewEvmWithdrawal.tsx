@@ -231,14 +231,14 @@ const ReviewContent = function ({
     <Operation
       amount={withdrawal.amount}
       callToAction={getCallToAction(withdrawal)}
+      heading={t('heading')}
       onClose={onClose}
       steps={steps}
-      subtitle={
+      subheading={
         withdrawal.status === MessageStatus.RELAYED
           ? t('your-withdraw-is-completed')
           : t('withdraw-on-its-way')
       }
-      title={t('heading')}
       token={fromToken}
     />
   )

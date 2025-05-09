@@ -1,11 +1,30 @@
+'use client'
+
+import { useHemi } from 'hooks/useHemi'
+import { useNetworks } from 'hooks/useNetworks'
 import {
+  SyncStatus,
   type HistoryActions,
   type HistoryReducerState,
 } from 'hooks/useSyncHistory/types'
+import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { type Dispatch, useEffect, useRef, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { type Address, type Chain } from 'viem'
+import { useAccount } from 'wagmi'
 import { AppToWebWorker } from 'workers/history'
+
+const isReadyOrSyncing = (status: SyncStatus | undefined) =>
+  !!status && ['ready', 'syncing'].includes(status)
+
+const isChainReadyOrSyncing =
+  (history: HistoryReducerState) => (chain: RemoteChain) =>
+    isReadyOrSyncing(
+      history.deposits.find(d => d.chainId === chain.id)?.status,
+    ) ||
+    isReadyOrSyncing(
+      history.withdrawals.find(d => d.chainId === chain.id)?.status,
+    )
 
 type Props = {
   address: Address
@@ -15,7 +34,7 @@ type Props = {
   l2ChainId: Chain['id']
 }
 
-export const SyncHistoryWorker = function ({
+const SyncHistoryWorker = function ({
   address,
   dispatch,
   history,
@@ -34,7 +53,7 @@ export const SyncHistoryWorker = function ({
     function initWorker() {
       // load the Worker
       workerRef.current = new Worker(
-        new URL('../../workers/history.ts', import.meta.url),
+        new URL('../workers/history.ts', import.meta.url),
       )
 
       // listen for state updates and forward to our history reducer
@@ -108,4 +127,34 @@ export const SyncHistoryWorker = function ({
     ],
   )
   return null
+}
+
+export const SyncHistoryWorkers = function () {
+  const { address, isConnected } = useAccount()
+  const l2ChainId = useHemi().id
+  const { remoteNetworks } = useNetworks()
+  const { dispatch, history, syncStatus } = useTunnelHistory()
+
+  const historyChainSync = []
+
+  // We need to be ready or syncing to return workers
+  if (isConnected && address && ['ready', 'syncing'].includes(syncStatus)) {
+    // Add workers for every pair L1-Hemi chain
+    historyChainSync.push(
+      ...remoteNetworks
+        .filter(isChainReadyOrSyncing(history))
+        .map(l1Chain => (
+          <SyncHistoryWorker
+            address={address}
+            dispatch={dispatch}
+            history={history}
+            key={`${l1Chain.id}_${l2ChainId}_${address}`}
+            l1ChainId={l1Chain.id}
+            l2ChainId={l2ChainId}
+          />
+        )),
+    )
+  }
+
+  return <>{historyChainSync}</>
 }

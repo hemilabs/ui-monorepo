@@ -19,6 +19,7 @@ import { Analytics } from './_components/analytics'
 import { AppLayout } from './_components/appLayout'
 import { AppOverlays } from './_components/appOverlays'
 import { Navbar } from './_components/navbar'
+import { Workers } from './_components/workers'
 
 type PageProps = {
   params: { locale: Locale }
@@ -72,11 +73,11 @@ export default async function RootLayout({
           getting mainnet|testnet from query string, and using useSearchParams (through nuqs) requires so to compile.
           However, there's no change at all in the UI, so no fallback seems to be needed, as it isn't an async request
           or something that requires showing something. */}
-            <Suspense>
-              <WalletsContext locale={locale}>
-                <TunnelHistoryProvider>
-                  <ConnectWalletDrawerProvider>
-                    <Analytics>
+            <WalletsContext locale={locale}>
+              <ConnectWalletDrawerProvider>
+                <Analytics>
+                  <Suspense>
+                    <TunnelHistoryProvider>
                       <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
                         <div className="hidden w-1/4 max-w-64 md:block">
                           <Navbar />
@@ -84,13 +85,14 @@ export default async function RootLayout({
                         <AppLayout>
                           <ErrorBoundary>{children}</ErrorBoundary>
                           <AppOverlays />
+                          <Workers />
                         </AppLayout>
                       </div>
-                    </Analytics>
-                  </ConnectWalletDrawerProvider>
-                </TunnelHistoryProvider>
-              </WalletsContext>
-            </Suspense>
+                    </TunnelHistoryProvider>
+                  </Suspense>
+                </Analytics>
+              </ConnectWalletDrawerProvider>
+            </WalletsContext>
           </SkeletonTheme>
         </NextIntlClientProvider>
       </body>

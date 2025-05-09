@@ -1,6 +1,7 @@
 'use client'
 
 import { useTokenPrices } from 'hooks/useTokenPrices'
+import { useMemo } from 'react'
 import { sortTokens } from 'utils/sortTokens'
 
 import { StakeGraph } from './_components/icons/stakeGraph'
@@ -30,15 +31,32 @@ const PageBackground = () => (
 )
 
 export default function Page() {
-  // Removing WETH from the list of tokens to stake
-  // here instead of in the tokenList file
-  // It has to be rendered on dashboard page though
   const { loading: isLoadingBalance, tokensWalletBalance } = useWalletBalances()
-  const tokensFiltered = tokensWalletBalance.filter(t => t.symbol !== 'WETH')
 
-  const { data: prices, isPending: isLoadingPrices } = useTokenPrices()
+  const {
+    data: prices,
+    errorUpdateCount,
+    isPending: isLoadingPrices,
+  } = useTokenPrices()
+
   const isLoading = isLoadingBalance || isLoadingPrices
-  const sortedTokens = isLoading ? [] : sortTokens(tokensFiltered, prices)
+
+  const sortedTokens = useMemo(
+    () =>
+      // If prices errored, let's show the tokens without price ordering.
+      // If the prices API eventually comes back, prices will be redefined and they will
+      // be sorted as expected.
+      !isLoading || errorUpdateCount > 0
+        ? sortTokens(
+            // Removing WETH from the list of tokens to stake
+            // here instead of in the tokenList file
+            // It has to be rendered on dashboard page though
+            tokensWalletBalance.filter(t => t.symbol !== 'WETH'),
+            prices,
+          )
+        : [],
+    [errorUpdateCount, isLoading, prices, tokensWalletBalance],
+  )
 
   return (
     <div className="h-[calc(100vh-theme(spacing.48))]">

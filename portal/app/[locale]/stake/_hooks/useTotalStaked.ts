@@ -11,11 +11,15 @@ import { formatUnits } from 'viem'
  */
 export const useTotalStaked = function () {
   const hemi = useHemi()
-  const { data: prices, isPending: isLoadingPrices } = useTokenPrices()
+  const {
+    data: prices,
+    isError: isTokenPricesError,
+    isPending: isLoadingPrices,
+  } = useTokenPrices()
 
   const {
     data: totalPerToken = [],
-    isError,
+    isError: isTotalStakedError,
     isPending: isLoadingTotalStaked,
   } = useQuery({
     queryFn: () => getTotalStaked(hemi.id),
@@ -24,6 +28,7 @@ export const useTotalStaked = function () {
     refetchInterval: 2 * 60 * 1000,
   })
 
+  const isError = isTokenPricesError || isTotalStakedError
   const isPending = isLoadingTotalStaked || isLoadingPrices
 
   const calculateTotalStake = () =>

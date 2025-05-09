@@ -2,6 +2,7 @@ import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -33,6 +34,7 @@ const WalletIcon = () => (
 export const WalletConnection = function () {
   const { closeDrawer, isDrawerOpen, openDrawer } = useDrawerContext()
   const [networkType] = useNetworkType()
+  const pathname = usePathnameWithoutLocale()
   const t = useTranslations()
 
   const { status: btcStatus } = useBtcAccount()
@@ -56,7 +58,7 @@ export const WalletConnection = function () {
     <div className="ml-auto mr-2 md:mr-6">
       <div className="flex items-center gap-x-3">
         <div className="hidden md:block">
-          <ConnectedChains />
+          {pathname.startsWith('/tunnel') && <ConnectedChains />}
         </div>
         <button
           className="flex h-8 items-center gap-x-2 rounded-lg border border-solid border-neutral-300/55 bg-white 

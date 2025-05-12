@@ -2,6 +2,7 @@
   "name": "ui-monorepo",
   "version": "1.0.0",
   "scripts": {
+    "deps:check": "knip",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "postinstall": "patch-package",
@@ -15,6 +16,7 @@
     "eslint": "8.57.0",
     "eslint-config-bloq": "4.5.0",
     "husky": "9.1.7",
+    "knip": "5.55.1",
     "lerna": "8.1.2",
     "lint-staged": "15.2.10",
     "patch-package": "8.0.0",

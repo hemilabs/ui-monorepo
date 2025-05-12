@@ -277,9 +277,24 @@ export const StakeAssetsTable = function () {
   const { track } = useUmami()
   const { loading: isLoadingBalance, tokensWithPosition } = useStakePositions()
 
-  const { data: prices, isPending: isLoadingPrices } = useTokenPrices()
+  const {
+    data: prices,
+    errorUpdateCount,
+    isPending: isLoadingPrices,
+  } = useTokenPrices()
+
   const isLoading = isLoadingBalance || isLoadingPrices
-  const sortedTokens = isLoading ? [] : sortTokens(tokensWithPosition, prices)
+
+  const sortedTokens = useMemo(
+    () =>
+      // If prices errored, let's show the tokens without price ordering.
+      // If the prices API eventually comes back, prices will be redefined and they will
+      // be sorted as expected.
+      !isLoading || errorUpdateCount > 0
+        ? sortTokens(tokensWithPosition, prices)
+        : [],
+    [isLoading, errorUpdateCount, tokensWithPosition, prices],
+  )
 
   if (tokensWithPosition.length === 0) {
     return <WelcomeStake />

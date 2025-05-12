@@ -33,7 +33,7 @@ const RenderFiatBalanceUnsafe = function ({
     data,
     fetchStatus: tokenPricesFetchStatus,
     status: pricesStatus,
-  } = useTokenPrices()
+  } = useTokenPrices({ retryOnMount: false })
 
   const stringBalance = formatUnits(balance, token.decimals)
 

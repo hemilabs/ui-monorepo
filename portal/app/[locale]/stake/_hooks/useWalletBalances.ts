@@ -28,6 +28,8 @@ export const useWalletBalances = function () {
               })
           : BigInt(0),
       queryKey: ['wallet-token-balance', token.chainId, token.address],
+      // refetch every 5 minutes
+      refetchInterval: 5 * 60 * 1000,
       select: (balance: bigint) => ({ ...token, balance }) satisfies StakeToken,
     })),
   })

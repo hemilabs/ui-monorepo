@@ -29,6 +29,14 @@ export const Drawer = function ({
     }
   }, drawerRef)
 
+  const drawerContainer =
+    container ?? document.getElementById('app-layout-container')
+
+  if (!drawerContainer) {
+    // container not found, prevent "ReactDOM.createPortal" from crashing
+    return null
+  }
+
   return ReactDOM.createPortal(
     <>
       <div
@@ -44,7 +52,7 @@ export const Drawer = function ({
       </div>
       <OverlayComponent />
     </>,
-    container ?? document.getElementById('app-layout-container'),
+    drawerContainer,
   )
 }
 

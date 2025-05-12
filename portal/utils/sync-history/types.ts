@@ -5,12 +5,7 @@ import {
   type SyncType,
 } from 'hooks/useSyncHistory/types'
 import { type RemoteChain } from 'types/chain'
-import { TunnelOperation } from 'types/tunnel'
 import { type Address, type Chain } from 'viem'
-
-export type SyncInfo<TSyncType extends SyncType> = {
-  content: TunnelOperation[]
-} & TSyncType
 
 export type ExtendedSyncInfo<TSyncType extends SyncType> = TSyncType &
   (TSyncType extends BlockSyncType

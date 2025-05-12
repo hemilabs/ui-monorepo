@@ -59,15 +59,15 @@ export type SyncContentPayload<
   content: TOperation[]
 } & DefinedFields<TSyncType>
 
-export type SyncDepositsAction<
+type SyncDepositsAction<
   TOperation extends DepositTunnelOperation = DepositTunnelOperation,
   TSyncType extends SyncType = SyncType,
 > = Action<'sync-deposits'> & Payload<SyncContentPayload<TOperation, TSyncType>>
 
-export type SyncFinished = Action<'sync-finished'> &
+type SyncFinished = Action<'sync-finished'> &
   Payload<{ chainId: RemoteChain['id'] }>
 
-export type SyncWithdrawalsAction<
+type SyncWithdrawalsAction<
   TOperation extends WithdrawTunnelOperation = WithdrawTunnelOperation,
   TSyncType extends SyncType = SyncType,
 > = Action<'sync-withdrawals'> &

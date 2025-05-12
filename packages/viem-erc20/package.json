@@ -21,6 +21,7 @@
     "tsc:check": "tsc"
   },
   "devDependencies": {
+    "typescript": "5.6.3",
     "viem": "2.22.10",
     "vitest": "3.0.8"
   },

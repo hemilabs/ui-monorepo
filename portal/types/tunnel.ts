@@ -192,5 +192,3 @@ export type WithdrawTunnelOperation =
   | ToBtcWithdrawOperation
 
 export type TunnelOperation = DepositTunnelOperation | WithdrawTunnelOperation
-
-export type RawTunnelOperation<T extends TunnelOperation> = Omit<T, 'timestamp'>

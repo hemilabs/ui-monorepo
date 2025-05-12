@@ -18,7 +18,11 @@
   "scripts": {
     "tsc:check": "tsc"
   },
+  "dependencies": {
+    "hemi-viem": "2.3.2"
+  },
   "devDependencies": {
+    "typescript": "5.6.3",
     "viem": "2.22.10"
   },
   "peerDependencies": {

@@ -10,7 +10,7 @@ import { nativeTokens } from './nativeTokens'
 import { stakeWhiteList } from './stakeTokens'
 import { tunnelWhiteList } from './tunnelTokens'
 
-export const extendWithWhiteList = <
+const extendWithWhiteList = <
   T extends Partial<Record<RemoteChain['id'], Record<string, object>>>,
 >(
   whiteList: T,

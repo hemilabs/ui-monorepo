@@ -104,7 +104,7 @@ function getTokenAddress(token: EvmToken) {
   return wethToken.address as Address
 }
 
-export type StakeEvents = Partial<{
+type StakeEvents = Partial<{
   onStake: () => void
   onStakeConfirmed: () => void
   onStakeFailed: () => void
@@ -275,7 +275,7 @@ const validateUnstakeOperation = async function ({
   }
 }
 
-export type UnstakeEvents = Partial<{
+type UnstakeEvents = Partial<{
   onUnstake: () => void
   onUnstakeConfirmed: () => void
   onUnstakeFailed: () => void

@@ -1,0 +1,25 @@
+{
+  "ignore": ["portal/i18n/request.ts", "subgraphs/utils/index.ts"],
+  "ignoreBinaries": ["ipconfig"],
+  "ignoreDependencies": [
+    "@tsconfig/node20",
+    "@wagmi/core",
+    "eslint-config-next",
+    "eslint-config-prettier"
+  ],
+  "ignoreUnresolved": ["next"],
+  "workspaces": {
+    "staking-points": {
+      "entry": "server.ts"
+    },
+    "subgraphs/hemi-stake-operations-subgraph": {
+      "entry": "src/mappings/*.ts"
+    },
+    "subgraphs/hemi-tunnel-deposits-subgraph": {
+      "entry": "src/mappings/*.ts"
+    },
+    "subgraphs/hemi-tunnel-withdrawals-subgraph": {
+      "entry": "src/mappings/*.ts"
+    }
+  }
+}

@@ -60,10 +60,6 @@ export const DrawerParagraph = ({ children }: { children: string }) => (
   <p className="text-sm font-medium text-neutral-500">{children}</p>
 )
 
-export const DrawerTitle = ({ children }: { children: string }) => (
-  <h2 className="text-2xl font-medium text-neutral-950">{children}</h2>
-)
-
 export const DrawerTopSection = ({
   heading,
   onClose,
@@ -72,7 +68,7 @@ export const DrawerTopSection = ({
   onClose?: () => void
 }) => (
   <div className="flex items-center justify-between">
-    <DrawerTitle>{heading}</DrawerTitle>
+    <h2 className="text-2xl font-medium text-neutral-950">{heading}</h2>
     {!!onClose && (
       <button
         className="h-5 w-5 cursor-pointer"

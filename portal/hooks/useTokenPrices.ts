@@ -1,17 +1,15 @@
-import * as Sentry from '@sentry/nextjs'
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import fetch from 'fetch-plus-plus'
-import { useEffect } from 'react'
 import { isValidUrl } from 'utils/url'
 
 const pricesUrl = process.env.NEXT_PUBLIC_TOKEN_PRICES_URL
 
 type Prices = Record<string, string>
 
-export const useTokenPrices = function (
+export const useTokenPrices = (
   options: Omit<UseQueryOptions<Prices, Error>, 'queryKey' | 'queryFn'> = {},
-) {
-  const query = useQuery({
+) =>
+  useQuery({
     // If the URL is not set, prices are not returned. Consumers of the hook
     // should consider this scenario
     enabled: pricesUrl !== undefined && isValidUrl(pricesUrl),
@@ -23,19 +21,3 @@ export const useTokenPrices = function (
     retry: 2,
     ...options,
   })
-
-  const { error } = query
-
-  useEffect(
-    function captureTokenPriceError() {
-      if (error) {
-        Sentry.captureException(
-          new Error('Failed to fetch the Token Prices api', { cause: error }),
-        )
-      }
-    },
-    [error],
-  )
-
-  return query
-}

@@ -7,7 +7,7 @@
     "deploy": "npm run build",
     "dev": "next dev",
     "dev:wifi": "WIFI=true LOCAL_IP=$(ipconfig getifaddr en0) PORT=3000 npm run dev",
-    "generate:htaccess": "node ./scripts/generateHeaders.js",
+    "generate:htaccess": "node ./scripts/generateServerConfig.js",
     "preserve": "npm run build",
     "serve": "serve out",
     "test": "vitest run"

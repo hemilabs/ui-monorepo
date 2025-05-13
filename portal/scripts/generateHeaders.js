@@ -181,7 +181,10 @@ const toHtAccess = config =>
       .flatMap(({ headers }) => headers)
       .map(header => `Header always set ${header.key} "${header.value}"`)
       .join('\n')}
-  </IfModule>`
+  </IfModule>
+
+  # Map the 404 page into Next's custom 404 page
+  ErrorDocument 404 /404.html`
 
 // eslint-disable-next-line promise/catch-or-return
 Promise.all([

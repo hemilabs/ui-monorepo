@@ -59,6 +59,10 @@ function enableSentry() {
   ]
 
   Sentry.init({
+    denyUrls: [
+      process.env.NEXT_PUBLIC_POINTS_URL,
+      process.env.NEXT_PUBLIC_TOKEN_PRICES_URL,
+    ],
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
     enabled,
     ignoreErrors,

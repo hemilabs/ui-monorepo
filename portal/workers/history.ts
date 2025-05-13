@@ -1,10 +1,10 @@
 import { bitcoinTestnet, bitcoinMainnet } from 'btc-wallet/chains'
-import debugConstructor from 'debug'
 import {
   type BlockSyncType,
   type HistoryActions,
   type TransactionListSyncType,
-} from 'hooks/useSyncHistory/types'
+} from 'context/tunnelHistoryContext/types'
+import debugConstructor from 'debug'
 import { mainnet } from 'networks/mainnet'
 import { sepolia } from 'networks/sepolia'
 import { findChainById } from 'utils/chain'

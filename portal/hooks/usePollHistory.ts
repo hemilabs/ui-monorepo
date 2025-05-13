@@ -1,8 +1,10 @@
+import {
+  HistoryActions,
+  HistoryReducerState,
+} from 'context/tunnelHistoryContext/types'
 import { Dispatch, useEffect } from 'react'
 import { isL2NetworkId } from 'utils/chain'
 import { Chain } from 'viem'
-
-import { HistoryActions, HistoryReducerState } from './types'
 
 export const usePollHistory = function ({
   chainId,

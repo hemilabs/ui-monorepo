@@ -1,4 +1,4 @@
-import { BlockSyncType } from 'hooks/useSyncHistory/types'
+import { BlockSyncType } from 'context/tunnelHistoryContext/types'
 import pDoWhilst from 'p-do-whilst'
 import { EvmDepositOperation, ToEvmWithdrawOperation } from 'types/tunnel'
 import {

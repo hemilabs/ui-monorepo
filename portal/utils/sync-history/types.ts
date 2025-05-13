@@ -1,9 +1,9 @@
-import { Debugger } from 'debug'
 import {
   type BlockSyncType,
   type HistoryActions,
   type SyncType,
-} from 'hooks/useSyncHistory/types'
+} from 'context/tunnelHistoryContext/types'
+import { Debugger } from 'debug'
 import { type RemoteChain } from 'types/chain'
 import { type Address, type Chain } from 'viem'
 

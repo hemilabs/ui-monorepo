@@ -1,11 +1,11 @@
 import { BtcChain } from 'btc-wallet/chains'
 import { Account, BtcTransaction } from 'btc-wallet/unisat'
-import { bitcoinTunnelManagerAbi } from 'hemi-viem/contracts'
-import { type HemiPublicClient } from 'hooks/useHemiClient'
 import {
   type BlockSyncType,
   type TransactionListSyncType,
-} from 'hooks/useSyncHistory/types'
+} from 'context/tunnelHistoryContext/types'
+import { bitcoinTunnelManagerAbi } from 'hemi-viem/contracts'
+import { type HemiPublicClient } from 'hooks/useHemiClient'
 import pAll from 'p-all'
 import pDoWhilst from 'p-do-whilst'
 import {

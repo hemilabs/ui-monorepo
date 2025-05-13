@@ -69,16 +69,16 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
           <SkeletonTheme baseColor="#E5E5E5" highlightColor="#FAFAFA">
-            {/* This suspense wrapper is needed because, from this point downwards, rendering depends on 
-          getting mainnet|testnet from query string, and using useSearchParams (through nuqs) requires so to compile.
-          However, there's no change at all in the UI, so no fallback seems to be needed, as it isn't an async request
-          or something that requires showing something. */}
             <WalletsContext locale={locale}>
               <ConnectWalletDrawerProvider>
                 <Analytics>
-                  <Suspense>
-                    <TunnelHistoryProvider>
-                      <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
+                  <TunnelHistoryProvider>
+                    <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
+                      {/* This suspense wrapper is needed because, from this point downwards, rendering depends on 
+          getting mainnet|testnet from query string, and using useSearchParams (through nuqs) requires so to compile.
+          However, there's no change at all in the UI, so no fallback seems to be needed, as it isn't an async request
+          or something that requires showing something. */}
+                      <Suspense>
                         <div className="hidden w-1/4 max-w-64 md:block">
                           <Navbar />
                         </div>
@@ -87,9 +87,9 @@ export default async function RootLayout({
                           <AppOverlays />
                           <Workers />
                         </AppLayout>
-                      </div>
-                    </TunnelHistoryProvider>
-                  </Suspense>
+                      </Suspense>
+                    </div>
+                  </TunnelHistoryProvider>
                 </Analytics>
               </ConnectWalletDrawerProvider>
             </WalletsContext>

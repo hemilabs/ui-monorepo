@@ -7,6 +7,7 @@ import {
   type Locale,
 } from '@rainbow-me/rainbowkit'
 import {
+  coinbaseWallet,
   metaMaskWallet,
   okxWallet,
   rabbyWallet,
@@ -30,6 +31,7 @@ const connectors = connectorsForWallets(
     {
       groupName: 'Wallets',
       wallets: [
+        coinbaseWallet,
         metaMaskWallet,
         okxWallet,
         rabbyWallet,

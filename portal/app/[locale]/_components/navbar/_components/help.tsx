@@ -10,8 +10,8 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useRouter } from 'i18n/navigation'
 import { locales } from 'i18n/routing'
+import { useLocale, useTranslations } from 'next-intl'
 import { ComponentProps, ReactNode, RefObject, useState } from 'react'
-import { useLocale, useTranslations } from 'use-intl'
 
 import { CmcAttribution } from './cmcAttribution'
 import { TermsAndConditions } from './termsAndConditions'
@@ -78,7 +78,7 @@ const ItemText = ({
   </span>
 )
 
-export const ItemWithSubmenu = function ({
+const ItemWithSubmenu = function ({
   event,
   icon,
   subMenu,

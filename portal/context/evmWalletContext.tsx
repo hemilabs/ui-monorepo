@@ -8,6 +8,7 @@ import {
 } from '@rainbow-me/rainbowkit'
 import {
   metaMaskWallet,
+  rabbyWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -26,7 +27,7 @@ const connectors = connectorsForWallets(
   [
     {
       groupName: 'Wallets',
-      wallets: [metaMaskWallet, walletConnectWallet],
+      wallets: [metaMaskWallet, rabbyWallet, walletConnectWallet],
     },
   ],
   {

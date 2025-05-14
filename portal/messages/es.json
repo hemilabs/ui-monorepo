@@ -177,6 +177,14 @@
     "demos": "Demos",
     "explorer": "Explorador",
     "get-started": "Comenzar",
+    "help": {
+      "language": "Idioma",
+      "legal-and-privacy": "Legal y Privacidad",
+      "locales": {
+        "en": "Inglés",
+        "es": "Español"
+      }
+    },
     "hemidocs": "Documentación de Hemi",
     "network": "Red",
     "network-status": "Estado de la red",

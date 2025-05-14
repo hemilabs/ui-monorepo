@@ -17,13 +17,12 @@ import React, { Suspense } from 'react'
 import { getSwapUrl } from 'utils/swap'
 
 import { Badge } from './_components/badge'
-import { CmcAttribution } from './_components/cmcAttribution'
 import { GetStarted } from './_components/getStarted'
+import { Help } from './_components/help'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiLogoFull } from './_components/hemiLogo'
 import { ItemLink, ItemWithSubmenu, NetworkSwitch } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
-import { TermsAndConditions } from './_components/termsAndConditions'
 
 const ActionableOperations = dynamic(
   () =>
@@ -46,15 +45,16 @@ export const Navbar = function () {
   return (
     <>
       <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col bg-white px-3 pt-3 md:pt-0 [&>*]:md:ml-3 [&>*]:md:pr-3">
-        <div className="hidden h-24 items-center justify-center md:flex">
+        <div className="hidden h-24 items-center justify-between md:flex">
           <div className="flex items-center gap-x-2">
             <Link className="w-full" href={href}>
               <HemiLogoFull />
             </Link>
             <Badge />
           </div>
+          <Help />
         </div>
-        <ul className="flex h-[calc(100dvh-335px)] flex-col gap-y-1 overflow-y-auto md:h-full [&>li>div]:px-3">
+        <ul className="flex h-[calc(100dvh-240px)] flex-col gap-y-1 overflow-y-auto md:h-full [&>li>div]:px-3">
           <li className="order-1">
             <ItemLink
               event="nav - tunnel"
@@ -144,6 +144,12 @@ export const Navbar = function () {
               text={t('hemidocs')}
             />
           </li>
+          <li className="order-12 md:hidden">
+            <Separator />
+          </li>
+          <li className="order-13 md:hidden">
+            <Help />
+          </li>
           <li className="md:order-13 hidden md:block">
             <NetworkSwitch />
           </li>
@@ -152,15 +158,6 @@ export const Navbar = function () {
           </li>
           <li className="md:order-14 hidden md:block">
             <SocialLinks />
-          </li>
-          <li className="md:order-15 hidden md:block">
-            <CmcAttribution />
-          </li>
-          <li className="md:order-16 hidden md:block">
-            <Separator />
-          </li>
-          <li className="md:order-17 hidden md:block">
-            <TermsAndConditions />
           </li>
         </ul>
       </div>
@@ -173,15 +170,6 @@ export const Navbar = function () {
         </li>
         <li>
           <SocialLinks />
-        </li>
-        <li>
-          <CmcAttribution />
-        </li>
-        <li>
-          <Separator />
-        </li>
-        <li>
-          <TermsAndConditions />
         </li>
       </ul>
     </>

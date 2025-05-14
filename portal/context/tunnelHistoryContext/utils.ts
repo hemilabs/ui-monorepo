@@ -1,6 +1,6 @@
 import { type RemoteChain } from 'types/chain'
 import { type TunnelOperation } from 'types/tunnel'
-import { type Address, type Chain } from 'viem'
+import { Address, Chain } from 'viem'
 
 import {
   type HistoryReducerState,

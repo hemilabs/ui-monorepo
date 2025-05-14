@@ -1,24 +1,25 @@
+'use client'
+
 import { useConnectedToSupportedEvmChain } from 'hooks/useConnectedToSupportedChain'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { usePollHistory } from 'hooks/usePollHistory'
 import debounce from 'lodash/debounce'
-import { useEffect, useMemo, useReducer, useState } from 'react'
-import { type RemoteChain } from 'types/chain'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { RemoteChain } from 'types/chain'
 import {
-  type DepositTunnelOperation,
-  type TunnelOperation,
-  type WithdrawTunnelOperation,
+  DepositTunnelOperation,
+  TunnelOperation,
+  WithdrawTunnelOperation,
 } from 'types/tunnel'
 import { findChainById, isEvmNetwork } from 'utils/chain'
 import { chainConfiguration } from 'utils/sync-history/chainConfiguration'
-import { type Address, type Chain } from 'viem'
+import { Address, Chain } from 'viem'
 import { mainnet, sepolia } from 'viem/chains'
 import { useAccount } from 'wagmi'
 
-import { historyReducer, initialState } from './reducer'
-import { type HistoryReducerState, type StorageChain } from './types'
-import { usePollHistory } from './usePollHistory'
+import { HistoryActions, HistoryReducerState, StorageChain } from './types'
 import {
   getTunnelHistoryDepositStorageKey,
   getTunnelHistoryWithdrawStorageKey,
@@ -127,7 +128,17 @@ const debouncedSaveToStorage = debounce(
   { leading: true },
 )
 
-export const useSyncHistory = function () {
+export const HistoryLoader = function ({
+  dispatch,
+  forceResync,
+  history,
+  setForceResync,
+}: {
+  dispatch: Dispatch<HistoryActions>
+  forceResync: boolean
+  history: HistoryReducerState
+  setForceResync: Dispatch<SetStateAction<boolean>>
+}) {
   const { address } = useAccount()
   const l2ChainId = useHemi().id
   const { remoteNetworks } = useNetworks()
@@ -135,14 +146,8 @@ export const useSyncHistory = function () {
 
   // use this boolean to check if the past history was restored from local storage
   const [loadedFromLocalStorage, setLoadedFromLocalStorage] = useState(false)
-  // use this boolean to force a resync of the history
-  const [forceResync, setForceResync] = useState(false)
-
-  const reducer = useReducer(historyReducer, initialState)
 
   const supportedEvmChain = useConnectedToSupportedEvmChain()
-
-  const [history, dispatch] = reducer
 
   useEffect(
     function resetState() {
@@ -272,37 +277,5 @@ export const useSyncHistory = function () {
     history,
   })
 
-  const historyContext = useMemo(
-    () => ({
-      addDepositToTunnelHistory: (deposit: DepositTunnelOperation) =>
-        dispatch({ payload: deposit, type: 'add-deposit' }),
-      addWithdrawalToTunnelHistory: (withdrawal: WithdrawTunnelOperation) =>
-        dispatch({ payload: withdrawal, type: 'add-withdraw' }),
-      deposits: history.deposits.flatMap(d => d.content),
-      dispatch,
-      history,
-      resyncHistory: () => setForceResync(true),
-      syncStatus: history.status,
-      updateDeposit: (
-        deposit: DepositTunnelOperation,
-        updates: Partial<DepositTunnelOperation>,
-      ) =>
-        dispatch({
-          payload: { deposit, updates },
-          type: 'update-deposit',
-        }),
-      updateWithdrawal: (
-        withdraw: WithdrawTunnelOperation,
-        updates: Partial<WithdrawTunnelOperation>,
-      ) =>
-        dispatch({
-          payload: { updates, withdraw },
-          type: 'update-withdraw',
-        }),
-      withdrawals: history.withdrawals.flatMap(w => w.content),
-    }),
-    [dispatch, history],
-  )
-
-  return historyContext
+  return null
 }

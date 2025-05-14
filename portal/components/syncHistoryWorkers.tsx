@@ -1,12 +1,12 @@
 'use client'
 
-import { useHemi } from 'hooks/useHemi'
-import { useNetworks } from 'hooks/useNetworks'
 import {
   SyncStatus,
   type HistoryActions,
   type HistoryReducerState,
-} from 'hooks/useSyncHistory/types'
+} from 'context/tunnelHistoryContext/types'
+import { useHemi } from 'hooks/useHemi'
+import { useNetworks } from 'hooks/useNetworks'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { type Dispatch, useEffect, useRef, useState } from 'react'
 import { type RemoteChain } from 'types/chain'

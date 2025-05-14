@@ -8,6 +8,7 @@ import {
 } from '@rainbow-me/rainbowkit'
 import {
   metaMaskWallet,
+  okxWallet,
   rabbyWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
@@ -27,7 +28,7 @@ const connectors = connectorsForWallets(
   [
     {
       groupName: 'Wallets',
-      wallets: [metaMaskWallet, rabbyWallet, walletConnectWallet],
+      wallets: [metaMaskWallet, okxWallet, rabbyWallet, walletConnectWallet],
     },
   ],
   {

@@ -45,6 +45,10 @@ const fetchDomains = new Set([
   'https://*.walletconnect.org',
   // cookie3
   'https://a.markfi.xyz',
+  // coinbase wallet
+  'https://chain-proxy.wallet.coinbase.com',
+  'https://keys.coinbase.com',
+  'wss://www.walletlink.org/rpc',
 ])
 
 if (process.env.NEXT_PUBLIC_THE_GRAPH_API_URL) {

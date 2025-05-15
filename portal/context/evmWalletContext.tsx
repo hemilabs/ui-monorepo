@@ -7,7 +7,11 @@ import {
   type Locale,
 } from '@rainbow-me/rainbowkit'
 import {
+  coinbaseWallet,
   metaMaskWallet,
+  okxWallet,
+  rabbyWallet,
+  tokenPocketWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -26,7 +30,14 @@ const connectors = connectorsForWallets(
   [
     {
       groupName: 'Wallets',
-      wallets: [metaMaskWallet, walletConnectWallet],
+      wallets: [
+        coinbaseWallet,
+        metaMaskWallet,
+        okxWallet,
+        rabbyWallet,
+        tokenPocketWallet,
+        walletConnectWallet,
+      ],
     },
   ],
   {

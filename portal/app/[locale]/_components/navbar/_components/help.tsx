@@ -1,4 +1,3 @@
-/* eslint-disable arrow-body-style */
 import { AnalyticsEventsWithChain, useUmami } from 'app/analyticsEvents'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
@@ -27,11 +26,18 @@ type Props = {
   value?: string
 }
 
-const IconContainer = ({ children }: { children: ReactNode }) => (
+const IconContainer = ({
+  children,
+  selected,
+}: Selectable & { children: ReactNode }) => (
   <div
-    className="flex h-10 w-10
+    className={`flex h-10 w-10
       items-center justify-center rounded-lg bg-neutral-50
-      md:h-4 md:w-4"
+      md:h-4 md:w-4 ${
+        selected
+          ? '[&>svg>path]:fill-neutral-950'
+          : '[&>svg>path]:fill-neutral-500'
+      }`}
   >
     {children}
   </div>
@@ -100,7 +106,7 @@ const ItemWithSubmenu = function ({
     <MenuContainer isOpen={isOpen} refProp={ref}>
       <Row onClick={onClick}>
         <div className="flex items-center gap-x-4 md:gap-x-2">
-          <IconContainer>{icon}</IconContainer>
+          <IconContainer selected={isOpen}>{icon}</IconContainer>
           <ItemText selected={isOpen} text={text} />
         </div>
         <div className="flex items-center gap-x-2">
@@ -115,27 +121,29 @@ const ItemWithSubmenu = function ({
   )
 }
 
-const LanguageMenu = ({ active }: LanguageProps) => {
+const LanguageMenu = function ({ active }: LanguageProps) {
   const t = useTranslations('navbar.help')
   const pathname = usePathnameWithoutLocale()
   const router = useRouter()
 
-  const onClick = (locale: string) => {
+  const onClick = function (locale: string) {
     router.push(pathname, { locale })
   }
 
   return (
     <div
-      className="absolute bottom-0 right-0 z-40 flex
-    w-52 -translate-x-8 -translate-y-32 flex-col
-    items-start gap-y-2
-    rounded-lg border
-    border-neutral-300/55 bg-white p-4
+      className="shadow-help-menu absolute bottom-0 right-0 z-40
+    flex h-fit w-52 -translate-x-8
+    -translate-y-32 flex-col
+    items-start justify-center rounded-lg border
+    border-neutral-300/55 bg-white p-2
     md:top-0 md:translate-x-48 md:translate-y-1"
     >
       {locales.map(locale => (
         <div
-          className="flex w-full items-center justify-between gap-x-2"
+          className="flex w-full items-center justify-between
+          rounded-md px-3 py-2
+          hover:bg-neutral-50"
           key={locale}
           onClick={() => onClick(locale)}
         >
@@ -154,10 +162,10 @@ const LanguageMenu = ({ active }: LanguageProps) => {
 
 const LegalAndPrivacy = () => (
   <div
-    className="-translate-y-18 absolute bottom-0 right-0 z-20
-        flex w-64 -translate-x-8 flex-col
-        items-start gap-x-2
-        rounded-lg border
+    className="-translate-y-18 shadow-help-menu absolute bottom-0 right-0
+        z-20 flex w-64 -translate-x-8
+        flex-col items-start
+        gap-x-2 rounded-lg border
         border-neutral-300/55 bg-white p-4
         md:translate-x-60 md:translate-y-7"
   >
@@ -166,58 +174,60 @@ const LegalAndPrivacy = () => (
   </div>
 )
 
-const Backdrop = ({ onClick }) => (
+const Backdrop = () => (
   <div
     className="absolute left-0 top-0 z-20
     h-screen w-screen bg-gradient-to-b
     from-neutral-950/0 to-neutral-950/25
     md:hidden"
-    onClick={onClick}
   />
 )
 
-export const Help = () => {
+export const Help = function () {
   const [isOpen, setIsOpen] = useState(false)
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
   const t = useTranslations('navbar.help')
   const activeLocale = useLocale()
 
   return (
-    <div className="cursor-pointer" ref={ref}>
-      {isOpen && <Backdrop onClick={() => setIsOpen(false)} />}
-
-      <div
-        className="flex h-7 w-7 items-center justify-center rounded-md
-        border border-neutral-300/55 bg-neutral-50"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <QuestionMark className="h-4 w-4" />
-      </div>
-
-      {isOpen && (
+    <>
+      {isOpen && <Backdrop />}
+      <div className="cursor-pointer" ref={ref}>
         <div
-          className="absolute bottom-0 left-0 z-30
-          flex h-36 w-full flex-col
-          items-start rounded-2xl border
-          border-neutral-300/55 bg-white p-4
-          md:top-0 md:h-fit md:w-64 md:translate-x-52
-          md:translate-y-16 md:rounded-lg md:p-1"
+          className="shadow-help-icon flex h-7 w-7 items-center justify-center
+          rounded-md border border-neutral-300/55
+          bg-neutral-50"
+          onClick={() => setIsOpen(!isOpen)}
         >
-          <ItemWithSubmenu
-            event="nav - language"
-            icon={<LanguageIcon className="h-5 w-5" />}
-            subMenu={<LanguageMenu active={activeLocale} />}
-            text={t('language')}
-            value={t(`locales.${activeLocale}`)}
-          />
-          <ItemWithSubmenu
-            event="nav - legal and privacy"
-            icon={<LegalIcon className="h-5 w-5" />}
-            subMenu={<LegalAndPrivacy />}
-            text={t('legal-and-privacy')}
-          />
+          <QuestionMark className="h-4 w-4 [&>path]:hover:fill-neutral-950" />
         </div>
-      )}
-    </div>
+
+        {isOpen && (
+          <div
+            className="shadow-help-menu absolute bottom-0 left-0
+            z-30 flex h-36 w-full
+            flex-col items-start rounded-t-2xl
+            border border-neutral-300/55 bg-white
+            p-4
+            md:top-0 md:h-fit md:w-64 md:translate-x-52
+            md:translate-y-16 md:rounded-lg md:p-1"
+          >
+            <ItemWithSubmenu
+              event="nav - language"
+              icon={<LanguageIcon className="h-5 w-5" />}
+              subMenu={<LanguageMenu active={activeLocale} />}
+              text={t('language')}
+              value={t(`locales.${activeLocale}`)}
+            />
+            <ItemWithSubmenu
+              event="nav - legal and privacy"
+              icon={<LegalIcon className="h-5 w-5" />}
+              subMenu={<LegalAndPrivacy />}
+              text={t('legal-and-privacy')}
+            />
+          </div>
+        )}
+      </div>
+    </>
   )
 }

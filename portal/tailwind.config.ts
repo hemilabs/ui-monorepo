@@ -33,6 +33,10 @@ const config: Config = {
         'button-secondary': '0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
         'button-secondary-focused':
           '0px 0px 0px 2px #FFF, 0px 0px 0px 4px var(--Color-Orange-500, #FF6C15), 0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
+        'help-icon':
+          '0px 1px 2px 0px rgba(10 10 10 0.04), 0px 1px 4px 0px #rgba(10 10 10 0.02)',
+        'help-menu':
+          '0px 4px 12px 0px rgba(10 10 10 0.06), 0px 4px 6px 0px rgba(10 10 10 0.02), 0px 0px 0px 1px rgba(10 10 10 0.06)',
         'hemi-layout':
           '0px 2px 2px 0px rgba(10, 10, 10, 0.04), 0px 8px 16px -4px rgba(10, 10, 10, 0.04)',
         'large':

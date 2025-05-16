@@ -1,5 +1,14 @@
-export const UnisatLogo = () => (
-  <svg fill="none" height={14} width={14} xmlns="http://www.w3.org/2000/svg">
+import { ComponentProps } from 'react'
+
+export const UnisatLogo = (props: ComponentProps<'svg'>) => (
+  <svg
+    fill="none"
+    height={14}
+    viewBox="0 0 14 14"
+    width={14}
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
     <g clipPath="url(#unisat_a)">
       <path
         d="M11.667 0H2.333A2.333 2.333 0 0 0 0 2.333v9.334A2.333 2.333 0 0 0 2.333 14h9.334A2.333 2.333 0 0 0 14 11.667V2.333A2.333 2.333 0 0 0 11.667 0Z"

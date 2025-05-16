@@ -11,7 +11,7 @@ import { useAccount as useEvmAccount } from 'wagmi'
 
 import { ConnectedChains } from '../connectedWallet/connectedChains'
 
-import { MetamaskLogo } from './metamaskLogo'
+import { EvmWalletLogo } from './evmWalletLogo'
 import { UnisatLogo } from './unisatLogo'
 
 const ConnectWalletsDrawer = dynamic(
@@ -38,15 +38,17 @@ export const WalletConnection = function () {
   const t = useTranslations()
 
   const { status: btcStatus } = useBtcAccount()
-  const { status: evmStatus } = useEvmAccount()
+  const { connector, status: evmStatus } = useEvmAccount()
   const { track } = useUmami()
 
   const walletsConnected = []
   if (walletIsConnected(evmStatus)) {
-    walletsConnected.push({ icon: <MetamaskLogo /> })
+    walletsConnected.push({
+      icon: <EvmWalletLogo walletName={connector?.name} />,
+    })
   }
   if (walletIsConnected(btcStatus)) {
-    walletsConnected.push({ icon: <UnisatLogo /> })
+    walletsConnected.push({ icon: <UnisatLogo className="h-4 w-4" /> })
   }
 
   const onConnectWalletsClick = function () {
@@ -72,16 +74,16 @@ export const WalletConnection = function () {
             </>
           )}
           {walletsConnected.length > 0 && (
-            <div className="flex items-center justify-between gap-x-1 border-neutral-500/55">
+            <div className="flex items-center justify-between gap-x-1">
               {walletsConnected.map(({ icon }, index) => (
                 <div
-                  className="flex items-center justify-center rounded-full border border-solid p-1"
+                  className="flex h-4 w-4 items-center justify-center rounded-full"
                   key={index}
                 >
                   {icon}
                 </div>
               ))}
-              <span>
+              <span className="ml-1">
                 {t('common.wallets-connected', {
                   count: walletsConnected.length,
                 })}

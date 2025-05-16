@@ -204,7 +204,6 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   const tunnelOperation = useTunnelOperation()
   const tokenList = useTunnelTokens()
 
-  // See https://github.com/hemilabs/ui-monorepo/issues/158
   const l1ChainId = evmRemoteNetworks[0].id
 
   const initial = useMemo(

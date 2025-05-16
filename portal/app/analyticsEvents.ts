@@ -55,6 +55,8 @@ const analyticsEvents = [
   'nav - pure finance',
   'nav - stake',
   'nav - tunnel',
+  'nav - language',
+  'nav - legal and privacy',
   // socials
   'nav - discord',
   'nav - gitHub',

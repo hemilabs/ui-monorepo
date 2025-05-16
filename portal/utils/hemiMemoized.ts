@@ -53,7 +53,6 @@ export const getVaultIndexByBTCAddress = pMemoize(
 
 // Memoizing it as it is unlikely to change
 export const getBitcoinKitAddress = pMemoize(
-  // @ts-expect-error needs to be fixed https://github.com/hemilabs/hemi-viem/issues/30
   (hemiClient: HemiPublicClient) => hemiClient.getBitcoinKitAddress(),
   { resolver: hemiClient => hemiClient.chain.id },
 )

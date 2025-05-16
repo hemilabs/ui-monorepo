@@ -10,7 +10,6 @@ import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
@@ -27,6 +26,7 @@ import { walletIsConnected } from 'utils/wallet'
 import { formatUnits, parseUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { useEstimateBtcWithdrawFees } from '../_hooks/useEstimateBtcWithdrawFees'
 import { useEstimateWithdrawFees } from '../_hooks/useEstimateWithdrawFees'
 import { useMinWithdrawalSats } from '../_hooks/useMinWithdrawalSats'
 import {
@@ -95,10 +95,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
 
   const { btcAddress, evmChainId } = useAccounts()
   const fromChain = useChain(fromNetworkId)
-  const estimatedFees = useEstimateFees({
-    chainId: fromNetworkId,
-    operation: 'withdraw-btc',
-  })
+
   const { isPending: isLoadingMinWithdrawalSats, minWithdrawalFormattedSats } =
     useMinWithdrawalSats(fromToken)
   const [networkType] = useNetworkType()
@@ -175,6 +172,15 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       fromToken,
     }) &&
     Big(fromInput).gte(minWithdrawalFormattedSats)
+
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: estimatedFees } = useEstimateBtcWithdrawFees({
+    amount: parseUnits(fromInput, fromToken.decimals),
+    btcAddress,
+    enabled: !!btcAddress && canWithdraw,
+    l2ChainId: evmChainId,
+  })
 
   const gas = {
     amount: formatUnits(estimatedFees, fromChain?.nativeCurrency.decimals),
@@ -294,7 +300,9 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       fromToken,
     }) && hasBridgeConfiguration(fromToken, toNetworkId)
 
-  const withdrawGasFees = useEstimateWithdrawFees({
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: withdrawGasFees } = useEstimateWithdrawFees({
     amount: parseUnits(fromInput, fromToken.decimals),
     fromToken,
     l1ChainId: toToken.chainId,

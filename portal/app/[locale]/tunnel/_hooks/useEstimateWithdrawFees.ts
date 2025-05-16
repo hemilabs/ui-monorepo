@@ -20,7 +20,11 @@ export const useEstimateWithdrawFees = function ({
 }) {
   const l2BridgeAddress = useL2BridgeAddress(l1ChainId)
   const isNative = isNativeAddress(fromToken.address)
-  const { data: gasUnits, isSuccess } = useEstimateGas({
+  const {
+    data: gasUnits,
+    isError,
+    isSuccess,
+  } = useEstimateGas({
     data: encodeInitiateWithdraw({
       amount,
       l2TokenAddress: isNative
@@ -36,6 +40,7 @@ export const useEstimateWithdrawFees = function ({
     chainId: fromToken.chainId,
     enabled: isSuccess,
     gasUnits,
+    isGasUnitsError: isError,
     overEstimation: 1.5,
   })
 }

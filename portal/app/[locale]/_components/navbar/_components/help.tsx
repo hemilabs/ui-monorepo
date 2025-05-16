@@ -9,7 +9,7 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useRouter } from 'i18n/navigation'
 import { locales } from 'i18n/routing'
-import { useLocale, useTranslations } from 'next-intl'
+import { Locale, useLocale, useTranslations } from 'next-intl'
 import { ComponentProps, ReactNode, RefObject, useState } from 'react'
 
 import { CmcAttribution } from './cmcAttribution'
@@ -137,7 +137,7 @@ const LanguageMenu = function ({ active }: LanguageProps) {
   const pathname = usePathnameWithoutLocale()
   const router = useRouter()
 
-  const onClick = function (locale: string) {
+  const onClick = function (locale: Locale) {
     router.push(pathname, { locale })
   }
 

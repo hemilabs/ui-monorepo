@@ -21,7 +21,7 @@ function getLogo(walletName: string) {
   // where rabby's id was "io.rabby", or tokenPocket's was the URL to download the wallet.
   // I checked wagmi's repo (as they define the connectors) and they just state that injected wallets are unreliable
   // I was unable to match by id, but in general, the wallet id contains the name of the wallet
-  // This checks seems to work well enough
+  // This check seems to work well enough
   const walletKey = Object.keys(wallets).find(key =>
     walletName.toLowerCase().includes(key.toLowerCase()),
   )

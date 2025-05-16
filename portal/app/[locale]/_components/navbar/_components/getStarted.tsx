@@ -29,7 +29,7 @@ export const GetStarted = function () {
         onClick={track ? onClick : undefined}
       >
         <span>{t('get-started')}</span>
-        <Chevron.Right className="[&>path]:fill-white " />
+        <Chevron.Right className="[&>path]:fill-white" />
       </Link>
       <Link
         className={`hidden ${active ? '' : 'cursor-pointer'} md:block`}

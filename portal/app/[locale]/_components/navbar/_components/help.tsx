@@ -33,7 +33,8 @@ const IconContainer = ({
   <div
     className={`flex h-10 w-10
       items-center justify-center rounded-lg bg-neutral-50
-      md:h-4 md:w-4 ${
+      md:h-4 md:w-4 group-hover/row:[&>svg>path]:fill-neutral-950
+      ${
         selected
           ? '[&>svg>path]:fill-neutral-950'
           : '[&>svg>path]:fill-neutral-500'
@@ -45,7 +46,8 @@ const IconContainer = ({
 
 const Row = (props: { children: ReactNode } & ComponentProps<'div'>) => (
   <div
-    className="flex h-14 items-center justify-between px-4 md:h-fit"
+    className="group/row flex h-14 items-center justify-between px-4
+    md:h-8 md:px-3 md:py-2"
     {...props}
   />
 )
@@ -61,9 +63,8 @@ const MenuContainer = ({
 } & ComponentProps<'div'>) => (
   <div
     {...props}
-    className={`w-full cursor-pointer rounded-lg transition-colors duration-300 md:py-2 ${
-      isOpen ? 'rounded-lg bg-neutral-50' : 'hover:bg-neutral-50'
-    }`}
+    className={`w-full cursor-pointer rounded-lg transition-colors duration-300
+       ${isOpen ? 'rounded-lg bg-neutral-50' : 'hover:bg-neutral-50'}`}
     ref={refProp}
   >
     {children}
@@ -76,7 +77,7 @@ const ItemText = ({
 }: Pick<Props, 'text'> & Selectable) => (
   <span
     className={`text-base font-medium capitalize transition-colors duration-300
-      group-hover/item:text-neutral-950 md:text-sm ${
+      group-hover/row:text-neutral-950 md:text-sm ${
         selected ? 'text-neutral-950' : 'text-neutral-700'
       }`}
   >
@@ -97,14 +98,24 @@ const ItemWithSubmenu = function ({
 
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
 
-  const onClick = function () {
-    setIsOpen(!isOpen)
+  const onMouseEnter = function () {
+    setIsOpen(true)
+    track?.(event, { chain: networkType })
+  }
+
+  const onMouseLeave = function () {
+    setIsOpen(false)
     track?.(event, { chain: networkType })
   }
 
   return (
-    <MenuContainer isOpen={isOpen} refProp={ref}>
-      <Row onClick={onClick}>
+    <MenuContainer
+      isOpen={isOpen}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      refProp={ref}
+    >
+      <Row>
         <div className="flex items-center gap-x-4 md:gap-x-2">
           <IconContainer selected={isOpen}>{icon}</IconContainer>
           <ItemText selected={isOpen} text={text} />
@@ -137,13 +148,13 @@ const LanguageMenu = function ({ active }: LanguageProps) {
     -translate-y-32 flex-col
     items-start justify-center rounded-lg border
     border-neutral-300/55 bg-white p-2
-    md:top-0 md:translate-x-48 md:translate-y-1"
+    md:top-0 md:translate-x-48 md:translate-y-1 md:p-1"
     >
       {locales.map(locale => (
         <div
-          className="flex w-full items-center justify-between
-          rounded-md px-3 py-2
-          hover:bg-neutral-50"
+          className="group/row flex w-full items-center
+          justify-between rounded-md px-3
+          py-2 hover:bg-neutral-50"
           key={locale}
           onClick={() => onClick(locale)}
         >
@@ -174,12 +185,13 @@ const LegalAndPrivacy = () => (
   </div>
 )
 
-const Backdrop = () => (
+const Backdrop = ({ onClick }) => (
   <div
     className="absolute left-0 top-0 z-20
     h-screen w-screen bg-gradient-to-b
     from-neutral-950/0 to-neutral-950/25
     md:hidden"
+    onClick={onClick}
   />
 )
 
@@ -191,15 +203,21 @@ export const Help = function () {
 
   return (
     <>
-      {isOpen && <Backdrop />}
       <div className="cursor-pointer" ref={ref}>
+        {isOpen && <Backdrop onClick={() => setIsOpen(!isOpen)} />}
         <div
-          className="shadow-help-icon flex h-7 w-7 items-center justify-center
-          rounded-md border border-neutral-300/55
-          bg-neutral-50"
+          className={`shadow-help-icon flex h-7 w-7 items-center justify-center
+          rounded-md border border-neutral-300/55 hover:bg-neutral-50
+          ${isOpen ? 'bg-neutral-50' : 'bg-white'} group/icon "`}
           onClick={() => setIsOpen(!isOpen)}
         >
-          <QuestionMark className="h-4 w-4 [&>path]:hover:fill-neutral-950" />
+          <QuestionMark
+            className={`h-4 w-4
+            ${
+              isOpen ? '[&>path]:fill-neutral-950' : '[&>path]:fill-neutral-500'
+            } 
+            group-hover/icon:[&>path]:fill-neutral-950`}
+          />
         </div>
 
         {isOpen && (
@@ -207,21 +225,20 @@ export const Help = function () {
             className="shadow-help-menu absolute bottom-0 left-0
             z-30 flex h-36 w-full
             flex-col items-start rounded-t-2xl
-            border border-neutral-300/55 bg-white
-            p-4
+            border border-neutral-300/55 bg-white p-4
             md:top-0 md:h-fit md:w-64 md:translate-x-52
             md:translate-y-16 md:rounded-lg md:p-1"
           >
             <ItemWithSubmenu
               event="nav - language"
-              icon={<LanguageIcon className="h-5 w-5" />}
+              icon={<LanguageIcon className="h-5 w-5 md:h-4 md:w-4" />}
               subMenu={<LanguageMenu active={activeLocale} />}
               text={t('language')}
               value={t(`locales.${activeLocale}`)}
             />
             <ItemWithSubmenu
               event="nav - legal and privacy"
-              icon={<LegalIcon className="h-5 w-5" />}
+              icon={<LegalIcon className="h-5 w-5 md:h-4 md:w-4" />}
               subMenu={<LegalAndPrivacy />}
               text={t('legal-and-privacy')}
             />

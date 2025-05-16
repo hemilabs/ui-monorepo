@@ -16,31 +16,18 @@ const mean = function (rewards: bigint[] = []) {
     .toFixed(0)
 }
 
-type OperationsToEstimate =
-  | 'challenge-btc-withdrawal'
-  | 'confirm-btc-deposit'
-  | 'withdraw-btc'
-
-const GasUnitsEstimations: Record<OperationsToEstimate, bigint> = {
-  // TODO review estimations https://github.com/hemilabs/ui-monorepo/issues/826
-  'challenge-btc-withdrawal': BigInt(400_000),
-  // TODO review estimations https://github.com/hemilabs/ui-monorepo/issues/826
-  'confirm-btc-deposit': BigInt(400_000),
-  // TODO review estimations https://github.com/hemilabs/ui-monorepo/issues/826
-  'withdraw-btc': BigInt(400_000),
-}
-
 type UseEstimateFees = {
   chainId: number
   enabled?: boolean
+  isGasUnitsError?: boolean
   overEstimation?: number
-  // allow consumer of the hook to send a gasUnits (for example, when using OP SDK to estimate the gas units)
-  // of for those scenarios where gas units are estimated offline by us, send the key of the operation to estimate
-} & ({ gasUnits: bigint } | { operation: OperationsToEstimate })
+  gasUnits?: bigint
+}
 
 export const useEstimateFees = function ({
   chainId,
   enabled = true,
+  isGasUnitsError = false,
   overEstimation = defaultOverEstimation,
   ...props
 }: UseEstimateFees) {
@@ -61,13 +48,10 @@ export const useEstimateFees = function ({
   const baseFeePerGas =
     feeHistory?.baseFeePerGas?.[defaultBlockCount] ?? BigInt(0)
 
-  const gasUnits =
-    'gasUnits' in props
-      ? props?.gasUnits ?? BigInt(0)
-      : GasUnitsEstimations[props.operation]
+  const gasUnits = props.gasUnits ?? BigInt(0)
 
   const maxPriorityFeePerGas = mean(feeHistory?.reward.map(r => r[0]))
-  return BigInt(
+  const fees = BigInt(
     Big(gasUnits.toString())
       .times(
         Big(baseFeePerGas.toString()).plus(maxPriorityFeePerGas.toString()),
@@ -75,4 +59,9 @@ export const useEstimateFees = function ({
       .times(overEstimation)
       .toFixed(0),
   )
+
+  return {
+    fees,
+    isError: isGasUnitsError,
+  }
 }

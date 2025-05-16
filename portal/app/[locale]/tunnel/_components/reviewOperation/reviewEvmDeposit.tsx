@@ -49,7 +49,10 @@ const ReviewContent = function ({
   const toChain = useChain(deposit.l2ChainId)
 
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
-  const approvalTokenGasFees = useEstimateApproveErc20Fees({
+
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: approvalTokenGasFees } = useEstimateApproveErc20Fees({
     amount: BigInt(deposit.amount),
     enabled: [
       EvmDepositStatus.APPROVAL_TX_FAILED,
@@ -59,7 +62,9 @@ const ReviewContent = function ({
     token: fromToken,
   })
 
-  const depositGasFees = useEstimateDepositFees({
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: depositGasFees } = useEstimateDepositFees({
     amount: BigInt(deposit.amount),
     enabled: [
       EvmDepositStatus.APPROVAL_TX_COMPLETED,

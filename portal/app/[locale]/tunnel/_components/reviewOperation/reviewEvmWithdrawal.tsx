@@ -61,16 +61,23 @@ const ReviewContent = function ({
   const t = useTranslations('tunnel-page.review-withdrawal')
   const tCommon = useTranslations('common')
 
-  const claimWithdrawalTokenGasFees = useEstimateFinalizeWithdrawalFees({
-    withdrawal,
-  })
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: claimWithdrawalTokenGasFees } =
+    useEstimateFinalizeWithdrawalFees({
+      withdrawal,
+    })
 
-  const proveWithdrawalTokenGasFees = useEstimateProveWithdrawalFees({
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: proveWithdrawalTokenGasFees } = useEstimateProveWithdrawalFees({
     enabled: withdrawal.status === MessageStatus.READY_TO_PROVE,
     withdrawal,
   })
 
-  const withdrawGasFees = useEstimateWithdrawFees({
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: withdrawGasFees } = useEstimateWithdrawFees({
     amount: BigInt(withdrawal.amount),
     enabled: withdrawal.status === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
     fromToken,

@@ -67,13 +67,17 @@ export const StakeOperation = function ({
     },
   })
 
-  const approvalEstimatedFees = useEstimateApproveErc20Fees({
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: approvalEstimatedFees } = useEstimateApproveErc20Fees({
     amount: parseUnits(amount, token.decimals),
     spender,
     token,
   })
 
-  const stakeEstimatedFees = useEstimateStakeFees({
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: stakeEstimatedFees } = useEstimateStakeFees({
     amount: parseUnits(amount, token.decimals),
     enabled: allowance > 0 || operatesNativeToken,
     token,

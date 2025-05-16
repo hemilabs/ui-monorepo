@@ -14,7 +14,11 @@ export const useEstimateApproveErc20Fees = function ({
   spender: Address
   token: EvmToken
 }) {
-  const { data: gasUnits, isSuccess } = useEstimateGas({
+  const {
+    data: gasUnits,
+    isError,
+    isSuccess,
+  } = useEstimateGas({
     abi: erc20Abi,
     address: token.address,
     args: [spender, amount],
@@ -26,6 +30,7 @@ export const useEstimateApproveErc20Fees = function ({
     chainId: token.chainId,
     enabled: isSuccess,
     gasUnits,
+    isGasUnitsError: isError,
     overEstimation: 1.5,
   })
 }

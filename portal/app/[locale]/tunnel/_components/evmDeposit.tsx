@@ -165,13 +165,17 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const fromChain = useChain(fromNetworkId)
 
-  const approvalTokenGasFees = useEstimateApproveErc20Fees({
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: approvalTokenGasFees } = useEstimateApproveErc20Fees({
     amount,
     spender: l1StandardBridgeAddress,
     token: fromToken,
   })
 
-  const depositGasFees = useEstimateDepositFees({
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: depositGasFees } = useEstimateDepositFees({
     amount,
     fromToken,
     toToken,

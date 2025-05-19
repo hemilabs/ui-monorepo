@@ -202,49 +202,45 @@ export const Help = function () {
   const activeLocale = useLocale()
 
   return (
-    <>
-      <div className="cursor-pointer" ref={ref}>
-        {isOpen && <Backdrop onClick={() => setIsOpen(!isOpen)} />}
+    <div className="cursor-pointer" ref={ref}>
+      {isOpen && <Backdrop onClick={() => setIsOpen(!isOpen)} />}
+      <div
+        className={`shadow-help-icon flex h-7 w-7 items-center justify-center
+        rounded-md border border-neutral-300/55 hover:bg-neutral-50
+        ${isOpen ? 'bg-neutral-50' : 'bg-white'} group/icon "`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <QuestionMark
+          className={`h-4 w-4
+          ${isOpen ? '[&>path]:fill-neutral-950' : '[&>path]:fill-neutral-500'} 
+          group-hover/icon:[&>path]:fill-neutral-950`}
+        />
+      </div>
+
+      {isOpen && (
         <div
-          className={`shadow-help-icon flex h-7 w-7 items-center justify-center
-          rounded-md border border-neutral-300/55 hover:bg-neutral-50
-          ${isOpen ? 'bg-neutral-50' : 'bg-white'} group/icon "`}
-          onClick={() => setIsOpen(!isOpen)}
+          className="shadow-help-menu absolute bottom-0 left-0
+          z-30 flex h-36 w-full
+          flex-col items-start rounded-t-2xl
+          border border-neutral-300/55 bg-white p-4
+          md:top-0 md:h-fit md:w-64 md:translate-x-52
+          md:translate-y-16 md:rounded-lg md:p-1"
         >
-          <QuestionMark
-            className={`h-4 w-4
-            ${
-              isOpen ? '[&>path]:fill-neutral-950' : '[&>path]:fill-neutral-500'
-            } 
-            group-hover/icon:[&>path]:fill-neutral-950`}
+          <ItemWithSubmenu
+            event="nav - language"
+            icon={<LanguageIcon className="h-5 w-5 md:h-4 md:w-4" />}
+            subMenu={<LanguageMenu active={activeLocale} />}
+            text={t('language')}
+            value={t(`locales.${activeLocale}`)}
+          />
+          <ItemWithSubmenu
+            event="nav - legal and privacy"
+            icon={<LegalIcon className="h-5 w-5 md:h-4 md:w-4" />}
+            subMenu={<LegalAndPrivacy />}
+            text={t('legal-and-privacy')}
           />
         </div>
-
-        {isOpen && (
-          <div
-            className="shadow-help-menu absolute bottom-0 left-0
-            z-30 flex h-36 w-full
-            flex-col items-start rounded-t-2xl
-            border border-neutral-300/55 bg-white p-4
-            md:top-0 md:h-fit md:w-64 md:translate-x-52
-            md:translate-y-16 md:rounded-lg md:p-1"
-          >
-            <ItemWithSubmenu
-              event="nav - language"
-              icon={<LanguageIcon className="h-5 w-5 md:h-4 md:w-4" />}
-              subMenu={<LanguageMenu active={activeLocale} />}
-              text={t('language')}
-              value={t(`locales.${activeLocale}`)}
-            />
-            <ItemWithSubmenu
-              event="nav - legal and privacy"
-              icon={<LegalIcon className="h-5 w-5 md:h-4 md:w-4" />}
-              subMenu={<LegalAndPrivacy />}
-              text={t('legal-and-privacy')}
-            />
-          </div>
-        )}
-      </div>
-    </>
+      )}
+    </div>
   )
 }

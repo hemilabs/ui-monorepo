@@ -11,12 +11,13 @@ import {
   Hemi2xPoints,
   Hemi3xPoints,
   PumpBtcPoints,
-  SatoshiPoints,
   SolvPoints,
   UnirouterPoints,
   EigenpiePoints,
   KernelPoints,
   YieldNestPoints,
+  RiverPoints,
+  PellPoints,
 } from './pointsTag'
 
 type Props = {
@@ -34,8 +35,9 @@ const rewardComponentMap: Record<Reward, ReactNode> = {
   hemi3x: <Hemi3xPoints />,
   kernel: <KernelPoints />,
   lorenzo: <LorenzoPoints />,
+  pell: <PellPoints />,
   pumpbtc: <PumpBtcPoints />,
-  satoshi: <SatoshiPoints />,
+  river: <RiverPoints />,
   solv: <SolvPoints />,
   unirouter: <UnirouterPoints />,
   yieldnest: <YieldNestPoints />,

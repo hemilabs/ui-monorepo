@@ -95,11 +95,11 @@ export const stakeWhiteList: Partial<
       rewards: ['hemi'],
       website: 'https://kerneldao.com/kelp',
     },
-    // satUSD
+    // satUSD - The protocol is now River
     '0xb4818BB69478730EF4e33Cc068dD94278e2766cB': {
-      protocol: 'satoshi',
+      protocol: 'river',
       priceSymbol: 'usdc',
-      rewards: ['hemi3x', 'satoshi'],
+      rewards: ['hemi3x', 'river', 'pell'],
       website: 'https://www.satoshiprotocol.org',
     },
     // stBTC

@@ -13,8 +13,9 @@ import { Hemi3xPointsIcon } from './icons/hemi3xPointsIcon'
 import { HemiPointsIcon } from './icons/hemiPointsIcon'
 import { KernelIcon } from './icons/kernelIcon'
 import { LorenzoPointsIcon } from './icons/lorenzoPointsIcon'
+import { PellPointsIcon } from './icons/pellPointsIcon'
 import { PumpBtcPointsIcon } from './icons/pumpBtcPointsIcon'
-import { SatoshiPointsIcon } from './icons/satoshiPointsIcon'
+import { RiverPointsIcon } from './icons/riverPointsIcon'
 import { SolvPointsIcon } from './icons/solvPointsIcon'
 import { UnirouterPointsIcon } from './icons/unirouterPointsIcon'
 import { YieldNestIcon } from './icons/yieldNestIcon'
@@ -159,6 +160,17 @@ export const BabypiePoints = () => (
   />
 )
 
+export const PellPoints = () => (
+  <PointsTag
+    icon={<PellPointsIcon />}
+    label="points"
+    style={{
+      background: 'rgba(76, 103, 239, 1)',
+    }}
+    textColor="text-white"
+  />
+)
+
 export const PumpBtcPoints = () => (
   <PointsTag
     icon={<PumpBtcPointsIcon />}
@@ -214,10 +226,10 @@ export const YieldNestPoints = () => (
   />
 )
 
-export const SatoshiPoints = () => (
+export const RiverPoints = () => (
   <PointsTag
     backgroundColor="bg-black"
-    icon={<SatoshiPointsIcon />}
+    icon={<RiverPointsIcon />}
     label="points"
     textColor="text-white"
   />

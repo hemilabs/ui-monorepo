@@ -4,7 +4,7 @@ import { Button } from 'components/button'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 
-export const ConnectEvmWallet = function () {
+export const ConnectEvmWallet = function ({ text }: { text?: string }) {
   const { openConnectModal } = useConnectModal()
   const [networkType] = useNetworkType()
   const t = useTranslations()
@@ -17,7 +17,7 @@ export const ConnectEvmWallet = function () {
 
   return (
     <Button onClick={onClick} type="button">
-      {t('tunnel-page.submit-button.connect-evm-wallet')}
+      {text ?? t('tunnel-page.submit-button.connect-evm-wallet')}
     </Button>
   )
 }

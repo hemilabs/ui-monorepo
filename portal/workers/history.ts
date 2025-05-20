@@ -103,6 +103,9 @@ async function syncTunnelHistory(parameters: StartSyncing) {
 
 // wait for the UI to send chain and address once ready
 worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
+  if (!e?.data) {
+    return
+  }
   if (e.data.type === 'start') {
     syncTunnelHistory(e.data)
   }

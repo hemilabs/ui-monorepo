@@ -4,7 +4,6 @@ import { WarningBox } from 'components/warningBox'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useChain } from 'hooks/useChain'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
@@ -15,6 +14,7 @@ import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { useEstimateBtcDepositFees } from '../../_hooks/useEstimateBtcDepositFees'
 import { ConfirmBtcDeposit } from '../confirmBtcDeposit'
 import { RetryBtcDeposit } from '../retryBtcDeposit'
 
@@ -50,12 +50,7 @@ const ReviewContent = function ({
 
   const { isConnected } = useAccount()
   const bitcoin = useBitcoin()
-  // fees for bitcoin deposit confirmation
-  const estimatedFees = useEstimateFees({
-    chainId: deposit.l2ChainId,
-    operation: 'confirm-btc-deposit',
-    overEstimation: 1.5,
-  })
+
   const hemi = useHemi()
   const l2chain = useChain(deposit.l2ChainId)
 
@@ -71,6 +66,13 @@ const ReviewContent = function ({
       BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
       BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
     ].includes(depositStatus)
+
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: estimatedFees } = useEstimateBtcDepositFees({
+    deposit,
+    enabled: showDepositConfirmationFees,
+  })
 
   const shouldAddManualConfirmationStep = () =>
     [

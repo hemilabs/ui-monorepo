@@ -1,10 +1,10 @@
 'use client'
 
+import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { WarningBox } from 'components/warningBox'
 import { useChain } from 'hooks/useChain'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useSimpleVaultGracePeriod } from 'hooks/useSimpleVaultGracePeriod'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
@@ -13,8 +13,10 @@ import { EvmToken } from 'types/token'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
 import { getNativeToken } from 'utils/nativeToken'
 import { secondsToHours } from 'utils/time'
-import { formatUnits } from 'viem'
+import { formatUnits, parseUnits } from 'viem'
 
+import { useEstimateChallengeBtcWithdrawFees } from '../../_hooks/useEstimateBtcChallengeWithdrawFees'
+import { useEstimateBtcWithdrawFees } from '../../_hooks/useEstimateBtcWithdrawFees'
 import { ChallengeBtcWithdrawal } from '../challengeBtcWithdrawal'
 import { RetryBtcWithdraw } from '../retryBtcWithdraw'
 
@@ -46,14 +48,39 @@ const ReviewContent = function ({
 }: Props & { fromToken: EvmToken }) {
   const fromChain = useChain(withdrawal.l2ChainId)
   const toChain = useChain(withdrawal.l1ChainId)
-  const bitcoinWithdrawalEstimatedFees = useEstimateFees({
-    chainId: withdrawal.l2ChainId,
-    operation: 'withdraw-btc',
+
+  const { address: btcAddress } = useBtcAccount()
+
+  const showWithdrawalStepFees = [
+    BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
+    BtcWithdrawStatus.WITHDRAWAL_FAILED,
+  ].includes(withdrawal.status)
+
+  const showChallengeStepFees = [
+    BtcWithdrawStatus.CHALLENGE_FAILED,
+    BtcWithdrawStatus.CHALLENGE_IN_PROGRESS,
+    BtcWithdrawStatus.READY_TO_CHALLENGE,
+  ].includes(withdrawal.status)
+
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: bitcoinWithdrawalEstimatedFees } = useEstimateBtcWithdrawFees({
+    amount: parseUnits(withdrawal.amount, fromToken.decimals),
+    btcAddress,
+    enabled: !!btcAddress && showWithdrawalStepFees,
+    l2ChainId: withdrawal.l2ChainId,
   })
-  const challengeWithdrawalEstimatedFees = useEstimateFees({
-    chainId: withdrawal.l2ChainId,
-    operation: 'challenge-btc-withdrawal',
-  })
+
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const isValidUuid = !!withdrawal.uuid
+  const { fees: challengeWithdrawalEstimatedFees } =
+    useEstimateChallengeBtcWithdrawFees({
+      enabled: isValidUuid && showChallengeStepFees,
+      l2ChainId: withdrawal.l2ChainId,
+      uuid: isValidUuid ? BigInt(withdrawal.uuid) : BigInt(0),
+    })
+
   const { isLoading: isLoadingVaultGracePeriod, vaultGracePeriod = BigInt(0) } =
     useSimpleVaultGracePeriod()
   const t = useTranslations('tunnel-page.review-withdrawal')
@@ -92,10 +119,7 @@ const ReviewContent = function ({
         />
       ),
       explorerChainId: withdrawal.l2ChainId,
-      fees: [
-        BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
-        BtcWithdrawStatus.WITHDRAWAL_FAILED,
-      ].includes(withdrawal.status)
+      fees: showWithdrawalStepFees
         ? {
             amount: formatUnits(
               bitcoinWithdrawalEstimatedFees,
@@ -149,11 +173,7 @@ const ReviewContent = function ({
         />
       ),
       explorerChainId: withdrawal.l2ChainId,
-      fees: [
-        BtcWithdrawStatus.CHALLENGE_FAILED,
-        BtcWithdrawStatus.CHALLENGE_IN_PROGRESS,
-        BtcWithdrawStatus.READY_TO_CHALLENGE,
-      ].includes(withdrawal.status)
+      fees: showChallengeStepFees
         ? {
             amount: formatUnits(
               challengeWithdrawalEstimatedFees,

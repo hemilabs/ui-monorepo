@@ -71,7 +71,9 @@ export const UnstakeOperation = function ({
       token,
     }).error
 
-  const unstakeEstimatedFees = useEstimateUnstakeFees({
+  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
+  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
+  const { fees: unstakeEstimatedFees } = useEstimateUnstakeFees({
     amount: parseUnits(amount, token.decimals),
     enabled: canUnstake,
     token,

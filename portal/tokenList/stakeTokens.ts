@@ -99,8 +99,8 @@ export const stakeWhiteList: Partial<
     '0xb4818BB69478730EF4e33Cc068dD94278e2766cB': {
       protocol: 'river',
       priceSymbol: 'usdc',
-      rewards: ['hemi3x', 'river', 'pell'],
-      website: 'https://www.satoshiprotocol.org',
+      rewards: ['hemi3x', 'river'],
+      website: 'https://www.river.inc',
     },
     // stBTC
     '0xf6718b2701D4a6498eF77D7c152b2137Ab28b8A3': {

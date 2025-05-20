@@ -60,6 +60,9 @@ const watchDeposit = function (deposit: BtcDepositOperation) {
 
 // wait for the UI to send chain and address once ready
 worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
+  if (!e?.data) {
+    return
+  }
   if (e.data.type === 'watch-btc-deposit') {
     watchDeposit(e.data.deposit)
   }

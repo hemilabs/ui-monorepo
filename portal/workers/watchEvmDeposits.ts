@@ -55,6 +55,9 @@ const watchDeposit = (deposit: EvmDepositOperation) =>
 
 // wait for the UI to send chain and address once ready
 worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
+  if (!e?.data) {
+    return
+  }
   if (e.data.type === 'watch-evm-deposit') {
     watchDeposit(e.data.deposit)
   }

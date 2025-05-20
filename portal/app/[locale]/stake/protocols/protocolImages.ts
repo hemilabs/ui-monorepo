@@ -15,7 +15,7 @@ import makerDao from './images/makerDao.png'
 import merlinChain from './images/merlinChain.png'
 import obeliskNodeDao from './images/obeliskNodeDao.svg'
 import pumpBtc from './images/pumpBtc.png'
-import satoshi from './images/satoshi.png'
+import river from './images/river.png'
 import solv from './images/solv.svg'
 import sumer from './images/sumer.png'
 import tether from './images/tether.svg'
@@ -43,7 +43,7 @@ export const protocolImages: Record<
   merlinChain: { className: 'w-29', src: merlinChain },
   obeliskNodeDao: { src: obeliskNodeDao },
   pumpBtc: { className: 'w-24', src: pumpBtc },
-  satoshi: { src: satoshi },
+  river: { src: river },
   solv: { src: solv },
   sumer: { className: 'w-15', src: sumer },
   tether: { src: tether },

@@ -13,7 +13,6 @@ import { Hemi3xPointsIcon } from './icons/hemi3xPointsIcon'
 import { HemiPointsIcon } from './icons/hemiPointsIcon'
 import { KernelIcon } from './icons/kernelIcon'
 import { LorenzoPointsIcon } from './icons/lorenzoPointsIcon'
-import { PellPointsIcon } from './icons/pellPointsIcon'
 import { PumpBtcPointsIcon } from './icons/pumpBtcPointsIcon'
 import { RiverPointsIcon } from './icons/riverPointsIcon'
 import { SolvPointsIcon } from './icons/solvPointsIcon'
@@ -157,17 +156,6 @@ export const BabypiePoints = () => (
       background: 'rgba(215, 226, 235, 1)',
     }}
     textColor="text-points-eigenpie"
-  />
-)
-
-export const PellPoints = () => (
-  <PointsTag
-    icon={<PellPointsIcon />}
-    label="points"
-    style={{
-      background: 'rgba(76, 103, 239, 1)',
-    }}
-    textColor="text-white"
   />
 )
 

@@ -17,7 +17,6 @@ import {
   KernelPoints,
   YieldNestPoints,
   RiverPoints,
-  PellPoints,
 } from './pointsTag'
 
 type Props = {
@@ -35,7 +34,6 @@ const rewardComponentMap: Record<Reward, ReactNode> = {
   hemi3x: <Hemi3xPoints />,
   kernel: <KernelPoints />,
   lorenzo: <LorenzoPoints />,
-  pell: <PellPoints />,
   pumpbtc: <PumpBtcPoints />,
   river: <RiverPoints />,
   solv: <SolvPoints />,

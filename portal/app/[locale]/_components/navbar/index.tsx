@@ -17,7 +17,7 @@ import React, { Suspense } from 'react'
 import { getSwapUrl } from 'utils/swap'
 
 import { Badge } from './_components/badge'
-import { GetStarted } from './_components/getStarted'
+import { GetStarted } from './_components/get-started/index'
 import { Help } from './_components/help'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiLogoFull } from './_components/hemiLogo'

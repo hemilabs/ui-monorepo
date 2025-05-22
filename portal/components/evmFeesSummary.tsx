@@ -12,6 +12,7 @@ export const EvmFeesSummary = function ({
 }: {
   gas: {
     amount: string
+    isError: boolean
     label: string
     token: Token
   }
@@ -20,46 +21,37 @@ export const EvmFeesSummary = function ({
 }) {
   const { isConnected } = useAccount()
   const t = useTranslations()
-  // gas can't be exact zero. If zero, it means it is loading.
-  const isLoading = gas.amount === '0'
+
+  // gas can't be exact zero. If zero and there is no errors, it means it is loading.
+  const isLoading = gas.amount === '0' && !gas.isError
+
+  const shouldShowSkeleton = isConnected && isLoading
+  const shouldShowAmount = isConnected && !gas.isError
+
+  const renderAmount = (amount: string, token: Token) =>
+    shouldShowSkeleton ? (
+      <Skeleton className="w-12" />
+    ) : (
+      <div className="text-neutral-950">
+        {shouldShowAmount ? (
+          <DisplayAmount amount={amount} showTokenLogo={false} token={token} />
+        ) : (
+          <span>-</span>
+        )}
+      </div>
+    )
+
   return (
     <div className="flex flex-col gap-y-1 text-sm">
       <div className="flex items-center justify-between">
         <span className="text-neutral-500">{gas.label}</span>
-        {isConnected && isLoading ? (
-          <Skeleton className="w-12" />
-        ) : (
-          <div className="text-neutral-950">
-            {isConnected ? (
-              <DisplayAmount
-                amount={gas.amount}
-                showTokenLogo={false}
-                token={gas.token}
-              />
-            ) : (
-              <span>-</span>
-            )}
-          </div>
-        )}
+        {renderAmount(gas.amount, gas.token)}
       </div>
+
       {total !== undefined && (
         <div className="flex items-center justify-between">
           <span className="text-neutral-500">{t('common.total')}</span>
-          {isConnected && isLoading ? (
-            <Skeleton className="w-12" />
-          ) : (
-            <div className="text-neutral-950">
-              {isConnected ? (
-                <DisplayAmount
-                  amount={total}
-                  showTokenLogo={false}
-                  token={operationToken}
-                />
-              ) : (
-                <span>-</span>
-              )}
-            </div>
-          )}
+          {renderAmount(total, operationToken)}
         </div>
       )}
     </div>

@@ -61,28 +61,28 @@ const ReviewContent = function ({
   const t = useTranslations('tunnel-page.review-withdrawal')
   const tCommon = useTranslations('common')
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: claimWithdrawalTokenGasFees } =
-    useEstimateFinalizeWithdrawalFees({
-      withdrawal,
-    })
+  const {
+    fees: claimWithdrawalTokenGasFees,
+    isError: isClaimWithdrawalTokenGasFeesError,
+  } = useEstimateFinalizeWithdrawalFees({
+    withdrawal,
+  })
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: proveWithdrawalTokenGasFees } = useEstimateProveWithdrawalFees({
+  const {
+    fees: proveWithdrawalTokenGasFees,
+    isError: isProveWithdrawalTokenGasFeesError,
+  } = useEstimateProveWithdrawalFees({
     enabled: withdrawal.status === MessageStatus.READY_TO_PROVE,
     withdrawal,
   })
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: withdrawGasFees } = useEstimateWithdrawFees({
-    amount: BigInt(withdrawal.amount),
-    enabled: withdrawal.status === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
-    fromToken,
-    l1ChainId: withdrawal.l1ChainId,
-  })
+  const { fees: withdrawGasFees, isError: isWithdrawGasFeesError } =
+    useEstimateWithdrawFees({
+      amount: BigInt(withdrawal.amount),
+      enabled: withdrawal.status === MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
+      fromToken,
+      l1ChainId: withdrawal.l1ChainId,
+    })
 
   const getWithdrawalStatus = function () {
     const map = {
@@ -113,6 +113,7 @@ const ReviewContent = function ({
               withdrawGasFees,
               fromChain.nativeCurrency.decimals,
             ),
+            isError: isWithdrawGasFeesError,
             token: getNativeToken(fromChain.id),
           }
         : undefined,
@@ -182,6 +183,7 @@ const ReviewContent = function ({
               proveWithdrawalTokenGasFees,
               toChain.nativeCurrency.decimals,
             ),
+            isError: isProveWithdrawalTokenGasFeesError,
             token: getNativeToken(toChain.id),
           }
         : undefined,
@@ -223,6 +225,7 @@ const ReviewContent = function ({
               claimWithdrawalTokenGasFees,
               toChain.nativeCurrency.decimals,
             ),
+            isError: isClaimWithdrawalTokenGasFeesError,
             token: getNativeToken(toChain.id),
           }
         : undefined,

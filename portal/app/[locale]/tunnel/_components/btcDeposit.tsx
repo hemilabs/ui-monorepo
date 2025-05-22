@@ -116,7 +116,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     ],
   )
 
-  const { feePrices } = useGetFeePrices()
+  const { feePrices, isError: isFeePricesError } = useGetFeePrices()
 
   const handleDeposit = function () {
     if (!canDeposit) {
@@ -150,7 +150,9 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
                 },
               )}
             />
-            {fees !== undefined ? <BtcFees fees={fees} /> : null}
+            {fees !== undefined ? (
+              <BtcFees fees={fees} isError={isFeePricesError} />
+            ) : null}
           </div>
         }
         bottomSection={<WalletsConnected />}

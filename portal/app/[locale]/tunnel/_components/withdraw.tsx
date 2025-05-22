@@ -173,17 +173,17 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     }) &&
     Big(fromInput).gte(minWithdrawalFormattedSats)
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: estimatedFees } = useEstimateBtcWithdrawFees({
-    amount: parseUnits(fromInput, fromToken.decimals),
-    btcAddress,
-    enabled: !!btcAddress && canWithdraw,
-    l2ChainId: evmChainId,
-  })
+  const { fees: estimatedFees, isError: isEstimateFeesError } =
+    useEstimateBtcWithdrawFees({
+      amount: parseUnits(fromInput, fromToken.decimals),
+      btcAddress,
+      enabled: !!btcAddress && canWithdraw,
+      l2ChainId: evmChainId,
+    })
 
   const gas = {
     amount: formatUnits(estimatedFees, fromChain?.nativeCurrency.decimals),
+    isError: isEstimateFeesError,
     label: t('common.network-gas-fee', { network: fromChain?.name }),
     token: getNativeToken(fromChain.id),
   }
@@ -300,13 +300,12 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       fromToken,
     }) && hasBridgeConfiguration(fromToken, toNetworkId)
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: withdrawGasFees } = useEstimateWithdrawFees({
-    amount: parseUnits(fromInput, fromToken.decimals),
-    fromToken,
-    l1ChainId: toToken.chainId,
-  })
+  const { fees: withdrawGasFees, isError: isEstimateFeesError } =
+    useEstimateWithdrawFees({
+      amount: parseUnits(fromInput, fromToken.decimals),
+      fromToken,
+      l1ChainId: toToken.chainId,
+    })
 
   const { isPending: isWithdrawing, mutate: withdraw } = useWithdraw({
     fromInput,
@@ -321,6 +320,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
 
   const gas = {
     amount: formatUnits(withdrawGasFees, fromChain?.nativeCurrency.decimals),
+    isError: isEstimateFeesError,
     label: t('common.network-gas-fee', { network: fromChain?.name }),
     token: getNativeToken(fromChain.id),
   }

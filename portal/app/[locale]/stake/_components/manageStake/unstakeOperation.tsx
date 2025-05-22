@@ -71,13 +71,12 @@ export const UnstakeOperation = function ({
       token,
     }).error
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: unstakeEstimatedFees } = useEstimateUnstakeFees({
-    amount: parseUnits(amount, token.decimals),
-    enabled: canUnstake,
-    token,
-  })
+  const { fees: unstakeEstimatedFees, isError: isUnstakeEstimatedFeesError } =
+    useEstimateUnstakeFees({
+      amount: parseUnits(amount, token.decimals),
+      enabled: canUnstake,
+      token,
+    })
 
   const statusMap = {
     [UnstakeStatusEnum.UNSTAKE_TX_PENDING]: ProgressStatus.PROGRESS,
@@ -95,6 +94,7 @@ export const UnstakeOperation = function ({
               unstakeEstimatedFees,
               hemi.nativeCurrency.decimals,
             ),
+            isError: isUnstakeEstimatedFeesError,
             token: getNativeToken(hemi.id),
           }
         : undefined,
@@ -131,7 +131,12 @@ export const UnstakeOperation = function ({
           <Preview
             amount={amount}
             balanceComponent={StakedBalance}
-            fees={<Fees estimatedFees={unstakeEstimatedFees} />}
+            fees={
+              <Fees
+                estimatedFees={unstakeEstimatedFees}
+                isError={isUnstakeEstimatedFeesError}
+              />
+            }
             isOperating={isOperating}
             maxBalance={
               <UnstakeMaxBalance

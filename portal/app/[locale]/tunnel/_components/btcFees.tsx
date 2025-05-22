@@ -3,7 +3,13 @@ import { useBitcoin } from 'hooks/useBitcoin'
 import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
 
-export const BtcFees = function ({ fees }: { fees: string }) {
+export const BtcFees = function ({
+  fees,
+  isError,
+}: {
+  fees: string
+  isError: boolean
+}) {
   const bitcoin = useBitcoin()
   const t = useTranslations('common')
 
@@ -14,15 +20,19 @@ export const BtcFees = function ({ fees }: { fees: string }) {
       <div className="flex items-center justify-between">
         <span className="text-neutral-500">{t('fees')}</span>
         <div className="text-neutral-950">
-          <DisplayAmount
-            amount={fees}
-            showTokenLogo={false}
-            // Btc fees are displayed in the special unit
-            token={{
-              ...token,
-              symbol: 'sat/vB',
-            }}
-          />
+          {isError ? (
+            <span>-</span>
+          ) : (
+            <DisplayAmount
+              amount={fees}
+              showTokenLogo={false}
+              // Btc fees are displayed in the special unit
+              token={{
+                ...token,
+                symbol: 'sat/vB',
+              }}
+            />
+          )}
         </div>
       </div>
     </div>

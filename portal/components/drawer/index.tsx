@@ -11,7 +11,7 @@ import { Overlay } from '../overlay'
 type Props = {
   children: React.ReactNode
   container?: HTMLElement
-  onClose?: () => void
+  onClose?: VoidFunction
   overlay?: ComponentType
 }
 
@@ -70,12 +70,8 @@ export const DrawerTopSection = ({
   <div className="flex items-center justify-between">
     <h2 className="text-2xl font-medium text-neutral-950">{heading}</h2>
     {!!onClose && (
-      <button
-        className="h-5 w-5 cursor-pointer"
-        onClick={onClose}
-        type="button"
-      >
-        <CloseIcon className="h-full w-full [&>path]:hover:stroke-black" />
+      <button className="size-5 cursor-pointer" onClick={onClose} type="button">
+        <CloseIcon className="size-full [&>path]:hover:stroke-black" />
       </button>
     )}
   </div>

@@ -1,5 +1,5 @@
 export const OrangeCheckIcon = () => (
-  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-orange-500">
+  <div className="flex size-5 items-center justify-center rounded-full bg-orange-500">
     <svg fill="none" height={16} width={16} xmlns="http://www.w3.org/2000/svg">
       <path
         clipRule="evenodd"

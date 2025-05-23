@@ -23,7 +23,7 @@ export const PositionStatus = function ({ position, status }: Props) {
 
   return (
     <div
-      className={`relative h-5 w-5 rounded-full ${
+      className={`relative size-5 rounded-full ${
         isNotReady ? 'bg-neutral-300/50' : 'bg-orange-100'
       }`}
     >

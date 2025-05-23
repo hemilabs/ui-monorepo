@@ -17,12 +17,10 @@ export const TwoRowBox = ({
   top,
 }: {
   bottom: ReactNode
-  top: BoxProps
+  top: ReactNode
 }) => (
   <div className={`relative z-0 flex w-full flex-col ${bottom ? '-mb-3' : ''}`}>
-    <div className={`${commonCss} z-10 justify-between ${top.bgColor}`}>
-      {top.children}
-    </div>
+    <div className={`${commonCss} z-10 justify-between bg-white`}>{top}</div>
     {bottom && (
       <div
         className="pt-4.5 relative flex h-[50px] w-full -translate-y-2 items-center gap-x-1

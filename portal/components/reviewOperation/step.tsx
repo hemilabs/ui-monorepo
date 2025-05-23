@@ -18,6 +18,7 @@ type Props = {
   fees?:
     | {
         amount: string
+        isError?: boolean
         token: Token
       }
     | undefined
@@ -31,11 +32,15 @@ type Props = {
   txHash?: string
 }
 
-const Fees = ({ amount, token }: Props['fees']) => (
+const Fees = ({ amount, isError = false, token }: Props['fees']) => (
   <>
     <FeesIcon />
     <div className="ml-1 text-neutral-500">
-      <DisplayAmount amount={amount} showTokenLogo={false} token={token} />
+      {isError ? (
+        <span>-</span>
+      ) : (
+        <DisplayAmount amount={amount} showTokenLogo={false} token={token} />
+      )}
     </div>
   </>
 )

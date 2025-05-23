@@ -62,24 +62,25 @@ const ReviewContent = function ({
     BtcWithdrawStatus.READY_TO_CHALLENGE,
   ].includes(withdrawal.status)
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: bitcoinWithdrawalEstimatedFees } = useEstimateBtcWithdrawFees({
+  const {
+    fees: bitcoinWithdrawalEstimatedFees,
+    isError: isBitcoinWithdrawalEstimateFeesError,
+  } = useEstimateBtcWithdrawFees({
     amount: parseUnits(withdrawal.amount, fromToken.decimals),
     btcAddress,
     enabled: !!btcAddress && showWithdrawalStepFees,
     l2ChainId: withdrawal.l2ChainId,
   })
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
   const isValidUuid = !!withdrawal.uuid
-  const { fees: challengeWithdrawalEstimatedFees } =
-    useEstimateChallengeBtcWithdrawFees({
-      enabled: isValidUuid && showChallengeStepFees,
-      l2ChainId: withdrawal.l2ChainId,
-      uuid: isValidUuid ? BigInt(withdrawal.uuid) : BigInt(0),
-    })
+  const {
+    fees: challengeWithdrawalEstimatedFees,
+    isError: isChallengeWithdrawalEstimateFeesError,
+  } = useEstimateChallengeBtcWithdrawFees({
+    enabled: isValidUuid && showChallengeStepFees,
+    l2ChainId: withdrawal.l2ChainId,
+    uuid: isValidUuid ? BigInt(withdrawal.uuid) : BigInt(0),
+  })
 
   const { isLoading: isLoadingVaultGracePeriod, vaultGracePeriod = BigInt(0) } =
     useSimpleVaultGracePeriod()
@@ -125,6 +126,7 @@ const ReviewContent = function ({
               bitcoinWithdrawalEstimatedFees,
               fromChain?.nativeCurrency.decimals,
             ),
+            isError: isBitcoinWithdrawalEstimateFeesError,
             token: getNativeToken(fromChain.id),
           }
         : undefined,
@@ -179,6 +181,7 @@ const ReviewContent = function ({
               challengeWithdrawalEstimatedFees,
               fromChain?.nativeCurrency.decimals,
             ),
+            isError: isChallengeWithdrawalEstimateFeesError,
             token: getNativeToken(fromChain.id),
           }
         : undefined,

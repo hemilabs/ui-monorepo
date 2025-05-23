@@ -67,12 +67,11 @@ const ReviewContent = function ({
       BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
     ].includes(depositStatus)
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: estimatedFees } = useEstimateBtcDepositFees({
-    deposit,
-    enabled: showDepositConfirmationFees,
-  })
+  const { fees: estimatedFees, isError: isEstimatedFeesError } =
+    useEstimateBtcDepositFees({
+      deposit,
+      enabled: showDepositConfirmationFees,
+    })
 
   const shouldAddManualConfirmationStep = () =>
     [
@@ -180,6 +179,7 @@ const ReviewContent = function ({
       fees: showDepositConfirmationFees
         ? {
             amount: formatUnits(estimatedFees, hemi.nativeCurrency.decimals),
+            isError: isEstimatedFeesError,
             token: getNativeToken(hemi.id),
           }
         : undefined,

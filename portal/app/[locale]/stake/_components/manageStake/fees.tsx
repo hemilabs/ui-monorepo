@@ -6,9 +6,10 @@ import { formatUnits } from 'viem'
 
 type Props = {
   estimatedFees: bigint
+  isError: boolean
 }
 
-export const Fees = function ({ estimatedFees }: Props) {
+export const Fees = function ({ estimatedFees, isError }: Props) {
   const hemi = useHemi()
   const t = useTranslations('common')
 
@@ -16,6 +17,7 @@ export const Fees = function ({ estimatedFees }: Props) {
 
   const gas = {
     amount: formatUnits(estimatedFees, hemi.nativeCurrency.decimals),
+    isError,
     label: t('network-gas-fee', { network: hemi.name }),
     token: nativeToken,
   }

@@ -67,21 +67,19 @@ export const StakeOperation = function ({
     },
   })
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: approvalEstimatedFees } = useEstimateApproveErc20Fees({
-    amount: parseUnits(amount, token.decimals),
-    spender,
-    token,
-  })
+  const { fees: approvalEstimatedFees, isError: isApprovalEstimatedFeesError } =
+    useEstimateApproveErc20Fees({
+      amount: parseUnits(amount, token.decimals),
+      spender,
+      token,
+    })
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: stakeEstimatedFees } = useEstimateStakeFees({
-    amount: parseUnits(amount, token.decimals),
-    enabled: allowance > 0 || operatesNativeToken,
-    token,
-  })
+  const { fees: stakeEstimatedFees, isError: isStakeEstimatedFeesError } =
+    useEstimateStakeFees({
+      amount: parseUnits(amount, token.decimals),
+      enabled: allowance > 0 || operatesNativeToken,
+      token,
+    })
 
   const hemi = useHemi()
 
@@ -118,6 +116,7 @@ export const StakeOperation = function ({
               approvalEstimatedFees,
               hemi.nativeCurrency.decimals,
             ),
+            isError: isApprovalEstimatedFeesError,
             token: getNativeToken(hemi.id),
           }
         : undefined,
@@ -150,6 +149,7 @@ export const StakeOperation = function ({
               stakeEstimatedFees,
               hemi.nativeCurrency.decimals,
             ),
+            isError: isStakeEstimatedFeesError,
             token: getNativeToken(hemi.id),
           }
         : undefined,
@@ -221,7 +221,12 @@ export const StakeOperation = function ({
         preview={
           <Preview
             amount={amount}
-            fees={<Fees estimatedFees={stakeEstimatedFees} />}
+            fees={
+              <Fees
+                estimatedFees={stakeEstimatedFees}
+                isError={isStakeEstimatedFeesError}
+              />
+            }
             isOperating={isOperating}
             maxBalance={
               <StakeMaxBalance

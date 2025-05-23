@@ -50,30 +50,28 @@ const ReviewContent = function ({
 
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: approvalTokenGasFees } = useEstimateApproveErc20Fees({
-    amount: BigInt(deposit.amount),
-    enabled: [
-      EvmDepositStatus.APPROVAL_TX_FAILED,
-      EvmDepositStatus.APPROVAL_TX_PENDING,
-    ].includes(depositStatus),
-    spender: l1StandardBridgeAddress,
-    token: fromToken,
-  })
+  const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
+    useEstimateApproveErc20Fees({
+      amount: BigInt(deposit.amount),
+      enabled: [
+        EvmDepositStatus.APPROVAL_TX_FAILED,
+        EvmDepositStatus.APPROVAL_TX_PENDING,
+      ].includes(depositStatus),
+      spender: l1StandardBridgeAddress,
+      token: fromToken,
+    })
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: depositGasFees } = useEstimateDepositFees({
-    amount: BigInt(deposit.amount),
-    enabled: [
-      EvmDepositStatus.APPROVAL_TX_COMPLETED,
-      EvmDepositStatus.DEPOSIT_TX_PENDING,
-      EvmDepositStatus.DEPOSIT_TX_FAILED,
-    ].includes(depositStatus),
-    fromToken,
-    toToken,
-  })
+  const { fees: depositGasFees, isError: isDepositGasFeesError } =
+    useEstimateDepositFees({
+      amount: BigInt(deposit.amount),
+      enabled: [
+        EvmDepositStatus.APPROVAL_TX_COMPLETED,
+        EvmDepositStatus.DEPOSIT_TX_PENDING,
+        EvmDepositStatus.DEPOSIT_TX_FAILED,
+      ].includes(depositStatus),
+      fromToken,
+      toToken,
+    })
 
   const t = useTranslations('tunnel-page.review-deposit')
   const tCommon = useTranslations('common')
@@ -96,6 +94,7 @@ const ReviewContent = function ({
               approvalTokenGasFees,
               fromChain.nativeCurrency.decimals,
             ),
+            isError: isApprovalTokenGasFeesError,
             token: getNativeToken(fromChain.id),
           }
         : undefined,
@@ -139,6 +138,7 @@ const ReviewContent = function ({
               depositGasFees,
               fromChain.nativeCurrency.decimals,
             ),
+            isError: isDepositGasFeesError,
             token: getNativeToken(fromChain.id),
           }
         : undefined,

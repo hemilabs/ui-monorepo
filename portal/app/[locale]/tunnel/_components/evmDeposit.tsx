@@ -165,21 +165,19 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const fromChain = useChain(fromNetworkId)
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: approvalTokenGasFees } = useEstimateApproveErc20Fees({
-    amount,
-    spender: l1StandardBridgeAddress,
-    token: fromToken,
-  })
+  const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
+    useEstimateApproveErc20Fees({
+      amount,
+      spender: l1StandardBridgeAddress,
+      token: fromToken,
+    })
 
-  // TODO: We need to decide what to render when `isError` is true (This hook is handling errors).
-  // Issue: https://github.com/hemilabs/ui-monorepo/issues/866
-  const { fees: depositGasFees } = useEstimateDepositFees({
-    amount,
-    fromToken,
-    toToken,
-  })
+  const { fees: depositGasFees, isError: isDepositGasFeesError } =
+    useEstimateDepositFees({
+      amount,
+      fromToken,
+      toToken,
+    })
 
   const { isPending: isRunningOperation, mutate: deposit } = useDeposit({
     extendedErc20Approval,
@@ -223,6 +221,8 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       depositGasFees + (needsApproval ? approvalTokenGasFees : BigInt(0)),
       fromChain?.nativeCurrency.decimals,
     ),
+    isError:
+      isDepositGasFeesError || (needsApproval && isApprovalTokenGasFeesError),
     label: t('common.network-gas-fee', { network: fromChain?.name }),
     token: getNativeToken(fromChain.id),
   }

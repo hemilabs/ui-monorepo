@@ -72,12 +72,7 @@ const Completed = function ({
             </>
           ) : null
         }
-        top={{
-          bgColor: 'bg-white',
-          children: (
-            <span className="mr-auto text-neutral-600">{description}</span>
-          ),
-        }}
+        top={<span className="mr-auto text-neutral-600">{description}</span>}
       />
       {!!postAction && (
         <div className="left-2.25 absolute bottom-6">
@@ -133,15 +128,12 @@ const Progress = function ({
             )}
           </>
         }
-        top={{
-          bgColor: 'bg-white',
-          children: (
-            <>
-              <span className="mr-auto text-orange-500">{description}</span>
-              {fees && <Fees {...fees} />}
-            </>
-          ),
-        }}
+        top={
+          <>
+            <span className="mr-auto text-orange-500">{description}</span>
+            {fees && <Fees {...fees} />}
+          </>
+        }
       />
       {!!postAction && (
         <div className="left-2.25 absolute bottom-6">
@@ -200,15 +192,12 @@ const Failed = function ({
             </>
           ) : null
         }
-        top={{
-          bgColor: 'bg-white',
-          children: (
-            <>
-              <span className="mr-auto text-rose-500">{description}</span>
-              {fees && <Fees {...fees} />}
-            </>
-          ),
-        }}
+        top={
+          <>
+            <span className="mr-auto text-rose-500">{description}</span>
+            {fees && <Fees {...fees} />}
+          </>
+        }
       />
       {!!postAction && (
         <div className="left-2.25 absolute bottom-6">
@@ -230,20 +219,13 @@ const Rejected = function ({ description, fees, position, postAction }: Props) {
         <PositionStatus position={position} status={ProgressStatus.REJECTED} />
       </div>
       <TwoRowBox
-        bottom={
+        bottom={<span className="mr-auto text-rose-500">{t('rejected')}</span>}
+        top={
           <>
-            <span className="mr-auto text-rose-500">{t('rejected')}</span>
+            <span className="mr-auto text-orange-500">{description}</span>
+            {fees && <Fees {...fees} />}
           </>
         }
-        top={{
-          bgColor: 'bg-white',
-          children: (
-            <>
-              <span className="mr-auto text-orange-500">{description}</span>
-              {fees && <Fees {...fees} />}
-            </>
-          ),
-        }}
       />
       {!!postAction && (
         <div className="left-2.25 absolute bottom-6">

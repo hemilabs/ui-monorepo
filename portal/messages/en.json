@@ -198,7 +198,8 @@
     "swap": "Swap",
     "stake": "Stake",
     "tools": "Tools",
-    "tunnel": "Tunnel"
+    "tunnel": "Tunnel",
+    "tvl": "TVL on Hemi"
   },
   "stake-page": {
     "asset": "Asset",

@@ -32,6 +32,8 @@ NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=1 # Vault index to use for bitcoin in 
 NEXT_PUBLIC_POINTS_URL=<url>
 # Pricing URL
 NEXT_PUBLIC_TOKEN_PRICES_URL=<url> # URL to retrieve usd prices for tokens
+# Total Value Locked URL
+NEXT_PUBLIC_TVL_URL=<url> # URL to retrieve the total value locked on Hemi
 # Subgraphs endpoint ID
 NEXT_PUBLIC_SUBGRAPHS_API_URL=<url>
 # The following variables could be used to customize the contracts addresses used by Hemi (for example, for testing with a forked blockchain):

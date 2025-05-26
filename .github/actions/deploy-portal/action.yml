@@ -60,6 +60,9 @@ inputs:
   NEXT_PUBLIC_TOKEN_PRICES_URL:
     required: false
     description: Token prices URL
+  NEXT_PUBLIC_TVL_URL:
+    required: false
+    description: Total Value Locked URL
   NEXT_PUBLIC_SENTRY_DSN:
     required: false
     description: Sentry DSN URL
@@ -109,6 +112,7 @@ runs:
         NEXT_PUBLIC_ENABLE_STAKE_TESTNET: ${{ inputs.NEXT_PUBLIC_ENABLE_STAKE_TESTNET }}
         NEXT_PUBLIC_POINTS_URL: ${{ inputs.NEXT_PUBLIC_POINTS_URL }}
         NEXT_PUBLIC_TOKEN_PRICES_URL: ${{ inputs.NEXT_PUBLIC_TOKEN_PRICES_URL }}
+        NEXT_PUBLIC_TVL_URL: ${{ inputs.NEXT_PUBLIC_TVL_URL }}
         NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.NEXT_PUBLIC_SENTRY_DSN }}
         NEXT_PUBLIC_SUBGRAPHS_API_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPHS_API_URL }}
         NEXT_PUBLIC_TRACES_SAMPLE_RATE: ${{ inputs.NEXT_PUBLIC_TRACES_SAMPLE_RATE }}

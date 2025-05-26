@@ -23,6 +23,7 @@ import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiLogoFull } from './_components/hemiLogo'
 import { ItemLink, ItemWithSubmenu, NetworkSwitch } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
+import { Tvl } from './_components/tvl'
 
 const ActionableOperations = dynamic(
   () =>
@@ -44,8 +45,8 @@ export const Navbar = function () {
 
   return (
     <>
-      <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col bg-white px-3 pt-3 md:pt-0 [&>*]:md:ml-3 [&>*]:md:pr-3">
-        <div className="hidden h-24 items-center justify-between md:flex">
+      <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col bg-white px-3 pt-3 md:pt-0">
+        <div className="hidden h-24 items-center justify-between md:flex [&>*]:md:ml-3">
           <div className="flex items-center gap-x-2">
             <Link className="w-full" href={href}>
               <HemiLogoFull />
@@ -54,7 +55,7 @@ export const Navbar = function () {
           </div>
           <Help />
         </div>
-        <ul className="flex h-[calc(100dvh-240px)] flex-col gap-y-1 overflow-y-auto md:h-full [&>li>div]:px-3">
+        <ul className="flex h-[calc(100dvh-240px)] flex-col overflow-y-auto md:h-full [&>li>div]:px-3">
           <li className="order-1">
             <ItemLink
               event="nav - tunnel"
@@ -120,7 +121,7 @@ export const Navbar = function () {
           <li className="order-8">
             <Separator />
           </li>
-          <li className="order-9 mb-auto">
+          <li className="order-9">
             <ItemLink
               event="nav - demos"
               href="/demos"
@@ -136,7 +137,7 @@ export const Navbar = function () {
               text={t('network-status')}
             />
           </li>
-          <li className="order-11 md:order-12">
+          <li className="order-11 mb-auto md:order-12">
             <ItemLink
               event="nav - docs"
               href="https://docs.hemi.xyz"
@@ -150,13 +151,16 @@ export const Navbar = function () {
           <li className="order-13 md:hidden">
             <Help />
           </li>
-          <li className="md:order-13 hidden md:block">
+          <li className="hidden md:order-10 md:block">
             <NetworkSwitch />
           </li>
-          <li className="hidden md:order-10 md:block">
+          <li className="md:order-13 hidden md:block">
             <GetStarted />
           </li>
           <li className="md:order-14 hidden md:block">
+            <Tvl />
+          </li>
+          <li className="md:order-15 hidden md:block">
             <SocialLinks />
           </li>
         </ul>

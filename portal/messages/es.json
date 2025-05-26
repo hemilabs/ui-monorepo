@@ -197,7 +197,8 @@
     "swap": "Intercambiar",
     "stake": "Apostar",
     "tools": "Herramientas",
-    "tunnel": "Túnel"
+    "tunnel": "Túnel",
+    "tvl": "TVL en Hemi"
   },
   "stake-page": {
     "asset": "Activo",

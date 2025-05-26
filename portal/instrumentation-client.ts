@@ -67,6 +67,7 @@ function enableSentry() {
       /(https|wss):\/\/*\.walletconnect\.(com|org)/,
       process.env.NEXT_PUBLIC_POINTS_URL,
       process.env.NEXT_PUBLIC_TOKEN_PRICES_URL,
+      process.env.NEXT_PUBLIC_TVL_URL,
       process.env.NEXT_PUBLIC_COOKIE3_URL,
       // filter in case any of the env variables are undefined, although in prod all should be defined.
     ].filter(Boolean),

@@ -33,6 +33,7 @@
     "hemi-viem": "2.4.2",
     "hemi-viem-stake-actions": "1.0.0",
     "lodash": "4.17.21",
+    "millify": "6.1.0",
     "next": "14.2.16",
     "next-intl": "4.0.2",
     "nuqs": "1.17.8",

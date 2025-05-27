@@ -9,6 +9,7 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useRouter } from 'i18n/navigation'
 import { locales } from 'i18n/routing'
+import { useSearchParams } from 'next/navigation'
 import { Locale, useLocale, useTranslations } from 'next-intl'
 import { ComponentProps, ReactNode, RefObject, useState } from 'react'
 
@@ -135,10 +136,14 @@ const ItemWithSubmenu = function ({
 const LanguageMenu = function ({ active }: LanguageProps) {
   const t = useTranslations('navbar.help')
   const pathname = usePathnameWithoutLocale()
+  const searchParams = useSearchParams()
   const router = useRouter()
 
   const onClick = function (locale: Locale) {
-    router.push(pathname, { locale })
+    const query = searchParams.toString()
+    const fullPath = query ? `${pathname}?${query}` : pathname
+
+    router.push(fullPath, { locale })
   }
 
   return (

@@ -4,16 +4,35 @@ import React from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { Amount } from './amount'
-import { Background } from './background'
 import { DollarSign } from './dollarSign'
+import { HemiLogo } from './hemiLogo'
 
 export const Tvl = function () {
-  const { data, isPending } = useTvl()
+  const { data, isError, isPending } = useTvl()
   const t = useTranslations('navbar')
 
+  const getAmount = function () {
+    if (isError) {
+      return '-'
+    }
+
+    return new Intl.NumberFormat('en', {
+      compactDisplay: 'short',
+      maximumFractionDigits: 2,
+      notation: 'compact',
+    }).format(data)
+  }
+
   return (
-    <section className="shadow-soft h-22 relative mt-4 w-52">
-      <Background />
+    <section
+      className="shadow-soft h-22 relative mb-4 mt-4 w-full overflow-hidden rounded-lg
+      md:mb-0"
+      style={{
+        background:
+          'linear-gradient(0deg, #262626, #262626),linear-gradient(0deg, #FFFFFF, #FFFFFF),linear-gradient(180deg, rgba(0, 0, 0, 0) 10.65%, rgba(0, 0, 0, 0.6) 76.58%)',
+      }}
+    >
+      <HemiLogo className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform" />
       <div className="absolute left-0 top-0 w-full">
         <div className="flex flex-col gap-y-2 p-4">
           <div className="flex w-full items-center justify-between">
@@ -26,7 +45,7 @@ export const Tvl = function () {
             {isPending ? (
               <Skeleton baseColor="#262626" highlightColor="#303030" />
             ) : (
-              <Amount value={`$${data}`} />
+              <Amount value={`$${getAmount()}`} />
             )}
           </div>
         </div>

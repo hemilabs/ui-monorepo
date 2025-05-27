@@ -157,7 +157,7 @@ export const Navbar = function () {
           <li className="md:order-13 hidden md:block">
             <GetStarted />
           </li>
-          <li className="md:order-14 hidden md:block">
+          <li className="md:order-14 md:block">
             <Tvl />
           </li>
           <li className="md:order-15 hidden md:block">

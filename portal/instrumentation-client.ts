@@ -65,6 +65,7 @@ function enableSentry() {
     denyUrls: [
       // Filter all Wallet Connect related urls
       /(https|wss):\/\/*\.walletconnect\.(com|org)/,
+      process.env.NEXT_PUBLIC_COOKIE3_URL,
       process.env.NEXT_PUBLIC_POINTS_URL,
       process.env.NEXT_PUBLIC_TOKEN_PRICES_URL,
       process.env.NEXT_PUBLIC_TVL_URL,

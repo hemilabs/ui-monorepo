@@ -1,18 +1,6 @@
-import { ButtonLoader } from 'components/buttonLoader'
-import dynamic from 'next/dynamic'
+import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { FormEvent, ReactNode } from 'react'
 import { RemoteChain } from 'types/chain'
-
-const SubmitWhenConnectedToChain = dynamic(
-  () =>
-    import('components/submitWhenConnectedToChain').then(
-      mod => mod.SubmitWhenConnectedToChain,
-    ),
-  {
-    loading: () => <ButtonLoader />,
-    ssr: false,
-  },
-)
 
 type Props = {
   expectedChainId: RemoteChain['id']

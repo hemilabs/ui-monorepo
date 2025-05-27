@@ -1,29 +1,40 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Button } from 'components/button'
+import { ButtonLoader } from 'components/buttonLoader'
 import { useChain } from 'hooks/useChain'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useSwitchChain } from 'hooks/useSwitchChain'
+import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { RemoteChain } from 'types/chain'
+import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
+
+const ConnectEvmWallet = dynamic(
+  () => import('components/connectEvmWallet').then(mod => mod.ConnectEvmWallet),
+  {
+    loading: () => <ButtonLoader />,
+    ssr: false,
+  },
+)
 
 type Props = {
   chainId: RemoteChain['id']
+  connectWalletText?: string
   submitButton: React.ReactNode
 }
 
 export const SubmitWhenConnectedToChain = function ({
   chainId,
+  connectWalletText,
   submitButton,
 }: Props) {
   const t = useTranslations()
   const { status } = useAccount()
   const { switchChain } = useSwitchChain()
-  const { openConnectModal } = useConnectModal()
   const connectedToChain = useIsConnectedToExpectedNetwork(chainId)
   const targetChain = useChain(chainId)
 
-  if (status === 'connected') {
+  if (walletIsConnected(status)) {
     return (
       <>
         {connectedToChain && submitButton}
@@ -36,9 +47,5 @@ export const SubmitWhenConnectedToChain = function ({
     )
   }
 
-  return (
-    <Button onClick={openConnectModal} type="button">
-      {t('connect-wallets.connect-evm-wallet')}
-    </Button>
-  )
+  return <ConnectEvmWallet text={connectWalletText} />
 }

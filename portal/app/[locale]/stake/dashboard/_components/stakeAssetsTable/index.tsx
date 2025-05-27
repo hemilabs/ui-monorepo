@@ -300,7 +300,7 @@ export const StakeAssetsTable = function () {
     return <WelcomeStake />
   }
 
-  const stakeMoreUrl = '/stake'
+  const stakeMoreUrl = 'stake'
 
   function goToStakePage(e: MouseEvent<HTMLAnchorElement>) {
     e.preventDefault()

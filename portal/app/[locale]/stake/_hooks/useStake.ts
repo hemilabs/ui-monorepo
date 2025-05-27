@@ -9,7 +9,8 @@ import { useState } from 'react'
 import { StakeStatusEnum, StakeToken } from 'types/stake'
 import { isNativeToken } from 'utils/nativeToken'
 import { stake } from 'utils/stake'
-import { Hash, parseUnits } from 'viem'
+import { parseTokenUnits } from 'utils/token'
+import { Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { getStakedBalanceQueryKey } from './useStakedBalance'
@@ -63,7 +64,7 @@ export const useStake = function (token: StakeToken) {
       setIsSubmitting(true)
       track?.('stake - stake started', { chain: networkType })
 
-      const amountUnits = parseUnits(amount, token.decimals)
+      const amountUnits = parseTokenUnits(amount, token)
 
       await stake({
         amount: amountUnits,

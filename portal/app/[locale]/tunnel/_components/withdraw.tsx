@@ -21,9 +21,9 @@ import { Token } from 'types/token'
 import { isEvmNetwork } from 'utils/chain'
 import { formatBtcAddress } from 'utils/format'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
-import { tunnelsThroughPartners } from 'utils/token'
+import { parseTokenUnits, tunnelsThroughPartners } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
-import { formatUnits, parseUnits } from 'viem'
+import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEstimateBtcWithdrawFees } from '../_hooks/useEstimateBtcWithdrawFees'
@@ -154,7 +154,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   const handleWithdraw = function () {
     clearWithdrawBitcoinState()
     withdrawBitcoin({
-      amount: parseUnits(fromInput, fromToken.decimals),
+      amount: parseTokenUnits(fromInput, fromToken),
       l1ChainId: toNetworkId,
       l2ChainId: fromNetworkId,
     })
@@ -175,7 +175,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
 
   const { fees: estimatedFees, isError: isEstimateFeesError } =
     useEstimateBtcWithdrawFees({
-      amount: parseUnits(fromInput, fromToken.decimals),
+      amount: parseTokenUnits(fromInput, fromToken),
       btcAddress,
       enabled: !!btcAddress && canWithdraw,
       l2ChainId: evmChainId,
@@ -302,7 +302,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
 
   const { fees: withdrawGasFees, isError: isEstimateFeesError } =
     useEstimateWithdrawFees({
-      amount: parseUnits(fromInput, fromToken.decimals),
+      amount: parseTokenUnits(fromInput, fromToken),
       fromToken,
       l1ChainId: toToken.chainId,
     })

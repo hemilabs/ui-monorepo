@@ -21,7 +21,8 @@ import {
 import { findChainById } from 'utils/chain'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { isNativeAddress } from 'utils/nativeToken'
-import { Chain, parseUnits, zeroAddress } from 'viem'
+import { parseTokenUnits } from 'utils/token'
+import { Chain, zeroAddress } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelOperation'
@@ -42,7 +43,7 @@ export const useDeposit = function ({
   on,
   toToken,
 }: UseDeposit) {
-  const amount = parseUnits(fromInput, fromToken.decimals)
+  const amount = parseTokenUnits(fromInput, fromToken)
 
   const { address } = useAccount()
   const { addTransaction, clearTransactionsInMemory } = useContext(

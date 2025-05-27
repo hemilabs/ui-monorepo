@@ -6,7 +6,8 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { useState } from 'react'
 import { StakeToken, UnstakeStatusEnum } from 'types/stake'
 import { unstake } from 'utils/stake'
-import { Hash, parseUnits } from 'viem'
+import { parseTokenUnits } from 'utils/token'
+import { Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { getStakedBalanceQueryKey } from './useStakedBalance'
@@ -47,7 +48,7 @@ export const useUnstake = function (token: StakeToken) {
       setIsSubmitting(true)
       track?.('stake - unstake started', { chain: networkType })
 
-      const amountUnits = parseUnits(amount, token.decimals)
+      const amountUnits = parseTokenUnits(amount, token)
 
       await unstake({
         amount: amountUnits,

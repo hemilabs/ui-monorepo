@@ -11,7 +11,8 @@ import {
 } from 'types/stake'
 import { getNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
-import { formatUnits, parseUnits } from 'viem'
+import { parseTokenUnits } from 'utils/token'
+import { formatUnits } from 'viem'
 
 import { useAmount } from '../../_hooks/useAmount'
 import { useEstimateUnstakeFees } from '../../_hooks/useEstimateUnstakeFees'
@@ -65,7 +66,7 @@ export const UnstakeOperation = function ({
     !isStakedPositionPending &&
     !isSubmitting &&
     !canSubmit({
-      amount: parseUnits(amount, token.decimals),
+      amount: parseTokenUnits(amount, token),
       balance,
       connectedChainId: token.chainId,
       token,
@@ -73,7 +74,7 @@ export const UnstakeOperation = function ({
 
   const { fees: unstakeEstimatedFees, isError: isUnstakeEstimatedFeesError } =
     useEstimateUnstakeFees({
-      amount: parseUnits(amount, token.decimals),
+      amount: parseTokenUnits(amount, token),
       enabled: canUnstake,
       token,
     })

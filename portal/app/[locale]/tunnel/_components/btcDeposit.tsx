@@ -12,7 +12,7 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { formatEvmAddress } from 'utils/format'
-import { parseUnits } from 'viem'
+import { parseTokenUnits } from 'utils/token'
 
 import { useMinDepositSats } from '../_hooks/useMinDepositSats'
 import { BtcToHemiTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
@@ -128,7 +128,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
       hemiAddress: evmAddress,
       l1ChainId: fromNetworkId,
       l2ChainId: toNetworkId,
-      satoshis: Number(parseUnits(fromInput, fromToken.decimals)),
+      satoshis: Number(parseTokenUnits(fromInput, fromToken)),
     })
     track?.('btc - dep started', { chain: networkType })
   }

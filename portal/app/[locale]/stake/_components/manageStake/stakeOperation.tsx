@@ -11,7 +11,8 @@ import { useTranslations } from 'next-intl'
 import { StakeOperations, StakeStatusEnum, type StakeToken } from 'types/stake'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
-import { formatUnits, parseUnits } from 'viem'
+import { parseTokenUnits } from 'utils/token'
+import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useAmount } from '../../_hooks/useAmount'
@@ -69,14 +70,14 @@ export const StakeOperation = function ({
 
   const { fees: approvalEstimatedFees, isError: isApprovalEstimatedFeesError } =
     useEstimateApproveErc20Fees({
-      amount: parseUnits(amount, token.decimals),
+      amount: parseTokenUnits(amount, token),
       spender,
       token,
     })
 
   const { fees: stakeEstimatedFees, isError: isStakeEstimatedFeesError } =
     useEstimateStakeFees({
-      amount: parseUnits(amount, token.decimals),
+      amount: parseTokenUnits(amount, token),
       enabled: allowance > 0 || operatesNativeToken,
       token,
     })
@@ -164,13 +165,13 @@ export const StakeOperation = function ({
     allowanceLoaded &&
     !isSubmitting &&
     !canSubmit({
-      amount: parseUnits(amount, token.decimals),
+      amount: parseTokenUnits(amount, token),
       balance,
       connectedChainId: token.chainId,
       token,
     }).error
 
-  const requiresApproval = allowance < parseUnits(amount, token.decimals)
+  const requiresApproval = allowance < parseTokenUnits(amount, token)
 
   const handleStake = () =>
     stake({

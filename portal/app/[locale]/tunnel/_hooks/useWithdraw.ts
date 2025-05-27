@@ -17,7 +17,8 @@ import {
 } from 'types/tunnel'
 import { findChainById } from 'utils/chain'
 import { isNativeToken } from 'utils/nativeToken'
-import { type Chain, parseUnits, zeroAddress, Address } from 'viem'
+import { parseTokenUnits } from 'utils/token'
+import { type Chain, zeroAddress, Address } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelOperation'
@@ -35,7 +36,7 @@ export const useWithdraw = function ({
   on,
   toToken,
 }: UseWithdraw) {
-  const amount = parseUnits(fromInput, fromToken.decimals)
+  const amount = parseTokenUnits(fromInput, fromToken)
 
   const { address: account } = useAccount()
   const hemiPublicClient = useHemiClient()

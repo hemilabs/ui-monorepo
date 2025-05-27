@@ -14,9 +14,9 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
-import { tunnelsThroughPartners } from 'utils/token'
+import { parseTokenUnits, tunnelsThroughPartners } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
-import { formatUnits, parseUnits } from 'viem'
+import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useDeposit } from '../_hooks/useDeposit'
@@ -130,7 +130,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     updateFromInput,
   } = state
 
-  const amount = parseUnits(fromInput, fromToken.decimals)
+  const amount = parseTokenUnits(fromInput, fromToken)
 
   const { chain, status } = useEvmAccount()
 

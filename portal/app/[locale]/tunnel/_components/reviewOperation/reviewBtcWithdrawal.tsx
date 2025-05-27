@@ -13,7 +13,8 @@ import { EvmToken } from 'types/token'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
 import { getNativeToken } from 'utils/nativeToken'
 import { secondsToHours } from 'utils/time'
-import { formatUnits, parseUnits } from 'viem'
+import { parseTokenUnits } from 'utils/token'
+import { formatUnits } from 'viem'
 
 import { useEstimateChallengeBtcWithdrawFees } from '../../_hooks/useEstimateBtcChallengeWithdrawFees'
 import { useEstimateBtcWithdrawFees } from '../../_hooks/useEstimateBtcWithdrawFees'
@@ -66,7 +67,7 @@ const ReviewContent = function ({
     fees: bitcoinWithdrawalEstimatedFees,
     isError: isBitcoinWithdrawalEstimateFeesError,
   } = useEstimateBtcWithdrawFees({
-    amount: parseUnits(withdrawal.amount, fromToken.decimals),
+    amount: parseTokenUnits(withdrawal.amount, fromToken),
     btcAddress,
     enabled: !!btcAddress && showWithdrawalStepFees,
     l2ChainId: withdrawal.l2ChainId,

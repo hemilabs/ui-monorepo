@@ -1,9 +1,6 @@
 'use client'
 
 import { useUmami } from 'app/analyticsEvents'
-import { Big } from 'big.js'
-import { Button } from 'components/button'
-import { ButtonLoader } from 'components/buttonLoader'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useAccounts } from 'hooks/useAccounts'
@@ -16,8 +13,6 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { type RemoteChain } from 'types/chain'
-import { Token } from 'types/token'
 import { isEvmNetwork } from 'utils/chain'
 import { formatBtcAddress } from 'utils/format'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
@@ -36,20 +31,13 @@ import {
   type TypedTunnelState,
 } from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
-import { canSubmit, getTotal } from '../_utils'
+import { validateSubmit, getTotal } from '../_utils'
 
 import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
+import { SubmitEvmWithdrawal } from './submitEvmWithdrawal'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
-
-const ConnectEvmWallet = dynamic(
-  () => import('./connectEvmWallet').then(mod => mod.ConnectEvmWallet),
-  {
-    loading: () => <ButtonLoader />,
-    ssr: false,
-  },
-)
 
 const CustomTunnelsThroughPartners = dynamic(
   () =>
@@ -72,10 +60,6 @@ const WalletsConnected = dynamic(
   { ssr: false },
 )
 
-const hasBridgeConfiguration = (token: Token, l1ChainId: RemoteChain['id']) =>
-  isNativeToken(token) ||
-  token.extensions?.bridgeInfo[l1ChainId].tokenAddress !== undefined
-
 type BtcWithdrawProps = {
   state: TypedTunnelState<HemiToBitcoinTunneling>
 }
@@ -93,13 +77,14 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     updateFromInput,
   } = state
 
-  const { btcAddress, evmChainId } = useAccounts()
+  const { btcAddress, btcWalletStatus, evmChainId, evmWalletStatus } =
+    useAccounts()
   const fromChain = useChain(fromNetworkId)
 
   const { isPending: isLoadingMinWithdrawalSats, minWithdrawalFormattedSats } =
     useMinWithdrawalSats(fromToken)
   const [networkType] = useNetworkType()
-  const { balance: bitcoinBalance } = useTokenBalance(
+  const { balance: bitcoinBalance, isSuccess: balanceLoaded } = useTokenBalance(
     fromToken.chainId,
     fromToken.address,
   )
@@ -151,10 +136,12 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     ],
   )
 
+  const amount = parseTokenUnits(fromInput, fromToken)
+
   const handleWithdraw = function () {
     clearWithdrawBitcoinState()
     withdrawBitcoin({
-      amount: parseTokenUnits(fromInput, fromToken),
+      amount,
       l1ChainId: toNetworkId,
       l2ChainId: fromNetworkId,
     })
@@ -162,20 +149,26 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     track?.('btc - withdraw started', { chain: networkType })
   }
 
-  const canWithdraw =
-    !isLoadingMinWithdrawalSats &&
-    canSubmit({
-      balance: bitcoinBalance,
-      chainId: evmChainId,
-      fromInput,
-      fromNetworkId,
-      fromToken,
-    }) &&
-    Big(fromInput).gte(minWithdrawalFormattedSats)
+  const {
+    canSubmit,
+    error: validationError,
+    errorKey,
+  } = validateSubmit({
+    amountInput: fromInput,
+    balance: bitcoinBalance,
+    chainId: fromToken.chainId,
+    expectedChain: fromChain.name,
+    minAmount: minWithdrawalFormattedSats,
+    operation: 'withdrawal',
+    t,
+    token: fromToken,
+  })
+
+  const canWithdraw = !isLoadingMinWithdrawalSats && canSubmit
 
   const { fees: estimatedFees, isError: isEstimateFeesError } =
     useEstimateBtcWithdrawFees({
-      amount: parseTokenUnits(fromInput, fromToken),
+      amount,
       btcAddress,
       enabled: !!btcAddress && canWithdraw,
       l2ChainId: evmChainId,
@@ -186,6 +179,13 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     isError: isEstimateFeesError,
     label: t('common.network-gas-fee', { network: fromChain?.name }),
     token: getNativeToken(fromChain.id),
+  }
+
+  const getSubmitText = function () {
+    if (isWithdrawing) {
+      return t('tunnel-page.submit-button.withdrawing')
+    }
+    return t('tunnel-page.submit-button.initiate-withdrawal')
   }
 
   return (
@@ -219,16 +219,14 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       bottomSection={<WalletsConnected />}
       formContent={
         <FormContent
+          errorKey={
+            walletIsConnected(btcWalletStatus) &&
+            walletIsConnected(evmWalletStatus) &&
+            balanceLoaded
+              ? errorKey
+              : undefined
+          }
           isRunningOperation={isWithdrawing}
-          minInputMsg={{
-            loading: isLoadingMinWithdrawalSats,
-            value: isLoadingMinWithdrawalSats
-              ? ''
-              : t('tunnel-page.form.min-withdrawal', {
-                  amount: minWithdrawalFormattedSats,
-                  symbol: fromToken.symbol,
-                }),
-          }}
           setMaxBalanceButton={
             <SetMaxEvmBalance
               disabled={isWithdrawing}
@@ -244,11 +242,8 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       submitButton={
         <SubmitWithTwoWallets
           disabled={!canWithdraw || isWithdrawing}
-          text={
-            isWithdrawing
-              ? t('tunnel-page.submit-button.withdrawing')
-              : t('tunnel-page.submit-button.initiate-withdrawal')
-          }
+          text={getSubmitText()}
+          validationError={validationError}
         />
       }
     />
@@ -269,7 +264,6 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     fromNetworkId,
     fromToken,
     resetStateAfterOperation,
-    toNetworkId,
     toToken,
     updateFromInput,
   } = state
@@ -280,25 +274,29 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
 
   const fromChain = useChain(fromNetworkId)
 
-  const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
-    fromToken.chainId,
-  )
+  const {
+    balance: walletNativeTokenBalance,
+    isSuccess: nativeTokenBalanceLoaded,
+  } = useNativeTokenBalance(fromToken.chainId)
 
-  const { balance: walletTokenBalance } = useTokenBalance(
-    fromToken.chainId,
-    fromToken.address,
-  )
+  const { balance: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
+    useTokenBalance(fromToken.chainId, fromToken.address)
 
-  const canWithdraw =
-    canSubmit({
-      balance: operatesNativeToken
-        ? walletNativeTokenBalance
-        : walletTokenBalance,
-      chainId,
-      fromInput,
-      fromNetworkId,
-      fromToken,
-    }) && hasBridgeConfiguration(fromToken, toNetworkId)
+  const {
+    canSubmit: canWithdraw,
+    error: validationError,
+    errorKey,
+  } = validateSubmit({
+    amountInput: fromInput,
+    balance: operatesNativeToken
+      ? walletNativeTokenBalance
+      : walletTokenBalance,
+    chainId,
+    expectedChain: fromChain.name,
+    operation: 'withdrawal',
+    t,
+    token: fromToken,
+  })
 
   const { fees: withdrawGasFees, isError: isEstimateFeesError } =
     useEstimateWithdrawFees({
@@ -336,29 +334,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
         fromToken,
       })
 
-  const getSubmitButton = function () {
-    if (tunnelsThroughPartners(fromToken)) {
-      return (
-        <Button onClick={() => setIsPartnersDrawerOpen(true)} type="button">
-          {t('tunnel-page.tunnel-partners.tunnel-with-our-partners')}
-        </Button>
-      )
-    }
-
-    if (walletIsConnected(status)) {
-      return (
-        <Button disabled={!canWithdraw || isWithdrawing} type="submit">
-          {t(
-            `tunnel-page.submit-button.${
-              isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'
-            }`,
-          )}
-        </Button>
-      )
-    }
-
-    return <ConnectEvmWallet />
-  }
+  const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
 
   return (
     <>
@@ -376,6 +352,9 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
         }
         formContent={
           <FormContent
+            errorKey={
+              walletIsConnected(status) && balanceLoaded ? errorKey : undefined
+            }
             isRunningOperation={isWithdrawing}
             setMaxBalanceButton={
               <SetMaxEvmBalance
@@ -397,7 +376,15 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
           />
         }
         onSubmit={withdraw}
-        submitButton={getSubmitButton()}
+        submitButton={
+          <SubmitEvmWithdrawal
+            canWithdraw={canWithdraw}
+            fromToken={fromToken}
+            isWithdrawing={isWithdrawing}
+            setIsPartnersDrawerOpen={setIsPartnersDrawerOpen}
+            validationError={validationError}
+          />
+        }
       />
       {isPartnersDrawerOpen && (
         <CustomTunnelsThroughPartners

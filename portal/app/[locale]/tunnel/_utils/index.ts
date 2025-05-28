@@ -1,33 +1,53 @@
 import Big from 'big.js'
+import { validateInput } from 'components/tokenInput/utils'
+import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
-import { isNativeToken } from 'utils/nativeToken'
-import { formatUnits, parseUnits } from 'viem'
+import { parseTokenUnits } from 'utils/token'
+import { formatUnits } from 'viem'
 
-import { type TunnelState } from '../_hooks/useTunnelState'
-
-type CanSubmit = Pick<
-  TunnelState,
-  'fromNetworkId' | 'fromToken' | 'fromInput'
-> & {
-  balance: bigint
-  chainId?: TunnelState['fromNetworkId']
-  fromInput: string
+type CanSubmit = Parameters<typeof validateInput>[0] & {
+  chainId: RemoteChain['id']
+  expectedChain: RemoteChain['name']
 }
 
-export const canSubmit = ({
+export const validateSubmit = function ({
+  amountInput,
   balance,
   chainId,
-  fromInput,
-  fromNetworkId,
-  fromToken,
-}: CanSubmit) =>
-  Big(fromInput).gt(0) &&
-  chainId === fromNetworkId &&
-  // for native tokens, it can't match the whole balance
-  // as native tokens are used to pay for fees
-  Big(fromInput)[isNativeToken(fromToken) ? 'lt' : 'lte'](
-    formatUnits(balance, fromToken.decimals),
-  )
+  expectedChain,
+  minAmount,
+  operation,
+  t,
+  token,
+}: CanSubmit) {
+  const inputValidation = validateInput({
+    amountInput,
+    balance,
+    minAmount,
+    operation,
+    t,
+    token,
+  })
+
+  if (!inputValidation.isValid) {
+    return {
+      canSubmit: false,
+      error: inputValidation.error,
+      errorKey: inputValidation.errorKey,
+    }
+  }
+  // TODO this may be removed after https://github.com/hemilabs/ui-monorepo/issues/1231
+  if (chainId !== token.chainId) {
+    return {
+      canSubmit: false,
+      error: t('common.connect-to-network', {
+        network: expectedChain,
+      }),
+      errorKey: 'connect-to-network',
+    }
+  }
+  return { canSubmit: true, error: undefined, errorKey: undefined }
+}
 
 type GetTotal = {
   fees?: bigint
@@ -41,7 +61,7 @@ export const getTotal = ({
 }: GetTotal) =>
   formatUnits(
     BigInt(
-      Big(parseUnits(fromInput, fromToken.decimals).toString())
+      Big(parseTokenUnits(fromInput, fromToken).toString())
         .plus(fees.toString())
         .toFixed(),
     ),

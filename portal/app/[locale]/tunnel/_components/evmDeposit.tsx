@@ -1,10 +1,7 @@
 'use client'
 
-import { Button } from 'components/button'
-import { ButtonLoader } from 'components/buttonLoader'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
-import { Spinner } from 'components/spinner'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
@@ -22,19 +19,12 @@ import { useAccount as useEvmAccount } from 'wagmi'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useEstimateDepositFees } from '../_hooks/useEstimateDepositFees'
 import { EvmTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
-import { canSubmit, getTotal } from '../_utils'
+import { validateSubmit, getTotal } from '../_utils'
 
 import { Erc20TokenApproval } from './erc20TokenApproval'
 import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
-
-const ConnectEvmWallet = dynamic(
-  () => import('./connectEvmWallet').then(mod => mod.ConnectEvmWallet),
-  {
-    loading: () => <ButtonLoader />,
-    ssr: false,
-  },
-)
+import { SubmitEvmDeposit } from './submitEvmDeposit'
 
 const CustomTunnelsThroughPartners = dynamic(
   () =>
@@ -56,58 +46,6 @@ type OperationRunning = 'idle' | 'approving' | 'depositing'
 
 type EvmDepositProps = {
   state: TypedTunnelState<EvmTunneling>
-}
-
-const SubmitEvmDeposit = function ({
-  canDeposit,
-  isAllowanceLoading,
-  isRunningOperation,
-  needsApproval,
-  operationRunning,
-}: {
-  canDeposit: boolean
-  isAllowanceLoading: boolean
-  isRunningOperation: boolean
-  needsApproval: boolean
-  operationRunning: OperationRunning
-}) {
-  const t = useTranslations()
-
-  const getOperationButtonText = function () {
-    const texts = {
-      approve: {
-        idle: t('tunnel-page.submit-button.approve-and-deposit'),
-        loading: t('tunnel-page.submit-button.approving'),
-      },
-      deposit: {
-        idle: t('tunnel-page.submit-button.deposit'),
-        loading: t('tunnel-page.submit-button.depositing'),
-      },
-    }
-    if (isAllowanceLoading) {
-      return <Spinner size={'small'} />
-    }
-    // TODO Se need to handle allowanceStatus === 'error, see https://github.com/hemilabs/ui-monorepo/pull/1125
-    if (!isRunningOperation) {
-      return texts[needsApproval ? 'approve' : 'deposit'].idle
-    }
-    if (operationRunning === 'approving') {
-      return texts.approve.loading
-    }
-    if (operationRunning === 'depositing') {
-      return texts.deposit.loading
-    }
-    return texts.deposit.idle
-  }
-
-  return (
-    <Button
-      disabled={!canDeposit || isRunningOperation || isAllowanceLoading}
-      type="submit"
-    >
-      {getOperationButtonText()}
-    </Button>
-  )
 }
 
 export const EvmDeposit = function ({ state }: EvmDepositProps) {
@@ -136,9 +74,10 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const operatesNativeToken = isNativeToken(fromToken)
 
-  const { balance: walletNativeTokenBalance } = useNativeTokenBalance(
-    fromToken.chainId,
-  )
+  const {
+    balance: walletNativeTokenBalance,
+    isSuccess: nativeTokenBalanceLoaded,
+  } = useNativeTokenBalance(fromToken.chainId)
 
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
 
@@ -148,22 +87,26 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     spender: l1StandardBridgeAddress,
   })
 
-  const { balance: walletTokenBalance } = useTokenBalance(
-    fromToken.chainId,
-    fromToken.address,
-  )
+  const { balance: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
+    useTokenBalance(fromToken.chainId, fromToken.address)
 
-  const canDeposit = canSubmit({
+  const fromChain = useChain(fromNetworkId)
+
+  const {
+    canSubmit: canDeposit,
+    error: validationError,
+    errorKey,
+  } = validateSubmit({
+    amountInput: fromInput,
     balance: operatesNativeToken
       ? walletNativeTokenBalance
       : walletTokenBalance,
     chainId: chain?.id,
-    fromInput,
-    fromNetworkId,
-    fromToken,
+    expectedChain: fromChain.name,
+    operation: 'deposit',
+    t,
+    token: fromToken,
   })
-
-  const fromChain = useChain(fromNetworkId)
 
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
     useEstimateApproveErc20Fees({
@@ -205,18 +148,19 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     }
   }
 
-  const totalDeposit = operatesNativeToken
-    ? getTotal({
-        fees: depositGasFees,
-        fromInput,
-        fromToken,
-      })
-    : getTotal({
-        fromInput,
-        fromToken,
-      })
+  const getTotalDeposit = () =>
+    operatesNativeToken
+      ? getTotal({
+          fees: depositGasFees,
+          fromInput,
+          fromToken,
+        })
+      : getTotal({
+          fromInput,
+          fromToken,
+        })
 
-  const gas = {
+  const getGas = () => ({
     amount: formatUnits(
       depositGasFees + (needsApproval ? approvalTokenGasFees : BigInt(0)),
       fromChain?.nativeCurrency.decimals,
@@ -225,29 +169,9 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       isDepositGasFeesError || (needsApproval && isApprovalTokenGasFeesError),
     label: t('common.network-gas-fee', { network: fromChain?.name }),
     token: getNativeToken(fromChain.id),
-  }
+  })
 
-  const getSubmitButton = function () {
-    if (tunnelsThroughPartners(fromToken)) {
-      return (
-        <Button onClick={() => setIsPartnersDrawerOpen(true)} type="button">
-          {t('tunnel-page.tunnel-partners.tunnel-with-our-partners')}
-        </Button>
-      )
-    }
-    if (walletIsConnected(status)) {
-      return (
-        <SubmitEvmDeposit
-          canDeposit={canDeposit}
-          isAllowanceLoading={isAllowanceLoading}
-          isRunningOperation={isRunningOperation}
-          needsApproval={needsApproval}
-          operationRunning={operationRunning}
-        />
-      )
-    }
-    return <ConnectEvmWallet />
-  }
+  const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
 
   return (
     <>
@@ -256,15 +180,18 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
           canDeposit ? (
             <FeesContainer>
               <EvmFeesSummary
-                gas={gas}
+                gas={getGas()}
                 operationToken={fromToken}
-                total={totalDeposit}
+                total={getTotalDeposit()}
               />
             </FeesContainer>
           ) : null
         }
         formContent={
           <FormContent
+            errorKey={
+              walletIsConnected(status) && balanceLoaded ? errorKey : undefined
+            }
             isRunningOperation={isRunningOperation}
             setMaxBalanceButton={
               <SetMaxEvmBalance
@@ -312,7 +239,18 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
           />
         }
         onSubmit={handleDeposit}
-        submitButton={getSubmitButton()}
+        submitButton={
+          <SubmitEvmDeposit
+            canDeposit={canDeposit}
+            fromToken={fromToken}
+            isAllowanceLoading={isAllowanceLoading}
+            isRunningOperation={isRunningOperation}
+            needsApproval={needsApproval}
+            operationRunning={operationRunning}
+            setIsPartnersDrawerOpen={setIsPartnersDrawerOpen}
+            validationError={validationError}
+          />
+        }
       />
       {isPartnersDrawerOpen && (
         <CustomTunnelsThroughPartners

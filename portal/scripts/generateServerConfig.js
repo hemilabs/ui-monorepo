@@ -51,9 +51,6 @@ const fetchDomains = new Set([
   'wss://www.walletlink.org/rpc',
 ])
 
-if (process.env.NEXT_PUBLIC_THE_GRAPH_API_URL) {
-  fetchDomains.add(new URL(process.env.NEXT_PUBLIC_THE_GRAPH_API_URL).origin)
-}
 if (process.env.NEXT_PUBLIC_TOKEN_PRICES_URL) {
   fetchDomains.add(new URL(process.env.NEXT_PUBLIC_TOKEN_PRICES_URL).origin)
 }

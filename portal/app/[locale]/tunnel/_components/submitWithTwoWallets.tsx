@@ -61,17 +61,15 @@ export const SubmitWithTwoWallets = function ({
     <SubmitWhenConnectedToChain
       chainId={bitcoin.id}
       submitButton={
-        <>
-          {validationError ? (
-            <Button disabled type="button">
-              {validationError}
-            </Button>
-          ) : (
-            <Button disabled={disabled} type="submit">
-              {text}
-            </Button>
-          )}
-        </>
+        validationError ? (
+          <Button disabled type="button">
+            {validationError}
+          </Button>
+        ) : (
+          <Button disabled={disabled} type="submit">
+            {text}
+          </Button>
+        )
       }
     />
   )

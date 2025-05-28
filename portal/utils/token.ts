@@ -131,13 +131,8 @@ export const getL2Erc20Token = pMemoize(
  * @returns The parsed token amount in the smallest unit.
  */
 export const parseTokenUnits = function (amount: string, token: Token) {
-  // Without a decimal part, use the regular viem parseUnits function
-  if (!amount.includes('.')) {
-    return viemParseUnits(amount, token.decimals)
-  }
-  // The values after "." exceeding the token's decimals must be truncated
   const [whole, fraction] = amount.split('.')
-  const truncatedFraction = fraction.slice(0, token.decimals)
+  const truncatedFraction = fraction?.slice(0, token.decimals)
   const normalizedAmount = truncatedFraction
     ? `${whole}.${truncatedFraction}`
     : whole

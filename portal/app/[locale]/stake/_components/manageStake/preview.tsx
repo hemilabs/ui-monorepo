@@ -12,6 +12,7 @@ import { Tabs } from './tabs'
 type Props = {
   amount: string
   fees: ReactNode
+  errorKey: string | undefined
   isOperating: boolean
   maxBalance: ReactNode
   operation: StakeOperations
@@ -26,6 +27,7 @@ type Props = {
 export const Preview = function ({
   amount,
   balanceComponent,
+  errorKey,
   fees,
   isOperating,
   maxBalance,
@@ -55,6 +57,7 @@ export const Preview = function ({
               <TokenInput
                 balanceComponent={balanceComponent}
                 disabled={isOperating}
+                errorKey={errorKey}
                 label={t('amount')}
                 maxBalanceButton={maxBalance}
                 onChange={setAmount}

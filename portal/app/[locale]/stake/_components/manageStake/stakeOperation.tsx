@@ -41,11 +41,7 @@ const useBalance = function (token: StakeToken) {
   const nativeBalance = useNativeTokenBalance(token.chainId)
   const tokenBalance = useTokenBalance(token.chainId, token.address)
 
-  const balance = isNativeToken(token)
-    ? nativeBalance.balance
-    : tokenBalance.balance
-
-  return balance
+  return isNativeToken(token) ? nativeBalance : tokenBalance
 }
 
 export const StakeOperation = function ({
@@ -56,8 +52,8 @@ export const StakeOperation = function ({
   subheading,
   token,
 }: Props) {
-  const { address } = useAccount()
-  const [amount, setAmount] = useAmount()
+  const { address, chainId } = useAccount()
+  const [amountInput, setAmountInput] = useAmount()
   const operatesNativeToken = isNativeToken(token)
   const spender = stakeManagerAddresses[token.chainId]
 
@@ -68,16 +64,18 @@ export const StakeOperation = function ({
     },
   })
 
+  const amount = parseTokenUnits(amountInput, token)
+
   const { fees: approvalEstimatedFees, isError: isApprovalEstimatedFeesError } =
     useEstimateApproveErc20Fees({
-      amount: parseTokenUnits(amount, token),
+      amount,
       spender,
       token,
     })
 
   const { fees: stakeEstimatedFees, isError: isStakeEstimatedFeesError } =
     useEstimateStakeFees({
-      amount: parseTokenUnits(amount, token),
+      amount,
       enabled: allowance > 0 || operatesNativeToken,
       token,
     })
@@ -91,11 +89,8 @@ export const StakeOperation = function ({
     stakeStatus,
     stakeTransactionHash,
   } = useStake(token)
-  const t = useTranslations('stake-page.drawer')
-  const tCommon = useTranslations('common')
-  const balance = useBalance(token)
-
-  const steps: StepPropsWithoutPosition[] = []
+  const t = useTranslations()
+  const { balance, isSuccess: balanceLoaded } = useBalance(token)
 
   const addApprovalStep = function (): StepPropsWithoutPosition {
     const showFees = [
@@ -109,7 +104,7 @@ export const StakeOperation = function ({
     }
 
     return {
-      description: tCommon('approving-token', { symbol: token.symbol }),
+      description: t('common.approving-token', { symbol: token.symbol }),
       explorerChainId: token.chainId,
       fees: showFees
         ? {
@@ -142,7 +137,7 @@ export const StakeOperation = function ({
     ].includes(stakeStatus)
 
     return {
-      description: t('stake-token', { symbol: token.symbol }),
+      description: t('stake-page.drawer.stake-token', { symbol: token.symbol }),
       explorerChainId: token.chainId,
       fees: showFees
         ? {
@@ -161,41 +156,52 @@ export const StakeOperation = function ({
 
   const allowanceLoaded = !isPending || operatesNativeToken
 
+  const {
+    canSubmit: isSubmitValid,
+    error,
+    errorKey,
+  } = canSubmit({
+    amountInput,
+    balance,
+    chainId,
+    expectedChain: hemi.name,
+    operation: 'stake',
+    t,
+    token,
+  })
+
   const canStake =
-    allowanceLoaded &&
-    !isSubmitting &&
-    !canSubmit({
-      amount: parseTokenUnits(amount, token),
-      balance,
-      connectedChainId: token.chainId,
-      token,
-    }).error
+    allowanceLoaded && balanceLoaded && !isSubmitting && isSubmitValid
 
-  const requiresApproval = allowance < parseTokenUnits(amount, token)
+  const requiresApproval = allowance < parseTokenUnits(amountInput, token)
 
-  const handleStake = () =>
-    stake({
-      amount,
-    })
+  const handleStake = () => stake({ amountInput })
 
   const isOperating = stakeStatus !== undefined
 
-  if (isOperating) {
-    if (requiresApproval || approvalTxHash) {
-      steps.push(addApprovalStep())
+  const getSteps = function () {
+    const steps: StepPropsWithoutPosition[] = []
+    if (isOperating) {
+      if (requiresApproval || approvalTxHash) {
+        steps.push(addApprovalStep())
+      }
+      steps.push(addStakingStep())
     }
-    steps.push(addStakingStep())
+    return steps
   }
 
   const getSubmitButtonText = function () {
     if (!allowanceLoaded || isSubmitting) {
-      return <Spinner size={'small'} />
+      return <Spinner size="small" />
+    }
+    if (error) {
+      return error
     }
     if (requiresApproval) {
-      return t('approve-and-stake')
+      return t('stake-page.drawer.approve-and-stake')
     }
 
-    return tCommon('stake')
+    return t('common.stake')
   }
 
   return (
@@ -208,7 +214,7 @@ export const StakeOperation = function ({
         />
       )}
       <Operation
-        amount={amount}
+        amount={amountInput}
         callToAction={
           <StakeCallToAction
             isSubmitting={isSubmitting}
@@ -221,7 +227,8 @@ export const StakeOperation = function ({
         onSubmit={handleStake}
         preview={
           <Preview
-            amount={amount}
+            amount={amountInput}
+            errorKey={allowanceLoaded && balanceLoaded ? errorKey : undefined}
             fees={
               <Fees
                 estimatedFees={stakeEstimatedFees}
@@ -233,19 +240,19 @@ export const StakeOperation = function ({
               <StakeMaxBalance
                 disabled={isSubmitting}
                 estimateFees={stakeEstimatedFees}
-                onSetMaxBalance={setAmount}
+                onSetMaxBalance={setAmountInput}
                 token={token}
               />
             }
             operation="stake"
-            setAmount={setAmount}
+            setAmount={setAmountInput}
             setOperation={() => onOperationChange('unstake')}
             showTabs={showTabs}
             strategyDetails={<StrategyDetails token={token} />}
             submitButton={
               <div className="flex w-full flex-col gap-y-3 text-center">
                 <DrawerParagraph>
-                  {t('you-can-unstake-anytime')}
+                  {t('stake-page.drawer.you-can-unstake-anytime')}
                 </DrawerParagraph>
                 <SubmitButton
                   disabled={!canStake}
@@ -256,7 +263,7 @@ export const StakeOperation = function ({
             token={token}
           />
         }
-        steps={steps}
+        steps={getSteps()}
         subheading={subheading}
         token={token}
       />

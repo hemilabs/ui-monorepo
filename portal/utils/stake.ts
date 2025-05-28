@@ -1,4 +1,5 @@
 import hemilabsTokenList from '@hemilabs/token-list'
+import { validateInput } from 'components/tokenInput/utils'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import {
   type HemiPublicClient,
@@ -9,58 +10,80 @@ import { EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
 import { type Address, type Chain, type Hash } from 'viem'
 
+import { findChainById } from './chain'
+import { parseTokenUnits } from './token'
+
 export const isStakeEnabledOnTestnet = (networkType: NetworkType) =>
   networkType !== 'testnet' ||
   process.env.NEXT_PUBLIC_ENABLE_STAKE_TESTNET === 'true'
 
+type CanSubmit = Omit<Parameters<typeof validateInput>[0], 'token'> & {
+  chainId: Chain['id']
+  expectedChain: Chain['name']
+  token: EvmToken
+}
+
 /**
- * Determines if a user is able to stake or unstake a token
+ * Determines whether a staking operation can be submitted based on input validation,
+ * user balance, network chain, and other contextual parameters.
  *
- * @param params All the parameters needed to determine if a user can stake or unstake a token
- * @param amount The amount of tokens to stake/unstake
- * @param balance The balance the user has of the token
- * @param connectedChainId The chain Id the user is connected to
- * @param token The token to stake/unstake
+ * @param params - The parameters required to check if submission is allowed.
+ * @param params.amountInput - The input amount of tokens for the operation (as a string).
+ * @param params.balance - The user's current balance.
+ * @param params.chainId - The current network chain ID.
+ * @param params.expectedChain - The expected network chain name.
+ * @param params.operation - The staking operation type (e.g., 'stake' or 'unstake').
+ * @param params.t - Translation function for localization and error messages.
+ * @param params.token - The token object, including its chain ID.
+ * @returns An object indicating if submission is allowed, and any associated error message and key.
  */
 export const canSubmit = function ({
-  amount,
+  amountInput,
   balance,
-  connectedChainId,
+  chainId,
+  expectedChain,
+  operation,
+  t,
   token,
-}: {
-  amount: bigint
-  balance: bigint
-  connectedChainId: Chain['id']
-  token: EvmToken
-}) {
-  if (amount <= 0) {
-    return { error: 'amount-less-equal-than-0' }
+}: CanSubmit) {
+  const inputValidation = validateInput({
+    amountInput,
+    balance,
+    operation,
+    t,
+    token,
+  })
+
+  if (!inputValidation.isValid) {
+    return {
+      canSubmit: false,
+      error: inputValidation.error,
+      errorKey: inputValidation.errorKey,
+    }
   }
-  // this chain Id comes from the hemi client. It verifies that the token
-  // is on expected hemi chain (hemi / testnet).
-  if (connectedChainId !== token.chainId) {
-    return { error: 'wrong-chain' }
+  // TODO this may be removed after https://github.com/hemilabs/ui-monorepo/issues/1231
+  if (chainId !== token.chainId) {
+    return {
+      canSubmit: false,
+      error: t('common.connect-to-network', {
+        network: expectedChain,
+      }),
+      errorKey: 'connect-to-network',
+    }
   }
-  if (balance <= 0) {
-    return { error: 'not-enough-balance' }
-  }
-  if (amount > balance) {
-    return { error: 'amount-larger-than-balance' }
-  }
-  return {}
+  return { canSubmit: true, error: undefined, errorKey: undefined }
 }
 
 const validateStakeOperation = async function ({
-  amount,
+  amountInput,
   forAccount,
   hemiPublicClient,
+  t,
   token,
 }: {
-  amount: bigint
   forAccount: Address
   hemiPublicClient: HemiPublicClient
-  token: EvmToken
-}) {
+} & Pick<CanSubmit, 'amountInput' | 't' | 'token'>) {
   const balance = isNativeToken(token)
     ? await hemiPublicClient.getBalance({
         address: forAccount,
@@ -72,9 +95,12 @@ const validateStakeOperation = async function ({
       })
 
   const { error } = canSubmit({
-    amount,
+    amountInput,
     balance,
-    connectedChainId: hemiPublicClient.chain.id,
+    chainId: hemiPublicClient.chain.id,
+    expectedChain: findChainById(token.chainId).name,
+    operation: 'stake',
+    t,
     token,
   })
   if (error) {
@@ -119,25 +145,31 @@ type StakeEvents = Partial<{
 
 /**
  * Stakes an amount of a token in Hemi.
- * @param params All the parameters needed to determine if a user can stake a token
- * @param params.amount The amount of tokens to stake
- * @param params.forAccount The address of the user that will stake
- * @param params.hemiPublicClient Hemi public client for read-only calls
- * @param params.hemiWalletClient Hemi Wallet client for signing transactions
- * @param params.onStake Optional callback to run prior to prompt the user to sign a Stake transaction
- * @param params.onStakeConfirmed Optional callback for the Stake transaction confirmation
- * @param params.onStakeFailed Optional callback for the Stake transaction failure
- * @param params.onStakeTokenApprovalFailed Optional callback for the Token approval transaction failure
- * @param params.onStakeTokenApproved Optional callback after the token is approved
- * @param params.onTokenApprove Optional callback to run prior to prompt the user to sign the Token approval transaction
- * @param params.onUserRejectedStake Optional callback for the user rejecting to sign the Stake transaction
- * @param params.onUserRejectedTokenApproval Optional callback for the user rejecting to sign the Token approval transaction
- * @param params.onUserSignedStake Optional callback for the user signing the Stake transaction
- * @param params.onUserSignedTokenApproval Optional callback for the user signing the Token approval transaction
- * @param params.token The token to stake
+ *
+ * Handles both native and ERC-20 tokens. For ERC-20 tokens, checks allowance and requests approval if needed.
+ * Invokes the appropriate callbacks at each stage of the staking process, including approval, signing, confirmation, and failure.
+ *
+ * @param params - All the parameters needed to determine if a user can stake a token.
+ * @param params.amountInput - The input amount of tokens for the operation (as a string).
+ * @param params.forAccount - The address of the user that will stake.
+ * @param params.hemiPublicClient - Hemi public client for read-only blockchain calls.
+ * @param params.hemiWalletClient - Hemi Wallet client for signing transactions.
+ * @param params.t - Translation function for localization and error messages.
+ * @param params.token - The token to stake.
+ * @param params.onStake - Optional callback to run prior to prompting the user to sign a Stake transaction.
+ * @param params.onStakeConfirmed - Optional callback for the Stake transaction confirmation.
+ * @param params.onStakeFailed - Optional callback for the Stake transaction failure.
+ * @param params.onStakeTokenApprovalFailed - Optional callback for the Token approval transaction failure.
+ * @param params.onStakeTokenApproved - Optional callback after the token is approved.
+ * @param params.onTokenApprove - Optional callback to run prior to prompting the user to sign the Token approval transaction.
+ * @param params.onUserRejectedStake - Optional callback for the user rejecting to sign the Stake transaction.
+ * @param params.onUserRejectedTokenApproval - Optional callback for the user rejecting to sign the Token approval transaction.
+ * @param params.onUserSignedStake - Optional callback for the user signing the Stake transaction (receives the transaction hash).
+ * @param params.onUserSignedTokenApproval - Optional callback for the user signing the Token approval transaction (receives the transaction hash).
+ * @returns A promise that resolves when the staking process is complete, or returns early if the user rejects or a failure occurs.
  */
 export const stake = async function ({
-  amount,
+  amountInput,
   forAccount,
   hemiPublicClient,
   hemiWalletClient,
@@ -151,20 +183,23 @@ export const stake = async function ({
   onUserRejectedTokenApproval,
   onUserSignedStake,
   onUserSignedTokenApproval,
+  t,
   token,
 }: {
-  amount: bigint
   forAccount: Address
   hemiPublicClient: HemiPublicClient
   hemiWalletClient: HemiWalletClient
-  token: EvmToken
-} & StakeEvents) {
+} & Pick<CanSubmit, 'amountInput' | 't' | 'token'> &
+  StakeEvents) {
   await validateStakeOperation({
-    amount,
+    amountInput,
     forAccount,
     hemiPublicClient,
+    t,
     token,
   })
+
+  const amount = parseTokenUnits(amountInput, token)
 
   let stakePromise: Promise<Hash> | undefined
 
@@ -250,24 +285,26 @@ export const stake = async function ({
 }
 
 const validateUnstakeOperation = async function ({
-  amount,
+  amountInput,
   forAccount,
   hemiPublicClient,
+  t,
   token,
 }: {
-  amount: bigint
   forAccount: Address
   hemiPublicClient: HemiPublicClient
-  token: EvmToken
-}) {
+} & Pick<CanSubmit, 'amountInput' | 't' | 'token'>) {
   const balance = await hemiPublicClient.stakedBalance({
     address: forAccount,
     tokenAddress: getTokenAddress(token),
   })
   const { error } = canSubmit({
-    amount,
+    amountInput,
     balance,
-    connectedChainId: hemiPublicClient.chain.id,
+    chainId: hemiPublicClient.chain.id,
+    expectedChain: findChainById(token.chainId).name,
+    operation: 'unstake',
+    t,
     token,
   })
   if (error) {
@@ -284,21 +321,24 @@ type UnstakeEvents = Partial<{
 }>
 
 /**
- * Unstakes an amount of a token in Hemi.
- * @param params All the parameters needed to determine if a user can unstake a token
- * @param params.amount The amount of tokens to stake
- * @param params.forAccount The address of the user that will unstake
- * @param params.hemiPublicClient Hemi public client for read-only calls
- * @param params.hemiWalletClient Hemi Wallet client for signing transactions
- * @param params.onUnstake Optional callback to run prior to prompt the user to sign a Unstake transaction
- * @param params.onUnstakeConfirmed Optional callback for the Unstake transaction confirmation
- * @param params.onUnstakeFailed Optional callback for the Unstake transaction failure
- * @param params.onUserRejectedUnstake Optional callback for the user rejecting to sign the Unstake transaction
- * @param params.onUserSignedUnstake Optional callback for the user signing the Unstake transaction
- * @param params.token The token to stake
+ * Handles the unstaking process for a given account and token.
+ *
+ * @param params - The parameters for the unstake operation.
+ * @param params.amountInput - The input amount of tokens for the operation (as a string).
+ * @param params.forAccount - The address of the account performing the unstake.
+ * @param params.hemiPublicClient - The public client instance for blockchain interactions.
+ * @param params.hemiWalletClient - The wallet client instance for signing transactions.
+ * @param params.t - Translation function for localization and error messages.
+ * @param params.token - The token being unstaked.
+ * @param params.onUnstake - Optional callback invoked before the unstake transaction is sent.
+ * @param params.onUnstakeConfirmed - Optional callback invoked when the unstake transaction is confirmed.
+ * @param params.onUnstakeFailed - Optional callback invoked if the unstake transaction fails.
+ * @param params.onUserRejectedUnstake - Optional callback invoked if the user rejects the unstake transaction.
+ * @param params.onUserSignedUnstake - Optional callback invoked after the user signs the unstake transaction.
+ * @returns A promise that resolves when the unstake process is complete.
  */
 export const unstake = async function ({
-  amount,
+  amountInput,
   forAccount,
   hemiPublicClient,
   hemiWalletClient,
@@ -307,22 +347,25 @@ export const unstake = async function ({
   onUnstakeFailed,
   onUserRejectedUnstake,
   onUserSignedUnstake,
+  t,
   token,
 }: {
-  amount: bigint
   forAccount: Address
   hemiPublicClient: HemiPublicClient
   hemiWalletClient: HemiWalletClient
-  token: EvmToken
-} & UnstakeEvents) {
+} & Pick<CanSubmit, 'amountInput' | 't' | 'token'> &
+  UnstakeEvents) {
   await validateUnstakeOperation({
-    amount,
+    amountInput,
     forAccount,
     hemiPublicClient,
+    t,
     token,
   })
 
   onUnstake?.()
+
+  const amount = parseTokenUnits(amountInput, token)
 
   const unstakeTransactionHash = await hemiWalletClient
     .unstakeToken({

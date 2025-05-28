@@ -3,6 +3,7 @@ import { useUmami } from 'app/analyticsEvents'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { StakeToken, UnstakeStatusEnum } from 'types/stake'
 import { unstake } from 'utils/stake'
@@ -21,6 +22,7 @@ export const useUnstake = function (token: StakeToken) {
     token.chainId,
     token.address,
   )
+  const t = useTranslations()
 
   // Use this state to prevent multiple submissions, and force the animation to run
   // as quickly as the user clicks the button
@@ -44,14 +46,14 @@ export const useUnstake = function (token: StakeToken) {
   })
 
   const { mutate } = useMutation({
-    async mutationFn({ amount }: { amount: string }) {
+    async mutationFn({ amountInput }: { amountInput: string }) {
       setIsSubmitting(true)
       track?.('stake - unstake started', { chain: networkType })
 
-      const amountUnits = parseTokenUnits(amount, token)
+      const amountUnits = parseTokenUnits(amountInput, token)
 
       await unstake({
-        amount: amountUnits,
+        amountInput,
         forAccount: address,
         hemiPublicClient,
         hemiWalletClient,
@@ -79,6 +81,7 @@ export const useUnstake = function (token: StakeToken) {
           setUnstakeStatus(UnstakeStatusEnum.UNSTAKE_TX_FAILED),
         onUserSignedUnstake: (unstakeTxHash: Hash) =>
           setUnstakeTransactionHash(unstakeTxHash),
+        t,
         token,
       })
     },

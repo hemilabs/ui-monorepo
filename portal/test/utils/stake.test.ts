@@ -3,12 +3,13 @@ import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { HemiPublicClient, HemiWalletClient } from 'hooks/useHemiClient'
 import { EvmToken } from 'types/token'
 import { canSubmit, stake, unstake } from 'utils/stake'
+import { parseTokenUnits } from 'utils/token'
 import { Hash, parseUnits, zeroAddress } from 'viem'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-vi.mock('utils/nativeToken', () => ({
-  isNativeToken: vi.fn(token => token.symbol === 'ETH'),
-}))
+// Minimal t mock for tests, cast as any to bypass type checks
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const t = ((key: string) => key) as any
 
 // @ts-expect-error Adding minimal properties needed
 const token: EvmToken = {
@@ -46,64 +47,38 @@ const hemiWalletClient: HemiWalletClient = {
 
 describe('utils/stake', function () {
   describe('canSubmit', function () {
-    it('should return error if amount is a negative value', function () {
-      const result = canSubmit({
-        amount: BigInt(-123),
-        balance: BigInt(1000),
-        connectedChainId: hemiSepolia.id,
-        token,
-      })
-      expect(result).toEqual({ error: 'amount-less-equal-than-0' })
-    })
-
-    it('should return error if amount is equal to 0', function () {
-      const result = canSubmit({
-        amount: BigInt(0),
-        balance: BigInt(1000),
-        connectedChainId: hemiSepolia.id,
-        token,
-      })
-      expect(result).toEqual({ error: 'amount-less-equal-than-0' })
-    })
-
     it('should return error if chain ID does not match', function () {
       const result = canSubmit({
-        amount: BigInt(1),
-        balance: BigInt(1000),
-        connectedChainId: hemi.id,
+        amountInput: '1',
+        balance: parseTokenUnits('10', token),
+        chainId: hemi.id,
+        expectedChain: hemiSepolia.name,
+        operation: 'stake',
+        t,
         token,
       })
-      expect(result).toEqual({ error: 'wrong-chain' })
+      expect(result).toEqual({
+        canSubmit: false,
+        error: 'common.connect-to-network',
+        errorKey: 'connect-to-network',
+      })
     })
 
-    it('should return error if balance is less than or equal to 0', function () {
+    it('should return canSubmit = true if all conditions are met', function () {
       const result = canSubmit({
-        amount: BigInt(1),
-        balance: BigInt(0),
-        connectedChainId: hemiSepolia.id,
+        amountInput: '1',
+        balance: parseTokenUnits('100', token),
+        chainId: hemiSepolia.id,
+        expectedChain: hemiSepolia.name,
+        operation: 'stake',
+        t,
         token,
       })
-      expect(result).toEqual({ error: 'not-enough-balance' })
-    })
-
-    it('should return error if balance is less than the amount', function () {
-      const result = canSubmit({
-        amount: BigInt(10),
-        balance: BigInt(9),
-        connectedChainId: hemiSepolia.id,
-        token,
+      expect(result).toEqual({
+        canSubmit: true,
+        error: undefined,
+        errorKey: undefined,
       })
-      expect(result).toEqual({ error: 'amount-larger-than-balance' })
-    })
-
-    it('should return empty object if all conditions are met', function () {
-      const result = canSubmit({
-        amount: BigInt(1),
-        balance: BigInt(1000),
-        connectedChainId: hemiSepolia.id,
-        token,
-      })
-      expect(result).toEqual({})
     })
   })
 
@@ -116,17 +91,16 @@ describe('utils/stake', function () {
       hemiPublicClient.getErc20TokenAllowance.mockResolvedValue(BigInt(0))
       hemiPublicClient.getErc20TokenBalance.mockResolvedValue(BigInt(0))
 
-      const amount = parseUnits('1', token.decimals)
-
       await expect(
         stake({
-          amount,
+          amountInput: '1',
           forAccount: zeroAddress,
           hemiPublicClient,
           hemiWalletClient,
+          t,
           token,
         }),
-      ).rejects.toThrow('not-enough-balance')
+      ).rejects.toThrow('common.insufficient-balance')
     })
 
     it('should call stakeERC20Token if the token has enough allowance', async function () {
@@ -145,7 +119,7 @@ describe('utils/stake', function () {
         status: 'success',
       })
 
-      const amount = parseUnits('1', token.decimals)
+      const amountInput = '1'
 
       const onStake = vi.fn()
       const onStakeConfirmed = vi.fn()
@@ -159,7 +133,7 @@ describe('utils/stake', function () {
       const onUserSignedTokenApproval = vi.fn()
 
       await stake({
-        amount,
+        amountInput,
         forAccount: zeroAddress,
         hemiPublicClient,
         hemiWalletClient,
@@ -173,6 +147,7 @@ describe('utils/stake', function () {
         onUserRejectedTokenApproval,
         onUserSignedStake,
         onUserSignedTokenApproval,
+        t,
         token,
       })
 
@@ -190,7 +165,7 @@ describe('utils/stake', function () {
 
       // assert event call
       expect(hemiWalletClient.stakeERC20Token).toHaveBeenCalledWith({
-        amount,
+        amount: parseUnits(amountInput, token.decimals),
         forAccount: zeroAddress,
         tokenAddress: token.address,
       })
@@ -216,7 +191,7 @@ describe('utils/stake', function () {
         // fake waiting for stake receipt
         .mockResolvedValueOnce({ status: 'success' })
 
-      const amount = parseUnits('1', token.decimals)
+      const amountInput = '1'
 
       const onStake = vi.fn()
       const onStakeConfirmed = vi.fn()
@@ -230,7 +205,7 @@ describe('utils/stake', function () {
       const onUserSignedTokenApproval = vi.fn()
 
       await stake({
-        amount,
+        amountInput,
         forAccount: zeroAddress,
         hemiPublicClient,
         hemiWalletClient,
@@ -261,6 +236,8 @@ describe('utils/stake', function () {
       expect(onUserSignedStake).toHaveBeenCalledWith(stakeTransactionHash)
       expect(onStakeConfirmed).toHaveBeenCalledOnce()
 
+      const amount = parseUnits(amountInput, token.decimals)
+
       expect(hemiWalletClient.approveErc20Token).toHaveBeenCalledWith({
         address: token.address,
         amount,
@@ -282,21 +259,21 @@ describe('utils/stake', function () {
     it('should throw error if the user has not enough staked balance', async function () {
       hemiPublicClient.stakedBalance.mockResolvedValue(BigInt(0))
 
-      const amount = parseUnits('1', token.decimals)
-
       await expect(
         unstake({
-          amount,
+          amountInput: '1',
           forAccount: zeroAddress,
           hemiPublicClient,
           hemiWalletClient,
+          t,
           token,
         }),
-      ).rejects.toThrow('not-enough-balance')
+      ).rejects.toThrow('common.insufficient-balance')
     })
 
     it('should call unstakeToken if the user has enough staked balance', async function () {
-      const amount = parseUnits('1', token.decimals)
+      const amountInput = '1'
+      const amount = parseUnits(amountInput, token.decimals)
       // the user has enough staked balance
       hemiPublicClient.stakedBalance.mockResolvedValue(amount)
       // fake transaction hash generated by unstaking
@@ -313,7 +290,7 @@ describe('utils/stake', function () {
       const onUserSignedUnstake = vi.fn()
 
       await unstake({
-        amount,
+        amountInput,
         forAccount: zeroAddress,
         hemiPublicClient,
         hemiWalletClient,
@@ -322,6 +299,7 @@ describe('utils/stake', function () {
         onUnstakeFailed,
         onUserRejectedUnstake,
         onUserSignedUnstake,
+        t,
         token,
       })
 

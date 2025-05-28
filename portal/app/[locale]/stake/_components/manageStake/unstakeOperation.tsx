@@ -1,5 +1,6 @@
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { Spinner } from 'components/spinner'
 import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -13,6 +14,7 @@ import { getNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
+import { useAccount } from 'wagmi'
 
 import { useAmount } from '../../_hooks/useAmount'
 import { useEstimateUnstakeFees } from '../../_hooks/useEstimateUnstakeFees'
@@ -52,29 +54,38 @@ export const UnstakeOperation = function ({
   subheading,
   token,
 }: Props) {
-  const [amount, setAmount] = useAmount()
+  const { chainId } = useAccount()
+  const [amountInput, setAmountInput] = useAmount()
 
   const hemi = useHemi()
-  const { balance, isPending: isStakedPositionPending } =
-    useStakedBalance(token)
-  const t = useTranslations('stake-page.drawer')
-  const tCommon = useTranslations('common')
+  const {
+    balance,
+    isPending: isStakedPositionPending,
+    isSuccess: isStakedPositionSuccess,
+  } = useStakedBalance(token)
+  const t = useTranslations()
   const { isSubmitting, unstake, unstakeStatus, unStakeTransactionHash } =
     useUnstake(token)
 
-  const canUnstake =
-    !isStakedPositionPending &&
-    !isSubmitting &&
-    !canSubmit({
-      amount: parseTokenUnits(amount, token),
-      balance,
-      connectedChainId: token.chainId,
-      token,
-    }).error
+  const {
+    canSubmit: isSubmitValid,
+    error,
+    errorKey,
+  } = canSubmit({
+    amountInput,
+    balance,
+    chainId,
+    expectedChain: hemi.name,
+    operation: 'unstake',
+    t,
+    token,
+  })
+
+  const canUnstake = isStakedPositionSuccess && !isSubmitting && isSubmitValid
 
   const { fees: unstakeEstimatedFees, isError: isUnstakeEstimatedFeesError } =
     useEstimateUnstakeFees({
-      amount: parseTokenUnits(amount, token),
+      amount: parseTokenUnits(amountInput, token),
       enabled: canUnstake,
       token,
     })
@@ -86,7 +97,7 @@ export const UnstakeOperation = function ({
   }
 
   const unstakeStep: StepPropsWithoutPosition = {
-    description: t('unstake-token', { symbol: token.symbol }),
+    description: t('stake-page.drawer.unstake-token', { symbol: token.symbol }),
     explorerChainId: token.chainId,
     fees:
       unstakeStatus === UnstakeStatusEnum.UNSTAKE_TX_PENDING
@@ -103,9 +114,19 @@ export const UnstakeOperation = function ({
     txHash: unStakeTransactionHash,
   }
 
-  const handleUnstake = () => unstake({ amount })
+  const handleUnstake = () => unstake({ amountInput })
 
   const isOperating = unstakeStatus !== undefined
+
+  const getSubmitButtonText = function () {
+    if (isStakedPositionPending || isSubmitting) {
+      return <Spinner size="small" />
+    }
+    if (error) {
+      return error
+    }
+    return t('common.unstake')
+  }
 
   return (
     <>
@@ -117,7 +138,7 @@ export const UnstakeOperation = function ({
         />
       )}
       <Operation
-        amount={amount}
+        amount={amountInput}
         callToAction={
           <UnstakeCallToAction
             isSubmitting={isSubmitting}
@@ -130,8 +151,9 @@ export const UnstakeOperation = function ({
         onSubmit={handleUnstake}
         preview={
           <Preview
-            amount={amount}
+            amount={amountInput}
             balanceComponent={StakedBalance}
+            errorKey={isStakedPositionSuccess ? errorKey : undefined}
             fees={
               <Fees
                 estimatedFees={unstakeEstimatedFees}
@@ -142,22 +164,18 @@ export const UnstakeOperation = function ({
             maxBalance={
               <UnstakeMaxBalance
                 disabled={isSubmitting}
-                onSetMaxBalance={setAmount}
+                onSetMaxBalance={setAmountInput}
                 token={token}
               />
             }
             operation="unstake"
-            setAmount={setAmount}
+            setAmount={setAmountInput}
             setOperation={() => onOperationChange('stake')}
             showTabs
             submitButton={
               <SubmitButton
                 disabled={!canUnstake}
-                text={
-                  isStakedPositionPending || isSubmitting
-                    ? '...'
-                    : tCommon('unstake')
-                }
+                text={getSubmitButtonText()}
               />
             }
             token={token}

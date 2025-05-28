@@ -5,11 +5,13 @@ import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { StakeStatusEnum, StakeToken } from 'types/stake'
 import { isNativeToken } from 'utils/nativeToken'
 import { stake } from 'utils/stake'
-import { Hash, parseUnits } from 'viem'
+import { parseTokenUnits } from 'utils/token'
+import { Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { getStakedBalanceQueryKey } from './useStakedBalance'
@@ -50,6 +52,7 @@ export const useStake = function (token: StakeToken) {
   >(undefined)
 
   const queryClient = useQueryClient()
+  const t = useTranslations()
   const { track } = useUmami()
 
   const stakedBalanceQueryKey = getStakedBalanceQueryKey({
@@ -59,14 +62,14 @@ export const useStake = function (token: StakeToken) {
   })
 
   const { mutate } = useMutation({
-    async mutationFn({ amount }: { amount: string }) {
+    async mutationFn({ amountInput }: { amountInput: string }) {
       setIsSubmitting(true)
       track?.('stake - stake started', { chain: networkType })
 
-      const amountUnits = parseUnits(amount, token.decimals)
+      const amountUnits = parseTokenUnits(amountInput, token)
 
       await stake({
-        amount: amountUnits,
+        amountInput,
         forAccount: address,
         hemiPublicClient,
         hemiWalletClient,
@@ -110,6 +113,7 @@ export const useStake = function (token: StakeToken) {
           setStakeStatus(StakeStatusEnum.STAKE_TX_PENDING)
         },
         onUserSignedTokenApproval: txHash => setApprovalTxHash(txHash),
+        t,
         token,
       })
     },

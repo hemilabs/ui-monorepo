@@ -1,7 +1,6 @@
 'use client'
 
 import { useUmami } from 'app/analyticsEvents'
-import { Big } from 'big.js'
 import { useBalance } from 'btc-wallet/hooks/useBalance'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
@@ -12,11 +11,12 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { formatEvmAddress } from 'utils/format'
-import { parseUnits } from 'viem'
+import { parseTokenUnits } from 'utils/token'
+import { walletIsConnected } from 'utils/wallet'
 
 import { useMinDepositSats } from '../_hooks/useMinDepositSats'
 import { BtcToHemiTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
-import { canSubmit } from '../_utils'
+import { validateSubmit } from '../_utils/'
 
 import { BtcFees } from './btcFees'
 import { FormContent, TunnelForm } from './form'
@@ -49,24 +49,31 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     updateFromInput,
   } = state
 
-  const { evmAddress } = useAccounts()
+  const { btcChainId, btcWalletStatus, evmAddress } = useAccounts()
   const bitcoin = useBitcoin()
-  const { balance } = useBalance()
+  const { balance, isSuccess: balanceLoaded } = useBalance()
   const { isPending: isMinDepositsSatsLoading, minDepositFormattedSats } =
     useMinDepositSats()
   const [networkType] = useNetworkType()
+  const t = useTranslations()
   const { track } = useUmami()
 
-  const canDeposit =
-    !isMinDepositsSatsLoading &&
-    canSubmit({
-      balance: BigInt(balance?.confirmed ?? 0),
-      chainId: bitcoin.id,
-      fromInput,
-      fromNetworkId,
-      fromToken,
-    }) &&
-    Big(fromInput).gte(minDepositFormattedSats)
+  const {
+    canSubmit,
+    error: validationError,
+    errorKey,
+  } = validateSubmit({
+    amountInput: fromInput,
+    balance: BigInt(balance?.confirmed ?? 0),
+    chainId: btcChainId,
+    expectedChain: bitcoin.name,
+    minAmount: minDepositFormattedSats,
+    operation: 'deposit',
+    t,
+    token: fromToken,
+  })
+
+  const canDeposit = !isMinDepositsSatsLoading && canSubmit
 
   const {
     clearDepositState,
@@ -75,8 +82,6 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     depositReceipt,
     depositReceiptError,
   } = useDepositBitcoin()
-
-  const t = useTranslations()
 
   useEffect(
     function handleSuccess() {
@@ -128,7 +133,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
       hemiAddress: evmAddress,
       l1ChainId: fromNetworkId,
       l2ChainId: toNetworkId,
-      satoshis: Number(parseUnits(fromInput, fromToken.decimals)),
+      satoshis: Number(parseTokenUnits(fromInput, fromToken)),
     })
     track?.('btc - dep started', { chain: networkType })
   }
@@ -158,14 +163,12 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
         bottomSection={<WalletsConnected />}
         formContent={
           <FormContent
+            errorKey={
+              walletIsConnected(btcWalletStatus) && balanceLoaded
+                ? errorKey
+                : undefined
+            }
             isRunningOperation={isDepositing}
-            minInputMsg={{
-              loading: isMinDepositsSatsLoading,
-              value: t('tunnel-page.form.min-deposit', {
-                amount: minDepositFormattedSats,
-                symbol: bitcoin.nativeCurrency.symbol,
-              }),
-            }}
             setMaxBalanceButton={
               <SetMaxBtcBalance
                 disabled={isDepositing}
@@ -181,6 +184,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
           <SubmitWithTwoWallets
             disabled={!canDeposit || isDepositing || isMinDepositsSatsLoading}
             text={t('tunnel-page.submit-button.deposit')}
+            validationError={validationError}
           />
         }
       />

@@ -5,6 +5,8 @@ import { ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
 
+import { isInputError } from './utils'
+
 const Balance = dynamic(
   () => import('components/cryptoBalance').then(mod => mod.Balance),
   {
@@ -20,33 +22,31 @@ type Props = {
     token: Token
   }>
   disabled: boolean
+  errorKey: string | undefined
   label: string
   maxBalanceButton?: ReactNode
-  minInputMsg?: {
-    loading: boolean
-    value: string
-  }
   onChange: (value: string) => void
   token: Token
   tokenSelector: ReactNode
   value: string
 }
 
-const MinInputMsg = ({ loading, value }: Required<Props['minInputMsg']>) =>
-  loading ? (
-    <Skeleton className="h-5 w-48" />
-  ) : (
-    <span className="mt-auto text-sm font-medium text-neutral-500">
-      {value}
-    </span>
-  )
+const getTextColor = function (value: string, errorKey: string | undefined) {
+  if (Big(value).eq(0)) {
+    return 'text-neutral-600 focus:text-neutral-950'
+  }
+  if (errorKey === undefined || !isInputError(errorKey)) {
+    return 'text-neutral-950 focus:text-neutral-950'
+  }
+  return 'text-rose-500'
+}
 
 export const TokenInput = function ({
   balanceComponent: BalanceComponent = Balance,
   disabled,
+  errorKey,
   label,
   maxBalanceButton,
-  minInputMsg,
   onChange,
   token,
   tokenSelector,
@@ -63,16 +63,16 @@ export const TokenInput = function ({
           <span className="text-sm">{label}</span>
           <input
             className={`
-            text-3.25xl max-w-1/2 w-full bg-transparent ${
-              Big(value).gt(0) ? 'text-neutral-950' : 'text-neutral-600'
-            }
-            outline-none focus:text-neutral-950`}
+            text-3.25xl max-w-1/2 w-full bg-transparent ${getTextColor(
+              value,
+              errorKey,
+            )}
+            outline-none`}
             disabled={disabled}
             onChange={e => onChange(e.target.value)}
             type="text"
             value={value}
           />
-          {!!minInputMsg && <MinInputMsg {...minInputMsg} />}
         </div>
         <div className="flex h-full flex-col items-end justify-end gap-y-3 text-sm">
           {tokenSelector}

@@ -34,19 +34,16 @@ const SwitchToNetworkToast = dynamic(
 )
 
 type FormContentProps = {
+  errorKey: string | undefined
   isRunningOperation: boolean
-  minInputMsg?: {
-    loading: boolean
-    value: string
-  }
   setMaxBalanceButton: ReactNode
   tokenApproval?: ReactNode
   tunnelState: ReturnType<typeof useTunnelState>
 }
 
 export const FormContent = function ({
+  errorKey,
   isRunningOperation,
-  minInputMsg,
   setMaxBalanceButton,
   tokenApproval,
   tunnelState,
@@ -105,9 +102,9 @@ export const FormContent = function ({
       />
       <TokenInput
         disabled={isRunningOperation}
+        errorKey={errorKey}
         label={t('form.send')}
         maxBalanceButton={setMaxBalanceButton}
-        minInputMsg={minInputMsg}
         onChange={updateFromInput}
         token={fromToken}
         tokenSelector={
@@ -123,6 +120,7 @@ export const FormContent = function ({
       />
       <TokenInput
         disabled={isRunningOperation}
+        errorKey={errorKey}
         label={t('form.receive')}
         onChange={updateFromInput}
         token={toToken}

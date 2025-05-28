@@ -25,24 +25,11 @@ type Props = {
   errorKey: string | undefined
   label: string
   maxBalanceButton?: ReactNode
-  minInputMsg?: {
-    loading: boolean
-    value: string
-  }
   onChange: (value: string) => void
   token: Token
   tokenSelector: ReactNode
   value: string
 }
-
-const MinInputMsg = ({ loading, value }: Required<Props['minInputMsg']>) =>
-  loading ? (
-    <Skeleton className="h-5 w-48" />
-  ) : (
-    <span className="mt-auto text-sm font-medium text-neutral-500">
-      {value}
-    </span>
-  )
 
 const getTextColor = function (value: string, errorKey: string | undefined) {
   if (Big(value).eq(0)) {
@@ -60,7 +47,6 @@ export const TokenInput = function ({
   errorKey,
   label,
   maxBalanceButton,
-  minInputMsg,
   onChange,
   token,
   tokenSelector,
@@ -87,7 +73,6 @@ export const TokenInput = function ({
             type="text"
             value={value}
           />
-          {!!minInputMsg && <MinInputMsg {...minInputMsg} />}
         </div>
         <div className="flex h-full flex-col items-end justify-end gap-y-3 text-sm">
           {tokenSelector}

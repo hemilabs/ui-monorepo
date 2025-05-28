@@ -87,6 +87,7 @@ export const validateInput = function ({
       isValid: false,
     }
   }
+  // For native tokens, the amount can't be equal to the balance, as fees must be considered.
   if (isNativeToken(token) && amount >= balance) {
     return {
       error: t('common.insufficient-balance', { symbol: token.symbol }),
@@ -94,6 +95,7 @@ export const validateInput = function ({
       isValid: false,
     }
   }
+  // For ERC20, the amount can be equal to the balance.
   if (!isNativeToken(token) && amount > balance) {
     return {
       error: t('common.insufficient-balance', { symbol: token.symbol }),

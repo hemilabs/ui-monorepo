@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'

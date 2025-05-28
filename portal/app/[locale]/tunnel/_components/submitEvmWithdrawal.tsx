@@ -1,3 +1,5 @@
+'use client'
+
 import { Button } from 'components/button'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useTranslations } from 'next-intl'

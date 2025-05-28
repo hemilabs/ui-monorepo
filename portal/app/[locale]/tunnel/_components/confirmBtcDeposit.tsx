@@ -121,7 +121,11 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
       expectedChainId={deposit.l2ChainId}
       onSubmit={handleConfirm}
       submitButton={
-        <Button disabled={!isReadyToConfirm || isConfirming} type="submit">
+        <Button
+          disabled={!isReadyToConfirm || isConfirming}
+          fontSize="text-mid"
+          type="submit"
+        >
           {t(`tunnel-page.submit-button.${getText()}`)}
         </Button>
       }

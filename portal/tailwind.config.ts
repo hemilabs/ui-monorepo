@@ -108,6 +108,13 @@ const config: Config = {
             lineHeight: '20px',
           },
         ],
+        'mid': [
+          '0.938rem', // 15px
+          {
+            letterSpacing: '-0.3px',
+            lineHeight: '20px',
+          },
+        ],
         'base': [
           '1rem', // 16px
           {

@@ -53,7 +53,7 @@ export const RetryBtcWithdraw = function ({ withdrawal }: Props) {
       expectedChainId={withdrawal.l2ChainId}
       onSubmit={handleRetry}
       submitButton={
-        <Button disabled={isWithdrawing}>
+        <Button disabled={isWithdrawing} fontSize="text-mid">
           {t(isWithdrawing ? 'withdrawing' : 'try-again')}
         </Button>
       }

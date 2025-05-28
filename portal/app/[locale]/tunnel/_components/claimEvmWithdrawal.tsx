@@ -62,7 +62,11 @@ export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
       expectedChainId={withdrawal.l1ChainId}
       onSubmit={handleClaim}
       submitButton={
-        <Button disabled={!isReadyToClaim || isClaiming} type="submit">
+        <Button
+          disabled={!isReadyToClaim || isClaiming}
+          fontSize="text-mid"
+          type="submit"
+        >
           {t(getText())}
         </Button>
       }

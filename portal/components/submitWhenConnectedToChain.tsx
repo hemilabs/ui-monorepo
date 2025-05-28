@@ -39,7 +39,11 @@ export const SubmitWhenConnectedToChain = function ({
       <>
         {connectedToChain && submitButton}
         {!connectedToChain && (
-          <Button onClick={() => switchChain({ chainId })} type="button">
+          <Button
+            fontSize="text-mid"
+            onClick={() => switchChain({ chainId })}
+            type="button"
+          >
             {t('common.connect-to-network', { network: targetChain?.name })}
           </Button>
         )}

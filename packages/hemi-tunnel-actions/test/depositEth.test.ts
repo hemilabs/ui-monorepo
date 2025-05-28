@@ -2,7 +2,7 @@ import { hemiSepolia } from 'hemi-viem'
 import { type PublicClient, WalletClient, zeroAddress, zeroHash } from 'viem'
 import { writeContract } from 'viem/actions'
 import { sepolia } from 'viem/chains'
-import { beforeEach, describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 
 import { depositEth } from '../src/depositEth'
 
@@ -29,10 +29,6 @@ const validParameters = {
 }
 
 describe('depositEth', function () {
-  beforeEach(function () {
-    vi.clearAllMocks()
-  })
-
   it('should emit "deposit-failed-validation" if the account is not a valid address', async function () {
     const { emitter, promise } = depositEth({
       ...validParameters,

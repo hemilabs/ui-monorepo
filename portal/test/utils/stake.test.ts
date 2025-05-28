@@ -5,7 +5,7 @@ import { EvmToken } from 'types/token'
 import { canSubmit, stake, unstake } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
 import { Hash, parseUnits, zeroAddress } from 'viem'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 // Minimal t mock for tests, cast as any to bypass type checks
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -83,10 +83,6 @@ describe('utils/stake', function () {
   })
 
   describe('stake', function () {
-    beforeEach(function () {
-      vi.clearAllMocks()
-    })
-
     it('should throw error if the user has not enough balance', async function () {
       hemiPublicClient.getErc20TokenAllowance.mockResolvedValue(BigInt(0))
       hemiPublicClient.getErc20TokenBalance.mockResolvedValue(BigInt(0))
@@ -252,10 +248,6 @@ describe('utils/stake', function () {
   })
 
   describe('unstake', function () {
-    beforeEach(function () {
-      vi.clearAllMocks()
-    })
-
     it('should throw error if the user has not enough staked balance', async function () {
       hemiPublicClient.stakedBalance.mockResolvedValue(BigInt(0))
 

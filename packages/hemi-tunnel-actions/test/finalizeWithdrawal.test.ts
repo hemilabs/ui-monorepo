@@ -1,6 +1,6 @@
 import { PublicClient, WalletClient, zeroAddress, zeroHash } from 'viem'
 import { getWithdrawals, getWithdrawalStatus } from 'viem/op-stack'
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 
 import { finalizeWithdrawal } from '../src/finalizeWithdrawal'
 
@@ -42,10 +42,6 @@ const validParameters = {
 }
 
 describe('finalizeWithdrawal', function () {
-  beforeEach(function () {
-    vi.clearAllMocks()
-  })
-
   it('should emit "finalize-failed-validation" if the withdrawal transaction hash is not a valid hash', async function () {
     const { emitter, promise } = finalizeWithdrawal({
       ...validParameters,

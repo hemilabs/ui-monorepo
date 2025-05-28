@@ -12,17 +12,13 @@ import {
 } from 'utils/tunnel'
 import { hemiSepolia } from 'viem/chains'
 import { getWithdrawalStatus } from 'viem/op-stack'
-import { beforeEach, describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 
 vi.mock('viem/op-stack', () => ({
   getWithdrawalStatus: vi.fn(),
 }))
 
 describe('utils/tunnel', function () {
-  beforeEach(function () {
-    vi.clearAllMocks()
-  })
-
   describe('getEvmWithdrawalStatus', function () {
     const parameters = {
       l1publicClient: {},

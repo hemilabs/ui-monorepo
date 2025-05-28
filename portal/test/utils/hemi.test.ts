@@ -11,7 +11,7 @@ import {
   getHemiStatusOfBtcWithdrawal,
 } from 'utils/hemi'
 import { zeroAddress } from 'viem'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 const hemiClient: HemiPublicClient = {
   acknowledgedDeposits: vi.fn(),
@@ -41,10 +41,6 @@ const withdrawal: ToBtcWithdrawOperation = {
 }
 
 describe('utils/hemi', function () {
-  beforeEach(function () {
-    vi.clearAllMocks()
-  })
-
   describe('getHemiStatusOfBtcDeposit', function () {
     it(`should return ${BtcDepositStatus.BTC_TX_CONFIRMED} if Hemi is not aware of the bitcoin transaction`, async function () {
       hemiClient.acknowledgedDeposits.mockResolvedValue(false)

@@ -8,7 +8,7 @@ import {
   watchDepositOnBitcoin,
   watchDepositOnHemi,
 } from 'utils/watch/bitcoinDeposits'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 const vaultAddress = '0x0000000000000000000000000000000000000001' as const
 
@@ -46,10 +46,6 @@ vi.mock('utils/hemi', () => ({
 }))
 
 describe('utils/watch/bitcoinDeposits', function () {
-  beforeEach(function () {
-    vi.clearAllMocks()
-  })
-
   describe('watchDepositOnBitcoin', function () {
     it('should not return changes if the receipt show it is still not confirmed', async function () {
       const getTransactionReceipt = vi.fn().mockResolvedValue({

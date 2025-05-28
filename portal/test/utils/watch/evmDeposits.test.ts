@@ -3,7 +3,7 @@ import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { watchEvmDeposit } from 'utils/watch/evmDeposits'
 import { hemiSepolia, sepolia } from 'viem/chains'
 import { getL2TransactionHashes } from 'viem/op-stack'
-import { beforeEach, describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 
 vi.mock('utils/evmApi', () => ({
   getEvmBlock: vi.fn(),
@@ -26,10 +26,6 @@ const receipt = { blockNumber: BigInt(100), status: 'success' }
 const block = { timestamp: BigInt(1630000000) }
 
 describe('watchEvmDeposit', function () {
-  beforeEach(function () {
-    vi.clearAllMocks()
-  })
-
   it('should not return any update if the transaction is still pending', async function () {
     vi.mocked(getEvmTransactionReceipt).mockResolvedValue(null)
 

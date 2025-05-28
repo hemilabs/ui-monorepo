@@ -7,7 +7,7 @@ import {
   getHemiStatusOfBtcWithdrawal,
 } from 'utils/hemi'
 import { watchBitcoinWithdrawal } from 'utils/watch/bitcoinWithdrawals'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 const withdrawal: ToBtcWithdrawOperation = {
   amount: '100000000',
@@ -44,10 +44,6 @@ vi.mock('utils/hemi', () => ({
 }))
 
 describe('utils/watch/bitcoinWithdrawals', function () {
-  beforeEach(function () {
-    vi.clearAllMocks()
-  })
-
   describe('watchBitcoinWithdrawal', function () {
     it('should return no changes if the withdrawal is still pending', async function () {
       vi.mocked(getHemiStatusOfBtcWithdrawal).mockResolvedValue(

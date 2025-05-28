@@ -7,7 +7,7 @@ import {
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import { getEvmWithdrawalStatus } from 'utils/tunnel'
 import { sepolia } from 'viem/chains'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 // @ts-expect-error Only adding the minimum required properties
 const withdrawal: ToEvmWithdrawOperation = {
@@ -31,12 +31,6 @@ vi.mock('utils/tunnel', () => ({
 }))
 
 describe('utils/watch/evmWithdrawals', function () {
-  beforeEach(function () {
-    vi.clearAllMocks()
-    vi.resetAllMocks()
-    vi.resetModules()
-  })
-
   describe('watchEvmWithdrawal', async function () {
     it('should return no changes if the withdrawal is pending', async function () {
       const { watchEvmWithdrawal } = await import('utils/watch/evmWithdrawals')

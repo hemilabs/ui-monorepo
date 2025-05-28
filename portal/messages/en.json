@@ -341,6 +341,7 @@
       "your-withdraw-is-completed": "Your withdrawal is complete."
     },
     "submit-button": {
+      "allowance-load-failed": "Failed to load allowance",
       "approve-and-deposit": "Approve and Deposit",
       "approving": "Approving...",
       "challenge-withdrawal": "Challenge Withdrawal",

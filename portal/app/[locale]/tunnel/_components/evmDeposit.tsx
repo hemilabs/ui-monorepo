@@ -81,11 +81,12 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
 
-  const { isAllowanceLoading, needsApproval } = useNeedsApproval({
-    address: fromToken.address,
-    amount,
-    spender: l1StandardBridgeAddress,
-  })
+  const { isAllowanceError, isAllowanceLoading, needsApproval } =
+    useNeedsApproval({
+      address: fromToken.address,
+      amount,
+      spender: l1StandardBridgeAddress,
+    })
 
   const { balance: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
     useTokenBalance(fromToken.chainId, fromToken.address)
@@ -243,6 +244,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
           <SubmitEvmDeposit
             canDeposit={canDeposit}
             fromToken={fromToken}
+            isAllowanceError={isAllowanceError}
             isAllowanceLoading={isAllowanceLoading}
             isRunningOperation={isRunningOperation}
             needsApproval={needsApproval}

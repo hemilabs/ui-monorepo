@@ -341,6 +341,7 @@
       "your-withdraw-is-completed": "Su retiro ha sido completado."
     },
     "submit-button": {
+      "allowance-load-failed": "No se pudo cargar el monto autorizado",
       "approve-and-deposit": "Aprobar y Depositar",
       "approving": "Aprobando...",
       "challenge-withdrawal": "Disputar Retiro",

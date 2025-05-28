@@ -8,6 +8,7 @@ import { tunnelsThroughPartners } from 'utils/token'
 type Props = {
   canDeposit: boolean
   fromToken: EvmToken
+  isAllowanceError: boolean
   isAllowanceLoading: boolean
   isRunningOperation: boolean
   needsApproval: boolean
@@ -18,6 +19,7 @@ type Props = {
 export const SubmitEvmDeposit = function ({
   canDeposit,
   fromToken,
+  isAllowanceError,
   isAllowanceLoading,
   isRunningOperation,
   needsApproval,
@@ -38,6 +40,7 @@ export const SubmitEvmDeposit = function ({
   const getOperationButtonText = function () {
     const texts = {
       approve: {
+        error: t('tunnel-page.submit-button.allowance-load-failed'),
         idle: t('tunnel-page.submit-button.approve-and-deposit'),
         loading: t('tunnel-page.submit-button.approving'),
       },
@@ -49,6 +52,9 @@ export const SubmitEvmDeposit = function ({
     if (isAllowanceLoading) {
       return <Spinner size={'small'} />
     }
+    if (isAllowanceError) {
+      return texts.approve.error
+    }
     if (operationRunning === 'approving') {
       return texts.approve.loading
     }
@@ -58,7 +64,6 @@ export const SubmitEvmDeposit = function ({
     if (validationError) {
       return validationError
     }
-    // TODO Se need to handle allowanceStatus === 'error, see https://github.com/hemilabs/ui-monorepo/pull/1125
     return texts[needsApproval ? 'approve' : 'deposit'].idle
   }
 

@@ -2,7 +2,7 @@ import { hemiSepolia } from 'hemi-viem'
 import { type PublicClient, WalletClient, zeroAddress, zeroHash } from 'viem'
 import { writeContract } from 'viem/actions'
 import { sepolia } from 'viem/chains'
-import { beforeEach, describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 
 import {
   initiateWithdrawErc20,
@@ -275,10 +275,6 @@ const runCommonTests = function (
 }
 
 describe('withdraw', function () {
-  beforeEach(function () {
-    vi.clearAllMocks()
-  })
-
   describe('initiateWithdrawEth', function () {
     // eslint-disable-next-line @vitest/require-hook
     runCommonTests(initiateWithdrawEth)

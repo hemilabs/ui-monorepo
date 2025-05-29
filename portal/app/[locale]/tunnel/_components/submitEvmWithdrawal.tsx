@@ -25,7 +25,11 @@ export const SubmitEvmWithdrawal = function ({
 
   if (tunnelsThroughPartners(fromToken)) {
     return (
-      <Button onClick={() => setIsPartnersDrawerOpen(true)} type="button">
+      <Button
+        fontSize="text-mid"
+        onClick={() => setIsPartnersDrawerOpen(true)}
+        type="button"
+      >
         {t('tunnel-page.tunnel-partners.tunnel-with-our-partners')}
       </Button>
     )
@@ -36,11 +40,15 @@ export const SubmitEvmWithdrawal = function ({
       chainId={fromToken.chainId}
       submitButton={
         validationError ? (
-          <Button disabled type="button">
+          <Button disabled fontSize="text-mid" type="button">
             {validationError}
           </Button>
         ) : (
-          <Button disabled={!canWithdraw || isWithdrawing} type="submit">
+          <Button
+            disabled={!canWithdraw || isWithdrawing}
+            fontSize="text-mid"
+            type="submit"
+          >
             {t(
               `tunnel-page.submit-button.${
                 isWithdrawing ? 'withdrawing' : 'initiate-withdrawal'

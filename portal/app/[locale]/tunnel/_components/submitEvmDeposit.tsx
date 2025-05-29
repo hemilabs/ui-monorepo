@@ -33,7 +33,11 @@ export const SubmitEvmDeposit = function ({
 
   if (tunnelsThroughPartners(fromToken)) {
     return (
-      <Button onClick={() => setIsPartnersDrawerOpen(true)} type="button">
+      <Button
+        fontSize="text-mid"
+        onClick={() => setIsPartnersDrawerOpen(true)}
+        type="button"
+      >
         {t('tunnel-page.tunnel-partners.tunnel-with-our-partners')}
       </Button>
     )
@@ -75,6 +79,7 @@ export const SubmitEvmDeposit = function ({
       submitButton={
         <Button
           disabled={!canDeposit || isRunningOperation || isAllowanceLoading}
+          fontSize="text-mid"
           type="submit"
         >
           {getOperationButtonText()}

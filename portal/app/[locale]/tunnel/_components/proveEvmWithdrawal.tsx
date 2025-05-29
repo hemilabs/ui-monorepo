@@ -60,7 +60,11 @@ export const ProveWithdrawal = function ({ withdrawal }: Props) {
       expectedChainId={withdrawal.l1ChainId}
       onSubmit={handleProve}
       submitButton={
-        <Button disabled={!isReadyToProve || isProving} type="submit">
+        <Button
+          disabled={!isReadyToProve || isProving}
+          fontSize="text-mid"
+          type="submit"
+        >
           {t(getText())}
         </Button>
       }

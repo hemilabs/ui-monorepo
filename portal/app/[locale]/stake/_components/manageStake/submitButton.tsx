@@ -15,7 +15,7 @@ export const SubmitButton = function ({ disabled, text }: Props) {
       <SubmitWhenConnectedToChain
         chainId={hemi.id}
         submitButton={
-          <Button disabled={disabled} type="submit">
+          <Button disabled={disabled} fontSize="text-mid" type="submit">
             {text}
           </Button>
         }

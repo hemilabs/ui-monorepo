@@ -25,7 +25,7 @@ export const UnstakeCallToAction = function ({
     return (
       <CallToAction
         submitButton={
-          <Button disabled type="button">
+          <Button disabled fontSize="text-mid" type="button">
             {t('stake-page.drawer.unstaking')}
           </Button>
         }
@@ -37,7 +37,7 @@ export const UnstakeCallToAction = function ({
   return (
     <CallToAction
       submitButton={
-        <Button disabled={isSubmitting} type="submit">
+        <Button disabled={isSubmitting} fontSize="text-mid" type="submit">
           {t('common.try-again')}
         </Button>
       }

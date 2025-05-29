@@ -4,7 +4,7 @@ import { isRelativeUrl } from 'utils/url'
 
 import { ExternalLink } from './externalLink'
 
-const commonCss = `text-sm box-content flex items-center justify-center
+const commonCss = `box-content flex items-center justify-center
   rounded-lg border border-solid px-3 py-1.5 font-medium disabled:opacity-50`
 
 const variants = {
@@ -16,6 +16,8 @@ const variants = {
     disabled:bg-neutral-100 shadow-button-secondary focus:shadow-button-secondary-focused`,
 } as const
 
+type FontSize = { fontSize?: 'text-sm' | 'text-mid' }
+
 type Height = {
   height?: 'h-4' | 'h-5' | 'h-6' | 'h-8'
 }
@@ -24,15 +26,22 @@ type Variant = {
   variant?: keyof typeof variants
 }
 
-type ButtonProps = ComponentProps<'button'> & Variant & Height
+type ButtonProps = ComponentProps<'button'> & Variant & FontSize & Height
 
 type ButtonLinkProps = Omit<ComponentProps<'a'>, 'href' | 'ref'> &
   Required<Pick<ComponentProps<typeof Link>, 'href'>> &
   Variant
 
-export const Button = ({ height = 'h-8', variant, ...props }: ButtonProps) => (
+export const Button = ({
+  fontSize = 'text-sm',
+  height = 'h-8',
+  variant,
+  ...props
+}: ButtonProps) => (
   <button
-    className={`${commonCss} ${height} ${variants[variant ?? 'primary']}`}
+    className={`${commonCss} ${fontSize} ${height} ${
+      variants[variant ?? 'primary']
+    }`}
     {...props}
   />
 )

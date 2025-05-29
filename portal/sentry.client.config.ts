@@ -51,6 +51,9 @@ function enableSentry() {
     // See https://blog.sentry.io/making-your-javascript-projects-less-noisy/#ignore-un-actionable-errors
     'The node to be removed is not a child of this node.',
     'The node before which the new node is to be inserted is not a child of this node.',
+    // MM already prompts to add the chain if switching to an unknown chain.
+    // All the other wallets tested work too, although without this error.
+    'Try adding the chain using wallet_addEthereumChain first',
     // Thrown when firefox prevents an add-on from referencing a DOM element that has been removed.
     `TypeError: can't access dead object`,
     'User denied transaction signature',
@@ -60,10 +63,12 @@ function enableSentry() {
 
   Sentry.init({
     denyUrls: [
+      // Filter all Wallet Connect related urls
+      /(https|wss):\/\/*\.walletconnect\.(com|org)/,
       process.env.NEXT_PUBLIC_POINTS_URL,
       process.env.NEXT_PUBLIC_TOKEN_PRICES_URL,
       process.env.NEXT_PUBLIC_COOKIE3_URL,
-      // filter in case any is undefined, although in prod all should be defined.
+      // filter in case any of the env variables are undefined, although in prod all should be defined.
     ].filter(Boolean),
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
     enabled,

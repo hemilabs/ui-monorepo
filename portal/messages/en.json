@@ -26,13 +26,11 @@
     "min-amount-stake": "Minimum stake is {amount} {symbol}",
     "min-amount-unstake": "Minimum unstake is {amount} {symbol}",
     "min-amount-withdrawal": "Minimum withdrawal is {amount} {symbol}",
-    "network-does-not-match": "This network doesn't match the one selected in your wallet.",
     "network-gas-fee": "{network} gas fee",
     "open": "Open",
     "stake": "Stake",
     "start-using-mainnet": "Start using Mainnet",
     "success": "Success",
-    "switch-to-network": "Switch to {network}",
     "total": "Total",
     "total-amount": "Total Amount",
     "transaction-status": {

@@ -26,13 +26,11 @@
     "min-amount-stake": "La apuesta mínima es {amount} {symbol}",
     "min-amount-unstake": "El desbloqueo mínimo es {amount} {symbol}",
     "min-amount-withdrawal": "El retiro mínimo es {amount} {symbol}",
-    "network-does-not-match": "Esta red no coincide con la seleccionada en su billetera.",
     "network-gas-fee": "Tarifa de gas de {network}",
     "open": "Abrir",
     "stake": "Apostar",
     "start-using-mainnet": "Usar Mainnet",
     "success": "Exitoso",
-    "switch-to-network": "Cambiar a {network}",
     "total": "Total",
     "total-amount": "Monto Total",
     "transaction-status": {

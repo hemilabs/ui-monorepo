@@ -1,11 +1,9 @@
 'use client'
 
-import { useAccounts } from 'hooks/useAccounts'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import React, { useEffect, useState } from 'react'
 
-import { Footer } from './footer'
 import { Header } from './header'
 import { Navbar } from './navbar'
 
@@ -30,7 +28,6 @@ const TestnetIndicator = function () {
 }
 
 export const AppLayout = function ({ children }: Props) {
-  const { allDisconnected } = useAccounts()
   const [networkType] = useNetworkType()
   const pathname = usePathnameWithoutLocale()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -46,9 +43,6 @@ export const AppLayout = function ({ children }: Props) {
     },
     [networkType, pathname, setIsMenuOpen],
   )
-
-  // Footer is only visible if at least one chain is connected
-  const showFooter = !allDisconnected
 
   return (
     <div
@@ -68,12 +62,8 @@ export const AppLayout = function ({ children }: Props) {
       </div>
       <Header isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
       <div
-        className={`box-border ${
-          // 7rem comes from header (3.5) + footer (3.5) heights in mobile
-          // 4.25 is the header desktop height
-          showFooter ? 'h-[calc(100dvh-7rem)]' : 'h-[calc(100dvh-3.5rem)]'
-        }
-          flex-grow md:h-[calc(100dvh-4.25rem-1rem)]
+        className={`box-border h-[calc(100dvh-3.5rem)] flex-grow
+          md:h-[calc(100dvh-4.25rem-1rem)]
           ${hiddenClass}
           ${
             networkType === 'testnet'
@@ -103,9 +93,7 @@ export const AppLayout = function ({ children }: Props) {
         <div className="md:hidden">
           <Navbar />
         </div>
-      ) : (
-        showFooter && <Footer />
-      )}
+      ) : null}
     </div>
   )
 }

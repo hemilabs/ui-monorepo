@@ -11,7 +11,6 @@ import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import { isEvmNetworkId } from 'utils/chain'
 
-import { useToastIfNotConnectedTo } from '../_hooks/useToastIfNotConnectedTo'
 import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { NetworkSelectors } from './networkSelectors'
@@ -23,14 +22,6 @@ const CustomTokenDrawer = dynamic(
     loading: () => <DrawerLoader className="h-[80dvh] md:h-full" />,
     ssr: false,
   },
-)
-
-const SwitchToNetworkToast = dynamic(
-  () =>
-    import('components/switchToNetworkToast').then(
-      mod => mod.SwitchToNetworkToast,
-    ),
-  { ssr: false },
 )
 
 type FormContentProps = {
@@ -65,8 +56,6 @@ export const FormContent = function ({
   const hemi = useHemi()
   const t = useTranslations('tunnel-page')
 
-  const showFromToast = useToastIfNotConnectedTo(fromNetworkId)
-  const showToToast = useToastIfNotConnectedTo(toNetworkId)
   const fromTokens = useTunnelTokens(fromNetworkId)
 
   const evmTunneling =
@@ -77,15 +66,6 @@ export const FormContent = function ({
 
   return (
     <>
-      {/* For Evm<->Evm tunneling, the relevant chain is the "from" - as the user must be connected
-        to that chain, and nothing else. For Evm<->Btc, the user needs to be connected to 2 wallets.
-        So we must check that the connected EVM wallet is a hemi one (And the correct one)
-        and that the BTC wallet connected is the appropriate. */}
-      {showFromToast && <SwitchToNetworkToast chainId={fromNetworkId} />}
-      {/* adding !showFromToast so we don't show 2 toast at the same */}
-      {showToToast && !showFromToast && !evmTunneling && (
-        <SwitchToNetworkToast chainId={toNetworkId} />
-      )}
       <div className="flex items-center justify-between gap-x-2">
         <h3 className="text-xl font-medium capitalize text-neutral-950">
           {t('title')}

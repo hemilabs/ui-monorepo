@@ -189,7 +189,7 @@ const ReviewContent = function ({
       onClose={onClose}
       steps={steps}
       subheading={
-        depositStatus === EvmDepositStatus.DEPOSIT_TX_CONFIRMED
+        depositStatus === EvmDepositStatus.DEPOSIT_RELAYED
           ? t('your-deposit-is-complete')
           : t('deposit-on-its-way')
       }

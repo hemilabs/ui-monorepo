@@ -25,6 +25,11 @@ const nextConfig = {
         pathname: '/hemilabs/token-list/**',
         protocol: 'https',
       },
+      {
+        hostname: 'hemilabs.github.io',
+        pathname: '/token-list/logos/**',
+        protocol: 'https',
+      },
     ],
     unoptimized: true,
   },

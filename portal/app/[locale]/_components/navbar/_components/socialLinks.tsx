@@ -22,8 +22,8 @@ export const SocialLinks = function () {
 
   return (
     <div
-      className="mb-1 mt-4 flex flex-wrap items-center justify-center gap-x-6
-    rounded-lg bg-transparent md:h-14 md:gap-x-4 md:bg-neutral-50"
+      className="mb-3 mt-0 flex flex-wrap items-center justify-center gap-x-6
+      md:mb-0 md:mt-6 md:h-10 md:gap-x-4 md:border-t md:border-neutral-300/55 md:py-4"
     >
       <ExternalLink href={twitterUrl} onClick={addTracking('nav - x')}>
         <TwitterIcon className={svgCss} />

@@ -3,12 +3,12 @@ import { umamiAnalyticsContextFactory } from 'umami-analytics-next'
 
 // all analytic events
 const analyticsEvents = [
-  // /demos
-  'demos - bitcoinkit',
-  'demos - cryptochords',
-  'demos - DEMOS',
-  'demos - hatchlings',
-  'demos - pure finance',
+  // /ecosystem
+  'ecosystem - bitcoinkit',
+  'ecosystem - cryptochords',
+  'ecosystem - DEMOS',
+  'ecosystem - hatchlings',
+  'ecosystem - pure finance',
   // header
   'header - tunnel',
   'header - txn history',
@@ -44,6 +44,7 @@ const analyticsEvents = [
   'nav - demos',
   'nav - dex',
   'nav - docs',
+  'nav - ecosystem',
   'nav - explorer',
   'nav - hbk',
   'nav - get started',
@@ -119,6 +120,15 @@ const analyticsEvents = [
   'evm connected',
   'evm copy',
   'evm disconnected',
+  // dex's
+  'nav - 1delta',
+  'nav - eisen',
+  'nav - sushi',
+  'nav - oku',
+  'nav - izumi',
+  'nav - dodo',
+  'nav - atlas',
+  'nav - passdex',
 ] as const
 
 type AnalyticsEvents = typeof analyticsEvents

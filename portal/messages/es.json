@@ -73,7 +73,7 @@
       "second-line": "No use la aplicación móvil de UniSat."
     }
   },
-  "demos": {
+  "ecosystem": {
     "bitcoin-kit": {
       "heading": "Demo de Kit de Hemi Bitcoin",
       "sub-heading": "Demostración de construcción en Bitcoin con Hemi utilizando el Bitcoin Kit"
@@ -86,7 +86,7 @@
       "heading": "DEMOS",
       "sub-heading": "Soluciones de verificación biométrica para aplicaciones Web3."
     },
-    "heading": "Demos",
+    "heading": "Ecosistema",
     "hemihatchlings": {
       "heading": "Hemi Hatchlings",
       "sub-heading": "Aprenda como funciona la finalidad de Ethereum y Bitcoin"
@@ -95,7 +95,7 @@
       "heading": "Pure Finance",
       "sub-heading": "Utilidad e interacciones de contratos inteligentes integrados directamente en la red Hemi"
     },
-    "sub-heading": "Aprenda y explore con las Demos de desarrolladores de Hemi"
+    "sub-heading": "Aprenda y explore con el ecosistema para desarrolladores de Hemi"
   },
   "error-pages": {
     "not-found": {
@@ -176,9 +176,11 @@
   },
   "navbar": {
     "agree-to-terms-and-policy": "Al usar esta aplicación, usted acepta los <terms>Términos de Uso</terms> y la <policy>Política de Privacidad</policy>",
-    "bitcoinkit": "Kit de Hemi Bitcoin",
+    "bitcoinkit": "Kit de Hemi Bitcoin (hBK)",
     "data-attribution": "Datos proporcionados por <link>CoinMarketCap.com</link>",
-    "demos": "Demos",
+    "dex": "DEX",
+    "docs": "Documentación",
+    "ecosystem": "Ecosistema",
     "explorer": "Explorador",
     "get-started": "Comenzar",
     "help": {
@@ -190,7 +192,6 @@
         "pt": "Portugués"
       }
     },
-    "hemidocs": "Documentación de Hemi",
     "learn-how-to-start": "Aprenda cómo empezar a utilizar la red Hemi",
     "network": "Red",
     "network-status": "Estado de la red",

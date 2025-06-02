@@ -29,8 +29,8 @@ export const Tvl = function () {
   return (
     isNotTestnet && (
       <section
-        className="shadow-soft h-22 relative mb-4 mt-4 w-full overflow-hidden rounded-lg
-      md:mb-0"
+        className="shadow-soft h-22 relative mb-4 w-full overflow-hidden rounded-lg
+        md:mb-0 md:mt-4"
         style={{
           background:
             'linear-gradient(0deg, #262626, #262626),linear-gradient(0deg, #FFFFFF, #FFFFFF),linear-gradient(180deg, rgba(0, 0, 0, 0) 10.65%, rgba(0, 0, 0, 0.6) 76.58%)',

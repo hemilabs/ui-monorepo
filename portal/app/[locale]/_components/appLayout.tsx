@@ -2,6 +2,7 @@
 
 import { useAccounts } from 'hooks/useAccounts'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import React, { useEffect, useState } from 'react'
 
@@ -29,11 +30,23 @@ const TestnetIndicator = function () {
   )
 }
 
+const Backdrop = ({ onClick }) => (
+  <div
+    className="absolute left-0 top-0 z-20
+    h-screen w-screen bg-gradient-to-b
+    from-neutral-950/0 to-neutral-950/25"
+    onClick={onClick}
+  />
+)
+
 export const AppLayout = function ({ children }: Props) {
   const { allDisconnected } = useAccounts()
   const [networkType] = useNetworkType()
   const pathname = usePathnameWithoutLocale()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false)
+  const ref = useOnClickOutside<HTMLDivElement>(() => setIsNavbarOpen(false))
+
   // Hide instead of not-rendering when the header is open, to avoid loosing state of the components when opening
   // and closing the header
   const hiddenClass = isMenuOpen ? 'hidden' : ''
@@ -49,24 +62,23 @@ export const AppLayout = function ({ children }: Props) {
 
   // Footer is only visible if at least one chain is connected
   const showFooter = !allDisconnected
-
   return (
     <div
       className={`
         shadow-hemi-layout backdrop-blur-20 relative flex h-full
-        w-3/4 flex-1 flex-col self-stretch overflow-y-hidden bg-neutral-50 md:h-[calc(100dvh-16px)] md:border-solid
-        ${
-          networkType === 'testnet'
-            ? 'md:border-2 md:border-orange-500'
-            : 'border-neutral-300/55 md:border'
-        }
-        md:my-2 md:mr-2 md:w-[calc(75%-8px)] md:rounded-2xl`}
+        w-3/4 flex-1 flex-col self-stretch overflow-y-hidden bg-neutral-50 md:h-[calc(100dvh-16px)]
+        ${networkType === 'testnet' ? 'md:border-2 md:border-orange-500' : ''}
+        md:my-2 md:mr-2 md:w-[calc(75%-8px)]`}
       id="app-layout-container"
     >
       <div className="relative hidden md:block">
         <TestnetIndicator />
       </div>
-      <Header isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
+      <Header
+        isMenuOpen={isMenuOpen}
+        setIsNavbarOpen={setIsNavbarOpen}
+        toggleMenu={toggleMenu}
+      />
       <div
         className={`box-border ${
           // 7rem comes from header (3.5) + footer (3.5) heights in mobile
@@ -99,6 +111,17 @@ export const AppLayout = function ({ children }: Props) {
           </div>
         </div>
       </div>
+      {isNavbarOpen && (
+        <>
+          <Backdrop onClick={() => setIsNavbarOpen(false)} />
+          <div
+            className="h- shadow-navbar z-30 ml-2 hidden w-60 rounded-xl border border-neutral-300/55 bg-white p-1 md:absolute md:block lg:hidden"
+            ref={ref}
+          >
+            <Navbar />
+          </div>
+        </>
+      )}
       {isMenuOpen ? (
         <div className="md:hidden">
           <Navbar />

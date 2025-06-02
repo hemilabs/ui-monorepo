@@ -1,27 +1,24 @@
 'use client'
 
 import { BitcoinKitIcon } from 'components/icons/bitcoinKit'
-import { DemosPageIcon } from 'components/icons/demosPageIcon'
-import { DexIcon } from 'components/icons/dexIcon'
 import { DocsIcon } from 'components/icons/docsIcon'
-import { ElectroCardiogramIcon } from 'components/icons/electroCardiogramIcon'
+import { EcosystemIcon } from 'components/icons/ecosystemIcon'
+import { NetworkStatusIcon } from 'components/icons/networkStatusIcon'
 import { StakeIcon } from 'components/icons/stakeIcon'
-import { ToolsIcon } from 'components/icons/toolsIcon'
 import { TunnelIcon } from 'components/icons/tunnelIcon'
 import { Link } from 'components/link'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import React, { Suspense } from 'react'
-import { getSwapUrl } from 'utils/swap'
 
 import { Badge } from './_components/badge'
+import { Dex } from './_components/dex'
 import { GetStarted } from './_components/getStarted'
 import { Help } from './_components/help'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiLogoFull } from './_components/hemiLogo'
-import { ItemLink, ItemWithSubmenu, NetworkSwitch } from './_components/navItem'
+import { ItemLink, NetworkSwitch } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
 import { Tvl } from './_components/tvl'
 
@@ -33,20 +30,17 @@ const ActionableOperations = dynamic(
   { ssr: false },
 )
 
-const Separator = () => (
-  <div className="my-2 h-px w-full bg-neutral-300/55 md:my-3" />
-)
+const Separator = () => <div className="my-2 h-px w-full bg-neutral-100" />
 
 export const Navbar = function () {
-  const [networkType] = useNetworkType()
   const t = useTranslations('navbar')
 
   const href = useTunnelOperationByConnectedWallet()
 
   return (
     <>
-      <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col bg-white px-3 pt-3 md:pt-0">
-        <div className="hidden h-24 items-center justify-between md:flex [&>*]:md:ml-3">
+      <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col overflow-visible bg-white px-3 pt-3 md:pt-0">
+        <div className="hidden h-24 items-center justify-between md:flex md:h-16 lg:h-24 [&>*]:md:ml-3">
           <div className="flex items-center gap-x-2">
             <Link className="w-full" href={href}>
               <HemiLogoFull />
@@ -55,8 +49,8 @@ export const Navbar = function () {
           </div>
           <Help />
         </div>
-        <ul className="flex h-[calc(100dvh-240px)] flex-col overflow-y-auto md:h-full [&>li>div]:px-3">
-          <li className="order-1">
+        <ul className="flex h-[calc(100dvh-170px)] flex-col overflow-y-auto md:mt-2 md:h-full lg:h-full [&>li>div]:px-2">
+          <li>
             <ItemLink
               event="nav - tunnel"
               href={href}
@@ -69,7 +63,10 @@ export const Navbar = function () {
               text={t('tunnel')}
             />
           </li>
-          <li className="order-2">
+          <li>
+            <Dex />
+          </li>
+          <li>
             <ItemLink
               event="nav - stake"
               href="/stake/dashboard"
@@ -78,23 +75,18 @@ export const Navbar = function () {
               urlToBeSelected="/stake"
             />
           </li>
-          <li className="order-3">
-            <ItemLink
-              event="nav - dex"
-              href={getSwapUrl(networkType)}
-              icon={<DexIcon />}
-              text={t('swap')}
-            />
-          </li>
-          <li className="order-4">
-            <Suspense>
-              <HemiExplorerLink />
-            </Suspense>
-          </li>
-          <li className="order-5">
+          <li>
             <Separator />
           </li>
-          <li className="order-6">
+          <li>
+            <ItemLink
+              event="nav - ecosystem"
+              href="/ecosystem"
+              icon={<EcosystemIcon />}
+              text={t('ecosystem')}
+            />
+          </li>
+          <li>
             <ItemLink
               event="nav - hbk"
               href="https://docs.hemi.xyz/building-bitcoin-apps/hemi-bitcoin-kit-hbk"
@@ -102,78 +94,53 @@ export const Navbar = function () {
               text={t('bitcoinkit')}
             />
           </li>
-          <li className="order-7">
-            <ItemWithSubmenu
-              event="nav - tools"
-              icon={<ToolsIcon />}
-              subMenu={
-                <>
-                  <ItemLink
-                    event="nav - pure finance"
-                    href="https://purefinance.hemi.xyz"
-                    text="Pure Finance"
-                  />
-                </>
-              }
-              text={t('tools')}
-            />
-          </li>
-          <li className="order-8">
-            <Separator />
-          </li>
-          <li className="order-9">
-            <ItemLink
-              event="nav - demos"
-              href="/demos"
-              icon={<DemosPageIcon />}
-              text={t('demos')}
-            />
-          </li>
-          <li className="order-10 md:order-11">
-            <ItemLink
-              event="nav - network status"
-              href="https://hemistatus.com"
-              icon={<ElectroCardiogramIcon />}
-              text={t('network-status')}
-            />
-          </li>
-          <li className="order-11 mb-auto md:order-12">
+          <li>
             <ItemLink
               event="nav - docs"
               href="https://docs.hemi.xyz"
               icon={<DocsIcon />}
-              text={t('hemidocs')}
+              text={t('docs')}
             />
           </li>
-          <li className="order-12 md:hidden">
+          <li>
             <Separator />
           </li>
-          <li className="order-13 md:hidden">
-            <Help />
+          <li>
+            <Suspense>
+              <HemiExplorerLink />
+            </Suspense>
           </li>
-          <li className="hidden md:order-10 md:block">
+          <li>
+            <ItemLink
+              event="nav - network status"
+              href="https://hemistatus.com"
+              icon={<NetworkStatusIcon />}
+              text={t('network-status')}
+            />
+          </li>
+          <li className="mb-auto md:block">
             <NetworkSwitch />
           </li>
-          <li className="md:order-13 hidden md:block">
+          <li className="md:hidden">
+            <Help />
+          </li>
+          <li className="hidden md:block">
             <GetStarted />
           </li>
-          <li className="md:order-14 md:block">
+          <li className="order-first md:order-none">
             <Tvl />
           </li>
-          <li className="md:order-15 hidden md:block">
+          <li className="hidden md:block">
             <SocialLinks />
           </li>
         </ul>
       </div>
       <ul className="fixed bottom-0 w-full border-t border-neutral-300 bg-neutral-50 px-3 pt-4 md:hidden">
-        <li className="rounded-lg border border-neutral-300 bg-neutral-100 px-3 py-1">
-          <NetworkSwitch />
-        </li>
-        <li className="mt-3">
-          <GetStarted />
-        </li>
         <li>
           <SocialLinks />
+        </li>
+        <li>
+          <GetStarted />
         </li>
       </ul>
     </>

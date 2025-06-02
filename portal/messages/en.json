@@ -75,7 +75,7 @@
       "second-line": "Do not use the UniSat mobile app."
     }
   },
-  "demos": {
+  "ecosystem": {
     "bitcoin-kit": {
       "heading": "Hemi Bitcoin Kit Demo",
       "sub-heading": "Demonstration of building on Bitcoin with Hemi using the Bitcoin Kit"
@@ -88,7 +88,7 @@
       "heading": "DEMOS",
       "sub-heading": "Biometric verification solutions for Web3 applications."
     },
-    "heading": "Demos",
+    "heading": "Ecosystem",
     "hemihatchlings": {
       "heading": "Hemi Hatchlings",
       "sub-heading": "Learn how Ethereum & Bitcoin finality works"
@@ -97,7 +97,7 @@
       "heading": "Pure Finance",
       "sub-heading": "Utility and smart contract interaction built directly into the Hemi network"
     },
-    "sub-heading": "Learn and explore with Hemi developer demos"
+    "sub-heading": "Learn and explore with Hemi developer ecosystem"
   },
   "error-pages": {
     "not-found": {
@@ -178,9 +178,23 @@
   },
   "navbar": {
     "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
-    "bitcoinkit": "Hemi Bitcoin Kit",
+    "bitcoinkit": "Hemi Bitcoin Kit (hBK)",
     "data-attribution": "Data provided by <link>CoinMarketCap.com</link>",
-    "demos": "Demos",
+    "dex": {
+      "1delta": "1delta",
+      "aggregators": "Aggregators",
+      "atlas": "Atlas",
+      "dodo": "Dodo",
+      "eisen": "Eisen",
+      "izumi": "Izumi",
+      "oku": "Oku (uni)",
+      "passdex": "Passdex",
+      "subtitle": "DEX’s",
+      "sushi": "Sushi",
+      "title": "DEX"
+    },
+    "docs": "Documentation",
+    "ecosystem": "Ecosystem",
     "explorer": "Explorer",
     "get-started": "Get Started",
     "help": {
@@ -191,7 +205,6 @@
         "es": "Spanish"
       }
     },
-    "hemidocs": "Hemi Docs",
     "learn-how-to-start": "Learn how to start using the Hemi network",
     "network": "Network",
     "network-status": "Network Status",

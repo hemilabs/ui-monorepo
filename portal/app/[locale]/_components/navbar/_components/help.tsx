@@ -210,8 +210,8 @@ export const Help = function () {
     <div className="cursor-pointer" ref={ref}>
       {isOpen && <Backdrop onClick={() => setIsOpen(!isOpen)} />}
       <div
-        className={`shadow-help-icon flex h-7 w-7 items-center justify-center
-        rounded-md border border-neutral-300/55 hover:bg-neutral-50
+        className={`shadow-help-icon mb-2 flex h-7 w-7 items-center justify-center
+        rounded-md border border-neutral-300/55 hover:bg-neutral-50 md:mb-0
         ${isOpen ? 'bg-neutral-50' : 'bg-white'} group/icon "`}
         onClick={() => setIsOpen(!isOpen)}
       >

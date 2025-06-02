@@ -16,8 +16,8 @@ import hemiHatchlingsIcon from './_images/hemi_hatchlings_small.png'
 import pureFinanceImg from './_images/pure_finance_large.png'
 import pureFinanceIcon from './_images/pure_finance_small.svg'
 
-const Demos = function () {
-  const t = useTranslations('demos')
+const Ecosystem = function () {
+  const t = useTranslations('ecosystem')
   const [networkType] = useNetworkType()
 
   return (
@@ -27,7 +27,7 @@ const Demos = function () {
         <DemoCard
           altText="DEMOS - Biometric Verification"
           bgImage={demosImg}
-          event="demos - DEMOS"
+          event="ecosystem - DEMOS"
           heading={t('demos.heading')}
           headingColor="white"
           // Same url for both Mainnet and Testnet
@@ -39,7 +39,7 @@ const Demos = function () {
         <DemoCard
           altText="Bitcoin Kit Demo"
           bgImage={bitcoinKitImg}
-          event="demos - bitcoinkit"
+          event="ecosystem - bitcoinkit"
           heading={t('bitcoin-kit.heading')}
           headingColor="black"
           href={`https://bitcoin-kit.hemi.xyz/code-editor?networkType=${networkType}`}
@@ -50,7 +50,7 @@ const Demos = function () {
         <DemoCard
           altText="pure finance"
           bgImage={pureFinanceImg}
-          event="demos - pure finance"
+          event="ecosystem - pure finance"
           heading={t('purefinance.heading')}
           headingColor="black"
           href="https://purefinance.hemi.xyz"
@@ -61,7 +61,7 @@ const Demos = function () {
         <DemoCard
           altText="hemi hatchlings"
           bgImage={hemiHatchlingsImg}
-          event="demos - hatchlings"
+          event="ecosystem - hatchlings"
           heading={t('hemihatchlings.heading')}
           headingColor="white"
           href={
@@ -75,7 +75,7 @@ const Demos = function () {
         <DemoCard
           altText="cryptochords"
           bgImage={cryptoChordsImg}
-          event="demos - cryptochords"
+          event="ecosystem - cryptochords"
           heading={t('cryptochords.heading')}
           headingColor="white"
           href={`https://cryptochords.hemi.xyz?networkType=${networkType}`}
@@ -87,4 +87,4 @@ const Demos = function () {
   )
 }
 
-export default Demos
+export default Ecosystem

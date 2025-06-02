@@ -34,12 +34,13 @@ const IconContainer = ({
   selected = false,
 }: Selectable & { children: ReactNode }) => (
   <div
-    className={`flex h-6 w-6 items-center justify-center rounded-[4px] 
-    border py-1 shadow-md md:h-5 md:w-5 ${
-      selected
-        ? 'border-orange-700/55 bg-orange-500 [&>svg>path]:fill-white'
-        : 'border-neutral-300/55 bg-stone-50'
-    }`}
+    className={`flex h-6 w-6 items-center justify-center rounded-md
+      transition-colors duration-300
+      md:h-5 md:w-5 ${
+        selected
+          ? 'bg-orange-500 [&>svg>path]:fill-white'
+          : 'bg-neutral-100 [&>svg>path]:fill-neutral-400 group-hover/item:[&>svg>path]:fill-neutral-950'
+      }`}
   >
     {children}
   </div>
@@ -56,10 +57,8 @@ const ItemContainer = ({
 }: { children: ReactNode } & Selectable & ComponentProps<'div'>) => (
   <div
     {...props}
-    className={`group/item cursor-pointer rounded-lg py-2 transition-colors duration-300 ${
-      selected
-        ? 'border border-orange-500/55 bg-orange-50'
-        : 'border border-transparent hover:bg-neutral-100'
+    className={`group/item cursor-pointer rounded-md py-2 transition-colors duration-300 ${
+      selected ? 'bg-orange-50' : 'hover:bg-neutral-100'
     }`}
   >
     {children}
@@ -91,10 +90,12 @@ const ItemText = ({
   text,
 }: Pick<Props, 'text'> & Selectable) => (
   <span
-    className={`text-base font-medium capitalize transition-colors duration-300
-      group-hover/item:text-neutral-950 md:text-sm ${
-        selected ? 'text-neutral-950' : 'text-neutral-600'
-      }`}
+    className={`text-base font-medium transition-colors duration-300
+       md:text-sm ${
+         selected
+           ? 'text-orange-500'
+           : 'text-neutral-600 group-hover/item:text-neutral-950'
+       }`}
   >
     {text}
   </span>
@@ -118,7 +119,7 @@ const ExternalLink = function ({
         <Row>
           {icon && <IconContainer>{icon}</IconContainer>}
           <ItemText text={text} />
-          <ArrowDownLeftIcon className="ml-auto" />
+          <ArrowDownLeftIcon className="ml-auto hidden group-hover/item:block" />
         </Row>
       </AnchorTag>
     </ItemContainer>
@@ -170,39 +171,6 @@ export const ItemLink = (props: ItemLinkProps) =>
     <PageLink {...props} />
   )
 
-export const ItemWithSubmenu = function ({
-  event,
-  icon,
-  subMenu,
-  text,
-}: Props & { subMenu: ReactNode }) {
-  const [networkType] = useNetworkType()
-  const [isOpen, setIsOpen] = useState(false)
-  const { track } = useUmami()
-
-  const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
-
-  const onClick = function () {
-    setIsOpen(!isOpen)
-    track?.(event, { chain: networkType })
-  }
-
-  return (
-    <MenuContainer isOpen={isOpen} refProp={ref}>
-      <Row onClick={onClick}>
-        <IconContainer>{icon}</IconContainer>
-        <ItemText selected={isOpen} text={text} />
-        {isOpen ? (
-          <Chevron.Up className="-mr-1 ml-auto" />
-        ) : (
-          <Chevron.Bottom className="-mr-1 ml-auto" />
-        )}
-      </Row>
-      {isOpen && <ul className="mt-2 flex flex-col">{subMenu}</ul>}
-    </MenuContainer>
-  )
-}
-
 export const NetworkSwitch = function () {
   const [networkType, setNetworkType] = useNetworkType()
   const [isOpen, setIsOpen] = useState(false)
@@ -217,25 +185,31 @@ export const NetworkSwitch = function () {
     setIsOpen(false)
   }
 
+  const getNetworkText = (network: string) =>
+    network[0].toUpperCase() + network.slice(1)
+
   return (
     <MenuContainer
       isOpen={isOpen}
       onClick={() => setIsOpen(true)}
       refProp={ref}
     >
-      <div className="relative">
+      <div>
         <Row onClick={() => setIsOpen(!isOpen)}>
           <IconContainer>
             <NetworkIcon />
           </IconContainer>
           <ItemText text={t('network')} />
           <div className="ml-auto flex items-center gap-x-1">
-            <ItemText selected={isOpen} text={networkType} />
+            <ItemText selected={isOpen} text={getNetworkText(networkType)} />
             <Chevron.Bottom />
           </div>
         </Row>
         {isOpen && (
-          <div className="absolute right-0 top-0 z-20 -translate-y-full translate-x-3">
+          <div
+            className="-translate-y-26 md:translate-x-34 absolute right-0 z-20
+            -translate-x-3 md:left-0 md:w-24"
+          >
             <Menu
               items={networkTypes.map(function (type) {
                 const selected = type === networkType

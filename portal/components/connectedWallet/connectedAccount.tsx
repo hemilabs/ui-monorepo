@@ -1,6 +1,6 @@
 import { useUmami } from 'app/analyticsEvents'
+import { bitcoinMainnet, bitcoinTestnet } from 'btc-wallet/chains'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
-import { useConfig as useBtcConfig } from 'btc-wallet/hooks/useConfig'
 import { useDisconnect as useBtcDisconnect } from 'btc-wallet/hooks/useDisconnect'
 import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchChain'
 import { type Account } from 'btc-wallet/unisat'
@@ -214,8 +214,8 @@ export const ConnectedBtcAccount = function () {
 }
 
 export const ConnectedBtcChain = function () {
-  const { chains } = useBtcConfig()
   const { chain, isConnected } = useBtcAccount()
+  const [networkType] = useNetworkType()
 
   const { switchChain } = useSwitchBtcChain()
 
@@ -229,8 +229,13 @@ export const ConnectedBtcChain = function () {
     // As only one btc chain is supported at the moment, this will work.
     // Once there are multiple chains, we may need to show a dropdown or something
     // to select the chain to connect to.
-    const chainId = chains[0].id === chain.id ? chains[1].id : chains[0].id
-    return <WrongNetwork onClick={() => switchChain({ chainId })} type="BTC" />
+    const btcChain = networkType === 'mainnet' ? bitcoinMainnet : bitcoinTestnet
+    return (
+      <WrongNetwork
+        onClick={() => switchChain({ chainId: btcChain.id })}
+        type="BTC"
+      />
+    )
   }
   return <ConnectedChain icon={<BtcLogo />} name={chain.name} />
 }

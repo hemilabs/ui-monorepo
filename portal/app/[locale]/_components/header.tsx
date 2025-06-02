@@ -5,6 +5,7 @@ import { StakeTabs } from 'components/stakeTabs'
 import { TunnelTabs } from 'components/tunnelTabs'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import dynamic from 'next/dynamic'
+import { Dispatch, SetStateAction } from 'react'
 
 import { Badge } from './navbar/_components/badge'
 
@@ -32,7 +33,7 @@ const HemiSymbol = () => (
 
 type Props = {
   isMenuOpen: boolean
-  setIsNavbarOpen: () => void
+  setIsNavbarOpen: Dispatch<SetStateAction<boolean>>
   toggleMenu: () => void
 }
 

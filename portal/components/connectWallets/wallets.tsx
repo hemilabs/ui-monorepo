@@ -2,7 +2,6 @@ import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { AnalyticsEventsWithChain } from 'app/analyticsEvents'
 import { ConnectorGroup } from 'btc-wallet/connectors/types'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
-import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { useConfig } from 'btc-wallet/hooks/useConfig'
 import { useConnect } from 'btc-wallet/hooks/useConnect'
 import {
@@ -15,6 +14,7 @@ import { ExternalLink } from 'components/externalLink'
 import { FiatBalance } from 'components/fiatBalance'
 import { Chevron } from 'components/icons/chevron'
 import { useBitcoin } from 'hooks/useBitcoin'
+import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useChainIsSupported } from 'hooks/useChainIsSupported'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
@@ -88,7 +88,7 @@ const InstallUnisat = function ({ connector }: { connector: ConnectorGroup }) {
 export const BtcWallet = function () {
   const { chainId, connector, status } = useBtcAccount()
   const bitcoin = useBitcoin()
-  const { balance } = useBtcBalance()
+  const { balance } = useBitcoinBalance()
   const chainSupported = useChainIsSupported(chainId)
   const { connect } = useConnect()
   const { connectors } = useConfig()

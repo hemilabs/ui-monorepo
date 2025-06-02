@@ -1,9 +1,9 @@
 'use client'
 
 import { useUmami } from 'app/analyticsEvents'
-import { useBalance } from 'btc-wallet/hooks/useBalance'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
+import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -51,7 +51,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
 
   const { btcChainId, btcWalletStatus, evmAddress } = useAccounts()
   const bitcoin = useBitcoin()
-  const { balance, isSuccess: balanceLoaded } = useBalance()
+  const { balance, isSuccess: balanceLoaded } = useBitcoinBalance()
   const { isPending: isMinDepositsSatsLoading, minDepositFormattedSats } =
     useMinDepositSats()
   const [networkType] = useNetworkType()

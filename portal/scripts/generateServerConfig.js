@@ -84,6 +84,7 @@ const imageSrcUrls = [
   'https://hemi.xyz',
   'https://raw.githubusercontent.com',
   'https://*.walletconnect.com',
+  'https://hemilabs.github.io',
 ]
 
 // these are domains where frames are allowed

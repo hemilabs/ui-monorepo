@@ -1,0 +1,81 @@
+diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
+index 3fb81a8..17ff335 100644
+--- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
++++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
+@@ -315,7 +315,12 @@
+       "chainId": 43111,
+       "decimals": 8,
+       "extensions": {
+-        "birthBlock": 1125154
++        "birthBlock": 1125154,
++        "bridgeInfo": {
++          "livenet": {
++           "tokenAddress": "BTC"
++          }
++        }
+       },
+       "logoURI": "https://hemilabs.github.io/token-list/logos/hemibtc.svg",
+       "name": "Hemi Bitcoin",
+@@ -326,10 +331,15 @@
+       "chainId": 43111,
+       "decimals": 6,
+       "extensions": {
+-        "birthBlock": 623077
++        "birthBlock": 623077,
++        "bridgeInfo": {
++          "1": {
++            "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
++          }
++        }
+       },
+       "logoURI": "https://hemilabs.github.io/token-list/logos/usdc.svg",
+-      "name": "Bridged USDC (Stargate)",
++      "name": "USDC",
+       "symbol": "USDC.e"
+     },
+     {
+@@ -364,7 +374,12 @@
+       "chainId": 43111,
+       "decimals": 6,
+       "extensions": {
+-        "birthBlock": 666946
++        "birthBlock": 666946,
++        "bridgeInfo": {
++          "1": {
++            "tokenAddress": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
++          }
++        }
+       },
+       "logoURI": "https://hemilabs.github.io/token-list/logos/usdt.svg",
+       "name": "USDT",
+@@ -500,11 +515,16 @@
+       "chainId": 743111,
+       "decimals": 8,
+       "extensions": {
+-        "birthBlock": 2165818
++        "birthBlock": 2165818,
++        "bridgeInfo": {
++          "testnet": {
++            "tokenAddress": "tBTC"
++          }
++        }
+       },
+       "logoURI": "https://hemilabs.github.io/token-list/logos/hemibtc.svg",
+-      "name": "HemiBitcoin",
+-      "symbol": "hBTC"
++      "name": "Testnet Bitcoin",
++      "symbol": "tBTC"
+     },
+     {
+       "address": "0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298",
+@@ -559,8 +579,8 @@
+       "chainId": 743111,
+       "decimals": 18,
+       "logoURI": "https://hemilabs.github.io/token-list/logos/hdai.svg",
+-      "name": "Hemi Tunneled DAI",
+-      "symbol": "hDAI",
++      "name": "Dai Stablecoin",
++      "symbol": "DAI",
+       "extensions": {
+         "birthBlock": 71589,
+         "bridgeInfo": {

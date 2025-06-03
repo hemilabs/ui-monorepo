@@ -1,7 +1,7 @@
 import { type FetchStatus, QueryStatus } from '@tanstack/react-query'
 import Big from 'big.js'
-import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { useTokenBalance, useNativeTokenBalance } from 'hooks/useBalance'
+import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { ComponentProps } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -130,7 +130,7 @@ const EvmBalance = (props: Props<EvmToken>) =>
   )
 
 const BtcBalance = function ({ token }: Props<BtcToken>) {
-  const { balance, fetchStatus, status } = useBtcBalance()
+  const { balance, fetchStatus, status } = useBitcoinBalance()
   return (
     <RenderFiatBalance
       balance={BigInt(balance?.confirmed ?? 0)}

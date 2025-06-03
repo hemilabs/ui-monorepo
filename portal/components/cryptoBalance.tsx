@@ -1,8 +1,8 @@
 'use client'
 
-import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { DisplayAmount } from 'components/displayAmount'
 import { useTokenBalance, useNativeTokenBalance } from 'hooks/useBalance'
+import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
@@ -74,7 +74,7 @@ const EvmBalance = (props: Props<EvmToken>) =>
   )
 
 const BtcBalance = function ({ token }: Props<BtcToken>) {
-  const { balance, fetchStatus, status } = useBtcBalance()
+  const { balance, fetchStatus, status } = useBitcoinBalance()
   return (
     <RenderCryptoBalance
       balance={BigInt(balance?.confirmed ?? 0)}

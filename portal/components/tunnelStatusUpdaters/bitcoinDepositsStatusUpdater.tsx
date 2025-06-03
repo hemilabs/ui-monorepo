@@ -1,8 +1,8 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { useBalance } from 'btc-wallet/hooks/useBalance'
 import { WithWorker } from 'components/withWorker'
+import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
@@ -32,7 +32,7 @@ const WatchBtcDeposit = function ({
   worker: AppToWorker
 }) {
   const { updateDeposit } = useTunnelHistory()
-  const { queryKey: btcBalanceQueryKey } = useBalance()
+  const { queryKey: btcBalanceQueryKey } = useBitcoinBalance()
   const queryClient = useQueryClient()
 
   useEffect(

@@ -1,7 +1,7 @@
 import Big from 'big.js'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
-import { useBalance as useBtcBalance } from 'btc-wallet/hooks/useBalance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useEstimateBtcFees } from 'hooks/useEstimateBtcFees'
 import { useTranslations } from 'next-intl'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
@@ -73,7 +73,7 @@ export const SetMaxBtcBalance = function ({
   token,
 }: Props<BtcToken>) {
   const { address } = useBtcAccount()
-  const { balance, isLoading: isLoadingBalance } = useBtcBalance()
+  const { balance, isLoading: isLoadingBalance } = useBitcoinBalance()
   const btcBalance = balance?.confirmed ?? 0
 
   const { fees, isLoading: isLoadingFees } = useEstimateBtcFees(address)

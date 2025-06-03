@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useUmami } from 'app/analyticsEvents'
-import { useBalance } from 'btc-wallet/hooks/useBalance'
 import { Button } from 'components/button'
+import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useConfirmBitcoinDeposit } from 'hooks/useBtcTunnel'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
@@ -31,7 +31,7 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
   const t = useTranslations()
   const { updateDeposit } = useTunnelHistory()
   const { track } = useUmami()
-  const { queryKey: btcBalanceQueryKey } = useBalance()
+  const { queryKey: btcBalanceQueryKey } = useBitcoinBalance()
   const queryClient = useQueryClient()
 
   const isConfirming =

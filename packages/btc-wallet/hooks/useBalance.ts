@@ -5,7 +5,9 @@ import { GlobalContext } from '../context/globalContext'
 
 import { useAccount } from './useAccount'
 
-export const useBalance = function () {
+export const useBalance = function ({
+  enabled = true,
+}: { enabled?: boolean } = {}) {
   const { address, chainId, isConnected } = useAccount()
   const { currentConnector } = useContext(GlobalContext)
 
@@ -15,10 +17,11 @@ export const useBalance = function () {
     address,
     chainId,
     currentConnector?.id,
+    enabled,
   ]
 
   const { data: balance, ...rest } = useQuery({
-    enabled: isConnected && currentConnector !== undefined,
+    enabled: enabled && isConnected && currentConnector !== undefined,
     // use "!" because "enabled" already checks currentConnector is defined
     queryFn: () => currentConnector!.getBalance(),
     queryKey,

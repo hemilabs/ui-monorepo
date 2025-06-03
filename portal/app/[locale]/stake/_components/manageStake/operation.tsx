@@ -46,7 +46,7 @@ export const Operation = ({
         {preview}
       </div>
       <div
-        className={`absolute inset-0 pb-1 transition-transform duration-500 ${
+        className={`absolute inset-0 flex flex-col pb-1 transition-transform duration-500 ${
           isOperating ? 'translate-x-0' : 'translate-x-full'
         }`}
       >

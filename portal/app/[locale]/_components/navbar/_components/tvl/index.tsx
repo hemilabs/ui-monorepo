@@ -21,7 +21,6 @@ export const Tvl = function () {
 
     return `$${new Intl.NumberFormat('en', {
       compactDisplay: 'short',
-      maximumFractionDigits: 2,
       notation: 'compact',
     }).format(data)}`
   }

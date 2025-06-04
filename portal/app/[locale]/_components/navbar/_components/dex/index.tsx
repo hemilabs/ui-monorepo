@@ -32,9 +32,9 @@ const IconContainer = ({
   selected = false,
 }: Selectable & { children: ReactNode }) => (
   <div
-    className={`flex h-6 w-6 items-center justify-center rounded-md
+    className={`flex size-6 items-center justify-center rounded-md
       transition-colors duration-300
-      md:h-5 md:w-5 ${
+      md:size-5 ${
         selected
           ? '[&>svg>path]:fill-neutral-950'
           : 'bg-neutral-100 [&>svg>path]:fill-neutral-400 group-hover/item:[&>svg>path]:fill-neutral-950'
@@ -45,7 +45,7 @@ const IconContainer = ({
 )
 
 const LinkIconContainer = ({ children }: { children: ReactNode }) => (
-  <div className="flex h-10 w-10 items-center justify-center rounded-md md:h-5 md:w-5">
+  <div className="flex size-10 items-center justify-center rounded-md md:size-5">
     {children}
   </div>
 )

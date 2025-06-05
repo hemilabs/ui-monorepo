@@ -9,7 +9,6 @@ This monorepo contains the following projects:
 - **packages/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported).
 - **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
 - **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
-- **packages/viem-erc20**: Package that contains viem actions to interact with ERC20 contracts.
 - **portal**: Portal app living at [https://app.hemi.xyz](https://app.hemi.xyz).
 - **staking-points**: Staking Points API
 - **subgraph-api**: API for querying hemi subgraphs needed for the portal.

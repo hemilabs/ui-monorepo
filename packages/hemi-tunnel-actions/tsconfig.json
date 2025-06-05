@@ -3,7 +3,7 @@
     "baseUrl": "./",
     "noEmit": true
   },
-  "extends": "@tsconfig/node20/tsconfig.json",
   "exclude": ["node_modules", "test/*"],
+  "extends": "@tsconfig/node20/tsconfig.json",
   "include": ["**/*.ts"]
 }

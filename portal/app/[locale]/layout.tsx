@@ -79,7 +79,7 @@ export default async function RootLayout({
           However, there's no change at all in the UI, so no fallback seems to be needed, as it isn't an async request
           or something that requires showing something. */}
                       <Suspense>
-                        <div className="hidden w-1/4 max-w-60 md:block">
+                        <div className="hidden w-1/4 max-w-60 lg:block">
                           <Navbar />
                         </div>
                         <AppLayout>

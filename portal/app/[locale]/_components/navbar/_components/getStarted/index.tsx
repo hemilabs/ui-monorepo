@@ -22,8 +22,8 @@ export const GetStarted = function () {
   return (
     <>
       <Link
-        className={`shadow-soft font-inter-variable flex cursor-pointer items-center
-        justify-center gap-x-1 rounded-lg border
+        className={`shadow-soft font-inter-variable mx-4 mb-4 flex
+        cursor-pointer items-center justify-center gap-x-1 rounded-lg border
         border-neutral-300/55 bg-white py-2 text-sm font-semibold text-neutral-950 md:hidden
         `}
         href={href}

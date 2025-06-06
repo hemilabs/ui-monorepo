@@ -41,6 +41,8 @@ const config: Config = {
           '0px 2px 2px 0px rgba(10, 10, 10, 0.04), 0px 8px 16px -4px rgba(10, 10, 10, 0.04)',
         'large':
           '0px 2px 4px 0px rgba(0, 2, 2, 0.04), 0px 8px 24px -4px rgba(0, 2, 2, 0.04)',
+        'navbar':
+          '0px 0px 0px 1px rgba(212, 212, 216, 0.56), 12px 0px 24px -8px rgba(10, 10, 10, 0.06), 0px 10px 24px -8px rgba(10, 10, 10, 0.08), 0px 4px 6px -2px rgba(10, 10, 10, 0.04)',
         'soft': '0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
       },
       // See https://www.figma.com/design/4fVd9wneclsvYDYD95ApZ9/Hemi-Portal?node-id=3685-11596&node-type=FRAME&m=dev

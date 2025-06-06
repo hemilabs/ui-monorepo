@@ -33,8 +33,8 @@ const IconContainer = ({
 }: Selectable & { children: ReactNode }) => (
   <div
     className={`flex size-6 items-center justify-center rounded-md
-      transition-colors duration-300
-      md:size-5 ${
+      transition-colors duration-300 md:size-5
+      group-hover/nav:[&>svg>path]:fill-neutral-950 ${
         selected
           ? '[&>svg>path]:fill-neutral-950'
           : 'bg-neutral-100 [&>svg>path]:fill-neutral-400 group-hover/item:[&>svg>path]:fill-neutral-950'
@@ -45,7 +45,7 @@ const IconContainer = ({
 )
 
 const LinkIconContainer = ({ children }: { children: ReactNode }) => (
-  <div className="flex size-10 items-center justify-center rounded-md md:size-5">
+  <div className="flex size-10 items-center justify-center rounded-md md:size-5 group-hover/item:[&>svg>path]:fill-neutral-950">
     {children}
   </div>
 )
@@ -77,7 +77,7 @@ const ItemText = ({
 }: Pick<Props, 'text'> & Selectable) => (
   <span
     className={`text-base font-medium transition-colors duration-300
-       md:text-sm ${
+       group-hover/nav:text-neutral-950 md:text-sm ${
          selected
            ? 'text-neutral-950'
            : 'text-neutral-600 group-hover/item:text-neutral-950'
@@ -113,7 +113,9 @@ const ExternalLink = function ({
         <Row>
           {icon && <LinkIconContainer>{icon}</LinkIconContainer>}
           <ItemText text={text} />
-          <ArrowDownLeftIcon className="ml-auto hidden group-hover/item:block" />
+          <div className="ml-auto hidden size-4 items-center group-hover/item:flex">
+            <ArrowDownLeftIcon />
+          </div>
         </Row>
       </AnchorTag>
     </ItemContainer>
@@ -134,10 +136,19 @@ export const Dex = function () {
   const [isOpen, setIsOpen] = useState(false)
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
   const t = useTranslations('navbar.dex')
+  const [networkType] = useNetworkType()
+  const isTestnet = networkType === 'testnet'
 
-  return (
+  return isTestnet ? (
+    <ExternalLink
+      event="nav - dex"
+      href="https://swap.hemi.xyz"
+      icon={<DexIcon />}
+      text={t('title')}
+    />
+  ) : (
     <div
-      className={`group/nav rounded-md py-2 transition-colors duration-300 ${
+      className={`group/nav cursor-pointer rounded-md py-2 transition-colors duration-300 ${
         isOpen ? 'bg-neutral-50' : 'hover:bg-neutral-100'
       }`}
       onClick={() => setIsOpen(!isOpen)}
@@ -186,7 +197,7 @@ export const Dex = function () {
           />
           <ExternalLink
             event="nav - oku"
-            href="https://oku.trade"
+            href="https://oku.trade?inputChain=hemi"
             icon={<Image alt={t('oku')} src={okuIcon} />}
             text={t('oku')}
           />
@@ -198,7 +209,7 @@ export const Dex = function () {
           />
           <ExternalLink
             event="nav - dodo"
-            href="https://dodoex.io"
+            href="https://app.dodoex.io/swap/network/hemi"
             icon={<Image alt={t('dodo')} src={dodoIcon} />}
             text={t('dodo')}
           />

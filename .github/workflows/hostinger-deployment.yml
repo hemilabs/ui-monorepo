@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: hemilabs/actions/setup-node-env@main
+      - uses: hemilabs/actions/setup-node-env@v1
       - uses: ./.github/actions/deploy-portal
         with:
           HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}

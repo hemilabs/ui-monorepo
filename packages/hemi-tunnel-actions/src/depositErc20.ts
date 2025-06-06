@@ -6,8 +6,12 @@ import {
   type PublicClient,
   type WalletClient,
 } from 'viem'
-import { writeContract } from 'viem/actions'
-import { erc20PublicActions, erc20WalletActions } from 'viem-erc20'
+import { waitForTransactionReceipt, writeContract } from 'viem/actions'
+import {
+  approveErc20Token,
+  getErc20TokenAllowance,
+  getErc20TokenBalance,
+} from 'viem-erc20/actions'
 
 import { l1StandardBridgeAbi } from './abis'
 import { DepositErc20Events } from './types'
@@ -46,12 +50,13 @@ const canDepositErc20 = async function ({
     return { canDeposit: false, reason }
   }
 
-  const tokenBalance = await l1PublicClient
-    .extend(erc20PublicActions())
-    .getErc20TokenBalance({
-      account,
-      address: tokenAddress,
-    })
+  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+  const tokenBalance = await getErc20TokenBalance(l1PublicClient, {
+    account,
+    address: tokenAddress,
+  })
 
   if (amount > tokenBalance) {
     return { canDeposit: false, reason: 'insufficient balance' }
@@ -83,9 +88,6 @@ const runDepositErc20 = ({
 }) =>
   async function (emitter: EventEmitter<DepositErc20Events>) {
     try {
-      const extendedL1PublicClient = l1PublicClient.extend(erc20PublicActions())
-      const extendedL1WalletClient = l1WalletClient.extend(erc20WalletActions())
-
       const { canDeposit, reason } = await canDepositErc20({
         account,
         amount,
@@ -106,7 +108,10 @@ const runDepositErc20 = ({
 
       const l1StandardBridge = getL1StandardBridgeAddress({ l1Chain, l2Chain })
 
-      const allowance = await extendedL1PublicClient.getErc20TokenAllowance({
+      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+      const allowance = await getErc20TokenAllowance(l1PublicClient, {
         address: l1TokenAddress,
         owner: account,
         spender: l1StandardBridge,
@@ -114,15 +119,16 @@ const runDepositErc20 = ({
 
       if (amount > allowance) {
         emitter.emit('pre-approve')
-        const approveHash = await extendedL1WalletClient
-          .approveErc20Token({
-            address: l1TokenAddress,
-            amount: approvalAmount ?? amount,
-            spender: l1StandardBridge,
-          })
-          .catch(function (error) {
-            emitter.emit('user-signing-approve-error', error)
-          })
+        // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+        const approveHash = await approveErc20Token(l1WalletClient, {
+          address: l1TokenAddress,
+          amount: approvalAmount ?? amount,
+          spender: l1StandardBridge,
+        }).catch(function (error) {
+          emitter.emit('user-signing-approve-error', error)
+        })
 
         if (!approveHash) {
           return
@@ -130,13 +136,14 @@ const runDepositErc20 = ({
 
         emitter.emit('user-signed-approve', approveHash)
 
-        const approveReceipt = await extendedL1PublicClient
-          .waitForTransactionReceipt({
-            hash: approveHash,
-          })
-          .catch(function (error) {
-            emitter.emit('approve-failed', error)
-          })
+        // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+        const approveReceipt = await waitForTransactionReceipt(l1PublicClient, {
+          hash: approveHash,
+        }).catch(function (error) {
+          emitter.emit('approve-failed', error)
+        })
 
         if (!approveReceipt) {
           return
@@ -177,7 +184,7 @@ const runDepositErc20 = ({
       await handleWaitDeposit({
         emitter,
         hash: depositHash,
-        publicClient: extendedL1PublicClient,
+        publicClient: l1PublicClient,
       })
     } catch (error) {
       emitter.emit('unexpected-error', error as Error)

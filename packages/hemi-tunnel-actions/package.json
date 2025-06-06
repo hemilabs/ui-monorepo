@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "hemi-viem": "2.4.2",
-    "viem-erc20": "1.0.0"
+    "viem-erc20": "1.0.1"
   },
   "devDependencies": {
     "@tsconfig/node20": "20.1.5",

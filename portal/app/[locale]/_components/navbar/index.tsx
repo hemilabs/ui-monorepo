@@ -30,7 +30,7 @@ const ActionableOperations = dynamic(
   { ssr: false },
 )
 
-const Separator = () => <div className="my-2 h-px w-full bg-neutral-100" />
+const Separator = () => <div className="my-1 h-px w-full bg-neutral-100" />
 
 export const Navbar = function () {
   const t = useTranslations('navbar')
@@ -40,8 +40,8 @@ export const Navbar = function () {
   return (
     <>
       <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col overflow-visible bg-white px-3 pt-3 md:pt-0">
-        <div className="hidden h-24 items-center justify-between md:flex md:h-16 lg:h-24 [&>*]:md:ml-3">
-          <div className="flex items-center gap-x-2">
+        <div className="lg:h-18 hidden h-24 items-center justify-between md:flex md:h-16 [&>*]:md:ml-2">
+          <div className="flex items-center justify-start gap-x-2">
             <Link className="w-full" href={href}>
               <HemiLogoFull />
             </Link>
@@ -49,7 +49,7 @@ export const Navbar = function () {
           </div>
           <Help />
         </div>
-        <ul className="flex h-[calc(100dvh-170px)] flex-col overflow-y-auto md:mt-2 md:h-full lg:h-full [&>li>div]:px-2">
+        <ul className="flex h-[calc(100dvh-170px)] flex-col gap-y-[2px] overflow-y-auto md:mt-2 md:h-full lg:h-full [&>li>div]:px-2">
           <li>
             <ItemLink
               event="nav - tunnel"

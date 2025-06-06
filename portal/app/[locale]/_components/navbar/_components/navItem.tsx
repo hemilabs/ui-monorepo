@@ -35,8 +35,8 @@ const IconContainer = ({
 }: Selectable & { children: ReactNode }) => (
   <div
     className={`flex h-6 w-6 items-center justify-center rounded-md
-      transition-colors duration-300
-      md:h-5 md:w-5 ${
+      transition-colors duration-300 md:h-5
+      md:w-5 group-hover/nav:[&>svg>path]:fill-neutral-950 ${
         selected
           ? 'bg-orange-500 [&>svg>path]:fill-white'
           : 'bg-neutral-100 [&>svg>path]:fill-neutral-400 group-hover/item:[&>svg>path]:fill-neutral-950'
@@ -76,7 +76,7 @@ const MenuContainer = ({
 } & ComponentProps<'div'>) => (
   <div
     {...props}
-    className={`cursor-pointer rounded-lg py-2 transition-colors duration-300 ${
+    className={`group/nav cursor-pointer rounded-lg py-2 transition-colors duration-300 ${
       isOpen ? 'rounded-lg bg-neutral-100' : 'hover:bg-neutral-100'
     }`}
     ref={refProp}
@@ -91,7 +91,7 @@ const ItemText = ({
 }: Pick<Props, 'text'> & Selectable) => (
   <span
     className={`text-base font-medium transition-colors duration-300
-       md:text-sm ${
+       group-hover/nav:text-neutral-950 md:text-sm ${
          selected
            ? 'text-orange-500'
            : 'text-neutral-600 group-hover/item:text-neutral-950'
@@ -119,7 +119,9 @@ const ExternalLink = function ({
         <Row>
           {icon && <IconContainer>{icon}</IconContainer>}
           <ItemText text={text} />
-          <ArrowDownLeftIcon className="ml-auto hidden group-hover/item:block" />
+          <div className="ml-auto hidden size-4 items-center group-hover/item:flex">
+            <ArrowDownLeftIcon />
+          </div>
         </Row>
       </AnchorTag>
     </ItemContainer>
@@ -201,7 +203,7 @@ export const NetworkSwitch = function () {
           </IconContainer>
           <ItemText text={t('network')} />
           <div className="ml-auto flex items-center gap-x-1">
-            <ItemText selected={isOpen} text={getNetworkText(networkType)} />
+            <ItemText text={getNetworkText(networkType)} />
             <Chevron.Bottom />
           </div>
         </Row>

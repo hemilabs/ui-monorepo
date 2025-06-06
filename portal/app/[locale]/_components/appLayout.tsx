@@ -67,8 +67,12 @@ export const AppLayout = function ({ children }: Props) {
       className={`
         shadow-hemi-layout backdrop-blur-20 relative flex h-full
         w-3/4 flex-1 flex-col self-stretch overflow-y-hidden bg-neutral-50 md:h-[calc(100dvh-16px)]
-        ${networkType === 'testnet' ? 'md:border-2 md:border-orange-500' : ''}
-        md:my-2 md:mr-2 md:w-[calc(75%-8px)]`}
+        ${
+          networkType === 'testnet'
+            ? 'md:border-2 md:border-orange-500'
+            : 'border-neutral-300/55 lg:border'
+        }
+        md:my-0 md:mr-0 md:w-[calc(75%-8px)] lg:my-2 lg:mr-2 lg:rounded-2xl`}
       id="app-layout-container"
     >
       <div className="relative hidden md:block">
@@ -115,7 +119,7 @@ export const AppLayout = function ({ children }: Props) {
         <>
           <Backdrop onClick={() => setIsNavbarOpen(false)} />
           <div
-            className="shadow-navbar z-30 ml-2 hidden w-60 rounded-xl border border-neutral-300/55 bg-white p-1 md:absolute md:block lg:hidden"
+            className="shadow-navbar z-30 ml-2 mt-2 hidden rounded-xl bg-white p-1 md:absolute md:block lg:hidden"
             ref={ref}
           >
             <Navbar />

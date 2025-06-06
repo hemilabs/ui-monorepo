@@ -23,6 +23,7 @@
     "viem-erc20": "1.0.0"
   },
   "devDependencies": {
+    "@tsconfig/node20": "20.1.5",
     "@types/node": "20.12.12",
     "typescript": "5.6.3",
     "viem": "2.22.10",

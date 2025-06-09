@@ -149,6 +149,7 @@ const StakeAndEarnSpanish = () => (
 const componentsPerLanguage: Record<Locale, () => ReactElement> = {
   en: StakeAndEarnEnglish,
   es: StakeAndEarnSpanish,
+  pt: StakeAndEarnEnglish, // TO-DO: Create a Portuguese version
 }
 
 export const StakeAndEarn = function () {

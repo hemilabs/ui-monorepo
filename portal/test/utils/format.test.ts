@@ -70,6 +70,22 @@ describe('utils/format', function () {
       [5184000, 'es', 'hace 2 meses'],
       [31536000, 'es', 'hace 1 año'],
       [63072000, 'es', 'hace 2 años'],
+      [1, 'pt', 'há 1 segundo'],
+      [10, 'pt', 'há 10 segundos'],
+      [59, 'pt', 'há 59 segundos'],
+      [60, 'pt', 'há 1 minuto'],
+      [119, 'pt', 'há 2 minutos'],
+      [120, 'pt', 'há 2 minutos'],
+      [3600, 'pt', 'há 1 hora'],
+      [7200, 'pt', 'há 2 horas'],
+      [86400, 'pt', 'há 1 dia'],
+      [172800, 'pt', 'há 2 dias'],
+      [604800, 'pt', 'há 1 semana'],
+      [1209600, 'pt', 'há 2 semanas'],
+      [2592000, 'pt', 'há 1 mês'],
+      [5184000, 'pt', 'há 2 meses'],
+      [31536000, 'pt', 'há 1 ano'],
+      [63072000, 'pt', 'há 2 anos'],
     ]
 
     it.each(cases)(

@@ -334,6 +334,7 @@ const StakeSpanish = () => (
 const SvgContainer: Record<Locale, () => ReactElement> = {
   en: StakeEnglish,
   es: StakeSpanish,
+  pt: StakeEnglish, // TO-DO: Create a Portuguese version
 }
 
 export const StakeLink = function () {

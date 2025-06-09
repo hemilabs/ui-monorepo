@@ -121,6 +121,11 @@ if (errorTrackingDomain !== null) {
   downloadScriptsDomains.add(url)
 }
 
+const fontsDomain = [
+  'https://fonts.googleapis.com',
+  'https://fonts.gstatic.com',
+]
+
 const serveJson = {
   headers: [
     {
@@ -169,7 +174,9 @@ const serveJson = {
             ' ',
           )}; frame-src 'self' ${frameSrcUrls.join(
             ' ',
-          )}; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests`,
+          )}; frame-ancestors 'none'; block-all-mixed-content; upgrade-insecure-requests; font-src 'self' ${fontsDomain.join(
+            ' ',
+          )}; style-src-elem 'self' 'unsafe-inline' ${fontsDomain.join(' ')};`,
         },
       ],
       source: '**/*.*',

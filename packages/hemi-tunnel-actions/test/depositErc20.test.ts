@@ -1,40 +1,33 @@
 import { hemiSepolia } from 'hemi-viem'
 import { zeroAddress, zeroHash } from 'viem'
-import { writeContract } from 'viem/actions'
+import { writeContract, waitForTransactionReceipt } from 'viem/actions'
 import { sepolia } from 'viem/chains'
+import {
+  approveErc20Token,
+  getErc20TokenAllowance,
+  getErc20TokenBalance,
+} from 'viem-erc20/actions'
 import { describe, it, expect, vi } from 'vitest'
 
 import { depositErc20 } from '../src/depositErc20'
 
 vi.mock('viem/actions', () => ({
+  waitForTransactionReceipt: vi.fn(),
   writeContract: vi.fn(),
 }))
 
-const createL1PublicClient = ({
-  getErc20TokenAllowance = vi.fn(),
-  getErc20TokenBalance = vi.fn(),
-  waitForTransactionReceipt = vi.fn(),
-} = {}) => ({
-  extend: () => ({
-    getErc20TokenAllowance,
-    getErc20TokenBalance,
-    waitForTransactionReceipt,
-  }),
-})
-
-const createL1WalletClient = ({ approveErc20Token = vi.fn() } = {}) => ({
-  extend: () => ({
-    approveErc20Token,
-  }),
-})
+vi.mock('viem-erc20/actions', () => ({
+  approveErc20Token: vi.fn(),
+  getErc20TokenAllowance: vi.fn(),
+  getErc20TokenBalance: vi.fn(),
+}))
 
 const validParameters = {
   account: zeroAddress,
   amount: BigInt(100),
   l1Chain: sepolia,
-  l1PublicClient: createL1PublicClient(),
   l1TokenAddress: zeroAddress,
-  l1WalletClient: createL1WalletClient(),
+  l1WalletClient: {},
   l2Chain: hemiSepolia,
   l2TokenAddress: zeroAddress,
 }
@@ -105,13 +98,10 @@ describe('depositErc20', function () {
   })
 
   it('should emit "deposit-failed-validation" if the token does not have enough balance', async function () {
-    const l1PublicClient = createL1PublicClient({
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(50)),
-    })
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(50))
 
     const { emitter, promise } = depositErc20({
       ...validParameters,
-      l1PublicClient,
     })
 
     const depositFailedValidation = vi.fn()
@@ -125,23 +115,14 @@ describe('depositErc20', function () {
   })
 
   it('should emit "approve-failed" when the approval transaction receipt fails', async function () {
-    const l1PublicClient = createL1PublicClient({
-      getErc20TokenAllowance: vi.fn().mockResolvedValue(BigInt(0)),
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(200)),
-      waitForTransactionReceipt: vi
-        .fn()
-        .mockRejectedValue(new Error('Transaction receipt error')),
-    })
+    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
+    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockRejectedValue(
+      new Error('Transaction receipt error'),
+    )
 
-    const l1WalletClient = createL1WalletClient({
-      approveErc20Token: vi.fn().mockResolvedValue(zeroHash),
-    })
-
-    const { emitter, promise } = depositErc20({
-      ...validParameters,
-      l1PublicClient,
-      l1WalletClient,
-    })
+    const { emitter, promise } = depositErc20(validParameters)
 
     const onApproveFailed = vi.fn()
     const onSettled = vi.fn()
@@ -156,25 +137,15 @@ describe('depositErc20', function () {
   })
 
   it('should emit "approve-transaction-succeeded" and "deposit-transaction-succeeded" when approval and deposit succeeds', async function () {
-    const l1PublicClient = createL1PublicClient({
-      getErc20TokenAllowance: vi.fn().mockResolvedValue(BigInt(0)),
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(200)),
-      waitForTransactionReceipt: vi.fn().mockResolvedValue({
-        status: 'success',
-      }),
-    })
-
-    const l1WalletClient = createL1WalletClient({
-      approveErc20Token: vi.fn().mockResolvedValue(zeroHash),
-    })
-
+    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
+    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
-
-    const { emitter, promise } = depositErc20({
-      ...validParameters,
-      l1PublicClient,
-      l1WalletClient,
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+      status: 'success',
     })
+
+    const { emitter, promise } = depositErc20(validParameters)
 
     const onApprove = vi.fn()
     const approveTransactionSucceeded = vi.fn()
@@ -196,18 +167,12 @@ describe('depositErc20', function () {
   })
 
   it('should support approving a custom amount', async function () {
-    const l1PublicClient = createL1PublicClient({
-      getErc20TokenAllowance: vi.fn().mockResolvedValue(BigInt(0)),
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(200)),
-      waitForTransactionReceipt: vi.fn().mockResolvedValue({
-        status: 'success',
-      }),
+    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
+    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+      status: 'success',
     })
-    const approveErc20Token = vi.fn().mockResolvedValue(zeroHash)
-    const l1WalletClient = createL1WalletClient({
-      approveErc20Token,
-    })
-
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
 
     const approvalAmount = BigInt(1000)
@@ -215,8 +180,6 @@ describe('depositErc20', function () {
     const { emitter, promise } = depositErc20({
       ...validParameters,
       approvalAmount,
-      l1PublicClient,
-      l1WalletClient,
     })
 
     const onApprove = vi.fn()
@@ -231,11 +194,14 @@ describe('depositErc20', function () {
 
     await promise
 
-    expect(approveErc20Token).toHaveBeenCalledExactlyOnceWith({
-      address: zeroAddress,
-      amount: approvalAmount,
-      spender: hemiSepolia.contracts.l1StandardBridge[sepolia.id].address,
-    })
+    expect(approveErc20Token).toHaveBeenCalledExactlyOnceWith(
+      expect.any(Object), // the publicClient
+      {
+        address: zeroAddress,
+        amount: approvalAmount,
+        spender: hemiSepolia.contracts.l1StandardBridge[sepolia.id].address,
+      },
+    )
     expect(onApprove).toHaveBeenCalledOnce()
     expect(approveTransactionSucceeded).toHaveBeenCalledOnce()
     expect(depositTransactionSucceeded).toHaveBeenCalledOnce()
@@ -244,20 +210,11 @@ describe('depositErc20', function () {
   })
 
   it('should emit "user-signing-approve-error" when approval fails', async function () {
-    const l1PublicClient = createL1PublicClient({
-      getErc20TokenAllowance: vi.fn().mockResolvedValue(BigInt(0)),
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(200)),
-    })
+    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
+    vi.mocked(approveErc20Token).mockRejectedValue(new Error('Approval error'))
 
-    const l1WalletClient = createL1WalletClient({
-      approveErc20Token: vi.fn().mockRejectedValue(new Error('Approval error')),
-    })
-
-    const { emitter, promise } = depositErc20({
-      ...validParameters,
-      l1PublicClient,
-      l1WalletClient,
-    })
+    const { emitter, promise } = depositErc20(validParameters)
 
     const onApprove = vi.fn()
     const userSigningApproveError = vi.fn()
@@ -277,23 +234,14 @@ describe('depositErc20', function () {
   })
 
   it('should emit "approve-transaction-reverted" when approval transaction reverts', async function () {
-    const l1PublicClient = createL1PublicClient({
-      getErc20TokenAllowance: vi.fn().mockResolvedValue(BigInt(0)),
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(200)),
-      waitForTransactionReceipt: vi.fn().mockResolvedValue({
-        status: 'reverted',
-      }),
+    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
+    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue({
+      status: 'reverted',
     })
 
-    const l1WalletClient = createL1WalletClient({
-      approveErc20Token: vi.fn().mockResolvedValue(zeroHash),
-    })
-
-    const { emitter, promise } = depositErc20({
-      ...validParameters,
-      l1PublicClient,
-      l1WalletClient,
-    })
+    const { emitter, promise } = depositErc20(validParameters)
 
     const onApprove = vi.fn()
     const approveTransactionReverted = vi.fn()
@@ -313,20 +261,11 @@ describe('depositErc20', function () {
   })
 
   it('should emit "user-signing-deposit-error" when deposit signing fails', async function () {
-    const l1PublicClient = createL1PublicClient({
-      getErc20TokenAllowance: vi.fn().mockResolvedValue(BigInt(200)),
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(200)),
-    })
-
-    const l1WalletClient = createL1WalletClient()
-
+    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(200))
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
     vi.mocked(writeContract).mockRejectedValue(new Error('Signing error'))
 
-    const { emitter, promise } = depositErc20({
-      ...validParameters,
-      l1PublicClient,
-      l1WalletClient,
-    })
+    const { emitter, promise } = depositErc20(validParameters)
 
     const onDeposit = vi.fn()
     const userSigningDepositError = vi.fn()
@@ -345,22 +284,12 @@ describe('depositErc20', function () {
   })
 
   it('should emit "deposit-transaction-reverted" when deposit transaction reverts', async function () {
-    const l1PublicClient = createL1PublicClient({
-      getErc20TokenAllowance: vi.fn().mockResolvedValue(BigInt(200)),
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(200)),
-      waitForTransactionReceipt: vi.fn().mockResolvedValue({
-        status: 'reverted',
-      }),
-    })
-
-    const l1WalletClient = createL1WalletClient()
-
+    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(200))
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
 
     const { emitter, promise } = depositErc20({
       ...validParameters,
-      l1PublicClient,
-      l1WalletClient,
     })
 
     const onDeposit = vi.fn()

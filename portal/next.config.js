@@ -40,7 +40,6 @@ const nextConfig = {
     'btc-wallet',
     'hemi-tunnel-actions',
     'hemi-viem-stake-actions',
-    'viem-erc20',
   ],
   webpack(config) {
     config.resolve.fallback = { fs: false, net: false, tls: false }

@@ -7,6 +7,7 @@ import {
   isAddress,
   PublicClient,
 } from 'viem'
+import { waitForTransactionReceipt } from 'viem/actions'
 
 import { DepositEvents } from './types'
 
@@ -80,13 +81,14 @@ export const handleWaitDeposit = async function <T extends DepositEvents>({
 }) {
   emitter.emit('user-signed-deposit', hash)
 
-  const depositReceipt = await publicClient
-    .waitForTransactionReceipt({
-      hash,
-    })
-    .catch(function (err) {
-      emitter.emit('deposit-failed', err)
-    })
+  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+  const depositReceipt = await waitForTransactionReceipt(publicClient, {
+    hash,
+  }).catch(function (err) {
+    emitter.emit('deposit-failed', err)
+  })
   if (!depositReceipt) {
     return
   }

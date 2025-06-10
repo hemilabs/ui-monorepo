@@ -1,7 +1,12 @@
 import { hemiSepolia } from 'hemi-viem'
-import { type PublicClient, WalletClient, zeroAddress, zeroHash } from 'viem'
-import { writeContract } from 'viem/actions'
+import { zeroAddress, zeroHash } from 'viem'
+import {
+  writeContract,
+  waitForTransactionReceipt,
+  getBalance,
+} from 'viem/actions'
 import { sepolia } from 'viem/chains'
+import { getErc20TokenBalance } from 'viem-erc20/actions'
 import { describe, it, expect, vi } from 'vitest'
 
 import {
@@ -9,31 +14,24 @@ import {
   initiateWithdrawEth,
 } from '../src/initiateWithdraw'
 
-vi.mock('viem/actions', () => ({
-  writeContract: vi.fn(),
+vi.mock('viem-erc20/actions', () => ({
+  getErc20TokenBalance: vi.fn(),
 }))
 
-const createL2PublicClient = ({
-  getBalance = vi.fn().mockResolvedValue(BigInt(1000)),
-  getErc20TokenBalance = vi.fn().mockResolvedValue(BigInt(1000)),
-  waitForTransactionReceipt = vi.fn().mockResolvedValue({ status: 'success' }),
-} = {}): PublicClient =>
-  ({
-    extend: vi.fn().mockReturnValue({
-      getErc20TokenBalance,
-    }),
-    getBalance,
-    waitForTransactionReceipt,
-  }) as PublicClient
+vi.mock('viem/actions', () => ({
+  getBalance: vi.fn(),
+  waitForTransactionReceipt: vi.fn(),
+  writeContract: vi.fn(),
+}))
 
 const validParameters = {
   account: zeroAddress,
   amount: BigInt(100),
   l1Chain: sepolia,
   l2Chain: hemiSepolia,
-  l2PublicClient: createL2PublicClient(),
+  l2PublicClient: {},
   l2TokenAddress: zeroAddress,
-  l2WalletClient: {} as WalletClient,
+  l2WalletClient: {},
 }
 
 const runCommonTests = function (
@@ -123,17 +121,14 @@ const runCommonTests = function (
     const receipt = { status: 'success' }
     const amount = BigInt(1)
 
-    const l2PublicClient = createL2PublicClient({
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(1000)),
-      waitForTransactionReceipt: vi.fn().mockResolvedValue(receipt),
-    })
-
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue(receipt)
 
     const { emitter, promise } = initiateWithdraw({
       ...validParameters,
       amount,
-      l2PublicClient,
     })
 
     const onWithdraw = vi.fn()
@@ -169,17 +164,13 @@ const runCommonTests = function (
   it('should emit "user-signing-withdraw-error" when signing fails', async function () {
     const amount = BigInt(1)
 
-    const l2PublicClient = createL2PublicClient({
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(1000)),
-      waitForTransactionReceipt: vi.fn(),
-    })
-
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(writeContract).mockRejectedValue(new Error('Signing error'))
 
     const { emitter, promise } = initiateWithdraw({
       ...validParameters,
       amount,
-      l2PublicClient,
     })
 
     const onWithdrawCallback = vi.fn()
@@ -200,19 +191,16 @@ const runCommonTests = function (
   it('should emit "withdraw-failed" when transaction receipt fails', async function () {
     const amount = BigInt(1)
 
-    const l2PublicClient = createL2PublicClient({
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(1000)),
-      waitForTransactionReceipt: vi
-        .fn()
-        .mockRejectedValue(new Error('Transaction receipt error')),
-    })
-
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockRejectedValue(
+      new Error('Transaction receipt error'),
+    )
 
     const { emitter, promise } = initiateWithdraw({
       ...validParameters,
       amount,
-      l2PublicClient,
     })
 
     const onWithdraw = vi.fn()
@@ -237,17 +225,14 @@ const runCommonTests = function (
     const receipt = { status: 'reverted' }
     const amount = BigInt(1)
 
-    const l2PublicClient = createL2PublicClient({
-      getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(1000)),
-      waitForTransactionReceipt: vi.fn().mockResolvedValue(receipt),
-    })
-
+    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue(receipt)
 
     const { emitter, promise } = initiateWithdraw({
       ...validParameters,
       amount,
-      l2PublicClient,
     })
 
     const onWithdraw = vi.fn()
@@ -280,14 +265,9 @@ describe('withdraw', function () {
     runCommonTests(initiateWithdrawEth)
 
     it('should emit "withdraw-failed-validation" if the account balance is insufficient', async function () {
-      const l2PublicClient = createL2PublicClient({
-        getBalance: vi.fn().mockResolvedValue(BigInt(50)),
-      })
+      vi.mocked(getBalance).mockResolvedValue(BigInt(50))
 
-      const { emitter, promise } = initiateWithdrawEth({
-        ...validParameters,
-        l2PublicClient,
-      })
+      const { emitter, promise } = initiateWithdrawEth(validParameters)
 
       const failedValidation = vi.fn()
       const onSettled = vi.fn()
@@ -304,14 +284,9 @@ describe('withdraw', function () {
     })
 
     it('should emit "withdraw-failed-validation" if the account balance is the same as the withdrawn amount', async function () {
-      const l2PublicClient = createL2PublicClient({
-        getBalance: vi.fn().mockResolvedValue(BigInt(validParameters.amount)),
-      })
+      vi.mocked(getBalance).mockResolvedValue(BigInt(validParameters.amount))
 
-      const { emitter, promise } = initiateWithdrawEth({
-        ...validParameters,
-        l2PublicClient,
-      })
+      const { emitter, promise } = initiateWithdrawEth(validParameters)
 
       const failedValidation = vi.fn()
       const onSettled = vi.fn()
@@ -333,14 +308,9 @@ describe('withdraw', function () {
     runCommonTests(initiateWithdrawErc20)
 
     it('should emit "withdraw-failed-validation" if the account balance is insufficient', async function () {
-      const l2PublicClient = createL2PublicClient({
-        getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(50)),
-      })
+      vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(50))
 
-      const { emitter, promise } = initiateWithdrawErc20({
-        ...validParameters,
-        l2PublicClient,
-      })
+      const { emitter, promise } = initiateWithdrawErc20(validParameters)
 
       const failedValidation = vi.fn()
       const onSettled = vi.fn()
@@ -357,15 +327,10 @@ describe('withdraw', function () {
     })
 
     it('should emit "withdraw-failed-validation" if the account ETH balance is zero', async function () {
-      const l2PublicClient = createL2PublicClient({
-        getBalance: vi.fn().mockResolvedValue(BigInt(0)),
-        getErc20TokenBalance: vi.fn().mockResolvedValue(BigInt(100)),
-      })
+      vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
+      vi.mocked(getBalance).mockResolvedValue(BigInt(0))
 
-      const { emitter, promise } = initiateWithdrawErc20({
-        ...validParameters,
-        l2PublicClient,
-      })
+      const { emitter, promise } = initiateWithdrawErc20(validParameters)
 
       const failedValidation = vi.fn()
       const onSettled = vi.fn()

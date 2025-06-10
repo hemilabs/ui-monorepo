@@ -6,7 +6,7 @@ import {
   type PublicClient,
   type WalletClient,
 } from 'viem'
-import { writeContract } from 'viem/actions'
+import { getBalance, writeContract } from 'viem/actions'
 
 import { l1StandardBridgeAbi } from './abis'
 import { DepositEvents } from './types'
@@ -43,7 +43,10 @@ const canDepositEth = async function ({
     return { canDeposit: false, reason }
   }
 
-  const balance = await l1PublicClient.getBalance({ address: account })
+  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+  const balance = await getBalance(l1PublicClient, { address: account })
   if (amount >= balance) {
     return { canDeposit: false, reason: 'insufficient balance' }
   }

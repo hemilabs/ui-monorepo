@@ -6,8 +6,12 @@ import {
   PublicClient,
   WalletClient,
 } from 'viem'
-import { writeContract } from 'viem/actions'
-import { erc20PublicActions } from 'viem-erc20'
+import {
+  getBalance,
+  waitForTransactionReceipt,
+  writeContract,
+} from 'viem/actions'
+import { getErc20TokenBalance } from 'viem-erc20/actions'
 
 import { l2BridgeAbi } from './abis'
 import { WithdrawEvents } from './types'
@@ -22,7 +26,10 @@ const getErc20Balance = ({
   publicClient: PublicClient
   tokenAddress: Address
 }) =>
-  publicClient.extend(erc20PublicActions()).getErc20TokenBalance({
+  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+  getErc20TokenBalance(publicClient, {
     account,
     address: tokenAddress,
   })
@@ -33,7 +40,11 @@ const getEthBalance = ({
 }: {
   account: Address
   publicClient: PublicClient
-}) => publicClient.getBalance({ address: account })
+}) =>
+  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+  getBalance(publicClient, { address: account })
 
 const canInitiateWithdraw = async function ({
   account,
@@ -137,13 +148,17 @@ const runInitiateWithdraw = ({
 
       emitter.emit('user-signed-withdraw', hash)
 
-      const withdrawalReceipt = await l2PublicClient
-        .waitForTransactionReceipt({
+      const withdrawalReceipt = await waitForTransactionReceipt(
+        // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+        l2PublicClient,
+        {
           hash,
-        })
-        .catch(function (err) {
-          emitter.emit('withdraw-failed', err)
-        })
+        },
+      ).catch(function (err) {
+        emitter.emit('withdraw-failed', err)
+      })
       if (!withdrawalReceipt) {
         return
       }

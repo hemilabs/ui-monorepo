@@ -1,29 +1,26 @@
 import { hemiSepolia } from 'hemi-viem'
 import { type PublicClient, WalletClient, zeroAddress, zeroHash } from 'viem'
-import { writeContract } from 'viem/actions'
+import {
+  getBalance,
+  waitForTransactionReceipt,
+  writeContract,
+} from 'viem/actions'
 import { sepolia } from 'viem/chains'
 import { describe, it, expect, vi } from 'vitest'
 
 import { depositEth } from '../src/depositEth'
 
 vi.mock('viem/actions', () => ({
+  getBalance: vi.fn(),
+  waitForTransactionReceipt: vi.fn(),
   writeContract: vi.fn(),
 }))
-
-const createL1PublicClient = ({
-  getBalance = vi.fn().mockResolvedValue(BigInt(1000)),
-  waitForTransactionReceipt = vi.fn().mockResolvedValue({ status: 'success' }),
-} = {}): PublicClient =>
-  ({
-    getBalance,
-    waitForTransactionReceipt,
-  }) as PublicClient
 
 const validParameters = {
   account: zeroAddress,
   amount: BigInt(100),
   l1Chain: sepolia,
-  l1PublicClient: createL1PublicClient(),
+  l1PublicClient: {} as PublicClient,
   l1WalletClient: {} as WalletClient,
   l2Chain: hemiSepolia,
 }
@@ -94,14 +91,9 @@ describe('depositEth', function () {
   })
 
   it('should emit "deposit-failed-validation" if the account balance is insufficient', async function () {
-    const l1PublicClient = createL1PublicClient({
-      getBalance: vi.fn().mockResolvedValue(BigInt(50)),
-    })
+    vi.mocked(getBalance).mockResolvedValue(BigInt(50))
 
-    const { emitter, promise } = depositEth({
-      ...validParameters,
-      l1PublicClient,
-    })
+    const { emitter, promise } = depositEth(validParameters)
 
     const failedValidation = vi.fn()
     emitter.on('deposit-failed-validation', failedValidation)
@@ -115,14 +107,11 @@ describe('depositEth', function () {
 
   it('should emit "deposit-failed-validation" if the deposited amount is the same as the account balance', async function () {
     const amount = BigInt(100)
-    const l1PublicClient = createL1PublicClient({
-      getBalance: vi.fn().mockResolvedValue(amount),
-    })
+    vi.mocked(getBalance).mockResolvedValue(amount)
 
     const { emitter, promise } = depositEth({
       ...validParameters,
       amount,
-      l1PublicClient,
     })
 
     const failedValidation = vi.fn()
@@ -139,17 +128,13 @@ describe('depositEth', function () {
     const receipt = { status: 'success' }
     const amount = BigInt(1)
 
-    const l1PublicClient = createL1PublicClient({
-      getBalance: vi.fn().mockResolvedValue(BigInt(1000)),
-      waitForTransactionReceipt: vi.fn().mockResolvedValue(receipt),
-    })
-
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue(receipt)
 
     const { emitter, promise } = depositEth({
       ...validParameters,
       amount,
-      l1PublicClient,
     })
 
     const onDeposit = vi.fn()
@@ -182,17 +167,10 @@ describe('depositEth', function () {
   })
 
   it('should emit "user-signing-error" when signing fails', async function () {
-    const l1PublicClient = createL1PublicClient({
-      getBalance: vi.fn().mockResolvedValue(BigInt(1000)),
-      waitForTransactionReceipt: vi.fn(),
-    })
-
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(writeContract).mockRejectedValue(new Error('Signing error'))
 
-    const { emitter, promise } = depositEth({
-      ...validParameters,
-      l1PublicClient,
-    })
+    const { emitter, promise } = depositEth(validParameters)
 
     const onDepositCallback = vi.fn()
     const onSigningError = vi.fn()
@@ -210,19 +188,13 @@ describe('depositEth', function () {
   })
 
   it('should emit "deposit-failed" when transaction receipt fails', async function () {
-    const l1PublicClient = createL1PublicClient({
-      getBalance: vi.fn().mockResolvedValue(BigInt(1000)),
-      waitForTransactionReceipt: vi
-        .fn()
-        .mockRejectedValue(new Error('Transaction receipt error')),
-    })
-
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockRejectedValue(
+      new Error('Transaction receipt error'),
+    )
 
-    const { emitter, promise } = depositEth({
-      ...validParameters,
-      l1PublicClient,
-    })
+    const { emitter, promise } = depositEth(validParameters)
 
     const onDeposit = vi.fn()
     const onUserSignedTransaction = vi.fn()
@@ -245,17 +217,11 @@ describe('depositEth', function () {
   it('should emit "deposit-transaction-reverted" when transaction reverts', async function () {
     const receipt = { status: 'reverted' }
 
-    const l1PublicClient = createL1PublicClient({
-      getBalance: vi.fn().mockResolvedValue(BigInt(1000)),
-      waitForTransactionReceipt: vi.fn().mockResolvedValue(receipt),
-    })
-
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue(receipt)
 
-    const { emitter, promise } = depositEth({
-      ...validParameters,
-      l1PublicClient,
-    })
+    const { emitter, promise } = depositEth(validParameters)
 
     const onDeposit = vi.fn()
     const onUserSignedTransaction = vi.fn()

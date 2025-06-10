@@ -73,7 +73,7 @@ export const EarnCard = function () {
   }
 
   return (
-    <div className="group/card-image h-22 fixed bottom-8 right-8 z-10 max-w-64 cursor-pointer">
+    <div className="group/card-image h-22 fixed bottom-8 right-8 z-20 max-w-64 cursor-pointer">
       <ExternalLink href={absintheUrl} onClick={navigate}>
         <EarnPoints className="absolute opacity-100 transition-opacity duration-300 group-hover/card-image:opacity-0" />
         <EarnPointsHovered className="opacity-0 transition-opacity duration-300 group-hover/card-image:visible group-hover/card-image:opacity-100" />

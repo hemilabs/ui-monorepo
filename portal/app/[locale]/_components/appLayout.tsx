@@ -34,7 +34,8 @@ const Backdrop = ({ onClick }) => (
   <div
     className="absolute left-0 top-0 z-20
     h-screen w-screen bg-gradient-to-b
-    from-neutral-950/0 to-neutral-950/25"
+    from-neutral-950/0 to-neutral-950/25
+    lg:hidden"
     onClick={onClick}
   />
 )
@@ -119,7 +120,7 @@ export const AppLayout = function ({ children }: Props) {
         <>
           <Backdrop onClick={() => setIsNavbarOpen(false)} />
           <div
-            className="shadow-navbar z-30 ml-2 mt-2 hidden rounded-xl bg-white p-1 md:absolute md:block lg:hidden"
+            className="shadow-navbar z-30 ml-2 mt-2 hidden  h-[calc(100dvh-16px)] overflow-hidden rounded-xl bg-white p-1 md:absolute md:block lg:hidden"
             ref={ref}
           >
             <Navbar />

@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import React from 'react'
 import Skeleton from 'react-loading-skeleton'
 
+import { Amount } from './amount'
 import { DollarSign } from './dollarSign'
 import { HemiLogo } from './hemiLogo'
 
@@ -47,9 +48,14 @@ export const Tvl = function () {
               {isPending ? (
                 <Skeleton baseColor="#262626" highlightColor="#303030" />
               ) : (
-                <span className="font-inter-display text-2xl font-semibold text-white">
-                  {getAmount()}
-                </span>
+                <>
+                  <span className="hidden lg:block">
+                    <Amount value={`${getAmount()}`} />
+                  </span>
+                  <span className="font-inter-display text-2xl font-semibold text-white lg:hidden">
+                    {getAmount()}
+                  </span>
+                </>
               )}
             </div>
           </div>

@@ -3,11 +3,12 @@ import { Link } from 'components/link'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'i18n/navigation'
+import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import React from 'react'
 
+import hemiLogo from './_images/hemiLogo.png'
 import { Background } from './background'
-import { HemiLogo } from './hemiLogo'
 
 export const GetStarted = function () {
   const [networkType] = useNetworkType()
@@ -50,7 +51,9 @@ export const GetStarted = function () {
             group-hover/item:[&>g>rect]:fill-orange-50`}
           />
           <div className="absolute left-0 top-0 flex h-full w-full flex-col justify-between">
-            <HemiLogo className="m-auto mt-7" />
+            <div className="m-auto mt-7">
+              <Image alt={'hemi-logo'} className="size-13" src={hemiLogo} />
+            </div>
             <div className="flex flex-col justify-center px-4 pb-4">
               <div className="flex items-center">
                 <span className="text-base text-neutral-950">

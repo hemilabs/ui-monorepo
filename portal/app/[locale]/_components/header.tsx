@@ -57,8 +57,8 @@ export const Header = function ({
       </div>
       <div className="size-13 hidden items-center justify-center border-r border-neutral-300/55 md:flex lg:hidden">
         <div
-          className="hidden size-7 cursor-pointer items-center justify-center
-          rounded-lg border border-neutral-300/55 md:flex"
+          className="shadow-soft hidden size-7 cursor-pointer items-center
+          justify-center rounded-lg border border-neutral-300/55 bg-white md:flex"
           onClick={() => setIsNavbarOpen(true)}
         >
           <HamburgerIcon />

@@ -66,7 +66,7 @@ export const AppLayout = function ({ children }: Props) {
     <div
       className={`
         shadow-hemi-layout backdrop-blur-20 relative flex h-full
-        w-3/4 flex-1 flex-col self-stretch overflow-y-hidden bg-neutral-50 md:h-[calc(100dvh-16px)]
+        w-3/4 flex-1 flex-col self-stretch overflow-y-hidden bg-neutral-50 lg:h-[calc(100dvh-16px)]
         ${
           networkType === 'testnet'
             ? 'md:border-2 md:border-orange-500'

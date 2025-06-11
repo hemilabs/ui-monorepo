@@ -32,6 +32,7 @@ type Props = {
     | 'seeds'
     | 'x2-eigenpie-points'
     | 'x2-babypie-jewels'
+    | 'x2point5-river-points'
   icon: ReactNode
   style?: CSSProperties
   textColor:
@@ -218,7 +219,7 @@ export const RiverPoints = () => (
   <PointsTag
     backgroundColor="bg-black"
     icon={<RiverPointsIcon />}
-    label="points"
+    label="x2point5-river-points"
     textColor="text-white"
   />
 )

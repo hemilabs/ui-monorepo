@@ -1,6 +1,10 @@
+import { useBitcoin } from 'hooks/useBitcoin'
+import { useNetworkType } from 'hooks/useNetworkType'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { Token } from 'types/token'
+import { isBtcNetworkId } from 'utils/chain'
+import { getNativeToken } from 'utils/nativeToken'
 
 import { CustomTokenLogo } from './customTokenLogo'
 import { HemiSubLogo } from './hemiSubLogo'
@@ -26,6 +30,9 @@ const MaxRetries = 5
 export function TokenLogo({ size, token }: Props) {
   const [imageState, setImageState] = useState<ImageState>('idle')
   const [retry, setRetry] = useState(0)
+  const [networkType] = useNetworkType()
+  const bitcoinChain = useBitcoin()
+  const bitcoinToken = getNativeToken(bitcoinChain.id)
 
   useEffect(
     function retryImageEffect() {
@@ -43,9 +50,14 @@ export function TokenLogo({ size, token }: Props) {
     [imageState, retry, setRetry, setImageState],
   )
 
-  // BTC and tBTC are special cases
-  // We use a preset logo for them
-  if (['btc', 'tbtc'].includes(token.symbol.toLowerCase())) {
+  // BTC and tBTC have special logo rendering.
+  // On Hemi (mainnet), only BTC uses the preset logo because tBTC represents a different token.
+  // On Hemi Sepolia (testnet), both BTC and tBTC use the preset logo.
+  const isTestnet = networkType === 'testnet'
+  const isHemiBtc =
+    token.extensions.bridgeInfo?.[bitcoinToken.chainId]?.tokenAddress ===
+    bitcoinToken.address
+  if (isBtcNetworkId(token.chainId) || (isTestnet && isHemiBtc)) {
     return (
       <div className={`relative ${sizes[size]}`}>
         <div className="flex h-full w-full items-center justify-center">

@@ -73,7 +73,7 @@
       "second-line": "Não utilize a aplicação móvel UniSat."
     }
   },
-  "demos": {
+  "ecosystem": {
     "bitcoin-kit": {
       "heading": "Demonstração do Hemi Bitcoin Kit",
       "sub-heading": "Demonstração de construção em Bitcoin com Hemi utilizando o Bitcoin Kit"
@@ -86,7 +86,7 @@
       "heading": "DEMOS",
       "sub-heading": "Soluções de verificação biométrica para aplicações Web3."
     },
-    "heading": "Demonstrações",
+    "heading": "Ecosistema",
     "hemihatchlings": {
       "heading": "Hemi Hatchlings",
       "sub-heading": "Saiba como funciona a finalidade de Ethereum e Bitcoin"
@@ -95,7 +95,7 @@
       "heading": "Pure Finance",
       "sub-heading": "Utilidade e interação com contratos inteligentes diretamente na rede Hemi"
     },
-    "sub-heading": "Aprenda e explore com as demonstrações para programadores Hemi"
+    "sub-heading": "Aprenda e explore com o ecosistema para programadores Hemi"
   },
   "error-pages": {
     "not-found": {
@@ -176,9 +176,23 @@
   },
   "navbar": {
     "agree-to-terms-and-policy": "Ao utilizar esta aplicação, concorda com os <terms>Termos de Utilização</terms> e a <policy>Política de Privacidade</policy>",
-    "bitcoinkit": "Hemi Bitcoin Kit",
+    "bitcoinkit": "Hemi Bitcoin Kit (hBK)",
     "data-attribution": "Dados fornecidos por <link>CoinMarketCap.com</link>",
-    "demos": "Demonstrações",
+    "dex": {
+      "1delta": "1delta",
+      "aggregators": "Agregadores",
+      "atlas": "Atlas",
+      "dodo": "Dodo",
+      "eisen": "Eisen",
+      "izumi": "Izumi",
+      "oku": "Oku (uni)",
+      "passdex": "Passdex",
+      "subtitle": "DEXs",
+      "sushi": "Sushi",
+      "title": "DEX"
+    },
+    "docs": "Documentação",
+    "ecosystem": "Ecosistema",
     "explorer": "Explorador",
     "get-started": "Começar",
     "help": {
@@ -190,13 +204,14 @@
         "pt": "Português"
       }
     },
-    "hemidocs": "Documentação Hemi",
+    "learn-how-to-start": "Aprenda como começar a usar a rede Hemi",
     "network": "Rede",
     "network-status": "Estado da Rede",
     "swap": "Troca",
     "stake": "Apostar",
     "tools": "Ferramentas",
-    "tunnel": "Túnel"
+    "tunnel": "Túnel",
+    "tvl": "TVL na Hemi"
   },
   "stake-page": {
     "asset": "Ativo",

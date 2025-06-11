@@ -58,8 +58,6 @@ export const AppLayout = function ({ children }: Props) {
     [networkType, pathname, setIsMenuOpen],
   )
 
-  // Footer is only visible if at least one chain is connected
-  const showFooter = !allDisconnected
   return (
     <div
       className={`

@@ -122,6 +122,29 @@ const ExternalLink = function ({
   )
 }
 
+const HemiSwapLink = function ({
+  event,
+  text,
+}: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
+  const [networkType] = useNetworkType()
+  const { track } = useUmami()
+  const addTracking = () =>
+    track ? () => track(event, { chain: networkType }) : undefined
+  return (
+    <div className="group/nav cursor-pointer rounded-md py-2 transition-colors duration-300 hover:bg-neutral-100">
+      <AnchorTag href="https://swap.hemi.xyz" onClick={addTracking()}>
+        <Row>
+          <IconContainer>{<DexIcon />}</IconContainer>
+          <ItemText text={text} />
+          <div className="ml-auto hidden size-4 items-center group-hover/nav:flex">
+            <ArrowDownLeftIcon />
+          </div>
+        </Row>
+      </AnchorTag>
+    </div>
+  )
+}
+
 const Backdrop = ({ onClick }) => (
   <div
     className="absolute left-0 top-0 z-20
@@ -140,12 +163,7 @@ export const Dex = function () {
   const isTestnet = networkType === 'testnet'
 
   return isTestnet ? (
-    <ExternalLink
-      event="nav - dex"
-      href="https://swap.hemi.xyz"
-      icon={<DexIcon />}
-      text={t('title')}
-    />
+    <HemiSwapLink event="nav - dex" text={t('title')} />
   ) : (
     <div
       className={`group/nav cursor-pointer rounded-md py-2 transition-colors duration-300 ${

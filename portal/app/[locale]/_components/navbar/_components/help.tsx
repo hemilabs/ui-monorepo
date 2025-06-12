@@ -12,6 +12,7 @@ import { locales } from 'i18n/routing'
 import { useSearchParams } from 'next/navigation'
 import { Locale, useLocale, useTranslations } from 'next-intl'
 import { ComponentProps, ReactNode, RefObject, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 import { CmcAttribution } from './cmcAttribution'
 import { TermsAndConditions } from './termsAndConditions'
@@ -222,30 +223,32 @@ export const Help = function () {
         />
       </div>
 
-      {isOpen && (
-        <div
-          className="shadow-help-menu absolute bottom-0 left-0
+      {isOpen &&
+        createPortal(
+          <div
+            className="shadow-help-menu absolute bottom-0 left-0
           z-30 flex h-36 w-full
           flex-col items-start rounded-t-2xl
           border border-neutral-300/55 bg-white p-4
           md:top-0 md:h-fit md:w-64 md:translate-x-52
           md:translate-y-16 md:rounded-lg md:p-1"
-        >
-          <ItemWithSubmenu
-            event="nav - language"
-            icon={<LanguageIcon className="h-5 w-5 md:h-4 md:w-4" />}
-            subMenu={<LanguageMenu active={activeLocale} />}
-            text={t('language')}
-            value={t(`locales.${activeLocale}`)}
-          />
-          <ItemWithSubmenu
-            event="nav - legal and privacy"
-            icon={<LegalIcon className="h-5 w-5 md:h-4 md:w-4" />}
-            subMenu={<LegalAndPrivacy />}
-            text={t('legal-and-privacy')}
-          />
-        </div>
-      )}
+          >
+            <ItemWithSubmenu
+              event="nav - language"
+              icon={<LanguageIcon className="h-5 w-5 md:h-4 md:w-4" />}
+              subMenu={<LanguageMenu active={activeLocale} />}
+              text={t('language')}
+              value={t(`locales.${activeLocale}`)}
+            />
+            <ItemWithSubmenu
+              event="nav - legal and privacy"
+              icon={<LegalIcon className="h-5 w-5 md:h-4 md:w-4" />}
+              subMenu={<LegalAndPrivacy />}
+              text={t('legal-and-privacy')}
+            />
+          </div>,
+          document.getElementById('app-layout-container'),
+        )}
     </div>
   )
 }

@@ -111,7 +111,7 @@ export const AppLayout = function ({ children }: Props) {
         <>
           <Backdrop onClick={() => setIsNavbarOpen(false)} />
           <div
-            className="shadow-navbar z-30 ml-2 mt-2 hidden  h-[calc(100dvh-16px)] overflow-hidden rounded-xl bg-white p-1 md:absolute md:block lg:hidden"
+            className="shadow-navbar z-30 ml-2 mt-2 hidden  h-[calc(100dvh-16px)] rounded-xl bg-white p-1 md:absolute md:block lg:hidden"
             ref={ref}
           >
             <Navbar />

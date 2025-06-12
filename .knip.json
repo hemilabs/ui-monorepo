@@ -20,6 +20,9 @@
     },
     "subgraphs/hemi-tunnel-withdrawals-subgraph": {
       "entry": "src/mappings/*.ts"
+    },
+    "subgraphs/hemi-tunnel-withdrawals-proof-claim-subgraph": {
+      "entry": "src/mappings/*.ts"
     }
   }
 }

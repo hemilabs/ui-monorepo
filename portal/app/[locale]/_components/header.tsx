@@ -5,6 +5,7 @@ import { StakeTabs } from 'components/stakeTabs'
 import { TunnelTabs } from 'components/tunnelTabs'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import dynamic from 'next/dynamic'
+import { Dispatch, SetStateAction } from 'react'
 
 import { Badge } from './navbar/_components/badge'
 
@@ -32,14 +33,20 @@ const HemiSymbol = () => (
 
 type Props = {
   isMenuOpen: boolean
+  setIsNavbarOpen: Dispatch<SetStateAction<boolean>>
   toggleMenu: () => void
 }
 
-export const Header = function ({ isMenuOpen, toggleMenu }: Props) {
+export const Header = function ({
+  isMenuOpen,
+  setIsNavbarOpen,
+  toggleMenu,
+}: Props) {
   const href = useTunnelOperationByConnectedWallet()
+
   return (
     <header
-      className="md:h-17 md:py-4.5 flex h-14 items-center border-b border-solid
+      className="md:h-13 md:py-4.5 flex h-14 items-center border-b border-solid
      border-neutral-300/55 bg-white px-3 py-3 md:bg-transparent md:px-0"
     >
       <div className="flex items-center gap-x-2 md:hidden">
@@ -47,6 +54,15 @@ export const Header = function ({ isMenuOpen, toggleMenu }: Props) {
           <HemiSymbol />
         </Link>
         <Badge />
+      </div>
+      <div className="size-13 hidden items-center justify-center border-r border-neutral-300/55 md:flex lg:hidden">
+        <div
+          className="shadow-soft hidden size-7 cursor-pointer items-center
+          justify-center rounded-lg border border-neutral-300/55 bg-white md:flex"
+          onClick={() => setIsNavbarOpen(true)}
+        >
+          <HamburgerIcon />
+        </div>
       </div>
       <div className="hidden pl-6 md:block">
         <StakeTabs />

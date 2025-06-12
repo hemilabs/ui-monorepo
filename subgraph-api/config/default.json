@@ -18,6 +18,10 @@
       "withdrawals": {
         "mainnet": "77x4fbDsVMm66pGUWBfVMzsUDec71eNSfHb1PeMhxKco",
         "testnet": "VNKvTQZiMR4awsoKuB7eRYJBrrQ1Aq3yvCKhW7N22a6"
+      },
+      "withdrawalProofs": {
+        "mainnet": "7B7h8up4FdvVAtBgzgG7rWQkW3kd8W6a73L89efr9o9k",
+        "testnet": "6aTMqKg6Et48FzbAL9uYu8GZGoCMwYE9qWWTXpXmwgDR"
       }
     }
   }

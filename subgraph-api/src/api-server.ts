@@ -6,6 +6,7 @@ import express from 'express'
 import { hemi, hemiSepolia } from 'hemi-viem'
 import { mainnet, sepolia } from 'viem/chains'
 
+import { getWithdrawalProofAndClaimHandler } from './route-handlers/get-withdrawal-proof-and-claim.ts'
 import {
   getBtcWithdrawals,
   getEvmDeposits,
@@ -13,11 +14,7 @@ import {
   getLastIndexedBlock,
   getTotalStaked,
 } from './subgraph.ts'
-
-function sendJsonResponse(res, statusCode: number, data: object) {
-  res.writeHead(statusCode, { 'Content-Type': 'application/json' })
-  res.end(JSON.stringify(data))
-}
+import { sendJsonResponse } from './utils.ts'
 
 function parseChainId(req, res, next) {
   const { chainIdStr } = req.params
@@ -117,6 +114,13 @@ export function createApiServer() {
         })
         .catch(next)
     },
+  )
+
+  app.get(
+    '/:chainIdStr(\\d+)/hashedWithdrawals/:hash',
+    parseChainId,
+    validateChainIsEthereum,
+    getWithdrawalProofAndClaimHandler,
   )
 
   app.get(

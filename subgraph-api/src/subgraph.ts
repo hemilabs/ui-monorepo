@@ -1,4 +1,5 @@
-// Copied from https://github.com/hemilabs/ui-monorepo/blob/853f366d/webapp/utils/subgraph.ts and slightly modified
+// Copied from https://github.com/hemilabs/ui-monorepo/blob/853f366d/webapp/utils/subgraph.ts
+// and extended from there.
 
 import config from 'config'
 import fetch from 'fetch-plus-plus'
@@ -399,4 +400,52 @@ export const getTotalStaked = function (hemiId: Chain['id']) {
       }))
     },
   )
+}
+
+type GetWithdrawalProofAndClaimQueryResponse = GraphResponse<{
+  withdrawal: {
+    id: string
+    claimTxHash: string | null
+    proveTxHash: string | null
+  } | null
+}>
+
+export const getWithdrawalProofAndClaim = function ({
+  chainId,
+  hashedWithdrawal,
+}: {
+  chainId: Chain['id']
+  hashedWithdrawal: string
+}) {
+  /**
+   * Subgraph Ids from the subgraphs published in Arbitrum
+   */
+  const subgraphIds = {
+    [mainnet.id]: subgraphConfig.tunnel.withdrawalProofs.mainnet,
+    [sepolia.id]: subgraphConfig.tunnel.withdrawalProofs.testnet,
+  }
+
+  const subgraphUrl = getSubgraphUrl({
+    chainId,
+    subgraphIds,
+  })
+
+  const schema = {
+    query: `query GetWithdrawal($hashedWithdrawal: String!) {
+      withdrawal(id: $hashedWithdrawal) {
+        id
+        claimTxHash
+        proveTxHash
+      }
+    }`,
+    variables: { hashedWithdrawal },
+  }
+
+  return request<GetWithdrawalProofAndClaimQueryResponse>(
+    subgraphUrl,
+    schema,
+  ).then(function (response) {
+    checkGraphQLErrors(response)
+    return response.data.withdrawal
+  })
 }

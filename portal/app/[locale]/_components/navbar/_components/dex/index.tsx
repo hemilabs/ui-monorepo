@@ -9,6 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { ComponentProps, ReactNode, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 import atlasIcon from './_images/atlas.png'
 import dodoIcon from './_images/dodo.png'
@@ -183,68 +184,70 @@ export const Dex = function () {
         />
       </Row>
 
-      {isOpen && (
-        <div
-          className="shadow-help-menu md:translate-y-30 absolute bottom-0
+      {isOpen &&
+        createPortal(
+          <div
+            className="shadow-help-menu md:translate-y-30 absolute bottom-0
           left-0 z-30 flex
           w-full flex-col items-start
           rounded-t-2xl border border-neutral-300/55 bg-white
           p-4 md:top-0 md:h-fit md:w-64
           md:translate-x-56 md:rounded-lg
           md:p-1"
-        >
-          <ItemTitle text={t('aggregators')} />
-          <ExternalLink
-            event="nav - 1delta"
-            href="https://1delta.io"
-            icon={<Image alt={t('1delta')} src={oneDeltaIcon} />}
-            text={t('1delta')}
-          />
-          <ExternalLink
-            event="nav - eisen"
-            href="https://eisenfinance.com"
-            icon={<Image alt={t('eisen')} src={eisenIcon} />}
-            text={t('eisen')}
-          />
-          <ItemTitle text={t('subtitle')} />
-          <ExternalLink
-            event="nav - sushi"
-            href="https://www.sushi.com/hemi/swap"
-            icon={<Image alt={t('sushi')} src={sushiIcon} />}
-            text={t('sushi')}
-          />
-          <ExternalLink
-            event="nav - oku"
-            href="https://oku.trade?inputChain=hemi"
-            icon={<Image alt={t('oku')} src={okuIcon} />}
-            text={t('oku')}
-          />
-          <ExternalLink
-            event="nav - izumi"
-            href="https://izumi.finance/trade/swap"
-            icon={<Image alt={t('izumi')} src={izumiIcon} />}
-            text={t('izumi')}
-          />
-          <ExternalLink
-            event="nav - dodo"
-            href="https://app.dodoex.io/swap/network/hemi"
-            icon={<Image alt={t('dodo')} src={dodoIcon} />}
-            text={t('dodo')}
-          />
-          <ExternalLink
-            event="nav - atlas"
-            href="https://www.atlasexchange.xyz/swap"
-            icon={<Image alt={t('atlas')} src={atlasIcon} />}
-            text={t('atlas')}
-          />
-          <ExternalLink
-            event="nav - passdex"
-            href="https://passdex.finance/?chain=HEMI"
-            icon={<Image alt={t('passdex')} src={passdexIcon} />}
-            text={t('passdex')}
-          />
-        </div>
-      )}
+          >
+            <ItemTitle text={t('aggregators')} />
+            <ExternalLink
+              event="nav - 1delta"
+              href="https://1delta.io"
+              icon={<Image alt={t('1delta')} src={oneDeltaIcon} />}
+              text={t('1delta')}
+            />
+            <ExternalLink
+              event="nav - eisen"
+              href="https://eisenfinance.com"
+              icon={<Image alt={t('eisen')} src={eisenIcon} />}
+              text={t('eisen')}
+            />
+            <ItemTitle text={t('subtitle')} />
+            <ExternalLink
+              event="nav - sushi"
+              href="https://www.sushi.com/hemi/swap"
+              icon={<Image alt={t('sushi')} src={sushiIcon} />}
+              text={t('sushi')}
+            />
+            <ExternalLink
+              event="nav - oku"
+              href="https://oku.trade?inputChain=hemi"
+              icon={<Image alt={t('oku')} src={okuIcon} />}
+              text={t('oku')}
+            />
+            <ExternalLink
+              event="nav - izumi"
+              href="https://izumi.finance/trade/swap"
+              icon={<Image alt={t('izumi')} src={izumiIcon} />}
+              text={t('izumi')}
+            />
+            <ExternalLink
+              event="nav - dodo"
+              href="https://app.dodoex.io/swap/network/hemi"
+              icon={<Image alt={t('dodo')} src={dodoIcon} />}
+              text={t('dodo')}
+            />
+            <ExternalLink
+              event="nav - atlas"
+              href="https://www.atlasexchange.xyz/swap"
+              icon={<Image alt={t('atlas')} src={atlasIcon} />}
+              text={t('atlas')}
+            />
+            <ExternalLink
+              event="nav - passdex"
+              href="https://passdex.finance/?chain=HEMI"
+              icon={<Image alt={t('passdex')} src={passdexIcon} />}
+              text={t('passdex')}
+            />
+          </div>,
+          document.getElementById('app-layout-container'),
+        )}
     </div>
   )
 }

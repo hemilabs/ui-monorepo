@@ -3,9 +3,8 @@
 
 import config from 'config'
 import fetch from 'fetch-plus-plus'
-import { hemi, hemiSepolia } from 'hemi-viem'
 import { type Address, type Chain, checksumAddress as toChecksum } from 'viem'
-import { mainnet, sepolia } from 'viem/chains'
+import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
 import {
   type EvmDepositOperation,
@@ -24,7 +23,7 @@ type GraphResponse<T> = SuccessResponse<T> | ErrorResponse
 
 type ConfigType = typeof import('../config/default.json')
 
-const subgraphConfig: ConfigType['subgraph'] = config.get('subgraph')
+const subgraphConfig = config.get<ConfigType['subgraph']>('subgraph')
 
 const getSubgraphUrl = function ({
   chainId,

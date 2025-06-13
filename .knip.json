@@ -2,7 +2,6 @@
   "ignore": ["portal/i18n/request.ts", "subgraphs/utils/index.ts"],
   "ignoreBinaries": ["ipconfig"],
   "ignoreDependencies": [
-    "@tsconfig/node20",
     "@wagmi/core",
     "eslint-config-next",
     "eslint-config-prettier"

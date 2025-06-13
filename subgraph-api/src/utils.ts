@@ -1,5 +1,7 @@
 import { Response } from 'express'
 
+export const isInteger = (string: string) => /^\d+$/.test(string)
+
 export const sendJsonResponse = function (
   res: Response,
   statusCode: number,

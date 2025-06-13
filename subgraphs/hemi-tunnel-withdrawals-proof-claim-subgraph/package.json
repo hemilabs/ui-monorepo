@@ -1,5 +1,6 @@
 {
   "name": "hemi-tunnel-withdrawals-proof-claim-subgraph",
+  "version": "1.0.0",
   "scripts": {
     "build": "graph build",
     "build:mainnet": "npm run build -- --network mainnet",

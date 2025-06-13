@@ -102,7 +102,7 @@ const WatchEvmWithdrawal = function ({
         getSeconds(12)
 
       worker.postMessage({
-        type: 'watch-withdrawal',
+        type: 'watch-evm-withdrawal',
         withdrawal,
       })
 
@@ -111,7 +111,7 @@ const WatchEvmWithdrawal = function ({
           return
         }
         worker.postMessage({
-          type: 'watch-withdrawal',
+          type: 'watch-evm-withdrawal',
           withdrawal,
         })
         // Block posting until a response is received

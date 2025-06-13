@@ -20,7 +20,7 @@ export const getUpdateWithdrawalKey = (withdrawal: WithdrawTunnelOperation) =>
   `update-withdrawal-${withdrawal.l2ChainId}-${withdrawal.transactionHash}` as const
 
 type WatchWithdrawal = {
-  type: 'watch-withdrawal'
+  type: 'watch-evm-withdrawal'
   withdrawal: ToEvmWithdrawOperation
 }
 
@@ -91,7 +91,7 @@ worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
   if (!e?.data) {
     return
   }
-  if (e.data.type === 'watch-withdrawal') {
+  if (e.data.type === 'watch-evm-withdrawal') {
     watchWithdrawal(e.data.withdrawal)
   }
   // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712

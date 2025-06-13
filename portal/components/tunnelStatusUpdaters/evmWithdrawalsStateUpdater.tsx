@@ -101,25 +101,22 @@ const WatchEvmWithdrawal = function ({
         // refetchInterval object.
         getSeconds(12)
 
-      let intervalId
-      // skip polling for disabled states (those whose interval is "false")
-      if (typeof interval === 'number') {
+      worker.postMessage({
+        type: 'watch-withdrawal',
+        withdrawal,
+      })
+
+      const intervalId = setInterval(function () {
+        if (!hasWorkedPostedBack) {
+          return
+        }
         worker.postMessage({
           type: 'watch-withdrawal',
           withdrawal,
         })
-        intervalId = setInterval(function () {
-          if (!hasWorkedPostedBack) {
-            return
-          }
-          worker.postMessage({
-            type: 'watch-withdrawal',
-            withdrawal,
-          })
-          // Block posting until a response is received
-          hasWorkedPostedBack = false
-        }, interval)
-      }
+        // Block posting until a response is received
+        hasWorkedPostedBack = false
+      }, interval)
 
       return function cleanup() {
         worker.removeEventListener('message', saveUpdates)

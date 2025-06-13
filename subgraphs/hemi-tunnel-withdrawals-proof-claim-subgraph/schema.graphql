@@ -1,0 +1,5 @@
+type Withdrawal @entity {
+  id: Bytes!
+  claimTxHash: Bytes
+  proveTxHash: Bytes
+}

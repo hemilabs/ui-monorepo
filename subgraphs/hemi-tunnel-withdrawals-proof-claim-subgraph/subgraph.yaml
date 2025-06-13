@@ -1,0 +1,29 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: portal
+    network: sepolia
+    source:
+      abi: portal
+      address: '0xB6f9579980aE46f61217A99145645341E49E2516'
+      startBlock: 5302666
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - WithdrawalFinalized
+        - WithdrawalProven
+      abis:
+        - name: portal
+          file: ./abis/portal.json
+      eventHandlers:
+        - event: WithdrawalFinalized(indexed bytes32,bool)
+          handler: handleWithdrawalFinalized
+        - event: WithdrawalProven(indexed bytes32,indexed address,indexed address)
+          handler: handleWithdrawalProven
+      file: ./src/mappings/portal.ts

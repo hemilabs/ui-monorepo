@@ -1,0 +1,14 @@
+{
+  "mainnet": {
+    "portal": {
+      "address": "0x39a0005415256B9863aFE2d55Edcf75ECc3A4D7e",
+      "startBlock": 20711664
+    }
+  },
+  "sepolia": {
+    "portal": {
+      "address": "0xB6f9579980aE46f61217A99145645341E49E2516",
+      "startBlock": 5302666
+    }
+  }
+}

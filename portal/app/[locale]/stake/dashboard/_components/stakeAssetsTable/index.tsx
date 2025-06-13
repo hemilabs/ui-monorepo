@@ -323,7 +323,14 @@ export const StakeAssetsTable = function () {
         </div>
       </div>
       <Card>
-        <div className="max-h-[50dvh] overflow-x-auto p-2" ref={containerRef}>
+        <div
+          className="max-h-[50dvh] overflow-x-auto p-2"
+          ref={containerRef}
+          style={{
+            scrollbarColor: '#d4d4d4 transparent',
+            scrollbarWidth: 'thin',
+          }}
+        >
           <StakeAssetsTableImp
             containerRef={containerRef}
             data={sortedTokens}

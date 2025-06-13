@@ -1,9 +1,11 @@
 import Big from 'big.js'
+import { RenderFiatBalance } from 'components/fiatBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
+import { parseTokenUnits } from 'utils/token'
 
 import { isInputError } from './utils'
 
@@ -73,6 +75,15 @@ export const TokenInput = function ({
             type="text"
             value={value}
           />
+          <span className="mt-1 text-sm text-neutral-500">
+            ${' '}
+            <RenderFiatBalance
+              balance={parseTokenUnits(value, token)}
+              fetchStatus="idle"
+              queryStatus="success"
+              token={token}
+            />
+          </span>
         </div>
         <div className="flex h-full flex-col items-end justify-end gap-y-3 text-sm">
           {tokenSelector}

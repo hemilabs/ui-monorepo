@@ -197,12 +197,7 @@
     "get-started": "Comenzar",
     "help": {
       "language": "Idioma",
-      "legal-and-privacy": "Privacidad y Legales",
-      "locales": {
-        "en": "Inglés",
-        "es": "Español",
-        "pt": "Portugués"
-      }
+      "legal-and-privacy": "Privacidad y Legales"
     },
     "learn-how-to-start": "Aprenda cómo empezar a utilizar la red Hemi",
     "network": "Red",

@@ -8,7 +8,7 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useRouter } from 'i18n/navigation'
-import { locales } from 'i18n/routing'
+import { getLocalizedLocaleName, locales } from 'i18n/routing'
 import { useSearchParams } from 'next/navigation'
 import { Locale, useLocale, useTranslations } from 'next-intl'
 import { ComponentProps, ReactNode, RefObject, useState } from 'react'
@@ -134,7 +134,6 @@ const ItemWithSubmenu = function ({
 }
 
 const LanguageMenu = function ({ active }: LanguageProps) {
-  const t = useTranslations('navbar.help')
   const pathname = usePathnameWithoutLocale()
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -165,7 +164,7 @@ const LanguageMenu = function ({ active }: LanguageProps) {
         >
           <ItemText
             selected={active === locale}
-            text={t(`locales.${locale}`)}
+            text={getLocalizedLocaleName(locale)}
           />
           <div className={active === locale ? 'block' : 'invisible'}>
             <CheckMark className="[&>path]:stroke-emerald-500" />
@@ -236,7 +235,7 @@ export const Help = function () {
             icon={<LanguageIcon className="h-5 w-5 md:h-4 md:w-4" />}
             subMenu={<LanguageMenu active={activeLocale} />}
             text={t('language')}
-            value={t(`locales.${activeLocale}`)}
+            value={getLocalizedLocaleName(activeLocale)}
           />
           <ItemWithSubmenu
             event="nav - legal and privacy"

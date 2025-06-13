@@ -220,7 +220,13 @@ export const StakeStrategyTable = function ({ data, loading }: Props) {
         </p>
       </div>
       <Card>
-        <div className="max-h-[48dvh] overflow-x-auto p-2">
+        <div
+          className="max-h-[48dvh] overflow-x-auto p-2"
+          style={{
+            scrollbarColor: '#d4d4d4 transparent',
+            scrollbarWidth: 'thin',
+          }}
+        >
           <StakeStrategyTableImp data={data} loading={loading} />
         </div>
       </Card>

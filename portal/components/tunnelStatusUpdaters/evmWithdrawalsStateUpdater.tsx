@@ -9,6 +9,10 @@ import { hemiTestnet } from 'networks/hemiTestnet'
 import { useEffect } from 'react'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
+import {
+  isPendingOperation,
+  isWithdrawalMissingInformation,
+} from 'utils/tunnel'
 import { hasKeys } from 'utils/utilities'
 import { useAccount } from 'wagmi'
 import {
@@ -155,17 +159,7 @@ export const EvmWithdrawalsStateUpdater = function () {
   }
 
   const withdrawalsToWatch = withdrawals.filter(
-    w =>
-      !w.timestamp ||
-      w.status === undefined ||
-      [
-        MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
-        MessageStatus.STATE_ROOT_NOT_PUBLISHED,
-        MessageStatus.READY_TO_PROVE,
-        MessageStatus.IN_CHALLENGE_PERIOD,
-        MessageStatus.READY_FOR_RELAY,
-        // @ts-expect-error status is of type MessageStatus
-      ].includes(w.status),
+    w => isWithdrawalMissingInformation(w) || isPendingOperation(w),
   )
 
   return (

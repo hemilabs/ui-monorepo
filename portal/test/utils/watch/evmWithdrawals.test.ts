@@ -26,9 +26,13 @@ vi.mock('utils/evmApi', () => ({
   getEvmTransactionReceipt: vi.fn(),
 }))
 
-vi.mock('utils/tunnel', () => ({
-  getEvmWithdrawalStatus: vi.fn(),
-}))
+vi.mock('utils/tunnel', async function (importOriginal) {
+  const tunnelUtils = (await importOriginal()) as object
+  return {
+    ...tunnelUtils,
+    getEvmWithdrawalStatus: vi.fn(),
+  }
+})
 
 describe('utils/watch/evmWithdrawals', function () {
   describe('watchEvmWithdrawal', async function () {

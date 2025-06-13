@@ -9,7 +9,9 @@ import {
   getEvmWithdrawalStatus,
   isDeposit,
   isPendingOperation,
+  isWithdrawalMissingInformation,
 } from 'utils/tunnel'
+import { zeroHash } from 'viem'
 import { hemiSepolia } from 'viem/chains'
 import { getWithdrawalStatus } from 'viem/op-stack'
 import { describe, it, expect, vi } from 'vitest'
@@ -249,6 +251,79 @@ describe('utils/tunnel', function () {
           expect(isPendingOperation(operation)).toBe(false)
         })
       })
+    })
+  })
+
+  describe('isWithdrawalMissingInformation', function () {
+    // @ts-expect-error baseWithdrawal is partial for test construction, but will be cast as ToEvmWithdrawOperation
+    const baseWithdrawal: ToEvmWithdrawOperation = {
+      claimTxHash: zeroHash,
+      proveTxHash: zeroHash,
+      status: MessageStatus.READY_TO_PROVE,
+      timestamp: 1234567890,
+    }
+
+    it('should return true if timestamp is missing', function () {
+      const { timestamp, ...withdrawal } = baseWithdrawal
+      expect(isWithdrawalMissingInformation(withdrawal)).toBe(true)
+    })
+
+    it('should return true if status is undefined', function () {
+      const { status, ...withdrawal } = baseWithdrawal
+      expect(isWithdrawalMissingInformation(withdrawal)).toBe(true)
+    })
+
+    it('should return true if status is IN_CHALLENGE_PERIOD and proveTxHash is missing', function () {
+      const { proveTxHash, ...rest } = baseWithdrawal
+      const withdrawal = { ...rest, status: MessageStatus.IN_CHALLENGE_PERIOD }
+      expect(isWithdrawalMissingInformation(withdrawal)).toBe(true)
+    })
+
+    it('should return true if status is READY_FOR_RELAY and proveTxHash is missing', function () {
+      const { proveTxHash, ...rest } = baseWithdrawal
+      const withdrawal = { ...rest, status: MessageStatus.READY_FOR_RELAY }
+      expect(isWithdrawalMissingInformation(withdrawal)).toBe(true)
+    })
+
+    it('should return true if status is RELAYED and proveTxHash is missing', function () {
+      const { proveTxHash, ...rest } = baseWithdrawal
+      const withdrawal = { ...rest, status: MessageStatus.RELAYED }
+      expect(isWithdrawalMissingInformation(withdrawal)).toBe(true)
+    })
+
+    it('should return true if status is RELAYED and claimTxHash is missing', function () {
+      const { claimTxHash, ...rest } = baseWithdrawal
+      const withdrawal = { ...rest, status: MessageStatus.RELAYED }
+      expect(isWithdrawalMissingInformation(withdrawal)).toBe(true)
+    })
+
+    it('should return false if all required fields are present for status READY_TO_PROVE', function () {
+      const withdrawal = {
+        ...baseWithdrawal,
+        status: MessageStatus.READY_TO_PROVE,
+      }
+      expect(isWithdrawalMissingInformation(withdrawal)).toBe(false)
+    })
+
+    it('should return false if all required fields are present for status IN_CHALLENGE_PERIOD', function () {
+      const withdrawal = {
+        ...baseWithdrawal,
+        status: MessageStatus.IN_CHALLENGE_PERIOD,
+      }
+      expect(isWithdrawalMissingInformation(withdrawal)).toBe(false)
+    })
+
+    it('should return false if all required fields are present for status READY_FOR_RELAY', function () {
+      const withdrawal = {
+        ...baseWithdrawal,
+        status: MessageStatus.READY_FOR_RELAY,
+      }
+      expect(isWithdrawalMissingInformation(withdrawal)).toBe(false)
+    })
+
+    it('should return false if all required fields are present for status RELAYED', function () {
+      const withdrawal = { ...baseWithdrawal, status: MessageStatus.RELAYED }
+      expect(isWithdrawalMissingInformation(withdrawal)).toBe(false)
     })
   })
 })

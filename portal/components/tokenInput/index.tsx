@@ -75,15 +75,15 @@ export const TokenInput = function ({
             type="text"
             value={value}
           />
-          <span className="mt-1 text-sm text-neutral-500">
-            ${' '}
+          <div className="mt-1 flex items-center text-sm text-neutral-500">
+            <span className="mr-1">$</span>
             <RenderFiatBalance
               balance={parseTokenUnits(value, token)}
               fetchStatus="idle"
               queryStatus="success"
               token={token}
             />
-          </span>
+          </div>
         </div>
         <div className="flex h-full flex-col items-end justify-end gap-y-3 text-sm">
           {tokenSelector}

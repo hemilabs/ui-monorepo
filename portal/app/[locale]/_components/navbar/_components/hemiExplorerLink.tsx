@@ -2,7 +2,7 @@ import { ExplorerIcon } from 'components/icons/explorerIcon'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 
-import { ItemLink } from './navItem'
+import { ItemLink } from './itemLink'
 
 export const HemiExplorerLink = function () {
   const hemi = useHemi()

@@ -3,7 +3,7 @@ import { ExternalLink as AnchorTag } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { Link } from 'components/link'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { ComponentProps } from 'react'
+import { ComponentProps, Suspense } from 'react'
 
 import {
   IconContainer,
@@ -36,22 +36,26 @@ const ExternalLinkUI = ({
   </ItemContainer>
 )
 
-export const ExternalLink = function ({
+const ExternalLinkImpl = function ({
   event,
-  href,
-  icon,
-  text,
+  ...props
 }: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
   const [networkType] = useNetworkType()
   const { track } = useUmami()
-  const addTracking = () =>
-    track ? () => track(event, { chain: networkType }) : undefined
+
   return (
     <ExternalLinkUI
-      href={href}
-      icon={icon}
-      onClick={addTracking()}
-      text={text}
+      {...props}
+      onClick={track ? () => track(event, { chain: networkType }) : undefined}
     />
   )
 }
+
+export const ExternalLink = ({
+  event,
+  ...props
+}: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) => (
+  <Suspense fallback={<ExternalLinkUI {...props} />}>
+    <ExternalLinkImpl event={event} {...props} />
+  </Suspense>
+)

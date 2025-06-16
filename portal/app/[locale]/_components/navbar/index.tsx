@@ -57,7 +57,10 @@ export const Navbar = function () {
               icon={<TunnelIcon />}
               rightSection={
                 <div className="ml-auto">
-                  <ActionableOperations />
+                  {/* Initially users will be disconnected, so no need for a fallback here. */}
+                  <Suspense>
+                    <ActionableOperations />
+                  </Suspense>
                 </div>
               }
               text={t('tunnel')}

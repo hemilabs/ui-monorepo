@@ -16,7 +16,7 @@ import {
 type ItemLinkProps = NavItemProps &
   Required<Pick<ComponentProps<typeof Link>, 'href'>>
 
-const ExternalLinkUI = ({
+export const ExternalLinkUI = ({
   href,
   icon,
   onClick,

@@ -110,9 +110,7 @@ export const Navbar = function () {
             <Separator />
           </li>
           <li>
-            <Suspense>
-              <HemiExplorerLink />
-            </Suspense>
+            <HemiExplorerLink />
           </li>
           <li>
             <ItemLink

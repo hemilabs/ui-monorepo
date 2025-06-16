@@ -1,14 +1,14 @@
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTvl } from 'hooks/useTvl'
 import { useTranslations } from 'next-intl'
-import React from 'react'
+import React, { Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { Amount } from './amount'
 import { DollarSign } from './dollarSign'
 import { HemiLogo } from './hemiLogo'
 
-export const Tvl = function () {
+const TvlImpl = function () {
   const { data, isError, isPending } = useTvl()
   const t = useTranslations('navbar')
   const [networkType] = useNetworkType()
@@ -64,3 +64,15 @@ export const Tvl = function () {
     )
   )
 }
+
+export const Tvl = () => (
+  <Suspense
+    fallback={
+      // Statically render a skeleton as TVL is only shown and mainnet, but in addition to this,
+      // the position changes on the navbar.
+      <Skeleton className="h-22 shadow-soft mb-4 w-full rounded-lg md:mb-0 md:mt-4" />
+    }
+  >
+    <TvlImpl />
+  </Suspense>
+)

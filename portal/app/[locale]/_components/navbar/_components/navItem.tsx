@@ -12,7 +12,7 @@ import {
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, RefObject, ReactNode, useState } from 'react'
+import { ComponentProps, RefObject, ReactNode, useState, Suspense } from 'react'
 import { UrlObject } from 'url'
 
 export type NavItemProps = {
@@ -63,12 +63,12 @@ export const ItemContainer = ({
 
 const MenuContainer = ({
   children,
-  isOpen,
+  isOpen = false,
   refProp,
   ...props
 }: { children: ReactNode } & {
-  isOpen: boolean
-  refProp: RefObject<HTMLDivElement>
+  isOpen?: boolean
+  refProp?: RefObject<HTMLDivElement>
 } & ComponentProps<'div'>) => (
   <div
     {...props}
@@ -100,12 +100,36 @@ export const ItemText = ({
 export type ItemLinkProps = NavItemProps &
   Required<Pick<ComponentProps<typeof Link>, 'href'>>
 
-export const NetworkSwitch = function () {
+const SwitchUI = function ({
+  network,
+  setIsOpen,
+}: {
+  network: NetworkType
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>
+}) {
+  const t = useTranslations('navbar')
+
+  const getNetworkText = () => network[0].toUpperCase() + network.slice(1)
+
+  return (
+    <Row onClick={() => setIsOpen?.(isOpen => !isOpen)}>
+      <IconContainer>
+        <NetworkIcon />
+      </IconContainer>
+      <ItemText text={t('network')} />
+      <div className="ml-auto flex items-center gap-x-1">
+        <ItemText text={getNetworkText()} />
+        <Chevron.Bottom />
+      </div>
+    </Row>
+  )
+}
+
+const NetworkSwitchImpl = function () {
   const [networkType, setNetworkType] = useNetworkType()
   const [isOpen, setIsOpen] = useState(false)
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
   const { track } = useUmami()
-  const t = useTranslations('navbar')
 
   const selectNetwork = function (type: NetworkType) {
     setNetworkType(type)
@@ -114,9 +138,6 @@ export const NetworkSwitch = function () {
     setIsOpen(false)
   }
 
-  const getNetworkText = (network: string) =>
-    network[0].toUpperCase() + network.slice(1)
-
   return (
     <MenuContainer
       isOpen={isOpen}
@@ -124,16 +145,7 @@ export const NetworkSwitch = function () {
       refProp={ref}
     >
       <div>
-        <Row onClick={() => setIsOpen(!isOpen)}>
-          <IconContainer>
-            <NetworkIcon />
-          </IconContainer>
-          <ItemText text={t('network')} />
-          <div className="ml-auto flex items-center gap-x-1">
-            <ItemText text={getNetworkText(networkType)} />
-            <Chevron.Bottom />
-          </div>
-        </Row>
+        <SwitchUI network={networkType} setIsOpen={setIsOpen} />
         {isOpen && (
           <div
             className="-translate-y-26 md:translate-x-34 absolute right-0 z-20
@@ -171,3 +183,21 @@ export const NetworkSwitch = function () {
     </MenuContainer>
   )
 }
+
+export const NetworkSwitch = () => (
+  // The Switch component is the same for mainnet|testnet, when it is closed
+  // except for the selected network. This will depend on the networkType query string
+  // When omitted, it defaults to mainnet. I expect the majority of the users to want to be on mainnet,
+  // so while the component is loading, we show the mainnet switch. For testnet users, until hydration, it may mean
+  // that mainnet will briefly appear selected. I'm choosing this trade-off for a better user experience
+  // for mainnet users.
+  <Suspense
+    fallback={
+      <MenuContainer>
+        <SwitchUI network="mainnet" />
+      </MenuContainer>
+    }
+  >
+    <NetworkSwitchImpl />
+  </Suspense>
+)

@@ -3,8 +3,6 @@ import { StakeExtensions } from 'types/stake'
 import { Token } from 'types/token'
 import { mainnet, sepolia } from 'viem/chains'
 
-// TODO: Some tokens are not deployed, so their rewards can't be configured
-// https://github.com/hemilabs/ui-monorepo/issues/752#issuecomment-2616916547
 export const stakeWhiteList: Partial<
   Record<Token['chainId'], Record<string, StakeExtensions>>
 > = {

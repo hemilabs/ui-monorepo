@@ -5,12 +5,13 @@ import { DocsIcon } from 'components/icons/docsIcon'
 import { EcosystemIcon } from 'components/icons/ecosystemIcon'
 import { NetworkStatusIcon } from 'components/icons/networkStatusIcon'
 import { StakeIcon } from 'components/icons/stakeIcon'
+import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 
 import { Badge } from './_components/badge'
 import { Dex } from './_components/dex'
 import { GetStarted } from './_components/getStarted'
-import { Help } from './_components/help'
+import { HelpButton } from './_components/help/helpButton'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HomeLink } from './_components/homeLink'
 import { ItemLink } from './_components/itemLink'
@@ -20,6 +21,12 @@ import { TunnelLink } from './_components/tunnelLink'
 import { Tvl } from './_components/tvl'
 
 const Separator = () => <div className="my-1 h-px w-full bg-neutral-100" />
+
+const Help = dynamic(() => import('./_components/help').then(mod => mod.Help), {
+  // Render the closed version of the help button
+  loading: () => <HelpButton isOpen={false} />,
+  ssr: false,
+})
 
 export const Navbar = function () {
   const t = useTranslations('navbar')

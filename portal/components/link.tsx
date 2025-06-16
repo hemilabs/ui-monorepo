@@ -1,6 +1,6 @@
 import { defaultNetworkType, useNetworkType } from 'hooks/useNetworkType'
 import { Link as BaseLink } from 'i18n/navigation'
-import { ComponentProps } from 'react'
+import { ComponentProps, Suspense } from 'react'
 import { type UrlObject } from 'url'
 
 const getQuery = function (q: UrlObject['query']): Record<string, string> {
@@ -26,7 +26,7 @@ const getQuery = function (q: UrlObject['query']): Record<string, string> {
 // query parameter when it differs from the default network type. This keeps
 // the URL clean for the default network while still allowing navigation
 // between mainnet and testnet when explicitly selected.
-export const Link = function (props: ComponentProps<typeof BaseLink>) {
+const LinkImpl = function (props: ComponentProps<typeof BaseLink>) {
   const [networkType] = useNetworkType()
 
   let href = props.href
@@ -49,3 +49,12 @@ export const Link = function (props: ComponentProps<typeof BaseLink>) {
 
   return <BaseLink {...props} href={href} />
 }
+
+export const Link = (props: ComponentProps<typeof BaseLink>) => (
+  // The link implementation adds the NetworkType query string to the URL only if it is not mainnet
+  // Other than that, it's a regular link. That's why the fallback can be the regular link, without modifying
+  // the href
+  <Suspense fallback={<BaseLink {...props} />}>
+    <LinkImpl {...props} />
+  </Suspense>
+)

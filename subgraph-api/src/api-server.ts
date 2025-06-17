@@ -2,10 +2,13 @@
 
 import config from 'config'
 import cors from 'cors'
-import express from 'express'
-import { hemi, hemiSepolia } from 'hemi-viem'
-import { mainnet, sepolia } from 'viem/chains'
+import express, { NextFunction, Request, Response } from 'express'
+import { Address } from 'viem'
+import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
+import { ChainIdPathParams, ReqData } from '../types/server.ts'
+
+import { getWithdrawalProofAndClaimHandler } from './route-handlers/get-withdrawal-proof-and-claim.ts'
 import {
   getBtcWithdrawals,
   getEvmDeposits,
@@ -13,38 +16,58 @@ import {
   getLastIndexedBlock,
   getTotalStaked,
 } from './subgraph.ts'
+import { isInteger, sendJsonResponse } from './utils.ts'
 
-function sendJsonResponse(res, statusCode: number, data: object) {
-  res.writeHead(statusCode, { 'Content-Type': 'application/json' })
-  res.end(JSON.stringify(data))
-}
-
-function parseChainId(req, res, next) {
+function parseChainId(
+  req: Request<ChainIdPathParams> & ReqData,
+  res: Response,
+  next: NextFunction,
+) {
   const { chainIdStr } = req.params
   req.data = req.data || {}
   req.data.chainId = parseInt(chainIdStr)
   next()
 }
 
-function validateChainIsEthereum(req, res, next) {
-  if ([mainnet.id, sepolia.id].includes(req.data.chainId)) {
+function validateChainIsEthereum(
+  req: Request & ReqData,
+  res: Response,
+  next: NextFunction,
+) {
+  // @ts-expect-error number includes mainnet.id and sepolia.id types
+  if (req.data.chainId && [mainnet.id, sepolia.id].includes(req.data.chainId)) {
     next()
   } else {
     next('route')
   }
 }
 
-function validateChainIsHemi(req, res, next) {
-  if ([hemi.id, hemiSepolia.id].includes(req.data.chainId)) {
+function validateChainIsHemi(
+  req: Request & ReqData,
+  res: Response,
+  next: NextFunction,
+) {
+  if (
+    req.data.chainId &&
+    // @ts-expect-error number includes mainnet.id and sepolia.id types
+    [hemi.id, hemiSepolia.id].includes(req.data.chainId)
+  ) {
     next()
   } else {
     next('route')
   }
 }
 
-const isInteger = string => /^\d+$/.test(string)
-
-function parseQueryParams(req, res, next) {
+type QueryParams = {
+  fromBlock?: string
+  limit?: string
+  skip?: string
+}
+function parseQueryParams(
+  req: Request<object, object, object, QueryParams> & ReqData,
+  res: Response,
+  next: NextFunction,
+) {
   const { fromBlock = '0', limit, skip } = req.query
 
   req.data = req.data || {}
@@ -77,12 +100,12 @@ function parseQueryParams(req, res, next) {
 export function createApiServer() {
   const app = express()
 
-  app.use(cors({ origin: config.get('originList') }))
+  app.use(cors({ origin: config.get<string[]>('originList') }))
 
   app.get(
     '/:chainIdStr(\\d+)/:operation(deposits|withdrawals)/meta',
     parseChainId,
-    function (req, res, next) {
+    function (req: Request & ReqData, res: Response, next: NextFunction) {
       const { operation } = req.params
       if (operation === 'deposits') {
         validateChainIsEthereum(req, res, next)
@@ -90,8 +113,7 @@ export function createApiServer() {
         validateChainIsHemi(req, res, next)
       }
     },
-    function (req, res, next) {
-      // @ts-expect-error: req.data.chainId is set in parseChainId
+    function (req: Request & ReqData, res: Response, next: NextFunction) {
       const { chainId } = req.data
 
       getLastIndexedBlock(chainId)
@@ -107,7 +129,11 @@ export function createApiServer() {
     parseChainId,
     validateChainIsEthereum,
     parseQueryParams,
-    function (req, res, next) {
+    function (
+      req: Request<ChainIdPathParams & { address: Address }> & ReqData,
+      res: Response,
+      next: NextFunction,
+    ) {
       const { address } = req.params
 
       // @ts-expect-error: req.data is populated by parseChainId and parseQueryParams
@@ -120,11 +146,18 @@ export function createApiServer() {
   )
 
   app.get(
+    '/:chainIdStr(\\d+)/hashedWithdrawals/:hash',
+    parseChainId,
+    validateChainIsEthereum,
+    getWithdrawalProofAndClaimHandler,
+  )
+
+  app.get(
     '/:chainIdStr(\\d+)/withdrawals/:address(0x[0-9a-fA-F]{40})/:type(btc|evm)',
     parseChainId,
     validateChainIsHemi,
     parseQueryParams,
-    function (req, res, next) {
+    function (req: Request, res: Response, next: NextFunction) {
       const { address, type } = req.params
 
       let getWithdrawals
@@ -147,7 +180,7 @@ export function createApiServer() {
     '/:chainIdStr(\\d+)/staked',
     parseChainId,
     validateChainIsHemi,
-    function (req, res, next) {
+    function (req: Request, res: Response, next: NextFunction) {
       // @ts-expect-error: req.data.chainId is set in parseChainId
       const { chainId } = req.data
 
@@ -159,13 +192,18 @@ export function createApiServer() {
     },
   )
 
-  app.use(function (req, res) {
+  app.use(function (req: Request, res: Response) {
     sendJsonResponse(res, 404, { error: 'Not Found' })
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  app.use(function (err, req, res, next) {
-    if (config.get('debug')) {
+  app.use(function (
+    err: Error,
+    req: Request,
+    res: Response,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    next: NextFunction,
+  ) {
+    if (config.get<boolean>('debug')) {
       // eslint-disable-next-line no-console
       console.log(err)
     }

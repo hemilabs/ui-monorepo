@@ -1,6 +1,7 @@
 import { useNetworkType } from 'hooks/useNetworkType'
+import { Suspense } from 'react'
 
-export const Badge = function () {
+const BadgeImpl = function () {
   const [networkType] = useNetworkType()
   return (
     <span
@@ -19,3 +20,9 @@ export const Badge = function () {
     </span>
   )
 }
+
+export const Badge = () => (
+  <Suspense>
+    <BadgeImpl />
+  </Suspense>
+)

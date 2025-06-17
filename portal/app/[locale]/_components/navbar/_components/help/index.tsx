@@ -3,7 +3,6 @@ import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { LanguageIcon } from 'components/icons/languageIcon'
 import { LegalIcon } from 'components/icons/legalIcon'
-import { QuestionMark } from 'components/icons/questionMark'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
@@ -13,8 +12,10 @@ import { useSearchParams } from 'next/navigation'
 import { Locale, useLocale, useTranslations } from 'next-intl'
 import { ComponentProps, ReactNode, RefObject, useState } from 'react'
 
-import { CmcAttribution } from './cmcAttribution'
-import { TermsAndConditions } from './termsAndConditions'
+import { CmcAttribution } from '../cmcAttribution'
+import { TermsAndConditions } from '../termsAndConditions'
+
+import { HelpButton } from './helpButton'
 
 type Selectable = { selected?: boolean }
 type LanguageProps = {
@@ -208,18 +209,7 @@ export const Help = function () {
   return (
     <div className="cursor-pointer" ref={ref}>
       {isOpen && <Backdrop onClick={() => setIsOpen(!isOpen)} />}
-      <div
-        className={`shadow-help-icon mb-2 flex h-7 w-7 items-center justify-center
-        rounded-md border border-neutral-300/55 hover:bg-neutral-50 md:mb-0
-        ${isOpen ? 'bg-neutral-50' : 'bg-white'} group/icon "`}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <QuestionMark
-          className={`h-4 w-4
-          ${isOpen ? '[&>path]:fill-neutral-950' : '[&>path]:fill-neutral-500'} 
-          group-hover/icon:[&>path]:fill-neutral-950`}
-        />
-      </div>
+      <HelpButton isOpen={isOpen} setIsOpen={setIsOpen} />
 
       {isOpen && (
         <div

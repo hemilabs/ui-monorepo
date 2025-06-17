@@ -1,6 +1,4 @@
 import { type AnalyticsEventsWithChain } from 'app/analyticsEvents'
-import { ExternalLink as AnchorTag } from 'components/externalLink'
-import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { NetworkIcon } from 'components/icons/networkIcon'
@@ -12,14 +10,12 @@ import {
   useNetworkType,
 } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, RefObject, ReactNode, useState } from 'react'
+import { ComponentProps, RefObject, ReactNode, useState, Suspense } from 'react'
 import { UrlObject } from 'url'
-import { isRelativeUrl } from 'utils/url'
 
-type Props = {
+export type NavItemProps = {
   event?: AnalyticsEventsWithChain
   icon?: ReactNode
   rightSection?: ReactNode
@@ -29,7 +25,7 @@ type Props = {
 
 type Selectable = { selected?: boolean }
 
-const IconContainer = ({
+export const IconContainer = ({
   children,
   selected = false,
 }: Selectable & { children: ReactNode }) => (
@@ -46,11 +42,11 @@ const IconContainer = ({
   </div>
 )
 
-const Row = (props: { children: ReactNode } & ComponentProps<'div'>) => (
+export const Row = (props: { children: ReactNode } & ComponentProps<'div'>) => (
   <div className="flex items-center gap-x-2" {...props} />
 )
 
-const ItemContainer = ({
+export const ItemContainer = ({
   children,
   selected = false,
   ...props
@@ -67,12 +63,12 @@ const ItemContainer = ({
 
 const MenuContainer = ({
   children,
-  isOpen,
+  isOpen = false,
   refProp,
   ...props
 }: { children: ReactNode } & {
-  isOpen: boolean
-  refProp: RefObject<HTMLDivElement>
+  isOpen?: boolean
+  refProp?: RefObject<HTMLDivElement>
 } & ComponentProps<'div'>) => (
   <div
     {...props}
@@ -85,10 +81,10 @@ const MenuContainer = ({
   </div>
 )
 
-const ItemText = ({
+export const ItemText = ({
   selected = false,
   text,
-}: Pick<Props, 'text'> & Selectable) => (
+}: Pick<NavItemProps, 'text'> & Selectable) => (
   <span
     className={`text-base font-medium transition-colors duration-300
        group-hover/nav:text-neutral-950 md:text-sm ${
@@ -101,84 +97,39 @@ const ItemText = ({
   </span>
 )
 
-type ItemLinkProps = Props & Required<Pick<ComponentProps<typeof Link>, 'href'>>
+export type ItemLinkProps = NavItemProps &
+  Required<Pick<ComponentProps<typeof Link>, 'href'>>
 
-const ExternalLink = function ({
-  event,
-  href,
-  icon,
-  text,
-}: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
-  const [networkType] = useNetworkType()
-  const { track } = useUmami()
-  const addTracking = () =>
-    track ? () => track(event, { chain: networkType }) : undefined
+const SwitchUI = function ({
+  network,
+  setIsOpen,
+}: {
+  network: NetworkType
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>
+}) {
+  const t = useTranslations('navbar')
+
+  const getNetworkText = () => network[0].toUpperCase() + network.slice(1)
+
   return (
-    <ItemContainer>
-      <AnchorTag href={href} onClick={addTracking()}>
-        <Row>
-          {icon && <IconContainer>{icon}</IconContainer>}
-          <ItemText text={text} />
-          <div className="ml-auto hidden size-4 items-center group-hover/item:flex">
-            <ArrowDownLeftIcon />
-          </div>
-        </Row>
-      </AnchorTag>
-    </ItemContainer>
+    <Row onClick={() => setIsOpen?.(isOpen => !isOpen)}>
+      <IconContainer>
+        <NetworkIcon />
+      </IconContainer>
+      <ItemText text={t('network')} />
+      <div className="ml-auto flex items-center gap-x-1">
+        <ItemText text={getNetworkText()} />
+        <Chevron.Bottom />
+      </div>
+    </Row>
   )
 }
 
-const PageLink = function ({
-  event,
-  href,
-  icon,
-  rightSection,
-  text,
-  urlToBeSelected = href,
-}: ItemLinkProps) {
-  const [networkType] = useNetworkType()
-  const pathname = usePathnameWithoutLocale()
-  const { track } = useUmami()
-
-  const selected =
-    typeof urlToBeSelected === 'string'
-      ? pathname.startsWith(urlToBeSelected)
-      : pathname.startsWith(urlToBeSelected.pathname)
-
-  return (
-    <ItemContainer
-      onClick={
-        track && !!event
-          ? () => track(event, { chain: networkType })
-          : undefined
-      }
-      selected={selected}
-    >
-      <Link href={href}>
-        <Row>
-          <IconContainer selected={selected}>{icon}</IconContainer>
-          <ItemText selected={selected} text={text} />
-          {rightSection}
-        </Row>
-      </Link>
-    </ItemContainer>
-  )
-}
-
-export const ItemLink = (props: ItemLinkProps) =>
-  typeof props.href === 'string' && !isRelativeUrl(props.href) ? (
-    // @ts-expect-error Typescript fails to detect that props.href must be a string
-    <ExternalLink {...props} />
-  ) : (
-    <PageLink {...props} />
-  )
-
-export const NetworkSwitch = function () {
+const NetworkSwitchImpl = function () {
   const [networkType, setNetworkType] = useNetworkType()
   const [isOpen, setIsOpen] = useState(false)
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
   const { track } = useUmami()
-  const t = useTranslations('navbar')
 
   const selectNetwork = function (type: NetworkType) {
     setNetworkType(type)
@@ -187,9 +138,6 @@ export const NetworkSwitch = function () {
     setIsOpen(false)
   }
 
-  const getNetworkText = (network: string) =>
-    network[0].toUpperCase() + network.slice(1)
-
   return (
     <MenuContainer
       isOpen={isOpen}
@@ -197,16 +145,7 @@ export const NetworkSwitch = function () {
       refProp={ref}
     >
       <div>
-        <Row onClick={() => setIsOpen(!isOpen)}>
-          <IconContainer>
-            <NetworkIcon />
-          </IconContainer>
-          <ItemText text={t('network')} />
-          <div className="ml-auto flex items-center gap-x-1">
-            <ItemText text={getNetworkText(networkType)} />
-            <Chevron.Bottom />
-          </div>
-        </Row>
+        <SwitchUI network={networkType} setIsOpen={setIsOpen} />
         {isOpen && (
           <div
             className="-translate-y-26 md:translate-x-34 absolute right-0 z-20
@@ -244,3 +183,21 @@ export const NetworkSwitch = function () {
     </MenuContainer>
   )
 }
+
+export const NetworkSwitch = () => (
+  // The Switch component is the same for mainnet|testnet, when it is closed
+  // except for the selected network. This will depend on the networkType query string
+  // When omitted, it defaults to mainnet. I expect the majority of the users to want to be on mainnet,
+  // so while the component is loading, we show the mainnet switch. For testnet users, until hydration, it may mean
+  // that mainnet will briefly appear selected. I'm choosing this trade-off for a better user experience
+  // for mainnet users.
+  <Suspense
+    fallback={
+      <MenuContainer>
+        <SwitchUI network="mainnet" />
+      </MenuContainer>
+    }
+  >
+    <NetworkSwitchImpl />
+  </Suspense>
+)

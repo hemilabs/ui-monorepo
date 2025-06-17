@@ -74,14 +74,14 @@ export default async function RootLayout({
                 <Analytics>
                   <TunnelHistoryProvider>
                     <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
+                      <div className="hidden w-1/4 max-w-60 lg:block">
+                        <Navbar />
+                      </div>
                       {/* This suspense wrapper is needed because, from this point downwards, rendering depends on 
           getting mainnet|testnet from query string, and using useSearchParams (through nuqs) requires so to compile.
           However, there's no change at all in the UI, so no fallback seems to be needed, as it isn't an async request
           or something that requires showing something. */}
                       <Suspense>
-                        <div className="hidden w-1/4 max-w-60 lg:block">
-                          <Navbar />
-                        </div>
                         <AppLayout>
                           <ErrorBoundary>{children}</ErrorBoundary>
                           <AppOverlays />

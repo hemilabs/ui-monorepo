@@ -8,7 +8,13 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, ReactNode, useState } from 'react'
+import {
+  ComponentProps,
+  MutableRefObject,
+  ReactNode,
+  Suspense,
+  useState,
+} from 'react'
 
 import atlasIcon from './_images/atlas.png'
 import dodoIcon from './_images/dodo.png'
@@ -122,6 +128,28 @@ const ExternalLink = function ({
   )
 }
 
+const Container = ({
+  children,
+  divRef,
+  isOpen = false,
+  onClick,
+}: {
+  children: ReactNode
+  divRef?: MutableRefObject<HTMLDivElement>
+  isOpen?: boolean
+  onClick?: () => void
+}) => (
+  <div
+    className={`group/nav cursor-pointer rounded-md py-2 transition-colors duration-300 ${
+      isOpen ? 'bg-neutral-50' : 'hover:bg-neutral-100'
+    }`}
+    onClick={onClick}
+    ref={divRef}
+  >
+    {children}
+  </div>
+)
+
 const HemiSwapLink = function ({
   event,
   text,
@@ -131,7 +159,7 @@ const HemiSwapLink = function ({
   const addTracking = () =>
     track ? () => track(event, { chain: networkType }) : undefined
   return (
-    <div className="group/nav cursor-pointer rounded-md py-2 transition-colors duration-300 hover:bg-neutral-100">
+    <Container>
       <AnchorTag href="https://swap.hemi.xyz" onClick={addTracking()}>
         <Row>
           <IconContainer>{<DexIcon />}</IconContainer>
@@ -141,7 +169,7 @@ const HemiSwapLink = function ({
           </div>
         </Row>
       </AnchorTag>
-    </div>
+    </Container>
   )
 }
 
@@ -155,7 +183,7 @@ const Backdrop = ({ onClick }) => (
   />
 )
 
-export const Dex = function () {
+const DexImpl = function () {
   const [isOpen, setIsOpen] = useState(false)
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
   const t = useTranslations('navbar.dex')
@@ -165,13 +193,7 @@ export const Dex = function () {
   return isTestnet ? (
     <HemiSwapLink event="nav - dex" text={t('title')} />
   ) : (
-    <div
-      className={`group/nav cursor-pointer rounded-md py-2 transition-colors duration-300 ${
-        isOpen ? 'bg-neutral-50' : 'hover:bg-neutral-100'
-      }`}
-      onClick={() => setIsOpen(!isOpen)}
-      ref={ref}
-    >
+    <Container divRef={ref} isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
       {isOpen && <Backdrop onClick={() => setIsOpen(!isOpen)} />}
 
       <Row>
@@ -245,6 +267,28 @@ export const Dex = function () {
           />
         </div>
       )}
-    </div>
+    </Container>
+  )
+}
+
+export const Dex = function () {
+  const t = useTranslations('navbar.dex')
+  return (
+    // The only difference for the DEX link for mainnet|testnet is that for testnet
+    // there's an arrow (External link), while for mainnet, there's a chevron (Clickable menu)
+    // As both of these only appear on hover, and there's no hover on a static render
+    // we can just ignore them, and render the text and icon as a fallback
+    <Suspense
+      fallback={
+        <Container>
+          <Row>
+            <IconContainer>{<DexIcon />}</IconContainer>
+            <ItemText text={t('title')} />
+          </Row>
+        </Container>
+      }
+    >
+      <DexImpl />
+    </Suspense>
   )
 }

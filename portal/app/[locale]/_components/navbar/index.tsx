@@ -5,63 +5,45 @@ import { DocsIcon } from 'components/icons/docsIcon'
 import { EcosystemIcon } from 'components/icons/ecosystemIcon'
 import { NetworkStatusIcon } from 'components/icons/networkStatusIcon'
 import { StakeIcon } from 'components/icons/stakeIcon'
-import { TunnelIcon } from 'components/icons/tunnelIcon'
-import { Link } from 'components/link'
-import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import React, { Suspense } from 'react'
 
 import { Badge } from './_components/badge'
 import { Dex } from './_components/dex'
 import { GetStarted } from './_components/getStarted'
-import { Help } from './_components/help'
+import { HelpButton } from './_components/help/helpButton'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
-import { HemiLogoFull } from './_components/hemiLogo'
-import { ItemLink, NetworkSwitch } from './_components/navItem'
+import { HomeLink } from './_components/homeLink'
+import { ItemLink } from './_components/itemLink'
+import { NetworkSwitch } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
+import { TunnelLink } from './_components/tunnelLink'
 import { Tvl } from './_components/tvl'
-
-const ActionableOperations = dynamic(
-  () =>
-    import('components/actionableOperations').then(
-      mod => mod.ActionableOperations,
-    ),
-  { ssr: false },
-)
 
 const Separator = () => <div className="my-1 h-px w-full bg-neutral-100" />
 
+const Help = dynamic(() => import('./_components/help').then(mod => mod.Help), {
+  // Render the closed version of the help button
+  loading: () => <HelpButton isOpen={false} />,
+  ssr: false,
+})
+
 export const Navbar = function () {
   const t = useTranslations('navbar')
-
-  const href = useTunnelOperationByConnectedWallet()
 
   return (
     <>
       <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col overflow-visible bg-white px-3 pt-3 md:pt-0">
         <div className="lg:h-18 hidden h-24 items-center justify-between md:flex md:h-16 [&>*]:md:ml-2">
           <div className="flex items-center justify-start gap-x-2">
-            <Link className="w-full" href={href}>
-              <HemiLogoFull />
-            </Link>
+            <HomeLink />
             <Badge />
           </div>
           <Help />
         </div>
         <ul className="flex h-[calc(100dvh-170px)] flex-col gap-y-[2px] overflow-y-auto md:mt-2 md:h-full [&>li>div]:px-2">
           <li>
-            <ItemLink
-              event="nav - tunnel"
-              href={href}
-              icon={<TunnelIcon />}
-              rightSection={
-                <div className="ml-auto">
-                  <ActionableOperations />
-                </div>
-              }
-              text={t('tunnel')}
-            />
+            <TunnelLink />
           </li>
           <li>
             <Dex />
@@ -106,9 +88,7 @@ export const Navbar = function () {
             <Separator />
           </li>
           <li>
-            <Suspense>
-              <HemiExplorerLink />
-            </Suspense>
+            <HemiExplorerLink />
           </li>
           <li>
             <ItemLink

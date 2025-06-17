@@ -9,6 +9,10 @@ import { hemiTestnet } from 'networks/hemiTestnet'
 import { useEffect } from 'react'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
+import {
+  isPendingOperation,
+  isWithdrawalMissingInformation,
+} from 'utils/tunnel'
 import { hasKeys } from 'utils/utilities'
 import { useAccount } from 'wagmi'
 import {
@@ -101,25 +105,22 @@ const WatchEvmWithdrawal = function ({
         // refetchInterval object.
         getSeconds(12)
 
-      let intervalId
-      // skip polling for disabled states (those whose interval is "false")
-      if (typeof interval === 'number') {
+      worker.postMessage({
+        type: 'watch-evm-withdrawal',
+        withdrawal,
+      })
+
+      const intervalId = setInterval(function () {
+        if (!hasWorkedPostedBack) {
+          return
+        }
         worker.postMessage({
-          type: 'watch-withdrawal',
+          type: 'watch-evm-withdrawal',
           withdrawal,
         })
-        intervalId = setInterval(function () {
-          if (!hasWorkedPostedBack) {
-            return
-          }
-          worker.postMessage({
-            type: 'watch-withdrawal',
-            withdrawal,
-          })
-          // Block posting until a response is received
-          hasWorkedPostedBack = false
-        }, interval)
-      }
+        // Block posting until a response is received
+        hasWorkedPostedBack = false
+      }, interval)
 
       return function cleanup() {
         worker.removeEventListener('message', saveUpdates)
@@ -158,17 +159,7 @@ export const EvmWithdrawalsStateUpdater = function () {
   }
 
   const withdrawalsToWatch = withdrawals.filter(
-    w =>
-      !w.timestamp ||
-      w.status === undefined ||
-      [
-        MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE,
-        MessageStatus.STATE_ROOT_NOT_PUBLISHED,
-        MessageStatus.READY_TO_PROVE,
-        MessageStatus.IN_CHALLENGE_PERIOD,
-        MessageStatus.READY_FOR_RELAY,
-        // @ts-expect-error status is of type MessageStatus
-      ].includes(w.status),
+    w => isWithdrawalMissingInformation(w) || isPendingOperation(w),
   )
 
   return (

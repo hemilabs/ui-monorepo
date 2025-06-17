@@ -144,3 +144,22 @@ export const isPendingOperation = function (
 
   return isWithdrawPendingOperation(operation)
 }
+
+export const isMissingProveTransaction = (withdrawal: ToEvmWithdrawOperation) =>
+  [
+    MessageStatus.IN_CHALLENGE_PERIOD,
+    MessageStatus.READY_FOR_RELAY,
+    MessageStatus.RELAYED,
+    // @ts-expect-error status is of type MessageStatus
+  ].includes(withdrawal.status) && !withdrawal.proveTxHash
+
+export const isMissingClaimTransaction = (withdrawal: ToEvmWithdrawOperation) =>
+  withdrawal.status === MessageStatus.RELAYED && !withdrawal.claimTxHash
+
+export const isWithdrawalMissingInformation = (
+  withdrawal: ToEvmWithdrawOperation,
+) =>
+  !withdrawal.timestamp ||
+  withdrawal.status === undefined ||
+  isMissingProveTransaction(withdrawal) ||
+  isMissingClaimTransaction(withdrawal)

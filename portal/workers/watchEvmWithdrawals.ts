@@ -6,6 +6,7 @@ import {
   MessageStatus,
   type WithdrawTunnelOperation,
 } from 'types/tunnel'
+import { isWithdrawalMissingInformation } from 'utils/tunnel'
 import { type EnableWorkersDebug } from 'utils/typeUtilities'
 import { hasKeys } from 'utils/utilities'
 import { watchEvmWithdrawal } from 'utils/watch/evmWithdrawals'
@@ -20,7 +21,7 @@ export const getUpdateWithdrawalKey = (withdrawal: WithdrawTunnelOperation) =>
   `update-withdrawal-${withdrawal.l2ChainId}-${withdrawal.transactionHash}` as const
 
 type WatchWithdrawal = {
-  type: 'watch-withdrawal'
+  type: 'watch-evm-withdrawal'
   withdrawal: ToEvmWithdrawOperation
 }
 
@@ -45,8 +46,13 @@ const worker = typeWorker<WatchEvmWithdrawalsWorker>(self)
 // See https://www.npmjs.com/package/p-queue#priority
 const getPriority = function (withdrawal: ToEvmWithdrawOperation) {
   // prioritize those with missing vital information
-  if (!withdrawal.timestamp || withdrawal.status === undefined) {
-    return 2
+  if (isWithdrawalMissingInformation(withdrawal)) {
+    // if timestamp or status are missing, give higher priority, otherwise, low priority, and let
+    // the worker solve the rest of the information missing in the background
+    if (!withdrawal.timestamp || withdrawal.status === undefined) {
+      return 2
+    }
+    return 1
   }
   if (
     [MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
@@ -91,7 +97,7 @@ worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
   if (!e?.data) {
     return
   }
-  if (e.data.type === 'watch-withdrawal') {
+  if (e.data.type === 'watch-evm-withdrawal') {
     watchWithdrawal(e.data.withdrawal)
   }
   // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712

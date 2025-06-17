@@ -1,7 +1,12 @@
 import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
-import { getEvmWithdrawalStatus } from 'utils/tunnel'
+import { getWithdrawalProofClaimTxs } from 'utils/subgraph'
+import {
+  getEvmWithdrawalStatus,
+  isMissingClaimTransaction,
+  isMissingProveTransaction,
+} from 'utils/tunnel'
 
 const getTransactionBlockNumber = function (
   withdrawal: ToEvmWithdrawOperation,
@@ -67,6 +72,23 @@ export const watchEvmWithdrawal = async function (
   }
   if (withdrawal.timestamp !== timestamp) {
     updates.timestamp = timestamp
+  }
+  if (
+    isMissingProveTransaction(withdrawal) ||
+    isMissingClaimTransaction(withdrawal)
+  ) {
+    await getWithdrawalProofClaimTxs(receipt, withdrawal.l1ChainId)
+      // the request could fail if the prove / claim weren't indexed yet, returning
+      // a 404. Just fallback and let the next iteration of the worker to try again
+      .catch(() => ({ claimTxHash: null, proveTxHash: null }))
+      .then(function ({ claimTxHash, proveTxHash }) {
+        if (claimTxHash && withdrawal.claimTxHash !== claimTxHash) {
+          updates.claimTxHash = claimTxHash
+        }
+        if (proveTxHash && withdrawal.proveTxHash !== proveTxHash) {
+          updates.proveTxHash = proveTxHash
+        }
+      })
   }
 
   return updates

@@ -4,7 +4,16 @@ import {
   ToBtcWithdrawOperation,
   ToEvmWithdrawOperation,
 } from 'types/tunnel'
-import { type Address, type Chain } from 'viem'
+import {
+  encodeAbiParameters,
+  Hash,
+  keccak256,
+  parseAbiParameters,
+  TransactionReceipt,
+  type Address,
+  type Chain,
+} from 'viem'
+import { getWithdrawals } from 'viem/op-stack'
 
 import { isL2NetworkId } from './chain'
 
@@ -143,4 +152,37 @@ export const getTotalStaked = function (hemiId: Chain['id']) {
       totalStaked: string
     }[]
   }>(`${url}/staked`).then(({ staked }) => staked)
+}
+
+export const getWithdrawalProofClaimTxs = function (
+  withdrawalReceipt: TransactionReceipt,
+  l1ChainId: Chain['id'],
+) {
+  // When proving (and claiming) withdrawals, the storageKey where the proof will be saved
+  // in the contract is based on hashing a withdrawal object. See this hashing in
+  // https://github.com/hemilabs/optimism/blob/bde08fd3e335c235455b4cee6a6f8dbf88446201/packages/contracts-bedrock/src/L1/OptimismPortal2.sol#L542
+  // The same happens when claiming. As this hash is emitted in the Prove and Claim events, the subgraph-api allows us to filter by it.
+  // Because of that, we need to regenerate the hash to be able to query the events indexed.
+  // The code below is an implementation based of
+  // https://github.com/hemilabs/optimism/blob/bde08fd3e335c235455b4cee6a6f8dbf88446201/packages/contracts-bedrock/src/libraries/Hashing.sol#L107
+  // which generates the same hash
+  const hashWithdrawal = function () {
+    const [{ data, gasLimit, nonce, sender, target, value }] =
+      getWithdrawals(withdrawalReceipt)
+
+    const encoded = encodeAbiParameters(
+      parseAbiParameters('uint256, address, address, uint256, uint256, bytes'),
+      [nonce, sender, target, value, gasLimit, data],
+    )
+
+    return keccak256(encoded)
+  }
+
+  const url = getSubgraphBaseUrl(l1ChainId)
+
+  return request<{
+    claimTxHash: Hash | null
+    id: string
+    proveTxHash: Hash | null
+  }>(`${url}/hashedWithdrawals/${hashWithdrawal()}`)
 }

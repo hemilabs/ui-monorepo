@@ -8,6 +8,8 @@ import { mainnet } from 'viem/chains'
 import { PartnerLink } from './partnerLink'
 import stargateLogo from './partnerLogos/stargate.svg'
 
+// Stargate uses this address for ETH
+const stargateEthereumAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
 const stargateChainNameMap = {
   [hemi.id]: 'hemi',
   [mainnet.id]: 'ethereum',
@@ -15,31 +17,34 @@ const stargateChainNameMap = {
 
 type Props = {
   fromToken: Token
+  label?: string
   toToken: Token
 }
 
-export const Stargate = function ({ fromToken, toToken }: Props) {
+export const Stargate = function ({ fromToken, label, toToken }: Props) {
   const t = useTranslations('tunnel-page.tunnel-partners')
 
   const url = `https://stargate.finance/bridge${queryStringObjectToString({
     dstChain: stargateChainNameMap[toToken.chainId],
-    dstToken: toToken.address,
+    dstToken:
+      toToken.address === 'ETH' ? stargateEthereumAddress : toToken.address,
     srcChain: stargateChainNameMap[fromToken.chainId],
-    srcToken: fromToken.address,
+    srcToken:
+      fromToken.address === 'ETH' ? stargateEthereumAddress : fromToken.address,
   })}`
 
   return (
     <PartnerLink
       icon={
         <Image
-          alt="Stargate Banner"
+          alt="Stargate logo"
           className="mr-2 rounded-lg bg-black p-1.5"
           height={32}
           src={stargateLogo}
           width={32}
         />
       }
-      text={t('tunnel-with-stargate')}
+      text={label ?? t('tunnel-with-stargate')}
       url={url}
     />
   )

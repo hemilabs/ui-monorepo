@@ -312,9 +312,11 @@
       "from-network": "From Network",
       "hemi-receiving-address": "Receiving Hemi address",
       "hemi-receiving-address-description": "Deposited {symbol} is sent to the address associated with your connected EVM wallet.",
+      "hemi-tunnel": "Hemi tunnel",
       "max": "max",
       "receive": "Receive",
       "send": "Send",
+      "third-party-bridge": "3rd party bridge",
       "to-network": "To Network"
     },
     "review-deposit": {

@@ -7,6 +7,7 @@ import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
@@ -25,6 +26,7 @@ import { Erc20TokenApproval } from './erc20TokenApproval'
 import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
 import { SubmitEvmDeposit } from './submitEvmDeposit'
+import { TunnelProvider, TunnelProviderToggle } from './tunnelProviderToggle'
 
 const CustomTunnelsThroughPartners = dynamic(
   () =>
@@ -52,10 +54,13 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
+  const [provider, setProvider] = useState<TunnelProvider>('native')
 
   // use this state to toggle the Erc20 token approval
   const [extendedErc20Approval, setExtendedErc20Approval] = useState(false)
   const [isPartnersDrawerOpen, setIsPartnersDrawerOpen] = useState(false)
+  const [networkType] = useNetworkType()
+  const isMainnet = networkType === 'mainnet'
 
   const t = useTranslations()
 
@@ -174,26 +179,62 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
 
+  function RenderBelowForm() {
+    if (!canDeposit) return null
+
+    return (
+      <FeesContainer>
+        <EvmFeesSummary
+          gas={getGas()}
+          operationToken={fromToken}
+          total={getTotalDeposit()}
+        />
+      </FeesContainer>
+    )
+  }
+
+  function RenderTunnelProviderToggle() {
+    if (!isMainnet) return null
+
+    return (
+      <TunnelProviderToggle
+        fromChainId={fromNetworkId}
+        onChange={setProvider}
+        provider={provider}
+        toChainId={state.toNetworkId}
+      />
+    )
+  }
+
+  function RenderSubmitButton() {
+    if (provider !== 'native') return null
+
+    return (
+      <SubmitEvmDeposit
+        canDeposit={canDeposit}
+        fromToken={fromToken}
+        isAllowanceError={isAllowanceError}
+        isAllowanceLoading={isAllowanceLoading}
+        isRunningOperation={isRunningOperation}
+        needsApproval={needsApproval}
+        operationRunning={operationRunning}
+        setIsPartnersDrawerOpen={setIsPartnersDrawerOpen}
+        validationError={validationError}
+      />
+    )
+  }
+
   return (
     <>
       <TunnelForm
-        belowForm={
-          canDeposit ? (
-            <FeesContainer>
-              <EvmFeesSummary
-                gas={getGas()}
-                operationToken={fromToken}
-                total={getTotalDeposit()}
-              />
-            </FeesContainer>
-          ) : null
-        }
+        belowForm={<RenderBelowForm />}
         formContent={
           <FormContent
             errorKey={
               walletIsConnected(status) && balanceLoaded ? errorKey : undefined
             }
             isRunningOperation={isRunningOperation}
+            provider={provider}
             setMaxBalanceButton={
               <SetMaxEvmBalance
                 disabled={isRunningOperation}
@@ -213,6 +254,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
                 />
               )
             }
+            tunnelProviderToggle={<RenderTunnelProviderToggle />}
             tunnelState={{
               ...state,
               // patch these events to update the extendedErc20Approval state
@@ -240,19 +282,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
           />
         }
         onSubmit={handleDeposit}
-        submitButton={
-          <SubmitEvmDeposit
-            canDeposit={canDeposit}
-            fromToken={fromToken}
-            isAllowanceError={isAllowanceError}
-            isAllowanceLoading={isAllowanceLoading}
-            isRunningOperation={isRunningOperation}
-            needsApproval={needsApproval}
-            operationRunning={operationRunning}
-            setIsPartnersDrawerOpen={setIsPartnersDrawerOpen}
-            validationError={validationError}
-          />
-        }
+        submitButton={<RenderSubmitButton />}
       />
       {isPartnersDrawerOpen && (
         <CustomTunnelsThroughPartners

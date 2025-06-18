@@ -14,6 +14,7 @@ import { isEvmNetworkId } from 'utils/chain'
 import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { NetworkSelectors } from './networkSelectors'
+import { TunnelProvider } from './tunnelProviderToggle'
 
 const CustomTokenDrawer = dynamic(
   () =>
@@ -27,16 +28,20 @@ const CustomTokenDrawer = dynamic(
 type FormContentProps = {
   errorKey: string | undefined
   isRunningOperation: boolean
+  provider?: TunnelProvider
   setMaxBalanceButton: ReactNode
   tokenApproval?: ReactNode
+  tunnelProviderToggle?: ReactNode
   tunnelState: ReturnType<typeof useTunnelState>
 }
 
 export const FormContent = function ({
   errorKey,
   isRunningOperation,
+  provider,
   setMaxBalanceButton,
   tokenApproval,
+  tunnelProviderToggle,
   tunnelState,
 }: FormContentProps) {
   const {
@@ -63,6 +68,7 @@ export const FormContent = function ({
 
   const l1ChainId = fromNetworkId === hemi.id ? toNetworkId : fromNetworkId
   const l2ChainId = hemi.id
+  const safeProvider = tunnelProviderToggle ? provider : 'native'
 
   return (
     <>
@@ -80,42 +86,47 @@ export const FormContent = function ({
         updateFromNetwork={updateFromNetwork}
         updateToNetwork={updateToNetwork}
       />
-      <TokenInput
-        disabled={isRunningOperation}
-        errorKey={errorKey}
-        label={t('form.send')}
-        maxBalanceButton={setMaxBalanceButton}
-        onChange={updateFromInput}
-        token={fromToken}
-        tokenSelector={
-          <TokenSelector
-            chainId={fromNetworkId}
+      {tunnelProviderToggle}
+      {safeProvider !== 'thirdParty' && (
+        <>
+          <TokenInput
             disabled={isRunningOperation}
-            onSelectToken={updateFromToken}
-            selectedToken={fromToken}
-            tokens={fromTokens}
+            errorKey={errorKey}
+            label={t('form.send')}
+            maxBalanceButton={setMaxBalanceButton}
+            onChange={updateFromInput}
+            token={fromToken}
+            tokenSelector={
+              <TokenSelector
+                chainId={fromNetworkId}
+                disabled={isRunningOperation}
+                onSelectToken={updateFromToken}
+                selectedToken={fromToken}
+                tokens={fromTokens}
+              />
+            }
+            value={fromInput}
           />
-        }
-        value={fromInput}
-      />
-      <TokenInput
-        disabled={isRunningOperation}
-        errorKey={errorKey}
-        label={t('form.receive')}
-        onChange={updateFromInput}
-        token={toToken}
-        tokenSelector={<TokenSelectorReadOnly token={toToken} />}
-        // Tunnelling goes 1:1, so output equals input
-        value={fromInput}
-      />
-      {!!customTokenAddress && evmTunneling && (
-        <CustomTokenDrawer
-          fromNetworkId={fromNetworkId}
-          // @ts-expect-error TS fails to check these, but they are checked above by evmTunneling
-          l1ChainId={l1ChainId}
-          l2ChainId={l2ChainId}
-          onSelectToken={updateFromToken}
-        />
+          <TokenInput
+            disabled={isRunningOperation}
+            errorKey={errorKey}
+            label={t('form.receive')}
+            onChange={updateFromInput}
+            token={toToken}
+            tokenSelector={<TokenSelectorReadOnly token={toToken} />}
+            // Tunnelling goes 1:1, so output equals input
+            value={fromInput}
+          />
+          {!!customTokenAddress && evmTunneling && (
+            <CustomTokenDrawer
+              fromNetworkId={fromNetworkId}
+              // @ts-expect-error TS fails to check these, but they are checked above by evmTunneling
+              l1ChainId={l1ChainId}
+              l2ChainId={l2ChainId}
+              onSelectToken={updateFromToken}
+            />
+          )}
+        </>
       )}
     </>
   )

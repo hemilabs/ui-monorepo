@@ -1,0 +1,86 @@
+import { FreeTech } from 'components/customTunnelsThroughPartners/freetech'
+import { Interport } from 'components/customTunnelsThroughPartners/interport'
+import { Meson } from 'components/customTunnelsThroughPartners/meson'
+import { Stargate } from 'components/customTunnelsThroughPartners/stargate'
+import { WarningIcon } from 'components/icons/warningIcon'
+import { useTranslations } from 'next-intl'
+import { getNativeToken } from 'utils/nativeToken'
+import { Chain } from 'viem'
+
+export type TunnelProvider = 'native' | 'thirdParty'
+
+type Props = {
+  fromChainId: Chain['id']
+  onChange: (provider: TunnelProvider) => void
+  provider: TunnelProvider
+  toChainId: Chain['id']
+}
+
+type ThirdPartyOptionsProps = Pick<Props, 'fromChainId' | 'toChainId'>
+
+function ThirdPartyOptions({ fromChainId, toChainId }: ThirdPartyOptionsProps) {
+  const fromNativeToken = getNativeToken(fromChainId)
+  const toNativeToken = getNativeToken(toChainId)
+
+  return (
+    <div className="flex-col items-center justify-center space-y-3 rounded-lg bg-neutral-50 p-4">
+      <Stargate
+        fromToken={fromNativeToken}
+        label="Stargate"
+        toToken={toNativeToken}
+      />
+      <FreeTech />
+      <Interport fromChainId={fromChainId} toChainId={toChainId} />
+      <Meson label="Meson" />
+    </div>
+  )
+}
+
+export const TunnelProviderToggle = function ({
+  fromChainId,
+  onChange,
+  provider,
+  toChainId,
+}: Props) {
+  const t = useTranslations('tunnel-page')
+
+  return (
+    <>
+      <div className="flex w-full items-center justify-center rounded-lg bg-neutral-100 p-1">
+        <button
+          className={`flex-1 rounded-md p-1 text-sm font-medium transition ${
+            provider === 'native'
+              ? 'border-neutral-300/56 border bg-white text-neutral-950 shadow-sm'
+              : 'text-neutral-600'
+          }`}
+          onClick={() => onChange('native')}
+          type="button"
+        >
+          {t('form.hemi-tunnel')}
+        </button>
+        <button
+          className={`flex-1 rounded-md p-1 text-sm font-medium transition ${
+            provider === 'thirdParty'
+              ? 'border-neutral-300/56 border bg-white text-neutral-950 shadow-sm'
+              : 'text-neutral-600'
+          }`}
+          onClick={() => onChange('thirdParty')}
+          type="button"
+        >
+          {t('form.third-party-bridge')}
+        </button>
+      </div>
+      {provider === 'thirdParty' && (
+        <>
+          <ThirdPartyOptions fromChainId={fromChainId} toChainId={toChainId} />
+          <div className="mt-3 flex items-center justify-center gap-x-1 text-neutral-900">
+            <WarningIcon />
+            <p className="text-center text-sm font-normal">
+              {t('tunnel-partners.use-at-your-own-risk')}
+            </p>
+          </div>
+        </>
+      )}
+    </>
+  )
+}

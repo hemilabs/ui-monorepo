@@ -1,0 +1,14 @@
+{
+  "name": "vaults-monitor-api",
+  "version": "1.0.0",
+  "dependencies": {
+    "esplora-client": "1.2.0",
+    "hemi-viem": "2.5.0",
+    "not-express": "4.1.0",
+    "promise-mem": "1.0.4",
+    "viem": "2.31.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

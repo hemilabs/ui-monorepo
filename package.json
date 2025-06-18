@@ -30,6 +30,7 @@
     "portal",
     "subgraph-api",
     "subgraphs/*",
-    "token-prices/*"
+    "token-prices/*",
+    "vaults-monitor/*"
   ]
 }

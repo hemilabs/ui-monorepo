@@ -30,10 +30,11 @@
     {
       "extends": ["bloq/node", "prettier"],
       "files": [
-        "staking-points/**/*.js",
-        "token-prices/**/*.js",
+        "vaults-monitor/**/*.js",
+        "portal/*.config.js",
         "portal/scripts/*.js",
-        "portal/*.config.js"
+        "staking-points/**/*.js",
+        "token-prices/**/*.js"
       ]
     },
     {

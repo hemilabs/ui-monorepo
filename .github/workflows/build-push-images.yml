@@ -8,6 +8,7 @@ on:
       - 'staking-points/**'
       - 'subgraph-api/**'
       - 'token-prices/**'
+      - 'vaults-monitor/**'
 
 jobs:
   build-and-push:
@@ -35,3 +36,5 @@ jobs:
             image: hemilabs/token-prices-api
           - context: token-prices/cron
             image: hemilabs/token-prices-cron
+          - context: vaults-monitor/api
+            image: hemilabs/vaults-monitor-api

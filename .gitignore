@@ -5,11 +5,10 @@
 .nx/cache
 .serverless
 .vscode/
-
 lerna-debug.log
 node_modules
 out
-tsconfig.tsbuildinfo
+subgraph-api/.env*
 # information from docker-compose
 subgraphs/data
 # Graph CLI generated artifacts
@@ -21,5 +20,5 @@ subgraphs/hemi-tunnel-withdrawals-proof-claim-subgraph/build
 subgraphs/hemi-tunnel-withdrawals-proof-claim-subgraph/generated
 subgraphs/hemi-tunnel-withdrawals-subgraph/build
 subgraphs/hemi-tunnel-withdrawals-subgraph/generated
-
-subgraph-api/.env*
+tsconfig.tsbuildinfo
+vaults-monitor/**/.env*

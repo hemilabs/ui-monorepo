@@ -1,6 +1,6 @@
 {
   "ignore": ["portal/i18n/request.ts", "subgraphs/utils/index.ts"],
-  "ignoreBinaries": ["ipconfig"],
+  "ignoreBinaries": ["ipconfig", "sleep"],
   "ignoreDependencies": [
     "@wagmi/core",
     "eslint-config-next",

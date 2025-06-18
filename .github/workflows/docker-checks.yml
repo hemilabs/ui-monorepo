@@ -39,3 +39,4 @@ jobs:
           - token-prices/api
           - token-prices/cron
           - vaults-monitor/api
+          - vaults-monitor/cron

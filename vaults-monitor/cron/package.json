@@ -1,0 +1,13 @@
+{
+  "name": "vaults-monitor-cron",
+  "version": "1.0.0",
+  "scripts": {
+    "prestart": "sleep ${SLEEP:-0}"
+  },
+  "dependencies": {
+    "startinterval2": "1.0.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

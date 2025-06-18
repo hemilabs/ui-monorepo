@@ -2,18 +2,20 @@
 
 const startInterval = require('startinterval2')
 
-const safeCheckVaults = require('./src/check-vaults')
+const checkVaults = require('./src/check-vaults')
+const safeAsyncFn = require('./src/safe-async-fn')
 
-const apiUrl = process.env.API_URL || 'http://localhost:3003'
+const apiUrl = process.env.API_URL || 'http://localhost:3004'
 const slackWebhookUrl = process.env.SLACK_WEBHOOK_URL
 const slackMention = process.env.SLACK_MENTION
 const refreshIntervalStr = process.env.REFRESH_INTERVAL_SEC || '300' // 5m
 const refreshInterval = parseInt(refreshIntervalStr)
 
+const safeCheckVaults = safeAsyncFn(checkVaults)
+
 async function run() {
   const [err] = await safeCheckVaults({ apiUrl, slackMention, slackWebhookUrl })
   if (err) {
-    // eslint-disable-next-line no-console
     console.error(`Failed to check vaults: ${err.stack}`)
   }
 }

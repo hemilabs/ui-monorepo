@@ -1,8 +1,20 @@
 'use strict'
 
 const fetchJson = require('./fetch-json')
-const safeAsyncFn = require('./safe-async-fn')
 const postMessageToSlack = require('./post-message-to-slack')
+
+// These values match the Status enum used in the BitcoinTunnelManager and
+// BitcoinVault contracts.
+/* eslint-disable sort-keys */
+const VaultStatus = {
+  CREATED: 0,
+  INITIALIZING: 1,
+  LIVE: 2,
+  CLOSING_INIT: 3,
+  CLOSING_VERIF: 4,
+  CLOSED: 5,
+}
+/* eslint-enable sort-keys */
 
 const toBtc = sats => (sats / 100000000).toFixed(8)
 
@@ -25,17 +37,23 @@ function analyzeVaultsData({
   if (!vaultsData.length) {
     alerts.push('There are no vaults configured')
   }
-  if (!vaultsData.some(data => data.status === 2)) {
+  if (!vaultsData.some(data => data.status === VaultStatus.LIVE)) {
     alerts.push('No vaults are in LIVE state')
   }
   vaultsData.forEach(function (data, i) {
-    if (data.status === 0 || data.status === 1) {
-      // Vault is CREATED or INITIALIZING
+    if (
+      data.status === VaultStatus.CREATED ||
+      data.status === VaultStatus.INITIALIZING
+    ) {
       return
     }
 
-    if (data.status === 2 || data.status === 3) {
-      // Vault is LIVE or CLOSING_INIT
+    if (
+      data.status === VaultStatus.LIVE ||
+      data.status === VaultStatus.CLOSING_INIT
+    ) {
+      // This check shall be improved.
+      // See https://github.com/hemilabs/ui-monorepo/issues/1324
       if (data.balanceSats < data.pendingWithdrawalAmountSat) {
         alerts.push(
           `Vault ${i} at ${data.vaultAddress} does not have enough BTC in ${
@@ -52,23 +70,24 @@ function analyzeVaultsData({
   return alerts
 }
 
-function sendAlertsToSlack({ alerts, slackMention, slackWebhookUrl }) {
+async function sendAlertsToSlack({ alerts, slackMention, slackWebhookUrl }) {
   const intro =
     'The following problems were found when analyzing the bitcoin vaults:'
-  const message = `${intro}\n\n${alerts.map(alert => `- ${alert}\n`)}`
-  if (slackWebhookUrl) {
-    postMessageToSlack(message, slackWebhookUrl, slackMention)
-  } else {
-    console.error(message) // eslint-disable-line no-console
-  }
+  const message = `${intro}\n\n${alerts.map(alert => `- ${alert}`).join('\n')}`
+  await postMessageToSlack(message, slackWebhookUrl, slackMention)
 }
 
 async function checkVaults({ apiUrl, slackMention, slackWebhookUrl }) {
+  console.log('Running checks...')
   const state = await fetchJson(apiUrl)
   const alerts = analyzeVaultsData(state)
-  if (alerts.length) {
+  if (alerts.length && slackWebhookUrl) {
     await sendAlertsToSlack({ alerts, slackMention, slackWebhookUrl })
+  } else if (alerts.length) {
+    console.error(`Alerts: ${alerts.join(', ')}`)
+  } else {
+    console.log('OK')
   }
 }
 
-module.exports = safeAsyncFn(checkVaults)
+module.exports = checkVaults

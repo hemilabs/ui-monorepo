@@ -14,6 +14,6 @@ USER node
 
 COPY . .
 
-EXPOSE 3003
+EXPOSE 3004
 
 CMD ["npm", "start"]

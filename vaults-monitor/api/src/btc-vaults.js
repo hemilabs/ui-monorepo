@@ -18,7 +18,7 @@ const viem = require('viem')
 
 function getHemiClient(chainId) {
   const chain = { [hemi.id]: hemi, [hemiSepolia.id]: hemiSepolia }[chainId]
-  const transport = viem.http(chain.rpcUrls.default.http[0])
+  const transport = viem.http()
   return viem.createPublicClient({ chain, transport })
 }
 

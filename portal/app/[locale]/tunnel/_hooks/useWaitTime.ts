@@ -10,6 +10,7 @@ export const useEvmWithdrawTimeToProve = (withdrawal: ToEvmWithdrawOperation) =>
     enabled: !!withdrawal,
     queryFn: () => getTimeToProveInSeconds(withdrawal),
     queryKey: ['time-to-prove-withdraw', withdrawal.transactionHash],
+    refetchInterval: 24000, // 24 seconds
   })
 
 export const useEvmWithdrawTimeToFinalize = (
@@ -19,4 +20,5 @@ export const useEvmWithdrawTimeToFinalize = (
     enabled: !!withdrawal,
     queryFn: () => getTimeToFinalizeInSeconds(withdrawal),
     queryKey: ['time-to-finalize-withdraw', withdrawal.transactionHash],
+    refetchInterval: 24000, // 24 seconds
   })

@@ -13,10 +13,10 @@ type Props = {
   withdrawal: ToEvmWithdrawOperation
 }
 
-const ExpectedWithdrawalWaitTimeSecondsTestnet = 20 * 60
-const ExpectedWithdrawalWaitTimeSecondsMainnet = 40 * 60
-const ExpectedProofWaitTimeSecondsTestnet = 3 * 60 * 60
-const ExpectedProofWaitTimeSecondsMainnet = 24 * 60 * 60
+const ExpectedWithdrawalWaitTimeSecondsTestnet = 20 * 60 // 20 minutes
+const ExpectedWithdrawalWaitTimeSecondsMainnet = 40 * 60 // 40 minutes
+const ExpectedProofWaitTimeSecondsTestnet = 3 * 60 * 60 // 3 hours
+const ExpectedProofWaitTimeSecondsMainnet = 24 * 60 * 60 // 24 hours
 
 const renderTime = function (
   timeInSeconds: number,
@@ -67,7 +67,7 @@ export const EvmWithdrawalWaitTimeToProve = function ({ withdrawal }: Props) {
     )
   }
 
-  if (data === 0) {
+  if (data === 0 && withdrawal.status === MessageStatus.READY_TO_PROVE) {
     return <span> {tCommon('waiting-completed')} </span>
   }
 
@@ -98,7 +98,7 @@ export const EvmWithdrawalWaitTimeToFinalize = function ({
     )
   }
 
-  if (data === 0) {
+  if (data === 0 && withdrawal.status === MessageStatus.READY_FOR_RELAY) {
     return <span> {tCommon('waiting-completed')} </span>
   }
 

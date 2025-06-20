@@ -3,7 +3,13 @@
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
-import React, { useEffect, useState } from 'react'
+import React, {
+  Dispatch,
+  SetStateAction,
+  Suspense,
+  useEffect,
+  useState,
+} from 'react'
 
 import { AppLayoutContainer } from './appLayoutContainer'
 import { Header } from './header'
@@ -25,14 +31,15 @@ const Backdrop = ({ onClick }) => (
   />
 )
 
-export const AppLayout = function ({ children }: Props) {
+// UI-less component so I can wrap it on suspense.
+// Hooks can't be wrapped...
+const NavBarUrlSync = function ({
+  setIsMenuOpen,
+}: {
+  setIsMenuOpen: Dispatch<SetStateAction<boolean>>
+}) {
   const [networkType] = useNetworkType()
   const pathname = usePathnameWithoutLocale()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isNavbarOpen, setIsNavbarOpen] = useState(false)
-  const ref = useOnClickOutside<HTMLDivElement>(() => setIsNavbarOpen(false))
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
   useEffect(
     function closeNavBarOnUrlChange() {
@@ -41,8 +48,22 @@ export const AppLayout = function ({ children }: Props) {
     [networkType, pathname, setIsMenuOpen],
   )
 
+  return null
+}
+
+export const AppLayout = function ({ children }: Props) {
+  const pathname = usePathnameWithoutLocale()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isNavbarOpen, setIsNavbarOpen] = useState(false)
+  const ref = useOnClickOutside<HTMLDivElement>(() => setIsNavbarOpen(false))
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
+
   return (
     <AppLayoutContainer>
+      <Suspense>
+        <NavBarUrlSync setIsMenuOpen={setIsMenuOpen} />
+      </Suspense>
       <div className="relative hidden md:block">
         <TestnetIndicator />
       </div>

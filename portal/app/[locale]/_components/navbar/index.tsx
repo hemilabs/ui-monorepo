@@ -8,7 +8,8 @@ import { StakeIcon } from 'components/icons/stakeIcon'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 
-import { Badge } from './_components/badge'
+import { Badge } from '../badge'
+
 import { Dex } from './_components/dex'
 import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'

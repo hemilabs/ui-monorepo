@@ -7,7 +7,7 @@ import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByC
 import dynamic from 'next/dynamic'
 import { Dispatch, SetStateAction } from 'react'
 
-import { Badge } from './navbar/_components/badge'
+import { Badge } from './badge'
 
 const WalletConnection = dynamic(
   () => import('components/connectWallets').then(mod => mod.WalletConnection),

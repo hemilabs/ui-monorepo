@@ -83,7 +83,7 @@ export const EvmWithdrawalWaitTimeToProve = function ({
     )
   }
 
-  if (data === 0 && withdrawal.status === MessageStatus.READY_TO_PROVE) {
+  if (data === 0 && withdrawal.status >= MessageStatus.READY_TO_PROVE) {
     return <span> {tCommon('waiting-completed')} </span>
   }
 
@@ -113,7 +113,7 @@ export const EvmWithdrawalWaitTimeToFinalize = function ({
     )
   }
 
-  if (data === 0 && withdrawal.status === MessageStatus.READY_FOR_RELAY) {
+  if (data === 0 && withdrawal.status >= MessageStatus.READY_FOR_RELAY) {
     return <span> {tCommon('waiting-completed')} </span>
   }
 

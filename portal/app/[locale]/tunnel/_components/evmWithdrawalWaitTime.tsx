@@ -9,8 +9,12 @@ import {
   useEvmWithdrawTimeToProve,
 } from '../_hooks/useWaitTime'
 
-type Props = {
+type WithdrawalProps = {
   withdrawal: ToEvmWithdrawOperation
+}
+
+type WaitTimeProps = {
+  timeInSeconds: number
 }
 
 const ExpectedWithdrawalWaitTimeSecondsTestnet = 20 * 60 // 20 minutes
@@ -18,34 +22,47 @@ const ExpectedWithdrawalWaitTimeSecondsMainnet = 40 * 60 // 40 minutes
 const ExpectedProofWaitTimeSecondsTestnet = 3 * 60 * 60 // 3 hours
 const ExpectedProofWaitTimeSecondsMainnet = 24 * 60 * 60 // 24 hours
 
-const renderTime = function (
-  timeInSeconds: number,
-  tCommon: ReturnType<typeof useTranslations>,
-) {
-  const minuteInSeconds = 60
-  const hourInSeconds = 60 * 60
+const minuteInSeconds = 60
+const hourInSeconds = 60 * 60
+
+const WaitTime = function ({ timeInSeconds }: WaitTimeProps) {
+  const tCommon = useTranslations('common')
 
   if (timeInSeconds > hourInSeconds) {
-    return tCommon.rich('wait-hours', {
-      hours: () =>
-        tCommon('hours', {
-          hours: Math.ceil(secondsToHours(timeInSeconds)),
-        }),
-    })
+    return (
+      <span>
+        {tCommon.rich('wait-hours', {
+          hours: () =>
+            tCommon('hours', {
+              hours: Math.ceil(secondsToHours(timeInSeconds)),
+            }),
+        })}
+      </span>
+    )
   }
 
   if (timeInSeconds > minuteInSeconds) {
-    return tCommon('wait-minutes', {
-      minutes: Math.ceil(secondsToMinutes(timeInSeconds)),
-    })
+    return (
+      <span>
+        {tCommon('wait-minutes', {
+          minutes: Math.ceil(secondsToMinutes(timeInSeconds)),
+        })}
+      </span>
+    )
   }
 
-  return tCommon('wait-minutes', {
-    minutes: 1,
-  })
+  return (
+    <span>
+      {tCommon('wait-minutes', {
+        minutes: 1,
+      })}
+    </span>
+  )
 }
 
-export const EvmWithdrawalWaitTimeToProve = function ({ withdrawal }: Props) {
+export const EvmWithdrawalWaitTimeToProve = function ({
+  withdrawal,
+}: WithdrawalProps) {
   const [networkType] = useNetworkType()
   const tCommon = useTranslations('common')
   const { data, isError, isPending } = useEvmWithdrawTimeToProve(withdrawal)
@@ -56,14 +73,13 @@ export const EvmWithdrawalWaitTimeToProve = function ({ withdrawal }: Props) {
 
   if (isError) {
     return (
-      <span>
-        {renderTime(
+      <WaitTime
+        timeInSeconds={
           networkType === 'mainnet'
             ? ExpectedWithdrawalWaitTimeSecondsMainnet
-            : ExpectedWithdrawalWaitTimeSecondsTestnet,
-          tCommon,
-        )}
-      </span>
+            : ExpectedWithdrawalWaitTimeSecondsTestnet
+        }
+      />
     )
   }
 
@@ -71,12 +87,12 @@ export const EvmWithdrawalWaitTimeToProve = function ({ withdrawal }: Props) {
     return <span> {tCommon('waiting-completed')} </span>
   }
 
-  return <span> {renderTime(data, tCommon)} </span>
+  return <WaitTime timeInSeconds={data} />
 }
 
 export const EvmWithdrawalWaitTimeToFinalize = function ({
   withdrawal,
-}: Props) {
+}: WithdrawalProps) {
   const [networkType] = useNetworkType()
   const tCommon = useTranslations('common')
   const { data, isError, isPending } = useEvmWithdrawTimeToFinalize(withdrawal)
@@ -87,14 +103,13 @@ export const EvmWithdrawalWaitTimeToFinalize = function ({
 
   if (isError || withdrawal.status < MessageStatus.READY_FOR_RELAY) {
     return (
-      <span>
-        {renderTime(
+      <WaitTime
+        timeInSeconds={
           networkType === 'mainnet'
             ? ExpectedProofWaitTimeSecondsMainnet
-            : ExpectedProofWaitTimeSecondsTestnet,
-          tCommon,
-        )}
-      </span>
+            : ExpectedProofWaitTimeSecondsTestnet
+        }
+      />
     )
   }
 
@@ -102,5 +117,5 @@ export const EvmWithdrawalWaitTimeToFinalize = function ({
     return <span> {tCommon('waiting-completed')} </span>
   }
 
-  return <span> {renderTime(data, tCommon)} </span>
+  return <WaitTime timeInSeconds={data} />
 }

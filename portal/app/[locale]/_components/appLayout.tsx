@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 
 import { AppLayoutContainer } from './appLayoutContainer'
 import { Header } from './header'
+import { MainContainer } from './mainContainer'
 import { Navbar } from './navbar'
 import { TestnetIndicator } from './testnetIndicator'
 
@@ -31,10 +32,6 @@ export const AppLayout = function ({ children }: Props) {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false)
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsNavbarOpen(false))
 
-  // Hide instead of not-rendering when the header is open, to avoid loosing state of the components when opening
-  // and closing the header
-  const hiddenClass = isMenuOpen ? 'hidden' : ''
-
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
   useEffect(
@@ -54,16 +51,7 @@ export const AppLayout = function ({ children }: Props) {
         setIsNavbarOpen={setIsNavbarOpen}
         toggleMenu={toggleMenu}
       />
-      <div
-        className={`box-border h-[calc(100dvh-3.5rem)] flex-grow
-          md:h-[calc(100dvh-4.25rem-1rem)]
-          ${hiddenClass}
-          ${
-            networkType === 'testnet'
-              ? 'max-md:border-3 max-md:border-solid max-md:border-orange-500'
-              : ''
-          }`}
-      >
+      <MainContainer hide={isMenuOpen}>
         <div className="relative md:hidden">
           <TestnetIndicator />
         </div>
@@ -81,7 +69,7 @@ export const AppLayout = function ({ children }: Props) {
             {children}
           </div>
         </div>
-      </div>
+      </MainContainer>
       {isNavbarOpen && (
         <>
           <Backdrop onClick={() => setIsNavbarOpen(false)} />

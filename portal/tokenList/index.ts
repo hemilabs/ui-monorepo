@@ -7,6 +7,7 @@ import { type Address } from 'viem'
 
 import { customTunnelPartnersWhitelist } from './customTunnelPartnersWhitelist'
 import { nativeTokens } from './nativeTokens'
+import { priceWhiteList } from './priceTokens'
 import { stakeWhiteList } from './stakeTokens'
 import { tunnelWhiteList } from './tunnelTokens'
 
@@ -68,8 +69,9 @@ export const tokenList = {
   timestamp: hemilabsTokenList.timestamp,
   tokens: tokens
     .concat(nativeTokens)
+    .map(extendWithWhiteList(customTunnelPartnersWhitelist))
+    .map(extendWithWhiteList(priceWhiteList))
     .map(extendWithWhiteList(stakeWhiteList))
     .map(extendWithWhiteList(tunnelWhiteList))
-    .map(extendWithWhiteList(customTunnelPartnersWhitelist))
     .sort((a, b) => a.symbol.localeCompare(b.symbol)),
 }

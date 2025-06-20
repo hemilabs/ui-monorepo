@@ -7,25 +7,10 @@ import React, { useEffect, useState } from 'react'
 
 import { Header } from './header'
 import { Navbar } from './navbar'
+import { TestnetIndicator } from './testnetIndicator'
 
 type Props = {
   children: React.ReactNode
-}
-
-const TestnetIndicator = function () {
-  const [networkType] = useNetworkType()
-  if (networkType !== 'testnet') {
-    return null
-  }
-
-  return (
-    <span
-      className="absolute left-1/2 z-10 -translate-x-1/2 rounded-b bg-orange-500
-    px-2 text-sm font-medium text-white"
-    >
-      Testnet
-    </span>
-  )
 }
 
 const Backdrop = ({ onClick }) => (

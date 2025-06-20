@@ -2,6 +2,7 @@ import { hemi } from 'hemi-viem'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
+import { isNativeAddress } from 'utils/nativeToken'
 import { queryStringObjectToString } from 'utils/url'
 import { mainnet } from 'viem/chains'
 
@@ -26,11 +27,13 @@ export const Stargate = function ({ fromToken, label, toToken }: Props) {
 
   const url = `https://stargate.finance/bridge${queryStringObjectToString({
     dstChain: stargateChainNameMap[toToken.chainId],
-    dstToken:
-      toToken.address === 'ETH' ? stargateEthereumAddress : toToken.address,
+    dstToken: isNativeAddress(toToken.address)
+      ? stargateEthereumAddress
+      : toToken.address,
     srcChain: stargateChainNameMap[fromToken.chainId],
-    srcToken:
-      fromToken.address === 'ETH' ? stargateEthereumAddress : fromToken.address,
+    srcToken: isNativeAddress(fromToken.address)
+      ? stargateEthereumAddress
+      : fromToken.address,
   })}`
 
   return (

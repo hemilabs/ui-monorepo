@@ -6,11 +6,13 @@ on:
       - 'staking-points/**'
       - 'subgraph-api/**'
       - 'token-prices/**'
+      - 'vaults-monitor/**'
   push:
     paths:
       - 'staking-points/**'
       - 'subgraph-api/**'
       - 'token-prices/**'
+      - 'vaults-monitor/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
@@ -36,3 +38,5 @@ jobs:
           - subgraph-api
           - token-prices/api
           - token-prices/cron
+          - vaults-monitor/api
+          - vaults-monitor/cron

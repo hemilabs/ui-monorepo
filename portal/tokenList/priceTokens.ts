@@ -69,6 +69,11 @@ function getMainnetPriceList() {
   const tokenMaps = {
     // Prefer ordering by symbol in comments, instead of by address, which makes it harder
     // to search for a specific token.
+    /* eslint-disable sort-keys */
+    // bwAJNA
+    '0x63D367531B460Da78a9EBBAF6c1FBFC397E5d40A': {
+      priceSymbol: 'ajna',
+    },
     // VUSD
     '0x7A06C4AeF988e7925575C50261297a946aD204A8': {
       priceSymbol: 'usdt',
@@ -78,6 +83,7 @@ function getMainnetPriceList() {
       ...ethAddresses.map(address => [address, { priceSymbol: 'eth' }]),
       ...usdcAddresses.map(address => [address, { priceSymbol: 'usdc' }]),
     ]),
+    /* eslint-disable sort-keys */
   } satisfies PriceMap
 
   return {

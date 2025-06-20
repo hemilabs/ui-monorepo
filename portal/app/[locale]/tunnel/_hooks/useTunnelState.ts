@@ -17,7 +17,7 @@ import { type Chain, isHash } from 'viem'
 import { useTunnelOperation } from './useTunnelOperation'
 
 export type Operation = 'claim' | 'deposit' | 'prove' | 'withdraw' | 'view'
-export type TunnelProviderType = 'native' | 'thirdParty'
+type TunnelProviderType = 'native' | 'thirdParty'
 
 export type TunnelState = {
   fromInput: string

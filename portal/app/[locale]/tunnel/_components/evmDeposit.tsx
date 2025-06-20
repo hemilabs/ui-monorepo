@@ -26,7 +26,7 @@ import { Erc20TokenApproval } from './erc20TokenApproval'
 import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
 import { SubmitEvmDeposit } from './submitEvmDeposit'
-import { TunnelProvider, TunnelProviderToggle } from './tunnelProviderToggle'
+import { TunnelProviderToggle } from './tunnelProviderToggle'
 
 const CustomTunnelsThroughPartners = dynamic(
   () =>
@@ -54,7 +54,6 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
-  const [provider, setProvider] = useState<TunnelProvider>('native')
 
   // use this state to toggle the Erc20 token approval
   const [extendedErc20Approval, setExtendedErc20Approval] = useState(false)
@@ -68,7 +67,10 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     fromInput,
     fromNetworkId,
     fromToken,
+    providerType,
     resetStateAfterOperation,
+    toggleTunnelProviderType,
+    toNetworkId,
     toToken,
     updateFromInput,
   } = state
@@ -198,16 +200,16 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
     return (
       <TunnelProviderToggle
-        fromChainId={fromNetworkId}
-        onChange={setProvider}
-        provider={provider}
-        toChainId={state.toNetworkId}
+        fromNetworkId={fromNetworkId}
+        providerType={providerType}
+        toNetworkId={toNetworkId}
+        toggleTunnelProviderType={toggleTunnelProviderType}
       />
     )
   }
 
   function RenderSubmitButton() {
-    if (provider !== 'native') return null
+    if (providerType !== 'native') return null
 
     return (
       <SubmitEvmDeposit
@@ -234,7 +236,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
               walletIsConnected(status) && balanceLoaded ? errorKey : undefined
             }
             isRunningOperation={isRunningOperation}
-            provider={provider}
+            provider={<RenderTunnelProviderToggle />}
             setMaxBalanceButton={
               <SetMaxEvmBalance
                 disabled={isRunningOperation}
@@ -254,7 +256,6 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
                 />
               )
             }
-            tunnelProviderToggle={<RenderTunnelProviderToggle />}
             tunnelState={{
               ...state,
               // patch these events to update the extendedErc20Approval state

@@ -38,7 +38,7 @@ import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitEvmWithdrawal } from './submitEvmWithdrawal'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
-import { TunnelProvider, TunnelProviderToggle } from './tunnelProviderToggle'
+import { TunnelProviderToggle } from './tunnelProviderToggle'
 
 const CustomTunnelsThroughPartners = dynamic(
   () =>
@@ -264,7 +264,10 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     fromInput,
     fromNetworkId,
     fromToken,
+    providerType,
     resetStateAfterOperation,
+    toggleTunnelProviderType,
+    toNetworkId,
     toToken,
     updateFromInput,
   } = state
@@ -283,7 +286,6 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   const { balance: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
     useTokenBalance(fromToken.chainId, fromToken.address)
 
-  const [provider, setProvider] = useState<TunnelProvider>('native')
   const [networkType] = useNetworkType()
   const isMainnet = networkType === 'mainnet'
 
@@ -360,16 +362,16 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
 
     return (
       <TunnelProviderToggle
-        fromChainId={fromNetworkId}
-        onChange={setProvider}
-        provider={provider}
-        toChainId={state.toNetworkId}
+        fromNetworkId={fromNetworkId}
+        providerType={providerType}
+        toNetworkId={toNetworkId}
+        toggleTunnelProviderType={toggleTunnelProviderType}
       />
     )
   }
 
   function RenderSubmitButton() {
-    if (provider !== 'native') return null
+    if (providerType !== 'native') return null
 
     return (
       <SubmitEvmWithdrawal
@@ -392,7 +394,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
               walletIsConnected(status) && balanceLoaded ? errorKey : undefined
             }
             isRunningOperation={isWithdrawing}
-            provider={provider}
+            provider={<RenderTunnelProviderToggle />}
             setMaxBalanceButton={
               <SetMaxEvmBalance
                 disabled={isWithdrawing}
@@ -401,7 +403,6 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
                 token={fromToken}
               />
             }
-            tunnelProviderToggle={<RenderTunnelProviderToggle />}
             tunnelState={{
               ...state,
               updateFromToken(from, to) {

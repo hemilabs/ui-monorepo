@@ -17,6 +17,7 @@ import { type Chain, isHash } from 'viem'
 import { useTunnelOperation } from './useTunnelOperation'
 
 export type Operation = 'claim' | 'deposit' | 'prove' | 'withdraw' | 'view'
+export type TunnelProviderType = 'native' | 'thirdParty'
 
 export type TunnelState = {
   fromInput: string
@@ -24,6 +25,7 @@ export type TunnelState = {
   fromToken: Token
   toNetworkId: RemoteChain['id']
   toToken: Token
+  providerType: TunnelProviderType
 }
 
 type Action<T extends string> = {
@@ -45,6 +47,8 @@ type UpdateToNetwork = Action<'updateToNetwork'> &
 type ToggleInput = Action<'toggleInput'> & NoPayload
 type ToggleTestnetMainnet = Action<'toggleTestnetMainnet'> &
   Payload<Pick<TunnelState, 'fromNetworkId' | 'toNetworkId'>>
+type ToggleTunnelProviderType = Action<'toggleTunnelProviderType'> &
+  Payload<TunnelProviderType>
 
 type Actions =
   | ResetStateAfterOperation
@@ -54,6 +58,7 @@ type Actions =
   | UpdateToNetwork
   | ToggleInput
   | ToggleTestnetMainnet
+  | ToggleTunnelProviderType
 
 // the _:never is used to fail compilation if a case is missing
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -119,7 +124,14 @@ const reducer = function (state: TunnelState, action: Actions): TunnelState {
         ...state,
         ...action.payload,
         fromToken: getNativeToken(action.payload.fromNetworkId),
+        providerType: 'native', // reset provider to native on network switch
         toToken: getNativeToken(action.payload.toNetworkId),
+      }
+    }
+    case 'toggleTunnelProviderType': {
+      return {
+        ...state,
+        providerType: action.payload,
       }
     }
     default:
@@ -220,9 +232,17 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   const [state, dispatch] = useReducer(reducer, {
     fromInput: '0',
     fromToken: getNativeToken(initial.fromNetworkId),
+    providerType: 'native',
     toToken: getNativeToken(initial.toNetworkId),
     ...initial,
   } as TunnelState)
+
+  const toggleTunnelProviderType = useCallback(
+    function (payload: TunnelProviderType) {
+      dispatch({ payload, type: 'toggleTunnelProviderType' })
+    },
+    [dispatch],
+  )
 
   // This function cleans up the user input, only allowing strings representing
   // numbers to go through and alter the state.
@@ -298,6 +318,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
       },
       [dispatch, operation, tunnelOperation],
     ),
+    toggleTunnelProviderType,
     updateFromInput,
     updateFromNetwork: useCallback(
       function (fromNetworkId: UpdateFromNetwork['payload']) {

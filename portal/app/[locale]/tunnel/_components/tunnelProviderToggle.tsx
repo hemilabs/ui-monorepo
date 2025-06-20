@@ -7,16 +7,17 @@ import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { Chain } from 'viem'
 
-export type TunnelProvider = 'native' | 'thirdParty'
+import { useTunnelState } from '../_hooks/useTunnelState'
 
-type Props = {
+type Props = Pick<
+  ReturnType<typeof useTunnelState>,
+  'fromNetworkId' | 'toNetworkId' | 'providerType' | 'toggleTunnelProviderType'
+>
+
+type ThirdPartyOptionsProps = {
   fromChainId: Chain['id']
-  onChange: (provider: TunnelProvider) => void
-  provider: TunnelProvider
   toChainId: Chain['id']
 }
-
-type ThirdPartyOptionsProps = Pick<Props, 'fromChainId' | 'toChainId'>
 
 function ThirdPartyOptions({ fromChainId, toChainId }: ThirdPartyOptionsProps) {
   const fromNativeToken = getNativeToken(fromChainId)
@@ -37,10 +38,10 @@ function ThirdPartyOptions({ fromChainId, toChainId }: ThirdPartyOptionsProps) {
 }
 
 export const TunnelProviderToggle = function ({
-  fromChainId,
-  onChange,
-  provider,
-  toChainId,
+  fromNetworkId,
+  providerType,
+  toggleTunnelProviderType,
+  toNetworkId,
 }: Props) {
   const t = useTranslations('tunnel-page')
 
@@ -49,30 +50,34 @@ export const TunnelProviderToggle = function ({
       <div className="flex w-full items-center justify-center rounded-lg bg-neutral-100 p-1">
         <button
           className={`flex-1 rounded-md p-1 text-sm font-medium transition ${
-            provider === 'native'
+            providerType === 'native'
               ? 'border-neutral-300/56 border bg-white text-neutral-950 shadow-sm'
-              : 'text-neutral-600'
+              : 'text-neutral-600 hover:text-neutral-950'
           }`}
-          onClick={() => onChange('native')}
+          onClick={() => toggleTunnelProviderType('native')}
           type="button"
         >
           {t('form.hemi-tunnel')}
         </button>
         <button
           className={`flex-1 rounded-md p-1 text-sm font-medium transition ${
-            provider === 'thirdParty'
+            providerType === 'thirdParty'
               ? 'border-neutral-300/56 border bg-white text-neutral-950 shadow-sm'
-              : 'text-neutral-600'
+              : 'text-neutral-600 hover:text-neutral-950'
           }`}
-          onClick={() => onChange('thirdParty')}
+          onClick={() => toggleTunnelProviderType('thirdParty')}
           type="button"
         >
           {t('form.third-party-bridge')}
         </button>
       </div>
-      {provider === 'thirdParty' && (
+      {providerType === 'thirdParty' && (
         <>
-          <ThirdPartyOptions fromChainId={fromChainId} toChainId={toChainId} />
+          {/* As this is used by Evm networks only, we can cast these safely */}
+          <ThirdPartyOptions
+            fromChainId={fromNetworkId as number}
+            toChainId={toNetworkId as number}
+          />
           <div className="mt-3 flex items-center justify-center gap-x-1 text-neutral-900">
             <WarningIcon />
             <p className="text-center text-sm font-normal">

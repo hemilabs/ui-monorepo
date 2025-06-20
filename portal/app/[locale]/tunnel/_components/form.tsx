@@ -14,7 +14,6 @@ import { isEvmNetworkId } from 'utils/chain'
 import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { NetworkSelectors } from './networkSelectors'
-import { TunnelProvider } from './tunnelProviderToggle'
 
 const CustomTokenDrawer = dynamic(
   () =>
@@ -28,10 +27,9 @@ const CustomTokenDrawer = dynamic(
 type FormContentProps = {
   errorKey: string | undefined
   isRunningOperation: boolean
-  provider?: TunnelProvider
+  provider?: ReactNode
   setMaxBalanceButton: ReactNode
   tokenApproval?: ReactNode
-  tunnelProviderToggle?: ReactNode
   tunnelState: ReturnType<typeof useTunnelState>
 }
 
@@ -41,13 +39,13 @@ export const FormContent = function ({
   provider,
   setMaxBalanceButton,
   tokenApproval,
-  tunnelProviderToggle,
   tunnelState,
 }: FormContentProps) {
   const {
     fromInput,
     fromNetworkId,
     fromToken,
+    providerType,
     toggleInput,
     toNetworkId,
     toToken,
@@ -68,7 +66,6 @@ export const FormContent = function ({
 
   const l1ChainId = fromNetworkId === hemi.id ? toNetworkId : fromNetworkId
   const l2ChainId = hemi.id
-  const safeProvider = tunnelProviderToggle ? provider : 'native'
 
   return (
     <>
@@ -86,8 +83,8 @@ export const FormContent = function ({
         updateFromNetwork={updateFromNetwork}
         updateToNetwork={updateToNetwork}
       />
-      {tunnelProviderToggle}
-      {safeProvider !== 'thirdParty' && (
+      {provider}
+      {(!provider || providerType === 'native') && (
         <>
           <TokenInput
             disabled={isRunningOperation}

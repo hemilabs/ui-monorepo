@@ -5,6 +5,7 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import React, { useEffect, useState } from 'react'
 
+import { AppLayoutContainer } from './appLayoutContainer'
 import { Header } from './header'
 import { Navbar } from './navbar'
 import { TestnetIndicator } from './testnetIndicator'
@@ -44,18 +45,7 @@ export const AppLayout = function ({ children }: Props) {
   )
 
   return (
-    <div
-      className={`
-        shadow-hemi-layout backdrop-blur-20 relative flex h-full
-        w-3/4 flex-1 flex-col self-stretch overflow-y-hidden bg-neutral-50 lg:h-[calc(100dvh-16px)]
-        ${
-          networkType === 'testnet'
-            ? 'md:border-2 md:border-orange-500'
-            : 'border-neutral-300/55 lg:border'
-        }
-        md:my-0 md:mr-0 md:w-[calc(75%-8px)] lg:my-2 lg:mr-2 lg:rounded-2xl`}
-      id="app-layout-container"
-    >
+    <AppLayoutContainer>
       <div className="relative hidden md:block">
         <TestnetIndicator />
       </div>
@@ -108,6 +98,6 @@ export const AppLayout = function ({ children }: Props) {
           <Navbar />
         </div>
       ) : null}
-    </div>
+    </AppLayoutContainer>
   )
 }

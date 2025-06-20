@@ -36,7 +36,6 @@ export const stakeWhiteList: Partial<
         // satUSD
         '0xb4818BB69478730EF4e33Cc068dD94278e2766cB': {
             protocol: 'satoshi',
-            priceSymbol: 'usdc',
             rewards: ['hemi3x', 'satoshi'],
             website: 'https://www.satoshiprotocol.org',
         },
@@ -46,7 +45,25 @@ export const stakeWhiteList: Partial<
 }
 ```
 
-## Step 3 - Add the protocol logo image (if needed)
+## Step 3 - Add the price symbol (if needed)
+
+If the token has not a symbol that's mapped to the returned tokens from the Token Prices API, then a mapping into a known token is needed. For that, the [priceWhiteList](../tokenList/priceTokens.ts) needs to be updated, adding the price symbol as below:
+
+```tsx
+export const priceWhiteList = {
+  [hemi.id]: {
+    ...
+    // satUSD
+    '0xb4818BB69478730EF4e33Cc068dD94278e2766cB': {
+      priceSymbol: 'usdc',
+    }
+  }
+}
+```
+
+If the token is also on the tunnel, make sure to also map to the sourceId chain.
+
+## Step 4 - Add the protocol logo image (if needed)
 
 If the new token protocol is not already in the [protocolImages.ts](../app/[locale]/stake/protocols/protocolImages.ts) file you need to add the protocol logo image to the [/stake/protocols/images](../app/[locale]/stake/protocols/images) folder and add it to the `protocolImages` list as below:
 
@@ -64,7 +81,7 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
 }
 ```
 
-## Step 4 - Add the new rewards icon images (if needed)
+## Step 5 - Add the new rewards icon images (if needed)
 
 If the new token you added have rewards that are not already in the [tokenRewards.tsx](../app/[locale]/stake/_components/tokenRewards.tsx) list you must add the icon image file to the [rewards icons](../app/[locale]/stake/_components/icons) folder and create the reward points tag component as follows:
 
@@ -103,7 +120,7 @@ const rewardComponentMap: Record<Reward, ReactNode> = {
 }
 ```
 
-## Step 5 - Check if token is whitelisted
+## Step 6 - Check if token is whitelisted
 
 Before merging your changes to the `main` branch you need to make sure the new token you added is already whitelisted to staking and you can do that by calling `tokenAllowlist` method in the [staking pool smart contract](https://explorer.hemi.xyz/address/0x4F5E928763CBFaF5fFD8907ebbB0DAbd5f78bA83) as shown in the screenshot below:
 

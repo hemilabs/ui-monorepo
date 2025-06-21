@@ -77,17 +77,15 @@ export default async function RootLayout({
                       <div className="hidden w-1/4 max-w-60 lg:block">
                         <Navbar />
                       </div>
-                      {/* This suspense wrapper is needed because, from this point downwards, rendering depends on 
-          getting mainnet|testnet from query string, and using useSearchParams (through nuqs) requires so to compile.
-          However, there's no change at all in the UI, so no fallback seems to be needed, as it isn't an async request
-          or something that requires showing something. */}
-                      <Suspense>
-                        <AppLayout>
-                          <ErrorBoundary>{children}</ErrorBoundary>
-                          <AppOverlays />
-                          <Workers />
-                        </AppLayout>
-                      </Suspense>
+                      <AppLayout>
+                        <ErrorBoundary>
+                          {/* Last resort Suspense wrapper usage.
+                        Ideally, Suspense wrappers should be added where needed in each page */}
+                          <Suspense>{children}</Suspense>
+                        </ErrorBoundary>
+                        <AppOverlays />
+                        <Workers />
+                      </AppLayout>
                     </div>
                   </TunnelHistoryProvider>
                 </Analytics>

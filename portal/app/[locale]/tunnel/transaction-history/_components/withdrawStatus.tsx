@@ -3,9 +3,12 @@ import Skeleton from 'react-loading-skeleton'
 import {
   BtcWithdrawStatus,
   MessageStatus,
+  ToEvmWithdrawOperation,
   WithdrawTunnelOperation,
 } from 'types/tunnel'
 import { isToEvmWithdraw } from 'utils/tunnel'
+
+import { EvmWithdrawalWaitTimeToProve } from '../../_components/evmWithdrawalWaitTime'
 
 import { TxStatus } from './txStatus'
 
@@ -15,17 +18,21 @@ type Props = {
 
 const EvmWithdrawStatus = function ({ withdrawal }: Props) {
   const t = useTranslations()
-  const waitMinutes = t('common.wait-minutes', { minutes: 20 })
+  const waitTime = (
+    <EvmWithdrawalWaitTimeToProve
+      withdrawal={withdrawal as ToEvmWithdrawOperation}
+    />
+  )
 
   const statuses = {
     // This status should never be rendered, but just to be defensive
     // let's render the next status:
     [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: (
-      <TxStatus.InStatus text={waitMinutes} />
+      <TxStatus.InStatus text={waitTime} />
     ),
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: <TxStatus.Failed />,
     [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: (
-      <TxStatus.InStatus text={waitMinutes} />
+      <TxStatus.InStatus text={waitTime} />
     ),
     [MessageStatus.READY_TO_PROVE]: (
       <TxStatus.InStatus text={t('transaction-history.ready-to-prove')} />

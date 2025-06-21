@@ -45,6 +45,7 @@
     "unsupported-chain-heading": "You're not connected to a supported chain",
     "wait-hours": "Wait ~<hours></hours>",
     "wait-minutes": "Wait ~{minutes} minutes",
+    "waiting-completed": "Waiting completed",
     "wallets-connected": "{count} Connected {count, plural, =1 {Wallet} other {Wallets}} ",
     "wrong-network": "Wrong Network",
     "wrong-type-network": "Wrong {type} Network",

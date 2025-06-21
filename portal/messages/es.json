@@ -45,6 +45,7 @@
     "unsupported-chain-heading": "Usted no se encuentra conectado a una red soportada",
     "wait-hours": "Espere hasta ~<hours></hours>",
     "wait-minutes": "Espere hasta ~{minutes} minutos",
+    "waiting-completed": "Espera completada",
     "wallets-connected": "{count} {count, plural, =1 {Billetera Conectada} other {Billeteras Conectadas}} ",
     "wrong-network": "Red Incorrecta",
     "wrong-type-network": "Red {type} Incorrecta",

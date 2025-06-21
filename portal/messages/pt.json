@@ -45,6 +45,7 @@
     "unsupported-chain-heading": "Não está conectado a uma rede suportada",
     "wait-hours": "Aguarde ~<hours></hours>",
     "wait-minutes": "Aguarde ~{minutes} minutos",
+    "waiting-completed": "Espera concluída",
     "wallets-connected": "{count} {count, plural, =1 {Carteira Conectada} other {Carteiras Conectadas}}",
     "wrong-network": "Rede Errada",
     "wrong-type-network": "Rede {type} Errada",

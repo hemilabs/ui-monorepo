@@ -4,7 +4,11 @@ import { useTranslations } from 'next-intl'
 import { PartnerLink } from './partnerLink'
 import mesonLogo from './partnerLogos/meson.svg'
 
-export const Meson = function () {
+type Props = {
+  label?: string
+}
+
+export const Meson = function ({ label }: Props) {
   const t = useTranslations('tunnel-page.tunnel-partners')
 
   // TODO: This url should be updated once we have the template for Meson
@@ -15,14 +19,14 @@ export const Meson = function () {
     <PartnerLink
       icon={
         <Image
-          alt="Meson Banner"
+          alt="Meson logo"
           className="mr-2 rounded-lg"
           height={32}
           src={mesonLogo}
           width={32}
         />
       }
-      text={t('tunnel-with-meson')}
+      text={label ?? t('tunnel-with-meson')}
       url={url}
     />
   )

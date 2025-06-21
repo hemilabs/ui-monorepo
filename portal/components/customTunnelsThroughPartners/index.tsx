@@ -33,7 +33,7 @@ export const CustomTunnelsThroughPartners = function ({
             {t(`${operation}.subheading`, { symbol: fromToken.symbol })}
           </DrawerParagraph>
         </div>
-        <div className="space-y-4">
+        <div className="mb-3 space-y-4">
           <Stargate fromToken={fromToken} toToken={toToken} />
           <Meson />
         </div>

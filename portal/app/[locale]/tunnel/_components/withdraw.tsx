@@ -38,6 +38,7 @@ import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitEvmWithdrawal } from './submitEvmWithdrawal'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
+import { TunnelProviderToggle } from './tunnelProviderToggle'
 
 const CustomTunnelsThroughPartners = dynamic(
   () =>
@@ -263,7 +264,10 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     fromInput,
     fromNetworkId,
     fromToken,
+    providerType,
     resetStateAfterOperation,
+    toggleTunnelProviderType,
+    toNetworkId,
     toToken,
     updateFromInput,
   } = state
@@ -281,6 +285,9 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
 
   const { balance: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
     useTokenBalance(fromToken.chainId, fromToken.address)
+
+  const [networkType] = useNetworkType()
+  const isMainnet = networkType === 'mainnet'
 
   const {
     canSubmit: canWithdraw,
@@ -336,26 +343,58 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
 
   const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
 
+  function RenderBelowForm() {
+    if (!canWithdraw) return null
+
+    return (
+      <FeesContainer>
+        <EvmFeesSummary
+          gas={gas}
+          operationToken={fromToken}
+          total={totalDeposit}
+        />
+      </FeesContainer>
+    )
+  }
+
+  function RenderTunnelProviderToggle() {
+    if (!isMainnet) return null
+
+    return (
+      <TunnelProviderToggle
+        fromNetworkId={fromNetworkId}
+        providerType={providerType}
+        toNetworkId={toNetworkId}
+        toggleTunnelProviderType={toggleTunnelProviderType}
+      />
+    )
+  }
+
+  function RenderSubmitButton() {
+    if (providerType !== 'native') return null
+
+    return (
+      <SubmitEvmWithdrawal
+        canWithdraw={canWithdraw}
+        fromToken={fromToken}
+        isWithdrawing={isWithdrawing}
+        setIsPartnersDrawerOpen={setIsPartnersDrawerOpen}
+        validationError={validationError}
+      />
+    )
+  }
+
   return (
     <>
       <TunnelForm
-        belowForm={
-          canWithdraw ? (
-            <FeesContainer>
-              <EvmFeesSummary
-                gas={gas}
-                operationToken={fromToken}
-                total={totalDeposit}
-              />
-            </FeesContainer>
-          ) : null
-        }
+        belowForm={<RenderBelowForm />}
         formContent={
           <FormContent
             errorKey={
               walletIsConnected(status) && balanceLoaded ? errorKey : undefined
             }
             isRunningOperation={isWithdrawing}
+            provider={<RenderTunnelProviderToggle />}
             setMaxBalanceButton={
               <SetMaxEvmBalance
                 disabled={isWithdrawing}
@@ -376,15 +415,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
           />
         }
         onSubmit={withdraw}
-        submitButton={
-          <SubmitEvmWithdrawal
-            canWithdraw={canWithdraw}
-            fromToken={fromToken}
-            isWithdrawing={isWithdrawing}
-            setIsPartnersDrawerOpen={setIsPartnersDrawerOpen}
-            validationError={validationError}
-          />
-        }
+        submitButton={<RenderSubmitButton />}
       />
       {isPartnersDrawerOpen && (
         <CustomTunnelsThroughPartners

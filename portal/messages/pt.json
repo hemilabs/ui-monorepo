@@ -312,9 +312,11 @@
       "from-network": "Da Rede",
       "hemi-receiving-address": "Endereço de receção Hemi",
       "hemi-receiving-address-description": "O {symbol} depositado é enviado para o endereço associado à sua carteira EVM conectada.",
+      "hemi-tunnel": "Hemi túnel",
       "max": "máx",
       "receive": "Receber",
       "send": "Enviar",
+      "third-party-bridge": "Ponte de terceiros",
       "to-network": "Para a Rede"
     },
     "review-deposit": {

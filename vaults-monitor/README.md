@@ -15,19 +15,20 @@ These control the `api` server:
 
 | Variable      | Description                                                     | Default                |
 | ------------- | --------------------------------------------------------------- | ---------------------- |
-| CACHE_MINUTES | The time to cache the status in minutes.                        | 5                      |
+| CACHE_MINUTES | The time to cache the status in minutes.                        | 1                      |
 | CHAIN         | The Hemi chain to monitor: mainnet or testnet.                  | mainnet                |
 | ORIGINS       | Comma-separated list of allowed origins. '\*' is not supported. | `http://localhos:3000` |
 | PORT          | The HTTP port the server listens for requests.                  | 3004                   |
 
 These environment variables control how the `cron` job behaves:
 
-| Variable             | Description                                                                         | Default                 |
-| -------------------- | ----------------------------------------------------------------------------------- | ----------------------- |
-| API_URL              | The URL of the API service.                                                         | `http://localhost:3004` |
-| REFRESH_INTERVAL_SEC | How frequently the cache will be refreshed. If set to 0, it will run once and exit. | 300                     |
-| SLACK_MENTION        | The user to tag when sending alerts                                                 |                         |
-| SLACK_WEBHOOK_URL    | The full URL of the webhook to send the alerts to.                                  |                         |
+| Variable             | Description                                                                                 | Default                 |
+| -------------------- | ------------------------------------------------------------------------------------------- | ----------------------- |
+| API_URL              | The URL of the API service.                                                                 | `http://localhost:3004` |
+| MAX_BLOCKS_BEHIND    | The maximum difference between Bitcoin kit last header and the actual Bitcoin chain height. | 4                       |
+| REFRESH_INTERVAL_SEC | How frequently the cache will be refreshed. If set to 0, it will run once and exit.         | 300                     |
+| SLACK_MENTION        | The user to tag when sending alerts                                                         |                         |
+| SLACK_WEBHOOK_URL    | The full URL of the webhook to send the alerts to.                                          |                         |
 
 ## Local development and testing
 

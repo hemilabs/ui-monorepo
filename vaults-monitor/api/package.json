@@ -1,6 +1,6 @@
 {
   "name": "vaults-monitor-api",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "dependencies": {
     "esplora-client": "1.2.0",
     "hemi-viem": "2.5.0",

@@ -18,15 +18,14 @@ const VaultStatus = {
 
 const toBtc = sats => (sats / 100000000).toFixed(8)
 
-function analyzeVaultsData({
-  bitcoinChainData,
-  tunnelManagerData,
-  vaultsData,
-}) {
+function analyzeVaultsData(
+  { bitcoinChainData, tunnelManagerData, vaultsData },
+  { maxBlocksBehind },
+) {
   const alerts = []
   const blocksBehind =
     bitcoinChainData.bitcoin.height - bitcoinChainData.bitcoinKit.height
-  if (blocksBehind > 2) {
+  if (blocksBehind > maxBlocksBehind) {
     alerts.push(
       `BitcoinKit is ${blocksBehind} blocks behind the bitcoin blockchain`,
     )
@@ -77,10 +76,15 @@ async function sendAlertsToSlack({ alerts, slackMention, slackWebhookUrl }) {
   await postMessageToSlack(message, slackWebhookUrl, slackMention)
 }
 
-async function checkVaults({ apiUrl, slackMention, slackWebhookUrl }) {
+async function checkVaults({
+  apiUrl,
+  maxBlocksBehind,
+  slackMention,
+  slackWebhookUrl,
+}) {
   console.log('Running checks...')
   const state = await fetchJson(apiUrl)
-  const alerts = analyzeVaultsData(state)
+  const alerts = analyzeVaultsData(state, { maxBlocksBehind })
   if (alerts.length && slackWebhookUrl) {
     await sendAlertsToSlack({ alerts, slackMention, slackWebhookUrl })
   } else if (alerts.length) {

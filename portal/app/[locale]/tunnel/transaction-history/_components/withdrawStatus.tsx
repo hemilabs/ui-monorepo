@@ -5,12 +5,17 @@ import {
   MessageStatus,
   ToBtcWithdrawOperation,
   ToEvmWithdrawOperation,
+  WithdrawTunnelOperation,
 } from 'types/tunnel'
 import { isToEvmWithdraw } from 'utils/tunnel'
 
 import { EvmWithdrawalWaitTimeToProve } from '../../_components/evmWithdrawalWaitTime'
 
 import { TxStatus } from './txStatus'
+
+type Props = {
+  withdrawal: WithdrawTunnelOperation
+}
 
 const EvmWithdrawStatus = function ({
   withdrawal,
@@ -95,11 +100,7 @@ const BitcoinWithdrawStatus = function ({
 
 // This is the component rendering the content of the Status column in the
 // transactions history table.
-export const WithdrawStatus = ({
-  withdrawal,
-}: {
-  withdrawal: ToBtcWithdrawOperation
-}) =>
+export const WithdrawStatus = ({ withdrawal }: Props) =>
   isToEvmWithdraw(withdrawal) ? (
     <EvmWithdrawStatus withdrawal={withdrawal} />
   ) : (

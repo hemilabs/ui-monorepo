@@ -5,6 +5,7 @@ import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { secondsToHours, secondsToMinutes } from 'utils/time'
 
 import {
+  isStatusToEnable,
   useEvmWithdrawTimeToFinalize,
   useEvmWithdrawTimeToProve,
 } from '../_hooks/useWaitTime'
@@ -65,10 +66,18 @@ export const EvmWithdrawalWaitTimeToProve = function ({
 }: WithdrawalProps) {
   const [networkType] = useNetworkType()
   const tCommon = useTranslations('common')
-  const { data, isError, isFetching, isPending } =
-    useEvmWithdrawTimeToProve(withdrawal)
 
-  if (isFetching && isPending) {
+  const enableStatusesToProve = [
+    MessageStatus.STATE_ROOT_NOT_PUBLISHED,
+    MessageStatus.READY_TO_PROVE,
+  ] as const
+
+  const { data, isError, isPending } = useEvmWithdrawTimeToProve({
+    validStatuses: enableStatusesToProve,
+    withdrawal,
+  })
+
+  if (isStatusToEnable(withdrawal.status, enableStatusesToProve) && isPending) {
     return <Skeleton className="w-12" />
   }
 
@@ -96,10 +105,21 @@ export const EvmWithdrawalWaitTimeToFinalize = function ({
 }: WithdrawalProps) {
   const [networkType] = useNetworkType()
   const tCommon = useTranslations('common')
-  const { data, isError, isFetching, isPending } =
-    useEvmWithdrawTimeToFinalize(withdrawal)
 
-  if (isFetching && isPending) {
+  const enableStatusesToFinalize = [
+    MessageStatus.IN_CHALLENGE_PERIOD,
+    MessageStatus.READY_FOR_RELAY,
+  ] as const
+
+  const { data, isError, isPending } = useEvmWithdrawTimeToFinalize({
+    validStatuses: enableStatusesToFinalize,
+    withdrawal,
+  })
+
+  if (
+    isStatusToEnable(withdrawal.status, enableStatusesToFinalize) &&
+    isPending
+  ) {
     return <Skeleton className="w-12" />
   }
 

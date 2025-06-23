@@ -5,34 +5,29 @@ import {
   getTimeToFinalizeInSeconds,
 } from 'utils/wait-times/evmWithdrawals'
 
-export const isStatusToEnable = <const T extends readonly MessageStatusType[]>(
-  status: MessageStatusType,
-  validStatuses: T,
-): status is T[number] => validStatuses.includes(status as T[number])
-
 export const useEvmWithdrawTimeToProve = ({
-  validStatuses,
+  enabledStatus,
   withdrawal,
 }: {
-  validStatuses: readonly MessageStatusType[]
+  enabledStatus: MessageStatusType
   withdrawal: ToEvmWithdrawOperation
 }) =>
   useQuery({
-    enabled: !!withdrawal && isStatusToEnable(withdrawal.status, validStatuses),
+    enabled: !!withdrawal && withdrawal.status === enabledStatus,
     queryFn: () => getTimeToProveInSeconds(withdrawal),
     queryKey: ['time-to-prove-withdraw', withdrawal.transactionHash],
     refetchInterval: 24000, // 24 seconds
   })
 
 export const useEvmWithdrawTimeToFinalize = ({
-  validStatuses,
+  enabledStatus,
   withdrawal,
 }: {
-  validStatuses: readonly MessageStatusType[]
+  enabledStatus: MessageStatusType
   withdrawal: ToEvmWithdrawOperation
 }) =>
   useQuery({
-    enabled: !!withdrawal && isStatusToEnable(withdrawal.status, validStatuses),
+    enabled: !!withdrawal && withdrawal.status === enabledStatus,
     queryFn: () => getTimeToFinalizeInSeconds(withdrawal),
     queryKey: ['time-to-finalize-withdraw', withdrawal.transactionHash],
     refetchInterval: 24000, // 24 seconds

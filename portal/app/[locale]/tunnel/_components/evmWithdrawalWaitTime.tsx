@@ -5,7 +5,6 @@ import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { secondsToHours, secondsToMinutes } from 'utils/time'
 
 import {
-  isStatusToEnable,
   useEvmWithdrawTimeToFinalize,
   useEvmWithdrawTimeToProve,
 } from '../_hooks/useWaitTime'
@@ -67,17 +66,14 @@ export const EvmWithdrawalWaitTimeToProve = function ({
   const [networkType] = useNetworkType()
   const tCommon = useTranslations('common')
 
-  const enableStatusesToProve = [
-    MessageStatus.STATE_ROOT_NOT_PUBLISHED,
-    MessageStatus.READY_TO_PROVE,
-  ] as const
+  const enabledStatus = MessageStatus.STATE_ROOT_NOT_PUBLISHED
 
   const { data, isError, isPending } = useEvmWithdrawTimeToProve({
-    validStatuses: enableStatusesToProve,
+    enabledStatus,
     withdrawal,
   })
 
-  if (isStatusToEnable(withdrawal.status, enableStatusesToProve) && isPending) {
+  if (withdrawal.status === enabledStatus && isPending) {
     return <Skeleton className="w-12" />
   }
 
@@ -93,7 +89,7 @@ export const EvmWithdrawalWaitTimeToProve = function ({
     )
   }
 
-  if (data === 0 && withdrawal.status >= MessageStatus.READY_TO_PROVE) {
+  if (withdrawal.status >= MessageStatus.READY_TO_PROVE) {
     return <span> {tCommon('waiting-completed')} </span>
   }
 
@@ -106,20 +102,14 @@ export const EvmWithdrawalWaitTimeToFinalize = function ({
   const [networkType] = useNetworkType()
   const tCommon = useTranslations('common')
 
-  const enableStatusesToFinalize = [
-    MessageStatus.IN_CHALLENGE_PERIOD,
-    MessageStatus.READY_FOR_RELAY,
-  ] as const
+  const enabledStatus = MessageStatus.IN_CHALLENGE_PERIOD
 
   const { data, isError, isPending } = useEvmWithdrawTimeToFinalize({
-    validStatuses: enableStatusesToFinalize,
+    enabledStatus,
     withdrawal,
   })
 
-  if (
-    isStatusToEnable(withdrawal.status, enableStatusesToFinalize) &&
-    isPending
-  ) {
+  if (withdrawal.status === enabledStatus && isPending) {
     return <Skeleton className="w-12" />
   }
 
@@ -135,7 +125,7 @@ export const EvmWithdrawalWaitTimeToFinalize = function ({
     )
   }
 
-  if (data === 0 && withdrawal.status >= MessageStatus.READY_FOR_RELAY) {
+  if (withdrawal.status >= MessageStatus.READY_FOR_RELAY) {
     return <span> {tCommon('waiting-completed')} </span>
   }
 

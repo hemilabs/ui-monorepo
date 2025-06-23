@@ -15,6 +15,7 @@ services:
       context: cron
     environment:
       API_URL: http://api:${PORT:-3004}
+      MAX_BLOCKS_BEHIND: ${MAX_BLOCKS_BEHIND}
       NODE_ENV: production
       REFRESH_INTERVAL_SEC: ${REFRESH_INTERVAL_SEC}
       SLACK_MENTION: ${SLACK_MENTION}

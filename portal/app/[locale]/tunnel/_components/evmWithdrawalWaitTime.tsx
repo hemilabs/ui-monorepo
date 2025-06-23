@@ -65,9 +65,10 @@ export const EvmWithdrawalWaitTimeToProve = function ({
 }: WithdrawalProps) {
   const [networkType] = useNetworkType()
   const tCommon = useTranslations('common')
-  const { data, isError, isPending } = useEvmWithdrawTimeToProve(withdrawal)
+  const { data, isError, isFetching, isPending } =
+    useEvmWithdrawTimeToProve(withdrawal)
 
-  if (isPending) {
+  if (isFetching && isPending) {
     return <Skeleton className="w-12" />
   }
 
@@ -95,9 +96,10 @@ export const EvmWithdrawalWaitTimeToFinalize = function ({
 }: WithdrawalProps) {
   const [networkType] = useNetworkType()
   const tCommon = useTranslations('common')
-  const { data, isError, isPending } = useEvmWithdrawTimeToFinalize(withdrawal)
+  const { data, isError, isFetching, isPending } =
+    useEvmWithdrawTimeToFinalize(withdrawal)
 
-  if (isPending) {
+  if (isFetching && isPending) {
     return <Skeleton className="w-12" />
   }
 

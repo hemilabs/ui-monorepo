@@ -3,8 +3,8 @@ import Skeleton from 'react-loading-skeleton'
 import {
   BtcWithdrawStatus,
   MessageStatus,
+  ToBtcWithdrawOperation,
   ToEvmWithdrawOperation,
-  WithdrawTunnelOperation,
 } from 'types/tunnel'
 import { isToEvmWithdraw } from 'utils/tunnel'
 
@@ -12,17 +12,13 @@ import { EvmWithdrawalWaitTimeToProve } from '../../_components/evmWithdrawalWai
 
 import { TxStatus } from './txStatus'
 
-type Props = {
-  withdrawal: WithdrawTunnelOperation
-}
-
-const EvmWithdrawStatus = function ({ withdrawal }: Props) {
+const EvmWithdrawStatus = function ({
+  withdrawal,
+}: {
+  withdrawal: ToEvmWithdrawOperation
+}) {
   const t = useTranslations()
-  const waitTime = (
-    <EvmWithdrawalWaitTimeToProve
-      withdrawal={withdrawal as ToEvmWithdrawOperation}
-    />
-  )
+  const waitTime = <EvmWithdrawalWaitTimeToProve withdrawal={withdrawal} />
 
   const statuses = {
     // This status should never be rendered, but just to be defensive
@@ -52,7 +48,11 @@ const EvmWithdrawStatus = function ({ withdrawal }: Props) {
 // After the withdrawal is initiated, the operation is in a wait state for up to
 // 12 hours. Past that time, if not completed, the operation can be challenged.
 // Either way, it can be successful or have failed.
-const BitcoinWithdrawStatus = function ({ withdrawal }: Props) {
+const BitcoinWithdrawStatus = function ({
+  withdrawal,
+}: {
+  withdrawal: ToBtcWithdrawOperation
+}) {
   const t = useTranslations()
 
   const statuses = {
@@ -95,7 +95,11 @@ const BitcoinWithdrawStatus = function ({ withdrawal }: Props) {
 
 // This is the component rendering the content of the Status column in the
 // transactions history table.
-export const WithdrawStatus = ({ withdrawal }: Props) =>
+export const WithdrawStatus = ({
+  withdrawal,
+}: {
+  withdrawal: ToBtcWithdrawOperation
+}) =>
   isToEvmWithdraw(withdrawal) ? (
     <EvmWithdrawStatus withdrawal={withdrawal} />
   ) : (

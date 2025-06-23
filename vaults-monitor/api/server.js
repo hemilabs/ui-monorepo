@@ -6,7 +6,7 @@ const pMemoize = require('promise-mem')
 
 const { getBtcVaultsData } = require('./src/btc-vaults')
 
-const cacheMinutesStr = process.env.CACHE_MINUTES || '5'
+const cacheMinutesStr = process.env.CACHE_MINUTES || '1'
 const chain = process.env.CHAIN || 'mainnet'
 const originsStr = process.env.ORIGINS || `http://localhost:3000`
 const portStr = process.env.PORT || '3004'

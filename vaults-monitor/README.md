@@ -15,7 +15,7 @@ These control the `api` server:
 
 | Variable      | Description                                                     | Default                |
 | ------------- | --------------------------------------------------------------- | ---------------------- |
-| CACHE_MINUTES | The time to cache the status in minutes.                        | 5                      |
+| CACHE_MINUTES | The time to cache the status in minutes.                        | 1                      |
 | CHAIN         | The Hemi chain to monitor: mainnet or testnet.                  | mainnet                |
 | ORIGINS       | Comma-separated list of allowed origins. '\*' is not supported. | `http://localhos:3000` |
 | PORT          | The HTTP port the server listens for requests.                  | 3004                   |

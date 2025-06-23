@@ -1,0 +1,27 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: BitcoinTunnelManager
+    network: hemi
+    source:
+      address: '0xEAcA824F46c000fB89403846Bb57e6b913321081'
+      abi: BitcoinTunnelManager
+      startBlock: 1125154
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - DepositConfirmed
+      abis:
+        - name: BitcoinTunnelManager
+          file: ./abis/BitcoinTunnelManager.json
+      eventHandlers:
+        - event: DepositConfirmed(indexed address,indexed address,indexed
+            bytes32,uint256,uint256)
+          handler: handleDepositConfirmed
+      file: ./src/mappings/bitcoin-tunnel-manager.ts

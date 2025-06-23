@@ -14,6 +14,8 @@ subgraphs/data
 # Graph CLI generated artifacts
 subgraphs/hemi-stake-operations-subgraph/build
 subgraphs/hemi-stake-operations-subgraph/generated
+subgraphs/hemi-tunnel-btc-deposits-subgraph/build
+subgraphs/hemi-tunnel-btc-deposits-subgraph/generated
 subgraphs/hemi-tunnel-deposits-subgraph/build
 subgraphs/hemi-tunnel-deposits-subgraph/generated
 subgraphs/hemi-tunnel-withdrawals-proof-claim-subgraph/build

@@ -1,0 +1,11 @@
+type BtcConfirmedDeposit @entity(immutable: true) {
+  blockNumber: BigInt!
+  depositTxId: Bytes! # bytes32
+  depositSats: BigInt! # uint256
+  id: Bytes!
+  netSatsAfterFee: BigInt! # uint256
+  recipient: Bytes! # address
+  timestamp: BigInt!
+  transactionHash: Bytes!
+  vault: Bytes! # address
+}

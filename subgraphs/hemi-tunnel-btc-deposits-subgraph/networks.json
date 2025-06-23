@@ -1,0 +1,14 @@
+{
+  "hemi": {
+    "BitcoinTunnelManager": {
+      "address": "0xEAcA824F46c000fB89403846Bb57e6b913321081",
+      "startBlock": 1125154
+    }
+  },
+  "hemi-sepolia": {
+    "BitcoinTunnelManager": {
+      "address": "0x8221CFD3Eca3c5F9FA27b2AE774151642f1C449e",
+      "startBlock": 2165818
+    }
+  }
+}

@@ -77,7 +77,7 @@ export const EvmWithdrawalWaitTimeToProve = function ({
     return <Skeleton className="w-12" />
   }
 
-  if (isError) {
+  if (isError || withdrawal.status < enabledStatus) {
     return (
       <WaitTime
         timeInSeconds={
@@ -113,7 +113,7 @@ export const EvmWithdrawalWaitTimeToFinalize = function ({
     return <Skeleton className="w-12" />
   }
 
-  if (isError || withdrawal.status < MessageStatus.READY_FOR_RELAY) {
+  if (isError || withdrawal.status < enabledStatus) {
     return (
       <WaitTime
         timeInSeconds={

@@ -1,11 +1,14 @@
 {
   "name": "vaults-monitor-cron",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "scripts": {
     "prestart": "sleep ${SLEEP:-0}"
   },
   "dependencies": {
-    "startinterval2": "1.0.1"
+    "post-message-to-slack": "1.0.0",
+    "safe-async-fn": "1.0.0",
+    "startinterval2": "1.0.1",
+    "tiny-fetch-json": "1.0.0"
   },
   "engines": {
     "node": ">=20"

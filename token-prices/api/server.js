@@ -3,10 +3,10 @@
 const http = require('http')
 const pLimitOne = require('promise-limit-one')
 const redis = require('redis')
+const safeAsyncFn = require('safe-async-fn')
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379'
-const portStr = process.env.PORT || '3001'
-const port = parseInt(portStr)
+const port = Number.parseInt(process.env.PORT || '3001')
 const originsStr = process.env.ORIGINS || 'http://localhost:3000'
 const origins = originsStr.split(',')
 
@@ -32,6 +32,8 @@ const getPricesFromCache = pLimitOne(async function () {
   })
   return data
 })
+
+const safeGetPricesFromCache = safeAsyncFn(getPricesFromCache)
 
 async function handleRequest(req, res) {
   const { 'access-control-request-headers': headers, origin } = req.headers
@@ -60,19 +62,20 @@ async function handleRequest(req, res) {
     return
   }
 
-  let statusCode, data
-  try {
-    statusCode = 200
-    data = await getPricesFromCache()
-  } catch (err) {
+  let statusCode, response
+  const [err, data] = await safeGetPricesFromCache()
+  if (err) {
     // eslint-disable-next-line no-console
     console.error(`Failed to handle request: ${err}`)
     statusCode = 500
-    data = { error: 'Internal Server Error' }
+    response = { error: 'Internal Server Error' }
+  } else {
+    statusCode = 200
+    response = data
   }
 
   res.writeHead(statusCode, { 'Content-Type': 'application/json' })
-  res.end(JSON.stringify(data))
+  res.end(JSON.stringify(response))
 }
 
 http.createServer(handleRequest).listen(port)

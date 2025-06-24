@@ -9,6 +9,7 @@ import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
+import { UrlObject } from 'url'
 
 const ActionableOperations = dynamic(
   () =>
@@ -18,13 +19,15 @@ const ActionableOperations = dynamic(
   { ssr: false },
 )
 
-const TunnelTabsImpl = function () {
-  const [networkType] = useNetworkType()
+const UI = function ({
+  onTabClick,
+  tunnelHref,
+}: {
+  onTabClick?: (eventName?: AnalyticsEventsWithChain) => void
+  tunnelHref: UrlObject | string
+}) {
   const pathname = usePathnameWithoutLocale()
   const t = useTranslations('tunnel-page')
-  const { track } = useUmami()
-
-  const tunnelHref = useTunnelOperationByConnectedWallet()
 
   if (!pathname.startsWith(`/tunnel/`)) {
     return null
@@ -32,15 +35,12 @@ const TunnelTabsImpl = function () {
 
   const isInTransactionHistory = pathname === `/tunnel/transaction-history/`
 
-  const addTracking = (eventName: AnalyticsEventsWithChain) =>
-    track ? () => track(eventName, { chain: networkType }) : undefined
-
   return (
     <div className="flex items-center justify-center gap-x-4">
       <Tabs>
         <Tab
           href={tunnelHref}
-          onClick={addTracking('header - tunnel')}
+          onClick={onTabClick ? () => onTabClick('header - tunnel') : undefined}
           selected={pathname === '/tunnel/'}
         >
           <span className="flex h-full min-h-7 items-center justify-center">
@@ -49,7 +49,9 @@ const TunnelTabsImpl = function () {
         </Tab>
         <Tab
           href="/tunnel/transaction-history"
-          onClick={addTracking('header - txn history')}
+          onClick={
+            onTabClick ? () => onTabClick('header - txn history') : undefined
+          }
           selected={isInTransactionHistory}
         >
           <div className="flex items-center justify-center gap-x-2">
@@ -62,8 +64,23 @@ const TunnelTabsImpl = function () {
   )
 }
 
+const TunnelTabsImpl = function () {
+  const [networkType] = useNetworkType()
+
+  const tunnelHref = useTunnelOperationByConnectedWallet()
+
+  const { track } = useUmami()
+
+  const onTabClick = track
+    ? (eventName: AnalyticsEventsWithChain) =>
+        track(eventName, { chain: networkType })
+    : undefined
+
+  return <UI onTabClick={onTabClick} tunnelHref={tunnelHref} />
+}
+
 export const TunnelTabs = () => (
-  <Suspense>
+  <Suspense fallback={<UI tunnelHref="/tunnel" />}>
     <TunnelTabsImpl />
   </Suspense>
 )

@@ -1,7 +1,6 @@
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import { useContext } from 'react'
@@ -19,16 +18,15 @@ import { useEstimateFinalizeWithdrawalFees } from '../../_hooks/useEstimateFinal
 import { useEstimateProveWithdrawalFees } from '../../_hooks/useEstimateProveWithdrawalFees'
 import { useEstimateWithdrawFees } from '../../_hooks/useEstimateWithdrawFees'
 import { ClaimEvmWithdrawal } from '../claimEvmWithdrawal'
+import {
+  EvmWithdrawalWaitTimeToFinalize,
+  EvmWithdrawalWaitTimeToProve,
+} from '../evmWithdrawalWaitTime'
 import { ProveWithdrawal } from '../proveEvmWithdrawal'
 import { RetryEvmWithdrawal } from '../retryEvmWithdrawal'
 
 import { ChainLabel } from './chainLabel'
 import { Operation } from './operation'
-
-const ExpectedWithdrawalWaitTimeMinutesTestnet = 20
-const ExpectedWithdrawalWaitTimeMinutesMainnet = 40
-const ExpectedProofWaitTimeHoursTestnet = 3
-const ExpectedProofWaitTimeHoursMainnet = 24
 
 const getCallToAction = (withdrawal: ToEvmWithdrawOperation) =>
   ({
@@ -57,9 +55,7 @@ const ReviewContent = function ({
   const fromChain = useChain(withdrawal.l2ChainId)
   const toChain = useChain(withdrawal.l1ChainId)
   const [operationStatus] = useContext(ToEvmWithdrawalContext)
-  const [networkType] = useNetworkType()
   const t = useTranslations('tunnel-page.review-withdrawal')
-  const tCommon = useTranslations('common')
 
   const {
     fees: claimWithdrawalTokenGasFees,
@@ -118,12 +114,7 @@ const ReviewContent = function ({
           }
         : undefined,
     postAction: {
-      description: tCommon('wait-minutes', {
-        minutes:
-          networkType === 'mainnet'
-            ? ExpectedWithdrawalWaitTimeMinutesMainnet
-            : ExpectedWithdrawalWaitTimeMinutesTestnet,
-      }),
+      description: <EvmWithdrawalWaitTimeToProve withdrawal={withdrawal} />,
       status: getWithdrawalStatus(),
     },
     status:
@@ -188,15 +179,7 @@ const ReviewContent = function ({
           }
         : undefined,
     postAction: {
-      description: tCommon.rich('wait-hours', {
-        hours: () =>
-          tCommon('hours', {
-            hours:
-              networkType === 'mainnet'
-                ? ExpectedProofWaitTimeHoursMainnet
-                : ExpectedProofWaitTimeHoursTestnet,
-          }),
-      }),
+      description: <EvmWithdrawalWaitTimeToFinalize withdrawal={withdrawal} />,
       status:
         withdrawal.status >= MessageStatus.READY_FOR_RELAY
           ? ProgressStatus.COMPLETED

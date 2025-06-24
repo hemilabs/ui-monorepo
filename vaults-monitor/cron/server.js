@@ -1,9 +1,9 @@
 'use strict'
 
 const startInterval = require('startinterval2')
+const safeAsyncFn = require('safe-async-fn')
 
 const checkVaults = require('./src/check-vaults')
-const safeAsyncFn = require('./src/safe-async-fn')
 
 const apiUrl = process.env.API_URL || 'http://localhost:3004'
 const maxBlocksBehind = Number.parseInt(process.env.MAX_BLOCKS_BEHIND || '4')

@@ -1,5 +1,9 @@
 {
-  "version": "1.0.0",
+  "name": "staking-points-api",
+  "version": "1.0.1",
+  "dependencies": {
+    "safe-async-fn": "1.0.0"
+  },
   "engines": {
     "node": ">=20"
   }

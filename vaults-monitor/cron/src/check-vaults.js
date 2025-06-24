@@ -1,7 +1,7 @@
 'use strict'
 
-const fetchJson = require('./fetch-json')
-const postMessageToSlack = require('./post-message-to-slack')
+const fetchJson = require('tiny-fetch-json')
+const postMessageToSlack = require('post-message-to-slack')
 
 // These values match the Status enum used in the BitcoinTunnelManager and
 // BitcoinVault contracts.
@@ -70,10 +70,10 @@ function analyzeVaultsData(
 }
 
 async function sendAlertsToSlack({ alerts, slackMention, slackWebhookUrl }) {
-  const intro =
-    'The following problems were found when analyzing the bitcoin vaults:'
+  const intro = 'Problems found when analyzing the bitcoin vaults:'
   const message = `${intro}\n\n${alerts.map(alert => `- ${alert}`).join('\n')}`
-  await postMessageToSlack(message, slackWebhookUrl, slackMention)
+  const text = `${slackMention ? `<${slackMention}> ` : ''}${message}.`
+  await postMessageToSlack(slackWebhookUrl, { text })
 }
 
 async function checkVaults({

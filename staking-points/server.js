@@ -1,12 +1,12 @@
 'use strict'
 
 const http = require('http')
+const safeAsyncFn = require('safe-async-fn')
 
 const absintheApiKey = process.env.ABSINTHE_API_KEY
 const absintheApiUrl =
   process.env.ABSINTHE_API_URL || 'https://gql3.absinthe.network/v1/graphql'
-const portStr = process.env.PORT || '3002'
-const port = parseInt(portStr)
+const port = Number.parseInt(process.env.PORT || '3002')
 const originsStr = process.env.ORIGINS || 'http://localhost:3000'
 const origins = originsStr.split(',')
 
@@ -39,6 +39,8 @@ async function getUserPoints(address) {
   return data?.query_address_points[0]?.points || 0
 }
 
+const safeGetUserPoints = safeAsyncFn(getUserPoints)
+
 async function handleRequest(req, res) {
   const { 'access-control-request-headers': headers, origin } = req.headers
   if (headers) {
@@ -67,19 +69,20 @@ async function handleRequest(req, res) {
     return
   }
 
-  let statusCode, data
-  try {
-    statusCode = 200
-    data = { points: await getUserPoints(address) }
-  } catch (err) {
+  let statusCode, response
+  const [err, points] = await safeGetUserPoints(address)
+  if (err) {
     // eslint-disable-next-line no-console
     console.error(`Failed to handle request: ${err}`)
     statusCode = 500
-    data = { error: 'Internal Server Error' }
+    response = { error: 'Internal Server Error' }
+  } else {
+    statusCode = 200
+    response = { points }
   }
 
   res.writeHead(statusCode, { 'Content-Type': 'application/json' })
-  res.end(JSON.stringify(data))
+  res.end(JSON.stringify(response))
 }
 
 http.createServer(handleRequest).listen(port)

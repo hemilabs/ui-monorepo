@@ -1,6 +1,8 @@
 'use strict'
 
+const fetchJson = require('tiny-fetch-json')
 const redis = require('redis')
+const safeAsyncFn = require('safe-async-fn')
 const startInterval = require('startinterval2')
 
 const cacheExpirationStr = process.env.CACHE_EXPIRATION_SEC || '3600' // 1h
@@ -11,25 +13,6 @@ const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379'
 const refreshIntervalStr = process.env.REFRESH_INTERVAL_SEC || '300' // 5m
 const refreshInterval = parseInt(refreshIntervalStr)
 
-const safeFn = (asyncFn, errorMessage = '') =>
-  async function (...args) {
-    try {
-      await asyncFn(...args)
-    } catch (err) {
-      console.error(`${errorMessage}: ${err}`) // eslint-disable-line no-console
-    }
-  }
-
-async function fetchJson(url, params, headers) {
-  const fullUrl = `${url}?${new URLSearchParams(params).toString()}`
-  const fullHeaders = { accept: 'application/json', ...headers }
-  const res = await fetch(fullUrl, { headers: fullHeaders })
-  if (!res.ok) {
-    throw new Error(`Failed to fetch data: ${res.statusText}`)
-  }
-  return res.json()
-}
-
 async function fetchPrices() {
   const url =
     'https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest'
@@ -38,7 +21,8 @@ async function fetchPrices() {
     'Accept-Encoding': 'deflate, gzip',
     'X-CMC_PRO_API_KEY': coinMarketCapApiKey,
   }
-  const res = await fetchJson(url, params, headers)
+  const fullUrl = `${url}?${new URLSearchParams(params).toString()}`
+  const res = await fetchJson(fullUrl, { headers })
   return Object.fromEntries(
     Object.values(res.data).map(({ quote, symbol }) => [
       symbol.toUpperCase(),
@@ -65,11 +49,15 @@ async function refreshPrices() {
   await storePrices(prices)
 }
 
+const safeRefreshPrices = safeAsyncFn(refreshPrices)
+
 if (refreshInterval > 0) {
-  startInterval(
-    safeFn(refreshPrices, 'Failed to refresh prices'),
-    refreshInterval * 1000,
-  )
+  startInterval(async function () {
+    const [err] = await safeRefreshPrices()
+    if (err) {
+      console.error(`Failed to refresh prices: ${err}`) // eslint-disable-line no-console
+    }
+  }, refreshInterval * 1000)
 } else {
   refreshPrices()
 }

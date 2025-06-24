@@ -11,16 +11,7 @@
     "staking-points": {
       "entry": "server.ts"
     },
-    "subgraphs/hemi-stake-operations-subgraph": {
-      "entry": "src/mappings/*.ts"
-    },
-    "subgraphs/hemi-tunnel-deposits-subgraph": {
-      "entry": "src/mappings/*.ts"
-    },
-    "subgraphs/hemi-tunnel-withdrawals-subgraph": {
-      "entry": "src/mappings/*.ts"
-    },
-    "subgraphs/hemi-tunnel-withdrawals-proof-claim-subgraph": {
+    "subgraphs/*": {
       "entry": "src/mappings/*.ts"
     }
   }

@@ -38,7 +38,7 @@
     },
     {
       "extends": ["bloq/node", "prettier"],
-      "files": ["vaults-monitor/**/*.js"],
+      "files": ["external-api-cache/**/*.js", "vaults-monitor/**/*.js"],
       "rules": {
         "no-console": "off"
       }

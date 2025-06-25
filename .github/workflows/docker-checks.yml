@@ -3,12 +3,14 @@ name: Docker Checks
 on:
   pull_request:
     paths:
+      - 'external-api-cache/**'
       - 'staking-points/**'
       - 'subgraph-api/**'
       - 'token-prices/**'
       - 'vaults-monitor/**'
   push:
     paths:
+      - 'external-api-cache/**'
       - 'staking-points/**'
       - 'subgraph-api/**'
       - 'token-prices/**'
@@ -34,6 +36,7 @@ jobs:
     strategy:
       matrix:
         context:
+          - external-api-cache
           - staking-points
           - subgraph-api
           - token-prices/api

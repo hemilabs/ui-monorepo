@@ -26,6 +26,7 @@
   },
   "private": true,
   "workspaces": [
+    "external-api-cache",
     "packages/*",
     "portal",
     "subgraph-api",

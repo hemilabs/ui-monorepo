@@ -1,7 +1,7 @@
 /* eslint-disable new-cap */
 /* eslint-disable node/no-unsupported-features/es-syntax */
 /* eslint-env browser */
-/* globals ReactDOM, redux */
+/* globals NotReactDOM, NotRedux */
 
 'use strict'
 
@@ -12,7 +12,7 @@ function startInterval(callback, delay) {
 
 async function getVaultsState() {
   try {
-    const res = await fetch('http://localhost:3004')
+    const res = await fetch('https://vault.monitor.hemi-internal.com/')
     if (!res.ok) {
       throw new Error(`Could not get vaults data: ${res.statusText}`)
     }
@@ -187,10 +187,10 @@ function appReducer(state = initialState, action) {
   }
 }
 
-const store = redux.createStore(appReducer)
+const store = NotRedux.createStore(appReducer)
 
 function render() {
-  ReactDOM.render(App(store.getState()), document.getElementById('root'))
+  NotReactDOM.render(App(store.getState()), document.getElementById('root'))
 }
 
 store.subscribe(render)

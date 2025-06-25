@@ -3,15 +3,15 @@ import PQueue from 'p-queue'
 import { RemoteChain } from 'types/chain'
 import {
   type ToEvmWithdrawOperation,
-  MessageStatus,
   type WithdrawTunnelOperation,
 } from 'types/tunnel'
-import { isWithdrawalMissingInformation } from 'utils/tunnel'
 import { type EnableWorkersDebug } from 'utils/typeUtilities'
 import { hasKeys } from 'utils/utilities'
 import { watchEvmWithdrawal } from 'utils/watch/evmWithdrawals'
 import { typeWorker } from 'utils/workers'
 import { type Hash } from 'viem'
+
+import { analyzeEvmWithdrawalPolling } from './pollings/analyzeEvmWithdrawalPolling'
 
 const queue = new PQueue({ concurrency: 2 })
 
@@ -23,6 +23,7 @@ export const getUpdateWithdrawalKey = (withdrawal: WithdrawTunnelOperation) =>
 type WatchWithdrawal = {
   type: 'watch-evm-withdrawal'
   withdrawal: ToEvmWithdrawOperation
+  focusedWithdrawalHash?: Hash
 }
 
 type AppToWebWorkerActions = EnableWorkersDebug | WatchWithdrawal
@@ -43,28 +44,6 @@ type WatchEvmWithdrawalsWorker = Omit<Worker, 'onmessage' | 'postMessage'> & {
 
 const worker = typeWorker<WatchEvmWithdrawalsWorker>(self)
 
-// See https://www.npmjs.com/package/p-queue#priority
-const getPriority = function (withdrawal: ToEvmWithdrawOperation) {
-  // prioritize those with missing vital information
-  if (isWithdrawalMissingInformation(withdrawal)) {
-    // if timestamp or status are missing, give higher priority, otherwise, low priority, and let
-    // the worker solve the rest of the information missing in the background
-    if (!withdrawal.timestamp || withdrawal.status === undefined) {
-      return 2
-    }
-    return 1
-  }
-  if (
-    [MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
-      // @ts-expect-error status is of type MessageStatus
-      withdrawal.status,
-    )
-  ) {
-    return 1
-  }
-  return 0
-}
-
 const postUpdates = (withdrawal: ToEvmWithdrawOperation) =>
   function (updates: Partial<ToEvmWithdrawOperation> = {}) {
     if (hasKeys(updates)) {
@@ -78,28 +57,42 @@ const postUpdates = (withdrawal: ToEvmWithdrawOperation) =>
     })
   }
 
-const watchWithdrawal = (withdrawal: ToEvmWithdrawOperation) =>
+function watchWithdrawal({
+  focusedWithdrawalHash,
+  withdrawal,
+}: Omit<WatchWithdrawal, 'type'>) {
+  const { priority } = analyzeEvmWithdrawalPolling({
+    focusedWithdrawalHash,
+    withdrawal,
+  })
+
   // Use a queue to avoid firing lots of requests. Throttling may also not work because it throttles
   // for a specific period of time and depending on load, requests may take up to 5 seconds to complete
   // so this let us to query up to <concurrency> checks for status at the same time
-  queue.add(
+  return queue.add(
     () => watchEvmWithdrawal(withdrawal).then(postUpdates(withdrawal)),
     {
       // Give more priority to those that require polling and are not ready or are missing information
       // because if ready, after the operation they will change their status automatically and will have
       // the longest waiting period of all withdrawals, as the others have been waiting for longer
-      priority: getPriority(withdrawal),
+      priority,
     },
   )
+}
 
 // wait for the UI to send chain and address once ready
 worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
   if (!e?.data) {
     return
   }
+
   if (e.data.type === 'watch-evm-withdrawal') {
-    watchWithdrawal(e.data.withdrawal)
+    watchWithdrawal({
+      focusedWithdrawalHash: e.data.focusedWithdrawalHash,
+      withdrawal: e.data.withdrawal,
+    })
   }
+
   // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
   if (e.data.type === 'enable-debug') {
     debugConstructor.enable(e.data.payload)

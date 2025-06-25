@@ -4,8 +4,7 @@ import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
-import { hemiMainnet } from 'networks/hemiMainnet'
-import { hemiTestnet } from 'networks/hemiTestnet'
+import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
@@ -14,36 +13,13 @@ import {
   isWithdrawalMissingInformation,
 } from 'utils/tunnel'
 import { hasKeys } from 'utils/utilities'
+import { Hash } from 'viem'
 import { useAccount } from 'wagmi'
+import { analyzeEvmWithdrawalPolling } from 'workers/pollings/analyzeEvmWithdrawalPolling'
 import {
   type AppToWorker,
   getUpdateWithdrawalKey,
 } from 'workers/watchEvmWithdrawals'
-
-const getSeconds = (seconds: number) => seconds * 1000
-const getMinutes = (minutes: number) => getSeconds(minutes * 60)
-
-// use different refetch intervals depending on the status and chain
-const refetchInterval = {
-  [hemiMainnet.id]: {
-    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getSeconds(24),
-    [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: getMinutes(3),
-    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(1),
-    [MessageStatus.READY_TO_PROVE]: getMinutes(1),
-    [MessageStatus.IN_CHALLENGE_PERIOD]: getMinutes(3),
-    [MessageStatus.READY_FOR_RELAY]: getMinutes(3),
-    [MessageStatus.RELAYED]: getMinutes(3),
-  },
-  [hemiTestnet.id]: {
-    [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getSeconds(24),
-    [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: getMinutes(3),
-    [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getMinutes(1),
-    [MessageStatus.READY_TO_PROVE]: getMinutes(2),
-    [MessageStatus.IN_CHALLENGE_PERIOD]: getMinutes(2),
-    [MessageStatus.READY_FOR_RELAY]: getMinutes(2),
-    [MessageStatus.RELAYED]: getMinutes(3),
-  },
-} satisfies { [chainId: number]: { [status: number]: number | false } }
 
 const WatchEvmWithdrawal = function ({
   withdrawal,
@@ -61,6 +37,8 @@ const WatchEvmWithdrawal = function ({
     withdrawal.l1ChainId,
   )
   const queryClient = useQueryClient()
+  const searchParams = useSearchParams()
+  const txHash = searchParams.get('txHash')
 
   useEffect(
     function watchWithdrawalUpdates() {
@@ -98,14 +76,15 @@ const WatchEvmWithdrawal = function ({
 
       worker.addEventListener('message', saveUpdates)
 
-      const interval =
-        refetchInterval[withdrawal.l2ChainId][withdrawal.status] ??
-        // This should be the case only for not-defined status. The value is not relevant
-        // as once the status is retrieved, in the next interval, it should be defined in the
-        // refetchInterval object.
-        getSeconds(12)
+      const focusedWithdrawalHash = txHash as Hash
+
+      const { interval } = analyzeEvmWithdrawalPolling({
+        focusedWithdrawalHash,
+        withdrawal,
+      })
 
       worker.postMessage({
+        focusedWithdrawalHash,
         type: 'watch-evm-withdrawal',
         withdrawal,
       })
@@ -115,6 +94,7 @@ const WatchEvmWithdrawal = function ({
           return
         }
         worker.postMessage({
+          focusedWithdrawalHash,
           type: 'watch-evm-withdrawal',
           withdrawal,
         })
@@ -134,6 +114,7 @@ const WatchEvmWithdrawal = function ({
       nativeTokenBalanceQueryKey,
       queryClient,
       updateWithdrawal,
+      txHash,
       withdrawal,
       worker,
     ],

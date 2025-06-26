@@ -4,12 +4,15 @@ import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useEvmDeposits } from 'hooks/useEvmDeposits'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
 import { isPendingOperation } from 'utils/tunnel'
 import { hasKeys } from 'utils/utilities'
+import { Hash } from 'viem'
 import { useAccount } from 'wagmi'
+import { analyzeEvmDepositPolling } from 'workers/pollings/analyzeEvmDepositPolling'
 import { type AppToWorker, getDepositKey } from 'workers/watchEvmDeposits'
 
 const WatchEvmDeposit = function ({
@@ -28,6 +31,8 @@ const WatchEvmDeposit = function ({
     deposit.l2ChainId,
   )
   const queryClient = useQueryClient()
+  const searchParams = useSearchParams()
+  const txHash = searchParams.get('txHash')
 
   useEffect(
     function watchDepositUpdates() {
@@ -40,9 +45,9 @@ const WatchEvmDeposit = function ({
           type: string
         }>,
       ) {
-        // This is needed because this component is rendered per-withdrawal, so each component will receive the posted message
-        // for every withdrawal, as there are many withdrawals but only one worker.
-        // Of all components, this "if" clause below will be true for only one rendered component - the one belonging to the withdrawal
+        // This is needed because this component is rendered per-deposit, so each component will receive the posted message
+        // for every deposit, as there are many deposits but only one worker.
+        // Of all components, this "if" clause below will be true for only one rendered component - the one belonging to the deposit
         const { type, updates } = event.data
         if (type !== getDepositKey(deposit)) {
           return
@@ -65,11 +70,16 @@ const WatchEvmDeposit = function ({
 
       worker.addEventListener('message', saveUpdates)
 
-      // refetch every 15 seconds
-      const interval = 15 * 1000
+      const focusedDepositHash = txHash as Hash
+
+      const { interval } = analyzeEvmDepositPolling({
+        deposit,
+        focusedDepositHash,
+      })
 
       worker.postMessage({
         deposit,
+        focusedDepositHash,
         type: 'watch-evm-deposit',
       })
 
@@ -79,6 +89,7 @@ const WatchEvmDeposit = function ({
         }
         worker.postMessage({
           deposit,
+          focusedDepositHash,
           type: 'watch-evm-deposit',
         })
         // Block posting until a response is received
@@ -96,6 +107,7 @@ const WatchEvmDeposit = function ({
       nativeTokenBalanceQueryKey,
       queryClient,
       updateDeposit,
+      txHash,
       worker,
     ],
   )

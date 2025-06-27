@@ -5,6 +5,7 @@ on:
     branches:
       - main
     paths:
+      - 'external-api-cache/**'
       - 'staking-points/**'
       - 'subgraph-api/**'
       - 'token-prices/**'
@@ -28,6 +29,8 @@ jobs:
     strategy:
       matrix:
         include:
+          - context: external-api-cache
+            image: hemilabs/external-api-cache
           - context: staking-points
             image: hemilabs/staking-points-api
           - context: subgraph-api

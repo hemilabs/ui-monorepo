@@ -34,8 +34,8 @@ type WatchEvmDepositsWorker = Omit<Worker, 'onmessage' | 'postMessage'> & {
 
 const worker = typeWorker<WatchEvmDepositsWorker>(self)
 
-export const getDepositKey = (withdrawal: EvmDepositOperation) =>
-  `update-evm-deposit-${withdrawal.l1ChainId}-${withdrawal.transactionHash}` as const
+export const getDepositKey = (deposit: EvmDepositOperation) =>
+  `update-evm-deposit-${deposit.l1ChainId}-${deposit.transactionHash}` as const
 
 const postUpdates = (deposit: EvmDepositOperation) =>
   function (updates: Partial<EvmDepositOperation> = {}) {

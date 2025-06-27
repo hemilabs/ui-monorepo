@@ -87,7 +87,7 @@
       "heading": "DEMOS",
       "sub-heading": "Soluções de verificação biométrica para aplicações Web3."
     },
-    "heading": "Ecosistema",
+    "heading": "Demonstrações",
     "hemihatchlings": {
       "heading": "Hemi Hatchlings",
       "sub-heading": "Saiba como funciona a finalidade de Ethereum e Bitcoin"
@@ -96,7 +96,7 @@
       "heading": "Pure Finance",
       "sub-heading": "Utilidade e interação com contratos inteligentes diretamente na rede Hemi"
     },
-    "sub-heading": "Aprenda e explore com o ecosistema para programadores Hemi"
+    "sub-heading": "Aprenda e explore com as demonstrações para programadores Hemi"
   },
   "error-pages": {
     "not-found": {
@@ -193,7 +193,7 @@
       "title": "DEX"
     },
     "docs": "Documentação",
-    "ecosystem": "Ecosistema",
+    "ecosystem": "Demonstrações",
     "explorer": "Explorador",
     "get-started": "Começar",
     "help": {

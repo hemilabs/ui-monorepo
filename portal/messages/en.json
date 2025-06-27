@@ -87,7 +87,7 @@
       "heading": "DEMOS",
       "sub-heading": "Biometric verification solutions for Web3 applications."
     },
-    "heading": "Ecosystem",
+    "heading": "Demos",
     "hemihatchlings": {
       "heading": "Hemi Hatchlings",
       "sub-heading": "Learn how Ethereum & Bitcoin finality works"
@@ -96,7 +96,7 @@
       "heading": "Pure Finance",
       "sub-heading": "Utility and smart contract interaction built directly into the Hemi network"
     },
-    "sub-heading": "Learn and explore with Hemi developer ecosystem"
+    "sub-heading": "Learn and explore with Hemi developer demos"
   },
   "error-pages": {
     "not-found": {
@@ -193,7 +193,7 @@
       "title": "DEX"
     },
     "docs": "Documentation",
-    "ecosystem": "Ecosystem",
+    "ecosystem": "Demos",
     "explorer": "Explorer",
     "get-started": "Get Started",
     "help": {

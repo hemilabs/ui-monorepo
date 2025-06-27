@@ -3,6 +3,7 @@ import {
   MessageStatus,
   type ToEvmWithdrawOperation,
 } from 'types/tunnel'
+import { zeroHash } from 'viem'
 import { hemiSepolia, sepolia } from 'viem/chains'
 import { describe, expect, it } from 'vitest'
 import {
@@ -18,52 +19,33 @@ const createWithdrawal = (
 ): ToEvmWithdrawOperation =>
   // @ts-expect-error Only adding the minimum required properties for testing
   ({
-    claimTxHash: '0x456',
+    claimTxHash: zeroHash,
     direction: MessageDirection.L2_TO_L1,
     l1ChainId: sepolia.id,
     l2ChainId: hemiSepolia.id,
-    proveTxHash: '0x123',
+    proveTxHash: zeroHash,
     status: MessageStatus.RELAYED,
     timestamp: 123456,
-    transactionHash: '0xabc',
+    transactionHash: zeroHash,
     ...overrides,
   })
 
 describe('analyzeEvmWithdrawalPolling', function () {
-  it('returns MAX priority and 6s interval for focused withdrawal', function () {
+  it('returns HIGH priority and 7s interval for focused withdrawal', function () {
     const withdrawal = createWithdrawal()
     const result = analyzeEvmWithdrawalPolling({
-      focusedWithdrawalHash: '0xabc',
+      focusedWithdrawalHash: zeroHash,
       withdrawal,
     })
-    expect(result.priority).toBe(EvmWithdrawalPriority.MAX)
-    expect(result.interval).toBe(getSeconds(6))
-  })
-
-  it('returns HIGH priority and 8s interval if timestamp is missing', function () {
-    const withdrawal = createWithdrawal({ timestamp: undefined })
-    const result = analyzeEvmWithdrawalPolling({ withdrawal })
     expect(result.priority).toBe(EvmWithdrawalPriority.HIGH)
-    expect(result.interval).toBe(getSeconds(8))
+    expect(result.interval).toBe(getSeconds(7))
   })
 
-  it('returns MEDIUM priority and 10s interval if proveTxHash is missing and status requires it', function () {
-    const withdrawal = createWithdrawal({
-      proveTxHash: undefined,
-      status: MessageStatus.READY_FOR_RELAY,
-    })
+  it('returns MEDIUM priority and 14s interval if status is missing', function () {
+    const withdrawal = createWithdrawal({ status: undefined })
     const result = analyzeEvmWithdrawalPolling({ withdrawal })
     expect(result.priority).toBe(EvmWithdrawalPriority.MEDIUM)
-    expect(result.interval).toBe(getSeconds(10))
-  })
-
-  it('returns MEDIUM priority and 10s interval for READY_TO_PROVE status', function () {
-    const withdrawal = createWithdrawal({
-      status: MessageStatus.READY_TO_PROVE,
-    })
-    const result = analyzeEvmWithdrawalPolling({ withdrawal })
-    expect(result.priority).toBe(EvmWithdrawalPriority.MEDIUM)
-    expect(result.interval).toBe(getSeconds(10))
+    expect(result.interval).toBe(getSeconds(14))
   })
 
   it('returns LOW priority and default mapped interval for unrelated status', function () {
@@ -81,6 +63,6 @@ describe('analyzeEvmWithdrawalPolling', function () {
     })
     const result = analyzeEvmWithdrawalPolling({ withdrawal })
     expect(result.priority).toBe(EvmWithdrawalPriority.LOW)
-    expect(result.interval).toBe(getSeconds(12))
+    expect(result.interval).toBe(getSeconds(28))
   })
 })

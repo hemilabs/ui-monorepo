@@ -1,7 +1,6 @@
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { MessageStatus, type ToEvmWithdrawOperation } from 'types/tunnel'
-import { isWithdrawalMissingInformation } from 'utils/tunnel'
 import { Hash } from 'viem'
 
 type Props = {
@@ -35,10 +34,9 @@ const refetchInterval = {
 } satisfies { [chainId: number]: { [status: number]: number | false } }
 
 export const EvmWithdrawalPriority = {
-  HIGH: 2, // Missing timestamp or status
+  HIGH: 2, // Focused withdrawal
   LOW: 0, // Everything else
-  MAX: 3, // Focused withdrawal
-  MEDIUM: 1, // Missing info (like prove/claim tx) or specific statuses
+  MEDIUM: 1, // Missing status
 } as const
 
 // See https://www.npmjs.com/package/p-queue#priority
@@ -46,7 +44,7 @@ export function analyzeEvmWithdrawalPolling({
   focusedWithdrawalHash,
   withdrawal,
 }: Props) {
-  const fallback = getSeconds(12)
+  const fallback = getSeconds(28)
 
   // Focused withdrawal
   if (
@@ -55,33 +53,15 @@ export function analyzeEvmWithdrawalPolling({
       withdrawal.transactionHash.toLowerCase()
   ) {
     return {
-      interval: getSeconds(6),
-      priority: EvmWithdrawalPriority.MAX,
+      interval: getSeconds(7),
+      priority: EvmWithdrawalPriority.HIGH,
     }
   }
 
-  // Missing vital info
-  if (isWithdrawalMissingInformation(withdrawal)) {
-    if (!withdrawal.timestamp || withdrawal.status === undefined) {
-      return {
-        interval: getSeconds(8),
-        priority: EvmWithdrawalPriority.HIGH,
-      }
-    }
+  // Missing status
+  if (withdrawal.status === undefined) {
     return {
-      interval: getSeconds(10),
-      priority: EvmWithdrawalPriority.MEDIUM,
-    }
-  }
-
-  if (
-    [MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
-      // @ts-expect-error status is of type MessageStatus
-      withdrawal.status,
-    )
-  ) {
-    return {
-      interval: getSeconds(10),
+      interval: getSeconds(14),
       priority: EvmWithdrawalPriority.MEDIUM,
     }
   }

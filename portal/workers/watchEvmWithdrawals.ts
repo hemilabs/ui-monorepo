@@ -13,7 +13,7 @@ import { type Hash } from 'viem'
 
 import { analyzeEvmWithdrawalPolling } from './pollings/analyzeEvmWithdrawalPolling'
 
-const queue = new PQueue({ concurrency: 2 })
+const queue = new PQueue({ concurrency: 4 })
 
 const debug = debugConstructor('watch-evm-withdrawals-worker')
 

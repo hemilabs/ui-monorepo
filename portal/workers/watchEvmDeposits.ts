@@ -5,15 +5,18 @@ import { type EnableWorkersDebug } from 'utils/typeUtilities'
 import { hasKeys } from 'utils/utilities'
 import { watchEvmDeposit } from 'utils/watch/evmDeposits'
 import { typeWorker } from 'utils/workers'
-import { Chain } from 'viem'
+import { Chain, Hash } from 'viem'
+
+import { analyzeEvmDepositPolling } from './pollings/analyzeEvmDepositPolling'
 
 const debug = debugConstructor('watch-evm-deposits-worker')
 
-const hemiQueue = new PQueue({ concurrency: 5 })
+const queue = new PQueue({ concurrency: 5 })
 
 type WatchEvmDeposit = {
   deposit: EvmDepositOperation
   type: 'watch-evm-deposit'
+  focusedDepositHash?: Hash
 }
 
 type AppToWebWorkerActions = EnableWorkersDebug | WatchEvmDeposit
@@ -50,8 +53,19 @@ const postUpdates = (deposit: EvmDepositOperation) =>
     })
   }
 
-const watchDeposit = (deposit: EvmDepositOperation) =>
-  hemiQueue.add(() => watchEvmDeposit(deposit).then(postUpdates(deposit)))
+function watchDeposit({
+  deposit,
+  focusedDepositHash,
+}: Omit<WatchEvmDeposit, 'type'>) {
+  const { priority } = analyzeEvmDepositPolling({
+    deposit,
+    focusedDepositHash,
+  })
+
+  return queue.add(() => watchEvmDeposit(deposit).then(postUpdates(deposit)), {
+    priority,
+  })
+}
 
 // wait for the UI to send chain and address once ready
 worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
@@ -59,7 +73,10 @@ worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
     return
   }
   if (e.data.type === 'watch-evm-deposit') {
-    watchDeposit(e.data.deposit)
+    watchDeposit({
+      deposit: e.data.deposit,
+      focusedDepositHash: e.data.focusedDepositHash,
+    })
   }
   // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
   if (e.data.type === 'enable-debug') {

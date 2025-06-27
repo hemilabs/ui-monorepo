@@ -36,7 +36,7 @@ const refetchInterval = {
 export const EvmWithdrawalPriority = {
   HIGH: 2, // Focused withdrawal
   LOW: 0, // Everything else
-  MEDIUM: 1, // Missing status
+  MEDIUM: 1, // Missing status or timestamp
 } as const
 
 // See https://www.npmjs.com/package/p-queue#priority
@@ -58,8 +58,8 @@ export function analyzeEvmWithdrawalPolling({
     }
   }
 
-  // Missing status
-  if (withdrawal.status === undefined) {
+  // Missing status or timestamp
+  if (!withdrawal.timestamp || withdrawal.status === undefined) {
     return {
       interval: getSeconds(14),
       priority: EvmWithdrawalPriority.MEDIUM,

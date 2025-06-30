@@ -1,4 +1,5 @@
 import { type EvmDepositOperation } from 'types/tunnel'
+import { zeroHash } from 'viem'
 import { describe, expect, it } from 'vitest'
 import {
   analyzeEvmDepositPolling,
@@ -14,7 +15,7 @@ const createDeposit = (
   ({
     status: 1,
     timestamp: 123456,
-    transactionHash: '0xabc',
+    transactionHash: zeroHash,
     ...overrides,
   })
 
@@ -23,11 +24,11 @@ describe('analyzeEvmDepositPolling', function () {
     const deposit = createDeposit()
     const result = analyzeEvmDepositPolling({
       deposit,
-      focusedDepositHash: '0xabc',
+      focusedDepositHash: zeroHash,
     })
 
     expect(result.priority).toBe(EvmDepositPriority.HIGH)
-    expect(result.interval).toBe(getSeconds(6))
+    expect(result.interval).toBe(getSeconds(7))
   })
 
   it('returns MEDIUM priority when timestamp is missing', function () {
@@ -35,7 +36,7 @@ describe('analyzeEvmDepositPolling', function () {
     const result = analyzeEvmDepositPolling({ deposit })
 
     expect(result.priority).toBe(EvmDepositPriority.MEDIUM)
-    expect(result.interval).toBe(getSeconds(8))
+    expect(result.interval).toBe(getSeconds(14))
   })
 
   it('returns MEDIUM priority when status is undefined', function () {
@@ -43,7 +44,7 @@ describe('analyzeEvmDepositPolling', function () {
     const result = analyzeEvmDepositPolling({ deposit })
 
     expect(result.priority).toBe(EvmDepositPriority.MEDIUM)
-    expect(result.interval).toBe(getSeconds(8))
+    expect(result.interval).toBe(getSeconds(14))
   })
 
   it('returns LOW priority and fallback interval when all data is present and not focused', function () {
@@ -51,6 +52,6 @@ describe('analyzeEvmDepositPolling', function () {
     const result = analyzeEvmDepositPolling({ deposit })
 
     expect(result.priority).toBe(EvmDepositPriority.LOW)
-    expect(result.interval).toBe(getSeconds(12))
+    expect(result.interval).toBe(getSeconds(28))
   })
 })

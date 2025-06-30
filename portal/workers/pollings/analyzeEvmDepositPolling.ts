@@ -18,7 +18,7 @@ export function analyzeEvmDepositPolling({
   deposit,
   focusedDepositHash,
 }: Props) {
-  const fallback = getSeconds(12)
+  const fallback = getSeconds(28)
 
   // Focused deposit
   if (
@@ -26,7 +26,7 @@ export function analyzeEvmDepositPolling({
     focusedDepositHash.toLowerCase() === deposit.transactionHash.toLowerCase()
   ) {
     return {
-      interval: getSeconds(6),
+      interval: getSeconds(7),
       priority: EvmDepositPriority.HIGH,
     }
   }
@@ -34,7 +34,7 @@ export function analyzeEvmDepositPolling({
   // Missing timestamp or status
   if (!deposit.timestamp || deposit.status === undefined) {
     return {
-      interval: getSeconds(8),
+      interval: getSeconds(14),
       priority: EvmDepositPriority.MEDIUM,
     }
   }

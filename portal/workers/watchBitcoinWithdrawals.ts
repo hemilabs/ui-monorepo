@@ -1,15 +1,18 @@
 import { type BtcChain } from 'btc-wallet/chains'
 import debugConstructor from 'debug'
 import PQueue from 'p-queue'
-import { BtcWithdrawStatus, type ToBtcWithdrawOperation } from 'types/tunnel'
-import { isPendingOperation } from 'utils/tunnel'
+import { type ToBtcWithdrawOperation } from 'types/tunnel'
 import { type EnableWorkersDebug } from 'utils/typeUtilities'
 import { watchBitcoinWithdrawal } from 'utils/watch/bitcoinWithdrawals'
 import { typeWorker } from 'utils/workers'
+import { Hash } from 'viem'
+
+import { analyzeBitcoinWithdrawalPolling } from './pollings/analyzeBitcoinWithdrawalPolling'
 
 type WatchBtcWithdrawal = {
   type: 'watch-btc-withdrawal'
   withdrawal: ToBtcWithdrawOperation
+  focusedWithdrawalHash?: Hash
 }
 
 type AppToWebWorkerActions = EnableWorkersDebug | WatchBtcWithdrawal
@@ -32,22 +35,6 @@ const worker = typeWorker<WatchBtcWithdrawalsWorker>(self)
 
 const hemiQueue = new PQueue({ concurrency: 3 })
 
-// See https://www.npmjs.com/package/p-queue#priority
-const getPriority = function (withdrawal: ToBtcWithdrawOperation) {
-  // Give priority to running operations
-  if (
-    [
-      BtcWithdrawStatus.CHALLENGE_IN_PROGRESS,
-      BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
-    ].includes(withdrawal.status)
-  ) {
-    return 2
-  }
-  // if a final withdrawal reached this point, it is for missing information.
-  // Let's give them priority, so they are removed forever from the queue
-  return isPendingOperation(withdrawal) ? 0 : 1
-}
-
 export const getWithdrawalKey = (withdrawal: ToBtcWithdrawOperation) =>
   `update-btc-withdrawal-${withdrawal.l1ChainId}-${withdrawal.transactionHash}` as const
 
@@ -59,11 +46,22 @@ const postUpdates =
       updates,
     })
 
-const watchWithdrawal = (withdrawal: ToBtcWithdrawOperation) =>
-  hemiQueue.add(
+function watchWithdrawal({
+  focusedWithdrawalHash,
+  withdrawal,
+}: Omit<WatchBtcWithdrawal, 'type'>) {
+  const { priority } = analyzeBitcoinWithdrawalPolling({
+    focusedWithdrawalHash,
+    withdrawal,
+  })
+
+  return hemiQueue.add(
     () => watchBitcoinWithdrawal(withdrawal).then(postUpdates(withdrawal)),
-    { priority: getPriority(withdrawal) },
+    {
+      priority,
+    },
   )
+}
 
 // wait for the UI to send chain and address once ready
 worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
@@ -71,7 +69,10 @@ worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
     return
   }
   if (e.data.type === 'watch-btc-withdrawal') {
-    watchWithdrawal(e.data.withdrawal)
+    watchWithdrawal({
+      focusedWithdrawalHash: e.data.focusedWithdrawalHash,
+      withdrawal: e.data.withdrawal,
+    })
   }
   // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
   if (e.data.type === 'enable-debug') {

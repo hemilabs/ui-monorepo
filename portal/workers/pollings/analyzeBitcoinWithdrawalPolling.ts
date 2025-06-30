@@ -47,7 +47,7 @@ export function analyzeBitcoinWithdrawalPolling({
     }
   }
 
-  // Pending operation (missing status)
+  // Pending operation
   if (isPendingOperation(withdrawal)) {
     return {
       interval: getSeconds(18),

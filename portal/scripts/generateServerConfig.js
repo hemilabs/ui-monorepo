@@ -55,8 +55,8 @@ if (process.env.NEXT_PUBLIC_TOKEN_PRICES_URL) {
   fetchDomains.add(new URL(process.env.NEXT_PUBLIC_TOKEN_PRICES_URL).origin)
 }
 
-if (process.env.NEXT_PUBLIC_TVL_URL) {
-  fetchDomains.add(new URL(process.env.NEXT_PUBLIC_TVL_URL).origin)
+if (process.env.NEXT_PUBLIC_API_CACHE_URL) {
+  fetchDomains.add(new URL(process.env.NEXT_PUBLIC_API_CACHE_URL).origin)
 }
 
 if (process.env.NEXT_PUBLIC_POINTS_URL) {

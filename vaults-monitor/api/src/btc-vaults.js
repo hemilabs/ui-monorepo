@@ -42,7 +42,10 @@ async function getBitcoinChainData(client) {
 async function getBitcoinAddressBalance(network, address) {
   const client = esploraClient({ network })
   const addressData = await client.bitcoin.addresses.getAddress({ address })
-  return addressData.chain_stats.funded_txo_sum || 0
+  return (
+    addressData.chain_stats.funded_txo_sum -
+    addressData.chain_stats.spent_txo_sum
+  )
 }
 
 async function getVaultBitcoinBalanceData(client, { vaultAddress }) {

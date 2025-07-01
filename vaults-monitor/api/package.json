@@ -1,7 +1,8 @@
 {
   "name": "vaults-monitor-api",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "dependencies": {
+    "cors": "2.8.5",
     "esplora-client": "1.2.0",
     "hemi-viem": "2.5.0",
     "not-express": "4.1.0",

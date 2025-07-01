@@ -6,11 +6,14 @@ import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useBtcWithdrawals } from 'hooks/useBtcWithdrawals'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
 import { isPendingOperation } from 'utils/tunnel'
 import { hasKeys } from 'utils/utilities'
+import { Hash } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
+import { analyzeBitcoinWithdrawalPolling } from 'workers/pollings/analyzeBitcoinWithdrawalPolling'
 import {
   type AppToWorker,
   getWithdrawalKey,
@@ -26,6 +29,8 @@ function WatchBitcoinWithdrawal({
   const { updateWithdrawal } = useTunnelHistory()
   const { queryKey: btcBalanceQueryKey } = useBitcoinBalance()
   const queryClient = useQueryClient()
+  const searchParams = useSearchParams()
+  const txHash = searchParams.get('txHash')
 
   useEffect(
     function watchWithdrawalUpdates() {
@@ -60,10 +65,15 @@ function WatchBitcoinWithdrawal({
 
       worker.addEventListener('message', saveUpdates)
 
-      // refetch every 15 seconds
-      const interval = 15 * 1000
+      const focusedWithdrawalHash = txHash as Hash
+
+      const { interval } = analyzeBitcoinWithdrawalPolling({
+        focusedWithdrawalHash,
+        withdrawal,
+      })
 
       worker.postMessage({
+        focusedWithdrawalHash,
         type: 'watch-btc-withdrawal',
         withdrawal,
       })
@@ -73,6 +83,7 @@ function WatchBitcoinWithdrawal({
           return
         }
         worker.postMessage({
+          focusedWithdrawalHash,
           type: 'watch-btc-withdrawal',
           withdrawal,
         })
@@ -85,7 +96,14 @@ function WatchBitcoinWithdrawal({
         clearInterval(intervalId)
       }
     },
-    [btcBalanceQueryKey, queryClient, updateWithdrawal, withdrawal, worker],
+    [
+      btcBalanceQueryKey,
+      queryClient,
+      updateWithdrawal,
+      withdrawal,
+      txHash,
+      worker,
+    ],
   )
 
   return null

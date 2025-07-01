@@ -63,8 +63,10 @@ const useTransactionsHistory = function (filter: FilterOptions) {
         }),
     [deposits, filter, withdrawals],
   )
+
   return {
     data,
+    isSettled: syncStatus === 'finished' || syncStatus === 'error',
     loading: syncStatus === 'syncing',
   }
 }
@@ -77,7 +79,7 @@ export const TransactionHistory = function ({
   setFilterOption: (filter: FilterOptions) => void
 }) {
   const { status } = useAccount()
-  const { data, loading } = useTransactionsHistory(filterOption)
+  const { data, isSettled, loading } = useTransactionsHistory(filterOption)
 
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -93,16 +95,22 @@ export const TransactionHistory = function ({
         className="transaction-history-container overflow-x-auto p-2"
         ref={containerRef}
       >
-        {connectedToSupportedChain && showTable && (
-          <Table
-            containerRef={containerRef}
-            data={data}
-            filterOption={filterOption}
-            loading={loading}
-            setFilterOption={setFilterOption}
-          />
+        {connectedToSupportedChain && (
+          <>
+            {showTable && (
+              <Table
+                containerRef={containerRef}
+                data={data}
+                filterOption={filterOption}
+                loading={loading}
+                setFilterOption={setFilterOption}
+              />
+            )}
+            {/* Only show NoTransactions after syncing finishes and data remains empty.
+            Prevents flicker during initial load. */}
+            {isSettled && data.length === 0 && <NoTransactions />}
+          </>
         )}
-        {connectedToSupportedChain && !showTable && <NoTransactions />}
         {connectedToUnsupportedChain && <UnsupportedChain />}
         {status === 'connecting' && (
           <Skeleton className="h-[calc(100%-theme(spacing.2))] w-full rounded-2xl" />

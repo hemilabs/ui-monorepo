@@ -13,12 +13,14 @@ This service periodically checks the status of the bitcoin vaults used by the He
 
 These control the `api` server:
 
-| Variable      | Description                                                      | Default                |
-| ------------- | ---------------------------------------------------------------- | ---------------------- |
-| CACHE_MINUTES | The time to cache the status in minutes.                         | 1                      |
-| CHAIN         | The Hemi chain to monitor: mainnet or testnet.                   | mainnet                |
-| ORIGINS       | Comma-separated list of allowed origins. Patterns are supported. | `http://localhos:3000` |
-| PORT          | The HTTP port the server listens for requests.                   | 3004                   |
+| Variable      | Description                                                       | Default                |
+| ------------- | ----------------------------------------------------------------- | ---------------------- |
+| CACHE_MINUTES | The time to cache the status in minutes.                          | 1                      |
+| CHAIN         | The Hemi chain to monitor: mainnet or testnet.                    | mainnet                |
+| ORIGINS       | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhos:3000` |
+| PORT          | The HTTP port the server listens for requests.                    | 3004                   |
+
+(1) Only stars (`*`) are supported. I.e. `https://*.hemi.xyz` will match any subdomain or subdomain chain.
 
 These environment variables control how the `cron` job behaves:
 

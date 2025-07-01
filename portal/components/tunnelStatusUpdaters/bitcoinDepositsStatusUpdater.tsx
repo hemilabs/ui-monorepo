@@ -6,10 +6,13 @@ import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useBtcDeposits } from 'hooks/useBtcDeposits'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { hasKeys } from 'utils/utilities'
+import { Hash } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
+import { analyzeBitcoinDepositPolling } from 'workers/pollings/analyzeBitcoinDepositPolling'
 import { type AppToWorker, getDepositKey } from 'workers/watchBitcoinDeposits'
 
 // put those undefined statuses first
@@ -34,6 +37,8 @@ const WatchBtcDeposit = function ({
   const { updateDeposit } = useTunnelHistory()
   const { queryKey: btcBalanceQueryKey } = useBitcoinBalance()
   const queryClient = useQueryClient()
+  const searchParams = useSearchParams()
+  const txHash = searchParams.get('txHash')
 
   useEffect(
     function watchDepositUpdates() {
@@ -70,14 +75,19 @@ const WatchBtcDeposit = function ({
 
       worker.addEventListener('message', saveUpdates)
 
-      // refetch every 30 seconds
-      const interval = 30 * 1000
+      const focusedDepositHash = txHash as Hash
+
+      const { interval } = analyzeBitcoinDepositPolling({
+        deposit,
+        focusedDepositHash,
+      })
 
       let intervalId
       // skip polling for disabled states (those whose interval is "false")
       if (typeof interval === 'number') {
         worker.postMessage({
           deposit,
+          focusedDepositHash,
           type: 'watch-btc-deposit',
         })
         intervalId = setInterval(function () {
@@ -86,6 +96,7 @@ const WatchBtcDeposit = function ({
           }
           worker.postMessage({
             deposit,
+            focusedDepositHash,
             type: 'watch-btc-deposit',
           })
           // Block posting until a response is received
@@ -100,7 +111,7 @@ const WatchBtcDeposit = function ({
         }
       }
     },
-    [btcBalanceQueryKey, deposit, queryClient, updateDeposit, worker],
+    [btcBalanceQueryKey, deposit, queryClient, updateDeposit, txHash, worker],
   )
 
   return null

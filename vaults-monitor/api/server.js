@@ -17,7 +17,7 @@ const maxAge = Number.parseInt(cacheMinutesStr) * 60 * 1000
 const limitedGetBtcVaultsData = pMemoize(getBtcVaultsData, { maxAge })
 
 // Given we only need to parse origins (<protocol>//<domain>) that may contain a
-// stat (glob pattern format), we only need to escape dots and convert stars to
+// star (glob pattern format), we only need to escape dots and convert stars to
 // regex patterns in that case.
 const globToRegExp = origin =>
   /\*/.test(origin)

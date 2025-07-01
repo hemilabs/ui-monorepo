@@ -16,11 +16,16 @@ const chainId = chain === 'mainnet' ? hemi.id : hemiSepolia.id
 const maxAge = Number.parseInt(cacheMinutesStr) * 60 * 1000
 const limitedGetBtcVaultsData = pMemoize(getBtcVaultsData, { maxAge })
 
-const isPattern = /^\/.*\/$/ // Starts and ends with a slash
-const parsePattern = p => (isPattern.test(p) ? new RegExp(p.slice(1, -1)) : p)
+// Given we only need to parse origins (<protocol>//<domain>) that may contain a
+// stat (glob pattern format), we only need to escape dots and convert stars to
+// regex patterns in that case.
+const globToRegExp = origin =>
+  /\*/.test(origin)
+    ? new RegExp(`^${origin.replace(/\./g, '\\.').replace(/\*/g, '.*')}$`)
+    : origin
 
 const app = express()
-app.use(cors({ origin: originsStr.split(',').map(parsePattern) }))
+app.use(cors({ origin: originsStr.split(',').map(globToRegExp) }))
 
 app.get('/', async function (req, res) {
   const vaultsData = await limitedGetBtcVaultsData(chainId)

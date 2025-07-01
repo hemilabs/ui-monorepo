@@ -9,9 +9,13 @@ import {
   watchDepositOnHemi,
 } from 'utils/watch/bitcoinDeposits'
 import { typeWorker } from 'utils/workers'
+import { Hash } from 'viem'
+
+import { analyzeBitcoinDepositPolling } from './pollings/analyzeBitcoinDepositPolling'
 
 type WatchBtcDeposit = {
   deposit: BtcDepositOperation
+  focusedDepositHash?: Hash
   type: 'watch-btc-deposit'
 }
 
@@ -48,13 +52,25 @@ const postUpdates =
       updates,
     })
 
-const watchDeposit = function (deposit: BtcDepositOperation) {
+const watchDeposit = function ({
+  deposit,
+  focusedDepositHash,
+}: Omit<WatchBtcDeposit, 'type'>) {
+  const { priority } = analyzeBitcoinDepositPolling({
+    deposit,
+    focusedDepositHash,
+  })
+
   if (deposit.status === BtcDepositStatus.BTC_TX_PENDING) {
-    bitcoinQueue.add(() =>
-      watchDepositOnBitcoin(deposit).then(postUpdates(deposit)),
+    bitcoinQueue.add(
+      () => watchDepositOnBitcoin(deposit).then(postUpdates(deposit)),
+      { priority },
     )
   } else {
-    hemiQueue.add(() => watchDepositOnHemi(deposit).then(postUpdates(deposit)))
+    hemiQueue.add(
+      () => watchDepositOnHemi(deposit).then(postUpdates(deposit)),
+      { priority },
+    )
   }
 }
 
@@ -64,7 +80,10 @@ worker.onmessage = function runWorker(e: MessageEvent<AppToWebWorkerActions>) {
     return
   }
   if (e.data.type === 'watch-btc-deposit') {
-    watchDeposit(e.data.deposit)
+    watchDeposit({
+      deposit: e.data.deposit,
+      focusedDepositHash: e.data.focusedDepositHash,
+    })
   }
   // See https://github.com/debug-js/debug/issues/916#issuecomment-1539231712
   if (e.data.type === 'enable-debug') {

@@ -1,5 +1,9 @@
 {
-  "ignore": ["portal/i18n/request.ts", "subgraphs/utils/index.ts"],
+  "ignore": [
+    "portal-backend/**/config.js",
+    "portal/i18n/request.ts",
+    "subgraphs/utils/index.ts"
+  ],
   "ignoreBinaries": ["ipconfig", "sleep"],
   "ignoreDependencies": [
     "@wagmi/core",
@@ -8,9 +12,6 @@
   ],
   "ignoreUnresolved": ["next"],
   "workspaces": {
-    "staking-points": {
-      "entry": "server.ts"
-    },
     "subgraphs/*": {
       "entry": "src/mappings/*.ts"
     }

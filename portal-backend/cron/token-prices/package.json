@@ -1,0 +1,13 @@
+{
+  "name": "token-prices-cron",
+  "version": "1.0.3",
+  "dependencies": {
+    "redis": "4.7.0",
+    "safe-async-fn": "1.0.0",
+    "startinterval2": "1.0.1",
+    "tiny-fetch-json": "1.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

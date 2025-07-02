@@ -26,12 +26,11 @@
   },
   "private": true,
   "workspaces": [
-    "external-api-cache",
     "packages/*",
     "portal",
+    "portal-backend/api",
+    "portal-backend/cron/*",
     "subgraph-api",
-    "subgraphs/*",
-    "token-prices/*",
-    "vaults-monitor/*"
+    "subgraphs/*"
   ]
 }

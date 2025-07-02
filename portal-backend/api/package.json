@@ -1,0 +1,20 @@
+{
+  "name": "portal-backend",
+  "version": "1.0.0",
+  "dependencies": {
+    "cors": "2.8.5",
+    "esplora-client": "1.2.0",
+    "hemi-viem": "2.5.0",
+    "not-express": "4.1.0",
+    "promise-limit-one": "1.1.0",
+    "promise-mem": "1.0.4",
+    "promise-swr": "1.0.1",
+    "redis": "4.7.1",
+    "safe-async-fn": "1.0.0",
+    "tiny-fetch-json": "1.0.0",
+    "viem": "2.31.6"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

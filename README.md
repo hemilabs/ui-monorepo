@@ -10,10 +10,9 @@ This monorepo contains the following projects:
 - **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
 - **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
 - **portal**: Portal app living at [https://app.hemi.xyz](https://app.hemi.xyz).
-- **staking-points**: Staking Points API
+- **portal-backend**: Various APIs and cron jobs the Portal uses.
 - **subgraph-api**: API for querying hemi subgraphs needed for the portal.
 - **subgraphs/\***: The different subgraphs needed for the portal, such as tunneling operations.
-- **token-prices**: The Token Prices API.
 
 ## Deployment
 

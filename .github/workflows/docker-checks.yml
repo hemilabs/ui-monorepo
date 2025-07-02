@@ -3,18 +3,12 @@ name: Docker Checks
 on:
   pull_request:
     paths:
-      - 'external-api-cache/**'
-      - 'staking-points/**'
+      - 'portal-backend/**'
       - 'subgraph-api/**'
-      - 'token-prices/**'
-      - 'vaults-monitor/**'
   push:
     paths:
-      - 'external-api-cache/**'
-      - 'staking-points/**'
+      - 'portal-backend/**'
       - 'subgraph-api/**'
-      - 'token-prices/**'
-      - 'vaults-monitor/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
@@ -36,10 +30,7 @@ jobs:
     strategy:
       matrix:
         context:
-          - external-api-cache
-          - staking-points
+          - portal-backend/api
+          - portal-backend/cron/token-prices
+          - portal-backend/cron/vaults-monitor
           - subgraph-api
-          - token-prices/api
-          - token-prices/cron
-          - vaults-monitor/api
-          - vaults-monitor/cron

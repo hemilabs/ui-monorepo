@@ -12,6 +12,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import { PropsWithChildren, Suspense } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
@@ -68,30 +69,32 @@ export default async function RootLayout({
         className={`${interVariable.variable} ${interDisplay.variable} w-svw overflow-y-hidden`}
       >
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <SkeletonTheme baseColor="#E5E5E5" highlightColor="#FAFAFA">
-            <WalletsContext locale={locale}>
-              <ConnectWalletDrawerProvider>
-                <Analytics>
-                  <TunnelHistoryProvider>
-                    <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
-                      <div className="hidden w-1/4 max-w-60 lg:block">
-                        <Navbar />
-                      </div>
-                      <AppLayout>
-                        <ErrorBoundary>
-                          {/* Last resort Suspense wrapper usage.
+          <NuqsAdapter>
+            <SkeletonTheme baseColor="#E5E5E5" highlightColor="#FAFAFA">
+              <WalletsContext locale={locale}>
+                <ConnectWalletDrawerProvider>
+                  <Analytics>
+                    <TunnelHistoryProvider>
+                      <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
+                        <div className="hidden w-1/4 max-w-60 lg:block">
+                          <Navbar />
+                        </div>
+                        <AppLayout>
+                          <ErrorBoundary>
+                            {/* Last resort Suspense wrapper usage.
                         Ideally, Suspense wrappers should be added where needed in each page */}
-                          <Suspense>{children}</Suspense>
-                        </ErrorBoundary>
-                        <AppOverlays />
-                        <Workers />
-                      </AppLayout>
-                    </div>
-                  </TunnelHistoryProvider>
-                </Analytics>
-              </ConnectWalletDrawerProvider>
-            </WalletsContext>
-          </SkeletonTheme>
+                            <Suspense>{children}</Suspense>
+                          </ErrorBoundary>
+                          <AppOverlays />
+                          <Workers />
+                        </AppLayout>
+                      </div>
+                    </TunnelHistoryProvider>
+                  </Analytics>
+                </ConnectWalletDrawerProvider>
+              </WalletsContext>
+            </SkeletonTheme>
+          </NuqsAdapter>
         </NextIntlClientProvider>
       </body>
     </html>

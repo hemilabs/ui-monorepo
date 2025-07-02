@@ -17,10 +17,13 @@ const PageBackground = () => (
         background:
           'radial-gradient(100% 100% at 50% 0%, rgba(253, 239, 232, 0.16) 11.7%, rgba(255, 111, 26, 0.16) 37.02%, rgba(255, 24, 20, 0.03) 60.34%), #FAFAFA',
       }}
-    ></div>
+    />
 
     <div className="relative flex w-full flex-col items-center justify-between lg:flex-row lg:items-start">
-      <div className="[&>div>svg]:-translate-x-36 [&>div>svg]:-translate-y-2 [&>div>svg]:scale-75 lg:[&>div>svg]:-translate-x-8">
+      <div
+        className="flex w-full items-center justify-center 
+    [&>div>svg]:scale-75 [&>div>svg]:lg:-translate-x-8 [&>div>svg]:lg:-translate-y-2"
+      >
         <StakeAndEarn />
       </div>
       <div className="[&>svg]:lg:scale-80 [&>svg]:lg:-translate-y-25 [&>svg]:-translate-y-20 [&>svg]:scale-75 [&>svg]:lg:translate-x-12 [&>svg]:xl:translate-x-16">

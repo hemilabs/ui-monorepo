@@ -20,8 +20,6 @@
     "hours": "{hours} horas",
     "insufficient-balance": "{symbol} insuficiente",
     "learn-more": "Aprenda más",
-    "mainnet-is-now-live": "¡Mainnet está disponible!",
-    "mainnet-is-now-live-description": "Tunelice, hace stake y más en mainnet usando el nuevo cambio de red.",
     "min-amount-deposit": "El depósito mínimo {amount} {symbol}",
     "min-amount-stake": "El stake mínimo es {amount} {symbol}",
     "min-amount-unstake": "El desbloqueo mínimo es {amount} {symbol}",
@@ -211,7 +209,7 @@
   },
   "stake-page": {
     "asset": "Activo",
-    "change-to-mainnet": "Cambie a Mainnet y hace stake",
+    "change-to-mainnet": "Cambie a Mainnet y haga stake",
     "dashboard": {
       "coming-soon": "Próximamente",
       "staked": "Staked",
@@ -220,14 +218,14 @@
       "subtitle": "Haz stake con tus activos para ganar recompensas y aumentar tus puntos.",
       "title": "Panel",
       "total-earned-points": "Total de puntos Hemi ganados",
-      "total-staked-on-hemi": "Total Staked en Hemi",
+      "total-staked-on-hemi": "Total en stake en Hemi",
       "your-stake": "Su Stake"
     },
     "drawer": {
-      "approve-and-stake": "Aprobar y hacer Stake",
+      "approve-and-stake": "Aprobar y Hacer Stake",
       "description-manage-stake": "Recargue su stake o retire en cualquier momento— ¡Usted tiene el control total!",
       "manage-your-stake": "Gestione su stake",
-      "stake-and-earn-rewards": "Hace stake {symbol} y gane recompensas!",
+      "stake-and-earn-rewards": "Haga stake {symbol} y gane recompensas!",
       "stake-token": "Hacer stake {symbol}",
       "staking": "Haciendo stake...",
       "strategy-details": {
@@ -237,7 +235,7 @@
         "website": "Sitio web"
       },
       "unstake-eth-as-weth-heading": "El ETH desbloqueado se recibirá como WETH",
-      "unstake-eth-as-weth-subheading": "Cuando stake ETH, automáticamente es convertido a WETH. Al desbloquear, recibirá WETH, que puede convertir de nuevo a ETH si lo desea.",
+      "unstake-eth-as-weth-subheading": "Cuando hace stake con ETH, es automáticamente convertido a WETH. Al desbloquear, recibirá WETH, que puede convertir de nuevo a ETH si lo desea.",
       "unstake-token": "Desbloquear {symbol}",
       "unstaking": "Desbloqueando...",
       "unwrap": "Convertir",

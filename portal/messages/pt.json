@@ -20,8 +20,6 @@
     "hours": "{hours} horas",
     "insufficient-balance": "Saldo insuficiente de {symbol}",
     "learn-more": "Saber mais",
-    "mainnet-is-now-live": "Mainnet está agora ativa!",
-    "mainnet-is-now-live-description": "Faça túneis, stake e mais na mainnet utilizando o novo seletor de rede.",
     "min-amount-deposit": "Depósito mínimo é {amount} {symbol}",
     "min-amount-stake": "Stake mínimo é {amount} {symbol}",
     "min-amount-unstake": "Desbloqueio mínimo é {amount} {symbol}",
@@ -220,11 +218,11 @@
       "subtitle": "Faça stake para ganhar recompensas e aumentar os seus pontos.",
       "title": "Painel",
       "total-earned-points": "Total de pontos Hemi ganhos",
-      "total-staked-on-hemi": "Total Staked no Hemi",
+      "total-staked-on-hemi": "Total em stake em Hemi",
       "your-stake": "O seu Stake"
     },
     "drawer": {
-      "approve-and-stake": "Aprovar e faça Stake",
+      "approve-and-stake": "Aprovar e Fazer Stake",
       "description-manage-stake": "Aumente o seu stake ou levante a qualquer momento— tem controle total!",
       "manage-your-stake": "Gerir o seu stake",
       "stake-and-earn-rewards": "Faça stake {symbol} e ganhe recompensas!",
@@ -237,7 +235,7 @@
         "website": "Website"
       },
       "unstake-eth-as-weth-heading": "ETH desbloqueado será recebido como WETH",
-      "unstake-eth-as-weth-subheading": "Quando stake ETH, este é automaticamente convertido em WETH. Ao desbloquear, receberá WETH, que pode converter novamente em ETH, se desejar.",
+      "unstake-eth-as-weth-subheading": "Quando fazer stake com ETH, este é automaticamente convertido em WETH. Ao desbloquear, receberá WETH, que pode converter novamente em ETH, se desejar.",
       "unstake-token": "Desbloquear {symbol}",
       "unstaking": "A desbloquear...",
       "unwrap": "Desembrulhar",

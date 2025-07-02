@@ -20,8 +20,6 @@
     "hours": "{hours} hours",
     "insufficient-balance": "Insufficient {symbol}",
     "learn-more": "Learn more",
-    "mainnet-is-now-live": "Mainnet is now live!",
-    "mainnet-is-now-live-description": "Tunnel, stake, and more on mainnet using the new network switch.",
     "min-amount-deposit": "Minimum deposit is {amount} {symbol}",
     "min-amount-stake": "Minimum stake is {amount} {symbol}",
     "min-amount-unstake": "Minimum unstake is {amount} {symbol}",

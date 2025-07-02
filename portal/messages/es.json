@@ -225,8 +225,8 @@
       "approve-and-stake": "Aprobar y Hacer Stake",
       "description-manage-stake": "Recargue su stake o retire en cualquier momento— ¡Usted tiene el control total!",
       "manage-your-stake": "Gestione su stake",
-      "stake-and-earn-rewards": "Haga stake {symbol} y gane recompensas!",
-      "stake-token": "Hacer stake {symbol}",
+      "stake-and-earn-rewards": "¡Haga stake de {symbol} y gane recompensas!",
+      "stake-token": "Hacer stake de {symbol}",
       "staking": "Haciendo stake...",
       "strategy-details": {
         "heading": "Detalles de la Estrategia",

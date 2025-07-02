@@ -232,7 +232,7 @@ export const StakeAndEarn = function () {
     throw new Error(`Missing "Stake and Earn" component for locale ${locale}`)
   }
   return (
-    <div className="relative h-32 w-full">
+    <div className="flex h-32 w-full items-center justify-center lg:relative lg:items-start lg:justify-start">
       {/* Trick designed by Nahuel so the overlay of the 4 components causes a particular blended color */}
       <Component />
       <Component />

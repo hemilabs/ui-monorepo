@@ -5,11 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'external-api-cache/**'
-      - 'staking-points/**'
+      - 'portal-backend/**'
       - 'subgraph-api/**'
-      - 'token-prices/**'
-      - 'vaults-monitor/**'
 
 jobs:
   build-and-push:
@@ -29,17 +26,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - context: external-api-cache
-            image: hemilabs/external-api-cache
-          - context: staking-points
-            image: hemilabs/staking-points-api
+          - context: portal-backend/api
+            image: hemilabs/portal-backend-api
+          - context: portal-backend/cron/token-prices
+            image: hemilabs/token-prices-cron
+          - context: portal-backend/cron/vaults-monitor
+            image: hemilabs/vaults-monitor-cron
           - context: subgraph-api
             image: hemilabs/subgraph-api
-          - context: token-prices/api
-            image: hemilabs/token-prices-api
-          - context: token-prices/cron
-            image: hemilabs/token-prices-cron
-          - context: vaults-monitor/api
-            image: hemilabs/vaults-monitor-api
-          - context: vaults-monitor/cron
-            image: hemilabs/vaults-monitor-cron

@@ -8,9 +8,6 @@
   ],
   "ignoreUnresolved": ["next"],
   "workspaces": {
-    "staking-points": {
-      "entry": "server.ts"
-    },
     "subgraphs/*": {
       "entry": "src/mappings/*.ts"
     }

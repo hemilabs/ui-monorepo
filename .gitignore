@@ -23,4 +23,3 @@ subgraphs/hemi-tunnel-withdrawals-proof-claim-subgraph/generated
 subgraphs/hemi-tunnel-withdrawals-subgraph/build
 subgraphs/hemi-tunnel-withdrawals-subgraph/generated
 tsconfig.tsbuildinfo
-vaults-monitor/**/.env*

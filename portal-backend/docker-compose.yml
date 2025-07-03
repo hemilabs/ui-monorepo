@@ -1,0 +1,49 @@
+services:
+  cache:
+    image: redis:7.2.7-alpine
+  portal-api:
+    build:
+      context: api
+    depends_on:
+      - cache
+    environment:
+      ABSINTHE_API_KEY: ${ABSINTHE_API_KEY}
+      ABSINTHE_API_URL: ${ABSINTHE_API_URL}
+      BTC_VAULTS_CACHE_MIN: ${BTC_VAULTS_CACHE_MIN}
+      NODE_ENV: ${NODE_ENV:-production}
+      ORIGINS: ${ORIGINS}
+      PORT: ${PORT}
+      REDIS_URL: redis://cache:6379
+      TVL_DATA_SAMPLE_ID: ${TVL_DATA_SAMPLE_ID}
+      TVL_DATA_URL: ${TVL_DATA_URL}
+      TVL_REVALIDATE_MIN: ${TVL_REVALIDATE_MIN}
+    ports:
+      - '3006:3006'
+    restart: always
+  token-prices-cron:
+    build:
+      context: cron/token-prices
+    depends_on:
+      - cache
+    environment:
+      CACHE_EXPIRATION_MIN: ${CACHE_EXPIRATION_MIN}
+      COIN_MARKET_CAP_API_KEY: ${COIN_MARKET_CAP_API_KEY}
+      COIN_MARKET_CAP_SLUGS: ${COIN_MARKET_CAP_SLUGS}
+      NODE_ENV: ${NODE_ENV:-production}
+      REDIS_URL: redis://cache:6379
+      REFRESH_PRICES_MIN: ${REFRESH_PRICES_MIN}
+    restart: always
+  vaults-monitor-cron:
+    build:
+      context: cron/vaults-monitor
+    depends_on:
+      - portal-api
+    environment:
+      API_URL: http://portal-api:${PORT:-3006}
+      MAX_BLOCKS_BEHIND: ${MAX_BLOCKS_BEHIND}
+      NODE_ENV: ${NODE_ENV:-production}
+      SLACK_MENTION: ${SLACK_MENTION}
+      SLACK_WEBHOOK_URL: ${SLACK_WEBHOOK_URL}
+      SLEEP: 5
+      VAULTS_MONITORING_MIN: ${VAULTS_MONITORING_MIN}
+    restart: always

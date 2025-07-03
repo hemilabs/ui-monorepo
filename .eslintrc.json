@@ -29,16 +29,11 @@
     },
     {
       "extends": ["bloq/node", "prettier"],
-      "files": [
-        "portal/*.config.js",
-        "portal/scripts/*.js",
-        "staking-points/**/*.js",
-        "token-prices/**/*.js"
-      ]
+      "files": ["portal/*.config.js", "portal/scripts/*.js"]
     },
     {
       "extends": ["bloq/node", "prettier"],
-      "files": ["external-api-cache/**/*.js", "vaults-monitor/**/*.js"],
+      "files": ["portal-backend/**/*.js"],
       "rules": {
         "no-console": "off"
       }

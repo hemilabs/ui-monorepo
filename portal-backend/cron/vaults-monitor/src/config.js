@@ -15,6 +15,6 @@ const config = {
 const get = path =>
   path.split('.').reduce((partial, prop) => partial && partial[prop], config)
 
-module.exports = {
-  get,
-}
+const api = { get }
+
+module.exports = api

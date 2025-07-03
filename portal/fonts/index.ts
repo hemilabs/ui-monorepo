@@ -8,28 +8,13 @@ export const interDisplay = localFont({
       weight: '400',
     },
     {
-      path: './inter/display/InterDisplay-Italic.woff2',
-      style: 'italic',
-      weight: '400',
-    },
-    {
       path: './inter/display/InterDisplay-Medium.woff2',
       style: 'normal',
       weight: '500',
     },
     {
-      path: './inter/display/InterDisplay-MediumItalic.woff2',
-      style: 'italic',
-      weight: '500',
-    },
-    {
       path: './inter/display/InterDisplay-SemiBold.woff2',
       style: 'normal',
-      weight: '600',
-    },
-    {
-      path: './inter/display/InterDisplay-SemiBoldItalic.woff2',
-      style: 'italic',
       weight: '600',
     },
   ],
@@ -41,11 +26,6 @@ export const interVariable = localFont({
     {
       path: './inter/variable/InterVariable.woff2',
       style: 'normal',
-      weight: '100 900',
-    },
-    {
-      path: './inter/variable/InterVariable-Italic.woff2',
-      style: 'italic',
       weight: '100 900',
     },
   ],

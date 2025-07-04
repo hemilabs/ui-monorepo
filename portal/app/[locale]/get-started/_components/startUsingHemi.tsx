@@ -4,7 +4,7 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { useRouter } from 'i18n/navigation'
 import Image, { StaticImageData } from 'next/image'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { getSwapUrl } from 'utils/swap'
 import { isRelativeUrl, queryStringObjectToString } from 'utils/url'
 
@@ -68,7 +68,6 @@ const Box = function ({
 }
 export const StartUsingHemi = function () {
   const [networkType] = useNetworkType()
-  const locale = useLocale()
   const t = useTranslations('get-started')
   const href = useTunnelOperationByConnectedWallet()
 
@@ -85,7 +84,7 @@ export const StartUsingHemi = function () {
           alt="Tunnel form"
           event="tut - tunnel assets"
           heading={t('tunnel-assets')}
-          href={`/${locale}${href.pathname}${queryStringObjectToString({
+          href={`/${href.pathname}${queryStringObjectToString({
             ...href.query,
             networkType,
           })}`}

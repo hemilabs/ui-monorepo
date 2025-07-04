@@ -127,12 +127,16 @@ const analyticsEvents = [
   'nav - dodo',
   'nav - atlas',
   'nav - passdex',
+  // custom Tokens for the tunnel
+  'custom erc20 - cancel',
+  'custom erc20 - open modal',
+  'custom erc20 - save token',
 ] as const
 
 type AnalyticsEvents = typeof analyticsEvents
 export type AnalyticsEvent = (typeof analyticsEvents)[number]
 
-// These require chain and wallet info
+// These require wallet info
 type AnalyticsEventsWithWallet = Extract<
   AnalyticsEvent,
   | 'btc connected'
@@ -143,13 +147,24 @@ type AnalyticsEventsWithWallet = Extract<
   | 'evm disconnected'
 >
 
+// These events require a custom ERC20 address
+type AnalyticsEventsWithCustomERC20 = Extract<
+  AnalyticsEvent,
+  | 'custom erc20 - cancel'
+  | 'custom erc20 - open modal'
+  | 'custom erc20 - save token'
+>
+
 type WalletChainData = { wallet: string }
+type CustomERC20Data = { address: string }
 
 // Create a mapped type that maps each key to its corresponding value type
 type EventDataMap = {
-  [K in AnalyticsEventsWithWallet]: WalletChainData
-} & {
-  [K in Exclude<AnalyticsEvent, AnalyticsEventsWithWallet>]: never
+  [K in AnalyticsEvent]: K extends AnalyticsEventsWithWallet
+    ? WalletChainData
+    : K extends AnalyticsEventsWithCustomERC20
+      ? CustomERC20Data
+      : never
 }
 
 export const { UmamiAnalyticsProvider, useUmami } =

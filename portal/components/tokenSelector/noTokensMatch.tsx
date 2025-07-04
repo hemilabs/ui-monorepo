@@ -1,5 +1,6 @@
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useToken } from 'hooks/useToken'
+import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { type Chain, isAddress } from 'viem'
 
@@ -24,6 +25,7 @@ export const NoTokensMatch = function ({
       retry: 1,
     },
   })
+  const { track } = useUmami()
 
   const userTypedAddress = isAddress(searchText)
   const t = useTranslations('token-selector')
@@ -41,6 +43,7 @@ export const NoTokensMatch = function ({
   const onClick = function () {
     setCustomTokenAddress(searchText)
     closeModal()
+    track('custom erc20 - open modal', { address: searchText })
   }
 
   return (

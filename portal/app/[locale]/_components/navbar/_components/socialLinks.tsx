@@ -7,39 +7,51 @@ import { TwitterIcon } from 'components/icons/twitterIcon'
 import { YoutubeIcon } from 'components/icons/youtubeIcon'
 import hemiSocials from 'hemi-socials'
 import { useUmami } from 'hooks/useUmami'
-import React from 'react'
+import { Suspense } from 'react'
 
 const { discordUrl, githubUrl, linkedinUrl, twitterUrl, youtubeUrl } =
   hemiSocials
 
 const svgCss = '[&_path]:hover:fill-black'
 
-export const SocialLinks = function () {
+const UI = ({
+  addTracking,
+}: {
+  addTracking?: (event: AnalyticsEvent) => () => void | undefined
+}) => (
+  <div
+    className="mb-3 mt-0 flex flex-wrap items-center justify-center gap-x-6
+      md:mb-6 md:mt-6 md:h-10 md:gap-x-4 md:border-t md:border-neutral-300/55 md:py-4 lg:mb-0"
+  >
+    <ExternalLink href={twitterUrl} onClick={addTracking?.('nav - x')}>
+      <TwitterIcon className={svgCss} />
+    </ExternalLink>
+    <ExternalLink href={discordUrl} onClick={addTracking?.('nav - discord')}>
+      <DiscordIcon className={svgCss} />
+    </ExternalLink>
+    <ExternalLink href={githubUrl} onClick={addTracking?.('nav - gitHub')}>
+      <GithubIcon className={svgCss} />
+    </ExternalLink>
+    <ExternalLink href={linkedinUrl} onClick={addTracking?.('nav - linkedIn')}>
+      <LinkedinIcon className={svgCss} />
+    </ExternalLink>
+    <ExternalLink href={youtubeUrl} onClick={addTracking?.('nav - youtube')}>
+      <YoutubeIcon className={svgCss} />
+    </ExternalLink>
+  </div>
+)
+
+const SocialLinksImpl = function () {
   const { enabled, track } = useUmami()
 
   const addTracking = (event: AnalyticsEvent) =>
     enabled ? () => track(event) : undefined
 
-  return (
-    <div
-      className="mb-3 mt-0 flex flex-wrap items-center justify-center gap-x-6
-      md:mb-6 md:mt-6 md:h-10 md:gap-x-4 md:border-t md:border-neutral-300/55 md:py-4 lg:mb-0"
-    >
-      <ExternalLink href={twitterUrl} onClick={addTracking('nav - x')}>
-        <TwitterIcon className={svgCss} />
-      </ExternalLink>
-      <ExternalLink href={discordUrl} onClick={addTracking('nav - discord')}>
-        <DiscordIcon className={svgCss} />
-      </ExternalLink>
-      <ExternalLink href={githubUrl} onClick={addTracking('nav - gitHub')}>
-        <GithubIcon className={svgCss} />
-      </ExternalLink>
-      <ExternalLink href={linkedinUrl} onClick={addTracking('nav - linkedIn')}>
-        <LinkedinIcon className={svgCss} />
-      </ExternalLink>
-      <ExternalLink href={youtubeUrl} onClick={addTracking('nav - youtube')}>
-        <YoutubeIcon className={svgCss} />
-      </ExternalLink>
-    </div>
-  )
+  return <UI addTracking={addTracking} />
 }
+
+export const SocialLinks = () => (
+  <Suspense fallback={<UI />}>
+    <SocialLinksImpl />
+  </Suspense>
+)

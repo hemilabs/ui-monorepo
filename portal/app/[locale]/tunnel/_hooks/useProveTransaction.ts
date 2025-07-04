@@ -6,7 +6,6 @@ import { ProveEvents } from 'hemi-tunnel-actions/src/types'
 import { useNativeTokenBalance } from 'hooks/useBalance'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { useAccount, useWalletClient } from 'wagmi'
@@ -24,7 +23,6 @@ export const useProveTransaction = function ({
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
     withdrawal.l1ChainId,
   )
-  const [networkType] = useNetworkType()
   const hemiPublicClient = useHemiClient()
   const queryClient = useQueryClient()
   const { updateWithdrawal } = useTunnelHistory()
@@ -43,15 +41,12 @@ export const useProveTransaction = function ({
         withdrawalTransactionHash: withdrawal.transactionHash,
       })
 
-      emitter.on(
-        'pre-prove',
-        () => track?.('evm - prove started', { chain: networkType }),
-      )
+      emitter.on('pre-prove', () => track?.('evm - prove started'))
       emitter.on('user-signed-prove', proveTxHash =>
         updateWithdrawal(withdrawal, { proveTxHash }),
       )
       emitter.on('prove-transaction-reverted', function (receipt) {
-        track?.('evm - prove failed', { chain: networkType })
+        track?.('evm - prove failed')
 
         updateNativeBalanceAfterFees(receipt)
       })
@@ -61,7 +56,7 @@ export const useProveTransaction = function ({
           status: MessageStatus.IN_CHALLENGE_PERIOD,
         })
 
-        track?.('evm - prove success', { chain: networkType })
+        track?.('evm - prove success')
 
         updateNativeBalanceAfterFees(receipt)
       })

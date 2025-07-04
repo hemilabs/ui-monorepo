@@ -1,4 +1,3 @@
-import { type NetworkType } from 'hooks/useNetworkType'
 import { umamiAnalyticsContextFactory } from 'umami-analytics-next'
 
 // all analytic events
@@ -144,63 +143,13 @@ type AnalyticsEventsWithWallet = Extract<
   | 'evm disconnected'
 >
 
-// These types are the ones that are required to be added the chainInfo
-type EventChainData = { chain: NetworkType }
-
-export type AnalyticsEventsWithChain = Exclude<
-  Exclude<
-    AnalyticsEvent,
-    // These are not tracking by anything
-    | 'add to wallet - hemi mainnet'
-    | 'add to wallet - hemi sepolia'
-    | 'add to wallet - sepolia'
-    | 'bitcoin faucet'
-    | 'ethereum faucet'
-    | 'fund wallet - moonpay'
-    | 'fund wallet - oku'
-    | 'fund wallet - sushi'
-    | 'nav - discord'
-    | 'nav - gitHub'
-    | 'nav - linkedIn'
-    | 'nav - mainnet to testnet'
-    | 'nav - testnet to mainnet'
-    | 'nav - youtube'
-    | 'nav - x'
-    | 'network - automatic'
-    | 'network - manual'
-    | 'tut - add hemi'
-    | 'tut - create capsule'
-    | 'tut - deploy contract'
-    | 'tut - deploy erc20'
-    | 'tut - dev tooling'
-    | 'tut - hello world'
-    | 'tut - get btc balance'
-    | 'tut - learn more'
-    | 'tut - pop miner'
-    | 'tut - pop miner cli'
-    | 'tut - setup btc'
-    | 'tut - setup evm'
-    | 'tut - setup safe'
-    | 'tut - swap tokens'
-    | 'tut - tunnel assets'
-    | 'tut - tunnel eth'
-    | 'tut - wallet setup'
-  >,
-  AnalyticsEventsWithWallet
->
-
-type WalletChainData = EventChainData & { wallet: string }
-
-// Create a union type from the arrays
-type KeysWithEventData = AnalyticsEventsWithChain | AnalyticsEventsWithWallet
+type WalletChainData = { wallet: string }
 
 // Create a mapped type that maps each key to its corresponding value type
 type EventDataMap = {
-  [K in KeysWithEventData]: K extends AnalyticsEventsWithWallet
-    ? WalletChainData
-    : K extends AnalyticsEventsWithChain
-      ? EventChainData
-      : { [key: string]: unknown }
+  [K in AnalyticsEventsWithWallet]: WalletChainData
+} & {
+  [K in Exclude<AnalyticsEvent, AnalyticsEventsWithWallet>]: never
 }
 
 export const { UmamiAnalyticsProvider, useUmami } =

@@ -3,7 +3,6 @@ import { ChainLogo } from 'components/chainLogo'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { type ReactNode, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
@@ -39,7 +38,6 @@ export const NetworkSelector = function ({
   onSelectNetwork,
   readonly,
 }: Props) {
-  const [networkType] = useNetworkType()
   const [showNetworkDropdown, setShowNetworkDropdown] = useState(false)
   const { track } = useUmami()
 
@@ -56,7 +54,7 @@ export const NetworkSelector = function ({
   const selectNetwork = function ({ id }: RemoteChain) {
     setShowNetworkDropdown(false)
     onSelectNetwork(id)
-    track?.(eventName, { chain: networkType })
+    track?.(eventName)
   }
 
   const commonCss = `flex items-center border border-solid border-neutral-300/55 shadow-soft

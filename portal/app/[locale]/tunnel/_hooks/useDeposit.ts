@@ -8,7 +8,6 @@ import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useContext } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
@@ -53,7 +52,6 @@ export const useDeposit = function ({
     fromToken.chainId,
   )
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
-  const [networkType] = useNetworkType()
   const queryClient = useQueryClient()
   const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
     fromToken.chainId,
@@ -80,7 +78,7 @@ export const useDeposit = function ({
 
   return useMutation({
     mutationFn: function runDeposit() {
-      track?.('evm - dep started', { chain: networkType })
+      track?.('evm - dep started')
 
       const { emitter, promise } = depositingNative
         ? depositEth({
@@ -172,7 +170,7 @@ export const useDeposit = function ({
           blockNumber: Number(blockNumber),
           status: EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
         })
-        track?.('evm - dep success', { chain: networkType })
+        track?.('evm - dep success')
         // update balances, they will be revalidated on background.
         // We update the native token considering the gas spent, and the token deposited
         if (depositingNative) {
@@ -193,7 +191,7 @@ export const useDeposit = function ({
           status: EvmDepositStatus.DEPOSIT_TX_FAILED,
         })
 
-        track?.('evm - dep failed', { chain: networkType })
+        track?.('evm - dep failed')
         // Although the transaction was reverted, the gas was paid.
         updateNativeBalanceAfterFees(receipt)
       })

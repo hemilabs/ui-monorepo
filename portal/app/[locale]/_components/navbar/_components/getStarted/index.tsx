@@ -1,6 +1,5 @@
 import { Chevron } from 'components/icons/chevron'
 import { Link } from 'components/link'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'i18n/navigation'
 import Image from 'next/image'
@@ -65,11 +64,9 @@ const UI = ({ active, href, onClick, t }: Props) => (
 )
 
 const GetStartedImpl = function (props: Omit<Props, 'onClick'>) {
-  const [networkType] = useNetworkType()
-
   const { track } = useUmami()
 
-  const onClick = () => track?.('nav - get started', { chain: networkType })
+  const onClick = () => track?.('nav - get started')
 
   return <UI {...props} onClick={onClick} />
 }

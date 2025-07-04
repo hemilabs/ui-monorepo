@@ -6,7 +6,6 @@ import { FinalizeEvents } from 'hemi-tunnel-actions/src/types'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
@@ -24,7 +23,6 @@ export const useClaimTransaction = function ({
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
     withdrawal.l1ChainId,
   )
-  const [networkType] = useNetworkType()
   const queryClient = useQueryClient()
   const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
     withdrawal.l1ChainId,
@@ -51,10 +49,7 @@ export const useClaimTransaction = function ({
         withdrawalTransactionHash: withdrawal.transactionHash,
       })
 
-      emitter.on(
-        'pre-finalize',
-        () => track?.('evm - claim started', { chain: networkType }),
-      )
+      emitter.on('pre-finalize', () => track?.('evm - claim started'))
       emitter.on('user-signed-finalize', claimTxHash =>
         updateWithdrawal(withdrawal, {
           claimTxHash,
@@ -80,10 +75,10 @@ export const useClaimTransaction = function ({
           )
         }
 
-        track?.('evm - claim success', { chain: networkType })
+        track?.('evm - claim success')
       })
       emitter.on('finalize-transaction-reverted', function () {
-        track?.('evm - claim failed', { chain: networkType })
+        track?.('evm - claim failed')
       })
 
       on?.(emitter)

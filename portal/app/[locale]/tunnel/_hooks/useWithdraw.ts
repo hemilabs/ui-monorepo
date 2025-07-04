@@ -6,7 +6,6 @@ import { WithdrawEvents } from 'hemi-tunnel-actions/src/types'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
 import { type EvmToken } from 'types/token'
@@ -44,7 +43,6 @@ export const useWithdraw = function ({
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
     fromToken.chainId,
   )
-  const [networkType] = useNetworkType()
   const queryClient = useQueryClient()
   const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
     fromToken.chainId,
@@ -62,7 +60,7 @@ export const useWithdraw = function ({
 
   return useMutation({
     mutationFn: function runWithdraw() {
-      track?.('evm - init withdraw started', { chain: networkType })
+      track?.('evm - init withdraw started')
 
       const l2TokenAddress = withdrawingNative
         ? NativeTokenSpecialAddressOnL2
@@ -109,7 +107,7 @@ export const useWithdraw = function ({
       emitter.on('withdraw-transaction-reverted', function (receipt) {
         // regardless, fees were paid
         updateNativeBalanceAfterFees(receipt)
-        track?.('evm - init withdraw failed', { chain: networkType })
+        track?.('evm - init withdraw failed')
 
         updateWithdrawal(withdrawal, {
           blockNumber: Number(receipt.blockNumber),
@@ -118,7 +116,7 @@ export const useWithdraw = function ({
       })
 
       emitter.on('withdraw-transaction-succeeded', function (receipt) {
-        track?.('evm - init withdraw success', { chain: networkType })
+        track?.('evm - init withdraw success')
 
         updateNativeBalanceAfterFees(
           receipt,

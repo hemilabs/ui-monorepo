@@ -1,6 +1,5 @@
 import { useUmami } from 'app/analyticsEvents'
 import { Tab, Tabs } from 'components/tabs'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 
 import { ReloadHistory } from './reloadHistory'
@@ -19,7 +18,6 @@ type Props = {
 }
 
 export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
-  const [networkType] = useNetworkType()
   const t = useTranslations('tunnel-page.transaction-history.top-bar')
   const { track } = useUmami()
   return (
@@ -39,7 +37,7 @@ export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
             border
             onClick={function () {
               onFilterOptionChange({ ...filterOption, operation: 'all' })
-              track?.('txn filter - all', { chain: networkType })
+              track?.('txn filter - all')
             }}
             selected={filterOption.operation === 'all'}
           >
@@ -49,7 +47,7 @@ export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
             border
             onClick={function () {
               onFilterOptionChange({ ...filterOption, operation: 'ethereum' })
-              track?.('txn filter - eth', { chain: networkType })
+              track?.('txn filter - eth')
             }}
             selected={filterOption.operation === 'ethereum'}
           >
@@ -59,7 +57,7 @@ export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
             border
             onClick={function () {
               onFilterOptionChange({ ...filterOption, operation: 'bitcoin' })
-              track?.('txn filter - btc', { chain: networkType })
+              track?.('txn filter - btc')
             }}
             selected={filterOption.operation === 'bitcoin'}
           >

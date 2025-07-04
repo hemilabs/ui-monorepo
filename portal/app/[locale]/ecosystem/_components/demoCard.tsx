@@ -1,8 +1,7 @@
 'use client'
 
-import { AnalyticsEventsWithChain } from 'app/analyticsEvents'
+import { AnalyticsEvent } from 'app/analyticsEvents'
 import { ExternalLink } from 'components/externalLink'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import Image, { StaticImageData } from 'next/image'
 
@@ -17,7 +16,7 @@ type ColorVariant = keyof typeof colorVariants
 type Props = {
   altText: string
   bgImage: StaticImageData
-  event: AnalyticsEventsWithChain
+  event: AnalyticsEvent
   href: string
   heading: string
   headingColor: ColorVariant
@@ -37,11 +36,9 @@ export const DemoCard = function ({
   subHeading,
   subHeadingColor,
 }: Props) {
-  const [networkType] = useNetworkType()
   const { track } = useUmami()
 
-  const addTracking = () =>
-    track ? () => track(event, { chain: networkType }) : undefined
+  const addTracking = () => (track ? () => track(event) : undefined)
 
   return (
     <div

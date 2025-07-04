@@ -86,7 +86,6 @@ const ConnectedWallet = function ({
   disconnect: () => void
   formattedAddress: string
 }) {
-  const [networkType] = useNetworkType()
   const [menuOpen, setMenuOpen] = useState(false)
   const t = useTranslations('connect-wallets')
   const { track } = useUmami()
@@ -97,7 +96,7 @@ const ConnectedWallet = function ({
 
   const copyAddress = function () {
     navigator.clipboard.writeText(address)
-    track?.(copyEvent, { chain: networkType, wallet: connectorName })
+    track?.(copyEvent, { wallet: connectorName })
     closeMenu()
   }
 

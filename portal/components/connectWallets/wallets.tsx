@@ -1,5 +1,5 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { AnalyticsEventsWithChain } from 'app/analyticsEvents'
+import { AnalyticsEvent } from 'app/analyticsEvents'
 import { ConnectorGroup } from 'btc-wallet/connectors/types'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useConfig } from 'btc-wallet/hooks/useConfig'
@@ -16,7 +16,6 @@ import { Chevron } from 'components/icons/chevron'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useChainIsSupported } from 'hooks/useChainIsSupported'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { isAndroid } from 'react-device-detect'
@@ -39,21 +38,20 @@ const ConnectWalletButton = function ({
   rightIcon,
   text,
 }: {
-  event: AnalyticsEventsWithChain
+  event: AnalyticsEvent
   hoverClassName: string
   icon: React.ReactNode
   onClick: ReturnType<typeof useConnectModal>['openConnectModal']
   rightIcon?: React.ReactNode
   text: string
 }) {
-  const [networkType] = useNetworkType()
   const { track } = useUmami()
   return (
     <button
       className={`group flex w-full cursor-pointer items-center gap-x-2 rounded-xl border
        border-solid border-slate-200 bg-white p-3 shadow-sm ${hoverClassName}`}
       onClick={function () {
-        track?.(event, { chain: networkType })
+        track?.(event)
         onClick()
       }}
     >

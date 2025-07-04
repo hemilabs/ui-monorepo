@@ -1,8 +1,7 @@
 'use client'
 
-import { type AnalyticsEventsWithChain } from 'app/analyticsEvents'
+import { AnalyticsEvent } from 'app/analyticsEvents'
 import { Tab, Tabs } from 'components/tabs'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { useUmami } from 'hooks/useUmami'
@@ -23,7 +22,7 @@ const UI = function ({
   onTabClick,
   tunnelHref,
 }: {
-  onTabClick?: (eventName?: AnalyticsEventsWithChain) => void
+  onTabClick?: (eventName?: AnalyticsEvent) => void
   tunnelHref: UrlObject | string
 }) {
   const pathname = usePathnameWithoutLocale()
@@ -65,15 +64,12 @@ const UI = function ({
 }
 
 const TunnelTabsImpl = function () {
-  const [networkType] = useNetworkType()
-
   const tunnelHref = useTunnelOperationByConnectedWallet()
 
   const { track } = useUmami()
 
   const onTabClick = track
-    ? (eventName: AnalyticsEventsWithChain) =>
-        track(eventName, { chain: networkType })
+    ? (eventName: AnalyticsEvent) => track(eventName)
     : undefined
 
   return <UI onTabClick={onTabClick} tunnelHref={tunnelHref} />

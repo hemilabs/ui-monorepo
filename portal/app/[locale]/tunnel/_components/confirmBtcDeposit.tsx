@@ -3,7 +3,6 @@ import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useConfirmBitcoinDeposit } from 'hooks/useBtcTunnel'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useEffect, useState } from 'react'
@@ -25,7 +24,6 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
     confirmBitcoinDepositReceiptError,
   } = useConfirmBitcoinDeposit(deposit)
 
-  const [networkType] = useNetworkType()
   const [operationStatus, setOperationStatus] =
     useState<OperationStatus>('idle')
   const t = useTranslations()
@@ -43,16 +41,10 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
         // This is needed to invalidate the balance query
         // so the balance is updated in the UI instantly
         queryClient.invalidateQueries({ queryKey: btcBalanceQueryKey })
-        track?.('btc - confirm dep success', { chain: networkType })
+        track?.('btc - confirm dep success')
       }
     },
-    [
-      btcBalanceQueryKey,
-      confirmBitcoinDepositReceipt,
-      networkType,
-      queryClient,
-      track,
-    ],
+    [btcBalanceQueryKey, confirmBitcoinDepositReceipt, queryClient, track],
   )
 
   useEffect(
@@ -70,13 +62,12 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
         updateDeposit(deposit, {
           status: BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
         })
-        track?.('btc - confirm dep failed', { chain: networkType })
+        track?.('btc - confirm dep failed')
       }
     },
     [
       confirmBitcoinDepositReceiptError,
       deposit,
-      networkType,
       isConfirming,
       track,
       updateDeposit,
@@ -100,7 +91,7 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
     })
     confirmBitcoinDeposit()
 
-    track?.('btc - confirm dep started', { chain: networkType })
+    track?.('btc - confirm dep started')
   }
 
   const getText = function () {

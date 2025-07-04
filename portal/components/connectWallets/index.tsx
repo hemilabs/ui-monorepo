@@ -1,7 +1,6 @@
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { useDrawerContext } from 'hooks/useDrawerContext'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -30,7 +29,6 @@ const WalletIcon = () => (
 
 export const WalletConnection = function () {
   const { closeDrawer, isDrawerOpen, openDrawer } = useDrawerContext()
-  const [networkType] = useNetworkType()
   const t = useTranslations()
 
   const { status: btcStatus } = useBtcAccount()
@@ -49,7 +47,7 @@ export const WalletConnection = function () {
 
   const onConnectWalletsClick = function () {
     openDrawer()
-    track?.('connect wallets', { chain: networkType })
+    track?.('connect wallets')
   }
 
   return (

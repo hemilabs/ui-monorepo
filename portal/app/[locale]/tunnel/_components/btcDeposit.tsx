@@ -6,7 +6,6 @@ import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
-import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -54,7 +53,6 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
   const { balance, isSuccess: balanceLoaded } = useBitcoinBalance()
   const { isPending: isMinDepositsSatsLoading, minDepositFormattedSats } =
     useMinDepositSats()
-  const [networkType] = useNetworkType()
   const t = useTranslations()
   const { track } = useUmami()
 
@@ -90,12 +88,11 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
       }
       setIsDepositing(false)
       resetStateAfterOperation()
-      track?.('btc - dep success', { chain: networkType })
+      track?.('btc - dep success')
     },
     [
       depositReceipt,
       isDepositing,
-      networkType,
       resetStateAfterOperation,
       setIsDepositing,
       track,
@@ -107,18 +104,11 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
       if (isDepositing && (depositError || depositReceiptError)) {
         setIsDepositing(false)
         if (depositReceiptError) {
-          track?.('btc - dep failed', { chain: networkType })
+          track?.('btc - dep failed')
         }
       }
     },
-    [
-      depositError,
-      depositReceiptError,
-      networkType,
-      isDepositing,
-      setIsDepositing,
-      track,
-    ],
+    [depositError, depositReceiptError, isDepositing, setIsDepositing, track],
   )
 
   const { feePrices, isError: isFeePricesError } = useGetFeePrices()
@@ -135,7 +125,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
       l2ChainId: toNetworkId,
       satoshis: Number(parseTokenUnits(fromInput, fromToken)),
     })
-    track?.('btc - dep started', { chain: networkType })
+    track?.('btc - dep started')
   }
 
   const fees = feePrices?.fastestFee?.toString()

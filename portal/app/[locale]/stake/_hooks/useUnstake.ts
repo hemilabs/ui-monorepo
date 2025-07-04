@@ -48,7 +48,7 @@ export const useUnstake = function (token: StakeToken) {
   const { mutate } = useMutation({
     async mutationFn({ amountInput }: { amountInput: string }) {
       setIsSubmitting(true)
-      track?.('stake - unstake started', { chain: networkType })
+      track?.('stake - unstake started')
 
       const amountUnits = parseTokenUnits(amountInput, token)
 
@@ -71,11 +71,11 @@ export const useUnstake = function (token: StakeToken) {
             (old: bigint) => old - amountUnits,
           )
 
-          track?.('stake - unstake success', { chain: networkType })
+          track?.('stake - unstake success')
         },
         onUnstakeFailed() {
           setUnstakeStatus(UnstakeStatusEnum.UNSTAKE_TX_FAILED)
-          track?.('stake - unstake failed', { chain: networkType })
+          track?.('stake - unstake failed')
         },
         onUserRejectedUnstake: () =>
           setUnstakeStatus(UnstakeStatusEnum.UNSTAKE_TX_FAILED),

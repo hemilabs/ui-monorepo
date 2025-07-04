@@ -1,4 +1,4 @@
-import { type AnalyticsEventsWithChain } from 'app/analyticsEvents'
+import { type AnalyticsEvent } from 'app/analyticsEvents'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { NetworkIcon } from 'components/icons/networkIcon'
@@ -16,7 +16,7 @@ import { ComponentProps, RefObject, ReactNode, useState, Suspense } from 'react'
 import { UrlObject } from 'url'
 
 export type NavItemProps = {
-  event?: AnalyticsEventsWithChain
+  event?: AnalyticsEvent
   icon?: ReactNode
   rightSection?: ReactNode
   text: string

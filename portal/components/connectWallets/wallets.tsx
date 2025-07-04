@@ -51,7 +51,7 @@ const ConnectWalletButton = function ({
   return (
     <button
       className={`group flex w-full cursor-pointer items-center gap-x-2 rounded-xl border
-       border-solid border-slate-200 bg-white p-3 shadow-sm ${hoverClassName}`}
+       border-solid border-neutral-200 bg-white p-3 shadow-sm ${hoverClassName}`}
       onClick={function () {
         track?.(event, { chain: networkType })
         onClick()

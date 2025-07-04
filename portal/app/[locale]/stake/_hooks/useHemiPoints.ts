@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import fetch from 'fetch-plus-plus'
 import { useAccount } from 'wagmi'
 
-const hemiPointsUrl = process.env.NEXT_PUBLIC_POINTS_URL
+const portalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL
 
 export const useHemiPoints = function () {
   const { address, isConnected } = useAccount()
@@ -10,7 +10,7 @@ export const useHemiPoints = function () {
   return useQuery({
     enabled: isConnected && !!address,
     queryFn: () =>
-      fetch(`${hemiPointsUrl}/${address}`).then(
+      fetch(`${portalApiUrl}/points/${address}`).then(
         ({ points }) => points,
       ) as Promise<number>,
     queryKey: ['hemi-points', address],

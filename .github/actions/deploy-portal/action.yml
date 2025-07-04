@@ -54,15 +54,9 @@ inputs:
   NEXT_PUBLIC_ENABLE_STAKE_TESTNET:
     required: false
     description: Flag to enable or not stake on testnet
-  NEXT_PUBLIC_POINTS_URL:
-    required: false
-    description: Hemi Points URL
-  NEXT_PUBLIC_TOKEN_PRICES_URL:
-    required: false
-    description: Token prices URL
-  NEXT_PUBLIC_API_CACHE_URL:
-    required: false
-    description: Total Value Locked URL
+  NEXT_PUBLIC_PORTAL_API_URL:
+    required: true
+    description: Portal API URL to get token prices, user points, TVL and more
   NEXT_PUBLIC_SENTRY_DSN:
     required: false
     description: Sentry DSN URL
@@ -100,7 +94,6 @@ runs:
       env:
         NEXT_PUBLIC_ANALYTICS_URL: ${{ inputs.NEXT_PUBLIC_ANALYTICS_URL }}
         NEXT_PUBLIC_ANALYTICS_WEBSITE_ID: ${{ inputs.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID }}
-        NEXT_PUBLIC_API_CACHE_URL: ${{ inputs.NEXT_PUBLIC_API_CACHE_URL }}
         NEXT_PUBLIC_COOKIE3_SITE_ID: ${{ inputs.NEXT_PUBLIC_COOKIE3_SITE_ID }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA }}
@@ -111,10 +104,9 @@ runs:
         NEXT_PUBLIC_ENABLE_ANALYTICS: ${{ inputs.NEXT_PUBLIC_ENABLE_ANALYTICS }}
         NEXT_PUBLIC_ENABLE_COOKIE3: ${{ inputs.NEXT_PUBLIC_ENABLE_COOKIE3 }}
         NEXT_PUBLIC_ENABLE_STAKE_TESTNET: ${{ inputs.NEXT_PUBLIC_ENABLE_STAKE_TESTNET }}
-        NEXT_PUBLIC_POINTS_URL: ${{ inputs.NEXT_PUBLIC_POINTS_URL }}
+        NEXT_PUBLIC_PORTAL_API_URL: ${{ inputs.NEXT_PUBLIC_PORTAL_API_URL }}
         NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.NEXT_PUBLIC_SENTRY_DSN }}
         NEXT_PUBLIC_SUBGRAPHS_API_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPHS_API_URL }}
-        NEXT_PUBLIC_TOKEN_PRICES_URL: ${{ inputs.NEXT_PUBLIC_TOKEN_PRICES_URL }}
         NEXT_PUBLIC_TRACES_SAMPLE_RATE: ${{ inputs.NEXT_PUBLIC_TRACES_SAMPLE_RATE }}
         NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ inputs.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
         SENTRY_AUTH_TOKEN: ${{ inputs.SENTRY_AUTH_TOKEN }}

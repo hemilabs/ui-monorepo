@@ -1,8 +1,7 @@
-import { useUmami } from 'app/analyticsEvents'
 import { ExternalLink as AnchorTag } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { Link } from 'components/link'
-import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import { ComponentProps, Suspense } from 'react'
 
 import {
@@ -40,13 +39,12 @@ const ExternalLinkImpl = function ({
   event,
   ...props
 }: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
-  const [networkType] = useNetworkType()
-  const { track } = useUmami()
+  const { enabled, track } = useUmami()
 
   return (
     <ExternalLinkUI
       {...props}
-      onClick={track ? () => track(event, { chain: networkType }) : undefined}
+      onClick={enabled ? () => track(event) : undefined}
     />
   )
 }

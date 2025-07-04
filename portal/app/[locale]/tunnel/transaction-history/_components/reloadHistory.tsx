@@ -1,4 +1,3 @@
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
 import { ComponentProps } from 'react'
@@ -21,13 +20,12 @@ const ReloadIcon = (props: ComponentProps<'svg'>) => (
 )
 
 export const ReloadHistory = function () {
-  const [networkType] = useNetworkType()
   const { resyncHistory } = useTunnelHistory()
   const { track } = useUmami()
 
   const onResync = function () {
     resyncHistory()
-    track?.('txn refresh', { chain: networkType })
+    track?.('txn refresh')
   }
 
   return (

@@ -1,7 +1,6 @@
-import { useUmami } from 'app/analyticsEvents'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { Modal } from 'components/modal'
-import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import { useWindowSize } from 'hooks/useWindowSize'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
@@ -46,7 +45,6 @@ export const TokenSelector = function ({
   selectedToken,
   tokens,
 }: Props) {
-  const [networkType] = useNetworkType()
   const [showTokenSelector, setShowTokenSelector] = useState(false)
   const { track } = useUmami()
 
@@ -55,7 +53,7 @@ export const TokenSelector = function ({
 
   const handleSelection = function (token: Token) {
     onSelectToken(token)
-    track?.('select token', { chain: networkType })
+    track?.('select token')
   }
 
   return (

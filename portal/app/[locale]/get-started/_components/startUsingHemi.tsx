@@ -1,7 +1,7 @@
-import { useUmami } from 'app/analyticsEvents'
 import { Card } from 'components/card'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
+import { useUmami } from 'hooks/useUmami'
 import { useRouter } from 'i18n/navigation'
 import Image, { StaticImageData } from 'next/image'
 import { useTranslations } from 'next-intl'

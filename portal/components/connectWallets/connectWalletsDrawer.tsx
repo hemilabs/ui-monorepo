@@ -5,7 +5,6 @@ import {
 } from '@rainbow-me/rainbowkit'
 import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { ExternalLink } from 'components/externalLink'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 
@@ -24,7 +23,6 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
   const { accountModalOpen } = useAccountModal()
   const { chainModalOpen } = useChainModal()
   const { connectModalOpen } = useConnectModal()
-  const [networkType] = useNetworkType()
   const t = useTranslations()
   const { track } = useUmami()
 
@@ -37,7 +35,7 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
     if (accountModalOpen || chainModalOpen || connectModalOpen) {
       return
     }
-    track?.('close wallet drawer', { chain: networkType })
+    track?.('close wallet drawer')
 
     closeDrawer()
   }

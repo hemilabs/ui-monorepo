@@ -1,4 +1,3 @@
-import { useUmami } from 'app/analyticsEvents'
 import { bitcoinMainnet, bitcoinTestnet } from 'btc-wallet/chains'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useDisconnect as useBtcDisconnect } from 'btc-wallet/hooks/useDisconnect'
@@ -12,6 +11,7 @@ import {
 } from 'hooks/useConnectedToUnsupportedChain'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
+import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { formatBtcAddress, formatEvmAddress } from 'utils/format'
@@ -86,7 +86,6 @@ const ConnectedWallet = function ({
   disconnect: () => void
   formattedAddress: string
 }) {
-  const [networkType] = useNetworkType()
   const [menuOpen, setMenuOpen] = useState(false)
   const t = useTranslations('connect-wallets')
   const { track } = useUmami()
@@ -97,7 +96,7 @@ const ConnectedWallet = function ({
 
   const copyAddress = function () {
     navigator.clipboard.writeText(address)
-    track?.(copyEvent, { chain: networkType, wallet: connectorName })
+    track?.(copyEvent, { wallet: connectorName })
     closeMenu()
   }
 

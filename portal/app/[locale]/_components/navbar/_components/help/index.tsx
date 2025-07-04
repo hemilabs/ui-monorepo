@@ -1,11 +1,11 @@
-import { AnalyticsEventsWithChain, useUmami } from 'app/analyticsEvents'
+import { AnalyticsEvent } from 'app/analyticsEvents'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { LanguageIcon } from 'components/icons/languageIcon'
 import { LegalIcon } from 'components/icons/legalIcon'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
+import { useUmami } from 'hooks/useUmami'
 import { useRouter } from 'i18n/navigation'
 import { getLocalizedLocaleName, locales } from 'i18n/routing'
 import { useSearchParams } from 'next/navigation'
@@ -22,7 +22,7 @@ type LanguageProps = {
   active: string
 }
 type Props = {
-  event?: AnalyticsEventsWithChain
+  event?: AnalyticsEvent
   icon?: ReactNode
   text: string
   value?: string
@@ -94,7 +94,6 @@ const ItemWithSubmenu = function ({
   text,
   value,
 }: Props & { subMenu: ReactNode }) {
-  const [networkType] = useNetworkType()
   const [isOpen, setIsOpen] = useState(false)
   const { track } = useUmami()
 
@@ -102,12 +101,12 @@ const ItemWithSubmenu = function ({
 
   const onMouseEnter = function () {
     setIsOpen(true)
-    track?.(event, { chain: networkType })
+    track?.(event)
   }
 
   const onMouseLeave = function () {
     setIsOpen(false)
-    track?.(event, { chain: networkType })
+    track?.(event)
   }
 
   return (

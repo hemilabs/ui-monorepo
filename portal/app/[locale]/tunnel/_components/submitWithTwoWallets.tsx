@@ -1,11 +1,10 @@
-import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
 import { ButtonLoader } from 'components/buttonLoader'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useDrawerContext } from 'hooks/useDrawerContext'
-import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 
@@ -33,14 +32,13 @@ export const SubmitWithTwoWallets = function ({
   const { allDisconnected, btcWalletStatus, evmWalletStatus } = useAccounts()
   const bitcoin = useBitcoin()
   const { openDrawer } = useDrawerContext()
-  const [networkType] = useNetworkType()
   const t = useTranslations('tunnel-page.submit-button')
   const { track } = useUmami()
 
   if (allDisconnected) {
     const onClick = function () {
       openDrawer()
-      track?.('form - connect wallets', { chain: networkType })
+      track?.('form - connect wallets')
     }
     return (
       <Button fontSize="text-mid" onClick={onClick} type="button">

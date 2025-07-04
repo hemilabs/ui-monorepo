@@ -1,7 +1,7 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useMutation } from '@tanstack/react-query'
-import { useUmami } from 'app/analyticsEvents'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
+import { useUmami } from 'hooks/useUmami'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { sepolia } from 'networks/sepolia'
@@ -20,7 +20,7 @@ export const AddChain = function ({ chain, children }: Props) {
   const [isChainAdded, setIsChainAdded] = useChainAdded(chain)
   const { openConnectModal } = useConnectModal()
   const isConnectedToChain = useIsConnectedToExpectedNetwork(chain.id)
-  const { track } = useUmami()
+  const { enabled, track } = useUmami()
   const { data: walletClient } = useWalletClient()
 
   const { mutate: addChain } = useMutation({
@@ -28,15 +28,18 @@ export const AddChain = function ({ chain, children }: Props) {
     mutationKey: ['add-chain-mutation', chain.id],
     onSuccess() {
       setIsChainAdded(true)
+      if (!enabled) {
+        return
+      }
       switch (chain.id) {
         case sepolia.id:
-          track?.('add to wallet - sepolia')
+          track('add to wallet - sepolia')
           break
         case hemiMainnet.id:
-          track?.('add to wallet - hemi mainnet')
+          track('add to wallet - hemi mainnet')
           break
         case hemiTestnet.id:
-          track?.('add to wallet - hemi sepolia')
+          track('add to wallet - hemi sepolia')
           break
       }
     },

@@ -1,10 +1,9 @@
 import { useQueryClient } from '@tanstack/react-query'
-import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChallengeBitcoinWithdrawal } from 'hooks/useBtcTunnel'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useEffect, useState } from 'react'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
@@ -24,7 +23,6 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
     challengeReceiptError,
     challengeWithdrawal,
   } = useChallengeBitcoinWithdrawal(withdrawal)
-  const [networkType] = useNetworkType()
   const { updateWithdrawal } = useTunnelHistory()
   const [operationStatus, setOperationStatus] =
     useState<OperationStatus>('idle')
@@ -53,14 +51,13 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
           queryKey: nativeTokenBalanceQueryKey,
         })
 
-        track?.('btc - challenge success', { chain: networkType })
+        track?.('btc - challenge success')
       }
     },
     [
       erc20BalanceQueryKey,
       challengeReceipt,
       nativeTokenBalanceQueryKey,
-      networkType,
       queryClient,
       track,
     ],
@@ -81,17 +78,10 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
         updateWithdrawal(withdrawal, {
           status: BtcWithdrawStatus.CHALLENGE_FAILED,
         })
-        track?.('btc - challenge failed', { chain: networkType })
+        track?.('btc - challenge failed')
       }
     },
-    [
-      challengeReceiptError,
-      isChallenging,
-      networkType,
-      updateWithdrawal,
-      track,
-      withdrawal,
-    ],
+    [challengeReceiptError, isChallenging, updateWithdrawal, track, withdrawal],
   )
 
   const handleChallenge = function (e: FormEvent) {
@@ -100,7 +90,7 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
       status: BtcWithdrawStatus.CHALLENGE_IN_PROGRESS,
     })
     challengeWithdrawal()
-    track?.('btc - challenge started', { chain: networkType })
+    track?.('btc - challenge started')
   }
 
   const getText = function () {

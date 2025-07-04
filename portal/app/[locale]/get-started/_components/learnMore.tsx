@@ -1,9 +1,10 @@
-import { useUmami, AnalyticsEvent } from 'app/analyticsEvents'
+import { AnalyticsEvent } from 'app/analyticsEvents'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { ExternalLink } from 'components/externalLink'
 import { Tab, Tabs } from 'components/tabs'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
@@ -18,9 +19,9 @@ type Props = {
 }
 
 const Box = function ({ event, heading, href, subheading }: Props) {
-  const { track } = useUmami()
+  const { enabled, track } = useUmami()
 
-  const addTracking = () => (track ? () => track(event) : undefined)
+  const addTracking = () => (enabled ? () => track(event) : undefined)
 
   return (
     <div className="rounded-2xl border border-solid border-neutral-300/55 bg-white hover:bg-gray-50">
@@ -131,12 +132,12 @@ export const LearnMore = function () {
   >('wallet')
   const tCommon = useTranslations('common')
   const t = useTranslations('get-started')
-  const { track } = useUmami()
+  const { enabled, track } = useUmami()
 
   const tutorialsUrl = 'https://docs.hemi.xyz/main/start-here'
 
   const addTracking = () =>
-    track ? () => track('tut - learn more') : undefined
+    enabled ? () => track('tut - learn more') : undefined
 
   return (
     <>

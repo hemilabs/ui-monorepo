@@ -1,7 +1,6 @@
-import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
-import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useEffect, useState } from 'react'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
@@ -19,7 +18,6 @@ export const RetryBtcDeposit = function ({ deposit }: Props) {
   const { address } = useAccount()
   const { depositBitcoin, depositError, depositReceiptError } =
     useDepositBitcoin()
-  const [networkType] = useNetworkType()
   const t = useTranslations('tunnel-page.submit-button')
   const [operationStatus, setOperationStatus] =
     useState<OperationStatus>('idle')
@@ -41,10 +39,10 @@ export const RetryBtcDeposit = function ({ deposit }: Props) {
   useEffect(
     function handleTxFailure() {
       if (depositReceiptError && isDepositing) {
-        track?.('btc - dep failed', { chain: networkType })
+        track?.('btc - dep failed')
       }
     },
-    [depositReceiptError, isDepositing, networkType, track],
+    [depositReceiptError, isDepositing, track],
   )
 
   const handleRetry = function (e: FormEvent) {
@@ -56,7 +54,7 @@ export const RetryBtcDeposit = function ({ deposit }: Props) {
       l2ChainId: deposit.l2ChainId,
       satoshis: Number(deposit.amount),
     })
-    track?.('btc - dep started', { chain: networkType })
+    track?.('btc - dep started')
   }
 
   const getText = function () {

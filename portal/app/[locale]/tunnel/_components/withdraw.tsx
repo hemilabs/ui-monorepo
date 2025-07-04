@@ -1,6 +1,5 @@
 'use client'
 
-import { useUmami } from 'app/analyticsEvents'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { useAccounts } from 'hooks/useAccounts'
@@ -9,6 +8,7 @@ import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
 import { useChain } from 'hooks/useChain'
 import { useNetworks } from 'hooks/useNetworks'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
@@ -84,7 +84,6 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
 
   const { isPending: isLoadingMinWithdrawalSats, minWithdrawalFormattedSats } =
     useMinWithdrawalSats(fromToken)
-  const [networkType] = useNetworkType()
   const { balance: bitcoinBalance, isSuccess: balanceLoaded } = useTokenBalance(
     fromToken.chainId,
     fromToken.address,
@@ -106,11 +105,10 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       }
       setIsWithdrawing(false)
       resetStateAfterOperation()
-      track?.('btc - withdraw success', { chain: networkType })
+      track?.('btc - withdraw success')
     },
     [
       isWithdrawing,
-      networkType,
       resetStateAfterOperation,
       setIsWithdrawing,
       track,
@@ -123,13 +121,12 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       if ((withdrawError || withdrawBitcoinReceiptError) && isWithdrawing) {
         setIsWithdrawing(false)
         if (withdrawBitcoinReceiptError) {
-          track?.('btc - withdraw failed', { chain: networkType })
+          track?.('btc - withdraw failed')
         }
       }
     },
     [
       isWithdrawing,
-      networkType,
       setIsWithdrawing,
       track,
       withdrawBitcoinReceiptError,
@@ -147,7 +144,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       l2ChainId: fromNetworkId,
     })
     setIsWithdrawing(true)
-    track?.('btc - withdraw started', { chain: networkType })
+    track?.('btc - withdraw started')
   }
 
   const {

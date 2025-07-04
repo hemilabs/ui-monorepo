@@ -1,7 +1,7 @@
-import { useUmami } from 'app/analyticsEvents'
 import { ExternalLink } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
@@ -31,9 +31,9 @@ const FundMethod = function ({
 }) {
   const t = useTranslations('get-started')
   const [networkType] = useNetworkType()
-  const { track } = useUmami()
+  const { enabled, track } = useUmami()
 
-  const addTracking = () => (track ? () => track?.(event) : undefined)
+  const addTracking = () => (enabled ? () => track(event) : undefined)
 
   return (
     <ExternalLink

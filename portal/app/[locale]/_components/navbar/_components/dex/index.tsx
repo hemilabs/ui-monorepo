@@ -1,10 +1,11 @@
-import { AnalyticsEvent, useUmami } from 'app/analyticsEvents'
+import { AnalyticsEvent } from 'app/analyticsEvents'
 import { ExternalLink as AnchorTag } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { Chevron } from 'components/icons/chevron'
 import { DexIcon } from 'components/icons/dexIcon'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
+import { useUmami } from 'hooks/useUmami'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
@@ -109,8 +110,8 @@ const ExternalLink = function ({
   icon,
   text,
 }: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
-  const { track } = useUmami()
-  const addTracking = () => (track ? () => track(event) : undefined)
+  const { enabled, track } = useUmami()
+  const addTracking = () => (enabled ? () => track(event) : undefined)
   return (
     <ItemContainer>
       <AnchorTag href={href} onClick={addTracking()}>
@@ -152,8 +153,8 @@ const HemiSwapLink = function ({
   event,
   text,
 }: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
-  const { track } = useUmami()
-  const addTracking = () => (track ? () => track(event) : undefined)
+  const { enabled, track } = useUmami()
+  const addTracking = () => (enabled ? () => track(event) : undefined)
   return (
     <Container>
       <AnchorTag href="https://swap.hemi.xyz" onClick={addTracking()}>

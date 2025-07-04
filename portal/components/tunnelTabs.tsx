@@ -66,9 +66,9 @@ const UI = function ({
 const TunnelTabsImpl = function () {
   const tunnelHref = useTunnelOperationByConnectedWallet()
 
-  const { track } = useUmami()
+  const { enabled, track } = useUmami()
 
-  const onTabClick = track
+  const onTabClick = enabled
     ? (eventName: AnalyticsEvent) => track(eventName)
     : undefined
 

@@ -15,10 +15,10 @@ const { discordUrl, githubUrl, linkedinUrl, twitterUrl, youtubeUrl } =
 const svgCss = '[&_path]:hover:fill-black'
 
 export const SocialLinks = function () {
-  const { track } = useUmami()
+  const { enabled, track } = useUmami()
 
   const addTracking = (event: AnalyticsEvent) =>
-    track ? () => track(event) : undefined
+    enabled ? () => track(event) : undefined
 
   return (
     <div

@@ -1,8 +1,8 @@
 'use client'
 
-import { useUmami } from 'app/analyticsEvents'
 import { ExternalLink } from 'components/externalLink'
 import { useNetworkType } from 'hooks/useNetworkType'
+import { useUmami } from 'hooks/useUmami'
 import { type MouseEvent } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
 import { isStakeEnabledOnTestnet } from 'utils/stake'

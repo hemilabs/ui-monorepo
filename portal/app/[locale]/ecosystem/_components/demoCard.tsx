@@ -36,9 +36,9 @@ export const DemoCard = function ({
   subHeading,
   subHeadingColor,
 }: Props) {
-  const { track } = useUmami()
+  const { enabled, track } = useUmami()
 
-  const addTracking = () => (track ? () => track(event) : undefined)
+  const addTracking = () => (enabled ? () => track(event) : undefined)
 
   return (
     <div

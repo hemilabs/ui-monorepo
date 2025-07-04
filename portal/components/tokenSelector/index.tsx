@@ -1,6 +1,6 @@
-import { useUmami } from 'app/analyticsEvents'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { Modal } from 'components/modal'
+import { useUmami } from 'hooks/useUmami'
 import { useWindowSize } from 'hooks/useWindowSize'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'

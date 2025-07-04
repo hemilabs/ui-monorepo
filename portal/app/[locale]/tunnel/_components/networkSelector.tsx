@@ -1,9 +1,9 @@
-import { useUmami } from 'app/analyticsEvents'
 import { ChainLogo } from 'components/chainLogo'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
+import { useUmami } from 'hooks/useUmami'
 import { type ReactNode, useState } from 'react'
 import { type RemoteChain } from 'types/chain'
 

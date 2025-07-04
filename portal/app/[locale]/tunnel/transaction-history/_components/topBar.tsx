@@ -1,5 +1,5 @@
-import { useUmami } from 'app/analyticsEvents'
 import { Tab, Tabs } from 'components/tabs'
+import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 
 import { ReloadHistory } from './reloadHistory'

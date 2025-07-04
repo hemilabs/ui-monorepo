@@ -1,6 +1,6 @@
-import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
+import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useEffect, useState } from 'react'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'

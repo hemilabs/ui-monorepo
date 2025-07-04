@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useUmami } from 'app/analyticsEvents'
 import EventEmitter from 'events'
 import { initiateWithdrawErc20, initiateWithdrawEth } from 'hemi-tunnel-actions'
 import { WithdrawEvents } from 'hemi-tunnel-actions/src/types'
@@ -7,6 +6,7 @@ import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useUmami } from 'hooks/useUmami'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
 import { type EvmToken } from 'types/token'
 import {

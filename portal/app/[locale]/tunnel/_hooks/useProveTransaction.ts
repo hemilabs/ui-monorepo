@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useUmami } from 'app/analyticsEvents'
 import EventEmitter from 'events'
 import { proveWithdrawal } from 'hemi-tunnel-actions'
 import { ProveEvents } from 'hemi-tunnel-actions/src/types'
@@ -7,6 +6,7 @@ import { useNativeTokenBalance } from 'hooks/useBalance'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useUmami } from 'hooks/useUmami'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { useAccount, useWalletClient } from 'wagmi'
 

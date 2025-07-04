@@ -6,13 +6,13 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useUmami } from 'app/analyticsEvents'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { Balance } from 'components/cryptoBalance'
 import { ExternalLink } from 'components/externalLink'
 import { FiatBalance } from 'components/fiatBalance'
 import { TokenLogo } from 'components/tokenLogo'
+import { useUmami } from 'hooks/useUmami'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
 import { MouseEvent, useMemo } from 'react'

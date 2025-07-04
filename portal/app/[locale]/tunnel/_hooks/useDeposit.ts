@@ -1,5 +1,4 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useUmami } from 'app/analyticsEvents'
 import { TransactionsInProgressContext } from 'context/transactionsInProgressContext'
 import { EventEmitter } from 'events'
 import { depositErc20, depositEth } from 'hemi-tunnel-actions'
@@ -9,6 +8,7 @@ import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBal
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
+import { useUmami } from 'hooks/useUmami'
 import { useContext } from 'react'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
 import { type EvmToken } from 'types/token'

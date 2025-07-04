@@ -1,10 +1,10 @@
-import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
 import { ButtonLoader } from 'components/buttonLoader'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useDrawerContext } from 'hooks/useDrawerContext'
+import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 

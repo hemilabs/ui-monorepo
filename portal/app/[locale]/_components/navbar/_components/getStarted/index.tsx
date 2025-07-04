@@ -64,9 +64,9 @@ const UI = ({ active, href, onClick, t }: Props) => (
 )
 
 const GetStartedImpl = function (props: Omit<Props, 'onClick'>) {
-  const { track } = useUmami()
+  const { enabled, track } = useUmami()
 
-  const onClick = () => track?.('nav - get started')
+  const onClick = enabled ? () => track('nav - get started') : undefined
 
   return <UI {...props} onClick={onClick} />
 }

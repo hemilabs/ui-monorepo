@@ -1,6 +1,6 @@
-import { useUmami } from 'app/analyticsEvents'
 import { Link } from 'components/link'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
+import { useUmami } from 'hooks/useUmami'
 import { Suspense } from 'react'
 
 import {
@@ -39,12 +39,12 @@ const PageLinkImpl = function ({
   event,
   ...props
 }: Omit<Props, 'urlToBeSelected'>) {
-  const { track } = useUmami()
+  const { enabled, track } = useUmami()
 
   return (
     <PageLinkUI
       {...props}
-      onClick={track && !!event ? () => track(event) : undefined}
+      onClick={enabled && !!event ? () => track(event) : undefined}
     />
   )
 }

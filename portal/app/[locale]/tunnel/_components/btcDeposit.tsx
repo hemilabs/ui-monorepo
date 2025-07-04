@@ -1,11 +1,11 @@
 'use client'
 
-import { useUmami } from 'app/analyticsEvents'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
+import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'

@@ -1,6 +1,6 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { useUmami } from 'app/analyticsEvents'
 import { Button } from 'components/button'
+import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 
 import { EmptyState } from './emptyState'

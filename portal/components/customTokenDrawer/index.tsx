@@ -8,6 +8,7 @@ import { useChain } from 'hooks/useChain'
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useL2Token } from 'hooks/useL2Token'
 import { getUseTokenQueryKey, useToken } from 'hooks/useToken'
+import { useUmami } from 'hooks/useUmami'
 import { useUserTokenList } from 'hooks/useUserTokenList'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
@@ -111,6 +112,8 @@ export const CustomTokenDrawer = function ({
     },
   })
 
+  const { track } = useUmami()
+
   const [acknowledged, setAcknowledged] = useState(false)
   const t = useTranslations('token-custom-drawer')
 
@@ -162,17 +165,24 @@ export const CustomTokenDrawer = function ({
       isL2 ? l1TokenAdded : l2TokenAdded,
     )
 
+    track?.('custom erc20 - save token', { address: l2TokenAdded.address })
+
+    closeDrawer()
+  }
+
+  const cancel = function () {
+    track?.('custom erc20 - cancel', { address: customTokenAddress })
     closeDrawer()
   }
 
   return (
-    <Drawer onClose={closeDrawer}>
+    <Drawer onClose={cancel}>
       <form
         className="drawer-content h-[80dvh] md:h-full"
         onSubmit={handleSubmit}
       >
         <div className="flex flex-col gap-y-3">
-          <DrawerTopSection heading={t('heading')} onClose={closeDrawer} />
+          <DrawerTopSection heading={t('heading')} onClose={cancel} />
           <DrawerParagraph>{t('subheading')}</DrawerParagraph>
         </div>
         <div className="skip-parent-padding-x flex flex-1 flex-col overflow-y-auto">

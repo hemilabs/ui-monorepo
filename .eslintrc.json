@@ -101,6 +101,13 @@
         "markdownlint/md041": "warn",
         "markdownlint/md045": "warn"
       }
+    },
+    {
+      "extends": ["bloq/markdown"],
+      "files": [".github/pull_request_template.md"],
+      "rules": {
+        "markdownlint/md041": "off"
+      }
     }
   ],
   "root": true,

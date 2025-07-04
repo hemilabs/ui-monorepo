@@ -28,12 +28,8 @@ NEXT_PUBLIC_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet
 # Bitcoin configuring
 NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET=2 # Vault index to use for bitcoin in hemi mainnet. Defaults to 0
 NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=1 # Vault index to use for bitcoin in hemi sepolia. Defaults to 0
-# Hemi Points Url
-NEXT_PUBLIC_POINTS_URL=<url>
-# Pricing URL
-NEXT_PUBLIC_TOKEN_PRICES_URL=<url> # URL to retrieve usd prices for tokens
-# Total Value Locked URL
-NEXT_PUBLIC_API_CACHE_URL=<url> # The URL of the service that now returns the TVL
+# Backend API URL
+NEXT_PUBLIC_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
 # Subgraphs endpoint ID
 NEXT_PUBLIC_SUBGRAPHS_API_URL=<url>
 # The following variables could be used to customize the contracts addresses used by Hemi (for example, for testing with a forked blockchain):
@@ -48,6 +44,8 @@ NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=<wallet-connect-id>
 ```
 
 If not defined, the contracts addresses used will be the ones defined in [hemi-viem](https://github.com/hemilabs/hemi-viem).
+
+See [Environment Variables](./Environment%20Variables.md) to ensure changes to the list above are done properly.
 
 ## Deployment
 

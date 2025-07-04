@@ -160,7 +160,7 @@ export const LearnMore = function () {
               <p className="text-sm text-neutral-600">
                 {t('tutorials-subheading')}
               </p>
-              <div className="mt-3 hidden w-fit md:block">
+              <div className="[&>a]:shadow-button-primary mt-3 hidden w-fit text-sm md:block">
                 <ButtonLink href={tutorialsUrl} onClick={addTracking()}>
                   {tCommon('learn-more')}
                 </ButtonLink>

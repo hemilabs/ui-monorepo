@@ -175,7 +175,7 @@
   },
   "navbar": {
     "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
-    "bitcoinkit": "Hemi Bitcoin Kit (hBK)",
+    "bitcoinkit": "Hemi Bitcoin Kit",
     "data-attribution": "Data provided by <link>CoinMarketCap.com</link>",
     "dex": {
       "1delta": "1delta",

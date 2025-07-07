@@ -26,6 +26,7 @@ export const Meson = function ({ label }: Props) {
           width={32}
         />
       }
+      partner="meson"
       text={label ?? t('tunnel-with-meson')}
       url={url}
     />

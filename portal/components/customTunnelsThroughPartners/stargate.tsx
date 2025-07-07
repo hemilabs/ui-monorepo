@@ -47,6 +47,7 @@ export const Stargate = function ({ fromToken, label, toToken }: Props) {
           width={32}
         />
       }
+      partner="stargate"
       text={label ?? t('tunnel-with-stargate')}
       url={url}
     />

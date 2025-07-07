@@ -19,6 +19,7 @@ export const FreeTech = function () {
           width={32}
         />
       }
+      partner="free tech"
       text="Free Tech"
       url={url}
     />

@@ -1,6 +1,6 @@
 {
   "name": "token-prices-cron",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "dependencies": {
     "redis": "4.7.0",
     "safe-async-fn": "1.0.0",

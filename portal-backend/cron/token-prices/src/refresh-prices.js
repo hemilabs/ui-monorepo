@@ -26,18 +26,20 @@ async function fetchPrices() {
 }
 
 const client = redis.createClient(config.get('redis'))
-client.connect()
 
 const expiration = config.get('cacheExpirationMin') * 60
 
-const storePrices = prices =>
-  Promise.all(
+async function storePrices(prices) {
+  client.connect()
+  await Promise.all(
     Object.entries(prices)
       .map(([symbol, price]) =>
         client.set(`price:${symbol}`, price, { EX: expiration }),
       )
       .concat(client.set('time', Date.now())),
   )
+  client.quit() // Release the connection to allow the process to exit
+}
 
 async function refreshPrices() {
   const prices = await fetchPrices()

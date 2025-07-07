@@ -23,6 +23,7 @@ export const Interport = function ({ fromChainId, toChainId }: Props) {
           width={32}
         />
       }
+      partner="interport"
       text="Interport"
       url={url}
     />

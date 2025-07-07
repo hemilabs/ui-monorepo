@@ -3,6 +3,7 @@ import { Interport } from 'components/customTunnelsThroughPartners/interport'
 import { Meson } from 'components/customTunnelsThroughPartners/meson'
 import { Stargate } from 'components/customTunnelsThroughPartners/stargate'
 import { WarningIcon } from 'components/icons/warningIcon'
+import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { Chain } from 'viem'
@@ -44,6 +45,17 @@ export const TunnelProviderToggle = function ({
   toNetworkId,
 }: Props) {
   const t = useTranslations('tunnel-page')
+  const { track } = useUmami()
+
+  const toggleNativeProvider = function () {
+    toggleTunnelProviderType('native')
+    track?.('toggle to hemi tunnel')
+  }
+
+  const toggleThirdPartyProvider = function () {
+    toggleTunnelProviderType('thirdParty')
+    track?.('toggle to 3rd party bridge')
+  }
 
   return (
     <>
@@ -54,7 +66,7 @@ export const TunnelProviderToggle = function ({
               ? 'border-neutral-300/56 border bg-white text-neutral-950 shadow-sm'
               : 'text-neutral-600 hover:text-neutral-950'
           }`}
-          onClick={() => toggleTunnelProviderType('native')}
+          onClick={toggleNativeProvider}
           type="button"
         >
           {t('form.hemi-tunnel')}
@@ -65,7 +77,7 @@ export const TunnelProviderToggle = function ({
               ? 'border-neutral-300/56 border bg-white text-neutral-950 shadow-sm'
               : 'text-neutral-600 hover:text-neutral-950'
           }`}
-          onClick={() => toggleTunnelProviderType('thirdParty')}
+          onClick={toggleThirdPartyProvider}
           type="button"
         >
           {t('form.third-party-bridge')}

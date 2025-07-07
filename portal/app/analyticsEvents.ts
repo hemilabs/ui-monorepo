@@ -105,8 +105,11 @@ const analyticsEvents = [
   'evm - prove success',
   'from network',
   'form - connect wallets',
+  'partner bridge',
   'select token',
   'to network',
+  'toggle to 3rd party bridge',
+  'toggle to hemi tunnel',
   // wallets drawer
   'btc connect',
   'btc connected',
@@ -155,8 +158,15 @@ type AnalyticsEventsWithCustomERC20 = Extract<
   | 'custom erc20 - save token'
 >
 
+// this event requires a partner name
+type AnalyticsEventsWithPartnerBridge = Extract<
+  AnalyticsEvent,
+  'partner bridge'
+>
+
 type WalletChainData = { wallet: string }
 type CustomERC20Data = { address: string }
+type PartnerBridgeData = { partner: string }
 
 // Create a mapped type that maps each key to its corresponding value type
 type EventDataMap = {
@@ -164,7 +174,9 @@ type EventDataMap = {
     ? WalletChainData
     : K extends AnalyticsEventsWithCustomERC20
       ? CustomERC20Data
-      : never
+      : K extends AnalyticsEventsWithPartnerBridge
+        ? PartnerBridgeData
+        : never
 }
 
 export const { UmamiAnalyticsProvider, useUmami } =

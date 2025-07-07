@@ -5,7 +5,7 @@ import { useNetworkType } from './useNetworkType'
 export const useUmami = function () {
   const [networkType] = useNetworkType()
   const umami = useAnalytics()
-  const enabled = networkType === 'mainnet'
+  const enabled = networkType === 'mainnet' && !!umami.track
 
   if (enabled) {
     return {

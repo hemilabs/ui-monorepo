@@ -8,7 +8,7 @@ import { CustomToken } from './token'
 
 type Props = {
   chainId: Chain['id']
-  closeModal: () => void
+  closeModal: VoidFunction
   searchText: string
 }
 

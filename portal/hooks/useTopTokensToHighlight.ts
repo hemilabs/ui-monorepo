@@ -1,58 +1,53 @@
 import { useQueries } from '@tanstack/react-query'
+import Big from 'big.js'
 import { Token } from 'types/token'
 import { isL2NetworkId } from 'utils/chain'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { isNativeToken } from 'utils/nativeToken'
+import { getTokenPrice } from 'utils/token'
+import { formatUnits } from 'viem'
 import { getErc20TokenBalance } from 'viem-erc20/actions'
 import { useAccount } from 'wagmi'
 
 import { useHemiClient } from './useHemiClient'
-
-/**
- * Normalize balances to 18 decimals to allow fair comparison across tokens.
- *
- * Many tokens (e.g., USDC) use different decimal formats than others (e.g., ETH),
- * so comparing raw balances directly (bigint) can be misleading.
- *
- * For example:
- * - 1 ETH has 18 decimals → 1 ETH = 1_000_000_000_000_000_000
- * - 1 USDC has 6 decimals → 1 USDC = 1_000_000
- *
- * Without normalization, 1 ETH would appear 1,000,000x larger than 1 USDC.
- * These functions adjusts all balances to a common 18-decimal scale before sorting.
- */
-function powBigInt(base: bigint, exponent: number) {
-  let result = BigInt(1)
-  for (let i = 0; i < exponent; i++) {
-    result *= base
-  }
-  return result
-}
-
-function normalizeBalance(balance: bigint, decimals: number) {
-  const diff = 18 - decimals
-  if (diff === 0) return balance
-  if (diff > 0) return balance * powBigInt(BigInt(10), diff)
-  return balance / powBigInt(BigInt(10), -diff)
-}
+import { useTokenPrices } from './useTokenPrices'
 
 type Props = {
   limit?: number
   tokens: Token[]
 }
 
+/**
+ * Hook to retrieve and rank the top tokens held by the user based on their USD value.
+ *
+ * This hook fetches the on-chain balances for a given list of tokens (on both L1 and L2),
+ * retrieves their corresponding USD prices from the portal API, and returns the top N tokens
+ * sorted by their total USD value (balance * price).
+ *
+ * - Native and ERC-20 token balances are supported.
+ * - Prices are fetched via the `useTokenPrices` hook.
+ * - Balances are normalized using `formatUnits` to match the token's decimals.
+ * - Values are multiplied using `Big.js` to ensure precision in the USD calculation.
+ *
+ * This is useful for UI components that want to highlight the user's most valuable tokens,
+ * for example: Quick tokens in a token selector.
+ *
+ * @param limit (optional) Maximum number of tokens to return (default: 3)
+ * @param tokens List of available tokens to evaluate
+ * @returns Query result containing sorted tokens by USD value, loading and error states
+ */
 export function useTopTokensToHighlight({ limit = 3, tokens }: Props) {
   const { address: account, isConnected } = useAccount()
   const hemiClient = useHemiClient()
+  const { data: prices } = useTokenPrices()
 
   return useQueries({
     combine(results) {
-      if (!isConnected || !account) {
+      if (!isConnected || !account || !prices) {
         return {
           isError: false,
           isLoading: false,
-          sortedTokens: [] as Token[], // Cast is needed to satisfy TypeScript
-          // because the type of sortedTokens is inferred from the select function
+          sortedTokens: [] as Token[], // Satisfy type inference for empty fallback
         }
       }
 
@@ -62,20 +57,26 @@ export function useTopTokensToHighlight({ limit = 3, tokens }: Props) {
       )
 
       const sortedResults = successfulResults
-        .filter(
-          ({ data }) =>
-            normalizeBalance(data!.balance, data!.decimals) > BigInt(0),
-        )
+        .filter(function ({ data }) {
+          const price = getTokenPrice(data, prices)
+          return price && data.balance > BigInt(0)
+        })
         .sort(function (a, b) {
-          const aNorm = normalizeBalance(a.data!.balance, a.data!.decimals)
-          const bNorm = normalizeBalance(b.data!.balance, b.data!.decimals)
+          const aStringBalance = formatUnits(a.data.balance, a.data.decimals)
+          const bStringBalance = formatUnits(b.data.balance, b.data.decimals)
 
-          if (aNorm > bNorm) return -1
-          if (aNorm < bNorm) return 1
+          const aPrice = getTokenPrice(a.data, prices)
+          const bPrice = getTokenPrice(b.data, prices)
+
+          const aAmount = Big(aStringBalance).times(Big(aPrice))
+          const bAmount = Big(bStringBalance).times(Big(bPrice))
+
+          if (aAmount.gt(bAmount)) return -1
+          if (aAmount.lt(bAmount)) return 1
           return 0
         })
         .slice(0, limit)
-        .map(({ data }) => ({ ...data! }))
+        .map(({ data }) => ({ ...data }))
 
       return {
         isError: results.some(r => r.isError),

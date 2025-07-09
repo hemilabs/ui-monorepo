@@ -32,7 +32,6 @@ function CustomTokensHeader({
   return (
     <div
       className="absolute left-0 top-0 w-full"
-      key="manually_added"
       style={{
         height,
         transform: `translateY(${virtualItemStart + offset}px)`,
@@ -54,7 +53,6 @@ function YourTokensHeader({
   return (
     <div
       className="absolute left-0 top-0 w-full"
-      key="your_tokens"
       style={{
         height,
         transform: `translateY(${virtualItemStart + offset}px)`,
@@ -80,7 +78,6 @@ function AllTokensHeader({
   return (
     <div
       className="relative inset-x-0 top-0"
-      key="all_tokens"
       style={{
         height,
         transform: `translateY(${virtualItemStart + offset}px)`,
@@ -100,21 +97,18 @@ function AllTokensHeader({
 }
 
 const TokenRow = ({
-  index,
   offset,
   onSelect,
   start,
   token,
 }: {
   token: TokenType
-  index: number
   start: number
   offset: number
   onSelect: (t: TokenType) => void
 }) => (
   <li
     className="absolute left-0 top-0 w-full cursor-pointer rounded-lg hover:bg-neutral-100"
-    key={index}
     onClick={() => onSelect(token)}
     style={{
       height: '56px',
@@ -205,6 +199,7 @@ export const List = function ({
         rows.push(
           <CustomTokensHeader
             height={customTokensHeaderHeight}
+            key="manually_added"
             offset={getOffset()}
             virtualItemStart={virtualItem.start}
           />,
@@ -216,6 +211,7 @@ export const List = function ({
         rows.push(
           <YourTokensHeader
             height={yourTokensHeaderHeight}
+            key="your_tokens"
             offset={getOffset()}
             virtualItemStart={virtualItem.start}
           />,
@@ -228,6 +224,7 @@ export const List = function ({
           <AllTokensHeader
             hasTokens={hasYourTokens}
             height={allTokensHeaderHeight}
+            key="all_tokens"
             offset={getOffset()}
             virtualItemStart={virtualItem.start}
           />,
@@ -237,7 +234,7 @@ export const List = function ({
 
       rows.push(
         <TokenRow
-          index={virtualItem.index}
+          key={virtualItem.index}
           offset={getOffset()}
           onSelect={onSelectToken}
           start={virtualItem.start}

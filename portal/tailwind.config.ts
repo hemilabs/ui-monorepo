@@ -81,35 +81,35 @@ const config: Config = {
         'xxs': [
           '0.688rem', // 11px,
           {
-            letterSpacing: '-0.22px',
-            lineHeight: '11px',
+            letterSpacing: '0.2px',
+            lineHeight: '16px',
           },
         ],
         'xs': [
           '0.75rem', // 12px,
           {
-            letterSpacing: '-0.24px',
-            lineHeight: '16px',
+            letterSpacing: '0.1px',
+            lineHeight: '17px',
           },
         ],
         'sm': [
           '0.8125rem', // 13px
           {
-            letterSpacing: '-0.28px',
-            lineHeight: '20px',
+            letterSpacing: '0',
+            lineHeight: '18px',
           },
         ],
         'mid': [
           '0.938rem', // 15px
           {
-            letterSpacing: '-0.3px',
-            lineHeight: '20px',
+            letterSpacing: '-0.12px',
+            lineHeight: '22px',
           },
         ],
         'base': [
           '1rem', // 16px
           {
-            letterSpacing: '-0.32px',
+            letterSpacing: '-0.2px',
             lineHeight: '24px',
           },
         ],

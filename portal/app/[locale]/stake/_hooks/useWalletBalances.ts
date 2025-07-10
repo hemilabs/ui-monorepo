@@ -13,20 +13,21 @@ export const useWalletBalances = function () {
   return useQueries({
     combine: results => ({
       loading: results.some(({ isLoading }) => isLoading),
-      tokensWalletBalance: results
-        .filter(({ status }) => status === 'success')
-        .map(({ data }) => data),
+      tokensWalletBalance: results.map(({ data }) => data),
     }),
     queries: stakeTokens.map(token => ({
-      queryFn: () =>
-        isConnected
-          ? isNativeToken(token)
-            ? hemiClient.getBalance({ address: account })
-            : hemiClient.getErc20TokenBalance({
-                account,
-                address: token.address as `0x${string}`,
-              })
-          : BigInt(0),
+      async queryFn() {
+        if (!isConnected) {
+          return BigInt(0)
+        }
+        const promise = isNativeToken(token)
+          ? hemiClient.getBalance({ address: account })
+          : hemiClient.getErc20TokenBalance({
+              account,
+              address: token.address as `0x${string}`,
+            })
+        return promise.catch(() => BigInt(0))
+      },
       queryKey: ['wallet-token-balance', token.chainId, token.address],
       // refetch every 5 minutes
       refetchInterval: 5 * 60 * 1000,

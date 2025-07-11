@@ -58,7 +58,7 @@ const StakeLayoutClient = function ({ children }: Props) {
 
   return (
     <>
-      <div className="mb-4 mt-5 md:hidden">
+      <div className="mb-4 mt-5 px-4 md:hidden">
         <StakeTabs />
       </div>
       {children}

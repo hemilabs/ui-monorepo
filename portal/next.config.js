@@ -21,11 +21,6 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
-        hostname: 'raw.githubusercontent.com',
-        pathname: '/hemilabs/token-list/**',
-        protocol: 'https',
-      },
-      {
         hostname: 'hemilabs.github.io',
         pathname: '/token-list/logos/**',
         protocol: 'https',

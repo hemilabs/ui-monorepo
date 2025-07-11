@@ -17,8 +17,9 @@ import { type Address, type Chain } from 'viem'
 export const NativeTokenSpecialAddressOnL2 =
   '0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000' as Address
 
-const ethLogoUri =
-  'https://raw.githubusercontent.com/hemilabs/token-list/master/src/logos/eth.svg'
+const ethLogoURI = 'https://hemilabs.github.io/token-list/l1Logos/eth.svg'
+
+const hemiEthLogoURI = 'https://hemilabs.github.io/token-list/logos/eth.svg'
 
 const nativeTokens: Token[] = [
   {
@@ -31,7 +32,7 @@ const nativeTokens: Token[] = [
         [hemiMainnet.id]: {},
       },
     },
-    logoURI: ethLogoUri,
+    logoURI: ethLogoURI,
     name: mainnet.nativeCurrency.name,
     symbol: mainnet.nativeCurrency.symbol,
   },
@@ -45,7 +46,7 @@ const nativeTokens: Token[] = [
         [hemiTestnet.id]: {},
       },
     },
-    logoURI: ethLogoUri,
+    logoURI: ethLogoURI,
     name: sepolia.nativeCurrency.name,
     symbol: sepolia.nativeCurrency.symbol,
   },
@@ -60,7 +61,7 @@ const nativeTokens: Token[] = [
         },
       },
     },
-    logoURI: ethLogoUri,
+    logoURI: hemiEthLogoURI,
     name: hemiMainnet.nativeCurrency.name,
     symbol: hemiMainnet.nativeCurrency.symbol,
   },
@@ -75,7 +76,7 @@ const nativeTokens: Token[] = [
         },
       },
     },
-    logoURI: ethLogoUri,
+    logoURI: hemiEthLogoURI,
     name: hemiTestnet.nativeCurrency.name,
     symbol: hemiTestnet.nativeCurrency.symbol,
   },

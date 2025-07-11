@@ -45,6 +45,7 @@ export const getRemoteTokens = function (token: EvmToken) {
         },
       },
     },
+    logoURI: token.extensions!.l1LogoURI,
     name: token.name
       // Remove the ".e" suffix
       .replace('.e', '')

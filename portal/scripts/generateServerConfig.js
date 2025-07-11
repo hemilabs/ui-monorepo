@@ -78,7 +78,6 @@ customRpcOrigins.forEach(function (url) {
 // these are domains where we download images from
 const imageSrcUrls = [
   'https://hemi.xyz',
-  'https://raw.githubusercontent.com',
   'https://*.walletconnect.com',
   'https://hemilabs.github.io',
 ]

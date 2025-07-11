@@ -1,13 +1,11 @@
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useNetworkType } from 'hooks/useNetworkType'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
 import { Token } from 'types/token'
 import { isBtcNetworkId } from 'utils/chain'
 import { getNativeToken } from 'utils/nativeToken'
 
 import { CustomTokenLogo } from './customTokenLogo'
-import { HemiSubLogo } from './hemiSubLogo'
 import { BtcLogo } from './icons/btcLogo'
 
 const sizes = {
@@ -22,33 +20,11 @@ type Props = {
   token: Token
 }
 
-type ImageState = 'idle' | 'loaded' | 'error'
-
-const MaxRetries = 5
-
 // for hemi tokens, we add a hemi logo at the bottom right
 export function TokenLogo({ size, token }: Props) {
-  const [imageState, setImageState] = useState<ImageState>('idle')
-  const [retry, setRetry] = useState(0)
   const [networkType] = useNetworkType()
   const bitcoinChain = useBitcoin()
   const bitcoinToken = getNativeToken(bitcoinChain.id)
-
-  useEffect(
-    function retryImageEffect() {
-      let timer: NodeJS.Timeout | null = null
-      if (imageState === 'error' && retry <= MaxRetries) {
-        timer = setTimeout(function forceReload() {
-          setImageState('idle')
-          setRetry(r => r + 1)
-        }, 10 * 1000)
-      }
-      return function () {
-        if (timer) clearTimeout(timer)
-      }
-    },
-    [imageState, retry, setRetry, setImageState],
-  )
 
   // BTC and tBTC have special logo rendering.
   // On Hemi (mainnet), only BTC uses the preset logo because tBTC represents a different token.
@@ -67,19 +43,15 @@ export function TokenLogo({ size, token }: Props) {
     )
   }
 
-  return token.logoURI && imageState !== 'error' ? (
+  return token.logoURI ? (
     <div className={`relative ${sizes[size]}`}>
       <Image
         alt={`${token.symbol} Logo`}
         className="w-full"
         height={20}
-        onError={() => setImageState('error')}
-        onLoad={() => setImageState('loaded')}
-        src={`${token.logoURI}${retry === 0 ? '' : `?retry=${retry}`}`}
+        src={token.logoURI}
         width={20}
       />
-      {/* for custom tokens, it is already included in the component */}
-      <HemiSubLogo token={token} />
     </div>
   ) : (
     <div className={`relative ${sizes[size]}`}>

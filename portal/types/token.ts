@@ -5,6 +5,7 @@ type TunnelPartners = 'meson' | 'stargate'
 
 export type Extensions = {
   birthBlock?: number
+  l1LogoURI?: string
   bridgeInfo?: {
     [keyof: string]: {
       tokenAddress?: Address

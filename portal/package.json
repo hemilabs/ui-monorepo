@@ -13,7 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@hemilabs/token-list": "2.0.1",
+    "@hemilabs/token-list": "2.1.0",
     "@rainbow-me/rainbowkit": "2.2.4",
     "@sentry/nextjs": "9.9.0",
     "@tanstack/react-query": "5.69.0",

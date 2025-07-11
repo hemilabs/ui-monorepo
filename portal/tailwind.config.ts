@@ -46,10 +46,13 @@ const config: Config = {
         'navbar':
           '0px 0px 0px 1px rgba(212, 212, 216, 0.56), 12px 0px 24px -8px rgba(10, 10, 10, 0.06), 0px 10px 24px -8px rgba(10, 10, 10, 0.08), 0px 4px 6px -2px rgba(10, 10, 10, 0.04)',
         'soft': '0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
+        'token-selector':
+          '0px 0px 0px 1px rgba(10,10,10,0.08), 0px 1px 3px 0px rgba(10,10,10,0.08), 0px 1px 2px -1px rgba(10,10,10,0.08)',
+        'top-token-selector': 'inset 0 4px 4px -2px rgba(0,0,0,0.03)',
       },
       // See https://www.figma.com/design/4fVd9wneclsvYDYD95ApZ9/Hemi-Portal?node-id=3685-11596&node-type=FRAME&m=dev
       colors: {
-        orange: {
+        'orange': {
           50: '#FFF6ED',
           100: '#FFEBD4',
           200: '#FFD4A8',
@@ -63,12 +66,17 @@ const config: Config = {
           950: '#451105',
           hemi: '#FF5F00',
         },
-        points: {
+        'points': {
           'bsquared': '#FFB852',
           'eigenpie': '#131247',
           'pump-btc': '#69DFFA',
           'solv': '#EDE5FB',
           'unirouter': '#9600FF',
+        },
+        'token-selector-hover': {
+          eth: 'rgba(98, 126, 234, 0.08)',
+          usdc: 'rgba(39, 117, 202, 0.08)',
+          usdt: 'rgba(39, 161, 124, 0.08)',
         },
       },
       fontFamily: {

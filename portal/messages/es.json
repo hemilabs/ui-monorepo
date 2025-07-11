@@ -288,11 +288,14 @@
     "this-address-is-valid": "Esta dirección es válida"
   },
   "token-selector": {
+    "all-tokens": "Todos los tokens",
     "manually-added-tokens": "Tokens agregados manualmente",
     "no-results-for": "No se encontraron resultados para <search></search>",
+    "search-results": "Resultados de la búsqueda",
     "search-tokens": "Buscar por nombre de token o dirección...",
     "select-token": "Seleccione un token",
-    "validating-token-address": "Validando dirección del token..."
+    "validating-token-address": "Validando dirección del token...",
+    "your-tokens": "Sus tokens"
   },
   "transaction-history": {
     "challenge-in-progress": "Desafío en progreso",

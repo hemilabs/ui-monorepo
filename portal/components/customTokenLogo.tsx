@@ -2,8 +2,8 @@ import { HemiSubLogo } from 'components/hemiSubLogo'
 import { Token } from 'types/token'
 
 const sizes = {
-  medium: 'h-8 w-8 text-[8px]',
-  small: 'h-5 w-5 text-[6px]',
+  medium: 'size-8 text-[8px]',
+  small: 'size-5 text-[6px]',
 } as const
 
 type Size = keyof typeof sizes
@@ -21,6 +21,6 @@ export const CustomTokenLogo = ({ size, token }: Props) => (
     >
       {token.symbol}
     </div>
-    <HemiSubLogo token={token} />
+    <HemiSubLogo size={size} token={token} />
   </>
 )

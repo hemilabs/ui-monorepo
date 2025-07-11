@@ -1,5 +1,6 @@
 'use client'
 
+import { PageLayout } from 'components/pageLayout'
 import { useTranslations } from 'next-intl'
 
 import { AddHemiWallet } from './_components/addHemiWallet'
@@ -11,7 +12,7 @@ const GetStarted = function () {
   const t = useTranslations('get-started')
 
   return (
-    <>
+    <PageLayout variant="center">
       <h1 className="mb-1 text-2xl font-medium text-neutral-950">
         {t('heading')}
       </h1>
@@ -22,7 +23,7 @@ const GetStarted = function () {
       <div className="mt-12 pb-14">
         <LearnMore />
       </div>
-    </>
+    </PageLayout>
   )
 }
 

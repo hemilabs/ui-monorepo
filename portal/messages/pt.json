@@ -101,6 +101,10 @@
       "title": "Oops! Página não encontrada",
       "description": "Não conseguimos encontrar a página que procura.",
       "action": "Voltar à página inicial"
+    },
+    "unhandled-error": {
+      "title": "Algo correu mal",
+      "description": "Ocorreu um erro inesperado. Por favor, tente novamente ou <link>contacte-nos</link> se o problema persistir."
     }
   },
   "get-started": {

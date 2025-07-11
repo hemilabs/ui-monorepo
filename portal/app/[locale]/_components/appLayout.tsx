@@ -52,7 +52,6 @@ const NavBarUrlSync = function ({
 }
 
 export const AppLayout = function ({ children }: Props) {
-  const pathname = usePathnameWithoutLocale()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isNavbarOpen, setIsNavbarOpen] = useState(false)
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsNavbarOpen(false))
@@ -77,18 +76,7 @@ export const AppLayout = function ({ children }: Props) {
           <TestnetIndicator />
         </div>
         <div className="h-full overflow-y-auto">
-          <div
-            className={`relative mx-auto h-full px-4 pb-3 pt-4 md:pt-12
-            ${
-              // transaction history, and stake pages page use a different layout
-              pathname.endsWith('transaction-history/') ||
-              pathname.startsWith('/stake')
-                ? 'xl:px-12 xl:pb-12'
-                : 'max-w-5xl'
-            }`}
-          >
-            {children}
-          </div>
+          <div className="relative h-full pb-3 pt-4 md:pt-12">{children}</div>
         </div>
       </MainContainer>
       {isNavbarOpen && (

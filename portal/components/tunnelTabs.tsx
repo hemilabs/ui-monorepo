@@ -35,7 +35,7 @@ const UI = function ({
   const isInTransactionHistory = pathname === `/tunnel/transaction-history/`
 
   return (
-    <div className="flex items-center justify-center gap-x-4">
+    <div className="flex items-center justify-center gap-x-4 max-md:px-4">
       <Tabs>
         <Tab
           href={tunnelHref}

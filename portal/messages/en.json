@@ -101,6 +101,10 @@
       "title": "Oops! Page not found",
       "description": "We can't find the page you're looking for.",
       "action": "Go back home"
+    },
+    "unhandled-error": {
+      "title": "Something Went Wrong",
+      "description": "An unexpected error has occurred. Please try again or <link>contact us</link> if the problem persists."
     }
   },
   "get-started": {

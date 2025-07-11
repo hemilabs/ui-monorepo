@@ -1,5 +1,6 @@
 'use client'
 
+import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
@@ -21,7 +22,7 @@ const Ecosystem = function () {
   const [networkType] = useNetworkType()
 
   return (
-    <>
+    <PageLayout variant="center">
       <PageTitle subtitle={t('sub-heading')} title={t('heading')} />
       <div className="mt-6 flex flex-col flex-wrap gap-x-6 gap-y-4 md:mt-8 md:flex-row md:gap-y-6">
         <DemoCard
@@ -83,7 +84,7 @@ const Ecosystem = function () {
           subHeading={t('cryptochords.sub-heading')}
         />
       </div>
-    </>
+    </PageLayout>
   )
 }
 

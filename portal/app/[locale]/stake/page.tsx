@@ -1,5 +1,6 @@
 'use client'
 
+import { PageLayout } from 'components/pageLayout'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useMemo } from 'react'
 import { sortTokens } from 'utils/sortTokens'
@@ -62,11 +63,13 @@ export default function Page() {
   )
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.48))]">
-      <PageBackground />
-      <div className="relative z-20 -translate-y-60 md:-translate-y-48">
-        <StakeStrategyTable data={sortedTokens} loading={isLoading} />
+    <PageLayout variant="wide">
+      <div className="h-[calc(100vh-theme(spacing.48))]">
+        <PageBackground />
+        <div className="relative z-20 -translate-y-60 md:-translate-y-48">
+          <StakeStrategyTable data={sortedTokens} loading={isLoading} />
+        </div>
       </div>
-    </div>
+    </PageLayout>
   )
 }

@@ -1,12 +1,8 @@
 'use client'
 
-import * as Sentry from '@sentry/nextjs'
-import { ExclamationMark } from 'components/icons/exclamationMark'
+import { Error500 } from 'components/error500'
 import hemiSocials from 'hemi-socials'
-import Image from 'next/image'
-import { useEffect } from 'react'
-
-import Error500 from './_images/500.svg'
+import { type ComponentProps } from 'react'
 
 const { discordUrl } = hemiSocials
 
@@ -15,31 +11,19 @@ const { discordUrl } = hemiSocials
 // See https://github.com/vercel/next.js/issues/70553
 // Apparently, it's been fixed in Next 15, but next15 does not work yet for us
 // TODO see https://github.com/hemilabs/ui-monorepo/issues/1093
-export default function GlobalError({
-  error,
-}: {
-  error: Error & { digest?: string }
-}) {
-  useEffect(
-    function () {
-      Sentry.captureException(error)
-    },
-    [error],
-  )
-
-  return (
-    // At this point of the route, we can't determine which language we're in
-    // let's default to English
-    <html lang="en">
-      <head>
-        <title>Hemi Portal</title>
-        <link href="/favicon.ico" rel="icon" />
-        <link href="https://fonts.googleapis.com" rel="preconnect" />
-        <link href="https://fonts.gstatic.com" rel="preconnect" />
-        <link rel="stylesheet" />
-        {/* Next does not load tailwind nor imports .css files
+const GlobalError = (props: Pick<ComponentProps<typeof Error500>, 'error'>) => (
+  // At this point of the route, we can't determine which language we're in
+  // let's default to English
+  <html lang="en">
+    <head>
+      <title>Hemi Portal</title>
+      <link href="/favicon.ico" rel="icon" />
+      <link href="https://fonts.googleapis.com" rel="preconnect" />
+      <link href="https://fonts.gstatic.com" rel="preconnect" />
+      <link rel="stylesheet" />
+      {/* Next does not load tailwind nor imports .css files
         So we need to manually add the styles needed here. */}
-        <style>{`
+      <style>{`
           .-top-15 { top: -60px; }
           .-z-10 { z-index: -10; }
           .absolute { position: absolute; }
@@ -88,36 +72,31 @@ export default function GlobalError({
           .w-96 { width: 24rem; }
           .w-full { width: 100%; }
         `}</style>
-      </head>
-      <body className="inter-font m-0 h-screen">
-        <div className="flex h-full">
-          <Image
-            alt="500"
-            className="-top-15 absolute inset-0 -z-10 m-auto w-full"
-            src={Error500}
-          />
-          <div className="m-auto flex flex-col items-center gap-4">
-            <ExclamationMark />
-            <div className="w-96 text-center">
-              <h1 className="text-lg font-medium">Something Went Wrong</h1>
-              <h3 className="mt-1 text-base font-medium text-neutral-500">
-                An unexpected error has occurred. Please try again or
-                <a className="text-orange-500" href={discordUrl}>
-                  {' '}
-                  contact us{' '}
-                </a>
-                if the problem persists.
-              </h3>
-            </div>
-            <button
-              className="primary-button flex items-center justify-center font-medium"
-              onClick={() => window.location.replace('/')}
+    </head>
+    <body className="inter-font m-0 h-screen">
+      <Error500
+        {...props}
+        // I couldn't find a way to read these from the translation files,
+        // so I had to hardcode them :/
+        description={
+          <>
+            An unexpected error has occurred. Please try again or
+            <a
+              className="text-orange-500 hover:text-orange-700"
+              href={discordUrl}
             >
-              Try again
-            </button>
-          </div>
-        </div>
-      </body>
-    </html>
-  )
-}
+              {' '}
+              contact us{' '}
+            </a>
+            if the problem persists.
+          </>
+        }
+        reset={() => window.location.replace('/')}
+        title="Something Went Wrong"
+        tryAgainLabel="Try again"
+      />
+    </body>
+  </html>
+)
+
+export default GlobalError

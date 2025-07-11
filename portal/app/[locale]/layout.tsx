@@ -2,7 +2,6 @@ import 'styles/globals.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import 'react-loading-skeleton/dist/skeleton.css'
 
-import { ErrorBoundary } from 'components/errorBoundary'
 import { ConnectWalletDrawerProvider } from 'context/connectWalletDrawerContext'
 import { TunnelHistoryProvider } from 'context/tunnelHistoryContext'
 import { WalletsContext } from 'context/walletsContext'
@@ -80,11 +79,9 @@ export default async function RootLayout({
                           <Navbar />
                         </div>
                         <AppLayout>
-                          <ErrorBoundary>
-                            {/* Last resort Suspense wrapper usage.
+                          {/* Last resort Suspense wrapper usage.
                         Ideally, Suspense wrappers should be added where needed in each page */}
-                            <Suspense>{children}</Suspense>
-                          </ErrorBoundary>
+                          <Suspense>{children}</Suspense>
                           <AppOverlays />
                           <Workers />
                         </AppLayout>

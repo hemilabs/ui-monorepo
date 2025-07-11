@@ -1,5 +1,6 @@
 'use client'
 
+import { PageLayout } from 'components/pageLayout'
 import { PageTitle } from 'components/pageTitle'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -32,7 +33,7 @@ const Page = function () {
   const t = useTranslations('tunnel-page')
 
   return (
-    <>
+    <PageLayout variant="wide">
       <PageTitle
         subtitle={t('transaction-history.subtitle')}
         title={t('transaction-history.title')}
@@ -47,7 +48,7 @@ const Page = function () {
           setFilterOption={setFilterOption}
         />
       </div>
-    </>
+    </PageLayout>
   )
 }
 

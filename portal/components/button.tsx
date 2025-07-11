@@ -8,7 +8,7 @@ const commonCss = `box-content flex items-center justify-center
   rounded-lg border border-solid px-3 py-1.5 font-medium disabled:opacity-50`
 
 const variants = {
-  primary: `border-orange-700/55 from-orange-500 to-orange-600 text-white hover:border-orange-700/70  
+  primary: `primary-button border-orange-700/55 from-orange-500 to-orange-600 text-white hover:border-orange-700/70  
     bg-gradient-to-b transition-all duration-300
     hover:from-orange-600 hover:to-orange-600 disabled:bg-orange-600 shadow-button-primary
     focus:shadow-button-primary-focused`,

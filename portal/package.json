@@ -50,7 +50,8 @@
     "use-local-storage-state": "19.5.0",
     "viem": "2.22.10",
     "viem-erc20": "1.0.1",
-    "wagmi": "2.14.8"
+    "wagmi": "2.14.8",
+    "wallet-watch-asset": "github:hemilabs/wallet-watch-asset#v1.0.1"
   },
   "devDependencies": {
     "@types/big.js": "6.2.2",

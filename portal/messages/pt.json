@@ -323,6 +323,10 @@
       "to-network": "Para a Rede"
     },
     "review-deposit": {
+      "add-token-to-wallet-error": "Falha ao adicionar o contrato do token à sua carteira",
+      "add-token-to-wallet-idle": "Adicionar contrato do token à sua carteira",
+      "add-token-to-wallet-pending": "A adicionar contrato do token à sua carteira...",
+      "add-token-to-wallet-success": "Contrato do token adicionado à sua carteira",
       "approve-confirmed": "Aprovação confirmada",
       "approve-initiated": "Aprovação iniciada",
       "btc-deposit-come-back-delay-note": "Se não receber o seu depósito após {hours} horas, regresse a esta página para reclamar manualmente.",

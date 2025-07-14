@@ -323,6 +323,10 @@
       "to-network": "Hacia la Red"
     },
     "review-deposit": {
+      "add-token-to-wallet-error": "No se pudo agregar el contrato del token a su billetera",
+      "add-token-to-wallet-idle": "Agregar contrato del token a su billetera",
+      "add-token-to-wallet-pending": "Agregando contrato del token a su billetera...",
+      "add-token-to-wallet-success": "El contrato del token fue agregado a su billetera",
       "approve-confirmed": "Aprobación confirmada",
       "approve-initiated": "Aprobación iniciada",
       "btc-deposit-come-back-delay-note": "Si usted no recibe su depósito después de {hours} horas regrese a esta pagina para reclamarlo manualmente.",

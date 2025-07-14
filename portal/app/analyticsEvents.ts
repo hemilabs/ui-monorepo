@@ -134,6 +134,10 @@ const analyticsEvents = [
   'custom erc20 - cancel',
   'custom erc20 - open modal',
   'custom erc20 - save token',
+  // save tokens in user's wallet
+  'save token wallet - error',
+  'save token wallet - init',
+  'save token wallet - ok',
 ] as const
 
 type AnalyticsEvents = typeof analyticsEvents
@@ -150,12 +154,15 @@ type AnalyticsEventsWithWallet = Extract<
   | 'evm disconnected'
 >
 
-// These events require a custom ERC20 address
-type AnalyticsEventsWithCustomERC20 = Extract<
+// These events require an ERC20 address
+type AnalyticsEventsWithERC20 = Extract<
   AnalyticsEvent,
   | 'custom erc20 - cancel'
   | 'custom erc20 - open modal'
   | 'custom erc20 - save token'
+  | 'save token wallet - error'
+  | 'save token wallet - init'
+  | 'save token wallet - ok'
 >
 
 // this event requires a partner name
@@ -172,7 +179,7 @@ type PartnerBridgeData = { partner: string }
 type EventDataMap = {
   [K in AnalyticsEvent]: K extends AnalyticsEventsWithWallet
     ? WalletChainData
-    : K extends AnalyticsEventsWithCustomERC20
+    : K extends AnalyticsEventsWithERC20
       ? CustomERC20Data
       : K extends AnalyticsEventsWithPartnerBridge
         ? PartnerBridgeData

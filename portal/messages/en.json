@@ -323,6 +323,10 @@
       "to-network": "To Network"
     },
     "review-deposit": {
+      "add-token-to-wallet-error": "Failed to add the token contract to your wallet",
+      "add-token-to-wallet-idle": "Add token contract to your wallet",
+      "add-token-to-wallet-pending": "Adding token contract to your wallet...",
+      "add-token-to-wallet-success": "Token contract added to your wallet",
       "approve-confirmed": "Approve confirmed",
       "approve-initiated": "Approve initiated",
       "btc-deposit-come-back-delay-note": "If you do not receive your deposit after {hours} hours return to this page to manually claim.",

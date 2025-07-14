@@ -1,0 +1,19 @@
+diff --git a/node_modules/wallet-watch-asset/src/index.js b/node_modules/wallet-watch-asset/src/index.js
+index f719a4c..010f7c2 100644
+--- a/node_modules/wallet-watch-asset/src/index.js
++++ b/node_modules/wallet-watch-asset/src/index.js
+@@ -29,9 +29,11 @@ async function watchAsset(provider, account, token, storage) {
+   const { address, chainId, decimals, logoURI, symbol } = token;
+ 
+   // The only wallet known so far with EIP-747 support is MetaMask.
+-  if (!provider.isMetaMask) {
+-    throw new Error("Wallet not supported");
+-  }
++  // The portal uses Viem Transport's, so we must skip this check
++  // for this package to work
++  // if (!provider.isMetaMask) {
++  //   throw new Error("Wallet not supported");
++  // }
+ 
+   const storageKey = `watchedAssets:${account}`;
+   const watchedAssets = storage?.getItem(storageKey) || "";

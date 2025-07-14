@@ -8,7 +8,7 @@ import { useHemi } from 'hooks/useHemi'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
-import { type BtcToken } from 'types/token'
+import { EvmToken, type BtcToken } from 'types/token'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
@@ -18,6 +18,7 @@ import { useEstimateBtcDepositFees } from '../../_hooks/useEstimateBtcDepositFee
 import { ConfirmBtcDeposit } from '../confirmBtcDeposit'
 import { RetryBtcDeposit } from '../retryBtcDeposit'
 
+import { AddTokenToWallet } from './addTokenToWallet'
 import { ChainLabel } from './chainLabel'
 import { Operation } from './operation'
 
@@ -45,7 +46,8 @@ const ReviewContent = function ({
   deposit,
   fromToken,
   onClose,
-}: Props & { fromToken: BtcToken }) {
+  toToken,
+}: Props & { fromToken: BtcToken; toToken: EvmToken }) {
   const depositStatus = deposit.status ?? BtcDepositStatus.BTC_TX_PENDING
 
   const { isConnected } = useAccount()
@@ -213,6 +215,15 @@ const ReviewContent = function ({
         </div>
       )
     }
+    // Only show the option to add the token if the deposit is completed
+    if (
+      [
+        BtcDepositStatus.BTC_DEPOSITED,
+        BtcDepositStatus.BTC_DEPOSITED_MANUALLY,
+      ].includes(depositStatus)
+    ) {
+      return <AddTokenToWallet token={toToken} />
+    }
     return null
   }
 
@@ -242,7 +253,12 @@ export const ReviewBtcDeposit = function ({ deposit, onClose }: Props) {
     chainId: deposit.l1ChainId,
   })
 
-  const tokensLoaded = !!fromToken
+  const { data: toToken } = useToken({
+    address: deposit.l2Token,
+    chainId: deposit.l2ChainId,
+  })
+
+  const tokensLoaded = !!fromToken && !!toToken
 
   return (
     <>
@@ -251,6 +267,7 @@ export const ReviewBtcDeposit = function ({ deposit, onClose }: Props) {
           deposit={deposit}
           fromToken={fromToken as BtcToken}
           onClose={onClose}
+          toToken={toToken as EvmToken}
         />
       ) : (
         <Skeleton className="h-full" />

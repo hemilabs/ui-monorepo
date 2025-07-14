@@ -6,11 +6,12 @@ import { isBtcNetworkId } from 'utils/chain'
 import { getNativeToken } from 'utils/nativeToken'
 
 import { CustomTokenLogo } from './customTokenLogo'
+import { HemiSubLogo } from './hemiSubLogo'
 import { BtcLogo } from './icons/btcLogo'
 
 const sizes = {
-  medium: 'h-8 w-8',
-  small: 'h-5 w-5 [&>div:nth-child(2)]:h-2.5 [&>div:nth-child(2)]:w-2.5',
+  medium: 'size-8',
+  small: 'size-5',
 } as const
 
 type Size = keyof typeof sizes
@@ -36,9 +37,10 @@ export function TokenLogo({ size, token }: Props) {
   if (isBtcNetworkId(token.chainId) || (isTestnet && isHemiBtc)) {
     return (
       <div className={`relative ${sizes[size]}`}>
-        <div className="flex h-full w-full items-center justify-center">
-          <BtcLogo className="h-full w-full" />
+        <div className="flex size-full items-center justify-center">
+          <BtcLogo className="size-full" />
         </div>
+        {isTestnet && isHemiBtc && <HemiSubLogo size={size} token={token} />}
       </div>
     )
   }

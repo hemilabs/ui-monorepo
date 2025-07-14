@@ -18,7 +18,7 @@ const app = express()
 const origin = config
   .get('origins')
   .split(',')
-  .map(o => (/\*/.test(o) ? globToRegExp : o))
+  .map(o => (/\*/.test(o) ? globToRegExp(o) : o))
 
 app.use(cors({ origin }))
 

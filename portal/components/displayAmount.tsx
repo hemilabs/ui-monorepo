@@ -4,6 +4,7 @@ import { Tooltip } from 'components/tooltip'
 import { ComponentType, Fragment, ReactNode } from 'react'
 import { Token } from 'types/token'
 import { formatNumber } from 'utils/format'
+import { getTokenSymbol } from 'utils/token'
 
 type CustomContainer = ComponentType<{
   children?: ReactNode
@@ -20,6 +21,7 @@ type Props = {
   symbolContainer?: CustomContainer
   showSymbol?: boolean
   showTokenLogo?: boolean
+  symbolRenderer?: (token: Token) => string
   token: Token
 }
 
@@ -30,6 +32,7 @@ export const DisplayAmount = function ({
   showSymbol = true,
   showTokenLogo = true,
   symbolContainer: SymbolContainer = DefaultTextContainer,
+  symbolRenderer = getTokenSymbol,
   token,
 }: Props) {
   const formattedAmount = formatNumber(amount)
@@ -40,7 +43,7 @@ export const DisplayAmount = function ({
   const showDots = bigAmount.lt(1) && notZero && formattedAmount !== amount
   return (
     <Tooltip
-      id={`amount-tooltip-${token.symbol}`}
+      id={`amount-tooltip-${token.name}`}
       overlay={
         notZero ? (
           <div className="flex items-center gap-x-1 px-2 py-1 text-sm font-medium text-white">
@@ -51,7 +54,7 @@ export const DisplayAmount = function ({
             }).format(
               // @ts-expect-error NumberFormat.format accept strings, typings are wrong. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/format#parameters
               amount,
-            )} ${token.symbol}`}</span>
+            )} ${symbolRenderer(token)}`}</span>
           </div>
         ) : null
       }
@@ -61,7 +64,7 @@ export const DisplayAmount = function ({
           showDots ? '...' : ''
         }`}</AmountContainer>
         {showSymbol ? (
-          <SymbolContainer>{` ${token.symbol}`}</SymbolContainer>
+          <SymbolContainer>{` ${symbolRenderer(token)}`}</SymbolContainer>
         ) : null}
       </Container>
     </Tooltip>

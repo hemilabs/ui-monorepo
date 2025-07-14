@@ -3,6 +3,7 @@ import { TokenLogo } from 'components/tokenLogo'
 import { useToken } from 'hooks/useToken'
 import Skeleton from 'react-loading-skeleton'
 import { TunnelOperation } from 'types/tunnel'
+import { getTunnelTokenSymbol } from 'utils/token'
 import { isDeposit } from 'utils/tunnel'
 import { formatUnits } from 'viem'
 
@@ -38,6 +39,7 @@ export const Amount = function ({ operation }: Props) {
       <DisplayAmount
         amount={formatUnits(BigInt(amount), token.decimals)}
         showSymbol={false}
+        symbolRenderer={getTunnelTokenSymbol}
         token={token}
       />
     </div>

@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import { isEvmNetworkId } from 'utils/chain'
+import { getTunnelTokenSymbol } from 'utils/token'
 
 import { useTunnelState } from '../_hooks/useTunnelState'
 
@@ -110,7 +111,12 @@ export const FormContent = function ({
             label={t('form.receive')}
             onChange={updateFromInput}
             token={toToken}
-            tokenSelector={<TokenSelectorReadOnly token={toToken} />}
+            tokenSelector={
+              <TokenSelectorReadOnly
+                symbolRenderer={getTunnelTokenSymbol}
+                token={toToken}
+              />
+            }
             // Tunnelling goes 1:1, so output equals input
             value={fromInput}
           />

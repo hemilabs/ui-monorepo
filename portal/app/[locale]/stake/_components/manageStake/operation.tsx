@@ -3,7 +3,7 @@ import { ReviewOperation } from 'components/reviewOperation'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { ReactNode } from 'react'
 import { StakeToken } from 'types/stake'
-import { parseTokenUnits } from 'utils/token'
+import { getTokenSymbol, parseTokenUnits } from 'utils/token'
 
 import { Form } from './form'
 
@@ -54,6 +54,7 @@ export const Operation = ({
           amount={parseTokenUnits(amount, token).toString()}
           callToAction={callToAction}
           steps={steps}
+          symbolRenderer={getTokenSymbol}
           token={token}
         />
       </div>

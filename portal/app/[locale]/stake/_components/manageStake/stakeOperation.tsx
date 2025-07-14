@@ -11,7 +11,7 @@ import { useTranslations } from 'next-intl'
 import { StakeOperations, StakeStatusEnum, type StakeToken } from 'types/stake'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
-import { parseTokenUnits } from 'utils/token'
+import { getTokenSymbol, parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -104,7 +104,9 @@ export const StakeOperation = function ({
     }
 
     return {
-      description: t('common.approving-token', { symbol: token.symbol }),
+      description: t('common.approving-token', {
+        symbol: getTokenSymbol(token),
+      }),
       explorerChainId: token.chainId,
       fees: showFees
         ? {
@@ -137,7 +139,9 @@ export const StakeOperation = function ({
     ].includes(stakeStatus)
 
     return {
-      description: t('stake-page.drawer.stake-token', { symbol: token.symbol }),
+      description: t('stake-page.drawer.stake-token', {
+        symbol: getTokenSymbol(token),
+      }),
       explorerChainId: token.chainId,
       fees: showFees
         ? {

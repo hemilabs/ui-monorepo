@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
 import { formatEvmAddress } from 'utils/format'
-import { parseTokenUnits } from 'utils/token'
+import { getTunnelTokenSymbol, parseTokenUnits } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 
 import { useMinDepositSats } from '../_hooks/useMinDepositSats'
@@ -141,7 +141,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
               tooltipText={t(
                 'tunnel-page.form.hemi-receiving-address-description',
                 {
-                  symbol: state.fromToken.symbol,
+                  symbol: getTunnelTokenSymbol(state.fromToken),
                 },
               )}
             />

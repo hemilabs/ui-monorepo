@@ -5,19 +5,19 @@ type TunnelPartners = 'meson' | 'stargate'
 
 export type Extensions = {
   birthBlock?: number
-  l1LogoURI?: string
   bridgeInfo?: {
     [keyof: string]: {
       tokenAddress?: Address
     }
   }
+  // use this to replace the symbol across the entire UI
+  customSymbol?: string
+  l1LogoURI?: string
   protocol?: string
   // Use this to map which symbol should be used to map prices
   priceSymbol?: string
-  // Custom token symbol to show in the Stake
-  stakeSymbol?: string
   tunnel?: boolean
-  // Custom token symbol to show in the Tunnel
+  // Custom token symbol to show in the Tunnel page only
   tunnelSymbol?: string
   tunnelPartners?: TunnelPartners[]
 }

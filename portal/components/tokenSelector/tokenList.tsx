@@ -13,6 +13,7 @@ import partition from 'lodash/partition'
 import { useTranslations } from 'next-intl'
 import { type JSX, useRef, useState } from 'react'
 import { Token as TokenType } from 'types/token'
+import { getTunnelTokenSymbol } from 'utils/token'
 import { type Chain, isAddress, isAddressEqual } from 'viem'
 
 import { NoTokensMatch } from './noTokensMatch'
@@ -117,7 +118,7 @@ const List = function ({
 }
 
 const bySymbol = (a: TokenType, b: TokenType) =>
-  a.symbol.localeCompare(b.symbol)
+  getTunnelTokenSymbol(a).localeCompare(getTunnelTokenSymbol(b))
 
 export const TokenList = function ({
   chainId,
@@ -136,7 +137,9 @@ export const TokenList = function ({
   const tokensToList = tokens.filter(
     token =>
       token.name.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
-      token.symbol.toLowerCase().includes(debouncedSearchText.toLowerCase()) ||
+      getTunnelTokenSymbol(token)
+        .toLowerCase()
+        .includes(debouncedSearchText.toLowerCase()) ||
       // allow only exact match for addresses. In most cases, they will be pasted, rather than typed
       // so no user will partially type an address
       (userTypedAddress &&

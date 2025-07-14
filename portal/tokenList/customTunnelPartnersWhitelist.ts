@@ -29,7 +29,6 @@ export const customTunnelPartnersWhitelist: Partial<
     // USDT
     '0xbB0D083fb1be0A9f6157ec484b6C79E0A4e31C2e': {
       tunnelPartners: ['meson', 'stargate'],
-      tunnelSymbol: 'USDT',
     },
   },
 }

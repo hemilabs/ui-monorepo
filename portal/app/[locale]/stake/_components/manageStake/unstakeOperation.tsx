@@ -12,7 +12,7 @@ import {
 } from 'types/stake'
 import { getNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
-import { parseTokenUnits } from 'utils/token'
+import { getTokenSymbol, parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
@@ -97,7 +97,9 @@ export const UnstakeOperation = function ({
   }
 
   const unstakeStep: StepPropsWithoutPosition = {
-    description: t('stake-page.drawer.unstake-token', { symbol: token.symbol }),
+    description: t('stake-page.drawer.unstake-token', {
+      symbol: getTokenSymbol(token),
+    }),
     explorerChainId: token.chainId,
     fees:
       unstakeStatus === UnstakeStatusEnum.UNSTAKE_TX_PENDING

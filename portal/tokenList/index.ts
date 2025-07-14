@@ -5,6 +5,7 @@ import { type RemoteChain } from 'types/chain'
 import { type EvmToken, type Token } from 'types/token'
 import { type Address } from 'viem'
 
+import { customSymbolsList } from './customSymbols'
 import { customTunnelPartnersWhitelist } from './customTunnelPartnersWhitelist'
 import { nativeTokens } from './nativeTokens'
 import { priceWhiteList } from './priceTokens'
@@ -70,6 +71,7 @@ export const tokenList = {
   timestamp: hemilabsTokenList.timestamp,
   tokens: tokens
     .concat(nativeTokens)
+    .map(extendWithWhiteList(customSymbolsList))
     .map(extendWithWhiteList(customTunnelPartnersWhitelist))
     .map(extendWithWhiteList(priceWhiteList))
     .map(extendWithWhiteList(stakeWhiteList))

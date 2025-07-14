@@ -18,6 +18,7 @@ import { useTranslations } from 'next-intl'
 import { MouseEvent, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakeToken } from 'types/stake'
+import { getTokenSymbol } from 'utils/token'
 
 import { useDrawerStakeQueryString } from '../../_hooks/useDrawerStakeQueryString'
 import { ProtocolImage } from '../protocolImage'
@@ -45,7 +46,7 @@ const columnsBuilder = (
     cell: ({ row }) => (
       <div className="flex items-center justify-center space-x-2">
         <TokenLogo size="small" token={row.original} />
-        <span className="text-neutral-950">{row.original.symbol}</span>
+        <span className="text-neutral-950">{getTokenSymbol(row.original)}</span>
       </div>
     ),
     header: () => <Header text={t('asset')} />,

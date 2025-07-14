@@ -6,11 +6,12 @@ import { Token } from 'types/token'
 import { formatUnits } from 'viem'
 
 type Props = {
+  symbolRenderer?: (token: Token) => string
   token?: Token
   value: string
 }
 
-export const Amount = function ({ token, value }: Props) {
+export const Amount = function ({ symbolRenderer, token, value }: Props) {
   const t = useTranslations('common')
   return (
     <div className="flex items-center justify-between text-sm font-medium">
@@ -18,6 +19,7 @@ export const Amount = function ({ token, value }: Props) {
       <div className="text-neutral-950">
         <DisplayAmount
           amount={formatUnits(BigInt(value), token?.decimals ?? 18)}
+          symbolRenderer={symbolRenderer}
           token={token}
         />
       </div>

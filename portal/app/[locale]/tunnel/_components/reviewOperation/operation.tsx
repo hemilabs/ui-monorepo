@@ -3,6 +3,7 @@ import { ReviewOperation } from 'components/reviewOperation'
 import { Amount } from 'components/reviewOperation/amount'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { ComponentProps, ReactNode } from 'react'
+import { getTunnelTokenSymbol } from 'utils/token'
 
 type Props = {
   callToAction?: ReactNode
@@ -35,6 +36,7 @@ export const Operation = ({
       bottomSection={bottomSection}
       callToAction={callToAction}
       steps={steps}
+      symbolRenderer={getTunnelTokenSymbol}
       token={token}
     />
   </>

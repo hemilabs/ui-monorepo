@@ -1,6 +1,6 @@
 import Big from 'big.js'
 import { StakeToken } from 'types/stake'
-import { getTokenPrice } from 'utils/token'
+import { getTokenPrice, getTokenSymbol } from 'utils/token'
 import { formatUnits } from 'viem'
 
 const hasBalance = (token: StakeToken): boolean =>
@@ -60,6 +60,6 @@ export const sortTokens = function (
       return bUsdValue - aUsdValue
     }
 
-    return a.symbol.localeCompare(b.symbol)
+    return getTokenSymbol(a).localeCompare(getTokenSymbol(b))
   })
 }

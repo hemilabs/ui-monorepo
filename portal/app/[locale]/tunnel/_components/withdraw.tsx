@@ -16,7 +16,11 @@ import Skeleton from 'react-loading-skeleton'
 import { isEvmNetwork } from 'utils/chain'
 import { formatBtcAddress } from 'utils/format'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
-import { parseTokenUnits, tunnelsThroughPartners } from 'utils/token'
+import {
+  getTunnelTokenSymbol,
+  parseTokenUnits,
+  tunnelsThroughPartners,
+} from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -196,7 +200,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
             tooltipText={t(
               'tunnel-page.form.bitcoin-receiving-address-description',
               {
-                symbol: toToken.symbol,
+                symbol: getTunnelTokenSymbol(toToken),
               },
             )}
           />

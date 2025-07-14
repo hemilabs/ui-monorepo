@@ -138,3 +138,16 @@ export const parseTokenUnits = function (amount: string, token: Token) {
     : whole
   return viemParseUnits(normalizedAmount, token.decimals)
 }
+
+export const getTokenSymbol = function (token: Token) {
+  const { extensions = {}, symbol } = token
+  if (extensions.customSymbol) {
+    return extensions.customSymbol
+  }
+  return symbol
+}
+
+export const getTunnelTokenSymbol = (token: Token) =>
+  token.extensions?.tunnelSymbol
+    ? token.extensions.tunnelSymbol
+    : getTokenSymbol(token)

@@ -2,6 +2,7 @@ import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { WarningBox } from 'components/warningBox'
 import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
+import { getTunnelTokenSymbol } from 'utils/token'
 
 import { Meson } from './meson'
 import { Stargate } from './stargate'
@@ -25,12 +26,16 @@ export const CustomTunnelsThroughPartners = function ({
     <Drawer onClose={onClose}>
       <div className="drawer-content max-md:pb-16 md:h-full">
         <DrawerTopSection
-          heading={t(`${operation}.heading`, { symbol: fromToken.symbol })}
+          heading={t(`${operation}.heading`, {
+            symbol: getTunnelTokenSymbol(fromToken),
+          })}
           onClose={onClose}
         />
         <div className="mb-3">
           <DrawerParagraph>
-            {t(`${operation}.subheading`, { symbol: fromToken.symbol })}
+            {t(`${operation}.subheading`, {
+              symbol: getTunnelTokenSymbol(fromToken),
+            })}
           </DrawerParagraph>
         </div>
         <div className="mb-3 space-y-4">

@@ -22,6 +22,7 @@ import { MouseEvent, RefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakeToken } from 'types/stake'
 import { sortTokens } from 'utils/sortTokens'
+import { getTokenSymbol } from 'utils/token'
 import { queryStringObjectToString } from 'utils/url'
 
 import { ProtocolImage } from '../../../_components/protocolImage'
@@ -160,7 +161,7 @@ const columnsBuilder = (
     cell: ({ row }) => (
       <div className="flex items-center justify-center space-x-2">
         <TokenLogo size="small" token={row.original} />
-        <span className="text-neutral-950">{row.original.symbol}</span>
+        <span className="text-neutral-950">{getTokenSymbol(row.original)}</span>
       </div>
     ),
     header: () => <Header text={t('asset')} />,

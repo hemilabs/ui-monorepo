@@ -2,7 +2,7 @@ import Big from 'big.js'
 import { validateInput } from 'components/tokenInput/utils'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
-import { parseTokenUnits } from 'utils/token'
+import { getTunnelTokenSymbol, parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 
 type CanSubmit = Parameters<typeof validateInput>[0] & {
@@ -25,6 +25,7 @@ export const validateSubmit = function ({
     balance,
     minAmount,
     operation,
+    symbolRenderer: getTunnelTokenSymbol,
     t,
     token,
   })

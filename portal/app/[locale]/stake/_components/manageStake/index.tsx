@@ -9,6 +9,7 @@ import { Drawer } from 'components/drawer'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { type StakeOperations, type StakeToken } from 'types/stake'
+import { getTokenSymbol } from 'utils/token'
 
 import { type DrawerModes } from '../../_hooks/useDrawerStakeQueryString'
 
@@ -45,8 +46,10 @@ export const ManageStake = function ({
       subheading: t('description-manage-stake'),
     },
     stake: {
-      heading: t('stake-token', { symbol: token.symbol }),
-      subheading: t('stake-and-earn-rewards', { symbol: token.symbol }),
+      heading: t('stake-token', { symbol: getTokenSymbol(token) }),
+      subheading: t('stake-and-earn-rewards', {
+        symbol: getTokenSymbol(token),
+      }),
     },
   }[mode]
 

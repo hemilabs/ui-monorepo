@@ -2,6 +2,7 @@ import { CustomTokenLogo } from 'components/customTokenLogo'
 import Skeleton from 'react-loading-skeleton'
 import { Token as TokenType } from 'types/token'
 import { formatEvmAddress } from 'utils/format'
+import { getTunnelTokenSymbol } from 'utils/token'
 
 import { Balance } from '../cryptoBalance'
 import { FiatBalance } from '../fiatBalance'
@@ -53,7 +54,7 @@ export const Token = ({ token }: { token: TokenType }) => (
         <Balance token={token} />
       </div>
       <div className="flex items-center justify-between text-neutral-500">
-        <span>{token.symbol}</span>
+        <span>{getTunnelTokenSymbol(token)}</span>
         <div className="flex items-center gap-x-1 font-normal">
           <span>$</span>
           <FiatBalance token={token} />

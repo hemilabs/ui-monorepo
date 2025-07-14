@@ -14,7 +14,6 @@ export const stakeWhiteList: Partial<
     '0x93919784C523f39CACaa98Ee0a9d96c3F32b593e': {
       protocol: 'bedRock',
       rewards: ['hemi', 'bedrock'],
-      stakeSymbol: 'brBTC',
       website: 'https://www.bedrock.technology',
     },
     // DAI
@@ -27,7 +26,6 @@ export const stakeWhiteList: Partial<
     '0x027a9d301FB747cd972CFB29A63f3BDA551DFc5c': {
       protocol: 'egEth',
       rewards: ['hemi2x', 'eigenpie'],
-      stakeSymbol: 'egETH',
       website: 'https://www.eigenlayer.magpiexyz.io/restake',
     },
     // enzoBTC
@@ -58,7 +56,6 @@ export const stakeWhiteList: Partial<
     '0x0Af3EC6F9592C193196bEf220BC0Ce4D9311527D': {
       protocol: 'babypie',
       rewards: ['hemi2x', 'babypie'],
-      stakeSymbol: 'mBTC',
       website: 'https://www.babylon.magpiexyz.io/stake',
     },
     // M-BTC

@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
-import { parseTokenUnits } from 'utils/token'
+import { getTokenSymbol, parseTokenUnits } from 'utils/token'
 
 const checkInputIsNotZero = (input: string) => /0\.[0]*[1-9]/.test(input)
 
@@ -10,6 +10,7 @@ type CanSubmit = {
   balance: bigint
   minAmount?: string
   operation: 'deposit' | 'stake' | 'unstake' | 'withdrawal'
+  symbolRenderer?: (token: Token) => string
   t: ReturnType<typeof useTranslations<never>>
   token: Token
 }
@@ -40,6 +41,7 @@ type ValidationResult = {
  * @param params.balance - The user's current token balance as a bigint.
  * @param params.minAmount - The minimum allowed amount as a string (optional).
  * @param params.operation - The operation type (e.g., "deposit", "withdraw") used for error messages.
+ * @param params.symbolRenderer - A function to render the token symbol (optional).
  * @param params.t - The translation function for error messages.
  * @param params.token - The token object containing metadata such as decimals and symbol.
  * @returns An object containing the validation result, error message, and error key.
@@ -49,6 +51,7 @@ export const validateInput = function ({
   balance,
   minAmount,
   operation,
+  symbolRenderer = getTokenSymbol,
   t,
   token,
 }: CanSubmit): ValidationResult {
@@ -65,7 +68,7 @@ export const validateInput = function ({
       return {
         error: t(`common.min-amount-${operation}`, {
           amount: minAmountParsed,
-          symbol: token.symbol,
+          symbol: symbolRenderer(token),
         }),
         errorKey: 'less-than-min-value',
         isValid: false,
@@ -81,7 +84,7 @@ export const validateInput = function ({
     return {
       error: t(`common.min-amount-${operation}`, {
         amount: minAmountParsed,
-        symbol: token.symbol,
+        symbol: symbolRenderer(token),
       }),
       errorKey: 'less-than-min-value',
       isValid: false,
@@ -91,7 +94,9 @@ export const validateInput = function ({
   // For ERC20, the amount can be equal to the balance.
   if (amount > balance || (isNativeToken(token) && amount === balance)) {
     return {
-      error: t('common.insufficient-balance', { symbol: token.symbol }),
+      error: t('common.insufficient-balance', {
+        symbol: symbolRenderer(token),
+      }),
       errorKey: 'insufficient-balance',
       isValid: false,
     }

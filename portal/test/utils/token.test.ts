@@ -5,6 +5,8 @@ import {
   isEvmToken,
   tunnelsThroughPartners,
   parseTokenUnits,
+  getTokenSymbol,
+  getTunnelTokenSymbol,
 } from 'utils/token'
 import { parseUnits as viemParseUnits } from 'viem'
 import { describe, expect, it } from 'vitest'
@@ -168,6 +170,36 @@ describe('utils/token', function () {
         token.decimals,
       )
       expect(parseTokenUnits(largeDecimalAmount, token)).toEqual(expected)
+    })
+  })
+
+  describe('getTokenSymbol', function () {
+    it('should return customSymbol if it exists in the token extensions', function () {
+      const token = {
+        ...baseToken,
+        extensions: { customSymbol: 'cBTC' },
+        symbol: 'BTC',
+      }
+      expect(getTokenSymbol(token)).toBe(token.extensions.customSymbol)
+    })
+
+    it('should return the token symbol if customSymbol does not exist in extensions', function () {
+      expect(getTokenSymbol(baseToken)).toBe(baseToken.symbol)
+    })
+  })
+
+  describe('getTunnelTokenSymbol', function () {
+    it('should return tunnelSymbol if it exists in the token extensions', function () {
+      const token = {
+        ...baseToken,
+        extensions: { customSymbol: 'cBTC', tunnelSymbol: 'tBTC' },
+        symbol: 'BTC',
+      }
+      expect(getTunnelTokenSymbol(token)).toBe(token.extensions.tunnelSymbol)
+    })
+
+    it('should fall back to getTokenSymbol when no tunnel exist', function () {
+      expect(getTunnelTokenSymbol(baseToken)).toBe(getTokenSymbol(baseToken))
     })
   })
 })

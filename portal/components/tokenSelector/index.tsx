@@ -7,6 +7,7 @@ import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
+import { getTunnelTokenSymbol } from 'utils/token'
 
 import { Chevron } from '../icons/chevron'
 import { TokenLogo } from '../tokenLogo'
@@ -66,7 +67,9 @@ export const TokenSelector = function ({
         type="button"
       >
         <TokenLogo size="small" token={selectedToken} />
-        <span className="text-neutral-950">{selectedToken.symbol}</span>
+        <span className="text-neutral-950">
+          {getTunnelTokenSymbol(selectedToken)}
+        </span>
         {tokens.length > 1 && (
           <Chevron.Bottom className="ml-auto flex-shrink-0 [&>path]:fill-neutral-500 [&>path]:group-hover/token-selector:fill-neutral-950" />
         )}

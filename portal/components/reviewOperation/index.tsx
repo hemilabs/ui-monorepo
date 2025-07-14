@@ -1,5 +1,6 @@
 import { DrawerSection } from 'components/drawer'
 import { ComponentProps, ReactNode } from 'react'
+import { Token } from 'types/token'
 
 import { Amount } from './amount'
 import { CallToActionContainer } from './callToActionContainer'
@@ -9,6 +10,7 @@ type Props = {
   bottomSection?: ReactNode
   callToAction?: ReactNode
   steps: StepPropsWithoutPosition[]
+  symbolRenderer?: (token: Token) => string
 } & Omit<ComponentProps<typeof Amount>, 'value'> & {
     // rename value to amount
     amount: ComponentProps<typeof Amount>['value']
@@ -19,12 +21,13 @@ export const ReviewOperation = ({
   bottomSection,
   callToAction,
   steps,
+  symbolRenderer,
   token,
 }: Props) => (
   <>
     <div className="skip-parent-padding-x mt-3 flex min-h-0 flex-1 flex-col overflow-y-auto">
       <DrawerSection>
-        <Amount token={token} value={amount} />
+        <Amount symbolRenderer={symbolRenderer} token={token} value={amount} />
         <div
           className="mt-4 flex flex-col gap-y-8"
           // use this to prevent layout shift for the gray container

@@ -1,5 +1,5 @@
 diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
-index 17c1715..9968812 100644
+index 17c1715..66662f8 100644
 --- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 +++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 @@ -340,6 +340,11 @@
@@ -43,7 +43,7 @@ index 17c1715..9968812 100644
          "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/usdt.svg"
        },
        "logoURI": "https://hemilabs.github.io/token-list/logos/usdt.svg",
-@@ -540,11 +555,16 @@
+@@ -540,10 +555,15 @@
        "decimals": 8,
        "extensions": {
          "birthBlock": 2165818,
@@ -56,20 +56,16 @@ index 17c1715..9968812 100644
        },
        "logoURI": "https://hemilabs.github.io/token-list/logos/hemibtc.svg",
 -      "name": "HemiBitcoin",
--      "symbol": "hBTC"
 +      "name": "Testnet Bitcoin",
-+      "symbol": "tBTC"
+       "symbol": "hBTC"
      },
      {
-       "address": "0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298",
-@@ -611,8 +631,8 @@
+@@ -611,7 +631,7 @@
          "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/hdai.svg"
        },
        "logoURI": "https://hemilabs.github.io/token-list/logos/hdai.svg",
 -      "name": "Hemi Tunneled DAI",
--      "symbol": "hDAI"
 +      "name": "Dai Stablecoin",
-+      "symbol": "DAI"
+       "symbol": "hDAI"
      }
    ]
- }

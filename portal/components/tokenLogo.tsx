@@ -48,7 +48,7 @@ export function TokenLogo({ size, token }: Props) {
   return token.logoURI ? (
     <div className={`relative ${sizes[size]}`}>
       <Image
-        alt={`${token.symbol} Logo`}
+        alt={`${token.name} Logo`}
         className="w-full"
         height={20}
         src={token.logoURI}

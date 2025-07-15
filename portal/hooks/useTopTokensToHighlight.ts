@@ -13,7 +13,6 @@ import { useHemiClient } from './useHemiClient'
 import { useTokenPrices } from './useTokenPrices'
 
 type Props = {
-  limit?: number
   tokens: Token[]
 }
 
@@ -21,7 +20,7 @@ type Props = {
  * Hook to retrieve and rank the top tokens held by the user based on their USD value.
  *
  * This hook fetches the on-chain balances for a given list of tokens (on both L1 and L2),
- * retrieves their corresponding USD prices from the portal API, and returns the top N tokens
+ * retrieves their corresponding USD prices from the portal API, and returns the top tokens
  * sorted by their total USD value (balance * price).
  *
  * - Native and ERC-20 token balances are supported.
@@ -32,11 +31,10 @@ type Props = {
  * This is useful for UI components that want to highlight the user's most valuable tokens,
  * for example: Quick tokens in a token selector.
  *
- * @param limit (optional) Maximum number of tokens to return (default: 3)
  * @param tokens List of available tokens to evaluate
  * @returns Query result containing sorted tokens by USD value, loading and error states
  */
-export function useTopTokensToHighlight({ limit = 3, tokens }: Props) {
+export function useTopTokensToHighlight({ tokens }: Props) {
   const { address: account, isConnected } = useAccount()
   const hemiClient = useHemiClient()
   const { data: prices } = useTokenPrices()
@@ -75,7 +73,6 @@ export function useTopTokensToHighlight({ limit = 3, tokens }: Props) {
           if (aAmount.lt(bAmount)) return 1
           return 0
         })
-        .slice(0, limit)
         .map(({ data }) => ({ ...data }))
 
       return {

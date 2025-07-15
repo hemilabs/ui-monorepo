@@ -1,7 +1,6 @@
 'use client'
 
 import { Card } from 'components/card'
-import { Drawer } from 'components/drawer'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { MagnifyingGlassIcon } from 'components/icons/magnifyingGlassIcon'
 import { SearchInput } from 'components/inputText'
@@ -9,6 +8,7 @@ import { Modal } from 'components/modal'
 import { useDebounce } from 'hooks/useDebounce'
 import { useTopTokensToHighlight } from 'hooks/useTopTokensToHighlight'
 import { useUserTokenList } from 'hooks/useUserTokenList'
+import { useVisualViewportSize } from 'hooks/useVisualViewportSize'
 import { useWindowSize } from 'hooks/useWindowSize'
 import partition from 'lodash/partition'
 import { useTranslations } from 'next-intl'
@@ -21,10 +21,7 @@ import { NoTokensMatch } from './noTokensMatch'
 import { TokenListSkeleton } from './tokenListSkeleton'
 import { TokenQuickSelect } from './tokenQuickSelect'
 
-export const isCustomToken = (userTokenList: TokenType[], token: TokenType) =>
-  userTokenList.some(
-    t => t.address === token.address && t.chainId === token.chainId,
-  )
+import { isCustomToken } from '.'
 
 type Props = {
   chainId: Chain['id']
@@ -47,6 +44,7 @@ export const TokenList = function ({
   const debouncedSearchText = useDebounce(searchText)
   const { userTokenList } = useUserTokenList()
   const { width } = useWindowSize()
+  const { height: viewportHeight } = useVisualViewportSize()
 
   // Define a list of default priority tokens by their addresses
   // These tokens will be prioritized in the quick selection section
@@ -113,9 +111,28 @@ export const TokenList = function ({
     closeModal()
   }
 
+  const onKeyDown = function (e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      handleSelectToken(sortedTokens[0])
+    }
+  }
+
+  const addKeyDownListener = sortedTokens.length === 1 ? onKeyDown : undefined
+
   const content = (
-    <div className="drawer-content flex h-[65dvh] flex-col gap-x-3 md:w-[409px]">
-      <div className="flex items-center justify-between">
+    <div
+      className="drawer-content-no-bg flex h-full w-screen flex-col gap-x-3 overflow-hidden bg-white md:h-[65dvh] md:w-[409px] md:bg-transparent"
+      style={{
+        // On mobile devices, when the virtual keyboard is open, the visible viewport height (visualViewport.height)
+        // becomes smaller than the full window height. To ensure the modal fits within the remaining space plus the extra space,
+        // we uses visualViewport to detect available height
+        // On desktop (md:), fallback to Tailwind-defined height.
+        height: width < 768 ? `${viewportHeight - 112}px` : undefined,
+        scrollbarColor: '#d4d4d4 transparent',
+        scrollbarWidth: 'thin',
+      }}
+    >
+      <div className="mb-2 flex items-center justify-between">
         <h3 className="text-xl font-medium text-neutral-950">
           {t('select-token')}
         </h3>
@@ -126,16 +143,10 @@ export const TokenList = function ({
       </div>
       <div className="py-4">
         <SearchInput
-          autoFocus
+          autoFocus={width >= 768}
           onChange={e => setSearchText(e.target.value)}
           onClear={() => setSearchText('')}
-          onKeyDown={function (e) {
-            // If the user presses Enter and there is only one token in the search results,
-            // select that token and close the modal
-            if (e.key === 'Enter' && sortedTokens.length === 1) {
-              handleSelectToken(sortedTokens[0])
-            }
-          }}
+          onKeyDown={addKeyDownListener}
           placeholder={t('search-tokens')}
           value={searchText}
         />
@@ -143,9 +154,7 @@ export const TokenList = function ({
       {!searchText ? (
         <div className="mb-4">
           <TokenQuickSelect
-            onSelect={function (token) {
-              handleSelectToken(token)
-            }}
+            onSelect={token => handleSelectToken(token)}
             tokens={quickSelectionTokens}
           />
         </div>
@@ -164,10 +173,8 @@ export const TokenList = function ({
       ) : sortedTokens.length > 0 ? (
         <List
           isSearchActive={!!searchText}
-          onSelectToken={function (token) {
-            handleSelectToken(token)
-          }}
-          tokens={restOfTokens}
+          onSelectToken={token => handleSelectToken(token)}
+          tokens={searchText ? restOfTokens : sortedTokens}
           yourTokens={fetchedSortedTopTokens}
         />
       ) : (
@@ -180,11 +187,9 @@ export const TokenList = function ({
     </div>
   )
 
-  return width >= 768 ? (
-    <Modal onClose={closeModal}>
+  return (
+    <Modal onClose={closeModal} position={width < 768 ? 'top' : 'center'}>
       <Card>{content}</Card>
     </Modal>
-  ) : (
-    <Drawer onClose={closeModal}>{content}</Drawer>
   )
 }

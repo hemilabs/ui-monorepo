@@ -3,13 +3,15 @@
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { DatabaseIcon } from 'components/icons/databaseIcon'
 import { MultiTokensIcon } from 'components/icons/multiTokensIcon'
+import { useHasScrolled } from 'hooks/useHasScrolled'
 import { useUserTokenList } from 'hooks/useUserTokenList'
 import { useTranslations } from 'next-intl'
 import { type JSX, useRef } from 'react'
 import { Token as TokenType } from 'types/token'
 
 import { Token } from './token'
-import { isCustomToken } from './tokenList'
+
+import { isCustomToken } from '.'
 
 type Props = {
   onSelectToken: (token: TokenType) => void
@@ -30,7 +32,7 @@ function CustomTokensHeader({
 }: RenderHeaderProps) {
   const t = useTranslations('token-selector')
   return (
-    <div
+    <li
       className="absolute left-0 top-0 w-full"
       style={{
         height,
@@ -40,7 +42,7 @@ function CustomTokensHeader({
       <h6 className="py-3 pb-1.5 text-sm font-medium text-neutral-500">
         {t('manually-added-tokens')}
       </h6>
-    </div>
+    </li>
   )
 }
 
@@ -51,7 +53,7 @@ function YourTokensHeader({
 }: RenderHeaderProps) {
   const t = useTranslations('token-selector')
   return (
-    <div
+    <li
       className="absolute left-0 top-0 w-full"
       style={{
         height,
@@ -64,7 +66,7 @@ function YourTokensHeader({
           {t('your-tokens')}
         </h6>
       </div>
-    </div>
+    </li>
   )
 }
 
@@ -76,7 +78,7 @@ function AllTokensHeader({
 }: RenderHeaderProps) {
   const t = useTranslations('token-selector')
   return (
-    <div
+    <li
       className="relative inset-x-0 top-0"
       style={{
         height,
@@ -86,13 +88,13 @@ function AllTokensHeader({
       {hasTokens && (
         <div className="absolute inset-x-0 top-4 h-px border-t border-neutral-300/55 md:-mx-6" />
       )}
-      <div className="flex items-center gap-x-2 pt-8">
+      <div className="flex items-center gap-x-2 pb-2 pt-9">
         <DatabaseIcon />
         <h6 className="text-sm font-medium text-neutral-500">
           {t('all-tokens')}
         </h6>
       </div>
-    </div>
+    </li>
   )
 }
 
@@ -111,7 +113,7 @@ const TokenRow = ({
     className="absolute left-0 top-0 w-full cursor-pointer rounded-lg hover:bg-neutral-100"
     onClick={() => onSelect(token)}
     style={{
-      height: '56px',
+      height: '64px',
       // After showing your, all and custom tokens headers, we need to adjust the position of all the following tokens to consider it
       transform: `translateY(${start + offset}px)`,
     }}
@@ -120,12 +122,17 @@ const TokenRow = ({
   </li>
 )
 
-const shouldRenderHeader = (
-  alreadyRendered: boolean,
-  isFirst: boolean,
-  isSearchActive: boolean,
-  condition?: boolean,
-) => !alreadyRendered && isFirst && !isSearchActive && (condition ?? true)
+const shouldRenderHeader = ({
+  alreadyRendered,
+  condition = true,
+  isFirst,
+  isSearchActive,
+}: {
+  alreadyRendered: boolean
+  isFirst: boolean
+  isSearchActive: boolean
+  condition?: boolean
+}) => !alreadyRendered && isFirst && !isSearchActive && condition
 
 export const List = function ({
   isSearchActive,
@@ -136,19 +143,21 @@ export const List = function ({
   yourTokens: TokenType[]
 }) {
   const parentRef = useRef<HTMLDivElement>(null)
+
   const { userTokenList } = useUserTokenList()
+  const { hasScrolled, onScroll } = useHasScrolled()
 
   const combinedTokens = [...yourTokens, ...tokens, ...userTokenList]
 
   const rowVirtualizer = useVirtualizer({
     count: combinedTokens.length,
-    estimateSize: () => 56,
+    estimateSize: () => 64,
     getScrollElement: () => parentRef.current,
     overscan: 5,
   })
 
   const customTokensHeaderHeight = 40
-  const allTokensHeaderHeight = 60
+  const allTokensHeaderHeight = 64
   const yourTokensHeaderHeight = 40
 
   const getList = function () {
@@ -177,23 +186,23 @@ export const List = function ({
       const isFirstYourTokens = rowIndex === 0
       const isFirstAllTokens = virtualItem.index === yourTokens.length
 
-      const shouldRenderCustomHeader = shouldRenderHeader(
-        hasAddedCustomTokensHeader,
-        true, // custom tokens are always the last section
-        false, // custom tokens are not affected by search
-        isCustom,
-      )
-      const shouldRenderYourTokensHeader = shouldRenderHeader(
-        hasAddedYourTokensHeader,
-        isFirstYourTokens,
+      const shouldRenderCustomHeader = shouldRenderHeader({
+        alreadyRendered: hasAddedCustomTokensHeader,
+        condition: isCustom,
+        isFirst: true, // custom tokens are always the last section
+        isSearchActive: false, // custom tokens are not affected by search
+      })
+      const shouldRenderYourTokensHeader = shouldRenderHeader({
+        alreadyRendered: hasAddedYourTokensHeader,
+        condition: hasYourTokens,
+        isFirst: isFirstYourTokens,
         isSearchActive,
-        hasYourTokens,
-      )
-      const shouldRenderAllTokensHeader = shouldRenderHeader(
-        hasAddedAllTokensHeader,
-        isFirstAllTokens,
+      })
+      const shouldRenderAllTokensHeader = shouldRenderHeader({
+        alreadyRendered: hasAddedAllTokensHeader,
+        isFirst: isFirstAllTokens,
         isSearchActive,
-      )
+      })
 
       if (shouldRenderCustomHeader) {
         rows.push(
@@ -247,7 +256,10 @@ export const List = function ({
 
   return (
     <div
-      className="shadow-top-token-selector mb-4 size-full overflow-y-auto bg-white"
+      className={`mb-4 size-full overflow-y-auto bg-white transition-shadow duration-200 ${
+        hasScrolled ? 'shadow-top-token-selector' : ''
+      }`}
+      onScroll={onScroll}
       ref={parentRef}
     >
       <ul className="relative size-full">{getList()}</ul>

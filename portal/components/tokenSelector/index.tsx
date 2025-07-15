@@ -7,6 +7,7 @@ import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
+import { Token as TokenType } from 'types/token'
 
 import { Chevron } from '../icons/chevron'
 import { TokenLogo } from '../tokenLogo'
@@ -15,10 +16,10 @@ const TokenListLoading = function () {
   const { width } = useWindowSize()
   return width > 768 ? (
     <Modal>
-      <Skeleton className="h-90 w-96" containerClassName="flex" />
+      <Skeleton className="h-[65dvh] w-[409px]" containerClassName="flex" />
     </Modal>
   ) : (
-    <DrawerLoader className="h-90 md:hidden" />
+    <DrawerLoader className="h-[65dvh] md:hidden" />
   )
 }
 
@@ -29,6 +30,11 @@ const TokenList = dynamic(
     ssr: false,
   },
 )
+
+export const isCustomToken = (userTokenList: TokenType[], token: TokenType) =>
+  userTokenList.some(
+    t => t.address === token.address && t.chainId === token.chainId,
+  )
 
 type Props = {
   chainId: RemoteChain['id']

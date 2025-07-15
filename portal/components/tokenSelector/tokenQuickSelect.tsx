@@ -20,7 +20,7 @@ function getTokenHoverBgClass(symbol: string) {
 }
 
 export const TokenQuickSelect = ({ onSelect, tokens }: Props) => (
-  <div className="flex gap-x-2 px-1">
+  <div className="flex gap-x-3">
     {tokens.map(token => (
       <div
         className="shadow-token-selector group relative flex-1 rounded-lg bg-white"
@@ -34,7 +34,7 @@ export const TokenQuickSelect = ({ onSelect, tokens }: Props) => (
         />
 
         <button
-          className="relative z-10 flex h-16 w-full flex-col items-center justify-center gap-y-1"
+          className="relative z-10 flex w-full flex-col items-center gap-y-1 pb-2 pt-4"
           onClick={() => onSelect(token)}
           type="button"
         >

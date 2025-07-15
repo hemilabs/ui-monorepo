@@ -2,7 +2,7 @@ import { ComponentProps } from 'react'
 
 import { MagnifyingGlassIcon } from './icons/magnifyingGlassIcon'
 
-const inputCss = `shadow-soft text-sm placeholder:text-sm w-full cursor-pointer rounded-lg border disabled:cursor-auto
+const inputCss = `shadow-soft text-base md:text-sm placeholder:text-sm w-full cursor-pointer rounded-lg border disabled:cursor-auto
   border-solid border-neutral-300/55 bg-white px-3 py-2 font-medium text-neutral-950 hover:border-neutral-300/90
  placeholder:font-medium placeholder:text-neutral-500 focus:border-orange-500 focus:outline-none transition-colors duration-200`
 
@@ -47,7 +47,7 @@ export const SearchInput = function ({
           />
         </div>
       )}
-      <div className="w-full rounded-lg border border-transparent transition-all duration-200 focus-within:rounded-xl focus-within:border-[3px] focus-within:border-orange-100">
+      <div className="box-border w-full rounded-lg outline outline-0 outline-orange-100 transition-all duration-200 focus-within:outline-4">
         <input
           {...props}
           className={`${inputCss} ${showMagnifyingGlass ? 'pl-8' : ''} ${

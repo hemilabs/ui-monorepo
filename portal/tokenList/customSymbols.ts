@@ -36,5 +36,5 @@ export const customSymbolsList: Partial<
       customSymbol: 'tBTC',
     },
   },
-  /* eslint-disable sort-keys */
+  /* eslint-enable sort-keys */
 }

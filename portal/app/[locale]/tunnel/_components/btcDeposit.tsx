@@ -4,7 +4,6 @@ import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
-import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -111,8 +110,6 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     [depositError, depositReceiptError, isDepositing, setIsDepositing, track],
   )
 
-  const { feePrices, isError: isFeePricesError } = useGetFeePrices()
-
   const handleDeposit = function () {
     if (!canDeposit) {
       return
@@ -127,8 +124,6 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     })
     track?.('btc - dep started')
   }
-
-  const fees = feePrices?.fastestFee?.toString()
 
   return (
     <>
@@ -145,9 +140,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
                 },
               )}
             />
-            {fees !== undefined ? (
-              <BtcFees fees={fees} isError={isFeePricesError} />
-            ) : null}
+            <BtcFees />
           </div>
         }
         bottomSection={<WalletsConnected />}

@@ -51,7 +51,7 @@ export const Modal = function ({
           rather than interacting with the page behind it.
         */}
         <div
-          className="absolute inset-0 z-0 h-screen md:hidden"
+          className="absolute inset-0 z-0 h-screen max-h-full md:hidden"
           onClick={onClose}
         >
           <OverlayComponent />

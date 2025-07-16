@@ -120,7 +120,7 @@ export const TokenList = function ({
 
   const content = (
     <div
-      className="drawer-content-no-bg flex h-full w-screen flex-col gap-x-3 overflow-hidden bg-white md:h-[65dvh] md:w-[409px] md:bg-transparent"
+      className="flex h-screen w-screen flex-col gap-x-3 overflow-hidden bg-white pt-6 md:h-[65dvh] md:w-[409px] md:bg-transparent [&>:not(.skip-parent-padding-x)]:px-4 [&>:not(.skip-parent-padding-x)]:md:px-6"
       style={{
         // On mobile devices, when the virtual keyboard is open, the visible viewport height (visualViewport.height)
         // becomes smaller than the full window height. To ensure the modal fits within the remaining space plus the extra space,

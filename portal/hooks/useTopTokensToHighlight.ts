@@ -89,16 +89,19 @@ export function useTopTokensToHighlight({ tokens }: Props) {
         : getEvmL1PublicClient(chainId)
 
       return {
-        queryFn: () =>
-          isConnected
-            ? isNativeToken(token)
-              ? publicClient.getBalance({ address: account })
-              : // @ts-expect-error because it works on IDE
-                getErc20TokenBalance(publicClient, {
-                  account,
-                  address: token.address as `0x${string}`,
-                })
-            : BigInt(0),
+        queryFn() {
+          if (!isConnected) {
+            return BigInt(0)
+          }
+          const promise = isNativeToken(token)
+            ? publicClient.getBalance({ address: account })
+            : // @ts-expect-error because it works on IDE
+              getErc20TokenBalance(publicClient, {
+                account,
+                address: token.address as `0x${string}`,
+              })
+          return promise.catch(() => BigInt(0))
+        },
         queryKey: ['top-token-balance', token.chainId, token.address],
         select: (balance: bigint) => ({ ...token, balance }),
       }

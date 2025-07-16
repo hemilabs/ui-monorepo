@@ -3,14 +3,9 @@
     @apply flex w-full flex-col overflow-y-hidden bg-white pt-6 md:w-[450px];
   }
 
-  .drawer-content-no-bg {
-    @apply flex w-full flex-col overflow-y-hidden pt-6 md:w-[450px];
-  }
-
   /* Use the .skip-parent-padding-x for elements that should not have the px-* applied. For example, components
   that must stretch with some background along the entire drawer, and should not have the drawer's padding. */
-  .drawer-content > *:not(.skip-parent-padding-x),
-  .drawer-content-no-bg > *:not(.skip-parent-padding-x) {
+  .drawer-content > *:not(.skip-parent-padding-x) {
     @apply px-4 md:px-6;
   }
 }

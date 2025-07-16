@@ -113,9 +113,6 @@ const TokenRow = ({
     onClick={() => onSelect(token)}
     style={{
       height: '60px',
-      // After showing your, all and custom tokens headers, we need to adjust the position of all the following tokens to consider it
-      // marginLeft: '0.5rem',
-      // marginRight: '0.5rem',
       transform: `translateY(${start + offset}px)`,
     }}
   >
@@ -257,13 +254,13 @@ export const List = function ({
 
   return (
     <div
-      className={`skip-parent-padding-x size-full overflow-y-auto bg-white transition-shadow duration-200 ${
+      className={`skip-parent-padding-x flex-1 overflow-y-auto bg-white transition-shadow duration-200 ${
         hasScrolled ? 'shadow-top-token-selector' : ''
       }`}
       onScroll={onScroll}
       ref={parentRef}
     >
-      <ul className="relative size-full">{getList()}</ul>
+      <ul className="relative">{getList()}</ul>
     </div>
   )
 }

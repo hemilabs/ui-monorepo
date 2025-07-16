@@ -1,25 +1,29 @@
-import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { Modal } from 'components/modal'
 import { useUmami } from 'hooks/useUmami'
+import { useVisualViewportSize } from 'hooks/useVisualViewportSize'
 import { useWindowSize } from 'hooks/useWindowSize'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
-import { Token as TokenType } from 'types/token'
 
 import { Chevron } from '../icons/chevron'
 import { TokenLogo } from '../tokenLogo'
 
 const TokenListLoading = function () {
   const { width } = useWindowSize()
-  return width > 768 ? (
-    <Modal>
-      <Skeleton className="h-[65dvh] w-[409px]" containerClassName="flex" />
+  const { height: viewportHeight } = useVisualViewportSize()
+  return (
+    <Modal verticalAlign={width < 768 ? 'top' : 'center'}>
+      <Skeleton
+        className="h-full w-screen md:h-[65dvh] md:w-[409px]"
+        containerClassName="flex"
+        style={{
+          height: width < 768 ? `${viewportHeight - 112}px` : undefined,
+        }}
+      />
     </Modal>
-  ) : (
-    <DrawerLoader className="h-[65dvh] md:hidden" />
   )
 }
 
@@ -30,11 +34,6 @@ const TokenList = dynamic(
     ssr: false,
   },
 )
-
-export const isCustomToken = (userTokenList: TokenType[], token: TokenType) =>
-  userTokenList.some(
-    t => t.address === token.address && t.chainId === token.chainId,
-  )
 
 type Props = {
   chainId: RemoteChain['id']

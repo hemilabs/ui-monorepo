@@ -8,10 +8,9 @@ import { useUserTokenList } from 'hooks/useUserTokenList'
 import { useTranslations } from 'next-intl'
 import { type JSX, useRef } from 'react'
 import { Token as TokenType } from 'types/token'
+import { isCustomToken } from 'utils/token'
 
 import { Token } from './token'
-
-import { isCustomToken } from '.'
 
 type Props = {
   onSelectToken: (token: TokenType) => void
@@ -39,7 +38,7 @@ function CustomTokensHeader({
         transform: `translateY(${virtualItemStart + offset}px)`,
       }}
     >
-      <h6 className="py-3 pb-1.5 text-sm font-medium text-neutral-500">
+      <h6 className="px-4 py-3 pb-1.5 text-sm font-medium text-neutral-500 md:px-6">
         {t('manually-added-tokens')}
       </h6>
     </li>
@@ -60,7 +59,7 @@ function YourTokensHeader({
         transform: `translateY(${virtualItemStart + offset}px)`,
       }}
     >
-      <div className="flex items-center gap-x-2 py-3">
+      <div className="flex items-center gap-x-2 px-4 py-3 md:px-6">
         <MultiTokensIcon />
         <h6 className="text-sm font-medium text-neutral-500">
           {t('your-tokens')}
@@ -88,7 +87,7 @@ function AllTokensHeader({
       {hasTokens && (
         <div className="absolute inset-x-0 top-4 h-px border-t border-neutral-300/55 md:-mx-6" />
       )}
-      <div className="flex items-center gap-x-2 pb-2 pt-9">
+      <div className="flex items-center gap-x-2 px-4 pb-2 pt-9 md:px-6">
         <DatabaseIcon />
         <h6 className="text-sm font-medium text-neutral-500">
           {t('all-tokens')}
@@ -110,11 +109,13 @@ const TokenRow = ({
   onSelect: (t: TokenType) => void
 }) => (
   <li
-    className="absolute left-0 top-0 w-full cursor-pointer rounded-lg hover:bg-neutral-100"
+    className="absolute left-1 right-1 top-0 cursor-pointer rounded-lg hover:bg-neutral-100 md:left-3 md:right-3"
     onClick={() => onSelect(token)}
     style={{
-      height: '64px',
+      height: '60px',
       // After showing your, all and custom tokens headers, we need to adjust the position of all the following tokens to consider it
+      // marginLeft: '0.5rem',
+      // marginRight: '0.5rem',
       transform: `translateY(${start + offset}px)`,
     }}
   >
@@ -151,7 +152,7 @@ export const List = function ({
 
   const rowVirtualizer = useVirtualizer({
     count: combinedTokens.length,
-    estimateSize: () => 64,
+    estimateSize: () => 60,
     getScrollElement: () => parentRef.current,
     overscan: 5,
   })
@@ -256,7 +257,7 @@ export const List = function ({
 
   return (
     <div
-      className={`mb-4 size-full overflow-y-auto bg-white transition-shadow duration-200 ${
+      className={`skip-parent-padding-x size-full overflow-y-auto bg-white transition-shadow duration-200 ${
         hasScrolled ? 'shadow-top-token-selector' : ''
       }`}
       onScroll={onScroll}

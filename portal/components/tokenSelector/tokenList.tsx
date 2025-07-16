@@ -14,14 +14,13 @@ import partition from 'lodash/partition'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { Token as TokenType } from 'types/token'
+import { isCustomToken } from 'utils/token'
 import { type Chain, isAddress, isAddressEqual } from 'viem'
 
 import { List } from './list'
 import { NoTokensMatch } from './noTokensMatch'
 import { TokenListSkeleton } from './tokenListSkeleton'
 import { TokenQuickSelect } from './tokenQuickSelect'
-
-import { isCustomToken } from '.'
 
 type Props = {
   chainId: Chain['id']
@@ -188,7 +187,7 @@ export const TokenList = function ({
   )
 
   return (
-    <Modal onClose={closeModal} position={width < 768 ? 'top' : 'center'}>
+    <Modal onClose={closeModal} verticalAlign={width < 768 ? 'top' : 'center'}>
       <Card>{content}</Card>
     </Modal>
   )

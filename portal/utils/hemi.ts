@@ -352,3 +352,27 @@ export const initiateBtcWithdrawal = ({
       vaultIndex,
     }),
   )
+
+const calculateBtcDepositFee = (
+  hemiClient: HemiPublicClient,
+  { amount, vaultStateAddress }: { amount: bigint; vaultStateAddress: Address },
+) =>
+  hemiClient.calculateDepositFee({
+    depositAmount: amount,
+    vaultStateAddress,
+  })
+
+export const getBitcoinDepositFee = ({
+  amount,
+  hemiClient,
+}: {
+  amount: bigint
+  hemiClient: HemiPublicClient
+}) =>
+  hemiClient
+    .getVaultChildIndex()
+    .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
+    .then(vaultAddress => getBitcoinVaultStateAddress(hemiClient, vaultAddress))
+    .then(vaultStateAddress =>
+      calculateBtcDepositFee(hemiClient, { amount, vaultStateAddress }),
+    )

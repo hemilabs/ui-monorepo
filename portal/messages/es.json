@@ -24,6 +24,7 @@
     "min-amount-stake": "El stake mínimo es {amount} {symbol}",
     "min-amount-unstake": "El desbloqueo mínimo es {amount} {symbol}",
     "min-amount-withdrawal": "El retiro mínimo es {amount} {symbol}",
+    "network-fees": "Tarifa de red",
     "network-gas-fee": "Tarifa de gas de {network}",
     "open": "Abrir",
     "stake": "Stake",
@@ -37,6 +38,7 @@
       "pending": "Pendiente",
       "rejected": "Rechazada"
     },
+    "tunnel-fees": "Tarifas del túnel",
     "try-again": "Intente Nuevamente",
     "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
     "unstake": "Desbloquear",

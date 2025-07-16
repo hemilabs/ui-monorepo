@@ -11,7 +11,9 @@ import { useEffect, useState } from 'react'
 import { formatEvmAddress } from 'utils/format'
 import { parseTokenUnits } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
+import { formatUnits } from 'viem'
 
+import { useBtcDepositTunnelFees } from '../_hooks/useBtcTunnelFees'
 import { useMinDepositSats } from '../_hooks/useMinDepositSats'
 import { BtcToHemiTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
 import { validateSubmit } from '../_utils/'
@@ -72,6 +74,14 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
 
   const canDeposit = !isMinDepositsSatsLoading && canSubmit
 
+  const amountBigInt = parseTokenUnits(fromInput, fromToken)
+
+  const {
+    btcDepositFee,
+    isError: isTunnelFeeError,
+    isLoading: isLoadingTunnelFee,
+  } = useBtcDepositTunnelFees(amountBigInt)
+
   const {
     clearDepositState,
     depositBitcoin,
@@ -125,6 +135,23 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     track?.('btc - dep started')
   }
 
+  const calculateReceiveAmount = function () {
+    if (amountBigInt === BigInt(0)) {
+      return '0'
+    }
+    if (isTunnelFeeError) {
+      return '-'
+    }
+    if (isLoadingTunnelFee) {
+      return '...'
+    }
+
+    return formatUnits(
+      amountBigInt - (btcDepositFee ?? BigInt(0)),
+      fromToken.decimals,
+    )
+  }
+
   return (
     <>
       <TunnelForm
@@ -140,12 +167,13 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
                 },
               )}
             />
-            <BtcFees />
+            <BtcFees amount={amountBigInt} />
           </div>
         }
         bottomSection={<WalletsConnected />}
         formContent={
           <FormContent
+            calculateReceiveAmount={calculateReceiveAmount}
             errorKey={
               walletIsConnected(btcWalletStatus) && balanceLoaded
                 ? errorKey

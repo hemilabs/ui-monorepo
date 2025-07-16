@@ -1,5 +1,7 @@
 import { ReactNode } from 'react'
 
 export const FeesContainer = ({ children }: { children: ReactNode }) => (
-  <div className="px-8 py-4 md:px-10">{children}</div>
+  <div className="flex flex-col gap-y-1 px-8 py-4 text-sm md:px-10">
+    {children}
+  </div>
 )

@@ -8,6 +8,8 @@ import { formatUnits } from 'viem'
 
 import { useBtcDepositTunnelFees } from '../_hooks/useBtcTunnelFees'
 
+import { FeesContainer } from './feesContainer'
+
 type BtcFeesProps = {
   amount: bigint
 }
@@ -79,7 +81,7 @@ export const BtcFees = function ({ amount }: BtcFeesProps) {
   }
 
   return (
-    <div className="flex flex-col gap-y-1 px-8 py-4 text-sm md:px-10">
+    <FeesContainer>
       <div className="flex items-center justify-between">
         <span className="text-neutral-500">{t('network-fees')}</span>
         <div className="text-neutral-950">{renderNetworkFees()}</div>
@@ -88,6 +90,6 @@ export const BtcFees = function ({ amount }: BtcFeesProps) {
         <span className="text-neutral-500">{t('tunnel-fees')}</span>
         <div className="text-neutral-950">{renderTunnelFees()}</div>
       </div>
-    </div>
+    </FeesContainer>
   )
 }

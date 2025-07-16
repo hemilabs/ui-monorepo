@@ -20,6 +20,7 @@ import { formatUnits } from 'viem'
 import { useEstimateDepositFees } from '../../_hooks/useEstimateDepositFees'
 import { RetryEvmDeposit } from '../retryEvmDeposit'
 
+import { AddTokenToWallet } from './addTokenToWallet'
 import { ChainIcon } from './chainIcon'
 import { ChainLabel } from './chainLabel'
 import { Operation } from './operation'
@@ -181,9 +182,24 @@ const ReviewContent = function ({
   steps.push(getDepositStep())
   steps.push(getFundsHemiStep())
 
+  const addToken = function () {
+    // Only show the option to add the token if the deposit is either completed,
+    // or the user is waiting for the tokens to be minted on Hemi.
+    if (
+      ![
+        EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
+        EvmDepositStatus.DEPOSIT_RELAYED,
+      ].includes(depositStatus)
+    ) {
+      return null
+    }
+    return <AddTokenToWallet token={toToken} />
+  }
+
   return (
     <Operation
       amount={deposit.amount}
+      bottomSection={addToken()}
       callToAction={getCallToAction(deposit)}
       heading={t('review-deposit')}
       onClose={onClose}

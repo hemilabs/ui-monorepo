@@ -188,7 +188,7 @@ export const TokenList = function ({
 
   return (
     <Modal onClose={closeModal} verticalAlign={width < 768 ? 'top' : 'center'}>
-      <Card>{content}</Card>
+      <Card className="overflow-hidden rounded-2xl bg-white">{content}</Card>
     </Modal>
   )
 }

@@ -260,7 +260,14 @@ export const List = function ({
       onScroll={onScroll}
       ref={parentRef}
     >
-      <ul className="relative">{getList()}</ul>
+      <ul
+        className="relative"
+        style={{
+          height: `${rowVirtualizer.getTotalSize()}px`,
+        }}
+      >
+        {getList()}
+      </ul>
     </div>
   )
 }

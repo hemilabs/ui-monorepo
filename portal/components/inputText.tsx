@@ -1,8 +1,10 @@
 import { ComponentProps } from 'react'
 
-const inputCss = `shadow-soft text-sm placeholder:text-sm w-full cursor-pointer rounded-lg border disabled:cursor-auto
+import { MagnifyingGlassIcon } from './icons/magnifyingGlassIcon'
+
+const inputCss = `shadow-soft text-base md:text-sm placeholder:text-sm w-full cursor-pointer rounded-lg border disabled:cursor-auto
   border-solid border-neutral-300/55 bg-white px-3 py-2 font-medium text-neutral-950 hover:border-neutral-300/90
- placeholder:font-medium placeholder:text-neutral-500 focus:border-orange-500 focus:outline-none`
+ placeholder:font-medium placeholder:text-neutral-500 focus:border-orange-500 focus:outline-none transition-colors duration-200`
 
 const CloseIcon = (props: ComponentProps<'svg'>) => (
   <svg
@@ -14,24 +16,13 @@ const CloseIcon = (props: ComponentProps<'svg'>) => (
   >
     <path
       d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"
-      fill="#737373"
-    />
-  </svg>
-)
-
-const MagnifyingGlass = () => (
-  <svg fill="none" height={16} width={16} xmlns="http://www.w3.org/2000/svg">
-    <path
-      clipRule="evenodd"
-      d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-      fill="#A3A3A3"
-      fillRule="evenodd"
+      fill="#0A0A0A"
     />
   </svg>
 )
 
 type Props = Omit<ComponentProps<'input'>, 'className' | 'type'> & {
-  onClear?: () => void
+  onClear?: VoidFunction
   showMagnifyingGlass?: boolean
 }
 
@@ -45,7 +36,7 @@ export const SearchInput = function ({
     <div className="relative flex items-center">
       {showMagnifyingGlass && (
         <div className="absolute translate-x-3">
-          <MagnifyingGlass />
+          <MagnifyingGlassIcon />
         </div>
       )}
       {showCloseIcon && (
@@ -56,13 +47,15 @@ export const SearchInput = function ({
           />
         </div>
       )}
-      <input
-        {...props}
-        className={`${inputCss} ${showMagnifyingGlass ? 'pl-8' : ''} ${
-          showCloseIcon ? 'pr-8' : ''
-        }`}
-        type="text"
-      />
+      <div className="box-border w-full rounded-lg outline outline-0 outline-orange-100 transition-all duration-200 focus-within:outline-4">
+        <input
+          {...props}
+          className={`${inputCss} ${showMagnifyingGlass ? 'pl-8' : ''} ${
+            showCloseIcon ? 'pr-8' : ''
+          }`}
+          type="text"
+        />
+      </div>
     </div>
   )
 }

@@ -5,6 +5,7 @@ import {
   isEvmToken,
   tunnelsThroughPartners,
   parseTokenUnits,
+  isCustomToken,
 } from 'utils/token'
 import { parseUnits as viemParseUnits } from 'viem'
 import { describe, expect, it } from 'vitest'
@@ -33,6 +34,32 @@ describe('utils/token', function () {
       }
       const prices = { USDT: '0.99' }
       expect(getTokenPrice(token, prices)).toBe('0.99')
+    })
+  })
+
+  describe('isCustomToken', function () {
+    it('should return true if token exists in the user token list', function () {
+      const userTokenList = [baseToken]
+      const token = { ...baseToken }
+      expect(isCustomToken(userTokenList, token)).toBe(true)
+    })
+
+    it('should return false if token is not in the user token list', function () {
+      const userTokenList = []
+      const token = { ...baseToken }
+      expect(isCustomToken(userTokenList, token)).toBe(false)
+    })
+
+    it('should return false if chainId differs even with same address', function () {
+      const userTokenList = [{ ...baseToken, chainId: 10 }]
+      const token = { ...baseToken }
+      expect(isCustomToken(userTokenList, token)).toBe(false)
+    })
+
+    it('should return false if address differs even with same chainId', function () {
+      const userTokenList = [{ ...baseToken, address: '0xnot123' }]
+      const token = { ...baseToken }
+      expect(isCustomToken(userTokenList, token)).toBe(false)
     })
   })
 

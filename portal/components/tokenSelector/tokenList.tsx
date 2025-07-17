@@ -1,119 +1,32 @@
 'use client'
 
-import { useVirtualizer } from '@tanstack/react-virtual'
 import { Card } from 'components/card'
-import { Drawer } from 'components/drawer'
 import { CloseIcon } from 'components/icons/closeIcon'
+import { MagnifyingGlassIcon } from 'components/icons/magnifyingGlassIcon'
 import { SearchInput } from 'components/inputText'
 import { Modal } from 'components/modal'
 import { useDebounce } from 'hooks/useDebounce'
+import { useTopTokensToHighlight } from 'hooks/useTopTokensToHighlight'
 import { useUserTokenList } from 'hooks/useUserTokenList'
+import { useVisualViewportSize } from 'hooks/useVisualViewportSize'
 import { useWindowSize } from 'hooks/useWindowSize'
 import partition from 'lodash/partition'
 import { useTranslations } from 'next-intl'
-import { type JSX, useRef, useState } from 'react'
+import { useState } from 'react'
 import { Token as TokenType } from 'types/token'
+import { isCustomToken } from 'utils/token'
 import { type Chain, isAddress, isAddressEqual } from 'viem'
 
+import { List } from './list'
 import { NoTokensMatch } from './noTokensMatch'
-import { Token } from './token'
-
-const isCustomToken = (userTokenList: TokenType[], token: TokenType) =>
-  userTokenList.some(
-    t => t.address === token.address && t.chainId === token.chainId,
-  )
+import { TokenListSkeleton } from './tokenListSkeleton'
+import { TokenQuickSelect } from './tokenQuickSelect'
 
 type Props = {
   chainId: Chain['id']
   closeModal: () => void
   onSelectToken: (token: TokenType) => void
   tokens: TokenType[]
-}
-
-const List = function ({
-  hasCustomTokens,
-  onSelectToken,
-  tokens,
-}: Omit<Props, 'chainId' | 'closeModal'> & { hasCustomTokens: boolean }) {
-  const parentRef = useRef<HTMLDivElement>(null)
-  const t = useTranslations('token-selector')
-  const { userTokenList } = useUserTokenList()
-
-  const rowVirtualizer = useVirtualizer({
-    count: tokens.length,
-    estimateSize: () => 52,
-    getScrollElement: () => parentRef.current,
-    overscan: 5,
-  })
-
-  const customTokensLabelHeight = 28
-
-  const getList = function () {
-    const rows: JSX.Element[] = []
-    const virtualItems = rowVirtualizer.getVirtualItems()
-    let hasAddedCustomTokensLabel = false
-
-    for (let rowIndex = 0; rowIndex < virtualItems.length; rowIndex++) {
-      const virtualItem = virtualItems[rowIndex]
-      const token = tokens[virtualItem.index]
-
-      if (!hasAddedCustomTokensLabel && isCustomToken(userTokenList, token)) {
-        rows.push(
-          <div
-            className="absolute left-0 top-0 w-full"
-            key="manually_added"
-            style={{
-              height: customTokensLabelHeight,
-              transform: `translateY(${virtualItem.start}px)`,
-            }}
-          >
-            <h6 className="py-3 pb-1.5 text-sm font-medium text-neutral-500">
-              {t('manually-added-tokens')}
-            </h6>
-          </div>,
-        )
-        hasAddedCustomTokensLabel = true
-      }
-      rows.push(
-        <li
-          className="absolute left-0 top-0 w-full cursor-pointer rounded-lg hover:bg-neutral-100"
-          key={virtualItem.index}
-          onClick={() => onSelectToken(token)}
-          style={{
-            height: '52px',
-            // After showing the custom tokens label, we need to adjust the position of all the following tokens to consider it
-            transform: `translateY(${
-              virtualItem.start +
-              (hasAddedCustomTokensLabel ? customTokensLabelHeight : 0)
-            }px)`,
-          }}
-        >
-          <Token token={token} />
-        </li>,
-      )
-    }
-    return rows
-  }
-
-  return (
-    <div
-      className="skip-parent-padding-x mx-auto h-[212px] w-[calc(100%-theme(spacing.4)*2)]
-      overflow-y-auto md:w-[calc(100%-theme(spacing.6)*2)]"
-      ref={parentRef}
-    >
-      <ul
-        className="relative w-full"
-        style={{
-          height: `${
-            rowVirtualizer.getTotalSize() +
-            (hasCustomTokens ? customTokensLabelHeight : 0)
-          }px`,
-        }}
-      >
-        {getList()}
-      </ul>
-    </div>
-  )
 }
 
 const bySymbol = (a: TokenType, b: TokenType) =>
@@ -130,6 +43,29 @@ export const TokenList = function ({
   const debouncedSearchText = useDebounce(searchText)
   const { userTokenList } = useUserTokenList()
   const { width } = useWindowSize()
+  const { height: viewportHeight } = useVisualViewportSize()
+
+  // Define a list of default priority tokens by their addresses
+  // These tokens will be prioritized in the quick selection section
+  const defaultPriorityTokensByAddress = [
+    'ETH',
+    // USDC Sepolia
+    '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8',
+    // USDT Sepolia
+    '0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0',
+    // USDC.e Sepolia
+    '0xD47971C7F5B1067d25cd45d30b2c9eb60de96443',
+    // USDT.e Sepolia
+    '0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298',
+    // USDC Mainnet
+    '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    // USDT Mainnet
+    '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    // USDC Hemi
+    '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA',
+    // USDT Hemi
+    '0xbB0D083fb1be0A9f6157ec484b6C79E0A4e31C2e',
+  ]
 
   const userTypedAddress = isAddress(debouncedSearchText)
 
@@ -148,22 +84,54 @@ export const TokenList = function ({
     isCustomToken(userTokenList, token),
   )
 
-  const [pinnedTokens, restOfTokens] = partition(
-    supportedTokens,
-    token =>
-      token.symbol === 'ETH' ||
-      token.symbol.includes('USDC') ||
-      token.symbol.includes('USDT'),
+  const quickSelectionTokens = tokens.filter(token =>
+    defaultPriorityTokensByAddress.some(address => token.address === address),
   )
 
-  const sortedTokens = pinnedTokens
-    .sort(bySymbol)
-    .concat(restOfTokens.sort(bySymbol))
-    .concat(customTokens.sort(bySymbol))
+  const {
+    isLoading: isLoadingTopTokens,
+    sortedTokens: fetchedSortedTopTokens,
+  } = useTopTokensToHighlight({
+    tokens: supportedTokens,
+  })
+
+  const restOfTokens = supportedTokens.filter(
+    token => !fetchedSortedTopTokens.some(top => top.address === token.address),
+  )
+
+  const sortedTokens = [
+    ...fetchedSortedTopTokens // Do not sort 'fetchedSortedTopTokens' again; already sorted by balance in hook
+      .concat(restOfTokens.sort(bySymbol))
+      .concat(customTokens.sort(bySymbol)),
+  ]
+
+  function handleSelectToken(token: TokenType) {
+    onSelectToken(token)
+    closeModal()
+  }
+
+  const onKeyDown = function (e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') {
+      handleSelectToken(sortedTokens[0])
+    }
+  }
+
+  const addKeyDownListener = sortedTokens.length === 1 ? onKeyDown : undefined
 
   const content = (
-    <div className="drawer-content h-90 gap-x-3 gap-y-0 md:w-96">
-      <div className="flex items-center justify-between">
+    <div
+      className="flex h-screen w-screen flex-col gap-x-3 overflow-hidden bg-white pt-6 md:h-[65dvh] md:w-[409px] md:bg-transparent [&>:not(.skip-parent-padding-x)]:px-4 [&>:not(.skip-parent-padding-x)]:md:px-6"
+      style={{
+        // On mobile devices, when the virtual keyboard is open, the visible viewport height (visualViewport.height)
+        // becomes smaller than the full window height. To ensure the modal fits within the remaining space plus the extra space,
+        // we uses visualViewport to detect available height
+        // On desktop (md:), fallback to Tailwind-defined height.
+        height: width < 768 ? `${viewportHeight - 112}px` : undefined,
+        scrollbarColor: '#d4d4d4 transparent',
+        scrollbarWidth: 'thin',
+      }}
+    >
+      <div className="mb-2 flex items-center justify-between">
         <h3 className="text-xl font-medium text-neutral-950">
           {t('select-token')}
         </h3>
@@ -174,20 +142,39 @@ export const TokenList = function ({
       </div>
       <div className="py-4">
         <SearchInput
+          autoFocus={width >= 768}
           onChange={e => setSearchText(e.target.value)}
           onClear={() => setSearchText('')}
+          onKeyDown={addKeyDownListener}
           placeholder={t('search-tokens')}
           value={searchText}
         />
       </div>
-      {sortedTokens.length > 0 ? (
+      {!searchText ? (
+        <div className="mb-4">
+          <TokenQuickSelect
+            onSelect={token => handleSelectToken(token)}
+            tokens={quickSelectionTokens}
+          />
+        </div>
+      ) : (
+        <div className="mb-2 flex items-center gap-x-2">
+          <MagnifyingGlassIcon />
+          <div className="text-sm font-medium text-neutral-500">
+            {t('search-results')}
+          </div>
+        </div>
+      )}
+      {isLoadingTopTokens || searchText !== debouncedSearchText ? (
+        <div className="mt-2">
+          <TokenListSkeleton />
+        </div>
+      ) : sortedTokens.length > 0 ? (
         <List
-          hasCustomTokens={customTokens.length > 0}
-          onSelectToken={function (token) {
-            onSelectToken(token)
-            closeModal()
-          }}
-          tokens={sortedTokens}
+          isSearchActive={!!searchText}
+          onSelectToken={token => handleSelectToken(token)}
+          tokens={searchText ? restOfTokens : sortedTokens}
+          yourTokens={fetchedSortedTopTokens}
         />
       ) : (
         <NoTokensMatch
@@ -199,11 +186,9 @@ export const TokenList = function ({
     </div>
   )
 
-  return width >= 768 ? (
-    <Modal onClose={closeModal}>
-      <Card>{content}</Card>
+  return (
+    <Modal onClose={closeModal} verticalAlign={width < 768 ? 'top' : 'center'}>
+      <Card className="overflow-hidden rounded-2xl bg-white">{content}</Card>
     </Modal>
-  ) : (
-    <Drawer onClose={closeModal}>{content}</Drawer>
   )
 }

@@ -15,7 +15,7 @@ export const CustomToken = ({ token }: { token: TokenType }) => (
           <CustomTokenLogo size="medium" token={token} />
         </div>
       ) : (
-        <Skeleton className="h-8 w-8 rounded-full" />
+        <Skeleton className="size-8 rounded-full" />
       )}
     </div>
     <div className="flex w-full flex-col">
@@ -43,7 +43,7 @@ export const CustomToken = ({ token }: { token: TokenType }) => (
 )
 
 export const Token = ({ token }: { token: TokenType }) => (
-  <div className="flex items-center gap-x-3 p-2 text-sm font-medium text-neutral-950">
+  <div className="flex items-center gap-x-3 p-3 text-sm font-medium text-neutral-950">
     <div className="flex-shrink-0 flex-grow-0">
       <TokenLogo size="medium" token={token} />
     </div>

@@ -51,7 +51,7 @@ export function useTopTokensToHighlight({ tokens }: Props) {
       )
 
       const tokensWithBalance = successfulResults
-        .map(({ data }) => ({ ...data }))
+        .map(({ data }) => data)
         .filter(function (token): token is EvmToken & { balance: bigint } {
           const price = getTokenPrice(token, prices)
           return price && token.balance > BigInt(0)
@@ -65,7 +65,7 @@ export function useTopTokensToHighlight({ tokens }: Props) {
       return {
         isError: results.some(r => r.isError),
         isLoading: results.some(r => r.isLoading),
-        sortedTokens: [...sortedResults],
+        sortedTokens: sortedResults,
       }
     },
     queries: tokens.map(function (token) {

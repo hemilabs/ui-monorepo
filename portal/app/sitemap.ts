@@ -17,12 +17,11 @@ function getAppRoutes(appDir: string, baseRoute = ''): string[] {
   const entries = fs.readdirSync(appDir, { withFileTypes: true })
   let routes: string[] = []
 
-  // Check if this directory contains a page file
   const hasPageFile = entries.some(
     entry => entry.isFile() && /^page\.(js|ts|tsx)$/.test(entry.name),
   )
 
-  if (hasPageFile && baseRoute) {
+  if (hasPageFile && baseRoute && !baseRoute.endsWith('demos')) {
     routes.push(baseRoute || '/')
   }
 

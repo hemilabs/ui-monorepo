@@ -8,9 +8,6 @@ const getBaseUrl = () =>
     ? `https://app.${process.env.HEMI_DOMAIN}`
     : 'http://localhost:3000'
 
-// Routes that only redirect and should not be included in sitemap
-const EXCLUDED_ROUTES = ['demos']
-
 /**
  * Recursively finds all route paths in the Next.js app directory,
  * ignoring the [locale] folder and only including folders with a page.{js,ts,tsx} file.
@@ -20,16 +17,12 @@ function getAppRoutes(appDir: string, baseRoute = ''): string[] {
   const entries = fs.readdirSync(appDir, { withFileTypes: true })
   let routes: string[] = []
 
-  // Check if this directory contains a page file
   const hasPageFile = entries.some(
     entry => entry.isFile() && /^page\.(js|ts|tsx)$/.test(entry.name),
   )
 
-  if (hasPageFile && baseRoute) {
-    // Exclude specific redirect-only routes
-    if (!EXCLUDED_ROUTES.includes(baseRoute)) {
-      routes.push(baseRoute)
-    }
+  if (hasPageFile && baseRoute && !baseRoute.endsWith('demos')) {
+    routes.push(baseRoute || '/')
   }
 
   for (const entry of entries) {

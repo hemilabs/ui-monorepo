@@ -293,7 +293,7 @@ export const StakeAssetsTable = function () {
       !isLoading || errorUpdateCount > 0
         ? sortTokens<StakeToken>({
             prices,
-            prioritySymbols: [...priorityStakeTokensToSort],
+            prioritySymbols: priorityStakeTokensToSort,
             tokens: tokensWithPosition,
           })
         : [],

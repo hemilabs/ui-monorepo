@@ -59,7 +59,7 @@ export type StakeToken = EvmToken & {
   extensions: StakeExtensions
 }
 
-export const priorityStakeTokensToSort = ['hemiBTC', 'USDT', 'USDC'] as const
+export const priorityStakeTokensToSort = ['hemiBTC', 'USDT', 'USDC']
 
 export type StakeOperations = 'stake' | 'unstake'
 

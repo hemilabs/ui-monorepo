@@ -57,8 +57,8 @@ export default function Page() {
             // here instead of in the tokenList file
             // It has to be rendered on dashboard page though
             prices,
-            prioritySymbols: [...priorityStakeTokensToSort],
-            tokens: tokensWalletBalance.filter(t => t.symbol !== 'WETH'),
+            prioritySymbols: priorityStakeTokensToSort,
+            tokens: tokensWalletBalance.filter(t => t && t.symbol !== 'WETH'),
           })
         : [],
     [errorUpdateCount, isLoading, prices, tokensWalletBalance],

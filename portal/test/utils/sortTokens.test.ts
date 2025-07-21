@@ -48,8 +48,6 @@ const mockPrices: Record<string, string> = {
   'ZZZ': '7',
 }
 
-const prioritySymbols = [...priorityStakeTokensToSort]
-
 describe('utils/sortTokens', function () {
   describe('sortTokens', function () {
     it('should place hemiBTC, USDT, USDC at the top in that order', function () {
@@ -63,7 +61,7 @@ describe('utils/sortTokens', function () {
 
       const sortedTokens = sortTokens({
         prices: mockPrices,
-        prioritySymbols,
+        prioritySymbols: priorityStakeTokensToSort,
         tokens,
       })
 
@@ -82,7 +80,7 @@ describe('utils/sortTokens', function () {
 
       const sortedTokens = sortTokens({
         prices: mockPrices,
-        prioritySymbols,
+        prioritySymbols: priorityStakeTokensToSort,
         tokens,
       })
 
@@ -103,7 +101,7 @@ describe('utils/sortTokens', function () {
 
       const sortedTokens = sortTokens({
         prices: mockPrices,
-        prioritySymbols,
+        prioritySymbols: priorityStakeTokensToSort,
         tokens,
       })
 
@@ -140,7 +138,7 @@ describe('utils/sortTokens', function () {
 
       const sortedTokens = sortTokens({
         prices: mockPrices,
-        prioritySymbols,
+        prioritySymbols: priorityStakeTokensToSort,
         tokens,
       })
 
@@ -160,7 +158,7 @@ describe('utils/sortTokens', function () {
 
       const sortedTokens = sortTokens({
         prices: mockPrices,
-        prioritySymbols,
+        prioritySymbols: priorityStakeTokensToSort,
         tokens,
       })
 
@@ -193,7 +191,7 @@ describe('utils/sortTokens', function () {
 
       const sortedTokens = sortTokens({
         prices: mockPrices,
-        prioritySymbols,
+        prioritySymbols: priorityStakeTokensToSort,
         tokens,
       })
 
@@ -219,7 +217,7 @@ describe('utils/sortTokens', function () {
 
       const sortedTokens = sortTokens({
         prices: mockPrices,
-        prioritySymbols,
+        prioritySymbols: priorityStakeTokensToSort,
         tokens,
       })
 
@@ -253,7 +251,7 @@ describe('utils/sortTokens', function () {
 
       const sortedTokens = sortTokens({
         prices: mockPrices,
-        prioritySymbols,
+        prioritySymbols: priorityStakeTokensToSort,
         tokens,
       })
 
@@ -266,7 +264,7 @@ describe('utils/sortTokens', function () {
       const tokens: StakeToken[] = []
       const sortedTokens = sortTokens({
         prices: mockPrices,
-        prioritySymbols,
+        prioritySymbols: priorityStakeTokensToSort,
         tokens,
       })
       expect(sortedTokens).toEqual([])
@@ -282,7 +280,7 @@ describe('utils/sortTokens', function () {
       const originalOrder = [...tokens]
       sortTokens({
         prices: mockPrices,
-        prioritySymbols,
+        prioritySymbols: priorityStakeTokensToSort,
         tokens,
       })
 

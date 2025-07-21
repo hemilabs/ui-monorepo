@@ -16,7 +16,9 @@ export async function getTokenBalance({
   isConnected,
   token,
 }: Props) {
-  if (!isConnected) return BigInt(0)
+  if (!isConnected) {
+    return BigInt(0)
+  }
 
   try {
     if (isNativeToken(token)) {

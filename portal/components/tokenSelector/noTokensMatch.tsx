@@ -43,7 +43,7 @@ export const NoTokensMatch = function ({
   const onClick = function () {
     setCustomTokenAddress(searchText)
     closeModal()
-    track('custom erc20 - open modal', { address: searchText })
+    track?.('custom erc20 - open modal', { address: searchText })
   }
 
   return (

@@ -49,7 +49,7 @@ export const Toast = function ({
 
   return (
     <div
-      className="shadow-soft fixed bottom-20 left-4 right-4 z-40 flex justify-between
+      className="shadow-soft fixed inset-x-4 bottom-20 z-40 flex justify-between
       gap-x-3 rounded-xl border border-solid border-black/85 bg-neutral-800 p-3.5
     text-sm font-medium text-white md:bottom-auto md:left-auto md:right-8 md:top-20"
     >
@@ -75,8 +75,8 @@ export const Toast = function ({
           </Link>
         )}
       </div>
-      <button className="h-5 w-5" onClick={() => setClosedToast(true)}>
-        <CloseIcon className="h-full w-full [&>path]:hover:stroke-white" />
+      <button className="size-5" onClick={() => setClosedToast(true)}>
+        <CloseIcon className="size-full [&>path]:hover:stroke-white" />
       </button>
     </div>
   )

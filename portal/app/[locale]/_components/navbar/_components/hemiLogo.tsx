@@ -1,6 +1,6 @@
 export const HemiLogoFull = () => (
-  <svg fill="none" height={24} width={71} xmlns="http://www.w3.org/2000/svg">
-    <g clipPath="url(#a)">
+  <svg fill="none" height="24" width="71" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#hemiLogoFullClipPath)">
       <path
         d="m12.46 2.166-1.218 7.156h-.93L9.094 2.166a.17.17 0 0 0-.2-.14C4.2 2.913.8 7.036.8 12c0 4.965 3.4 9.087 8.104 9.974a.17.17 0 0 0 .2-.139l1.218-7.156h.93l1.217 7.156a.17.17 0 0 0 .2.14c4.705-.879 8.105-5.01 8.105-9.975s-3.409-9.087-8.113-9.974a.17.17 0 0 0-.2.14Z"
         fill="#FF6A00"
@@ -11,8 +11,8 @@ export const HemiLogoFull = () => (
       />
     </g>
     <defs>
-      <clipPath id="a">
-        <path d="M.799 2h69.565v20H.799z" fill="#fff" />
+      <clipPath id="hemiLogoFullClipPath">
+        <path d="M0 0h69.565v20H0z" fill="#fff" transform="translate(.799 2)" />
       </clipPath>
     </defs>
   </svg>

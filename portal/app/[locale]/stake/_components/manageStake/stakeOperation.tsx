@@ -2,11 +2,13 @@ import { DrawerParagraph } from 'components/drawer'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { Spinner } from 'components/spinner'
+import { ToastLoader } from 'components/toast/toastLoader'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
+import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { StakeOperations, StakeStatusEnum, type StakeToken } from 'types/stake'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
@@ -18,7 +20,14 @@ import { useAccount } from 'wagmi'
 import { useAmount } from '../../_hooks/useAmount'
 import { useEstimateStakeFees } from '../../_hooks/useEstimateStakeFees'
 import { useStake } from '../../_hooks/useStake'
-import { StakeToast } from '../stakeToast'
+
+const StakeToast = dynamic(
+  () => import('../stakeToast').then(mod => mod.StakeToast),
+  {
+    loading: () => <ToastLoader />,
+    ssr: false,
+  },
+)
 
 import { Fees } from './fees'
 import { StakeMaxBalance } from './maxBalance'

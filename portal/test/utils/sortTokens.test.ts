@@ -1,4 +1,4 @@
-import { StakeToken } from 'types/stake'
+import { priorityStakeTokensToSort, StakeToken } from 'types/stake'
 import { sortTokens } from 'utils/sortTokens'
 import { zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
@@ -59,7 +59,11 @@ describe('utils/sortTokens', function () {
         createMockToken({ balance: BigInt(0), symbol: 'hemiBTC' }),
       ]
 
-      const sortedTokens = sortTokens(tokens, mockPrices)
+      const sortedTokens = sortTokens({
+        prices: mockPrices,
+        prioritySymbols: priorityStakeTokensToSort,
+        tokens,
+      })
 
       expect(sortedTokens[0].symbol).toBe('hemiBTC')
       expect(sortedTokens[1].symbol).toBe('USDT')
@@ -74,7 +78,11 @@ describe('utils/sortTokens', function () {
         createMockToken({ balance: BigInt(0), symbol: 'hemiBTC' }),
       ]
 
-      const sortedTokens = sortTokens(tokens, mockPrices)
+      const sortedTokens = sortTokens({
+        prices: mockPrices,
+        prioritySymbols: priorityStakeTokensToSort,
+        tokens,
+      })
 
       expect(sortedTokens[0].symbol).toBe('hemiBTC')
       expect(sortedTokens[1].symbol).toBe('USDT.e')
@@ -91,7 +99,11 @@ describe('utils/sortTokens', function () {
         createMockToken({ balance: BigInt(5000), symbol: 'DDD' }),
       ]
 
-      const sortedTokens = sortTokens(tokens, mockPrices)
+      const sortedTokens = sortTokens({
+        prices: mockPrices,
+        prioritySymbols: priorityStakeTokensToSort,
+        tokens,
+      })
 
       expect(sortedTokens[0].symbol).toBe('USDT')
       expect(sortedTokens[1].symbol).toBe('BBB')
@@ -124,7 +136,11 @@ describe('utils/sortTokens', function () {
         }),
       ]
 
-      const sortedTokens = sortTokens(tokens, mockPrices)
+      const sortedTokens = sortTokens({
+        prices: mockPrices,
+        prioritySymbols: priorityStakeTokensToSort,
+        tokens,
+      })
 
       expect(sortedTokens[0].symbol).toBe('CCC')
       expect(sortedTokens[1].symbol).toBe('AAA')
@@ -140,7 +156,11 @@ describe('utils/sortTokens', function () {
         createMockToken({ balance: BigInt(0), symbol: 'BBB' }),
       ]
 
-      const sortedTokens = sortTokens(tokens, mockPrices)
+      const sortedTokens = sortTokens({
+        prices: mockPrices,
+        prioritySymbols: priorityStakeTokensToSort,
+        tokens,
+      })
 
       expect(sortedTokens[0].symbol).toBe('AAA')
       expect(sortedTokens[1].symbol).toBe('BBB')
@@ -169,7 +189,11 @@ describe('utils/sortTokens', function () {
         createMockToken({ balance: BigInt(0), symbol: 'DDD' }),
       ]
 
-      const sortedTokens = sortTokens(tokens, mockPrices)
+      const sortedTokens = sortTokens({
+        prices: mockPrices,
+        prioritySymbols: priorityStakeTokensToSort,
+        tokens,
+      })
 
       expect(sortedTokens[0].symbol).toBe('hemiBTC')
       expect(sortedTokens[1].symbol).toBe('USDT')
@@ -191,7 +215,11 @@ describe('utils/sortTokens', function () {
         createMockToken({ balance: BigInt(0), symbol: 'CCC' }),
       ]
 
-      const sortedTokens = sortTokens(tokens, mockPrices)
+      const sortedTokens = sortTokens({
+        prices: mockPrices,
+        prioritySymbols: priorityStakeTokensToSort,
+        tokens,
+      })
 
       expect(sortedTokens[0].symbol).toBe('AAA')
       expect(
@@ -221,7 +249,11 @@ describe('utils/sortTokens', function () {
         },
       ]
 
-      const sortedTokens = sortTokens(tokens, mockPrices)
+      const sortedTokens = sortTokens({
+        prices: mockPrices,
+        prioritySymbols: priorityStakeTokensToSort,
+        tokens,
+      })
 
       const topSymbols = [sortedTokens[0].symbol, sortedTokens[1].symbol].sort()
       expect(topSymbols).toEqual(['AAA', 'DAI'].sort())
@@ -230,7 +262,11 @@ describe('utils/sortTokens', function () {
 
     it('should handle empty array', function () {
       const tokens: StakeToken[] = []
-      const sortedTokens = sortTokens(tokens, mockPrices)
+      const sortedTokens = sortTokens({
+        prices: mockPrices,
+        prioritySymbols: priorityStakeTokensToSort,
+        tokens,
+      })
       expect(sortedTokens).toEqual([])
     })
 
@@ -242,11 +278,86 @@ describe('utils/sortTokens', function () {
       ]
 
       const originalOrder = [...tokens]
-      sortTokens(tokens, mockPrices)
+      sortTokens({
+        prices: mockPrices,
+        prioritySymbols: priorityStakeTokensToSort,
+        tokens,
+      })
 
       expect(tokens[0].symbol).toBe(originalOrder[0].symbol)
       expect(tokens[1].symbol).toBe(originalOrder[1].symbol)
       expect(tokens[2].symbol).toBe(originalOrder[2].symbol)
     })
+  })
+
+  it('should sort tokens by USD value when no prioritySymbols are provided', function () {
+    const tokens: StakeToken[] = [
+      createMockToken({
+        balance: BigInt('1000000000000000000'),
+        symbol: 'CCC',
+      }),
+      createMockToken({
+        balance: BigInt('100000000000000000'),
+        symbol: 'AAA',
+      }),
+      createMockToken({
+        balance: BigInt('100000000000000000'),
+        symbol: 'BBB',
+      }),
+    ]
+
+    const sortedTokens = sortTokens({
+      prices: mockPrices,
+      tokens,
+    })
+
+    expect(sortedTokens[0].symbol).toBe('CCC')
+    expect(sortedTokens[1].symbol).toBe('BBB')
+    expect(sortedTokens[2].symbol).toBe('AAA')
+  })
+
+  it('should sort tokens alphabetically if no balances and no prioritySymbols are provided', function () {
+    const tokens: StakeToken[] = [
+      createMockToken({ balance: BigInt(0), symbol: 'ZZZ' }),
+      createMockToken({ balance: BigInt(0), symbol: 'AAA' }),
+      createMockToken({ balance: BigInt(0), symbol: 'BBB' }),
+    ]
+
+    const sortedTokens = sortTokens({
+      prices: mockPrices,
+      tokens,
+    })
+
+    expect(sortedTokens.map(t => t.symbol)).toEqual(['AAA', 'BBB', 'ZZZ'])
+  })
+
+  it('should sort by balance first (USD descending), then alphabetically without prioritySymbols', function () {
+    const tokens: StakeToken[] = [
+      createMockToken({
+        balance: BigInt('1000000000000000000'),
+        symbol: 'AAA',
+      }),
+      createMockToken({
+        balance: BigInt(0),
+        symbol: 'ZZZ',
+      }),
+      createMockToken({
+        balance: BigInt('100000000000000000'),
+        symbol: 'BBB',
+      }),
+      createMockToken({
+        balance: BigInt(0),
+        symbol: 'CCC',
+      }),
+    ]
+
+    const sortedTokens = sortTokens({
+      prices: mockPrices,
+      tokens,
+    })
+
+    expect(sortedTokens[0].symbol).toBe('AAA')
+    expect(sortedTokens[1].symbol).toBe('BBB')
+    expect(sortedTokens.slice(2).map(t => t.symbol)).toEqual(['CCC', 'ZZZ'])
   })
 })

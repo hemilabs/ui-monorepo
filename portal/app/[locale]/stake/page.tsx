@@ -3,6 +3,7 @@
 import { PageLayout } from 'components/pageLayout'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useMemo } from 'react'
+import { priorityStakeTokensToSort } from 'types/stake'
 import { sortTokens } from 'utils/sortTokens'
 
 import { StakeGraph } from './_components/icons/stakeGraph'
@@ -51,13 +52,14 @@ export default function Page() {
       // If the prices API eventually comes back, prices will be redefined and they will
       // be sorted as expected.
       !isLoading || errorUpdateCount > 0
-        ? sortTokens(
+        ? sortTokens({
             // Removing WETH from the list of tokens to stake
             // here instead of in the tokenList file
             // It has to be rendered on dashboard page though
-            tokensWalletBalance.filter(t => t.symbol !== 'WETH'),
             prices,
-          )
+            prioritySymbols: priorityStakeTokensToSort,
+            tokens: tokensWalletBalance.filter(t => t && t.symbol !== 'WETH'),
+          })
         : [],
     [errorUpdateCount, isLoading, prices, tokensWalletBalance],
   )

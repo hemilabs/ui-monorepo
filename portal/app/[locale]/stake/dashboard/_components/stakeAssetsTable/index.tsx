@@ -20,7 +20,7 @@ import { useRouter } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { MouseEvent, RefObject, useMemo, useRef } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { StakeToken } from 'types/stake'
+import { priorityStakeTokensToSort, StakeToken } from 'types/stake'
 import { sortTokens } from 'utils/sortTokens'
 import { queryStringObjectToString } from 'utils/url'
 
@@ -291,7 +291,11 @@ export const StakeAssetsTable = function () {
       // If the prices API eventually comes back, prices will be redefined and they will
       // be sorted as expected.
       !isLoading || errorUpdateCount > 0
-        ? sortTokens(tokensWithPosition, prices)
+        ? sortTokens<StakeToken>({
+            prices,
+            prioritySymbols: priorityStakeTokensToSort,
+            tokens: tokensWithPosition,
+          })
         : [],
     [isLoading, errorUpdateCount, tokensWithPosition, prices],
   )

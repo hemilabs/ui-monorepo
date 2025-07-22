@@ -1,12 +1,10 @@
 import { useQueries } from '@tanstack/react-query'
-import Big from 'big.js'
-import { Token } from 'types/token'
+import { EvmToken, Token } from 'types/token'
 import { isL2NetworkId } from 'utils/chain'
 import { getEvmL1PublicClient } from 'utils/chainClients'
-import { isNativeToken } from 'utils/nativeToken'
+import { getTokenBalance } from 'utils/getTokenBalance'
+import { sortTokens } from 'utils/sortTokens'
 import { getTokenPrice } from 'utils/token'
-import { formatUnits } from 'viem'
-import { getErc20TokenBalance } from 'viem-erc20/actions'
 import { useAccount } from 'wagmi'
 
 import { useHemiClient } from './useHemiClient'
@@ -23,10 +21,8 @@ type Props = {
  * retrieves their corresponding USD prices from the portal API, and returns the top tokens
  * sorted by their total USD value (balance * price).
  *
- * - Native and ERC-20 token balances are supported.
+ * - Evm tokens are supported.
  * - Prices are fetched via the `useTokenPrices` hook.
- * - Balances are normalized using `formatUnits` to match the token's decimals.
- * - Values are multiplied using `Big.js` to ensure precision in the USD calculation.
  *
  * This is useful for UI components that want to highlight the user's most valuable tokens,
  * for example: Quick tokens in a token selector.
@@ -54,54 +50,39 @@ export function useTopTokensToHighlight({ tokens }: Props) {
           status === 'success' && typeof data?.balance === 'bigint',
       )
 
-      const sortedResults = successfulResults
-        .filter(function ({ data }) {
-          const price = getTokenPrice(data, prices)
-          return price && data.balance > BigInt(0)
+      const tokensWithBalance = successfulResults
+        .map(({ data }) => data)
+        .filter(function (token): token is EvmToken & { balance: bigint } {
+          const price = getTokenPrice(token, prices)
+          return price && token.balance > BigInt(0)
         })
-        .sort(function (a, b) {
-          const aStringBalance = formatUnits(a.data.balance, a.data.decimals)
-          const bStringBalance = formatUnits(b.data.balance, b.data.decimals)
 
-          const aPrice = getTokenPrice(a.data, prices)
-          const bPrice = getTokenPrice(b.data, prices)
-
-          const aAmount = Big(aStringBalance).times(Big(aPrice))
-          const bAmount = Big(bStringBalance).times(Big(bPrice))
-
-          if (aAmount.gt(bAmount)) return -1
-          if (aAmount.lt(bAmount)) return 1
-          return 0
-        })
-        .map(({ data }) => ({ ...data }))
+      const sortedResults = sortTokens<EvmToken>({
+        prices,
+        tokens: tokensWithBalance,
+      })
 
       return {
         isError: results.some(r => r.isError),
         isLoading: results.some(r => r.isLoading),
-        sortedTokens: [...sortedResults],
+        sortedTokens: sortedResults,
       }
     },
     queries: tokens.map(function (token) {
       // We can safely cast here it's an evm token
       const chainId = token.chainId as number
-      const publicClient = isL2NetworkId(chainId)
+      const client = isL2NetworkId(chainId)
         ? hemiClient
         : getEvmL1PublicClient(chainId)
 
       return {
-        queryFn() {
-          if (!isConnected) {
-            return BigInt(0)
-          }
-          const promise = isNativeToken(token)
-            ? publicClient.getBalance({ address: account })
-            : // @ts-expect-error because it works on IDE
-              getErc20TokenBalance(publicClient, {
-                account,
-                address: token.address as `0x${string}`,
-              })
-          return promise.catch(() => BigInt(0))
-        },
+        queryFn: () =>
+          getTokenBalance({
+            account,
+            client,
+            isConnected,
+            token,
+          }),
         queryKey: ['top-token-balance', token.chainId, token.address],
         select: (balance: bigint) => ({ ...token, balance }),
       }

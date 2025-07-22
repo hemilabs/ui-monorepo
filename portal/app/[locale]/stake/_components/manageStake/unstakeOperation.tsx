@@ -1,6 +1,7 @@
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { Spinner } from 'components/spinner'
+import { ToastLoader } from 'components/toast/toastLoader'
 import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -20,7 +21,14 @@ import { useAmount } from '../../_hooks/useAmount'
 import { useEstimateUnstakeFees } from '../../_hooks/useEstimateUnstakeFees'
 import { useStakedBalance } from '../../_hooks/useStakedBalance'
 import { useUnstake } from '../../_hooks/useUnstake'
-import { StakeToast } from '../stakeToast'
+
+const StakeToast = dynamic(
+  () => import('../stakeToast').then(mod => mod.StakeToast),
+  {
+    loading: () => <ToastLoader />,
+    ssr: false,
+  },
+)
 
 import { Fees } from './fees'
 import { UnstakeMaxBalance } from './maxBalance'

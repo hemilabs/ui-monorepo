@@ -3,16 +3,33 @@ import { ExternalLink } from 'components/externalLink'
 import { DiscordIcon } from 'components/icons/discordIcon'
 import { GithubIcon } from 'components/icons/githubIcon'
 import { LinkedinIcon } from 'components/icons/linkedinIcon'
+import { TiktokIcon } from 'components/icons/tiktokIcon'
 import { TwitterIcon } from 'components/icons/twitterIcon'
 import { YoutubeIcon } from 'components/icons/youtubeIcon'
 import hemiSocials from 'hemi-socials'
 import { useUmami } from 'hooks/useUmami'
+import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 
-const { discordUrl, githubUrl, linkedinUrl, twitterUrl, youtubeUrl } =
-  hemiSocials
+import { TelegramButton } from './telegram/telegramButton'
+
+const {
+  discordUrl,
+  githubUrl,
+  linkedinUrl,
+  telegramCommunityUrl,
+  telegramNewsUrl,
+  tiktokUrl,
+  twitterUrl,
+  youtubeUrl,
+} = hemiSocials
 
 const svgCss = '[&_path]:hover:fill-black'
+
+const Telegram = dynamic(() => import('./telegram').then(mod => mod.Telegram), {
+  loading: () => <TelegramButton isOpen={false} />,
+  ssr: false,
+})
 
 const UI = ({
   addTracking,
@@ -21,7 +38,7 @@ const UI = ({
 }) => (
   <div
     className="mb-3 mt-0 flex flex-wrap items-center justify-center gap-x-6
-      md:mb-6 md:mt-6 md:h-10 md:gap-x-4 md:border-t md:border-neutral-300/55 md:py-4 lg:mb-0"
+      md:mb-6 md:mt-6 md:h-10 md:gap-x-2 md:border-t md:border-neutral-300/55 md:py-2 lg:mb-0"
   >
     <ExternalLink href={twitterUrl} onClick={addTracking?.('nav - x')}>
       <TwitterIcon className={svgCss} />
@@ -37,6 +54,13 @@ const UI = ({
     </ExternalLink>
     <ExternalLink href={youtubeUrl} onClick={addTracking?.('nav - youtube')}>
       <YoutubeIcon className={svgCss} />
+    </ExternalLink>
+    <Telegram
+      telegramCommunityUrl={telegramCommunityUrl}
+      telegramNewsUrl={telegramNewsUrl}
+    />
+    <ExternalLink href={tiktokUrl} onClick={addTracking?.('nav - tiktok')}>
+      <TiktokIcon className={svgCss} />
     </ExternalLink>
   </div>
 )

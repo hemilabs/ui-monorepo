@@ -17,12 +17,13 @@ export const DisclaimerEth = function () {
         subheading={t('unstake-eth-as-weth-subheading')}
       >
         <ExternalLink
-          className={`flex cursor-pointer items-center gap-x-1 text-sm text-orange-500
-        `}
+          className="group/disclaimer flex cursor-pointer items-center gap-x-1 text-sm "
           href="https://purefinance.hemi.xyz/en/wrap-eth/"
         >
-          <span>{t('unwrap')}</span>
-          <Chevron.Right className="[&>path]:fill-orange-500" />
+          <span className="text-orange-500 group-hover/disclaimer:text-orange-700">
+            {t('unwrap')}
+          </span>
+          <Chevron.Right className="[&>path]:fill-orange-500 group-hover/disclaimer:[&>path]:fill-orange-700" />
         </ExternalLink>
       </WarningBox>
     </div>

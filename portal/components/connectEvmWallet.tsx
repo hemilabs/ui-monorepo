@@ -15,7 +15,7 @@ export const ConnectEvmWallet = function ({ text }: { text?: string }) {
 
   return (
     <Button fontSize="text-mid" onClick={onClick} type="button">
-      {text ?? t('tunnel-page.submit-button.connect-evm-wallet')}
+      {text ?? t('connect-wallets.connect-evm-wallet')}
     </Button>
   )
 }

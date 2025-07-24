@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/nextjs'
 import { Button } from 'components/button'
+import { ExternalLink } from 'components/externalLink'
 import { ExclamationMark } from 'components/icons/exclamationMark'
 import hemiSocials from 'hemi-socials'
 import Image from 'next/image'
@@ -65,12 +66,12 @@ export const LocalizedError500 = function (
       {...props}
       description={t.rich('error-pages.unhandled-error.description', {
         link: (chunk: string) => (
-          <a
+          <ExternalLink
             className="text-orange-500 hover:text-orange-700"
             href={discordUrl}
           >
             {chunk}
-          </a>
+          </ExternalLink>
         ),
       })}
       title={t('error-pages.unhandled-error.title')}

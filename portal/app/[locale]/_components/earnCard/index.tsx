@@ -5,6 +5,7 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { type MouseEvent } from 'react'
 import useLocalStorageState from 'use-local-storage-state'
+import { absintheUrl } from 'utils/absinthe'
 import { isStakeEnabledOnTestnet } from 'utils/stake'
 
 import { EarnPoints } from './earnPoints'
@@ -25,8 +26,6 @@ export const EarnCard = function () {
   if (hideEarnAndStakeLink || !stakeEnabledOnTestnet) {
     return null
   }
-
-  const absintheUrl = 'https://boost.absinthe.network/hemi-mainnet/dashboard'
 
   const navigate = function (e: MouseEvent<HTMLAnchorElement>) {
     e.preventDefault()

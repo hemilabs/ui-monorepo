@@ -8,8 +8,6 @@ import { useTranslations } from 'next-intl'
 import { DemoCard } from './_components/demoCard'
 import bitcoinKitImg from './_images/bitcoin_kit_large.png'
 import bitcoinKitIcon from './_images/bitcoin_kit_small.svg'
-import cryptoChordsImg from './_images/crypto_chords_large.png'
-import cryptoChordsIcon from './_images/crypto_chords_small.svg'
 import demosImg from './_images/demos_large.png'
 import demosIcon from './_images/demos_small.png'
 import pureFinanceImg from './_images/pure_finance_large.png'
@@ -56,16 +54,6 @@ const Ecosystem = function () {
           icon={pureFinanceIcon}
           subHeading={t('purefinance.sub-heading')}
           subHeadingColor="gray"
-        />
-        <DemoCard
-          altText="cryptochords"
-          bgImage={cryptoChordsImg}
-          event="ecosystem - cryptochords"
-          heading={t('cryptochords.heading')}
-          headingColor="white"
-          href={`https://cryptochords.hemi.xyz?networkType=${networkType}`}
-          icon={cryptoChordsIcon}
-          subHeading={t('cryptochords.sub-heading')}
         />
       </div>
     </PageLayout>

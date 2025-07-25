@@ -35,6 +35,7 @@ export const CallToAction = function ({
         e.preventDefault()
         updateTxHash(queryStringOptions.txHash)
       }}
+      size="xSmall"
       variant={variant}
     >
       {text}

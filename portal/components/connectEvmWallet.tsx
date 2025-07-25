@@ -1,9 +1,15 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { Button } from 'components/button'
+import { Button, ButtonSize } from 'components/button'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 
-export const ConnectEvmWallet = function ({ text }: { text?: string }) {
+export const ConnectEvmWallet = function ({
+  buttonSize = 'xLarge',
+  text,
+}: {
+  buttonSize?: ButtonSize
+  text?: string
+}) {
   const { openConnectModal } = useConnectModal()
   const t = useTranslations()
   const { track } = useUmami()
@@ -14,7 +20,7 @@ export const ConnectEvmWallet = function ({ text }: { text?: string }) {
   }
 
   return (
-    <Button fontSize="text-mid" onClick={onClick} type="button">
+    <Button onClick={onClick} size={buttonSize} type="button">
       {text ?? t('connect-wallets.connect-evm-wallet')}
     </Button>
   )

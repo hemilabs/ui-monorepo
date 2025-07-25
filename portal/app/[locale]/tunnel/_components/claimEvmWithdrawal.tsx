@@ -64,7 +64,7 @@ export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
       submitButton={
         <Button
           disabled={!isReadyToClaim || isClaiming}
-          fontSize="text-mid"
+          size="small"
           type="submit"
         >
           {t(getText())}

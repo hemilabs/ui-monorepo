@@ -92,6 +92,7 @@ const columnsBuilder = (
               e.stopPropagation()
               setDrawerQueryString('stake', row.original.address)
             }}
+            size="xSmall"
           >
             {t('stake.title')}
           </ButtonLink>

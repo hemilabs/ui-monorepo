@@ -5,13 +5,13 @@ import { StakeStatusEnum } from 'types/stake'
 import { CallToAction } from './callToAction'
 
 const ProgressButton = ({ text }: { text: string }) => (
-  <Button disabled fontSize="text-mid" type="button">
+  <Button disabled size="small" type="button">
     {text}
   </Button>
 )
 
 const TryAgainButton = ({ disabled }: { disabled: boolean }) => (
-  <Button disabled={disabled} fontSize="text-mid" type="submit">
+  <Button disabled={disabled} size="small" type="submit">
     {useTranslations('common')('try-again')}
   </Button>
 )

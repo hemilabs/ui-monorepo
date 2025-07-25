@@ -68,7 +68,7 @@ const Retry = function ({
       expectedChainId={deposit.l1ChainId}
       onSubmit={handleRetry}
       submitButton={
-        <Button disabled={isDepositing} fontSize="text-mid">
+        <Button disabled={isDepositing} size="small">
           {t(isDepositing ? 'depositing' : 'try-again')}
         </Button>
       }

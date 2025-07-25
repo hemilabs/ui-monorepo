@@ -59,7 +59,7 @@ export const ConnectWallet = function () {
   return (
     <EmptyState
       action={
-        <Button height="h-6" onClick={onClick} type="button">
+        <Button onClick={onClick} size="xSmall" type="button">
           {t('common.connect-wallet')}
         </Button>
       }

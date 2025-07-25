@@ -1,4 +1,5 @@
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
+import { Button } from 'components/button'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
@@ -53,10 +54,10 @@ export const WalletConnection = function () {
   return (
     <div className="ml-auto mr-2 md:mr-6">
       <div className="flex items-center gap-x-3">
-        <button
-          className="flex h-8 items-center gap-x-2 rounded-lg border border-solid border-neutral-300/55 bg-white 
-          py-1.5 pl-2 pr-4 text-sm font-medium shadow-sm hover:bg-neutral-100"
+        <Button
           onClick={onConnectWalletsClick}
+          size="xSmall"
+          variant="secondary"
         >
           {walletsConnected.length === 0 && (
             <>
@@ -81,7 +82,7 @@ export const WalletConnection = function () {
               </span>
             </div>
           )}
-        </button>
+        </Button>
         {isDrawerOpen && <ConnectWalletsDrawer closeDrawer={closeDrawer} />}
       </div>
     </div>

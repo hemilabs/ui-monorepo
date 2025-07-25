@@ -6,7 +6,6 @@ const analyticsEvents = [
   'ecosystem - bitcoinkit',
   'ecosystem - cryptochords',
   'ecosystem - DEMOS',
-  'ecosystem - hatchlings',
   'ecosystem - pure finance',
   // header
   'header - tunnel',

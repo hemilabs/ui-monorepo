@@ -1,4 +1,4 @@
-import { Button } from 'components/button'
+import { Button, ButtonSize } from 'components/button'
 import { ButtonLoader } from 'components/buttonLoader'
 import { useChain } from 'hooks/useChain'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
@@ -21,12 +21,14 @@ type Props = {
   chainId: RemoteChain['id']
   connectWalletText?: string
   submitButton: React.ReactNode
+  submitButtonSize?: ButtonSize
 }
 
 export const SubmitWhenConnectedToChain = function ({
   chainId,
   connectWalletText,
   submitButton,
+  submitButtonSize = 'xLarge',
 }: Props) {
   const t = useTranslations()
   const { status } = useAccount()
@@ -40,8 +42,8 @@ export const SubmitWhenConnectedToChain = function ({
         {connectedToChain && submitButton}
         {!connectedToChain && (
           <Button
-            fontSize="text-mid"
             onClick={() => switchChain({ chainId })}
+            size={submitButtonSize}
             type="button"
           >
             {t('common.connect-to-network', { network: targetChain?.name })}
@@ -51,5 +53,7 @@ export const SubmitWhenConnectedToChain = function ({
     )
   }
 
-  return <ConnectEvmWallet text={connectWalletText} />
+  return (
+    <ConnectEvmWallet buttonSize={submitButtonSize} text={connectWalletText} />
+  )
 }

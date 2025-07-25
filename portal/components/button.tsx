@@ -1,53 +1,68 @@
 import { Link } from 'components/link'
 import { ComponentProps } from 'react'
+import { simpleMergeTailwindClasses } from 'utils/simpleMergeTailwindClasses'
 import { isRelativeUrl } from 'utils/url'
 
 import { ExternalLink } from './externalLink'
 
-const commonCss = `box-content flex items-center justify-center
-  rounded-lg border border-solid px-3 py-1.5 font-medium disabled:opacity-50`
+const commonCss = `box-border flex items-center justify-center
+  rounded-lg py-1.5 font-medium disabled:opacity-50`
 
 const variants = {
-  primary: `primary-button border-orange-700/55 from-orange-500 to-orange-600 text-white hover:border-orange-700/70  
-    bg-gradient-to-b transition-all duration-300
-    hover:from-orange-600 hover:to-orange-600 disabled:bg-orange-600 shadow-button-primary
-    focus:shadow-button-primary-focused`,
-  secondary: `text-neutral-950 bg-white border-neutral-300/55 hover:bg-neutral-100
-    disabled:bg-neutral-100 shadow-button-secondary focus:shadow-button-secondary-focused`,
+  primary: `primary-button border-button-primary bg-button-primary text-white 
+  transition-all duration-200 hover:bg-button-primary-hovered 
+  disabled:bg-button-primary-disabled disabled:shadow-button-primary-disabled shadow-button-primary 
+  focus:shadow-button-primary-focused border border-solid`,
+  secondary: `text-neutral-950 bg-white hover:bg-neutral-50 disabled:bg-neutral-50 
+  shadow-button-secondary focus:shadow-button-secondary-focused disabled:shadow-button-secondary-disabled`,
+  tertiary: `text-neutral-950 bg-transparent hover:bg-neutral-100 focus:bg-neutral-100 focus:shadow-button-tertiary-focused`,
 } as const
-
-type FontSize = { fontSize?: 'text-sm' | 'text-mid' }
-
-type Height = {
-  height?: 'h-4' | 'h-5' | 'h-6' | 'h-8'
-}
 
 type Variant = {
   variant?: keyof typeof variants
 }
 
-type ButtonProps = ComponentProps<'button'> & Variant & FontSize & Height
+export type ButtonSize = 'xSmall' | 'small' | 'xLarge'
+
+const sizeMap: Record<ButtonSize, string> = {
+  small: 'h-8 text-sm gap-x-2 px-3',
+  xLarge: 'h-11 text-mid gap-x-2 px-4',
+  xSmall: 'h-7 text-xs gap-x-1 px-2.5',
+} as const
+
+type Size = {
+  size?: keyof typeof sizeMap
+}
+
+type ButtonProps = ComponentProps<'button'> & Variant & Size
 
 type ButtonLinkProps = Omit<ComponentProps<'a'>, 'href' | 'ref'> &
   Required<Pick<ComponentProps<typeof Link>, 'href'>> &
-  Variant
+  Variant &
+  Size
 
-export const Button = ({
-  fontSize = 'text-sm',
-  height = 'h-8',
-  variant,
+export function Button({
+  className,
+  size = 'small',
+  variant = 'primary',
   ...props
-}: ButtonProps) => (
-  <button
-    className={`${commonCss} ${fontSize} ${height} ${
-      variants[variant ?? 'primary']
-    }`}
-    {...props}
-  />
-)
+}: ButtonProps) {
+  const finalClassName = simpleMergeTailwindClasses({
+    classLists: [commonCss, sizeMap[size], variants[variant], className],
+  })
 
-export const ButtonLink = function ({ variant, ...props }: ButtonLinkProps) {
-  const className = `${commonCss} px-2 ${variants[variant ?? 'primary']}`
+  return <button className={finalClassName} {...props} />
+}
+
+export const ButtonLink = function ({
+  className,
+  size = 'small',
+  variant = 'primary',
+  ...props
+}: ButtonLinkProps) {
+  const finalClassName = simpleMergeTailwindClasses({
+    classLists: [commonCss, sizeMap[size], variants[variant], className],
+  })
 
   if (
     !props.href ||
@@ -55,11 +70,11 @@ export const ButtonLink = function ({ variant, ...props }: ButtonLinkProps) {
   ) {
     return (
       <ExternalLink
-        className={className}
+        className={finalClassName}
         {...props}
         href={props.href as string | undefined}
       />
     )
   }
-  return <Link className={className} {...props} />
+  return <Link className={finalClassName} {...props} />
 }

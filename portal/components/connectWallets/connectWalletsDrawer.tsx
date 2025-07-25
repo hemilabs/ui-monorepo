@@ -3,8 +3,8 @@ import {
   useChainModal,
   useConnectModal,
 } from '@rainbow-me/rainbowkit'
+import { ButtonLink } from 'components/button'
 import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
-import { ExternalLink } from 'components/externalLink'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 
@@ -72,13 +72,13 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
                 )}
               </P>
             </div>
-            <ExternalLink
-              className="rounded-md bg-neutral-100 px-2 py-1.5 text-center
-                text-sm font-semibold text-neutral-600 hover:text-neutral-950"
+            <ButtonLink
               href="https://docs.hemi.xyz/how-to-tutorials/using-hemi/wallet-setup/btc-wallet-setup"
+              size="xSmall"
+              variant="tertiary"
             >
               {t('connect-wallets.how-to-create-unisat-wallet')}
-            </ExternalLink>
+            </ButtonLink>
           </div>
           <DrawerParagraph>
             {t('connect-wallets.btc-wallet-requirement')}

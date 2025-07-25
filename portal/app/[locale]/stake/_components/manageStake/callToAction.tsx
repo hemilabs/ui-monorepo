@@ -7,6 +7,7 @@ export const CallToAction = ({ submitButton }: { submitButton: ReactNode }) => (
     <SubmitWhenConnectedToChain
       chainId={useHemi().id}
       submitButton={submitButton}
+      submitButtonSize="small"
     />
   </div>
 )

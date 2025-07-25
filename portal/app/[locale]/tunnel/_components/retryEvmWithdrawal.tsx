@@ -61,7 +61,7 @@ const Retry = function ({
       expectedChainId={withdrawal.l2ChainId}
       onSubmit={handleRetry}
       submitButton={
-        <Button disabled={isWithdrawing} fontSize="text-mid">
+        <Button disabled={isWithdrawing} size="small">
           {t(isWithdrawing ? 'withdrawing' : 'try-again')}
         </Button>
       }

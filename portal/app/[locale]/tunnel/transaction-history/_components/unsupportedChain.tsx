@@ -57,8 +57,8 @@ export const UnsupportedChain = function () {
     <EmptyState
       action={
         <Button
-          height="h-6"
           onClick={() => switchChain({ chainId: hemi.id })}
+          size="xSmall"
           type="button"
         >
           {t('common.connect-to-supported-network')}

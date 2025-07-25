@@ -111,7 +111,7 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
       expectedChainId={withdrawal.l2ChainId}
       onSubmit={handleChallenge}
       submitButton={
-        <Button disabled={isChallenging} fontSize="text-mid" type="submit">
+        <Button disabled={isChallenging} size="small" type="submit">
           {t(`submit-button.${getText()}`)}
         </Button>
       }

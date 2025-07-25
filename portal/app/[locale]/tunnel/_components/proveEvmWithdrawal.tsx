@@ -62,7 +62,7 @@ export const ProveWithdrawal = function ({ withdrawal }: Props) {
       submitButton={
         <Button
           disabled={!isReadyToProve || isProving}
-          fontSize="text-mid"
+          size="small"
           type="submit"
         >
           {t(getText())}

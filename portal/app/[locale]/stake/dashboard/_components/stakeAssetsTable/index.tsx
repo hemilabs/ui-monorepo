@@ -134,7 +134,8 @@ const CallToAction = function ({ stake }: ActionProps) {
         e.preventDefault()
         // navigation is done in event delegation, in the row
       }}
-      variant="secondary"
+      size="xSmall"
+      variant="tertiary"
     >
       <span className="text-lg font-normal text-neutral-500 transition duration-300 hover:text-neutral-950">
         ···
@@ -321,7 +322,7 @@ export const StakeAssetsTable = function () {
           {t('dashboard.staking-assets')}
         </h5>
         <div className="[&>a]:py-1">
-          <ButtonLink href={stakeMoreUrl} onClick={goToStakePage}>
+          <ButtonLink href={stakeMoreUrl} onClick={goToStakePage} size="xSmall">
             <span className="mr-1">+{t('dashboard.stake-more')}</span>
           </ButtonLink>
         </div>

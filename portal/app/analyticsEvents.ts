@@ -4,9 +4,7 @@ import { umamiAnalyticsContextFactory } from 'umami-analytics-next'
 const analyticsEvents = [
   // /ecosystem
   'ecosystem - bitcoinkit',
-  'ecosystem - cryptochords',
   'ecosystem - DEMOS',
-  'ecosystem - hatchlings',
   'ecosystem - pure finance',
   // header
   'header - tunnel',

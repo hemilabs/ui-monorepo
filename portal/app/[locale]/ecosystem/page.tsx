@@ -8,12 +8,8 @@ import { useTranslations } from 'next-intl'
 import { DemoCard } from './_components/demoCard'
 import bitcoinKitImg from './_images/bitcoin_kit_large.png'
 import bitcoinKitIcon from './_images/bitcoin_kit_small.svg'
-import cryptoChordsImg from './_images/crypto_chords_large.png'
-import cryptoChordsIcon from './_images/crypto_chords_small.svg'
 import demosImg from './_images/demos_large.png'
 import demosIcon from './_images/demos_small.png'
-import hemiHatchlingsImg from './_images/hemi_hatchlings_large.png'
-import hemiHatchlingsIcon from './_images/hemi_hatchlings_small.png'
 import pureFinanceImg from './_images/pure_finance_large.png'
 import pureFinanceIcon from './_images/pure_finance_small.svg'
 
@@ -58,30 +54,6 @@ const Ecosystem = function () {
           icon={pureFinanceIcon}
           subHeading={t('purefinance.sub-heading')}
           subHeadingColor="gray"
-        />
-        <DemoCard
-          altText="hemi hatchlings"
-          bgImage={hemiHatchlingsImg}
-          event="ecosystem - hatchlings"
-          heading={t('hemihatchlings.heading')}
-          headingColor="white"
-          href={
-            networkType === 'mainnet'
-              ? 'https://hemihatchlings.hemi.xyz'
-              : 'https://testnet.hatchlings.hemi.xyz'
-          }
-          icon={hemiHatchlingsIcon}
-          subHeading={t('hemihatchlings.sub-heading')}
-        />
-        <DemoCard
-          altText="cryptochords"
-          bgImage={cryptoChordsImg}
-          event="ecosystem - cryptochords"
-          heading={t('cryptochords.heading')}
-          headingColor="white"
-          href={`https://cryptochords.hemi.xyz?networkType=${networkType}`}
-          icon={cryptoChordsIcon}
-          subHeading={t('cryptochords.sub-heading')}
         />
       </div>
     </PageLayout>

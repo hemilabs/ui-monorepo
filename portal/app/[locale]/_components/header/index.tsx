@@ -1,3 +1,4 @@
+import { ButtonIcon } from 'components/button'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
 import { StakeTabs } from 'components/stakeTabs'
@@ -46,13 +47,15 @@ export const Header = ({ isMenuOpen, setIsNavbarOpen, toggleMenu }: Props) => (
       <TunnelTabs />
     </div>
     <WalletConnection />
-    <button
-      className="flex size-8 cursor-pointer items-center
-      justify-center rounded-lg border border-neutral-300/55 md:hidden"
-      onClick={toggleMenu}
-      type="button"
-    >
-      {isMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
-    </button>
+    <div className="md:hidden">
+      <ButtonIcon
+        onClick={toggleMenu}
+        size="xSmall"
+        type="button"
+        variant="secondary"
+      >
+        {isMenuOpen ? <CloseIcon /> : <HamburgerIcon />}
+      </ButtonIcon>
+    </div>
   </header>
 )

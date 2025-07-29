@@ -127,7 +127,6 @@ const CallToAction = function ({ stake }: ActionProps) {
 
   return (
     <ButtonLink
-      className="border-none"
       href={`${pathname}${queryString}`}
       onClick={function (e) {
         // prevent full navigation - we want a shallow navigation to open the drawer

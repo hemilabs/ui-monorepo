@@ -34,7 +34,7 @@ const config: Config = {
       },
       boxShadow: {
         'button-primary':
-          '0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 3px 2px -5px rgba(10, 10, 10, 0.11)',
+          '0px 1px 3px 0px rgba(10, 10, 10, 0.15), 0px 7px 11px -5px rgba(10, 10, 10, 0.11)',
         'button-primary-disabled':
           '0 0 0 1px #FFF, 0 1px 3px 0 rgba(10,10,10,0.15), 0 7px 11px -5px rgba(10,10,10,0.11), inset 0 2px 1px 0 rgba(255,255,255,0.14)',
         'button-primary-focused':

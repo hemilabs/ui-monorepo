@@ -48,7 +48,7 @@ export const Error500 = function ({
             {description}
           </h3>
         </div>
-        <Button onClick={reset} size="xSmall" type="button">
+        <Button onClick={reset} type="button">
           {tryAgainLabel}
         </Button>
       </div>

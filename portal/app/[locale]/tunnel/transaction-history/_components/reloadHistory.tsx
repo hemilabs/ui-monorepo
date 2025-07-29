@@ -1,4 +1,4 @@
-import { Button } from 'components/button'
+import { ButtonIcon } from 'components/button'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
 import { ComponentProps } from 'react'
@@ -30,14 +30,13 @@ export const ReloadHistory = function () {
   }
 
   return (
-    <Button
-      className="px-1.5"
+    <ButtonIcon
       onClick={onResync}
       size="xSmall"
       type="button"
-      variant="primary"
+      variant="secondary"
     >
       <ReloadIcon />
-    </Button>
+    </ButtonIcon>
   )
 }

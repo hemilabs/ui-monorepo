@@ -30,13 +30,15 @@ export const ReloadHistory = function () {
   }
 
   return (
-    <ButtonIcon
-      onClick={onResync}
-      size="xSmall"
-      type="button"
-      variant="secondary"
-    >
-      <ReloadIcon />
-    </ButtonIcon>
+    <div className="group">
+      <ButtonIcon
+        onClick={onResync}
+        size="xSmall"
+        type="button"
+        variant="secondary"
+      >
+        <ReloadIcon className="[&>path]:fill-neutral-500 [&>path]:transition-colors [&>path]:duration-200 [&>path]:group-hover:fill-neutral-950" />
+      </ButtonIcon>
+    </div>
   )
 }

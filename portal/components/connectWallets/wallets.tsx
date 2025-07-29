@@ -58,7 +58,7 @@ const ConnectWalletButton = function ({
       {icon}
       <span className="text-base font-medium text-neutral-950">{text}</span>
       {rightIcon || (
-        <div className="group-hover ml-auto">
+        <div className="group ml-auto">
           <Chevron.Right className="group-hover:[&>path]:fill-neutral-950" />
         </div>
       )}

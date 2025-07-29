@@ -21,7 +21,7 @@ const withBeforeTransition = `
 const variants = {
   primary: `
     relative z-10 overflow-hidden text-white bg-button-primary
-    border border-button-primary shadow-button-primary
+    border border-button-primary-custom shadow-button-primary
     disabled:bg-button-primary-disabled disabled:shadow-button-primary-disabled
     focus-visible:shadow-button-primary-focused
     ${withBeforeTransition} before:bg-button-primary-hovered

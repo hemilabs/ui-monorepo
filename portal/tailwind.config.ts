@@ -36,7 +36,7 @@ const config: Config = {
         'button-primary':
           '0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11), 0 2px 1px 0 rgba(255, 255, 255, 0.14) inset',
         'button-primary-disabled':
-          '0 0 0 1px #FFF, 0 1px 3px 0 rgba(10,10,10,0.15), 0 7px 11px -5px rgba(10,10,10,0.11), inset 0 2px 1px 0 rgba(255,255,255,0.14)',
+          '0 1px 3px 0 rgba(10,10,10,0.15), 0 7px 11px -5px rgba(10,10,10,0.11), inset 0 2px 1px 0 rgba(255,255,255,0.14)',
         'button-primary-focused':
           '0 0 0 1px #FFF, 0 0 0 4px #FFEBD4, 0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11), inset 0 2px 1px 0 rgba(255, 255, 255, 0.14)',
         'button-secondary':

@@ -95,13 +95,16 @@ export const TokenList = function ({
     tokens: supportedTokens,
   })
 
-  const restOfTokens = supportedTokens.filter(
-    token => !fetchedSortedTopTokens.some(top => top.address === token.address),
-  )
+  const restOfTokens = supportedTokens
+    .filter(
+      token =>
+        !fetchedSortedTopTokens.some(top => top.address === token.address),
+    )
+    .sort(bySymbol)
 
   const sortedTokens = [
     ...fetchedSortedTopTokens // Do not sort 'fetchedSortedTopTokens' again; already sorted by balance in hook
-      .concat(restOfTokens.sort(bySymbol))
+      .concat(restOfTokens)
       .concat(customTokens.sort(bySymbol)),
   ]
 
@@ -173,7 +176,7 @@ export const TokenList = function ({
         <List
           isSearchActive={!!searchText}
           onSelectToken={token => handleSelectToken(token)}
-          tokens={searchText ? restOfTokens : sortedTokens}
+          tokens={searchText ? restOfTokens : supportedTokens.sort(bySymbol)}
           yourTokens={fetchedSortedTopTokens}
         />
       ) : (

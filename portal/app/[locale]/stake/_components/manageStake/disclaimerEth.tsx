@@ -4,7 +4,7 @@ import { InfoIcon } from 'components/icons/infoIcon'
 import { WarningBox } from 'components/warningBox'
 import { useTranslations } from 'next-intl'
 
-const Icon = () => <InfoIcon className="[&>g>path]:fill-black " />
+const Icon = () => <InfoIcon className="[&>g>path]:fill-black" />
 
 export const DisclaimerEth = function () {
   const t = useTranslations('stake-page.drawer')

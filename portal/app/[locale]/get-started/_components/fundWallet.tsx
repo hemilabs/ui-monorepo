@@ -49,7 +49,7 @@ const FundMethod = function ({
           ? t('get-testnet-tokens')
           : t('buy-sell-swap')}
       </span>
-      <ArrowDownLeftIcon className="group-hover/link:text-orange-70 [&>path]:fill-orange-500" />
+      <ArrowDownLeftIcon className="[&>path]:fill-orange-500 group-hover/link:[&>path]:fill-orange-700" />
     </ExternalLink>
   )
 }

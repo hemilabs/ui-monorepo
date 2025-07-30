@@ -19,7 +19,7 @@
     "tsc:check": "tsc"
   },
   "dependencies": {
-    "hemi-viem": "2.4.2",
+    "hemi-viem": "2.6.1",
     "viem-erc20": "1.0.1"
   },
   "devDependencies": {

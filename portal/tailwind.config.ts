@@ -16,6 +16,11 @@ const config: Config = {
         '20': '20px',
       },
       backgroundImage: {
+        'button-primary': 'linear-gradient(180deg, #FF8E4D 0%, #FF6C15 100%)',
+        'button-primary-disabled':
+          'linear-gradient(180deg, #FF8E4D 0%, #FF6C15 100%)',
+        'button-primary-hovered':
+          'linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.00) 100%), linear-gradient(180deg, #FF8E4D 0%, #FF6C15 100%)',
         'earnpoints-hover':
           'linear-gradient(0deg, rgba(255,108,21,0.12) 43.65%, rgba(255,24,20,0.12) 106.25%)',
         'hemi-gradient':
@@ -29,12 +34,18 @@ const config: Config = {
       },
       boxShadow: {
         'button-primary':
-          '0px 1px 2px 0px rgba(10, 10, 10, 0.04), 0px 0px 6px 0px rgba(255, 246, 237, 0.24) inset',
+          '0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11), 0 2px 1px 0 rgba(255, 255, 255, 0.14) inset',
+        'button-primary-disabled':
+          '0 1px 3px 0 rgba(10,10,10,0.15), 0 7px 11px -5px rgba(10,10,10,0.11), inset 0 2px 1px 0 rgba(255,255,255,0.14)',
         'button-primary-focused':
-          '0px 0px 0px 2px #FFF, 0px 0px 0px 4px var(--Color-Orange-500, #FF6C15), 0px 1px 2px 0px rgba(10, 10, 10, 0.04), 0px 0px 6px 0px rgba(255, 246, 237, 0.24) inset',
-        'button-secondary': '0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
+          '0 0 0 1px #FFF, 0 0 0 4px #FFEBD4, 0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11), inset 0 2px 1px 0 rgba(255, 255, 255, 0.14)',
+        'button-secondary':
+          '0 0 0 1px rgba(10, 10, 10, 0.08), 0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11)',
+        'button-secondary-disabled':
+          '0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11)',
         'button-secondary-focused':
-          '0px 0px 0px 2px #FFF, 0px 0px 0px 4px var(--Color-Orange-500, #FF6C15), 0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
+          '0 0 0 1px rgba(10, 10, 10, 0.08), 0 0 0 4px #E5E5E5, 0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11)',
+        'button-tertiary-focused': '0 0 0 4px #E5E5E5',
         'help-icon':
           '0px 1px 2px 0px rgba(10 10 10 0.04), 0px 1px 4px 0px #rgba(10 10 10 0.02)',
         'help-menu':
@@ -52,6 +63,9 @@ const config: Config = {
       },
       // See https://www.figma.com/design/4fVd9wneclsvYDYD95ApZ9/Hemi-Portal?node-id=3685-11596&node-type=FRAME&m=dev
       colors: {
+        'button': {
+          'primary-custom': '#DB6825',
+        },
         'orange': {
           50: '#FFF6ED',
           100: '#FFEBD4',

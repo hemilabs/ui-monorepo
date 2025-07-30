@@ -41,7 +41,7 @@ export const SubmitWithTwoWallets = function ({
       track?.('form - connect wallets')
     }
     return (
-      <Button fontSize="text-mid" onClick={onClick} type="button">
+      <Button onClick={onClick} size="xLarge" type="button">
         {t('connect-both-wallets')}
       </Button>
     )
@@ -60,11 +60,11 @@ export const SubmitWithTwoWallets = function ({
       chainId={bitcoin.id}
       submitButton={
         validationError ? (
-          <Button disabled fontSize="text-mid" type="button">
+          <Button disabled size="xLarge" type="button">
             {validationError}
           </Button>
         ) : (
-          <Button disabled={disabled} fontSize="text-mid" type="submit">
+          <Button disabled={disabled} size="xLarge" type="submit">
             {text}
           </Button>
         )

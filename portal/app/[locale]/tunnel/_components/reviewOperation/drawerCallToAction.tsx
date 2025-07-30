@@ -17,6 +17,7 @@ export const DrawerCallToAction = ({
     <SubmitWhenConnectedToChain
       chainId={expectedChainId}
       submitButton={submitButton}
+      submitButtonSize="small"
     />
   </form>
 )

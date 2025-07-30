@@ -75,7 +75,7 @@ export const RetryBtcDeposit = function ({ deposit }: Props) {
       expectedChainId={deposit.l1ChainId}
       onSubmit={handleRetry}
       submitButton={
-        <Button disabled={isDepositing} fontSize="text-mid">
+        <Button disabled={isDepositing} size="small">
           {t(getText())}
         </Button>
       }

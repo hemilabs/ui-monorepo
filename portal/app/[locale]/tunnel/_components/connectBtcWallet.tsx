@@ -16,7 +16,7 @@ export const ConnectBtcWallet = function () {
   }
 
   return (
-    <Button fontSize="text-mid" onClick={onClick} type="button">
+    <Button onClick={onClick} size="xLarge" type="button">
       {t('tunnel-page.submit-button.connect-btc-wallet')}
     </Button>
   )

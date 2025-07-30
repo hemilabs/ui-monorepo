@@ -4,51 +4,99 @@ import { isRelativeUrl } from 'utils/url'
 
 import { ExternalLink } from './externalLink'
 
-const commonCss = `box-content flex items-center justify-center
-  rounded-lg border border-solid px-3 py-1.5 font-medium disabled:opacity-50`
+const commonCss = `box-border flex items-center justify-center 
+  font-medium disabled:opacity-50 focus:outline-none`
+
+// Adds a smooth hover background effect using a before pseudo-element.
+// This ensures consistent transitions across button variants by:
+// - Creating a full-size background layer positioned behind the content (`before:absolute`, `before:inset-0`, `before:-z-10`)
+// - Starting fully transparent (`before:opacity-0`) and transitioning to visible on hover (`hover:before:opacity-100`)
+// - Applying a transition effect on opacity (`before:transition-opacity before:duration-200`)
+const withBeforeTransition = `
+  before:content-[''] before:absolute before:inset-0 before:-z-10
+  before:opacity-0 enabled:hover:before:opacity-100
+  before:transition-opacity before:duration-200
+`
 
 const variants = {
-  primary: `primary-button border-orange-700/55 from-orange-500 to-orange-600 text-white hover:border-orange-700/70  
-    bg-gradient-to-b transition-all duration-300
-    hover:from-orange-600 hover:to-orange-600 disabled:bg-orange-600 shadow-button-primary
-    focus:shadow-button-primary-focused`,
-  secondary: `text-neutral-950 bg-white border-neutral-300/55 hover:bg-neutral-100
-    disabled:bg-neutral-100 shadow-button-secondary focus:shadow-button-secondary-focused`,
+  primary: `
+    relative z-10 overflow-hidden text-white bg-button-primary
+    border border-button-primary-custom shadow-button-primary
+    disabled:bg-button-primary-disabled disabled:shadow-button-primary-disabled
+    focus-visible:shadow-button-primary-focused
+    ${withBeforeTransition} before:bg-button-primary-hovered
+  `,
+  secondary: `
+    relative z-10 overflow-hidden text-neutral-950 bg-white
+    shadow-button-secondary focus-visible:shadow-button-secondary-focused
+    disabled:bg-neutral-50 disabled:shadow-button-secondary-disabled
+    ${withBeforeTransition} before:bg-neutral-50
+  `,
+  tertiary: `
+    relative z-10 overflow-hidden text-neutral-950 bg-transparent
+    focus:bg-neutral-100 focus-visible:shadow-button-tertiary-focused
+    ${withBeforeTransition} before:bg-neutral-100
+  `,
 } as const
 
-type FontSize = { fontSize?: 'text-sm' | 'text-mid' }
+export type ButtonSize = 'xSmall' | 'small' | 'xLarge'
 
-type Height = {
-  height?: 'h-4' | 'h-5' | 'h-6' | 'h-8'
-}
+/* eslint-disable sort-keys */
+const buttonSizePresets = {
+  xSmall: {
+    icon: 'h-7 text-xs rounded-md min-w-7',
+    regular: 'h-7 text-xs gap-x-1 px-2.5 rounded-md',
+  },
+  small: {
+    icon: 'h-8 text-sm rounded-lg min-w-8',
+    regular: 'h-8 text-sm gap-x-2 px-3 rounded-lg',
+  },
+  xLarge: {
+    icon: 'h-11 text-mid rounded-lg min-w-11',
+    regular: 'h-11 text-mid gap-x-2 px-4 rounded-lg',
+  },
+} as const
+/* eslint-enable sort-keys */
 
-type Variant = {
+type ButtonStyleProps = {
   variant?: keyof typeof variants
+  size?: ButtonSize
 }
 
-type ButtonProps = ComponentProps<'button'> & Variant & FontSize & Height
-
-type ButtonLinkProps = Omit<ComponentProps<'a'>, 'href' | 'ref'> &
+type ButtonProps = Omit<ComponentProps<'button'>, 'className'> &
+  ButtonStyleProps
+type ButtonLinkProps = Omit<ComponentProps<'a'>, 'href' | 'ref' | 'className'> &
   Required<Pick<ComponentProps<typeof Link>, 'href'>> &
-  Variant
+  ButtonStyleProps
 
 export const Button = ({
-  fontSize = 'text-sm',
-  height = 'h-8',
-  variant,
+  size = 'small',
+  variant = 'primary',
   ...props
 }: ButtonProps) => (
   <button
-    className={`${commonCss} ${fontSize} ${height} ${
-      variants[variant ?? 'primary']
-    }`}
+    className={`${commonCss} ${buttonSizePresets[size].regular} ${variants[variant]}`}
     {...props}
   />
 )
 
-export const ButtonLink = function ({ variant, ...props }: ButtonLinkProps) {
-  const className = `${commonCss} px-2 ${variants[variant ?? 'primary']}`
+export const ButtonIcon = ({
+  size = 'small',
+  variant = 'primary',
+  ...props
+}: ButtonProps) => (
+  <button
+    className={`${commonCss} ${buttonSizePresets[size].icon} ${variants[variant]}`}
+    {...props}
+  />
+)
 
+export const ButtonLink = function ({
+  size = 'small',
+  variant = 'primary',
+  ...props
+}: ButtonLinkProps) {
+  const className = `${commonCss} ${buttonSizePresets[size].regular} ${variants[variant]}`
   if (
     !props.href ||
     (typeof props.href === 'string' && !isRelativeUrl(props.href))

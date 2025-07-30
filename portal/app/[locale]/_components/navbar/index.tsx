@@ -102,7 +102,7 @@ export const Navbar = function () {
           <li className="mb-auto md:block">
             <NetworkSwitch />
           </li>
-          <li className="md:hidden">
+          <li className="mb-2 md:hidden">
             <Help />
           </li>
           <li className="hidden md:block">

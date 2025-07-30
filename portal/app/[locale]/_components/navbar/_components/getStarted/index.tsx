@@ -1,3 +1,4 @@
+import { ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { Link } from 'components/link'
 import { useUmami } from 'hooks/useUmami'
@@ -16,17 +17,17 @@ type Props = Pick<ComponentProps<typeof Link>, 'href' | 'onClick'> & {
 
 const UI = ({ active, href, onClick, t }: Props) => (
   <>
-    <Link
-      className={`shadow-soft font-inter-variable mx-4 mb-4 flex
-        cursor-pointer items-center justify-center gap-x-1 rounded-lg border
-        border-neutral-300/55 bg-white py-2 text-sm font-semibold text-neutral-950 md:hidden
-        `}
-      href={href}
-      onClick={onClick}
-    >
-      <span>{t('get-started')}</span>
-      <Chevron.Right className="[&>path]:fill-neutral-500" />
-    </Link>
+    <div className="mx-4 mb-4 md:hidden">
+      <ButtonLink
+        href={href}
+        onClick={onClick}
+        size="small"
+        variant="secondary"
+      >
+        <span>{t('get-started')}</span>
+        <Chevron.Right className="[&>path]:fill-neutral-500" />
+      </ButtonLink>
+    </div>
     <Link
       className={`hidden ${active ? '' : 'cursor-pointer'} group/item md:block`}
       href={href}

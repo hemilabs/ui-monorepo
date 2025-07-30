@@ -34,8 +34,8 @@ export const SubmitEvmDeposit = function ({
   if (tunnelsThroughPartners(fromToken)) {
     return (
       <Button
-        fontSize="text-mid"
         onClick={() => setIsPartnersDrawerOpen(true)}
+        size="xLarge"
         type="button"
       >
         {t('tunnel-page.tunnel-partners.tunnel-with-our-partners')}
@@ -79,7 +79,7 @@ export const SubmitEvmDeposit = function ({
       submitButton={
         <Button
           disabled={!canDeposit || isRunningOperation || isAllowanceLoading}
-          fontSize="text-mid"
+          size="xLarge"
           type="submit"
         >
           {getOperationButtonText()}

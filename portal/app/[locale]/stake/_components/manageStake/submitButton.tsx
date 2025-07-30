@@ -15,10 +15,11 @@ export const SubmitButton = function ({ disabled, text }: Props) {
       <SubmitWhenConnectedToChain
         chainId={hemi.id}
         submitButton={
-          <Button disabled={disabled} fontSize="text-mid" type="submit">
+          <Button disabled={disabled} size="small" type="submit">
             {text}
           </Button>
         }
+        submitButtonSize="small"
       />
     </div>
   )

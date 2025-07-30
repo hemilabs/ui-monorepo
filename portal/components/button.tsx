@@ -20,20 +20,20 @@ const withBeforeTransition = `
 
 const variants = {
   primary: `
-    relative z-10 overflow-hidden text-white bg-button-primary
+    relative z-0 overflow-hidden text-white bg-button-primary
     border border-button-primary-custom shadow-button-primary
     disabled:bg-button-primary-disabled disabled:shadow-button-primary-disabled
     focus-visible:shadow-button-primary-focused
     ${withBeforeTransition} before:bg-button-primary-hovered
   `,
   secondary: `
-    relative z-10 overflow-hidden text-neutral-950 bg-white
+    relative z-0 overflow-hidden text-neutral-950 bg-white
     shadow-button-secondary focus-visible:shadow-button-secondary-focused
     disabled:bg-neutral-50 disabled:shadow-button-secondary-disabled
     ${withBeforeTransition} before:bg-neutral-50
   `,
   tertiary: `
-    relative z-10 overflow-hidden text-neutral-950 bg-transparent
+    relative z-0 overflow-hidden text-neutral-950 bg-transparent
     focus:bg-neutral-100 focus-visible:shadow-button-tertiary-focused
     ${withBeforeTransition} before:bg-neutral-100
   `,

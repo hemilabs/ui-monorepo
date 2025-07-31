@@ -14,7 +14,7 @@ const commonCss = `box-border flex items-center justify-center
 // - Applying a transition effect on opacity (`before:transition-opacity before:duration-200`)
 const withBeforeTransition = `
   before:content-[''] before:absolute before:inset-0 before:-z-10
-  before:opacity-0 enabled:hover:before:opacity-100
+  before:opacity-0 hover:before:opacity-100
   before:transition-opacity before:duration-200
 `
 
@@ -64,10 +64,14 @@ type ButtonStyleProps = {
 }
 
 type ButtonProps = Omit<ComponentProps<'button'>, 'className'> &
-  ButtonStyleProps
-type ButtonLinkProps = Omit<ComponentProps<'a'>, 'href' | 'ref' | 'className'> &
+  ButtonStyleProps & {
+    className?: string
+  }
+type ButtonLinkProps = Omit<ComponentProps<'a'>, 'href' | 'ref'> &
   Required<Pick<ComponentProps<typeof Link>, 'href'>> &
-  ButtonStyleProps
+  ButtonStyleProps & {
+    className?: string
+  }
 
 export const Button = ({
   size = 'small',
@@ -92,11 +96,14 @@ export const ButtonIcon = ({
 )
 
 export const ButtonLink = function ({
+  className: extraClassName,
   size = 'small',
   variant = 'primary',
   ...props
 }: ButtonLinkProps) {
-  const className = `${commonCss} ${buttonSizePresets[size].regular} ${variants[variant]}`
+  const className = `${commonCss} ${buttonSizePresets[size].regular} ${
+    variants[variant]
+  } ${extraClassName || ''}`
   if (
     !props.href ||
     (typeof props.href === 'string' && !isRelativeUrl(props.href))

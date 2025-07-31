@@ -14,7 +14,7 @@ const commonCss = `box-border flex items-center justify-center
 // - Applying a transition effect on opacity (`before:transition-opacity before:duration-200`)
 const withBeforeTransition = `
   before:content-[''] before:absolute before:inset-0 before:-z-10
-  before:opacity-0 enabled:hover:before:opacity-100
+  before:opacity-0 hover:before:opacity-100 disabled:hover:before:opacity-0
   before:transition-opacity before:duration-200
 `
 
@@ -65,6 +65,7 @@ type ButtonStyleProps = {
 
 type ButtonProps = Omit<ComponentProps<'button'>, 'className'> &
   ButtonStyleProps
+
 type ButtonLinkProps = Omit<ComponentProps<'a'>, 'href' | 'ref' | 'className'> &
   Required<Pick<ComponentProps<typeof Link>, 'href'>> &
   ButtonStyleProps

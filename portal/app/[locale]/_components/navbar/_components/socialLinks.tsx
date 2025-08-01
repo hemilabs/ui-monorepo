@@ -53,7 +53,7 @@ const UI = ({
       <LinkedinIcon className={svgCss} />
     </ExternalLink>
     <ExternalLink href={youtubeUrl} onClick={addTracking?.('nav - youtube')}>
-      <YoutubeIcon className={`${svgCss}`} />
+      <YoutubeIcon className={svgCss} />
     </ExternalLink>
     <Telegram
       telegramCommunityUrl={telegramCommunityUrl}

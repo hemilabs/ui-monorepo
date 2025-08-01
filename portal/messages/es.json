@@ -169,6 +169,11 @@
   "metadata": {
     "title": "Portal de Hemi"
   },
+  "rewards-page": {
+    "only-live-on-mainnet": "Solo en Mainnet",
+    "switch-to-mainnet": "Cambiar a Mainnet",
+    "switch-to-start-claiming": "Puede cambiar de red para comenzar a reclamar sus HEMI."
+  },
   "navbar": {
     "agree-to-terms-and-policy": "Al usar esta aplicación, usted acepta los <terms>Términos de Uso</terms> y la <policy>Política de Privacidad</policy>",
     "bitcoinkit": "Kit de Hemi Bitcoin",

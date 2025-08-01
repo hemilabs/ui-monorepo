@@ -1,0 +1,73 @@
+import { ComponentProps } from 'react'
+
+const LeftBackground = (props: ComponentProps<'svg'>) => (
+  <svg
+    fill="none"
+    height={868}
+    width={235}
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="m-307.317-103.999 375.43 377.146c70.284 70.605 70.023 184.816-.582 255.101L-33.197 634.503"
+      stroke="#E9F8F9"
+      strokeLinecap="round"
+      strokeWidth={22}
+    />
+    <path
+      d="m-246.159 971.012 392.421-392.418c62.852-62.851 62.852-164.754 0-227.605L-221.03-16.301"
+      stroke="#FF6A00"
+      strokeLinecap="round"
+      strokeWidth={22}
+    />
+    <path
+      d="m-204.116 971.613 372.003-372c74.457-74.461 74.457-195.184 0-269.645L-178.386-16.301"
+      stroke="#009CF5"
+      strokeLinecap="round"
+      strokeWidth={22}
+    />
+    <path
+      d="M58.782 211.619a8.468 8.468 0 0 1-8.47 8.469 8.466 8.466 0 0 1-8.468-8.469 8.469 8.469 0 1 1 16.938 0ZM34.779 231.959a8.468 8.468 0 0 1-8.47 8.469 8.466 8.466 0 0 1-8.468-8.469 8.469 8.469 0 1 1 16.938 0Z"
+      fill="#fff"
+    />
+  </svg>
+)
+const RightBackground = (props: ComponentProps<'svg'>) => (
+  <svg
+    fill="none"
+    height={868}
+    width={234}
+    xmlns="http://www.w3.org/2000/svg"
+    {...props}
+  >
+    <path
+      d="M542.046-103.999 166.617 273.147c-70.284 70.605-70.024 184.816.582 255.101l100.727 106.255"
+      stroke="#E9F8F9"
+      strokeLinecap="round"
+      strokeWidth={22}
+    />
+    <path
+      d="M480.889 971.011 88.468 578.593c-62.852-62.851-62.852-164.754 0-227.605L455.76-16.302"
+      stroke="#1B282F"
+      strokeLinecap="round"
+      strokeWidth={22}
+    />
+    <path
+      d="m438.846 971.612-372.003-372c-74.457-74.461-74.457-195.184 0-269.645L413.116-16.302"
+      stroke="#FF6A00"
+      strokeLinecap="round"
+      strokeWidth={22}
+    />
+    <path
+      d="M175.948 211.619a8.468 8.468 0 0 0 8.469 8.469 8.466 8.466 0 0 0 8.469-8.469 8.469 8.469 0 1 0-16.938 0ZM199.951 231.959a8.468 8.468 0 0 0 8.469 8.469 8.466 8.466 0 0 0 8.469-8.469 8.469 8.469 0 1 0-16.938 0Z"
+      fill="#fff"
+    />
+  </svg>
+)
+
+export const Background = () => (
+  <>
+    <LeftBackground className="-left-30 absolute -top-24 bottom-12 -z-10 md:left-0" />
+    <RightBackground className="-right-30 absolute -top-24 bottom-12 -z-10 md:right-0" />
+  </>
+)

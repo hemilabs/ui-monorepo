@@ -100,6 +100,62 @@ export const ItemText = ({
 export type ItemLinkProps = NavItemProps &
   Required<Pick<ComponentProps<typeof Link>, 'href'>>
 
+export type ItemDrawerProps = {
+  icon: ReactNode
+  items: Omit<ItemLinkProps, 'icon' | 'rightSection'>[]
+  text: string
+}
+
+export const DrawerContainer = ({
+  children,
+  isOpen = false,
+  ...props
+}: { children: ReactNode } & {
+  isOpen?: boolean
+} & ComponentProps<'div'>) => (
+  <div
+    {...props}
+    className={`group/nav cursor-pointer rounded-lg p-2 transition-colors duration-300 ${
+      isOpen ? 'rounded-lg bg-neutral-100' : 'hover:bg-neutral-100'
+    }`}
+  >
+    {children}
+  </div>
+)
+
+export const DrawerIconContainer = ({
+  children,
+  selected = false,
+}: Selectable & { children: ReactNode }) => (
+  <div
+    className={`flex size-6 items-center justify-center rounded-md
+      transition-colors duration-300 md:size-5
+      group-hover/nav:[&>svg>path]:fill-neutral-950 ${
+        selected
+          ? '[&>svg>path]:fill-neutral-950'
+          : 'bg-neutral-100 [&>svg>path]:fill-neutral-400'
+      }`}
+  >
+    {children}
+  </div>
+)
+
+export const DrawerItemText = ({
+  selected = false,
+  text,
+}: Pick<NavItemProps, 'text'> & Selectable) => (
+  <span
+    className={`text-base font-medium transition-colors duration-300
+       group-hover/nav:text-neutral-950 md:text-sm ${
+         selected
+           ? 'text-neutral-950'
+           : 'text-neutral-600 group-hover/item:text-neutral-950'
+       }`}
+  >
+    {text}
+  </span>
+)
+
 const SwitchUI = function ({
   network,
   setIsOpen,

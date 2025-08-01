@@ -6,7 +6,7 @@ import { useState } from 'react'
 
 import { TelegramButton } from './telegramButton'
 
-const Backdrop = ({ onClick }) => (
+const Backdrop = ({ onClick }: { onClick: () => void }) => (
   <div
     className="absolute bottom-0 left-0 z-20
     h-screen w-screen bg-gradient-to-b
@@ -51,7 +51,7 @@ export const Telegram = function ({
   const { track } = useUmami()
 
   const trackTelegramClick = (channel: string) => () =>
-    track?.(`telegram - ${channel}` as AnalyticsEvent)
+    track?.(`nav - telegram ${channel}` as AnalyticsEvent)
   return (
     <div className="relative cursor-pointer" ref={ref}>
       {isOpen && <Backdrop onClick={() => setIsOpen(!isOpen)} />}

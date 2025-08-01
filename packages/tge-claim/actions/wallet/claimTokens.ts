@@ -28,10 +28,7 @@ const validateRatio = function (
     return { canClaim: false, reason: 'Ratio must be a finite number' }
   }
 
-  // Round to 2 decimal places
-  const roundedRatio = Math.round(ratio * 100) / 100
-
-  if (roundedRatio < 50 || roundedRatio > 100) {
+  if (ratio < 50 || ratio > 100) {
     return { canClaim: false, reason: 'Ratio must be between 50 and 100' }
   }
 

@@ -67,7 +67,7 @@ const RightBackground = (props: ComponentProps<'svg'>) => (
 
 export const Background = () => (
   <>
-    <LeftBackground className="-left-30 absolute -top-24 bottom-12 -z-10 md:left-0" />
-    <RightBackground className="-right-30 absolute -top-24 bottom-12 -z-10 md:right-0" />
+    <LeftBackground className="xs:-left-30 absolute -left-44 -top-24 bottom-12 -z-10 md:left-0" />
+    <RightBackground className="xs:-right-30 absolute -right-44 -top-24 bottom-12 -z-10 md:right-0" />
   </>
 )

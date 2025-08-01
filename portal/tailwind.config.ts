@@ -246,6 +246,9 @@ const config: Config = {
         '17': '17',
         '18': '18',
       },
+      screens: {
+        xs: '425px',
+      },
       spacing: {
         '0.5': '0.125rem',
         '1.5': '0.375rem',

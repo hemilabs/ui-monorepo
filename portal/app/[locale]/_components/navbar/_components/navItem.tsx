@@ -100,13 +100,13 @@ export const ItemText = ({
 export type ItemLinkProps = NavItemProps &
   Required<Pick<ComponentProps<typeof Link>, 'href'>>
 
-export type ItemDrawerProps = {
+export type ItemAccordionProps = {
   icon: ReactNode
   items: Omit<ItemLinkProps, 'icon' | 'rightSection'>[]
   text: string
 }
 
-export const DrawerContainer = ({
+export const AccordionContainer = ({
   children,
   isOpen = false,
   ...props
@@ -123,7 +123,7 @@ export const DrawerContainer = ({
   </div>
 )
 
-export const DrawerIconContainer = ({
+export const AccordionIconContainer = ({
   children,
   selected = false,
 }: Selectable & { children: ReactNode }) => (
@@ -140,7 +140,7 @@ export const DrawerIconContainer = ({
   </div>
 )
 
-export const DrawerItemText = ({
+export const AccordionItemText = ({
   selected = false,
   text,
 }: Pick<NavItemProps, 'text'> & Selectable) => (

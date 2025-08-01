@@ -7,7 +7,6 @@ import { NetworkStatusIcon } from 'components/icons/networkStatusIcon'
 import { StakeIcon } from 'components/icons/stakeIcon'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { ReactNode } from 'react'
 
 import { Badge } from '../badge'
 
@@ -16,7 +15,7 @@ import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HomeLink } from './_components/homeLink'
-import { ItemDrawer } from './_components/itemDrawer'
+import { ItemAccordion } from './_components/itemAccordion'
 import { ItemLink } from './_components/itemLink'
 import { NetworkSwitch } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
@@ -39,10 +38,6 @@ const PaddedListItem = ({
   className?: string
 }) => <li className={`[&>div]:px-2 ${className}`}>{children}</li>
 
-const PlainListItem = ({ children }: { children: ReactNode }) => (
-  <li>{children}</li>
-)
-
 export const Navbar = function () {
   const t = useTranslations('navbar')
 
@@ -63,8 +58,8 @@ export const Navbar = function () {
           <PaddedListItem>
             <Dex />
           </PaddedListItem>
-          <PlainListItem>
-            <ItemDrawer
+          <li>
+            <ItemAccordion
               icon={<StakeIcon />}
               items={[
                 {
@@ -83,7 +78,7 @@ export const Navbar = function () {
               ]}
               text={t('stake')}
             />
-          </PlainListItem>
+          </li>
           <PaddedListItem>
             <Separator />
           </PaddedListItem>

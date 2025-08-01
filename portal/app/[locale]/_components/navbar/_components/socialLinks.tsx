@@ -46,6 +46,12 @@ const UI = ({
     <ExternalLink href={discordUrl} onClick={addTracking?.('nav - discord')}>
       <DiscordIcon className={svgCss} />
     </ExternalLink>
+    <ExternalLink href={githubUrl} onClick={addTracking?.('nav - gitHub')}>
+      <GithubIcon className={svgCss} />
+    </ExternalLink>
+    <ExternalLink href={linkedinUrl} onClick={addTracking?.('nav - linkedIn')}>
+      <LinkedinIcon className={svgCss} />
+    </ExternalLink>
     <ExternalLink href={youtubeUrl} onClick={addTracking?.('nav - youtube')}>
       <YoutubeIcon className={`${svgCss}`} />
     </ExternalLink>
@@ -53,14 +59,12 @@ const UI = ({
       telegramCommunityUrl={telegramCommunityUrl}
       telegramNewsUrl={telegramNewsUrl}
     />
-    <ExternalLink href={tiktokUrl} onClick={addTracking?.('nav - tiktok')}>
+    <ExternalLink
+      className="-ml-1"
+      href={tiktokUrl}
+      onClick={addTracking?.('nav - tiktok')}
+    >
       <TiktokIcon className={svgCss} />
-    </ExternalLink>
-    <ExternalLink href={githubUrl} onClick={addTracking?.('nav - gitHub')}>
-      <GithubIcon className={svgCss} />
-    </ExternalLink>
-    <ExternalLink href={linkedinUrl} onClick={addTracking?.('nav - linkedIn')}>
-      <LinkedinIcon className={svgCss} />
     </ExternalLink>
   </div>
 )

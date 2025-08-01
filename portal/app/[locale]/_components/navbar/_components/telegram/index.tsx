@@ -1,5 +1,6 @@
 import { AnalyticsEvent } from 'app/analyticsEvents'
 import { ExternalLink } from 'components/externalLink'
+import { ArrowRightIcon } from 'components/icons/arrowRightIcon'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
 import { useState } from 'react'
@@ -26,16 +27,15 @@ const TelegramMenuItem = ({
   onClick?: () => void
 }) => (
   <ExternalLink
-    className="group/row flex h-14 w-full items-center rounded-md
+    className="group/row flex h-14 w-full items-center justify-between rounded-md
     px-4 hover:bg-neutral-50 md:h-8 md:px-3 md:py-2"
     href={href}
     onClick={onClick}
   >
-    <div className="flex flex-col">
-      <span className="text-base font-medium text-neutral-700 group-hover/row:text-neutral-950 md:text-sm">
-        {title}
-      </span>
-    </div>
+    <span className="text-base font-medium text-neutral-700 group-hover/row:text-neutral-950 md:text-sm">
+      # {title}
+    </span>
+    <ArrowRightIcon className="h-4 w-4 opacity-0 transition-opacity group-hover/row:opacity-100" />
   </ExternalLink>
 )
 
@@ -60,7 +60,7 @@ export const Telegram = function ({
       {isOpen && (
         <div
           className="shadow-help-menu absolute bottom-full left-1/2 z-30 mb-2
-          flex h-fit w-64 -translate-x-1/2
+          flex h-fit w-52 -translate-x-1/2
           flex-col items-start rounded-lg
           border border-neutral-300/55 bg-white p-1"
         >

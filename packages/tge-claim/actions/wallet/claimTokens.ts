@@ -13,7 +13,7 @@ import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { tgeClaimAbi, getTgeClaimAddress } from '../../contracts/claimContract'
 import { ClaimEvents, type LockupMonths } from '../../types/claim'
 import { getEligibility } from '../../utils/getEligibility'
-import { checkIsClaimable } from '../public/claimTokens'
+import { checkIsClaimable } from '../public/checkIsClaimable'
 
 // Validation functions
 const validateLockupMonths = (

@@ -11,7 +11,11 @@ import {
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
 import { tgeClaimAbi, getTgeClaimAddress } from '../../contracts/claimContract'
-import { ClaimEvents, type LockupMonths } from '../../types/claim'
+import {
+  ClaimEvents,
+  EligibilityData,
+  type LockupMonths,
+} from '../../types/claim'
 import { getEligibility } from '../../utils/getEligibility'
 import { checkIsClaimable } from '../public/checkIsClaimable'
 
@@ -210,62 +214,34 @@ const runClaim = ({
   }
 
 // Encode claim function data for gas estimation
-export const encodeClaimTokens = function ({
+export const encodeClaimTokens = ({
   account,
   amount,
+  eligibility,
   lockupMonths,
   ratio,
   termsSignature,
 }: {
   account: Address
+  eligibility: EligibilityData
   amount: bigint
   lockupMonths: number
   ratio: number
   termsSignature: Hash
-}) {
-  const eligibility = getEligibility(account)
-
-  if (!eligibility) {
-    throw new Error('Address is not eligible for claiming')
-  }
-
-  // Validate amount
-  if (amount <= BigInt(0)) {
-    throw new Error('Amount must be greater than zero')
-  }
-
-  const maxClaimableAmount = BigInt(eligibility.amount)
-  if (amount > maxClaimableAmount) {
-    throw new Error('Amount exceeds maximum claimable allocation')
-  }
-
-  // Validate lockupMonths
-  if (!validateLockupMonths(lockupMonths)) {
-    throw new Error('Lockup months must be 6, 24, or 48')
-  }
-
-  // Validate ratio
-  const ratioValidation = validateRatio(ratio)
-  if (ratioValidation) {
-    throw new Error(ratioValidation.reason)
-  }
-
-  const { claimGroupId, proof } = eligibility
-
-  return encodeFunctionData({
+}) =>
+  encodeFunctionData({
     abi: tgeClaimAbi,
     args: [
-      BigInt(claimGroupId),
+      BigInt(eligibility.claimGroupId),
       account,
       amount,
-      proof,
+      eligibility.proof,
       lockupMonths,
       formatRatio(ratio),
       termsSignature,
     ],
     functionName: 'claim',
   })
-}
 
 // Main export function
 export const claimTokens = function (...args: Parameters<typeof runClaim>) {

@@ -1,4 +1,3 @@
-import { AnalyticsEvent } from 'app/analyticsEvents'
 import { ExternalLink } from 'components/externalLink'
 import { ArrowRightIcon } from 'components/icons/arrowRightIcon'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
@@ -50,8 +49,8 @@ export const Telegram = function ({
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
   const { track } = useUmami()
 
-  const trackTelegramClick = (channel: string) => () =>
-    track?.(`nav - telegram ${channel}` as AnalyticsEvent)
+  const trackTelegramClick = (channel: 'community' | 'news') => () =>
+    track?.(`nav - telegram ${channel}`)
   return (
     <div className="relative cursor-pointer" ref={ref}>
       {isOpen && <Backdrop onClick={() => setIsOpen(!isOpen)} />}

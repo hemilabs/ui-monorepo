@@ -59,7 +59,7 @@ export const Telegram = function ({
 
       {isOpen && (
         <div
-          className="shadow-help-menu absolute bottom-full left-1/2 z-30 mb-2
+          className="shadow-help-menu absolute bottom-full left-1/2 z-50 mb-2
           flex h-fit w-52 -translate-x-1/2
           flex-col items-start rounded-lg
           border border-neutral-300/55 bg-white p-1"

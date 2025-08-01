@@ -37,8 +37,8 @@ const UI = ({
   addTracking?: (event: AnalyticsEvent) => () => void | undefined
 }) => (
   <div
-    className="mb-3 mt-0 flex flex-wrap items-center justify-center gap-x-6
-      md:mb-6 md:mt-6 md:h-10 md:gap-x-2 md:border-t md:border-neutral-300/55 md:py-2 lg:mb-0"
+    className="mb-3 mt-0 flex flex-wrap items-center justify-between gap-x-6
+      !px-0 md:mb-6 md:mt-6 md:h-10 md:gap-x-2 md:border-t md:border-neutral-300/55 md:py-2 lg:mb-0"
   >
     <ExternalLink href={twitterUrl} onClick={addTracking?.('nav - x')}>
       <TwitterIcon className={svgCss} />

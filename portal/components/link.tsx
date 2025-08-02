@@ -34,7 +34,11 @@ const LinkImpl = function (props: ComponentProps<typeof BaseLink>) {
   if (networkType !== defaultNetworkType) {
     if (typeof href === 'string') {
       href = { pathname: href, query: { networkType } }
-    } else {
+    } else if (
+      typeof href.query === 'object' &&
+      // only add the networkType if consumer does not set it
+      href.query.networkType === undefined
+    ) {
       href = {
         ...href,
         query: { ...getQuery(href.query), networkType },

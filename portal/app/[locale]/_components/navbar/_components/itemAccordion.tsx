@@ -34,7 +34,6 @@ function ItemAccordionUI({
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathnameWithoutLocale()
   const router = useRouter()
-  //const { width } = useWindowSize()
 
   function matchesPath(path: string, url?: string | UrlObject) {
     if (typeof url === 'string') {
@@ -47,7 +46,7 @@ function ItemAccordionUI({
     if (typeof url === 'string') {
       return url
     }
-    return url.pathname
+    return url?.pathname
   }
 
   const hasSelectedItem = items.some(({ urlToBeSelected }) =>
@@ -70,7 +69,7 @@ function ItemAccordionUI({
   )
 
   function handleOpenAccordion() {
-    // TODO: After defining the governance page, we must define item[0]
+    // TODO: After defining the governance page, we must define item[0], which is the first item in the accordion.
     const firstItemHref = items.length > 0 ? items[1]?.href : undefined
     if (firstItemHref && width >= 768) {
       router.push(getUrlPath(firstItemHref))
@@ -138,6 +137,7 @@ function ItemAccordionUI({
     </div>
   )
 }
+
 function ItemAccordionImpl(props: Omit<Props, 'urlToBeSelected'>) {
   const { enabled, track } = useUmami()
   const { width } = useWindowSize()

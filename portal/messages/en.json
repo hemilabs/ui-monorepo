@@ -177,6 +177,7 @@
   "navbar": {
     "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
     "bitcoinkit": "Hemi Bitcoin Kit",
+    "boost-staking": "Boost staking",
     "data-attribution": "Data provided by <link>CoinMarketCap.com</link>",
     "dex": {
       "1delta": "1delta",
@@ -199,6 +200,7 @@
       "language": "Language",
       "legal-and-privacy": "Legal and Privacy"
     },
+    "hemi-staking": "$HEMI staking",
     "learn-how-to-start": "Learn how to start using the Hemi network",
     "network": "Network",
     "network-status": "Network Status",

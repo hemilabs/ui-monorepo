@@ -42,7 +42,7 @@ export const Navbar = function () {
           </div>
           <Help />
         </div>
-        <ul className="flex h-[calc(100dvh-170px)] flex-col gap-y-[2px] overflow-visible md:mt-2 md:h-full [&>li>div]:px-2">
+        <ul className="flex h-[calc(100dvh-170px)] flex-col gap-y-[2px] overflow-y-auto md:mt-2 md:h-full [&>li>div]:px-2">
           <li>
             <TunnelLink />
           </li>

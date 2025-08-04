@@ -37,8 +37,8 @@ const UI = ({
   addTracking?: (event: AnalyticsEvent) => () => void | undefined
 }) => (
   <div
-    className="mb-3 mt-0 flex flex-wrap items-center justify-between gap-x-6
-      !px-0 md:mb-6 md:mt-6 md:h-10 md:gap-x-2 md:border-t md:border-neutral-300/55 md:py-2 lg:mb-0"
+    className="mb-3 mt-0 flex flex-wrap items-center justify-between gap-x-6 overflow-visible
+      px-3 md:mb-6 md:mt-6 md:h-10 md:gap-x-2 md:border-t md:border-neutral-300/55 md:!px-0 md:py-2 lg:mb-0"
   >
     <ExternalLink href={twitterUrl} onClick={addTracking?.('nav - x')}>
       <TwitterIcon className={svgCss} />
@@ -46,19 +46,19 @@ const UI = ({
     <ExternalLink href={discordUrl} onClick={addTracking?.('nav - discord')}>
       <DiscordIcon className={svgCss} />
     </ExternalLink>
-    <ExternalLink href={githubUrl} onClick={addTracking?.('nav - gitHub')}>
-      <GithubIcon className={svgCss} />
-    </ExternalLink>
-    <ExternalLink href={linkedinUrl} onClick={addTracking?.('nav - linkedIn')}>
-      <LinkedinIcon className={svgCss} />
-    </ExternalLink>
-    <ExternalLink href={youtubeUrl} onClick={addTracking?.('nav - youtube')}>
-      <YoutubeIcon className={svgCss} />
-    </ExternalLink>
     <Telegram
       telegramCommunityUrl={telegramCommunityUrl}
       telegramNewsUrl={telegramNewsUrl}
     />
+    <ExternalLink href={linkedinUrl} onClick={addTracking?.('nav - linkedIn')}>
+      <LinkedinIcon className={svgCss} />
+    </ExternalLink>
+    <ExternalLink href={githubUrl} onClick={addTracking?.('nav - gitHub')}>
+      <GithubIcon className={svgCss} />
+    </ExternalLink>
+    <ExternalLink href={youtubeUrl} onClick={addTracking?.('nav - youtube')}>
+      <YoutubeIcon className={svgCss} />
+    </ExternalLink>
     <ExternalLink
       className="-ml-1"
       href={tiktokUrl}

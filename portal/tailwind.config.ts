@@ -220,13 +220,6 @@ const config: Config = {
             lineHeight: '60px',
           },
         ],
-        '6.4xl': [
-          '4rem', // 64px
-          {
-            letterSpacing: '-1.28px',
-            lineHeight: '68px',
-          },
-        ],
         '7xl': [
           '4.5rem', // 72px
           {

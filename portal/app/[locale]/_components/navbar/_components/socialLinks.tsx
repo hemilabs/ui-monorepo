@@ -59,11 +59,7 @@ const UI = ({
     <ExternalLink href={youtubeUrl} onClick={addTracking?.('nav - youtube')}>
       <YoutubeIcon className={svgCss} />
     </ExternalLink>
-    <ExternalLink
-      className="-ml-1"
-      href={tiktokUrl}
-      onClick={addTracking?.('nav - tiktok')}
-    >
+    <ExternalLink href={tiktokUrl} onClick={addTracking?.('nav - tiktok')}>
       <TiktokIcon className={svgCss} />
     </ExternalLink>
   </div>

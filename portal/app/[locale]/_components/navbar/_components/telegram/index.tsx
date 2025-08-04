@@ -1,5 +1,5 @@
 import { ExternalLink } from 'components/externalLink'
-import { ArrowRightIcon } from 'components/icons/arrowRightIcon'
+import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { Menu } from 'components/menu'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
@@ -23,7 +23,7 @@ const createTelegramMenuItem = ({
       onClick={onClick}
     >
       <span># {title}</span>
-      <ArrowRightIcon className="h-4 w-4 opacity-0 transition-opacity group-hover/menu-item:opacity-100" />
+      <ArrowDownLeftIcon className="opacity-0 transition-opacity group-hover/menu-item:opacity-100" />
     </ExternalLink>
   ),
   id: title.toLowerCase().replace(' ', '-'),
@@ -38,7 +38,7 @@ const TelegramDesktop = ({
   telegramNewsUrl: string
   trackTelegramClick: (channel: 'community' | 'news') => () => void
 }) => (
-  <div className="-translate-y-26 absolute left-1/2 z-20 hidden w-56 -translate-x-1/2 md:left-0 md:block md:translate-x-0">
+  <div className="fixed bottom-12 left-20 z-20 hidden w-56 md:block">
     <Menu
       items={[
         createTelegramMenuItem({
@@ -56,7 +56,7 @@ const TelegramDesktop = ({
   </div>
 )
 
-const TelegramDrawer = ({
+function TelegramDrawer({
   setIsOpen,
   telegramCommunityUrl,
   telegramNewsUrl,
@@ -66,34 +66,42 @@ const TelegramDrawer = ({
   telegramNewsUrl: string
   setIsOpen: (isOpen: boolean) => void
   trackTelegramClick: (channel: 'community' | 'news') => () => void
-}) => (
-  <div className="fixed inset-0 z-50 md:hidden">
-    <div
-      className="fixed inset-0 bg-black/50"
-      onClick={() => setIsOpen(false)}
-    />
-    <div className="fixed bottom-0 left-0 right-0 rounded-t-2xl bg-white p-6">
-      <div className="space-y-4">
-        <ExternalLink
-          className="flex items-center justify-between border-b border-gray-100 py-3"
-          href={telegramCommunityUrl}
-          onClick={trackTelegramClick('community')}
-        >
-          <span className="text-base"># Community Channel</span>
-          <ArrowRightIcon className="h-5 w-5 text-gray-400" />
-        </ExternalLink>
-        <ExternalLink
-          className="flex items-center justify-between py-3"
-          href={telegramNewsUrl}
-          onClick={trackTelegramClick('news')}
-        >
-          <span className="text-base"># News Channel</span>
-          <ArrowRightIcon className="h-5 w-5 text-gray-400" />
-        </ExternalLink>
+}) {
+  function handleChannelClick(channel: 'community' | 'news') {
+    trackTelegramClick(channel)()
+    setIsOpen(false)
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 md:hidden">
+      <div
+        className="fixed inset-0 bg-black/50"
+        onClick={() => setIsOpen(false)}
+      />
+      <div className="fixed bottom-0 left-0 right-0 rounded-t-2xl bg-white p-6">
+        <h3 className="mb-4 text-lg font-semibold">Telegram Channels</h3>
+        <div className="space-y-4">
+          <ExternalLink
+            className="flex items-center justify-between border-b border-gray-100 py-3"
+            href={telegramCommunityUrl}
+            onClick={() => handleChannelClick('community')}
+          >
+            <span className="text-base"># Community Channel</span>
+            <ArrowDownLeftIcon className="h-5 w-5 text-gray-400" />
+          </ExternalLink>
+          <ExternalLink
+            className="flex items-center justify-between py-3"
+            href={telegramNewsUrl}
+            onClick={() => handleChannelClick('news')}
+          >
+            <span className="text-base"># News Channel</span>
+            <ArrowDownLeftIcon className="h-5 w-5 text-gray-400" />
+          </ExternalLink>
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
 export const Telegram = function ({
   telegramCommunityUrl,
@@ -111,27 +119,26 @@ export const Telegram = function ({
 
   return (
     <div
-      className={`group/nav cursor-pointer rounded-lg py-2 transition-colors duration-300`}
+      className="group/nav relative cursor-pointer rounded-lg py-2 transition-colors duration-300"
       ref={ref}
     >
-      <div>
-        <TelegramButton isOpen={isOpen} setIsOpen={setIsOpen} />
-        {isOpen && (
-          <>
-            <TelegramDesktop
-              telegramCommunityUrl={telegramCommunityUrl}
-              telegramNewsUrl={telegramNewsUrl}
-              trackTelegramClick={trackTelegramClick}
-            />
-            <TelegramDrawer
-              setIsOpen={setIsOpen}
-              telegramCommunityUrl={telegramCommunityUrl}
-              telegramNewsUrl={telegramNewsUrl}
-              trackTelegramClick={trackTelegramClick}
-            />
-          </>
-        )}
-      </div>
+      <TelegramButton isOpen={isOpen} setIsOpen={setIsOpen} />
+
+      {isOpen && (
+        <>
+          <TelegramDesktop
+            telegramCommunityUrl={telegramCommunityUrl}
+            telegramNewsUrl={telegramNewsUrl}
+            trackTelegramClick={trackTelegramClick}
+          />
+          <TelegramDrawer
+            setIsOpen={setIsOpen}
+            telegramCommunityUrl={telegramCommunityUrl}
+            telegramNewsUrl={telegramNewsUrl}
+            trackTelegramClick={trackTelegramClick}
+          />
+        </>
+      )}
     </div>
   )
 }

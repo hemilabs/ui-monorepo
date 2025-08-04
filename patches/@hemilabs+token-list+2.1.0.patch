@@ -1,5 +1,5 @@
 diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
-index 17c1715..9968812 100644
+index 17c1715..b6424f6 100644
 --- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 +++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
 @@ -340,6 +340,11 @@
@@ -62,7 +62,7 @@ index 17c1715..9968812 100644
      },
      {
        "address": "0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298",
-@@ -611,8 +631,8 @@
+@@ -611,8 +631,19 @@
          "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/hdai.svg"
        },
        "logoURI": "https://hemilabs.github.io/token-list/logos/hdai.svg",
@@ -70,6 +70,17 @@ index 17c1715..9968812 100644
 -      "symbol": "hDAI"
 +      "name": "Dai Stablecoin",
 +      "symbol": "DAI"
++    },
++    {
++      "address": "0xbaacf81C8341c3Cb983BC48051Cc7377d2A2Eb93",
++      "chainId": 743111,
++      "decimals": 18,
++      "extensions": {
++        "birthBlock": 3819064
++      },
++      "logoURI": "https://hemilabs.github.io/token-list/l1Logos/hemibtc.svg",
++      "name": "MyToken",
++      "symbol": "MTK"
      }
    ]
  }

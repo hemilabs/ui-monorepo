@@ -1,8 +1,8 @@
+import { OrangeCheckIcon } from 'components/icons/orangeCheckIcon'
 import Image from 'next/image'
 import { ReactNode } from 'react'
 
 import { ClockIcon } from './_icons/clockIcon'
-import { OrangeCheckIcon } from './_icons/orangeCheckIcon'
 import gradientLoadingImg from './_images/gradient_loading.png'
 import { ProgressStatus } from './progressStatus'
 

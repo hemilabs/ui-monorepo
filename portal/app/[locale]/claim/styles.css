@@ -1,0 +1,33 @@
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  50% {
+    background-position: -100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.text-shimmer {
+  animation-name: shimmer;
+  animation-duration: 4s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-fill-mode: forwards;
+  background-clip: text;
+  background-image: linear-gradient(
+    90deg,
+    #ff8e4d,
+    rgba(255, 255, 255, 0.64),
+    #ff6c15 20%
+  );
+  background-position: 0 0;
+  background-size: 200% 100%;
+  text-decoration: none;
+  transition: all 1s ease-in-out;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-size-adjust: none;
+}

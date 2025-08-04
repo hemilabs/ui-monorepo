@@ -1,10 +1,12 @@
 {
   "common": {
+    "accept": "Accept",
     "add": "Add",
     "added": "Added",
     "amount": "Amount",
     "approving": "Approving...",
     "approving-token": "Approving {symbol}",
+    "cancel": "Cancel",
     "connect-to-network": "Connect to {network}",
     "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",
@@ -169,11 +171,6 @@
   "metadata": {
     "title": "Hemi Portal"
   },
-  "rewards-page": {
-    "only-live-on-mainnet": "Only live on Mainnet",
-    "switch-to-mainnet": "Switch to Mainnet",
-    "switch-to-start-claiming": "You can switch networks to start claiming your HEMI."
-  },
   "navbar": {
     "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
     "bitcoinkit": "Hemi Bitcoin Kit",
@@ -204,11 +201,54 @@
     "learn-how-to-start": "Learn how to start using the Hemi network",
     "network": "Network",
     "network-status": "Network Status",
+    "rewards": "Rewards",
     "swap": "Swap",
     "stake": "Stake",
     "tools": "Tools",
     "tunnel": "Tunnel",
     "tvl": "TVL on Hemi"
+  },
+  "rewards-page": {
+    "apy-in-staked-hemi": "APY in veHEMI",
+    "claimed": "Claimed",
+    "claim-and-stake-successful": "Claim and Stake successful",
+    "claim-details": "Claim details",
+    "claim-name": "Claim name:",
+    "claim-options": {
+      "and-other-partners": "...and many other partners!",
+      "apy-in-ve-hemi": "{percentage}% APY in veHEMI",
+      "bonus-hemi": "{percentage}% Bonus HEMI",
+      "bonus-tokens": "Bonus tokens",
+      "claim-and-stake": "Claim & Stake",
+      "claiming-and-staking": "Claiming & Staking...",
+      "future-incentives-from": "Future incentives from",
+      "hybrid-claim": "Hybrid Claim + Stake",
+      "lockup-period-6": "6 month lock",
+      "lockup-period-24": "2 years lock",
+      "lockup-period-48": "4 years lock",
+      "max-yield": "Max Yield",
+      "recommended": "Recommended",
+      "staked-hemi": "Staked veHEMI",
+      "standard-claim": "Standard Claim",
+      "submit-text": "Claim & Stake",
+      "unlocked-hemi": "Unlocked $HEMI"
+    },
+    "here-is-your-claim-tx": "Here's your claim transaction:",
+    "lock-period": "Lock period:",
+    "you-are-eligible": "Your eligibility for HEMI tokens",
+    "have-questions": "Have questions? Create a ticket on <discordLink>Discord</discordLink>, check <absintheLink>Absinthe</absintheLink> or connect another wallet to check again.",
+    "not-eligible": "Not eligible",
+    "only-live-on-mainnet": "Only live on Mainnet",
+    "stake-more": "Stake more",
+    "subheading": "See if you're eligible",
+    "switch-to-mainnet": "Switch to Mainnet",
+    "switch-to-start-claiming": "You can switch networks to start claiming your HEMI.",
+    "terms-and-conditions": {
+      "terms": "Tincidunt non Sed Donec nulla, nulla, ultrices odio Quisque malesuada elementum orci quam venenatis non placerat Nam diam vitae nec faucibus dui nulla, eget ",
+      "title": "Hemi rewards terms and conditions"
+    },
+    "title": "Hemi Rewards Program",
+    "view-tx-on-explorer": "View TX on explorer"
   },
   "stake-page": {
     "asset": "Asset",

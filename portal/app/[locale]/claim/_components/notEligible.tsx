@@ -1,0 +1,37 @@
+import { ExternalLink } from 'components/externalLink'
+import hemiSocials from 'hemi-socials'
+import { useTranslations } from 'next-intl'
+import { absintheUrl } from 'utils/absinthe'
+
+import { EligibilityStatus } from './eligibilityStatus'
+
+const { discordUrl } = hemiSocials
+
+export const NotEligible = function () {
+  const t = useTranslations('rewards-page')
+  return (
+    <>
+      <EligibilityStatus status="not-eligible" />
+      <p className="xl:max-w-120 mt-3 max-w-48 text-center text-xs font-medium text-neutral-500 sm:max-w-80 md:max-w-72 lg:max-w-72 2xl:max-w-full">
+        {t.rich('have-questions', {
+          absintheLink: (chunk: string) => (
+            <ExternalLink
+              className="text-orange-500 hover:text-orange-700"
+              href={absintheUrl}
+            >
+              {chunk}
+            </ExternalLink>
+          ),
+          discordLink: (chunk: string) => (
+            <ExternalLink
+              className="text-orange-500 hover:text-orange-700"
+              href={discordUrl}
+            >
+              {chunk}
+            </ExternalLink>
+          ),
+        })}
+      </p>
+    </>
+  )
+}

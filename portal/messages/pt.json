@@ -1,10 +1,12 @@
 {
   "common": {
+    "accept": "Aceitar",
     "add": "Adicionar",
     "added": "Adicionado",
     "amount": "Quantia",
     "approving": "A aprovar...",
     "approving-token": "A aprovar {symbol}",
+    "cancel": "Cancelar",
     "connect-to-network": "Conectar à {network}",
     "connect-to-supported-network": "Conectar a uma rede suportada",
     "connect-wallet": "Conectar Carteira",
@@ -169,11 +171,6 @@
   "metadata": {
     "title": "Portal Hemi"
   },
-  "rewards-page": {
-    "only-live-on-mainnet": "Apenas na Mainnet",
-    "switch-to-mainnet": "Mudar para Mainnet",
-    "switch-to-start-claiming": "Pode mudar de rede para começar a reclamar os seus HEMI."
-  },
   "navbar": {
     "agree-to-terms-and-policy": "Ao utilizar esta aplicação, concorda com os <terms>Termos de Utilização</terms> e a <policy>Política de Privacidade</policy>",
     "bitcoinkit": "Hemi Bitcoin Kit",
@@ -204,11 +201,54 @@
     "learn-how-to-start": "Aprenda como começar a usar a rede Hemi",
     "network": "Rede",
     "network-status": "Estado da Rede",
+    "rewards": "Recompensas",
     "swap": "Troca",
     "stake": "Stake",
     "tools": "Ferramentas",
     "tunnel": "Túnel",
     "tvl": "TVL na Hemi"
+  },
+  "rewards-page": {
+    "apy-in-staked-hemi": "APY em veHEMI",
+    "claimed": "Reivindicado",
+    "claim-and-stake-successful": "Reivindicação e Stake bem-sucedidos",
+    "claim-details": "Detalhes da reivindicação",
+    "claim-name": "Nome da reivindicação:",
+    "claim-options": {
+      "and-other-partners": "...e muitos outros parceiros!",
+      "apy-in-ve-hemi": "{percentage}% APY em veHEMI",
+      "bonus-hemi": "{percentage}% Bónus HEMI",
+      "bonus-tokens": "Tokens bónus",
+      "claim-and-stake": "Reivindicar & Fazer Stake",
+      "claiming-and-staking": "A reivindicar & a fazer stake...",
+      "future-incentives-from": "Incentivos futuros de",
+      "hybrid-claim": "Reivindicação Híbrida + Stake",
+      "lockup-period-6": "Bloqueio de 6 meses",
+      "lockup-period-24": "Bloqueio de 2 anos",
+      "lockup-period-48": "Bloqueio de 4 anos",
+      "max-yield": "Rendimento Máximo",
+      "recommended": "Recomendado",
+      "staked-hemi": "veHEMI em stake",
+      "standard-claim": "Reivindicação Padrão",
+      "submit-text": "Reivindicar & Fazer Stake",
+      "unlocked-hemi": "$HEMI desbloqueado"
+    },
+    "here-is-your-claim-tx": "Aqui está a sua transação de reivindicação:",
+    "lock-period": "Período de bloqueio:",
+    "you-are-eligible": "A sua elegibilidade para tokens HEMI",
+    "have-questions": "Tem dúvidas? Crie um ticket no <discordLink>Discord</discordLink>, verifique o <absintheLink>Absinthe</absintheLink> ou conecte outra carteira para verificar novamente.",
+    "not-eligible": "Não elegível",
+    "only-live-on-mainnet": "Disponível apenas na Mainnet",
+    "stake-more": "Fazer mais stake",
+    "subheading": "Veja se é elegível",
+    "switch-to-mainnet": "Mudar para Mainnet",
+    "switch-to-start-claiming": "Pode mudar de rede para começar a reivindicar o seu HEMI.",
+    "terms-and-conditions": {
+      "terms": "Tincidunt non Sed Donec nulla, nulla, ultrices odio Quisque malesuada elementum orci quam venenatis non placerat Nam diam vitae nec faucibus dui nulla, eget ",
+      "title": "Termos e condições das recompensas Hemi"
+    },
+    "title": "Programa de Recompensas Hemi",
+    "view-tx-on-explorer": "Ver TX no explorador"
   },
   "stake-page": {
     "asset": "Ativo",

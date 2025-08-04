@@ -234,16 +234,16 @@
       "submit-text": "Reclamar y hacer Stake",
       "unlocked-hemi": "$HEMI desbloqueado"
     },
-    "here-is-your-claim-tx": "Aquí está tu transacción de reclamo:",
+    "here-is-your-claim-tx": "Aquí está su transacción de reclamo:",
     "lock-period": "Período de bloqueo:",
-    "you-are-eligible": "Tu elegibilidad para tokens HEMI",
-    "have-questions": "¿Tienes preguntas? Crea un ticket en <discordLink>Discord</discordLink>, revisa <absintheLink>Absinthe</absintheLink> o conecta otra billetera para verificar nuevamente.",
+    "you-are-eligible": "Su elegibilidad para tokens HEMI",
+    "have-questions": "¿Tiene preguntas? Cree un ticket en <discordLink>Discord</discordLink>, revise <absintheLink>Absinthe</absintheLink> o conecte otra billetera para verificar nuevamente.",
     "not-eligible": "No elegible",
     "only-live-on-mainnet": "Solo disponible en Mainnet",
     "stake-more": "Hacer más Stake",
-    "subheading": "Verifica si eres elegible",
+    "subheading": "Verifique si es elegible",
     "switch-to-mainnet": "Cambiar a Mainnet",
-    "switch-to-start-claiming": "Puedes cambiar de red para comenzar a reclamar su HEMI.",
+    "switch-to-start-claiming": "Puede cambiar de red para comenzar a reclamar su HEMI.",
     "terms-and-conditions": {
       "terms": "Tincidunt non Sed Donec nulla, nulla, ultrices odio Quisque malesuada elementum orci quam venenatis non placerat Nam diam vitae nec faucibus dui nulla, eget ",
       "title": "Términos y condiciones del programa de recompensas Hemi"

@@ -12,7 +12,7 @@ export const TelegramButton = ({ isOpen, setIsOpen }: Props) => (
   >
     <TelegramIcon
       className={`transition-colors [&_path]:hover:fill-black
-      ${isOpen ? '[&>path]:fill-neutral-950' : '[&>path]:fill-neutral-500'}`}
+    ${isOpen ? '[&_path]:fill-neutral-950' : '[&_path]:fill-neutral-500'}`}
     />
   </div>
 )

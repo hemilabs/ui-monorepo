@@ -3,6 +3,7 @@ import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
 import { Menu } from 'components/menu'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 
 import { TelegramButton } from './telegramButton'
@@ -30,6 +31,7 @@ const createTelegramMenuItem = ({
 })
 
 const TelegramDesktop = ({
+  t,
   telegramCommunityUrl,
   telegramNewsUrl,
   trackTelegramClick,
@@ -37,6 +39,7 @@ const TelegramDesktop = ({
   telegramCommunityUrl: string
   telegramNewsUrl: string
   trackTelegramClick: (channel: 'community' | 'news') => () => void
+  t: (key: string) => string
 }) => (
   <div className="fixed bottom-12 left-20 z-20 hidden w-56 md:block">
     <Menu
@@ -44,12 +47,12 @@ const TelegramDesktop = ({
         createTelegramMenuItem({
           href: telegramCommunityUrl,
           onClick: trackTelegramClick('community'),
-          title: 'Community Channel',
+          title: t('community'),
         }),
         createTelegramMenuItem({
           href: telegramNewsUrl,
           onClick: trackTelegramClick('news'),
-          title: 'News Channel',
+          title: t('news'),
         }),
       ]}
     />
@@ -58,6 +61,7 @@ const TelegramDesktop = ({
 
 function TelegramDrawer({
   setIsOpen,
+  t,
   telegramCommunityUrl,
   telegramNewsUrl,
   trackTelegramClick,
@@ -66,6 +70,7 @@ function TelegramDrawer({
   telegramNewsUrl: string
   setIsOpen: (isOpen: boolean) => void
   trackTelegramClick: (channel: 'community' | 'news') => () => void
+  t: (key: string) => string
 }) {
   function handleChannelClick(channel: 'community' | 'news') {
     trackTelegramClick(channel)()
@@ -78,24 +83,23 @@ function TelegramDrawer({
         className="fixed inset-0 bg-black/50"
         onClick={() => setIsOpen(false)}
       />
-      <div className="fixed bottom-0 left-0 right-0 rounded-t-2xl bg-white p-6">
-        <h3 className="mb-4 text-lg font-semibold">Telegram Channels</h3>
+      <div className="fixed inset-x-0 bottom-0 rounded-t-2xl bg-white p-6">
         <div className="space-y-4">
           <ExternalLink
             className="flex items-center justify-between border-b border-gray-100 py-3"
             href={telegramCommunityUrl}
             onClick={() => handleChannelClick('community')}
           >
-            <span className="text-base"># Community Channel</span>
-            <ArrowDownLeftIcon className="h-5 w-5 text-gray-400" />
+            <span className="text-base"># {t('community')}</span>
+            <ArrowDownLeftIcon className="size-5 text-gray-400" />
           </ExternalLink>
           <ExternalLink
             className="flex items-center justify-between py-3"
             href={telegramNewsUrl}
             onClick={() => handleChannelClick('news')}
           >
-            <span className="text-base"># News Channel</span>
-            <ArrowDownLeftIcon className="h-5 w-5 text-gray-400" />
+            <span className="text-base"># {t('news')}</span>
+            <ArrowDownLeftIcon className="size-5 text-gray-400" />
           </ExternalLink>
         </div>
       </div>
@@ -103,16 +107,11 @@ function TelegramDrawer({
   )
 }
 
-export const Telegram = function ({
-  telegramCommunityUrl,
-  telegramNewsUrl,
-}: {
-  telegramCommunityUrl: string
-  telegramNewsUrl: string
-}) {
+export const Telegram = function ({ telegramCommunityUrl, telegramNewsUrl }) {
   const [isOpen, setIsOpen] = useState(false)
   const ref = useOnClickOutside<HTMLDivElement>(() => setIsOpen(false))
   const { track } = useUmami()
+  const t = useTranslations('navbar.telegram')
 
   const trackTelegramClick = (channel: 'community' | 'news') => () =>
     track?.(`nav - telegram ${channel}`)
@@ -127,12 +126,14 @@ export const Telegram = function ({
       {isOpen && (
         <>
           <TelegramDesktop
+            t={t}
             telegramCommunityUrl={telegramCommunityUrl}
             telegramNewsUrl={telegramNewsUrl}
             trackTelegramClick={trackTelegramClick}
           />
           <TelegramDrawer
             setIsOpen={setIsOpen}
+            t={t}
             telegramCommunityUrl={telegramCommunityUrl}
             telegramNewsUrl={telegramNewsUrl}
             trackTelegramClick={trackTelegramClick}

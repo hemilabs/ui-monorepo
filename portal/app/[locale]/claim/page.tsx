@@ -33,21 +33,19 @@ export default function Page() {
   }
 
   return (
-    <>
-      <PageLayout variant="wide">
-        <div className="flex w-full flex-col items-center gap-y-2">
-          <div className="size-14">
-            <HemiSymbolWhite />
-          </div>
-          <p className="mt-1 text-xs font-semibold uppercase text-orange-500">
-            {t('rewards-page.title')}
-          </p>
-          <p className="text-center text-4xl font-semibold text-neutral-950">
-            {t('rewards-page.subheading')}
-          </p>
-          {getMainSection()}
+    <PageLayout variant="wide">
+      <div className="flex w-full flex-col items-center gap-y-2">
+        <div className="size-14">
+          <HemiSymbolWhite />
         </div>
-      </PageLayout>
-    </>
+        <p className="mt-1 text-xs font-semibold uppercase text-orange-500">
+          {t('rewards-page.title')}
+        </p>
+        <p className="text-center text-4xl font-semibold text-neutral-950">
+          {t('rewards-page.subheading')}
+        </p>
+        {getMainSection()}
+      </div>
+    </PageLayout>
   )
 }

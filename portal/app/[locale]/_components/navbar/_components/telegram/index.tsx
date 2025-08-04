@@ -29,6 +29,72 @@ const createTelegramMenuItem = ({
   id: title.toLowerCase().replace(' ', '-'),
 })
 
+const TelegramDesktop = ({
+  telegramCommunityUrl,
+  telegramNewsUrl,
+  trackTelegramClick,
+}: {
+  telegramCommunityUrl: string
+  telegramNewsUrl: string
+  trackTelegramClick: (channel: 'community' | 'news') => () => void
+}) => (
+  <div className="-translate-y-26 absolute left-1/2 z-20 hidden w-56 -translate-x-1/2 md:left-0 md:block md:translate-x-0">
+    <Menu
+      items={[
+        createTelegramMenuItem({
+          href: telegramCommunityUrl,
+          onClick: trackTelegramClick('community'),
+          title: 'Community Channel',
+        }),
+        createTelegramMenuItem({
+          href: telegramNewsUrl,
+          onClick: trackTelegramClick('news'),
+          title: 'News Channel',
+        }),
+      ]}
+    />
+  </div>
+)
+
+const TelegramDrawer = ({
+  setIsOpen,
+  telegramCommunityUrl,
+  telegramNewsUrl,
+  trackTelegramClick,
+}: {
+  telegramCommunityUrl: string
+  telegramNewsUrl: string
+  setIsOpen: (isOpen: boolean) => void
+  trackTelegramClick: (channel: 'community' | 'news') => () => void
+}) => (
+  <div className="fixed inset-0 z-50 md:hidden">
+    <div
+      className="fixed inset-0 bg-black/50"
+      onClick={() => setIsOpen(false)}
+    />
+    <div className="fixed bottom-0 left-0 right-0 rounded-t-2xl bg-white p-6">
+      <div className="space-y-4">
+        <ExternalLink
+          className="flex items-center justify-between border-b border-gray-100 py-3"
+          href={telegramCommunityUrl}
+          onClick={trackTelegramClick('community')}
+        >
+          <span className="text-base"># Community Channel</span>
+          <ArrowRightIcon className="h-5 w-5 text-gray-400" />
+        </ExternalLink>
+        <ExternalLink
+          className="flex items-center justify-between py-3"
+          href={telegramNewsUrl}
+          onClick={trackTelegramClick('news')}
+        >
+          <span className="text-base"># News Channel</span>
+          <ArrowRightIcon className="h-5 w-5 text-gray-400" />
+        </ExternalLink>
+      </div>
+    </div>
+  </div>
+)
+
 export const Telegram = function ({
   telegramCommunityUrl,
   telegramNewsUrl,
@@ -52,54 +118,17 @@ export const Telegram = function ({
         <TelegramButton isOpen={isOpen} setIsOpen={setIsOpen} />
         {isOpen && (
           <>
-            {/* Mobile Drawer */}
-            <div className="fixed inset-0 z-50 md:hidden">
-              <div
-                className="fixed inset-0 bg-black/50"
-                onClick={() => setIsOpen(false)}
-              />
-              <div className="fixed bottom-0 left-0 right-0 rounded-t-2xl bg-white p-6">
-                <h3 className="mb-4 text-lg font-semibold">
-                  Telegram Channels
-                </h3>
-                <div className="space-y-4">
-                  <ExternalLink
-                    className="flex items-center justify-between border-b border-gray-100 py-3"
-                    href={telegramCommunityUrl}
-                    onClick={trackTelegramClick('community')}
-                  >
-                    <span className="text-base"># Community Channel</span>
-                    <ArrowRightIcon className="h-5 w-5 text-gray-400" />
-                  </ExternalLink>
-                  <ExternalLink
-                    className="flex items-center justify-between py-3"
-                    href={telegramNewsUrl}
-                    onClick={trackTelegramClick('news')}
-                  >
-                    <span className="text-base"># News Channel</span>
-                    <ArrowRightIcon className="h-5 w-5 text-gray-400" />
-                  </ExternalLink>
-                </div>
-              </div>
-            </div>
-
-            {/* Desktop Menu */}
-            <div className="-translate-y-26 absolute left-1/2 z-20 hidden w-56 -translate-x-1/2 md:left-0 md:block md:translate-x-0">
-              <Menu
-                items={[
-                  createTelegramMenuItem({
-                    href: telegramCommunityUrl,
-                    onClick: trackTelegramClick('community'),
-                    title: 'Community Channel',
-                  }),
-                  createTelegramMenuItem({
-                    href: telegramNewsUrl,
-                    onClick: trackTelegramClick('news'),
-                    title: 'News Channel',
-                  }),
-                ]}
-              />
-            </div>
+            <TelegramDesktop
+              telegramCommunityUrl={telegramCommunityUrl}
+              telegramNewsUrl={telegramNewsUrl}
+              trackTelegramClick={trackTelegramClick}
+            />
+            <TelegramDrawer
+              setIsOpen={setIsOpen}
+              telegramCommunityUrl={telegramCommunityUrl}
+              telegramNewsUrl={telegramNewsUrl}
+              trackTelegramClick={trackTelegramClick}
+            />
           </>
         )}
       </div>

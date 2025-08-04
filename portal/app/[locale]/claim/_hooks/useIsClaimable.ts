@@ -28,7 +28,6 @@ const getIsClaimableQueryKey = ({
  * Checks if the user can claim given eligibility data. Note that if it returns false,
  * it means either the user already claimed, or that they were not eligible (for example, the proof is invalid).
  * @param eligibility
- * @returns
  */
 export const useIsClaimable = function (eligibility: EligibilityData) {
   const { address } = useAccount()

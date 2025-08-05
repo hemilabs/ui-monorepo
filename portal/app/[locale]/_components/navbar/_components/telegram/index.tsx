@@ -118,7 +118,7 @@ export const Telegram = function ({ telegramCommunityUrl, telegramNewsUrl }) {
 
   return (
     <div
-      className="group/nav relative cursor-pointer rounded-lg py-2 transition-colors duration-300"
+      className="group/nav relative cursor-pointer rounded-lg transition-colors"
       ref={ref}
     >
       <TelegramButton isOpen={isOpen} setIsOpen={setIsOpen} />

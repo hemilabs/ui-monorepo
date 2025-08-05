@@ -11,8 +11,8 @@ export const TelegramButton = ({ isOpen, setIsOpen }: Props) => (
     onClick={() => setIsOpen?.(!isOpen)}
   >
     <TelegramIcon
-      className={`transition-colors [&_path]:hover:fill-black
-    ${isOpen ? '[&_path]:fill-neutral-950' : '[&_path]:fill-neutral-500'}`}
+      className={`[&_path]:transition-colors [&_path]:duration-300 [&_path]:hover:fill-black
+  ${isOpen ? '[&_path]:fill-neutral-950' : '[&_path]:fill-neutral-500'}`}
     />
   </div>
 )

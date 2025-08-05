@@ -33,7 +33,7 @@ type Props = {
 }
 
 const getTextColor = function (value: string, errorKey: string | undefined) {
-  if (value === '0') {
+  if (value === '0' || parseFloat(value) === 0) {
     return 'text-neutral-600 focus:text-neutral-950'
   }
   if (errorKey === undefined || !isInputError(errorKey)) {

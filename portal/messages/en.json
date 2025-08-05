@@ -201,7 +201,11 @@
     "stake": "Stake",
     "tools": "Tools",
     "tunnel": "Tunnel",
-    "tvl": "TVL on Hemi"
+    "tvl": "TVL on Hemi",
+    "telegram": {
+      "community": "Community Channel",
+      "news": "News Channel"
+    }
   },
   "stake-page": {
     "asset": "Asset",

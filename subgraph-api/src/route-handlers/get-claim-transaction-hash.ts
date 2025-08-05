@@ -20,7 +20,7 @@ export async function getClaimTransactionHandler(
 ) {
   const { chainId } = req.data
   const address = req.params.address as Address
-  const claimGroup = parseInt(req.params.claimGroup)
+  const claimGroup = parseInt(req.params.claimGroup, 10)
 
   const claim = await getMerkleClaim({
     account: address,

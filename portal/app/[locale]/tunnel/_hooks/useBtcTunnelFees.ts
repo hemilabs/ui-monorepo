@@ -8,8 +8,12 @@ export const useBtcDepositTunnelFees = function (amount: bigint) {
   const { data: btcDepositFee, ...rest } = useQuery({
     enabled: amount > BigInt(0),
     queryFn: () => getBitcoinDepositFee({ amount, hemiClient }),
-    // queryKeys are serialized, and bigints are not automatically serialized.
-    queryKey: ['btc-tunne-deposit-fee', amount.toString(), hemiClient.chain.id],
+    queryKey: [
+      'btc-tunnel-deposit-fee',
+      // queryKeys are serialized, and bigints are not automatically serialized.
+      amount.toString(),
+      hemiClient.chain.id,
+    ],
   })
 
   return {
@@ -24,9 +28,9 @@ export const useBtcWithdrawalTunnelFees = function (amount: bigint) {
   const { data: btcWithdrawalFee, ...rest } = useQuery({
     enabled: amount > BigInt(0),
     queryFn: () => getBitcoinWithdrawalFee({ amount, hemiClient }),
-    // queryKeys are serialized, and bigints are not automatically serialized.
     queryKey: [
       'btc-tunnel-withdrawal-fee',
+      // queryKeys are serialized, and bigints are not automatically serialized.
       amount.toString(),
       hemiClient.chain.id,
     ],

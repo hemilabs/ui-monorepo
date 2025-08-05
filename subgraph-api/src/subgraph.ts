@@ -517,6 +517,8 @@ export const getMerkleClaim = function ({
         account: toChecksum(claim.account),
         // @ts-expect-error addresses are string lowercased
         erc20: toChecksum(claim.erc20),
+        // ratio comes as an integer with 2 decimals So 15.23 comes as 1523
+        // Dividing by 100 gives us the correct ratio
         ratio: Number(claim.ratio) / 100,
       }
     },

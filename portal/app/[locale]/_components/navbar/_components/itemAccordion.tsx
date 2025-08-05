@@ -69,8 +69,7 @@ function ItemAccordionUI({
   )
 
   function handleOpenAccordion() {
-    // TODO: After defining the governance page, we must define item[0], which is the first item in the accordion.
-    const firstItemHref = items.length > 0 ? items[1]?.href : undefined
+    const firstItemHref = items.length > 0 ? items[0]?.href : undefined
     if (firstItemHref && width >= 768) {
       router.push(getUrlPath(firstItemHref))
     }

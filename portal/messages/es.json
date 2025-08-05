@@ -168,6 +168,20 @@
     "tutorials-and-tools": "Tutoriales y herramientas para comenzar rápidamente.",
     "tutorials-subheading": "Siga algunos de los tutoriales para tomar ventaja al construir tu primer proyecto con Hemi."
   },
+  "staking-dashboard": {
+    "heading": "Gobernancia de staking",
+    "sub-heading": "Aprenda y explore con el ecosistema para desarrolladores de Hemi",
+    "table": {
+      "amount": "Cantidad",
+      "apy": "APY",
+      "get-started": "Comience tunelizando activos desde y hacia hemi",
+      "lockup-period": "Período de bloqueo",
+      "no-transactions-made": "No se han realizado transacciones",
+      "time-remaining": "Tiempo restante",
+      "tx": "Tx",
+      "unlock": "Descubrir"
+    }
+  },
   "metadata": {
     "title": "Portal de Hemi"
   },

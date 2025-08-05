@@ -44,8 +44,8 @@ const analyticsEvents = [
   'nav - explorer',
   'nav - hbk',
   'nav - get started',
-  // TODO: Governance needs to be reviewed in the future
-  'nav - governance',
+  // TODO: needs to be reviewed in the future
+  'nav - staking dashboard',
   'nav - network status',
   'nav - mainnet to testnet',
   'nav - testnet to mainnet',

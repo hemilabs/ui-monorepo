@@ -22,4 +22,6 @@ subgraphs/hemi-tunnel-withdrawals-proof-claim-subgraph/build
 subgraphs/hemi-tunnel-withdrawals-proof-claim-subgraph/generated
 subgraphs/hemi-tunnel-withdrawals-subgraph/build
 subgraphs/hemi-tunnel-withdrawals-subgraph/generated
+subgraphs/hemi-token-merkle-claims-subgraph/build
+subgraphs/hemi-token-merkle-claims-subgraph/generated
 tsconfig.tsbuildinfo

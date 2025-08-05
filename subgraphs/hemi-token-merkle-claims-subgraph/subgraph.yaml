@@ -1,0 +1,27 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: MerkleBox
+    network: hemi-sepolia
+    source:
+      abi: MerkleBox
+      address: '0x38f4C4BD276b9C47b419FE27D4ED01C32c120cF4'
+      startBlock: 3855233
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - MerkleClaim
+      abis:
+        - name: MerkleBox
+          file: ./abis/MerkleBox.json
+      eventHandlers:
+        - event: MerkleClaim(indexed address,indexed address,indexed
+            uint256,uint256,uint32,uint256,address)
+          handler: handleMerkleClaim
+      file: ./src/mappings/merkle-box.ts

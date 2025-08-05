@@ -6,6 +6,7 @@ import { useHemiToken } from '../_hooks/useHemiToken'
 import { useIsClaimable } from '../_hooks/useIsClaimable'
 import { formatHemi } from '../_utils'
 
+import { ClaimDetails } from './claimDetails'
 import { ClaimOptions } from './claimOptions'
 import { EligibilityStatus } from './eligibilityStatus'
 import { NotEligible } from './notEligible'
@@ -16,7 +17,7 @@ type Props = {
 
 export const Eligible = function ({ eligibility }: Props) {
   const { data: claimTransaction, isLoading: isGetClaimTransactionLoading } =
-    useGetClaimTransaction()
+    useGetClaimTransaction(eligibility.claimGroupId)
   const { data: isClaimable, isLoading: isClaimableLoading } =
     useIsClaimable(eligibility)
   const hemiToken = useHemiToken()
@@ -36,7 +37,7 @@ export const Eligible = function ({ eligibility }: Props) {
     return (
       <>
         <EligibilityStatus status="claimed" />
-        {/* TODO show Claim details */}
+        <ClaimDetails eligibility={eligibility} />
       </>
     )
   }

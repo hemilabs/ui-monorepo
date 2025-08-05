@@ -7,7 +7,7 @@ import { LockupMonths } from 'tge-claim'
 import { useClaimGroupConfiguration } from '../_hooks/useClaimGroupConfiguration'
 import { useHemiToken } from '../_hooks/useHemiToken'
 import { RecommendationLevel } from '../_types'
-import { formatHemi } from '../_utils'
+import { calculateSplitAmount, formatHemi } from '../_utils'
 import '../styles.css'
 
 import { Amount } from './amount'
@@ -100,20 +100,14 @@ export const Strategy = function ({
     }
     const { bonus: bonusPercentage, lockupRatio } = data
 
-    // Split the claimable amount in staked and unlocked
-    const claimAmount = BigInt(amount)
-    // multiply by 100 as decimal numbers don't work with BigInt
-    // as it is a percentage, we need to divide by 100, and remove the extra 100 we've added
-    const stakedHemi = (claimAmount * BigInt(lockupRatio * 100)) / BigInt(10000)
-    const unlockedHemi = claimAmount - stakedHemi
+    const amounts = calculateSplitAmount({
+      amount: BigInt(amount),
+      bonusPercentage,
+      lockupRatio,
+    })
 
-    const value = type === 'staked' ? stakedHemi : unlockedHemi
-
-    // apply the bonus, if any. Similar to lockup, bonus may include decimals.
-    const finalValue =
-      value + (value * BigInt(bonusPercentage * 100)) / BigInt(10000)
-
-    const formattedValue = formatHemi(finalValue, hemiToken.decimals)
+    const value = type === 'staked' ? amounts.staked : amounts.unlocked
+    const formattedValue = formatHemi(value, hemiToken.decimals)
 
     return (
       <Amount

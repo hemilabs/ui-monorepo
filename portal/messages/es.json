@@ -252,6 +252,7 @@
     "lock-period": "Período de bloqueo:",
     "you-are-eligible": "Su elegibilidad para tokens HEMI",
     "have-questions": "¿Tiene preguntas? Cree un ticket en <discordLink>Discord</discordLink>, revise <absintheLink>Absinthe</absintheLink> o conecte otra billetera para verificar nuevamente.",
+    "go-to-staking-dashboard": "Ir al panel de control de staking",
     "not-eligible": "No elegible",
     "only-live-on-mainnet": "Solo disponible en Mainnet",
     "stake-more": "Hacer más Stake",

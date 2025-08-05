@@ -8,7 +8,7 @@ import { useAccount } from 'wagmi'
 
 import { useHemiToken } from './useHemiToken'
 
-const getIsClaimableQueryKey = ({
+export const getIsClaimableQueryKey = ({
   address,
   eligibility,
   hemiId,

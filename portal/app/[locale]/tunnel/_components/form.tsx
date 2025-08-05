@@ -25,6 +25,7 @@ const CustomTokenDrawer = dynamic(
 )
 
 type FormContentProps = {
+  calculateReceiveAmount?: (input: string) => string
   errorKey: string | undefined
   isRunningOperation: boolean
   provider?: ReactNode
@@ -34,6 +35,7 @@ type FormContentProps = {
 }
 
 export const FormContent = function ({
+  calculateReceiveAmount = (input: string) => input,
   errorKey,
   isRunningOperation,
   provider,
@@ -111,8 +113,7 @@ export const FormContent = function ({
             onChange={updateFromInput}
             token={toToken}
             tokenSelector={<TokenSelectorReadOnly token={toToken} />}
-            // Tunnelling goes 1:1, so output equals input
-            value={fromInput}
+            value={calculateReceiveAmount(fromInput)}
           />
           {!!customTokenAddress && evmTunneling && (
             <CustomTokenDrawer

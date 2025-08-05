@@ -16,7 +16,6 @@
     "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
     "erc20-extra-approval": "Aprobar 10x este depósito",
     "failed": "Falló",
-    "fees": "Tarifa",
     "hours": "{hours} horas",
     "insufficient-balance": "{symbol} insuficiente",
     "learn-more": "Aprenda más",
@@ -24,6 +23,7 @@
     "min-amount-stake": "El stake mínimo es {amount} {symbol}",
     "min-amount-unstake": "El desbloqueo mínimo es {amount} {symbol}",
     "min-amount-withdrawal": "El retiro mínimo es {amount} {symbol}",
+    "network-fees": "Tarifa de red",
     "network-gas-fee": "Tarifa de gas de {network}",
     "open": "Abrir",
     "stake": "Stake",
@@ -37,6 +37,7 @@
       "pending": "Pendiente",
       "rejected": "Rechazada"
     },
+    "tunnel-fees": "Tarifas del túnel",
     "try-again": "Intente Nuevamente",
     "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
     "unstake": "Desbloquear",

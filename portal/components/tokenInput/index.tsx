@@ -1,4 +1,3 @@
-import Big from 'big.js'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -34,7 +33,7 @@ type Props = {
 }
 
 const getTextColor = function (value: string, errorKey: string | undefined) {
-  if (Big(value).eq(0)) {
+  if (value === '0' || parseFloat(value) === 0) {
     return 'text-neutral-600 focus:text-neutral-950'
   }
   if (errorKey === undefined || !isInputError(errorKey)) {
@@ -77,12 +76,14 @@ export const TokenInput = function ({
           />
           <div className="mt-1 flex items-center text-sm text-neutral-500">
             <span className="mr-1">$</span>
-            <RenderFiatBalance
-              balance={parseTokenUnits(value, token)}
-              fetchStatus="idle"
-              queryStatus="success"
-              token={token}
-            />
+            {!Number.isNaN(value) ? (
+              <RenderFiatBalance
+                balance={parseTokenUnits(value, token)}
+                fetchStatus="idle"
+                queryStatus="success"
+                token={token}
+              />
+            ) : null}
           </div>
         </div>
         <div className="flex h-full flex-col items-end justify-end gap-y-3 text-sm">

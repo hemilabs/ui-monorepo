@@ -16,7 +16,6 @@
     "erc20-approve-10x-detailed-description": "Ao ativar a aprovação de 10x, adicionamos automaticamente 10 vezes a quantia desta transação como margem para transações futuras, poupando custos com taxas de gás e tempo.",
     "erc20-extra-approval": "Aprovar depósitos 10x",
     "failed": "Falhou",
-    "fees": "Taxas",
     "hours": "{hours} horas",
     "insufficient-balance": "Saldo insuficiente de {symbol}",
     "learn-more": "Saber mais",

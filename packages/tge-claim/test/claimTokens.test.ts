@@ -12,8 +12,8 @@ import {
 } from 'viem/actions'
 import { describe, it, expect, vi } from 'vitest'
 
-import { claimTokens } from '../actions/wallet/claimTokens'
-import { getTgeClaimAddress } from '../contracts/claimContract'
+import { claimTokens } from '../actions/wallet/merkleBox'
+import { getMerkleBoxAddress } from '../contracts/merkleBox'
 
 // Mock all external dependencies
 vi.mock('viem/actions', () => ({
@@ -22,11 +22,11 @@ vi.mock('viem/actions', () => ({
   writeContract: vi.fn(),
 }))
 
-vi.mock('../contracts/claimContract', async function (importOriginal) {
+vi.mock('../contracts/merkleBox', async function (importOriginal) {
   const original = (await importOriginal()) as object
   return {
     ...original,
-    getTgeClaimAddress: vi
+    getMerkleBoxAddress: vi
       .fn()
       .mockReturnValue('0xabcdefabcdefabcdefabcdefabcdefabcdefabcd' as const),
   }
@@ -485,7 +485,7 @@ describe('claimTokens', function () {
     await promise
 
     expect(onClaimTransactionSucceeded).toHaveBeenCalledExactlyOnceWith(receipt)
-    expect(getTgeClaimAddress).toHaveBeenCalledWith(hemi.id)
+    expect(getMerkleBoxAddress).toHaveBeenCalledWith(hemi.id)
   })
 
   it('should allow partial claims when amount is less than eligibility', async function () {

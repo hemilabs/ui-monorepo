@@ -1,4 +1,4 @@
-export { encodeClaimTokens } from './actions/wallet/claimTokens'
+export { encodeClaimTokens } from './actions/wallet/merkleBox'
 
 export type { ClaimOption, EligibilityData, LockupMonths } from './types/claim'
 export { lockupOptions, lockupMonths } from './types/claim'

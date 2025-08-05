@@ -1,2 +1,2 @@
-export { checkIsClaimable } from './public/checkIsClaimable'
-export { claimTokens } from './wallet/claimTokens'
+export { checkIsClaimable } from './public/merkleBox'
+export { claimTokens } from './wallet/merkleBox'

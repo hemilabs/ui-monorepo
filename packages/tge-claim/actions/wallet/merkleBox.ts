@@ -10,14 +10,14 @@ import {
 } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
-import { tgeClaimAbi, getTgeClaimAddress } from '../../contracts/claimContract'
+import { merkleBoxAbi, getMerkleBoxAddress } from '../../contracts/merkleBox'
 import {
   ClaimEvents,
   EligibilityData,
   type LockupMonths,
 } from '../../types/claim'
 import { getEligibility } from '../../utils/getEligibility'
-import { checkIsClaimable } from '../public/checkIsClaimable'
+import { checkIsClaimable } from '../public/merkleBox'
 
 // Validation functions
 const validateLockupMonths = (
@@ -114,8 +114,8 @@ const canClaim = async function ({
     account,
     amount,
     chainId,
+    client: walletClient,
     eligibility,
-    walletClient,
   })
 }
 
@@ -162,13 +162,13 @@ const runClaim = ({
 
       emitter.emit('pre-claim')
 
-      const contractAddress = getTgeClaimAddress(walletClient.chain!.id)
+      const contractAddress = getMerkleBoxAddress(walletClient.chain!.id)
 
       // Using @ts-expect-error fails to compile so I need to use @ts-ignore
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const claimHash = await writeContract(walletClient, {
-        abi: tgeClaimAbi,
+        abi: merkleBoxAbi,
         account,
         address: contractAddress,
         args: [
@@ -228,7 +228,7 @@ export const encodeClaimTokens = ({
   termsSignature: Hash
 }) =>
   encodeFunctionData({
-    abi: tgeClaimAbi,
+    abi: merkleBoxAbi,
     args: [
       BigInt(eligibility.claimGroupId),
       account,

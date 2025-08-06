@@ -1,5 +1,3 @@
-'use client'
-
 import { PageLayout } from 'components/pageLayout'
 
 export default function StakingDashboardLayoutClient({

@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 
 import { EmptyIcon } from '../../_icons/emptyIcon'
 
-export function NoTransactionsMade() {
+export function NoPositionStaked() {
   const t = useTranslations('staking-dashboard.table')
   return (
     <div className="flex flex-col items-center justify-center text-center">

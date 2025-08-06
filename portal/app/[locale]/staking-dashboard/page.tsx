@@ -4,7 +4,7 @@ import { PageLayout } from 'components/pageLayout'
 import { useTranslations } from 'next-intl'
 
 import { StakeTable } from './_components/stakeTable'
-import { generateStakingDashboardTokens } from './_utils/mockedData'
+import { generateStakingDashboardOperations } from './_utils/mockedData'
 
 function Page() {
   const t = useTranslations('staking-dashboard')
@@ -14,7 +14,7 @@ function Page() {
    * //TODO: This page component is temporarily using mocked staking dashboard tokens for development purposes.
    * The mock data will be replaced with real data integration in the future.
    */
-  const mockStakingDashboardTokens = generateStakingDashboardTokens()
+  const mockStakingDashboardOperations = generateStakingDashboardOperations()
 
   return (
     <PageLayout variant="wide">
@@ -26,7 +26,10 @@ function Page() {
           {t('sub-heading')}
         </p>
         <div className="mt-8 flex w-full space-x-6">
-          <StakeTable data={[...mockStakingDashboardTokens]} loading={false} />
+          <StakeTable
+            data={[...mockStakingDashboardOperations]}
+            loading={false}
+          />
         </div>
       </div>
     </PageLayout>

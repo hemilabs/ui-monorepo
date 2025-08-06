@@ -1,66 +1,33 @@
-import { StakingDashboardToken } from 'types/stakingDashboard'
+import { type StakingDashboardOperation } from 'types/stakingDashboard'
 
 /**
- * //TODO - Generates a mocked list of tokens for temporary use during development.
+ * //TODO - Generates a mocked list of staking operations for temporary use during development.
  *
  * @remarks
  * This function is temporary and should be replaced with real data from a reliable source.
  *
- * @returns An array of {@link StakingDashboardToken} objects representing mocked governance tokens.
+ * @returns An array of {@link StakingDashboardOperation} objects representing mocked operations.
  */
-export const generateStakingDashboardTokens = (): StakingDashboardToken[] => [
-  {
-    address: '0xec46E0EFB2EA8152da0327a5Eb3FF9a43956F13e',
-    amount: '1.000.000 veHEMI',
-    apy: '10%',
-    chainId: 1,
-    decimals: 18,
-    extensions: {
-      birthBlock: 18450000,
-      bridgeInfo: {
-        optimism: {
-          tokenAddress: `0xBridgeTokenOptimism000000000000000001`,
-        },
-      },
-      l1LogoURI: 'https://hemilabs.github.io/token-list/logos/hemibtc.svg',
-      priceSymbol: 'veHEMI',
-      stakeSymbol: 'veHEMI',
-      tunnel: true,
-      tunnelSymbol: 'veHEMI',
+export const generateStakingDashboardOperations =
+  (): StakingDashboardOperation[] => [
+    {
+      amount: '100000000000',
+      apy: '10%',
+      chainId: 743111,
+      lockupPeriod: '48 months',
+      percentageRemaining: 75,
+      timeRemaining: '36 months',
+      token: '0x931d9e210530184C321EA4ee6238cCB4D0AB5236',
+      transactionHash: '0xabcd...ef0001',
     },
-    lockupPeriod: '48 months',
-    logoURI: 'https://hemilabs.github.io/token-list/logos/hemibtc.svg',
-    name: 'veHEMI',
-    percentageRemaining: 75,
-    symbol: 'hemi',
-    timeRemaining: '36 months',
-    transaction: `0xabcd...ef0001`,
-  },
-  {
-    address: '0xec46E0EFB2EA8152da0327a5Eb3FF9a43956F13e',
-    amount: '2.000.000 veHEMI',
-    apy: '8%',
-    chainId: 1,
-    decimals: 18,
-    extensions: {
-      birthBlock: 18450000,
-      bridgeInfo: {
-        optimism: {
-          tokenAddress: `0xBridgeTokenOptimism000000000000000002`,
-        },
-      },
-      l1LogoURI: 'https://hemilabs.github.io/token-list/logos/hemibtc.svg',
-      priceSymbol: 'veHEMI',
-      stakeSymbol: 'veHEMI',
-      tunnel: true,
-      tunnelSymbol: 'veHEMI',
+    {
+      amount: '20000000000',
+      apy: '8%',
+      chainId: 743111,
+      lockupPeriod: '6 days',
+      percentageRemaining: 0,
+      timeRemaining: '0 days',
+      token: '0x931d9e210530184C321EA4ee6238cCB4D0AB5236',
+      transactionHash: '0xabcd...ef0002',
     },
-    lockupPeriod: '6 days',
-    logoURI: 'https://hemilabs.github.io/token-list/logos/hemibtc.svg',
-    name: 'veHEMI',
-    percentageRemaining: 0,
-    symbol: 'hemi',
-    timeRemaining: '0 days',
-    transaction: `0xabcd...ef0002`,
-  },
-]
+  ]

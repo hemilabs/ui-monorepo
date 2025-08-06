@@ -169,7 +169,7 @@
     "tutorials-subheading": "Siga algunos de los tutoriales para tomar ventaja al construir tu primer proyecto con Hemi."
   },
   "staking-dashboard": {
-    "heading": "Gobernancia de staking",
+    "heading": "Staking de Gobernanza",
     "sub-heading": "Aprenda y explore con el ecosistema para desarrolladores de Hemi",
     "table": {
       "amount": "Cantidad",
@@ -179,7 +179,7 @@
       "no-transactions-made": "No se han realizado transacciones",
       "time-remaining": "Tiempo restante",
       "tx": "Tx",
-      "unlock": "Descubrir"
+      "unlock": "Desbloquear"
     }
   },
   "metadata": {

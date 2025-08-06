@@ -1,4 +1,4 @@
-import { Hash } from 'viem'
+import { Chain, Hash } from 'viem'
 
 import { type EvmToken, type Extensions } from './token'
 
@@ -7,11 +7,16 @@ import { type EvmToken, type Extensions } from './token'
  *
  */
 export type StakingDashboardToken = EvmToken & {
-  amount: string
   extensions: Omit<Extensions, 'protocol'>
-  transaction: Hash
+}
+
+export type StakingDashboardOperation = {
+  amount: string
+  transactionHash: Hash
   apy: string
+  chainId: Chain['id']
   lockupPeriod: string
   timeRemaining: string
+  token: string
   percentageRemaining: number
 }

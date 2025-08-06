@@ -8,29 +8,34 @@ import {
 } from '@tanstack/react-table'
 import { Button } from 'components/button'
 import { Card } from 'components/card'
+import { ErrorBoundary } from 'components/errorBoundary'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { StakingDashboardToken } from 'types/stakingDashboard'
+import { StakingDashboardOperation } from 'types/stakingDashboard'
+import { formatEvmHash } from 'utils/format'
 
-import { VeHemiIcon } from '../../_icons/veHemiIcon'
+import { Amount } from '../amount'
 import { Column, ColumnHeader, Header } from '../table'
 
 import { CircularProgress } from './circularProgress'
-import { NoTransactionsMade } from './noTransactionsMade'
+import { NoPositionStaked } from './noPositionStaked'
 
 // created here so there's a stable reference between renders when using it
 const emptyData = new Array(4).fill(null)
 
 const columnsBuilder = (
   t: ReturnType<typeof useTranslations<'staking-dashboard.table'>>,
-): ColumnDef<StakingDashboardToken>[] => [
+): ColumnDef<StakingDashboardOperation>[] => [
   {
     cell: ({ row }) => (
-      <div className="flex items-center justify-center space-x-2">
-        <VeHemiIcon />
-        <span className="text-neutral-950">{row.original.amount}</span>
+      <div className="flex items-center justify-center gap-x-2">
+        <ErrorBoundary
+          fallback={<span className="text-sm text-neutral-950">-</span>}
+        >
+          <Amount operation={row.original} />
+        </ErrorBoundary>
       </div>
     ),
     header: () => <Header text={t('amount')} />,
@@ -39,7 +44,9 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) => (
-      <span className="text-neutral-500">{row.original.transaction}</span>
+      <span className="text-neutral-500">
+        {formatEvmHash(row.original.transactionHash)}
+      </span>
     ),
     header: () => <Header text={t('tx')} />,
     id: 'tx',
@@ -63,7 +70,7 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) => (
-      <div className="flex items-center justify-center space-x-2">
+      <div className="flex items-center justify-center gap-x-2">
         {row.original.percentageRemaining === 0 ? (
           <Button
             size="small"
@@ -88,7 +95,7 @@ const columnsBuilder = (
 ]
 
 type StakeTableImpProps = {
-  data: StakingDashboardToken[]
+  data: StakingDashboardOperation[]
   loading: boolean
 }
 
@@ -165,7 +172,7 @@ const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
 }
 
 type Props = {
-  data: StakingDashboardToken[]
+  data: StakingDashboardOperation[]
   loading: boolean
 }
 
@@ -185,7 +192,7 @@ export const StakeTable = function ({ data, loading }: Props) {
           }}
         >
           {isEmpty ? (
-            <NoTransactionsMade />
+            <NoPositionStaked />
           ) : (
             <StakeTableImp data={data} loading={loading} />
           )}

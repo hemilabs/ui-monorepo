@@ -23,7 +23,7 @@ export const Column = (props: ComponentProps<'td'>) => (
   />
 )
 
-export const Header = ({ text }: { text?: string }) => (
+export const Header = ({ text }: { text: string }) => (
   <span className="block py-2 text-left font-semibold text-neutral-600">
     {text}
   </span>

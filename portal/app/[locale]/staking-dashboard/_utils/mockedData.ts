@@ -11,23 +11,23 @@ import { type StakingDashboardOperation } from 'types/stakingDashboard'
 export const generateStakingDashboardOperations =
   (): StakingDashboardOperation[] => [
     {
-      amount: '100000000000',
+      amount: '1000000000000000000000000',
       apy: '10%',
       chainId: 743111,
       lockupPeriod: '48 months',
       percentageRemaining: 75,
       timeRemaining: '36 months',
-      token: '0x931d9e210530184C321EA4ee6238cCB4D0AB5236',
+      token: '0xbaacf81C8341c3Cb983BC48051Cc7377d2A2Eb93',
       transactionHash: '0xabcd...ef0001',
     },
     {
-      amount: '20000000000',
+      amount: '5000000000000000000000000',
       apy: '8%',
       chainId: 743111,
       lockupPeriod: '6 days',
       percentageRemaining: 0,
       timeRemaining: '0 days',
-      token: '0x931d9e210530184C321EA4ee6238cCB4D0AB5236',
+      token: '0xbaacf81C8341c3Cb983BC48051Cc7377d2A2Eb93',
       transactionHash: '0xabcd...ef0002',
     },
   ]

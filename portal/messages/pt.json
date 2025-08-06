@@ -174,9 +174,9 @@
     "table": {
       "amount": "Quantidade",
       "apy": "APY",
-      "get-started": "Comece por tunelar ativos de e para o Hemi",
+      "get-started": "Comece a fazer stake com seu HEMI",
       "lockup-period": "Período de bloqueio",
-      "no-transactions-made": "Nenhuma transação efetuada",
+      "no-hemi-staked": "Sem HEMI staked",
       "time-remaining": "Tempo restante",
       "tx": "Tx",
       "unlock": "Desbloquear"

@@ -174,9 +174,9 @@
     "table": {
       "amount": "Amount",
       "apy": "APY",
-      "get-started": "Get started by tunneling assets from and to hemi",
+      "get-started": "Get started by staking your HEMI",
       "lockup-period": "Lockup period",
-      "no-transactions-made": "No transactions made",
+      "no-hemi-staked": "No HEMI staked",
       "time-remaining": "Time remaining",
       "tx": "Tx",
       "unlock": "Unlock"

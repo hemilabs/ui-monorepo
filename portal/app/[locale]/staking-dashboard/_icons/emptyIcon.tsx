@@ -8,23 +8,21 @@ export const EmptyIcon = (props: ComponentProps<'svg'>) => (
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <g filter="url(#a-icon231548)">
+    <g filter="url(#a_emptyIcon12487)">
       <path
-        clipRule="evenodd"
-        d="M.999 11.27c0-.246.033-.492.099-.73l1.523-5.521A2.75 2.75 0 0 1 5.272 3h9.454a2.75 2.75 0 0 1 2.651 2.019l1.523 5.52c.066.239.099.485.099.732V15a2 2 0 0 1-2 2h-14a2 2 0 0 1-2-2v-3.73Zm3.068-5.852A1.25 1.25 0 0 1 5.272 4.5h9.454a1.25 1.25 0 0 1 1.205.918l1.523 5.52c.006.02.01.041.015.062h-3.47a1 1 0 0 0-.86.49l-.606 1.02a1 1 0 0 1-.86.49H8.235a1 1 0 0 1-.894-.553l-.448-.894A1 1 0 0 0 5.999 11h-3.47l.015-.062 1.523-5.52Z"
+        d="M16.749 7.998a2.251 2.251 0 0 1 2.25 2.25v5.5a2.25 2.25 0 0 1-2.25 2.25h-13.5a2.25 2.25 0 0 1-2.25-2.25v-5.5a2.25 2.25 0 0 1 2.25-2.25h13.5Zm-6.62 2.147a.348.348 0 0 0-.32.214l-.653 1.57-1.694.135a.347.347 0 0 0-.197.61l1.29 1.105-.394 1.653a.347.347 0 0 0 .518.376l1.45-.885 1.451.885a.349.349 0 0 0 .385-.015.346.346 0 0 0 .134-.362l-.395-1.653 1.291-1.105a.347.347 0 0 0-.198-.61l-1.695-.135-.652-1.569a.348.348 0 0 0-.32-.214Zm4.62-5.147c.98 0 1.814.627 2.123 1.502a3.828 3.828 0 0 0-.123-.002h-13.5c-.04 0-.082 0-.123.002a2.25 2.25 0 0 1 2.123-1.502h9.5Zm-2-3A2.252 2.252 0 0 1 14.872 3.5c-.04-.002-.082-.002-.123-.002h-9.5l-.123.002a2.25 2.25 0 0 1 2.123-1.502h5.5Z"
         fill="#FF6C15"
-        fillRule="evenodd"
       />
     </g>
     <defs>
       <filter
         colorInterpolationFilters="sRGB"
         filterUnits="userSpaceOnUse"
-        height={14}
-        id="a-icon231548"
+        height={16}
+        id="a_emptyIcon12487"
         width={18}
         x={0.999}
-        y={3}
+        y={1.998}
       >
         <feFlood floodOpacity={0} result="BackgroundImageFix" />
         <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
@@ -37,7 +35,7 @@ export const EmptyIcon = (props: ComponentProps<'svg'>) => (
         <feGaussianBlur stdDeviation={0.5} />
         <feComposite in2="hardAlpha" k2={-1} k3={1} operator="arithmetic" />
         <feColorMatrix values="0 0 0 0 0.270588 0 0 0 0 0.0666667 0 0 0 0 0.0196078 0 0 0 0.24 0" />
-        <feBlend in2="shape" result="effect1_innerShadow_13981_71218" />
+        <feBlend in2="shape" result="effect1_innerShadow_14373_33361" />
       </filter>
     </defs>
   </svg>

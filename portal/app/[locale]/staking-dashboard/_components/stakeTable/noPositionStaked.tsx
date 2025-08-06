@@ -12,7 +12,7 @@ export function NoPositionStaked() {
         <EmptyIcon />
       </span>
       <h3 className="mt-2 text-lg font-semibold text-neutral-950">
-        {t('no-transactions-made')}
+        {t('no-hemi-staked')}
       </h3>
       <span className="mt-1 text-sm font-medium text-neutral-500">
         {t('get-started')}

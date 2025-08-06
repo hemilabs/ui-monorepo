@@ -1,5 +1,5 @@
 {
-  "name": "hemi-token-merkle-claims",
+  "name": "hemi-token-merkle-claims-subgraph",
   "version": "1.0.0",
   "scripts": {
     "build": "graph build",

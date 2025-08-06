@@ -168,6 +168,20 @@
     "tutorials-and-tools": "Tutorials and tools to get you started quickly.",
     "tutorials-subheading": "Follow along with some of the tutorials to help you get a head start when building your first Hemi project."
   },
+  "staking-dashboard": {
+    "heading": "Governance staking",
+    "sub-heading": "Learn and explore with Hemi developer ecosystem",
+    "table": {
+      "amount": "Amount",
+      "apy": "APY",
+      "get-started": "Get started by staking your HEMI",
+      "lockup-period": "Lockup period",
+      "no-hemi-staked": "No HEMI staked",
+      "time-remaining": "Time remaining",
+      "tx": "Tx",
+      "unlock": "Unlock"
+    }
+  },
   "metadata": {
     "title": "Hemi Portal"
   },

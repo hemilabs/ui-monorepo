@@ -63,11 +63,11 @@ export const Navbar = function () {
               icon={<StakeIcon />}
               items={[
                 {
-                  // TODO: Governance needs to be reviewed in the future
-                  event: 'nav - governance',
-                  href: '/governance',
+                  // TODO: needs to be reviewed in the future
+                  event: 'nav - staking dashboard',
+                  href: '/staking-dashboard',
                   text: t('hemi-staking'),
-                  urlToBeSelected: '/governance',
+                  urlToBeSelected: '/staking-dashboard',
                 },
                 {
                   event: 'nav - stake',

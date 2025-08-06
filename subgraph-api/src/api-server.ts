@@ -8,6 +8,7 @@ import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
 import { ChainIdPathParams, ReqData } from '../types/server.ts'
 
+import { getClaimTransactionHandler } from './route-handlers/get-claim-transaction-hash.ts'
 import { getWithdrawalProofAndClaimHandler } from './route-handlers/get-withdrawal-proof-and-claim.ts'
 import {
   getBtcWithdrawals,
@@ -190,6 +191,13 @@ export function createApiServer() {
         })
         .catch(next)
     },
+  )
+
+  app.get(
+    '/:chainIdStr(\\d+)/claim/:address(0x[0-9a-fA-F]{40})/:claimGroup(\\d+)',
+    parseChainId,
+    validateChainIsHemi,
+    getClaimTransactionHandler,
   )
 
   app.use(function (req: Request, res: Response) {

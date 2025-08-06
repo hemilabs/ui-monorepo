@@ -10,6 +10,10 @@
       "mainnet": "7qiewFZ7UyDpj3gyNaCDUk55NqHLdbjWQLduS5dcYfQ4",
       "testnet": "DNdeC2WA2bYLJx3qAv2VXG2qmW7AsgVT5byGnPjzAnY5"
     },
+    "tokenClaim": {
+      "mainnet": "TBD",
+      "testnet": "4jnDpTcGgMxMhsyTYSCXzCQftwbBcsCVMHJ9puK64MvA"
+    },
     "tunnel": {
       "deposits": {
         "mainnet": "443cSh2tPs3qSCvNehnGd7hkya4MPoH7FEYdsDXQeYeY",

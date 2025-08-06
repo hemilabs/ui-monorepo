@@ -1,2 +1,5 @@
-export { checkIsClaimable } from './public/merkleBox'
+export {
+  checkIsClaimable,
+  getClaimGroupConfiguration,
+} from './public/merkleBox'
 export { claimTokens } from './wallet/merkleBox'

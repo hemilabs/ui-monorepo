@@ -174,9 +174,9 @@
     "table": {
       "amount": "Cantidad",
       "apy": "APY",
-      "get-started": "Comienza poniendo en staking tus HEMI",
+      "get-started": "Comience haciendo staking de tu HEMI",
       "lockup-period": "Período de bloqueo",
-      "no-hemi-staked": "No HEMI en staking",
+      "no-hemi-staked": "No hay HEMI stakeado",
       "time-remaining": "Tiempo restante",
       "tx": "Tx",
       "unlock": "Desbloquear"

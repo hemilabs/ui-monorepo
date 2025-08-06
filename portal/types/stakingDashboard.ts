@@ -1,10 +1,5 @@
 import { Chain, Hash } from 'viem'
 
-/**
- * // TODO - This types are not fully defined yet.
- *
- */
-
 export type StakingDashboardOperation = {
   amount: string
   transactionHash: Hash

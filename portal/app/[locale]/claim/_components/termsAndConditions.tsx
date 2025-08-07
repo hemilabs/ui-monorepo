@@ -10,7 +10,7 @@ import { Hash } from 'viem'
 import { useAccount, useSwitchChain } from 'wagmi'
 
 // TODO This message needs to be defined by legal
-const SigningMessage = 'I have read and accept the T&C of HEMI tokens'
+const SigningMessage = 'Dummy message to sign'
 
 type Props = {
   onAccept: (signedTermsAndConditions: Hash) => void
@@ -40,7 +40,7 @@ export const TermsAndConditions = function ({ onAccept, onClose }: Props) {
     },
     // on error, we close the modal and the user has to start over
     onError: onClose,
-    onSuccess: (signedMessage: Hash) => onAccept(signedMessage),
+    onSuccess: onAccept,
   })
 
   const disableSubmit = status === 'pending'

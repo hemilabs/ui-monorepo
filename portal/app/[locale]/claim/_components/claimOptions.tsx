@@ -4,10 +4,13 @@ import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { LockupMonths, lockupOptions, type EligibilityData } from 'tge-claim'
+import { Hash } from 'viem'
 
 const TermsAndConditions = dynamic(() =>
   import('./termsAndConditions').then(mod => mod.TermsAndConditions),
 )
+
+import { useClaimTokens } from '../_hooks/useClaimTokens'
 
 import { Strategy } from './strategy'
 
@@ -16,6 +19,7 @@ type Props = {
 }
 
 export const ClaimOptions = function ({ eligibility }: Props) {
+  const { mutate: claimTokens, status } = useClaimTokens()
   const [termsAndConditions, setTermsAndConditions] = useState<{
     lockup: LockupMonths | undefined
     show: boolean
@@ -26,10 +30,19 @@ export const ClaimOptions = function ({ eligibility }: Props) {
     setTermsAndConditions({ lockup: lockupMonths, show: true })
   }
 
-  const disableSubmit = termsAndConditions.show
+  const disableSubmit =
+    termsAndConditions.show || ['pending', 'success'].includes(status)
 
-  const handleAcceptTermsAndConditions = () =>
+  const handleAcceptTermsAndConditions = function (termsSignature: Hash) {
     setTermsAndConditions(prev => ({ ...prev, show: false }))
+    claimTokens({
+      lockupMonths: termsAndConditions.lockup!,
+      // Currently, we don't allow customization for users of the ratio
+      // so we default to 50%
+      ratio: 50,
+      termsSignature,
+    })
+  }
 
   const getSubmitButtonText = function (strategyLockupMonths: LockupMonths) {
     if (termsAndConditions.lockup === strategyLockupMonths) {

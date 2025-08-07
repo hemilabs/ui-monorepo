@@ -15,21 +15,24 @@ export const useClaimGroupConfiguration = function ({
   lockupMonths,
 }: {
   claimGroupId: number
-  lockupMonths: LockupMonths
+  lockupMonths: LockupMonths | undefined
 }) {
   const hemi = useHemi()
   const hemiClient = useHemiClient()
 
   return useQuery({
+    enabled: lockupMonths !== undefined,
     // use initial data hardcoded so we get a straight render of the bonus,
     // but by using react-query we can revalidate in the background the bonuses on-chain
     // current claim tokens only supports lockup ratio of 50
-    initialData: { bonus: bonusMap[lockupMonths], lockupRatio: 50 },
+    initialData: lockupMonths
+      ? { bonus: bonusMap[lockupMonths], lockupRatio: 50 }
+      : undefined,
     queryFn: () =>
       getClaimGroupConfiguration({
         chainId: hemi.id,
         claimGroupId,
-        lockupMonths,
+        lockupMonths: lockupMonths!,
         publicClient: hemiClient,
       })
         .then(({ bonus, lockupRatio }) => ({

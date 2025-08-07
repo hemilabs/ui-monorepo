@@ -231,7 +231,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
           >
             {t('view-tx-on-explorer')}
           </ButtonLink>
-          <ButtonLink href="/staking-dashbord" variant="primary">
+          <ButtonLink href="/staking-dashboard" variant="primary">
             {t('stake-more')}
           </ButtonLink>
         </div>

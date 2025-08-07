@@ -30,7 +30,7 @@ export const Eligible = function ({ eligibility }: Props) {
     return <p>...</p>
   }
 
-  if (claimTransaction !== undefined) {
+  if (claimTransaction) {
     // User has already claimed. If it could not claim, there wouldn't be a transaction hash,
     // and we wouldn't be here.
     return (

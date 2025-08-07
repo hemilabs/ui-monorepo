@@ -1,8 +1,8 @@
 import { hemiSepolia } from 'hemi-viem'
 import { type Address } from 'viem'
 
-// Contract ABI for TGE Claim contract
-export const tgeClaimAbi = [
+// Contract ABI for MerkleBox contract
+export const merkleBoxAbi = [
   {
     inputs: [
       {
@@ -50,6 +50,45 @@ export const tgeClaimAbi = [
     inputs: [
       {
         internalType: 'uint256',
+        name: '',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint32',
+        name: '',
+        type: 'uint32',
+      },
+    ],
+    name: 'holdingToBonusSchedule',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: 'enabled',
+        type: 'bool',
+      },
+      {
+        internalType: 'uint32',
+        name: 'bonus',
+        type: 'uint32',
+      },
+      {
+        internalType: 'uint32',
+        name: 'lockupRatio',
+        type: 'uint32',
+      },
+      {
+        internalType: 'address',
+        name: 'mintedNFT',
+        type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      {
+        internalType: 'uint256',
         name: 'claimGroupId',
         type: 'uint256',
       },
@@ -83,17 +122,17 @@ export const tgeClaimAbi = [
 ] as const
 
 // Contract addresses by chain ID
-const TGE_CLAIM_ADDRESSES: Record<number, Address> = {
+const MerkleBoxAddresses: Record<number, Address> = {
   // Hemi Mainnet (chainId: TBD - will be updated when available)
   // 43111: '0x...', // placeholder
-  [hemiSepolia.id]: '0xE987f93C1e8cC326D5aCF9352c63ffe639B84161',
+  [hemiSepolia.id]: '0x38f4C4BD276b9C47b419FE27D4ED01C32c120cF4',
 } as const
 
-// Get TGE claim contract address for a given chain ID
-export const getTgeClaimAddress = function (chainId: number): Address {
-  const address = TGE_CLAIM_ADDRESSES[chainId]
+// Get MerkleBox contract address for a given chain ID
+export const getMerkleBoxAddress = function (chainId: number): Address {
+  const address = MerkleBoxAddresses[chainId]
   if (!address) {
-    throw new Error(`TGE Claim contract not available for chain ${chainId}`)
+    throw new Error(`MerkleBox contract not available for chain ${chainId}`)
   }
   return address
 }

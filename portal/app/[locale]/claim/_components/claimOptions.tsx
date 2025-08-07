@@ -50,6 +50,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
         <Strategy
           amount={eligibility.amount}
           bgColor="bg-neutral-50"
+          claimGroupId={eligibility.claimGroupId}
           heading={t('claim-options.standard-claim')}
           lockupMonths={lockupOptions.sixMonths}
           onSubmit={onSubmit}
@@ -63,7 +64,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
         <Strategy
           amount={eligibility.amount}
           bgColor="bg-[#fcfcfc]"
-          bonusPercentage={5}
+          claimGroupId={eligibility.claimGroupId}
           heading={t('claim-options.hybrid-claim')}
           lockupMonths={lockupOptions.twoYears}
           onSubmit={onSubmit}
@@ -79,7 +80,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
           <Strategy
             amount={eligibility.amount}
             bgColor="bg-recommended-claim"
-            bonusPercentage={10}
+            claimGroupId={eligibility.claimGroupId}
             heading={t('claim-options.max-yield')}
             lockupMonths={lockupOptions.fourYears}
             onSubmit={onSubmit}

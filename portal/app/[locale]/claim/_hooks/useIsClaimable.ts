@@ -1,9 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
+import { useHemiClient } from 'hooks/useHemiClient'
 import { EligibilityData } from 'tge-claim'
 import { checkIsClaimable } from 'tge-claim/actions'
 import { Address, parseUnits } from 'viem'
-import { useAccount, useWalletClient } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { useHemiToken } from './useHemiToken'
 
@@ -32,20 +33,20 @@ const getIsClaimableQueryKey = ({
 export const useIsClaimable = function (eligibility: EligibilityData) {
   const { address } = useAccount()
   const hemiToken = useHemiToken()
-  const { data: walletClient } = useWalletClient()
+  const hemiPublicClient = useHemiClient()
   const hemi = useHemi()
 
   const amount = parseUnits(eligibility.amount, hemiToken.decimals)
 
   return useQuery({
-    enabled: !!address && !!walletClient,
+    enabled: !!address && !!hemiPublicClient,
     queryFn: () =>
       checkIsClaimable({
         account: address!,
         amount,
         chainId: hemi.id,
+        client: hemiPublicClient,
         eligibility,
-        walletClient: walletClient!,
       }),
     queryKey: getIsClaimableQueryKey({
       address,

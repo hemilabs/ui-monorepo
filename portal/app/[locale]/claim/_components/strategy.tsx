@@ -1,8 +1,10 @@
 import { SparklesIcon } from 'components/icons/sparkles'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { LockupMonths } from 'tge-claim'
 
+import { useClaimGroupConfiguration } from '../_hooks/useClaimGroupConfiguration'
 import { useHemiToken } from '../_hooks/useHemiToken'
 import { RecommendationLevel } from '../_types'
 import { formatHemi } from '../_utils'
@@ -42,7 +44,7 @@ const Description = ({
 type Props = {
   amount: string
   bgColor: string
-  bonusPercentage?: number
+  claimGroupId: number
   heading: string
   lockupMonths: LockupMonths
   onSubmit: (lockupMonths: LockupMonths) => void
@@ -53,26 +55,72 @@ type Props = {
 export const Strategy = function ({
   amount,
   bgColor,
-  bonusPercentage = 0,
+  claimGroupId,
   heading,
   lockupMonths,
   onSubmit,
   recommendationLevel,
   submitButton,
 }: Props) {
+  const { data, isLoading: isLoadingBonus } = useClaimGroupConfiguration({
+    claimGroupId,
+    lockupMonths,
+  })
   const hemiToken = useHemiToken()
   const t = useTranslations('rewards-page.claim-options')
-
-  const claimAmount = BigInt(amount)
-  const half = claimAmount / BigInt(2)
-
-  const value = half + (half * BigInt(bonusPercentage)) / BigInt(100)
-
-  const formattedValue = formatHemi(value, hemiToken.decimals)
 
   const handleSubmit = function (e: FormEvent) {
     e.preventDefault()
     onSubmit(lockupMonths)
+  }
+
+  const renderBonusBadge = function () {
+    if (isLoadingBonus) {
+      return <Skeleton className="h-4.5 w-30" />
+    }
+    const { bonus: bonusPercentage } = data
+    if (bonusPercentage === 0) {
+      return null
+    }
+    return (
+      <div className="flex items-center gap-x-0.5">
+        <span className="text-shimmer text-sm font-semibold">
+          {t('bonus-hemi', {
+            percentage: bonusPercentage,
+          })}
+        </span>
+        <SparklesIcon />
+      </div>
+    )
+  }
+
+  const renderAmount = function (type: 'staked' | 'unlocked') {
+    if (isLoadingBonus) {
+      return <Skeleton className="h-8 w-32" />
+    }
+    const { bonus: bonusPercentage, lockupRatio } = data
+
+    // Split the claimable amount in staked and unlocked
+    const claimAmount = BigInt(amount)
+    // multiply by 100 as decimal numbers don't work with BigInt
+    // as it is a percentage, we need to divide by 100, and remove the extra 100 we've added
+    const stakedHemi = (claimAmount * BigInt(lockupRatio * 100)) / BigInt(10000)
+    const unlockedHemi = claimAmount - stakedHemi
+
+    const value = type === 'staked' ? stakedHemi : unlockedHemi
+
+    // apply the bonus, if any. Similar to lockup, bonus may include decimals.
+    const finalValue =
+      value + (value * BigInt(bonusPercentage * 100)) / BigInt(10000)
+
+    const formattedValue = formatHemi(finalValue, hemiToken.decimals)
+
+    return (
+      <Amount
+        recommendationLevel={recommendationLevel}
+        value={formattedValue}
+      />
+    )
   }
 
   return (
@@ -85,16 +133,7 @@ export const Strategy = function ({
           <h5 className="text-smd font-semibold text-black">
             {t(`lockup-period-${lockupMonths}`)}
           </h5>
-          {bonusPercentage !== 0 ? (
-            <div className="flex items-center gap-x-0.5">
-              <span className="text-shimmer text-sm font-semibold">
-                {t('bonus-hemi', {
-                  percentage: bonusPercentage,
-                })}
-              </span>
-              <SparklesIcon />
-            </div>
-          ) : null}
+          {renderBonusBadge()}
         </div>
       </div>
       <div
@@ -105,10 +144,7 @@ export const Strategy = function ({
           {recommendationLevel === 'high' && <RecommendedBadge />}
         </div>
         <div className="mb-2 mt-auto grid grid-cols-[1fr_auto_1fr] grid-rows-2 place-items-center">
-          <Amount
-            recommendationLevel={recommendationLevel}
-            value={formattedValue}
-          />
+          {renderAmount('unlocked')}
           <span
             className={`text-2.33xl ${
               recommendationLevel === 'high' ? 'text-sky-850' : 'text-black'
@@ -116,10 +152,7 @@ export const Strategy = function ({
           >
             +
           </span>
-          <Amount
-            recommendationLevel={recommendationLevel}
-            value={formattedValue}
-          />
+          {renderAmount('staked')}
           <Description
             recommendationLevel={recommendationLevel}
             text={t('unlocked-hemi')}

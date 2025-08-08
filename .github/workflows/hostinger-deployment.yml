@@ -37,7 +37,7 @@ jobs:
           HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
           HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
           HOSTINGER_SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
-          HOSTINGER_TARGET: domains/${{ vars[vars.HEMI_DOMAIN] }}/public_html/app
+          HOSTINGER_TARGET: domains/${{ vars[vars.HEMI_DOMAIN] }}/public_html/${{ vars.HEMI_TARGET_FOLDER }}
           HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
           NEXT_PUBLIC_ANALYTICS_URL: ${{ vars.NEXT_PUBLIC_ANALYTICS_URL }}
           NEXT_PUBLIC_ANALYTICS_WEBSITE_ID: ${{ vars.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID }}

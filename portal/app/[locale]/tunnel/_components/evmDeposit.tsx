@@ -2,6 +2,7 @@
 
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
+import { FeesContainer } from 'components/feesContainer'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
@@ -23,7 +24,6 @@ import { EvmTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
 import { validateSubmit, getTotal } from '../_utils'
 
 import { Erc20TokenApproval } from './erc20TokenApproval'
-import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
 import { SubmitEvmDeposit } from './submitEvmDeposit'
 import { TunnelProviderToggle } from './tunnelProviderToggle'

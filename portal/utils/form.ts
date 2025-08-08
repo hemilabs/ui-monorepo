@@ -30,3 +30,32 @@ export const sanitizeAmount = function (input: string) {
   }
   return { value: _value }
 }
+
+export const sanitizeLockup = function ({
+  input,
+  value,
+}: {
+  input: string
+  value: string
+}) {
+  if (!input) {
+    return { value: '' }
+  }
+
+  const _cleaned = input.replace(/^0+/, '').trim()
+
+  let num = Math.abs(Number.parseFloat(_cleaned))
+
+  // If the input is not a valid number, return the current value.
+  if (!Number.isFinite(num)) {
+    return { value }
+  }
+
+  // If the input is a decimal, round it to the nearest integer.
+  num = Math.floor(num)
+
+  // 1460 days (4 years) is the maximum.
+  if (num > 1460) num = 1460
+
+  return { value: String(num) }
+}

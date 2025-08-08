@@ -169,13 +169,25 @@
     "tutorials-subheading": "Siga algunos de los tutoriales para tomar ventaja al construir tu primer proyecto con Hemi."
   },
   "staking-dashboard": {
+    "amount": "Cantidad",
+    "form": {
+      "days": "{days, plural, one {{days} día} other {{days} días}}",
+      "estimated-apy": "APY estimado:",
+      "expire-date": "Fecha de caducidad:",
+      "lockup-increment-warning": "El tiempo de bloqueo se puede configurar en incrementos de 6 días.",
+      "send": "Enviar",
+      "stake": "Stake",
+      "staking": "Staking...",
+      "title": "Stake",
+      "try-values": "{min} o {max}",
+      "years": "{years} años"
+    },
     "heading": "Staking de Gobernanza",
+    "lockup-period": "Período de bloqueo",
     "sub-heading": "Aprenda y explore con el ecosistema para desarrolladores de Hemi",
     "table": {
-      "amount": "Cantidad",
       "apy": "APY",
       "get-started": "Comience haciendo staking de sus HEMI",
-      "lockup-period": "Período de bloqueo",
       "no-hemi-staked": "No hay HEMI stakeado",
       "time-remaining": "Tiempo restante",
       "tx": "Tx",

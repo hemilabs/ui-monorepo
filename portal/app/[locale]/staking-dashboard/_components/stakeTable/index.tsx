@@ -26,7 +26,7 @@ import { NoPositionStaked } from './noPositionStaked'
 const emptyData = new Array(4).fill(null)
 
 const columnsBuilder = (
-  t: ReturnType<typeof useTranslations<'staking-dashboard.table'>>,
+  t: ReturnType<typeof useTranslations<'staking-dashboard'>>,
 ): ColumnDef<StakingDashboardOperation>[] => [
   {
     cell: ({ row }) => (
@@ -48,7 +48,7 @@ const columnsBuilder = (
         {formatEvmHash(row.original.transactionHash)}
       </span>
     ),
-    header: () => <Header text={t('tx')} />,
+    header: () => <Header text={t('table.tx')} />,
     id: 'tx',
     meta: { width: '120px' },
   },
@@ -56,7 +56,7 @@ const columnsBuilder = (
     cell: ({ row }) => (
       <span className="text-emerald-600">{row.original.apy}</span>
     ),
-    header: () => <Header text={t('apy')} />,
+    header: () => <Header text={t('table.apy')} />,
     id: 'apy',
     meta: { width: '120px' },
   },
@@ -76,7 +76,7 @@ const columnsBuilder = (
             size="small"
             //TODO - onClick TBD
           >
-            {t('unlock')}
+            {t('table.unlock')}
           </Button>
         ) : (
           <>
@@ -88,7 +88,7 @@ const columnsBuilder = (
         )}
       </div>
     ),
-    header: () => <Header text={t('time-remaining')} />,
+    header: () => <Header text={t('table.time-remaining')} />,
     id: 'time-remaining',
     meta: { width: '120px' },
   },
@@ -100,7 +100,7 @@ type StakeTableImpProps = {
 }
 
 const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
-  const t = useTranslations('staking-dashboard.table')
+  const t = useTranslations('staking-dashboard')
   const { width } = useWindowSize()
 
   const columns = useMemo(
@@ -183,7 +183,7 @@ export const StakeTable = function ({ data, loading }: Props) {
     <div className="w-full rounded-2xl bg-neutral-100 text-sm font-medium">
       <Card>
         <div
-          className={`min-h-120 max-h-[48dvh] overflow-x-auto p-2 ${
+          className={`h-[47dvh] overflow-x-auto p-2 md:min-h-[510px] ${
             isEmpty ? 'flex items-center justify-center' : ''
           }`}
           style={{

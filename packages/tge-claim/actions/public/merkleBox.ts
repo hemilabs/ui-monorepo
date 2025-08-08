@@ -4,6 +4,35 @@ import { readContract } from 'viem/actions'
 import { merkleBoxAbi, getMerkleBoxAddress } from '../../contracts/merkleBox'
 import { EligibilityData, LockupMonths } from '../../types/claim'
 
+export const isClaimable = ({
+  account,
+  amount,
+  chainId,
+  client,
+  eligibility,
+}: {
+  account: Address
+  amount: bigint
+  chainId: Chain['id']
+  client: PublicClient | WalletClient
+  eligibility: EligibilityData
+}) =>
+  // Check if the claim is valid and claimable using isClaimable with user-provided amount
+  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
+  readContract(client, {
+    abi: merkleBoxAbi,
+    address: getMerkleBoxAddress(chainId),
+    args: [
+      BigInt(eligibility.claimGroupId),
+      account,
+      amount,
+      eligibility.proof,
+    ],
+    functionName: 'isClaimable',
+  })
+
 // Check if the claim is valid on-chain
 export const checkIsClaimable = async function ({
   account,
@@ -19,21 +48,15 @@ export const checkIsClaimable = async function ({
   eligibility: EligibilityData
 }): Promise<{ canClaim: true } | { canClaim: false; reason: string }> {
   try {
-    const contractAddress = getMerkleBoxAddress(chainId)
-    const { claimGroupId, proof } = eligibility
-
-    // Check if the claim is valid and claimable using isClaimable with user-provided amount
-    // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
-    const isClaimable = await readContract(client, {
-      abi: merkleBoxAbi,
-      address: contractAddress,
-      args: [BigInt(claimGroupId), account, amount, proof],
-      functionName: 'isClaimable',
+    const canClaim = await isClaimable({
+      account,
+      amount,
+      chainId,
+      client,
+      eligibility,
     })
 
-    if (!isClaimable) {
+    if (!canClaim) {
       return {
         canClaim: false,
         reason:

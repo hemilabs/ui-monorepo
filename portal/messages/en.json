@@ -247,6 +247,8 @@
       "submit-text": "Claim & Stake",
       "unlocked-hemi": "Unlocked $HEMI"
     },
+    "claim-rewards": "Claim rewards",
+    "claiming-your-rewards": "Claiming your rewards",
     "here-is-your-claim-tx": "Here's your claim transaction:",
     "lock-period": "Lock period:",
     "you-are-eligible": "Your eligibility for HEMI tokens",

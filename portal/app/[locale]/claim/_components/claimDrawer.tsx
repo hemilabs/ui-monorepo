@@ -73,6 +73,12 @@ export const ClaimDrawer = function ({
       </form>
     ) : null
 
+  const statusMap: Partial<Record<MutationStatus, ProgressStatus>> = {
+    error: ProgressStatus.FAILED,
+    pending: ProgressStatus.PROGRESS,
+    success: ProgressStatus.COMPLETED,
+  }
+
   const steps: StepPropsWithoutPosition[] = [
     {
       description: t('claiming-your-rewards'),
@@ -84,14 +90,7 @@ export const ClaimDrawer = function ({
             token: getNativeToken(hemi.id),
           }
         : undefined,
-      status:
-        status === 'pending'
-          ? ProgressStatus.PROGRESS
-          : status === 'success'
-            ? ProgressStatus.COMPLETED
-            : status === 'error'
-              ? ProgressStatus.FAILED
-              : ProgressStatus.NOT_READY,
+      status: statusMap[status] || ProgressStatus.NOT_READY,
       txHash: transactionHash,
     },
   ]

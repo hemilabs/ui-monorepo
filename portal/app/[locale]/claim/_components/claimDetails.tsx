@@ -3,7 +3,7 @@
 import { ButtonLink } from 'components/button'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
-import { ReactNode, useEffect } from 'react'
+import { ReactNode, useEffect, useRef } from 'react'
 import ConfettiExplosion from 'react-confetti-explosion'
 import Skeleton from 'react-loading-skeleton'
 import { EligibilityData, LockupMonths } from 'tge-claim'
@@ -22,6 +22,66 @@ import {
 import { ClaimToast } from './claimToast'
 import { Incentives } from './incentives'
 import { StakedHemiTooltip } from './stakedHemiTooltip'
+
+function usePageVisitTracker(claimGroupId: number) {
+  const { address } = useAccount()
+
+  const [hasVisited, setHasVisited] = useLocalStorageState(
+    `portal.visited-claim-page-${address.toLowerCase()}-claim-group-${claimGroupId}`,
+    {
+      defaultValue: false,
+    },
+  )
+
+  // Use a ref to track if we've already marked as visited in this session
+  // This prevents the effect from running multiple times in Strict Mode
+  const hasMarkedVisitedRef = useRef(false)
+
+  useEffect(
+    // marks the page as "visited" when the component unmounts
+    // technically, we could just directly use the cleanup function from useEffect
+    // but when running locally with strict mode, effects run twice,
+    // which makes it hard to reproduce the unmount behavior
+    // See https://react.dev/reference/react/StrictMode#fixing-bugs-found-by-double-rendering-in-development
+    function markAsVisited() {
+      const handleVisibilityChange = function () {
+        if (
+          document.visibilityState === 'hidden' &&
+          !hasVisited &&
+          !hasMarkedVisitedRef.current
+        ) {
+          setHasVisited(true)
+          hasMarkedVisitedRef.current = true
+        }
+      }
+
+      const handleBeforeUnload = function () {
+        if (!hasVisited && !hasMarkedVisitedRef.current) {
+          setHasVisited(true)
+          hasMarkedVisitedRef.current = true
+        }
+      }
+
+      // Listen for both visibility change and beforeunload for better coverage
+      document.addEventListener('visibilitychange', handleVisibilityChange)
+      window.addEventListener('beforeunload', handleBeforeUnload)
+
+      return function () {
+        document.removeEventListener('visibilitychange', handleVisibilityChange)
+        window.removeEventListener('beforeunload', handleBeforeUnload)
+
+        // Also mark as visited when component unmounts (navigation within app)
+        if (!hasVisited && !hasMarkedVisitedRef.current) {
+          setHasVisited(true)
+          hasMarkedVisitedRef.current = true
+        }
+      }
+    },
+    [hasVisited, setHasVisited],
+  )
+
+  return hasVisited
+}
 
 const Row = ({ children }: { children: ReactNode }) => (
   <div className="text-mid flex items-center justify-between border-b border-solid border-neutral-300/55 py-3 font-medium last:border-b-0">
@@ -42,12 +102,14 @@ type Props = {
 }
 
 export const ClaimDetails = function ({ eligibility }: Props) {
-  const { address } = useAccount()
   const hemi = useHemi()
   const hemiToken = useHemiToken()
 
   const { data: transaction, isLoading: isLoadingTransaction } =
-    useGetClaimTransaction(eligibility.claimGroupId)
+    useGetClaimTransaction(eligibility.claimGroupId, {
+      // do not revalidate - use the cached version, given TheGraph tiny delay
+      refetchOnMount: false,
+    })
 
   const { data: claimConfig, isLoading: isLoadingClaimConfiguration } =
     useClaimGroupConfiguration({
@@ -55,31 +117,9 @@ export const ClaimDetails = function ({ eligibility }: Props) {
       lockupMonths: transaction?.lockupMonths,
     })
 
-  const [hasVisited, setHasVisited] = useLocalStorageState(
-    `portal.visited-claim-page-${address.toLowerCase()}-claim-group-${
-      eligibility.claimGroupId
-    }`,
-    { defaultValue: false },
-  )
+  const hasVisited = usePageVisitTracker(eligibility.claimGroupId)
 
   const t = useTranslations('rewards-page')
-
-  useEffect(
-    // marks the page as "visited" when the component unmounts
-    // technically, we could just directly use the cleanup function from useEffect
-    // but when running locally with strict mode, effects run twice,
-    // which makes it hard to reproduce the unmount behavior
-    // See https://react.dev/reference/react/StrictMode#fixing-bugs-found-by-double-rendering-in-development
-    // that's why I am using the beforeunload event
-    function markAsVisited() {
-      const handleBeforeUnload = () => setHasVisited(true)
-      window.addEventListener('beforeunload', handleBeforeUnload)
-
-      return () =>
-        window.removeEventListener('beforeunload', handleBeforeUnload)
-    },
-    [hasVisited, setHasVisited],
-  )
 
   const claimTitle: Record<LockupMonths, string> = {
     6: t('claim-options.standard-claim'),
@@ -223,10 +263,10 @@ export const ClaimDetails = function ({ eligibility }: Props) {
             <Value>{getIncentives()}</Value>
           </Row>
         </div>
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center justify-between gap-x-4 p-4 [&>*]:flex-1">
           <ButtonLink
             aria-disabled={isLoadingTransaction}
-            href={`${hemi.blockExplorers.default.url}/tx/${transaction.transactionHash}`}
+            href={`${hemi.blockExplorers.default.url}/tx/${transaction?.transactionHash}`}
             variant="secondary"
           >
             {t('view-tx-on-explorer')}

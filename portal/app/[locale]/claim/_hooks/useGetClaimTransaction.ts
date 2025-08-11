@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { LockupMonths } from 'tge-claim'
 import { Address, Chain, Hash } from 'viem'
@@ -11,6 +11,8 @@ type Response = {
   ratio: number
   transactionHash: Hash
 }
+
+type ParsedResponse = Omit<Response, 'amount'> & { amount: bigint }
 
 export const getClaimTransactionQueryKey = ({
   address,
@@ -27,7 +29,13 @@ export const getClaimTransactionQueryKey = ({
   claimGroupId,
 ]
 
-export const useGetClaimTransaction = function (claimGroupId: number) {
+export const useGetClaimTransaction = function (
+  claimGroupId: number,
+  options: Omit<
+    UseQueryOptions<ParsedResponse | null>,
+    'enabled' | 'queryFn' | 'queryKey'
+  > = {},
+) {
   const { address } = useAccount()
   const hemi = useHemi()
 
@@ -36,9 +44,9 @@ export const useGetClaimTransaction = function (claimGroupId: number) {
     async queryFn() {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${hemi.id}/claim/${address}/${claimGroupId}`,
-      ).catch(() => null)
+      )
 
-      if (!response) {
+      if (!response.ok) {
         return null
       }
 
@@ -50,7 +58,7 @@ export const useGetClaimTransaction = function (claimGroupId: number) {
         lockupMonths: data.lockupMonths,
         ratio: data.ratio,
         transactionHash: data.transactionHash,
-      }
+      } satisfies ParsedResponse
     },
     queryKey: getClaimTransactionQueryKey({
       address,
@@ -63,5 +71,6 @@ export const useGetClaimTransaction = function (claimGroupId: number) {
     // value, isLoading becomes "true", tearing down the whole UI. So that's why this is disabled
     refetchOnWindowFocus: false,
     retry: false,
+    ...options,
   })
 }

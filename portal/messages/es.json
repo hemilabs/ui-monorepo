@@ -248,6 +248,8 @@
       "submit-text": "Reclamar y hacer Stake",
       "unlocked-hemi": "$HEMI desbloqueado"
     },
+    "claim-rewards": "Reclamar recompensas",
+    "claiming-your-rewards": "Reclamando sus recompensas",
     "here-is-your-claim-tx": "Aquí está su transacción de reclamo:",
     "lock-period": "Período de bloqueo:",
     "you-are-eligible": "Su elegibilidad para tokens HEMI",

@@ -1,6 +1,13 @@
 export { encodeClaimTokens } from './actions/wallet/merkleBox'
 
-export type { ClaimOption, EligibilityData, LockupMonths } from './types/claim'
+export { getMerkleBoxAddress } from './contracts/merkleBox'
+
+export type {
+  ClaimEvents,
+  ClaimOption,
+  EligibilityData,
+  LockupMonths,
+} from './types/claim'
 export { lockupOptions, lockupMonths } from './types/claim'
 
 export { getEligibility } from './utils/getEligibility'

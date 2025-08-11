@@ -43,7 +43,7 @@ export const TermsAndConditions = function ({ onAccept, onClose }: Props) {
     onSuccess: onAccept,
   })
 
-  const disableSubmit = status === 'pending'
+  const disableSubmit = ['pending', 'success'].includes(status)
 
   const handleSubmit = function (e: FormEvent) {
     e.preventDefault()

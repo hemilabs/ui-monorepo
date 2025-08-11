@@ -1,3 +1,4 @@
+import { Spinner } from 'components/spinner'
 import { useTranslations } from 'next-intl'
 import { type EligibilityData } from 'tge-claim'
 
@@ -22,7 +23,11 @@ export const Eligible = function ({ eligibility }: Props) {
   const amount = formatHemi(BigInt(eligibility.amount), hemiToken.decimals)
 
   if (isClaimableLoading || isClaimable === undefined) {
-    return <p>...</p>
+    return (
+      <div className="mt-5">
+        <Spinner color="#FF6A00" size="small" />
+      </div>
+    )
   }
 
   if (!isClaimable) {

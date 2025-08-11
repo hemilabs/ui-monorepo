@@ -3,7 +3,7 @@
 import { ButtonLink } from 'components/button'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
-import { ReactNode, useEffect, useRef } from 'react'
+import { ReactNode, useEffect } from 'react'
 import ConfettiExplosion from 'react-confetti-explosion'
 import Skeleton from 'react-loading-skeleton'
 import { EligibilityData, LockupMonths } from 'tge-claim'
@@ -33,10 +33,6 @@ function usePageVisitTracker(claimGroupId: number) {
     },
   )
 
-  // Use a ref to track if we've already marked as visited in this session
-  // This prevents the effect from running multiple times in Strict Mode
-  const hasMarkedVisitedRef = useRef(false)
-
   useEffect(
     // marks the page as "visited" when the component unmounts
     // technically, we could just directly use the cleanup function from useEffect
@@ -44,40 +40,15 @@ function usePageVisitTracker(claimGroupId: number) {
     // which makes it hard to reproduce the unmount behavior
     // See https://react.dev/reference/react/StrictMode#fixing-bugs-found-by-double-rendering-in-development
     function markAsVisited() {
-      const handleVisibilityChange = function () {
-        if (
-          document.visibilityState === 'hidden' &&
-          !hasVisited &&
-          !hasMarkedVisitedRef.current
-        ) {
-          setHasVisited(true)
-          hasMarkedVisitedRef.current = true
-        }
-      }
+      const handleBeforeUnload = () => setHasVisited(true)
 
-      const handleBeforeUnload = function () {
-        if (!hasVisited && !hasMarkedVisitedRef.current) {
-          setHasVisited(true)
-          hasMarkedVisitedRef.current = true
-        }
-      }
-
-      // Listen for both visibility change and beforeunload for better coverage
-      document.addEventListener('visibilitychange', handleVisibilityChange)
       window.addEventListener('beforeunload', handleBeforeUnload)
 
-      return function () {
-        document.removeEventListener('visibilitychange', handleVisibilityChange)
+      return function cleanup() {
         window.removeEventListener('beforeunload', handleBeforeUnload)
-
-        // Also mark as visited when component unmounts (navigation within app)
-        if (!hasVisited && !hasMarkedVisitedRef.current) {
-          setHasVisited(true)
-          hasMarkedVisitedRef.current = true
-        }
       }
     },
-    [hasVisited, setHasVisited],
+    [setHasVisited],
   )
 
   return hasVisited

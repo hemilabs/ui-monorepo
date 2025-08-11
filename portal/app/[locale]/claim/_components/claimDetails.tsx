@@ -40,6 +40,9 @@ function usePageVisitTracker(claimGroupId: number) {
     // which makes it hard to reproduce the unmount behavior
     // See https://react.dev/reference/react/StrictMode#fixing-bugs-found-by-double-rendering-in-development
     function markAsVisited() {
+      if (hasVisited) {
+        return undefined
+      }
       const handleBeforeUnload = () => setHasVisited(true)
 
       window.addEventListener('beforeunload', handleBeforeUnload)
@@ -48,7 +51,7 @@ function usePageVisitTracker(claimGroupId: number) {
         window.removeEventListener('beforeunload', handleBeforeUnload)
       }
     },
-    [setHasVisited],
+    [hasVisited, setHasVisited],
   )
 
   return hasVisited

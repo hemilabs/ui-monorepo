@@ -2,6 +2,7 @@
 
 import { HemiSymbolWhite } from 'components/icons/hemiSymbolWhite'
 import { PageLayout } from 'components/pageLayout'
+import { Spinner } from 'components/spinner'
 import { useTranslations } from 'next-intl'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
@@ -22,7 +23,11 @@ export default function Page() {
       return <DisconnectedState />
     }
     if (!walletIsConnected(status)) {
-      return <p>...</p>
+      return (
+        <div className="mt-5">
+          <Spinner color="#FF6A00" size="small" />
+        </div>
+      )
     }
 
     // from this point on, the user is connected

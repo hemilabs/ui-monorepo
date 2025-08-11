@@ -32,7 +32,7 @@ export const getClaimTransactionQueryKey = ({
 export const useGetClaimTransaction = function (
   claimGroupId: number,
   options: Omit<
-    UseQueryOptions<ParsedResponse>,
+    UseQueryOptions<ParsedResponse | null>,
     'enabled' | 'queryFn' | 'queryKey'
   > = {},
 ) {

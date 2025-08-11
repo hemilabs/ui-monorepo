@@ -3,7 +3,7 @@ name: Hostinger Deployment
 on:
   push:
     branches:
-      - main
+      - token-claim
   release:
     types:
       - published

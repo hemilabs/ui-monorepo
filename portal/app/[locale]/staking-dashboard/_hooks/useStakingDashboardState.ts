@@ -1,27 +1,12 @@
-import { useHemiToken } from 'app/[locale]/claim/_hooks/useHemiToken'
-import { useNetworks } from 'hooks/useNetworks'
-import { useNetworkType } from 'hooks/useNetworkType'
-import { useCallback, useEffect, useReducer } from 'react'
-import { type RemoteChain } from 'types/chain'
+import { useCallback, useReducer } from 'react'
 import { type StakingDashboardToken } from 'types/stakingDashboard'
-import { findChainById } from 'utils/chain'
 import { sanitizeAmount } from 'utils/form'
-import { getNativeToken } from 'utils/nativeToken'
 import { type NoPayload, type Payload } from 'utils/typeUtilities'
-import { type Chain } from 'viem'
-
-type Lockup = {
-  days?: number
-  valid?: boolean
-}
 
 type StakingDashboardState = {
   estimatedApy: number
   input: string
-  hydrated: boolean
-  lockup: Lockup
-  networkId: RemoteChain['id']
-  token: StakingDashboardToken
+  lockupDays: number
 }
 
 type Action<T extends string> = {
@@ -30,22 +15,14 @@ type Action<T extends string> = {
 
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
 type UpdateEstimatedApy = Action<'updateEstimatedApy'> & Payload<number>
-type UpdateHydrated = Action<'updateHydrated'> & NoPayload
-type UpdateLockup = Action<'updateLockup'> & Payload<Lockup>
+type UpdateLockupDays = Action<'updateLockupDays'> & Payload<number>
 type UpdateInput = Action<'updateInput'> & Payload<string>
-type UpdateToken = Action<'updateToken'> & Payload<StakingDashboardToken>
-
-type ToggleTestnetMainnet = Action<'toggleTestnetMainnet'> &
-  Payload<Pick<StakingDashboardState, 'networkId'>>
 
 type Actions =
   | ResetStateAfterOperation
   | UpdateEstimatedApy
-  | UpdateHydrated
   | UpdateInput
-  | UpdateLockup
-  | UpdateToken
-  | ToggleTestnetMainnet
+  | UpdateLockupDays
 
 // the _:never is used to fail compilation if a case is missing
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -69,17 +46,8 @@ function reducer(
     case 'updateInput':
       return { ...state, input: payload }
 
-    case 'updateHydrated':
-      return { ...state, hydrated: true }
-
-    case 'updateLockup':
-      return { ...state, lockup: { ...state.lockup, ...payload } }
-
-    case 'updateToken':
-      return { ...state, token: payload }
-
-    case 'toggleTestnetMainnet':
-      return { ...state, ...payload }
+    case 'updateLockupDays':
+      return { ...state, lockupDays: payload }
 
     default:
       // if a switch statement is missing on all possible actions
@@ -89,34 +57,17 @@ function reducer(
 }
 
 type StakingDashboardFunctionEvents = {
-  [K in Exclude<
-    Actions['type'],
-    'toggleTestnetMainnet' | 'updateToken' | 'updateHydrated'
-  >]: (payload?: Extract<Actions, { type: K }>['payload']) => void
+  [K in Actions['type']]: (
+    payload?: Extract<Actions, { type: K }>['payload'],
+  ) => void
 }
 
 export const useStakingDashboardState = function (): StakingDashboardState &
   StakingDashboardFunctionEvents {
-  const [networkType] = useNetworkType()
-  const hemiToken = useHemiToken()
-
-  // This sets the default chain ID to the first EVM remote network,
-  // because useHemiToken is not guaranteed to return a token (temporary),
-  // and we need a default token to initialize the state.
-  // The token will be updated later in the effect.
-  const { evmRemoteNetworks } = useNetworks()
-  const chainId = evmRemoteNetworks[0].id
-
   const [state, dispatch] = useReducer(reducer, {
     estimatedApy: 9.6, // TODO - Placeholder for estimated APY, replace with actual logic
-    hydrated: false,
     input: '0',
-    lockup: {
-      days: 732, // Default to 2 years
-      valid: true,
-    },
-    networkId: chainId,
-    token: getNativeToken(chainId),
+    lockupDays: 732, // Default to 2 years
   } as StakingDashboardState)
 
   const updateEstimatedApy = useCallback(function (
@@ -132,37 +83,11 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     }
   }, [])
 
-  const updateLockup = useCallback(function (payload: UpdateLockup['payload']) {
-    dispatch({ payload, type: 'updateLockup' })
+  const updateLockupDays = useCallback(function (
+    payload: UpdateLockupDays['payload'],
+  ) {
+    dispatch({ payload, type: 'updateLockupDays' })
   }, [])
-
-  const isTestnet = findChainById(state.networkId)?.testnet ?? false
-
-  useEffect(
-    function syncHemiTokenAndNetwork() {
-      // TODO - If hemiToken is undefined (currently we only have it for Hemi Sepolia),
-      // then use the default token for the current network.
-      // This is a placeholder until the actual token is set.
-      const token = hemiToken ?? getNativeToken(state.networkId)
-
-      if ((networkType === 'testnet') !== isTestnet) {
-        dispatch({
-          payload: { networkId: token.chainId },
-          type: 'toggleTestnetMainnet',
-        })
-      }
-
-      dispatch({
-        payload: token as StakingDashboardToken,
-        type: 'updateToken',
-      })
-
-      dispatch({
-        type: 'updateHydrated',
-      })
-    },
-    [hemiToken, networkType, isTestnet, state.networkId],
-  )
 
   return {
     ...state,
@@ -172,12 +97,11 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     ),
     updateEstimatedApy,
     updateInput,
-    updateLockup,
+    updateLockupDays,
   }
 }
 
 export type StakingDashboardStake = {
-  networkId: Chain['id']
   token: StakingDashboardToken
 }
 

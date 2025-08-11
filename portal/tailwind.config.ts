@@ -267,6 +267,9 @@ const config: Config = {
       lineHeight: {
         '6.5': '1.625rem',
       },
+      minHeight: {
+        '128': '32rem',
+      },
       opacity: {
         '88': '.88',
       },

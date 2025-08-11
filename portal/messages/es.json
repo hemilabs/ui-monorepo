@@ -179,8 +179,9 @@
       "stake": "Stake",
       "staking": "Staking...",
       "title": "Stake",
-      "try-values": "{min} o {max}",
-      "years": "{years} años"
+      "try-values": "Utilice {min} o {max}",
+      "use": "Utilice {day}",
+      "years": "{years, plural, one {{years} año} other {{years} años}}"
     },
     "heading": "Staking de Gobernanza",
     "lockup-period": "Período de bloqueo",

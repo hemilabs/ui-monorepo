@@ -183,7 +183,7 @@ export const StakeTable = function ({ data, loading }: Props) {
     <div className="w-full rounded-2xl bg-neutral-100 text-sm font-medium">
       <Card>
         <div
-          className={`h-[47dvh] overflow-x-auto p-2 md:min-h-[510px] ${
+          className={`md:min-h-128 h-[47dvh] overflow-x-auto p-2 ${
             isEmpty ? 'flex items-center justify-center' : ''
           }`}
           style={{

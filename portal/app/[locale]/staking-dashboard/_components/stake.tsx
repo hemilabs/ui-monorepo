@@ -2,10 +2,11 @@
 
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
-import { useChain } from 'hooks/useChain'
+import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { StakingDashboardToken } from 'types/stakingDashboard'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
@@ -16,6 +17,7 @@ import {
 } from '../_hooks/useStakingDashboardState'
 
 import { FormContent, StakingForm } from './form'
+import { isValidLockup } from './lockup'
 import { SubmitStake } from './submitStake'
 
 const SetMaxEvmBalance = dynamic(
@@ -27,17 +29,18 @@ type OperationRunning = 'idle' | 'staking'
 
 type StakeProps = {
   state: TypedStakingDashboardState<StakingDashboardStake>
+  token: StakingDashboardToken
 }
 
-export const Stake = function ({ state }: StakeProps) {
+export const Stake = function ({ state, token }: StakeProps) {
   const t = useTranslations()
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
 
-  const { lockup, networkId, token, updateInput } = state
+  const { lockupDays, updateInput } = state
   const { status } = useEvmAccount()
-  const chain = useChain(networkId)
+  const hemi = useHemi()
 
   // TODO(placeholder): Temporary mocked values for UI wiring only.
   // Replace once contract reads/writes and validations are wired up.
@@ -50,7 +53,7 @@ export const Stake = function ({ state }: StakeProps) {
   const getGas = () => ({
     amount: formatUnits(stakeGasFees, token.decimals),
     isError: isStakeGasFeesError,
-    label: t('common.network-gas-fee', { network: chain?.name }),
+    label: t('common.network-gas-fee', { network: hemi.name }),
     token,
   })
 
@@ -77,7 +80,7 @@ export const Stake = function ({ state }: StakeProps) {
   }
   const RenderSubmitButton = () => (
     <SubmitStake
-      canStake={lockup.valid}
+      canStake={isValidLockup(lockupDays)}
       isRunningOperation={isRunningOperation}
       operationRunning={operationRunning}
       token={token}
@@ -101,9 +104,8 @@ export const Stake = function ({ state }: StakeProps) {
                 token={token}
               />
             }
-            stakingDashboardState={{
-              ...state,
-            }}
+            stakingDashboardState={state}
+            token={token}
           />
         }
         onSubmit={handleStake}

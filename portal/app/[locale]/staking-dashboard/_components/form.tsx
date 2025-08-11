@@ -1,32 +1,20 @@
 import { Card } from 'components/card'
 import { TokenInput } from 'components/tokenInput'
-import { TokenLogo } from 'components/tokenLogo'
+import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
+import { StakingDashboardToken } from 'types/stakingDashboard'
 
 import { useStakingDashboardState } from '../_hooks/useStakingDashboardState'
 
 import { Lockup } from './lockup'
-
-type FormTokenProps = {
-  stakingDashboardState: ReturnType<typeof useStakingDashboardState>
-}
-
-function FormToken({ stakingDashboardState }: FormTokenProps) {
-  const { token } = stakingDashboardState
-  return (
-    <div className="flex items-center gap-x-2 text-base">
-      <TokenLogo size="small" token={token} />
-      <span className="text-neutral-950">{token.symbol}</span>
-    </div>
-  )
-}
 
 type FormContentProps = {
   errorKey: string | undefined
   isRunningOperation: boolean
   setMaxBalanceButton: ReactNode
   stakingDashboardState: ReturnType<typeof useStakingDashboardState>
+  token: StakingDashboardToken
 }
 
 export const FormContent = function ({
@@ -34,8 +22,9 @@ export const FormContent = function ({
   isRunningOperation,
   setMaxBalanceButton,
   stakingDashboardState,
+  token,
 }: FormContentProps) {
-  const { input, token, updateInput } = stakingDashboardState
+  const { input, updateInput } = stakingDashboardState
 
   const t = useTranslations('staking-dashboard')
 
@@ -53,9 +42,7 @@ export const FormContent = function ({
         maxBalanceButton={setMaxBalanceButton}
         onChange={updateInput}
         token={token}
-        tokenSelector={
-          <FormToken stakingDashboardState={stakingDashboardState} />
-        }
+        tokenSelector={<TokenSelectorReadOnly token={token} />}
         value={input}
       />
       <Lockup stakingDashboardState={stakingDashboardState} />
@@ -66,8 +53,8 @@ export const FormContent = function ({
 type StakingDashboardFormProps = {
   bottomSection?: ReactNode
   formContent: ReactNode
-  onSubmit: () => void
-  belowForm?: React.ReactNode
+  onSubmit: VoidFunction
+  belowForm?: ReactNode
   submitButton?: ReactNode
 }
 

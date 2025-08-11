@@ -1,7 +1,10 @@
+import { PageLayout } from 'components/pageLayout'
+import { ReactNode } from 'react'
+
 export default function StakingDashboardLayoutClient({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
-  return <div className="mx-auto">{children}</div>
+  return <PageLayout variant="superWide">{children}</PageLayout>
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import { useHemiToken } from 'app/[locale]/claim/_hooks/useHemiToken'
 import Skeleton from 'react-loading-skeleton'
 
 import {
@@ -15,12 +16,12 @@ export const StakeForm = function ({
 }: {
   state: ReturnType<typeof useStakingDashboardState>
 }) {
-  const { hydrated } = state
+  const hemiToken = useHemiToken()
 
-  if (!hydrated) {
+  if (!hemiToken) {
     return (
       <Skeleton
-        className="h-[510px] max-w-[536px] rounded-2xl"
+        className="min-h-128 rounded-2xl"
         containerClassName="flex justify-center"
       />
     )
@@ -28,6 +29,9 @@ export const StakeForm = function ({
 
   // Typescript can't infer it, but we can cast these safely
   return (
-    <Stake state={state as TypedStakingDashboardState<StakingDashboardStake>} />
+    <Stake
+      state={state as TypedStakingDashboardState<StakingDashboardStake>}
+      token={hemiToken}
+    />
   )
 }

@@ -179,8 +179,9 @@
       "stake": "Stake",
       "staking": "Staking...",
       "title": "Stake",
-      "try-values": "{min} or {max}",
-      "years": "{years} years"
+      "try-values": "Use {min} or {max}",
+      "use": "Use {day}",
+      "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
     "heading": "Governance staking",
     "lockup-period": "Lockup period",

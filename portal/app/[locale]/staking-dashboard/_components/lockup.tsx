@@ -1,10 +1,11 @@
+import { WarningIcon } from 'components/icons/warningIcon'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useState } from 'react'
-import { sanitizeLockup } from 'utils/form'
 import { formatDate } from 'utils/format'
 
 import { useStakingDashboardState } from '../_hooks/useStakingDashboardState'
-import { WarningIcon } from '../_icons/warningIcon'
+import { maxDays, minDays, step } from '../_utils/constants'
+import { sanitizeLockup } from '../_utils/sanitizeLockup'
 
 import { RangeSlider } from './rangeSlider'
 
@@ -21,15 +22,11 @@ type Props = {
   stakingDashboardState: ReturnType<typeof useStakingDashboardState>
 }
 
-const minDays = 6
-const maxDays = 1460 // 4 years
-const step = 6 // 6-day increments
-
 const isMultipleOfStep = (n: number) => n % step === 0
 
 const isWithinRange = (n: number) => n >= minDays && n <= maxDays
 
-const isValidLockup = (n: number) =>
+export const isValidLockup = (n: number) =>
   !Number.isNaN(n) && isWithinRange(n) && isMultipleOfStep(n)
 
 function addDays(date: Date, days: number) {
@@ -66,27 +63,27 @@ function TryValuesHint({ isValid, maxValue, minValue }: TryValuesHintProps) {
     <span className="text-xs font-medium text-neutral-500">
       {maxValue && minValue
         ? t('try-values', { max: maxValue, min: minValue })
-        : minValue ?? maxValue}
+        : t('use', { day: minValue ?? maxValue })}
     </span>
   )
 }
 
 export function Lockup({ stakingDashboardState }: Props) {
-  const { estimatedApy, lockup, updateLockup } = stakingDashboardState
+  const { estimatedApy, lockupDays, updateLockupDays } = stakingDashboardState
   const t = useTranslations('staking-dashboard')
   const locale = useLocale()
 
-  const [inputValue, setInputValue] = useState(lockup.days.toString())
+  const [inputValue, setInputValue] = useState(lockupDays.toString())
   const [touched, setTouched] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
 
   const inputNumber = Number(inputValue)
   const valid = isValidLockup(inputNumber)
   const nearest = getNearestValidValues(inputNumber)
-  const expireDate = formatDate(addDays(new Date(), lockup.days), locale)
+  const expireDate = formatDate(addDays(new Date(), lockupDays), locale)
 
   function handleSliderChange(val: number) {
-    updateLockup({ days: val, valid: true })
+    updateLockupDays(val)
     setInputValue(String(val))
     setTouched(false)
   }
@@ -98,9 +95,7 @@ export function Lockup({ stakingDashboardState }: Props) {
     const num = Number(value)
     const isValid = isValidLockup(num)
     if (isValid) {
-      updateLockup({ days: num, valid: isValid })
-    } else {
-      updateLockup({ valid: isValid })
+      updateLockupDays(num)
     }
   }
 
@@ -112,10 +107,10 @@ export function Lockup({ stakingDashboardState }: Props) {
     function handleInputFocusReset() {
       if (!inputValue && !isFocused) {
         setInputValue(minDays.toString())
-        updateLockup({ days: minDays, valid: true })
+        updateLockupDays(minDays)
       }
     },
-    [inputValue, isFocused, updateLockup],
+    [inputValue, isFocused, updateLockupDays],
   )
 
   return (
@@ -128,8 +123,8 @@ export function Lockup({ stakingDashboardState }: Props) {
           <div className="flex items-center justify-center gap-x-3">
             <TryValuesHint
               isValid={valid}
-              maxValue={nearest.maxValue}
-              minValue={nearest.minValue}
+              maxValue={nearest?.maxValue}
+              minValue={nearest?.minValue}
             />
             <input
               className={`w-24 rounded-md border px-2.5 py-1.5 text-center text-sm font-medium text-neutral-950 focus:outline-none focus:ring-0 ${
@@ -151,7 +146,7 @@ export function Lockup({ stakingDashboardState }: Props) {
             min={minDays}
             onChange={handleSliderChange}
             step={step}
-            value={lockup.days}
+            value={lockupDays}
           />
           <p className="mt-2 flex items-center justify-between text-xs font-medium text-neutral-500">
             <span>{t('form.days', { days: 6 })}</span>
@@ -161,7 +156,7 @@ export function Lockup({ stakingDashboardState }: Props) {
           <div className="mt-4 h-px w-full bg-neutral-300/55" />
         </div>
 
-        <div className="mt-2.5 flex flex-col justify-between gap-y-2 md:flex-row md:items-center md:gap-y-0">
+        <div className="mt-3 flex flex-col justify-between gap-y-2 md:flex-row md:items-center md:gap-y-0">
           <p className="text-sm font-medium text-neutral-600">
             {t('form.expire-date')}
             <span className="ml-1 text-neutral-950">{expireDate}</span>

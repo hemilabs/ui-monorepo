@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "noEmit": true
+  },
+  "exclude": ["node_modules", "test/*"],
+  "extends": "@tsconfig/node20/tsconfig.json",
+  "include": ["**/*.ts"]
+}

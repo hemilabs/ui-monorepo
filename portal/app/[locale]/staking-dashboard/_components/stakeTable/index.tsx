@@ -9,12 +9,12 @@ import {
 import { Button } from 'components/button'
 import { Card } from 'components/card'
 import { ErrorBoundary } from 'components/errorBoundary'
+import { TxLink } from 'components/txLink'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakingDashboardOperation } from 'types/stakingDashboard'
-import { formatEvmHash } from 'utils/format'
 
 import { Amount } from '../amount'
 import { Column, ColumnHeader, Header } from '../table'
@@ -26,7 +26,7 @@ import { NoPositionStaked } from './noPositionStaked'
 const emptyData = new Array(4).fill(null)
 
 const columnsBuilder = (
-  t: ReturnType<typeof useTranslations<'staking-dashboard.table'>>,
+  t: ReturnType<typeof useTranslations<'staking-dashboard'>>,
 ): ColumnDef<StakingDashboardOperation>[] => [
   {
     cell: ({ row }) => (
@@ -40,25 +40,32 @@ const columnsBuilder = (
     ),
     header: () => <Header text={t('amount')} />,
     id: 'amount',
-    meta: { width: '200px' },
+    meta: { className: 'justify-start', width: '200px' },
   },
   {
-    cell: ({ row }) => (
-      <span className="text-neutral-500">
-        {formatEvmHash(row.original.transactionHash)}
-      </span>
+    cell({ row }) {
+      const { transactionHash } = row.original
+      return (
+        <div className="flex items-center justify-end">
+          <TxLink chainId={row.original.chainId} txHash={transactionHash} />
+        </div>
+      )
+    },
+    header: () => (
+      <div className="mr-8">
+        <Header text={t('table.tx')} />
+      </div>
     ),
-    header: () => <Header text={t('tx')} />,
     id: 'tx',
-    meta: { width: '120px' },
+    meta: { width: '180px' },
   },
   {
     cell: ({ row }) => (
       <span className="text-emerald-600">{row.original.apy}</span>
     ),
-    header: () => <Header text={t('apy')} />,
+    header: () => <Header text={t('table.apy')} />,
     id: 'apy',
-    meta: { width: '120px' },
+    meta: { width: '30px' },
   },
   {
     cell: ({ row }) => (
@@ -66,17 +73,17 @@ const columnsBuilder = (
     ),
     header: () => <Header text={t('lockup-period')} />,
     id: 'lockup-period',
-    meta: { width: '120px' },
+    meta: { width: '100px' },
   },
   {
     cell: ({ row }) => (
-      <div className="flex items-center justify-center gap-x-2">
+      <div className="flex items-center justify-end gap-x-2">
         {row.original.percentageRemaining === 0 ? (
           <Button
             size="small"
             //TODO - onClick TBD
           >
-            {t('unlock')}
+            {t('table.unlock')}
           </Button>
         ) : (
           <>
@@ -88,7 +95,7 @@ const columnsBuilder = (
         )}
       </div>
     ),
-    header: () => <Header text={t('time-remaining')} />,
+    header: () => <Header text={t('table.time-remaining')} />,
     id: 'time-remaining',
     meta: { width: '120px' },
   },
@@ -100,7 +107,7 @@ type StakeTableImpProps = {
 }
 
 const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
-  const t = useTranslations('staking-dashboard.table')
+  const t = useTranslations('staking-dashboard')
   const { width } = useWindowSize()
 
   const columns = useMemo(
@@ -141,6 +148,9 @@ const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
           <tr className="flex w-full items-center" key={headerGroup.id}>
             {headerGroup.headers.map(header => (
               <ColumnHeader
+                className={
+                  header.column.columnDef.meta?.className ?? 'justify-end'
+                }
                 key={header.id}
                 style={{ width: header.column.columnDef.meta?.width }}
               >
@@ -158,6 +168,9 @@ const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
           <tr className="group/stake-row flex items-center" key={row.id}>
             {row.getVisibleCells().map(cell => (
               <Column
+                className={
+                  cell.column.columnDef.meta?.className ?? 'justify-end'
+                }
                 key={cell.id}
                 style={{ width: cell.column.columnDef.meta?.width }}
               >
@@ -183,7 +196,7 @@ export const StakeTable = function ({ data, loading }: Props) {
     <div className="w-full rounded-2xl bg-neutral-100 text-sm font-medium">
       <Card>
         <div
-          className={`min-h-120 max-h-[48dvh] overflow-x-auto p-2 ${
+          className={`md:min-h-128 h-[47dvh] overflow-x-auto p-2 ${
             isEmpty ? 'flex items-center justify-center' : ''
           }`}
           style={{

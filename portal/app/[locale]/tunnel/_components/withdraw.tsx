@@ -2,6 +2,7 @@
 
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
+import { FeesContainer } from 'components/feesContainer'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
@@ -33,7 +34,6 @@ import {
 import { useWithdraw } from '../_hooks/useWithdraw'
 import { validateSubmit, getTotal } from '../_utils'
 
-import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitEvmWithdrawal } from './submitEvmWithdrawal'

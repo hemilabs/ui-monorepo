@@ -3,11 +3,18 @@
 import { PageLayout } from 'components/pageLayout'
 import { useTranslations } from 'next-intl'
 
+import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
+import { useStakingDashboardState } from './_hooks/useStakingDashboardState'
 import { generateStakingDashboardOperations } from './_utils/mockedData'
 
 function Page() {
   const t = useTranslations('staking-dashboard')
+  const stakingDashboardState = useStakingDashboardState()
+
+  const props = {
+    state: stakingDashboardState,
+  }
 
   /**
    * @temporary
@@ -17,7 +24,7 @@ function Page() {
   const mockStakingDashboardOperations = generateStakingDashboardOperations()
 
   return (
-    <PageLayout variant="wide">
+    <PageLayout variant="superWide">
       <div className="flex flex-col">
         <h1 className="mb-1 text-2xl font-semibold text-neutral-950">
           {t('heading')}
@@ -25,11 +32,16 @@ function Page() {
         <p className="text-sm font-normal text-neutral-500">
           {t('sub-heading')}
         </p>
-        <div className="mt-8 flex w-full space-x-6">
-          <StakeTable
-            data={[...mockStakingDashboardOperations]}
-            loading={false}
-          />
+        <div className="mt-8 flex flex-col-reverse gap-6 md:flex-row">
+          <div className="w-full md:w-3/5">
+            <StakeTable
+              data={[...mockStakingDashboardOperations]}
+              loading={false}
+            />
+          </div>
+          <div className="w-full md:w-2/5">
+            <StakeForm {...props} />
+          </div>
         </div>
       </div>
     </PageLayout>

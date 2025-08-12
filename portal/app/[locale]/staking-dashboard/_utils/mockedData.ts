@@ -18,7 +18,8 @@ export const generateStakingDashboardOperations =
       percentageRemaining: 75,
       timeRemaining: '36 months',
       token: '0xbaacf81C8341c3Cb983BC48051Cc7377d2A2Eb93',
-      transactionHash: '0xabcd...ef0001',
+      transactionHash:
+        '0x08a875c5014f4b4132bdd16008854a124f09a940179c99fa1ce731919a99dab2',
     },
     {
       amount: '5000000000000000000000000',
@@ -28,6 +29,7 @@ export const generateStakingDashboardOperations =
       percentageRemaining: 0,
       timeRemaining: '0 days',
       token: '0xbaacf81C8341c3Cb983BC48051Cc7377d2A2Eb93',
-      transactionHash: '0xabcd...ef0002',
+      transactionHash:
+        '0x3b5b86000291333647a61156dbd91cf24e788160db5c1b6780439f6bc5613a18',
     },
   ]

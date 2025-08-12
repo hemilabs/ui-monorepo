@@ -1,9 +1,10 @@
 import { PageLayout } from 'components/pageLayout'
+import { ReactNode } from 'react'
 
 export default function StakingDashboardLayoutClient({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode
 }) {
-  return <PageLayout variant="wide">{children}</PageLayout>
+  return <PageLayout variant="superWide">{children}</PageLayout>
 }

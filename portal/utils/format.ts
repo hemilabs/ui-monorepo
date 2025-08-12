@@ -70,3 +70,10 @@ export const formatTVL = function (amount: number | string) {
   // For the rest, show the full format
   return `$${formatFiatNumberTVL(amount)}`
 }
+
+export const formatDate = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(date)

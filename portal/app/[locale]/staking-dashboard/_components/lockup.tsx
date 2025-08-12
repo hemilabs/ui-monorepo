@@ -63,9 +63,7 @@ function TryValuesHint({
   onSelectValue,
 }: TryValuesHintProps & { onSelectValue: (value: number) => void }) {
   const t = useTranslations('staking-dashboard.form')
-  if (isValid || !inputText) {
-    return null
-  }
+  if (isValid || !inputText) return null
 
   const renderValue = (value: number) => (
     <button
@@ -79,15 +77,14 @@ function TryValuesHint({
 
   return (
     <span className="text-xs font-medium text-neutral-500">
-      {maxValue && minValue ? (
-        <>
-          {t('use')} {renderValue(minValue)} {t('or')} {renderValue(maxValue)}
-        </>
-      ) : (
-        <>
-          {t('use')} {renderValue(minValue ?? maxValue!)}
-        </>
-      )}
+      {maxValue && minValue
+        ? t.rich('use-or', {
+            max: () => renderValue(maxValue),
+            min: () => renderValue(minValue),
+          })
+        : t.rich('use', {
+            day: () => renderValue(minValue ?? maxValue),
+          })}
     </span>
   )
 }

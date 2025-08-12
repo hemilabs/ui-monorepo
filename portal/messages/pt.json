@@ -180,7 +180,8 @@
       "stake": "Stake",
       "staking": "Fazendo stake...",
       "title": "Stake",
-      "use": "Use",
+      "use": "Use <day></day>",
+      "use-or": "Use <min></min> ou <max></max>",
       "years": "{years, plural, one {{years} ano} other {{years} anos}}"
     },
     "heading": "Governança de staking",

@@ -40,7 +40,7 @@ const columnsBuilder = (
     ),
     header: () => <Header text={t('amount')} />,
     id: 'amount',
-    meta: { width: '200px' },
+    meta: { className: 'justify-start', width: '200px' },
   },
   {
     cell({ row }) {
@@ -149,7 +149,7 @@ const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
             {headerGroup.headers.map(header => (
               <ColumnHeader
                 className={
-                  header.id === 'amount' ? 'justify-start' : 'justify-end'
+                  header.column.columnDef.meta?.className ?? 'justify-end'
                 }
                 key={header.id}
                 style={{ width: header.column.columnDef.meta?.width }}
@@ -169,7 +169,7 @@ const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
             {row.getVisibleCells().map(cell => (
               <Column
                 className={
-                  cell.column.id === 'amount' ? 'justify-start' : 'justify-end'
+                  cell.column.columnDef.meta?.className ?? 'justify-end'
                 }
                 key={cell.id}
                 style={{ width: cell.column.columnDef.meta?.width }}

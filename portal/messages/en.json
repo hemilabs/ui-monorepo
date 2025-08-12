@@ -180,7 +180,8 @@
       "stake": "Stake",
       "staking": "Staking...",
       "title": "Stake",
-      "use": "Use",
+      "use": "Use <day></day>",
+      "use-or": "Use <min></min> or <max></max>",
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
     "heading": "Governance staking",

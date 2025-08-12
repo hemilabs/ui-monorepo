@@ -1,10 +1,11 @@
 import { WarningIcon } from 'components/icons/warningIcon'
+import { LockupInput } from 'components/inputText'
 import { useLocale, useTranslations } from 'next-intl'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { formatDate } from 'utils/format'
 
 import { useStakingDashboardState } from '../_hooks/useStakingDashboardState'
-import { maxDays, minDays, step } from '../_utils/constants'
+import { halfDays, maxDays, minDays, step } from '../_utils/constants'
 import { sanitizeLockup } from '../_utils/sanitizeLockup'
 
 import { RangeSlider } from './rangeSlider'
@@ -15,6 +16,7 @@ type NearestValidValues = {
 } | null
 
 type TryValuesHintProps = NearestValidValues & {
+  inputText: string
   isValid: boolean
 }
 
@@ -22,12 +24,11 @@ type Props = {
   stakingDashboardState: ReturnType<typeof useStakingDashboardState>
 }
 
-const isMultipleOfStep = (n: number) => n % step === 0
-
-const isWithinRange = (n: number) => n >= minDays && n <= maxDays
-
 export const isValidLockup = (n: number) =>
-  !Number.isNaN(n) && isWithinRange(n) && isMultipleOfStep(n)
+  !Number.isNaN(n) &&
+  n >= minDays &&
+  n <= maxDays &&
+  (n % step === 0 || n === maxDays)
 
 function addDays(date: Date, days: number) {
   const result = new Date(date)
@@ -40,8 +41,9 @@ function getNearestValidValues(n: number): NearestValidValues {
 
   const lower = Math.floor(n / step) * step
   const upper = lower + step
+
   const minValue = lower >= minDays ? lower : null
-  const maxValue = upper <= maxDays ? upper : null
+  const maxValue = upper <= maxDays ? upper : upper > maxDays ? maxDays : null
 
   if (minValue === null && maxValue === null) {
     return null
@@ -53,17 +55,39 @@ function getNearestValidValues(n: number): NearestValidValues {
   }
 }
 
-function TryValuesHint({ isValid, maxValue, minValue }: TryValuesHintProps) {
+function TryValuesHint({
+  inputText,
+  isValid,
+  maxValue,
+  minValue,
+  onSelectValue,
+}: TryValuesHintProps & { onSelectValue: (value: number) => void }) {
   const t = useTranslations('staking-dashboard.form')
-  if (isValid) {
+  if (isValid || !inputText) {
     return null
   }
 
+  const renderValue = (value: number) => (
+    <button
+      className="transition-colors duration-150 hover:text-neutral-950"
+      onClick={() => onSelectValue(value)}
+      type="button"
+    >
+      {value}
+    </button>
+  )
+
   return (
     <span className="text-xs font-medium text-neutral-500">
-      {maxValue && minValue
-        ? t('try-values', { max: maxValue, min: minValue })
-        : t('use', { day: minValue ?? maxValue })}
+      {maxValue && minValue ? (
+        <>
+          {t('use')} {renderValue(minValue)} {t('or')} {renderValue(maxValue)}
+        </>
+      ) : (
+        <>
+          {t('use')} {renderValue(minValue ?? maxValue!)}
+        </>
+      )}
     </span>
   )
 }
@@ -92,26 +116,11 @@ export function Lockup({ stakingDashboardState }: Props) {
     const { value } = sanitizeLockup({ input: val, value: inputValue })
     setInputValue(value)
     setTouched(true)
-    const num = Number(value)
-    const isValid = isValidLockup(num)
-    if (isValid) {
-      updateLockupDays(num)
-    }
+    updateLockupDays(Number(value))
   }
 
-  const displayValue = isFocused
-    ? inputValue
-    : t('form.days', { days: inputValue })
-
-  useEffect(
-    function handleInputFocusReset() {
-      if (!inputValue && !isFocused) {
-        setInputValue(minDays.toString())
-        updateLockupDays(minDays)
-      }
-    },
-    [inputValue, isFocused, updateLockupDays],
-  )
+  const displayValue =
+    isFocused || !inputValue ? inputValue : t('form.days', { days: inputValue })
 
   return (
     <>
@@ -122,22 +131,23 @@ export function Lockup({ stakingDashboardState }: Props) {
           </span>
           <div className="flex items-center justify-center gap-x-3">
             <TryValuesHint
+              inputText={inputValue}
               isValid={valid}
               maxValue={nearest?.maxValue}
               minValue={nearest?.minValue}
+              onSelectValue={value => handleInputChange(value.toString())}
             />
-            <input
-              className={`w-24 rounded-md border px-2.5 py-1.5 text-center text-sm font-medium text-neutral-950 focus:outline-none focus:ring-0 ${
-                touched && !valid
-                  ? 'shadow-lockup-input-error'
-                  : 'shadow-lockup-input-default'
-              }`}
-              onBlur={() => setIsFocused(false)}
-              onChange={e => handleInputChange(e.target.value)}
-              onFocus={() => setIsFocused(true)}
-              type="text"
-              value={displayValue}
-            />
+            <div className="w-32">
+              <LockupInput
+                autoFocus={false}
+                isError={touched && !valid}
+                onBlur={() => setIsFocused(false)}
+                onChange={e => handleInputChange(e.target.value)}
+                onClear={() => handleInputChange('')}
+                onFocus={() => setIsFocused(true)}
+                value={displayValue}
+              />
+            </div>
           </div>
         </div>
         <div className="mt-2">
@@ -149,14 +159,29 @@ export function Lockup({ stakingDashboardState }: Props) {
             value={lockupDays}
           />
           <p className="mt-2 flex items-center justify-between text-xs font-medium text-neutral-500">
-            <span>{t('form.days', { days: 6 })}</span>
-            <span>{t('form.years', { years: 2 })}</span>
-            <span>{t('form.years', { years: 4 })}</span>
+            <span
+              className="cursor-pointer hover:text-neutral-950"
+              onClick={() => handleInputChange(minDays.toString())}
+            >
+              {t('form.days', { days: minDays })}
+            </span>
+            <span
+              className="cursor-pointer hover:text-neutral-950"
+              onClick={() => handleInputChange(halfDays.toString())}
+            >
+              {t('form.years', { years: 2 })}
+            </span>
+            <span
+              className="cursor-pointer hover:text-neutral-950"
+              onClick={() => handleInputChange(maxDays.toString())}
+            >
+              {t('form.years', { years: 4 })}
+            </span>
           </p>
           <div className="mt-4 h-px w-full bg-neutral-300/55" />
         </div>
 
-        <div className="mt-3 flex flex-col justify-between gap-y-2 md:flex-row md:items-center md:gap-y-0">
+        <div className="mt-2 flex flex-col justify-between gap-y-2 md:flex-row md:items-center md:gap-y-0">
           <p className="text-sm font-medium text-neutral-600">
             {t('form.expire-date')}
             <span className="ml-1 text-neutral-950">{expireDate}</span>

@@ -3,6 +3,8 @@ import { type StakingDashboardToken } from 'types/stakingDashboard'
 import { sanitizeAmount } from 'utils/form'
 import { type NoPayload, type Payload } from 'utils/typeUtilities'
 
+import { isValidLockup } from '../_components/lockup'
+
 type StakingDashboardState = {
   estimatedApy: number
   input: string
@@ -86,7 +88,10 @@ export const useStakingDashboardState = function (): StakingDashboardState &
   const updateLockupDays = useCallback(function (
     payload: UpdateLockupDays['payload'],
   ) {
-    dispatch({ payload, type: 'updateLockupDays' })
+    const isValid = isValidLockup(payload)
+    if (isValid) {
+      dispatch({ payload, type: 'updateLockupDays' })
+    }
   }, [])
 
   return {

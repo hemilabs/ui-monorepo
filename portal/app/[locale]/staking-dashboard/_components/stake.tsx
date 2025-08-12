@@ -89,28 +89,26 @@ export const Stake = function ({ state, token }: StakeProps) {
   )
 
   return (
-    <>
-      <StakingForm
-        belowForm={<RenderBelowForm />}
-        formContent={
-          <FormContent
-            errorKey={walletIsConnected(status) ? 'errorKey' : undefined}
-            isRunningOperation={isRunningOperation}
-            setMaxBalanceButton={
-              <SetMaxEvmBalance
-                disabled={isRunningOperation}
-                gas={stakeGasFees}
-                onSetMaxBalance={maxBalance => updateInput(maxBalance)}
-                token={token}
-              />
-            }
-            stakingDashboardState={state}
-            token={token}
-          />
-        }
-        onSubmit={handleStake}
-        submitButton={<RenderSubmitButton />}
-      />
-    </>
+    <StakingForm
+      belowForm={<RenderBelowForm />}
+      formContent={
+        <FormContent
+          errorKey={walletIsConnected(status) ? 'errorKey' : undefined}
+          isRunningOperation={isRunningOperation}
+          setMaxBalanceButton={
+            <SetMaxEvmBalance
+              disabled={isRunningOperation}
+              gas={stakeGasFees}
+              onSetMaxBalance={maxBalance => updateInput(maxBalance)}
+              token={token}
+            />
+          }
+          stakingDashboardState={state}
+          token={token}
+        />
+      }
+      onSubmit={handleStake}
+      submitButton={<RenderSubmitButton />}
+    />
   )
 }

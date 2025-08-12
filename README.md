@@ -4,12 +4,15 @@ A comprehensive collection of UI components and utilities for blockchain applica
 
 ## 📦 Projects
 
-This monorepo contains the following projects:
+This monorepo uses npm workspaces, and contains the following projects:
 
-- **packages/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported).
-- **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
-- **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
-- **portal**: Portal app living at [https://app.hemi.xyz](https://app.hemi.xyz).
+- **packages/\***: Contains a comprehensive list of reusable packages.
+  - **packages/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported).
+  - **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
+  - **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
+  - **packages/tge-claim**: Package that contains functions needed for the TGE event.
+  - **packages/ve-hemi-actions**: Package that contains functions needed to interact with the staking contract veHEMI.
+- **portal**: Portal webapp living at [https://app.hemi.xyz](https://app.hemi.xyz).
 - **portal-backend**: Various APIs and cron jobs the Portal uses.
 - **subgraph-api**: API for querying hemi subgraphs needed for the portal.
 - **subgraphs/\***: The different subgraphs needed for the portal, such as tunneling operations.

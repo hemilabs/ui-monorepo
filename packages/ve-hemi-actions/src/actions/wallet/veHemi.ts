@@ -29,7 +29,7 @@ const canCreateLock = async function ({
   account: Address
   amount: bigint
   approvalAmount?: bigint
-  lockDurationInSeconds: bigint
+  lockDurationInSeconds: number
   walletClient: WalletClient
 }): Promise<{
   canCreate: boolean
@@ -82,7 +82,7 @@ const runCreateLock = ({
   account: Address
   amount: bigint
   approvalAmount?: bigint
-  lockDurationInSeconds: bigint
+  lockDurationInSeconds: number
   walletClient: WalletClient
 }) =>
   async function (emitter: EventEmitter<CreateLockEvents>) {
@@ -172,7 +172,7 @@ const runCreateLock = ({
         abi: veHemiAbi,
         account,
         address: veHemiAddress,
-        args: [amount, lockDurationInSeconds],
+        args: [amount, BigInt(lockDurationInSeconds)],
         chain: walletClient.chain,
         functionName: 'createLock',
       }).catch(function (error) {

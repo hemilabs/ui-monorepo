@@ -2,7 +2,10 @@ import { hemiSepolia } from 'hemi-viem'
 import { zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
-import { MAX_LOCK_DURATION, MIN_LOCK_DURATION } from '../src/constants'
+import {
+  MaxLockDurationSeconds,
+  MinLockDurationSeconds,
+} from '../src/constants'
 import { validateCreateLockInputs } from '../src/utils'
 
 describe('validateCreateLockInputs', function () {
@@ -11,7 +14,7 @@ describe('validateCreateLockInputs', function () {
     amount: BigInt(100),
     approvalAmount: BigInt(100),
     chainId: hemiSepolia.id,
-    lockDurationInSeconds: BigInt(30 * 24 * 60 * 60), // 30 days
+    lockDurationInSeconds: 30 * 24 * 60 * 60, // 30 days
   }
 
   it('should return undefined for valid inputs', function () {
@@ -58,7 +61,7 @@ describe('validateCreateLockInputs', function () {
     expect(
       validateCreateLockInputs({
         ...validParams,
-        lockDurationInSeconds: MIN_LOCK_DURATION - BigInt(1),
+        lockDurationInSeconds: MinLockDurationSeconds - 1,
       }),
     ).toBe('lock duration is too short')
   })
@@ -67,7 +70,7 @@ describe('validateCreateLockInputs', function () {
     expect(
       validateCreateLockInputs({
         ...validParams,
-        lockDurationInSeconds: MAX_LOCK_DURATION + BigInt(1),
+        lockDurationInSeconds: MaxLockDurationSeconds + 1,
       }),
     ).toBe('lock duration is too long (maximum 4 years)')
   })
@@ -85,7 +88,7 @@ describe('validateCreateLockInputs', function () {
     expect(
       validateCreateLockInputs({
         ...validParams,
-        lockDurationInSeconds: MIN_LOCK_DURATION,
+        lockDurationInSeconds: MinLockDurationSeconds,
       }),
     ).toBeUndefined()
   })
@@ -94,7 +97,7 @@ describe('validateCreateLockInputs', function () {
     expect(
       validateCreateLockInputs({
         ...validParams,
-        lockDurationInSeconds: MAX_LOCK_DURATION,
+        lockDurationInSeconds: MaxLockDurationSeconds,
       }),
     ).toBeUndefined()
   })

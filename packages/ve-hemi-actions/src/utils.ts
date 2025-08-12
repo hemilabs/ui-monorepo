@@ -3,9 +3,9 @@ import type { Address } from 'viem'
 import { isAddress, zeroAddress } from 'viem'
 
 import {
-  MAX_LOCK_DURATION,
-  MIN_LOCK_DURATION,
-  SUPPORTED_CHAINS,
+  MaxLockDurationSeconds,
+  MinLockDurationSeconds,
+  SupportedChains,
 } from './constants'
 
 export const validateCreateLockInputs = function ({
@@ -19,7 +19,7 @@ export const validateCreateLockInputs = function ({
   amount: bigint
   approvalAmount?: bigint
   chainId: number
-  lockDurationInSeconds: bigint
+  lockDurationInSeconds: number
 }) {
   if (!isAddress(account)) {
     return 'account is not a valid address'
@@ -41,15 +41,15 @@ export const validateCreateLockInputs = function ({
     return 'approval amount cannot be less than amount'
   }
 
-  if (lockDurationInSeconds < MIN_LOCK_DURATION) {
+  if (lockDurationInSeconds < MinLockDurationSeconds) {
     return 'lock duration is too short'
   }
 
-  if (lockDurationInSeconds > MAX_LOCK_DURATION) {
+  if (lockDurationInSeconds > MaxLockDurationSeconds) {
     return 'lock duration is too long (maximum 4 years)'
   }
 
-  const isSupportedChain = SUPPORTED_CHAINS.includes(chainId)
+  const isSupportedChain = SupportedChains.includes(chainId)
   if (!isSupportedChain) {
     return 'chain is not supported'
   }

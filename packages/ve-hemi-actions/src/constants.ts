@@ -6,13 +6,14 @@ const VE_HEMI_CONTRACT_ADDRESSES: Record<number, Address> = {
   [hemiSepolia.id]: '0x54e24e64653F97477872D320c4d116D03a201493',
 } as const
 
-export const SUPPORTED_CHAINS: number[] = [hemi.id, hemiSepolia.id]
+export const SupportedChains: number[] = [hemi.id, hemiSepolia.id]
 
-// Maximum lock duration is 4 years (in seconds)
-export const MAX_LOCK_DURATION = BigInt(4 * 365 * 24 * 60 * 60) // 4 years in seconds
+// See https://docs.soliditylang.org/en/latest/units-and-global-variables.html#time-units
+// Maximum lock duration is 4 years (a year is defined in the contract as 365.25 days)
+export const MaxLockDurationSeconds = 4 * 365.25 * 24 * 60 * 60
 
-// Minimum lock duration (1 week in seconds)
-export const MIN_LOCK_DURATION = BigInt(7 * 24 * 60 * 60) // 1 week in seconds
+// Minimum lock duration (12 days in seconds)
+export const MinLockDurationSeconds = 12 * 24 * 60 * 60
 
 export const getVeHemiContractAddress = function (chainId: number) {
   const address = VE_HEMI_CONTRACT_ADDRESSES[chainId]

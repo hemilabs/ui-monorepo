@@ -32,13 +32,13 @@ const connectors = connectorsForWallets(
     {
       groupName: 'Wallets',
       wallets: [
-        binanceWallet,
-        coinbaseWallet,
         metaMaskWallet,
+        binanceWallet,
+        walletConnectWallet,
         okxWallet,
         rabbyWallet,
+        coinbaseWallet,
         tokenPocketWallet,
-        walletConnectWallet,
       ],
     },
   ],

@@ -67,6 +67,8 @@ const config: Config = {
           '0 0 0 1px rgba(10, 10, 10, 0.08), 0 1px 3px 0 rgba(10, 10, 10, 0.08), 0 1px 2px -1px rgba(10, 10, 10, 0.08)',
         'lockup-input-error':
           '0 0 0 1px rgba(244, 63, 94, 0.88), 0 1px 3px 0 rgba(10, 10, 10, 0.08), 0 1px 2px -1px rgba(10, 10, 10, 0.08)',
+        'lockup-input-hover':
+          '0 0 0 1px rgba(10, 10, 10, 0.14), 0 1px 3px 0 rgba(10, 10, 10, 0.08), 0 1px 2px -1px rgba(10, 10, 10, 0.08)',
         'navbar':
           '0px 0px 0px 1px rgba(212, 212, 216, 0.56), 12px 0px 24px -8px rgba(10, 10, 10, 0.06), 0px 10px 24px -8px rgba(10, 10, 10, 0.08), 0px 4px 6px -2px rgba(10, 10, 10, 0.04)',
         'soft': '0px 1px 2px 0px rgba(10, 10, 10, 0.04)',

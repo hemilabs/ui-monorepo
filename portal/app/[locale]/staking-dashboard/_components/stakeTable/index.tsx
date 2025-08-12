@@ -65,7 +65,7 @@ const columnsBuilder = (
     ),
     header: () => <Header text={t('table.apy')} />,
     id: 'apy',
-    meta: { width: '30px' },
+    meta: { width: '42px' },
   },
   {
     cell: ({ row }) => (
@@ -73,7 +73,7 @@ const columnsBuilder = (
     ),
     header: () => <Header text={t('lockup-period')} />,
     id: 'lockup-period',
-    meta: { width: '100px' },
+    meta: { width: '140px' },
   },
   {
     cell: ({ row }) => (
@@ -97,7 +97,7 @@ const columnsBuilder = (
     ),
     header: () => <Header text={t('table.time-remaining')} />,
     id: 'time-remaining',
-    meta: { width: '120px' },
+    meta: { width: '140px' },
   },
 ]
 

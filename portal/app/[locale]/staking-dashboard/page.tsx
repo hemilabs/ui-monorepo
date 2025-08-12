@@ -33,13 +33,13 @@ function Page() {
           {t('sub-heading')}
         </p>
         <div className="mt-8 flex flex-col-reverse gap-6 md:flex-row">
-          <div className="w-full md:w-3/5">
+          <div className="w-full md:w-1/2 lg:w-3/5">
             <StakeTable
               data={[...mockStakingDashboardOperations]}
               loading={false}
             />
           </div>
-          <div className="w-full md:w-2/5">
+          <div className="w-full md:w-1/2 lg:w-2/5">
             <StakeForm {...props} />
           </div>
         </div>

@@ -1,0 +1,8 @@
+{
+  "hemi-sepolia": {
+    "VeHemi": {
+      "address": "0x54e24e64653F97477872D320c4d116D03a201493",
+      "startBlock": 3819082
+    }
+  }
+}

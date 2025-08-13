@@ -1,0 +1,11 @@
+type LockedPosition @entity {
+  address: Bytes!
+  amount: BigInt!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  lockTime: BigInt!
+  id: String!
+  timestamp: BigInt!
+  tokenId: BigInt!
+  transactionHash: Bytes!
+}

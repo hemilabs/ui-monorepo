@@ -4,7 +4,7 @@ import { LockedPosition } from '../../generated/schema'
 
 function handleNewLock(event: DepositEvent): void {
   const lockedPosition = new LockedPosition(event.params.tokenId.toString())
-  lockedPosition.address = event.transaction.from
+  lockedPosition.address = event.params.provider
   lockedPosition.amount = event.params.amount
   lockedPosition.blockNumber = event.block.number
   lockedPosition.blockTimestamp = event.block.timestamp

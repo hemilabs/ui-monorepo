@@ -134,7 +134,7 @@ export function Lockup({ stakingDashboardState }: Props) {
               minValue={nearest?.minValue}
               onSelectValue={value => handleInputChange(value.toString())}
             />
-            <div className="w-32">
+            <div className="w-26">
               <LockupInput
                 autoFocus={false}
                 isError={touched && !valid}
@@ -177,8 +177,7 @@ export function Lockup({ stakingDashboardState }: Props) {
           </p>
           <div className="mt-4 h-px w-full bg-neutral-300/55" />
         </div>
-
-        <div className="mt-2 flex flex-col justify-between gap-y-2 md:flex-row md:items-center md:gap-y-0">
+        <div className="mt-2 flex flex-col justify-between gap-y-2 lg:flex-row lg:items-center lg:gap-x-4 lg:gap-y-0">
           <p className="text-sm font-medium text-neutral-600">
             {t('form.expire-date')}
             <span className="ml-1 text-neutral-950">{expireDate}</span>
@@ -190,11 +189,13 @@ export function Lockup({ stakingDashboardState }: Props) {
         </div>
       </div>
       <div
-        className={`mt-3 flex items-center justify-center gap-x-1 text-center text-sm font-medium ${
+        className={`mt-3 flex items-start justify-center gap-x-1 text-center text-sm font-medium ${
           touched && !valid ? 'text-rose-500' : 'text-neutral-900'
         }`}
       >
-        <WarningIcon />
+        <span className="mt-0.5 shrink-0 leading-none">
+          <WarningIcon />
+        </span>
         <span>{t('form.lockup-increment-warning')}</span>
       </div>
     </>

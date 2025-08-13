@@ -2,8 +2,8 @@ import { ComponentProps, ReactNode } from 'react'
 
 import { MagnifyingGlassIcon } from './icons/magnifyingGlassIcon'
 
-const inputCss = `text-base md:text-sm placeholder:text-sm w-full cursor-pointer rounded-lg border disabled:cursor-auto
-  border-solid border-neutral-300/55 bg-white px-3 py-2 font-medium text-neutral-950 hover:border-neutral-300/90
+const inputCss = `text-base md:text-sm placeholder:text-sm w-full cursor-pointer rounded-lg
+ bg-white px-3 py-2 font-medium text-neutral-950 border border-solid disabled:cursor-auto
  placeholder:font-medium placeholder:text-neutral-500 focus:border-orange-500 focus:outline-none transition-colors duration-200`
 
 const CloseIcon = (props: ComponentProps<'svg'>) => (
@@ -64,7 +64,7 @@ export const SearchInput = function ({
       )}
       <input
         {...props}
-        className={`${inputCss} shadow-soft ${
+        className={`${inputCss} shadow-soft border-neutral-300/55 hover:border-neutral-300/90 ${
           showMagnifyingGlass ? 'pl-8' : ''
         } ${showCloseIcon ? 'pr-8' : ''}`}
         type="text"
@@ -73,21 +73,21 @@ export const SearchInput = function ({
   )
 }
 
-export const LockupInput = function ({
+export const LockupInput = ({
   isError = false,
-  onClear,
   ...props
-}: Props & { isError?: boolean }) {
-  const showCloseIcon = (props.value?.toString().length ?? 0) > 0 && !!onClear
-  return (
-    <InputWrapper onClear={onClear} showCloseIcon={showCloseIcon}>
-      <input
-        {...props}
-        className={`${inputCss} ${showCloseIcon ? 'pr-8' : ''} ${
-          isError ? 'shadow-lockup-input-error' : 'shadow-lockup-input-default'
-        }`}
-        type="text"
-      />
-    </InputWrapper>
-  )
-}
+}: Props & { isError?: boolean }) => (
+  <InputWrapper showCloseIcon={false}>
+    <input
+      {...props}
+      className={`${inputCss}
+          hover:shadow-lockup-input-hover border-transparent  
+          ${
+            isError
+              ? 'shadow-lockup-input-error'
+              : 'shadow-lockup-input-default'
+          }`}
+      type="text"
+    />
+  </InputWrapper>
+)

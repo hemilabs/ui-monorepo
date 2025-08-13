@@ -18,7 +18,7 @@ interface EventMap {
 export interface Unisat {
   disconnect(): Promise<void>
   getAccounts(): Promise<Account[]>
-  getBalance(): Promise<Balance>
+  getBalance(): Promise<Balance | Satoshis>
   getNetwork(): Promise<BtcSupportedNetworks>
   requestAccounts(): Promise<Account[]>
   on<Event extends keyof EventMap>(event: Event, handler: EventMap[Event]): void

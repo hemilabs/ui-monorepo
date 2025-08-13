@@ -25,7 +25,18 @@ const unisatWalletConnector = {
   },
   getBalance() {
     assertInstalled()
-    return window.unisat.getBalance()
+    return window.unisat.getBalance().then(function (res) {
+      if (typeof res === 'number') {
+        // The Binance BTC injected provider returns the total balance instead
+        // of the whole object!
+        return {
+          confirmed: res,
+          total: res,
+          unconfirmed: 0,
+        }
+      }
+      return res
+    })
   },
   getNetwork() {
     assertInstalled()

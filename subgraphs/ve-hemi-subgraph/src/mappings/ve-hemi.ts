@@ -34,10 +34,10 @@ export function handleDepositEvent(event: DepositEvent): void {
 
 // This function is called when a new Staking position is created
 export function handleNewLock(event: LockEvent): void {
-  log.debug('Handling deposit for tokenId: {} in transaction hash: {}', [
-    event.params.tokenId.toString(),
-    event.transaction.hash.toHexString(),
-  ])
+  log.debug(
+    'Handling new lock position for tokenId: {} in transaction hash: {}',
+    [event.params.tokenId.toString(), event.transaction.hash.toHexString()],
+  )
 
   const lockedPosition = new LockedPosition(event.params.tokenId.toString())
   lockedPosition.amount = event.params.amount

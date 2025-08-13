@@ -18,7 +18,6 @@
     "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
     "erc20-extra-approval": "Aprobar 10x este depósito",
     "failed": "Falló",
-    "fees": "Tarifa",
     "hours": "{hours} horas",
     "insufficient-balance": "{symbol} insuficiente",
     "learn-more": "Aprenda más",
@@ -26,6 +25,7 @@
     "min-amount-stake": "El stake mínimo es {amount} {symbol}",
     "min-amount-unstake": "El desbloqueo mínimo es {amount} {symbol}",
     "min-amount-withdrawal": "El retiro mínimo es {amount} {symbol}",
+    "network-fees": "Tarifa de red",
     "network-gas-fee": "Tarifa de gas de {network}",
     "open": "Abrir",
     "stake": "Stake",
@@ -39,6 +39,7 @@
       "pending": "Pendiente",
       "rejected": "Rechazada"
     },
+    "tunnel-fees": "Tarifas del túnel",
     "try-again": "Intente Nuevamente",
     "unexpected-error": "Ocurrió un error inesperado. Por favor inténtelo de nuevo.",
     "unstake": "Desbloquear",
@@ -235,7 +236,11 @@
     "stake": "Stake",
     "tools": "Herramientas",
     "tunnel": "Túnel",
-    "tvl": "TVL en Hemi"
+    "tvl": "TVL en Hemi",
+    "telegram": {
+      "community": "Canal de la Comunidad",
+      "news": "Canal de Noticias"
+    }
   },
   "rewards-page": {
     "apy-in-staked-hemi": "APY en veHEMI",
@@ -290,7 +295,7 @@
       "staked": "Staked",
       "stake-more": "Hacer más stake",
       "staking-assets": "Activos en stake",
-      "subtitle": "Haz stake con tus activos para ganar recompensas y aumentar tus puntos.",
+      "subtitle": "Haga stake con sus activos para ganar recompensas y aumentar sus puntos.",
       "title": "Panel",
       "total-earned-points": "Total de puntos Hemi ganados",
       "total-staked-on-hemi": "Total en stake en Hemi",

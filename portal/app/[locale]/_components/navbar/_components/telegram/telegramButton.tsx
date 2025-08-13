@@ -1,0 +1,18 @@
+import { TelegramIcon } from 'components/icons/telegramIcon'
+
+type Props = {
+  isOpen: boolean
+  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const TelegramButton = ({ isOpen, setIsOpen }: Props) => (
+  <div
+    className="group/icon cursor-pointer"
+    onClick={() => setIsOpen?.(!isOpen)}
+  >
+    <TelegramIcon
+      className={`[&_path]:transition-colors [&_path]:duration-300 [&_path]:hover:fill-black
+  ${isOpen ? '[&_path]:fill-neutral-950' : '[&_path]:fill-neutral-500'}`}
+    />
+  </div>
+)

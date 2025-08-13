@@ -22,6 +22,7 @@ import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { useBtcWithdrawalTunnelFees } from '../_hooks/useBtcTunnelFees'
 import { useEstimateBtcWithdrawFees } from '../_hooks/useEstimateBtcWithdrawFees'
 import { useEstimateWithdrawFees } from '../_hooks/useEstimateWithdrawFees'
 import { useMinWithdrawalSats } from '../_hooks/useMinWithdrawalSats'
@@ -35,6 +36,7 @@ import { useWithdraw } from '../_hooks/useWithdraw'
 import { validateSubmit, getTotal } from '../_utils'
 
 import { FormContent, TunnelForm } from './form'
+import { HemiBtcFeesSummary } from './hemiBtcFeesSummary'
 import { ReceivingAddress } from './receivingAddress'
 import { SubmitEvmWithdrawal } from './submitEvmWithdrawal'
 import { SubmitWithTwoWallets } from './submitWithTwoWallets'
@@ -136,6 +138,12 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
 
   const amount = parseTokenUnits(fromInput, fromToken)
 
+  const {
+    btcWithdrawalFee,
+    isError: isTunnelFeeError,
+    isLoading: isLoadingTunnelFee,
+  } = useBtcWithdrawalTunnelFees(amount)
+
   const handleWithdraw = function () {
     clearWithdrawBitcoinState()
     withdrawBitcoin({
@@ -145,6 +153,23 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     })
     setIsWithdrawing(true)
     track?.('btc - withdraw started')
+  }
+
+  const calculateReceiveAmount = function () {
+    if (amount === BigInt(0)) {
+      return '0'
+    }
+    if (isTunnelFeeError) {
+      return '-'
+    }
+    if (isLoadingTunnelFee) {
+      return '...'
+    }
+
+    return formatUnits(
+      amount - (btcWithdrawalFee ?? BigInt(0)),
+      fromToken.decimals,
+    )
   }
 
   const {
@@ -163,18 +188,19 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   })
 
   const canWithdraw = !isLoadingMinWithdrawalSats && canSubmit
+  const feeEstimationEnabled = !!btcAddress && canWithdraw
 
   const { fees: estimatedFees, isError: isEstimateFeesError } =
     useEstimateBtcWithdrawFees({
       amount,
       btcAddress,
-      enabled: !!btcAddress && canWithdraw,
+      enabled: feeEstimationEnabled,
       l2ChainId: evmChainId,
     })
 
   const gas = {
     amount: formatUnits(estimatedFees, fromChain?.nativeCurrency.decimals),
-    isError: isEstimateFeesError,
+    isError: isEstimateFeesError || !feeEstimationEnabled,
     label: t('common.network-gas-fee', { network: fromChain?.name }),
     token: getNativeToken(fromChain.id),
   }
@@ -200,23 +226,23 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
               },
             )}
           />
-          {canWithdraw ? (
-            <FeesContainer>
-              <EvmFeesSummary
-                gas={gas}
-                operationToken={fromToken}
-                total={getTotal({
-                  fromInput,
-                  fromToken,
-                })}
-              />
-            </FeesContainer>
-          ) : null}
+          <FeesContainer>
+            <HemiBtcFeesSummary amount={amount} token={fromToken} />
+            <EvmFeesSummary
+              gas={gas}
+              operationToken={fromToken}
+              total={getTotal({
+                fromInput,
+                fromToken,
+              })}
+            />
+          </FeesContainer>
         </div>
       }
       bottomSection={<WalletsConnected />}
       formContent={
         <FormContent
+          calculateReceiveAmount={calculateReceiveAmount}
           errorKey={
             walletIsConnected(btcWalletStatus) &&
             walletIsConnected(evmWalletStatus) &&

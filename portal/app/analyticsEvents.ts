@@ -61,6 +61,9 @@ const analyticsEvents = [
   'nav - linkedIn',
   'nav - youtube',
   'nav - x',
+  'nav - telegram community',
+  'nav - telegram news',
+  'nav - tiktok',
   // /stake
   'stake - click earn points card',
   'stake - close earn points card',

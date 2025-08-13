@@ -1,7 +1,6 @@
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
-import { useAccount } from 'wagmi'
 
 import { DisplayAmount } from './displayAmount'
 
@@ -19,14 +18,12 @@ export const EvmFeesSummary = function ({
   operationToken: Token
   total?: string
 }) {
-  const { isConnected } = useAccount()
   const t = useTranslations()
 
   // gas can't be exact zero. If zero and there is no errors, it means it is loading.
-  const isLoading = gas.amount === '0' && !gas.isError
+  const shouldShowSkeleton = gas.amount === '0' && !gas.isError
 
-  const shouldShowSkeleton = isConnected && isLoading
-  const shouldShowAmount = isConnected && !gas.isError
+  const shouldShowAmount = !gas.isError
 
   const renderAmount = (amount: string, token: Token) =>
     shouldShowSkeleton ? (

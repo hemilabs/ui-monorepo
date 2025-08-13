@@ -3,21 +3,14 @@ import { ComponentProps } from 'react'
 export const TwitterIcon = (props: ComponentProps<'svg'>) => (
   <svg
     fill="none"
-    height={16}
-    width={16}
+    height="20"
+    width="20"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <g clipPath="url(#x_icon_clippath)">
-      <path
-        d="M12.6.769h2.454l-5.36 6.126L16 15.231h-4.937l-3.867-5.056-4.425 5.056H.316l5.733-6.554L0 .77h5.063l3.495 4.622L12.601.769Zm-.86 12.994h1.36L4.323 2.16H2.865l8.875 11.603Z"
-        fill="#737373"
-      />
-    </g>
-    <defs>
-      <clipPath id="x_icon_clippath">
-        <path d="M0 0h16v16H0z" fill="#fff" />
-      </clipPath>
-    </defs>
+    <path
+      d="M14.3131 3.2207H16.6131L11.5881 8.96445L17.5 16.7788H12.8713L9.24625 12.0388L5.0975 16.7788H2.79625L8.17125 10.6351L2.5 3.22133H7.24625L10.5231 7.55383L14.3131 3.2207ZM13.5063 15.4026H14.7806L6.55375 4.52508H5.18625L13.5063 15.4026Z"
+      fill="#737373"
+    />
   </svg>
 )

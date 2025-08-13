@@ -4,7 +4,6 @@ import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
-import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -12,7 +11,9 @@ import { useEffect, useState } from 'react'
 import { formatEvmAddress } from 'utils/format'
 import { parseTokenUnits } from 'utils/token'
 import { walletIsConnected } from 'utils/wallet'
+import { formatUnits } from 'viem'
 
+import { useBtcDepositTunnelFees } from '../_hooks/useBtcTunnelFees'
 import { useMinDepositSats } from '../_hooks/useMinDepositSats'
 import { BtcToHemiTunneling, TypedTunnelState } from '../_hooks/useTunnelState'
 import { validateSubmit } from '../_utils/'
@@ -73,6 +74,14 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
 
   const canDeposit = !isMinDepositsSatsLoading && canSubmit
 
+  const amountBigInt = parseTokenUnits(fromInput, fromToken)
+
+  const {
+    btcDepositFee,
+    isError: isTunnelFeeError,
+    isLoading: isLoadingTunnelFee,
+  } = useBtcDepositTunnelFees(amountBigInt)
+
   const {
     clearDepositState,
     depositBitcoin,
@@ -111,8 +120,6 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     [depositError, depositReceiptError, isDepositing, setIsDepositing, track],
   )
 
-  const { feePrices, isError: isFeePricesError } = useGetFeePrices()
-
   const handleDeposit = function () {
     if (!canDeposit) {
       return
@@ -128,7 +135,22 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     track?.('btc - dep started')
   }
 
-  const fees = feePrices?.fastestFee?.toString()
+  const calculateReceiveAmount = function () {
+    if (amountBigInt === BigInt(0)) {
+      return '0'
+    }
+    if (isTunnelFeeError) {
+      return '-'
+    }
+    if (isLoadingTunnelFee) {
+      return '...'
+    }
+
+    return formatUnits(
+      amountBigInt - (btcDepositFee ?? BigInt(0)),
+      fromToken.decimals,
+    )
+  }
 
   return (
     <>
@@ -145,14 +167,13 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
                 },
               )}
             />
-            {fees !== undefined ? (
-              <BtcFees fees={fees} isError={isFeePricesError} />
-            ) : null}
+            <BtcFees amount={amountBigInt} />
           </div>
         }
         bottomSection={<WalletsConnected />}
         formContent={
           <FormContent
+            calculateReceiveAmount={calculateReceiveAmount}
             errorKey={
               walletIsConnected(btcWalletStatus) && balanceLoaded
                 ? errorKey

@@ -3,7 +3,12 @@
 
 import config from 'config'
 import fetch from 'fetch-plus-plus'
-import { type Address, type Chain, checksumAddress as toChecksum } from 'viem'
+import {
+  type Address,
+  type Chain,
+  type Hash,
+  checksumAddress as toChecksum,
+} from 'viem'
 import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
 import {
@@ -521,6 +526,89 @@ export const getMerkleClaim = function ({
         // Dividing by 100 gives us the correct ratio
         ratio: Number(claim.ratio) / 100,
       }
+    },
+  )
+}
+
+type GetLockedPositionsQueryResponse = GraphResponse<{
+  lockedPositions: {
+    amount: string
+    blockNumber: string
+    blockTimestamp: string
+    forfeitable: boolean
+    id: string
+    lockTime: string
+    owner: Address
+    pastOwners: Address[]
+    status: 'active' | 'withdrawn'
+    timestamp: string
+    tokenId: string
+    transactionHash: Hash
+    transferable: boolean
+  }[]
+}>
+
+export const getLockedPositions = function ({
+  address,
+  chainId,
+}: {
+  address: Address
+  chainId: Chain['id']
+}) {
+  /**
+   * Subgraph Ids for the veHemi subgraph
+   */
+  const subgraphIds = {
+    [hemi.id]: subgraphConfig.veHemi.mainnet,
+    [hemiSepolia.id]: subgraphConfig.veHemi.testnet,
+  }
+
+  const subgraphUrl = getSubgraphUrl({
+    chainId,
+    subgraphIds,
+  })
+
+  const schema = {
+    query: `
+      query GetLockedPositions($address: Bytes!) {
+        lockedPositions(
+          where: {
+            or: [
+              { owner: $address },
+              { pastOwners_contains: [$address] }
+            ]
+          }
+          orderBy: timestamp
+          orderDirection: desc
+        ) {
+          amount
+          blockNumber
+          blockTimestamp
+          forfeitable
+          id
+          lockTime
+          owner
+          pastOwners
+          status
+          timestamp
+          tokenId
+          transactionHash
+          transferable
+        }
+      }
+    `,
+    variables: { address: address.toLowerCase() },
+  }
+
+  return request<GetLockedPositionsQueryResponse>(subgraphUrl, schema).then(
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.lockedPositions.map(position => ({
+        ...position,
+        // Convert addresses to checksum format
+        owner: toChecksum(position.owner),
+        pastOwners: position.pastOwners.map(addr => toChecksum(addr)),
+      }))
     },
   )
 }

@@ -1,11 +1,15 @@
 type LockedPosition @entity {
-  address: Bytes!
   amount: BigInt!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
+  forfeitable: Boolean!
   lockTime: BigInt!
   id: String!
+  owner: Bytes!
+  pastOwners: [Bytes!]!
+  status: String!
   timestamp: BigInt!
   tokenId: BigInt!
   transactionHash: Bytes!
+  transferable: Boolean!
 }

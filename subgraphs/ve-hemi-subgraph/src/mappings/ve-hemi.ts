@@ -1,51 +1,131 @@
 import { log } from '@graphprotocol/graph-ts'
-import { Deposit as DepositEvent } from '../../generated/VeHemi/VeHemi'
-import { LockedPosition } from '../../generated/schema'
 
-function handleNewLock(event: DepositEvent): void {
-  const lockedPosition = new LockedPosition(event.params.tokenId.toString())
-  lockedPosition.address = event.params.provider
-  lockedPosition.amount = event.params.amount
-  lockedPosition.blockNumber = event.block.number
-  lockedPosition.blockTimestamp = event.block.timestamp
-  lockedPosition.lockTime = event.params.lockTime
-  lockedPosition.timestamp = event.params.timestamp
-  lockedPosition.tokenId = event.params.tokenId
-  lockedPosition.transactionHash = event.transaction.hash
-  log.info('Creating locked position: {}', [lockedPosition.id])
-  lockedPosition.save()
-}
+import { isZeroAddress } from '../../../utils'
+import {
+  Deposit as DepositEvent,
+  Lock as LockEvent,
+  Transfer as TransferEvent,
+  Withdraw as WithdrawEvent,
+} from '../../generated/VeHemi/VeHemi'
+import { LockedPosition } from '../schema/lockedPosition'
 
-function handleUpdateLock(
-  event: DepositEvent,
-  lockedPosition: LockedPosition,
-): void {
+// This function is called when a staking position is created or updated.
+// As the DepositEvent fires both in creation and update, if the lockedPosition can't be loaded
+// it means the position is being created - we must ignore it
+export function handleDepositEvent(event: DepositEvent): void {
+  const lockedPosition = LockedPosition.load(event.params.tokenId.toString())
+  if (lockedPosition === null) {
+    log.debug('Skipping DepositEvent for tokenId {} in transaction hash {}', [
+      event.params.tokenId.toString(),
+      event.transaction.hash.toHexString(),
+    ])
+    return
+  }
+
   // if the amount was updated, the increased amount is set, if not, zero is send
   // So we can just add it up
   lockedPosition.amount = lockedPosition.amount.plus(event.params.amount)
   // if the lock time was increased, the new value is emitted. If not, the existing previous one is
-  // emitted in the event. So we can just set the last one.
+  // emitted in the event. So we can just set the event one.
   lockedPosition.lockTime = event.params.lockTime
   log.info('Updating locked position: {}', [lockedPosition.id])
   lockedPosition.save()
 }
 
-// While the Lock event is used when a lock is created, in that situation the Deposit event
-// is also emitted. In addition to that, only the Deposit is emitted when increasing
-// the amount or the lock period. So it's best to just index the DepositEvent and solve
-// everything in here.
-// Each tokenId identifies a unique position (through an NFT), and these ids are globally unique.
-export function handleDeposit(event: DepositEvent): void {
+// This function is called when a new Staking position is created
+export function handleNewLock(event: LockEvent): void {
   log.debug('Handling deposit for tokenId: {} in transaction hash: {}', [
     event.params.tokenId.toString(),
-    event.transaction.hash.toString(),
+    event.transaction.hash.toHexString(),
   ])
-  const id = event.params.tokenId.toString()
-  let existingPosition = LockedPosition.load(id)
-  if (existingPosition !== null) {
-    // The position already exist, so either the amount or the unlock period was updated
-    handleUpdateLock(event, existingPosition)
-  } else {
-    handleNewLock(event)
+
+  const lockedPosition = new LockedPosition(event.params.tokenId.toString())
+  lockedPosition.amount = event.params.amount
+  lockedPosition.blockNumber = event.block.number
+  lockedPosition.blockTimestamp = event.block.timestamp
+  lockedPosition.forfeitable = event.params.forfeitable
+  lockedPosition.lockTime = event.params.lockTime
+  lockedPosition.owner = event.params.account
+  lockedPosition.pastOwners = []
+  lockedPosition.status = 'active'
+  // "start" contains the block.timestamp
+  lockedPosition.timestamp = event.params.start
+  lockedPosition.tokenId = event.params.tokenId
+  lockedPosition.transferable = event.params.transferable
+  lockedPosition.transactionHash = event.transaction.hash
+
+  log.info('Creating locked position: {}', [lockedPosition.id])
+  lockedPosition.save()
+}
+
+export function handleWithdraw(event: WithdrawEvent): void {
+  log.debug('Handling withdraw for tokenId: {} in transaction hash: {}', [
+    event.params.tokenId.toString(),
+    event.transaction.hash.toHexString(),
+  ])
+
+  const lockedPosition = LockedPosition.load(event.params.tokenId.toString())
+  if (lockedPosition === null) {
+    log.warning('Trying to withdraw position not found for tokenId: {}', [
+      event.params.tokenId.toString(),
+    ])
+    return
   }
+
+  lockedPosition.status = 'withdrawn'
+  log.info('Withdraw locked position: {}', [lockedPosition.id])
+  lockedPosition.save()
+}
+
+export function handleTransfer(event: TransferEvent): void {
+  // if the "from" is the zero address, this is the minting of an NFT so we must skip it
+  if (isZeroAddress(event.params.from)) {
+    log.debug(
+      'Skipping minting event for tokenId: {} in transaction hash: {}',
+      [event.params.tokenId.toString(), event.transaction.hash.toHexString()],
+    )
+    return
+  }
+  // if the "to" is the zero address, this is the burning of an NFT so we must skip it
+  if (isZeroAddress(event.params.to)) {
+    log.debug(
+      'Skipping burning event for tokenId: {} in transaction hash: {}',
+      [event.params.tokenId.toString(), event.transaction.hash.toHexString()],
+    )
+    return
+  }
+
+  log.debug(
+    'Handling transfer for tokenId: {} in transaction hash: {} from {} to {}',
+    [
+      event.params.tokenId.toString(),
+      event.transaction.hash.toHexString(),
+      event.params.from.toHexString(),
+      event.params.to.toHexString(),
+    ],
+  )
+
+  const lockedPosition = LockedPosition.load(event.params.tokenId.toString())
+  if (lockedPosition === null) {
+    log.warning('Trying to transfer position not found for tokenId: {}', [
+      event.params.tokenId.toString(),
+    ])
+    return
+  }
+
+  const newOwner = event.params.to
+
+  // only add the owner if not already present - user could've owned it in the past
+  if (!lockedPosition.pastOwners.includes(lockedPosition.owner)) {
+    lockedPosition.pastOwners.push(lockedPosition.owner)
+  }
+
+  lockedPosition.owner = newOwner
+
+  log.info('Transfer locked position: {} in {}', [
+    lockedPosition.id,
+    event.transaction.hash.toHexString(),
+  ])
+
+  lockedPosition.save()
 }

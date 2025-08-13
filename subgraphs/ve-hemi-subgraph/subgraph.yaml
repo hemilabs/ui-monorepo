@@ -21,6 +21,13 @@ dataSources:
         - name: VeHemi
           file: ./abis/VeHemi.json
       eventHandlers:
+        - event: Lock(indexed address,indexed address,indexed
+            uint256,uint256,uint256,uint256,uint256,bool,bool)
+          handler: handleNewLock
         - event: Deposit(indexed address,indexed uint256,uint256,uint256,uint256)
-          handler: handleDeposit
+          handler: handleDepositEvent
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+        - event: Withdraw(indexed address,indexed uint256,uint256,uint256)
+          handler: handleWithdraw
       file: ./src/mappings/ve-hemi.ts

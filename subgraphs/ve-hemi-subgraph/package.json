@@ -1,0 +1,23 @@
+{
+  "name": "ve-hemi-subgraph",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "graph build",
+    "build:hemi": "npm run build -- --network hemi",
+    "build:hemi-sepolia": "npm run build -- --network hemi-sepolia",
+    "codegen": "graph codegen",
+    "create-local": "graph create --node http://localhost:8020/ $npm_package_name",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 $npm_package_name --version-label $npm_package_version",
+    "deploy-local:hemi": "npm run deploy-local -- --network hemi",
+    "deploy-local:hemi-sepolia": "npm run deploy-local -- --network hemi-sepolia",
+    "deploy-studio:hemi": "graph deploy --node https://api.studio.thegraph.com/deploy/ $npm_package_name-hemi  --version-label $npm_package_version --network hemi",
+    "deploy-studio:hemi-sepolia": "graph deploy --node https://api.studio.thegraph.com/deploy/ $npm_package_name-hemi-sepolia  --version-label $npm_package_version --network hemi-sepolia",
+    "graph:auth": "graph auth",
+    "prepare": "npm run codegen",
+    "remove-local": "graph remove --node http://localhost:8020/ $npm_package_name"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.95.0",
+    "@graphprotocol/graph-ts": "0.36.0"
+  }
+}

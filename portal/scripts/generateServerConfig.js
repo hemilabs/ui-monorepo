@@ -45,10 +45,17 @@ const fetchDomains = new Set([
   'https://*.walletconnect.org',
   // cookie3
   'https://a.markfi.xyz',
-  // coinbase wallet
+  // Coinbase wallet
   'https://chain-proxy.wallet.coinbase.com',
   'https://keys.coinbase.com',
   'wss://www.walletlink.org/rpc',
+  // Binance W3W wallet
+  'https://binance.nodereal.io',
+  'https://bsc-dataseed2.ninicoin.io',
+  'https://bscrpc.com',
+  'https://rpc.ankr.com/bsc',
+  'wss://nbstream.binance.click',
+  'wss://nbstream.binance.com',
 ])
 
 if (process.env.NEXT_PUBLIC_PORTAL_API_URL) {

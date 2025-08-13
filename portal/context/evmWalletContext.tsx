@@ -1,5 +1,6 @@
 'use client'
 
+import binanceWallet from '@binance/w3w-rainbow-connector-v2'
 import {
   connectorsForWallets,
   RainbowKitProvider,
@@ -7,7 +8,6 @@ import {
   type Locale,
 } from '@rainbow-me/rainbowkit'
 import {
-  binanceWallet,
   coinbaseWallet,
   metaMaskWallet,
   okxWallet,

@@ -2,10 +2,14 @@
 
 ## Project setup
 
-### Environment variables
+Follow the steps in the [Root README](../README.md). No extra actions are needed.
+
+### Configuration and Environment variables
 
 The environment variables are defined in the `.env` file at the root of the project.
 The prefix `NEXT_PUBLIC_` is required for the variables to be available in the browser. A few variables can be set locally (in a `.env.local`), in addition to the ones already defined in the `.env`.
+
+This is the list of all variables that can be configured:
 
 ```sh
 # Use this variables to override RPC urls per chain. In order to join multiple RPC urls, join them with the "+" character.
@@ -48,7 +52,23 @@ If not defined, the contracts addresses used will be the ones defined in [hemi-v
 
 See [Environment Variables](./Environment%20Variables.md) to ensure changes to the list above are done properly.
 
-## Deployment
+## Running locally
+
+Use the following command
+
+```sh
+npm run dev
+```
+
+## Testing
+
+Run tests with the following command
+
+```sh
+npm test
+```
+
+## Building and Deployment
 
 Run the following command:
 

@@ -17,6 +17,16 @@ This monorepo uses npm workspaces, and contains the following projects:
 - **subgraph-api**: API for querying hemi subgraphs needed for the portal.
 - **subgraphs/\***: The different subgraphs needed for the portal, such as tunneling operations.
 
+## Setup
+
+To setup the repository, use following command in the root repo
+
+```sh
+npm install
+```
+
+This will setup all dependencies in all the workspaces. Check each workspace's README.md for further installation steps if needed.
+
 ## Deployment
 
 Deploys to staging are triggered when merging changes to the `main` branch.
@@ -30,3 +40,11 @@ Tags applied with the following command will show in its message the list of all
 ```sh
 git tag -s YYYYMMDD_seq -m "Deploy $(date -I)" -m "$(git log $(git describe --abbrev=0 --tags)..HEAD --oneline | grep Merge)"
 ```
+
+## MCP servers
+
+This is the list of MCP servers that can be connected to. Use the listed guidelines to enable the connection of VS code to them
+
+Note: Some guidelines may use settings customization, but VS code has standardize them into using mcp.json. Further info [here](https://code.visualstudio.com/docs/copilot/chat/mcp-servers)
+
+- [Figma](https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Dev-Mode-MCP-Server)

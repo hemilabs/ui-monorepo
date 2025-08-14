@@ -1,6 +1,7 @@
-import { veHemiAbi } from 'abi'
 import type { Address, PublicClient, WalletClient } from 'viem'
 import { readContract } from 'viem/actions'
+
+import { veHemiAbi } from '../../abi'
 
 import { getVeHemiContractAddress } from './../../constants'
 

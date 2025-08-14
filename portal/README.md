@@ -2,7 +2,7 @@
 
 ## Project setup
 
-Follow the steps in the [Root README](../README.md). No extra actions are needed.
+Follow the steps in the [main README](../README.md). No extra actions are needed.
 
 ### Configuration and Environment variables
 
@@ -54,7 +54,7 @@ See [Environment Variables](./Environment%20Variables.md) to ensure changes to t
 
 ## Running locally
 
-Use the following command
+Use the following command:
 
 ```sh
 npm run dev
@@ -62,7 +62,7 @@ npm run dev
 
 ## Testing
 
-Run tests with the following command
+Run tests with the following command:
 
 ```sh
 npm test

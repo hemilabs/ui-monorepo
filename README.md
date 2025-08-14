@@ -19,7 +19,7 @@ This monorepo uses npm workspaces, and contains the following projects:
 
 ## Setup
 
-To setup the repository, use following command in the root repo
+To setup the repository, run the following command in the root of the repo:
 
 ```sh
 npm install

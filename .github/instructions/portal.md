@@ -8,7 +8,7 @@ Apply the [Frontend rules](./frontend.md).
 
 ## Overview
 
-The [portal](../../portal/) is a Web3 app that allows users to interact with Hemi, an L2 that integrates Ethereum with Bitcoin. Users can tunnel their asses from Evm chains to Hemi, and viceversa, as well as participate in other activities.
+The [portal](../../portal/) is a Web3 app that allows users to interact with Hemi, an L2 that integrates Ethereum with Bitcoin. Users can tunnel their assets from EVM chains to Hemi, and viceversa, as well as participate in other activities.
 
 ## Structure
 
@@ -30,7 +30,7 @@ This folder should be reviewed when implementing new features to see which ones 
 
 - This app uses the App router from next (v14). Therefore, below the `app` folder, each folder that contains a `page.tsx` is a route segment.
 - When creating a new component, hook, or function utility, prefer co-locating these new files in their `_components`, `_hooks` or `_utils` that belongs to the page where it is being used. This mean that each page will have their own folders for these types of files.
-  If the component/hook/util is generic enough, they can be created/moved to their respective folder `components`/`hooks`/`utils` in the root of the portal project.
+  If the component/hook/util is generic enough, they can be created in/moved to their respective folder `components`/`hooks`/`utils` in the root of the portal project.
 - When adding new functions to either `utils` or `_utils`, if they contain logic, add tests in the `test` folder. If the function is only code that calls an external source, tests may be skipped.
 - **ALL strings that are visible to users MUST be translated** depending on the locale. The exceptions are numbers in isolation (when they are rendered on their own and not as a part of a string), and if a string consist of a word that is not translated in any language (For example: "Testnet"). This means that when a string rendered to the user is added, its translations to all supported languages must be added to the corresponding files in the [messages](../../portal/messages) folder. **Never use hardcoded strings in components - always use the translation functions.**
 - When adding translations, follow this pattern:

@@ -10,7 +10,7 @@ Apply the [general coding guidelines](./general-coding.md) to all code as a base
 
 - Prefer using `T[]` over `Array<T>`
 - Prefer using `type` over `interface`
-- When adding a `tsconfig.json`, start with an empty version like this
+- When adding a `tsconfig.json`, start with an empty version like this:
 
 ```json
 {

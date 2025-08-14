@@ -2,11 +2,8 @@ import { hemiSepolia } from 'hemi-viem'
 import { zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
-import {
-  MaxLockDurationSeconds,
-  MinLockDurationSeconds,
-} from '../src/constants'
-import { validateCreateLockInputs } from '../src/utils'
+import { MaxLockDurationSeconds, MinLockDurationSeconds } from '../constants'
+import { validateCreateLockInputs } from '../utils'
 
 describe('validateCreateLockInputs', function () {
   const validParams = {

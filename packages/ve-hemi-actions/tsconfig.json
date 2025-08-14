@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src",
+    "baseUrl": "./",
     "noEmit": true
   },
   "exclude": ["node_modules", "test/*"],

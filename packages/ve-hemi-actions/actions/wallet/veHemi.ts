@@ -56,6 +56,9 @@ const canCreateLock = async function ({
   try {
     const tokenBalance = await memoizedGetHemiTokenAddress(walletClient).then(
       hemiTokenAddress =>
+        // Using @ts-expect-error fails to compile so I need to use @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
         getErc20TokenBalance(walletClient, {
           account,
           address: hemiTokenAddress,

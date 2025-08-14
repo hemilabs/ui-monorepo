@@ -5,7 +5,7 @@ applyTo: 'portal/**'
 # Portal rules
 
 Apply the [Frontend rules](./frontend.md). Check the [portal's README](../../portal/README.md) to know about the general overview of the project.  
-Furthermore, consider the [the code structure](../../portal//README.md#structure), which will give hints of where each type of file can be found, or where to place new files when implementing features.
+Furthermore, consider the [code structure](../../portal//README.md#structure), which will give hints of where each type of file can be found, or where to place new files when implementing features.
 
 ## Rules
 

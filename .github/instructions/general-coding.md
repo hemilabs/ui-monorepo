@@ -8,7 +8,7 @@ applyTo: '**'
 - When adding dependencies in a package.json, prefer using a version that's already installed in other projects' package.json. This should prevent having multiple versions of the same package.
 - When updating a project, prefer using the same language that is already used. If the project is Typescript based, use Typescript. If it is Javascript based, prefer Javascript. If it uses both, or it is a new project from scratch, prefer Typescript if possible.
 - When updating a project, prefer using the same module system for organizing and reusing code. If the project already used CommonJs, keep using it. If the project uses ESM, use ESM. If starting a new project from scratch, prefer using ESM.
-- If some functionality needs to be exported into a reusable package, they must be added as a new project under the (packages folder)(../../packages).
+- If some functionality needs to be exported into a reusable package, they must be added as a new project under the [packages folder](../../packages).
 - For any web3 code, like reading or writing to smart contracts, use `viem`, and `wagmi` if needed.
 - Do not use arrow functions, except when the function consist of only one statement. In those cases, use arrow functions without brackets.
 - When adding tests, the `test` folder replicates the folder structure where the file being tested is imported from. To run the test, use `npm test` in the project folder.

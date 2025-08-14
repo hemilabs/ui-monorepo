@@ -20,7 +20,7 @@ Some relevant folders are:
 - [/components](../../portal/components/) folder, which contains reusable components to the entire app that are not tied to a specific page.
 - [/hooks](../../portal/hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
 - [/messages/](../../portal/messages) folder, which contain a file per locale with all the translated resources.
-- [/test](../../portal//test/) folder, which contains some tests for different portal files. These tests are for plain Typescript function, and not for components.
+- [/test](../../portal/test/) folder, which contains some tests for different portal files. These tests are for plain Typescript functions, and not for components.
 - [/types](../../portal/types/) folder, which contains many reusable Typescript types across the entire app
 - [/utils](../../portal/utils/) folder, which contains most of the logic that is not tied to UI.
 

@@ -1,6 +1,22 @@
 # Portal
 
-## Project setup
+The Portal is a Web3 app that allows users to interact with Hemi, an L2 that integrates Ethereum with Bitcoin. Users can tunnel their assets from EVM chains to Hemi, and viceversa, as well as participate in other activities.
+
+## Structure
+
+The portal is a Next app that uses static building and the app router. As it is a static page, it does not rely with SSR features (Except on local development).
+
+Some relevant folders are:
+
+- [/app](./app/) folder, which contains the Next's App router code
+- [/components](./components/) folder, which contains reusable components to the entire app that are not tied to a specific page.
+- [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
+- [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.
+- [/test](./test/) folder, which contains some tests for different portal files. These tests are for plain Typescript functions, and not for components.
+- [/types](./types/) folder, which contains many reusable Typescript types across the entire app
+- [/utils](./utils/) folder, which contains most of the logic that is not tied to UI.
+
+## Setup
 
 Follow the steps in the [main README](../README.md). No extra actions are needed.
 

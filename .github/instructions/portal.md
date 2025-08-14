@@ -4,27 +4,8 @@ applyTo: 'portal/**'
 
 # Portal rules
 
-Apply the [Frontend rules](./frontend.md).
-
-## Overview
-
-The [portal](../../portal/) is a Web3 app that allows users to interact with Hemi, an L2 that integrates Ethereum with Bitcoin. Users can tunnel their assets from EVM chains to Hemi, and viceversa, as well as participate in other activities.
-
-## Structure
-
-The portal is a Next app that uses static building and the app router. As it is a static page, it does not rely with SSR features (Except on local development).
-
-Some relevant folders are:
-
-- [/app](../../portal/app/) folder, which contains the Next's App router code
-- [/components](../../portal/components/) folder, which contains reusable components to the entire app that are not tied to a specific page.
-- [/hooks](../../portal/hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
-- [/messages/](../../portal/messages) folder, which contain a file per locale with all the translated resources.
-- [/test](../../portal/test/) folder, which contains some tests for different portal files. These tests are for plain Typescript functions, and not for components.
-- [/types](../../portal/types/) folder, which contains many reusable Typescript types across the entire app
-- [/utils](../../portal/utils/) folder, which contains most of the logic that is not tied to UI.
-
-This folder should be reviewed when implementing new features to see which ones can be reused. If a new component is to be written, and it is abstract enough to be reused across many pages, it should be created here.
+Apply the [Frontend rules](./frontend.md). Check the [portal's README](../../portal/README.md) to know about the general overview of the project.  
+Furthermore, consider the [the code structure](../../portal//README.md#structure), which will give hints of where each type of file can be found, or where to place new files when implementing features.
 
 ## Rules
 

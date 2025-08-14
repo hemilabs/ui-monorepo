@@ -27,6 +27,10 @@
         "mainnet": "7B7h8up4FdvVAtBgzgG7rWQkW3kd8W6a73L89efr9o9k",
         "testnet": "6aTMqKg6Et48FzbAL9uYu8GZGoCMwYE9qWWTXpXmwgDR"
       }
+    },
+    "veHemi": {
+      "mainnet": "TBD",
+      "testnet": "HFj92373tN3eEdEtYqsWmVftpwhshRGzfwgzg9eG3W7S"
     }
   }
 }

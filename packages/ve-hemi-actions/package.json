@@ -36,6 +36,6 @@
   },
   "exports": {
     ".": "./index.ts",
-    "./actions": "./src/actions/index.ts"
+    "./actions": "./actions/index.ts"
   }
 }

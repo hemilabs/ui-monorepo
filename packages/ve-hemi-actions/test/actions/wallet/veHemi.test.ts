@@ -8,9 +8,9 @@ import {
 } from 'viem-erc20/actions'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 
-import { getHemiTokenAddress } from '../../../src/actions/public/veHemi'
-import { createLock } from '../../../src/actions/wallet/veHemi'
-import { getVeHemiContractAddress } from '../../../src/constants'
+import { createLock } from '../../../actions'
+import { getHemiTokenAddress } from '../../../actions/public/veHemi'
+import { getVeHemiContractAddress } from '../../../constants'
 
 vi.mock('viem/actions', () => ({
   waitForTransactionReceipt: vi.fn(),
@@ -23,7 +23,7 @@ vi.mock('viem-erc20/actions', () => ({
   getErc20TokenBalance: vi.fn(),
 }))
 
-vi.mock('../../../src/actions/public/veHemi', () => ({
+vi.mock('../../../actions/public/veHemi', () => ({
   getHemiTokenAddress: vi.fn(),
 }))
 

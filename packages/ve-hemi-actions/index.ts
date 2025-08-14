@@ -1,9 +1,9 @@
-export type { CreateLockEvents } from './src/types'
+export type { CreateLockEvents } from './types'
 
 export {
   getVeHemiContractAddress,
   MaxLockDurationSeconds,
   MinLockDurationSeconds,
-} from './src/constants'
+} from './constants'
 
-export { validateCreateLockInputs } from './src/utils'
+export { validateCreateLockInputs } from './utils'

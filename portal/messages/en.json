@@ -172,6 +172,9 @@
   "staking-dashboard": {
     "amount": "Amount",
     "form": {
+      "allowance-load-failed": "Failed to load allowance",
+      "approve-and-stake": "Approve and Stake",
+      "approving": "Approving...",
       "days": "{days, plural, one {{days} day} other {{days} days}}",
       "estimated-apy": "Estimated APY:",
       "expire-date": "Expire date:",
@@ -186,7 +189,9 @@
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
     "heading": "Governance staking",
+    "here-is-your-stake-tx": "Here's your stake transaction:",
     "lockup-period": "Lockup period",
+    "stake-successful": "Stake successful",
     "sub-heading": "Learn and explore with Hemi developer ecosystem",
     "table": {
       "apy": "APY",

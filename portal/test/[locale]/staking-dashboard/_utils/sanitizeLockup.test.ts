@@ -1,4 +1,4 @@
-import { maxDays } from 'app/[locale]/staking-dashboard/_utils/constants'
+import { maxDays } from 'app/[locale]/staking-dashboard/_utils/lockCreationTimes'
 import { sanitizeLockup } from 'app/[locale]/staking-dashboard/_utils/sanitizeLockup'
 import { describe, it, expect } from 'vitest'
 

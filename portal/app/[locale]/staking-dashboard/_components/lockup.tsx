@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { formatDate } from 'utils/format'
 
 import { useStakingDashboardState } from '../_hooks/useStakingDashboardState'
-import { halfDays, maxDays, minDays, step } from '../_utils/constants'
+import { halfDays, maxDays, minDays, step } from '../_utils/lockCreationTimes'
 import { sanitizeLockup } from '../_utils/sanitizeLockup'
 
 import { RangeSlider } from './rangeSlider'

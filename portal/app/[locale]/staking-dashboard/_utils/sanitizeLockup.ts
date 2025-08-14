@@ -1,4 +1,4 @@
-import { maxDays } from './constants'
+import { maxDays } from './lockCreationTimes'
 
 export const sanitizeLockup = function ({
   input,

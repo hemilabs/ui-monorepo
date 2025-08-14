@@ -172,6 +172,9 @@
   "staking-dashboard": {
     "amount": "Quantidade",
     "form": {
+      "allowance-load-failed": "Falha ao carregar a margem",
+      "approve-and-stake": "Aprovar e Fazer Stake",
+      "approving": "A aprovar...",
       "days": "{days, plural, one {{days} dia} other {{days} dias}}",
       "estimated-apy": "TEA estimado:",
       "expire-date": "Data de vencimento:",
@@ -186,7 +189,9 @@
       "years": "{years, plural, one {{years} ano} other {{years} anos}}"
     },
     "heading": "Governança de staking",
+    "here-is-your-stake-tx": "Aqui está a sua transação de staking:",
     "lockup-period": "Período de bloqueio",
+    "stake-successful": "Stake bem-sucedido",
     "sub-heading": "Aprenda e explore com o ecossistema de desenvolvedores Hemi",
     "table": {
       "apy": "TEA",

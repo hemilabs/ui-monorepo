@@ -4,13 +4,30 @@ import { EvmToken } from './token'
 
 export type StakingDashboardToken = EvmToken
 
+export const enum StakingDashboardStatus {
+  // The Approval TX is sent but not confirmed.
+  APPROVAL_TX_PENDING = 0,
+  // The Approval TX failed to be confirmed.
+  APPROVAL_TX_FAILED = 1,
+  // Once the Approval TX is confirmed, but the user hasn't sent the createLoc Transaction
+  APPROVAL_TX_COMPLETED = 2,
+  // The user has confirmed the TX in their wallet, but it hasn't been included in a block
+  STAKE_TX_PENDING = 3,
+  // CreateLock tx reverted
+  STAKE_TX_FAILED = 4,
+  // Transaction createLock confirmed
+  STAKE_TX_CONFIRMED = 5,
+}
+
 export type StakingDashboardOperation = {
   amount: string
-  transactionHash: Hash
-  apy: string
+  approvalTxHash?: Hash
+  transactionHash?: Hash
+  apy?: string
   chainId: Chain['id']
-  lockupPeriod: string
-  timeRemaining: string
+  lockupDays: number
+  timeRemaining?: string
   token: string
-  percentageRemaining: number
+  percentageRemaining?: number
+  status?: StakingDashboardStatus
 }

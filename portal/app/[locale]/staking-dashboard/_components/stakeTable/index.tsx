@@ -17,6 +17,7 @@ import Skeleton from 'react-loading-skeleton'
 import { StakingDashboardOperation } from 'types/stakingDashboard'
 
 import { Amount } from '../amount'
+import { LockupDisplay } from '../lockupDisplay'
 import { Column, ColumnHeader, Header } from '../table'
 
 import { CircularProgress } from './circularProgress'
@@ -69,7 +70,9 @@ const columnsBuilder = (
   },
   {
     cell: ({ row }) => (
-      <span className="text-neutral-500">{row.original.lockupPeriod}</span>
+      <span className="text-neutral-500">
+        <LockupDisplay lockupDays={row.original.lockupDays} />
+      </span>
     ),
     header: () => <Header text={t('lockup-period')} />,
     id: 'lockup-period',

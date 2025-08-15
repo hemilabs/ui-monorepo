@@ -39,19 +39,17 @@ function addDays(date: Date, days: number) {
 function getNearestValidValues(n: number): NearestValidValues {
   if (Number.isNaN(n)) return null
 
-  const lower = Math.floor(n / step) * step
-  const upper = lower + step
+  if (n <= minDays) return { maxValue: minDays, minValue: null }
+  if (n >= maxDays) return { maxValue: null, minValue: maxDays }
 
-  const minValue = lower >= minDays ? lower : null
-  const maxValue = upper <= maxDays ? upper : upper > maxDays ? maxDays : null
+  const base = Math.floor((n - minDays) / step) * step + minDays
 
-  if (minValue === null && maxValue === null) {
-    return null
-  }
+  const lower = base
+  const upper = Math.min(base + step, maxDays)
 
   return {
-    maxValue,
-    minValue,
+    maxValue: upper <= maxDays ? upper : null,
+    minValue: lower >= minDays ? lower : null,
   }
 }
 
@@ -90,34 +88,39 @@ function TryValuesHint({
 }
 
 export function Lockup({ stakingDashboardState }: Props) {
-  const { estimatedApy, lockupDays, updateLockupDays } = stakingDashboardState
+  const {
+    estimatedApy,
+    inputDays,
+    lockupDays,
+    updateInputDays,
+    updateLockupDays,
+  } = stakingDashboardState
   const t = useTranslations('staking-dashboard')
   const locale = useLocale()
 
-  const [inputValue, setInputValue] = useState(lockupDays.toString())
   const [touched, setTouched] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
 
-  const inputNumber = Number(inputValue)
+  const inputNumber = Number(inputDays)
   const valid = isValidLockup(inputNumber)
   const nearest = getNearestValidValues(inputNumber)
   const expireDate = formatDate(addDays(new Date(), lockupDays), locale)
 
   function handleSliderChange(val: number) {
     updateLockupDays(val)
-    setInputValue(String(val))
+    updateInputDays(String(val))
     setTouched(false)
   }
 
   function handleInputChange(val: string) {
-    const { value } = sanitizeLockup({ input: val, value: inputValue })
-    setInputValue(value)
+    const { value } = sanitizeLockup({ input: val, value: inputDays })
+    updateInputDays(value)
     setTouched(true)
     updateLockupDays(Number(value))
   }
 
   const displayValue =
-    isFocused || !inputValue ? inputValue : t('form.days', { days: inputValue })
+    isFocused || !inputDays ? inputDays : t('form.days', { days: inputDays })
 
   return (
     <>
@@ -128,7 +131,7 @@ export function Lockup({ stakingDashboardState }: Props) {
           </span>
           <div className="flex items-center justify-center gap-x-3">
             <TryValuesHint
-              inputText={inputValue}
+              inputText={inputDays}
               isValid={valid}
               maxValue={nearest?.maxValue}
               minValue={nearest?.minValue}

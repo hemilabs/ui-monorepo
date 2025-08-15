@@ -16,10 +16,7 @@ import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
 
-const ExtraApprovalTimesAmount = 10
-
 type UseStake = {
-  extendedErc20Approval?: boolean | undefined
   input: string
   lockupDays: number
   on?: (emitter: EventEmitter<CreateLockEvents>) => void
@@ -28,7 +25,6 @@ type UseStake = {
 }
 
 export const useStake = function ({
-  extendedErc20Approval,
   input,
   lockupDays,
   on,
@@ -66,9 +62,7 @@ export const useStake = function ({
       const { emitter, promise } = createLock({
         account: address,
         amount,
-        approvalAmount: extendedErc20Approval
-          ? amount * BigInt(ExtraApprovalTimesAmount)
-          : amount,
+        approvalAmount: amount,
         lockDurationInSeconds: daysToSeconds(lockupDays),
         walletClient: hemiWalletClient,
       })

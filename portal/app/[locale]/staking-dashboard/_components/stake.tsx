@@ -60,7 +60,6 @@ export const Stake = function ({ state, token }: StakeProps) {
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
-  const [extendedErc20Approval, setExtendedErc20Approval] = useState(false)
 
   const {
     input,
@@ -137,7 +136,6 @@ export const Stake = function ({ state, token }: StakeProps) {
     })
 
   const { isPending: isRunningOperation, mutate: stake } = useStake({
-    extendedErc20Approval,
     input,
     lockupDays,
     on(emitter) {
@@ -146,7 +144,6 @@ export const Stake = function ({ state, token }: StakeProps) {
       )
       emitter.on('lock-creation-transaction-succeeded', function () {
         resetStateAfterOperation()
-        setExtendedErc20Approval(false)
       })
       emitter.on('lock-creation-settled', () => setOperationRunning('idle'))
     },

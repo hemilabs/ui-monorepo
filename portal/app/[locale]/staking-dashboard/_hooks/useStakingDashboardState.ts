@@ -11,6 +11,7 @@ import { twoYears } from '../_utils/lockCreationTimes'
 type StakingDashboardState = {
   estimatedApy: number
   input: string
+  inputDays: string
   lockupDays: number
   stakingDashboardOperation?: StakingDashboardOperation
 }
@@ -23,6 +24,7 @@ type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
 type UpdateEstimatedApy = Action<'updateEstimatedApy'> & Payload<number>
 type UpdateLockupDays = Action<'updateLockupDays'> & Payload<number>
 type UpdateInput = Action<'updateInput'> & Payload<string>
+type UpdateInputDays = Action<'updateInputDays'> & Payload<string>
 type UpdateStakingDashboardOperation =
   Action<'updateStakingDashboardOperation'> &
     Payload<StakingDashboardOperation | undefined>
@@ -31,6 +33,7 @@ type Actions =
   | ResetStateAfterOperation
   | UpdateEstimatedApy
   | UpdateInput
+  | UpdateInputDays
   | UpdateLockupDays
   | UpdateStakingDashboardOperation
 
@@ -48,13 +51,21 @@ function reducer(
 
   switch (type) {
     case 'resetStateAfterOperation':
-      return { ...state, input: '0' }
+      return {
+        ...state,
+        input: '0',
+        inputDays: twoYears.toString(),
+        lockupDays: twoYears,
+      }
 
     case 'updateEstimatedApy':
       return { ...state, estimatedApy: payload }
 
     case 'updateInput':
       return { ...state, input: payload }
+
+    case 'updateInputDays':
+      return { ...state, inputDays: payload }
 
     case 'updateLockupDays':
       return { ...state, lockupDays: payload }
@@ -86,6 +97,7 @@ export const useStakingDashboardState = function (): StakingDashboardState &
   const [state, dispatch] = useReducer(reducer, {
     estimatedApy: 9.6, // TODO - Placeholder for estimated APY, replace with actual logic
     input: '0',
+    inputDays: twoYears.toString(),
     lockupDays: twoYears,
   } as StakingDashboardState)
 
@@ -100,6 +112,12 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     if (!error) {
       dispatch({ payload: value, type: 'updateInput' })
     }
+  }, [])
+
+  const updateInputDays = useCallback(function (
+    payload: UpdateInputDays['payload'],
+  ) {
+    dispatch({ payload, type: 'updateInputDays' })
   }, [])
 
   const updateLockupDays = useCallback(function (
@@ -122,6 +140,7 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     ),
     updateEstimatedApy,
     updateInput,
+    updateInputDays,
     updateLockupDays,
     updateStakingDashboardOperation,
   }

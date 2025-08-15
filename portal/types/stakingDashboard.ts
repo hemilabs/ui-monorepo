@@ -1,4 +1,4 @@
-import { Chain, Hash } from 'viem'
+import { Hash } from 'viem'
 
 import { EvmToken } from './token'
 
@@ -19,19 +19,24 @@ export const enum StakingDashboardStatus {
   STAKE_TX_CONFIRMED = 5,
 }
 
-export type StakingDashboardEvent = {
+export type StakingDashboardOperation = {
   approvalTxHash?: Hash
   transactionHash?: Hash
   status?: StakingDashboardStatus
 }
 
-export type StakingDashboardOperation = {
-  amount: string
-  transactionHash?: Hash
-  apy?: string
-  chainId: Chain['id']
-  lockupDays: number
-  timeRemaining?: string // this should be derived from lockupDays
-  token: string
-  percentageRemaining?: number // this should be derived from lockupDays
+export type StakingPosition = {
+  amount: bigint
+  blockNumber: bigint
+  blockTimestamp: bigint
+  forfeitable: boolean
+  id: string
+  lockTime: bigint
+  owner: string
+  pastOwners: string[]
+  status: string
+  timestamp: bigint
+  tokenId: string
+  transactionHash: Hash
+  transferable: boolean
 }

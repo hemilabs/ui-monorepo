@@ -66,9 +66,9 @@ export const Stake = function ({ state, token }: StakeProps) {
     input,
     lockupDays,
     resetStateAfterOperation,
-    stakingDashboardEvent,
+    stakingDashboardOperation,
     updateInput,
-    updateStakingDashboardEvent,
+    updateStakingDashboardOperation,
   } = state
 
   const { chainId, status } = useEvmAccount()
@@ -151,7 +151,7 @@ export const Stake = function ({ state, token }: StakeProps) {
       emitter.on('lock-creation-settled', () => setOperationRunning('idle'))
     },
     token,
-    updateStakingDashboardEvent,
+    updateStakingDashboardOperation,
   })
 
   const handleStake = function () {
@@ -192,10 +192,12 @@ export const Stake = function ({ state, token }: StakeProps) {
 
   return (
     <>
-      {stakingDashboardEvent?.status ===
+      {stakingDashboardOperation?.status ===
         StakingDashboardStatus.STAKE_TX_CONFIRMED &&
-        stakingDashboardEvent.transactionHash && (
-          <StakeToast transactionHash={stakingDashboardEvent.transactionHash} />
+        stakingDashboardOperation.transactionHash && (
+          <StakeToast
+            transactionHash={stakingDashboardOperation.transactionHash}
+          />
         )}
       <StakingForm
         belowForm={<RenderBelowForm />}

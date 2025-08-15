@@ -5,7 +5,7 @@ import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import {
-  StakingDashboardEvent,
+  StakingDashboardOperation,
   StakingDashboardStatus,
   StakingDashboardToken,
 } from 'types/stakingDashboard'
@@ -24,7 +24,7 @@ type UseStake = {
   lockupDays: number
   on?: (emitter: EventEmitter<CreateLockEvents>) => void
   token: StakingDashboardToken
-  updateStakingDashboardEvent: (payload?: StakingDashboardEvent) => void
+  updateStakingDashboardOperation: (payload?: StakingDashboardOperation) => void
 }
 
 export const useStake = function ({
@@ -33,7 +33,7 @@ export const useStake = function ({
   lockupDays,
   on,
   token,
-  updateStakingDashboardEvent,
+  updateStakingDashboardOperation,
 }: UseStake) {
   const amount = parseTokenUnits(input, token)
 
@@ -74,20 +74,20 @@ export const useStake = function ({
       })
 
       emitter.on('user-signed-approve', function (approvalTxHash) {
-        updateStakingDashboardEvent({
+        updateStakingDashboardOperation({
           approvalTxHash,
           status: StakingDashboardStatus.APPROVAL_TX_PENDING,
         })
       })
       emitter.on('approve-transaction-reverted', function (receipt) {
-        updateStakingDashboardEvent({
+        updateStakingDashboardOperation({
           status: StakingDashboardStatus.APPROVAL_TX_FAILED,
         })
 
         updateNativeBalanceAfterFees(receipt)
       })
       emitter.on('approve-transaction-succeeded', function (receipt) {
-        updateStakingDashboardEvent({
+        updateStakingDashboardOperation({
           status: StakingDashboardStatus.APPROVAL_TX_COMPLETED,
         })
 
@@ -95,13 +95,13 @@ export const useStake = function ({
         queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
       })
       emitter.on('user-signed-lock-creation', function (transactionHash) {
-        updateStakingDashboardEvent({
+        updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_PENDING,
           transactionHash,
         })
       })
       emitter.on('lock-creation-transaction-succeeded', function (receipt) {
-        updateStakingDashboardEvent({
+        updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_CONFIRMED,
         })
 
@@ -114,7 +114,7 @@ export const useStake = function ({
         )
       })
       emitter.on('lock-creation-transaction-reverted', function (receipt) {
-        updateStakingDashboardEvent({
+        updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_FAILED,
         })
 

@@ -15,14 +15,48 @@ $ curl http://localhost:3006/btc-vaults/743111
 {"bitcoinChainData":{"bitcoin":{"height":901676},"bitcoinKit":{"height":901674,"blockHash":"0x0000000000000000000107cb02a6c19084b54a1d0e8504d3a96d8fdd10d2f62b","version":536944640,"previousBlockHash":"0x00000000000000000000a30d9d5025c11b17b2c44b176de0e284c84f59dacebb","merkleRoot":"0x05c2f62905f83beeb75131a245c1851705814d09165fdac50b74e0e4814607b2","timestamp":1750196887,"bits":386021892,"nonce":1816880925}},"tunnelManagerData":{"withdrawalsPaused":false},"vaultsData":[{"status":5,"vaultAddress":"0x3DA10b74Bd339E69C1De9408020ce640B012e8cc","balanceSats":0,"bitcoinCustodyAddress":"18AVmm853HVhibPHMc3JRLXMynzKAbj6Po","pendingWithdrawalAmountSat":0,"pendingWithdrawalCount":0},...]}
 ```
 
+#### `/claims/:address`
+
+Returns the data needed for a user to claim their HEMI tokens or just the claimable amount if TGE has not happened yet.
+
+Before TGE:
+
+```console
+$ curl http://localhost:3006/claims/0x0000000000000000000000000000000000000001
+{"amount":"50000000000000000000"}
+```
+
+After TGE:
+
+```console
+$ curl http://localhost:3006/claims/0x0000000000000000000000000000000000000001
+{"amount":"50000000000000000000","claimGroupId":16,"proof":["0x0000000000000000000000000000000000000000000000000000000000000001","0x0000000000000000000000000000000000000000000000000000000000000002","0x0000000000000000000000000000000000000000000000000000000000000003"]}
+```
+
+The data must be set in `api/src/claims/claim-data.json`. It must be a object whose properties are the user addresses:
+
+```json
+{
+  "0x0000000000000000000000000000000000000001": {
+    "amount": "50000000000000000000",
+    "claimGroupId": 16,
+    "proof": [
+      "0x0000000000000000000000000000000000000000000000000000000000000001",
+      "0x0000000000000000000000000000000000000000000000000000000000000002",
+      "0x0000000000000000000000000000000000000000000000000000000000000003"
+    ]
+  }
+}
+```
+
 #### `/points/:address`
 
 Provides the amount of Hemi points any user has earned through the **Incentivized Testnet**, **Hemi Staking** campaigns, etc.
 Data is provided by [Absinthe](https://absinthe.network/).
 
 ```console
-$ curl http://localhost:3006/0x85e0D9e73c12eFE889750f44422a77B544D48d17
-{"points":270644}
+$ curl http://localhost:3006/0x0000000000000000000000000000000000000001
+{"points":10000}
 ```
 
 #### `/prices`
@@ -52,6 +86,7 @@ These environment variables control how the cache works:
 | ABSINTHE_API_KEY     | The JWT used to authenticate to the Absinthe GraphQL API.         |                                            |
 | ABSINTHE_API_URL     | The Absinthe GraphQL API URL.                                     | `https://gql3.absinthe.network/v1/graphql` |
 | BTC_VAULTS_CACHE_MIN | The time to cache the BTC vaults data in minutes.                 | 1                                          |
+| CLAIMS_TGE_TIME      | The time set for the HEMI token TGE in milliseconds.              | 0 (meaning no time is set)                 |
 | ORIGINS              | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhos:3000`                     |
 | PORT                 | The HTTP port the server listens for requests.                    | 3006                                       |
 | REDIS_URL            | The URL of the Redis database.                                    | `redis://localhost:6379`                   |

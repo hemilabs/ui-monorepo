@@ -8,6 +8,7 @@ const config = require('./src/config')
 const { getBtcVaultsData } = require('./src/btc-vaults')
 const { getTokenPrices } = require('./src/redis')(config.get('redis'))
 const { getTvl } = require('./src/databox')(config.get('tvl.data'))
+const { getUserClaimData } = require('./src/claims')(config.get('claims'))
 const { getUserPoints } = require('./src/absinthe')(config.get('absinthe'))
 
 const globToRegExp = require('./src/glob-to-regexp')
@@ -15,10 +16,11 @@ const toMiddleware = require('./src/to-middleware')
 
 const app = express()
 
-const origin = config
-  .get('origins')
-  .split(',')
-  .map(o => (/\*/.test(o) ? globToRegExp(o) : o))
+/** @type {string} */
+const origins = config.get('origins')
+
+/** @type {(string | RegExp)[]} */
+const origin = origins.split(',').map(o => (/\*/.test(o) ? globToRegExp(o) : o))
 
 app.use(cors({ origin }))
 
@@ -45,6 +47,11 @@ app.get(
   toMiddleware(async () => ({ tvl: await getTvl() }), {
     revalidate: config.get('tvl.revalidateMin') * 60 * 1000,
   }),
+)
+
+app.get(
+  /\/claims\/(0x[0-9a-fA-F]{40})/,
+  toMiddleware(getUserClaimData, { maxAge: 60 * 1000 }),
 )
 
 const port = config.get('port')

@@ -33,7 +33,7 @@ $ curl http://localhost:3006/claims/43111/0x000000000000000000000000000000000000
 {"amount":"50000000000000000000","claimGroupId":16,"proof":["0x0000000000000000000000000000000000000000000000000000000000000001","0x0000000000000000000000000000000000000000000000000000000000000002","0x0000000000000000000000000000000000000000000000000000000000000003"]}
 ```
 
-The data must be set in `api/src/claims/claim-data-CHAIN_ID.json`. It must be a object whose properties are the user addresses:
+The data must be hosted in a public URL and must be a object whose properties are the user addresses:
 
 ```json
 {
@@ -81,18 +81,19 @@ $ curl http://localhost:3006/tvl
 
 These environment variables control how the cache works:
 
-| Variable                                           | Description                                                       | Default                                    |
-| -------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------ |
-| ABSINTHE_API_KEY                                   | The JWT used to authenticate to the Absinthe GraphQL API.         |                                            |
-| ABSINTHE_API_URL                                   | The Absinthe GraphQL API URL.                                     | `https://gql3.absinthe.network/v1/graphql` |
-| BTC_VAULTS_CACHE_MIN                               | The time to cache the BTC vaults data in minutes.                 | 1                                          |
-| CLAIMS_TGE_TIME_MAINNET<br>CLAIMS_TGE_TIME_TESTNET | The time set for the HEMI token TGE in milliseconds.              | 0 (meaning no time is set)                 |
-| ORIGINS                                            | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhos:3000`                     |
-| PORT                                               | The HTTP port the server listens for requests.                    | 3006                                       |
-| REDIS_URL                                          | The URL of the Redis database.                                    | `redis://localhost:6379`                   |
-| TVL_DATA_SAMPLE_ID                                 | The sample id within the TVL data.                                |                                            |
-| TVL_DATA_URL                                       | The Databox URL that shall be used to get the TVL.                |                                            |
-| TVL_REVALIDATE_MIN                                 | The time the TVL will be considered fresh.                        | 20                                         |
+| Variable                                        | Description                                                       | Default                                    |
+| ----------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------ |
+| ABSINTHE_API_KEY                                | The JWT used to authenticate to the Absinthe GraphQL API.         |                                            |
+| ABSINTHE_API_URL                                | The Absinthe GraphQL API URL.                                     | `https://gql3.absinthe.network/v1/graphql` |
+| BTC_VAULTS_CACHE_MIN                            | The time to cache the BTC vaults data in minutes.                 | 1                                          |
+| CLAIMS_43111_DATA_URL<br>CLAIMS_743111_DATA_URL | The URL hosting the claim data for each chain.                    |                                            |
+| CLAIMS_43111_TGE_TIME<br>CLAIMS_743111_TGE_TIME | The time set for the HEMI token TGE in milliseconds.              | 0 (meaning no time is set)                 |
+| ORIGINS                                         | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhos:3000`                     |
+| PORT                                            | The HTTP port the server listens for requests.                    | 3006                                       |
+| REDIS_URL                                       | The URL of the Redis database.                                    | `redis://localhost:6379`                   |
+| TVL_DATA_SAMPLE_ID                              | The sample id within the TVL data.                                |                                            |
+| TVL_DATA_URL                                    | The Databox URL that shall be used to get the TVL.                |                                            |
+| TVL_REVALIDATE_MIN                              | The time the TVL will be considered fresh.                        | 20                                         |
 
 (1) Only stars (`*`) are supported. I.e. `https://*.hemi.xyz` will match any subdomain or subdomain chain.
 

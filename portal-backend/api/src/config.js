@@ -11,9 +11,13 @@ const config = {
     cacheMin: Number(env('BTC_VAULTS_CACHE_MIN', '1')),
   },
   claims: {
-    tgeTime: {
-      43111: Number(env('CLAIMS_TGE_TIME_43111', '0')),
-      743111: Number(env('CLAIMS_TGE_TIME_743111', '0')),
+    43111: {
+      dataUrl: Number(env('CLAIMS_43111_DATA_URL')),
+      tgeTime: Number(env('CLAIMS_43111_DATA_URL', '0')),
+    },
+    743111: {
+      dataUrl: Number(env('CLAIMS_743111_TGE_TIME')),
+      tgeTime: Number(env('CLAIMS_743111_TGE_TIME', '0')),
     },
   },
   origins: env('ORIGINS', 'http://localhost:3000'),

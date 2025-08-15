@@ -12,11 +12,11 @@ const config = {
   },
   claims: {
     43111: {
-      dataUrl: Number(env('CLAIMS_43111_DATA_URL')),
-      tgeTime: Number(env('CLAIMS_43111_DATA_URL', '0')),
+      dataUrl: env('CLAIMS_43111_DATA_URL'),
+      tgeTime: Number(env('CLAIMS_43111_TGE_TIME', '0')),
     },
     743111: {
-      dataUrl: Number(env('CLAIMS_743111_TGE_TIME')),
+      dataUrl: env('CLAIMS_743111_DATA_URL'),
       tgeTime: Number(env('CLAIMS_743111_TGE_TIME', '0')),
     },
   },

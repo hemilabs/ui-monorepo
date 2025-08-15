@@ -34,7 +34,7 @@ module.exports = function (config) {
       return { amount: '0' }
     }
 
-    if (!tgeTime || Date.now() < tgeTime[chainId]) {
+    if (!tgeTime || Date.now() < tgeTime) {
       return { amount: userData.amount }
     }
 

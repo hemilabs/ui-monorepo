@@ -1,19 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
-import { useTokenBalance } from 'hooks/useBalance'
+import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import {
-  StakingDashboardOperation,
+  StakingDashboardEvent,
   StakingDashboardStatus,
   StakingDashboardToken,
 } from 'types/stakingDashboard'
 import { parseTokenUnits } from 'utils/token'
 import { CreateLockEvents, getVeHemiContractAddress } from 've-hemi-actions'
 import { createLock } from 've-hemi-actions/actions'
-import { useAccount, useWalletClient } from 'wagmi'
+import { useAccount } from 'wagmi'
 
-import { daysToSecondsNumber } from '../_utils/lockCreationTimes'
+import { daysToSeconds } from '../_utils/lockCreationTimes'
 
 const ExtraApprovalTimesAmount = 10
 
@@ -23,7 +24,7 @@ type UseStake = {
   lockupDays: number
   on?: (emitter: EventEmitter<CreateLockEvents>) => void
   token: StakingDashboardToken
-  updateStakingDashboardOperation: (payload?: StakingDashboardOperation) => void
+  updateStakingDashboardEvent: (payload?: StakingDashboardEvent) => void
 }
 
 export const useStake = function ({
@@ -32,30 +33,32 @@ export const useStake = function ({
   lockupDays,
   on,
   token,
-  updateStakingDashboardOperation,
+  updateStakingDashboardEvent,
 }: UseStake) {
   const amount = parseTokenUnits(input, token)
 
   const { address } = useAccount()
-  const bridgeAddress = getVeHemiContractAddress(token.chainId)
+  const veHemiAddress = getVeHemiContractAddress(token.chainId)
   const queryClient = useQueryClient()
-  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
+  const { queryKey: hemiBalanceQueryKey } = useTokenBalance(
     token.chainId,
     token.address,
+  )
+
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+    token.chainId,
   )
 
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     token.chainId,
   )
 
-  const { data: l2WalletClient } = useWalletClient({
-    chainId: token.chainId,
-  })
+  const { hemiWalletClient } = useHemiWalletClient()
 
   const { allowanceQueryKey } = useNeedsApproval({
     address: token.address,
     amount,
-    spender: bridgeAddress,
+    spender: veHemiAddress,
   })
 
   return useMutation({
@@ -66,66 +69,54 @@ export const useStake = function ({
         approvalAmount: extendedErc20Approval
           ? amount * BigInt(ExtraApprovalTimesAmount)
           : amount,
-        lockDurationInSeconds: daysToSecondsNumber(lockupDays),
-        walletClient: l2WalletClient,
+        lockDurationInSeconds: daysToSeconds(lockupDays),
+        walletClient: hemiWalletClient,
       })
-
-      let stakingOperation: StakingDashboardOperation | undefined
-
-      const getStake = () => ({
-        amount: amount.toString(),
-        chainId: token.chainId,
-        token: token.address,
-      })
-
-      function commitUpdate(extra: Partial<StakingDashboardOperation>) {
-        const base = stakingOperation ?? {
-          chainId: token.chainId,
-          lockupDays,
-          ...getStake(),
-        }
-
-        stakingOperation = { ...base, ...extra }
-        updateStakingDashboardOperation(stakingOperation)
-      }
 
       emitter.on('user-signed-approve', function (approvalTxHash) {
-        commitUpdate({
+        updateStakingDashboardEvent({
           approvalTxHash,
           status: StakingDashboardStatus.APPROVAL_TX_PENDING,
         })
       })
       emitter.on('approve-transaction-reverted', function (receipt) {
-        commitUpdate({ status: StakingDashboardStatus.APPROVAL_TX_FAILED })
+        updateStakingDashboardEvent({
+          status: StakingDashboardStatus.APPROVAL_TX_FAILED,
+        })
+
         updateNativeBalanceAfterFees(receipt)
       })
       emitter.on('approve-transaction-succeeded', function (receipt) {
-        commitUpdate({ status: StakingDashboardStatus.APPROVAL_TX_COMPLETED })
+        updateStakingDashboardEvent({
+          status: StakingDashboardStatus.APPROVAL_TX_COMPLETED,
+        })
 
         updateNativeBalanceAfterFees(receipt)
         queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
       })
       emitter.on('user-signed-lock-creation', function (transactionHash) {
-        commitUpdate({
+        updateStakingDashboardEvent({
           status: StakingDashboardStatus.STAKE_TX_PENDING,
           transactionHash,
         })
-
-        updateStakingDashboardOperation(stakingOperation)
       })
       emitter.on('lock-creation-transaction-succeeded', function (receipt) {
-        commitUpdate({ status: StakingDashboardStatus.STAKE_TX_CONFIRMED })
+        updateStakingDashboardEvent({
+          status: StakingDashboardStatus.STAKE_TX_CONFIRMED,
+        })
 
         // fees
         updateNativeBalanceAfterFees(receipt)
         // staked
         queryClient.setQueryData(
-          erc20BalanceQueryKey,
+          hemiBalanceQueryKey,
           (old: bigint) => old - amount,
         )
       })
       emitter.on('lock-creation-transaction-reverted', function (receipt) {
-        commitUpdate({ status: StakingDashboardStatus.STAKE_TX_FAILED })
+        updateStakingDashboardEvent({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
 
         // Although the transaction was reverted, the gas was paid.
         updateNativeBalanceAfterFees(receipt)
@@ -140,9 +131,14 @@ export const useStake = function ({
       // the mutation, which will cause the UI to be out of sync until balances are re-validated.
       // Query invalidation here must work as fire and forget, as, after all, it runs in the background!
       queryClient.invalidateQueries({
-        queryKey: erc20BalanceQueryKey,
+        queryKey: hemiBalanceQueryKey,
       })
+
       queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
+
+      queryClient.invalidateQueries({
+        queryKey: nativeTokenBalanceQueryKey,
+      })
     },
   })
 }

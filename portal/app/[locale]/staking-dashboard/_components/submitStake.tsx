@@ -41,7 +41,7 @@ export const SubmitStake = function ({
       },
     }
     if (isAllowanceLoading) {
-      return <Spinner size={'small'} />
+      return <Spinner size="small" />
     }
     if (isAllowanceError) {
       return texts.approve.error

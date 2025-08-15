@@ -16,19 +16,17 @@ export const useEstimateCreateLockFees = function ({
   token: StakingDashboardToken
 }) {
   const { isConnected } = useAccount()
-  const bridgeAddress = getVeHemiContractAddress(token.chainId)
+  const veHemiAddress = getVeHemiContractAddress(token.chainId)
 
-  const data = isConnected
-    ? encodeCreateLock({
-        amount,
-        lockDurationInSeconds,
-      })
-    : undefined
+  const data = encodeCreateLock({
+    amount,
+    lockDurationInSeconds,
+  })
 
   const { data: gasUnits, isSuccess } = useEstimateGas({
     data,
     query: { enabled: isConnected && enabled },
-    to: bridgeAddress,
+    to: veHemiAddress,
     value: undefined,
   })
 

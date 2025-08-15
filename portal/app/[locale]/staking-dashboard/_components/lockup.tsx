@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { formatDate } from 'utils/format'
 
 import { useStakingDashboardState } from '../_hooks/useStakingDashboardState'
-import { halfDays, maxDays, minDays, step } from '../_utils/lockCreationTimes'
+import { maxDays, minDays, step, twoYears } from '../_utils/lockCreationTimes'
 import { sanitizeLockup } from '../_utils/sanitizeLockup'
 
 import { RangeSlider } from './rangeSlider'
@@ -164,7 +164,7 @@ export function Lockup({ stakingDashboardState }: Props) {
             </span>
             <span
               className="cursor-pointer hover:text-neutral-950"
-              onClick={() => handleInputChange(halfDays.toString())}
+              onClick={() => handleInputChange(twoYears.toString())}
             >
               {t('form.years', { years: 2 })}
             </span>

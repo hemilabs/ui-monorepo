@@ -1,18 +1,18 @@
 import { useCallback, useReducer } from 'react'
 import {
-  StakingDashboardOperation,
+  StakingDashboardEvent,
   type StakingDashboardToken,
 } from 'types/stakingDashboard'
 import { sanitizeAmount } from 'utils/form'
 import { type NoPayload, type Payload } from 'utils/typeUtilities'
 
-import { halfDays } from '../_utils/lockCreationTimes'
+import { twoYears } from '../_utils/lockCreationTimes'
 
 type StakingDashboardState = {
   estimatedApy: number
   input: string
   lockupDays: number
-  stakingDashboardOperation?: StakingDashboardOperation
+  stakingDashboardEvent?: StakingDashboardEvent
 }
 
 type Action<T extends string> = {
@@ -23,16 +23,15 @@ type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
 type UpdateEstimatedApy = Action<'updateEstimatedApy'> & Payload<number>
 type UpdateLockupDays = Action<'updateLockupDays'> & Payload<number>
 type UpdateInput = Action<'updateInput'> & Payload<string>
-type UpdateStakingDashboardOperation =
-  Action<'updateStakingDashboardOperation'> &
-    Payload<StakingDashboardOperation | undefined>
+type UpdateStakingDashboardEvent = Action<'updateStakingDashboardEvent'> &
+  Payload<StakingDashboardEvent | undefined>
 
 type Actions =
   | ResetStateAfterOperation
   | UpdateEstimatedApy
   | UpdateInput
   | UpdateLockupDays
-  | UpdateStakingDashboardOperation
+  | UpdateStakingDashboardEvent
 
 // the _:never is used to fail compilation if a case is missing
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -59,8 +58,14 @@ function reducer(
     case 'updateLockupDays':
       return { ...state, lockupDays: payload }
 
-    case 'updateStakingDashboardOperation':
-      return { ...state, stakingDashboardOperation: payload }
+    case 'updateStakingDashboardEvent':
+      return {
+        ...state,
+        stakingDashboardEvent: {
+          ...(state.stakingDashboardEvent ?? {}),
+          ...payload,
+        },
+      }
 
     default:
       // if a switch statement is missing on all possible actions
@@ -80,7 +85,7 @@ export const useStakingDashboardState = function (): StakingDashboardState &
   const [state, dispatch] = useReducer(reducer, {
     estimatedApy: 9.6, // TODO - Placeholder for estimated APY, replace with actual logic
     input: '0',
-    lockupDays: halfDays, // Default to 2 years
+    lockupDays: twoYears,
   } as StakingDashboardState)
 
   const updateEstimatedApy = useCallback(function (
@@ -102,10 +107,10 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     dispatch({ payload, type: 'updateLockupDays' })
   }, [])
 
-  const updateStakingDashboardOperation = useCallback(function (
-    payload: UpdateStakingDashboardOperation['payload'],
+  const updateStakingDashboardEvent = useCallback(function (
+    payload: UpdateStakingDashboardEvent['payload'],
   ) {
-    dispatch({ payload, type: 'updateStakingDashboardOperation' })
+    dispatch({ payload, type: 'updateStakingDashboardEvent' })
   }, [])
 
   return {
@@ -117,7 +122,7 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     updateEstimatedApy,
     updateInput,
     updateLockupDays,
-    updateStakingDashboardOperation,
+    updateStakingDashboardEvent,
   }
 }
 

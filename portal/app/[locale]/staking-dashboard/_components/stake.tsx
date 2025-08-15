@@ -2,8 +2,9 @@
 
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
+import { ToastLoader } from 'components/toast/toastLoader'
 import { useTokenBalance } from 'hooks/useBalance'
-import { useChain } from 'hooks/useChain'
+import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import dynamic from 'next/dynamic'
@@ -14,6 +15,7 @@ import {
   StakingDashboardToken,
 } from 'types/stakingDashboard'
 import { getTotal } from 'utils/getTotal'
+import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
@@ -31,12 +33,19 @@ import { daysToSeconds } from '../_utils/lockCreationTimes'
 
 import { FormContent, StakingForm } from './form'
 import { isValidLockup } from './lockup'
-import { StakeToast } from './stakeToast'
 import { SubmitStake } from './submitStake'
 
 const SetMaxEvmBalance = dynamic(
   () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),
   { ssr: false },
+)
+
+const StakeToast = dynamic(
+  () => import('./stakeToast').then(mod => mod.StakeToast),
+  {
+    loading: () => <ToastLoader />,
+    ssr: false,
+  },
 )
 
 type OperationRunning = 'idle' | 'approving' | 'staking'
@@ -57,57 +66,67 @@ export const Stake = function ({ state, token }: StakeProps) {
     input,
     lockupDays,
     resetStateAfterOperation,
-    stakingDashboardOperation,
+    stakingDashboardEvent,
     updateInput,
-    updateStakingDashboardOperation,
+    updateStakingDashboardEvent,
   } = state
 
-  const { chain, status } = useEvmAccount()
-  const expectedChain = useChain(token.chainId)
-
+  const { chainId, status } = useEvmAccount()
   const hemi = useHemi()
 
   const amount = parseTokenUnits(input, token)
 
-  const bridgeAddress = getVeHemiContractAddress(token.chainId)
+  const veHemiAddress = getVeHemiContractAddress(token.chainId)
 
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
     useNeedsApproval({
       address: token.address,
       amount,
-      spender: bridgeAddress,
+      spender: veHemiAddress,
     })
 
   const { balance: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
     useTokenBalance(token.chainId, token.address)
 
   const {
-    canSubmit: canStake,
+    canSubmit: validInput,
     error: validationError,
     errorKey,
   } = validateSubmit({
     amountInput: input,
     balance: walletTokenBalance,
-    chainId: chain?.id,
-    expectedChain: expectedChain.name,
+    chainId,
+    expectedChain: hemi.name,
     operation: 'stake',
     t,
     token,
   })
 
+  const canStake = validInput && isValidLockup(lockupDays)
+
+  const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
+    useEstimateApproveErc20Fees({
+      amount,
+      spender: veHemiAddress,
+      token,
+    })
+
   const { fees: createLockGasFees, isError: isCreateLockFeesError } =
     useEstimateCreateLockFees({
       amount,
-      enabled: !needsApproval && canStake,
-      lockDurationInSeconds: daysToSeconds(lockupDays),
+      lockDurationInSeconds: BigInt(daysToSeconds(lockupDays)),
       token,
     })
 
   const getGas = () => ({
-    amount: formatUnits(createLockGasFees, token.decimals),
-    isError: isCreateLockFeesError,
+    amount: formatUnits(
+      createLockGasFees + (needsApproval ? approvalTokenGasFees : BigInt(0)),
+      hemi.nativeCurrency.decimals,
+    ),
+    isError:
+      isCreateLockFeesError || (needsApproval && isApprovalTokenGasFeesError),
     label: t('common.network-gas-fee', { network: hemi.name }),
-    token,
+    token: getNativeToken(hemi.id),
   })
 
   const getTotalStake = () =>
@@ -132,7 +151,7 @@ export const Stake = function ({ state, token }: StakeProps) {
       emitter.on('lock-creation-settled', () => setOperationRunning('idle'))
     },
     token,
-    updateStakingDashboardOperation,
+    updateStakingDashboardEvent,
   })
 
   const handleStake = function () {
@@ -145,7 +164,7 @@ export const Stake = function ({ state, token }: StakeProps) {
   }
 
   function RenderBelowForm() {
-    if (!canStake || needsApproval) return null
+    if (!canStake) return null
 
     return (
       <FeesContainer>
@@ -160,7 +179,7 @@ export const Stake = function ({ state, token }: StakeProps) {
 
   const RenderSubmitButton = () => (
     <SubmitStake
-      canStake={canStake && isValidLockup(lockupDays)}
+      canStake={canStake}
       isAllowanceError={isAllowanceError}
       isAllowanceLoading={isAllowanceLoading}
       isRunningOperation={isRunningOperation}
@@ -173,12 +192,10 @@ export const Stake = function ({ state, token }: StakeProps) {
 
   return (
     <>
-      {stakingDashboardOperation?.status ===
+      {stakingDashboardEvent?.status ===
         StakingDashboardStatus.STAKE_TX_CONFIRMED &&
-        stakingDashboardOperation.transactionHash && (
-          <StakeToast
-            transactionHash={stakingDashboardOperation.transactionHash}
-          />
+        stakingDashboardEvent.transactionHash && (
+          <StakeToast transactionHash={stakingDashboardEvent.transactionHash} />
         )}
       <StakingForm
         belowForm={<RenderBelowForm />}
@@ -194,7 +211,7 @@ export const Stake = function ({ state, token }: StakeProps) {
               <SetMaxEvmBalance
                 disabled={isRunningOperation}
                 gas={createLockGasFees}
-                onSetMaxBalance={maxBalance => updateInput(maxBalance)}
+                onSetMaxBalance={updateInput}
                 token={token}
               />
             }

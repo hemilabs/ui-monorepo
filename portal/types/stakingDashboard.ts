@@ -19,15 +19,19 @@ export const enum StakingDashboardStatus {
   STAKE_TX_CONFIRMED = 5,
 }
 
+export type StakingDashboardEvent = {
+  approvalTxHash?: Hash
+  transactionHash?: Hash
+  status?: StakingDashboardStatus
+}
+
 export type StakingDashboardOperation = {
   amount: string
-  approvalTxHash?: Hash
   transactionHash?: Hash
   apy?: string
   chainId: Chain['id']
   lockupDays: number
-  timeRemaining?: string
+  timeRemaining?: string // this should be derived from lockupDays
   token: string
-  percentageRemaining?: number
-  status?: StakingDashboardStatus
+  percentageRemaining?: number // this should be derived from lockupDays
 }

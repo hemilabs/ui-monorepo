@@ -94,7 +94,7 @@
         "markdownlint/md033": [
           "warn",
           {
-            "allowed_elements": ["img"]
+            "allowed_elements": ["br", "img"]
           }
         ],
         "markdownlint/md040": "warn",

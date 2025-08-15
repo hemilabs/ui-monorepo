@@ -50,8 +50,11 @@ app.get(
 )
 
 app.get(
-  /\/claims\/(0x[0-9a-fA-F]{40})/,
-  toMiddleware(getUserClaimData, { maxAge: 60 * 1000 }),
+  /\/claims\/(7?43111)\/(0x[0-9a-fA-F]{40})/,
+  toMiddleware(getUserClaimData, {
+    maxAge: 5 * 60 * 1000,
+    resolver: (chainId, address) => `${chainId}:${address}`,
+  }),
 )
 
 const port = config.get('port')

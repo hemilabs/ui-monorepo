@@ -14,6 +14,7 @@ import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakingPosition } from 'types/stakingDashboard'
 
+import { Amount } from '../amount'
 import { Column, ColumnHeader, Header } from '../table'
 
 import { CircularProgress } from './circularProgress'
@@ -31,8 +32,9 @@ const columnsBuilder = (
         <ErrorBoundary
           fallback={<span className="text-sm text-neutral-950">-</span>}
         >
-          {/* TODO - Check if the amount component is still needed, otherwise we should drop it */}
-          <span>1</span>
+          {/* TODO - This is just a placeholder.
+          this will be updated in upcoming PRs */}
+          <Amount amount="1" chainId={743111} tokenAddress="0xabc" />
         </ErrorBoundary>
       </div>
     ),

@@ -23,7 +23,7 @@ export const ConnectWallet = function () {
         </Button>
       }
       icon={<WalletIcon />}
-      subtitle={t('transaction-history.connect-wallet-to-review')}
+      subtitle={t('staking-dashboard.table.connect-to-stake')}
       title={t('common.your-wallet-not-connected')}
     />
   )

@@ -196,6 +196,8 @@
     "sub-heading": "Learn and explore with Hemi developer ecosystem",
     "table": {
       "apy": "APY",
+      "connect-to-hemi": "Connect to {network} to view your stake positions.",
+      "connect-to-stake": "Connect your wallet to view your HEMI staked.",
       "get-started": "Get started by staking your HEMI",
       "no-hemi-staked": "No HEMI staked",
       "time-remaining": "Time remaining",

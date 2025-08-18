@@ -66,7 +66,7 @@ export const StakingForm = ({
   onSubmit,
   submitButton,
 }: StakingDashboardFormProps) => (
-  <div className="relative mx-auto max-w-[536px] [&>.card-container]:first:relative [&>.card-container]:first:z-10">
+  <div className="relative mx-auto w-full lg:max-w-[536px] [&>.card-container]:first:relative [&>.card-container]:first:z-10">
     <Card>
       <form
         className="flex flex-col p-4 md:p-6"

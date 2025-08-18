@@ -10,18 +10,23 @@ import { Card } from 'components/card'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { TxLink } from 'components/txLink'
 import { useHemi } from 'hooks/useHemi'
+import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakingPosition } from 'types/stakingDashboard'
+import { walletIsConnected } from 'utils/wallet'
+import { useAccount } from 'wagmi'
 
 import { Amount } from '../amount'
 import { Column, ColumnHeader, Header } from '../table'
 
+import { ConnectWallet } from './connectWallet'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
 import { TimeRemaining } from './timeRemaining'
+import { UnsupportedChain } from './unsupportedChain'
 
 // created here so there's a stable reference between renders when using it
 const emptyData = new Array(4).fill(null)
@@ -168,7 +173,27 @@ type Props = {
 }
 
 export const StakeTable = function ({ data, loading }: Props) {
+  const { status } = useAccount()
+  const hemi = useHemi()
   const isEmpty = data?.length === 0 && !loading
+
+  const connectedToHemi = useIsConnectedToExpectedNetwork(hemi.id)
+
+  const getContent = function () {
+    if (!walletIsConnected(status)) {
+      return <ConnectWallet />
+    }
+    if (status === 'connecting') {
+      return <Skeleton className="h-[calc(100%-3px)] w-full rounded-2xl" />
+    }
+    if (!connectedToHemi) {
+      return <UnsupportedChain />
+    }
+    if (isEmpty) {
+      return <NoPositionStaked />
+    }
+    return <StakeTableImp data={data} loading={loading} />
+  }
 
   return (
     <div className="w-full rounded-2xl bg-neutral-100 text-sm font-medium">
@@ -182,11 +207,7 @@ export const StakeTable = function ({ data, loading }: Props) {
             scrollbarWidth: 'thin',
           }}
         >
-          {isEmpty ? (
-            <NoPositionStaked />
-          ) : (
-            <StakeTableImp data={data} loading={loading} />
-          )}
+          {getContent()}
         </div>
       </Card>
     </div>

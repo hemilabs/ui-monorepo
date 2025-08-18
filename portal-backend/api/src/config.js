@@ -10,6 +10,16 @@ const config = {
   btcVaults: {
     cacheMin: Number(env('BTC_VAULTS_CACHE_MIN', '1')),
   },
+  claims: {
+    43111: {
+      dataUrl: env('CLAIMS_43111_DATA_URL'),
+      tgeTime: Number(env('CLAIMS_43111_TGE_TIME', '0')),
+    },
+    743111: {
+      dataUrl: env('CLAIMS_743111_DATA_URL'),
+      tgeTime: Number(env('CLAIMS_743111_TGE_TIME', '0')),
+    },
+  },
   origins: env('ORIGINS', 'http://localhost:3000'),
   port: Number(env('PORT', '3006')),
   redis: {

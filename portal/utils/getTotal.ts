@@ -4,13 +4,15 @@ import { formatUnits } from 'viem'
 
 import { parseTokenUnits } from './token'
 
-type Props = {
+export const getTotal = ({
+  fees = BigInt(0),
+  fromInput,
+  fromToken,
+}: {
   fees?: bigint
   fromInput: string
   fromToken: Token
-}
-
-export const getTotal = ({ fees = BigInt(0), fromInput, fromToken }: Props) =>
+}) =>
   formatUnits(
     BigInt(
       Big(parseTokenUnits(fromInput, fromToken).toString())

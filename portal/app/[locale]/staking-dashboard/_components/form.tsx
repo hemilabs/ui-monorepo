@@ -41,6 +41,7 @@ export const FormContent = function ({
         label={t('amount')}
         maxBalanceButton={setMaxBalanceButton}
         onChange={updateInput}
+        showFiatBalance={false}
         token={token}
         tokenSelector={<TokenSelectorReadOnly token={token} />}
         value={input}

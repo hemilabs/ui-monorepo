@@ -1,7 +1,7 @@
 import { WarningIcon } from 'components/icons/warningIcon'
 import { LockupInput } from 'components/inputText'
 import { useLocale, useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { formatDate } from 'utils/format'
 
 import { useStakingDashboardState } from '../_hooks/useStakingDashboardState'
@@ -39,11 +39,10 @@ function addDays(date: Date, days: number) {
 function getNearestValidValues(n: number): NearestValidValues {
   if (Number.isNaN(n)) return null
 
-  if (n <= minDays) return { maxValue: minDays, minValue: null }
-  if (n >= maxDays) return { maxValue: null, minValue: maxDays }
+  if (n <= minDays) return { maxValue: null, minValue: minDays }
+  if (n >= maxDays) return { maxValue: maxDays, minValue: null }
 
   const base = Math.floor((n - minDays) / step) * step + minDays
-
   const lower = base
   const upper = Math.min(base + step, maxDays)
 
@@ -63,13 +62,13 @@ function TryValuesHint({
   const t = useTranslations('staking-dashboard.form')
   if (isValid || !inputText) return null
 
-  const renderValue = (value: number) => (
+  const renderValue = (value: number, label?: ReactNode) => (
     <button
       className="transition-colors duration-150 hover:text-neutral-950"
       onClick={() => onSelectValue(value)}
       type="button"
     >
-      {value}
+      {label ?? value}
     </button>
   )
 
@@ -80,9 +79,9 @@ function TryValuesHint({
             max: () => renderValue(maxValue),
             min: () => renderValue(minValue),
           })
-        : t.rich('use', {
-            day: () => renderValue(minValue ?? maxValue),
-          })}
+        : minValue
+          ? renderValue(minValue, t('min-days', { days: minValue }))
+          : renderValue(maxValue, t('max-days', { days: maxValue }))}
     </span>
   )
 }

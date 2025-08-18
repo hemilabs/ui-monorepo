@@ -9,7 +9,6 @@ export function NoPositionStaked() {
   const t = useTranslations('staking-dashboard.table')
   return (
     <TableEmptyState
-      action={null}
       icon={
         <div className="flex size-8 items-center justify-center rounded-full bg-orange-50">
           <EmptyIcon />

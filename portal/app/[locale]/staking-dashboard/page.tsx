@@ -6,14 +6,13 @@ import { useTranslations } from 'next-intl'
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
 import { useStakingDashboardState } from './_hooks/useStakingDashboardState'
+import { useStakingPositions } from './_hooks/useStakingPositions'
 
 function Page() {
   const t = useTranslations('staking-dashboard')
-  const stakingDashboardState = useStakingDashboardState()
+  const state = useStakingDashboardState()
 
-  const props = {
-    state: stakingDashboardState,
-  }
+  const { data, isLoading } = useStakingPositions()
 
   return (
     <PageLayout variant="superWide">
@@ -26,10 +25,10 @@ function Page() {
         </p>
         <div className="mt-8 flex flex-col-reverse gap-6 md:flex-row">
           <div className="w-full md:w-1/2 lg:w-3/5">
-            <StakeTable data={[]} loading={false} />
+            <StakeTable data={data} loading={isLoading} />
           </div>
           <div className="w-full md:w-1/2 lg:w-2/5">
-            <StakeForm {...props} />
+            <StakeForm state={state} />
           </div>
         </div>
       </div>

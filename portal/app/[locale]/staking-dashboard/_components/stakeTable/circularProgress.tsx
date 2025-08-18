@@ -11,7 +11,7 @@ export function CircularProgress({
 }: Props) {
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
-  const offset = circumference * ((100 + percentage) / 100)
+  const offset = circumference * ((100 - percentage) / 100)
 
   return (
     <svg className="-rotate-90" height={size} width={size}>

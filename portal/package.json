@@ -13,6 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@formatjs/intl-durationformat": "0.7.4",
     "@hemilabs/token-list": "2.1.0",
     "@rainbow-me/rainbowkit": "2.2.4",
     "@sentry/nextjs": "9.9.0",

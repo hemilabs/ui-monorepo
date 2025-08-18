@@ -3,6 +3,11 @@
 const fetchJson = require('tiny-fetch-json')
 const pSwr = require('promise-swr')
 
+const localData = {
+  43111: require('./claims-data/43111.json'),
+  743111: require('./claims-data/743111.json'),
+}
+
 const memoizedFetchJson = pSwr(fetchJson, {
   maxAge: 60 * 60 * 1000,
   revalidate: 5 * 60 * 1000,
@@ -28,7 +33,9 @@ module.exports = function (config) {
     const { dataUrl, tgeTime } = config[chainId]
 
     /** @type {{ [address: string]: ClaimData }} */
-    const allData = await memoizedFetchJson(dataUrl)
+    const allData = dataUrl
+      ? await memoizedFetchJson(dataUrl)
+      : localData[chainId]
     const userData = allData[address]
     if (!userData) {
       return { amount: '0' }

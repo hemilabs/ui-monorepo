@@ -1,9 +1,8 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Button } from 'components/button'
+import { TableEmptyState } from 'components/tableEmptyState'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-
-import { EmptyState } from './emptyState'
 
 const WalletIcon = () => (
   <svg
@@ -57,7 +56,7 @@ export const ConnectWallet = function () {
   }
 
   return (
-    <EmptyState
+    <TableEmptyState
       action={
         <Button onClick={onClick} size="xSmall" type="button">
           {t('common.connect-wallet')}

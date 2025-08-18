@@ -1,10 +1,6 @@
-'use client'
-
-import { shouldPolyfill } from '@formatjs/intl-durationformat/should-polyfill'
-import { useQuery } from '@tanstack/react-query'
-import { useUmami } from 'hooks/useUmami'
+// Load polyfill for Intl.DurationFormat - Note this will load even when not needed.
+import '@formatjs/intl-durationformat/polyfill'
 import { useLocale } from 'next-intl'
-import Skeleton from 'react-loading-skeleton'
 
 type DurationTimeProps = {
   seconds: number
@@ -12,7 +8,7 @@ type DurationTimeProps = {
 
 // While this function could be on its own file, and not be a component,
 // I prefer to keep it here encapsulated because it uses Intl.DurationFormat,
-// which needs to be dynamically polyfilled.
+// which needs to be polyfilled.
 // Having the function separated could cause scenarios where it is called
 // without the polyfill when needed.
 const formatDuration = function (durationSeconds: number, locale: string) {
@@ -49,31 +45,6 @@ const formatDuration = function (durationSeconds: number, locale: string) {
 
 export const DurationTime = function ({ seconds }: DurationTimeProps) {
   const locale = useLocale()
-  const { track } = useUmami()
-
-  const needsPolyfill = shouldPolyfill()
-
-  // Dynamically load the polyfill if needed
-  const { data: polyfillLoaded } = useQuery({
-    enabled: needsPolyfill,
-    initialData: needsPolyfill ? undefined : true,
-    queryFn: () =>
-      // See https://formatjs.github.io/docs/polyfills/intl-durationformat/
-      // react-query expects something (not undefined) to be returned.
-      import('@formatjs/intl-durationformat/polyfill-force')
-        // let's track how many users needed polyfilling, to understand
-        // if it was a viable decision or not
-        .then(() => track?.('staking dashboard - polyfill DurationFormat'))
-        .then(() => true),
-    queryKey: ['duration-polyfill', needsPolyfill],
-    // once loaded, no need to revalidate
-    staleTime: Infinity,
-  })
-
-  if (!polyfillLoaded) {
-    // if here, polyfill is loading
-    return <Skeleton className="h-4.5 w-22" />
-  }
 
   const formattedDuration = formatDuration(seconds, locale)
 

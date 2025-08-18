@@ -230,6 +230,7 @@
     "docs": "Documentação",
     "ecosystem": "Demonstrações",
     "explorer": "Explorador",
+    "genesis-drop": "Lançamento Génesis",
     "get-started": "Começar",
     "help": {
       "language": "Idioma",
@@ -239,7 +240,6 @@
     "learn-how-to-start": "Aprenda como começar a usar a rede Hemi",
     "network": "Rede",
     "network-status": "Estado da Rede",
-    "rewards": "Recompensas",
     "swap": "Troca",
     "stake": "Stake",
     "tools": "Ferramentas",
@@ -277,23 +277,24 @@
     },
     "claim-rewards": "Reivindicar recompensas",
     "claiming-your-rewards": "Reivindicando suas recompensas",
+    "connect-demos-wallet": "Certifique-se de conectar sua carteira verificada Demos.",
     "here-is-your-claim-tx": "Aqui está a sua transação de reivindicação:",
     "lock-period": "Período de bloqueio:",
-    "you-are-eligible": "A sua elegibilidade para tokens HEMI",
-    "have-questions": "Tem dúvidas? Crie um ticket no <discordLink>Discord</discordLink>, verifique o <absintheLink>Absinthe</absintheLink> ou conecte outra carteira para verificar novamente.",
+    "have-questions": "Certifique-se de que está conectado à sua carteira verificada Demos. Se tiver dúvidas, abra um ticket no <discordLink>Discord</discordLink>, verifique <absintheLink>Absinthe</absintheLink> ou tente outra carteira.",
     "go-to-staking-dashboard": "Ir para o painel de stake",
     "not-eligible": "Não elegível",
     "only-live-on-mainnet": "Disponível apenas na Mainnet",
     "stake-more": "Faça mais stake",
-    "subheading": "Veja se é elegível",
+    "subheading": "Lançamento Génesis do Hemi",
     "switch-to-mainnet": "Mudar para Mainnet",
     "switch-to-start-claiming": "Pode mudar de rede para começar a reivindicar o seu HEMI.",
     "terms-and-conditions": {
       "terms": "Tincidunt non Sed Donec nulla, nulla, ultrices odio Quisque malesuada elementum orci quam venenatis non placerat Nam diam vitae nec faucibus dui nulla, eget ",
       "title": "Termos e condições das recompensas Hemi"
     },
-    "title": "Programa de Recompensas Hemi",
-    "view-tx-on-explorer": "Ver TX no explorador"
+    "title": "Programa de Recompensas",
+    "view-tx-on-explorer": "Ver TX no explorador",
+    "your-earned-tokens": "Seus tokens {symbol} ganhos."
   },
   "stake-page": {
     "asset": "Ativo",

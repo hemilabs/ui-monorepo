@@ -16,11 +16,18 @@ export default function Page() {
   const { status } = useAccount()
 
   const eligibility = useEligibleForTokens()
-  const t = useTranslations()
+  const t = useTranslations('rewards-page')
 
   const getMainSection = function () {
     if (status === 'disconnected') {
-      return <DisconnectedState />
+      return (
+        <>
+          <DisconnectedState />
+          <p className="max-w-50 mt-1 text-center text-xs font-medium text-neutral-500">
+            {t('connect-demos-wallet')}
+          </p>
+        </>
+      )
     }
     if (!walletIsConnected(status)) {
       return (
@@ -44,10 +51,10 @@ export default function Page() {
           <HemiSymbolWhite />
         </div>
         <p className="mt-1 text-xs font-semibold uppercase text-orange-500">
-          {t('rewards-page.title')}
+          {t('title')}
         </p>
         <p className="text-center text-4xl font-semibold text-neutral-950">
-          {t('rewards-page.subheading')}
+          {t('subheading')}
         </p>
         {getMainSection()}
       </div>

@@ -12,7 +12,7 @@ export const NotEligible = function () {
   return (
     <>
       <EligibilityStatus status="not-eligible" />
-      <p className="xl:max-w-120 mt-3 max-w-48 text-center text-xs font-medium text-neutral-500 sm:max-w-80 md:max-w-72 lg:max-w-72 2xl:max-w-full">
+      <p className="mt-3 max-w-48 text-center text-xs font-medium text-neutral-500 sm:max-w-80 md:max-w-72 lg:max-w-72 xl:max-w-96">
         {t.rich('have-questions', {
           absintheLink: (chunk: string) => (
             <ExternalLink

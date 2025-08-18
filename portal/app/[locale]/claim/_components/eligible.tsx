@@ -48,7 +48,7 @@ export const Eligible = function ({ eligibility }: Props) {
         <EligibilityStatus amount={amount} status="eligible" />
       </div>
       <p className="text-center text-xs font-medium text-neutral-500">
-        {t('you-are-eligible')}
+        {t('your-earned-tokens', { symbol: hemiToken.symbol })}
       </p>
       <ClaimOptions eligibility={eligibility} />
     </>

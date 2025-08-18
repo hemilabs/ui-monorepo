@@ -209,7 +209,6 @@
   "metadata": {
     "title": "Portal de Hemi"
   },
-
   "navbar": {
     "agree-to-terms-and-policy": "Al usar esta aplicación, usted acepta los <terms>Términos de Uso</terms> y la <policy>Política de Privacidad</policy>",
     "bitcoinkit": "Kit de Hemi Bitcoin",
@@ -231,6 +230,7 @@
     "docs": "Documentación",
     "ecosystem": "Demos",
     "explorer": "Explorador",
+    "genesis-drop": "Lanzamiento Génesis",
     "get-started": "Comenzar",
     "help": {
       "language": "Idioma",
@@ -240,7 +240,6 @@
     "learn-how-to-start": "Aprenda cómo empezar a utilizar la red Hemi",
     "network": "Red",
     "network-status": "Estado de la red",
-    "rewards": "Recompensas",
     "swap": "Intercambiar",
     "stake": "Stake",
     "tools": "Herramientas",
@@ -278,23 +277,24 @@
     },
     "claim-rewards": "Reclamar recompensas",
     "claiming-your-rewards": "Reclamando sus recompensas",
+    "connect-demos-wallet": "Asegúrese de conectar su billetera verificada de Demos.",
     "here-is-your-claim-tx": "Aquí está su transacción de reclamo:",
     "lock-period": "Período de bloqueo:",
-    "you-are-eligible": "Su elegibilidad para tokens HEMI",
-    "have-questions": "¿Tiene preguntas? Cree un ticket en <discordLink>Discord</discordLink>, revise <absintheLink>Absinthe</absintheLink> o conecte otra billetera para verificar nuevamente.",
+    "have-questions": "Asegúrese de estar conectado con su billetera verificada de Demos. Si tiene preguntas, abra un ticket en <discordLink>Discord</discordLink>, consulte <absintheLink>Absinthe</absintheLink> o pruebe con otra billetera.",
     "go-to-staking-dashboard": "Ir al panel de control de staking",
     "not-eligible": "No elegible",
     "only-live-on-mainnet": "Solo disponible en Mainnet",
     "stake-more": "Hacer más Stake",
-    "subheading": "Verifique si es elegible",
+    "subheading": "Lanzamiento Génesis de Hemi",
     "switch-to-mainnet": "Cambiar a Mainnet",
     "switch-to-start-claiming": "Puede cambiar de red para comenzar a reclamar su HEMI.",
     "terms-and-conditions": {
       "terms": "Tincidunt non Sed Donec nulla, nulla, ultrices odio Quisque malesuada elementum orci quam venenatis non placerat Nam diam vitae nec faucibus dui nulla, eget ",
       "title": "Términos y condiciones del programa de recompensas Hemi"
     },
-    "title": "Programa de Recompensas Hemi",
-    "view-tx-on-explorer": "Ver TX en el explorador"
+    "title": "Programa de Recompensas",
+    "view-tx-on-explorer": "Ver TX en el explorador",
+    "your-earned-tokens": "Sus tokens {symbol} ganados."
   },
   "stake-page": {
     "asset": "Activo",

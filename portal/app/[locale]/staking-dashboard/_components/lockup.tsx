@@ -140,7 +140,6 @@ export function Lockup({ stakingDashboardState }: Props) {
                 isError={touched && !valid}
                 onBlur={() => setIsFocused(false)}
                 onChange={e => handleInputChange(e.target.value)}
-                onClear={() => handleInputChange('')}
                 onFocus={() => setIsFocused(true)}
                 value={displayValue}
               />

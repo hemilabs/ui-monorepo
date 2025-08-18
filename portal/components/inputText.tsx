@@ -76,7 +76,7 @@ export const SearchInput = function ({
 export const LockupInput = ({
   isError = false,
   ...props
-}: Props & { isError?: boolean }) => (
+}: Omit<Props, 'onClear'> & { isError?: boolean }) => (
   <InputWrapper showCloseIcon={false}>
     <input
       {...props}

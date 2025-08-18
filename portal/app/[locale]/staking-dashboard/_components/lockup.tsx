@@ -1,11 +1,11 @@
 import { WarningIcon } from 'components/icons/warningIcon'
 import { LockupInput } from 'components/inputText'
 import { useLocale, useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { formatDate } from 'utils/format'
 
 import { useStakingDashboardState } from '../_hooks/useStakingDashboardState'
-import { halfDays, maxDays, minDays, step } from '../_utils/constants'
+import { maxDays, minDays, step, twoYears } from '../_utils/lockCreationTimes'
 import { sanitizeLockup } from '../_utils/sanitizeLockup'
 
 import { RangeSlider } from './rangeSlider'
@@ -39,19 +39,16 @@ function addDays(date: Date, days: number) {
 function getNearestValidValues(n: number): NearestValidValues {
   if (Number.isNaN(n)) return null
 
-  const lower = Math.floor(n / step) * step
-  const upper = lower + step
+  if (n <= minDays) return { maxValue: null, minValue: minDays }
+  if (n >= maxDays) return { maxValue: maxDays, minValue: null }
 
-  const minValue = lower >= minDays ? lower : null
-  const maxValue = upper <= maxDays ? upper : upper > maxDays ? maxDays : null
-
-  if (minValue === null && maxValue === null) {
-    return null
-  }
+  const base = Math.floor((n - minDays) / step) * step + minDays
+  const lower = base
+  const upper = Math.min(base + step, maxDays)
 
   return {
-    maxValue,
-    minValue,
+    maxValue: upper <= maxDays ? upper : null,
+    minValue: lower >= minDays ? lower : null,
   }
 }
 
@@ -65,13 +62,13 @@ function TryValuesHint({
   const t = useTranslations('staking-dashboard.form')
   if (isValid || !inputText) return null
 
-  const renderValue = (value: number) => (
+  const renderValue = (value: number, label?: ReactNode) => (
     <button
       className="transition-colors duration-150 hover:text-neutral-950"
       onClick={() => onSelectValue(value)}
       type="button"
     >
-      {value}
+      {label ?? value}
     </button>
   )
 
@@ -82,42 +79,47 @@ function TryValuesHint({
             max: () => renderValue(maxValue),
             min: () => renderValue(minValue),
           })
-        : t.rich('use', {
-            day: () => renderValue(minValue ?? maxValue),
-          })}
+        : minValue
+          ? renderValue(minValue, t('min-days', { days: minValue }))
+          : renderValue(maxValue, t('max-days', { days: maxValue }))}
     </span>
   )
 }
 
 export function Lockup({ stakingDashboardState }: Props) {
-  const { estimatedApy, lockupDays, updateLockupDays } = stakingDashboardState
+  const {
+    estimatedApy,
+    inputDays,
+    lockupDays,
+    updateInputDays,
+    updateLockupDays,
+  } = stakingDashboardState
   const t = useTranslations('staking-dashboard')
   const locale = useLocale()
 
-  const [inputValue, setInputValue] = useState(lockupDays.toString())
   const [touched, setTouched] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
 
-  const inputNumber = Number(inputValue)
+  const inputNumber = Number(inputDays)
   const valid = isValidLockup(inputNumber)
   const nearest = getNearestValidValues(inputNumber)
   const expireDate = formatDate(addDays(new Date(), lockupDays), locale)
 
   function handleSliderChange(val: number) {
     updateLockupDays(val)
-    setInputValue(String(val))
+    updateInputDays(String(val))
     setTouched(false)
   }
 
   function handleInputChange(val: string) {
-    const { value } = sanitizeLockup({ input: val, value: inputValue })
-    setInputValue(value)
+    const { value } = sanitizeLockup({ input: val, value: inputDays })
+    updateInputDays(value)
     setTouched(true)
     updateLockupDays(Number(value))
   }
 
   const displayValue =
-    isFocused || !inputValue ? inputValue : t('form.days', { days: inputValue })
+    isFocused || !inputDays ? inputDays : t('form.days', { days: inputDays })
 
   return (
     <>
@@ -128,7 +130,7 @@ export function Lockup({ stakingDashboardState }: Props) {
           </span>
           <div className="flex items-center justify-center gap-x-3">
             <TryValuesHint
-              inputText={inputValue}
+              inputText={inputDays}
               isValid={valid}
               maxValue={nearest?.maxValue}
               minValue={nearest?.minValue}
@@ -163,7 +165,7 @@ export function Lockup({ stakingDashboardState }: Props) {
             </span>
             <span
               className="cursor-pointer hover:text-neutral-950"
-              onClick={() => handleInputChange(halfDays.toString())}
+              onClick={() => handleInputChange(twoYears.toString())}
             >
               {t('form.years', { years: 2 })}
             </span>

@@ -1,9 +1,5 @@
-import Big from 'big.js'
 import { validateInput } from 'components/tokenInput/utils'
 import { RemoteChain } from 'types/chain'
-import { Token } from 'types/token'
-import { parseTokenUnits } from 'utils/token'
-import { formatUnits } from 'viem'
 
 type CanSubmit = Parameters<typeof validateInput>[0] & {
   chainId: RemoteChain['id']
@@ -48,22 +44,3 @@ export const validateSubmit = function ({
   }
   return { canSubmit: true, error: undefined, errorKey: undefined }
 }
-
-type GetTotal = {
-  fees?: bigint
-  fromInput: string
-  fromToken: Token
-}
-export const getTotal = ({
-  fees = BigInt(0),
-  fromInput,
-  fromToken,
-}: GetTotal) =>
-  formatUnits(
-    BigInt(
-      Big(parseTokenUnits(fromInput, fromToken).toString())
-        .plus(fees.toString())
-        .toFixed(),
-    ),
-    fromToken.decimals,
-  )

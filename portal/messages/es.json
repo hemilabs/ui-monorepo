@@ -172,21 +172,27 @@
   "staking-dashboard": {
     "amount": "Cantidad",
     "form": {
+      "allowance-load-failed": "No se pudo cargar el monto autorizado",
+      "approve-and-stake": "Aprobar y Hacer Stake",
+      "approving": "Aprobando...",
       "days": "{days, plural, one {{days} día} other {{days} días}}",
       "estimated-apy": "TEA estimado:",
       "expire-date": "Fecha de vencimiento:",
       "lockup-increment-warning": "El tiempo de bloqueo se puede configurar en incrementos de 6 días.",
+      "max-days": "Máx. {days} {days, plural, one {día} other {días}}",
+      "min-days": "Mín. {days} {days, plural, one {día} other {días}}",
       "or": "o",
       "send": "Enviar",
       "stake": "Stake",
       "staking": "Haciendo stake...",
       "title": "Stake",
-      "use": "Utilice <day></day>",
       "use-or": "Utilice <min></min> o <max></max>",
       "years": "{years, plural, one {{years} año} other {{years} años}}"
     },
     "heading": "Staking de Gobernanza",
+    "here-is-your-stake-tx": "Aquí está su transacción de staking:",
     "lockup-period": "Período de bloqueo",
+    "stake-successful": "Stake exitoso",
     "sub-heading": "Aprenda y explore con el ecosistema para desarrolladores de Hemi",
     "table": {
       "apy": "TEA",

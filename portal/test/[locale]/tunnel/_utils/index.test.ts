@@ -1,5 +1,5 @@
-import { validateSubmit } from 'app/[locale]/tunnel/_utils'
 import * as tokenInputUtils from 'components/tokenInput/utils'
+import { validateSubmit } from 'utils/validateSubmit'
 import { describe, it, expect, vi, afterEach } from 'vitest'
 
 // Minimal mock for t, matching only the required signature for the test

@@ -6,15 +6,13 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { Button } from 'components/button'
 import { Card } from 'components/card'
 import { ErrorBoundary } from 'components/errorBoundary'
-import { TxLink } from 'components/txLink'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { StakingDashboardOperation } from 'types/stakingDashboard'
+import { StakingPosition } from 'types/stakingDashboard'
 
 import { Amount } from '../amount'
 import { Column, ColumnHeader, Header } from '../table'
@@ -27,14 +25,16 @@ const emptyData = new Array(4).fill(null)
 
 const columnsBuilder = (
   t: ReturnType<typeof useTranslations<'staking-dashboard'>>,
-): ColumnDef<StakingDashboardOperation>[] => [
+): ColumnDef<StakingPosition>[] => [
   {
-    cell: ({ row }) => (
+    cell: () => (
       <div className="flex items-center justify-center gap-x-2">
         <ErrorBoundary
           fallback={<span className="text-sm text-neutral-950">-</span>}
         >
-          <Amount operation={row.original} />
+          {/* TODO - This is just a placeholder.
+          this will be updated in upcoming PRs */}
+          <Amount amount="1" chainId={743111} tokenAddress="0xabc" />
         </ErrorBoundary>
       </div>
     ),
@@ -43,14 +43,7 @@ const columnsBuilder = (
     meta: { className: 'justify-start', width: '200px' },
   },
   {
-    cell({ row }) {
-      const { transactionHash } = row.original
-      return (
-        <div className="flex items-center justify-end">
-          <TxLink chainId={row.original.chainId} txHash={transactionHash} />
-        </div>
-      )
-    },
+    cell: () => <div className="flex items-center justify-end">0xabc</div>,
     header: () => (
       <div className="mr-8">
         <Header text={t('table.tx')} />
@@ -60,39 +53,22 @@ const columnsBuilder = (
     meta: { width: '180px' },
   },
   {
-    cell: ({ row }) => (
-      <span className="text-emerald-600">{row.original.apy}</span>
-    ),
+    cell: () => <span className="text-emerald-600">9.8</span>,
     header: () => <Header text={t('table.apy')} />,
     id: 'apy',
     meta: { width: '42px' },
   },
   {
-    cell: ({ row }) => (
-      <span className="text-neutral-500">{row.original.lockupPeriod}</span>
-    ),
+    cell: () => <span className="text-neutral-500">12</span>,
     header: () => <Header text={t('lockup-period')} />,
     id: 'lockup-period',
     meta: { width: '140px' },
   },
   {
-    cell: ({ row }) => (
+    cell: () => (
       <div className="flex items-center justify-end gap-x-2">
-        {row.original.percentageRemaining === 0 ? (
-          <Button
-            size="small"
-            //TODO - onClick TBD
-          >
-            {t('table.unlock')}
-          </Button>
-        ) : (
-          <>
-            <CircularProgress percentage={row.original.percentageRemaining} />
-            <span className="text-neutral-950">
-              {row.original.timeRemaining}
-            </span>
-          </>
-        )}
+        <CircularProgress percentage={10} />
+        <span className="text-neutral-950">10</span>
       </div>
     ),
     header: () => <Header text={t('table.time-remaining')} />,
@@ -102,7 +78,7 @@ const columnsBuilder = (
 ]
 
 type StakeTableImpProps = {
-  data: StakingDashboardOperation[]
+  data: StakingPosition[]
   loading: boolean
 }
 
@@ -185,7 +161,7 @@ const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
 }
 
 type Props = {
-  data: StakingDashboardOperation[]
+  data: StakingPosition[]
   loading: boolean
 }
 

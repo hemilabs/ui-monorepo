@@ -2,16 +2,15 @@ import { DisplayAmount } from 'components/displayAmount'
 import { TokenLogo } from 'components/tokenLogo'
 import { useToken } from 'hooks/useToken'
 import Skeleton from 'react-loading-skeleton'
-import { StakingDashboardOperation } from 'types/stakingDashboard'
-import { formatUnits } from 'viem'
+import { Chain, formatUnits } from 'viem'
 
 type Props = {
-  operation: StakingDashboardOperation
+  amount: string
+  chainId: Chain['id']
+  tokenAddress: string
 }
 
-export const Amount = function ({ operation }: Props) {
-  const { amount, chainId, token: tokenAddress } = operation
-
+export const Amount = function ({ amount, chainId, tokenAddress }: Props) {
   const { data: token, isLoading } = useToken({
     address: tokenAddress,
     chainId,

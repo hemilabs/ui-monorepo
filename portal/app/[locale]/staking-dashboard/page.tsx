@@ -6,7 +6,6 @@ import { useTranslations } from 'next-intl'
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
 import { useStakingDashboardState } from './_hooks/useStakingDashboardState'
-import { generateStakingDashboardOperations } from './_utils/mockedData'
 
 function Page() {
   const t = useTranslations('staking-dashboard')
@@ -15,13 +14,6 @@ function Page() {
   const props = {
     state: stakingDashboardState,
   }
-
-  /**
-   * @temporary
-   * //TODO: This page component is temporarily using mocked staking dashboard tokens for development purposes.
-   * The mock data will be replaced with real data integration in the future.
-   */
-  const mockStakingDashboardOperations = generateStakingDashboardOperations()
 
   return (
     <PageLayout variant="superWide">
@@ -34,10 +26,7 @@ function Page() {
         </p>
         <div className="mt-8 flex flex-col-reverse gap-6 md:flex-row">
           <div className="w-full md:w-1/2 lg:w-3/5">
-            <StakeTable
-              data={[...mockStakingDashboardOperations]}
-              loading={false}
-            />
+            <StakeTable data={[]} loading={false} />
           </div>
           <div className="w-full md:w-1/2 lg:w-2/5">
             <StakeForm {...props} />

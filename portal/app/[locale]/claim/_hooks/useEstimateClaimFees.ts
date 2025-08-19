@@ -20,7 +20,7 @@ export const useEstimateClaimFees = function ({
   ratio: number
   termsSignature: Hash
 }) {
-  const { address: account } = useAccount()
+  const { address } = useAccount()
   const hemi = useHemi()
   const contractAddress = getMerkleBoxAddress(hemi.id)
 
@@ -30,14 +30,15 @@ export const useEstimateClaimFees = function ({
     isSuccess,
   } = useEstimateGas({
     data: encodeClaimTokens({
-      account: account!,
-      amount: BigInt(eligibility.amount),
-      eligibility,
+      address,
+      amount: eligibility.amount,
+      claimGroupId: eligibility.claimGroupId,
       lockupMonths,
+      proof: eligibility.proof,
       ratio,
       termsSignature,
     }),
-    query: { enabled: !!account },
+    query: { enabled: !!address && eligibility.claimGroupId !== undefined },
     to: contractAddress,
   })
 

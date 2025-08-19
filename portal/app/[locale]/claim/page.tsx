@@ -15,7 +15,7 @@ import { useEligibleForTokens } from './_hooks/useEligibleForTokens'
 export default function Page() {
   const { status } = useAccount()
 
-  const eligibility = useEligibleForTokens()
+  const { data: eligibility } = useEligibleForTokens()
   const t = useTranslations('rewards-page')
 
   const getMainSection = function () {
@@ -29,7 +29,7 @@ export default function Page() {
         </>
       )
     }
-    if (!walletIsConnected(status)) {
+    if (!walletIsConnected(status) || eligibility === undefined) {
       return (
         <div className="mt-5">
           <Spinner color="#FF6A00" size="small" />
@@ -38,7 +38,7 @@ export default function Page() {
     }
 
     // from this point on, the user is connected
-    if (!eligibility) {
+    if (eligibility.amount === BigInt(0)) {
       return <NotEligible />
     }
     return <Eligible eligibility={eligibility} />

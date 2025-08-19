@@ -8,6 +8,7 @@ import { formatHemi } from '../_utils'
 
 import { ClaimDetails } from './claimDetails'
 import { ClaimOptions } from './claimOptions'
+import { ComeBackLater } from './comeBackLater'
 import { EligibilityStatus } from './eligibilityStatus'
 
 type Props = {
@@ -15,14 +16,14 @@ type Props = {
 }
 
 export const Eligible = function ({ eligibility }: Props) {
-  const { data: isClaimable, isLoading: isClaimableLoading } =
-    useIsClaimable(eligibility)
+  const { data: isClaimable } = useIsClaimable(eligibility)
   const hemiToken = useHemiToken()
   const t = useTranslations('rewards-page')
 
   const amount = formatHemi(BigInt(eligibility.amount), hemiToken.decimals)
+  const claimGroupIdAvailable = eligibility.claimGroupId !== undefined
 
-  if (isClaimableLoading || isClaimable === undefined) {
+  if (isClaimable === undefined && claimGroupIdAvailable) {
     return (
       <div className="mt-5">
         <Spinner color="#FF6A00" size="small" />
@@ -30,7 +31,7 @@ export const Eligible = function ({ eligibility }: Props) {
     )
   }
 
-  if (!isClaimable) {
+  if (claimGroupIdAvailable && !isClaimable) {
     // User has already claimed. If it could not claim, there wouldn't be a transaction hash,
     // and we wouldn't be here.
     return (
@@ -41,7 +42,7 @@ export const Eligible = function ({ eligibility }: Props) {
     )
   }
 
-  // User is eligible, as they can claim
+  const proofAvailable = eligibility.proof.length > 0
   return (
     <>
       <div className="max-h-22 w-full max-w-60 sm:max-w-80">
@@ -50,7 +51,11 @@ export const Eligible = function ({ eligibility }: Props) {
       <p className="text-center text-xs font-medium text-neutral-500">
         {t('your-earned-tokens', { symbol: hemiToken.symbol })}
       </p>
-      <ClaimOptions eligibility={eligibility} />
+      {proofAvailable && claimGroupIdAvailable ? (
+        <ClaimOptions eligibility={eligibility} />
+      ) : (
+        <ComeBackLater />
+      )}
     </>
   )
 }

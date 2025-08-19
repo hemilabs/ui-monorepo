@@ -99,7 +99,7 @@ export const ClaimDrawer = function ({
     <Drawer onClose={onClose}>
       <div className="drawer-content h-[80dvh] md:h-full">
         <Operation
-          amount={eligibility.amount}
+          amount={eligibility.amount.toString()}
           callToAction={getCallToAction()}
           heading={t('claim-rewards')}
           onClose={onClose}

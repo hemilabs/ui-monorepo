@@ -13,14 +13,16 @@ export const useEligibleForTokens = function () {
   return useQuery({
     enabled: !!address,
     queryFn: () =>
-      fetch(`${portalApiUrl}/claims/${hemi.id}/${address}`).then(
-        ({ amount, claimGroupId, proof = [] }) => ({
+      fetch(`${portalApiUrl}/claims/${hemi.id}/${address}`)
+        .catch(() => ({
+          amount: 0,
+        }))
+        .then(({ amount, claimGroupId, proof = [] }) => ({
           address,
           amount: BigInt(amount),
           claimGroupId,
           proof,
-        }),
-      ) as Promise<EligibilityData>,
+        })) as Promise<EligibilityData>,
     queryKey: ['eligibleForTokens', hemi.id, address],
   })
 }

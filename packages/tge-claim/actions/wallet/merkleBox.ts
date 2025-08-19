@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events'
 import { hemi, hemiSepolia } from 'hemi-viem'
 import {
-  type Address,
   type WalletClient,
   type Hash,
   encodeFunctionData,
@@ -16,7 +15,6 @@ import {
   EligibilityData,
   type LockupMonths,
 } from '../../types/claim'
-import { getEligibility } from '../../utils/getEligibility'
 import { checkIsClaimable } from '../public/merkleBox'
 
 // Validation functions
@@ -46,32 +44,42 @@ const formatRatio = function (ratio: number) {
   return BigInt(Math.round(roundedRatio * 100))
 }
 
+const isProofValid = (proof: unknown): proof is Hash[] =>
+  !!proof && Array.isArray(proof) && proof.length > 0
+
+const isClaimGroupIdValid = (claimGroupId: unknown): claimGroupId is number =>
+  typeof claimGroupId === 'number' && claimGroupId >= 0
+
 // Check if user can claim tokens
 const canClaim = async function ({
-  account,
+  address,
   amount,
   chainId,
+  claimGroupId,
   lockupMonths,
+  proof,
   ratio,
   walletClient,
-}: {
-  account: Address
-  amount: bigint
+}: EligibilityData & {
   chainId: number
   lockupMonths: number
   ratio: number
   walletClient: WalletClient
 }): Promise<{ canClaim: true } | { canClaim: false; reason: string }> {
-  if (!isAddress(account)) {
+  if (!isAddress(address)) {
     return { canClaim: false, reason: 'Invalid account address format' }
   }
 
-  if (account === zeroAddress) {
+  if (address === zeroAddress) {
     return { canClaim: false, reason: 'Account cannot be zero address' }
   }
 
   if (amount <= BigInt(0)) {
     return { canClaim: false, reason: 'Amount must be greater than zero' }
+  }
+
+  if (!isClaimGroupIdValid(claimGroupId)) {
+    return { canClaim: false, reason: 'Invalid claim group ID' }
   }
 
   if (!validateLockupMonths(lockupMonths)) {
@@ -95,41 +103,34 @@ const canClaim = async function ({
     }
   }
 
-  // Check eligibility
-  const eligibility = getEligibility(account)
-  if (!eligibility) {
-    return { canClaim: false, reason: 'Address is not eligible for claiming' }
-  }
-
-  // Validate amount against eligibility
-  const maxClaimableAmount = BigInt(eligibility.amount)
-  if (amount > maxClaimableAmount) {
+  if (!isProofValid(proof)) {
     return {
       canClaim: false,
-      reason: 'Amount exceeds maximum claimable allocation',
+      reason: 'Invalid proof format',
     }
   }
 
   return checkIsClaimable({
-    account,
+    address,
     amount,
     chainId,
+    claimGroupId,
     client: walletClient,
-    eligibility,
+    proof,
   })
 }
 
 // Main claim function following the event-driven pattern
 const runClaim = ({
-  account,
+  address,
   amount,
+  claimGroupId,
   lockupMonths,
+  proof,
   ratio,
   termsSignature,
   walletClient,
-}: {
-  account: Address
-  amount: bigint
+}: EligibilityData & {
   lockupMonths: number
   ratio: number
   termsSignature: Hash
@@ -138,10 +139,12 @@ const runClaim = ({
   async function (emitter: EventEmitter<ClaimEvents>) {
     try {
       const claimResult = await canClaim({
-        account,
+        address,
         amount,
         chainId: walletClient.chain!.id,
+        claimGroupId,
         lockupMonths,
+        proof,
         ratio,
         walletClient,
       }).catch(() => ({
@@ -156,10 +159,6 @@ const runClaim = ({
         return
       }
 
-      // eligibility is guaranteed to exist here - already checked in canClaim
-      const eligibility = getEligibility(account)!
-      const { claimGroupId, proof } = eligibility
-
       emitter.emit('pre-claim')
 
       const contractAddress = getMerkleBoxAddress(walletClient.chain!.id)
@@ -169,11 +168,11 @@ const runClaim = ({
       // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const claimHash = await writeContract(walletClient, {
         abi: merkleBoxAbi,
-        account,
+        account: address,
         address: contractAddress,
         args: [
           BigInt(claimGroupId),
-          account,
+          address,
           amount,
           proof,
           lockupMonths,
@@ -213,16 +212,14 @@ const runClaim = ({
 
 // Encode claim function data for gas estimation
 export const encodeClaimTokens = ({
-  account,
+  address,
   amount,
-  eligibility,
+  claimGroupId,
   lockupMonths,
+  proof,
   ratio,
   termsSignature,
-}: {
-  account: Address
-  eligibility: EligibilityData
-  amount: bigint
+}: EligibilityData & {
   lockupMonths: number
   ratio: number
   termsSignature: Hash
@@ -230,10 +227,10 @@ export const encodeClaimTokens = ({
   encodeFunctionData({
     abi: merkleBoxAbi,
     args: [
-      BigInt(eligibility.claimGroupId),
-      account,
+      BigInt(claimGroupId),
+      address,
       amount,
-      eligibility.proof,
+      proof,
       lockupMonths,
       formatRatio(ratio),
       termsSignature,

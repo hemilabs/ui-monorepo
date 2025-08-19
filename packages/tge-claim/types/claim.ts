@@ -1,4 +1,4 @@
-import { type Hash, TransactionReceipt } from 'viem'
+import { Address, type Hash, TransactionReceipt } from 'viem'
 
 // Common events for all TGE claim operations
 type CommonEvents = {
@@ -35,8 +35,8 @@ export type LockupMonths = (typeof lockupMonths)[number]
 
 // Eligibility data structure
 export type EligibilityData = {
-  address: string
-  amount: string
+  address: Address
+  amount: bigint
   claimGroupId: number
   proof: Hash[]
 }

@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
+import { type LockupMonths, lockupOptions } from 'genesis-drop-actions'
+import { getClaimGroupConfiguration } from 'genesis-drop-actions/actions'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
-import { type LockupMonths, lockupOptions } from 'tge-claim'
-import { getClaimGroupConfiguration } from 'tge-claim/actions'
 
 const bonusMap: Record<LockupMonths, number> = {
   [lockupOptions.sixMonths]: 0,

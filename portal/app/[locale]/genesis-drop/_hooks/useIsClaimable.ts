@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
+import { EligibilityData } from 'genesis-drop-actions'
+import { isClaimable } from 'genesis-drop-actions/actions'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
-import { EligibilityData } from 'tge-claim'
-import { isClaimable } from 'tge-claim/actions'
 import { useAccount } from 'wagmi'
 
 export const getIsClaimableQueryKey = ({

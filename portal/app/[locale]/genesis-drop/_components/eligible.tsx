@@ -1,6 +1,6 @@
 import { Spinner } from 'components/spinner'
+import { type EligibilityData } from 'genesis-drop-actions'
 import { useTranslations } from 'next-intl'
-import { type EligibilityData } from 'tge-claim'
 
 import { useHemiToken } from '../_hooks/useHemiToken'
 import { useIsClaimable } from '../_hooks/useIsClaimable'

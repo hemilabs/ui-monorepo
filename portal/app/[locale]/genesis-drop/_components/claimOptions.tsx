@@ -1,10 +1,14 @@
 import { MutationStatus } from '@tanstack/react-query'
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
+import {
+  LockupMonths,
+  lockupOptions,
+  type EligibilityData,
+} from 'genesis-drop-actions'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { LockupMonths, lockupOptions, type EligibilityData } from 'tge-claim'
 import { Hash } from 'viem'
 
 import { useClaimTokens } from '../_hooks/useClaimTokens'

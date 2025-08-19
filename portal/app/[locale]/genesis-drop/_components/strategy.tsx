@@ -1,8 +1,8 @@
 import { SparklesIcon } from 'components/icons/sparkles'
+import { LockupMonths } from 'genesis-drop-actions'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { LockupMonths } from 'tge-claim'
 
 import { useClaimGroupConfiguration } from '../_hooks/useClaimGroupConfiguration'
 import { useHemiToken } from '../_hooks/useHemiToken'

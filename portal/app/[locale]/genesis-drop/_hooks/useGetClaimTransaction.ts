@@ -1,6 +1,6 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { LockupMonths } from 'genesis-drop-actions'
 import { useHemi } from 'hooks/useHemi'
-import { LockupMonths } from 'tge-claim'
 import { Address, Chain, Hash } from 'viem'
 import { useAccount } from 'wagmi'
 

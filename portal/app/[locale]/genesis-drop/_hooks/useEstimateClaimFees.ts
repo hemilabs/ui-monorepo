@@ -1,11 +1,11 @@
-import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useHemi } from 'hooks/useHemi'
 import {
   encodeClaimTokens,
   getMerkleBoxAddress,
   type EligibilityData,
   type LockupMonths,
-} from 'tge-claim'
+} from 'genesis-drop-actions'
+import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useHemi } from 'hooks/useHemi'
 import { Hash } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 

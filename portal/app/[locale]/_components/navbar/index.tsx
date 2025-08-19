@@ -3,7 +3,6 @@
 import { BitcoinKitIcon } from 'components/icons/bitcoinKit'
 import { DocsIcon } from 'components/icons/docsIcon'
 import { EcosystemIcon } from 'components/icons/ecosystemIcon'
-import { GenesisDropIcon } from 'components/icons/genesisDropIcon'
 import { NetworkStatusIcon } from 'components/icons/networkStatusIcon'
 import { StakeIcon } from 'components/icons/stakeIcon'
 import dynamic from 'next/dynamic'
@@ -12,6 +11,7 @@ import { useTranslations } from 'next-intl'
 import { Badge } from '../badge'
 
 import { Dex } from './_components/dex'
+import { GenesisDrop } from './_components/genesisDrop'
 import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
@@ -60,13 +60,7 @@ export const Navbar = function () {
             <Dex />
           </PaddedListItem>
           <PaddedListItem>
-            <ItemLink
-              event="nav - genesis drop"
-              // TODO update URL and move files
-              href="/claim"
-              icon={<GenesisDropIcon />}
-              text={t('genesis-drop')}
-            />
+            <GenesisDrop />
           </PaddedListItem>
           <li>
             <ItemAccordion

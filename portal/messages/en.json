@@ -277,6 +277,7 @@
     },
     "claim-rewards": "Claim rewards",
     "claiming-your-rewards": "Claiming your rewards",
+    "come-back-later": "Come back at TGE to claim your {symbol}",
     "connect-demos-wallet": "Make sure to connect your Demos verified wallet.",
     "here-is-your-claim-tx": "Here's your claim transaction:",
     "lock-period": "Lock period:",

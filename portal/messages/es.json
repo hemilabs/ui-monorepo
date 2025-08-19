@@ -277,6 +277,7 @@
     },
     "claim-rewards": "Reclamar recompensas",
     "claiming-your-rewards": "Reclamando sus recompensas",
+    "come-back-later": "Regrese en el momento del TGE para reclamar sus {symbol}",
     "connect-demos-wallet": "Asegúrese de conectar su billetera verificada de Demos.",
     "here-is-your-claim-tx": "Aquí está su transacción de reclamo:",
     "lock-period": "Período de bloqueo:",

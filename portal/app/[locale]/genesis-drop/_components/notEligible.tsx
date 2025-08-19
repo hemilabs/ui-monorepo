@@ -8,7 +8,7 @@ import { EligibilityStatus } from './eligibilityStatus'
 const { discordUrl } = hemiSocials
 
 export const NotEligible = function () {
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
   return (
     <>
       <EligibilityStatus status="not-eligible" />

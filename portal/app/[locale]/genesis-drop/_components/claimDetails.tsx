@@ -93,7 +93,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
 
   const hasVisited = usePageVisitTracker(eligibility.claimGroupId)
 
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
 
   const claimTitle: Record<LockupMonths, string> = {
     6: t('claim-options.standard-claim'),

@@ -43,7 +43,7 @@ const XIcon = () => (
 )
 
 export const NoBonus = function () {
-  const t = useTranslations('rewards-page.claim-options')
+  const t = useTranslations('genesis-drop.claim-options')
   return (
     <Container bgColor="bg-neutral-50">
       <Row>
@@ -55,7 +55,7 @@ export const NoBonus = function () {
 }
 
 export const BonusDetails = function () {
-  const t = useTranslations('rewards-page.claim-options')
+  const t = useTranslations('genesis-drop.claim-options')
   return (
     <Container bgColor="bg-white">
       <Row>

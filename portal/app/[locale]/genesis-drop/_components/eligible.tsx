@@ -18,7 +18,7 @@ type Props = {
 export const Eligible = function ({ eligibility }: Props) {
   const { data: isClaimable } = useIsClaimable(eligibility)
   const hemiToken = useHemiToken()
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
 
   const amount = formatHemi(BigInt(eligibility.amount), hemiToken.decimals)
   const claimGroupIdAvailable = eligibility.claimGroupId !== undefined

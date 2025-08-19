@@ -16,7 +16,7 @@ export default function Page() {
   const { status } = useAccount()
 
   const { data: eligibility } = useEligibleForTokens()
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
 
   const getMainSection = function () {
     if (status === 'disconnected') {

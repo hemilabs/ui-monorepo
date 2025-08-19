@@ -67,7 +67,7 @@ export const Strategy = function ({
     lockupMonths,
   })
   const hemiToken = useHemiToken()
-  const t = useTranslations('rewards-page.claim-options')
+  const t = useTranslations('genesis-drop.claim-options')
 
   const handleSubmit = function (e: FormEvent) {
     e.preventDefault()

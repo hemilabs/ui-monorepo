@@ -1,6 +1,6 @@
 'use client'
 
-import { useHemiToken } from 'app/[locale]/claim/_hooks/useHemiToken'
+import { useHemiToken } from 'app/[locale]/genesis-drop/_hooks/useHemiToken'
 import Skeleton from 'react-loading-skeleton'
 
 import {

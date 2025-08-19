@@ -39,7 +39,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
     undefined,
   )
   const [claimStatus, setClaimStatus] = useState<MutationStatus>('idle')
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
 
   const closeDrawer = function () {
     setTermsAndConditions({ lockup: undefined, show: false })

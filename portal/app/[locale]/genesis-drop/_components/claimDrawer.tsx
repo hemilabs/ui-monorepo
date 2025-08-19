@@ -41,7 +41,7 @@ export const ClaimDrawer = function ({
   const hemi = useHemi()
   const hemiToken = useHemiToken()
   const tCommon = useTranslations('common')
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
 
   const {
     fees: claimGasFees = BigInt(0),

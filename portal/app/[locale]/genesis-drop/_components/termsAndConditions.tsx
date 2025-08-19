@@ -55,11 +55,11 @@ export const TermsAndConditions = function ({ onAccept, onClose }: Props) {
       <div className="max-w-120 relative w-full bg-neutral-50">
         <div className="shadow-claim-page-high relative z-10 rounded-lg bg-white">
           <h3 className="px-6 py-4 text-lg font-semibold  text-neutral-950">
-            {t('rewards-page.terms-and-conditions.title')}
+            {t('genesis-drop.terms-and-conditions.title')}
           </h3>
           <div className="h-px w-full border-b border-solid border-b-neutral-300/55" />
           <p className="h-80 p-6 text-sm font-normal text-neutral-500">
-            {t('rewards-page.terms-and-conditions.terms')}
+            {t('genesis-drop.terms-and-conditions.terms')}
           </p>
         </div>
         <form

@@ -10,7 +10,7 @@ type Props = {
 
 export const ClaimToast = function ({ transactionHash }: Props) {
   const hemi = useHemi()
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
   return (
     <Toast
       description={t('here-is-your-claim-tx')}

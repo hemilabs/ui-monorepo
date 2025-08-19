@@ -6,6 +6,8 @@ import {
   encodeFunctionData,
   isAddress,
   zeroAddress,
+  isHex,
+  Hex,
 } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
@@ -44,8 +46,11 @@ const formatRatio = function (ratio: number) {
   return BigInt(Math.round(roundedRatio * 100))
 }
 
-const isProofValid = (proof: unknown): proof is Hash[] =>
-  !!proof && Array.isArray(proof) && proof.length > 0
+const isProofValid = (proof: unknown): proof is Hex[] =>
+  !!proof &&
+  Array.isArray(proof) &&
+  proof.length > 0 &&
+  proof.every(p => isHex(p))
 
 const isClaimGroupIdValid = (claimGroupId: unknown): claimGroupId is number =>
   typeof claimGroupId === 'number' && claimGroupId >= 0

@@ -257,6 +257,22 @@ describe('claimTokens', function () {
     )
   })
 
+  it('should emit "claim-failed-validation" if proof is not an array of hex values', async function () {
+    const { emitter, promise } = claimTokens({
+      ...validParameters,
+      proof: [123, 456],
+    })
+
+    const failedValidation = vi.fn()
+    emitter.on('claim-failed-validation', failedValidation)
+
+    await promise
+
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'Invalid proof format',
+    )
+  })
+
   it('should emit "claim-failed-validation" if proof is not an array', async function () {
     const { emitter, promise } = claimTokens({
       ...validParameters,

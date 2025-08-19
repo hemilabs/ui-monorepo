@@ -20,8 +20,7 @@ const GenesisDropImpl = function () {
     <li className="[&>div]:px-2">
       <ItemLink
         event="nav - genesis drop"
-        // TODO update URL and move files
-        href="/claim"
+        href="/genesis-drop"
         icon={<GenesisDropIcon />}
         text={t('genesis-drop')}
       />

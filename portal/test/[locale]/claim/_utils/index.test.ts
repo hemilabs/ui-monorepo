@@ -1,4 +1,4 @@
-import { calculateSplitAmount } from 'app/[locale]/claim/_utils'
+import { calculateSplitAmount } from 'app/[locale]/genesis-drop/_utils'
 import { describe, expect, it } from 'vitest'
 
 // 1 token with 18 decimals

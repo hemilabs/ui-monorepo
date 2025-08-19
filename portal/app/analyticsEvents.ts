@@ -75,6 +75,8 @@ const analyticsEvents = [
   'stake - unstake failed',
   'stake - unstake started',
   'stake - unstake success',
+  // /staking-dashboard
+  'staking dashboard - polyfill DurationFormat',
   // /transaction-history
   'txn refresh',
   'txn filter - all',

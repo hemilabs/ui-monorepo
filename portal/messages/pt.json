@@ -196,11 +196,14 @@
     "sub-heading": "Aprenda e explore com o ecossistema de desenvolvedores Hemi",
     "table": {
       "apy": "TEA",
+      "connect-to-hemi": "Conecte à {network} para ver as suas posições de stake.",
+      "connect-to-stake": "Conecte a sua carteira para ver o seu HEMI em stake.",
       "get-started": "Comece a fazer stake com seu HEMI",
       "no-hemi-staked": "Sem HEMI staked",
       "time-remaining": "Tempo restante",
       "tx": "Tx",
-      "unlock": "Desbloquear"
+      "unlock": "Desbloquear",
+      "unlocks-on": "Desbloqueia em {date}"
     }
   },
   "metadata": {

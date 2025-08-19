@@ -8,17 +8,25 @@ import {
 } from '@tanstack/react-table'
 import { Card } from 'components/card'
 import { ErrorBoundary } from 'components/errorBoundary'
+import { TxLink } from 'components/txLink'
+import { useHemi } from 'hooks/useHemi'
+import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakingPosition } from 'types/stakingDashboard'
+import { walletIsConnected } from 'utils/wallet'
+import { useAccount } from 'wagmi'
 
 import { Amount } from '../amount'
 import { Column, ColumnHeader, Header } from '../table'
 
-import { CircularProgress } from './circularProgress'
+import { ConnectWallet } from './connectWallet'
+import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
+import { TimeRemaining } from './timeRemaining'
+import { UnsupportedChain } from './unsupportedChain'
 
 // created here so there's a stable reference between renders when using it
 const emptyData = new Array(4).fill(null)
@@ -27,62 +35,65 @@ const columnsBuilder = (
   t: ReturnType<typeof useTranslations<'staking-dashboard'>>,
 ): ColumnDef<StakingPosition>[] => [
   {
-    cell: () => (
+    cell: ({ row }) => (
       <div className="flex items-center justify-center gap-x-2">
         <ErrorBoundary
           fallback={<span className="text-sm text-neutral-950">-</span>}
         >
-          {/* TODO - This is just a placeholder.
-          this will be updated in upcoming PRs */}
-          <Amount amount="1" chainId={743111} tokenAddress="0xabc" />
+          <Amount operation={row.original} />
         </ErrorBoundary>
       </div>
     ),
     header: () => <Header text={t('amount')} />,
     id: 'amount',
-    meta: { className: 'justify-start', width: '200px' },
+    meta: { width: '200px' },
   },
   {
-    cell: () => <div className="flex items-center justify-end">0xabc</div>,
-    header: () => (
-      <div className="mr-8">
-        <Header text={t('table.tx')} />
-      </div>
-    ),
+    cell: function ExplorerLink({ row }) {
+      const hemi = useHemi()
+      return (
+        <div className="flex items-center">
+          <TxLink chainId={hemi.id} txHash={row.original.transactionHash} />
+        </div>
+      )
+    },
+    header: () => <Header text={t('table.tx')} />,
     id: 'tx',
-    meta: { width: '180px' },
+    meta: { width: '150px' },
   },
   {
+    // TODO define apy - using a hardcoded value for the time being
     cell: () => <span className="text-emerald-600">9.8</span>,
     header: () => <Header text={t('table.apy')} />,
     id: 'apy',
     meta: { width: '42px' },
   },
   {
-    cell: () => <span className="text-neutral-500">12</span>,
+    cell: ({ row }) => (
+      <ErrorBoundary
+        fallback={<span className="text-sm text-neutral-950">-</span>}
+      >
+        <LockupTime lockupTime={row.original.lockTime} />
+      </ErrorBoundary>
+    ),
     header: () => <Header text={t('lockup-period')} />,
     id: 'lockup-period',
-    meta: { width: '140px' },
+    meta: { width: '120px' },
   },
   {
-    cell: () => (
-      <div className="flex items-center justify-end gap-x-2">
-        <CircularProgress percentage={10} />
-        <span className="text-neutral-950">10</span>
-      </div>
-    ),
+    cell: ({ row }) => <TimeRemaining operation={row.original} />,
     header: () => <Header text={t('table.time-remaining')} />,
     id: 'time-remaining',
-    meta: { width: '140px' },
+    meta: { width: '170px' },
   },
 ]
 
 type StakeTableImpProps = {
-  data: StakingPosition[]
+  data: StakingPosition[] | undefined
   loading: boolean
 }
 
-const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
+const StakeTableImp = function ({ data = [], loading }: StakeTableImpProps) {
   const t = useTranslations('staking-dashboard')
   const { width } = useWindowSize()
 
@@ -124,9 +135,7 @@ const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
           <tr className="flex w-full items-center" key={headerGroup.id}>
             {headerGroup.headers.map(header => (
               <ColumnHeader
-                className={
-                  header.column.columnDef.meta?.className ?? 'justify-end'
-                }
+                className="justify-start"
                 key={header.id}
                 style={{ width: header.column.columnDef.meta?.width }}
               >
@@ -144,9 +153,7 @@ const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
           <tr className="group/stake-row flex items-center" key={row.id}>
             {row.getVisibleCells().map(cell => (
               <Column
-                className={
-                  cell.column.columnDef.meta?.className ?? 'justify-end'
-                }
+                className="justify-start"
                 key={cell.id}
                 style={{ width: cell.column.columnDef.meta?.width }}
               >
@@ -161,12 +168,32 @@ const StakeTableImp = function ({ data, loading }: StakeTableImpProps) {
 }
 
 type Props = {
-  data: StakingPosition[]
+  data: StakingPosition[] | undefined
   loading: boolean
 }
 
 export const StakeTable = function ({ data, loading }: Props) {
-  const isEmpty = data.length === 0 && !loading
+  const { status } = useAccount()
+  const hemi = useHemi()
+  const isEmpty = data?.length === 0 && !loading
+
+  const connectedToHemi = useIsConnectedToExpectedNetwork(hemi.id)
+
+  const getContent = function () {
+    if (!walletIsConnected(status)) {
+      return <ConnectWallet />
+    }
+    if (status === 'connecting') {
+      return <Skeleton className="h-[calc(100%-3px)] w-full rounded-2xl" />
+    }
+    if (!connectedToHemi) {
+      return <UnsupportedChain />
+    }
+    if (isEmpty) {
+      return <NoPositionStaked />
+    }
+    return <StakeTableImp data={data} loading={loading} />
+  }
 
   return (
     <div className="w-full rounded-2xl bg-neutral-100 text-sm font-medium">
@@ -180,11 +207,7 @@ export const StakeTable = function ({ data, loading }: Props) {
             scrollbarWidth: 'thin',
           }}
         >
-          {isEmpty ? (
-            <NoPositionStaked />
-          ) : (
-            <StakeTableImp data={data} loading={loading} />
-          )}
+          {getContent()}
         </div>
       </Card>
     </div>

@@ -60,11 +60,13 @@ export const UnsupportedChain = function () {
           size="xSmall"
           type="button"
         >
-          {t('common.connect-to-supported-network')}
+          {t('common.connect-to-network', { network: hemi.name })}
         </Button>
       }
       icon={<Icon />}
-      subtitle={t('transaction-history.unsupported-chain-subheading')}
+      subtitle={t('staking-dashboard.table.connect-to-hemi', {
+        network: hemi.name,
+      })}
       title={t('common.unsupported-chain-heading')}
     />
   )

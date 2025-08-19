@@ -2,6 +2,7 @@ import {
   formatBtcAddress,
   formatEvmAddress,
   formatEvmHash,
+  formatFutureTime,
   formatPastTime,
   formatTVL,
 } from 'utils/format'
@@ -89,9 +90,72 @@ describe('utils/format', function () {
     ]
 
     it.each(cases)(
-      'should return correct relative time for %i seconds in %s locale',
+      'should return correct past relative time for %i seconds in %s locale',
       function (seconds: number, locale: string, expected: string) {
         const result = formatPastTime(seconds, locale)
+        expect(result).toBe(expected)
+      },
+    )
+  })
+
+  describe('formatFutureTime', function () {
+    const cases = [
+      [1, 'en', 'in 1 second'],
+      [10, 'en', 'in 10 seconds'],
+      [59, 'en', 'in 59 seconds'],
+      [60, 'en', 'in 1 minute'],
+      [119, 'en', 'in 2 minutes'],
+      [120, 'en', 'in 2 minutes'],
+      [3600, 'en', 'in 1 hour'],
+      [7200, 'en', 'in 2 hours'],
+      [86400, 'en', 'in 1 day'],
+      [172800, 'en', 'in 2 days'],
+      [604800, 'en', 'in 1 week'],
+      [1209600, 'en', 'in 2 weeks'],
+      [2592000, 'en', 'in 1 month'],
+      [5184000, 'en', 'in 2 months'],
+      [31162468, 'en', 'in 1 year'],
+      [30328739, 'en', 'in 1 year'],
+      [31536000, 'en', 'in 1 year'],
+      [63072000, 'en', 'in 2 years'],
+      [1, 'es', 'dentro de 1 segundo'],
+      [10, 'es', 'dentro de 10 segundos'],
+      [59, 'es', 'dentro de 59 segundos'],
+      [60, 'es', 'dentro de 1 minuto'],
+      [119, 'es', 'dentro de 2 minutos'],
+      [120, 'es', 'dentro de 2 minutos'],
+      [3600, 'es', 'dentro de 1 hora'],
+      [7200, 'es', 'dentro de 2 horas'],
+      [86400, 'es', 'dentro de 1 día'],
+      [172800, 'es', 'dentro de 2 días'],
+      [604800, 'es', 'dentro de 1 semana'],
+      [1209600, 'es', 'dentro de 2 semanas'],
+      [2592000, 'es', 'dentro de 1 mes'],
+      [5184000, 'es', 'dentro de 2 meses'],
+      [31536000, 'es', 'dentro de 1 año'],
+      [63072000, 'es', 'dentro de 2 años'],
+      [1, 'pt', 'em 1 segundo'],
+      [10, 'pt', 'em 10 segundos'],
+      [59, 'pt', 'em 59 segundos'],
+      [60, 'pt', 'em 1 minuto'],
+      [119, 'pt', 'em 2 minutos'],
+      [120, 'pt', 'em 2 minutos'],
+      [3600, 'pt', 'em 1 hora'],
+      [7200, 'pt', 'em 2 horas'],
+      [86400, 'pt', 'em 1 dia'],
+      [172800, 'pt', 'em 2 dias'],
+      [604800, 'pt', 'em 1 semana'],
+      [1209600, 'pt', 'em 2 semanas'],
+      [2592000, 'pt', 'em 1 mês'],
+      [5184000, 'pt', 'em 2 meses'],
+      [31536000, 'pt', 'em 1 ano'],
+      [63072000, 'pt', 'em 2 anos'],
+    ]
+
+    it.each(cases)(
+      'should return correct future relative time for %i seconds in %s locale',
+      function (seconds: number, locale: string, expected: string) {
+        const result = formatFutureTime(seconds, locale)
         expect(result).toBe(expected)
       },
     )

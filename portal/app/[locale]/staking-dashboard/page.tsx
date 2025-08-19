@@ -6,14 +6,13 @@ import { useTranslations } from 'next-intl'
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
 import { useStakingDashboardState } from './_hooks/useStakingDashboardState'
+import { useStakingPositions } from './_hooks/useStakingPositions'
 
 function Page() {
   const t = useTranslations('staking-dashboard')
-  const stakingDashboardState = useStakingDashboardState()
+  const state = useStakingDashboardState()
 
-  const props = {
-    state: stakingDashboardState,
-  }
+  const { data, isLoading } = useStakingPositions()
 
   return (
     <PageLayout variant="superWide">
@@ -24,12 +23,12 @@ function Page() {
         <p className="text-sm font-normal text-neutral-500">
           {t('sub-heading')}
         </p>
-        <div className="mt-8 flex flex-col-reverse gap-6 md:flex-row">
-          <div className="w-full md:w-1/2 lg:w-3/5">
-            <StakeTable data={[]} loading={false} />
+        <div className="mt-8 flex flex-col-reverse gap-6 lg:flex-row">
+          <div className="w-full lg:w-1/2 lg:flex-initial 2xl:w-full">
+            <StakeTable data={data} loading={isLoading} />
           </div>
-          <div className="w-full md:w-1/2 lg:w-2/5">
-            <StakeForm {...props} />
+          <div className="w-full lg:w-fit lg:flex-auto lg:flex-shrink-0 lg:basis-1/2 2xl:w-fit 2xl:flex-none">
+            <StakeForm state={state} />
           </div>
         </div>
       </div>

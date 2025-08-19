@@ -17,14 +17,6 @@ export type ClaimEvents = CommonEvents & {
   'user-signing-claim-error': [Error]
 }
 
-// Claim option types as defined in requirements
-// "user-selection" means the user can select, but for the others it means the option is fixed
-export type ClaimOption =
-  | 'standard'
-  | 'hybrid'
-  | 'full-stake'
-  | 'user-selection'
-
 export const lockupOptions = {
   // I prefer to sort these in time-based order
   /* eslint-disable sort-keys */
@@ -46,6 +38,5 @@ export type EligibilityData = {
   address: string
   amount: string
   claimGroupId: number
-  option: ClaimOption
   proof: Hash[]
 }

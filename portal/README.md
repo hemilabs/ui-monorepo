@@ -51,7 +51,7 @@ NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET=2 # Vault index to use for bitcoin in 
 NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=1 # Vault index to use for bitcoin in hemi sepolia. Defaults to 0
 # Use these with UTC timestamps - at that time, Genesis Drop becomes enabled in the frontend
 NEXT_PUBLIC_GENESIS_DROP_ENABLE_HEMI_TIMESTAMP=<number>
-NEXT_PUBLIC_GENESIS_DROP_ENABLE_HEMI_SEPOLIA_TIMESTAMP=<mumber>
+NEXT_PUBLIC_GENESIS_DROP_ENABLE_HEMI_SEPOLIA_TIMESTAMP=<number>
 # Backend API URL
 NEXT_PUBLIC_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
 # Subgraphs endpoint ID

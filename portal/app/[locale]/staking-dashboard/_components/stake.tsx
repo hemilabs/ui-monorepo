@@ -1,5 +1,6 @@
 'use client'
 
+import { useHemiToken } from 'app/[locale]/genesis-drop/_hooks/useHemiToken'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
 import { ToastLoader } from 'components/toast/toastLoader'
@@ -10,10 +11,7 @@ import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import {
-  StakingDashboardStatus,
-  StakingDashboardToken,
-} from 'types/stakingDashboard'
+import { StakingDashboardStatus } from 'types/stakingDashboard'
 import { getTotal } from 'utils/getTotal'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
@@ -23,12 +21,9 @@ import { getVeHemiContractAddress } from 've-hemi-actions'
 import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
+import { useStakingDashboard } from '../_context/stakingDashboardContext'
 import { useEstimateCreateLockFees } from '../_hooks/useEstimateCreateLockFees'
 import { useStake } from '../_hooks/useStake'
-import {
-  StakingDashboardStake,
-  TypedStakingDashboardState,
-} from '../_hooks/useStakingDashboardState'
 import { daysToSeconds } from '../_utils/lockCreationTimes'
 
 import { FormContent, StakingForm } from './form'
@@ -50,12 +45,8 @@ const StakeToast = dynamic(
 
 type OperationRunning = 'idle' | 'approving' | 'staking'
 
-type StakeProps = {
-  state: TypedStakingDashboardState<StakingDashboardStake>
-  token: StakingDashboardToken
-}
-
-export const Stake = function ({ state, token }: StakeProps) {
+export const Stake = function () {
+  const token = useHemiToken()
   const t = useTranslations()
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
@@ -68,7 +59,7 @@ export const Stake = function ({ state, token }: StakeProps) {
     stakingDashboardOperation,
     updateInput,
     updateStakingDashboardOperation,
-  } = state
+  } = useStakingDashboard()
 
   const { chainId, status } = useEvmAccount()
   const hemi = useHemi()
@@ -214,8 +205,6 @@ export const Stake = function ({ state, token }: StakeProps) {
                 token={token}
               />
             }
-            stakingDashboardState={state}
-            token={token}
           />
         }
         onSubmit={handleStake}

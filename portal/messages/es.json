@@ -218,6 +218,13 @@
   },
   "staking-dashboard": {
     "amount": "Cantidad",
+    "drawer": {
+      "approving": "Aprobando {symbol}",
+      "heading": "Revisar Stake",
+      "subheading": "Revise y confirme su stake.",
+      "stake-token": "Hacer stake de {symbol}",
+      "try-again": "Intentar de nuevo"
+    },
     "form": {
       "allowance-load-failed": "No se pudo cargar el monto autorizado",
       "approve-and-stake": "Aprobar y Hacer Stake",

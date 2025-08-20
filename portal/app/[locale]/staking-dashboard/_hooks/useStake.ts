@@ -16,6 +16,8 @@ import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
 
+import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
+
 type UseStake = {
   input: string
   lockupDays: number
@@ -33,6 +35,7 @@ export const useStake = function ({
 }: UseStake) {
   const amount = parseTokenUnits(input, token)
 
+  const { setDrawerQueryString } = useDrawerStakingQueryString()
   const { address } = useAccount()
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
   const queryClient = useQueryClient()
@@ -71,7 +74,9 @@ export const useStake = function ({
         updateStakingDashboardOperation({
           approvalTxHash,
           status: StakingDashboardStatus.APPROVAL_TX_PENDING,
+          transactionHash: undefined,
         })
+        setDrawerQueryString('staking')
       })
       emitter.on('approve-transaction-reverted', function (receipt) {
         updateStakingDashboardOperation({
@@ -92,6 +97,12 @@ export const useStake = function ({
         updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_PENDING,
           transactionHash,
+        })
+        setDrawerQueryString('staking')
+      })
+      emitter.on('user-signing-lock-creation-error', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
         })
       })
       emitter.on('lock-creation-transaction-succeeded', function (receipt) {

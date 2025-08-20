@@ -1,11 +1,11 @@
+import { useHemiToken } from 'app/[locale]/genesis-drop/_hooks/useHemiToken'
 import { Card } from 'components/card'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
-import { StakingDashboardToken } from 'types/stakingDashboard'
 
-import { useStakingDashboardState } from '../_hooks/useStakingDashboardState'
+import { useStakingDashboard } from '../_context/stakingDashboardContext'
 
 import { Lockup } from './lockup'
 
@@ -13,18 +13,15 @@ type FormContentProps = {
   errorKey: string | undefined
   isRunningOperation: boolean
   setMaxBalanceButton: ReactNode
-  stakingDashboardState: ReturnType<typeof useStakingDashboardState>
-  token: StakingDashboardToken
 }
 
 export const FormContent = function ({
   errorKey,
   isRunningOperation,
   setMaxBalanceButton,
-  stakingDashboardState,
-  token,
 }: FormContentProps) {
-  const { input, updateInput } = stakingDashboardState
+  const token = useHemiToken()
+  const { input, updateInput } = useStakingDashboard()
 
   const t = useTranslations('staking-dashboard')
 
@@ -46,7 +43,7 @@ export const FormContent = function ({
         tokenSelector={<TokenSelectorReadOnly token={token} />}
         value={input}
       />
-      <Lockup stakingDashboardState={stakingDashboardState} />
+      <Lockup />
     </>
   )
 }

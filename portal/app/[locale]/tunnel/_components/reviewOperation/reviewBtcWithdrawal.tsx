@@ -1,6 +1,7 @@
 'use client'
 
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
+import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
@@ -21,8 +22,6 @@ import { useEstimateChallengeBtcWithdrawFees } from '../../_hooks/useEstimateBtc
 import { useEstimateBtcWithdrawFees } from '../../_hooks/useEstimateBtcWithdrawFees'
 import { ChallengeBtcWithdrawal } from '../challengeBtcWithdrawal'
 import { RetryBtcWithdraw } from '../retryBtcWithdraw'
-
-import { ChainLabel } from './chainLabel'
 
 const getCallToAction = function (withdrawal: ToBtcWithdrawOperation) {
   switch (withdrawal.status) {

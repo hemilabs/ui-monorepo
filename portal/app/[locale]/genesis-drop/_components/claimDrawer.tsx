@@ -5,10 +5,10 @@ import { Operation } from 'components/reviewOperation/operation'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { LockupMonths, type EligibilityData } from 'genesis-drop-actions'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { FormEvent } from 'react'
-import { LockupMonths, type EligibilityData } from 'tge-claim'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits, Hash } from 'viem'
 
@@ -41,7 +41,7 @@ export const ClaimDrawer = function ({
   const hemi = useHemi()
   const hemiToken = useHemiToken()
   const tCommon = useTranslations('common')
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
 
   const {
     fees: claimGasFees = BigInt(0),

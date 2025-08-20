@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import fetch from 'fetch-plus-plus'
+import { EligibilityData } from 'genesis-drop-actions'
 import { useHemi } from 'hooks/useHemi'
-import { EligibilityData } from 'tge-claim'
 import { useAccount } from 'wagmi'
 
 const portalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL

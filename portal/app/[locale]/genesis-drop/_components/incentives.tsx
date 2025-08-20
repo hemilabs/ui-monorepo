@@ -9,7 +9,7 @@ const classNameHover =
   'group-hover/container:[&>path]:fill-white group-hover/container:[&>rect]:fill-neutral-950'
 
 export const Incentives = function () {
-  const t = useTranslations('rewards-page.claim-options')
+  const t = useTranslations('genesis-drop.claim-options')
   return (
     <>
       <Tooltip

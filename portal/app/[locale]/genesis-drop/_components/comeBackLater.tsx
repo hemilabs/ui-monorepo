@@ -62,7 +62,7 @@ function usePageVisitTracker() {
 export const ComeBackLater = function () {
   const hemiToken = useHemiToken()
   const hasVisited = usePageVisitTracker()
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
 
   return (
     <>

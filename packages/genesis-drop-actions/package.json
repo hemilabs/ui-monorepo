@@ -1,9 +1,10 @@
 {
-  "name": "tge-claim",
+  "name": "genesis-drop-actions",
   "version": "1.0.0",
-  "description": "Hemi TGE Claim Actions",
+  "description": "Hemi Genesis Drop Actions",
   "keywords": [
     "claim",
+    "genesis drop",
     "hemi",
     "hemilabs",
     "tge",

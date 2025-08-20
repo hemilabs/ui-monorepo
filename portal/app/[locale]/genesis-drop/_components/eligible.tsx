@@ -1,6 +1,6 @@
 import { Spinner } from 'components/spinner'
+import { type EligibilityData } from 'genesis-drop-actions'
 import { useTranslations } from 'next-intl'
-import { type EligibilityData } from 'tge-claim'
 
 import { useHemiToken } from '../_hooks/useHemiToken'
 import { useIsClaimable } from '../_hooks/useIsClaimable'
@@ -18,7 +18,7 @@ type Props = {
 export const Eligible = function ({ eligibility }: Props) {
   const { data: isClaimable } = useIsClaimable(eligibility)
   const hemiToken = useHemiToken()
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
 
   const amount = formatHemi(BigInt(eligibility.amount), hemiToken.decimals)
   const claimGroupIdAvailable = eligibility.claimGroupId !== undefined

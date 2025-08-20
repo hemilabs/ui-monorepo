@@ -1,12 +1,12 @@
 'use client'
 
 import { ButtonLink } from 'components/button'
+import { EligibilityData, LockupMonths } from 'genesis-drop-actions'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect } from 'react'
 import ConfettiExplosion from 'react-confetti-explosion'
 import Skeleton from 'react-loading-skeleton'
-import { EligibilityData, LockupMonths } from 'tge-claim'
 import useLocalStorageState from 'use-local-storage-state'
 import { useAccount } from 'wagmi'
 
@@ -93,7 +93,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
 
   const hasVisited = usePageVisitTracker(eligibility.claimGroupId)
 
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
 
   const claimTitle: Record<LockupMonths, string> = {
     6: t('claim-options.standard-claim'),

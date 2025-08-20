@@ -206,7 +206,7 @@ type Props =
     }
 
 export const EligibilityStatus = function (props: Props) {
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
 
   if (props.status === 'not-eligible') {
     return <Text value={t('not-eligible')} />

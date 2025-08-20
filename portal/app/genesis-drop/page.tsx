@@ -8,6 +8,6 @@ const LocalePageRedirect = dynamic(
   { ssr: false },
 )
 
-const Page = () => <LocalePageRedirect redirectPage="/claim" />
+const Page = () => <LocalePageRedirect redirectPage="/genesis-drop" />
 
 export default Page

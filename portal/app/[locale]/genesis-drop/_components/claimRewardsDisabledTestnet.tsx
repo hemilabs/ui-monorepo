@@ -48,7 +48,7 @@ const Icon = () => (
 
 export const ClaimRewardsDisabledTestnet = function () {
   const pathname = usePathname()
-  const t = useTranslations('rewards-page')
+  const t = useTranslations('genesis-drop')
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-y-1">
       <Icon />

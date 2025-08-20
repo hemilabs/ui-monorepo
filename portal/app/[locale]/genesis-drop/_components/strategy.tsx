@@ -1,8 +1,8 @@
 import { SparklesIcon } from 'components/icons/sparkles'
+import { LockupMonths } from 'genesis-drop-actions'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { LockupMonths } from 'tge-claim'
 
 import { useClaimGroupConfiguration } from '../_hooks/useClaimGroupConfiguration'
 import { useHemiToken } from '../_hooks/useHemiToken'
@@ -67,7 +67,7 @@ export const Strategy = function ({
     lockupMonths,
   })
   const hemiToken = useHemiToken()
-  const t = useTranslations('rewards-page.claim-options')
+  const t = useTranslations('genesis-drop.claim-options')
 
   const handleSubmit = function (e: FormEvent) {
     e.preventDefault()

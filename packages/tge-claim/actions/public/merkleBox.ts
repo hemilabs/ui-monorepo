@@ -1,21 +1,19 @@
-import { Address, Chain, PublicClient, WalletClient } from 'viem'
+import { Chain, PublicClient, WalletClient } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { merkleBoxAbi, getMerkleBoxAddress } from '../../contracts/merkleBox'
 import { EligibilityData, LockupMonths } from '../../types/claim'
 
 export const isClaimable = ({
-  account,
+  address,
   amount,
   chainId,
+  claimGroupId,
   client,
-  eligibility,
-}: {
-  account: Address
-  amount: bigint
+  proof,
+}: EligibilityData & {
   chainId: Chain['id']
   client: PublicClient | WalletClient
-  eligibility: EligibilityData
 }) =>
   // Check if the claim is valid and claimable using isClaimable with user-provided amount
   // Using @ts-expect-error fails to compile so I need to use @ts-ignore
@@ -24,36 +22,30 @@ export const isClaimable = ({
   readContract(client, {
     abi: merkleBoxAbi,
     address: getMerkleBoxAddress(chainId),
-    args: [
-      BigInt(eligibility.claimGroupId),
-      account,
-      amount,
-      eligibility.proof,
-    ],
+    args: [BigInt(claimGroupId), address, amount, proof],
     functionName: 'isClaimable',
   })
 
 // Check if the claim is valid on-chain
 export const checkIsClaimable = async function ({
-  account,
+  address,
   amount,
   chainId,
+  claimGroupId,
   client,
-  eligibility,
-}: {
-  account: Address
-  amount: bigint
+  proof,
+}: EligibilityData & {
   chainId: Chain['id']
   client: PublicClient | WalletClient
-  eligibility: EligibilityData
 }): Promise<{ canClaim: true } | { canClaim: false; reason: string }> {
   try {
     const canClaim = await isClaimable({
-      account,
+      address,
       amount,
       chainId,
+      claimGroupId,
       client,
-      eligibility,
+      proof,
     })
 
     if (!canClaim) {

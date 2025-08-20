@@ -42,7 +42,7 @@ const Description = ({
 )
 
 type Props = {
-  amount: string
+  amount: bigint
   bgColor: string
   claimGroupId: number
   heading: string
@@ -101,7 +101,7 @@ export const Strategy = function ({
     const { bonus: bonusPercentage, lockupRatio } = data
 
     const amounts = calculateSplitAmount({
-      amount: BigInt(amount),
+      amount,
       bonusPercentage,
       lockupRatio,
     })

@@ -18,7 +18,7 @@ export const useClaimTokens = function (options?: {
   on(emitter: EventEmitter<ClaimEvents>): void
 }) {
   const { address } = useAccount()
-  const eligibility = useEligibleForTokens()
+  const { data: eligibility } = useEligibleForTokens()
   const hemi = useHemi()
   const connectedToHemi = useIsConnectedToExpectedNetwork(hemi.id)
   const { hemiWalletClient } = useHemiWalletClient()
@@ -41,8 +41,10 @@ export const useClaimTokens = function (options?: {
 
   const isClaimableKey = getIsClaimableQueryKey({
     address,
-    eligibility,
+    amount: eligibility.amount,
+    claimGroupId: eligibility.claimGroupId,
     hemiId: hemi.id,
+    proof: eligibility.proof,
   })
 
   return useMutation({
@@ -60,9 +62,11 @@ export const useClaimTokens = function (options?: {
       }
 
       const { emitter, promise } = claimTokens({
-        account: address!,
+        address,
         amount: BigInt(eligibility.amount),
+        claimGroupId: eligibility.claimGroupId,
         lockupMonths,
+        proof: eligibility.proof,
         ratio,
         termsSignature,
         walletClient: hemiWalletClient,

@@ -11,6 +11,7 @@ import { useTranslations } from 'next-intl'
 import { Badge } from '../badge'
 
 import { Dex } from './_components/dex'
+import { GenesisDrop } from './_components/genesisDrop'
 import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
@@ -57,6 +58,9 @@ export const Navbar = function () {
           </PaddedListItem>
           <PaddedListItem>
             <Dex />
+          </PaddedListItem>
+          <PaddedListItem>
+            <GenesisDrop />
           </PaddedListItem>
           <li>
             <ItemAccordion

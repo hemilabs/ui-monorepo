@@ -43,6 +43,7 @@ const analyticsEvents = [
   'nav - ecosystem',
   'nav - explorer',
   'nav - hbk',
+  'nav - genesis drop',
   'nav - get started',
   'nav - staking dashboard',
   'nav - network status',

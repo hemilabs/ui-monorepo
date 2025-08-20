@@ -32,26 +32,16 @@ vi.mock('../contracts/merkleBox', async function (importOriginal) {
   }
 })
 
-vi.mock('../utils/airdrop.json', () => ({
-  default: [
-    {
-      address: '0x1234567890123456789012345678901234567890',
-      amount: '1000000000000000000',
-      claimGroupId: 1,
-      option: 'standard' as const,
-      proof: [zeroHash, zeroHash],
-    },
-  ],
-}))
-
 const mockWalletClient = {
   chain: hemiSepolia,
 } as unknown as WalletClient
 
 const validParameters = {
-  account: '0x1234567890123456789012345678901234567890' as const,
+  address: '0x1234567890123456789012345678901234567890' as const,
   amount: BigInt('1000000000000000000'),
+  claimGroupId: 1,
   lockupMonths: 6,
+  proof: [zeroHash, zeroHash],
   ratio: 75.5,
   termsSignature: zeroHash,
   walletClient: mockWalletClient,
@@ -90,27 +80,10 @@ describe('claimTokens', function () {
     )
   })
 
-  it('should emit "claim-failed-validation" if the amount exceeds eligibility', async function () {
-    const { emitter, promise } = claimTokens({
-      ...validParameters,
-      // More than eligible amount
-      amount: validParameters.amount + BigInt(1),
-    })
-
-    const failedValidation = vi.fn()
-    emitter.on('claim-failed-validation', failedValidation)
-
-    await promise
-
-    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
-      'Amount exceeds maximum claimable allocation',
-    )
-  })
-
   it('should emit "claim-failed-validation" if the account is not a valid address', async function () {
     const { emitter, promise } = claimTokens({
       ...validParameters,
-      account: 'invalid-address',
+      address: 'invalid-address',
     })
 
     const failedValidation = vi.fn()
@@ -126,7 +99,7 @@ describe('claimTokens', function () {
   it('should emit "claim-failed-validation" if the account is zero address', async function () {
     const { emitter, promise } = claimTokens({
       ...validParameters,
-      account: zeroAddress,
+      address: zeroAddress,
     })
 
     const failedValidation = vi.fn()
@@ -155,23 +128,6 @@ describe('claimTokens', function () {
 
     expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
       'Invalid chain ID - only Hemi networks are supported',
-    )
-  })
-
-  it('should emit "claim-failed-validation" if the address is not eligible', async function () {
-    const { emitter, promise } = claimTokens({
-      ...validParameters,
-      // different address
-      account: '0x1234567890123456789012345678901234888888',
-    })
-
-    const failedValidation = vi.fn()
-    emitter.on('claim-failed-validation', failedValidation)
-
-    await promise
-
-    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
-      'Address is not eligible for claiming',
     )
   })
 
@@ -253,6 +209,163 @@ describe('claimTokens', function () {
     )
   })
 
+  it('should emit "claim-failed-validation" if claimGroupId is negative', async function () {
+    const { emitter, promise } = claimTokens({
+      ...validParameters,
+      claimGroupId: -1,
+    })
+
+    const failedValidation = vi.fn()
+    emitter.on('claim-failed-validation', failedValidation)
+
+    await promise
+
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'Invalid claim group ID',
+    )
+  })
+
+  it('should emit "claim-failed-validation" if claimGroupId is not a number', async function () {
+    const { emitter, promise } = claimTokens({
+      ...validParameters,
+      claimGroupId: 'invalid',
+    })
+
+    const failedValidation = vi.fn()
+    emitter.on('claim-failed-validation', failedValidation)
+
+    await promise
+
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'Invalid claim group ID',
+    )
+  })
+
+  it('should emit "claim-failed-validation" if proof is empty array', async function () {
+    const { emitter, promise } = claimTokens({
+      ...validParameters,
+      proof: [],
+    })
+
+    const failedValidation = vi.fn()
+    emitter.on('claim-failed-validation', failedValidation)
+
+    await promise
+
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'Invalid proof format',
+    )
+  })
+
+  it('should emit "claim-failed-validation" if proof is not an array of hex values', async function () {
+    const { emitter, promise } = claimTokens({
+      ...validParameters,
+      proof: [123, 456],
+    })
+
+    const failedValidation = vi.fn()
+    emitter.on('claim-failed-validation', failedValidation)
+
+    await promise
+
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'Invalid proof format',
+    )
+  })
+
+  it('should emit "claim-failed-validation" if proof is not an array', async function () {
+    const { emitter, promise } = claimTokens({
+      ...validParameters,
+      proof: null,
+    })
+
+    const failedValidation = vi.fn()
+    emitter.on('claim-failed-validation', failedValidation)
+
+    await promise
+
+    expect(failedValidation).toHaveBeenCalledExactlyOnceWith(
+      'Invalid proof format',
+    )
+  })
+  it('should accept valid claimGroupId (0 and positive numbers)', async function () {
+    const receipt = {
+      status: 'success',
+    } as TransactionReceipt
+
+    vi.mocked(readContract).mockResolvedValue(true)
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue(receipt)
+
+    const { emitter, promise } = claimTokens({
+      ...validParameters,
+      claimGroupId: 0, // Should be valid
+    })
+
+    const onClaimTransactionSucceeded = vi.fn()
+    emitter.on('claim-transaction-succeeded', onClaimTransactionSucceeded)
+
+    await promise
+
+    expect(onClaimTransactionSucceeded).toHaveBeenCalledExactlyOnceWith(receipt)
+
+    expect(writeContract).toHaveBeenCalledWith(
+      mockWalletClient,
+      expect.objectContaining({
+        args: [
+          BigInt(0), // claimGroupId should be 0
+          validParameters.address,
+          validParameters.amount,
+          [zeroHash, zeroHash],
+          validParameters.lockupMonths,
+          BigInt(7550), // ratio 75.5 * 100 = 7550
+          validParameters.termsSignature,
+        ],
+        functionName: 'claim',
+      }),
+    )
+  })
+
+  it('should accept valid proof array with multiple hashes', async function () {
+    const receipt = {
+      status: 'success',
+    } as TransactionReceipt
+
+    const multipleProof = [zeroHash, zeroHash, zeroHash] // Three proof elements
+
+    vi.mocked(readContract).mockResolvedValue(true)
+    vi.mocked(writeContract).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue(receipt)
+
+    const { emitter, promise } = claimTokens({
+      ...validParameters,
+      proof: multipleProof,
+    })
+
+    const onClaimTransactionSucceeded = vi.fn()
+    emitter.on('claim-transaction-succeeded', onClaimTransactionSucceeded)
+
+    await promise
+
+    expect(onClaimTransactionSucceeded).toHaveBeenCalledExactlyOnceWith(receipt)
+
+    expect(writeContract).toHaveBeenCalledWith(
+      mockWalletClient,
+      expect.objectContaining({
+        args: [
+          BigInt(1),
+          validParameters.address,
+          validParameters.amount,
+          multipleProof, // Should use the provided proof array
+          validParameters.lockupMonths,
+          BigInt(7550), // ratio 75.5 * 100 = 7550
+          validParameters.termsSignature,
+        ],
+        functionName: 'claim',
+      }),
+    )
+  })
+
   it('should round ratio to 2 decimal places and accept valid values', async function () {
     const receipt = {
       status: 'success',
@@ -280,7 +393,7 @@ describe('claimTokens', function () {
       expect.objectContaining({
         args: [
           BigInt(1),
-          validParameters.account,
+          validParameters.address,
           validParameters.amount,
           [zeroHash, zeroHash],
           validParameters.lockupMonths,
@@ -319,7 +432,7 @@ describe('claimTokens', function () {
       expect.objectContaining({
         args: [
           BigInt(1),
-          validParameters.account,
+          validParameters.address,
           validParameters.amount,
           [zeroHash, zeroHash],
           lockupMonths,
@@ -365,10 +478,10 @@ describe('claimTokens', function () {
     expect(writeContract).toHaveBeenCalledExactlyOnceWith(
       mockWalletClient,
       expect.objectContaining({
-        account: validParameters.account,
+        account: validParameters.address,
         args: [
           BigInt(1),
-          validParameters.account,
+          validParameters.address,
           validParameters.amount, // Use the user-provided amount
           [zeroHash, zeroHash],
           validParameters.lockupMonths,
@@ -517,7 +630,7 @@ describe('claimTokens', function () {
       expect.objectContaining({
         args: [
           BigInt(1),
-          validParameters.account,
+          validParameters.address,
           partialAmount,
           [zeroHash, zeroHash],
           validParameters.lockupMonths,
@@ -546,7 +659,7 @@ describe('claimTokens', function () {
       address: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
       args: [
         BigInt(1),
-        validParameters.account,
+        validParameters.address,
         validParameters.amount, // Use the user-provided amount
         [zeroHash, zeroHash],
       ],

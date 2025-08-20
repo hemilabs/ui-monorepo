@@ -3,24 +3,23 @@ import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { EligibilityData } from 'tge-claim'
 import { isClaimable } from 'tge-claim/actions'
-import { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
 export const getIsClaimableQueryKey = ({
   address,
-  eligibility,
+  amount,
+  claimGroupId,
   hemiId,
-}: {
-  address: Address
-  eligibility: EligibilityData
+  proof = [],
+}: EligibilityData & {
   hemiId: number
 }) => [
   'hemi-token-is-claimable',
   address,
-  eligibility.amount,
+  amount.toString(),
   hemiId,
-  eligibility.claimGroupId,
-  ...eligibility.proof,
+  claimGroupId,
+  ...proof,
 ]
 
 /**
@@ -36,19 +35,23 @@ export const useIsClaimable = function (eligibility: EligibilityData) {
   const amount = BigInt(eligibility.amount)
 
   return useQuery({
-    enabled: !!address && !!hemiPublicClient,
+    enabled:
+      !!address && !!hemiPublicClient && eligibility.claimGroupId !== undefined,
     queryFn: () =>
       isClaimable({
-        account: address!,
+        address,
         amount,
         chainId: hemi.id,
+        claimGroupId: eligibility.claimGroupId,
         client: hemiPublicClient,
-        eligibility,
+        proof: eligibility.proof,
       }),
     queryKey: getIsClaimableQueryKey({
       address,
-      eligibility,
+      amount,
+      claimGroupId: eligibility.claimGroupId,
       hemiId: hemi.id,
+      proof: eligibility.proof,
     }),
   })
 }

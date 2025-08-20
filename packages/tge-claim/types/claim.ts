@@ -1,4 +1,4 @@
-import { type Hash, TransactionReceipt } from 'viem'
+import { Address, type Hash, Hex, TransactionReceipt } from 'viem'
 
 // Common events for all TGE claim operations
 type CommonEvents = {
@@ -16,14 +16,6 @@ export type ClaimEvents = CommonEvents & {
   'user-signed-claim': [Hash]
   'user-signing-claim-error': [Error]
 }
-
-// Claim option types as defined in requirements
-// "user-selection" means the user can select, but for the others it means the option is fixed
-export type ClaimOption =
-  | 'standard'
-  | 'hybrid'
-  | 'full-stake'
-  | 'user-selection'
 
 export const lockupOptions = {
   // I prefer to sort these in time-based order
@@ -43,9 +35,8 @@ export type LockupMonths = (typeof lockupMonths)[number]
 
 // Eligibility data structure
 export type EligibilityData = {
-  address: string
-  amount: string
+  address: Address
+  amount: bigint
   claimGroupId: number
-  option: ClaimOption
-  proof: Hash[]
+  proof: Hex[]
 }

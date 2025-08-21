@@ -1,14 +1,9 @@
-import { useMutation } from '@tanstack/react-query'
-import { useHemi } from 'hooks/useHemi'
-import { useUmami } from 'hooks/useUmami'
+import { useAddTokenToWallet } from 'hooks/useAddTokenToWallet'
 import { useWatchedAsset } from 'hooks/useWatchedAsset'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
 import { EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
-import { type Address } from 'viem'
-import { useAccount, useSwitchChain, useWalletClient } from 'wagmi'
-import watchAsset from 'wallet-watch-asset'
 
 type Props = {
   token: EvmToken
@@ -33,41 +28,12 @@ const PlusIcon = (props: ComponentProps<'svg'>) => (
 )
 
 export const AddTokenToWallet = function ({ token }: Props) {
-  const { address, chainId } = useAccount()
-  const hemi = useHemi()
-  const { switchChainAsync } = useSwitchChain()
   const t = useTranslations('tunnel-page.review-deposit')
-  const { track } = useUmami()
-  const { data: walletClient } = useWalletClient()
   const isTokenAdded = useWatchedAsset(token.address)
 
-  const { mutate, status } = useMutation({
-    async mutationFn() {
-      // users must be connected to hemi to add tokens.
-      if (chainId !== hemi.id) {
-        await switchChainAsync({ chainId: hemi.id })
-      }
-      track?.('save token wallet - init', { address: token.address })
-      return watchAsset(
-        walletClient,
-        address,
-        {
-          address: token.address as Address,
-          chainId: token.chainId,
-          // token logos include the small Hemi logo, but wallets crop it.
-          // Besides, many wallets add the chain logo anyways, so we're safe to
-          // use the L1 logo version
-          logoURI: token.extensions.l1LogoURI,
-        },
-        localStorage,
-      )
-    },
-    onError: () =>
-      track?.('save token wallet - error', { address: token.address }),
-    onSuccess: () =>
-      track?.('save token wallet - ok', { address: token.address }),
+  const { mutate, status } = useAddTokenToWallet({
+    token,
   })
-
   // only show the button if the token is an ERC20, and if it wasn't previously added.
   // Note that if it was just added, status is "success", thus preventing to hide the
   // success message.

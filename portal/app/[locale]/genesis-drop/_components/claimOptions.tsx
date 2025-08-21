@@ -103,12 +103,12 @@ export const ClaimOptions = function ({ eligibility }: Props) {
       return (
         <div className="flex items-center gap-x-1.5">
           <Spinner size="xSmall" />
-          <span>{t('claim-options.claiming-and-staking')}</span>
+          <span>{t('claim-options.claiming')}</span>
         </div>
       )
     }
 
-    return t('claim-options.claim-and-stake')
+    return t('claim-options.claim')
   }
 
   return (
@@ -118,7 +118,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
           amount={eligibility.amount}
           bgColor="bg-neutral-50"
           claimGroupId={eligibility.claimGroupId}
-          heading={t('claim-options.standard-claim')}
+          heading={t(`claim-options.claim-number`, { number: 1 })}
           lockupMonths={lockupOptions.sixMonths}
           onSubmit={onSubmit}
           recommendationLevel="low"
@@ -130,9 +130,9 @@ export const ClaimOptions = function ({ eligibility }: Props) {
         />
         <Strategy
           amount={eligibility.amount}
-          bgColor="bg-[#fcfcfc]"
+          bgColor="bg-white"
           claimGroupId={eligibility.claimGroupId}
-          heading={t('claim-options.hybrid-claim')}
+          heading={t(`claim-options.claim-number`, { number: 2 })}
           lockupMonths={lockupOptions.twoYears}
           onSubmit={onSubmit}
           recommendationLevel="medium"
@@ -148,7 +148,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
             amount={eligibility.amount}
             bgColor="bg-recommended-claim"
             claimGroupId={eligibility.claimGroupId}
-            heading={t('claim-options.max-yield')}
+            heading={t(`claim-options.claim-number`, { number: 3 })}
             lockupMonths={lockupOptions.fourYears}
             onSubmit={onSubmit}
             recommendationLevel="high"

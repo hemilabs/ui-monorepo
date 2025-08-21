@@ -1,4 +1,3 @@
-import { SparklesIcon } from 'components/icons/sparkles'
 import { LockupMonths } from 'genesis-drop-actions'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
@@ -12,9 +11,8 @@ import '../styles.css'
 
 import { Amount } from './amount'
 import { Blur } from './blur'
-import { BonusDetails, NoBonus } from './bonusDetails'
+import { FullBonus, SimpleBonus } from './bonusDetails'
 import { RecommendedBadge } from './recommendedBadge'
-import { StakedHemiTooltip } from './stakedHemiTooltip'
 
 // I prefer to sort these in priority-based order
 /* eslint-disable sort-keys */
@@ -25,21 +23,23 @@ const boxShadows: Record<RecommendationLevel, string> = {
 }
 /* eslint-enable sort-keys */
 
-const Description = ({
+const Description = function ({
   recommendationLevel,
-  text,
 }: {
   recommendationLevel: RecommendationLevel
-  text: string
-}) => (
-  <span
-    className={`text-xs font-medium ${
-      recommendationLevel === 'high' ? 'text-sky-950' : 'text-neutral-500'
-    }`}
-  >
-    {`/ ${text}`}
-  </span>
-)
+}) {
+  const { symbol } = useHemiToken()
+  const t = useTranslations('genesis-drop.claim-options')
+  return (
+    <span
+      className={`text-xs font-medium ${
+        recommendationLevel === 'high' ? 'text-sky-950' : 'text-neutral-500'
+      }`}
+    >
+      {`/ ${t('tokens-available-now', { symbol })}`}
+    </span>
+  )
+}
 
 type Props = {
   amount: bigint
@@ -74,40 +74,19 @@ export const Strategy = function ({
     onSubmit(lockupMonths)
   }
 
-  const renderBonusBadge = function () {
-    if (isLoadingBonus) {
-      return <Skeleton className="h-4.5 w-30" />
-    }
-    const { bonus: bonusPercentage } = data
-    if (bonusPercentage === 0) {
-      return null
-    }
-    return (
-      <div className="flex items-center gap-x-0.5">
-        <span className="text-shimmer text-sm font-semibold">
-          {t('bonus-hemi', {
-            percentage: bonusPercentage,
-          })}
-        </span>
-        <SparklesIcon />
-      </div>
-    )
-  }
-
-  const renderAmount = function (type: 'staked' | 'unlocked') {
+  const renderUnlockedAmount = function () {
     if (isLoadingBonus) {
       return <Skeleton className="h-8 w-32" />
     }
     const { bonus: bonusPercentage, lockupRatio } = data
 
-    const amounts = calculateSplitAmount({
+    const { unlocked } = calculateSplitAmount({
       amount,
       bonusPercentage,
       lockupRatio,
     })
 
-    const value = type === 'staked' ? amounts.staked : amounts.unlocked
-    const formattedValue = formatHemi(value, hemiToken.decimals)
+    const formattedValue = formatHemi(unlocked, hemiToken.decimals)
 
     return (
       <Amount
@@ -117,56 +96,67 @@ export const Strategy = function ({
     )
   }
 
+  const { bonus: bonusPercentage, lockupRatio } = data
+
+  const renderStakedAmount = function (skeleton: ReactNode) {
+    if (isLoadingBonus) {
+      return <>{skeleton}</>
+    }
+
+    const { staked } = calculateSplitAmount({
+      amount,
+      bonusPercentage,
+      lockupRatio,
+    })
+
+    const formattedValue = formatHemi(staked, hemiToken.decimals)
+
+    return <>{formattedValue}</>
+  }
+
   return (
     <form
       className={`sm:w-86 max-sm:max-w-90 relative w-full max-w-full rounded-lg bg-neutral-100 ${boxShadows[recommendationLevel]}`}
       onSubmit={handleSubmit}
     >
-      <div className="h-11 w-full rounded-t-lg bg-neutral-100 px-6 pt-2">
-        <div className="flex items-center justify-between pt-1">
-          <h5 className="text-smd font-semibold text-black">
-            {t(`lockup-period-${lockupMonths}`)}
-          </h5>
-          {renderBonusBadge()}
-        </div>
-      </div>
       <div
-        className={`flex h-52 flex-col justify-between rounded-t-lg border-t border-solid border-neutral-300/55 pt-4 ${bgColor}`}
+        className={`flex flex-col justify-between gap-y-3 rounded-t-lg border-t border-solid border-neutral-300/55 pt-6 ${bgColor}`}
       >
         <div className="flex items-center justify-between px-6">
           <h4 className="text-smd font-semibold text-black">{heading}</h4>
           {recommendationLevel === 'high' && <RecommendedBadge />}
         </div>
-        <div className="mb-2 mt-auto grid grid-cols-[1fr_auto_1fr] grid-rows-2 place-items-center">
-          {renderAmount('unlocked')}
-          <span
-            className={`text-2.33xl ${
-              recommendationLevel === 'high' ? 'text-sky-850' : 'text-black'
-            }`}
-          >
-            +
-          </span>
-          {renderAmount('staked')}
-          <Description
-            recommendationLevel={recommendationLevel}
-            text={t('unlocked-hemi')}
-          />
-          {/* Empty column for the grid */}
-          <div />
-          <div className="flex items-center gap-x-1">
-            <Description
-              recommendationLevel={recommendationLevel}
-              text={t('staked-hemi')}
-            />
-            <StakedHemiTooltip />
-          </div>
+        <div className="mt-7 flex items-center gap-x-2 px-6">
+          {renderUnlockedAmount()}
+          <Description recommendationLevel={recommendationLevel} />
         </div>
-        <div className="h-15 flex items-center justify-center border-y border-solid border-t-neutral-300/55 px-4 [&>button]:w-full">
+        <p className="text-shimmer w-full px-6 text-base font-medium">
+          {t.rich('plus-staked-tokens', {
+            amount: () => renderStakedAmount(<Skeleton className="h-6 w-14" />),
+            break: () => <br />,
+            period: () => (
+              <span className="lowercase">
+                {t(`lockup-period-${lockupMonths}`)}
+              </span>
+            ),
+          })}
+        </p>
+        <div className="h-15 flex items-center justify-center border-y border-solid border-t-neutral-300/55 px-6 [&>button]:w-full">
           {submitButton}
         </div>
       </div>
-      <div className="h-24 rounded-b-lg">
-        {recommendationLevel === 'low' ? <NoBonus /> : <BonusDetails />}
+      <div className="md:h-39 h-fit rounded-b-lg">
+        {recommendationLevel === 'low' ? (
+          <SimpleBonus
+            amount={renderStakedAmount(<Skeleton className="h-3 w-10" />)}
+          />
+        ) : (
+          <FullBonus
+            amount={renderStakedAmount(<Skeleton className="h-3 w-10" />)}
+            bonus={bonusPercentage}
+            lockupMonths={lockupMonths}
+          />
+        )}
       </div>
       {recommendationLevel === 'high' && <Blur />}
     </form>

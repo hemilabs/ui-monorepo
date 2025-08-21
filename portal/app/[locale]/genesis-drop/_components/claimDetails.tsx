@@ -1,8 +1,11 @@
 'use client'
 
-import { ButtonLink } from 'components/button'
+import { Button, ButtonLink } from 'components/button'
+import { ExternalLink } from 'components/externalLink'
 import { EligibilityData, LockupMonths } from 'genesis-drop-actions'
+import { useAddTokenToWallet } from 'hooks/useAddTokenToWallet'
 import { useHemi } from 'hooks/useHemi'
+import { useWatchedAsset } from 'hooks/useWatchedAsset'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect } from 'react'
 import ConfettiExplosion from 'react-confetti-explosion'
@@ -78,6 +81,11 @@ type Props = {
 export const ClaimDetails = function ({ eligibility }: Props) {
   const hemi = useHemi()
   const hemiToken = useHemiToken()
+  const isTokenAdded = useWatchedAsset(hemiToken.address)
+
+  const { mutate: addToken, status: addTokenStatus } = useAddTokenToWallet({
+    token: hemiToken,
+  })
 
   const { data: transaction, isLoading: isLoadingTransaction } =
     useGetClaimTransaction(eligibility.claimGroupId, {
@@ -96,9 +104,9 @@ export const ClaimDetails = function ({ eligibility }: Props) {
   const t = useTranslations('genesis-drop')
 
   const claimTitle: Record<LockupMonths, string> = {
-    6: t('claim-options.standard-claim'),
-    24: t('claim-options.hybrid-claim'),
-    48: t('claim-options.max-yield'),
+    6: t('claim-options.claim-number', { number: 1 }),
+    24: t('claim-options.claim-number', { number: 2 }),
+    48: t('claim-options.claim-number', { number: 3 }),
   }
 
   const loadingSkeleton = (
@@ -132,12 +140,15 @@ export const ClaimDetails = function ({ eligibility }: Props) {
     }
 
     const { staked } = calculateSplitAmount({
-      amount: BigInt(eligibility.amount),
+      amount: eligibility.amount,
       bonusPercentage: claimConfig.bonus,
       lockupRatio: transaction.ratio,
     })
 
-    return formatHemi(staked, hemiToken.decimals)
+    const formattedAmount = formatHemi(staked, hemiToken.decimals)
+    return t(`staked-for-${transaction.lockupMonths}-months`, {
+      amount: formattedAmount,
+    })
   }
 
   const getApy = function () {
@@ -147,7 +158,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
     if (isStandardLock()) {
       return `-`
     }
-    return `${PercentageApyStakedHemi}%`
+    return t('apy-in-hemi-up-to', { percentage: PercentageApyStakedHemi })
   }
 
   const getIncentives = function () {
@@ -162,6 +173,15 @@ export const ClaimDetails = function ({ eligibility }: Props) {
         <Incentives />
       </div>
     )
+  }
+  const canAddHemiTokenToWallet = !['pending', 'success'].includes(
+    addTokenStatus,
+  )
+
+  const addHemiToken = function () {
+    if (canAddHemiTokenToWallet) {
+      addToken()
+    }
   }
 
   return (
@@ -205,29 +225,22 @@ export const ClaimDetails = function ({ eligibility }: Props) {
             </Value>
           </Row>
           <Row>
-            <Label>{t('lock-period')}</Label>
-            <Value>
-              {isLoadingTransaction
-                ? loadingSkeleton
-                : t(`claim-options.lockup-period-${transaction.lockupMonths}`)}
-            </Value>
-          </Row>
-          <Row>
-            <Label>{t('claim-options.unlocked-hemi')}</Label>
+            <Label>
+              {t('claim-options.unlocked-hemi', { symbol: hemiToken.symbol })}
+            </Label>
             <Value>{getUnlockedAmount()}</Value>
           </Row>
           <Row>
             <Label>
-              <span>{t('claim-options.staked-hemi')}</span>
-              <StakedHemiTooltip />
+              <span>
+                {t('claim-options.staked-hemi', { symbol: hemiToken.symbol })}
+              </span>
             </Label>
-            <Value>
-              <span>{getStakedAmount()}</span>
-            </Value>
+            <Value>{getStakedAmount()}</Value>
           </Row>
           <Row>
             <Label>
-              <span>{t('apy-in-staked-hemi')}</span>
+              {t('apy-in-staked-hemi', { symbol: hemiToken.symbol })}
               <StakedHemiTooltip />
             </Label>
             <Value>{getApy()}</Value>
@@ -238,18 +251,29 @@ export const ClaimDetails = function ({ eligibility }: Props) {
           </Row>
         </div>
         <div className="flex items-center justify-between gap-x-4 p-4 [&>*]:flex-1">
-          <ButtonLink
-            aria-disabled={isLoadingTransaction}
-            href={`${hemi.blockExplorers.default.url}/tx/${transaction?.transactionHash}`}
+          <Button
+            disabled={!canAddHemiTokenToWallet || isTokenAdded}
+            onClick={addHemiToken}
+            type="button"
             variant="secondary"
           >
-            {t('view-tx-on-explorer')}
-          </ButtonLink>
+            {t(isTokenAdded ? 'hemi-token-added' : 'add-hemi-to-your-wallet', {
+              symbol: hemiToken.symbol,
+            })}
+          </Button>
           <ButtonLink href="/staking-dashboard" variant="primary">
-            {t('stake-more')}
+            {t('stake-hemi', { symbol: hemiToken.symbol })}
           </ButtonLink>
         </div>
       </div>
+      <ExternalLink
+        className="flex w-full justify-center py-3 text-xs font-medium text-orange-500 hover:text-orange-700"
+        href={`${
+          hemi.blockExplorers!.default.url
+        }/tx/${transaction?.transactionHash}`}
+      >
+        {t('view-tx-on-explorer')}
+      </ExternalLink>
     </>
   )
 }

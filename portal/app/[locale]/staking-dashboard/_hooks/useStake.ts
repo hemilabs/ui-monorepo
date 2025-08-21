@@ -10,7 +10,6 @@ import {
   StakingDashboardToken,
   StakingPosition,
 } from 'types/stakingDashboard'
-import { getEvmBlock } from 'utils/evmApi'
 import { parseTokenUnits } from 'utils/token'
 import {
   CreateLockEvents,
@@ -117,47 +116,43 @@ export const useStake = function ({
           status: StakingDashboardStatus.STAKE_TX_FAILED,
         })
       })
-      emitter.on(
-        'lock-creation-transaction-succeeded',
-        async function (receipt) {
-          updateStakingDashboardOperation({
-            status: StakingDashboardStatus.STAKE_TX_CONFIRMED,
-          })
+      emitter.on('lock-creation-transaction-succeeded', function (receipt) {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_CONFIRMED,
+        })
 
-          const { blockNumber, transactionHash } = receipt
-          const { lockDuration, tokenId, ts } = getLockEvent(receipt)
-          const { timestamp } = await getEvmBlock(blockNumber, token.chainId)
+        const { blockNumber, transactionHash } = receipt
+        const { lockDuration, tokenId, ts } = getLockEvent(receipt)
 
-          const newPosition: StakingPosition = {
-            amount,
-            blockNumber,
-            blockTimestamp: timestamp,
-            forfeitable: false,
-            id: tokenId.toString(),
-            lockTime: lockDuration,
-            owner: address,
-            pastOwners: [],
-            status: 'active',
-            timestamp: ts,
-            tokenId: tokenId.toString(),
-            transactionHash,
-            transferable: true,
-          }
+        const newPosition: StakingPosition = {
+          amount,
+          blockNumber,
+          blockTimestamp: ts,
+          forfeitable: false,
+          id: tokenId.toString(),
+          lockTime: lockDuration,
+          owner: address,
+          pastOwners: [],
+          status: 'active',
+          timestamp: ts,
+          tokenId: tokenId.toString(),
+          transactionHash,
+          transferable: true,
+        }
 
-          queryClient.setQueryData(stakingPositionQueryKey, old => [
-            newPosition,
-            ...((old as StakingPosition[] | undefined) ?? []),
-          ])
+        queryClient.setQueryData(stakingPositionQueryKey, old => [
+          newPosition,
+          ...((old as StakingPosition[] | undefined) ?? []),
+        ])
 
-          // fees
-          updateNativeBalanceAfterFees(receipt)
-          // staked
-          queryClient.setQueryData(
-            hemiBalanceQueryKey,
-            (old: bigint) => old - amount,
-          )
-        },
-      )
+        // fees
+        updateNativeBalanceAfterFees(receipt)
+        // staked
+        queryClient.setQueryData(
+          hemiBalanceQueryKey,
+          (old: bigint) => old - amount,
+        )
+      })
       emitter.on('lock-creation-transaction-reverted', function (receipt) {
         updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_FAILED,

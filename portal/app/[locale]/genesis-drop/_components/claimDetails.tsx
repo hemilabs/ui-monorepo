@@ -121,7 +121,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
     }
 
     const { unlocked } = calculateSplitAmount({
-      amount: BigInt(eligibility.amount),
+      amount: eligibility.amount,
       bonusPercentage: claimConfig.bonus,
       lockupRatio: transaction.ratio,
     })

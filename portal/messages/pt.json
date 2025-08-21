@@ -133,7 +133,7 @@
       "staked-tokens-can-earn": "Tokens em stake podem ganhar um bônus de até {percentage}% em {symbol}",
       "submit-text": "Reivindicar & Fazer Stake",
       "this-option-includes-bonus": "Esta opção de reivindicação inclui um bônus de <bonus></bonus>% nos seus tokens ganhos.",
-      "tokens-available-now": "¡Tokens {symbol} disponíveis agora!",
+      "tokens-available-now": "Tokens {symbol} disponíveis agora!",
       "unlocked-hemi": "{symbol} desbloqueados"
     },
     "claim-rewards": "Reivindicar recompensas",

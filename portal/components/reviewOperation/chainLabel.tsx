@@ -1,6 +1,6 @@
 import { RemoteChain } from 'types/chain'
 
-import { ChainIcon } from '../../app/[locale]/tunnel/_components/reviewOperation/chainIcon'
+import { ChainIcon } from './chainIcon'
 
 interface Props {
   active?: boolean

@@ -24,7 +24,7 @@ export const RetryStake = function () {
   const token = useHemiToken()
   const hemi = useHemi()
 
-  const t = useTranslations('staking-dashboard')
+  const t = useTranslations()
 
   // this component tries to initiate a new stake, based on the failed one
   const { mutate: runStake } = useStake({
@@ -37,11 +37,17 @@ export const RetryStake = function () {
       emitter.on('lock-creation-transaction-reverted', () =>
         setOperationRunning('failed'),
       )
+      emitter.on('user-signing-approve-error', () =>
+        setOperationRunning('failed'),
+      )
+      emitter.on('user-signing-lock-creation-error', () =>
+        setOperationRunning('failed'),
+      )
+      emitter.on('unexpected-error', () => setOperationRunning('failed'))
       emitter.on('lock-creation-transaction-succeeded', function () {
+        setOperationRunning('idle')
         resetStateAfterOperation()
       })
-
-      emitter.on('lock-creation-settled', () => setOperationRunning('idle'))
     },
     token,
     updateStakingDashboardOperation,
@@ -61,7 +67,9 @@ export const RetryStake = function () {
         chainId={hemi.id}
         submitButton={
           <Button disabled={isStaking} size="small">
-            {t(isStaking ? 'form.staking' : 'drawer.try-again')}
+            {t(
+              isStaking ? 'staking-dashboard.form.staking' : 'common.try-again',
+            )}
           </Button>
         }
         submitButtonSize="small"

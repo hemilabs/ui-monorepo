@@ -17,6 +17,7 @@ import { useAccount } from 'wagmi'
 import { daysToSeconds } from '../_utils/lockCreationTimes'
 
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
+import { useStakingPositions } from './useStakingPositions'
 
 type UseStake = {
   input: string
@@ -51,6 +52,8 @@ export const useStake = function ({
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     token.chainId,
   )
+
+  const { queryKey: stakingPositionQueryKey } = useStakingPositions()
 
   const { hemiWalletClient } = useHemiWalletClient()
 
@@ -143,6 +146,10 @@ export const useStake = function ({
 
       queryClient.invalidateQueries({
         queryKey: nativeTokenBalanceQueryKey,
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: stakingPositionQueryKey,
       })
     },
   })

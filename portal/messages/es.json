@@ -222,8 +222,7 @@
       "approving": "Aprobando {symbol}",
       "heading": "Revisar Stake",
       "subheading": "Revise y confirme su stake.",
-      "stake-token": "Hacer stake de {symbol}",
-      "try-again": "Intentar de nuevo"
+      "stake-token": "Hacer stake de {symbol}"
     },
     "form": {
       "allowance-load-failed": "No se pudo cargar el monto autorizado",

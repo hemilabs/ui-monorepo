@@ -2,24 +2,23 @@
 
 import { useHemiToken } from 'app/[locale]/genesis-drop/_hooks/useHemiToken'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
+import { Operation } from 'components/reviewOperation/operation'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
-import { useAllowance } from 'hooks/useAllowance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
+import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'next-intl'
 import { StakingDashboardStatus } from 'types/stakingDashboard'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { getVeHemiContractAddress } from 've-hemi-actions'
 import { formatUnits } from 'viem'
-import { useAccount } from 'wagmi'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useEstimateCreateLockFees } from '../../_hooks/useEstimateCreateLockFees'
 import { daysToSeconds } from '../../_utils/lockCreationTimes'
 
-import { Operation } from './operation'
 import { RetryStake } from './retryStake'
 
 type Props = {
@@ -36,20 +35,16 @@ export const Review = function ({ onClose }: Props) {
 
   const t = useTranslations('staking-dashboard')
   const hemi = useHemi()
-  const { address } = useAccount()
 
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
 
   const amount = parseTokenUnits(input, token)
 
-  const { data: allowance } = useAllowance(token.address, {
-    args: {
-      owner: address,
-      spender: veHemiAddress,
-    },
+  const { needsApproval } = useNeedsApproval({
+    address: token.address,
+    amount,
+    spender: veHemiAddress,
   })
-
-  const requiresApproval = allowance < amount
 
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
     useEstimateApproveErc20Fees({
@@ -68,6 +63,23 @@ export const Review = function ({ onClose }: Props) {
       lockDurationInSeconds: BigInt(daysToSeconds(lockupDays)),
       token,
     })
+
+  const getStepFees = ({
+    fee,
+    isError,
+    show,
+  }: {
+    fee: bigint
+    show: boolean
+    isError: boolean
+  }): StepPropsWithoutPosition['fees'] =>
+    show
+      ? {
+          amount: formatUnits(fee, hemi.nativeCurrency.decimals),
+          isError,
+          token: getNativeToken(hemi.id),
+        }
+      : undefined
 
   const addApprovalStep = function (): StepPropsWithoutPosition {
     const showFees = [
@@ -89,16 +101,11 @@ export const Review = function ({ onClose }: Props) {
         />
       ),
       explorerChainId: token.chainId,
-      fees: showFees
-        ? {
-            amount: formatUnits(
-              approvalTokenGasFees,
-              hemi.nativeCurrency.decimals,
-            ),
-            isError: isApprovalTokenGasFeesError,
-            token: getNativeToken(hemi.id),
-          }
-        : undefined,
+      fees: getStepFees({
+        fee: approvalTokenGasFees,
+        isError: isApprovalTokenGasFeesError,
+        show: showFees,
+      }),
       status: statusMap[stakingStatus] ?? ProgressStatus.COMPLETED,
       txHash: stakingDashboardOperation?.approvalTxHash,
     }
@@ -128,16 +135,11 @@ export const Review = function ({ onClose }: Props) {
         />
       ),
       explorerChainId: token.chainId,
-      fees: showFees
-        ? {
-            amount: formatUnits(
-              createLockGasFees,
-              hemi.nativeCurrency.decimals,
-            ),
-            isError: isCreateLockFeesError,
-            token: getNativeToken(hemi.id),
-          }
-        : undefined,
+      fees: getStepFees({
+        fee: createLockGasFees,
+        isError: isCreateLockFeesError,
+        show: showFees,
+      }),
       status: statusMap[stakingStatus] ?? ProgressStatus.NOT_READY,
       txHash: stakingDashboardOperation?.transactionHash,
     }
@@ -145,7 +147,7 @@ export const Review = function ({ onClose }: Props) {
 
   const getSteps = function () {
     const steps: StepPropsWithoutPosition[] = []
-    if (requiresApproval || stakingDashboardOperation?.approvalTxHash) {
+    if (needsApproval || stakingDashboardOperation?.approvalTxHash) {
       steps.push(addApprovalStep())
     }
     steps.push(addStakingStep())

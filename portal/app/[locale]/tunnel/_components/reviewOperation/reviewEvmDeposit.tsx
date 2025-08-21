@@ -1,5 +1,6 @@
 'use client'
 
+import { ChainIcon } from 'components/reviewOperation/chainIcon'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
@@ -23,7 +24,6 @@ import { useEstimateDepositFees } from '../../_hooks/useEstimateDepositFees'
 import { RetryEvmDeposit } from '../retryEvmDeposit'
 
 import { AddTokenToWallet } from './addTokenToWallet'
-import { ChainIcon } from './chainIcon'
 
 const getCallToAction = (deposit: EvmDepositOperation) =>
   [

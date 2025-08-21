@@ -36,37 +36,37 @@ export const useStakingPositions = function (
   const { address } = useAccount()
   const hemi = useHemi()
 
-  return useQuery({
-    enabled: !!address,
-    async queryFn() {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${hemi.id}/locks/${address}`,
-      )
+  const queryKey = getStakingPositionsQueryKey({ address, chainId: hemi.id })
 
-      if (!response.ok) {
-        return []
-      }
+  return {
+    ...useQuery({
+      enabled: !!address,
+      async queryFn() {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${hemi.id}/locks/${address}`,
+        )
 
-      const data: ApiResponse = await response.json()
+        if (!response.ok) {
+          return []
+        }
 
-      const positions = data.positions.map(
-        position =>
-          ({
-            ...position,
-            amount: BigInt(position.amount),
-            blockNumber: BigInt(position.blockNumber),
-            blockTimestamp: BigInt(position.blockTimestamp),
-            lockTime: BigInt(position.lockTime),
-            timestamp: BigInt(position.timestamp),
-          }) as StakingPosition,
-      )
+        const data: ApiResponse = await response.json()
 
-      return positions
-    },
-    queryKey: getStakingPositionsQueryKey({
-      address,
-      chainId: hemi.id,
+        return data.positions.map(
+          position =>
+            ({
+              ...position,
+              amount: BigInt(position.amount),
+              blockNumber: BigInt(position.blockNumber),
+              blockTimestamp: BigInt(position.blockTimestamp),
+              lockTime: BigInt(position.lockTime),
+              timestamp: BigInt(position.timestamp),
+            }) as StakingPosition,
+        )
+      },
+      queryKey,
+      ...options,
     }),
-    ...options,
-  })
+    queryKey,
+  }
 }

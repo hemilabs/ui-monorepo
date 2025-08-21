@@ -63,7 +63,7 @@ export const useClaimTokens = function (options?: {
 
       const { emitter, promise } = claimTokens({
         address,
-        amount: BigInt(eligibility.amount),
+        amount: eligibility.amount,
         claimGroupId: eligibility.claimGroupId,
         lockupMonths,
         proof: eligibility.proof,

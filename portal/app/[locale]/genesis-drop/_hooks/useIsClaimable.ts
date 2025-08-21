@@ -32,7 +32,7 @@ export const useIsClaimable = function (eligibility: EligibilityData) {
   const hemiPublicClient = useHemiClient()
   const hemi = useHemi()
 
-  const amount = BigInt(eligibility.amount)
+  const { amount } = eligibility
 
   return useQuery({
     enabled:

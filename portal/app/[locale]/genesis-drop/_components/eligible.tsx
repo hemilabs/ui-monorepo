@@ -44,7 +44,7 @@ export const Eligible = function ({ eligibility }: Props) {
   const { data: transaction } = useGetClaimTransaction(eligibility.claimGroupId)
   const t = useTranslations('genesis-drop')
 
-  const amount = formatHemi(BigInt(eligibility.amount), hemiToken.decimals)
+  const amount = formatHemi(eligibility.amount, hemiToken.decimals)
   const claimGroupIdAvailable = eligibility.claimGroupId !== undefined
 
   if (isClaimable === undefined && claimGroupIdAvailable) {

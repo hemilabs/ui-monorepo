@@ -4,7 +4,6 @@ import { BitcoinKitIcon } from 'components/icons/bitcoinKit'
 import { DocsIcon } from 'components/icons/docsIcon'
 import { EcosystemIcon } from 'components/icons/ecosystemIcon'
 import { NetworkStatusIcon } from 'components/icons/networkStatusIcon'
-import { StakeIcon } from 'components/icons/stakeIcon'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 
@@ -16,10 +15,10 @@ import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HomeLink } from './_components/homeLink'
-import { ItemAccordion } from './_components/itemAccordion'
 import { ItemLink } from './_components/itemLink'
 import { NetworkSwitch } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
+import { Stake } from './_components/stake'
 import { TunnelLink } from './_components/tunnelLink'
 import { Tvl } from './_components/tvl'
 
@@ -62,27 +61,7 @@ export const Navbar = function () {
           <PaddedListItem>
             <GenesisDrop />
           </PaddedListItem>
-          <li>
-            <ItemAccordion
-              icon={<StakeIcon />}
-              items={[
-                {
-                  // TODO: needs to be reviewed in the future
-                  event: 'nav - staking dashboard',
-                  href: '/staking-dashboard',
-                  text: t('hemi-staking'),
-                  urlToBeSelected: '/staking-dashboard',
-                },
-                {
-                  event: 'nav - stake',
-                  href: '/stake/dashboard',
-                  text: t('boost-staking'),
-                  urlToBeSelected: '/stake',
-                },
-              ]}
-              text={t('stake')}
-            />
-          </li>
+          <Stake />
           <PaddedListItem>
             <Separator />
           </PaddedListItem>

@@ -96,12 +96,12 @@ export const Strategy = function ({
     )
   }
 
-  const { bonus: bonusPercentage, lockupRatio } = data
-
   const renderStakedAmount = function (skeleton: ReactNode) {
     if (isLoadingBonus) {
       return <>{skeleton}</>
     }
+
+    const { bonus: bonusPercentage, lockupRatio } = data
 
     const { staked } = calculateSplitAmount({
       amount,
@@ -112,6 +112,15 @@ export const Strategy = function ({
     const formattedValue = formatHemi(staked, hemiToken.decimals)
 
     return <>{formattedValue}</>
+  }
+
+  const renderBonus = function () {
+    if (isLoadingBonus) {
+      return <Skeleton className="h-3 w-10" />
+    }
+    const { bonus: bonusPercentage } = data
+
+    return <>{bonusPercentage}</>
   }
 
   return (
@@ -153,7 +162,7 @@ export const Strategy = function ({
         ) : (
           <FullBonus
             amount={renderStakedAmount(<Skeleton className="h-3 w-10" />)}
-            bonus={bonusPercentage}
+            bonus={renderBonus()}
             lockupMonths={lockupMonths}
           />
         )}

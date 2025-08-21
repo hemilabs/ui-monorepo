@@ -1,9 +1,10 @@
 import { InfoIcon } from 'components/icons/infoIcon'
 import { Tooltip } from 'components/tooltip'
 import { useTranslations } from 'next-intl'
+import { ReactNode } from 'react'
 
 type Props = {
-  bonus: number
+  bonus: ReactNode
 }
 
 export const BonusHemiTooltip = function ({ bonus }: Props) {
@@ -14,7 +15,7 @@ export const BonusHemiTooltip = function ({ bonus }: Props) {
       id="bonus-hemi"
       overlay={
         <p className="p-4 text-sm font-medium text-white">
-          {t('this-option-includes-bonus', { bonus })}
+          {t.rich('this-option-includes-bonus', { bonus: () => bonus })}
         </p>
       }
     >

@@ -56,7 +56,7 @@ export const FullBonus = function ({
   lockupMonths,
 }: {
   amount: ReactNode
-  bonus: number
+  bonus: ReactNode
   lockupMonths: LockupMonths
 }) {
   const { symbol } = useHemiToken()
@@ -70,8 +70,8 @@ export const FullBonus = function ({
       />
       <BonusDetail
         content={<BonusHemiTooltip bonus={bonus} />}
-        text={t('more-rewards', {
-          bonus,
+        text={t.rich('more-rewards', {
+          bonus: () => bonus,
           symbol,
         })}
       />

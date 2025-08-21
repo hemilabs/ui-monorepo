@@ -123,7 +123,7 @@
       "claiming": "Claiming...",
       "future-incentives-from": "Future incentives from",
       "more-info-description": "Of your total earned tokens, a portion will be claimable immediately (\"available now\") while the rest will be staked automatically for a set lock-up period.",
-      "more-rewards": "+{bonus}% more {symbol}",
+      "more-rewards": "+<bonus></bonus>% more {symbol}",
       "lockup-period-6": "6 month",
       "lockup-period-24": "2 years",
       "lockup-period-48": "4 years",
@@ -132,7 +132,7 @@
       "staked-hemi": "Staked {symbol}",
       "staked-tokens-can-earn": "Staked tokens can earn a bonus of up to {percentage}% in {symbol}",
       "submit-text": "Claim & Stake",
-      "this-option-includes-bonus": "This claim option includes a {bonus}% bonus on your earned tokens.",
+      "this-option-includes-bonus": "This claim option includes a <bonus></bonus>% bonus on your earned tokens.",
       "tokens-available-now": "{symbol} tokens available now!",
       "unlocked-hemi": "Unlocked {symbol}"
     },

@@ -123,7 +123,7 @@
       "claiming": "Reclamando...",
       "future-incentives-from": "Futuros incentivos de",
       "more-info-description": "De sus tokens totales ganados, una parte será reclamable inmediatamente (\"disponible ahora\") mientras que el resto será puesto automáticamente en stake por un período de bloqueo establecido.",
-      "more-rewards": "+{bonus}% mas {symbol}",
+      "more-rewards": "+<bonus></bonus>% mas {symbol}",
       "lockup-period-6": "Bloqueo de 6 meses",
       "lockup-period-24": "Bloqueo de 2 años",
       "lockup-period-48": "Bloqueo de 4 años",
@@ -132,7 +132,7 @@
       "staked-hemi": "{symbol} en Stake",
       "staked-tokens-can-earn": "Los tokens en stake pueden ganar un bono de hasta {percentage}% en {symbol}",
       "submit-text": "Reclamar y hacer Stake",
-      "this-option-includes-bonus": "Esta opción de reclamo incluye un {bonus}% extra en sus tokens ganados.",
+      "this-option-includes-bonus": "Esta opción de reclamo incluye un <bonus></bonus>% extra en sus tokens ganados.",
       "tokens-available-now": "¡{symbol} tokens disponibles ahora!",
       "unlocked-hemi": "{symbol} desbloqueados"
     },

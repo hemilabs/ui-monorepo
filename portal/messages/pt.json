@@ -123,7 +123,7 @@
       "claiming": "A reivindicar...",
       "future-incentives-from": "Incentivos futuros de",
       "more-info-description": "Do total de tokens ganhos, uma parte estará disponível para reivindicação imediata (\"disponível agora\") enquanto o resto será automaticamente colocado em stake por um período de bloqueio definido.",
-      "more-rewards": "+{bonus}% mais {symbol}",
+      "more-rewards": "+<bonus></bonus>% mais {symbol}",
       "lockup-period-6": "Bloqueio de 6 meses",
       "lockup-period-24": "Bloqueio de 2 anos",
       "lockup-period-48": "Bloqueio de 4 anos",
@@ -132,7 +132,7 @@
       "staked-hemi": "{symbol} em stake",
       "staked-tokens-can-earn": "Tokens em stake podem ganhar um bônus de até {percentage}% em {symbol}",
       "submit-text": "Reivindicar & Fazer Stake",
-      "this-option-includes-bonus": "Esta opção de reivindicação inclui um bônus de {bonus}% nos seus tokens ganhos.",
+      "this-option-includes-bonus": "Esta opção de reivindicação inclui um bônus de <bonus></bonus>% nos seus tokens ganhos.",
       "tokens-available-now": "¡Tokens {symbol} disponíveis agora!",
       "unlocked-hemi": "{symbol} desbloqueados"
     },

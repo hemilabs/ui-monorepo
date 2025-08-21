@@ -1,11 +1,11 @@
-import { hemiSepolia } from 'hemi-viem'
+import { hemi, hemiSepolia } from 'hemi-viem'
 import { useHemi } from 'hooks/useHemi'
 import { tokenList } from 'tokenList'
 import { EvmToken } from 'types/token'
 import { Address, Chain } from 'viem'
 
 const hemiTokenMap: Record<Chain['id'], Address> = {
-  // TODO add hemi mainnet once available
+  [hemi.id]: '0x99e3de3817f6081b2568208337ef83295b7f591d',
   [hemiSepolia.id]: '0xbaacf81C8341c3Cb983BC48051Cc7377d2A2Eb93',
 }
 export const useHemiToken = function () {

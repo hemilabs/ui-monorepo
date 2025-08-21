@@ -13,6 +13,7 @@ export const ClaimToast = function ({ transactionHash }: Props) {
   const t = useTranslations('genesis-drop')
   return (
     <Toast
+      autoCloseMs={10000}
       description={t('here-is-your-claim-tx')}
       goTo={{
         href: '/staking-dashboard',

@@ -112,7 +112,7 @@
     "claim-name": "Nombre del reclamo:",
     "claim-options": {
       "and-other-partners": "...¡y muchos otros socios!",
-      "apy-in-ve-hemi": "Hasta {percentage}% APY en {symbol}",
+      "apy-in-ve-hemi": "Hasta {percentage}% TEA en {symbol}",
       "bonus-hemi": "{percentage}% HEMI extra",
       "bonus-staked-for-6-months": "<amount></amount> tokens en stake por 6 meses",
       "bonus-staked-for-24-months": "<amount></amount> tokens en stake por 2 años",

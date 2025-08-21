@@ -104,7 +104,7 @@
   },
   "genesis-drop": {
     "add-hemi-to-your-wallet": "Adicionar {symbol} à sua carteira",
-    "apy-in-staked-hemi": "APY em {symbol}",
+    "apy-in-staked-hemi": "TEA em {symbol}",
     "apy-in-hemi-up-to": "Até {percentage}%",
     "claimed": "Reivindicado",
     "claim-and-stake-successful": "Reivindicação e Stake bem-sucedidos",

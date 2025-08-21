@@ -1,7 +1,8 @@
 import { EventEmitter } from 'events'
-import type { Address } from 'viem'
-import { isAddress, zeroAddress } from 'viem'
+import type { Address, TransactionReceipt } from 'viem'
+import { isAddress, parseEventLogs, zeroAddress } from 'viem'
 
+import { veHemiAbi } from './abi'
 import {
   MaxLockDurationSeconds,
   MinLockDurationSeconds,
@@ -67,3 +68,14 @@ export const toPromiseEvent = function <T extends Record<string, unknown[]>>(
   const promise = fn(emitter)
   return { emitter, promise }
 }
+
+type VeHemiLockEvent = {
+  lockDuration: bigint
+  tokenId: bigint
+  ts: bigint
+}
+
+export const getLockEvent = (receipt: TransactionReceipt) =>
+  parseEventLogs({ abi: veHemiAbi, logs: receipt.logs }).find(
+    event => event.eventName === 'Lock',
+  )?.args as VeHemiLockEvent | undefined

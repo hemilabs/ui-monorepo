@@ -19,7 +19,7 @@ type ApiResponse = {
   positions: ApiPosition[]
 }
 
-const getStakingPositionsQueryKey = ({
+export const getStakingPositionsQueryKey = ({
   address,
   chainId,
 }: {
@@ -36,37 +36,37 @@ export const useStakingPositions = function (
   const { address } = useAccount()
   const hemi = useHemi()
 
-  const queryKey = getStakingPositionsQueryKey({ address, chainId: hemi.id })
+  return useQuery({
+    enabled: !!address,
+    async queryFn() {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${hemi.id}/locks/${address}`,
+      )
 
-  return {
-    ...useQuery({
-      enabled: !!address,
-      async queryFn() {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${hemi.id}/locks/${address}`,
-        )
+      if (!response.ok) {
+        return []
+      }
 
-        if (!response.ok) {
-          return []
-        }
+      const data: ApiResponse = await response.json()
 
-        const data: ApiResponse = await response.json()
+      const positions = data.positions.map(
+        position =>
+          ({
+            ...position,
+            amount: BigInt(position.amount),
+            blockNumber: BigInt(position.blockNumber),
+            blockTimestamp: BigInt(position.blockTimestamp),
+            lockTime: BigInt(position.lockTime),
+            timestamp: BigInt(position.timestamp),
+          }) as StakingPosition,
+      )
 
-        return data.positions.map(
-          position =>
-            ({
-              ...position,
-              amount: BigInt(position.amount),
-              blockNumber: BigInt(position.blockNumber),
-              blockTimestamp: BigInt(position.blockTimestamp),
-              lockTime: BigInt(position.lockTime),
-              timestamp: BigInt(position.timestamp),
-            }) as StakingPosition,
-        )
-      },
-      queryKey,
-      ...options,
+      return positions
+    },
+    queryKey: getStakingPositionsQueryKey({
+      address,
+      chainId: hemi.id,
     }),
-    queryKey,
-  }
+    ...options,
+  })
 }

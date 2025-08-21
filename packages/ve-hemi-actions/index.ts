@@ -6,4 +6,4 @@ export {
   MinLockDurationSeconds,
 } from './constants'
 
-export { validateCreateLockInputs } from './utils'
+export { getLockEvent, validateCreateLockInputs } from './utils'

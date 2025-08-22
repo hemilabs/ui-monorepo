@@ -1,5 +1,6 @@
 import { Chevron } from 'components/icons/chevron'
 import { Link } from 'components/link'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
@@ -31,6 +32,7 @@ function ItemAccordionUI({
   text,
   width,
 }: Omit<Props, 'event' | 'urlToBeSelected'>) {
+  const [networkType] = useNetworkType()
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathnameWithoutLocale()
   const router = useRouter()
@@ -71,7 +73,13 @@ function ItemAccordionUI({
   function handleOpenAccordion() {
     const firstItemHref = items.length > 0 ? items[0]?.href : undefined
     if (firstItemHref && width >= 768) {
-      router.push(getUrlPath(firstItemHref))
+      router.push(
+        getUrlPath(
+          `${firstItemHref}${
+            networkType === 'mainnet' ? '' : `?networkType=${networkType}`
+          }`,
+        ),
+      )
     }
   }
 

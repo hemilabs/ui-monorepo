@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { PropsWithChildren } from 'react'
+import { PropsWithChildren, Suspense } from 'react'
 
 import StakingDashboardLayoutClient from './_components/stakingDashboardLayoutClient'
 
@@ -10,5 +10,9 @@ export const metadata: Metadata = {
 export default function StakingDashboardLayout({
   children,
 }: PropsWithChildren) {
-  return <StakingDashboardLayoutClient>{children}</StakingDashboardLayoutClient>
+  return (
+    <Suspense>
+      <StakingDashboardLayoutClient>{children}</StakingDashboardLayoutClient>
+    </Suspense>
+  )
 }

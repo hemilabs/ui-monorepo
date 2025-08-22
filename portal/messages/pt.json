@@ -104,7 +104,7 @@
   },
   "genesis-drop": {
     "add-hemi-to-your-wallet": "Adicionar {symbol} à sua carteira",
-    "apy-in-staked-hemi": "TEA em {symbol}",
+    "apy-in-staked-hemi": "TEA em ${symbol}",
     "apy-in-hemi-up-to": "Até {percentage}%",
     "claimed": "Reivindicado",
     "claim-and-stake-successful": "Reivindicação e Stake bem-sucedidos",
@@ -112,7 +112,7 @@
     "claim-name": "Nome da reivindicação:",
     "claim-options": {
       "and-other-partners": "...e muitos outros parceiros!",
-      "apy-in-ve-hemi": "Até {percentage}% TEA em {symbol}",
+      "apy-in-ve-hemi": "Até {percentage}% TEA em ${symbol}",
       "bonus-hemi": "{percentage}% Bônus HEMI",
       "bonus-staked-for-6-months": "<amount></amount> tokens em stake por 6 meses",
       "bonus-staked-for-24-months": "<amount></amount> tokens em stake por 2 anos",
@@ -123,22 +123,22 @@
       "claiming": "A reivindicar...",
       "future-incentives-from": "Incentivos futuros de",
       "more-info-description": "Do total de tokens ganhos, uma parte estará disponível para reivindicação imediata (\"disponível agora\") enquanto o resto será automaticamente colocado em stake por um período de bloqueio definido.",
-      "more-rewards": "+<bonus></bonus>% mais {symbol}",
+      "more-rewards": "+<bonus></bonus>% mais ${symbol}",
       "lockup-period-6": "Bloqueio de 6 meses",
       "lockup-period-24": "Bloqueio de 2 anos",
       "lockup-period-48": "Bloqueio de 4 anos",
       "plus-staked-tokens": "Mais <amount></amount> tokens em stake<break></break>por <period></period>.",
       "recommended": "Recomendado",
-      "staked-hemi": "{symbol} em stake",
-      "staked-tokens-can-earn": "Tokens em stake podem ganhar um bônus de até {percentage}% em {symbol}",
+      "staked-hemi": "${symbol} em stake",
+      "staked-tokens-can-earn": "Tokens em stake podem ganhar um bônus de até {percentage}% em ${symbol}",
       "submit-text": "Reivindicar & Fazer Stake",
       "this-option-includes-bonus": "Esta opção de reivindicação inclui um bônus de <bonus></bonus>% nos seus tokens ganhos.",
       "tokens-available-now": "Tokens {symbol} disponíveis agora!",
-      "unlocked-hemi": "{symbol} desbloqueados"
+      "unlocked-hemi": "${symbol} desbloqueados"
     },
     "claim-rewards": "Reivindicar recompensas",
     "claiming-your-rewards": "Reivindicando suas recompensas",
-    "come-back-later": "Volte no momento do TGE para reivindicar os seus {symbol}",
+    "come-back-later": "Volte no momento do TGE para reivindicar os seus ${symbol}",
     "connect-demos-wallet": "Certifique-se de conectar sua carteira verificada Demos.",
     "hemi-token-added": "{symbol} adicionado à sua carteira",
     "here-is-your-claim-tx": "Aqui está a sua transação de reivindicação:",
@@ -159,7 +159,7 @@
     },
     "title": "Programa de Recompensas",
     "view-tx-on-explorer": "Ver TX no explorador",
-    "your-earned-tokens": "Seus tokens {symbol} ganhos."
+    "your-earned-tokens": "Seus tokens ${symbol} ganhos."
   },
   "get-started": {
     "add-funds-to-your-wallet": "Adicionar fundos à sua carteira",

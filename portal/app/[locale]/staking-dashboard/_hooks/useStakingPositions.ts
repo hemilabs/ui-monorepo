@@ -19,7 +19,7 @@ type ApiResponse = {
   positions: ApiPosition[]
 }
 
-const getStakingPositionsQueryKey = ({
+export const getStakingPositionsQueryKey = ({
   address,
   chainId,
 }: {

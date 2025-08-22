@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
 import { formatDate } from 'utils/format'
 
-import { useStakingDashboardState } from '../_hooks/useStakingDashboardState'
+import { useStakingDashboard } from '../_context/stakingDashboardContext'
 import { maxDays, minDays, step, twoYears } from '../_utils/lockCreationTimes'
 import { sanitizeLockup } from '../_utils/sanitizeLockup'
 
@@ -18,10 +18,6 @@ type NearestValidValues = {
 type TryValuesHintProps = NearestValidValues & {
   inputText: string
   isValid: boolean
-}
-
-type Props = {
-  stakingDashboardState: ReturnType<typeof useStakingDashboardState>
 }
 
 export const isValidLockup = (n: number) =>
@@ -86,14 +82,14 @@ function TryValuesHint({
   )
 }
 
-export function Lockup({ stakingDashboardState }: Props) {
+export function Lockup() {
   const {
     estimatedApy,
     inputDays,
     lockupDays,
     updateInputDays,
     updateLockupDays,
-  } = stakingDashboardState
+  } = useStakingDashboard()
   const t = useTranslations('staking-dashboard')
   const locale = useLocale()
 

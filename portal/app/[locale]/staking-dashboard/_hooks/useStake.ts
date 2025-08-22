@@ -8,13 +8,21 @@ import {
   StakingDashboardOperation,
   StakingDashboardStatus,
   StakingDashboardToken,
+  StakingPosition,
 } from 'types/stakingDashboard'
 import { parseTokenUnits } from 'utils/token'
-import { CreateLockEvents, getVeHemiContractAddress } from 've-hemi-actions'
+import {
+  CreateLockEvents,
+  getLockEvent,
+  getVeHemiContractAddress,
+} from 've-hemi-actions'
 import { createLock } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
+
+import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
+import { getStakingPositionsQueryKey } from './useStakingPositions'
 
 type UseStake = {
   input: string
@@ -33,6 +41,7 @@ export const useStake = function ({
 }: UseStake) {
   const amount = parseTokenUnits(input, token)
 
+  const { setDrawerQueryString } = useDrawerStakingQueryString()
   const { address } = useAccount()
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
   const queryClient = useQueryClient()
@@ -48,6 +57,11 @@ export const useStake = function ({
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     token.chainId,
   )
+
+  const stakingPositionQueryKey = getStakingPositionsQueryKey({
+    address,
+    chainId: token.chainId,
+  })
 
   const { hemiWalletClient } = useHemiWalletClient()
 
@@ -71,7 +85,9 @@ export const useStake = function ({
         updateStakingDashboardOperation({
           approvalTxHash,
           status: StakingDashboardStatus.APPROVAL_TX_PENDING,
+          transactionHash: undefined,
         })
+        setDrawerQueryString('staking')
       })
       emitter.on('approve-transaction-reverted', function (receipt) {
         updateStakingDashboardOperation({
@@ -93,11 +109,41 @@ export const useStake = function ({
           status: StakingDashboardStatus.STAKE_TX_PENDING,
           transactionHash,
         })
+        setDrawerQueryString('staking')
+      })
+      emitter.on('user-signing-lock-creation-error', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
       })
       emitter.on('lock-creation-transaction-succeeded', function (receipt) {
         updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_CONFIRMED,
         })
+
+        const { blockNumber, transactionHash } = receipt
+        const { lockDuration, tokenId, ts } = getLockEvent(receipt)
+
+        const newPosition: StakingPosition = {
+          amount,
+          blockNumber,
+          blockTimestamp: ts,
+          forfeitable: false,
+          id: tokenId.toString(),
+          lockTime: lockDuration,
+          owner: address,
+          pastOwners: [],
+          status: 'active',
+          timestamp: ts,
+          tokenId: tokenId.toString(),
+          transactionHash,
+          transferable: true,
+        }
+
+        queryClient.setQueryData(stakingPositionQueryKey, old => [
+          newPosition,
+          ...((old as StakingPosition[] | undefined) ?? []),
+        ])
 
         // fees
         updateNativeBalanceAfterFees(receipt)

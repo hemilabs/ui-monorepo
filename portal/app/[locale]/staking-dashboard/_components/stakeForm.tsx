@@ -1,21 +1,39 @@
 'use client'
 
 import { useHemiToken } from 'app/[locale]/genesis-drop/_hooks/useHemiToken'
+import { DrawerLoader } from 'components/drawer/drawerLoader'
+import dynamic from 'next/dynamic'
+import { Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import {
-  StakingDashboardStake,
-  TypedStakingDashboardState,
-  useStakingDashboardState,
-} from '../_hooks/useStakingDashboardState'
+  StakingDashboardProvider,
+  useStakingDashboard,
+} from '../_context/stakingDashboardContext'
+import { useDrawerStakingQueryString } from '../_hooks/useDrawerStakingQueryString'
 
 import { Stake } from './stake'
 
-export const StakeForm = function ({
-  state,
-}: {
-  state: ReturnType<typeof useStakingDashboardState>
-}) {
+const StakeReview = dynamic(
+  () => import('./stakeReview').then(mod => mod.StakeReview),
+  {
+    loading: () => <DrawerLoader className="h-[95dvh] md:h-full" />,
+    ssr: false,
+  },
+)
+
+const SideDrawer = function () {
+  const { drawerMode, setDrawerQueryString } = useDrawerStakingQueryString()
+  const { stakingDashboardOperation } = useStakingDashboard()
+
+  if (!drawerMode || !stakingDashboardOperation) {
+    return null
+  }
+
+  return <StakeReview closeDrawer={() => setDrawerQueryString(null)} />
+}
+
+export const StakeForm = function () {
   const hemiToken = useHemiToken()
 
   if (!hemiToken) {
@@ -27,11 +45,12 @@ export const StakeForm = function ({
     )
   }
 
-  // Typescript can't infer it, but we can cast these safely
   return (
-    <Stake
-      state={state as TypedStakingDashboardState<StakingDashboardStake>}
-      token={hemiToken}
-    />
+    <StakingDashboardProvider>
+      <Stake />
+      <Suspense>
+        <SideDrawer />
+      </Suspense>
+    </StakingDashboardProvider>
   )
 }

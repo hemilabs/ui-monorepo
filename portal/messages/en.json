@@ -230,6 +230,12 @@
   },
   "staking-dashboard": {
     "amount": "Amount",
+    "drawer": {
+      "approving": "Approving {symbol}",
+      "heading": "Review Stake",
+      "subheading": "Review and confirm your stake.",
+      "stake-token": "Stake {symbol}"
+    },
     "form": {
       "allowance-load-failed": "Failed to load allowance",
       "approve-and-stake": "Approve and Stake",

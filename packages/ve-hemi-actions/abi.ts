@@ -144,4 +144,19 @@ export const veHemiAbi = [
     stateMutability: 'view',
     type: 'function',
   },
+  {
+    inputs: [
+      { indexed: true, name: 'provider', type: 'address' },
+      { indexed: true, name: 'account', type: 'address' },
+      { indexed: true, name: 'tokenId', type: 'uint256' },
+      { indexed: false, name: 'value', type: 'uint256' },
+      { indexed: false, name: 'ts', type: 'uint256' },
+      { indexed: false, name: 'lockDuration', type: 'uint256' },
+      { indexed: false, name: 'type', type: 'uint256' },
+      { indexed: false, name: 'transferable', type: 'bool' },
+      { indexed: false, name: 'forfeitable', type: 'bool' },
+    ],
+    name: 'Lock',
+    type: 'event',
+  },
 ] as const

@@ -5,13 +5,10 @@ import { useTranslations } from 'next-intl'
 
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
-import { useStakingDashboardState } from './_hooks/useStakingDashboardState'
 import { useStakingPositions } from './_hooks/useStakingPositions'
 
 function Page() {
   const t = useTranslations('staking-dashboard')
-  const state = useStakingDashboardState()
-
   const { data, isLoading } = useStakingPositions()
 
   return (
@@ -28,7 +25,7 @@ function Page() {
             <StakeTable data={data} loading={isLoading} />
           </div>
           <div className="w-full lg:w-fit lg:flex-auto lg:flex-shrink-0 lg:basis-1/2 2xl:w-fit 2xl:flex-none">
-            <StakeForm state={state} />
+            <StakeForm />
           </div>
         </div>
       </div>

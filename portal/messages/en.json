@@ -104,7 +104,7 @@
   },
   "genesis-drop": {
     "add-hemi-to-your-wallet": "Add {symbol} to your wallet",
-    "apy-in-staked-hemi": "APY in {symbol}",
+    "apy-in-staked-hemi": "APY in ${symbol}",
     "apy-in-hemi-up-to": "Up to {percentage}%",
     "claimed": "Claimed",
     "claim-and-stake-successful": "Claim and Stake successful",
@@ -112,7 +112,7 @@
     "claim-name": "Claim name:",
     "claim-options": {
       "and-other-partners": "...and many other partners!",
-      "apy-in-ve-hemi": "Up to {percentage}% APY in {symbol}",
+      "apy-in-ve-hemi": "Up to {percentage}% APY in ${symbol}",
       "bonus-hemi": "{percentage}% Bonus HEMI",
       "bonus-staked-for-6-months": "<amount></amount> tokens staked for 6 months",
       "bonus-staked-for-24-months": "<amount></amount> tokens staked for 2 years",
@@ -123,22 +123,22 @@
       "claiming": "Claiming...",
       "future-incentives-from": "Future incentives from",
       "more-info-description": "Of your total earned tokens, a portion will be claimable immediately (\"available now\") while the rest will be staked automatically for a set lock-up period.",
-      "more-rewards": "+<bonus></bonus>% more {symbol}",
+      "more-rewards": "+<bonus></bonus>% more ${symbol}",
       "lockup-period-6": "6 month",
       "lockup-period-24": "2 years",
       "lockup-period-48": "4 years",
       "plus-staked-tokens": "Plus <amount></amount> tokens staked<break></break>for <period></period>.",
       "recommended": "Recommended",
-      "staked-hemi": "Staked {symbol}",
-      "staked-tokens-can-earn": "Staked tokens can earn a bonus of up to {percentage}% in {symbol}",
+      "staked-hemi": "Staked ${symbol}",
+      "staked-tokens-can-earn": "Staked tokens can earn a bonus of up to {percentage}% in ${symbol}",
       "submit-text": "Claim & Stake",
       "this-option-includes-bonus": "This claim option includes a <bonus></bonus>% bonus on your earned tokens.",
-      "tokens-available-now": "{symbol} tokens available now!",
-      "unlocked-hemi": "Unlocked {symbol}"
+      "tokens-available-now": "${symbol} tokens available now!",
+      "unlocked-hemi": "Unlocked ${symbol}"
     },
     "claim-rewards": "Claim rewards",
     "claiming-your-rewards": "Claiming your rewards",
-    "come-back-later": "Come back at TGE to claim your {symbol}",
+    "come-back-later": "Come back at TGE to claim your ${symbol}",
     "connect-demos-wallet": "Make sure to connect your Demos verified wallet.",
     "hemi-token-added": "{symbol} added to your wallet",
     "here-is-your-claim-tx": "Here's your claim transaction:",
@@ -159,7 +159,7 @@
     },
     "title": "Rewards Program",
     "view-tx-on-explorer": "View TX on explorer",
-    "your-earned-tokens": "Your earned {symbol} tokens."
+    "your-earned-tokens": "Your earned ${symbol} tokens."
   },
   "get-started": {
     "add-funds-to-your-wallet": "Add funds to your wallet",

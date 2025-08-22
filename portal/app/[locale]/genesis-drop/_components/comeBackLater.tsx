@@ -66,7 +66,7 @@ export const ComeBackLater = function () {
 
   return (
     <>
-      <div className="mt-14 flex items-center gap-x-1 rounded-lg bg-orange-50 p-4">
+      <div className="mt-11 flex items-center gap-x-1 rounded-lg bg-orange-50 p-4">
         <Icon />
         <p className="text-sm font-medium text-orange-500">
           {t('come-back-later', { symbol: hemiToken.symbol })}

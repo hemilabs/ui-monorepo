@@ -15,7 +15,7 @@ export const Amount = function ({ operation }: Props) {
 
   return (
     <div className="flex items-center gap-x-1.5 text-neutral-950">
-      <TokenLogo size="small" token={token} />
+      <TokenLogo size="small" token={token} version="L1" />
       <DisplayAmount
         amount={formatUnits(BigInt(amount), token.decimals)}
         showSymbol={false}

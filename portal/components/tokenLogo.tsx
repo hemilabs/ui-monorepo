@@ -46,7 +46,10 @@ export function TokenLogo({ size, token, version = 'default' }: Props) {
     )
   }
 
-  const logoURI = version === 'L1' ? token.extensions.l1LogoURI : token.logoURI
+  const logoURI =
+    version === 'L1' && token.extensions?.l1LogoURI
+      ? token.extensions.l1LogoURI
+      : token.logoURI
 
   return logoURI ? (
     <div className={`relative ${sizes[size]}`}>

@@ -1,6 +1,6 @@
 import { Chevron } from 'components/icons/chevron'
 import { Link } from 'components/link'
-import { useNetworkType } from 'hooks/useNetworkType'
+import { NetworkType, useNetworkType } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
@@ -29,10 +29,10 @@ function ItemAccordionUI({
   eventTrack,
   icon,
   items,
+  networkType,
   text,
   width,
-}: Omit<Props, 'event' | 'urlToBeSelected'>) {
-  const [networkType] = useNetworkType()
+}: Omit<Props, 'event' | 'urlToBeSelected'> & { networkType: NetworkType }) {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathnameWithoutLocale()
   const router = useRouter()
@@ -146,6 +146,7 @@ function ItemAccordionUI({
 }
 
 function ItemAccordionImpl(props: Omit<Props, 'urlToBeSelected'>) {
+  const [networkType] = useNetworkType()
   const { enabled, track } = useUmami()
   const { width } = useWindowSize()
 
@@ -153,6 +154,7 @@ function ItemAccordionImpl(props: Omit<Props, 'urlToBeSelected'>) {
     ...props,
     eventEnabled: enabled,
     eventTrack: track,
+    networkType,
     width,
   }
 
@@ -160,7 +162,7 @@ function ItemAccordionImpl(props: Omit<Props, 'urlToBeSelected'>) {
 }
 
 export const ItemAccordion = (props: ItemAccordionProps) => (
-  <Suspense fallback={<ItemAccordionUI {...props} />}>
+  <Suspense fallback={<ItemAccordionUI {...props} networkType="mainnet" />}>
     <ItemAccordionImpl {...props} />
   </Suspense>
 )

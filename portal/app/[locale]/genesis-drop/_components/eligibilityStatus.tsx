@@ -1,7 +1,7 @@
 import { useTranslations } from 'next-intl'
 
 const Text = ({ value }: { value: string }) => (
-  <div className="[&>svg]:max-h-26 relative flex w-full items-center justify-center">
+  <div className="relative flex w-full items-center justify-center [&>svg]:h-20">
     <svg
       className="max-w-full"
       fill="none"
@@ -110,7 +110,7 @@ const Text = ({ value }: { value: string }) => (
       {/* Background stroke layer with enhanced effects */}
       <g filter="url(#creamyTextEffects)">
         <mask fill="black" id="creamyTextMask" maskUnits="userSpaceOnUse">
-          <rect fill="white" height="90" width="400" />
+          <rect fill="white" height="90" width="500" />
           <text
             dominantBaseline="central"
             fontFamily="inherit"

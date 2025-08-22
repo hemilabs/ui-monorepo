@@ -75,7 +75,7 @@ export const Eligible = function ({ eligibility }: Props) {
   const proofAvailable = eligibility.proof.length > 0
   return (
     <>
-      <div className="max-h-22 md:max-w-105 w-full max-w-60 sm:max-w-80">
+      <div className="md:max-w-105 max-h-24 w-full max-w-96">
         <EligibilityStatus amount={amount} status="eligible" />
       </div>
       <div className="flex items-center gap-x-1">

@@ -19,10 +19,11 @@ type Size = keyof typeof sizes
 type Props = {
   size: Size
   token: Token
+  version?: 'default' | 'L1'
 }
 
 // for hemi tokens, we add a hemi logo at the bottom right
-export function TokenLogo({ size, token }: Props) {
+export function TokenLogo({ size, token, version = 'default' }: Props) {
   const [networkType] = useNetworkType()
   const bitcoinChain = useBitcoin()
   const bitcoinToken = getNativeToken(bitcoinChain.id)
@@ -45,13 +46,15 @@ export function TokenLogo({ size, token }: Props) {
     )
   }
 
-  return token.logoURI ? (
+  const logoURI = version === 'L1' ? token.extensions.l1LogoURI : token.logoURI
+
+  return logoURI ? (
     <div className={`relative ${sizes[size]}`}>
       <Image
         alt={`${token.symbol} Logo`}
         className="w-full"
         height={20}
-        src={token.logoURI}
+        src={logoURI}
         width={20}
       />
     </div>

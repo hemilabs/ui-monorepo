@@ -40,7 +40,7 @@ export const FormContent = function ({
         onChange={updateInput}
         showFiatBalance={false}
         token={token}
-        tokenSelector={<TokenSelectorReadOnly token={token} />}
+        tokenSelector={<TokenSelectorReadOnly logoVersion="L1" token={token} />}
         value={input}
       />
       <Lockup />

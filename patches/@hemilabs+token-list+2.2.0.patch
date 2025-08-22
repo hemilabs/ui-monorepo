@@ -1,0 +1,87 @@
+diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
+index 4e6f369..1dce0f5 100644
+--- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
++++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
+@@ -357,6 +357,11 @@
+       "decimals": 8,
+       "extensions": {
+         "birthBlock": 1125154,
++        "bridgeInfo": {
++          "livenet": {
++            "tokenAddress": "BTC"
++          }
++        },
+         "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/hemibtc.svg"
+       },
+       "logoURI": "https://hemilabs.github.io/token-list/logos/hemibtc.svg",
+@@ -369,10 +374,15 @@
+       "decimals": 6,
+       "extensions": {
+         "birthBlock": 623077,
++        "bridgeInfo": {
++          "1": {
++            "tokenAddress": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
++          }
++        },
+         "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/usdc.svg"
+       },
+       "logoURI": "https://hemilabs.github.io/token-list/logos/usdc.svg",
+-      "name": "Bridged USDC (Stargate)",
++      "name": "USDC",
+       "symbol": "USDC.e"
+     },
+     {
+@@ -410,6 +420,11 @@
+       "decimals": 6,
+       "extensions": {
+         "birthBlock": 666946,
++        "bridgeInfo": {
++          "1": {
++            "tokenAddress": "0xdAC17F958D2ee523a2206206994597C13D831ec7"
++          }
++        },
+         "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/usdt.svg"
+       },
+       "logoURI": "https://hemilabs.github.io/token-list/logos/usdt.svg",
+@@ -557,11 +572,16 @@
+       "decimals": 8,
+       "extensions": {
+         "birthBlock": 2165818,
++        "bridgeInfo": {
++          "testnet": {
++            "tokenAddress": "tBTC"
++          }
++        },
+         "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/hemibtc.svg"
+       },
+       "logoURI": "https://hemilabs.github.io/token-list/logos/hemibtc.svg",
+-      "name": "HemiBitcoin",
+-      "symbol": "hBTC"
++      "name": "Testnet Bitcoin",
++      "symbol": "tBTC"
+     },
+     {
+       "address": "0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298",
+@@ -628,8 +648,20 @@
+         "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/hdai.svg"
+       },
+       "logoURI": "https://hemilabs.github.io/token-list/logos/hdai.svg",
+-      "name": "Hemi Tunneled DAI",
+-      "symbol": "hDAI"
++      "name": "Dai Stablecoin",
++      "symbol": "DAI"
++    },
++    {
++      "address": "0xbaacf81C8341c3Cb983BC48051Cc7377d2A2Eb93",
++      "chainId": 743111,
++      "decimals": 18,
++      "extensions": {
++        "birthBlock": 3819064,
++        "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/hemi.svg"
++      },
++      "logoURI": "https://hemilabs.github.io/token-list/logos/hemi.svg",
++      "name": "MyToken",
++      "symbol": "MTK"
+     }
+   ]
+ }

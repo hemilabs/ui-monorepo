@@ -29,28 +29,32 @@ const UI = ({ active, href, onClick, t }: Props) => (
       </ButtonLink>
     </div>
     <Link
-      className={`hidden ${active ? '' : 'cursor-pointer'} group/item md:block`}
+      className={`hidden ${
+        active ? '' : 'cursor-pointer'
+      } group/item ml-1 md:block`}
       href={href}
       onClick={onClick}
     >
-      <div className="shadow-soft relative">
+      <div className="shadow-get-started-card relative h-full w-52 rounded-lg bg-white">
         <Background
-          className={`rounded-lg border
+          className={`rounded-lg 
             ${
               active
-                ? 'border-orange-500 [&>rect]:fill-orange-50'
-                : 'border-neutral-300/55'
+                ? 'outline outline-1 outline-orange-500 [&>rect]:fill-orange-50'
+                : '[&>rect]:fill-transparent'
             }
             group-hover/item:[&>rect]:fill-orange-50`}
         />
-        <div className="absolute left-4 right-4 top-4 flex flex-col items-start gap-2.5">
+        <div className="absolute top-4 flex flex-col items-start gap-2.5 px-4">
           <HemiLogoIcon />
           <div className="flex flex-col justify-center">
-            <div className="flex items-center">
+            <div className="flex items-center gap-1.5">
               <span className="text-mid font-semibold text-neutral-950">
                 {t('get-started')}
               </span>
-              <Chevron.Right className="pl-1.5 [&>path]:fill-neutral-500" />
+              <div className="flex size-4 items-center justify-center">
+                <Chevron.Right className="[&>path]:fill-neutral-500" />
+              </div>
             </div>
             <span className="text-sm font-medium text-neutral-500">
               {t('learn-how-to-start')}

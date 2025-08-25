@@ -2,9 +2,9 @@ import { ComponentProps } from 'react'
 
 export const Background = (props: ComponentProps<'svg'>) => (
   <svg
+    className="size-full"
     fill="none"
-    height="120"
-    width="212"
+    viewBox="0 0 210 120"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >

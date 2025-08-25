@@ -21,8 +21,6 @@ const config: Config = {
           'linear-gradient(180deg, #FF8E4D 0%, #FF6C15 100%)',
         'button-primary-hovered':
           'linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.00) 100%), linear-gradient(180deg, #FF8E4D 0%, #FF6C15 100%)',
-        'earnpoints-hover':
-          'linear-gradient(0deg, rgba(255,108,21,0.12) 43.65%, rgba(255,24,20,0.12) 106.25%)',
         'hemi-gradient':
           'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',
         'recommended-claim':

@@ -1,4 +1,5 @@
 import { TunnelIcon } from 'components/icons/tunnelIcon'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -34,9 +35,21 @@ const UI = ({ href, icon, text }: ComponentProps<typeof ItemLink>) => (
 const TunnelLinkImpl = function (
   props: Omit<ComponentProps<typeof ItemLink>, 'href'>,
 ) {
+  const [networkType] = useNetworkType()
   const href = useTunnelOperationByConnectedWallet()
 
-  return <UI href={href} {...props} />
+  return (
+    <UI
+      href={{
+        ...href,
+        query: {
+          ...href.query,
+          ...(networkType === 'testnet' && { networkType }),
+        },
+      }}
+      {...props}
+    />
+  )
 }
 
 export const TunnelLink = function () {

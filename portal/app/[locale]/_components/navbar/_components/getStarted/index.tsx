@@ -3,11 +3,11 @@ import { Chevron } from 'components/icons/chevron'
 import { Link } from 'components/link'
 import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'i18n/navigation'
-import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import React, { ComponentProps, Suspense } from 'react'
 
-import hemiLogo from './_images/hemiLogo.png'
+import { HemiLogoIcon } from '../hemiLogo'
+
 import { Background } from './background'
 
 type Props = Pick<ComponentProps<typeof Link>, 'href' | 'onClick'> & {
@@ -38,23 +38,21 @@ const UI = ({ active, href, onClick, t }: Props) => (
           className={`rounded-lg border
             ${
               active
-                ? 'border-orange-500 [&>g>rect]:fill-orange-50'
+                ? 'border-orange-500 [&>rect]:fill-orange-50'
                 : 'border-neutral-300/55'
             }
-            group-hover/item:[&>g>rect]:fill-orange-50`}
+            group-hover/item:[&>rect]:fill-orange-50`}
         />
-        <div className="absolute left-0 top-0 flex h-full w-full flex-col justify-between">
-          <div className="m-auto mt-7">
-            <Image alt={'hemi-logo'} className="size-13" src={hemiLogo} />
-          </div>
-          <div className="flex flex-col justify-center px-4 pb-4">
+        <div className="absolute left-4 right-4 top-4 flex flex-col items-start gap-2.5">
+          <HemiLogoIcon />
+          <div className="flex flex-col justify-center">
             <div className="flex items-center">
-              <span className="text-base text-neutral-950">
+              <span className="text-mid font-semibold text-neutral-950">
                 {t('get-started')}
               </span>
-              <Chevron.Right className="pl-1 [&>path]:fill-neutral-500" />
+              <Chevron.Right className="pl-1.5 [&>path]:fill-neutral-500" />
             </div>
-            <span className="text-sm text-neutral-500">
+            <span className="text-sm font-medium text-neutral-500">
               {t('learn-how-to-start')}
             </span>
           </div>

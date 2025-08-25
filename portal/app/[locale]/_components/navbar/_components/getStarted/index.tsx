@@ -3,11 +3,11 @@ import { Chevron } from 'components/icons/chevron'
 import { Link } from 'components/link'
 import { useUmami } from 'hooks/useUmami'
 import { usePathname } from 'i18n/navigation'
-import Image from 'next/image'
 import { useTranslations } from 'next-intl'
 import React, { ComponentProps, Suspense } from 'react'
 
-import hemiLogo from './_images/hemiLogo.png'
+import { HemiLogoIcon } from '../hemiLogo'
+
 import { Background } from './background'
 
 type Props = Pick<ComponentProps<typeof Link>, 'href' | 'onClick'> & {
@@ -29,32 +29,34 @@ const UI = ({ active, href, onClick, t }: Props) => (
       </ButtonLink>
     </div>
     <Link
-      className={`hidden ${active ? '' : 'cursor-pointer'} group/item md:block`}
+      className={`hidden ${
+        active ? '' : 'cursor-pointer'
+      } group/item ml-1 md:block`}
       href={href}
       onClick={onClick}
     >
-      <div className="shadow-soft relative">
+      <div className="shadow-get-started-card relative h-full w-52 rounded-lg bg-white">
         <Background
-          className={`rounded-lg border
+          className={`rounded-lg 
             ${
               active
-                ? 'border-orange-500 [&>g>rect]:fill-orange-50'
-                : 'border-neutral-300/55'
+                ? 'outline outline-1 outline-orange-500 [&>rect]:fill-orange-50'
+                : '[&>rect]:fill-transparent'
             }
-            group-hover/item:[&>g>rect]:fill-orange-50`}
+            group-hover/item:[&>rect]:fill-orange-50`}
         />
-        <div className="absolute left-0 top-0 flex h-full w-full flex-col justify-between">
-          <div className="m-auto mt-7">
-            <Image alt={'hemi-logo'} className="size-13" src={hemiLogo} />
-          </div>
-          <div className="flex flex-col justify-center px-4 pb-4">
-            <div className="flex items-center">
-              <span className="text-base text-neutral-950">
+        <div className="absolute top-4 flex flex-col items-start gap-2.5 px-4">
+          <HemiLogoIcon />
+          <div className="flex flex-col justify-center">
+            <div className="flex items-center gap-1.5">
+              <span className="text-mid font-semibold text-neutral-950">
                 {t('get-started')}
               </span>
-              <Chevron.Right className="pl-1 [&>path]:fill-neutral-500" />
+              <div className="flex size-4 items-center justify-center">
+                <Chevron.Right className="[&>path]:fill-neutral-500" />
+              </div>
             </div>
-            <span className="text-sm text-neutral-500">
+            <span className="text-sm font-medium text-neutral-500">
               {t('learn-how-to-start')}
             </span>
           </div>

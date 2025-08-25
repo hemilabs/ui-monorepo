@@ -53,6 +53,8 @@ const config: Config = {
         'claim-page-high':
           '0 0 0 1px rgba(10, 10, 10, 0.08), 0 3px 12px 0 rgba(0, 0, 0, 0.04), 0 7px 16px -5px rgba(10, 10, 10, 0.08)',
         'claim-page-soft': '0 0 0 1px rgba(10, 10, 10, 0.08)',
+        'get-started-card':
+          '0 0 0 1px rgba(10, 10, 10, 0.08), 0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11)',
         'help-icon':
           '0px 1px 2px 0px rgba(10 10 10 0.04), 0px 1px 4px 0px #rgba(10 10 10 0.02)',
         'help-menu':

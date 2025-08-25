@@ -66,8 +66,6 @@ const analyticsEvents = [
   'nav - telegram news',
   'nav - tiktok',
   // /stake
-  'stake - click earn points card',
-  'stake - close earn points card',
   'stake - learn stake',
   'stake - stake failed',
   'stake - stake started',

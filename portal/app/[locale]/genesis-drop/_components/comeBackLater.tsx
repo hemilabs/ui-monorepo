@@ -1,11 +1,10 @@
+import { useHemiToken } from 'hooks/useHemiToken'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useTranslations } from 'next-intl'
 import { useEffect } from 'react'
 import ConfettiExplosion from 'react-confetti-explosion'
 import useSessionStorageState from 'use-session-storage-state'
 import { useAccount } from 'wagmi'
-
-import { useHemiToken } from '../_hooks/useHemiToken'
 
 const Icon = () => (
   <svg

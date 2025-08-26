@@ -1,7 +1,7 @@
-import { useHemiToken } from 'app/[locale]/genesis-drop/_hooks/useHemiToken'
 import { Button } from 'components/button'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
+import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 

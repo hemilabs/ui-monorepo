@@ -1,7 +1,7 @@
-import { useHemiToken } from 'app/[locale]/genesis-drop/_hooks/useHemiToken'
 import { Card } from 'components/card'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
+import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 

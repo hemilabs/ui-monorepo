@@ -2,10 +2,10 @@ import { InfoIcon } from 'components/icons/infoIcon'
 import { Spinner } from 'components/spinner'
 import { Tooltip } from 'components/tooltip'
 import { type EligibilityData } from 'genesis-drop-actions'
+import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
 
 import { useGetClaimTransaction } from '../_hooks/useGetClaimTransaction'
-import { useHemiToken } from '../_hooks/useHemiToken'
 import { useIsClaimable } from '../_hooks/useIsClaimable'
 import { formatHemi } from '../_utils'
 

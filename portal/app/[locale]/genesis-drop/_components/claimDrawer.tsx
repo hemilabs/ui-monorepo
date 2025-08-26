@@ -7,13 +7,13 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { LockupMonths, type EligibilityData } from 'genesis-drop-actions'
 import { useHemi } from 'hooks/useHemi'
+import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
 import { FormEvent } from 'react'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits, Hash } from 'viem'
 
 import { useEstimateClaimFees } from '../_hooks/useEstimateClaimFees'
-import { useHemiToken } from '../_hooks/useHemiToken'
 
 type Props = {
   eligibility: EligibilityData

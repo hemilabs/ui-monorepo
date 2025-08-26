@@ -37,7 +37,12 @@ const LeftBackground = (props: ComponentProps<'svg'>) => (
 
     {/* Circle from leftPath1 - render before orange path so it goes behind */}
     <circle fill="#fff" r="8.469">
-      <animateMotion dur="8s" repeatCount="indefinite">
+      <animateMotion
+        dur="8s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#leftPath1" />
       </animateMotion>
     </circle>
@@ -52,12 +57,24 @@ const LeftBackground = (props: ComponentProps<'svg'>) => (
 
     {/* Circles from leftPath2 and leftPath3 - render after orange path so they stay visible */}
     <circle fill="#fff" r="8.469">
-      <animateMotion begin="1s" dur="6s" repeatCount="indefinite">
+      <animateMotion
+        begin="1s"
+        dur="6s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#leftPath2" />
       </animateMotion>
     </circle>
     <circle fill="#fff" r="8.469">
-      <animateMotion begin="2s" dur="7s" repeatCount="indefinite">
+      <animateMotion
+        begin="2s"
+        dur="7s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#leftPath3" />
       </animateMotion>
     </circle>
@@ -100,7 +117,13 @@ const RightBackground = (props: ComponentProps<'svg'>) => (
 
     {/* Circle from rightPath1 - render before dark path so it goes behind */}
     <circle fill="#fff" r="8.469">
-      <animateMotion begin="0.5s" dur="8s" repeatCount="indefinite">
+      <animateMotion
+        begin="0.5s"
+        dur="8s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#rightPath1" />
       </animateMotion>
     </circle>
@@ -115,12 +138,24 @@ const RightBackground = (props: ComponentProps<'svg'>) => (
 
     {/* Circles from rightPath2 and rightPath3 - render after dark path so they stay visible */}
     <circle fill="#fff" r="8.469">
-      <animateMotion begin="1.5s" dur="6s" repeatCount="indefinite">
+      <animateMotion
+        begin="1.5s"
+        dur="6s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#rightPath2" />
       </animateMotion>
     </circle>
     <circle fill="#fff" r="8.469">
-      <animateMotion begin="2.5s" dur="7s" repeatCount="indefinite">
+      <animateMotion
+        begin="2.5s"
+        dur="7s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#rightPath3" />
       </animateMotion>
     </circle>

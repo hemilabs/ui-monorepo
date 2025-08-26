@@ -129,12 +129,12 @@
       "potential-staked-rewards": "Recompensas potenciais para seus tokens ${symbol} em stake",
       "recommended": "Recomendado",
       "staked-hemi": "${symbol} em stake",
-      "staked-tokens-may-qualify": "Tokens ${symbol} em stake podem qualificar para até {multiplier}x multiplicador",
+      "staked-tokens-may-qualify": "Tokens ${symbol} em stake podem se qualificar para multiplicador de até {multiplier}x",
       "submit-text": "Reivindicar & Fazer Stake",
       "this-option-includes-bonus": "Esta opção de reivindicação já inclui um bônus de <bonus></bonus>% nos seus tokens ganhos.",
       "tokens-available-now": "Tokens {symbol} disponíveis agora!",
       "tokens-available-now-amount": "<amount></amount> tokens ${symbol} disponíveis agora!",
-      "up-to-multiplier-rewards": "Até {multiplier}x multiplicador nas recompensas em stake"
+      "up-to-multiplier-rewards": "Multiplicador de até {multiplier}x nas recompensas em stake"
     },
     "claim-rewards": "Reivindicar recompensas",
     "claiming-your-rewards": "Reivindicando suas recompensas",

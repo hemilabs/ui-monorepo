@@ -84,10 +84,10 @@ function ItemAccordionUI({
   }
 
   function handleClick() {
-    if (!isOpen) {
+    if (!hasSelectedItem) {
       handleOpenAccordion()
+      setIsOpen(prev => !prev)
     }
-    setIsOpen(prev => !prev)
   }
 
   return (

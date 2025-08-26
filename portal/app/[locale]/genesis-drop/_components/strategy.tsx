@@ -145,7 +145,7 @@ export const Strategy = function ({
             break: () => <br />,
             period: () => (
               <span className="lowercase">
-                {t(`lockup-period-${lockupMonths}`)}
+                {t('lockup-period-months', { months: lockupMonths })}
               </span>
             ),
           })}
@@ -154,10 +154,11 @@ export const Strategy = function ({
           {submitButton}
         </div>
       </div>
-      <div className="md:h-39 h-fit rounded-b-lg">
+      <div className="md:h-47 h-fit rounded-b-lg">
         {recommendationLevel === 'low' ? (
           <SimpleBonus
             amount={renderStakedAmount(<Skeleton className="h-3 w-10" />)}
+            lockupMonths={lockupMonths}
           />
         ) : (
           <FullBonus

@@ -1,4 +1,10 @@
 {
+  "hemi": {
+    "VeHemi": {
+      "address": "0x371d3718D5b7F75EAb050FAe6Da7DF3092031c89",
+      "startBlock": 2527403
+    }
+  },
   "hemi-sepolia": {
     "VeHemi": {
       "address": "0x54e24e64653F97477872D320c4d116D03a201493",

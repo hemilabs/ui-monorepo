@@ -2,7 +2,7 @@ import { hemi, hemiSepolia } from 'hemi-viem'
 import type { Address } from 'viem'
 
 const VE_HEMI_CONTRACT_ADDRESSES: Record<number, Address> = {
-  // TODO: Add hemi mainnet address when available
+  [hemi.id]: '0x371d3718D5b7F75EAb050FAe6Da7DF3092031c89',
   [hemiSepolia.id]: '0x54e24e64653F97477872D320c4d116D03a201493',
 } as const
 

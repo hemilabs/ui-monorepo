@@ -4,11 +4,11 @@ import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 
 import { useHemiToken } from '../_hooks/useHemiToken'
-import { PercentageApyStakedHemi } from '../_utils'
+import { getMultiplier } from '../_utils'
 
 import { BonusHemiTooltip } from './bonusHemiTooltip'
 import { Incentives } from './incentives'
-import { StakedHemiTooltip } from './stakedHemiTooltip'
+import { MultiplierRewardsTooltip } from './multiplierRewardsTooltip'
 
 const Container = ({
   bgColor,
@@ -38,15 +38,30 @@ const BonusDetail = ({
   </div>
 )
 
-export const SimpleBonus = function ({ amount }: { amount: ReactNode }) {
+export const SimpleBonus = function ({
+  amount,
+  lockupMonths,
+}: {
+  amount: ReactNode
+  lockupMonths: LockupMonths
+}) {
+  const { symbol } = useHemiToken()
   const t = useTranslations('genesis-drop.claim-options')
   return (
     <Container bgColor="bg-neutral-50">
       <BonusDetail
-        text={t.rich('bonus-staked-for-6-months', {
+        text={t.rich('tokens-available-now-amount', {
           amount: () => amount,
+          symbol,
         })}
       />
+      <BonusDetail
+        text={t.rich('bonus-staked-for-months', {
+          amount: () => amount,
+          months: () => lockupMonths,
+        })}
+      />
+      <BonusDetail text={t('potential-staked-rewards', { symbol })} />
     </Container>
   )
 }
@@ -61,24 +76,31 @@ export const FullBonus = function ({
 }) {
   const { symbol } = useHemiToken()
   const t = useTranslations('genesis-drop.claim-options')
+  const multiplier = getMultiplier(lockupMonths)
   return (
     <Container bgColor="bg-white">
       <BonusDetail
-        text={t.rich(`bonus-staked-for-${lockupMonths}-months`, {
+        text={t.rich(`tokens-available-now-amount`, {
           amount: () => amount,
+          symbol,
+        })}
+      />
+      <BonusDetail
+        text={t.rich('bonus-staked-for-months', {
+          amount: () => amount,
+          months: () => lockupMonths,
+        })}
+      />
+      <BonusDetail
+        content={<MultiplierRewardsTooltip multiplier={multiplier} />}
+        text={t('up-to-multiplier-rewards', {
+          multiplier,
         })}
       />
       <BonusDetail
         content={<BonusHemiTooltip bonus={bonus} />}
         text={t.rich('more-rewards', {
           bonus: () => bonus,
-          symbol,
-        })}
-      />
-      <BonusDetail
-        content={<StakedHemiTooltip />}
-        text={t('apy-in-ve-hemi', {
-          percentage: PercentageApyStakedHemi,
           symbol,
         })}
       />

@@ -1,9 +1,8 @@
 import Big from 'big.js'
+import { LockupMonths } from 'genesis-drop-actions'
 import { NetworkType } from 'hooks/useNetworkType'
 import { smartRound } from 'smart-round'
 import { formatUnits } from 'viem'
-
-export const PercentageApyStakedHemi = 9
 
 const formatter = smartRound(12, 2, 2)
 
@@ -69,4 +68,13 @@ export const calculateSplitAmount = function ({
     staked: applyBonus(staked, bonusPercentage),
     unlocked: applyBonus(unlocked, bonusPercentage),
   }
+}
+
+export const getMultiplier = function (lockupMonths: LockupMonths) {
+  const multipliers: Partial<Record<LockupMonths, number>> = {
+    24: 3.25,
+    48: 6.25,
+  }
+
+  return multipliers[lockupMonths]
 }

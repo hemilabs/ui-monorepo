@@ -3,9 +3,12 @@ import { Tooltip } from 'components/tooltip'
 import { useTranslations } from 'next-intl'
 
 import { useHemiToken } from '../_hooks/useHemiToken'
-import { PercentageApyStakedHemi } from '../_utils'
 
-export const StakedHemiTooltip = function () {
+type Props = {
+  multiplier?: number
+}
+
+export const MultiplierRewardsTooltip = function ({ multiplier }: Props) {
   const t = useTranslations('genesis-drop.claim-options')
   const { symbol } = useHemiToken()
   return (
@@ -13,12 +16,14 @@ export const StakedHemiTooltip = function () {
       borderRadius="12px"
       id="staked-hemi"
       overlay={
-        <p className="p-4 text-sm font-medium text-white">
-          {t('staked-tokens-can-earn', {
-            percentage: PercentageApyStakedHemi,
-            symbol,
-          })}
-        </p>
+        multiplier && (
+          <p className="p-4 text-sm font-medium text-white">
+            {t('staked-tokens-may-qualify', {
+              multiplier,
+              symbol,
+            })}
+          </p>
+        )
       }
     >
       <div className="group/icon">

@@ -29,31 +29,52 @@ const LeftBackground = (props: ComponentProps<'svg'>) => (
       strokeWidth={22}
     />
     <path
-      d="m-246.159 971.012 392.421-392.418c62.852-62.851 62.852-164.754 0-227.605L-221.03-16.301"
-      stroke="#FF6A00"
-      strokeLinecap="round"
-      strokeWidth={22}
-    />
-    <path
       d="m-204.116 971.613 372.003-372c74.457-74.461 74.457-195.184 0-269.645L-178.386-16.301"
       stroke="#009CF5"
       strokeLinecap="round"
       strokeWidth={22}
     />
 
-    {/* Animated circles following the paths */}
+    {/* Circle from leftPath1 - render before orange path so it goes behind */}
     <circle fill="#fff" r="8.469">
-      <animateMotion dur="8s" repeatCount="indefinite">
+      <animateMotion
+        dur="8s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#leftPath1" />
       </animateMotion>
     </circle>
+
+    {/* Orange path rendered here so leftPath1 circle goes behind it */}
+    <path
+      d="m-246.159 971.012 392.421-392.418c62.852-62.851 62.852-164.754 0-227.605L-221.03-16.301"
+      stroke="#FF6A00"
+      strokeLinecap="round"
+      strokeWidth={22}
+    />
+
+    {/* Circles from leftPath2 and leftPath3 - render after orange path so they stay visible */}
     <circle fill="#fff" r="8.469">
-      <animateMotion begin="1s" dur="6s" repeatCount="indefinite">
+      <animateMotion
+        begin="1s"
+        dur="6s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#leftPath2" />
       </animateMotion>
     </circle>
     <circle fill="#fff" r="8.469">
-      <animateMotion begin="2s" dur="7s" repeatCount="indefinite">
+      <animateMotion
+        begin="2s"
+        dur="7s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#leftPath3" />
       </animateMotion>
     </circle>
@@ -88,31 +109,53 @@ const RightBackground = (props: ComponentProps<'svg'>) => (
       strokeWidth={22}
     />
     <path
-      d="M480.889 971.011 88.468 578.593c-62.852-62.851-62.852-164.754 0-227.605L455.76-16.302"
-      stroke="#1B282F"
-      strokeLinecap="round"
-      strokeWidth={22}
-    />
-    <path
       d="m438.846 971.612-372.003-372c-74.457-74.461-74.457-195.184 0-269.645L413.116-16.302"
       stroke="#FF6A00"
       strokeLinecap="round"
       strokeWidth={22}
     />
 
-    {/* Animated circles following the paths */}
+    {/* Circle from rightPath1 - render before dark path so it goes behind */}
     <circle fill="#fff" r="8.469">
-      <animateMotion begin="0.5s" dur="8s" repeatCount="indefinite">
+      <animateMotion
+        begin="0.5s"
+        dur="8s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#rightPath1" />
       </animateMotion>
     </circle>
+
+    {/* Dark path rendered here so rightPath1 circle goes behind it */}
+    <path
+      d="M480.889 971.011 88.468 578.593c-62.852-62.851-62.852-164.754 0-227.605L455.76-16.302"
+      stroke="#1B282F"
+      strokeLinecap="round"
+      strokeWidth={22}
+    />
+
+    {/* Circles from rightPath2 and rightPath3 - render after dark path so they stay visible */}
     <circle fill="#fff" r="8.469">
-      <animateMotion begin="1.5s" dur="6s" repeatCount="indefinite">
+      <animateMotion
+        begin="1.5s"
+        dur="6s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#rightPath2" />
       </animateMotion>
     </circle>
     <circle fill="#fff" r="8.469">
-      <animateMotion begin="2.5s" dur="7s" repeatCount="indefinite">
+      <animateMotion
+        begin="2.5s"
+        dur="7s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
         <mpath href="#rightPath3" />
       </animateMotion>
     </circle>

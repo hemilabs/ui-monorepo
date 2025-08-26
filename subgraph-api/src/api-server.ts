@@ -18,7 +18,7 @@ import {
   getLastIndexedBlock,
   getTotalStaked,
 } from './subgraph.ts'
-import { isInteger, sendJsonResponse } from './utils.ts'
+import { isInteger, sendJsonResponse, asyncHandler } from './utils.ts'
 
 function parseChainId(
   req: Request<ChainIdPathParams> & ReqData,
@@ -198,14 +198,14 @@ export function createApiServer() {
     '/:chainIdStr(\\d+)/claim/:address(0x[0-9a-fA-F]{40})/:claimGroup(\\d+)',
     parseChainId,
     validateChainIsHemi,
-    getClaimTransactionHandler,
+    asyncHandler(getClaimTransactionHandler),
   )
 
   app.get(
     '/:chainIdStr(\\d+)/locks/:address(0x[0-9a-fA-F]{40})',
     parseChainId,
     validateChainIsHemi,
-    getLockedPositionsHandler,
+    asyncHandler(getLockedPositionsHandler),
   )
 
   app.use(function (req: Request, res: Response) {

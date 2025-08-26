@@ -41,8 +41,7 @@ export const useStakingPositions = function (
     async queryFn() {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${hemi.id}/locks/${address}`,
-      )
-
+      ).catch(() => ({ ok: false }) as Response)
       if (!response.ok) {
         return []
       }

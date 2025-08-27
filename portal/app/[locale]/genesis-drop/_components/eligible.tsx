@@ -14,6 +14,7 @@ import { ClaimOptions } from './claimOptions'
 import { ComeBackLater } from './comeBackLater'
 import { EligibilityStatus } from './eligibilityStatus'
 import { NotEligible } from './notEligible'
+import { ShareResults } from './shareResults'
 
 type Props = {
   eligibility: EligibilityData
@@ -87,7 +88,10 @@ export const Eligible = function ({ eligibility }: Props) {
       {proofAvailable && claimGroupIdAvailable ? (
         <ClaimOptions eligibility={eligibility} />
       ) : (
-        <ComeBackLater />
+        <>
+          <ShareResults amount={amount} symbol={hemiToken.symbol} />
+          <ComeBackLater />
+        </>
       )}
     </>
   )

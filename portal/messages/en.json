@@ -156,7 +156,7 @@
       "terms": "Tincidunt non Sed Donec nulla, nulla, ultrices odio Quisque malesuada elementum orci quam venenatis non placerat Nam diam vitae nec faucibus dui nulla, eget ",
       "title": "Hemi rewards terms and conditions"
     },
-    "share-on-x": "Share on X",
+    "share-on-x": "Share on <icon></icon>",
     "share-x-text": "I am eligible for {amount} ${symbol} in the TGE Genesis drop of Hemi! 🎉 Check if you are eligible:",
     "title": "Rewards Program",
     "up-to-multiplier": "Up to {multiplier}x",

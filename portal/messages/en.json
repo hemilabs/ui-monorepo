@@ -243,7 +243,6 @@
       "approve-and-stake": "Approve and Stake",
       "approving": "Approving...",
       "days": "{days, plural, one {{days} day} other {{days} days}}",
-      "estimated-apy": "Estimated APY:",
       "expire-date": "Expire date:",
       "lockup-increment-warning": "Lock-up time can be set in 6-day increments.",
       "max-days": "Max. {days} {days, plural, one {day} other {days}}",
@@ -262,7 +261,6 @@
     "stake-successful": "Stake successful",
     "sub-heading": "Learn and explore with Hemi developer ecosystem",
     "table": {
-      "apy": "APY",
       "connect-to-hemi": "Connect to {network} to view your stake positions.",
       "connect-to-stake": "Connect your wallet to view your HEMI staked.",
       "get-started": "Get started by staking your HEMI",

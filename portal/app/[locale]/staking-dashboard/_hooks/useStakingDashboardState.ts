@@ -9,7 +9,6 @@ import { type NoPayload, type Payload } from 'utils/typeUtilities'
 import { twoYears } from '../_utils/lockCreationTimes'
 
 type StakingDashboardState = {
-  estimatedApy: number
   input: string
   inputDays: string
   lockupDays: number
@@ -21,7 +20,6 @@ type Action<T extends string> = {
 }
 
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
-type UpdateEstimatedApy = Action<'updateEstimatedApy'> & Payload<number>
 type UpdateLockupDays = Action<'updateLockupDays'> & Payload<number>
 type UpdateInput = Action<'updateInput'> & Payload<string>
 type UpdateInputDays = Action<'updateInputDays'> & Payload<string>
@@ -31,7 +29,6 @@ type UpdateStakingDashboardOperation =
 
 type Actions =
   | ResetStateAfterOperation
-  | UpdateEstimatedApy
   | UpdateInput
   | UpdateInputDays
   | UpdateLockupDays
@@ -57,9 +54,6 @@ function reducer(
         inputDays: twoYears.toString(),
         lockupDays: twoYears,
       }
-
-    case 'updateEstimatedApy':
-      return { ...state, estimatedApy: payload }
 
     case 'updateInput':
       return { ...state, input: payload }
@@ -95,17 +89,10 @@ type StakingDashboardFunctionEvents = {
 export const useStakingDashboardState = function (): StakingDashboardState &
   StakingDashboardFunctionEvents {
   const [state, dispatch] = useReducer(reducer, {
-    estimatedApy: 9.6, // TODO - Placeholder for estimated APY, replace with actual logic
     input: '0',
     inputDays: twoYears.toString(),
     lockupDays: twoYears,
   } as StakingDashboardState)
-
-  const updateEstimatedApy = useCallback(function (
-    payload: UpdateEstimatedApy['payload'],
-  ) {
-    dispatch({ payload, type: 'updateEstimatedApy' })
-  }, [])
 
   const updateInput = useCallback(function (payload: UpdateInput['payload']) {
     const { error, value } = sanitizeAmount(payload)
@@ -138,7 +125,6 @@ export const useStakingDashboardState = function (): StakingDashboardState &
       () => dispatch({ type: 'resetStateAfterOperation' }),
       [],
     ),
-    updateEstimatedApy,
     updateInput,
     updateInputDays,
     updateLockupDays,

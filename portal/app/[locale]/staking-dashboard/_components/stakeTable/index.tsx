@@ -46,7 +46,7 @@ const columnsBuilder = (
     ),
     header: () => <Header text={t('amount')} />,
     id: 'amount',
-    meta: { width: '200px' },
+    meta: { width: '221px' },
   },
   {
     cell: function ExplorerLink({ row }) {
@@ -59,14 +59,7 @@ const columnsBuilder = (
     },
     header: () => <Header text={t('table.tx')} />,
     id: 'tx',
-    meta: { width: '150px' },
-  },
-  {
-    // TODO define apy - using a hardcoded value for the time being
-    cell: () => <span className="text-emerald-600">9.8</span>,
-    header: () => <Header text={t('table.apy')} />,
-    id: 'apy',
-    meta: { width: '42px' },
+    meta: { width: '164px' },
   },
   {
     cell: ({ row }) => (
@@ -78,13 +71,13 @@ const columnsBuilder = (
     ),
     header: () => <Header text={t('lockup-period')} />,
     id: 'lockup-period',
-    meta: { width: '120px' },
+    meta: { width: '134px' },
   },
   {
     cell: ({ row }) => <TimeRemaining operation={row.original} />,
     header: () => <Header text={t('table.time-remaining')} />,
     id: 'time-remaining',
-    meta: { width: '170px' },
+    meta: { width: '184px' },
   },
 ]
 

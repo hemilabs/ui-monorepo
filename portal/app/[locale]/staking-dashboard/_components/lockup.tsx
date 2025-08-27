@@ -83,13 +83,8 @@ function TryValuesHint({
 }
 
 export function Lockup() {
-  const {
-    estimatedApy,
-    inputDays,
-    lockupDays,
-    updateInputDays,
-    updateLockupDays,
-  } = useStakingDashboard()
+  const { inputDays, lockupDays, updateInputDays, updateLockupDays } =
+    useStakingDashboard()
   const t = useTranslations('staking-dashboard')
   const locale = useLocale()
 
@@ -174,14 +169,10 @@ export function Lockup() {
           </p>
           <div className="mt-4 h-px w-full bg-neutral-300/55" />
         </div>
-        <div className="mt-2 flex flex-col justify-between gap-y-2 lg:flex-row lg:items-center lg:gap-x-4 lg:gap-y-0">
+        <div className="mt-2">
           <p className="text-sm font-medium text-neutral-600">
             {t('form.expire-date')}
             <span className="ml-1 text-neutral-950">{expireDate}</span>
-          </p>
-          <p className="text-sm font-medium text-neutral-600">
-            {t('form.estimated-apy')}
-            <span className="ml-1 text-emerald-600">{estimatedApy}%</span>
           </p>
         </div>
       </div>

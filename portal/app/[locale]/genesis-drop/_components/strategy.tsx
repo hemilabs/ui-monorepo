@@ -129,7 +129,7 @@ export const Strategy = function ({
       onSubmit={handleSubmit}
     >
       <div
-        className={`flex flex-col justify-between gap-y-3 rounded-t-lg border-t border-solid border-neutral-300/55 pt-6 ${bgColor}`}
+        className={`flex flex-col justify-between gap-y-3 rounded-t-lg pt-6 ${bgColor}`}
       >
         <div className="flex items-center justify-between px-6">
           <h4 className="text-smd font-semibold text-black">{heading}</h4>

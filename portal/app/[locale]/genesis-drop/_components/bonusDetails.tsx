@@ -1,9 +1,9 @@
 import { OrangeCheckIcon } from 'components/icons/orangeCheckIcon'
 import { LockupMonths } from 'genesis-drop-actions'
+import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 
-import { useHemiToken } from '../_hooks/useHemiToken'
 import { getMultiplier } from '../_utils'
 
 import { BonusHemiTooltip } from './bonusHemiTooltip'

@@ -1,7 +1,7 @@
 'use client'
 
-import { useHemiToken } from 'app/[locale]/genesis-drop/_hooks/useHemiToken'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
+import { useHemiToken } from 'hooks/useHemiToken'
 import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'

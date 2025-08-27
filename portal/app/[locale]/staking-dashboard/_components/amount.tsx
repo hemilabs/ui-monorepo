@@ -1,6 +1,6 @@
-import { useHemiToken } from 'app/[locale]/genesis-drop/_hooks/useHemiToken'
 import { DisplayAmount } from 'components/displayAmount'
 import { TokenLogo } from 'components/tokenLogo'
+import { useHemiToken } from 'hooks/useHemiToken'
 import { StakingPosition } from 'types/stakingDashboard'
 import { formatUnits } from 'viem'
 

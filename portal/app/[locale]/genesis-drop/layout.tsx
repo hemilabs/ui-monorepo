@@ -34,7 +34,7 @@ const LayoutImpl = function ({ children }: Props) {
   }
 
   return (
-    <PageLayout variant="wide">
+    <PageLayout variant="genesisDrop">
       <Background />
       <div className="flex w-full flex-col items-center gap-y-2">
         <Page>{children}</Page>

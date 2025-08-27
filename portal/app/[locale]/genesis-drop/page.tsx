@@ -1,7 +1,6 @@
 'use client'
 
 import { HemiSymbolWhite } from 'components/icons/hemiSymbolWhite'
-import { PageLayout } from 'components/pageLayout'
 import { Spinner } from 'components/spinner'
 import { useTranslations } from 'next-intl'
 import { walletIsConnected } from 'utils/wallet'
@@ -45,7 +44,7 @@ export default function Page() {
   }
 
   return (
-    <PageLayout variant="wide">
+    <>
       <div className="flex w-full flex-col items-center gap-y-2">
         <div className="size-14">
           <HemiSymbolWhite />
@@ -58,6 +57,6 @@ export default function Page() {
         </p>
         {getMainSection()}
       </div>
-    </PageLayout>
+    </>
   )
 }

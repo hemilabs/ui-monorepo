@@ -2,12 +2,11 @@ import { EventEmitter } from 'events'
 import { hemi, hemiSepolia } from 'hemi-viem'
 import {
   type WalletClient,
-  type Hash,
   encodeFunctionData,
   isAddress,
   zeroAddress,
   isHex,
-  Hex,
+  type Hex,
 } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
@@ -138,7 +137,7 @@ const runClaim = ({
 }: EligibilityData & {
   lockupMonths: number
   ratio: number
-  termsSignature: Hash
+  termsSignature: Hex
   walletClient: WalletClient
 }) =>
   async function (emitter: EventEmitter<ClaimEvents>) {
@@ -227,7 +226,7 @@ export const encodeClaimTokens = ({
 }: EligibilityData & {
   lockupMonths: number
   ratio: number
-  termsSignature: Hash
+  termsSignature: Hex
 }) =>
   encodeFunctionData({
     abi: merkleBoxAbi,

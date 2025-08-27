@@ -9,7 +9,7 @@ import {
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { Hash } from 'viem'
+import { Hash, Hex } from 'viem'
 
 import { useClaimTokens } from '../_hooks/useClaimTokens'
 
@@ -38,7 +38,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
   }>({ lockup: undefined, show: false })
 
   const [isRetrying, setIsRetrying] = useState(false)
-  const [signedTerms, setSignedTerms] = useState<Hash | undefined>(undefined)
+  const [signedTerms, setSignedTerms] = useState<Hex | undefined>(undefined)
   const [transactionHash, setTransactionHash] = useState<Hash | undefined>(
     undefined,
   )
@@ -76,7 +76,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
   const disableSubmit =
     termsAndConditions.show || ['pending', 'success'].includes(claimStatus)
 
-  const handleClaim = (termsSignature: Hash) =>
+  const handleClaim = (termsSignature: Hex) =>
     claimTokens({
       lockupMonths: termsAndConditions.lockup!,
 
@@ -89,7 +89,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
     setIsRetrying(true)
   }
 
-  const handleAcceptTermsAndConditions = function (termsSignature: Hash) {
+  const handleAcceptTermsAndConditions = function (termsSignature: Hex) {
     // save it for retrying
     setSignedTerms(termsSignature)
     handleClaim(termsSignature)

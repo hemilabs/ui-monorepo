@@ -7,7 +7,7 @@ import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
-import { Hash } from 'viem'
+import { Hex } from 'viem'
 import { useAccount, useSwitchChain } from 'wagmi'
 
 import { useEligibleForTokens } from './useEligibleForTokens'
@@ -55,7 +55,7 @@ export const useClaimTokens = function (options?: {
     }: {
       lockupMonths: LockupMonths
       ratio: number
-      termsSignature: Hash
+      termsSignature: Hex
     }) {
       if (!connectedToHemi) {
         await switchChainAsync({ chainId: hemi.id })

@@ -6,7 +6,7 @@ import {
 } from 'genesis-drop-actions'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
-import { Hash } from 'viem'
+import { Hex } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 export const useEstimateClaimFees = function ({
@@ -18,7 +18,7 @@ export const useEstimateClaimFees = function ({
   eligibility: EligibilityData
   lockupMonths: LockupMonths
   ratio: number
-  termsSignature: Hash
+  termsSignature: Hex
 }) {
   const { address } = useAccount()
   const hemi = useHemi()

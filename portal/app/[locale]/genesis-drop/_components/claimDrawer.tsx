@@ -11,7 +11,7 @@ import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
 import { FormEvent } from 'react'
 import { getNativeToken } from 'utils/nativeToken'
-import { formatUnits, Hash } from 'viem'
+import { formatUnits, Hash, Hex } from 'viem'
 
 import { useEstimateClaimFees } from '../_hooks/useEstimateClaimFees'
 
@@ -23,7 +23,7 @@ type Props = {
   onRetry: VoidFunction
   ratio: number
   status: MutationStatus
-  termsSignature: Hash
+  termsSignature: Hex
   transactionHash: Hash | undefined
 }
 

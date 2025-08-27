@@ -9,6 +9,8 @@ const analyticsEvents = [
   // header
   'header - tunnel',
   'header - txn history',
+  // /genesis-drop
+  'genesis-drop - share eligibility',
   // /get-started
   'add to wallet - hemi mainnet',
   'add to wallet - hemi sepolia',

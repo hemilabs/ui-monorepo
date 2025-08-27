@@ -38,7 +38,7 @@ export const ShareResults = function ({ amount, symbol }: Props) {
   const t = useTranslations('genesis-drop')
   const { track } = useUmami()
 
-  // pathname already includes the "/""
+  // pathname already includes the "/"
   const mainUrl = `${window.location.origin}${pathname}`
   const tweetText = t('share-x-text', {
     amount,
@@ -58,12 +58,11 @@ export const ShareResults = function ({ amount, symbol }: Props) {
   return (
     <div className="mt-4 w-fit max-w-xs">
       <ButtonLink href={twitterUrl} onClick={handleShare} variant="secondary">
-        <span>
+        <span className="flex items-center gap-x-1.5">
           {t.rich('share-on-x', {
-            x: () => <Icon />,
+            icon: () => <Icon />,
           })}
         </span>
-        <Icon />
       </ButtonLink>
     </div>
   )

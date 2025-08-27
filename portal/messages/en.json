@@ -113,7 +113,7 @@
     "claim-options": {
       "and-other-partners": "...and many other partners!",
       "bonus-hemi": "{percentage}% Bonus HEMI",
-      "bonus-staked-for-months": "<amount></amount> tokens staked for <months></months> months",
+      "bonus-staked-for-months": "<amount></amount> $<symbol></symbol> tokens staked for <months></months> months",
       "bonus-tokens": "Bonus tokens",
       "claim": "Claim",
       "claim-title-6": "Genesis Voyager",
@@ -125,7 +125,7 @@
       "more-rewards": "+<bonus></bonus>% more ${symbol}",
       "liquid-hemi": "Liquid ${symbol}",
       "lockup-period-months": "{months} months",
-      "plus-staked-tokens": "Plus <amount></amount> tokens staked<break></break>for <period></period>.",
+      "plus-staked-tokens": "Plus <amount></amount> $<symbol></symbol> tokens staked<break></break>for <period></period>.",
       "potential-staked-rewards": "Potential rewards for your staked ${symbol}",
       "recommended": "Recommended",
       "staked-hemi": "Staked ${symbol}",

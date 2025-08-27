@@ -148,6 +148,7 @@ export const Strategy = function ({
                 {t('lockup-period-months', { months: lockupMonths })}
               </span>
             ),
+            symbol: () => hemiToken.symbol,
           })}
         </p>
         <div className="h-15 flex items-center justify-center border-y border-solid border-t-neutral-300/55 px-6 [&>button]:w-full">

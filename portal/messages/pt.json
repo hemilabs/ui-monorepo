@@ -113,7 +113,7 @@
     "claim-options": {
       "and-other-partners": "...e muitos outros parceiros!",
       "bonus-hemi": "{percentage}% Bônus HEMI",
-      "bonus-staked-for-months": "<amount></amount> tokens em stake por <months></months> meses",
+      "bonus-staked-for-months": "<amount></amount> $<symbol></symbol> tokens em stake por <months></months> meses",
       "bonus-tokens": "Tokens de bônus",
       "claim": "Reivindicar",
       "claim-title-6": "Gênesis Viajante",
@@ -125,7 +125,7 @@
       "more-rewards": "+<bonus></bonus>% mais ${symbol}",
       "liquid-hemi": "${symbol} líquidos",
       "lockup-period-months": "{months} meses",
-      "plus-staked-tokens": "Mais <amount></amount> tokens em stake<break></break>por <period></period>.",
+      "plus-staked-tokens": "Mais <amount></amount> $<symbol></symbol> tokens em stake<break></break>por <period></period>.",
       "potential-staked-rewards": "Recompensas potenciais para seus tokens ${symbol} em stake",
       "recommended": "Recomendado",
       "staked-hemi": "${symbol} em stake",

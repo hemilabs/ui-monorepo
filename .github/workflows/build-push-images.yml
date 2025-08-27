@@ -3,7 +3,7 @@ name: Publish Docker images
 on:
   push:
     branches:
-      - token-claim
+      - main
     paths:
       - 'portal-backend/**'
       - 'subgraph-api/**'

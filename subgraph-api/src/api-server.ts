@@ -8,6 +8,8 @@ import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
 import { ChainIdPathParams, ReqData } from '../types/server.ts'
 
+import { getClaimTransactionHandler } from './route-handlers/get-claim-transaction-hash.ts'
+import { getLockedPositionsHandler } from './route-handlers/get-locked-positions.ts'
 import { getWithdrawalProofAndClaimHandler } from './route-handlers/get-withdrawal-proof-and-claim.ts'
 import {
   getBtcWithdrawals,
@@ -16,7 +18,7 @@ import {
   getLastIndexedBlock,
   getTotalStaked,
 } from './subgraph.ts'
-import { isInteger, sendJsonResponse } from './utils.ts'
+import { isInteger, sendJsonResponse, asyncHandler } from './utils.ts'
 
 function parseChainId(
   req: Request<ChainIdPathParams> & ReqData,
@@ -190,6 +192,20 @@ export function createApiServer() {
         })
         .catch(next)
     },
+  )
+
+  app.get(
+    '/:chainIdStr(\\d+)/claim/:address(0x[0-9a-fA-F]{40})/:claimGroup(\\d+)',
+    parseChainId,
+    validateChainIsHemi,
+    asyncHandler(getClaimTransactionHandler),
+  )
+
+  app.get(
+    '/:chainIdStr(\\d+)/locks/:address(0x[0-9a-fA-F]{40})',
+    parseChainId,
+    validateChainIsHemi,
+    asyncHandler(getLockedPositionsHandler),
   )
 
   app.use(function (req: Request, res: Response) {

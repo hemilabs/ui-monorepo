@@ -3,21 +3,18 @@ import { ExternalLink } from 'components/externalLink'
 import { DiscordIcon } from 'components/icons/discordIcon'
 import { GithubIcon } from 'components/icons/githubIcon'
 import { LinkedinIcon } from 'components/icons/linkedinIcon'
+import { TelegramIcon } from 'components/icons/telegramIcon'
 import { TiktokIcon } from 'components/icons/tiktokIcon'
 import { TwitterIcon } from 'components/icons/twitterIcon'
 import { YoutubeIcon } from 'components/icons/youtubeIcon'
 import hemiSocials from 'hemi-socials'
 import { useUmami } from 'hooks/useUmami'
-import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
-
-import { TelegramButton } from './telegram/telegramButton'
 
 const {
   discordUrl,
   githubUrl,
   linkedinUrl,
-  telegramCommunityUrl,
   telegramNewsUrl,
   tiktokUrl,
   twitterUrl,
@@ -26,11 +23,6 @@ const {
 
 const svgCss =
   '[&_path]:hover:fill-black [&_path]:transition-all [&_path]:duration-300 [&_path]:ease-linear'
-
-const Telegram = dynamic(() => import('./telegram').then(mod => mod.Telegram), {
-  loading: () => <TelegramButton isOpen={false} />,
-  ssr: false,
-})
 
 const UI = ({
   addTracking,
@@ -47,10 +39,12 @@ const UI = ({
     <ExternalLink href={discordUrl} onClick={addTracking?.('nav - discord')}>
       <DiscordIcon className={svgCss} />
     </ExternalLink>
-    <Telegram
-      telegramCommunityUrl={telegramCommunityUrl}
-      telegramNewsUrl={telegramNewsUrl}
-    />
+    <ExternalLink
+      href={telegramNewsUrl}
+      onClick={addTracking?.('nav - telegram news')}
+    >
+      <TelegramIcon className={svgCss} />
+    </ExternalLink>
     <ExternalLink href={linkedinUrl} onClick={addTracking?.('nav - linkedIn')}>
       <LinkedinIcon className={svgCss} />
     </ExternalLink>

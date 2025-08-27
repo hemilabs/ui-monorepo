@@ -76,7 +76,9 @@ export const AppLayout = function ({ children }: Props) {
           <TestnetIndicator />
         </div>
         <div className="h-full overflow-y-auto">
-          <div className="relative h-full pb-3 pt-4 md:pt-12">{children}</div>
+          <div className="relative h-full overflow-x-hidden pb-3 pt-4 md:pt-12">
+            {children}
+          </div>
         </div>
       </MainContainer>
       {isNavbarOpen && (

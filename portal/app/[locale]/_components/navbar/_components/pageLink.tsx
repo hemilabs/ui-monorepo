@@ -1,7 +1,7 @@
 import { Link } from 'components/link'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
-import { Suspense } from 'react'
+import { cloneElement, isValidElement, Suspense } from 'react'
 
 import {
   IconContainer,
@@ -27,7 +27,14 @@ const PageLinkUI = ({
   <ItemContainer onClick={onClick} selected={selected}>
     <Link href={href}>
       <Row>
-        <IconContainer selected={selected}>{icon}</IconContainer>
+        <IconContainer selected={selected}>
+          {isValidElement(icon)
+            ? // Need to use any so I don't type _all_ icons with "selected" as optional props
+              // Not ideal, but it does the job
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              cloneElement(icon, { selected } as any)
+            : icon}
+        </IconContainer>
         <ItemText selected={selected} text={text} />
         {rightSection}
       </Row>

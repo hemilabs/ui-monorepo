@@ -27,6 +27,7 @@ type Props = {
   label: string
   maxBalanceButton?: ReactNode
   onChange: (value: string) => void
+  showFiatBalance?: boolean
   token: Token
   tokenSelector: ReactNode
   value: string
@@ -49,6 +50,7 @@ export const TokenInput = function ({
   label,
   maxBalanceButton,
   onChange,
+  showFiatBalance = true,
   token,
   tokenSelector,
   value,
@@ -74,17 +76,19 @@ export const TokenInput = function ({
             type="text"
             value={value}
           />
-          <div className="mt-1 flex items-center text-sm text-neutral-500">
-            <span className="mr-1">$</span>
-            {!Number.isNaN(value) ? (
-              <RenderFiatBalance
-                balance={parseTokenUnits(value, token)}
-                fetchStatus="idle"
-                queryStatus="success"
-                token={token}
-              />
-            ) : null}
-          </div>
+          {showFiatBalance && (
+            <div className="mt-1 flex items-center text-sm text-neutral-500">
+              <span className="mr-1">$</span>
+              {!Number.isNaN(value) ? (
+                <RenderFiatBalance
+                  balance={parseTokenUnits(value, token)}
+                  fetchStatus="idle"
+                  queryStatus="success"
+                  token={token}
+                />
+              ) : null}
+            </div>
+          )}
         </div>
         <div className="flex h-full flex-col items-end justify-end gap-y-3 text-sm">
           {tokenSelector}

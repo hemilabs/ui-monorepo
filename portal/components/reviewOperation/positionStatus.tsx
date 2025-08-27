@@ -1,7 +1,7 @@
+import { OrangeCheckIcon } from 'components/icons/orangeCheckIcon'
 import Image from 'next/image'
 
 import { ErrorIcon } from './_icons/errorIcon'
-import { OrangeCheckIcon } from './_icons/orangeCheckIcon'
 import gradientLoadingImg from './_images/gradient_loading.png'
 import { ProgressStatus } from './progressStatus'
 

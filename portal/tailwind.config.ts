@@ -21,15 +21,19 @@ const config: Config = {
           'linear-gradient(180deg, #FF8E4D 0%, #FF6C15 100%)',
         'button-primary-hovered':
           'linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.00) 100%), linear-gradient(180deg, #FF8E4D 0%, #FF6C15 100%)',
-        'earnpoints-hover':
-          'linear-gradient(0deg, rgba(255,108,21,0.12) 43.65%, rgba(255,24,20,0.12) 106.25%)',
         'hemi-gradient':
           'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',
+        'recommended-claim':
+          'linear-gradient(0deg, rgba(0, 156, 245, 0.03) 0%, rgba(0, 156, 245, 0.03) 100%), linear-gradient(0deg, rgba(250, 250, 250, 0.64) 0%, rgba(250, 250, 250, 0.64) 100%)',
+      },
+      blur: {
+        '1.5xl': '32px',
       },
       borderRadius: {
         '2.5xl': '1.25rem',
       },
       borderWidth: {
+        '1.5': '1.5px',
         '3': '3px',
       },
       boxShadow: {
@@ -46,6 +50,11 @@ const config: Config = {
         'button-secondary-focused':
           '0 0 0 1px rgba(10, 10, 10, 0.08), 0 0 0 4px #E5E5E5, 0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11)',
         'button-tertiary-focused': '0 0 0 4px #E5E5E5',
+        'claim-page-high':
+          '0 0 0 1px rgba(10, 10, 10, 0.08), 0 3px 12px 0 rgba(0, 0, 0, 0.04), 0 7px 16px -5px rgba(10, 10, 10, 0.08)',
+        'claim-page-soft': '0 0 0 1px rgba(10, 10, 10, 0.08)',
+        'get-started-card':
+          '0 0 0 1px rgba(10, 10, 10, 0.08), 0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11)',
         'help-icon':
           '0px 1px 2px 0px rgba(10 10 10 0.04), 0px 1px 4px 0px #rgba(10 10 10 0.02)',
         'help-menu':
@@ -54,6 +63,12 @@ const config: Config = {
           '0px 2px 2px 0px rgba(10, 10, 10, 0.04), 0px 8px 16px -4px rgba(10, 10, 10, 0.04)',
         'large':
           '0px 2px 4px 0px rgba(0, 2, 2, 0.04), 0px 8px 24px -4px rgba(0, 2, 2, 0.04)',
+        'lockup-input-default':
+          '0 0 0 1px rgba(10, 10, 10, 0.08), 0 1px 3px 0 rgba(10, 10, 10, 0.08), 0 1px 2px -1px rgba(10, 10, 10, 0.08)',
+        'lockup-input-error':
+          '0 0 0 1px rgba(244, 63, 94, 0.88), 0 1px 3px 0 rgba(10, 10, 10, 0.08), 0 1px 2px -1px rgba(10, 10, 10, 0.08)',
+        'lockup-input-hover':
+          '0 0 0 1px rgba(10, 10, 10, 0.14), 0 1px 3px 0 rgba(10, 10, 10, 0.08), 0 1px 2px -1px rgba(10, 10, 10, 0.08)',
         'navbar':
           '0px 0px 0px 1px rgba(212, 212, 216, 0.56), 12px 0px 24px -8px rgba(10, 10, 10, 0.06), 0px 10px 24px -8px rgba(10, 10, 10, 0.08), 0px 4px 6px -2px rgba(10, 10, 10, 0.04)',
         'soft': '0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
@@ -87,6 +102,12 @@ const config: Config = {
           'solv': '#EDE5FB',
           'unirouter': '#9600FF',
         },
+        'sky': {
+          450: '#009CF5',
+          550: '#0EA5E9',
+          850: '#004E7B',
+          950: '#738ABC',
+        },
         'token-selector-hover': {
           eth: 'rgba(98, 126, 234, 0.08)',
           usdc: 'rgba(39, 117, 202, 0.08)',
@@ -119,6 +140,13 @@ const config: Config = {
           {
             letterSpacing: '0',
             lineHeight: '18px',
+          },
+        ],
+        'smd': [
+          '0.875rem', // 14px
+          {
+            letterSpacing: '-0.06px',
+            lineHeight: '20px',
           },
         ],
         'mid': [
@@ -156,6 +184,13 @@ const config: Config = {
             lineHeight: '32px',
           },
         ],
+        '2.33xl': [
+          '1.75rem', // 28px
+          {
+            letterSpacing: '-0.28px',
+            lineHeight: '32px',
+          },
+        ],
         '3xl': [
           '1.875rem', // 30px
           {
@@ -171,10 +206,10 @@ const config: Config = {
           },
         ],
         '4xl': [
-          '2.25rem', // 40px
+          '2.25rem', // 36px
           {
             letterSpacing: '-0.72px',
-            lineHeight: '44px',
+            lineHeight: '40px',
           },
         ],
         '5xl': [
@@ -234,6 +269,9 @@ const config: Config = {
       lineHeight: {
         '6.5': '1.625rem',
       },
+      minHeight: {
+        '128': '32rem',
+      },
       opacity: {
         '88': '.88',
       },
@@ -245,6 +283,9 @@ const config: Config = {
         '16': '16',
         '17': '17',
         '18': '18',
+      },
+      screens: {
+        xs: '425px',
       },
       spacing: {
         '0.5': '0.125rem',
@@ -263,8 +304,15 @@ const config: Config = {
         '29': '7.25rem',
         '30': '7.5rem',
         '34': '8.5rem',
+        '39': '9.75rem',
         '42': '10.5rem',
+        '47': '11.75rem',
+        '50': '12.5rem',
+        '86': '21.5rem',
         '90': '22.5rem',
+        '94': '23.5rem',
+        '105': '26.25rem',
+        '120': '30rem',
       },
     },
   },

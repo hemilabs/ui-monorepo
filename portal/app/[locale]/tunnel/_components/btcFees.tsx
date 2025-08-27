@@ -1,4 +1,5 @@
 import { DisplayAmount } from 'components/displayAmount'
+import { FeesContainer } from 'components/feesContainer'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useTranslations } from 'next-intl'
@@ -7,8 +8,6 @@ import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
 import { useBtcDepositTunnelFees } from '../_hooks/useBtcTunnelFees'
-
-import { FeesContainer } from './feesContainer'
 
 type BtcFeesProps = {
   amount: bigint

@@ -19,10 +19,11 @@ These environment variables control how the API works:
 - `GET /:chainId/deposits/:address`
 - `GET /:chainId/withdrawals/:address/(btc|evm)`
 - `GET /:chainId/staked`
+- `GET /:chainId/claim/:address/:claimGroup`
 
 ## Local development and testing
 
-To start the service, the environment variables are stored in i.e. a `.env` file and run the following commands:
+To start the service, the environment variables are stored in a `.env` file and run the following commands:
 
 ```sh
 docker build --tag subgraph-api:local .

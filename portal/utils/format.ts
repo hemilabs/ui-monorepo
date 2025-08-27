@@ -23,16 +23,22 @@ export const formatNumber = (value: number | string) =>
 export const formatFiatNumber = (value: number | string) =>
   fiatRounder(value, { shouldFormat: true })
 
-export const formatPastTime = function (
-  secondsFromNow: number,
-  locale: string,
-) {
+// Shared function to format relative time based on thresholds
+const formatRelativeTime = function ({
+  locale,
+  rounder,
+  seconds,
+}: {
+  locale: string
+  rounder: (value: number) => number
+  seconds: number
+}) {
+  const rtf = new Intl.RelativeTimeFormat(locale, { style: 'long' })
+
   // We need to iterate from the largest unit to the smallest unit - so I prefer
   // so sort them like that
   /* eslint-disable sort-keys */
-  const thresholdsInSeconds: Partial<
-    Record<Intl.RelativeTimeFormatUnit, number>
-  > = {
+  const thresholds: Partial<Record<Intl.RelativeTimeFormatUnit, number>> = {
     // Defined to loosely match blockscout relative timestamps - all converted to seconds
     // See https://github.com/hemilabs/blockscout-frontend/blob/4f993ce5e62382ea98f42c6d79818630af331b9d/lib/date/dayjs.ts#L13
     year: 28944000, // 11 months, assuming 365 days - 30 days
@@ -45,19 +51,31 @@ export const formatPastTime = function (
   }
   /* eslint-enable sort-keys */
 
-  const rtf = new Intl.RelativeTimeFormat(locale, { style: 'long' })
-
-  for (const [unit, secondsInUnit] of Object.entries(thresholdsInSeconds)) {
-    if (secondsFromNow > secondsInUnit || unit === 'second') {
-      const value = Math.floor(secondsFromNow / secondsInUnit) * -1
-
+  for (const [unit, secondsInUnit] of Object.entries(thresholds)) {
+    if (Math.abs(seconds) > secondsInUnit || unit === 'second') {
+      const value = rounder(seconds / secondsInUnit)
       return rtf.format(value, unit as Intl.RelativeTimeFormatUnit)
     }
   }
-  // should never reach here, adding this return it to avoid
-  // adding "undefined" to the inferred returned type
-  return ''
+
+  return rtf.format(0, 'second')
 }
+
+export const formatPastTime = (secondsFromNow: number, locale: string) =>
+  formatRelativeTime({
+    locale,
+    rounder: Math.ceil,
+    // using -1 because we need RelativeFormat to render it in the past,
+    // but secondsFromNow is an absolute value
+    seconds: secondsFromNow * -1,
+  })
+
+export const formatFutureTime = (seconds: number, locale: string) =>
+  formatRelativeTime({
+    locale,
+    rounder: Math.round,
+    seconds,
+  })
 
 const formatFiatNumberTVL = (value: number | string) =>
   fiatRounderTVL(value, { shouldFormat: true })
@@ -70,3 +88,10 @@ export const formatTVL = function (amount: number | string) {
   // For the rest, show the full format
   return `$${formatFiatNumberTVL(amount)}`
 }
+
+export const formatDate = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale, {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(date)

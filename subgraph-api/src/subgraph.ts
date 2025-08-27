@@ -3,7 +3,12 @@
 
 import config from 'config'
 import fetch from 'fetch-plus-plus'
-import { type Address, type Chain, checksumAddress as toChecksum } from 'viem'
+import {
+  type Address,
+  type Chain,
+  type Hash,
+  checksumAddress as toChecksum,
+} from 'viem'
 import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
 import {
@@ -447,4 +452,163 @@ export const getWithdrawalProofAndClaim = function ({
     checkGraphQLErrors(response)
     return response.data.withdrawal
   })
+}
+
+type GetMerkleClaimQueryResponse = GraphResponse<{
+  merkleClaim: {
+    account: string
+    amount: string
+    blockNumber: string
+    blockTimestamp: string
+    erc20: string
+    lockupMonths: number
+    ratio: string
+    transactionHash: string
+  } | null
+}>
+
+export const getMerkleClaim = function ({
+  account,
+  chainId,
+  claimGroup,
+}: {
+  account: Address
+  chainId: Chain['id']
+  claimGroup: number
+}) {
+  /**
+   * Subgraph Ids from the subgraphs published in Arbitrum
+   */
+  const subgraphIds = {
+    [hemiSepolia.id]: subgraphConfig.tokenClaim.testnet,
+  }
+
+  const subgraphUrl = getSubgraphUrl({
+    chainId,
+    subgraphIds,
+  })
+
+  const id = `${account.toLowerCase()}-${claimGroup}`
+
+  const schema = {
+    query: `query GetMerkleClaim($id: String!) {
+      merkleClaim(id: $id) {
+        account
+        amount
+        blockNumber
+        blockTimestamp
+        erc20
+        lockupMonths
+        ratio
+        transactionHash
+      }
+    }`,
+    variables: { id },
+  }
+
+  return request<GetMerkleClaimQueryResponse>(subgraphUrl, schema).then(
+    function (response) {
+      checkGraphQLErrors(response)
+      const claim = response.data.merkleClaim
+      if (!claim) {
+        return null
+      }
+      return {
+        ...claim,
+        // The Subgraph lowercases all the addresses when saving, so better convert them
+        // into checksum format to avoid errors when trying to get balances or other operations.
+        // GraphQL also converts BigInt as strings, which can't be serialized...
+        // @ts-expect-error addresses are string lowercased
+        account: toChecksum(claim.account),
+        // @ts-expect-error addresses are string lowercased
+        erc20: toChecksum(claim.erc20),
+        // ratio comes as an integer with 2 decimals So 15.23 comes as 1523
+        // Dividing by 100 gives us the correct ratio
+        ratio: Number(claim.ratio) / 100,
+      }
+    },
+  )
+}
+
+type GetLockedPositionsQueryResponse = GraphResponse<{
+  lockedPositions: {
+    amount: string
+    blockNumber: string
+    blockTimestamp: string
+    forfeitable: boolean
+    id: string
+    lockTime: string
+    owner: Address
+    pastOwners: Address[]
+    status: 'active' | 'withdrawn'
+    timestamp: string
+    tokenId: string
+    transactionHash: Hash
+    transferable: boolean
+  }[]
+}>
+
+export const getLockedPositions = function ({
+  address,
+  chainId,
+}: {
+  address: Address
+  chainId: Chain['id']
+}) {
+  /**
+   * Subgraph Ids for the veHemi subgraph
+   */
+  const subgraphIds = {
+    [hemi.id]: subgraphConfig.veHemi.mainnet,
+    [hemiSepolia.id]: subgraphConfig.veHemi.testnet,
+  }
+
+  const subgraphUrl = getSubgraphUrl({
+    chainId,
+    subgraphIds,
+  })
+
+  const schema = {
+    query: `
+      query GetLockedPositions($address: Bytes!) {
+        lockedPositions(
+          where: {
+            or: [
+              { owner: $address },
+              { pastOwners_contains: [$address] }
+            ]
+          }
+          orderBy: timestamp
+          orderDirection: desc
+        ) {
+          amount
+          blockNumber
+          blockTimestamp
+          forfeitable
+          id
+          lockTime
+          owner
+          pastOwners
+          status
+          timestamp
+          tokenId
+          transactionHash
+          transferable
+        }
+      }
+    `,
+    variables: { address: address.toLowerCase() },
+  }
+
+  return request<GetLockedPositionsQueryResponse>(subgraphUrl, schema).then(
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.lockedPositions.map(position => ({
+        ...position,
+        // Convert addresses to checksum format
+        owner: toChecksum(position.owner),
+        pastOwners: position.pastOwners.map(addr => toChecksum(addr)),
+      }))
+    },
+  )
 }

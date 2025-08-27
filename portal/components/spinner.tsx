@@ -1,7 +1,7 @@
 import React, { useId } from 'react'
 
 type SpinnerProps = {
-  size?: 'small' | 'medium' | 'large' | number
+  size?: 'xSmall' | 'small' | 'medium' | 'large' | number
   color?: string
   className?: string
 }
@@ -28,6 +28,7 @@ export const Spinner = function ({
       large: 60,
       medium: 40,
       small: 24,
+      xSmall: 16,
     }
 
     return sizeMap[size]

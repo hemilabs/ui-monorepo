@@ -1,3 +1,5 @@
+import { ChainLabel } from 'components/reviewOperation/chainLabel'
+import { Operation } from 'components/reviewOperation/operation'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { WarningBox } from 'components/warningBox'
@@ -19,8 +21,6 @@ import { ConfirmBtcDeposit } from '../confirmBtcDeposit'
 import { RetryBtcDeposit } from '../retryBtcDeposit'
 
 import { AddTokenToWallet } from './addTokenToWallet'
-import { ChainLabel } from './chainLabel'
-import { Operation } from './operation'
 
 const getCallToAction = function (deposit: BtcDepositOperation) {
   switch (deposit.status) {

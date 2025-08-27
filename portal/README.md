@@ -1,11 +1,31 @@
 # Portal
 
-## Project setup
+The Portal is a Web3 app that allows users to interact with Hemi, an L2 that integrates Ethereum with Bitcoin. Users can tunnel their assets from EVM chains to Hemi, and viceversa, as well as participate in other activities.
 
-### Environment variables
+## Structure
+
+The portal is a Next app that uses static building and the app router. As it is a static page, it does not rely with SSR features (Except on local development).
+
+Some relevant folders are:
+
+- [/app](./app/) folder, which contains the Next's App router code
+- [/components](./components/) folder, which contains reusable components to the entire app that are not tied to a specific page.
+- [/hooks](./hooks/) folder, which contains reusable hooks to the entire app that are not tied to a specific page.
+- [/messages/](./messages/) folder, which contain a file per locale with all the translated resources.
+- [/test](./test/) folder, which contains some tests for different portal files. These tests are for plain Typescript functions, and not for components.
+- [/types](./types/) folder, which contains many reusable Typescript types across the entire app
+- [/utils](./utils/) folder, which contains most of the logic that is not tied to UI.
+
+## Setup
+
+Follow the steps in the [main README](../README.md). No extra actions are needed.
+
+### Configuration and Environment variables
 
 The environment variables are defined in the `.env` file at the root of the project.
 The prefix `NEXT_PUBLIC_` is required for the variables to be available in the browser. A few variables can be set locally (in a `.env.local`), in addition to the ones already defined in the `.env`.
+
+This is the list of all variables that can be configured:
 
 ```sh
 # Use this variables to override RPC urls per chain. In order to join multiple RPC urls, join them with the "+" character.
@@ -25,9 +45,15 @@ NEXT_PUBLIC_ANALYTICS_URL=<url> # Umami analytics URL
 NEXT_PUBLIC_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features
 NEXT_PUBLIC_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
+NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET=<true|false> # Enable claim rewards on Testnet, for local development
 # Bitcoin configuring
 NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET=2 # Vault index to use for bitcoin in hemi mainnet. Defaults to 0
 NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=1 # Vault index to use for bitcoin in hemi sepolia. Defaults to 0
+# Use these with UTC timestamps - at that time, Genesis Drop and Staking Governance become enabled in the frontend
+NEXT_PUBLIC_GENESIS_DROP_ENABLE_HEMI_TIMESTAMP=<number>
+NEXT_PUBLIC_GENESIS_DROP_ENABLE_HEMI_SEPOLIA_TIMESTAMP=<number>
+NEXT_PUBLIC_STAKE_GOVERNANCE_ENABLE_HEMI_SEPOLIA_TIMESTAMP=<number>
+NEXT_PUBLIC_STAKE_GOVERNANCE_ENABLE_HEMI_TIMESTAMP=<number>
 # Backend API URL
 NEXT_PUBLIC_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
 # Subgraphs endpoint ID
@@ -47,7 +73,23 @@ If not defined, the contracts addresses used will be the ones defined in [hemi-v
 
 See [Environment Variables](./Environment%20Variables.md) to ensure changes to the list above are done properly.
 
-## Deployment
+## Running locally
+
+Use the following command:
+
+```sh
+npm run dev
+```
+
+## Testing
+
+Run tests with the following command:
+
+```sh
+npm test
+```
+
+## Building and Deployment
 
 Run the following command:
 

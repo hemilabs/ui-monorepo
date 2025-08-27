@@ -51,6 +51,21 @@ inputs:
   NEXT_PUBLIC_ENABLE_COOKIE3:
     required: false
     description: Flag to enable or not Cookie3
+  NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET:
+    required: false
+    description: Flag to enable or not claim rewards on testnet
+  NEXT_PUBLIC_GENESIS_DROP_ENABLE_HEMI_TIMESTAMP:
+    required: false
+    description: Timestamp to enable Genesis Drop for Hemi
+  NEXT_PUBLIC_GENESIS_DROP_ENABLE_HEMI_SEPOLIA_TIMESTAMP:
+    required: false
+    description: Timestamp to enable Genesis Drop for Hemi Sepolia
+  NEXT_PUBLIC_STAKE_GOVERNANCE_ENABLE_HEMI_TIMESTAMP:
+    required: false
+    description: Timestamp to enable Stake Governance for Hemi
+  NEXT_PUBLIC_STAKE_GOVERNANCE_ENABLE_HEMI_SEPOLIA_TIMESTAMP:
+    required: false
+    description: Timestamp to enable Stake Governance for Hemi Sepolia
   NEXT_PUBLIC_ENABLE_STAKE_TESTNET:
     required: false
     description: Flag to enable or not stake on testnet
@@ -103,6 +118,11 @@ runs:
         NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA: ${{ inputs.NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA}}
         NEXT_PUBLIC_ENABLE_ANALYTICS: ${{ inputs.NEXT_PUBLIC_ENABLE_ANALYTICS }}
         NEXT_PUBLIC_ENABLE_COOKIE3: ${{ inputs.NEXT_PUBLIC_ENABLE_COOKIE3 }}
+        NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET: ${{ inputs.NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET }}
+        NEXT_PUBLIC_GENESIS_DROP_ENABLE_HEMI_TIMESTAMP: ${{ inputs.NEXT_PUBLIC_GENESIS_DROP_ENABLE_HEMI_TIMESTAMP }}
+        NEXT_PUBLIC_GENESIS_DROP_ENABLE_HEMI_SEPOLIA_TIMESTAMP: ${{ inputs.NEXT_PUBLIC_GENESIS_DROP_ENABLE_HEMI_SEPOLIA_TIMESTAMP }}
+        NEXT_PUBLIC_STAKE_GOVERNANCE_ENABLE_HEMI_TIMESTAMP: ${{ inputs.NEXT_PUBLIC_STAKE_GOVERNANCE_ENABLE_HEMI_TIMESTAMP }}
+        NEXT_PUBLIC_STAKE_GOVERNANCE_ENABLE_HEMI_SEPOLIA_TIMESTAMP: ${{ inputs.NEXT_PUBLIC_STAKE_GOVERNANCE_ENABLE_HEMI_SEPOLIA_TIMESTAMP }}
         NEXT_PUBLIC_ENABLE_STAKE_TESTNET: ${{ inputs.NEXT_PUBLIC_ENABLE_STAKE_TESTNET }}
         NEXT_PUBLIC_PORTAL_API_URL: ${{ inputs.NEXT_PUBLIC_PORTAL_API_URL }}
         NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.NEXT_PUBLIC_SENTRY_DSN }}

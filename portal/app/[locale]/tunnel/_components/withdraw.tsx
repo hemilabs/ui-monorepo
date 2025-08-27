@@ -2,6 +2,7 @@
 
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
+import { FeesContainer } from 'components/feesContainer'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
@@ -15,8 +16,10 @@ import { useEffect, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { isEvmNetwork } from 'utils/chain'
 import { formatBtcAddress } from 'utils/format'
+import { getTotal } from 'utils/getTotal'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits, tunnelsThroughPartners } from 'utils/token'
+import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -32,9 +35,7 @@ import {
   type TypedTunnelState,
 } from '../_hooks/useTunnelState'
 import { useWithdraw } from '../_hooks/useWithdraw'
-import { validateSubmit, getTotal } from '../_utils'
 
-import { FeesContainer } from './feesContainer'
 import { FormContent, TunnelForm } from './form'
 import { HemiBtcFeesSummary } from './hemiBtcFeesSummary'
 import { ReceivingAddress } from './receivingAddress'

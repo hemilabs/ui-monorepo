@@ -10,6 +10,10 @@
       "mainnet": "7qiewFZ7UyDpj3gyNaCDUk55NqHLdbjWQLduS5dcYfQ4",
       "testnet": "DNdeC2WA2bYLJx3qAv2VXG2qmW7AsgVT5byGnPjzAnY5"
     },
+    "tokenClaim": {
+      "mainnet": "TBD",
+      "testnet": "4jnDpTcGgMxMhsyTYSCXzCQftwbBcsCVMHJ9puK64MvA"
+    },
     "tunnel": {
       "deposits": {
         "mainnet": "443cSh2tPs3qSCvNehnGd7hkya4MPoH7FEYdsDXQeYeY",
@@ -23,6 +27,10 @@
         "mainnet": "7B7h8up4FdvVAtBgzgG7rWQkW3kd8W6a73L89efr9o9k",
         "testnet": "6aTMqKg6Et48FzbAL9uYu8GZGoCMwYE9qWWTXpXmwgDR"
       }
+    },
+    "veHemi": {
+      "mainnet": "56TUB5qxv2zED5z1vhbCwgj9z2jXbYYwVAo2wmKznruZ",
+      "testnet": "HFj92373tN3eEdEtYqsWmVftpwhshRGzfwgzg9eG3W7S"
     }
   }
 }

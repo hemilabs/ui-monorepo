@@ -17,7 +17,6 @@ import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { Analytics } from './_components/analytics'
 import { AppLayout } from './_components/appLayout'
-import { AppOverlays } from './_components/appOverlays'
 import { Navbar } from './_components/navbar'
 import { Workers } from './_components/workers'
 
@@ -82,7 +81,6 @@ export default async function RootLayout({
                           {/* Last resort Suspense wrapper usage.
                         Ideally, Suspense wrappers should be added where needed in each page */}
                           <Suspense>{children}</Suspense>
-                          <AppOverlays />
                           <Workers />
                         </AppLayout>
                       </div>

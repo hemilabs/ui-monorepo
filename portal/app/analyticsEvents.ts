@@ -43,7 +43,9 @@ const analyticsEvents = [
   'nav - ecosystem',
   'nav - explorer',
   'nav - hbk',
+  'nav - genesis drop',
   'nav - get started',
+  'nav - staking dashboard',
   'nav - network status',
   'nav - mainnet to testnet',
   'nav - testnet to mainnet',
@@ -60,12 +62,9 @@ const analyticsEvents = [
   'nav - linkedIn',
   'nav - youtube',
   'nav - x',
-  'nav - telegram community',
   'nav - telegram news',
   'nav - tiktok',
   // /stake
-  'stake - click earn points card',
-  'stake - close earn points card',
   'stake - learn stake',
   'stake - stake failed',
   'stake - stake started',
@@ -74,6 +73,8 @@ const analyticsEvents = [
   'stake - unstake failed',
   'stake - unstake started',
   'stake - unstake success',
+  // /staking-dashboard
+  'staking dashboard - polyfill DurationFormat',
   // /transaction-history
   'txn refresh',
   'txn filter - all',

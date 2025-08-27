@@ -1,10 +1,12 @@
 {
   "common": {
+    "accept": "Accept",
     "add": "Add",
     "added": "Added",
     "amount": "Amount",
     "approving": "Approving...",
     "approving-token": "Approving {symbol}",
+    "cancel": "Cancel",
     "connect-to-network": "Connect to {network}",
     "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",
@@ -100,6 +102,67 @@
       "description": "An unexpected error has occurred. Please try again or <link>contact us</link> if the problem persists."
     }
   },
+  "genesis-drop": {
+    "add-hemi-to-your-wallet": "Add {symbol} to your wallet",
+    "apy-in-staked-hemi": "APY in ${symbol}",
+    "apy-in-hemi-up-to": "Up to {percentage}%",
+    "claimed": "Claimed",
+    "claim-and-stake-successful": "Claim and Stake successful",
+    "claim-details": "Claim details",
+    "claim-name": "Claim name:",
+    "claim-options": {
+      "and-other-partners": "...and many other partners!",
+      "bonus-hemi": "{percentage}% Bonus HEMI",
+      "bonus-staked-for-months": "<amount></amount> tokens staked for <months></months> months",
+      "bonus-tokens": "Bonus tokens",
+      "claim": "Claim",
+      "claim-title-6": "Genesis Voyager",
+      "claim-title-24": "Genesis Guardian",
+      "claim-title-48": "Genesis Legend",
+      "claiming": "Claiming...",
+      "future-incentives-from": "Future incentives from",
+      "more-info-description": "Of your total earned tokens, a portion will be claimable immediately (\"available now\") while the rest will be staked automatically for a set lock-up period.",
+      "more-rewards": "+<bonus></bonus>% more ${symbol}",
+      "liquid-hemi": "Liquid ${symbol}",
+      "lockup-period-months": "{months} months",
+      "plus-staked-tokens": "Plus <amount></amount> tokens staked<break></break>for <period></period>.",
+      "potential-staked-rewards": "Potential rewards for your staked ${symbol}",
+      "recommended": "Recommended",
+      "staked-hemi": "Staked ${symbol}",
+      "staked-tokens-may-qualify": "Staked ${symbol} tokens may qualify for up to a {multiplier}x multiplier",
+      "submit-text": "Claim & Stake",
+      "this-option-includes-bonus": "This claim option already includes a <bonus></bonus>% bonus on your earned tokens.",
+      "tokens-available-now": "${symbol} tokens available now!",
+      "tokens-available-now-amount": "<amount></amount> ${symbol} tokens available now!",
+      "up-to-multiplier-rewards": "Up to {multiplier}x multiplier on staked rewards"
+    },
+    "claim-rewards": "Claim rewards",
+    "claiming-your-rewards": "Claiming your rewards",
+    "come-back-later": "Come back at TGE to claim your ${symbol}",
+    "connect-demos-wallet": "Make sure to connect your Demos verified wallet.",
+    "hemi-token-added": "{symbol} added to your wallet",
+    "here-is-your-claim-tx": "Here's your claim transaction:",
+    "have-questions": "Make sure you're connected to your Demos-verified wallet. If you have questions, open a ticket on <discordLink>Discord</discordLink>, check <absintheLink>Absinthe</absintheLink> or try another wallet.",
+    "go-to-staking-dashboard": "Go to staking dashboard",
+    "not-eligible": "Not eligible",
+    "only-live-on-mainnet": "Only live on Mainnet",
+    "rewards-multiplier": "Rewards multiplier",
+    "staked-for-months": "{amount} for {months} months",
+    "stake-hemi": "Stake {symbol}",
+    "subheading": "Hemi Genesis Drop",
+    "switch-to-mainnet": "Switch to Mainnet",
+    "switch-to-start-claiming": "You can switch networks to start claiming your HEMI.",
+    "terms-and-conditions": {
+      "terms": "Tincidunt non Sed Donec nulla, nulla, ultrices odio Quisque malesuada elementum orci quam venenatis non placerat Nam diam vitae nec faucibus dui nulla, eget ",
+      "title": "Hemi rewards terms and conditions"
+    },
+    "share-on-x": "Share on X",
+    "share-x-text": "I am eligible for {amount} ${symbol} in the TGE Genesis drop of Hemi! 🎉 Check if you are eligible:",
+    "title": "Rewards Program",
+    "up-to-multiplier": "Up to {multiplier}x",
+    "view-tx-on-explorer": "View TX on explorer",
+    "your-earned-tokens": "Your earned ${symbol} tokens."
+  },
   "get-started": {
     "add-funds-to-your-wallet": "Add funds to your wallet",
     "add-hemi-to-your-wallet": "Add Hemi to your wallet",
@@ -167,12 +230,54 @@
     "tutorials-and-tools": "Tutorials and tools to get you started quickly.",
     "tutorials-subheading": "Follow along with some of the tutorials to help you get a head start when building your first Hemi project."
   },
+  "staking-dashboard": {
+    "amount": "Amount",
+    "drawer": {
+      "approving": "Approving {symbol}",
+      "heading": "Review Stake",
+      "subheading": "Review and confirm your stake.",
+      "stake-token": "Stake {symbol}"
+    },
+    "form": {
+      "allowance-load-failed": "Failed to load allowance",
+      "approve-and-stake": "Approve and Stake",
+      "approving": "Approving...",
+      "days": "{days, plural, one {{days} day} other {{days} days}}",
+      "expire-date": "Expire date:",
+      "lockup-increment-warning": "Lock-up time can be set in 6-day increments.",
+      "max-days": "Max. {days} {days, plural, one {day} other {days}}",
+      "min-days": "Min. {days} {days, plural, one {day} other {days}}",
+      "or": "or",
+      "send": "Send",
+      "stake": "Stake",
+      "staking": "Staking...",
+      "title": "Stake",
+      "use-or": "Use <min></min> or <max></max>",
+      "years": "{years, plural, one {{years} year} other {{years} years}}"
+    },
+    "heading": "Governance staking",
+    "here-is-your-stake-tx": "Here's your stake transaction:",
+    "lockup-period": "Lockup period",
+    "stake-successful": "Stake successful",
+    "sub-heading": "Learn and explore with Hemi developer ecosystem",
+    "table": {
+      "connect-to-hemi": "Connect to {network} to view your stake positions.",
+      "connect-to-stake": "Connect your wallet to view your HEMI staked.",
+      "get-started": "Get started by staking your HEMI",
+      "no-hemi-staked": "No HEMI staked",
+      "time-remaining": "Time remaining",
+      "tx": "Tx",
+      "unlock": "Unlock",
+      "unlocks-on": "Unlocks on {date}"
+    }
+  },
   "metadata": {
     "title": "Hemi Portal"
   },
   "navbar": {
     "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
     "bitcoinkit": "Hemi Bitcoin Kit",
+    "boost-staking": "Boost staking",
     "data-attribution": "Data provided by <link>CoinMarketCap.com</link>",
     "dex": {
       "1delta": "1delta",
@@ -190,11 +295,13 @@
     "docs": "Documentation",
     "ecosystem": "Demos",
     "explorer": "Explorer",
+    "genesis-drop": "Genesis Drop",
     "get-started": "Get Started",
     "help": {
       "language": "Language",
       "legal-and-privacy": "Legal and Privacy"
     },
+    "hemi-staking": "$HEMI staking",
     "learn-how-to-start": "Learn how to start using the Hemi network",
     "network": "Network",
     "network-status": "Network Status",
@@ -202,11 +309,7 @@
     "stake": "Stake",
     "tools": "Tools",
     "tunnel": "Tunnel",
-    "tvl": "TVL on Hemi",
-    "telegram": {
-      "community": "Community Channel",
-      "news": "News Channel"
-    }
+    "tvl": "TVL on Hemi"
   },
   "stake-page": {
     "asset": "Asset",

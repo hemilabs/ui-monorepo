@@ -33,6 +33,7 @@ const nextConfig = {
   trailingSlash: true,
   transpilePackages: [
     'btc-wallet',
+    'genesis-drop-actions',
     'hemi-tunnel-actions',
     'hemi-viem-stake-actions',
   ],

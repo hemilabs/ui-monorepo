@@ -23,3 +23,6 @@ export const getEvmChainId = (chain: string): i32 => chainMap.get(chain)
 
 export const getHemiChainId = (l1ChainId: i32): i32 =>
   l1ChainId === ethereumMainnetId ? hemiMainnetId : hemiSepoliaId
+
+export const isZeroAddress = (address: Address): boolean =>
+  address.equals(zeroAddress)

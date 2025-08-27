@@ -4,15 +4,28 @@ A comprehensive collection of UI components and utilities for blockchain applica
 
 ## 📦 Projects
 
-This monorepo contains the following projects:
+This monorepo uses npm workspaces, and contains the following projects:
 
-- **packages/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported).
-- **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
-- **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
-- **portal**: Portal app living at [https://app.hemi.xyz](https://app.hemi.xyz).
+- **packages/\***: Contains a comprehensive list of reusable packages.
+  - **packages/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported).
+  - **packages/genesis-drop-actions**: Package that contains functions needed for the TGE event.
+  - **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
+  - **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
+  - **packages/ve-hemi-actions**: Package that contains functions needed to interact with the staking contract veHEMI.
+- **portal**: Portal webapp living at [https://app.hemi.xyz](https://app.hemi.xyz).
 - **portal-backend**: Various APIs and cron jobs the Portal uses.
 - **subgraph-api**: API for querying hemi subgraphs needed for the portal.
 - **subgraphs/\***: The different subgraphs needed for the portal, such as tunneling operations.
+
+## Setup
+
+To setup the repository, run the following command in the root of the repo:
+
+```sh
+npm install
+```
+
+This will setup all dependencies in all the workspaces. Check each workspace's README.md for further installation steps if needed.
 
 ## Deployment
 
@@ -27,3 +40,11 @@ Tags applied with the following command will show in its message the list of all
 ```sh
 git tag -s YYYYMMDD_seq -m "Deploy $(date -I)" -m "$(git log $(git describe --abbrev=0 --tags)..HEAD --oneline | grep Merge)"
 ```
+
+## MCP servers
+
+This is the list of MCP servers that can be connected to. Use the listed guidelines to enable the connection of VS code to them
+
+Note: Some guidelines may use settings customization, but VS code has standardize them into using mcp.json. Further info [here](https://code.visualstudio.com/docs/copilot/chat/mcp-servers)
+
+- [Figma](https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Dev-Mode-MCP-Server)

@@ -1,0 +1,36 @@
+'use client'
+
+import { PageLayout } from 'components/pageLayout'
+import { useTranslations } from 'next-intl'
+
+import { StakeForm } from './_components/stakeForm'
+import { StakeTable } from './_components/stakeTable'
+import { useStakingPositions } from './_hooks/useStakingPositions'
+
+function Page() {
+  const t = useTranslations('staking-dashboard')
+  const { data, isLoading } = useStakingPositions()
+
+  return (
+    <PageLayout variant="superWide">
+      <div className="flex flex-col">
+        <h1 className="mb-1 text-2xl font-semibold text-neutral-950">
+          {t('heading')}
+        </h1>
+        <p className="text-sm font-normal text-neutral-500">
+          {t('sub-heading')}
+        </p>
+        <div className="mt-8 flex flex-col-reverse gap-6 lg:flex-row">
+          <div className="w-full lg:w-1/2 lg:flex-initial 2xl:w-full">
+            <StakeTable data={data} loading={isLoading} />
+          </div>
+          <div className="w-full lg:w-fit lg:flex-auto lg:flex-shrink-0 lg:basis-1/2 2xl:w-fit 2xl:flex-none">
+            <StakeForm />
+          </div>
+        </div>
+      </div>
+    </PageLayout>
+  )
+}
+
+export default Page

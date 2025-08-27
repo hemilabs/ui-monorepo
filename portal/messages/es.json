@@ -1,10 +1,12 @@
 {
   "common": {
+    "accept": "Aceptar",
     "add": "Agregar",
     "added": "Agregada",
     "amount": "Monto",
     "approving": "Aprobando...",
     "approving-token": "Aprobando {symbol}",
+    "cancel": "Cancelar",
     "connect-to-network": "Conectarse a {network}",
     "connect-to-supported-network": "Conectarse a una red soportada",
     "connect-wallet": "Conectar Billetera",
@@ -100,6 +102,67 @@
       "description": "Ha ocurrido un error inesperado. Por favor, inténtelo de nuevo o <link>contáctenos</link> si el problema persiste."
     }
   },
+  "genesis-drop": {
+    "add-hemi-to-your-wallet": "Agregar {symbol} a su billetera",
+    "apy-in-staked-hemi": "TEA en ${symbol}",
+    "apy-in-hemi-up-to": "Hasta {percentage}%",
+    "claimed": "Reclamado",
+    "claim-and-stake-successful": "Reclamo y Stake exitoso",
+    "claim-details": "Detalles del reclamo",
+    "claim-name": "Nombre del reclamo:",
+    "claim-options": {
+      "and-other-partners": "...¡y muchos otros socios!",
+      "bonus-hemi": "{percentage}% HEMI extra",
+      "bonus-staked-for-months": "<amount></amount> tokens en stake por <months></months> meses",
+      "bonus-tokens": "Tokens extra",
+      "claim": "Reclamar",
+      "claim-title-6": "Génesis Viajero",
+      "claim-title-24": "Génesis Guardián",
+      "claim-title-48": "Génesis Leyenda",
+      "claiming": "Reclamando...",
+      "future-incentives-from": "Futuros incentivos de",
+      "more-info-description": "De sus tokens totales ganados, una parte será reclamable inmediatamente (\"disponible ahora\") mientras que el resto será puesto automáticamente en stake por un período de bloqueo establecido.",
+      "more-rewards": "+<bonus></bonus>% mas ${symbol}",
+      "liquid-hemi": "${symbol} líquidos",
+      "lockup-period-months": "{months} meses",
+      "plus-staked-tokens": "Más <amount></amount> tokens en stake<break></break>por <period></period>.",
+      "potential-staked-rewards": "Recompensas potenciales para sus tokens ${symbol} en stake",
+      "recommended": "Recomendado",
+      "staked-hemi": "${symbol} en Stake",
+      "staked-tokens-may-qualify": "Los tokens ${symbol} en stake pueden calificar para hasta un multiplicador de {multiplier}x",
+      "submit-text": "Reclamar y hacer Stake",
+      "this-option-includes-bonus": "Esta opción de reclamo ya incluye un <bonus></bonus>% extra en sus tokens ganados.",
+      "tokens-available-now": "¡${symbol} tokens disponibles ahora!",
+      "tokens-available-now-amount": "¡<amount></amount> ${symbol} tokens disponibles ahora!",
+      "up-to-multiplier-rewards": "Hasta {multiplier}x multiplicador en recompensas en stake"
+    },
+    "claim-rewards": "Reclamar recompensas",
+    "claiming-your-rewards": "Reclamando sus recompensas",
+    "come-back-later": "Regrese en el momento del TGE para reclamar sus ${symbol}",
+    "connect-demos-wallet": "Asegúrese de conectar su billetera verificada de Demos.",
+    "hemi-token-added": "{symbol} agregado a su billetera",
+    "here-is-your-claim-tx": "Aquí está su transacción de reclamo:",
+    "have-questions": "Asegúrese de estar conectado con su billetera verificada de Demos. Si tiene preguntas, abra un ticket en <discordLink>Discord</discordLink>, consulte <absintheLink>Absinthe</absintheLink> o pruebe con otra billetera.",
+    "go-to-staking-dashboard": "Ir al panel de control de staking",
+    "not-eligible": "No elegible",
+    "only-live-on-mainnet": "Solo disponible en Mainnet",
+    "rewards-multiplier": "Multiplicador de recompensas",
+    "staked-for-months": "{amount} por {months} meses",
+    "stake-hemi": "Hacer Stake de {symbol}",
+    "subheading": "Lanzamiento Génesis de Hemi",
+    "switch-to-mainnet": "Cambiar a Mainnet",
+    "switch-to-start-claiming": "Puede cambiar de red para comenzar a reclamar su HEMI.",
+    "terms-and-conditions": {
+      "terms": "Tincidunt non Sed Donec nulla, nulla, ultrices odio Quisque malesuada elementum orci quam venenatis non placerat Nam diam vitae nec faucibus dui nulla, eget ",
+      "title": "Términos y condiciones del programa de recompensas Hemi"
+    },
+    "share-on-x": "Compartir en X",
+    "share-x-text": "¡Soy elegible para {amount} ${symbol} en el lanzamiento Génesis TGE de Hemi! 🎉 Verifica si eres elegible:",
+    "title": "Programa de Recompensas",
+    "up-to-multiplier": "Hasta {multiplier}x",
+    "view-tx-on-explorer": "Ver TX en el explorador",
+    "your-earned-tokens": "Sus tokens ${symbol} ganados."
+  },
   "get-started": {
     "add-funds-to-your-wallet": "Agregue fondos a su billetera",
     "add-hemi-to-your-wallet": "Agregue hemi a su billetera",
@@ -167,12 +230,54 @@
     "tutorials-and-tools": "Tutoriales y herramientas para comenzar rápidamente.",
     "tutorials-subheading": "Siga algunos de los tutoriales para tomar ventaja al construir tu primer proyecto con Hemi."
   },
+  "staking-dashboard": {
+    "amount": "Cantidad",
+    "drawer": {
+      "approving": "Aprobando {symbol}",
+      "heading": "Revisar Stake",
+      "subheading": "Revise y confirme su stake.",
+      "stake-token": "Hacer stake de {symbol}"
+    },
+    "form": {
+      "allowance-load-failed": "No se pudo cargar el monto autorizado",
+      "approve-and-stake": "Aprobar y Hacer Stake",
+      "approving": "Aprobando...",
+      "days": "{days, plural, one {{days} día} other {{days} días}}",
+      "expire-date": "Fecha de vencimiento:",
+      "lockup-increment-warning": "El tiempo de bloqueo se puede configurar en incrementos de 6 días.",
+      "max-days": "Máx. {days} {days, plural, one {día} other {días}}",
+      "min-days": "Mín. {days} {days, plural, one {día} other {días}}",
+      "or": "o",
+      "send": "Enviar",
+      "stake": "Stake",
+      "staking": "Haciendo stake...",
+      "title": "Stake",
+      "use-or": "Utilice <min></min> o <max></max>",
+      "years": "{years, plural, one {{years} año} other {{years} años}}"
+    },
+    "heading": "Staking de Gobernanza",
+    "here-is-your-stake-tx": "Aquí está su transacción de staking:",
+    "lockup-period": "Período de bloqueo",
+    "stake-successful": "Stake exitoso",
+    "sub-heading": "Aprenda y explore con el ecosistema para desarrolladores de Hemi",
+    "table": {
+      "connect-to-hemi": "Conéctese a {network} para ver sus posiciones de stake.",
+      "connect-to-stake": "Conecte su billetera para ver su HEMI en stake.",
+      "get-started": "Comience haciendo staking de sus HEMI",
+      "no-hemi-staked": "No hay HEMI stakeado",
+      "time-remaining": "Tiempo restante",
+      "tx": "Tx",
+      "unlock": "Desbloquear",
+      "unlocks-on": "Desbloquea el {date}"
+    }
+  },
   "metadata": {
     "title": "Portal de Hemi"
   },
   "navbar": {
     "agree-to-terms-and-policy": "Al usar esta aplicación, usted acepta los <terms>Términos de Uso</terms> y la <policy>Política de Privacidad</policy>",
     "bitcoinkit": "Kit de Hemi Bitcoin",
+    "boost-staking": "Boost staking",
     "data-attribution": "Datos proporcionados por <link>CoinMarketCap.com</link>",
     "dex": {
       "1delta": "1delta",
@@ -190,11 +295,13 @@
     "docs": "Documentación",
     "ecosystem": "Demos",
     "explorer": "Explorador",
+    "genesis-drop": "Lanzamiento Génesis",
     "get-started": "Comenzar",
     "help": {
       "language": "Idioma",
       "legal-and-privacy": "Privacidad y Legales"
     },
+    "hemi-staking": "$HEMI staking",
     "learn-how-to-start": "Aprenda cómo empezar a utilizar la red Hemi",
     "network": "Red",
     "network-status": "Estado de la red",
@@ -202,11 +309,7 @@
     "stake": "Stake",
     "tools": "Herramientas",
     "tunnel": "Túnel",
-    "tvl": "TVL en Hemi",
-    "telegram": {
-      "community": "Canal de la Comunidad",
-      "news": "Canal de Noticias"
-    }
+    "tvl": "TVL en Hemi"
   },
   "stake-page": {
     "asset": "Activo",

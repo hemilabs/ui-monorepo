@@ -1,0 +1,13 @@
+type MerkleClaim @entity(immutable: true) {
+  account: Bytes!
+  amount: BigInt!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  claimGroup: BigInt!
+  erc20: Bytes!
+  id: ID!
+  lockupMonths: Int!
+  mintedNFT: Bytes!
+  ratio: BigInt!
+  transactionHash: Bytes!
+}

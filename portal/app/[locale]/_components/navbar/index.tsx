@@ -4,13 +4,13 @@ import { BitcoinKitIcon } from 'components/icons/bitcoinKit'
 import { DocsIcon } from 'components/icons/docsIcon'
 import { EcosystemIcon } from 'components/icons/ecosystemIcon'
 import { NetworkStatusIcon } from 'components/icons/networkStatusIcon'
-import { StakeIcon } from 'components/icons/stakeIcon'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 
 import { Badge } from '../badge'
 
 import { Dex } from './_components/dex'
+import { GenesisDrop } from './_components/genesisDrop'
 import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
@@ -18,6 +18,7 @@ import { HomeLink } from './_components/homeLink'
 import { ItemLink } from './_components/itemLink'
 import { NetworkSwitch } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
+import { Stake } from './_components/stake'
 import { TunnelLink } from './_components/tunnelLink'
 import { Tvl } from './_components/tvl'
 
@@ -28,6 +29,14 @@ const Help = dynamic(() => import('./_components/help').then(mod => mod.Help), {
   loading: () => <HelpButton isOpen={false} />,
   ssr: false,
 })
+
+const PaddedListItem = ({
+  children,
+  className = '',
+}: {
+  children: React.ReactNode
+  className?: string
+}) => <li className={`[&>div]:px-2 ${className}`}>{children}</li>
 
 export const Navbar = function () {
   const t = useTranslations('navbar')
@@ -42,78 +51,73 @@ export const Navbar = function () {
           </div>
           <Help />
         </div>
-        <ul className="flex h-[calc(100dvh-170px)] flex-col gap-y-[2px] overflow-y-auto md:mt-2 md:h-full [&>li>div]:px-2">
-          <li>
+        <ul className="flex h-[calc(100dvh-170px)] flex-col gap-y-[2px] overflow-y-auto md:mt-2 md:h-full">
+          <PaddedListItem>
             <TunnelLink />
-          </li>
-          <li>
+          </PaddedListItem>
+          <PaddedListItem>
             <Dex />
-          </li>
-          <li>
-            <ItemLink
-              event="nav - stake"
-              href="/stake/dashboard"
-              icon={<StakeIcon />}
-              text={t('stake')}
-              urlToBeSelected="/stake"
-            />
-          </li>
-          <li>
+          </PaddedListItem>
+          <PaddedListItem>
+            <GenesisDrop />
+          </PaddedListItem>
+          <Stake />
+          <PaddedListItem>
             <Separator />
-          </li>
-          <li>
+          </PaddedListItem>
+          <PaddedListItem>
             <ItemLink
               event="nav - ecosystem"
               href="/ecosystem"
               icon={<EcosystemIcon />}
               text={t('ecosystem')}
             />
-          </li>
-          <li>
+          </PaddedListItem>
+          <PaddedListItem>
             <ItemLink
               event="nav - hbk"
               href="https://docs.hemi.xyz/building-bitcoin-apps/hemi-bitcoin-kit-hbk"
               icon={<BitcoinKitIcon />}
               text={t('bitcoinkit')}
             />
-          </li>
-          <li>
+          </PaddedListItem>
+          <PaddedListItem>
             <ItemLink
               event="nav - docs"
               href="https://docs.hemi.xyz"
               icon={<DocsIcon />}
               text={t('docs')}
             />
-          </li>
-          <li>
+          </PaddedListItem>
+          <PaddedListItem>
             <Separator />
-          </li>
-          <li>
+          </PaddedListItem>
+          <PaddedListItem>
             <HemiExplorerLink />
-          </li>
-          <li>
+          </PaddedListItem>
+          <PaddedListItem>
             <ItemLink
               event="nav - network status"
               href="https://hemistatus.com"
               icon={<NetworkStatusIcon />}
               text={t('network-status')}
             />
-          </li>
-          <li className="mb-auto md:block">
+          </PaddedListItem>
+          <PaddedListItem className="mb-auto md:block">
             <NetworkSwitch />
-          </li>
-          <li className="mb-2 md:hidden">
+          </PaddedListItem>
+          <PaddedListItem className="mb-2 md:hidden">
             <Help />
-          </li>
-          <li className="hidden md:block">
+          </PaddedListItem>
+          <PaddedListItem className="hidden md:block">
             <GetStarted />
-          </li>
-          <li className="order-first md:order-none">
+          </PaddedListItem>
+          <PaddedListItem className="order-first md:order-none">
             <Tvl />
-          </li>
-          <li className="hidden md:block">
+          </PaddedListItem>
+          <PaddedListItem className="hidden md:block">
             <SocialLinks />
-          </li>
+          </PaddedListItem>
         </ul>
       </div>
       <ul className="fixed bottom-0 w-full border-t border-neutral-300 bg-neutral-50 px-3 pt-4 md:hidden">

@@ -1,9 +1,8 @@
 import { Button } from 'components/button'
+import { TableEmptyState } from 'components/tableEmptyState'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { useSwitchChain } from 'wagmi'
-
-import { EmptyState } from './emptyState'
 
 const Icon = () => (
   <svg
@@ -54,7 +53,7 @@ export const UnsupportedChain = function () {
   const t = useTranslations()
 
   return (
-    <EmptyState
+    <TableEmptyState
       action={
         <Button
           onClick={() => switchChain({ chainId: hemi.id })}

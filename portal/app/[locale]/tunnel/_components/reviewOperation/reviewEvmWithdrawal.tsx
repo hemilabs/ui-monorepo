@@ -1,3 +1,5 @@
+import { ChainLabel } from 'components/reviewOperation/chainLabel'
+import { Operation } from 'components/reviewOperation/operation'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
@@ -24,9 +26,6 @@ import {
 } from '../evmWithdrawalWaitTime'
 import { ProveWithdrawal } from '../proveEvmWithdrawal'
 import { RetryEvmWithdrawal } from '../retryEvmWithdrawal'
-
-import { ChainLabel } from './chainLabel'
-import { Operation } from './operation'
 
 const getCallToAction = (withdrawal: ToEvmWithdrawOperation) =>
   ({

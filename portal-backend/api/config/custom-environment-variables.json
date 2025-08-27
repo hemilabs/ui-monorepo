@@ -1,0 +1,41 @@
+{
+  "absinthe": {
+    "apiKey": "ABSINTHE_API_KEY",
+    "apiUrl": "ABSINTHE_API_URL"
+  },
+  "btcVaults": {
+    "cacheMin": {
+      "__format": "json",
+      "__name": "BTC_VAULTS_CACHE_MIN"
+    }
+  },
+  "origins": "ORIGINS",
+  "port": {
+    "__format": "json",
+    "__name": "PORT"
+  },
+  "redis": {
+    "url": "REDIS_URL"
+  },
+  "sentry": {
+    "dsn": "SENTRY_DSN",
+    "loggingLevels": {
+      "__format": "json",
+      "__name": "SENTRY_LOGGING_LEVELS"
+    }
+  },
+  "tvl": {
+    "data": {
+      "sampleId": {
+        "__format": "json",
+        "__name": "TVL_DATA_SAMPLE_ID"
+      },
+      "url": "TVL_DATA_URL"
+    },
+    "revalidateMin": {
+      "__format": "json",
+      "__name": "TVL_REVALIDATE_MIN"
+    }
+  },
+  "version": "npm_package_version"
+}

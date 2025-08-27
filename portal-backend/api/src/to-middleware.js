@@ -14,7 +14,7 @@ function toMiddleware(fn, options = {}) {
   // @ts-ignore ts(2345)
   const safeFn = safeAsyncFn(cachedFn)
   return async function (req, res) {
-    const [err, data] = await safeFn(...req.params)
+    const [err, data] = await safeFn(...Object.values(req.params))
     let statusCode, response
     if (err) {
       console.error(`Failed to handle request: ${err}`)

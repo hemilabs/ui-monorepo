@@ -243,7 +243,6 @@
       "approve-and-stake": "Aprobar y Hacer Stake",
       "approving": "Aprobando...",
       "days": "{days, plural, one {{days} día} other {{days} días}}",
-      "estimated-apy": "TEA estimado:",
       "expire-date": "Fecha de vencimiento:",
       "lockup-increment-warning": "El tiempo de bloqueo se puede configurar en incrementos de 6 días.",
       "max-days": "Máx. {days} {days, plural, one {día} other {días}}",
@@ -262,7 +261,6 @@
     "stake-successful": "Stake exitoso",
     "sub-heading": "Aprenda y explore con el ecosistema para desarrolladores de Hemi",
     "table": {
-      "apy": "TEA",
       "connect-to-hemi": "Conéctese a {network} para ver sus posiciones de stake.",
       "connect-to-stake": "Conecte su billetera para ver su HEMI en stake.",
       "get-started": "Comience haciendo staking de sus HEMI",

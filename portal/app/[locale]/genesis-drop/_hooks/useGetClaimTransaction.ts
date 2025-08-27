@@ -40,7 +40,7 @@ export const useGetClaimTransaction = function (
   const hemi = useHemi()
 
   return useQuery({
-    enabled: !!address,
+    enabled: !!address && claimGroupId !== undefined,
     async queryFn() {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${hemi.id}/claim/${address}/${claimGroupId}`,

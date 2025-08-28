@@ -255,11 +255,10 @@
       "use-or": "Use <min></min> ou <max></max>",
       "years": "{years, plural, one {{years} ano} other {{years} anos}}"
     },
-    "heading": "Stake {symbol} de Governança",
+    "heading": "Stake seus ${symbol} e ganhe",
     "here-is-your-stake-tx": "Aqui está a sua transação de staking:",
     "lockup-period": "Período de bloqueio",
     "stake-successful": "Stake bem-sucedido",
-    "sub-heading": "Bloqueie o {symbol}, ganhe poder de voto e ajude a moldar o protocolo.",
     "switch-to-start-staking": "Você pode mudar de rede para começar a fazer staking do seu HEMI.",
     "table": {
       "connect-to-hemi": "Conecte à {network} para ver as suas posições de stake.",

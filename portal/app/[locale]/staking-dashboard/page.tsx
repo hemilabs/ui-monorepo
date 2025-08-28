@@ -39,9 +39,6 @@ function Page() {
         <h1 className="mb-1 text-2xl font-semibold text-neutral-950">
           {t('heading', { symbol })}
         </h1>
-        <p className="text-sm font-normal text-neutral-500">
-          {t('sub-heading', { symbol })}
-        </p>
         {isEnabled ? <StakingContent /> : <StakingDashboardDisabledTestnet />}
       </div>
     </PageLayout>

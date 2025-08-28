@@ -7,6 +7,7 @@ import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
+import { useUmami } from 'hooks/useUmami'
 import { Hex } from 'viem'
 import { useAccount, useSwitchChain } from 'wagmi'
 
@@ -24,6 +25,7 @@ export const useClaimTokens = function (options?: {
   const { hemiWalletClient } = useHemiWalletClient()
   const queryClient = useQueryClient()
   const { switchChainAsync } = useSwitchChain()
+  const { track } = useUmami()
 
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
     hemi.id,
@@ -57,6 +59,8 @@ export const useClaimTokens = function (options?: {
       ratio: number
       termsSignature: Hex
     }) {
+      track?.('genesis-drop - submit start', { lockupMonths })
+
       if (!connectedToHemi) {
         await switchChainAsync({ chainId: hemi.id })
       }
@@ -72,6 +76,11 @@ export const useClaimTokens = function (options?: {
         walletClient: hemiWalletClient,
       })
 
+      emitter.on(
+        'claim-failed-validation',
+        () => track?.('genesis-drop - failed validation', { lockupMonths }),
+      )
+
       emitter.on('claim-transaction-succeeded', function (receipt) {
         // update native balance on the wallet due to gas paid
         updateNativeBalanceAfterFees(receipt)
@@ -83,11 +92,15 @@ export const useClaimTokens = function (options?: {
         })
         // optimistically update isClaimable to false.
         queryClient.setQueryData(isClaimableKey, false)
+
+        track?.('genesis-drop - submit success', { lockupMonths })
       })
 
       emitter.on('claim-transaction-reverted', function (receipt) {
         // update native balance on the wallet due to gas paid
         updateNativeBalanceAfterFees(receipt)
+
+        track?.('genesis-drop - submit reverted', { lockupMonths })
       })
 
       options?.on(emitter)

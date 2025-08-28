@@ -1,4 +1,4 @@
-import { hemiSepolia } from 'hemi-viem'
+import { hemi, hemiSepolia } from 'hemi-viem'
 import { type Address } from 'viem'
 
 // Contract ABI for MerkleBox contract
@@ -125,6 +125,7 @@ export const merkleBoxAbi = [
 const MerkleBoxAddresses: Record<number, Address> = {
   // Hemi Mainnet (chainId: TBD - will be updated when available)
   // 43111: '0x...', // placeholder
+  [hemi.id]: '0x9Ab3660ceE733332785cEa09D1a4Ff222F31aE54',
   [hemiSepolia.id]: '0x38f4C4BD276b9C47b419FE27D4ED01C32c120cF4',
 } as const
 

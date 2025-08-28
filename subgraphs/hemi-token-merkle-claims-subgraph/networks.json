@@ -1,4 +1,10 @@
 {
+  "hemi": {
+    "MerkleBox": {
+      "address": "0x9Ab3660ceE733332785cEa09D1a4Ff222F31aE54",
+      "startBlock": 2544163
+    }
+  },
   "hemi-sepolia": {
     "MerkleBox": {
       "address": "0x38f4C4BD276b9C47b419FE27D4ED01C32c120cF4",

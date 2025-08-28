@@ -59,6 +59,7 @@ export const SimpleBonus = function ({
         text={t.rich('bonus-staked-for-months', {
           amount: () => amount,
           months: () => lockupMonths,
+          symbol: () => symbol,
         })}
       />
       <BonusDetail text={t('potential-staked-rewards', { symbol })} />
@@ -89,6 +90,7 @@ export const FullBonus = function ({
         text={t.rich('bonus-staked-for-months', {
           amount: () => amount,
           months: () => lockupMonths,
+          symbol: () => symbol,
         })}
       />
       <BonusDetail

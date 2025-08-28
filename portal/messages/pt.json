@@ -161,7 +161,8 @@
     "title": "Programa de Recompensas",
     "up-to-multiplier": "Até {multiplier}x",
     "view-tx-on-explorer": "Ver TX no explorador",
-    "your-earned-tokens": "Seus tokens ${symbol} ganhos."
+    "your-earned-tokens": "Seus tokens ${symbol} ganhos.",
+    "your-rewards-are-on-their-way": "Suas recompensas estão a caminho!"
   },
   "get-started": {
     "add-funds-to-your-wallet": "Adicionar fundos à sua carteira",

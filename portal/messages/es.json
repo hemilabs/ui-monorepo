@@ -255,7 +255,7 @@
       "use-or": "Utilice <min></min> o <max></max>",
       "years": "{years, plural, one {{years} año} other {{years} años}}"
     },
-    "heading": "Stake tus ${symbol} y gana",
+    "heading": "Haga stake de sus ${symbol} y gane",
     "here-is-your-stake-tx": "Aquí está su transacción de staking:",
     "lockup-period": "Período de bloqueo",
     "stake-successful": "Stake exitoso",

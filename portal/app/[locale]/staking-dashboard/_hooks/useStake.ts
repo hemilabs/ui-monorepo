@@ -4,6 +4,7 @@ import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useUmami } from 'hooks/useUmami'
 import {
   StakingDashboardOperation,
   StakingDashboardStatus,
@@ -42,6 +43,7 @@ export const useStake = function ({
   const amount = parseTokenUnits(input, token)
 
   const { setDrawerQueryString } = useDrawerStakingQueryString()
+  const { track } = useUmami()
   const { address } = useAccount()
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
   const queryClient = useQueryClient()
@@ -95,6 +97,8 @@ export const useStake = function ({
         })
 
         updateNativeBalanceAfterFees(receipt)
+
+        track?.('staking dashboard - approve reverted')
       })
       emitter.on('approve-transaction-succeeded', function (receipt) {
         updateStakingDashboardOperation({
@@ -110,11 +114,15 @@ export const useStake = function ({
           transactionHash,
         })
         setDrawerQueryString('staking')
+
+        track?.('staking dashboard - signed lock creation')
       })
       emitter.on('user-signing-lock-creation-error', function () {
         updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_FAILED,
         })
+
+        track?.('staking dashboard - signing lock creation error')
       })
       emitter.on('lock-creation-transaction-succeeded', function (receipt) {
         updateStakingDashboardOperation({
@@ -152,6 +160,8 @@ export const useStake = function ({
           hemiBalanceQueryKey,
           (old: bigint) => old - amount,
         )
+
+        track?.('staking dashboard - lock creation success')
       })
       emitter.on('lock-creation-transaction-reverted', function (receipt) {
         updateStakingDashboardOperation({
@@ -160,6 +170,8 @@ export const useStake = function ({
 
         // Although the transaction was reverted, the gas was paid.
         updateNativeBalanceAfterFees(receipt)
+
+        track?.('staking dashboard - lock creation reverted')
       })
 
       on?.(emitter)

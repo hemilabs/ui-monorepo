@@ -83,7 +83,12 @@ const analyticsEvents = [
   'stake - unstake started',
   'stake - unstake success',
   // /staking-dashboard
+  'staking dashboard - approve reverted',
+  'staking dashboard - lock creation reverted',
+  'staking dashboard - lock creation success',
   'staking dashboard - polyfill DurationFormat',
+  'staking dashboard - signed lock creation',
+  'staking dashboard - signing lock creation error',
   // /transaction-history
   'txn refresh',
   'txn filter - all',

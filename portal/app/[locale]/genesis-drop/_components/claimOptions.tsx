@@ -96,7 +96,9 @@ export const ClaimOptions = function ({ eligibility }: Props) {
     setSignedTerms(termsSignature)
     handleClaim(termsSignature)
 
-    track?.('genesis-drop - terms signed')
+    track?.('genesis-drop - terms signed', {
+      lockupMonths: termsAndConditions.lockup,
+    })
   }
 
   const showDrawer =

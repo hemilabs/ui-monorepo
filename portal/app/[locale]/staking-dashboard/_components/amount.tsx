@@ -18,6 +18,7 @@ export const Amount = function ({ operation }: Props) {
       <TokenLogo size="small" token={token} version="L1" />
       <DisplayAmount
         amount={formatUnits(BigInt(amount), token.decimals)}
+        logoVersion="L1"
         showSymbol={false}
         token={token}
       />

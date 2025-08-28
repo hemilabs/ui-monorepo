@@ -104,7 +104,7 @@ export const ClaimDrawer = function ({
           heading={t('claim-rewards')}
           onClose={onClose}
           steps={steps}
-          subheading={t('claiming-your-rewards')}
+          subheading={t('your-rewards-are-on-their-way')}
           token={hemiToken}
         />
       </div>

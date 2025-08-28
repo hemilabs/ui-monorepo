@@ -161,7 +161,8 @@
     "title": "Rewards Program",
     "up-to-multiplier": "Up to {multiplier}x",
     "view-tx-on-explorer": "View TX on explorer",
-    "your-earned-tokens": "Your earned ${symbol} tokens."
+    "your-earned-tokens": "Your earned ${symbol} tokens.",
+    "your-rewards-are-on-their-way": "Your rewards are on their way!"
   },
   "get-started": {
     "add-funds-to-your-wallet": "Add funds to your wallet",

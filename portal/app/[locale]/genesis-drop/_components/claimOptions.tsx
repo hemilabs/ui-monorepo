@@ -6,6 +6,7 @@ import {
   lockupOptions,
   type EligibilityData,
 } from 'genesis-drop-actions'
+import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
@@ -44,6 +45,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
   )
   const [claimStatus, setClaimStatus] = useState<MutationStatus>('idle')
   const t = useTranslations('genesis-drop')
+  const { track } = useUmami()
 
   const closeDrawer = function () {
     setTermsAndConditions({ lockup: undefined, show: false })
@@ -93,6 +95,10 @@ export const ClaimOptions = function ({ eligibility }: Props) {
     // save it for retrying
     setSignedTerms(termsSignature)
     handleClaim(termsSignature)
+
+    track?.('genesis-drop - terms signed', {
+      lockupMonths: termsAndConditions.lockup,
+    })
   }
 
   const showDrawer =
@@ -163,9 +169,12 @@ export const ClaimOptions = function ({ eligibility }: Props) {
       {termsAndConditions.show && (
         <TermsAndConditions
           onAccept={handleAcceptTermsAndConditions}
-          onClose={() =>
+          onClose={function () {
+            track?.('genesis-drop - terms rejected', {
+              lockupMonths: termsAndConditions.lockup,
+            })
             setTermsAndConditions({ lockup: undefined, show: false })
-          }
+          }}
         />
       )}
       {showDrawer && (

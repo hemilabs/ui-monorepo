@@ -1,3 +1,4 @@
+import { LockupMonths } from 'genesis-drop-actions'
 import { umamiAnalyticsContextFactory } from 'umami-analytics-next'
 
 // all analytic events
@@ -10,7 +11,13 @@ const analyticsEvents = [
   'header - tunnel',
   'header - txn history',
   // /genesis-drop
+  'genesis-drop - failed validation',
   'genesis-drop - share eligibility',
+  'genesis-drop - submit reverted',
+  'genesis-drop - submit start',
+  'genesis-drop - submit success',
+  'genesis-drop - terms rejected',
+  'genesis-drop - terms signed',
   // /get-started
   'add to wallet - hemi mainnet',
   'add to wallet - hemi sepolia',
@@ -175,9 +182,21 @@ type AnalyticsEventsWithPartnerBridge = Extract<
   'partner bridge'
 >
 
+// these events require a Lockup Month period
+type AnalyticsEventsWithGenesisDropData = Extract<
+  AnalyticsEvent,
+  | 'genesis-drop - failed validation'
+  | 'genesis-drop - submit reverted'
+  | 'genesis-drop - submit start'
+  | 'genesis-drop - submit success'
+  | 'genesis-drop - terms signed'
+  | 'genesis-drop - terms rejected'
+>
+
 type WalletChainData = { wallet: string }
 type CustomERC20Data = { address: string }
 type PartnerBridgeData = { partner: string }
+type GenesisDropData = { lockupMonths: LockupMonths }
 
 // Create a mapped type that maps each key to its corresponding value type
 type EventDataMap = {
@@ -187,7 +206,9 @@ type EventDataMap = {
       ? CustomERC20Data
       : K extends AnalyticsEventsWithPartnerBridge
         ? PartnerBridgeData
-        : never
+        : K extends AnalyticsEventsWithGenesisDropData
+          ? GenesisDropData
+          : never
 }
 
 export const { UmamiAnalyticsProvider, useUmami } =

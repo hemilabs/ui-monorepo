@@ -1,7 +1,7 @@
 import Big from 'big.js'
 import { TokenLogo } from 'components/tokenLogo'
 import { Tooltip } from 'components/tooltip'
-import { ComponentType, Fragment, ReactNode } from 'react'
+import { ComponentProps, ComponentType, Fragment, ReactNode } from 'react'
 import { Token } from 'types/token'
 import { formatNumber } from 'utils/format'
 
@@ -17,6 +17,7 @@ type Props = {
   amount: string
   amountContainer?: CustomContainer
   container?: CustomContainer
+  logoVersion?: ComponentProps<typeof TokenLogo>['version']
   symbolContainer?: CustomContainer
   showSymbol?: boolean
   showTokenLogo?: boolean
@@ -27,6 +28,7 @@ export const DisplayAmount = function ({
   amount,
   amountContainer: AmountContainer = DefaultTextContainer,
   container: Container = Fragment,
+  logoVersion,
   showSymbol = true,
   showTokenLogo = true,
   symbolContainer: SymbolContainer = DefaultTextContainer,
@@ -44,7 +46,9 @@ export const DisplayAmount = function ({
       overlay={
         notZero ? (
           <div className="flex items-center gap-x-1 px-2 py-1 text-sm font-medium text-white">
-            {showTokenLogo && <TokenLogo size="small" token={token} />}
+            {showTokenLogo && (
+              <TokenLogo size="small" token={token} version={logoVersion} />
+            )}
             <span>{`${new Intl.NumberFormat('en-US', {
               maximumFractionDigits: token.decimals,
               useGrouping: true,

@@ -63,6 +63,8 @@ const config: Config = {
           '0px 2px 2px 0px rgba(10, 10, 10, 0.04), 0px 8px 16px -4px rgba(10, 10, 10, 0.04)',
         'large':
           '0px 2px 4px 0px rgba(0, 2, 2, 0.04), 0px 8px 24px -4px rgba(0, 2, 2, 0.04)',
+        'live-mainnet-card':
+          '0 0 2px 0 rgba(10, 10, 10, 0.10), 0 8px 12px -4px rgba(10, 10, 10, 0.08), 0 1px 2px 0 rgba(10, 10, 10, 0.10)',
         'lockup-input-default':
           '0 0 0 1px rgba(10, 10, 10, 0.08), 0 1px 3px 0 rgba(10, 10, 10, 0.08), 0 1px 2px -1px rgba(10, 10, 10, 0.08)',
         'lockup-input-error':

@@ -1,6 +1,7 @@
 'use client'
 
 import { PageLayout } from 'components/pageLayout'
+import { useHemiToken } from 'hooks/useHemiToken'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
 
@@ -28,6 +29,7 @@ function StakingContent() {
 function Page() {
   const t = useTranslations('staking-dashboard')
   const [networkType] = useNetworkType()
+  const { symbol } = useHemiToken()
 
   const isEnabled = isStakingDashboardEnabledOnTestnet(networkType)
 
@@ -35,10 +37,10 @@ function Page() {
     <PageLayout variant="superWide">
       <div className="flex flex-col">
         <h1 className="mb-1 text-2xl font-semibold text-neutral-950">
-          {t('heading')}
+          {t('heading', { symbol })}
         </h1>
         <p className="text-sm font-normal text-neutral-500">
-          {t('sub-heading')}
+          {t('sub-heading', { symbol })}
         </p>
         {isEnabled ? <StakingContent /> : <StakingDashboardDisabledTestnet />}
       </div>

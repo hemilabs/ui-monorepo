@@ -480,6 +480,7 @@ export const getMerkleClaim = function ({
    * Subgraph Ids from the subgraphs published in Arbitrum
    */
   const subgraphIds = {
+    [hemi.id]: subgraphConfig.tokenClaim.mainnet,
     [hemiSepolia.id]: subgraphConfig.tokenClaim.testnet,
   }
 

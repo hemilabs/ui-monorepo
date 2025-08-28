@@ -20,6 +20,8 @@ const mainnetAddresses = [
   mainnet.nativeCurrency.symbol,
   // FRAX
   '0xc4a20a608616F18aA631316eEDa9Fb62d089361e',
+  // HEMI
+  '0x99e3dE3817F6081B2568208337ef83295b7f591D',
   // HEMI BTC
   '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28',
   // LINK

@@ -318,7 +318,7 @@ describe('claimTokens', function () {
           validParameters.amount,
           [zeroHash, zeroHash],
           validParameters.lockupMonths,
-          BigInt(7550), // ratio 75.5 * 100 = 7550
+          7550, // ratio 75.5 * 100 = 7550
           validParameters.termsSignature,
         ],
         functionName: 'claim',
@@ -358,7 +358,7 @@ describe('claimTokens', function () {
           validParameters.amount,
           multipleProof, // Should use the provided proof array
           validParameters.lockupMonths,
-          BigInt(7550), // ratio 75.5 * 100 = 7550
+          7550, // ratio 75.5 * 100 = 7550
           validParameters.termsSignature,
         ],
         functionName: 'claim',
@@ -397,7 +397,7 @@ describe('claimTokens', function () {
           validParameters.amount,
           [zeroHash, zeroHash],
           validParameters.lockupMonths,
-          BigInt(7512), // ratio should be 75.12 * 100 = 7512
+          7512, // ratio should be 75.12 * 100 = 7512
           validParameters.termsSignature,
         ],
         functionName: 'claim',
@@ -436,7 +436,7 @@ describe('claimTokens', function () {
           validParameters.amount,
           [zeroHash, zeroHash],
           lockupMonths,
-          BigInt(7550), // ratio 75.5 * 100 = 7550
+          7550, // ratio 75.5 * 100 = 7550
           validParameters.termsSignature,
         ],
         functionName: 'claim',
@@ -485,7 +485,7 @@ describe('claimTokens', function () {
           validParameters.amount, // Use the user-provided amount
           [zeroHash, zeroHash],
           validParameters.lockupMonths,
-          BigInt(7550), // ratio 75.5 * 100 = 7550
+          7550, // ratio 75.5 * 100 = 7550
           validParameters.termsSignature,
         ],
         functionName: 'claim',
@@ -634,7 +634,7 @@ describe('claimTokens', function () {
           partialAmount,
           [zeroHash, zeroHash],
           validParameters.lockupMonths,
-          BigInt(7550), // ratio 75.5 * 100 = 7550
+          7550, // ratio 75.5 * 100 = 7550
           validParameters.termsSignature,
         ],
         functionName: 'claim',

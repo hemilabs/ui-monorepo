@@ -40,9 +40,9 @@ const validateRatio = function (
 
 const formatRatio = function (ratio: number) {
   // Round to 2 decimal places and convert to contract format (multiply by 100)
-  // So for example a ratio of 65.75 should become BigInt(6575)
+  // So for example a ratio of 65.75 should become 6575
   const roundedRatio = Math.round(ratio * 100) / 100
-  return BigInt(Math.round(roundedRatio * 100))
+  return Math.round(roundedRatio * 100)
 }
 
 const isProofValid = (proof: unknown): proof is Hex[] =>

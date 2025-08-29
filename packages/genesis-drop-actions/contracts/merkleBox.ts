@@ -26,14 +26,14 @@ export const merkleBoxAbi = [
         type: 'bytes32[]',
       },
       {
-        internalType: 'uint32',
+        internalType: 'uint8',
         name: 'lockupMonths',
-        type: 'uint32',
+        type: 'uint8',
       },
       {
-        internalType: 'uint256',
+        internalType: 'uint32',
         name: 'ratio',
-        type: 'uint256',
+        type: 'uint32',
       },
       {
         internalType: 'bytes',
@@ -73,12 +73,12 @@ export const merkleBoxAbi = [
       },
       {
         internalType: 'uint32',
-        name: 'lockupRatio',
+        name: 'minLockupRatio',
         type: 'uint32',
       },
       {
         internalType: 'address',
-        name: 'mintedNFT',
+        name: 'nft',
         type: 'address',
       },
     ],
@@ -123,10 +123,8 @@ export const merkleBoxAbi = [
 
 // Contract addresses by chain ID
 const MerkleBoxAddresses: Record<number, Address> = {
-  // Hemi Mainnet (chainId: TBD - will be updated when available)
-  // 43111: '0x...', // placeholder
   [hemi.id]: '0x9Ab3660ceE733332785cEa09D1a4Ff222F31aE54',
-  [hemiSepolia.id]: '0x38f4C4BD276b9C47b419FE27D4ED01C32c120cF4',
+  [hemiSepolia.id]: '0x1e1d3D4e58B15AAF85067ad2ABafD2c022b2DB93',
 } as const
 
 // Get MerkleBox contract address for a given chain ID

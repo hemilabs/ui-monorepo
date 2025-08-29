@@ -26,14 +26,14 @@ export const merkleBoxAbi = [
         type: 'bytes32[]',
       },
       {
-        internalType: 'uint32',
+        internalType: 'uint8',
         name: 'lockupMonths',
-        type: 'uint32',
+        type: 'uint8',
       },
       {
-        internalType: 'uint256',
+        internalType: 'uint32',
         name: 'ratio',
-        type: 'uint256',
+        type: 'uint32',
       },
       {
         internalType: 'bytes',
@@ -73,12 +73,12 @@ export const merkleBoxAbi = [
       },
       {
         internalType: 'uint32',
-        name: 'lockupRatio',
+        name: 'minLockupRatio',
         type: 'uint32',
       },
       {
         internalType: 'address',
-        name: 'mintedNFT',
+        name: 'nft',
         type: 'address',
       },
     ],

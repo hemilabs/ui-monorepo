@@ -123,10 +123,8 @@ export const merkleBoxAbi = [
 
 // Contract addresses by chain ID
 const MerkleBoxAddresses: Record<number, Address> = {
-  // Hemi Mainnet (chainId: TBD - will be updated when available)
-  // 43111: '0x...', // placeholder
   [hemi.id]: '0x9Ab3660ceE733332785cEa09D1a4Ff222F31aE54',
-  [hemiSepolia.id]: '0x38f4C4BD276b9C47b419FE27D4ED01C32c120cF4',
+  [hemiSepolia.id]: '0x1e1d3D4e58B15AAF85067ad2ABafD2c022b2DB93',
 } as const
 
 // Get MerkleBox contract address for a given chain ID

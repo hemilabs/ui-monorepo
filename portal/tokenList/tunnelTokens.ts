@@ -10,6 +10,8 @@ import { mainnet, sepolia } from 'viem/chains'
 const mainnetAddresses = [
   // AAVE
   '0xB2960608948C4D216f72F98C39Eb3d0E775E3923',
+  // BGBTC
+  '0x5B6d6D09F425da2a816D1cDBabd049449Ae8d8e6',
   // bwAJNA
   '0x63D367531B460Da78a9EBBAF6c1FBFC397E5d40A',
   // COMP

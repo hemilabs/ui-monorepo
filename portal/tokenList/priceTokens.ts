@@ -7,6 +7,8 @@ type PriceMap = Record<Address, Pick<Extensions, 'priceSymbol'>>
 
 // BTC tokens on Hemi
 const btcAddresses = [
+  // BGBTC
+  '0x5B6d6D09F425da2a816D1cDBabd049449Ae8d8e6',
   // brBTC
   '0x93919784C523f39CACaa98Ee0a9d96c3F32b593e',
   // enzoBTC

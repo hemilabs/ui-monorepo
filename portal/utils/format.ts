@@ -73,7 +73,7 @@ export const formatPastTime = (secondsFromNow: number, locale: string) =>
 export const formatFutureTime = (seconds: number, locale: string) =>
   formatRelativeTime({
     locale,
-    rounder: Math.round,
+    rounder: Math.floor,
     seconds,
   })
 

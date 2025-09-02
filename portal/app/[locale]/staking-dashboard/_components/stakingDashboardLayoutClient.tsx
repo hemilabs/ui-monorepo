@@ -1,21 +1,12 @@
 'use client'
 
-import NotFound from 'app/not-found'
 import { PageLayout } from 'components/pageLayout'
-import { useHemi } from 'hooks/useHemi'
 import { ReactNode } from 'react'
-import { isStakeGovernanceEnabled } from 'utils/featureFlags'
 
-export default function StakingDashboardLayoutClient({
+const StakingDashboardLayoutClient = ({
   children,
 }: {
   children: ReactNode
-}) {
-  const chainId = useHemi().id
-  const enabled = isStakeGovernanceEnabled(chainId)
-  if (!enabled) {
-    return <NotFound />
-  }
+}) => <PageLayout variant="superWide">{children}</PageLayout>
 
-  return <PageLayout variant="superWide">{children}</PageLayout>
-}
+export default StakingDashboardLayoutClient

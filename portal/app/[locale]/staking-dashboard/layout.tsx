@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { PropsWithChildren, Suspense } from 'react'
+import { PropsWithChildren } from 'react'
 
 import StakingDashboardLayoutClient from './_components/stakingDashboardLayoutClient'
 
@@ -7,12 +7,8 @@ export const metadata: Metadata = {
   title: 'Staking dashboard | Hemi Portal',
 }
 
-export default function StakingDashboardLayout({
-  children,
-}: PropsWithChildren) {
-  return (
-    <Suspense>
-      <StakingDashboardLayoutClient>{children}</StakingDashboardLayoutClient>
-    </Suspense>
-  )
-}
+const StakingDashboardLayout = ({ children }: PropsWithChildren) => (
+  <StakingDashboardLayoutClient>{children}</StakingDashboardLayoutClient>
+)
+
+export default StakingDashboardLayout

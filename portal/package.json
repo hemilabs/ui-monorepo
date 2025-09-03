@@ -56,7 +56,7 @@
     "ve-hemi-actions": "1.0.0",
     "viem": "2.22.10",
     "viem-erc20": "1.0.1",
-    "wagmi": "2.14.8",
+    "wagmi": "2.14.11",
     "wallet-watch-asset": "github:hemilabs/wallet-watch-asset#v1.0.1"
   },
   "devDependencies": {

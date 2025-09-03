@@ -159,4 +159,21 @@ export const veHemiAbi = [
     name: 'Lock',
     type: 'event',
   },
+  {
+    inputs: [{ internalType: 'uint256', name: 'tokenId_', type: 'uint256' }],
+    name: 'getLockedBalance',
+    outputs: [
+      {
+        components: [
+          { internalType: 'int128', name: 'amount', type: 'int128' },
+          { internalType: 'uint64', name: 'end', type: 'uint64' },
+        ],
+        internalType: 'struct IVeHemi.LockedBalance',
+        name: '',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const

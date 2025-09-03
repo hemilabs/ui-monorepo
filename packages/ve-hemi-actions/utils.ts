@@ -101,7 +101,9 @@ export const validateIncreaseAmountInputs = function ({
     approvalAmount: approvalAdditionalAmount,
     chainId,
   })
-  if (commonError) return commonError
+  if (commonError) {
+    return commonError
+  }
 
   if (tokenId <= BigInt(0)) {
     return 'invalid token ID'

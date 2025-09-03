@@ -21,7 +21,10 @@ import {
   validateCreateLockInputs,
   validateIncreaseAmountInputs,
 } from '../../utils'
-import { getHemiTokenAddress } from '../public/veHemi'
+import { getHemiTokenAddress, getLockedBalance } from '../public/veHemi'
+
+type DefaultEventMap = [never]
+type EventMap<T> = Record<keyof T, unknown[]> | DefaultEventMap
 
 const memoizedGetHemiTokenAddress = pMemoize(getHemiTokenAddress, {
   resolver: w => w.chain?.id,
@@ -133,13 +136,21 @@ const canIncreaseAmount = async function ({
       return { canIncrease: false, reason: 'insufficient balance' }
     }
 
+    // check if lock is expired
+    // if expired, cannot increase amount
+    const { end } = await getLockedBalance(walletClient, tokenId)
+    const now = BigInt(Math.floor(Date.now() / 1000))
+    if (end <= now) {
+      return { canIncrease: false, reason: 'lock already expired' }
+    }
+
     return { canIncrease: true }
   } catch {
     return { canIncrease: false, reason: 'failed to check balance' }
   }
 }
 
-const handleApproval = async function ({
+const handleApproval = async function <T extends ApprovalEvents>({
   account,
   amount,
   approvalAmount,
@@ -151,10 +162,10 @@ const handleApproval = async function ({
   account: Address
   amount: bigint
   approvalAmount?: bigint
-  walletClient: WalletClient
-  veHemiAddress: Address
+  emitter: EventEmitter<EventMap<T>>
   hemiTokenAddress: Address
-  emitter: EventEmitter<ApprovalEvents>
+  veHemiAddress: Address
+  walletClient: WalletClient
 }): Promise<boolean> {
   // Using @ts-expect-error fails to compile so I need to use @ts-ignore
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

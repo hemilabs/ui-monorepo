@@ -9,18 +9,16 @@ import {
   SupportedChains,
 } from './constants'
 
-export const validateCreateLockInputs = function ({
+const validateCommonInputs = function ({
   account,
   amount,
   approvalAmount = amount,
   chainId,
-  lockDurationInSeconds,
 }: {
   account: Address
   amount: bigint
   approvalAmount?: bigint
   chainId: number
-  lockDurationInSeconds: number
 }) {
   if (!isAddress(account)) {
     return 'account is not a valid address'
@@ -42,6 +40,37 @@ export const validateCreateLockInputs = function ({
     return 'approval amount cannot be less than amount'
   }
 
+  const isSupportedChain = SupportedChains.includes(chainId)
+  if (!isSupportedChain) {
+    return 'chain is not supported'
+  }
+
+  return undefined
+}
+
+export const validateCreateLockInputs = function ({
+  account,
+  amount,
+  approvalAmount = amount,
+  chainId,
+  lockDurationInSeconds,
+}: {
+  account: Address
+  amount: bigint
+  approvalAmount?: bigint
+  chainId: number
+  lockDurationInSeconds: number
+}) {
+  const commonError = validateCommonInputs({
+    account,
+    amount,
+    approvalAmount,
+    chainId,
+  })
+  if (commonError) {
+    return commonError
+  }
+
   if (lockDurationInSeconds < MinLockDurationSeconds) {
     return 'lock duration is too short'
   }
@@ -50,9 +79,32 @@ export const validateCreateLockInputs = function ({
     return 'lock duration is too long (maximum 4 years)'
   }
 
-  const isSupportedChain = SupportedChains.includes(chainId)
-  if (!isSupportedChain) {
-    return 'chain is not supported'
+  return undefined
+}
+
+export const validateIncreaseAmountInputs = function ({
+  account,
+  additionalAmount,
+  approvalAdditionalAmount = additionalAmount,
+  chainId,
+  tokenId,
+}: {
+  account: Address
+  additionalAmount: bigint
+  approvalAdditionalAmount?: bigint
+  chainId: number
+  tokenId: bigint
+}) {
+  const commonError = validateCommonInputs({
+    account,
+    amount: additionalAmount,
+    approvalAmount: approvalAdditionalAmount,
+    chainId,
+  })
+  if (commonError) return commonError
+
+  if (tokenId <= BigInt(0)) {
+    return 'invalid token ID'
   }
 
   return undefined

@@ -35,9 +35,7 @@ const AddSection = function ({
 
   // as the tunnel may be using a custom RPC, we want users to add the public original one.
   // For that, use the original hemi definition from hemi-viem
-  const hemiToAdd = (
-    hemi.id === hemiTestnet.id ? hemiTestnet : hemiMainnet
-  ) as Chain
+  const hemiToAdd = hemi.id === hemiTestnet.id ? hemiTestnet : hemiMainnet
   return (
     <div className="flex flex-col gap-y-3">
       <ChainRow

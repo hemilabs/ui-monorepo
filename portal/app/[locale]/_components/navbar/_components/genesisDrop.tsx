@@ -7,13 +7,11 @@ export const GenesisDrop = function () {
   const t = useTranslations('navbar')
 
   return (
-    <li className="[&>div]:px-2">
-      <ItemLink
-        event="nav - genesis drop"
-        href="/genesis-drop"
-        icon={<GenesisDropIcon />}
-        text={t('genesis-drop')}
-      />
-    </li>
+    <ItemLink
+      event="nav - genesis drop"
+      href="/genesis-drop"
+      icon={<GenesisDropIcon />}
+      text={t('genesis-drop')}
+    />
   )
 }

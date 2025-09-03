@@ -1,7 +1,7 @@
 import { allNetworks } from 'networks'
 import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
-import { type EvmChain, type RemoteChain } from 'types/chain'
+import { type RemoteChain } from 'types/chain'
 import { type Address, type Chain, zeroAddress } from 'viem'
 
 export const findChainById = (chainId: RemoteChain['id']) =>
@@ -13,7 +13,7 @@ export const isBtcNetworkId = (chainId: RemoteChain['id']) =>
 export const isEvmNetworkId = (chainId: RemoteChain['id']) =>
   typeof chainId === 'number'
 
-export const isEvmNetwork = (chain: RemoteChain): chain is EvmChain =>
+export const isEvmNetwork = (chain: RemoteChain): chain is Chain =>
   isEvmNetworkId(chain.id)
 
 export const isL2NetworkId = (chainId: number) =>

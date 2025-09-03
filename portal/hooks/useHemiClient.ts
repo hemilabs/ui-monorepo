@@ -52,6 +52,7 @@ const walletClientToHemiClient = (walletClient: WalletClient) =>
 
 export const useHemiWalletClient = function () {
   const hemi = useHemi()
+  // @ts-expect-error wagmi and viem doing their stuff in TS...
   const { data: hemiWalletClient, ...rest } = useWalletClient({
     chainId: hemi.id,
     query: { select: walletClientToHemiClient },

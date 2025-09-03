@@ -1,20 +1,10 @@
 import { GenesisDropIcon } from 'components/icons/genesisDropIcon'
-import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
-import { Suspense } from 'react'
-import { isGenesisDropEnabled } from 'utils/featureFlags'
 
 import { ItemLink } from './itemLink'
 
-const GenesisDropImpl = function () {
-  const hemi = useHemi()
+export const GenesisDrop = function () {
   const t = useTranslations('navbar')
-
-  const isEnabled = isGenesisDropEnabled(hemi.id)
-
-  if (!isEnabled) {
-    return null
-  }
 
   return (
     <li className="[&>div]:px-2">
@@ -27,9 +17,3 @@ const GenesisDropImpl = function () {
     </li>
   )
 }
-
-export const GenesisDrop = () => (
-  <Suspense>
-    <GenesisDropImpl />
-  </Suspense>
-)

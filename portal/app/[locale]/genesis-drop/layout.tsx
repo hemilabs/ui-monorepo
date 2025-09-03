@@ -1,11 +1,8 @@
 'use client'
 
-import NotFound from 'app/not-found'
 import { PageLayout } from 'components/pageLayout'
-import { useHemi } from 'hooks/useHemi'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { ReactNode, Suspense } from 'react'
-import { isGenesisDropEnabled } from 'utils/featureFlags'
 
 import { Background } from './_components/background'
 import { ClaimRewardsDisabledTestnet } from './_components/claimRewardsDisabledTestnet'
@@ -25,28 +22,15 @@ const Page = function ({ children }: Props) {
   return children
 }
 
-const LayoutImpl = function ({ children }: Props) {
-  const hemi = useHemi()
-  const genesisEnabled = isGenesisDropEnabled(hemi.id)
-
-  if (!genesisEnabled) {
-    return <NotFound />
-  }
-
-  return (
-    <PageLayout variant="genesisDrop">
-      <Background />
-      <div className="flex w-full flex-col items-center gap-y-2">
+const Layout = ({ children }: Props) => (
+  <PageLayout variant="genesisDrop">
+    <Background />
+    <div className="flex w-full flex-col items-center gap-y-2">
+      <Suspense>
         <Page>{children}</Page>
-      </div>
-    </PageLayout>
-  )
-}
+      </Suspense>
+    </div>
+  </PageLayout>
+)
 
-export default function Layout({ children }: Props) {
-  return (
-    <Suspense>
-      <LayoutImpl>{children}</LayoutImpl>
-    </Suspense>
-  )
-}
+export default Layout

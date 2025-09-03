@@ -24,7 +24,7 @@
   "devDependencies": {
     "@tsconfig/node20": "20.1.5",
     "typescript": "5.8.3",
-    "viem": "2.22.10"
+    "viem": "2.28.4"
   },
   "peerDependencies": {
     "viem": "^2.x"

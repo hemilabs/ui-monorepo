@@ -39,6 +39,7 @@ const fetchDomains = new Set([
   // The Graph studio url
   'https://api.studio.thegraph.com/',
   // Reown (Ex WalletConnect), through RainbowKit
+  'https://api.web3modal.org',
   'wss://*.walletconnect.com',
   'https://*.walletconnect.com',
   'wss://relay.walletconnect.org',
@@ -46,6 +47,7 @@ const fetchDomains = new Set([
   // cookie3
   'https://a.markfi.xyz',
   // Coinbase wallet
+  'https://cca-lite.coinbase.com',
   'https://chain-proxy.wallet.coinbase.com',
   'https://keys.coinbase.com',
   'wss://www.walletlink.org/rpc',

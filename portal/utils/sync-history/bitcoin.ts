@@ -155,117 +155,174 @@ export const createBitcoinSync = function ({
     let localDepositSyncInfo: TransactionListSyncType = {
       ...depositsSyncInfo,
     }
-    debug('Getting bitcoin custody address')
-    const vaultAddress = await hemiClient
-      .getVaultChildIndex()
-      .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
 
-    const bitcoinCustodyAddress = await getBitcoinCustodyAddress(
-      hemiClient,
-      vaultAddress,
+    debug('Getting vault historic indexes')
+    const vaultIndexes = await hemiClient.getVaultHistoricVaultIndexes()
+    debug(
+      'Found %s vault indexes: %s',
+      vaultIndexes.length,
+      vaultIndexes.join(', '),
     )
 
-    debug('Found custody address %s', bitcoinCustodyAddress)
-
-    const getTransactionsBatch = async function (afterTxId?: string) {
-      const formattedTxId = afterTxId ?? 'last available transaction'
-      debug('Getting transactions batch starting from %s', formattedTxId)
-
-      const transactions = await createBtcApi(mapBitcoinNetwork(l1Chain.id))
-        .getAddressTransactions(
-          bitcoinCustodyAddress,
-          afterTxId ? { afterTxId } : undefined,
+    // Process vaults sequentially starting from the last processed vault or the first one
+    const startVaultArrayIndex = localDepositSyncInfo.iterationVault
+      ? vaultIndexes.findIndex(
+          index => index === localDepositSyncInfo.iterationVault,
         )
-        .then(discardKnownTransactions(localDepositSyncInfo.toKnownTx))
+      : 0
+
+    // If the vault from iterationVault is not found, start from the beginning
+    const validStartIndex =
+      startVaultArrayIndex === -1 ? 0 : startVaultArrayIndex
+    const vaultsToProcess = vaultIndexes.slice(validStartIndex)
+
+    for (const [vaultArrayIndex, vaultIndex] of vaultsToProcess.entries()) {
+      debug(
+        'Processing vault index %s (%s/%s)',
+        vaultIndex,
+        vaultArrayIndex + 1,
+        vaultsToProcess.length,
+      )
+
+      const vaultAddress = await getVaultAddressByIndex(hemiClient, vaultIndex)
+      const bitcoinCustodyAddress = await getBitcoinCustodyAddress(
+        hemiClient,
+        vaultAddress,
+      )
 
       debug(
-        'Found %s transactions starting from %s',
-        transactions.length,
-        formattedTxId,
-      )
-      return transactions
-    }
-
-    const processTransactions = async function (
-      unprocessedTransactions: MempoolJsBitcoinTransaction[],
-      batchPivotTx?: string,
-    ) {
-      const bitcoinDeposits = filterDeposits(
-        unprocessedTransactions,
-        hemiAddress,
+        'Found custody address %s for vault %s',
         bitcoinCustodyAddress,
+        vaultIndex,
       )
 
-      const newDeposits = await pAll(
-        bitcoinDeposits.map(
-          bitcoinDeposit =>
-            async function (): Promise<BtcDepositOperation> {
-              const btc = getNativeToken(l1Chain.id)
-              const partialDeposit: Omit<BtcDepositOperation, 'status'> = {
-                amount: calculateDepositAmount(
-                  bitcoinDeposit.vout,
-                  bitcoinCustodyAddress,
-                ).toString(),
-                direction: MessageDirection.L1_TO_L2,
-                // vin should all be utxos coming from the same address...
-                // not supporting multisig for the time being (although, we are not really using
-                // the from field for anything so far)
-                from: bitcoinDeposit.vin[0].prevout.scriptpubkeyAddress,
-                l1ChainId: l1Chain.id,
-                l1Token: btc.address,
-                l2ChainId: l2Chain.id,
-                l2Token: btc.extensions.bridgeInfo[l2Chain.id].tokenAddress,
-                timestamp: getBitcoinTimestamp(bitcoinDeposit.status.blockTime),
-                to: bitcoinCustodyAddress,
-                transactionHash: bitcoinDeposit.txId,
-              }
-              const status = bitcoinDeposit.status.confirmed
-                ? await getHemiStatusOfBtcDeposit({
-                    deposit: partialDeposit,
-                    hemiClient,
-                    vaultAddress,
-                  })
-                : BtcDepositStatus.BTC_TX_PENDING
-              return { ...partialDeposit, status }
-            },
-        ),
-        { concurrency: 3 },
-      )
-      debug('Got %s new deposits', newDeposits.length)
+      const getTransactionsBatch = async function (afterTxId?: string) {
+        const formattedTxId = afterTxId ?? 'last available transaction'
+        debug(
+          'Getting transactions batch starting from %s for vault %s',
+          formattedTxId,
+          vaultIndex,
+        )
 
-      // This means we finished requesting TXs from the history
-      const hasSyncToMinTx = unprocessedTransactions.length === 0
+        // Add delay to be gentle with the Mempool API - so it does not block us.
+        await new Promise(resolve => setTimeout(resolve, 500))
 
-      localDepositSyncInfo = {
-        ...localDepositSyncInfo,
-        fromKnownTx: hasSyncToMinTx
-          ? undefined
-          : localDepositSyncInfo.fromKnownTx ?? unprocessedTransactions[0].txId,
-        hasSyncToMinTx,
-        // Once we sync up to the oldest transaction, next time we will only sync up to this point
-        toKnownTx: hasSyncToMinTx
-          ? localDepositSyncInfo.fromKnownTx ?? localDepositSyncInfo.toKnownTx
-          : localDepositSyncInfo.toKnownTx,
-        // store it in case we need to restart the sync from a specific point, otherwise undefined
-        txPivot: hasSyncToMinTx ? undefined : batchPivotTx,
+        const transactions = await createBtcApi(mapBitcoinNetwork(l1Chain.id))
+          .getAddressTransactions(
+            bitcoinCustodyAddress,
+            afterTxId ? { afterTxId } : undefined,
+          )
+          .then(discardKnownTransactions(localDepositSyncInfo.toKnownTx))
+
+        debug(
+          'Found %s transactions starting from %s for vault %s',
+          transactions.length,
+          formattedTxId,
+          vaultIndex,
+        )
+        return transactions
       }
 
-      saveHistory({
-        payload: {
-          chainId: l1Chain.id,
-          content: newDeposits,
-          ...localDepositSyncInfo,
-        },
-        type: 'sync-deposits',
-      })
-    }
+      const processTransactions = async function (
+        unprocessedTransactions: MempoolJsBitcoinTransaction[],
+        batchPivotTx?: string,
+      ) {
+        const bitcoinDeposits = filterDeposits(
+          unprocessedTransactions,
+          hemiAddress,
+          bitcoinCustodyAddress,
+        )
 
-    return createSlidingTransactionList({
-      getTransactionsBatch,
-      pivotTxId: depositsSyncInfo.txPivot ?? depositsSyncInfo.fromKnownTx,
-      processTransactions,
-      txIdGetter: transactions => transactions.at(-1).txId,
-    }).run()
+        const newDeposits = await pAll(
+          bitcoinDeposits.map(
+            bitcoinDeposit =>
+              async function (): Promise<BtcDepositOperation> {
+                const btc = getNativeToken(l1Chain.id)
+                const partialDeposit: Omit<BtcDepositOperation, 'status'> = {
+                  amount: calculateDepositAmount(
+                    bitcoinDeposit.vout,
+                    bitcoinCustodyAddress,
+                  ).toString(),
+                  direction: MessageDirection.L1_TO_L2,
+                  // vin should all be utxos coming from the same address...
+                  // not supporting multisig for the time being (although, we are not really using
+                  // the from field for anything so far)
+                  from: bitcoinDeposit.vin[0].prevout.scriptpubkeyAddress,
+                  l1ChainId: l1Chain.id,
+                  l1Token: btc.address,
+                  l2ChainId: l2Chain.id,
+                  l2Token: btc.extensions.bridgeInfo[l2Chain.id].tokenAddress,
+                  timestamp: getBitcoinTimestamp(
+                    bitcoinDeposit.status.blockTime,
+                  ),
+                  to: bitcoinCustodyAddress,
+                  transactionHash: bitcoinDeposit.txId,
+                }
+                const status = bitcoinDeposit.status.confirmed
+                  ? await getHemiStatusOfBtcDeposit({
+                      deposit: partialDeposit,
+                      hemiClient,
+                      vaultAddress,
+                    })
+                  : BtcDepositStatus.BTC_TX_PENDING
+                return { ...partialDeposit, status }
+              },
+          ),
+          { concurrency: 3 },
+        )
+        debug(
+          'Got %s new deposits for vault %s',
+          newDeposits.length,
+          vaultIndex,
+        )
+
+        // This means we finished requesting TXs from the history for this vault
+        const hasVaultSyncToMinTx = unprocessedTransactions.length === 0
+
+        // Check if we've processed all vaults and reached minTx for all of them
+        const isLastVault = vaultArrayIndex === vaultsToProcess.length - 1
+        const hasSyncToMinTx = hasVaultSyncToMinTx && isLastVault
+
+        localDepositSyncInfo = {
+          ...localDepositSyncInfo,
+          fromKnownTx: hasVaultSyncToMinTx
+            ? undefined
+            : localDepositSyncInfo.fromKnownTx ??
+              unprocessedTransactions[0].txId,
+          hasSyncToMinTx,
+          // Track which vault we're currently processing - store the vault index (ID), not array position
+          iterationVault: hasSyncToMinTx ? undefined : vaultIndex,
+          // Once we sync up to the oldest transaction, next time we will only sync up to this point
+          toKnownTx: hasVaultSyncToMinTx
+            ? localDepositSyncInfo.fromKnownTx ?? localDepositSyncInfo.toKnownTx
+            : localDepositSyncInfo.toKnownTx,
+          // store it in case we need to restart the sync from a specific point, otherwise undefined
+          txPivot: hasVaultSyncToMinTx ? undefined : batchPivotTx,
+        }
+
+        saveHistory({
+          payload: {
+            chainId: l1Chain.id,
+            content: newDeposits,
+            ...localDepositSyncInfo,
+          },
+          type: 'sync-deposits',
+        })
+      }
+
+      await createSlidingTransactionList({
+        getTransactionsBatch,
+        // Reset pivotTxId for each new vault - only use saved pivot if we're continuing the same vault
+        pivotTxId:
+          localDepositSyncInfo.iterationVault === vaultIndex
+            ? depositsSyncInfo.txPivot ?? depositsSyncInfo.fromKnownTx
+            : undefined,
+        processTransactions,
+        txIdGetter: transactions => transactions.at(-1).txId,
+      }).run()
+
+      debug('Finished processing vault %s', vaultIndex)
+    }
   }
 
   const syncWithdrawals = async function () {

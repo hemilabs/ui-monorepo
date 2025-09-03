@@ -48,8 +48,10 @@ NEXT_PUBLIC_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governan
 NEXT_PUBLIC_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development
 NEXT_PUBLIC_ENABLE_CLAIM_REWARDS_TESTNET=<true|false> # Enable claim rewards on Testnet, for local development
 # Bitcoin configuring
-NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET=2 # Vault index to use for bitcoin in hemi mainnet. Defaults to 0
-NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=1 # Vault index to use for bitcoin in hemi sepolia. Defaults to 0
+NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET=1,2 # Comma-separated list of past vault indexes. Do not include the active ones.
+NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA=1,2,3 # Comma-separated list of past vault indexes. Do not include the active ones.
+NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET=3 # Vault index to use for bitcoin in hemi mainnet. Defaults to 0
+NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=4 # Vault index to use for bitcoin in hemi sepolia. Defaults to 0
 # Backend API URL
 NEXT_PUBLIC_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
 # Subgraphs endpoint ID

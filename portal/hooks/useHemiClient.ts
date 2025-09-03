@@ -28,6 +28,17 @@ const defaultBitcoinVaults = {
   ),
 }
 
+const pastBitcoinVaults = {
+  [hemiMainnet.id]:
+    process.env.NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET?.split(',')?.map(
+      Number,
+    ) ?? [],
+  [hemiSepolia.id]:
+    process.env.NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA?.split(',')?.map(
+      Number,
+    ) ?? [],
+}
+
 export const publicClientToHemiClient = (publicClient: PublicClient) =>
   publicClient
     .extend(erc20PublicActions())
@@ -36,7 +47,7 @@ export const publicClientToHemiClient = (publicClient: PublicClient) =>
     .extend(hemiPublicSimpleBitcoinVaultStateActions())
     .extend(hemiPublicBitcoinTunnelManagerActions())
     .extend(hemiPublicStakeActions())
-    .extend(hemiPublicExtraActions({ defaultBitcoinVaults }))
+    .extend(hemiPublicExtraActions({ defaultBitcoinVaults, pastBitcoinVaults }))
 
 export const useHemiClient = function () {
   const hemi = useHemi()

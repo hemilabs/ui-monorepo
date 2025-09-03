@@ -25,9 +25,14 @@ export function handleDepositEvent(event: DepositEvent): void {
   // if the amount was updated, the increased amount is set, if not, zero is send
   // So we can just add it up
   lockedPosition.amount = lockedPosition.amount.plus(event.params.amount)
-  // if the lock time was increased, the new value is emitted. If not, the existing previous one is
-  // emitted in the event. So we can just set the event one.
-  lockedPosition.lockTime = event.params.lockTime
+
+  // Normalize lockTime: the Deposit event gives us the absolute unlock timestamp,
+  // but we want to keep consistency with the Lock event where lockTime is stored as a duration.
+  // So here we convert it back to a duration by subtracting the original start timestamp
+  const end = event.params.lockTime
+  const start = lockedPosition.timestamp
+  lockedPosition.lockTime = end.minus(start)
+
   log.info('Updating locked position: {}', [lockedPosition.id])
   lockedPosition.save()
 }

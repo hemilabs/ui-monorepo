@@ -248,7 +248,7 @@ describe('validateIncreaseAmountInputs', function () {
   })
 
   it('should use amount as default approval amount when not provided', function () {
-    const { approvalAmount, ...newParams } = validParams
+    const { approvalAdditionalAmount, ...newParams } = validParams
     expect(validateIncreaseAmountInputs(newParams)).toBeUndefined()
   })
 })

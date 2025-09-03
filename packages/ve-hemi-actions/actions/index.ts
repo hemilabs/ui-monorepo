@@ -1,1 +1,6 @@
-export { createLock, encodeCreateLock } from './wallet/veHemi'
+export {
+  createLock,
+  encodeCreateLock,
+  encodeIncreaseAmount,
+  increaseAmount,
+} from './wallet/veHemi'

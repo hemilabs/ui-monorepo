@@ -3,7 +3,10 @@ import { zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import { MaxLockDurationSeconds, MinLockDurationSeconds } from '../constants'
-import { validateCreateLockInputs } from '../utils'
+import {
+  validateCreateLockInputs,
+  validateIncreaseAmountInputs,
+} from '../utils'
 
 describe('validateCreateLockInputs', function () {
   const validParams = {
@@ -129,5 +132,123 @@ describe('validateCreateLockInputs', function () {
   it('should use amount as default approval amount when not provided', function () {
     const { approvalAmount, ...newParams } = validParams
     expect(validateCreateLockInputs(newParams)).toBeUndefined()
+  })
+})
+
+describe('validateIncreaseAmountInputs', function () {
+  const validParams = {
+    account: '0x1234567890123456789012345678901234567890' as const,
+    additionalAmount: BigInt(100),
+    approvalAdditionalAmount: BigInt(100),
+    chainId: hemiSepolia.id,
+    tokenId: BigInt(1),
+  }
+
+  it('should return undefined for valid inputs', function () {
+    expect(validateIncreaseAmountInputs(validParams)).toBeUndefined()
+  })
+
+  it('should return error for invalid account', function () {
+    expect(
+      validateIncreaseAmountInputs({
+        ...validParams,
+        account: 'invalid',
+      }),
+    ).toBe('account is not a valid address')
+  })
+
+  it('should return error for zero account', function () {
+    expect(
+      validateIncreaseAmountInputs({
+        ...validParams,
+        account: zeroAddress,
+      }),
+    ).toBe('account cannot be zero address')
+  })
+
+  it('should return error for zero amount', function () {
+    expect(
+      validateIncreaseAmountInputs({
+        ...validParams,
+        additionalAmount: BigInt(0),
+      }),
+    ).toBe('amount cannot be zero')
+  })
+
+  it('should return error for negative amounts', function () {
+    expect(
+      validateIncreaseAmountInputs({
+        ...validParams,
+        additionalAmount: -BigInt(1),
+      }),
+    ).toBe('amount cannot be negative')
+  })
+
+  it('should return error for invalid token ID', function () {
+    expect(
+      validateIncreaseAmountInputs({
+        ...validParams,
+        tokenId: BigInt(0),
+      }),
+    ).toBe('invalid token ID')
+  })
+
+  it('should return error for negative token ID', function () {
+    expect(
+      validateIncreaseAmountInputs({
+        ...validParams,
+        tokenId: -BigInt(1),
+      }),
+    ).toBe('invalid token ID')
+  })
+
+  it('should accept valid token ID', function () {
+    expect(
+      validateIncreaseAmountInputs({
+        ...validParams,
+        tokenId: BigInt(123),
+      }),
+    ).toBeUndefined()
+  })
+
+  it('should return error for unsupported chain', function () {
+    expect(
+      validateIncreaseAmountInputs({
+        ...validParams,
+        chainId: 999999,
+      }),
+    ).toBe('chain is not supported')
+  })
+
+  it('should return error when approval amount is less than amount', function () {
+    expect(
+      validateIncreaseAmountInputs({
+        ...validParams,
+        approvalAdditionalAmount: validParams.additionalAmount - BigInt(1),
+      }),
+    ).toBe('approval amount cannot be less than amount')
+  })
+
+  it('should accept when approval amount equals amount', function () {
+    expect(
+      validateIncreaseAmountInputs({
+        ...validParams,
+        approvalAdditionalAmount: validParams.additionalAmount,
+      }),
+    ).toBeUndefined()
+  })
+
+  it('should accept when approval amount is greater than amount', function () {
+    expect(
+      validateIncreaseAmountInputs({
+        ...validParams,
+        approvalAdditionalAmount: validParams.additionalAmount + BigInt(1),
+      }),
+    ).toBeUndefined()
+  })
+
+  it('should use amount as default approval amount when not provided', function () {
+    const { approvalAdditionalAmount, ...newParams } = validParams
+    expect(validateIncreaseAmountInputs(newParams)).toBeUndefined()
   })
 })

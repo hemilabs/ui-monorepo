@@ -5,10 +5,10 @@ import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { getErc20TokenBalance } from 'viem-erc20/actions'
 
 import { veHemiAbi } from '../../abi'
-import { memoizedGetHemiTokenAddress } from '../../actions/public/veHemi'
 import { getVeHemiContractAddress } from '../../constants'
 import type { CreateLockEvents } from '../../types'
 import { toPromiseEvent, validateCreateLockInputs } from '../../utils'
+import { memoizedGetHemiTokenAddress } from '../public/veHemi'
 
 import { handleApproval } from './approval'
 

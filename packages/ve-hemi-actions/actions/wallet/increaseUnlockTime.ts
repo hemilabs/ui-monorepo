@@ -5,7 +5,7 @@ import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
 import { veHemiAbi } from '../../abi'
 import { getVeHemiContractAddress } from '../../constants'
-import { IncreaseUnlockTimeEvents } from '../../types'
+import type { IncreaseUnlockTimeEvents } from '../../types'
 import { toPromiseEvent, validateIncreaseUnlockTimeInputs } from '../../utils'
 import { getLockedBalance } from '../public/veHemi'
 

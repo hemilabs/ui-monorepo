@@ -24,6 +24,12 @@ inputs:
   NEXT_PUBLIC_ANALYTICS_WEBSITE_ID:
     required: false
     description: Analytics website ID
+  NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET:
+    required: false
+    description: Comma-separated list of past bitcoin vault indexes for Mainnet
+  NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA:
+    required: false
+    description: Comma-separated list of past bitcoin vault indexes for Sepolia
   NEXT_PUBLIC_COOKIE3_SITE_ID:
     required: false
     description: Cookie3 site ID
@@ -101,6 +107,8 @@ runs:
         NEXT_PUBLIC_ANALYTICS_URL: ${{ inputs.NEXT_PUBLIC_ANALYTICS_URL }}
         NEXT_PUBLIC_ANALYTICS_WEBSITE_ID: ${{ inputs.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID }}
         NEXT_PUBLIC_COOKIE3_SITE_ID: ${{ inputs.NEXT_PUBLIC_COOKIE3_SITE_ID }}
+        NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET: ${{ inputs.NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET }}
+        NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA: ${{ inputs.NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_SEPOLIA }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_MAINNET }}

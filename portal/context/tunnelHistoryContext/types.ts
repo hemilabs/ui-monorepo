@@ -19,6 +19,7 @@ export type BlockSyncType = {
 export type TransactionListSyncType = {
   fromKnownTx: BtcTransaction | undefined
   hasSyncToMinTx: boolean
+  iterationVault: number | undefined
   toKnownTx: BtcTransaction | undefined
   txPivot: BtcTransaction | undefined
 }

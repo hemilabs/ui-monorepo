@@ -1,3 +1,4 @@
+import pMemoize from 'promise-mem'
 import type { Address, PublicClient, WalletClient } from 'viem'
 import { readContract } from 'viem/actions'
 
@@ -23,6 +24,10 @@ export const getHemiTokenAddress = async function (
     functionName: 'HEMI',
   })
 }
+
+export const memoizedGetHemiTokenAddress = pMemoize(getHemiTokenAddress, {
+  resolver: w => w.chain?.id,
+})
 
 export const getLockedBalance = async function (
   client: PublicClient | WalletClient,

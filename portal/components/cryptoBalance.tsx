@@ -18,10 +18,9 @@ export const RenderCryptoBalance = ({
   fetchStatus,
   status,
   token,
-}: Props &
-  Pick<
+}: Props & { balance: bigint } & Pick<
     ReturnType<typeof useTokenBalance>,
-    'balance' | 'fetchStatus' | 'status'
+    'fetchStatus' | 'status'
   >) => (
   <>
     {status === 'pending' && fetchStatus === 'fetching' && (

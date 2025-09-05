@@ -36,6 +36,7 @@ const nextConfig = {
     'genesis-drop-actions',
     'hemi-tunnel-actions',
     'hemi-viem-stake-actions',
+    've-hemi-actions',
   ],
   webpack(config) {
     config.resolve.fallback = { fs: false, net: false, tls: false }

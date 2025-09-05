@@ -72,7 +72,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     token: fromToken,
   })
 
-  const canDeposit = !isMinDepositsSatsLoading && canSubmit
+  const canDeposit = !isMinDepositsSatsLoading && canSubmit && evmAddress
 
   const amountBigInt = parseTokenUnits(fromInput, fromToken)
 

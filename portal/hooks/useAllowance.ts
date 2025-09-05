@@ -9,7 +9,7 @@ type Owner = AllowanceArgs[0]
 type Spender = AllowanceArgs[1]
 
 type Options = {
-  args: { owner: Owner; spender: Spender }
+  args: { owner: Owner | undefined; spender: Spender | undefined }
   query?: UseReadContractParameters<typeof erc20Abi, 'allowance'>['query']
 }
 

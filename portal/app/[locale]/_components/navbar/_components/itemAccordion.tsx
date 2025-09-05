@@ -31,7 +31,7 @@ function ItemAccordionUI({
   items,
   networkType,
   text,
-  width,
+  width = 0,
 }: Omit<Props, 'event' | 'urlToBeSelected'> & { networkType: NetworkType }) {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathnameWithoutLocale()
@@ -42,13 +42,6 @@ function ItemAccordionUI({
       return path.startsWith(url)
     }
     return !!url?.pathname && path.startsWith(url.pathname)
-  }
-
-  function getUrlPath(url?: string | UrlObject) {
-    if (typeof url === 'string') {
-      return url
-    }
-    return url?.pathname
   }
 
   const hasSelectedItem = items.some(({ urlToBeSelected }) =>
@@ -74,11 +67,9 @@ function ItemAccordionUI({
     const firstItemHref = items.length > 0 ? items[0]?.href : undefined
     if (firstItemHref && width >= 768) {
       router.push(
-        getUrlPath(
-          `${firstItemHref}${
-            networkType === 'mainnet' ? '' : `?networkType=${networkType}`
-          }`,
-        ),
+        `${firstItemHref}${
+          networkType === 'mainnet' ? '' : `?networkType=${networkType}`
+        }`,
       )
     }
   }

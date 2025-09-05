@@ -59,7 +59,7 @@ export const AddChainManually = function ({ chain, layer }: Props) {
         />
         <DataSection
           label={t('block-explorer-url')}
-          value={chain.blockExplorers.default.url}
+          value={chain.blockExplorers!.default.url}
         />
       </div>
     </div>

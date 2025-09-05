@@ -10,7 +10,13 @@ import { useRouter } from 'i18n/navigation'
 import { getLocalizedLocaleName, locales } from 'i18n/routing'
 import { useSearchParams } from 'next/navigation'
 import { Locale, useLocale, useTranslations } from 'next-intl'
-import { ComponentProps, ReactNode, RefObject, useState } from 'react'
+import {
+  type ComponentProps,
+  type MouseEventHandler,
+  type ReactNode,
+  type RefObject,
+  useState,
+} from 'react'
 
 import { CmcAttribution } from '../cmcAttribution'
 import { TermsAndConditions } from '../termsAndConditions'
@@ -93,7 +99,10 @@ const ItemWithSubmenu = function ({
   subMenu,
   text,
   value,
-}: Props & { subMenu: ReactNode }) {
+}: Required<Omit<Props, 'value'>> &
+  Pick<Props, 'value'> & {
+    subMenu: ReactNode
+  }) {
   const [isOpen, setIsOpen] = useState(false)
   const { track } = useUmami()
 
@@ -121,12 +130,14 @@ const ItemWithSubmenu = function ({
           <IconContainer selected={isOpen}>{icon}</IconContainer>
           <ItemText selected={isOpen} text={text} />
         </div>
-        <div className="flex items-center gap-x-2">
-          <div className="hidden md:block">
-            <ItemText selected={true} text={value} />
+        {value && (
+          <div className="flex items-center gap-x-2">
+            <div className="hidden md:block">
+              <ItemText selected={true} text={value} />
+            </div>
+            <Chevron.Right />
           </div>
-          <Chevron.Right />
-        </div>
+        )}
       </Row>
       {isOpen && subMenu}
     </MenuContainer>
@@ -189,7 +200,11 @@ const LegalAndPrivacy = () => (
   </div>
 )
 
-const Backdrop = ({ onClick }) => (
+const Backdrop = ({
+  onClick,
+}: {
+  onClick: MouseEventHandler<HTMLDivElement>
+}) => (
   <div
     className="absolute left-0 top-0 z-20
     h-screen w-screen bg-gradient-to-b

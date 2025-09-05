@@ -7,3 +7,9 @@ export {
   initiateWithdrawErc20,
 } from './src/initiateWithdraw'
 export { prepareProveWithdrawal, proveWithdrawal } from './src/proveWithdrawal'
+export {
+  type DepositErc20Events,
+  type FinalizeEvents,
+  type ProveEvents,
+  type WithdrawEvents,
+} from './src/types'

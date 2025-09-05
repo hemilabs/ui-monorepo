@@ -7,6 +7,7 @@
     "build:sepolia": "npm run build -- --network sepolia",
     "codegen": "graph codegen",
     "create-local": "graph create --node http://localhost:8020/ $(jq -r .name package.json)",
+    "deploy": "npm run deploy-studio:mainnet && npm run deploy-studio:sepolia",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 $(jq -r .name package.json) --version-label $(jq -r .version package.json)",
     "deploy-local:mainnet": "npm run deploy-local -- --network mainnet",
     "deploy-local:sepolia": "npm run deploy-local -- --network sepolia",

@@ -44,7 +44,7 @@ jobs:
       - if: steps.version-check.outputs.VERSION_CHANGED == 'true'
         run: npm run deploy
         working-directory: subgraphs/${{ matrix.subgraph }}
-        continue-on-error: true
+        continue-on-error: false
       - if: ${{ !cancelled() }}
         uses: bloq/actions/notify-deploy-to-slack@v1
         with:

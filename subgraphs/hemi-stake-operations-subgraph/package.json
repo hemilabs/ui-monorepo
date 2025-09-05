@@ -7,6 +7,7 @@
     "build:hemi-sepolia": "npm run build -- --network hemi-sepolia",
     "codegen": "graph codegen",
     "create-local": "graph create --node http://localhost:8020/ $(jq -r .name package.json)",
+    "deploy": "npm run deploy-studio:hemi && npm run deploy-studio:hemi-sepolia",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 $(jq -r .name package.json) --version-label $(jq -r .version package.json)",
     "deploy-local:hemi": "npm run deploy-local -- --network hemi",
     "deploy-local:hemi-sepolia": "npm run deploy-local -- --network hemi-sepolia",

@@ -12,5 +12,12 @@ export const isNativeAddress = (address: string) =>
 
 export const isNativeToken = (token: Token) => isNativeAddress(token.address)
 
-export const getNativeToken = (chainId: Token['chainId']) =>
-  nativeTokens.find(token => token.chainId === chainId && isNativeToken(token))
+export const getNativeToken = function (chainId: Token['chainId']) {
+  const nativeToken = nativeTokens.find(
+    token => token.chainId === chainId && isNativeToken(token),
+  )
+  if (!nativeToken) {
+    throw new Error(`Could not find native token for chainId ${chainId}`)
+  }
+  return nativeToken
+}

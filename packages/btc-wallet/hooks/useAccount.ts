@@ -3,6 +3,7 @@ import { useContext, useEffect, useMemo } from 'react'
 
 import { bitcoinChains } from '../chains'
 import { GlobalContext } from '../context/globalContext'
+import { BtcSupportedNetworks } from '../unisat'
 
 import { getAccountsQueryKey, getNetworksQueryKey } from './queryKeys'
 import { useConfig } from './useConfig'
@@ -34,7 +35,7 @@ export const useAccount = function () {
         return undefined
       }
       return currentConnector.onAccountsChanged(acc =>
-        queryClient.setQueryData(accountQueryKey, () => acc),
+        queryClient.setQueryData<string[]>(accountQueryKey, acc),
       )
     },
     [accountQueryKey, currentConnector, queryClient],
@@ -58,7 +59,10 @@ export const useAccount = function () {
         return undefined
       }
       return currentConnector.onChainChanged(({ network }) =>
-        queryClient.setQueryData(networksQueryKey, () => network),
+        queryClient.setQueryData<BtcSupportedNetworks>(
+          networksQueryKey,
+          () => network,
+        ),
       )
     },
     [currentConnector, networksQueryKey, queryClient],

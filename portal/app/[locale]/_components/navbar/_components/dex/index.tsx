@@ -11,6 +11,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import {
   ComponentProps,
+  MouseEventHandler,
   MutableRefObject,
   ReactNode,
   Suspense,
@@ -111,7 +112,7 @@ const ExternalLink = function ({
   text,
 }: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
   const { enabled, track } = useUmami()
-  const addTracking = () => (enabled ? () => track(event) : undefined)
+  const addTracking = () => (enabled && event ? () => track(event) : undefined)
   return (
     <ItemContainer>
       <AnchorTag href={href} onClick={addTracking()}>
@@ -134,7 +135,7 @@ const Container = ({
   onClick,
 }: {
   children: ReactNode
-  divRef?: MutableRefObject<HTMLDivElement>
+  divRef?: MutableRefObject<HTMLDivElement | null>
   isOpen?: boolean
   onClick?: () => void
 }) => (
@@ -154,7 +155,7 @@ const HemiSwapLink = function ({
   text,
 }: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
   const { enabled, track } = useUmami()
-  const addTracking = () => (enabled ? () => track(event) : undefined)
+  const addTracking = () => (enabled && event ? () => track(event) : undefined)
   return (
     <Container>
       <AnchorTag href="https://swap.hemi.xyz" onClick={addTracking()}>
@@ -170,7 +171,11 @@ const HemiSwapLink = function ({
   )
 }
 
-const Backdrop = ({ onClick }) => (
+const Backdrop = ({
+  onClick,
+}: {
+  onClick: MouseEventHandler<HTMLDivElement>
+}) => (
   <div
     className="absolute left-0 top-0 z-20
     h-screen w-screen bg-gradient-to-b

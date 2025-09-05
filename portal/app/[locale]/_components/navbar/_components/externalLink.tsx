@@ -40,11 +40,10 @@ const ExternalLinkImpl = function ({
   ...props
 }: Omit<ItemLinkProps, 'href'> & Pick<ComponentProps<'a'>, 'href'>) {
   const { enabled, track } = useUmami()
-
   return (
     <ExternalLinkUI
       {...props}
-      onClick={enabled ? () => track(event) : undefined}
+      onClick={enabled && event ? () => track(event) : undefined}
     />
   )
 }

@@ -40,7 +40,6 @@ const validParameters = {
 
 describe('createLock', function () {
   beforeEach(function () {
-    vi.clearAllMocks()
     vi.mocked(getHemiTokenAddress).mockResolvedValue(zeroAddress)
     vi.mocked(memoizedGetHemiTokenAddress).mockResolvedValue(zeroAddress)
   })
@@ -49,7 +48,6 @@ describe('createLock', function () {
     const { emitter, promise } = createLock({
       ...validParameters,
       account: 'invalid-address',
-      walletClient: { chain: hemiSepolia },
     })
 
     const lockCreationFailedValidation = vi.fn()
@@ -66,7 +64,6 @@ describe('createLock', function () {
     const { emitter, promise } = createLock({
       ...validParameters,
       amount: BigInt(0),
-      walletClient: { chain: hemiSepolia },
     })
 
     const lockCreationFailedValidation = vi.fn()

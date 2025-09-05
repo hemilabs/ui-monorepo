@@ -31,7 +31,6 @@ const validParameters = {
 
 describe('increaseUnlockTime', function () {
   beforeEach(function () {
-    vi.clearAllMocks()
     vi.mocked(getHemiTokenAddress).mockResolvedValue(zeroAddress)
     vi.mocked(memoizedGetHemiTokenAddress).mockResolvedValue(zeroAddress)
 
@@ -47,7 +46,6 @@ describe('increaseUnlockTime', function () {
     const { emitter, promise } = increaseUnlockTime({
       ...validParameters,
       account: 'invalid-address',
-      walletClient: { chain: hemiSepolia },
     })
 
     const increaseUnlockTimeFailedValidation = vi.fn()
@@ -67,7 +65,6 @@ describe('increaseUnlockTime', function () {
     const { emitter, promise } = increaseUnlockTime({
       ...validParameters,
       tokenId: BigInt(0),
-      walletClient: { chain: hemiSepolia },
     })
 
     const increaseUnlockTimeFailedValidation = vi.fn()
@@ -87,7 +84,6 @@ describe('increaseUnlockTime', function () {
     const { emitter, promise } = increaseUnlockTime({
       ...validParameters,
       lockDurationInSeconds: 0,
-      walletClient: { chain: hemiSepolia },
     })
 
     const increaseUnlockTimeFailedValidation = vi.fn()
@@ -107,7 +103,6 @@ describe('increaseUnlockTime', function () {
     const { emitter, promise } = increaseUnlockTime({
       ...validParameters,
       lockDurationInSeconds: -1,
-      walletClient: { chain: hemiSepolia },
     })
 
     const increaseUnlockTimeFailedValidation = vi.fn()

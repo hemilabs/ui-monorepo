@@ -7,7 +7,7 @@ import { veHemiAbi } from '../../abi'
 import { getVeHemiContractAddress } from '../../constants'
 import type { WithdrawEvents } from '../../types'
 import { toPromiseEvent, validateWithdrawInputs } from '../../utils'
-import { getLockedBalance } from '../public/veHemi'
+import { getLockedBalance, getOwnerOf } from '../public/veHemi'
 
 const canRunWithdraw = async function ({
   account,
@@ -38,14 +38,21 @@ const canRunWithdraw = async function ({
   }
 
   try {
-    // Check if lock exists and is expired
-    const { amount, end } = await getLockedBalance(walletClient, tokenId)
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    // Check if lock exists and is expired and if the account is the owner
+    const [{ amount, end }, owner] = await Promise.all([
+      getLockedBalance(walletClient, tokenId),
+      getOwnerOf(walletClient, tokenId),
+    ])
+
+    if (owner.toLowerCase() !== account.toLowerCase()) {
+      return { canWithdraw: false, reason: 'not token owner' }
+    }
 
     if (amount <= 0) {
       return { canWithdraw: false, reason: 'no existing lock' }
     }
 
+    const now = BigInt(Math.floor(Date.now() / 1000))
     if (end > now) {
       return { canWithdraw: false, reason: 'lock not yet expired' }
     }

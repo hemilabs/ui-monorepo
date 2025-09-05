@@ -8,6 +8,7 @@ import {
   getHemiTokenAddress,
   memoizedGetHemiTokenAddress,
   getLockedBalance,
+  getOwnerOf,
 } from '../../../actions/public/veHemi'
 import { getVeHemiContractAddress } from '../../../constants'
 
@@ -19,6 +20,7 @@ vi.mock('viem/actions', () => ({
 vi.mock('../../../actions/public/veHemi', () => ({
   getHemiTokenAddress: vi.fn(),
   getLockedBalance: vi.fn(),
+  getOwnerOf: vi.fn(),
   memoizedGetHemiTokenAddress: vi.fn(),
 }))
 
@@ -30,9 +32,9 @@ const validParameters = {
 
 describe('withdraw', function () {
   beforeEach(function () {
-    vi.clearAllMocks()
     vi.mocked(getHemiTokenAddress).mockResolvedValue(zeroAddress)
     vi.mocked(memoizedGetHemiTokenAddress).mockResolvedValue(zeroAddress)
+    vi.mocked(getOwnerOf).mockResolvedValue(validParameters.account)
 
     // Mock getLockedBalance to return an expired lock with amount
     const pastTimestamp = BigInt(Math.floor(Date.now() / 1000) - 86400) // 1 day ago (expired)
@@ -46,7 +48,6 @@ describe('withdraw', function () {
     const { emitter, promise } = withdraw({
       ...validParameters,
       account: 'invalid-address',
-      walletClient: { chain: hemiSepolia },
     })
 
     const withdrawFailedValidation = vi.fn()
@@ -63,7 +64,6 @@ describe('withdraw', function () {
     const { emitter, promise } = withdraw({
       ...validParameters,
       account: zeroAddress,
-      walletClient: { chain: hemiSepolia },
     })
 
     const withdrawFailedValidation = vi.fn()
@@ -80,7 +80,6 @@ describe('withdraw', function () {
     const { emitter, promise } = withdraw({
       ...validParameters,
       tokenId: BigInt(0),
-      walletClient: { chain: hemiSepolia },
     })
 
     const withdrawFailedValidation = vi.fn()

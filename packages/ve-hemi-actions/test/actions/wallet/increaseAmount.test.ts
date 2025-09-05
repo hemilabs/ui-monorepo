@@ -42,7 +42,6 @@ const validParameters = {
 
 describe('increaseAmount', function () {
   beforeEach(function () {
-    vi.clearAllMocks()
     vi.mocked(getHemiTokenAddress).mockResolvedValue(zeroAddress)
     vi.mocked(memoizedGetHemiTokenAddress).mockResolvedValue(zeroAddress)
 
@@ -58,7 +57,6 @@ describe('increaseAmount', function () {
     const { emitter, promise } = increaseAmount({
       ...validParameters,
       account: 'invalid-address',
-      walletClient: { chain: hemiSepolia },
     })
 
     const increaseAmountFailedValidation = vi.fn()
@@ -78,7 +76,6 @@ describe('increaseAmount', function () {
     const { emitter, promise } = increaseAmount({
       ...validParameters,
       additionalAmount: BigInt(0),
-      walletClient: { chain: hemiSepolia },
     })
 
     const increaseAmountFailedValidation = vi.fn()
@@ -98,7 +95,6 @@ describe('increaseAmount', function () {
     const { emitter, promise } = increaseAmount({
       ...validParameters,
       tokenId: BigInt(0),
-      walletClient: { chain: hemiSepolia },
     })
 
     const increaseAmountFailedValidation = vi.fn()
@@ -303,13 +299,9 @@ describe('increaseAmount', function () {
     vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
     vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
-    vi.mocked(waitForTransactionReceipt)
-      .mockResolvedValueOnce({
-        status: 'reverted',
-      })
-      .mockResolvedValue({
-        status: 'success',
-      })
+    vi.mocked(waitForTransactionReceipt).mockResolvedValueOnce({
+      status: 'reverted',
+    })
 
     const { emitter, promise } = increaseAmount(validParameters)
 

@@ -36,3 +36,25 @@ export type IncreaseAmountEvents = CommonEvents &
     'user-signed-increase-amount': [Hash]
     'user-signing-increase-amount-error': [Error]
   }
+
+export type IncreaseUnlockTimeEvents = CommonEvents & {
+  'increase-unlock-time-failed': [Error]
+  'increase-unlock-time-failed-validation': [string]
+  'increase-unlock-time-settled': []
+  'increase-unlock-time-transaction-reverted': [TransactionReceipt]
+  'increase-unlock-time-transaction-succeeded': [TransactionReceipt]
+  'pre-increase-unlock-time': []
+  'user-signed-increase-unlock-time': [Hash]
+  'user-signing-increase-unlock-time-error': [Error]
+}
+
+export type WithdrawEvents = CommonEvents & {
+  'withdraw-failed': [Error]
+  'withdraw-failed-validation': [string]
+  'withdraw-settled': []
+  'withdraw-transaction-reverted': [TransactionReceipt]
+  'withdraw-transaction-succeeded': [TransactionReceipt]
+  'pre-withdraw': []
+  'user-signed-withdraw': [Hash]
+  'user-signing-withdraw-error': [Error]
+}

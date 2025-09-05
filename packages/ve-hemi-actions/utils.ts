@@ -9,17 +9,7 @@ import {
   SupportedChains,
 } from './constants'
 
-const validateCommonInputs = function ({
-  account,
-  amount,
-  approvalAmount = amount,
-  chainId,
-}: {
-  account: Address
-  amount: bigint
-  approvalAmount?: bigint
-  chainId: number
-}) {
+const validateAccount = function (account: Address) {
   if (!isAddress(account)) {
     return 'account is not a valid address'
   }
@@ -28,6 +18,27 @@ const validateCommonInputs = function ({
     return 'account cannot be zero address'
   }
 
+  return undefined
+}
+
+const validateTokenId = function (tokenId: bigint) {
+  if (tokenId <= BigInt(0)) {
+    return 'invalid token ID'
+  }
+
+  return undefined
+}
+
+const validateChain = function (chainId: number) {
+  const isSupportedChain = SupportedChains.includes(chainId)
+  if (!isSupportedChain) {
+    return 'chain is not supported'
+  }
+
+  return undefined
+}
+
+const validateAmount = function (amount: bigint) {
   if (amount === BigInt(0)) {
     return 'amount cannot be zero'
   }
@@ -36,13 +47,15 @@ const validateCommonInputs = function ({
     return 'amount cannot be negative'
   }
 
+  return undefined
+}
+
+const validateApprovalAmount = function (
+  amount: bigint,
+  approvalAmount: bigint,
+) {
   if (approvalAmount < amount) {
     return 'approval amount cannot be less than amount'
-  }
-
-  const isSupportedChain = SupportedChains.includes(chainId)
-  if (!isSupportedChain) {
-    return 'chain is not supported'
   }
 
   return undefined
@@ -61,14 +74,24 @@ export const validateCreateLockInputs = function ({
   chainId: number
   lockDurationInSeconds: number
 }) {
-  const commonError = validateCommonInputs({
-    account,
-    amount,
-    approvalAmount,
-    chainId,
-  })
-  if (commonError) {
-    return commonError
+  const accountError = validateAccount(account)
+  if (accountError) {
+    return accountError
+  }
+
+  const chainError = validateChain(chainId)
+  if (chainError) {
+    return chainError
+  }
+
+  const amountError = validateAmount(amount)
+  if (amountError) {
+    return amountError
+  }
+
+  const approvalError = validateApprovalAmount(amount, approvalAmount)
+  if (approvalError) {
+    return approvalError
   }
 
   if (lockDurationInSeconds < MinLockDurationSeconds) {
@@ -95,18 +118,96 @@ export const validateIncreaseAmountInputs = function ({
   chainId: number
   tokenId: bigint
 }) {
-  const commonError = validateCommonInputs({
-    account,
-    amount: additionalAmount,
-    approvalAmount: approvalAdditionalAmount,
-    chainId,
-  })
-  if (commonError) {
-    return commonError
+  const accountError = validateAccount(account)
+  if (accountError) {
+    return accountError
   }
 
-  if (tokenId <= BigInt(0)) {
-    return 'invalid token ID'
+  const chainError = validateChain(chainId)
+  if (chainError) {
+    return chainError
+  }
+
+  const tokenError = validateTokenId(tokenId)
+  if (tokenError) {
+    return tokenError
+  }
+
+  const amountError = validateAmount(additionalAmount)
+  if (amountError) {
+    return amountError
+  }
+
+  const approvalError = validateApprovalAmount(
+    additionalAmount,
+    approvalAdditionalAmount,
+  )
+  if (approvalError) {
+    return approvalError
+  }
+
+  return undefined
+}
+
+export const validateIncreaseUnlockTimeInputs = function ({
+  account,
+  chainId,
+  lockDurationInSeconds,
+  tokenId,
+}: {
+  account: Address
+  chainId: number
+  lockDurationInSeconds: number
+  tokenId: bigint
+}) {
+  const accountError = validateAccount(account)
+  if (accountError) {
+    return accountError
+  }
+
+  const chainError = validateChain(chainId)
+  if (chainError) {
+    return chainError
+  }
+
+  const tokenError = validateTokenId(tokenId)
+  if (tokenError) {
+    return tokenError
+  }
+
+  if (lockDurationInSeconds <= 0) {
+    return 'lock duration must be positive'
+  }
+
+  if (lockDurationInSeconds > MaxLockDurationSeconds) {
+    return 'lock duration is too long (maximum 4 years)'
+  }
+
+  return undefined
+}
+
+export const validateWithdrawInputs = function ({
+  account,
+  chainId,
+  tokenId,
+}: {
+  account: Address
+  chainId: number
+  tokenId: bigint
+}) {
+  const accountError = validateAccount(account)
+  if (accountError) {
+    return accountError
+  }
+
+  const chainError = validateChain(chainId)
+  if (chainError) {
+    return chainError
+  }
+
+  const tokenError = validateTokenId(tokenId)
+  if (tokenError) {
+    return tokenError
   }
 
   return undefined

@@ -11,10 +11,10 @@ import { getLocalizedLocaleName, locales } from 'i18n/routing'
 import { useSearchParams } from 'next/navigation'
 import { Locale, useLocale, useTranslations } from 'next-intl'
 import {
-  ComponentProps,
-  MouseEventHandler,
-  ReactNode,
-  RefObject,
+  type ComponentProps,
+  type MouseEventHandler,
+  type ReactNode,
+  type RefObject,
   useState,
 } from 'react'
 

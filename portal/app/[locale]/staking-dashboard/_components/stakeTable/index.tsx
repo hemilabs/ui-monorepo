@@ -113,7 +113,7 @@ const StakeTableImp = function ({ data = [], loading }: StakeTableImpProps) {
         // and keep original order in larger devices
         width < 1024
           ? ['time-remaining'].concat(
-              columns.map(c => c.id).filter(id => id !== 'time-remaining'),
+              columns.map(c => c.id!).filter(id => id !== 'time-remaining'),
             )
           : undefined,
     },

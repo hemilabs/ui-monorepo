@@ -52,7 +52,7 @@ const ConnectWalletButton = function ({
        border-solid border-neutral-200 bg-white p-3 shadow-sm ${hoverClassName}`}
       onClick={function () {
         track?.(event)
-        onClick()
+        onClick?.()
       }}
     >
       {icon}
@@ -74,8 +74,8 @@ const InstallUnisat = function ({ connector }: { connector: ConnectorGroup }) {
       href={
         // Unisat only supports chrome and android - no other browser nor mobile OS - See https://unisat.io/
         isAndroid
-          ? connector.downloadUrls.android
-          : connector.downloadUrls.chrome
+          ? connector.downloadUrls?.android
+          : connector.downloadUrls?.chrome
       }
     >
       {t('common.add')}
@@ -111,8 +111,15 @@ export const BtcWallet = function () {
   }
 
   if (status === 'connected') {
-    const getBalance = () =>
-      formatUnits(BigInt(balance.confirmed), bitcoin.nativeCurrency.decimals)
+    const getBalance = function () {
+      if (!balance || isNaN(balance.confirmed)) {
+        return undefined
+      }
+      return formatUnits(
+        BigInt(balance.confirmed),
+        bitcoin.nativeCurrency.decimals,
+      )
+    }
 
     return (
       <Box
@@ -126,10 +133,7 @@ export const BtcWallet = function () {
         walletType={t('btc-wallet')}
       >
         {chainSupported ? (
-          <Balance
-            balance={balance ? getBalance() : undefined}
-            token={getNativeToken(bitcoin.id)}
-          />
+          <Balance balance={getBalance()} token={getNativeToken(bitcoin.id)} />
         ) : (
           <ConnectToSupportedChain />
         )}
@@ -159,7 +163,7 @@ export const EvmWallet = function () {
         walletName={connector!.name}
         walletType={t('evm-wallet')}
       >
-        {chainSupported ? (
+        {chainSupported && chain ? (
           <div className="flex items-end justify-between">
             <Balance
               balance={

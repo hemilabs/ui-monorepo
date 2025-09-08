@@ -46,6 +46,9 @@ const createSyncer = function ({
   withdrawalsSyncInfo,
 }: SyncHistoryCombinations) {
   const l1Chain = findChainById(l1ChainId)
+  if (!l1Chain) {
+    throw new Error(`Unsupported L1 chainId ${l1ChainId}`)
+  }
   // L2 are always EVM
   const l2Chain = findChainById(l2ChainId) as Chain
 

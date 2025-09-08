@@ -14,7 +14,9 @@ export const getTimeToProveInSeconds = async function (
 
   const { seconds } = await publicClientL1.getTimeToProve({
     receipt,
-    // @ts-expect-error Typescript doesn't recognize the type of hemiClient.chain as viem Chain
+    // Chain is correctly defined, but getTimeToProve expects a more strict
+    // definition of Chain.
+    // @ts-expect-error This works on runtime
     targetChain: hemiClient.chain,
   })
 

@@ -17,7 +17,7 @@ export const calculateSkip = function ({
   // if we hit the limit, we need to increase the fromBlock. So grab the last one known as valid
   // and reset the "skip" to 0
   return {
-    fromBlock: operations.at(-1).blockNumber ?? 0,
+    fromBlock: operations.at(-1)?.blockNumber ?? 0,
     skip: 0,
   }
 }

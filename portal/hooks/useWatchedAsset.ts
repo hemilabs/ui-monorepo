@@ -14,9 +14,13 @@ export const useWatchedAsset = function (tokenAddress: EvmToken['address']) {
       serializer: {
         parse: value => value,
         // Not really needed, but required to comply with the types.
-        stringify: (value: string) => value,
+        stringify: value => value as string,
       },
     },
   )
-  return !!storedKeys && storedKeys.includes(`${hemi.id}:${tokenAddress}`)
+  return (
+    !!storedKeys &&
+    typeof storedKeys === 'string' &&
+    storedKeys.includes(`${hemi.id}:${tokenAddress}`)
+  )
 }

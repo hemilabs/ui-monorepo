@@ -24,7 +24,7 @@ export const AddChain = function ({ chain, children }: Props) {
   const { data: walletClient } = useWalletClient()
 
   const { mutate: addChain } = useMutation({
-    mutationFn: (c: Chain) => walletClient?.addChain({ chain: c }),
+    mutationFn: (c: Chain) => walletClient!.addChain({ chain: c }),
     mutationKey: ['add-chain-mutation', chain.id],
     onSuccess() {
       setIsChainAdded(true)
@@ -56,7 +56,7 @@ export const AddChain = function ({ chain, children }: Props) {
 
   const onClick = function () {
     if (!isConnected) {
-      openConnectModal()
+      openConnectModal?.()
       return
     }
     if (!isChainAdded && !isConnectedToChain) {

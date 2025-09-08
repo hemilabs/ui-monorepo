@@ -76,5 +76,5 @@ export const getMultiplier = function (lockupMonths: LockupMonths) {
     48: 6.25,
   }
 
-  return multipliers[lockupMonths]
+  return multipliers[lockupMonths]!
 }

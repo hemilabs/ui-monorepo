@@ -30,7 +30,8 @@ export const useEstimateClaimFees = function ({
     isSuccess,
   } = useEstimateGas({
     data: encodeClaimTokens({
-      address,
+      // will be defined if the query is enabled
+      address: address!,
       amount: eligibility.amount,
       claimGroupId: eligibility.claimGroupId,
       lockupMonths,

@@ -11,7 +11,7 @@ export const ConnectWallet = function () {
   const { track } = useUmami()
 
   const onClick = function () {
-    openConnectModal()
+    openConnectModal?.()
     track?.('evm connect')
   }
 

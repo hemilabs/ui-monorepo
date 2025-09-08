@@ -13,7 +13,7 @@ export const MaxButton = function ({
   onClick,
 }: {
   disabled: boolean
-  onClick: () => void
+  onClick: VoidFunction | undefined
 }) {
   const t = useTranslations('tunnel-page.form')
   return (
@@ -87,7 +87,12 @@ export const SetMaxBtcBalance = function ({
     btcBalance <= fees
 
   const handleClick = () =>
-    onSetMaxBalance(formatUnits(BigInt(btcBalance - fees), token.decimals))
+    onSetMaxBalance(formatUnits(BigInt(btcBalance - fees!), token.decimals))
 
-  return <MaxButton disabled={maxButtonDisabled} onClick={handleClick} />
+  return (
+    <MaxButton
+      disabled={maxButtonDisabled}
+      onClick={maxButtonDisabled ? undefined : handleClick}
+    />
+  )
 }

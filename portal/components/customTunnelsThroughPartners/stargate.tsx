@@ -11,7 +11,7 @@ import stargateLogo from './partnerLogos/stargate.svg'
 
 // Stargate uses this address for ETH
 const stargateEthereumAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-const stargateChainNameMap = {
+const stargateChainNameMap: Partial<Record<Token['chainId'], string>> = {
   [hemi.id]: 'hemi',
   [mainnet.id]: 'ethereum',
 }
@@ -26,11 +26,11 @@ export const Stargate = function ({ fromToken, label, toToken }: Props) {
   const t = useTranslations('tunnel-page.tunnel-partners')
 
   const url = `https://stargate.finance/bridge${queryStringObjectToString({
-    dstChain: stargateChainNameMap[toToken.chainId],
+    dstChain: stargateChainNameMap[toToken.chainId]!,
     dstToken: isNativeAddress(toToken.address)
       ? stargateEthereumAddress
       : toToken.address,
-    srcChain: stargateChainNameMap[fromToken.chainId],
+    srcChain: stargateChainNameMap[fromToken.chainId]!,
     srcToken: isNativeAddress(fromToken.address)
       ? stargateEthereumAddress
       : fromToken.address,

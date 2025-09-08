@@ -57,14 +57,16 @@ const getL1TokenMaps = (priceMaps: PriceMap, hemiChain: Chain) =>
       .map(function ([address, { priceSymbol }]) {
         const l1Address = hemilabsTokenList.tokens.find(
           t => t.chainId === hemiChain.id && t.address === address,
-        )?.extensions?.bridgeInfo?.[hemiChain.sourceId]?.tokenAddress
+        )?.extensions?.bridgeInfo?.[hemiChain.sourceId!]?.tokenAddress
         if (!l1Address) {
           return null
         }
         return [l1Address, { priceSymbol }]
       })
       // Remove those that don't have a L1 address, like some stake tokens
-      .filter(Boolean),
+      .filter(
+        (entry): entry is [string, { priceSymbol: string }] => entry !== null,
+      ),
   )
 
 function getMainnetPriceList() {

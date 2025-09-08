@@ -22,7 +22,7 @@ const byTimestampDesc = function (
   b: BtcDepositOperation,
 ) {
   if (a.status === b.status) {
-    return b.timestamp - a.timestamp
+    return (b.timestamp ?? 0) - (a.timestamp ?? 0)
   }
   return (a.status ?? -1) - (b.status ?? -1)
 }
@@ -82,7 +82,7 @@ const WatchBtcDeposit = function ({
         focusedDepositHash,
       })
 
-      let intervalId
+      let intervalId: NodeJS.Timeout
       // skip polling for disabled states (those whose interval is "false")
       if (typeof interval === 'number') {
         worker.postMessage({

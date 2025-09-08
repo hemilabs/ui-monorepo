@@ -7,7 +7,7 @@ import { Balance } from '../cryptoBalance'
 import { FiatBalance } from '../fiatBalance'
 import { TokenLogo } from '../tokenLogo'
 
-export const CustomToken = ({ token }: { token: TokenType }) => (
+export const CustomToken = ({ token }: { token: TokenType | undefined }) => (
   <div className="flex items-center gap-x-3 p-2 px-1.5 text-sm font-medium text-neutral-950">
     <div className="flex-shrink-0 flex-grow-0">
       {token ? (

@@ -1,9 +1,12 @@
 import pDoWhilst from 'p-do-whilst'
 
 type CreateSlidingTransactionList<T> = {
-  getTransactionsBatch: (pivotTxId: string) => Promise<T[]>
-  pivotTxId: string
-  processTransactions: (transactions: T[], pivotTxId: string) => Promise<void>
+  getTransactionsBatch: (pivotTxId: string | undefined) => Promise<T[]>
+  pivotTxId: string | undefined
+  processTransactions: (
+    transactions: T[],
+    pivotTxId: string | undefined,
+  ) => Promise<void>
   txIdGetter: (transactions: T[]) => string
 }
 

@@ -2,7 +2,7 @@ import { DisplayAmount } from 'components/displayAmount'
 import { ReactNode } from 'react'
 import { Token } from 'types/token'
 
-const Container = ({ children }: { children: ReactNode }) => (
+const Container = ({ children }: { children?: ReactNode }) => (
   <div
     className="text-3.25xl flex items-baseline gap-x-1 font-medium
   text-neutral-950"
@@ -11,7 +11,7 @@ const Container = ({ children }: { children: ReactNode }) => (
   </div>
 )
 
-const SymbolContainer = ({ children }: { children: ReactNode }) => (
+const SymbolContainer = ({ children }: { children?: ReactNode }) => (
   <span className="text-sm text-neutral-500">{children}</span>
 )
 

@@ -39,7 +39,7 @@ export const useIsClaimable = function (eligibility: EligibilityData) {
       !!address && !!hemiPublicClient && eligibility.claimGroupId !== undefined,
     queryFn: () =>
       isClaimable({
-        address,
+        address: address!,
         amount,
         chainId: hemi.id,
         claimGroupId: eligibility.claimGroupId,
@@ -47,7 +47,7 @@ export const useIsClaimable = function (eligibility: EligibilityData) {
         proof: eligibility.proof,
       }),
     queryKey: getIsClaimableQueryKey({
-      address,
+      address: address!,
       amount,
       claimGroupId: eligibility.claimGroupId,
       hemiId: hemi.id,

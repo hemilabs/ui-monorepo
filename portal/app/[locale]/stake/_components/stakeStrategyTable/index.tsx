@@ -140,7 +140,7 @@ const StakeStrategyTableImp = function ({
         // and keep original order in larger devices
         width < 1024
           ? ['action'].concat(
-              columns.map(c => c.id).filter(id => id !== 'action'),
+              columns.map(c => c.id!).filter(id => id !== 'action'),
             )
           : undefined,
     },

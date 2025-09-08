@@ -7,7 +7,7 @@ import { createBtcApi } from 'utils/btcApi'
 import { useNetworkType } from './useNetworkType'
 
 type Args = {
-  txId: BtcTransaction
+  txId: BtcTransaction | undefined
 }
 
 export const useWaitForTransactionReceipt = function ({ txId }: Args) {
@@ -19,7 +19,7 @@ export const useWaitForTransactionReceipt = function ({ txId }: Args) {
   return {
     ...useQuery({
       enabled: !!txId && !!chainId && isChainIdSupported(chainId),
-      queryFn: () => createBtcApi(networkType).getTransactionReceipt(txId),
+      queryFn: () => createBtcApi(networkType).getTransactionReceipt(txId!),
       queryKey,
       refetchInterval(query) {
         // Poll every 30 secs until confirmed

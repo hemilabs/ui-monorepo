@@ -9,7 +9,8 @@ type Props = {
   txHash: string
 }
 export const SeeOnExplorer = function ({ chainId, txHash }: Props) {
-  const blockExplorer = useChain(chainId).blockExplorers.default
+  // chainId can only be used here if coming from a valid known chain to us
+  const blockExplorer = useChain(chainId)!.blockExplorers!.default
   const t = useTranslations('tunnel-page.transaction-status')
 
   if (!txHash) {

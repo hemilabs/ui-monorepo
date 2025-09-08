@@ -10,7 +10,7 @@ type SortableToken = EvmToken & {
 
 type Props<T extends SortableToken> = {
   tokens: T[]
-  prices: Record<string, string>
+  prices: Record<string, string> | undefined
   prioritySymbols?: string[]
 }
 

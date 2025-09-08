@@ -7,7 +7,7 @@ import { type Address, type Chain, isAddress } from 'viem'
 import { useConfig } from 'wagmi'
 
 type Params = {
-  address: string
+  address: string | undefined
   chainId: RemoteChain['id']
   options?: Omit<UseQueryOptions<Token, Error>, 'queryKey' | 'queryFn'>
 }
@@ -24,9 +24,10 @@ export const useToken = function ({ address, chainId, options = {} }: Params) {
     ...options,
     enabled:
       (options.enabled ?? true) &&
+      !!address &&
       (isAddress(address, { strict: false }) || isNativeAddress(address)),
     queryFn: async () =>
-      getTokenByAddress(address, chainId) ??
+      getTokenByAddress(address!, chainId) ??
       // up to this point, chainId must be an EVM one because we checked for native addresses
       (getErc20Token({
         address: address as Address,

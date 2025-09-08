@@ -8,7 +8,7 @@ const calculateNewStatus = async function ({
   receipt,
 }: {
   deposit: EvmDepositOperation
-  receipt: TransactionReceipt | undefined
+  receipt: TransactionReceipt | undefined | null
 }) {
   // if receipt was not found, it means the transaction is still pending8
   if (!receipt) {

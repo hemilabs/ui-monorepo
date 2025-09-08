@@ -12,9 +12,8 @@ export const SupportedChains: number[] = [hemi.id, hemiSepolia.id]
 // Maximum lock duration is 4 years (a year is defined in the contract as 365.25 days)
 export const MaxLockDurationSeconds = 4 * 365.25 * 24 * 60 * 60
 
-// Minimum lock duration in seconds (≈ 12 days)
-// In the contract: YEAR = 365.25 days, so 1 day = 86400 seconds
-// SIX_DAYS = YEAR / (12 * 5) = 1,051,920 seconds
+// In the contract: YEAR = 365.25 days, SIX_DAYS = YEAR / (12 * 5)
+// If 1 day is 86,400 seconds, 12 days are 1,051,920 seconds
 export const MinLockDurationSeconds = 1_051_920
 
 export const getVeHemiContractAddress = function (chainId: number) {

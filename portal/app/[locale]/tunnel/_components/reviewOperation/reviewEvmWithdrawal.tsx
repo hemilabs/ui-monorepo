@@ -5,9 +5,13 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
-import { useContext } from 'react'
+import { ReactNode, useContext } from 'react'
 import { EvmToken } from 'types/token'
-import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
+import {
+  MessageStatus,
+  type MessageStatusType,
+  type ToEvmWithdrawOperation,
+} from 'types/tunnel'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -15,6 +19,7 @@ import { useAccount } from 'wagmi'
 import {
   ToEvmWithdrawalContext,
   ToEvmWithdrawalProvider,
+  type ToEvmWithdrawOperationStatuses,
 } from '../../_context/toEvmWithdrawalContext'
 import { useEstimateFinalizeWithdrawalFees } from '../../_hooks/useEstimateFinalizeWithdrawalFees'
 import { useEstimateProveWithdrawalFees } from '../../_hooks/useEstimateProveWithdrawalFees'
@@ -27,8 +32,8 @@ import {
 import { ProveWithdrawal } from '../proveEvmWithdrawal'
 import { RetryEvmWithdrawal } from '../retryEvmWithdrawal'
 
-const getCallToAction = (withdrawal: ToEvmWithdrawOperation) =>
-  ({
+const getCallToAction = function (withdrawal: ToEvmWithdrawOperation) {
+  const map: Partial<Record<MessageStatusType, ReactNode>> = {
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: (
       <RetryEvmWithdrawal withdrawal={withdrawal} />
     ),
@@ -36,7 +41,9 @@ const getCallToAction = (withdrawal: ToEvmWithdrawOperation) =>
     [MessageStatus.READY_FOR_RELAY]: (
       <ClaimEvmWithdrawal withdrawal={withdrawal} />
     ),
-  })[withdrawal.status]
+  }
+  return map[withdrawal.status]
+}
 
 type Props = {
   onClose: () => void
@@ -51,8 +58,8 @@ const ReviewContent = function ({
   fromToken: EvmToken
 }) {
   const { chainId: connectedChainId } = useAccount()
-  const fromChain = useChain(withdrawal.l2ChainId)
-  const toChain = useChain(withdrawal.l1ChainId)
+  const fromChain = useChain(withdrawal.l2ChainId)!
+  const toChain = useChain(withdrawal.l1ChainId)!
   const [operationStatus] = useContext(ToEvmWithdrawalContext)
   const t = useTranslations('tunnel-page.review-withdrawal')
 
@@ -80,7 +87,7 @@ const ReviewContent = function ({
     })
 
   const getWithdrawalStatus = function () {
-    const map = {
+    const map: Partial<Record<MessageStatusType, ProgressStatus>> = {
       [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: ProgressStatus.NOT_READY,
       [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: ProgressStatus.PROGRESS,
       [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: ProgressStatus.FAILED,
@@ -133,11 +140,12 @@ const ReviewContent = function ({
       return ProgressStatus.NOT_READY
     }
 
-    const map = {
-      claiming: ProgressStatus.PROGRESS,
-      failed: ProgressStatus.FAILED,
-      rejected: ProgressStatus.REJECTED,
-    }
+    const map: Partial<Record<ToEvmWithdrawOperationStatuses, ProgressStatus>> =
+      {
+        claiming: ProgressStatus.PROGRESS,
+        failed: ProgressStatus.FAILED,
+        rejected: ProgressStatus.REJECTED,
+      }
     return map[operationStatus] ?? ProgressStatus.READY
   }
 
@@ -148,11 +156,12 @@ const ReviewContent = function ({
     if (withdrawal.status >= MessageStatus.IN_CHALLENGE_PERIOD) {
       return ProgressStatus.COMPLETED
     }
-    const map = {
-      failed: ProgressStatus.FAILED,
-      proving: ProgressStatus.PROGRESS,
-      rejected: ProgressStatus.REJECTED,
-    }
+    const map: Partial<Record<ToEvmWithdrawOperationStatuses, ProgressStatus>> =
+      {
+        failed: ProgressStatus.FAILED,
+        proving: ProgressStatus.PROGRESS,
+        rejected: ProgressStatus.REJECTED,
+      }
     return map[operationStatus] ?? ProgressStatus.READY
   }
 

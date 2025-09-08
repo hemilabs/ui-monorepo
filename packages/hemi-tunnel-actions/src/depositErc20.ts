@@ -50,9 +50,6 @@ const canDepositErc20 = async function ({
     return { canDeposit: false, reason }
   }
 
-  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
   const tokenBalance = await getErc20TokenBalance(l1PublicClient, {
     account,
     address: tokenAddress,
@@ -108,9 +105,6 @@ const runDepositErc20 = ({
 
       const l1StandardBridge = getL1StandardBridgeAddress({ l1Chain, l2Chain })
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const allowance = await getErc20TokenAllowance(l1PublicClient, {
         address: l1TokenAddress,
         owner: account,
@@ -119,9 +113,6 @@ const runDepositErc20 = ({
 
       if (amount > allowance) {
         emitter.emit('pre-approve')
-        // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
         const approveHash = await approveErc20Token(l1WalletClient, {
           address: l1TokenAddress,
           amount: approvalAmount ?? amount,
@@ -136,9 +127,6 @@ const runDepositErc20 = ({
 
         emitter.emit('user-signed-approve', approveHash)
 
-        // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
         const approveReceipt = await waitForTransactionReceipt(l1PublicClient, {
           hash: approveHash,
         }).catch(function (error) {
@@ -159,9 +147,6 @@ const runDepositErc20 = ({
 
       emitter.emit('pre-deposit')
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const depositHash = await writeContract(l1WalletClient, {
         abi: l1StandardBridgeAbi,
         account,
@@ -178,9 +163,6 @@ const runDepositErc20 = ({
         return
       }
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       await handleWaitDeposit({
         emitter,
         hash: depositHash,

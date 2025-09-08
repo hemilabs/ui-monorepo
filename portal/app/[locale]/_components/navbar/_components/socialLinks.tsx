@@ -27,7 +27,7 @@ const svgCss =
 const UI = ({
   addTracking,
 }: {
-  addTracking?: (event: AnalyticsEvent) => () => void | undefined
+  addTracking?: (event: AnalyticsEvent) => (() => void) | undefined
 }) => (
   <div
     className="mb-3 mt-0 flex flex-wrap items-center justify-between gap-x-6 overflow-visible

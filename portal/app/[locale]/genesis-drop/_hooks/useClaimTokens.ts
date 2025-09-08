@@ -35,20 +35,6 @@ export const useClaimTokens = function (options?: {
     hemi.id,
   )
 
-  const claimTransactionQueryKey = getClaimTransactionQueryKey({
-    address,
-    chainId: hemi.id,
-    claimGroupId: eligibility.claimGroupId,
-  })
-
-  const isClaimableKey = getIsClaimableQueryKey({
-    address,
-    amount: eligibility.amount,
-    claimGroupId: eligibility.claimGroupId,
-    hemiId: hemi.id,
-    proof: eligibility.proof,
-  })
-
   return useMutation({
     async mutationFn({
       lockupMonths,
@@ -59,6 +45,13 @@ export const useClaimTokens = function (options?: {
       ratio: number
       termsSignature: Hex
     }) {
+      if (!eligibility) {
+        throw new Error('User is not eligible')
+      }
+      if (!address) {
+        throw new Error('User is not connected')
+      }
+
       track?.('genesis-drop - submit start', { lockupMonths })
 
       if (!connectedToHemi) {
@@ -73,7 +66,7 @@ export const useClaimTokens = function (options?: {
         proof: eligibility.proof,
         ratio,
         termsSignature,
-        walletClient: hemiWalletClient,
+        walletClient: hemiWalletClient!,
       })
 
       emitter.on(
@@ -84,6 +77,21 @@ export const useClaimTokens = function (options?: {
       emitter.on('claim-transaction-succeeded', function (receipt) {
         // update native balance on the wallet due to gas paid
         updateNativeBalanceAfterFees(receipt)
+
+        const claimTransactionQueryKey = getClaimTransactionQueryKey({
+          address,
+          chainId: hemi.id,
+          claimGroupId: eligibility.claimGroupId,
+        })
+
+        const isClaimableKey = getIsClaimableQueryKey({
+          address,
+          amount: eligibility.amount,
+          claimGroupId: eligibility.claimGroupId,
+          hemiId: hemi.id,
+          proof: eligibility.proof,
+        })
+
         queryClient.setQueryData(claimTransactionQueryKey, {
           amount: eligibility.amount,
           lockupMonths,
@@ -108,6 +116,15 @@ export const useClaimTokens = function (options?: {
       return promise
     },
     onSettled() {
+      // at this point, variables are defined because mutation run
+      const isClaimableKey = getIsClaimableQueryKey({
+        address: address!,
+        amount: eligibility!.amount,
+        claimGroupId: eligibility!.claimGroupId,
+        hemiId: hemi.id,
+        proof: eligibility!.proof,
+      })
+
       // invalidate gas balance on the wallet
       queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
       // invalidate updated contracts

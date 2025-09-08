@@ -29,6 +29,7 @@ const getCallToAction = (deposit: EvmDepositOperation) =>
   [
     EvmDepositStatus.APPROVAL_TX_FAILED,
     EvmDepositStatus.DEPOSIT_TX_FAILED,
+    // @ts-expect-error includes accepts undefined
   ].includes(deposit.status) ? (
     <RetryEvmDeposit deposit={deposit} />
   ) : null
@@ -46,8 +47,8 @@ const ReviewContent = function ({
 }: Props & { fromToken: EvmToken; toToken: EvmToken }) {
   const depositStatus = deposit.status ?? EvmDepositStatus.DEPOSIT_TX_CONFIRMED
 
-  const fromChain = useChain(deposit.l1ChainId)
-  const toChain = useChain(deposit.l2ChainId)
+  const fromChain = useChain(deposit.l1ChainId)!
+  const toChain = useChain(deposit.l2ChainId)!
 
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
 
@@ -107,7 +108,7 @@ const ReviewContent = function ({
   })
 
   const getDepositStep = function (): StepPropsWithoutPosition {
-    const statusMap = {
+    const statusMap: Partial<Record<EvmDepositStatus, ProgressStatus>> = {
       [EvmDepositStatus.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,
       [EvmDepositStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
       [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.COMPLETED,
@@ -116,7 +117,7 @@ const ReviewContent = function ({
       [EvmDepositStatus.DEPOSIT_RELAYED]: ProgressStatus.COMPLETED,
     }
 
-    const postStatusMap = {
+    const postStatusMap: Partial<Record<EvmDepositStatus, ProgressStatus>> = {
       [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.PROGRESS,
       [EvmDepositStatus.DEPOSIT_RELAYED]: ProgressStatus.COMPLETED,
     }
@@ -147,9 +148,9 @@ const ReviewContent = function ({
         description: tCommon('wait-minutes', {
           minutes: ExpectedWaitTimeMinutesGetFundsHemi,
         }),
-        status: postStatusMap[depositStatus],
+        status: postStatusMap[depositStatus]!,
       },
-      status: statusMap[depositStatus],
+      status: statusMap[depositStatus]!,
       txHash: deposit.transactionHash,
     }
   }

@@ -25,7 +25,8 @@ const HistoryLoader = dynamic(
 type TunnelHistoryContext = {
   addDepositToTunnelHistory: (deposit: DepositTunnelOperation) => void
   addWithdrawalToTunnelHistory: (
-    withdrawal: Omit<WithdrawTunnelOperation, 'timestamp'>,
+    withdrawal: WithdrawTunnelOperation &
+      Partial<Pick<WithdrawTunnelOperation, 'timestamp'>>,
   ) => void
   deposits: DepositTunnelOperation[]
   dispatch: Dispatch<HistoryActions>

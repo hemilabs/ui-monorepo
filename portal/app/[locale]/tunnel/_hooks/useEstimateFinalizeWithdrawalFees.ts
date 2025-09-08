@@ -26,7 +26,7 @@ export const useEstimateFinalizeWithdrawalFees = function ({
     isError,
     isSuccess,
   } = useQuery({
-    enabled,
+    enabled: enabled && !!account,
     async queryFn() {
       const publicClient = getEvmL1PublicClient(l1ChainId)
       return hemiClient
@@ -34,8 +34,10 @@ export const useEstimateFinalizeWithdrawalFees = function ({
         .then(receipt => getWithdrawals(receipt))
         .then(([w]) =>
           publicClient.estimateFinalizeWithdrawalGas({
-            account,
-            // @ts-expect-error Can't make the viem types to work. This works on runtime
+            account: account!,
+            // Chain is correctly defined, but getWithdrawalStatus expects a more strict
+            // definition of Chain.
+            // @ts-expect-error This works on runtime
             targetChain: hemi as Chain,
             withdrawal: w,
           }),

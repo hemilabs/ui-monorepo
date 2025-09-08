@@ -46,8 +46,8 @@ const ReviewContent = function ({
   onClose,
   withdrawal,
 }: Props & { fromToken: EvmToken }) {
-  const fromChain = useChain(withdrawal.l2ChainId)
-  const toChain = useChain(withdrawal.l1ChainId)
+  const fromChain = useChain(withdrawal.l2ChainId)!
+  const toChain = useChain(withdrawal.l1ChainId)!
 
   const { address: btcAddress } = useBtcAccount()
 
@@ -69,21 +69,22 @@ const ReviewContent = function ({
     amount: parseTokenUnits(withdrawal.amount, fromToken),
     btcAddress,
     enabled: !!btcAddress && showWithdrawalStepFees,
-    l2ChainId: withdrawal.l2ChainId,
   })
 
-  const isValidUuid = !!withdrawal.uuid
+  const isValidUuid = withdrawal.uuid !== undefined
   const {
     fees: challengeWithdrawalEstimatedFees,
     isError: isChallengeWithdrawalEstimateFeesError,
   } = useEstimateChallengeBtcWithdrawFees({
     enabled: isValidUuid && showChallengeStepFees,
     l2ChainId: withdrawal.l2ChainId,
-    uuid: isValidUuid ? BigInt(withdrawal.uuid) : BigInt(0),
+    uuid: isValidUuid ? BigInt(withdrawal.uuid!) : BigInt(0),
   })
 
-  const { isLoading: isLoadingVaultGracePeriod, vaultGracePeriod = BigInt(0) } =
-    useSimpleVaultGracePeriod()
+  const {
+    data: vaultGracePeriod = BigInt(0),
+    isLoading: isLoadingVaultGracePeriod,
+  } = useSimpleVaultGracePeriod()
   const t = useTranslations('tunnel-page.review-withdrawal')
   const tCommon = useTranslations('common')
 
@@ -98,16 +99,18 @@ const ReviewContent = function ({
   const steps: StepPropsWithoutPosition[] = []
 
   const addWithdrawStep = function (): StepPropsWithoutPosition {
-    const statusMap = {
+    const statusMap: Partial<Record<BtcWithdrawStatus, ProgressStatus>> = {
       [BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING]: ProgressStatus.PROGRESS,
       [BtcWithdrawStatus.WITHDRAWAL_FAILED]: ProgressStatus.FAILED,
     }
 
-    const postActionStatus = {
-      [BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED]: ProgressStatus.PROGRESS,
-      [BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING]: ProgressStatus.NOT_READY,
-      [BtcWithdrawStatus.WITHDRAWAL_FAILED]: ProgressStatus.NOT_READY,
-    }
+    const postActionStatus: Partial<Record<BtcWithdrawStatus, ProgressStatus>> =
+      {
+        [BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED]:
+          ProgressStatus.PROGRESS,
+        [BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING]: ProgressStatus.NOT_READY,
+        [BtcWithdrawStatus.WITHDRAWAL_FAILED]: ProgressStatus.NOT_READY,
+      }
 
     return {
       description: (

@@ -80,8 +80,8 @@ const ConnectedWallet = function ({
   disconnect,
   formattedAddress,
 }: {
-  address: Address | Account
-  connectorName: string
+  address: Address | Account | undefined
+  connectorName: string | undefined
   copyEvent: 'btc copy' | 'evm copy'
   disconnect: () => void
   formattedAddress: string
@@ -95,8 +95,10 @@ const ConnectedWallet = function ({
   const ref = useOnClickOutside<HTMLDivElement>(closeMenu)
 
   const copyAddress = function () {
-    navigator.clipboard.writeText(address)
-    track?.(copyEvent, { wallet: connectorName })
+    // if this function is called, the user is connected and therefore it is defined
+    // as well as the connector
+    navigator.clipboard.writeText(address!)
+    track?.(copyEvent, { wallet: connectorName! })
     closeMenu()
   }
 
@@ -128,7 +130,7 @@ const ConnectedWallet = function ({
                 content: (
                   <button
                     className="flex items-center gap-x-1"
-                    onClick={copyAddress}
+                    onClick={address ? copyAddress : undefined}
                   >
                     <CopyLogo className="[&>path]:group-hover/menu-item:fill-neutral-950" />
                     <span className="w-max text-sm">{t('copy-address')}</span>
@@ -167,7 +169,7 @@ export const ConnectedEvmChain = function () {
 
   const closeMenu = () => setMenuOpen(false)
 
-  if (isChainUnsupported) {
+  if (isChainUnsupported || !chain) {
     return <WrongEvmNetwork />
   }
   return (
@@ -189,7 +191,7 @@ export const ConnectedEvmAccount = function () {
   return (
     <ConnectedWallet
       address={address}
-      connectorName={connector.name}
+      connectorName={connector?.name}
       copyEvent="evm copy"
       disconnect={disconnect}
       formattedAddress={address ? formatEvmAddress(address) : '...'}
@@ -204,7 +206,7 @@ export const ConnectedBtcAccount = function () {
   return (
     <ConnectedWallet
       address={address}
-      connectorName={connector.name}
+      connectorName={connector?.name}
       copyEvent="btc copy"
       disconnect={disconnect}
       formattedAddress={address ? formatBtcAddress(address) : '...'}
@@ -224,7 +226,7 @@ export const ConnectedBtcChain = function () {
     return null
   }
 
-  if (isChainUnsupported) {
+  if (isChainUnsupported || !chain) {
     // As only one btc chain is supported at the moment, this will work.
     // Once there are multiple chains, we may need to show a dropdown or something
     // to select the chain to connect to.

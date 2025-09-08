@@ -22,7 +22,6 @@ export function stakedBalance(
   const { address, tokenAddress } = parameters
   return readContract(client, {
     abi: stakeManagerAbi,
-    // @ts-expect-error: TS is complaining about client.chain!.id definition, but this works
     address: stakeManagerAddresses[client.chain!.id],
     args: [tokenAddress, address],
     functionName: 'balance',
@@ -44,7 +43,6 @@ export function stakeTokenAllowlist(
   const { address } = parameters
   return readContract(client, {
     abi: stakeManagerAbi,
-    // @ts-expect-error: TS is complaining about client.chain!.id definition, but this works
     address: stakeManagerAddresses[client.chain!.id],
     args: [address],
     functionName: 'tokenAllowlist',

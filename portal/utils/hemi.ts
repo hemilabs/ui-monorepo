@@ -174,6 +174,14 @@ const getInitiatedWithdrawalStatus = async function ({
     : BtcWithdrawStatus.WITHDRAWAL_FAILED
 }
 
+const getUuid = function (withdrawal: ToBtcWithdrawOperation): bigint {
+  if (!withdrawal.uuid) {
+    throw new Error(`Missing uuid for withdrawal ${withdrawal.transactionHash}`)
+  }
+
+  return BigInt(withdrawal.uuid)
+}
+
 export const getHemiStatusOfBtcWithdrawal = async function ({
   hemiClient,
   withdrawal,
@@ -185,7 +193,7 @@ export const getHemiStatusOfBtcWithdrawal = async function ({
     return getInitiatedWithdrawalStatus({ hemiClient, withdrawal })
   }
 
-  const uuid = BigInt(withdrawal.uuid)
+  const uuid = getUuid(withdrawal)
 
   // If the initiation succeeded, the BTC transaction must be monitored. If
   // present, move it to WITHDRAWAL_SUCCEEDED but if not and the withdrawal is
@@ -211,34 +219,42 @@ export const getHemiStatusOfBtcWithdrawal = async function ({
     if (isChallenged) {
       return BtcWithdrawStatus.WITHDRAWAL_CHALLENGED
     }
-    const gracePeriod = await getBitcoinWithdrawalGracePeriod({
-      hemiClient,
-      vaultIndex,
-    })
-    const age = Math.floor(new Date().getTime() / 1000) - withdrawal.timestamp
-    if (age > gracePeriod) {
-      return BtcWithdrawStatus.READY_TO_CHALLENGE
+    if (withdrawal.timestamp) {
+      const gracePeriod = await getBitcoinWithdrawalGracePeriod({
+        hemiClient,
+        vaultIndex,
+      })
+      const age = Math.floor(new Date().getTime() / 1000) - withdrawal.timestamp
+      if (age > gracePeriod) {
+        return BtcWithdrawStatus.READY_TO_CHALLENGE
+      }
     }
   }
   if (
     withdrawal.status === BtcWithdrawStatus.READY_TO_CHALLENGE &&
     withdrawal.challengeTxHash
   ) {
-    const receipt = await hemiClient
-      .getTransactionReceipt({ hash: withdrawal.challengeTxHash })
-      .catch(function (err) {
-        // Do nothing if the TX was not found, as that throws
-        if (err.name === 'TransactionReceiptNotFoundError') {
-          return null
-        }
-        throw err
-      })
-    if (!receipt) {
-      return BtcWithdrawStatus.CHALLENGE_IN_PROGRESS
+    const hash = withdrawal.challengeTxHash
+
+    const handleReadyToChallenge = async function () {
+      const receipt = await hemiClient
+        .getTransactionReceipt({ hash })
+        .catch(function (err) {
+          // Do nothing if the TX was not found, as that throws
+          if (err.name === 'TransactionReceiptNotFoundError') {
+            return null
+          }
+          throw err
+        })
+      if (!receipt) {
+        return BtcWithdrawStatus.CHALLENGE_IN_PROGRESS
+      }
+      return receipt.status === 'success'
+        ? BtcWithdrawStatus.WITHDRAWAL_CHALLENGED
+        : BtcWithdrawStatus.CHALLENGE_FAILED
     }
-    return receipt.status === 'success'
-      ? BtcWithdrawStatus.WITHDRAWAL_CHALLENGED
-      : BtcWithdrawStatus.CHALLENGE_FAILED
+
+    return handleReadyToChallenge()
   }
   // if we reach this point, return the same status as before
   return withdrawal.status
@@ -310,7 +326,7 @@ export const confirmBtcDeposit = ({
       throw new Error('Bitcoin Deposit is not ready for confirmation!')
     }
 
-    return hemiWalletClient.confirmDeposit({
+    return hemiWalletClient!.confirmDeposit({
       // For current vault implementations, the field is not used... but required by
       // the abi
       extraInfo: '0x',
@@ -345,7 +361,7 @@ export const initiateBtcWithdrawal = ({
   hemiWalletClient: HemiWalletClient
 }) =>
   hemiClient.getVaultChildIndex().then(vaultIndex =>
-    hemiWalletClient.initiateWithdrawal({
+    hemiWalletClient!.initiateWithdrawal({
       amount,
       btcAddress,
       from,

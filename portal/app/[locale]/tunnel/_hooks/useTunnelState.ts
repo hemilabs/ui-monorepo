@@ -198,9 +198,12 @@ const getDefaultNetworksOrder = function ({
 // But toggleTestnetMainnet is internal for a useEffect, no need to expose it
 // and updateFromToken uses a different interface
 type TunnelFunctionEvents = {
-  [K in Exclude<Actions['type'], 'toggleTestnetMainnet' | 'updateFromToken'>]: (
-    payload?: Extract<Actions, { type: K }>['payload'],
-  ) => void
+  [K in Exclude<
+    Actions['type'],
+    'toggleTestnetMainnet' | 'updateFromToken'
+  >]: Extract<Actions, { type: K }> extends NoPayload
+    ? () => void
+    : (payload: Extract<Actions, { type: K }>['payload']) => void
 } & {
   updateFromToken: (
     fromToken: TunnelState['fromToken'],
@@ -248,9 +251,9 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   // numbers to go through and alter the state.
   const updateFromInput = useCallback(
     function (payload: UpdateFromInput['payload']) {
-      const { error, value } = sanitizeAmount(payload)
-      if (!error) {
-        dispatch({ payload: value, type: 'updateFromInput' })
+      const result = sanitizeAmount(payload)
+      if (!('error' in result)) {
+        dispatch({ payload: result.value, type: 'updateFromInput' })
       }
     },
     [dispatch],
@@ -278,7 +281,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   const getTunnelToken = useCallback(
     function (fromToken: Token, toNetworkId: RemoteChain['id']) {
       const bridgeAddress =
-        fromToken.extensions?.bridgeInfo[toNetworkId]?.tokenAddress
+        fromToken.extensions?.bridgeInfo?.[toNetworkId]?.tokenAddress
       // find the tunneled pair of the token, or go with the native if missing
       // bitcoin is a special case as it tunnels a native token (btc) into an erc20
       if (fromToken.chainId === bitcoin.id) {
@@ -287,9 +290,9 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
           t =>
             t.chainId === toNetworkId &&
             t.address ===
-              bitcoinNativeToken.extensions.bridgeInfo[toNetworkId]
-                .tokenAddress,
-        )
+              bitcoinNativeToken.extensions?.bridgeInfo?.[toNetworkId]
+                ?.tokenAddress,
+        )!
       }
 
       const toToken =
@@ -298,7 +301,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
           : tokenList.find(
               t => t.address === bridgeAddress && t.chainId === toNetworkId,
             )
-      return toToken
+      return toToken!
     },
     [bitcoin.id, tokenList],
   )
@@ -344,9 +347,9 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
         // if the selected token can't be tunneled to the target chain
         // we need to first update the target network
         // just grab the first available network that's enabled
-        if (!fromToken.extensions?.bridgeInfo[state.toNetworkId]) {
+        if (!fromToken.extensions?.bridgeInfo?.[state.toNetworkId]) {
           const [newToNetworkId] = Object.keys(
-            fromToken.extensions.bridgeInfo,
+            fromToken.extensions!.bridgeInfo!,
           ).filter(id => networks.some(n => n.id.toString() === id))
           // parse as int or keep as string, depending on the id
           const payload = (
@@ -384,12 +387,10 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
         // so the "From" must be updated to the tunnel equivalent in Hemi.
         const tunneledEthHemi = getNativeToken(hemi.id)
         const nativeToken = getNativeToken(toNetworkId)
-        const fromToken = nativeToken.extensions?.bridgeInfo[hemi.id]
-          ?.tokenAddress
-          ? getTokenByAddress(
-              nativeToken.extensions.bridgeInfo[hemi.id].tokenAddress,
-              hemi.id,
-            ) ?? tunneledEthHemi
+        const targetAddress =
+          nativeToken.extensions?.bridgeInfo?.[hemi.id]?.tokenAddress
+        const fromToken = targetAddress
+          ? getTokenByAddress(targetAddress, hemi.id) ?? tunneledEthHemi
           : tunneledEthHemi
 
         const toToken = getTunnelToken(fromToken, toNetworkId)

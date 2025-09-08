@@ -48,9 +48,6 @@ const canIncreaseAmount = async function ({
 
   try {
     const hemiTokenAddress = await memoizedGetHemiTokenAddress(walletClient)
-    // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
     const tokenBalance = await getErc20TokenBalance(walletClient, {
       account,
       address: hemiTokenAddress,
@@ -124,9 +121,6 @@ const runIncreaseAmount = ({
 
       emitter.emit('pre-increase-amount')
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const increaseHash = await writeContract(walletClient, {
         abi: veHemiAbi,
         account,
@@ -144,9 +138,6 @@ const runIncreaseAmount = ({
 
       emitter.emit('user-signed-increase-amount', increaseHash)
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const increaseReceipt = await waitForTransactionReceipt(walletClient, {
         hash: increaseHash,
       }).catch(function (error) {

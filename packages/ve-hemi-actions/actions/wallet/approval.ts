@@ -25,9 +25,6 @@ export const handleApproval = async function <T extends ApprovalEvents>({
   veHemiAddress: Address
   walletClient: WalletClient
 }): Promise<boolean> {
-  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
   const allowance = await getErc20TokenAllowance(walletClient, {
     address: hemiTokenAddress,
     owner: account,
@@ -37,9 +34,6 @@ export const handleApproval = async function <T extends ApprovalEvents>({
   if (amount > allowance) {
     emitter.emit('pre-approve')
 
-    // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
     const approveHash = await approveErc20Token(walletClient, {
       address: hemiTokenAddress,
       amount: approvalAmount ?? amount,
@@ -54,9 +48,6 @@ export const handleApproval = async function <T extends ApprovalEvents>({
 
     emitter.emit('user-signed-approve', approveHash)
 
-    // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
     const approveReceipt = await waitForTransactionReceipt(walletClient, {
       hash: approveHash,
     }).catch(function (error) {

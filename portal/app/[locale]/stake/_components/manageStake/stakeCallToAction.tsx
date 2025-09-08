@@ -18,7 +18,7 @@ const TryAgainButton = ({ disabled }: { disabled: boolean }) => (
 
 type Props = {
   isSubmitting: boolean
-  stakeStatus: StakeStatusEnum
+  stakeStatus: StakeStatusEnum | undefined
 }
 
 export const StakeCallToAction = function ({

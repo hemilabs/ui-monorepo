@@ -1,4 +1,5 @@
 import { useTranslations } from 'next-intl'
+import { ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
   BtcDepositStatus,
@@ -18,7 +19,7 @@ export const DepositStatus = function ({ deposit }: Props) {
   const t = useTranslations()
 
   if (!isBtcDeposit(deposit)) {
-    const evmStatuses = {
+    const evmStatuses: Partial<Record<EvmDepositStatus, ReactNode>> = {
       [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: (
         <TxStatus.InStatus
           text={t('common.wait-minutes', {
@@ -30,7 +31,12 @@ export const DepositStatus = function ({ deposit }: Props) {
       [EvmDepositStatus.DEPOSIT_RELAYED]: <TxStatus.Success />,
     }
 
-    return evmStatuses[deposit.status] ?? <Skeleton className="w-15 h-8" />
+    const skeleton = <Skeleton className="w-15 h-8" />
+
+    if (deposit.status === undefined) {
+      return skeleton
+    }
+    return evmStatuses[deposit.status] ?? skeleton
   }
 
   const statuses = {

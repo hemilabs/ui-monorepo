@@ -16,9 +16,6 @@ export const isClaimable = ({
   client: PublicClient | WalletClient
 }) =>
   // Check if the claim is valid and claimable using isClaimable with user-provided amount
-  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
   readContract(client, {
     abi: merkleBoxAbi,
     address: getMerkleBoxAddress(chainId),
@@ -76,9 +73,6 @@ export const getClaimGroupConfiguration = async function ({
   lockupMonths: LockupMonths
   publicClient: PublicClient
 }) {
-  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
   const [, bonus, lockupRatio] = await readContract(publicClient, {
     abi: merkleBoxAbi,
     address: getMerkleBoxAddress(chainId),

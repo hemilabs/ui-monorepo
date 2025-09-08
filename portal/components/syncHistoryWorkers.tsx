@@ -41,7 +41,7 @@ const SyncHistoryWorker = function ({
   l1ChainId,
   l2ChainId,
 }: Props) {
-  const workerRef = useRef<AppToWebWorker>(null)
+  const workerRef = useRef<AppToWebWorker | null>(null)
   const [workerLoaded, setWorkerLoaded] = useState(false)
 
   // This must be done here because there's some weird issue when moving it into a custom hook that prevents
@@ -54,13 +54,13 @@ const SyncHistoryWorker = function ({
       // load the Worker
       workerRef.current = new Worker(
         new URL('../workers/history.ts', import.meta.url),
-      )
+      ) as AppToWebWorker
 
       // listen for state updates and forward to our history reducer
       const processWebWorkerMessage = (event: MessageEvent<HistoryActions>) =>
         dispatch(event.data)
 
-      workerRef.current.addEventListener('message', processWebWorkerMessage)
+      workerRef.current?.addEventListener('message', processWebWorkerMessage)
 
       // announce we're syncing
       dispatch({ payload: { chainId: l1ChainId }, type: 'sync' })
@@ -100,12 +100,12 @@ const SyncHistoryWorker = function ({
       // Send the parameters the worker needs to start working - excluding deposits and withdrawals!
       const { content: deposits, ...depositsSyncInfo } = history.deposits.find(
         chainDeposits => chainDeposits.chainId === l1ChainId,
-      )
+      )!
 
       const { content: withdrawals, ...withdrawalsSyncInfo } =
         history.withdrawals.find(
           chainWithdrawals => chainWithdrawals.chainId === l1ChainId,
-        )
+        )!
 
       workerRef.current.postMessage({
         address,

@@ -21,7 +21,7 @@ export const ClaimToast = function ({ transactionHash }: Props) {
       }}
       title={t('claim-and-stake-successful')}
       tx={{
-        href: `${hemi.blockExplorers.default.url}/tx/${transactionHash}`,
+        href: `${hemi.blockExplorers!.default.url}/tx/${transactionHash}`,
         label: formatEvmHash(transactionHash),
       }}
     />

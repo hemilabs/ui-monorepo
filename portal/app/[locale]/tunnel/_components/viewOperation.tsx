@@ -38,8 +38,8 @@ const Operation = function () {
   const tunnelOperation = useGetTunnelOperation()
   const { txHash, updateTxHash } = useTunnelOperation()
 
-  const isEvmTx = isHash(txHash)
-  const isBtcTx = isBtcTxHash(txHash)
+  const isEvmTx = txHash && isHash(txHash)
+  const isBtcTx = txHash && isBtcTxHash(txHash)
 
   if (!txHash || (!isEvmTx && !isBtcTx) || !tunnelOperation) {
     return null

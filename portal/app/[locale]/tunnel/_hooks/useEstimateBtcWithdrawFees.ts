@@ -4,6 +4,7 @@ import {
   encodeInitiateWithdrawal,
 } from 'hemi-viem'
 import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useHemi } from 'hooks/useHemi'
 import { HemiPublicClient, useHemiClient } from 'hooks/useHemiClient'
 import { useEstimateGas } from 'wagmi'
 
@@ -29,25 +30,28 @@ export function useEstimateBtcWithdrawFees({
   amount,
   btcAddress,
   enabled = true,
-  l2ChainId,
 }: {
-  btcAddress: string
   amount: bigint
-  l2ChainId: number
+  btcAddress: string | undefined
   enabled?: boolean
 }) {
+  const hemi = useHemi()
   const hemiClient = useHemiClient()
-  const bitcoinManagerAddresses = bitcoinTunnelManagerAddresses[l2ChainId]
+  const bitcoinManagerAddresses = bitcoinTunnelManagerAddresses[hemi.id]
 
   const { data: encodedData, isSuccess } = useQuery({
-    enabled,
+    enabled: enabled && !!btcAddress && !!hemiClient,
     queryFn: () =>
-      getEncodeInitiateWithdrawal({ amount, btcAddress, hemiClient }),
+      getEncodeInitiateWithdrawal({
+        amount,
+        btcAddress: btcAddress!,
+        hemiClient,
+      }),
     queryKey: [
       'encode-initiate-withdrawal',
       btcAddress,
       amount.toString(),
-      l2ChainId,
+      hemi.id,
     ],
   })
 
@@ -62,7 +66,7 @@ export function useEstimateBtcWithdrawFees({
   })
 
   return useEstimateFees({
-    chainId: l2ChainId,
+    chainId: hemi.id,
     enabled: gasSuccess,
     gasUnits,
     isGasUnitsError: isGasError,

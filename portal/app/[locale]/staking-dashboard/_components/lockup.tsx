@@ -11,8 +11,8 @@ import { sanitizeLockup } from '../_utils/sanitizeLockup'
 import { RangeSlider } from './rangeSlider'
 
 type NearestValidValues = {
-  minValue: number | null
-  maxValue: number | null
+  minValue: number | null | undefined
+  maxValue: number | null | undefined
 } | null
 
 type TryValuesHintProps = NearestValidValues & {
@@ -68,17 +68,24 @@ function TryValuesHint({
     </button>
   )
 
+  const getText = function () {
+    if (maxValue && minValue) {
+      return t.rich('use-or', {
+        max: () => renderValue(maxValue),
+        min: () => renderValue(minValue),
+      })
+    }
+    if (minValue) {
+      return renderValue(minValue, t('min-days', { days: minValue }))
+    }
+    if (maxValue) {
+      return renderValue(maxValue, t('max-days', { days: maxValue }))
+    }
+    return undefined
+  }
+
   return (
-    <span className="text-xs font-medium text-neutral-500">
-      {maxValue && minValue
-        ? t.rich('use-or', {
-            max: () => renderValue(maxValue),
-            min: () => renderValue(minValue),
-          })
-        : minValue
-          ? renderValue(minValue, t('min-days', { days: minValue }))
-          : renderValue(maxValue, t('max-days', { days: maxValue }))}
-    </span>
+    <span className="text-xs font-medium text-neutral-500">{getText()}</span>
   )
 }
 

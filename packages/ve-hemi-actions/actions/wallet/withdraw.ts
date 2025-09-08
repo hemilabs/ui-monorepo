@@ -92,9 +92,6 @@ const runWithdraw = ({
 
       emitter.emit('pre-withdraw')
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const withdrawHash = await writeContract(walletClient, {
         abi: veHemiAbi,
         account,
@@ -112,9 +109,6 @@ const runWithdraw = ({
 
       emitter.emit('user-signed-withdraw', withdrawHash)
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const withdrawReceipt = await waitForTransactionReceipt(walletClient, {
         hash: withdrawHash,
       }).catch(function (error) {

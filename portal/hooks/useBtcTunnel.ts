@@ -28,6 +28,7 @@ import {
 import { useBitcoin } from './useBitcoin'
 import { useBtcDeposits } from './useBtcDeposits'
 import { useBtcWithdrawals } from './useBtcWithdrawals'
+import { useHemi } from './useHemi'
 import { useHemiClient, useHemiWalletClient } from './useHemiClient'
 import { useTunnelHistory } from './useTunnelHistory'
 import { useWaitForTransactionReceipt as useWaitForBtcTransactionReceipt } from './useWaitForTransactionReceipt'
@@ -50,7 +51,7 @@ export const useConfirmBitcoinDeposit = function (
     mutationFn: () =>
       confirmBtcDeposit({
         deposit,
-        from: address,
+        from: address!,
         hemiClient,
         hemiWalletClient,
       }),
@@ -159,7 +160,7 @@ export const useDepositBitcoin = function () {
         hemiAddress,
         hemiClient,
         satoshis,
-        walletConnector: connector,
+        walletConnector: connector!,
       }),
     mutationKey: [connector, hemiClient],
     onSuccess(
@@ -170,11 +171,11 @@ export const useDepositBitcoin = function () {
       addDepositToTunnelHistory({
         amount: satoshis.toString(),
         direction: MessageDirection.L1_TO_L2,
-        from: address,
+        from: address!,
         l1ChainId,
         l1Token: btc.address,
         l2ChainId,
-        l2Token: btc.extensions.bridgeInfo[l2ChainId].tokenAddress,
+        l2Token: btc.extensions!.bridgeInfo![l2ChainId].tokenAddress!,
         status: BtcDepositStatus.BTC_TX_PENDING,
         to: bitcoinCustodyAddress,
         transactionHash: txHash,
@@ -251,7 +252,9 @@ export const useDepositBitcoin = function () {
       updateDeposit(deposit, {
         blockNumber: depositReceipt.status.blockHeight,
         status: BtcDepositStatus.BTC_TX_CONFIRMED,
-        timestamp: getBitcoinTimestamp(depositReceipt.status.blockTime),
+        timestamp: depositReceipt.status.blockTime
+          ? getBitcoinTimestamp(depositReceipt.status.blockTime)
+          : undefined,
       })
     },
     [bitcoin, depositReceipt, deposits, updateDeposit],
@@ -271,6 +274,7 @@ export const useWithdrawBitcoin = function () {
   const bitcoin = useBitcoin()
   const { address: btcAddress } = useBtcAccount()
   const { address: hemiAddress } = useEvmAccount()
+  const hemi = useHemi()
   const hemiClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
   const { addWithdrawalToTunnelHistory, updateWithdrawal } = useTunnelHistory()
@@ -293,8 +297,8 @@ export const useWithdrawBitcoin = function () {
     }) =>
       initiateBtcWithdrawal({
         amount,
-        btcAddress,
-        from: hemiAddress,
+        btcAddress: btcAddress!,
+        from: hemiAddress!,
         hemiClient,
         hemiWalletClient,
       }),
@@ -302,15 +306,14 @@ export const useWithdrawBitcoin = function () {
       addWithdrawalToTunnelHistory({
         amount: amount.toString(),
         direction: MessageDirection.L2_TO_L1,
-        from: hemiAddress,
+        from: hemiAddress!,
         l1ChainId,
         l1Token: zeroAddress,
         l2ChainId,
-        l2Token: getNativeToken(bitcoin.id).extensions.bridgeInfo[
-          hemiClient.chain.id
-        ].tokenAddress,
+        l2Token: getNativeToken(bitcoin.id)!.extensions!.bridgeInfo![hemi.id]
+          .tokenAddress!,
         status: BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
-        to: btcAddress,
+        to: btcAddress!,
         transactionHash,
       })
       updateTxHash(transactionHash, { history: 'push' })
@@ -369,16 +372,13 @@ export const useWithdrawBitcoin = function () {
         return
       }
 
-      const uuid = getBitcoinWithdrawalUuid(
-        // @ts-expect-error it seems typings are not correct in wagmi
-        withdrawBitcoinReceipt,
-      )
+      const uuid = getBitcoinWithdrawalUuid(withdrawBitcoinReceipt)
 
       // update here so next iteration of the effect doesn't reach this point
       updateWithdrawal(withdrawal, {
         blockNumber: Number(withdrawBitcoinReceipt.blockNumber),
         status: BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED,
-        uuid: uuid.toString(),
+        uuid: uuid?.toString(),
       })
 
       clearWithdrawBitcoinState()
@@ -426,11 +426,19 @@ export const useChallengeBitcoinWithdrawal = function (
     mutate: challengeWithdrawal,
     reset: resetChallengeWithdrawal,
   } = useMutation({
-    mutationFn: () =>
-      hemiWalletClient.challengeWithdrawal({
+    mutationFn() {
+      if (!hemiAddress) {
+        throw new Error('Not Connected')
+      }
+      if (!withdrawal.uuid) {
+        throw new Error('Withdrawal UUID is required to challenge')
+      }
+
+      return hemiWalletClient!.challengeWithdrawal({
         from: hemiAddress,
         uuid: BigInt(withdrawal.uuid),
-      }),
+      })
+    },
     onError: () =>
       updateWithdrawal(withdrawal, {
         // Error here means rejection and that the TX wasn't generated

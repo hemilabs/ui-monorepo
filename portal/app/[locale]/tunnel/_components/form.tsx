@@ -117,6 +117,7 @@ export const FormContent = function ({
           />
           {!!customTokenAddress && evmTunneling && (
             <CustomTokenDrawer
+              customTokenAddress={customTokenAddress}
               fromNetworkId={fromNetworkId}
               // @ts-expect-error TS fails to check these, but they are checked above by evmTunneling
               l1ChainId={l1ChainId}

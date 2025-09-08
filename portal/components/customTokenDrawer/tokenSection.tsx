@@ -19,7 +19,7 @@ type Props = {
   addressValidity: AddressValidity | undefined
   chainId: Chain['id']
   isLoading: boolean
-  token: Token
+  token: Token | undefined
 } & (
   | { layer: 1 }
   | {
@@ -38,15 +38,15 @@ export const TokenSection = function ({
   token,
   ...props
 }: Props) {
-  const chain = useChain(chainId)
+  // chainId can only come from the selector, so it's guaranteed to be defined
+  const chain = useChain(chainId)!
   const [hasFocused, setHasFocused] = useState(false)
   const t = useTranslations('token-custom-drawer')
 
   const isCustomAddress = 'tunneledCustomTokenAddress' in props
 
-  const addressValue = isCustomAddress
-    ? props.tunneledCustomTokenAddress
-    : token?.address ?? ''
+  const addressValue =
+    (isCustomAddress ? props.tunneledCustomTokenAddress : token?.address) ?? ''
 
   return (
     <>
@@ -71,12 +71,12 @@ export const TokenSection = function ({
               onChange={
                 isCustomAddress
                   ? e =>
-                      props.onTunneledCustomTokenAddressChange(e.target.value)
+                      props.onTunneledCustomTokenAddressChange?.(e.target.value)
                   : undefined
               }
               onClear={
                 isCustomAddress && !addressDisabled
-                  ? () => props.onTunneledCustomTokenAddressChange('')
+                  ? () => props.onTunneledCustomTokenAddressChange?.('')
                   : undefined
               }
               showMagnifyingGlass={false}

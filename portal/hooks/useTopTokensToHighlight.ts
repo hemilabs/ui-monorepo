@@ -41,7 +41,7 @@ export function useTopTokensToHighlight({ tokens }: Props) {
         return {
           isError: false,
           isLoading: false,
-          sortedTokens: [] as Token[], // Satisfy type inference for empty fallback
+          sortedTokens: [],
         }
       }
 
@@ -53,8 +53,11 @@ export function useTopTokensToHighlight({ tokens }: Props) {
       const tokensWithBalance = successfulResults
         .map(({ data }) => data)
         .filter(function (token): token is EvmToken & { balance: bigint } {
+          if (!token) {
+            return false
+          }
           const price = getTokenPrice(token, prices)
-          return price && token.balance > BigInt(0)
+          return !!price && token.balance > BigInt(0)
         })
 
       const sortedResults = sortTokens<EvmToken>({
@@ -76,9 +79,10 @@ export function useTopTokensToHighlight({ tokens }: Props) {
         : getEvmL1PublicClient(chainId)
 
       return {
+        enabled: !!account,
         queryFn: () =>
           getTokenBalance({
-            account,
+            account: account!,
             client,
             isConnected,
             token,

@@ -23,6 +23,7 @@ export const usePollHistory = function ({
   useEffect(
     function poll() {
       // worker is still running, do nothing.
+      // @ts-expect-error includes accepts undefined
       if (!['ready', 'syncing'].includes(status)) {
         return undefined
       }

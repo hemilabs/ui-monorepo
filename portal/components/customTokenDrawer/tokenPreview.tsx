@@ -5,7 +5,7 @@ import { Token } from 'types/token'
 
 import background from './previewBackground.svg'
 
-type Props = { isLoading: boolean; token: Token }
+type Props = { isLoading: boolean; token: Token | undefined }
 
 export const TokenPreview = function ({ isLoading, token }: Props) {
   const t = useTranslations('token-custom-drawer')

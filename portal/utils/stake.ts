@@ -1,14 +1,11 @@
 import hemilabsTokenList from '@hemilabs/token-list'
 import { validateInput } from 'components/tokenInput/utils'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
-import {
-  type HemiPublicClient,
-  type HemiWalletClient,
-} from 'hooks/useHemiClient'
+import type { HemiPublicClient, HemiWalletClient } from 'hooks/useHemiClient'
 import { NetworkType } from 'hooks/useNetworkType'
 import { EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
-import { type Address, type Chain, type Hash } from 'viem'
+import type { Address, Chain, Hash, TransactionReceipt } from 'viem'
 
 import { findChainById } from './chain'
 import { parseTokenUnits } from './token'
@@ -18,7 +15,7 @@ export const isStakeEnabledOnTestnet = (networkType: NetworkType) =>
   process.env.NEXT_PUBLIC_ENABLE_STAKE_TESTNET === 'true'
 
 type CanSubmit = Omit<Parameters<typeof validateInput>[0], 'token'> & {
-  chainId: Chain['id']
+  chainId: Chain['id'] | undefined
   expectedChain: Chain['name']
   token: EvmToken
 }
@@ -84,6 +81,10 @@ const validateStakeOperation = async function ({
   forAccount: Address
   hemiPublicClient: HemiPublicClient
 } & Pick<CanSubmit, 'amountInput' | 't' | 'token'>) {
+  if (!hemiPublicClient) {
+    throw new Error('Hemi client not initialized')
+  }
+
   const balance = isNativeToken(token)
     ? await hemiPublicClient.getBalance({
         address: forAccount,
@@ -97,8 +98,8 @@ const validateStakeOperation = async function ({
   const { error } = canSubmit({
     amountInput,
     balance,
-    chainId: hemiPublicClient.chain.id,
-    expectedChain: findChainById(token.chainId).name,
+    chainId: hemiPublicClient.chain?.id,
+    expectedChain: findChainById(token.chainId)!.name,
     operation: 'stake',
     t,
     token,
@@ -191,6 +192,10 @@ export const stake = async function ({
   hemiWalletClient: HemiWalletClient
 } & Pick<CanSubmit, 'amountInput' | 't' | 'token'> &
   StakeEvents) {
+  if (!hemiWalletClient) {
+    throw new Error('Hemi wallet client not initialized')
+  }
+
   await validateStakeOperation({
     amountInput,
     forAccount,
@@ -245,11 +250,12 @@ export const stake = async function ({
         return
       }
 
-      if (approvalReceipt.status === 'success') {
-        onStakeTokenApproved?.()
-      } else {
-        onStakeTokenApprovalFailed?.()
+      const map: Record<TransactionReceipt['status'], () => void> = {
+        reverted: () => onStakeTokenApprovalFailed?.(),
+        success: () => onStakeTokenApproved?.(),
       }
+
+      map[approvalReceipt.status]()
     }
     onStake?.()
     stakePromise = hemiWalletClient.stakeERC20Token({
@@ -277,11 +283,12 @@ export const stake = async function ({
     return
   }
 
-  if (receipt.status === 'success') {
-    onStakeConfirmed?.()
-  } else {
-    onStakeFailed?.()
+  const map: Record<TransactionReceipt['status'], () => void> = {
+    reverted: () => onStakeFailed?.(),
+    success: () => onStakeConfirmed?.(),
   }
+
+  map[receipt.status]()
 }
 
 const validateUnstakeOperation = async function ({
@@ -301,8 +308,8 @@ const validateUnstakeOperation = async function ({
   const { error } = canSubmit({
     amountInput,
     balance,
-    chainId: hemiPublicClient.chain.id,
-    expectedChain: findChainById(token.chainId).name,
+    chainId: hemiPublicClient.chain?.id,
+    expectedChain: findChainById(token.chainId)!.name,
     operation: 'unstake',
     t,
     token,
@@ -355,6 +362,10 @@ export const unstake = async function ({
   hemiWalletClient: HemiWalletClient
 } & Pick<CanSubmit, 'amountInput' | 't' | 'token'> &
   UnstakeEvents) {
+  if (!hemiWalletClient) {
+    throw new Error('Hemi wallet client not initialized')
+  }
+
   await validateUnstakeOperation({
     amountInput,
     forAccount,

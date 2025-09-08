@@ -1,6 +1,7 @@
 import { Token } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
-import { Address, PublicClient } from 'viem'
+import { type Address, type PublicClient } from 'viem'
+import { getBalance } from 'viem/actions'
 import { getErc20TokenBalance } from 'viem-erc20/actions'
 
 type Props = {
@@ -22,9 +23,8 @@ export async function getTokenBalance({
 
   try {
     if (isNativeToken(token)) {
-      return await client.getBalance({ address: account })
+      return await getBalance(client, { address: account })
     }
-    // @ts-expect-error because it works on IDE
     return await getErc20TokenBalance(client, {
       account,
       address: token.address as `0x${string}`,

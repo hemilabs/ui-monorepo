@@ -26,9 +26,6 @@ const getErc20Balance = ({
   publicClient: PublicClient
   tokenAddress: Address
 }) =>
-  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
   getErc20TokenBalance(publicClient, {
     account,
     address: tokenAddress,
@@ -40,11 +37,7 @@ const getEthBalance = ({
 }: {
   account: Address
   publicClient: PublicClient
-}) =>
-  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
-  getBalance(publicClient, { address: account })
+}) => getBalance(publicClient, { address: account })
 
 const canInitiateWithdraw = async function ({
   account,
@@ -126,9 +119,6 @@ const runInitiateWithdraw = ({
 
       emitter.emit('pre-withdraw')
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const hash = await writeContract(l2WalletClient, {
         abi: l2BridgeAbi,
         account,
@@ -149,9 +139,6 @@ const runInitiateWithdraw = ({
       emitter.emit('user-signed-withdraw', hash)
 
       const withdrawalReceipt = await waitForTransactionReceipt(
-        // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
         l2PublicClient,
         {
           hash,

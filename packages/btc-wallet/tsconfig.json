@@ -2,7 +2,6 @@
   "compilerOptions": {
     "baseUrl": "./"
   },
-  "extends": "../../tsconfig.base.json",
-  "exclude": ["node_modules"],
+  "extends": "@tsconfig/next/tsconfig.json",
   "include": ["**/**/*.ts", "**/**/*.tsx", "global.d.ts"]
 }

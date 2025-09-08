@@ -2,7 +2,9 @@ import joi from 'utils/notJoi'
 
 const schema = joi.number().positive().unsafe()
 
-export const sanitizeAmount = function (input: string) {
+export const sanitizeAmount = function (
+  input: string,
+): { error: string } | { value: string } {
   // If the user cleared the input, just set it to "0".
   if (!input) {
     return { value: '0' }

@@ -25,6 +25,7 @@ export const useAddTokenToWallet = function (options: Options) {
         await switchChainAsync({ chainId: token.chainId })
       }
       return watchAsset(
+        // @ts-expect-error walletClient is a different type, but it matches the Provider interface
         walletClient,
         address,
         {
@@ -33,7 +34,7 @@ export const useAddTokenToWallet = function (options: Options) {
           // token logos include the small Hemi logo, but wallets crop it.
           // Besides, many wallets add the chain logo anyways, so we're safe to
           // use the L1 logo version
-          logoURI: token.extensions.l1LogoURI,
+          logoURI: token.extensions?.l1LogoURI,
         },
         localStorage,
       )

@@ -31,7 +31,7 @@ export const useTotalStaked = function () {
   const isError = isTokenPricesError || isTotalStakedError
   const isPending = isLoadingTotalStaked || isLoadingPrices
 
-  const calculateTotalStake = () =>
+  const calculateTotalStake = (pricesData: Record<string, string>) =>
     totalPerToken
       .reduce(function (acc, { id, totalStaked }) {
         const token = getTokenByAddress(id, hemi.id)
@@ -43,7 +43,7 @@ export const useTotalStaked = function () {
         if (!token) {
           return acc
         }
-        const price = getTokenPrice(token, prices)
+        const price = getTokenPrice(token, pricesData)
         const amount = formatUnits(BigInt(totalStaked), token.decimals)
         return acc.plus(Big(amount).times(price))
       }, Big(0))
@@ -52,6 +52,7 @@ export const useTotalStaked = function () {
   return {
     isError,
     isPending,
-    totalStake: prices === undefined || isPending ? '0' : calculateTotalStake(),
+    totalStake:
+      prices === undefined || isPending ? '0' : calculateTotalStake(prices),
   }
 }

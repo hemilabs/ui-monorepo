@@ -251,6 +251,7 @@ export const createBitcoinSync = function ({
                   l1ChainId: l1Chain.id,
                   l1Token: btc.address,
                   l2ChainId: l2Chain.id,
+                  // @ts-expect-error btc has bridgeInfo defined
                   l2Token: btc.extensions.bridgeInfo[l2Chain.id].tokenAddress,
                   timestamp: bitcoinDeposit.status.blockTime
                     ? getBitcoinTimestamp(bitcoinDeposit.status.blockTime)

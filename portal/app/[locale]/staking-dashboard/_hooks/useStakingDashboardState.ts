@@ -81,9 +81,9 @@ function reducer(
 }
 
 type StakingDashboardFunctionEvents = {
-  [K in Actions['type']]: (
-    payload?: Extract<Actions, { type: K }>['payload'],
-  ) => void
+  [K in Actions['type']]: Extract<Actions, { type: K }> extends NoPayload
+    ? () => void
+    : (payload: Extract<Actions, { type: K }>['payload']) => void
 }
 
 export const useStakingDashboardState = function (): StakingDashboardState &
@@ -95,9 +95,9 @@ export const useStakingDashboardState = function (): StakingDashboardState &
   } as StakingDashboardState)
 
   const updateInput = useCallback(function (payload: UpdateInput['payload']) {
-    const { error, value } = sanitizeAmount(payload)
-    if (!error) {
-      dispatch({ payload: value, type: 'updateInput' })
+    const result = sanitizeAmount(payload)
+    if (!('error' in result)) {
+      dispatch({ payload: result.value, type: 'updateInput' })
     }
   }, [])
 

@@ -17,11 +17,11 @@ export const useEstimateStakeFees = function ({
   enabled?: boolean
   token: StakeToken
 }) {
-  const { address: forAccount, isConnected } = useAccount()
+  const { address: forAccount } = useAccount()
   const isNative = isNativeToken(token)
   const bridgeAddress = stakeManagerAddresses[token.chainId]
 
-  const data = isConnected
+  const data = forAccount
     ? isNative
       ? encodeStakeEth({ forAccount })
       : encodeStakeErc20({
@@ -33,7 +33,7 @@ export const useEstimateStakeFees = function ({
 
   const { data: gasUnits, isSuccess } = useEstimateGas({
     data,
-    query: { enabled: isConnected && enabled },
+    query: { enabled: forAccount && enabled },
     to: bridgeAddress,
     value: isNative ? amount : undefined,
   })

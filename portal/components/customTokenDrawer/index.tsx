@@ -28,10 +28,11 @@ import { AddPairToHemi } from './addPairToHemi'
 import { TokenSection } from './tokenSection'
 
 type Props = {
+  customTokenAddress: Address
   fromNetworkId: Chain['id']
   l1ChainId: Chain['id']
   l2ChainId: Chain['id']
-  onSelectToken(fromToken: Token, toToken: Token)
+  onSelectToken: (fromToken: Token, toToken: Token) => void
 }
 
 const canSubmit = ({
@@ -71,6 +72,7 @@ const getL2AddressValidity = function (
 }
 
 export const CustomTokenDrawer = function ({
+  customTokenAddress,
   fromNetworkId,
   l1ChainId,
   l2ChainId,
@@ -80,7 +82,7 @@ export const CustomTokenDrawer = function ({
   const fromChain = useChain(fromNetworkId) as Chain
   const isL2 = isL2Network(fromChain)
 
-  const [customTokenAddress, setCustomTokenAddress] = useCustomTokenAddress()
+  const [, setCustomTokenAddress] = useCustomTokenAddress()
   const queryClient = useQueryClient()
   const { addToken } = useUserTokenList()
   const [tunneledCustomTokenAddress, setTunneledCustomTokenAddress] =
@@ -137,7 +139,8 @@ export const CustomTokenDrawer = function ({
       return
     }
 
-    const { l1Token, ...tokenData } = l2customToken
+    // canSubmit ensures l2CustomToken is defined
+    const { l1Token, ...tokenData } = l2customToken!
     // the token list is saved with chainId from Hemi, and then the opposite is generated
     // from the tunnel info. See https://github.com/hemilabs/token-list/blob/master/src/hemi.tokenlist.json
     // for examples
@@ -150,13 +153,14 @@ export const CustomTokenDrawer = function ({
           },
         },
       },
-    } satisfies EvmToken
+    } as EvmToken
 
     addToken(l2TokenAdded)
 
+    // it exists, it's been created above
     const l1TokenAdded = getRemoteTokens(l2TokenAdded).find(
       token => token.chainId === l1ChainId,
-    )
+    )!
     // however, as we close the drawer and auto-select this token to tunnel
     // chances are that the state from local storage is not synced
     // so for this particular scenario we will use the token from memory

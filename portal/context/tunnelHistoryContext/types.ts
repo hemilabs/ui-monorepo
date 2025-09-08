@@ -5,11 +5,7 @@ import {
   type TunnelOperation,
   type WithdrawTunnelOperation,
 } from 'types/tunnel'
-import {
-  type DefinedFields,
-  type NoPayload,
-  type Payload,
-} from 'utils/typeUtilities'
+import { type NoPayload, type Payload } from 'utils/typeUtilities'
 
 export type BlockSyncType = {
   chunkIndex: number
@@ -18,7 +14,7 @@ export type BlockSyncType = {
 
 export type TransactionListSyncType = {
   fromKnownTx: BtcTransaction | undefined
-  hasSyncToMinTx: boolean
+  hasSyncToMinTx: boolean | undefined
   iterationVault: number | undefined
   toKnownTx: BtcTransaction | undefined
   txPivot: BtcTransaction | undefined
@@ -58,7 +54,7 @@ export type SyncContentPayload<
 > = {
   chainId: RemoteChain['id']
   content: TOperation[]
-} & DefinedFields<TSyncType>
+} & TSyncType
 
 type SyncDepositsAction<
   TOperation extends DepositTunnelOperation = DepositTunnelOperation,

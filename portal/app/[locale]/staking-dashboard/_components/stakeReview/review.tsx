@@ -87,9 +87,16 @@ export const Review = function ({ onClose }: Props) {
       StakingDashboardStatus.APPROVAL_TX_PENDING,
     ].includes(stakingStatus)
 
-    const statusMap = {
+    const statusMap: Partial<Record<StakingDashboardStatus, ProgressStatus>> = {
       [StakingDashboardStatus.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
       [StakingDashboardStatus.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
+    }
+
+    const getStatus = function () {
+      if (stakingStatus === undefined) {
+        return ProgressStatus.COMPLETED
+      }
+      return statusMap[stakingStatus] ?? ProgressStatus.COMPLETED
     }
 
     return {
@@ -106,7 +113,7 @@ export const Review = function ({ onClose }: Props) {
         isError: isApprovalTokenGasFeesError,
         show: showFees,
       }),
-      status: statusMap[stakingStatus] ?? ProgressStatus.COMPLETED,
+      status: getStatus(),
       txHash: stakingDashboardOperation?.approvalTxHash,
     }
   }

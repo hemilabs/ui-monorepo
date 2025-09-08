@@ -11,10 +11,10 @@ export const useUmami = function () {
     return {
       enabled,
       track: umami.track,
-    }
+    } as const
   }
 
   // Return this separately so track key is not defined
   // improving type inference
-  return { enabled: false }
+  return { enabled: false } as const
 }

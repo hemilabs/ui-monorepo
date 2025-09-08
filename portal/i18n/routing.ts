@@ -7,7 +7,11 @@ export type Locale = (typeof locales)[number]
 
 export function getLocalizedLocaleName(locale: Locale) {
   const displayNames = new Intl.DisplayNames([locale], { type: 'language' })
-  return displayNames.of(locale)
+  const localeName = displayNames.of(locale)
+  if (!localeName) {
+    throw new Error(`Language name not found for locale: ${locale}`)
+  }
+  return localeName
 }
 
 export const routing = defineRouting({

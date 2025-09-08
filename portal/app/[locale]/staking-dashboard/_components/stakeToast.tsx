@@ -16,7 +16,7 @@ export const StakeToast = function ({ transactionHash }: Props) {
       description={t('here-is-your-stake-tx')}
       title={t('stake-successful')}
       tx={{
-        href: `${hemi.blockExplorers.default.url}/tx/${transactionHash}`,
+        href: `${hemi.blockExplorers?.default.url}/tx/${transactionHash}`,
         label: formatEvmHash(transactionHash),
       }}
     />

@@ -2,7 +2,7 @@ import { validateInput } from 'components/tokenInput/utils'
 import { RemoteChain } from 'types/chain'
 
 type CanSubmit = Parameters<typeof validateInput>[0] & {
-  chainId: RemoteChain['id']
+  chainId: RemoteChain['id'] | undefined
   expectedChain: RemoteChain['name']
 }
 

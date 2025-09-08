@@ -50,11 +50,11 @@ export const isStakeToken = (token: Token): token is StakeToken =>
 export const isTunnelToken = (token: Token) => token.extensions?.tunnel === true
 
 export const tunnelsThroughPartners = (token: Token) =>
-  token.extensions?.tunnelPartners?.length > 0
+  (token.extensions?.tunnelPartners?.length ?? 0) > 0
 
 export const getTokenPrice = function (
   token: Token,
-  prices: Record<string, string>,
+  prices: Record<string, string> | undefined,
 ) {
   const priceSymbol = (
     token.extensions?.priceSymbol ?? token.symbol

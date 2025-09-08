@@ -32,7 +32,11 @@ type Props = {
   txHash?: string
 }
 
-const Fees = ({ amount, isError = false, token }: Props['fees']) => (
+const Fees = ({
+  amount,
+  isError = false,
+  token,
+}: NonNullable<Props['fees']>) => (
   <>
     <FeesIcon />
     <div className="ml-1 text-neutral-500">

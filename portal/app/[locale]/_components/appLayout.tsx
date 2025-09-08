@@ -5,6 +5,7 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import React, {
   Dispatch,
+  MouseEventHandler,
   SetStateAction,
   Suspense,
   useEffect,
@@ -21,7 +22,11 @@ type Props = {
   children: React.ReactNode
 }
 
-const Backdrop = ({ onClick }) => (
+const Backdrop = ({
+  onClick,
+}: {
+  onClick: MouseEventHandler<HTMLDivElement>
+}) => (
   <div
     className="absolute left-0 top-0 z-20
     h-screen w-screen bg-gradient-to-b

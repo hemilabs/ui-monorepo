@@ -26,7 +26,7 @@ function usePageVisitTracker(claimGroupId: number) {
   const { address } = useAccount()
 
   const [hasVisited, setHasVisited] = useLocalStorageState(
-    `portal.visited-claim-page-${address.toLowerCase()}-claim-group-${claimGroupId}`,
+    `portal.visited-claim-page-${address!.toLowerCase()}-claim-group-${claimGroupId}`,
     {
       defaultValue: false,
     },
@@ -106,7 +106,12 @@ export const ClaimDetails = function ({ eligibility }: Props) {
   const isStandardLock = () => transaction?.lockupMonths === 6
 
   const getUnlockedAmount = function () {
-    if (isLoadingTransaction || isLoadingClaimConfiguration) {
+    if (
+      !claimConfig ||
+      !transaction ||
+      isLoadingTransaction ||
+      isLoadingClaimConfiguration
+    ) {
       return loadingSkeleton
     }
 
@@ -171,7 +176,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
   }
 
   const getMultiplierRewards = function () {
-    if (isLoadingTransaction) {
+    if (isLoadingTransaction || !transaction) {
       return loadingSkeleton
     }
     if (isStandardLock()) {
@@ -233,7 +238,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
           <Row>
             <Label>{t('claim-name')}</Label>
             <Value>
-              {isLoadingTransaction
+              {isLoadingTransaction || !transaction
                 ? loadingSkeleton
                 : t(`claim-options.claim-title-${transaction.lockupMonths}`)}
             </Value>

@@ -75,7 +75,7 @@ export const Strategy = function ({
   }
 
   const renderUnlockedAmount = function () {
-    if (isLoadingBonus) {
+    if (isLoadingBonus || !data) {
       return <Skeleton className="h-8 w-32" />
     }
     const { bonus: bonusPercentage, lockupRatio } = data
@@ -97,7 +97,7 @@ export const Strategy = function ({
   }
 
   const renderStakedAmount = function (skeleton: ReactNode) {
-    if (isLoadingBonus) {
+    if (isLoadingBonus || !data) {
       return <>{skeleton}</>
     }
 
@@ -115,7 +115,7 @@ export const Strategy = function ({
   }
 
   const renderBonus = function () {
-    if (isLoadingBonus) {
+    if (isLoadingBonus || !data) {
       return <Skeleton className="h-3 w-10" />
     }
     const { bonus: bonusPercentage } = data

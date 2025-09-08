@@ -174,7 +174,7 @@ export const List = function ({
         hasAddedYourTokensHeader && yourTokensHeaderHeight,
         hasAddedAllTokensHeader && allTokensHeaderHeight,
         hasAddedCustomTokensHeader && customTokensHeaderHeight,
-      ].reduce((acc, val) => acc + (val || 0), 0)
+      ].reduce((acc: number, val) => acc + (val || 0), 0)
 
     for (let rowIndex = 0; rowIndex < virtualItems.length; rowIndex++) {
       const virtualItem = virtualItems[rowIndex]

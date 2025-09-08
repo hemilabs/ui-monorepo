@@ -34,7 +34,8 @@ export const SubmitWhenConnectedToChain = function ({
   const { status } = useAccount()
   const { switchChain } = useSwitchChain()
   const connectedToChain = useIsConnectedToExpectedNetwork(chainId)
-  const targetChain = useChain(chainId)
+  // we're setting the target chain, so it's a chain known to us and defined
+  const targetChain = useChain(chainId)!
 
   if (walletIsConnected(status)) {
     return (
@@ -46,7 +47,7 @@ export const SubmitWhenConnectedToChain = function ({
             size={submitButtonSize}
             type="button"
           >
-            {t('common.connect-to-network', { network: targetChain?.name })}
+            {t('common.connect-to-network', { network: targetChain.name })}
           </Button>
         )}
       </>

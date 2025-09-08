@@ -22,9 +22,9 @@ type Vout = {
   value: number
 }
 
-export type MempoolJsBitcoinTransaction = {
+type UnparsedMempoolJsBitcoinTransaction = {
   status: TransactionStatus
-  txId: string
+  txid: string
   vin: {
     prevout: {
       scriptpubkeyAddress: string
@@ -33,10 +33,21 @@ export type MempoolJsBitcoinTransaction = {
   vout: Vout[]
 }
 
-type Utxo = {
-  status: TransactionStatus
+export type MempoolJsBitcoinTransaction = Omit<
+  UnparsedMempoolJsBitcoinTransaction,
+  'txid'
+> & {
   txId: string
+}
+
+type UnparsedUtxo = {
+  status: TransactionStatus
+  txid: string
   value: Satoshis
+}
+
+export type Utxo = Omit<UnparsedUtxo, 'txid'> & {
+  txId: string
 }
 
 export type TransactionReceipt = {
@@ -74,7 +85,7 @@ export const createBtcApi = function (network: NetworkType) {
       bitcoin =>
         bitcoin.addresses
           .getAddressTxs({ address, after_txid: queryString?.afterTxId })
-          .then(txs =>
+          .then((txs: UnparsedMempoolJsBitcoinTransaction[]) =>
             txs.map(tx => toCamelCase({ ...tx, txId: tx.txid })),
           ) as Promise<MempoolJsBitcoinTransaction[]>,
     )
@@ -85,7 +96,7 @@ export const createBtcApi = function (network: NetworkType) {
       bitcoin =>
         bitcoin.addresses
           .getAddressTxsUtxo({ address })
-          .then(utxos =>
+          .then((utxos: UnparsedUtxo[]) =>
             utxos.map(utxo => toCamelCase({ ...utxo, txId: utxo.txid })),
           ) as Promise<Utxo[]>,
     )

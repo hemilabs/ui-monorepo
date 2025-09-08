@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { type Account } from 'btc-wallet/unisat'
-import { createBtcApi } from 'utils/btcApi'
+import { createBtcApi, type Utxo } from 'utils/btcApi'
 
 import { useNetworkType } from './useNetworkType'
 
-const btcInputsSize = parseInt(process.env.NEXT_PUBLIC_BTC_INPUTS_SIZE)
-const btcOutputsSize = parseInt(process.env.NEXT_PUBLIC_BTC_OUTPUTS_SIZE)
+const btcInputsSize = parseInt(process.env.NEXT_PUBLIC_BTC_INPUTS_SIZE!)
+const btcOutputsSize = parseInt(process.env.NEXT_PUBLIC_BTC_OUTPUTS_SIZE!)
 // the value sent + OP_RETURN with hemi address
 const expectedOutputs = 2
 
@@ -23,11 +23,11 @@ export const useGetFeePrices = function () {
   }
 }
 
-const useGetUtxos = function (account: Account) {
+const useGetUtxos = function (account: Account | undefined) {
   const [networkType] = useNetworkType()
   const { data: utxos, ...rest } = useQuery({
     enabled: !!account,
-    queryFn: () => createBtcApi(networkType).getAddressTxsUtxo(account),
+    queryFn: () => createBtcApi(networkType).getAddressTxsUtxo(account!),
     queryKey: ['btc-utxos', account, networkType],
   })
   return {
@@ -36,10 +36,10 @@ const useGetUtxos = function (account: Account) {
   }
 }
 
-const calculateTxSize = utxos =>
+const calculateTxSize = (utxos: Utxo[]) =>
   expectedOutputs * btcOutputsSize + utxos.length * btcInputsSize
 
-export const useEstimateBtcFees = function (from: Account) {
+export const useEstimateBtcFees = function (from: Account | undefined) {
   const { feePrices, isLoading: isLoadingFeePrices } = useGetFeePrices()
   const { isLoading: isLoadingUtxos, utxos } = useGetUtxos(from)
 

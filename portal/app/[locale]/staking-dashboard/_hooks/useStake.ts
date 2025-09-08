@@ -75,12 +75,15 @@ export const useStake = function ({
 
   return useMutation({
     mutationFn: function runCreateLock() {
+      if (!address) {
+        throw new Error('No account connected')
+      }
       const { emitter, promise } = createLock({
         account: address,
         amount,
         approvalAmount: amount,
         lockDurationInSeconds: daysToSeconds(lockupDays),
-        walletClient: hemiWalletClient,
+        walletClient: hemiWalletClient!,
       })
 
       emitter.on('user-signed-approve', function (approvalTxHash) {
@@ -148,10 +151,10 @@ export const useStake = function ({
           transferable: true,
         }
 
-        queryClient.setQueryData(stakingPositionQueryKey, old => [
-          newPosition,
-          ...((old as StakingPosition[] | undefined) ?? []),
-        ])
+        queryClient.setQueryData(
+          stakingPositionQueryKey,
+          (old: StakingPosition[] | undefined = []) => [newPosition, ...old],
+        )
 
         // fees
         updateNativeBalanceAfterFees(receipt)

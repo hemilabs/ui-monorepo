@@ -9,7 +9,7 @@ export const getBitcoinCustodyAddress = pMemoize(
     hemiClient.getBitcoinCustodyAddress({ vaultAddress }),
   {
     resolver: (hemiClient, vaultAddress) =>
-      `${hemiClient.chain.id}_${vaultAddress}`,
+      `${hemiClient.chain?.id}_${vaultAddress}`,
   },
 )
 
@@ -19,7 +19,7 @@ export const getBitcoinVaultGracePeriod = pMemoize(
     hemiClient.getBitcoinWithdrawalGracePeriod({ vaultAddress }),
   {
     resolver: (hemiClient, vaultAddress) =>
-      `${hemiClient.chain.id}_${vaultAddress}`,
+      `${hemiClient.chain?.id}_${vaultAddress}`,
   },
 )
 
@@ -28,7 +28,7 @@ export const getBitcoinVaultStateAddress = pMemoize(
     hemiClient.getBitcoinVaultStateAddress({ vaultAddress }),
   {
     resolver: (hemiClient, vaultAddress) =>
-      `${hemiClient.chain.id}_${vaultAddress}`,
+      `${hemiClient.chain?.id}_${vaultAddress}`,
   },
 )
 
@@ -37,7 +37,7 @@ export const getVaultAddressByIndex = pMemoize(
     hemiClient.getVaultByIndex({ vaultIndex }),
   {
     resolver: (hemiClient, vaultIndex) =>
-      `${hemiClient.chain.id}_${vaultIndex}`,
+      `${hemiClient.chain?.id}_${vaultIndex}`,
   },
 )
 
@@ -54,5 +54,5 @@ export const getVaultIndexByBTCAddress = pMemoize(
 // Memoizing it as it is unlikely to change
 export const getBitcoinKitAddress = pMemoize(
   (hemiClient: HemiPublicClient) => hemiClient.getBitcoinKitAddress(),
-  { resolver: hemiClient => hemiClient.chain.id },
+  { resolver: hemiClient => hemiClient.chain?.id },
 )

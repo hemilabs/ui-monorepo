@@ -431,8 +431,8 @@ export const Table = function ({
         width < 1024
           ? ['action', 'status'].concat(
               columns
-                .filter(c => !['action', 'status'].includes(c.id))
-                .map(c => c.id),
+                .filter(c => !['action', 'status'].includes(c.id!))
+                .map(c => c.id!),
             )
           : undefined,
     },

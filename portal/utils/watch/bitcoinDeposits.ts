@@ -41,7 +41,8 @@ export const watchDepositOnBitcoin = async function (
       deposit.transactionHash,
     )
     updates.blockNumber = receipt.status.blockHeight
-    updates.timestamp = getBitcoinTimestamp(receipt.status.blockTime)
+    // if receipt.status.confirmed is true, blockTime is defined
+    updates.timestamp = getBitcoinTimestamp(receipt.status.blockTime!)
   }
 
   if (!hasKeys(updates)) {

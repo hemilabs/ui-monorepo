@@ -29,7 +29,7 @@ export const useL2Token = function ({
         address: address as Address,
         chainId,
         config,
-      }) satisfies Promise<L2Token>,
+      }) as Promise<L2Token>,
     queryKey: ['l2-erc20-token-complete', address, chainId],
   })
 }

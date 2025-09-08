@@ -60,6 +60,8 @@ const WaitTime = function ({ timeInSeconds }: WaitTimeProps) {
   )
 }
 
+const WaitSkeleton = () => <Skeleton className="w-12" />
+
 export const EvmWithdrawalWaitTimeToProve = function ({
   withdrawal,
 }: WithdrawalProps) {
@@ -68,13 +70,13 @@ export const EvmWithdrawalWaitTimeToProve = function ({
 
   const enabledStatus = MessageStatus.STATE_ROOT_NOT_PUBLISHED
 
-  const { data, isError, isPending } = useEvmWithdrawTimeToProve({
+  const { data, isError } = useEvmWithdrawTimeToProve({
     enabledStatus,
     withdrawal,
   })
 
-  if (withdrawal.status === enabledStatus && isPending) {
-    return <Skeleton className="w-12" />
+  if (withdrawal.status === enabledStatus && data === undefined) {
+    return <WaitSkeleton />
   }
 
   if (isError || withdrawal.status < enabledStatus) {
@@ -93,6 +95,10 @@ export const EvmWithdrawalWaitTimeToProve = function ({
     return <span> {tCommon('waiting-completed')} </span>
   }
 
+  if (data === undefined) {
+    return <WaitSkeleton />
+  }
+
   return <WaitTime timeInSeconds={data} />
 }
 
@@ -104,13 +110,13 @@ export const EvmWithdrawalWaitTimeToFinalize = function ({
 
   const enabledStatus = MessageStatus.IN_CHALLENGE_PERIOD
 
-  const { data, isError, isPending } = useEvmWithdrawTimeToFinalize({
+  const { data, isError } = useEvmWithdrawTimeToFinalize({
     enabledStatus,
     withdrawal,
   })
 
-  if (withdrawal.status === enabledStatus && isPending) {
-    return <Skeleton className="w-12" />
+  if (withdrawal.status === enabledStatus && data === undefined) {
+    return <WaitSkeleton />
   }
 
   if (isError || withdrawal.status < enabledStatus) {
@@ -127,6 +133,10 @@ export const EvmWithdrawalWaitTimeToFinalize = function ({
 
   if (withdrawal.status >= MessageStatus.READY_FOR_RELAY) {
     return <span> {tCommon('waiting-completed')} </span>
+  }
+
+  if (data === undefined) {
+    return <WaitSkeleton />
   }
 
   return <WaitTime timeInSeconds={data} />

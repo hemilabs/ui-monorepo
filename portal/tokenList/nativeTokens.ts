@@ -95,6 +95,10 @@ const addBitcoinTokens = function ({
     t => t.chainId === hemiChain.id && t.address === hemiBtcAddress,
   )
 
+  if (!btcToken) {
+    throw new Error(`Failed to find BTC token for chain ${hemiChain.name}`)
+  }
+
   nativeTokens.push({
     address: btcChain.nativeCurrency.symbol,
     chainId: btcChain.id,

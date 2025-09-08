@@ -16,7 +16,7 @@ export const ConnectEvmWallet = function ({
 
   const onClick = function () {
     track?.('evm connect')
-    openConnectModal()
+    openConnectModal?.()
   }
 
   return (

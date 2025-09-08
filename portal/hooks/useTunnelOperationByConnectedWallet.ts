@@ -17,7 +17,7 @@ export const useTunnelOperationByConnectedWallet = function () {
 
   const isSupported = useChainIsSupported(evmChainId)
 
-  if (!isSupported) {
+  if (!evmChainId || !isSupported) {
     return { pathname: '/tunnel' }
   }
 

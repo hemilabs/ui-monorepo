@@ -36,7 +36,7 @@ export const getRemoteTokens = function (token: EvmToken) {
   }
   return Object.keys(token.extensions!.bridgeInfo!).map(l1ChainId => ({
     ...token,
-    address: token.extensions!.bridgeInfo![l1ChainId].tokenAddress,
+    address: token.extensions!.bridgeInfo![l1ChainId].tokenAddress!,
     chainId: Number(l1ChainId),
     extensions: {
       bridgeInfo: {
@@ -57,7 +57,7 @@ export const getRemoteTokens = function (token: EvmToken) {
   })) satisfies EvmToken[]
 }
 
-const hemiTokens: Token[] = (hemilabsTokenList.tokens as EvmToken[]).filter(
+const hemiTokens: EvmToken[] = (hemilabsTokenList.tokens as EvmToken[]).filter(
   t => t.chainId === hemiMainnet.id || t.chainId === hemiTestnet.id,
 )
 

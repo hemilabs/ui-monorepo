@@ -68,7 +68,7 @@ const getWithdrawerBitcoinAddress = ({
       }),
     )
     // the bitcoin address can be retrieve from the input data call - it's the 2nd parameter
-    .then(args => args[1] as string)
+    .then(({ args }) => args[1])
 
 const isValidDeposit = (
   hemiAddress: Address,
@@ -252,9 +252,9 @@ export const createBitcoinSync = function ({
                   l1Token: btc.address,
                   l2ChainId: l2Chain.id,
                   l2Token: btc.extensions.bridgeInfo[l2Chain.id].tokenAddress,
-                  timestamp: getBitcoinTimestamp(
-                    bitcoinDeposit.status.blockTime,
-                  ),
+                  timestamp: bitcoinDeposit.status.blockTime
+                    ? getBitcoinTimestamp(bitcoinDeposit.status.blockTime)
+                    : undefined,
                   to: bitcoinCustodyAddress,
                   transactionHash: bitcoinDeposit.txId,
                 }
@@ -318,7 +318,8 @@ export const createBitcoinSync = function ({
             ? depositsSyncInfo.txPivot ?? depositsSyncInfo.fromKnownTx
             : undefined,
         processTransactions,
-        txIdGetter: transactions => transactions.at(-1).txId,
+        // caller of this function checks transactions is .length > 0, so there will always be a last option
+        txIdGetter: transactions => transactions.at(-1)!.txId,
       }).run()
 
       debug('Finished processing vault %s', vaultIndex)

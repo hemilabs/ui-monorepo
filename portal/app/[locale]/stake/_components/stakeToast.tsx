@@ -14,12 +14,12 @@ type Props = {
 }
 
 export const StakeToast = function ({ chainId, txHash, type }: Props) {
-  const blockExplorer = useChain(chainId).blockExplorers.default
+  const blockExplorer = useChain(chainId)?.blockExplorers?.default
 
   const t = useTranslations('stake-page.toast')
 
   const tx = {
-    href: `${blockExplorer.url}/tx/${txHash}`,
+    href: `${blockExplorer?.url}/tx/${txHash}`,
     label: formatEvmHash(txHash),
   }
 

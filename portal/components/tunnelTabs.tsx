@@ -22,7 +22,7 @@ const UI = function ({
   onTabClick,
   tunnelHref,
 }: {
-  onTabClick?: (eventName?: AnalyticsEvent) => void
+  onTabClick?: ((eventName: AnalyticsEvent) => void) | undefined
   tunnelHref: UrlObject | string
 }) {
   const pathname = usePathnameWithoutLocale()

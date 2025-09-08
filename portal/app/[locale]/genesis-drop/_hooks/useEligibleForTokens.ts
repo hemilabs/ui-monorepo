@@ -14,7 +14,7 @@ export const useEligibleForTokens = function () {
   return useQuery({
     enabled: !!address,
     queryFn: () =>
-      fetch(`${portalApiUrl}/claims/${hemi.id}/${toChecksumAddress(address)}`)
+      fetch(`${portalApiUrl}/claims/${hemi.id}/${toChecksumAddress(address!)}`)
         .catch(() => ({
           amount: 0,
         }))

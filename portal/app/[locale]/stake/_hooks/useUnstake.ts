@@ -47,6 +47,9 @@ export const useUnstake = function (token: StakeToken) {
 
   const { mutate } = useMutation({
     async mutationFn({ amountInput }: { amountInput: string }) {
+      if (!address) {
+        throw new Error('Not connected')
+      }
       setIsSubmitting(true)
       track?.('stake - unstake started')
 

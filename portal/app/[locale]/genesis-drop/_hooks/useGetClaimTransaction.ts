@@ -19,13 +19,13 @@ export const getClaimTransactionQueryKey = ({
   chainId,
   claimGroupId,
 }: {
-  address: Address
+  address: Address | undefined
   chainId: Chain['id']
   claimGroupId: number
 }) => [
   'hemi-token-claim-transaction',
   chainId.toString(),
-  address.toString(),
+  address?.toString(),
   claimGroupId,
 ]
 

@@ -70,7 +70,7 @@ export const useStake = function (token: StakeToken) {
 
       await stake({
         amountInput,
-        forAccount: address,
+        forAccount: address!,
         hemiPublicClient,
         hemiWalletClient,
         onStake: () => setStakeStatus(StakeStatusEnum.STAKE_TX_PENDING),

@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { EvmToken } from 'types/token'
 import { isNativeAddress } from 'utils/nativeToken'
 import { type Address, erc20Abi, isAddress } from 'viem'
@@ -37,7 +36,7 @@ export const useTokenBalance = function (
   const { data, refetch, ...rest } = useReadContract({
     abi: erc20Abi,
     address: tokenAddress as Address,
-    args: useMemo(() => [address], [address]),
+    args: address ? [address] : undefined,
     chainId,
     functionName: 'balanceOf',
     query: {

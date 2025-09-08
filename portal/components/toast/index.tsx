@@ -10,7 +10,7 @@ type Props = {
   autoCloseMs?: number
   description: string
   goTo?: {
-    href: ComponentProps<typeof ExternalLink>['href']
+    href: ComponentProps<typeof Link>['href']
     label: string
   }
   tx: {

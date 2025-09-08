@@ -232,7 +232,7 @@ const StakeAssetsTableImp = function ({ containerRef, data, loading }: Props) {
         // and keep original order in larger devices
         width < 1024
           ? ['action'].concat(
-              columns.map(c => c.id).filter(id => id !== 'action'),
+              columns.map(c => c.id!).filter(id => id !== 'action'),
             )
           : undefined,
     },

@@ -13,7 +13,7 @@ export const ConnectWallet = function () {
   const { symbol } = useHemiToken()
 
   const onClick = function () {
-    openConnectModal()
+    openConnectModal?.()
     track?.('evm connect')
   }
 

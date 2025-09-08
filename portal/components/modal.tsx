@@ -32,6 +32,13 @@ export const Modal = function ({
     }
   }, modalRef)
 
+  const modalContainer =
+    container ?? document.getElementById('app-layout-container')
+
+  if (!modalContainer) {
+    return null
+  }
+
   return ReactDOM.createPortal(
     <>
       <OverlayComponent />
@@ -61,6 +68,6 @@ export const Modal = function ({
         </div>
       </dialog>
     </>,
-    container ?? document.getElementById('app-layout-container'),
+    modalContainer,
   )
 }

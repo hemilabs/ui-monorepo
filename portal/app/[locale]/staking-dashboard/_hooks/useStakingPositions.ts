@@ -29,7 +29,7 @@ export const getStakingPositionsQueryKey = ({
 
 export const useStakingPositions = function (
   options: Omit<
-    UseQueryOptions<StakingPosition[] | null>,
+    UseQueryOptions<StakingPosition[]>,
     'enabled' | 'queryFn' | 'queryKey'
   > = {},
 ) {

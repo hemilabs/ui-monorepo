@@ -1,8 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
+import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { getBitcoinDepositFee, getBitcoinWithdrawalFee } from 'utils/hemi'
 
 export const useBtcDepositTunnelFees = function (amount: bigint) {
+  const hemi = useHemi()
   const hemiClient = useHemiClient()
 
   const { data: btcDepositFee, ...rest } = useQuery({
@@ -12,7 +14,7 @@ export const useBtcDepositTunnelFees = function (amount: bigint) {
       'btc-tunnel-deposit-fee',
       // queryKeys are serialized, and bigints are not automatically serialized.
       amount.toString(),
-      hemiClient.chain.id,
+      hemi.id,
     ],
   })
 
@@ -23,6 +25,7 @@ export const useBtcDepositTunnelFees = function (amount: bigint) {
 }
 
 export const useBtcWithdrawalTunnelFees = function (amount: bigint) {
+  const hemi = useHemi()
   const hemiClient = useHemiClient()
 
   const { data: btcWithdrawalFee, ...rest } = useQuery({
@@ -32,7 +35,7 @@ export const useBtcWithdrawalTunnelFees = function (amount: bigint) {
       'btc-tunnel-withdrawal-fee',
       // queryKeys are serialized, and bigints are not automatically serialized.
       amount.toString(),
-      hemiClient.chain.id,
+      hemi.id,
     ],
   })
 

@@ -1,7 +1,7 @@
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useNetworkType } from 'hooks/useNetworkType'
 import Image from 'next/image'
-import { Token } from 'types/token'
+import { type Token } from 'types/token'
 import { isBtcNetworkId } from 'utils/chain'
 import { getNativeToken } from 'utils/nativeToken'
 
@@ -33,7 +33,7 @@ export function TokenLogo({ size, token, version = 'default' }: Props) {
   // On Hemi Sepolia (testnet), both BTC and tBTC use the preset logo.
   const isTestnet = networkType === 'testnet'
   const isHemiBtc =
-    token.extensions.bridgeInfo?.[bitcoinToken.chainId]?.tokenAddress ===
+    token.extensions?.bridgeInfo?.[bitcoinToken.chainId]?.tokenAddress ===
     bitcoinToken.address
   if (isBtcNetworkId(token.chainId) || (isTestnet && isHemiBtc)) {
     return (

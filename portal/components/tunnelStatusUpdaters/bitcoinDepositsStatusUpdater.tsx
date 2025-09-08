@@ -9,6 +9,7 @@ import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
 import { BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
+import { isPendingOperation } from 'utils/tunnel'
 import { hasKeys } from 'utils/utilities'
 import { Hash } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
@@ -117,6 +118,11 @@ const WatchBtcDeposit = function ({
   return null
 }
 
+const missingInformation = (deposit: BtcDepositOperation) =>
+  !deposit.blockNumber ||
+  !deposit.timestamp ||
+  !deposit.confirmationTransactionHash
+
 // See https://github.com/vercel/next.js/issues/31009#issuecomment-11463441611
 // and https://github.com/vercel/next.js/issues/31009#issuecomment-1338645354
 const getWorker = () =>
@@ -136,15 +142,8 @@ export const BitcoinDepositsStatusUpdater = function () {
   // Here, btc transactions have not been confirmed, so we must check it
   // in the bitcoin blockchain
   const depositsToWatch = deposits
-    .filter(deposit =>
-      [
-        // Unconfirmed btc transactions, to be watched  in the bitcoin blockchain
-        BtcDepositStatus.BTC_TX_PENDING,
-        // Btc transactions on Bitcoin confirmed, to be watched in the hemi blockchain
-        BtcDepositStatus.BTC_TX_CONFIRMED,
-        BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
-        BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING,
-      ].includes(deposit.status),
+    .filter(
+      deposit => isPendingOperation(deposit) || missingInformation(deposit),
     )
     .sort(byTimestampDesc)
 

@@ -81,7 +81,7 @@ const ReviewContent = function ({
       BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
       BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED,
       BtcDepositStatus.BTC_DEPOSITED_MANUALLY,
-    ].includes(deposit.status) || deposit.confirmationTransactionHash
+    ].includes(deposit.status)
 
   const steps: StepPropsWithoutPosition[] = []
 
@@ -152,7 +152,9 @@ const ReviewContent = function ({
           label={t('get-your-funds-on', { networkName: l2chain.name })}
         />
       ),
+      explorerChainId: deposit.l2ChainId,
       status: statusMap[depositStatus] ?? ProgressStatus.NOT_READY,
+      txHash: deposit.confirmationTransactionHash,
     }
   }
 

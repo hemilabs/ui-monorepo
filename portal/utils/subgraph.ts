@@ -1,15 +1,15 @@
 import fetch from 'fetch-plus-plus'
-import {
+import type {
   EvmDepositOperation,
   ToBtcWithdrawOperation,
   ToEvmWithdrawOperation,
 } from 'types/tunnel'
 import {
   encodeAbiParameters,
-  Hash,
+  type Hash,
   keccak256,
   parseAbiParameters,
-  TransactionReceipt,
+  type TransactionReceipt,
   type Address,
   type Chain,
 } from 'viem'
@@ -185,4 +185,25 @@ export const getWithdrawalProofClaimTxs = function (
     id: string
     proveTxHash: Hash | null
   }>(`${url}/hashedWithdrawals/${hashWithdrawal()}`)
+}
+
+/**
+ * Retrieves BTC deposit information by transaction hash
+ * @param params Parameters of the call.
+ * @param params.chainId Hemi chain Id
+ * @param params.depositTxId The Bitcoin transaction ID to search for
+ * @returns The BTC deposit operation or null if not found
+ */
+export const getBtcDepositInfo = async function ({
+  chainId,
+  depositTxId,
+}: {
+  chainId: Chain['id']
+  depositTxId: string
+}) {
+  const url = getSubgraphBaseUrl(chainId)
+
+  return request<{ netSatsAfterFee: string; transactionHash: Hash } | null>(
+    `${url}/deposits/${depositTxId}/btc`,
+  ).catch(() => null)
 }

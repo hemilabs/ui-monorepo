@@ -81,7 +81,7 @@ const whitelistTunnel = function (hemiChain: Chain, addresses: string[]) {
   const l1Addresses = erc20Tokens
     .map(
       address =>
-        // @ts-expect-error it fails. to understand sourceId is a key of bridgeInfo but it works
+        // @ts-expect-error it fails to understand sourceId is a key of bridgeInfo but it works
         hemilabsTokenList.tokens.find(
           t => t.chainId === hemiChain.id && t.address === address,
         )?.extensions?.bridgeInfo?.[hemiChain.sourceId!]

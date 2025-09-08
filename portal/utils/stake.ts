@@ -81,10 +81,6 @@ const validateStakeOperation = async function ({
   forAccount: Address
   hemiPublicClient: HemiPublicClient
 } & Pick<CanSubmit, 'amountInput' | 't' | 'token'>) {
-  if (!hemiPublicClient) {
-    throw new Error('Hemi client not initialized')
-  }
-
   const balance = isNativeToken(token)
     ? await hemiPublicClient.getBalance({
         address: forAccount,

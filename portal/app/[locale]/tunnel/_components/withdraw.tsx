@@ -81,9 +81,8 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
     updateFromInput,
   } = state
 
-  const { btcAddress, btcWalletStatus, evmChainId, evmWalletStatus } =
-    useAccounts()
-  const fromChain = useChain(fromNetworkId)
+  const { btcAddress, btcWalletStatus, evmWalletStatus } = useAccounts()
+  const fromChain = useChain(fromNetworkId)!
 
   const { isPending: isLoadingMinWithdrawalSats, minWithdrawalFormattedSats } =
     useMinWithdrawalSats(fromToken)
@@ -196,7 +195,6 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
       amount,
       btcAddress,
       enabled: feeEstimationEnabled,
-      l2ChainId: evmChainId,
     })
 
   const gas = {
@@ -300,7 +298,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
 
   const operatesNativeToken = isNativeToken(fromToken)
 
-  const fromChain = useChain(fromNetworkId)
+  const fromChain = useChain(fromNetworkId)!
 
   const {
     balance: walletNativeTokenBalance,

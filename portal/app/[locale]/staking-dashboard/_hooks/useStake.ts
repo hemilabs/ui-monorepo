@@ -133,7 +133,11 @@ export const useStake = function ({
         })
 
         const { blockNumber, transactionHash } = receipt
-        const { lockDuration, tokenId, ts } = getLockEvent(receipt)
+        const lockEvent = getLockEvent(receipt)
+        if (!lockEvent) {
+          throw new Error('No lock event found in transaction receipt')
+        }
+        const { lockDuration, tokenId, ts } = lockEvent
 
         const newPosition: StakingPosition = {
           amount,

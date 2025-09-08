@@ -20,7 +20,7 @@ export const UnstakeMaxBalance = function ({
   onSetMaxBalance,
   token,
 }: Props) {
-  const { balance, isPending } = useStakedBalance(token)
+  const { balance = BigInt(0), isPending } = useStakedBalance(token)
   // SetMaxEvmBalance internal logic gets the token balance, but we actually need the staked balance here.
   // So that's why we're using the MaxButton directly, which has the same UI but without the
   // extra logic of SetMaxEvmBalance.

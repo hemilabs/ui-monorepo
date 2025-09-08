@@ -111,7 +111,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       ? walletNativeTokenBalance
       : walletTokenBalance,
     chainId: chain?.id,
-    expectedChain: fromChain.name,
+    expectedChain: fromChain!.name,
     operation: 'deposit',
     t,
     token: fromToken,
@@ -172,12 +172,12 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   const getGas = () => ({
     amount: formatUnits(
       depositGasFees + (needsApproval ? approvalTokenGasFees : BigInt(0)),
-      fromChain?.nativeCurrency.decimals,
+      fromChain!.nativeCurrency.decimals,
     ),
     isError:
       isDepositGasFeesError || (needsApproval && isApprovalTokenGasFeesError),
-    label: t('common.network-gas-fee', { network: fromChain?.name }),
-    token: getNativeToken(fromChain.id),
+    label: t('common.network-gas-fee', { network: fromChain!.name }),
+    token: getNativeToken(fromChain!.id),
   })
 
   const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
@@ -267,7 +267,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
                 }
                 state.toggleInput()
               },
-              updateFromNetwork(payload: number) {
+              updateFromNetwork(payload) {
                 setExtendedErc20Approval(false)
                 state.updateFromNetwork(payload)
               },

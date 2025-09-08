@@ -43,9 +43,6 @@ const canDepositEth = async function ({
     return { canDeposit: false, reason }
   }
 
-  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
   const balance = await getBalance(l1PublicClient, { address: account })
   if (amount >= balance) {
     return { canDeposit: false, reason: 'insufficient balance' }
@@ -92,9 +89,6 @@ const runDepositEth = ({
 
       const l1StandardBridge = getL1StandardBridgeAddress({ l1Chain, l2Chain })
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const depositHash = await writeContract(l1WalletClient, {
         abi: l1StandardBridgeAbi,
         account,

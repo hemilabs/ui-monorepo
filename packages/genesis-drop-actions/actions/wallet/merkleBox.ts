@@ -167,9 +167,6 @@ const runClaim = ({
 
       const contractAddress = getMerkleBoxAddress(walletClient.chain!.id)
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const claimHash = await writeContract(walletClient, {
         abi: merkleBoxAbi,
         account: address,
@@ -195,9 +192,6 @@ const runClaim = ({
 
       emitter.emit('user-signed-claim', claimHash)
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const receipt = await waitForTransactionReceipt(walletClient, {
         hash: claimHash,
       })

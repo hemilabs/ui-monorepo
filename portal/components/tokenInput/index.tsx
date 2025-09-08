@@ -1,7 +1,7 @@
 import { RenderFiatBalance } from 'components/fiatBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { ReactNode } from 'react'
+import { ComponentType, ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
 import { parseTokenUnits } from 'utils/token'
@@ -18,9 +18,9 @@ const Balance = dynamic(
   },
 )
 
-type Props = {
-  balanceComponent?: React.ComponentType<{
-    token: Token
+type Props<T extends Token> = {
+  balanceComponent?: ComponentType<{
+    token: T
   }>
   disabled: boolean
   errorKey: string | undefined
@@ -28,7 +28,7 @@ type Props = {
   maxBalanceButton?: ReactNode
   onChange: (value: string) => void
   showFiatBalance?: boolean
-  token: Token
+  token: T
   tokenSelector: ReactNode
   value: string
 }
@@ -43,8 +43,8 @@ const getTextColor = function (value: string, errorKey: string | undefined) {
   return 'text-rose-500'
 }
 
-export const TokenInput = function ({
-  balanceComponent: BalanceComponent = Balance,
+export const TokenInput = function <T extends Token>({
+  balanceComponent,
   disabled,
   errorKey,
   label,
@@ -54,8 +54,9 @@ export const TokenInput = function ({
   token,
   tokenSelector,
   value,
-}: Props) {
+}: Props<T>) {
   const t = useTranslations('tunnel-page')
+  const BalanceComponent = balanceComponent ?? Balance
   return (
     <div
       className="h-[120px] rounded-lg border border-solid border-transparent bg-neutral-50

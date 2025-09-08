@@ -60,6 +60,7 @@
     "wallet-watch-asset": "github:hemilabs/wallet-watch-asset#v1.0.1"
   },
   "devDependencies": {
+    "@tsconfig/next": "2.0.3",
     "@types/big.js": "6.2.2",
     "@types/lodash": "4.17.16",
     "@types/node": "20.12.12",

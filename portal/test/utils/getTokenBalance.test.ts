@@ -1,9 +1,13 @@
 import { Token } from 'types/token'
 import { getTokenBalance } from 'utils/getTokenBalance'
-import { PublicClient } from 'viem'
-import { zeroAddress } from 'viem'
+import { type PublicClient, zeroAddress } from 'viem'
+import { getBalance } from 'viem/actions'
 import { getErc20TokenBalance } from 'viem-erc20/actions'
 import { describe, expect, it, vi } from 'vitest'
+
+vi.mock('viem/actions', () => ({
+  getBalance: vi.fn(),
+}))
 
 vi.mock('viem-erc20/actions', () => ({
   getErc20TokenBalance: vi.fn(),
@@ -48,13 +52,11 @@ describe('getTokenBalance', function () {
   })
 
   it('should return balance for native token', async function () {
-    const client = {
-      getBalance: vi.fn().mockResolvedValue(BigInt(1000)),
-    } as unknown as PublicClient
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
 
     const result = await getTokenBalance({
       account,
-      client,
+      client: {} as PublicClient,
       isConnected: true,
       token: mockNativeToken,
     })
@@ -77,13 +79,11 @@ describe('getTokenBalance', function () {
   })
 
   it('should return 0 on error for native token', async function () {
-    const client = {
-      getBalance: vi.fn().mockRejectedValue(new Error('fail')),
-    } as unknown as PublicClient
+    vi.mocked(getBalance).mockRejectedValue(new Error('fail'))
 
     const result = await getTokenBalance({
       account,
-      client,
+      client: {} as PublicClient,
       isConnected: true,
       token: mockNativeToken,
     })

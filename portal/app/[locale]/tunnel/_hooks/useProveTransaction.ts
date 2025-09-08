@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import EventEmitter from 'events'
-import { proveWithdrawal } from 'hemi-tunnel-actions'
-import { ProveEvents } from 'hemi-tunnel-actions/src/types'
+import { type ProveEvents, proveWithdrawal } from 'hemi-tunnel-actions'
 import { useNativeTokenBalance } from 'hooks/useBalance'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
@@ -34,9 +33,12 @@ export const useProveTransaction = function ({
 
   return useMutation({
     mutationFn: function prove() {
+      if (!account) {
+        throw new Error('Not Connected')
+      }
       const { emitter, promise } = proveWithdrawal({
         account,
-        l1WalletClient,
+        l1WalletClient: l1WalletClient!,
         l2PublicClient: hemiPublicClient,
         withdrawalTransactionHash: withdrawal.transactionHash,
       })

@@ -31,7 +31,7 @@ function usePageVisitTracker() {
   // confetti should be rendered again in the next session, but not when navigating
   // through the page multiple times.
   const [hasVisited, setHasVisited] = useSessionStorageState(
-    `portal.visited-eligible-page-${address.toLowerCase()}`,
+    `portal.visited-eligible-page-${address!.toLowerCase()}`,
     {
       defaultValue: false,
     },

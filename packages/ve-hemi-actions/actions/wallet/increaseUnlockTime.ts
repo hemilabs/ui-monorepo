@@ -100,9 +100,6 @@ const runIncreaseUnlockTime = ({
 
       emitter.emit('pre-increase-unlock-time')
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const increaseHash = await writeContract(walletClient, {
         abi: veHemiAbi,
         account,
@@ -120,9 +117,6 @@ const runIncreaseUnlockTime = ({
 
       emitter.emit('user-signed-increase-unlock-time', increaseHash)
 
-      // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
       const increaseReceipt = await waitForTransactionReceipt(walletClient, {
         hash: increaseHash,
       }).catch(function (error) {

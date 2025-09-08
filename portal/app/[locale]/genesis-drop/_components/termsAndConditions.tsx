@@ -63,7 +63,7 @@ export const TermsAndConditions = function ({ onAccept, onClose }: Props) {
         await switchChainAsync({ chainId: hemi.id })
       }
 
-      return hemiWalletClient.signMessage({
+      return hemiWalletClient!.signMessage({
         account: address!,
         message: SigningMessage,
       })

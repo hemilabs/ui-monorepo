@@ -55,10 +55,10 @@ export const getEvmWithdrawalStatus = async function ({
   if (receipt.status === 'reverted') {
     return MessageStatus.FAILED_L1_TO_L2_MESSAGE
   }
-  // @ts-expect-error Can't make the viem types to work. This works on runtime
   return getWithdrawalStatus(l1publicClient, {
     chain: l1publicClient.chain,
     receipt,
+    // @ts-expect-error Can't make the viem types to work. This works on runtime
     targetChain: findChainById(l2ChainId),
   }).then(mapStatusToOpMessageStatus)
 }
@@ -121,7 +121,7 @@ const isDepositPendingOperation = function (
   if (isBtcDeposit(operation)) {
     return !btcDepositCompletedActions.includes(operation.status)
   }
-
+  // @ts-expect-error includes accepts undefined on runtime
   return !evmDepositCompletedActions.includes(operation.status)
 }
 

@@ -3,7 +3,7 @@ import { CallToActionContainer } from 'components/reviewOperation/callToActionCo
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, ReactNode } from 'react'
+import { ComponentType, ReactNode } from 'react'
 import { StakeOperations, StakeToken } from 'types/stake'
 
 import { DisclaimerEth } from './disclaimerEth'
@@ -11,6 +11,9 @@ import { Tabs } from './tabs'
 
 type Props = {
   amount: string
+  balanceComponent?: ComponentType<{
+    token: StakeToken
+  }>
   fees: ReactNode
   errorKey: string | undefined
   isOperating: boolean
@@ -22,7 +25,7 @@ type Props = {
   strategyDetails?: ReactNode
   submitButton: ReactNode
   token: StakeToken
-} & Pick<ComponentProps<typeof TokenInput>, 'balanceComponent'>
+}
 
 export const Preview = function ({
   amount,

@@ -87,7 +87,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
     })
 
   const handleRetry = function () {
-    handleClaim(signedTerms)
+    handleClaim(signedTerms!)
     setIsRetrying(true)
   }
 
@@ -97,7 +97,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
     handleClaim(termsSignature)
 
     track?.('genesis-drop - terms signed', {
-      lockupMonths: termsAndConditions.lockup,
+      lockupMonths: termsAndConditions.lockup!,
     })
   }
 
@@ -171,7 +171,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
           onAccept={handleAcceptTermsAndConditions}
           onClose={function () {
             track?.('genesis-drop - terms rejected', {
-              lockupMonths: termsAndConditions.lockup,
+              lockupMonths: termsAndConditions.lockup!,
             })
             setTermsAndConditions({ lockup: undefined, show: false })
           }}
@@ -181,12 +181,12 @@ export const ClaimOptions = function ({ eligibility }: Props) {
         <ClaimDrawer
           eligibility={eligibility}
           isRetrying={isRetrying}
-          lockupMonths={termsAndConditions.lockup}
+          lockupMonths={termsAndConditions.lockup!}
           onClose={closeDrawer}
           onRetry={handleRetry}
           ratio={defaultRatio}
           status={claimStatus}
-          termsSignature={signedTerms}
+          termsSignature={signedTerms!}
           transactionHash={transactionHash}
         />
       )}

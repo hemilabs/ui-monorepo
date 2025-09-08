@@ -67,7 +67,7 @@ export const UnstakeOperation = function ({
 
   const hemi = useHemi()
   const {
-    balance,
+    balance = BigInt(0),
     isPending: isStakedPositionPending,
     isSuccess: isStakedPositionSuccess,
   } = useStakedBalance(token)
@@ -98,10 +98,17 @@ export const UnstakeOperation = function ({
       token,
     })
 
-  const statusMap = {
-    [UnstakeStatusEnum.UNSTAKE_TX_PENDING]: ProgressStatus.PROGRESS,
-    [UnstakeStatusEnum.UNSTAKE_TX_FAILED]: ProgressStatus.FAILED,
-    [UnstakeStatusEnum.UNSTAKE_TX_CONFIRMED]: ProgressStatus.COMPLETED,
+  const getStatus = function () {
+    if (unstakeStatus === undefined) {
+      return ProgressStatus.NOT_READY
+    }
+
+    const statusMap = {
+      [UnstakeStatusEnum.UNSTAKE_TX_PENDING]: ProgressStatus.PROGRESS,
+      [UnstakeStatusEnum.UNSTAKE_TX_FAILED]: ProgressStatus.FAILED,
+      [UnstakeStatusEnum.UNSTAKE_TX_CONFIRMED]: ProgressStatus.COMPLETED,
+    }
+    return statusMap[unstakeStatus] ?? ProgressStatus.NOT_READY
   }
 
   const unstakeStep: StepPropsWithoutPosition = {
@@ -118,7 +125,7 @@ export const UnstakeOperation = function ({
             token: getNativeToken(hemi.id),
           }
         : undefined,
-    status: statusMap[unstakeStatus] ?? ProgressStatus.NOT_READY,
+    status: getStatus(),
     txHash: unStakeTransactionHash,
   }
 
@@ -138,13 +145,14 @@ export const UnstakeOperation = function ({
 
   return (
     <>
-      {unstakeStatus === UnstakeStatusEnum.UNSTAKE_TX_CONFIRMED && (
-        <StakeToast
-          chainId={token.chainId}
-          txHash={unStakeTransactionHash}
-          type="unstake"
-        />
-      )}
+      {unstakeStatus === UnstakeStatusEnum.UNSTAKE_TX_CONFIRMED &&
+        unStakeTransactionHash && (
+          <StakeToast
+            chainId={token.chainId}
+            txHash={unStakeTransactionHash}
+            type="unstake"
+          />
+        )}
       <Operation
         amount={amountInput}
         callToAction={

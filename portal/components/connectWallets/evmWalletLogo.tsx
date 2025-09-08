@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image, { StaticImageData } from 'next/image'
 
 import coinbaseLogo from './logos/coinbase.svg'
 import metamaskLogo from './logos/metamask.svg'
@@ -8,7 +8,7 @@ import tokenPocketLogo from './logos/tokenPocket.svg'
 import walletConnectLogo from './logos/walletConnect.svg'
 
 function getLogo(walletName: string) {
-  const wallets = {
+  const wallets: Record<string, StaticImageData> = {
     coinbase: coinbaseLogo,
     metaMask: metamaskLogo,
     okx: okxLogo,

@@ -1,8 +1,14 @@
 'use client'
 
-import { createContext, ReactNode, useState } from 'react'
+import {
+  createContext,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useState,
+} from 'react'
 
-type ToEvmWithdrawOperationStatuses =
+export type ToEvmWithdrawOperationStatuses =
   | 'idle'
   | 'withdrawing'
   | 'proving'
@@ -10,13 +16,14 @@ type ToEvmWithdrawOperationStatuses =
   | 'failed'
   | 'rejected'
 
-type ToEvmWithdrawalContext = ReturnType<
-  typeof useState<ToEvmWithdrawOperationStatuses>
->
+type ToEvmWithdrawalContext = [
+  ToEvmWithdrawOperationStatuses,
+  Dispatch<SetStateAction<ToEvmWithdrawOperationStatuses>>,
+]
 
 export const ToEvmWithdrawalContext = createContext<ToEvmWithdrawalContext>([
   'idle',
-  () => 'idle',
+  () => undefined,
 ])
 
 export const ToEvmWithdrawalProvider = function ({

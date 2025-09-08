@@ -1,7 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import EventEmitter from 'events'
-import { initiateWithdrawErc20, initiateWithdrawEth } from 'hemi-tunnel-actions'
-import { WithdrawEvents } from 'hemi-tunnel-actions/src/types'
+import {
+  initiateWithdrawErc20,
+  initiateWithdrawEth,
+  type WithdrawEvents,
+} from 'hemi-tunnel-actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
@@ -60,6 +63,9 @@ export const useWithdraw = function ({
 
   return useMutation({
     mutationFn: function runWithdraw() {
+      if (!account) {
+        throw new Error('Not Connected')
+      }
       track?.('evm - init withdraw started')
 
       const l2TokenAddress = withdrawingNative
@@ -76,11 +82,19 @@ export const useWithdraw = function ({
         l2Chain,
         l2PublicClient: hemiPublicClient,
         l2TokenAddress,
-        l2WalletClient: hemiWalletClient,
+        l2WalletClient: hemiWalletClient!,
       }
 
       const { emitter, promise } = withdrawingNative
-        ? initiateWithdrawEth(args)
+        ? initiateWithdrawEth({
+            account,
+            amount,
+            l1Chain,
+            l2Chain,
+            l2PublicClient: hemiPublicClient,
+            l2TokenAddress,
+            l2WalletClient: hemiWalletClient!,
+          })
         : initiateWithdrawErc20(args)
 
       let withdrawal: ToEvmWithdrawOperation | undefined
@@ -109,7 +123,7 @@ export const useWithdraw = function ({
         updateNativeBalanceAfterFees(receipt)
         track?.('evm - init withdraw failed')
 
-        updateWithdrawal(withdrawal, {
+        updateWithdrawal(withdrawal!, {
           blockNumber: Number(receipt.blockNumber),
           status: MessageStatus.FAILED_L1_TO_L2_MESSAGE,
         })
@@ -131,7 +145,7 @@ export const useWithdraw = function ({
           )
         }
 
-        updateWithdrawal(withdrawal, {
+        updateWithdrawal(withdrawal!, {
           blockNumber: Number(receipt.blockNumber),
           status: MessageStatus.STATE_ROOT_NOT_PUBLISHED,
         })

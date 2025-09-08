@@ -5,9 +5,9 @@ export const useAmount = function () {
   const [amount, setAmount] = useState('0')
 
   const onChange = useCallback(function (input: string) {
-    const { error, value } = sanitizeAmount(input)
-    if (!error) {
-      setAmount(value)
+    const result = sanitizeAmount(input)
+    if (!('error' in result)) {
+      setAmount(result.value)
     }
   }, [])
 

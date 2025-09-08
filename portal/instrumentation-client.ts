@@ -68,7 +68,7 @@ function enableSentry() {
       process.env.NEXT_PUBLIC_COOKIE3_URL,
       process.env.NEXT_PUBLIC_PORTAL_API_URL,
       // filter in case any of the env variables are undefined, although in prod all should be defined.
-    ].filter(Boolean),
+    ].filter(Boolean) as (string | RegExp)[],
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
     enabled,
     ignoreErrors,
@@ -87,8 +87,8 @@ function enableSentry() {
       // ref: https://github.com/getsentry/sentry/issues/19713#issuecomment-696614341
       Sentry.rewriteFramesIntegration({
         iteratee(frame) {
-          const { origin } = new URL(frame.filename)
-          frame.filename = decodeURI(frame.filename.replace(origin, 'app://'))
+          const { origin } = new URL(frame.filename!)
+          frame.filename = decodeURI(frame.filename!.replace(origin, 'app://'))
           return frame
         },
       }),
@@ -97,7 +97,7 @@ function enableSentry() {
         // Should skip all errors that are entirely made of third party frames in the stack trace.
         // Let's start with this, we can make it more strict if needed.
         behaviour: 'drop-error-if-exclusively-contains-third-party-frames',
-        filterKeys: [process.env.NEXT_PUBLIC_SENTRY_FILTER_KEY_ID],
+        filterKeys: [process.env.NEXT_PUBLIC_SENTRY_FILTER_KEY_ID!],
       }),
     ],
     tracesSampleRate:

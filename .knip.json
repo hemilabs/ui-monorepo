@@ -6,7 +6,6 @@
     "eslint-config-next",
     "eslint-config-prettier"
   ],
-  "ignoreUnresolved": ["next"],
   "workspaces": {
     "subgraphs/*": {
       "entry": "src/mappings/*.ts"

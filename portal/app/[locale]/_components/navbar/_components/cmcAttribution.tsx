@@ -8,7 +8,7 @@ export const CmcAttribution = function () {
   return (
     <p className="font-base mx-auto w-full pt-2 text-left text-xs text-neutral-400 md:pb-0">
       {t.rich('data-attribution', {
-        link: (chunk: string) => (
+        link: chunk => (
           <ExternalLink className={cssLink} href="https://coinmarketcap.com/">
             {chunk}
           </ExternalLink>

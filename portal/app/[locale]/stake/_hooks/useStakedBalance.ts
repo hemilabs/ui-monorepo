@@ -13,7 +13,7 @@ export const getStakedBalanceQueryKey = ({
   networkType,
   token,
 }: {
-  address: Address
+  address: Address | undefined
   networkType: NetworkType
   token: StakeToken
 }) => [
@@ -53,14 +53,14 @@ const getQuery = ({
   networkType,
   token,
 }: {
-  address: Address
+  address: Address | undefined
   hemiClient: HemiPublicClient
   isConnected: boolean
   networkType: NetworkType
   token: StakeToken
 }) => ({
   enabled: isConnected && !!address,
-  queryFn: getStakedBalance({ address, hemiClient, token }),
+  queryFn: getStakedBalance({ address: address!, hemiClient, token }),
   queryKey: getStakedBalanceQueryKey({ address, networkType, token }),
 })
 
@@ -69,7 +69,7 @@ export const useStakedBalance = function (token: StakeToken) {
   const hemiClient = useHemiClient()
   const [networkType] = useNetworkType()
 
-  const { data: balance, ...rest } = useQuery(
+  const { data: balance = BigInt(0), ...rest } = useQuery(
     getQuery({
       address,
       hemiClient,
@@ -95,11 +95,13 @@ export const useStakePositions = function () {
       loading: results.some(({ isLoading }) => isLoading),
       tokensWithPosition: results
         .filter(
-          ({ data, status }) =>
-            status === 'success' && data.balance > BigInt(0),
+          (result): result is typeof result & { data: StakeToken } =>
+            result.status === 'success' &&
+            result.data !== undefined &&
+            result.data.balance > BigInt(0) &&
+            // Exclude ETH, as WETH will appear already
+            !isNativeToken(result.data),
         )
-        // Exclude ETH, as WETH will appear already
-        .filter(({ data }) => !isNativeToken(data))
         .map(({ data }) => data),
     }),
     queries: stakeTokens.map(token => ({

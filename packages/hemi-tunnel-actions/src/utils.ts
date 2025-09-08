@@ -81,9 +81,6 @@ export const handleWaitDeposit = async function <T extends DepositEvents>({
 }) {
   emitter.emit('user-signed-deposit', hash)
 
-  // Using @ts-expect-error fails to compile so I need to use @ts-ignore
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore because it works on IDE, and when building on its own, but fails when compiling from the portal through next
   const depositReceipt = await waitForTransactionReceipt(publicClient, {
     hash,
   }).catch(function (err) {

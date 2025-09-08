@@ -1,10 +1,11 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "baseUrl": "./",
     "lib": ["dom", "dom.iterable", "esnext", "WebWorker"],
-    "plugins": [{ "name": "next" }]
+    "target": "es6"
   },
-  "extends": "../tsconfig.base.json",
+  "extends": "@tsconfig/next/tsconfig.json",
   "include": [
     "intl.d.ts",
     "next-env.d.ts",

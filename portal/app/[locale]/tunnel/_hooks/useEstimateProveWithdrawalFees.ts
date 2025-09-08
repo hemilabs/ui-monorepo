@@ -26,16 +26,17 @@ export const useEstimateProveWithdrawalFees = function ({
     isError,
     isSuccess,
   } = useQuery({
-    enabled,
+    enabled: enabled && !!account,
     async queryFn() {
       const publicClient = getEvmL1PublicClient(l1ChainId)
 
       return prepareProveWithdrawal({
-        account,
+        account: account!,
         hash: transactionHash,
         l1PublicClient: publicClient,
         l2PublicClient: hemiClient.extend(publicActionsL2()),
       }).then(proveArgs =>
+        // @ts-expect-error works on runtime
         publicClient.estimateProveWithdrawalGas({
           chain: findChainById(l1ChainId) as Chain,
           ...proveArgs,

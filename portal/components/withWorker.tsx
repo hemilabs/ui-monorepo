@@ -11,7 +11,7 @@ export const WithWorker = function <T extends Worker>({
   children,
   getWorker,
 }: Props<T>) {
-  const workerRef = useRef<T>(null)
+  const workerRef = useRef<T | null>(null)
 
   useEffect(
     function initWorker() {

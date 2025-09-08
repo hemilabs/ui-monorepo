@@ -8,7 +8,7 @@ export const TermsAndConditions = function () {
   return (
     <p className="font-base mx-auto w-full pb-2 text-left text-xs text-neutral-400">
       {t.rich('agree-to-terms-and-policy', {
-        policy: (chunk: string) => (
+        policy: chunk => (
           <ExternalLink
             className={cssLink}
             href="https://hemi.xyz/privacy-policy/"
@@ -16,7 +16,7 @@ export const TermsAndConditions = function () {
             {chunk}
           </ExternalLink>
         ),
-        terms: (chunk: string) => (
+        terms: chunk => (
           <ExternalLink
             className={cssLink}
             href="https://hemi.xyz/terms-of-service"

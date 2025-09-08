@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import EventEmitter from 'events'
-import { finalizeWithdrawal } from 'hemi-tunnel-actions'
-import { FinalizeEvents } from 'hemi-tunnel-actions/src/types'
+import { type FinalizeEvents, finalizeWithdrawal } from 'hemi-tunnel-actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
@@ -39,12 +38,15 @@ export const useClaimTransaction = function ({
 
   return useMutation({
     mutationFn: function claim() {
+      if (!account) {
+        throw new Error('Not Connected')
+      }
       // clear any previous transaction hash, which may come from failed attempts
       updateWithdrawal(withdrawal, { claimTxHash: undefined })
 
       const { emitter, promise } = finalizeWithdrawal({
         account,
-        l1WalletClient,
+        l1WalletClient: l1WalletClient!,
         l2PublicClient: hemiClient,
         withdrawalTransactionHash: withdrawal.transactionHash,
       })

@@ -69,7 +69,8 @@ export const PageLink = function ({
   const selected =
     typeof urlToBeSelected === 'string'
       ? pathname.startsWith(urlToBeSelected)
-      : pathname.startsWith(urlToBeSelected.pathname)
+      : !!urlToBeSelected.pathname &&
+        pathname.startsWith(urlToBeSelected.pathname)
 
   const props = {
     href,

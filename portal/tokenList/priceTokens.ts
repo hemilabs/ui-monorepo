@@ -55,6 +55,7 @@ const getL1TokenMaps = (priceMaps: PriceMap, hemiChain: Chain) =>
   Object.fromEntries(
     Object.entries(priceMaps)
       .map(function ([address, { priceSymbol }]) {
+        // @ts-expect-error it fails to understand sourceId is a key of bridgeInfo but it works
         const l1Address = hemilabsTokenList.tokens.find(
           t => t.chainId === hemiChain.id && t.address === address,
         )?.extensions?.bridgeInfo?.[hemiChain.sourceId!]?.tokenAddress

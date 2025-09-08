@@ -37,7 +37,7 @@ const readStateFromStorage = function <T extends TunnelOperation>({
   const restored = localStorage.getItem(key)
   if (!restored) {
     const chain = findChainById(chainId)
-    if (isEvmNetwork(chain)) {
+    if (chain && isEvmNetwork(chain)) {
       return {
         chainId,
         chunkIndex: 0,
@@ -50,6 +50,7 @@ const readStateFromStorage = function <T extends TunnelOperation>({
       content: [],
       fromKnownTx: undefined,
       hasSyncToMinTx: false,
+      iterationVault: undefined,
       toKnownTx: undefined,
       txPivot: undefined,
     }
@@ -246,7 +247,11 @@ export const HistoryLoader = function ({
         return
       }
       // clear local storage
-      clearHistoryInLocalStorage({ address, l2ChainId, remoteNetworks })
+      clearHistoryInLocalStorage({
+        address: address!,
+        l2ChainId,
+        remoteNetworks,
+      })
       // reset the history in memory
       dispatch({ type: 'reset' })
       // update flag so data is reloaded again

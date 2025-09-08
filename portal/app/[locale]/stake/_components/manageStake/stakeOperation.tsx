@@ -66,12 +66,15 @@ export const StakeOperation = function ({
   const operatesNativeToken = isNativeToken(token)
   const spender = stakeManagerAddresses[token.chainId]
 
-  const { data: allowance, isPending } = useAllowance(token.address, {
-    args: {
-      owner: address,
-      spender,
+  const { data: allowance = BigInt(0), isPending } = useAllowance(
+    token.address,
+    {
+      args: {
+        owner: address,
+        spender,
+      },
     },
-  })
+  )
 
   const amount = parseTokenUnits(amountInput, token)
 
@@ -85,7 +88,7 @@ export const StakeOperation = function ({
   const { fees: stakeEstimatedFees, isError: isStakeEstimatedFeesError } =
     useEstimateStakeFees({
       amount,
-      enabled: allowance > 0 || operatesNativeToken,
+      enabled: allowance > BigInt(0) || operatesNativeToken,
       token,
     })
 
@@ -102,15 +105,24 @@ export const StakeOperation = function ({
   const { balance, isSuccess: balanceLoaded } = useBalance(token)
 
   const addApprovalStep = function (): StepPropsWithoutPosition {
-    const showFees = [
-      StakeStatusEnum.APPROVAL_TX_FAILED,
-      StakeStatusEnum.APPROVAL_TX_PENDING,
-    ].includes(stakeStatus)
+    const getStatus = function () {
+      if (stakeStatus === undefined) {
+        return ProgressStatus.COMPLETED
+      }
 
-    const statusMap = {
-      [StakeStatusEnum.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
-      [StakeStatusEnum.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
+      const statusMap: Partial<Record<StakeStatusEnum, ProgressStatus>> = {
+        [StakeStatusEnum.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
+        [StakeStatusEnum.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
+      }
+      return statusMap[stakeStatus] ?? ProgressStatus.COMPLETED
     }
+
+    const showFees =
+      stakeStatus &&
+      [
+        StakeStatusEnum.APPROVAL_TX_FAILED,
+        StakeStatusEnum.APPROVAL_TX_PENDING,
+      ].includes(stakeStatus)
 
     return {
       description: t('common.approving-token', { symbol: token.symbol }),
@@ -125,25 +137,34 @@ export const StakeOperation = function ({
             token: getNativeToken(hemi.id),
           }
         : undefined,
-      status: statusMap[stakeStatus] ?? ProgressStatus.COMPLETED,
+      status: getStatus(),
       txHash: approvalTxHash,
     }
   }
 
   const addStakingStep = function (): StepPropsWithoutPosition {
-    const statusMap: Record<StakeStatusEnum, ProgressStatus> = {
-      [StakeStatusEnum.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
-      [StakeStatusEnum.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
-      [StakeStatusEnum.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,
-      [StakeStatusEnum.STAKE_TX_PENDING]: ProgressStatus.PROGRESS,
-      [StakeStatusEnum.STAKE_TX_FAILED]: ProgressStatus.FAILED,
-      [StakeStatusEnum.STAKE_TX_CONFIRMED]: ProgressStatus.COMPLETED,
+    const getStatus = function () {
+      if (stakeStatus === undefined) {
+        return ProgressStatus.NOT_READY
+      }
+      const statusMap: Record<StakeStatusEnum, ProgressStatus> = {
+        [StakeStatusEnum.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
+        [StakeStatusEnum.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
+        [StakeStatusEnum.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,
+        [StakeStatusEnum.STAKE_TX_PENDING]: ProgressStatus.PROGRESS,
+        [StakeStatusEnum.STAKE_TX_FAILED]: ProgressStatus.FAILED,
+        [StakeStatusEnum.STAKE_TX_CONFIRMED]: ProgressStatus.COMPLETED,
+      }
+      return statusMap[stakeStatus] ?? ProgressStatus.NOT_READY
     }
-    const showFees = [
-      StakeStatusEnum.APPROVAL_TX_COMPLETED,
-      StakeStatusEnum.STAKE_TX_PENDING,
-      StakeStatusEnum.STAKE_TX_FAILED,
-    ].includes(stakeStatus)
+
+    const showFees =
+      stakeStatus &&
+      [
+        StakeStatusEnum.APPROVAL_TX_COMPLETED,
+        StakeStatusEnum.STAKE_TX_PENDING,
+        StakeStatusEnum.STAKE_TX_FAILED,
+      ].includes(stakeStatus)
 
     return {
       description: t('stake-page.drawer.stake-token', { symbol: token.symbol }),
@@ -158,7 +179,7 @@ export const StakeOperation = function ({
             token: getNativeToken(hemi.id),
           }
         : undefined,
-      status: statusMap[stakeStatus] ?? ProgressStatus.NOT_READY,
+      status: getStatus(),
       txHash: stakeTransactionHash,
     }
   }
@@ -218,7 +239,7 @@ export const StakeOperation = function ({
       {stakeStatus === StakeStatusEnum.STAKE_TX_CONFIRMED && (
         <StakeToast
           chainId={token.chainId}
-          txHash={stakeTransactionHash}
+          txHash={stakeTransactionHash!}
           type="stake"
         />
       )}

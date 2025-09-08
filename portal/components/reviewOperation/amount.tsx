@@ -6,7 +6,7 @@ import { Token } from 'types/token'
 import { formatUnits } from 'viem'
 
 type Props = {
-  token?: Token
+  token: Token
   value: string
 }
 

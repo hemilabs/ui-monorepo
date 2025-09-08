@@ -49,7 +49,7 @@ export const RetryBtcDeposit = function ({ deposit }: Props) {
     e.preventDefault()
 
     depositBitcoin({
-      hemiAddress: address,
+      hemiAddress: address!,
       l1ChainId: deposit.l1ChainId,
       l2ChainId: deposit.l2ChainId,
       satoshis: Number(deposit.amount),

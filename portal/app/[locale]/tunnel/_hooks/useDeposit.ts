@@ -1,8 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { TransactionsInProgressContext } from 'context/transactionsInProgressContext'
 import { EventEmitter } from 'events'
-import { depositErc20, depositEth } from 'hemi-tunnel-actions'
-import { DepositErc20Events } from 'hemi-tunnel-actions/src/types'
+import {
+  type DepositErc20Events,
+  depositErc20,
+  depositEth,
+} from 'hemi-tunnel-actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
@@ -78,6 +81,9 @@ export const useDeposit = function ({
 
   return useMutation({
     mutationFn: function runDeposit() {
+      if (!address) {
+        throw new Error('No account connected')
+      }
       track?.('evm - dep started')
 
       const { emitter, promise } = depositingNative
@@ -87,7 +93,7 @@ export const useDeposit = function ({
             // here both chains are always EVM
             l1Chain: findChainById(fromToken.chainId) as Chain,
             l1PublicClient: getEvmL1PublicClient(fromToken.chainId),
-            l1WalletClient,
+            l1WalletClient: l1WalletClient!,
             l2Chain: findChainById(toToken.chainId) as Chain,
           })
         : depositErc20({
@@ -100,7 +106,7 @@ export const useDeposit = function ({
             l1PublicClient: getEvmL1PublicClient(fromToken.chainId),
             // @ts-expect-error string is Address
             l1TokenAddress: fromToken.address,
-            l1WalletClient,
+            l1WalletClient: l1WalletClient!,
             l2Chain: findChainById(toToken.chainId) as Chain,
             // @ts-expect-error string is Address
             l2TokenAddress: toToken.address,
@@ -166,7 +172,7 @@ export const useDeposit = function ({
       emitter.on('deposit-transaction-succeeded', function (receipt) {
         const { blockNumber } = receipt
         // timestamp will be loaded by background workers
-        updateDeposit(deposit, {
+        updateDeposit(deposit!, {
           blockNumber: Number(blockNumber),
           status: EvmDepositStatus.DEPOSIT_TX_CONFIRMED,
         })
@@ -187,7 +193,7 @@ export const useDeposit = function ({
         }
       })
       emitter.on('deposit-transaction-reverted', function (receipt) {
-        updateDeposit(deposit, {
+        updateDeposit(deposit!, {
           status: EvmDepositStatus.DEPOSIT_TX_FAILED,
         })
 

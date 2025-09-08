@@ -29,10 +29,8 @@ export function stakeERC20Token(
   return writeContract(client, {
     abi: stakeManagerAbi,
     account: forAccount,
-    // @ts-expect-error: TS is complaining about client.chain!.id definition, but this works
     address: stakeManagerAddresses[client.chain!.id],
     args: [tokenAddress, forAccount, amount],
-    // @ts-expect-error: TS is complaining about client.chain definition, but this works
     chain: client.chain,
     functionName: 'depositFor',
   })
@@ -59,10 +57,8 @@ export function stakeETHToken(
   return writeContract(client, {
     abi: stakeManagerAbi,
     account: forAccount,
-    // @ts-expect-error: TS is complaining about client.chain!.id definition, but this works
     address: stakeManagerAddresses[client.chain!.id],
     args: [forAccount],
-    // @ts-expect-error: TS is complaining about client.chain definition, but this works
     chain: client.chain,
     functionName: 'depositETHFor',
     value: amount,
@@ -92,10 +88,8 @@ export function unstakeToken(
   return writeContract(client, {
     abi: stakeManagerAbi,
     account: forAccount,
-    // @ts-expect-error: TS is complaining about client.chain!.id definition, but this works
     address: stakeManagerAddresses[client.chain!.id],
     args: [tokenAddress, amount],
-    // @ts-expect-error: TS is complaining about client.chain definition, but this works
     chain: client.chain,
     functionName: 'withdraw',
   })

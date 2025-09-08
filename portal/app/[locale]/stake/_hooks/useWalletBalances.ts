@@ -13,12 +13,18 @@ export const useWalletBalances = function () {
   return useQueries({
     combine: results => ({
       loading: results.some(({ isLoading }) => isLoading),
-      tokensWalletBalance: results.map(({ data }) => data),
+      tokensWalletBalance: results
+        .filter(
+          (result): result is typeof result & { data: StakeToken } =>
+            result.status === 'success' && result.data !== undefined,
+        )
+        .map(({ data }) => data),
     }),
     queries: stakeTokens.map(token => ({
+      enabled: !!hemiClient && !!account,
       queryFn: () =>
         getTokenBalance({
-          account,
+          account: account!,
           client: hemiClient,
           isConnected,
           token,

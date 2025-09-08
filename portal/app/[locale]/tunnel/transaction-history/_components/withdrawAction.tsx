@@ -1,9 +1,12 @@
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
+import { ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
   BtcWithdrawStatus,
   MessageStatus,
+  MessageStatusType,
+  ToEvmWithdrawOperation,
   type WithdrawTunnelOperation,
 } from 'types/tunnel'
 import { isToEvmWithdraw } from 'utils/tunnel'
@@ -14,7 +17,7 @@ type Props = {
   withdraw: WithdrawTunnelOperation
 }
 
-function EvmWithdrawAction({ withdraw }: Props) {
+function EvmWithdrawAction({ withdraw }: { withdraw: ToEvmWithdrawOperation }) {
   const [networkType] = useNetworkType()
   const t = useTranslations('tunnel-page.transaction-history.actions')
 
@@ -54,7 +57,7 @@ function EvmWithdrawAction({ withdraw }: Props) {
     />
   )
 
-  const actions = {
+  const actions: Record<MessageStatusType, ReactNode> = {
     [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: getViewButton(),
     [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: Failed,
     [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: getViewButton(),

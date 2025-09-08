@@ -14,7 +14,7 @@ export const NotEligible = function () {
       <EligibilityStatus status="not-eligible" />
       <p className="mt-3 max-w-48 text-center text-xs font-medium text-neutral-500 sm:max-w-80 md:max-w-72 lg:max-w-72 xl:max-w-96">
         {t.rich('have-questions', {
-          absintheLink: (chunk: string) => (
+          absintheLink: chunk => (
             <ExternalLink
               className="text-orange-500 hover:text-orange-700"
               href={absintheUrl}
@@ -22,7 +22,7 @@ export const NotEligible = function () {
               {chunk}
             </ExternalLink>
           ),
-          discordLink: (chunk: string) => (
+          discordLink: chunk => (
             <ExternalLink
               className="text-orange-500 hover:text-orange-700"
               href={discordUrl}

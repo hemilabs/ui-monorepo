@@ -5,7 +5,7 @@ const enabled = !!process.env.NEXT_PUBLIC_SENTRY_DSN
 const unsupportedWalletErrors = [
   '@polkadot/keyring requires direct dependencies',
   "Backpack couldn't override `window.ethereum`.",
-  'message: Cannot redefine property: ethereum',
+  'Cannot redefine property: ethereum',
   // Nightly wallet
   'Cannot set property ethereum of #<Window> which has only a getter',
   'sendRequest() -> core.crypto.encode()',

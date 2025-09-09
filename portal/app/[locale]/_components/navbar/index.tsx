@@ -43,7 +43,7 @@ export const Navbar = function () {
 
   return (
     <>
-      <div className="md:h-98vh flex h-[calc(100dvh-56px)] flex-col overflow-visible bg-white px-3 pt-3 md:pt-0">
+      <div className="flex h-[calc(100dvh-56px)] flex-col overflow-visible bg-white px-3 pt-3 md:h-full md:pt-0">
         <div className="lg:h-18 hidden h-24 items-center justify-between md:flex md:h-16 [&>*]:md:ml-2">
           <div className="flex items-center justify-start gap-x-2">
             <HomeLink />

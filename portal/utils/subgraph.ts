@@ -203,7 +203,7 @@ export const getBtcDepositInfo = async function ({
 }) {
   const url = getSubgraphBaseUrl(chainId)
 
-  return request<{ netSatsAfterFee: string; transactionHash: Hash } | null>(
+  return request<{ transactionHash: Hash } | null>(
     `${url}/deposits/${depositTxId}/btc`,
   ).catch(() => null)
 }

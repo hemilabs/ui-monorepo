@@ -8,6 +8,7 @@ import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
 import { ChainIdPathParams, ReqData } from '../types/server.ts'
 
+import { getBtcDepositOnHemi } from './route-handlers/get-btc-deposit-on-hemi.ts'
 import { getClaimTransactionHandler } from './route-handlers/get-claim-transaction-hash.ts'
 import { getLockedPositionsHandler } from './route-handlers/get-locked-positions.ts'
 import { getWithdrawalProofAndClaimHandler } from './route-handlers/get-withdrawal-proof-and-claim.ts'
@@ -124,6 +125,13 @@ export function createApiServer() {
         })
         .catch(next)
     },
+  )
+
+  app.get(
+    '/:chainIdStr(\\d+)/deposits/:hash/btc',
+    parseChainId,
+    validateChainIsHemi,
+    asyncHandler(getBtcDepositOnHemi),
   )
 
   app.get(

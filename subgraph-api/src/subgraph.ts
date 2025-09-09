@@ -11,10 +11,11 @@ import {
 } from 'viem'
 import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
-import {
-  type EvmDepositOperation,
-  type ToBtcWithdrawOperation,
-  type ToEvmWithdrawOperation,
+import type {
+  BtcDepositOperation,
+  EvmDepositOperation,
+  ToBtcWithdrawOperation,
+  ToEvmWithdrawOperation,
 } from '../types/tunnel.ts'
 
 type Schema = {
@@ -360,6 +361,89 @@ export const getEvmWithdrawals = function ({
         // @ts-expect-error OP-SDK does not properly type addresses as Address
         to: toChecksum(d.to),
       }))
+    },
+  )
+}
+
+const getBtcDepositsSubgraphUrl = function (chainId: Chain['id']) {
+  /**
+   * Subgraph Ids from the subgraphs published in Arbitrum
+   */
+  const subgraphIds = {
+    [hemi.id]: subgraphConfig.tunnel.btcDeposits.mainnet,
+    [hemiSepolia.id]: subgraphConfig.tunnel.btcDeposits.testnet,
+  }
+
+  return getSubgraphUrl({
+    chainId,
+    subgraphIds,
+  })
+}
+
+type GetBtcDepositQueryResponse = GraphResponse<{
+  btcConfirmedDeposits: (Omit<
+    BtcDepositOperation,
+    'blockNumber' | 'timestamp'
+  > & {
+    blockNumber: string
+    timestamp: string
+  })[]
+}>
+
+/**
+ * Retrieves a BTC deposit by its transaction ID
+ * @param params Parameters of the call.
+ * @param params.chainId Hemi chain Id
+ * @param params.depositTxId The Bitcoin transaction ID to search for
+ * @returns The BTC deposit operation or null if not found
+ */
+export const getBtcDeposit = function ({
+  chainId,
+  depositTxId,
+}: {
+  chainId: Chain['id']
+  depositTxId: string
+}) {
+  const url = getBtcDepositsSubgraphUrl(chainId)
+  const schema = {
+    query: `query GetBtcDeposit($depositTxId: String!) {
+      btcConfirmedDeposits(where: { depositTxId: $depositTxId }) {
+        blockNumber
+        depositSats
+        depositTxId
+        id
+        netSatsAfterFee
+        recipient
+        timestamp
+        transactionHash
+        vault
+      }
+    }`,
+    // the bitcoin transaction hash is stored prefixed with '0x' because
+    // that's how it's stored in the contract logs
+    variables: { depositTxId: `0x${depositTxId}` },
+  }
+
+  return request<GetBtcDepositQueryResponse>(url, schema).then(
+    function (response) {
+      checkGraphQLErrors(response)
+      const deposits = response.data.btcConfirmedDeposits
+
+      if (deposits.length === 0) {
+        return null
+      }
+
+      // the response array should always be one element
+      const deposit = deposits[0]
+      return {
+        ...deposit,
+        blockNumber: deposit.blockNumber,
+        // @ts-expect-error recipient is address lowercased
+        recipient: toChecksum(deposit.recipient),
+        timestamp: deposit.timestamp,
+        // @ts-expect-error vault is address lowercased
+        vault: toChecksum(deposit.vault),
+      } satisfies BtcDepositOperation
     },
   )
 }

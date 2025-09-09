@@ -4,10 +4,12 @@ import { publicClientToHemiClient } from 'hooks/useHemiClient'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { createBtcApi } from 'utils/btcApi'
 import { getHemiStatusOfBtcDeposit, getVaultAddressByDeposit } from 'utils/hemi'
+import { getBtcDepositInfo } from 'utils/subgraph'
 import {
   watchDepositOnBitcoin,
   watchDepositOnHemi,
 } from 'utils/watch/bitcoinDeposits'
+import { zeroHash } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
 const vaultAddress = '0x0000000000000000000000000000000000000001' as const
@@ -43,6 +45,10 @@ vi.mock('utils/chainClients', () => ({
 vi.mock('utils/hemi', () => ({
   getHemiStatusOfBtcDeposit: vi.fn(),
   getVaultAddressByDeposit: vi.fn(),
+}))
+
+vi.mock('utils/subgraph', () => ({
+  getBtcDepositInfo: vi.fn(),
 }))
 
 describe('utils/watch/bitcoinDeposits', function () {
@@ -112,6 +118,69 @@ describe('utils/watch/bitcoinDeposits', function () {
       expect(updates).toEqual({
         status: BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
       })
+    })
+
+    it('should not call getHemiStatusOfBtcDeposit if the deposit status is not pending', async function () {
+      const completedDeposit = {
+        ...deposit,
+        status: BtcDepositStatus.BTC_DEPOSITED,
+      }
+      vi.mocked(getBtcDepositInfo).mockResolvedValue(null)
+
+      const updates = await watchDepositOnHemi(completedDeposit)
+
+      expect(vi.mocked(getHemiStatusOfBtcDeposit)).not.toHaveBeenCalled()
+      expect(vi.mocked(getVaultAddressByDeposit)).not.toHaveBeenCalled()
+      expect(updates.status).toBeUndefined()
+    })
+
+    it('should fetch the Hemi transaction hash from API when deposit is completed and confirmationTransactionHash is missing', async function () {
+      vi.mocked(getBtcDepositInfo).mockResolvedValue({
+        transactionHash: zeroHash,
+      })
+
+      const updates = await watchDepositOnHemi({
+        ...deposit,
+        status: BtcDepositStatus.BTC_DEPOSITED,
+      })
+
+      expect(vi.mocked(getBtcDepositInfo)).toHaveBeenCalledWith({
+        chainId: deposit.l2ChainId,
+        depositTxId: deposit.transactionHash,
+      })
+      expect(updates).toEqual({
+        confirmationTransactionHash: zeroHash,
+      })
+    })
+
+    it('should not update confirmationTransactionHash if deposit already has one', async function () {
+      const completedDeposit = {
+        ...deposit,
+        confirmationTransactionHash: zeroHash,
+        status: BtcDepositStatus.BTC_DEPOSITED,
+      }
+
+      const updates = await watchDepositOnHemi(completedDeposit)
+
+      expect(vi.mocked(getBtcDepositInfo)).not.toHaveBeenCalled()
+      expect(updates).toEqual({})
+    })
+
+    it('should not update confirmationTransactionHash if API returns null', async function () {
+      const completedDeposit = {
+        ...deposit,
+        status: BtcDepositStatus.BTC_DEPOSITED,
+      }
+
+      vi.mocked(getBtcDepositInfo).mockResolvedValue(null)
+
+      const updates = await watchDepositOnHemi(completedDeposit)
+
+      expect(vi.mocked(getBtcDepositInfo)).toHaveBeenCalledWith({
+        chainId: completedDeposit.l2ChainId,
+        depositTxId: completedDeposit.transactionHash,
+      })
+      expect(updates).toEqual({})
     })
   })
 })

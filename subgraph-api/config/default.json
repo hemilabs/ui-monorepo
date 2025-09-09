@@ -15,6 +15,10 @@
       "testnet": "4jnDpTcGgMxMhsyTYSCXzCQftwbBcsCVMHJ9puK64MvA"
     },
     "tunnel": {
+      "btcDeposits": {
+        "mainnet": "7jyx9Ai7y9EYsbxesiPv9fNMaSGYih9NVjUH5UwunA6R",
+        "testnet": "B1ekut9efcHoJvC5ve2KwU9uxi1FX5b2Qf7SoFkiKJkf"
+      },
       "deposits": {
         "mainnet": "443cSh2tPs3qSCvNehnGd7hkya4MPoH7FEYdsDXQeYeY",
         "testnet": "6UZDgKugh5wBXwPeJ7K5EfFmvaH8dvEv5s8XNwgWo934"

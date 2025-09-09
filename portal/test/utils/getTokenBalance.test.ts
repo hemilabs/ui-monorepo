@@ -42,9 +42,8 @@ describe('getTokenBalance', function () {
 
   it('should return 0 if not connected', async function () {
     const result = await getTokenBalance({
-      account,
+      account: undefined,
       client: {} as PublicClient,
-      isConnected: false,
       token: mockNativeToken,
     })
 
@@ -57,7 +56,6 @@ describe('getTokenBalance', function () {
     const result = await getTokenBalance({
       account,
       client: {} as PublicClient,
-      isConnected: true,
       token: mockNativeToken,
     })
 
@@ -71,7 +69,6 @@ describe('getTokenBalance', function () {
     const result = await getTokenBalance({
       account,
       client,
-      isConnected: true,
       token: mockErc20Token,
     })
 
@@ -84,7 +81,6 @@ describe('getTokenBalance', function () {
     const result = await getTokenBalance({
       account,
       client: {} as PublicClient,
-      isConnected: true,
       token: mockNativeToken,
     })
 
@@ -98,7 +94,6 @@ describe('getTokenBalance', function () {
     const result = await getTokenBalance({
       account,
       client,
-      isConnected: true,
       token: mockErc20Token,
     })
 

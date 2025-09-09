@@ -6,7 +6,7 @@ import { getTokenBalance } from 'utils/getTokenBalance'
 import { useAccount } from 'wagmi'
 
 export const useWalletBalances = function () {
-  const { address: account, isConnected } = useAccount()
+  const { address: account } = useAccount()
   const hemiClient = useHemiClient()
   const stakeTokens = useStakeTokens()
 
@@ -21,12 +21,10 @@ export const useWalletBalances = function () {
         .map(({ data }) => data),
     }),
     queries: stakeTokens.map(token => ({
-      enabled: !!hemiClient && !!account,
       queryFn: () =>
         getTokenBalance({
           account: account!,
           client: hemiClient,
-          isConnected,
           token,
         }),
       queryKey: ['wallet-token-balance', token.chainId, token.address],

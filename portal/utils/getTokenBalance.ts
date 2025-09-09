@@ -5,19 +5,13 @@ import { getBalance } from 'viem/actions'
 import { getErc20TokenBalance } from 'viem-erc20/actions'
 
 type Props = {
-  account: Address
+  account: Address | undefined
   client: PublicClient
-  isConnected: boolean
   token: Token
 }
 
-export async function getTokenBalance({
-  account,
-  client,
-  isConnected,
-  token,
-}: Props) {
-  if (!isConnected) {
+export async function getTokenBalance({ account, client, token }: Props) {
+  if (!account) {
     return BigInt(0)
   }
 

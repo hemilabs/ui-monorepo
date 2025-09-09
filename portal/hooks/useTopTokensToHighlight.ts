@@ -79,12 +79,10 @@ export function useTopTokensToHighlight({ tokens }: Props) {
         : getEvmL1PublicClient(chainId)
 
       return {
-        enabled: !!account,
         queryFn: () =>
           getTokenBalance({
-            account: account!,
+            account,
             client,
-            isConnected,
             token,
           }),
         queryKey: ['top-token-balance', token.chainId, token.address],

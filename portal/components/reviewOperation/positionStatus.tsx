@@ -3,11 +3,11 @@ import Image from 'next/image'
 
 import { ErrorIcon } from './_icons/errorIcon'
 import gradientLoadingImg from './_images/gradient_loading.png'
-import { ProgressStatus } from './progressStatus'
+import { ProgressStatus, type ProgressStatusType } from './progressStatus'
 
 type Props = {
   position: number
-  status: ProgressStatus
+  status: ProgressStatusType
 }
 
 export const PositionStatus = function ({ position, status }: Props) {

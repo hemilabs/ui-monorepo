@@ -3,7 +3,10 @@
 import { ChainIcon } from 'components/reviewOperation/chainIcon'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
-import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import {
+  ProgressStatus,
+  type ProgressStatusType,
+} from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
@@ -108,7 +111,7 @@ const ReviewContent = function ({
   })
 
   const getDepositStep = function (): StepPropsWithoutPosition {
-    const statusMap: Partial<Record<EvmDepositStatus, ProgressStatus>> = {
+    const statusMap: Partial<Record<EvmDepositStatus, ProgressStatusType>> = {
       [EvmDepositStatus.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,
       [EvmDepositStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
       [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.COMPLETED,
@@ -117,10 +120,11 @@ const ReviewContent = function ({
       [EvmDepositStatus.DEPOSIT_RELAYED]: ProgressStatus.COMPLETED,
     }
 
-    const postStatusMap: Partial<Record<EvmDepositStatus, ProgressStatus>> = {
-      [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.PROGRESS,
-      [EvmDepositStatus.DEPOSIT_RELAYED]: ProgressStatus.COMPLETED,
-    }
+    const postStatusMap: Partial<Record<EvmDepositStatus, ProgressStatusType>> =
+      {
+        [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.PROGRESS,
+        [EvmDepositStatus.DEPOSIT_RELAYED]: ProgressStatus.COMPLETED,
+      }
     return {
       description: (
         <ChainLabel

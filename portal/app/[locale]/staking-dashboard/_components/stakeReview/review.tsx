@@ -2,7 +2,10 @@
 
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
-import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import {
+  ProgressStatus,
+  type ProgressStatusType,
+} from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
@@ -87,7 +90,9 @@ export const Review = function ({ onClose }: Props) {
       StakingDashboardStatus.APPROVAL_TX_PENDING,
     ].includes(stakingStatus)
 
-    const statusMap: Partial<Record<StakingDashboardStatus, ProgressStatus>> = {
+    const statusMap: Partial<
+      Record<StakingDashboardStatus, ProgressStatusType>
+    > = {
       [StakingDashboardStatus.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
       [StakingDashboardStatus.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
     }
@@ -119,7 +124,7 @@ export const Review = function ({ onClose }: Props) {
   }
 
   const addStakingStep = function (): StepPropsWithoutPosition {
-    const statusMap: Record<StakingDashboardStatus, ProgressStatus> = {
+    const statusMap: Record<StakingDashboardStatus, ProgressStatusType> = {
       [StakingDashboardStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
       [StakingDashboardStatus.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
       [StakingDashboardStatus.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,

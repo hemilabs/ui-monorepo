@@ -8,7 +8,7 @@ import { Token } from 'types/token'
 import { FeesIcon } from './_icons/feesIcon'
 import { OneRowBox, TwoRowBox } from './box'
 import { PositionStatus } from './positionStatus'
-import { ProgressStatus } from './progressStatus'
+import { ProgressStatus, type ProgressStatusType } from './progressStatus'
 import { SeeOnExplorer } from './seeOnExplorer'
 import { Separator } from './separator'
 import { SubStep } from './subStep'
@@ -26,7 +26,7 @@ type Props = {
   position: number
   postAction?: {
     description: ReactNode
-    status: ProgressStatus
+    status: ProgressStatusType
   }
   separator?: boolean
   txHash?: string
@@ -252,7 +252,7 @@ const statusMap = {
 export const Step = function ({
   status,
   ...props
-}: Props & { status: ProgressStatus }) {
+}: Props & { status: ProgressStatusType }) {
   const StatusStep = statusMap[status]
   return (
     <>

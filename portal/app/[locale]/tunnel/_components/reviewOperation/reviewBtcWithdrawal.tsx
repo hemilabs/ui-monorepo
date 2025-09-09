@@ -3,7 +3,10 @@
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
-import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import {
+  ProgressStatus,
+  type ProgressStatusType,
+} from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { WarningBox } from 'components/warningBox'
 import { useChain } from 'hooks/useChain'
@@ -99,18 +102,18 @@ const ReviewContent = function ({
   const steps: StepPropsWithoutPosition[] = []
 
   const addWithdrawStep = function (): StepPropsWithoutPosition {
-    const statusMap: Partial<Record<BtcWithdrawStatus, ProgressStatus>> = {
+    const statusMap: Partial<Record<BtcWithdrawStatus, ProgressStatusType>> = {
       [BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING]: ProgressStatus.PROGRESS,
       [BtcWithdrawStatus.WITHDRAWAL_FAILED]: ProgressStatus.FAILED,
     }
 
-    const postActionStatus: Partial<Record<BtcWithdrawStatus, ProgressStatus>> =
-      {
-        [BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED]:
-          ProgressStatus.PROGRESS,
-        [BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING]: ProgressStatus.NOT_READY,
-        [BtcWithdrawStatus.WITHDRAWAL_FAILED]: ProgressStatus.NOT_READY,
-      }
+    const postActionStatus: Partial<
+      Record<BtcWithdrawStatus, ProgressStatusType>
+    > = {
+      [BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED]: ProgressStatus.PROGRESS,
+      [BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING]: ProgressStatus.NOT_READY,
+      [BtcWithdrawStatus.WITHDRAWAL_FAILED]: ProgressStatus.NOT_READY,
+    }
 
     return {
       description: (

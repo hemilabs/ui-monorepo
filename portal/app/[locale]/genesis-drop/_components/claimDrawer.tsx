@@ -2,7 +2,10 @@ import { MutationStatus } from '@tanstack/react-query'
 import { Button } from 'components/button'
 import { Drawer } from 'components/drawer'
 import { Operation } from 'components/reviewOperation/operation'
-import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import {
+  ProgressStatus,
+  type ProgressStatusType,
+} from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { LockupMonths, type EligibilityData } from 'genesis-drop-actions'
@@ -73,7 +76,7 @@ export const ClaimDrawer = function ({
       </form>
     ) : null
 
-  const statusMap: Partial<Record<MutationStatus, ProgressStatus>> = {
+  const statusMap: Partial<Record<MutationStatus, ProgressStatusType>> = {
     error: ProgressStatus.FAILED,
     pending: ProgressStatus.PROGRESS,
     success: ProgressStatus.COMPLETED,

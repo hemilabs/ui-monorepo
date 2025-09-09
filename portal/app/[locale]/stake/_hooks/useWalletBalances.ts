@@ -23,7 +23,7 @@ export const useWalletBalances = function () {
     queries: stakeTokens.map(token => ({
       queryFn: () =>
         getTokenBalance({
-          account: account!,
+          account,
           client: hemiClient,
           token,
         }),

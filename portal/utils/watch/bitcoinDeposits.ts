@@ -85,7 +85,8 @@ export const watchDepositOnHemi = async function (
     !isPendingOperation({ ...deposit, status: newStatus }) &&
     !deposit.confirmationTransactionHash
   ) {
-    // Try to get l2TransactionHash from the subgraph API if not already present
+    // Try to get hemiBTC minting transaction hash
+    // from the subgraph API if not already present
     const depositInfo = await getBtcDepositInfo({
       chainId: deposit.l2ChainId,
       depositTxId: deposit.transactionHash,

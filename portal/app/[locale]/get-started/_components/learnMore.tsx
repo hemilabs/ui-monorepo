@@ -181,7 +181,9 @@ export const LearnMore = function () {
                     }}
                     selected={selectedTab === 'wallet'}
                   >
-                    {t('learn-more-tutorials.wallet-setup')}
+                    <span className="whitespace-nowrap">
+                      {t('learn-more-tutorials.wallet-setup')}
+                    </span>
                   </Tab>
                   <Tab
                     onClick={function () {
@@ -190,7 +192,9 @@ export const LearnMore = function () {
                     }}
                     selected={selectedTab === 'dev-tooling'}
                   >
-                    {t('learn-more-tutorials.developer-tooling')}
+                    <span className="whitespace-nowrap">
+                      {t('learn-more-tutorials.developer-tooling')}
+                    </span>
                   </Tab>
                   <Tab
                     onClick={function () {
@@ -199,7 +203,9 @@ export const LearnMore = function () {
                     }}
                     selected={selectedTab === 'PoP-miner'}
                   >
-                    {t('learn-more-tutorials.pop-miner')}
+                    <span className="whitespace-nowrap">
+                      {t('learn-more-tutorials.pop-miner')}
+                    </span>
                   </Tab>
                 </Tabs>
               </div>

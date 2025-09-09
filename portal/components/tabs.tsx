@@ -42,6 +42,7 @@ export const Tab = function ({
     >
       {(!isLink || disabled) && (
         <button
+          className="w-full"
           disabled={disabled || selected}
           onClick={!isLink && !disabled ? props.onClick : undefined}
           type="button"

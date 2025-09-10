@@ -46,7 +46,7 @@ const columnsBuilder = (
     ),
     header: () => <Header text={t('amount')} />,
     id: 'amount',
-    meta: { width: '221px' },
+    meta: { width: '150px' },
   },
   {
     cell: function ExplorerLink({ row }) {
@@ -59,7 +59,7 @@ const columnsBuilder = (
     },
     header: () => <Header text={t('table.tx')} />,
     id: 'tx',
-    meta: { width: '164px' },
+    meta: { width: '130px' },
   },
   {
     cell: ({ row }) => (
@@ -71,13 +71,13 @@ const columnsBuilder = (
     ),
     header: () => <Header text={t('lockup-period')} />,
     id: 'lockup-period',
-    meta: { width: '134px' },
+    meta: { width: '230px' },
   },
   {
     cell: ({ row }) => <TimeRemaining operation={row.original} />,
     header: () => <Header text={t('table.time-remaining')} />,
     id: 'time-remaining',
-    meta: { width: '184px' },
+    meta: { className: 'justify-end', width: '130px' },
   },
 ]
 
@@ -128,7 +128,9 @@ const StakeTableImp = function ({ data = [], loading }: StakeTableImpProps) {
           <tr className="flex w-full items-center" key={headerGroup.id}>
             {headerGroup.headers.map(header => (
               <ColumnHeader
-                className="justify-start"
+                className={
+                  header.column.columnDef.meta?.className ?? 'justify-start'
+                }
                 key={header.id}
                 style={{ width: header.column.columnDef.meta?.width }}
               >
@@ -146,7 +148,9 @@ const StakeTableImp = function ({ data = [], loading }: StakeTableImpProps) {
           <tr className="group/stake-row flex items-center" key={row.id}>
             {row.getVisibleCells().map(cell => (
               <Column
-                className="justify-start"
+                className={
+                  cell.column.columnDef.meta?.className ?? 'justify-start'
+                }
                 key={cell.id}
                 style={{ width: cell.column.columnDef.meta?.width }}
               >

@@ -1,0 +1,72 @@
+import { Button } from 'components/button'
+import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { useHemi } from 'hooks/useHemi'
+import { useHemiToken } from 'hooks/useHemiToken'
+import { useTranslations } from 'next-intl'
+import { type FormEvent, useState } from 'react'
+
+import { useStakingDashboard } from '../../_context/stakingDashboardContext'
+import { useUnstake } from '../../_hooks/useUnstake'
+import { OperationRunning } from '../stakeTable/unlock'
+
+export const RetryUnstake = function () {
+  const [operationRunning, setOperationRunning] =
+    useState<OperationRunning>('idle')
+
+  const { unstakingDashboardOperation, updateUnstakingDashboardOperation } =
+    useStakingDashboard()
+
+  const token = useHemiToken()
+  const hemi = useHemi()
+
+  const t = useTranslations()
+
+  // unstakingDashboardOperation is defined because this component is only rendered in that case
+  const { amount, tokenId } = unstakingDashboardOperation!.stakingPosition!
+
+  // this component tries to initiate a new withdraw, based on the failed one
+  const { mutate: runUnstake } = useUnstake({
+    amount,
+    on(emitter) {
+      emitter.on('withdraw-transaction-reverted', () =>
+        setOperationRunning('failed'),
+      )
+      emitter.on('user-signing-withdraw-error', () =>
+        setOperationRunning('failed'),
+      )
+      emitter.on('unexpected-error', () => setOperationRunning('failed'))
+      emitter.on('withdraw-transaction-succeeded', function () {
+        setOperationRunning('idle')
+      })
+    },
+    token,
+    tokenId,
+    updateUnstakingDashboardOperation,
+  })
+
+  const isUnstaking = operationRunning === 'unstaking'
+
+  const handleRetry = function (e: FormEvent) {
+    e.preventDefault()
+    setOperationRunning('unstaking')
+    runUnstake()
+  }
+
+  return (
+    <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
+      <SubmitWhenConnectedToChain
+        chainId={hemi.id}
+        submitButton={
+          <Button disabled={isUnstaking} size="small">
+            {t(
+              isUnstaking
+                ? 'staking-dashboard.form.unstaking'
+                : 'common.try-again',
+            )}
+          </Button>
+        }
+        submitButtonSize="small"
+      />
+    </form>
+  )
+}

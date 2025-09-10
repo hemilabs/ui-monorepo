@@ -1,4 +1,4 @@
-export type { CreateLockEvents } from './types'
+export type { CreateLockEvents, WithdrawEvents } from './types'
 
 export {
   getVeHemiContractAddress,

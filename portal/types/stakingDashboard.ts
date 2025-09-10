@@ -25,6 +25,14 @@ export type StakingDashboardOperation = {
   status?: StakingDashboardStatus
 }
 
+export const StakingPositionStatus = {
+  ACTIVE: 'active',
+  WITHDRAWN: 'withdrawn',
+} as const
+
+export type StakingPositionStatus =
+  (typeof StakingPositionStatus)[keyof typeof StakingPositionStatus]
+
 export type StakingPosition = {
   amount: bigint
   blockNumber: bigint
@@ -34,9 +42,24 @@ export type StakingPosition = {
   lockTime: bigint
   owner: string
   pastOwners: string[]
-  status: string
+  status: StakingPositionStatus
   timestamp: bigint
   tokenId: string
   transactionHash: Hash
   transferable: boolean
+}
+
+export const enum UnstakingDashboardStatus {
+  // The user has confirmed the TX in their wallet, but it hasn't been included in a block
+  UNSTAKE_TX_PENDING = 0,
+  // Withdrawal tx reverted
+  UNSTAKE_TX_FAILED = 1,
+  // Transaction withdrawal confirmed
+  UNSTAKE_TX_CONFIRMED = 2,
+}
+
+export type UnstakingDashboardOperation = {
+  transactionHash?: Hash
+  stakingPosition?: Pick<StakingPosition, 'amount' | 'tokenId'>
+  status?: UnstakingDashboardStatus
 }

@@ -2,7 +2,6 @@
 
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
-import { ToastLoader } from 'components/toast/toastLoader'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
@@ -11,7 +10,6 @@ import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { StakingDashboardStatus } from 'types/stakingDashboard'
 import { getTotal } from 'utils/getTotal'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
@@ -35,14 +33,6 @@ const SetMaxEvmBalance = dynamic(
   { ssr: false },
 )
 
-const StakeToast = dynamic(
-  () => import('./stakeToast').then(mod => mod.StakeToast),
-  {
-    loading: () => <ToastLoader />,
-    ssr: false,
-  },
-)
-
 type OperationRunning = 'idle' | 'approving' | 'staking'
 
 export const Stake = function () {
@@ -56,7 +46,6 @@ export const Stake = function () {
     input,
     lockupDays,
     resetStateAfterOperation,
-    stakingDashboardOperation,
     updateInput,
     updateStakingDashboardOperation,
   } = useStakingDashboard()
@@ -179,37 +168,28 @@ export const Stake = function () {
   )
 
   return (
-    <>
-      {stakingDashboardOperation?.status ===
-        StakingDashboardStatus.STAKE_TX_CONFIRMED &&
-        stakingDashboardOperation.transactionHash && (
-          <StakeToast
-            transactionHash={stakingDashboardOperation.transactionHash}
-          />
-        )}
-      <StakingForm
-        belowForm={<RenderBelowForm />}
-        formContent={
-          <FormContent
-            errorKey={
-              walletIsConnected(status) && tokenBalanceLoaded
-                ? errorKey
-                : undefined
-            }
-            isRunningOperation={isRunningOperation}
-            setMaxBalanceButton={
-              <SetMaxEvmBalance
-                disabled={isRunningOperation}
-                gas={createLockGasFees}
-                onSetMaxBalance={updateInput}
-                token={token}
-              />
-            }
-          />
-        }
-        onSubmit={handleStake}
-        submitButton={<RenderSubmitButton />}
-      />
-    </>
+    <StakingForm
+      belowForm={<RenderBelowForm />}
+      formContent={
+        <FormContent
+          errorKey={
+            walletIsConnected(status) && tokenBalanceLoaded
+              ? errorKey
+              : undefined
+          }
+          isRunningOperation={isRunningOperation}
+          setMaxBalanceButton={
+            <SetMaxEvmBalance
+              disabled={isRunningOperation}
+              gas={createLockGasFees}
+              onSetMaxBalance={updateInput}
+              token={token}
+            />
+          }
+        />
+      }
+      onSubmit={handleStake}
+      submitButton={<RenderSubmitButton />}
+    />
   )
 }

@@ -7,7 +7,10 @@ import {
 } from '@rainbow-me/rainbowkit'
 import { Drawer } from 'components/drawer'
 
-import { Review } from './review'
+import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
+
+import { ReviewStake } from './reviewStake'
+import { ReviewUnstake } from './reviewUnstake'
 
 type Props = {
   closeDrawer: VoidFunction
@@ -17,6 +20,7 @@ export const StakeReview = function ({ closeDrawer }: Props) {
   const { accountModalOpen } = useAccountModal()
   const { chainModalOpen } = useChainModal()
   const { connectModalOpen } = useConnectModal()
+  const { drawerMode } = useDrawerStakingQueryString()
 
   // Prevent closing the drawer when a RainbowKit modal is open.
   // Without this check, clicks on the wallet modal (e.g., Connect Wallet)
@@ -26,10 +30,16 @@ export const StakeReview = function ({ closeDrawer }: Props) {
     closeDrawer()
   }
 
+  const isStaking = drawerMode === 'staking'
+
   return (
     <Drawer onClose={safeCloseDrawer}>
       <div className="drawer-content h-[80dvh] md:h-full">
-        <Review onClose={safeCloseDrawer} />
+        {isStaking ? (
+          <ReviewStake onClose={safeCloseDrawer} />
+        ) : (
+          <ReviewUnstake onClose={safeCloseDrawer} />
+        )}
       </div>
     </Drawer>
   )

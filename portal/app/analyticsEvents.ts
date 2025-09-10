@@ -88,6 +88,10 @@ const analyticsEvents = [
   'staking dashboard - lock creation success',
   'staking dashboard - signed lock creation',
   'staking dashboard - signing lock creation error',
+  'staking dashboard - withdraw transaction reverted',
+  'staking dashboard - withdraw success',
+  'staking dashboard - signed withdraw',
+  'staking dashboard - signing withdraw error',
   // /transaction-history
   'txn refresh',
   'txn filter - all',

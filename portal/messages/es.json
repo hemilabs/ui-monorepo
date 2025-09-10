@@ -234,9 +234,16 @@
     "amount": "Cantidad",
     "drawer": {
       "approving": "Aprobando {symbol}",
-      "heading": "Revisar Stake",
-      "subheading": "Revise y confirme su stake.",
-      "stake-token": "Hacer stake de {symbol}"
+      "stake": {
+        "heading": "Revisar Stake",
+        "subheading": "Revise y confirme su stake."
+      },
+      "stake-token": "Hacer stake de {symbol}",
+      "unstake": {
+        "heading": "Estamos desbloqueando tus tokens",
+        "subheading": "La red está procesando tu desbloqueo. Podrás acceder a tus tokens una vez completado el paso."
+      },
+      "unstake-token": "Desbloquear {symbol}"
     },
     "form": {
       "allowance-load-failed": "No se pudo cargar el monto autorizado",
@@ -252,6 +259,7 @@
       "stake": "Stake",
       "staking": "Haciendo stake...",
       "title": "Stake",
+      "unstaking": "Desbloqueando...",
       "use-or": "Utilice <min></min> o <max></max>",
       "years": "{years, plural, one {{years} año} other {{years} años}}"
     },
@@ -268,8 +276,10 @@
       "time-remaining": "Tiempo restante",
       "tx": "Tx",
       "unlock": "Desbloquear",
+      "unlocked": "Desbloqueado",
       "unlocks-on": "Desbloquea el {date}"
-    }
+    },
+    "unstake-successful": "Desbloqueo exitoso"
   },
   "metadata": {
     "title": "Portal de Hemi"

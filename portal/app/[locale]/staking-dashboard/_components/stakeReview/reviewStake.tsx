@@ -28,7 +28,7 @@ type Props = {
   onClose: VoidFunction
 }
 
-export const Review = function ({ onClose }: Props) {
+export const ReviewStake = function ({ onClose }: Props) {
   const { input, lockupDays, stakingDashboardOperation } = useStakingDashboard()
   const token = useHemiToken()
 
@@ -36,7 +36,7 @@ export const Review = function ({ onClose }: Props) {
     stakingDashboardOperation?.status ??
     StakingDashboardStatus.APPROVAL_TX_COMPLETED
 
-  const t = useTranslations('staking-dashboard')
+  const t = useTranslations('staking-dashboard.drawer')
   const hemi = useHemi()
 
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
@@ -109,7 +109,7 @@ export const Review = function ({ onClose }: Props) {
         <ChainLabel
           active={stakingStatus === StakingDashboardStatus.APPROVAL_TX_PENDING}
           chainId={hemi.id}
-          label={t('drawer.approving', { symbol: token.symbol })}
+          label={t('approving', { symbol: token.symbol })}
         />
       ),
       explorerChainId: token.chainId,
@@ -143,7 +143,7 @@ export const Review = function ({ onClose }: Props) {
         <ChainLabel
           active={stakingStatus === StakingDashboardStatus.STAKE_TX_PENDING}
           chainId={hemi.id}
-          label={t('drawer.stake-token', { symbol: token.symbol })}
+          label={t('stake-token', { symbol: token.symbol })}
         />
       ),
       explorerChainId: token.chainId,
@@ -178,10 +178,10 @@ export const Review = function ({ onClose }: Props) {
     <Operation
       amount={amount.toString()}
       callToAction={getCallToAction(stakingStatus)}
-      heading={t('drawer.heading')}
+      heading={t('stake.heading')}
       onClose={onClose}
       steps={getSteps()}
-      subheading={t('drawer.subheading')}
+      subheading={t('stake.subheading')}
       token={token}
     />
   )

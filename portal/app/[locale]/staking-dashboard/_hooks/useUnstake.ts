@@ -96,7 +96,7 @@ export const useUnstake = function ({
           stakingPositionQueryKey,
           (old: StakingPosition[] | undefined = []) =>
             old.map(position =>
-              position.tokenId === tokenId.toString()
+              position.tokenId === tokenId
                 ? { ...position, status: StakingPositionStatus.WITHDRAWN }
                 : position,
             ),

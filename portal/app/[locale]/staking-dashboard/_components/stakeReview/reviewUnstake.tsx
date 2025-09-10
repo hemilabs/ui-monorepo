@@ -2,7 +2,10 @@
 
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
-import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import {
+  ProgressStatus,
+  ProgressStatusType,
+} from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
@@ -57,7 +60,7 @@ export const ReviewUnstake = function ({ onClose }: Props) {
       : undefined
 
   const addUnstakingStep = function (): StepPropsWithoutPosition {
-    const statusMap: Record<UnstakingDashboardStatus, ProgressStatus> = {
+    const statusMap: Record<UnstakingDashboardStatus, ProgressStatusType> = {
       [UnstakingDashboardStatus.UNSTAKE_TX_PENDING]: ProgressStatus.PROGRESS,
       [UnstakingDashboardStatus.UNSTAKE_TX_FAILED]: ProgressStatus.FAILED,
       [UnstakingDashboardStatus.UNSTAKE_TX_CONFIRMED]: ProgressStatus.COMPLETED,

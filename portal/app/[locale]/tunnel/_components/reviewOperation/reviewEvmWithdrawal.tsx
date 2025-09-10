@@ -1,6 +1,9 @@
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
-import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import {
+  ProgressStatus,
+  type ProgressStatusType,
+} from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
 import { useToken } from 'hooks/useToken'
@@ -87,7 +90,7 @@ const ReviewContent = function ({
     })
 
   const getWithdrawalStatus = function () {
-    const map: Partial<Record<MessageStatusType, ProgressStatus>> = {
+    const map: Partial<Record<MessageStatusType, ProgressStatusType>> = {
       [MessageStatus.UNCONFIRMED_L1_TO_L2_MESSAGE]: ProgressStatus.NOT_READY,
       [MessageStatus.STATE_ROOT_NOT_PUBLISHED]: ProgressStatus.PROGRESS,
       [MessageStatus.FAILED_L1_TO_L2_MESSAGE]: ProgressStatus.FAILED,
@@ -140,12 +143,13 @@ const ReviewContent = function ({
       return ProgressStatus.NOT_READY
     }
 
-    const map: Partial<Record<ToEvmWithdrawOperationStatuses, ProgressStatus>> =
-      {
-        claiming: ProgressStatus.PROGRESS,
-        failed: ProgressStatus.FAILED,
-        rejected: ProgressStatus.REJECTED,
-      }
+    const map: Partial<
+      Record<ToEvmWithdrawOperationStatuses, ProgressStatusType>
+    > = {
+      claiming: ProgressStatus.PROGRESS,
+      failed: ProgressStatus.FAILED,
+      rejected: ProgressStatus.REJECTED,
+    }
     return map[operationStatus] ?? ProgressStatus.READY
   }
 
@@ -156,12 +160,13 @@ const ReviewContent = function ({
     if (withdrawal.status >= MessageStatus.IN_CHALLENGE_PERIOD) {
       return ProgressStatus.COMPLETED
     }
-    const map: Partial<Record<ToEvmWithdrawOperationStatuses, ProgressStatus>> =
-      {
-        failed: ProgressStatus.FAILED,
-        proving: ProgressStatus.PROGRESS,
-        rejected: ProgressStatus.REJECTED,
-      }
+    const map: Partial<
+      Record<ToEvmWithdrawOperationStatuses, ProgressStatusType>
+    > = {
+      failed: ProgressStatus.FAILED,
+      proving: ProgressStatus.PROGRESS,
+      rejected: ProgressStatus.REJECTED,
+    }
     return map[operationStatus] ?? ProgressStatus.READY
   }
 

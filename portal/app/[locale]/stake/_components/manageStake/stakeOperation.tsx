@@ -1,5 +1,8 @@
 import { DrawerParagraph } from 'components/drawer'
-import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import {
+  ProgressStatus,
+  type ProgressStatusType,
+} from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { Spinner } from 'components/spinner'
 import { ToastLoader } from 'components/toast/toastLoader'
@@ -110,7 +113,7 @@ export const StakeOperation = function ({
         return ProgressStatus.COMPLETED
       }
 
-      const statusMap: Partial<Record<StakeStatusEnum, ProgressStatus>> = {
+      const statusMap: Partial<Record<StakeStatusEnum, ProgressStatusType>> = {
         [StakeStatusEnum.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
         [StakeStatusEnum.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
       }
@@ -147,7 +150,7 @@ export const StakeOperation = function ({
       if (stakeStatus === undefined) {
         return ProgressStatus.NOT_READY
       }
-      const statusMap: Record<StakeStatusEnum, ProgressStatus> = {
+      const statusMap: Record<StakeStatusEnum, ProgressStatusType> = {
         [StakeStatusEnum.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
         [StakeStatusEnum.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
         [StakeStatusEnum.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,

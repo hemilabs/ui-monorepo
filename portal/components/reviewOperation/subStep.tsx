@@ -4,11 +4,11 @@ import { ReactNode } from 'react'
 
 import { ClockIcon } from './_icons/clockIcon'
 import gradientLoadingImg from './_images/gradient_loading.png'
-import { ProgressStatus } from './progressStatus'
+import { ProgressStatus, type ProgressStatusType } from './progressStatus'
 
 type Props = {
   description: ReactNode
-  status: ProgressStatus
+  status: ProgressStatusType
 }
 
 export function SubStep({ description, status }: Props) {

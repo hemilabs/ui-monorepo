@@ -140,7 +140,6 @@
     },
     "claim-rewards": "Reclamar recompensas",
     "claiming-your-rewards": "Reclamando sus recompensas",
-    "come-back-later": "Regrese en el momento del TGE para reclamar sus ${symbol}",
     "connect-demos-wallet": "Asegúrese de conectar su billetera verificada de Demos.",
     "hemi-token-added": "{symbol} agregado a su billetera",
     "here-is-your-claim-tx": "Aquí está su transacción de reclamo:",
@@ -155,7 +154,6 @@
     "terms-and-conditions": {
       "title": "Términos y Condiciones del programa Lanzamiento Génesis de Hemi"
     },
-    "share-on-x": "Compartir en <icon></icon>",
     "share-x-text": "¡Soy elegible para {amount} ${symbol} del lanzamiento Génesis TGE de Hemi! 🎉 Verifique si eres elegible:",
     "title": "Programa de Recompensas",
     "up-to-multiplier": "Hasta {multiplier}x",

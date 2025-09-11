@@ -9,7 +9,7 @@ import { Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
   StakingDashboardStatus,
-  UnstakingDashboardStatus,
+  UnlockingDashboardStatus,
 } from 'types/stakingDashboard'
 
 import { useStakingDashboard } from '../_context/stakingDashboardContext'
@@ -35,12 +35,12 @@ const StakeToast = dynamic(
 
 const SideDrawer = function () {
   const { drawerMode, setDrawerQueryString } = useDrawerStakingQueryString()
-  const { stakingDashboardOperation, unstakingDashboardOperation } =
+  const { stakingDashboardOperation, unlockingDashboardOperation } =
     useStakingDashboard()
 
   if (
     !drawerMode ||
-    (!stakingDashboardOperation && !unstakingDashboardOperation)
+    (!stakingDashboardOperation && !unlockingDashboardOperation)
   ) {
     return null
   }
@@ -49,7 +49,7 @@ const SideDrawer = function () {
 }
 
 export const StakeForm = function () {
-  const { stakingDashboardOperation, unstakingDashboardOperation } =
+  const { stakingDashboardOperation, unlockingDashboardOperation } =
     useStakingDashboard()
   const hemiToken = useHemiToken()
   const t = useTranslations()
@@ -68,10 +68,10 @@ export const StakeForm = function () {
       StakingDashboardStatus.STAKE_TX_CONFIRMED &&
     stakingDashboardOperation.transactionHash
 
-  const showUnstakeToast =
-    unstakingDashboardOperation?.status ===
-      UnstakingDashboardStatus.UNSTAKE_TX_CONFIRMED &&
-    unstakingDashboardOperation.transactionHash
+  const showUnlockToast =
+    unlockingDashboardOperation?.status ===
+      UnlockingDashboardStatus.UNLOCK_TX_CONFIRMED &&
+    unlockingDashboardOperation.transactionHash
 
   return (
     <>
@@ -81,10 +81,10 @@ export const StakeForm = function () {
           transactionHash={stakingDashboardOperation.transactionHash!}
         />
       )}
-      {showUnstakeToast && (
+      {showUnlockToast && (
         <StakeToast
-          title={t('staking-dashboard.unstake-successful')}
-          transactionHash={unstakingDashboardOperation.transactionHash!}
+          title={t('staking-dashboard.unlock-successful')}
+          transactionHash={unlockingDashboardOperation.transactionHash!}
         />
       )}
       <Stake />

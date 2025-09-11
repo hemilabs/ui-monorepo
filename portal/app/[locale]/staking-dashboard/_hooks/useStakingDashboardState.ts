@@ -1,7 +1,7 @@
 import { useCallback, useReducer } from 'react'
 import {
   StakingDashboardOperation,
-  UnstakingDashboardOperation,
+  UnlockingDashboardOperation,
   type StakingDashboardToken,
 } from 'types/stakingDashboard'
 import { sanitizeAmount } from 'utils/form'
@@ -14,7 +14,7 @@ type StakingDashboardState = {
   inputDays: string
   lockupDays: number
   stakingDashboardOperation?: StakingDashboardOperation
-  unstakingDashboardOperation?: UnstakingDashboardOperation
+  unlockingDashboardOperation?: UnlockingDashboardOperation
 }
 
 type Action<T extends string> = {
@@ -28,9 +28,9 @@ type UpdateInputDays = Action<'updateInputDays'> & Payload<string>
 type UpdateStakingDashboardOperation =
   Action<'updateStakingDashboardOperation'> &
     Payload<StakingDashboardOperation | undefined>
-type UpdateUnstakingDashboardOperation =
-  Action<'updateUnstakingDashboardOperation'> &
-    Payload<UnstakingDashboardOperation | undefined>
+type UpdateUnlockingDashboardOperation =
+  Action<'updateUnlockingDashboardOperation'> &
+    Payload<UnlockingDashboardOperation | undefined>
 
 type Actions =
   | ResetStateAfterOperation
@@ -38,7 +38,7 @@ type Actions =
   | UpdateInputDays
   | UpdateLockupDays
   | UpdateStakingDashboardOperation
-  | UpdateUnstakingDashboardOperation
+  | UpdateUnlockingDashboardOperation
 
 // the _:never is used to fail compilation if a case is missing
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -79,11 +79,11 @@ function reducer(
         },
       }
 
-    case 'updateUnstakingDashboardOperation':
+    case 'updateUnlockingDashboardOperation':
       return {
         ...state,
-        unstakingDashboardOperation: {
-          ...(state.unstakingDashboardOperation ?? {}),
+        unlockingDashboardOperation: {
+          ...(state.unlockingDashboardOperation ?? {}),
           ...payload,
         },
       }
@@ -134,10 +134,10 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     dispatch({ payload, type: 'updateStakingDashboardOperation' })
   }, [])
 
-  const updateUnstakingDashboardOperation = useCallback(function (
-    payload: UpdateUnstakingDashboardOperation['payload'],
+  const updateUnlockingDashboardOperation = useCallback(function (
+    payload: UpdateUnlockingDashboardOperation['payload'],
   ) {
-    dispatch({ payload, type: 'updateUnstakingDashboardOperation' })
+    dispatch({ payload, type: 'updateUnlockingDashboardOperation' })
   }, [])
 
   return {
@@ -150,7 +150,7 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     updateInputDays,
     updateLockupDays,
     updateStakingDashboardOperation,
-    updateUnstakingDashboardOperation,
+    updateUnlockingDashboardOperation,
   }
 }
 

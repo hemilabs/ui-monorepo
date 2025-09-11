@@ -239,11 +239,11 @@
         "subheading": "Review and confirm your stake."
       },
       "stake-token": "Stake {symbol}",
-      "unstake": {
+      "unlock": {
         "heading": "We’re unlocking your tokens",
-        "subheading": "The network is processing your unlock. You’ll be able to access your tokens once the step is complete."
+        "subheading": "The network is processing your unlock. You’ll be able to access your tokens once the transaction is complete."
       },
-      "unstake-token": "Unlock {symbol}"
+      "unlock-token": "Unlock {symbol}"
     },
     "form": {
       "allowance-load-failed": "Failed to load allowance",
@@ -259,7 +259,7 @@
       "stake": "Stake",
       "staking": "Staking...",
       "title": "Stake",
-      "unstaking": "Unlocking...",
+      "unlocking": "Unlocking...",
       "use-or": "Use <min></min> or <max></max>",
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
@@ -279,7 +279,7 @@
       "unlocked": "Unlocked",
       "unlocks-on": "Unlocks on {date}"
     },
-    "unstake-successful": "Unlock successful"
+    "unlock-successful": "Unlock successful"
   },
   "metadata": {
     "title": "Hemi Portal"

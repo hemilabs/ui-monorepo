@@ -49,17 +49,17 @@ export type StakingPosition = {
   transferable: boolean
 }
 
-export const enum UnstakingDashboardStatus {
+export const enum UnlockingDashboardStatus {
   // The user has confirmed the TX in their wallet, but it hasn't been included in a block
-  UNSTAKE_TX_PENDING = 0,
+  UNLOCK_TX_PENDING = 0,
   // Withdrawal tx reverted
-  UNSTAKE_TX_FAILED = 1,
+  UNLOCK_TX_FAILED = 1,
   // Transaction withdrawal confirmed
-  UNSTAKE_TX_CONFIRMED = 2,
+  UNLOCK_TX_CONFIRMED = 2,
 }
 
-export type UnstakingDashboardOperation = {
+export type UnlockingDashboardOperation = {
   transactionHash?: Hash
   stakingPosition?: Pick<StakingPosition, 'amount' | 'tokenId'>
-  status?: UnstakingDashboardStatus
+  status?: UnlockingDashboardStatus
 }

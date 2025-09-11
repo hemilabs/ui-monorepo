@@ -10,7 +10,7 @@ import { Drawer } from 'components/drawer'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
 
 import { ReviewStake } from './reviewStake'
-import { ReviewUnstake } from './reviewUnstake'
+import { ReviewUnlock } from './reviewUnlock'
 
 type Props = {
   closeDrawer: VoidFunction
@@ -38,7 +38,7 @@ export const StakeReview = function ({ closeDrawer }: Props) {
         {isStaking ? (
           <ReviewStake onClose={safeCloseDrawer} />
         ) : (
-          <ReviewUnstake onClose={safeCloseDrawer} />
+          <ReviewUnlock onClose={safeCloseDrawer} />
         )}
       </div>
     </Drawer>

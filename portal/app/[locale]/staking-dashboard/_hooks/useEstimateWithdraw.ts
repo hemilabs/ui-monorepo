@@ -20,16 +20,15 @@ export const useEstimateWithdrawFees = function ({
     tokenId,
   })
 
-  const { data: gasUnits, isSuccess } = useEstimateGas({
+  const { data: gasUnits } = useEstimateGas({
     data,
     query: { enabled: isConnected && enabled },
     to: veHemiAddress,
-    value: undefined,
   })
 
   return useEstimateFees({
     chainId: token.chainId,
-    enabled: isSuccess,
+    enabled: gasUnits !== undefined,
     gasUnits,
     overEstimation: 1.5,
   })

@@ -1,6 +1,6 @@
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
 
-const drawerModes = ['staking', 'unstaking'] as const
+const drawerModes = ['staking', 'unlocking'] as const
 type DrawerModes = (typeof drawerModes)[number]
 
 export const useDrawerStakingQueryString = function () {

@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { StakingPosition, StakingPositionStatus } from 'types/stakingDashboard'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
-import { useUnstake } from '../../_hooks/useUnstake'
+import { useUnlock } from '../../_hooks/useUnlock'
 
 const CheckIcon = () => (
   <svg fill="none" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
@@ -22,7 +22,7 @@ type Props = {
   operation: Pick<StakingPosition, 'amount' | 'status' | 'tokenId'>
 }
 
-export type OperationRunning = 'idle' | 'unstaking' | 'failed'
+export type OperationRunning = 'idle' | 'unlocking' | 'failed'
 
 export function Unlock({ operation }: Props) {
   const t = useTranslations('staking-dashboard')
@@ -30,9 +30,9 @@ export function Unlock({ operation }: Props) {
   const { amount, tokenId } = operation
   const [operationRunning, setOperationRunning] =
     useState<OperationRunning>('idle')
-  const { updateUnstakingDashboardOperation } = useStakingDashboard()
+  const { updateUnlockingDashboardOperation } = useStakingDashboard()
 
-  const { mutate: runUnstake } = useUnstake({
+  const { mutate: runUnlock } = useUnlock({
     amount,
     on(emitter) {
       emitter.on('withdraw-transaction-reverted', () =>
@@ -48,7 +48,7 @@ export function Unlock({ operation }: Props) {
     },
     token,
     tokenId,
-    updateUnstakingDashboardOperation,
+    updateUnlockingDashboardOperation,
   })
 
   if (operation.status === StakingPositionStatus.WITHDRAWN) {
@@ -62,16 +62,16 @@ export function Unlock({ operation }: Props) {
     )
   }
 
-  const isUnstaking = operationRunning === 'unstaking'
+  const isUnlocking = operationRunning === 'unlocking'
 
   const handleUnlock = function () {
-    setOperationRunning('unstaking')
-    runUnstake()
+    setOperationRunning('unlocking')
+    runUnlock()
   }
 
   return (
     <div className="mr-0.5">
-      <Button disabled={isUnstaking} onClick={handleUnlock} size="small">
+      <Button disabled={isUnlocking} onClick={handleUnlock} size="small">
         {t('table.unlock')}
       </Button>
     </div>

@@ -1,3 +1,5 @@
+name: Subgraphs Deployment
+
 on:
   push:
     branches:

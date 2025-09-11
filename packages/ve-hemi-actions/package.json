@@ -22,7 +22,7 @@
   "dependencies": {
     "hemi-viem": "2.6.1",
     "promise-mem": "1.0.4",
-    "viem-erc20": "1.0.1"
+    "viem-erc20": "1.1.0"
   },
   "devDependencies": {
     "@tsconfig/node20": "20.1.5",

@@ -1,15 +1,18 @@
 'use client'
 
 import { DrawerLoader } from 'components/drawer/drawerLoader'
+import { ToastLoader } from 'components/toast/toastLoader'
 import { useHemiToken } from 'hooks/useHemiToken'
 import dynamic from 'next/dynamic'
+import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
-
 import {
-  StakingDashboardProvider,
-  useStakingDashboard,
-} from '../_context/stakingDashboardContext'
+  StakingDashboardStatus,
+  UnlockingDashboardStatus,
+} from 'types/stakingDashboard'
+
+import { useStakingDashboard } from '../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../_hooks/useDrawerStakingQueryString'
 
 import { Stake } from './stake'
@@ -22,11 +25,23 @@ const StakeReview = dynamic(
   },
 )
 
+const StakeToast = dynamic(
+  () => import('./stakeToast').then(mod => mod.StakeToast),
+  {
+    loading: () => <ToastLoader />,
+    ssr: false,
+  },
+)
+
 const SideDrawer = function () {
   const { drawerMode, setDrawerQueryString } = useDrawerStakingQueryString()
-  const { stakingDashboardOperation } = useStakingDashboard()
+  const { stakingDashboardOperation, unlockingDashboardOperation } =
+    useStakingDashboard()
 
-  if (!drawerMode || !stakingDashboardOperation) {
+  if (
+    !drawerMode ||
+    (!stakingDashboardOperation && !unlockingDashboardOperation)
+  ) {
     return null
   }
 
@@ -34,7 +49,10 @@ const SideDrawer = function () {
 }
 
 export const StakeForm = function () {
+  const { stakingDashboardOperation, unlockingDashboardOperation } =
+    useStakingDashboard()
   const hemiToken = useHemiToken()
+  const t = useTranslations()
 
   if (!hemiToken) {
     return (
@@ -45,12 +63,34 @@ export const StakeForm = function () {
     )
   }
 
+  const showStakeToast =
+    stakingDashboardOperation?.status ===
+      StakingDashboardStatus.STAKE_TX_CONFIRMED &&
+    stakingDashboardOperation.transactionHash
+
+  const showUnlockToast =
+    unlockingDashboardOperation?.status ===
+      UnlockingDashboardStatus.UNLOCK_TX_CONFIRMED &&
+    unlockingDashboardOperation.transactionHash
+
   return (
-    <StakingDashboardProvider>
+    <>
+      {showStakeToast && (
+        <StakeToast
+          title={t('staking-dashboard.stake-successful')}
+          transactionHash={stakingDashboardOperation.transactionHash!}
+        />
+      )}
+      {showUnlockToast && (
+        <StakeToast
+          title={t('staking-dashboard.unlock-successful')}
+          transactionHash={unlockingDashboardOperation.transactionHash!}
+        />
+      )}
       <Stake />
       <Suspense>
         <SideDrawer />
       </Suspense>
-    </StakingDashboardProvider>
+    </>
   )
 }

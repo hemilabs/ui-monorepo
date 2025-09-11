@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl'
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
 import { StakingDashboardDisabledTestnet } from './_components/stakingDashboardDisabledTestnet'
+import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
 import { isStakingDashboardEnabledOnTestnet } from './_utils/isStakingDashboardEnabledOnTestnet'
 
@@ -15,14 +16,16 @@ function StakingContent() {
   const { data, isLoading } = useStakingPositions()
 
   return (
-    <div className="mt-8 flex flex-col-reverse gap-6 lg:flex-row">
-      <div className="w-full lg:w-1/2 lg:flex-initial 2xl:w-full">
-        <StakeTable data={data} loading={isLoading} />
+    <StakingDashboardProvider>
+      <div className="mt-8 flex flex-col-reverse gap-6 lg:flex-row">
+        <div className="w-full lg:w-1/2 lg:flex-initial 2xl:w-full">
+          <StakeTable data={data} loading={isLoading} />
+        </div>
+        <div className="w-full lg:w-fit lg:flex-auto lg:flex-shrink-0 lg:basis-1/2 2xl:w-fit 2xl:flex-none">
+          <StakeForm />
+        </div>
       </div>
-      <div className="w-full lg:w-fit lg:flex-auto lg:flex-shrink-0 lg:basis-1/2 2xl:w-fit 2xl:flex-none">
-        <StakeForm />
-      </div>
-    </div>
+    </StakingDashboardProvider>
   )
 }
 

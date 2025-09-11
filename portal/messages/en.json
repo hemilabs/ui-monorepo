@@ -234,9 +234,16 @@
     "amount": "Amount",
     "drawer": {
       "approving": "Approving {symbol}",
-      "heading": "Review Stake",
-      "subheading": "Review and confirm your stake.",
-      "stake-token": "Stake {symbol}"
+      "stake": {
+        "heading": "Review Stake",
+        "subheading": "Review and confirm your stake."
+      },
+      "stake-token": "Stake {symbol}",
+      "unlock": {
+        "heading": "We’re unlocking your tokens",
+        "subheading": "The network is processing your unlock. You’ll be able to access your tokens once the transaction is complete."
+      },
+      "unlock-token": "Unlock {symbol}"
     },
     "form": {
       "allowance-load-failed": "Failed to load allowance",
@@ -252,11 +259,12 @@
       "stake": "Stake",
       "staking": "Staking...",
       "title": "Stake",
+      "unlocking": "Unlocking...",
       "use-or": "Use <min></min> or <max></max>",
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
     "heading": "Stake your ${symbol} and earn",
-    "here-is-your-stake-tx": "Here's your stake transaction:",
+    "here-is-your-tx": "Here's your transaction:",
     "lockup-period": "Lockup period",
     "stake-successful": "Stake successful",
     "switch-to-start-staking": "You can switch networks to start staking your HEMI.",
@@ -268,8 +276,10 @@
       "time-remaining": "Time remaining",
       "tx": "Tx",
       "unlock": "Unlock",
+      "unlocked": "Unlocked",
       "unlocks-on": "Unlocks on {date}"
-    }
+    },
+    "unlock-successful": "Unlock successful"
   },
   "metadata": {
     "title": "Hemi Portal"

@@ -1,4 +1,3 @@
-import { Button } from 'components/button'
 import { InRelativeTime } from 'components/inRelativeTime'
 import { Tooltip } from 'components/tooltip'
 import { useLocale, useTranslations } from 'next-intl'
@@ -6,6 +5,7 @@ import { StakingPosition } from 'types/stakingDashboard'
 import { formatDate } from 'utils/format'
 
 import { CircularProgress } from './circularProgress'
+import { Unlock } from './unlock'
 
 type Props = {
   operation: StakingPosition
@@ -15,9 +15,11 @@ export function TimeRemaining({ operation }: Props) {
   const t = useTranslations('staking-dashboard')
   const locale = useLocale()
 
-  const totalLockTimeSeconds = Number(operation.lockTime)
+  const { amount, lockTime, status, timestamp, tokenId } = operation
+
+  const totalLockTimeSeconds = Number(lockTime)
   const currentTimeInSeconds = Math.floor(Date.now() / 1000)
-  const unlockTime = Number(operation.timestamp) + totalLockTimeSeconds
+  const unlockTime = Number(timestamp) + totalLockTimeSeconds
   const timeRemainingSeconds = unlockTime - currentTimeInSeconds
 
   // Calculate unlock date in UTC
@@ -26,12 +28,13 @@ export function TimeRemaining({ operation }: Props) {
   // If time remaining is negative or zero, position can be unlocked
   if (timeRemainingSeconds <= 0) {
     return (
-      <Button
-        size="small"
-        //TODO - unlock TBD
-      >
-        {t('table.unlock')}
-      </Button>
+      <Unlock
+        operation={{
+          amount,
+          status,
+          tokenId,
+        }}
+      />
     )
   }
 

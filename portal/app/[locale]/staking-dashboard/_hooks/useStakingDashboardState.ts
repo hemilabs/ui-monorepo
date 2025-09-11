@@ -1,6 +1,7 @@
 import { useCallback, useReducer } from 'react'
 import {
   StakingDashboardOperation,
+  UnlockingDashboardOperation,
   type StakingDashboardToken,
 } from 'types/stakingDashboard'
 import { sanitizeAmount } from 'utils/form'
@@ -13,6 +14,7 @@ type StakingDashboardState = {
   inputDays: string
   lockupDays: number
   stakingDashboardOperation?: StakingDashboardOperation
+  unlockingDashboardOperation?: UnlockingDashboardOperation
 }
 
 type Action<T extends string> = {
@@ -26,6 +28,9 @@ type UpdateInputDays = Action<'updateInputDays'> & Payload<string>
 type UpdateStakingDashboardOperation =
   Action<'updateStakingDashboardOperation'> &
     Payload<StakingDashboardOperation | undefined>
+type UpdateUnlockingDashboardOperation =
+  Action<'updateUnlockingDashboardOperation'> &
+    Payload<UnlockingDashboardOperation | undefined>
 
 type Actions =
   | ResetStateAfterOperation
@@ -33,6 +38,7 @@ type Actions =
   | UpdateInputDays
   | UpdateLockupDays
   | UpdateStakingDashboardOperation
+  | UpdateUnlockingDashboardOperation
 
 // the _:never is used to fail compilation if a case is missing
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -69,6 +75,15 @@ function reducer(
         ...state,
         stakingDashboardOperation: {
           ...(state.stakingDashboardOperation ?? {}),
+          ...payload,
+        },
+      }
+
+    case 'updateUnlockingDashboardOperation':
+      return {
+        ...state,
+        unlockingDashboardOperation: {
+          ...(state.unlockingDashboardOperation ?? {}),
           ...payload,
         },
       }
@@ -119,6 +134,12 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     dispatch({ payload, type: 'updateStakingDashboardOperation' })
   }, [])
 
+  const updateUnlockingDashboardOperation = useCallback(function (
+    payload: UpdateUnlockingDashboardOperation['payload'],
+  ) {
+    dispatch({ payload, type: 'updateUnlockingDashboardOperation' })
+  }, [])
+
   return {
     ...state,
     resetStateAfterOperation: useCallback(
@@ -129,6 +150,7 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     updateInputDays,
     updateLockupDays,
     updateStakingDashboardOperation,
+    updateUnlockingDashboardOperation,
   }
 }
 

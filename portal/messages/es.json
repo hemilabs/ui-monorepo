@@ -234,9 +234,16 @@
     "amount": "Cantidad",
     "drawer": {
       "approving": "Aprobando {symbol}",
-      "heading": "Revisar Stake",
-      "subheading": "Revise y confirme su stake.",
-      "stake-token": "Hacer stake de {symbol}"
+      "stake": {
+        "heading": "Revisar Stake",
+        "subheading": "Revise y confirme su stake."
+      },
+      "stake-token": "Hacer stake de {symbol}",
+      "unlock": {
+        "heading": "Estamos desbloqueando sus tokens",
+        "subheading": "La red está procesando su desbloqueo. Podrá acceder a sus tokens una vez completada la transacción."
+      },
+      "unlock-token": "Desbloquear {symbol}"
     },
     "form": {
       "allowance-load-failed": "No se pudo cargar el monto autorizado",
@@ -252,11 +259,12 @@
       "stake": "Stake",
       "staking": "Haciendo stake...",
       "title": "Stake",
+      "unlocking": "Desbloqueando...",
       "use-or": "Utilice <min></min> o <max></max>",
       "years": "{years, plural, one {{years} año} other {{years} años}}"
     },
     "heading": "Haga stake de sus ${symbol} y gane",
-    "here-is-your-stake-tx": "Aquí está su transacción de staking:",
+    "here-is-your-tx": "Aquí está su transacción:",
     "lockup-period": "Período de bloqueo",
     "stake-successful": "Stake exitoso",
     "switch-to-start-staking": "Puede cambiar de red para comenzar a hacer staking de su HEMI.",
@@ -268,8 +276,10 @@
       "time-remaining": "Tiempo restante",
       "tx": "Tx",
       "unlock": "Desbloquear",
+      "unlocked": "Desbloqueado",
       "unlocks-on": "Desbloquea el {date}"
-    }
+    },
+    "unlock-successful": "Desbloqueo exitoso"
   },
   "metadata": {
     "title": "Portal de Hemi"

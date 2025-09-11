@@ -38,23 +38,15 @@ const MoreInfo = function () {
 }
 
 export const Eligible = function ({ eligibility }: Props) {
-  const { data: isClaimable } = useIsClaimable(eligibility)
+  const { data: isClaimable, isError: isClaimableError } =
+    useIsClaimable(eligibility)
   const hemiToken = useHemiToken()
   const { data: transaction } = useGetClaimTransaction(eligibility.claimGroupId)
   const t = useTranslations('genesis-drop')
 
   const amount = formatHemi(eligibility.amount, hemiToken.decimals)
-  const claimGroupIdAvailable = eligibility.claimGroupId !== undefined
 
-  if (isClaimable === undefined && claimGroupIdAvailable) {
-    return (
-      <div className="mt-5">
-        <Spinner color="#FF6A00" size="small" />
-      </div>
-    )
-  }
-
-  if (claimGroupIdAvailable && transaction) {
+  if (transaction) {
     // User has already claimed. If it could not claim, there wouldn't be a transaction hash,
     // and we wouldn't be here.
     return (
@@ -67,10 +59,19 @@ export const Eligible = function ({ eligibility }: Props) {
 
   // check for false, because it may be undefined for disabled query
   // during the Claim Checker stage.
-  if (isClaimable === false) {
+  if (isClaimable === false || isClaimableError) {
     return <NotEligible />
   }
 
+  if (isClaimable === undefined) {
+    return (
+      <div className="mt-5">
+        <Spinner color="#FF6A00" size="small" />
+      </div>
+    )
+  }
+
+  // if we reached this point, the user is eligible and can claim
   return (
     <>
       <div className="md:max-w-105 max-h-24 w-full max-w-96">

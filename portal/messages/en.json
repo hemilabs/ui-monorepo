@@ -111,6 +111,11 @@
     "claimed": "Claimed",
     "claim-and-stake-successful": "Claim and Stake successful",
     "claim-details": "Claim details",
+    "claim-groups": {
+      "genesis-drop": "Genesis Drop",
+      "spectra-and-dodo": "Spectra + Dodo",
+      "other-drop": "Other Drop"
+    },
     "claim-name": "Claim name:",
     "claim-options": {
       "and-other-partners": "...and many other partners!",

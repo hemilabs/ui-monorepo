@@ -53,6 +53,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
   }
 
   const { mutate: claimTokens } = useClaimTokens({
+    eligibility,
     on(emitter) {
       emitter.on('user-signing-claim-error', () => closeDrawer())
       emitter.on('user-signed-claim', function (hash) {

@@ -111,6 +111,11 @@
     "claimed": "Reclamado",
     "claim-and-stake-successful": "Reclamo y Stake exitoso",
     "claim-details": "Detalles del reclamo",
+    "claim-groups": {
+      "genesis-drop": "Lanzamiento Génesis",
+      "spectra-and-dodo": "Spectra + Dodo",
+      "other-drop": "Otro Lanzamiento"
+    },
     "claim-name": "Nombre del reclamo:",
     "claim-options": {
       "and-other-partners": "...¡y muchos otros socios!",

@@ -1,3 +1,4 @@
+import { GenesisDropTabs } from 'app/[locale]/genesis-drop/_components/genesisDropTabs'
 import { ButtonIcon } from 'components/button'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { HamburgerIcon } from 'components/icons/hamburgerIcon'
@@ -45,6 +46,7 @@ export const Header = ({ isMenuOpen, setIsNavbarOpen, toggleMenu }: Props) => (
     <div className="hidden pl-6 md:block">
       <StakeTabs />
       <TunnelTabs />
+      <GenesisDropTabs />
     </div>
     <WalletConnection />
     <div className="md:hidden">

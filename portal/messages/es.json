@@ -240,8 +240,8 @@
       },
       "stake-token": "Hacer stake de {symbol}",
       "unlock": {
-        "heading": "Estamos desbloqueando tus tokens",
-        "subheading": "La red está procesando tu desbloqueo. Podrás acceder a tus tokens una vez completada la transacción."
+        "heading": "Estamos desbloqueando sus tokens",
+        "subheading": "La red está procesando su desbloqueo. Podrá acceder a sus tokens una vez completada la transacción."
       },
       "unlock-token": "Desbloquear {symbol}"
     },

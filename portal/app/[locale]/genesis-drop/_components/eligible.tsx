@@ -11,10 +11,8 @@ import { formatHemi } from '../_utils'
 
 import { ClaimDetails } from './claimDetails'
 import { ClaimOptions } from './claimOptions'
-import { ComeBackLater } from './comeBackLater'
 import { EligibilityStatus } from './eligibilityStatus'
 import { NotEligible } from './notEligible'
-import { ShareResults } from './shareResults'
 
 type Props = {
   eligibility: EligibilityData
@@ -73,7 +71,6 @@ export const Eligible = function ({ eligibility }: Props) {
     return <NotEligible />
   }
 
-  const proofAvailable = eligibility.proof.length > 0
   return (
     <>
       <div className="md:max-w-105 max-h-24 w-full max-w-96">
@@ -83,16 +80,9 @@ export const Eligible = function ({ eligibility }: Props) {
         <p className="text-center text-xs font-medium text-neutral-500">
           {t('your-earned-tokens', { symbol: hemiToken.symbol })}
         </p>
-        {proofAvailable && <MoreInfo />}
+        <MoreInfo />
       </div>
-      {proofAvailable && claimGroupIdAvailable ? (
-        <ClaimOptions eligibility={eligibility} />
-      ) : (
-        <>
-          <ShareResults amount={amount} symbol={hemiToken.symbol} />
-          <ComeBackLater />
-        </>
-      )}
+      <ClaimOptions eligibility={eligibility} />
     </>
   )
 }

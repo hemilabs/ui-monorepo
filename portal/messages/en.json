@@ -140,7 +140,6 @@
     },
     "claim-rewards": "Claim rewards",
     "claiming-your-rewards": "Claiming your rewards",
-    "come-back-later": "Come back at TGE to claim your ${symbol}",
     "connect-demos-wallet": "Make sure to connect your Demos verified wallet.",
     "hemi-token-added": "{symbol} added to your wallet",
     "here-is-your-claim-tx": "Here's your claim transaction:",
@@ -155,7 +154,6 @@
     "terms-and-conditions": {
       "title": "Hemi Genesis Drop Terms and Conditions"
     },
-    "share-on-x": "Share on <icon></icon>",
     "share-x-text": "I am eligible for {amount} ${symbol} in the TGE Genesis drop of Hemi! 🎉 Check if you are eligible:",
     "title": "Rewards Program",
     "up-to-multiplier": "Up to {multiplier}x",

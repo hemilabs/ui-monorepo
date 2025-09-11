@@ -7,8 +7,8 @@
   },
   "hemi-sepolia": {
     "MerkleBox": {
-      "address": "0x38f4C4BD276b9C47b419FE27D4ED01C32c120cF4",
-      "startBlock": 3855233
+      "address": "0x1e1d3D4e58B15AAF85067ad2ABafD2c022b2DB93",
+      "startBlock": 4026327
     }
   }
 }

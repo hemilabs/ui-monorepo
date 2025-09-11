@@ -1,6 +1,6 @@
 {
   "name": "hemi-token-merkle-claims-subgraph",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "build": "graph build",
     "build:hemi": "npm run build -- --network hemi",

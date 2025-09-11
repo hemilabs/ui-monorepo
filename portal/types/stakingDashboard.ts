@@ -49,17 +49,23 @@ export type StakingPosition = {
   transferable: boolean
 }
 
-export const enum UnlockingDashboardStatus {
+// Prefer ordering these by value rather than by key
+/* eslint-disable sort-keys */
+export const UnlockingDashboardStatus = {
   // The user has confirmed the TX in their wallet, but it hasn't been included in a block
-  UNLOCK_TX_PENDING = 0,
+  UNLOCK_TX_PENDING: 0,
   // Withdrawal tx reverted
-  UNLOCK_TX_FAILED = 1,
+  UNLOCK_TX_FAILED: 1,
   // Transaction withdrawal confirmed
-  UNLOCK_TX_CONFIRMED = 2,
-}
+  UNLOCK_TX_CONFIRMED: 2,
+} as const
+/* eslint-enable sort-keys */
+
+export type UnlockingDashboardStatusType =
+  (typeof UnlockingDashboardStatus)[keyof typeof UnlockingDashboardStatus]
 
 export type UnlockingDashboardOperation = {
   transactionHash?: Hash
   stakingPosition?: Pick<StakingPosition, 'amount' | 'tokenId'>
-  status?: UnlockingDashboardStatus
+  status?: UnlockingDashboardStatusType
 }

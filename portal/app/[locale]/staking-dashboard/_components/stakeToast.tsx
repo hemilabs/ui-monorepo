@@ -14,7 +14,7 @@ export const StakeToast = function ({ title, transactionHash }: Props) {
   const t = useTranslations('staking-dashboard')
   return (
     <Toast
-      description={t('here-is-your-stake-tx')}
+      description={t('here-is-your-tx')}
       title={title}
       tx={{
         href: `${hemi.blockExplorers?.default.url}/tx/${transactionHash}`,

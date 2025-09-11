@@ -264,7 +264,7 @@
       "years": "{years, plural, one {{years} año} other {{years} años}}"
     },
     "heading": "Haga stake de sus ${symbol} y gane",
-    "here-is-your-stake-tx": "Aquí está su transacción de staking:",
+    "here-is-your-tx": "Aquí está su transacción:",
     "lockup-period": "Período de bloqueo",
     "stake-successful": "Stake exitoso",
     "switch-to-start-staking": "Puede cambiar de red para comenzar a hacer staking de su HEMI.",

@@ -10,7 +10,11 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
-import { UnlockingDashboardStatus } from 'types/stakingDashboard'
+import { ReactNode } from 'react'
+import {
+  UnlockingDashboardStatus,
+  type UnlockingDashboardStatusType,
+} from 'types/stakingDashboard'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
@@ -59,15 +63,16 @@ export const ReviewUnlock = function ({ onClose }: Props) {
       : undefined
 
   const addUnlockingStep = function (): StepPropsWithoutPosition {
-    const statusMap: Record<UnlockingDashboardStatus, ProgressStatusType> = {
-      [UnlockingDashboardStatus.UNLOCK_TX_PENDING]: ProgressStatus.PROGRESS,
-      [UnlockingDashboardStatus.UNLOCK_TX_FAILED]: ProgressStatus.FAILED,
-      [UnlockingDashboardStatus.UNLOCK_TX_CONFIRMED]: ProgressStatus.COMPLETED,
-    }
-    const showFees = [
-      UnlockingDashboardStatus.UNLOCK_TX_PENDING,
-      UnlockingDashboardStatus.UNLOCK_TX_FAILED,
-    ].includes(unlockStatus)
+    const statusMap: Record<UnlockingDashboardStatusType, ProgressStatusType> =
+      {
+        [UnlockingDashboardStatus.UNLOCK_TX_PENDING]: ProgressStatus.PROGRESS,
+        [UnlockingDashboardStatus.UNLOCK_TX_FAILED]: ProgressStatus.FAILED,
+        [UnlockingDashboardStatus.UNLOCK_TX_CONFIRMED]:
+          ProgressStatus.COMPLETED,
+      }
+    const showFees =
+      unlockStatus === UnlockingDashboardStatus.UNLOCK_TX_PENDING ||
+      unlockStatus === UnlockingDashboardStatus.UNLOCK_TX_FAILED
 
     return {
       description: (
@@ -90,10 +95,12 @@ export const ReviewUnlock = function ({ onClose }: Props) {
 
   const getSteps = () => [addUnlockingStep()]
 
-  const getCallToAction = (callStatus: UnlockingDashboardStatus) =>
-    [UnlockingDashboardStatus.UNLOCK_TX_FAILED].includes(callStatus) ? (
-      <RetryUnlock />
-    ) : null
+  const getCallToAction = function (callStatus: UnlockingDashboardStatusType) {
+    const map: Partial<Record<UnlockingDashboardStatusType, ReactNode>> = {
+      [UnlockingDashboardStatus.UNLOCK_TX_FAILED]: <RetryUnlock />,
+    }
+    return map[callStatus]
+  }
 
   return (
     <Operation

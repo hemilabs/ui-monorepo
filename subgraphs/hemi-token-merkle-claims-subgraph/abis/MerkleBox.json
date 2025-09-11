@@ -275,14 +275,14 @@
         "type": "bytes32[]"
       },
       {
-        "internalType": "uint32",
+        "internalType": "uint8",
         "name": "lockupMonths",
-        "type": "uint32"
+        "type": "uint8"
       },
       {
-        "internalType": "uint256",
+        "internalType": "uint32",
         "name": "ratio",
-        "type": "uint256"
+        "type": "uint32"
       },
       {
         "internalType": "bytes",
@@ -378,12 +378,12 @@
       },
       {
         "internalType": "uint32",
-        "name": "lockupRatio",
+        "name": "minLockupRatio",
         "type": "uint32"
       },
       {
         "internalType": "address",
-        "name": "mintedNFT",
+        "name": "nft",
         "type": "address"
       }
     ],
@@ -442,7 +442,7 @@
       },
       {
         "internalType": "bool",
-        "name": "lockupsTransferrable",
+        "name": "lockupsTransferable",
         "type": "bool"
       },
       {
@@ -488,6 +488,50 @@
       }
     ],
     "name": "isClaimable",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "claimGroupId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "proof",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "uint8",
+        "name": "lockupMonths",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint32",
+        "name": "ratio",
+        "type": "uint32"
+      }
+    ],
+    "name": "isClaimableWithBonus",
     "outputs": [
       {
         "internalType": "bool",
@@ -556,15 +600,15 @@
       },
       {
         "internalType": "bool",
-        "name": "lockupsTransferrable",
+        "name": "lockupsTransferable",
         "type": "bool"
       },
       {
         "components": [
           {
-            "internalType": "uint32",
+            "internalType": "uint8",
             "name": "months",
-            "type": "uint32"
+            "type": "uint8"
           },
           {
             "internalType": "uint32",
@@ -573,12 +617,12 @@
           },
           {
             "internalType": "uint32",
-            "name": "lockupRatio",
+            "name": "minLockupRatio",
             "type": "uint32"
           },
           {
             "internalType": "address",
-            "name": "mintedNFT",
+            "name": "nft",
             "type": "address"
           }
         ],

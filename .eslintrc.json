@@ -39,6 +39,14 @@
       }
     },
     {
+      "extends": ["bloq/node", "prettier"],
+      "files": ["portal-backend/api/scripts/*.js"],
+      "rules": {
+        "no-console": "off",
+        "node/no-unpublished-require": "off"
+      }
+    },
+    {
       "extends": ["bloq/node", "bloq/typescript", "prettier"],
       "files": ["subgraph-api/**/*.ts"],
       "rules": {

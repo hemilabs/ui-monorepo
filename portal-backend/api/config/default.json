@@ -1,0 +1,20 @@
+{
+  "absinthe": {
+    "apiUrl": "https://gql3.absinthe.network/v1/graphql"
+  },
+  "btcVaults": {
+    "cacheMin": 1
+  },
+  "origins": "http://localhost:3000",
+  "port": 3006,
+  "redis": {
+    "url": "redis://localhost:6379"
+  },
+  "sentry": {
+    "loggingLevels": ["log", "warn", "error"]
+  },
+  "tvl": {
+    "data": {},
+    "revalidateMin": 20
+  }
+}

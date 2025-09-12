@@ -14,7 +14,7 @@ export const metadata: Metadata = {
       'Hemi | Powered by Bitcoin and Ethereum — Bridge, swap, build, and more. All on Hemi.',
     images: [
       {
-        url: 'https://hemi.xyz/image/portal.png',
+        url: 'https://hemi.xyz/wp-content/uploads/2025/09/hemi-opengraph.jpg',
       },
     ],
     type: 'website',
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     description:
       'Hemi | Powered by Bitcoin and Ethereum — Bridge, swap, build, and more. All on Hemi.',
-    images: ['https://hemi.xyz/image/portal.png'],
+    images: ['https://hemi.xyz/wp-content/uploads/2025/09/hemi-opengraph.jpg'],
   },
 }
 

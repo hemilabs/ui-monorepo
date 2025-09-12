@@ -2,7 +2,7 @@ import { useRef, useEffect, RefObject } from 'react'
 
 export const useOnClickOutside = function <T extends HTMLElement>(
   handler?: (e: MouseEvent | TouchEvent) => void,
-  initialRef?: RefObject<T>,
+  initialRef?: RefObject<T | null>,
 ) {
   const internalRef = useRef<T>(null)
   const ref = initialRef ?? internalRef

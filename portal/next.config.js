@@ -14,9 +14,6 @@ const nextConfig = {
     // checks. So we don't need to run it again here.
     ignoreDuringBuilds: true,
   },
-  experimental: {
-    instrumentationHook: true,
-  },
   // images are exported on demand, which is incompatible with static export
   images: {
     remotePatterns: [

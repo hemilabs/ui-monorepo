@@ -46,7 +46,7 @@ const Body = function ({
   rows,
 }: {
   columns: ColumnDef<StakeToken>[]
-  containerRef: RefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLDivElement | null>
   loading: boolean
   rows: Row<StakeToken>[]
 }) {
@@ -200,7 +200,7 @@ const columnsBuilder = (
 ]
 
 type Props = {
-  containerRef: RefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLDivElement | null>
   data: StakeToken[]
   loading: boolean
 }

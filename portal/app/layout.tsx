@@ -33,12 +33,9 @@ export const generateStaticParams = async () =>
 
 // Since we have a `not-found.tsx` page on the root, a layout file
 // is required, even if it's just passing children through.
+// However, it does throw a warning when running locally
+// See https://github.com/amannn/next-intl/issues/1385
+// it works on production
 export default function RootLayout({ children }: Props) {
-  // Define empty body because otherwise it will break client redirects
-  // See https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts#root-layout-required
-  return (
-    <html>
-      <body>{children}</body>
-    </html>
-  )
+  return children
 }

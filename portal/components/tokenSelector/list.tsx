@@ -6,7 +6,7 @@ import { MultiTokensIcon } from 'components/icons/multiTokensIcon'
 import { useHasScrolled } from 'hooks/useHasScrolled'
 import { useUserTokenList } from 'hooks/useUserTokenList'
 import { useTranslations } from 'next-intl'
-import { type JSX, useRef } from 'react'
+import { type ReactElement, useRef } from 'react'
 import { Token as TokenType } from 'types/token'
 import { isCustomToken } from 'utils/token'
 
@@ -159,7 +159,7 @@ export const List = function ({
   const yourTokensHeaderHeight = 40
 
   const getList = function () {
-    const rows: JSX.Element[] = []
+    const rows: ReactElement[] = []
     const virtualItems = rowVirtualizer.getVirtualItems()
     const hasYourTokens = yourTokens.length > 0
 

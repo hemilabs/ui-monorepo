@@ -63,7 +63,7 @@ const Body = function ({
   rows,
 }: {
   columns: ColumnDef<TunnelOperation>[]
-  containerRef: RefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLDivElement | null>
   loading: boolean
   rows: Row<TunnelOperation>[]
 }) {
@@ -390,7 +390,7 @@ const columnsBuilder = (
 ]
 
 type TableProps = {
-  containerRef: RefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLDivElement | null>
   data: TunnelOperation[]
   loading: boolean
   filterOption: FilterOptions

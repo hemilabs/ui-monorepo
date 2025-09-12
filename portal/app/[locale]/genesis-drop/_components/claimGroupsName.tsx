@@ -15,22 +15,15 @@ export const ClaimGroupName = function ({ claimGroupId }: Props) {
 
   const claimGroupMap: Record<Chain['id'], Record<number, string>> = {
     [hemiMainnet.id]: {
-      // these 2 are mutually exclusive, so no user should
-      // see a duplicated tab
-      9: defaultText,
-      13: defaultText,
       14: t('spectra-and-dodo'),
     },
     // These are just for testing
     [hemiSepolia.id]: {
-      1: defaultText,
-      2: t('other-drop'),
+      2: t('spectra-and-dodo'),
+      3: t('other-drop'),
     },
   }
 
-  const text = claimGroupMap[hemi.id]?.[claimGroupId]
-  if (!text) {
-    return defaultText
-  }
+  const text = claimGroupMap[hemi.id]?.[claimGroupId] ?? defaultText
   return <>{text}</>
 }

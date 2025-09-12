@@ -6,6 +6,7 @@ import { ReactNode, Suspense } from 'react'
 
 import { Background } from './_components/background'
 import { ClaimRewardsDisabledTestnet } from './_components/claimRewardsDisabledTestnet'
+import { GenesisDropTabs } from './_components/genesisDropTabs'
 import { isClaimRewardsEnabledOnTestnet } from './_utils'
 
 type Props = {
@@ -22,15 +23,27 @@ const Page = function ({ children }: Props) {
   return children
 }
 
-const Layout = ({ children }: Props) => (
-  <PageLayout variant="genesisDrop">
-    <Background />
-    <div className="flex w-full flex-col items-center gap-y-2">
-      <Suspense>
-        <Page>{children}</Page>
-      </Suspense>
+const Tabs = function () {
+  const [networkType] = useNetworkType()
+  return isClaimRewardsEnabledOnTestnet(networkType) ? (
+    <div className="mb-4 mt-5 md:hidden">
+      <GenesisDropTabs />
     </div>
-  </PageLayout>
+  ) : null
+}
+
+const Layout = ({ children }: Props) => (
+  <>
+    <Tabs />
+    <PageLayout variant="genesisDrop">
+      <Background />
+      <div className="flex w-full flex-col items-center gap-y-2">
+        <Suspense>
+          <Page>{children}</Page>
+        </Suspense>
+      </div>
+    </PageLayout>
+  </>
 )
 
 export default Layout

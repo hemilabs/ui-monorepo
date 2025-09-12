@@ -111,6 +111,11 @@
     "claimed": "Reivindicado",
     "claim-and-stake-successful": "Reivindicação e Stake bem-sucedidos",
     "claim-details": "Detalhes da reivindicação",
+    "claim-groups": {
+      "genesis-drop": "Lançamento Gênesis",
+      "spectra-and-dodo": "Spectra + Dodo",
+      "other-drop": "Outro Lançamento"
+    },
     "claim-name": "Nome da reivindicação:",
     "claim-options": {
       "and-other-partners": "...e muitos outros parceiros!",

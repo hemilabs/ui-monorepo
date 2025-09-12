@@ -1,6 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type EventEmitter } from 'events'
-import { type ClaimEvents, type LockupMonths } from 'genesis-drop-actions'
+import {
+  EligibilityData,
+  type ClaimEvents,
+  type LockupMonths,
+} from 'genesis-drop-actions'
 import { claimTokens } from 'genesis-drop-actions/actions'
 import { useNativeTokenBalance } from 'hooks/useBalance'
 import { useHemi } from 'hooks/useHemi'
@@ -11,15 +15,17 @@ import { useUmami } from 'hooks/useUmami'
 import { Hex } from 'viem'
 import { useAccount, useSwitchChain } from 'wagmi'
 
-import { useEligibleForTokens } from './useEligibleForTokens'
 import { getClaimTransactionQueryKey } from './useGetClaimTransaction'
 import { getIsClaimableQueryKey } from './useIsClaimable'
 
-export const useClaimTokens = function (options?: {
-  on(emitter: EventEmitter<ClaimEvents>): void
+export const useClaimTokens = function ({
+  eligibility,
+  on,
+}: {
+  eligibility: EligibilityData
+  on?(emitter: EventEmitter<ClaimEvents>): void
 }) {
   const { address } = useAccount()
-  const { data: eligibility } = useEligibleForTokens()
   const hemi = useHemi()
   const connectedToHemi = useIsConnectedToExpectedNetwork(hemi.id)
   const { hemiWalletClient } = useHemiWalletClient()
@@ -45,9 +51,6 @@ export const useClaimTokens = function (options?: {
       ratio: number
       termsSignature: Hex
     }) {
-      if (!eligibility) {
-        throw new Error('User is not eligible')
-      }
       if (!address) {
         throw new Error('User is not connected')
       }
@@ -111,7 +114,7 @@ export const useClaimTokens = function (options?: {
         track?.('genesis-drop - submit reverted', { lockupMonths })
       })
 
-      options?.on(emitter)
+      on?.(emitter)
 
       return promise
     },

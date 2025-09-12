@@ -9,12 +9,14 @@ import { useAccount } from 'wagmi'
 import { DisconnectedState } from './_components/disconnectedState'
 import { Eligible } from './_components/eligible'
 import { NotEligible } from './_components/notEligible'
-import { useEligibleForTokens } from './_hooks/useEligibleForTokens'
+import { useAllEligibleForTokens } from './_hooks/useAllEligibleForTokens'
+import { useSelectedClaimGroup } from './_hooks/useSelectedClaimGroup'
 
 export default function Page() {
   const { status } = useAccount()
 
-  const { data: eligibility } = useEligibleForTokens()
+  const { data: allEligibility } = useAllEligibleForTokens()
+  const [selectedClaimGroup] = useSelectedClaimGroup()
   const t = useTranslations('genesis-drop')
 
   const getMainSection = function () {
@@ -28,19 +30,31 @@ export default function Page() {
         </>
       )
     }
-    if (!walletIsConnected(status) || eligibility === undefined) {
-      return (
-        <div className="mt-5">
-          <Spinner color="#FF6A00" size="small" />
-        </div>
-      )
+
+    const spinner = (
+      <div className="mt-5">
+        <Spinner color="#FF6A00" size="small" />
+      </div>
+    )
+
+    if (!walletIsConnected(status) || allEligibility === undefined) {
+      return spinner
     }
 
-    // from this point on, the user is connected
-    if (eligibility.amount === BigInt(0)) {
+    if (allEligibility.length === 0) {
       return <NotEligible />
     }
-    return <Eligible eligibility={eligibility} />
+
+    if (selectedClaimGroup === undefined) {
+      return spinner
+    }
+    return (
+      <Eligible
+        eligibility={
+          allEligibility.find(item => item.claimGroupId === selectedClaimGroup)!
+        }
+      />
+    )
   }
 
   return (

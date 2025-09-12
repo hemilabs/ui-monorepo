@@ -7,13 +7,13 @@
   },
   "devDependencies": {
     "@tanstack/react-query": "5.69.0",
-    "@types/react": "18.2.45",
-    "react": "18.2.0",
+    "@types/react": "19.1.13",
+    "react": "19.1.1",
     "typescript": "5.8.3",
     "viem": "2.28.4"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=5.52.1",
-    "react": "18.2.0"
+    "react": ">=19.1.1"
   }
 }

@@ -85,7 +85,7 @@ export default function Page() {
         </p>
         <p className="text-center text-4xl font-semibold text-neutral-950">
           {selectedClaimGroup !== null ? (
-            <ClaimGroupName claimGroupId={selectedClaimGroup!} />
+            <ClaimGroupName claimGroupId={selectedClaimGroup} />
           ) : (
             <Skeleton className="h-10 w-72" />
           )}

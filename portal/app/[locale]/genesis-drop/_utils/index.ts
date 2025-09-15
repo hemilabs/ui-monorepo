@@ -1,5 +1,5 @@
 import Big from 'big.js'
-import { LockupMonths } from 'genesis-drop-actions'
+import type { EligibilityData, LockupMonths } from 'genesis-drop-actions'
 import { NetworkType } from 'hooks/useNetworkType'
 import { smartRound } from 'smart-round'
 import { formatUnits } from 'viem'
@@ -77,4 +77,37 @@ export const getMultiplier = function (lockupMonths: LockupMonths) {
   }
 
   return multipliers[lockupMonths]!
+}
+
+/**
+ * Filters eligible tokens to handle exclusive groups based on network type
+ * For groups 9 and 13: if both are present, return the one with amount > 0, or group 13 if both have amount 0
+ */
+export const filterExclusiveGroups = function (
+  eligibleTokens: EligibilityData[],
+) {
+  const group9 = eligibleTokens.find(token => token.claimGroupId === 9)
+  const group13 = eligibleTokens.find(token => token.claimGroupId === 13)
+
+  // If both groups are not present, no filtering needed
+  if (!group9 || !group13) {
+    return eligibleTokens
+  }
+
+  const otherTokens = eligibleTokens.filter(
+    token => token.claimGroupId !== 9 && token.claimGroupId !== 13,
+  )
+
+  // If group 9 has amount and group 13 doesn't, keep group 9
+  if (group9.amount > BigInt(0) && group13.amount === BigInt(0)) {
+    return [...otherTokens, group9]
+  }
+
+  // If group 13 has amount and group 9 doesn't, keep group 13
+  if (group13.amount > BigInt(0) && group9.amount === BigInt(0)) {
+    return [...otherTokens, group13]
+  }
+
+  // If both have amount 0, or both have amount > 0, return group 13
+  return [...otherTokens, group13]
 }

@@ -80,6 +80,19 @@ export default function Page() {
     )
   }
 
+  const getSubheading = function () {
+    // use the default claim group if the user is disconnected
+    if (status === 'disconnected') {
+      return t('claim-groups.genesis-drop')
+    }
+
+    if (selectedClaimGroup !== null) {
+      return <ClaimGroupName claimGroupId={selectedClaimGroup} />
+    }
+
+    return <Skeleton className="h-10 w-72" />
+  }
+
   return (
     <>
       <div className="flex w-full flex-col items-center gap-y-2">
@@ -90,11 +103,7 @@ export default function Page() {
           {t('title')}
         </p>
         <p className="text-center text-4xl font-semibold text-neutral-950">
-          {selectedClaimGroup !== null ? (
-            <ClaimGroupName claimGroupId={selectedClaimGroup} />
-          ) : (
-            <Skeleton className="h-10 w-72" />
-          )}
+          {getSubheading()}
         </p>
         {getMainSection()}
       </div>

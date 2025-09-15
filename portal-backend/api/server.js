@@ -10,7 +10,7 @@ const Sentry = require('@sentry/node')
 const { getBtcVaultsData } = require('./src/btc-vaults')
 const { getTokenPrices } = require('./src/redis')(config.get('redis'))
 const { getTvl } = require('./src/databox')(config.get('tvl.data'))
-const { getAllUserClaimData, getUserClaimData } = require('./src/claims')()
+const { getAllUserClaimData } = require('./src/claims')()
 const { getUserPoints } = require('./src/absinthe')(config.get('absinthe'))
 
 const globToRegExp = require('./src/glob-to-regexp')
@@ -57,14 +57,6 @@ app.get(
 app.get(
   /\/claims\/(7?43111)\/(0x[0-9a-fA-F]{40})\/all/,
   toMiddleware(getAllUserClaimData, {
-    maxAge: 5 * 60 * 1000,
-    resolver: (chainId, address) => `${chainId}:${address}`,
-  }),
-)
-
-app.get(
-  /\/claims\/(7?43111)\/(0x[0-9a-fA-F]{40})/,
-  toMiddleware(getUserClaimData, {
     maxAge: 5 * 60 * 1000,
     resolver: (chainId, address) => `${chainId}:${address}`,
   }),

@@ -39,30 +39,18 @@ module.exports = function () {
    * @param {Address} address
    * @returns {Promise<ClaimData[]>}
    */
-  async function getAllUserClaimData(chainId, address) {
-    const userData = /** @type {ClaimData[]} */ ([])
-    Object.values(localData[chainId] || {}).forEach(function (claimGroup) {
+  const getAllUserClaimData = async (chainId, address) =>
+    Object.entries(localData[chainId] || {}).map(function ([
+      claimGroupId,
+      claimGroup,
+    ]) {
       const data = claimGroup[address]
-      if (data) {
-        userData.push(data)
-      }
+      return data
+        ? data
+        : { amount: '0', claimGroupId: Number(claimGroupId), proof: [] }
     })
-    return userData
-  }
-
-  /**
-   * Return only the first claim data for retro-compatibility.
-   * @param {number} chainId
-   * @param {Address} address
-   * @returns {Promise<ClaimData>}
-   */
-  async function getUserClaimData(chainId, address) {
-    const allData = await getAllUserClaimData(chainId, address)
-    return allData.length ? allData[0] : { amount: '0' }
-  }
 
   return {
     getAllUserClaimData,
-    getUserClaimData,
   }
 }

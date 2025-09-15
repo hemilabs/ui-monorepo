@@ -2,15 +2,31 @@
 
 import { HemiSymbolWhite } from 'components/icons/hemiSymbolWhite'
 import { Spinner } from 'components/spinner'
+import { type EligibilityData } from 'genesis-drop-actions'
 import { useTranslations } from 'next-intl'
+import Skeleton from 'react-loading-skeleton'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
+import { ClaimGroupName } from './_components/claimGroupsName'
 import { DisconnectedState } from './_components/disconnectedState'
 import { Eligible } from './_components/eligible'
 import { NotEligible } from './_components/notEligible'
 import { useAllEligibleForTokens } from './_hooks/useAllEligibleForTokens'
 import { useSelectedClaimGroup } from './_hooks/useSelectedClaimGroup'
+
+const hasAllocation = function (
+  allEligibility: EligibilityData[],
+  selectedClaimGroup: number,
+) {
+  const allocation = allEligibility.find(
+    item => item.claimGroupId === selectedClaimGroup,
+  )
+  if (!allocation) {
+    return false
+  }
+  return allocation.amount > BigInt(0)
+}
 
 export default function Page() {
   const { status } = useAccount()
@@ -37,11 +53,18 @@ export default function Page() {
       </div>
     )
 
-    if (!walletIsConnected(status) || allEligibility === undefined) {
+    if (
+      !walletIsConnected(status) ||
+      allEligibility === undefined ||
+      selectedClaimGroup === null
+    ) {
       return spinner
     }
 
-    if (allEligibility.length === 0) {
+    if (
+      allEligibility.length === 0 ||
+      !hasAllocation(allEligibility, selectedClaimGroup)
+    ) {
       return <NotEligible />
     }
 
@@ -67,7 +90,11 @@ export default function Page() {
           {t('title')}
         </p>
         <p className="text-center text-4xl font-semibold text-neutral-950">
-          {t('subheading')}
+          {selectedClaimGroup !== null ? (
+            <ClaimGroupName claimGroupId={selectedClaimGroup} />
+          ) : (
+            <Skeleton className="h-10 w-72" />
+          )}
         </p>
         {getMainSection()}
       </div>

@@ -112,7 +112,7 @@
     "claim-and-stake-successful": "Claim and Stake successful",
     "claim-details": "Claim details",
     "claim-groups": {
-      "genesis-drop": "Genesis Drop",
+      "genesis-drop": "Hemi Genesis Drop",
       "spectra-and-dodo": "Spectra + Dodo",
       "other-drop": "Other Drop"
     },
@@ -154,7 +154,6 @@
     "rewards-multiplier": "Rewards multiplier",
     "staked-for-months": "{amount} for {months} months",
     "stake-hemi": "Stake {symbol}",
-    "subheading": "Hemi Genesis Drop",
     "switch-to-start-claiming": "You can switch networks to start claiming your HEMI.",
     "terms-and-conditions": {
       "title": "Hemi Genesis Drop Terms and Conditions"

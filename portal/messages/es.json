@@ -112,7 +112,7 @@
     "claim-and-stake-successful": "Reclamo y Stake exitoso",
     "claim-details": "Detalles del reclamo",
     "claim-groups": {
-      "genesis-drop": "Lanzamiento Génesis",
+      "genesis-drop": "Lanzamiento Génesis de Hemi",
       "spectra-and-dodo": "Spectra + Dodo",
       "other-drop": "Otro Lanzamiento"
     },
@@ -154,7 +154,6 @@
     "rewards-multiplier": "Multiplicador de recompensas",
     "staked-for-months": "{amount} por {months} meses",
     "stake-hemi": "Hacer Stake de {symbol}",
-    "subheading": "Lanzamiento Génesis de Hemi",
     "switch-to-start-claiming": "Puede cambiar de red para comenzar a reclamar su HEMI.",
     "terms-and-conditions": {
       "title": "Términos y Condiciones del programa Lanzamiento Génesis de Hemi"

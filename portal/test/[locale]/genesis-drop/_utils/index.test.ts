@@ -1,11 +1,16 @@
-import { calculateSplitAmount } from 'app/[locale]/genesis-drop/_utils'
+import {
+  calculateSplitAmount,
+  filterExclusiveGroups,
+} from 'app/[locale]/genesis-drop/_utils'
+import { type EligibilityData } from 'genesis-drop-actions'
+import { zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
-
-// 1 token with 18 decimals
-const amount = BigInt(1000000000000000000)
 
 describe('claim/_utils', function () {
   describe('calculateSplitAmount', function () {
+    // 1 token with 18 decimals
+    const amount = BigInt(1000000000000000000)
+
     it('should calculate correct split amounts with 0% bonus and 50% lockup ratio', function () {
       const result = calculateSplitAmount({
         amount,
@@ -136,6 +141,154 @@ describe('claim/_utils', function () {
 
       expect(actualTotal).toBe(expectedTotal)
       expect(actualTotal).toBe(BigInt(1200000000000000000)) // 1.2 tokens
+    })
+  })
+
+  describe('filterExclusiveGroups', function () {
+    const mockAddress = zeroAddress
+
+    const createEligibilityData = (
+      claimGroupId: number,
+      amount: bigint,
+    ): EligibilityData => ({
+      address: mockAddress,
+      amount,
+      claimGroupId,
+      proof: [],
+    })
+
+    it('should return unchanged tokens when group 9 is not present', function () {
+      const eligibleTokens = [
+        createEligibilityData(1, BigInt(100)),
+        createEligibilityData(13, BigInt(200)),
+        createEligibilityData(5, BigInt(300)),
+      ]
+
+      const result = filterExclusiveGroups(eligibleTokens)
+
+      expect(result).toEqual(eligibleTokens)
+    })
+
+    it('should return unchanged tokens when group 13 is not present', function () {
+      const eligibleTokens = [
+        createEligibilityData(9, BigInt(200)),
+        createEligibilityData(12, BigInt(100)),
+        createEligibilityData(18, BigInt(300)),
+      ]
+
+      const result = filterExclusiveGroups(eligibleTokens)
+
+      expect(result).toEqual(eligibleTokens)
+    })
+
+    it('should return unchanged tokens when neither group 9 nor 13 are present', function () {
+      const eligibleTokens = [
+        createEligibilityData(1, BigInt(100)),
+        createEligibilityData(2, BigInt(200)),
+        createEligibilityData(5, BigInt(300)),
+      ]
+
+      const result = filterExclusiveGroups(eligibleTokens)
+
+      expect(result).toEqual(eligibleTokens)
+    })
+
+    it('should keep group 9 when it has amount and group 13 has 0', function () {
+      const eligibleTokens = [
+        createEligibilityData(1, BigInt(100)),
+        createEligibilityData(9, BigInt(200)),
+        createEligibilityData(13, BigInt(0)),
+        createEligibilityData(5, BigInt(300)),
+      ]
+
+      const result = filterExclusiveGroups(eligibleTokens)
+
+      expect(result).toEqual([
+        createEligibilityData(1, BigInt(100)),
+        createEligibilityData(5, BigInt(300)),
+        createEligibilityData(9, BigInt(200)),
+      ])
+    })
+
+    it('should keep group 13 when it has amount and group 9 has 0', function () {
+      const eligibleTokens = [
+        createEligibilityData(1, BigInt(100)),
+        createEligibilityData(9, BigInt(0)),
+        createEligibilityData(13, BigInt(200)),
+        createEligibilityData(5, BigInt(300)),
+      ]
+
+      const result = filterExclusiveGroups(eligibleTokens)
+
+      expect(result).toEqual([
+        createEligibilityData(1, BigInt(100)),
+        createEligibilityData(5, BigInt(300)),
+        createEligibilityData(13, BigInt(200)),
+      ])
+    })
+
+    it('should keep group 13 when both groups have 0 amount', function () {
+      const eligibleTokens = [
+        createEligibilityData(1, BigInt(100)),
+        createEligibilityData(9, BigInt(0)),
+        createEligibilityData(13, BigInt(0)),
+        createEligibilityData(5, BigInt(300)),
+      ]
+
+      const result = filterExclusiveGroups(eligibleTokens)
+
+      expect(result).toEqual([
+        createEligibilityData(1, BigInt(100)),
+        createEligibilityData(5, BigInt(300)),
+        createEligibilityData(13, BigInt(0)),
+      ])
+    })
+
+    it('should keep group 13 when both groups have amount > 0', function () {
+      const eligibleTokens = [
+        createEligibilityData(1, BigInt(100)),
+        createEligibilityData(9, BigInt(200)),
+        createEligibilityData(13, BigInt(300)),
+        createEligibilityData(5, BigInt(400)),
+      ]
+
+      const result = filterExclusiveGroups(eligibleTokens)
+
+      expect(result).toEqual([
+        createEligibilityData(1, BigInt(100)),
+        createEligibilityData(5, BigInt(400)),
+        createEligibilityData(13, BigInt(300)),
+      ])
+    })
+
+    it('should work with only groups 9 and 13 present', function () {
+      const eligibleTokens = [
+        createEligibilityData(9, BigInt(100)),
+        createEligibilityData(13, BigInt(0)),
+      ]
+
+      const result = filterExclusiveGroups(eligibleTokens)
+
+      expect(result).toEqual([createEligibilityData(9, BigInt(100))])
+    })
+
+    it('should preserve other tokens when filtering groups 9 and 13', function () {
+      const eligibleTokens = [
+        createEligibilityData(2, BigInt(50)),
+        createEligibilityData(9, BigInt(100)),
+        createEligibilityData(11, BigInt(150)),
+        createEligibilityData(13, BigInt(200)),
+        createEligibilityData(15, BigInt(250)),
+      ]
+
+      const result = filterExclusiveGroups(eligibleTokens)
+
+      expect(result).toEqual([
+        createEligibilityData(2, BigInt(50)),
+        createEligibilityData(11, BigInt(150)),
+        createEligibilityData(15, BigInt(250)),
+        createEligibilityData(13, BigInt(200)),
+      ])
     })
   })
 })

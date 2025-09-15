@@ -44,7 +44,7 @@ const GenesisDropTabsImpl = function () {
             key={claimGroupId}
             selected={selectedClaimGroup === claimGroupId}
           >
-            <span className="flex justify-center">
+            <span className="flex justify-center truncate">
               <ClaimGroupName claimGroupId={claimGroupId} />
             </span>
           </Tab>

@@ -50,19 +50,7 @@ module.exports = function () {
         : { amount: '0', claimGroupId: Number(claimGroupId), proof: [] }
     })
 
-  /**
-   * Return only the first claim data for retro-compatibility.
-   * @param {number} chainId
-   * @param {Address} address
-   * @returns {Promise<ClaimData>}
-   */
-  async function getUserClaimData(chainId, address) {
-    const allData = await getAllUserClaimData(chainId, address)
-    return allData.length ? allData[0] : { amount: '0' }
-  }
-
   return {
     getAllUserClaimData,
-    getUserClaimData,
   }
 }

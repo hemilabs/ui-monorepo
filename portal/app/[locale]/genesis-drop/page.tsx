@@ -15,12 +15,18 @@ import { NotEligible } from './_components/notEligible'
 import { useAllEligibleForTokens } from './_hooks/useAllEligibleForTokens'
 import { useSelectedClaimGroup } from './_hooks/useSelectedClaimGroup'
 
-const hasAllocation = (
+const hasAllocation = function (
   allEligibility: EligibilityData[],
   selectedClaimGroup: number,
-) =>
-  (allEligibility.find(item => item.claimGroupId === selectedClaimGroup)
-    ?.amount ?? BigInt(0)) > BigInt(0)
+) {
+  const allocation = allEligibility.find(
+    item => item.claimGroupId === selectedClaimGroup,
+  )
+  if (!allocation) {
+    return false
+  }
+  return allocation.amount > BigInt(0)
+}
 
 export default function Page() {
   const { status } = useAccount()

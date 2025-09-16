@@ -265,6 +265,10 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   const initialFromNetworkId = initial.fromNetworkId
   const initialToNetworkId = initial.toNetworkId
 
+  // We need to use useLayoutEffect here because by using a regular useEffect
+  // there are intermediate invalid states that gets rendered. This is because
+  // this effect fires when the user switched the network (mainnet <=> testnet)
+  // so this state must update as token addresses needs to be updated
   useLayoutEffect(
     function updateStateOnNetworkSwitch() {
       if (networkToggled) {

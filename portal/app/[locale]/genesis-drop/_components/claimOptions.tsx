@@ -120,7 +120,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
 
   return (
     <>
-      <div className="mt-7 flex w-full flex-col flex-wrap items-center justify-center gap-6 md:flex-row md:gap-8">
+      <div className="mt-7 flex w-full flex-col flex-wrap items-center justify-center gap-6 md:flex-row md:items-stretch md:gap-8">
         <Strategy
           amount={eligibility.amount}
           bgColor="bg-neutral-50"

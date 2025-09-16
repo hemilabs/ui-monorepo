@@ -125,7 +125,7 @@ export const Strategy = function ({
 
   return (
     <form
-      className={`sm:w-86 max-sm:max-w-90 relative w-full max-w-full rounded-lg bg-neutral-100 ${boxShadows[recommendationLevel]}`}
+      className={`sm:w-86 max-sm:max-w-90 relative w-full max-w-full rounded-lg bg-neutral-100 ${boxShadows[recommendationLevel]} flex flex-col`}
       onSubmit={handleSubmit}
     >
       <div
@@ -155,7 +155,7 @@ export const Strategy = function ({
           {submitButton}
         </div>
       </div>
-      <div className="md:h-47 h-fit rounded-b-lg">
+      <div className="md:min-h-47 flex-1 rounded-b-lg max-md:h-fit">
         {recommendationLevel === 'low' ? (
           <SimpleBonus
             amount={renderStakedAmount(<Skeleton className="h-3 w-10" />)}

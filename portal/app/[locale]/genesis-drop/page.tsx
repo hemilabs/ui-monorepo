@@ -4,6 +4,7 @@ import { HemiSymbolWhite } from 'components/icons/hemiSymbolWhite'
 import { Spinner } from 'components/spinner'
 import { type EligibilityData } from 'genesis-drop-actions'
 import { useTranslations } from 'next-intl'
+import { useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
@@ -32,8 +33,25 @@ export default function Page() {
   const { status } = useAccount()
 
   const { data: allEligibility } = useAllEligibleForTokens()
-  const [selectedClaimGroup] = useSelectedClaimGroup()
+  const [selectedClaimGroup, setSelectedClaimGroup] = useSelectedClaimGroup()
   const t = useTranslations('genesis-drop')
+
+  useEffect(
+    function autoSelectClaimGroup() {
+      if (allEligibility === undefined || allEligibility.length === 0) {
+        // do nothing - still loading or claim groups not available
+        return
+      }
+      const claimGroupIdFound = allEligibility.some(
+        e => e.claimGroupId === selectedClaimGroup,
+      )
+      if (selectedClaimGroup === undefined || !claimGroupIdFound) {
+        // select the first one by default, if not set already, unless the one set is not in the response
+        setSelectedClaimGroup(allEligibility[0].claimGroupId)
+      }
+    },
+    [allEligibility, selectedClaimGroup, setSelectedClaimGroup],
+  )
 
   const getMainSection = function () {
     if (status === 'disconnected') {

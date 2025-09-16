@@ -8,8 +8,6 @@ import { useAccount } from 'wagmi'
 
 import { filterExclusiveGroups } from '../_utils'
 
-import { useSelectedClaimGroup } from './useSelectedClaimGroup'
-
 const portalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL
 
 const byClaimGroupId = (a: EligibilityData, b: EligibilityData) =>
@@ -19,7 +17,6 @@ export const useAllEligibleForTokens = function ({
   enabled = true,
 }: { enabled?: boolean } = {}) {
   const { address } = useAccount()
-  const [selectedClaimGroup, setSelectedClaimGroup] = useSelectedClaimGroup()
   const hemi = useHemi()
 
   return useQuery({
@@ -56,14 +53,6 @@ export const useAllEligibleForTokens = function ({
       const filteredResponse = (
         hemi.id === hemiMainnet.id ? filterExclusiveGroups(response) : response
       ).sort(byClaimGroupId)
-
-      if (
-        selectedClaimGroup === undefined ||
-        !filteredResponse.some(e => e.claimGroupId === selectedClaimGroup)
-      ) {
-        // select the first one by default, if not set already, unless the one set is not in the response
-        setSelectedClaimGroup(filteredResponse[0].claimGroupId)
-      }
 
       return filteredResponse
     },

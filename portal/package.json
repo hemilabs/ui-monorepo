@@ -15,7 +15,7 @@
   "dependencies": {
     "@binance/w3w-rainbow-connector-v2": "1.0.2",
     "@formatjs/intl-durationformat": "0.7.4",
-    "@hemilabs/token-list": "2.3.0",
+    "@hemilabs/token-list": "2.4.0",
     "@rainbow-me/rainbowkit": "2.2.8",
     "@sentry/nextjs": "9.9.0",
     "@tanstack/react-query": "5.69.0",

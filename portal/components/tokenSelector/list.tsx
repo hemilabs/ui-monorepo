@@ -85,7 +85,7 @@ function AllTokensHeader({
       }}
     >
       {hasTokens && (
-        <div className="absolute inset-x-0 top-4 h-px border-t border-neutral-300/55 md:-mx-6" />
+        <div className="absolute inset-x-0 top-4 h-px border-t border-neutral-300/55" />
       )}
       <div className="flex items-center gap-x-2 px-4 pb-2 pt-9 md:px-6">
         <DatabaseIcon />

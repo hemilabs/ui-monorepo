@@ -100,6 +100,9 @@ function enableSentry() {
         filterKeys: [process.env.NEXT_PUBLIC_SENTRY_FILTER_KEY_ID!],
       }),
     ],
+    reactComponentAnnotation: {
+      enabled: true,
+    },
     tracesSampleRate:
       process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE &&
       !Number.isNaN(process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE)

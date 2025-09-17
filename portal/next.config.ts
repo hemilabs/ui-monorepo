@@ -1,14 +1,12 @@
-'use strict'
-
-const { withSentryConfig } = require('@sentry/nextjs')
+import { withSentryConfig, type SentryBuildOptions } from '@sentry/nextjs'
+import type { NextConfig } from 'next'
 // The plugin is part of next-intl, unsure why it is not detected
 // eslint-disable-next-line node/no-missing-require
-const createNextIntlPlugin = require('next-intl/plugin')
+import createNextIntlPlugin from 'next-intl/plugin'
 
 const withNextIntl = createNextIntlPlugin()
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   eslint: {
     // The linter is already running in the pre-commit git hook and in the CI
     // checks. So we don't need to run it again here.
@@ -52,10 +50,8 @@ const release =
       }
     : { create: false, finalize: false }
 
-/** @type {import('@sentry/nextjs').SentryBuildOptions} */
-const sentryOptions = {
+const sentryOptions: SentryBuildOptions = {
   authToken: process.env.SENTRY_AUTH_TOKEN,
-  normalizeDepth: 6,
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#widen-the-upload-scope
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
@@ -70,4 +66,4 @@ const sentryOptions = {
   widenClientFileUpload: true,
 }
 
-module.exports = withSentryConfig(withNextIntl(nextConfig), sentryOptions)
+export default withSentryConfig(withNextIntl(nextConfig), sentryOptions)

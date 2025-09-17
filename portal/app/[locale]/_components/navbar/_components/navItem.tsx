@@ -12,7 +12,7 @@ import {
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, RefObject, ReactNode, useState, Suspense } from 'react'
+import { ComponentProps, ReactNode, useState, Suspense } from 'react'
 import { UrlObject } from 'url'
 
 export type NavItemProps = {
@@ -64,18 +64,17 @@ export const ItemContainer = ({
 const MenuContainer = ({
   children,
   isOpen = false,
-  refProp,
+  ref,
   ...props
-}: { children: ReactNode } & {
+}: ComponentProps<'div'> & {
   isOpen?: boolean
-  refProp?: RefObject<HTMLDivElement>
-} & ComponentProps<'div'>) => (
+}) => (
   <div
     {...props}
     className={`group/nav cursor-pointer rounded-lg py-2 transition-colors duration-300 ${
       isOpen ? 'rounded-lg bg-neutral-100' : 'hover:bg-neutral-100'
     }`}
-    ref={refProp}
+    ref={ref}
   >
     {children}
   </div>
@@ -195,11 +194,7 @@ const NetworkSwitchImpl = function () {
   }
 
   return (
-    <MenuContainer
-      isOpen={isOpen}
-      onClick={() => setIsOpen(true)}
-      refProp={ref}
-    >
+    <MenuContainer isOpen={isOpen} onClick={() => setIsOpen(true)} ref={ref}>
       <div>
         <SwitchUI network={networkType} setIsOpen={setIsOpen} />
         {isOpen && (

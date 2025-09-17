@@ -2,9 +2,8 @@ import { type BtcChain } from 'btc-wallet/chains'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useHemi } from 'hooks/useHemi'
 import { useNetworks } from 'hooks/useNetworks'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelTokens } from 'hooks/useTunnelTokens'
-import { useCallback, useEffect, useMemo, useReducer } from 'react'
+import { useCallback, useLayoutEffect, useMemo, useReducer } from 'react'
 import { type RemoteChain } from 'types/chain'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
 import { findChainById } from 'utils/chain'
@@ -215,7 +214,6 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   const bitcoin = useBitcoin()
   const hemi = useHemi()
   const { evmRemoteNetworks, networks } = useNetworks()
-  const [networkType] = useNetworkType()
   const tunnelOperation = useTunnelOperation()
   const tokenList = useTunnelTokens()
 
@@ -261,21 +259,29 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
 
   const { operation } = tunnelOperation
 
-  const isTestnet = findChainById(state.fromNetworkId)?.testnet ?? false
+  const networkToggled =
+    hemi.testnet !== (findChainById(state.fromNetworkId)?.testnet ?? false)
 
-  useEffect(
+  const initialFromNetworkId = initial.fromNetworkId
+  const initialToNetworkId = initial.toNetworkId
+
+  // We need to use useLayoutEffect here because by using a regular useEffect
+  // there are intermediate invalid states that gets rendered. This is because
+  // this effect fires when the user switched the network (mainnet <=> testnet)
+  // so this state must update as token addresses needs to be updated
+  useLayoutEffect(
     function updateStateOnNetworkSwitch() {
-      if ((networkType === 'testnet') !== isTestnet) {
+      if (networkToggled) {
         dispatch({
           payload: {
-            fromNetworkId: initial.fromNetworkId,
-            toNetworkId: initial.toNetworkId,
+            fromNetworkId: initialFromNetworkId,
+            toNetworkId: initialToNetworkId,
           },
           type: 'toggleTestnetMainnet',
         })
       }
     },
-    [dispatch, initial, isTestnet, networkType],
+    [dispatch, initialFromNetworkId, initialToNetworkId, networkToggled],
   )
 
   const getTunnelToken = useCallback(

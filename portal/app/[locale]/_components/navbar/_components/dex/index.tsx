@@ -10,10 +10,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import {
-  ComponentProps,
-  MouseEventHandler,
-  MutableRefObject,
-  ReactNode,
+  type ComponentProps,
+  type MouseEventHandler,
+  type RefObject,
+  type ReactNode,
   Suspense,
   useState,
 } from 'react'
@@ -135,7 +135,7 @@ const Container = ({
   onClick,
 }: {
   children: ReactNode
-  divRef?: MutableRefObject<HTMLDivElement | null>
+  divRef?: RefObject<HTMLDivElement | null>
   isOpen?: boolean
   onClick?: () => void
 }) => (

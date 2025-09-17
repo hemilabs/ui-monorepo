@@ -14,7 +14,6 @@ import {
   type ComponentProps,
   type MouseEventHandler,
   type ReactNode,
-  type RefObject,
   useState,
 } from 'react'
 
@@ -63,17 +62,16 @@ const Row = (props: { children: ReactNode } & ComponentProps<'div'>) => (
 const MenuContainer = ({
   children,
   isOpen,
-  refProp,
+  ref,
   ...props
-}: { children: ReactNode } & {
+}: ComponentProps<'div'> & {
   isOpen: boolean
-  refProp: RefObject<HTMLDivElement>
-} & ComponentProps<'div'>) => (
+}) => (
   <div
     {...props}
     className={`w-full cursor-pointer rounded-lg transition-colors duration-300
        ${isOpen ? 'rounded-lg bg-neutral-50' : 'hover:bg-neutral-50'}`}
-    ref={refProp}
+    ref={ref}
   >
     {children}
   </div>
@@ -123,7 +121,7 @@ const ItemWithSubmenu = function ({
       isOpen={isOpen}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      refProp={ref}
+      ref={ref}
     >
       <Row>
         <div className="flex items-center gap-x-4 md:gap-x-2">

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/nextjs'
 // See https://nextjs.org/docs/app/building-your-application/optimizing/instrumentation
 // This generates a QR to load the app easily in your mobile / tablet device
 // for development
@@ -12,3 +13,7 @@ export async function register() {
     })
   }
 }
+
+// Not really needed as of now, but it shows a warning if not
+// Plus, if we ever go SSR, it will be useful
+export const onRequestError = Sentry.captureRequestError

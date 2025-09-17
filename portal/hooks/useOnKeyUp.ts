@@ -2,7 +2,7 @@ import { useRef, useEffect, RefObject } from 'react'
 
 export const useOnKeyUp = function <T extends HTMLElement>(
   handler: (e: KeyboardEvent) => void,
-  initialRef?: RefObject<T>,
+  initialRef?: RefObject<T | null>,
 ) {
   const internalRef = useRef<T>(null)
   const ref = initialRef ?? internalRef

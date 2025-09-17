@@ -3,6 +3,9 @@ import { Locale, locales } from 'i18n/routing'
 import type { MetadataRoute } from 'next'
 import path from 'path'
 
+// See https://github.com/vercel/next.js/issues/68667#issuecomment-2448127538
+export const dynamic = 'force-static'
+
 const getBaseUrl = () =>
   process.env.HEMI_DOMAIN
     ? `https://app.${process.env.HEMI_DOMAIN}`

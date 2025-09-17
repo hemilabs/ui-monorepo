@@ -12,7 +12,7 @@ import { notFound } from 'next/navigation'
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { setRequestLocale } from 'next-intl/server'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
-import { PropsWithChildren, Suspense } from 'react'
+import { Suspense } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import { Analytics } from './_components/analytics'
@@ -21,14 +21,10 @@ import { Navbar } from './_components/navbar'
 import { Workers } from './_components/workers'
 
 type PageProps = {
-  params: { locale: Locale }
+  params: Promise<{ locale: Locale }>
 }
 
 async function getMessages(locale: Locale) {
-  if (!hasLocale(routing.locales, locale)) {
-    notFound()
-    return undefined
-  }
   // See https://github.com/amannn/next-intl/issues/663
   // and https://next-intl.dev/docs/getting-started/app-router/with-i18n-routing#add-setrequestlocale-to-all-relevant-layouts-and-pages
   setRequestLocale(locale)
@@ -43,8 +39,9 @@ async function getMessages(locale: Locale) {
 }
 
 export async function generateMetadata({
-  params: { locale },
+  params,
 }: PageProps): Promise<Metadata> {
+  const { locale } = await params
   const { metadata } = await getMessages(locale)
 
   return {
@@ -57,8 +54,15 @@ export const generateStaticParams = async () =>
 
 export default async function RootLayout({
   children,
-  params: { locale },
-}: PropsWithChildren<PageProps>) {
+  params,
+}: LayoutProps<'/[locale]'>) {
+  const { locale } = await params
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound()
+    return undefined
+  }
+
   const messages = await getMessages(locale)
 
   return (

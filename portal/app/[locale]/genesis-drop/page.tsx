@@ -99,7 +99,7 @@ export default function Page() {
     // use the default claim group if the user is disconnected
     const defaultClaimGroup = t('claim-groups.genesis-drop')
     if (status === 'disconnected') {
-      return t('claim-groups.genesis-drop')
+      return defaultClaimGroup
     }
 
     if (selectedClaimGroup !== null) {

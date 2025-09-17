@@ -74,21 +74,18 @@ export default function Page() {
     if (
       !walletIsConnected(status) ||
       allEligibility === undefined ||
-      selectedClaimGroup === null
+      (allEligibility.length !== 0 && selectedClaimGroup === null)
     ) {
       return spinner
     }
 
     if (
       allEligibility.length === 0 ||
-      !hasAllocation(allEligibility, selectedClaimGroup)
+      (selectedClaimGroup && !hasAllocation(allEligibility, selectedClaimGroup))
     ) {
       return <NotEligible />
     }
 
-    if (selectedClaimGroup === undefined) {
-      return spinner
-    }
     return (
       <Eligible
         eligibility={
@@ -100,6 +97,7 @@ export default function Page() {
 
   const getSubheading = function () {
     // use the default claim group if the user is disconnected
+    const defaultClaimGroup = t('claim-groups.genesis-drop')
     if (status === 'disconnected') {
       return t('claim-groups.genesis-drop')
     }
@@ -107,8 +105,10 @@ export default function Page() {
     if (selectedClaimGroup !== null) {
       return <ClaimGroupName claimGroupId={selectedClaimGroup} />
     }
-
-    return <Skeleton className="h-10 w-72" />
+    if (allEligibility === undefined) {
+      return <Skeleton className="h-10 w-72" />
+    }
+    return defaultClaimGroup
   }
 
   return (

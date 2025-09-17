@@ -74,6 +74,8 @@ const config: Config = {
         'navbar':
           '0px 0px 0px 1px rgba(212, 212, 216, 0.56), 12px 0px 24px -8px rgba(10, 10, 10, 0.06), 0px 10px 24px -8px rgba(10, 10, 10, 0.08), 0px 4px 6px -2px rgba(10, 10, 10, 0.04)',
         'soft': '0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
+        'table':
+          '0 0 2px 0 rgba(10, 10, 10, 0.10), 0 8px 12px -4px rgba(10, 10, 10, 0.08), 0 1px 2px 0 rgba(10, 10, 10, 0.10)',
         'token-selector':
           '0px 0px 0px 1px rgba(10,10,10,0.08), 0px 1px 3px 0px rgba(10,10,10,0.08), 0px 1px 2px -1px rgba(10,10,10,0.08)',
         'top-token-selector': 'inset 0 4px 4px -2px rgba(0,0,0,0.03)',

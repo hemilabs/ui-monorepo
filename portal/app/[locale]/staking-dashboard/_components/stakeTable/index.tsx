@@ -1,17 +1,12 @@
 'use client'
 
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
-import { Card } from 'components/card'
+import { ColumnDef } from '@tanstack/react-table'
 import { ErrorBoundary } from 'components/errorBoundary'
+import { Table } from 'components/table'
+import { Header } from 'components/table/table'
 import { TxLink } from 'components/txLink'
 import { useHemi } from 'hooks/useHemi'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
-import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -20,7 +15,6 @@ import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
 import { Amount } from '../amount'
-import { Column, ColumnHeader, Header } from '../table'
 
 import { ConnectWallet } from './connectWallet'
 import { LockupTime } from './lockupTime'
@@ -28,10 +22,7 @@ import { NoPositionStaked } from './noPositionStaked'
 import { TimeRemaining } from './timeRemaining'
 import { UnsupportedChain } from './unsupportedChain'
 
-// created here so there's a stable reference between renders when using it
-const emptyData = new Array(4).fill(null)
-
-const columnsBuilder = (
+const stakingColumns = (
   t: ReturnType<typeof useTranslations<'staking-dashboard'>>,
 ): ColumnDef<StakingPosition>[] => [
   {
@@ -81,132 +72,47 @@ const columnsBuilder = (
   },
 ]
 
-type StakeTableImpProps = {
-  data: StakingPosition[] | undefined
-  loading: boolean
-}
-
-const StakeTableImp = function ({ data = [], loading }: StakeTableImpProps) {
-  const t = useTranslations('staking-dashboard')
-  const { width } = useWindowSize()
-
-  const columns = useMemo(
-    () =>
-      columnsBuilder(t).map(c =>
-        data.length === 0 && loading
-          ? {
-              ...c,
-              cell: () => <Skeleton className="w-16" />,
-            }
-          : c,
-      ),
-    [data.length, loading, t],
-  )
-
-  const table = useReactTable({
-    columns,
-    data: data.length === 0 ? emptyData : data,
-    getCoreRowModel: getCoreRowModel(),
-    state: {
-      columnOrder:
-        // move "time-remaining" to the left in small devices
-        // and keep original order in larger devices
-        width < 1024
-          ? ['time-remaining'].concat(
-              columns.map(c => c.id!).filter(id => id !== 'time-remaining'),
-            )
-          : undefined,
-    },
-  })
-
-  const { rows } = table.getRowModel()
-
-  return (
-    <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
-      <thead className="sticky top-0 z-10">
-        {table.getHeaderGroups().map(headerGroup => (
-          <tr className="flex w-full items-center" key={headerGroup.id}>
-            {headerGroup.headers.map(header => (
-              <ColumnHeader
-                className={
-                  header.column.columnDef.meta?.className ?? 'justify-start'
-                }
-                key={header.id}
-                style={{ width: header.column.columnDef.meta?.width }}
-              >
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
-              </ColumnHeader>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody className="relative">
-        {rows.map(row => (
-          <tr className="group/stake-row flex items-center" key={row.id}>
-            {row.getVisibleCells().map(cell => (
-              <Column
-                className={
-                  cell.column.columnDef.meta?.className ?? 'justify-start'
-                }
-                key={cell.id}
-                style={{ width: cell.column.columnDef.meta?.width }}
-              >
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-              </Column>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )
-}
-
 type Props = {
   data: StakingPosition[] | undefined
   loading: boolean
 }
 
-export const StakeTable = function ({ data, loading }: Props) {
+export function StakeTable({ data, loading }: Props) {
+  const t = useTranslations('staking-dashboard')
   const { status } = useAccount()
   const hemi = useHemi()
-  const isEmpty = data?.length === 0 && !loading
-
   const connectedToHemi = useIsConnectedToExpectedNetwork(hemi.id)
 
-  const getContent = function () {
-    if (!walletIsConnected(status)) {
-      return <ConnectWallet />
-    }
-    if (status === 'connecting') {
-      return <Skeleton className="h-[calc(100%-3px)] w-full rounded-2xl" />
-    }
-    if (!connectedToHemi) {
-      return <UnsupportedChain />
-    }
-    if (isEmpty) {
-      return <NoPositionStaked />
-    }
-    return <StakeTableImp data={data} loading={loading} />
+  const isEmpty = (data?.length ?? 0) === 0 && !loading
+
+  const cols = useMemo(() => stakingColumns(t), [t])
+
+  if (!walletIsConnected(status)) {
+    return <ConnectWallet />
+  }
+
+  if (status === 'connecting') {
+    return <Skeleton className="h-[calc(100%-3px)] w-full rounded-xl" />
+  }
+
+  if (!connectedToHemi) {
+    return <UnsupportedChain />
+  }
+
+  if (isEmpty) {
+    return <NoPositionStaked />
   }
 
   return (
-    <div className="w-full rounded-2xl bg-neutral-100 text-sm font-medium">
-      <Card>
-        <div
-          className={`md:min-h-128 h-[47dvh] overflow-x-auto p-2 ${
-            isEmpty ? 'flex items-center justify-center' : ''
-          }`}
-          style={{
-            scrollbarColor: '#d4d4d4 transparent',
-            scrollbarWidth: 'thin',
-          }}
-        >
-          {getContent()}
-        </div>
-      </Card>
+    <div className="h-[53dvh] overflow-hidden md:min-h-[53dvh]">
+      <Table<StakingPosition>
+        columns={cols}
+        data={data}
+        getRowKey={(row, i) => row?.transactionHash ?? String(i)}
+        loading={loading}
+        priorityColumnIdsOnSmall={['time-remaining']}
+        smallBreakpoint={1024}
+      />
     </div>
   )
 }

@@ -252,6 +252,7 @@ const config: Config = {
         /* eslint-enable sort-keys */
       },
       height: {
+        '85vh': '85vh',
         '97vh': '97vh',
         '98vh': '98vh',
         // 96px from header (height + padding), 40px from container's padding top in > md screens
@@ -270,6 +271,9 @@ const config: Config = {
       },
       lineHeight: {
         '6.5': '1.625rem',
+      },
+      maxHeight: {
+        '85vh': '85vh',
       },
       minHeight: {
         '128': '32rem',

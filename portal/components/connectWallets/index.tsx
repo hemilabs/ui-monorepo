@@ -15,7 +15,7 @@ import { UnisatLogo } from './unisatLogo'
 const ConnectWalletsDrawer = dynamic(
   () => import('./connectWalletsDrawer').then(mod => mod.ConnectWalletsDrawer),
   {
-    loading: () => <DrawerLoader className="h-[55dvh] md:h-full" />,
+    loading: () => <DrawerLoader className="h-85vh md:h-full" />,
     ssr: false,
   },
 )

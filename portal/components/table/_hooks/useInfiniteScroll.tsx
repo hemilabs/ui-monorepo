@@ -1,41 +1,42 @@
-import { RefObject, useEffect } from 'react'
+import { useCallback, useEffect, RefObject } from 'react'
 
-type Props = {
-  hasMore?: boolean
-  loadingMore?: boolean
-  onLoadMore?: VoidFunction
-  ref: RefObject<HTMLElement | null>
+type UseInfiniteScrollProps = {
+  fetchNextPage?: VoidFunction
+  hasNextPage: boolean
+  isFetching: boolean
+  scrollContainerRef: RefObject<HTMLDivElement | null>
 }
 
 export function useInfiniteScroll({
-  hasMore,
-  loadingMore,
-  onLoadMore,
-  ref,
-}: Props) {
-  useEffect(
-    function observeIntersection() {
-      if (!onLoadMore || !hasMore || loadingMore) {
-        return undefined
-      }
-
-      const observer = new IntersectionObserver(
-        function (entries) {
-          if (entries[0].isIntersecting) {
-            onLoadMore()
-          }
-        },
-        { threshold: 0.1 },
-      )
-
-      if (ref.current) {
-        observer.observe(ref.current)
-      }
-
-      return function cleanup() {
-        observer.disconnect()
+  fetchNextPage,
+  hasNextPage,
+  isFetching,
+  scrollContainerRef,
+}: UseInfiniteScrollProps) {
+  const fetchMoreOnBottomReached = useCallback(
+    function (containerRefElement?: HTMLDivElement | null) {
+      if (containerRefElement && fetchNextPage) {
+        const { clientHeight, scrollHeight, scrollTop } = containerRefElement
+        // Fetch more when user scrolls within 500px of bottom
+        if (
+          scrollHeight - scrollTop - clientHeight < 500 &&
+          !isFetching &&
+          hasNextPage
+        ) {
+          fetchNextPage()
+        }
       }
     },
-    [ref, onLoadMore, hasMore, loadingMore],
+    [fetchNextPage, isFetching, hasNextPage],
   )
+
+  // Check on mount and after fetch if we need more data
+  useEffect(
+    function fetchMoreData() {
+      fetchMoreOnBottomReached(scrollContainerRef.current)
+    },
+    [fetchMoreOnBottomReached, scrollContainerRef],
+  )
+
+  return { fetchMoreOnBottomReached }
 }

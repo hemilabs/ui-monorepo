@@ -7,40 +7,158 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useWindowSize } from 'hooks/useWindowSize'
-import { useRef } from 'react'
-import Skeleton from 'react-loading-skeleton'
+import { RefObject, useRef } from 'react'
 
+import { ColumnHeader } from './_components/columnHeader'
+import { LoadingMoreIndicator } from './_components/loadingMoreIndicator'
+import { LoadingSkeletonRows } from './_components/loadingSkeletonRows'
+import { VirtualRows } from './_components/virtualRows'
 import { useInfiniteScroll } from './_hooks/useInfiniteScroll'
 import { useScrollbarDetection } from './_hooks/useScrollbarDetection'
 import { useTableData } from './_hooks/useTableData'
-import { Column, ColumnHeader } from './table'
+import { useTableVirtualizer } from './_hooks/useTableVirtualizer'
 
-export type TableProps<T> = {
-  columns: ColumnDef<T, unknown>[]
-  data?: T[]
-  getRowKey?: (row: T, index: number) => string
-  hasMore?: boolean
+type TableHeaderProps<TData> = {
+  hasVerticalBodyScrollbar: boolean
+  smallBreakpoint: number
+  table: ReturnType<typeof useReactTable<TData>>
+  width: number
+}
+
+const TableHeader = <TData,>({
+  hasVerticalBodyScrollbar,
+  smallBreakpoint,
+  table,
+  width,
+}: TableHeaderProps<TData>) => (
+  <div
+    className={`rounded-t-xl bg-neutral-100 pb-1.5 ${
+      hasVerticalBodyScrollbar && width >= smallBreakpoint ? 'pr-3' : ''
+    }`}
+  >
+    <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
+      <thead>
+        {table.getHeaderGroups().map(headerGroup => (
+          <tr className="flex w-full items-center" key={headerGroup.id}>
+            {headerGroup.headers.map(header => (
+              <ColumnHeader
+                className={
+                  header.column.columnDef.meta?.className ?? 'justify-start'
+                }
+                key={header.id}
+                style={{
+                  width: header.column.columnDef.meta?.width,
+                }}
+              >
+                {flexRender(
+                  header.column.columnDef.header,
+                  header.getContext(),
+                )}
+              </ColumnHeader>
+            ))}
+          </tr>
+        ))}
+      </thead>
+    </table>
+  </div>
+)
+
+type TableBodyProps<TData> = {
+  fetchMoreOnBottomReached: (el?: HTMLDivElement | null) => void
+  getRowKey?: (row: TData | null, index: number) => string
+  isFetching: boolean
+  loading: boolean
+  rowSize: number
+  rowVirtualizer: ReturnType<typeof useTableVirtualizer<TData>>
+  scrollContainerRef: RefObject<HTMLDivElement | null>
+  skeletonRows: number
+  table: ReturnType<typeof useReactTable<TData>>
+}
+
+function TableBody<TData>({
+  fetchMoreOnBottomReached,
+  getRowKey,
+  isFetching,
+  loading,
+  rowSize,
+  rowVirtualizer,
+  scrollContainerRef,
+  skeletonRows,
+  table,
+  virtualItems,
+}: TableBodyProps<TData> & {
+  virtualItems: ReturnType<typeof rowVirtualizer.getVirtualItems>
+}) {
+  const { rows } = table.getRowModel()
+
+  return (
+    <div
+      className="shadow-table -mt-1.5 mb-1 min-h-0 flex-1 overflow-y-auto rounded-xl bg-white"
+      onScroll={e => fetchMoreOnBottomReached(e.currentTarget)}
+      ref={scrollContainerRef}
+    >
+      <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
+        <tbody
+          className="relative"
+          style={{
+            height: `${
+              rowVirtualizer.getTotalSize() +
+              (isFetching && !loading ? rowSize : 0)
+            }px`,
+          }}
+        >
+          <LoadingSkeletonRows
+            loading={loading}
+            rows={rows}
+            skeletonRows={skeletonRows}
+            table={table}
+          />
+          <VirtualRows
+            getRowKey={getRowKey}
+            loading={loading}
+            rows={rows}
+            virtualItems={virtualItems}
+          />
+          <LoadingMoreIndicator
+            isFetching={isFetching}
+            loading={loading}
+            rowSize={rowSize}
+            rowVirtualizer={rowVirtualizer}
+            table={table}
+          />
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+export type TableProps<TData> = {
+  columns: ColumnDef<TData, unknown>[]
+  data: TData[] | undefined
+  fetchNextPage?: VoidFunction
+  getRowKey?: (row: TData | null, index: number) => string
+  hasNextPage?: boolean
+  isFetching?: boolean
   loading?: boolean
-  loadingMore?: boolean
-  onLoadMore?: VoidFunction
   priorityColumnIdsOnSmall?: string[]
+  rowSize?: number
   skeletonRows?: number
   smallBreakpoint?: number
 }
 
-export function Table<T>({
+export function Table<TData>({
   columns,
   data = [],
+  fetchNextPage,
   getRowKey,
-  hasMore = false,
+  hasNextPage = false,
+  isFetching = false,
   loading = false,
-  loadingMore = false,
-  onLoadMore,
   priorityColumnIdsOnSmall,
+  rowSize = 64,
   skeletonRows = 4,
   smallBreakpoint = 1024,
-}: TableProps<T>) {
-  const loadMoreRef = useRef<HTMLTableRowElement>(null)
+}: TableProps<TData>) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const { height, width } = useWindowSize()
 
@@ -48,13 +166,6 @@ export function Table<T>({
     data,
     height,
     ref: scrollContainerRef,
-  })
-
-  useInfiniteScroll({
-    hasMore,
-    loadingMore,
-    onLoadMore,
-    ref: loadMoreRef,
   })
 
   const { columnOrder, columnsWithSkeleton, safeData } = useTableData({
@@ -76,101 +187,49 @@ export function Table<T>({
 
   const { rows } = table.getRowModel()
 
+  const { fetchMoreOnBottomReached } = useInfiniteScroll({
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    scrollContainerRef,
+  })
+
+  const rowVirtualizer = useTableVirtualizer({
+    rows,
+    rowSize,
+    scrollContainerRef,
+  })
+
+  const virtualItems = rowVirtualizer.getVirtualItems()
+
   return (
     <div
-      className="flex size-full flex-col rounded-xl bg-neutral-50 text-sm font-medium"
+      className="flex h-full flex-col bg-neutral-50"
       style={{
         scrollbarColor: '#d4d4d4 transparent',
         scrollbarWidth: 'thin',
       }}
     >
       <div className="flex h-full flex-col overflow-x-auto">
-        <div className="flex h-full min-w-max flex-col">
-          <div className="px-1">
-            {/* Header */}
-            <div
-              className={`rounded-t-xl bg-neutral-100 pb-1.5 ${
-                hasVerticalBodyScrollbar && width >= smallBreakpoint
-                  ? 'pr-3'
-                  : ''
-              }`}
-            >
-              {table.getHeaderGroups().map(headerGroup => (
-                <div className="flex w-full items-center" key={headerGroup.id}>
-                  {headerGroup.headers.map(header => (
-                    <ColumnHeader
-                      className={
-                        header.column.columnDef.meta?.className ??
-                        'justify-start'
-                      }
-                      key={header.id}
-                      style={{
-                        width: header.column.columnDef.meta?.width,
-                      }}
-                    >
-                      {flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                    </ColumnHeader>
-                  ))}
-                </div>
-              ))}
-            </div>
-          </div>
-          {/* Body */}
-          <div
-            className="shadow-table mx-1 -mt-1.5 mb-1 min-h-0 flex-1 overflow-y-auto rounded-xl bg-white"
-            ref={scrollContainerRef}
-          >
-            <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
-              <tbody className="relative">
-                {rows.map((row, idx) => (
-                  <tr
-                    className="group/row flex items-center"
-                    key={getRowKey ? getRowKey(row.original, idx) : row.id}
-                  >
-                    {row.getVisibleCells().map(cell => (
-                      <Column
-                        className={
-                          cell.column.columnDef.meta?.className ??
-                          'justify-start'
-                        }
-                        key={cell.id}
-                        style={{
-                          width: cell.column.columnDef.meta?.width,
-                        }}
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </Column>
-                    ))}
-                  </tr>
-                ))}
-                {hasMore && (
-                  <tr
-                    className="group/row flex h-16 items-center"
-                    ref={loadMoreRef}
-                  >
-                    {loadingMore &&
-                      table.getVisibleLeafColumns().map(column => (
-                        <Column
-                          className={
-                            column.columnDef.meta?.className ?? 'justify-start'
-                          }
-                          key={column.id}
-                          style={{ width: column.columnDef.meta?.width }}
-                        >
-                          <Skeleton className="w-16" />
-                        </Column>
-                      ))}
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+        <div className="flex h-full min-w-max flex-col px-1">
+          <TableHeader
+            hasVerticalBodyScrollbar={hasVerticalBodyScrollbar}
+            smallBreakpoint={smallBreakpoint}
+            table={table}
+            width={width}
+          />
+          <TableBody
+            fetchMoreOnBottomReached={fetchMoreOnBottomReached}
+            getRowKey={getRowKey}
+            isFetching={isFetching}
+            loading={loading}
+            rowSize={rowSize}
+            rowVirtualizer={rowVirtualizer}
+            scrollContainerRef={scrollContainerRef}
+            skeletonRows={skeletonRows}
+            table={table}
+            virtualItems={virtualItems}
+          />
         </div>
       </div>
     </div>

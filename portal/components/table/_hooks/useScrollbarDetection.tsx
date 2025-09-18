@@ -1,12 +1,16 @@
 import { RefObject, useEffect, useState } from 'react'
 
-type Props<T> = {
-  data: T[] | undefined
+type Props<TData> = {
+  data: TData[] | undefined
   height: number
   ref: RefObject<HTMLDivElement | null>
 }
 
-export function useScrollbarDetection<T>({ data, height, ref }: Props<T>) {
+export function useScrollbarDetection<TData>({
+  data,
+  height,
+  ref,
+}: Props<TData>) {
   const [hasScrollbar, setHasScrollbar] = useState(false)
 
   useEffect(

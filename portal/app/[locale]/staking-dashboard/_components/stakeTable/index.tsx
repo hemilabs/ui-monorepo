@@ -1,14 +1,15 @@
 'use client'
 
 import { ColumnDef } from '@tanstack/react-table'
+import { Card } from 'components/card'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { Table } from 'components/table'
-import { Header } from 'components/table/table'
+import { Header } from 'components/table/_components/header'
 import { TxLink } from 'components/txLink'
 import { useHemi } from 'hooks/useHemi'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
-import { useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { StakingPosition } from 'types/stakingDashboard'
 import { walletIsConnected } from 'utils/wallet'
@@ -87,25 +88,33 @@ export function StakeTable({ data, loading }: Props) {
 
   const cols = useMemo(() => stakingColumns(t), [t])
 
-  if (!walletIsConnected(status)) {
-    return <ConnectWallet />
-  }
+  const getContent = function () {
+    const wrapWithContainer = (content: ReactNode) => (
+      <div className="h-full bg-neutral-50 px-1 pb-1">
+        <Card height="h-full">{content}</Card>
+      </div>
+    )
 
-  if (status === 'connecting') {
-    return <Skeleton className="h-[calc(100%-3px)] w-full rounded-xl" />
-  }
+    if (!walletIsConnected(status)) {
+      return wrapWithContainer(<ConnectWallet />)
+    }
 
-  if (!connectedToHemi) {
-    return <UnsupportedChain />
-  }
+    if (status === 'connecting') {
+      return wrapWithContainer(
+        <Skeleton className="h-[calc(100%-3px)] w-full rounded-xl" />,
+      )
+    }
 
-  if (isEmpty) {
-    return <NoPositionStaked />
-  }
+    if (!connectedToHemi) {
+      return wrapWithContainer(<UnsupportedChain />)
+    }
 
-  return (
-    <div className="h-[53dvh] overflow-hidden md:min-h-[53dvh]">
-      <Table<StakingPosition>
+    if (isEmpty) {
+      return wrapWithContainer(<NoPositionStaked />)
+    }
+
+    return (
+      <Table
         columns={cols}
         data={data}
         getRowKey={(row, i) => row?.transactionHash ?? String(i)}
@@ -113,6 +122,14 @@ export function StakeTable({ data, loading }: Props) {
         priorityColumnIdsOnSmall={['time-remaining']}
         smallBreakpoint={1024}
       />
+    )
+  }
+
+  return (
+    <div className="w-full rounded-xl bg-neutral-100 text-sm font-medium">
+      <div className="h-[53dvh] overflow-hidden md:min-h-[53dvh]">
+        {getContent()}
+      </div>
     </div>
   )
 }

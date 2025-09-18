@@ -3,18 +3,20 @@ import Skeleton from 'react-loading-skeleton'
 
 import { TableProps } from '../index'
 
-type Props<T> = Omit<
-  TableProps<T>,
+type Props<TData> = Omit<
+  TableProps<TData>,
   'data' | 'loading' | 'skeletonRows' | 'smallBreakpoint'
 > &
   Required<
-    Pick<TableProps<T>, 'loading' | 'skeletonRows' | 'smallBreakpoint'>
+    Pick<
+      TableProps<TData>,
+      'data' | 'loading' | 'skeletonRows' | 'smallBreakpoint'
+    >
   > & {
-    data: T[] | undefined
     width: number
   }
 
-export function useTableData<T>({
+export function useTableData<TData>({
   columns,
   data,
   loading,
@@ -22,7 +24,7 @@ export function useTableData<T>({
   skeletonRows,
   smallBreakpoint,
   width,
-}: Props<T>) {
+}: Props<TData>) {
   const showSkeleton = (data?.length ?? 0) === 0 && loading
 
   const columnsWithSkeleton = useMemo(
@@ -38,14 +40,18 @@ export function useTableData<T>({
     [columns, showSkeleton],
   )
 
-  const safeData =
-    data && data.length > 0 ? data : new Array(skeletonRows).fill(null)
+  const skeletonArray = useMemo(
+    () => new Array(skeletonRows).fill(null),
+    [skeletonRows],
+  )
+  const safeData = data && data.length > 0 ? data : skeletonArray
 
   const columnOrder =
     width < smallBreakpoint && priorityColumnIdsOnSmall?.length
       ? [
           ...priorityColumnIdsOnSmall,
           ...columnsWithSkeleton
+            .filter(c => c.id)
             .map(c => c.id!)
             .filter(id => id && !priorityColumnIdsOnSmall.includes(id)),
         ]

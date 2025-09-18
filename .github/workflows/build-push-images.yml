@@ -31,6 +31,8 @@ jobs:
         include:
           - context: portal-backend/api
             image: hemilabs/portal-backend-api
+          - context: portal-backend/cron/hemi-supply
+            image: hemilabs/hemi-supply-cron
           - context: portal-backend/cron/token-prices
             image: hemilabs/token-prices-cron
           - context: portal-backend/cron/vaults-monitor

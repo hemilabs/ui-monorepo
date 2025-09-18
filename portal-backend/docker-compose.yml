@@ -1,6 +1,24 @@
 services:
   cache:
     image: redis:7.2.7-alpine
+  hemi-supply-cron:
+    build:
+      context: cron/hemi-supply
+    depends_on:
+      - cache
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      REDIS_URL: redis://cache:6379
+      REFRESH_SUPPLY_MIN: ${REFRESH_SUPPLY_MIN}
+      RPC_URL_BNB: ${RPC_URL_BNB}
+      RPC_URL_ETH: ${RPC_URL_ETH}
+      RPC_URL_HEMI: ${RPC_URL_HEMI}
+      SENTRY_DSN: ${SENTRY_DSN}
+      SENTRY_LOGGING_LEVELS: ${SENTRY_LOGGING_LEVELS}
+      SUPPLY_CORRECTION: ${SUPPLY_CORRECTION}
+      SUPPLY_MERKLE_LOCKED: ${SUPPLY_MERKLE_LOCKED}
+      SUPPLY_OP_ADDRESSES: ${SUPPLY_OP_ADDRESSES}
+    restart: always
   portal-api:
     build:
       context: api

@@ -90,6 +90,33 @@ These environment variables control how the cache works:
 
 (1) Only stars (`*`) are supported. I.e. `https://*.hemi.xyz` will match any subdomain or subdomain chain.
 
+## Hemi supply cron
+
+Periodically retrieves network data to compute the HEMI circulating supply and updates the cache (Redis).
+The main goal is to provide this information to CoinMarketCap.
+
+### Configuration
+
+These environment variables control how the `cron` job behaves:
+
+| Variable              | Description                                                                          | Default                        |
+| --------------------- | ------------------------------------------------------------------------------------ | ------------------------------ |
+| REDIS_URL             | The URL of the Redis database.                                                       | `redis://localhost:6379`       |
+| REFRESH_SUPPLY_MIN    | How frequently the cache will be refreshed. If set to 0, it will run once and exit.  | 5                              |
+| RPC_URL_BNB           | URL of the BNB Chain RPC node.                                                       | `https://56.rpc.thirdweb.com`  |
+| RPC_URL_ETH           | URL of the Ethereum RPC node.                                                        | `https://eth.merkle.io`        |
+| RPC_URL_HEMI          | URL of the Hemi RPC node.                                                            | `https://rpc.hemi.network/rpc` |
+| SENTRY_DSN            | The Sentry DSN.                                                                      |                                |
+| SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).                         | ["log", "warn", "error"]       |
+| SUPPLY_CORRECTION     | Amount of HEMI to be subtracted from the supply. In wei/units, not in HEMI!          | 0                              |
+| SUPPLY_MERKLE_LOCKED  | Percent of HEMI held in MerkleBox that are considered locked.                        | 50                             |
+| SUPPLY_OP_ADDRESSES   | Comma-separated list of addresses, whose balances will be subtracted from the supply |                                |
+
+### Stored data
+
+Data in the `cache` is stored with keys prefixed with `supply:`.
+In addition, a `supply:time` key is also stored every time the cache is refreshed.
+
 ## Token price cron
 
 Periodically retrieves token prices from [CoinMarketCap](https://coinmarketcap.com/) and updates the key/value store (Redis).

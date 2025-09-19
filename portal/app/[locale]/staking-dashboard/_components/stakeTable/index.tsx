@@ -73,6 +73,12 @@ const stakingColumns = (
   },
 ]
 
+const Container = ({ children }: { children: ReactNode }) => (
+  <div className="h-full bg-neutral-50 pb-1 md:px-1 [&>div]:h-full">
+    <Card>{children}</Card>
+  </div>
+)
+
 type Props = {
   data: StakingPosition[] | undefined
   loading: boolean
@@ -89,35 +95,42 @@ export function StakeTable({ data, loading }: Props) {
   const cols = useMemo(() => stakingColumns(t), [t])
 
   const getContent = function () {
-    const wrapWithContainer = (content: ReactNode) => (
-      <div className="h-full bg-neutral-50 px-1 pb-1">
-        <Card height="h-full">{content}</Card>
-      </div>
-    )
-
     if (!walletIsConnected(status)) {
-      return wrapWithContainer(<ConnectWallet />)
+      return (
+        <Container>
+          <ConnectWallet />
+        </Container>
+      )
     }
 
     if (status === 'connecting') {
-      return wrapWithContainer(
-        <Skeleton className="h-[calc(100%-3px)] w-full rounded-xl" />,
+      return (
+        <Container>
+          <Skeleton className="h-[calc(100%-3px)] w-full rounded-xl" />
+        </Container>
       )
     }
 
     if (!connectedToHemi) {
-      return wrapWithContainer(<UnsupportedChain />)
+      return (
+        <Container>
+          <UnsupportedChain />
+        </Container>
+      )
     }
 
     if (isEmpty) {
-      return wrapWithContainer(<NoPositionStaked />)
+      return (
+        <Container>
+          <NoPositionStaked />
+        </Container>
+      )
     }
 
     return (
       <Table
         columns={cols}
         data={data}
-        getRowKey={(row, i) => row?.transactionHash ?? String(i)}
         loading={loading}
         priorityColumnIdsOnSmall={['time-remaining']}
         smallBreakpoint={1024}
@@ -127,7 +140,7 @@ export function StakeTable({ data, loading }: Props) {
 
   return (
     <div className="w-full rounded-xl bg-neutral-100 text-sm font-medium">
-      <div className="h-[53dvh] overflow-hidden md:min-h-[53dvh]">
+      <div className="md:min-h-128 h-[53dvh] overflow-hidden">
         {getContent()}
       </div>
     </div>

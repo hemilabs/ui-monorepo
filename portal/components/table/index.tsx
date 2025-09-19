@@ -33,7 +33,7 @@ const TableHeader = <TData,>({
 }: TableHeaderProps<TData>) => (
   <div
     className={`rounded-t-xl bg-neutral-100 pb-1.5 ${
-      hasVerticalBodyScrollbar && width >= smallBreakpoint ? 'pr-3' : ''
+      hasVerticalBodyScrollbar && width >= smallBreakpoint ? 'pr-2.5' : ''
     }`}
   >
     <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
@@ -65,7 +65,6 @@ const TableHeader = <TData,>({
 
 type TableBodyProps<TData> = {
   fetchMoreOnBottomReached: (el?: HTMLDivElement | null) => void
-  getRowKey?: (row: TData | null, index: number) => string
   isFetching: boolean
   loading: boolean
   rowSize: number
@@ -77,7 +76,6 @@ type TableBodyProps<TData> = {
 
 function TableBody<TData>({
   fetchMoreOnBottomReached,
-  getRowKey,
   isFetching,
   loading,
   rowSize,
@@ -96,6 +94,10 @@ function TableBody<TData>({
       className="shadow-table -mt-1.5 mb-1 min-h-0 flex-1 overflow-y-auto rounded-xl bg-white"
       onScroll={e => fetchMoreOnBottomReached(e.currentTarget)}
       ref={scrollContainerRef}
+      style={{
+        scrollbarColor: '#d4d4d4 transparent',
+        scrollbarWidth: 'thin',
+      }}
     >
       <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
         <tbody
@@ -114,7 +116,6 @@ function TableBody<TData>({
             table={table}
           />
           <VirtualRows
-            getRowKey={getRowKey}
             loading={loading}
             rows={rows}
             virtualItems={virtualItems}
@@ -133,10 +134,9 @@ function TableBody<TData>({
 }
 
 export type TableProps<TData> = {
-  columns: ColumnDef<TData, unknown>[]
+  columns: ColumnDef<TData>[]
   data: TData[] | undefined
   fetchNextPage?: VoidFunction
-  getRowKey?: (row: TData | null, index: number) => string
   hasNextPage?: boolean
   isFetching?: boolean
   loading?: boolean
@@ -150,7 +150,6 @@ export function Table<TData>({
   columns,
   data = [],
   fetchNextPage,
-  getRowKey,
   hasNextPage = false,
   isFetching = false,
   loading = false,
@@ -203,14 +202,14 @@ export function Table<TData>({
   const virtualItems = rowVirtualizer.getVirtualItems()
 
   return (
-    <div
-      className="flex h-full flex-col bg-neutral-50"
-      style={{
-        scrollbarColor: '#d4d4d4 transparent',
-        scrollbarWidth: 'thin',
-      }}
-    >
-      <div className="flex h-full flex-col overflow-x-auto">
+    <div className="flex h-full flex-col bg-neutral-50">
+      <div
+        className="flex h-full flex-col overflow-x-auto"
+        style={{
+          scrollbarColor: '#d4d4d4 transparent',
+          scrollbarWidth: 'thin',
+        }}
+      >
         <div className="flex h-full min-w-max flex-col px-1">
           <TableHeader
             hasVerticalBodyScrollbar={hasVerticalBodyScrollbar}
@@ -220,7 +219,6 @@ export function Table<TData>({
           />
           <TableBody
             fetchMoreOnBottomReached={fetchMoreOnBottomReached}
-            getRowKey={getRowKey}
             isFetching={isFetching}
             loading={loading}
             rowSize={rowSize}

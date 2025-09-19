@@ -1,7 +1,6 @@
-import { useReactTable } from '@tanstack/react-table'
+import type { Table } from '@tanstack/react-table'
+import { Virtualizer } from '@tanstack/react-virtual'
 import Skeleton from 'react-loading-skeleton'
-
-import { useTableVirtualizer } from '../_hooks/useTableVirtualizer'
 
 import { Column } from './column'
 
@@ -9,8 +8,8 @@ type Props<TData> = {
   isFetching: boolean
   loading: boolean
   rowSize: number
-  rowVirtualizer: ReturnType<typeof useTableVirtualizer<TData>>
-  table: ReturnType<typeof useReactTable<TData>>
+  rowVirtualizer: Virtualizer<HTMLDivElement, Element>
+  table: Table<TData>
 }
 
 export function LoadingMoreIndicator<TData>({
@@ -35,7 +34,7 @@ export function LoadingMoreIndicator<TData>({
       {table.getVisibleLeafColumns().map(column => (
         <Column
           className={column.columnDef.meta?.className ?? 'justify-start'}
-          key={`loading-${column.id}`}
+          key={column.id}
           style={{ width: column.columnDef.meta?.width }}
         >
           <Skeleton className="w-16" />

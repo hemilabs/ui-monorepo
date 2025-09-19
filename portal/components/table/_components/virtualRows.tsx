@@ -1,20 +1,15 @@
 import { flexRender, Row } from '@tanstack/react-table'
-
-import { useTableVirtualizer } from '../_hooks/useTableVirtualizer'
+import type { VirtualItem } from '@tanstack/react-virtual'
 
 import { Column } from './column'
 
 type Props<TData> = {
-  getRowKey?: (row: TData, index: number) => string
   loading: boolean
   rows: Row<TData>[]
-  virtualItems: ReturnType<
-    ReturnType<typeof useTableVirtualizer<TData>>['getVirtualItems']
-  >
+  virtualItems: VirtualItem[]
 }
 
 export function VirtualRows<TData>({
-  getRowKey,
   loading,
   rows,
   virtualItems,
@@ -31,7 +26,7 @@ export function VirtualRows<TData>({
           <tr
             className="group/row absolute flex w-full items-center"
             data-index={virtualRow.index}
-            key={getRowKey ? getRowKey(row.original, virtualRow.index) : row.id}
+            key={row.id}
             style={{
               height: `${virtualRow.size}px`,
               transform: `translateY(${virtualRow.start}px)`,

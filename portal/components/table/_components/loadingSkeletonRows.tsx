@@ -1,4 +1,4 @@
-import { Row, useReactTable } from '@tanstack/react-table'
+import type { Row, Table } from '@tanstack/react-table'
 import Skeleton from 'react-loading-skeleton'
 
 import { Column } from './column'
@@ -7,7 +7,7 @@ type Props<TData> = {
   loading: boolean
   rows: Row<TData>[]
   skeletonRows: number
-  table: ReturnType<typeof useReactTable<TData>>
+  table: Table<TData>
 }
 
 export function LoadingSkeletonRows<TData>({

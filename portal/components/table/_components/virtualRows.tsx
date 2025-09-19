@@ -21,7 +21,7 @@ export function VirtualRows<TData>({
   return (
     <>
       {virtualItems.map(function (virtualRow) {
-        const row = rows[virtualRow.index] as Row<TData>
+        const row = rows[virtualRow.index]
         return (
           <tr
             className="group/row absolute flex w-full items-center"

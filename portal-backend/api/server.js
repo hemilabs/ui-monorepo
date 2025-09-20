@@ -1,17 +1,17 @@
 'use strict'
 
-require('./src/instrument.js')
-
 const config = require('config')
 const cors = require('cors')
 const express = require('express')
 const Sentry = require('@sentry/node')
 
+require('./src/instrument.js')
+
 const { getBtcVaultsData } = require('./src/btc-vaults')
-const { getTokenPrices } = require('./src/redis')(config.get('redis'))
 const { getTvl } = require('./src/databox')(config.get('tvl.data'))
 const { getAllUserClaimData } = require('./src/claims')()
 const { getUserPoints } = require('./src/absinthe')(config.get('absinthe'))
+const cache = require('./src/redis')(config.get('redis'))
 
 const globToRegExp = require('./src/glob-to-regexp')
 const toMiddleware = require('./src/to-middleware')
@@ -34,6 +34,13 @@ app.get(
 )
 
 app.get(
+  '/circulating',
+  toMiddleware(cache.getCirculatingSupply, {
+    revalidate: 5 * 60 * 1000,
+  }),
+)
+
+app.get(
   /\/points\/(0x[0-9a-fA-F]{40})/,
   toMiddleware(async address => ({ points: await getUserPoints(address) }), {
     revalidate: 60 * 1000,
@@ -42,7 +49,7 @@ app.get(
 
 app.get(
   '/prices',
-  toMiddleware(getTokenPrices, {
+  toMiddleware(cache.getTokenPrices, {
     revalidate: 60 * 1000,
   }),
 )

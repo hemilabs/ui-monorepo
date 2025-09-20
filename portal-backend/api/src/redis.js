@@ -2,9 +2,28 @@
 
 const redis = require('redis')
 
+function fromUnit(value) {
+  const str = value.padStart(19, '0')
+  return `${str.slice(0, -18)}.${str.slice(-18)}`
+}
+
 module.exports = function ({ url }) {
   const client = redis.createClient({ url })
   client.connect()
+
+  async function getCirculatingSupply() {
+    const prefix = 'supply:'
+    const keys = await client.keys(`${prefix}*`)
+    const values = await client.mGet(keys)
+    const data = Object.fromEntries(
+      keys.map((key, i) => [key.slice(prefix.length), values[i] || '0']),
+    )
+    const { time, total, ...rest } = data
+    const circulatingSupply =
+      BigInt(total) -
+      Object.values(rest).reduce((acc, value) => acc + BigInt(value), 0n)
+    return fromUnit(circulatingSupply.toString())
+  }
 
   async function getTokenPrices() {
     const data = { prices: {} }
@@ -27,6 +46,7 @@ module.exports = function ({ url }) {
   }
 
   return {
+    getCirculatingSupply,
     getTokenPrices,
   }
 }

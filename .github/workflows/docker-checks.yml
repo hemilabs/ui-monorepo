@@ -34,6 +34,7 @@ jobs:
       matrix:
         context:
           - portal-backend/api
+          - portal-backend/cron/hemi-supply
           - portal-backend/cron/token-prices
           - portal-backend/cron/vaults-monitor
           - subgraph-api

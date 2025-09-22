@@ -20,7 +20,7 @@ type Withdraw @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type TokenStakeBalance @entity {
+type TokenStakeBalance @entity(immutable: false) {
   id: Bytes! # token address
   totalStaked: BigInt!
 }

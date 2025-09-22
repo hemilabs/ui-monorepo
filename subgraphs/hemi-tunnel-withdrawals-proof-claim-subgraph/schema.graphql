@@ -1,4 +1,4 @@
-type Withdrawal @entity {
+type Withdrawal @entity(immutable: false) {
   id: Bytes!
   claimTxHash: Bytes
   proveTxHash: Bytes

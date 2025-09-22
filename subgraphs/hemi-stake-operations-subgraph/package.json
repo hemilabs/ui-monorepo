@@ -18,7 +18,7 @@
     "remove-local": "graph remove --node http://localhost:8020/ $(jq -r .name package.json)"
   },
   "dependencies": {
-    "@graphprotocol/graph-cli": "0.95.0",
-    "@graphprotocol/graph-ts": "0.36.0"
+    "@graphprotocol/graph-cli": "0.97.1",
+    "@graphprotocol/graph-ts": "0.38.1"
   }
 }

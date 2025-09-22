@@ -132,8 +132,8 @@ export function handleTransfer(event: TransferEvent): void {
 
   // only add the owner if not already present - user could've owned it in the past
   if (!lockedPosition.pastOwners.includes(lockedPosition.owner)) {
-    // see how arrays are updated in this weird way
-    // https://thegraph.com/docs/en/subgraphs/developing/creating/graph-ts/api/#updating-existing-entities
+    // In AssemblyScript, arrays must be reassigned to the entity after modification to ensure changes are persisted.
+    // See documentation for extra details https://thegraph.com/docs/en/subgraphs/developing/creating/graph-ts/api/#updating-existing-entities
     // AssemblyScript :agitate:
     const pastOwners = lockedPosition.pastOwners
     pastOwners.push(lockedPosition.owner)

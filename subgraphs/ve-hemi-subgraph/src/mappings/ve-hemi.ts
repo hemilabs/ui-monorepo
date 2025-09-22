@@ -120,9 +120,24 @@ export function handleTransfer(event: TransferEvent): void {
 
   const newOwner = event.params.to
 
+  // Transfer event is even emitted after locking, so this
+  // prevent saving the exact same entity that's already saved
+  if (lockedPosition.owner.equals(newOwner)) {
+    log.info(
+      'Owner is the same, skipping transfer for locked position {} in tx {}',
+      [lockedPosition.id, event.transaction.hash.toHexString()],
+    )
+    return
+  }
+
   // only add the owner if not already present - user could've owned it in the past
   if (!lockedPosition.pastOwners.includes(lockedPosition.owner)) {
-    lockedPosition.pastOwners.push(lockedPosition.owner)
+    // see how arrays are updated in this weird way
+    // https://thegraph.com/docs/en/subgraphs/developing/creating/graph-ts/api/#updating-existing-entities
+    // AssemblyScript :agitate:
+    const pastOwners = lockedPosition.pastOwners
+    pastOwners.push(lockedPosition.owner)
+    lockedPosition.pastOwners = pastOwners
   }
 
   lockedPosition.owner = newOwner

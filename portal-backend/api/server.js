@@ -18,6 +18,8 @@ const globToRegExp = require('./src/glob-to-regexp')
 
 const app = express()
 
+app.disable('x-powered-by')
+
 /** @type {string} */
 const origins = config.get('origins')
 

@@ -1,10 +1,9 @@
-import { InRelativeTime } from 'components/inRelativeTime'
 import { Tooltip } from 'components/tooltip'
 import { useLocale, useTranslations } from 'next-intl'
 import { StakingPosition } from 'types/stakingDashboard'
 import { formatDate } from 'utils/format'
 
-import { CircularProgress } from './circularProgress'
+import { LinearProgress } from './linearProgress'
 import { Unlock } from './unlock'
 
 type Props = {
@@ -55,12 +54,7 @@ export function TimeRemaining({ operation }: Props) {
         </p>
       }
     >
-      <div className="flex w-full items-center gap-x-3">
-        <CircularProgress percentage={percentagePassed} />
-        <span className="text-left text-neutral-950">
-          <InRelativeTime timestamp={unlockTime} />
-        </span>
-      </div>
+      <LinearProgress percentage={percentagePassed} unlockTime={unlockTime} />
     </Tooltip>
   )
 }

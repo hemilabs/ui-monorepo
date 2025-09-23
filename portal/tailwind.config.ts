@@ -23,6 +23,8 @@ const config: Config = {
           'linear-gradient(180deg, rgba(255, 255, 255, 0.20) 0%, rgba(255, 255, 255, 0.00) 100%), linear-gradient(180deg, #FF8E4D 0%, #FF6C15 100%)',
         'hemi-gradient':
           'linear-gradient(143deg, #F16063 -3.27%, rgba(116, 96, 241, 0.00) 130.65%)',
+        'linear-progress-bar':
+          'linear-gradient(270deg, rgba(229, 229, 229, 0.88) 0%, rgba(229, 229, 229, 0.00) 100%)',
         'recommended-claim':
           'linear-gradient(0deg, rgba(0, 156, 245, 0.03) 0%, rgba(0, 156, 245, 0.03) 100%), linear-gradient(0deg, rgba(250, 250, 250, 0.64) 0%, rgba(250, 250, 250, 0.64) 100%)',
       },

@@ -69,7 +69,7 @@ const stakingColumns = (
     cell: ({ row }) => <TimeRemaining operation={row.original} />,
     header: () => <Header text={t('table.time-remaining')} />,
     id: 'time-remaining',
-    meta: { className: 'justify-end', width: '130px' },
+    meta: { className: 'justify-end', width: '140px' },
   },
 ]
 

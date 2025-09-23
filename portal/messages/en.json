@@ -435,7 +435,8 @@
       "receive": "Receive",
       "send": "Send",
       "third-party-bridge": "3rd party bridge",
-      "to-network": "To Network"
+      "to-network": "To Network",
+      "withdrawing-funds-time-warning": "Withdrawing funds can take up to 24 hours to complete."
     },
     "review-deposit": {
       "add-token-to-wallet-error": "Failed to add the token contract to your wallet",

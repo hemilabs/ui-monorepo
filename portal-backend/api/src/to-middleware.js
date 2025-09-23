@@ -15,17 +15,12 @@ function toMiddleware(fn, options = {}) {
   const safeFn = safeAsyncFn(cachedFn)
   return async function (req, res) {
     const [err, data] = await safeFn(...Object.values(req.params))
-    let statusCode, response
     if (err) {
       console.error(`Failed to handle request: ${err}`)
-      statusCode = 500
-      response = { error: 'Internal Server Error' }
+      res.status(500).json({ error: 'Internal Server Error' })
     } else {
-      statusCode = 200
-      response = data
+      res.status(200).json(data)
     }
-    res.writeHead(statusCode, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify(response))
   }
 }
 

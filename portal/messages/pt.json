@@ -435,7 +435,8 @@
       "receive": "Receber",
       "send": "Enviar",
       "third-party-bridge": "Ponte de terceiros",
-      "to-network": "Para a Rede"
+      "to-network": "Para a Rede",
+      "withdrawing-funds-time-warning": "A retirada de fundos pode levar até 24 horas para ser concluída."
     },
     "review-deposit": {
       "add-token-to-wallet-error": "Falha ao adicionar o contrato do token à sua carteira",

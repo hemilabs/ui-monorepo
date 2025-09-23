@@ -3,6 +3,7 @@
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
+import { WarningIcon } from 'components/icons/warningIcon'
 import { useAccounts } from 'hooks/useAccounts'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useWithdrawBitcoin } from 'hooks/useBtcTunnel'
@@ -366,7 +367,9 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
 
   function RenderBelowForm() {
-    if (!canWithdraw) return null
+    if (!canWithdraw) {
+      return null
+    }
 
     return (
       <FeesContainer>
@@ -379,8 +382,23 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     )
   }
 
+  function RenderBottomSection() {
+    if (!isMainnet || providerType !== 'native') {
+      return null
+    }
+
+    return (
+      <span className="mt-1 flex items-center justify-center gap-x-2 text-center text-sm font-medium text-neutral-500">
+        <WarningIcon className="shrink-0 text-neutral-400" />
+        {t('tunnel-page.form.withdrawing-funds-time-warning')}
+      </span>
+    )
+  }
+
   function RenderTunnelProviderToggle() {
-    if (!isMainnet) return null
+    if (!isMainnet) {
+      return null
+    }
 
     return (
       <TunnelProviderToggle
@@ -393,7 +411,9 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   }
 
   function RenderSubmitButton() {
-    if (providerType !== 'native') return null
+    if (providerType !== 'native') {
+      return null
+    }
 
     return (
       <SubmitEvmWithdrawal
@@ -410,6 +430,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     <>
       <TunnelForm
         belowForm={<RenderBelowForm />}
+        bottomSection={<RenderBottomSection />}
         formContent={
           <FormContent
             errorKey={

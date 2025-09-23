@@ -13,10 +13,12 @@ const { getAllUserClaimData } = require('./src/claims')()
 const { getUserPoints } = require('./src/absinthe')(config.get('absinthe'))
 const cache = require('./src/redis')(config.get('redis'))
 
+const { toJsonMiddleware, toTextMiddleware } = require('./src/to-middleware')
 const globToRegExp = require('./src/glob-to-regexp')
-const toMiddleware = require('./src/to-middleware')
 
 const app = express()
+
+app.disable('x-powered-by')
 
 /** @type {string} */
 const origins = config.get('origins')
@@ -28,42 +30,45 @@ app.use(cors({ origin }))
 
 app.get(
   /\/btc-vaults\/(7?43111)/, // Hemi and Hemi Sepolia only
-  toMiddleware(getBtcVaultsData, {
+  toJsonMiddleware(getBtcVaultsData, {
     maxAge: config.get('btcVaults.cacheMin') * 60 * 1000,
   }),
 )
 
 app.get(
   '/circulating',
-  toMiddleware(cache.getCirculatingSupply, {
+  toTextMiddleware(cache.getCirculatingSupply, {
     revalidate: 5 * 60 * 1000,
   }),
 )
 
 app.get(
   /\/points\/(0x[0-9a-fA-F]{40})/,
-  toMiddleware(async address => ({ points: await getUserPoints(address) }), {
-    revalidate: 60 * 1000,
-  }),
+  toJsonMiddleware(
+    async address => ({ points: await getUserPoints(address) }),
+    {
+      revalidate: 60 * 1000,
+    },
+  ),
 )
 
 app.get(
   '/prices',
-  toMiddleware(cache.getTokenPrices, {
+  toJsonMiddleware(cache.getTokenPrices, {
     revalidate: 60 * 1000,
   }),
 )
 
 app.get(
   '/tvl',
-  toMiddleware(async () => ({ tvl: await getTvl() }), {
+  toJsonMiddleware(async () => ({ tvl: await getTvl() }), {
     revalidate: config.get('tvl.revalidateMin') * 60 * 1000,
   }),
 )
 
 app.get(
   /\/claims\/(7?43111)\/(0x[0-9a-fA-F]{40})\/all/,
-  toMiddleware(getAllUserClaimData, {
+  toJsonMiddleware(getAllUserClaimData, {
     maxAge: 5 * 60 * 1000,
     resolver: (chainId, address) => `${chainId}:${address}`,
   }),

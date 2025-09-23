@@ -5,28 +5,43 @@ const pMemoize = require('promise-mem')
 const pSwr = require('promise-swr')
 const safeAsyncFn = require('safe-async-fn')
 
-function toMiddleware(fn, options = {}) {
+function getSafeCachedFn(fn, options) {
   const cachedFn = options.revalidate
     ? pSwr(fn, options)
     : options.maxAge
       ? pMemoize(fn, options)
       : pLimitOne(fn)
   // @ts-ignore ts(2345)
-  const safeFn = safeAsyncFn(cachedFn)
+  return safeAsyncFn(cachedFn)
+}
+
+function toJsonMiddleware(fn, options = {}) {
+  const wrapped = getSafeCachedFn(fn, options)
   return async function (req, res) {
-    const [err, data] = await safeFn(...Object.values(req.params))
-    let statusCode, response
+    const [err, data] = await wrapped(...Object.values(req.params))
     if (err) {
       console.error(`Failed to handle request: ${err}`)
-      statusCode = 500
-      response = { error: 'Internal Server Error' }
+      res.status(500).json({ error: 'Internal Server Error' })
     } else {
-      statusCode = 200
-      response = data
+      res.status(200).json(data)
     }
-    res.writeHead(statusCode, { 'Content-Type': 'application/json' })
-    res.end(JSON.stringify(response))
   }
 }
 
-module.exports = toMiddleware
+function toTextMiddleware(fn, options = {}) {
+  const wrapped = getSafeCachedFn(fn, options)
+  return async function (req, res) {
+    const [err, data] = await wrapped(...Object.values(req.params))
+    if (err) {
+      console.error(`Failed to handle request: ${err}`)
+      res.status(500).type('text').send('Internal Server Error')
+    } else {
+      res.status(200).type('text').send(data.toString())
+    }
+  }
+}
+
+module.exports = {
+  toJsonMiddleware,
+  toTextMiddleware,
+}

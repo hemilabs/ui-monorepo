@@ -34,7 +34,6 @@ export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
       <div className="order-4 ml-auto">
         <Tabs>
           <Tab
-            border
             onClick={function () {
               onFilterOptionChange({ ...filterOption, operation: 'all' })
               track?.('txn filter - all')
@@ -44,7 +43,6 @@ export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
             {t('all')}
           </Tab>
           <Tab
-            border
             onClick={function () {
               onFilterOptionChange({ ...filterOption, operation: 'ethereum' })
               track?.('txn filter - eth')
@@ -54,7 +52,6 @@ export const TopBar = function ({ filterOption, onFilterOptionChange }: Props) {
             {t('ethereum')}
           </Tab>
           <Tab
-            border
             onClick={function () {
               onFilterOptionChange({ ...filterOption, operation: 'bitcoin' })
               track?.('txn filter - btc')

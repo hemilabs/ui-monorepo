@@ -140,7 +140,7 @@ export function StakeTable({ data, loading }: Props) {
 
   return (
     <div className="w-full rounded-xl bg-neutral-100 text-sm font-medium">
-      <div className="md:min-h-128 h-[53dvh] overflow-hidden">
+      <div className="md:min-h-120 h-[49dvh] overflow-hidden">
         {getContent()}
       </div>
     </div>

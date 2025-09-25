@@ -84,6 +84,8 @@ const analyticsEvents = [
   'stake - unstake success',
   // /staking-dashboard
   'staking dashboard - approve reverted',
+  'staking dashboard - filter active',
+  'staking dashboard - filter burned',
   'staking dashboard - lock creation reverted',
   'staking dashboard - lock creation success',
   'staking dashboard - signed lock creation',

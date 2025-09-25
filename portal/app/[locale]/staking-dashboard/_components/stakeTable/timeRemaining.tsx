@@ -33,6 +33,7 @@ export function TimeRemaining({ operation }: Props) {
           status,
           tokenId,
         }}
+        unlockDate={unlockDate}
       />
     )
   }

@@ -271,10 +271,13 @@
     "stake-successful": "Stake exitoso",
     "switch-to-start-staking": "Puede cambiar de red para comenzar a hacer staking de su HEMI.",
     "table": {
+      "active": "Activo",
+      "burned": "Quemado",
       "connect-to-hemi": "Conéctese a {network} para ver sus posiciones de stake.",
       "connect-to-stake": "Conecte su billetera para ver su {symbol} en stake.",
       "get-started": "Comience haciendo staking de sus {symbol}",
       "no-hemi-staked": "No hay {symbol} en stake",
+      "on": "En {date}",
       "time-remaining": "Tiempo restante",
       "tx": "Tx",
       "unlock": "Desbloquear",

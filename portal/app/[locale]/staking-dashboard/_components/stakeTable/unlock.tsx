@@ -1,8 +1,9 @@
 import { Button } from 'components/button'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { StakingPosition, StakingPositionStatus } from 'types/stakingDashboard'
+import { formatDate } from 'utils/format'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useUnlock } from '../../_hooks/useUnlock'
@@ -20,12 +21,14 @@ const CheckIcon = () => (
 
 type Props = {
   operation: Pick<StakingPosition, 'amount' | 'status' | 'tokenId'>
+  unlockDate: Date
 }
 
 export type OperationRunning = 'idle' | 'unlocking' | 'failed'
 
-export function Unlock({ operation }: Props) {
+export function Unlock({ operation, unlockDate }: Props) {
   const t = useTranslations('staking-dashboard')
+  const locale = useLocale()
   const token = useHemiToken()
   const { amount, tokenId } = operation
   const [operationRunning, setOperationRunning] =
@@ -53,10 +56,17 @@ export function Unlock({ operation }: Props) {
 
   if (operation.status === StakingPositionStatus.WITHDRAWN) {
     return (
-      <div className="flex items-center gap-x-1.5">
-        <CheckIcon />
-        <span className="text-sm font-medium text-neutral-500">
-          {t('table.unlocked')}
+      <div className="flex flex-col items-start">
+        <div className="flex items-center">
+          <CheckIcon />
+          <span className="text-sm font-medium text-emerald-600">
+            {t('table.burned')}
+          </span>
+        </div>
+        <span className="text-xs font-normal text-neutral-500">
+          {t('table.on', {
+            date: formatDate(unlockDate, locale),
+          })}
         </span>
       </div>
     )

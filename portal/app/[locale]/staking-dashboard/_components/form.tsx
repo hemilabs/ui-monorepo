@@ -73,7 +73,7 @@ export const StakingForm = ({
         }}
       >
         <div className="flex flex-col gap-y-3">{formContent}</div>
-        <div className="mt-10 w-full [&>*]:w-full">{submitButton}</div>
+        <div className="mt-12 w-full [&>*]:w-full">{submitButton}</div>
         {bottomSection}
       </form>
     </Card>

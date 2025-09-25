@@ -4,9 +4,14 @@ import { PageLayout } from 'components/pageLayout'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
+import { useMemo, useState } from 'react'
 
 import { StakeForm } from './_components/stakeForm'
 import { StakeTable } from './_components/stakeTable'
+import {
+  StakeTableFilter,
+  type StakeTableFilterOptions,
+} from './_components/stakeTable/stakeTableFilter'
 import { StakingDashboardDisabledTestnet } from './_components/stakingDashboardDisabledTestnet'
 import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
@@ -15,11 +20,25 @@ import { isStakingDashboardEnabledOnTestnet } from './_utils/isStakingDashboardE
 function StakingContent() {
   const { data, isLoading } = useStakingPositions()
 
+  const [filter, setFilter] = useState<StakeTableFilterOptions>('active')
+
+  function handleFilter(newFilter: StakeTableFilterOptions) {
+    setFilter(newFilter)
+  }
+
+  const filteredData = useMemo(
+    () => data?.filter(position => position.status === filter),
+    [data, filter],
+  )
+
   return (
     <StakingDashboardProvider>
       <div className="mt-8 flex flex-col-reverse gap-6 lg:flex-row">
         <div className="w-full lg:w-1/2 lg:flex-initial 2xl:w-full">
-          <StakeTable data={data} loading={isLoading} />
+          <div className="mb-4 ml-1 flex flex-row md:w-fit">
+            <StakeTableFilter filter={filter} onFilter={handleFilter} />
+          </div>
+          <StakeTable data={filteredData} loading={isLoading} />
         </div>
         <div className="w-full lg:w-fit lg:flex-auto lg:flex-shrink-0 lg:basis-1/2 2xl:w-fit 2xl:flex-none">
           <StakeForm />

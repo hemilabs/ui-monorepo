@@ -18,7 +18,7 @@ import { isL2Network } from 'utils/chain'
 import {
   type Address,
   type Chain,
-  checksumAddress,
+  getAddress,
   isAddress,
   isAddressEqual,
 } from 'viem'
@@ -47,7 +47,7 @@ const canSubmit = ({
   acknowledged &&
   !!l1CustomToken &&
   !!l2customToken &&
-  isAddress(l1CustomToken.address) &&
+  isAddress(l1CustomToken.address, { strict: false }) &&
   isAddressEqual(l2customToken.l1Token, l1CustomToken.address)
 
 const getL1AddressValidity = (l1CustomToken: Token | undefined) =>
@@ -140,16 +140,18 @@ export const CustomTokenDrawer = function ({
     }
 
     // canSubmit ensures l2CustomToken is defined
-    const { l1Token, ...tokenData } = l2customToken!
+    const { address, l1Token, ...tokenData } = l2customToken!
     // the token list is saved with chainId from Hemi, and then the opposite is generated
     // from the tunnel info. See https://github.com/hemilabs/token-list/blob/master/src/hemi.tokenlist.json
     // for examples
+
     const l2TokenAdded = {
       ...tokenData,
+      address: getAddress(address),
       extensions: {
         bridgeInfo: {
           [l1ChainId]: {
-            tokenAddress: checksumAddress(l1Token, l1ChainId),
+            tokenAddress: getAddress(l1Token),
           },
         },
       },

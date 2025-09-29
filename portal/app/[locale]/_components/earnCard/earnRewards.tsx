@@ -1,3 +1,4 @@
+import { Locale } from 'i18n/routing'
 import Image, { type StaticImageData } from 'next/image'
 import { useLocale, useTranslations } from 'next-intl'
 import { MouseEventHandler } from 'react'
@@ -44,7 +45,7 @@ const PoweredBy = () => (
   </p>
 )
 
-const imageMap: Record<string, StaticImageData> = {
+const imageMap: Record<Locale, StaticImageData> = {
   en: earnEn,
   es: earnEs,
   pt: earnPt,
@@ -54,11 +55,6 @@ export const EarnRewards = function ({ onClose }: { onClose: VoidFunction }) {
   const locale = useLocale()
 
   const image = imageMap[locale]
-
-  if (!image) {
-    // throw so Sentry records the error
-    throw new Error(`Image not found for locale: ${locale}`)
-  }
 
   return (
     <div className="group/card-image shadow-theme-md hover:shadow-theme-lg rounded-xl border border-solid border-neutral-300/55 bg-white">

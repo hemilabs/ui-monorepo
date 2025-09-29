@@ -1,0 +1,48 @@
+name: Deploy Subgraph
+
+description: Deploy a subgraph to The Graph
+
+inputs:
+  graph-api-key:
+    description: The Graph API key for authentication
+    required: true
+  reference:
+    description: Reference for the deployment (e.g., commit SHA or tag)
+    required: false
+  slack-mention:
+    description: Slack mention for notifications
+    required: false
+  slack-webhook-url:
+    description: Slack webhook URL for notifications
+    required: false
+  subgraph:
+    description: Name of the subgraph to deploy
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - uses: bloq/actions/notify-deploy-to-slack@v1
+      with:
+        app-name: Hemi Portal Subgraph ${{ inputs.subgraph }}
+        environment: staging
+        reference: ${{ inputs.reference }}
+        slack-mention: ${{ inputs.slack-mention }}
+        slack-webhook-url: ${{ inputs.slack-webhook-url }}
+        status: 'started :stopwatch:'
+    - uses: hemilabs/actions/setup-node-env@v1
+    - run: npx --yes graph auth "$GRAPH_API_KEY"
+      shell: bash
+      env:
+        GRAPH_API_KEY: ${{ inputs.graph-api-key }}
+    - run: npm run deploy
+      shell: bash
+      working-directory: subgraphs/${{ inputs.subgraph }}
+    - if: always()
+      uses: bloq/actions/notify-deploy-to-slack@v1
+      with:
+        app-name: Hemi Portal Subgraph ${{ inputs.subgraph }}
+        environment: staging
+        slack-mention: ${{ inputs.slack-mention }}
+        slack-webhook-url: ${{ inputs.slack-webhook-url }}
+        status: ${{ job.status == 'failure' && 'failed :boom:' || 'finished :ok:' }}

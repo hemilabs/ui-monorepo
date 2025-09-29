@@ -159,6 +159,9 @@ const analyticsEvents = [
   'save token wallet - error',
   'save token wallet - init',
   'save token wallet - ok',
+  // earn rewards card
+  'earn rewards - open link',
+  'earn rewards - close',
 ] as const
 
 type AnalyticsEvents = typeof analyticsEvents

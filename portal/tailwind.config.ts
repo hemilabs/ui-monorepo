@@ -84,6 +84,14 @@ const config: Config = {
         'token-selector':
           '0px 0px 0px 1px rgba(10,10,10,0.08), 0px 1px 3px 0px rgba(10,10,10,0.08), 0px 1px 2px -1px rgba(10,10,10,0.08)',
         'top-token-selector': 'inset 0 4px 4px -2px rgba(0,0,0,0.03)',
+        // These shadows "theme-md" and "theme-lg" will be part of the Shadows Design system
+        // once https://github.com/hemilabs/ui-monorepo/issues/1526 is implemented
+        /* eslint-disable sort-keys */
+        'theme-md':
+          '0 0 0 1px rgba(0, 0, 0, 0.05), 0 5px 16px -2px rgba(0, 0, 0, 0.08), 0 7px 11px -6px rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02)',
+        'theme-lg':
+          '0 0 0 1px rgba(0, 0, 0, 0.05), 0 12px 28px -8px rgba(0, 0, 0, 0.16), 0 5px 16px -2px rgba(0, 0, 0, 0.06)',
+        /* eslint-enable sort-keys */
       },
       // See https://www.figma.com/design/4fVd9wneclsvYDYD95ApZ9/Hemi-Portal?node-id=3685-11596&node-type=FRAME&m=dev
       colors: {

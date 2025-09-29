@@ -27,6 +27,7 @@
     "min-amount-withdrawal": "Minimum withdrawal is {amount} {symbol}",
     "network-fees": "Network fees",
     "network-gas-fee": "{network} gas fee",
+    "powered-by": "Powered by <company></company>",
     "only-live-on-mainnet": "Only live on Mainnet",
     "open": "Open",
     "stake": "Stake",

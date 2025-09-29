@@ -17,6 +17,9 @@
   "redis": {
     "url": "REDIS_URL"
   },
+  "rpcUrl": {
+    "hemi": "RPC_URL_HEMI"
+  },
   "sentry": {
     "dsn": "SENTRY_DSN",
     "loggingLevels": {

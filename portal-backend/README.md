@@ -51,6 +51,15 @@ The data for each claim group must be located in individual files in the `src/cl
 
 Note that the route `GET /claims/:chain-id/:address` is kept for compatibility and will return just the first element of the array.
 
+#### `GET /net-stats`
+
+Returns the Hemi network stats required by the [home page of the Marketing site](https://hemi.xyz).
+
+```console
+$ curl http://localhost:3006/net-stats
+{"btc-transactions":"7310797","latest-keystone":"2774674","timestamp":1759162804799}
+```
+
 #### `GET /points/:address`
 
 Provides the amount of Hemi points any user has earned through the **Incentivized Testnet**, **Hemi Staking** campaigns, etc.
@@ -91,6 +100,7 @@ These environment variables control how the cache works:
 | ORIGINS               | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhos:3000`                     |
 | PORT                  | The HTTP port the server listens for requests.                    | 3006                                       |
 | REDIS_URL             | The URL of the Redis database.                                    | `redis://localhost:6379`                   |
+| RPC_URL_HEMI          | URL of the Hemi RPC node.                                         | `https://rpc.hemi.network/rpc`             |
 | SENTRY_DSN            | The Sentry DSN.                                                   |                                            |
 | SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).      | ["log", "warn", "error"]                   |
 | TVL_DATA_SAMPLE_ID    | The sample id within the TVL data.                                |                                            |

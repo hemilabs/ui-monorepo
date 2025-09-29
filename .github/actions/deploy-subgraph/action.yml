@@ -38,8 +38,8 @@ runs:
     - run: npm run deploy
       shell: bash
       working-directory: subgraphs/${{ inputs.subgraph }}
-      continue-on-error: true
-    - uses: bloq/actions/notify-deploy-to-slack@v1
+    - if: always()
+      uses: bloq/actions/notify-deploy-to-slack@v1
       with:
         app-name: Hemi Portal Subgraph ${{ inputs.subgraph }}
         environment: staging

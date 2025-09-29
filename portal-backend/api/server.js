@@ -10,6 +10,7 @@ require('./src/instrument.js')
 const { getBtcVaultsData } = require('./src/btc-vaults')
 const { getTvl } = require('./src/databox')(config.get('tvl.data'))
 const { getAllUserClaimData } = require('./src/claims')()
+const { getNetStats } = require('./src/net-stats')(config.get('rpcUrl'))
 const { getUserPoints } = require('./src/absinthe')(config.get('absinthe'))
 const cache = require('./src/redis')(config.get('redis'))
 
@@ -56,6 +57,13 @@ app.get(
   '/prices',
   toJsonMiddleware(cache.getTokenPrices, {
     revalidate: 60 * 1000,
+  }),
+)
+
+app.get(
+  '/net-stats',
+  toJsonMiddleware(getNetStats, {
+    maxAge: 60 * 60 * 1000,
   }),
 )
 

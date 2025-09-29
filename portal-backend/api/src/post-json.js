@@ -15,6 +15,11 @@ async function postJson(resource, payload, options = {}) {
     throw new Error(`Failed to post JSON: ${res.status} ${res.statusText}`)
   }
 
+  const contentType = res.headers.get('content-type')
+  if (!contentType || !contentType.includes('application/json')) {
+    throw new Error('Response is not JSON')
+  }
+
   return res.json()
 }
 

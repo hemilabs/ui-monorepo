@@ -10,6 +10,9 @@
   "redis": {
     "url": "redis://localhost:6379"
   },
+  "rpcUrl": {
+    "hemi": "https://rpc.hemi.network/rpc"
+  },
   "sentry": {
     "loggingLevels": ["log", "warn", "error"]
   },

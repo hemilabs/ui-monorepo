@@ -5,15 +5,11 @@ const BadgeImpl = function () {
   const [networkType] = useNetworkType()
   return (
     <span
-      className="text-xxs flex h-5 items-center justify-center rounded-md
-    px-1.5 py-1 text-center font-medium capitalize text-orange-950"
+      className="text-xxs bg-sky-450 h-4.5 flex items-center justify-center rounded-md
+    px-1.5 text-center font-medium capitalize text-white"
       style={{
-        background:
-          'linear-gradient(180deg, rgba(255, 255, 255, 0.20) 35.57%, rgba(255, 255, 255, 0.00) 70.92%), var(--Color-Orange-500, #FF6C15)',
         boxShadow:
           '0px 1px 0px 0px rgba(255, 255, 255, 0.25) inset, 0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
-        textShadow:
-          '0px 0px 2px rgba(255, 255, 255, 0.56), 0px 0px 1px rgba(0, 0, 0, 0.14)',
       }}
     >
       {networkType}

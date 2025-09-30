@@ -29,6 +29,7 @@
     "network-gas-fee": "Tarifa de gas de {network}",
     "only-live-on-mainnet": "Solo disponible en Mainnet",
     "open": "Abrir",
+    "powered-by": "Con tecnología de <company></company>",
     "stake": "Stake",
     "start-using-mainnet": "Usar Mainnet",
     "success": "Exitoso",

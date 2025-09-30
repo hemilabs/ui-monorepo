@@ -4,62 +4,45 @@ import { useTranslations } from 'next-intl'
 import React, { Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
-import { Amount } from './amount'
 import { DollarSign } from './dollarSign'
-import { HemiLogo } from './hemiLogo'
 
 const TvlImpl = function () {
-  const { data, isError, isPending } = useTvl()
+  const { data, isError } = useTvl()
   const t = useTranslations('navbar')
   const [networkType] = useNetworkType()
   const isNotTestnet = networkType !== 'testnet'
 
-  const getAmount = function () {
+  const renderAmount = function () {
     if (isError) {
       return '-'
     }
 
-    return `$${new Intl.NumberFormat('en', {
-      compactDisplay: 'short',
-      notation: 'compact',
-    }).format(data)}`
+    if (data === undefined) {
+      return <Skeleton baseColor="#FFF" highlightColor="#009CF5" />
+    }
+
+    return (
+      <h6 className="text-2xl font-semibold text-white">{`$${new Intl.NumberFormat(
+        'en',
+        {
+          compactDisplay: 'short',
+          notation: 'compact',
+        },
+      ).format(data)}`}</h6>
+    )
   }
 
   return (
     isNotTestnet && (
       <section
-        className="shadow-soft h-22 relative mx-0.5 mb-4 overflow-hidden rounded-lg 
-        md:mb-0 md:mt-3"
-        style={{
-          background:
-            'linear-gradient(0deg, #262626, #262626),linear-gradient(0deg, #FFFFFF, #FFFFFF),linear-gradient(180deg, rgba(0, 0, 0, 0) 10.65%, rgba(0, 0, 0, 0.6) 76.58%)',
-        }}
+        className="shadow-soft h-22 bg-sky-450 relative mx-0.5 mb-4 flex flex-col gap-y-3 rounded-lg 
+        p-4 md:mb-0 md:mt-3"
       >
-        <HemiLogo className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform" />
-        <div className="absolute left-0 top-0 w-full">
-          <div className="flex flex-col gap-y-2 p-4">
-            <div className="flex w-full items-center justify-between">
-              <span className="font-inter-variable text-sm font-medium text-white">
-                {t('tvl')}:
-              </span>
-              <DollarSign />
-            </div>
-            <div className="-translate-x-1">
-              {isPending ? (
-                <Skeleton baseColor="#262626" highlightColor="#303030" />
-              ) : (
-                <>
-                  <span className="hidden lg:block">
-                    <Amount value={`${getAmount()}`} />
-                  </span>
-                  <span className="font-inter-display text-2xl font-semibold text-white lg:hidden">
-                    {getAmount()}
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
+        <div className="flex w-full items-center justify-between">
+          <span className="text-sm font-medium text-white">{t('tvl')}:</span>
+          <DollarSign />
         </div>
+        {renderAmount()}
       </section>
     )
   )

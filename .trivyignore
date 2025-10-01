@@ -1,0 +1,3 @@
+# @graphprotocol/graph-cli@0.97.1 > gluegun@5.2.0 > cross-spawn@7.0.3
+# https://github.com/graphprotocol/graph-tooling/issues/2043
+CVE-2024-21538

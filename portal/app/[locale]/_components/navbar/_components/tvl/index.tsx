@@ -1,10 +1,14 @@
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTvl } from 'hooks/useTvl'
 import { useTranslations } from 'next-intl'
-import React, { Suspense } from 'react'
+import React, { type ReactNode, Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { DollarSign } from './dollarSign'
+
+const Text = ({ children }: { children: ReactNode }) => (
+  <h2 className="text-2xl font-semibold text-white">{children}</h2>
+)
 
 const TvlImpl = function () {
   const { data, isError } = useTvl()
@@ -14,7 +18,7 @@ const TvlImpl = function () {
 
   const renderAmount = function () {
     if (isError) {
-      return '-'
+      return <Text>{'-'}</Text>
     }
 
     if (data === undefined) {
@@ -22,13 +26,10 @@ const TvlImpl = function () {
     }
 
     return (
-      <h6 className="text-2xl font-semibold text-white">{`$${new Intl.NumberFormat(
-        'en',
-        {
-          compactDisplay: 'short',
-          notation: 'compact',
-        },
-      ).format(data)}`}</h6>
+      <Text>{`$${new Intl.NumberFormat('en', {
+        compactDisplay: 'short',
+        notation: 'compact',
+      }).format(data)}`}</Text>
     )
   }
 

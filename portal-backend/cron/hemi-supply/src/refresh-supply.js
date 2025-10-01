@@ -71,7 +71,7 @@ async function storeSupply(data) {
   try {
     await client.connect()
     const setPromises = []
-    Object.entries(data).map(function ([metric, value]) {
+    Object.entries(data).forEach(function ([metric, value]) {
       if (!value) {
         return
       }

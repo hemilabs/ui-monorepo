@@ -13,17 +13,16 @@ export const MultiplierRewardsTooltip = function ({ multiplier }: Props) {
   return (
     <Tooltip
       borderRadius="12px"
+      disabled={multiplier === undefined}
       id="staked-hemi"
-      overlay={
-        multiplier && (
-          <p className="p-4 text-sm font-medium text-white">
-            {t('staked-tokens-may-qualify', {
-              multiplier,
-              symbol,
-            })}
-          </p>
-        )
+      text={
+        multiplier !== undefined &&
+        t('staked-tokens-may-qualify', {
+          multiplier,
+          symbol,
+        })
       }
+      variant="info"
     >
       <div className="group/icon">
         <InfoIcon className="group-hover/icon:[&>g>path]:fill-neutral-950" />

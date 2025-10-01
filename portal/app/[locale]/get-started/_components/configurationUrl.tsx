@@ -25,13 +25,6 @@ export const ConfigurationUrl = function ({
     [copied, setCopied],
   )
 
-  const overlay = (
-    <div className="flex items-center gap-x-1 px-2 text-sm font-medium text-white">
-      <span>{t(`${copied ? 'copied' : 'copy'}`)}</span>
-      {copied && <CheckMark className="[&>path]:stroke-emerald-500" />}
-    </div>
-  )
-
   const onClick = function () {
     setCopied(true)
     window.navigator.clipboard.writeText(href!)
@@ -54,8 +47,14 @@ export const ConfigurationUrl = function ({
       )}
       <Tooltip
         id={`copy-${href}`}
-        overlay={overlay}
+        text={
+          <span className="flex items-center gap-x-1">
+            <span>{t(`${copied ? 'copied' : 'copy'}`)}</span>
+            {copied && <CheckMark className="[&>path]:stroke-emerald-500" />}
+          </span>
+        }
         trigger={['hover', 'focus']}
+        variant="simple"
       >
         <button
           className="flex cursor-pointer"

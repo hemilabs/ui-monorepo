@@ -47,13 +47,10 @@ export function TimeRemaining({ operation }: Props) {
 
   return (
     <Tooltip
-      overlay={
-        <p className="p-2 text-sm font-medium text-white">
-          {t('table.unlocks-on', {
-            date: formatDate(unlockDate, locale),
-          })}
-        </p>
-      }
+      text={t('table.unlocks-on', {
+        date: formatDate(unlockDate, locale),
+      })}
+      variant="simple"
     >
       <LinearProgress percentage={percentagePassed} unlockTime={unlockTime} />
     </Tooltip>

@@ -33,6 +33,7 @@
         "__format": "json",
         "__name": "TVL_DATA_SAMPLE_ID"
       },
+      "password": "TVL_DATA_PASSWORD",
       "url": "TVL_DATA_URL"
     },
     "revalidateMin": {

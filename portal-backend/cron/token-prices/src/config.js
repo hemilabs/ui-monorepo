@@ -12,6 +12,10 @@ const config = {
     url: env('REDIS_URL', 'redis://localhost:6379'),
   },
   refreshPricesMin: Number(env('REFRESH_PRICES_MIN', '5')),
+  sentry: {
+    dsn: env('SENTRY_DSN', ''),
+    loggingLevels: env('SENTRY_LOGGING_LEVELS', 'log,warn,error').split(','),
+  },
 }
 
 const get = path =>

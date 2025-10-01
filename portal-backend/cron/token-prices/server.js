@@ -3,6 +3,8 @@
 const safeAsyncFn = require('safe-async-fn')
 const startInterval = require('startinterval2')
 
+require('./src/instrument.js')
+
 const { refreshPrices } = require('./src/refresh-prices')
 const config = require('./src/config')
 

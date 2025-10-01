@@ -5,6 +5,10 @@ const env = (variable, defaultValue) => process.env[variable] || defaultValue
 const config = {
   apiUrl: env('API_URL', 'http://localhost:3006'),
   maxBlocksBehind: Number.parseInt(env('MAX_BLOCKS_BEHIND', '4')),
+  sentry: {
+    dsn: env('SENTRY_DSN', ''),
+    loggingLevels: env('SENTRY_LOGGING_LEVELS', 'log,warn,error').split(','),
+  },
   slack: {
     mention: env('SLACK_MENTION'),
     webhookUrl: env('SLACK_WEBHOOK_URL'),

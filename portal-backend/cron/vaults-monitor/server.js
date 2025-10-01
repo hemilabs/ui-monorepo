@@ -3,6 +3,8 @@
 const startInterval = require('startinterval2')
 const safeAsyncFn = require('safe-async-fn')
 
+require('./src/instrument.js')
+
 const { checkVaults } = require('./src/check-vaults')
 const config = require('./src/config')
 

@@ -51,7 +51,7 @@ function getOverlay(props: BaseTooltipProps) {
   return (
     <div className={`${commonCss} flex flex-col gap-y-1 rounded-xl p-4`}>
       <p className="text-smd font-semibold text-white">{title}</p>
-      <p className="max-w- text-sm font-medium text-neutral-400">{text}</p>
+      <p className="text-sm font-medium text-neutral-400">{text}</p>
     </div>
   )
 }

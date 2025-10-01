@@ -17,7 +17,7 @@ async function run() {
     slack: config.get('slack'),
   })
   if (err) {
-    console.error(`Failed to check vaults: ${err}`)
+    console.warn(`Failed to check vaults: ${err}`)
   } else {
     console.log('Vaults checked')
   }

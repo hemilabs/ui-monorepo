@@ -60,7 +60,7 @@ function fetchSupply() {
   }
   /* eslint-enable sort-keys */
   return promiseAllProps(props, function (key, err) {
-    console.error(`Failed to fetch supply data "${key}": ${err}`)
+    console.warn(`Failed to fetch supply data "${key}": ${err}`)
     return null
   })
 }

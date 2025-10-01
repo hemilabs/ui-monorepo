@@ -13,9 +13,9 @@ const safeRefreshPrices = safeAsyncFn(refreshPrices)
 async function run() {
   const [err] = await safeRefreshPrices()
   if (err) {
-    console.error(`Failed to refresh prices: ${err}`)
+    console.warn(`Failed to refresh token prices: ${err}`)
   } else {
-    console.log('Prices refreshed')
+    console.log('Token prices refreshed')
   }
 }
 

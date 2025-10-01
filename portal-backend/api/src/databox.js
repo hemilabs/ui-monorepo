@@ -19,22 +19,22 @@ module.exports = function ({ password, sampleId, url }) {
    * @throws {Error} If the fetch fails or any structure is missing or invalid.
    */
   async function getTvl() {
-    // Since the Databox API now requires a password, fetching the TVL is a 2-step flow:
-    // First, the fetch uses the password as query string. The response contains a temporary token.
-    // Then, the token is used to fetch the actual TVL data, again using query string.
-    const { cookie: tempPassword, password: status } = await fetchWithPassword(
-      url,
-      password,
-    )
-    if (status !== 'success') {
-      throw new Error(
-        `Failed to fetch TVL data from Databox. Status is ${status}`,
-      )
+    try {
+      // Since the Databox API now requires a password, fetching the TVL is a
+      // 2-step flow: First, use the password as query string. The response
+      // contains a cookie. Then, use the cookie to fetch the actual TVL data.
+      const { cookie, password: res } = await fetchWithPassword(url, password)
+      if (res !== 'success') {
+        throw new Error(`Status is ${res}`)
+      }
+
+      const { samples } = await fetchWithPassword(url, cookie)
+      const sample = samples.find(s => s.id === sampleId)
+      return sample.sampledata.dsData[0].data[0].items[0].value
+    } catch (err) {
+      console.warn(`Failed to fetch TVL data from Databox: ${err}`)
+      throw err
     }
-    const { samples } = await fetchWithPassword(url, tempPassword)
-    const { data } = samples.find(s => s.id === sampleId).sampledata.dsData[0]
-    // there should always be one item
-    return data[0].items[0].value
   }
 
   return {

@@ -152,6 +152,8 @@ These environment variables control how the `cron` job behaves:
 | COIN_MARKET_CAP_SLUGS   | String of comma separated token slugs. I.e. "bitcoin,ethereum"                      | bitcoin                  |
 | REDIS_URL               | The URL of the Redis database.                                                      | `redis://localhost:6379` |
 | REFRESH_PRICES_MIN      | How frequently the cache will be refreshed. If set to 0, it will run once and exit. | 5                        |
+| SENTRY_DSN              | The Sentry DSN.                                                                     |                          |
+| SENTRY_LOGGING_LEVELS   | The logging levels to send to Sentry (props of console.log).                        | ["log", "warn", "error"] |
 
 ### Stored data
 
@@ -166,13 +168,15 @@ This service periodically checks the status of the bitcoin vaults used by the He
 
 These environment variables control how the `cron` job behaves:
 
-| Variable              | Description                                                                                 | Default                 |
-| --------------------- | ------------------------------------------------------------------------------------------- | ----------------------- |
-| API_URL               | The URL of the API service.                                                                 | `http://localhost:3004` |
-| MAX_BLOCKS_BEHIND     | The maximum difference between Bitcoin kit last header and the actual Bitcoin chain height. | 4                       |
-| SLACK_MENTION         | The user to tag when sending alerts                                                         |                         |
-| SLACK_WEBHOOK_URL     | The full URL of the webhook to send the alerts to.                                          |                         |
-| VAULTS_MONITORING_MIN | How frequently the cache will be refreshed. If set to 0, it will run once and exit.         | 5                       |
+| Variable              | Description                                                                                 | Default                  |
+| --------------------- | ------------------------------------------------------------------------------------------- | ------------------------ |
+| API_URL               | The URL of the API service.                                                                 | `http://localhost:3004`  |
+| MAX_BLOCKS_BEHIND     | The maximum difference between Bitcoin kit last header and the actual Bitcoin chain height. | 4                        |
+| SENTRY_DSN            | The Sentry DSN.                                                                             |                          |
+| SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).                                | ["log", "warn", "error"] |
+| SLACK_MENTION         | The user to tag when sending alerts                                                         |                          |
+| SLACK_WEBHOOK_URL     | The full URL of the webhook to send the alerts to.                                          |                          |
+| VAULTS_MONITORING_MIN | How frequently the cache will be refreshed. If set to 0, it will run once and exit.         | 5                        |
 
 ## Local development and testing
 

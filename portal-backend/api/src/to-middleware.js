@@ -20,7 +20,7 @@ function toJsonMiddleware(fn, options = {}) {
   return async function (req, res) {
     const [err, data] = await wrapped(...Object.values(req.params))
     if (err) {
-      console.error(`Failed to handle request: ${err.stack}`)
+      console.error(`Failed to handle request to ${req.path}: ${err.stack}`)
       res.status(500).json({ error: 'Internal Server Error' })
     } else {
       res.status(200).json(data)
@@ -33,7 +33,7 @@ function toTextMiddleware(fn, options = {}) {
   return async function (req, res) {
     const [err, data] = await wrapped(...Object.values(req.params))
     if (err) {
-      console.error(`Failed to handle request: ${err.stack}`)
+      console.error(`Failed to handle request to ${req.path}: ${err.stack}`)
       res.status(500).type('text').send('Internal Server Error')
     } else {
       res.status(200).type('text').send(data.toString())

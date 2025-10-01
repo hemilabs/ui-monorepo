@@ -3,6 +3,8 @@
 const startInterval = require('startinterval2')
 const safeAsyncFn = require('safe-async-fn')
 
+require('./src/instrument.js')
+
 const { checkVaults } = require('./src/check-vaults')
 const config = require('./src/config')
 
@@ -15,7 +17,7 @@ async function run() {
     slack: config.get('slack'),
   })
   if (err) {
-    console.error(`Failed to check vaults: ${err}`)
+    console.warn(`Failed to check vaults: ${err}`)
   } else {
     console.log('Vaults checked')
   }

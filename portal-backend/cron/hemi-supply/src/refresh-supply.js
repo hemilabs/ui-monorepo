@@ -60,7 +60,7 @@ function fetchSupply() {
   }
   /* eslint-enable sort-keys */
   return promiseAllProps(props, function (key, err) {
-    console.error(`Failed to fetch supply data "${key}": ${err}`)
+    console.warn(`Failed to fetch supply data "${key}": ${err}`)
     return null
   })
 }
@@ -70,13 +70,16 @@ const client = redis.createClient(config.get('redis'))
 async function storeSupply(data) {
   try {
     await client.connect()
-    await Promise.all(
-      Object.entries(data)
-        .map(([metric, value]) =>
-          client.set(`supply:${metric}`, value.toString()),
-        )
-        .concat(client.set('supply:time', Date.now())),
-    )
+    const setPromises = []
+    Object.entries(data).forEach(function ([metric, value]) {
+      if (!value) {
+        return
+      }
+
+      setPromises.push(client.set(`supply:${metric}`, value.toString()))
+    })
+    setPromises.push(client.set('supply:time', Date.now()))
+    await Promise.all(setPromises)
   } finally {
     await client.quit() // Release the connection to allow the process to exit
   }

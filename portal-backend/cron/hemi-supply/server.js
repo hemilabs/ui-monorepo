@@ -13,7 +13,7 @@ const safeRefreshSupply = safeAsyncFn(refreshSupply)
 async function run() {
   const [err] = await safeRefreshSupply()
   if (err) {
-    console.error(`Failed to refresh HEMI supply data: ${err}`)
+    console.warn(`Failed to refresh HEMI supply data: ${err}`)
   } else {
     console.log('HEMI supply data refreshed')
   }

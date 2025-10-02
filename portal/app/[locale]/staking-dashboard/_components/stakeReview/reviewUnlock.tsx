@@ -1,7 +1,6 @@
 'use client'
 
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
-import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
   ProgressStatusType,
@@ -20,6 +19,7 @@ import { formatUnits } from 'viem'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useEstimateWithdrawFees } from '../../_hooks/useEstimateWithdraw'
+import { Operation } from '../operation'
 
 import { RetryUnlock } from './retryUnlock'
 

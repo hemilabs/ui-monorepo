@@ -4,7 +4,6 @@ import { useLocale, useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
 import { formatDate } from 'utils/format'
 
-import { useStakingDashboard } from '../_context/stakingDashboardContext'
 import { maxDays, minDays, step, twoYears } from '../_utils/lockCreationTimes'
 import { sanitizeLockup } from '../_utils/sanitizeLockup'
 
@@ -89,9 +88,19 @@ function TryValuesHint({
   )
 }
 
-export function Lockup() {
-  const { inputDays, lockupDays, updateInputDays, updateLockupDays } =
-    useStakingDashboard()
+type Props = {
+  inputDays: string
+  lockupDays: number
+  updateInputDays: (days: string) => void
+  updateLockupDays: (days: number) => void
+}
+
+export function Lockup({
+  inputDays,
+  lockupDays,
+  updateInputDays,
+  updateLockupDays,
+}: Props) {
   const t = useTranslations('staking-dashboard')
   const locale = useLocale()
 

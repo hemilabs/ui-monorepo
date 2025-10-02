@@ -6,49 +6,43 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { type StakingOperationRunning } from 'types/stakingDashboard'
 
-import { useStakingDashboard } from '../../_context/stakingDashboardContext'
-import { useStake } from '../../_hooks/useStake'
+import { useStakingDashboard } from '../../../_context/stakingDashboardContext'
+import { useIncreaseAmount } from '../../../_hooks/useIncreaseAmount'
 
-export const RetryStake = function () {
+export const RetryIncreaseAmount = function () {
   const [operationRunning, setOperationRunning] =
-    useState<Exclude<StakingOperationRunning, 'staked'>>('idle')
+    useState<StakingOperationRunning>('idle')
 
   const {
-    input,
-    lockupDays,
     resetStateAfterOperation,
+    stakingDashboardOperation,
     updateStakingDashboardOperation,
   } = useStakingDashboard()
+
+  // stakingDashboardOperation and stakingPosition will always be defined here
+  const { input, stakingPosition } = stakingDashboardOperation!
+  const { tokenId } = stakingPosition!
 
   const token = useHemiToken()
   const hemi = useHemi()
 
   const t = useTranslations()
 
-  // this component tries to initiate a new stake, based on the failed one
-  const { mutate: runStake } = useStake({
-    input,
-    lockupDays,
+  // this component tries to initiate a new operation, based on the failed one
+  const { mutate: runStake } = useIncreaseAmount({
+    input: input!,
     on(emitter) {
-      emitter.on('approve-transaction-reverted', () =>
-        setOperationRunning('failed'),
+      emitter.on('user-signed-approve', () => setOperationRunning('staking'))
+      emitter.on('user-signed-increase-amount', () =>
+        setOperationRunning('staking'),
       )
-      emitter.on('lock-creation-transaction-reverted', () =>
-        setOperationRunning('failed'),
-      )
-      emitter.on('user-signing-approve-error', () =>
-        setOperationRunning('failed'),
-      )
-      emitter.on('user-signing-lock-creation-error', () =>
-        setOperationRunning('failed'),
-      )
-      emitter.on('unexpected-error', () => setOperationRunning('failed'))
-      emitter.on('lock-creation-transaction-succeeded', function () {
-        setOperationRunning('idle')
+      emitter.on('increase-amount-transaction-succeeded', function () {
         resetStateAfterOperation()
       })
+      emitter.on('increase-amount-settled', () => setOperationRunning('staked'))
     },
     token,
+    tokenId: tokenId!,
     updateStakingDashboardOperation,
   })
 

@@ -1,7 +1,7 @@
 import { useCallback, useReducer } from 'react'
 import {
-  StakingDashboardOperation,
-  UnlockingDashboardOperation,
+  type StakingDashboardOperation,
+  type UnlockingDashboardOperation,
   type StakingDashboardToken,
 } from 'types/stakingDashboard'
 import { sanitizeAmount } from 'utils/form'
@@ -22,9 +22,9 @@ type Action<T extends string> = {
 }
 
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
-type UpdateLockupDays = Action<'updateLockupDays'> & Payload<number>
 type UpdateInput = Action<'updateInput'> & Payload<string>
 type UpdateInputDays = Action<'updateInputDays'> & Payload<string>
+type UpdateLockupDays = Action<'updateLockupDays'> & Payload<number>
 type UpdateStakingDashboardOperation =
   Action<'updateStakingDashboardOperation'> &
     Payload<StakingDashboardOperation | undefined>
@@ -40,59 +40,74 @@ type Actions =
   | UpdateStakingDashboardOperation
   | UpdateUnlockingDashboardOperation
 
-// the _:never is used to fail compilation if a case is missing
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const compilationError = function (_: never): never {
-  throw new Error('Missing implementation of action in reducer')
+const compilationError = function (value: string): never {
+  throw new Error(`Missing implementation of action in reducer: ${value}`)
+}
+
+type ActionHandlers = {
+  [K in Actions['type']]: (
+    state: StakingDashboardState,
+    payload: Extract<Actions, { type: K }>['payload'],
+  ) => StakingDashboardState
+}
+
+const actionHandlers: ActionHandlers = {
+  resetStateAfterOperation: state => ({
+    ...state,
+    input: '0',
+    inputDays: twoYears.toString(),
+    lockupDays: twoYears,
+  }),
+
+  updateInput: (state, payload) => ({
+    ...state,
+    input: payload,
+  }),
+
+  updateInputDays: (state, payload) => ({
+    ...state,
+    inputDays: payload,
+  }),
+
+  updateLockupDays: (state, payload) => ({
+    ...state,
+    lockupDays: payload,
+  }),
+
+  updateStakingDashboardOperation: (state, payload) => ({
+    ...state,
+    stakingDashboardOperation: {
+      ...(state.stakingDashboardOperation ?? {}),
+      ...payload,
+    },
+  }),
+
+  updateUnlockingDashboardOperation: (state, payload) => ({
+    ...state,
+    unlockingDashboardOperation: {
+      ...(state.unlockingDashboardOperation ?? {}),
+      ...payload,
+    },
+  }),
 }
 
 function reducer(
   state: StakingDashboardState,
   action: Actions,
 ): StakingDashboardState {
-  const { payload, type } = action
+  const handler = actionHandlers[action.type]
 
-  switch (type) {
-    case 'resetStateAfterOperation':
-      return {
-        ...state,
-        input: '0',
-        inputDays: twoYears.toString(),
-        lockupDays: twoYears,
-      }
-
-    case 'updateInput':
-      return { ...state, input: payload }
-
-    case 'updateInputDays':
-      return { ...state, inputDays: payload }
-
-    case 'updateLockupDays':
-      return { ...state, lockupDays: payload }
-
-    case 'updateStakingDashboardOperation':
-      return {
-        ...state,
-        stakingDashboardOperation: {
-          ...(state.stakingDashboardOperation ?? {}),
-          ...payload,
-        },
-      }
-
-    case 'updateUnlockingDashboardOperation':
-      return {
-        ...state,
-        unlockingDashboardOperation: {
-          ...(state.unlockingDashboardOperation ?? {}),
-          ...payload,
-        },
-      }
-
-    default:
-      // if a switch statement is missing on all possible actions
-      // this will fail on compile time
-      return compilationError(type)
+  if (!handler) {
+    return compilationError(action.type)
   }
+
+  // Typescript can't infer that handler automatically
+  return (
+    handler as (
+      state: StakingDashboardState,
+      payload: typeof action.payload,
+    ) => StakingDashboardState
+  )(state, action.payload)
 }
 
 type StakingDashboardFunctionEvents = {
@@ -131,7 +146,20 @@ export const useStakingDashboardState = function (): StakingDashboardState &
   const updateStakingDashboardOperation = useCallback(function (
     payload: UpdateStakingDashboardOperation['payload'],
   ) {
-    dispatch({ payload, type: 'updateStakingDashboardOperation' })
+    let sanitizedPayload = payload
+
+    if (payload?.input !== undefined) {
+      const result = sanitizeAmount(payload.input)
+      if ('error' in result) {
+        return
+      }
+      sanitizedPayload = { ...payload, input: result.value }
+    }
+
+    dispatch({
+      payload: sanitizedPayload,
+      type: 'updateStakingDashboardOperation',
+    })
   }, [])
 
   const updateUnlockingDashboardOperation = useCallback(function (

@@ -9,23 +9,32 @@ import { TxLink } from 'components/txLink'
 import { useHemi } from 'hooks/useHemi'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
-import { ReactNode, useMemo } from 'react'
+import { ReactNode, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { StakingPosition } from 'types/stakingDashboard'
+import { type StakingPosition } from 'types/stakingDashboard'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
 import { Amount } from '../amount'
 
+import { ActionCell } from './actionCell'
 import { ConnectWallet } from './connectWallet'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
 import { TimeRemaining } from './timeRemaining'
 import { UnsupportedChain } from './unsupportedChain'
 
-const stakingColumns = (
-  t: ReturnType<typeof useTranslations<'staking-dashboard'>>,
-): ColumnDef<StakingPosition>[] => [
+type StakingColumnsProps = {
+  t: ReturnType<typeof useTranslations<'staking-dashboard'>>
+  openRowId: string | null
+  setOpenRowId: (id: string | null) => void
+}
+
+const stakingColumns = ({
+  openRowId,
+  setOpenRowId,
+  t,
+}: StakingColumnsProps): ColumnDef<StakingPosition>[] => [
   {
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-x-2">
@@ -51,7 +60,7 @@ const stakingColumns = (
     },
     header: () => <Header text={t('table.tx')} />,
     id: 'tx',
-    meta: { width: '130px' },
+    meta: { width: '120px' },
   },
   {
     cell: ({ row }) => (
@@ -63,13 +72,20 @@ const stakingColumns = (
     ),
     header: () => <Header text={t('lockup-period')} />,
     id: 'lockup-period',
-    meta: { width: '230px' },
+    meta: { width: '200px' },
   },
   {
     cell: ({ row }) => <TimeRemaining operation={row.original} />,
     header: () => <Header text={t('table.time-remaining')} />,
     id: 'time-remaining',
     meta: { className: 'justify-end', width: '140px' },
+  },
+  {
+    cell: ({ row }) => (
+      <ActionCell openRowId={openRowId} row={row} setOpenRowId={setOpenRowId} />
+    ),
+    id: 'action',
+    meta: { width: '60px' },
   },
 ]
 
@@ -86,13 +102,22 @@ type Props = {
 
 export function StakeTable({ data, loading }: Props) {
   const t = useTranslations('staking-dashboard')
+  const [openRowId, setOpenRowId] = useState<string | null>(null)
   const { status } = useAccount()
   const hemi = useHemi()
   const connectedToHemi = useIsConnectedToExpectedNetwork(hemi.id)
 
   const isEmpty = (data?.length ?? 0) === 0 && !loading
 
-  const cols = useMemo(() => stakingColumns(t), [t])
+  const cols = useMemo(
+    () =>
+      stakingColumns({
+        openRowId,
+        setOpenRowId,
+        t,
+      }),
+    [openRowId, setOpenRowId, t],
+  )
 
   const getContent = function () {
     if (!walletIsConnected(status)) {
@@ -132,7 +157,7 @@ export function StakeTable({ data, loading }: Props) {
         columns={cols}
         data={data}
         loading={loading}
-        priorityColumnIdsOnSmall={['time-remaining']}
+        priorityColumnIdsOnSmall={['action', 'time-remaining']}
         smallBreakpoint={1024}
       />
     )

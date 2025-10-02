@@ -10,6 +10,7 @@ import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { StakingOperationRunning } from 'types/stakingDashboard'
 import { getTotal } from 'utils/getTotal'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
@@ -33,14 +34,12 @@ const SetMaxEvmBalance = dynamic(
   { ssr: false },
 )
 
-type OperationRunning = 'idle' | 'approving' | 'staking'
-
 export const Stake = function () {
   const token = useHemiToken()
   const t = useTranslations()
   // use this to be able to show state boxes before user confirmation (mutation isn't finished)
   const [operationRunning, setOperationRunning] =
-    useState<OperationRunning>('idle')
+    useState<Exclude<StakingOperationRunning, 'staked'>>('idle')
 
   const {
     input,

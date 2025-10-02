@@ -20,3 +20,30 @@ export function daysToSeconds(days: number | bigint): number | bigint {
   }
   return clampMin(days * daySeconds, MinLockDurationSeconds)
 }
+
+type GetUnlockInfoProps = {
+  timestamp: number | bigint
+  lockTime: number | bigint
+}
+
+export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
+  const currentTimeInSeconds = Math.floor(Date.now() / 1000)
+
+  // Convert to Number for calculations
+  const timestampNum = Number(timestamp)
+  const lockTimeNum = Number(lockTime)
+
+  const unlockTime = timestampNum + lockTimeNum
+  const timeRemainingSeconds = unlockTime - currentTimeInSeconds
+
+  // Calculate unlock date in UTC
+  const unlockDate = new Date(unlockTime * 1000)
+
+  return {
+    currentTimeInSeconds,
+    timeRemainingSeconds,
+    totalLockTimeSeconds: lockTimeNum,
+    unlockDate,
+    unlockTime,
+  }
+}

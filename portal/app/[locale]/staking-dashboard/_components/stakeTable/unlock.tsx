@@ -2,7 +2,11 @@ import { Button } from 'components/button'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { StakingPosition, StakingPositionStatus } from 'types/stakingDashboard'
+import {
+  type StakingPosition,
+  StakingPositionStatus,
+  type UnlockingOperationRunning,
+} from 'types/stakingDashboard'
 import { formatDate } from 'utils/format'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
@@ -24,15 +28,13 @@ type Props = {
   unlockDate: Date
 }
 
-export type OperationRunning = 'idle' | 'unlocking' | 'failed'
-
 export function Unlock({ operation, unlockDate }: Props) {
   const t = useTranslations('staking-dashboard')
   const locale = useLocale()
   const token = useHemiToken()
   const { amount, tokenId } = operation
   const [operationRunning, setOperationRunning] =
-    useState<OperationRunning>('idle')
+    useState<UnlockingOperationRunning>('idle')
   const { updateUnlockingDashboardOperation } = useStakingDashboard()
 
   const { mutate: runUnlock } = useUnlock({

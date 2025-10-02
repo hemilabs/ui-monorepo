@@ -4,14 +4,14 @@ import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
+import { type UnlockingOperationRunning } from 'types/stakingDashboard'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useUnlock } from '../../_hooks/useUnlock'
-import { OperationRunning } from '../stakeTable/unlock'
 
 export const RetryUnlock = function () {
   const [operationRunning, setOperationRunning] =
-    useState<OperationRunning>('idle')
+    useState<UnlockingOperationRunning>('idle')
 
   const { unlockingDashboardOperation, updateUnlockingDashboardOperation } =
     useStakingDashboard()

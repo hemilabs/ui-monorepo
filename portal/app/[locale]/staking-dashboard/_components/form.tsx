@@ -21,7 +21,14 @@ export const FormContent = function ({
   setMaxBalanceButton,
 }: FormContentProps) {
   const token = useHemiToken()
-  const { input, updateInput } = useStakingDashboard()
+  const {
+    input,
+    inputDays,
+    lockupDays,
+    updateInput,
+    updateInputDays,
+    updateLockupDays,
+  } = useStakingDashboard()
 
   const t = useTranslations('staking-dashboard')
 
@@ -43,7 +50,12 @@ export const FormContent = function ({
         tokenSelector={<TokenSelectorReadOnly logoVersion="L1" token={token} />}
         value={input}
       />
-      <Lockup />
+      <Lockup
+        inputDays={inputDays}
+        lockupDays={lockupDays}
+        updateInputDays={updateInputDays}
+        updateLockupDays={updateLockupDays}
+      />
     </>
   )
 }

@@ -24,11 +24,8 @@ const MoreInfo = function () {
     <Tooltip
       borderRadius="12px"
       id="more-info-hemi"
-      overlay={
-        <p className="p-4 text-sm font-medium text-white">
-          {t('more-info-description')}
-        </p>
-      }
+      text={t('more-info-description')}
+      variant="info"
     >
       <div className="group/icon">
         <InfoIcon className="group-hover/icon:[&>g>path]:fill-neutral-950" />

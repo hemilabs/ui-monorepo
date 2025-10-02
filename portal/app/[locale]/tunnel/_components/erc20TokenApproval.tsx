@@ -56,16 +56,9 @@ export const Erc20TokenApproval = function ({
           borderRadius="12px"
           disabled={disabled}
           id="erc20-approval-tooltip"
-          overlay={
-            <div className="p-4 font-medium">
-              <h5 className="mb-1.5 text-base text-white">
-                {t('erc20-approve-10x-deposits')}
-              </h5>
-              <p className="text-xs text-neutral-400">
-                {t('erc20-approve-10x-detailed-description')}
-              </p>
-            </div>
-          }
+          text={t('erc20-approve-10x-detailed-description')}
+          title={t('erc20-approve-10x-deposits')}
+          variant="rich"
         >
           <InfoIcon />
         </Tooltip>

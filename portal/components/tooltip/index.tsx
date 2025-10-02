@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
 
-import { BaseTooltipProps } from './base'
+import { type BaseTooltipProps } from './base'
 
 // Can't use dynamic here, because the fallback depends on the consumer.
 // next/dynamic offers a static fallback, defined at import time.
@@ -11,10 +11,9 @@ const BaseTooltip = lazy(() =>
 export const Tooltip = function ({
   children,
   disabled = false,
-  overlay,
   ...props
 }: BaseTooltipProps & { disabled?: boolean }) {
-  if (!overlay || disabled) {
+  if (disabled) {
     return <>{children}</>
   }
 
@@ -22,9 +21,7 @@ export const Tooltip = function ({
 
   return (
     <Suspense fallback={content}>
-      <BaseTooltip overlay={overlay} {...props}>
-        {content}
-      </BaseTooltip>
+      <BaseTooltip {...props}>{content}</BaseTooltip>
     </Suspense>
   )
 }

@@ -43,9 +43,9 @@ export const DisplayAmount = function ({
   return (
     <Tooltip
       id={`amount-tooltip-${token.symbol}`}
-      overlay={
+      text={
         notZero ? (
-          <div className="flex items-center gap-x-1 px-2 py-1 text-sm font-medium text-white">
+          <span className="flex items-center gap-x-1">
             {showTokenLogo && (
               <TokenLogo size="small" token={token} version={logoVersion} />
             )}
@@ -56,9 +56,10 @@ export const DisplayAmount = function ({
               // @ts-expect-error NumberFormat.format accept strings, typings are wrong. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/format#parameters
               amount,
             )} ${token.symbol}`}</span>
-          </div>
+          </span>
         ) : null
       }
+      variant="simple"
     >
       <Container>
         <AmountContainer>{`${formattedAmount}${

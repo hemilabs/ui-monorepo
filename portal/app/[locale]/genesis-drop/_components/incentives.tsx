@@ -12,30 +12,21 @@ export const Incentives = function () {
   const t = useTranslations('genesis-drop.claim-options')
   return (
     <>
-      <Tooltip
-        id="odyssey-tooltip"
-        overlay={<p className="p-2 text-sm font-medium text-white">Odyssey</p>}
-      >
+      <Tooltip id="odyssey-tooltip" text="Odyssey" variant="simple">
         <div className="group/container">
           <OdysseyIcon className={classNameHover} />
         </div>
       </Tooltip>
 
-      <Tooltip
-        id="vesper-tooltip"
-        overlay={<p className="p-2 text-sm font-medium text-white">Vesper</p>}
-      >
+      <Tooltip id="vesper-tooltip" text="Vesper" variant="simple">
         <div className="group/container">
           <VesperIcon className={classNameHover} />
         </div>
       </Tooltip>
       <Tooltip
         id="may-other-partners-tooltip"
-        overlay={
-          <p className="p-2 text-sm font-medium text-white">
-            {t('and-other-partners')}
-          </p>
-        }
+        text={t('and-other-partners')}
+        variant="simple"
       >
         <div className="group/container">
           <PlusSignIcon className={classNameHover} />

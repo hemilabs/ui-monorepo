@@ -20,11 +20,13 @@ import {
 
 import atlasIcon from './_images/atlas.png'
 import dodoIcon from './_images/dodo.png'
+import dzapIcon from './_images/dzap.png'
 import eisenIcon from './_images/eisen.png'
 import izumiIcon from './_images/izumi.png'
 import okuIcon from './_images/oku.png'
 import oneDeltaIcon from './_images/oneDelta.png'
 import passdexIcon from './_images/passdex.png'
+import rubicIcon from './_images/rubic.png'
 import sushiIcon from './_images/sushi.png'
 
 type Props = {
@@ -210,14 +212,26 @@ const DexImpl = function () {
       {isOpen && (
         <div
           className="md:translate-y-30 absolute bottom-0 left-0
-          z-30 flex w-full
-          flex-col items-start rounded-t-2xl
-          bg-white p-4
-          shadow-lg md:top-0 md:h-fit md:w-64
+          top-24 z-30 flex w-full
+          flex-col items-start overflow-y-auto
+          rounded-t-2xl bg-white
+          p-4 shadow-lg md:top-0 md:h-fit md:w-64
           md:translate-x-56 md:rounded-lg
           md:p-1"
         >
           <ItemTitle text={t('aggregators')} />
+          <ExternalLink
+            event="nav - rubic"
+            href="https://app.rubic.exchange"
+            icon={<Image alt="Rubic" src={rubicIcon} />}
+            text="Rubic"
+          />
+          <ExternalLink
+            event="nav - dzap"
+            href="https://app.dzap.io/trade"
+            icon={<Image alt="Dzap" src={dzapIcon} />}
+            text="Dzap"
+          />
           <ExternalLink
             event="nav - 1delta"
             href="https://1delta.io"

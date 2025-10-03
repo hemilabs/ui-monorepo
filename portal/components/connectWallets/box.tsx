@@ -30,7 +30,7 @@ export const Box = function ({
           })}
         </span>
       </div>
-      <div className="rounded-xl border border-solid border-neutral-300/55 bg-white p-2 shadow-sm">
+      <div className="rounded-xl bg-white p-2 shadow-md">
         <div className="flex w-full items-center justify-between rounded-md border border-solid bg-neutral-300/55 bg-neutral-50 px-2 py-1">
           {topContent}
         </div>

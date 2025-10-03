@@ -36,7 +36,7 @@ const TvlImpl = function () {
   return (
     isNotTestnet && (
       <section
-        className="shadow-soft h-22 bg-sky-450 relative mx-0.5 mb-4 flex flex-col gap-y-3 rounded-lg 
+        className="h-22 bg-sky-450 relative mx-0.5 mb-4 flex flex-col gap-y-3 rounded-lg 
         p-4 md:mb-0 md:mt-3"
       >
         <div className="flex w-full items-center justify-between">
@@ -54,7 +54,7 @@ export const Tvl = () => (
     fallback={
       // Statically render a skeleton as TVL is only shown and mainnet, but in addition to this,
       // the position changes on the navbar.
-      <Skeleton className="h-22 shadow-soft mb-4 w-full rounded-lg md:mb-0 md:mt-4" />
+      <Skeleton className="h-22 mb-4 w-full rounded-lg md:mb-0 md:mt-4" />
     }
   >
     <TvlImpl />

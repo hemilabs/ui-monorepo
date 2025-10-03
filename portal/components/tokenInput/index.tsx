@@ -59,8 +59,8 @@ export const TokenInput = function <T extends Token>({
   const BalanceComponent = balanceComponent ?? Balance
   return (
     <div
-      className="h-[120px] rounded-lg border border-solid border-transparent bg-neutral-50
-      p-4 font-medium text-neutral-500 hover:border-neutral-300/55"
+      className="hover:shadow-bs h-[120px] rounded-lg border border-solid border-transparent bg-neutral-50
+      p-4 font-medium text-neutral-500"
     >
       <div className="flex h-full items-center justify-between">
         <div className="flex h-full flex-shrink flex-grow flex-col items-start">

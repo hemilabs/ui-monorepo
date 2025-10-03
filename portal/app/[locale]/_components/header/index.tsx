@@ -35,13 +35,13 @@ export const Header = ({ isMenuOpen, setIsNavbarOpen, toggleMenu }: Props) => (
       <Badge />
     </div>
     <div className="size-13 hidden items-center justify-center border-r border-neutral-300/55 md:flex lg:hidden">
-      <div
-        className="shadow-soft hidden size-7 cursor-pointer items-center
-          justify-center rounded-lg border border-neutral-300/55 bg-white md:flex"
+      <ButtonIcon
         onClick={() => setIsNavbarOpen(true)}
+        size="xSmall"
+        variant="secondary"
       >
         <HamburgerIcon />
-      </div>
+      </ButtonIcon>
     </div>
     <div className="hidden pl-6 md:block">
       <StakeTabs />

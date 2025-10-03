@@ -48,8 +48,8 @@ const ConnectWalletButton = function ({
   const { track } = useUmami()
   return (
     <button
-      className={`group flex w-full cursor-pointer items-center gap-x-2 rounded-xl border
-       border-solid border-neutral-200 bg-white p-3 shadow-sm ${hoverClassName}`}
+      className={`group flex w-full cursor-pointer items-center gap-x-2 
+        rounded-xl bg-white p-3 shadow-sm ${hoverClassName}`}
       onClick={function () {
         track?.(event)
         onClick?.()
@@ -99,7 +99,7 @@ export const BtcWallet = function () {
     return (
       <ConnectWalletButton
         event="btc connect"
-        hoverClassName="hover:bg-orange-50 hover:border-orange-300/55"
+        hoverClassName="hover:bg-orange-50"
         icon={<BtcLogo />}
         onClick={() => connect(unisat.wallet)}
         rightIcon={
@@ -188,7 +188,7 @@ export const EvmWallet = function () {
     return (
       <ConnectWalletButton
         event="evm connect"
-        hoverClassName="hover:bg-blue-50 hover:border-blue-300/55"
+        hoverClassName="hover:bg-blue-50"
         icon={<EthLogo />}
         onClick={openConnectModal}
         text={t('connect-evm-wallet')}

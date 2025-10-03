@@ -49,7 +49,7 @@ export const Toast = function ({
 
   return (
     <div
-      className="shadow-soft fixed inset-x-4 bottom-20 z-40 flex justify-between
+      className="fixed inset-x-4 bottom-20 z-40 flex justify-between
       gap-x-3 rounded-xl border border-solid border-black/85 bg-neutral-800 p-3.5
     text-sm font-medium text-white md:bottom-auto md:left-auto md:right-8 md:top-20"
     >

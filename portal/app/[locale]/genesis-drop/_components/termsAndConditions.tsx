@@ -83,7 +83,7 @@ export const TermsAndConditions = function ({ onAccept, onClose }: Props) {
   return (
     <Modal onClose={onClose}>
       <div className="max-w-120 relative w-full bg-neutral-50">
-        <div className="shadow-claim-page-high relative z-10 rounded-lg bg-white">
+        <div className="relative z-10 rounded-lg bg-white shadow-sm">
           <h3 className="px-6 py-4 text-lg font-semibold  text-neutral-950">
             {t('genesis-drop.terms-and-conditions.title')}
           </h3>

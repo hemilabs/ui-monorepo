@@ -8,6 +8,17 @@ const config: Config = {
   ],
   plugins: [],
   theme: {
+    boxShadow: {
+      // Sorting by increasing size of shadow
+      /* eslint-disable sort-keys */
+      // Base
+      bs: '0 0 0 1px rgba(0, 0, 0, 0.05)',
+      sm: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.08), 0 7px 11px -6px rgba(0, 0, 0, 0.08)',
+      md: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 5px 16px -2px rgba(0, 0, 0, 0.08), 0 7px 11px -6px rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02)',
+      lg: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 12px 28px -8px rgba(0, 0, 0, 0.16), 0 5px 16px -2px rgba(0, 0, 0, 0.06)',
+      xl: '0 0 0 1px rgba(0, 0, 0, 0.05), 0 5px 16px -2px rgba(0, 0, 0, 0.06), 0 15px 35px -5px rgba(0, 0, 0, 0.20)',
+      /* eslint-enable sort-keys */
+    },
     extend: {
       animation: {
         'withdraw-progress': 'withdraw-progress 2s infinite',
@@ -53,45 +64,13 @@ const config: Config = {
         'button-secondary-focused':
           '0 0 0 1px rgba(10, 10, 10, 0.08), 0 0 0 4px #E5E5E5, 0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11)',
         'button-tertiary-focused': '0 0 0 4px #E5E5E5',
-        'claim-page-high':
-          '0 0 0 1px rgba(10, 10, 10, 0.08), 0 3px 12px 0 rgba(0, 0, 0, 0.04), 0 7px 16px -5px rgba(10, 10, 10, 0.08)',
-        'claim-page-soft': '0 0 0 1px rgba(10, 10, 10, 0.08)',
-        'get-started-card':
-          '0 0 0 1px rgba(10, 10, 10, 0.08), 0 1px 3px 0 rgba(10, 10, 10, 0.15), 0 7px 11px -5px rgba(10, 10, 10, 0.11)',
-        'help-icon':
-          '0px 1px 2px 0px rgba(10 10 10 0.04), 0px 1px 4px 0px #rgba(10 10 10 0.02)',
-        'help-menu':
-          '0px 4px 12px 0px rgba(10 10 10 0.06), 0px 4px 6px 0px rgba(10 10 10 0.02), 0px 0px 0px 1px rgba(10 10 10 0.06)',
-        'hemi-layout':
-          '0px 2px 2px 0px rgba(10, 10, 10, 0.04), 0px 8px 16px -4px rgba(10, 10, 10, 0.04)',
-        'large':
-          '0px 2px 4px 0px rgba(0, 2, 2, 0.04), 0px 8px 24px -4px rgba(0, 2, 2, 0.04)',
-        'live-mainnet-card':
-          '0 0 2px 0 rgba(10, 10, 10, 0.10), 0 8px 12px -4px rgba(10, 10, 10, 0.08), 0 1px 2px 0 rgba(10, 10, 10, 0.10)',
         'lockup-input-default':
           '0 0 0 1px rgba(10, 10, 10, 0.08), 0 1px 3px 0 rgba(10, 10, 10, 0.08), 0 1px 2px -1px rgba(10, 10, 10, 0.08)',
         'lockup-input-error':
           '0 0 0 1px rgba(244, 63, 94, 0.88), 0 1px 3px 0 rgba(10, 10, 10, 0.08), 0 1px 2px -1px rgba(10, 10, 10, 0.08)',
         'lockup-input-hover':
           '0 0 0 1px rgba(10, 10, 10, 0.14), 0 1px 3px 0 rgba(10, 10, 10, 0.08), 0 1px 2px -1px rgba(10, 10, 10, 0.08)',
-        'navbar':
-          '0px 0px 0px 1px rgba(212, 212, 216, 0.56), 12px 0px 24px -8px rgba(10, 10, 10, 0.06), 0px 10px 24px -8px rgba(10, 10, 10, 0.08), 0px 4px 6px -2px rgba(10, 10, 10, 0.04)',
         'soft': '0px 1px 2px 0px rgba(10, 10, 10, 0.04)',
-        'tab-active':
-          '0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.08), 0 7px 11px -6px rgba(0, 0, 0, 0.08)',
-        'table':
-          '0 0 2px 0 rgba(10, 10, 10, 0.10), 0 8px 12px -4px rgba(10, 10, 10, 0.08), 0 1px 2px 0 rgba(10, 10, 10, 0.10)',
-        'token-selector':
-          '0px 0px 0px 1px rgba(10,10,10,0.08), 0px 1px 3px 0px rgba(10,10,10,0.08), 0px 1px 2px -1px rgba(10,10,10,0.08)',
-        'top-token-selector': 'inset 0 4px 4px -2px rgba(0,0,0,0.03)',
-        // These shadows "theme-md" and "theme-lg" will be part of the Shadows Design system
-        // once https://github.com/hemilabs/ui-monorepo/issues/1526 is implemented
-        /* eslint-disable sort-keys */
-        'theme-md':
-          '0 0 0 1px rgba(0, 0, 0, 0.05), 0 5px 16px -2px rgba(0, 0, 0, 0.08), 0 7px 11px -6px rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02)',
-        'theme-lg':
-          '0 0 0 1px rgba(0, 0, 0, 0.05), 0 12px 28px -8px rgba(0, 0, 0, 0.16), 0 5px 16px -2px rgba(0, 0, 0, 0.06)',
-        /* eslint-enable sort-keys */
       },
       // See https://www.figma.com/design/4fVd9wneclsvYDYD95ApZ9/Hemi-Portal?node-id=3685-11596&node-type=FRAME&m=dev
       colors: {

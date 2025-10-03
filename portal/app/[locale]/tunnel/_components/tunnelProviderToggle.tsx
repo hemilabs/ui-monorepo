@@ -63,7 +63,7 @@ export const TunnelProviderToggle = function ({
         <button
           className={`flex-1 rounded-md p-1 text-sm font-medium transition ${
             providerType === 'native'
-              ? 'border border-neutral-300/55 bg-white text-neutral-950 shadow-sm'
+              ? 'bg-white text-neutral-950 shadow-sm'
               : 'text-neutral-600 hover:text-neutral-950'
           }`}
           onClick={toggleNativeProvider}
@@ -74,7 +74,7 @@ export const TunnelProviderToggle = function ({
         <button
           className={`flex-1 rounded-md p-1 text-sm font-medium transition ${
             providerType === 'thirdParty'
-              ? 'border border-neutral-300/55 bg-white text-neutral-950 shadow-sm'
+              ? 'bg-white text-neutral-950 shadow-sm'
               : 'text-neutral-600 hover:text-neutral-950'
           }`}
           onClick={toggleThirdPartyProvider}

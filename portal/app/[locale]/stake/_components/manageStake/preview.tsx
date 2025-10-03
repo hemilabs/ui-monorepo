@@ -56,7 +56,7 @@ export const Preview = function ({
         )}
         <DrawerSection>
           <div className="flex flex-col gap-y-4">
-            <div className="[&>*]:hover:shadow-large [&>*]:border-neutral-300/55 [&>*]:bg-white">
+            <div className="[&>*]:shadow-bs [&>*]:bg-white [&>*]:hover:shadow-sm">
               <TokenInput
                 balanceComponent={balanceComponent}
                 disabled={isOperating}

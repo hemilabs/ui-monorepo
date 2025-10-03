@@ -17,9 +17,9 @@ import { RecommendedBadge } from './recommendedBadge'
 // I prefer to sort these in priority-based order
 /* eslint-disable sort-keys */
 const boxShadows: Record<RecommendationLevel, string> = {
-  low: 'shadow-claim-page-soft',
-  medium: 'shadow-claim-page-high',
-  high: 'shadow-claim-page-high',
+  low: 'shadow-bs',
+  medium: 'shadow-md',
+  high: 'shadow-md',
 }
 /* eslint-enable sort-keys */
 

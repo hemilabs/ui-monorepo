@@ -57,7 +57,7 @@ export const EarnRewards = function ({ onClose }: { onClose: VoidFunction }) {
   const image = imageMap[locale]
 
   return (
-    <div className="group/card-image shadow-theme-md hover:shadow-theme-lg rounded-xl border border-solid border-neutral-300/55 bg-white">
+    <div className="group/card-image rounded-xl bg-white shadow-md hover:shadow-lg">
       <div className="p-1.5">
         <div className="relative overflow-hidden rounded-lg">
           <Image

@@ -156,11 +156,10 @@ const LanguageMenu = function ({ active }: LanguageProps) {
 
   return (
     <div
-      className="shadow-help-menu absolute bottom-0 right-0 z-40
-    flex h-fit w-52 -translate-x-8
-    -translate-y-32 flex-col
-    items-start justify-center rounded-lg border
-    border-neutral-300/55 bg-white p-2
+      className="absolute bottom-0 right-0 z-40 flex
+    h-fit w-52 -translate-x-8 -translate-y-32
+    flex-col items-start
+    justify-center rounded-lg bg-white p-2 shadow-lg
     md:top-0 md:translate-x-48 md:translate-y-1 md:p-1"
     >
       {locales.map(locale => (
@@ -186,11 +185,10 @@ const LanguageMenu = function ({ active }: LanguageProps) {
 
 const LegalAndPrivacy = () => (
   <div
-    className="-translate-y-18 shadow-help-menu absolute bottom-0 right-0
-        z-20 flex w-64 -translate-x-8
-        flex-col items-start
-        gap-x-2 rounded-lg border
-        border-neutral-300/55 bg-white p-4
+    className="-translate-y-18 absolute bottom-0 right-0 z-20
+        flex w-64 -translate-x-8 flex-col
+        items-start gap-x-2
+        rounded-lg bg-white p-4 shadow-lg
         md:translate-x-60 md:translate-y-7"
   >
     <TermsAndConditions />
@@ -225,10 +223,9 @@ export const Help = function () {
 
       {isOpen && (
         <div
-          className="shadow-help-menu absolute bottom-0 left-0
-          z-30 flex h-36 w-full
-          flex-col items-start rounded-t-2xl
-          border border-neutral-300/55 bg-white p-4
+          className="absolute bottom-0 left-0 z-30
+          flex h-36 w-full flex-col
+          items-start rounded-t-2xl bg-white p-4 shadow-lg
           md:top-0 md:h-fit md:w-64 md:translate-x-52
           md:translate-y-16 md:rounded-lg md:p-1"
         >

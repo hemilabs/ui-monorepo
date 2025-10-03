@@ -255,7 +255,7 @@ export const List = function ({
   return (
     <div
       className={`skip-parent-padding-x flex-1 overflow-y-auto bg-white transition-shadow duration-200 ${
-        hasScrolled ? 'shadow-top-token-selector' : ''
+        hasScrolled ? 'shadow-md' : ''
       }`}
       onScroll={onScroll}
       ref={parentRef}

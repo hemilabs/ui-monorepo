@@ -11,7 +11,7 @@ export const StakingDashboardDisabledTestnet = function () {
   const tCommon = useTranslations('common')
 
   return (
-    <div className="shadow-live-mainnet-card mt-8 flex flex-col items-center justify-center gap-y-1 rounded-xl bg-white py-48">
+    <div className="mt-8 flex flex-col items-center justify-center gap-y-1 rounded-xl bg-white py-48 shadow-md">
       <LiveIcon />
       <h2 className="text-lg font-semibold text-neutral-950">
         {tCommon('only-live-on-mainnet')}

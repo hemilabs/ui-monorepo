@@ -23,7 +23,7 @@ export const TokenQuickSelect = ({ onSelect, tokens }: Props) => (
   <div className="flex gap-x-3">
     {tokens.map(token => (
       <div
-        className="shadow-token-selector group relative flex-1 rounded-lg bg-white"
+        className="group relative flex-1 rounded-lg bg-white shadow-sm"
         key={token.address}
       >
         {/* Inner hover background */}

@@ -44,7 +44,7 @@ export const Tab = function ({
       } flex-1 items-center py-1 font-medium transition-colors duration-300 md:flex-auto [&>a]:w-full
       ${
         selected
-          ? 'shadow-tab-active bg-white text-neutral-950'
+          ? 'bg-white text-neutral-950 shadow-sm'
           : 'cursor-pointer bg-neutral-100 text-neutral-700 hover:text-neutral-950'
       }
     `}

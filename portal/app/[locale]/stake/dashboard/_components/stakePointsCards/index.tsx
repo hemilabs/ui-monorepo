@@ -38,7 +38,7 @@ const Points = ({
 
 const Container = ({ children }: { children: ReactNode }) => (
   <div className="h-24 w-full [&>div]:overflow-hidden">
-    <Card shadow="shadow-soft">
+    <Card>
       <div className="relative">{children}</div>
     </Card>
   </div>

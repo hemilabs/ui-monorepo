@@ -3,7 +3,7 @@ type Props = {
 }
 
 export const Menu = ({ items }: Props) => (
-  <div className="rounded-lg border border-solid border-neutral-300/55 bg-white p-1 text-sm shadow-md">
+  <div className="rounded-lg bg-white p-1 text-sm shadow-lg">
     <ul className="flex flex-col gap-y-1">
       {items.map(({ content, id }) => (
         <li

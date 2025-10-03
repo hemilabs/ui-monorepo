@@ -55,8 +55,8 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
           <div className="flex flex-col items-center gap-y-3 rounded-2xl bg-neutral-50 px-1 pb-3 pt-1">
             <BtcWallet />
             <div
-              className="shadow-soft mt-1 flex size-6 items-center justify-center rounded-full border
-          border-solid border-rose-100 bg-rose-50"
+              className="mt-1 flex size-6 items-center justify-center rounded-full border border-solid
+          border-rose-100 bg-rose-50 shadow-sm"
             >
               <WarningIcon />
             </div>

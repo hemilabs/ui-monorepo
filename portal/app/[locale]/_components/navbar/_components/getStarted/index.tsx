@@ -35,7 +35,7 @@ const UI = ({ active, href, onClick, t }: Props) => (
       href={href}
       onClick={onClick}
     >
-      <div className="shadow-get-started-card relative h-full w-52 rounded-lg bg-white">
+      <div className="relative h-full w-52 rounded-lg bg-white shadow-sm">
         <Background
           className={`rounded-lg 
             ${

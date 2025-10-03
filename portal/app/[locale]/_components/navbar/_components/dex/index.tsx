@@ -209,11 +209,11 @@ const DexImpl = function () {
 
       {isOpen && (
         <div
-          className="shadow-help-menu md:translate-y-30 absolute bottom-0
-          left-0 z-30 flex
-          w-full flex-col items-start
-          rounded-t-2xl border border-neutral-300/55 bg-white
-          p-4 md:top-0 md:h-fit md:w-64
+          className="md:translate-y-30 absolute bottom-0 left-0
+          z-30 flex w-full
+          flex-col items-start rounded-t-2xl
+          bg-white p-4
+          shadow-lg md:top-0 md:h-fit md:w-64
           md:translate-x-56 md:rounded-lg
           md:p-1"
         >

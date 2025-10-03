@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useNativeTokenBalance } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useUmami } from 'hooks/useUmami'
@@ -36,10 +36,6 @@ export const useIncreaseUnlockTime = function ({
   const { track } = useUmami()
   const { address } = useAccount()
   const queryClient = useQueryClient()
-  const { queryKey: hemiBalanceQueryKey } = useTokenBalance(
-    token.chainId,
-    token.address,
-  )
 
   const stakingPositionQueryKey = getStakingPositionsQueryKey({
     address,
@@ -140,9 +136,6 @@ export const useIncreaseUnlockTime = function ({
       // Do not return the promises here. Doing so will delay the resolution of
       // the mutation, which will cause the UI to be out of sync until balances are re-validated.
       // Query invalidation here must work as fire and forget, as, after all, it runs in the background!
-      queryClient.invalidateQueries({
-        queryKey: hemiBalanceQueryKey,
-      })
 
       queryClient.invalidateQueries({
         queryKey: nativeTokenBalanceQueryKey,

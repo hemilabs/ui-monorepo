@@ -138,7 +138,7 @@ export const useIncreaseAmount = function ({
         // HEMI balance
         queryClient.setQueryData(
           hemiBalanceQueryKey,
-          (old: bigint) => old + amount,
+          (old: bigint) => old - amount,
         )
 
         track?.('staking dashboard - increase amount success')

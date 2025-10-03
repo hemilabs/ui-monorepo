@@ -143,6 +143,8 @@ const analyticsEvents = [
   'evm copy',
   'evm disconnected',
   // dex's
+  'nav - rubic',
+  'nav - dzap',
   'nav - 1delta',
   'nav - eisen',
   'nav - sushi',

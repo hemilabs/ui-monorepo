@@ -296,16 +296,8 @@
     "boost-staking": "Boost staking",
     "data-attribution": "Datos proporcionados por <link>CoinMarketCap.com</link>",
     "dex": {
-      "1delta": "1delta",
       "aggregators": "Agregadores",
-      "atlas": "Atlas",
-      "dodo": "Dodo",
-      "eisen": "Eisen",
-      "izumi": "Izumi",
-      "oku": "Oku (uni)",
-      "passdex": "Passdex",
       "subtitle": "DEXs",
-      "sushi": "Sushi",
       "title": "DEX"
     },
     "docs": "Documentación",
@@ -566,9 +558,8 @@
       },
       "description": "Una vez seleccionado, será redirigido para completar su depósito. Para asistencia, contacte directamente al puente asociado.",
       "hemi-bears-no-responsibility": "Hemi no se responsabiliza por su operación.",
+      "tunnel-with-our-partner": "Tunelizar con nuestro socio {partner}",
       "tunnel-with-our-partners": "Tunelizar con nuestros socios",
-      "tunnel-with-meson": "Tunelizar con nuestro socio Meson",
-      "tunnel-with-stargate": "Tunelizar con nuestro socio Stargate",
       "use-at-your-own-risk": "Use los puentes de socios bajo su propio riesgo",
       "withdraw": {
         "heading": "Retirar {symbol}",

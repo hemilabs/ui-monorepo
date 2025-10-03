@@ -1,20 +1,15 @@
-import { hemi } from 'hemi-viem'
-import Image from 'next/image'
+import { useChain } from 'hooks/useChain'
 import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
 import { isNativeAddress } from 'utils/nativeToken'
 import { queryStringObjectToString } from 'utils/url'
-import { mainnet } from 'viem/chains'
 
+import { PartnerImage } from './partnerImage'
 import { PartnerLink } from './partnerLink'
 import stargateLogo from './partnerLogos/stargate.svg'
 
 // Stargate uses this address for ETH
 const stargateEthereumAddress = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
-const stargateChainNameMap: Partial<Record<Token['chainId'], string>> = {
-  [hemi.id]: 'hemi',
-  [mainnet.id]: 'ethereum',
-}
 
 type Props = {
   fromToken: Token
@@ -25,12 +20,15 @@ type Props = {
 export const Stargate = function ({ fromToken, label, toToken }: Props) {
   const t = useTranslations('tunnel-page.tunnel-partners')
 
+  const fromChain = useChain(fromToken.chainId)
+  const toChain = useChain(toToken.chainId)
+
   const url = `https://stargate.finance/bridge${queryStringObjectToString({
-    dstChain: stargateChainNameMap[toToken.chainId]!,
+    dstChain: toChain!.name.toLowerCase(),
     dstToken: isNativeAddress(toToken.address)
       ? stargateEthereumAddress
       : toToken.address,
-    srcChain: stargateChainNameMap[fromToken.chainId]!,
+    srcChain: fromChain!.name.toLowerCase(),
     srcToken: isNativeAddress(fromToken.address)
       ? stargateEthereumAddress
       : fromToken.address,
@@ -38,17 +36,9 @@ export const Stargate = function ({ fromToken, label, toToken }: Props) {
 
   return (
     <PartnerLink
-      icon={
-        <Image
-          alt="Stargate logo"
-          className="mr-2 rounded-lg bg-black p-1.5"
-          height={32}
-          src={stargateLogo}
-          width={32}
-        />
-      }
+      icon={<PartnerImage alt="Stargate logo" src={stargateLogo} />}
       partner="stargate"
-      text={label ?? t('tunnel-with-stargate')}
+      text={label ?? t('tunnel-with-our-partner', { partner: 'Stargate' })}
       url={url}
     />
   )

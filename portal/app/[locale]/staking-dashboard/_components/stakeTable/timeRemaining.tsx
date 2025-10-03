@@ -3,6 +3,8 @@ import { useLocale, useTranslations } from 'next-intl'
 import { StakingPosition } from 'types/stakingDashboard'
 import { formatDate } from 'utils/format'
 
+import { getUnlockInfo } from '../../_utils/lockCreationTimes'
+
 import { LinearProgress } from './linearProgress'
 import { Unlock } from './unlock'
 
@@ -16,13 +18,16 @@ export function TimeRemaining({ operation }: Props) {
 
   const { amount, lockTime, status, timestamp, tokenId } = operation
 
-  const totalLockTimeSeconds = Number(lockTime)
-  const currentTimeInSeconds = Math.floor(Date.now() / 1000)
-  const unlockTime = Number(timestamp) + totalLockTimeSeconds
-  const timeRemainingSeconds = unlockTime - currentTimeInSeconds
-
-  // Calculate unlock date in UTC
-  const unlockDate = new Date(unlockTime * 1000)
+  const {
+    currentTimeInSeconds,
+    timeRemainingSeconds,
+    totalLockTimeSeconds,
+    unlockDate,
+    unlockTime,
+  } = getUnlockInfo({
+    lockTime,
+    timestamp,
+  })
 
   // If time remaining is negative or zero, position can be unlocked
   if (timeRemainingSeconds <= 0) {

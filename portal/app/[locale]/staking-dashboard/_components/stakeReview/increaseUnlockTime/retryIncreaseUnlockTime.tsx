@@ -1,3 +1,4 @@
+import { useIncreaseUnlockTime } from 'app/[locale]/staking-dashboard/_hooks/useIncreaseUnlockTime'
 import { Button } from 'components/button'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
@@ -6,49 +7,43 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { type StakingOperationRunning } from 'types/stakingDashboard'
 
-import { useStakingDashboard } from '../../_context/stakingDashboardContext'
-import { useStake } from '../../_hooks/useStake'
+import { useStakingDashboard } from './../../../_context/stakingDashboardContext'
 
-export const RetryStake = function () {
+export const RetryIncreaseUnlockTime = function () {
   const [operationRunning, setOperationRunning] =
-    useState<Exclude<StakingOperationRunning, 'staked'>>('idle')
+    useState<StakingOperationRunning>('idle')
 
   const {
-    input,
-    lockupDays,
     resetStateAfterOperation,
+    stakingDashboardOperation,
     updateStakingDashboardOperation,
   } = useStakingDashboard()
+
+  // stakingDashboardOperation and stakingPosition will always be defined here
+  const { lockupDays, stakingPosition } = stakingDashboardOperation!
+  const { tokenId } = stakingPosition!
 
   const token = useHemiToken()
   const hemi = useHemi()
 
   const t = useTranslations()
 
-  // this component tries to initiate a new stake, based on the failed one
-  const { mutate: runStake } = useStake({
-    input,
-    lockupDays,
+  // this component tries to initiate a new operation, based on the failed one
+  const { mutate: runStake } = useIncreaseUnlockTime({
+    lockupDays: lockupDays!,
     on(emitter) {
-      emitter.on('approve-transaction-reverted', () =>
-        setOperationRunning('failed'),
+      emitter.on('user-signed-increase-unlock-time', () =>
+        setOperationRunning('staking'),
       )
-      emitter.on('lock-creation-transaction-reverted', () =>
-        setOperationRunning('failed'),
-      )
-      emitter.on('user-signing-approve-error', () =>
-        setOperationRunning('failed'),
-      )
-      emitter.on('user-signing-lock-creation-error', () =>
-        setOperationRunning('failed'),
-      )
-      emitter.on('unexpected-error', () => setOperationRunning('failed'))
-      emitter.on('lock-creation-transaction-succeeded', function () {
-        setOperationRunning('idle')
+      emitter.on('increase-unlock-time-transaction-succeeded', function () {
         resetStateAfterOperation()
       })
+      emitter.on('increase-unlock-time-settled', () =>
+        setOperationRunning('staked'),
+      )
     },
     token,
+    tokenId: tokenId!,
     updateStakingDashboardOperation,
   })
 

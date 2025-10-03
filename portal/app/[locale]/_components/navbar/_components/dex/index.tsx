@@ -221,51 +221,51 @@ const DexImpl = function () {
           <ExternalLink
             event="nav - 1delta"
             href="https://1delta.io"
-            icon={<Image alt={t('1delta')} src={oneDeltaIcon} />}
-            text={t('1delta')}
+            icon={<Image alt="1delta" src={oneDeltaIcon} />}
+            text="1delta"
           />
           <ExternalLink
             event="nav - eisen"
             href="https://eisenfinance.com"
-            icon={<Image alt={t('eisen')} src={eisenIcon} />}
-            text={t('eisen')}
+            icon={<Image alt="Eisen" src={eisenIcon} />}
+            text="Eisen"
           />
           <ItemTitle text={t('subtitle')} />
           <ExternalLink
             event="nav - sushi"
             href="https://www.sushi.com/hemi/swap"
-            icon={<Image alt={t('sushi')} src={sushiIcon} />}
-            text={t('sushi')}
+            icon={<Image alt="Sushi" src={sushiIcon} />}
+            text="Sushi"
           />
           <ExternalLink
             event="nav - oku"
             href="https://oku.trade?inputChain=hemi"
-            icon={<Image alt={t('oku')} src={okuIcon} />}
-            text={t('oku')}
+            icon={<Image alt="Oku (uni)" src={okuIcon} />}
+            text="Oku (uni)"
           />
           <ExternalLink
             event="nav - izumi"
             href="https://izumi.finance/trade/swap"
-            icon={<Image alt={t('izumi')} src={izumiIcon} />}
-            text={t('izumi')}
+            icon={<Image alt="Izumi" src={izumiIcon} />}
+            text="Izumi"
           />
           <ExternalLink
             event="nav - dodo"
             href="https://app.dodoex.io/swap/network/hemi"
-            icon={<Image alt={t('dodo')} src={dodoIcon} />}
-            text={t('dodo')}
+            icon={<Image alt="Dodo" src={dodoIcon} />}
+            text="Dodo"
           />
           <ExternalLink
             event="nav - atlas"
             href="https://www.atlasexchange.xyz/swap"
-            icon={<Image alt={t('atlas')} src={atlasIcon} />}
-            text={t('atlas')}
+            icon={<Image alt="Atlas" src={atlasIcon} />}
+            text="Atlas"
           />
           <ExternalLink
             event="nav - passdex"
             href="https://passdex.finance/?chain=HEMI"
-            icon={<Image alt={t('passdex')} src={passdexIcon} />}
-            text={t('passdex')}
+            icon={<Image alt="Passdex" src={passdexIcon} />}
+            text="Passdex"
           />
         </div>
       )}

@@ -296,16 +296,8 @@
     "boost-staking": "Boost staking",
     "data-attribution": "Data provided by <link>CoinMarketCap.com</link>",
     "dex": {
-      "1delta": "1delta",
       "aggregators": "Aggregators",
-      "atlas": "Atlas",
-      "dodo": "Dodo",
-      "eisen": "Eisen",
-      "izumi": "Izumi",
-      "oku": "Oku (uni)",
-      "passdex": "Passdex",
       "subtitle": "DEXs",
-      "sushi": "Sushi",
       "title": "DEX"
     },
     "docs": "Documentation",

@@ -558,9 +558,8 @@
       },
       "description": "Uma vez selecionada, será redirecionado para completar o seu depósito. Para assistência, contacte diretamente a ponte parceira.",
       "hemi-bears-no-responsibility": "O Hemi não se responsabiliza pelo seu funcionamento.",
+      "tunnel-with-our-partner": "Tunelar com o nosso parceiro {partner}",
       "tunnel-with-our-partners": "Tunelar com os nossos parceiros",
-      "tunnel-with-meson": "Tunelar com o nosso parceiro Meson",
-      "tunnel-with-stargate": "Tunelar com o nosso parceiro Stargate",
       "use-at-your-own-risk": "Utilize as pontes parceiras por sua conta e risco",
       "withdraw": {
         "heading": "Retirar {symbol}",

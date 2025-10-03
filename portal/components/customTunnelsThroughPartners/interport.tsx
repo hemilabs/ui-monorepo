@@ -1,6 +1,6 @@
-import Image from 'next/image'
 import { Chain } from 'viem'
 
+import { PartnerImage } from './partnerImage'
 import { PartnerLink } from './partnerLink'
 import interportLogo from './partnerLogos/interport.svg'
 
@@ -14,15 +14,7 @@ export const Interport = function ({ fromChainId, toChainId }: Props) {
 
   return (
     <PartnerLink
-      icon={
-        <Image
-          alt="Interport logo"
-          className="mr-2 rounded-lg"
-          height={32}
-          src={interportLogo}
-          width={32}
-        />
-      }
+      icon={<PartnerImage alt="Interport logo" src={interportLogo} />}
       partner="interport"
       text="Interport"
       url={url}

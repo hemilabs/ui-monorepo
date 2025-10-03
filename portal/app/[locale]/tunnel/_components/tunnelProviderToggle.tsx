@@ -30,7 +30,7 @@ function ThirdPartyOptions({ fromChainId, toChainId }: ThirdPartyOptionsProps) {
   const toNativeToken = getNativeToken(toChainId)
 
   return (
-    <div className="max-h-72 flex-col items-center justify-center space-y-3 overflow-y-auto rounded-lg bg-neutral-50 p-4">
+    <div className="max-h-72 items-center justify-center space-y-3 overflow-y-auto rounded-lg bg-neutral-50 p-4">
       <Stargate
         fromToken={fromNativeToken}
         label="Stargate"

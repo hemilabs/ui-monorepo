@@ -43,17 +43,17 @@ export type StakingPosition = {
   transferable: boolean
 }
 
-export type StakingDashboardOperation = {
-  approvalTxHash?: Hash
-  input?: string
-  inputDays?: string
-  lockupDays?: number
-  transactionHash?: Hash
-  stakingPosition?: Partial<
+export type StakingDashboardOperation = Partial<{
+  approvalTxHash: Hash
+  input: string
+  inputDays: string
+  lockupDays: number
+  transactionHash: Hash
+  stakingPosition: Partial<
     Pick<StakingPosition, 'amount' | 'tokenId' | 'lockTime'>
   >
   status?: StakingDashboardStatus
-}
+}>
 
 // Prefer ordering these by value rather than by key
 /* eslint-disable sort-keys */

@@ -40,10 +40,6 @@ type Actions =
   | UpdateStakingDashboardOperation
   | UpdateUnlockingDashboardOperation
 
-const compilationError = function (value: string): never {
-  throw new Error(`Missing implementation of action in reducer: ${value}`)
-}
-
 type ActionHandlers = {
   [K in Actions['type']]: (
     state: StakingDashboardState,
@@ -96,10 +92,6 @@ function reducer(
   action: Actions,
 ): StakingDashboardState {
   const handler = actionHandlers[action.type]
-
-  if (!handler) {
-    return compilationError(action.type)
-  }
 
   // Typescript can't infer that handler automatically
   return (

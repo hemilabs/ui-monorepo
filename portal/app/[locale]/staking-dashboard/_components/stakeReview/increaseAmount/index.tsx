@@ -125,7 +125,8 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
 
   const getTotalIncreaseAmount = () =>
     getTotal({
-      fees: increaseAmountFees,
+      fees:
+        increaseAmountFees + (needsApproval ? approvalTokenGasFees : BigInt(0)),
       fromInput: input!,
       fromToken: token,
     })

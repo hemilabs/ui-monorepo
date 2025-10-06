@@ -96,14 +96,27 @@ export const useIncreaseUnlockTime = function ({
           queryClient.setQueryData(
             stakingPositionQueryKey,
             (old: StakingPosition[] | undefined = []) =>
-              old.map(position =>
-                position.tokenId === tokenId
-                  ? {
-                      ...position,
-                      lockTime: daysToSeconds(BigInt(lockupDays - step)),
-                    }
-                  : position,
-              ),
+              old.map(function (position) {
+                if (position.tokenId !== tokenId) {
+                  return position
+                }
+
+                const currentTimestamp = BigInt(Math.floor(Date.now() / 1000))
+
+                // Calculate new unlock time (current time + chosen duration, rounded)
+                const rawUnlockTime =
+                  currentTimestamp + daysToSeconds(BigInt(lockupDays))
+                const newUnlockTime =
+                  (rawUnlockTime / BigInt(step)) * BigInt(step)
+
+                // New lockTime is duration from original start to new end
+                const newLockTime = newUnlockTime - BigInt(position.timestamp)
+
+                return {
+                  ...position,
+                  lockTime: newLockTime,
+                }
+              }),
           )
 
           // fees

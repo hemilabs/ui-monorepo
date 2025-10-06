@@ -52,7 +52,7 @@ export type StakingDashboardOperation = Partial<{
   stakingPosition: Partial<
     Pick<StakingPosition, 'amount' | 'tokenId' | 'lockTime' | 'timestamp'>
   >
-  status?: StakingDashboardStatus
+  status: StakingDashboardStatus
 }>
 
 // Prefer ordering these by value rather than by key

@@ -150,7 +150,7 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
       {openRowId === id &&
         createPortal(
           <div
-            className="shadow-staking-table-action-cell fixed z-10 min-w-64 cursor-pointer rounded-lg bg-white p-1 text-sm font-medium text-neutral-700"
+            className="fixed z-10 min-w-64 cursor-pointer rounded-lg bg-white p-1 text-sm font-medium text-neutral-700 shadow-lg"
             ref={menuRef}
             style={{ left: menuPosition.left, top: menuPosition.top }}
           >

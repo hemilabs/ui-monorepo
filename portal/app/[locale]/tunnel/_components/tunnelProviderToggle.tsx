@@ -1,6 +1,11 @@
+import { Cobridge } from 'components/customTunnelsThroughPartners/cobridge'
+import { FireFly } from 'components/customTunnelsThroughPartners/firefly'
 import { FreeTech } from 'components/customTunnelsThroughPartners/freetech'
 import { Interport } from 'components/customTunnelsThroughPartners/interport'
+import { Memebridge } from 'components/customTunnelsThroughPartners/memebridge'
 import { Meson } from 'components/customTunnelsThroughPartners/meson'
+import { OwIto } from 'components/customTunnelsThroughPartners/owito'
+import { Relay } from 'components/customTunnelsThroughPartners/relay'
 import { Stargate } from 'components/customTunnelsThroughPartners/stargate'
 import { WarningIcon } from 'components/icons/warningIcon'
 import { useUmami } from 'hooks/useUmami'
@@ -25,15 +30,20 @@ function ThirdPartyOptions({ fromChainId, toChainId }: ThirdPartyOptionsProps) {
   const toNativeToken = getNativeToken(toChainId)
 
   return (
-    <div className="flex-col items-center justify-center space-y-3 rounded-lg bg-neutral-50 p-4">
+    <div className="max-h-72 items-center justify-center space-y-3 overflow-y-auto rounded-lg bg-neutral-50 p-4">
       <Stargate
         fromToken={fromNativeToken}
         label="Stargate"
         toToken={toNativeToken}
       />
-      <FreeTech />
+      <FreeTech label="Free Tech" />
       <Interport fromChainId={fromChainId} toChainId={toChainId} />
       <Meson label="Meson" />
+      <Cobridge fromChainId={fromChainId} toChainId={toChainId} />
+      <OwIto />
+      <Memebridge />
+      <Relay />
+      <FireFly />
     </div>
   )
 }

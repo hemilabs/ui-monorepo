@@ -1,7 +1,7 @@
 import { BtcChain } from 'btc-wallet/chains'
 import { Address, Chain } from 'viem'
 
-type TunnelPartners = 'meson' | 'stargate'
+type TunnelPartners = 'freetech' | 'meson' | 'orbiter' | 'stargate'
 
 export type Extensions = {
   birthBlock?: number

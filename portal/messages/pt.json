@@ -242,9 +242,9 @@
         "subheading": "Deposite ${symbol} adicionais em seu bloqueio existente para aumentar sua quantidade de stake e poder de governança."
       },
       "increase-unlock-time": {
-        "heading": "Adicionar ${symbol} a este bloqueio",
+        "heading": "Estender a duração do bloqueio",
         "lockup-period-longer": "O período de bloqueio deve ser mais longo.",
-        "subheading": "Depositar ${symbol} adicionais em seu bloqueio existente para aumentar sua quantidade de stake e poder de governança."
+        "subheading": "Adicione mais tempo ao seu bloqueio existente para aumentar seu poder de governança."
       },
       "stake": {
         "heading": "Revisar Stake",

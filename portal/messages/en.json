@@ -242,9 +242,9 @@
         "subheading": "Deposit additional ${symbol} into your existing lockup to increase your staked amount and governance power."
       },
       "increase-unlock-time": {
-        "heading": "Add ${symbol} to this lockup",
+        "heading": "Extend lockup duration",
         "lockup-period-longer": "Lockup period must be longer.",
-        "subheading": "Deposit additional ${symbol} into your existing lockup to increase your staked amount and governance power."
+        "subheading": "Add more time to your existing lockup to boost your governance power."
       },
       "stake": {
         "heading": "Review Stake",

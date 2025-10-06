@@ -1,9 +1,6 @@
 'use client'
 
-import {
-  daysToSeconds,
-  step,
-} from 'app/[locale]/staking-dashboard/_utils/lockCreationTimes'
+import { daysToSeconds } from 'app/[locale]/staking-dashboard/_utils/lockCreationTimes'
 import { DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import {
@@ -169,10 +166,31 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
   function checkLockupIsGreater() {
     if (
       stakingPosition?.lockTime !== undefined &&
-      daysToSeconds(BigInt(lockupDays!) - BigInt(step)) <=
-        stakingPosition.lockTime
+      stakingPosition?.timestamp !== undefined
     ) {
-      return tDrawer('increase-unlock-time.lockup-period-longer')
+      const currentTimestamp = BigInt(Math.floor(Date.now() / 1000))
+      const SIX_DAYS = BigInt(6 * 24 * 60 * 60)
+
+      // Calculate the current unlock time by adding duration to start time.
+      // The contract stores unlock times rounded down to 6-day increments,
+      // so we round it here to match the on-chain value.
+      const currentEnd =
+        BigInt(stakingPosition.timestamp) + BigInt(stakingPosition.lockTime)
+      const roundedCurrentEnd = (currentEnd / SIX_DAYS) * SIX_DAYS
+
+      // Calculate the new unlock time from the user's input.
+      // The contract adds the duration to the current timestamp and rounds down,
+      // so we replicate that logic here.
+      const rawUnlockTime =
+        currentTimestamp + daysToSeconds(BigInt(lockupDays!))
+      const newUnlockTime = (rawUnlockTime / SIX_DAYS) * SIX_DAYS
+
+      // The contract requires the new unlock time to be strictly greater than
+      // the current one. This allows extending positions close to expiry with
+      // any duration that results in a longer lock.
+      if (newUnlockTime <= roundedCurrentEnd) {
+        return tDrawer('increase-unlock-time.lockup-period-longer')
+      }
     }
 
     return undefined

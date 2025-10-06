@@ -133,6 +133,7 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
       stakingPosition: {
         amount,
         lockTime,
+        timestamp,
         tokenId,
       },
     })

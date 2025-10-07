@@ -22,7 +22,12 @@ const TvlImpl = function () {
     }
 
     if (data === undefined) {
-      return <Skeleton baseColor="#FFF" highlightColor="#009CF5" />
+      return (
+        <Skeleton
+          baseColor="rgba(255,255,255,0.08)"
+          highlightColor="rgba(255,255,255,0.4)"
+        />
+      )
     }
 
     return (

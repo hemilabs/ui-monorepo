@@ -1,8 +1,9 @@
 'use client'
 
-import 'styles/globals.css'
 import { ExclamationMark } from 'components/icons/exclamationMark'
 import Image from 'next/image'
+
+import 'styles/globals.css'
 
 import Error404 from './_images/404.svg'
 
@@ -24,7 +25,10 @@ export default function NotFound() {
             We can&apos;t find the page you&apos;re looking for.
           </h3>
         </div>
-        <a className="button button--primary" href="/">
+        <a
+          className="button--base button--primary button--small--regular"
+          href="/"
+        >
           Go back home
         </a>
       </div>

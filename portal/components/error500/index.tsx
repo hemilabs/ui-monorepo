@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/nextjs'
-import { Button } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { ExclamationMark } from 'components/icons/exclamationMark'
 import hemiSocials from 'hemi-socials'
@@ -48,9 +47,13 @@ export const Error500 = function ({
             {description}
           </h3>
         </div>
-        <Button onClick={reset} type="button">
+        <button
+          className="button--base button--primary button--small--regular"
+          onClick={reset}
+          type="button"
+        >
           {tryAgainLabel}
-        </Button>
+        </button>
       </div>
     </div>
   )

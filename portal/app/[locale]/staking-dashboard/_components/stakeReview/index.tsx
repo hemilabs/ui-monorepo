@@ -9,12 +9,21 @@ import { Drawer } from 'components/drawer'
 
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
 
+import { ReviewIncreaseAmount } from './increaseAmount'
+import { ReviewIncreaseUnlockTime } from './increaseUnlockTime'
 import { ReviewStake } from './reviewStake'
 import { ReviewUnlock } from './reviewUnlock'
 
 type Props = {
   closeDrawer: VoidFunction
 }
+
+const reviewComponents = {
+  increasingAmount: ReviewIncreaseAmount,
+  increasingUnlockTime: ReviewIncreaseUnlockTime,
+  staking: ReviewStake,
+  unlocking: ReviewUnlock,
+} as const
 
 export const StakeReview = function ({ closeDrawer }: Props) {
   const { accountModalOpen } = useAccountModal()
@@ -26,20 +35,22 @@ export const StakeReview = function ({ closeDrawer }: Props) {
   // Without this check, clicks on the wallet modal (e.g., Connect Wallet)
   // are interpreted as outside clicks and trigger onClose unintentionally.
   function safeCloseDrawer() {
-    if (accountModalOpen || chainModalOpen || connectModalOpen) return
+    if (accountModalOpen || chainModalOpen || connectModalOpen) {
+      return
+    }
     closeDrawer()
   }
 
-  const isStaking = drawerMode === 'staking'
+  const ReviewComponent = drawerMode ? reviewComponents[drawerMode] : null
+
+  if (!ReviewComponent) {
+    return null
+  }
 
   return (
     <Drawer onClose={safeCloseDrawer}>
       <div className="drawer-content h-[80dvh] md:h-full">
-        {isStaking ? (
-          <ReviewStake onClose={safeCloseDrawer} />
-        ) : (
-          <ReviewUnlock onClose={safeCloseDrawer} />
-        )}
+        <ReviewComponent onClose={safeCloseDrawer} />
       </div>
     </Drawer>
   )

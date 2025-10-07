@@ -19,12 +19,6 @@ export const enum StakingDashboardStatus {
   STAKE_TX_CONFIRMED = 5,
 }
 
-export type StakingDashboardOperation = {
-  approvalTxHash?: Hash
-  transactionHash?: Hash
-  status?: StakingDashboardStatus
-}
-
 export const StakingPositionStatus = {
   ACTIVE: 'active',
   WITHDRAWN: 'withdrawn',
@@ -49,6 +43,18 @@ export type StakingPosition = {
   transferable: boolean
 }
 
+export type StakingDashboardOperation = Partial<{
+  approvalTxHash: Hash
+  input: string
+  inputDays: string
+  lockupDays: number
+  transactionHash: Hash
+  stakingPosition: Partial<
+    Pick<StakingPosition, 'amount' | 'tokenId' | 'lockTime' | 'timestamp'>
+  >
+  status: StakingDashboardStatus
+}>
+
 // Prefer ordering these by value rather than by key
 /* eslint-disable sort-keys */
 export const UnlockingDashboardStatus = {
@@ -69,3 +75,11 @@ export type UnlockingDashboardOperation = {
   stakingPosition?: Pick<StakingPosition, 'amount' | 'tokenId'>
   status?: UnlockingDashboardStatusType
 }
+
+export type UnlockingOperationRunning = 'idle' | 'unlocking' | 'failed'
+export type StakingOperationRunning =
+  | 'idle'
+  | 'approving'
+  | 'staking'
+  | 'staked'
+  | 'failed'

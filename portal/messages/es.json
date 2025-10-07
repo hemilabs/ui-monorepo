@@ -237,6 +237,15 @@
     "amount": "Cantidad",
     "drawer": {
       "approving": "Aprobando {symbol}",
+      "increase-amount": {
+        "heading": "Agregar ${symbol} a este bloqueo",
+        "subheading": "Depositar ${symbol} adicionales en su bloqueo existente para aumentar su cantidad de stake y poder de gobernanza."
+      },
+      "increase-unlock-time": {
+        "heading": "Extender la duración del bloqueo",
+        "lockup-period-longer": "El período de bloqueo debe ser más largo.",
+        "subheading": "Agregue más tiempo a su bloqueo existente para aumentar su poder de gobernanza."
+      },
       "stake": {
         "heading": "Revisar Stake",
         "subheading": "Revise y confirme su stake."
@@ -273,6 +282,8 @@
     "switch-to-start-staking": "Puede cambiar de red para comenzar a hacer staking de su HEMI.",
     "table": {
       "active": "Activo",
+      "add-liquidity-to-lockup": "Agregar {symbol} a este bloqueo",
+      "add-time-to-lockup": "Agregar tiempo a este bloqueo",
       "burned": "Quemado",
       "connect-to-hemi": "Conéctese a {network} para ver sus posiciones de stake.",
       "connect-to-stake": "Conecte su billetera para ver su {symbol} en stake.",

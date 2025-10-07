@@ -1,22 +1,27 @@
 'use client'
 
-import { Button } from 'components/button'
+import { Button, ButtonSize } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useTranslations } from 'next-intl'
-import { StakingDashboardToken } from 'types/stakingDashboard'
+import {
+  type StakingDashboardToken,
+  type StakingOperationRunning,
+} from 'types/stakingDashboard'
 
 type Props = {
+  buttonSize?: ButtonSize
   canStake: boolean
   token: StakingDashboardToken
   isAllowanceError: boolean
   isAllowanceLoading: boolean
   isRunningOperation: boolean
   needsApproval: boolean
-  operationRunning: 'idle' | 'approving' | 'staking'
+  operationRunning: StakingOperationRunning
   validationError: string | undefined
 }
 export const SubmitStake = function ({
+  buttonSize = 'xLarge',
   canStake,
   isAllowanceError,
   isAllowanceLoading,
@@ -64,7 +69,7 @@ export const SubmitStake = function ({
       submitButton={
         <Button
           disabled={!canStake || isRunningOperation || isAllowanceLoading}
-          size="xLarge"
+          size={buttonSize}
           type="submit"
         >
           {getOperationButtonText()}

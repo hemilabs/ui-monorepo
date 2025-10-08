@@ -1,6 +1,7 @@
+import { StakingPosition } from 'types/stakingDashboard'
 import { MaxLockDurationSeconds, MinLockDurationSeconds } from 've-hemi-actions'
 
-const daySeconds = 86_400
+export const daySeconds = 86_400
 
 export const minDays = Math.floor(MinLockDurationSeconds / daySeconds)
 export const maxDays = Math.floor(MaxLockDurationSeconds / daySeconds)
@@ -45,5 +46,36 @@ export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
     totalLockTimeSeconds: lockTimeNum,
     unlockDate,
     unlockTime,
+  }
+}
+
+type CalculateVotingPowerProps = Pick<
+  StakingPosition,
+  'amount' | 'timestamp' | 'lockTime'
+>
+
+export function calculateVotingPower({
+  amount,
+  lockTime,
+  timestamp,
+}: CalculateVotingPowerProps) {
+  const maxTimeSeconds = BigInt(maxDays * daySeconds)
+  const now = BigInt(Math.floor(Date.now() / 1000))
+
+  const end = timestamp + lockTime
+  const timeRemaining = end > now ? end - now : BigInt(0)
+
+  // Calculate voting power (decays linearly)
+  const votingPower = (amount * timeRemaining) / maxTimeSeconds
+
+  // Calculate percentage: (votingPower / lockedAmount) * 100
+  const percentageOfMax =
+    amount > BigInt(0)
+      ? Math.min(100, Number((votingPower * BigInt(10000)) / amount) / 100)
+      : 0
+
+  return {
+    percentageOfMax,
+    votingPower,
   }
 }

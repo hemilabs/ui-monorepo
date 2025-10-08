@@ -51,6 +51,7 @@ export const FormContent = function ({
         value={input}
       />
       <Lockup
+        input={input}
         inputDays={inputDays}
         lockupDays={lockupDays}
         updateInputDays={updateInputDays}

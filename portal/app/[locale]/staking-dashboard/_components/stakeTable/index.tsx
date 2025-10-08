@@ -5,7 +5,6 @@ import { Card } from 'components/card'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { Table } from 'components/table'
 import { Header } from 'components/table/_components/header'
-import { TxLink } from 'components/txLink'
 import { useHemi } from 'hooks/useHemi'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
@@ -15,6 +14,7 @@ import { type StakingPosition } from 'types/stakingDashboard'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
+import { calculateVotingPower } from '../../_utils/lockCreationTimes'
 import { Amount } from '../amount'
 
 import { ActionCell } from './actionCell'
@@ -23,6 +23,7 @@ import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
 import { TimeRemaining } from './timeRemaining'
 import { UnsupportedChain } from './unsupportedChain'
+import { VotingPower } from './votingPower'
 
 type StakingColumnsProps = {
   t: ReturnType<typeof useTranslations<'staking-dashboard'>>
@@ -45,22 +46,30 @@ const stakingColumns = ({
         </ErrorBoundary>
       </div>
     ),
-    header: () => <Header text={t('amount')} />,
-    id: 'amount',
-    meta: { width: '150px' },
+    header: () => <Header text={t('table.locked-amount')} />,
+    id: 'locked-amount',
+    meta: { width: '170px' },
   },
   {
-    cell: function ExplorerLink({ row }) {
-      const hemi = useHemi()
+    cell({ row }) {
+      const { amount, lockTime, timestamp } = row.original
+      const { percentageOfMax, votingPower } = calculateVotingPower({
+        amount,
+        lockTime,
+        timestamp,
+      })
       return (
-        <div className="flex items-center">
-          <TxLink chainId={hemi.id} txHash={row.original.transactionHash} />
+        <div className="flex items-center justify-center gap-x-2">
+          <VotingPower
+            percentageOfMax={percentageOfMax}
+            votingPower={votingPower}
+          />
         </div>
       )
     },
-    header: () => <Header text={t('table.tx')} />,
-    id: 'tx',
-    meta: { width: '120px' },
+    header: () => <Header text={t('voting-power')} />,
+    id: 'voting-power',
+    meta: { width: '150px' },
   },
   {
     cell: ({ row }) => (
@@ -70,8 +79,8 @@ const stakingColumns = ({
         <LockupTime lockupTime={row.original.lockTime} />
       </ErrorBoundary>
     ),
-    header: () => <Header text={t('lockup-period')} />,
-    id: 'lockup-period',
+    header: () => <Header text={t('table.lockup')} />,
+    id: 'lockup',
     meta: { width: '200px' },
   },
   {
@@ -165,7 +174,7 @@ export function StakeTable({ data, loading }: Props) {
 
   return (
     <div className="w-full rounded-xl bg-neutral-100 text-sm font-medium">
-      <div className="md:min-h-120 h-[49dvh] overflow-hidden">
+      <div className="md:min-h-136 h-[56dvh] overflow-hidden">
         {getContent()}
       </div>
     </div>

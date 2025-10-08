@@ -43,7 +43,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
     useState<StakingOperationRunning>('idle')
 
   // stakingDashboardOperation and stakingPosition will always be defined here
-  const { inputDays, lockupDays, stakingPosition, transactionHash } =
+  const { input, inputDays, lockupDays, stakingPosition, transactionHash } =
     stakingDashboardOperation!
   const { tokenId } = stakingPosition!
 
@@ -215,6 +215,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
       <Preview
         callToAction={getCallToAction(stakingDashboardStatus)}
         gas={getGas()}
+        input={input!}
         inputDays={inputDays!}
         isRunningOperation={isRunningOperation}
         isValid={isValid}

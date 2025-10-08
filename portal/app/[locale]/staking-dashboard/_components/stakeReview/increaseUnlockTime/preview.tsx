@@ -19,6 +19,7 @@ type PreviewProps = {
     label: string
     token: Token
   }
+  input: string
   inputDays: string
   isRunningOperation: boolean
   isValid: boolean
@@ -34,6 +35,7 @@ type PreviewProps = {
 export function Preview({
   callToAction,
   gas,
+  input,
   inputDays,
   isRunningOperation,
   isValid,
@@ -64,6 +66,7 @@ export function Preview({
         >
           <div className="flex flex-1 flex-col gap-y-3 overflow-y-auto p-4 md:p-6">
             <Lockup
+              input={input}
               inputDays={inputDays}
               lockupDays={lockupDays}
               updateInputDays={onUpdateInputDays}

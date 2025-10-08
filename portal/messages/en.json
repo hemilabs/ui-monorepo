@@ -288,6 +288,8 @@
       "connect-to-hemi": "Connect to {network} to view your stake positions.",
       "connect-to-stake": "Connect your wallet to view your {symbol} staked.",
       "get-started": "Get started by staking your {symbol}",
+      "locked-amount": "Locked Amount",
+      "lockup": "Lockup",
       "no-hemi-staked": "No {symbol} staked",
       "on": "On {date}",
       "time-remaining": "Time remaining",
@@ -296,7 +298,8 @@
       "unlocked": "Unlocked",
       "unlocks-on": "Unlocks on {date}"
     },
-    "unlock-successful": "Unlock successful"
+    "unlock-successful": "Unlock successful",
+    "voting-power": "Voting Power"
   },
   "metadata": {
     "title": "Hemi Portal"

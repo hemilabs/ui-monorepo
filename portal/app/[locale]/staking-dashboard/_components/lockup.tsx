@@ -1,10 +1,20 @@
 import { WarningIcon } from 'components/icons/warningIcon'
 import { LockupInput } from 'components/inputText'
+import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'next-intl'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useMemo, useState } from 'react'
 import { formatDate } from 'utils/format'
+import { parseTokenUnits } from 'utils/token'
+import { formatUnits } from 'viem'
 
-import { maxDays, minDays, step, twoYears } from '../_utils/lockCreationTimes'
+import {
+  calculateVotingPower,
+  daySeconds,
+  maxDays,
+  minDays,
+  step,
+  twoYears,
+} from '../_utils/lockCreationTimes'
 import { sanitizeLockup } from '../_utils/sanitizeLockup'
 
 import { RangeSlider } from './rangeSlider'
@@ -46,6 +56,15 @@ function getNearestValidValues(n: number): NearestValidValues {
     minValue: lower >= minDays ? lower : null,
   }
 }
+
+const Divider = () => <div className="h-px w-full bg-neutral-300/55" />
+
+const InfoRow = ({ label, value }: { label: string; value: string }) => (
+  <p className="flex justify-between text-sm font-medium text-neutral-600">
+    <span>{label}</span>
+    <span className="text-neutral-950">{value}</span>
+  </p>
+)
 
 function TryValuesHint({
   inputText,
@@ -89,6 +108,7 @@ function TryValuesHint({
 }
 
 type Props = {
+  input: string
   inputDays: string
   lockupDays: number
   updateInputDays: (days: string) => void
@@ -96,6 +116,7 @@ type Props = {
 }
 
 export function Lockup({
+  input,
   inputDays,
   lockupDays,
   updateInputDays,
@@ -103,6 +124,9 @@ export function Lockup({
 }: Props) {
   const t = useTranslations('staking-dashboard')
   const locale = useLocale()
+  const token = useHemiToken()
+
+  const amount = parseTokenUnits(input, token)
 
   const [touched, setTouched] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
@@ -111,6 +135,31 @@ export function Lockup({
   const valid = isValidLockup(inputNumber)
   const nearest = getNearestValidValues(inputNumber)
   const expireDate = formatDate(addDays(new Date(), lockupDays), locale)
+
+  const votingPowerRatio = useMemo(
+    function calcVotingPower() {
+      if (!amount || amount === BigInt(0)) {
+        return '0'
+      }
+
+      const now = BigInt(Math.floor(Date.now() / 1000))
+      const lockTime = BigInt(lockupDays * daySeconds)
+
+      const { votingPower } = calculateVotingPower({
+        amount,
+        lockTime,
+        timestamp: now,
+      })
+
+      const formattedPower = formatUnits(votingPower, token.decimals)
+      const numberFormatter = new Intl.NumberFormat(locale, {
+        maximumFractionDigits: 3, // Show up to 3 decimal places
+      })
+
+      return numberFormatter.format(Number(formattedPower))
+    },
+    [amount, locale, lockupDays, token.decimals],
+  )
 
   function handleSliderChange(val: number) {
     updateLockupDays(val)
@@ -130,7 +179,7 @@ export function Lockup({
 
   return (
     <>
-      <div className="w-full rounded-lg bg-neutral-50 p-4 ring-1 ring-transparent hover:ring-neutral-300/55">
+      <div className="w-full space-y-4 rounded-lg bg-neutral-50 p-4 ring-1 ring-transparent hover:ring-neutral-300/55">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-neutral-500">
             {t('lockup-period')}
@@ -155,42 +204,35 @@ export function Lockup({
             </div>
           </div>
         </div>
-        <div className="mt-2">
-          <RangeSlider
-            max={maxDays}
-            min={minDays}
-            onChange={handleSliderChange}
-            step={step}
-            value={lockupDays}
-          />
-          <p className="mt-2 flex items-center justify-between text-xs font-medium text-neutral-500">
+        <RangeSlider
+          max={maxDays}
+          min={minDays}
+          onChange={handleSliderChange}
+          step={step}
+          value={lockupDays}
+        />
+        <div className="flex items-center justify-between text-xs font-medium text-neutral-500">
+          {[
+            { days: minDays, label: t('form.days', { days: minDays }) },
+            { days: twoYears, label: t('form.years', { years: 2 }) },
+            { days: maxDays, label: t('form.years', { years: 4 }) },
+          ].map(({ days, label }) => (
             <span
               className="cursor-pointer hover:text-neutral-950"
-              onClick={() => handleInputChange(minDays.toString())}
+              key={days}
+              onClick={() => handleInputChange(days.toString())}
             >
-              {t('form.days', { days: minDays })}
+              {label}
             </span>
-            <span
-              className="cursor-pointer hover:text-neutral-950"
-              onClick={() => handleInputChange(twoYears.toString())}
-            >
-              {t('form.years', { years: 2 })}
-            </span>
-            <span
-              className="cursor-pointer hover:text-neutral-950"
-              onClick={() => handleInputChange(maxDays.toString())}
-            >
-              {t('form.years', { years: 4 })}
-            </span>
-          </p>
-          <div className="mt-4 h-px w-full bg-neutral-300/55" />
+          ))}
         </div>
-        <div className="mt-2">
-          <p className="text-sm font-medium text-neutral-600">
-            {t('form.expire-date')}
-            <span className="ml-1 text-neutral-950">{expireDate}</span>
-          </p>
-        </div>
+        <Divider />
+        <InfoRow label={t('form.expire-date')} value={expireDate} />
+        <Divider />
+        <InfoRow
+          label={`${t('voting-power')}:`}
+          value={`${input} ${token.symbol} = ${votingPowerRatio} ve${token.symbol}`}
+        />
       </div>
       <div
         className={`mt-3 flex items-start justify-center gap-x-1 text-center text-sm font-medium ${

@@ -3,10 +3,14 @@
 import { useHemi } from 'hooks/useHemi'
 import { Token } from 'types/token'
 
+// Prefer ordering these by value rather than by key
+/* eslint-disable sort-keys */
 const sizes = {
-  medium: 'size-4',
   small: 'size-2.5',
+  medium: 'size-3',
+  large: 'size-4',
 } as const
+/* eslint-enable sort-keys */
 
 type Props = {
   size: keyof typeof sizes

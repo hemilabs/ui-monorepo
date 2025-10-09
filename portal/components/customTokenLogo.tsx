@@ -1,10 +1,14 @@
 import { HemiSubLogo } from 'components/hemiSubLogo'
 import { Token } from 'types/token'
 
+// Prefer ordering these by value rather than by key
+/* eslint-disable sort-keys */
 const sizes = {
-  medium: 'size-8 text-[8px]',
   small: 'size-5 text-[6px]',
+  medium: 'size-6 text-[7px]',
+  large: 'size-8 text-[8px]',
 } as const
+/* eslint-enable sort-keys */
 
 type Size = keyof typeof sizes
 

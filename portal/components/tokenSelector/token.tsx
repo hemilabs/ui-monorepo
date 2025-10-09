@@ -45,7 +45,7 @@ export const CustomToken = ({ token }: { token: TokenType | undefined }) => (
 export const Token = ({ token }: { token: TokenType }) => (
   <div className="flex items-center gap-x-3 p-3 text-sm font-medium text-neutral-950">
     <div className="flex-shrink-0 flex-grow-0">
-      <TokenLogo size="medium" token={token} />
+      <TokenLogo size="large" token={token} />
     </div>
     <div className="flex w-full flex-col">
       <div className="flex items-center justify-between">

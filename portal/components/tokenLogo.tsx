@@ -9,10 +9,14 @@ import { CustomTokenLogo } from './customTokenLogo'
 import { HemiSubLogo } from './hemiSubLogo'
 import { BtcLogo } from './icons/btcLogo'
 
+// Prefer ordering these by value rather than by key
+/* eslint-disable sort-keys */
 const sizes = {
-  medium: 'size-8',
   small: 'size-5',
+  medium: 'size-6',
+  large: 'size-8',
 } as const
+/* eslint-enable sort-keys */
 
 type Size = keyof typeof sizes
 

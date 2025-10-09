@@ -288,6 +288,8 @@
       "connect-to-hemi": "Conéctese a {network} para ver sus posiciones de stake.",
       "connect-to-stake": "Conecte su billetera para ver su {symbol} en stake.",
       "get-started": "Comience haciendo staking de sus {symbol}",
+      "locked-amount": "Cantidad bloqueada",
+      "lockup": "Bloqueo",
       "no-hemi-staked": "No hay {symbol} en stake",
       "on": "En {date}",
       "time-remaining": "Tiempo restante",
@@ -296,7 +298,8 @@
       "unlocked": "Desbloqueado",
       "unlocks-on": "Desbloquea el {date}"
     },
-    "unlock-successful": "Desbloqueo exitoso"
+    "unlock-successful": "Desbloqueo exitoso",
+    "voting-power": "Poder de Voto"
   },
   "metadata": {
     "title": "Portal de Hemi"

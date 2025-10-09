@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { type StakingPosition } from 'types/stakingDashboard'
+import { formatUnits } from 'viem'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
@@ -38,7 +39,7 @@ type Props = {
 
 export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
   const t = useTranslations('staking-dashboard.table')
-  const { symbol } = useHemiToken()
+  const { decimals, symbol } = useHemiToken()
   const buttonRef = useRef<HTMLDivElement>(null)
   const menuRef = useOnClickOutside<HTMLDivElement>(() => setOpenRowId(null))
   const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 })
@@ -128,6 +129,7 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
 
   function handleIncreaseUnlockTime() {
     updateStakingDashboardOperation({
+      input: formatUnits(amount, decimals),
       inputDays: minDays.toString(),
       lockupDays: minDays,
       stakingPosition: {

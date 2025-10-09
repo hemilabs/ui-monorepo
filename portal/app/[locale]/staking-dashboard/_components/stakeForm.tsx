@@ -57,7 +57,7 @@ export const StakeForm = function () {
   if (!hemiToken) {
     return (
       <Skeleton
-        className="min-h-128 rounded-2xl"
+        className="min-h-136 rounded-2xl"
         containerClassName="flex justify-center"
       />
     )

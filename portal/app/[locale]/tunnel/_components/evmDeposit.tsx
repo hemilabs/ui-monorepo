@@ -182,7 +182,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
 
-  function RenderBelowForm() {
+  function renderBelowForm() {
     if (!canDeposit) return null
 
     return (
@@ -196,7 +196,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     )
   }
 
-  function RenderTunnelProviderToggle() {
+  function renderTunnelProviderToggle() {
     if (!isMainnet) return null
 
     return (
@@ -209,7 +209,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     )
   }
 
-  function RenderSubmitButton() {
+  function renderSubmitButton() {
     if (providerType !== 'native') return null
 
     return (
@@ -230,14 +230,14 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   return (
     <>
       <TunnelForm
-        belowForm={<RenderBelowForm />}
+        belowForm={renderBelowForm()}
         formContent={
           <FormContent
             errorKey={
               walletIsConnected(status) && balanceLoaded ? errorKey : undefined
             }
             isRunningOperation={isRunningOperation}
-            provider={<RenderTunnelProviderToggle />}
+            provider={renderTunnelProviderToggle()}
             setMaxBalanceButton={
               <SetMaxEvmBalance
                 disabled={isRunningOperation}
@@ -284,7 +284,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
           />
         }
         onSubmit={handleDeposit}
-        submitButton={<RenderSubmitButton />}
+        submitButton={renderSubmitButton()}
       />
       {isPartnersDrawerOpen && (
         <CustomTunnelsThroughPartners

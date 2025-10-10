@@ -5,9 +5,14 @@ import { useChain } from 'hooks/useChain'
 import { type RemoteChain } from 'types/chain'
 import { type Hash } from 'viem'
 
+const textColors = {
+  'neutral-500': 'text-neutral-500',
+  'neutral-600': 'text-neutral-600',
+} as const
+
 type Props = {
   chainId: RemoteChain['id']
-  textColor?: 'neutral-500' | 'neutral-600'
+  textColor?: keyof typeof textColors
   txHash: BtcTransaction | Hash
 }
 export const TxLink = function ({
@@ -21,9 +26,7 @@ export const TxLink = function ({
   return (
     <div className="group/txhash-link flex w-full items-center gap-x-2">
       <ExternalLink
-        className={`cursor-pointer hover:text-neutral-950 ${
-          textColor === 'neutral-500' ? 'text-neutral-500' : 'text-neutral-600'
-        }`}
+        className={`cursor-pointer hover:text-neutral-950 ${textColors[textColor]}`}
         href={href}
         // needed as there's event delegation in the row
         onClick={e => e.stopPropagation()}

@@ -21,7 +21,9 @@ export const TxLink = function ({
   return (
     <div className="group/txhash-link flex w-full items-center gap-x-2">
       <ExternalLink
-        className={`cursor-pointer text-${textColor} hover:text-neutral-950`}
+        className={`cursor-pointer hover:text-neutral-950 ${
+          textColor === 'neutral-500' ? 'text-neutral-500' : 'text-neutral-600'
+        }`}
         href={href}
         // needed as there's event delegation in the row
         onClick={e => e.stopPropagation()}

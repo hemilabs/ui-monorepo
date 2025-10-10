@@ -1,9 +1,6 @@
-FROM node:20.18.3-alpine
+FROM node:22.20.0-alpine3.22
 
 ENV NODE_ENV=production
-
-# Fix the cross-spawn vulnerability in the preinstalled npm version
-RUN npm i --global npm@10.9.1
 
 WORKDIR /app
 

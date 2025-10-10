@@ -1,6 +1,6 @@
 {
   "name": "portal-backend",
-  "version": "2.2.2",
+  "version": "2.2.3",
   "dependencies": {
     "@sentry/node": "10.5.0",
     "config": "4.1.0",

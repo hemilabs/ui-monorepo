@@ -1,12 +1,12 @@
 {
   "name": "subgraph-api",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "scripts": {
     "build": "tsc",
     "start": "tsx server.ts"
   },
   "dependencies": {
-    "@tsconfig/node20": "20.1.5",
+    "@tsconfig/node22": "22.0.2",
     "config": "3.3.12",
     "cors": "2.8.5",
     "dotenv": "16.4.7",

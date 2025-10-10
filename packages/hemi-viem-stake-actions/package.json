@@ -22,7 +22,7 @@
     "hemi-viem": "2.6.1"
   },
   "devDependencies": {
-    "@tsconfig/node20": "20.1.5",
+    "@tsconfig/node22": "22.0.2",
     "typescript": "5.8.3",
     "viem": "2.28.4"
   },

@@ -26,7 +26,7 @@ export default function NotFound() {
           </h3>
         </div>
         <a
-          className="button--base button--primary button--small--regular"
+          className="button--base button-primary button-small button-regular"
           href="/"
         >
           Go back home

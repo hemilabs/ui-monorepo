@@ -21,42 +21,54 @@ Because of that, we can add all the styles here, and then use plain buttons in t
 }
 
 /* Button Variants */
-.button--primary {
+.button-primary {
   @apply focus-visible:shadow-button-primary-focused before:bg-button-primary-hovered
     bg-orange-500 text-white disabled:opacity-55;
 }
 
-.button--secondary {
+.button-secondary {
   @apply focus-visible:shadow-button-secondary-focused bg-white text-neutral-950 shadow-sm
   before:bg-neutral-50 disabled:bg-neutral-50 disabled:opacity-55;
 }
 
-.button--tertiary {
+.button-tertiary {
   @apply focus-visible:shadow-button-tertiary-focused bg-transparent
     text-neutral-950 before:bg-neutral-100 focus:bg-neutral-100;
 }
 
 /* Button Sizes */
-.button--x-small--icon {
-  @apply h-7 min-w-7 rounded-md text-xs;
+.button-x-small {
+  @apply h-7 rounded-md text-xs;
 }
 
-.button--x-small--regular {
-  @apply h-7 gap-x-1 rounded-md px-2.5 text-xs;
+.button-x-small.button-regular {
+  @apply gap-x-1 px-2.5;
 }
 
-.button--small--icon {
-  @apply h-8 min-w-8 rounded-lg text-sm;
+.button-x-small.button-icon {
+  @apply min-w-7;
 }
 
-.button--small--regular {
-  @apply h-8 gap-x-2 rounded-lg px-3 text-sm;
+.button-small {
+  @apply h-8 rounded-lg text-sm;
 }
 
-.button--x-large--icon {
-  @apply text-mid h-11 min-w-11 rounded-lg;
+.button-small.button-icon {
+  @apply min-w-8;
 }
 
-.button--x-large--regular {
-  @apply text-mid h-11 gap-x-2 rounded-lg px-4;
+.button-small.button-regular {
+  @apply gap-x-2 px-3;
+}
+
+.button-x-large {
+  @apply text-mid h-11 rounded-lg;
+}
+
+.button-x-large.button-icon {
+  @apply min-w-11;
+}
+
+.button-x-large.button-regular {
+  @apply gap-x-2 px-4;
 }

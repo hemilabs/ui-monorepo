@@ -4,9 +4,9 @@ import { ComponentProps } from 'react'
 import { isRelativeUrl } from 'utils/url'
 
 const variants = {
-  primary: 'button--primary',
-  secondary: 'button--secondary',
-  tertiary: 'button--tertiary',
+  primary: 'button-primary',
+  secondary: 'button-secondary',
+  tertiary: 'button-tertiary',
 } as const
 
 export type ButtonSize = 'xSmall' | 'small' | 'xLarge'
@@ -14,16 +14,16 @@ export type ButtonSize = 'xSmall' | 'small' | 'xLarge'
 /* eslint-disable sort-keys */
 const buttonSizePresets = {
   xSmall: {
-    icon: 'h-7 text-xs rounded-md min-w-7',
-    regular: 'h-7 text-xs gap-x-1 px-2.5 rounded-md',
+    icon: 'button-x-small button-icon',
+    regular: 'button-x-small button-regular',
   },
   small: {
-    icon: 'h-8 text-sm rounded-lg min-w-8',
-    regular: 'h-8 text-sm gap-x-2 px-3 rounded-lg',
+    icon: 'button-small button-icon',
+    regular: 'button-small button-regular',
   },
   xLarge: {
-    icon: 'h-11 text-mid rounded-lg min-w-11',
-    regular: 'h-11 text-mid gap-x-2 px-4 rounded-lg',
+    icon: 'button-x-large button-icon',
+    regular: 'button-x-large button-regular',
   },
 } as const
 /* eslint-enable sort-keys */

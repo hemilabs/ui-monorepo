@@ -48,7 +48,7 @@ export const Error500 = function ({
           </h3>
         </div>
         <button
-          className="button--base button--primary button--small--regular"
+          className="button--base button-primary button-small button-regular"
           onClick={reset}
           type="button"
         >

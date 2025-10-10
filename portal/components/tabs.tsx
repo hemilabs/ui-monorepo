@@ -3,30 +3,23 @@
 import { Link } from 'components/link'
 import { type ComponentProps, type MouseEvent, type ReactNode } from 'react'
 
+import { Button, ButtonLink, type ButtonSize } from './button'
+
 type Button = { onClick?: (e: MouseEvent<HTMLButtonElement>) => void }
 type Anchor = {
   href: ComponentProps<typeof Link>['href']
   onClick?: (e: MouseEvent<HTMLAnchorElement>) => void
 }
 
-type TabSize = 'xSmall' | 'small'
-
 type TabProps = {
   children: ReactNode
   disabled?: boolean
   selected?: boolean
-  size?: TabSize
+  size?: Exclude<ButtonSize, 'xLarge'>
 } & (Anchor | Button)
 
 const tabIsLink = (value: Button | Anchor): value is Anchor =>
   (value as Anchor).href !== undefined
-
-/* eslint-disable sort-keys */
-const tabSizePresets = {
-  xSmall: 'h-7 text-xs rounded-md px-2.5',
-  small: 'h-8 text-sm rounded-xs px-3',
-} as const
-/* eslint-enable sort-keys */
 
 export const Tab = function ({
   children,
@@ -39,30 +32,35 @@ export const Tab = function ({
   return (
     <li
       className={`
-      box-border flex ${
-        tabSizePresets[size]
-      } flex-1 items-center py-1 font-medium transition-colors duration-300 md:flex-auto [&>a]:w-full
+        flex flex-1 items-center py-1 *:w-full md:flex-auto
       ${
         selected
-          ? 'bg-white text-neutral-950 shadow-sm'
-          : 'cursor-pointer bg-neutral-100 text-neutral-700 hover:text-neutral-950'
+          ? '*:cursor-default before:*:duration-0 hover:before:*:bg-white'
+          : '*:bg-neutral-100 *:text-neutral-700 *:shadow-none *:transition-colors *:duration-300 before:*:bg-neutral-100 hover:*:text-neutral-950'
       }
     `}
     >
       {(!isLink || disabled) && (
-        <button
-          className="w-full"
-          disabled={disabled || selected}
-          onClick={!isLink && !disabled ? props.onClick : undefined}
-          type="button"
+        <Button
+          disabled={disabled}
+          onClick={
+            !isLink && !disabled && !selected ? props.onClick : undefined
+          }
+          size={size}
+          variant="secondary"
         >
           {children}
-        </button>
+        </Button>
       )}
       {isLink && props.href && (
-        <Link href={props.href} onClick={props.onClick}>
+        <ButtonLink
+          href={props.href}
+          onClick={selected ? undefined : props.onClick}
+          size={size}
+          variant="secondary"
+        >
           {children}
-        </Link>
+        </ButtonLink>
       )}
     </li>
   )

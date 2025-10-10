@@ -1,0 +1,74 @@
+/*
+The following ".button" global classes were created because the <Button>
+and <ButtonLink> components of "components/button.tsx" file cannot be used
+by the error pages "app/not-found.tsx" and "app/global-error.tsx". These pages would be rendered if the root layout
+crashes, so Adapters for Nuqs are not available. We don't need them, but the button.tsx component needs them for the ButtonLink component.
+Because of that, we can add all the styles here, and then use plain buttons in those error pages.
+*/
+.button--base {
+  @apply relative z-0 box-border flex items-center
+  justify-center overflow-hidden font-medium focus:outline-none disabled:opacity-50;
+  /*
+  Adds a smooth hover background effect using a before pseudo-element.
+  This ensures consistent transitions across button variants by:
+  - Creating a full-size background layer positioned behind the content (`before:absolute`, `before:inset-0`, `before:-z-10`)
+  - Starting fully transparent (`before:opacity-0`) and transitioning to visible on hover (`hover:before:opacity-100`)
+  - Applying a transition effect on opacity (`before:transition-opacity before:duration-200`)
+  */
+  @apply before:absolute before:inset-0 before:-z-10 before:opacity-0
+  before:transition-opacity before:duration-200 before:content-['']
+  hover:before:opacity-100 disabled:hover:before:opacity-0;
+}
+
+/* Button Variants */
+.button-primary {
+  @apply focus-visible:shadow-button-primary-focused before:bg-button-primary-hovered
+    bg-orange-500 text-white disabled:opacity-55;
+}
+
+.button-secondary {
+  @apply focus-visible:shadow-button-secondary-focused bg-white text-neutral-950 shadow-sm
+  before:bg-neutral-50 disabled:bg-neutral-50 disabled:opacity-55;
+}
+
+.button-tertiary {
+  @apply focus-visible:shadow-button-tertiary-focused bg-transparent
+    text-neutral-950 before:bg-neutral-100 focus:bg-neutral-100;
+}
+
+/* Button Sizes */
+.button-x-small {
+  @apply h-7 rounded-md text-xs;
+}
+
+.button-x-small.button-regular {
+  @apply gap-x-1 px-2.5;
+}
+
+.button-x-small.button-icon {
+  @apply min-w-7;
+}
+
+.button-small {
+  @apply h-8 rounded-lg text-sm;
+}
+
+.button-small.button-icon {
+  @apply min-w-8;
+}
+
+.button-small.button-regular {
+  @apply gap-x-2 px-3;
+}
+
+.button-x-large {
+  @apply text-mid h-11 rounded-lg;
+}
+
+.button-x-large.button-icon {
+  @apply min-w-11;
+}
+
+.button-x-large.button-regular {
+  @apply gap-x-2 px-4;
+}

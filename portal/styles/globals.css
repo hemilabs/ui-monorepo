@@ -1,6 +1,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import '../app/[locale]/tunnel/transaction-history/_components/transactionHistory.css';
+@import '../components/button/button.css';
 @import '../components/drawer/drawer.css';
 @import 'tailwindcss/utilities';
 
@@ -11,25 +12,6 @@
   100% {
     height: 100%;
   }
-}
-
-/*
-The following ".button" global classes were created because the <Button>
-and <ButtonLink> components of "components/button.tsx" file cannot be used
-by the error pages "app/not-found.tsx" and "app/global-error.tsx".
-The application throws an error when importing any package related to Router
-like "next/router" or "next/navigation" inside the error pages.
-*/
-.button {
-  @apply box-content flex items-center justify-center rounded-lg
-  border border-solid px-3 py-1.5 text-sm font-medium disabled:opacity-40;
-}
-
-.button--primary {
-  @apply shadow-button-primary focus:shadow-button-primary-focused border-orange-700/55 bg-gradient-to-b
-  from-orange-500 to-orange-600 text-white transition-all
-  duration-300 hover:border-orange-700/70 hover:from-orange-600 hover:to-orange-600
-  disabled:bg-orange-600;
 }
 
 * {

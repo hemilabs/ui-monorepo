@@ -27,7 +27,10 @@ export default function NotFound() {
             {t('not-found.description')}
           </h3>
         </div>
-        <a className="button button-primary" href="/">
+        <a
+          className="button--base button-primary button-small button-regular"
+          href="/"
+        >
           {t('not-found.action')}
         </a>
       </div>

@@ -62,7 +62,7 @@
     "@tsconfig/next": "2.0.3",
     "@types/big.js": "6.2.2",
     "@types/lodash": "4.17.16",
-    "@types/node": "20.12.12",
+    "@types/node": "22.9.0",
     "@types/qrcode-terminal": "0.12.2",
     "@types/rc-tooltip": "3.7.14",
     "@types/react": "19.1.13",

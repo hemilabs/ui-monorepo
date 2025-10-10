@@ -75,6 +75,7 @@ export const SubmitStake = function ({
           {getOperationButtonText()}
         </Button>
       }
+      submitButtonSize={buttonSize}
     />
   )
 }

@@ -20,7 +20,7 @@ export default function NotFound() {
       <div className="z-10 m-auto flex flex-col items-center gap-4">
         <ExclamationMark />
         <div className="text-center">
-          <h1 className="text-lg font-medium text-neutral-950">
+          <h1 className="text-4xl font-medium text-neutral-950">
             {t('not-found.title')}
           </h1>
           <h3 className="mt-1 text-base font-medium text-neutral-500">

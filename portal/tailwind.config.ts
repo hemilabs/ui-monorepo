@@ -143,6 +143,13 @@ const config: Config = {
             lineHeight: '24px',
           },
         ],
+        'mid-md': [
+          '1.0625rem', // 17px
+          {
+            letterSpacing: '-0.17px',
+            lineHeight: '24px',
+          },
+        ],
         'lg': [
           '1.125rem', // 18px
           {

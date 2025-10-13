@@ -27,6 +27,14 @@ h6 {
   @apply font-inter-display;
 }
 
+h1 {
+  font-size: 2.25rem; /* 36px */
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: 40px;
+  letter-spacing: -0.72px;
+}
+
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;

@@ -72,7 +72,7 @@ export const FormContent = function ({
   return (
     <>
       <div className="flex items-center justify-between gap-x-2">
-        <h3 className="text-mid-md font-medium capitalize text-neutral-950">
+        <h3 className="text-mid-md font-semibold capitalize text-neutral-950">
           {t('title')}
         </h3>
         {tokenApproval}

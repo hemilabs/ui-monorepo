@@ -132,7 +132,7 @@ export const Strategy = function ({
         className={`flex flex-col justify-between gap-y-3 rounded-t-lg pt-6 ${bgColor}`}
       >
         <div className="flex items-center justify-between px-6">
-          <h4 className="text-smd font-semibold text-black">{heading}</h4>
+          <h4 className="text-sm font-semibold text-black">{heading}</h4>
           {recommendationLevel === 'high' && <RecommendedBadge />}
         </div>
         <div className="mt-7 flex items-center gap-x-2 px-6">

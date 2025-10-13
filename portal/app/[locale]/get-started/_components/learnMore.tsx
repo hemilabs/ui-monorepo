@@ -157,7 +157,7 @@ export const LearnMore = function () {
           />
           <div className="mt-4 flex flex-col gap-y-2 px-2 md:mt-6 md:flex-row md:gap-x-6">
             <div className="mb-6">
-              <h4 className="text-base text-neutral-950">{t('tutorials')}</h4>
+              <h4 className="text-sm text-neutral-950">{t('tutorials')}</h4>
               <p className="text-sm text-neutral-600">
                 {t('tutorials-subheading')}
               </p>

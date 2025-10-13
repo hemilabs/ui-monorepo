@@ -63,7 +63,7 @@ export const DemoCard = function ({
           href={href}
           onClick={addTracking()}
         >
-          <h4 className={`mt-auto text-base ${colorVariants[headingColor]}`}>
+          <h4 className={`mt-auto text-sm ${colorVariants[headingColor]}`}>
             {heading}
           </h4>
           <p

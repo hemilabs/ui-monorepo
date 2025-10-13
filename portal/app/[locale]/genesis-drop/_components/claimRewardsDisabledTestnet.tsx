@@ -13,7 +13,7 @@ export const ClaimRewardsDisabledTestnet = function () {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-y-1">
       <LiveIcon />
-      <h2 className="text-lg font-semibold text-neutral-950">
+      <h2 className="text-2xl font-semibold text-neutral-950">
         {tCommon('only-live-on-mainnet')}
       </h2>
       <p className="mb-3 max-w-44 text-center text-sm font-medium text-neutral-500 sm:max-w-64 md:max-w-72 lg:max-w-72 xl:max-w-full">

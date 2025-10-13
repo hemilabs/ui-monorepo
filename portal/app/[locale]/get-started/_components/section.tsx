@@ -18,7 +18,7 @@ export const Section = ({ children, step, ...props }: Props) => (
       <Card>
         <div className="flex flex-col gap-y-6 p-4 font-medium lg:flex-row lg:justify-between lg:p-6">
           <div>
-            <h3 className="text-base text-neutral-950">{props.heading}</h3>
+            <h3 className="text-mid-md text-neutral-950">{props.heading}</h3>
             <p className="mt-1 text-sm text-neutral-600">{props.subheading}</p>
           </div>
           {children}

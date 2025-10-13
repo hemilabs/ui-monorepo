@@ -21,7 +21,7 @@ export default function NotFound() {
           <h1 className="text-4xl font-medium text-neutral-950">
             Oops! Page not found
           </h1>
-          <h3 className="mt-1 text-base font-medium text-neutral-500">
+          <h3 className="text-mid-md mt-1 font-medium text-neutral-500">
             We can&apos;t find the page you&apos;re looking for.
           </h3>
         </div>

@@ -43,7 +43,7 @@ export const Error500 = function ({
         <ExclamationMark />
         <div className="w-96 text-center max-md:max-w-[80%]">
           <h1 className="text-4xl font-medium">{title}</h1>
-          <h3 className="mt-1 text-2xl font-medium text-neutral-950">
+          <h3 className="text-mid-md mt-1 font-medium text-neutral-950">
             {description}
           </h3>
         </div>

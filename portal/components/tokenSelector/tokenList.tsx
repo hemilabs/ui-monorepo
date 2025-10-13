@@ -136,7 +136,7 @@ export const TokenList = function ({
       }}
     >
       <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-xl font-medium text-neutral-950">
+        <h3 className="text-mid-md font-medium text-neutral-950">
           {t('select-token')}
         </h3>
         <CloseIcon

@@ -23,7 +23,7 @@ export default function NotFound() {
           <h1 className="text-4xl font-medium text-neutral-950">
             {t('not-found.title')}
           </h1>
-          <h3 className="mt-1 text-base font-medium text-neutral-500">
+          <h3 className="text-mid-md mt-1 font-medium text-neutral-500">
             {t('not-found.description')}
           </h3>
         </div>

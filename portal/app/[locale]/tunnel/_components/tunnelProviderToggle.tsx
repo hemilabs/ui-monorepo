@@ -70,7 +70,7 @@ export const TunnelProviderToggle = function ({
 
   return (
     <>
-      <div className="flex w-full items-center justify-center">
+      <div className="[&_li]:flex-1 [&_li]:md:flex-1">
         <Tabs>
           <Tab
             onClick={toggleNativeProvider}

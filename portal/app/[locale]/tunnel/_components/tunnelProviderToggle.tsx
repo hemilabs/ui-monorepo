@@ -8,6 +8,7 @@ import { OwIto } from 'components/customTunnelsThroughPartners/owito'
 import { Relay } from 'components/customTunnelsThroughPartners/relay'
 import { Stargate } from 'components/customTunnelsThroughPartners/stargate'
 import { WarningIcon } from 'components/icons/warningIcon'
+import { Tab, Tabs } from 'components/tabs'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
@@ -69,29 +70,23 @@ export const TunnelProviderToggle = function ({
 
   return (
     <>
-      <div className="flex w-full items-center justify-center rounded-lg bg-neutral-100 p-1">
-        <button
-          className={`flex-1 rounded-md p-1 text-sm font-medium transition ${
-            providerType === 'native'
-              ? 'bg-white text-neutral-950 shadow-sm'
-              : 'text-neutral-600 hover:text-neutral-950'
-          }`}
-          onClick={toggleNativeProvider}
-          type="button"
-        >
-          {t('form.hemi-tunnel')}
-        </button>
-        <button
-          className={`flex-1 rounded-md p-1 text-sm font-medium transition ${
-            providerType === 'thirdParty'
-              ? 'bg-white text-neutral-950 shadow-sm'
-              : 'text-neutral-600 hover:text-neutral-950'
-          }`}
-          onClick={toggleThirdPartyProvider}
-          type="button"
-        >
-          {t('form.third-party-bridge')}
-        </button>
+      <div className="flex w-full items-center justify-center">
+        <Tabs>
+          <Tab
+            onClick={toggleNativeProvider}
+            selected={providerType === 'native'}
+            size="small"
+          >
+            {t('form.hemi-tunnel')}
+          </Tab>
+          <Tab
+            onClick={toggleThirdPartyProvider}
+            selected={providerType === 'thirdParty'}
+            size="small"
+          >
+            {t('form.third-party-bridge')}
+          </Tab>
+        </Tabs>
       </div>
       {providerType === 'thirdParty' && (
         <>

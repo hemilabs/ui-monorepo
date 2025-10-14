@@ -72,9 +72,9 @@ export const FormContent = function ({
   return (
     <>
       <div className="flex items-center justify-between gap-x-2">
-        <h3 className="text-mid-md font-semibold capitalize text-neutral-950">
+        <h2 className="text-2xl font-semibold capitalize text-neutral-950">
           {t('title')}
-        </h3>
+        </h2>
         {tokenApproval}
       </div>
       <NetworkSelectors

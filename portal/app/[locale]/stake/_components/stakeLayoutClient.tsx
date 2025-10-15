@@ -10,6 +10,7 @@ import { isStakeEnabledOnTestnet } from 'utils/stake'
 
 import { useDrawerStakeQueryString } from '../_hooks/useDrawerStakeQueryString'
 
+import { Background } from './background'
 import { StakeDisabledTestnet } from './stakeDisabledTestnet'
 
 const ManageStake = dynamic(
@@ -65,6 +66,9 @@ const StakeLayoutClient = function ({ children }: Props) {
       <Suspense>
         <SideDrawer />
       </Suspense>
+      <div className="hidden md:block">
+        <Background />
+      </div>
     </>
   )
 }

@@ -1,41 +1,18 @@
 'use client'
 
 import { PageLayout } from 'components/pageLayout'
+import { PageTitle } from 'components/pageTitle'
 import { useTokenPrices } from 'hooks/useTokenPrices'
+import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { priorityStakeTokensToSort } from 'types/stake'
 import { sortTokens } from 'utils/sortTokens'
 
-import { StakeGraph } from './_components/icons/stakeGraph'
-import { StakeAndEarn } from './_components/stakeAndEarn'
 import { StakeStrategyTable } from './_components/stakeStrategyTable'
 import { useWalletBalances } from './_hooks/useWalletBalances'
 
-const PageBackground = () => (
-  <>
-    <div
-      className="absolute inset-0 -z-10"
-      style={{
-        background:
-          'radial-gradient(100% 100% at 50% 0%, rgba(253, 239, 232, 0.16) 11.7%, rgba(255, 111, 26, 0.16) 37.02%, rgba(255, 24, 20, 0.03) 60.34%), #FAFAFA',
-      }}
-    />
-
-    <div className="relative flex w-full flex-col items-center justify-between lg:flex-row lg:items-start">
-      <div
-        className="flex w-full items-center justify-center 
-    [&>div>svg]:scale-75 [&>div>svg]:lg:-translate-x-8 [&>div>svg]:lg:-translate-y-2"
-      >
-        <StakeAndEarn />
-      </div>
-      <div className="[&>svg]:lg:scale-80 [&>svg]:lg:-translate-y-25 [&>svg]:-translate-y-20 [&>svg]:scale-75 [&>svg]:lg:translate-x-12 [&>svg]:xl:translate-x-16">
-        <StakeGraph />
-      </div>
-    </div>
-  </>
-)
-
 export default function Page() {
+  const t = useTranslations('stake-page')
   const { loading: isLoadingBalance, tokensWalletBalance } = useWalletBalances()
 
   const {
@@ -58,7 +35,7 @@ export default function Page() {
             // It has to be rendered on dashboard page though
             prices,
             prioritySymbols: priorityStakeTokensToSort,
-            tokens: tokensWalletBalance.filter(t => t && t.symbol !== 'WETH'),
+            tokens: tokensWalletBalance.filter(f => f && f.symbol !== 'WETH'),
           })
         : [],
     [errorUpdateCount, isLoading, prices, tokensWalletBalance],
@@ -66,9 +43,9 @@ export default function Page() {
 
   return (
     <PageLayout variant="wide">
-      <div className="h-[calc(100vh-theme(spacing.48))]">
-        <PageBackground />
-        <div className="relative z-20 -translate-y-60 md:-translate-y-48">
+      <div className="h-fit-rest-screen w-full pb-4 md:pb-0">
+        <PageTitle title={t('stake.stake-earn-points')} />
+        <div className="mt-6 md:mt-8">
           <StakeStrategyTable data={sortedTokens} loading={isLoading} />
         </div>
       </div>

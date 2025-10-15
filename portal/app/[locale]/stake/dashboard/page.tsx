@@ -17,10 +17,7 @@ const Page = function () {
   return (
     <PageLayout variant="wide">
       <div className="h-fit-rest-screen w-full pb-4 md:pb-0">
-        <PageTitle
-          subtitle={t('dashboard.subtitle')}
-          title={t('dashboard.title')}
-        />
+        <PageTitle title={t('dashboard.title')} />
         <div className="mt-8 flex flex-col gap-6 lg:flex-row">
           <TotalStaked />
           <YourStake />

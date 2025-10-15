@@ -141,8 +141,8 @@ const ReviewContent = function ({
           hours: () =>
             isLoadingVaultGracePeriod ? (
               <Skeleton
-                className="h-full w-12"
-                containerClassName="h-5 inline-table"
+                className="mx-1 inline-block h-3.5 w-12 align-text-top"
+                containerClassName="h-3.5 inline-table"
               />
             ) : (
               tCommon('hours', {

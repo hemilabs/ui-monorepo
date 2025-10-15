@@ -334,6 +334,7 @@
     "tvl": "TVL on Hemi"
   },
   "stake-page": {
+    "action": "Action",
     "asset": "Asset",
     "change-to-mainnet": "Change to Mainnet and stake",
     "dashboard": {
@@ -376,14 +377,16 @@
       "x2point5-river-points": "x2.5 River Points"
     },
     "protocol": "Protocol",
+    "ready-to-earn": "Ready to earn? Start staking and watch your points add up",
     "rewards": "Rewards",
     "stake": {
       "action": "Action",
       "learn-how-to-stake-on-hemi": "Learn how to stake on Hemi",
       "new-here": "New here?",
-      "strategy": "Strategy",
+      "stake-earn-points": "Stake and earn points",
       "title": "Stake"
     },
+    "start-staking-earn-points": "Start staking and earn points",
     "toast": {
       "go-staking-dashboard": "View your staking dashboard",
       "here-your-stake-tx": "Here’s your {type} transaction:",

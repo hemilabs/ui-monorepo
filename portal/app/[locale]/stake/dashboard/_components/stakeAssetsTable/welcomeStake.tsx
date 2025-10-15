@@ -1,23 +1,32 @@
-import { StakeGraph } from '../../../_components/icons/stakeGraph'
-import { StakeAndEarn } from '../../../_components/stakeAndEarn'
+import { Button } from 'components/button'
+import { useTranslations } from 'next-intl'
 
-import { StakeLink } from './stakeLink'
+import { StarIcon } from '../../../_components/icons/starIcon'
 
-export const WelcomeStake = () => (
-  <div
-    className="mb-12 flex flex-col items-center rounded-xl px-5
-    pt-12 shadow-md lg:mt-12 lg:h-[50dvh] lg:flex-row lg:justify-evenly lg:gap-x-44 lg:py-12 xl:gap-x-16"
-    style={{
-      background:
-        'radial-gradient(100% 100% at 50% 0%, rgba(253, 239, 232, 0.16) 14.12%, rgba(255, 108, 21, 0.16) 32.29%, rgba(255, 24, 20, 0.03) 98.87%), #FFF',
-    }}
-  >
-    <div className="flex flex-col items-center gap-y-7">
-      <div className="[&>div>svg]:-translate-x-1/2 max-lg:[&>div>svg]:left-1/2 lg:[&>div>svg]:-translate-x-12">
-        <StakeAndEarn />
+type Props = {
+  onClick: VoidFunction
+}
+
+export function WelcomeStake({ onClick }: Props) {
+  const t = useTranslations('stake-page')
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-2 p-8">
+      <div className="flex size-8 items-center justify-center rounded-full border border-orange-100 bg-orange-50">
+        <StarIcon />
       </div>
-      <StakeLink />
+      <div className="flex flex-col items-center gap-1 text-center">
+        <h3 className="text-lg font-semibold text-neutral-950">
+          {t('start-staking-earn-points')}
+        </h3>
+        <p className="max-w-72 text-sm font-normal text-neutral-500">
+          {t('ready-to-earn')}
+        </p>
+      </div>
+      <div className="mt-2">
+        <Button onClick={onClick} size="small">
+          {t('stake.title')}
+        </Button>
+      </div>
     </div>
-    <StakeGraph />
-  </div>
-)
+  )
+}

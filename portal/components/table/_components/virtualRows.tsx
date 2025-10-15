@@ -5,12 +5,14 @@ import { Column } from './column'
 
 type Props<TData> = {
   loading: boolean
+  onRowClick?: (row: TData) => void
   rows: Row<TData>[]
   virtualItems: VirtualItem[]
 }
 
 export function VirtualRows<TData>({
   loading,
+  onRowClick,
   rows,
   virtualItems,
 }: Props<TData>) {
@@ -27,6 +29,7 @@ export function VirtualRows<TData>({
             className="group/row absolute flex w-full items-center"
             data-index={virtualRow.index}
             key={row.id}
+            onClick={() => onRowClick?.(row.original)}
             style={{
               height: `${virtualRow.size}px`,
               transform: `translateY(${virtualRow.start}px)`,

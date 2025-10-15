@@ -7,7 +7,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useWindowSize } from 'hooks/useWindowSize'
-import { RefObject, useRef } from 'react'
+import { ReactNode, RefObject, useRef } from 'react'
 
 import { ColumnHeader } from './_components/columnHeader'
 import { LoadingMoreIndicator } from './_components/loadingMoreIndicator'
@@ -67,6 +67,8 @@ type TableBodyProps<TData> = {
   fetchMoreOnBottomReached: (el?: HTMLDivElement | null) => void
   isFetching: boolean
   loading: boolean
+  onRowClick?: (row: TData) => void
+  placeholder?: ReactNode
   rowSize: number
   rowVirtualizer: ReturnType<typeof useTableVirtualizer<TData>>
   scrollContainerRef: RefObject<HTMLDivElement | null>
@@ -78,6 +80,8 @@ function TableBody<TData>({
   fetchMoreOnBottomReached,
   isFetching,
   loading,
+  onRowClick,
+  placeholder,
   rowSize,
   rowVirtualizer,
   scrollContainerRef,
@@ -99,36 +103,41 @@ function TableBody<TData>({
         scrollbarWidth: 'thin',
       }}
     >
-      <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
-        <tbody
-          className="relative"
-          style={{
-            height: `${
-              rowVirtualizer.getTotalSize() +
-              (isFetching && !loading ? rowSize : 0)
-            }px`,
-          }}
-        >
-          <LoadingSkeletonRows
-            loading={loading}
-            rows={rows}
-            skeletonRows={skeletonRows}
-            table={table}
-          />
-          <VirtualRows
-            loading={loading}
-            rows={rows}
-            virtualItems={virtualItems}
-          />
-          <LoadingMoreIndicator
-            isFetching={isFetching}
-            loading={loading}
-            rowSize={rowSize}
-            rowVirtualizer={rowVirtualizer}
-            table={table}
-          />
-        </tbody>
-      </table>
+      {!placeholder ? (
+        <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
+          <tbody
+            className="relative"
+            style={{
+              height: `${
+                rowVirtualizer.getTotalSize() +
+                (isFetching && !loading ? rowSize : 0)
+              }px`,
+            }}
+          >
+            <LoadingSkeletonRows
+              loading={loading}
+              rows={rows}
+              skeletonRows={skeletonRows}
+              table={table}
+            />
+            <VirtualRows
+              loading={loading}
+              onRowClick={onRowClick}
+              rows={rows}
+              virtualItems={virtualItems}
+            />
+            <LoadingMoreIndicator
+              isFetching={isFetching}
+              loading={loading}
+              rowSize={rowSize}
+              rowVirtualizer={rowVirtualizer}
+              table={table}
+            />
+          </tbody>
+        </table>
+      ) : (
+        placeholder
+      )}
     </div>
   )
 }
@@ -140,6 +149,8 @@ export type TableProps<TData> = {
   hasNextPage?: boolean
   isFetching?: boolean
   loading?: boolean
+  onRowClick?: (row: TData) => void
+  placeholder?: ReactNode
   priorityColumnIdsOnSmall?: string[]
   rowSize?: number
   skeletonRows?: number
@@ -153,6 +164,8 @@ export function Table<TData>({
   hasNextPage = false,
   isFetching = false,
   loading = false,
+  onRowClick,
+  placeholder,
   priorityColumnIdsOnSmall,
   rowSize = 64,
   skeletonRows = 4,
@@ -202,7 +215,7 @@ export function Table<TData>({
   const virtualItems = rowVirtualizer.getVirtualItems()
 
   return (
-    <div className="flex h-full flex-col bg-neutral-50">
+    <div className="flex h-full flex-col">
       <div
         className="flex h-full flex-col overflow-x-auto"
         style={{
@@ -221,6 +234,8 @@ export function Table<TData>({
             fetchMoreOnBottomReached={fetchMoreOnBottomReached}
             isFetching={isFetching}
             loading={loading}
+            onRowClick={onRowClick}
+            placeholder={placeholder}
             rowSize={rowSize}
             rowVirtualizer={rowVirtualizer}
             scrollContainerRef={scrollContainerRef}

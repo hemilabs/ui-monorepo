@@ -11,7 +11,7 @@ import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useUmami } from 'hooks/useUmami'
 import { useRouter } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
-import { useCallback, useMemo } from 'react'
+import { MouseEvent, useCallback, useMemo } from 'react'
 import { priorityStakeTokensToSort, StakeToken } from 'types/stake'
 import { sortTokens } from 'utils/sortTokens'
 import { queryStringObjectToString } from 'utils/url'
@@ -133,6 +133,9 @@ export const StakeAssetsTable = function () {
 
   const sortedTokens = useMemo(
     () =>
+      // If prices errored, let's show the tokens without price ordering.
+      // If the prices API eventually comes back, prices will be redefined and they will
+      // be sorted as expected.
       !isLoading || errorUpdateCount > 0
         ? sortTokens<StakeToken>({
             prices,
@@ -144,8 +147,13 @@ export const StakeAssetsTable = function () {
   )
 
   const stakeMoreUrl = 'stake'
-
-  function goToStakePage() {
+  function goToStakePage(e: MouseEvent<HTMLAnchorElement>) {
+    // If the user is trying to open the link in a new tab or window, let the browser handle it
+    if (e.ctrlKey || e.metaKey || e.shiftKey) {
+      return
+    }
+    e.preventDefault()
+    e.stopPropagation()
     track?.('stake - stake more')
     const queryString = queryStringObjectToString({ networkType })
     router.push(`/${stakeMoreUrl}${queryString}`)
@@ -168,7 +176,7 @@ export const StakeAssetsTable = function () {
           onRowClick={handleRowClick}
           placeholder={
             tokensWithPosition.length === 0 && (
-              <WelcomeStake onClick={goToStakePage} />
+              <WelcomeStake href={`/${stakeMoreUrl}`} onClick={goToStakePage} />
             )
           }
           priorityColumnIdsOnSmall={['action']}

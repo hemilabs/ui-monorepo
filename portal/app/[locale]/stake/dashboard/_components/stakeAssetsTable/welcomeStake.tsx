@@ -1,13 +1,15 @@
-import { Button } from 'components/button'
+import { ButtonLink } from 'components/button'
 import { useTranslations } from 'next-intl'
+import { MouseEvent } from 'react'
 
 import { StarIcon } from '../../../_components/icons/starIcon'
 
 type Props = {
-  onClick: VoidFunction
+  href: string
+  onClick: (e: MouseEvent<HTMLAnchorElement>) => void
 }
 
-export function WelcomeStake({ onClick }: Props) {
+export function WelcomeStake({ href, onClick }: Props) {
   const t = useTranslations('stake-page')
   return (
     <div className="flex h-full flex-col items-center justify-center gap-2 p-8">
@@ -23,9 +25,9 @@ export function WelcomeStake({ onClick }: Props) {
         </p>
       </div>
       <div className="mt-2">
-        <Button onClick={onClick} size="small">
+        <ButtonLink href={href} onClick={onClick} size="small">
           {t('stake.title')}
-        </Button>
+        </ButtonLink>
       </div>
     </div>
   )

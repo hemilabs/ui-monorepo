@@ -148,13 +148,13 @@ export const StakeAssetsTable = function () {
 
   const stakeMoreUrl = 'stake'
   function goToStakePage(e: MouseEvent<HTMLAnchorElement>) {
+    track?.('stake - stake more')
     // If the user is trying to open the link in a new tab or window, let the browser handle it
     if (e.ctrlKey || e.metaKey || e.shiftKey) {
       return
     }
     e.preventDefault()
     e.stopPropagation()
-    track?.('stake - stake more')
     const queryString = queryStringObjectToString({ networkType })
     router.push(`/${stakeMoreUrl}${queryString}`)
   }

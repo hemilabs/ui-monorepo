@@ -1,6 +1,7 @@
 'use client'
 
 import { PageLayout } from 'components/pageLayout'
+import { PageTitle } from 'components/pageTitle'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
@@ -43,9 +44,7 @@ export default function Page() {
   return (
     <PageLayout variant="wide">
       <div className="h-fit-rest-screen w-full pb-4 md:pb-0">
-        <h1 className="text-2xl font-semibold text-neutral-950">
-          {t('stake.stake-earn-points')}
-        </h1>
+        <PageTitle title={t('stake.stake-earn-points')} />
         <div className="mt-6 md:mt-8">
           <StakeStrategyTable data={sortedTokens} loading={isLoading} />
         </div>

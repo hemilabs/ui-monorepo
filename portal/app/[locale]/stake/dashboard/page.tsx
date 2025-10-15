@@ -1,6 +1,7 @@
 'use client'
 
 import { PageLayout } from 'components/pageLayout'
+import { PageTitle } from 'components/pageTitle'
 import { useTranslations } from 'next-intl'
 
 import { StakeAssetsTable } from './_components/stakeAssetsTable'
@@ -16,9 +17,7 @@ const Page = function () {
   return (
     <PageLayout variant="wide">
       <div className="h-fit-rest-screen w-full pb-4 md:pb-0">
-        <h1 className="text-2xl font-semibold text-neutral-950">
-          {t('dashboard.title')}
-        </h1>
+        <PageTitle title={t('dashboard.title')} />
         <div className="mt-8 flex flex-col gap-6 lg:flex-row">
           <TotalStaked />
           <YourStake />

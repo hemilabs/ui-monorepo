@@ -58,7 +58,6 @@ const CallToAction = function ({ stake }: ActionProps) {
 
 type StakeColumnsProps = {
   t: ReturnType<typeof useTranslations<'stake-page'>>
-  onRowClick: (token: StakeToken) => void
 }
 
 const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
@@ -157,14 +156,7 @@ export const StakeAssetsTable = function () {
     [setDrawerQueryString],
   )
 
-  const cols = useMemo(
-    () =>
-      stakeColumns({
-        onRowClick: handleRowClick,
-        t,
-      }),
-    [handleRowClick, t],
-  )
+  const cols = useMemo(() => stakeColumns({ t }), [t])
 
   return (
     <div className="w-full rounded-xl text-sm font-medium">

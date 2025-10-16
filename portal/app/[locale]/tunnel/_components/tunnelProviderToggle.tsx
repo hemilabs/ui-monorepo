@@ -70,7 +70,7 @@ export const TunnelProviderToggle = function ({
 
   return (
     <>
-      <div className="[&_li]:flex-1 [&_li]:md:flex-1">
+      <div className="[&_li]:flex-1 [&_li]:md:flex-1 [&_ul.flex.w-full.flex-wrap.items-center.gap-x-2.gap-y-1]:gap-x-3 [&_ul.flex.w-full.flex-wrap.items-center.gap-x-2.gap-y-1_li]:py-0">
         <Tabs>
           <Tab
             onClick={toggleNativeProvider}

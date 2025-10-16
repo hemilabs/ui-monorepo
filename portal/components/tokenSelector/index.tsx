@@ -64,14 +64,16 @@ export const TokenSelector = function ({
   return (
     <>
       <button
-        className="shadow-soft group/token-selector flex items-center gap-x-2 rounded-lg border
+        className="shadow-soft group/token-selector flex w-40 items-center gap-x-1.5 rounded-lg border
         border-solid border-neutral-300/55 bg-white p-2 text-sm font-medium hover:bg-neutral-100"
         disabled={disabled || tokens.length < 2}
         onClick={openModal}
         type="button"
       >
         <TokenLogo size="small" token={selectedToken} />
-        <span className="text-neutral-950">{selectedToken.symbol}</span>
+        <span className="font-semibold text-neutral-950">
+          {selectedToken.symbol}
+        </span>
         {tokens.length > 1 && (
           <Chevron.Bottom className="ml-auto flex-shrink-0 [&>path]:fill-neutral-500 [&>path]:group-hover/token-selector:fill-neutral-950" />
         )}

@@ -85,7 +85,7 @@ export const FormContent = function ({
       />
       {provider}
       {(!provider || providerType === 'native') && (
-        <>
+        <div className="flex flex-col gap-1.5">
           <TokenInput
             disabled={isRunningOperation}
             errorKey={errorKey}
@@ -123,7 +123,7 @@ export const FormContent = function ({
               onSelectToken={updateFromToken}
             />
           )}
-        </>
+        </div>
       )}
     </>
   )
@@ -144,10 +144,10 @@ export const TunnelForm = ({
   onSubmit,
   submitButton,
 }: TunnelFormProps) => (
-  <div className="relative mx-auto max-w-[536px] [&>.card-container]:first:relative [&>.card-container]:first:z-10">
+  <div className="relative mx-auto max-w-[536px] [&>.card-container]:first:relative [&>.card-container]:first:z-10 [&_ul.flex.w-full.flex-wrap.items-center.gap-x-2.gap-y-1_li]:py-0">
     <Card>
       <form
-        className="flex flex-col gap-y-3 p-4 md:p-6"
+        className="flex flex-col gap-6 p-4 md:p-6"
         onSubmit={function (e: FormEvent) {
           e.preventDefault()
           onSubmit()

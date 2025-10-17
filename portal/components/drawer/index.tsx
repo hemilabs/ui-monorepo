@@ -68,7 +68,7 @@ export const DrawerTopSection = ({
   onClose?: () => void
 }) => (
   <div className="flex items-center justify-between">
-    <h2 className="text-2xl font-medium text-neutral-950">{heading}</h2>
+    <h2>{heading}</h2>
     {!!onClose && (
       <button className="size-5 cursor-pointer" onClick={onClose} type="button">
         <CloseIcon className="size-full [&>path]:hover:stroke-black" />

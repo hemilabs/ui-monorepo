@@ -141,9 +141,7 @@ export const LearnMore = function () {
 
   return (
     <>
-      <h2 className="text-2xl font-medium text-neutral-950">
-        {t('learn-more-about-hemi')}
-      </h2>
+      <h2>{t('learn-more-about-hemi')}</h2>
       <p className="mb-6 text-sm font-medium text-neutral-600 md:mb-8">
         {t('tutorials-and-tools')}
       </p>

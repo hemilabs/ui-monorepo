@@ -18,12 +18,10 @@ export default function NotFound() {
       <div className="z-10 m-auto flex flex-col items-center gap-4">
         <ExclamationMark />
         <div className="text-center">
-          <h1 className="text-4xl font-semibold text-neutral-950">
-            Oops! Page not found
-          </h1>
-          <h3 className="mt-1 text-sm font-medium text-neutral-500">
+          <h3>Oops! Page not found</h3>
+          <p className="mt-1 text-sm font-medium text-neutral-500">
             We can&apos;t find the page you&apos;re looking for.
-          </h3>
+          </p>
         </div>
         <a
           className="button--base button-primary button-small button-regular"

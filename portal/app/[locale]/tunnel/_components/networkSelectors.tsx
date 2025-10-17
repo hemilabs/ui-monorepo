@@ -28,7 +28,7 @@ export const NetworkSelectors = function ({
   const t = useTranslations('tunnel-page')
 
   return (
-    <div className="mb-3 flex items-end justify-between gap-x-3">
+    <div className="flex items-end justify-between gap-x-3">
       <div className="w-[calc(50%-38px-0.75rem)] flex-grow">
         <NetworkSelector
           disabled={isRunningOperation}

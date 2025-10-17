@@ -148,7 +148,7 @@ export const TunnelForm = ({
   <div className="relative mx-auto max-w-[536px] [&>.card-container]:first:relative [&>.card-container]:first:z-10">
     <Card>
       <form
-        className="flex flex-col gap-3 p-4 md:p-6"
+        className="flex flex-col gap-y-3 p-4 md:p-6"
         onSubmit={function (e: FormEvent) {
           e.preventDefault()
           onSubmit()

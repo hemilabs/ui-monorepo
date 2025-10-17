@@ -67,7 +67,7 @@ export const TokenInput = function <T extends Token>({
           <span className="text-sm">{label}</span>
           <input
             className={`
-            text-3.25xl max-w-1/2 w-full bg-transparent ${getTextColor(
+            max-w-1/2 w-full bg-transparent text-4xl ${getTextColor(
               value,
               errorKey,
             )}

@@ -7,7 +7,7 @@ import Skeleton from 'react-loading-skeleton'
 import { DollarSign } from './dollarSign'
 
 const Text = ({ children }: { children: ReactNode }) => (
-  <h2 className="text-2xl font-semibold text-white">{children}</h2>
+  <h2 className="text-white">{children}</h2>
 )
 
 const TvlImpl = function () {

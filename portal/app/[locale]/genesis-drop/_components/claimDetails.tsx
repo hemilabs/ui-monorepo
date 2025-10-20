@@ -225,9 +225,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
             '0 0 0 1px rgba(10, 10, 10, 0.08), 0 1px 2px 0 rgba(10, 10, 10, 0.10)',
         }}
       >
-        <h3 className="px-6 py-3 text-lg font-semibold text-black">
-          {t('claim-details')}
-        </h3>
+        <h3 className="px-6 py-3">{t('claim-details')}</h3>
         <div
           className="relative z-10 rounded-xl bg-white px-6"
           style={{

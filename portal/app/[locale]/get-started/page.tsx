@@ -13,7 +13,7 @@ const GetStarted = function () {
 
   return (
     <PageLayout variant="center">
-      <h1 className="mb-1 text-2xl font-medium text-neutral-950">
+      <h1 className="mb-1 text-4xl font-medium text-neutral-950">
         {t('heading')}
       </h1>
       <p className="text-sm font-medium text-neutral-600">{t('subheading')}</p>

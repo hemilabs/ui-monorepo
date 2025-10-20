@@ -71,12 +71,11 @@ export const FormContent = function ({
 
   return (
     <>
-      <div className="flex items-center justify-between gap-x-2">
-        <h3 className="text-xl font-medium capitalize text-neutral-950">
-          {t('title')}
-        </h3>
+      <div className="mb-3 flex items-center justify-between gap-x-2">
+        <h2 className="capitalize">{t('title')}</h2>
         {tokenApproval}
       </div>
+
       <NetworkSelectors
         fromNetworkId={fromNetworkId}
         isRunningOperation={isRunningOperation}
@@ -87,7 +86,7 @@ export const FormContent = function ({
       />
       {provider}
       {(!provider || providerType === 'native') && (
-        <>
+        <div className="mb-3 flex flex-col gap-y-1.5">
           <TokenInput
             disabled={isRunningOperation}
             errorKey={errorKey}
@@ -125,7 +124,7 @@ export const FormContent = function ({
               onSelectToken={updateFromToken}
             />
           )}
-        </>
+        </div>
       )}
     </>
   )

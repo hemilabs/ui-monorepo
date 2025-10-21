@@ -24,6 +24,7 @@ export function RangeSlider({
   const safeValue = Math.max(value, effectiveMin)
   const uiValue = safeValue === max ? maxUI : safeValue
 
+  // Tolerance in steps to prevent clicks near the locked area
   const clickToleranceSteps = 8
 
   // locked area goes from absolute min to minLocked

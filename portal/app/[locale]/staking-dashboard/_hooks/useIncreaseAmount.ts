@@ -85,6 +85,13 @@ export const useIncreaseAmount = function ({
           transactionHash: undefined,
         })
       })
+
+      emitter.on('user-signing-approve-error', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.APPROVAL_TX_FAILED,
+        })
+      })
+
       emitter.on('approve-transaction-reverted', function (receipt) {
         updateStakingDashboardOperation({
           status: StakingDashboardStatus.APPROVAL_TX_FAILED,

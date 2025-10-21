@@ -1,6 +1,5 @@
 'use client'
 
-import { daysToSeconds } from 'app/[locale]/staking-dashboard/_utils/lockCreationTimes'
 import { DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import {
@@ -19,10 +18,11 @@ import {
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
+import { minDays } from '../../../../staking-dashboard/_utils/lockCreationTimes'
 import { useStakingDashboard } from '../../../_context/stakingDashboardContext'
 import { useEstimateIncreaseUnlockTimeFees } from '../../../_hooks/useEstimateIncreaseUnlockTimeFees'
 import { useIncreaseUnlockTime } from '../../../_hooks/useIncreaseUnlockTime'
-import { isValidLockup } from '../../lockup'
+import { getNearestValidValues, isValidLockup } from '../../lockup'
 
 import { Preview } from './preview'
 import { RetryIncreaseUnlockTime } from './retryIncreaseUnlockTime'
@@ -160,44 +160,41 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
       updateStakingDashboardOperation,
     })
 
-  // TODO: This UX/UI will be improved in future iterations.
-  // For now, we are just adding the step value to the current lockupDays
-  // So this validation will be replaced soon
-  function checkLockupIsGreater() {
+  const calculateCurrentLockupDays = function () {
     if (
       stakingPosition?.lockTime !== undefined &&
       stakingPosition?.timestamp !== undefined
     ) {
       const currentTimestamp = BigInt(Math.floor(Date.now() / 1000))
-      const SIX_DAYS = BigInt(6 * 24 * 60 * 60)
+      const sixDays = BigInt(6 * 24 * 60 * 60)
+      const secondsPerDay = BigInt(24 * 60 * 60)
 
-      // Calculate the current unlock time by adding duration to start time.
-      // The contract stores unlock times rounded down to 6-day increments,
-      // so we round it here to match the on-chain value.
+      // Calculate the current unlock time
       const currentEnd =
         BigInt(stakingPosition.timestamp) + BigInt(stakingPosition.lockTime)
-      const roundedCurrentEnd = (currentEnd / SIX_DAYS) * SIX_DAYS
+      const roundedCurrentEnd = (currentEnd / sixDays) * sixDays
 
-      // Calculate the new unlock time from the user's input.
-      // The contract adds the duration to the current timestamp and rounds down,
-      // so we replicate that logic here.
-      const rawUnlockTime =
-        currentTimestamp + daysToSeconds(BigInt(lockupDays!))
-      const newUnlockTime = (rawUnlockTime / SIX_DAYS) * SIX_DAYS
+      // Calculate how many days from now until unlock
+      const secondsRemaining = roundedCurrentEnd - currentTimestamp
+      const daysFromNow = Number(secondsRemaining / secondsPerDay)
 
-      // The contract requires the new unlock time to be strictly greater than
-      // the current one. This allows extending positions close to expiry with
-      // any duration that results in a longer lock.
-      if (newUnlockTime <= roundedCurrentEnd) {
-        return tDrawer('increase-unlock-time.lockup-period-longer')
-      }
+      // Round to match the minimum days (12 days)
+      return Math.max(0, Math.round(daysFromNow)) + minDays
     }
 
     return undefined
   }
 
-  const isValid =
-    isValidLockup(lockupDays!) && checkLockupIsGreater() === undefined
+  const currentLockupDays = calculateCurrentLockupDays()
+  const nearest = getNearestValidValues({
+    minLocked: currentLockupDays,
+    value: currentLockupDays ?? minDays,
+  })
+
+  const isValid = isValidLockup({
+    minLocked: currentLockupDays,
+    value: lockupDays!,
+  })
 
   return (
     <>
@@ -220,6 +217,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
         isRunningOperation={isRunningOperation}
         isValid={isValid}
         lockupDays={lockupDays!}
+        minLocked={nearest ? nearest.maxValue! : undefined}
         onSubmit={increaseUnlockTime}
         onUpdateInputDays={function (value) {
           updateStakingDashboardOperation({
@@ -233,7 +231,6 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
         }}
         operationRunning={operationRunning}
         steps={getSteps()}
-        validationError={checkLockupIsGreater()}
       />
     </>
   )

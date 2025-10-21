@@ -1,8 +1,7 @@
-import { WarningIcon } from 'components/icons/warningIcon'
 import { LockupInput } from 'components/inputText'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'next-intl'
-import { ReactNode, useMemo, useState } from 'react'
+import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { formatDate } from 'utils/format'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -14,10 +13,31 @@ import {
   minDays,
   step,
   twoYears,
-} from '../_utils/lockCreationTimes'
-import { sanitizeLockup } from '../_utils/sanitizeLockup'
+} from '../../_utils/lockCreationTimes'
+import { sanitizeLockup } from '../../_utils/sanitizeLockup'
 
 import { RangeSlider } from './rangeSlider'
+import { WarningMessage } from './warningMessage'
+
+function addDays(date: Date, days: number) {
+  const result = new Date(date)
+  result.setDate(result.getDate() + days)
+  return result
+}
+
+type ValidLockupProps = {
+  minLocked?: number
+  value: number
+}
+
+export const isValidLockup = ({
+  minLocked = minDays,
+  value,
+}: ValidLockupProps) =>
+  !Number.isNaN(value) &&
+  value >= minLocked &&
+  value <= maxDays &&
+  (value % step === 0 || value === maxDays)
 
 type NearestValidValues = {
   minValue: number | null | undefined
@@ -29,31 +49,39 @@ type TryValuesHintProps = NearestValidValues & {
   isValid: boolean
 }
 
-export const isValidLockup = (n: number) =>
-  !Number.isNaN(n) &&
-  n >= minDays &&
-  n <= maxDays &&
-  (n % step === 0 || n === maxDays)
-
-function addDays(date: Date, days: number) {
-  const result = new Date(date)
-  result.setDate(result.getDate() + days)
-  return result
+type NearestValidValuesProps = {
+  minLocked?: number
+  value: number
 }
 
-function getNearestValidValues(n: number): NearestValidValues {
-  if (Number.isNaN(n)) return null
+export function getNearestValidValues({
+  minLocked,
+  value,
+}: NearestValidValuesProps): NearestValidValues {
+  if (Number.isNaN(value)) {
+    return null
+  }
 
-  if (n <= minDays) return { maxValue: null, minValue: minDays }
-  if (n >= maxDays) return { maxValue: maxDays, minValue: null }
+  if (value >= maxDays) return { maxValue: maxDays, minValue: null }
+  if (value <= minDays) return { maxValue: null, minValue: minDays }
 
-  const base = Math.floor((n - minDays) / step) * step + minDays
+  // Calculate based on minDays
+  const base = Math.floor((value - minDays) / step) * step + minDays
   const lower = base
   const upper = Math.min(base + step, maxDays)
 
+  // Filter out values below minLocked
+  const validLower = minLocked && lower < minLocked ? null : lower
+  const validUpper = minLocked && upper < minLocked ? null : upper
+
+  // If value is below minLocked, only suggest minLocked or higher
+  if (minLocked && value < minLocked) {
+    return { maxValue: null, minValue: minLocked }
+  }
+
   return {
-    maxValue: upper <= maxDays ? upper : null,
-    minValue: lower >= minDays ? lower : null,
+    maxValue: validUpper,
+    minValue: validLower,
   }
 }
 
@@ -66,15 +94,29 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => (
   </p>
 )
 
+type TryValuesHintFullProps = TryValuesHintProps & {
+  minLocked?: number
+  onSelectValue: (value: number) => void
+  touched?: boolean
+}
+
 function TryValuesHint({
   inputText,
   isValid,
   maxValue,
+  minLocked,
   minValue,
   onSelectValue,
-}: TryValuesHintProps & { onSelectValue: (value: number) => void }) {
+  touched,
+}: TryValuesHintFullProps) {
   const t = useTranslations('staking-dashboard.form')
-  if (isValid || !inputText) return null
+  if (
+    isValid ||
+    !inputText ||
+    (!touched && minLocked && Number(inputText) < minLocked)
+  ) {
+    return null
+  }
 
   const renderValue = (value: number, label?: ReactNode) => (
     <button
@@ -111,6 +153,7 @@ type Props = {
   input: string
   inputDays: string
   lockupDays: number
+  minLocked?: number
   updateInputDays: (days: string) => void
   updateLockupDays: (days: number) => void
 }
@@ -119,6 +162,7 @@ export function Lockup({
   input,
   inputDays,
   lockupDays,
+  minLocked,
   updateInputDays,
   updateLockupDays,
 }: Props) {
@@ -132,8 +176,8 @@ export function Lockup({
   const [isFocused, setIsFocused] = useState(false)
 
   const inputNumber = Number(inputDays)
-  const valid = isValidLockup(inputNumber)
-  const nearest = getNearestValidValues(inputNumber)
+  const valid = isValidLockup({ minLocked, value: inputNumber })
+  const nearest = getNearestValidValues({ minLocked, value: inputNumber })
   const expireDate = formatDate(addDays(new Date(), lockupDays), locale)
 
   const votingPowerRatio = useMemo(
@@ -153,7 +197,7 @@ export function Lockup({
 
       const formattedPower = formatUnits(votingPower, token.decimals)
       const numberFormatter = new Intl.NumberFormat(locale, {
-        maximumFractionDigits: 3, // Show up to 3 decimal places
+        maximumFractionDigits: 3,
       })
 
       return numberFormatter.format(Number(formattedPower))
@@ -174,12 +218,45 @@ export function Lockup({
     updateLockupDays(Number(value))
   }
 
-  const displayValue =
-    isFocused || !inputDays ? inputDays : t('form.days', { days: inputDays })
+  function handleStepClick(days: number) {
+    // Prevent clicking on steps below minLocked
+    if (minLocked && days < minLocked) {
+      return
+    }
+    handleInputChange(days.toString())
+  }
+
+  function getDisplayValue() {
+    if (isFocused) {
+      return inputDays
+    }
+
+    let days = inputDays
+
+    if (!inputDays && minLocked) {
+      days = String(minLocked)
+    } else if (minLocked && Number(inputDays) < minLocked) {
+      days = String(minLocked)
+    }
+
+    return days ? t('form.days', { days }) : days
+  }
+
+  const displayValue = getDisplayValue()
+
+  useEffect(
+    function updateInputDaysByMinLocked() {
+      if (minLocked && Number(inputDays) < minLocked && !touched) {
+        updateInputDays(String(minLocked))
+        updateLockupDays(minLocked)
+      }
+    },
+    [inputDays, minLocked, touched, updateInputDays, updateLockupDays],
+  )
 
   return (
     <>
-      <div className="w-full space-y-4 rounded-lg bg-neutral-50 p-4 ring-1 ring-transparent hover:ring-neutral-300/55">
+      <div className="hover:shadow-bs w-full space-y-4 rounded-lg border border-solid border-transparent bg-neutral-50 p-4 ring-1 ring-transparent">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-neutral-500">
             {t('lockup-period')}
@@ -189,8 +266,10 @@ export function Lockup({
               inputText={inputDays}
               isValid={valid}
               maxValue={nearest?.maxValue}
+              minLocked={minLocked}
               minValue={nearest?.minValue}
               onSelectValue={value => handleInputChange(value.toString())}
+              touched={touched}
             />
             <div className="w-26">
               <LockupInput
@@ -207,6 +286,7 @@ export function Lockup({
         <RangeSlider
           max={maxDays}
           min={minDays}
+          minLocked={minLocked}
           onChange={handleSliderChange}
           step={step}
           value={lockupDays}
@@ -216,15 +296,23 @@ export function Lockup({
             { days: minDays, label: t('form.days', { days: minDays }) },
             { days: twoYears, label: t('form.years', { years: 2 }) },
             { days: maxDays, label: t('form.years', { years: 4 }) },
-          ].map(({ days, label }) => (
-            <span
-              className="cursor-pointer hover:text-neutral-950"
-              key={days}
-              onClick={() => handleInputChange(days.toString())}
-            >
-              {label}
-            </span>
-          ))}
+          ].map(function ({ days, label }) {
+            const isDisabled = minLocked && days < minLocked
+
+            return (
+              <span
+                className={`${
+                  isDisabled
+                    ? 'cursor-default text-neutral-400'
+                    : 'cursor-pointer hover:text-neutral-950'
+                }`}
+                key={days}
+                onClick={() => handleStepClick(days)}
+              >
+                {label}
+              </span>
+            )
+          })}
         </div>
         <Divider />
         <InfoRow label={t('form.expire-date')} value={expireDate} />
@@ -234,15 +322,13 @@ export function Lockup({
           value={`${input} ${token.symbol} = ${votingPowerRatio} ve${token.symbol}`}
         />
       </div>
-      <div
-        className={`mt-3 flex items-start justify-center gap-x-1 text-center text-sm font-medium ${
-          touched && !valid ? 'text-rose-500' : 'text-neutral-900'
-        }`}
-      >
-        <span className="mt-0.5 shrink-0 leading-none">
-          <WarningIcon />
-        </span>
-        <span>{t('form.lockup-increment-warning')}</span>
+      <div className="mt-5 space-y-2">
+        <WarningMessage isError={touched && !valid}>
+          {t('form.lockup-increment-warning')}
+        </WarningMessage>
+        {minLocked && (
+          <WarningMessage>{t('form.lockup-extend-warning')}</WarningMessage>
+        )}
       </div>
     </>
   )

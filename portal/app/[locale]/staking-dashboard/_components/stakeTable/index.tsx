@@ -81,7 +81,7 @@ const stakingColumns = ({
     ),
     header: () => <Header text={t('table.lockup')} />,
     id: 'lockup',
-    meta: { width: '200px' },
+    meta: { width: '120px' },
   },
   {
     cell: ({ row }) => <TimeRemaining operation={row.original} />,

@@ -80,7 +80,7 @@ export const Stake = function () {
     token,
   })
 
-  const canStake = validInput && isValidLockup(lockupDays)
+  const canStake = validInput && isValidLockup({ value: lockupDays })
 
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
     useEstimateApproveErc20Fees({

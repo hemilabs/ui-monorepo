@@ -24,12 +24,12 @@ type PreviewProps = {
   isRunningOperation: boolean
   isValid: boolean
   lockupDays: number
+  minLocked?: number
   onSubmit: VoidFunction
   onUpdateInputDays: (value: string) => void
   onUpdateLockupDays: (value: number) => void
   operationRunning: StakingOperationRunning
   steps: StepPropsWithoutPosition[]
-  validationError: string | undefined
 }
 
 export function Preview({
@@ -40,12 +40,12 @@ export function Preview({
   isRunningOperation,
   isValid,
   lockupDays,
+  minLocked,
   onSubmit,
   onUpdateInputDays,
   onUpdateLockupDays,
   operationRunning,
   steps,
-  validationError,
 }: PreviewProps) {
   const token = useHemiToken()
   return (
@@ -69,6 +69,7 @@ export function Preview({
               input={input}
               inputDays={inputDays}
               lockupDays={lockupDays}
+              minLocked={minLocked}
               updateInputDays={onUpdateInputDays}
               updateLockupDays={onUpdateLockupDays}
             />
@@ -89,7 +90,7 @@ export function Preview({
                 needsApproval={false}
                 operationRunning={operationRunning}
                 token={token}
-                validationError={validationError}
+                validationError={undefined}
               />
             </div>
           </CallToActionContainer>

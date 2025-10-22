@@ -243,7 +243,6 @@
       },
       "increase-unlock-time": {
         "heading": "Extend lockup duration",
-        "lockup-period-longer": "Lockup period must be longer.",
         "subheading": "Add more time to your existing lockup to boost your governance power."
       },
       "stake": {
@@ -263,6 +262,7 @@
       "approving": "Approving...",
       "days": "{days, plural, one {{days} day} other {{days} days}}",
       "expire-date": "Expire date:",
+      "lockup-extend-warning": "You can extend your lock-up up to 4 years total.",
       "lockup-increment-warning": "Lock-up time can be set in 6-day increments.",
       "max-days": "Max. {days} {days, plural, one {day} other {days}}",
       "min-days": "Min. {days} {days, plural, one {day} other {days}}",

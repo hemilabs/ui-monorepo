@@ -243,7 +243,6 @@
       },
       "increase-unlock-time": {
         "heading": "Extender la duración del bloqueo",
-        "lockup-period-longer": "El período de bloqueo debe ser más largo.",
         "subheading": "Agregue más tiempo a su bloqueo existente para aumentar su poder de gobernanza."
       },
       "stake": {
@@ -263,6 +262,7 @@
       "approving": "Aprobando...",
       "days": "{days, plural, one {{days} día} other {{days} días}}",
       "expire-date": "Fecha de vencimiento:",
+      "lockup-extend-warning": "Puede extender su período de bloqueo hasta un total de 4 años.",
       "lockup-increment-warning": "El tiempo de bloqueo se puede configurar en incrementos de 6 días.",
       "max-days": "Máx. {days} {days, plural, one {día} other {días}}",
       "min-days": "Mín. {days} {days, plural, one {día} other {días}}",

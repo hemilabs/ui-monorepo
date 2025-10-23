@@ -57,8 +57,8 @@ export const NetworkSelector = function ({
     track?.(eventName)
   }
 
-  const commonCss = `flex items-center border border-solid border-neutral-300/55 shadow-soft
-    text-sm font-medium text-neutral-950 rounded-lg bg-white p-2 gap-x-2`
+  const commonCss = `flex h-8 items-center border border-solid border-neutral-300/55 shadow-soft
+    text-sm font-medium text-neutral-950 rounded-lg bg-white py-1.5 px-3 gap-x-2 leading-[18px]`
 
   if (readonly || networks.length === 1) {
     return (

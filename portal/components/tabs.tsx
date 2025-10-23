@@ -35,8 +35,8 @@ export const Tab = function ({
         flex flex-1 items-center py-1 *:w-full md:flex-auto
       ${
         selected
-          ? '*:cursor-default before:*:duration-0 hover:before:*:bg-white'
-          : '*:bg-neutral-100 *:text-neutral-700 *:shadow-none *:transition-colors *:duration-300 before:*:bg-neutral-100 hover:*:text-neutral-950'
+          ? '*:duration-600 before:*:duration-600 *:cursor-default *:bg-white *:transition-colors before:*:bg-white before:*:transition-colors hover:before:*:bg-white'
+          : '*:duration-600 before:*:duration-600 *:bg-neutral-100 *:text-neutral-700 *:shadow-none *:transition-colors before:*:bg-neutral-100 before:*:transition-colors hover:*:text-neutral-950'
       }
     `}
     >

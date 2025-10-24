@@ -59,7 +59,7 @@ export const TokenInput = function <T extends Token>({
   const BalanceComponent = balanceComponent ?? Balance
   return (
     <div
-      className="hover:shadow-bs h-[120px] rounded-lg border border-solid border-transparent bg-neutral-50
+      className="hover:shadow-bs h-[124px] rounded-lg border border-solid border-transparent bg-neutral-50
       p-4 font-medium text-neutral-500"
     >
       <div className="flex h-full items-center justify-between">
@@ -67,7 +67,7 @@ export const TokenInput = function <T extends Token>({
           <span className="text-sm">{label}</span>
           <input
             className={`
-            max-w-1/2 w-full bg-transparent text-4xl ${getTextColor(
+            max-w-1/2 my-2 w-full bg-transparent text-4xl ${getTextColor(
               value,
               errorKey,
             )}
@@ -78,7 +78,7 @@ export const TokenInput = function <T extends Token>({
             value={value}
           />
           {showFiatBalance && (
-            <div className="mt-1 flex items-center text-sm text-neutral-500">
+            <div className="flex items-center text-sm  text-neutral-500">
               <span className="mr-1">$</span>
               {!Number.isNaN(value) ? (
                 <RenderFiatBalance
@@ -91,9 +91,9 @@ export const TokenInput = function <T extends Token>({
             </div>
           )}
         </div>
-        <div className="flex h-full flex-col items-end justify-end gap-y-3 text-sm">
+        <div className="flex h-full flex-col items-end justify-end text-sm">
           {tokenSelector}
-          <div className="flex items-center justify-end gap-x-2 text-sm">
+          <div className="mt-3 flex items-center justify-end gap-x-2 text-sm">
             <span className="text-neutral-500">{t('form.balance')}:</span>
             <span className="text-neutral-950">
               <BalanceComponent token={token} />

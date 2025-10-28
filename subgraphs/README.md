@@ -13,7 +13,7 @@ Use the following command to start the container.
 NETWORK_NAME="sepolia" ETHEREUM_RPC_URL="https://sepolia.drpc.org" docker compose up -d
 # Other env vars available to set
 POSTGRES_USER=<postgres-user>
-POSTGRESS_PASSWORD=<postgres-password>
+POSTGRES_PASSWORD=<postgres-password>
 ```
 
 Optionally, set the environment variables in a `.env` file.

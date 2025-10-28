@@ -10,15 +10,18 @@ Use the following command to start the container.
 
 ```sh
 # Example for sepolia
-NETWORK_NAME="sepolia" ETHEREUM_RPC_URL="https://sepolia.drpc.org" docker-compose up -d
+NETWORK_NAME="sepolia" ETHEREUM_RPC_URL="https://sepolia.drpc.org" docker compose up -d
 # Other env vars available to set
 POSTGRES_USER=<postgres-user>
 POSTGRESS_PASSWORD=<postgres-password>
 ```
 
-Once the container is up, if it is the first time the subgraph is going to be run, it first needs to be created. For that, use (**Note that the following commands must be run in the appropriate subgraph folder**)
+Optionally, set the environment variables in a `.env` file.
+
+Once the containers are up, if it is the first time the subgraph is going to be run, it first needs to be created. For that, run:
 
 ```sh
+cd <subgraph-folder>
 npm run create-local
 ```
 

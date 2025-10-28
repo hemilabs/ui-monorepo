@@ -9,6 +9,7 @@ lerna-debug.log
 node_modules
 out
 subgraph-api/.env*
+subgraphs/.env
 # information from docker-compose
 subgraphs/data
 # Graph CLI generated artifacts

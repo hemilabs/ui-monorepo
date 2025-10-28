@@ -10,14 +10,15 @@ type RewardTokenConfig = {
 // Define the reward tokens and their addresses
 // There is a method to dynamically fetch them from the veHEMI contract
 // So this is just temporary
+//TODO https://github.com/hemilabs/ui-monorepo/issues/1598
 const rewardTokensMap: Record<Chain['id'], RewardTokenConfig[]> = {
   [hemi.id]: [
     {
-      address: '0x...' as Address, // TODO: Add mainnet HEMI address
+      address: '0x99e3dE3817F6081B2568208337ef83295b7f591D',
       symbol: 'HEMI',
     },
     {
-      address: '0x...' as Address, // TODO: Add mainnet hemiBTC address
+      address: '0xAA40c0c7644e0b2B224509571e10ad20d9C4ef28',
       symbol: 'hemiBTC',
     },
   ],

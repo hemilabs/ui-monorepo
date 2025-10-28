@@ -57,8 +57,8 @@ export const NetworkSelector = function ({
     track?.(eventName)
   }
 
-  const commonCss = `flex items-center border border-solid border-neutral-300/55 shadow-soft
-    text-sm font-medium text-neutral-950 rounded-lg bg-white p-2 gap-x-2`
+  const commonCss = `flex h-8 items-center border border-solid border-neutral-300/55 shadow-soft
+    text-sm font-medium text-neutral-950 rounded-lg bg-white py-1.5 px-3 gap-x-2 leading-[18px]`
 
   if (readonly || networks.length === 1) {
     return (
@@ -75,13 +75,13 @@ export const NetworkSelector = function ({
   }
 
   const chevronCss =
-    'ml-auto [&>path]:group-hover/network-selector:fill-neutral-950'
+    'ml-auto [&>path]:transition-colors [&>path]:duration-200 [&>path]:group-hover/network-selector:fill-neutral-950'
 
   return (
     <Container>
       <Label text={label} />
       <button
-        className={`${commonCss} group/network-selector relative cursor-pointer hover:bg-neutral-100`}
+        className={`${commonCss} group/network-selector relative cursor-pointer transition-colors duration-200 hover:bg-neutral-50`}
         disabled={disabled || networks.length < 2}
         onClick={() => setShowNetworkDropdown(prev => !prev)}
         ref={ref}

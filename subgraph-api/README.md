@@ -29,3 +29,13 @@ To start the service, the environment variables are stored in a `.env` file and 
 docker build --tag subgraph-api:local .
 docker run --env-file .env --init --interactive --publish 3003:3003 --rm --tty subgraph-api:local
 ```
+
+To use a local graph-node and local subgraphs, set the following environment variables:
+
+```env
+SUBGRAPH_API_KEY= # No value
+SUBGRAPH_API_URL=http://localhost:8000
+
+# Local subgraph ids:
+SUBGRAPH_VE_HEMI_TESTNET=subgraph_id
+```

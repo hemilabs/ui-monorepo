@@ -43,7 +43,11 @@ const getSubgraphUrl = function ({
     throw new Error(`Unsupported subgraph for chain Id ${chainId}`)
   }
 
-  return `${subgraphConfig.apiUrl}/${subgraphConfig.apiKey}/subgraphs/id/${subgraphId}`
+  return (
+    `${subgraphConfig.apiUrl}` +
+    `${subgraphConfig.apiKey ? `/${subgraphConfig.apiKey}` : ''}` +
+    `/subgraphs/id/${subgraphId}`
+  )
 }
 
 const request = <TResponse, TSchema extends Schema = Schema>(

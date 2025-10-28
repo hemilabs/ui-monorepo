@@ -1,6 +1,6 @@
 {
   "extends": ["bloq", "prettier"],
-  "ignorePatterns": ["portal/next-env.d.ts", "subgraphs/**"],
+  "ignorePatterns": ["portal/next-env.d.ts", "subgraphs/**/*.ts"],
   "overrides": [
     {
       "excludedFiles": ["portal/scripts/*.js", "portal/*.config.js"],

@@ -65,7 +65,7 @@ export const TokenSelector = function ({
     <>
       <button
         className="shadow-soft group/token-selector flex h-8 w-40 items-center gap-x-1.5 rounded-lg border
-        border-solid border-neutral-300/55 bg-white px-3 py-1.5 text-sm font-medium hover:bg-neutral-50"
+        border-solid border-neutral-300/55 bg-white px-3 py-1.5 text-sm font-medium transition-colors duration-200 hover:bg-neutral-50"
         disabled={disabled || tokens.length < 2}
         onClick={openModal}
         type="button"

@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
     'hemi-tunnel-actions',
     'hemi-viem-stake-actions',
     've-hemi-actions',
+    've-hemi-rewards',
   ],
   webpack(config) {
     config.resolve.fallback = { fs: false, net: false, tls: false }

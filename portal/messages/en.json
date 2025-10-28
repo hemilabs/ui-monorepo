@@ -292,6 +292,7 @@
       "lockup": "Lockup",
       "no-hemi-staked": "No {symbol} staked",
       "on": "On {date}",
+      "rewards": "Rewards",
       "time-remaining": "Time remaining",
       "tx": "Tx",
       "unlock": "Unlock",

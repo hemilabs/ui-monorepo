@@ -3,7 +3,7 @@ import type { Address } from 'viem'
 
 const VE_HEMI_CONTRACT_ADDRESSES: Record<number, Address> = {
   [hemi.id]: '0x371d3718D5b7F75EAb050FAe6Da7DF3092031c89',
-  [hemiSepolia.id]: '0x54e24e64653F97477872D320c4d116D03a201493',
+  [hemiSepolia.id]: '0xd137b7B3510b23E98b6A9aC2acB5C8bb668AC82d',
 } as const
 
 export const SupportedChains: number[] = [hemi.id, hemiSepolia.id]

@@ -1,0 +1,40 @@
+{
+  "name": "ve-hemi-rewards",
+  "version": "1.0.0",
+  "description": "veHEMI Rewards",
+  "keywords": [
+    "hemi",
+    "hemiBTC",
+    "hemilabs",
+    "rewards",
+    "staking",
+    "veHEMI",
+    "viem"
+  ],
+  "license": "MIT",
+  "author": {
+    "email": "artur@hemi.xyz",
+    "name": "Artur Dolzan Neto"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "tsc:check": "tsc"
+  },
+  "dependencies": {
+    "hemi-viem": "2.6.1"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "22.0.2",
+    "@types/node": "22.9.0",
+    "typescript": "5.8.3",
+    "viem": "2.28.4",
+    "vitest": "3.2.4"
+  },
+  "peerDependencies": {
+    "viem": "^2.x"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./actions": "./actions/index.ts"
+  }
+}

@@ -16,6 +16,7 @@ import { useAccount } from 'wagmi'
 
 import { calculateVotingPower } from '../../_utils/lockCreationTimes'
 import { Amount } from '../amount'
+import { RewardsDisplay } from '../rewardsDisplay'
 
 import { ActionCell } from './actionCell'
 import { ConnectWallet } from './connectWallet'
@@ -70,6 +71,19 @@ const stakingColumns = ({
     header: () => <Header text={t('voting-power')} />,
     id: 'voting-power',
     meta: { width: '150px' },
+  },
+  {
+    cell({ row }) {
+      const { tokenId } = row.original
+      return (
+        <div className="flex items-center justify-center gap-x-2">
+          <RewardsDisplay tokenId={tokenId} />
+        </div>
+      )
+    },
+    header: () => <Header text={t('table.rewards')} />,
+    id: 'rewards',
+    meta: { width: '170px' },
   },
   {
     cell: ({ row }) => (

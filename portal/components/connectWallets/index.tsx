@@ -59,7 +59,7 @@ export const WalletConnection = function () {
   }
 
   return (
-    <div className="ml-auto mr-2 md:mr-6">
+    <div className="ml-auto mr-3">
       <div className="group flex items-center gap-x-3">
         <Button
           onClick={onConnectWalletsClick}

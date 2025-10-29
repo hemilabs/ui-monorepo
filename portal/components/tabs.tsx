@@ -32,7 +32,7 @@ export const Tab = function ({
   return (
     <li
       className={`
-        flex flex-1 items-center py-1 *:w-full md:flex-auto
+        flex flex-1 items-center *:w-full md:flex-auto
       ${
         selected
           ? '*:duration-600 before:*:duration-600 *:cursor-default *:bg-white *:transition-colors before:*:bg-white before:*:transition-colors hover:before:*:bg-white'

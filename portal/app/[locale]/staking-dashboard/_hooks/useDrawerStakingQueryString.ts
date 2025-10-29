@@ -5,6 +5,7 @@ const drawerModes = [
   'increasingUnlockTime',
   'staking',
   'unlocking',
+  'claimingRewards',
 ] as const
 type DrawerModes = (typeof drawerModes)[number]
 

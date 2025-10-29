@@ -5,26 +5,42 @@ import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { type StakingPosition } from 'types/stakingDashboard'
+import {
+  type CollectAllRewardsOperationRunning,
+  type StakingPosition,
+} from 'types/stakingDashboard'
 import { formatUnits } from 'viem'
 
 import { useStakingDashboard } from '../../_context/stakingDashboardContext'
+import { useCollectRewards } from '../../_hooks/useCollectAllRewards'
 import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryString'
+import { useHasRewards } from '../../_hooks/useHasRewards'
 import { PlusIcon } from '../../_icons/plusIcon'
+import { StarsIcon } from '../../_icons/starsIcon'
 import { getUnlockInfo, minDays } from '../../_utils/lockCreationTimes'
 
 import { ActionButton } from './actionButton'
 
 type ActionItemProps = {
+  enabled?: boolean
   icon: ReactNode
   label: string
   onClick?: VoidFunction
 }
 
-const ActionItem = ({ icon, label, onClick }: ActionItemProps) => (
+const ActionItem = ({
+  enabled = true,
+  icon,
+  label,
+  onClick,
+}: ActionItemProps) => (
   <div
-    className="flex items-center gap-2 rounded px-3 py-2 transition-colors hover:bg-neutral-50 hover:text-neutral-950"
-    onClick={onClick}
+    className={`flex items-center gap-2 rounded px-3 py-2 transition-colors ${
+      enabled
+        ? 'cursor-pointer hover:bg-neutral-50 hover:text-neutral-950'
+        : 'cursor-default opacity-50'
+    }`}
+    onClick={enabled ? onClick : undefined}
   >
     {icon}
     <span>{label}</span>
@@ -38,16 +54,22 @@ type Props = {
 }
 
 export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
-  const t = useTranslations('staking-dashboard.table')
-  const { decimals, symbol } = useHemiToken()
+  const t = useTranslations('staking-dashboard')
+  const { chainId, decimals, symbol } = useHemiToken()
   const buttonRef = useRef<HTMLDivElement>(null)
   const menuRef = useOnClickOutside<HTMLDivElement>(() => setOpenRowId(null))
   const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 })
   const { height: viewportHeight, width: viewportWidth } = useWindowSize()
-  const { updateStakingDashboardOperation } = useStakingDashboard()
+  const {
+    updateCollectRewardsDashboardOperation,
+    updateStakingDashboardOperation,
+  } = useStakingDashboard()
   const { setDrawerQueryString } = useDrawerStakingQueryString()
+  const [operationRunning, setOperationRunning] =
+    useState<CollectAllRewardsOperationRunning>('idle')
 
   const { amount, id, lockTime, timestamp, tokenId } = row.original
+  const { hasRewards } = useHasRewards(tokenId)
 
   const MENU_WIDTH = 275
   const MENU_HEIGHT = 88
@@ -106,6 +128,20 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
     [openRowId, id, setOpenRowId],
   )
 
+  const { mutate: runCollectRewards } = useCollectRewards({
+    chainId,
+    on(emitter) {
+      emitter.on('user-signed-collect-all-rewards', function () {
+        setOpenRowId(null)
+      })
+      emitter.on('collect-all-rewards-settled', function () {
+        setOperationRunning('idle')
+      })
+    },
+    tokenId,
+    updateCollectRewardsDashboardOperation,
+  })
+
   const { timeRemainingSeconds } = getUnlockInfo({
     lockTime,
     timestamp,
@@ -143,6 +179,17 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
     setOpenRowId(null)
   }
 
+  function handleClaimRewards() {
+    updateCollectRewardsDashboardOperation({
+      stakingPosition: {
+        amount,
+        tokenId,
+      },
+    })
+    runCollectRewards()
+    setOperationRunning('collecting')
+  }
+
   return (
     <div className="relative" ref={buttonRef}>
       <ActionButton
@@ -158,13 +205,19 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
           >
             <ActionItem
               icon={<PlusIcon />}
-              label={t('add-liquidity-to-lockup', { symbol })}
+              label={t('table.add-liquidity-to-lockup', { symbol })}
               onClick={handleIncreaseAmount}
             />
             <ActionItem
               icon={<PlusIcon />}
-              label={t('add-time-to-lockup')}
+              label={t('table.add-time-to-lockup')}
               onClick={handleIncreaseUnlockTime}
+            />
+            <ActionItem
+              enabled={operationRunning !== 'collecting' && hasRewards}
+              icon={<StarsIcon />}
+              label={t('claim-rewards.heading')}
+              onClick={handleClaimRewards}
             />
           </div>,
           document.body,

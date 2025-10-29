@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl'
 import { Suspense } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import {
+  CollectAllRewardsDashboardStatus,
   StakingDashboardStatus,
   UnlockingDashboardStatus,
 } from 'types/stakingDashboard'
@@ -35,12 +36,17 @@ const StakeToast = dynamic(
 
 const SideDrawer = function () {
   const { drawerMode, setDrawerQueryString } = useDrawerStakingQueryString()
-  const { stakingDashboardOperation, unlockingDashboardOperation } =
-    useStakingDashboard()
+  const {
+    collectRewardsDashboardOperation,
+    stakingDashboardOperation,
+    unlockingDashboardOperation,
+  } = useStakingDashboard()
 
   if (
     !drawerMode ||
-    (!stakingDashboardOperation && !unlockingDashboardOperation)
+    (!collectRewardsDashboardOperation &&
+      !stakingDashboardOperation &&
+      !unlockingDashboardOperation)
   ) {
     return null
   }
@@ -49,8 +55,11 @@ const SideDrawer = function () {
 }
 
 export const StakeForm = function () {
-  const { stakingDashboardOperation, unlockingDashboardOperation } =
-    useStakingDashboard()
+  const {
+    collectRewardsDashboardOperation,
+    stakingDashboardOperation,
+    unlockingDashboardOperation,
+  } = useStakingDashboard()
   const hemiToken = useHemiToken()
   const t = useTranslations()
 
@@ -73,6 +82,11 @@ export const StakeForm = function () {
       UnlockingDashboardStatus.UNLOCK_TX_CONFIRMED &&
     unlockingDashboardOperation.transactionHash
 
+  const showCollectRewardsToast =
+    collectRewardsDashboardOperation?.status ===
+      CollectAllRewardsDashboardStatus.COLLECT_TX_CONFIRMED &&
+    collectRewardsDashboardOperation.transactionHash
+
   return (
     <>
       {showStakeToast && (
@@ -85,6 +99,12 @@ export const StakeForm = function () {
         <StakeToast
           title={t('staking-dashboard.unlock-successful')}
           transactionHash={unlockingDashboardOperation.transactionHash!}
+        />
+      )}
+      {showCollectRewardsToast && (
+        <StakeToast
+          title={t('staking-dashboard.claim-rewards-successful')}
+          transactionHash={collectRewardsDashboardOperation.transactionHash!}
         />
       )}
       <Stake />

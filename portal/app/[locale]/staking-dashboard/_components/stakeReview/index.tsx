@@ -11,6 +11,7 @@ import { useDrawerStakingQueryString } from '../../_hooks/useDrawerStakingQueryS
 
 import { ReviewIncreaseAmount } from './increaseAmount'
 import { ReviewIncreaseUnlockTime } from './increaseUnlockTime'
+import { ReviewCollectRewards } from './reviewCollectRewards'
 import { ReviewStake } from './reviewStake'
 import { ReviewUnlock } from './reviewUnlock'
 
@@ -19,6 +20,7 @@ type Props = {
 }
 
 const reviewComponents = {
+  claimingRewards: ReviewCollectRewards,
   increasingAmount: ReviewIncreaseAmount,
   increasingUnlockTime: ReviewIncreaseUnlockTime,
   staking: ReviewStake,

@@ -1,9 +1,4 @@
-import {
-  type Address,
-  TransactionReceipt,
-  type WalletClient,
-  zeroAddress,
-} from 'viem'
+import { type Address, TransactionReceipt, type WalletClient } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
@@ -20,7 +15,6 @@ vi.mock('../../utils')
 
 describe('collectAllRewards', function () {
   const mockAccount: Address = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
-  const mockRewardToken: Address = '0x2315ab2800c25D0f932dD7f5D15CeA43cAA614Dd'
   const mockTokenId = 1n
   const mockHash: Address = '0xhash1234567890123456789012345678901234567890'
 
@@ -55,7 +49,6 @@ describe('collectAllRewards', function () {
 
       const runFn = await collectAllRewards({
         account: mockAccount,
-        rewardToken: mockRewardToken,
         tokenId: mockTokenId,
         walletClient: walletClientNoChain,
       })
@@ -71,7 +64,6 @@ describe('collectAllRewards', function () {
     it('should fail if tokenId is 0', async function () {
       const runFn = await collectAllRewards({
         account: mockAccount,
-        rewardToken: mockRewardToken,
         tokenId: 0n,
         walletClient: mockWalletClient,
       })
@@ -84,28 +76,11 @@ describe('collectAllRewards', function () {
       )
     })
 
-    it('should fail if rewardToken is zero address', async function () {
-      const runFn = await collectAllRewards({
-        account: mockAccount,
-        rewardToken: zeroAddress,
-        tokenId: mockTokenId,
-        walletClient: mockWalletClient,
-      })
-
-      await runFn(mockEmitter)
-
-      expect(mockEmitter.emit).toHaveBeenCalledWith(
-        'collect-all-rewards-failed-validation',
-        'invalid reward token address',
-      )
-    })
-
     it('should pass validation with valid inputs', async function () {
       vi.mocked(writeContract).mockResolvedValue(mockHash)
 
       const runFn = await collectAllRewards({
         account: mockAccount,
-        rewardToken: mockRewardToken,
         tokenId: mockTokenId,
         walletClient: mockWalletClient,
       })
@@ -122,7 +97,6 @@ describe('collectAllRewards', function () {
 
       const runFn = await collectAllRewards({
         account: mockAccount,
-        rewardToken: mockRewardToken,
         tokenId: mockTokenId,
         walletClient: mockWalletClient,
       })
@@ -138,7 +112,6 @@ describe('collectAllRewards', function () {
       const runFn = await collectAllRewards({
         account: mockAccount,
         addToPositionBPS: 0n,
-        rewardToken: mockRewardToken,
         tokenId: mockTokenId,
         walletClient: mockWalletClient,
       })
@@ -163,7 +136,6 @@ describe('collectAllRewards', function () {
 
       const runFn = await collectAllRewards({
         account: mockAccount,
-        rewardToken: mockRewardToken,
         tokenId: mockTokenId,
         walletClient: mockWalletClient,
       })
@@ -182,7 +154,6 @@ describe('collectAllRewards', function () {
 
       const runFn = await collectAllRewards({
         account: mockAccount,
-        rewardToken: mockRewardToken,
         tokenId: mockTokenId,
         walletClient: mockWalletClient,
       })
@@ -205,7 +176,6 @@ describe('collectAllRewards', function () {
 
       const runFn = await collectAllRewards({
         account: mockAccount,
-        rewardToken: mockRewardToken,
         tokenId: mockTokenId,
         walletClient: mockWalletClient,
       })
@@ -226,7 +196,6 @@ describe('collectAllRewards', function () {
 
       const runFn = await collectAllRewards({
         account: mockAccount,
-        rewardToken: mockRewardToken,
         tokenId: mockTokenId,
         walletClient: mockWalletClient,
       })
@@ -247,7 +216,6 @@ describe('collectAllRewards', function () {
 
       const runFn = await collectAllRewards({
         account: mockAccount,
-        rewardToken: mockRewardToken,
         tokenId: mockTokenId,
         walletClient: mockWalletClient,
       })
@@ -265,7 +233,6 @@ describe('collectAllRewards', function () {
 
       const runFn = await collectAllRewards({
         account: mockAccount,
-        rewardToken: mockRewardToken,
         tokenId: mockTokenId,
         walletClient: mockWalletClient,
       })
@@ -311,7 +278,6 @@ describe('collectAllRewards', function () {
 
       const runFn = await collectAllRewards({
         account: mockAccount,
-        rewardToken: mockRewardToken,
         tokenId: mockTokenId,
         walletClient: mockWalletClient,
       })

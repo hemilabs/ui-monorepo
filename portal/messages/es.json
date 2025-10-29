@@ -235,8 +235,14 @@
   },
   "staking-dashboard": {
     "amount": "Cantidad",
+    "claim-rewards": {
+      "heading": "Reclamar recompensas",
+      "subheading": "Estamos procesando tu solicitud de recompensas. Puedes seguir el progreso a continuación."
+    },
+    "claim-rewards-successful": "Recompensas reclamadas con éxito",
     "drawer": {
       "approving": "Aprobando {symbol}",
+      "claim-rewards": "Reclamar recompensas en {symbol}",
       "increase-amount": {
         "heading": "Agregar ${symbol} a este bloqueo",
         "subheading": "Depositar ${symbol} adicionales en su bloqueo existente para aumentar su cantidad de stake y poder de gobernanza."

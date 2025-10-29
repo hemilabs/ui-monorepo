@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 import type { Address, TransactionReceipt, WalletClient } from 'viem'
-import { encodeFunctionData, zeroAddress } from 'viem'
+import { encodeFunctionData } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
 import { veHemiRewardsAbi } from '../../abi'
@@ -8,12 +8,10 @@ import { getVeHemiRewardsContractAddress } from '../../constants'
 import type { CollectAllRewardsEvents } from '../../types'
 import { toPromiseEvent } from '../../utils'
 
-const canCollectRewards = async function ({
-  rewardToken,
+const canCollectAllRewards = async function ({
   tokenId,
   walletClient,
 }: {
-  rewardToken: Address
   tokenId: bigint
   walletClient: WalletClient
 }): Promise<{
@@ -34,33 +32,23 @@ const canCollectRewards = async function ({
     }
   }
 
-  if (!rewardToken || rewardToken === zeroAddress) {
-    return {
-      canCollect: false,
-      reason: 'invalid reward token address',
-    }
-  }
-
   return { canCollect: true }
 }
 
-const runCollectRewards = ({
+const runCollectAllRewards = ({
   account,
   addToPositionBPS = BigInt(0),
-  rewardToken,
   tokenId,
   walletClient,
 }: {
   account: Address
   addToPositionBPS?: bigint
-  rewardToken: Address
   tokenId: bigint
   walletClient: WalletClient
 }) =>
   async function (emitter: EventEmitter<CollectAllRewardsEvents>) {
     try {
-      const { canCollect, reason } = await canCollectRewards({
-        rewardToken,
+      const { canCollect, reason } = await canCollectAllRewards({
         tokenId,
         walletClient,
       }).catch(() => ({
@@ -123,8 +111,8 @@ const runCollectRewards = ({
   }
 
 export const collectAllRewards = (
-  ...args: Parameters<typeof runCollectRewards>
-) => toPromiseEvent<CollectAllRewardsEvents>(runCollectRewards(...args))
+  ...args: Parameters<typeof runCollectAllRewards>
+) => toPromiseEvent<CollectAllRewardsEvents>(runCollectAllRewards(...args))
 
 /**
  * Encode the collectAllRewards function call for batch operations

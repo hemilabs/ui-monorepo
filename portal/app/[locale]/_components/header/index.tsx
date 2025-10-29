@@ -43,7 +43,7 @@ export const Header = ({ isMenuOpen, setIsNavbarOpen, toggleMenu }: Props) => (
         <HamburgerIcon />
       </ButtonIcon>
     </div>
-    <div className="hidden pl-6 md:block">
+    <div className="hidden pl-3 md:block">
       <StakeTabs />
       <TunnelTabs />
       <GenesisDropTabs />

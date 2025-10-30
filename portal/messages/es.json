@@ -237,7 +237,7 @@
     "amount": "Cantidad",
     "claim-rewards": {
       "heading": "Reclamar recompensas",
-      "subheading": "Estamos procesando tu solicitud de recompensas. Puedes seguir el progreso a continuación."
+      "subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación."
     },
     "claim-rewards-successful": "Recompensas reclamadas con éxito",
     "drawer": {
@@ -298,7 +298,7 @@
       "lockup": "Bloqueo",
       "no-hemi-staked": "No hay {symbol} en stake",
       "on": "En {date}",
-      "rewards": "Recompensas",
+      "claimable-rewards": "Recompensas reclamables",
       "time-remaining": "Tiempo restante",
       "tx": "Tx",
       "unlock": "Desbloquear",

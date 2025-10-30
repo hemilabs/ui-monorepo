@@ -298,7 +298,7 @@
       "lockup": "Bloqueio",
       "no-hemi-staked": "Sem {symbol} staked",
       "on": "Em {date}",
-      "rewards": "Recompensas",
+      "claimable-rewards": "Recompensas reclamáveis",
       "time-remaining": "Tempo restante",
       "tx": "Tx",
       "unlock": "Desbloquear",

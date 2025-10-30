@@ -9,7 +9,6 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
-import { ReactNode } from 'react'
 import {
   CollectAllRewardsDashboardStatus,
   CollectAllRewardsDashboardStatusType,
@@ -36,7 +35,7 @@ export const ReviewCollectRewards = function ({ onClose }: Props) {
     collectRewardsDashboardOperation!
 
   const collectStatus =
-    status ?? CollectAllRewardsDashboardStatus.COLLECT_TX_CONFIRMED
+    status ?? CollectAllRewardsDashboardStatus.COLLECT_TX_PENDING
 
   const t = useTranslations('staking-dashboard')
   const hemi = useHemi()
@@ -105,23 +104,15 @@ export const ReviewCollectRewards = function ({ onClose }: Props) {
 
   const getSteps = () => [addCollectRewardsStep()]
 
-  const getCallToAction = function (
-    callStatus: CollectAllRewardsDashboardStatusType,
-  ) {
-    const map: Partial<
-      Record<CollectAllRewardsDashboardStatusType, ReactNode>
-    > = {
-      [CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED]: (
-        <RetryCollectRewards />
-      ),
-    }
-    return map[callStatus]
-  }
-
   return (
     <Operation
       amount={stakingPosition!.amount.toString()}
-      callToAction={getCallToAction(collectStatus)}
+      callToAction={
+        collectStatus ===
+          CollectAllRewardsDashboardStatus.COLLECT_TX_FAILED && (
+          <RetryCollectRewards />
+        )
+      }
       heading={t('claim-rewards.heading')}
       onClose={onClose}
       steps={getSteps()}

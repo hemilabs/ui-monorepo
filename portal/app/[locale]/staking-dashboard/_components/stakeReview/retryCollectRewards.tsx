@@ -25,7 +25,6 @@ export const RetryCollectRewards = function () {
 
   // this component tries to initiate a new collect rewards, based on the failed one
   const { mutate: runCollectRewards } = useCollectRewards({
-    chainId: hemi.id,
     on(emitter) {
       emitter.on('user-signing-collect-all-rewards-error', function () {
         setOperationRunning('failed')

@@ -55,7 +55,7 @@ type Props = {
 
 export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
   const t = useTranslations('staking-dashboard')
-  const { chainId, decimals, symbol } = useHemiToken()
+  const { decimals, symbol } = useHemiToken()
   const buttonRef = useRef<HTMLDivElement>(null)
   const menuRef = useOnClickOutside<HTMLDivElement>(() => setOpenRowId(null))
   const [menuPosition, setMenuPosition] = useState({ left: 0, top: 0 })
@@ -129,7 +129,6 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
   )
 
   const { mutate: runCollectRewards } = useCollectRewards({
-    chainId,
     on(emitter) {
       emitter.on('user-signed-collect-all-rewards', function () {
         setOpenRowId(null)

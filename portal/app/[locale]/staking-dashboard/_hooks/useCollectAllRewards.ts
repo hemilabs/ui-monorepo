@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
+import { useNativeTokenBalance } from 'hooks/useBalance'
+import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useRewardTokens } from 'hooks/useRewardTokens'
@@ -12,10 +14,10 @@ import type { CollectAllRewardsEvents } from 've-hemi-rewards'
 import { collectAllRewards } from 've-hemi-rewards/actions'
 import { useAccount } from 'wagmi'
 
+import { getCalculateRewardsQueryKey } from './useCalculateRewards'
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
 
 type UseCollectRewards = {
-  chainId: number
   on?: (emitter: EventEmitter<CollectAllRewardsEvents>) => void
   tokenId: string
   updateCollectRewardsDashboardOperation: (
@@ -24,7 +26,6 @@ type UseCollectRewards = {
 }
 
 export const useCollectRewards = function ({
-  chainId,
   on,
   tokenId,
   updateCollectRewardsDashboardOperation,
@@ -34,9 +35,15 @@ export const useCollectRewards = function ({
   const { address } = useAccount()
   const queryClient = useQueryClient()
   const rewardTokens = useRewardTokens()
+  const hemi = useHemi()
 
-  const updateNativeBalanceAfterFees =
-    useUpdateNativeBalanceAfterReceipt(chainId)
+  const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
+    hemi.id,
+  )
+
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+    hemi.id,
+  )
 
   const { hemiWalletClient } = useHemiWalletClient()
 
@@ -80,10 +87,12 @@ export const useCollectRewards = function ({
 
           // Update rewards to zero
           rewardTokens.forEach(function ({ address: rewardsAddress }) {
-            queryClient.setQueryData(
-              ['calculateRewards', tokenId.toString(), rewardsAddress, chainId],
-              () => BigInt(0),
-            )
+            const queryKey = getCalculateRewardsQueryKey({
+              chainId: hemi.id,
+              rewardToken: rewardsAddress,
+              tokenId: BigInt(tokenId),
+            })
+            queryClient.setQueryData(queryKey, () => BigInt(0))
           })
 
           updateCollectRewardsDashboardOperation({
@@ -113,15 +122,16 @@ export const useCollectRewards = function ({
     onSettled() {
       // Invalidate rewards queries in the background
       rewardTokens.forEach(function ({ address: rewardsAddress }) {
-        queryClient.invalidateQueries({
-          queryKey: [
-            'calculateRewards',
-            tokenId.toString(),
-            rewardsAddress,
-            chainId,
-          ],
+        const queryKey = getCalculateRewardsQueryKey({
+          chainId: hemi.id,
+          rewardToken: rewardsAddress,
+          tokenId: BigInt(tokenId),
         })
+        queryClient.invalidateQueries({ queryKey })
       })
+
+      // Invalidate native token balance in the background
+      queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
     },
   })
 }

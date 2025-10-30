@@ -2,18 +2,19 @@ import { useQueryClient } from '@tanstack/react-query'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useRewardTokens } from 'hooks/useRewardTokens'
 
+import { getCalculateRewardsQueryKey } from './useCalculateRewards'
+
 export function useHasRewards(tokenId: string) {
   const queryClient = useQueryClient()
   const token = useHemiToken()
   const rewardTokens = useRewardTokens()
 
   const totalRewards = rewardTokens.reduce(function (total, { address }) {
-    const queryKey = [
-      'calculateRewards',
-      tokenId,
-      address,
-      token.chainId,
-    ] as const
+    const queryKey = getCalculateRewardsQueryKey({
+      chainId: token.chainId,
+      rewardToken: address,
+      tokenId: BigInt(tokenId),
+    })
 
     const data = queryClient.getQueryData<bigint>(queryKey)
 

@@ -5,6 +5,16 @@ import { StakingDashboardToken } from 'types/stakingDashboard'
 import { calculateRewards } from 've-hemi-rewards/actions'
 import type { Address } from 'viem'
 
+export const getCalculateRewardsQueryKey = ({
+  chainId,
+  rewardToken,
+  tokenId,
+}: {
+  chainId: number
+  rewardToken: Address
+  tokenId: bigint
+}) => ['calculateRewards', tokenId.toString(), rewardToken, chainId]
+
 export const useCalculateRewards = function ({
   enabled = true,
   rewardToken,

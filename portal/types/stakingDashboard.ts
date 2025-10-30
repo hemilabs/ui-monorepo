@@ -57,6 +57,27 @@ export type StakingDashboardOperation = Partial<{
 
 // Prefer ordering these by value rather than by key
 /* eslint-disable sort-keys */
+export const CollectAllRewardsDashboardStatus = {
+  // The user has confirmed the TX in their wallet, but it hasn't been included in a block
+  COLLECT_TX_PENDING: 0,
+  // Withdrawal tx reverted
+  COLLECT_TX_FAILED: 1,
+  // Transaction withdrawal confirmed
+  COLLECT_TX_CONFIRMED: 2,
+} as const
+/* eslint-enable sort-keys */
+
+export type CollectAllRewardsDashboardStatusType =
+  (typeof CollectAllRewardsDashboardStatus)[keyof typeof CollectAllRewardsDashboardStatus]
+
+export type CollectAllRewardsDashboardOperation = {
+  transactionHash?: Hash
+  stakingPosition?: Pick<StakingPosition, 'amount' | 'tokenId'>
+  status?: CollectAllRewardsDashboardStatusType
+}
+
+// Prefer ordering these by value rather than by key
+/* eslint-disable sort-keys */
 export const UnlockingDashboardStatus = {
   // The user has confirmed the TX in their wallet, but it hasn't been included in a block
   UNLOCK_TX_PENDING: 0,
@@ -75,7 +96,7 @@ export type UnlockingDashboardOperation = {
   stakingPosition?: Pick<StakingPosition, 'amount' | 'tokenId'>
   status?: UnlockingDashboardStatusType
 }
-
+export type CollectAllRewardsOperationRunning = 'idle' | 'collecting' | 'failed'
 export type UnlockingOperationRunning = 'idle' | 'unlocking' | 'failed'
 export type StakingOperationRunning =
   | 'idle'

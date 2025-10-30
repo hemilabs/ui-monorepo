@@ -235,8 +235,14 @@
   },
   "staking-dashboard": {
     "amount": "Quantidade",
+    "claim-rewards": {
+      "heading": "Reclamar recompensas",
+      "subheading": "Estamos processando sua solicitação de recompensas. Você pode acompanhar o progresso abaixo."
+    },
+    "claim-rewards-successful": "Recompensas reclamadas com sucesso",
     "drawer": {
       "approving": "A aprovar {symbol}",
+      "claim-rewards": "Reclamar recompensas em {symbol}",
       "increase-amount": {
         "heading": "Adicionar ${symbol} a este bloqueio",
         "subheading": "Deposite ${symbol} adicionais em seu bloqueio existente para aumentar sua quantidade de stake e poder de governança."
@@ -292,7 +298,7 @@
       "lockup": "Bloqueio",
       "no-hemi-staked": "Sem {symbol} staked",
       "on": "Em {date}",
-      "rewards": "Recompensas",
+      "claimable-rewards": "Recompensas reclamáveis",
       "time-remaining": "Tempo restante",
       "tx": "Tx",
       "unlock": "Desbloquear",

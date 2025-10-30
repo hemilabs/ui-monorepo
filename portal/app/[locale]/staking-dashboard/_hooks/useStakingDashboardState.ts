@@ -1,5 +1,6 @@
 import { useCallback, useReducer } from 'react'
 import {
+  type CollectAllRewardsDashboardOperation,
   type StakingDashboardOperation,
   type UnlockingDashboardOperation,
   type StakingDashboardToken,
@@ -10,6 +11,7 @@ import { type NoPayload, type Payload } from 'utils/typeUtilities'
 import { twoYears } from '../_utils/lockCreationTimes'
 
 type StakingDashboardState = {
+  collectRewardsDashboardOperation?: CollectAllRewardsDashboardOperation
   input: string
   inputDays: string
   lockupDays: number
@@ -22,6 +24,9 @@ type Action<T extends string> = {
 }
 
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
+type UpdateCollectRewardsDashboardOperation =
+  Action<'updateCollectRewardsDashboardOperation'> &
+    Payload<CollectAllRewardsDashboardOperation | undefined>
 type UpdateInput = Action<'updateInput'> & Payload<string>
 type UpdateInputDays = Action<'updateInputDays'> & Payload<string>
 type UpdateLockupDays = Action<'updateLockupDays'> & Payload<number>
@@ -34,6 +39,7 @@ type UpdateUnlockingDashboardOperation =
 
 type Actions =
   | ResetStateAfterOperation
+  | UpdateCollectRewardsDashboardOperation
   | UpdateInput
   | UpdateInputDays
   | UpdateLockupDays
@@ -53,6 +59,14 @@ const actionHandlers: ActionHandlers = {
     input: '0',
     inputDays: twoYears.toString(),
     lockupDays: twoYears,
+  }),
+
+  updateCollectRewardsDashboardOperation: (state, payload) => ({
+    ...state,
+    collectRewardsDashboardOperation: {
+      ...(state.collectRewardsDashboardOperation ?? {}),
+      ...payload,
+    },
   }),
 
   updateInput: (state, payload) => ({
@@ -116,6 +130,12 @@ export const useStakingDashboardState = function (): StakingDashboardState &
     lockupDays: twoYears,
   } as StakingDashboardState)
 
+  const updateCollectRewardsDashboardOperation = useCallback(function (
+    payload: UpdateCollectRewardsDashboardOperation['payload'],
+  ) {
+    dispatch({ payload, type: 'updateCollectRewardsDashboardOperation' })
+  }, [])
+
   const updateInput = useCallback(function (payload: UpdateInput['payload']) {
     const result = sanitizeAmount(payload)
     if (!('error' in result)) {
@@ -166,6 +186,7 @@ export const useStakingDashboardState = function (): StakingDashboardState &
       () => dispatch({ type: 'resetStateAfterOperation' }),
       [],
     ),
+    updateCollectRewardsDashboardOperation,
     updateInput,
     updateInputDays,
     updateLockupDays,

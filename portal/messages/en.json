@@ -235,8 +235,14 @@
   },
   "staking-dashboard": {
     "amount": "Amount",
+    "claim-rewards": {
+      "heading": "Claim rewards",
+      "subheading": "We’re processing your reward claim. You can follow the progress below."
+    },
+    "claim-rewards-successful": "Claim rewards successful",
     "drawer": {
       "approving": "Approving {symbol}",
+      "claim-rewards": "Claim rewards on {symbol}",
       "increase-amount": {
         "heading": "Add ${symbol} to this lockup",
         "subheading": "Deposit additional ${symbol} into your existing lockup to increase your staked amount and governance power."
@@ -292,7 +298,7 @@
       "lockup": "Lockup",
       "no-hemi-staked": "No {symbol} staked",
       "on": "On {date}",
-      "rewards": "Rewards",
+      "claimable-rewards": "Claimable rewards",
       "time-remaining": "Time remaining",
       "tx": "Tx",
       "unlock": "Unlock",

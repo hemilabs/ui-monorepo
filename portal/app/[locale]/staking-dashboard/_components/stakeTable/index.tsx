@@ -81,7 +81,7 @@ const stakingColumns = ({
         </div>
       )
     },
-    header: () => <Header text={t('table.rewards')} />,
+    header: () => <Header text={t('table.claimable-rewards')} />,
     id: 'rewards',
     meta: { width: '170px' },
   },

@@ -146,10 +146,6 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
     timestamp,
   })
 
-  if (timeRemainingSeconds <= 0) {
-    return null
-  }
-
   function handleIncreaseAmount() {
     updateStakingDashboardOperation({
       input: '0',
@@ -203,11 +199,13 @@ export function ActionCell({ openRowId, row, setOpenRowId }: Props) {
             style={{ left: menuPosition.left, top: menuPosition.top }}
           >
             <ActionItem
+              enabled={timeRemainingSeconds > 0}
               icon={<PlusIcon />}
               label={t('table.add-liquidity-to-lockup', { symbol })}
               onClick={handleIncreaseAmount}
             />
             <ActionItem
+              enabled={timeRemainingSeconds > 0}
               icon={<PlusIcon />}
               label={t('table.add-time-to-lockup')}
               onClick={handleIncreaseUnlockTime}

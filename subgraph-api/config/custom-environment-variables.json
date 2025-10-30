@@ -14,7 +14,7 @@
     "origin": "SUBGRAPH_ORIGIN",
     "veHemi": {
       "testnet": "SUBGRAPH_VE_HEMI_TESTNET",
-      "testnetCustomUrl": "HEMI_VE_REWARDS_CUSTOM_SUBGRAPH_HEMI_SEPOLIA_URL"
+      "testnetCustomUrl": "SUBGRAPH_HEMI_VE_REWARDS_TESTNET_CUSTOM_URL"
     }
   }
 }

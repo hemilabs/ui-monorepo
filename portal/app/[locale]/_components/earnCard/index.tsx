@@ -35,9 +35,11 @@ export const EarnCard = function () {
     window.open(MerkleUrl, '_blank', 'noopener,noreferrer')
   }
 
-  const close = function () {
-    setHideEarnRewardsCard(true)
+  const close = function (e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault()
+    e.stopPropagation()
 
+    setHideEarnRewardsCard(true)
     track?.('earn rewards - close')
   }
 

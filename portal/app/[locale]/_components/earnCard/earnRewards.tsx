@@ -51,7 +51,11 @@ const imageMap: Record<Locale, StaticImageData> = {
   pt: earnPt,
 }
 
-export const EarnRewards = function ({ onClose }: { onClose: VoidFunction }) {
+export const EarnRewards = function ({
+  onClose,
+}: {
+  onClose: MouseEventHandler<HTMLButtonElement> | VoidFunction
+}) {
   const locale = useLocale()
 
   const image = imageMap[locale]
@@ -73,7 +77,7 @@ export const EarnRewards = function ({ onClose }: { onClose: VoidFunction }) {
           <PoweredBy />
         </div>
       </div>
-      <CloseButton onClick={() => onClose()} />
+      <CloseButton onClick={onClose} />
     </div>
   )
 }

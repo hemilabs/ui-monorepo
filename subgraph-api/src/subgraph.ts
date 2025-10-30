@@ -652,10 +652,17 @@ export const getLockedPositions = function ({
     [hemiSepolia.id]: subgraphConfig.veHemi.testnet,
   }
 
-  const subgraphUrl = getSubgraphUrl({
-    chainId,
-    subgraphIds,
-  })
+  // Allow overriding the subgraph URL for Hemi Sepolia via config
+  // This is temporarily needed while we test the veHemiRewards subgraph
+  // Should be removed once the subgraph is fully deployed and stable
+  const customUrl = config.get<string | undefined>(
+    'subgraph.veHemi.testnetCustomUrl',
+  )
+
+  const subgraphUrl =
+    chainId === hemiSepolia.id && customUrl
+      ? customUrl
+      : getSubgraphUrl({ chainId, subgraphIds })
 
   const schema = {
     query: `

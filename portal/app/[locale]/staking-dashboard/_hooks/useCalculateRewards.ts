@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useMemo } from 'react'
 import { StakingDashboardToken } from 'types/stakingDashboard'
 import { calculateRewards } from 've-hemi-rewards/actions'
 import type { Address } from 'viem'
@@ -28,16 +27,11 @@ export const useCalculateRewards = function ({
 }) {
   const { hemiWalletClient } = useHemiWalletClient()
 
-  const queryKey = useMemo(
-    () =>
-      [
-        'calculateRewards',
-        tokenId.toString(), // to avoid issues with bigint in query keys
-        rewardToken,
-        token.chainId,
-      ] as const,
-    [tokenId, rewardToken, token.chainId],
-  )
+  const queryKey = getCalculateRewardsQueryKey({
+    chainId: token.chainId,
+    rewardToken,
+    tokenId,
+  })
 
   return useQuery({
     enabled:

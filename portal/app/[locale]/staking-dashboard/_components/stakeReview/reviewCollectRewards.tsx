@@ -88,7 +88,7 @@ export const ReviewCollectRewards = function ({ onClose }: Props) {
             CollectAllRewardsDashboardStatus.COLLECT_TX_PENDING
           }
           chainId={hemi.id}
-          label={t('drawer.claim-rewards', { symbol: token.symbol })}
+          label={t('drawer.claim-rewards', { network: hemi.name })}
         />
       ),
       explorerChainId: token.chainId,

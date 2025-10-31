@@ -242,7 +242,7 @@
     "claim-rewards-successful": "Recompensas reclamadas con éxito",
     "drawer": {
       "approving": "Aprobando {symbol}",
-      "claim-rewards": "Reclamar recompensas en {symbol}",
+      "claim-rewards": "Reclamar recompensas en {network}",
       "increase-amount": {
         "heading": "Agregar ${symbol} a este bloqueo",
         "subheading": "Depositar ${symbol} adicionales en su bloqueo existente para aumentar su cantidad de stake y poder de gobernanza."

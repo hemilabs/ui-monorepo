@@ -242,7 +242,7 @@
     "claim-rewards-successful": "Claim rewards successful",
     "drawer": {
       "approving": "Approving {symbol}",
-      "claim-rewards": "Claim rewards on {symbol}",
+      "claim-rewards": "Claim rewards on {network}",
       "increase-amount": {
         "heading": "Add ${symbol} to this lockup",
         "subheading": "Deposit additional ${symbol} into your existing lockup to increase your staked amount and governance power."

@@ -8,9 +8,9 @@ import { useTranslations } from 'next-intl'
 import { getSwapUrl } from 'utils/swap'
 import { isRelativeUrl, queryStringObjectToString } from 'utils/url'
 
-import deployContracts from '../_assets/deployContracts.png'
-import swapTokens from '../_assets/swapTokens.png'
-import tunnelAssets from '../_assets/tunnelAssets.png'
+import deployContracts from '../_assets/deployContracts.svg'
+import swapTokens from '../_assets/swapTokens.svg'
+import tunnelAssets from '../_assets/tunnelAssets.svg'
 
 import { Section } from './section'
 
@@ -50,7 +50,7 @@ const Box = function ({
         <div className="flex flex-col gap-y-4 p-2 pb-4 text-sm font-medium">
           <Image
             alt={alt}
-            className="rounded-2xl opacity-60 group-hover/image:opacity-100"
+            className="rounded-2xl opacity-60 transition-opacity duration-300 group-hover/image:opacity-100"
             height={300}
             priority={true}
             src={image}

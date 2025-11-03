@@ -13,8 +13,7 @@
     "apiUrl": "SUBGRAPH_API_URL",
     "origin": "SUBGRAPH_ORIGIN",
     "veHemi": {
-      "testnet": "SUBGRAPH_VE_HEMI_TESTNET",
-      "testnetCustomUrl": "SUBGRAPH_HEMI_VE_REWARDS_TESTNET_CUSTOM_URL"
+      "testnet": "SUBGRAPH_VE_HEMI_TESTNET"
     }
   }
 }

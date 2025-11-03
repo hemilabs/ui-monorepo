@@ -102,7 +102,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   const fromChain = useChain(fromNetworkId)
 
   const {
-    canSubmit: canDeposit,
+    canSubmit,
     error: validationError,
     errorKey,
   } = validateSubmit({
@@ -181,6 +181,8 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   })
 
   const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
+
+  const canDeposit = canSubmit && !tunnelsThroughPartners(fromToken)
 
   function renderBelowForm() {
     if (!canDeposit) return null
@@ -283,7 +285,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
             }}
           />
         }
-        onSubmit={handleDeposit}
+        onSubmit={canDeposit ? handleDeposit : undefined}
         submitButton={renderSubmitButton()}
       />
       {isPartnersDrawerOpen && (

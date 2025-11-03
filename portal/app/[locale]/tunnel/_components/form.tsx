@@ -133,7 +133,7 @@ export const FormContent = function ({
 type TunnelFormProps = {
   bottomSection?: ReactNode
   formContent: ReactNode
-  onSubmit: () => void
+  onSubmit: VoidFunction | undefined
   belowForm?: React.ReactNode
   submitButton?: ReactNode
 }
@@ -150,8 +150,11 @@ export const TunnelForm = ({
       <form
         className="flex flex-col gap-y-3 p-4 md:p-6"
         onSubmit={function (e: FormEvent) {
+          // if there isn't an onSubmit function, the page reloads
+          // if the user manages to submit the form (e.g., by pressing Enter)
+          // that's why we prevent default behavior here
           e.preventDefault()
-          onSubmit()
+          onSubmit?.()
         }}
       >
         {formContent}

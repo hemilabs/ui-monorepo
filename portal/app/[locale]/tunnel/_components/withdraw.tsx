@@ -191,6 +191,8 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   const canWithdraw = !isLoadingMinWithdrawalSats && canSubmit
   const feeEstimationEnabled = !!btcAddress && canWithdraw
 
+  const disableForm = !canWithdraw || isWithdrawing
+
   const { fees: estimatedFees, isError: isEstimateFeesError } =
     useEstimateBtcWithdrawFees({
       amount,
@@ -262,10 +264,10 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
           tunnelState={state}
         />
       }
-      onSubmit={handleWithdraw}
+      onSubmit={disableForm ? undefined : handleWithdraw}
       submitButton={
         <SubmitWithTwoWallets
-          disabled={!canWithdraw || isWithdrawing}
+          disabled={disableForm}
           text={getSubmitText()}
           validationError={validationError}
         />
@@ -313,7 +315,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   const isMainnet = networkType === 'mainnet'
 
   const {
-    canSubmit: canWithdraw,
+    canSubmit,
     error: validationError,
     errorKey,
   } = validateSubmit({
@@ -365,6 +367,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
       })
 
   const balanceLoaded = nativeTokenBalanceLoaded || tokenBalanceLoaded
+  const canWithdraw = canSubmit && !tunnelsThroughPartners(fromToken)
 
   function RenderBelowForm() {
     if (!canWithdraw) {
@@ -457,7 +460,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
             }}
           />
         }
-        onSubmit={withdraw}
+        onSubmit={canWithdraw ? withdraw : undefined}
         submitButton={<RenderSubmitButton />}
       />
       {isPartnersDrawerOpen && (

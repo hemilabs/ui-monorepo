@@ -4,7 +4,6 @@ import { useNativeTokenBalance } from 'hooks/useBalance'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
-import { useRewardTokens } from 'hooks/useRewardTokens'
 import { useUmami } from 'hooks/useUmami'
 import {
   CollectAllRewardsDashboardOperation,
@@ -16,6 +15,7 @@ import { useAccount } from 'wagmi'
 
 import { getCalculateRewardsQueryKey } from './useCalculateRewards'
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
+import { useRewardTokens } from './useRewardTokens'
 
 type UseCollectRewards = {
   on?: (emitter: EventEmitter<CollectAllRewardsEvents>) => void
@@ -34,7 +34,7 @@ export const useCollectRewards = function ({
   const { track } = useUmami()
   const { address } = useAccount()
   const queryClient = useQueryClient()
-  const rewardTokens = useRewardTokens()
+  const { tokens: rewardTokens } = useRewardTokens()
   const hemi = useHemi()
 
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(

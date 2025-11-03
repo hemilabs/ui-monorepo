@@ -1,59 +1,43 @@
-import { useHemiToken } from 'hooks/useHemiToken'
-import { useRewardTokens } from 'hooks/useRewardTokens'
+import { DisplayAmount } from 'components/displayAmount'
 import { EvmToken } from 'types/token'
-import { formatNumber } from 'utils/format'
 import { formatUnits } from 'viem'
-import type { Address } from 'viem'
 
 import { useCalculateRewards } from '../_hooks/useCalculateRewards'
+import { RewardTokenConfig, useRewardTokens } from '../_hooks/useRewardTokens'
 
 type Props = {
   tokenId: string
 }
 
 function RewardRow({
-  rewardToken,
-  symbol,
   token,
   tokenId,
 }: {
-  rewardToken: Address
-  symbol: string
-  token: EvmToken
+  token: EvmToken | RewardTokenConfig
   tokenId: string
 }) {
   const { data, isLoading } = useCalculateRewards({
-    rewardToken,
+    rewardToken: token.address,
     token,
     tokenId: BigInt(tokenId),
   })
   const formattedAmount =
-    isLoading || data === undefined
-      ? '-'
-      : formatNumber(formatUnits(data, token.decimals))
+    isLoading || data === undefined ? '0' : formatUnits(data, token.decimals)
 
   return (
-    <p className="space-x-1 text-sm font-medium text-neutral-950">
-      <span>{formattedAmount}</span>
-      <span>{symbol}</span>
-    </p>
+    <div className="space-x-1 text-sm font-medium text-neutral-950">
+      <DisplayAmount amount={formattedAmount} token={token as EvmToken} />
+    </div>
   )
 }
 
 export function RewardsDisplay({ tokenId }: Props) {
-  const token = useHemiToken()
-  const rewardTokens = useRewardTokens()
+  const { tokens: rewardTokens } = useRewardTokens()
 
   return (
     <div className="space-y-1">
-      {rewardTokens.map(({ address, symbol }) => (
-        <RewardRow
-          key={address}
-          rewardToken={address}
-          symbol={symbol}
-          token={token}
-          tokenId={tokenId}
-        />
+      {rewardTokens.map(item => (
+        <RewardRow key={item.address} token={item} tokenId={tokenId} />
       ))}
     </div>
   )

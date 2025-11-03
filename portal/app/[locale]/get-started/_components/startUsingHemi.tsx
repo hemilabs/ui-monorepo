@@ -8,10 +8,9 @@ import { useTranslations } from 'next-intl'
 import { getSwapUrl } from 'utils/swap'
 import { isRelativeUrl, queryStringObjectToString } from 'utils/url'
 
-import deployContracts from '../_assets/deployContracts.png'
-import swapTokensMainnet from '../_assets/swapTokens-mainnet.png'
-import swapTokensTestnet from '../_assets/swapTokens-testnet.png'
-import tunnelAssets from '../_assets/tunnelAssets.png'
+import deployContracts from '../_assets/deployContracts.svg'
+import swapTokens from '../_assets/swapTokens.svg'
+import tunnelAssets from '../_assets/tunnelAssets.svg'
 
 import { Section } from './section'
 
@@ -51,7 +50,7 @@ const Box = function ({
         <div className="flex flex-col gap-y-4 p-2 pb-4 text-sm font-medium">
           <Image
             alt={alt}
-            className="rounded-2xl opacity-60 group-hover/image:opacity-100"
+            className="rounded-2xl opacity-60 transition-opacity duration-300 group-hover/image:opacity-100"
             height={300}
             priority={true}
             src={image}
@@ -96,9 +95,7 @@ export const StartUsingHemi = function () {
           event="tut - swap tokens"
           heading={t('swap-tokens')}
           href={getSwapUrl(networkType)}
-          image={
-            networkType === 'testnet' ? swapTokensTestnet : swapTokensMainnet
-          }
+          image={swapTokens}
           subheading={t(`swap-tokens-${networkType}`)}
         />
         <Box

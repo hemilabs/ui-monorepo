@@ -3,30 +3,25 @@ import { EvmToken } from 'types/token'
 import { formatUnits } from 'viem'
 
 import { useCalculateRewards } from '../_hooks/useCalculateRewards'
-import { RewardTokenConfig, useRewardTokens } from '../_hooks/useRewardTokens'
+import { useRewardTokens } from '../_hooks/useRewardTokens'
 
 type Props = {
   tokenId: string
 }
 
-function RewardRow({
-  token,
-  tokenId,
-}: {
-  token: EvmToken | RewardTokenConfig
-  tokenId: string
-}) {
+function RewardRow({ token, tokenId }: { token: EvmToken; tokenId: string }) {
   const { data, isLoading } = useCalculateRewards({
     rewardToken: token.address,
     token,
     tokenId: BigInt(tokenId),
   })
+
   const formattedAmount =
     isLoading || data === undefined ? '0' : formatUnits(data, token.decimals)
 
   return (
     <div className="space-x-1 text-sm font-medium text-neutral-950">
-      <DisplayAmount amount={formattedAmount} token={token as EvmToken} />
+      <DisplayAmount amount={formattedAmount} token={token} />
     </div>
   )
 }

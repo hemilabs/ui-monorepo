@@ -34,7 +34,7 @@ function StakingContent() {
   return (
     <StakingDashboardProvider>
       <div className="mt-8 flex flex-col-reverse gap-6 lg:flex-row">
-        <div className="w-full lg:w-1/2 xl:flex-[2_1_0%]">
+        <div className="xl:grow-2 w-full lg:w-1/2 xl:shrink xl:basis-0">
           <div className="mb-4 ml-1 flex flex-row md:w-fit">
             <StakeTableFilter filter={filter} onFilter={handleFilter} />
           </div>

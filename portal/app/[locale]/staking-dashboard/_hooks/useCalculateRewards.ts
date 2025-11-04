@@ -4,8 +4,6 @@ import { EvmToken } from 'types/token'
 import { calculateRewards } from 've-hemi-rewards/actions'
 import type { Address } from 'viem'
 
-import { RewardTokenConfig } from './useRewardTokens'
-
 export const getCalculateRewardsQueryKey = ({
   chainId,
   rewardToken,
@@ -24,7 +22,7 @@ export const useCalculateRewards = function ({
 }: {
   enabled?: boolean
   rewardToken: string
-  token: EvmToken | RewardTokenConfig
+  token: EvmToken
   tokenId: bigint
 }) {
   const { hemiWalletClient } = useHemiWalletClient()

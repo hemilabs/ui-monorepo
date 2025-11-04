@@ -1,4 +1,4 @@
-import type { Address, Client } from 'viem'
+import { getAddress, type Address, type Client } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { veHemiRewardsAbi } from '../../abi'
@@ -13,12 +13,15 @@ export const calculateRewards = async function (
     throw new Error('Client chain is not defined')
   }
 
+  // Normalize the address to ensure correct checksum
+  const normalizedRewardToken = getAddress(rewardToken.toLowerCase())
+
   const veHemiRewardsAddress = getVeHemiRewardsContractAddress(client.chain.id)
 
   return readContract(client, {
     abi: veHemiRewardsAbi,
     address: veHemiRewardsAddress,
-    args: [tokenId, rewardToken],
+    args: [tokenId, normalizedRewardToken],
     functionName: 'calculateRewards',
   })
 }

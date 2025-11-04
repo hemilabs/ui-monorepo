@@ -11,9 +11,10 @@ const BaseTooltip = lazy(() =>
 export const Tooltip = function ({
   children,
   disabled = false,
+  text,
   ...props
 }: BaseTooltipProps & { disabled?: boolean }) {
-  if (disabled) {
+  if (disabled || text === null || text === undefined) {
     return <>{children}</>
   }
 
@@ -21,7 +22,9 @@ export const Tooltip = function ({
 
   return (
     <Suspense fallback={content}>
-      <BaseTooltip {...props}>{content}</BaseTooltip>
+      <BaseTooltip text={text} {...props}>
+        {content}
+      </BaseTooltip>
     </Suspense>
   )
 }

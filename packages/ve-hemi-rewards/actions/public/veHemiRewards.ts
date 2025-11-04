@@ -1,11 +1,11 @@
-import type { Address, PublicClient, WalletClient } from 'viem'
+import type { Address, Client } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { veHemiRewardsAbi } from '../../abi'
 import { getVeHemiRewardsContractAddress } from '../../constants'
 
 export const calculateRewards = async function (
-  client: PublicClient | WalletClient,
+  client: Client,
   tokenId: bigint,
   rewardToken: Address,
 ) {
@@ -24,7 +24,7 @@ export const calculateRewards = async function (
 }
 
 export const getRewardTokens = async function (
-  client: PublicClient | WalletClient,
+  client: Client,
 ): Promise<Address[]> {
   if (!client.chain) {
     throw new Error('Client chain is not defined')

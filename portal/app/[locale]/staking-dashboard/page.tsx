@@ -34,13 +34,13 @@ function StakingContent() {
   return (
     <StakingDashboardProvider>
       <div className="mt-8 flex flex-col-reverse gap-6 lg:flex-row">
-        <div className="w-full lg:w-1/2 xl:flex-[2]">
+        <div className="w-full lg:w-1/2 xl:flex-[2_1_0%]">
           <div className="mb-4 ml-1 flex flex-row md:w-fit">
             <StakeTableFilter filter={filter} onFilter={handleFilter} />
           </div>
           <StakeTable data={filteredData} loading={isLoading} />
         </div>
-        <div className="w-full shrink-0 lg:w-1/2 lg:shrink xl:flex-[1]">
+        <div className="w-full shrink-0 lg:w-1/2 lg:shrink xl:flex-1">
           <StakeForm />
         </div>
       </div>

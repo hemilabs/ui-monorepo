@@ -35,9 +35,7 @@ const rewardTokensMap: Record<Chain['id'], RewardTokenConfig[]> = {
 export const useRewardTokens = function () {
   const { id } = useHemi()
 
-  const { data: rewardTokenAddresses = [], isLoading } = useRewardTokensQuery({
-    chainId: id,
-  })
+  const { data: rewardTokenAddresses = [], isLoading } = useRewardTokensQuery()
 
   const fallbackTokens = useMemo(() => rewardTokensMap[id] || [], [id])
 

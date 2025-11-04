@@ -40,42 +40,35 @@ export const DisplayAmount = function ({
   const notZero = !bigAmount.eq(0)
   // Only show dots for small numbers (x < 1), if the amount is not zero and we're truncating decimals
   const showDots = bigAmount.lt(1) && notZero && formattedAmount !== amount
-
-  const content = (
-    <Container>
-      <AmountContainer>{`${formattedAmount}${
-        showDots ? '...' : ''
-      }`}</AmountContainer>
-      {showSymbol ? (
-        <SymbolContainer>{` ${token.symbol}`}</SymbolContainer>
-      ) : null}
-    </Container>
-  )
-
-  if (!notZero) {
-    return content
-  }
-
   return (
     <Tooltip
       id={`amount-tooltip-${token.symbol}`}
       text={
-        <span className="flex items-center gap-x-1">
-          {showTokenLogo && (
-            <TokenLogo size="small" token={token} version={logoVersion} />
-          )}
-          <span>{`${new Intl.NumberFormat('en-US', {
-            maximumFractionDigits: token.decimals,
-            useGrouping: true,
-          }).format(
-            // @ts-expect-error NumberFormat.format accept strings, typings are wrong. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/format#parameters
-            amount,
-          )} ${token.symbol}`}</span>
-        </span>
+        notZero ? (
+          <span className="flex items-center gap-x-1">
+            {showTokenLogo && (
+              <TokenLogo size="small" token={token} version={logoVersion} />
+            )}
+            <span>{`${new Intl.NumberFormat('en-US', {
+              maximumFractionDigits: token.decimals,
+              useGrouping: true,
+            }).format(
+              // @ts-expect-error NumberFormat.format accept strings, typings are wrong. See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/format#parameters
+              amount,
+            )} ${token.symbol}`}</span>
+          </span>
+        ) : null
       }
       variant="simple"
     >
-      {content}
+      <Container>
+        <AmountContainer>{`${formattedAmount}${
+          showDots ? '...' : ''
+        }`}</AmountContainer>
+        {showSymbol ? (
+          <SymbolContainer>{` ${token.symbol}`}</SymbolContainer>
+        ) : null}
+      </Container>
     </Tooltip>
   )
 }

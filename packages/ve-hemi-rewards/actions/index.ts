@@ -1,4 +1,4 @@
-export { calculateRewards } from './public/veHemiRewards'
+export { calculateRewards, getRewardTokens } from './public/veHemiRewards'
 export {
   collectAllRewards,
   encodeCollectAllRewards,

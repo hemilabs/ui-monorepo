@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { StakingDashboardToken } from 'types/stakingDashboard'
+import { EvmToken } from 'types/token'
 import { calculateRewards } from 've-hemi-rewards/actions'
 import type { Address } from 'viem'
 
@@ -10,7 +10,7 @@ export const getCalculateRewardsQueryKey = ({
   tokenId,
 }: {
   chainId: number
-  rewardToken: Address
+  rewardToken: string
   tokenId: bigint
 }) => ['calculateRewards', tokenId.toString(), rewardToken, chainId]
 
@@ -21,8 +21,8 @@ export const useCalculateRewards = function ({
   tokenId,
 }: {
   enabled?: boolean
-  rewardToken: Address
-  token: StakingDashboardToken
+  rewardToken: string
+  token: EvmToken
   tokenId: bigint
 }) {
   const { hemiWalletClient } = useHemiWalletClient()
@@ -36,7 +36,8 @@ export const useCalculateRewards = function ({
   return useQuery({
     enabled:
       enabled && !!hemiWalletClient && !!rewardToken && tokenId > BigInt(0),
-    queryFn: () => calculateRewards(hemiWalletClient!, tokenId, rewardToken),
+    queryFn: () =>
+      calculateRewards(hemiWalletClient!, tokenId, rewardToken as Address),
     queryKey,
     refetchInterval: 24000, // 24 seconds
   })

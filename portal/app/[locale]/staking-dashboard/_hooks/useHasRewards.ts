@@ -1,13 +1,13 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useRewardTokens } from 'hooks/useRewardTokens'
 
 import { getCalculateRewardsQueryKey } from './useCalculateRewards'
+import { useRewardTokens } from './useRewardTokens'
 
 export function useHasRewards(tokenId: string) {
   const queryClient = useQueryClient()
   const token = useHemiToken()
-  const rewardTokens = useRewardTokens()
+  const { isLoading, tokens: rewardTokens } = useRewardTokens()
 
   const totalRewards = rewardTokens.reduce(function (total, { address }) {
     const queryKey = getCalculateRewardsQueryKey({
@@ -23,6 +23,7 @@ export function useHasRewards(tokenId: string) {
 
   return {
     hasRewards: totalRewards > BigInt(0),
+    isLoading,
     totalRewards,
   }
 }

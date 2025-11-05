@@ -94,6 +94,9 @@ const config: Config = {
           usdt: 'rgba(39, 161, 124, 0.08)',
         },
       },
+      flexGrow: {
+        2: '2',
+      },
       fontFamily: {
         'inter-display': ['var(--font-inter-display)'],
         'inter-variable': ['var(--font-inter-variable)'],

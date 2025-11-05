@@ -8,7 +8,7 @@ import {
   type WalletClient,
 } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
-import { approve, allowance, balanceOf } from 'viem-erc20/actions'
+import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 
 import { l1StandardBridgeAbi } from './abis'
 import { DepositErc20Events } from './types'

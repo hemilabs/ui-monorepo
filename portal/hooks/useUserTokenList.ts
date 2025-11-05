@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { getRemoteTokens } from 'tokenList'
 import { type EvmToken } from 'types/token'
 import useLocalStorageState from 'use-local-storage-state'
-import { isAddress, isAddressEqual } from 'viem'
+import { isAddress, isAddressEqual, checksumAddress } from 'viem'
 
 import { useNetworkType } from './useNetworkType'
 
@@ -22,6 +22,15 @@ export const useUserTokenList = function () {
   return useMemo(
     () => ({
       addToken(token: EvmToken) {
+        if (!isAddress(token.address)) {
+          throw new Error('Invalid token address')
+        }
+
+        const normalizedAddress = checksumAddress(token.address, token.chainId)
+        const normalizedToken = {
+          ...token,
+          address: normalizedAddress,
+        }
         setUserTokenList(function (prevList) {
           const found = prevList.tokens.some(
             t =>
@@ -35,7 +44,7 @@ export const useUserTokenList = function () {
           }
           return {
             ...prevList,
-            tokens: prevList.tokens.concat(token),
+            tokens: prevList.tokens.concat(normalizedToken),
           }
         })
       },

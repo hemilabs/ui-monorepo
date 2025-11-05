@@ -89,7 +89,7 @@ export const getErc20Token = pMemoize(
     return Promise.all([read('decimals'), read('name'), read('symbol')]).then(
       ([decimals, name, symbol]) =>
         ({
-          address: toChecksum(address, chainId),
+          address: toChecksum(address),
           chainId,
           decimals,
           name,

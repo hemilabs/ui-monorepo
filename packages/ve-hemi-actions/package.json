@@ -22,6 +22,7 @@
   "dependencies": {
     "hemi-viem": "2.6.1",
     "promise-mem": "1.0.4",
+    "to-promise-event": "1.0.0",
     "viem-erc20": "1.1.0"
   },
   "devDependencies": {

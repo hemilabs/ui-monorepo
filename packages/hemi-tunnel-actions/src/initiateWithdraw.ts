@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { toPromiseEvent } from 'to-promise-event'
 import {
   Address,
   Chain,
@@ -15,7 +16,7 @@ import { getErc20TokenBalance } from 'viem-erc20/actions'
 
 import { l2BridgeAbi } from './abis'
 import { WithdrawEvents } from './types'
-import { getL2BridgeAddress, toPromiseEvent, validateInputs } from './utils'
+import { getL2BridgeAddress, validateInputs } from './utils'
 
 const getErc20Balance = ({
   account,

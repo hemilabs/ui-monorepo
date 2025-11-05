@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { toPromiseEvent } from 'to-promise-event'
 import {
   encodeFunctionData,
   type Address,
@@ -18,7 +19,6 @@ import { DepositErc20Events } from './types'
 import {
   getL1StandardBridgeAddress,
   handleWaitDeposit,
-  toPromiseEvent,
   validateInputs,
 } from './utils'
 

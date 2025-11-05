@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { toPromiseEvent } from 'to-promise-event'
 import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { encodeFunctionData } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
@@ -6,7 +7,6 @@ import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { veHemiRewardsAbi } from '../../abi'
 import { getVeHemiRewardsContractAddress } from '../../constants'
 import type { CollectAllRewardsEvents } from '../../types'
-import { toPromiseEvent } from '../../utils'
 
 const canCollectAllRewards = async function ({
   tokenId,

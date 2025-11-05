@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { toPromiseEvent } from 'to-promise-event'
 import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { encodeFunctionData } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
@@ -6,7 +7,7 @@ import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { veHemiAbi } from '../../abi'
 import { getVeHemiContractAddress } from '../../constants'
 import type { IncreaseUnlockTimeEvents } from '../../types'
-import { toPromiseEvent, validateIncreaseUnlockTimeInputs } from '../../utils'
+import { validateIncreaseUnlockTimeInputs } from '../../utils'
 import { getLockedBalance } from '../public/veHemi'
 
 const canIncreaseUnlockTime = async function ({

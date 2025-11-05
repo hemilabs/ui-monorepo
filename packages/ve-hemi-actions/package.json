@@ -23,7 +23,7 @@
     "hemi-viem": "2.6.1",
     "promise-mem": "1.0.4",
     "to-promise-event": "1.0.0",
-    "viem-erc20": "1.1.0"
+    "viem-erc20": "2.0.0"
   },
   "devDependencies": {
     "@tsconfig/node22": "22.0.2",

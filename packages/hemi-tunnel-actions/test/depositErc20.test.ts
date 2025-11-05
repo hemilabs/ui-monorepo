@@ -2,11 +2,7 @@ import { hemiSepolia } from 'hemi-viem'
 import { zeroAddress, zeroHash } from 'viem'
 import { writeContract, waitForTransactionReceipt } from 'viem/actions'
 import { sepolia } from 'viem/chains'
-import {
-  approveErc20Token,
-  getErc20TokenAllowance,
-  getErc20TokenBalance,
-} from 'viem-erc20/actions'
+import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 import { describe, it, expect, vi } from 'vitest'
 
 import { depositErc20 } from '../src/depositErc20'
@@ -17,9 +13,9 @@ vi.mock('viem/actions', () => ({
 }))
 
 vi.mock('viem-erc20/actions', () => ({
-  approveErc20Token: vi.fn(),
-  getErc20TokenAllowance: vi.fn(),
-  getErc20TokenBalance: vi.fn(),
+  allowance: vi.fn(),
+  approve: vi.fn(),
+  balanceOf: vi.fn(),
 }))
 
 const validParameters = {
@@ -98,7 +94,7 @@ describe('depositErc20', function () {
   })
 
   it('should emit "deposit-failed-validation" if the token does not have enough balance', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(50))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(50))
 
     const { emitter, promise } = depositErc20({
       ...validParameters,
@@ -115,9 +111,9 @@ describe('depositErc20', function () {
   })
 
   it('should emit "approve-failed" when the approval transaction receipt fails', async function () {
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(200))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockRejectedValue(
       new Error('Transaction receipt error'),
     )
@@ -137,9 +133,9 @@ describe('depositErc20', function () {
   })
 
   it('should emit "approve-transaction-succeeded" and "deposit-transaction-succeeded" when approval and deposit succeeds', async function () {
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(200))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'success',
@@ -167,9 +163,9 @@ describe('depositErc20', function () {
   })
 
   it('should support approving a custom amount', async function () {
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(200))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'success',
     })
@@ -194,7 +190,7 @@ describe('depositErc20', function () {
 
     await promise
 
-    expect(approveErc20Token).toHaveBeenCalledExactlyOnceWith(
+    expect(approve).toHaveBeenCalledExactlyOnceWith(
       expect.any(Object), // the publicClient
       {
         address: zeroAddress,
@@ -210,9 +206,9 @@ describe('depositErc20', function () {
   })
 
   it('should emit "user-signing-approve-error" when approval fails', async function () {
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
-    vi.mocked(approveErc20Token).mockRejectedValue(new Error('Approval error'))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(200))
+    vi.mocked(approve).mockRejectedValue(new Error('Approval error'))
 
     const { emitter, promise } = depositErc20(validParameters)
 
@@ -234,9 +230,9 @@ describe('depositErc20', function () {
   })
 
   it('should emit "approve-transaction-reverted" when approval transaction reverts', async function () {
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(200))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'reverted',
     })
@@ -261,8 +257,8 @@ describe('depositErc20', function () {
   })
 
   it('should emit "user-signing-deposit-error" when deposit signing fails', async function () {
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(200))
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
+    vi.mocked(allowance).mockResolvedValue(BigInt(200))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(200))
     vi.mocked(writeContract).mockRejectedValue(new Error('Signing error'))
 
     const { emitter, promise } = depositErc20(validParameters)
@@ -284,8 +280,8 @@ describe('depositErc20', function () {
   })
 
   it('should emit "deposit-transaction-reverted" when deposit transaction reverts', async function () {
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(200))
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(200))
+    vi.mocked(allowance).mockResolvedValue(BigInt(200))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(200))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
 
     const { emitter, promise } = depositErc20({

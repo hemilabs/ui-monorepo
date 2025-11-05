@@ -1,11 +1,7 @@
 import { hemiSepolia } from 'hemi-viem'
 import { zeroAddress, zeroHash } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
-import {
-  approveErc20Token,
-  getErc20TokenAllowance,
-  getErc20TokenBalance,
-} from 'viem-erc20/actions'
+import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 import { increaseAmount } from '../../../actions'
@@ -22,9 +18,9 @@ vi.mock('viem/actions', () => ({
 }))
 
 vi.mock('viem-erc20/actions', () => ({
-  approveErc20Token: vi.fn(),
-  getErc20TokenAllowance: vi.fn(),
-  getErc20TokenBalance: vi.fn(),
+  allowance: vi.fn(),
+  approve: vi.fn(),
+  balanceOf: vi.fn(),
 }))
 
 vi.mock('../../../actions/public/veHemi', () => ({
@@ -111,7 +107,7 @@ describe('increaseAmount', function () {
   })
 
   it('should emit "increase-amount-failed-validation" if user has insufficient balance', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(50))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(50))
 
     const { emitter, promise } = increaseAmount(validParameters)
 
@@ -129,7 +125,7 @@ describe('increaseAmount', function () {
   })
 
   it('should emit "increase-amount-failed-validation" if lock is expired', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
 
     // Mock expired lock (end timestamp in the past)
     const pastTimestamp = BigInt(Math.floor(Date.now() / 1000) - 86400) // 1 day ago
@@ -154,9 +150,9 @@ describe('increaseAmount', function () {
   })
 
   it('should approve tokens if allowance is insufficient', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(50))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(50))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'success',
     })
@@ -183,7 +179,7 @@ describe('increaseAmount', function () {
     expect(approveTransactionSucceeded).toHaveBeenCalled()
     expect(preIncreaseAmount).toHaveBeenCalledOnce()
     expect(increaseAmountSettled).toHaveBeenCalledOnce()
-    expect(approveErc20Token).toHaveBeenCalledWith(
+    expect(approve).toHaveBeenCalledWith(
       validParameters.walletClient,
       expect.objectContaining({
         amount: validParameters.additionalAmount,
@@ -193,9 +189,9 @@ describe('increaseAmount', function () {
   })
 
   it('should use custom approval amount if provided', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'success',
     })
@@ -213,7 +209,7 @@ describe('increaseAmount', function () {
 
     await promise
 
-    expect(approveErc20Token).toHaveBeenCalledWith(
+    expect(approve).toHaveBeenCalledWith(
       validParameters.walletClient,
       expect.objectContaining({
         amount: customApprovalAmount,
@@ -222,10 +218,8 @@ describe('increaseAmount', function () {
   })
 
   it('should successfully increase amount after approval', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(
-      validParameters.additionalAmount,
-    )
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(
+    vi.mocked(balanceOf).mockResolvedValue(validParameters.additionalAmount)
+    vi.mocked(allowance).mockResolvedValue(
       BigInt(validParameters.additionalAmount),
     )
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
@@ -266,10 +260,8 @@ describe('increaseAmount', function () {
   })
 
   it('should skip approval if allowance is sufficient', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(
-      validParameters.additionalAmount,
-    )
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(
+    vi.mocked(balanceOf).mockResolvedValue(validParameters.additionalAmount)
+    vi.mocked(allowance).mockResolvedValue(
       validParameters.additionalAmount + BigInt(1),
     )
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
@@ -292,13 +284,13 @@ describe('increaseAmount', function () {
     expect(preApprove).not.toHaveBeenCalled()
     expect(preIncreaseAmount).toHaveBeenCalledOnce()
     expect(increaseAmountSettled).toHaveBeenCalledOnce()
-    expect(approveErc20Token).not.toHaveBeenCalled()
+    expect(approve).not.toHaveBeenCalled()
   })
 
   it('should handle approve transaction failure', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValueOnce({
       status: 'reverted',
     })
@@ -321,9 +313,9 @@ describe('increaseAmount', function () {
   })
 
   it('should handle user rejecting approval', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(approveErc20Token).mockRejectedValue(new Error('User rejected'))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockRejectedValue(new Error('User rejected'))
 
     const { emitter, promise } = increaseAmount(validParameters)
 
@@ -343,8 +335,8 @@ describe('increaseAmount', function () {
   })
 
   it('should handle user rejecting increase amount', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(200))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(200))
     vi.mocked(writeContract).mockRejectedValue(new Error('User rejected'))
 
     const { emitter, promise } = increaseAmount(validParameters)
@@ -371,8 +363,8 @@ describe('increaseAmount', function () {
   })
 
   it('should handle increase amount transaction failure', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(200))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(200))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'reverted',
@@ -402,9 +394,9 @@ describe('increaseAmount', function () {
   })
 
   it('should handle approval failure during waitForTransactionReceipt', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockRejectedValue(
       new Error('Network error'),
     )
@@ -424,8 +416,8 @@ describe('increaseAmount', function () {
   })
 
   it('should handle increase amount failure during waitForTransactionReceipt', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(200))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(200))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockRejectedValue(
       new Error('Network error'),
@@ -465,7 +457,7 @@ describe('increaseAmount', function () {
   })
 
   it('should handle balance check failure', async function () {
-    vi.mocked(getErc20TokenBalance).mockRejectedValue(new Error('RPC error'))
+    vi.mocked(balanceOf).mockRejectedValue(new Error('RPC error'))
 
     const { emitter, promise } = increaseAmount(validParameters)
 
@@ -483,7 +475,7 @@ describe('increaseAmount', function () {
   })
 
   it('should handle getLockedBalance failure', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
     vi.mocked(getLockedBalance).mockRejectedValue(new Error('Contract error'))
 
     const { emitter, promise } = increaseAmount(validParameters)

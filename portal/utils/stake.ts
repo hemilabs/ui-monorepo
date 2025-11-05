@@ -6,6 +6,7 @@ import { NetworkType } from 'hooks/useNetworkType'
 import { EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
 import type { Address, Chain, Hash, TransactionReceipt } from 'viem'
+import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 
 import { findChainById } from './chain'
 import { parseTokenUnits } from './token'
@@ -85,7 +86,7 @@ const validateStakeOperation = async function ({
     ? await hemiPublicClient.getBalance({
         address: forAccount,
       })
-    : await hemiPublicClient.getErc20TokenBalance({
+    : await balanceOf(hemiPublicClient, {
         account: forAccount,
         // @ts-expect-error token is not native, so token.address is address
         address: token.address,
@@ -213,22 +214,20 @@ export const stake = async function ({
   } else {
     const spender = stakeManagerAddresses[token.chainId]
     const tokenAddress = token.address as Address
-    const allowance = await hemiPublicClient.getErc20TokenAllowance({
+    const tokenAllowance = await allowance(hemiPublicClient, {
       address: tokenAddress,
       owner: forAccount,
       spender,
     })
 
-    if (allowance < amount) {
+    if (tokenAllowance < amount) {
       // first, we need to approve the token to be spent by the stake manager
       onTokenApprove?.()
-      const approveTxHash = await hemiWalletClient
-        .approveErc20Token({
-          address: tokenAddress,
-          amount,
-          spender: stakeManagerAddresses[token.chainId],
-        })
-        .catch(onUserRejectedTokenApproval)
+      const approveTxHash = await approve(hemiWalletClient, {
+        address: tokenAddress,
+        amount,
+        spender: stakeManagerAddresses[token.chainId],
+      }).catch(onUserRejectedTokenApproval)
 
       if (!approveTxHash) {
         return

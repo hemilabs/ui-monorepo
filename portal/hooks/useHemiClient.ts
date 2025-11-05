@@ -14,7 +14,6 @@ import {
 import { useMemo } from 'react'
 import { hemiPublicExtraActions } from 'utils/hemiClientExtraActions'
 import { type WalletClient, type PublicClient } from 'viem'
-import { erc20PublicActions, erc20WalletActions } from 'viem-erc20'
 import { usePublicClient, useWalletClient } from 'wagmi'
 
 import { useHemi } from './useHemi'
@@ -41,7 +40,6 @@ const pastBitcoinVaults = {
 
 export const publicClientToHemiClient = (publicClient: PublicClient) =>
   publicClient
-    .extend(erc20PublicActions())
     .extend(hemiPublicBitcoinKitActions())
     .extend(hemiPublicSimpleBitcoinVaultActions())
     .extend(hemiPublicSimpleBitcoinVaultStateActions())
@@ -57,7 +55,6 @@ export const useHemiClient = function () {
 
 const walletClientToHemiClient = (walletClient: WalletClient) =>
   walletClient
-    .extend(erc20WalletActions())
     .extend(hemiWalletBitcoinTunnelManagerActions())
     .extend(hemiWalletStakeActions())
 

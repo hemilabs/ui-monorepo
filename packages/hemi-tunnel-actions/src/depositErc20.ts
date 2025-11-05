@@ -8,11 +8,7 @@ import {
   type WalletClient,
 } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
-import {
-  approveErc20Token,
-  getErc20TokenAllowance,
-  getErc20TokenBalance,
-} from 'viem-erc20/actions'
+import { approve, allowance, balanceOf } from 'viem-erc20/actions'
 
 import { l1StandardBridgeAbi } from './abis'
 import { DepositErc20Events } from './types'
@@ -50,7 +46,7 @@ const canDepositErc20 = async function ({
     return { canDeposit: false, reason }
   }
 
-  const tokenBalance = await getErc20TokenBalance(l1PublicClient, {
+  const tokenBalance = await balanceOf(l1PublicClient, {
     account,
     address: tokenAddress,
   })
@@ -105,15 +101,15 @@ const runDepositErc20 = ({
 
       const l1StandardBridge = getL1StandardBridgeAddress({ l1Chain, l2Chain })
 
-      const allowance = await getErc20TokenAllowance(l1PublicClient, {
+      const tokenAllowance = await allowance(l1PublicClient, {
         address: l1TokenAddress,
         owner: account,
         spender: l1StandardBridge,
       })
 
-      if (amount > allowance) {
+      if (amount > tokenAllowance) {
         emitter.emit('pre-approve')
-        const approveHash = await approveErc20Token(l1WalletClient, {
+        const approveHash = await approve(l1WalletClient, {
           address: l1TokenAddress,
           amount: approvalAmount ?? amount,
           spender: l1StandardBridge,

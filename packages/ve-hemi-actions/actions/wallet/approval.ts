@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events'
 import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
-import { approveErc20Token, getErc20TokenAllowance } from 'viem-erc20/actions'
+import { approve, allowance } from 'viem-erc20/actions'
 
 import type { ApprovalEvents } from '../../types'
 
@@ -25,16 +25,16 @@ export const handleApproval = async function <T extends ApprovalEvents>({
   veHemiAddress: Address
   walletClient: WalletClient
 }): Promise<boolean> {
-  const allowance = await getErc20TokenAllowance(walletClient, {
+  const tokenAllowance = await allowance(walletClient, {
     address: hemiTokenAddress,
     owner: account,
     spender: veHemiAddress,
   })
 
-  if (amount > allowance) {
+  if (amount > tokenAllowance) {
     emitter.emit('pre-approve')
 
-    const approveHash = await approveErc20Token(walletClient, {
+    const approveHash = await approve(walletClient, {
       address: hemiTokenAddress,
       amount: approvalAmount ?? amount,
       spender: veHemiAddress,

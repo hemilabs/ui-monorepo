@@ -2,7 +2,7 @@ import { Token } from 'types/token'
 import { getTokenBalance } from 'utils/getTokenBalance'
 import { type PublicClient, zeroAddress } from 'viem'
 import { getBalance } from 'viem/actions'
-import { getErc20TokenBalance } from 'viem-erc20/actions'
+import { balanceOf } from 'viem-erc20/actions'
 import { describe, expect, it, vi } from 'vitest'
 
 vi.mock('viem/actions', () => ({
@@ -10,7 +10,7 @@ vi.mock('viem/actions', () => ({
 }))
 
 vi.mock('viem-erc20/actions', () => ({
-  getErc20TokenBalance: vi.fn(),
+  balanceOf: vi.fn(),
 }))
 
 const mockNativeToken: Token = {
@@ -64,7 +64,7 @@ describe('getTokenBalance', function () {
 
   it('should return balance for ERC20 token', async function () {
     const client = {} as PublicClient
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(2000))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(2000))
 
     const result = await getTokenBalance({
       account,
@@ -89,7 +89,7 @@ describe('getTokenBalance', function () {
 
   it('should return 0 on error for ERC20 token', async function () {
     const client = {} as PublicClient
-    vi.mocked(getErc20TokenBalance).mockRejectedValue(new Error('fail'))
+    vi.mocked(balanceOf).mockRejectedValue(new Error('fail'))
 
     const result = await getTokenBalance({
       account,

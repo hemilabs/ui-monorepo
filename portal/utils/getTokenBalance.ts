@@ -2,7 +2,7 @@ import { Token } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
 import { type Address, type PublicClient } from 'viem'
 import { getBalance } from 'viem/actions'
-import { getErc20TokenBalance } from 'viem-erc20/actions'
+import { balanceOf } from 'viem-erc20/actions'
 
 type Props = {
   account: Address | undefined
@@ -19,7 +19,7 @@ export async function getTokenBalance({ account, client, token }: Props) {
     if (isNativeToken(token)) {
       return await getBalance(client, { address: account })
     }
-    return await getErc20TokenBalance(client, {
+    return await balanceOf(client, {
       account,
       address: token.address as `0x${string}`,
     })

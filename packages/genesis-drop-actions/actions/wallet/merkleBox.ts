@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import { hemi, hemiSepolia } from 'hemi-viem'
+import { toPromiseEvent } from 'to-promise-event'
 import {
   type WalletClient,
   encodeFunctionData,
@@ -237,9 +238,5 @@ export const encodeClaimTokens = ({
   })
 
 // Main export function
-export const claimTokens = function (...args: Parameters<typeof runClaim>) {
-  const emitter = new EventEmitter<ClaimEvents>()
-  const promise = Promise.resolve().then(() => runClaim(...args)(emitter))
-
-  return { emitter, promise }
-}
+export const claimTokens = (...args: Parameters<typeof runClaim>) =>
+  toPromiseEvent(runClaim(...args))

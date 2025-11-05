@@ -1,11 +1,7 @@
 import { hemiSepolia } from 'hemi-viem'
 import { zeroAddress, zeroHash } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
-import {
-  approveErc20Token,
-  getErc20TokenAllowance,
-  getErc20TokenBalance,
-} from 'viem-erc20/actions'
+import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 import { describe, expect, it, vi, beforeEach } from 'vitest'
 
 import { createLock } from '../../../actions'
@@ -21,9 +17,9 @@ vi.mock('viem/actions', () => ({
 }))
 
 vi.mock('viem-erc20/actions', () => ({
-  approveErc20Token: vi.fn(),
-  getErc20TokenAllowance: vi.fn(),
-  getErc20TokenBalance: vi.fn(),
+  allowance: vi.fn(),
+  approve: vi.fn(),
+  balanceOf: vi.fn(),
 }))
 
 vi.mock('../../../actions/public/veHemi', () => ({
@@ -77,7 +73,7 @@ describe('createLock', function () {
   })
 
   it('should emit "lock-creation-failed-validation" if user has insufficient balance', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(50))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(50))
 
     const { emitter, promise } = createLock(validParameters)
 
@@ -92,9 +88,9 @@ describe('createLock', function () {
   })
 
   it('should approve tokens if allowance is insufficient', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(50))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(50))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'success',
     })
@@ -121,7 +117,7 @@ describe('createLock', function () {
     expect(approveTransactionSucceeded).toHaveBeenCalled()
     expect(preLockCreation).toHaveBeenCalledOnce()
     expect(lockCreationSettled).toHaveBeenCalledOnce()
-    expect(approveErc20Token).toHaveBeenCalledWith(
+    expect(approve).toHaveBeenCalledWith(
       validParameters.walletClient,
       expect.objectContaining({
         amount: validParameters.amount,
@@ -131,9 +127,9 @@ describe('createLock', function () {
   })
 
   it('should use custom approval amount if provided', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'success',
     })
@@ -151,7 +147,7 @@ describe('createLock', function () {
 
     await promise
 
-    expect(approveErc20Token).toHaveBeenCalledWith(
+    expect(approve).toHaveBeenCalledWith(
       validParameters.walletClient,
       expect.objectContaining({
         amount: customApprovalAmount,
@@ -160,10 +156,8 @@ describe('createLock', function () {
   })
 
   it('should successfully create lock after approval', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(validParameters.amount)
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(
-      BigInt(validParameters.amount),
-    )
+    vi.mocked(balanceOf).mockResolvedValue(validParameters.amount)
+    vi.mocked(allowance).mockResolvedValue(BigInt(validParameters.amount))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'success',
@@ -202,10 +196,8 @@ describe('createLock', function () {
   })
 
   it('should skip approval if allowance is sufficient', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(validParameters.amount)
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(
-      validParameters.amount + BigInt(1),
-    )
+    vi.mocked(balanceOf).mockResolvedValue(validParameters.amount)
+    vi.mocked(allowance).mockResolvedValue(validParameters.amount + BigInt(1))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'success',
@@ -226,13 +218,13 @@ describe('createLock', function () {
     expect(preApprove).not.toHaveBeenCalled()
     expect(preLockCreation).toHaveBeenCalledOnce()
     expect(lockCreationSettled).toHaveBeenCalledOnce()
-    expect(approveErc20Token).not.toHaveBeenCalled()
+    expect(approve).not.toHaveBeenCalled()
   })
 
   it('should handle approve transaction failure', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt)
       .mockResolvedValueOnce({
         status: 'reverted',
@@ -259,9 +251,9 @@ describe('createLock', function () {
   })
 
   it('should handle user rejecting approval', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(approveErc20Token).mockRejectedValue(new Error('User rejected'))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockRejectedValue(new Error('User rejected'))
 
     const { emitter, promise } = createLock(validParameters)
 
@@ -281,8 +273,8 @@ describe('createLock', function () {
   })
 
   it('should handle user rejecting lock creation', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(200))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(200))
     vi.mocked(writeContract).mockRejectedValue(new Error('User rejected'))
 
     const { emitter, promise } = createLock(validParameters)
@@ -306,8 +298,8 @@ describe('createLock', function () {
   })
 
   it('should handle lock creation transaction failure', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(200))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(200))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue({
       status: 'reverted',
@@ -337,9 +329,9 @@ describe('createLock', function () {
   })
 
   it('should handle approval failure during waitForTransactionReceipt', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(0))
-    vi.mocked(approveErc20Token).mockResolvedValue(zeroHash)
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(0))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockRejectedValue(
       new Error('Network error'),
     )
@@ -359,8 +351,8 @@ describe('createLock', function () {
   })
 
   it('should handle lock creation failure during waitForTransactionReceipt', async function () {
-    vi.mocked(getErc20TokenBalance).mockResolvedValue(BigInt(1000))
-    vi.mocked(getErc20TokenAllowance).mockResolvedValue(BigInt(200))
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(BigInt(200))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockRejectedValue(
       new Error('Network error'),
@@ -397,7 +389,7 @@ describe('createLock', function () {
   })
 
   it('should handle balance check failure', async function () {
-    vi.mocked(getErc20TokenBalance).mockRejectedValue(new Error('RPC error'))
+    vi.mocked(balanceOf).mockRejectedValue(new Error('RPC error'))
 
     const { emitter, promise } = createLock(validParameters)
 
@@ -413,7 +405,7 @@ describe('createLock', function () {
 
   it('should handle unexpected errors', async function () {
     // Force an unexpected error by making getErc20TokenBalance throw during validation
-    vi.mocked(getErc20TokenBalance).mockRejectedValue(new Error('Unexpected'))
+    vi.mocked(balanceOf).mockRejectedValue(new Error('Unexpected'))
 
     const { emitter, promise } = createLock(validParameters)
 

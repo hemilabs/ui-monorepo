@@ -1,3 +1,4 @@
+import { toPromiseEvent } from 'to-promise-event'
 import { type Address, TransactionReceipt, type WalletClient } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
@@ -7,11 +8,10 @@ import {
   encodeCollectAllRewards,
 } from '../../actions/wallet/collectRewards'
 import { getVeHemiRewardsContractAddress } from '../../constants'
-import { toPromiseEvent } from '../../utils'
 
+vi.mock('to-promise-event')
 vi.mock('viem/actions')
 vi.mock('../../constants')
-vi.mock('../../utils')
 
 describe('collectAllRewards', function () {
   const mockAccount: Address = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'

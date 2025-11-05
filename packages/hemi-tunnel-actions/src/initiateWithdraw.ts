@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { toPromiseEvent } from 'to-promise-event'
 import {
   Address,
   Chain,
@@ -11,25 +12,11 @@ import {
   waitForTransactionReceipt,
   writeContract,
 } from 'viem/actions'
-import { getErc20TokenBalance } from 'viem-erc20/actions'
+import { balanceOf } from 'viem-erc20/actions'
 
 import { l2BridgeAbi } from './abis'
 import { WithdrawEvents } from './types'
-import { getL2BridgeAddress, toPromiseEvent, validateInputs } from './utils'
-
-const getErc20Balance = ({
-  account,
-  publicClient,
-  tokenAddress,
-}: {
-  account: Address
-  publicClient: PublicClient
-  tokenAddress: Address
-}) =>
-  getErc20TokenBalance(publicClient, {
-    account,
-    address: tokenAddress,
-  })
+import { getL2BridgeAddress, validateInputs } from './utils'
 
 const getEthBalance = ({
   account,
@@ -218,10 +205,9 @@ export const initiateWithdrawErc20 = ({
       amount,
       async checkBalance() {
         const [erc20Balance, ethBalance] = await Promise.all([
-          getErc20Balance({
+          balanceOf(l2PublicClient, {
             account,
-            publicClient: l2PublicClient,
-            tokenAddress: l2TokenAddress,
+            address: l2TokenAddress,
           }),
           getEthBalance({
             account,

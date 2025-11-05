@@ -21,7 +21,8 @@
     "tsc:check": "tsc"
   },
   "dependencies": {
-    "hemi-viem": "2.6.1"
+    "hemi-viem": "2.6.1",
+    "to-promise-event": "1.0.0"
   },
   "devDependencies": {
     "@tsconfig/node22": "22.0.2",

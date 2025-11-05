@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { toPromiseEvent } from 'to-promise-event'
 import {
   Address,
   Hash,
@@ -16,7 +17,6 @@ import {
 } from 'viem/op-stack'
 
 import { FinalizeEvents } from './types'
-import { toPromiseEvent } from './utils'
 
 type FinalizeWithdrawalParams = {
   account: Address

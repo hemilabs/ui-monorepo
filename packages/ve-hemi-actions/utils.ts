@@ -1,4 +1,3 @@
-import { EventEmitter } from 'events'
 import type { Address, TransactionReceipt } from 'viem'
 import { isAddress, parseEventLogs, zeroAddress } from 'viem'
 
@@ -211,17 +210,6 @@ export const validateWithdrawInputs = function ({
   }
 
   return undefined
-}
-
-export const toPromiseEvent = function <T extends Record<string, unknown[]>>(
-  fn: (emitter: EventEmitter<T>) => Promise<void>,
-): {
-  emitter: EventEmitter<T>
-  promise: Promise<void>
-} {
-  const emitter = new EventEmitter<T>()
-  const promise = fn(emitter)
-  return { emitter, promise }
 }
 
 type VeHemiLockEvent = {

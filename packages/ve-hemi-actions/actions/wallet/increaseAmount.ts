@@ -1,13 +1,14 @@
 import { EventEmitter } from 'events'
+import { toPromiseEvent } from 'to-promise-event'
 import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { encodeFunctionData } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
-import { getErc20TokenBalance } from 'viem-erc20/actions'
+import { balanceOf } from 'viem-erc20/actions'
 
 import { veHemiAbi } from '../../abi'
 import { getVeHemiContractAddress } from '../../constants'
 import type { IncreaseAmountEvents } from '../../types'
-import { toPromiseEvent, validateIncreaseAmountInputs } from '../../utils'
+import { validateIncreaseAmountInputs } from '../../utils'
 import { getLockedBalance, memoizedGetHemiTokenAddress } from '../public/veHemi'
 
 import { handleApproval } from './approval'
@@ -48,7 +49,7 @@ const canIncreaseAmount = async function ({
 
   try {
     const hemiTokenAddress = await memoizedGetHemiTokenAddress(walletClient)
-    const tokenBalance = await getErc20TokenBalance(walletClient, {
+    const tokenBalance = await balanceOf(walletClient, {
       account,
       address: hemiTokenAddress,
     })

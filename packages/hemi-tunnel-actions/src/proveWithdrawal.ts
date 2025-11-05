@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events'
+import { toPromiseEvent } from 'to-promise-event'
 import {
   Address,
   Hash,
@@ -19,7 +20,6 @@ import {
 } from 'viem/op-stack'
 
 import { ProveEvents } from './types'
-import { toPromiseEvent } from './utils'
 
 type ProveWithdrawalParams = {
   account: Address

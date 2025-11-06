@@ -10,6 +10,7 @@ import { balanceOf, redeem } from 'viem-erc4626/actions'
 import { describe, expect, it, vi } from 'vitest'
 
 import { withdraw } from '../src/actions/wallet/withdraw'
+import { getBtcStakingVaultContractAddress } from '../src/constants'
 
 vi.mock('viem/actions', () => ({
   waitForTransactionReceipt: vi.fn(),
@@ -150,7 +151,9 @@ describe('withdraw', function () {
     expect(redeem).toHaveBeenCalledExactlyOnceWith(
       validParameters.walletClient,
       {
-        address: '0x0000000000000000000000000000000000000000',
+        address: getBtcStakingVaultContractAddress(
+          validParameters.walletClient.chain!.id,
+        ),
         owner: validParameters.owner,
         receiver: validParameters.receiver,
         shares: validParameters.shares,

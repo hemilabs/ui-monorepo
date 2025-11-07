@@ -15,7 +15,8 @@ import {
 import { useRewardTokensAddresses } from './useRewardTokensAddresses'
 
 const secondsPerDay = BigInt(86400)
-const daysPerYear = BigInt(36525)
+// 365.25 days * 100, used for APY calculations with scaling
+const daysPerYearTimes100 = BigInt(36525)
 
 const getCalculateApyQueryKey = ({
   chainId,
@@ -106,7 +107,7 @@ export const useCalculateApy = function ({
       // apy = (totalDailyRewards * 365.25 * 10000) / (lockedAmount * 100) / 100
       // Multiply by 10000 to maintain precision before division
       const apyBigInt =
-        (totalDailyRewardsBigInt * daysPerYear * BigInt(10000)) /
+        (totalDailyRewardsBigInt * daysPerYearTimes100 * BigInt(10000)) /
         (lockedBalance.amount * BigInt(100))
 
       return Number(apyBigInt) / 100 // return as percentage

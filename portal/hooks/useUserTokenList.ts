@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { getRemoteTokens } from 'tokenList'
+import { getRemoteTokens, normalizeToken } from 'tokenList'
 import { type EvmToken } from 'types/token'
 import useLocalStorageState from 'use-local-storage-state'
 import { type Chain, isAddress, isAddressEqual, checksumAddress } from 'viem'
@@ -49,6 +49,7 @@ export const useUserTokenList = function (chainId?: Chain['id']) {
         })
       },
       userTokenList: userTokenList.tokens
+        .map(normalizeToken)
         .concat(userTokenList.tokens.flatMap(getRemoteTokens))
         .filter(t => !chainId || t.chainId === chainId),
     }),

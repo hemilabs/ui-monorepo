@@ -1,5 +1,6 @@
+import { hemi } from 'hemi-viem'
 import pMemoize from 'promise-mem'
-import type { Address, PublicClient, WalletClient } from 'viem'
+import type { Address, Client } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { veHemiAbi } from '../../abi'
@@ -7,7 +8,7 @@ import { veHemiAbi } from '../../abi'
 import { getVeHemiContractAddress } from './../../constants'
 
 export const getHemiTokenAddress = async function (
-  client: PublicClient | WalletClient,
+  client: Client,
 ): Promise<Address> {
   if (!client.chain) {
     throw new Error('Client chain is not defined')
@@ -27,7 +28,7 @@ export const memoizedGetHemiTokenAddress = pMemoize(getHemiTokenAddress, {
 })
 
 export const getLockedBalance = async function (
-  client: PublicClient | WalletClient,
+  client: Client,
   tokenId: bigint,
 ) {
   if (!client.chain) {
@@ -45,7 +46,7 @@ export const getLockedBalance = async function (
 }
 
 export const getOwnerOf = async function (
-  client: PublicClient | WalletClient,
+  client: Client,
   tokenId: bigint,
 ): Promise<Address> {
   if (!client.chain) {
@@ -59,5 +60,47 @@ export const getOwnerOf = async function (
     address: veHemiAddress,
     args: [tokenId],
     functionName: 'ownerOf',
+  })
+}
+
+export const getBalanceOfNFTAt = async function (
+  client: Client,
+  tokenId: bigint,
+  timestamp: bigint,
+): Promise<bigint> {
+  if (!client.chain) {
+    throw new Error('Client chain is not defined')
+  }
+
+  const veHemiAddress = getVeHemiContractAddress(client.chain.id)
+
+  return readContract(client, {
+    abi: veHemiAbi,
+    address: veHemiAddress,
+    args: [tokenId, timestamp],
+    functionName: 'balanceOfNFTAt',
+  })
+}
+
+export const getTotalVeHemiSupplyAt = async function (
+  client: Client,
+  timestamp: bigint,
+): Promise<bigint> {
+  if (!client.chain) {
+    throw new Error('Client chain is not defined')
+  }
+
+  const veHemiAddress = getVeHemiContractAddress(client.chain.id)
+
+  // Determine function name based on chain ID
+  // because the function name differs between Hemi mainnet and Hemi Sepolia contracts
+  const functionName =
+    client.chain.id === hemi.id ? 'totalVeHemiSupplyAt' : 'totalSupplyAt'
+
+  return readContract(client, {
+    abi: veHemiAbi,
+    address: veHemiAddress,
+    args: [timestamp],
+    functionName,
   })
 }

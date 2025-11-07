@@ -3,7 +3,7 @@ import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { type RemoteChain } from 'types/chain'
 import { type EvmToken, type Token } from 'types/token'
-import { type Address } from 'viem'
+import { type Address, isAddress, getAddress } from 'viem'
 
 import { customTunnelPartnersWhitelist } from './customTunnelPartnersWhitelist'
 import { nativeTokens } from './nativeTokens'
@@ -30,18 +30,25 @@ const extendWithWhiteList = <
     }
   }
 
+const formatAddress = (address: string) =>
+  isAddress(address, { strict: false })
+    ? getAddress(address)
+    : (address as Address)
+
 export const getRemoteTokens = function (token: EvmToken) {
   if (!token.extensions?.bridgeInfo) {
     return [] satisfies EvmToken[]
   }
   return Object.keys(token.extensions!.bridgeInfo!).map(l1ChainId => ({
     ...token,
-    address: token.extensions!.bridgeInfo![l1ChainId].tokenAddress!,
+    address: formatAddress(
+      token.extensions!.bridgeInfo![l1ChainId].tokenAddress!,
+    ),
     chainId: Number(l1ChainId),
     extensions: {
       bridgeInfo: {
         [token.chainId]: {
-          tokenAddress: token.address as Address,
+          tokenAddress: formatAddress(token.address),
         },
       },
     },

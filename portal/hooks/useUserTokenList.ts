@@ -22,15 +22,10 @@ export const useUserTokenList = function (chainId?: Chain['id']) {
   return useMemo(
     () => ({
       addToken(token: EvmToken) {
-        if (!isAddress(token.address)) {
-          throw new Error('Invalid token address')
-        }
-
-        const normalizedToken = normalizeToken(token)
-
         if (!isAddress(token.address, { strict: false })) {
           throw new Error('Invalid token address')
         }
+        const normalizedToken = normalizeToken(token)
 
         setUserTokenList(function (prevList) {
           const found = prevList.tokens.some(

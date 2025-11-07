@@ -3,7 +3,7 @@ import { useToken } from 'hooks/useToken'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { toChecksumAddress } from 'utils/address'
-import { type Address, type Chain, isAddress } from 'viem'
+import { type Chain, isAddress } from 'viem'
 
 import { CustomToken } from './token'
 
@@ -45,7 +45,7 @@ export const NoTokensMatch = function ({
   }
 
   const onClick = function () {
-    setCustomTokenAddress(toChecksumAddress(searchText) as Address)
+    setCustomTokenAddress(toChecksumAddress(searchText))
     closeModal()
     track?.('custom erc20 - open modal', { address: searchText })
   }

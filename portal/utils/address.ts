@@ -1,4 +1,6 @@
-import { isAddress, getAddress } from 'viem'
+import { type Address, isAddress, getAddress } from 'viem'
 
-export const toChecksumAddress = (address: string) =>
-  isAddress(address, { strict: false }) ? getAddress(address) : address
+export const toChecksumAddress = (address: string): Address =>
+  isAddress(address, { strict: false })
+    ? getAddress(address)
+    : (address as Address)

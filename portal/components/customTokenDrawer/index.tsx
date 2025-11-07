@@ -142,11 +142,11 @@ export const CustomTokenDrawer = function ({
 
     const l2TokenAdded = {
       ...tokenData,
-      address: toChecksumAddress(address as Address),
+      address: toChecksumAddress(address),
       extensions: {
         bridgeInfo: {
           [l1ChainId]: {
-            tokenAddress: toChecksumAddress(l1Token as Address),
+            tokenAddress: toChecksumAddress(l1Token),
           },
         },
       },

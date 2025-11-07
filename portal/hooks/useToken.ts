@@ -21,7 +21,7 @@ export const getUseTokenQueryKey = (
 export const useToken = function ({ address, chainId, options = {} }: Params) {
   const config = useConfig()
 
-  const checksumAddress = toChecksumAddress(address as Address)
+  const checksumAddress = toChecksumAddress(address!)
 
   return useQuery<Token, Error>({
     ...options,

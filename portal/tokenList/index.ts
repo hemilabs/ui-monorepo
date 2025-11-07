@@ -33,7 +33,7 @@ const extendWithWhiteList = <
 const normalizeAddress = (address: string) =>
   isAddress(address, { strict: false }) ? getAddress(address) : address
 
-export const normalizeToken = (token: Token) =>
+export const normalizeToken = <T extends Token = Token>(token: T) =>
   ({
     ...token,
     address: normalizeAddress(token.address),
@@ -55,7 +55,7 @@ export const normalizeToken = (token: Token) =>
           }
         : {}),
     } as Token['extensions'],
-  }) satisfies Token
+  }) as T
 
 export const getRemoteTokens = function (token: EvmToken) {
   if (!token.extensions?.bridgeInfo) {

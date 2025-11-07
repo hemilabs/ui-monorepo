@@ -1,7 +1,7 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
-import { toChecksumAddress } from 'utils/address'
+import { toChecksumAddress } from 'utils/adress'
 import { isNativeAddress } from 'utils/nativeToken'
 import { getErc20Token, getTokenByAddress } from 'utils/token'
 import { type Address, type Chain, isAddress } from 'viem'
@@ -21,22 +21,24 @@ export const getUseTokenQueryKey = (
 export const useToken = function ({ address, chainId, options = {} }: Params) {
   const config = useConfig()
 
-  const checksumAddress = toChecksumAddress(address!)
-
   return useQuery<Token, Error>({
     ...options,
     enabled:
       (options.enabled ?? true) &&
       !!address &&
       (isAddress(address, { strict: false }) || isNativeAddress(address)),
-    queryFn: async () =>
-      getTokenByAddress(checksumAddress, chainId) ??
-      // up to this point, chainId must be an EVM one because we checked for native addresses
-      (getErc20Token({
-        address: checksumAddress as Address,
-        chainId: chainId as Chain['id'],
-        config,
-      }) satisfies Promise<Token>),
-    queryKey: getUseTokenQueryKey(checksumAddress, chainId),
+    async queryFn() {
+      const checksumAddress = toChecksumAddress(address as Address)
+      return (
+        getTokenByAddress(checksumAddress, chainId) ??
+        // up to this point, chainId must be an EVM one because we checked for native addresses
+        (getErc20Token({
+          address: checksumAddress as Address,
+          chainId: chainId as Chain['id'],
+          config,
+        }) satisfies Promise<Token>)
+      )
+    },
+    queryKey: getUseTokenQueryKey(address?.toLowerCase(), chainId),
   })
 }

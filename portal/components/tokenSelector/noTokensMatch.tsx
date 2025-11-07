@@ -2,7 +2,8 @@ import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useToken } from 'hooks/useToken'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { type Address, type Chain, isAddress, getAddress } from 'viem'
+import { toChecksumAddress } from 'utils/adress'
+import { type Address, type Chain, isAddress } from 'viem'
 
 import { CustomToken } from './token'
 
@@ -18,13 +19,9 @@ export const NoTokensMatch = function ({
   searchText,
 }: Props) {
   const [, setCustomTokenAddress] = useCustomTokenAddress()
-  const isAddressValid = isAddress(searchText, { strict: false })
-  const normalizedSearchAddress = isAddressValid
-    ? getAddress(searchText)
-    : searchText
 
   const { data: customToken, status } = useToken({
-    address: normalizedSearchAddress,
+    address: toChecksumAddress(searchText),
     chainId,
     options: {
       retry: 1,
@@ -48,7 +45,7 @@ export const NoTokensMatch = function ({
   }
 
   const onClick = function () {
-    setCustomTokenAddress(normalizedSearchAddress as Address)
+    setCustomTokenAddress(toChecksumAddress(searchText) as Address)
     closeModal()
     track?.('custom erc20 - open modal', { address: searchText })
   }

@@ -3,7 +3,8 @@ import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { type RemoteChain } from 'types/chain'
 import { type EvmToken, type Token } from 'types/token'
-import { type Address, isAddress, getAddress } from 'viem'
+import { toChecksumAddress } from 'utils/adress'
+import { type Address } from 'viem'
 
 import { customTunnelPartnersWhitelist } from './customTunnelPartnersWhitelist'
 import { nativeTokens } from './nativeTokens'
@@ -30,13 +31,10 @@ const extendWithWhiteList = <
     }
   }
 
-const normalizeAddress = (address: string) =>
-  isAddress(address, { strict: false }) ? getAddress(address) : address
-
 export const normalizeToken = <T extends Token = Token>(token: T) =>
   ({
     ...token,
-    address: normalizeAddress(token.address),
+    address: toChecksumAddress(token.address),
     extensions: {
       ...token.extensions,
       ...(token.extensions?.bridgeInfo
@@ -46,7 +44,7 @@ export const normalizeToken = <T extends Token = Token>(token: T) =>
                 l1ChainId,
                 {
                   ...token.extensions!.bridgeInfo![l1ChainId],
-                  tokenAddress: normalizeAddress(
+                  tokenAddress: toChecksumAddress(
                     token.extensions!.bridgeInfo![l1ChainId].tokenAddress!,
                   ),
                 },

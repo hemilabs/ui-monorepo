@@ -1,9 +1,10 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
+import { toChecksumAddress } from 'utils/adress'
 import { isNativeAddress } from 'utils/nativeToken'
 import { getErc20Token, getTokenByAddress } from 'utils/token'
-import { type Address, type Chain, isAddress, getAddress } from 'viem'
+import { type Address, type Chain, isAddress } from 'viem'
 import { useConfig } from 'wagmi'
 
 type Params = {
@@ -27,12 +28,12 @@ export const useToken = function ({ address, chainId, options = {} }: Params) {
       !!address &&
       (isAddress(address, { strict: false }) || isNativeAddress(address)),
     async queryFn() {
-      const normalizedAddress = getAddress(address as Address)
+      const checksumAddress = toChecksumAddress(address as Address)
       return (
-        getTokenByAddress(normalizedAddress, chainId) ??
+        getTokenByAddress(checksumAddress, chainId) ??
         // up to this point, chainId must be an EVM one because we checked for native addresses
         (getErc20Token({
-          address: normalizedAddress,
+          address: checksumAddress as Address,
           chainId: chainId as Chain['id'],
           config,
         }) satisfies Promise<Token>)

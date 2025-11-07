@@ -1,4 +1,21 @@
 {
+  "bitcoin-yield": {
+    "bridge-btc-and-receive": "Bridge your BTC through the tunnel and receive {symbol}",
+    "heading": "Bitcoin, with Real Yield",
+    "info": {
+      "earning-rate": "Earning rate",
+      "holders": "# of holders",
+      "pool-deposits": "Pool Deposits",
+      "pool-token-value": "Pool token value"
+    },
+    "learn-more-about-hemibtc": "Learn more about {symbol}",
+    "link-your-wallet": "Link your wallet to access the Hemi ecosystem.",
+    "put-to-work": "Put your {symbol} to work and start generating yield.",
+    "start-earning": "Start Earning",
+    "subheading": "Earn rewards on your BTC through decentralized yield opportunities backed by real on-chain usage.",
+    "tunnel-btc": "Tunnel BTC",
+    "tunnel-to-hemi": "Tunnel Bitcoin to Hemi"
+  },
   "common": {
     "accept": "Accept",
     "add": "Add",

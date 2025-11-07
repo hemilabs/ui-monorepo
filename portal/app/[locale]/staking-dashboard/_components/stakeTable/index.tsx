@@ -53,6 +53,21 @@ const stakingColumns = ({
     meta: { width: '170px' },
   },
   {
+    cell: ({ row }) => (
+      <ErrorBoundary
+        fallback={<span className="text-sm text-neutral-950">-</span>}
+      >
+        <LockupTime
+          lockupTime={row.original.lockTime}
+          tokenId={row.original.tokenId}
+        />
+      </ErrorBoundary>
+    ),
+    header: () => <Header text={t('table.lockup')} />,
+    id: 'lockup',
+    meta: { width: '120px' },
+  },
+  {
     cell({ row }) {
       const { amount, lockTime, timestamp } = row.original
       const { percentageOfMax, votingPower } = calculateVotingPower({
@@ -85,18 +100,6 @@ const stakingColumns = ({
     header: () => <Header text={t('table.claimable-rewards')} />,
     id: 'rewards',
     meta: { width: '170px' },
-  },
-  {
-    cell: ({ row }) => (
-      <ErrorBoundary
-        fallback={<span className="text-sm text-neutral-950">-</span>}
-      >
-        <LockupTime lockupTime={row.original.lockTime} />
-      </ErrorBoundary>
-    ),
-    header: () => <Header text={t('table.lockup')} />,
-    id: 'lockup',
-    meta: { width: '120px' },
   },
   {
     cell: ({ row }) => <TimeRemaining operation={row.original} />,

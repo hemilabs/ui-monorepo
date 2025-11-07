@@ -1,4 +1,10 @@
-export { calculateRewards, getRewardTokens } from './public/veHemiRewards'
+export {
+  calculateRewards,
+  getMaxConfiguredReward,
+  getRewardPeriodsForDay,
+  getRewardTokens,
+  getStartingTimestamp,
+} from './public/veHemiRewards'
 export {
   collectAllRewards,
   encodeCollectAllRewards,

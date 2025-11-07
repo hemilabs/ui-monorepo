@@ -5,3 +5,8 @@ export {
   increaseUnlockTime,
 } from './wallet/increaseUnlockTime'
 export { encodeWithdraw, withdraw } from './wallet/withdraw'
+export {
+  getBalanceOfNFTAt,
+  getLockedBalance,
+  getTotalVeHemiSupplyAt,
+} from './public/veHemi'

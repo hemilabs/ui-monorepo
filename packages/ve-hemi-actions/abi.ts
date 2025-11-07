@@ -190,4 +190,28 @@ export const veHemiAbi = [
     stateMutability: 'view',
     type: 'function',
   },
+  {
+    inputs: [
+      { internalType: 'uint256', name: 'tokenId_', type: 'uint256' },
+      { internalType: 'uint256', name: 'timestamp_', type: 'uint256' },
+    ],
+    name: 'balanceOfNFTAt',
+    outputs: [{ internalType: 'uint256', name: '_balance', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'timestamp_', type: 'uint256' }],
+    name: 'totalVeHemiSupplyAt',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '_timestamp', type: 'uint256' }],
+    name: 'totalSupplyAt',
+    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const

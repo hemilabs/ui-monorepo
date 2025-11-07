@@ -28,6 +28,10 @@ export const useUserTokenList = function (chainId?: Chain['id']) {
 
         const normalizedToken = normalizeToken(token)
 
+        if (!isAddress(token.address, { strict: false })) {
+          throw new Error('Invalid token address')
+        }
+
         setUserTokenList(function (prevList) {
           const found = prevList.tokens.some(
             t =>

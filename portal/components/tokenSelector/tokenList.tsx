@@ -41,7 +41,7 @@ export const TokenList = function ({
   const t = useTranslations('token-selector')
   const [searchText, setSearchText] = useState('')
   const debouncedSearchText = useDebounce(searchText)
-  const { userTokenList } = useUserTokenList()
+  const { userTokenList } = useUserTokenList(chainId)
   const { width } = useWindowSize()
   const { height: viewportHeight } = useVisualViewportSize()
 
@@ -175,6 +175,7 @@ export const TokenList = function ({
         </div>
       ) : sortedTokens.length > 0 ? (
         <List
+          chainId={chainId}
           isSearchActive={!!searchText}
           onSelectToken={token => handleSelectToken(token)}
           tokens={searchText ? restOfTokens : supportedTokens.sort(bySymbol)}

@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { getRemoteTokens } from 'tokenList'
 import { type EvmToken } from 'types/token'
 import useLocalStorageState from 'use-local-storage-state'
-import { isAddress, isAddressEqual, checksumAddress } from 'viem'
+import { type Chain, isAddress, isAddressEqual, checksumAddress } from 'viem'
 
 import { useNetworkType } from './useNetworkType'
 
@@ -10,7 +10,7 @@ type CustomTokenList = {
   tokens: EvmToken[]
 }
 
-export const useUserTokenList = function () {
+export const useUserTokenList = function (chainId?: Chain['id']) {
   const [networkType] = useNetworkType()
   const [userTokenList, setUserTokenList] =
     useLocalStorageState<CustomTokenList>(
@@ -48,10 +48,10 @@ export const useUserTokenList = function () {
           }
         })
       },
-      userTokenList: userTokenList.tokens.concat(
-        userTokenList.tokens.flatMap(getRemoteTokens),
-      ),
+      userTokenList: userTokenList.tokens
+        .concat(userTokenList.tokens.flatMap(getRemoteTokens))
+        .filter(t => !chainId || t.chainId === chainId),
     }),
-    [userTokenList, setUserTokenList],
+    [chainId, userTokenList, setUserTokenList],
   )
 }

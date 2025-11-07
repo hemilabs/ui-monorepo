@@ -3,7 +3,7 @@ import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { type RemoteChain } from 'types/chain'
 import { type EvmToken, type Token } from 'types/token'
-import { toChecksumAddress } from 'utils/adress'
+import { toChecksumAddress } from 'utils/address'
 import { type Address } from 'viem'
 
 import { customTunnelPartnersWhitelist } from './customTunnelPartnersWhitelist'

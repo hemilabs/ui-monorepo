@@ -2,7 +2,7 @@ import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useToken } from 'hooks/useToken'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { toChecksumAddress } from 'utils/adress'
+import { toChecksumAddress } from 'utils/address'
 import { type Address, type Chain, isAddress } from 'viem'
 
 import { CustomToken } from './token'
@@ -21,7 +21,7 @@ export const NoTokensMatch = function ({
   const [, setCustomTokenAddress] = useCustomTokenAddress()
 
   const { data: customToken, status } = useToken({
-    address: toChecksumAddress(searchText),
+    address: searchText,
     chainId,
     options: {
       retry: 1,

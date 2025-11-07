@@ -14,7 +14,7 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { getRemoteTokens } from 'tokenList'
 import { EvmToken, L2Token, Token } from 'types/token'
-import { toChecksumAddress } from 'utils/adress'
+import { toChecksumAddress } from 'utils/address'
 import { isL2Network } from 'utils/chain'
 import { type Address, type Chain, isAddress, isAddressEqual } from 'viem'
 

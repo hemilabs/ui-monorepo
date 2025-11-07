@@ -1,7 +1,7 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
-import { toChecksumAddress } from 'utils/adress'
+import { toChecksumAddress } from 'utils/address'
 import { isNativeAddress } from 'utils/nativeToken'
 import { getErc20Token, getTokenByAddress } from 'utils/token'
 import { type Address, type Chain, isAddress } from 'viem'

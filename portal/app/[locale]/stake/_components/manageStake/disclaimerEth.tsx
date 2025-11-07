@@ -18,7 +18,7 @@ export const DisclaimerEth = function () {
       >
         <ExternalLink
           className="group/disclaimer flex cursor-pointer items-center gap-x-1 text-sm "
-          href="https://purefinance.hemi.xyz/en/wrap-eth/"
+          href="https://pure.finance/en/wrap-eth/"
         >
           <span className="text-orange-500 group-hover/disclaimer:text-orange-700">
             {t('unwrap')}

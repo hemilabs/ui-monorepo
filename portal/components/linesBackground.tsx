@@ -1,6 +1,6 @@
 import { ComponentProps } from 'react'
 
-export const Background = (props: ComponentProps<'svg'>) => (
+export const LinesBackground = (props: ComponentProps<'svg'>) => (
   <svg
     className="pointer-events-none absolute bottom-0 right-0 -z-10"
     fill="none"

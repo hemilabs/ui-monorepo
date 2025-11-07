@@ -2,6 +2,8 @@
 
 import { useHemiBtcToken } from 'hooks/useHemiBtcToken'
 import { useTranslations } from 'next-intl'
+import { formatNumber } from 'utils/format'
+import { formatUnits } from 'viem'
 
 import { usePoolTokenValue } from '../_hooks/usePoolTokenValue'
 
@@ -15,7 +17,11 @@ export const PoolTokenValue = function () {
   return (
     <CardInfo
       {...usePoolTokenValue()}
-      formatValue={poolTokenValue => `1 : ${poolTokenValue} ${hemiBtc.symbol}`}
+      formatValue={poolTokenValue =>
+        `1 : ${formatNumber(formatUnits(poolTokenValue, hemiBtc.decimals))} ${
+          hemiBtc.symbol
+        }`
+      }
       icon={poolTokenValueIcon}
       label={t('pool-token-value')}
     />

@@ -14,7 +14,7 @@ export const PoolDeposits = function () {
   return (
     <CardInfo
       {...usePoolDeposits()}
-      formatValue={value => formatTVL(value.toString())}
+      formatValue={formatTVL}
       icon={poolDepositIcon}
       label={t('pool-deposits')}
     />

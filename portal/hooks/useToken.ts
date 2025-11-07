@@ -21,24 +21,22 @@ export const getUseTokenQueryKey = (
 export const useToken = function ({ address, chainId, options = {} }: Params) {
   const config = useConfig()
 
+  const checksumAddress = toChecksumAddress(address as Address)
+
   return useQuery<Token, Error>({
     ...options,
     enabled:
       (options.enabled ?? true) &&
       !!address &&
       (isAddress(address, { strict: false }) || isNativeAddress(address)),
-    async queryFn() {
-      const checksumAddress = toChecksumAddress(address as Address)
-      return (
-        getTokenByAddress(checksumAddress, chainId) ??
-        // up to this point, chainId must be an EVM one because we checked for native addresses
-        (getErc20Token({
-          address: checksumAddress as Address,
-          chainId: chainId as Chain['id'],
-          config,
-        }) satisfies Promise<Token>)
-      )
-    },
-    queryKey: getUseTokenQueryKey(address, chainId),
+    queryFn: async () =>
+      getTokenByAddress(checksumAddress, chainId) ??
+      // up to this point, chainId must be an EVM one because we checked for native addresses
+      (getErc20Token({
+        address: checksumAddress as Address,
+        chainId: chainId as Chain['id'],
+        config,
+      }) satisfies Promise<Token>),
+    queryKey: getUseTokenQueryKey(checksumAddress, chainId),
   })
 }

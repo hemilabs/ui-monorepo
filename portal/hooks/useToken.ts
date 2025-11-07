@@ -3,7 +3,7 @@ import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 import { isNativeAddress } from 'utils/nativeToken'
 import { getErc20Token, getTokenByAddress } from 'utils/token'
-import { type Address, type Chain, isAddress } from 'viem'
+import { type Address, type Chain, isAddress, getAddress } from 'viem'
 import { useConfig } from 'wagmi'
 
 type Params = {
@@ -26,14 +26,18 @@ export const useToken = function ({ address, chainId, options = {} }: Params) {
       (options.enabled ?? true) &&
       !!address &&
       (isAddress(address, { strict: false }) || isNativeAddress(address)),
-    queryFn: async () =>
-      getTokenByAddress(address!, chainId) ??
-      // up to this point, chainId must be an EVM one because we checked for native addresses
-      (getErc20Token({
-        address: address as Address,
-        chainId: chainId as Chain['id'],
-        config,
-      }) satisfies Promise<Token>),
+    async queryFn() {
+      const normalizedAddress = getAddress(address as Address)
+      return (
+        getTokenByAddress(normalizedAddress, chainId) ??
+        // up to this point, chainId must be an EVM one because we checked for native addresses
+        (getErc20Token({
+          address: normalizedAddress,
+          chainId: chainId as Chain['id'],
+          config,
+        }) satisfies Promise<Token>)
+      )
+    },
     queryKey: getUseTokenQueryKey(address, chainId),
   })
 }

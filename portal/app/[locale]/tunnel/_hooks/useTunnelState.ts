@@ -215,6 +215,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
   const hemi = useHemi()
   const { evmRemoteNetworks, networks } = useNetworks()
   const tunnelOperation = useTunnelOperation()
+  const tokenList = useTunnelTokens()
 
   const l1ChainId = evmRemoteNetworks[0].id
 
@@ -263,7 +264,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
 
   const initialFromNetworkId = initial.fromNetworkId
   const initialToNetworkId = initial.toNetworkId
-  const tokenList = useTunnelTokens(state.toNetworkId)
+
   // We need to use useLayoutEffect here because by using a regular useEffect
   // there are intermediate invalid states that gets rendered. This is because
   // this effect fires when the user switched the network (mainnet <=> testnet)

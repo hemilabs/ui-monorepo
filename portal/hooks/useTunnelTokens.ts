@@ -12,8 +12,8 @@ const replaceSymbol = (token: Token) =>
     ? { ...token, symbol: token.extensions.tunnelSymbol }
     : token
 
-export const useTunnelTokens = function (chainId: RemoteChain['id']) {
-  const { userTokenList } = useUserTokenList(chainId)
+export const useTunnelTokens = function (chainId?: RemoteChain['id']) {
+  const { userTokenList } = useUserTokenList()
   return useMemo(
     () =>
       tokenList.tokens
@@ -21,7 +21,7 @@ export const useTunnelTokens = function (chainId: RemoteChain['id']) {
         .map(replaceSymbol)
         // custom user list is added through the tunnel, so by definition all tokens can be tunneled.
         .concat(userTokenList)
-        .filter(t => t.chainId === chainId),
+        .filter(t => !chainId || t.chainId === chainId),
     [chainId, userTokenList],
   )
 }

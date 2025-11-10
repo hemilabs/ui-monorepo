@@ -1,6 +1,7 @@
 // Public actions
 export { getUserBalance } from './public/getUserBalance'
 export { getMinimumDepositLimit } from './public/minimumDepositLimit'
+export { getPricePerShare } from './public/getPricePerShare'
 export { getStrategies } from './public/getStrategies'
 
 // Wallet actions

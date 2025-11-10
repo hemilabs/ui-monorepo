@@ -1,6 +1,7 @@
 'use client'
 
 import { DrawerLoader } from 'components/drawer/drawerLoader'
+import { LinesBackground } from 'components/linesBackground'
 import { StakeTabs } from 'components/stakeTabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useStakeTokens } from 'hooks/useStakeTokens'
@@ -10,7 +11,6 @@ import { isStakeEnabledOnTestnet } from 'utils/stake'
 
 import { useDrawerStakeQueryString } from '../_hooks/useDrawerStakeQueryString'
 
-import { Background } from './background'
 import { StakeDisabledTestnet } from './stakeDisabledTestnet'
 
 const ManageStake = dynamic(
@@ -67,7 +67,7 @@ const StakeLayoutClient = function ({ children }: Props) {
         <SideDrawer />
       </Suspense>
       <div className="hidden md:block">
-        <Background />
+        <LinesBackground />
       </div>
     </>
   )

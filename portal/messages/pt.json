@@ -1,4 +1,21 @@
 {
+  "bitcoin-yield": {
+    "bridge-btc-and-receive": "Transfira seu BTC através do túnel e receba {symbol}",
+    "heading": "Bitcoin, com Rendimento Real",
+    "info": {
+      "earning-rate": "Taxa de rendimento",
+      "holders": "Nº de titulares",
+      "pool-deposits": "Depósitos no fundo",
+      "pool-token-value": "Valor do token do fundo"
+    },
+    "learn-more-about-hemibtc": "Saiba mais sobre {symbol}",
+    "link-your-wallet": "Vincule sua carteira para acessar o ecossistema Hemi.",
+    "put-to-work": "Coloque seu {symbol} para trabalhar e comece a gerar rendimento.",
+    "start-earning": "Comece a ganhar",
+    "subheading": "Ganhe recompensas com seu BTC através de oportunidades de rendimento descentralizadas respaldadas por uso real on-chain.",
+    "tunnel-btc": "Tunelize BTC",
+    "tunnel-to-hemi": "Tunelar Bitcoin para Hemi"
+  },
   "common": {
     "accept": "Aceitar",
     "add": "Adicionar",

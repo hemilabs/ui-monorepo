@@ -1,7 +1,21 @@
 import { ComponentProps } from 'react'
 
-type Props = ComponentProps<'div'>
+const shadowVariants = {
+  /* eslint-disable sort-keys */
+  none: 'shadow-none',
+  bs: 'shadow-bs',
+  sm: 'shadow-sm',
+  md: 'shadow-md',
+  lg: 'shadow-lg',
+  xl: 'shadow-xl',
+  /* eslint-enable sort-keys */
+} as const
 
-export const Card = (props: Props) => (
-  <div className="card-container rounded-xl bg-white shadow-md" {...props} />
+type Props = ComponentProps<'div'> & { shadow?: keyof typeof shadowVariants }
+
+export const Card = ({ shadow = 'md', ...props }: Props) => (
+  <div
+    className={`card-container rounded-xl bg-white ${shadowVariants[shadow]}`}
+    {...props}
+  />
 )

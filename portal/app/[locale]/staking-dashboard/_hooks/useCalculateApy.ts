@@ -12,11 +12,10 @@ import {
   getStartingTimestamp,
 } from 've-hemi-rewards/actions'
 
-import { useRewardTokensAddresses } from './useRewardTokensAddresses'
+import { calculateApy, calculateDailyRewards } from '../_utils/apyCalculations'
+import { daySeconds } from '../_utils/lockCreationTimes'
 
-const secondsPerDay = BigInt(86400)
-// 365.25 days * 100, used for APY calculations with scaling
-const daysPerYearTimes100 = BigInt(36525)
+import { useRewardTokensAddresses } from './useRewardTokensAddresses'
 
 const getCalculateApyQueryKey = ({
   chainId,
@@ -27,9 +26,10 @@ const getCalculateApyQueryKey = ({
 }) => ['calculateApy', tokenId.toString(), chainId]
 
 function calculateCurrentDayTimestamp(startingTimestamp: bigint) {
+  const daySecondsBigInt = BigInt(daySeconds)
   const now = BigInt(Math.floor(Date.now() / 1000))
-  const daysSinceStart = (now - startingTimestamp) / secondsPerDay
-  return startingTimestamp + daysSinceStart * secondsPerDay
+  const daysSinceStart = (now - startingTimestamp) / daySecondsBigInt
+  return startingTimestamp + daysSinceStart * daySecondsBigInt
 }
 
 export const useCalculateApy = function ({
@@ -55,6 +55,7 @@ export const useCalculateApy = function ({
       rewardTokenAddresses.length > 0 &&
       tokenId > BigInt(0),
     async queryFn() {
+      // Step 1: Fetch initial data
       const [startingTimestamp, lockedBalance] = await Promise.all([
         getStartingTimestamp(hemiWalletClient!),
         getLockedBalance(hemiWalletClient!, tokenId),
@@ -67,50 +68,52 @@ export const useCalculateApy = function ({
       const currentDayTimestamp =
         calculateCurrentDayTimestamp(startingTimestamp)
 
-      let totalDailyRewardsBigInt = BigInt(0)
-
-      // Sum daily rewards from all reward tokens
-      for (const rewardToken of rewardTokenAddresses) {
-        const maxConfigured = await getMaxConfiguredReward(
-          hemiWalletClient!,
-          rewardToken,
-        )
-
-        // Use the most recent configured timestamp if current day is beyond maximum configured
-        const timestampToUse =
-          currentDayTimestamp > maxConfigured
-            ? maxConfigured
-            : currentDayTimestamp
-
-        const [rewardsPerDay, totalSupply, votingPower] = await Promise.all([
-          getRewardPeriodsForDay(
+      // Step 2: Fetch all reward token data
+      const rewardTokenData = await Promise.all(
+        rewardTokenAddresses.map(async function (rewardToken) {
+          const maxConfigured = await getMaxConfiguredReward(
             hemiWalletClient!,
             rewardToken,
-            timestampToUse,
-          ),
-          getTotalVeHemiSupplyAt(hemiWalletClient!, timestampToUse),
-          getBalanceOfNFTAt(hemiWalletClient!, tokenId, timestampToUse),
-        ])
+          )
 
-        if (totalSupply === BigInt(0) || votingPower === BigInt(0)) {
-          continue
-        }
+          // Use the most recent configured timestamp if current day is beyond maximum configured
+          const timestampToUse =
+            currentDayTimestamp > maxConfigured
+              ? maxConfigured
+              : currentDayTimestamp
 
-        // dailyRewards = (votingPower * rewardsPerDay) / totalSupply
-        totalDailyRewardsBigInt += (votingPower * rewardsPerDay) / totalSupply
-      }
+          const [rewardsPerDay, totalSupply, votingPower] = await Promise.all([
+            getRewardPeriodsForDay(
+              hemiWalletClient!,
+              rewardToken,
+              timestampToUse,
+            ),
+            getTotalVeHemiSupplyAt(hemiWalletClient!, timestampToUse),
+            getBalanceOfNFTAt(hemiWalletClient!, tokenId, timestampToUse),
+          ])
 
-      if (totalDailyRewardsBigInt === BigInt(0)) {
-        return 0
-      }
+          return { rewardsPerDay, totalSupply, votingPower }
+        }),
+      )
 
-      // apy = (totalDailyRewards * 365.25 * 10000) / (lockedAmount * 100) / 100
-      // Multiply by 10000 to maintain precision before division
-      const apyBigInt =
-        (totalDailyRewardsBigInt * daysPerYearTimes100 * BigInt(10000)) /
-        (lockedBalance.amount * BigInt(100))
+      // Step 3: Calculate total daily rewards
+      const totalDailyRewards = rewardTokenData.reduce(function (
+        acc,
+        { rewardsPerDay, totalSupply, votingPower },
+      ) {
+        const dailyRewards = calculateDailyRewards({
+          rewardsPerDay,
+          totalSupply,
+          votingPower,
+        })
+        return acc + dailyRewards
+      }, BigInt(0))
 
-      return Number(apyBigInt) / 100 // return as percentage
+      // Step 4: Calculate APY
+      return calculateApy({
+        lockedAmount: lockedBalance.amount,
+        totalDailyRewards,
+      })
     },
     queryKey,
     refetchInterval: 1000 * 60 * 5, // 5 minutes

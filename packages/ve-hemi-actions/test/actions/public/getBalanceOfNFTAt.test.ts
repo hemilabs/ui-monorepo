@@ -1,6 +1,6 @@
 import { zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { veHemiAbi } from '../../../abi'
 import { getBalanceOfNFTAt } from '../../../actions'
@@ -17,10 +17,6 @@ describe('getBalanceOfNFTAt', function () {
   const mockTokenId = 514n
   const mockTimestamp = 1761782400n
   const mockBalance = 9245189085900942600n
-
-  beforeEach(function () {
-    vi.clearAllMocks()
-  })
 
   it('should return balance of NFT at specific timestamp', async function () {
     vi.spyOn(constants, 'getVeHemiContractAddress').mockReturnValue(

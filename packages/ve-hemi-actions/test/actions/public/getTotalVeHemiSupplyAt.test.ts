@@ -1,6 +1,6 @@
 import { zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { veHemiAbi } from '../../../abi'
 import { getTotalVeHemiSupplyAt } from '../../../actions'
@@ -17,10 +17,6 @@ describe('getTotalVeHemiSupplyAt', function () {
   const mockTimestamp = 1761782400n
   const mockTotalSupply = 11649344692938931129822560n
 
-  beforeEach(function () {
-    vi.clearAllMocks()
-  })
-
   it('should return total veHEMI supply at specific timestamp', async function () {
     vi.spyOn(constants, 'getVeHemiContractAddress').mockReturnValue(
       mockVeHemiAddress,
@@ -35,7 +31,7 @@ describe('getTotalVeHemiSupplyAt', function () {
       abi: veHemiAbi,
       address: mockVeHemiAddress,
       args: [mockTimestamp],
-      functionName: 'totalSupplyAt',
+      functionName: 'totalVeHemiSupplyAt',
     })
   })
 

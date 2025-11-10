@@ -1,5 +1,7 @@
 import { DurationTime } from 'components/durationTime'
+import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
+import { formatNumber } from 'utils/format'
 
 import { useCalculateApy } from '../../_hooks/useCalculateApy'
 
@@ -9,6 +11,7 @@ type Props = {
 }
 
 export const LockupTime = function ({ lockupTime, tokenId }: Props) {
+  const t = useTranslations('staking-dashboard.table')
   const seconds = Number(lockupTime)
   const {
     data: apy,
@@ -26,7 +29,9 @@ export const LockupTime = function ({ lockupTime, tokenId }: Props) {
     }
 
     return (
-      <span className="text-xs font-normal text-emerald-600">{apy}% APY</span>
+      <span className="text-xs font-normal text-emerald-600">
+        {t('apy', { percentage: formatNumber(apy) })}
+      </span>
     )
   }
 

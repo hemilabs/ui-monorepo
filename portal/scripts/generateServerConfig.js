@@ -3,7 +3,7 @@
 require('dotenv').config({ override: true, path: ['.env', '.env.local'] })
 const { writeFile } = require('fs/promises')
 const path = require('path')
-const { mainnet, sepolia } = require('viem/chains')
+const { hemi, hemiSepolia, mainnet, sepolia } = require('viem/chains')
 
 const getDomain = function (url) {
   if (!url) {
@@ -36,6 +36,9 @@ const fetchDomains = new Set([
   // Hemi and Hemi Sepolia RPCs
   'https://*.hemi.network',
   'https://*.rpc.hemi.network',
+  // hemi and hemi sepolia explorer APIs.
+  hemi.blockExplorers.default.url,
+  hemiSepolia.blockExplorers.default.url,
   // The Graph studio url
   'https://api.studio.thegraph.com/',
   // Reown (Ex WalletConnect), through RainbowKit

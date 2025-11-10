@@ -1,6 +1,6 @@
 import { zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
-import { describe, expect, it, vi, beforeEach } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 import { veHemiRewardsAbi } from '../../abi'
 import { getMaxConfiguredReward } from '../../actions/public/veHemiRewards'
@@ -16,10 +16,6 @@ describe('getMaxConfiguredReward', function () {
   const mockVeHemiRewardsAddress = zeroAddress
   const mockRewardToken = '0x99e3dE3817F6081B2568208337ef83295b7f591D'
   const mockMaxConfigured = 1761782400n
-
-  beforeEach(function () {
-    vi.clearAllMocks()
-  })
 
   it('should return max configured reward timestamp for given token', async function () {
     vi.spyOn(constants, 'getVeHemiRewardsContractAddress').mockReturnValue(

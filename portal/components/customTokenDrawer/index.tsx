@@ -79,7 +79,7 @@ export const CustomTokenDrawer = function ({
 
   const [, setCustomTokenAddress] = useCustomTokenAddress()
   const queryClient = useQueryClient()
-  const { addToken } = useUserTokenList()
+  const { addToken } = useUserTokenList(fromNetworkId)
   const [tunneledCustomTokenAddress, setTunneledCustomTokenAddress] =
     useState('')
 

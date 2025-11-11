@@ -59,6 +59,7 @@ const stakingColumns = ({
       >
         <LockupTime
           lockupTime={row.original.lockTime}
+          status={row.original.status}
           tokenId={row.original.tokenId}
         />
       </ErrorBoundary>

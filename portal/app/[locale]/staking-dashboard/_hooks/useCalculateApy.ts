@@ -1,6 +1,7 @@
 import { useQuery, type UseQueryResult } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { unixNowTimestamp } from 'utils/time'
 import {
   getBalanceOfNFTAt,
   getLockedBalance,
@@ -27,8 +28,8 @@ const getCalculateApyQueryKey = ({
 
 function calculateCurrentDayTimestamp(startingTimestamp: bigint) {
   const daySecondsBigInt = BigInt(daySeconds)
-  const now = BigInt(Math.floor(Date.now() / 1000))
-  const daysSinceStart = (now - startingTimestamp) / daySecondsBigInt
+  const daysSinceStart =
+    (unixNowTimestamp() - startingTimestamp) / daySecondsBigInt
   return startingTimestamp + daysSinceStart * daySecondsBigInt
 }
 

@@ -10,6 +10,7 @@ import {
   StakingDashboardToken,
   StakingPosition,
 } from 'types/stakingDashboard'
+import { unixNowTimestamp } from 'utils/time'
 import { IncreaseUnlockTimeEvents } from 've-hemi-actions'
 import { increaseUnlockTime } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
@@ -101,11 +102,9 @@ export const useIncreaseUnlockTime = function ({
                   return position
                 }
 
-                const currentTimestamp = BigInt(Math.floor(Date.now() / 1000))
-
                 // Calculate new unlock time (current time + chosen duration, rounded)
                 const rawUnlockTime =
-                  currentTimestamp + daysToSeconds(BigInt(lockupDays))
+                  unixNowTimestamp() + daysToSeconds(BigInt(lockupDays))
                 const newUnlockTime =
                   (rawUnlockTime / BigInt(step)) * BigInt(step)
 

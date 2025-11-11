@@ -1,23 +1,27 @@
 import { DurationTime } from 'components/durationTime'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
+import { StakingPositionStatus } from 'types/stakingDashboard'
 import { formatNumber } from 'utils/format'
 
 import { useCalculateApy } from '../../_hooks/useCalculateApy'
 
 type Props = {
   lockupTime: bigint
+  status: StakingPositionStatus
   tokenId: string
 }
 
-export const LockupTime = function ({ lockupTime, tokenId }: Props) {
+export const LockupTime = function ({ lockupTime, status, tokenId }: Props) {
   const t = useTranslations('staking-dashboard.table')
   const seconds = Number(lockupTime)
+  const isActive = status === 'active'
+
   const {
     data: apy,
     error,
     isLoading,
-  } = useCalculateApy({ tokenId: BigInt(tokenId) })
+  } = useCalculateApy({ enabled: isActive, tokenId: BigInt(tokenId) })
 
   const renderApy = function () {
     if (isLoading) {

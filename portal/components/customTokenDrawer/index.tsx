@@ -14,14 +14,9 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { getRemoteTokens } from 'tokenList'
 import { EvmToken, L2Token, Token } from 'types/token'
+import { toChecksumAddress } from 'utils/address'
 import { isL2Network } from 'utils/chain'
-import {
-  type Address,
-  type Chain,
-  getAddress,
-  isAddress,
-  isAddressEqual,
-} from 'viem'
+import { type Address, type Chain, isAddress, isAddressEqual } from 'viem'
 
 import { Acknowledge } from './acknowledge'
 import { AddPairToHemi } from './addPairToHemi'
@@ -147,11 +142,11 @@ export const CustomTokenDrawer = function ({
 
     const l2TokenAdded = {
       ...tokenData,
-      address: getAddress(address),
+      address: toChecksumAddress(address),
       extensions: {
         bridgeInfo: {
           [l1ChainId]: {
-            tokenAddress: getAddress(l1Token),
+            tokenAddress: toChecksumAddress(l1Token),
           },
         },
       },

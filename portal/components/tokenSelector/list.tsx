@@ -9,10 +9,12 @@ import { useTranslations } from 'next-intl'
 import { type ReactElement, useRef } from 'react'
 import { Token as TokenType } from 'types/token'
 import { isCustomToken } from 'utils/token'
+import { type Chain } from 'viem'
 
 import { Token } from './token'
 
 type Props = {
+  chainId: Chain['id']
   onSelectToken: (token: TokenType) => void
   tokens: TokenType[]
 }
@@ -133,6 +135,7 @@ const shouldRenderHeader = ({
 }) => !alreadyRendered && isFirst && !isSearchActive && condition
 
 export const List = function ({
+  chainId,
   isSearchActive,
   onSelectToken,
   tokens,
@@ -142,7 +145,7 @@ export const List = function ({
 }) {
   const parentRef = useRef<HTMLDivElement>(null)
 
-  const { userTokenList } = useUserTokenList()
+  const { userTokenList } = useUserTokenList(chainId)
   const { hasScrolled, onScroll } = useHasScrolled()
 
   const combinedTokens = [...yourTokens, ...tokens, ...userTokenList]

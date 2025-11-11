@@ -3,6 +3,7 @@ import { hemiMainnet } from 'networks/hemiMainnet'
 import { hemiTestnet } from 'networks/hemiTestnet'
 import { type RemoteChain } from 'types/chain'
 import { type EvmToken, type Token } from 'types/token'
+import { toChecksumAddress } from 'utils/address'
 import { type Address } from 'viem'
 
 import { customTunnelPartnersWhitelist } from './customTunnelPartnersWhitelist'
@@ -30,31 +31,57 @@ const extendWithWhiteList = <
     }
   }
 
+export const normalizeToken = <T extends Token = Token>(token: T) =>
+  ({
+    ...token,
+    address: toChecksumAddress(token.address),
+    extensions: {
+      ...token.extensions,
+      ...(token.extensions?.bridgeInfo
+        ? {
+            bridgeInfo: Object.fromEntries(
+              Object.keys(token.extensions!.bridgeInfo!).map(l1ChainId => [
+                l1ChainId,
+                {
+                  ...token.extensions!.bridgeInfo![l1ChainId],
+                  tokenAddress: toChecksumAddress(
+                    token.extensions!.bridgeInfo![l1ChainId].tokenAddress!,
+                  ),
+                },
+              ]),
+            ),
+          }
+        : {}),
+    } as Token['extensions'],
+  }) as T
+
 export const getRemoteTokens = function (token: EvmToken) {
   if (!token.extensions?.bridgeInfo) {
     return [] satisfies EvmToken[]
   }
-  return Object.keys(token.extensions!.bridgeInfo!).map(l1ChainId => ({
-    ...token,
-    address: token.extensions!.bridgeInfo![l1ChainId].tokenAddress!,
-    chainId: Number(l1ChainId),
-    extensions: {
-      bridgeInfo: {
-        [token.chainId]: {
-          tokenAddress: token.address as Address,
+  return Object.keys(token.extensions!.bridgeInfo!).map(l1ChainId =>
+    normalizeToken({
+      ...token,
+      address: token.extensions!.bridgeInfo![l1ChainId].tokenAddress!,
+      chainId: Number(l1ChainId),
+      extensions: {
+        bridgeInfo: {
+          [token.chainId]: {
+            tokenAddress: token.address as Address,
+          },
         },
       },
-    },
-    logoURI: token.extensions!.l1LogoURI,
-    name: token.name
-      // Remove the ".e" suffix
-      .replace('.e', '')
-      .trim(),
-    symbol: token.symbol
-      // Remove the ".e" suffix
-      .replace('.e', '')
-      .trim(),
-  })) satisfies EvmToken[]
+      logoURI: token.extensions!.l1LogoURI,
+      name: token.name
+        // Remove the ".e" suffix
+        .replace('.e', '')
+        .trim(),
+      symbol: token.symbol
+        // Remove the ".e" suffix
+        .replace('.e', '')
+        .trim(),
+    }),
+  ) as EvmToken[]
 }
 
 const hemiTokens: EvmToken[] = (hemilabsTokenList.tokens as EvmToken[]).filter(

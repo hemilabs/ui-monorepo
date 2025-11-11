@@ -1,10 +1,11 @@
 import { Card } from 'components/card'
 import { P } from 'components/paragraph'
 import Image, { StaticImageData } from 'next/image'
+import { type ReactNode } from 'react'
 
 type Props<T> = {
   data: T | undefined
-  formatValue: (value: T) => string
+  formatValue: (value: T) => ReactNode
   isError: boolean
   icon: StaticImageData
   label: string

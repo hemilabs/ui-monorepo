@@ -18,11 +18,11 @@ const Step = ({
   image: StaticImageData
   subheading: string
 }) => (
-  <div className="flex gap-x-3">
+  <div className="flex flex-col items-center gap-x-3 gap-y-2 md:flex-row">
     <div>
       <Image alt="Step image" height={80} src={image} width={80} />
     </div>
-    <div className="flex max-w-64 flex-col justify-center gap-y-1">
+    <div className="flex w-full flex-col justify-center gap-y-1 max-md:text-center">
       <h4>{heading}</h4>
       <P className="text-neutral-500">{subheading}</P>
     </div>
@@ -34,7 +34,10 @@ export const GetStarted = function () {
   const t = useTranslations()
 
   return (
-    <article className="flex items-center gap-x-5 border-t border-solid border-neutral-300/55 py-6">
+    <article
+      className="flex flex-col items-center justify-between gap-x-5 
+      gap-y-10 border-t border-solid border-neutral-300/55 py-6 sm:flex-row"
+    >
       <Step
         heading={t('common.connect-wallet')}
         image={step1}

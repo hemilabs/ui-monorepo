@@ -14,7 +14,7 @@ export function calculateDailyRewards({
   totalSupply: bigint
   votingPower: bigint
 }) {
-  if (totalSupply === BigInt(0) || votingPower === BigInt(0)) {
+  if (totalSupply === BigInt(0)) {
     return BigInt(0)
   }
 

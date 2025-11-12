@@ -13,16 +13,23 @@
     "put-to-work": "Coloque seu {symbol} para trabalhar e comece a gerar rendimento.",
     "start-earning": "Comece a ganhar",
     "subheading": "Ganhe recompensas com seu BTC através de oportunidades de rendimento descentralizadas respaldadas por uso real on-chain.",
+    "table": {
+      "claim-rewards": "Reclamar Recompensas",
+      "pool": "Fundo",
+      "rewards": "Recompensas"
+    },
     "tunnel-btc": "Tunelize BTC",
     "tunnel-to-hemi": "Tunelar Bitcoin para Hemi"
   },
   "common": {
     "accept": "Aceitar",
+    "actions": "Ações",
     "add": "Adicionar",
     "added": "Adicionado",
     "amount": "Quantia",
     "approving": "A aprovar...",
     "approving-token": "A aprovar {symbol}",
+    "balance": "Saldo",
     "cancel": "Cancelar",
     "close": "Fechar",
     "connect-to-network": "Conectar à {network}",
@@ -31,6 +38,7 @@
     "connect-wallets": "Conectar Carteiras",
     "copied": "Copiado",
     "copy": "Copiar",
+    "deposit": "Depositar",
     "enter-an-amount": "Introduzir uma quantia",
     "erc20-approve-10x-deposits": "Aprovar 10x a quantia deste depósito",
     "erc20-approve-10x-detailed-description": "Ao ativar a aprovação de 10x, adicionamos automaticamente 10 vezes a quantia desta transação como margem para transações futuras, poupando custos com taxas de gás e tempo.",
@@ -69,6 +77,7 @@
     "wait-minutes": "Aguarde ~{minutes, plural, =1 {# minuto} other {# minutos}}",
     "waiting-completed": "Espera concluída",
     "wallets-connected": "{count} {count, plural, =1 {Carteira Conectada} other {Carteiras Conectadas}}",
+    "withdraw": "Retirar",
     "wrong-network": "Rede Errada",
     "wrong-type-network": "Rede {type} Errada",
     "your-wallet-not-connected": "A sua carteira não está conectada"

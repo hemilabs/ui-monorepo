@@ -16,9 +16,10 @@ type Props<T extends Token = Token> = {
 export const RenderCryptoBalance = ({
   balance,
   fetchStatus,
+  showSymbol = false,
   status,
   token,
-}: Props & { balance: bigint } & Pick<
+}: Props & { balance: bigint; showSymbol?: boolean } & Pick<
     ReturnType<typeof useTokenBalance>,
     'fetchStatus' | 'status'
   >) => (
@@ -31,7 +32,7 @@ export const RenderCryptoBalance = ({
     {status === 'success' && (
       <DisplayAmount
         amount={formatUnits(balance, token.decimals)}
-        showSymbol={false}
+        showSymbol={showSymbol}
         token={token}
       />
     )}

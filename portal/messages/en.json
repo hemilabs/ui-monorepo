@@ -13,16 +13,23 @@
     "put-to-work": "Put your {symbol} to work and start generating yield.",
     "start-earning": "Start Earning",
     "subheading": "Earn rewards on your BTC through decentralized yield opportunities backed by real on-chain usage.",
+    "table": {
+      "claim-rewards": "Claim Rewards",
+      "pool": "Pool",
+      "rewards": "Rewards"
+    },
     "tunnel-btc": "Tunnel BTC",
     "tunnel-to-hemi": "Tunnel Bitcoin to Hemi"
   },
   "common": {
     "accept": "Accept",
+    "actions": "Actions",
     "add": "Add",
     "added": "Added",
     "amount": "Amount",
     "approving": "Approving...",
     "approving-token": "Approving {symbol}",
+    "balance": "Balance",
     "cancel": "Cancel",
     "close": "Close",
     "connect-to-network": "Connect to {network}",
@@ -31,6 +38,7 @@
     "connect-wallets": "Connect Wallets",
     "copied": "Copied",
     "copy": "Copy",
+    "deposit": "Deposit",
     "enter-an-amount": "Enter an amount",
     "erc20-approve-10x-deposits": "Approve 10x the amount of this deposit",
     "erc20-approve-10x-detailed-description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
@@ -69,6 +77,7 @@
     "wait-minutes": "Wait ~{minutes, plural, =1 {# minute} other {# minutes}}",
     "waiting-completed": "Waiting completed",
     "wallets-connected": "{count} Connected {count, plural, =1 {Wallet} other {Wallets}} ",
+    "withdraw": "Withdraw",
     "wrong-network": "Wrong Network",
     "wrong-type-network": "Wrong {type} Network",
     "your-wallet-not-connected": "Your wallet is not connected"

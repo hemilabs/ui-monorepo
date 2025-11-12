@@ -24,6 +24,7 @@
     "approving": "A aprovar...",
     "approving-token": "A aprovar {symbol}",
     "cancel": "Cancelar",
+    "close": "Fechar",
     "connect-to-network": "Conectar à {network}",
     "connect-to-supported-network": "Conectar a uma rede suportada",
     "connect-wallet": "Conectar Carteira",

@@ -310,6 +310,9 @@ const config: Config = {
         '105': '26.25rem',
         '120': '30rem',
       },
+      transitionProperty: {
+        filter: 'filter',
+      },
     },
   },
 }

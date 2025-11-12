@@ -24,6 +24,7 @@
     "approving": "Approving...",
     "approving-token": "Approving {symbol}",
     "cancel": "Cancel",
+    "close": "Close",
     "connect-to-network": "Connect to {network}",
     "connect-to-supported-network": "Connect to supported network",
     "connect-wallet": "Connect Wallet",

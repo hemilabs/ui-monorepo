@@ -1,7 +1,6 @@
 'use client'
 
 import { Button } from 'components/button'
-import { P } from 'components/paragraph'
 import { useHemiBtcToken } from 'hooks/useHemiBtcToken'
 import Image, { StaticImageData } from 'next/image'
 import { useTranslations } from 'next-intl'
@@ -25,7 +24,7 @@ const Step = ({
     </div>
     <div className="flex w-full flex-col justify-center gap-y-1 max-md:text-center">
       <h4>{heading}</h4>
-      <P className="text-neutral-500">{subheading}</P>
+      <p className="body-text-normal text-neutral-500">{subheading}</p>
     </div>
   </div>
 )

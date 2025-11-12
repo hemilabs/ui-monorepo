@@ -1,5 +1,4 @@
 import { Card } from 'components/card'
-import { P } from 'components/paragraph'
 import Image, { StaticImageData } from 'next/image'
 import { type ReactNode } from 'react'
 
@@ -30,9 +29,7 @@ export const CardInfo = function <T>({
     <Card shadow="sm">
       <div className="h-20.5 relative w-full p-4">
         <div className="flex flex-shrink-0 flex-col gap-y-2">
-          <P className="text-neutral-500" variant="medium">
-            {label}
-          </P>
+          <span className="body-text-medium text-neutral-500">{label}</span>
           <h3>{getValue()}</h3>
         </div>
         <Image

@@ -30,7 +30,11 @@ const Step = ({
   </div>
 )
 
-export const GetStarted = function () {
+type Props = {
+  onClose: VoidFunction
+}
+
+export const GetStarted = function ({ onClose }: Props) {
   const { symbol } = useHemiBtcToken()
   const t = useTranslations()
 
@@ -60,7 +64,12 @@ export const GetStarted = function () {
         className="duration-400 scale absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-95 opacity-0
         transition-all delay-75 group-hover/get-started:scale-100 group-hover/get-started:opacity-100"
       >
-        <Button size="xSmall" type="button" variant="secondary">
+        <Button
+          onClick={onClose}
+          size="xSmall"
+          type="button"
+          variant="secondary"
+        >
           {t('common.close')}
         </Button>
       </div>

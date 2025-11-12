@@ -44,6 +44,21 @@ app.get(
 )
 
 app.get(
+  /\/claims\/(7?43111)\/(0x[0-9a-fA-F]{40})\/all/,
+  toJsonMiddleware(getAllUserClaimData, {
+    maxAge: 5 * 60 * 1000,
+    resolver: (chainId, address) => `${chainId}:${address}`,
+  }),
+)
+
+app.get(
+  '/net-stats',
+  toJsonMiddleware(getNetStats, {
+    maxAge: 60 * 60 * 1000,
+  }),
+)
+
+app.get(
   /\/points\/(0x[0-9a-fA-F]{40})/,
   toJsonMiddleware(
     async address => ({ points: await getUserPoints(address) }),
@@ -61,24 +76,9 @@ app.get(
 )
 
 app.get(
-  '/net-stats',
-  toJsonMiddleware(getNetStats, {
-    maxAge: 60 * 60 * 1000,
-  }),
-)
-
-app.get(
   '/tvl',
   toJsonMiddleware(async () => ({ tvl: await getTvl() }), {
     revalidate: config.get('tvl.revalidateMin') * 60 * 1000,
-  }),
-)
-
-app.get(
-  /\/claims\/(7?43111)\/(0x[0-9a-fA-F]{40})\/all/,
-  toJsonMiddleware(getAllUserClaimData, {
-    maxAge: 5 * 60 * 1000,
-    resolver: (chainId, address) => `${chainId}:${address}`,
   }),
 )
 

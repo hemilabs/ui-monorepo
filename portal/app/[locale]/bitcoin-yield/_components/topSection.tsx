@@ -2,7 +2,6 @@
 
 import { ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
-import { P } from 'components/paragraph'
 import { useHemiBtcToken } from 'hooks/useHemiBtcToken'
 import { useTranslations } from 'next-intl'
 
@@ -15,7 +14,7 @@ export const TopSection = function () {
       <div className="mb-12 flex items-center justify-between">
         <div className="max-w-120 flex flex-col gap-y-1">
           <h2>{t('heading')}</h2>
-          <P className="text-neutral-600">{t('subheading')}</P>
+          <p className="body-text-normal text-neutral-600">{t('subheading')}</p>
         </div>
         <div className="flex items-center gap-x-3">
           {/* TODO define external link - using docs as placeholder */}

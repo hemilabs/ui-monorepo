@@ -54,6 +54,16 @@ p {
   @apply text-base font-normal text-neutral-950;
 }
 
+.body-text-normal {
+  @apply text-sm font-normal;
+}
+.body-text-medium {
+  @apply text-sm font-medium;
+}
+.body-text-semibold {
+  @apply text-sm font-semibold;
+}
+
 input[type='range']::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;

@@ -41,7 +41,7 @@ export const GetStarted = function ({ onClose }: Props) {
   return (
     <article className="group/get-started relative gap-x-5 gap-y-10 border-t border-solid border-neutral-300/55 py-6">
       <div
-        className="duration-400 transition-filter flex flex-col items-center justify-between
+        className="transition-filter flex flex-col items-center justify-between duration-300
         group-hover/get-started:opacity-65 group-hover/get-started:blur-sm sm:flex-row"
       >
         <Step
@@ -61,8 +61,8 @@ export const GetStarted = function ({ onClose }: Props) {
         />
       </div>
       <div
-        className="duration-400 scale absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-95 opacity-0
-        transition-all delay-75 group-hover/get-started:scale-100 group-hover/get-started:opacity-100"
+        className="scale absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-95 opacity-0 transition-all
+        delay-75 duration-300 group-hover/get-started:scale-100 group-hover/get-started:opacity-100"
       >
         <Button
           onClick={onClose}

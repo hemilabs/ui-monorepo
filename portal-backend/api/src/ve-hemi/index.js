@@ -84,18 +84,15 @@ module.exports = function ({ cache }) {
       ratio,
     }))
     const totalRewardsPerWeight = await Promise.all(
-      timestamps.map(async timestamp =>
-        (
-          await Promise.all(
-            tokens.map(({ address, decimals, ratio }) =>
-              getRewardPeriod(client, address, timestamp).then(
-                reward =>
-                  reward * BigInt(Math.round(ratio * 10 ** (18 - decimals))),
-              ),
-            ),
-          )
-        ).reduce((total, reward) => total + reward, 0n),
-      ),
+      timestamps.map(async function (timestamp) {
+        const rewards = await Promise.all(
+          tokens.map(async function ({ address, decimals, ratio }) {
+            const reward = await getRewardPeriod(client, address, timestamp)
+            return reward * BigInt(Math.round(ratio * 10 ** (18 - decimals)))
+          }),
+        )
+        return rewards.reduce((total, reward) => total + reward, 0n)
+      }),
     )
     return totalRewardsPerWeight
   }

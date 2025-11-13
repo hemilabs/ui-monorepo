@@ -54,6 +54,9 @@ p {
   @apply text-base font-normal text-neutral-950;
 }
 
+.body-text-caption {
+  @apply text-xxs font-medium;
+}
 .body-text-normal {
   @apply text-sm font-normal;
 }

@@ -9,7 +9,7 @@ type Props = {
   address: Address
 }
 export const PoolData = function ({ address }: Props) {
-  const poolAsset = usePoolAsset().data!
+  const poolAsset = usePoolAsset().data
 
   return (
     <div className="flex items-center gap-x-3">

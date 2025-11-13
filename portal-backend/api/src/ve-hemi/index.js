@@ -111,8 +111,10 @@ module.exports = function ({ cache }) {
     }
 
     const timestamps = generateFutureTimestamps()
-    const totalWeights = await getTotalWeights(timestamps)
-    const totalRewards = await getTotalRewards(timestamps)
+    const [totalWeights, totalRewards] = await Promise.all([
+      getTotalWeights(timestamps),
+      getTotalRewards(timestamps),
+    ])
     // We may be losing some precision in the following division but it is not a
     // problem since we are only interested in an approximate ratio.
     const data = totalWeights.map((weight, i) =>

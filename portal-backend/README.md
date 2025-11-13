@@ -88,6 +88,15 @@ $ curl http://localhost:3006/tvl
 {"tvl":808500187.3738999}
 ```
 
+#### `GET /ve-hemi-rewards/:chain-id`
+
+Returns the veHemi rewards per unit of veHemi weight (voting power) for the next year (60 epochs of 6 days).
+
+```console
+$ curl http://localhost:3006/ve-hemi-rewards/43111
+[0, 0, 0, 0, 0, 0.001623267574410933, 0.0013566087424163847, ...other 50 elements, 0, 0, 0]
+```
+
 ### Configuration
 
 These environment variables control how the cache works:

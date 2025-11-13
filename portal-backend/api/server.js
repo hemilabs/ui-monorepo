@@ -14,6 +14,8 @@ const { getNetStats } = require('./src/net-stats')(config.get('rpcUrl'))
 const { getUserPoints } = require('./src/absinthe')(config.get('absinthe'))
 const cache = require('./src/redis')(config.get('redis'))
 
+const { getVeHemiRewards } = require('./src/ve-hemi')({ cache })
+
 const { toJsonMiddleware, toTextMiddleware } = require('./src/to-middleware')
 const globToRegExp = require('./src/glob-to-regexp')
 
@@ -79,6 +81,13 @@ app.get(
   '/tvl',
   toJsonMiddleware(async () => ({ tvl: await getTvl() }), {
     revalidate: config.get('tvl.revalidateMin') * 60 * 1000,
+  }),
+)
+
+app.get(
+  /\/ve-hemi-rewards\/(7?43111)/,
+  toJsonMiddleware(getVeHemiRewards, {
+    revalidate: 4 * 60 * 60 * 1000, // 4 hours
   }),
 )
 

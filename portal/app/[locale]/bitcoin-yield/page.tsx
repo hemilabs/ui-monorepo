@@ -4,6 +4,7 @@ import { PageLayout } from 'components/pageLayout'
 
 import { GetStartedLoader } from './_components/getStartedLoader'
 import { Info } from './_components/info'
+import { Integrations } from './_components/integrations'
 import { PoolTable } from './_components/poolTable'
 import { TopSection } from './_components/topSection'
 
@@ -14,6 +15,7 @@ export default function Page() {
       <GetStartedLoader />
       <Info />
       <PoolTable />
+      <Integrations />
     </PageLayout>
   )
 }

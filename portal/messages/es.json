@@ -8,6 +8,15 @@
       "pool-deposits": "Depósitos en el fondo",
       "pool-token-value": "Valor del token del fondo"
     },
+    "integrations": {
+      "categories": {
+        "defi": "DeFi",
+        "lending-market": "Mercado de préstamos"
+      },
+      "gearbox-description": "Transfiera, intercambie o mueva liquidez entre cualquier red, token o protocolo en un solo click.",
+      "heading": "Integraciones de {symbol}",
+      "spectra-description": "Spectra es un protocolo centrado en EVM para derivados de tasas de interés."
+    },
     "learn-more-about-hemibtc": "Aprenda más sobre {symbol}",
     "link-your-wallet": "Conecte su billetera para acceder al ecosistema Hemi.",
     "put-to-work": "Ponga su {symbol} a trabajar y comience a generar rendimiento.",

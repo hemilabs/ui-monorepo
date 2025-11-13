@@ -8,6 +8,15 @@
       "pool-deposits": "Pool Deposits",
       "pool-token-value": "Pool token value"
     },
+    "integrations": {
+      "categories": {
+        "defi": "DeFi",
+        "lending-market": "Lending market"
+      },
+      "gearbox-description": "Bridge, Swap, or Move liquidity across any chain, token, or protocol in one click.",
+      "heading": "{symbol} Integrations",
+      "spectra-description": "Spectra is an EVM-centric protocol for interest rate derivatives."
+    },
     "learn-more-about-hemibtc": "Learn more about {symbol}",
     "link-your-wallet": "Link your wallet to access the Hemi ecosystem.",
     "put-to-work": "Put your {symbol} to work and start generating yield.",

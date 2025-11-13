@@ -106,7 +106,7 @@ module.exports = function ({ cache }) {
    */
   async function getVeHemiRewards(chainId) {
     // Will not compute the rewards for chains other than Hemi mainnet
-    if (Number(chainId) != hemi.id) {
+    if (Number(chainId) !== hemi.id) {
       return new Array(EPOCHS).fill(0)
     }
 

@@ -10,7 +10,7 @@ import { CardInfo } from './cardInfo'
 import poolDepositIcon from './icons/poolDeposit.svg'
 
 export const PoolDeposits = function () {
-  const poolToken = usePoolAsset().data!
+  const poolToken = usePoolAsset().data
   const { data: poolDeposits, isError } = usePoolDeposits()
   const t = useTranslations('bitcoin-yield.info')
 

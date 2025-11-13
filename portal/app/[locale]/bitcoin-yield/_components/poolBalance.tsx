@@ -6,7 +6,7 @@ import { usePoolAsset } from '../_hooks/usePoolAsset'
 import { useUserPoolBalance } from '../_hooks/useUserPoolBalance'
 
 export const PoolBalance = function () {
-  const poolAsset = usePoolAsset().data!
+  const poolAsset = usePoolAsset().data
   // no need to check for errors, there's a fallback in the column definition
   const {
     data: poolBalance = BigInt(0),

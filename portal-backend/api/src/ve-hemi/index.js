@@ -2,9 +2,9 @@
 
 const { createPublicClient, http } = require('viem')
 const { hemi } = require('viem/chains')
+const erc20Actions = require('viem-erc20/actions') // eslint-disable-line node/no-missing-require
 
 const { getRewardPeriod, getRewardTokens } = require('./ve-hemi-rewards')
-const { getTokenDecimals, getTokenSymbol } = require('./erc-20')
 const { getTotalVeHemiSupplyAt } = require('./ve-hemi')
 
 const ONE_DAY = 24 * 60 * 60
@@ -73,8 +73,8 @@ module.exports = function ({ cache }) {
       tokenAddresses.map(address =>
         Promise.all([
           address,
-          getTokenDecimals(client, address),
-          getTokenSymbol(client, address).then(getRatioToHemi),
+          erc20Actions.decimals(client, { address }),
+          erc20Actions.symbol(client, { address }).then(getRatioToHemi),
         ]),
       ),
     )

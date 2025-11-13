@@ -89,7 +89,8 @@ module.exports = function ({ cache }) {
           await Promise.all(
             tokens.map(({ address, decimals, ratio }) =>
               getRewardPeriod(client, address, timestamp).then(
-                reward => reward * BigInt(ratio * 10 ** (18 - decimals)),
+                reward =>
+                  reward * BigInt(Math.round(ratio * 10 ** (18 - decimals))),
               ),
             ),
           )
@@ -100,12 +101,12 @@ module.exports = function ({ cache }) {
   }
 
   /**
-   * @param {43111|743111} chainId
+   * @param {"43111"|"743111"} chainId
    * @returns {Promise<number[]>}
    */
-  async function veHemiRewards(chainId) {
+  async function getVeHemiRewards(chainId) {
     // Will not compute the rewards for chains other than Hemi mainnet
-    if (chainId !== hemi.id) {
+    if (Number(chainId) != hemi.id) {
       return new Array(EPOCHS).fill(0)
     }
 
@@ -121,6 +122,6 @@ module.exports = function ({ cache }) {
   }
 
   return {
-    veHemiRewards,
+    getVeHemiRewards,
   }
 }

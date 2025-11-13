@@ -94,7 +94,7 @@ Returns the veHemi rewards per unit of veHemi weight (voting power) for the next
 
 ```console
 $ curl http://localhost:3006/ve-hemi-rewards/43111
-[0, 0, 0, 0, 0, 0.001623267574410933, 0.0013566087424163847, ...other 50 elements, 0, 0, 0]
+[0,0,0,0,0,0.001623267574410933,0.0013566087424163847,...other 50 elements,0,0,0]
 ```
 
 ### Configuration

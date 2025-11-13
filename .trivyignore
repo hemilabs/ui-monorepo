@@ -1,3 +1,9 @@
-# @graphprotocol/graph-cli@0.97.1 > gluegun@5.2.0 > cross-spawn@7.0.3
+# subgraphs/* > @graphprotocol/graph-cli@0.97.1 > gluegun@5.2.0 > cross-spawn@7.0.3
 # https://github.com/graphprotocol/graph-tooling/issues/2043
 CVE-2024-21538
+
+# subgraph-api > tsx@4.20.5 > esbuild@0.25.12
+CVE-2025-58183
+CVE-2025-58186
+CVE-2025-58187
+CVE-2025-58188

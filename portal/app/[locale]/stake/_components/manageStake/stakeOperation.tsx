@@ -1,4 +1,5 @@
 import { DrawerParagraph } from 'components/drawer'
+import { HemiFees } from 'components/hemiFees'
 import {
   ProgressStatus,
   type ProgressStatusType,
@@ -32,7 +33,6 @@ const StakeToast = dynamic(
   },
 )
 
-import { Fees } from './fees'
 import { StakeMaxBalance } from './maxBalance'
 import { Operation } from './operation'
 import { Preview } from './preview'
@@ -263,8 +263,8 @@ export const StakeOperation = function ({
             amount={amountInput}
             errorKey={allowanceLoaded && balanceLoaded ? errorKey : undefined}
             fees={
-              <Fees
-                estimatedFees={stakeEstimatedFees}
+              <HemiFees
+                fees={stakeEstimatedFees}
                 isError={isStakeEstimatedFeesError}
               />
             }

@@ -5,6 +5,8 @@ type CommonEvents = {
 }
 
 export type DepositEvents = CommonEvents & {
+  'approve-transaction-succeeded': [TransactionReceipt]
+  'approve-transaction-reverted': [TransactionReceipt]
   'check-allowance': []
   'deposit-failed': [Error]
   'deposit-failed-validation': [string]

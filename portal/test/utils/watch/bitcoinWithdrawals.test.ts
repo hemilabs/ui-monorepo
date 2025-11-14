@@ -72,16 +72,14 @@ describe('utils/watch/bitcoinWithdrawals', function () {
         uuid: uuid.toString(),
       })
 
-      expect(getEvmTransactionReceipt).toHaveBeenCalledOnce()
-      expect(getEvmTransactionReceipt).toHaveBeenCalledWith(
+      expect(getEvmTransactionReceipt).toHaveBeenCalledExactlyOnceWith(
         withdrawal.transactionHash,
         withdrawal.l2ChainId,
       )
 
       expect(getBitcoinWithdrawalUuid).toHaveBeenCalledOnce()
 
-      expect(getEvmBlock).toHaveBeenCalledOnce()
-      expect(getEvmBlock).toHaveBeenCalledWith(
+      expect(getEvmBlock).toHaveBeenCalledExactlyOnceWith(
         withdrawalReceipt.blockNumber,
         withdrawal.l2ChainId,
       )
@@ -109,16 +107,14 @@ describe('utils/watch/bitcoinWithdrawals', function () {
         uuid: uuid.toString(),
       })
 
-      expect(getEvmTransactionReceipt).toHaveBeenCalledOnce()
-      expect(getEvmTransactionReceipt).toHaveBeenCalledWith(
+      expect(getEvmTransactionReceipt).toHaveBeenCalledExactlyOnceWith(
         withdrawal.transactionHash,
         withdrawal.l2ChainId,
       )
 
       expect(getBitcoinWithdrawalUuid).toHaveBeenCalledOnce()
 
-      expect(getEvmBlock).toHaveBeenCalledOnce()
-      expect(getEvmBlock).toHaveBeenCalledWith(
+      expect(getEvmBlock).toHaveBeenCalledExactlyOnceWith(
         withdrawalReceipt.blockNumber,
         withdrawal.l2ChainId,
       )

@@ -62,8 +62,7 @@ describe('utils/watch/bitcoinDeposits', function () {
       const updates = await watchDepositOnBitcoin(deposit)
 
       expect(updates).toEqual({})
-      expect(getTransactionReceipt).toHaveBeenCalledOnce()
-      expect(getTransactionReceipt).toHaveBeenCalledWith(
+      expect(getTransactionReceipt).toHaveBeenCalledExactlyOnceWith(
         deposit.transactionHash,
       )
     })
@@ -84,8 +83,7 @@ describe('utils/watch/bitcoinDeposits', function () {
         timestamp: blockTime,
       })
 
-      expect(getTransactionReceipt).toHaveBeenCalledOnce()
-      expect(getTransactionReceipt).toHaveBeenCalledWith(
+      expect(getTransactionReceipt).toHaveBeenCalledExactlyOnceWith(
         deposit.transactionHash,
       )
     })

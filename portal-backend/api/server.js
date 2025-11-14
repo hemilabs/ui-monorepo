@@ -14,6 +14,8 @@ const { getNetStats } = require('./src/net-stats')(config.get('rpcUrl'))
 const { getUserPoints } = require('./src/absinthe')(config.get('absinthe'))
 const cache = require('./src/redis')(config.get('redis'))
 
+const { getVeHemiRewards } = require('./src/ve-hemi')({ cache })
+
 const { toJsonMiddleware, toTextMiddleware } = require('./src/to-middleware')
 const globToRegExp = require('./src/glob-to-regexp')
 
@@ -44,6 +46,21 @@ app.get(
 )
 
 app.get(
+  /\/claims\/(7?43111)\/(0x[0-9a-fA-F]{40})\/all/,
+  toJsonMiddleware(getAllUserClaimData, {
+    maxAge: 5 * 60 * 1000,
+    resolver: (chainId, address) => `${chainId}:${address}`,
+  }),
+)
+
+app.get(
+  '/net-stats',
+  toJsonMiddleware(getNetStats, {
+    maxAge: 60 * 60 * 1000,
+  }),
+)
+
+app.get(
   /\/points\/(0x[0-9a-fA-F]{40})/,
   toJsonMiddleware(
     async address => ({ points: await getUserPoints(address) }),
@@ -61,13 +78,6 @@ app.get(
 )
 
 app.get(
-  '/net-stats',
-  toJsonMiddleware(getNetStats, {
-    maxAge: 60 * 60 * 1000,
-  }),
-)
-
-app.get(
   '/tvl',
   toJsonMiddleware(async () => ({ tvl: await getTvl() }), {
     revalidate: config.get('tvl.revalidateMin') * 60 * 1000,
@@ -75,10 +85,9 @@ app.get(
 )
 
 app.get(
-  /\/claims\/(7?43111)\/(0x[0-9a-fA-F]{40})\/all/,
-  toJsonMiddleware(getAllUserClaimData, {
-    maxAge: 5 * 60 * 1000,
-    resolver: (chainId, address) => `${chainId}:${address}`,
+  /\/ve-hemi-rewards\/(7?43111)/,
+  toJsonMiddleware(getVeHemiRewards, {
+    revalidate: 4 * 60 * 60 * 1000, // 4 hours
   }),
 )
 

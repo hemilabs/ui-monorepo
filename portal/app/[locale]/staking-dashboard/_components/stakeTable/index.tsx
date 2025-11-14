@@ -22,6 +22,7 @@ import { ActionCell } from './actionCell'
 import { ConnectWallet } from './connectWallet'
 import { LockupTime } from './lockupTime'
 import { NoPositionStaked } from './noPositionStaked'
+import { type StakeTableFilterOptions } from './stakeTableFilter'
 import { TimeRemaining } from './timeRemaining'
 import { UnsupportedChain } from './unsupportedChain'
 import { VotingPower } from './votingPower'
@@ -30,6 +31,7 @@ type StakingColumnsProps = {
   t: ReturnType<typeof useTranslations<'staking-dashboard'>>
   openRowId: string | null
   setOpenRowId: (id: string | null) => void
+  filter: StakeTableFilterOptions
 }
 
 const stakingColumns = ({
@@ -121,9 +123,10 @@ const Container = ({ children }: { children: ReactNode }) => (
 type Props = {
   data: StakingPosition[] | undefined
   loading: boolean
+  filter?: StakeTableFilterOptions
 }
 
-export function StakeTable({ data, loading }: Props) {
+export function StakeTable({ data, filter = 'active', loading }: Props) {
   const t = useTranslations('staking-dashboard')
   const [openRowId, setOpenRowId] = useState<string | null>(null)
   const { status } = useAccount()
@@ -135,11 +138,12 @@ export function StakeTable({ data, loading }: Props) {
   const cols = useMemo(
     () =>
       stakingColumns({
+        filter,
         openRowId,
         setOpenRowId,
         t,
       }),
-    [openRowId, setOpenRowId, t],
+    [openRowId, setOpenRowId, t, filter],
   )
 
   const getContent = function () {
@@ -170,7 +174,7 @@ export function StakeTable({ data, loading }: Props) {
     if (isEmpty) {
       return (
         <Container>
-          <NoPositionStaked />
+          <NoPositionStaked filter={filter} />
         </Container>
       )
     }

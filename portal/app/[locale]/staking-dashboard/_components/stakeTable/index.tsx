@@ -31,7 +31,6 @@ type StakingColumnsProps = {
   t: ReturnType<typeof useTranslations<'staking-dashboard'>>
   openRowId: string | null
   setOpenRowId: (id: string | null) => void
-  filter: StakeTableFilterOptions
 }
 
 const stakingColumns = ({
@@ -138,12 +137,11 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
   const cols = useMemo(
     () =>
       stakingColumns({
-        filter,
         openRowId,
         setOpenRowId,
         t,
       }),
-    [openRowId, setOpenRowId, t, filter],
+    [openRowId, setOpenRowId, t],
   )
 
   const getContent = function () {

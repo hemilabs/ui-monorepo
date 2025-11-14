@@ -326,6 +326,7 @@
       "active": "Active",
       "add-liquidity-to-lockup": "Add ${symbol} to this lockup",
       "add-time-to-lockup": "Add time to this lockup",
+      "apy": "{percentage}% APY",
       "burned": "Burned",
       "connect-to-hemi": "Connect to {network} to view your stake positions.",
       "connect-to-stake": "Connect your wallet to view your ${symbol} staked.",

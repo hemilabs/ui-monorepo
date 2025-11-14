@@ -1,4 +1,5 @@
 import { StakingPosition } from 'types/stakingDashboard'
+import { unixNowTimestamp } from 'utils/time'
 import { MaxLockDurationSeconds, MinLockDurationSeconds } from 've-hemi-actions'
 
 export const daySeconds = 86_400
@@ -28,7 +29,7 @@ type GetUnlockInfoProps = {
 }
 
 export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
-  const currentTimeInSeconds = Math.floor(Date.now() / 1000)
+  const currentTimeInSeconds = Number(unixNowTimestamp())
 
   // Convert to Number for calculations
   const timestampNum = Number(timestamp)
@@ -60,7 +61,7 @@ export function calculateVotingPower({
   timestamp,
 }: CalculateVotingPowerProps) {
   const maxTimeSeconds = BigInt(maxDays * daySeconds)
-  const now = BigInt(Math.floor(Date.now() / 1000))
+  const now = unixNowTimestamp()
 
   const end = timestamp + lockTime
   const timeRemaining = end > now ? end - now : BigInt(0)

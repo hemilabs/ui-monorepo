@@ -8,17 +8,19 @@ const { getRewardPeriod, getRewardTokens } = require('./ve-hemi-rewards')
 const { getTotalVeHemiSupplyAt } = require('./ve-hemi')
 
 const ONE_DAY = 24 * 60 * 60
-const SIX_DAYS = ONE_DAY * 6
-const EPOCHS = 60 // Epochs in one year
+const EPOCH_DAYS = 6
+const EPOCH = ONE_DAY * EPOCH_DAYS
+const YEAR_EPOCHS = 366 / EPOCH_DAYS // 366 to make YEAR_EPOCHS a whole number
+const PAST_REWARDS_DAYS = 60
 
-function generateFutureTimestamps() {
+function generateTimestamps(epochs, epoch) {
   const now = Math.ceil(Date.now() / 1000)
   const startOfDay = now - (now % ONE_DAY)
   const timestamps = []
   let timestamp = startOfDay
-  for (let i = 0; i < EPOCHS; i++) {
+  for (let i = 0; i < epochs; i++) {
     timestamps.push(timestamp)
-    timestamp += SIX_DAYS
+    timestamp += epoch
   }
   return timestamps
 }
@@ -83,7 +85,7 @@ module.exports = function ({ cache }) {
       decimals,
       ratio,
     }))
-    const totalRewardsPerWeight = await Promise.all(
+    const totalRewards = await Promise.all(
       timestamps.map(async function (timestamp) {
         const rewards = await Promise.all(
           tokens.map(async function ({ address, decimals, ratio }) {
@@ -94,30 +96,36 @@ module.exports = function ({ cache }) {
         return rewards.reduce((total, reward) => total + reward, 0n)
       }),
     )
-    return totalRewardsPerWeight
+    return totalRewards
   }
 
   /**
+   * Computes the veHemi rewards per unit of weight for the next year.
+   *
+   * As there would be no rewards for future epochs, the function averages the
+   * rewards per day for the past 60 days and assumes that reward level will
+   * continue for the 60 epochs.
+   *
    * @param {"43111"|"743111"} chainId
    * @returns {Promise<number[]>}
    */
   async function getVeHemiRewards(chainId) {
     // Will not compute the rewards for chains other than Hemi mainnet
     if (Number(chainId) !== hemi.id) {
-      return new Array(EPOCHS).fill(0)
+      return new Array(YEAR_EPOCHS).fill(0)
     }
 
-    const timestamps = generateFutureTimestamps()
-    const [totalWeights, totalRewards] = await Promise.all([
-      getTotalWeights(timestamps),
-      getTotalRewards(timestamps),
+    const [weightsPerEpoch, pastRewardsPerDay] = await Promise.all([
+      getTotalWeights(generateTimestamps(YEAR_EPOCHS, EPOCH)),
+      getTotalRewards(generateTimestamps(PAST_REWARDS_DAYS, -ONE_DAY)),
     ])
-    // We may be losing some precision in the following division but it is not a
-    // problem since we are only interested in an approximate ratio.
-    const data = totalWeights.map((weight, i) =>
-      weight === 0n ? 0 : Number(totalRewards[i]) / Number(weight),
+    const totalRewards = pastRewardsPerDay.reduce((t, reward) => t + reward, 0n)
+    const avgPastRewardsPerDay = totalRewards / BigInt(PAST_REWARDS_DAYS)
+    const avgPastRewardsPerEpoch = Number(avgPastRewardsPerDay) * EPOCH_DAYS
+    const rewardsPerWeight = weightsPerEpoch.map(weight =>
+      weight === 0n ? 0 : avgPastRewardsPerEpoch / Number(weight),
     )
-    return data
+    return rewardsPerWeight
   }
 
   return {

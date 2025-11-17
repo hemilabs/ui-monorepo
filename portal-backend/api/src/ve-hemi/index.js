@@ -121,9 +121,9 @@ module.exports = function ({ cache }) {
     ])
     const totalRewards = pastRewardsPerDay.reduce((t, reward) => t + reward, 0n)
     const avgPastRewardsPerDay = totalRewards / BigInt(PAST_REWARDS_DAYS)
-    const avgPastRewardsPerEpoch = Number(avgPastRewardsPerDay) * EPOCH_DAYS
+    const avgPastRewardsPerEpoch = avgPastRewardsPerDay * BigInt(EPOCH_DAYS)
     const rewardsPerWeight = weightsPerEpoch.map(weight =>
-      weight === 0n ? 0 : avgPastRewardsPerEpoch / Number(weight),
+      weight === 0n ? 0 : Number(avgPastRewardsPerEpoch) / Number(weight),
     )
     return rewardsPerWeight
   }

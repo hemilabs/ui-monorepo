@@ -1,4 +1,3 @@
-import { hemiSepolia } from 'hemi-viem'
 import pMemoize from 'promise-mem'
 import type { Client } from 'viem'
 import { readContract } from 'viem/actions'
@@ -74,28 +73,5 @@ export const getBalanceOfNFTAt = async function (
     address: veHemiAddress,
     args: [tokenId, timestamp],
     functionName: 'balanceOfNFTAt',
-  })
-}
-
-export const getTotalVeHemiSupplyAt = async function (
-  client: Client,
-  timestamp: bigint,
-) {
-  if (!client.chain) {
-    throw new Error('Client chain is not defined')
-  }
-
-  const veHemiAddress = getVeHemiContractAddress(client.chain.id)
-
-  // Determine function name based on chain ID
-  // because the function name differs between Hemi mainnet and Hemi Sepolia contracts
-  const functionName =
-    client.chain.id === hemiSepolia.id ? 'totalSupplyAt' : 'totalVeHemiSupplyAt'
-
-  return readContract(client, {
-    abi: veHemiAbi,
-    address: veHemiAddress,
-    args: [timestamp],
-    functionName,
   })
 }

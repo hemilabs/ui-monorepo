@@ -4,7 +4,7 @@ import Skeleton from 'react-loading-skeleton'
 import { StakingPositionStatus } from 'types/stakingDashboard'
 import { formatNumber } from 'utils/format'
 
-import { useCalculateApy } from '../../_hooks/useCalculateApy'
+import { useCalculateApr } from '../../_hooks/useCalculateApr'
 
 type Props = {
   lockupTime: bigint
@@ -18,23 +18,23 @@ export const LockupTime = function ({ lockupTime, status, tokenId }: Props) {
   const isActive = status === 'active'
 
   const {
-    data: apy,
-    error,
-    isLoading,
-  } = useCalculateApy({ enabled: isActive, tokenId: BigInt(tokenId) })
+    data: apr,
+    error: error,
+    isLoading: isLoading,
+  } = useCalculateApr({ enabled: isActive, tokenId: BigInt(tokenId) })
 
-  const renderApy = function () {
+  const renderApr = function () {
     if (isLoading) {
       return <Skeleton className="h-4 w-16" />
     }
 
-    if (error || apy === undefined) {
+    if (error || apr === undefined) {
       return <span className="text-xs font-normal text-neutral-500">-</span>
     }
 
     return (
       <span className="text-xs font-normal text-emerald-600">
-        {t('apy', { percentage: formatNumber(apy) })}
+        {t('apr', { percentage: formatNumber(apr) })}
       </span>
     )
   }
@@ -44,7 +44,7 @@ export const LockupTime = function ({ lockupTime, status, tokenId }: Props) {
       <span className="text-neutral-500">
         <DurationTime seconds={seconds} />
       </span>
-      {renderApy()}
+      {renderApr()}
     </div>
   )
 }

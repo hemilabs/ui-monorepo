@@ -180,6 +180,27 @@ export function Lockup({
   const nearest = getNearestValidValues({ minLocked, value: inputNumber })
   const expireDate = formatDate(addDays(new Date(), lockupDays), locale)
 
+  const formattedInput = useMemo(
+    function formatInput() {
+      if (!input || input === '0' || input === '') {
+        return '0'
+      }
+
+      const numberValue = Number(input)
+      if (Number.isNaN(numberValue)) {
+        return input
+      }
+
+      const numberFormatter = new Intl.NumberFormat(locale, {
+        maximumFractionDigits: 3,
+        useGrouping: true,
+      })
+
+      return numberFormatter.format(numberValue)
+    },
+    [input, locale],
+  )
+
   const votingPowerRatio = useMemo(
     function calcVotingPower() {
       if (!amount || amount === BigInt(0)) {
@@ -199,7 +220,6 @@ export function Lockup({
       const numberFormatter = new Intl.NumberFormat(locale, {
         maximumFractionDigits: 3,
       })
-
       return numberFormatter.format(Number(formattedPower))
     },
     [amount, locale, lockupDays, token.decimals],
@@ -317,7 +337,7 @@ export function Lockup({
         <Divider />
         <InfoRow
           label={`${t('voting-power')}:`}
-          value={`${input} ${token.symbol} = ${votingPowerRatio} ve${token.symbol}`}
+          value={`${formattedInput} ${token.symbol} = ${votingPowerRatio} ve${token.symbol}`}
         />
       </div>
       <div className="mt-5 space-y-2">

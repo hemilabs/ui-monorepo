@@ -188,7 +188,7 @@ export const VaultDepositOperation = function ({
         [BitcoinYieldDepositStatus.DEPOSIT_TX_CONFIRMED]:
           ProgressStatus.COMPLETED,
       }
-      return statusMap[depositStatus] ?? ProgressStatus.NOT_READY
+      return statusMap[depositStatus]
     }
 
     const showFees =

@@ -40,6 +40,7 @@ export const Operation = ({
     </div>
     <SlidingSwitcher
       first={preview}
+      hideFirst={isOperating}
       second={
         <ReviewOperation
           amount={parseTokenUnits(amount, token).toString()}
@@ -48,7 +49,6 @@ export const Operation = ({
           token={token}
         />
       }
-      showFirst={isOperating}
     />
   </Form>
 )

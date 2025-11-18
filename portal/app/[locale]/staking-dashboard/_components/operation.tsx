@@ -36,6 +36,7 @@ export const Operation = ({
     </div>
     <SlidingSwitcher
       first={preview}
+      hideFirst={isOperating}
       second={
         <ReviewOperation
           amount={amount}
@@ -45,7 +46,6 @@ export const Operation = ({
           token={token}
         />
       }
-      showFirst={isOperating}
     />
   </>
 )

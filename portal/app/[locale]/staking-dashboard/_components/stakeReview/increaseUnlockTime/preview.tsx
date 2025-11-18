@@ -91,6 +91,7 @@ export function Preview({
           </CallToActionContainer>
         </form>
       }
+      hideFirst={operationRunning !== 'idle'}
       second={
         <>
           <div className="skip-parent-padding-x mt-3 flex min-h-0 flex-1 flex-col overflow-y-auto">
@@ -110,7 +111,6 @@ export function Preview({
           )}
         </>
       }
-      showFirst={operationRunning !== 'idle'}
     />
   )
 }

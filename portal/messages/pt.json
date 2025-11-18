@@ -1,6 +1,11 @@
 {
   "bitcoin-yield": {
     "bridge-btc-and-receive": "Transfira seu BTC através do túnel e receba {symbol}",
+    "drawer": {
+      "deposit-btc": "Depositar {symbol}",
+      "deposit-heading": "Depósito em análise",
+      "deposit-subheading": "Complete os passos restantes para depositar seu {symbol}"
+    },
     "heading": "Bitcoin, com Rendimento Real",
     "info": {
       "earning-rate": "Taxa de rendimento",
@@ -27,6 +32,10 @@
       "pool": "Fundo",
       "rewards": "Recompensas"
     },
+    "toast": {
+      "deposit-confirmed": "Depósito confirmado",
+      "your-deposit-was-successful": "Seu depósito foi bem-sucedido"
+    },
     "tunnel-btc": "Tunelize BTC",
     "tunnel-to-hemi": "Tunelar Bitcoin para Hemi"
   },
@@ -35,7 +44,9 @@
     "actions": "Ações",
     "add": "Adicionar",
     "added": "Adicionado",
+    "allowance-load-failed": "Falha ao carregar a margem",
     "amount": "Quantia",
+    "approve-and-deposit": "Aprovar e Depositar",
     "approving": "A aprovar...",
     "approving-token": "A aprovar {symbol}",
     "balance": "Saldo",
@@ -48,6 +59,7 @@
     "copied": "Copiado",
     "copy": "Copiar",
     "deposit": "Depositar",
+    "depositing": "A depositar...",
     "enter-an-amount": "Introduzir uma quantia",
     "erc20-approve-10x-deposits": "Aprovar 10x a quantia deste depósito",
     "erc20-approve-10x-detailed-description": "Ao ativar a aprovação de 10x, adicionamos automaticamente 10 vezes a quantia desta transação como margem para transações futuras, poupando custos com taxas de gás e tempo.",
@@ -299,9 +311,7 @@
       "unlock-token": "Desbloquear {symbol}"
     },
     "form": {
-      "allowance-load-failed": "Falha ao carregar a margem",
       "approve-and-stake": "Aprovar e Fazer Stake",
-      "approving": "A aprovar...",
       "days": "{days, plural, one {{days} dia} other {{days} dias}}",
       "expire-date": "Data de vencimento:",
       "lockup-extend-warning": "Você pode estender seu período de bloqueio até um total de 4 anos.",
@@ -535,7 +545,6 @@
     },
     "submit-button": {
       "allowance-load-failed": "Falha ao carregar a margem",
-      "approve-and-deposit": "Aprovar e Depositar",
       "approving": "A aprovar...",
       "challenge-withdrawal": "Desafiar Retirada",
       "challenging": "A desafiar...",
@@ -546,7 +555,6 @@
       "connect-both-wallets": "Conectar as suas carteiras BTC e EVM",
       "connect-btc-wallet": "Conectar a sua carteira BTC",
       "deposit": "Depositar",
-      "depositing": "A depositar...",
       "initiate-withdrawal": "Iniciar Retirada",
       "prove-withdrawal": "Provar retirada",
       "proving-withdrawal": "A provar...",

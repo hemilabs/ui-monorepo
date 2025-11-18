@@ -31,18 +31,18 @@ export const SubmitStake = function ({
   token,
   validationError,
 }: Props) {
-  const t = useTranslations('staking-dashboard.form')
+  const t = useTranslations()
 
   const getOperationButtonText = function () {
     const texts = {
       approve: {
-        error: t('allowance-load-failed'),
-        idle: t('approve-and-stake'),
-        loading: t('approving'),
+        error: t('common.allowance-load-failed'),
+        idle: t('staking-dashboard.form.approve-and-stake'),
+        loading: t('common.approving'),
       },
       stake: {
-        idle: t('stake'),
-        loading: t('staking'),
+        idle: t('staking-dashboard.form.stake'),
+        loading: t('staking-dashboard.form.staking'),
       },
     }
     if (isAllowanceLoading) {

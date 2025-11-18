@@ -28,7 +28,7 @@ const Retry = function ({
   const [operationStatus, setOperationStatus] =
     useState<EvmDepositOperationStatuses>('idle')
 
-  const t = useTranslations('tunnel-page.submit-button')
+  const t = useTranslations('common')
 
   // this component tries to initiate a new deposit, based on the failed one
   const { mutate: runDeposit } = useDeposit({

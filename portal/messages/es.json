@@ -1,6 +1,11 @@
 {
   "bitcoin-yield": {
     "bridge-btc-and-receive": "Transfiera su BTC a través del túnel y reciba {symbol}",
+    "drawer": {
+      "deposit-btc": "Depositar {symbol}",
+      "deposit-heading": "Depósito en revisión",
+      "deposit-subheading": "Complete los pasos restantes para depositar su {symbol}"
+    },
     "heading": "Bitcoin, con Rendimiento Real",
     "info": {
       "earning-rate": "Tasa de rendimiento",
@@ -27,6 +32,10 @@
       "pool": "Fondo",
       "rewards": "Recompensas"
     },
+    "toast": {
+      "deposit-confirmed": "Depósito confirmado",
+      "your-deposit-was-successful": "Su depósito fue exitoso"
+    },
     "tunnel-btc": "Tunelice BTC",
     "tunnel-to-hemi": "Tunelice Bitcoin a Hemi"
   },
@@ -35,7 +44,9 @@
     "actions": "Acciones",
     "add": "Agregar",
     "added": "Agregada",
+    "allowance-load-failed": "No se pudo cargar el monto autorizado",
     "amount": "Monto",
+    "approve-and-deposit": "Aprobar y Depositar",
     "approving": "Aprobando...",
     "approving-token": "Aprobando {symbol}",
     "balance": "Balance",
@@ -48,6 +59,7 @@
     "copied": "Copiado",
     "copy": "Copiar",
     "deposit": "Depositar",
+    "depositing": "Depositando...",
     "enter-an-amount": "Ingrese un monto",
     "erc20-approve-10x-deposits": "Aprobar 10x el monto de este depósito",
     "erc20-approve-10x-detailed-description": "Al activar la aprobación 10x, automáticamente agregamos 10 veces el monto de esta transacción como monto autorizado para otras futuras, lo que le permite ahorrar dinero en tarifas de gas y tiempo.",
@@ -299,9 +311,7 @@
       "unlock-token": "Desbloquear {symbol}"
     },
     "form": {
-      "allowance-load-failed": "No se pudo cargar el monto autorizado",
       "approve-and-stake": "Aprobar y Hacer Stake",
-      "approving": "Aprobando...",
       "days": "{days, plural, one {{days} día} other {{days} días}}",
       "expire-date": "Fecha de vencimiento:",
       "lockup-extend-warning": "Puede extender su período de bloqueo hasta un total de 4 años.",
@@ -535,7 +545,6 @@
     },
     "submit-button": {
       "allowance-load-failed": "No se pudo cargar el monto autorizado",
-      "approve-and-deposit": "Aprobar y Depositar",
       "approving": "Aprobando...",
       "challenge-withdrawal": "Disputar Retiro",
       "challenging": "Disputando...",
@@ -546,7 +555,6 @@
       "connect-both-wallets": "Conecte sus billeteras BTC y EVM",
       "connect-btc-wallet": "Conecte su billetera BTC",
       "deposit": "Depositar",
-      "depositing": "Depositando...",
       "initiate-withdrawal": "Iniciar Retiro",
       "prove-withdrawal": "Probar retiro",
       "proving-withdrawal": "Probando...",

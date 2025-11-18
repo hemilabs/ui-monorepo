@@ -1,18 +1,30 @@
 import { Button } from 'components/button'
 import { useTranslations } from 'next-intl'
 
+import { useOperationDrawer } from '../_hooks/useOperationDrawer'
+
 export const Actions = function () {
   const t = useTranslations()
+  const [, setOperationDrawer] = useOperationDrawer()
+
+  const commonProps = {
+    size: 'xSmall',
+    type: 'button',
+  } as const
 
   return (
     <div className="flex items-center gap-x-3">
-      <Button size="xSmall" type="button" variant="primary">
+      <Button
+        {...commonProps}
+        onClick={() => setOperationDrawer('deposit')}
+        variant="primary"
+      >
         {t('common.deposit')}
       </Button>
-      <Button size="xSmall" type="button" variant="secondary">
+      <Button {...commonProps} variant="secondary">
         {t('common.withdraw')}
       </Button>
-      <Button size="xSmall" type="button" variant="secondary">
+      <Button {...commonProps} variant="secondary">
         {t('bitcoin-yield.table.claim-rewards')}
       </Button>
     </div>

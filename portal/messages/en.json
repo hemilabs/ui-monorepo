@@ -1,6 +1,11 @@
 {
   "bitcoin-yield": {
     "bridge-btc-and-receive": "Bridge your BTC through the tunnel and receive {symbol}",
+    "drawer": {
+      "deposit-btc": "Deposit {symbol}",
+      "deposit-heading": "Deposit review",
+      "deposit-subheading": "Complete the remaining steps to deposit your {symbol}"
+    },
     "heading": "Bitcoin, with Real Yield",
     "info": {
       "earning-rate": "Earning rate",
@@ -27,6 +32,10 @@
       "pool": "Pool",
       "rewards": "Rewards"
     },
+    "toast": {
+      "deposit-confirmed": "Deposit confirmed",
+      "your-deposit-was-successful": "Your deposit was successful"
+    },
     "tunnel-btc": "Tunnel BTC",
     "tunnel-to-hemi": "Tunnel Bitcoin to Hemi"
   },
@@ -35,7 +44,9 @@
     "actions": "Actions",
     "add": "Add",
     "added": "Added",
+    "allowance-load-failed": "Failed to load allowance",
     "amount": "Amount",
+    "approve-and-deposit": "Approve and Deposit",
     "approving": "Approving...",
     "approving-token": "Approving {symbol}",
     "balance": "Balance",
@@ -48,6 +59,7 @@
     "copied": "Copied",
     "copy": "Copy",
     "deposit": "Deposit",
+    "depositing": "Depositing...",
     "enter-an-amount": "Enter an amount",
     "erc20-approve-10x-deposits": "Approve 10x the amount of this deposit",
     "erc20-approve-10x-detailed-description": "By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.",
@@ -299,9 +311,7 @@
       "unlock-token": "Unlock {symbol}"
     },
     "form": {
-      "allowance-load-failed": "Failed to load allowance",
       "approve-and-stake": "Approve and Stake",
-      "approving": "Approving...",
       "days": "{days, plural, one {{days} day} other {{days} days}}",
       "expire-date": "Expire date:",
       "lockup-extend-warning": "You can extend your lock-up up to 4 years total.",
@@ -535,7 +545,6 @@
     },
     "submit-button": {
       "allowance-load-failed": "Failed to load allowance",
-      "approve-and-deposit": "Approve and Deposit",
       "approving": "Approving...",
       "challenge-withdrawal": "Challenge Withdrawal",
       "challenging": "Challenging...",
@@ -546,7 +555,6 @@
       "connect-both-wallets": "Connect your BTC and EVM wallets",
       "connect-btc-wallet": "Connect your BTC wallet",
       "deposit": "Deposit",
-      "depositing": "Depositing...",
       "initiate-withdrawal": "Initiate Withdrawal",
       "prove-withdrawal": "Prove withdrawal",
       "proving-withdrawal": "Proving...",

@@ -47,12 +47,12 @@ export const SubmitEvmDeposit = function ({
     const texts = {
       approve: {
         error: t('tunnel-page.submit-button.allowance-load-failed'),
-        idle: t('tunnel-page.submit-button.approve-and-deposit'),
-        loading: t('tunnel-page.submit-button.approving'),
+        idle: t('common.approve-and-deposit'),
+        loading: t('common.approving'),
       },
       deposit: {
-        idle: t('tunnel-page.submit-button.deposit'),
-        loading: t('tunnel-page.submit-button.depositing'),
+        idle: t('common.deposit'),
+        loading: t('common.depositing'),
       },
     }
     if (isAllowanceLoading) {

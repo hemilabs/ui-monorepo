@@ -18,7 +18,7 @@ export const RetryBtcDeposit = function ({ deposit }: Props) {
   const { address } = useAccount()
   const { depositBitcoin, depositError, depositReceiptError } =
     useDepositBitcoin()
-  const t = useTranslations('tunnel-page.submit-button')
+  const t = useTranslations('common')
   const [operationStatus, setOperationStatus] =
     useState<OperationStatus>('idle')
   const { track } = useUmami()

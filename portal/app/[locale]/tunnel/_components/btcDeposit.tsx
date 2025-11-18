@@ -194,11 +194,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
         submitButton={
           <SubmitWithTwoWallets
             disabled={!canDeposit || isDepositing || isMinDepositsSatsLoading}
-            text={
-              isDepositing
-                ? t('tunnel-page.submit-button.depositing')
-                : t('tunnel-page.submit-button.deposit')
-            }
+            text={isDepositing ? t('common.depositing') : t('common.deposit')}
             validationError={validationError}
           />
         }

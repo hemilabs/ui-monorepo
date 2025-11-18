@@ -2,7 +2,7 @@ import { LockupInput } from 'components/inputText'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
-import { formatDate } from 'utils/format'
+import { formatDate, formatNumberWithGrouping } from 'utils/format'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 
@@ -179,27 +179,7 @@ export function Lockup({
   const valid = isValidLockup({ minLocked, value: inputNumber })
   const nearest = getNearestValidValues({ minLocked, value: inputNumber })
   const expireDate = formatDate(addDays(new Date(), lockupDays), locale)
-
-  const formattedInput = useMemo(
-    function formatInput() {
-      if (!input || input === '0' || input === '') {
-        return '0'
-      }
-
-      const numberValue = Number(input)
-      if (Number.isNaN(numberValue)) {
-        return input
-      }
-
-      const numberFormatter = new Intl.NumberFormat(locale, {
-        maximumFractionDigits: 3,
-        useGrouping: true,
-      })
-
-      return numberFormatter.format(numberValue)
-    },
-    [input, locale],
-  )
+  const formattedInput = formatNumberWithGrouping(input, locale, 3)
 
   const votingPowerRatio = useMemo(
     function calcVotingPower() {

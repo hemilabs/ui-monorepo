@@ -95,3 +95,20 @@ export const formatDate = (date: Date, locale: string) =>
     month: '2-digit',
     year: 'numeric',
   }).format(date)
+
+export function formatNumberWithGrouping(
+  value: number | string,
+  locale: string,
+  maximumFractionDigits: number = 3,
+) {
+  const numberValue = Number(value)
+
+  if (Number.isNaN(numberValue)) {
+    return value ? String(value) : '0'
+  }
+
+  return new Intl.NumberFormat(locale, {
+    maximumFractionDigits,
+    useGrouping: true,
+  }).format(numberValue)
+}

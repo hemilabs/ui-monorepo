@@ -17,26 +17,23 @@ export const LockupTime = function ({ lockupTime, status, tokenId }: Props) {
   const seconds = Number(lockupTime)
   const isActive = status === 'active'
 
-  const {
-    data: apr,
-    error: error,
-    isLoading: isLoading,
-  } = useCalculateApr({ enabled: isActive, tokenId: BigInt(tokenId) })
+  const { data: apr, error: error } = useCalculateApr({
+    enabled: isActive,
+    tokenId: BigInt(tokenId),
+  })
 
   const renderApr = function () {
-    if (isLoading) {
-      return <Skeleton className="h-4 w-16" />
+    if (apr !== undefined) {
+      return (
+        <span className="text-xs font-normal text-emerald-600">
+          {t('apr', { percentage: formatNumber(apr) })}
+        </span>
+      )
     }
-
-    if (error || apr === undefined) {
+    if (error) {
       return <span className="text-xs font-normal text-neutral-500">-</span>
     }
-
-    return (
-      <span className="text-xs font-normal text-emerald-600">
-        {t('apr', { percentage: formatNumber(apr) })}
-      </span>
-    )
+    return <Skeleton className="h-4 w-16" />
   }
 
   return (

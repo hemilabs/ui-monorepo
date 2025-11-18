@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { useHemiToken } from 'hooks/useHemiToken'
 import { unixNowTimestamp } from 'utils/time'
 import { getBalanceOfNFTAt, getLockedBalance } from 've-hemi-actions/actions'
 
@@ -11,7 +12,7 @@ import {
 
 import { useRewardsPerVeHEMI } from './useRewardsPerVeHEMI'
 
-const getCalculateAprQueryKey = ({
+export const getCalculateAprQueryKey = ({
   chainId,
   tokenId,
 }: {
@@ -43,6 +44,7 @@ export const useCalculateApr = function ({
   const { id } = useHemi()
   const { data: rewardsPerVeHEMI, error: isRewardsPerVeHEMIError } =
     useRewardsPerVeHEMI()
+  const hemiToken = useHemiToken()
 
   const queryKey = getCalculateAprQueryKey({
     chainId: id,
@@ -82,6 +84,7 @@ export const useCalculateApr = function ({
         lockedAmount: lockedBalance.amount,
         rewardsPerVeHEMI,
         rewardWeightDecay,
+        token: hemiToken,
       })
     },
     queryKey,

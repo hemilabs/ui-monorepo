@@ -17,6 +17,7 @@ import { useAccount } from 'wagmi'
 
 import { daysToSeconds, step } from '../_utils/lockCreationTimes'
 
+import { getCalculateAprQueryKey } from './useCalculateApr'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
 
 type UseIncreaseUnlockTime = {
@@ -120,6 +121,14 @@ export const useIncreaseUnlockTime = function ({
 
           // fees
           updateNativeBalanceAfterFees(receipt)
+
+          // APR
+          queryClient.invalidateQueries({
+            queryKey: getCalculateAprQueryKey({
+              chainId: token.chainId,
+              tokenId: BigInt(tokenId),
+            }),
+          })
 
           track?.('staking dashboard - increase unlock time success')
         },

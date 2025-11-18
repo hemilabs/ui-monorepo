@@ -1,4 +1,5 @@
-import { parseEther } from 'viem'
+import { EvmToken } from 'types/token'
+import { parseTokenUnits } from 'utils/token'
 
 import { epochsPerYear, secondsPerEpoch } from './lockCreationTimes'
 
@@ -18,7 +19,7 @@ import { epochsPerYear, secondsPerEpoch } from './lockCreationTimes'
  * @param currentTimestamp - Current timestamp (unix timestamp in seconds)
  * @param currentBalance - Current balance of the position from balanceOfNFT (in wei)
  * @param lockEndTimestamp - When the lock ends (unix timestamp in seconds)
- * @returns Array of 60 reward weight values (in HEMI * 10 ** 18) for each epoch
+ * @returns Array of 61 reward weight values (in HEMI * 10 ** 18) for each epoch
  *
  * @example
  * // Position with 25 veHEMI unlocking in 180 days (30 epochs)
@@ -72,6 +73,7 @@ export function calculateRewardWeightDecay({
  * @param lockedAmount - Amount of HEMI locked in the position (in wei)
  * @param rewardsPerVeHEMI - Array of 61 rewards per veHEMI from API (decimals in ether)
  * @param rewardWeightDecay - Array of 61 reward weight values for each epoch (in wei)
+ * @param token - The HEMI token object for unit parsing
  * @returns APR as percentage (e.g., 4.84 for 4.84%)
  *
  * @example
@@ -86,10 +88,12 @@ export function calculateApr({
   lockedAmount,
   rewardsPerVeHEMI,
   rewardWeightDecay,
+  token,
 }: {
   lockedAmount: bigint
   rewardsPerVeHEMI: number[]
   rewardWeightDecay: bigint[]
+  token: EvmToken
 }) {
   if (lockedAmount === BigInt(0)) {
     return 0
@@ -111,15 +115,19 @@ export function calculateApr({
   let totalRewards = BigInt(0)
 
   for (let i = 0; i < epochsPerYear; i++) {
-    // Convert decimal to wei using parseEther for precision
+    // Convert decimal to wei using parseTokenUnits for explicit HEMI token handling
     // rewardsPerVeHEMI comes as a decimal number (e.g., 0.001568 HEMI per veHEMI)
-    const rewardsPerVeHEMIWei = parseEther(rewardsPerVeHEMI[i].toString())
+    const rewardsPerVeHEMIWei = parseTokenUnits(
+      rewardsPerVeHEMI[i].toString(),
+      token,
+    )
 
-    // rewards[i] = (rewardWeight[i] × rewardsPerVeHEMI[i]) / 1e18
+    // rewards[i] = (rewardWeight[i] × rewardsPerVeHEMI[i]) / 10^decimals
     // rewardWeightDecay is in wei (e.g., 100000000000000000000n)
-    // Both are now in wei, so divide by 1e18 to get result in wei
+    // Both are now in smallest token units, so divide by 10^decimals to get result
     const rewardsAtEpoch =
-      (rewardWeightDecay[i] * rewardsPerVeHEMIWei) / BigInt(1e18)
+      (rewardWeightDecay[i] * rewardsPerVeHEMIWei) /
+      BigInt(10 ** token.decimals)
 
     totalRewards += rewardsAtEpoch
   }

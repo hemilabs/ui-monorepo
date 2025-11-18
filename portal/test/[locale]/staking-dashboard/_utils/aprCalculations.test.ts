@@ -3,7 +3,11 @@ import {
   calculateRewardWeightDecay,
 } from 'app/[locale]/staking-dashboard/_utils/aprCalculations'
 import { secondsPerEpoch } from 'app/[locale]/staking-dashboard/_utils/lockCreationTimes'
+import { EvmToken } from 'types/token'
+import { zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
+
+const token = { address: zeroAddress, decimals: 18, symbol: 'HEMI' } as EvmToken
 
 describe('calculateRewardWeightDecay', function () {
   it('should return 61 values', function () {
@@ -176,7 +180,7 @@ describe('calculateApr', function () {
   it('should calculate APR correctly for position unlocking after 1 year', function () {
     const currentBalance = BigInt('100000000000000000000') // 100 veHEMI
     const lockedAmount = BigInt('100000000000000000000') // 100 HEMI
-    const epochsUntilUnlock = 100 // Unlocks after 61 epochs
+    const epochsUntilUnlock = 100 // Position unlocks after 100 epochs (beyond 1 year analysis period)
 
     const rewardWeightDecay = calculateRewardWeightDecay({
       currentBalance,
@@ -190,12 +194,11 @@ describe('calculateApr', function () {
       lockedAmount,
       rewardsPerVeHEMI: MOCK_REWARDS_PER_VEHEMI,
       rewardWeightDecay,
+      token,
     })
 
-    // APR should be > 0
-    expect(apr).toBeGreaterThan(0)
-    // Should be a reasonable percentage (not NaN or Infinity)
-    expect(apr).toBeLessThan(1000)
+    // Actual calculated APR: 4.62%
+    expect(apr).toBeCloseTo(4.62, 2)
   })
 
   it('should calculate APR correctly for position unlocking before 1 year', function () {
@@ -215,12 +218,11 @@ describe('calculateApr', function () {
       lockedAmount,
       rewardsPerVeHEMI: MOCK_REWARDS_PER_VEHEMI,
       rewardWeightDecay,
+      token,
     })
 
-    // Should still calculate valid APR
-    expect(apr).toBeGreaterThan(0)
-    // APR should be lower than full-year lock due to shorter duration
-    expect(apr).toBeLessThan(100)
+    // Actual calculated APR: 1.39%
+    expect(apr).toBeCloseTo(1.39, 2)
   })
 
   it('should return 0 when locked amount is 0', function () {
@@ -230,6 +232,7 @@ describe('calculateApr', function () {
       lockedAmount: BigInt(0),
       rewardsPerVeHEMI: MOCK_REWARDS_PER_VEHEMI,
       rewardWeightDecay,
+      token,
     })
 
     expect(apr).toBe(0)
@@ -243,6 +246,7 @@ describe('calculateApr', function () {
       lockedAmount,
       rewardsPerVeHEMI: MOCK_REWARDS_PER_VEHEMI,
       rewardWeightDecay,
+      token,
     })
 
     expect(apr).toBe(0)
@@ -257,6 +261,7 @@ describe('calculateApr', function () {
         lockedAmount,
         rewardsPerVeHEMI: Array(50).fill(0.001), // Only 50 values
         rewardWeightDecay,
+        token,
       }),
     ).toThrow('Expected 61 rewards values, got 50')
   })
@@ -269,12 +274,12 @@ describe('calculateApr', function () {
         lockedAmount,
         rewardsPerVeHEMI: MOCK_REWARDS_PER_VEHEMI,
         rewardWeightDecay: Array(30).fill(BigInt('100000000000000000000')), // Only 30 values
+        token,
       }),
     ).toThrow('Expected 61 reward weight values, got 30')
   })
 
   it('should handle position with decreasing rewards per epoch', function () {
-    // Already using decreasing rewards from MOCK_REWARDS_PER_VEHEMI
     const currentBalance = BigInt('100000000000000000000')
     const lockedAmount = BigInt('100000000000000000000')
 
@@ -288,10 +293,11 @@ describe('calculateApr', function () {
       lockedAmount,
       rewardsPerVeHEMI: MOCK_REWARDS_PER_VEHEMI,
       rewardWeightDecay,
+      token,
     })
 
-    expect(apr).toBeGreaterThan(0)
-    expect(apr).toBeLessThan(1000)
+    // Actual calculated APR: 4.62%
+    expect(apr).toBeCloseTo(4.62, 2)
   })
 
   it('should calculate correct dot product', function () {
@@ -304,6 +310,7 @@ describe('calculateApr', function () {
       lockedAmount,
       rewardsPerVeHEMI: constantRewards,
       rewardWeightDecay,
+      token,
     })
 
     // Expected: 61 epochs × 1 veHEMI × 0.001 reward/veHEMI = 0.061 rewards
@@ -325,18 +332,18 @@ describe('calculateApr', function () {
       lockedAmount: smallLocked,
       rewardsPerVeHEMI: MOCK_REWARDS_PER_VEHEMI,
       rewardWeightDecay,
+      token,
     })
 
-    // Should calculate valid APR even for small amounts
-    expect(apr).toBeGreaterThanOrEqual(0)
-    expect(Number.isFinite(apr)).toBe(true)
+    // Actual calculated APR: 1.39%
+    expect(apr).toBeCloseTo(1.39, 2)
   })
 
   it('should handle realistic data from mainnet', function () {
     // Real data from tokenId 514
-    const currentBalance = BigInt('9245189085900942600') // 9.24 veHEMI
+    const currentBalance = BigInt('9168000000000000000') // 9.168 veHEMI
     const lockedAmount = BigInt('9674533770000000000') // 9.67 HEMI
-    const epochsUntilUnlock = 291 // ~4 years
+    const epochsUntilUnlock = 231 // ~3.8 years
 
     const rewardWeightDecay = calculateRewardWeightDecay({
       currentBalance,
@@ -350,10 +357,30 @@ describe('calculateApr', function () {
       lockedAmount,
       rewardsPerVeHEMI: MOCK_REWARDS_PER_VEHEMI,
       rewardWeightDecay,
+      token,
     })
 
-    // Should calculate a reasonable APR (between 0-100%)
-    expect(apr).toBeGreaterThan(0)
-    expect(apr).toBeLessThan(100)
+    // Actual calculated APR: 5.59%
+    expect(apr).toBeCloseTo(5.59, 2)
+  })
+
+  it('should return exact APR for known scenario', function () {
+    // Deterministic scenario with simple numbers for exact calculation
+    const currentBalance = BigInt('10000000000000000000') // 10 veHEMI
+    const lockedAmount = BigInt('10000000000000000000') // 10 HEMI
+    const simpleRewards = Array(61).fill(0.002) // 0.002 HEMI per veHEMI per epoch
+
+    const rewardWeightDecay = Array(61).fill(currentBalance) // No decay for simplicity
+
+    const apr = calculateApr({
+      lockedAmount,
+      rewardsPerVeHEMI: simpleRewards,
+      rewardWeightDecay,
+      token,
+    })
+
+    // Expected: 61 epochs × 10 veHEMI × 0.002 = 1.22 HEMI
+    // APR = (1.22 / 10) × 100 = 12.2%
+    expect(apr).toBeCloseTo(12.2, 1)
   })
 })

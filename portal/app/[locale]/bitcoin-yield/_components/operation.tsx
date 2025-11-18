@@ -10,7 +10,7 @@ type Props = {
   bottomSection?: ReactNode
   callToAction?: ReactNode
   isOperating?: boolean
-  onSubmit: () => void
+  onSubmit: VoidFunction
   preview?: ReactNode
   steps: StepPropsWithoutPosition[]
   subheading: string

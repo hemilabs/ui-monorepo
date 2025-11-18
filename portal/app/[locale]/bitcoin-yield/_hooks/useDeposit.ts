@@ -1,9 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { EventEmitter } from 'events'
-import {
-  getBtcStakingVaultContractAddress,
-  type DepositEvents,
-} from 'hemi-btc-staking-actions'
+import { getBtcStakingVaultContractAddress } from 'hemi-btc-staking-actions'
 import { depositToken } from 'hemi-btc-staking-actions/actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
@@ -23,13 +19,11 @@ import { getUserPoolBalanceQueryKey } from './useUserPoolBalance'
 
 type UseDeposit = {
   input: string
-  on?: (emitter: EventEmitter<DepositEvents>) => void
   updateBitcoinYieldOperation: (payload: BitcoinYieldDepositOperation) => void
 }
 
 export const useDeposit = function ({
   input,
-  on,
   updateBitcoinYieldOperation,
 }: UseDeposit) {
   const { data: token } = usePoolAsset()
@@ -165,8 +159,6 @@ export const useDeposit = function ({
           status: BitcoinYieldDepositStatus.DEPOSIT_TX_FAILED,
         })
       })
-
-      on?.(emitter)
 
       return promise
     },

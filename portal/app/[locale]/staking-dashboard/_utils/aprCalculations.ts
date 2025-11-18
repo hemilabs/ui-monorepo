@@ -1,3 +1,5 @@
+import { parseEther } from 'viem'
+
 import { epochsPerYear, secondsPerEpoch } from './lockCreationTimes'
 
 /**
@@ -102,9 +104,9 @@ export function calculateApr({
   let totalRewards = BigInt(0)
 
   for (let i = 0; i < epochsPerYear; i++) {
+    // Convert decimal to wei using parseEther for precision
     // rewardsPerVeHEMI comes as a decimal number (e.g., 0.001568 HEMI per veHEMI)
-    // Convert to wei by multiplying by 1e18
-    const rewardsPerVeHEMIWei = BigInt(Math.floor(rewardsPerVeHEMI[i] * 1e18))
+    const rewardsPerVeHEMIWei = parseEther(rewardsPerVeHEMI[i].toString())
 
     // rewards[i] = (rewardWeight[i] × rewardsPerVeHEMI[i]) / 1e18
     // rewardWeightDecay is in wei (e.g., 100000000000000000000n)

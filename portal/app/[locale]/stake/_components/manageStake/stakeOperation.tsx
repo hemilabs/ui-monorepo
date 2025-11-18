@@ -1,4 +1,5 @@
 import { DrawerParagraph } from 'components/drawer'
+import { HemiFees } from 'components/hemiFees'
 import {
   ProgressStatus,
   type ProgressStatusType,
@@ -8,6 +9,7 @@ import { Spinner } from 'components/spinner'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { useAllowance } from 'hooks/useAllowance'
+import { useAmount } from 'hooks/useAmount'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
@@ -20,7 +22,6 @@ import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { useAmount } from '../../_hooks/useAmount'
 import { useEstimateStakeFees } from '../../_hooks/useEstimateStakeFees'
 import { useStake } from '../../_hooks/useStake'
 
@@ -32,7 +33,6 @@ const StakeToast = dynamic(
   },
 )
 
-import { Fees } from './fees'
 import { StakeMaxBalance } from './maxBalance'
 import { Operation } from './operation'
 import { Preview } from './preview'
@@ -263,8 +263,8 @@ export const StakeOperation = function ({
             amount={amountInput}
             errorKey={allowanceLoaded && balanceLoaded ? errorKey : undefined}
             fees={
-              <Fees
-                estimatedFees={stakeEstimatedFees}
+              <HemiFees
+                fees={stakeEstimatedFees}
                 isError={isStakeEstimatedFeesError}
               />
             }

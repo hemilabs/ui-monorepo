@@ -1,7 +1,9 @@
+import { HemiFees } from 'components/hemiFees'
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { Spinner } from 'components/spinner'
 import { ToastLoader } from 'components/toast/toastLoader'
+import { useAmount } from 'hooks/useAmount'
 import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -17,7 +19,6 @@ import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { useAmount } from '../../_hooks/useAmount'
 import { useEstimateUnstakeFees } from '../../_hooks/useEstimateUnstakeFees'
 import { useStakedBalance } from '../../_hooks/useStakedBalance'
 import { useUnstake } from '../../_hooks/useUnstake'
@@ -30,7 +31,6 @@ const StakeToast = dynamic(
   },
 )
 
-import { Fees } from './fees'
 import { UnstakeMaxBalance } from './maxBalance'
 import { Operation } from './operation'
 import { Preview } from './preview'
@@ -171,8 +171,8 @@ export const UnstakeOperation = function ({
             balanceComponent={StakedBalance}
             errorKey={isStakedPositionSuccess ? errorKey : undefined}
             fees={
-              <Fees
-                estimatedFees={unstakeEstimatedFees}
+              <HemiFees
+                fees={unstakeEstimatedFees}
                 isError={isUnstakeEstimatedFeesError}
               />
             }

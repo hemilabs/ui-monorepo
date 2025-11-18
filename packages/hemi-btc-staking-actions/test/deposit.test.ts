@@ -243,7 +243,10 @@ describe('depositToken', function () {
   })
 
   it('should approve first if allowance is insufficient, then deposit', async function () {
-    const receipt = {
+    const approvalReceipt = {
+      status: 'success',
+    } as TransactionReceipt
+    const depositReceipt = {
       status: 'success',
     } as TransactionReceipt
 
@@ -254,12 +257,15 @@ describe('depositToken', function () {
     vi.mocked(allowance).mockResolvedValue(validParameters.amount - BigInt(1))
     vi.mocked(approve).mockResolvedValue(zeroHash)
     vi.mocked(vaultDeposit).mockResolvedValue(zeroHash)
-    vi.mocked(waitForTransactionReceipt).mockResolvedValue(receipt)
+    vi.mocked(waitForTransactionReceipt)
+      .mockResolvedValueOnce(approvalReceipt) // First call for approval
+      .mockResolvedValueOnce(depositReceipt) // Second call for deposit
 
     const { emitter, promise } = depositToken(validParameters)
 
     const onPreApprove = vi.fn()
     const onUserSignedApproval = vi.fn()
+    const onApproveTransactionSucceeded = vi.fn()
     const onPreDeposit = vi.fn()
     const onUserSignedDeposit = vi.fn()
     const onDepositTransactionSucceeded = vi.fn()
@@ -267,6 +273,7 @@ describe('depositToken', function () {
 
     emitter.on('pre-approve', onPreApprove)
     emitter.on('user-signed-approval', onUserSignedApproval)
+    emitter.on('approve-transaction-succeeded', onApproveTransactionSucceeded)
     emitter.on('pre-deposit', onPreDeposit)
     emitter.on('user-signed-deposit', onUserSignedDeposit)
     emitter.on('deposit-transaction-succeeded', onDepositTransactionSucceeded)
@@ -276,13 +283,58 @@ describe('depositToken', function () {
 
     expect(onPreApprove).toHaveBeenCalledOnce()
     expect(onUserSignedApproval).toHaveBeenCalledExactlyOnceWith(zeroHash)
+    expect(onApproveTransactionSucceeded).toHaveBeenCalledExactlyOnceWith(
+      approvalReceipt,
+    )
     expect(onPreDeposit).toHaveBeenCalledOnce()
     expect(onUserSignedDeposit).toHaveBeenCalledExactlyOnceWith(zeroHash)
     expect(onDepositTransactionSucceeded).toHaveBeenCalledExactlyOnceWith(
-      receipt,
+      depositReceipt,
     )
     expect(approve).toHaveBeenCalledOnce()
     expect(vaultDeposit).toHaveBeenCalledOnce()
+    expect(onSettled).toHaveBeenCalledOnce()
+  })
+
+  it('should emit "approve-transaction-reverted" when approval transaction reverts', async function () {
+    const approvalReceipt = {
+      status: 'reverted',
+    } as TransactionReceipt
+
+    vi.mocked(asset).mockResolvedValue(zeroAddress)
+    vi.mocked(getMinimumDepositLimit).mockResolvedValue(BigInt(1))
+    vi.mocked(balanceOf).mockResolvedValue(validParameters.amount)
+    vi.mocked(maxDeposit).mockResolvedValue(BigInt(1000))
+    vi.mocked(allowance).mockResolvedValue(validParameters.amount - BigInt(1))
+    vi.mocked(approve).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue(approvalReceipt)
+
+    const { emitter, promise } = depositToken(validParameters)
+
+    const onPreApprove = vi.fn()
+    const onUserSignedApproval = vi.fn()
+    const onApproveTransactionReverted = vi.fn()
+    const onApproveTransactionSucceeded = vi.fn()
+    const onPreDeposit = vi.fn()
+    const onSettled = vi.fn()
+
+    emitter.on('pre-approve', onPreApprove)
+    emitter.on('user-signed-approval', onUserSignedApproval)
+    emitter.on('approve-transaction-reverted', onApproveTransactionReverted)
+    emitter.on('approve-transaction-succeeded', onApproveTransactionSucceeded)
+    emitter.on('pre-deposit', onPreDeposit)
+    emitter.on('deposit-settled', onSettled)
+
+    await promise
+
+    expect(onPreApprove).toHaveBeenCalledOnce()
+    expect(onUserSignedApproval).toHaveBeenCalledExactlyOnceWith(zeroHash)
+    expect(onApproveTransactionReverted).toHaveBeenCalledExactlyOnceWith(
+      approvalReceipt,
+    )
+    expect(onApproveTransactionSucceeded).not.toHaveBeenCalled()
+    expect(onPreDeposit).not.toHaveBeenCalled()
+    expect(approve).toHaveBeenCalledOnce()
     expect(onSettled).toHaveBeenCalledOnce()
   })
 

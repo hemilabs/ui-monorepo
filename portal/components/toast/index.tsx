@@ -21,7 +21,7 @@ type Props = {
 }
 
 export const Toast = function ({
-  autoCloseMs = 5000,
+  autoCloseMs = 10000,
   description,
   goTo,
   title,

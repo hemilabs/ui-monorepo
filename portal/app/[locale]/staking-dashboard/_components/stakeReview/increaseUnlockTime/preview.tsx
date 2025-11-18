@@ -3,6 +3,7 @@ import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
 import { CallToActionContainer } from 'components/reviewOperation/callToActionContainer'
 import { Step, StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { SlidingSwitcher } from 'components/slidingSwitcher'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { FormEvent, ReactNode } from 'react'
 import { type StakingOperationRunning } from 'types/stakingDashboard'
@@ -49,14 +50,8 @@ export function Preview({
 }: PreviewProps) {
   const token = useHemiToken()
   return (
-    <div className="skip-parent-padding-x relative h-full overflow-hidden">
-      <div
-        className={`absolute inset-0 flex flex-col overflow-y-hidden transition-transform duration-500 ${
-          operationRunning !== 'idle'
-            ? 'invisible -translate-x-full'
-            : 'translate-x-0'
-        }`}
-      >
+    <SlidingSwitcher
+      first={
         <form
           className="flex min-h-0 flex-1 flex-col"
           onSubmit={function (e: FormEvent) {
@@ -95,26 +90,27 @@ export function Preview({
             </div>
           </CallToActionContainer>
         </form>
-      </div>
-      <div
-        className={`absolute inset-0 flex flex-col pb-1 transition-transform duration-500 ${
-          operationRunning !== 'idle' ? 'translate-x-0' : 'translate-x-full'
-        }`}
-      >
-        <div className="skip-parent-padding-x mt-3 flex min-h-0 flex-1 flex-col overflow-y-auto">
-          <DrawerSection>
-            <div
-              className="mt-4 flex flex-col gap-y-8"
-              style={{ height: `${144 * steps.length + 20}px` }}
-            >
-              {steps.map((stepProps, index) => (
-                <Step key={index} position={index + 1} {...stepProps} />
-              ))}
-            </div>
-          </DrawerSection>
-        </div>
-        <CallToActionContainer>{callToAction}</CallToActionContainer>
-      </div>
-    </div>
+      }
+      hideFirst={operationRunning !== 'idle'}
+      second={
+        <>
+          <div className="skip-parent-padding-x mt-3 flex min-h-0 flex-1 flex-col overflow-y-auto">
+            <DrawerSection>
+              <div
+                className="mt-4 flex flex-col gap-y-8"
+                style={{ height: `${144 * steps.length + 20}px` }}
+              >
+                {steps.map((stepProps, index) => (
+                  <Step key={index} position={index + 1} {...stepProps} />
+                ))}
+              </div>
+            </DrawerSection>
+          </div>
+          {callToAction && (
+            <CallToActionContainer>{callToAction}</CallToActionContainer>
+          )}
+        </>
+      }
+    />
   )
 }

@@ -152,6 +152,13 @@ const runDepositToken = ({
         if (!approvalReceipt) {
           return
         }
+
+        if (approvalReceipt.status === 'reverted') {
+          emitter.emit('approve-transaction-reverted', approvalReceipt)
+          return
+        }
+
+        emitter.emit('approve-transaction-succeeded', approvalReceipt)
       }
 
       emitter.emit('pre-deposit')

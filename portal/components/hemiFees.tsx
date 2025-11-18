@@ -5,18 +5,18 @@ import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 
 type Props = {
-  estimatedFees: bigint
+  fees: bigint
   isError: boolean
 }
 
-export const Fees = function ({ estimatedFees, isError }: Props) {
+export const HemiFees = function ({ fees, isError }: Props) {
   const hemi = useHemi()
   const t = useTranslations('common')
 
   const nativeToken = getNativeToken(hemi.id)
 
   const gas = {
-    amount: formatUnits(estimatedFees, hemi.nativeCurrency.decimals),
+    amount: formatUnits(fees, hemi.nativeCurrency.decimals),
     isError,
     label: t('network-gas-fee', { network: hemi.name }),
     token: nativeToken,

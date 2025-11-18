@@ -1,5 +1,5 @@
-import { DrawerSection } from 'components/drawer'
 import { CallToActionContainer } from 'components/reviewOperation/callToActionContainer'
+import { Tab, Tabs } from 'components/tabs'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useTranslations } from 'next-intl'
@@ -7,7 +7,6 @@ import { ComponentType, ReactNode } from 'react'
 import { StakeOperations, StakeToken } from 'types/stake'
 
 import { DisclaimerEth } from './disclaimerEth'
-import { Tabs } from './tabs'
 
 type Props = {
   amount: string
@@ -48,33 +47,42 @@ export const Preview = function ({
 
   return (
     <>
-      <div className="flex min-h-0 flex-1 flex-col gap-y-3 overflow-y-auto">
+      <div className="flex min-h-0 flex-1 flex-col gap-y-4 overflow-y-auto px-4 pt-0.5 md:px-6">
         {showTabs && (
-          <div className="relative translate-y-px">
-            <Tabs onSelect={setOperation} selected={operation} />
-          </div>
+          <Tabs>
+            <Tab
+              onClick={setOperation}
+              selected={operation === 'stake'}
+              size="small"
+            >
+              {t('stake')}
+            </Tab>
+            <Tab
+              onClick={setOperation}
+              selected={operation === 'unstake'}
+              size="small"
+            >
+              {t('unstake')}
+            </Tab>
+          </Tabs>
         )}
-        <DrawerSection>
-          <div className="flex flex-col gap-y-4">
-            <div className="[&>*]:shadow-bs [&>*]:bg-white [&>*]:hover:shadow-sm">
-              <TokenInput
-                balanceComponent={balanceComponent}
-                disabled={isOperating}
-                errorKey={errorKey}
-                label={t('amount')}
-                maxBalanceButton={maxBalance}
-                onChange={setAmount}
-                token={token}
-                tokenSelector={<TokenSelectorReadOnly token={token} />}
-                value={amount}
-              />
-            </div>
-            {fees}
-          </div>
-        </DrawerSection>
-        <div className="px-4 md:px-6">{strategyDetails}</div>
+        <div className="[&>*]:shadow-bs mb-2 [&>*]:hover:shadow-sm">
+          <TokenInput
+            balanceComponent={balanceComponent}
+            disabled={isOperating}
+            errorKey={errorKey}
+            label={t('amount')}
+            maxBalanceButton={maxBalance}
+            onChange={setAmount}
+            token={token}
+            tokenSelector={<TokenSelectorReadOnly token={token} />}
+            value={amount}
+          />
+        </div>
+        {fees}
+        {strategyDetails}
         {showEthDisclaimer && (
-          <div className="px-4 pb-4 pt-1 md:px-6">
+          <div className="pb-4 pt-1">
             <DisclaimerEth />
           </div>
         )}

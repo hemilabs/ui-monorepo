@@ -23,9 +23,9 @@ const getCalculateAprQueryKey = ({
  * Calculates APR for a veHEMI position
  *
  * Process:
- * 1. Fetches rewards per veHEMI from API (60 epochs)
- * 2. Gets position data from contract (voting power, lock end, locked amount)
- * 3. Calculates voting power decay over 60 epochs
+ * 1. Fetches rewards per veHEMI from API (61 epochs)
+ * 2. Gets position data from contract (weight, lock end, locked amount)
+ * 3. Calculates weight decay over 61 epochs
  * 4. Computes APR via dot product
  *
  * @param tokenId - The veHEMI NFT token ID
@@ -70,7 +70,7 @@ export const useCalculateApr = function ({
         return 0
       }
 
-      // Step 2: Calculate reward weight over 60 epochs (360 days)
+      // Step 2: Calculate reward weight over 61 epochs (366 days)
       const rewardWeightDecay = calculateRewardWeightDecay({
         currentBalance,
         currentTimestamp,

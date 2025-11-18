@@ -10,7 +10,7 @@ export const step = 6
 
 export const twoYears = 732
 
-export const epochsPerYear = 60 // 60 epochs × 6 days = 360 days
+export const epochsPerYear = 61 // 61 epochs × 6 days = 366 days
 export const secondsPerEpoch = step * daySeconds
 
 // To ensure the lock duration is at least the minimum, we clamp the value after calculation

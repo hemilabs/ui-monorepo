@@ -6,14 +6,14 @@ import { secondsPerEpoch } from 'app/[locale]/staking-dashboard/_utils/lockCreat
 import { describe, expect, it } from 'vitest'
 
 describe('calculateRewardWeightDecay', function () {
-  it('should return 60 values', function () {
+  it('should return 61 values', function () {
     const result = calculateRewardWeightDecay({
       currentBalance: BigInt('100000000000000000000'), // 100 veHEMI
       currentTimestamp: BigInt(1731772800),
       lockEndTimestamp: BigInt(1731772800 + 30 * secondsPerEpoch), // 30 epochs from now
     })
 
-    expect(result).toHaveLength(60)
+    expect(result).toHaveLength(61)
   })
 
   it('should start with current balance at epoch 0', function () {
@@ -49,7 +49,7 @@ describe('calculateRewardWeightDecay', function () {
     expect(result[30]).toBe(BigInt(0)) // 0% at unlock (epoch 30)
   })
 
-  it('should have zeros after unlock date until end of 60 elements', function () {
+  it('should have zeros after unlock date until end of 61 elements', function () {
     const epochsUntilUnlock = 20
 
     const result = calculateRewardWeightDecay({
@@ -61,12 +61,12 @@ describe('calculateRewardWeightDecay', function () {
     })
 
     // All epochs from unlock onwards should be zero
-    for (let i = epochsUntilUnlock; i < 60; i++) {
+    for (let i = epochsUntilUnlock; i < 61; i++) {
       expect(result[i]).toBe(BigInt(0))
     }
   })
 
-  it('should handle position that unlocks before 1 year (360 days)', function () {
+  it('should handle position that unlocks before 1 year (366 days)', function () {
     const epochsUntilUnlock = 15 // Unlocks at epoch 15 (90 days)
 
     const result = calculateRewardWeightDecay({
@@ -77,19 +77,19 @@ describe('calculateRewardWeightDecay', function () {
       ),
     })
 
-    // Should have values for epochs 0-14, zeros for 15-59
+    // Should have values for epochs 0-14, zeros for 15-60
     expect(result[0]).toBeGreaterThan(BigInt(0))
     expect(result[14]).toBeGreaterThan(BigInt(0))
     expect(result[15]).toBe(BigInt(0))
-    expect(result[59]).toBe(BigInt(0))
+    expect(result[60]).toBe(BigInt(0))
 
-    // Count zeros - should be 45 (60 - 15)
+    // Count zeros - should be 46 (61 - 15)
     const zeroCount = result.filter(weight => weight === BigInt(0)).length
-    expect(zeroCount).toBe(45)
+    expect(zeroCount).toBe(46)
   })
 
   it('should handle position that unlocks after 1 year (no zeros)', function () {
-    const epochsUntilUnlock = 100 // Unlocks after 600 days (beyond 360)
+    const epochsUntilUnlock = 100 // Unlocks after 600 days (beyond 366)
 
     const result = calculateRewardWeightDecay({
       currentBalance: BigInt('100000000000000000000'),
@@ -99,15 +99,15 @@ describe('calculateRewardWeightDecay', function () {
       ),
     })
 
-    // All 60 epochs should have positive reward weight
-    for (let i = 0; i < 60; i++) {
+    // All 61 epochs should have positive reward weight
+    for (let i = 0; i < 61; i++) {
       expect(result[i]).toBeGreaterThan(BigInt(0))
     }
 
-    // Should decay gradually but never reach zero in the 60 epochs
+    // Should decay gradually but never reach zero in the 61 epochs
     expect(result[0]).toBeGreaterThan(result[30])
-    expect(result[30]).toBeGreaterThan(result[59])
-    expect(result[59]).toBeGreaterThan(BigInt(0))
+    expect(result[30]).toBeGreaterThan(result[60])
+    expect(result[60]).toBeGreaterThan(BigInt(0))
   })
 
   it('should handle position already unlocked (all zeros)', function () {
@@ -118,7 +118,7 @@ describe('calculateRewardWeightDecay', function () {
     })
 
     // All epochs should be zero
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 61; i++) {
       expect(result[i]).toBe(BigInt(0))
     }
   })
@@ -165,7 +165,7 @@ describe('calculateApr', function () {
     7139786, 7096240, 7052695, 7009150, 6965606, 6922063, 6878520, 6834978,
     6791437, 6747898, 6704359, 6660819, 6617280, 6573741, 6530202, 6486663,
     6443126, 6399591, 6356066, 6312541, 6269020, 6225499, 6181977, 6138456,
-    6094935, 6051415, 6007894, 5964374, 5920852,
+    6094935, 6051415, 6007894, 5964374, 5920852, 5877330,
   ]
 
   // Convert to rewards per veHEMI (dailyRewards / totalSupply)
@@ -176,7 +176,7 @@ describe('calculateApr', function () {
   it('should calculate APR correctly for position unlocking after 1 year', function () {
     const currentBalance = BigInt('100000000000000000000') // 100 veHEMI
     const lockedAmount = BigInt('100000000000000000000') // 100 HEMI
-    const epochsUntilUnlock = 100 // Unlocks after 60 epochs
+    const epochsUntilUnlock = 100 // Unlocks after 61 epochs
 
     const rewardWeightDecay = calculateRewardWeightDecay({
       currentBalance,
@@ -224,7 +224,7 @@ describe('calculateApr', function () {
   })
 
   it('should return 0 when locked amount is 0', function () {
-    const rewardWeightDecay = Array(60).fill(BigInt(0))
+    const rewardWeightDecay = Array(61).fill(BigInt(0))
 
     const apr = calculateApr({
       lockedAmount: BigInt(0),
@@ -236,7 +236,7 @@ describe('calculateApr', function () {
   })
 
   it('should return 0 when reward weight is all zeros', function () {
-    const rewardWeightDecay = Array(60).fill(BigInt(0))
+    const rewardWeightDecay = Array(61).fill(BigInt(0))
     const lockedAmount = BigInt('100000000000000000000')
 
     const apr = calculateApr({
@@ -248,8 +248,8 @@ describe('calculateApr', function () {
     expect(apr).toBe(0)
   })
 
-  it('should throw error if rewardsPerVeHEMI does not have 60 values', function () {
-    const rewardWeightDecay = Array(60).fill(BigInt('100000000000000000000'))
+  it('should throw error if rewardsPerVeHEMI does not have 61 values', function () {
+    const rewardWeightDecay = Array(61).fill(BigInt('100000000000000000000'))
     const lockedAmount = BigInt('100000000000000000000')
 
     expect(() =>
@@ -258,10 +258,10 @@ describe('calculateApr', function () {
         rewardsPerVeHEMI: Array(50).fill(0.001), // Only 50 values
         rewardWeightDecay,
       }),
-    ).toThrow('Expected 60 rewards values, got 50')
+    ).toThrow('Expected 61 rewards values, got 50')
   })
 
-  it('should throw error if rewardWeightDecay does not have 60 values', function () {
+  it('should throw error if rewardWeightDecay does not have 61 values', function () {
     const lockedAmount = BigInt('100000000000000000000')
 
     expect(() =>
@@ -270,7 +270,7 @@ describe('calculateApr', function () {
         rewardsPerVeHEMI: MOCK_REWARDS_PER_VEHEMI,
         rewardWeightDecay: Array(30).fill(BigInt('100000000000000000000')), // Only 30 values
       }),
-    ).toThrow('Expected 60 reward weight values, got 30')
+    ).toThrow('Expected 61 reward weight values, got 30')
   })
 
   it('should handle position with decreasing rewards per epoch', function () {
@@ -296,8 +296,8 @@ describe('calculateApr', function () {
 
   it('should calculate correct dot product', function () {
     // Simple test case: constant rewards and reward weight
-    const constantRewards = Array(60).fill(0.001) // 0.001 per veHEMI
-    const rewardWeightDecay = Array(60).fill(BigInt('1000000000000000000')) // 1 veHEMI constant
+    const constantRewards = Array(61).fill(0.001) // 0.001 per veHEMI
+    const rewardWeightDecay = Array(61).fill(BigInt('1000000000000000000')) // 1 veHEMI constant
     const lockedAmount = BigInt('1000000000000000000') // 1 HEMI locked
 
     const apr = calculateApr({
@@ -306,9 +306,9 @@ describe('calculateApr', function () {
       rewardWeightDecay,
     })
 
-    // Expected: 60 epochs × 1 veHEMI × 0.001 reward/veHEMI = 0.06 rewards
-    // APR = (0.06 / 1) × 100 = 6%
-    expect(apr).toBeCloseTo(6, 1)
+    // Expected: 61 epochs × 1 veHEMI × 0.001 reward/veHEMI = 0.061 rewards
+    // APR = (0.061 / 1) × 100 = 6.1%
+    expect(apr).toBeCloseTo(6.1, 1)
   })
 
   it('should handle very small amounts without precision loss', function () {

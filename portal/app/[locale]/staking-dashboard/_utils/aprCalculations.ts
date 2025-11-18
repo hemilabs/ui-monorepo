@@ -3,26 +3,33 @@ import { parseEther } from 'viem'
 import { epochsPerYear, secondsPerEpoch } from './lockCreationTimes'
 
 /**
- * Calculates reward weight decay over 60 epochs (360 days)
- * Reward weight (from balanceOfNFT) decreases linearly from current to 0 at unlock
+ * Calculates reward weight decay over 61 epochs (366 days)
  *
- * Note: This is different from voting power used in governance.
+ * Note: Weight percentage is calculated as (timeRemaining / maxLockTime),
+ * where maxLockTime = 4 years (1440 days). So a position with 6 months
+ * remaining will have ~12.5% weight, matching the last 6 months of a 4-year position.
+ *
+ * The decay here projects how this weight will change over the next 61 epochs
+ * based on linear time decay against the position's unlock date.
+ *
  * Reward weight = balanceOfNFT (used for reward distribution)
  * Voting power = voteDelegation.getVotes (used for governance, includes delegations)
  *
  * @param currentTimestamp - Current timestamp (unix timestamp in seconds)
  * @param currentBalance - Current balance of the position from balanceOfNFT (in wei)
  * @param lockEndTimestamp - When the lock ends (unix timestamp in seconds)
- * @returns Array of 60 reward weight values (in wei) for each epoch
+ * @returns Array of 60 reward weight values (in HEMI * 10 ** 18) for each epoch
  *
  * @example
- * // Position with 100 veHEMI unlocking in 180 days (30 epochs)
+ * // Position with 25 veHEMI unlocking in 180 days (30 epochs)
+ * // Note: 25 veHEMI = ~12.5% weight (180 days / 1440 days max lock time)
  * calculateRewardWeightDecay({
- *   currentBalance: 100000000000000000000n, // 100 veHEMI from balanceOfNFT
+ *   currentBalance: 25000000000000000000n, // 25 veHEMI from balanceOfNFT
  *   lockEndTimestamp: 1747324800n, // 180 days from now
  *   currentTimestamp: 1731772800n,
  * })
- * // Returns: [100, 96.67, 93.33, ..., 3.33, 0, 0, ..., 0] (60 values)
+ * // Returns: [25, 24.17, 23.33, ..., 0.83, 0, 0, ..., 0] (61 values)
+ * // The last 31 values (epochs 30-60) are 0 since position unlocks at epoch 30
  */
 export function calculateRewardWeightDecay({
   currentBalance,
@@ -63,15 +70,15 @@ export function calculateRewardWeightDecay({
  * Uses dot product: totalRewards = Σ(rewardWeight[i] × rewardsPerVeHEMI[i])
  *
  * @param lockedAmount - Amount of HEMI locked in the position (in wei)
- * @param rewardsPerVeHEMI - Array of 60 rewards per veHEMI from API (decimals in ether)
- * @param rewardWeightDecay - Array of 60 reward weight values for each epoch (in wei)
+ * @param rewardsPerVeHEMI - Array of 61 rewards per veHEMI from API (decimals in ether)
+ * @param rewardWeightDecay - Array of 61 reward weight values for each epoch (in wei)
  * @returns APR as percentage (e.g., 4.84 for 4.84%)
  *
  * @example
  * calculateApr({
  *   lockedAmount: 9674533770000000000n,              // 9.67 HEMI
- *   rewardsPerVeHEMI: [0.001568, 0.001310, ...],    // 60 values from API
- *   rewardWeightDecay: [100n, 96n, 93n, ...],        // 60 values from calculateRewardWeightDecay
+ *   rewardsPerVeHEMI: [0.001568, 0.001310, ...],    // 61 values from API
+ *   rewardWeightDecay: [100n, 96n, 93n, ...],        // 61 values from calculateRewardWeightDecay
  * })
  * // Returns: 4.84 (meaning 4.84% APR)
  */

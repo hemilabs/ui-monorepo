@@ -41,7 +41,8 @@ export const useCalculateApr = function ({
 }) {
   const { hemiWalletClient } = useHemiWalletClient()
   const { id } = useHemi()
-  const { data: rewardsPerVeHEMI } = useRewardsPerVeHEMI()
+  const { data: rewardsPerVeHEMI, error: isRewardsPerVeHEMIError } =
+    useRewardsPerVeHEMI()
 
   const queryKey = getCalculateAprQueryKey({
     chainId: id,
@@ -52,13 +53,10 @@ export const useCalculateApr = function ({
     enabled:
       enabled &&
       !!hemiWalletClient &&
+      !isRewardsPerVeHEMIError &&
       !!rewardsPerVeHEMI &&
       tokenId > BigInt(0),
     async queryFn() {
-      if (!rewardsPerVeHEMI) {
-        throw new Error('Rewards per veHEMI data not available')
-      }
-
       // Step 1: Fetch position data from contract
       const currentTimestamp = unixNowTimestamp()
 
@@ -88,5 +86,6 @@ export const useCalculateApr = function ({
     },
     queryKey,
     refetchInterval: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
   })
 }

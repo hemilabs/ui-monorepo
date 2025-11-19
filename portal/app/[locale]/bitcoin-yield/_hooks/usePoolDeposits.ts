@@ -4,7 +4,7 @@ import { useHemiClient } from 'hooks/useHemiClient'
 import { Chain } from 'viem'
 import { totalAssets } from 'viem-erc4626/actions'
 
-const getPoolDepositsQueryKey = (chainId: Chain['id'] | undefined) => [
+export const getPoolDepositsQueryKey = (chainId: Chain['id'] | undefined) => [
   'btc-staking',
   'pool-deposits',
   chainId,

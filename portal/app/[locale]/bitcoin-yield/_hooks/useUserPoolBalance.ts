@@ -4,11 +4,9 @@ import { useHemiClient } from 'hooks/useHemiClient'
 import { type Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
-const getUserPoolBalanceQueryKey = (chainId: Chain['id'] | undefined) => [
-  'btc-staking',
-  'user-pool-balance',
-  chainId,
-]
+export const getUserPoolBalanceQueryKey = (
+  chainId: Chain['id'] | undefined,
+) => ['btc-staking', 'user-pool-balance', chainId]
 
 export const useUserPoolBalance = function () {
   const { address } = useAccount()

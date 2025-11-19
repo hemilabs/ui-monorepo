@@ -18,17 +18,17 @@ Example:
 ```typescript
 const { data, error } = useTodos()
 
-if (todos.data) {
-  return <div>{todos.data.map(renderTodo)}</div>
+if (data) {
+  return <div>{data.map(renderTodo)}</div>
 }
-if (todos.error) {
+if (error) {
   return 'An error has occurred'
 }
 
 return 'Loading...'
 ```
 
-- When creating reusable hooks that internally use `useQuery` or `useMutation`, if if the output of these functions is to be returned, don't rename them - just return its return value and let consumers do the rename, if needed.
+- When creating reusable hooks that internally use `useQuery` or `useMutation`, if the output of these functions is to be returned, don't rename them - just return its return value and let consumers do the rename, if needed.
 
 Example:
 

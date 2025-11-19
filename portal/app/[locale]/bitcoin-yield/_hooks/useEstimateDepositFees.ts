@@ -1,7 +1,7 @@
 import { getBtcStakingVaultContractAddress } from 'hemi-btc-staking-actions'
 import { encodeDepositToken } from 'hemi-btc-staking-actions/actions'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useHemiToken } from 'hooks/useHemiToken'
+import { useHemi } from 'hooks/useHemi'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 export const useEstimateDepositFees = function ({
@@ -11,9 +11,9 @@ export const useEstimateDepositFees = function ({
   amount: bigint
   enabled?: boolean
 }) {
-  const token = useHemiToken()
+  const hemi = useHemi()
   const { address } = useAccount()
-  const vaultAddress = getBtcStakingVaultContractAddress(token.chainId)
+  const vaultAddress = getBtcStakingVaultContractAddress(hemi.id)
 
   const isEnabled = enabled && !!address && amount > BigInt(0)
 
@@ -31,7 +31,7 @@ export const useEstimateDepositFees = function ({
   })
 
   return useEstimateFees({
-    chainId: token.chainId,
+    chainId: hemi.id,
     enabled: gasUnits !== undefined,
     gasUnits,
     isGasUnitsError: isError,

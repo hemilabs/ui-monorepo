@@ -1,6 +1,6 @@
 'use client'
 
-import { Button, ButtonSize } from 'components/button'
+import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useTranslations } from 'next-intl'
@@ -12,7 +12,6 @@ import {
 } from '../_types'
 
 type Props = {
-  buttonSize?: ButtonSize
   canDeposit: boolean
   token: EvmToken
   isAllowanceError: boolean
@@ -23,7 +22,6 @@ type Props = {
   vaultDepositOperation: BitcoinYieldDepositOperation | undefined
 }
 export const SubmitDeposit = function ({
-  buttonSize = 'xLarge',
   canDeposit,
   isAllowanceError,
   isAllowanceLoading,
@@ -78,13 +76,13 @@ export const SubmitDeposit = function ({
         submitButton={
           <Button
             disabled={!canDeposit || isRunningOperation || isAllowanceLoading}
-            size={buttonSize}
+            size="small"
             type="submit"
           >
             {getOperationButtonText()}
           </Button>
         }
-        submitButtonSize={buttonSize}
+        submitButtonSize="small"
       />
     </div>
   )

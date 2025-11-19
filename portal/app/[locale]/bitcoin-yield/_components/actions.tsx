@@ -21,7 +21,11 @@ export const Actions = function () {
       >
         {t('common.deposit')}
       </Button>
-      <Button {...commonProps} variant="secondary">
+      <Button
+        {...commonProps}
+        onClick={() => setOperationDrawer('withdraw')}
+        variant="secondary"
+      >
         {t('common.withdraw')}
       </Button>
       <Button {...commonProps} variant="secondary">

@@ -4,7 +4,10 @@
     "drawer": {
       "deposit-btc": "Depositar {symbol}",
       "deposit-heading": "Depósito en revisión",
-      "deposit-subheading": "Complete los pasos restantes para depositar su {symbol}"
+      "deposit-subheading": "Complete los pasos restantes para depositar su {symbol}",
+      "withdraw-btc": "Retirar {symbol}",
+      "withdraw-heading": "Revisar Retiro",
+      "withdraw-subheading": "¡Ya falta poco! Complete los pasos restantes para retirar su {symbol}"
     },
     "heading": "Bitcoin, con Rendimiento Real",
     "info": {
@@ -34,7 +37,9 @@
     },
     "toast": {
       "deposit-confirmed": "Depósito confirmado",
-      "your-deposit-was-successful": "Su depósito fue exitoso"
+      "withdraw-confirmed": "Retiro confirmado",
+      "your-deposit-was-successful": "Su depósito fue exitoso",
+      "your-withdrawal-was-successful": "Su retiro fue exitoso"
     },
     "tunnel-btc": "Tunelice BTC",
     "tunnel-to-hemi": "Tunelice Bitcoin a Hemi"

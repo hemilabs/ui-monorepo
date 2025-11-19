@@ -26,3 +26,23 @@ export type BitcoinYieldDepositOperation = {
   transactionHash?: Hash
   status: BitcoinYieldDepositStatusType
 }
+
+// Prefer ordering these by value rather than by key
+/* eslint-disable sort-keys */
+export const BitcoinYieldWithdrawalStatus = {
+  // The user has confirmed the TX in their wallet, but it hasn't been included in a block
+  WITHDRAW_TX_PENDING: 0,
+  // Withdraw tx reverted
+  WITHDRAW_TX_FAILED: 1,
+  // Transaction withdraw confirmed
+  WITHDRAW_TX_CONFIRMED: 2,
+} as const
+/* eslint-enable sort-keys */
+
+export type BitcoinYieldWithdrawalStatusType =
+  (typeof BitcoinYieldWithdrawalStatus)[keyof typeof BitcoinYieldWithdrawalStatus]
+
+export type BitcoinYieldWithdrawalOperation = {
+  transactionHash?: Hash
+  status: BitcoinYieldWithdrawalStatusType
+}

@@ -9,9 +9,12 @@ This monorepo uses npm workspaces, and contains the following projects:
 - **packages/\***: Contains a comprehensive list of reusable packages.
   - **packages/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported).
   - **packages/genesis-drop-actions**: Package that contains functions needed for the TGE event.
+  - **packages/hemi-btc-staking-actions**: Package that contains viem actions for Bitcoin staking on Hemi.
   - **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
   - **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
+  - **packages/to-promise-event**: Package that provides an utility to allow async functions to export a promise and an event emitter.
   - **packages/ve-hemi-actions**: Package that contains functions needed to interact with the staking contract veHEMI.
+  - **packages/ve-hemi-rewards**: Package that contains functions needed to interact with the veHEMI rewards system.
 - **portal**: Portal webapp living at [https://app.hemi.xyz](https://app.hemi.xyz).
 - **portal-backend**: Various APIs and cron jobs the Portal uses.
 - **subgraph-api**: API for querying hemi subgraphs needed for the portal.

@@ -3,6 +3,7 @@ import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
 import { formatDate } from 'utils/format'
+import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 
@@ -186,13 +187,12 @@ export function Lockup({
         return '0'
       }
 
-      const now = BigInt(Math.floor(Date.now() / 1000))
       const lockTime = BigInt(lockupDays * daySeconds)
 
       const { votingPower } = calculateVotingPower({
         amount,
         lockTime,
-        timestamp: now,
+        timestamp: unixNowTimestamp(),
       })
 
       const formattedPower = formatUnits(votingPower, token.decimals)

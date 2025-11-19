@@ -16,6 +16,7 @@ import {
   type StakingOperationRunning,
 } from 'types/stakingDashboard'
 import { getNativeToken } from 'utils/nativeToken'
+import { unixNowTimestamp } from 'utils/time'
 import { formatUnits } from 'viem'
 
 import { minDays } from '../../../../staking-dashboard/_utils/lockCreationTimes'
@@ -165,7 +166,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
       stakingPosition?.lockTime !== undefined &&
       stakingPosition?.timestamp !== undefined
     ) {
-      const currentTimestamp = BigInt(Math.floor(Date.now() / 1000))
+      const currentTimestamp = unixNowTimestamp()
       const sixDays = BigInt(6 * 24 * 60 * 60)
       const secondsPerDay = BigInt(24 * 60 * 60)
 

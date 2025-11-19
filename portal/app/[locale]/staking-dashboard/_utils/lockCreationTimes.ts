@@ -1,4 +1,5 @@
 import { StakingPosition } from 'types/stakingDashboard'
+import { unixNowTimestamp } from 'utils/time'
 import { MaxLockDurationSeconds, MinLockDurationSeconds } from 've-hemi-actions'
 
 export const daySeconds = 86_400
@@ -8,6 +9,9 @@ export const maxDays = Math.floor(MaxLockDurationSeconds / daySeconds)
 export const step = 6
 
 export const twoYears = 732
+
+export const epochsPerYear = 61 // 61 epochs × 6 days = 366 days
+export const secondsPerEpoch = step * daySeconds
 
 // To ensure the lock duration is at least the minimum, we clamp the value after calculation
 const clampMin = <T extends number | bigint>(value: T, min: T): T =>
@@ -28,7 +32,7 @@ type GetUnlockInfoProps = {
 }
 
 export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
-  const currentTimeInSeconds = Math.floor(Date.now() / 1000)
+  const currentTimeInSeconds = Number(unixNowTimestamp())
 
   // Convert to Number for calculations
   const timestampNum = Number(timestamp)
@@ -60,7 +64,7 @@ export function calculateVotingPower({
   timestamp,
 }: CalculateVotingPowerProps) {
   const maxTimeSeconds = BigInt(maxDays * daySeconds)
-  const now = BigInt(Math.floor(Date.now() / 1000))
+  const now = unixNowTimestamp()
 
   const end = timestamp + lockTime
   const timeRemaining = end > now ? end - now : BigInt(0)

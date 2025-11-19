@@ -16,6 +16,7 @@ import { getVeHemiContractAddress, IncreaseAmountEvents } from 've-hemi-actions'
 import { increaseAmount } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
+import { getCalculateAprQueryKey } from './useCalculateApr'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
 
 type UseIncreaseAmount = {
@@ -147,6 +148,14 @@ export const useIncreaseAmount = function ({
           hemiBalanceQueryKey,
           (old: bigint) => old - amount,
         )
+
+        // APR
+        queryClient.invalidateQueries({
+          queryKey: getCalculateAprQueryKey({
+            chainId: token.chainId,
+            tokenId: BigInt(tokenId),
+          }),
+        })
 
         track?.('staking dashboard - increase amount success')
       })

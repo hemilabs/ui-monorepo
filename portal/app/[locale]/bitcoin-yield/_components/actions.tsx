@@ -29,31 +29,35 @@ export const Actions = function () {
   const poolBalanceLoading = poolBalance === undefined && !isPoolBalanceError
 
   return (
-    <div className="flex items-center gap-x-3 [&>button]:min-w-16">
-      <Button
-        {...commonProps}
-        disabled={balance === undefined || balance === BigInt(0)}
-        onClick={() => setOperationDrawer('deposit')}
-        variant="primary"
-      >
-        {isTokenBalanceLoading ? (
-          <Spinner size="xSmall" />
-        ) : (
-          t('common.deposit')
-        )}
-      </Button>
-      <Button
-        {...commonProps}
-        disabled={poolBalance === undefined || poolBalance === BigInt(0)}
-        onClick={() => setOperationDrawer('withdraw')}
-        variant="secondary"
-      >
-        {poolBalanceLoading ? (
-          <Spinner color="#FF6C15" size="xSmall" />
-        ) : (
-          t('common.withdraw')
-        )}
-      </Button>
+    <div className="flex items-center gap-x-3">
+      <div className="*:min-w-16.25">
+        <Button
+          {...commonProps}
+          disabled={balance === undefined || balance === BigInt(0)}
+          onClick={() => setOperationDrawer('deposit')}
+          variant="primary"
+        >
+          {isTokenBalanceLoading ? (
+            <Spinner size="xSmall" />
+          ) : (
+            t('common.deposit')
+          )}
+        </Button>
+      </div>
+      <div className="*:min-w-19">
+        <Button
+          {...commonProps}
+          disabled={poolBalance === undefined || poolBalance === BigInt(0)}
+          onClick={() => setOperationDrawer('withdraw')}
+          variant="secondary"
+        >
+          {poolBalanceLoading ? (
+            <Spinner color="#FF6C15" size="xSmall" />
+          ) : (
+            t('common.withdraw')
+          )}
+        </Button>
+      </div>
       <Button {...commonProps} variant="secondary">
         {t('bitcoin-yield.table.claim-rewards')}
       </Button>

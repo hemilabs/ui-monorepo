@@ -13,6 +13,7 @@ This monorepo uses npm workspaces, and contains the following projects:
   - **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
   - **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
   - **packages/to-promise-event**: Package that provides an utility to allow async functions to export a promise and an event emitter.
+  - **packages/vault-strategies**: Package that contains viem actions for interacting with ERC-4626 vault strategies.
   - **packages/ve-hemi-actions**: Package that contains functions needed to interact with the staking contract veHEMI.
   - **packages/ve-hemi-rewards**: Package that contains functions needed to interact with the veHEMI rewards system.
 - **portal**: Portal webapp living at [https://app.hemi.xyz](https://app.hemi.xyz).

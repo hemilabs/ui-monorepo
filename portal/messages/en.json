@@ -4,7 +4,10 @@
     "drawer": {
       "deposit-btc": "Deposit {symbol}",
       "deposit-heading": "Deposit review",
-      "deposit-subheading": "Complete the remaining steps to deposit your {symbol}"
+      "deposit-subheading": "Complete the remaining steps to deposit your {symbol}",
+      "withdraw-btc": "Withdraw {symbol}",
+      "withdraw-heading": "Review Withdrawal",
+      "withdraw-subheading": "You're almost there! Complete the remaining steps to withdraw your {symbol}"
     },
     "heading": "Bitcoin, with Real Yield",
     "info": {
@@ -34,7 +37,9 @@
     },
     "toast": {
       "deposit-confirmed": "Deposit confirmed",
-      "your-deposit-was-successful": "Your deposit was successful"
+      "withdraw-confirmed": "Withdrawal confirmed",
+      "your-deposit-was-successful": "Your deposit was successful",
+      "your-withdrawal-was-successful": "Your withdrawal was successful"
     },
     "tunnel-btc": "Tunnel BTC",
     "tunnel-to-hemi": "Tunnel Bitcoin to Hemi"

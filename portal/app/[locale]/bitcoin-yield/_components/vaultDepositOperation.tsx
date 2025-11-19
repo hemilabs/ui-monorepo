@@ -310,7 +310,6 @@ export const VaultDepositOperation = function ({
             setAmount={onAmountChange}
             submitButton={
               <SubmitDeposit
-                buttonSize="small"
                 canDeposit={canDeposit}
                 isAllowanceError={isAllowanceError}
                 isAllowanceLoading={isAllowanceLoading}

@@ -1,31 +1,40 @@
 import { getBtcStakingVaultContractAddress } from 'hemi-btc-staking-actions'
-import { encodeDepositToken } from 'hemi-btc-staking-actions/actions'
+import { encodeWithdraw } from 'hemi-btc-staking-actions/actions'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useAccount, useEstimateGas } from 'wagmi'
 
-export const useEstimateDepositFees = function ({
-  amount,
+import { useConvertToShares } from './useConvertToShares'
+
+export const useEstimateWithdrawFees = function ({
+  assets,
   enabled = true,
 }: {
-  amount: bigint
+  assets: bigint
   enabled?: boolean
 }) {
   const hemi = useHemi()
   const { address } = useAccount()
   const vaultAddress = getBtcStakingVaultContractAddress(hemi.id)
 
-  const isEnabled = enabled && !!address && amount > BigInt(0)
+  const isEnabled = enabled && !!address && assets > BigInt(0)
+
+  const { data: shares } = useConvertToShares({
+    assets,
+    enabled: isEnabled,
+  })
 
   const { data: gasUnits, isError } = useEstimateGas({
-    data: isEnabled
-      ? encodeDepositToken({
-          amount,
-          receiver: address,
-        })
-      : undefined,
+    data:
+      isEnabled && shares !== undefined
+        ? encodeWithdraw({
+            owner: address,
+            receiver: address,
+            shares,
+          })
+        : undefined,
     query: {
-      enabled: isEnabled,
+      enabled: isEnabled && shares !== undefined,
     },
     to: vaultAddress,
   })

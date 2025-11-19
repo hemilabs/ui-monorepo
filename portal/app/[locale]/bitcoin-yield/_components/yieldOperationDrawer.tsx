@@ -11,6 +11,7 @@ import { useAmount } from 'hooks/useAmount'
 import { useOperationDrawer } from '../_hooks/useOperationDrawer'
 
 import { VaultDepositOperation } from './vaultDepositOperation'
+import { VaultWithdrawalOperation } from './vaultWithdrawalOperation'
 
 export const YieldOperationDrawer = function () {
   const { accountModalOpen } = useAccountModal()
@@ -36,6 +37,13 @@ export const YieldOperationDrawer = function () {
     <Drawer onClose={safeCloseDrawer}>
       {operation === 'deposit' && (
         <VaultDepositOperation
+          input={amount}
+          onAmountChange={onAmountChange}
+          onClose={safeCloseDrawer}
+        />
+      )}
+      {operation === 'withdraw' && (
+        <VaultWithdrawalOperation
           input={amount}
           onAmountChange={onAmountChange}
           onClose={safeCloseDrawer}

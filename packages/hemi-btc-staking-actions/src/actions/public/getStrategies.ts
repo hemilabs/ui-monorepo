@@ -4,21 +4,17 @@ import { readContract } from 'viem/actions'
 import { yieldVaultAbi } from '../../abi'
 import { getBtcStakingVaultContractAddress } from '../../constants'
 
-export const getStrategies = async function ({ client }: { client: Client }) {
+export const getStrategies = async function (client: Client) {
   if (!client.chain) {
     throw new Error('Client chain is not defined')
   }
 
   const vaultAddress = getBtcStakingVaultContractAddress(client.chain.id)
 
-  const strategiesList = await readContract(client, {
+  // it returns empty array if there are no strategies
+  return readContract(client, {
     abi: yieldVaultAbi,
     address: vaultAddress,
     functionName: 'getStrategies',
   })
-
-  // TODO check what strategy info is needed
-  // See https://github.com/hemilabs/ui-monorepo/issues/1619
-
-  return strategiesList
 }

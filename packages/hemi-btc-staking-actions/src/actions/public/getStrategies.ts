@@ -11,7 +11,7 @@ export const getStrategies = async function (client: Client) {
 
   const vaultAddress = getBtcStakingVaultContractAddress(client.chain.id)
 
-  // it returns empty array if there are no strategies
+  // Returns an empty array if there are no strategies
   return readContract(client, {
     abi: yieldVaultAbi,
     address: vaultAddress,

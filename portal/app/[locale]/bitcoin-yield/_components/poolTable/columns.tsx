@@ -45,7 +45,11 @@ export const useGetColumns = function () {
         },
         {
           cell: ({ row }) => <Actions row={row} />,
-          header: () => <Header text={t('common.actions')} />,
+          header: () => (
+            <div className="w-full max-lg:pl-4 lg:pr-4 *:lg:text-right">
+              <Header text={t('common.actions')} />
+            </div>
+          ),
           id: 'actions',
           meta: { width: '350px' },
         },

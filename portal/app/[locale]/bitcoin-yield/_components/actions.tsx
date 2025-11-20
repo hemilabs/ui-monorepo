@@ -38,7 +38,7 @@ export const Actions = function ({ row }: Props) {
   const loadingStrategies = row.original.strategies === undefined
 
   return (
-    <div className="flex w-full items-center justify-end gap-x-3">
+    <div className="flex w-full items-center justify-start gap-x-3 lg:justify-end">
       <div className="*:min-w-16.25">
         <Button
           {...commonProps}

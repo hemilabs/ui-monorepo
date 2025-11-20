@@ -1,4 +1,15 @@
-import { Hash } from 'viem'
+import type { Address, Hash } from 'viem'
+
+export type Strategy = {
+  address: Address
+  name: string
+  weight: bigint
+}
+
+export type Vault = {
+  address: Address
+  strategies: Strategy[] | undefined
+}
 
 // Prefer ordering these by value rather than by key
 /* eslint-disable sort-keys */

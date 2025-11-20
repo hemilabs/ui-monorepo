@@ -3,11 +3,11 @@ import { ErrorBoundary } from 'components/errorBoundary'
 import { Header } from 'components/table/_components/header'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
-import { Address } from 'viem'
 
-import { Actions } from '../_components/actions'
-import { PoolBalance } from '../_components/poolBalance'
-import { PoolData } from '../_components/poolData'
+import type { Vault } from '../../_types'
+import { Actions } from '../actions'
+import { PoolBalance } from '../poolBalance'
+import { PoolData } from '../poolData'
 
 const Fallback = () => <span className="text-sm text-neutral-950">-</span>
 
@@ -20,9 +20,10 @@ export const useGetColumns = function () {
         {
           cell: ({ row }) => (
             <ErrorBoundary fallback={<Fallback />}>
-              <PoolData address={row.original} />
+              <PoolData address={row.original.address} />
             </ErrorBoundary>
           ),
+
           header: () => <Header text={t('bitcoin-yield.table.pool')} />,
           id: 'pool',
           meta: { width: '200px' },
@@ -44,12 +45,12 @@ export const useGetColumns = function () {
           meta: { width: '200px' },
         },
         {
-          cell: () => <Actions />,
+          cell: ({ row }) => <Actions row={row} />,
           header: () => <Header text={t('common.actions')} />,
           id: 'actions',
           meta: { width: '350px' },
         },
-      ] satisfies ColumnDef<Address>[],
+      ] satisfies ColumnDef<Vault>[],
     [t],
   )
 }

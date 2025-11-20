@@ -4,6 +4,7 @@ import {
   formatEvmHash,
   formatFutureTime,
   formatPastTime,
+  formatPercentage,
   formatTVL,
 } from 'utils/format'
 import { describe, expect, it } from 'vitest'
@@ -188,6 +189,52 @@ describe('utils/format', function () {
 
     it('should format a string number greater than one hundred thousand without decimals', function () {
       expect(formatTVL('2500000.13')).toBe('$2,500,000')
+    })
+  })
+
+  describe('formatPercentage', function () {
+    it('should format integer percentage correctly', function () {
+      expect(formatPercentage(50)).toBe('50.00%')
+    })
+
+    it('should format decimal percentage correctly', function () {
+      expect(formatPercentage(25.5)).toBe('25.50%')
+    })
+
+    it('should format percentage with many decimals correctly', function () {
+      expect(formatPercentage(33.333333)).toBe('33.33%')
+    })
+
+    it('should format zero percentage correctly', function () {
+      expect(formatPercentage(0)).toBe('0.00%')
+    })
+
+    it('should format percentage greater than 100 correctly', function () {
+      expect(formatPercentage(150)).toBe('150.00%')
+    })
+
+    it('should format negative percentage correctly', function () {
+      expect(formatPercentage(-25.5)).toBe('-25.50%')
+    })
+
+    it('should format string percentage correctly', function () {
+      expect(formatPercentage('75')).toBe('75.00%')
+    })
+
+    it('should format string decimal percentage correctly', function () {
+      expect(formatPercentage('12.34')).toBe('12.34%')
+    })
+
+    it('should format very small percentage correctly', function () {
+      expect(formatPercentage(0.001)).toBe('0.00%')
+    })
+
+    it('should format small decimal percentage correctly', function () {
+      expect(formatPercentage(0.01)).toBe('0.01%')
+    })
+
+    it('should format percentage with high precision correctly', function () {
+      expect(formatPercentage(99.999999)).toBe('100.00%')
     })
   })
 })

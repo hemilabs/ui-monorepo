@@ -108,7 +108,7 @@ const VotingPowerEquivalence = ({
   <div className="flex items-center gap-x-1">
     <DisplayAmount amount={amount} showSymbol={true} token={token} />
     <span className="text-neutral-600">=</span>
-    <DisplayAmount amount={votingPower} showSymbol={false} token={token} />
+    <DisplayAmount amount={votingPower} showSymbol={true} token={token} />
     <span className="text-neutral-600">ve{token.symbol}</span>
   </div>
 )

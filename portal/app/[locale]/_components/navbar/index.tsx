@@ -51,7 +51,7 @@ export const Navbar = function () {
           </div>
           <Help />
         </div>
-        <ul className="flex h-[calc(100dvh-170px)] flex-col gap-y-[2px] overflow-y-auto md:mt-2 md:h-full">
+        <ul className="flex h-[calc(100dvh-170px)] flex-col gap-y-0.5 overflow-y-auto md:mt-2 md:h-full">
           <PaddedListItem>
             <TunnelLink />
           </PaddedListItem>
@@ -109,9 +109,9 @@ export const Navbar = function () {
           <PaddedListItem className="mb-2 md:hidden">
             <Help />
           </PaddedListItem>
-          <PaddedListItem className="hidden md:block">
+          <li className="hidden md:block">
             <GetStarted />
-          </PaddedListItem>
+          </li>
           <PaddedListItem className="order-first md:order-none">
             <Tvl />
           </PaddedListItem>

@@ -8,6 +8,7 @@ import {
 import { Column } from 'components/table/_components/column'
 import { ColumnHeader } from 'components/table/_components/columnHeader'
 import { TableBodyContainer } from 'components/table/_components/tableBodyContainer'
+import { getNewColumnOrder } from 'components/table/_utils'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { Fragment, useState } from 'react'
 
@@ -33,12 +34,12 @@ export const PoolTable = function () {
       row.original.strategies.length > 0,
     onExpandedChange: setExpanded,
     state: {
-      columnOrder:
-        width < 1024
-          ? ['actions'].concat(
-              columns.filter(c => !['actions'].includes(c.id!)).map(c => c.id!),
-            )
-          : undefined,
+      columnOrder: getNewColumnOrder({
+        breakpoint: 1024,
+        columns,
+        priorityColumnIds: ['actions'],
+        width,
+      }),
       expanded,
     },
   })

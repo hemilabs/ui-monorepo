@@ -215,12 +215,9 @@ export function Lockup({
       })
 
       const formattedPower = formatUnits(votingPower, token.decimals)
-      const numberFormatter = new Intl.NumberFormat(locale, {
-        maximumFractionDigits: 3,
-      })
-      return numberFormatter.format(Number(formattedPower))
+      return formattedPower.toString()
     },
-    [amount, locale, lockupDays, token.decimals],
+    [amount, lockupDays, token.decimals],
   )
 
   function handleSliderChange(val: number) {

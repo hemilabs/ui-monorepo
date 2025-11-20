@@ -23,7 +23,6 @@ export const useGetColumns = function () {
               <PoolData address={row.original.address} />
             </ErrorBoundary>
           ),
-
           header: () => <Header text={t('bitcoin-yield.table.pool')} />,
           id: 'pool',
           meta: { width: '200px' },

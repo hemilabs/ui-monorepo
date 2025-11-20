@@ -20,22 +20,24 @@ const Integration = ({
   logo,
   name,
 }: IntegrationProps) => (
-  <Card>
-    <div className="flex w-full flex-col gap-y-1 p-6">
-      <div className="relative size-12 rounded-md bg-neutral-900 ">
-        <Image
-          alt={`${name} logo`}
-          className="px-2.5"
-          fill
-          objectFit="contain"
-          src={logo}
-        />
+  <div className="w-full [&:hover_.card-container]:shadow-lg [&_.card-container]:transition-shadow [&_.card-container]:duration-200">
+    <Card>
+      <div className="flex w-full flex-col gap-y-1 p-6">
+        <div className="relative size-12 rounded-md bg-neutral-900 ">
+          <Image
+            alt={`${name} logo`}
+            className="px-2.5"
+            fill
+            objectFit="contain"
+            src={logo}
+          />
+        </div>
+        <p className="body-text-caption mt-5 text-orange-500">{category}</p>
+        <h2 className="text-neutral-950">{name}</h2>
+        <p className="body-text-normal mt-1 text-neutral-500">{description}</p>
       </div>
-      <p className="body-text-caption mt-5 text-orange-500">{category}</p>
-      <h2 className="text-neutral-950">{name}</h2>
-      <p className="body-text-normal mt-1 text-neutral-500">{description}</p>
-    </div>
-  </Card>
+    </Card>
+  </div>
 )
 export const Integrations = function () {
   const { data: poolAsset } = usePoolAsset()

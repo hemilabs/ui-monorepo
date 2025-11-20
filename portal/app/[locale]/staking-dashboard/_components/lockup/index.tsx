@@ -3,7 +3,7 @@ import { LockupInput } from 'components/inputText'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
-import { EvmToken } from 'types/token'
+import { Token } from 'types/token'
 import { formatDate } from 'utils/format'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -96,20 +96,28 @@ const InfoRow = ({ label, value }: { label: string; value: ReactNode }) => (
   </p>
 )
 
+const SymbolContainer = ({ children }: { children?: ReactNode }) => (
+  <span>{`ve${children?.toString().trim()}`}</span>
+)
+
 const VotingPowerEquivalence = ({
   amount,
   token,
   votingPower,
 }: {
   amount: string
-  token: EvmToken
+  token: Token
   votingPower: string
 }) => (
   <div className="flex items-center gap-x-1">
     <DisplayAmount amount={amount} showSymbol={true} token={token} />
-    <span className="text-neutral-600">=</span>
-    <DisplayAmount amount={votingPower} showSymbol={true} token={token} />
-    <span className="text-neutral-600">ve{token.symbol}</span>
+    <span>=</span>
+    <DisplayAmount
+      amount={votingPower}
+      showSymbol={true}
+      symbolContainer={SymbolContainer}
+      token={token}
+    />
   </div>
 )
 

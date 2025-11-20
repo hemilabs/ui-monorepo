@@ -38,10 +38,10 @@ export const GetStarted = function ({ onClose }: Props) {
   const t = useTranslations()
 
   return (
-    <article className="group/get-started relative gap-x-5 gap-y-10 border-t border-solid border-neutral-300/55 py-6">
+    <article className="group/get-started relative mb-8 gap-x-5 gap-y-10 border-y border-solid border-neutral-300/55 py-6">
       <div
-        className="transition-filter flex flex-col items-center justify-between duration-300
-        group-hover/get-started:opacity-65 group-hover/get-started:blur-sm sm:flex-row"
+        className="transition-filter flex flex-col items-center justify-between gap-x-3 gap-y-4
+        duration-300 group-hover/get-started:opacity-65 group-hover/get-started:blur-sm sm:flex-row"
       >
         <Step
           heading={t('common.connect-wallet')}

@@ -109,9 +109,9 @@ export const Navbar = function () {
           <PaddedListItem className="mb-2 md:hidden">
             <Help />
           </PaddedListItem>
-          <PaddedListItem className="hidden md:block">
+          <li className="hidden md:block">
             <GetStarted />
-          </PaddedListItem>
+          </li>
           <PaddedListItem className="order-first md:order-none">
             <Tvl />
           </PaddedListItem>

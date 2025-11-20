@@ -5,12 +5,6 @@ const HemiLogoPath = () => (
   />
 )
 
-export const HemiLogoIcon = () => (
-  <svg fill="none" height="24" width="24" xmlns="http://www.w3.org/2000/svg">
-    <HemiLogoPath />
-  </svg>
-)
-
 export const HemiLogoFull = () => (
   <svg fill="none" height="24" width="71" xmlns="http://www.w3.org/2000/svg">
     <g clipPath="url(#hemiLogoFullClipPath)">

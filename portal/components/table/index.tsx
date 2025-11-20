@@ -12,6 +12,7 @@ import { ReactNode, RefObject, useRef } from 'react'
 import { ColumnHeader } from './_components/columnHeader'
 import { LoadingMoreIndicator } from './_components/loadingMoreIndicator'
 import { LoadingSkeletonRows } from './_components/loadingSkeletonRows'
+import { TableBodyContainer } from './_components/tableBodyContainer'
 import { VirtualRows } from './_components/virtualRows'
 import { useInfiniteScroll } from './_hooks/useInfiniteScroll'
 import { useScrollbarDetection } from './_hooks/useScrollbarDetection'
@@ -94,8 +95,7 @@ function TableBody<TData>({
   const { rows } = table.getRowModel()
 
   return (
-    <div
-      className="-mt-1.5 mb-1 min-h-0 flex-1 overflow-y-auto overflow-x-hidden rounded-xl bg-white shadow-md"
+    <TableBodyContainer
       onScroll={e => fetchMoreOnBottomReached(e.currentTarget)}
       ref={scrollContainerRef}
       style={{
@@ -138,7 +138,7 @@ function TableBody<TData>({
       ) : (
         placeholder
       )}
-    </div>
+    </TableBodyContainer>
   )
 }
 

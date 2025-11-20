@@ -17,7 +17,7 @@ export const formatStrategyName = function (
   poolAssetSymbol: string,
 ) {
   const poolAsset = poolAssetSymbol.replace('.E', '')
-  const removeLastTokenRegex = new RegExp(`${poolAsset}([^${poolAsset}]*)$`, '')
+  const removeLastTokenRegex = new RegExp(`${poolAsset}([^${poolAsset}]*)$`)
 
   return name
     .replace(/Strategy|V2|Avalanche/g, '') // Remove words from the strategy name

@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
+import { getNewColumnOrder } from '../_utils'
 import { TableProps } from '../index'
 
 type Props<TData> = Omit<
@@ -46,16 +47,12 @@ export function useTableData<TData>({
   )
   const safeData = data && data.length > 0 ? data : skeletonArray
 
-  const columnOrder =
-    width < smallBreakpoint && priorityColumnIdsOnSmall?.length
-      ? [
-          ...priorityColumnIdsOnSmall,
-          ...columnsWithSkeleton
-            .filter(c => c.id)
-            .map(c => c.id!)
-            .filter(id => id && !priorityColumnIdsOnSmall.includes(id)),
-        ]
-      : undefined
+  const columnOrder = getNewColumnOrder({
+    breakpoint: smallBreakpoint,
+    columns: columnsWithSkeleton,
+    priorityColumnIds: priorityColumnIdsOnSmall,
+    width,
+  })
 
   return { columnOrder, columnsWithSkeleton, safeData }
 }

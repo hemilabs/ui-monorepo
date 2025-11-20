@@ -11,6 +11,7 @@ import { Arrow } from 'components/icons/arrow'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
+import { getNewColumnOrder } from 'components/table/_utils'
 import { TxLink } from 'components/txLink'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useWindowSize } from 'hooks/useWindowSize'
@@ -425,16 +426,12 @@ export const Table = function ({
     data,
     getCoreRowModel: getCoreRowModel(),
     state: {
-      columnOrder:
-        // move "action" and "status" to the left in small devices
-        // and keep original order in larger devices
-        width < 1024
-          ? ['action', 'status'].concat(
-              columns
-                .filter(c => !['action', 'status'].includes(c.id!))
-                .map(c => c.id!),
-            )
-          : undefined,
+      columnOrder: getNewColumnOrder({
+        breakpoint: 1024,
+        columns,
+        priorityColumnIds: ['action', 'status'],
+        width,
+      }),
     },
   })
 

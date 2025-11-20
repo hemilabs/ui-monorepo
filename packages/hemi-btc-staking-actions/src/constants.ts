@@ -1,10 +1,8 @@
 import { hemi, hemiSepolia } from 'hemi-viem'
 import { type Address } from 'viem'
 
-// TODO: Add contract addresses when available
-// See https://github.com/hemilabs/ui-monorepo/issues/1619
 const BTC_STAKING_VAULT_CONTRACT_ADDRESSES: Record<number, Address> = {
-  [hemi.id]: '0x0000000000000000000000000000000000000000',
+  [hemi.id]: '0x17BA356d3DFc89fc0cE3d6ABdfE1dd29a69A55cf',
   [hemiSepolia.id]: '0x07c5C83C7F963dFD5De3075140886F8Ee87d1468',
 } as const
 

@@ -9,8 +9,8 @@ import { waitForTransactionReceipt } from 'viem/actions'
 import { balanceOf, redeem } from 'viem-erc4626/actions'
 import { describe, expect, it, vi } from 'vitest'
 
-import { withdraw } from '../src/actions/wallet/withdraw'
-import { getBtcStakingVaultContractAddress } from '../src/constants'
+import { withdraw } from '../../../src/actions/wallet/withdraw'
+import { getBtcStakingVaultContractAddress } from '../../../src/constants'
 
 vi.mock('viem/actions', () => ({
   waitForTransactionReceipt: vi.fn(),

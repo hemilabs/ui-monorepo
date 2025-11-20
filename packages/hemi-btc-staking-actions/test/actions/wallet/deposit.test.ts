@@ -16,10 +16,10 @@ import {
 } from 'viem-erc4626/actions'
 import { describe, expect, it, vi } from 'vitest'
 
-import { getMinimumDepositLimit } from '../src/actions/public/minimumDepositLimit'
-import { depositToken } from '../src/actions/wallet/deposit'
+import { getMinimumDepositLimit } from '../../../src/actions/public/minimumDepositLimit'
+import { depositToken } from '../../../src/actions/wallet/deposit'
 
-vi.mock('../src/actions/public/minimumDepositLimit', () => ({
+vi.mock('../../../src/actions/public/minimumDepositLimit', () => ({
   getMinimumDepositLimit: vi.fn(),
 }))
 

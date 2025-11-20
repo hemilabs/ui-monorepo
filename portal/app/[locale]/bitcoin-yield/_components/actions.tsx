@@ -1,4 +1,6 @@
-import { Button } from 'components/button'
+import { Row } from '@tanstack/react-table'
+import { Button, ButtonIcon } from 'components/button'
+import { Chevron } from 'components/icons/chevron'
 import { Spinner } from 'components/spinner'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useTranslations } from 'next-intl'
@@ -6,8 +8,13 @@ import { useTranslations } from 'next-intl'
 import { useOperationDrawer } from '../_hooks/useOperationDrawer'
 import { usePoolAsset } from '../_hooks/usePoolAsset'
 import { useUserPoolBalance } from '../_hooks/useUserPoolBalance'
+import { type Vault } from '../_types'
 
-export const Actions = function () {
+type Props = {
+  row: Row<Vault>
+}
+
+export const Actions = function ({ row }: Props) {
   const t = useTranslations()
   const [, setOperationDrawer] = useOperationDrawer()
   const token = usePoolAsset().data
@@ -28,8 +35,10 @@ export const Actions = function () {
 
   const poolBalanceLoading = poolBalance === undefined && !isPoolBalanceError
 
+  const loadingStrategies = row.original.strategies === undefined
+
   return (
-    <div className="flex items-center gap-x-3">
+    <div className="flex w-full items-center justify-end gap-x-3">
       <div className="*:min-w-16.25">
         <Button
           {...commonProps}
@@ -58,9 +67,23 @@ export const Actions = function () {
           )}
         </Button>
       </div>
-      <Button {...commonProps} variant="secondary">
+      <Button {...commonProps} type="button" variant="secondary">
         {t('bitcoin-yield.table.claim-rewards')}
       </Button>
+      <ButtonIcon
+        {...commonProps}
+        disabled={loadingStrategies || !row.getCanExpand()}
+        onClick={row.getToggleExpandedHandler()}
+        variant="secondary"
+      >
+        {loadingStrategies ? (
+          <Spinner color="#FF6C15" size="xSmall" />
+        ) : row.getIsExpanded() ? (
+          <Chevron.Up />
+        ) : (
+          <Chevron.Bottom />
+        )}
+      </ButtonIcon>
     </div>
   )
 }

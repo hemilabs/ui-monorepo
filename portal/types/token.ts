@@ -40,3 +40,6 @@ export type EvmToken = BaseToken & { chainId: Chain['id'] }
 export type L2Token = EvmToken & { l1Token: Address }
 
 export type Token = BtcToken | EvmToken
+
+// token with balance information
+export type TokenWithBalance<T extends Token = Token> = T & { balance: bigint }

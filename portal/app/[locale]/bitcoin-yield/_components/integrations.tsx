@@ -28,8 +28,8 @@ const Integration = ({
             alt={`${name} logo`}
             className="px-2.5"
             fill
-            objectFit="contain"
             src={logo}
+            style={{ objectFit: 'contain' }}
           />
         </div>
         <p className="body-text-caption mt-5 text-orange-500">{category}</p>

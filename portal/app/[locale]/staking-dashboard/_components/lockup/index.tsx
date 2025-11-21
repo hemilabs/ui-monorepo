@@ -96,10 +96,6 @@ const InfoRow = ({ label, value }: { label: string; value: ReactNode }) => (
   </p>
 )
 
-const SymbolContainer = ({ children }: { children?: ReactNode }) => (
-  <span>{`ve${children?.toString().trim()}`}</span>
-)
-
 const VotingPowerEquivalence = ({
   amount,
   token,
@@ -110,13 +106,11 @@ const VotingPowerEquivalence = ({
   votingPower: string
 }) => (
   <div className="flex items-center gap-x-1">
-    <DisplayAmount amount={amount} showSymbol={true} token={token} />
+    <DisplayAmount amount={amount} token={token} />
     <span>=</span>
     <DisplayAmount
       amount={votingPower}
-      showSymbol={true}
-      symbolContainer={SymbolContainer}
-      token={token}
+      token={{ ...token, symbol: `ve${token.symbol}` }}
     />
   </div>
 )

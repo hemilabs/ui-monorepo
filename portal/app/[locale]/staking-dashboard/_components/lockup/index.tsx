@@ -1,7 +1,9 @@
+import { DisplayAmount } from 'components/displayAmount'
 import { LockupInput } from 'components/inputText'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
+import { Token } from 'types/token'
 import { formatDate } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
@@ -88,11 +90,30 @@ export function getNearestValidValues({
 
 const Divider = () => <div className="h-px w-full bg-neutral-300/55" />
 
-const InfoRow = ({ label, value }: { label: string; value: string }) => (
+const InfoRow = ({ label, value }: { label: string; value: ReactNode }) => (
   <p className="flex justify-between text-sm font-medium text-neutral-600">
     <span>{label}</span>
     <span className="text-neutral-950">{value}</span>
   </p>
+)
+
+const VotingPowerEquivalence = ({
+  amount,
+  token,
+  votingPower,
+}: {
+  amount: string
+  token: Token
+  votingPower: string
+}) => (
+  <div className="flex items-center gap-x-1">
+    <DisplayAmount amount={amount} token={token} />
+    <span>=</span>
+    <DisplayAmount
+      amount={votingPower}
+      token={{ ...token, symbol: `ve${token.symbol}` }}
+    />
+  </div>
 )
 
 type TryValuesHintFullProps = TryValuesHintProps & {
@@ -196,13 +217,9 @@ export function Lockup({
       })
 
       const formattedPower = formatUnits(votingPower, token.decimals)
-      const numberFormatter = new Intl.NumberFormat(locale, {
-        maximumFractionDigits: 3,
-      })
-
-      return numberFormatter.format(Number(formattedPower))
+      return formattedPower.toString()
     },
-    [amount, locale, lockupDays, token.decimals],
+    [amount, lockupDays, token.decimals],
   )
 
   function handleSliderChange(val: number) {
@@ -317,7 +334,13 @@ export function Lockup({
         <Divider />
         <InfoRow
           label={`${t('voting-power')}:`}
-          value={`${input} ${token.symbol} = ${votingPowerRatio} ve${token.symbol}`}
+          value={
+            <VotingPowerEquivalence
+              amount={input}
+              token={token}
+              votingPower={votingPowerRatio}
+            />
+          }
         />
       </div>
       <div className="mt-5 space-y-2">

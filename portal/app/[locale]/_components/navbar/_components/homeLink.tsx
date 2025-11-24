@@ -23,7 +23,13 @@ export const HomeLink = () => (
   // /bitcoin-yield. Otherwise, it redirects to the tunnel page with the appropriate operation
   // (Deposit, Withdraw, etc.) based on the connected wallet. Initial render shows /tunnel as
   // fallback, with the correct href applied after hydration for static rendering.
-  <Suspense fallback={<UI href="/tunnel" />}>
+  <Suspense
+    fallback={
+      <UI
+        href={featureFlags.enableBtcYieldPage ? '/bitcoin-yield' : '/tunnel'}
+      />
+    }
+  >
     <HemiLogoImpl />
   </Suspense>
 )

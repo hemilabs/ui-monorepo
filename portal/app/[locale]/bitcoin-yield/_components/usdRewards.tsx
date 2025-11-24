@@ -3,6 +3,7 @@ import { useHemi } from 'hooks/useHemi'
 import { tokenQueryOptions } from 'hooks/useToken'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import Skeleton from 'react-loading-skeleton'
+import { TokenWithBalance } from 'types/token'
 import { formatFiatNumber } from 'utils/format'
 import { calculateUsdValue } from 'utils/prices'
 import { Address } from 'viem'
@@ -36,15 +37,13 @@ export const UsdRewards = function ({ amounts, tokenAddresses }: Props) {
     return <Skeleton />
   }
 
-  const tokensWithBalance = queries
-    .filter(query => query.data !== undefined)
-    .map(function ({ data: token }, index) {
-      const amount = amounts[index]
-      return {
-        ...token,
-        balance: amount,
-      }
-    })
+  const tokensWithBalance = queries.map(function ({ data: token }, index) {
+    const amount = amounts[index]
+    return {
+      ...token,
+      balance: amount,
+    } as TokenWithBalance
+  })
 
   const usdRewards = calculateUsdValue(tokensWithBalance, prices)
 

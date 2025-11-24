@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import { Link } from 'components/link'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import { ComponentProps, Suspense } from 'react'
@@ -11,17 +12,24 @@ const UI = ({ href }: Pick<ComponentProps<typeof Link>, 'href'>) => (
 )
 
 const HemiLogoImpl = function () {
-  const href = useTunnelOperationByConnectedWallet()
+  const tunnelHref = useTunnelOperationByConnectedWallet()
+  const href = featureFlags.enableBtcYieldPage ? '/bitcoin-yield' : tunnelHref
 
   return <UI href={href} />
 }
 
 export const HomeLink = () => (
-  // The logo link redirects to the tunnel page, but defining which operation to return to
-  // (Deposit, Withdraw, etc.) depending on the connected wallet. In the initial render,
-  // There is no connected wallet, so it will redirect to the tunnel page. After hydration, the
-  // appropriate query string will be applied. This allow us to statically render this logo
-  <Suspense fallback={<UI href="/tunnel" />}>
+  // The logo link redirects based on feature flag. When btc yield page is enabled, it goes to
+  // /bitcoin-yield. Otherwise, it redirects to the tunnel page with the appropriate operation
+  // (Deposit, Withdraw, etc.) based on the connected wallet. Initial render shows /tunnel as
+  // fallback, with the correct href applied after hydration for static rendering.
+  <Suspense
+    fallback={
+      <UI
+        href={featureFlags.enableBtcYieldPage ? '/bitcoin-yield' : '/tunnel'}
+      />
+    }
+  >
     <HemiLogoImpl />
   </Suspense>
 )

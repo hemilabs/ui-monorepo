@@ -9,6 +9,7 @@ import { useTranslations } from 'next-intl'
 
 import { Badge } from '../badge'
 
+import { BitcoinYield } from './_components/bitcoinYield'
 import { Dex } from './_components/dex'
 import { GenesisDrop } from './_components/genesisDrop'
 import { GetStarted } from './_components/getStarted'
@@ -52,6 +53,9 @@ export const Navbar = function () {
           <Help />
         </div>
         <ul className="flex h-[calc(100dvh-170px)] flex-col gap-y-0.5 overflow-y-auto md:mt-2 md:h-full">
+          <PaddedListItem>
+            <BitcoinYield />
+          </PaddedListItem>
           <PaddedListItem>
             <TunnelLink />
           </PaddedListItem>

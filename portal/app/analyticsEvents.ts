@@ -47,6 +47,7 @@ const analyticsEvents = [
   'tut - tunnel eth',
   'tut - wallet setup',
   // nav bar
+  'nav - bitcoin yield',
   'nav - dex',
   'nav - docs',
   'nav - ecosystem',

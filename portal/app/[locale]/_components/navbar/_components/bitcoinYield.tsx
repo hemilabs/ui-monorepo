@@ -15,14 +15,12 @@ const BitcoinYieldImpl = function () {
   }
 
   return (
-    <li className="[&>div]:px-2">
-      <ItemLink
-        event="nav - bitcoin yield"
-        href="/bitcoin-yield"
-        icon={<BitcoinYieldIcon />}
-        text={t('bitcoin-yield')}
-      />
-    </li>
+    <ItemLink
+      event="nav - bitcoin yield"
+      href="/bitcoin-yield"
+      icon={<BitcoinYieldIcon />}
+      text={t('bitcoin-yield')}
+    />
   )
 }
 

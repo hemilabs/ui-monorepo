@@ -1,0 +1,36 @@
+{
+  "name": "vault-rewards-actions",
+  "version": "1.0.0",
+  "description": "Pool Rewards actions",
+  "keywords": [
+    "hemi",
+    "hemilabs",
+    "pools",
+    "rewards",
+    "vault",
+    "viem"
+  ],
+  "license": "MIT",
+  "author": {
+    "email": "gonzalo@hemi.xyz",
+    "name": "Gonzalo D'Elia"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "tsc:check": "tsc"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "22.0.2",
+    "@types/node": "22.9.0",
+    "typescript": "5.8.3",
+    "viem": "2.28.4",
+    "vitest": "3.2.4"
+  },
+  "peerDependencies": {
+    "viem": "^2.x"
+  },
+  "exports": {
+    ".": "./index.ts",
+    "./actions": "./src/actions/index.ts"
+  }
+}

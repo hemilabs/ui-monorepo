@@ -1,12 +1,10 @@
-import Big from 'big.js'
 import { Card } from 'components/card'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import Image, { StaticImageData } from 'next/image'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import { formatFiatNumber, formatTVL } from 'utils/format'
-import { getTokenPrice } from 'utils/token'
-import { formatUnits } from 'viem'
+import { calculateUsdValue } from 'utils/prices'
 import { useAccount } from 'wagmi'
 
 import { useHemiPoints } from '../../../_hooks/useHemiPoints'
@@ -130,19 +128,6 @@ export const YourStake = function () {
   const { loading: loadingPosition, tokensWithPosition } = useStakePositions()
   const t = useTranslations('stake-page.dashboard')
 
-  const getPosition = function () {
-    const userPosition = tokensWithPosition.reduce(
-      (acc, staked) =>
-        acc.plus(
-          Big(formatUnits(staked.balance, staked.decimals)).times(
-            getTokenPrice(staked, prices),
-          ),
-        ),
-      Big(0),
-    )
-    return `$ ${formatFiatNumber(userPosition.toFixed())}`
-  }
-
   const getPoints = function () {
     if (!isConnected) {
       return '-'
@@ -154,7 +139,8 @@ export const YourStake = function () {
       // if Prices API is missing, return "-"
       return '-'
     }
-    return getPosition()
+    const userPosition = calculateUsdValue(tokensWithPosition, prices)
+    return `$ ${formatFiatNumber(userPosition)}`
   }
 
   return (

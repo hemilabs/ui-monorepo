@@ -57,3 +57,10 @@ export type BitcoinYieldWithdrawalOperation = {
   transactionHash?: Hash
   status: BitcoinYieldWithdrawalStatusType
 }
+
+export type PoolRewards = readonly [
+  // array of token addresses that are rewarded
+  Address[],
+  // array of amounts rewarded for each token
+  bigint[],
+]

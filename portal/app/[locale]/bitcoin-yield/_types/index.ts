@@ -79,7 +79,7 @@ export type BitcoinYieldClaimRewardOperation = {
 }
 
 export type PoolRewards =
-  | []
+  | readonly []
   | readonly [
       // array of token addresses that are rewarded
       Address[],

@@ -1,3 +1,4 @@
+import type { NetworkType } from 'hooks/useNetworkType'
 import { formatPercentage } from 'utils/format'
 
 import type { Strategy } from '../_types'
@@ -38,3 +39,7 @@ export const formatStrategyName = function (
 
 export const formatStrategyWeight = (weight: bigint) =>
   formatPercentage(Number(weight) / 100)
+
+export const isBitcoinYieldEnabledOnTestnet = (networkType: NetworkType) =>
+  networkType !== 'testnet' ||
+  process.env.NEXT_PUBLIC_ENABLE_BTC_YIELD_TESTNET === 'true'

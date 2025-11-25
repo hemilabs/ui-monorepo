@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { getClaimable } from 'vault-rewards-actions/actions'
-import { type Chain } from 'viem'
+import { type Chain, zeroAddress, isAddressEqual } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { PoolRewards } from '../_types'
@@ -25,7 +25,7 @@ export const usePoolRewards = function <TData = PoolRewards>({
   return useQuery({
     enabled: address !== undefined && vaultRewardsAddress !== undefined,
     async queryFn() {
-      if (vaultRewardsAddress === undefined) {
+      if (isAddressEqual(vaultRewardsAddress!, zeroAddress)) {
         return [] as PoolRewards
       }
       return getClaimable(hemiClient, {

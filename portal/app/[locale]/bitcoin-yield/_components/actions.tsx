@@ -10,14 +10,16 @@ import { usePoolAsset } from '../_hooks/usePoolAsset'
 import { useUserPoolBalance } from '../_hooks/useUserPoolBalance'
 import { type Vault } from '../_types'
 
+import { Claim } from './claim'
+
 type Props = {
   row: Row<Vault>
 }
 
 export const Actions = function ({ row }: Props) {
-  const t = useTranslations()
   const [, setOperationDrawer] = useOperationDrawer()
   const token = usePoolAsset().data
+  const t = useTranslations()
 
   const {
     balance,
@@ -67,9 +69,9 @@ export const Actions = function ({ row }: Props) {
           )}
         </Button>
       </div>
-      <Button {...commonProps} type="button" variant="secondary">
-        {t('bitcoin-yield.table.claim-rewards')}
-      </Button>
+      <div className="*:min-w-19">
+        <Claim />
+      </div>
       <ButtonIcon
         {...commonProps}
         disabled={loadingStrategies || !row.getCanExpand()}

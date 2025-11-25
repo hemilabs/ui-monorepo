@@ -1,6 +1,6 @@
 import { parseAsStringLiteral, useQueryState } from 'nuqs'
 
-const drawerModes = ['deposit', 'withdraw'] as const
+const drawerModes = ['deposit', 'withdraw', 'claim'] as const
 
 export const useOperationDrawer = () =>
   useQueryState(

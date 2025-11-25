@@ -2,6 +2,8 @@
   "bitcoin-yield": {
     "bridge-btc-and-receive": "Bridge your BTC through the tunnel and receive {symbol}",
     "drawer": {
+      "claim-rewards-heading": "Claim Rewards",
+      "claim-rewards-subheading": "We're processing your reward claim. You can follow the progress below.",
       "deposit-btc": "Deposit {symbol}",
       "deposit-heading": "Deposit review",
       "deposit-subheading": "Complete the remaining steps to deposit your {symbol}",
@@ -39,6 +41,8 @@
       "rewards": "Rewards"
     },
     "toast": {
+      "claim-rewards-confirmed": "Claim rewards confirmed",
+      "claim-rewards-successful": "Your rewards claim was successful",
       "deposit-confirmed": "Deposit confirmed",
       "withdraw-confirmed": "Withdrawal confirmed",
       "your-deposit-was-successful": "Your deposit was successful",

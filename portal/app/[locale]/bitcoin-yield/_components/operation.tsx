@@ -10,7 +10,7 @@ type Props = {
   bottomSection?: ReactNode
   callToAction?: ReactNode
   isOperating?: boolean
-  onSubmit: VoidFunction
+  onSubmit?: VoidFunction
   preview?: ReactNode
   steps: StepPropsWithoutPosition[]
   subheading: string
@@ -36,7 +36,7 @@ export const Operation = ({
     className="drawer-content h-[95dvh] md:h-full"
     onSubmit={function (e) {
       e.preventDefault()
-      onSubmit()
+      onSubmit?.()
     }}
   >
     <div className="min-h-21 mb-3 flex flex-col gap-y-3">

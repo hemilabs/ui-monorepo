@@ -10,6 +10,7 @@ import { useAmount } from 'hooks/useAmount'
 
 import { useOperationDrawer } from '../_hooks/useOperationDrawer'
 
+import { VaultClaimRewardOperation } from './vaultClaimRewardOperation'
 import { VaultDepositOperation } from './vaultDepositOperation'
 import { VaultWithdrawalOperation } from './vaultWithdrawalOperation'
 
@@ -48,6 +49,9 @@ export const YieldOperationDrawer = function () {
           onAmountChange={onAmountChange}
           onClose={safeCloseDrawer}
         />
+      )}
+      {operation === 'claim' && (
+        <VaultClaimRewardOperation onClose={safeCloseDrawer} />
       )}
     </Drawer>
   )

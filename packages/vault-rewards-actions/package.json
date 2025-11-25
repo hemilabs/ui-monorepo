@@ -19,6 +19,9 @@
     "test": "vitest run",
     "tsc:check": "tsc"
   },
+  "dependencies": {
+    "to-promise-event": "1.0.0"
+  },
   "devDependencies": {
     "@tsconfig/node22": "22.0.2",
     "@types/node": "22.9.0",
@@ -30,7 +33,6 @@
     "viem": "^2.x"
   },
   "exports": {
-    ".": "./index.ts",
     "./actions": "./src/actions/index.ts"
   }
 }

@@ -24,6 +24,6 @@ Note that `@tsconfig/node22` must be installed in the `package.json`. Install th
 
 - Avoid using `any` whenever possible. If a type is not known, prefer using `unknown`
 - When adding or updating tests, don't worry about types not compiling. Tests are excluded from `tsconfig.json`, so feel free to leave errors in the IDE. As long as tests run, it is ok - no need to add `as any` in several places to make types compile in test files. Following that line, prefer using partial objects or the minimum object needed so tests pass, even though it may throw compilation errors. Types in tests should be mostly as a guide.
-- When defining Interfaces, Types, or inline types, the names of the keys should be sorted in alphabetic or der.
+- When defining Interfaces, Types, or inline types, the names of the keys should be sorted in alphabetic order.
 - Do not add the return type of a function, unless strictly needed. Let the Typescript compiler infer automatically the type returned.
-- Imports should be sorted alphabetically in descending order by module name
+- Imports should be sorted alphabetically in ascending order (A-Z) by module name

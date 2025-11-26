@@ -31,11 +31,10 @@ export const Operation = ({
       <DrawerParagraph>{subheading}</DrawerParagraph>
     </div>
     <ReviewOperation
-      amount={amount}
+      amount={<Amount token={token} value={amount} />}
       bottomSection={bottomSection}
       callToAction={callToAction}
       steps={steps}
-      token={token}
     />
   </>
 )

@@ -1,5 +1,6 @@
 import { DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { ReviewOperation } from 'components/reviewOperation'
+import { Amount } from 'components/reviewOperation/amount'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { SlidingSwitcher } from 'components/slidingSwitcher'
 import { ReactNode } from 'react'
@@ -43,10 +44,14 @@ export const Operation = ({
       hideFirst={isOperating}
       second={
         <ReviewOperation
-          amount={parseTokenUnits(amount, token).toString()}
+          amount={
+            <Amount
+              token={token}
+              value={parseTokenUnits(amount, token).toString()}
+            />
+          }
           callToAction={callToAction}
           steps={steps}
-          token={token}
         />
       }
     />

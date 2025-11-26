@@ -1,12 +1,11 @@
 import { DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { ReviewOperation } from 'components/reviewOperation'
-import { Amount } from 'components/reviewOperation/amount'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { SlidingSwitcher } from 'components/slidingSwitcher'
 import { ComponentProps, ReactNode } from 'react'
-import { parseTokenUnits } from 'utils/token'
 
 type Props = {
+  amount: ReactNode
   bottomSection?: ReactNode
   callToAction?: ReactNode
   isOperating?: boolean
@@ -14,10 +13,7 @@ type Props = {
   preview?: ReactNode
   steps: StepPropsWithoutPosition[]
   subheading: string
-} & ComponentProps<typeof DrawerTopSection> &
-  Omit<ComponentProps<typeof Amount>, 'value'> & {
-    amount: ComponentProps<typeof Amount>['value']
-  }
+} & ComponentProps<typeof DrawerTopSection>
 
 export const Operation = ({
   amount,
@@ -30,7 +26,6 @@ export const Operation = ({
   preview,
   steps,
   subheading,
-  token,
 }: Props) => (
   <form
     className="drawer-content h-[95dvh] md:h-full"
@@ -48,11 +43,10 @@ export const Operation = ({
       hideFirst={isOperating}
       second={
         <ReviewOperation
-          amount={parseTokenUnits(amount, token).toString()}
+          amount={amount}
           bottomSection={bottomSection}
           callToAction={callToAction}
           steps={steps}
-          token={token}
         />
       }
     />

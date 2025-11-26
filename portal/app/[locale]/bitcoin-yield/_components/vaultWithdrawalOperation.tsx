@@ -2,6 +2,7 @@
 
 import { Button } from 'components/button'
 import { HemiFees } from 'components/hemiFees'
+import { Amount } from 'components/reviewOperation/amount'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import {
   ProgressStatus,
@@ -213,7 +214,12 @@ export const VaultWithdrawalOperation = function ({
     <>
       {renderToast()}
       <Operation
-        amount={input}
+        amount={
+          <Amount
+            token={token}
+            value={parseTokenUnits(input, token).toString()}
+          />
+        }
         callToAction={getCallToAction(withdrawalStatus)}
         heading={t('bitcoin-yield.drawer.withdraw-heading')}
         isOperating={isPending || isSuccess}
@@ -249,7 +255,6 @@ export const VaultWithdrawalOperation = function ({
         subheading={t('bitcoin-yield.drawer.withdraw-subheading', {
           symbol: token.symbol,
         })}
-        token={token}
       />
     </>
   )

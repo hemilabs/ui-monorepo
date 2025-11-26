@@ -13,6 +13,7 @@ import { useHemiWalletClient } from 'hooks/useHemiClient'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useEffect, useRef, useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -20,7 +21,7 @@ import { useAccount } from 'wagmi'
 import { useClaimRewards } from '../_hooks/useClaimRewards'
 import { useEstimateClaimRewardFees } from '../_hooks/useEstimateClaimRewardFees'
 import { useHasClaimableRewards } from '../_hooks/useHasClaimableRewards'
-import { usePoolAsset } from '../_hooks/usePoolAsset'
+import { usePoolRewards } from '../_hooks/usePoolRewards'
 import {
   type BitcoinYieldClaimRewardOperation,
   BitcoinYieldClaimRewardStatus,
@@ -28,6 +29,7 @@ import {
 } from '../_types'
 
 import { Operation } from './operation'
+import { Rewards } from './rewards'
 
 const SuccessToast = dynamic(
   () => import('./successToast').then(mod => mod.SuccessToast),
@@ -49,8 +51,8 @@ export const VaultClaimRewardOperation = function ({ onClose }: Props) {
 
   const hemi = useHemi()
   const { address } = useAccount()
-  const { data: token } = usePoolAsset()
   const { data: hasClaimableRewards } = useHasClaimableRewards()
+  const { data: poolRewards } = usePoolRewards()
   const { hemiWalletClient } = useHemiWalletClient()
 
   const {
@@ -205,15 +207,31 @@ export const VaultClaimRewardOperation = function ({ onClose }: Props) {
     <>
       {renderToast()}
       <Operation
-        // No amount input for claiming rewards
-        amount="0"
+        amount={
+          <div className="flex items-center justify-between text-sm font-medium">
+            <span className="text-neutral-500">{t('common.total-amount')}</span>
+            {
+              /*
+            we only need to check for undefined (loading). If there were no rewards or an error
+            we wouldn't have pool rewards to claim, so this component wouldn't be rendering. I even think
+            we could skip undefined check, but I'm following Typescript suggestion here.*/
+              poolRewards !== undefined ? (
+                <Rewards
+                  amounts={poolRewards[1]!}
+                  tokenAddresses={poolRewards[0]!}
+                />
+              ) : (
+                <Skeleton className="h-4 w-24" />
+              )
+            }
+          </div>
+        }
         callToAction={getCallToAction(claimRewardStatus)}
         heading={t('bitcoin-yield.drawer.claim-rewards-heading')}
         isOperating={isPending || isSuccess}
         onClose={onClose}
         steps={steps}
         subheading={t('bitcoin-yield.drawer.claim-rewards-subheading')}
-        token={token}
       />
     </>
   )

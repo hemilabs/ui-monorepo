@@ -2,6 +2,7 @@
 
 import { Button } from 'components/button'
 import { HemiFees } from 'components/hemiFees'
+import { Amount } from 'components/reviewOperation/amount'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import {
   ProgressStatus,
@@ -287,7 +288,12 @@ export const VaultDepositOperation = function ({
     <>
       {renderToast()}
       <Operation
-        amount={input}
+        amount={
+          <Amount
+            token={token}
+            value={parseTokenUnits(input, token).toString()}
+          />
+        }
         callToAction={getCallToAction(depositStatus)}
         heading={t('bitcoin-yield.drawer.deposit-heading')}
         isOperating={isPending || isSuccess}
@@ -327,7 +333,6 @@ export const VaultDepositOperation = function ({
         subheading={t('bitcoin-yield.drawer.deposit-subheading', {
           symbol: token.symbol,
         })}
-        token={token}
       />
     </>
   )

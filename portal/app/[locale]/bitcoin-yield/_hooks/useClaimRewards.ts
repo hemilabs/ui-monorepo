@@ -22,7 +22,7 @@ type UseClaimRewards = {
 export const useClaimRewards = function ({
   updateBitcoinYieldOperation,
 }: UseClaimRewards) {
-  const { address } = useAccount()
+  const { address, chainId } = useAccount()
   const hemi = useHemi()
   const hemiClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
@@ -48,7 +48,7 @@ export const useClaimRewards = function ({
         throw new Error('Vault rewards address not available')
       }
 
-      if (hemiWalletClient?.chain?.id !== hemi.id) {
+      if (chainId !== hemi.id) {
         await switchChainAsync({ chainId: hemi.id })
       }
 

@@ -37,6 +37,9 @@ describe('withdraw', function () {
   it('should emit "unexpected-error" if wallet client chain is not defined', async function () {
     const walletClientWithoutChain = {} as WalletClient
 
+    // Mock balanceOf to avoid it being called before chain validation
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(100))
+
     const { emitter, promise } = withdraw({
       ...validParameters,
       walletClient: walletClientWithoutChain,
@@ -54,6 +57,9 @@ describe('withdraw', function () {
   })
 
   it('should emit "withdraw-failed-validation" if shares are zero', async function () {
+    // Mock balanceOf since it's called before validation
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(100))
+
     const { emitter, promise } = withdraw({
       ...validParameters,
       shares: BigInt(0),
@@ -70,6 +76,9 @@ describe('withdraw', function () {
   })
 
   it('should emit "withdraw-failed-validation" if shares are negative', async function () {
+    // Mock balanceOf since it's called before validation
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(100))
+
     const { emitter, promise } = withdraw({
       ...validParameters,
       shares: BigInt(-1),
@@ -86,6 +95,9 @@ describe('withdraw', function () {
   })
 
   it('should emit "withdraw-failed-validation" if shares are undefined', async function () {
+    // Mock balanceOf since it's called before validation
+    vi.mocked(balanceOf).mockResolvedValue(BigInt(100))
+
     const { emitter, promise } = withdraw({
       ...validParameters,
       // @ts-expect-error testing invalid input
@@ -265,5 +277,79 @@ describe('withdraw', function () {
 
     expect(onUnexpectedError).toHaveBeenCalledExactlyOnceWith(expect.any(Error))
     expect(onSettled).toHaveBeenCalledOnce()
+  })
+
+  it('should withdraw the full share balance when shares amount is exactly 99.9% of user balance', async function () {
+    const userBalance = BigInt(1000)
+    // Exactly 99.9%
+    const requestedShares = (userBalance * BigInt(999)) / BigInt(1000)
+    const receipt = { status: 'success' } as TransactionReceipt
+
+    vi.mocked(balanceOf).mockResolvedValue(userBalance)
+    vi.mocked(redeem).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue(receipt)
+
+    const { emitter, promise } = withdraw({
+      ...validParameters,
+      shares: requestedShares,
+    })
+
+    const onWithdrawTransactionSucceeded = vi.fn()
+    emitter.on('withdraw-transaction-succeeded', onWithdrawTransactionSucceeded)
+
+    await promise
+
+    expect(onWithdrawTransactionSucceeded).toHaveBeenCalledExactlyOnceWith(
+      receipt,
+    )
+    expect(redeem).toHaveBeenCalledExactlyOnceWith(
+      validParameters.walletClient,
+      {
+        address: getBtcStakingVaultContractAddress(
+          validParameters.walletClient.chain!.id,
+        ),
+        owner: validParameters.owner,
+        receiver: validParameters.receiver,
+        // Should use full balance, not requested shares
+        shares: userBalance,
+      },
+    )
+  })
+
+  it('should withdraw the full share balance when shares amount is greater than 99.9% of user balance', async function () {
+    const userBalance = BigInt(1000)
+    // 99.99% which is > 99.9% threshold
+    const requestedShares = (userBalance * BigInt(9999)) / BigInt(10000)
+    const receipt = { status: 'success' } as TransactionReceipt
+
+    vi.mocked(balanceOf).mockResolvedValue(userBalance)
+    vi.mocked(redeem).mockResolvedValue(zeroHash)
+    vi.mocked(waitForTransactionReceipt).mockResolvedValue(receipt)
+
+    const { emitter, promise } = withdraw({
+      ...validParameters,
+      shares: requestedShares,
+    })
+
+    const onWithdrawTransactionSucceeded = vi.fn()
+    emitter.on('withdraw-transaction-succeeded', onWithdrawTransactionSucceeded)
+
+    await promise
+
+    expect(onWithdrawTransactionSucceeded).toHaveBeenCalledExactlyOnceWith(
+      receipt,
+    )
+    expect(redeem).toHaveBeenCalledExactlyOnceWith(
+      validParameters.walletClient,
+      {
+        address: getBtcStakingVaultContractAddress(
+          validParameters.walletClient.chain!.id,
+        ),
+        owner: validParameters.owner,
+        receiver: validParameters.receiver,
+        // Should use full balance, not requested shares
+        shares: userBalance,
+      },
+    )
   })
 })

@@ -10,15 +10,11 @@ import { getBtcStakingVaultContractAddress } from '../../constants'
 import type { WithdrawEvents } from '../../types'
 
 const canWithdraw = async function ({
-  account,
   shares,
-  vaultAddress,
-  walletClient,
+  userShares,
 }: {
-  account: Address
   shares: bigint
-  vaultAddress: Address
-  walletClient: WalletClient
+  userShares: bigint
 }): Promise<{
   canWithdraw: boolean
   reason?: string
@@ -30,11 +26,6 @@ const canWithdraw = async function ({
     }
   }
 
-  const userShares = await balanceOf(walletClient, {
-    account,
-    address: vaultAddress,
-  })
-
   if (shares > userShares) {
     return {
       canWithdraw: false,
@@ -43,6 +34,28 @@ const canWithdraw = async function ({
   }
 
   return { canWithdraw: true }
+}
+
+const calculateAdjustedShares = function ({
+  requestedShares,
+  userShares,
+}: {
+  requestedShares: bigint
+  userShares: bigint
+}) {
+  // During withdraw operations, the token amount to withdraw may be too close
+  // but not be the exact user's balance due to rounding issues. If this is the
+  // case, assume the desired amount is the balance and not the given amount.
+  // This prevents small amounts (dust) to remain in the user's balance.
+  //
+  // If the token amount is above 99.9% of the balance, the whole
+  // balance will be returned instead of the given amount.
+  const threshold = (userShares * BigInt(999)) / BigInt(1000)
+  if (requestedShares >= threshold) {
+    return userShares
+  }
+
+  return requestedShares
 }
 
 const runWithdraw = ({
@@ -69,11 +82,15 @@ const runWithdraw = ({
         walletClient.chain.id,
       )
 
-      const { canWithdraw: canWithdrawFlag, reason } = await canWithdraw({
+      // Memoize the balanceOf call to use it for both validation and dust sweeping
+      const userShares = await balanceOf(walletClient, {
         account,
+        address: vaultAddress,
+      })
+
+      const { canWithdraw: canWithdrawFlag, reason } = await canWithdraw({
         shares,
-        vaultAddress,
-        walletClient,
+        userShares,
       }).catch(() => ({
         canWithdraw: false,
         reason: 'failed to validate inputs',
@@ -86,11 +103,17 @@ const runWithdraw = ({
 
       emitter.emit('pre-withdraw')
 
+      // Calculate adjusted shares for dust sweeping
+      const adjustedShares = calculateAdjustedShares({
+        requestedShares: shares,
+        userShares,
+      })
+
       const withdrawHash = await redeem(walletClient, {
         address: vaultAddress,
         owner,
         receiver,
-        shares,
+        shares: adjustedShares,
       }).catch(function (error: Error) {
         emitter.emit('user-signing-withdraw-error', error)
       })

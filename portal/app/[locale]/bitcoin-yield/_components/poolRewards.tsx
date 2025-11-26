@@ -16,7 +16,7 @@ export const PoolRewards = function () {
   const noRewards = loaded && poolRewards.length === 0
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-y-0.5">
       <span className="body-text-medium text-neutral-950">
         {withRewards ? (
           // here rewards are defined

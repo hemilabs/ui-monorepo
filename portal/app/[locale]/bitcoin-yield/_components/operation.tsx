@@ -15,7 +15,7 @@ type Props = {
   subheading: string
 } & ComponentProps<typeof DrawerTopSection>
 
-export const Operation = ({
+export const Operation = function ({
   amount,
   bottomSection,
   callToAction,
@@ -26,29 +26,36 @@ export const Operation = ({
   preview,
   steps,
   subheading,
-}: Props) => (
-  <form
-    className="drawer-content h-[95dvh] md:h-full"
-    onSubmit={function (e) {
-      e.preventDefault()
-      onSubmit?.()
-    }}
-  >
-    <div className="min-h-21 mb-3 flex flex-col gap-y-3">
-      <DrawerTopSection heading={heading} onClose={onClose} />
-      <DrawerParagraph>{subheading}</DrawerParagraph>
-    </div>
-    <SlidingSwitcher
-      first={preview}
-      hideFirst={isOperating}
-      second={
-        <ReviewOperation
-          amount={amount}
-          bottomSection={bottomSection}
-          callToAction={callToAction}
-          steps={steps}
-        />
-      }
+}: Props) {
+  const review = (
+    <ReviewOperation
+      amount={amount}
+      bottomSection={bottomSection}
+      callToAction={callToAction}
+      steps={steps}
     />
-  </form>
-)
+  )
+  return (
+    <form
+      className="drawer-content h-[95dvh] md:h-full"
+      onSubmit={function (e) {
+        e.preventDefault()
+        onSubmit?.()
+      }}
+    >
+      <div className="min-h-21 mb-3 flex flex-col gap-y-3">
+        <DrawerTopSection heading={heading} onClose={onClose} />
+        <DrawerParagraph>{subheading}</DrawerParagraph>
+      </div>
+      {preview ? (
+        <SlidingSwitcher
+          first={preview}
+          hideFirst={isOperating}
+          second={review}
+        />
+      ) : (
+        review
+      )}
+    </form>
+  )
+}

@@ -7,7 +7,6 @@ import {
 } from '@tanstack/react-table'
 import { Column } from 'components/table/_components/column'
 import { ColumnHeader } from 'components/table/_components/columnHeader'
-import { TableBodyContainer } from 'components/table/_components/tableBodyContainer'
 import { getNewColumnOrder } from 'components/table/_utils'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { Fragment, useState } from 'react'
@@ -72,37 +71,31 @@ export const PoolTable = function () {
             </tr>
           ))}
         </thead>
-        <TableBodyContainer>
-          <tbody className="flex flex-col">
-            {table.getRowModel().rows.map(row => (
-              <Fragment key={row.id}>
-                <tr className="flex w-full items-center [&>td]:border-b-0">
-                  {row.getVisibleCells().map(cell => (
-                    <Column
-                      key={cell.id}
-                      style={{
-                        width: cell.column.columnDef.meta?.width,
-                      }}
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </Column>
-                  ))}
+        <tbody className="-mt-1.5 mb-1 flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden rounded-xl bg-white shadow-md">
+          {table.getRowModel().rows.map(row => (
+            <Fragment key={row.id}>
+              <tr className="flex w-full items-center [&>td]:border-b-0">
+                {row.getVisibleCells().map(cell => (
+                  <Column
+                    key={cell.id}
+                    style={{
+                      width: cell.column.columnDef.meta?.width,
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Column>
+                ))}
+              </tr>
+              {row.getIsExpanded() && row.original.strategies !== undefined && (
+                <tr className="flex w-full items-center">
+                  <Column colSpan={row.getAllCells().length}>
+                    <StrategiesRow strategies={row.original.strategies} />
+                  </Column>
                 </tr>
-                {row.getIsExpanded() &&
-                  row.original.strategies !== undefined && (
-                    <tr className="flex w-full items-center">
-                      <Column colSpan={row.getAllCells().length}>
-                        <StrategiesRow strategies={row.original.strategies} />
-                      </Column>
-                    </tr>
-                  )}
-              </Fragment>
-            ))}
-          </tbody>
-        </TableBodyContainer>
+              )}
+            </Fragment>
+          ))}
+        </tbody>
       </table>
     </div>
   )

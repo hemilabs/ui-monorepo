@@ -44,6 +44,7 @@ NEXT_PUBLIC_ENABLE_COOKIE3=<true|false> # Enable cookie3 analytics
 NEXT_PUBLIC_ANALYTICS_URL=<url> # Umami analytics URL
 NEXT_PUBLIC_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features
+NEXT_PUBLIC_ENABLE_BTC_YIELD_CLAIM_REWARDS=<true|false> # Enable claim rewards on the Btc yield page
 NEXT_PUBLIC_ENABLE_BTC_YIELD_PAGE=<true|false> # Enable the Btc yield page
 NEXT_PUBLIC_ENABLE_BTC_YIELD_TESTNET=<true|false> # Enable bitcoin yield on Testnet, for local development
 NEXT_PUBLIC_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development

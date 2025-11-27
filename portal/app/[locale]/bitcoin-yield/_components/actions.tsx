@@ -1,4 +1,5 @@
 import { Row } from '@tanstack/react-table'
+import { featureFlags } from 'app/featureFlags'
 import { Button, ButtonIcon } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { Spinner } from 'components/spinner'
@@ -69,9 +70,11 @@ export const Actions = function ({ row }: Props) {
           )}
         </Button>
       </div>
-      <div className="*:min-w-19">
-        <Claim />
-      </div>
+      {featureFlags.enableBtcYieldClaimRewards && (
+        <div className="*:min-w-19">
+          <Claim />
+        </div>
+      )}
       <ButtonIcon
         {...commonProps}
         disabled={loadingStrategies || !row.getCanExpand()}

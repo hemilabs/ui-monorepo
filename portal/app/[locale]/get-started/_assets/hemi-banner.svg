@@ -57,6 +57,57 @@
         fill="#1D2E34"
       />
     </g>
+
+    <!-- Animated circles moving along the paths -->
+    <!-- Left side circles (only on colored paths) -->
+    <circle fill="#fff" r="6">
+      <animateMotion
+        begin="1s"
+        dur="7s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
+        <mpath href="#leftPath2" />
+      </animateMotion>
+    </circle>
+
+    <circle fill="#fff" r="6">
+      <animateMotion
+        begin="2s"
+        dur="9s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
+        <mpath href="#leftPath3" />
+      </animateMotion>
+    </circle>
+
+    <!-- Right side circles (only on colored paths) -->
+    <circle fill="#fff" r="6">
+      <animateMotion
+        begin="1.5s"
+        dur="7s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
+        <mpath href="#rightPath2" />
+      </animateMotion>
+    </circle>
+
+    <circle fill="#fff" r="6">
+      <animateMotion
+        begin="2.5s"
+        dur="9s"
+        keyPoints="1;0"
+        keyTimes="0;1"
+        repeatCount="indefinite"
+      >
+        <mpath href="#rightPath3" />
+      </animateMotion>
+    </circle>
   </g>
   <defs>
     <clipPath id="clip0_15643_19311">
@@ -70,5 +121,31 @@
         transform="translate(370 52)"
       />
     </clipPath>
+
+    <!-- Path definitions for animation -->
+    <path
+      d="M0.000327828 -115.809L92.9283 -27.1875C126.672 4.99259 126.672 57.1613 92.9283 89.3337L0.000327828 177.955"
+      id="leftPath1"
+    />
+    <path
+      d="M0.000681099 -115.809L143.241 20.7927C175.521 51.5766 175.521 101.479 143.241 132.256L0.000681099 268.857"
+      id="leftPath2"
+    />
+    <path
+      d="M0.000168059 -147.281L159.496 4.82266C200.936 44.3421 200.936 108.42 159.496 147.947L1.66417 298.464"
+      id="leftPath3"
+    />
+    <path
+      d="M897.576 -115.809L804.648 -27.1875C770.904 4.99259 770.904 57.1613 804.648 89.3337L897.576 177.955"
+      id="rightPath1"
+    />
+    <path
+      d="M897.576 -115.809L754.336 20.7927C722.056 51.5766 722.056 101.479 754.336 132.256L897.576 268.857"
+      id="rightPath2"
+    />
+    <path
+      d="M897.576 -147.281L738.08 4.82266C696.64 44.3421 696.64 108.42 738.08 147.947L895.912 298.464"
+      id="rightPath3"
+    />
   </defs>
 </svg>

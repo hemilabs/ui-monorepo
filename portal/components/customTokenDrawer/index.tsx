@@ -59,6 +59,12 @@ const getL2AddressValidity = function (
     return undefined
   }
   if (
+    l2customToken.l1Token === undefined ||
+    l1CustomToken.address === undefined
+  ) {
+    return 'this-address-is-not-valid'
+  }
+  if (
     !isAddressEqual(l2customToken.l1Token, l1CustomToken.address as Address)
   ) {
     return 'address-does-not-match-l2'

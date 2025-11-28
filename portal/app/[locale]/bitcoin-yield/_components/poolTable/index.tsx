@@ -74,7 +74,10 @@ export const PoolTable = function () {
         <tbody className="-mt-1.5 mb-1 flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden rounded-xl bg-white shadow-md">
           {table.getRowModel().rows.map(row => (
             <Fragment key={row.id}>
-              <tr className="flex w-full items-center [&>td]:border-b-0">
+              <tr
+                className="flex w-full items-center [&>td]:border-b-0"
+                onClick={row.getToggleExpandedHandler()}
+              >
                 {row.getVisibleCells().map(cell => (
                   <Column
                     key={cell.id}

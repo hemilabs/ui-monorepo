@@ -17,7 +17,11 @@ export const Claim = function () {
   return (
     <Button
       disabled={!address || isHasClaimableRewardsError || !hasClaimableRewards}
-      onClick={() => setOperationDrawer('claim')}
+      onClick={function (e) {
+        // Prevent event bubbling to parent row
+        e.stopPropagation()
+        setOperationDrawer('claim')
+      }}
       size="xSmall"
       type="button"
       variant="secondary"

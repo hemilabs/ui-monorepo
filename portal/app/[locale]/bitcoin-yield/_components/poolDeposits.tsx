@@ -18,7 +18,7 @@ export const PoolDeposits = function () {
     <CardInfo
       data={poolDeposits}
       formatValue={value => (
-        <>
+        <div className="flex items-center">
           <span className="mr-1">$</span>
           <RenderFiatBalance
             balance={value}
@@ -27,7 +27,7 @@ export const PoolDeposits = function () {
             queryStatus="success"
             token={poolToken}
           />
-        </>
+        </div>
       )}
       icon={poolDepositIcon}
       isError={isError}

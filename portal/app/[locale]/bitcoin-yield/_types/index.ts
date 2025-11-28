@@ -58,9 +58,31 @@ export type BitcoinYieldWithdrawalOperation = {
   status: BitcoinYieldWithdrawalStatusType
 }
 
-export type PoolRewards = readonly [
-  // array of token addresses that are rewarded
-  Address[],
-  // array of amounts rewarded for each token
-  bigint[],
-]
+// Prefer ordering these by value rather than by key
+/* eslint-disable sort-keys */
+export const BitcoinYieldClaimRewardStatus = {
+  // The user has confirmed the TX in their wallet, but it hasn't been included in a block
+  CLAIM_REWARD_TX_PENDING: 0,
+  // Claim reward tx reverted
+  CLAIM_REWARD_TX_FAILED: 1,
+  // Transaction claim reward confirmed
+  CLAIM_REWARD_TX_CONFIRMED: 2,
+} as const
+/* eslint-enable sort-keys */
+
+export type BitcoinYieldClaimRewardStatusType =
+  (typeof BitcoinYieldClaimRewardStatus)[keyof typeof BitcoinYieldClaimRewardStatus]
+
+export type BitcoinYieldClaimRewardOperation = {
+  transactionHash?: Hash
+  status: BitcoinYieldClaimRewardStatusType
+}
+
+export type PoolRewards =
+  | readonly []
+  | readonly [
+      // array of token addresses that are rewarded
+      Address[],
+      // array of amounts rewarded for each token
+      bigint[],
+    ]

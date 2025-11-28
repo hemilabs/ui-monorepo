@@ -39,11 +39,10 @@ export const Operation = ({
       hideFirst={isOperating}
       second={
         <ReviewOperation
-          amount={amount}
+          amount={<Amount token={token} value={amount} />}
           bottomSection={bottomSection}
           callToAction={callToAction}
           steps={steps}
-          token={token}
         />
       }
     />

@@ -2,6 +2,8 @@
   "bitcoin-yield": {
     "bridge-btc-and-receive": "Transfiera su BTC a través del túnel y reciba {symbol}",
     "drawer": {
+      "claim-rewards-heading": "Reclamar recompensas",
+      "claim-rewards-subheading": "Estamos procesando su solicitud de recompensas. Puede seguir el progreso a continuación.",
       "deposit-btc": "Depositar {symbol}",
       "deposit-heading": "Depósito en revisión",
       "deposit-subheading": "Complete los pasos restantes para depositar su {symbol}",
@@ -39,6 +41,8 @@
       "rewards": "Recompensas"
     },
     "toast": {
+      "claim-rewards-confirmed": "Reclamo de recompensas confirmado",
+      "claim-rewards-successful": "Su reclamo de recompensas fue exitoso",
       "deposit-confirmed": "Depósito confirmado",
       "withdraw-confirmed": "Retiro confirmado",
       "your-deposit-was-successful": "Su depósito fue exitoso",

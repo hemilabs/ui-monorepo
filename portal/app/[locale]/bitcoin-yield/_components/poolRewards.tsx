@@ -12,13 +12,16 @@ export const PoolRewards = function () {
 
   const errorOrDisconnected = isError || !address
   const loaded = poolRewards !== undefined
+  const withRewards = loaded && poolRewards.length > 0
+  const noRewards = loaded && poolRewards.length === 0
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-y-0.5">
       <span className="body-text-medium text-neutral-950">
-        {loaded ? (
-          <Rewards amounts={poolRewards[1]} tokenAddresses={poolRewards[0]} />
-        ) : errorOrDisconnected ? (
+        {withRewards ? (
+          // here rewards are defined
+          <Rewards amounts={poolRewards[1]!} tokenAddresses={poolRewards[0]!} />
+        ) : errorOrDisconnected || noRewards ? (
           '-'
         ) : (
           <Skeleton className="h-4 w-16" />
@@ -26,12 +29,13 @@ export const PoolRewards = function () {
       </span>
       <span className="body-text-normal text-neutral-500">
         {/* Don't render a "-" - there will be one above, let's avoid the duplicate "-" */}
-        {loaded ? (
+        {withRewards ? (
+          // here rewards are defined
           <UsdRewards
-            amounts={poolRewards[1]}
-            tokenAddresses={poolRewards[0]}
+            amounts={poolRewards[1]!}
+            tokenAddresses={poolRewards[0]!}
           />
-        ) : errorOrDisconnected ? null : (
+        ) : errorOrDisconnected || noRewards ? null : (
           <Skeleton className="h-full" />
         )}
       </span>

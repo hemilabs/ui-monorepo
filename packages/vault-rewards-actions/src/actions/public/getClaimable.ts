@@ -20,7 +20,7 @@ import { poolRewardsAbi } from '../../abi'
  * and its claimable amount. For example, if `_rewardTokens[0]` is token A's address,
  * then `_claimableAmounts[0]` is the claimable amount for token A.
  */
-export const getClaimable = function (
+export const getClaimable = async function (
   client: Client,
   {
     account,

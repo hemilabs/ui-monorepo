@@ -3,17 +3,17 @@ import { LockupInput } from 'components/inputText'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useLocale, useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
-import { Token } from 'types/token'
+import type { Token } from 'types/token'
 import { formatDate } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import {
-  calculateVotingPower,
   daySeconds,
   maxDays,
   minDays,
+  predictVotingPower,
   step,
   twoYears,
 } from '../../_utils/lockCreationTimes'
@@ -210,7 +210,7 @@ export function Lockup({
 
       const lockTime = BigInt(lockupDays * daySeconds)
 
-      const { votingPower } = calculateVotingPower({
+      const votingPower = predictVotingPower({
         amount,
         lockTime,
         timestamp: unixNowTimestamp(),

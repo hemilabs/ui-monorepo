@@ -1,37 +1,46 @@
+import { DisplayAmount } from 'components/displayAmount'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useLocale } from 'next-intl'
+import Skeleton from 'react-loading-skeleton'
+import { formatPercentage } from 'utils/format'
 import { formatUnits } from 'viem'
 
+import { usePositionVotingPower } from '../../_hooks/usePositionVotingPower'
+
 type Props = {
-  decimals?: number
-  percentageOfMax: number
-  votingPower: bigint
+  amount: bigint
+  tokenId: bigint
 }
 
-export const VotingPower = function ({
-  decimals = 18,
-  percentageOfMax,
-  votingPower,
-}: Props) {
+export const VotingPower = function ({ amount, tokenId }: Props) {
   const token = useHemiToken()
-  const locale = useLocale()
-  const formattedPower = formatUnits(votingPower, decimals)
+  const { data: votingPower, error } = usePositionVotingPower(tokenId)
 
-  const numberFormatter = new Intl.NumberFormat(locale, {
-    maximumFractionDigits: 3, // Show up to 3 decimal places
-  })
+  if (votingPower !== undefined) {
+    const formattedPower = formatUnits(votingPower, token.decimals)
 
-  const displayPower = numberFormatter.format(Number(formattedPower))
-  const clampedPercentage = Math.min(100, Math.max(0, percentageOfMax))
+    const percentageOfMax =
+      amount > BigInt(0)
+        ? Math.min(100, Number((votingPower * BigInt(10000)) / amount) / 100)
+        : 0
 
-  return (
-    <div className="flex flex-col">
-      <span className="text-sm font-medium text-neutral-950">
-        {`${displayPower} ve${token.symbol}`}
-      </span>
-      <span className="text-xs font-normal text-neutral-500">
-        {clampedPercentage.toFixed(0)}%
-      </span>
-    </div>
-  )
+    return (
+      <div className="flex flex-col">
+        <span className="text-sm font-medium text-neutral-950">
+          <DisplayAmount
+            amount={formattedPower}
+            token={{ ...token, symbol: `ve${token.symbol}` }}
+          />
+        </span>
+        <span className="text-xs font-normal text-neutral-500">
+          {formatPercentage(percentageOfMax)}
+        </span>
+      </div>
+    )
+  }
+
+  if (error) {
+    return <span className="text-sm text-neutral-950">-</span>
+  }
+
+  return <Skeleton className="h-10 w-20" />
 }

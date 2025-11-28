@@ -117,14 +117,15 @@ export const getL2Erc20Token = pMemoize(
         address,
         chainId,
         functionName: 'l1Token',
-      }),
+        // The token may not have an l1 counter part
+      }).catch(() => undefined),
     ]).then(
       ([token, l1Token]) =>
         ({
           ...token,
           address,
-          l1Token: toChecksum(l1Token, chainId),
-        }) as L2Token,
+          l1Token: l1Token ? toChecksum(l1Token, chainId) : undefined,
+        }) satisfies L2Token,
     ),
   { resolver: ({ address, chainId }) => `${address}-${chainId}` },
 )

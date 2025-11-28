@@ -37,7 +37,7 @@ export type BtcToken = BaseToken & { chainId: BtcChain['id'] }
 // includes erc20 and native tokens for all chains
 export type EvmToken = BaseToken & { chainId: Chain['id'] }
 // superset of erc20 token with the info required from tunneling
-export type L2Token = EvmToken & { l1Token: Address }
+export type L2Token = EvmToken & { l1Token?: Address }
 
 export type Token = BtcToken | EvmToken
 

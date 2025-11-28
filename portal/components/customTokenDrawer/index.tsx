@@ -43,6 +43,7 @@ const canSubmit = ({
   !!l1CustomToken &&
   !!l2customToken &&
   isAddress(l1CustomToken.address, { strict: false }) &&
+  !!l2customToken.l1Token &&
   isAddressEqual(l2customToken.l1Token, l1CustomToken.address)
 
 const getL1AddressValidity = (l1CustomToken: Token | undefined) =>
@@ -55,15 +56,11 @@ const getL2AddressValidity = function (
   if (!l2customToken) {
     return 'this-address-is-not-valid'
   }
-  if (!l1CustomToken) {
+
+  if (!l1CustomToken || !l2customToken.l1Token) {
     return undefined
   }
-  if (
-    l2customToken.l1Token === undefined ||
-    l1CustomToken.address === undefined
-  ) {
-    return 'this-address-is-not-valid'
-  }
+
   if (
     !isAddressEqual(l2customToken.l1Token, l1CustomToken.address as Address)
   ) {
@@ -116,7 +113,6 @@ export const CustomTokenDrawer = function ({
   })
 
   const { track } = useUmami()
-
   const [acknowledged, setAcknowledged] = useState(false)
   const t = useTranslations('token-custom-drawer')
 
@@ -152,7 +148,8 @@ export const CustomTokenDrawer = function ({
       extensions: {
         bridgeInfo: {
           [l1ChainId]: {
-            tokenAddress: toChecksumAddress(l1Token),
+            // At to this point it should be defined
+            tokenAddress: toChecksumAddress(l1Token!),
           },
         },
       },

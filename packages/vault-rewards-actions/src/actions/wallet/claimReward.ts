@@ -59,8 +59,8 @@ const canRunClaimReward = async function ({
     // Check if account has enough native token balance for gas
     const balance = await getBalance(walletClient, { address: account })
 
-    // Check if balance is greater than 0 (we can't estimate exact gas needed here)
-    if (balance <= BigInt(0)) {
+    // Check if the user has non-zero balance
+    if (balance === BigInt(0)) {
       return {
         canClaim: false,
         reason: 'insufficient native token balance for gas fees',

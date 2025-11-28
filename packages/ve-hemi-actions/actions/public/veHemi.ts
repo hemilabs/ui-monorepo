@@ -1,5 +1,5 @@
 import pMemoize from 'promise-mem'
-import type { Address, Client } from 'viem'
+import { isAddress, isAddressEqual, type Address, type Client } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { veHemiAbi } from '../../abi'
@@ -108,6 +108,10 @@ export const getPositionVotingPower = async function ({
     throw new Error('Client chain is not defined')
   }
 
+  if (!isAddress(ownerAddress)) {
+    throw new Error('Invalid owner address')
+  }
+
   const voteDelegationAddress = await memoizedGetVoteDelegationAddress(client)
 
   const delegation = await readContract(client, {
@@ -118,7 +122,7 @@ export const getPositionVotingPower = async function ({
   })
 
   // If delegated to another wallet, voting power is 0 for owner
-  if (delegation.delegatee.toLowerCase() !== ownerAddress.toLowerCase()) {
+  if (!isAddressEqual(delegation.delegatee, ownerAddress)) {
     return BigInt(0)
   }
 

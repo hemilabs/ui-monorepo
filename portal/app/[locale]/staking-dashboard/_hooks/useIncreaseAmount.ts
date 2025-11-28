@@ -161,6 +161,7 @@ export const useIncreaseAmount = function ({
         // Voting power
         queryClient.invalidateQueries({
           queryKey: getPositionVotingPowerQueryKey({
+            chainId: token.chainId,
             tokenId: BigInt(tokenId),
           }),
         })

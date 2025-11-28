@@ -26,6 +26,9 @@ export const VotingPower = function ({ amount, tokenId }: Props) {
     return (
       <div className="flex flex-col">
         <span className="text-sm font-medium text-neutral-950">
+          {/* TODO https://github.com/hemilabs/ui-monorepo/issues/1661
+            Read symbol from veHEMI contract
+          */}
           <DisplayAmount
             amount={formattedPower}
             token={{ ...token, symbol: `ve${token.symbol}` }}

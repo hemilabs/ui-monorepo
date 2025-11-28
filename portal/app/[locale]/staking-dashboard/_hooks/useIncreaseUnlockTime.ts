@@ -134,6 +134,7 @@ export const useIncreaseUnlockTime = function ({
           // Voting power
           queryClient.invalidateQueries({
             queryKey: getPositionVotingPowerQueryKey({
+              chainId: token.chainId,
               tokenId: BigInt(tokenId),
             }),
           })

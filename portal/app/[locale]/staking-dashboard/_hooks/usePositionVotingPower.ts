@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { getPositionVotingPower } from 've-hemi-actions/actions'
 import type { Chain } from 'viem'
@@ -14,11 +15,11 @@ export const getPositionVotingPowerQueryKey = ({
 
 export const usePositionVotingPower = function (tokenId: bigint) {
   const { hemiWalletClient } = useHemiWalletClient()
-  const { address, chainId } = useAccount()
+  const { address } = useAccount()
+  const chainId = useHemi().id
 
   return useQuery({
-    enabled:
-      !!hemiWalletClient && !!address && !!chainId && tokenId > BigInt(0),
+    enabled: !!hemiWalletClient && !!address && tokenId > BigInt(0),
     queryFn: () =>
       getPositionVotingPower({
         client: hemiWalletClient!,
@@ -26,7 +27,7 @@ export const usePositionVotingPower = function (tokenId: bigint) {
         tokenId,
       }),
     queryKey: getPositionVotingPowerQueryKey({
-      chainId: chainId!,
+      chainId,
       tokenId,
     }),
     refetchInterval: 1000 * 60 * 5, // 5 minutes

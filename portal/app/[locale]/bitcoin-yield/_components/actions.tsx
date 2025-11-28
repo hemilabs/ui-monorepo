@@ -46,7 +46,11 @@ export const Actions = function ({ row }: Props) {
         <Button
           {...commonProps}
           disabled={balance === undefined || balance === BigInt(0)}
-          onClick={() => setOperationDrawer('deposit')}
+          onClick={function (e) {
+            // Prevent event bubbling to parent row
+            e.stopPropagation()
+            setOperationDrawer('deposit')
+          }}
           variant="primary"
         >
           {isTokenBalanceLoading ? (
@@ -60,7 +64,11 @@ export const Actions = function ({ row }: Props) {
         <Button
           {...commonProps}
           disabled={poolBalance === undefined || poolBalance === BigInt(0)}
-          onClick={() => setOperationDrawer('withdraw')}
+          onClick={function (e) {
+            // Prevent event bubbling to parent row
+            e.stopPropagation()
+            setOperationDrawer('withdraw')
+          }}
           variant="secondary"
         >
           {poolBalanceLoading ? (
@@ -78,7 +86,11 @@ export const Actions = function ({ row }: Props) {
       <ButtonIcon
         {...commonProps}
         disabled={loadingStrategies || !row.getCanExpand()}
-        onClick={row.getToggleExpandedHandler()}
+        onClick={function (e) {
+          // we need to stop propagation as otherwise the row handler will execute
+          e.stopPropagation()
+          row.toggleExpanded()
+        }}
         variant="secondary"
       >
         {loadingStrategies ? (

@@ -53,16 +53,16 @@ export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
   }
 }
 
-type CalculateVotingPowerProps = Pick<
+type PredictVotingPowerProps = Pick<
   StakingPosition,
   'amount' | 'timestamp' | 'lockTime'
 >
 
-export function calculateVotingPower({
+export function predictVotingPower({
   amount,
   lockTime,
   timestamp,
-}: CalculateVotingPowerProps) {
+}: PredictVotingPowerProps) {
   const maxTimeSeconds = BigInt(maxDays * daySeconds)
   const now = unixNowTimestamp()
 
@@ -70,16 +70,5 @@ export function calculateVotingPower({
   const timeRemaining = end > now ? end - now : BigInt(0)
 
   // Calculate voting power (decays linearly)
-  const votingPower = (amount * timeRemaining) / maxTimeSeconds
-
-  // Calculate percentage: (votingPower / lockedAmount) * 100
-  const percentageOfMax =
-    amount > BigInt(0)
-      ? Math.min(100, Number((votingPower * BigInt(10000)) / amount) / 100)
-      : 0
-
-  return {
-    percentageOfMax,
-    votingPower,
-  }
+  return (amount * timeRemaining) / maxTimeSeconds
 }

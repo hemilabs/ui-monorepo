@@ -14,7 +14,6 @@ import { type StakingPosition } from 'types/stakingDashboard'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
-import { calculateVotingPower } from '../../_utils/lockCreationTimes'
 import { Amount } from '../amount'
 import { RewardsDisplay } from '../rewardsDisplay'
 
@@ -53,35 +52,26 @@ const stakingColumns = ({
     meta: { width: '170px' },
   },
   {
-    cell: ({ row }) => (
-      <ErrorBoundary
-        fallback={<span className="text-sm text-neutral-950">-</span>}
-      >
-        <LockupTime
-          lockupTime={row.original.lockTime}
-          status={row.original.status}
-          tokenId={row.original.tokenId}
-        />
-      </ErrorBoundary>
-    ),
+    cell({ row }) {
+      const { lockTime, status, tokenId } = row.original
+      return (
+        <ErrorBoundary
+          fallback={<span className="text-sm text-neutral-950">-</span>}
+        >
+          <LockupTime lockupTime={lockTime} status={status} tokenId={tokenId} />
+        </ErrorBoundary>
+      )
+    },
     header: () => <Header text={t('table.lockup')} />,
     id: 'lockup',
     meta: { width: '120px' },
   },
   {
     cell({ row }) {
-      const { amount, lockTime, timestamp } = row.original
-      const { percentageOfMax, votingPower } = calculateVotingPower({
-        amount,
-        lockTime,
-        timestamp,
-      })
+      const { amount, tokenId } = row.original
       return (
         <div className="flex items-center justify-center gap-x-2">
-          <VotingPower
-            percentageOfMax={percentageOfMax}
-            votingPower={votingPower}
-          />
+          <VotingPower amount={amount} tokenId={BigInt(tokenId)} />
         </div>
       )
     },

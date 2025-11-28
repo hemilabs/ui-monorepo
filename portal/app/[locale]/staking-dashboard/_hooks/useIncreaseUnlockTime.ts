@@ -18,6 +18,7 @@ import { useAccount } from 'wagmi'
 import { daysToSeconds, step } from '../_utils/lockCreationTimes'
 
 import { getCalculateAprQueryKey } from './useCalculateApr'
+import { getPositionVotingPowerQueryKey } from './usePositionVotingPower'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
 
 type UseIncreaseUnlockTime = {
@@ -125,6 +126,14 @@ export const useIncreaseUnlockTime = function ({
           // APR
           queryClient.invalidateQueries({
             queryKey: getCalculateAprQueryKey({
+              chainId: token.chainId,
+              tokenId: BigInt(tokenId),
+            }),
+          })
+
+          // Voting power
+          queryClient.invalidateQueries({
+            queryKey: getPositionVotingPowerQueryKey({
               chainId: token.chainId,
               tokenId: BigInt(tokenId),
             }),

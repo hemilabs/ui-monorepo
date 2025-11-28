@@ -17,6 +17,7 @@ import { increaseAmount } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { getCalculateAprQueryKey } from './useCalculateApr'
+import { getPositionVotingPowerQueryKey } from './usePositionVotingPower'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
 
 type UseIncreaseAmount = {
@@ -152,6 +153,14 @@ export const useIncreaseAmount = function ({
         // APR
         queryClient.invalidateQueries({
           queryKey: getCalculateAprQueryKey({
+            chainId: token.chainId,
+            tokenId: BigInt(tokenId),
+          }),
+        })
+
+        // Voting power
+        queryClient.invalidateQueries({
+          queryKey: getPositionVotingPowerQueryKey({
             chainId: token.chainId,
             tokenId: BigInt(tokenId),
           }),

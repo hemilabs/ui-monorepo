@@ -13,7 +13,7 @@ export const StrategiesRow = function ({ strategies }: Props) {
   const poolAsset = usePoolAsset().data
   const t = useTranslations('bitcoin-yield')
   return (
-    <div className="w-full px-4">
+    <div className="mb-1.5 w-full px-4">
       <div className="flex items-center gap-x-6 rounded bg-neutral-50 p-4">
         <span className="body-text-semibold self-start text-neutral-600">
           {t('pool-strategy')}

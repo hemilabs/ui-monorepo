@@ -13,13 +13,13 @@ export const Withdraw = function () {
   const { data: poolBalance, isError: isPoolBalanceError } =
     useUserPoolBalance()
 
-  const disableWithdraw =
+  const isWithdrawDisabled =
     !address || poolBalance === undefined || poolBalance === BigInt(0)
   const poolBalanceLoading = poolBalance === undefined && !isPoolBalanceError
 
   return (
     <Button
-      disabled={disableWithdraw}
+      disabled={isWithdrawDisabled}
       onClick={function (e) {
         // Prevent event bubbling to parent row
         e.stopPropagation()

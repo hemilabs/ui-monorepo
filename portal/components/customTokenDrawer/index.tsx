@@ -46,8 +46,16 @@ const canSubmit = ({
   !!l2customToken.l1Token &&
   isAddressEqual(l2customToken.l1Token, l1CustomToken.address)
 
-const getL1AddressValidity = (l1CustomToken: Token | undefined) =>
-  l1CustomToken ? 'this-address-is-valid' : 'this-address-is-not-valid'
+const getL1AddressValidity = function (
+  l1CustomToken: Token | undefined,
+  l2customToken: L2Token | undefined,
+) {
+  if (l2customToken && l2customToken.address && !l2customToken.l1Token) {
+    return 'l1-address-not-configured'
+  }
+
+  return l1CustomToken ? 'this-address-is-valid' : 'this-address-is-not-valid'
+}
 
 const getL2AddressValidity = function (
   l1CustomToken: Token | undefined,
@@ -192,7 +200,7 @@ export const CustomTokenDrawer = function ({
         <div className="skip-parent-padding-x flex flex-1 flex-col overflow-y-auto">
           <TokenSection
             addressDisabled
-            addressValidity={getL1AddressValidity(l1CustomToken)}
+            addressValidity={getL1AddressValidity(l1CustomToken, l2customToken)}
             chainId={l1ChainId}
             isLoading={isLoadingL1Token}
             layer={1}

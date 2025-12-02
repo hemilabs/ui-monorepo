@@ -477,7 +477,8 @@
     "see-on-explorer": "See on {explorer}",
     "subheading": "You need to input the pair of contract addresses from both Ethereum and Hemi to tunnel with this token.",
     "this-address-is-not-valid": "This address is not valid",
-    "this-address-is-valid": "This address is valid"
+    "this-address-is-valid": "This address is valid",
+    "l1-address-not-configured": "L1 address not configured in the contract"
   },
   "token-selector": {
     "all-tokens": "All tokens",

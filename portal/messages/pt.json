@@ -477,7 +477,8 @@
     "see-on-explorer": "Ver no {explorer}",
     "subheading": "Precisa de inserir o par de endereços de contrato de Ethereum e Hemi para tunelar com este token.",
     "this-address-is-not-valid": "Este endereço não é válido",
-    "this-address-is-valid": "Este endereço é válido"
+    "this-address-is-valid": "Este endereço é válido",
+    "l1-address-not-configured": "Endereço L1 não configurado no contrato"
   },
   "token-selector": {
     "all-tokens": "Todos os tokens",

@@ -13,6 +13,9 @@ import { type Vault } from '../_types'
 import { Claim } from './claim'
 import { Withdraw } from './withdraw'
 
+const cssHoverChevron =
+  'group-hover/chevron:[&>path]:fill-neutral-950 group-hover/chevron:[&>path]:transition-colors group-hover/chevron:[&>path]:duration-200'
+
 type Props = {
   row: Row<Vault>
 }
@@ -64,24 +67,26 @@ export const Actions = function ({ row }: Props) {
           <Claim />
         </div>
       )}
-      <ButtonIcon
-        {...commonProps}
-        disabled={loadingStrategies || !row.getCanExpand()}
-        onClick={function (e) {
-          // we need to stop propagation as otherwise the row handler will execute
-          e.stopPropagation()
-          row.toggleExpanded()
-        }}
-        variant="secondary"
-      >
-        {loadingStrategies ? (
-          <Spinner color="#FF6C15" size="xSmall" />
-        ) : row.getIsExpanded() ? (
-          <Chevron.Up />
-        ) : (
-          <Chevron.Bottom />
-        )}
-      </ButtonIcon>
+      <div className="group/chevron">
+        <ButtonIcon
+          {...commonProps}
+          disabled={loadingStrategies || !row.getCanExpand()}
+          onClick={function (e) {
+            // we need to stop propagation as otherwise the row handler will execute
+            e.stopPropagation()
+            row.toggleExpanded()
+          }}
+          variant="secondary"
+        >
+          {loadingStrategies ? (
+            <Spinner color="#FF6C15" size="xSmall" />
+          ) : row.getIsExpanded() ? (
+            <Chevron.Up className={cssHoverChevron} />
+          ) : (
+            <Chevron.Bottom className={cssHoverChevron} />
+          )}
+        </ButtonIcon>
+      </div>
     </div>
   )
 }

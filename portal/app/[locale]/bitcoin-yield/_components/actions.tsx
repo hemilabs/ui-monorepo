@@ -8,10 +8,10 @@ import { useTranslations } from 'next-intl'
 
 import { useOperationDrawer } from '../_hooks/useOperationDrawer'
 import { usePoolAsset } from '../_hooks/usePoolAsset'
-import { useUserPoolBalance } from '../_hooks/useUserPoolBalance'
 import { type Vault } from '../_types'
 
 import { Claim } from './claim'
+import { Withdraw } from './withdraw'
 
 type Props = {
   row: Row<Vault>
@@ -28,15 +28,11 @@ export const Actions = function ({ row }: Props) {
     // TODO https://github.com/hemilabs/ui-monorepo/issues/1648
     isLoading: isTokenBalanceLoading,
   } = useTokenBalance(token.chainId, token.address)
-  const { data: poolBalance, isError: isPoolBalanceError } =
-    useUserPoolBalance()
 
   const commonProps = {
     size: 'xSmall',
     type: 'button',
   } as const
-
-  const poolBalanceLoading = poolBalance === undefined && !isPoolBalanceError
 
   const loadingStrategies = row.original.strategies === undefined
 
@@ -61,22 +57,7 @@ export const Actions = function ({ row }: Props) {
         </Button>
       </div>
       <div className="*:min-w-19">
-        <Button
-          {...commonProps}
-          disabled={poolBalance === undefined || poolBalance === BigInt(0)}
-          onClick={function (e) {
-            // Prevent event bubbling to parent row
-            e.stopPropagation()
-            setOperationDrawer('withdraw')
-          }}
-          variant="secondary"
-        >
-          {poolBalanceLoading ? (
-            <Spinner color="#FF6C15" size="xSmall" />
-          ) : (
-            t('common.withdraw')
-          )}
-        </Button>
+        <Withdraw />
       </div>
       {featureFlags.enableBtcYieldClaimRewards && (
         <div className="*:min-w-19">

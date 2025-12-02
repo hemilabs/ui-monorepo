@@ -18,7 +18,7 @@ import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useChainIsSupported } from 'hooks/useChainIsSupported'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { isAndroid } from 'react-device-detect'
+import { isAndroid, isIOS } from 'react-device-detect'
 import Skeleton from 'react-loading-skeleton'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
@@ -72,10 +72,9 @@ const InstallUnisat = function ({ connector }: { connector: ConnectorGroup }) {
     <ExternalLink
       className="ml-auto rounded-full bg-black px-3 py-1 text-sm font-medium text-white"
       href={
-        // Unisat only supports chrome and android - no other browser nor mobile OS - See https://unisat.io/
-        isAndroid
-          ? connector.downloadUrls?.android
-          : connector.downloadUrls?.chrome
+        (isAndroid && connector.downloadUrls?.android) ||
+        (isIOS && connector.downloadUrls?.ios) ||
+        connector.downloadUrls?.chrome
       }
     >
       {t('common.add')}

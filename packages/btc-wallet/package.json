@@ -5,6 +5,11 @@
   "scripts": {
     "build": "tsc"
   },
+  "dependencies": {
+    "bitcoinjs-lib": "6.1.7",
+    "coinselect": "3.1.13",
+    "esplora-client": "1.2.0"
+  },
   "devDependencies": {
     "@tanstack/react-query": "5.69.0",
     "@types/react": "19.1.13",

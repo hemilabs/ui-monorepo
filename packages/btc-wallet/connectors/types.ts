@@ -31,6 +31,7 @@ export type ConnectorGroup = {
   downloadUrls?: {
     android?: string
     chrome?: string
+    ios?: string
   }
   name: string
   wallet: WalletConnector

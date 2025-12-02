@@ -14,8 +14,10 @@ export async function sendBitcoin(
   satoshis: number,
   options: { memo?: string } = {},
 ) {
-  const [address] = await provider.getAccounts()
-  const network = await provider.getNetwork()
+  const [[address], network] = await Promise.all([
+    provider.getAccounts(),
+    provider.getNetwork(),
+  ])
   const client = esploraClient({
     network: network === 'livenet' ? 'mainnet' : network,
   })

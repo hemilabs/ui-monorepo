@@ -42,7 +42,7 @@ const wallet = {
   },
   id: 'unisat',
   isInstalled,
-  name: 'UniSat',
+  name: 'Unisat',
   onAccountsChanged(handler) {
     assertInstalled()
     provider.on('accountsChanged', handler)

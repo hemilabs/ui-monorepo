@@ -2,8 +2,11 @@
 
 import { ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
+import hemiSocials from 'hemi-socials'
 import { useHemiBtcToken } from 'hooks/useHemiBtcToken'
 import { useTranslations } from 'next-intl'
+
+const { website } = hemiSocials
 
 export const TopSection = function () {
   const { symbol } = useHemiBtcToken()
@@ -18,8 +21,7 @@ export const TopSection = function () {
         </p>
       </div>
       <div className="flex flex-col items-center gap-3 max-lg:w-full sm:flex-row [&>a]:max-sm:w-full">
-        {/* TODO define external link - using docs as placeholder */}
-        <ButtonLink href="https://docs.hemi.xyz/" variant="secondary">
+        <ButtonLink href={`${website}/institutions`} variant="secondary">
           {t('learn-more-about-hemibtc', { symbol })}
         </ButtonLink>
         <ButtonLink href="/tunnel">

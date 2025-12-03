@@ -2,6 +2,7 @@
 
 require('dotenv').config({ override: true, path: ['.env', '.env.local'] })
 const { writeFile } = require('fs/promises')
+const { website } = require('hemi-socials')
 const path = require('path')
 const { hemi, hemiSepolia, mainnet, sepolia } = require('viem/chains')
 
@@ -90,7 +91,7 @@ customRpcOrigins.forEach(function (url) {
 
 // these are domains where we download images from
 const imageSrcUrls = [
-  'https://hemi.xyz',
+  website,
   'https://*.walletconnect.com',
   'https://hemilabs.github.io',
 ]

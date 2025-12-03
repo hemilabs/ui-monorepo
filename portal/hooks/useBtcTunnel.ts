@@ -14,6 +14,7 @@ import {
 import { getBitcoinTimestamp } from 'utils/bitcoin'
 import {
   confirmBtcDeposit,
+  getBitcoinDepositFee,
   getBitcoinWithdrawalUuid,
   initiateBtcDeposit,
   initiateBtcWithdrawal,
@@ -168,19 +169,34 @@ export const useDepositBitcoin = function () {
       { l1ChainId, l2ChainId, satoshis },
     ) {
       const btc = getNativeToken(bitcoin.id)
-      addDepositToTunnelHistory({
-        amount: satoshis.toString(),
-        direction: MessageDirection.L1_TO_L2,
-        from: address!,
-        l1ChainId,
-        l1Token: btc.address,
-        l2ChainId,
-        l2Token: btc.extensions!.bridgeInfo![l2ChainId].tokenAddress!,
-        status: BtcDepositStatus.BTC_TX_PENDING,
-        to: bitcoinCustodyAddress,
-        transactionHash: txHash,
-      })
-      updateTxHash(txHash, { history: 'push' })
+      const satoshisBigInt = BigInt(satoshis)
+
+      function addDeposit(amount: string) {
+        addDepositToTunnelHistory({
+          amount,
+          direction: MessageDirection.L1_TO_L2,
+          from: address!,
+          l1ChainId,
+          l1Token: btc.address,
+          l2ChainId,
+          l2Token: btc.extensions!.bridgeInfo![l2ChainId].tokenAddress!,
+          status: BtcDepositStatus.BTC_TX_PENDING,
+          to: bitcoinCustodyAddress,
+          transactionHash: txHash,
+        })
+        updateTxHash(txHash, { history: 'push' })
+      }
+
+      // Try to get vault fee and calculate net amount
+      getBitcoinDepositFee({ amount: satoshisBigInt, hemiClient })
+        .then(function (fee) {
+          const netAmount = satoshisBigInt - fee
+          addDeposit(netAmount.toString())
+        })
+        .catch(function () {
+          // Fallback: use gross amount if fee calculation fails
+          addDeposit(satoshis.toString())
+        })
     },
   })
 

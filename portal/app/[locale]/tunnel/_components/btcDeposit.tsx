@@ -153,52 +153,50 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
   }
 
   return (
-    <>
-      <TunnelForm
-        belowForm={
-          <div className="relative -translate-y-7">
-            <ReceivingAddress
-              address={evmAddress ? formatEvmAddress(evmAddress) : undefined}
-              receivingText={t('tunnel-page.form.hemi-receiving-address')}
-              tooltipText={t(
-                'tunnel-page.form.hemi-receiving-address-description',
-                {
-                  symbol: state.fromToken.symbol,
-                },
-              )}
+    <TunnelForm
+      belowForm={
+        <div className="relative -translate-y-7">
+          <ReceivingAddress
+            address={evmAddress ? formatEvmAddress(evmAddress) : undefined}
+            receivingText={t('tunnel-page.form.hemi-receiving-address')}
+            tooltipText={t(
+              'tunnel-page.form.hemi-receiving-address-description',
+              {
+                symbol: state.fromToken.symbol,
+              },
+            )}
+          />
+          <BtcFees amount={amountBigInt} />
+        </div>
+      }
+      bottomSection={<WalletsConnected />}
+      formContent={
+        <FormContent
+          calculateReceiveAmount={calculateReceiveAmount}
+          errorKey={
+            walletIsConnected(btcWalletStatus) && balanceLoaded
+              ? errorKey
+              : undefined
+          }
+          isRunningOperation={isDepositing}
+          setMaxBalanceButton={
+            <SetMaxBtcBalance
+              disabled={isDepositing}
+              onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
+              token={fromToken}
             />
-            <BtcFees amount={amountBigInt} />
-          </div>
-        }
-        bottomSection={<WalletsConnected />}
-        formContent={
-          <FormContent
-            calculateReceiveAmount={calculateReceiveAmount}
-            errorKey={
-              walletIsConnected(btcWalletStatus) && balanceLoaded
-                ? errorKey
-                : undefined
-            }
-            isRunningOperation={isDepositing}
-            setMaxBalanceButton={
-              <SetMaxBtcBalance
-                disabled={isDepositing}
-                onSetMaxBalance={maxBalance => updateFromInput(maxBalance)}
-                token={fromToken}
-              />
-            }
-            tunnelState={state}
-          />
-        }
-        onSubmit={handleDeposit}
-        submitButton={
-          <SubmitWithTwoWallets
-            disabled={!canDeposit || isDepositing || isMinDepositsSatsLoading}
-            text={isDepositing ? t('common.depositing') : t('common.deposit')}
-            validationError={validationError}
-          />
-        }
-      />
-    </>
+          }
+          tunnelState={state}
+        />
+      }
+      onSubmit={handleDeposit}
+      submitButton={
+        <SubmitWithTwoWallets
+          disabled={!canDeposit || isDepositing || isMinDepositsSatsLoading}
+          text={isDepositing ? t('common.depositing') : t('common.deposit')}
+          validationError={validationError}
+        />
+      }
+    />
   )
 }

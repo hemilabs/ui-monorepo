@@ -39,7 +39,7 @@ export const yieldVaultAbi = [
     inputs: [
       {
         internalType: 'uint256',
-        name: '_maxWithdrawable',
+        name: 'maxWithdrawable',
         type: 'uint256',
       },
     ],
@@ -54,6 +54,11 @@ export const yieldVaultAbi = [
   {
     inputs: [],
     name: 'CallerIsNotMaintainer',
+    type: 'error',
+  },
+  {
+    inputs: [],
+    name: 'DuplicateStrategyInQueue',
     type: 'error',
   },
   {
@@ -327,6 +332,22 @@ export const yieldVaultAbi = [
     type: 'error',
   },
   {
+    inputs: [
+      {
+        internalType: 'uint256',
+        name: 'actual',
+        type: 'uint256',
+      },
+      {
+        internalType: 'uint256',
+        name: 'expected',
+        type: 'uint256',
+      },
+    ],
+    name: 'IncorrectPayback',
+    type: 'error',
+  },
+  {
     inputs: [],
     name: 'InputIsHigherThanMaxLimit',
     type: 'error',
@@ -400,19 +421,8 @@ export const yieldVaultAbi = [
     type: 'error',
   },
   {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    name: 'OwnerMismatch',
+    inputs: [],
+    name: 'ProfitAndLossCannotBeReportedTogether',
     type: 'error',
   },
   {
@@ -602,6 +612,32 @@ export const yieldVaultAbi = [
       {
         indexed: true,
         internalType: 'address',
+        name: 'keeper',
+        type: 'address',
+      },
+    ],
+    name: 'KeeperAdded',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'keeper',
+        type: 'address',
+      },
+    ],
+    name: 'KeeperRemoved',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
         name: 'strategy',
         type: 'address',
       },
@@ -613,6 +649,32 @@ export const yieldVaultAbi = [
       },
     ],
     name: 'LossReported',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'maintainer',
+        type: 'address',
+      },
+    ],
+    name: 'MaintainerAdded',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'maintainer',
+        type: 'address',
+      },
+    ],
+    name: 'MaintainerRemoved',
     type: 'event',
   },
   {
@@ -670,6 +732,37 @@ export const yieldVaultAbi = [
     anonymous: false,
     inputs: [
       {
+        indexed: true,
+        internalType: 'address',
+        name: 'strategy',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'strategyDebt',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'profit',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'fee',
+        type: 'uint256',
+      },
+    ],
+    name: 'PerformanceFeePaid',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: false,
         internalType: 'address',
         name: 'account',
@@ -707,6 +800,12 @@ export const yieldVaultAbi = [
         name: 'debtRatio',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'totalDebtRatio',
+        type: 'uint256',
+      },
     ],
     name: 'StrategyAdded',
     type: 'event',
@@ -720,8 +819,45 @@ export const yieldVaultAbi = [
         name: 'strategy',
         type: 'address',
       },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'debtRatio',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'totalDebtRatio',
+        type: 'uint256',
+      },
     ],
     name: 'StrategyRemoved',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'token',
+        type: 'address',
+      },
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'to',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amount',
+        type: 'uint256',
+      },
+    ],
+    name: 'Swept',
     type: 'event',
   },
   {
@@ -754,56 +890,12 @@ export const yieldVaultAbi = [
     inputs: [
       {
         indexed: false,
-        internalType: 'uint256',
-        name: 'strategyDebt',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'profit',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'fee',
-        type: 'uint256',
-      },
-    ],
-    name: 'UniversalFeePaid',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: 'address',
         name: 'account',
         type: 'address',
       },
     ],
     name: 'Unpaused',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'oldMaxProfitAsFee',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'newMaxProfitAsFee',
-        type: 'uint256',
-      },
-    ],
-    name: 'UpdatedMaximumProfitAsFee',
     type: 'event',
   },
   {
@@ -829,6 +921,25 @@ export const yieldVaultAbi = [
     anonymous: false,
     inputs: [
       {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'oldPerformanceFee',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'newPerformanceFee',
+        type: 'uint256',
+      },
+    ],
+    name: 'UpdatedPerformanceFee',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
         indexed: true,
         internalType: 'address',
         name: 'strategy',
@@ -846,27 +957,14 @@ export const yieldVaultAbi = [
         name: 'newDebtRatio',
         type: 'uint256',
       },
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'totalDebtRatio',
+        type: 'uint256',
+      },
     ],
     name: 'UpdatedStrategyDebtRatio',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'oldUniversalFee',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'newUniversalFee',
-        type: 'uint256',
-      },
-    ],
-    name: 'UpdatedUniversalFee',
     type: 'event',
   },
   {
@@ -1270,11 +1368,6 @@ export const yieldVaultAbi = [
           },
           {
             internalType: 'uint256',
-            name: 'lastRebalance',
-            type: 'uint256',
-          },
-          {
-            internalType: 'uint256',
             name: 'totalDebt',
             type: 'uint256',
           },
@@ -1472,19 +1565,6 @@ export const yieldVaultAbi = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'maxProfitAsFee',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [
       {
         internalType: 'address',
@@ -1632,6 +1712,19 @@ export const yieldVaultAbi = [
         internalType: 'address',
         name: '',
         type: 'address',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'performanceFee',
+    outputs: [
+      {
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
     stateMutability: 'view',
@@ -2090,19 +2183,6 @@ export const yieldVaultAbi = [
   },
   {
     inputs: [],
-    name: 'universalFee',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
     name: 'unpause',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -2130,19 +2210,6 @@ export const yieldVaultAbi = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'newMaxProfitAsFee_',
-        type: 'uint256',
-      },
-    ],
-    name: 'updateMaximumProfitAsFee',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
         name: 'newLimit_',
         type: 'uint256',
       },
@@ -2156,11 +2223,11 @@ export const yieldVaultAbi = [
     inputs: [
       {
         internalType: 'uint256',
-        name: 'newUniversalFee_',
+        name: 'newPerformanceFee_',
         type: 'uint256',
       },
     ],
-    name: 'updateUniversalFee',
+    name: 'updatePerformanceFee',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -2207,19 +2274,6 @@ export const yieldVaultAbi = [
     name: 'upgradeToAndCall',
     outputs: [],
     stateMutability: 'payable',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'vaultAccountant',
-    outputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'pure',
     type: 'function',
   },
   {

@@ -6,6 +6,9 @@ type Props = {
   children: ReactNode
 }
 
+const previewImage =
+  'https://framerusercontent.com/assets/k63TVkxaxEkDMdo7zqWW0Xpo.png'
+
 export const metadata: Metadata = {
   description:
     'Hemi | Powered by Bitcoin and Ethereum — Bridge, swap, build, and more. All on Hemi.',
@@ -14,7 +17,7 @@ export const metadata: Metadata = {
       'Hemi | Powered by Bitcoin and Ethereum — Bridge, swap, build, and more. All on Hemi.',
     images: [
       {
-        url: 'https://hemi.xyz/wp-content/uploads/2025/09/hemi-opengraph.jpg',
+        url: previewImage,
       },
     ],
     type: 'website',
@@ -24,7 +27,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     description:
       'Hemi | Powered by Bitcoin and Ethereum — Bridge, swap, build, and more. All on Hemi.',
-    images: ['https://hemi.xyz/wp-content/uploads/2025/09/hemi-opengraph.jpg'],
+    images: [previewImage],
   },
 }
 

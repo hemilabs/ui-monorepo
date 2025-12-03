@@ -5,11 +5,11 @@
       "claim-rewards-heading": "Claim Rewards",
       "claim-rewards-subheading": "We're processing your reward claim. You can follow the progress below.",
       "deposit-btc": "Deposit {symbol}",
-      "deposit-heading": "Deposit review",
+      "deposit-heading": "Review Deposit",
       "deposit-subheading": "Complete the remaining steps to deposit your {symbol}",
       "withdraw-btc": "Withdraw {symbol}",
       "withdraw-heading": "Review Withdrawal",
-      "withdraw-subheading": "You're almost there! Complete the remaining steps to withdraw your {symbol}"
+      "withdraw-subheading": "Complete the remaining steps to withdraw your {symbol}"
     },
     "heading": "Bitcoin, with Real Yield",
     "info": {
@@ -33,7 +33,7 @@
     "pool-strategy": "Pool strategy:",
     "put-to-work": "Put your {symbol} to work and start generating yield.",
     "start-earning": "Start Earning",
-    "subheading": "Earn rewards on your BTC through decentralized yield opportunities backed by real on-chain usage.",
+    "subheading": "Earn rewards on your BTC through {symbol}.",
     "switch-to-start-staking": "You can switch networks to start staking your hemiBTC.",
     "table": {
       "claim-rewards": "Claim Rewards",

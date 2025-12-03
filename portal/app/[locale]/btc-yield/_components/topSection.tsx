@@ -17,7 +17,7 @@ export const TopSection = function () {
       <div className="flex flex-col gap-y-1 sm:max-w-96 md:self-start lg:self-auto">
         <h2>{t('heading')}</h2>
         <p className="body-text-normal text-left text-neutral-600">
-          {t('subheading')}
+          {t('subheading', { symbol })}
         </p>
       </div>
       <div className="flex flex-col items-center gap-3 max-lg:w-full sm:flex-row [&>a]:max-sm:w-full">

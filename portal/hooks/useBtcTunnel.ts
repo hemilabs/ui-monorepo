@@ -164,12 +164,12 @@ export const useDepositBitcoin = function () {
         walletConnector: connector!,
       }),
     mutationKey: [connector, hemiClient],
-    onSuccess(
+    async onSuccess(
       { bitcoinCustodyAddress, txHash },
       { l1ChainId, l2ChainId, satoshis },
     ) {
       const btc = getNativeToken(bitcoin.id)
-      const satoshisBigInt = BigInt(satoshis)
+      const satoshiAmount = BigInt(satoshis)
 
       function addDeposit(amount: string) {
         addDepositToTunnelHistory({
@@ -188,15 +188,17 @@ export const useDepositBitcoin = function () {
       }
 
       // Try to get vault fee and calculate net amount
-      getBitcoinDepositFee({ amount: satoshisBigInt, hemiClient })
-        .then(function (fee) {
-          const netAmount = satoshisBigInt - fee
-          addDeposit(netAmount.toString())
+      try {
+        const fee = await getBitcoinDepositFee({
+          amount: satoshiAmount,
+          hemiClient,
         })
-        .catch(function () {
-          // Fallback: use gross amount if fee calculation fails
-          addDeposit(satoshis.toString())
-        })
+        const netAmount = satoshiAmount - fee
+        addDeposit(netAmount.toString())
+      } catch {
+        // Fallback: use gross amount if fee calculation fails
+        addDeposit(satoshis.toString())
+      }
     },
   })
 

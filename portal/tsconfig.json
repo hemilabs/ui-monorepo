@@ -2,6 +2,7 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "baseUrl": "./",
+    "erasableSyntaxOnly": true,
     "lib": ["dom", "dom.iterable", "esnext", "WebWorker"],
     "target": "es6"
   },

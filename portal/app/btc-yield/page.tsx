@@ -8,6 +8,6 @@ const LocalePageRedirect = dynamic(
   { ssr: false },
 )
 
-const Page = () => <LocalePageRedirect redirectPage="/bitcoin-yield" />
+const Page = () => <LocalePageRedirect redirectPage="/btc-yield" />
 
 export default Page

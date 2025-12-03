@@ -13,21 +13,19 @@ const UI = ({ href }: Pick<ComponentProps<typeof Link>, 'href'>) => (
 
 const HemiLogoImpl = function () {
   const tunnelHref = useTunnelOperationByConnectedWallet()
-  const href = featureFlags.enableBtcYieldPage ? '/bitcoin-yield' : tunnelHref
+  const href = featureFlags.enableBtcYieldPage ? '/btc-yield' : tunnelHref
 
   return <UI href={href} />
 }
 
 export const HomeLink = () => (
   // The logo link redirects based on feature flag. When btc yield page is enabled, it goes to
-  // /bitcoin-yield. Otherwise, it redirects to the tunnel page with the appropriate operation
+  // /btc-yield. Otherwise, it redirects to the tunnel page with the appropriate operation
   // (Deposit, Withdraw, etc.) based on the connected wallet. Initial render shows /tunnel as
   // fallback, with the correct href applied after hydration for static rendering.
   <Suspense
     fallback={
-      <UI
-        href={featureFlags.enableBtcYieldPage ? '/bitcoin-yield' : '/tunnel'}
-      />
+      <UI href={featureFlags.enableBtcYieldPage ? '/btc-yield' : '/tunnel'} />
     }
   >
     <HemiLogoImpl />

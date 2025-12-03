@@ -9,7 +9,7 @@
       "deposit-subheading": "Complete os passos restantes para depositar seu {symbol}",
       "withdraw-btc": "Retirar {symbol}",
       "withdraw-heading": "Rever Retirada",
-      "withdraw-subheading": "Já falta pouco! Complete os passos restantes para retirar seu {symbol}"
+      "withdraw-subheading": "Complete os passos restantes para retirar seu {symbol}"
     },
     "heading": "Bitcoin, com Rendimento Real",
     "info": {
@@ -33,7 +33,7 @@
     "pool-strategy": "Estratégia do fundo:",
     "put-to-work": "Coloque seu {symbol} para trabalhar e comece a gerar rendimento.",
     "start-earning": "Comece a ganhar",
-    "subheading": "Ganhe recompensas com seu BTC através de oportunidades de rendimento descentralizadas respaldadas por uso real on-chain.",
+    "subheading": "Ganhe recompensas com seu BTC através de {symbol}.",
     "switch-to-start-staking": "Você pode mudar de rede para começar a fazer staking do seu hemiBTC.",
     "table": {
       "claim-rewards": "Reclamar Recompensas",

@@ -1,7 +1,6 @@
 'use client'
 
 import { featureFlags } from 'app/featureFlags'
-import { LinesBackground } from 'components/linesBackground'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { type ReactNode } from 'react'
 
@@ -25,13 +24,6 @@ const Layout = function ({ children }: Props) {
     return <BitcoinYieldDisabledTestnet />
   }
 
-  return (
-    <>
-      {children}
-      <div className="hidden md:block">
-        <LinesBackground />
-      </div>
-    </>
-  )
+  return <>{children}</>
 }
 export default Layout

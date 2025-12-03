@@ -21,7 +21,7 @@ export const TopSection = function () {
         </p>
       </div>
       <div className="flex flex-col items-center gap-3 max-lg:w-full sm:flex-row [&>a]:max-sm:w-full">
-        <ButtonLink href={`${website}/institutions`} variant="secondary">
+        <ButtonLink href={`${website}/btc-yield`} variant="secondary">
           {t('learn-more-about-hemibtc', { symbol })}
         </ButtonLink>
         <ButtonLink href="/tunnel">

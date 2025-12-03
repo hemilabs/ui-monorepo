@@ -1,9 +1,9 @@
-import type { Strategy } from 'app/[locale]/bitcoin-yield/_types'
+import type { Strategy } from 'app/[locale]/btc-yield/_types'
 import {
   calculatePoolBufferWeight,
   formatStrategyName,
   formatStrategyWeight,
-} from 'app/[locale]/bitcoin-yield/_utils'
+} from 'app/[locale]/btc-yield/_utils'
 import { zeroAddress } from 'viem'
 import { describe, it, expect } from 'vitest'
 

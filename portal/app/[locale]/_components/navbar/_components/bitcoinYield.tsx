@@ -14,7 +14,7 @@ const BitcoinYieldImpl = function () {
   return (
     <ItemLink
       event="nav - bitcoin yield"
-      href="/bitcoin-yield"
+      href="/btc-yield"
       icon={<BitcoinYieldIcon />}
       text="Bitcoin Yield"
     />

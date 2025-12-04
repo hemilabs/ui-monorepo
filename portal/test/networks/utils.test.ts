@@ -40,10 +40,7 @@ describe('networks/utils', function () {
 
       // Verify original RPC URLs are not kept
       mainnet.rpcUrls.default.http.forEach(originalUrl =>
-        expect(result.rpcUrls.default.http).not.includes(
-          originalUrl,
-          `${originalUrl} should have been ignored`,
-        ),
+        expect(result.rpcUrls.default.http).not.toContain(originalUrl),
       )
     })
 

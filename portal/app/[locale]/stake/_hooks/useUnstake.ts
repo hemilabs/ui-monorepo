@@ -5,7 +5,11 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { StakeToken, UnstakeStatusEnum } from 'types/stake'
+import {
+  StakeToken,
+  UnstakeStatusEnum,
+  type UnstakeStatusEnumType,
+} from 'types/stake'
 import { unstake } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
 import { Hash } from 'viem'
@@ -29,7 +33,7 @@ export const useUnstake = function (token: StakeToken) {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const [unstakeStatus, setUnstakeStatus] = useState<
-    UnstakeStatusEnum | undefined
+    UnstakeStatusEnumType | undefined
   >(undefined)
 
   const [unStakeTransactionHash, setUnstakeTransactionHash] = useState<

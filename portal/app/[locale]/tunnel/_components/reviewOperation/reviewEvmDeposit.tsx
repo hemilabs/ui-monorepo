@@ -16,8 +16,9 @@ import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import {
-  EvmDepositOperation,
+  type EvmDepositOperation,
   EvmDepositStatus,
+  type EvmDepositStatusType,
   ExpectedWaitTimeMinutesGetFundsHemi,
 } from 'types/tunnel'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
@@ -29,10 +30,10 @@ import { RetryEvmDeposit } from '../retryEvmDeposit'
 import { AddTokenToWallet } from './addTokenToWallet'
 
 const getCallToAction = (deposit: EvmDepositOperation) =>
+  deposit.status !== undefined &&
   [
     EvmDepositStatus.APPROVAL_TX_FAILED,
     EvmDepositStatus.DEPOSIT_TX_FAILED,
-    // @ts-expect-error includes accepts undefined
   ].includes(deposit.status) ? (
     <RetryEvmDeposit deposit={deposit} />
   ) : null
@@ -111,20 +112,22 @@ const ReviewContent = function ({
   })
 
   const getDepositStep = function (): StepPropsWithoutPosition {
-    const statusMap: Partial<Record<EvmDepositStatus, ProgressStatusType>> = {
-      [EvmDepositStatus.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,
-      [EvmDepositStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
-      [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.COMPLETED,
-      [EvmDepositStatus.DEPOSIT_TX_FAILED]: ProgressStatus.FAILED,
-      [EvmDepositStatus.DEPOSIT_TX_PENDING]: ProgressStatus.PROGRESS,
-      [EvmDepositStatus.DEPOSIT_RELAYED]: ProgressStatus.COMPLETED,
-    }
-
-    const postStatusMap: Partial<Record<EvmDepositStatus, ProgressStatusType>> =
+    const statusMap: Partial<Record<EvmDepositStatusType, ProgressStatusType>> =
       {
-        [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.PROGRESS,
+        [EvmDepositStatus.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,
+        [EvmDepositStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
+        [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.COMPLETED,
+        [EvmDepositStatus.DEPOSIT_TX_FAILED]: ProgressStatus.FAILED,
+        [EvmDepositStatus.DEPOSIT_TX_PENDING]: ProgressStatus.PROGRESS,
         [EvmDepositStatus.DEPOSIT_RELAYED]: ProgressStatus.COMPLETED,
       }
+
+    const postStatusMap: Partial<
+      Record<EvmDepositStatusType, ProgressStatusType>
+    > = {
+      [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: ProgressStatus.PROGRESS,
+      [EvmDepositStatus.DEPOSIT_RELAYED]: ProgressStatus.COMPLETED,
+    }
     return {
       description: (
         <ChainLabel
@@ -137,7 +140,6 @@ const ReviewContent = function ({
       fees: [
         EvmDepositStatus.APPROVAL_TX_COMPLETED,
         EvmDepositStatus.DEPOSIT_TX_PENDING,
-        EvmDepositStatus.DEPOSIT_TX_FAILED,
       ].includes(depositStatus)
         ? {
             amount: formatUnits(

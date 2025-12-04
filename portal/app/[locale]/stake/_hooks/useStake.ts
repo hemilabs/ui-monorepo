@@ -7,7 +7,11 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
-import { StakeStatusEnum, StakeToken } from 'types/stake'
+import {
+  StakeStatusEnum,
+  type StakeStatusEnumType,
+  type StakeToken,
+} from 'types/stake'
 import { isNativeToken } from 'utils/nativeToken'
 import { stake } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
@@ -41,9 +45,9 @@ export const useStake = function (token: StakeToken) {
   // as quickly as the user clicks the button
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const [stakeStatus, setStakeStatus] = useState<StakeStatusEnum | undefined>(
-    undefined,
-  )
+  const [stakeStatus, setStakeStatus] = useState<
+    StakeStatusEnumType | undefined
+  >(undefined)
   const [approvalTxHash, setApprovalTxHash] = useState<Hash | undefined>(
     undefined,
   )

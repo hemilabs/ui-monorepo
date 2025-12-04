@@ -19,7 +19,7 @@ const validOperations: Operation[] = [
 ]
 
 const isValidOperation = (value: string): value is Operation =>
-  validOperations.includes(value as Operation)
+  validOperations.includes(value)
 
 export const useTunnelOperation = function (): {
   operation: Operation | undefined

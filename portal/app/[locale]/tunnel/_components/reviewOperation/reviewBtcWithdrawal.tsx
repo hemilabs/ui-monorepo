@@ -15,7 +15,11 @@ import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
-import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
+import {
+  BtcWithdrawStatus,
+  type BtcWithdrawStatusType,
+  type ToBtcWithdrawOperation,
+} from 'types/tunnel'
 import { getNativeToken } from 'utils/nativeToken'
 import { secondsToHours } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
@@ -102,13 +106,15 @@ const ReviewContent = function ({
   const steps: StepPropsWithoutPosition[] = []
 
   const addWithdrawStep = function (): StepPropsWithoutPosition {
-    const statusMap: Partial<Record<BtcWithdrawStatus, ProgressStatusType>> = {
+    const statusMap: Partial<
+      Record<BtcWithdrawStatusType, ProgressStatusType>
+    > = {
       [BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING]: ProgressStatus.PROGRESS,
       [BtcWithdrawStatus.WITHDRAWAL_FAILED]: ProgressStatus.FAILED,
     }
 
     const postActionStatus: Partial<
-      Record<BtcWithdrawStatus, ProgressStatusType>
+      Record<BtcWithdrawStatusType, ProgressStatusType>
     > = {
       [BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED]: ProgressStatus.PROGRESS,
       [BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING]: ProgressStatus.NOT_READY,

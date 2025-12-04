@@ -8,7 +8,6 @@ export const ActionableOperations = function () {
 
   const actionableWithdrawals = withdrawals.filter(w =>
     [MessageStatus.READY_TO_PROVE, MessageStatus.READY_FOR_RELAY].includes(
-      // @ts-expect-error status is of type MessageStatus
       w.status,
     ),
   ).length

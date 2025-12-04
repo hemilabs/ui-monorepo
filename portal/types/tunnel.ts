@@ -3,8 +3,8 @@ import { BtcTransaction } from 'btc-wallet/unisat'
 import { type Chain, type Hash } from 'viem'
 
 // Prefer ordering by value instead of keys
-/* eslint-disable sort-keys */
 // Based on https://sdk.optimism.io/classes/crosschainmessenger#getMessageStatus
+/* eslint-disable sort-keys */
 export const MessageStatus = {
   UNCONFIRMED_L1_TO_L2_MESSAGE: 0,
   FAILED_L1_TO_L2_MESSAGE: 1,
@@ -42,26 +42,31 @@ export const MessageDirection = {
  *        |_DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED
  *        |_BTC_DEPOSITED_MANUALLY (Arrives here after manual confirmation)
  */
-export const enum BtcDepositStatus {
+/* eslint-disable sort-keys */
+export const BtcDepositStatus = {
   // The tx is in the mempool, but hasn't been included in a mined block
-  BTC_TX_PENDING = 0,
+  BTC_TX_PENDING: 0,
   // The tx is part of a block that has been mined, but it doesn't have enough
   // confirmations for the erc20 bitcoin to be minted in Hemi
-  BTC_TX_CONFIRMED = 1,
+  BTC_TX_CONFIRMED: 1,
   // The vault operator hasn't confirmed the deposit yet. The user can now
   // confirm the deposit manually
-  READY_TO_MANUAL_CONFIRM = 2,
+  READY_TO_MANUAL_CONFIRM: 2,
   // The user is confirming
-  DEPOSIT_MANUAL_CONFIRMING = 3,
+  DEPOSIT_MANUAL_CONFIRMING: 3,
   // Deposit tx reverted
-  DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED = 4,
+  DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED: 4,
   // The erc20 bitcoin version in Hemi has been minted
-  BTC_DEPOSITED = 5,
+  BTC_DEPOSITED: 5,
   // The erc20 bitcoin version in Hemi has been minted, after manual confirmation
-  BTC_DEPOSITED_MANUALLY = 6,
+  BTC_DEPOSITED_MANUALLY: 6,
   // The initial bitcoin transaction failed
-  BTC_TX_FAILED = 7,
-}
+  BTC_TX_FAILED: 7,
+} as const
+/* eslint-enable sort-keys */
+
+export type BtcDepositStatusType =
+  (typeof BtcDepositStatus)[keyof typeof BtcDepositStatus]
 
 /**
  * The first step for a Bitcoin withdrawal consists of doing a Hemi TX. This sets the state
@@ -79,41 +84,51 @@ export const enum BtcDepositStatus {
  *          |_WITHDRAWAL_CHALLENGED
  *          |_CHALLENGE_FAILED
  */
-export const enum BtcWithdrawStatus {
+/* eslint-disable sort-keys */
+export const BtcWithdrawStatus = {
   // The user has confirmed the TX in their wallet, but it hasn't been included in a block
-  INITIATE_WITHDRAW_PENDING = 0,
+  INITIATE_WITHDRAW_PENDING: 0,
   // Transaction withdraw confirmed
-  INITIATE_WITHDRAW_CONFIRMED = 1,
+  INITIATE_WITHDRAW_CONFIRMED: 1,
   // The challenge period is over without the operator having completed the withdrawal
-  READY_TO_CHALLENGE = 2,
+  READY_TO_CHALLENGE: 2,
   // The challenge is in progress
-  CHALLENGE_IN_PROGRESS = 3,
+  CHALLENGE_IN_PROGRESS: 3,
   // Withdrawal completed
-  WITHDRAWAL_SUCCEEDED = 4,
+  WITHDRAWAL_SUCCEEDED: 4,
   // Withdrawal challenged
-  WITHDRAWAL_CHALLENGED = 5,
+  WITHDRAWAL_CHALLENGED: 5,
   // The withdrawal flow failed
-  WITHDRAWAL_FAILED = 6,
+  WITHDRAWAL_FAILED: 6,
   // The challenge transaction failed
-  CHALLENGE_FAILED = 7,
-}
+  CHALLENGE_FAILED: 7,
+} as const
+/* eslint-enable sort-keys */
 
-export const enum EvmDepositStatus {
+export type BtcWithdrawStatusType =
+  (typeof BtcWithdrawStatus)[keyof typeof BtcWithdrawStatus]
+
+/* eslint-disable sort-keys */
+export const EvmDepositStatus = {
   // Only used for ERC20 deposits that require an approval. Otherwise, start on ${DEPOSIT_TX_PENDING}
-  APPROVAL_TX_PENDING = 0,
+  APPROVAL_TX_PENDING: 0,
   // Once the Approval TX is confirmed, but the user hasn't sent the Deposit Transaction
-  APPROVAL_TX_COMPLETED = 1,
+  APPROVAL_TX_COMPLETED: 1,
   // The user has confirmed the TX in their wallet, but it hasn't been included in a block
-  DEPOSIT_TX_PENDING = 2,
+  DEPOSIT_TX_PENDING: 2,
   // Transaction deposit confirmed
-  DEPOSIT_TX_CONFIRMED = 3,
+  DEPOSIT_TX_CONFIRMED: 3,
   // Deposit tx reverted
-  DEPOSIT_TX_FAILED = 4,
+  DEPOSIT_TX_FAILED: 4,
   // Approval failed
-  APPROVAL_TX_FAILED = 5,
+  APPROVAL_TX_FAILED: 5,
   // Funds have been minted in Hemi
-  DEPOSIT_RELAYED = 6,
-}
+  DEPOSIT_RELAYED: 6,
+} as const
+/* eslint-enable sort-keys */
+
+export type EvmDepositStatusType =
+  (typeof EvmDepositStatus)[keyof typeof EvmDepositStatus]
 
 export const ExpectedWaitTimeMinutesGetFundsHemi = 3
 
@@ -147,7 +162,7 @@ type WithdrawDirection = {
 export type BtcDepositOperation = CommonOperation &
   DepositDirection &
   BtcTransactionHash & {
-    status: BtcDepositStatus
+    status: BtcDepositStatusType
   } & {
     l1ChainId: BtcChain['id']
     l2ChainId: Chain['id']
@@ -159,7 +174,7 @@ export type EvmDepositOperation = CommonOperation &
     l1ChainId: Chain['id']
     l2ChainId: Chain['id']
     l2TransactionHash?: Hash // The transaction hash of tokens minted in the L2 chain
-    status?: EvmDepositStatus // If undefined, assume completed
+    status?: EvmDepositStatusType // If undefined, assume completed
   }
 
 export type ToEvmWithdrawOperation = CommonOperation &
@@ -181,7 +196,7 @@ export type ToBtcWithdrawOperation = CommonOperation &
     l2ChainId: Chain['id']
   } & {
     challengeTxHash?: Hash
-    status: BtcWithdrawStatus
+    status: BtcWithdrawStatusType
     uuid?: string // bigint can't be serialized into local storage
   }
 

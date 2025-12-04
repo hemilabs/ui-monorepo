@@ -37,7 +37,6 @@ function validateChainIsEthereum(
   res: Response,
   next: NextFunction,
 ) {
-  // @ts-expect-error number includes mainnet.id and sepolia.id types
   if (req.data.chainId && [mainnet.id, sepolia.id].includes(req.data.chainId)) {
     next()
   } else {
@@ -52,7 +51,6 @@ function validateChainIsHemi(
 ) {
   if (
     req.data.chainId &&
-    // @ts-expect-error number includes mainnet.id and sepolia.id types
     [hemi.id, hemiSepolia.id].includes(req.data.chainId)
   ) {
     next()

@@ -261,7 +261,7 @@ export const createBitcoinSync = function ({
                 // This is needed for recent deposits that may not be indexed yet (pending txs)
                 let amount: string
                 if (depositInfo?.netSatsAfterFee) {
-                  amount = depositInfo.netSatsAfterFee.toString()
+                  amount = depositInfo.netSatsAfterFee
                 } else {
                   // Fallback: calculate net amount using current vault fee
                   try {

@@ -11,7 +11,10 @@ import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'next-intl'
-import { StakingDashboardStatus } from 'types/stakingDashboard'
+import {
+  StakingDashboardStatus,
+  type StakingDashboardStatusType,
+} from 'types/stakingDashboard'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { getVeHemiContractAddress } from 've-hemi-actions'
@@ -91,7 +94,7 @@ export const ReviewStake = function ({ onClose }: Props) {
     ].includes(stakingStatus)
 
     const statusMap: Partial<
-      Record<StakingDashboardStatus, ProgressStatusType>
+      Record<StakingDashboardStatusType, ProgressStatusType>
     > = {
       [StakingDashboardStatus.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
       [StakingDashboardStatus.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
@@ -124,7 +127,7 @@ export const ReviewStake = function ({ onClose }: Props) {
   }
 
   const addStakingStep = function (): StepPropsWithoutPosition {
-    const statusMap: Record<StakingDashboardStatus, ProgressStatusType> = {
+    const statusMap: Record<StakingDashboardStatusType, ProgressStatusType> = {
       [StakingDashboardStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
       [StakingDashboardStatus.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
       [StakingDashboardStatus.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,
@@ -166,7 +169,7 @@ export const ReviewStake = function ({ onClose }: Props) {
     return steps
   }
 
-  const getCallToAction = (status: StakingDashboardStatus) =>
+  const getCallToAction = (status: StakingDashboardStatusType) =>
     [
       StakingDashboardStatus.APPROVAL_TX_FAILED,
       StakingDashboardStatus.STAKE_TX_FAILED,

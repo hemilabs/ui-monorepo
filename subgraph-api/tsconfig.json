@@ -1,9 +1,11 @@
 {
   "compilerOptions": {
     "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
     "noEmit": true,
     "resolveJsonModule": true,
     "strict": false
   },
-  "extends": "@tsconfig/node22/tsconfig.json"
+  "extends": "@tsconfig/node22/tsconfig.json",
+  "include": ["reset.d.ts", "server.ts", "src/**/*.ts"]
 }

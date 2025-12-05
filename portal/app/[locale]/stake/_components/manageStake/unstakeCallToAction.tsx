@@ -1,12 +1,12 @@
 import { Button } from 'components/button'
 import { useTranslations } from 'next-intl'
-import { UnstakeStatusEnum } from 'types/stake'
+import { UnstakeStatusEnum, type UnstakeStatusEnumType } from 'types/stake'
 
 import { CallToAction } from './callToAction'
 
 type Props = {
   isSubmitting: boolean
-  unstakeStatus: UnstakeStatusEnum | undefined
+  unstakeStatus: UnstakeStatusEnumType | undefined
 }
 
 export const UnstakeCallToAction = function ({

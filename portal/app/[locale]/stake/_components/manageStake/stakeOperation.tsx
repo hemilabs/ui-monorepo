@@ -15,7 +15,12 @@ import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { StakeOperations, StakeStatusEnum, type StakeToken } from 'types/stake'
+import {
+  StakeOperations,
+  StakeStatusEnum,
+  type StakeStatusEnumType,
+  type StakeToken,
+} from 'types/stake'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
@@ -113,7 +118,9 @@ export const StakeOperation = function ({
         return ProgressStatus.COMPLETED
       }
 
-      const statusMap: Partial<Record<StakeStatusEnum, ProgressStatusType>> = {
+      const statusMap: Partial<
+        Record<StakeStatusEnumType, ProgressStatusType>
+      > = {
         [StakeStatusEnum.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
         [StakeStatusEnum.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
       }
@@ -150,7 +157,7 @@ export const StakeOperation = function ({
       if (stakeStatus === undefined) {
         return ProgressStatus.NOT_READY
       }
-      const statusMap: Record<StakeStatusEnum, ProgressStatusType> = {
+      const statusMap: Record<StakeStatusEnumType, ProgressStatusType> = {
         [StakeStatusEnum.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
         [StakeStatusEnum.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
         [StakeStatusEnum.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,

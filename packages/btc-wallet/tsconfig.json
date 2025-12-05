@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "./"
+    "baseUrl": "./",
+    "erasableSyntaxOnly": true
   },
   "extends": "@tsconfig/next/tsconfig.json",
   "include": ["**/**/*.ts", "**/**/*.tsx", "global.d.ts"]

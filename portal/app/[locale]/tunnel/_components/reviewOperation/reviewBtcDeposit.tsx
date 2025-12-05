@@ -14,7 +14,11 @@ import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { EvmToken, type BtcToken } from 'types/token'
-import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
+import {
+  type BtcDepositOperation,
+  BtcDepositStatus,
+  type BtcDepositStatusType,
+} from 'types/tunnel'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
 import { useAccount } from 'wagmi'
@@ -89,13 +93,14 @@ const ReviewContent = function ({
   const steps: StepPropsWithoutPosition[] = []
 
   const getDepositStep = function (): StepPropsWithoutPosition {
-    const statusMap: Partial<Record<BtcDepositStatus, ProgressStatusType>> = {
-      [BtcDepositStatus.BTC_TX_PENDING]: ProgressStatus.PROGRESS,
-      [BtcDepositStatus.BTC_TX_FAILED]: ProgressStatus.FAILED,
-    }
+    const statusMap: Partial<Record<BtcDepositStatusType, ProgressStatusType>> =
+      {
+        [BtcDepositStatus.BTC_TX_PENDING]: ProgressStatus.PROGRESS,
+        [BtcDepositStatus.BTC_TX_FAILED]: ProgressStatus.FAILED,
+      }
 
     const postActionStatusMap: Partial<
-      Record<BtcDepositStatus, ProgressStatusType>
+      Record<BtcDepositStatusType, ProgressStatusType>
     > = {
       [BtcDepositStatus.BTC_TX_PENDING]: ProgressStatus.NOT_READY,
       [BtcDepositStatus.BTC_TX_CONFIRMED]: ProgressStatus.PROGRESS,
@@ -137,15 +142,16 @@ const ReviewContent = function ({
   }
 
   const getDepositFinalizedStep = function (): StepPropsWithoutPosition {
-    const statusMap: Partial<Record<BtcDepositStatus, ProgressStatusType>> = {
-      [BtcDepositStatus.READY_TO_MANUAL_CONFIRM]: ProgressStatus.FAILED,
-      [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING]: ProgressStatus.FAILED,
-      [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED]:
-        ProgressStatus.FAILED,
-      [BtcDepositStatus.BTC_DEPOSITED]: ProgressStatus.COMPLETED,
-      [BtcDepositStatus.BTC_DEPOSITED_MANUALLY]: ProgressStatus.FAILED,
-      [BtcDepositStatus.BTC_TX_FAILED]: ProgressStatus.FAILED,
-    }
+    const statusMap: Partial<Record<BtcDepositStatusType, ProgressStatusType>> =
+      {
+        [BtcDepositStatus.READY_TO_MANUAL_CONFIRM]: ProgressStatus.FAILED,
+        [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING]: ProgressStatus.FAILED,
+        [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED]:
+          ProgressStatus.FAILED,
+        [BtcDepositStatus.BTC_DEPOSITED]: ProgressStatus.COMPLETED,
+        [BtcDepositStatus.BTC_DEPOSITED_MANUALLY]: ProgressStatus.FAILED,
+        [BtcDepositStatus.BTC_TX_FAILED]: ProgressStatus.FAILED,
+      }
 
     return {
       description: (
@@ -166,7 +172,7 @@ const ReviewContent = function ({
       if (deposit.status === BtcDepositStatus.BTC_DEPOSITED_MANUALLY) {
         return ProgressStatus.COMPLETED
       }
-      const map: Partial<Record<BtcDepositStatus, ProgressStatusType>> = {
+      const map: Partial<Record<BtcDepositStatusType, ProgressStatusType>> = {
         [BtcDepositStatus.READY_TO_MANUAL_CONFIRM]: ProgressStatus.READY,
         [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMING]: ProgressStatus.PROGRESS,
         [BtcDepositStatus.DEPOSIT_MANUAL_CONFIRMATION_TX_FAILED]:

@@ -15,6 +15,7 @@ import { useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
 import {
   StakingDashboardStatus,
+  type StakingDashboardStatusType,
   type StakingOperationRunning,
 } from 'types/stakingDashboard'
 import { getTotal } from 'utils/getTotal'
@@ -155,7 +156,7 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
       }
 
       const statusMap: Partial<
-        Record<StakingDashboardStatus, ProgressStatusType>
+        Record<StakingDashboardStatusType, ProgressStatusType>
       > = {
         [StakingDashboardStatus.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
         [StakingDashboardStatus.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
@@ -192,14 +193,16 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
       if (stakingDashboardStatus === undefined) {
         return ProgressStatus.NOT_READY
       }
-      const statusMap: Record<StakingDashboardStatus, ProgressStatusType> = {
-        [StakingDashboardStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
-        [StakingDashboardStatus.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
-        [StakingDashboardStatus.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,
-        [StakingDashboardStatus.STAKE_TX_PENDING]: ProgressStatus.PROGRESS,
-        [StakingDashboardStatus.STAKE_TX_FAILED]: ProgressStatus.FAILED,
-        [StakingDashboardStatus.STAKE_TX_CONFIRMED]: ProgressStatus.COMPLETED,
-      }
+      const statusMap: Record<StakingDashboardStatusType, ProgressStatusType> =
+        {
+          [StakingDashboardStatus.APPROVAL_TX_PENDING]:
+            ProgressStatus.NOT_READY,
+          [StakingDashboardStatus.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
+          [StakingDashboardStatus.APPROVAL_TX_COMPLETED]: ProgressStatus.READY,
+          [StakingDashboardStatus.STAKE_TX_PENDING]: ProgressStatus.PROGRESS,
+          [StakingDashboardStatus.STAKE_TX_FAILED]: ProgressStatus.FAILED,
+          [StakingDashboardStatus.STAKE_TX_CONFIRMED]: ProgressStatus.COMPLETED,
+        }
       return statusMap[stakingDashboardStatus] ?? ProgressStatus.NOT_READY
     }
 
@@ -241,8 +244,8 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
     return steps
   }
 
-  const getCallToAction = function (callStatus: StakingDashboardStatus) {
-    const map: Partial<Record<StakingDashboardStatus, ReactNode>> = {
+  const getCallToAction = function (callStatus: StakingDashboardStatusType) {
+    const map: Partial<Record<StakingDashboardStatusType, ReactNode>> = {
       [StakingDashboardStatus.APPROVAL_TX_FAILED]: <RetryIncreaseAmount />,
       [StakingDashboardStatus.STAKE_TX_FAILED]: <RetryIncreaseAmount />,
     }

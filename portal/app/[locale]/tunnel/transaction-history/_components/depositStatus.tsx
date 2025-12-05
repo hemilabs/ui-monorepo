@@ -5,6 +5,7 @@ import {
   BtcDepositStatus,
   DepositTunnelOperation,
   EvmDepositStatus,
+  type EvmDepositStatusType,
   ExpectedWaitTimeMinutesGetFundsHemi,
 } from 'types/tunnel'
 import { isBtcDeposit } from 'utils/tunnel'
@@ -19,7 +20,7 @@ export const DepositStatus = function ({ deposit }: Props) {
   const t = useTranslations()
 
   if (!isBtcDeposit(deposit)) {
-    const evmStatuses: Partial<Record<EvmDepositStatus, ReactNode>> = {
+    const evmStatuses: Partial<Record<EvmDepositStatusType, ReactNode>> = {
       [EvmDepositStatus.DEPOSIT_TX_CONFIRMED]: (
         <TxStatus.InStatus
           text={t('common.wait-minutes', {

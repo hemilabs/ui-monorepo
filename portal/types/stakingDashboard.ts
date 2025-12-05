@@ -4,20 +4,25 @@ import { EvmToken } from './token'
 
 export type StakingDashboardToken = EvmToken
 
-export const enum StakingDashboardStatus {
+/* eslint-disable sort-keys */
+export const StakingDashboardStatus = {
   // The Approval TX is sent but not confirmed.
-  APPROVAL_TX_PENDING = 0,
+  APPROVAL_TX_PENDING: 0,
   // The Approval TX failed to be confirmed.
-  APPROVAL_TX_FAILED = 1,
+  APPROVAL_TX_FAILED: 1,
   // Once the Approval TX is confirmed, but the user hasn't sent the createLoc Transaction
-  APPROVAL_TX_COMPLETED = 2,
+  APPROVAL_TX_COMPLETED: 2,
   // The user has confirmed the TX in their wallet, but it hasn't been included in a block
-  STAKE_TX_PENDING = 3,
+  STAKE_TX_PENDING: 3,
   // CreateLock tx reverted
-  STAKE_TX_FAILED = 4,
+  STAKE_TX_FAILED: 4,
   // Transaction createLock confirmed
-  STAKE_TX_CONFIRMED = 5,
-}
+  STAKE_TX_CONFIRMED: 5,
+} as const
+/* eslint-enable sort-keys */
+
+export type StakingDashboardStatusType =
+  (typeof StakingDashboardStatus)[keyof typeof StakingDashboardStatus]
 
 export const StakingPositionStatus = {
   ACTIVE: 'active',
@@ -52,7 +57,7 @@ export type StakingDashboardOperation = Partial<{
   stakingPosition: Partial<
     Pick<StakingPosition, 'amount' | 'tokenId' | 'lockTime' | 'timestamp'>
   >
-  status: StakingDashboardStatus
+  status: StakingDashboardStatusType
 }>
 
 // Prefer ordering these by value rather than by key

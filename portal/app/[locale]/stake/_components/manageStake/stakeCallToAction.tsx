@@ -1,6 +1,6 @@
 import { Button } from 'components/button'
 import { useTranslations } from 'next-intl'
-import { StakeStatusEnum } from 'types/stake'
+import { StakeStatusEnum, type StakeStatusEnumType } from 'types/stake'
 
 import { CallToAction } from './callToAction'
 
@@ -18,7 +18,7 @@ const TryAgainButton = ({ disabled }: { disabled: boolean }) => (
 
 type Props = {
   isSubmitting: boolean
-  stakeStatus: StakeStatusEnum | undefined
+  stakeStatus: StakeStatusEnumType | undefined
 }
 
 export const StakeCallToAction = function ({

@@ -121,7 +121,7 @@ const isDepositPendingOperation = function (
   if (isBtcDeposit(operation)) {
     return !btcDepositCompletedActions.includes(operation.status)
   }
-  // @ts-expect-error includes accepts undefined on runtime
+  // @ts-expect-error includes() accepts undefined, and operation.status may not be defined
   return !evmDepositCompletedActions.includes(operation.status)
 }
 
@@ -150,7 +150,6 @@ export const isMissingProveTransaction = (withdrawal: ToEvmWithdrawOperation) =>
     MessageStatus.IN_CHALLENGE_PERIOD,
     MessageStatus.READY_FOR_RELAY,
     MessageStatus.RELAYED,
-    // @ts-expect-error status is of type MessageStatus
   ].includes(withdrawal.status) && !withdrawal.proveTxHash
 
 export const isMissingClaimTransaction = (withdrawal: ToEvmWithdrawOperation) =>

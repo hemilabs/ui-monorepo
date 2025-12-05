@@ -13,6 +13,7 @@ import { useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
 import {
   StakingDashboardStatus,
+  type StakingDashboardStatusType,
   type StakingOperationRunning,
 } from 'types/stakingDashboard'
 import { getNativeToken } from 'utils/nativeToken'
@@ -94,7 +95,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
         return ProgressStatus.NOT_READY
       }
       const statusMap: Partial<
-        Record<StakingDashboardStatus, ProgressStatusType>
+        Record<StakingDashboardStatusType, ProgressStatusType>
       > = {
         [StakingDashboardStatus.STAKE_TX_PENDING]: ProgressStatus.PROGRESS,
         [StakingDashboardStatus.STAKE_TX_FAILED]: ProgressStatus.FAILED,
@@ -134,8 +135,8 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
 
   const getSteps = () => [addIncreaseUnlockTimeStep()]
 
-  const getCallToAction = function (callStatus: StakingDashboardStatus) {
-    const map: Partial<Record<StakingDashboardStatus, ReactNode>> = {
+  const getCallToAction = function (callStatus: StakingDashboardStatusType) {
+    const map: Partial<Record<StakingDashboardStatusType, ReactNode>> = {
       [StakingDashboardStatus.APPROVAL_TX_FAILED]: <RetryIncreaseUnlockTime />,
       [StakingDashboardStatus.STAKE_TX_FAILED]: <RetryIncreaseUnlockTime />,
     }

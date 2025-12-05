@@ -75,26 +75,36 @@ export type StakeOperations = 'stake' | 'unstake'
  *      |_ STAKE_TX_FAILED The stake transaction failed. The user can retry.
  *      |_ STAKE_TX_CONFIRMED The stake transaction was confirmed. The user has now a staked position.
  */
-export const enum StakeStatusEnum {
+/* eslint-disable sort-keys */
+export const StakeStatusEnum = {
   // The Approval TX is sent but not confirmed.
-  APPROVAL_TX_PENDING = 0,
+  APPROVAL_TX_PENDING: 0,
   // The Approval TX failed to be confirmed.
-  APPROVAL_TX_FAILED = 1,
+  APPROVAL_TX_FAILED: 1,
   // Once the Approval TX is confirmed, but the user hasn't sent the Deposit Transaction
-  APPROVAL_TX_COMPLETED = 2,
+  APPROVAL_TX_COMPLETED: 2,
   // The user has confirmed the TX in their wallet, but it hasn't been included in a block
-  STAKE_TX_PENDING = 3,
+  STAKE_TX_PENDING: 3,
   // Deposit tx reverted
-  STAKE_TX_FAILED = 4,
+  STAKE_TX_FAILED: 4,
   // Transaction deposit confirmed
-  STAKE_TX_CONFIRMED = 5,
-}
+  STAKE_TX_CONFIRMED: 5,
+} as const
+/* eslint-enable sort-keys */
 
-export const enum UnstakeStatusEnum {
+export type StakeStatusEnumType =
+  (typeof StakeStatusEnum)[keyof typeof StakeStatusEnum]
+
+/* eslint-disable sort-keys */
+export const UnstakeStatusEnum = {
   // The user has confirmed the TX in their wallet, but it hasn't been included in a block
-  UNSTAKE_TX_PENDING = 0,
+  UNSTAKE_TX_PENDING: 0,
   // The unstake transaction reverted
-  UNSTAKE_TX_FAILED = 1,
+  UNSTAKE_TX_FAILED: 1,
   // Unstake transaction confirmed
-  UNSTAKE_TX_CONFIRMED = 2,
-}
+  UNSTAKE_TX_CONFIRMED: 2,
+} as const
+/* eslint-enable sort-keys */
+
+export type UnstakeStatusEnumType =
+  (typeof UnstakeStatusEnum)[keyof typeof UnstakeStatusEnum]

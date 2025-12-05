@@ -29,6 +29,12 @@ type Props = {
     }
 )
 
+const getAddressValue = (
+  isCustomAddress: boolean,
+  tunneledAddress: string | undefined,
+  tokenAddress: string | undefined,
+) => (isCustomAddress ? tunneledAddress : tokenAddress) ?? ''
+
 export const TokenSection = function ({
   addressDisabled,
   addressValidity,
@@ -45,8 +51,33 @@ export const TokenSection = function ({
 
   const isCustomAddress = 'tunneledCustomTokenAddress' in props
 
-  const addressValue =
-    (isCustomAddress ? props.tunneledCustomTokenAddress : token?.address) ?? ''
+  const tunneledAddress = isCustomAddress
+    ? props.tunneledCustomTokenAddress
+    : undefined
+  const tokenAddress = token?.address
+  const addressValue = getAddressValue(
+    isCustomAddress,
+    tunneledAddress,
+    tokenAddress,
+  )
+
+  const hasAddressValue = addressValue.length > 0
+  const hasInteracted = hasAddressValue || hasFocused
+  const shouldShowValidity = !isLoading && (hasInteracted || addressDisabled)
+
+  const handleBlur = () => setHasFocused(true)
+
+  const handleChange = isCustomAddress
+    ? (e: React.ChangeEvent<HTMLInputElement>) =>
+        props.onTunneledCustomTokenAddressChange?.(e.target.value)
+    : undefined
+
+  const canClear = isCustomAddress && !addressDisabled
+  const handleClear = canClear
+    ? () => props.onTunneledCustomTokenAddressChange?.('')
+    : undefined
+
+  const hasToken = !!token
 
   return (
     <>
@@ -67,26 +98,17 @@ export const TokenSection = function ({
             </p>
             <SearchInput
               disabled={addressDisabled}
-              onBlur={() => setHasFocused(true)}
-              onChange={
-                isCustomAddress
-                  ? e =>
-                      props.onTunneledCustomTokenAddressChange?.(e.target.value)
-                  : undefined
-              }
-              onClear={
-                isCustomAddress && !addressDisabled
-                  ? () => props.onTunneledCustomTokenAddressChange?.('')
-                  : undefined
-              }
+              onBlur={handleBlur}
+              onChange={handleChange}
+              onClear={handleClear}
               showMagnifyingGlass={false}
               value={addressValue}
             />
             <div className="flex items-center justify-between">
-              {!isLoading && (addressValue.length > 0 || hasFocused) ? (
+              {shouldShowValidity ? (
                 <>
                   <AddressValidity validity={addressValidity} />
-                  {!!token && (
+                  {hasToken && (
                     <SeeOnExplorer address={token.address} chainId={chainId} />
                   )}
                 </>

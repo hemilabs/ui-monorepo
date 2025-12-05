@@ -6,6 +6,7 @@ export type AddressValidity =
   | 'this-address-is-valid'
   | 'this-address-is-not-valid'
   | 'address-does-not-match-l2'
+  | 'l1-address-not-configured'
 
 type Props = {
   validity: AddressValidity | undefined

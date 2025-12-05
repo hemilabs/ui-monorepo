@@ -46,8 +46,20 @@ const canSubmit = ({
   !!l2customToken.l1Token &&
   isAddressEqual(l2customToken.l1Token, l1CustomToken.address)
 
-const getL1AddressValidity = (l1CustomToken: Token | undefined) =>
-  l1CustomToken ? 'this-address-is-valid' : 'this-address-is-not-valid'
+const getL1AddressValidity = function (
+  l1CustomToken: Token | undefined,
+  l2customToken: L2Token | undefined,
+  isL2PlaceholderData: boolean,
+) {
+  if (l2customToken && l2customToken.address && !l2customToken.l1Token) {
+    if (isL2PlaceholderData) {
+      return undefined
+    }
+    return 'l1-address-not-configured'
+  }
+
+  return l1CustomToken ? 'this-address-is-valid' : 'this-address-is-not-valid'
+}
 
 const getL2AddressValidity = function (
   l1CustomToken: Token | undefined,
@@ -86,19 +98,24 @@ export const CustomTokenDrawer = function ({
   const [tunneledCustomTokenAddress, setTunneledCustomTokenAddress] =
     useState('')
 
-  const { data: l2customToken, isLoading: isLoadingL2Token } = useL2Token({
+  const {
+    data: l2customToken,
+    isLoading: isLoadingL2Token,
+    isPlaceholderData: isL2PlaceholderData,
+  } = useL2Token({
     address: isL2 ? customTokenAddress : tunneledCustomTokenAddress,
     chainId: l2ChainId,
     options: {
       enabled: isL2 || !!tunneledCustomTokenAddress,
       // we may have an incomplete view in the cache of this, useful when
       // reading the L2 token
-      placeholderData: queryClient.getQueryData<L2Token>(
-        getUseTokenQueryKey(
-          isL2 ? customTokenAddress : tunneledCustomTokenAddress,
-          l2ChainId,
+      placeholderData: () =>
+        queryClient.getQueryData<L2Token>(
+          getUseTokenQueryKey(
+            isL2 ? customTokenAddress : tunneledCustomTokenAddress,
+            l2ChainId,
+          ),
         ),
-      ),
       retry: 1,
     },
   })
@@ -192,7 +209,11 @@ export const CustomTokenDrawer = function ({
         <div className="skip-parent-padding-x flex flex-1 flex-col overflow-y-auto">
           <TokenSection
             addressDisabled
-            addressValidity={getL1AddressValidity(l1CustomToken)}
+            addressValidity={getL1AddressValidity(
+              l1CustomToken,
+              l2customToken,
+              isL2PlaceholderData,
+            )}
             chainId={l1ChainId}
             isLoading={isLoadingL1Token}
             layer={1}

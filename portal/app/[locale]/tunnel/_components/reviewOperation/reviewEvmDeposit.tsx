@@ -140,6 +140,7 @@ const ReviewContent = function ({
       fees: [
         EvmDepositStatus.APPROVAL_TX_COMPLETED,
         EvmDepositStatus.DEPOSIT_TX_PENDING,
+        EvmDepositStatus.DEPOSIT_TX_FAILED,
       ].includes(depositStatus)
         ? {
             amount: formatUnits(

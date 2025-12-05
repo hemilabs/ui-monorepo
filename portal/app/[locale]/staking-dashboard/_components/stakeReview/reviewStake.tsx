@@ -13,7 +13,7 @@ import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'next-intl'
 import {
   StakingDashboardStatus,
-  StakingDashboardStatusType,
+  type StakingDashboardStatusType,
 } from 'types/stakingDashboard'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'

@@ -14,6 +14,7 @@ import {
 import { getBitcoinTimestamp } from 'utils/bitcoin'
 import {
   confirmBtcDeposit,
+  getBitcoinDepositFee,
   getBitcoinWithdrawalUuid,
   initiateBtcDeposit,
   initiateBtcWithdrawal,
@@ -149,27 +150,40 @@ export const useDepositBitcoin = function () {
     mutate: depositBitcoin,
     reset: resetSendBitcoin,
   } = useMutation({
-    mutationFn: ({
+    async mutationFn({
       hemiAddress,
       satoshis,
     }: {
       hemiAddress: Address
       satoshis: Satoshis
-    } & Pick<BtcDepositOperation, 'l1ChainId' | 'l2ChainId'>) =>
-      initiateBtcDeposit({
-        hemiAddress,
-        hemiClient,
-        satoshis,
-        walletConnector: connector!,
-      }),
+    } & Pick<BtcDepositOperation, 'l1ChainId' | 'l2ChainId'>) {
+      const [depositResult, vaultFee] = await Promise.all([
+        initiateBtcDeposit({
+          hemiAddress,
+          hemiClient,
+          satoshis,
+          walletConnector: connector!,
+        }),
+        getBitcoinDepositFee({
+          amount: BigInt(satoshis),
+          hemiClient,
+        }).catch(() => BigInt(0)), // Return 0 if fee fetch fails
+      ])
+
+      return { ...depositResult, vaultFee }
+    },
     mutationKey: [connector, hemiClient],
     onSuccess(
-      { bitcoinCustodyAddress, txHash },
+      { bitcoinCustodyAddress, txHash, vaultFee },
       { l1ChainId, l2ChainId, satoshis },
     ) {
       const btc = getNativeToken(bitcoin.id)
+
+      // If vaultFee is 0, it means the fetch failed - use gross amount as fallback
+      const amount = (BigInt(satoshis) - vaultFee).toString()
+
       addDepositToTunnelHistory({
-        amount: satoshis.toString(),
+        amount,
         direction: MessageDirection.L1_TO_L2,
         from: address!,
         l1ChainId,

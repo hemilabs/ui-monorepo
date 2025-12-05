@@ -23,6 +23,7 @@ import {
 } from 'utils/btcApi'
 import { getHemiClient } from 'utils/chainClients'
 import {
+  getBitcoinDepositFee,
   getHemiStatusOfBtcDeposit,
   getHemiStatusOfBtcWithdrawal,
   hemiAddressToBitcoinOpReturn,
@@ -32,7 +33,11 @@ import {
   getVaultAddressByIndex,
 } from 'utils/hemiMemoized'
 import { getNativeToken } from 'utils/nativeToken'
-import { getBtcWithdrawals, getLastIndexedBlock } from 'utils/subgraph'
+import {
+  getBtcDepositInfo,
+  getBtcWithdrawals,
+  getLastIndexedBlock,
+} from 'utils/subgraph'
 import { type Address, decodeFunctionData, type Hash, toHex } from 'viem'
 
 import { chainConfiguration } from './chainConfiguration'
@@ -238,11 +243,41 @@ export const createBitcoinSync = function ({
             bitcoinDeposit =>
               async function (): Promise<BtcDepositOperation> {
                 const btc = getNativeToken(l1Chain.id)
+
+                // Try to get deposit info from subgraph to get the net amount after fees
+                const depositInfo = await getBtcDepositInfo({
+                  chainId: l2Chain.id,
+                  depositTxId: bitcoinDeposit.txId,
+                }).catch(() => null)
+
+                // Calculate gross amount from transaction
+                const grossAmount = calculateDepositAmount(
+                  bitcoinDeposit.vout,
+                  bitcoinCustodyAddress,
+                )
+
+                // Use netSatsAfterFee from subgraph if available
+                // Otherwise fallback to calculating net amount using current vault fee
+                // This is needed for recent deposits that may not be indexed yet (pending txs)
+                let amount: string
+                if (depositInfo?.netSatsAfterFee) {
+                  amount = depositInfo.netSatsAfterFee
+                } else {
+                  // Fallback: calculate net amount using current vault fee
+                  try {
+                    const vaultFee = await getBitcoinDepositFee({
+                      amount: BigInt(grossAmount),
+                      hemiClient,
+                    })
+                    amount = (BigInt(grossAmount) - vaultFee).toString()
+                  } catch {
+                    // Last resort: use gross amount if fee calculation fails
+                    amount = grossAmount.toString()
+                  }
+                }
+
                 const partialDeposit: Omit<BtcDepositOperation, 'status'> = {
-                  amount: calculateDepositAmount(
-                    bitcoinDeposit.vout,
-                    bitcoinCustodyAddress,
-                  ).toString(),
+                  amount,
                   direction: MessageDirection.L1_TO_L2,
                   // vin should all be utxos coming from the same address...
                   // not supporting multisig for the time being (although, we are not really using

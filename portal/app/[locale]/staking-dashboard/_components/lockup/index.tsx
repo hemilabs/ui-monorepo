@@ -1,6 +1,7 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { LockupInput } from 'components/inputText'
 import { useHemiToken } from 'hooks/useHemiToken'
+import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import { useLocale, useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
 import type { Token } from 'types/token'
@@ -97,7 +98,7 @@ const InfoRow = ({ label, value }: { label: string; value: ReactNode }) => (
   </p>
 )
 
-const VotingPowerEquivalence = ({
+const VotingPowerEquivalence = function ({
   amount,
   token,
   votingPower,
@@ -105,16 +106,16 @@ const VotingPowerEquivalence = ({
   amount: string
   token: Token
   votingPower: string
-}) => (
-  <div className="flex items-center gap-x-1">
-    <DisplayAmount amount={amount} token={token} />
-    <span>=</span>
-    <DisplayAmount
-      amount={votingPower}
-      token={{ ...token, symbol: `ve${token.symbol}` }}
-    />
-  </div>
-)
+}) {
+  const veHemiToken = useVeHemiToken()
+  return (
+    <div className="flex items-center gap-x-1">
+      <DisplayAmount amount={amount} token={token} />
+      <span>=</span>
+      <DisplayAmount amount={votingPower} token={veHemiToken} />
+    </div>
+  )
+}
 
 type TryValuesHintFullProps = TryValuesHintProps & {
   minLocked?: number

@@ -9,7 +9,7 @@ import { useCalculateApr } from '../../_hooks/useCalculateApr'
 type Props = {
   lockupTime: bigint
   status: StakingPositionStatus
-  tokenId: string
+  tokenId: bigint
 }
 
 export const LockupTime = function ({ lockupTime, status, tokenId }: Props) {
@@ -19,7 +19,7 @@ export const LockupTime = function ({ lockupTime, status, tokenId }: Props) {
 
   const { data: apr, error: error } = useCalculateApr({
     enabled: isActive,
-    tokenId: BigInt(tokenId),
+    tokenId,
   })
 
   const renderApr = function () {

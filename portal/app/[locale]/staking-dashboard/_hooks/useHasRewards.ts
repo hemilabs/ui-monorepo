@@ -4,7 +4,7 @@ import { useHemiToken } from 'hooks/useHemiToken'
 import { getCalculateRewardsQueryKey } from './useCalculateRewards'
 import { useRewardTokens } from './useRewardTokens'
 
-export function useHasRewards(tokenId: string) {
+export function useHasRewards(tokenId: bigint) {
   const queryClient = useQueryClient()
   const token = useHemiToken()
   const { isLoading, tokens: rewardTokens } = useRewardTokens()
@@ -13,7 +13,7 @@ export function useHasRewards(tokenId: string) {
     const queryKey = getCalculateRewardsQueryKey({
       chainId: token.chainId,
       rewardToken: address,
-      tokenId: BigInt(tokenId),
+      tokenId,
     })
 
     const data = queryClient.getQueryData<bigint>(queryKey)

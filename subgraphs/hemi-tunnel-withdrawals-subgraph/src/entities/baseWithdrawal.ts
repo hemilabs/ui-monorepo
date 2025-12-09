@@ -116,6 +116,19 @@ export class BaseWithdrawal extends Entity {
     this.set('id', Value.fromBytes(value))
   }
 
+  get netSatsAfterFee(): BigInt {
+    const value = this.get('netSatsAfterFee')
+    if (!value || value.kind == ValueKind.NULL) {
+      throw new Error('Cannot return null for a required field.')
+    } else {
+      return value.toBigInt()
+    }
+  }
+
+  set netSatsAfterFee(value: BigInt) {
+    this.set('netSatsAfterFee', Value.fromBigInt(value))
+  }
+
   get timestamp(): BigInt {
     const value = this.get('timestamp')
     if (!value || value.kind == ValueKind.NULL) {

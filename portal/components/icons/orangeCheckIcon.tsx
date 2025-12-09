@@ -12,7 +12,7 @@ type Props = {
 
 export const OrangeCheckIcon = ({ size = 'medium' }: Props) => (
   <div
-    className={`flex ${sizes[size]} items-center justify-center rounded-full bg-orange-500`}
+    className={`flex ${sizes[size]} items-center justify-center rounded-full bg-orange-600`}
   >
     <svg fill="none" height={16} width={16} xmlns="http://www.w3.org/2000/svg">
       <path

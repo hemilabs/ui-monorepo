@@ -34,7 +34,7 @@ export const IconContainer = ({
       transition-colors duration-300 md:h-5
       md:w-5 group-hover/nav:[&>svg>path]:fill-neutral-950 ${
         selected
-          ? 'bg-orange-500 [&>svg>path]:fill-white'
+          ? 'bg-orange-600 [&>svg>path]:fill-white'
           : 'bg-neutral-100 [&>svg>path]:fill-neutral-400 group-hover/item:[&>svg>path]:fill-neutral-950'
       }`}
   >
@@ -88,7 +88,7 @@ export const ItemText = ({
     className={`text-base font-medium transition-colors duration-300
        group-hover/nav:text-neutral-950 md:text-sm ${
          selected
-           ? 'text-orange-500'
+           ? 'text-orange-600'
            : 'text-neutral-600 group-hover/item:text-neutral-950'
        }`}
   >

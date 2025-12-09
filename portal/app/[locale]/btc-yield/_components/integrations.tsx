@@ -36,7 +36,7 @@ const Integration = ({
               style={{ objectFit: 'contain' }}
             />
           </span>
-          <p className="body-text-caption mt-5 text-orange-500">{category}</p>
+          <p className="body-text-caption mt-5 text-orange-600">{category}</p>
           <h2 className="text-neutral-950">{name}</h2>
           <p className="body-text-normal mt-1 text-neutral-500">
             {description}

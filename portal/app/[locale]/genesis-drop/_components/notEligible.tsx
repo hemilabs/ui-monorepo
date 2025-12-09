@@ -15,18 +15,12 @@ export const NotEligible = function () {
       <p className="mt-3 max-w-48 text-center text-xs font-medium text-neutral-500 sm:max-w-80 md:max-w-72 lg:max-w-72 xl:max-w-96">
         {t.rich('have-questions', {
           absintheLink: chunk => (
-            <ExternalLink
-              className="text-orange-500 hover:text-orange-700"
-              href={absintheUrl}
-            >
+            <ExternalLink className="hoverable-text" href={absintheUrl}>
               {chunk}
             </ExternalLink>
           ),
           discordLink: chunk => (
-            <ExternalLink
-              className="text-orange-500 hover:text-orange-700"
-              href={discordUrl}
-            >
+            <ExternalLink className="hoverable-text" href={discordUrl}>
               {chunk}
             </ExternalLink>
           ),

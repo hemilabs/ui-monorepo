@@ -1,3 +1,5 @@
+import { orange600 } from 'styles'
+
 type Props = {
   selected?: boolean
 }
@@ -5,7 +7,7 @@ type Props = {
 export const GenesisDropIcon = ({ selected }: Props) => (
   <svg fill="none" height={20} width={20} xmlns="http://www.w3.org/2000/svg">
     <rect
-      fill={selected ? '#FF6C15' : '#F5F5F5'}
+      fill={selected ? orange600 : '#F5F5F5'}
       height={20}
       rx={6}
       width={20}

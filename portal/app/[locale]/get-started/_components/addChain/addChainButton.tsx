@@ -45,10 +45,7 @@ export const AddChainButton = function ({ chain }: Props) {
   }
 
   return (
-    <button
-      className="cursor-pointer text-orange-500 hover:text-orange-700"
-      type="button"
-    >
+    <button className="hoverable-text cursor-pointer" type="button">
       {getText()}
     </button>
   )

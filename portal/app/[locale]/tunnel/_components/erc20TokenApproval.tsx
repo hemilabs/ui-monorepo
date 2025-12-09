@@ -11,7 +11,7 @@ type Props = {
 const Toggle = ({ checked, disabled, onCheckedChange }: Props) => (
   <div
     className={`ml-auto h-5 w-9 rounded-full bg-neutral-100 ${
-      checked ? 'bg-orange-500' : 'bg-neutral-100'
+      checked ? 'bg-orange-600' : 'bg-neutral-100'
     } ${disabled ? 'opacity-40' : ''}`}
     style={{ boxShadow: '0px 0px 3px 0px rgba(0, 0, 0, 0.12) inset' }}
   >

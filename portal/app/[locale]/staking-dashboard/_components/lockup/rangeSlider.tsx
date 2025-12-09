@@ -1,4 +1,5 @@
 import { FormEvent, MouseEvent, useRef } from 'react'
+import { orange600 } from 'styles'
 
 type Props = {
   value: number
@@ -34,8 +35,8 @@ export function RangeSlider({
   const valuePercentage = ((uiValue - min) / (max - min)) * 100
 
   const background = minLocked
-    ? `linear-gradient(to right, #a3a3a3 0%, #a3a3a3 ${lockedPercentage}%, #ff6a00 ${lockedPercentage}%, #ff6a00 ${valuePercentage}%, #e5e5e5 ${valuePercentage}%, #e5e5e5 100%)`
-    : `linear-gradient(to right, #ff6a00 0%, #ff6a00 ${valuePercentage}%, #e5e5e5 ${valuePercentage}%, #e5e5e5 100%)`
+    ? `linear-gradient(to right, #a3a3a3 0%, #a3a3a3 ${lockedPercentage}%, ${orange600} ${lockedPercentage}%, ${orange600} ${valuePercentage}%, #e5e5e5 ${valuePercentage}%, #e5e5e5 100%)`
+    : `linear-gradient(to right, ${orange600} 0%, ${orange600} ${valuePercentage}%, #e5e5e5 ${valuePercentage}%, #e5e5e5 100%)`
 
   function handleInput(e: FormEvent<HTMLInputElement>) {
     const input = e.target as HTMLInputElement

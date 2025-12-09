@@ -17,7 +17,7 @@ const UI = ({
           ${hide ? 'hidden' : ''}
           ${
             networkType === 'testnet'
-              ? 'max-md:border-3 max-md:border-solid max-md:border-orange-500'
+              ? 'max-md:border-3 max-md:border-solid max-md:border-orange-600'
               : ''
           }`}
   >

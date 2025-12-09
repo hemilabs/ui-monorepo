@@ -121,7 +121,7 @@ function ItemAccordionUI({
                   before:absolute before:left-0 before:top-0 before:h-full before:w-0.5 before:bg-neutral-200
                   ${
                     isSelected
-                      ? 'after:absolute after:left-0 after:top-1/2 after:h-4/6 after:w-0.5 after:-translate-y-1/2 after:bg-orange-500'
+                      ? 'after:absolute after:left-0 after:top-1/2 after:h-4/6 after:w-0.5 after:-translate-y-1/2 after:bg-orange-600'
                       : ''
                   }
                 `}

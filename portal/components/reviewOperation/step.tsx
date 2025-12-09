@@ -60,7 +60,7 @@ const Completed = function ({
   return (
     <>
       <div className="left-2.25 absolute top-0.5">
-        <ShortVerticalLine dashed={false} stroke="stroke-orange-500" />
+        <ShortVerticalLine dashed={false} stroke="stroke-orange-600" />
       </div>
       <div className="mt-4">
         <PositionStatus position={position} status={ProgressStatus.COMPLETED} />
@@ -80,7 +80,7 @@ const Completed = function ({
       />
       {!!postAction && (
         <div className="left-2.25 absolute bottom-6">
-          <LongVerticalLine dashed={false} stroke="stroke-orange-500" />
+          <LongVerticalLine dashed={false} stroke="stroke-orange-600" />
         </div>
       )}
     </>
@@ -118,7 +118,7 @@ const Progress = function ({
   return (
     <>
       <div className="left-2.25 absolute top-0.5">
-        <ShortVerticalLine dashed={false} stroke="stroke-orange-500" />
+        <ShortVerticalLine dashed={false} stroke="stroke-orange-600" />
       </div>
       <div className="mt-4">
         <PositionStatus position={position} status={ProgressStatus.PROGRESS} />
@@ -134,7 +134,7 @@ const Progress = function ({
         }
         top={
           <>
-            <span className="mr-auto text-orange-500">{description}</span>
+            <span className="mr-auto text-orange-600">{description}</span>
             {fees && <Fees {...fees} />}
           </>
         }
@@ -151,13 +151,13 @@ const Progress = function ({
 const Ready = ({ description, fees, position, postAction }: Props) => (
   <>
     <div className="left-2.25 absolute top-0.5">
-      <ShortVerticalLine dashed={false} stroke="stroke-orange-500" />
+      <ShortVerticalLine dashed={false} stroke="stroke-orange-600" />
     </div>
     <div className="mt-4">
       <PositionStatus position={position} status={ProgressStatus.READY} />
     </div>
     <OneRowBox bgColor="bg-white">
-      <span className="mr-auto text-orange-500">{description}</span>
+      <span className="mr-auto text-orange-600">{description}</span>
       {fees && <Fees {...fees} />}
     </OneRowBox>
     {!!postAction && (
@@ -217,7 +217,7 @@ const Rejected = function ({ description, fees, position, postAction }: Props) {
   return (
     <>
       <div className="left-2.25 absolute top-0.5">
-        <ShortVerticalLine dashed={false} stroke="stroke-orange-500" />
+        <ShortVerticalLine dashed={false} stroke="stroke-orange-600" />
       </div>
       <div className="mt-4">
         <PositionStatus position={position} status={ProgressStatus.REJECTED} />
@@ -226,7 +226,7 @@ const Rejected = function ({ description, fees, position, postAction }: Props) {
         bottom={<span className="mr-auto text-rose-500">{t('rejected')}</span>}
         top={
           <>
-            <span className="mr-auto text-orange-500">{description}</span>
+            <span className="mr-auto text-orange-600">{description}</span>
             {fees && <Fees {...fees} />}
           </>
         }

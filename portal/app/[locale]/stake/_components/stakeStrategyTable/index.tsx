@@ -138,7 +138,7 @@ export const StakeStrategyTable = function ({ data, loading }: Props) {
       <p className="ml-2 mt-2.5 flex font-normal text-neutral-600">
         {t('stake.new-here')}
         <ExternalLink href={learnHowToStakeLink} onClick={trackLinkClick}>
-          <span className="ml-1 text-orange-500 hover:text-orange-700">
+          <span className="hoverable-text ml-1">
             {t('stake.learn-how-to-stake-on-hemi')}
           </span>
         </ExternalLink>

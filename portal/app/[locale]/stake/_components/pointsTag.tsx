@@ -23,7 +23,7 @@ type Props = {
   backgroundColor?:
     | 'bg-black'
     | 'bg-points-bsquared'
-    | 'bg-orange-500'
+    | 'bg-orange-600'
     | 'bg-points-solv'
   borderColor?: 'border-black' | 'border-transparent'
   label:
@@ -115,7 +115,7 @@ export const EigenpiePoints = () => (
 
 export const HemiPoints = () => (
   <PointsTag
-    backgroundColor="bg-orange-500"
+    backgroundColor="bg-orange-600"
     icon={<HemiPointsIcon />}
     label="points"
     textColor="text-white"
@@ -124,7 +124,7 @@ export const HemiPoints = () => (
 
 export const Hemi2xPoints = () => (
   <PointsTag
-    backgroundColor="bg-orange-500"
+    backgroundColor="bg-orange-600"
     icon={<Hemi2xPointsIcon />}
     label="points"
     textColor="text-white"
@@ -133,7 +133,7 @@ export const Hemi2xPoints = () => (
 
 export const Hemi3xPoints = () => (
   <PointsTag
-    backgroundColor="bg-orange-500"
+    backgroundColor="bg-orange-600"
     icon={<Hemi3xPointsIcon />}
     label="points"
     textColor="text-white"

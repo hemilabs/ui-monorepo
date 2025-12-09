@@ -117,7 +117,7 @@ export default function Page() {
         <div className="size-14">
           <HemiSymbolWhite />
         </div>
-        <p className="mt-1 text-xs font-semibold uppercase text-orange-500">
+        <p className="mt-1 text-xs font-semibold uppercase text-orange-600">
           {t('title')}
         </p>
         <p className="text-center text-4xl font-semibold text-neutral-950">

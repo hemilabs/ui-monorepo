@@ -20,7 +20,7 @@ export const MaxButton = function ({
     <button
       className={`${
         disabled ? 'cursor-not-allowed' : 'cursor-pointer'
-      } text-sm font-medium uppercase text-orange-500 hover:text-orange-700`}
+      } hoverable-text text-sm font-medium uppercase`}
       disabled={disabled}
       onClick={onClick}
       type="button"

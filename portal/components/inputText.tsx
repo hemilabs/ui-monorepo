@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon } from './icons/magnifyingGlassIcon'
 
 const inputCss = `text-base md:text-sm placeholder:text-sm w-full cursor-pointer rounded-lg
  bg-white px-3 py-2 font-medium text-neutral-950 border border-solid disabled:cursor-auto
- placeholder:font-medium placeholder:text-neutral-500 focus:border-orange-500 focus:outline-none transition-colors duration-200`
+ placeholder:font-medium placeholder:text-neutral-500 focus:border-orange-600 focus:outline-none transition-colors duration-200`
 
 const CloseIcon = (props: ComponentProps<'svg'>) => (
   <svg

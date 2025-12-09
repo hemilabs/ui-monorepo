@@ -29,7 +29,7 @@ const Text = ({ heading }: Pick<Props, 'heading'>) => (
 const Points = ({
   color = 'text-neutral-950',
   points,
-}: { color?: 'text-neutral-950' | 'text-orange-500' } & Pick<
+}: { color?: 'text-neutral-950' | 'text-orange-600' } & Pick<
   Props,
   'points'
 >) => <p className={`text-xl font-semibold ${color}`}>{points}</p>
@@ -76,7 +76,7 @@ export const EarnedPoints = function () {
           }}
         >
           <Text heading={t('total-earned-points')} />
-          <Points color="text-orange-500" points={getPoints()} />
+          <Points color="text-orange-600" points={getPoints()} />
         </div>
       </div>
       <Image

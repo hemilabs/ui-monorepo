@@ -37,8 +37,8 @@ const FundMethod = function ({
 
   return (
     <ExternalLink
-      className="group/link flex w-full items-center gap-x-1 rounded-xl border border-solid border-neutral-300/55
-        p-4 text-sm font-medium text-orange-500 hover:bg-neutral-50 hover:text-orange-700"
+      className="group/link hoverable-text flex w-full items-center gap-x-1 rounded-xl border border-solid
+        border-neutral-300/55 p-4 text-sm font-medium hover:bg-neutral-50"
       href={url}
       onClick={addTracking()}
     >
@@ -49,7 +49,7 @@ const FundMethod = function ({
           ? t('get-testnet-tokens')
           : t('buy-sell-swap')}
       </span>
-      <ArrowDownLeftIcon className="[&>path]:fill-orange-500 group-hover/link:[&>path]:fill-orange-700" />
+      <ArrowDownLeftIcon className="[&>path]:fill-orange-600 group-hover/link:[&>path]:fill-orange-700" />
     </ExternalLink>
   )
 }

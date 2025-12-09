@@ -33,7 +33,7 @@ const config: Config = {
       },
       backgroundImage: {
         'button-primary-hovered':
-          'linear-gradient(252deg, rgba(255, 255, 255, 0.20) -10.15%, rgba(255, 255, 255, 0.00) 103.3%), linear-gradient(0deg, #FF6C15, #FF6C15)',
+          'linear-gradient(252deg, rgba(255, 255, 255, 0.20) -10.15%, rgba(255, 255, 255, 0.00) 103.3%), linear-gradient(0deg, #FF600A, #FF600A)',
         'linear-progress-bar':
           'linear-gradient(270deg, rgba(229, 229, 229, 0.88) 0%, rgba(229, 229, 229, 0.00) 100%)',
         'recommended-claim':
@@ -62,18 +62,19 @@ const config: Config = {
       // See https://www.figma.com/design/4fVd9wneclsvYDYD95ApZ9/Hemi-Portal?node-id=3685-11596&node-type=FRAME&m=dev
       colors: {
         'orange': {
-          50: '#FFF6ED',
-          100: '#FFEBD4',
-          200: '#FFD4A8',
-          300: '#FFB570',
-          400: '#FF8937',
-          500: '#FF6C15',
-          600: '#F04D06',
-          700: '#C73807',
-          800: '#9e2d0E',
-          900: '#7F280F',
-          950: '#451105',
-          hemi: '#FF5F00',
+          50: '#FFF6EC',
+          100: '#FFEAD3',
+          200: '#FFD1A5',
+          300: '#FFB06D',
+          400: '#FF8332',
+          500: '#FF600A',
+          // this is also defined in portal/styles/index.ts
+          // but I can't import it here
+          600: '#FF4600',
+          700: '#CC2F02',
+          800: '#A1260B',
+          900: '#82220C',
+          950: '#460E04',
         },
         'points': {
           'bsquared': '#FFB852',

@@ -23,7 +23,7 @@ export function SubStep({ description, status }: Props) {
         <div
           className={`relative flex h-5 w-5 items-center justify-center rounded-full ${
             isProgress
-              ? 'bg-orange-100 text-orange-500'
+              ? 'bg-orange-100 text-orange-600'
               : 'bg-neutral-300/50 text-neutral-500'
           }`}
         >
@@ -40,7 +40,7 @@ export function SubStep({ description, status }: Props) {
         </div>
       )}
 
-      <span className={isProgress ? 'text-orange-500' : 'text-neutral-500'}>
+      <span className={isProgress ? 'text-orange-600' : 'text-neutral-500'}>
         {description}
       </span>
     </div>

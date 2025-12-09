@@ -56,6 +56,7 @@ export type ToBtcWithdrawOperation = CommonOperation &
   } & {
     challengeTxHash?: Hash
     uuid?: string // bigint can't be serialized into local storage
+    netSatsAfterFee: string
   }
 
 export type BtcDepositOperation = {

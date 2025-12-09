@@ -177,6 +177,7 @@ export const getBtcWithdrawals = function ({
         l1Token,
         l2ChainId,
         l2Token,
+        netSatsAfterFee,
         timestamp,
         to,
         transactionHash,

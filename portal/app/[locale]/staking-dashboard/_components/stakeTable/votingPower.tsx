@@ -14,8 +14,13 @@ type Props = {
 
 export const VotingPower = function ({ amount, tokenId }: Props) {
   const token = useHemiToken()
-  const veHemiToken = useVeHemiToken()
+  const { data: veHemiToken, isLoading: isLoadingVeHemiToken } =
+    useVeHemiToken()
   const { data: votingPower, error } = usePositionVotingPower(tokenId)
+
+  if (isLoadingVeHemiToken || !veHemiToken) {
+    return <Skeleton className="h-10 w-20" />
+  }
 
   if (votingPower !== undefined) {
     const formattedPower = formatUnits(votingPower, token.decimals)

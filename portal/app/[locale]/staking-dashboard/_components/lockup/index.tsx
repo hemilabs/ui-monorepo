@@ -4,6 +4,7 @@ import { useHemiToken } from 'hooks/useHemiToken'
 import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import { useLocale, useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import type { Token } from 'types/token'
 import { formatDate } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
@@ -107,7 +108,19 @@ const VotingPowerEquivalence = function ({
   token: Token
   votingPower: string
 }) {
-  const veHemiToken = useVeHemiToken()
+  const { data: veHemiToken, isLoading: isLoadingVeHemiToken } =
+    useVeHemiToken()
+
+  if (isLoadingVeHemiToken || !veHemiToken) {
+    return (
+      <div className="flex items-center gap-x-1">
+        <DisplayAmount amount={amount} token={token} />
+        <span>=</span>
+        <Skeleton className="h-4 w-16" />
+      </div>
+    )
+  }
+
   return (
     <div className="flex items-center gap-x-1">
       <DisplayAmount amount={amount} token={token} />

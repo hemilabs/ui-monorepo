@@ -10,9 +10,5 @@ export const useVeHemiToken = function () {
   return useToken({
     address: veHemiAddress,
     chainId,
-    options: {
-      gcTime: 1000 * 60 * 60 * 24,
-      staleTime: 1000 * 60 * 60 * 24,
-    },
   })
 }

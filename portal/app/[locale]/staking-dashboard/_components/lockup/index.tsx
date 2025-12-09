@@ -111,21 +111,15 @@ const VotingPowerEquivalence = function ({
   const { data: veHemiToken, isLoading: isLoadingVeHemiToken } =
     useVeHemiToken()
 
-  if (isLoadingVeHemiToken || !veHemiToken) {
-    return (
-      <div className="flex items-center gap-x-1">
-        <DisplayAmount amount={amount} token={token} />
-        <span>=</span>
-        <Skeleton className="h-4 w-16" />
-      </div>
-    )
-  }
-
   return (
     <div className="flex items-center gap-x-1">
       <DisplayAmount amount={amount} token={token} />
       <span>=</span>
-      <DisplayAmount amount={votingPower} token={veHemiToken} />
+      {isLoadingVeHemiToken || !veHemiToken ? (
+        <Skeleton className="h-4 w-16" />
+      ) : (
+        <DisplayAmount amount={votingPower} token={veHemiToken} />
+      )}
     </div>
   )
 }

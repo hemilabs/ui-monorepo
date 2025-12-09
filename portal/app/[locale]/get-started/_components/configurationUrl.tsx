@@ -34,7 +34,7 @@ export const ConfigurationUrl = function ({
     <>
       {clickableLink ? (
         <ExternalLink
-          className="mr-auto overflow-hidden text-ellipsis whitespace-nowrap text-orange-500 hover:text-orange-700 md:basis-auto"
+          className="hoverable-text mr-auto overflow-hidden text-ellipsis whitespace-nowrap md:basis-auto"
           href={href}
           {...props}
         >

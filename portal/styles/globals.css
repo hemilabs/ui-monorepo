@@ -108,3 +108,7 @@ input[type='range']:active::-moz-range-thumb {
   box-shadow: 0 2px 6px rgba(10, 10, 10, 0.2);
   transform: scale(1.08);
 }
+
+.hoverable-text {
+  @apply text-orange-600 hover:text-orange-700;
+}

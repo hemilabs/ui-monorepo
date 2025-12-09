@@ -69,10 +69,7 @@ export const LocalizedError500 = function (
       {...props}
       description={t.rich('error-pages.unhandled-error.description', {
         link: chunk => (
-          <ExternalLink
-            className="text-orange-500 hover:text-orange-700"
-            href={discordUrl}
-          >
+          <ExternalLink className="hoverable-text" href={discordUrl}>
             {chunk}
           </ExternalLink>
         ),

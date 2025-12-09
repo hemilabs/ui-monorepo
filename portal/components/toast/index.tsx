@@ -61,9 +61,7 @@ export const Toast = function ({
         <p className="text-neutral-400 md:max-w-96">
           {description}
           <ExternalLink href={tx.href}>
-            <span className="ml-1 text-orange-500 hover:text-orange-700">
-              {tx.label}
-            </span>
+            <span className="hoverable-text ml-1">{tx.label}</span>
           </ExternalLink>
         </p>
         {goTo !== undefined && (

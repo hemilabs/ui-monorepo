@@ -24,7 +24,7 @@ export const AddPairToHemi = function () {
         subheading={t.rich('make-a-request-to-add', {
           link: chunk => (
             <ExternalLink
-              className="text-orange-500 hover:text-orange-700"
+              className="hoverable-text"
               href="https://github.com/hemilabs/token-list/issues/new"
             >
               {chunk}

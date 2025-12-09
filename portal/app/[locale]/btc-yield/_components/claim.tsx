@@ -1,6 +1,7 @@
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { useTranslations } from 'next-intl'
+import { orange600 } from 'styles'
 import { useAccount } from 'wagmi'
 
 import { useHasClaimableRewards } from '../_hooks/useHasClaimableRewards'
@@ -29,7 +30,7 @@ export const Claim = function () {
       {hasClaimableRewards !== undefined || !address ? (
         t('bitcoin-yield.table.claim-rewards')
       ) : (
-        <Spinner color="#FF6C15" size="xSmall" />
+        <Spinner color={orange600} size="xSmall" />
       )}
     </Button>
   )

@@ -17,7 +17,7 @@ export const Acknowledge = function ({ acknowledged, onChange }: Props) {
       <input
         checked={acknowledged}
         className="checkbox h-4 w-4 cursor-pointer appearance-none rounded bg-white shadow-sm
-              transition-all checked:bg-orange-500 focus:ring-2 focus:ring-orange-500"
+              transition-all checked:bg-orange-600 focus:ring-2 focus:ring-orange-600"
         id="custom-token-acknowledged"
         onChange={e => onChange(e.target.checked)}
         type="checkbox"

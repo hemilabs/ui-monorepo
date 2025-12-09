@@ -3,7 +3,7 @@ type Props = {
   stroke:
     | 'stroke-neutral-300'
     | 'stroke-neutral-300/55'
-    | 'stroke-orange-500'
+    | 'stroke-orange-600'
     | 'stroke-rose-500'
 }
 

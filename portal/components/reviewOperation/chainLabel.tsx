@@ -13,7 +13,7 @@ export const ChainLabel = ({ active = false, chainId, label }: Props) => (
     <ChainIcon chainId={chainId} />
     <span
       className={`text-sm font-normal ${
-        active ? 'text-orange-500' : 'text-neutral-500'
+        active ? 'text-orange-600' : 'text-neutral-500'
       }`}
     >
       {label}

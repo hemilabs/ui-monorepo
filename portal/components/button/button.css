@@ -7,7 +7,7 @@ Because of that, we can add all the styles here, and then use plain buttons in t
 */
 .button--base {
   @apply relative z-0 box-border flex items-center
-  justify-center overflow-hidden font-medium focus:outline-none disabled:opacity-50;
+  justify-center overflow-hidden font-medium focus:outline-none disabled:opacity-55;
   /*
   Adds a smooth hover background effect using a before pseudo-element.
   This ensures consistent transitions across button variants by:
@@ -23,7 +23,7 @@ Because of that, we can add all the styles here, and then use plain buttons in t
 /* Button Variants */
 .button-primary {
   @apply focus-visible:shadow-button-primary-focused before:bg-button-primary-hovered
-    bg-orange-500 text-white disabled:opacity-55;
+    bg-orange-600 text-white disabled:opacity-55;
 }
 
 .button-secondary {

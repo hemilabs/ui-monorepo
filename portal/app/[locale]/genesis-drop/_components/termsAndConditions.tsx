@@ -37,7 +37,7 @@ const LegalText = function () {
     >
       {before}
       <ExternalLink
-        className="text-orange-500 hover:text-orange-700"
+        className="hoverable-text"
         href={`${website}/terms-of-service`}
       >
         {/* Part of a legal text that is on English - so we can't translate it */}

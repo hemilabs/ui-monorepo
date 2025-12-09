@@ -275,7 +275,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
         </div>
       </div>
       <ExternalLink
-        className="flex w-full justify-center py-3 text-xs font-medium text-orange-500 hover:text-orange-700"
+        className="hoverable-text flex w-full justify-center py-3 text-xs font-medium"
         href={`${
           hemi.blockExplorers!.default.url
         }/tx/${transaction?.transactionHash}`}

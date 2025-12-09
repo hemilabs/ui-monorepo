@@ -1,4 +1,5 @@
 import { ComponentProps } from 'react'
+import { orange600 } from 'styles'
 
 export const CheckMark = (props: ComponentProps<'svg'>) => (
   <svg
@@ -10,7 +11,7 @@ export const CheckMark = (props: ComponentProps<'svg'>) => (
   >
     <path
       d="M1.375 7.547 4.5 10.125l6.125-8.25"
-      stroke="#FF6C15"
+      stroke={orange600}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}

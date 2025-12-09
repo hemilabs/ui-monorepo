@@ -27,10 +27,7 @@ const GlobalError = (props: Pick<ComponentProps<typeof Error500>, 'error'>) => (
         description={
           <>
             An unexpected error has occurred. Please try again or
-            <a
-              className="text-orange-500 hover:text-orange-700"
-              href={discordUrl}
-            >
+            <a className="hoverable-text" href={discordUrl}>
               {' '}
               contact us{' '}
             </a>

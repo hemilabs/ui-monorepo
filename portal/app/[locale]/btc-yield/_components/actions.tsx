@@ -5,6 +5,7 @@ import { Chevron } from 'components/icons/chevron'
 import { Spinner } from 'components/spinner'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useTranslations } from 'next-intl'
+import { orange600 } from 'styles'
 
 import { useOperationDrawer } from '../_hooks/useOperationDrawer'
 import { usePoolAsset } from '../_hooks/usePoolAsset'
@@ -79,7 +80,7 @@ export const Actions = function ({ row }: Props) {
           variant="secondary"
         >
           {loadingStrategies ? (
-            <Spinner color="#FF6C15" size="xSmall" />
+            <Spinner color={orange600} size="xSmall" />
           ) : row.getIsExpanded() ? (
             <Chevron.Up className={cssHoverChevron} />
           ) : (

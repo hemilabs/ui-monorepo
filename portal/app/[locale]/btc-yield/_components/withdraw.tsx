@@ -1,6 +1,7 @@
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { useTranslations } from 'next-intl'
+import { orange600 } from 'styles'
 import { useAccount } from 'wagmi'
 
 import { useOperationDrawer } from '../_hooks/useOperationDrawer'
@@ -30,7 +31,7 @@ export const Withdraw = function () {
       variant="secondary"
     >
       {poolBalanceLoading && !!address ? (
-        <Spinner color="#FF6C15" size="xSmall" />
+        <Spinner color={orange600} size="xSmall" />
       ) : (
         t('common.withdraw')
       )}

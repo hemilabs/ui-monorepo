@@ -1,4 +1,7 @@
+import { orange600 } from 'styles'
+
 import { SparklesIcon } from './sparkles'
+
 type Props = {
   selected?: boolean
 }
@@ -10,7 +13,7 @@ export const BitcoinYieldIcon = ({ selected }: Props) => (
     </div>
     <svg fill="none" height="20" width="20" xmlns="http://www.w3.org/2000/svg">
       <rect
-        fill={selected ? '#FF6C15' : '#F5F5F5'}
+        fill={selected ? orange600 : '#F5F5F5'}
         height={20}
         rx={6}
         width={20}

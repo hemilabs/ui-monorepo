@@ -9,7 +9,7 @@ const UI = function () {
 
   return (
     <span
-      className="absolute left-1/2 z-10 -translate-x-1/2 rounded-b bg-orange-500
+      className="absolute left-1/2 z-10 -translate-x-1/2 rounded-b bg-orange-600
     px-2 text-sm font-medium text-white"
     >
       Testnet

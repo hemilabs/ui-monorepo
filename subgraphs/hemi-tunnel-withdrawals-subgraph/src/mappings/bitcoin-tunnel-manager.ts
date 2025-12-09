@@ -44,6 +44,8 @@ export function handleWithdrawalInitiated(
   entity.l1Token = zeroAddress
   entity.l2Token = bitcoinTokenMap.get(entity.l1ChainId)
 
+  entity.netSatsAfterFee = event.params.netSatsAfterFee
+
   entity.timestamp = event.block.timestamp
   entity.transactionHash = event.transaction.hash
 

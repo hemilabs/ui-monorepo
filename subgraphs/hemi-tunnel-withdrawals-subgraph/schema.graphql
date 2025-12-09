@@ -23,6 +23,7 @@ type BtcWithdrawal @entity(immutable: true) {
   l2ChainId: Int! # number
   l2Token: Bytes! # address
   id: Bytes!
+  netSatsAfterFee: BigInt! # uint256
   timestamp: BigInt!
   to: String # btc address, optional
   transactionHash: Bytes!

@@ -77,6 +77,7 @@ jobs:
           slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
           status: ${{ job.status == 'failure' && 'failed :boom:' || 'finished :ok:' }}
   deploy-beta:
+    if: ${{ github.event_name != 'release' }}
     environment: staging
     runs-on: ubuntu-latest
     steps:
@@ -90,7 +91,7 @@ jobs:
           HOSTINGER_PORT: ${{ secrets.HOSTINGER_PORT }}
           HOSTINGER_SSH_KEY: ${{ secrets.HOSTINGER_SSH_KEY }}
           # Note: This line uses HEMI_TARGET_FOLDER_BETA, which is different from the deploy job above
-          HOSTINGER_TARGET: domains/${{ vars[vars.HEMI_DOMAIN] }}/public_html/${{ vars.HEMI_TARGET_FOLDER_BETA }}
+          HOSTINGER_TARGET: domains/${{ vars.HEMI_DOMAIN_PROD }}/public_html/${{ vars.HEMI_TARGET_FOLDER_BETA }}
           HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
           NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET: ${{ vars.NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET }}
           NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA: ${{ vars.NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA }}

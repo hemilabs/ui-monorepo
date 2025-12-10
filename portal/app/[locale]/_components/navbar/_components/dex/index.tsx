@@ -47,7 +47,7 @@ const IconContainer = ({
       group-hover/nav:[&>svg>path]:fill-neutral-950 ${
         selected
           ? '[&>svg>path]:fill-neutral-950'
-          : 'bg-neutral-100 [&>svg>path]:fill-neutral-400 group-hover/item:[&>svg>path]:fill-neutral-950'
+          : '[&>svg>path]:fill-neutral-400 group-hover/item:[&>svg>path]:fill-neutral-950'
       }`}
   >
     {children}

@@ -34,8 +34,8 @@ export const IconContainer = ({
       transition-colors duration-300 md:h-5
       md:w-5 group-hover/nav:[&>svg>path]:fill-neutral-950 ${
         selected
-          ? 'bg-orange-600 [&>svg>path]:fill-white'
-          : 'bg-neutral-100 [&>svg>path]:fill-neutral-400 group-hover/item:[&>svg>path]:fill-neutral-950'
+          ? '[&>svg>path]:fill-orange-600'
+          : 'group-hover/item:[&>svg>path]:fill-neutral-950'
       }`}
   >
     {children}
@@ -53,7 +53,7 @@ export const ItemContainer = ({
 }: { children: ReactNode } & Selectable & ComponentProps<'div'>) => (
   <div
     {...props}
-    className={`group/item cursor-pointer rounded-md py-2 transition-colors duration-300 ${
+    className={`group/item cursor-pointer rounded-md py-1.5 transition-colors duration-300 ${
       selected ? 'bg-orange-50' : 'hover:bg-neutral-100'
     }`}
   >

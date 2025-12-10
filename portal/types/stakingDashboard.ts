@@ -43,7 +43,7 @@ export type StakingPosition = {
   pastOwners: string[]
   status: StakingPositionStatus
   timestamp: bigint
-  tokenId: string
+  tokenId: bigint
   transactionHash: Hash
   transferable: boolean
 }

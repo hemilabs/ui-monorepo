@@ -6,14 +6,14 @@ import { useCalculateRewards } from '../_hooks/useCalculateRewards'
 import { useRewardTokens } from '../_hooks/useRewardTokens'
 
 type Props = {
-  tokenId: string
+  tokenId: bigint
 }
 
-function RewardRow({ token, tokenId }: { token: EvmToken; tokenId: string }) {
+function RewardRow({ token, tokenId }: { token: EvmToken; tokenId: bigint }) {
   const { data, isLoading } = useCalculateRewards({
     rewardToken: token.address,
     token,
-    tokenId: BigInt(tokenId),
+    tokenId,
   })
 
   const formattedAmount =

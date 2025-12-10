@@ -71,7 +71,7 @@ const stakingColumns = ({
       const { amount, tokenId } = row.original
       return (
         <div className="flex items-center justify-center gap-x-2">
-          <VotingPower amount={amount} tokenId={BigInt(tokenId)} />
+          <VotingPower amount={amount} tokenId={tokenId} />
         </div>
       )
     },

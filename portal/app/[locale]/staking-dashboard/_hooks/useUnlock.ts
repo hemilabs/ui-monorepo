@@ -22,7 +22,7 @@ type UseUnlock = {
   amount: bigint
   on?: (emitter: EventEmitter<WithdrawEvents>) => void
   token: StakingDashboardToken
-  tokenId: string
+  tokenId: bigint
   updateUnlockingDashboardOperation: (
     payload?: UnlockingDashboardOperation,
   ) => void
@@ -66,7 +66,7 @@ export const useUnlock = function ({
       }
       const { emitter, promise } = withdraw({
         account: address,
-        tokenId: BigInt(tokenId),
+        tokenId,
         walletClient: hemiWalletClient!,
       })
 

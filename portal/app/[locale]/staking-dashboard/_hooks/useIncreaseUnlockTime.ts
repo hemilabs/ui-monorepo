@@ -25,7 +25,7 @@ type UseIncreaseUnlockTime = {
   lockupDays: number
   on?: (emitter: EventEmitter<IncreaseUnlockTimeEvents>) => void
   token: StakingDashboardToken
-  tokenId: string
+  tokenId: bigint
   updateStakingDashboardOperation: (payload?: StakingDashboardOperation) => void
 }
 
@@ -63,7 +63,7 @@ export const useIncreaseUnlockTime = function ({
       const { emitter, promise } = increaseUnlockTime({
         account: address,
         lockDurationInSeconds: daysToSeconds(lockupDays),
-        tokenId: BigInt(tokenId),
+        tokenId,
         walletClient: hemiWalletClient!,
       })
 
@@ -127,7 +127,7 @@ export const useIncreaseUnlockTime = function ({
           queryClient.invalidateQueries({
             queryKey: getCalculateAprQueryKey({
               chainId: token.chainId,
-              tokenId: BigInt(tokenId),
+              tokenId,
             }),
           })
 
@@ -135,7 +135,7 @@ export const useIncreaseUnlockTime = function ({
           queryClient.invalidateQueries({
             queryKey: getPositionVotingPowerQueryKey({
               chainId: token.chainId,
-              tokenId: BigInt(tokenId),
+              tokenId,
             }),
           })
 

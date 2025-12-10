@@ -19,7 +19,7 @@ import { useRewardTokens } from './useRewardTokens'
 
 type UseCollectRewards = {
   on?: (emitter: EventEmitter<CollectAllRewardsEvents>) => void
-  tokenId: string
+  tokenId: bigint
   updateCollectRewardsDashboardOperation: (
     payload?: CollectAllRewardsDashboardOperation,
   ) => void
@@ -56,7 +56,7 @@ export const useCollectRewards = function ({
       const { emitter, promise } = collectAllRewards({
         account: address,
         addToPositionBPS: BigInt(0),
-        tokenId: BigInt(tokenId),
+        tokenId,
         walletClient: hemiWalletClient!,
       })
 
@@ -90,7 +90,7 @@ export const useCollectRewards = function ({
             const queryKey = getCalculateRewardsQueryKey({
               chainId: hemi.id,
               rewardToken: rewardsAddress,
-              tokenId: BigInt(tokenId),
+              tokenId,
             })
             queryClient.setQueryData(queryKey, () => BigInt(0))
           })
@@ -125,7 +125,7 @@ export const useCollectRewards = function ({
         const queryKey = getCalculateRewardsQueryKey({
           chainId: hemi.id,
           rewardToken: rewardsAddress,
-          tokenId: BigInt(tokenId),
+          tokenId,
         })
         queryClient.invalidateQueries({ queryKey })
       })

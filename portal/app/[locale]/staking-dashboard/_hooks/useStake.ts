@@ -150,7 +150,7 @@ export const useStake = function ({
           pastOwners: [],
           status: 'active',
           timestamp: ts,
-          tokenId: tokenId.toString(),
+          tokenId,
           transactionHash,
           transferable: true,
         }

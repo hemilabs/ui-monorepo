@@ -6,13 +6,19 @@ import { useAccount } from 'wagmi'
 
 type ApiPosition = Omit<
   StakingPosition,
-  'amount' | 'blockNumber' | 'blockTimestamp' | 'lockTime' | 'timestamp'
+  | 'amount'
+  | 'blockNumber'
+  | 'blockTimestamp'
+  | 'lockTime'
+  | 'timestamp'
+  | 'tokenId'
 > & {
   amount: string
   blockNumber: string
   blockTimestamp: string
   lockTime: string
   timestamp: string
+  tokenId: string
 }
 
 type ApiResponse = {
@@ -57,6 +63,7 @@ export const useStakingPositions = function (
             blockTimestamp: BigInt(position.blockTimestamp),
             lockTime: BigInt(position.lockTime),
             timestamp: BigInt(position.timestamp),
+            tokenId: BigInt(position.tokenId),
           }) as StakingPosition,
       )
 

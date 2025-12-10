@@ -1,8 +1,10 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { LockupInput } from 'components/inputText'
 import { useHemiToken } from 'hooks/useHemiToken'
+import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import { useLocale, useTranslations } from 'next-intl'
 import { ReactNode, useEffect, useMemo, useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
 import type { Token } from 'types/token'
 import { formatDate } from 'utils/format'
 import { unixNowTimestamp } from 'utils/time'
@@ -97,7 +99,7 @@ const InfoRow = ({ label, value }: { label: string; value: ReactNode }) => (
   </p>
 )
 
-const VotingPowerEquivalence = ({
+const VotingPowerEquivalence = function ({
   amount,
   token,
   votingPower,
@@ -105,16 +107,22 @@ const VotingPowerEquivalence = ({
   amount: string
   token: Token
   votingPower: string
-}) => (
-  <div className="flex items-center gap-x-1">
-    <DisplayAmount amount={amount} token={token} />
-    <span>=</span>
-    <DisplayAmount
-      amount={votingPower}
-      token={{ ...token, symbol: `ve${token.symbol}` }}
-    />
-  </div>
-)
+}) {
+  const { data: veHemiToken, isLoading: isLoadingVeHemiToken } =
+    useVeHemiToken()
+
+  return (
+    <div className="flex items-center gap-x-1">
+      <DisplayAmount amount={amount} token={token} />
+      <span>=</span>
+      {isLoadingVeHemiToken || !veHemiToken ? (
+        <Skeleton className="h-4 w-16" />
+      ) : (
+        <DisplayAmount amount={votingPower} token={veHemiToken} />
+      )}
+    </div>
+  )
+}
 
 type TryValuesHintFullProps = TryValuesHintProps & {
   minLocked?: number

@@ -30,6 +30,7 @@ export const tokenQueryOptions = ({
   options?: Omit<UseQueryOptions<Token, Error>, 'queryKey' | 'queryFn'>
 }) =>
   queryOptions({
+    staleTime: 1000 * 60 * 60 * 24,
     ...options,
     enabled:
       (options.enabled ?? true) &&

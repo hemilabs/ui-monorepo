@@ -1,5 +1,6 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { useHemiToken } from 'hooks/useHemiToken'
+import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import Skeleton from 'react-loading-skeleton'
 import { formatPercentage } from 'utils/format'
 import { formatUnits } from 'viem'
@@ -13,7 +14,13 @@ type Props = {
 
 export const VotingPower = function ({ amount, tokenId }: Props) {
   const token = useHemiToken()
+  const { data: veHemiToken, isLoading: isLoadingVeHemiToken } =
+    useVeHemiToken()
   const { data: votingPower, error } = usePositionVotingPower(tokenId)
+
+  if (isLoadingVeHemiToken || !veHemiToken) {
+    return <Skeleton className="h-10 w-20" />
+  }
 
   if (votingPower !== undefined) {
     const formattedPower = formatUnits(votingPower, token.decimals)
@@ -26,13 +33,7 @@ export const VotingPower = function ({ amount, tokenId }: Props) {
     return (
       <div className="flex flex-col">
         <span className="text-sm font-medium text-neutral-950">
-          {/* TODO https://github.com/hemilabs/ui-monorepo/issues/1661
-            Read symbol from veHEMI contract
-          */}
-          <DisplayAmount
-            amount={formattedPower}
-            token={{ ...token, symbol: `ve${token.symbol}` }}
-          />
+          <DisplayAmount amount={formattedPower} token={veHemiToken} />
         </span>
         <span className="text-xs font-normal text-neutral-500">
           {formatPercentage(percentageOfMax)}

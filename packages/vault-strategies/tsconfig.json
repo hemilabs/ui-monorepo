@@ -1,5 +1,5 @@
 {
   "exclude": ["node_modules", "test/*"],
-  "extends": "@tsconfig/node22/tsconfig.json",
+  "extends": "@tsconfig/node24/tsconfig.json",
   "include": ["**/*.ts"]
 }

@@ -4,7 +4,7 @@
     "erasableSyntaxOnly": true,
     "noEmit": true
   },
-  "extends": "@tsconfig/node22/tsconfig.json",
+  "extends": "@tsconfig/node24/tsconfig.json",
   "exclude": ["node_modules", "test/*"],
   "include": ["**/*.ts"]
 }

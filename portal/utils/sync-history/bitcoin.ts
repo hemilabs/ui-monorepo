@@ -403,7 +403,15 @@ export const createBitcoinSync = function ({
           fromBlock,
           limit,
           skip,
-        }).then(addMissingInfoFromSubgraph(hemiClient))
+        })
+          .then(withdrawals =>
+            // Replace amount with netSatsAfterFee
+            withdrawals.map(w => ({
+              ...w,
+              amount: w.netSatsAfterFee,
+            })),
+          )
+          .then(addMissingInfoFromSubgraph(hemiClient))
 
         saveHistory({
           payload: {

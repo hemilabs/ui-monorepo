@@ -198,6 +198,7 @@ export type ToBtcWithdrawOperation = CommonOperation &
     challengeTxHash?: Hash
     status: BtcWithdrawStatusType
     uuid?: string // bigint can't be serialized into local storage
+    netSatsAfterFee: string
   }
 
 export type DepositTunnelOperation = BtcDepositOperation | EvmDepositOperation

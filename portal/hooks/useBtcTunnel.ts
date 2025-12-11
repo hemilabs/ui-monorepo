@@ -15,6 +15,7 @@ import { getBitcoinTimestamp } from 'utils/bitcoin'
 import {
   confirmBtcDeposit,
   getBitcoinDepositFee,
+  getBitcoinWithdrawalFee,
   getBitcoinWithdrawalUuid,
   initiateBtcDeposit,
   initiateBtcWithdrawal,
@@ -302,23 +303,35 @@ export const useWithdrawBitcoin = function () {
     mutate: withdrawBitcoin,
     reset: resetWithdrawBitcoin,
   } = useMutation({
-    mutationFn: ({
+    async mutationFn({
       amount,
     }: {
       amount: bigint
       l1ChainId: BtcChain['id']
       l2ChainId: Chain['id']
-    }) =>
-      initiateBtcWithdrawal({
-        amount,
-        btcAddress: btcAddress!,
-        from: hemiAddress!,
-        hemiClient,
-        hemiWalletClient,
-      }),
-    onSuccess(transactionHash, { amount, l1ChainId, l2ChainId }) {
+    }) {
+      const [transactionHash, vaultFee] = await Promise.all([
+        initiateBtcWithdrawal({
+          amount,
+          btcAddress: btcAddress!,
+          from: hemiAddress!,
+          hemiClient,
+          hemiWalletClient,
+        }),
+        getBitcoinWithdrawalFee({
+          amount,
+          hemiClient,
+        }).catch(() => BigInt(0)), // Return 0 if fee fetch fails
+      ])
+
+      return { transactionHash, vaultFee }
+    },
+    onSuccess({ transactionHash, vaultFee }, { amount, l1ChainId, l2ChainId }) {
+      // Calculate net amount after vault fee
+      const amountAfterFeesDeduction = (amount - vaultFee).toString()
+
       addWithdrawalToTunnelHistory({
-        amount: amount.toString(),
+        amount: amountAfterFeesDeduction,
         direction: MessageDirection.L2_TO_L1,
         from: hemiAddress!,
         l1ChainId,
@@ -326,6 +339,7 @@ export const useWithdrawBitcoin = function () {
         l2ChainId,
         l2Token: getNativeToken(bitcoin.id)!.extensions!.bridgeInfo![hemi.id]
           .tokenAddress!,
+        netSatsAfterFee: amountAfterFeesDeduction,
         status: BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING,
         to: btcAddress!,
         transactionHash,
@@ -338,7 +352,7 @@ export const useWithdrawBitcoin = function () {
     data: withdrawBitcoinReceipt,
     error: withdrawBitcoinReceiptError,
     queryKey: withdrawBitcoinQueryKey,
-  } = useWaitForEvmTransactionReceipt({ hash: withdrawTxHash })
+  } = useWaitForEvmTransactionReceipt({ hash: withdrawTxHash?.transactionHash })
 
   const clearWithdrawBitcoinState = useCallback(
     function () {

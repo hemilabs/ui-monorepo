@@ -2,7 +2,7 @@
 
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { SubmitWhenConnectedToChain } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { EvmToken } from 'types/token'
 import { tunnelsThroughPartners } from 'utils/token'

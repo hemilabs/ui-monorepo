@@ -1,5 +1,5 @@
 import { Button } from 'components/button'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { SubmitWhenConnectedToChain } from 'components/submitWhenConnected'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'

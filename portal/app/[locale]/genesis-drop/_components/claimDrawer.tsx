@@ -7,7 +7,7 @@ import {
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { LockupMonths, type EligibilityData } from 'genesis-drop-actions'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
@@ -64,8 +64,7 @@ export const ClaimDrawer = function ({
   const getCallToAction = () =>
     status === 'error' ? (
       <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
-        <SubmitWhenConnectedToChain
-          chainId={hemi.id}
+        <SubmitWhenConnected
           submitButton={
             <Button disabled={isRetrying} size="small" variant="primary">
               {tCommon('try-again')}

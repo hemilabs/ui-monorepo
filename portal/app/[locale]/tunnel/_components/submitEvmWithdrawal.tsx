@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from 'components/button'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { EvmToken } from 'types/token'
 import { tunnelsThroughPartners } from 'utils/token'
@@ -36,7 +36,7 @@ export const SubmitEvmWithdrawal = function ({
   }
 
   return (
-    <SubmitWhenConnectedToChain
+    <SubmitWhenConnected
       chainId={fromToken.chainId}
       submitButton={
         validationError ? (

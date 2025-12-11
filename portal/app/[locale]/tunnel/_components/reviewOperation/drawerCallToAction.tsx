@@ -1,23 +1,13 @@
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { FormEvent, ReactNode } from 'react'
-import { RemoteChain } from 'types/chain'
 
 type Props = {
-  expectedChainId: RemoteChain['id']
   onSubmit: (e: FormEvent) => void
   submitButton: ReactNode
 }
 
-export const DrawerCallToAction = ({
-  expectedChainId,
-  onSubmit,
-  submitButton,
-}: Props) => (
+export const DrawerCallToAction = ({ onSubmit, submitButton }: Props) => (
   <form className="flex w-full [&>button]:w-full" onSubmit={onSubmit}>
-    <SubmitWhenConnectedToChain
-      chainId={expectedChainId}
-      submitButton={submitButton}
-      submitButtonSize="small"
-    />
+    <SubmitWhenConnected submitButton={submitButton} submitButtonSize="small" />
   </form>
 )

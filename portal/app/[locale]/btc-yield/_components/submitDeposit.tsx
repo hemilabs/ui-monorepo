@@ -2,7 +2,7 @@
 
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
 import { EvmToken } from 'types/token'
@@ -32,8 +32,11 @@ export const SubmitDeposit = function ({
   isAllowanceLoading,
   isRunningOperation,
   needsApproval,
+<<<<<<< HEAD
   setAcknowledged,
   token,
+=======
+>>>>>>> 04fcf6ed (Change name and remove property chainId)
   validationError,
   vaultDepositOperation,
 }: Props) {
@@ -76,13 +79,8 @@ export const SubmitDeposit = function ({
   }
 
   return (
-    <div className="flex w-full flex-col gap-y-2 [&>button]:w-full">
-      <Acknowledge
-        acknowledged={acknowledged}
-        setAcknowledged={setAcknowledged}
-      />
-      <SubmitWhenConnectedToChain
-        chainId={token.chainId}
+    <div className="w-full [&>button]:w-full">
+      <SubmitWhenConnected
         submitButton={
           <Button
             disabled={!canDeposit || isRunningOperation || isAllowanceLoading}

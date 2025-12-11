@@ -1,26 +1,21 @@
 'use client'
 
 import { Button } from 'components/button'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
-import type { EvmToken } from 'types/token'
 
 import { Acknowledge } from './acknowledge'
 
 type Props = {
   canWithdraw: boolean
   isRunningOperation: boolean
-  token: EvmToken
   validationError?: string
 } & ComponentProps<typeof Acknowledge>
 
 export const SubmitWithdraw = function ({
-  acknowledged,
   canWithdraw,
   isRunningOperation,
-  setAcknowledged,
-  token,
   validationError,
 }: Props) {
   const t = useTranslations('common')
@@ -34,13 +29,8 @@ export const SubmitWithdraw = function ({
   }
 
   return (
-    <div className="flex w-full flex-col gap-y-2 [&>button]:w-full">
-      <Acknowledge
-        acknowledged={acknowledged}
-        setAcknowledged={setAcknowledged}
-      />
-      <SubmitWhenConnectedToChain
-        chainId={token.chainId}
+    <div className="w-full [&>button]:w-full">
+      <SubmitWhenConnected
         submitButton={
           <Button
             disabled={!canWithdraw || isRunningOperation}

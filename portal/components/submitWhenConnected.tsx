@@ -18,7 +18,7 @@ type Props = {
   submitButtonSize?: ButtonSize
 }
 
-export const SubmitWhenConnectedToChain = function ({
+export const SubmitWhenConnected = function ({
   connectWalletText,
   submitButton,
   submitButtonSize = 'xLarge',

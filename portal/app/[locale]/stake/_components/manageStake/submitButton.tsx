@@ -1,6 +1,5 @@
 import { Button } from 'components/button'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
-import { useHemi } from 'hooks/useHemi'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { ReactNode } from 'react'
 
 type Props = {
@@ -8,19 +7,15 @@ type Props = {
   text: ReactNode
 }
 
-export const SubmitButton = function ({ disabled, text }: Props) {
-  const hemi = useHemi()
-  return (
-    <div className="flex w-full [&>button]:w-full">
-      <SubmitWhenConnectedToChain
-        chainId={hemi.id}
-        submitButton={
-          <Button disabled={disabled} size="small" type="submit">
-            {text}
-          </Button>
-        }
-        submitButtonSize="small"
-      />
-    </div>
-  )
-}
+export const SubmitButton = ({ disabled, text }: Props) => (
+  <div className="flex w-full [&>button]:w-full">
+    <SubmitWhenConnected
+      submitButton={
+        <Button disabled={disabled} size="small" type="submit">
+          {text}
+        </Button>
+      }
+      submitButtonSize="small"
+    />
+  </div>
+)

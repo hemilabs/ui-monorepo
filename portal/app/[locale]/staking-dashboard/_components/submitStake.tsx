@@ -2,7 +2,7 @@
 
 import { Button, ButtonSize } from 'components/button'
 import { Spinner } from 'components/spinner'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import {
   type StakingDashboardToken,
@@ -28,7 +28,6 @@ export const SubmitStake = function ({
   isRunningOperation,
   needsApproval,
   operationRunning,
-  token,
   validationError,
 }: Props) {
   const t = useTranslations()
@@ -64,8 +63,7 @@ export const SubmitStake = function ({
   }
 
   return (
-    <SubmitWhenConnectedToChain
-      chainId={token.chainId}
+    <SubmitWhenConnected
       submitButton={
         <Button
           disabled={!canStake || isRunningOperation || isAllowanceLoading}

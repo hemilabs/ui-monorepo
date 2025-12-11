@@ -1,5 +1,5 @@
 import { Button } from 'components/button'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { SubmitWhenConnectedToChain } from 'components/submitWhenConnected'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'

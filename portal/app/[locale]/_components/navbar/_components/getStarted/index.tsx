@@ -10,7 +10,7 @@ type Props = Pick<ComponentProps<typeof Link>, 'href' | 'onClick'> & {
 }
 
 const UI = ({ href, onClick, t }: Props) => (
-  <div className="mx-4 mb-4 md:mx-0 md:mb-0 md:px-1">
+  <div className="mx-4 mb-4 md:mx-0 md:mb-0">
     <ButtonLink href={href} onClick={onClick} size="small" variant="secondary">
       <span>{t('get-started')}</span>
       <Chevron.Right className="[&>path]:fill-neutral-500" />

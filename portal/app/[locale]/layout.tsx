@@ -18,7 +18,7 @@ import { SkeletonTheme } from 'react-loading-skeleton'
 import { Analytics } from './_components/analytics'
 import { AppLayout } from './_components/appLayout'
 import { AppOverlays } from './_components/appOverlays'
-import { Navbar } from './_components/navbar'
+import { NavbarDesktop } from './_components/navbar/navbarDesktop'
 import { Workers } from './_components/workers'
 
 type PageProps = {
@@ -79,8 +79,8 @@ export default async function RootLayout({
                   <Analytics>
                     <TunnelHistoryProvider>
                       <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
-                        <div className="hidden w-1/4 max-w-60 lg:block">
-                          <Navbar />
+                        <div className="max-lg:hidden">
+                          <NavbarDesktop />
                         </div>
                         <AppLayout>
                           {/* Last resort Suspense wrapper usage.

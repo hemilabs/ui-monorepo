@@ -244,7 +244,6 @@ export const VaultWithdrawalOperation = function ({
               <SubmitWithdraw
                 canWithdraw={canWithdraw}
                 isRunningOperation={isPending}
-                token={token}
                 validationError={validationError}
               />
             }

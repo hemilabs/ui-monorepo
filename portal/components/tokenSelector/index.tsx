@@ -16,7 +16,7 @@ const TokenListLoading = function () {
   const { width } = useWindowSize()
   const { height: viewportHeight } = useVisualViewportSize()
   return (
-    <Modal verticalAlign={width < screenBreakpoints.sm ? 'top' : 'center'}>
+    <Modal verticalAlign={width < screenBreakpoints.md ? 'top' : 'center'}>
       <Skeleton
         className="h-full w-screen md:h-[65dvh] md:w-[409px]"
         containerClassName="flex"

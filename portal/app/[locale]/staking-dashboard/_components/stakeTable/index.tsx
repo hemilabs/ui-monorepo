@@ -177,7 +177,6 @@ export function StakeTable({ data, filter = 'active', loading }: Props) {
         data={data}
         loading={loading}
         priorityColumnIdsOnSmall={['action', 'time-remaining']}
-        smallBreakpoint={1024}
       />
     )
   }

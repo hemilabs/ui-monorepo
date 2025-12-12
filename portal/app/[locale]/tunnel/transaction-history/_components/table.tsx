@@ -18,6 +18,7 @@ import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
 import { ComponentProps, RefObject, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { screenBreakpoints } from 'styles'
 import { TunnelOperation } from 'types/tunnel'
 import { isDeposit, isWithdraw } from 'utils/tunnel'
 
@@ -427,7 +428,7 @@ export const Table = function ({
     getCoreRowModel: getCoreRowModel(),
     state: {
       columnOrder: getNewColumnOrder({
-        breakpoint: 1024,
+        breakpoint: screenBreakpoints.lg,
         columns,
         priorityColumnIds: ['action', 'status'],
         width,

@@ -13,6 +13,7 @@ type Props = {
   container?: HTMLElement
   onClose?: VoidFunction
   overlay?: ComponentType
+  position?: 'left' | 'right'
 }
 
 export const Drawer = function ({
@@ -20,6 +21,7 @@ export const Drawer = function ({
   container,
   onClose,
   overlay: OverlayComponent = Overlay,
+  position = 'right',
 }: Props) {
   const drawerRef = useOnClickOutside<HTMLDivElement>(onClose)
 
@@ -40,13 +42,12 @@ export const Drawer = function ({
   return ReactDOM.createPortal(
     <>
       <div
-        className="fixed bottom-0 left-0 right-0 z-30 w-full overflow-y-auto rounded-t-lg border border-solid 
-        border-neutral-300/55 bg-transparent md:bottom-3 md:left-auto md:right-3 md:top-3 md:h-[calc(100%-theme(spacing.3)*2)] md:w-fit md:rounded-lg"
+        className={`fixed bottom-0 left-0 right-0 z-30 w-full overflow-y-auto rounded-t-lg bg-transparent md:bottom-2 ${
+          position === 'right'
+            ? 'md:left-auto md:right-2'
+            : 'md:left-2 md:right-auto'
+        } shadow-xl md:top-2 md:w-fit md:rounded-lg`}
         ref={drawerRef}
-        style={{
-          boxShadow:
-            '0px 1px 1px 0px rgba(0, 0, 0, 0.02), 0px 8px 16px -4px rgba(0, 0, 0, 0.04), -12px 0px 32px -8px rgba(0, 0, 0, 0.06)',
-        }}
       >
         {children}
       </div>

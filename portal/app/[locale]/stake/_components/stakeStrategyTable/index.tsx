@@ -132,7 +132,6 @@ export const StakeStrategyTable = function ({ data, loading }: Props) {
           data={data}
           loading={loading}
           priorityColumnIdsOnSmall={['action']}
-          smallBreakpoint={1024}
         />
       </div>
       <p className="ml-2 mt-2.5 flex font-normal text-neutral-600">

@@ -10,6 +10,7 @@ import { ColumnHeader } from 'components/table/_components/columnHeader'
 import { getNewColumnOrder } from 'components/table/_utils'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { Fragment, useState } from 'react'
+import { screenBreakpoints } from 'styles'
 
 import { useTableData } from '../../_hooks/useTableData'
 
@@ -34,7 +35,7 @@ export const PoolTable = function () {
     onExpandedChange: setExpanded,
     state: {
       columnOrder: getNewColumnOrder({
-        breakpoint: 1024,
+        breakpoint: screenBreakpoints.lg,
         columns,
         priorityColumnIds: ['actions'],
         width,

@@ -1,27 +1,24 @@
 'use client'
 
 import { DrawerLoader } from 'components/drawer/drawerLoader'
-import { useNetworkType } from 'hooks/useNetworkType'
-import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import dynamic from 'next/dynamic'
-import React, {
-  Dispatch,
-  SetStateAction,
-  Suspense,
-  useEffect,
-  useState,
-} from 'react'
+import React, { Suspense, useState } from 'react'
 
 import { AppLayoutContainer } from './appLayoutContainer'
 import { Header } from './header'
 import { MainContainer } from './mainContainer'
-import { NavbarMobile } from './navbar/navbarMobile'
+import { NavBarUrlSync } from './navbar/navBarUrlSync'
 import { TestnetIndicator } from './testnetIndicator'
 
-const NavbarTablet = dynamic(
-  () => import('./navbar/navbarTablet').then(mod => mod.NavbarTablet),
+const NavbarResponsive = dynamic(
+  () => import('./navbar/navbarResponsive').then(mod => mod.NavbarResponsive),
   {
-    loading: () => <DrawerLoader className="w-54 h-full" position="left" />,
+    loading: () => (
+      <DrawerLoader
+        className="h-90dvh md:w-54 w-full md:h-full"
+        position="left"
+      />
+    ),
     ssr: false,
   },
 )
@@ -30,46 +27,25 @@ type Props = {
   children: React.ReactNode
 }
 
-// UI-less component so I can wrap it on suspense.
-// Hooks can't be wrapped...
-const NavBarUrlSync = function ({
-  setIsMenuOpen,
-}: {
-  setIsMenuOpen: Dispatch<SetStateAction<boolean>>
-}) {
-  const [networkType] = useNetworkType()
-  const pathname = usePathnameWithoutLocale()
-
-  useEffect(
-    function closeNavBarOnUrlChange() {
-      setIsMenuOpen(false)
-    },
-    [networkType, pathname, setIsMenuOpen],
-  )
-
-  return null
-}
-
 export const AppLayout = function ({ children }: Props) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isNavbarOpen, setIsNavbarOpen] = useState(false)
 
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
+  const toggleMenu = () => setIsNavbarOpen(!isNavbarOpen)
 
   return (
     <AppLayoutContainer>
       <Suspense>
-        <NavBarUrlSync setIsMenuOpen={setIsMenuOpen} />
+        <NavBarUrlSync setIsNavbarOpen={setIsNavbarOpen} />
       </Suspense>
       <div className="relative hidden md:block">
         <TestnetIndicator />
       </div>
       <Header
-        isMenuOpen={isMenuOpen}
+        isMenuOpen={isNavbarOpen}
         setIsNavbarOpen={setIsNavbarOpen}
         toggleMenu={toggleMenu}
       />
-      <MainContainer hide={isMenuOpen}>
+      <MainContainer>
         <div className="relative md:hidden">
           <TestnetIndicator />
         </div>
@@ -79,12 +55,9 @@ export const AppLayout = function ({ children }: Props) {
           </div>
         </div>
       </MainContainer>
-      {isNavbarOpen && <NavbarTablet onClose={() => setIsNavbarOpen(false)} />}
-      {isMenuOpen ? (
-        <div className="md:hidden">
-          <NavbarMobile />
-        </div>
-      ) : null}
+      {isNavbarOpen && (
+        <NavbarResponsive onClose={() => setIsNavbarOpen(false)} />
+      )}
     </AppLayoutContainer>
   )
 }

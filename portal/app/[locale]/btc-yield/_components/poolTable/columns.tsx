@@ -34,7 +34,9 @@ export const useGetColumns = function () {
               <PoolBalance />
             </ErrorBoundary>
           ),
-          header: () => <Header text={t('common.balance')} />,
+          header: () => (
+            <Header text={t('bitcoin-yield.table.staked-balance')} />
+          ),
           id: 'balance',
           meta: { width: '200px' },
         },

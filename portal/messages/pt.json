@@ -38,7 +38,8 @@
     "table": {
       "claim-rewards": "Reclamar Recompensas",
       "pool": "Fundo",
-      "rewards": "Recompensas"
+      "rewards": "Recompensas",
+      "staked-balance": "Saldo em Stake"
     },
     "toast": {
       "claim-rewards-confirmed": "Reclamação de recompensas confirmada",

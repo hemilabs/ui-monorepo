@@ -38,7 +38,8 @@
     "table": {
       "claim-rewards": "Claim Rewards",
       "pool": "Pool",
-      "rewards": "Rewards"
+      "rewards": "Rewards",
+      "staked-balance": "Staked Balance"
     },
     "toast": {
       "claim-rewards-confirmed": "Claim rewards confirmed",

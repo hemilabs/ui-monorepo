@@ -56,6 +56,7 @@ export const VaultDepositOperation = function ({
   onAmountChange,
   onClose,
 }: Props) {
+  const [acknowledged, setAcknowledged] = useState(false)
   const [vaultDepositOperation, setVaultDepositOperation] = useState<
     BitcoinYieldDepositOperation | undefined
   >()
@@ -248,7 +249,8 @@ export const VaultDepositOperation = function ({
   const balanceLoaded = tokenBalance !== undefined
   const allowanceLoaded = needsApproval !== undefined
 
-  const canDeposit = balanceLoaded && allowanceLoaded && isSubmitValid
+  const canDeposit =
+    balanceLoaded && allowanceLoaded && isSubmitValid && acknowledged
 
   const handleDeposit = function () {
     if (canDeposit) {
@@ -316,11 +318,13 @@ export const VaultDepositOperation = function ({
             setAmount={onAmountChange}
             submitButton={
               <SubmitDeposit
+                acknowledged={acknowledged}
                 canDeposit={canDeposit}
                 isAllowanceError={isAllowanceError}
                 isAllowanceLoading={isAllowanceLoading}
                 isRunningOperation={isPending}
                 needsApproval={needsApproval}
+                setAcknowledged={setAcknowledged}
                 token={token}
                 validationError={validationError}
                 vaultDepositOperation={vaultDepositOperation}

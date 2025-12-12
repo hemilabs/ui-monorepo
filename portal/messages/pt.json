@@ -2,6 +2,7 @@
   "bitcoin-yield": {
     "bridge-btc-and-receive": "Transfira seu BTC através do túnel e receba {symbol}",
     "drawer": {
+      "ack-beta-site": "Entendo que este é um software em beta e aceito todos os riscos, incluindo a possível perda de fundos na mainnet devido a bugs.",
       "claim-rewards-heading": "Reclamar recompensas",
       "claim-rewards-subheading": "Estamos processando sua solicitação de recompensas. Você pode acompanhar o progresso abaixo.",
       "deposit-btc": "Depositar {symbol}",

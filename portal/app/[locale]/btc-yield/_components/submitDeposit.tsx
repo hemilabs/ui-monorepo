@@ -4,12 +4,15 @@ import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useTranslations } from 'next-intl'
+import { ComponentProps } from 'react'
 import { EvmToken } from 'types/token'
 
 import {
   BitcoinYieldDepositStatus,
   type BitcoinYieldDepositOperation,
 } from '../_types'
+
+import { Acknowledge } from './acknowledge'
 
 type Props = {
   canDeposit: boolean
@@ -20,13 +23,16 @@ type Props = {
   needsApproval: boolean
   validationError: string | undefined
   vaultDepositOperation: BitcoinYieldDepositOperation | undefined
-}
+} & ComponentProps<typeof Acknowledge>
+
 export const SubmitDeposit = function ({
+  acknowledged,
   canDeposit,
   isAllowanceError,
   isAllowanceLoading,
   isRunningOperation,
   needsApproval,
+  setAcknowledged,
   token,
   validationError,
   vaultDepositOperation,
@@ -70,7 +76,11 @@ export const SubmitDeposit = function ({
   }
 
   return (
-    <div className="w-full [&>button]:w-full">
+    <div className="flex w-full flex-col gap-y-2 [&>button]:w-full">
+      <Acknowledge
+        acknowledged={acknowledged}
+        setAcknowledged={setAcknowledged}
+      />
       <SubmitWhenConnectedToChain
         chainId={token.chainId}
         submitButton={

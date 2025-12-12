@@ -54,6 +54,7 @@ export const VaultWithdrawalOperation = function ({
   onAmountChange,
   onClose,
 }: Props) {
+  const [acknowledged, setAcknowledged] = useState(false)
   const [vaultWithdrawalOperation, setVaultWithdrawalOperation] = useState<
     BitcoinYieldWithdrawalOperation | undefined
   >()
@@ -175,7 +176,7 @@ export const VaultWithdrawalOperation = function ({
 
   const balanceLoaded = userPoolBalance !== undefined
 
-  const canWithdraw = balanceLoaded && isSubmitValid
+  const canWithdraw = balanceLoaded && isSubmitValid && acknowledged
 
   const handleWithdraw = function () {
     if (canWithdraw) {
@@ -242,8 +243,10 @@ export const VaultWithdrawalOperation = function ({
             setAmount={onAmountChange}
             submitButton={
               <SubmitWithdraw
+                acknowledged={acknowledged}
                 canWithdraw={canWithdraw}
                 isRunningOperation={isPending}
+                setAcknowledged={setAcknowledged}
                 token={token}
                 validationError={validationError}
               />

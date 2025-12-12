@@ -180,7 +180,6 @@ export const StakeAssetsTable = function () {
             )
           }
           priorityColumnIdsOnSmall={['action']}
-          smallBreakpoint={1024}
         />
       </div>
     </div>

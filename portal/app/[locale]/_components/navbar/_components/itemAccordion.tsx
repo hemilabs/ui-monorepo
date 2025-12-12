@@ -7,6 +7,7 @@ import { useUmami } from 'hooks/useUmami'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { useRouter } from 'i18n/navigation'
 import { Suspense, useEffect, useState } from 'react'
+import { screenBreakpoints } from 'styles'
 import { UrlObject } from 'url'
 
 import {
@@ -65,7 +66,7 @@ function ItemAccordionUI({
 
   function handleOpenAccordion() {
     const firstItemHref = items.length > 0 ? items[0]?.href : undefined
-    if (firstItemHref && width >= 768) {
+    if (firstItemHref && width >= screenBreakpoints.md) {
       router.push(
         `${firstItemHref}${
           networkType === 'mainnet' ? '' : `?networkType=${networkType}`

@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-table'
 import { useWindowSize } from 'hooks/useWindowSize'
 import { ReactNode, RefObject, useRef } from 'react'
+import { screenBreakpoints } from 'styles'
 
 import { ColumnHeader } from './_components/columnHeader'
 import { LoadingMoreIndicator } from './_components/loadingMoreIndicator'
@@ -169,7 +170,7 @@ export function Table<TData>({
   priorityColumnIdsOnSmall,
   rowSize = 64,
   skeletonRows = 4,
-  smallBreakpoint = 1024,
+  smallBreakpoint = screenBreakpoints.lg,
 }: TableProps<TData>) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const { height, width } = useWindowSize()

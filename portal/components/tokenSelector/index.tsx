@@ -5,6 +5,7 @@ import { useWindowSize } from 'hooks/useWindowSize'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
+import { screenBreakpoints } from 'styles'
 import { RemoteChain } from 'types/chain'
 import { Token } from 'types/token'
 
@@ -15,12 +16,15 @@ const TokenListLoading = function () {
   const { width } = useWindowSize()
   const { height: viewportHeight } = useVisualViewportSize()
   return (
-    <Modal verticalAlign={width < 768 ? 'top' : 'center'}>
+    <Modal verticalAlign={width < screenBreakpoints.sm ? 'top' : 'center'}>
       <Skeleton
         className="h-full w-screen md:h-[65dvh] md:w-[409px]"
         containerClassName="flex"
         style={{
-          height: width < 768 ? `${viewportHeight - 112}px` : undefined,
+          height:
+            width < screenBreakpoints.md
+              ? `${viewportHeight - 112}px`
+              : undefined,
         }}
       />
     </Modal>

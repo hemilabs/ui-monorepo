@@ -13,6 +13,7 @@ import { useWindowSize } from 'hooks/useWindowSize'
 import partition from 'lodash/partition'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { screenBreakpoints } from 'styles'
 import { Token as TokenType } from 'types/token'
 import { isCustomToken } from 'utils/token'
 import { type Chain, isAddress, isAddressEqual } from 'viem'
@@ -130,7 +131,10 @@ export const TokenList = function ({
         // becomes smaller than the full window height. To ensure the modal fits within the remaining space plus the extra space,
         // we uses visualViewport to detect available height
         // On desktop (md:), fallback to Tailwind-defined height.
-        height: width < 768 ? `${viewportHeight - 112}px` : undefined,
+        height:
+          width < screenBreakpoints.md
+            ? `${viewportHeight - 112}px`
+            : undefined,
         scrollbarColor: '#d4d4d4 transparent',
         scrollbarWidth: 'thin',
       }}
@@ -146,7 +150,7 @@ export const TokenList = function ({
       </div>
       <div className="py-4">
         <SearchInput
-          autoFocus={width >= 768}
+          autoFocus={width >= screenBreakpoints.md}
           onChange={e => setSearchText(e.target.value)}
           onClear={() => setSearchText('')}
           onKeyDown={addKeyDownListener}
@@ -192,7 +196,10 @@ export const TokenList = function ({
   )
 
   return (
-    <Modal onClose={closeModal} verticalAlign={width < 768 ? 'top' : 'center'}>
+    <Modal
+      onClose={closeModal}
+      verticalAlign={width < screenBreakpoints.md ? 'top' : 'center'}
+    >
       <Card>
         <div className="overflow-hidden bg-white">{content}</div>
       </Card>

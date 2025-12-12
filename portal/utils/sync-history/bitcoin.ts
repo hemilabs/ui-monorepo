@@ -283,6 +283,7 @@ export const createBitcoinSync = function ({
                   // not supporting multisig for the time being (although, we are not really using
                   // the from field for anything so far)
                   from: bitcoinDeposit.vin[0].prevout.scriptpubkeyAddress,
+                  grossAmount: grossAmount.toString(),
                   l1ChainId: l1Chain.id,
                   l1Token: btc.address,
                   l2ChainId: l2Chain.id,
@@ -403,15 +404,7 @@ export const createBitcoinSync = function ({
           fromBlock,
           limit,
           skip,
-        })
-          .then(withdrawals =>
-            // Replace amount with netSatsAfterFee
-            withdrawals.map(w => ({
-              ...w,
-              amount: w.netSatsAfterFee,
-            })),
-          )
-          .then(addMissingInfoFromSubgraph(hemiClient))
+        }).then(addMissingInfoFromSubgraph(hemiClient))
 
         saveHistory({
           payload: {

@@ -159,7 +159,12 @@ type WithdrawDirection = {
   direction: typeof MessageDirection.L2_TO_L1
 }
 
+type BtcGrossAmount = {
+  grossAmount: string
+}
+
 export type BtcDepositOperation = CommonOperation &
+  BtcGrossAmount &
   DepositDirection &
   BtcTransactionHash & {
     status: BtcDepositStatusType
@@ -190,6 +195,7 @@ export type ToEvmWithdrawOperation = CommonOperation &
   }
 
 export type ToBtcWithdrawOperation = CommonOperation &
+  BtcGrossAmount &
   EvmTransactionHash &
   WithdrawDirection & {
     l1ChainId: BtcChain['id']
@@ -198,7 +204,6 @@ export type ToBtcWithdrawOperation = CommonOperation &
     challengeTxHash?: Hash
     status: BtcWithdrawStatusType
     uuid?: string // bigint can't be serialized into local storage
-    netSatsAfterFee: string
   }
 
 export type DepositTunnelOperation = BtcDepositOperation | EvmDepositOperation

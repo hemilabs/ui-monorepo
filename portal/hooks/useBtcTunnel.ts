@@ -299,7 +299,7 @@ export const useWithdrawBitcoin = function () {
   const withdrawals = useBtcWithdrawals()
 
   const {
-    data: withdrawTxHash,
+    data: withdrawData,
     error: withdrawError,
     mutate: withdrawBitcoin,
     reset: resetWithdrawBitcoin,
@@ -353,7 +353,7 @@ export const useWithdrawBitcoin = function () {
     data: withdrawBitcoinReceipt,
     error: withdrawBitcoinReceiptError,
     queryKey: withdrawBitcoinQueryKey,
-  } = useWaitForEvmTransactionReceipt({ hash: withdrawTxHash?.transactionHash })
+  } = useWaitForEvmTransactionReceipt({ hash: withdrawData?.transactionHash })
 
   const clearWithdrawBitcoinState = useCallback(
     function () {
@@ -436,8 +436,8 @@ export const useWithdrawBitcoin = function () {
     withdrawBitcoin,
     withdrawBitcoinReceipt,
     withdrawBitcoinReceiptError,
+    withdrawData,
     withdrawError,
-    withdrawTxHash,
   }
 }
 

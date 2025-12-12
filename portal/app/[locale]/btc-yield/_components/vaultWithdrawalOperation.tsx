@@ -247,7 +247,6 @@ export const VaultWithdrawalOperation = function ({
                 canWithdraw={canWithdraw}
                 isRunningOperation={isPending}
                 setAcknowledged={setAcknowledged}
-                token={token}
                 validationError={validationError}
               />
             }

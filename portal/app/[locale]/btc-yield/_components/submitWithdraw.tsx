@@ -14,8 +14,10 @@ type Props = {
 } & ComponentProps<typeof Acknowledge>
 
 export const SubmitWithdraw = function ({
+  acknowledged,
   canWithdraw,
   isRunningOperation,
+  setAcknowledged,
   validationError,
 }: Props) {
   const t = useTranslations('common')
@@ -30,6 +32,10 @@ export const SubmitWithdraw = function ({
 
   return (
     <div className="w-full [&>button]:w-full">
+      <Acknowledge
+        acknowledged={acknowledged}
+        setAcknowledged={setAcknowledged}
+      />
       <SubmitWhenConnected
         submitButton={
           <Button

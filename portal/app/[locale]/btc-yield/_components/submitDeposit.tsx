@@ -32,11 +32,6 @@ export const SubmitDeposit = function ({
   isAllowanceLoading,
   isRunningOperation,
   needsApproval,
-<<<<<<< HEAD
-  setAcknowledged,
-  token,
-=======
->>>>>>> 04fcf6ed (Change name and remove property chainId)
   validationError,
   vaultDepositOperation,
 }: Props) {

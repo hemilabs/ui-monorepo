@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
@@ -23,6 +24,7 @@ import { getStakedBalanceQueryKey } from './useStakedBalance'
 export const useStake = function (token: StakeToken) {
   const operatesNativeToken = isNativeToken(token)
   const { address } = useAccount()
+  const ensureConnectedTo = useEnsureConnectedTo()
   const { queryKey: allowanceQueryKey } = useAllowance(token.address, {
     args: { owner: address, spender: stakeManagerAddresses[token.chainId] },
   })
@@ -67,6 +69,8 @@ export const useStake = function (token: StakeToken) {
 
   const { mutate } = useMutation({
     async mutationFn({ amountInput }: { amountInput: string }) {
+      await ensureConnectedTo(token.chainId)
+
       setIsSubmitting(true)
       track?.('stake - stake started')
 

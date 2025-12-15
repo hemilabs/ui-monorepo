@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getBtcStakingVaultContractAddress } from 'hemi-btc-staking-actions'
 import { depositToken } from 'hemi-btc-staking-actions/actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
@@ -30,6 +32,8 @@ export const useDeposit = function ({
   const amount = parseTokenUnits(input, token)
 
   const { address } = useAccount()
+  const hemi = useHemi()
+  const ensureConnectedTo = useEnsureConnectedTo()
   const vaultAddress = getBtcStakingVaultContractAddress(token.chainId)
   const queryClient = useQueryClient()
 
@@ -62,6 +66,8 @@ export const useDeposit = function ({
       if (!address) {
         throw new Error('No account connected')
       }
+
+      await ensureConnectedTo(hemi.id)
 
       const { emitter, promise } = depositToken({
         account: address,

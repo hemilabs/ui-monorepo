@@ -1,16 +1,10 @@
 import { validateInput } from 'components/tokenInput/utils'
-import { RemoteChain } from 'types/chain'
 
-type CanSubmit = Parameters<typeof validateInput>[0] & {
-  chainId: RemoteChain['id'] | undefined
-  expectedChain: RemoteChain['name']
-}
+type CanSubmit = Parameters<typeof validateInput>[0]
 
 export const validateSubmit = function ({
   amountInput,
   balance,
-  chainId,
-  expectedChain,
   minAmount,
   operation,
   t,
@@ -30,16 +24,6 @@ export const validateSubmit = function ({
       canSubmit: false,
       error: inputValidation.error,
       errorKey: inputValidation.errorKey,
-    }
-  }
-  // TODO this may be removed after https://github.com/hemilabs/ui-monorepo/issues/1231
-  if (chainId !== token.chainId) {
-    return {
-      canSubmit: false,
-      error: t('common.connect-to-network', {
-        network: expectedChain,
-      }),
-      errorKey: 'connect-to-network',
     }
   }
   return { canSubmit: true, error: undefined, errorKey: undefined }

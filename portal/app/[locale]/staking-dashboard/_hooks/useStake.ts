@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
@@ -45,6 +46,7 @@ export const useStake = function ({
   const { setDrawerQueryString } = useDrawerStakingQueryString()
   const { track } = useUmami()
   const { address } = useAccount()
+  const ensureConnectedTo = useEnsureConnectedTo()
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
   const queryClient = useQueryClient()
   const { queryKey: hemiBalanceQueryKey } = useTokenBalance(
@@ -74,10 +76,13 @@ export const useStake = function ({
   })
 
   return useMutation({
-    mutationFn: function runCreateLock() {
+    mutationFn: async function runCreateLock() {
       if (!address) {
         throw new Error('No account connected')
       }
+
+      await ensureConnectedTo(token.chainId)
+
       const { emitter, promise } = createLock({
         account: address,
         amount,

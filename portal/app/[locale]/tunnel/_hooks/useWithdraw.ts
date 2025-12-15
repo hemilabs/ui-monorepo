@@ -6,6 +6,7 @@ import {
   type WithdrawEvents,
 } from 'hemi-tunnel-actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
@@ -41,6 +42,7 @@ export const useWithdraw = function ({
   const amount = parseTokenUnits(fromInput, fromToken)
 
   const { address: account } = useAccount()
+  const ensureConnectedTo = useEnsureConnectedTo()
   const hemiPublicClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
@@ -62,10 +64,13 @@ export const useWithdraw = function ({
   const withdrawingNative = isNativeToken(fromToken)
 
   return useMutation({
-    mutationFn: function runWithdraw() {
+    mutationFn: async function runWithdraw() {
       if (!account) {
         throw new Error('Not Connected')
       }
+
+      await ensureConnectedTo(fromToken.chainId)
+
       track?.('evm - init withdraw started')
 
       const l2TokenAddress = withdrawingNative

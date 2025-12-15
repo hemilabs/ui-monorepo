@@ -78,7 +78,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
 
   const amount = parseTokenUnits(fromInput, fromToken)
 
-  const { chain, status } = useEvmAccount()
+  const { status } = useEvmAccount()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -110,8 +110,6 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     balance: operatesNativeToken
       ? walletNativeTokenBalance
       : walletTokenBalance,
-    chainId: chain?.id,
-    expectedChain: fromChain!.name,
     operation: 'deposit',
     t,
     token: fromToken,

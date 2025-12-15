@@ -1,7 +1,6 @@
 'use client'
 
 import { useAccounts } from 'hooks/useAccounts'
-import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useUmami } from 'hooks/useUmami'
@@ -49,8 +48,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     updateFromInput,
   } = state
 
-  const { btcChainId, btcWalletStatus, evmAddress } = useAccounts()
-  const bitcoin = useBitcoin()
+  const { btcWalletStatus, evmAddress } = useAccounts()
   const { balance, isSuccess: balanceLoaded } = useBitcoinBalance()
   const { isPending: isMinDepositsSatsLoading, minDepositFormattedSats } =
     useMinDepositSats()
@@ -64,8 +62,6 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
   } = validateSubmit({
     amountInput: fromInput,
     balance: BigInt(balance?.confirmed ?? 0),
-    chainId: btcChainId,
-    expectedChain: bitcoin.name,
     minAmount: minDepositFormattedSats,
     operation: 'deposit',
     t,

@@ -49,7 +49,7 @@ export const Stake = function () {
     updateStakingDashboardOperation,
   } = useStakingDashboard()
 
-  const { chainId, status } = useEvmAccount()
+  const { status } = useEvmAccount()
   const hemi = useHemi()
 
   const amount = parseTokenUnits(input, token)
@@ -73,8 +73,6 @@ export const Stake = function () {
   } = validateSubmit({
     amountInput: input,
     balance: walletTokenBalance,
-    chainId,
-    expectedChain: hemi.name,
     operation: 'stake',
     t,
     token,

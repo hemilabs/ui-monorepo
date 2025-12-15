@@ -7,8 +7,6 @@ const t = (key: string) => key
 
 const baseArgs = {
   balance: BigInt(100),
-  chainId: 1,
-  expectedChain: 'Ethereum',
   t,
   token: { chainId: 1, decimals: 18 },
 }
@@ -42,20 +40,6 @@ describe('validateSubmit', function () {
       canSubmit: false,
       error: 'Invalid',
       errorKey: 'enter-an-amount',
-    })
-  })
-
-  it('returns canSubmit: false and error for wrong chain', function () {
-    vi.spyOn(tokenInputUtils, 'validateInput').mockReturnValue({
-      errorKey: undefined,
-      isValid: true,
-    })
-    const args = { ...baseArgs, chainId: 2 }
-    const result = validateSubmit(args)
-    expect(result).toEqual({
-      canSubmit: false,
-      error: 'common.connect-to-network',
-      errorKey: 'connect-to-network',
     })
   })
 })

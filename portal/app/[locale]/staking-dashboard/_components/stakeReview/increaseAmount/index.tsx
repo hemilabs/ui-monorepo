@@ -24,7 +24,6 @@ import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { getVeHemiContractAddress } from 've-hemi-actions'
 import { formatUnits } from 'viem'
-import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useStakingDashboard } from '../../../_context/stakingDashboardContext'
 import { useEstimateIncreaseAmountFees } from '../../../_hooks/useEstimateIncreaseAmountFees'
@@ -45,7 +44,6 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
     updateStakingDashboardOperation,
   } = useStakingDashboard()
   const token = useHemiToken()
-  const { chainId } = useEvmAccount()
 
   const [operationRunning, setOperationRunning] =
     useState<StakingOperationRunning>('idle')
@@ -86,8 +84,6 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
   } = validateSubmit({
     amountInput: input!,
     balance: walletTokenBalance,
-    chainId,
-    expectedChain: hemi.name,
     operation: 'stake',
     t,
     token,
@@ -206,11 +202,10 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
       return statusMap[stakingDashboardStatus] ?? ProgressStatus.NOT_READY
     }
 
-    const showFees = [
-      StakingDashboardStatus.APPROVAL_TX_COMPLETED,
-      StakingDashboardStatus.STAKE_TX_PENDING,
-      StakingDashboardStatus.STAKE_TX_FAILED,
-    ].includes(stakingDashboardStatus)
+    const showFees =
+      stakingDashboardStatus === StakingDashboardStatus.APPROVAL_TX_COMPLETED ||
+      stakingDashboardStatus === StakingDashboardStatus.STAKE_TX_PENDING ||
+      stakingDashboardStatus === StakingDashboardStatus.STAKE_TX_FAILED
 
     return {
       description: (

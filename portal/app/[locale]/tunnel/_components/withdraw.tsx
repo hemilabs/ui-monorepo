@@ -180,8 +180,6 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   } = validateSubmit({
     amountInput: fromInput,
     balance: bitcoinBalance,
-    chainId: fromToken.chainId,
-    expectedChain: fromChain.name,
     minAmount: minWithdrawalFormattedSats,
     operation: 'withdrawal',
     t,
@@ -297,7 +295,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     updateFromInput,
   } = state
 
-  const { chainId, status } = useAccount()
+  const { status } = useAccount()
 
   const operatesNativeToken = isNativeToken(fromToken)
 
@@ -323,8 +321,6 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
     balance: operatesNativeToken
       ? walletNativeTokenBalance
       : walletTokenBalance,
-    chainId,
-    expectedChain: fromChain.name,
     operation: 'withdrawal',
     t,
     token: fromToken,

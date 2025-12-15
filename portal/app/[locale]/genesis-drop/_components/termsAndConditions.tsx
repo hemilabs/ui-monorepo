@@ -3,13 +3,13 @@ import { Button } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { Modal } from 'components/modal'
 import hemiSocials from 'hemi-socials'
+import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
 import { FormEvent } from 'react'
 import { Hash } from 'viem'
-import { useAccount, useSwitchChain } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 const { website } = hemiSocials
 
@@ -56,18 +56,15 @@ type Props = {
 export const TermsAndConditions = function ({ onAccept, onClose }: Props) {
   const { address } = useAccount()
   const hemi = useHemi()
-  const connectedToHemi = useIsConnectedToExpectedNetwork(hemi.id)
+  const ensureConnectedTo = useEnsureConnectedTo()
   const { hemiWalletClient } = useHemiWalletClient()
   const t = useTranslations()
-  const { switchChainAsync } = useSwitchChain()
 
   const { mutate: signTermsAndConditions, status } = useMutation({
     async mutationFn() {
       // if the user disconnects the wallet, the whole claim page changes
       // so this component wouldn't even render. So we don't need to handle that scenario
-      if (!connectedToHemi) {
-        await switchChainAsync({ chainId: hemi.id })
-      }
+      await ensureConnectedTo(hemi.id)
 
       return hemiWalletClient!.signMessage({
         account: address!,

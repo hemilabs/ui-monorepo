@@ -65,14 +65,26 @@ export const getBtcWithdrawals = function ({
   skip?: number
 }) {
   const url = getSubgraphBaseUrl(chainId)
-  return request<{ withdrawals: ToBtcWithdrawOperation[] }>(
-    `${url}/withdrawals/${address}/btc`,
-    {
-      fromBlock,
-      limit,
-      skip,
-    },
-  ).then(({ withdrawals }) => withdrawals)
+  return request<{
+    withdrawals: (Omit<ToBtcWithdrawOperation, 'grossAmount'> & {
+      netSatsAfterFee: string
+    })[]
+  }>(`${url}/withdrawals/${address}/btc`, {
+    fromBlock,
+    limit,
+    skip,
+  }).then(({ withdrawals }) =>
+    // Map to add grossAmount field
+    // grossAmount is the amount before fees deduction
+    // amount is the net amount after fees deduction
+    withdrawals.map(
+      ({ amount: grossAmount, netSatsAfterFee: amount, ...rest }) => ({
+        ...rest,
+        amount,
+        grossAmount,
+      }),
+    ),
+  )
 }
 
 /**

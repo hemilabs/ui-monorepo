@@ -72,8 +72,6 @@ const analyticsEvents = [
   'nav - linkedIn',
   'nav - youtube',
   'nav - x',
-  'nav - telegram news',
-  'nav - tiktok',
   // /stake
   'stake - learn stake',
   'stake - stake failed',

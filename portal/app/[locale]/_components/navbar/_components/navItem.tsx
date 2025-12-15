@@ -12,49 +12,49 @@ import {
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, ReactNode, useState, Suspense } from 'react'
+import {
+  ComponentProps,
+  ReactNode,
+  useState,
+  Suspense,
+  ComponentType,
+} from 'react'
 import { UrlObject } from 'url'
+
+import { IconContainer } from './iconContainer'
+
+type Selectable = { selected?: boolean }
 
 export type NavItemProps = {
   event?: AnalyticsEvent
   icon?: ReactNode
+  iconContainer?: ComponentType<ComponentProps<typeof IconContainer>>
+  itemContainer?: ComponentType<ComponentProps<'div'> & Selectable>
   rightSection?: ReactNode
+  row?: ComponentType<ComponentProps<'div'>>
   text: string
   urlToBeSelected?: string | UrlObject
 }
 
-type Selectable = { selected?: boolean }
-
-export const IconContainer = ({
-  children,
-  selected = false,
-}: Selectable & { children: ReactNode }) => (
+export const Row = (props: ComponentProps<'div'>) => (
   <div
-    className={`flex h-6 w-6 items-center justify-center rounded-md
-      transition-colors duration-300 md:h-5
-      md:w-5 group-hover/nav:[&>svg>path]:fill-neutral-950 ${
-        selected
-          ? '[&>svg>path]:fill-orange-600'
-          : 'group-hover/item:[&>svg>path]:fill-neutral-950'
-      }`}
-  >
-    {children}
-  </div>
-)
-
-export const Row = (props: { children: ReactNode } & ComponentProps<'div'>) => (
-  <div className="flex items-center gap-x-2" {...props} />
+    className="flex w-full flex-col items-center gap-2 md:flex-row"
+    {...props}
+  />
 )
 
 export const ItemContainer = ({
   children,
+  justifyItems = 'justify-center md:justify-start',
+  padding = 'py-1.5',
   selected = false,
   ...props
-}: { children: ReactNode } & Selectable & ComponentProps<'div'>) => (
+}: Selectable &
+  ComponentProps<'div'> & { justifyItems?: string; padding?: string }) => (
   <div
     {...props}
-    className={`group/item cursor-pointer rounded-md py-1.5 transition-colors duration-300 ${
-      selected ? 'bg-orange-50' : 'hover:bg-neutral-100'
+    className={`group/item flex ${justifyItems} h-full cursor-pointer items-center rounded-lg ${padding} transition-colors duration-300 md:rounded-md ${
+      selected ? 'bg-orange-50' : 'hover:bg-neutral-100 max-md:bg-zinc-50/80'
     }`}
   >
     {children}
@@ -85,8 +85,8 @@ export const ItemText = ({
   text,
 }: Pick<NavItemProps, 'text'> & Selectable) => (
   <span
-    className={`text-base font-medium transition-colors duration-300
-       group-hover/nav:text-neutral-950 md:text-sm ${
+    className={`text-sm font-semibold transition-colors duration-300
+       group-hover/nav:text-neutral-950 md:font-medium ${
          selected
            ? 'text-orange-600'
            : 'text-neutral-600 group-hover/item:text-neutral-950'

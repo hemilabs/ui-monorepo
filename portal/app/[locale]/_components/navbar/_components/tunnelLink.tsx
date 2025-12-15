@@ -1,4 +1,4 @@
-import { TunnelIcon } from 'components/icons/tunnelIcon'
+import { TunnelIcon as BaseIcon } from 'components/icons/tunnelIcon'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTunnelOperationByConnectedWallet } from 'hooks/useTunnelOperationByConnectedWallet'
 import dynamic from 'next/dynamic'
@@ -21,7 +21,7 @@ const UI = ({ href, icon, text }: ComponentProps<typeof ItemLink>) => (
     href={href}
     icon={icon}
     rightSection={
-      <div className="ml-auto">
+      <div className="ml-auto hidden md:block">
         {/* Initially users will be disconnected, so no need for a fallback here. */}
         <Suspense>
           <ActionableOperations />
@@ -30,6 +30,12 @@ const UI = ({ href, icon, text }: ComponentProps<typeof ItemLink>) => (
     }
     text={text}
   />
+)
+
+const TunnelIcon = () => (
+  <div className="w-8 md:w-3">
+    <BaseIcon />
+  </div>
 )
 
 const TunnelLinkImpl = function (

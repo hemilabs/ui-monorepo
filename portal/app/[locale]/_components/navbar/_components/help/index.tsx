@@ -16,6 +16,8 @@ import {
   type ReactNode,
   useState,
 } from 'react'
+import ReactDOM from 'react-dom'
+import { getPortalContainer } from 'utils/document'
 
 import { CmcAttribution } from '../cmcAttribution'
 import { TermsAndConditions } from '../termsAndConditions'
@@ -216,34 +218,41 @@ export const Help = function () {
   const t = useTranslations('navbar.help')
   const activeLocale = useLocale()
 
+  const helpPortalContainer = getPortalContainer()
+
   return (
     <div className="cursor-pointer" ref={ref}>
       {isOpen && <Backdrop onClick={() => setIsOpen(!isOpen)} />}
       <HelpButton isOpen={isOpen} setIsOpen={setIsOpen} />
 
-      {isOpen && (
-        <div
-          className="absolute bottom-0 left-0 z-30
-          flex h-36 w-full flex-col
-          items-start rounded-t-2xl bg-white p-4 shadow-lg
-          md:top-0 md:h-fit md:w-64 md:translate-x-52
-          md:translate-y-16 md:rounded-lg md:p-1"
-        >
-          <ItemWithSubmenu
-            event="nav - language"
-            icon={<LanguageIcon className="h-5 w-5 md:h-4 md:w-4" />}
-            subMenu={<LanguageMenu active={activeLocale} />}
-            text={t('language')}
-            value={getLocalizedLocaleName(activeLocale)}
-          />
-          <ItemWithSubmenu
-            event="nav - legal and privacy"
-            icon={<LegalIcon className="h-5 w-5 md:h-4 md:w-4" />}
-            subMenu={<LegalAndPrivacy />}
-            text={t('legal-and-privacy')}
-          />
-        </div>
-      )}
+      {isOpen &&
+        helpPortalContainer &&
+        ReactDOM.createPortal(
+          <div
+            className="absolute bottom-0 left-0 z-30
+            flex h-36 w-full flex-col
+            items-start rounded-t-2xl bg-white p-4 shadow-lg
+            md:top-0 md:h-fit md:w-64 md:translate-x-52 md:translate-y-12
+            md:rounded-lg md:p-1 lg:translate-x-2 lg:translate-y-2"
+            onMouseDown={e => e.stopPropagation()}
+            onTouchStart={e => e.stopPropagation()}
+          >
+            <ItemWithSubmenu
+              event="nav - language"
+              icon={<LanguageIcon className="h-5 w-5 md:h-4 md:w-4" />}
+              subMenu={<LanguageMenu active={activeLocale} />}
+              text={t('language')}
+              value={getLocalizedLocaleName(activeLocale)}
+            />
+            <ItemWithSubmenu
+              event="nav - legal and privacy"
+              icon={<LegalIcon className="h-5 w-5 md:h-4 md:w-4" />}
+              subMenu={<LegalAndPrivacy />}
+              text={t('legal-and-privacy')}
+            />
+          </div>,
+          helpPortalContainer,
+        )}
     </div>
   )
 }

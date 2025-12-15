@@ -3,8 +3,7 @@ import { ComponentProps } from 'react'
 export const BitcoinKitIcon = (props: ComponentProps<'svg'>) => (
   <svg
     fill="none"
-    height={13}
-    width={13}
+    viewBox="0 0 13 13"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >

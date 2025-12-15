@@ -2,9 +2,9 @@ import { ComponentProps } from 'react'
 
 export const GenesisDropIcon = (props: ComponentProps<'svg'>) => (
   <svg
+    className="size-full"
     fill="none"
-    height={14}
-    width={10}
+    viewBox="0 0 10 14"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >

@@ -19,14 +19,9 @@ export const NavbarResponsive = function ({ onClose }: Props) {
     // Can't use CSS because the drawer works as a Portal in React.
     return null
   }
-  if (width >= screenBreakpoints.md) {
-    // tablet mode
-    return (
-      <Drawer onClose={onClose} position="left">
-        <NavbarDesktop />
-      </Drawer>
-    )
-  }
-  // mobile mode
-  return <NavbarMobile />
+  return (
+    <Drawer onClose={onClose} position="left">
+      {width >= screenBreakpoints.md ? <NavbarDesktop /> : <NavbarMobile />}
+    </Drawer>
+  )
 }

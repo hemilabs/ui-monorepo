@@ -4,13 +4,8 @@ import { Link } from 'components/link'
 import { useUmami } from 'hooks/useUmami'
 import { ComponentProps, Suspense } from 'react'
 
-import {
-  IconContainer,
-  ItemContainer,
-  ItemText,
-  NavItemProps,
-  Row,
-} from './navItem'
+import { IconContainer } from './iconContainer'
+import { ItemContainer, ItemText, NavItemProps, Row } from './navItem'
 
 type ItemLinkProps = NavItemProps &
   Required<Pick<ComponentProps<typeof Link>, 'href'>>
@@ -18,21 +13,23 @@ type ItemLinkProps = NavItemProps &
 export const ExternalLinkUI = ({
   href,
   icon,
+  itemContainer: ContainerComponent = ItemContainer,
   onClick,
+  row: RowComponent = Row,
   text,
 }: Omit<ItemLinkProps, 'href'> &
   Pick<ComponentProps<'a'>, 'href' | 'onClick'>) => (
-  <ItemContainer>
-    <AnchorTag href={href} onClick={onClick}>
-      <Row>
+  <ContainerComponent>
+    <AnchorTag className="w-full" href={href} onClick={onClick}>
+      <RowComponent>
         {icon && <IconContainer>{icon}</IconContainer>}
         <ItemText text={text} />
         <div className="ml-auto hidden size-4 items-center group-hover/item:flex">
           <ArrowDownLeftIcon />
         </div>
-      </Row>
+      </RowComponent>
     </AnchorTag>
-  </ItemContainer>
+  </ContainerComponent>
 )
 
 const ExternalLinkImpl = function ({

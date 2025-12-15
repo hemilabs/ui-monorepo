@@ -20,7 +20,7 @@ const UI = ({
 }: {
   addTracking?: (event: AnalyticsEvent) => (() => void) | undefined
 }) => (
-  <div className="flex flex-wrap items-center justify-between overflow-visible p-3">
+  <>
     <ExternalLink href={twitterUrl} onClick={addTracking?.('nav - x')}>
       <TwitterIcon className={svgCss} />
     </ExternalLink>
@@ -36,7 +36,7 @@ const UI = ({
     <ExternalLink href={linkedinUrl} onClick={addTracking?.('nav - linkedIn')}>
       <LinkedinIcon className={svgCss} />
     </ExternalLink>
-  </div>
+  </>
 )
 
 const SocialLinksImpl = function () {

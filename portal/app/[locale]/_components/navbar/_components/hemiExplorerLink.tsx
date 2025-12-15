@@ -7,7 +7,10 @@ import { ExternalLinkUI } from './externalLink'
 import { ItemLink } from './itemLink'
 
 const ExplorerLink = function (
-  props: Pick<ComponentProps<typeof ItemLink>, 'icon' | 'text'>,
+  props: Pick<
+    ComponentProps<typeof ItemLink>,
+    'icon' | 'itemContainer' | 'text'
+  >,
 ) {
   const hemi = useHemi()
   return (
@@ -19,20 +22,30 @@ const ExplorerLink = function (
   )
 }
 
-export const HemiExplorerLink = function () {
+export const HemiExplorerLink = function (
+  props: Pick<
+    ComponentProps<typeof ItemLink>,
+    'iconContainer' | 'itemContainer' | 'row'
+  >,
+) {
   const t = useTranslations('navbar')
 
   const text = t('explorer')
 
-  const props = {
-    icon: <ExplorerIcon />,
+  const commonProps = {
+    icon: (
+      <div className="max-md:size-4 md:w-3">
+        <ExplorerIcon />
+      </div>
+    ),
     text,
+    ...props,
   }
 
   return (
     // The explorer link depends on mainnet|testnet, but the UI is exactly the same
-    <Suspense fallback={<ExternalLinkUI {...props} />}>
-      <ExplorerLink {...props} />
+    <Suspense fallback={<ExternalLinkUI {...commonProps} />}>
+      <ExplorerLink {...commonProps} />
     </Suspense>
   )
 }

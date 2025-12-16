@@ -75,7 +75,7 @@ export const SubmitDeposit = function ({
   }
 
   return (
-    <div className="w-full [&>button]:w-full">
+    <div className="flex w-full flex-col gap-y-2 [&>button]:w-full">
       <Acknowledge
         acknowledged={acknowledged}
         setAcknowledged={setAcknowledged}

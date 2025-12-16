@@ -17,7 +17,7 @@ import { HemiStatusLink } from './_components/hemiStatusLink'
 import { HomeLink } from './_components/homeLink'
 import { NetworkSwitch } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
-import { Stake } from './_components/stake'
+import { StakeDesktop } from './_components/stake'
 import { TunnelLink } from './_components/tunnelLink'
 import { Tvl } from './_components/tvl'
 import { VideoAsset } from './_components/videoAsset'
@@ -60,7 +60,7 @@ export const NavbarDesktop = () => (
       <PaddedListItem>
         <GenesisDrop />
       </PaddedListItem>
-      <Stake />
+      <StakeDesktop />
       <PaddedListItem>
         <Separator />
       </PaddedListItem>

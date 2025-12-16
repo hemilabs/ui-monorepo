@@ -15,6 +15,7 @@ import { HemiStatusLink } from './_components/hemiStatusLink'
 import { IconContainer as BaseIconContainer } from './_components/iconContainer'
 import { ItemContainer, ItemText } from './_components/navItem'
 import { SocialLinks } from './_components/socialLinks'
+import { StakeMobile } from './_components/stake'
 import { TunnelLink } from './_components/tunnelLink'
 import { Tvl } from './_components/tvl'
 
@@ -68,9 +69,8 @@ export const NavbarMobile = function () {
         <SmallBox>
           <GenesisDrop />
         </SmallBox>
-        {/*  TODO replace with Stake */}
         <SmallBox>
-          <EcosystemLink />
+          <StakeMobile />
         </SmallBox>
         <SmallBox>
           <EcosystemLink />

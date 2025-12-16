@@ -32,6 +32,7 @@ export const SubmitDeposit = function ({
   isAllowanceLoading,
   isRunningOperation,
   needsApproval,
+  setAcknowledged,
   validationError,
   vaultDepositOperation,
 }: Props) {
@@ -75,6 +76,10 @@ export const SubmitDeposit = function ({
 
   return (
     <div className="w-full [&>button]:w-full">
+      <Acknowledge
+        acknowledged={acknowledged}
+        setAcknowledged={setAcknowledged}
+      />
       <SubmitWhenConnected
         submitButton={
           <Button

@@ -108,7 +108,6 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
 
   return (
     <DrawerCallToAction
-      expectedChainId={withdrawal.l2ChainId}
       onSubmit={handleChallenge}
       submitButton={
         <Button disabled={isChallenging} size="small" type="submit">

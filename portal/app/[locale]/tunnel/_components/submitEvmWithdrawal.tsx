@@ -37,7 +37,6 @@ export const SubmitEvmWithdrawal = function ({
 
   return (
     <SubmitWhenConnected
-      chainId={fromToken.chainId}
       submitButton={
         validationError ? (
           <Button disabled size="xLarge" type="button">

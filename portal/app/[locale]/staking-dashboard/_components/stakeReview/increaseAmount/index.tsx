@@ -202,10 +202,11 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
       return statusMap[stakingDashboardStatus] ?? ProgressStatus.NOT_READY
     }
 
-    const showFees =
-      stakingDashboardStatus === StakingDashboardStatus.APPROVAL_TX_COMPLETED ||
-      stakingDashboardStatus === StakingDashboardStatus.STAKE_TX_PENDING ||
-      stakingDashboardStatus === StakingDashboardStatus.STAKE_TX_FAILED
+    const showFees = [
+      StakingDashboardStatus.APPROVAL_TX_COMPLETED,
+      StakingDashboardStatus.STAKE_TX_PENDING,
+      StakingDashboardStatus.STAKE_TX_FAILED,
+    ].includes(stakingDashboardStatus)
 
     return {
       description: (

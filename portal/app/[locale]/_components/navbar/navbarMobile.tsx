@@ -14,6 +14,7 @@ import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiStatusLink } from './_components/hemiStatusLink'
 import { IconContainer as BaseIconContainer } from './_components/iconContainer'
 import { ItemContainer, ItemText } from './_components/navItem'
+import { NetworkSwitch } from './_components/networkSwitch'
 import { SocialLinks } from './_components/socialLinks'
 import { StakeMobile } from './_components/stake'
 import { TunnelLink } from './_components/tunnelLink'
@@ -98,6 +99,13 @@ export const NavbarMobile = function () {
         </FullItem>
         <FullItem>
           <HemiStatusLink
+            iconContainer={IconContainer}
+            itemContainer={CustomContainer}
+            row={RowContainer}
+          />
+        </FullItem>
+        <FullItem>
+          <NetworkSwitch
             iconContainer={IconContainer}
             itemContainer={CustomContainer}
             row={RowContainer}

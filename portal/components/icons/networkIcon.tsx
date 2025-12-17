@@ -3,8 +3,7 @@ import { ComponentProps } from 'react'
 export const NetworkIcon = (props: ComponentProps<'svg'>) => (
   <svg
     fill="none"
-    height={14}
-    width={12}
+    viewBox="0 0 12 14"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >

@@ -69,6 +69,7 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
     useNeedsApproval({
       address: token.address,
       amount,
+      chainId: token.chainId,
       spender: veHemiAddress,
     })
 

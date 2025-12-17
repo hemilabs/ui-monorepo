@@ -93,6 +93,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
     useNeedsApproval({
       address: fromToken.address,
       amount,
+      chainId: fromToken.chainId,
       spender: l1StandardBridgeAddress,
     })
 

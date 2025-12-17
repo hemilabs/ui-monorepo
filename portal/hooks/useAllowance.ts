@@ -1,5 +1,5 @@
 import { isNativeAddress } from 'utils/nativeToken'
-import { type ContractFunctionArgs, erc20Abi, isAddress } from 'viem'
+import { Chain, type ContractFunctionArgs, erc20Abi, isAddress } from 'viem'
 import { type UseReadContractParameters, useReadContract } from 'wagmi'
 
 type AllowanceArgs = ContractFunctionArgs<typeof erc20Abi, 'view', 'allowance'>
@@ -10,17 +10,19 @@ type Spender = AllowanceArgs[1]
 type Options = {
   args: { owner: Owner | undefined; spender: Spender | undefined }
   query?: UseReadContractParameters<typeof erc20Abi, 'allowance'>['query']
+  chainId: Chain['id']
 }
 
 export const useAllowance = (
   erc20Address: string,
-  { args: { owner, spender }, query }: Options,
+  { args: { owner, spender }, chainId, query }: Options,
 ) =>
   useReadContract({
     abi: erc20Abi,
     // @ts-expect-error Will be enabled if erc20Address is address
     address: erc20Address,
     args: owner && spender ? [owner, spender] : undefined,
+    chainId,
     functionName: 'allowance',
     query: {
       ...query,

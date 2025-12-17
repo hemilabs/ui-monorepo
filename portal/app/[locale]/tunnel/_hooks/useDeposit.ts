@@ -79,6 +79,7 @@ export const useDeposit = function ({
   const { allowanceQueryKey } = useNeedsApproval({
     address: fromToken.address,
     amount,
+    chainId: fromToken.chainId,
     spender: l1StandardBridgeAddress,
   })
 

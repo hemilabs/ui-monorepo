@@ -72,6 +72,7 @@ export const useStake = function ({
   const { allowanceQueryKey } = useNeedsApproval({
     address: token.address,
     amount,
+    chainId: token.chainId,
     spender: veHemiAddress,
   })
 

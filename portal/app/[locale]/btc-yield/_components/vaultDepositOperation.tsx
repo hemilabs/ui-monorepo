@@ -92,6 +92,7 @@ export const VaultDepositOperation = function ({
     useNeedsApproval({
       address: token.address,
       amount,
+      chainId: token.chainId,
       spender: vaultAddress,
     })
 

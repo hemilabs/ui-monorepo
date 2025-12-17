@@ -55,6 +55,7 @@ export const useDeposit = function ({
   const { allowanceQueryKey } = useNeedsApproval({
     address: token.address,
     amount,
+    chainId: token.chainId,
     spender: vaultAddress,
   })
 

@@ -60,6 +60,7 @@ export const Stake = function () {
     useNeedsApproval({
       address: token.address,
       amount,
+      chainId: token.chainId,
       spender: veHemiAddress,
     })
 

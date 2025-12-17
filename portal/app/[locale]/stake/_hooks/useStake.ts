@@ -27,6 +27,7 @@ export const useStake = function (token: StakeToken) {
   const ensureConnectedTo = useEnsureConnectedTo()
   const { queryKey: allowanceQueryKey } = useAllowance(token.address, {
     args: { owner: address, spender: stakeManagerAddresses[token.chainId] },
+    chainId: token.chainId,
   })
   const [networkType] = useNetworkType()
   const hemiPublicClient = useHemiClient()

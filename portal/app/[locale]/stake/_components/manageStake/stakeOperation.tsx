@@ -81,6 +81,7 @@ export const StakeOperation = function ({
         owner: address,
         spender,
       },
+      chainId: token.chainId,
     },
   )
 

@@ -111,7 +111,6 @@ export const NavbarMobile = function () {
             row={RowContainer}
           />
         </FullItem>
-        {/* TODO add network switch */}
         <FullItem>
           <CustomContainer>
             <RowContainer>

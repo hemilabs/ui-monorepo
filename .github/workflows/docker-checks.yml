@@ -21,9 +21,9 @@ jobs:
   docker-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - run: docker build --tag ${{ github.repository }}:${{ github.sha }} ${{ matrix.context }}
-      - uses: aquasecurity/trivy-action@0.29.0
+      - uses: aquasecurity/trivy-action@18f2510ee396bbf400402947b394f2dd8c87dbb0 # 0.29.0
         with:
           exit-code: 1
           ignore-unfixed: true

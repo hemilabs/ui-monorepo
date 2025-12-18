@@ -22,7 +22,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - uses: bloq/actions/notify-deploy-to-slack@v1
+    - uses: bloq/actions/notify-deploy-to-slack@7a00bde576f8383a7afabf48dc6153bd7a7daab7 # v1.6.0
       with:
         app-name: Hemi Portal Subgraph ${{ inputs.subgraph }}
         environment: staging
@@ -30,7 +30,7 @@ runs:
         slack-mention: ${{ inputs.slack-mention }}
         slack-webhook-url: ${{ inputs.slack-webhook-url }}
         status: 'started :stopwatch:'
-    - uses: hemilabs/actions/setup-node-env@v1
+    - uses: hemilabs/actions/setup-node-env@06d5e0813de21d92283163864cce2e95ec5b67c6 # v1.0.0
     - run: npx --yes graph auth "$GRAPH_API_KEY"
       shell: bash
       env:
@@ -39,7 +39,7 @@ runs:
       shell: bash
       working-directory: subgraphs/${{ inputs.subgraph }}
     - if: always()
-      uses: bloq/actions/notify-deploy-to-slack@v1
+      uses: bloq/actions/notify-deploy-to-slack@7a00bde576f8383a7afabf48dc6153bd7a7daab7 # v1.6.0
       with:
         app-name: Hemi Portal Subgraph ${{ inputs.subgraph }}
         environment: staging

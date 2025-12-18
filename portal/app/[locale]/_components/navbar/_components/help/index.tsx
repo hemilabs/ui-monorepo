@@ -239,14 +239,14 @@ export const Help = function () {
           >
             <ItemWithSubmenu
               event="nav - language"
-              icon={<LanguageIcon className="h-5 w-5 md:h-4 md:w-4" />}
+              icon={<LanguageIcon className="size-5 md:size-4" />}
               subMenu={<LanguageMenu active={activeLocale} />}
               text={t('language')}
               value={getLocalizedLocaleName(activeLocale)}
             />
             <ItemWithSubmenu
               event="nav - legal and privacy"
-              icon={<LegalIcon className="h-5 w-5 md:h-4 md:w-4" />}
+              icon={<LegalIcon className="size-5 md:size-4" />}
               subMenu={<LegalAndPrivacy />}
               text={t('legal-and-privacy')}
             />

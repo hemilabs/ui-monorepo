@@ -2,7 +2,7 @@
 
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import dynamic from 'next/dynamic'
-import React, { Suspense, useState } from 'react'
+import React, { Suspense, useState, ReactNode } from 'react'
 
 import { AppLayoutContainer } from './appLayoutContainer'
 import { Header } from './header'
@@ -24,7 +24,7 @@ const NavbarResponsive = dynamic(
 )
 
 type Props = {
-  children: React.ReactNode
+  children: ReactNode
 }
 
 export const AppLayout = function ({ children }: Props) {

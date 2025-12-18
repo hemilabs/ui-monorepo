@@ -1,6 +1,7 @@
 'use client'
 
 import dynamic from 'next/dynamic'
+import { ReactNode } from 'react'
 
 import { Badge } from '../badge'
 
@@ -34,7 +35,7 @@ const PaddedListItem = ({
   children,
   className = '',
 }: {
-  children: React.ReactNode
+  children: ReactNode
   className?: string
 }) => <li className={`[&>div]:px-2 ${className}`}>{children}</li>
 

@@ -142,7 +142,7 @@ export const LearnMore = function () {
   return (
     <>
       <h2>{t('learn-more-about-hemi')}</h2>
-      <p className="mb-6 text-sm font-medium text-neutral-600 md:mb-8">
+      <p className="mb-6 font-medium text-neutral-600 md:mb-8">
         {t('tutorials-and-tools')}
       </p>
       <Card>
@@ -156,9 +156,7 @@ export const LearnMore = function () {
           <div className="mt-4 flex flex-col gap-y-2 px-2 md:mt-6 md:flex-row md:gap-x-6">
             <div className="mb-6">
               <h4>{t('tutorials')}</h4>
-              <p className="text-sm text-neutral-600">
-                {t('tutorials-subheading')}
-              </p>
+              <p className="text-neutral-600">{t('tutorials-subheading')}</p>
               <div className="mt-3 hidden w-fit md:block">
                 <ButtonLink
                   href={tutorialsUrl}

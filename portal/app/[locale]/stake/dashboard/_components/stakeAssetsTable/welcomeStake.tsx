@@ -20,7 +20,7 @@ export function WelcomeStake({ href, onClick }: Props) {
         <h3 className="text-lg font-semibold text-neutral-950">
           {t('start-staking-earn-points')}
         </h3>
-        <p className="max-w-72 text-sm font-normal text-neutral-500">
+        <p className="max-w-72 font-normal text-neutral-500">
           {t('ready-to-earn')}
         </p>
       </div>

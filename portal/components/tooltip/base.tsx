@@ -33,7 +33,7 @@ function getOverlay(props: BaseTooltipProps) {
   if (variant === 'simple') {
     return (
       <div className={`${commonCss} rounded-md px-1.5 py-1`}>
-        <p className="text-sm font-medium text-white">{text}</p>
+        <p className="font-medium text-white">{text}</p>
       </div>
     )
   }
@@ -41,7 +41,7 @@ function getOverlay(props: BaseTooltipProps) {
   if (variant === 'info') {
     return (
       <div className={`${commonCss} rounded-xl p-3`}>
-        <p className="text-sm font-medium text-white">{text}</p>
+        <p className="font-medium text-white">{text}</p>
       </div>
     )
   }

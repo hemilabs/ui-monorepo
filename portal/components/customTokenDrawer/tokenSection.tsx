@@ -93,7 +93,7 @@ export const TokenSection = function ({
         <div className="mt-1 flex gap-x-3">
           <PositionStatus position={layer} />
           <div className="flex w-full flex-col gap-y-2">
-            <p className="text-sm font-medium text-neutral-950">
+            <p className="font-medium text-neutral-950">
               {t('add-token-on-chain', { network: chain.name })}
             </p>
             <SearchInput

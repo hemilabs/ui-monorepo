@@ -16,7 +16,7 @@ type Props = {
 }
 
 const P = ({ children }: { children: string }) => (
-  <p className="text-center text-sm font-medium text-rose-600">{children}</p>
+  <p className="text-center font-medium text-rose-600">{children}</p>
 )
 
 export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {

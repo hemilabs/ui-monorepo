@@ -47,9 +47,7 @@ export const CustomTunnelsThroughPartners = function ({
           )}
           {fromToken.extensions?.tunnelPartners?.includes('meson') && <Meson />}
         </div>
-        <p className="mb-3 text-sm font-medium text-zinc-500">
-          {t('description')}
-        </p>
+        <p className="mb-3 font-medium text-zinc-500">{t('description')}</p>
         <div>
           <WarningBox
             heading={t('use-at-your-own-risk')}

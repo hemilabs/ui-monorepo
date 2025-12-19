@@ -97,7 +97,7 @@ export const TunnelProviderToggle = function ({
           />
           <div className="mt-3 flex items-center justify-center gap-x-1 text-neutral-900">
             <WarningIcon />
-            <p className="text-center text-sm font-normal">
+            <p className="text-center font-normal">
               {t('tunnel-partners.use-at-your-own-risk')}
             </p>
           </div>

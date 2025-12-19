@@ -19,7 +19,7 @@ export default function NotFound() {
         <ExclamationMark />
         <div className="text-center">
           <h3>Oops! Page not found</h3>
-          <p className="mt-1 text-sm font-medium text-neutral-500">
+          <p className="mt-1 font-medium text-neutral-500">
             We can&apos;t find the page you&apos;re looking for.
           </p>
         </div>

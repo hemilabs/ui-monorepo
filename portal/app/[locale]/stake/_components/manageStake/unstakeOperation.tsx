@@ -17,7 +17,6 @@ import { getNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
-import { useAccount } from 'wagmi'
 
 import { useEstimateUnstakeFees } from '../../_hooks/useEstimateUnstakeFees'
 import { useStakedBalance } from '../../_hooks/useStakedBalance'
@@ -62,7 +61,6 @@ export const UnstakeOperation = function ({
   subheading,
   token,
 }: Props) {
-  const { chainId } = useAccount()
   const [amountInput, setAmountInput] = useAmount()
 
   const hemi = useHemi()
@@ -82,8 +80,6 @@ export const UnstakeOperation = function ({
   } = canSubmit({
     amountInput,
     balance,
-    chainId,
-    expectedChain: hemi.name,
     operation: 'unstake',
     t,
     token,

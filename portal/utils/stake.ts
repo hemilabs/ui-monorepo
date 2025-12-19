@@ -5,7 +5,7 @@ import type { HemiPublicClient, HemiWalletClient } from 'hooks/useHemiClient'
 import { NetworkType } from 'hooks/useNetworkType'
 import { EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
-import type { Address, Chain, Hash, TransactionReceipt } from 'viem'
+import type { Address, Hash, TransactionReceipt } from 'viem'
 import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 
 import { findChainById } from './chain'
@@ -16,20 +16,17 @@ export const isStakeEnabledOnTestnet = (networkType: NetworkType) =>
   process.env.NEXT_PUBLIC_ENABLE_STAKE_TESTNET === 'true'
 
 type CanSubmit = Omit<Parameters<typeof validateInput>[0], 'token'> & {
-  chainId: Chain['id'] | undefined
-  expectedChain: Chain['name']
   token: EvmToken
 }
 
 /**
- * Determines whether a staking operation can be submitted based on input validation,
- * user balance, network chain, and other contextual parameters.
+ * Determines whether a staking operation can be submitted based on input validation
+ * and user balance. This function only validates the input amount, balance, and token constraints.
+ * Network chain validation is handled separately in validateStakeOperation and validateUnstakeOperation.
  *
  * @param params - The parameters required to check if submission is allowed.
  * @param params.amountInput - The input amount of tokens for the operation (as a string).
  * @param params.balance - The user's current balance.
- * @param params.chainId - The current network chain ID.
- * @param params.expectedChain - The expected network chain name.
  * @param params.operation - The staking operation type (e.g., 'stake' or 'unstake').
  * @param params.t - Translation function for localization and error messages.
  * @param params.token - The token object, including its chain ID.
@@ -71,6 +68,14 @@ const validateStakeOperation = async function ({
   forAccount: Address
   hemiPublicClient: HemiPublicClient
 } & Pick<CanSubmit, 'amountInput' | 't' | 'token'>) {
+  if (hemiPublicClient.chain?.id !== token.chainId) {
+    throw new Error(
+      t('common.connect-to-network', {
+        network: findChainById(token.chainId)!.name,
+      }),
+    )
+  }
+
   const balance = isNativeToken(token)
     ? await hemiPublicClient.getBalance({
         address: forAccount,
@@ -84,8 +89,6 @@ const validateStakeOperation = async function ({
   const { error } = canSubmit({
     amountInput,
     balance,
-    chainId: hemiPublicClient.chain?.id,
-    expectedChain: findChainById(token.chainId)!.name,
     operation: 'stake',
     t,
     token,
@@ -285,6 +288,14 @@ const validateUnstakeOperation = async function ({
   forAccount: Address
   hemiPublicClient: HemiPublicClient
 } & Pick<CanSubmit, 'amountInput' | 't' | 'token'>) {
+  if (hemiPublicClient.chain?.id !== token.chainId) {
+    throw new Error(
+      t('common.connect-to-network', {
+        network: findChainById(token.chainId)!.name,
+      }),
+    )
+  }
+
   const balance = await hemiPublicClient.stakedBalance({
     address: forAccount,
     tokenAddress: getTokenAddress(token),
@@ -292,8 +303,6 @@ const validateUnstakeOperation = async function ({
   const { error } = canSubmit({
     amountInput,
     balance,
-    chainId: hemiPublicClient.chain?.id,
-    expectedChain: findChainById(token.chainId)!.name,
     operation: 'unstake',
     t,
     token,

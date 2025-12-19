@@ -69,7 +69,7 @@ export const StakeOperation = function ({
   subheading,
   token,
 }: Props) {
-  const { address, chainId } = useAccount()
+  const { address } = useAccount()
   const [amountInput, setAmountInput] = useAmount()
   const operatesNativeToken = isNativeToken(token)
   const spender = stakeManagerAddresses[token.chainId]
@@ -204,8 +204,6 @@ export const StakeOperation = function ({
   } = canSubmit({
     amountInput,
     balance,
-    chainId,
-    expectedChain: hemi.name,
     operation: 'stake',
     t,
     token,

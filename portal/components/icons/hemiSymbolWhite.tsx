@@ -1,9 +1,11 @@
+import { orange600 } from 'styles'
+
 export const HemiSymbolWhite = () => (
   <svg fill="none" height={56} width={56} xmlns="http://www.w3.org/2000/svg">
     <rect fill="#fff" height={56} rx={28} width={56} />
     <path
       d="m31.017 10.256-2.194 12.912h-1.677l-2.194-12.912a.306.306 0 0 0-.36-.25C16.127 11.605 10 19.041 10 28s6.128 16.394 14.607 17.995a.306.306 0 0 0 .36-.251l2.195-12.912h1.677l2.194 12.912a.306.306 0 0 0 .36.25C39.872 44.41 46 36.959 46 28s-6.144-16.394-14.623-17.995a.306.306 0 0 0-.36.251Z"
-      fill="#FF6A00"
+      fill={orange600}
     />
   </svg>
 )

@@ -23,7 +23,7 @@ type Props = {
 }
 
 const Text = ({ heading }: Pick<Props, 'heading'>) => (
-  <p className="text-sm font-medium text-neutral-500">{heading}</p>
+  <p className="font-medium text-neutral-500">{heading}</p>
 )
 
 const Points = ({

@@ -21,7 +21,7 @@ export const Section = ({ children, step, ...props }: Props) => (
             <h3 className="text-mid-md font-semibold text-neutral-950">
               {props.heading}
             </h3>
-            <p className="mt-1 text-sm text-neutral-600">{props.subheading}</p>
+            <p className="mt-1 text-neutral-600">{props.subheading}</p>
           </div>
           {children}
         </div>

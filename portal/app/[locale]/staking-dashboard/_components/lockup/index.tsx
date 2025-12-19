@@ -93,7 +93,7 @@ export function getNearestValidValues({
 const Divider = () => <div className="h-px w-full bg-neutral-300/55" />
 
 const InfoRow = ({ label, value }: { label: string; value: ReactNode }) => (
-  <p className="flex justify-between text-sm font-medium text-neutral-600">
+  <p className="flex justify-between font-medium text-neutral-600">
     <span>{label}</span>
     <span className="text-neutral-950">{value}</span>
   </p>

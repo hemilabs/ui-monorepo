@@ -18,7 +18,7 @@ export const TokenPreview = function ({ isLoading, token }: Props) {
         {token || isLoading ? (
           <CustomToken token={token} />
         ) : (
-          <p className="flex h-14 items-center justify-center text-sm font-medium text-neutral-500">
+          <p className="flex h-14 items-center justify-center font-medium text-neutral-500">
             {t('add-contract-to-preview')}
           </p>
         )}

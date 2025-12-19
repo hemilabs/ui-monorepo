@@ -58,7 +58,7 @@ export const Drawer = function ({
 }
 
 export const DrawerParagraph = ({ children }: { children: string }) => (
-  <p className="text-sm font-medium text-neutral-500">{children}</p>
+  <p className="font-medium text-neutral-500">{children}</p>
 )
 
 export const DrawerTopSection = ({

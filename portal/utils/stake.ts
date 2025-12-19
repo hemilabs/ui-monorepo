@@ -38,8 +38,6 @@ type CanSubmit = Omit<Parameters<typeof validateInput>[0], 'token'> & {
 export const canSubmit = function ({
   amountInput,
   balance,
-  chainId,
-  expectedChain,
   operation,
   t,
   token,
@@ -59,16 +57,7 @@ export const canSubmit = function ({
       errorKey: inputValidation.errorKey,
     }
   }
-  // TODO this may be removed after https://github.com/hemilabs/ui-monorepo/issues/1231
-  if (chainId !== token.chainId) {
-    return {
-      canSubmit: false,
-      error: t('common.connect-to-network', {
-        network: expectedChain,
-      }),
-      errorKey: 'connect-to-network',
-    }
-  }
+
   return { canSubmit: true, error: undefined, errorKey: undefined }
 }
 

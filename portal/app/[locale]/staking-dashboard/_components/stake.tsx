@@ -140,7 +140,6 @@ export const Stake = function () {
 
   function RenderBelowForm() {
     if (!canStake) return null
-
     return (
       <FeesContainer>
         <EvmFeesSummary

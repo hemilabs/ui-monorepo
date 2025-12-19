@@ -41,8 +41,8 @@ const TvlImpl = function () {
   return (
     isNotTestnet && (
       <section
-        className="h-22 relative mx-0.5 mb-4 flex flex-col gap-y-3 rounded-lg bg-neutral-800 
-        p-4 md:mb-0 md:mt-2.5"
+        className="h-22 relative mb-4 flex flex-col gap-y-3 rounded-lg bg-neutral-800 
+        p-4 md:mb-0 md:mt-3"
       >
         <div className="flex w-full items-center justify-between">
           <span className="text-sm font-medium text-white">{t('tvl')}:</span>

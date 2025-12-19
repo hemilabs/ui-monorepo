@@ -5,6 +5,7 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useOnKeyUp } from 'hooks/useOnKeyUp'
 import { ComponentType } from 'react'
 import ReactDOM from 'react-dom'
+import { getPortalContainer } from 'utils/document'
 
 import { Overlay } from '../overlay'
 
@@ -31,8 +32,7 @@ export const Drawer = function ({
     }
   }, drawerRef)
 
-  const drawerContainer =
-    container ?? document.getElementById('app-layout-container')
+  const drawerContainer = container ?? getPortalContainer()
 
   if (!drawerContainer) {
     // container not found, prevent "ReactDOM.createPortal" from crashing

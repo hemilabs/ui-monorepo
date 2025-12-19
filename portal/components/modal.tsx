@@ -4,6 +4,7 @@ import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useOnKeyUp } from 'hooks/useOnKeyUp'
 import { ComponentType } from 'react'
 import ReactDOM from 'react-dom'
+import { getPortalContainer } from 'utils/document'
 
 import { Overlay } from './overlay'
 
@@ -32,8 +33,7 @@ export const Modal = function ({
     }
   }, modalRef)
 
-  const modalContainer =
-    container ?? document.getElementById('app-layout-container')
+  const modalContainer = container ?? getPortalContainer()
 
   if (!modalContainer) {
     return null

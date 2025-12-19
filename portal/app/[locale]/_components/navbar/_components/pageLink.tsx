@@ -3,13 +3,8 @@ import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
 import { cloneElement, isValidElement, Suspense } from 'react'
 
-import {
-  IconContainer,
-  ItemContainer,
-  ItemLinkProps,
-  ItemText,
-  Row,
-} from './navItem'
+import { IconContainer as DefaultIconContainer } from './iconContainer'
+import { ItemContainer, ItemLinkProps, ItemText, Row } from './navItem'
 
 type Props = {
   selected?: boolean
@@ -19,14 +14,17 @@ type Props = {
 const PageLinkUI = ({
   href,
   icon,
+  iconContainer: IconContainer = DefaultIconContainer,
+  itemContainer: ContainerComponent = ItemContainer,
   onClick,
   rightSection,
+  row: RowComponent = Row,
   selected,
   text,
 }: Omit<Props, 'event' | 'urlToBeSelected'>) => (
-  <ItemContainer onClick={onClick} selected={selected}>
-    <Link href={href}>
-      <Row>
+  <ContainerComponent onClick={onClick} selected={selected}>
+    <Link className="w-full" href={href}>
+      <RowComponent>
         <IconContainer selected={selected}>
           {isValidElement(icon)
             ? // Need to use any so I don't type _all_ icons with "selected" as optional props
@@ -37,9 +35,9 @@ const PageLinkUI = ({
         </IconContainer>
         <ItemText selected={selected} text={text} />
         {rightSection}
-      </Row>
+      </RowComponent>
     </Link>
-  </ItemContainer>
+  </ContainerComponent>
 )
 
 const PageLinkImpl = function ({
@@ -60,7 +58,9 @@ export const PageLink = function ({
   event,
   href,
   icon,
+  itemContainer,
   rightSection,
+  row,
   text,
   urlToBeSelected = href,
 }: ItemLinkProps) {
@@ -75,7 +75,9 @@ export const PageLink = function ({
   const props = {
     href,
     icon,
+    itemContainer,
     rightSection,
+    row,
     selected,
     text,
   }

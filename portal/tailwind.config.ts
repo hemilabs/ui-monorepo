@@ -242,6 +242,7 @@ const config: Config = {
       },
       height: {
         '85vh': '85vh',
+        '90dvh': '90dvh',
         '97vh': '97vh',
         '98vh': '98vh',
         // 96px from header (height + padding), 40px from container's padding top in > md screens
@@ -299,6 +300,7 @@ const config: Config = {
         '21': '5.25rem',
         '22': '5.5rem',
         '23': '5.75rem',
+        '24.5': '6.125rem',
         '26': '6.5rem',
         '29': '7.25rem',
         '30': '7.5rem',
@@ -307,6 +309,7 @@ const config: Config = {
         '42': '10.5rem',
         '47': '11.75rem',
         '50': '12.5rem',
+        '54': '13.5rem',
         '86': '21.5rem',
         '90': '22.5rem',
         '94': '23.5rem',

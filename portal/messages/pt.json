@@ -387,13 +387,14 @@
     "docs": "Documentação",
     "ecosystem": "Demonstrações",
     "explorer": "Explorador",
+    "follow-us": "Siga-nos",
     "genesis-drop": "Lançamento Génesis",
     "get-started": "Começar",
+    "governance-staking": "Stake de governança",
     "help": {
       "language": "Idioma",
       "legal-and-privacy": "Legal e Privacidade"
     },
-    "hemi-staking": "$HEMI staking",
     "network": "Rede",
     "network-status": "Estado da Rede",
     "swap": "Troca",

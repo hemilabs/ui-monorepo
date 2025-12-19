@@ -10,7 +10,11 @@ export const GenesisDrop = function () {
     <ItemLink
       event="nav - genesis drop"
       href="/genesis-drop"
-      icon={<GenesisDropIcon />}
+      icon={
+        <div className="flex w-5 items-center justify-center md:w-2.5">
+          <GenesisDropIcon />
+        </div>
+      }
       text={t('genesis-drop')}
     />
   )

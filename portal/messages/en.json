@@ -387,13 +387,14 @@
     "docs": "Documentation",
     "ecosystem": "Demos",
     "explorer": "Explorer",
+    "follow-us": "Follow us",
     "genesis-drop": "Genesis Drop",
     "get-started": "Get Started",
+    "governance-staking": "Governance staking",
     "help": {
       "language": "Language",
       "legal-and-privacy": "Legal and Privacy"
     },
-    "hemi-staking": "$HEMI staking",
     "network": "Network",
     "network-status": "Network Status",
     "swap": "Swap",

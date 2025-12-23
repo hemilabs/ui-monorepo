@@ -27,3 +27,28 @@ Note that `@tsconfig/node24` must be installed in the `package.json`. Install th
 - When defining Interfaces, Types, or inline types, the names of the keys should be sorted in alphabetic order.
 - Do not add the return type of a function, unless strictly needed. Let the Typescript compiler infer automatically the type returned.
 - Imports should be sorted alphabetically in ascending order (A-Z) by module name
+- Prefer inline exports over exporting at the end. For example, this is correct
+
+```ts
+// prefer exporting inline
+export const foo = function () {
+  /* ...*/
+}
+export const baz = function () {
+  /* ...*/
+}
+```
+
+and avoid exporting at the end
+
+```ts
+// prefer exporting inline
+const foo = function () {
+  /* ...*/
+}
+const baz = function () {
+  /* ...*/
+}
+
+export { foo, baz }
+```

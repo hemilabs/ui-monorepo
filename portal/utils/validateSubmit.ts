@@ -26,5 +26,6 @@ export const validateSubmit = function ({
       errorKey: inputValidation.errorKey,
     }
   }
+
   return { canSubmit: true, error: undefined, errorKey: undefined }
 }

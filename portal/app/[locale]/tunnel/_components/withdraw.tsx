@@ -487,7 +487,6 @@ export const Withdraw = function ({
       />
     )
   }
-
   // Typescript can't infer it, but we can cast these safely
   if (isEvmNetwork(toChain)) {
     return <EvmWithdraw state={state as TypedTunnelState<EvmTunneling>} />

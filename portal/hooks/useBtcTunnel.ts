@@ -30,6 +30,7 @@ import {
 import { useBitcoin } from './useBitcoin'
 import { useBtcDeposits } from './useBtcDeposits'
 import { useBtcWithdrawals } from './useBtcWithdrawals'
+import { useEnsureConnectedTo } from './useEnsureConnectedTo'
 import { useHemi } from './useHemi'
 import { useHemiClient, useHemiWalletClient } from './useHemiClient'
 import { useTunnelHistory } from './useTunnelHistory'
@@ -297,6 +298,7 @@ export const useWithdrawBitcoin = function () {
   const { txHash, updateTxHash } = useTunnelOperation()
   const queryClient = useQueryClient()
   const withdrawals = useBtcWithdrawals()
+  const ensureConnectedTo = useEnsureConnectedTo()
 
   const {
     data: withdrawData,
@@ -306,11 +308,14 @@ export const useWithdrawBitcoin = function () {
   } = useMutation({
     async mutationFn({
       amount,
+      l2ChainId,
     }: {
       amount: bigint
       l1ChainId: BtcChain['id']
       l2ChainId: Chain['id']
     }) {
+      await ensureConnectedTo(l2ChainId)
+
       const [transactionHash, vaultFee] = await Promise.all([
         initiateBtcWithdrawal({
           amount,

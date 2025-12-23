@@ -43,12 +43,16 @@ export const Rewards = function ({
 }: {
   merklRewards: MerklRewards
 }) {
-  if (merklRewards.length === 0) {
+  const merklRewardsToClaim = merklRewards.filter(
+    reward => BigInt(reward.amount) - BigInt(reward.claimed) > BigInt(0),
+  )
+
+  if (merklRewardsToClaim.length === 0) {
     return <span>-</span>
   }
   return (
     <div className="flex flex-wrap gap-1">
-      {merklRewards
+      {merklRewardsToClaim
         .filter(
           reward => BigInt(reward.amount) - BigInt(reward.claimed) > BigInt(0),
         )
@@ -61,9 +65,8 @@ export const Rewards = function ({
               address={reward.token.address}
               amount={BigInt(reward.amount) - BigInt(reward.claimed)}
             />
-            {merklRewards.length > 1 && index < merklRewards.length - 1 && (
-              <span>+</span>
-            )}
+            {merklRewardsToClaim.length > 1 &&
+              index < merklRewardsToClaim.length - 1 && <span>+</span>}
           </span>
         ))}
     </div>

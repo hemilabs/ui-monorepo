@@ -21,7 +21,7 @@ import { useAccount } from 'wagmi'
 import { useClaimRewards } from '../_hooks/useClaimRewards'
 import { useEstimateClaimRewardFees } from '../_hooks/useEstimateClaimRewardFees'
 import { useHasClaimableRewards } from '../_hooks/useHasClaimableRewards'
-import { usePoolRewards } from '../_hooks/usePoolRewards'
+import { useMerklRewards } from '../_hooks/useMerklRewards'
 import {
   type BitcoinYieldClaimRewardOperation,
   BitcoinYieldClaimRewardStatus,
@@ -52,7 +52,7 @@ export const VaultClaimRewardOperation = function ({ onClose }: Props) {
   const hemi = useHemi()
   const { address } = useAccount()
   const { data: hasClaimableRewards } = useHasClaimableRewards()
-  const { data: poolRewards } = usePoolRewards()
+  const { data: merklRewards } = useMerklRewards()
   const { hemiWalletClient } = useHemiWalletClient()
 
   const {
@@ -215,11 +215,8 @@ export const VaultClaimRewardOperation = function ({ onClose }: Props) {
             we only need to check for undefined (loading). If there were no rewards or an error
             we wouldn't have pool rewards to claim, so this component wouldn't be rendering. I even think
             we could skip undefined check, but I'm following Typescript suggestion here.*/
-              poolRewards !== undefined ? (
-                <Rewards
-                  amounts={poolRewards[1]!}
-                  tokenAddresses={poolRewards[0]!}
-                />
+              merklRewards !== undefined ? (
+                <Rewards merklRewards={merklRewards} />
               ) : (
                 <Skeleton className="h-4 w-24" />
               )

@@ -2,6 +2,7 @@ import { RenderCryptoBalance } from 'components/cryptoBalance'
 import { useHemi } from 'hooks/useHemi'
 import { useToken } from 'hooks/useToken'
 import Skeleton from 'react-loading-skeleton'
+import { type MerklRewards } from 'utils/merkl'
 import type { Address } from 'viem'
 
 const TokenRewardItem = function ({
@@ -38,25 +39,33 @@ const TokenRewardItem = function ({
 }
 
 export const Rewards = function ({
-  amounts,
-  tokenAddresses,
+  merklRewards,
 }: {
-  amounts: bigint[]
-  tokenAddresses: Address[]
+  merklRewards: MerklRewards
 }) {
-  if (tokenAddresses.length === 0) {
+  if (merklRewards.length === 0) {
     return <span>-</span>
   }
   return (
     <div className="flex flex-wrap gap-1">
-      {tokenAddresses.map((address, index) => (
-        <span className="flex items-center gap-x-1" key={address}>
-          <TokenRewardItem address={address} amount={amounts[index]} />
-          {tokenAddresses.length > 1 && index < tokenAddresses.length - 1 && (
-            <span>+</span>
-          )}
-        </span>
-      ))}
+      {merklRewards
+        .filter(
+          reward => BigInt(reward.amount) - BigInt(reward.claimed) > BigInt(0),
+        )
+        .map((reward, index) => (
+          <span
+            className="flex items-center gap-x-1"
+            key={reward.token.address}
+          >
+            <TokenRewardItem
+              address={reward.token.address}
+              amount={BigInt(reward.amount) - BigInt(reward.claimed)}
+            />
+            {merklRewards.length > 1 && index < merklRewards.length - 1 && (
+              <span>+</span>
+            )}
+          </span>
+        ))}
     </div>
   )
 }

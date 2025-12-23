@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
+import { MerklRewards } from 'utils/merkl'
 import { claimReward } from 'vault-rewards-actions/actions'
 import { useAccount, useSwitchChain } from 'wagmi'
 
@@ -10,7 +11,8 @@ import {
   BitcoinYieldClaimRewardStatus,
 } from '../_types'
 
-import { getPoolRewardsQueryKey } from './usePoolRewards'
+import { useMerklCampaigns } from './useMerklCampaigns'
+import { getMerklRewardsQueryKey } from './useMerklRewards'
 import { useVaultRewardsAddress } from './useVaultRewardsAddress'
 
 type UseClaimRewards = {
@@ -26,6 +28,7 @@ export const useClaimRewards = function ({
   const hemi = useHemi()
   const hemiClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
+  const { data: merklCampaigns } = useMerklCampaigns()
   const { data: vaultRewardsAddress } = useVaultRewardsAddress()
   const queryClient = useQueryClient()
   const { switchChainAsync } = useSwitchChain()
@@ -33,6 +36,8 @@ export const useClaimRewards = function ({
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     hemiClient.chain!.id,
   )
+
+  const campaignIds = merklCampaigns?.map(c => c.campaignId)
 
   return useMutation({
     async mutationFn() {
@@ -87,8 +92,16 @@ export const useClaimRewards = function ({
 
         // Optimistically set rewards to empty array since they were claimed
         queryClient.setQueryData(
-          getPoolRewardsQueryKey(hemiClient.chain?.id, address),
-          [],
+          getMerklRewardsQueryKey({
+            address,
+            campaignIds,
+          }),
+          (oldRewards: MerklRewards) =>
+            oldRewards.map(oldReward => ({
+              ...oldReward,
+              // when claiming, the "claimed" rewards equals the "amount"
+              claimed: oldReward.amount,
+            })),
         )
       })
 
@@ -112,7 +125,10 @@ export const useClaimRewards = function ({
     onSettled() {
       // Always invalidate pool rewards on settlement
       queryClient.invalidateQueries({
-        queryKey: getPoolRewardsQueryKey(hemiClient.chain?.id, address),
+        queryKey: getMerklRewardsQueryKey({
+          address,
+          campaignIds,
+        }),
       })
     },
   })

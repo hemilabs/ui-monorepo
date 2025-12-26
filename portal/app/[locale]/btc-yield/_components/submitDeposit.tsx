@@ -5,7 +5,6 @@ import { Spinner } from 'components/spinner'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
-import { EvmToken } from 'types/token'
 
 import {
   BitcoinYieldDepositStatus,
@@ -16,7 +15,6 @@ import { Acknowledge } from './acknowledge'
 
 type Props = {
   canDeposit: boolean
-  token: EvmToken
   isAllowanceError: boolean
   isAllowanceLoading: boolean
   isRunningOperation: boolean

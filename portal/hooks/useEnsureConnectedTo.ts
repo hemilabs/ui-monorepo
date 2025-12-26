@@ -22,7 +22,7 @@ export const useEnsureConnectedTo = function () {
     }
 
     if (isBtcNetworkId(targetChainId)) {
-      if (!btcAddress) throw new Error('No Bitcoin account connected')
+      if (!btcAddress) throw new Error('No Bitcoin wallet connected')
       if (!btcConnector) throw new Error('Bitcoin wallet not connected')
       if (btcChainId !== targetChainId) {
         await btcConnector.switchNetwork(targetChainId)

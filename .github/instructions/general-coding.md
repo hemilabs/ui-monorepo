@@ -20,3 +20,4 @@ applyTo: '**'
 - When defining parameters for a function, prefer using an object if 3 or more parameters are required. Some exceptions are when the function is a facade/adapter of another known function, and in those cases it may be preferable to maintain a similar signature.
 - If changes into a config file are needed, ask before executing them. Config files are sensible changes and may impact many places, so they need to be careful reviewed.
 - Each workspace should have a README, which shall be read as part of the context when working on the workspace.
+- When adding environment variables, update the README of the project with its name. These env variables may also be added to the workflow files in the [../](.github) folder if their values are to be read from Github Actions vars and secrets

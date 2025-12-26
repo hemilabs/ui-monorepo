@@ -63,6 +63,8 @@ const fetchDomains = new Set([
   'wss://nbstream.binance.click',
   'wss://nbstream.binance.com',
   'wss://nbstream.binance.info',
+  // Merkl API
+  'https://api.merkl.xyz',
 ])
 
 if (process.env.NEXT_PUBLIC_PORTAL_API_URL) {

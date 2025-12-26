@@ -77,12 +77,3 @@ export type BitcoinYieldClaimRewardOperation = {
   transactionHash?: Hash
   status: BitcoinYieldClaimRewardStatusType
 }
-
-export type PoolRewards =
-  | readonly []
-  | readonly [
-      // array of token addresses that are rewarded
-      Address[],
-      // array of amounts rewarded for each token
-      bigint[],
-    ]

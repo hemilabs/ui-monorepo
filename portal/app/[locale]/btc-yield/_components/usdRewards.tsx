@@ -5,18 +5,19 @@ import { useTokenPrices } from 'hooks/useTokenPrices'
 import Skeleton from 'react-loading-skeleton'
 import { TokenWithBalance } from 'types/token'
 import { formatFiatNumber } from 'utils/format'
+import { type MerklRewards } from 'utils/merkl'
 import { calculateUsdValue } from 'utils/prices'
-import { Address } from 'viem'
 import { useConfig } from 'wagmi'
 
 type Props = {
-  amounts: bigint[]
-  tokenAddresses: Address[]
+  merklRewards: MerklRewards
 }
-export const UsdRewards = function ({ amounts, tokenAddresses }: Props) {
+export const UsdRewards = function ({ merklRewards }: Props) {
   const config = useConfig()
   const hemi = useHemi()
   const { data: prices, isError: isPricesError } = useTokenPrices()
+
+  const tokenAddresses = merklRewards.map(r => r.token.address)
 
   const queries = useQueries({
     queries: tokenAddresses.map(address =>
@@ -37,13 +38,18 @@ export const UsdRewards = function ({ amounts, tokenAddresses }: Props) {
     return <Skeleton />
   }
 
-  const tokensWithBalance = queries.map(function ({ data: token }, index) {
-    const amount = amounts[index]
-    return {
-      ...token,
-      balance: amount,
-    } as TokenWithBalance
-  })
+  const tokensWithBalance = queries
+    .map(function ({ data: token }) {
+      // all scenarios should be found as we checked above there were no errors
+      const { amount, claimed } = merklRewards.find(
+        mr => mr.token.address === token!.address,
+      )!
+      return {
+        ...token,
+        balance: BigInt(amount) - BigInt(claimed),
+      } as TokenWithBalance
+    })
+    .filter(b => b.balance > BigInt(0))
 
   const usdRewards = calculateUsdValue(tokensWithBalance, prices)
 

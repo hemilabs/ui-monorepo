@@ -1,8 +1,7 @@
-import { usePoolRewards } from './usePoolRewards'
+import { useMerklRewards } from './useMerklRewards'
 
 export const useHasClaimableRewards = () =>
-  usePoolRewards({
-    select: poolRewards =>
-      poolRewards.length > 0 &&
-      poolRewards[1]?.some(amount => amount > BigInt(0)),
+  useMerklRewards({
+    select: rewards =>
+      rewards.length > 0 && rewards.some(r => r.breakdowns.length > 0),
   })

@@ -41,9 +41,11 @@ export const useConfirmBitcoinDeposit = function (
 ) {
   const { address } = useEvmAccount()
   const hemiClient = useHemiClient()
+  const hemi = useHemi()
   const queryClient = useQueryClient()
   const { hemiWalletClient } = useHemiWalletClient()
   const { updateDeposit } = useTunnelHistory()
+  const ensureConnectedTo = useEnsureConnectedTo()
 
   const {
     data: confirmBitcoinDepositTxHash,
@@ -51,13 +53,16 @@ export const useConfirmBitcoinDeposit = function (
     mutate: confirmBitcoinDeposit,
     reset: resetConfirmBitcoinDeposit,
   } = useMutation({
-    mutationFn: () =>
-      confirmBtcDeposit({
+    mutationFn: async function runConfirmBitcoinDeposit() {
+      await ensureConnectedTo(hemi.id)
+
+      return confirmBtcDeposit({
         deposit,
         from: address!,
         hemiClient,
         hemiWalletClient,
-      }),
+      })
+    },
     mutationKey: [hemiClient, hemiWalletClient],
     onSuccess: confirmationTransactionHash =>
       updateDeposit(deposit, {
@@ -308,13 +313,12 @@ export const useWithdrawBitcoin = function () {
   } = useMutation({
     async mutationFn({
       amount,
-      l2ChainId,
     }: {
       amount: bigint
       l1ChainId: BtcChain['id']
       l2ChainId: Chain['id']
     }) {
-      await ensureConnectedTo(l2ChainId)
+      await ensureConnectedTo(hemi.id)
 
       const [transactionHash, vaultFee] = await Promise.all([
         initiateBtcWithdrawal({
@@ -451,8 +455,10 @@ export const useChallengeBitcoinWithdrawal = function (
 ) {
   const { address: hemiAddress } = useEvmAccount()
   const { hemiWalletClient } = useHemiWalletClient()
+  const hemi = useHemi()
   const { updateWithdrawal } = useTunnelHistory()
   const queryClient = useQueryClient()
+  const ensureConnectedTo = useEnsureConnectedTo()
 
   const {
     data: challengeTransactionHash,
@@ -460,7 +466,9 @@ export const useChallengeBitcoinWithdrawal = function (
     mutate: challengeWithdrawal,
     reset: resetChallengeWithdrawal,
   } = useMutation({
-    mutationFn() {
+    async mutationFn() {
+      await ensureConnectedTo(hemi.id)
+
       if (!hemiAddress) {
         throw new Error('Not Connected')
       }

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
 import { useNativeTokenBalance } from 'hooks/useBalance'
+import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useUmami } from 'hooks/useUmami'
@@ -39,6 +40,7 @@ export const useIncreaseUnlockTime = function ({
   const { track } = useUmami()
   const { address } = useAccount()
   const queryClient = useQueryClient()
+  const ensureConnectedTo = useEnsureConnectedTo()
 
   const stakingPositionQueryKey = getStakingPositionsQueryKey({
     address,
@@ -56,7 +58,9 @@ export const useIncreaseUnlockTime = function ({
   const { hemiWalletClient } = useHemiWalletClient()
 
   return useMutation({
-    mutationFn: function runIncreaseUnlockTime() {
+    mutationFn: async function runIncreaseUnlockTime() {
+      await ensureConnectedTo(token.chainId)
+
       if (!address) {
         throw new Error('No account connected')
       }

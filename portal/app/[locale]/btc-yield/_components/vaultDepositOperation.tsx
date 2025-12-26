@@ -326,7 +326,6 @@ export const VaultDepositOperation = function ({
                 isRunningOperation={isPending}
                 needsApproval={needsApproval}
                 setAcknowledged={setAcknowledged}
-                token={token}
                 validationError={validationError}
                 vaultDepositOperation={vaultDepositOperation}
               />

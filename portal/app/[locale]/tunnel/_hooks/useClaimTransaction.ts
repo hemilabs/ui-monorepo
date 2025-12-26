@@ -34,7 +34,10 @@ export const useClaimTransaction = function ({
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     withdrawal.l1ChainId,
   )
-  const { data: l1WalletClient } = useWalletClient()
+
+  const { data: l1WalletClient } = useWalletClient({
+    chainId: withdrawal.l1ChainId,
+  })
 
   const claimingNativeToken = isNativeAddress(withdrawal.l1Token)
 

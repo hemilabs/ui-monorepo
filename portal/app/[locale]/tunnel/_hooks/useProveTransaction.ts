@@ -31,7 +31,9 @@ export const useProveTransaction = function ({
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     withdrawal.l1ChainId,
   )
-  const { data: l1WalletClient } = useWalletClient()
+  const { data: l1WalletClient } = useWalletClient({
+    chainId: withdrawal.l1ChainId,
+  })
 
   return useMutation({
     mutationFn: async function prove() {

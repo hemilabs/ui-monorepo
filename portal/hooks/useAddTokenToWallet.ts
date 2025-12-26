@@ -1,9 +1,10 @@
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { EvmToken } from 'types/token'
 import { type Address } from 'viem'
-import { useAccount, useSwitchChain, useWalletClient } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 import watchAsset from 'wallet-watch-asset'
 
+import { useEnsureConnectedTo } from './useEnsureConnectedTo'
 import { useUmami } from './useUmami'
 
 type Options = {
@@ -12,18 +13,19 @@ type Options = {
 }
 
 export const useAddTokenToWallet = function (options: Options) {
-  const { address, chainId } = useAccount()
-  const { switchChainAsync } = useSwitchChain()
-  const { data: walletClient } = useWalletClient()
+  const { address } = useAccount()
+  const ensureConnectedTo = useEnsureConnectedTo()
+  const { data: walletClient } = useWalletClient({
+    chainId: options.token.chainId,
+  })
   const { track } = useUmami()
 
   return useMutation({
     async mutationFn() {
       const { token } = options
-      // users must be connected to hemi to add tokens.
-      if (chainId !== token.chainId) {
-        await switchChainAsync({ chainId: token.chainId })
-      }
+
+      await ensureConnectedTo(options.token.chainId)
+
       return watchAsset(
         // @ts-expect-error walletClient is a different type, but it matches the Provider interface
         walletClient,

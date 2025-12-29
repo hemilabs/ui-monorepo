@@ -142,13 +142,13 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
   )
 
   const handleDeposit = function () {
-    if (!canDeposit || !evmAddress) {
+    if (!canDeposit) {
       return
     }
     clearDepositState()
     setIsDepositing(true)
     depositBitcoin({
-      hemiAddress: evmAddress,
+      hemiAddress: evmAddress!,
       l1ChainId: fromNetworkId,
       l2ChainId: toNetworkId,
       satoshis: Number(parseTokenUnits(fromInput, fromToken)),

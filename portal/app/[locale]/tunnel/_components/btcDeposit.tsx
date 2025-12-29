@@ -1,6 +1,7 @@
 'use client'
 
 import { useAccounts } from 'hooks/useAccounts'
+import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useDepositBitcoin } from 'hooks/useBtcTunnel'
 import { useUmami } from 'hooks/useUmami'
@@ -36,6 +37,22 @@ type BtcDepositProps = {
   state: TypedTunnelState<BtcToHemiTunneling>
 }
 
+const canDepositBitcoin = ({
+  canSubmit,
+  evmAddress,
+  isBitcoinChainConnected,
+  isMinDepositsSatsLoading,
+}: {
+  evmAddress: string | undefined
+  canSubmit: boolean
+  isMinDepositsSatsLoading: boolean
+  isBitcoinChainConnected: boolean
+}) =>
+  !isMinDepositsSatsLoading &&
+  canSubmit &&
+  !!evmAddress &&
+  isBitcoinChainConnected
+
 export const BtcDeposit = function ({ state }: BtcDepositProps) {
   const [isDepositing, setIsDepositing] = useState(false)
 
@@ -48,12 +65,13 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     updateFromInput,
   } = state
 
-  const { btcWalletStatus, evmAddress } = useAccounts()
+  const { btcChainId, btcWalletStatus, evmAddress } = useAccounts()
   const { balance, isSuccess: balanceLoaded } = useBitcoinBalance()
   const { isPending: isMinDepositsSatsLoading, minDepositFormattedSats } =
     useMinDepositSats()
   const t = useTranslations()
   const { track } = useUmami()
+  const bitcoin = useBitcoin()
 
   const {
     canSubmit,
@@ -68,7 +86,14 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     token: fromToken,
   })
 
-  const canDeposit = !isMinDepositsSatsLoading && canSubmit && evmAddress
+  const isBitcoinChainConnected = btcChainId === bitcoin.id
+
+  const canDeposit = canDepositBitcoin({
+    canSubmit,
+    evmAddress,
+    isBitcoinChainConnected,
+    isMinDepositsSatsLoading,
+  })
 
   const amountBigInt = parseTokenUnits(fromInput, fromToken)
 
@@ -117,7 +142,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
   )
 
   const handleDeposit = function () {
-    if (!canDeposit) {
+    if (!canDeposit || !evmAddress) {
       return
     }
     clearDepositState()

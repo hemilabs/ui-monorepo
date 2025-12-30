@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "erasableSyntaxOnly": true,
+    "noEmit": true
+  },
+  "exclude": ["node_modules", "test/*"],
+  "extends": "@tsconfig/node24/tsconfig.json",
+  "include": ["**/*.ts"]
+}

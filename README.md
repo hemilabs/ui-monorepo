@@ -12,6 +12,7 @@ This monorepo uses npm workspaces, and contains the following projects:
   - **packages/hemi-btc-staking-actions**: Package that contains viem actions for Bitcoin staking on Hemi.
   - **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
   - **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
+  - **packages/merkl-claim-rewards**: Package that contains actions to integrate with Merkl functionality.
   - **packages/to-promise-event**: Package that provides an utility to allow async functions to export a promise and an event emitter.
   - **packages/vault-strategies**: Package that contains viem actions for interacting with ERC-4626 vault strategies.
   - **packages/ve-hemi-actions**: Package that contains functions needed to interact with the staking contract veHEMI.

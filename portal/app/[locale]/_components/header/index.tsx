@@ -34,7 +34,7 @@ export const Header = ({ isMenuOpen, setIsNavbarOpen, toggleMenu }: Props) => (
       <HomeLink />
       <Badge />
     </div>
-    <div className="size-13 hidden items-center justify-center border-r border-neutral-300/55 md:flex lg:hidden">
+    <div className="size-13 hidden items-center justify-center border-r border-neutral-300/55 md:flex xl:hidden">
       <ButtonIcon
         onClick={() => setIsNavbarOpen(true)}
         size="xSmall"

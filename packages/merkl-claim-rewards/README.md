@@ -116,11 +116,11 @@ const gasEstimate = await estimateGas(client, {
 
 ## Events
 
-The `claimAllRewards` function emits events defined in [types.ts](src/types.ts#L8-L17). See the `ClaimAllRewardsEvents` type for the complete list of events and their parameters.
+The `claimAllRewards` function emits events defined in [types.ts](src/types.ts). See the `ClaimAllRewardsEvents` type for the complete list of events and their parameters.
 
 ## API Reference
 
 See the JSDoc comments for detailed parameter and return type documentation:
 
-- [`claimAllRewards`](src/actions/wallet/claimAllRewards.ts#L139-L149) - Claims multiple rewards in a single transaction
-- [`encodeClaimAllRewards`](src/actions/wallet/claimAllRewards.ts#L151-L161) - Encodes claim transaction data for gas estimation
+- [`claimAllRewards`](src/actions/wallet/claimAllRewards.ts) - Claims multiple rewards in a single transaction
+- [`encodeClaimAllRewards`](src/actions/wallet/claimAllRewards.ts) - Encodes claim transaction data for gas estimation

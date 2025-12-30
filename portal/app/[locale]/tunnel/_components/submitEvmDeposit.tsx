@@ -2,7 +2,7 @@
 
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { EvmToken } from 'types/token'
 import { tunnelsThroughPartners } from 'utils/token'
@@ -74,8 +74,7 @@ export const SubmitEvmDeposit = function ({
   }
 
   return (
-    <SubmitWhenConnectedToChain
-      chainId={fromToken.chainId}
+    <SubmitWhenConnected
       submitButton={
         <Button
           disabled={!canDeposit || isRunningOperation || isAllowanceLoading}

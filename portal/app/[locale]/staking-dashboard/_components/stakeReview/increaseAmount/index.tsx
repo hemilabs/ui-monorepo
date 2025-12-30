@@ -24,7 +24,6 @@ import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { getVeHemiContractAddress } from 've-hemi-actions'
 import { formatUnits } from 'viem'
-import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useStakingDashboard } from '../../../_context/stakingDashboardContext'
 import { useEstimateIncreaseAmountFees } from '../../../_hooks/useEstimateIncreaseAmountFees'
@@ -45,7 +44,6 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
     updateStakingDashboardOperation,
   } = useStakingDashboard()
   const token = useHemiToken()
-  const { chainId } = useEvmAccount()
 
   const [operationRunning, setOperationRunning] =
     useState<StakingOperationRunning>('idle')
@@ -71,6 +69,7 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
     useNeedsApproval({
       address: token.address,
       amount,
+      chainId: token.chainId,
       spender: veHemiAddress,
     })
 
@@ -86,8 +85,6 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
   } = validateSubmit({
     amountInput: input!,
     balance: walletTokenBalance,
-    chainId,
-    expectedChain: hemi.name,
     operation: 'stake',
     t,
     token,

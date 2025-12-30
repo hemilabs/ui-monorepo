@@ -37,6 +37,22 @@ type BtcDepositProps = {
   state: TypedTunnelState<BtcToHemiTunneling>
 }
 
+const canDepositBitcoin = ({
+  canSubmit,
+  evmAddress,
+  isBitcoinChainConnected,
+  isMinDepositsSatsLoading,
+}: {
+  evmAddress: string | undefined
+  canSubmit: boolean
+  isMinDepositsSatsLoading: boolean
+  isBitcoinChainConnected: boolean
+}) =>
+  !isMinDepositsSatsLoading &&
+  canSubmit &&
+  !!evmAddress &&
+  isBitcoinChainConnected
+
 export const BtcDeposit = function ({ state }: BtcDepositProps) {
   const [isDepositing, setIsDepositing] = useState(false)
 
@@ -50,12 +66,12 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
   } = state
 
   const { btcChainId, btcWalletStatus, evmAddress } = useAccounts()
-  const bitcoin = useBitcoin()
   const { balance, isSuccess: balanceLoaded } = useBitcoinBalance()
   const { isPending: isMinDepositsSatsLoading, minDepositFormattedSats } =
     useMinDepositSats()
   const t = useTranslations()
   const { track } = useUmami()
+  const bitcoin = useBitcoin()
 
   const {
     canSubmit,
@@ -64,15 +80,20 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
   } = validateSubmit({
     amountInput: fromInput,
     balance: BigInt(balance?.confirmed ?? 0),
-    chainId: btcChainId,
-    expectedChain: bitcoin.name,
     minAmount: minDepositFormattedSats,
     operation: 'deposit',
     t,
     token: fromToken,
   })
 
-  const canDeposit = !isMinDepositsSatsLoading && canSubmit && evmAddress
+  const isBitcoinChainConnected = btcChainId === bitcoin.id
+
+  const canDeposit = canDepositBitcoin({
+    canSubmit,
+    evmAddress,
+    isBitcoinChainConnected,
+    isMinDepositsSatsLoading,
+  })
 
   const amountBigInt = parseTokenUnits(fromInput, fromToken)
 
@@ -127,7 +148,7 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     clearDepositState()
     setIsDepositing(true)
     depositBitcoin({
-      hemiAddress: evmAddress,
+      hemiAddress: evmAddress!,
       l1ChainId: fromNetworkId,
       l2ChainId: toNetworkId,
       satoshis: Number(parseTokenUnits(fromInput, fromToken)),

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
@@ -37,6 +38,7 @@ export const useIncreaseAmount = function ({
 }: UseIncreaseAmount) {
   const { track } = useUmami()
   const { address } = useAccount()
+  const ensureConnectedTo = useEnsureConnectedTo()
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
   const queryClient = useQueryClient()
   const { queryKey: hemiBalanceQueryKey } = useTokenBalance(
@@ -64,14 +66,18 @@ export const useIncreaseAmount = function ({
   const { allowanceQueryKey } = useNeedsApproval({
     address: token.address,
     amount,
+    chainId: token.chainId,
     spender: veHemiAddress,
   })
 
   return useMutation({
-    mutationFn: function runIncreaseAmount() {
+    mutationFn: async function runIncreaseAmount() {
+      await ensureConnectedTo(token.chainId)
+
       if (!address) {
         throw new Error('No account connected')
       }
+
       const { emitter, promise } = increaseAmount({
         account: address,
         additionalAmount: amount,

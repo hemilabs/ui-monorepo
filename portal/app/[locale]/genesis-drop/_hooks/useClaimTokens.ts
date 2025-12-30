@@ -7,13 +7,13 @@ import {
 } from 'genesis-drop-actions'
 import { claimTokens } from 'genesis-drop-actions/actions'
 import { useNativeTokenBalance } from 'hooks/useBalance'
+import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
-import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useUmami } from 'hooks/useUmami'
 import { Hex } from 'viem'
-import { useAccount, useSwitchChain } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { getClaimTransactionQueryKey } from './useGetClaimTransaction'
 import { getIsClaimableQueryKey } from './useIsClaimable'
@@ -27,10 +27,9 @@ export const useClaimTokens = function ({
 }) {
   const { address } = useAccount()
   const hemi = useHemi()
-  const connectedToHemi = useIsConnectedToExpectedNetwork(hemi.id)
+  const ensureConnectedTo = useEnsureConnectedTo()
   const { hemiWalletClient } = useHemiWalletClient()
   const queryClient = useQueryClient()
-  const { switchChainAsync } = useSwitchChain()
   const { track } = useUmami()
 
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
@@ -57,9 +56,7 @@ export const useClaimTokens = function ({
 
       track?.('genesis-drop - submit start', { lockupMonths })
 
-      if (!connectedToHemi) {
-        await switchChainAsync({ chainId: hemi.id })
-      }
+      await ensureConnectedTo(hemi.id)
 
       const { emitter, promise } = claimTokens({
         address,

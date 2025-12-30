@@ -59,7 +59,6 @@ export const ClaimEvmWithdrawal = function ({ withdrawal }: Props) {
 
   return (
     <DrawerCallToAction
-      expectedChainId={withdrawal.l1ChainId}
       onSubmit={handleClaim}
       submitButton={
         <Button

@@ -39,6 +39,7 @@ const unstakeTransactionHash =
 // @ts-expect-error only add the minimum values required
 const hemiPublicClient: HemiPublicClient = {
   chain: hemiSepolia,
+  getBalance: vi.fn(),
   stakedBalance: vi.fn(),
   waitForTransactionReceipt: vi.fn(),
 }
@@ -51,20 +52,33 @@ const hemiWalletClient: HemiWalletClient = {
 
 describe('utils/stake', function () {
   describe('canSubmit', function () {
-    it('should return error if chain ID does not match', function () {
+    it('should return error if amount is empty', function () {
       const result = canSubmit({
-        amountInput: '1',
-        balance: parseTokenUnits('10', token),
-        chainId: hemi.id,
-        expectedChain: hemiSepolia.name,
+        amountInput: '',
+        balance: parseTokenUnits('100', token),
         operation: 'stake',
         t,
         token,
       })
       expect(result).toEqual({
         canSubmit: false,
-        error: 'common.connect-to-network',
-        errorKey: 'connect-to-network',
+        error: 'common.enter-an-amount',
+        errorKey: 'enter-an-amount',
+      })
+    })
+
+    it('should return error if balance is insufficient', function () {
+      const result = canSubmit({
+        amountInput: '100',
+        balance: parseTokenUnits('10', token),
+        operation: 'stake',
+        t,
+        token,
+      })
+      expect(result).toEqual({
+        canSubmit: false,
+        error: 'common.insufficient-balance',
+        errorKey: 'insufficient-balance',
       })
     })
 
@@ -72,8 +86,6 @@ describe('utils/stake', function () {
       const result = canSubmit({
         amountInput: '1',
         balance: parseTokenUnits('100', token),
-        chainId: hemiSepolia.id,
-        expectedChain: hemiSepolia.name,
         operation: 'stake',
         t,
         token,
@@ -87,6 +99,26 @@ describe('utils/stake', function () {
   })
 
   describe('stake', function () {
+    it('should throw error if chain ID does not match', async function () {
+      const wrongChainClient = {
+        ...hemiPublicClient,
+        chain: hemi,
+      }
+      allowance.mockResolvedValue(BigInt(0))
+      balanceOf.mockResolvedValue(parseTokenUnits('10', token))
+
+      await expect(
+        stake({
+          amountInput: '1',
+          forAccount: zeroAddress,
+          hemiPublicClient: wrongChainClient,
+          hemiWalletClient,
+          t,
+          token,
+        }),
+      ).rejects.toThrow('common.connect-to-network')
+    })
+
     it('should throw error if the user has not enough balance', async function () {
       allowance.mockResolvedValue(BigInt(0))
       balanceOf.mockResolvedValue(BigInt(0))
@@ -245,6 +277,25 @@ describe('utils/stake', function () {
   })
 
   describe('unstake', function () {
+    it('should throw error if chain ID does not match', async function () {
+      const wrongChainClient = {
+        ...hemiPublicClient,
+        chain: hemi,
+        stakedBalance: vi.fn().mockResolvedValue(parseTokenUnits('10', token)),
+      }
+
+      await expect(
+        unstake({
+          amountInput: '1',
+          forAccount: zeroAddress,
+          hemiPublicClient: wrongChainClient,
+          hemiWalletClient,
+          t,
+          token,
+        }),
+      ).rejects.toThrow('common.connect-to-network')
+    })
+
     it('should throw error if the user has not enough staked balance', async function () {
       hemiPublicClient.stakedBalance.mockResolvedValue(BigInt(0))
 

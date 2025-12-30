@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { MerklRewards } from 'utils/merkl'
 import { claimReward } from 'vault-rewards-actions/actions'
-import { useAccount, useSwitchChain } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import {
   type BitcoinYieldClaimRewardOperation,
@@ -24,14 +25,14 @@ type UseClaimRewards = {
 export const useClaimRewards = function ({
   updateBitcoinYieldOperation,
 }: UseClaimRewards) {
-  const { address, chainId } = useAccount()
+  const { address } = useAccount()
   const hemi = useHemi()
   const hemiClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
   const { data: merklCampaigns } = useMerklCampaigns()
   const { data: vaultRewardsAddress } = useVaultRewardsAddress()
   const queryClient = useQueryClient()
-  const { switchChainAsync } = useSwitchChain()
+  const ensureConnectedTo = useEnsureConnectedTo()
 
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     hemiClient.chain!.id,
@@ -53,9 +54,7 @@ export const useClaimRewards = function ({
         throw new Error('Vault rewards address not available')
       }
 
-      if (chainId !== hemi.id) {
-        await switchChainAsync({ chainId: hemi.id })
-      }
+      await ensureConnectedTo(hemi.id)
 
       const { emitter, promise } = claimReward({
         account: address,

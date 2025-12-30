@@ -1,6 +1,5 @@
 import { Button } from 'components/button'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
-import { useHemi } from 'hooks/useHemi'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
@@ -17,7 +16,6 @@ export const RetryUnlock = function () {
     useStakingDashboard()
 
   const token = useHemiToken()
-  const hemi = useHemi()
 
   const t = useTranslations()
 
@@ -54,8 +52,7 @@ export const RetryUnlock = function () {
 
   return (
     <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
-      <SubmitWhenConnectedToChain
-        chainId={hemi.id}
+      <SubmitWhenConnected
         submitButton={
           <Button disabled={isUnlocking} size="small">
             {t(

@@ -65,7 +65,6 @@ const Retry = function ({
 
   return (
     <DrawerCallToAction
-      expectedChainId={deposit.l1ChainId}
       onSubmit={handleRetry}
       submitButton={
         <Button disabled={isDepositing} size="small">

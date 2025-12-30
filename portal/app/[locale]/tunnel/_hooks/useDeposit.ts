@@ -7,6 +7,7 @@ import {
   depositEth,
 } from 'hemi-tunnel-actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
@@ -28,6 +29,7 @@ import { Chain, zeroAddress } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelOperation'
+
 const ExtraApprovalTimesAmount = 10
 
 type UseDeposit = {
@@ -48,6 +50,7 @@ export const useDeposit = function ({
   const amount = parseTokenUnits(fromInput, fromToken)
 
   const { address } = useAccount()
+  const ensureConnectedTo = useEnsureConnectedTo()
   const { addTransaction, clearTransactionsInMemory } = useContext(
     TransactionsInProgressContext,
   )
@@ -76,14 +79,18 @@ export const useDeposit = function ({
   const { allowanceQueryKey } = useNeedsApproval({
     address: fromToken.address,
     amount,
+    chainId: fromToken.chainId,
     spender: l1StandardBridgeAddress,
   })
 
   return useMutation({
-    mutationFn: function runDeposit() {
+    mutationFn: async function runDeposit() {
       if (!address) {
         throw new Error('No account connected')
       }
+
+      await ensureConnectedTo(fromToken.chainId)
+
       track?.('evm - dep started')
 
       const { emitter, promise } = depositingNative

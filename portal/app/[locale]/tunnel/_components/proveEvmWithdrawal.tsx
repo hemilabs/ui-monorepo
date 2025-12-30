@@ -57,7 +57,6 @@ export const ProveWithdrawal = function ({ withdrawal }: Props) {
 
   return (
     <DrawerCallToAction
-      expectedChainId={withdrawal.l1ChainId}
       onSubmit={handleProve}
       submitButton={
         <Button

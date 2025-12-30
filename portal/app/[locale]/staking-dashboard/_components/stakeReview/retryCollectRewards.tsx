@@ -1,6 +1,5 @@
 import { Button } from 'components/button'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
-import { useHemi } from 'hooks/useHemi'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { CollectAllRewardsOperationRunning } from 'types/stakingDashboard'
@@ -17,7 +16,6 @@ export const RetryCollectRewards = function () {
     updateCollectRewardsDashboardOperation,
   } = useStakingDashboard()
 
-  const hemi = useHemi()
   const t = useTranslations()
 
   // collectRewardsDashboardOperation is defined because this component is only rendered in that case
@@ -51,8 +49,7 @@ export const RetryCollectRewards = function () {
 
   return (
     <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
-      <SubmitWhenConnectedToChain
-        chainId={hemi.id}
+      <SubmitWhenConnected
         submitButton={
           <Button disabled={isCollecting} size="small">
             {t(

@@ -49,6 +49,7 @@ export const ReviewStake = function ({ onClose }: Props) {
   const { needsApproval } = useNeedsApproval({
     address: token.address,
     amount,
+    chainId: token.chainId,
     spender: veHemiAddress,
   })
 

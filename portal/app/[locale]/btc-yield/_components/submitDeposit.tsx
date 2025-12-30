@@ -2,10 +2,9 @@
 
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
-import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
-import { EvmToken } from 'types/token'
 
 import {
   BitcoinYieldDepositStatus,
@@ -16,7 +15,6 @@ import { Acknowledge } from './acknowledge'
 
 type Props = {
   canDeposit: boolean
-  token: EvmToken
   isAllowanceError: boolean
   isAllowanceLoading: boolean
   isRunningOperation: boolean
@@ -33,7 +31,6 @@ export const SubmitDeposit = function ({
   isRunningOperation,
   needsApproval,
   setAcknowledged,
-  token,
   validationError,
   vaultDepositOperation,
 }: Props) {
@@ -81,8 +78,7 @@ export const SubmitDeposit = function ({
         acknowledged={acknowledged}
         setAcknowledged={setAcknowledged}
       />
-      <SubmitWhenConnectedToChain
-        chainId={token.chainId}
+      <SubmitWhenConnected
         submitButton={
           <Button
             disabled={!canDeposit || isRunningOperation || isAllowanceLoading}

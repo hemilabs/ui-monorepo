@@ -1,10 +1,10 @@
 import { Button } from 'components/button'
 import { ButtonLoader } from 'components/buttonLoader'
+import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { SubmitWhenConnectedToChain } from 'components/submitWhenConnectedToChain'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useDrawerContext } from 'hooks/useDrawerContext'
-import { useHemi } from 'hooks/useHemi'
 import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -33,7 +33,6 @@ export const SubmitWithTwoWallets = function ({
   const { allDisconnected, btcWalletStatus, evmWalletStatus } = useAccounts()
   const bitcoin = useBitcoin()
   const { openDrawer } = useDrawerContext()
-  const hemi = useHemi()
   const t = useTranslations('tunnel-page.submit-button')
   const { track } = useUmami()
 
@@ -71,9 +70,8 @@ export const SubmitWithTwoWallets = function ({
     <SubmitWhenConnectedToChain
       chainId={bitcoin.id}
       submitButton={
-        <SubmitWhenConnectedToChain
-          chainId={hemi.id}
-          submitButton={submitButton}
+        <SubmitWhenConnected
+          submitButton={<SubmitWhenConnected submitButton={submitButton} />}
         />
       }
     />

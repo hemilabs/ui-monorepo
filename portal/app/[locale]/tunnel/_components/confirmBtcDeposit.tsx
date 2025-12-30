@@ -109,7 +109,6 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
 
   return (
     <DrawerCallToAction
-      expectedChainId={deposit.l2ChainId}
       onSubmit={handleConfirm}
       submitButton={
         <Button

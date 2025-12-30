@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTokenBalance } from 'hooks/useBalance'
+import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
@@ -19,6 +20,7 @@ import { getStakedBalanceQueryKey } from './useStakedBalance'
 
 export const useUnstake = function (token: StakeToken) {
   const { address } = useAccount()
+  const ensureConnectedTo = useEnsureConnectedTo()
   const hemiPublicClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
   const [networkType] = useNetworkType()
@@ -54,6 +56,9 @@ export const useUnstake = function (token: StakeToken) {
       if (!address) {
         throw new Error('Not connected')
       }
+
+      await ensureConnectedTo(token.chainId)
+
       setIsSubmitting(true)
       track?.('stake - unstake started')
 

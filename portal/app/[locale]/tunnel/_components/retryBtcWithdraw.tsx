@@ -50,7 +50,6 @@ export const RetryBtcWithdraw = function ({ withdrawal }: Props) {
 
   return (
     <DrawerCallToAction
-      expectedChainId={withdrawal.l2ChainId}
       onSubmit={handleRetry}
       submitButton={
         <Button disabled={isWithdrawing} size="small">

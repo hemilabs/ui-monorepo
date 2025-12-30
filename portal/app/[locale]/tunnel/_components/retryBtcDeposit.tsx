@@ -72,7 +72,6 @@ export const RetryBtcDeposit = function ({ deposit }: Props) {
 
   return (
     <DrawerCallToAction
-      expectedChainId={deposit.l1ChainId}
       onSubmit={handleRetry}
       submitButton={
         <Button disabled={isDepositing} size="small">

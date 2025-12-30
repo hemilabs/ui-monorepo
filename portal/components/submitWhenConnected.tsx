@@ -1,6 +1,7 @@
 import { ButtonSize } from 'components/button'
 import { ButtonLoader } from 'components/buttonLoader'
 import dynamic from 'next/dynamic'
+import { ReactNode } from 'react'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
@@ -14,7 +15,7 @@ const ConnectEvmWallet = dynamic(
 
 type Props = {
   connectWalletText?: string
-  submitButton: React.ReactNode
+  submitButton: ReactNode
   submitButtonSize?: ButtonSize
 }
 

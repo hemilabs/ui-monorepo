@@ -1,5 +1,6 @@
 import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
+import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { orange600 } from 'styles'
 import { useAccount } from 'wagmi'
@@ -9,15 +10,22 @@ import { useOperationDrawer } from '../_hooks/useOperationDrawer'
 
 export const Claim = function () {
   const { address } = useAccount()
+  const hemi = useHemi()
   const [, setOperationDrawer] = useOperationDrawer()
   const t = useTranslations()
 
   const { data: hasClaimableRewards, isError: isHasClaimableRewardsError } =
     useHasClaimableRewards()
 
+  const isDisabled =
+    !address ||
+    isHasClaimableRewardsError ||
+    !hasClaimableRewards ||
+    hemi.testnet
+
   return (
     <Button
-      disabled={!address || isHasClaimableRewardsError || !hasClaimableRewards}
+      disabled={isDisabled}
       onClick={function (e) {
         // Prevent event bubbling to parent row
         e.stopPropagation()

@@ -1,9 +1,14 @@
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
-import { encodeClaimReward } from 'vault-rewards-actions/actions'
+import { encodeClaimAllRewards } from 'merkl-claim-rewards/actions'
 import { useAccount, useEstimateGas } from 'wagmi'
 
-import { useVaultRewardsAddress } from './useVaultRewardsAddress'
+import {
+  MERKL_DISTRIBUTOR_ADDRESS,
+  transformMerklRewardsToClaimParams,
+} from '../_utils'
+
+import { useMerklRewards } from './useMerklRewards'
 
 export const useEstimateClaimRewardFees = function ({
   enabled = true,
@@ -12,18 +17,19 @@ export const useEstimateClaimRewardFees = function ({
 } = {}) {
   const hemi = useHemi()
   const { address } = useAccount()
-  const { data: vaultRewardsAddress } = useVaultRewardsAddress()
+  const { data: merklRewards } = useMerklRewards()
 
-  const isEnabled = enabled && !!address && !!vaultRewardsAddress
+  const claimParams = merklRewards
+    ? transformMerklRewardsToClaimParams(merklRewards)
+    : null
+  const hasClaimableRewards = !!claimParams && claimParams.amounts.length > 0
+
+  const isEnabled = enabled && !!address && hasClaimableRewards
 
   const { data: gasUnits, isError } = useEstimateGas({
-    data: isEnabled
-      ? encodeClaimReward({
-          account: address!,
-        })
-      : undefined,
+    data: isEnabled ? encodeClaimAllRewards(claimParams) : undefined,
     query: { enabled: isEnabled },
-    to: vaultRewardsAddress,
+    to: MERKL_DISTRIBUTOR_ADDRESS,
   })
 
   return useEstimateFees({

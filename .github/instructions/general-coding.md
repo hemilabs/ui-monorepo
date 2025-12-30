@@ -12,6 +12,28 @@ applyTo: '**'
 - For any web3 code, like reading or writing to smart contracts, use `viem`, and `wagmi` if needed.
 - Do not use arrow functions, except when the function consist of only one statement. In those cases, use arrow functions without brackets.
 - When adding tests, the `test` folder replicates the folder structure where the file being tested is imported from. To run the test, use `npm test` in the project folder.
+- When adding a `vitest.config.ts`, use this configuration:
+
+```typescript
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  test: {
+    clearMocks: true,
+  },
+})
+```
+
+With that vitest config, there's no need to use
+
+```ts
+beforeEach(function () {
+  vi.clearAllMocks()
+})
+```
+
+in tests as the vitest config will automatically clear the mocks.
+
 - After writing all the code, format with prettier. Prettier is installed in the root of the repo, and we use its default config. You can get the prettier version from the root's package.json. To format the code, you can use `npm run format:write`
 - Do not export/expose functions unless they are strictly need to. To verify that there are no unused exports, we use `knip`. There is a command in the root repo, `npm run deps:check`
 - Prefer functions like filter, map, reduce, over for, while loops for better readability, unless the complexity/performance impact favors the latter over the former.

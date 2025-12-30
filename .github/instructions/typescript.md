@@ -14,6 +14,9 @@ Apply the [general coding guidelines](./general-coding.md) to all code as a base
 
 ```json
 {
+  "compilerOptions": {
+    "erasableSyntaxOnly": true
+  },
   "exclude": ["node_modules", "test/*"],
   "extends": "@tsconfig/node24/tsconfig.json",
   "include": ["**/*.ts"]

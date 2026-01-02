@@ -79,7 +79,7 @@ export default async function RootLayout({
                   <Analytics>
                     <TunnelHistoryProvider>
                       <div className="flex h-dvh flex-nowrap justify-stretch bg-white">
-                        <div className="max-lg:hidden">
+                        <div className="max-xl:hidden">
                           <NavbarDesktop />
                         </div>
                         <AppLayout>

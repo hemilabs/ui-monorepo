@@ -28,7 +28,7 @@ type MerklReward = {
   distributionChainId: number
   pending: string
   proofs: Hash[]
-  recipient: string
+  recipient: Address
   root: Hash
   token: MerklToken
 }
@@ -66,16 +66,36 @@ const fetchMerkl = async function <TResponse>(
   return response.json() as Promise<TResponse>
 }
 
-export const getUserRewards = async ({
+/**
+ * Fetches user rewards from the Merkl API for a specific address and chain.
+ *
+ * For more information about integrating user rewards, see the Merkl documentation:
+ * https://docs.merkl.xyz/integrate-merkl/app#integrating-user-rewards
+ *
+ * @param params - Configuration object
+ * @param params.address - The user's wallet address to fetch rewards for
+ * @param params.chainId - The chain ID to fetch rewards from
+ * @returns Promise resolving to an array of user rewards response objects
+ */
+export const getUserRewards = async function ({
   address,
   chainId,
 }: {
   address: Address
   chainId: Chain['id']
-}) =>
-  fetchMerkl<MerklUserRewardsResponse>(`/users/${address}/rewards`, {
-    query: { chainId: chainId.toString() },
+}) {
+  const chainIdStr = chainId.toString()
+  return fetchMerkl<MerklUserRewardsResponse>(`/users/${address}/rewards`, {
+    query: {
+      chainId: chainIdStr,
+      claimableOnly: 'true',
+      // using reloadChainId to avoid Merkl cache. After all, we're caching on react-query
+      // so we don't really need this extra layer of caching. Using it would break the
+      // revalidation after claiming the rewards
+      reloadChainId: chainIdStr,
+    },
   })
+}
 
 export const getOpportunityCampaigns = async ({
   opportunityId,

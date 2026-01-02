@@ -1,13 +1,11 @@
 {
-  "name": "vault-rewards-actions",
+  "name": "merkl-claim-rewards",
   "version": "1.0.0",
-  "description": "Pool Rewards actions",
+  "description": "Merkl Claim Rewards",
   "keywords": [
-    "hemi",
     "hemilabs",
-    "pools",
+    "merkl",
     "rewards",
-    "vault",
     "viem"
   ],
   "license": "MIT",
@@ -32,7 +30,9 @@
   "peerDependencies": {
     "viem": "^2.x"
   },
+  "private": true,
   "exports": {
+    ".": "./index.ts",
     "./actions": "./src/actions/index.ts"
   }
 }

@@ -3,18 +3,22 @@ import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
+import { claimAllRewards } from 'merkl-claim-rewards/actions'
 import { MerklRewards } from 'utils/merkl'
-import { claimReward } from 'vault-rewards-actions/actions'
+import { hemi as hemiMainnet } from 'viem/chains'
 import { useAccount } from 'wagmi'
 
 import {
   type BitcoinYieldClaimRewardOperation,
   BitcoinYieldClaimRewardStatus,
 } from '../_types'
+import {
+  MERKL_DISTRIBUTOR_ADDRESS,
+  transformMerklRewardsToClaimParams,
+} from '../_utils'
 
 import { useMerklCampaigns } from './useMerklCampaigns'
-import { getMerklRewardsQueryKey } from './useMerklRewards'
-import { useVaultRewardsAddress } from './useVaultRewardsAddress'
+import { getMerklRewardsQueryKey, useMerklRewards } from './useMerklRewards'
 
 type UseClaimRewards = {
   updateBitcoinYieldOperation: (
@@ -30,7 +34,7 @@ export const useClaimRewards = function ({
   const hemiClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
   const { data: merklCampaigns } = useMerklCampaigns()
-  const { data: vaultRewardsAddress } = useVaultRewardsAddress()
+  const { data: merklRewards } = useMerklRewards()
   const queryClient = useQueryClient()
   const ensureConnectedTo = useEnsureConnectedTo()
 
@@ -46,42 +50,50 @@ export const useClaimRewards = function ({
         throw new Error('No account connected')
       }
 
-      if (!hemiClient.chain) {
-        throw new Error('Chain is not defined')
+      // Throw error if on hemi sepolia (testnet)
+      if (hemi.id !== hemiMainnet.id) {
+        throw new Error('Claiming rewards is only available on Hemi mainnet')
       }
 
-      if (!vaultRewardsAddress) {
-        throw new Error('Vault rewards address not available')
+      if (!merklRewards || merklRewards.length === 0) {
+        throw new Error('No merkl rewards available')
       }
 
       await ensureConnectedTo(hemi.id)
 
-      const { emitter, promise } = claimReward({
+      const claimParams = transformMerklRewardsToClaimParams(merklRewards)
+
+      if (claimParams.amounts.length === 0) {
+        throw new Error('No claimable rewards available')
+      }
+
+      const { emitter, promise } = claimAllRewards({
         account: address,
-        vaultRewardsAddress,
-        walletClient: hemiWalletClient!,
+        client: hemiWalletClient!,
+        distributorAddress: MERKL_DISTRIBUTOR_ADDRESS,
+        ...claimParams,
       })
 
-      emitter.on('pre-claim-reward', function () {
+      emitter.on('pre-claim-all-rewards', function () {
         updateBitcoinYieldOperation({
           status: BitcoinYieldClaimRewardStatus.CLAIM_REWARD_TX_PENDING,
         })
       })
 
-      emitter.on('user-signed-claim-reward', function (transactionHash) {
+      emitter.on('user-signed-claim-all-rewards', function (transactionHash) {
         updateBitcoinYieldOperation({
           status: BitcoinYieldClaimRewardStatus.CLAIM_REWARD_TX_PENDING,
           transactionHash,
         })
       })
 
-      emitter.on('user-signing-claim-reward-error', function () {
+      emitter.on('user-signing-claim-all-rewards-error', function () {
         updateBitcoinYieldOperation({
           status: BitcoinYieldClaimRewardStatus.CLAIM_REWARD_TX_FAILED,
         })
       })
 
-      emitter.on('claim-reward-transaction-succeeded', function (receipt) {
+      emitter.on('claim-all-rewards-transaction-succeeded', function (receipt) {
         updateBitcoinYieldOperation({
           status: BitcoinYieldClaimRewardStatus.CLAIM_REWARD_TX_CONFIRMED,
         })
@@ -104,7 +116,7 @@ export const useClaimRewards = function ({
         )
       })
 
-      emitter.on('claim-reward-transaction-reverted', function (receipt) {
+      emitter.on('claim-all-rewards-transaction-reverted', function (receipt) {
         updateBitcoinYieldOperation({
           status: BitcoinYieldClaimRewardStatus.CLAIM_REWARD_TX_FAILED,
         })
@@ -113,7 +125,7 @@ export const useClaimRewards = function ({
         updateNativeBalanceAfterFees(receipt)
       })
 
-      emitter.on('claim-reward-failed-validation', function () {
+      emitter.on('claim-all-rewards-failed-validation', function () {
         updateBitcoinYieldOperation({
           status: BitcoinYieldClaimRewardStatus.CLAIM_REWARD_TX_FAILED,
         })

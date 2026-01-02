@@ -1,7 +1,38 @@
 import type { NetworkType } from 'hooks/useNetworkType'
+import { type ClaimReward } from 'merkl-claim-rewards'
 import { formatPercentage } from 'utils/format'
+import type { MerklRewards } from 'utils/merkl'
+import type { Address } from 'viem'
 
 import type { Strategy } from '../_types'
+
+// Merkl distributor address for Hemi mainnet
+export const MERKL_DISTRIBUTOR_ADDRESS: Address =
+  '0x3Ef3D8bA38EBe18DB133cEc108f4D14CE00Dd9Ae'
+
+/**
+ * Transforms MerklRewards data into parameters required by claimAllRewards function
+ * Note: assumes all rewards are already claimable since getUserRewards uses claimableOnly=true
+ * @param rewards - Array of merkl rewards (all assumed to be claimable)
+ * @returns Object with arrays for amounts, proofs, tokens, and users
+ */
+export const transformMerklRewardsToClaimParams = (rewards: MerklRewards) =>
+  rewards.reduce(
+    function (acc, reward) {
+      acc.amounts.push(BigInt(reward.amount))
+      acc.proofs.push(reward.proofs)
+      acc.tokens.push(reward.token.address)
+      acc.users.push(reward.recipient as Address)
+
+      return acc
+    },
+    {
+      amounts: [],
+      proofs: [],
+      tokens: [],
+      users: [],
+    } as Omit<ClaimReward, 'account'>,
+  )
 
 export const calculatePoolBufferWeight = function (strategies: Strategy[]) {
   const totalWeight = strategies.reduce(

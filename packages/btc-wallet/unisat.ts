@@ -1,3 +1,5 @@
+import { UTXO } from 'coinselect'
+
 export type Account = string
 export type Satoshis = number
 export type Balance = {
@@ -19,9 +21,13 @@ export interface Unisat {
   disconnect(): Promise<void>
   getAccounts(): Promise<Account[]>
   getBalance(): Promise<Balance>
+  getBitcoinUtxos?(): Promise<UTXO[]>
   getNetwork(): Promise<BtcSupportedNetworks>
+  isBinance?: boolean
+  isOkxWallet?: boolean
   requestAccounts(): Promise<Account[]>
   on<Event extends keyof EventMap>(event: Event, handler: EventMap[Event]): void
+  pushTx(txHex: string): Promise<BtcTransaction>
   removeListener<Event extends keyof EventMap>(
     event: Event,
     handler: EventMap[Event],
@@ -31,5 +37,6 @@ export interface Unisat {
     satoshis: Satoshis,
     options: object,
   ) => Promise<BtcTransaction>
+  signPsbt(psbtHex: string, options?: object): Promise<string>
   switchNetwork: (network: BtcSupportedNetworks) => Promise<void>
 }

@@ -1,27 +1,22 @@
 import { Unisat } from '../unisat'
+import { sendBitcoin } from '../utils/psbt'
 
 import { type ConnectorGroup, type WalletConnector } from './types'
 
-// See https://github.com/unisat-wallet/unisat-dev-docs/blob/master/wallet-api/api-docs/browser-detection.md
 const provider = (typeof window !== 'undefined' &&
-  (window.unisat_wallet || window.unisat)) as Unisat
+  window.okxwallet?.bitcoin) as Unisat
 
-// Some wallets (e.g., Binance and OKX) inject similar APIs but are not UniSat.
-// Exclude them from UniSat detection to avoid false positives.
-const isInstalled = () =>
-  !!provider && !(provider.isBinance || provider.isOkxWallet)
+const isInstalled = () => !!provider
 
 const assertInstalled = function () {
   if (!isInstalled()) {
-    throw new Error('UniSat Wallet is not installed')
+    throw new Error('OKX Wallet is not installed')
   }
 }
 
 const wallet = {
   async connect() {
     assertInstalled()
-    // in order to connect to unisat, we just need to request accounts and the user
-    // will be prompted to connect
     await provider.requestAccounts()
   },
   disconnect() {
@@ -40,9 +35,9 @@ const wallet = {
     assertInstalled()
     return provider.getNetwork()
   },
-  id: 'unisat',
+  id: 'okx',
   isInstalled,
-  name: 'Unisat',
+  name: 'OKX',
   onAccountsChanged(handler) {
     assertInstalled()
     provider.on('accountsChanged', handler)
@@ -50,26 +45,28 @@ const wallet = {
   },
   onChainChanged(handler) {
     assertInstalled()
-    // This event is not listed in the docs, but "networkChanged" doesn't fire
-    // See https://github.com/unisat-wallet/extension/issues/211#issuecomment-2290557037
     provider.on('chainChanged', handler)
     return () => provider.removeListener('chainChanged', handler)
   },
   sendBitcoin(toAddress, satoshis, options) {
     assertInstalled()
-    return provider.sendBitcoin(toAddress, satoshis, options)
+    // The method sendBitcoin in the provider does not support options.memo.
+    // See: https://web3.okx.com/es-la/build/dev-docs/sdks/chains/bitcoin/provider#sendbitcoin
+    return sendBitcoin(provider, toAddress, satoshis, options)
   },
   switchNetwork(network) {
     assertInstalled()
-    return provider.switchNetwork(network)
+    return provider.switchNetwork(network) // NOT IMPLEMENTED BY OKX
   },
 } satisfies WalletConnector
 
-export const unisat = {
+export const okx = {
   downloadUrls: {
+    android: 'https://play.google.com/store/apps/details?id=com.okx.wallet',
     chrome:
-      'https://chromewebstore.google.com/detail/ppbibelpcjmhbdihakflkdcoccbgbkpo',
+      'https://chromewebstore.google.com/detail/mcohilncbfahbmgdjkbpemcciiolgcge',
+    ios: 'https://apps.apple.com/us/app/id6743309484',
   },
-  name: 'UniSat Wallet',
+  name: 'OKX Wallet',
   wallet,
 } satisfies ConnectorGroup

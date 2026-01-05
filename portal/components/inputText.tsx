@@ -69,11 +69,11 @@ const sizeClasses = {
   },
   xs: {
     borderRadius: 'rounded-md',
-    iconLeftPadding: 'pl-2.5',
+    iconLeftPadding: 'pl-9',
     iconPosition: 'left-2.5',
     padding: 'px-2.5 py-1.5',
     placeholder: 'placeholder:text-xs',
-    typography: 'text-xs leading-[16px] font-semibold',
+    typography: 'text-xs font-semibold',
   },
 } as const
 

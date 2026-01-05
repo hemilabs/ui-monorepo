@@ -32,8 +32,8 @@ module.exports = function ({ password, sampleId, url }) {
       const sample = samples.find(s => s.id === sampleId)
 
       if (!sample) {
-        // This is expected to happen almost every day when not more than once
-        // per day. Let's log it as info to prevent triggering alerts.
+        // This is expected to happen almost every day or even not more than
+        // once per day. Let's log it as info to prevent triggering alerts.
         console.info(`Sample with id ${sampleId} not found`)
         throw new Error('Sample not found')
       }

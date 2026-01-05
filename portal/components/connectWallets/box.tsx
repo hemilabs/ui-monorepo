@@ -1,41 +1,19 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 
 type Props = {
   children: ReactNode
   topContent: ReactNode
-  walletName: string
-  walletType: string
 }
 
-export const Box = function ({
-  children,
-  topContent,
-  walletName,
-  walletType,
-}: Props) {
-  const t = useTranslations('connect-wallets')
-
-  return (
-    <div className="flex w-full flex-col gap-y-2">
-      <div className="flex items-center justify-between px-3 pt-1 text-sm text-neutral-500">
-        <span>{walletType}</span>
-        <span>
-          {t.rich('connected-with-wallet', {
-            wallet: () => (
-              <span className="text-neutral-950">{walletName}</span>
-            ),
-          })}
-        </span>
+export const Box = ({ children, topContent }: Props) => (
+  <div className="flex w-full flex-col gap-y-2">
+    <div className="rounded-lg bg-white p-2 shadow-sm">
+      <div className="flex w-full items-center justify-between py-1.5">
+        {topContent}
       </div>
-      <div className="rounded-xl bg-white p-2 shadow-md">
-        <div className="flex w-full items-center justify-between rounded-md border border-solid bg-neutral-300/55 bg-neutral-50 px-2 py-1">
-          {topContent}
-        </div>
-        <div className="h-24">{children}</div>
-      </div>
+      <div className="flex h-24">{children}</div>
     </div>
-  )
-}
+  </div>
+)

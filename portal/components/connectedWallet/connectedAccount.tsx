@@ -3,8 +3,12 @@ import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useDisconnect as useBtcDisconnect } from 'btc-wallet/hooks/useDisconnect'
 import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchChain'
 import { type Account } from 'btc-wallet/unisat'
+import { Button } from 'components/button'
+import { EvmWalletLogo } from 'components/connectWallets/evmWalletLogo'
+import { ProfileIcon } from 'components/connectWallets/icons/profile'
+import { UnisatLogo } from 'components/connectWallets/unisatLogo'
 import { Chevron } from 'components/icons/chevron'
-import { Menu } from 'components/menu'
+import { Tooltip } from 'components/tooltip'
 import {
   useConnectedToUnsupportedBtcChain,
   useConnectedToUnsupportedEvmChain,
@@ -13,14 +17,13 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { ReactNode, useState } from 'react'
 import { formatBtcAddress, formatEvmAddress } from 'utils/format'
 import { type Address } from 'viem'
 import { useAccount, useDisconnect as useEvmDisconnect } from 'wagmi'
 
 import { BtcLogo } from '../icons/btcLogo'
 
-import { CopyLogo } from './copyLogo'
 import { DisconnectLogo } from './disconnectLogo'
 import { EvmChainsMenu } from './evmChainsMenu'
 import { EvmLogo } from './evmLogo'
@@ -28,18 +31,20 @@ import { WrongEvmNetwork, WrongNetwork } from './wrongNetwork'
 
 const ConnectedChain = function ({
   closeMenu,
+  disconnect,
   icon,
   menu,
   menuOpen = false,
   name,
   openMenu,
 }: {
-  closeMenu?: () => void
-  icon: React.ReactNode
-  menu?: React.ReactNode
+  closeMenu?: VoidFunction
+  disconnect: VoidFunction
+  icon: ReactNode
+  menu?: ReactNode
   menuOpen?: boolean
   name: string
-  openMenu?: () => void
+  openMenu?: VoidFunction
 }) {
   const ref = useOnClickOutside<HTMLDivElement>(closeMenu)
 
@@ -47,113 +52,83 @@ const ConnectedChain = function ({
     '[&>path]:fill-neutral-500 [&>path]:group-hover/connected-account:fill-neutral-950'
 
   return (
-    <div
-      className={`relative flex h-8 items-center gap-x-2 rounded-lg p-2 ${
-        openMenu
-          ? 'group/connected-account cursor-pointer hover:bg-neutral-100'
-          : ''
-      }`}
-      onClick={openMenu}
-      ref={ref}
-    >
-      <div className="flex cursor-pointer items-center justify-between gap-x-1 rounded-md">
-        {icon}
-        <span className="mr-2 text-sm font-medium text-neutral-950">
-          {name}
-        </span>
-        {menu !== undefined &&
-          (menuOpen ? (
-            <Chevron.Up className={chevronCss} />
-          ) : (
-            <Chevron.Bottom className={chevronCss} />
-          ))}
+    <div className="flex items-center gap-3 px-2">
+      <div
+        className={`relative flex h-7 items-center gap-x-2 rounded-md px-2 py-1.5 shadow-sm  ${
+          openMenu ? 'group/connected-account cursor-pointer' : ''
+        }`}
+        onClick={openMenu}
+        ref={ref}
+      >
+        <div className="flex cursor-pointer items-center justify-between gap-x-1 rounded-md">
+          {icon}
+          <span className="mr-2 text-sm font-medium text-neutral-950">
+            {name}
+          </span>
+          {menu !== undefined &&
+            (menuOpen ? (
+              <Chevron.Up className={chevronCss} />
+            ) : (
+              <Chevron.Bottom className={chevronCss} />
+            ))}
+        </div>
+        {menuOpen && menu}
       </div>
-      {menuOpen && menu}
+      <Button onClick={disconnect} size="xSmall" variant="secondary">
+        <DisconnectLogo />
+      </Button>
     </div>
   )
 }
 
 const ConnectedWallet = function ({
   address,
+  connectorLogo,
   connectorName,
   copyEvent,
-  disconnect,
   formattedAddress,
 }: {
   address: Address | Account | undefined
+  connectorLogo: ReactNode | undefined
   connectorName: string | undefined
   copyEvent: 'btc copy' | 'evm copy'
-  disconnect: () => void
   formattedAddress: string
 }) {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const t = useTranslations('connect-wallets')
+  const t = useTranslations('common')
   const { track } = useUmami()
-
-  const closeMenu = () => setMenuOpen(false)
-
-  const ref = useOnClickOutside<HTMLDivElement>(closeMenu)
 
   const copyAddress = function () {
     // if this function is called, the user is connected and therefore it is defined
     // as well as the connector
     navigator.clipboard.writeText(address!)
     track?.(copyEvent, { wallet: connectorName! })
-    closeMenu()
   }
-
-  const chevronCss =
-    '[&>path]:fill-neutral-500 [&>path]:group-hover/connected-wallet:fill-neutral-950'
 
   return (
     <div
       className="group/connected-wallet relative flex h-8 cursor-pointer items-center rounded-lg
-        p-2 text-sm font-medium text-neutral-950 hover:bg-neutral-100"
-      ref={ref}
+        p-2 text-sm font-medium text-neutral-950"
     >
-      <div
-        className="flex cursor-pointer items-center justify-between gap-x-1 rounded-md"
-        onClick={() => setMenuOpen(prev => !prev)}
+      <Tooltip
+        borderRadius="6px"
+        id="copy-address"
+        text={t('copy')}
+        variant="simple"
       >
-        <span className="text-sm">{formattedAddress}</span>
-        {menuOpen ? (
-          <Chevron.Up className={chevronCss} />
-        ) : (
-          <Chevron.Bottom className={chevronCss} />
-        )}
-      </div>
-      {menuOpen && (
-        <div className="absolute bottom-0 right-0 z-10 translate-x-[calc(100%-20px)] translate-y-[calc(100%-5px)]">
-          <Menu
-            items={[
-              {
-                content: (
-                  <button
-                    className="flex items-center gap-x-1"
-                    onClick={address ? copyAddress : undefined}
-                  >
-                    <CopyLogo className="[&>path]:group-hover/menu-item:fill-neutral-950" />
-                    <span className="w-max text-sm">{t('copy-address')}</span>
-                  </button>
-                ),
-                id: 'copy',
-              },
-              {
-                content: (
-                  <button
-                    className="flex items-center gap-x-1"
-                    onClick={disconnect}
-                  >
-                    <DisconnectLogo className="[&>g>path]:group-hover/menu-item:fill-neutral-950" />
-                    <span className="text-sm">{t('disconnect')}</span>
-                  </button>
-                ),
-                id: 'disconnect',
-              },
-            ]}
-          />
+        <div className="flex cursor-pointer items-center gap-3">
+          <div className="relative size-8">
+            <ProfileIcon />
+            {connectorName && (
+              <div className="absolute -bottom-1.5 -right-1.5 rounded-full bg-neutral-100 p-0.5">
+                {connectorLogo}
+              </div>
+            )}
+          </div>
+          <span className="text-sm" onClick={address ? copyAddress : undefined}>
+            {formattedAddress}
+          </span>
         </div>
-      )}
+      </Tooltip>
     </div>
   )
 }
@@ -162,6 +137,7 @@ export const ConnectedEvmChain = function () {
   const { chain, isConnected } = useAccount()
   const isChainUnsupported = useConnectedToUnsupportedEvmChain()
   const [menuOpen, setMenuOpen] = useState(false)
+  const { disconnect } = useEvmDisconnect()
 
   if (!isConnected) {
     return null
@@ -175,6 +151,7 @@ export const ConnectedEvmChain = function () {
   return (
     <ConnectedChain
       closeMenu={closeMenu}
+      disconnect={disconnect}
       icon={<EvmLogo chainId={chain.id} />}
       menu={<EvmChainsMenu onSwitchChain={closeMenu} />}
       menuOpen={menuOpen}
@@ -186,14 +163,15 @@ export const ConnectedEvmChain = function () {
 
 export const ConnectedEvmAccount = function () {
   const { address, connector } = useAccount()
-  const { disconnect } = useEvmDisconnect()
 
   return (
     <ConnectedWallet
       address={address}
+      connectorLogo={
+        <EvmWalletLogo className="size-4" walletName={connector?.name} />
+      }
       connectorName={connector?.name}
       copyEvent="evm copy"
-      disconnect={disconnect}
       formattedAddress={address ? formatEvmAddress(address) : '...'}
     />
   )
@@ -201,14 +179,13 @@ export const ConnectedEvmAccount = function () {
 
 export const ConnectedBtcAccount = function () {
   const { address, connector } = useBtcAccount()
-  const { disconnect } = useBtcDisconnect()
 
   return (
     <ConnectedWallet
       address={address}
+      connectorLogo={<UnisatLogo className="size-4" />}
       connectorName={connector?.name}
       copyEvent="btc copy"
-      disconnect={disconnect}
       formattedAddress={address ? formatBtcAddress(address) : '...'}
     />
   )
@@ -217,6 +194,7 @@ export const ConnectedBtcAccount = function () {
 export const ConnectedBtcChain = function () {
   const { chain, isConnected } = useBtcAccount()
   const [networkType] = useNetworkType()
+  const { disconnect } = useBtcDisconnect()
 
   const { switchChain } = useSwitchBtcChain()
 
@@ -238,5 +216,11 @@ export const ConnectedBtcChain = function () {
       />
     )
   }
-  return <ConnectedChain icon={<BtcLogo />} name={chain.name} />
+  return (
+    <ConnectedChain
+      disconnect={disconnect}
+      icon={<BtcLogo />}
+      name={chain.name}
+    />
+  )
 }

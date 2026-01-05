@@ -46,11 +46,11 @@ export const WalletConnection = function () {
   const walletsConnected = []
   if (walletIsConnected(evmStatus)) {
     walletsConnected.push({
-      icon: <EvmWalletLogo walletName={connector?.name} />,
+      icon: <EvmWalletLogo className="size-5" walletName={connector?.name} />,
     })
   }
   if (walletIsConnected(btcStatus)) {
-    walletsConnected.push({ icon: <UnisatLogo className="h-4 w-4" /> })
+    walletsConnected.push({ icon: <UnisatLogo className="size-4" /> })
   }
 
   const onConnectWalletsClick = function () {
@@ -76,7 +76,7 @@ export const WalletConnection = function () {
             <div className="flex items-center justify-between gap-x-1">
               {walletsConnected.map(({ icon }, index) => (
                 <div
-                  className="flex h-4 w-4 items-center justify-center rounded-full"
+                  className="flex size-5 items-center justify-center rounded-full"
                   key={index}
                 >
                   {icon}

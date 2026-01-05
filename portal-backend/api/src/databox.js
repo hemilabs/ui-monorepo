@@ -30,6 +30,14 @@ module.exports = function ({ password, sampleId, url }) {
 
       const { samples } = await fetchWithPassword(url, cookie)
       const sample = samples.find(s => s.id === sampleId)
+
+      if (!sample) {
+        // This is expected to happen almost every day when not more than once
+        // per day. Let's log it as info to prevent triggering alerts.
+        console.info(`Sample with id ${sampleId} not found`)
+        throw new Error('Sample not found')
+      }
+
       return sample.sampledata.dsData[0].data[0].items[0].value
     } catch (err) {
       console.warn(`Failed to fetch TVL data from Databox: ${err}`)

@@ -96,39 +96,51 @@ const ConnectedWallet = function ({
 }) {
   const t = useTranslations('common')
   const { track } = useUmami()
+  const [copied, setCopied] = useState(false)
 
   const copyAddress = function () {
     // if this function is called, the user is connected and therefore it is defined
     // as well as the connector
     navigator.clipboard.writeText(address!)
     track?.(copyEvent, { wallet: connectorName! })
+
+    // This is to control the tooltip visibility
+    // When the address is copied, we need to keep the tooltip visible for a few seconds
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
     <div
-      className="group/connected-wallet relative flex h-8 cursor-pointer items-center rounded-lg
+      className="group/connected-wallet relative flex h-8 items-center rounded-lg
         p-2 text-sm font-medium text-neutral-950"
     >
-      <Tooltip
-        borderRadius="6px"
-        id="copy-address"
-        text={t('copy')}
-        variant="simple"
-      >
-        <div className="flex cursor-pointer items-center gap-3">
-          <div className="relative size-8">
-            <ProfileIcon />
-            {connectorName && (
-              <div className="absolute -bottom-1.5 -right-1.5 rounded-full bg-neutral-100 p-0.5">
-                {connectorLogo}
-              </div>
-            )}
-          </div>
-          <span className="text-sm" onClick={address ? copyAddress : undefined}>
+      <div className="flex items-center gap-3">
+        <div className="relative size-8">
+          <ProfileIcon />
+          {connectorName && (
+            <div className="absolute -bottom-1.5 -right-1.5 rounded-full bg-neutral-100 p-0.5">
+              {connectorLogo}
+            </div>
+          )}
+        </div>
+
+        <Tooltip
+          borderRadius="6px"
+          id="copy-address"
+          text={copied ? t('copied') : t('copy')}
+          trigger={copied ? [] : ['hover']}
+          variant="simple"
+          visible={copied ? true : undefined}
+        >
+          <span
+            className="cursor-pointer text-sm"
+            onClick={address ? copyAddress : undefined}
+          >
             {formattedAddress}
           </span>
-        </div>
-      </Tooltip>
+        </Tooltip>
+      </div>
     </div>
   )
 }

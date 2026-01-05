@@ -11,6 +11,7 @@ import {
   coinbaseWallet,
   metaMaskWallet,
   okxWallet,
+  phantomWallet,
   rabbyWallet,
   tokenPocketWallet,
   walletConnectWallet,
@@ -19,6 +20,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { allEvmNetworks } from 'networks'
 import { buildTransports } from 'utils/transport'
 import { WagmiProvider, createConfig } from 'wagmi'
+import { walletConnect } from 'wagmi/connectors'
 
 type Props = {
   children: React.ReactNode
@@ -27,35 +29,49 @@ type Props = {
 
 const queryClient = new QueryClient()
 
+const appName = 'Hemi Portal'
+const projectId =
+  process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? 'YOUR_PROJECT_ID'
+
+const configuredWallets = [
+  metaMaskWallet,
+  binanceWallet,
+  walletConnectWallet,
+  okxWallet,
+  rabbyWallet,
+  coinbaseWallet,
+  phantomWallet,
+  tokenPocketWallet,
+]
+
 const connectors = connectorsForWallets(
   [
     {
       groupName: 'Wallets',
-      wallets: [
-        metaMaskWallet,
-        binanceWallet,
-        walletConnectWallet,
-        okxWallet,
-        rabbyWallet,
-        coinbaseWallet,
-        tokenPocketWallet,
-      ],
+      wallets: configuredWallets,
     },
   ],
   {
-    appName: 'Hemi Portal',
-    projectId:
-      // the ?? is needed to compile - if undefined, throws an error. When building
-      // to deploy, this variable will be set.
-      process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? 'YOUR_PROJECT_ID',
+    appName,
+    projectId,
   },
 )
 
 export const allEvmNetworksWalletConfig = createConfig({
   chains: allEvmNetworks,
-  connectors,
+  connectors: [
+    walletConnect({
+      projectId,
+      showQrModal: false,
+    }),
+    ...connectors,
+  ],
   transports: buildTransports(allEvmNetworks),
 })
+
+export const allWalletConnectors = configuredWallets.map(wallet =>
+  wallet({ appName, projectId }),
+)
 
 export const EvmWalletContext = ({ children, locale }: Props) => (
   <WagmiProvider config={allEvmNetworksWalletConfig}>

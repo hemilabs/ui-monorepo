@@ -1,99 +1,12 @@
 export const EthLogo = () => (
-  <svg fill="none" height={38} width={38} xmlns="http://www.w3.org/2000/svg">
-    <g filter="url(#svg_eth_logo_id_a)">
-      <rect fill="#fff" height={32} rx={16} width={32} x={3} y={2} />
-      <rect
-        height={31.3}
-        rx={15.65}
-        stroke="#B2B3B3"
-        strokeOpacity={0.56}
-        strokeWidth={0.7}
-        width={31.3}
-        x={3.35}
-        y={2.35}
-      />
-      <g filter="url(#svg_eth_logo_id_b)">
-        <rect
-          fill="#6B8AFF"
-          fillOpacity={0.2}
-          height={28}
-          rx={14}
-          width={28}
-          x={5}
-          y={4}
-        />
-        <rect
-          height={27.5}
-          rx={13.75}
-          stroke="#6B8AFF"
-          strokeOpacity={0.4}
-          strokeWidth={0.5}
-          width={27.5}
-          x={5.25}
-          y={4.25}
-        />
-        <path
-          d="m18.482 10.29-4.395 7.226a.597.597 0 0 0 .21.826l4.395 2.574c.19.112.426.112.616 0l4.395-2.574c.289-.17.384-.54.21-.826l-4.394-7.226a.609.609 0 0 0-1.037 0Z"
-          fill="#6B8AFF"
-        />
-        <path
-          d="m22.79 21.01-.003-.031-.006-.03c-.002-.013-.006-.024-.01-.036a.31.31 0 0 0-.03-.064l-.013-.02a.344.344 0 0 0-.096-.097c-.007-.005-.014-.007-.02-.012a.298.298 0 0 0-.039-.02l-.027-.01a.404.404 0 0 0-.098-.02h-.035c-.008 0-.017.003-.026.004-.013.001-.026.002-.04.005-.003 0-.007.003-.01.004a.372.372 0 0 0-.114.049l-2.892 1.704a.651.651 0 0 1-.662 0l-2.892-1.704a.372.372 0 0 0-.114-.05l-.01-.003a1.155 1.155 0 0 0-.065-.008h-.036l-.032.003-.03.005-.036.01-.027.01a.292.292 0 0 0-.038.021c-.007.004-.014.007-.02.012a.34.34 0 0 0-.097.096l-.012.02c-.008.014-.015.026-.02.039-.005.008-.007.018-.011.026l-.01.035a.177.177 0 0 0-.006.03.176.176 0 0 0-.003.032v.035l.003.027c.002.013.003.026.006.038 0 .005.003.01.004.015.012.043.03.083.057.12l3.188 4.482a.652.652 0 0 0 1.062 0l3.188-4.483a.354.354 0 0 0 .057-.12c0-.004.004-.01.004-.014l.006-.038c0-.01.002-.018.003-.027v-.035h.002Z"
-          fill="#6B8AFF"
-        />
-      </g>
-    </g>
-    <defs>
-      <filter
-        colorInterpolationFilters="sRGB"
-        filterUnits="userSpaceOnUse"
-        height={38}
-        id="svg_eth_logo_id_a"
-        width={38}
-        x={0}
-        y={0}
-      >
-        <feFlood floodOpacity={0} result="BackgroundImageFix" />
-        <feColorMatrix
-          in="SourceAlpha"
-          result="hardAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        />
-        <feOffset dy={1} />
-        <feGaussianBlur stdDeviation={1.5} />
-        <feComposite in2="hardAlpha" operator="out" />
-        <feColorMatrix values="0 0 0 0 0.419608 0 0 0 0 0.541176 0 0 0 0 1 0 0 0 0.16 0" />
-        <feBlend
-          in2="BackgroundImageFix"
-          result="effect1_dropShadow_2243_68212"
-        />
-        <feBlend
-          in="SourceGraphic"
-          in2="effect1_dropShadow_2243_68212"
-          result="shape"
-        />
-      </filter>
-      <filter
-        colorInterpolationFilters="sRGB"
-        filterUnits="userSpaceOnUse"
-        height={28}
-        id="svg_eth_logo_id_b"
-        width={28}
-        x={5}
-        y={4}
-      >
-        <feFlood floodOpacity={0} result="BackgroundImageFix" />
-        <feBlend in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-        <feColorMatrix
-          in="SourceAlpha"
-          result="hardAlpha"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
-        />
-        <feOffset />
-        <feGaussianBlur stdDeviation={1} />
-        <feComposite in2="hardAlpha" k2={-1} k3={1} operator="arithmetic" />
-        <feColorMatrix values="0 0 0 0 0.419608 0 0 0 0 0.541176 0 0 0 0 1 0 0 0 0.48 0" />
-        <feBlend in2="shape" result="effect1_innerShadow_2243_68212" />
-      </filter>
-    </defs>
+  <svg fill="none" height="32" width="32" xmlns="http://www.w3.org/2000/svg">
+    <path
+      d="m15.384 5.4-5.218 9.934c-.207.393-.094.903.25 1.136l5.218 3.54a.639.639 0 0 0 .732 0l5.218-3.54c.344-.233.457-.743.25-1.136l-5.218-9.935c-.279-.532-.952-.532-1.232 0Z"
+      fill="#6B8AFF"
+    />
+    <path
+      d="M20.5 20.14c0-.016-.002-.03-.003-.044l-.007-.042c-.003-.017-.007-.032-.012-.049a.437.437 0 0 0-.037-.088c-.004-.009-.008-.019-.014-.028a.455.455 0 0 0-.115-.132c-.007-.007-.015-.01-.024-.017a.34.34 0 0 0-.045-.028l-.032-.014a.44.44 0 0 0-.079-.022.176.176 0 0 0-.037-.004h-.042c-.01 0-.02.003-.031.004-.015.003-.031.004-.046.008-.005 0-.01.004-.014.005a.413.413 0 0 0-.134.068L16.393 22.1a.695.695 0 0 1-.393.124.695.695 0 0 1-.393-.124l-3.435-2.343a.414.414 0 0 0-.134-.068l-.014-.005c-.015-.004-.03-.005-.046-.008a1.63 1.63 0 0 0-.031-.004h-.042c-.012 0-.025.003-.037.004l-.037.008-.042.014-.032.014a.34.34 0 0 0-.045.028c-.008.005-.017.01-.024.017a.418.418 0 0 0-.115.132l-.015.028c-.008.018-.017.035-.024.053l-.012.035c-.005.017-.009.032-.012.049a.271.271 0 0 0-.007.042.286.286 0 0 0-.003.043c0 .016-.001.032 0 .047 0 .013.002.025.003.038.002.017.003.035.007.052a.523.523 0 0 0 .073.185l3.785 6.163c.308.501.953.501 1.261 0l3.786-6.163a.525.525 0 0 0 .068-.165c0-.006.004-.014.005-.02l.007-.052c0-.013.002-.025.003-.038v-.047h.002Z"
+      fill="#6B8AFF"
+    />
   </svg>
 )

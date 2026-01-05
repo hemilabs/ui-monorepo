@@ -121,25 +121,24 @@
   "connect-wallets": {
     "btc-wallet": "Billetera BTC",
     "btc-wallet-requirement": "Una billetera de Bitcoin solo es necesaria si se transfieren activos entre Bitcoin y Hemi.",
-    "connect-btc-wallet": "Conecte su billetera Unisat de BTC",
+    "connect-btc-wallet": "Conecte su billetera de BTC",
     "connect-evm-wallet": "Conecte su billetera EVM",
     "connect-to-see-balance": "Conéctese a una red soportada para ver su balance",
-    "connected-with-wallet": "Conectado con <wallet></wallet>",
     "copy-address": "Copiar dirección",
-    "description": "Conecte sus billeteras EVM y BTC para transferir activos de manera fluida. Para una mejor experiencia, use billeteras de ambas redes.",
     "disconnect": "Desconectar",
+    "dont-have": "¿No tienes {wallet}?",
     "evm-wallet": "Billetera EVM",
-    "how-to-create-unisat-wallet": "Cómo crear una billetera Unisat",
+    "get": "Obtener",
+    "get-wallet": "Obtener {wallet}",
+    "install": "Instalar",
+    "scan-with": "Escanear con {wallet}",
     "status": {
       "connected": "Conectada",
       "connecting": "Conectando",
       "disconnected": "Desconectada",
       "reconnecting": "Reconectando"
     },
-    "unisat-is-the-only-supported-wallet": {
-      "first-line": "La extensión web de UniSat es la única billetera BTC soportada.",
-      "second-line": "No use la aplicación móvil de UniSat."
-    }
+    "wallets": "Billeteras"
   },
   "ecosystem": {
     "bitcoin-kit": {

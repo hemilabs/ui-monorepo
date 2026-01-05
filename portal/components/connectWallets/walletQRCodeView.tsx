@@ -104,15 +104,18 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         >
           <Chevron.Left className="group-hover:[&>path]:fill-neutral-950" />
         </button>
-
         <h4 className="flex-1 text-center text-neutral-500 md:flex-none">
-          {t('scan-with', { wallet: wallet.name })}
+          <span className="md:hidden">
+            {t('dont-have', { wallet: wallet.name })}
+          </span>
+          <span className="hidden md:inline">
+            {t('scan-with', { wallet: wallet.name })}
+          </span>
         </h4>
         <div className="hidden md:block">
           <QrcodePlaceholderIcon />
         </div>
       </div>
-
       <div className="flex h-full flex-col items-center justify-center gap-4 py-3">
         <div className="shadow-bs hidden size-full items-center justify-center rounded-md bg-neutral-50/80 md:flex">
           {uri ? (
@@ -123,22 +126,16 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         </div>
 
         {downloadUrl && (
-          <div className="flex w-full flex-col items-center gap-4 md:flex-row md:justify-between">
-            <h4 className="text-center text-neutral-500 md:text-left">
-              {t('dont-have', { wallet: wallet.name })}
-            </h4>
-
-            <Button
-              onClick={() =>
-                window.open(downloadUrl, '_blank', 'noopener,noreferrer')
-              }
-              size="xSmall"
-              type="submit"
-              variant="secondary"
-            >
-              {t('get')}
-            </Button>
-          </div>
+          <Button
+            onClick={() =>
+              window.open(downloadUrl, '_blank', 'noopener,noreferrer')
+            }
+            size="xSmall"
+            type="submit"
+            variant="secondary"
+          >
+            {t('get')}
+          </Button>
         )}
       </div>
     </>

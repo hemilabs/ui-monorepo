@@ -29,7 +29,6 @@ import eisenIcon from './_images/eisen.png'
 import izumiIcon from './_images/izumi.png'
 import okuIcon from './_images/oku.png'
 import oneDeltaIcon from './_images/oneDelta.png'
-import passdexIcon from './_images/passdex.png'
 import rubicIcon from './_images/rubic.png'
 import sushiIcon from './_images/sushi.png'
 
@@ -211,12 +210,6 @@ const DexImpl = function () {
                 href="https://www.atlasexchange.xyz/swap"
                 icon={<Image alt="Atlas" src={atlasIcon} />}
                 text="Atlas"
-              />
-              <ExternalLink
-                event="nav - passdex"
-                href="https://passdex.finance/?chain=HEMI"
-                icon={<Image alt="Passdex" src={passdexIcon} />}
-                text="Passdex"
               />
             </div>
           </div>,

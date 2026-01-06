@@ -16,6 +16,7 @@
     "info": {
       "earning-rate": "Tasa de rendimiento",
       "holders": "# de titulares",
+      "native": "Nativo:",
       "pool-deposits": "Depósitos en el fondo",
       "pool-token-value": "Valor del token del fondo"
     },

@@ -1,3 +1,4 @@
+import { type EvmToken } from 'types/token'
 import { type Hex, type Address, type Chain, type Hash } from 'viem'
 
 import { queryStringObjectToString } from './url'
@@ -39,13 +40,17 @@ type MerklUserRewardsResponse = {
   rewards: MerklRewards
 }[]
 
-type MerklCampaign = {
+export type MerklCampaign = {
+  apr: number
   campaignId: Hex
+  endTimestamp: number
   id: string
+  rewardToken: Pick<EvmToken, 'address' | 'chainId' | 'symbol'>
   status: string
 }
 
-type MerklOpportunityResponse = {
+export type MerklOpportunityResponse = {
+  apr: number
   campaigns: MerklCampaign[]
   chainId: Chain['id']
   id: string

@@ -16,6 +16,7 @@
     "info": {
       "earning-rate": "Earning rate",
       "holders": "# of holders",
+      "native": "Native:",
       "pool-deposits": "Pool deposits",
       "pool-token-value": "Pool token value"
     },

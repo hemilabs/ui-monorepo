@@ -17,7 +17,7 @@ type SimpleInfoVariant = Omit<TooltipProps, 'overlay'> & {
 type RichVariant = Omit<TooltipProps, 'overlay'> & {
   children?: TooltipProps['children']
   text: ReactNode
-  title: ReactNode
+  title?: ReactNode
   variant: 'rich'
 }
 
@@ -46,11 +46,11 @@ function getOverlay(props: BaseTooltipProps) {
     )
   }
 
-  const title = props.title!
-
   return (
     <div className={`${commonCss} flex flex-col gap-y-1 rounded-xl p-4`}>
-      <p className="text-smd font-semibold text-white">{title}</p>
+      {props.title && (
+        <p className="text-smd font-semibold text-white">{props.title}</p>
+      )}
       <p className="text-sm font-medium text-neutral-400">{text}</p>
     </div>
   )

@@ -1,8 +1,3 @@
-import {
-  useAccountModal,
-  useChainModal,
-  useConnectModal,
-} from '@rainbow-me/rainbowkit'
 import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
@@ -15,21 +10,10 @@ type Props = {
 }
 
 export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
-  const { accountModalOpen } = useAccountModal()
-  const { chainModalOpen } = useChainModal()
-  const { connectModalOpen } = useConnectModal()
   const t = useTranslations()
   const { track } = useUmami()
 
-  // Rainbow kit's modals appear on top of the drawer. By clicking on those
-  // technically we're clicking outside of the drawer, which would close it,
-  // but we don't want to do so.
-  // Luckily, there are some hooks to detect that those modals are opened,
-  // and prevent this scenario.
   const onClose = function () {
-    if (accountModalOpen || chainModalOpen || connectModalOpen) {
-      return
-    }
     track?.('close wallet drawer')
 
     closeDrawer()
@@ -38,7 +22,7 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
   return (
     <Drawer onClose={onClose}>
       <div className="drawer-content max-md:max-h-85vh h-full overflow-y-auto md:max-w-md">
-        <div className="flex h-full flex-col gap-y-3">
+        <div className="mb-3 flex h-full flex-col gap-y-3">
           <DrawerTopSection
             heading={t('common.connect-wallets')}
             onClose={closeDrawer}

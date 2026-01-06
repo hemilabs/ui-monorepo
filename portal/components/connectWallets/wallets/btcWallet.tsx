@@ -119,7 +119,9 @@ export const BtcWallet = function () {
             <FiatBalance token={getNativeToken(bitcoin.id)} />
           </div>
         ) : (
-          <ConnectToSupportedChain />
+          <div className="flex w-full justify-center">
+            <ConnectToSupportedChain />
+          </div>
         )}
       </Box>
     )

@@ -2,8 +2,11 @@ import { ComponentProps, ReactNode } from 'react'
 
 import { MagnifyingGlassIcon } from './icons/magnifyingGlassIcon'
 
-const inputCss = `w-full cursor-pointer rounded-lg
-text-neutral-500 hover:text-neutral-600 hover:placeholder:text-neutral-600 bg-white disabled:cursor-auto placeholder:font-medium focus:outline-none transition-colors duration-200`
+const baseInputCss = `w-full cursor-pointer rounded-lg bg-white disabled:cursor-auto placeholder:font-medium focus:outline-none transition-colors duration-200`
+
+const searchInputCss = `${baseInputCss} text-neutral-500 hover:text-neutral-600 hover:placeholder:text-neutral-600`
+
+const lockupInputCss = `${baseInputCss} text-base md:text-sm placeholder:text-sm px-3 py-2 font-medium text-neutral-950 border border-solid placeholder:text-neutral-500 focus:border-orange-600`
 
 const CloseIcon = (props: ComponentProps<'svg'>) => (
   <svg
@@ -32,7 +35,7 @@ type InputWrapperProps = {
   children: ReactNode
   showCloseIcon: boolean
   onClear?: VoidFunction
-  size: Size
+  size?: Size
 }
 
 const InputWrapper = ({
@@ -51,7 +54,9 @@ const InputWrapper = ({
       </div>
     )}
     <div
-      className={`box-border flex w-full gap-x-2 rounded-lg outline outline-0 outline-neutral-200 transition-all duration-200 focus-within:outline-4 disabled:cursor-not-allowed ${wrapperHeights[size]}`}
+      className={`box-border flex w-full gap-x-2 rounded-lg outline outline-0 outline-neutral-200 transition-all duration-200 focus-within:outline-4 disabled:cursor-not-allowed ${
+        size ? wrapperHeights[size] : ''
+      }`}
     >
       {children}
     </div>
@@ -120,7 +125,9 @@ export const SearchInput = function ({
       )}
       <input
         {...props}
-        className={`${inputCss} ${sizeClass.typography} ${sizeClass.padding} ${
+        className={`${searchInputCss} ${sizeClass.typography} ${
+          sizeClass.padding
+        } ${
           sizeClass.placeholder
         } focus:shadow-input-focused active:shadow-input-focused shadow-sm hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-55 ${
           showMagnifyingGlass ? sizeClass.iconLeftPadding : ''
@@ -139,7 +146,7 @@ export const LockupInput = ({
   <InputWrapper showCloseIcon={false}>
     <input
       {...props}
-      className={`${inputCss}
+      className={`${lockupInputCss}
           hover:shadow-lockup-input-hover border-transparent  
           ${
             isError

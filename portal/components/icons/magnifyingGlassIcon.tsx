@@ -2,10 +2,12 @@ type Props = {
   size?: 'xs' | 's' | 'xl'
 }
 
+const defaultSize = 'w-4 h-4'
+
 const iconSizes = {
-  s: 'w-4 h-4', // 16px
+  s: defaultSize, // 16px
   xl: 'w-6 h-6', // 24px
-  xs: 'w-3 h-3', // 12px
+  xs: defaultSize, // 16px
 } as const
 
 export const MagnifyingGlassIcon = ({ size = 's' }: Props) => (

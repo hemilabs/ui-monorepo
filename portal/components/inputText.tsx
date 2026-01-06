@@ -20,15 +20,27 @@ const CloseIcon = (props: ComponentProps<'svg'>) => (
   </svg>
 )
 
+type Size = 'xs' | 's' | 'xl'
+
+const wrapperHeights: Record<Size, string> = {
+  s: 'h-8',
+  xl: 'h-11',
+  xs: 'h-7',
+} as const
+
+type InputWrapperProps = {
+  children: ReactNode
+  showCloseIcon: boolean
+  onClear?: VoidFunction
+  size: Size
+}
+
 const InputWrapper = ({
   children,
   onClear,
   showCloseIcon,
-}: {
-  children: ReactNode
-  showCloseIcon: boolean
-  onClear?: VoidFunction
-}) => (
+  size,
+}: InputWrapperProps) => (
   <div className="group relative flex items-center">
     {showCloseIcon && (
       <div className="absolute right-0 -translate-x-3">
@@ -38,7 +50,9 @@ const InputWrapper = ({
         />
       </div>
     )}
-    <div className="box-border flex w-full gap-x-2 rounded-lg outline outline-0 outline-neutral-200 transition-all duration-200 focus-within:outline-4">
+    <div
+      className={`box-border flex w-full gap-x-2 rounded-lg outline outline-0 outline-neutral-200 transition-all duration-200 focus-within:outline-4 disabled:cursor-not-allowed ${wrapperHeights[size]}`}
+    >
       {children}
     </div>
   </div>
@@ -48,27 +62,28 @@ type Props = Omit<ComponentProps<'input'>, 'className' | 'type' | 'size'> & {
   onClear?: VoidFunction
 }
 
-type Size = 'xs' | 's' | 'xl'
-
 const sizeClasses = {
   s: {
     borderRadius: 'rounded-lg',
+    height: 'h-8',
     iconLeftPadding: 'pl-9',
     iconPosition: 'left-3',
-    padding: 'px-3 py-2',
+    padding: 'px-2.5 py-2',
     placeholder: 'placeholder:text-sm',
     typography: 'text-sm font-semibold',
   },
   xl: {
     borderRadius: 'rounded-lg',
+    height: 'h-11',
     iconLeftPadding: 'pl-12',
     iconPosition: 'left-4',
     padding: 'px-4 py-1.5',
-    placeholder: 'placeholder:text-xl[15px]',
-    typography: 'text-xl[15px] font-semibold',
+    placeholder: 'placeholder:text-mid',
+    typography: 'text-mid font-semibold',
   },
   xs: {
     borderRadius: 'rounded-md',
+    height: 'h-7',
     iconLeftPadding: 'pl-9',
     iconPosition: 'left-2.5',
     padding: 'px-2.5 py-1.5',
@@ -91,7 +106,11 @@ export const SearchInput = function ({
   const sizeClass = sizeClasses[selectedSize]
 
   return (
-    <InputWrapper onClear={onClear} showCloseIcon={showCloseIcon}>
+    <InputWrapper
+      onClear={onClear}
+      showCloseIcon={showCloseIcon}
+      size={selectedSize}
+    >
       {showMagnifyingGlass && (
         <div
           className={`absolute ${sizeClass.iconPosition} top-1/2 -translate-y-1/2 group-hover:[&>svg>path]:fill-neutral-600`}
@@ -103,9 +122,10 @@ export const SearchInput = function ({
         {...props}
         className={`${inputCss} ${sizeClass.typography} ${sizeClass.padding} ${
           sizeClass.placeholder
-        } focus:shadow-input-focused active:shadow-input-focused shadow-sm hover:shadow-sm ${
+        } focus:shadow-input-focused active:shadow-input-focused shadow-sm hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-55 ${
           showMagnifyingGlass ? sizeClass.iconLeftPadding : ''
         } ${showCloseIcon ? 'pr-8' : ''}`}
+        disabled={props.disabled}
         type="text"
       />
     </InputWrapper>

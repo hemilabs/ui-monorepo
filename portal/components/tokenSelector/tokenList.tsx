@@ -151,11 +151,12 @@ export const TokenList = function ({
       <div className="py-4">
         <SearchInput
           autoFocus={width >= screenBreakpoints.md}
+          name="search-tokens"
           onChange={e => setSearchText(e.target.value)}
           onClear={() => setSearchText('')}
           onKeyDown={addKeyDownListener}
           placeholder={t('search-tokens')}
-          size="s"
+          size="xs"
           value={searchText}
         />
       </div>

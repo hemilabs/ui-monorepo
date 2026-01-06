@@ -1,4 +1,4 @@
-import { Button } from 'components/button'
+import { ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { type WalletData } from 'hooks/useAllWallets'
 import { useTranslations } from 'next-intl'
@@ -126,16 +126,14 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         </div>
 
         {downloadUrl && (
-          <Button
-            onClick={() =>
-              window.open(downloadUrl, '_blank', 'noopener,noreferrer')
-            }
-            size="xSmall"
-            type="submit"
-            variant="secondary"
-          >
-            {t('get')}
-          </Button>
+          <div className="flex w-full flex-col items-center gap-4 px-1 md:flex-row md:justify-between">
+            <h4 className="hidden text-neutral-500 md:block">
+              {t('dont-have', { wallet: wallet.name })}
+            </h4>
+            <ButtonLink href={downloadUrl} size="xSmall" variant="secondary">
+              {t('get')}
+            </ButtonLink>
+          </div>
         )}
       </div>
     </>

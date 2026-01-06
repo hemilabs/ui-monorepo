@@ -8,6 +8,7 @@ import { useChainIsSupported } from 'hooks/useChainIsSupported'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { getNativeToken } from 'utils/nativeToken'
+import { walletIsConnected } from 'utils/wallet'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { Box } from '../box'
@@ -42,7 +43,7 @@ export const EvmWallet = function () {
       </Box>
     )
   }
-  if (status === 'disconnected' || status === 'connecting') {
+  if (!walletIsConnected(status)) {
     return (
       <ConnectWalletAccordion
         event="evm connect"

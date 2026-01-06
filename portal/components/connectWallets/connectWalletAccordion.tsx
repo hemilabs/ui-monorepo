@@ -118,7 +118,7 @@ export const ConnectWalletAccordion = function ({
                       {wallet.name}
                     </span>
                     {showInstall && (
-                      <div className="group-hover:backdrop-blur-1 absolute inset-0 flex items-center justify-center rounded-lg bg-white/80 opacity-0 transition-all duration-300 group-hover:opacity-100">
+                      <div className="group-hover:backdrop-blur-px absolute inset-0 flex items-center justify-center rounded-lg bg-white/80 opacity-0 transition-all duration-300 group-hover:opacity-100">
                         <div className="flex items-center gap-1 text-orange-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                           <DownloadIcon />
                           <span className="text-sm font-semibold">

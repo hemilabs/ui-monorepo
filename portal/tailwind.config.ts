@@ -31,8 +31,8 @@ const config: Config = {
         'withdraw-progress': 'withdraw-progress 2s infinite',
       },
       backdropBlur: {
-        '1': '1px',
         '20': '20px',
+        'px': '1px',
       },
       backgroundImage: {
         'button-primary-hovered':

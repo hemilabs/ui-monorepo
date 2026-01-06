@@ -165,7 +165,5 @@ export const formatAPRDisplay = function (apr: number) {
   if (apr < 0.01) {
     return '< 0.01%'
   }
-
-  // Use formatPercentage with one decimal place
   return formatPercentage(apr)
 }

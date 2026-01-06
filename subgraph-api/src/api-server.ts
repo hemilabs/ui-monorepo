@@ -2,11 +2,12 @@
 
 import config from 'config'
 import cors from 'cors'
-import express, { NextFunction, Request, Response } from 'express'
-import { Address } from 'viem'
+import express from 'express'
+import type { NextFunction, Request, Response } from 'express'
+import type { Address } from 'viem'
 import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
-import { ChainIdPathParams, ReqData } from '../types/server.ts'
+import type { ChainIdPathParams, ReqData } from '../types/server.ts'
 
 import { getBtcDepositOnHemi } from './route-handlers/get-btc-deposit-on-hemi.ts'
 import { getClaimTransactionHandler } from './route-handlers/get-claim-transaction-hash.ts'

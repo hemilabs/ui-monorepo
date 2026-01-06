@@ -36,11 +36,13 @@ type InputWrapperProps = {
   showCloseIcon: boolean
   onClear?: VoidFunction
   size?: Size
+  outlineColor?: 'neutral-200' | 'orange-100'
 }
 
 const InputWrapper = ({
   children,
   onClear,
+  outlineColor,
   showCloseIcon,
   size,
 }: InputWrapperProps) => (
@@ -54,7 +56,7 @@ const InputWrapper = ({
       </div>
     )}
     <div
-      className={`box-border flex w-full gap-x-2 rounded-lg outline outline-0 outline-neutral-200 transition-all duration-200 focus-within:outline-4 disabled:cursor-not-allowed ${
+      className={`box-border flex w-full gap-x-2 rounded-lg outline outline-0 outline-${outlineColor} transition-all duration-200 focus-within:outline-4 disabled:cursor-not-allowed ${
         size ? wrapperHeights[size] : ''
       }`}
     >
@@ -143,7 +145,7 @@ export const LockupInput = ({
   isError = false,
   ...props
 }: Omit<Props, 'onClear'> & { isError?: boolean }) => (
-  <InputWrapper showCloseIcon={false}>
+  <InputWrapper outlineColor="orange-100" showCloseIcon={false}>
     <input
       {...props}
       className={`${lockupInputCss}

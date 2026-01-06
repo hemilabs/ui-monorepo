@@ -56,7 +56,11 @@ const InputWrapper = ({
       </div>
     )}
     <div
-      className={`box-border flex w-full gap-x-2 rounded-lg outline outline-0 outline-${outlineColor} transition-all duration-200 focus-within:outline-4 disabled:cursor-not-allowed ${
+      className={`box-border flex w-full gap-x-2 rounded-lg outline outline-0 ${
+        outlineColor === 'orange-100'
+          ? 'outline-orange-100'
+          : 'outline-neutral-200'
+      } transition-all duration-200 focus-within:outline-4 disabled:cursor-not-allowed ${
         size ? wrapperHeights[size] : ''
       }`}
     >
@@ -115,6 +119,7 @@ export const SearchInput = function ({
   return (
     <InputWrapper
       onClear={onClear}
+      outlineColor="neutral-200"
       showCloseIcon={showCloseIcon}
       size={selectedSize}
     >

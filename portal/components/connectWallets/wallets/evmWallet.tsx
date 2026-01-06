@@ -38,7 +38,9 @@ export const EvmWallet = function () {
             <FiatBalance token={getNativeToken(chain.id)} />
           </div>
         ) : (
-          <ConnectToSupportedChain />
+          <div className="flex w-full justify-center">
+            <ConnectToSupportedChain />
+          </div>
         )}
       </Box>
     )

@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
+import { featureFlags } from 'app/featureFlags'
 import { getOpportunityCampaigns } from 'utils/merkl'
 
-const opportunityId = process.env.NEXT_PUBLIC_BTC_YIELD_OPPORTUNITY_ID
+import { opportunityId } from '../_utils'
 
 export const useMerklCampaigns = () =>
   useQuery({
-    enabled: opportunityId !== undefined,
+    enabled:
+      featureFlags.enableBtcYieldClaimRewards && opportunityId !== undefined,
     queryFn: () => getOpportunityCampaigns({ opportunityId: opportunityId! }),
     queryKey: ['merkl-opportunity-campaigns', opportunityId],
   })

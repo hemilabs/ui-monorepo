@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi'
 
 import { useHasClaimableRewards } from '../_hooks/useHasClaimableRewards'
 import { useOperationDrawer } from '../_hooks/useOperationDrawer'
+import { opportunityId } from '../_utils'
 
 export const Claim = function () {
   const { address } = useAccount()
@@ -35,7 +36,9 @@ export const Claim = function () {
       type="button"
       variant="secondary"
     >
-      {hasClaimableRewards !== undefined || !address ? (
+      {opportunityId === undefined ||
+      hasClaimableRewards !== undefined ||
+      !address ? (
         t('bitcoin-yield.table.claim-rewards')
       ) : (
         <Spinner color={orange600} size="xSmall" />

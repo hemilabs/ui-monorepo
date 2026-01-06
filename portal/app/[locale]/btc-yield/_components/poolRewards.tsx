@@ -2,6 +2,7 @@ import Skeleton from 'react-loading-skeleton'
 import { useAccount } from 'wagmi'
 
 import { useMerklRewards } from '../_hooks/useMerklRewards'
+import { opportunityId } from '../_utils'
 
 import { Rewards } from './rewards'
 import { UsdRewards } from './usdRewards'
@@ -13,7 +14,10 @@ export const PoolRewards = function () {
   const errorOrDisconnected = isError || !address
   const loaded = merklRewards !== undefined
   const withRewards = loaded && merklRewards.length > 0
-  const noRewards = loaded && merklRewards.length === 0
+  const noRewards =
+    opportunityId === undefined ||
+    errorOrDisconnected ||
+    (loaded && merklRewards.length === 0)
 
   return (
     <div className="flex flex-col gap-y-0.5">
@@ -21,7 +25,7 @@ export const PoolRewards = function () {
         {withRewards ? (
           // here rewards are defined
           <Rewards merklRewards={merklRewards} />
-        ) : errorOrDisconnected || noRewards ? (
+        ) : noRewards ? (
           '-'
         ) : (
           <Skeleton className="h-4 w-16" />
@@ -32,7 +36,7 @@ export const PoolRewards = function () {
         {withRewards ? (
           // here rewards are defined
           <UsdRewards merklRewards={merklRewards} />
-        ) : errorOrDisconnected || noRewards ? null : (
+        ) : noRewards ? null : (
           <Skeleton className="h-full" />
         )}
       </span>

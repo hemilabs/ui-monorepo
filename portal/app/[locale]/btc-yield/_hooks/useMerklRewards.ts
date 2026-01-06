@@ -23,15 +23,15 @@ export const useMerklRewards = function <TData = MerklRewards>({
   const { address } = useAccount()
   const hemi = useHemi()
 
-  const { data: campaigns } = useMerklCampaigns()
-  const campaignIds = campaigns?.map(c => c.campaignId)
+  const { data: merklData } = useMerklCampaigns()
+  const campaignIds = merklData?.campaigns.map(c => c.campaignId)
 
   return useQuery({
     // rewards only work for mainnet
     enabled:
       hemi.id === hemiMainnet.id &&
       address !== undefined &&
-      campaigns !== undefined,
+      campaignIds !== undefined,
     async queryFn() {
       const allRewards = await getUserRewards({
         address: address!,

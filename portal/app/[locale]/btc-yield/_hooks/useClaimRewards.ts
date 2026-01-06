@@ -33,7 +33,7 @@ export const useClaimRewards = function ({
   const hemi = useHemi()
   const hemiClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
-  const { data: merklCampaigns } = useMerklCampaigns()
+  const { data: merklData } = useMerklCampaigns()
   const { data: merklRewards } = useMerklRewards()
   const queryClient = useQueryClient()
   const ensureConnectedTo = useEnsureConnectedTo()
@@ -42,7 +42,7 @@ export const useClaimRewards = function ({
     hemiClient.chain!.id,
   )
 
-  const campaignIds = merklCampaigns?.map(c => c.campaignId)
+  const campaignIds = merklData?.campaigns.map(c => c.campaignId)
 
   return useMutation({
     async mutationFn() {

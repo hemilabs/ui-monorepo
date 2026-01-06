@@ -148,13 +148,13 @@ runs:
         SENTRY_RELEASE: ${{ inputs.SENTRY_RELEASE }}
     - name: Check portal build
       id: portal_build
-      uses: andstor/file-existence-action@v3
+      uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0
       with:
         files: ./portal/out/
     # folder should only exist if portal was built
     - if: steps.portal_build.outputs.files_exists == 'true'
       name: Copy portal files to Hostinger
-      uses: appleboy/scp-action@master
+      uses: appleboy/scp-action@7179e72a3fa4d4c33870a471708fda724fae7596 # master
       with:
         host: ${{ inputs.HOSTINGER_HOST }}
         key: ${{ inputs.HOSTINGER_SSH_KEY }}

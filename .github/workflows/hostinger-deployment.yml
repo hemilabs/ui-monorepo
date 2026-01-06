@@ -20,7 +20,7 @@ jobs:
     environment: ${{ github.event_name == 'release' && 'production' || 'staging' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: bloq/actions/notify-deploy-to-slack@v1
+      - uses: bloq/actions/notify-deploy-to-slack@7a00bde576f8383a7afabf48dc6153bd7a7daab7 # v1.6.0
         with:
           app-name: Hemi Portal
           environment: ${{ vars.ENVIRONMENT_NAME }}
@@ -28,10 +28,10 @@ jobs:
           slack-mention: ${{ vars.SLACK_MENTION }}
           slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
           status: 'started :stopwatch:'
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
           fetch-depth: 0
-      - uses: hemilabs/actions/setup-node-env@v1
+      - uses: hemilabs/actions/setup-node-env@06d5e0813de21d92283163864cce2e95ec5b67c6 # v1.0.0
       - uses: ./.github/actions/deploy-portal
         with:
           HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
@@ -70,7 +70,7 @@ jobs:
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
           SENTRY_RELEASE: ${{ format('{0}@{1}', vars.SENTRY_PROJECT, github.event.release.name) }}
       - if: ${{ !cancelled() }}
-        uses: bloq/actions/notify-deploy-to-slack@v1
+        uses: bloq/actions/notify-deploy-to-slack@7a00bde576f8383a7afabf48dc6153bd7a7daab7 # v1.6.0
         with:
           app-name: Hemi Portal
           environment: ${{ vars.ENVIRONMENT_NAME }}
@@ -82,10 +82,10 @@ jobs:
     environment: staging
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
         with:
           fetch-depth: 0
-      - uses: hemilabs/actions/setup-node-env@v1
+      - uses: hemilabs/actions/setup-node-env@06d5e0813de21d92283163864cce2e95ec5b67c6 # v1.0.0
       - uses: ./.github/actions/deploy-portal
         with:
           HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}

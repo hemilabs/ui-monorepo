@@ -2,13 +2,6 @@
 # https://github.com/graphprotocol/graph-tooling/issues/2043
 CVE-2024-21538
 
-# subgraph-api > tsx@4.20.5 > esbuild@0.25.12
-CVE-2025-58183
-CVE-2025-58186
-CVE-2025-58187
-CVE-2025-58188
-CVE-2025-61729
-
 # * > glob@10.4.5
 # Rebuilding the lockfile did not update to @11.1.0
 CVE-2025-64756

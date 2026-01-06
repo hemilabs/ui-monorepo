@@ -1,6 +1,6 @@
 /* eslint-disable promise/no-callback-in-promise */
 
-import { Request, Response, NextFunction } from 'express'
+import type { Request, Response, NextFunction } from 'express'
 
 import { getWithdrawalProofAndClaim } from '../subgraph.ts'
 import { sendJsonResponse } from '../utils.ts'

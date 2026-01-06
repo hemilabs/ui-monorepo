@@ -1,4 +1,4 @@
-import { Request, Response } from 'express'
+import type { Request, Response } from 'express'
 import { type Address } from 'viem'
 
 import { getLockedPositions } from '../subgraph.ts'

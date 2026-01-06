@@ -1,5 +1,5 @@
 /* eslint-disable promise/no-callback-in-promise */
-import { Request, Response } from 'express'
+import type { Request, Response } from 'express'
 import { type Address } from 'viem'
 
 import { getMerkleClaim } from '../subgraph.ts'

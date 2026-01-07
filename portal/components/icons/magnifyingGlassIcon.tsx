@@ -9,6 +9,7 @@ const iconSizes = {
   xs: defaultSize, // 16px
   s: defaultSize, // 16px
   xl: 'w-6 h-6', // 24px
+  /* eslint-enable sort-keys */
 } as const
 
 export const MagnifyingGlassIcon = ({ size = 's' }: Props) => (

@@ -25,10 +25,11 @@ const CloseIcon = (props: ComponentProps<'svg'>) => (
 
 type Size = 'xs' | 's' | 'xl'
 
+/* eslint-disable sort-keys */
 const wrapperHeights: Record<Size, string> = {
+  xs: 'h-7',
   s: 'h-8',
   xl: 'h-11',
-  xs: 'h-7',
 } as const
 
 type InputWrapperProps = {

@@ -51,7 +51,7 @@ export const Actions = function ({ row }: Props) {
           }}
           variant="primary"
         >
-          {(balance === undefined) !== undefined || isError ? (
+          {balance !== undefined || isError ? (
             t('common.deposit')
           ) : (
             <Spinner size="xSmall" />

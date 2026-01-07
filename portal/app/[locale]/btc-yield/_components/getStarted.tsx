@@ -18,11 +18,11 @@ const Step = ({
   image: StaticImageData
   subheading: string
 }) => (
-  <div className="flex flex-col items-center gap-x-3 gap-y-2 md:flex-row">
+  <div className="flex w-full flex-row items-center gap-x-3 gap-y-2">
     <div>
       <Image alt="Step image" height={80} src={image} width={80} />
     </div>
-    <div className="flex w-full flex-col justify-center gap-y-1 max-md:text-center">
+    <div className="flex w-full flex-col justify-center gap-y-1">
       <h4>{heading}</h4>
       <p className="body-text-normal text-neutral-500">{subheading}</p>
     </div>
@@ -40,7 +40,7 @@ export const GetStarted = function ({ onClose }: Props) {
   return (
     <article className="group/get-started relative mb-8 gap-x-5 gap-y-10 border-y border-solid border-neutral-300/55 py-6">
       <div
-        className="transition-filter flex flex-col items-center justify-between gap-x-3 gap-y-4
+        className="transition-filter flex flex-col items-center justify-between gap-x-3 gap-y-6
         duration-300 group-hover/get-started:opacity-65 group-hover/get-started:blur-sm sm:flex-row"
       >
         <Step

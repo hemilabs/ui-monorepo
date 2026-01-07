@@ -5,6 +5,8 @@ const fetchJson = require('tiny-fetch-json')
 const fetchWithPassword = (url, password) =>
   fetchJson(`${url}?password=${password}`)
 
+const knownIssue = Symbol('known issue')
+
 /**
  * @param {object} config
  * @param {string} config.password - The password for the Databox API.
@@ -30,17 +32,16 @@ module.exports = function ({ password, sampleId, url }) {
 
       const { samples } = await fetchWithPassword(url, cookie)
       const sample = samples.find(s => s.id === sampleId)
-
       if (!sample) {
-        // This is expected to happen almost every day or even not more than
-        // once per day. Let's log it as info to prevent triggering alerts.
-        console.info(`Sample with id ${sampleId} not found`)
-        throw new Error('Sample not found')
+        // This is a known issue expected to happen very often.
+        throw new Error('Sample not found', { cause: knownIssue })
       }
 
       return sample.sampledata.dsData[0].data[0].items[0].value
     } catch (err) {
-      console.warn(`Failed to fetch TVL data from Databox: ${err}`)
+      // Known issues are logged at info level to prevent rising alerts.
+      const logLevel = err.cause === knownIssue ? 'info' : 'warn'
+      console[logLevel](`Failed to fetch TVL data from Databox: ${err.message}`)
       throw err
     }
   }

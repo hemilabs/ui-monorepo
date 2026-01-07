@@ -3,6 +3,9 @@
 const env = (variable, defaultValue) => process.env[variable] || defaultValue
 
 const config = {
+  accounts: {
+    dead: '0x000000000000000000000000000000000000dEaD',
+  },
   contracts: {
     hemi: {
       bnb: '0x5ffd0eadc186af9512542d0d5e5eafc65d5afc5b',

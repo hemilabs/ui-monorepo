@@ -4,7 +4,7 @@ import { MagnifyingGlassIcon } from './icons/magnifyingGlassIcon'
 
 const baseInputCss = `w-full cursor-pointer rounded-lg bg-white disabled:cursor-auto placeholder:font-medium focus:outline-none transition-colors duration-200`
 
-const inputCss = `${baseInputCss} text-neutral-500 hover:text-neutral-600 hover:placeholder:text-neutral-600 focus:text-neutral-950`
+const inputTextStyles = `${baseInputCss} text-neutral-500 hover:text-neutral-600 hover:placeholder:text-neutral-600 focus:text-neutral-950`
 
 const sharedInputStyles = `focus:shadow-input-focused active:shadow-input-focused shadow-sm hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-55`
 
@@ -125,9 +125,9 @@ export const SearchInput = function ({
       )}
       <input
         {...props}
-        className={`${inputCss} ${sizeClass.typography} ${sizeClass.padding} ${
-          sizeClass.placeholder
-        } ${sharedInputStyles} ${
+        className={`${inputTextStyles} ${sizeClass.typography} ${
+          sizeClass.padding
+        } ${sizeClass.placeholder} ${sharedInputStyles} ${
           showMagnifyingGlass ? sizeClass.iconLeftPadding : ''
         } ${showCloseIcon ? 'pr-8' : ''}`}
         disabled={props.disabled}
@@ -146,9 +146,11 @@ export function LockupInput({
     <InputWrapper showCloseIcon={false} size={selectedSize}>
       <input
         {...props}
-        className={`${inputCss} ${sizeClasses[selectedSize].typography} ${
-          sizeClasses[selectedSize].padding
-        } ${sizeClasses[selectedSize].placeholder} ${sharedInputStyles} ${
+        className={`${inputTextStyles} ${
+          sizeClasses[selectedSize].typography
+        } ${sizeClasses[selectedSize].padding} ${
+          sizeClasses[selectedSize].placeholder
+        } ${sharedInputStyles} ${
           isError ? 'shadow-lockup-input-error' : 'shadow-lockup-input-default'
         }`}
         type="text"

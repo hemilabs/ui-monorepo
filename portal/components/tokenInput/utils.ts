@@ -7,7 +7,7 @@ const checkInputIsNotZero = (input: string) => /0\.[0]*[1-9]/.test(input)
 
 type CanSubmit = {
   amountInput: string
-  balance: bigint
+  balance: bigint | undefined
   minAmount?: string
   operation: 'deposit' | 'stake' | 'unstake' | 'withdrawal'
   t: ReturnType<typeof useTranslations<never>>
@@ -46,7 +46,7 @@ type ValidationResult = {
  */
 export const validateInput = function ({
   amountInput,
-  balance,
+  balance = BigInt(0),
   minAmount,
   operation,
   t,

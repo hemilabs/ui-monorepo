@@ -1,4 +1,4 @@
-import { type FetchStatus, QueryStatus } from '@tanstack/react-query'
+import { QueryStatus } from '@tanstack/react-query'
 import Big from 'big.js'
 import { useTokenBalance, useNativeTokenBalance } from 'hooks/useBalance'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
@@ -18,72 +18,39 @@ type Props<T extends Token = Token> = {
 }
 
 const RenderFiatBalanceUnsafe = function ({
-  balance = BigInt(0),
+  balance,
   customFormatter = formatFiatNumber,
-  fetchStatus,
   queryStatus,
   token,
 }: Props & {
   balance: bigint | undefined
   customFormatter?: (amount: string) => string
-  fetchStatus: FetchStatus
   queryStatus: QueryStatus
 }) {
-  const {
-    data,
-    fetchStatus: tokenPricesFetchStatus,
-    status: pricesStatus,
-  } = useTokenPrices({ retryOnMount: false })
+  const { data: pricesData, status: pricesStatus } = useTokenPrices({
+    retryOnMount: false,
+  })
 
-  const stringBalance = formatUnits(balance, token.decimals)
+  if (balance !== undefined && pricesData !== undefined) {
+    const stringBalance = formatUnits(balance, token.decimals)
+    const price = getTokenPrice(token, pricesData)
 
-  const price = getTokenPrice(token, data)
-
-  const mergedFetchStatuses = function () {
-    const fetchStatuses = [fetchStatus, tokenPricesFetchStatus]
-    if (fetchStatuses.includes('fetching')) {
-      return 'fetching'
-    }
-    if (fetchStatuses.includes('paused')) {
-      return 'paused'
-    }
-    return 'idle'
-  }
-
-  const mergedStatus = function () {
-    const statuses = [queryStatus, pricesStatus]
-    if (statuses.includes('pending')) {
-      return 'pending'
-    }
-    if (statuses.includes('error')) {
-      return 'error'
-    }
-    return 'success'
-  }
-
-  const mergedFetchStatus = mergedFetchStatuses()
-  const status = mergedStatus()
-
-  return (
-    // Prevent crashing if a price is missing or wrongly mapped
-    <ErrorBoundary fallback="-">
+    return (
       <>
-        {status === 'pending' && mergedFetchStatus === 'fetching' && (
-          <Skeleton className="h-full" containerClassName="w-8" />
-        )}
-        {(status === 'error' ||
-          (status === 'pending' && mergedFetchStatus === 'idle')) &&
-          '-'}
-        {status === 'success' && (
-          <>
-            {customFormatter(
-              Big(stringBalance).times(price).toFixed(token.decimals),
-            )}
-          </>
+        {customFormatter(
+          Big(stringBalance).times(price).toFixed(token.decimals),
         )}
       </>
-    </ErrorBoundary>
-  )
+    )
+  }
+
+  // Check for errors from either source
+  if (queryStatus === 'error' || pricesStatus === 'error') {
+    return <>-</>
+  }
+
+  // Loading state (either balance or prices are loading)
+  return <Skeleton className="h-full" containerClassName="w-8" />
 }
 
 export const RenderFiatBalance = (
@@ -96,11 +63,10 @@ export const RenderFiatBalance = (
 )
 
 const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
-  const { balance, fetchStatus, status } = useNativeTokenBalance(token.chainId)
+  const { data, status } = useNativeTokenBalance(token.chainId)
   return (
     <RenderFiatBalance
-      balance={balance}
-      fetchStatus={fetchStatus}
+      balance={data?.value}
       queryStatus={status}
       token={token}
     />
@@ -108,17 +74,12 @@ const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
 }
 
 const TokenBalance = function ({ token }: Props<EvmToken>) {
-  const { balance, fetchStatus, status } = useTokenBalance(
+  const { data: balance, status } = useTokenBalance(
     token.chainId,
     token.address,
   )
   return (
-    <RenderFiatBalance
-      balance={balance}
-      fetchStatus={fetchStatus}
-      queryStatus={status}
-      token={token}
-    />
+    <RenderFiatBalance balance={balance} queryStatus={status} token={token} />
   )
 }
 
@@ -130,11 +91,10 @@ const EvmBalance = (props: Props<EvmToken>) =>
   )
 
 const BtcBalance = function ({ token }: Props<BtcToken>) {
-  const { balance, fetchStatus, status } = useBitcoinBalance()
+  const { balance, status } = useBitcoinBalance()
   return (
     <RenderFiatBalance
       balance={BigInt(balance?.confirmed ?? 0)}
-      fetchStatus={fetchStatus}
       queryStatus={status}
       token={token}
     />

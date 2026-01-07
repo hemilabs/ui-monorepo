@@ -168,7 +168,7 @@ export const VaultWithdrawalOperation = function ({
     isValid: isSubmitValid,
   } = validateInput({
     amountInput: input,
-    balance: userPoolBalance ?? BigInt(0),
+    balance: userPoolBalance,
     operation: 'withdrawal',
     t,
     token,

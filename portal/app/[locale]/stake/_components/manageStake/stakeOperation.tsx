@@ -111,7 +111,7 @@ export const StakeOperation = function ({
     stakeTransactionHash,
   } = useStake(token)
   const t = useTranslations()
-  const { balance, isSuccess: balanceLoaded } = useBalance(token)
+  const { data: balance, isSuccess: balanceLoaded } = useBalance(token)
 
   const addApprovalStep = function (): StepPropsWithoutPosition {
     const getStatus = function () {
@@ -197,13 +197,16 @@ export const StakeOperation = function ({
 
   const allowanceLoaded = !isPending || operatesNativeToken
 
+  const getBalance = () =>
+    balance ? (typeof balance === 'bigint' ? balance : balance.value) : balance
+
   const {
     canSubmit: isSubmitValid,
     error,
     errorKey,
   } = canSubmit({
     amountInput,
-    balance,
+    balance: getBalance(),
     operation: 'stake',
     t,
     token,

@@ -18,11 +18,7 @@ export const useEstimateDepositFees = function ({
 }) {
   const isNative = isNativeToken(fromToken)
   const l1StandardBridge = useL1StandardBridgeAddress(fromToken.chainId)
-  const {
-    data: gasUnits,
-    isError,
-    isSuccess,
-  } = useEstimateGas({
+  const { data: gasUnits, isError } = useEstimateGas({
     data: isNative
       ? encodeDepositEth()
       : encodeDepositErc20({
@@ -39,7 +35,7 @@ export const useEstimateDepositFees = function ({
 
   return useEstimateFees({
     chainId: fromToken.chainId,
-    enabled: isSuccess,
+    enabled: gasUnits !== undefined,
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,

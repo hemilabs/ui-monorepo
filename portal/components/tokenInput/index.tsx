@@ -83,7 +83,6 @@ export const TokenInput = function <T extends Token>({
               {!Number.isNaN(value) ? (
                 <RenderFiatBalance
                   balance={parseTokenUnits(value, token)}
-                  fetchStatus="idle"
                   queryStatus="success"
                   token={token}
                 />

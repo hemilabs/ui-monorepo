@@ -73,7 +73,7 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
       spender: veHemiAddress,
     })
 
-  const { balance: walletTokenBalance } = useTokenBalance(
+  const { data: walletTokenBalance } = useTokenBalance(
     token.chainId,
     token.address,
   )

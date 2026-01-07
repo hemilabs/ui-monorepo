@@ -75,10 +75,7 @@ export const VaultDepositOperation = function ({
       ),
   })
 
-  const { balance: tokenBalance } = useTokenBalance(
-    token.chainId,
-    token.address,
-  )
+  const { data: tokenBalance } = useTokenBalance(token.chainId, token.address)
 
   const depositStatus = vaultDepositOperation?.status
 

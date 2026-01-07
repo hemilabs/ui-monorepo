@@ -26,12 +26,10 @@ export const Actions = function ({ row }: Props) {
   const token = usePoolAsset().data
   const t = useTranslations()
 
-  const {
-    balance,
-    // I need to use this because useTokenBalance is defaulting to zero
-    // TODO https://github.com/hemilabs/ui-monorepo/issues/1648
-    isLoading: isTokenBalanceLoading,
-  } = useTokenBalance(token.chainId, token.address)
+  const { data: balance, isError } = useTokenBalance(
+    token.chainId,
+    token.address,
+  )
 
   const commonProps = {
     size: 'xSmall',
@@ -53,10 +51,10 @@ export const Actions = function ({ row }: Props) {
           }}
           variant="primary"
         >
-          {isTokenBalanceLoading ? (
-            <Spinner size="xSmall" />
-          ) : (
+          {balance !== undefined || isError ? (
             t('common.deposit')
+          ) : (
+            <Spinner size="xSmall" />
           )}
         </Button>
       </div>

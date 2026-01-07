@@ -46,11 +46,7 @@ export function useEstimateBtcDepositFees({
     queryKey: ['encode-confirm-deposit', deposit.transactionHash],
   })
 
-  const {
-    data: gasUnits,
-    isError: isGasError,
-    isSuccess: gasSuccess,
-  } = useEstimateGas({
+  const { data: gasUnits, isError: isGasError } = useEstimateGas({
     data: encodedData,
     query: { enabled: isSuccess && !!encodedData },
     to: bitcoinManagerAddresses,
@@ -58,7 +54,7 @@ export function useEstimateBtcDepositFees({
 
   return useEstimateFees({
     chainId: deposit.l2ChainId,
-    enabled: gasSuccess,
+    enabled: gasUnits !== undefined,
     gasUnits,
     isGasUnitsError: isGasError,
     overEstimation: 1.5,

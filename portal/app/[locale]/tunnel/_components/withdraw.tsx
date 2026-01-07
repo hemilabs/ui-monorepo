@@ -87,7 +87,7 @@ const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
 
   const { isPending: isLoadingMinWithdrawalSats, minWithdrawalFormattedSats } =
     useMinWithdrawalSats(fromToken)
-  const { balance: bitcoinBalance, isSuccess: balanceLoaded } = useTokenBalance(
+  const { data: bitcoinBalance, isSuccess: balanceLoaded } = useTokenBalance(
     fromToken.chainId,
     fromToken.address,
   )
@@ -302,11 +302,11 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   const fromChain = useChain(fromNetworkId)!
 
   const {
-    balance: walletNativeTokenBalance,
+    data: walletNativeTokenBalance,
     isSuccess: nativeTokenBalanceLoaded,
   } = useNativeTokenBalance(fromToken.chainId)
 
-  const { balance: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
+  const { data: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
     useTokenBalance(fromToken.chainId, fromToken.address)
 
   const [networkType] = useNetworkType()
@@ -319,7 +319,7 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
   } = validateSubmit({
     amountInput: fromInput,
     balance: operatesNativeToken
-      ? walletNativeTokenBalance
+      ? walletNativeTokenBalance?.value
       : walletTokenBalance,
     operation: 'withdrawal',
     t,

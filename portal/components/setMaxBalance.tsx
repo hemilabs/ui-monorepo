@@ -43,21 +43,21 @@ export const SetMaxEvmBalance = function ({
   token,
 }: Props<EvmToken> & { gas: bigint }) {
   const {
-    balance: walletNativeTokenBalance,
+    data: walletNativeTokenBalance,
     isLoading: isLoadingNativeTokenBalance,
   } = useNativeTokenBalance(token.chainId)
 
-  const { balance: walletTokenBalance } = useTokenBalance(
+  const { data: walletTokenBalance } = useTokenBalance(
     token.chainId,
     token.address,
   )
 
   // gas is paid in native token. So we must deduct gas for native tokens, but not for erc20 tokens
   const finalBalance = isNativeToken(token)
-    ? walletNativeTokenBalance - gas
+    ? (walletNativeTokenBalance?.value ?? BigInt(0)) - gas
     : walletTokenBalance
 
-  const maxBalance = formatUnits(finalBalance, token.decimals)
+  const maxBalance = formatUnits(finalBalance ?? BigInt(0), token.decimals)
 
   const handleClick = () => onSetMaxBalance(maxBalance)
 

@@ -24,11 +24,7 @@ export const useEstimateClaimFees = function ({
   const hemi = useHemi()
   const contractAddress = getMerkleBoxAddress(hemi.id)
 
-  const {
-    data: gasUnits,
-    isError,
-    isSuccess,
-  } = useEstimateGas({
+  const { data: gasUnits, isError } = useEstimateGas({
     data: encodeClaimTokens({
       // will be defined if the query is enabled
       address: address!,
@@ -45,7 +41,7 @@ export const useEstimateClaimFees = function ({
 
   return useEstimateFees({
     chainId: hemi.id,
-    enabled: isSuccess,
+    enabled: gasUnits !== undefined,
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,

@@ -83,7 +83,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   const operatesNativeToken = isNativeToken(fromToken)
 
   const {
-    balance: walletNativeTokenBalance,
+    data: walletNativeTokenBalance,
     isSuccess: nativeTokenBalanceLoaded,
   } = useNativeTokenBalance(fromToken.chainId)
 
@@ -97,7 +97,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
       spender: l1StandardBridgeAddress,
     })
 
-  const { balance: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
+  const { data: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
     useTokenBalance(fromToken.chainId, fromToken.address)
 
   const fromChain = useChain(fromNetworkId)
@@ -109,7 +109,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   } = validateSubmit({
     amountInput: fromInput,
     balance: operatesNativeToken
-      ? walletNativeTokenBalance
+      ? walletNativeTokenBalance?.value
       : walletTokenBalance,
     operation: 'deposit',
     t,

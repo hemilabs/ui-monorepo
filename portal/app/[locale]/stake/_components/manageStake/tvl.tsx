@@ -7,16 +7,11 @@ import { isNativeAddress } from 'utils/nativeToken'
 import { getWrappedEther } from 'utils/token'
 
 const TokenTvl = function ({ token }: { token: EvmToken }) {
-  const {
-    data: supply,
-    fetchStatus,
-    status,
-  } = useTotalSupply(token.address, token.chainId)
+  const { data: supply, status } = useTotalSupply(token.address, token.chainId)
   return (
     <RenderFiatBalance
       balance={supply}
       customFormatter={formatTVL}
-      fetchStatus={fetchStatus}
       queryStatus={status}
       token={token}
     />

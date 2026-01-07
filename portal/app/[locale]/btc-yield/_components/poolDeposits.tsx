@@ -11,7 +11,7 @@ import poolDepositIcon from './icons/poolDeposit.svg'
 
 export const PoolDeposits = function () {
   const poolToken = usePoolAsset().data
-  const { data: poolDeposits, isError } = usePoolDeposits()
+  const { data: poolDeposits, isError, status } = usePoolDeposits()
   const t = useTranslations('bitcoin-yield.info')
 
   return (
@@ -22,9 +22,7 @@ export const PoolDeposits = function () {
           <span className="mr-1">$</span>
           <RenderFiatBalance
             balance={value}
-            // at the point this component is rendered, the data is already available
-            fetchStatus="idle"
-            queryStatus="success"
+            queryStatus={status}
             token={poolToken}
           />
         </div>

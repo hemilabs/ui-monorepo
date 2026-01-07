@@ -64,7 +64,7 @@ export const Stake = function () {
       spender: veHemiAddress,
     })
 
-  const { balance: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
+  const { data: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
     useTokenBalance(token.chainId, token.address)
 
   const {

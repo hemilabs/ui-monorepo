@@ -48,7 +48,7 @@ const InputWrapper = ({
     {showCloseIcon && (
       <div className="absolute right-0 -translate-x-3">
         <CloseIcon
-          className="cursor-pointer [&>path]:hover:fill-neutral-600"
+          className="cursor-pointer [&>path]:hover:fill-neutral-500"
           onClick={onClear}
         />
       </div>

@@ -6,6 +6,7 @@ const config = require('./config')
 const ethCall = require('./eth-call')
 const promiseAllProps = require('./promise-all-props')
 
+const { dead } = config.get('accounts')
 const { hemi, merkleBox, safe, veHemi } = config.get('contracts')
 const { correction, merkleLocked, opAddresses } = config.get('supply')
 const rpcUrls = config.get('rpcUrls')
@@ -53,7 +54,7 @@ function fetchSupply() {
     'bnb-safe': getBalanceOf(rpcUrls.bnb, hemi.bnb, safe),
     'locked': getBalanceOf(rpcUrls.hemi, hemi.hemi, veHemi),
     'merkle': getDistributedButLocked(),
-    // getTokensBurned(), // Method TBD
+    'burned': getBalanceOf(rpcUrls.eth, hemi.eth, dead),
     // getTokensSlashed(), // Method TBD
     ...getAddressBalances(opAddresses),
     'correction': Promise.resolve(correction),

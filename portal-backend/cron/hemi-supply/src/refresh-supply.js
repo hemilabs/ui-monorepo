@@ -88,7 +88,6 @@ async function storeSupply(data) {
 
 async function refreshSupply() {
   const data = await fetchSupply()
-  console.log('Fetched supply data:', data)
   await storeSupply(data)
 }
 

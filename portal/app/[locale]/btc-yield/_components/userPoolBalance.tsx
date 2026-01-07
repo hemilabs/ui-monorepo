@@ -8,13 +8,6 @@ type Props = {
 }
 
 export const UserPoolBalance = function ({ token }: Props) {
-  const { data: balance, fetchStatus, status } = useUserPoolBalance()
-  return (
-    <RenderCryptoBalance
-      balance={balance ?? BigInt(0)}
-      fetchStatus={fetchStatus}
-      status={status}
-      token={token}
-    />
-  )
+  const { data: balance, status } = useUserPoolBalance()
+  return <RenderCryptoBalance balance={balance} status={status} token={token} />
 }

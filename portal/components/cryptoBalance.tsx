@@ -13,57 +13,44 @@ type Props<T extends Token = Token> = {
   token: T
 }
 
-export const RenderCryptoBalance = ({
+export const RenderCryptoBalance = function ({
   balance,
-  fetchStatus,
   showSymbol = false,
   status,
   token,
-}: Props & { balance: bigint; showSymbol?: boolean } & Pick<
+}: Props & { balance: bigint | undefined; showSymbol?: boolean } & Pick<
     ReturnType<typeof useTokenBalance>,
-    'fetchStatus' | 'status'
-  >) => (
-  <>
-    {status === 'pending' && fetchStatus === 'fetching' && (
-      <Skeleton className="h-full" containerClassName="basis-1/3" />
-    )}
-    {(status === 'error' || (status === 'pending' && fetchStatus === 'idle')) &&
-      '-'}
-    {status === 'success' && (
+    'status'
+  >) {
+  if (balance !== undefined) {
+    return (
       <DisplayAmount
         amount={formatUnits(balance, token.decimals)}
         showSymbol={showSymbol}
         token={token}
       />
-    )}
-  </>
-)
+    )
+  }
+  if (status === 'error') {
+    return <>-</>
+  }
+  // Loading state
+  return <Skeleton className="h-full" containerClassName="basis-1/3" />
+}
 
 const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
-  const { balance, fetchStatus, status } = useNativeTokenBalance(token.chainId)
+  const { data, status } = useNativeTokenBalance(token.chainId)
   return (
-    <RenderCryptoBalance
-      balance={balance}
-      fetchStatus={fetchStatus}
-      status={status}
-      token={token}
-    />
+    <RenderCryptoBalance balance={data?.value} status={status} token={token} />
   )
 }
 
 const TokenBalance = function ({ token }: Props<EvmToken>) {
-  const { balance, fetchStatus, status } = useTokenBalance(
+  const { data: balance, status } = useTokenBalance(
     token.chainId,
     token.address,
   )
-  return (
-    <RenderCryptoBalance
-      balance={balance}
-      fetchStatus={fetchStatus}
-      status={status}
-      token={token}
-    />
-  )
+  return <RenderCryptoBalance balance={balance} status={status} token={token} />
 }
 
 const EvmBalance = (props: Props<EvmToken>) =>
@@ -74,11 +61,10 @@ const EvmBalance = (props: Props<EvmToken>) =>
   )
 
 const BtcBalance = function ({ token }: Props<BtcToken>) {
-  const { balance, fetchStatus, status } = useBitcoinBalance()
+  const { balance, status } = useBitcoinBalance()
   return (
     <RenderCryptoBalance
-      balance={BigInt(balance?.confirmed ?? 0)}
-      fetchStatus={fetchStatus}
+      balance={balance?.confirmed ? BigInt(balance?.confirmed) : undefined}
       status={status}
       token={token}
     />

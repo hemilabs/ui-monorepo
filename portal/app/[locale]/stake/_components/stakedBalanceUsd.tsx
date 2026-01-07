@@ -8,14 +8,9 @@ type Props = {
 }
 
 export const StakedBalanceUsd = function ({ token }: Props) {
-  const { balance, fetchStatus, status } = useStakedBalance(token)
+  const { balance, status } = useStakedBalance(token)
 
   return (
-    <RenderFiatBalance
-      balance={balance}
-      fetchStatus={fetchStatus}
-      queryStatus={status}
-      token={token}
-    />
+    <RenderFiatBalance balance={balance} queryStatus={status} token={token} />
   )
 }

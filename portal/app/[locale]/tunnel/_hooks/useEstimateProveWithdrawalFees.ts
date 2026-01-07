@@ -21,11 +21,7 @@ export const useEstimateProveWithdrawalFees = function ({
   const { address: account } = useAccount()
   const hemiClient = useHemiClient()
 
-  const {
-    data: gasUnits,
-    isError,
-    isSuccess,
-  } = useQuery({
+  const { data: gasUnits, isError } = useQuery({
     enabled: enabled && !!account,
     async queryFn() {
       const publicClient = getEvmL1PublicClient(l1ChainId)
@@ -53,7 +49,7 @@ export const useEstimateProveWithdrawalFees = function ({
 
   return useEstimateFees({
     chainId: l1ChainId,
-    enabled: isSuccess,
+    enabled: gasUnits !== undefined,
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,

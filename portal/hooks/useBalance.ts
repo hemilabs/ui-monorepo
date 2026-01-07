@@ -12,19 +12,13 @@ export const useNativeTokenBalance = function (
   enabled: boolean = true,
 ) {
   const { address, isConnected } = useAccount()
-  const { data, refetch, ...rest } = useWagmiBalance({
+  return useWagmiBalance({
     address,
     chainId,
     query: {
       enabled: isConnected && enabled,
     },
   })
-
-  return {
-    balance: rest.status === 'error' ? BigInt(0) : data?.value ?? BigInt(0),
-    refetchBalance: refetch,
-    ...rest,
-  }
 }
 
 export const useTokenBalance = function (
@@ -32,8 +26,7 @@ export const useTokenBalance = function (
   tokenAddress: string,
 ) {
   const { address, isConnected } = useAccount()
-
-  const { data, refetch, ...rest } = useReadContract({
+  return useReadContract({
     abi: erc20Abi,
     address: tokenAddress as Address,
     args: address ? [address] : undefined,
@@ -48,10 +41,4 @@ export const useTokenBalance = function (
         !isNativeAddress(tokenAddress),
     },
   })
-
-  return {
-    balance: rest.status === 'error' ? BigInt(0) : data ?? BigInt(0),
-    refetchTokenBalance: refetch,
-    ...rest,
-  }
 }

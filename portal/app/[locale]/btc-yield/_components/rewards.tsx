@@ -30,7 +30,6 @@ const TokenRewardItem = function ({
   return (
     <RenderCryptoBalance
       balance={amount}
-      fetchStatus="idle"
       showSymbol
       status="success"
       token={token}

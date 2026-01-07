@@ -23,7 +23,7 @@ export const useEstimateCreateLockFees = function ({
     lockDurationInSeconds,
   })
 
-  const { data: gasUnits, isSuccess } = useEstimateGas({
+  const { data: gasUnits } = useEstimateGas({
     data,
     query: { enabled: isConnected && enabled },
     to: veHemiAddress,
@@ -32,7 +32,7 @@ export const useEstimateCreateLockFees = function ({
 
   return useEstimateFees({
     chainId: token.chainId,
-    enabled: isSuccess,
+    enabled: gasUnits !== undefined,
     gasUnits,
     overEstimation: 1.5,
   })

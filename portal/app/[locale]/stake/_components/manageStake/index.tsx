@@ -1,10 +1,5 @@
 'use client'
 
-import {
-  useAccountModal,
-  useChainModal,
-  useConnectModal,
-} from '@rainbow-me/rainbowkit'
 import { Drawer } from 'components/drawer'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
@@ -35,9 +30,6 @@ export const ManageStake = function ({
   )
 
   const t = useTranslations('stake-page.drawer')
-  const { accountModalOpen } = useAccountModal()
-  const { chainModalOpen } = useChainModal()
-  const { connectModalOpen } = useConnectModal()
 
   const { heading, subheading } = {
     manage: {
@@ -52,19 +44,11 @@ export const ManageStake = function ({
 
   const isStaking = mode === 'stake' || operation === 'stake'
 
-  // Prevent closing the drawer when a RainbowKit modal is open.
-  // Without this check, clicks on the wallet modal (e.g., Connect Wallet)
-  // are interpreted as outside clicks and trigger onClose unintentionally.
-  function safeCloseDrawer() {
-    if (accountModalOpen || chainModalOpen || connectModalOpen) return
-    closeDrawer()
-  }
-
   return (
-    <Drawer onClose={safeCloseDrawer}>
+    <Drawer onClose={closeDrawer}>
       {isStaking ? (
         <StakeOperation
-          closeDrawer={safeCloseDrawer}
+          closeDrawer={closeDrawer}
           heading={heading}
           onOperationChange={setOperation}
           showTabs={isManaging}
@@ -73,7 +57,7 @@ export const ManageStake = function ({
         />
       ) : (
         <UnstakeOperation
-          closeDrawer={safeCloseDrawer}
+          closeDrawer={closeDrawer}
           heading={heading}
           onOperationChange={setOperation}
           subheading={subheading}

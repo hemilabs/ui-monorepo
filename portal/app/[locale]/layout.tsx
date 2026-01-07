@@ -1,5 +1,4 @@
 import 'styles/globals.css'
-import '@rainbow-me/rainbowkit/styles.css'
 import 'react-loading-skeleton/dist/skeleton.css'
 
 import { ConnectWalletDrawerProvider } from 'context/connectWalletDrawerContext'

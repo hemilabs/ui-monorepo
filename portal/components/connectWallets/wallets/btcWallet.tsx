@@ -4,6 +4,7 @@ import { ConnectorGroup } from 'btc-wallet/connectors/types'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useConfig } from 'btc-wallet/hooks/useConfig'
 import { useConnect } from 'btc-wallet/hooks/useConnect'
+import { useDisconnect as useBtcDisconnect } from 'btc-wallet/hooks/useDisconnect'
 import {
   ConnectedBtcAccount,
   ConnectedBtcChain,
@@ -23,6 +24,7 @@ import { getNativeToken } from 'utils/nativeToken'
 import { Box } from '../box'
 import { BtcLogo } from '../btcLogo'
 import { ConnectToSupportedChain } from '../connectToSupportedChain'
+import { DisconnectWallet } from '../disconnectWallet'
 
 const ConnectWalletButton = function ({
   event,
@@ -82,6 +84,7 @@ export const BtcWallet = function () {
   const chainSupported = useChainIsSupported(chainId)
   const { connect } = useConnect()
   const { connectors } = useConfig()
+  const { disconnect } = useBtcDisconnect()
 
   const t = useTranslations('connect-wallets')
 
@@ -109,6 +112,7 @@ export const BtcWallet = function () {
           <>
             <ConnectedBtcAccount />
             <ConnectedBtcChain />
+            <DisconnectWallet disconnect={disconnect} />
           </>
         }
       >

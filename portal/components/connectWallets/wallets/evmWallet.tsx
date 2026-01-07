@@ -9,11 +9,15 @@ import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { getNativeToken } from 'utils/nativeToken'
 import { walletIsConnected } from 'utils/wallet'
-import { useAccount as useEvmAccount } from 'wagmi'
+import {
+  useAccount as useEvmAccount,
+  useDisconnect as useEvmDisconnect,
+} from 'wagmi'
 
 import { Box } from '../box'
 import { ConnectToSupportedChain } from '../connectToSupportedChain'
 import { ConnectWalletAccordion } from '../connectWalletAccordion'
+import { DisconnectWallet } from '../disconnectWallet'
 import { EthLogo } from '../ethLogo'
 
 export const EvmWallet = function () {
@@ -21,6 +25,7 @@ export const EvmWallet = function () {
   const t = useTranslations('connect-wallets')
   const allWallets = useAllWallets()
   const chainSupported = useChainIsSupported(chainId)
+  const { disconnect } = useEvmDisconnect()
 
   if (status === 'connected') {
     return (
@@ -29,6 +34,7 @@ export const EvmWallet = function () {
           <>
             <ConnectedEvmAccount />
             <ConnectedEvmChain />
+            <DisconnectWallet disconnect={disconnect} />
           </>
         }
       >

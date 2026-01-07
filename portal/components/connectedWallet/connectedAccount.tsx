@@ -1,9 +1,7 @@
 import { bitcoinMainnet, bitcoinTestnet } from 'btc-wallet/chains'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
-import { useDisconnect as useBtcDisconnect } from 'btc-wallet/hooks/useDisconnect'
 import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchChain'
 import { type Account } from 'btc-wallet/unisat'
-import { Button } from 'components/button'
 import { EvmWalletLogo } from 'components/connectWallets/evmWalletLogo'
 import { ProfileIcon } from 'components/connectWallets/icons/profile'
 import { UnisatLogo } from 'components/connectWallets/unisatLogo'
@@ -20,18 +18,16 @@ import { useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
 import { formatBtcAddress, formatEvmAddress } from 'utils/format'
 import { type Address } from 'viem'
-import { useAccount, useDisconnect as useEvmDisconnect } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { BtcLogo } from '../icons/btcLogo'
 
-import { DisconnectLogo } from './disconnectLogo'
 import { EvmChainsMenu } from './evmChainsMenu'
 import { EvmLogo } from './evmLogo'
 import { WrongEvmNetwork, WrongNetwork } from './wrongNetwork'
 
 const ConnectedChain = function ({
   closeMenu,
-  disconnect,
   icon,
   menu,
   menuOpen = false,
@@ -39,7 +35,6 @@ const ConnectedChain = function ({
   openMenu,
 }: {
   closeMenu?: VoidFunction
-  disconnect: VoidFunction
   icon: ReactNode
   menu?: ReactNode
   menuOpen?: boolean
@@ -74,9 +69,6 @@ const ConnectedChain = function ({
         </div>
         {menuOpen && menu}
       </div>
-      <Button onClick={disconnect} size="xSmall" variant="secondary">
-        <DisconnectLogo />
-      </Button>
     </div>
   )
 }
@@ -113,7 +105,7 @@ const ConnectedWallet = function ({
   return (
     <div
       className="group/connected-wallet relative flex h-8 items-center rounded-lg
-        p-2 text-sm font-medium text-neutral-950"
+        py-2 text-sm font-medium text-neutral-950"
     >
       <div className="flex items-center gap-3">
         <div className="relative size-8">
@@ -149,7 +141,6 @@ export const ConnectedEvmChain = function () {
   const { chain, isConnected } = useAccount()
   const isChainUnsupported = useConnectedToUnsupportedEvmChain()
   const [menuOpen, setMenuOpen] = useState(false)
-  const { disconnect } = useEvmDisconnect()
 
   if (!isConnected) {
     return null
@@ -163,7 +154,6 @@ export const ConnectedEvmChain = function () {
   return (
     <ConnectedChain
       closeMenu={closeMenu}
-      disconnect={disconnect}
       icon={<EvmLogo chainId={chain.id} />}
       menu={<EvmChainsMenu onSwitchChain={closeMenu} />}
       menuOpen={menuOpen}
@@ -206,7 +196,6 @@ export const ConnectedBtcAccount = function () {
 export const ConnectedBtcChain = function () {
   const { chain, isConnected } = useBtcAccount()
   const [networkType] = useNetworkType()
-  const { disconnect } = useBtcDisconnect()
 
   const { switchChain } = useSwitchBtcChain()
 
@@ -228,11 +217,5 @@ export const ConnectedBtcChain = function () {
       />
     )
   }
-  return (
-    <ConnectedChain
-      disconnect={disconnect}
-      icon={<BtcLogo />}
-      name={chain.name}
-    />
-  )
+  return <ConnectedChain icon={<BtcLogo />} name={chain.name} />
 }

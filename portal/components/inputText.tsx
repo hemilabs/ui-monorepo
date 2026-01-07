@@ -4,9 +4,9 @@ import { MagnifyingGlassIcon } from './icons/magnifyingGlassIcon'
 
 const baseInputCss = `w-full cursor-pointer rounded-lg bg-white disabled:cursor-auto placeholder:font-medium focus:outline-none transition-colors duration-200`
 
-const searchInputCss = `${baseInputCss} text-neutral-500 hover:text-neutral-600 hover:placeholder:text-neutral-600`
+const inputCss = `${baseInputCss} text-neutral-500 hover:text-neutral-600 hover:placeholder:text-neutral-600 focus:text-neutral-950`
 
-const lockupInputCss = `${baseInputCss} text-base md:text-sm placeholder:text-sm px-3 py-2 font-medium text-neutral-950 border border-solid placeholder:text-neutral-500 focus:border-orange-600`
+const sharedInputStyles = `focus:shadow-input-focused active:shadow-input-focused shadow-sm hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-55`
 
 const CloseIcon = (props: ComponentProps<'svg'>) => (
   <svg
@@ -36,13 +36,11 @@ type InputWrapperProps = {
   showCloseIcon: boolean
   onClear?: VoidFunction
   size?: Size
-  outlineColor?: 'neutral-200' | 'orange-100'
 }
 
 const InputWrapper = ({
   children,
   onClear,
-  outlineColor,
   showCloseIcon,
   size,
 }: InputWrapperProps) => (
@@ -56,11 +54,7 @@ const InputWrapper = ({
       </div>
     )}
     <div
-      className={`box-border flex w-full gap-x-2 rounded-lg outline outline-0 ${
-        outlineColor === 'orange-100'
-          ? 'outline-orange-100'
-          : 'outline-neutral-200'
-      } transition-all duration-200 focus-within:outline-4 disabled:cursor-not-allowed ${
+      className={`box-border flex w-full gap-x-2 rounded-lg outline outline-0 outline-neutral-200 transition-all duration-200 focus-within:outline-4 disabled:cursor-not-allowed ${
         size ? wrapperHeights[size] : ''
       }`}
     >
@@ -119,7 +113,6 @@ export const SearchInput = function ({
   return (
     <InputWrapper
       onClear={onClear}
-      outlineColor="neutral-200"
       showCloseIcon={showCloseIcon}
       size={selectedSize}
     >
@@ -132,11 +125,9 @@ export const SearchInput = function ({
       )}
       <input
         {...props}
-        className={`${searchInputCss} ${sizeClass.typography} ${
-          sizeClass.padding
-        } ${
+        className={`${inputCss} ${sizeClass.typography} ${sizeClass.padding} ${
           sizeClass.placeholder
-        } focus:shadow-input-focused active:shadow-input-focused shadow-sm hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-55 ${
+        } ${sharedInputStyles} ${
           showMagnifyingGlass ? sizeClass.iconLeftPadding : ''
         } ${showCloseIcon ? 'pr-8' : ''}`}
         disabled={props.disabled}
@@ -145,22 +136,23 @@ export const SearchInput = function ({
     </InputWrapper>
   )
 }
-
-export const LockupInput = ({
+export function LockupInput({
   isError = false,
+  size,
   ...props
-}: Omit<Props, 'onClear'> & { isError?: boolean }) => (
-  <InputWrapper outlineColor="orange-100" showCloseIcon={false}>
-    <input
-      {...props}
-      className={`${lockupInputCss}
-          hover:shadow-lockup-input-hover border-transparent  
-          ${
-            isError
-              ? 'shadow-lockup-input-error'
-              : 'shadow-lockup-input-default'
-          }`}
-      type="text"
-    />
-  </InputWrapper>
-)
+}: Omit<Props, 'onClear'> & { isError?: boolean; size?: Size }) {
+  const selectedSize: Size = size ?? 'xs'
+  return (
+    <InputWrapper showCloseIcon={false} size={selectedSize}>
+      <input
+        {...props}
+        className={`${inputCss} ${sizeClasses[selectedSize].typography} ${
+          sizeClasses[selectedSize].padding
+        } ${sizeClasses[selectedSize].placeholder} ${sharedInputStyles} ${
+          isError ? 'shadow-lockup-input-error' : 'shadow-lockup-input-default'
+        }`}
+        type="text"
+      />
+    </InputWrapper>
+  )
+}

@@ -31,6 +31,7 @@ const wrapperHeights: Record<Size, string> = {
   s: 'h-8',
   xl: 'h-11',
 } as const
+/* eslint-enable sort-keys */
 
 type InputWrapperProps = {
   children: ReactNode

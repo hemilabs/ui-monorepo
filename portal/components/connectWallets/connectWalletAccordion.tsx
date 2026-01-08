@@ -5,6 +5,7 @@ import { type WalletData } from 'hooks/useAllWallets'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
+import { isMobile } from 'react-device-detect'
 import { useConnect } from 'wagmi'
 
 import { EvmWalletLogo } from './evmWalletLogo'
@@ -12,20 +13,26 @@ import { DownloadIcon } from './icons/download'
 import { WalletQRCodeView } from './walletQRCodeView'
 
 // These are the connector types that require a QR code to connect
+// It applies to desktop devices only
 const qrCodeConnectorTypes = ['walletConnect', 'binanceWallet']
+// walletConnect is a generic connector so we need to handle it differently
+// always showing the option to open the website so the user can connect their wallet
+const isWalletConnect = (wallet: WalletData) =>
+  wallet.connector?.type === 'walletConnect'
 
 function getWalletState(wallet: WalletData) {
   const hasConnector = !!wallet.connector
   const needsQRCode = wallet.connector?.type
-    ? qrCodeConnectorTypes.includes(wallet.connector.type)
+    ? qrCodeConnectorTypes.includes(wallet.connector.type) && !isMobile
     : false
 
   return {
-    canConnectDirectly: hasConnector && !needsQRCode,
+    canConnectDirectly:
+      hasConnector && !needsQRCode && !isWalletConnect(wallet),
     hasConnector,
     needsQRCode,
-    showCheck: hasConnector && !needsQRCode,
-    showInstall: !hasConnector || needsQRCode,
+    showCheck: hasConnector && !needsQRCode && !isWalletConnect(wallet),
+    showInstall: !hasConnector || needsQRCode || isWalletConnect(wallet),
   }
 }
 

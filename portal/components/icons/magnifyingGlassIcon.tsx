@@ -2,13 +2,13 @@ type Props = {
   size?: 'xs' | 's' | 'xl'
 }
 
-const defaultSize = 'w-4 h-4'
+const defaultSize = 'size-4'
 
 const iconSizes = {
   /* eslint-disable sort-keys */
   xs: defaultSize, // 16px
   s: defaultSize, // 16px
-  xl: 'w-6 h-6', // 24px
+  xl: 'size-6', // 24px
   /* eslint-enable sort-keys */
 } as const
 

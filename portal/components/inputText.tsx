@@ -73,7 +73,7 @@ const sizeClasses = {
   s: {
     borderRadius: 'rounded-lg',
     height: 'h-8',
-    iconLeftPadding: 'pl-7',
+    iconLeftPadding: 'pl-9',
     iconPosition: 'left-3',
     padding: 'px-2.5 py-2',
     placeholder: 'placeholder:text-sm',
@@ -91,7 +91,7 @@ const sizeClasses = {
   xs: {
     borderRadius: 'rounded-md',
     height: 'h-7',
-    iconLeftPadding: 'pl-7',
+    iconLeftPadding: 'pl-9',
     iconPosition: 'left-2.5',
     padding: 'px-2.5 py-1.5',
     placeholder: 'placeholder:text-xs',

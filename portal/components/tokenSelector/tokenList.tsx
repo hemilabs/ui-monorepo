@@ -156,7 +156,7 @@ export const TokenList = function ({
           onClear={() => setSearchText('')}
           onKeyDown={addKeyDownListener}
           placeholder={t('search-tokens')}
-          size="xl"
+          size="s"
           value={searchText}
         />
       </div>

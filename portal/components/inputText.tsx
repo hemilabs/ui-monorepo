@@ -2,9 +2,9 @@ import { ComponentProps, ReactNode } from 'react'
 
 import { MagnifyingGlassIcon } from './icons/magnifyingGlassIcon'
 
-const baseInputCss = `w-full cursor-pointer rounded-lg bg-white disabled:cursor-auto placeholder:font-medium focus:outline-none transition-colors duration-200`
+const baseInputCss = `w-full cursor-pointer rounded-lg bg-white disabled:cursor-auto placeholder:font-medium placeholder:transition-colors placeholder:duration-200 focus:outline-none transition-colors duration-200`
 
-const inputTextStyles = `${baseInputCss} text-neutral-500 hover:text-neutral-600 hover:placeholder:text-neutral-600 focus:text-neutral-950`
+const inputTextStyles = `${baseInputCss} text-neutral-500 hover:text-neutral-600 hover:placeholder:text-neutral-600 active:text-neutral-600 focus:text-neutral-950`
 
 const sharedInputStyles = `focus:shadow-input-focused active:shadow-input-focused shadow-sm hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-55`
 
@@ -50,7 +50,7 @@ const InputWrapper = ({
     {showCloseIcon && (
       <div className="absolute right-0 -translate-x-3">
         <CloseIcon
-          className="cursor-pointer [&>path]:hover:fill-neutral-500"
+          className="cursor-pointer [&>path]:hover:fill-neutral-950"
           onClick={onClear}
         />
       </div>
@@ -73,11 +73,11 @@ const sizeClasses = {
   s: {
     borderRadius: 'rounded-lg',
     height: 'h-8',
-    iconLeftPadding: 'pl-9',
+    iconLeftPadding: 'pl-7',
     iconPosition: 'left-3',
     padding: 'px-2.5 py-2',
     placeholder: 'placeholder:text-sm',
-    typography: 'text-sm font-semibold',
+    typography: 'text-sm font-medium',
   },
   xl: {
     borderRadius: 'rounded-lg',
@@ -86,16 +86,16 @@ const sizeClasses = {
     iconPosition: 'left-4',
     padding: 'px-4 py-1.5',
     placeholder: 'placeholder:text-mid',
-    typography: 'text-mid font-semibold',
+    typography: 'text-mid font-medium',
   },
   xs: {
     borderRadius: 'rounded-md',
     height: 'h-7',
-    iconLeftPadding: 'pl-9',
+    iconLeftPadding: 'pl-7',
     iconPosition: 'left-2.5',
     padding: 'px-2.5 py-1.5',
     placeholder: 'placeholder:text-xs',
-    typography: 'text-xs font-semibold',
+    typography: 'text-xs font-medium',
   },
 } as const
 
@@ -120,7 +120,7 @@ export const SearchInput = function ({
     >
       {showMagnifyingGlass && (
         <div
-          className={`absolute ${sizeClass.iconPosition} top-1/2 -translate-y-1/2 group-hover:[&>svg>path]:fill-neutral-600`}
+          className={`absolute ${sizeClass.iconPosition} top-1/2 -translate-y-1/2 group-hover:[&>svg>path]:fill-neutral-500`}
         >
           <MagnifyingGlassIcon size={selectedSize} />
         </div>

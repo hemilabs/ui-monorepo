@@ -10,28 +10,46 @@ import { useConnect } from 'wagmi'
 
 import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
 
-function getWalletDownloadUrl(item: WalletData) {
-  const { downloadUrls } = item
-
+function getMobileDownloadUrl(downloadUrls: WalletData['downloadUrls']) {
   if (!downloadUrls) {
     return undefined
   }
+  if (isIOS && downloadUrls.ios) {
+    return downloadUrls.ios
+  }
+  if (isAndroid && downloadUrls.android) {
+    return downloadUrls.android
+  }
 
-  if (isMobile) {
-    if (isIOS && downloadUrls.ios) {
-      return downloadUrls.ios
-    }
-    if (isAndroid && downloadUrls.android) {
-      return downloadUrls.android
-    }
-    if (downloadUrls.mobile) {
-      return downloadUrls.mobile
-    }
+  return downloadUrls.mobile
+}
+
+function getDesktopDownloadUrl(downloadUrls: WalletData['downloadUrls']) {
+  if (!downloadUrls) {
+    return undefined
   }
 
   return (
     downloadUrls.browserExtension || downloadUrls.chrome || downloadUrls.firefox
   )
+}
+
+function getWalletDownloadUrl(item: WalletData) {
+  const { downloadUrls } = item
+
+  if (!downloadUrls) {
+    // If there is no download URL provided by the connector,
+    // the only option left is the generic walletConnect
+    const devices = isMobile ? 'Mobile' : 'Desktop,Web,Browser Extension'
+
+    return `https://walletguide.walletconnect.network/?devices=${encodeURIComponent(
+      devices,
+    )}`
+  }
+
+  return isMobile
+    ? getMobileDownloadUrl(downloadUrls)
+    : getDesktopDownloadUrl(downloadUrls)
 }
 
 type Props = {

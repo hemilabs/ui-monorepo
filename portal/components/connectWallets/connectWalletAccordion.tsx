@@ -44,7 +44,7 @@ export const ConnectWalletAccordion = function ({
 }: Props) {
   const { track } = useUmami()
   const t = useTranslations('connect-wallets')
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(true)
   const [selectedWallet, setSelectedWallet] = useState<WalletData | null>(null)
   const { connect } = useConnect()
 
@@ -65,6 +65,20 @@ export const ConnectWalletAccordion = function ({
     }
   }
 
+  const sortedWallets = [...wallets].sort(function (a, b) {
+    const aState = getWalletState(a)
+    const bState = getWalletState(b)
+
+    if (aState.showCheck && !bState.showCheck) {
+      return -1
+    }
+    if (!aState.showCheck && bState.showCheck) {
+      return 1
+    }
+
+    return 0
+  })
+
   return (
     <div className="rounded-lg bg-white shadow-sm">
       <button
@@ -82,7 +96,11 @@ export const ConnectWalletAccordion = function ({
         </div>
       </button>
 
-      <div className={`shadow-sm ${isOpen ? 'block' : 'hidden'}`} />
+      <div
+        className={`h-px border-t border-neutral-300/55 ${
+          isOpen ? 'block' : 'hidden'
+        }`}
+      />
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${
           isOpen ? 'max-h-120' : 'max-h-0'
@@ -95,8 +113,8 @@ export const ConnectWalletAccordion = function ({
             }`}
           >
             <h4 className="mb-3 mt-1 text-neutral-500">{t('wallets')}</h4>
-            <div className="flex gap-2 overflow-x-auto md:grid md:grid-cols-3 md:overflow-x-visible">
-              {wallets.map(function (wallet) {
+            <div className="flex gap-2 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:overflow-x-visible md:pb-0">
+              {sortedWallets.map(function (wallet) {
                 const { showCheck, showInstall } = getWalletState(wallet)
 
                 return (

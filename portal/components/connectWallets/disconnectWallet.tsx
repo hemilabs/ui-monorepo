@@ -1,4 +1,4 @@
-import { Button } from 'components/button'
+import { ButtonIcon } from 'components/button'
 import { DisconnectLogo } from 'components/connectedWallet/disconnectLogo'
 
 type Props = {
@@ -6,7 +6,9 @@ type Props = {
 }
 
 export const DisconnectWallet = ({ disconnect }: Props) => (
-  <Button onClick={disconnect} size="xSmall" variant="secondary">
-    <DisconnectLogo />
-  </Button>
+  <div className="group">
+    <ButtonIcon onClick={disconnect} size="xSmall" variant="secondary">
+      <DisconnectLogo className="text-neutral-500 transition-colors duration-200 group-hover:text-neutral-950" />
+    </ButtonIcon>
+  </div>
 )

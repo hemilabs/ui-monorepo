@@ -121,25 +121,24 @@
   "connect-wallets": {
     "btc-wallet": "Carteira BTC",
     "btc-wallet-requirement": "Uma carteira Bitcoin é necessária apenas se transferir ativos entre Bitcoin e Hemi.",
-    "connect-btc-wallet": "Conectar a sua Carteira BTC Unisat",
+    "connect-btc-wallet": "Conectar a sua Carteira BTC",
     "connect-evm-wallet": "Conectar a sua Carteira EVM",
     "connect-to-see-balance": "Conectar a uma rede suportada para ver o seu saldo",
-    "connected-with-wallet": "Conectado com <wallet></wallet>",
     "copy-address": "Copiar Endereço",
-    "description": "Conecte as suas carteiras EVM e BTC para transferir ativos sem problemas. Para a melhor experiência, utilize carteiras de ambas as redes.",
     "disconnect": "Desconectar",
+    "dont-have": "Não tem {wallet}?",
     "evm-wallet": "Carteira EVM",
-    "how-to-create-unisat-wallet": "Como criar uma carteira Unisat",
+    "get": "Obter",
+    "get-wallet": "Obter {wallet}",
+    "install": "Instalar",
+    "scan-with": "Escanear com {wallet}",
     "status": {
       "connected": "Conectado",
       "connecting": "A conectar",
       "disconnected": "Desconectado",
       "reconnecting": "A reconectar"
     },
-    "unisat-is-the-only-supported-wallet": {
-      "first-line": "A extensão web UniSat é a única carteira BTC suportada.",
-      "second-line": "Não utilize a aplicação móvel UniSat."
-    }
+    "wallets": "Carteiras"
   },
   "ecosystem": {
     "bitcoin-kit": {

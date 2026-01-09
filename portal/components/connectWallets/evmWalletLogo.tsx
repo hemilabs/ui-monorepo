@@ -1,20 +1,24 @@
-import Image, { StaticImageData } from 'next/image'
+import { ComponentProps, ReactNode } from 'react'
 
-import coinbaseLogo from './logos/coinbase.svg'
-import metamaskLogo from './logos/metamask.svg'
-import okxLogo from './logos/okx.svg'
-import rabbyLogo from './logos/rabby.svg'
-import tokenPocketLogo from './logos/tokenPocket.svg'
-import walletConnectLogo from './logos/walletConnect.svg'
+import { BinanceWalletLogo } from './logos/binanceWallet'
+import { CoinbaseWalletLogo } from './logos/coinbaseWallet'
+import { MetamaskLogo } from './logos/metamask'
+import { OkxWalletLogo } from './logos/okxWallet'
+import { PhantomWalletLogo } from './logos/phantomWallet'
+import { RabbyWalletLogo } from './logos/rabbyWallet'
+import { TokenPocketLogo } from './logos/tokenPocket'
+import { WalletConnectLogo } from './logos/walletConnect'
 
-function getLogo(walletName: string) {
-  const wallets: Record<string, StaticImageData> = {
-    coinbase: coinbaseLogo,
-    metaMask: metamaskLogo,
-    okx: okxLogo,
-    rabby: rabbyLogo,
-    tokenPocket: tokenPocketLogo,
-    walletConnect: walletConnectLogo,
+function getLogo(walletName: string, props?: ComponentProps<'svg'>) {
+  const wallets: Record<string, ReactNode> = {
+    binance: <BinanceWalletLogo {...props} />,
+    coinbase: <CoinbaseWalletLogo {...props} />,
+    metaMask: <MetamaskLogo {...props} />,
+    okx: <OkxWalletLogo {...props} />,
+    phantom: <PhantomWalletLogo {...props} />,
+    rabby: <RabbyWalletLogo {...props} />,
+    tokenPocket: <TokenPocketLogo {...props} />,
+    walletConnect: <WalletConnectLogo {...props} />,
   }
   // Why this check instead of using the wallet's ids? All injected wallets override window.ethereum.
   // This causes some weird collisions where the wallet id takes different forms. For example, I found cases
@@ -31,19 +35,12 @@ function getLogo(walletName: string) {
 
 export const EvmWalletLogo = function ({
   walletName,
+  ...props
 }: {
   walletName: string | undefined
-}) {
+} & ComponentProps<'svg'>) {
   if (!walletName) {
     return null
   }
-  return (
-    <Image
-      alt="Evm Wallet Logo"
-      className="h-full w-full rounded-full"
-      height={16}
-      src={getLogo(walletName)}
-      width={16}
-    />
-  )
+  return getLogo(walletName, props)
 }

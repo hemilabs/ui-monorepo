@@ -1,5 +1,5 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { useMutation } from '@tanstack/react-query'
+import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useUmami } from 'hooks/useUmami'
 import { hemiMainnet } from 'networks/hemiMainnet'
@@ -18,7 +18,7 @@ type Props = { chain: Chain; children: React.ReactNode }
 export const AddChain = function ({ chain, children }: Props) {
   const { isConnected } = useAccount()
   const [isChainAdded, setIsChainAdded] = useChainAdded(chain)
-  const { openConnectModal } = useConnectModal()
+  const { openDrawer } = useDrawerContext()
   const isConnectedToChain = useIsConnectedToExpectedNetwork(chain.id)
   const { enabled, track } = useUmami()
   const { data: walletClient } = useWalletClient()
@@ -56,7 +56,7 @@ export const AddChain = function ({ chain, children }: Props) {
 
   const onClick = function () {
     if (!isConnected) {
-      openConnectModal?.()
+      openDrawer?.()
       return
     }
     if (!isChainAdded && !isConnectedToChain) {

@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
-import { bitcoinTunnelManagerAddresses, encodeConfirmDeposit } from 'hemi-viem'
+import { bitcoinTunnelManagerAddresses } from 'hemi-viem'
+import { encodeConfirmDeposit } from 'hemi-viem/actions'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { HemiPublicClient, useHemiClient } from 'hooks/useHemiClient'
+import { useHemiClient } from 'hooks/useHemiClient'
 import { BtcDepositOperation } from 'types/tunnel'
 import { calculateDepositOutputIndex } from 'utils/bitcoin'
 import { createBtcApi, mapBitcoinNetwork } from 'utils/btcApi'
 import { getVaultIndexByBTCAddress } from 'utils/hemiMemoized'
+import { type PublicClient } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
 async function getEncodedConfirmDeposit({
@@ -13,7 +15,7 @@ async function getEncodedConfirmDeposit({
   hemiClient,
 }: {
   deposit: BtcDepositOperation
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
 }) {
   const vaultIndex = await getVaultIndexByBTCAddress(hemiClient, deposit)
 

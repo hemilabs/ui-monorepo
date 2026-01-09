@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import {
-  bitcoinTunnelManagerAddresses,
-  encodeInitiateWithdrawal,
-} from 'hemi-viem'
+import { bitcoinTunnelManagerAddresses } from 'hemi-viem'
+import { encodeInitiateWithdrawal } from 'hemi-viem/actions'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
-import { HemiPublicClient, useHemiClient } from 'hooks/useHemiClient'
+import { useHemiClient } from 'hooks/useHemiClient'
+import { getVaultChildIndex } from 'utils/hemiClientExtraActions'
+import { type PublicClient } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
 async function getEncodeInitiateWithdrawal({
@@ -15,9 +15,9 @@ async function getEncodeInitiateWithdrawal({
 }: {
   amount: bigint
   btcAddress: string
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
 }) {
-  const vaultIndex = await hemiClient.getVaultChildIndex()
+  const vaultIndex = await getVaultChildIndex(hemiClient)
 
   return encodeInitiateWithdrawal({
     amount,

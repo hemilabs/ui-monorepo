@@ -1,6 +1,5 @@
 import { bitcoinTestnet } from 'btc-wallet/chains'
 import { hemiSepolia } from 'hemi-viem'
-import { publicClientToHemiClient } from 'hooks/useHemiClient'
 import { type BtcDepositOperation, BtcDepositStatus } from 'types/tunnel'
 import { createBtcApi } from 'utils/btcApi'
 import { getHemiStatusOfBtcDeposit, getVaultAddressByDeposit } from 'utils/hemi'
@@ -24,10 +23,6 @@ const deposit: BtcDepositOperation = {
 }
 
 const depositOnHemi = { ...deposit, status: BtcDepositStatus.BTC_TX_CONFIRMED }
-
-vi.mock('hooks/useHemiClient', () => ({
-  publicClientToHemiClient: vi.fn(),
-}))
 
 // mock createBtcApi but keep the original mapBitcoinNetwork
 vi.mock(import('utils/btcApi'), async function (importOriginal) {
@@ -91,12 +86,10 @@ describe('utils/watch/bitcoinDeposits', function () {
 
   describe('watchDepositOnHemi', function () {
     it('should not return changes if the deposit is confirmed only on bitcoin and is not ready for confirming', async function () {
-      const mock = {}
       vi.mocked(getHemiStatusOfBtcDeposit).mockResolvedValue(
         BtcDepositStatus.BTC_TX_CONFIRMED,
       )
       vi.mocked(getVaultAddressByDeposit).mockResolvedValue(vaultAddress)
-      vi.mocked(publicClientToHemiClient).mockResolvedValue(mock)
 
       const updates = await watchDepositOnHemi(depositOnHemi)
 
@@ -104,12 +97,10 @@ describe('utils/watch/bitcoinDeposits', function () {
     })
 
     it('should return changes if the deposit is confirmed on bitcoin and is ready for confirming', async function () {
-      const mock = {}
       vi.mocked(getHemiStatusOfBtcDeposit).mockResolvedValue(
         BtcDepositStatus.READY_TO_MANUAL_CONFIRM,
       )
       vi.mocked(getVaultAddressByDeposit).mockResolvedValue(vaultAddress)
-      vi.mocked(publicClientToHemiClient).mockResolvedValue(mock)
 
       const updates = await watchDepositOnHemi(depositOnHemi)
 

@@ -1,7 +1,5 @@
-import {
-  bitcoinTunnelManagerAddresses,
-  encodeChallengeWithdrawal,
-} from 'hemi-viem'
+import { bitcoinTunnelManagerAddresses } from 'hemi-viem'
+import { encodeChallengeWithdrawal } from 'hemi-viem/actions'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useEstimateGas } from 'wagmi'
 

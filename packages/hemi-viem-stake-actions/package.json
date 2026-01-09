@@ -30,6 +30,7 @@
     "viem": "^2.x"
   },
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./actions": "./actions/index.ts"
   }
 }

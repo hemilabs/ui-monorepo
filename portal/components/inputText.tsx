@@ -4,10 +4,9 @@ import { MagnifyingGlassIcon } from './icons/magnifyingGlassIcon'
 
 const baseInputCss = `w-full cursor-pointer rounded-lg bg-white disabled:cursor-auto placeholder:font-medium placeholder:transition-colors placeholder:duration-200 focus:outline-none transition-colors duration-200`
 
-const inputTextStyles = `${baseInputCss} text-neutral-500 hover:text-neutral-600 hover:placeholder:text-neutral-600 active:text-neutral-600 focus:text-neutral-950`
+const inputTextStyles = `${baseInputCss} text-neutral-500 hover:text-neutral-600 hover:placeholder:text-neutral-600 focus:text-neutral-950 focus:placeholder:text-neutral-600`
 
-const sharedInputStyles = `focus:shadow-input-focused active:shadow-input-focused shadow-sm hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-55`
-
+const sharedInputStyles = `focus:shadow-input-focused active:shadow-input-focused active:text-neutral-600 shadow-sm hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-55`
 const CloseIcon = (props: ComponentProps<'svg'>) => (
   <svg
     fill="none"

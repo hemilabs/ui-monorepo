@@ -2,10 +2,11 @@ import { ComponentProps, ReactNode } from 'react'
 
 import { MagnifyingGlassIcon } from './icons/magnifyingGlassIcon'
 
-const inputCss = `text-base md:text-sm placeholder:text-sm w-full cursor-pointer rounded-lg
- bg-white px-3 py-2 font-medium text-neutral-950 border border-solid disabled:cursor-auto
- placeholder:font-medium placeholder:text-neutral-500 focus:border-orange-600 focus:outline-none transition-colors duration-200`
+const baseInputCss = `w-full cursor-pointer rounded-lg bg-white disabled:cursor-auto placeholder:font-medium placeholder:transition-colors placeholder:duration-200 focus:outline-none transition-colors duration-200`
 
+const inputTextStyles = `${baseInputCss} text-neutral-500 hover:text-neutral-600 hover:placeholder:text-neutral-600 focus:text-neutral-950 focus:placeholder:text-neutral-600`
+
+const sharedInputStyles = `focus:shadow-input-focused active:shadow-input-focused active:text-neutral-600 shadow-sm hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-55`
 const CloseIcon = (props: ComponentProps<'svg'>) => (
   <svg
     fill="none"
@@ -16,21 +17,35 @@ const CloseIcon = (props: ComponentProps<'svg'>) => (
   >
     <path
       d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z"
-      fill="#0A0A0A"
+      fill="#737373"
     />
   </svg>
 )
+
+type Size = 'xs' | 's' | 'xl'
+
+/* eslint-disable sort-keys */
+const wrapperHeights: Record<Size, string> = {
+  xs: 'h-7',
+  s: 'h-8',
+  xl: 'h-11',
+} as const
+/* eslint-enable sort-keys */
+
+type InputWrapperProps = {
+  children: ReactNode
+  showCloseIcon: boolean
+  onClear?: VoidFunction
+  size?: Size
+}
 
 const InputWrapper = ({
   children,
   onClear,
   showCloseIcon,
-}: {
-  children: ReactNode
-  showCloseIcon: boolean
-  onClear?: VoidFunction
-}) => (
-  <div className="relative flex items-center">
+  size,
+}: InputWrapperProps) => (
+  <div className="group relative flex items-center">
     {showCloseIcon && (
       <div className="absolute right-0 -translate-x-3">
         <CloseIcon
@@ -39,55 +54,108 @@ const InputWrapper = ({
         />
       </div>
     )}
-    <div className="box-border w-full rounded-lg outline outline-0 outline-orange-100 transition-all duration-200 focus-within:outline-4">
+    <div
+      className={`box-border flex w-full gap-x-2 rounded-lg outline outline-0 outline-neutral-200 transition-all duration-200 focus-within:outline-4 disabled:cursor-not-allowed ${
+        size ? wrapperHeights[size] : ''
+      }`}
+    >
       {children}
     </div>
   </div>
 )
 
-type Props = Omit<ComponentProps<'input'>, 'className' | 'type'> & {
+type Props = Omit<ComponentProps<'input'>, 'className' | 'type' | 'size'> & {
   onClear?: VoidFunction
 }
+
+const sizeClasses = {
+  s: {
+    borderRadius: 'rounded-lg',
+    height: 'h-8',
+    iconLeftPadding: 'pl-9',
+    iconPosition: 'left-3',
+    padding: 'px-2.5 py-2',
+    placeholder: 'placeholder:text-sm',
+    typography: 'text-sm font-medium',
+  },
+  xl: {
+    borderRadius: 'rounded-lg',
+    height: 'h-11',
+    iconLeftPadding: 'pl-12',
+    iconPosition: 'left-4',
+    padding: 'px-4 py-1.5',
+    placeholder: 'placeholder:text-mid',
+    typography: 'text-mid font-medium',
+  },
+  xs: {
+    borderRadius: 'rounded-md',
+    height: 'h-7',
+    iconLeftPadding: 'pl-9',
+    iconPosition: 'left-2.5',
+    padding: 'px-2.5 py-1.5',
+    placeholder: 'placeholder:text-xs',
+    typography: 'text-xs font-medium',
+  },
+} as const
 
 export const SearchInput = function ({
   onClear,
   showMagnifyingGlass = true,
+  size,
   ...props
-}: Props & { showMagnifyingGlass?: boolean }) {
+}: Props & {
+  showMagnifyingGlass?: boolean
+  size?: Size
+}) {
   const showCloseIcon = (props.value?.toString().length ?? 0) > 0 && !!onClear
+  const selectedSize: Size = size ?? 's'
+  const sizeClass = sizeClasses[selectedSize]
+
   return (
-    <InputWrapper onClear={onClear} showCloseIcon={showCloseIcon}>
+    <InputWrapper
+      onClear={onClear}
+      showCloseIcon={showCloseIcon}
+      size={selectedSize}
+    >
       {showMagnifyingGlass && (
-        <div className="absolute translate-x-3 translate-y-3 md:translate-y-2.5">
-          <MagnifyingGlassIcon />
+        <div
+          className={`absolute ${sizeClass.iconPosition} top-1/2 -translate-y-1/2 group-hover:[&>svg>path]:fill-neutral-500`}
+        >
+          <MagnifyingGlassIcon size={selectedSize} />
         </div>
       )}
       <input
         {...props}
-        className={`${inputCss} shadow-soft border-neutral-300/55 hover:border-neutral-300/90 ${
-          showMagnifyingGlass ? 'pl-8' : ''
+        className={`${inputTextStyles} ${sizeClass.typography} ${
+          sizeClass.padding
+        } ${sizeClass.placeholder} ${sharedInputStyles} ${
+          showMagnifyingGlass ? sizeClass.iconLeftPadding : ''
         } ${showCloseIcon ? 'pr-8' : ''}`}
+        disabled={props.disabled}
         type="text"
       />
     </InputWrapper>
   )
 }
-
-export const LockupInput = ({
+export function LockupInput({
   isError = false,
+  size,
   ...props
-}: Omit<Props, 'onClear'> & { isError?: boolean }) => (
-  <InputWrapper showCloseIcon={false}>
-    <input
-      {...props}
-      className={`${inputCss}
-          hover:shadow-lockup-input-hover border-transparent  
-          ${
-            isError
-              ? 'shadow-lockup-input-error'
-              : 'shadow-lockup-input-default'
-          }`}
-      type="text"
-    />
-  </InputWrapper>
-)
+}: Omit<Props, 'onClear'> & { isError?: boolean; size?: Size }) {
+  const selectedSize: Size = size ?? 'xs'
+  return (
+    <InputWrapper showCloseIcon={false} size={selectedSize}>
+      <input
+        {...props}
+        className={`${inputTextStyles} ${
+          sizeClasses[selectedSize].typography
+        } ${sizeClasses[selectedSize].padding} ${
+          sizeClasses[selectedSize].placeholder
+        } ${sharedInputStyles} ${
+          isError ? 'shadow-lockup-input-error' : 'shadow-lockup-input-default'
+        }`}
+        type="text"
+      />
+    </InputWrapper>
+  )
+}

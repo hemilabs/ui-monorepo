@@ -4,7 +4,6 @@ export { getMinimumDepositLimit } from './public/minimumDepositLimit'
 export { getPricePerShare } from './public/getPricePerShare'
 export { getStrategies } from './public/getStrategies'
 export { getStrategyConfig } from './public/getStrategyConfig'
-export { getVaultRewardsAddress } from './public/getVaultRewardsAddress'
 
 // Wallet actions
 export { depositToken, encodeDepositToken } from './wallet/deposit'

@@ -1,7 +1,6 @@
 'use client'
 
 import { DrawerLoader } from 'components/drawer/drawerLoader'
-import { LinesBackground } from 'components/linesBackground'
 import { StakeTabs } from 'components/stakeTabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useStakeTokens } from 'hooks/useStakeTokens'
@@ -66,9 +65,6 @@ const StakeLayoutClient = function ({ children }: Props) {
       <Suspense>
         <SideDrawer />
       </Suspense>
-      <div className="hidden md:block">
-        <LinesBackground />
-      </div>
     </>
   )
 }

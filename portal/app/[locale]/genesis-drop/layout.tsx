@@ -4,7 +4,6 @@ import { PageLayout } from 'components/pageLayout'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { ReactNode, Suspense } from 'react'
 
-import { Background } from './_components/background'
 import { ClaimRewardsDisabledTestnet } from './_components/claimRewardsDisabledTestnet'
 import { GenesisDropTabs } from './_components/genesisDropTabs'
 import { isClaimRewardsEnabledOnTestnet } from './_utils'
@@ -36,7 +35,6 @@ const Layout = ({ children }: Props) => (
   <>
     <Tabs />
     <PageLayout variant="genesisDrop">
-      <Background />
       <div className="flex w-full flex-col items-center gap-y-2">
         <Suspense>
           <Page>{children}</Page>

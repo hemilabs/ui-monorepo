@@ -17,7 +17,6 @@ import {
 } from 'types/tunnel'
 import { getNativeToken } from 'utils/nativeToken'
 import { formatUnits } from 'viem'
-import { useAccount } from 'wagmi'
 
 import {
   ToEvmWithdrawalContext,
@@ -60,7 +59,6 @@ const ReviewContent = function ({
 }: Props & {
   fromToken: EvmToken
 }) {
-  const { chainId: connectedChainId } = useAccount()
   const fromChain = useChain(withdrawal.l2ChainId)!
   const toChain = useChain(withdrawal.l1ChainId)!
   const [operationStatus] = useContext(ToEvmWithdrawalContext)
@@ -180,7 +178,6 @@ const ReviewContent = function ({
     ),
     explorerChainId: withdrawal.l1ChainId,
     fees:
-      connectedChainId === withdrawal.l1ChainId &&
       proveWithdrawalTokenGasFees !== BigInt(0)
         ? {
             amount: formatUnits(
@@ -214,7 +211,6 @@ const ReviewContent = function ({
     ),
     explorerChainId: withdrawal.l1ChainId,
     fees:
-      connectedChainId === withdrawal.l1ChainId &&
       claimWithdrawalTokenGasFees !== BigInt(0)
         ? {
             amount: formatUnits(

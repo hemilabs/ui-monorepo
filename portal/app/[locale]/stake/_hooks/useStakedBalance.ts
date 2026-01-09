@@ -1,11 +1,12 @@
 import { useQueries, useQuery } from '@tanstack/react-query'
-import { HemiPublicClient, useHemiClient } from 'hooks/useHemiClient'
+import { stakedBalance } from 'hemi-viem-stake-actions/actions'
+import { useHemiClient } from 'hooks/useHemiClient'
 import { NetworkType, useNetworkType } from 'hooks/useNetworkType'
 import { useStakeTokens } from 'hooks/useStakeTokens'
 import { StakeToken } from 'types/stake'
 import { isNativeToken } from 'utils/nativeToken'
 import { getWrappedEther } from 'utils/token'
-import { Address } from 'viem'
+import { type Address, type PublicClient } from 'viem'
 import { useAccount } from 'wagmi'
 
 export const getStakedBalanceQueryKey = ({
@@ -30,14 +31,14 @@ const getStakedBalance = ({
   token,
 }: {
   address: Address
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
   token: StakeToken
 }) =>
   function () {
     if (!hemiClient) {
       return Promise.resolve(BigInt(0))
     }
-    return hemiClient.stakedBalance({
+    return stakedBalance(hemiClient, {
       address,
       // @ts-expect-error tokenAddress is a string Address
       tokenAddress: isNativeToken(token)
@@ -54,7 +55,7 @@ const getQuery = ({
   token,
 }: {
   address: Address | undefined
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
   isConnected: boolean
   networkType: NetworkType
   token: StakeToken

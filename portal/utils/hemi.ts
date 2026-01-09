@@ -1,17 +1,31 @@
 import { WalletConnector } from 'btc-wallet/connectors/types'
 import { Account as BtcAccount, Satoshis } from 'btc-wallet/unisat'
+import {
+  acknowledgedDeposits,
+  calculateDepositFee,
+  calculateWithdrawalFee,
+  isBitcoinWithdrawalChallenged,
+  isBitcoinWithdrawalFulfilled,
+} from 'hemi-viem/actions'
+import { getTransactionByTxId, getTxConfirmations } from 'hemi-viem/actions'
 import { bitcoinTunnelManagerAbi } from 'hemi-viem/contracts'
-import { HemiWalletClient, type HemiPublicClient } from 'hooks/useHemiClient'
+import { HemiWalletClient } from 'hooks/useHemiClient'
 import {
   type BtcDepositOperation,
   BtcDepositStatus,
   BtcWithdrawStatus,
   type ToBtcWithdrawOperation,
 } from 'types/tunnel'
-import { type Address, parseEventLogs, type TransactionReceipt } from 'viem'
+import {
+  type Address,
+  parseEventLogs,
+  type PublicClient,
+  type TransactionReceipt,
+} from 'viem'
 
 import { calculateDepositOutputIndex } from './bitcoin'
 import { createBtcApi, mapBitcoinNetwork } from './btcApi'
+import { getVaultChildIndex } from './hemiClientExtraActions'
 import {
   getBitcoinCustodyAddress,
   getBitcoinKitAddress,
@@ -28,7 +42,7 @@ export const hemiAddressToBitcoinOpReturn = (hemiAddress: Address) =>
   hemiAddress.toUpperCase().slice(2)
 
 export const getVaultAddressByDeposit = (
-  hemiClient: HemiPublicClient,
+  hemiClient: PublicClient,
   deposit: BtcDepositOperation,
 ) =>
   getVaultIndexByBTCAddress(hemiClient, deposit).then(vaultIndex =>
@@ -45,37 +59,34 @@ export const getHemiStatusOfBtcDeposit = ({
   // Omit status so we can use this method for both getting the status the first time
   // or updating it when it already exists
   deposit: Omit<BtcDepositOperation, 'status'>
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
   vaultAddress: Address
 }) =>
   Promise.all([
     getBitcoinKitAddress(hemiClient).then(bitcoinKitAddress =>
       // check if Hemi is aware of the btc transaction
-      hemiClient
-        .getTransactionByTxId({
-          bitcoinKitAddress,
-          txId: deposit.transactionHash,
-        })
+      getTransactionByTxId(hemiClient, {
+        bitcoinKitAddress,
+        txId: deposit.transactionHash,
+      })
         // api throws if not found
         .catch(() => undefined)
         .then(txFound => !!txFound),
     ),
     // check if the deposit's been confirmed
-    hemiClient
-      .getBitcoinVaultStateAddress({ vaultAddress })
-      .then(vaultStateAddress =>
-        hemiClient.acknowledgedDeposits({
+    getBitcoinVaultStateAddress(hemiClient, vaultAddress).then(
+      vaultStateAddress =>
+        acknowledgedDeposits(hemiClient, {
           txId: deposit.transactionHash,
           vaultStateAddress,
         }),
-      ),
+    ),
     // check the number of confirmations of the deposit
     getBitcoinKitAddress(hemiClient).then(bitcoinKitAddress =>
-      hemiClient
-        .getTxConfirmations({
-          bitcoinKitAddress,
-          txId: deposit.transactionHash,
-        })
+      getTxConfirmations(hemiClient, {
+        bitcoinKitAddress,
+        txId: deposit.transactionHash,
+      })
         // api throws if the tx Id is not found, which is the same as 0 confirmations from our POV.
         .catch(() => 0),
     ),
@@ -102,14 +113,14 @@ const getIsBitcoinWithdrawalChallenged = ({
   uuid,
   vaultIndex,
 }: {
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
   vaultIndex: number
   uuid: bigint
 }) =>
   getVaultAddressByIndex(hemiClient, vaultIndex)
     .then(vaultAddress => getBitcoinVaultStateAddress(hemiClient, vaultAddress))
     .then(vaultStateAddress =>
-      hemiClient.isBitcoinWithdrawalChallenged({
+      isBitcoinWithdrawalChallenged(hemiClient, {
         uuid,
         vaultStateAddress,
       }),
@@ -124,14 +135,14 @@ const getIsBitcoinWithdrawalFulfilled = ({
   uuid,
   vaultIndex,
 }: {
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
   vaultIndex: number
   uuid: bigint
 }) =>
   getVaultAddressByIndex(hemiClient, vaultIndex)
     .then(vaultAddress => getBitcoinVaultStateAddress(hemiClient, vaultAddress))
     .then(vaultStateAddress =>
-      hemiClient.isBitcoinWithdrawalFulfilled({
+      isBitcoinWithdrawalFulfilled(hemiClient, {
         uuid,
         vaultStateAddress,
       }),
@@ -141,7 +152,7 @@ export const getBitcoinWithdrawalGracePeriod = ({
   hemiClient,
   vaultIndex,
 }: {
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
   vaultIndex: number
 }) =>
   getVaultAddressByIndex(hemiClient, vaultIndex).then(vaultAddress =>
@@ -152,7 +163,7 @@ const getInitiatedWithdrawalStatus = async function ({
   hemiClient,
   withdrawal,
 }: {
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
   withdrawal: ToBtcWithdrawOperation
 }) {
   const receipt = await hemiClient
@@ -186,7 +197,7 @@ export const getHemiStatusOfBtcWithdrawal = async function ({
   hemiClient,
   withdrawal,
 }: {
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
   withdrawal: ToBtcWithdrawOperation
 }) {
   if (withdrawal.status === BtcWithdrawStatus.INITIATE_WITHDRAW_PENDING) {
@@ -199,7 +210,7 @@ export const getHemiStatusOfBtcWithdrawal = async function ({
   // present, move it to WITHDRAWAL_SUCCEEDED but if not and the withdrawal is
   // more than ${grace period}, move it to CHALLENGE_READY.
   if (withdrawal.status === BtcWithdrawStatus.INITIATE_WITHDRAW_CONFIRMED) {
-    const vaultIndex = await hemiClient.getVaultChildIndex()
+    const vaultIndex = await getVaultChildIndex(hemiClient)
 
     const [isFulfilled, isChallenged] = await Promise.all([
       getIsBitcoinWithdrawalFulfilled({
@@ -267,7 +278,7 @@ export const initiateBtcDeposit = function ({
   walletConnector,
 }: {
   hemiAddress: Address
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
   satoshis: Satoshis
   walletConnector: WalletConnector
 }) {
@@ -280,8 +291,7 @@ export const initiateBtcDeposit = function ({
   }
 
   return (
-    hemiClient
-      .getVaultChildIndex()
+    getVaultChildIndex(hemiClient)
       // get vault address which will custody the btc
       .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
       // get the bitcoin address which the vault uses
@@ -307,7 +317,7 @@ export const confirmBtcDeposit = ({
 }: {
   deposit: BtcDepositOperation
   from: Address
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
   hemiWalletClient: HemiWalletClient
 }) =>
   Promise.all([
@@ -357,10 +367,10 @@ export const initiateBtcWithdrawal = ({
   amount: bigint
   btcAddress: BtcAccount
   from: Address
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
   hemiWalletClient: HemiWalletClient
 }) =>
-  hemiClient.getVaultChildIndex().then(vaultIndex =>
+  getVaultChildIndex(hemiClient).then(vaultIndex =>
     hemiWalletClient!.initiateWithdrawal({
       amount,
       btcAddress,
@@ -370,10 +380,10 @@ export const initiateBtcWithdrawal = ({
   )
 
 const calculateBtcDepositFee = (
-  hemiClient: HemiPublicClient,
+  hemiClient: PublicClient,
   { amount, vaultStateAddress }: { amount: bigint; vaultStateAddress: Address },
 ) =>
-  hemiClient.calculateDepositFee({
+  calculateDepositFee(hemiClient, {
     depositAmount: amount,
     vaultStateAddress,
   })
@@ -383,10 +393,9 @@ export const getBitcoinDepositFee = ({
   hemiClient,
 }: {
   amount: bigint
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
 }) =>
-  hemiClient
-    .getVaultChildIndex()
+  getVaultChildIndex(hemiClient)
     .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
     .then(vaultAddress => getBitcoinVaultStateAddress(hemiClient, vaultAddress))
     .then(vaultStateAddress =>
@@ -394,10 +403,10 @@ export const getBitcoinDepositFee = ({
     )
 
 const calculateBtcWithdrawalFee = (
-  hemiClient: HemiPublicClient,
+  hemiClient: PublicClient,
   { amount, vaultStateAddress }: { amount: bigint; vaultStateAddress: Address },
 ) =>
-  hemiClient.calculateWithdrawalFee({
+  calculateWithdrawalFee(hemiClient, {
     vaultStateAddress,
     withdrawalAmount: amount,
   })
@@ -407,10 +416,9 @@ export const getBitcoinWithdrawalFee = ({
   hemiClient,
 }: {
   amount: bigint
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
 }) =>
-  hemiClient
-    .getVaultChildIndex()
+  getVaultChildIndex(hemiClient)
     .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
     .then(vaultAddress => getBitcoinVaultStateAddress(hemiClient, vaultAddress))
     .then(vaultStateAddress =>

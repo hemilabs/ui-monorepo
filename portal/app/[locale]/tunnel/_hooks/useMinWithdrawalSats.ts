@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
+import { getMinimumWithdrawalSats } from 'hemi-viem/actions'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { EvmToken } from 'types/token'
+import { getVaultChildIndex } from 'utils/hemiClientExtraActions'
 import { getVaultAddressByIndex } from 'utils/hemiMemoized'
 import { formatUnits } from 'viem'
 
@@ -14,11 +16,10 @@ export const useMinWithdrawalSats = function (hemiBitcoinToken: EvmToken) {
 
   const { data: minWithdrawalSats, ...rest } = useQuery({
     queryFn: () =>
-      hemiClient
-        .getVaultChildIndex()
+      getVaultChildIndex(hemiClient)
         .then(vaultIndex => getVaultAddressByIndex(hemiClient, vaultIndex))
         .then(vaultAddress =>
-          hemiClient.getMinimumWithdrawalSats({ vaultAddress }),
+          getMinimumWithdrawalSats(hemiClient, { vaultAddress }),
         ),
     // TODO may need to be updated when multi-vault support is added
     // See https://github.com/hemilabs/ui-monorepo/issues/393

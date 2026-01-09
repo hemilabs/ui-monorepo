@@ -1,11 +1,12 @@
 import hemilabsTokenList from '@hemilabs/token-list'
 import { validateInput } from 'components/tokenInput/utils'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
-import type { HemiPublicClient, HemiWalletClient } from 'hooks/useHemiClient'
+import { stakedBalance, unstakeToken } from 'hemi-viem-stake-actions/actions'
+import type { HemiWalletClient } from 'hooks/useHemiClient'
 import { NetworkType } from 'hooks/useNetworkType'
 import { EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
-import type { Address, Hash, TransactionReceipt } from 'viem'
+import type { Address, Hash, PublicClient, TransactionReceipt } from 'viem'
 import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 
 import { findChainById } from './chain'
@@ -66,7 +67,7 @@ const validateStakeOperation = async function ({
   token,
 }: {
   forAccount: Address
-  hemiPublicClient: HemiPublicClient
+  hemiPublicClient: PublicClient
 } & Pick<CanSubmit, 'amountInput' | 't' | 'token'>) {
   if (hemiPublicClient.chain?.id !== token.chainId) {
     throw new Error(
@@ -177,7 +178,7 @@ export const stake = async function ({
   token,
 }: {
   forAccount: Address
-  hemiPublicClient: HemiPublicClient
+  hemiPublicClient: PublicClient
   hemiWalletClient: HemiWalletClient
 } & Pick<CanSubmit, 'amountInput' | 't' | 'token'> &
   StakeEvents) {
@@ -286,7 +287,7 @@ const validateUnstakeOperation = async function ({
   token,
 }: {
   forAccount: Address
-  hemiPublicClient: HemiPublicClient
+  hemiPublicClient: PublicClient
 } & Pick<CanSubmit, 'amountInput' | 't' | 'token'>) {
   if (hemiPublicClient.chain?.id !== token.chainId) {
     throw new Error(
@@ -296,7 +297,7 @@ const validateUnstakeOperation = async function ({
     )
   }
 
-  const balance = await hemiPublicClient.stakedBalance({
+  const balance = await stakedBalance(hemiPublicClient, {
     address: forAccount,
     tokenAddress: getTokenAddress(token),
   })
@@ -351,7 +352,7 @@ export const unstake = async function ({
   token,
 }: {
   forAccount: Address
-  hemiPublicClient: HemiPublicClient
+  hemiPublicClient: PublicClient
   hemiWalletClient: HemiWalletClient
 } & Pick<CanSubmit, 'amountInput' | 't' | 'token'> &
   UnstakeEvents) {
@@ -371,13 +372,11 @@ export const unstake = async function ({
 
   const amount = parseTokenUnits(amountInput, token)
 
-  const unstakeTransactionHash = await hemiWalletClient
-    .unstakeToken({
-      amount,
-      forAccount,
-      tokenAddress: getTokenAddress(token),
-    })
-    .catch(onUserRejectedUnstake)
+  const unstakeTransactionHash = await unstakeToken(hemiWalletClient, {
+    amount,
+    forAccount,
+    tokenAddress: getTokenAddress(token),
+  }).catch(onUserRejectedUnstake)
 
   if (!unstakeTransactionHash) {
     return

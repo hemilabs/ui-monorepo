@@ -1,12 +1,19 @@
-import { type HemiPublicClient } from 'hooks/useHemiClient'
+import {
+  getBitcoinCustodyAddress as getBitcoinCustodyAddressAction,
+  getBitcoinKitAddress as getBitcoinKitAddressAction,
+  getBitcoinVaultStateAddress as getBitcoinVaultStateAddressAction,
+  getBitcoinWithdrawalGracePeriod as getBitcoinWithdrawalGracePeriodAction,
+  getVaultByIndex,
+} from 'hemi-viem/actions'
 import pMemoize from 'promise-mem'
 import { BtcDepositOperation } from 'types/tunnel'
-import { type Address } from 'viem'
+import { getVaultChildIndex } from 'utils/hemiClientExtraActions'
+import { type Address, type PublicClient } from 'viem'
 
 // Vaults will have only one custody address (at least with current implementation)
 export const getBitcoinCustodyAddress = pMemoize(
-  (hemiClient: HemiPublicClient, vaultAddress: Address) =>
-    hemiClient.getBitcoinCustodyAddress({ vaultAddress }),
+  (hemiClient: PublicClient, vaultAddress: Address) =>
+    getBitcoinCustodyAddressAction(hemiClient, { vaultAddress }),
   {
     resolver: (hemiClient, vaultAddress) =>
       `${hemiClient.chain?.id}_${vaultAddress}`,
@@ -15,8 +22,8 @@ export const getBitcoinCustodyAddress = pMemoize(
 
 // Grace period is constant per vault
 export const getBitcoinVaultGracePeriod = pMemoize(
-  (hemiClient: HemiPublicClient, vaultAddress: Address) =>
-    hemiClient.getBitcoinWithdrawalGracePeriod({ vaultAddress }),
+  (hemiClient: PublicClient, vaultAddress: Address) =>
+    getBitcoinWithdrawalGracePeriodAction(hemiClient, { vaultAddress }),
   {
     resolver: (hemiClient, vaultAddress) =>
       `${hemiClient.chain?.id}_${vaultAddress}`,
@@ -24,8 +31,8 @@ export const getBitcoinVaultGracePeriod = pMemoize(
 )
 
 export const getBitcoinVaultStateAddress = pMemoize(
-  (hemiClient: HemiPublicClient, vaultAddress: Address) =>
-    hemiClient.getBitcoinVaultStateAddress({ vaultAddress }),
+  (hemiClient: PublicClient, vaultAddress: Address) =>
+    getBitcoinVaultStateAddressAction(hemiClient, { vaultAddress }),
   {
     resolver: (hemiClient, vaultAddress) =>
       `${hemiClient.chain?.id}_${vaultAddress}`,
@@ -33,8 +40,8 @@ export const getBitcoinVaultStateAddress = pMemoize(
 )
 
 export const getVaultAddressByIndex = pMemoize(
-  (hemiClient: HemiPublicClient, vaultIndex: number) =>
-    hemiClient.getVaultByIndex({ vaultIndex }),
+  (hemiClient: PublicClient, vaultIndex: number) =>
+    getVaultByIndex(hemiClient, { vaultIndex }),
   {
     resolver: (hemiClient, vaultIndex) =>
       `${hemiClient.chain?.id}_${vaultIndex}`,
@@ -44,15 +51,15 @@ export const getVaultAddressByIndex = pMemoize(
 export const getVaultIndexByBTCAddress = pMemoize(
   // remove once se use getVaultIndexByBTCAddress below
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  (hemiClient: HemiPublicClient, deposit: BtcDepositOperation) =>
+  (hemiClient: PublicClient, deposit: BtcDepositOperation) =>
     // TODO https://github.com/hemilabs/ui-monorepo/issues/393
     // We should use hemiClient.getVaultIndexByBTCAddress({ btcAddress: deposit.to }),
-    hemiClient.getVaultChildIndex(),
+    getVaultChildIndex(hemiClient),
   { resolver: (_, deposit) => `${deposit.l1ChainId}_${deposit.to}` },
 )
 
 // Memoizing it as it is unlikely to change
 export const getBitcoinKitAddress = pMemoize(
-  (hemiClient: HemiPublicClient) => hemiClient.getBitcoinKitAddress(),
+  (hemiClient: PublicClient) => getBitcoinKitAddressAction(hemiClient),
   { resolver: hemiClient => hemiClient.chain?.id },
 )

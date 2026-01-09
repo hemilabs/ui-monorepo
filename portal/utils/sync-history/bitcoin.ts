@@ -5,7 +5,6 @@ import {
   type TransactionListSyncType,
 } from 'context/tunnelHistoryContext/types'
 import { bitcoinTunnelManagerAbi } from 'hemi-viem/contracts'
-import { type HemiPublicClient } from 'hooks/useHemiClient'
 import pAll from 'p-all'
 import pDoWhilst from 'p-do-whilst'
 import {
@@ -28,6 +27,7 @@ import {
   getHemiStatusOfBtcWithdrawal,
   hemiAddressToBitcoinOpReturn,
 } from 'utils/hemi'
+import { getVaultHistoricVaultIndexes } from 'utils/hemiClientExtraActions'
 import {
   getBitcoinCustodyAddress,
   getVaultAddressByIndex,
@@ -38,7 +38,13 @@ import {
   getBtcWithdrawals,
   getLastIndexedBlock,
 } from 'utils/subgraph'
-import { type Address, decodeFunctionData, type Hash, toHex } from 'viem'
+import {
+  type Address,
+  decodeFunctionData,
+  type Hash,
+  toHex,
+  type PublicClient,
+} from 'viem'
 
 import { chainConfiguration } from './chainConfiguration'
 import { calculateSkip } from './common'
@@ -62,7 +68,7 @@ const getWithdrawerBitcoinAddress = ({
   hemiClient,
 }: {
   hash: Hash
-  hemiClient: HemiPublicClient
+  hemiClient: PublicClient
 }) =>
   hemiClient
     .getTransaction({ hash })
@@ -110,7 +116,7 @@ const filterDeposits = (
   })
 
 const addMissingInfoFromSubgraph =
-  (hemiClient: HemiPublicClient) => (withdrawals: ToBtcWithdrawOperation[]) =>
+  (hemiClient: PublicClient) => (withdrawals: ToBtcWithdrawOperation[]) =>
     pAll(
       withdrawals.map(
         w => async () =>
@@ -162,7 +168,7 @@ export const createBitcoinSync = function ({
     }
 
     debug('Getting vault historic indexes')
-    const vaultIndexes = await hemiClient.getVaultHistoricVaultIndexes()
+    const vaultIndexes = await getVaultHistoricVaultIndexes(hemiClient)
     debug(
       'Found %s vault indexes: %s',
       vaultIndexes.length,

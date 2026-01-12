@@ -41,7 +41,7 @@ export const useMerklRewards = function <TData = MerklRewards>({
         .flatMap(({ rewards }) => rewards)
         .filter(reward =>
           reward.breakdowns.some(breakdown =>
-            campaignIds!.includes(breakdown.campaignId),
+            campaignIds!.includes(breakdown.subCampaignId),
           ),
         )
     },

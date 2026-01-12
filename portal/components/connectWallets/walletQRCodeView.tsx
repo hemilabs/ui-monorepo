@@ -103,7 +103,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
           className="group text-neutral-600 hover:text-neutral-950"
           onClick={onBack}
         >
-          <Chevron.Left className="group-hover:[&>path]:fill-neutral-950" />
+          <Chevron.Left className="size-5 group-hover:[&>path]:fill-neutral-950" />
         </button>
         <h4 className="flex-1 text-center text-neutral-500 md:flex-none">
           <span className="md:hidden">
@@ -117,7 +117,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
           <QrcodePlaceholderIcon />
         </div>
       </div>
-      <div className="flex h-full flex-col items-center justify-center gap-4 py-3">
+      <div className="flex h-full flex-col items-center justify-center gap-3 py-3.5">
         <div className="shadow-bs hidden size-full items-center justify-center rounded-md bg-neutral-50/80 md:flex">
           {uri ? (
             <QRCodeSVG size={240} value={uri} />

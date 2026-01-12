@@ -42,6 +42,8 @@ const ConnectedChain = function ({
   openMenu?: VoidFunction
 }) {
   const ref = useOnClickOutside<HTMLDivElement>(closeMenu)
+  const [networkType] = useNetworkType()
+  const isMainnet = networkType === 'mainnet'
 
   const chevronCss =
     '[&>path]:fill-neutral-500 [&>path]:group-hover/connected-account:fill-neutral-950 [&>path]:transition-colors [&>path]:duration-200'
@@ -49,17 +51,19 @@ const ConnectedChain = function ({
   return (
     <div className="flex items-center gap-3 px-2">
       <div
-        className={`relative flex h-7 items-center gap-x-2 rounded-md px-2 py-1.5 shadow-sm transition-colors duration-200 hover:bg-neutral-50 ${
+        className={`${
+          isMainnet ? 'w-32' : 'w-37'
+        } relative flex h-7 items-center gap-x-2 rounded-md px-2 py-1.5 shadow-sm transition-colors duration-200 hover:bg-neutral-50 ${
           openMenu ? 'group/connected-account cursor-pointer' : ''
         }`}
         onClick={openMenu}
         ref={ref}
       >
-        <div className="flex cursor-pointer items-center justify-between gap-x-1 rounded-md">
-          {icon}
-          <span className="mr-2 text-sm font-medium text-neutral-950">
-            {name}
-          </span>
+        <div className="flex w-full cursor-pointer items-center justify-between gap-x-2 rounded-md">
+          <div className="flex items-center gap-x-1">
+            {icon}
+            <span className="text-sm font-medium text-neutral-950">{name}</span>
+          </div>
           {menu !== undefined &&
             (menuOpen ? (
               <Chevron.Up className={chevronCss} />
@@ -108,7 +112,7 @@ const ConnectedWallet = function ({
         py-2 text-sm font-medium text-neutral-950"
     >
       <div className="flex items-center gap-3">
-        <div className="relative hidden size-8 md:block">
+        <div className="relative size-8">
           <ProfileIcon />
           {connectorName && (
             <div className="absolute -bottom-1.5 -right-1.5 rounded-full bg-neutral-100 p-0.5">

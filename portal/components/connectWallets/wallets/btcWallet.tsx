@@ -55,7 +55,7 @@ const ConnectWalletButton = function ({
       <span className="text-base font-medium text-neutral-950">{text}</span>
       {rightIcon || (
         <div className="group ml-auto">
-          <Chevron.Right className="group-hover:[&>path]:fill-neutral-950" />
+          <Chevron.Right className="size-5 group-hover:[&>path]:fill-neutral-950" />
         </div>
       )}
     </button>
@@ -117,7 +117,7 @@ export const BtcWallet = function () {
         }
       >
         {chainSupported ? (
-          <div className="flex items-end gap-x-1 px-3 py-2 text-4xl font-normal text-neutral-950">
+          <div className="flex items-end gap-x-1 p-2 text-4xl font-semibold text-neutral-950 md:p-4">
             <span>$</span>
             <FiatBalance token={getNativeToken(bitcoin.id)} />
           </div>

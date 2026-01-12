@@ -33,13 +33,15 @@ export const EvmWallet = function () {
         topContent={
           <>
             <ConnectedEvmAccount />
-            <ConnectedEvmChain />
-            <DisconnectWallet disconnect={disconnect} />
+            <div className="flex items-center gap-1 md:gap-3">
+              <ConnectedEvmChain />
+              <DisconnectWallet disconnect={disconnect} />
+            </div>
           </>
         }
       >
         {chainSupported && chain ? (
-          <div className="flex items-end gap-x-1 px-3 py-2 text-4xl font-normal text-neutral-950">
+          <div className="flex items-end gap-x-1 p-2 text-4xl font-semibold text-neutral-950 md:p-4">
             <span>$</span>
             <FiatBalance token={getNativeToken(chain.id)} />
           </div>

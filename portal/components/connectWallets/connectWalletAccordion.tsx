@@ -1,6 +1,7 @@
 import { AnalyticsEvent } from 'app/analyticsEvents'
 import { Chevron } from 'components/icons/chevron'
 import { OrangeCheckIcon } from 'components/icons/orangeCheckIcon'
+import { Tooltip } from 'components/tooltip'
 import { type WalletData } from 'hooks/useAllWallets'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
@@ -136,9 +137,9 @@ export const ConnectWalletAccordion = function ({
         <span className="text-base font-medium text-neutral-950">{text}</span>
         <div className="group ml-auto">
           {isOpen ? (
-            <Chevron.Bottom className="group-hover:[&>path]:fill-neutral-950" />
+            <Chevron.Bottom className="size-5 group-hover:[&>path]:fill-neutral-950" />
           ) : (
-            <Chevron.Right className="group-hover:[&>path]:fill-neutral-950" />
+            <Chevron.Right className="size-5 group-hover:[&>path]:fill-neutral-950" />
           )}
         </div>
       </button>
@@ -160,19 +161,26 @@ export const ConnectWalletAccordion = function ({
             }`}
           >
             <h4 className="mb-3 mt-1 text-neutral-500">{t('wallets')}</h4>
-            <div className="flex gap-2 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:overflow-x-visible md:pb-0">
+            <div className="flex gap-2 overflow-x-auto p-1 md:grid md:grid-cols-3 md:overflow-x-visible md:p-0">
               {sortedWallets.map(function (wallet) {
                 const { showCheck, showInstall } = getWalletState(wallet)
 
                 return (
                   <button
-                    className="size-30 group relative flex shrink-0 flex-col items-center justify-center gap-2 rounded-lg bg-neutral-50/80 p-2 transition-shadow duration-300 hover:shadow-sm"
+                    className="size-30 group relative mb-2 flex shrink-0 flex-col items-center justify-center gap-2 rounded-lg bg-neutral-50/80 p-2 transition-shadow duration-300 hover:shadow-sm md:mb-0"
                     key={wallet.id}
                     onClick={() => handleWalletConnect(wallet)}
                   >
                     {showCheck && (
                       <div className="absolute right-2 top-2">
-                        <OrangeCheckIcon size="small" />
+                        <Tooltip
+                          borderRadius="6px"
+                          id="wallet-installed"
+                          text={t('installed')}
+                          variant="simple"
+                        >
+                          <OrangeCheckIcon size="small" />
+                        </Tooltip>
                       </div>
                     )}
                     <EvmWalletLogo

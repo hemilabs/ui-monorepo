@@ -131,6 +131,7 @@
     "get": "Get",
     "get-wallet": "Get {wallet}",
     "install": "Install",
+    "installed": "Installed",
     "scan-with": "Scan with {wallet}",
     "status": {
       "connected": "Connected",

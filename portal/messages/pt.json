@@ -131,6 +131,7 @@
     "get": "Obter",
     "get-wallet": "Obter {wallet}",
     "install": "Instalar",
+    "installed": "Instalado",
     "scan-with": "Escanear com {wallet}",
     "status": {
       "connected": "Conectado",

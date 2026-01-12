@@ -10,6 +10,8 @@ import { useConnect } from 'wagmi'
 
 import { EvmWalletLogo } from './evmWalletLogo'
 import { DownloadIcon } from './icons/download'
+import { getWalletConnectUri } from './utils/walletConnect'
+import { getWalletDeepLink, hasDeepLinkSupport } from './utils/walletDeepLinks'
 import { WalletQRCodeView } from './walletQRCodeView'
 
 // These are the connector types that require a QR code to connect
@@ -20,21 +22,33 @@ const qrCodeConnectorTypes = ['walletConnect', 'binanceWallet']
 const isWalletConnect = (wallet: WalletData) =>
   wallet.connector?.type === 'walletConnect'
 
-function getWalletState(wallet: WalletData) {
+function getDesktopWalletState(wallet: WalletData) {
   const hasConnector = !!wallet.connector
   const needsQRCode = wallet.connector?.type
-    ? qrCodeConnectorTypes.includes(wallet.connector.type) && !isMobile
+    ? qrCodeConnectorTypes.includes(wallet.connector.type)
     : false
 
+  const canConnect = !isWalletConnect(wallet) && hasConnector && !needsQRCode
+
   return {
-    canConnectDirectly:
-      hasConnector && !needsQRCode && !isWalletConnect(wallet),
+    canConnectDirectly: canConnect,
     hasConnector,
     needsQRCode,
-    showCheck: hasConnector && !needsQRCode && !isWalletConnect(wallet),
-    showInstall: !hasConnector || needsQRCode || isWalletConnect(wallet),
+    showCheck: canConnect,
+    showInstall: isWalletConnect(wallet) || !hasConnector || needsQRCode,
   }
 }
+
+const getMobileWalletState = (wallet: WalletData) => ({
+  canConnectDirectly: true,
+  hasConnector: !!wallet.connector,
+  needsQRCode: false,
+  showCheck: false,
+  showInstall: false,
+})
+
+const getWalletState = (wallet: WalletData) =>
+  isMobile ? getMobileWalletState(wallet) : getDesktopWalletState(wallet)
 
 type Props = {
   event: AnalyticsEvent
@@ -53,23 +67,49 @@ export const ConnectWalletAccordion = function ({
   const t = useTranslations('connect-wallets')
   const [isOpen, setIsOpen] = useState(true)
   const [selectedWallet, setSelectedWallet] = useState<WalletData | null>(null)
-  const { connect } = useConnect()
+  const { connect, connectors } = useConnect()
 
   const handleClick = function () {
     track?.(event)
     setIsOpen(!isOpen)
   }
 
-  function handleWalletConnect(wallet: WalletData) {
-    const { canConnectDirectly } = getWalletState(wallet)
+  async function connectWithDeepLink(wallet: WalletData) {
+    const wcConnector = connectors.find(c => c.id === 'walletConnect')
+    if (!wcConnector) return
 
-    if (canConnectDirectly) {
-      if (wallet.connector) {
-        connect({ connector: wallet.connector })
+    try {
+      connect({ connector: wcConnector })
+      const uri = await getWalletConnectUri(wcConnector)
+
+      if (uri) {
+        const deepLink = getWalletDeepLink(wallet.id)
+        if (deepLink) {
+          const connectionUrl = `${deepLink}wc?uri=${encodeURIComponent(uri)}`
+          window.location.href = connectionUrl
+        }
       }
-    } else {
+    } catch {
       setSelectedWallet(wallet)
     }
+  }
+
+  async function handleWalletConnect(wallet: WalletData) {
+    const { canConnectDirectly } = getWalletState(wallet)
+    const supportsDeepLink = hasDeepLinkSupport(wallet.id)
+
+    // Desktop or mobile with connector: connect directly
+    if (canConnectDirectly && wallet.connector && !isWalletConnect(wallet)) {
+      connect({ connector: wallet.connector })
+      return
+    }
+
+    // Mobile without connector but with deep link support (TokenPocket, OKX, Phantom)
+    if (isMobile && supportsDeepLink && !wallet.connector) {
+      await connectWithDeepLink(wallet)
+    }
+
+    setSelectedWallet(wallet)
   }
 
   const sortedWallets = [...wallets].sort(function (a, b) {

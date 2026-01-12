@@ -9,6 +9,7 @@ import Skeleton from 'react-loading-skeleton'
 import { useConnect } from 'wagmi'
 
 import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
+import { getWalletConnectUri } from './utils/walletConnect'
 
 function getMobileDownloadUrl(downloadUrls: WalletData['downloadUrls']) {
   if (!downloadUrls) {
@@ -21,7 +22,7 @@ function getMobileDownloadUrl(downloadUrls: WalletData['downloadUrls']) {
     return downloadUrls.android
   }
 
-  return downloadUrls.mobile
+  return downloadUrls.mobile || downloadUrls.browserExtension
 }
 
 function getDesktopDownloadUrl(downloadUrls: WalletData['downloadUrls']) {
@@ -72,7 +73,6 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         return undefined
       }
 
-      const abortController = new AbortController()
       const walletConnectConnector = connectors.find(
         ({ id }) => id === 'walletConnect',
       )
@@ -81,32 +81,15 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         return undefined
       }
 
-      let provider: unknown = null
-      const listenForWalletConnectUri = async function () {
-        try {
-          provider = await walletConnectConnector.getProvider()
+      // Generate WalletConnect URI
+      getWalletConnectUri(walletConnectConnector)
+        .then(setUri)
+        .catch(() => setUri(''))
 
-          // @ts-expect-error - Ts can't infer it
-          provider.once('display_uri', function (value: string) {
-            if (!abortController.signal.aborted) {
-              setUri(value)
-            }
-          })
-
-          connect({ connector: walletConnectConnector })
-        } catch {
-          setUri('')
-        }
-      }
-
-      listenForWalletConnectUri()
+      // Start connection
+      connect({ connector: walletConnectConnector })
 
       return function cleanup() {
-        abortController.abort()
-        if (provider) {
-          // @ts-expect-error - Ts can't infer it
-          provider.removeAllListeners?.()
-        }
         walletConnectConnector.disconnect?.()
       }
     },

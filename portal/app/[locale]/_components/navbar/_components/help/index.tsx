@@ -84,7 +84,7 @@ const ItemText = ({
   text,
 }: Pick<Props, 'text'> & Selectable) => (
   <span
-    className={`text-base font-medium capitalize transition-colors duration-300
+    className={`text-base font-medium transition-colors duration-300
       group-hover/row:text-neutral-950 md:text-sm ${
         selected ? 'text-neutral-950' : 'text-neutral-700'
       }`}

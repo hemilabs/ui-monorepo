@@ -377,7 +377,7 @@
   },
   "navbar": {
     "agree-to-terms-and-policy": "Ao utilizar esta aplicação, concorda com os <terms>Termos de Utilização</terms> e a <policy>Política de Privacidade</policy>",
-    "bitcoinkit": "Hemi Bitcoin Kit",
+    "bitcoinkit": "Hemi Bitcoin Kit (hBK)",
     "boost-staking": "Boost staking",
     "data-attribution": "Dados fornecidos por <link>CoinMarketCap.com</link>",
     "dex": {
@@ -389,12 +389,12 @@
     "ecosystem": "Demonstrações",
     "explorer": "Explorador",
     "follow-us": "Siga-nos",
-    "genesis-drop": "Lançamento génesis",
+    "genesis-drop": "Lançamento Génesis",
     "get-started": "Começar",
     "governance-staking": "Stake de governança",
     "help": {
       "language": "Idioma",
-      "legal-and-privacy": "Legal e privacidade"
+      "legal-and-privacy": "Legal e Privacidade"
     },
     "network": "Rede",
     "network-status": "Estado da rede",

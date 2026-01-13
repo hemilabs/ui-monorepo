@@ -377,7 +377,7 @@
   },
   "navbar": {
     "agree-to-terms-and-policy": "Ao utilizar esta aplicação, concorda com os <terms>Termos de Utilização</terms> e a <policy>Política de Privacidade</policy>",
-    "bitcoinkit": "Hemi bitcoin kit",
+    "bitcoinkit": "Hemi Bitcoin Kit",
     "boost-staking": "Boost staking",
     "data-attribution": "Dados fornecidos por <link>CoinMarketCap.com</link>",
     "dex": {
@@ -401,7 +401,7 @@
     "swap": "Troca",
     "stake": "Stake",
     "tools": "Ferramentas",
-    "tunnel": "Túnel",
+    "tunnel": "Tunelar",
     "tvl": "TVL na Hemi"
   },
   "stake-page": {

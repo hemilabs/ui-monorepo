@@ -377,13 +377,13 @@
   },
   "navbar": {
     "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
-    "bitcoinkit": "Hemi bitcoin kit",
+    "bitcoinkit": "Hemi Bitcoin kit",
     "boost-staking": "Boost staking",
     "data-attribution": "Data provided by <link>CoinMarketCap.com</link>",
     "dex": {
       "aggregators": "Aggregators",
       "subtitle": "DEXs",
-      "title": "Dex"
+      "title": "DEXs"
     },
     "docs": "Documentation",
     "ecosystem": "Demos",
@@ -394,7 +394,7 @@
     "governance-staking": "Governance staking",
     "help": {
       "language": "Language",
-      "legal-and-privacy": "Legal and Privacy"
+      "legal-and-privacy": "Legal and privacy"
     },
     "network": "Network",
     "network-status": "Network status",

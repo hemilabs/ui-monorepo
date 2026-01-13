@@ -377,27 +377,27 @@
   },
   "navbar": {
     "agree-to-terms-and-policy": "Ao utilizar esta aplicação, concorda com os <terms>Termos de Utilização</terms> e a <policy>Política de Privacidade</policy>",
-    "bitcoinkit": "Hemi Bitcoin Kit",
+    "bitcoinkit": "Hemi bitcoin kit",
     "boost-staking": "Boost staking",
     "data-attribution": "Dados fornecidos por <link>CoinMarketCap.com</link>",
     "dex": {
       "aggregators": "Agregadores",
       "subtitle": "DEXs",
-      "title": "DEX"
+      "title": "DEXs"
     },
     "docs": "Documentação",
     "ecosystem": "Demonstrações",
     "explorer": "Explorador",
     "follow-us": "Siga-nos",
-    "genesis-drop": "Lançamento Génesis",
+    "genesis-drop": "Lançamento génesis",
     "get-started": "Começar",
     "governance-staking": "Stake de governança",
     "help": {
       "language": "Idioma",
-      "legal-and-privacy": "Legal e Privacidade"
+      "legal-and-privacy": "Legal e privacidade"
     },
     "network": "Rede",
-    "network-status": "Estado da Rede",
+    "network-status": "Estado da rede",
     "swap": "Troca",
     "stake": "Stake",
     "tools": "Ferramentas",

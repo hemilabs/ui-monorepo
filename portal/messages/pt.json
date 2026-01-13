@@ -377,13 +377,13 @@
   },
   "navbar": {
     "agree-to-terms-and-policy": "Ao utilizar esta aplicação, concorda com os <terms>Termos de Utilização</terms> e a <policy>Política de Privacidade</policy>",
-    "bitcoinkit": "Hemi Bitcoin Kit (hBK)",
+    "bitcoinkit": "Hemi Bitcoin Kit",
     "boost-staking": "Boost staking",
     "data-attribution": "Dados fornecidos por <link>CoinMarketCap.com</link>",
     "dex": {
       "aggregators": "Agregadores",
       "subtitle": "DEXs",
-      "title": "DEXs"
+      "title": "DEX"
     },
     "docs": "Documentação",
     "ecosystem": "Demonstrações",
@@ -397,11 +397,11 @@
       "legal-and-privacy": "Legal e Privacidade"
     },
     "network": "Rede",
-    "network-status": "Estado da rede",
+    "network-status": "Estado da Rede",
     "swap": "Troca",
     "stake": "Stake",
     "tools": "Ferramentas",
-    "tunnel": "Tunelar",
+    "tunnel": "Túnel",
     "tvl": "TVL na Hemi"
   },
   "stake-page": {

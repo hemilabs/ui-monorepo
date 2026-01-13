@@ -136,7 +136,7 @@ const DexImpl = function () {
       <Row>
         <IconContainer selected={isOpen}>{<DexIcon />}</IconContainer>
         <ItemText selected={isOpen} text={t('title')} />
-        <Chevron.Right className="ml-auto group-hover/nav:block max-md:hidden" />
+        <Chevron.Right className="grup ml-auto hidden group-hover/nav:block group-hover/item:flex max-md:hidden [&>path]:fill-neutral-500" />
       </Row>
 
       {isOpen &&

@@ -24,7 +24,7 @@ export const ExternalLinkUI = ({
       <RowComponent>
         {icon && <IconContainer>{icon}</IconContainer>}
         <ItemText text={text} />
-        <div className="ml-auto hidden size-4 items-center group-hover/item:flex">
+        <div className="ml-auto size-4 items-center max-md:flex md:hidden md:group-hover/item:flex">
           <ArrowDownLeftIcon />
         </div>
       </RowComponent>

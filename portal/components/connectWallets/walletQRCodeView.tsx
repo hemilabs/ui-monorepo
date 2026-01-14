@@ -61,7 +61,7 @@ type Props = {
 export function WalletQRCodeView({ onBack, wallet }: Props) {
   const t = useTranslations('connect-wallets')
   const [uri, setUri] = useState('')
-  const { connect, connectors } = useConnect()
+  const { connect, connectors, reset } = useConnect()
 
   const downloadUrl = getWalletDownloadUrl(wallet)
 
@@ -91,9 +91,10 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
 
       return function cleanup() {
         walletConnectConnector.disconnect?.()
+        reset()
       }
     },
-    [connect, connectors],
+    [connect, connectors, reset],
   )
 
   return (

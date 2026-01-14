@@ -68,7 +68,7 @@ export const ConnectWalletAccordion = function ({
   const t = useTranslations('connect-wallets')
   const [isOpen, setIsOpen] = useState(true)
   const [selectedWallet, setSelectedWallet] = useState<WalletData | null>(null)
-  const { connect, connectors } = useConnect()
+  const { connect, connectors, reset } = useConnect()
 
   const handleClick = function () {
     track?.(event)
@@ -77,7 +77,9 @@ export const ConnectWalletAccordion = function ({
 
   async function connectWithDeepLink(wallet: WalletData) {
     const wcConnector = connectors.find(c => c.id === 'walletConnect')
-    if (!wcConnector) return
+    if (!wcConnector) {
+      return
+    }
 
     try {
       connect({ connector: wcConnector })
@@ -98,6 +100,7 @@ export const ConnectWalletAccordion = function ({
   async function handleWalletConnect(wallet: WalletData) {
     const { canConnectDirectly } = getWalletState(wallet)
     const supportsDeepLink = hasDeepLinkSupport(wallet.id)
+    reset()
 
     // Desktop or mobile with connector: connect directly
     if (canConnectDirectly && wallet.connector && !isWalletConnect(wallet)) {
@@ -191,7 +194,7 @@ export const ConnectWalletAccordion = function ({
                       {wallet.name}
                     </span>
                     {showInstall && (
-                      <div className="group-hover:backdrop-blur-px absolute inset-0 flex items-center justify-center rounded-lg bg-white/80 opacity-0 transition-all duration-300 group-hover:opacity-100">
+                      <div className="group-hover:backdrop-blur-2 absolute inset-0 flex items-center justify-center rounded-lg bg-white/80 opacity-0 transition-all duration-300 group-hover:opacity-100">
                         <div className="flex items-center gap-1 text-orange-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                           <DownloadIcon />
                           <span className="text-sm font-semibold">

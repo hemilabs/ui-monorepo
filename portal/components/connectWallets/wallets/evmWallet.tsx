@@ -10,6 +10,7 @@ import Skeleton from 'react-loading-skeleton'
 import { getNativeToken } from 'utils/nativeToken'
 import { walletIsConnected } from 'utils/wallet'
 import {
+  useConnect,
   useAccount as useEvmAccount,
   useDisconnect as useEvmDisconnect,
 } from 'wagmi'
@@ -26,6 +27,12 @@ export const EvmWallet = function () {
   const allWallets = useAllWallets()
   const chainSupported = useChainIsSupported(chainId)
   const { disconnect } = useEvmDisconnect()
+  const { reset } = useConnect()
+
+  const disconnectWallet = function () {
+    disconnect()
+    reset()
+  }
 
   if (status === 'connected') {
     return (
@@ -33,9 +40,9 @@ export const EvmWallet = function () {
         topContent={
           <>
             <ConnectedEvmAccount />
-            <div className="flex items-center gap-1 md:gap-3">
+            <div className="flex items-center gap-1">
               <ConnectedEvmChain />
-              <DisconnectWallet disconnect={disconnect} />
+              <DisconnectWallet disconnect={disconnectWallet} />
             </div>
           </>
         }

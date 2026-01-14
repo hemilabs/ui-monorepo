@@ -111,8 +111,10 @@ export const BtcWallet = function () {
         topContent={
           <>
             <ConnectedBtcAccount />
-            <ConnectedBtcChain />
-            <DisconnectWallet disconnect={disconnect} />
+            <div className="flex items-center gap-1">
+              <ConnectedBtcChain />
+              <DisconnectWallet disconnect={disconnect} />
+            </div>
           </>
         }
       >

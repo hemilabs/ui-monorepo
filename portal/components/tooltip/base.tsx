@@ -5,7 +5,7 @@ import { type ReactNode } from 'react'
 import 'rc-tooltip/assets/bootstrap_white.css'
 
 type CommonTooltipProps = {
-  borderRadius?: '4px' | '12px'
+  borderRadius?: '4px' | '6px' | '12px'
 }
 
 type SimpleInfoVariant = Omit<TooltipProps, 'overlay'> & {
@@ -56,13 +56,16 @@ function getOverlay(props: BaseTooltipProps) {
   )
 }
 
-export const BaseTooltip = function (props: BaseTooltipProps) {
+export const BaseTooltip = function (
+  props: BaseTooltipProps & { visible?: boolean },
+) {
   const {
     borderRadius = '4px',
     children,
     id,
     placement = 'top',
     trigger = ['click', 'hover', 'focus'],
+    visible,
   } = props
 
   return (
@@ -85,6 +88,7 @@ export const BaseTooltip = function (props: BaseTooltipProps) {
         root: { borderRadius, opacity: 1, padding: 0 },
       }}
       trigger={trigger}
+      visible={visible}
     >
       {children}
     </RcTooltip>

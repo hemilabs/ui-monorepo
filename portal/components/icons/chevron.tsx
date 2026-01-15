@@ -1,10 +1,15 @@
 import { ComponentProps } from 'react'
 
-const Bottom = (props: ComponentProps<'svg'>) => (
+const Bottom = ({
+  height = 16,
+  width = 16,
+  ...props
+}: ComponentProps<'svg'>) => (
   <svg
     fill="none"
-    height={16}
-    width={16}
+    height={height}
+    viewBox="0 0 16 16"
+    width={width}
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
@@ -19,11 +24,16 @@ const Bottom = (props: ComponentProps<'svg'>) => (
 
 type Props = { className?: string }
 
-const Right = (props: Props) => (
+const Right = ({
+  height = 16,
+  width = 17,
+  ...props
+}: ComponentProps<'svg'>) => (
   <svg
     fill="none"
-    height={16}
-    width={17}
+    height={height}
+    viewBox="0 0 17 16"
+    width={width}
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >

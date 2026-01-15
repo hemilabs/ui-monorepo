@@ -1,10 +1,5 @@
 'use client'
 
-import {
-  useAccountModal,
-  useChainModal,
-  useConnectModal,
-} from '@rainbow-me/rainbowkit'
 import { Drawer } from 'components/drawer'
 import { useAmount } from 'hooks/useAmount'
 
@@ -15,43 +10,30 @@ import { VaultDepositOperation } from './vaultDepositOperation'
 import { VaultWithdrawalOperation } from './vaultWithdrawalOperation'
 
 export const YieldOperationDrawer = function () {
-  const { accountModalOpen } = useAccountModal()
-  const { chainModalOpen } = useChainModal()
-  const { connectModalOpen } = useConnectModal()
   const [operation, setOperationDrawer] = useOperationDrawer()
 
   const [amount, onAmountChange] = useAmount()
 
   const closeDrawer = () => setOperationDrawer(null)
 
-  // Prevent closing the drawer when a RainbowKit modal is open.
-  // Without this check, clicks on the wallet modal (e.g., Connect Wallet)
-  // are interpreted as outside clicks and trigger onClose unintentionally.
-  function safeCloseDrawer() {
-    if (accountModalOpen || chainModalOpen || connectModalOpen) {
-      return
-    }
-    closeDrawer()
-  }
-
   return (
-    <Drawer onClose={safeCloseDrawer}>
+    <Drawer onClose={closeDrawer}>
       {operation === 'deposit' && (
         <VaultDepositOperation
           input={amount}
           onAmountChange={onAmountChange}
-          onClose={safeCloseDrawer}
+          onClose={closeDrawer}
         />
       )}
       {operation === 'withdraw' && (
         <VaultWithdrawalOperation
           input={amount}
           onAmountChange={onAmountChange}
-          onClose={safeCloseDrawer}
+          onClose={closeDrawer}
         />
       )}
       {operation === 'claim' && (
-        <VaultClaimRewardOperation onClose={safeCloseDrawer} />
+        <VaultClaimRewardOperation onClose={closeDrawer} />
       )}
     </Drawer>
   )

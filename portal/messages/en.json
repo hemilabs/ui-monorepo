@@ -121,25 +121,25 @@
   "connect-wallets": {
     "btc-wallet": "BTC Wallet",
     "btc-wallet-requirement": "A Bitcoin wallet is only required if moving assets between Bitcoin and Hemi.",
-    "connect-btc-wallet": "Connect your Unisat BTC Wallet",
+    "connect-btc-wallet": "Connect your BTC Wallet",
     "connect-evm-wallet": "Connect your EVM Wallet",
     "connect-to-see-balance": "Connect to a supported network to see your balance",
-    "connected-with-wallet": "Connected with <wallet></wallet>",
     "copy-address": "Copy Address",
-    "description": "Connect your EVM and BTC wallets to transfer assets seamlessly. For the best experience, use wallets from both networks.",
     "disconnect": "Disconnect",
+    "dont-have": "Don't have {wallet}?",
     "evm-wallet": "EVM Wallet",
-    "how-to-create-unisat-wallet": "How to create a Unisat wallet",
+    "get": "Get",
+    "get-wallet": "Get {wallet}",
+    "install": "Install",
+    "installed": "Installed",
+    "scan-with": "Scan with {wallet}",
     "status": {
       "connected": "Connected",
       "connecting": "Connecting",
       "disconnected": "Disconnected",
       "reconnecting": "Reconnecting"
     },
-    "unisat-is-the-only-supported-wallet": {
-      "first-line": "The UniSat Web Extension is the only supported BTC wallet.",
-      "second-line": "Do not use the UniSat mobile app."
-    }
+    "wallets": "Wallets"
   },
   "ecosystem": {
     "bitcoin-kit": {

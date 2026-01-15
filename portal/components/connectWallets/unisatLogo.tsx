@@ -10,10 +10,6 @@ export const UnisatLogo = (props: ComponentProps<'svg'>) => (
     {...props}
   >
     <g clipPath="url(#unisat_a)">
-      <path
-        d="M11.667 0H2.333A2.333 2.333 0 0 0 0 2.333v9.334A2.333 2.333 0 0 0 2.333 14h9.334A2.333 2.333 0 0 0 14 11.667V2.333A2.333 2.333 0 0 0 11.667 0Z"
-        fill="#12100F"
-      />
       <mask
         height={10}
         id="unisat_b"

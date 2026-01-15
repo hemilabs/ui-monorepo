@@ -48,8 +48,6 @@ const fetchDomains = new Set([
   'https://*.walletconnect.com',
   'wss://relay.walletconnect.org',
   'https://*.walletconnect.org',
-  // cookie3
-  'https://a.markfi.xyz',
   // Coinbase wallet
   'https://cca-lite.coinbase.com',
   'https://chain-proxy.wallet.coinbase.com',
@@ -120,11 +118,6 @@ if (
   downloadScriptsDomains.add('https://challenges.cloudflare.com')
   downloadScriptsDomains.add('https://ajax.cloudflare.com')
   fetchDomains.add('https://cloudflareinsights.com')
-}
-const cookie3Domain = getDomain(process.env.NEXT_PUBLIC_COOKIE3_URL)
-if (process.env.NEXT_PUBLIC_ENABLE_COOKIE3 === 'true' && cookie3Domain) {
-  fetchDomains.add(`https://${cookie3Domain}`)
-  downloadScriptsDomains.add(`https://${cookie3Domain}`)
 }
 // error-tracking
 const errorTrackingDomain = getDomain(process.env.NEXT_PUBLIC_SENTRY_DSN)

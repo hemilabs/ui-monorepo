@@ -77,11 +77,7 @@ export const NavbarMobile = function () {
           <EcosystemLink />
         </SmallBox>
         <FullItem>
-          <BitcoinKitLink
-            iconContainer={IconContainer}
-            itemContainer={CustomContainer}
-            row={RowContainer}
-          />
+          <BitcoinKitLink itemContainer={CustomContainer} row={RowContainer} />
         </FullItem>
         <FullItem>
           <DocsLink

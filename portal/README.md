@@ -38,9 +38,6 @@ NEXT_PUBLIC_CUSTOM_RPC_URL_SEPOLIA=<urls>
 NEXT_PUBLIC_WORKERS_DEBUG_ENABLE=<true|false>
 # These env variables are required for Enabling Analytics
 NEXT_PUBLIC_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
-NEXT_PUBLIC_COOKIE3_SITE_ID=<string> # Site ID for cookie3
-NEXT_PUBLIC_COOKIE3_URL=<url> # Cookie3 analytics url
-NEXT_PUBLIC_ENABLE_COOKIE3=<true|false> # Enable cookie3 analytics
 NEXT_PUBLIC_ANALYTICS_URL=<url> # Umami analytics URL
 NEXT_PUBLIC_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
 # These env variables are required for enabling the following features

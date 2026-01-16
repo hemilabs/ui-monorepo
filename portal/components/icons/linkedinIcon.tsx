@@ -3,8 +3,8 @@ import { ComponentProps } from 'react'
 export const LinkedinIcon = (props: ComponentProps<'svg'>) => (
   <svg
     fill="none"
-    height={15}
-    width={16}
+    height={18}
+    width={20}
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >

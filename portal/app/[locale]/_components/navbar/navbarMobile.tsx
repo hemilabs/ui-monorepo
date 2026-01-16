@@ -77,7 +77,11 @@ export const NavbarMobile = function () {
           <EcosystemLink />
         </SmallBox>
         <FullItem>
-          <BitcoinKitLink itemContainer={CustomContainer} row={RowContainer} />
+          <BitcoinKitLink
+            iconContainer={IconContainer}
+            itemContainer={CustomContainer}
+            row={RowContainer}
+          />
         </FullItem>
         <FullItem>
           <DocsLink
@@ -125,7 +129,7 @@ export const NavbarMobile = function () {
                 </div>
               </IconContainer>
               <ItemText text={t('follow-us')} />
-              <div className="ml-auto flex gap-x-3">
+              <div className="ml-auto flex flex-wrap items-end gap-x-3">
                 <SocialLinks />
               </div>
             </RowContainer>

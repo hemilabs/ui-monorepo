@@ -40,6 +40,7 @@ NEXT_PUBLIC_WORKERS_DEBUG_ENABLE=<true|false>
 NEXT_PUBLIC_ENABLE_ANALYTICS=<true|false> # Enable Analytics with Umami
 NEXT_PUBLIC_ANALYTICS_URL=<url> # Umami analytics URL
 NEXT_PUBLIC_ANALYTICS_WEBSITE_ID=<string> # Umami website ID
+NEXT_PUBLIC_ANALYTICS_FORMO_WRITE_KEY=<string> # Formo analytics write key
 # These env variables are required for enabling the following features
 NEXT_PUBLIC_BTC_YIELD_CLAIM_REWARDS=<true|false> # Enable claim rewards on the Btc yield page
 NEXT_PUBLIC_BTC_YIELD_OPPORTUNITY_ID=<string> # Merkl Opportunity ID for BTC yield campaigns

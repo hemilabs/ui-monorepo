@@ -44,7 +44,10 @@ export default function Page() {
   return (
     <PageLayout variant="wide">
       <div className="h-fit-rest-screen w-full pb-4 md:pb-0">
-        <PageTitle title={t('stake.stake-earn-points')} />
+        <PageTitle
+          subtitle={t('stake.subheading')}
+          title={t('stake.heading')}
+        />
         <div className="mt-6 md:mt-8">
           <StakeStrategyTable data={sortedTokens} loading={isLoading} />
         </div>

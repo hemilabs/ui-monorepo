@@ -225,7 +225,7 @@ type PartnerBridgeData = { partner: string }
 type GenesisDropData = { lockupMonths: LockupMonths }
 
 // Create a mapped type that maps each key to its corresponding value type
-type EventDataMap = {
+export type EventDataMap = {
   [K in AnalyticsEvent]: K extends AnalyticsEventsWithWallet
     ? WalletChainData
     : K extends AnalyticsEventsWithERC20

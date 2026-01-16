@@ -147,10 +147,10 @@
       "sub-heading": "Demonstração de construção em Bitcoin com Hemi utilizando o Bitcoin Kit"
     },
     "demos": {
-      "heading": "DEMOS",
-      "sub-heading": "Soluções de verificação biométrica para aplicações Web3."
+      "heading": "TBD",
+      "sub-heading": "TBD"
     },
-    "heading": "Demonstrações",
+    "heading": "TBD",
     "purefinance": {
       "heading": "Pure Finance",
       "sub-heading": "Utilidade e interação com contratos inteligentes diretamente na rede Hemi"
@@ -286,7 +286,7 @@
     "oku": "Oku",
     "rpc-url": "URL RPC",
     "start-using-hemi": "Começar a usar o Hemi",
-    "subheading": "Uma rede, alimentada por Bitcoin e Ethereum.",
+    "subheading": "Configure a rede Hemi em sua carteira para começar a usar o protocolo.",
     "sushi-swap": "Sushi Swap",
     "swap-tokens": "Trocar tokens",
     "swap-tokens-mainnet": "Trocar tokens na Sushi",
@@ -342,7 +342,8 @@
       "use-or": "Use <min></min> ou <max></max>",
       "years": "{years, plural, one {{years} ano} other {{years} anos}}"
     },
-    "heading": "Stake seus ${symbol} e ganhe",
+    "heading": "Governance staking",
+    "subheading": "Stake seus ${symbol} e ganhe.",
     "here-is-your-tx": "Aqui está a sua transação:",
     "lockup-period": "Período de bloqueio",
     "stake-successful": "Stake bem-sucedido",
@@ -414,6 +415,7 @@
       "stake-more": "Faça mais stake",
       "staking-assets": "Ativos em stake",
       "subtitle": "Faça stake para ganhar recompensas e aumentar os seus pontos.",
+      "heading": "Boost staking",
       "title": "Painel",
       "total-earned-points": "Total de pontos Hemi ganhos",
       "total-staked-on-hemi": "Total em stake em Hemi",
@@ -454,7 +456,8 @@
       "action": "Ação",
       "learn-how-to-stake-on-hemi": "Saiba como fazer stake no Hemi",
       "new-here": "Novo por aqui?",
-      "stake-earn-points": "Fazer stake e ganhar pontos",
+      "heading": "Stake for boost",
+      "subheading": "Faça stake para ganhar recompensas e aumentar os seus pontos..",
       "title": "Stake"
     },
     "start-staking-earn-points": "Comece a fazer stake e ganhar pontos",

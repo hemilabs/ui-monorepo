@@ -6,6 +6,7 @@ import { useUmami } from 'hooks/useUmami'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
+import { formatBtcAddress, formatEvmAddress } from 'utils/format'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount as useEvmAccount } from 'wagmi'
 
@@ -39,18 +40,22 @@ export const WalletConnection = function () {
   const { closeDrawer, isDrawerOpen, openDrawer } = useDrawerContext()
   const t = useTranslations()
 
-  const { status: btcStatus } = useBtcAccount()
-  const { connector, status: evmStatus } = useEvmAccount()
+  const { address: btcAddress, status: btcStatus } = useBtcAccount()
+  const { address: evmAddress, connector, status: evmStatus } = useEvmAccount()
   const { track } = useUmami()
 
   const walletsConnected = []
   if (walletIsConnected(evmStatus)) {
     walletsConnected.push({
+      address: evmAddress ? formatEvmAddress(evmAddress) : undefined,
       icon: <EvmWalletLogo className="size-5" walletName={connector?.name} />,
     })
   }
   if (walletIsConnected(btcStatus)) {
-    walletsConnected.push({ icon: <UnisatLogo className="size-4" /> })
+    walletsConnected.push({
+      address: btcAddress ? formatBtcAddress(btcAddress) : undefined,
+      icon: <UnisatLogo className="size-4" />,
+    })
   }
 
   const onConnectWalletsClick = function () {
@@ -58,35 +63,37 @@ export const WalletConnection = function () {
     track?.('connect wallets')
   }
 
+  const buttonVariant =
+    walletsConnected.length > 0 ? 'secondary' : ('primary' as const)
+
   return (
     <div className="ml-auto mr-3">
       <div className="group flex items-center gap-x-3">
         <Button
           onClick={onConnectWalletsClick}
           size="xSmall"
-          variant="secondary"
+          variant={buttonVariant}
         >
           {walletsConnected.length === 0 && (
             <>
-              <WalletIcon className="[&>path]:fill-neutral-500 [&>path]:transition-colors [&>path]:duration-200 [&>path]:group-hover:fill-neutral-950" />
+              <WalletIcon className="opacity-70 transition-opacity duration-200 group-hover:opacity-100 [&>path]:fill-white" />
               <span>{t('common.connect-wallets')}</span>
             </>
           )}
           {walletsConnected.length > 0 && (
-            <div className="flex items-center justify-between gap-x-1">
-              {walletsConnected.map(({ icon }, index) => (
+            <div className="flex items-center justify-between">
+              {walletsConnected.map(({ address, icon }, index) => (
                 <div
-                  className="flex size-5 items-center justify-center rounded-full"
+                  className="flex items-center justify-center rounded-full"
                   key={index}
                 >
                   {icon}
+                  <span className="ml-1 text-sm">{address}</span>
+                  {index < walletsConnected.length - 1 && (
+                    <div className="mx-2 h-2.5 w-0.5 rounded-full bg-neutral-200" />
+                  )}
                 </div>
               ))}
-              <span className="ml-1">
-                {t('common.wallets-connected', {
-                  count: walletsConnected.length,
-                })}
-              </span>
             </div>
           )}
         </Button>

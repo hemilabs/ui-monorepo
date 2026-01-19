@@ -24,6 +24,9 @@ inputs:
   NEXT_PUBLIC_ANALYTICS_WEBSITE_ID:
     required: false
     description: Analytics website ID
+  NEXT_PUBLIC_ANALYTICS_FORMO_WRITE_KEY:
+    required: false
+    description: Formo analytics write key
   NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET:
     required: false
     description: Comma-separated list of past bitcoin vault indexes for Mainnet
@@ -112,6 +115,7 @@ runs:
       env:
         NEXT_PUBLIC_ANALYTICS_URL: ${{ inputs.NEXT_PUBLIC_ANALYTICS_URL }}
         NEXT_PUBLIC_ANALYTICS_WEBSITE_ID: ${{ inputs.NEXT_PUBLIC_ANALYTICS_WEBSITE_ID }}
+        NEXT_PUBLIC_ANALYTICS_FORMO_WRITE_KEY: ${{ inputs.NEXT_PUBLIC_ANALYTICS_FORMO_WRITE_KEY }}
         NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET: ${{ inputs.NEXT_PUBLIC_BITCOIN_PAST_VAULTS_MAINNET }}
         NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA: ${{ inputs.NEXT_PUBLIC_BITCOIN_PAST_VAULTS_SEPOLIA }}
         NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET: ${{ inputs.NEXT_PUBLIC_CUSTOM_RPC_URL_HEMI_MAINNET }}

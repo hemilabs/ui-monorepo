@@ -118,6 +118,9 @@ if (
   downloadScriptsDomains.add('https://challenges.cloudflare.com')
   downloadScriptsDomains.add('https://ajax.cloudflare.com')
   fetchDomains.add('https://cloudflareinsights.com')
+  // formo analytics
+  downloadScriptsDomains.add('https://*.formo.so')
+  fetchDomains.add('https://*.formo.so')
 }
 // error-tracking
 const errorTrackingDomain = getDomain(process.env.NEXT_PUBLIC_SENTRY_DSN)

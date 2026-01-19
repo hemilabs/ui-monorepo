@@ -76,7 +76,7 @@ export const WalletConnection = function () {
         >
           {walletsConnected.length === 0 && (
             <>
-              <WalletIcon className="[&>path]:fill-white [&>path]:transition-colors [&>path]:duration-200 [&>path]:group-hover:fill-white" />
+              <WalletIcon className="transition-opacity duration-200 group-hover:opacity-[0.72] [&>path]:fill-white [&>path]:transition-colors [&>path]:duration-200" />{' '}
               <span>{t('common.connect-wallets')}</span>
             </>
           )}
@@ -90,7 +90,7 @@ export const WalletConnection = function () {
                   {icon}
                   <span className="ml-1 text-sm">{address}</span>
                   {index < walletsConnected.length - 1 && (
-                    <span className="px-2 text-sm text-neutral-200">|</span>
+                    <div className="mx-2 h-2.5 w-0.5 rounded-full bg-neutral-200" />
                   )}
                 </div>
               ))}

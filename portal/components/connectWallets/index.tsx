@@ -76,7 +76,7 @@ export const WalletConnection = function () {
         >
           {walletsConnected.length === 0 && (
             <>
-              <WalletIcon className="opacity-[0.72] transition-opacity duration-200 group-hover:opacity-100 [&>path]:fill-white" />
+              <WalletIcon className="opacity-70 transition-opacity duration-200 group-hover:opacity-100 [&>path]:fill-white" />
               <span>{t('common.connect-wallets')}</span>
             </>
           )}

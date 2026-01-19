@@ -88,10 +88,8 @@ export const WalletConnection = function () {
                   key={index}
                 >
                   {icon}
-                  <span className="ml-1">
-                    <span className="text-sm" key={index}>
-                      {address}
-                    </span>
+                  <span className="ml-1 text-sm" key={index}>
+                    {address}
                   </span>
                   {index < walletsConnected.length - 1 && (
                     <span className="px-2 text-sm text-neutral-200">|</span>

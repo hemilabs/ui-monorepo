@@ -63,7 +63,7 @@ export const WalletConnection = function () {
     track?.('connect wallets')
   }
 
-  const isConnected =
+  const buttonVariant =
     walletsConnected.length > 0 ? 'secondary' : ('primary' as const)
 
   return (
@@ -72,7 +72,7 @@ export const WalletConnection = function () {
         <Button
           onClick={onConnectWalletsClick}
           size="xSmall"
-          variant={isConnected}
+          variant={buttonVariant}
         >
           {walletsConnected.length === 0 && (
             <>

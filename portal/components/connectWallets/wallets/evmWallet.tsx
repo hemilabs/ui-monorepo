@@ -10,7 +10,6 @@ import Skeleton from 'react-loading-skeleton'
 import { getNativeToken } from 'utils/nativeToken'
 import { walletIsConnected } from 'utils/wallet'
 import {
-  useConnect,
   useAccount as useEvmAccount,
   useDisconnect as useEvmDisconnect,
 } from 'wagmi'
@@ -22,17 +21,15 @@ import { DisconnectWallet } from '../disconnectWallet'
 import { EthLogo } from '../ethLogo'
 
 export const EvmWallet = function () {
-  const { chain, chainId, status } = useEvmAccount()
+  const { chain, chainId, connector, status } = useEvmAccount()
   const t = useTranslations('connect-wallets')
   const allWallets = useAllWallets()
   const chainSupported = useChainIsSupported(chainId)
   const { disconnect } = useEvmDisconnect()
-  const { reset } = useConnect()
 
-  const disconnectWallet = function () {
-    disconnect()
-    reset()
-  }
+  // Disconnect the specific connector that is currently connected
+  // This ensures proper cleanup and allows reconnecting the same wallet
+  const disconnectWallet = () => disconnect({ connector })
 
   if (status === 'connected') {
     return (

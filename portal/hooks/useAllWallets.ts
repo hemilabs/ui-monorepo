@@ -19,11 +19,16 @@ export function useAllWallets(): WalletData[] {
       allWalletConnectors.map(function (wallet) {
         const connector = evmConnectors.find(c => c.name === wallet.name)
 
+        // A wallet is installed if:
+        // 1. RainbowKit detected it (wallet.installed), OR
+        // 2. We found a matching connector (especially for EIP-6963 auto-discovered wallets)
+        const installed = wallet.installed ?? !!connector
+
         return {
           connector,
           downloadUrls: wallet.downloadUrls,
           id: wallet.id,
-          installed: wallet.installed ?? false,
+          installed,
           name: wallet.name,
         }
       }),

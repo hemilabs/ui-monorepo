@@ -131,7 +131,7 @@ const ItemWithSubmenu = function ({
           <ItemText selected={isOpen} text={text} />
         </div>
         {value && (
-          <div className="flex items-center gap-x-2">
+          <div className="flex items-center gap-x-2 capitalize">
             <div className="hidden md:block">
               <ItemText selected={true} text={value} />
             </div>
@@ -168,7 +168,7 @@ const LanguageMenu = function ({ active }: LanguageProps) {
         <div
           className="group/row flex w-full items-center
           justify-between rounded-md px-3
-          py-2 hover:bg-neutral-50"
+          py-2 capitalize hover:bg-neutral-50"
           key={locale}
           onClick={() => onClick(locale)}
         >

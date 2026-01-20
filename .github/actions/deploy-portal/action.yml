@@ -109,7 +109,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: npx lerna run deploy --scope=portal
+    - run: npm run deploy -w portal
       shell: bash
       name: Build site
       env:

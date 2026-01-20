@@ -12,7 +12,7 @@
       "withdraw-heading": "Rever Retirada",
       "withdraw-subheading": "Complete os passos restantes para retirar seu {symbol}"
     },
-    "heading": "Bitcoin, com Rendimento Real",
+    "heading": "Bitcoin, rendimento",
     "info": {
       "earning-rate": "Taxa de rendimento",
       "holders": "Nº de titulares",
@@ -603,7 +603,7 @@
       "deposit": "Depósito",
       "no-transactions": "Nenhuma transação efetuada",
       "no-transactions-get-started": "Comece por tunelar ativos de e para o Hemi",
-      "subtitle": "Ver e acompanhar o seu histórico de transações no Hemi",
+      "subtitle": "Acompanhe o status e os detalhes das suas transações Hemi.",
       "title": "Histórico de Transações",
       "top-bar": {
         "all": "Todas",

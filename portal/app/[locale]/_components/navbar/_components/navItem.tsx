@@ -95,7 +95,7 @@ export const AccordionIconContainer = ({
       group-hover/nav:[&>svg>path]:fill-neutral-950 ${
         selected
           ? '[&>svg>path]:fill-neutral-950'
-          : 'bg-neutral-100 [&>svg>path]:fill-neutral-400'
+          : '[&>svg>path]:fill-neutral-400'
       }`}
   >
     {children}

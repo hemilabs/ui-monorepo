@@ -11,7 +11,7 @@ export const IconContainer = ({
 }) => (
   <div
     className={`flex ${size} items-center justify-center rounded-md transition-colors duration-300
-      group-hover/nav:[&_svg>path]:fill-neutral-950 ${
+      ${
         selected
           ? '[&_svg>path]:fill-orange-600'
           : 'group-hover/item:[&_svg>path]:fill-neutral-950'

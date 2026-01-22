@@ -49,11 +49,11 @@ export const ItemText = ({
 }: Pick<NavItemProps, 'text'> & Selectable) => (
   <span
     className={`text-sm font-semibold transition-colors duration-300
-       group-hover/nav:text-neutral-950 md:font-medium ${
-         selected
-           ? 'text-orange-600'
-           : 'text-neutral-600 group-hover/item:text-neutral-950'
-       }`}
+      md:font-medium ${
+        selected
+          ? 'text-orange-600'
+          : 'text-neutral-600 group-hover/item:text-neutral-950'
+      }`}
   >
     {text}
   </span>

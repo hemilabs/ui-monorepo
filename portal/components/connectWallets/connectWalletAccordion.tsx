@@ -97,7 +97,8 @@ export const ConnectWalletAccordion = function ({
       await disconnectAll()
 
       // Start connection - intentionally not awaited to avoid blocking the UI while user approves
-      // This follows RainbowKit's pattern: packages/rainbowkit/src/components/ConnectOptions/DesktopOptions.tsx
+      // This follows RainbowKit's pattern:
+      // https://github.com/rainbow-me/rainbowkit/blob/d1c94fbb7a6c5a78a5f618f4bf3061dd074c2807/packages/rainbowkit/src/components/ConnectOptions/DesktopOptions.tsx#L115
       // where they call wallet.connect() without await
       connectAsync({ connector: walletConnectConnector })
     },
@@ -120,7 +121,8 @@ export const ConnectWalletAccordion = function ({
       await disconnectAll()
       // Use connectAsync following RainbowKit's pattern
       // Start connection - intentionally not awaited to avoid blocking the UI while user approves
-      // This follows RainbowKit's pattern: packages/rainbowkit/src/components/ConnectOptions/DesktopOptions.tsx
+      // This follows RainbowKit's pattern:
+      // https://github.com/rainbow-me/rainbowkit/blob/d1c94fbb7a6c5a78a5f618f4bf3061dd074c2807/packages/rainbowkit/src/components/ConnectOptions/DesktopOptions.tsx#L115
       connectAsync({ connector: wcConnector })
       const uri = await getWalletConnectUri(wcConnector)
 

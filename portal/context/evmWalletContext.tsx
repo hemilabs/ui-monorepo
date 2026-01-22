@@ -18,6 +18,7 @@ import {
 } from '@rainbow-me/rainbowkit/wallets'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { allEvmNetworks } from 'networks'
+import { isMobile } from 'react-device-detect'
 import { buildTransports } from 'utils/transport'
 import { WagmiProvider, createConfig } from 'wagmi'
 import { walletConnect } from 'wagmi/connectors'
@@ -33,6 +34,7 @@ const appName = 'Hemi Portal'
 const projectId =
   process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ?? 'YOUR_PROJECT_ID'
 
+// All wallets to show in the UI
 const configuredWallets = [
   metaMaskWallet,
   binanceWallet,
@@ -44,11 +46,24 @@ const configuredWallets = [
   tokenPocketWallet,
 ]
 
+// Exclude wallets that work better with EIP-6963 auto-discovery:
+// - metaMaskWallet: metaMaskSDK conflicts with EIP-6963, let wagmi auto-discover
+// - rabbyWallet: works better with native EIP-6963 injected connector
+// - phantomWallet: works better with native EIP-6963 injected connector
+// - This does not apply to mobile, as wallets there usually need to be explicitly selected
+const walletsForConnectors = [
+  binanceWallet,
+  walletConnectWallet,
+  okxWallet,
+  coinbaseWallet,
+  tokenPocketWallet,
+]
+
 const connectors = connectorsForWallets(
   [
     {
       groupName: 'Wallets',
-      wallets: configuredWallets,
+      wallets: isMobile ? configuredWallets : walletsForConnectors,
     },
   ],
   {

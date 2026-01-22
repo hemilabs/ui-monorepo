@@ -5,9 +5,9 @@ import { Tooltip } from 'components/tooltip'
 import { type WalletData } from 'hooks/useAllWallets'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useCallback, useState } from 'react'
 import { isMobile } from 'react-device-detect'
-import { useConnect } from 'wagmi'
+import { useConnect, useConnections, useDisconnect } from 'wagmi'
 
 import { EvmWalletLogo } from './evmWalletLogo'
 import { DownloadIcon } from './icons/download'
@@ -68,7 +68,42 @@ export const ConnectWalletAccordion = function ({
   const t = useTranslations('connect-wallets')
   const [isOpen, setIsOpen] = useState(true)
   const [selectedWallet, setSelectedWallet] = useState<WalletData | null>(null)
-  const { connect, connectors, reset } = useConnect()
+  const connections = useConnections()
+  const { connectAsync, connectors } = useConnect()
+  const { disconnectAsync } = useDisconnect()
+
+  // Disconnect all active connections before connecting a new wallet
+  // This is necessary because wagmi v2 allows multiple simultaneous connections
+  const disconnectAll = useCallback(
+    async function () {
+      for (const connection of connections) {
+        await disconnectAsync({ connector: connection.connector })
+      }
+    },
+    [connections, disconnectAsync],
+  )
+
+  // Get the WalletConnect connector for QR code connections
+  const walletConnectConnector = connectors.find(c => c.id === 'walletConnect')
+
+  // Following RainbowKit's pattern: start connection
+  const startWalletConnectSession = useCallback(
+    async function () {
+      if (!walletConnectConnector) {
+        return
+      }
+
+      // Disconnect all existing connections before connecting a new wallet
+      await disconnectAll()
+
+      // Start connection - intentionally not awaited to avoid blocking the UI while user approves
+      // This follows RainbowKit's pattern:
+      // https://github.com/rainbow-me/rainbowkit/blob/d1c94fbb7a6c5a78a5f618f4bf3061dd074c2807/packages/rainbowkit/src/components/ConnectOptions/DesktopOptions.tsx#L115
+      // where they call wallet.connect() without await
+      connectAsync({ connector: walletConnectConnector })
+    },
+    [connectAsync, disconnectAll, walletConnectConnector],
+  )
 
   const handleClick = function () {
     track?.(event)
@@ -82,7 +117,13 @@ export const ConnectWalletAccordion = function ({
     }
 
     try {
-      connect({ connector: wcConnector })
+      // Disconnect all existing connections before connecting a new wallet
+      await disconnectAll()
+      // Use connectAsync following RainbowKit's pattern
+      // Start connection - intentionally not awaited to avoid blocking the UI while user approves
+      // This follows RainbowKit's pattern:
+      // https://github.com/rainbow-me/rainbowkit/blob/d1c94fbb7a6c5a78a5f618f4bf3061dd074c2807/packages/rainbowkit/src/components/ConnectOptions/DesktopOptions.tsx#L115
+      connectAsync({ connector: wcConnector })
       const uri = await getWalletConnectUri(wcConnector)
 
       if (uri) {
@@ -100,17 +141,30 @@ export const ConnectWalletAccordion = function ({
   async function handleWalletConnect(wallet: WalletData) {
     const { canConnectDirectly } = getWalletState(wallet)
     const supportsDeepLink = hasDeepLinkSupport(wallet.id)
-    reset()
 
     // Desktop or mobile with connector: connect directly
     if (canConnectDirectly && wallet.connector && !isWalletConnect(wallet)) {
-      connect({ connector: wallet.connector })
+      const attemptConnection = async function () {
+        // Disconnect all existing connections before connecting a new wallet
+        // This prevents multiple simultaneous connections in wagmi v2
+        await disconnectAll()
+        await connectAsync({ connector: wallet.connector! })
+      }
+
+      attemptConnection()
       return
     }
 
     // Mobile without connector but with deep link support (TokenPocket, OKX, Phantom)
     if (isMobile && supportsDeepLink && !wallet.connector) {
       await connectWithDeepLink(wallet)
+    }
+
+    // For wallets that need QR code (desktop without direct connection)
+    // Start the WalletConnect session BEFORE showing the QRCodeView
+    // This follows RainbowKit's pattern where connection starts in selectWallet
+    if (!isMobile) {
+      await startWalletConnectSession()
     }
 
     setSelectedWallet(wallet)

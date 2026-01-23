@@ -91,11 +91,15 @@ const HemiSwapLink = function ({
   const addTracking = () => (enabled && event ? () => track(event) : undefined)
   return (
     <ItemContainer>
-      <AnchorTag href="https://swap.hemi.xyz" onClick={addTracking()}>
+      <AnchorTag
+        className="flex-1"
+        href="https://swap.hemi.xyz"
+        onClick={addTracking()}
+      >
         <Row>
           <IconContainer>{<DexIcon />}</IconContainer>
           <ItemText text={text} />
-          <div className="ml-auto hidden size-4 items-center group-hover/nav:flex">
+          <div className="ml-auto hidden size-4 items-center md:group-hover/item:flex">
             <ArrowDownLeftIcon />
           </div>
         </Row>

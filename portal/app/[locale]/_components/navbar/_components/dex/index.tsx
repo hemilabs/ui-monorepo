@@ -91,11 +91,15 @@ const HemiSwapLink = function ({
   const addTracking = () => (enabled && event ? () => track(event) : undefined)
   return (
     <ItemContainer>
-      <AnchorTag href="https://swap.hemi.xyz" onClick={addTracking()}>
+      <AnchorTag
+        className="flex-1"
+        href="https://swap.hemi.xyz"
+        onClick={addTracking()}
+      >
         <Row>
           <IconContainer>{<DexIcon />}</IconContainer>
           <ItemText text={text} />
-          <div className="ml-auto hidden size-4 items-center group-hover/nav:flex">
+          <div className="ml-auto hidden size-4 items-center md:group-hover/item:flex">
             <ArrowDownLeftIcon />
           </div>
         </Row>
@@ -130,13 +134,30 @@ const DexImpl = function () {
   return isTestnet ? (
     <HemiSwapLink event="nav - dex" text={t('title')} />
   ) : (
-    <ItemContainer onClick={() => setIsOpen(!isOpen)} selected={isOpen}>
+    <ItemContainer
+      onClick={() => setIsOpen(!isOpen)}
+      selected={isOpen}
+      selectedClassName="bg-neutral-100"
+    >
       {isOpen && <Backdrop onClick={() => setIsOpen(!isOpen)} />}
 
       <Row>
-        <IconContainer selected={isOpen}>{<DexIcon />}</IconContainer>
-        <ItemText selected={isOpen} text={t('title')} />
-        <Chevron.Right className="group ml-auto hidden max-md:hidden md:group-hover/nav:block [&>path]:fill-neutral-500" />
+        <IconContainer
+          selected={isOpen}
+          selectedClassName="[&_svg>path]:fill-neutral-950"
+        >
+          {<DexIcon />}
+        </IconContainer>
+        <ItemText
+          selected={isOpen}
+          selectedClassName="text-neutral-950"
+          text={t('title')}
+        />
+        <Chevron.Right
+          className={`ml-auto [&>path]:fill-neutral-500 ${
+            isOpen ? 'block' : 'hidden max-md:hidden md:group-hover/nav:block'
+          }`}
+        />{' '}
       </Row>
 
       {isOpen &&

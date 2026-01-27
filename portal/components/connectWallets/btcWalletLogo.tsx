@@ -8,14 +8,7 @@ function getLogo(walletId: string, props?: ComponentProps<'svg'>) {
     okx: <OkxLogo {...props} />,
     unisat: <UnisatLogo {...props} />,
   }
-
-  // Match by wallet id (e.g., 'unisat', 'okx')
-  const walletKey = Object.keys(wallets).find(key =>
-    walletId.toLowerCase().includes(key.toLowerCase()),
-  )
-
-  // Default to unisat if not found
-  return wallets[walletKey || 'unisat']
+  return wallets[walletId] || wallets.unisat
 }
 
 export const BtcWalletLogo = function ({

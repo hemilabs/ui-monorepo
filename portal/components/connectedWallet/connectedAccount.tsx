@@ -212,16 +212,16 @@ export const ConnectedBtcChain = function () {
   }
 
   if (isChainUnsupported || !chain) {
-    const canSwitch = connector?.supportsSwitchNetwork ?? false
     // As only one btc chain is supported at the moment, this will work.
     // Once there are multiple chains, we may need to show a dropdown or something
     // to select the chain to connect to.
     const btcChain = networkType === 'mainnet' ? bitcoinMainnet : bitcoinTestnet
     return (
       <WrongNetwork
-        canSwitch={canSwitch}
         onClick={
-          canSwitch ? () => switchChain({ chainId: btcChain.id }) : undefined
+          connector?.supportsSwitchNetwork
+            ? () => switchChain({ chainId: btcChain.id })
+            : undefined
         }
         type="BTC"
       />

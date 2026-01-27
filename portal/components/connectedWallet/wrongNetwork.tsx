@@ -8,17 +8,15 @@ import { EvmChainsMenu } from './evmChainsMenu'
 type NetworkType = 'BTC' | 'ETH'
 
 export const WrongNetwork = function ({
-  canSwitch = true,
   onClick,
   type,
 }: {
-  canSwitch?: boolean
   onClick?: VoidFunction
   type: NetworkType
 }) {
   const t = useTranslations('common')
 
-  if (!canSwitch) {
+  if (!onClick) {
     return (
       <div className="flex items-center p-2 text-sm font-medium text-rose-600">
         <span>{t('wrong-type-network', { type })}</span>

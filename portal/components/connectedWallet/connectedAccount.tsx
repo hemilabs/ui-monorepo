@@ -2,9 +2,9 @@ import { bitcoinMainnet, bitcoinTestnet } from 'btc-wallet/chains'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchChain'
 import { type Account } from 'btc-wallet/unisat'
+import { BtcWalletLogo } from 'components/connectWallets/btcWalletLogo'
 import { EvmWalletLogo } from 'components/connectWallets/evmWalletLogo'
 import { ProfileIcon } from 'components/connectWallets/icons/profile'
-import { UnisatLogo } from 'components/connectWallets/unisatLogo'
 import { Chevron } from 'components/icons/chevron'
 import { Tooltip } from 'components/tooltip'
 import {
@@ -189,7 +189,9 @@ export const ConnectedBtcAccount = function () {
   return (
     <ConnectedWallet
       address={address}
-      connectorLogo={<UnisatLogo className="size-4" />}
+      connectorLogo={
+        <BtcWalletLogo className="size-4" walletId={connector?.id} />
+      }
       connectorName={connector?.name}
       copyEvent="btc copy"
       formattedAddress={address ? formatBtcAddress(address) : '...'}
@@ -198,7 +200,7 @@ export const ConnectedBtcAccount = function () {
 }
 
 export const ConnectedBtcChain = function () {
-  const { chain, isConnected } = useBtcAccount()
+  const { chain, connector, isConnected } = useBtcAccount()
   const [networkType] = useNetworkType()
 
   const { switchChain } = useSwitchBtcChain()
@@ -210,13 +212,17 @@ export const ConnectedBtcChain = function () {
   }
 
   if (isChainUnsupported || !chain) {
+    const canSwitch = connector?.supportsSwitchNetwork ?? false
     // As only one btc chain is supported at the moment, this will work.
     // Once there are multiple chains, we may need to show a dropdown or something
     // to select the chain to connect to.
     const btcChain = networkType === 'mainnet' ? bitcoinMainnet : bitcoinTestnet
     return (
       <WrongNetwork
-        onClick={() => switchChain({ chainId: btcChain.id })}
+        canSwitch={canSwitch}
+        onClick={
+          canSwitch ? () => switchChain({ chainId: btcChain.id }) : undefined
+        }
         type="BTC"
       />
     )

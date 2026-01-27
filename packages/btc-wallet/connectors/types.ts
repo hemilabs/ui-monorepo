@@ -24,6 +24,7 @@ export type WalletConnector = {
     satoshis: Satoshis,
     options: object,
   ) => Promise<BtcTransaction>
+  supportsSwitchNetwork: boolean
   switchNetwork: (network: BtcSupportedNetworks) => Promise<void>
 }
 

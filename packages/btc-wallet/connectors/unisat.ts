@@ -59,6 +59,7 @@ const wallet = {
     assertInstalled()
     return provider.sendBitcoin(toAddress, satoshis, options)
   },
+  supportsSwitchNetwork: true,
   switchNetwork(network) {
     assertInstalled()
     return provider.switchNetwork(network)

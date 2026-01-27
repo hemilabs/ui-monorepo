@@ -1,9 +1,14 @@
 import { type Wallet } from '@rainbow-me/rainbowkit'
+import {
+  type ConnectorGroup,
+  type WalletConnector,
+} from 'btc-wallet/connectors/types'
+import { useConfig as useBtcConfig } from 'btc-wallet/hooks/useConfig'
 import { allWalletConnectors } from 'context/evmWalletContext'
 import { useMemo } from 'react'
 import { type Connector, useConnect } from 'wagmi'
 
-export type WalletData = {
+export type EvmWalletData = {
   connector?: Connector
   downloadUrls: Wallet['downloadUrls']
   id: Wallet['id']
@@ -11,10 +16,24 @@ export type WalletData = {
   name: Wallet['name']
 }
 
-export function useAllWallets(): WalletData[] {
-  const { connectors: evmConnectors } = useConnect()
+export type BtcWalletData = {
+  connector: WalletConnector
+  downloadUrls: ConnectorGroup['downloadUrls']
+  id: string
+  installed: boolean
+  name: string
+}
 
-  return useMemo(
+type AllWallets = {
+  btcWallets: BtcWalletData[]
+  evmWallets: EvmWalletData[]
+}
+
+export function useAllWallets(): AllWallets {
+  const { connectors: evmConnectors } = useConnect()
+  const { connectors: btcConnectors } = useBtcConfig()
+
+  const evmWallets = useMemo(
     () =>
       allWalletConnectors.map(function (wallet) {
         const connector = evmConnectors.find(c => c.name === wallet.name)
@@ -34,4 +53,21 @@ export function useAllWallets(): WalletData[] {
       }),
     [evmConnectors],
   )
+
+  const btcWallets = useMemo(
+    () =>
+      btcConnectors.map(connectorGroup => ({
+        connector: connectorGroup.wallet,
+        downloadUrls: connectorGroup.downloadUrls,
+        id: connectorGroup.wallet.id,
+        installed: connectorGroup.wallet.isInstalled(),
+        name: connectorGroup.name,
+      })),
+    [btcConnectors],
+  )
+
+  return {
+    btcWallets,
+    evmWallets,
+  }
 }

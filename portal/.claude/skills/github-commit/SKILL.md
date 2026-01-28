@@ -1,5 +1,5 @@
 ---
-model: haiku
+model: sonnet
 name: github-commit
 description: Create a well-formatted git commit following best practices
 ---
@@ -18,7 +18,18 @@ When this skill is invoked, create a git commit following these steps:
 
 ## Commit Message Guidelines
 
-- **Title**: Imperative mood, max 50 characters (e.g., "Add feature" not "Added feature")
+Follow these seven rules for great commit messages:
+
+1. **Separate subject from body with a blank line**
+2. **Limit the subject line to 50 characters**
+3. **Capitalize the subject line**
+4. **Do not end the subject line with a period**
+5. **Use the imperative mood in the subject line** (e.g., "Add feature" not "Added feature")
+6. **Wrap the body at 72 characters**
+7. **Use the body to explain what and why vs. how**
+
+Additional guidelines:
+
 - **Style**: Casual and human, but professional
 - **Language**: Always in English
 - **Format**:
@@ -29,8 +40,10 @@ When this skill is invoked, create a git commit following these steps:
 
 - Always use `-S` flag to sign commits with GPG
 - Be specific but concise
-- Focus on _what_ and _why_, not _how_
-- Use commit body for larger explanations when the title isn't enough
 - No need for issue numbers unless critical
 - Avoid generic messages like "fix bug" or "update code"
 - **Never commit sensitive data**: secrets, private keys, API keys, tokens, .env files, wallet private keys, seed phrases, mnemonics, keystore files, or any credentials
+
+## References
+
+Based on: <https://chris.beams.io/git-commit>

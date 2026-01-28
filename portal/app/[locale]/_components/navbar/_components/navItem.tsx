@@ -27,16 +27,23 @@ export const Row = (props: ComponentProps<'div'>) => (
 
 export const ItemContainer = ({
   children,
+  hoverClassName = 'hover:bg-neutral-100 max-md:bg-zinc-50/80',
   justifyItems = 'justify-center md:justify-start',
   padding = 'py-1.5',
   selected = false,
+  selectedClassName = 'bg-orange-50',
   ...props
 }: Selectable &
-  ComponentProps<'div'> & { justifyItems?: string; padding?: string }) => (
+  ComponentProps<'div'> & {
+    justifyItems?: string
+    padding?: string
+    selectedClassName?: string
+    hoverClassName?: string
+  }) => (
   <div
     {...props}
     className={`group/item group/nav flex ${justifyItems} h-full cursor-pointer items-center rounded-lg ${padding} transition-colors duration-300 md:rounded-md ${
-      selected ? 'bg-orange-50' : 'hover:bg-neutral-100 max-md:bg-zinc-50/80'
+      selected ? selectedClassName : hoverClassName
     }`}
   >
     {children}
@@ -44,16 +51,18 @@ export const ItemContainer = ({
 )
 
 export const ItemText = ({
+  hoverClassName = 'text-neutral-600 group-hover/item:text-neutral-950',
   selected = false,
+  selectedClassName = 'text-orange-600',
   text,
-}: Pick<NavItemProps, 'text'> & Selectable) => (
+}: Pick<NavItemProps, 'text'> &
+  Selectable & { selectedClassName?: string; hoverClassName?: string }) => (
   <span
-    className={`text-sm font-semibold transition-colors duration-300
-       group-hover/nav:text-neutral-950 md:font-medium ${
-         selected
-           ? 'text-orange-600'
-           : 'text-neutral-600 group-hover/item:text-neutral-950'
-       }`}
+    className={`text-sm font-semibold transition-colors duration-300 md:font-medium ${
+      selected
+        ? selectedClassName
+        : `group-hover/nav:text-neutral-950 ${hoverClassName}`
+    }`}
   >
     {text}
   </span>

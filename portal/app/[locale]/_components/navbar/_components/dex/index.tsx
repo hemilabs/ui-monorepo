@@ -134,13 +134,30 @@ const DexImpl = function () {
   return isTestnet ? (
     <HemiSwapLink event="nav - dex" text={t('title')} />
   ) : (
-    <ItemContainer onClick={() => setIsOpen(!isOpen)} selected={isOpen}>
+    <ItemContainer
+      onClick={() => setIsOpen(!isOpen)}
+      selected={isOpen}
+      selectedClassName="bg-neutral-100"
+    >
       {isOpen && <Backdrop onClick={() => setIsOpen(!isOpen)} />}
 
       <Row>
-        <IconContainer selected={isOpen}>{<DexIcon />}</IconContainer>
-        <ItemText selected={isOpen} text={t('title')} />
-        <Chevron.Right className="group ml-auto hidden max-md:hidden md:group-hover/nav:block [&>path]:fill-neutral-500" />
+        <IconContainer
+          selected={isOpen}
+          selectedClassName="[&_svg>path]:fill-neutral-950"
+        >
+          {<DexIcon />}
+        </IconContainer>
+        <ItemText
+          selected={isOpen}
+          selectedClassName="text-neutral-950"
+          text={t('title')}
+        />
+        <Chevron.Right
+          className={`ml-auto [&>path]:fill-neutral-500 ${
+            isOpen ? 'block' : 'hidden max-md:hidden md:group-hover/nav:block'
+          }`}
+        />{' '}
       </Row>
 
       {isOpen &&

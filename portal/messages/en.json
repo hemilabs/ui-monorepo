@@ -12,7 +12,7 @@
       "withdraw-heading": "Review Withdrawal",
       "withdraw-subheading": "Complete the remaining steps to withdraw your {symbol}"
     },
-    "heading": "Bitcoin, with Real Yield",
+    "heading": "Bitcoin yield",
     "info": {
       "earning-rate": "Earning rate",
       "holders": "# of holders",
@@ -35,7 +35,7 @@
     "pool-strategy": "Pool strategy:",
     "put-to-work": "Put your {symbol} to work and start generating yield.",
     "start-earning": "Start Earning",
-    "subheading": "Earn compliant Bitcoin yield without leaving custody.",
+    "subheading": "Earn Bitcoin yield while keeping full custody of your assets.",
     "switch-to-start-staking": "You can switch networks to start staking your hemiBTC.",
     "table": {
       "claim-rewards": "Claim Rewards",
@@ -147,7 +147,7 @@
       "sub-heading": "Demonstration of building on Bitcoin with Hemi using the Bitcoin Kit"
     },
     "demos": {
-      "heading": "DEMOS",
+      "heading": "Demos",
       "sub-heading": "Biometric verification solutions for Web3 applications."
     },
     "heading": "Demos",
@@ -286,7 +286,7 @@
     "oku": "Oku",
     "rpc-url": "RPC URL",
     "start-using-hemi": "Start using Hemi",
-    "subheading": "One network, powered by Bitcoin & Ethereum.",
+    "subheading": "Set up the Hemi network in your wallet to start using the protocol.",
     "sushi-swap": "Sushi Swap",
     "swap-tokens": "Swap tokens",
     "swap-tokens-mainnet": "Swap tokens on Sushi",
@@ -342,7 +342,8 @@
       "use-or": "Use <min></min> or <max></max>",
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
-    "heading": "Stake your ${symbol} and earn",
+    "heading": "Governance staking",
+    "subheading": "Stake your ${symbol} to participate in governance and earn staking rewards.",
     "here-is-your-tx": "Here's your transaction:",
     "lockup-period": "Lockup period",
     "stake-successful": "Stake successful",
@@ -413,7 +414,8 @@
       "staked": "Staked",
       "stake-more": "Stake more",
       "staking-assets": "Staking assets",
-      "subtitle": "Stake your assets to earn rewards and boost your points.",
+      "subtitle": "Monitor your boost staking positions and rewards.",
+      "heading": "Boost staking",
       "title": "Dashboard",
       "total-earned-points": "Total Hemi points earned",
       "total-staked-on-hemi": "Total Staked on Hemi",
@@ -454,7 +456,8 @@
       "action": "Action",
       "learn-how-to-stake-on-hemi": "Learn how to stake on Hemi",
       "new-here": "New here?",
-      "stake-earn-points": "Stake and earn points",
+      "heading": "Stake for boost",
+      "subheading": "Stake tokens to earn points across supported programs.",
       "title": "Stake"
     },
     "start-staking-earn-points": "Start staking and earn points",
@@ -600,8 +603,8 @@
       "deposit": "Deposit",
       "no-transactions": "No transactions made",
       "no-transactions-get-started": "Get started by tunneling assets from and to hemi",
-      "subtitle": "View and track your Hemi transaction history",
-      "title": "Transaction History",
+      "subtitle": "Track the status and details of your Hemi transactions.",
+      "title": "Transaction history",
       "top-bar": {
         "all": "All",
         "bitcoin": "Bitcoin",

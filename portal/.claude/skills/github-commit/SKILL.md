@@ -12,8 +12,9 @@ When this skill is invoked, create a git commit following these steps:
 
 1. **Check git status** to see what files are staged/unstaged
 2. **Review the changes** using `git diff` (or `git diff --staged` if files are already staged)
-3. **Stage files if needed** with `git add`
-4. **Create the commit** following the guidelines below
+3. **Verify no sensitive data** is being committed (secrets, private keys, API keys, tokens, credentials)
+4. **Stage files if needed** with `git add`
+5. **Create the commit** using `git commit -S` to sign the commit
 
 ## Commit Message Guidelines
 
@@ -26,8 +27,10 @@ When this skill is invoked, create a git commit following these steps:
 
 ## Important Notes
 
+- Always use `-S` flag to sign commits with GPG
 - Be specific but concise
 - Focus on _what_ and _why_, not _how_
 - Use commit body for larger explanations when the title isn't enough
 - No need for issue numbers unless critical
 - Avoid generic messages like "fix bug" or "update code"
+- **Never commit sensitive data**: secrets, private keys, API keys, tokens, .env files, wallet private keys, seed phrases, mnemonics, keystore files, or any credentials

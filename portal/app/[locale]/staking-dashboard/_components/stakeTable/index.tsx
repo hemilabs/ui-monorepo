@@ -108,7 +108,7 @@ const stakingColumns = ({
 ]
 
 const Container = ({ children }: { children: ReactNode }) => (
-  <div className="h-full bg-neutral-50 pb-1 md:px-1 [&>div]:h-full">
+  <div className="h-full rounded-xl bg-neutral-100 p-1 [&>div]:h-full">
     <Card>{children}</Card>
   </div>
 )

@@ -54,9 +54,12 @@ const wallet = {
     // See: https://web3.okx.com/es-la/build/dev-docs/sdks/chains/bitcoin/provider#sendbitcoin
     return sendBitcoin(provider, toAddress, satoshis, options)
   },
+  // OKX does not implement switchNetwork for Bitcoin
+  // See: https://web3.okx.com/build/dev-docs/sdks/chains/bitcoin/provider
+  supportsSwitchNetwork: false,
   switchNetwork(network) {
     assertInstalled()
-    return provider.switchNetwork(network) // NOT IMPLEMENTED BY OKX
+    return provider.switchNetwork(network)
   },
 } satisfies WalletConnector
 

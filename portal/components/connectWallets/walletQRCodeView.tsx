@@ -1,6 +1,6 @@
 import { ButtonLink } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
-import { type WalletData } from 'hooks/useAllWallets'
+import { type EvmWalletData } from 'hooks/useAllWallets'
 import { useTranslations } from 'next-intl'
 import { QRCodeSVG } from 'qrcode.react'
 import { useEffect, useState } from 'react'
@@ -11,7 +11,7 @@ import { useConnect } from 'wagmi'
 import { QrcodePlaceholderIcon } from './icons/qrcodePlaceholder'
 import { getWalletConnectUri } from './utils/walletConnect'
 
-function getMobileDownloadUrl(downloadUrls: WalletData['downloadUrls']) {
+function getMobileDownloadUrl(downloadUrls: EvmWalletData['downloadUrls']) {
   if (!downloadUrls) {
     return undefined
   }
@@ -25,7 +25,7 @@ function getMobileDownloadUrl(downloadUrls: WalletData['downloadUrls']) {
   return downloadUrls.mobile || downloadUrls.browserExtension
 }
 
-function getDesktopDownloadUrl(downloadUrls: WalletData['downloadUrls']) {
+function getDesktopDownloadUrl(downloadUrls: EvmWalletData['downloadUrls']) {
   if (!downloadUrls) {
     return undefined
   }
@@ -35,7 +35,7 @@ function getDesktopDownloadUrl(downloadUrls: WalletData['downloadUrls']) {
   )
 }
 
-function getWalletDownloadUrl(item: WalletData) {
+function getWalletDownloadUrl(item: EvmWalletData) {
   const { downloadUrls } = item
 
   if (!downloadUrls) {
@@ -55,7 +55,7 @@ function getWalletDownloadUrl(item: WalletData) {
 
 type Props = {
   onBack: VoidFunction
-  wallet: WalletData
+  wallet: EvmWalletData
 }
 
 export function WalletQRCodeView({ onBack, wallet }: Props) {

@@ -19,13 +19,20 @@ import { ConnectToSupportedChain } from '../connectToSupportedChain'
 import { ConnectWalletAccordion } from '../connectWalletAccordion'
 import { DisconnectWallet } from '../disconnectWallet'
 import { EthLogo } from '../ethLogo'
+import { EvmWalletLogo } from '../evmWalletLogo'
+import {
+  getEvmWalletState,
+  useEvmWalletConnect,
+} from '../hooks/useEvmWalletConnect'
+import { WalletQRCodeView } from '../walletQRCodeView'
 
 export const EvmWallet = function () {
   const { chain, chainId, connector, status } = useEvmAccount()
   const t = useTranslations('connect-wallets')
-  const allWallets = useAllWallets()
+  const { evmWallets } = useAllWallets()
   const chainSupported = useChainIsSupported(chainId)
   const { disconnect } = useEvmDisconnect()
+  const { handleConnect } = useEvmWalletConnect()
 
   // Disconnect the specific connector that is currently connected
   // This ensures proper cleanup and allows reconnecting the same wallet
@@ -61,9 +68,17 @@ export const EvmWallet = function () {
     return (
       <ConnectWalletAccordion
         event="evm connect"
+        getWalletState={getEvmWalletState}
         icon={<EthLogo />}
+        onConnect={handleConnect}
+        renderDetailView={(wallet, onBack) => (
+          <WalletQRCodeView onBack={onBack} wallet={wallet} />
+        )}
+        renderLogo={wallet => (
+          <EvmWalletLogo className="size-14" walletName={wallet.name} />
+        )}
         text={t('connect-evm-wallet')}
-        wallets={allWallets}
+        wallets={evmWallets}
       />
     )
   }

@@ -12,7 +12,7 @@
       "withdraw-heading": "Rever Retirada",
       "withdraw-subheading": "Complete os passos restantes para retirar seu {symbol}"
     },
-    "heading": "Bitcoin, com Rendimento Real",
+    "heading": "Bitcoin yield",
     "info": {
       "earning-rate": "Taxa de rendimento",
       "holders": "Nº de titulares",
@@ -35,7 +35,7 @@
     "pool-strategy": "Estratégia do fundo:",
     "put-to-work": "Coloque seu {symbol} para trabalhar e comece a gerar rendimento.",
     "start-earning": "Comece a ganhar",
-    "subheading": "Obtenha rendimento em Bitcoin em conformidade com as normas e sem perder a custódia.",
+    "subheading": "Obtenha rendimento em Bitcoin sem perder a custódia dos seus ativos.",
     "switch-to-start-staking": "Você pode mudar de rede para começar a fazer staking do seu hemiBTC.",
     "table": {
       "claim-rewards": "Reclamar Recompensas",
@@ -147,7 +147,7 @@
       "sub-heading": "Demonstração de construção em Bitcoin com Hemi utilizando o Bitcoin Kit"
     },
     "demos": {
-      "heading": "DEMOS",
+      "heading": "Demos",
       "sub-heading": "Soluções de verificação biométrica para aplicações Web3."
     },
     "heading": "Demonstrações",
@@ -250,7 +250,7 @@
     "ethereum-faucet": "Torneira Ethereum",
     "fund-your-wallets": "Financiar as suas carteiras",
     "get-testnet-tokens": "Obter tokens de testnet",
-    "heading": "Começar no Hemi",
+    "heading": "Comece a usar a Hemi",
     "here-are-some-options-mainnet": "Aqui estão alguns DEXs que pode querer explorar.",
     "here-are-some-options-testnet": "Aqui estão algumas torneiras que pode querer explorar.",
     "layer": "Camada {layer}",
@@ -286,7 +286,7 @@
     "oku": "Oku",
     "rpc-url": "URL RPC",
     "start-using-hemi": "Começar a usar o Hemi",
-    "subheading": "Uma rede, alimentada por Bitcoin e Ethereum.",
+    "subheading": "Configure a rede da Hemi na sua wallet e comece a interagir com o protocolo.",
     "sushi-swap": "Sushi Swap",
     "swap-tokens": "Trocar tokens",
     "swap-tokens-mainnet": "Trocar tokens na Sushi",
@@ -342,7 +342,8 @@
       "use-or": "Use <min></min> ou <max></max>",
       "years": "{years, plural, one {{years} ano} other {{years} anos}}"
     },
-    "heading": "Stake seus ${symbol} e ganhe",
+    "heading": "Governance staking",
+    "subheading": "Faça staking de ${symbol} para participar da governança do protocolo e receber recompensas.",
     "here-is-your-tx": "Aqui está a sua transação:",
     "lockup-period": "Período de bloqueio",
     "stake-successful": "Stake bem-sucedido",
@@ -413,7 +414,8 @@
       "staked": "Staked",
       "stake-more": "Faça mais stake",
       "staking-assets": "Ativos em stake",
-      "subtitle": "Faça stake para ganhar recompensas e aumentar os seus pontos.",
+      "subtitle": "Visualize suas posições ativas de boost staking e as recompensas obtidas.",
+      "heading": "Boost staking",
       "title": "Painel",
       "total-earned-points": "Total de pontos Hemi ganhos",
       "total-staked-on-hemi": "Total em stake em Hemi",
@@ -454,7 +456,8 @@
       "action": "Ação",
       "learn-how-to-stake-on-hemi": "Saiba como fazer stake no Hemi",
       "new-here": "Novo por aqui?",
-      "stake-earn-points": "Fazer stake e ganhar pontos",
+      "heading": "Stake for boost",
+      "subheading": "Faça stake para ganhar recompensas e aumentar os seus pontos.",
       "title": "Stake"
     },
     "start-staking-earn-points": "Comece a fazer stake e ganhar pontos",
@@ -600,7 +603,7 @@
       "deposit": "Depósito",
       "no-transactions": "Nenhuma transação efetuada",
       "no-transactions-get-started": "Comece por tunelar ativos de e para o Hemi",
-      "subtitle": "Ver e acompanhar o seu histórico de transações no Hemi",
+      "subtitle": "Consulte o status e as informações detalhadas das suas transações na Hemi.",
       "title": "Histórico de Transações",
       "top-bar": {
         "all": "Todas",

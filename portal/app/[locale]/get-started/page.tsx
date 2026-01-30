@@ -13,9 +13,9 @@ const GetStarted = function () {
 
   return (
     <PageLayout variant="center">
-      <h1 className="mb-1 text-4xl font-medium text-neutral-950">
+      <h2 className="mb-1 text-4xl font-medium text-neutral-950">
         {t('heading')}
-      </h1>
+      </h2>
       <p className="font-medium text-neutral-600">{t('subheading')}</p>
       <AddHemiWallet />
       <FundWallet />

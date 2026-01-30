@@ -58,9 +58,9 @@ function Page() {
   return (
     <PageLayout variant="superWide">
       <div className="flex flex-col">
-        <h1 className="mb-1 text-4xl font-semibold text-neutral-950">
+        <h2 className="mb-1 text-4xl font-semibold text-neutral-950">
           {t('heading', { symbol })}
-        </h1>
+        </h2>
         {isEnabled ? <StakingContent /> : <StakingDashboardDisabledTestnet />}
       </div>
     </PageLayout>

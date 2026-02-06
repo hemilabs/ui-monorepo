@@ -30,7 +30,7 @@ runs:
         slack-mention: ${{ inputs.slack-mention }}
         slack-webhook-url: ${{ inputs.slack-webhook-url }}
         status: 'started :stopwatch:'
-    - uses: hemilabs/actions/setup-node-env@06d5e0813de21d92283163864cce2e95ec5b67c6 # v1.0.0
+    - uses: hemilabs/actions/setup-node-env@e67f2b7d682accaeb026ebe393f8a161b2daa35b # v2.2.0
     - run: npx --yes graph auth "$GRAPH_API_KEY"
       shell: bash
       env:

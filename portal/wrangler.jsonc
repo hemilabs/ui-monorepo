@@ -1,0 +1,11 @@
+{
+  "name": "hemi-portal",
+  "compatibility_date": "2025-11-17",
+  "build": {
+    "command": "CF_BUILD=1 npm run deploy"
+  },
+  "assets": {
+    "directory": "./out/",
+    "not_found_handling": "404-page"
+  }
+}

@@ -1,8 +1,6 @@
 import { createParser } from 'nuqs'
 import { isAddress } from 'viem'
 
-import { hasKeys } from './utilities'
-
 export const isRelativeUrl = (url: string) => url.startsWith('/')
 
 export const isValidUrl = function (url: string) {
@@ -22,12 +20,6 @@ export const parseAsEvmAddress = createParser({
 export const queryStringObjectToString = function (
   queryString: Record<string, string> = {},
 ) {
-  if (!hasKeys(queryString)) {
-    return ''
-  }
-  const searchParams = new URLSearchParams()
-  Object.entries(queryString).forEach(([key, value]) =>
-    searchParams.append(key, value),
-  )
-  return `?${searchParams.toString()}`
+  const stringified = new URLSearchParams(queryString).toString()
+  return stringified ? `?${stringified}` : ''
 }

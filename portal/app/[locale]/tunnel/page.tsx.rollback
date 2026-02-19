@@ -27,55 +27,48 @@ const MyModal = function () {
       // onClose={closeModal}
       verticalAlign={isMobileBottom ? 'bottom' : 'center'}
     >
-      <div
-        className={
-          isMobileBottom
-            ? 'fixed bottom-0 left-0 right-0 z-30 w-screen'
-            : 'mx-auto max-w-[448px]'
-        }
-      >
+      <div className={isMobileBottom ? 'fixed bottom-0 left-0 right-0 z-30 w-full overflow-y-auto' : 'mx-auto max-w-[448px]'}>
         <div
-          className={
-            isMobileBottom
-              ? 'card-container rounded-b-none rounded-t-xl bg-white pl-6 pr-6 pt-6 shadow-md'
-              : 'card-container mx-auto rounded-xl bg-white p-8 shadow-md'
-          }
+          className={isMobileBottom ? 'card-container rounded-t-xl rounded-b-none bg-white shadow-md p-6 w-full' :  'card-container rounded-xl bg-white shadow-md p-8 mx-auto'}
         >
           <WarningRounded className="mb-4" />
           <div className={`flex flex-col ${isMobileBottom ? 'mb-6' : ''}`}>
-            <h3 className="text-mid-md mb-2 font-semibold">
-              Switch wallet to continue
-            </h3>
+            <h3 className="text-mid-md font-semibold mb-2">Switch wallet to continue</h3>
             <p className="text-sm text-neutral-500 md:mb-4">
-              We’re currently experiencing an issue with the Rabby wallet where
-              transactions between Hemi and Bitcoin may fail. While we work with
-              the Rabby team to resolve this, please connect a different wallet
-              to complete this transaction.
+              We're currently experiencing an issue with the Rabby wallet where transactions between Hemi and Bitcoin may fail. While we work with the Rabby team to resolve this, please connect a different wallet to complete this transaction.
             </p>
           </div>
-          <div
-            className={
-              isMobileBottom
-                ? 'border-neutral-300/56 -mx-6 flex w-screen flex-col gap-y-2 border-t bg-neutral-50 px-6 pb-6 pt-4'
-                : 'flex w-full flex-row-reverse gap-x-2'
-            }
-          >
-            <div className={isMobileBottom ? '' : 'min-w-0 flex-1'}>
+        </div>
+        <div
+          className={
+            isMobileBottom
+              ? 'flex flex-col w-full gap-y-2'
+              : 'flex w-full gap-x-2'
+          }
+        >
+          {isMobileBottom ? (
+            <div className="flex flex-col w-full gap-y-2 border-t border-neutral-300/56 bg-neutral-50 px-6 pt-4 pb-6">
               <Button size="small" style={{ width: '100%' }} variant="primary">
                 Switch wallet
               </Button>
-            </div>
-            <div className={isMobileBottom ? '' : 'min-w-0 flex-1'}>
-              <Button
-                onClick={closeModal}
-                size="small"
-                style={{ width: '100%' }}
-                variant="secondary"
-              >
+              <Button onClick={closeModal} size="small" style={{ width: '100%' }} variant="secondary">
                 Cancel
               </Button>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="min-w-0 flex-1">
+                <Button size="small" style={{ width: '100%' }} variant="secondary" onClick={closeModal}>
+                  Cancel
+                </Button>
+              </div>
+              <div className="min-w-0 flex-1">
+                <Button size="small" style={{ width: '100%' }} variant="primary">
+                  Switch wallet
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </Modal>

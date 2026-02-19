@@ -69,7 +69,7 @@ export function Preview({
               updateLockupDays={onUpdateLockupDays}
             />
             {isValid && (
-              <FeesContainer>
+              <FeesContainer compact>
                 <EvmFeesSummary gas={gas} operationToken={token} />
               </FeesContainer>
             )}

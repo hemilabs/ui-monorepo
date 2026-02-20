@@ -657,12 +657,12 @@
       }
     },
     "warning-modal": {
-      "heading": "Cambie de billetera para continuar",
-      "description": "Actualmente estamos experimentando un problema con la billetera Rabby donde las transacciones entre Hemi y Bitcoin pueden fallar. Mientras trabajamos con el equipo de Rabby para resolver este problema, por favor conecte una billetera diferente para completar esta transacción."
+      "heading": "Conecta otra billetera para continuar",
+      "description": "Actualmente estamos teniendo problemas con la billetera Rabby donde las transacciones entre Hemi y Bitcoin pueden fallar. Mientras trabajamos con el equipo de Rabby para resolver este problema, por favor conecta una billetera diferente para completar esta transacción."
     },
     "warning-modal-button": {
-      "switch-wallet": "Switch wallet",
-      "cancel": "Cancel"
+      "switch-wallet": "Cambiar billetera",
+      "cancel": "Cancelar"
     }
   }
 }

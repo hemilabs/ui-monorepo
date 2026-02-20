@@ -15,18 +15,20 @@ import {
 
 import { Deposit } from './_components/deposit'
 import { Withdraw } from './_components/withdraw'
-import { useShouldShowRabbyWarningModal } from './_hooks/useShouldShowRabbyWarningModal'
 import { useTunnelOperation } from './_hooks/useTunnelOperation'
 import { useTunnelState } from './_hooks/useTunnelState'
 
-const WarningModal = function () {
+const WarningModal = function ({ onClose }: { onClose?: () => void }) {
   const [isOpen, setIsOpen] = useState(true)
   const [isVisible, setIsVisible] = useState(false)
   const { connector } = useEvmAccount()
   const { disconnect } = useEvmDisconnect()
   const { openDrawer } = useDrawerContext()
   const { width } = useWindowSize()
-  const closeModal = () => setIsOpen(false)
+  function closeModal() {
+    setIsOpen(false)
+    onClose?.()
+  }
 
   useLayoutEffect(function () {
     const t = requestAnimationFrame(() => setIsVisible(true))
@@ -108,12 +110,28 @@ const WarningModal = function () {
     </Modal>
   )
 }
+const TunnelWithdrawWithWarning = function ({
+  state,
+}: {
+  state: ReturnType<typeof useTunnelState>
+}) {
+  const [showRabbyWarning, setShowRabbyWarning] = useState(false)
+  return (
+    <>
+      <Withdraw
+        onOpenRabbyWarning={() => setShowRabbyWarning(true)}
+        state={state}
+      />
+      {showRabbyWarning && (
+        <WarningModal onClose={() => setShowRabbyWarning(false)} />
+      )}
+    </>
+  )
+}
+
 const Tunnel = function () {
   const { operation } = useTunnelOperation()
   const tunnelState = useTunnelState()
-  const shouldShowRabbyWarning = useShouldShowRabbyWarningModal(
-    tunnelState.toNetworkId,
-  )
 
   const props = {
     state: tunnelState,
@@ -122,11 +140,10 @@ const Tunnel = function () {
   return (
     <div className="h-fit-rest-screen">
       {operation === 'withdraw' ? (
-        <Withdraw {...props} />
+        <TunnelWithdrawWithWarning state={tunnelState} />
       ) : (
         <Deposit {...props} />
       )}
-      {shouldShowRabbyWarning && <WarningModal />}
     </div>
   )
 }

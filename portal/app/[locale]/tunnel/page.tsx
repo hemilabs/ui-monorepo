@@ -4,19 +4,40 @@ import { Button } from 'components/button'
 import { WarningRounded } from 'components/icons/warningRounded'
 import { Modal } from 'components/modal'
 import { PageLayout } from 'components/pageLayout'
+import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useWindowSize } from 'hooks/useWindowSize'
-import { Suspense, useState } from 'react'
+import { Suspense, useLayoutEffect, useState } from 'react'
 import { screenBreakpoints } from 'styles'
+import {
+  useAccount as useEvmAccount,
+  useDisconnect as useEvmDisconnect,
+} from 'wagmi'
 
 import { Deposit } from './_components/deposit'
 import { Withdraw } from './_components/withdraw'
+import { useShouldShowRabbyWarningModal } from './_hooks/useShouldShowRabbyWarningModal'
 import { useTunnelOperation } from './_hooks/useTunnelOperation'
 import { useTunnelState } from './_hooks/useTunnelState'
 
-const MyModal = function () {
+const WarningModal = function () {
   const [isOpen, setIsOpen] = useState(true)
+  const [isVisible, setIsVisible] = useState(false)
+  const { connector } = useEvmAccount()
+  const { disconnect } = useEvmDisconnect()
+  const { openDrawer } = useDrawerContext()
   const { width } = useWindowSize()
   const closeModal = () => setIsOpen(false)
+
+  useLayoutEffect(function () {
+    const t = requestAnimationFrame(() => setIsVisible(true))
+    return () => cancelAnimationFrame(t)
+  }, [])
+
+  function onSwitchWallet() {
+    closeModal()
+    if (connector) disconnect({ connector })
+    openDrawer()
+  }
 
   if (!isOpen) return null
 
@@ -24,15 +45,16 @@ const MyModal = function () {
 
   return (
     <Modal
-      // onClose={closeModal}
+      onClose={closeModal}
       verticalAlign={isMobileBottom ? 'bottom' : 'center'}
     >
       <div
         className={
           isMobileBottom
-            ? 'fixed bottom-0 left-0 right-0 z-30 w-screen'
-            : 'mx-auto max-w-[448px]'
+            ? 'fixed bottom-0 left-0 right-0 z-30 w-screen transition-opacity duration-200'
+            : 'mx-auto max-w-[448px] transition-opacity duration-200'
         }
+        style={{ opacity: isVisible ? 1 : 0 }}
       >
         <div
           className={
@@ -61,7 +83,12 @@ const MyModal = function () {
             }
           >
             <div className={isMobileBottom ? '' : 'min-w-0 flex-1'}>
-              <Button size="small" style={{ width: '100%' }} variant="primary">
+              <Button
+                onClick={onSwitchWallet}
+                size="small"
+                style={{ width: '100%' }}
+                variant="primary"
+              >
                 Switch wallet
               </Button>
             </div>
@@ -84,6 +111,9 @@ const MyModal = function () {
 const Tunnel = function () {
   const { operation } = useTunnelOperation()
   const tunnelState = useTunnelState()
+  const shouldShowRabbyWarning = useShouldShowRabbyWarningModal(
+    tunnelState.toNetworkId,
+  )
 
   const props = {
     state: tunnelState,
@@ -96,6 +126,7 @@ const Tunnel = function () {
       ) : (
         <Deposit {...props} />
       )}
+      {shouldShowRabbyWarning && <WarningModal />}
     </div>
   )
 }
@@ -105,7 +136,6 @@ export default function Page() {
     <PageLayout variant="center">
       <Suspense>
         <Tunnel />
-        <MyModal />
       </Suspense>
     </PageLayout>
   )

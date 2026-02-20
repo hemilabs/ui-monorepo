@@ -80,7 +80,7 @@ const WarningModal = function ({ onClose }: { onClose?: () => void }) {
           <div
             className={
               isMobileBottom
-                ? 'border-neutral-300/56 -mx-6 flex w-screen flex-col gap-y-2 border-t bg-neutral-50 px-6 pb-6 pt-4'
+                ? '-mx-6 flex w-screen flex-col gap-y-2 border-t border-neutral-300/55 bg-neutral-50 px-6 pb-6 pt-4'
                 : 'flex w-full flex-row-reverse gap-x-2'
             }
           >

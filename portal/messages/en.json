@@ -655,6 +655,14 @@
         "heading": "Withdraw {symbol}",
         "subheading": "To withdraw {symbol}, you’ll be redirected to one of our trusted partner bridges. Choose a bridge below to continue."
       }
+    },
+    "warning-modal": {
+      "heading": "Switch wallet to continue",
+      "description": "We’re currently experiencing an issue with the Rabby wallet where transactions between Hemi and Bitcoin may fail. While we work with the Rabby team to resolve this, please connect a different wallet to complete this transaction."
+    },
+    "warning-modal-button": {
+      "switch-wallet": "Switch wallet",
+      "cancel": "Cancel"
     }
   }
 }

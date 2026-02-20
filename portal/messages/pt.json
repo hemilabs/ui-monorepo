@@ -655,6 +655,14 @@
         "heading": "Retirar {symbol}",
         "subheading": "Para retirar {symbol}, será redirecionado para uma das nossas pontes parceiras de confiança. Escolha uma ponte abaixo para continuar."
       }
+    },
+    "warning-modal": {
+      "heading": "Mude de carteira para continuar",
+      "description": "Estamos enfrentando um problema com a carteira Rabby onde as transações entre Hemi e Bitcoin podem falhar. Enquanto trabalhamos com o time da Rabby para resolver este problema, por favor conecte uma carteira diferente para completar esta transação."
+    },
+    "warning-modal-button": {
+      "switch-wallet": "Mudar carteira",
+      "cancel": "Cancelar"
     }
   }
 }

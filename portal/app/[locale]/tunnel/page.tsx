@@ -6,6 +6,7 @@ import { Modal } from 'components/modal'
 import { PageLayout } from 'components/pageLayout'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useWindowSize } from 'hooks/useWindowSize'
+import { useTranslations } from 'next-intl'
 import { Suspense, useLayoutEffect, useState } from 'react'
 import { screenBreakpoints } from 'styles'
 import {
@@ -25,14 +26,15 @@ const WarningModal = function ({ onClose }: { onClose?: () => void }) {
   const { disconnect } = useEvmDisconnect()
   const { openDrawer } = useDrawerContext()
   const { width } = useWindowSize()
+  const t = useTranslations('tunnel-page')
   function closeModal() {
     setIsOpen(false)
     onClose?.()
   }
 
   useLayoutEffect(function () {
-    const t = requestAnimationFrame(() => setIsVisible(true))
-    return () => cancelAnimationFrame(t)
+    const rafId = requestAnimationFrame(() => setIsVisible(true))
+    return () => cancelAnimationFrame(rafId)
   }, [])
 
   function onSwitchWallet() {
@@ -68,13 +70,10 @@ const WarningModal = function ({ onClose }: { onClose?: () => void }) {
           <WarningRounded className="mb-4" />
           <div className={`flex flex-col ${isMobileBottom ? 'mb-6' : ''}`}>
             <h3 className="text-mid-md mb-2 font-semibold">
-              Switch wallet to continue
+              {t('warning-modal.heading')}
             </h3>
             <p className="text-sm text-neutral-500 md:mb-4">
-              We’re currently experiencing an issue with the Rabby wallet where
-              transactions between Hemi and Bitcoin may fail. While we work with
-              the Rabby team to resolve this, please connect a different wallet
-              to complete this transaction.
+              {t('warning-modal.description')}
             </p>
           </div>
           <div
@@ -91,7 +90,7 @@ const WarningModal = function ({ onClose }: { onClose?: () => void }) {
                 style={{ width: '100%' }}
                 variant="primary"
               >
-                Switch wallet
+                {t('warning-modal-button.switch-wallet')}
               </Button>
             </div>
             <div className={isMobileBottom ? '' : 'min-w-0 flex-1'}>
@@ -101,7 +100,7 @@ const WarningModal = function ({ onClose }: { onClose?: () => void }) {
                 style={{ width: '100%' }}
                 variant="secondary"
               >
-                Cancel
+                {t('warning-modal-button.cancel')}
               </Button>
             </div>
           </div>

@@ -655,6 +655,14 @@
         "heading": "Retirar {symbol}",
         "subheading": "Para retirar {symbol}, será redirigido a uno de nuestros puentes asociados de confianza. Elija un puente a continuación para continuar."
       }
+    },
+    "warning-modal": {
+      "heading": "Conecta otra billetera para continuar",
+      "description": "Actualmente estamos teniendo problemas con la billetera Rabby donde las transacciones entre Hemi y Bitcoin pueden fallar. Mientras trabajamos con el equipo de Rabby para resolver este problema, por favor conecta una billetera diferente para completar esta transacción."
+    },
+    "warning-modal-button": {
+      "switch-wallet": "Cambiar billetera",
+      "cancel": "Cancelar"
     }
   }
 }

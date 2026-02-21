@@ -1,6 +1,7 @@
 'use client'
 
 import { PageLayout } from 'components/pageLayout'
+import { PageTitle } from 'components/pageTitle'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useTranslations } from 'next-intl'
@@ -58,12 +59,7 @@ function Page() {
   return (
     <PageLayout variant="superWide">
       <div className="flex flex-col">
-        <h1 className="mb-1 text-4xl font-semibold text-neutral-950">
-          {t('heading')}
-        </h1>
-        <p className="body-text-normal text-left text-neutral-500">
-          {t('subheading', { symbol })}
-        </p>
+        <PageTitle title={t('heading', { symbol })} />
         {isEnabled ? <StakingContent /> : <StakingDashboardDisabledTestnet />}
       </div>
     </PageLayout>

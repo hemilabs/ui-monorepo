@@ -1,7 +1,15 @@
 import { ReactNode } from 'react'
 
-export const FeesContainer = ({ children }: { children: ReactNode }) => (
-  <div className="flex flex-col gap-y-1 px-8 py-4 text-sm md:px-10">
+const baseClassName = 'flex flex-col gap-y-1 py-4 text-sm'
+
+export const FeesContainer = ({
+  children,
+  compact = false,
+}: {
+  children: ReactNode
+  compact?: boolean
+}) => (
+  <div className={`${baseClassName} ${compact ? 'px-4' : 'px-8'}`}>
     {children}
   </div>
 )

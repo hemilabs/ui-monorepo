@@ -83,7 +83,7 @@ export function Preview({
           value={input}
         />
         {validInput && (
-          <FeesContainer>
+          <FeesContainer compact>
             <EvmFeesSummary gas={gas} operationToken={token} total={total} />
           </FeesContainer>
         )}

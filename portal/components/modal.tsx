@@ -8,7 +8,7 @@ import { getPortalContainer } from 'utils/document'
 
 import { Overlay } from './overlay'
 
-type ModalVerticalAlign = 'center' | 'top' | 'bottom'
+type ModalVerticalAlign = 'center' | 'top'
 
 type Props = {
   children: React.ReactNode
@@ -39,16 +39,13 @@ export const Modal = function ({
     return null
   }
 
-  const verticalAlignClasses: Record<ModalVerticalAlign, string> = {
-    bottom: 'pb-4 m-0 items-end',
-    center: 'items-center',
-    top: 'pt-13 m-0 items-start',
-  }
   return ReactDOM.createPortal(
     <>
       <OverlayComponent />
       <dialog
-        className={`pointer-event-auto fixed inset-0 z-50 flex min-h-screen justify-center overflow-y-auto overflow-x-hidden rounded-2xl bg-transparent shadow-xl outline-none focus:outline-none md:min-h-0 ${verticalAlignClasses[verticalAlign]}`}
+        className={`pointer-event-auto fixed inset-0 z-50 flex min-h-screen justify-center overflow-y-auto overflow-x-hidden rounded-2xl bg-transparent shadow-xl outline-none focus:outline-none md:min-h-0 ${
+          verticalAlign === 'top' ? 'pt-13 m-0 items-start' : 'items-center'
+        }`}
         onTouchStart={e => e.stopPropagation()}
       >
         {/*

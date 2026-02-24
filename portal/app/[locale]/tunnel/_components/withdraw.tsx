@@ -29,7 +29,6 @@ import { useBtcWithdrawalTunnelFees } from '../_hooks/useBtcTunnelFees'
 import { useEstimateBtcWithdrawFees } from '../_hooks/useEstimateBtcWithdrawFees'
 import { useEstimateWithdrawFees } from '../_hooks/useEstimateWithdrawFees'
 import { useMinWithdrawalSats } from '../_hooks/useMinWithdrawalSats'
-import { useShouldShowRabbyWarningModal } from '../_hooks/useShouldShowRabbyWarningModal'
 import {
   type EvmTunneling,
   type HemiToBitcoinTunneling,
@@ -67,15 +66,11 @@ const WalletsConnected = dynamic(
 )
 
 type BtcWithdrawProps = {
-  onOpenRabbyWarning?: () => void
   state: TypedTunnelState<HemiToBitcoinTunneling>
 }
 
-const BtcWithdraw = function ({ onOpenRabbyWarning, state }: BtcWithdrawProps) {
+const BtcWithdraw = function ({ state }: BtcWithdrawProps) {
   const [isWithdrawing, setIsWithdrawing] = useState(false)
-  const shouldShowRabbyWarning = useShouldShowRabbyWarningModal(
-    state.toNetworkId,
-  )
 
   const {
     fromInput,
@@ -159,14 +154,6 @@ const BtcWithdraw = function ({ onOpenRabbyWarning, state }: BtcWithdrawProps) {
     })
     setIsWithdrawing(true)
     track?.('btc - withdraw started')
-  }
-
-  const handleSubmit = function () {
-    if (shouldShowRabbyWarning && onOpenRabbyWarning) {
-      onOpenRabbyWarning()
-      return
-    }
-    handleWithdraw()
   }
 
   const calculateReceiveAmount = function () {
@@ -275,7 +262,7 @@ const BtcWithdraw = function ({ onOpenRabbyWarning, state }: BtcWithdrawProps) {
           tunnelState={state}
         />
       }
-      onSubmit={disableForm ? undefined : handleSubmit}
+      onSubmit={disableForm ? undefined : handleWithdraw}
       submitButton={
         <SubmitWithTwoWallets
           disabled={disableForm}
@@ -485,10 +472,8 @@ const EvmWithdraw = function ({ state }: EvmWithdrawProps) {
 }
 
 export const Withdraw = function ({
-  onOpenRabbyWarning,
   state,
 }: {
-  onOpenRabbyWarning?: () => void
   state: ReturnType<typeof useTunnelState>
 }) {
   const { toNetworkId } = state
@@ -507,9 +492,6 @@ export const Withdraw = function ({
     return <EvmWithdraw state={state as TypedTunnelState<EvmTunneling>} />
   }
   return (
-    <BtcWithdraw
-      onOpenRabbyWarning={onOpenRabbyWarning}
-      state={state as TypedTunnelState<HemiToBitcoinTunneling>}
-    />
+    <BtcWithdraw state={state as TypedTunnelState<HemiToBitcoinTunneling>} />
   )
 }

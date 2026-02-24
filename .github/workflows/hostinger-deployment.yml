@@ -20,7 +20,7 @@ jobs:
     environment: ${{ github.event_name == 'release' && 'production' || 'staging' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: bloq/actions/notify-deploy-to-slack@7a00bde576f8383a7afabf48dc6153bd7a7daab7 # v1.6.0
+      - uses: bloq/actions/notify-deploy-to-slack@ffeb51ecfe42bb78533630b64c1082b09ef3bd2f # v1.6.1
         with:
           app-name: Hemi Portal
           environment: ${{ vars.ENVIRONMENT_NAME }}
@@ -69,7 +69,7 @@ jobs:
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
           SENTRY_RELEASE: ${{ format('{0}@{1}', vars.SENTRY_PROJECT, github.event.release.name) }}
       - if: ${{ !cancelled() }}
-        uses: bloq/actions/notify-deploy-to-slack@7a00bde576f8383a7afabf48dc6153bd7a7daab7 # v1.6.0
+        uses: bloq/actions/notify-deploy-to-slack@ffeb51ecfe42bb78533630b64c1082b09ef3bd2f # v1.6.1
         with:
           app-name: Hemi Portal
           environment: ${{ vars.ENVIRONMENT_NAME }}

@@ -1,7 +1,8 @@
 import { EvmToken } from 'types/token'
 import { parseTokenUnits } from 'utils/token'
+import { SixDaysSeconds } from 've-hemi-actions'
 
-import { epochsPerYear, secondsPerEpoch } from './lockCreationTimes'
+import { epochsPerYear } from './lockCreationTimes'
 
 /**
  * Calculates reward weight decay over 61 epochs (366 days)
@@ -45,7 +46,7 @@ export function calculateRewardWeightDecay({
 
   // Calculate how many epochs until unlock
   const timeUntilUnlock = lockEndTimestamp - currentTimestamp
-  const epochsUntilUnlock = Math.ceil(Number(timeUntilUnlock) / secondsPerEpoch)
+  const epochsUntilUnlock = Math.ceil(Number(timeUntilUnlock) / SixDaysSeconds)
 
   for (let epoch = 0; epoch < epochsPerYear; epoch++) {
     if (epoch >= epochsUntilUnlock || epochsUntilUnlock <= 0) {

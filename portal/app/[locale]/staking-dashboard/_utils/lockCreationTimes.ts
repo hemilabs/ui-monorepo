@@ -1,6 +1,10 @@
 import { StakingPosition } from 'types/stakingDashboard'
 import { unixNowTimestamp } from 'utils/time'
-import { MaxLockDurationSeconds, MinLockDurationSeconds } from 've-hemi-actions'
+import {
+  MaxLockDurationSeconds,
+  MinLockDurationSeconds,
+  SixDaysSeconds,
+} from 've-hemi-actions'
 
 export const daySeconds = 86_400
 
@@ -11,7 +15,6 @@ export const step = 6
 export const twoYears = 732
 
 export const epochsPerYear = 61 // 61 epochs × 6 days = 366 days
-export const secondsPerEpoch = step * daySeconds
 
 // To ensure the lock duration is at least the minimum, we clamp the value after calculation
 const clampMin = <T extends number | bigint>(value: T, min: T): T =>
@@ -38,7 +41,8 @@ export function getUnlockInfo({ lockTime, timestamp }: GetUnlockInfoProps) {
   const timestampNum = Number(timestamp)
   const lockTimeNum = Number(lockTime)
 
-  const unlockTime = timestampNum + lockTimeNum
+  const unlockTime =
+    Math.floor((timestampNum + lockTimeNum) / SixDaysSeconds) * SixDaysSeconds
   const timeRemainingSeconds = unlockTime - currentTimeInSeconds
 
   // Calculate unlock date in UTC

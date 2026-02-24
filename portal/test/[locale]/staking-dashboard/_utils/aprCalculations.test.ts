@@ -2,8 +2,8 @@ import {
   calculateApr,
   calculateRewardWeightDecay,
 } from 'app/[locale]/staking-dashboard/_utils/aprCalculations'
-import { secondsPerEpoch } from 'app/[locale]/staking-dashboard/_utils/lockCreationTimes'
 import { EvmToken } from 'types/token'
+import { SixDaysSeconds } from 've-hemi-actions'
 import { zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
@@ -14,7 +14,7 @@ describe('calculateRewardWeightDecay', function () {
     const result = calculateRewardWeightDecay({
       currentBalance: BigInt('100000000000000000000'), // 100 veHEMI
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(1731772800 + 30 * secondsPerEpoch), // 30 epochs from now
+      lockEndTimestamp: BigInt(1731772800 + 30 * SixDaysSeconds), // 30 epochs from now
     })
 
     expect(result).toHaveLength(61)
@@ -26,7 +26,7 @@ describe('calculateRewardWeightDecay', function () {
     const result = calculateRewardWeightDecay({
       currentBalance,
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(1731772800 + 30 * secondsPerEpoch),
+      lockEndTimestamp: BigInt(1731772800 + 30 * SixDaysSeconds),
     })
 
     // First epoch should equal current balance
@@ -40,9 +40,7 @@ describe('calculateRewardWeightDecay', function () {
     const result = calculateRewardWeightDecay({
       currentBalance,
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(
-        1731772800 + epochsUntilUnlock * secondsPerEpoch,
-      ),
+      lockEndTimestamp: BigInt(1731772800 + epochsUntilUnlock * SixDaysSeconds),
     })
 
     // Check linear decay
@@ -59,9 +57,7 @@ describe('calculateRewardWeightDecay', function () {
     const result = calculateRewardWeightDecay({
       currentBalance: BigInt('100000000000000000000'),
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(
-        1731772800 + epochsUntilUnlock * secondsPerEpoch,
-      ),
+      lockEndTimestamp: BigInt(1731772800 + epochsUntilUnlock * SixDaysSeconds),
     })
 
     // All epochs from unlock onwards should be zero
@@ -76,9 +72,7 @@ describe('calculateRewardWeightDecay', function () {
     const result = calculateRewardWeightDecay({
       currentBalance: BigInt('50000000000000000000'), // 50 veHEMI
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(
-        1731772800 + epochsUntilUnlock * secondsPerEpoch,
-      ),
+      lockEndTimestamp: BigInt(1731772800 + epochsUntilUnlock * SixDaysSeconds),
     })
 
     // Should have values for epochs 0-14, zeros for 15-60
@@ -98,9 +92,7 @@ describe('calculateRewardWeightDecay', function () {
     const result = calculateRewardWeightDecay({
       currentBalance: BigInt('100000000000000000000'),
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(
-        1731772800 + epochsUntilUnlock * secondsPerEpoch,
-      ),
+      lockEndTimestamp: BigInt(1731772800 + epochsUntilUnlock * SixDaysSeconds),
     })
 
     // All 61 epochs should have positive reward weight
@@ -133,7 +125,7 @@ describe('calculateRewardWeightDecay', function () {
     const result = calculateRewardWeightDecay({
       currentBalance: smallBalance,
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(1731772800 + 30 * secondsPerEpoch),
+      lockEndTimestamp: BigInt(1731772800 + 30 * SixDaysSeconds),
     })
 
     // Should still calculate values (not all zeros due to rounding)
@@ -147,9 +139,7 @@ describe('calculateRewardWeightDecay', function () {
     const result = calculateRewardWeightDecay({
       currentBalance: BigInt('100000000000000000000'),
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(
-        1731772800 + epochsUntilUnlock * secondsPerEpoch,
-      ), // Exactly 10 epochs
+      lockEndTimestamp: BigInt(1731772800 + epochsUntilUnlock * SixDaysSeconds), // Exactly 10 epochs
     })
 
     // Epoch 9 should have value, epoch 10 should be zero
@@ -185,9 +175,7 @@ describe('calculateApr', function () {
     const rewardWeightDecay = calculateRewardWeightDecay({
       currentBalance,
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(
-        1731772800 + epochsUntilUnlock * secondsPerEpoch,
-      ),
+      lockEndTimestamp: BigInt(1731772800 + epochsUntilUnlock * SixDaysSeconds),
     })
 
     const apr = calculateApr({
@@ -209,9 +197,7 @@ describe('calculateApr', function () {
     const rewardWeightDecay = calculateRewardWeightDecay({
       currentBalance,
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(
-        1731772800 + epochsUntilUnlock * secondsPerEpoch,
-      ),
+      lockEndTimestamp: BigInt(1731772800 + epochsUntilUnlock * SixDaysSeconds),
     })
 
     const apr = calculateApr({
@@ -286,7 +272,7 @@ describe('calculateApr', function () {
     const rewardWeightDecay = calculateRewardWeightDecay({
       currentBalance,
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(1731772800 + 100 * secondsPerEpoch),
+      lockEndTimestamp: BigInt(1731772800 + 100 * SixDaysSeconds),
     })
 
     const apr = calculateApr({
@@ -325,7 +311,7 @@ describe('calculateApr', function () {
     const rewardWeightDecay = calculateRewardWeightDecay({
       currentBalance: smallBalance,
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(1731772800 + 30 * secondsPerEpoch),
+      lockEndTimestamp: BigInt(1731772800 + 30 * SixDaysSeconds),
     })
 
     const apr = calculateApr({
@@ -348,9 +334,7 @@ describe('calculateApr', function () {
     const rewardWeightDecay = calculateRewardWeightDecay({
       currentBalance,
       currentTimestamp: BigInt(1731772800),
-      lockEndTimestamp: BigInt(
-        1731772800 + epochsUntilUnlock * secondsPerEpoch,
-      ),
+      lockEndTimestamp: BigInt(1731772800 + epochsUntilUnlock * SixDaysSeconds),
     })
 
     const apr = calculateApr({

@@ -13,10 +13,11 @@ import {
 } from 'types/stakingDashboard'
 import { unixNowTimestamp } from 'utils/time'
 import { IncreaseUnlockTimeEvents } from 've-hemi-actions'
+import { SixDaysSeconds } from 've-hemi-actions'
 import { increaseUnlockTime } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
-import { daysToSeconds, step } from '../_utils/lockCreationTimes'
+import { daysToSeconds } from '../_utils/lockCreationTimes'
 
 import { getCalculateAprQueryKey } from './useCalculateApr'
 import { getPositionVotingPowerQueryKey } from './usePositionVotingPower'
@@ -111,8 +112,8 @@ export const useIncreaseUnlockTime = function ({
                 // Calculate new unlock time (current time + chosen duration, rounded)
                 const rawUnlockTime =
                   unixNowTimestamp() + daysToSeconds(BigInt(lockupDays))
-                const newUnlockTime =
-                  (rawUnlockTime / BigInt(step)) * BigInt(step)
+                const sixDays = BigInt(SixDaysSeconds)
+                const newUnlockTime = (rawUnlockTime / sixDays) * sixDays
 
                 // New lockTime is duration from original start to new end
                 const newLockTime = newUnlockTime - BigInt(position.timestamp)

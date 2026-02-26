@@ -9,4 +9,5 @@ export {
   getBalanceOfNFTAt,
   getLockedBalance,
   getPositionVotingPower,
+  getTotalVotingPower,
 } from './public/veHemi'

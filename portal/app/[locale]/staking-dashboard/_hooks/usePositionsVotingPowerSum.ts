@@ -2,15 +2,26 @@ import { useQueries } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useMemo } from 'react'
+import { StakingPositionStatus } from 'types/stakingDashboard'
 import { getPositionVotingPower } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { getPositionVotingPowerQueryKey } from './usePositionVotingPower'
+import { useStakingPositions } from './useStakingPositions'
 
-export const usePositionsVotingPowerSum = function (tokenIds: bigint[]) {
+export const usePositionsVotingPowerSum = function () {
   const { hemiWalletClient } = useHemiWalletClient()
   const { address } = useAccount()
   const chainId = useHemi().id
+  const { data: positions } = useStakingPositions()
+
+  const tokenIds = useMemo(
+    () =>
+      positions
+        ?.filter(p => p.status === StakingPositionStatus.ACTIVE)
+        .map(p => p.tokenId) ?? [],
+    [positions],
+  )
 
   const queries = useQueries({
     queries: tokenIds.map(tokenId => ({

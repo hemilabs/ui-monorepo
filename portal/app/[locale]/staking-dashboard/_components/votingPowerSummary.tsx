@@ -3,31 +3,21 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import { useTranslations } from 'next-intl'
-import { useMemo, type ReactNode } from 'react'
-import { StakingPositionStatus } from 'types/stakingDashboard'
+import { type ReactNode } from 'react'
 import { formatUnits } from 'viem'
 
 import { usePositionsVotingPowerSum } from '../_hooks/usePositionsVotingPowerSum'
-import { useStakingPositions } from '../_hooks/useStakingPositions'
 import { useTotalVotingPower } from '../_hooks/useTotalVotingPower'
 
 import { CardInfo } from './cardInfo'
 
 export const VotingPowerSummary = function () {
   const t = useTranslations('staking-dashboard')
-  const { data: positions } = useStakingPositions()
-  const tokenIds = useMemo(
-    () =>
-      positions
-        ?.filter(p => p.status === StakingPositionStatus.ACTIVE)
-        .map(p => p.tokenId) ?? [],
-    [positions],
-  )
   const { data: veHemiToken } = useVeHemiToken()
   const { data: totalVotingPower, isError: isTotalError } =
     useTotalVotingPower()
   const { data: positionsSum, isError: isSumError } =
-    usePositionsVotingPowerSum(tokenIds)
+    usePositionsVotingPowerSum()
 
   const formatVeHemi = (value: bigint): ReactNode =>
     veHemiToken ? (
@@ -41,7 +31,7 @@ export const VotingPowerSummary = function () {
 
   return (
     <div
-      className="xs:flex-row flex w-full flex-col flex-wrap items-center justify-between gap-4 md:flex-nowrap md:gap-5
+      className="xs:flex-row flex w-full flex-col flex-wrap items-center justify-between gap-6 md:flex-nowrap
         [&>.card-container]:w-full [&>.card-container]:max-md:basis-[calc(50%-theme(spacing.2))]"
     >
       <CardInfo<bigint>

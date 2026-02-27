@@ -371,9 +371,9 @@
       "unlocks-on": "Desbloqueia em {date}"
     },
     "unlock-successful": "Desbloqueio bem-sucedido",
+    "total-voting-power": "Poder de voto total",
     "voting-power": "Poder de Voto",
-    "your-positions": "Suas posições",
-    "total-voting-power": "Poder de voto total"
+    "your-positions": "Suas posições"
   },
   "metadata": {
     "title": "Portal Hemi"

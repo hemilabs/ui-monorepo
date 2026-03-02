@@ -1,6 +1,7 @@
 'use client'
 
 import { PageLayout } from 'components/pageLayout'
+import { PageTitle } from 'components/pageTitle'
 import { useTranslations } from 'next-intl'
 
 import { AddHemiWallet } from './_components/addHemiWallet'
@@ -13,10 +14,7 @@ const GetStarted = function () {
 
   return (
     <PageLayout variant="center">
-      <h1 className="mb-1 text-4xl font-medium text-neutral-950">
-        {t('heading')}
-      </h1>
-      <p className="font-medium text-neutral-600">{t('subheading')}</p>
+      <PageTitle subtitle={t('subheading')} title={t('heading')} />
       <AddHemiWallet />
       <FundWallet />
       <StartUsingHemi />

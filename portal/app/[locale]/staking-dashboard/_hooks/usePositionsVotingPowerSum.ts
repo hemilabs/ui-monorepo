@@ -34,6 +34,7 @@ export const usePositionsVotingPowerSum = function () {
         }),
       queryKey: getPositionVotingPowerQueryKey({
         chainId,
+        ownerAddress: address!,
         tokenId,
       }),
       refetchInterval: 1000 * 60 * 5, // 5 minutes

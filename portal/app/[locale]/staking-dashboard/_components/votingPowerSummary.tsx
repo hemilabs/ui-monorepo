@@ -14,14 +14,14 @@ import { CardInfo } from './cardInfo'
 
 export const VotingPowerSummary = function () {
   const t = useTranslations('staking-dashboard')
-  const { address } = useAccount()
+  const { status } = useAccount()
   const { data: veHemiToken } = useVeHemiToken()
   const { data: totalVotingPower, isError: isTotalError } =
     useTotalVotingPower()
   const { data: positionsSum, isError: isSumError } =
     usePositionsVotingPowerSum()
 
-  const isDisconnected = !address
+  const isWalletConnected = status === 'connected'
 
   const formatVeHemi = (value: bigint): ReactNode =>
     veHemiToken ? (
@@ -39,15 +39,15 @@ export const VotingPowerSummary = function () {
         [&>.card-container]:w-full [&>.card-container]:max-md:basis-[calc(50%-theme(spacing.2))]"
     >
       <CardInfo<bigint>
-        data={isDisconnected ? undefined : positionsSum}
+        data={isWalletConnected ? positionsSum : undefined}
         formatValue={formatVeHemi}
-        isError={isDisconnected || isSumError}
+        isError={isWalletConnected ? isSumError : false}
         label={t('your-positions')}
       />
       <CardInfo<bigint>
-        data={isDisconnected ? undefined : totalVotingPower}
+        data={isWalletConnected ? totalVotingPower : undefined}
         formatValue={formatVeHemi}
-        isError={isDisconnected || isTotalError}
+        isError={isWalletConnected ? isTotalError : false}
         label={t('total-voting-power')}
       />
     </div>

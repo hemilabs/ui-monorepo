@@ -64,6 +64,16 @@ export const usePositionsVotingPowerSum = function () {
     [positions],
   )
 
+  const queryKey = useMemo(
+    () =>
+      getPositionsVotingPowerSumQueryKey({
+        chainId,
+        ownerAddress: address!,
+        tokenIds,
+      }),
+    [chainId, address, tokenIds],
+  )
+
   const batchQuery = useQuery({
     enabled:
       !!address &&
@@ -76,11 +86,7 @@ export const usePositionsVotingPowerSum = function () {
         ownerAddress: address!,
         tokenIds,
       }),
-    queryKey: getPositionsVotingPowerSumQueryKey({
-      chainId,
-      ownerAddress: address!,
-      tokenIds,
-    }),
+    queryKey,
     refetchInterval: 1000 * 60 * 5, // 5 minutes
     retry: 2,
   })

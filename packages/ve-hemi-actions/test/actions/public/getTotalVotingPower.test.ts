@@ -27,8 +27,8 @@ describe('getTotalVotingPower', function () {
       .mockResolvedValueOnce(mockVotes)
 
     const result = await getTotalVotingPower({
-      account: mockAccountAddress,
       client: mockClient,
+      ownerAddress: mockAccountAddress,
     })
 
     expect(result).toBe(mockVotes)
@@ -53,21 +53,21 @@ describe('getTotalVotingPower', function () {
 
     await expect(
       getTotalVotingPower({
-        account: mockAccountAddress,
         client: clientWithoutChain,
+        ownerAddress: mockAccountAddress,
       }),
     ).rejects.toThrow('Client chain is not defined')
   })
 
-  it('should throw error when account address is invalid', async function () {
+  it('should throw error when owner address is invalid', async function () {
     const mockClient = { chain: { id: 2001 } }
     const invalidAddress = 'not-an-address'
 
     await expect(
       getTotalVotingPower({
-        account: invalidAddress as `0x${string}`,
         client: mockClient,
+        ownerAddress: invalidAddress as `0x${string}`,
       }),
-    ).rejects.toThrow('Invalid account address')
+    ).rejects.toThrow('Invalid owner address')
   })
 })

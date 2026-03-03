@@ -186,18 +186,18 @@ export const getPositionsVotingPowerSum = async function ({
 }
 
 export const getTotalVotingPower = async function ({
-  account,
   client,
+  ownerAddress,
 }: {
-  account: Address
   client: Client
+  ownerAddress: Address
 }) {
   if (!client.chain) {
     throw new Error('Client chain is not defined')
   }
 
-  if (!isAddress(account)) {
-    throw new Error('Invalid account address')
+  if (!isAddress(ownerAddress)) {
+    throw new Error('Invalid owner address')
   }
 
   const voteDelegationAddress = await memoizedGetVoteDelegationAddress(client)
@@ -205,7 +205,7 @@ export const getTotalVotingPower = async function ({
   const votes = await readContract(client, {
     abi: veHemiVoteDelegationAbi,
     address: voteDelegationAddress,
-    args: [account],
+    args: [ownerAddress],
     functionName: 'getVotes',
   })
 

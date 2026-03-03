@@ -22,8 +22,8 @@ export const useTotalVotingPower = function () {
     enabled: !!hemiWalletClient && !!address,
     queryFn: () =>
       getTotalVotingPower({
-        account: address!,
         client: hemiWalletClient!,
+        ownerAddress: address!,
       }),
     queryKey: getTotalVotingPowerQueryKey({
       address,

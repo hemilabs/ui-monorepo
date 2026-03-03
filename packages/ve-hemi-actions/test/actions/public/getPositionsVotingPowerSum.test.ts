@@ -1,6 +1,6 @@
 import { zeroAddress } from 'viem'
 import { multicall, readContract } from 'viem/actions'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { veHemiAbi } from '../../../abi'
 import { getPositionsVotingPowerSum } from '../../../actions/public/veHemi'
@@ -9,16 +9,25 @@ import { veHemiVoteDelegationAbi } from '../../../voteDelegationAbi'
 
 vi.mock('viem/actions')
 
+const CHAIN_ID_POSITIONS_SUM = 9002
+
 describe('getPositionsVotingPowerSum', function () {
   const mockVeHemiAddress = zeroAddress
   const mockVoteDelegationAddress = '0x1234567890123456789012345678901234567890'
   const mockOwnerAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
 
+  afterEach(function () {
+    vi.useRealTimers()
+  })
+
   it('should return sum of voting power and call multicall with correct params', async function () {
-    const mockClient = { chain: { id: 2001 } }
-    const tokenIds = [BigInt(1), BigInt(2)]
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    const fixedNowMs = 1700000000000
+    vi.useFakeTimers({ now: fixedNowMs })
+
+    const now = BigInt(Math.floor(fixedNowMs / 1000))
     const futureEnd = now + BigInt(86400)
+    const mockClient = { chain: { id: CHAIN_ID_POSITIONS_SUM } }
+    const tokenIds = [BigInt(1), BigInt(2)]
 
     const mockDelegations = [
       {
@@ -67,7 +76,7 @@ describe('getPositionsVotingPowerSum', function () {
   })
 
   it('should return 0 when tokenIds is empty without calling multicall', async function () {
-    const mockClient = { chain: { id: 2001 } }
+    const mockClient = { chain: { id: CHAIN_ID_POSITIONS_SUM } }
 
     const result = await getPositionsVotingPowerSum({
       client: mockClient,
@@ -93,7 +102,7 @@ describe('getPositionsVotingPowerSum', function () {
   })
 
   it('should throw error when owner address is invalid', async function () {
-    const mockClient = { chain: { id: 2001 } }
+    const mockClient = { chain: { id: CHAIN_ID_POSITIONS_SUM } }
     const invalidAddress = 'not-an-address'
 
     await expect(
@@ -106,7 +115,7 @@ describe('getPositionsVotingPowerSum', function () {
   })
 
   it('should throw when multicall fails (allowFailure: false)', async function () {
-    const mockClient = { chain: { id: 2001 } }
+    const mockClient = { chain: { id: CHAIN_ID_POSITIONS_SUM } }
 
     vi.spyOn(constants, 'getVeHemiContractAddress').mockReturnValue(
       mockVeHemiAddress,

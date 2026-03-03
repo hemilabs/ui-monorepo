@@ -15,7 +15,8 @@ describe('getTotalVotingPower', function () {
   const mockAccountAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
 
   it('should return total voting power and call readContract with correct params', async function () {
-    const mockClient = { chain: { id: 2001 } }
+    const uniqueChainId = 9001
+    const mockClient = { chain: { id: uniqueChainId } }
     const mockVotes = BigInt(1000000)
 
     vi.spyOn(constants, 'getVeHemiContractAddress').mockReturnValue(
@@ -31,7 +32,9 @@ describe('getTotalVotingPower', function () {
     })
 
     expect(result).toBe(mockVotes)
-    expect(constants.getVeHemiContractAddress).toHaveBeenCalledWith(2001)
+    expect(constants.getVeHemiContractAddress).toHaveBeenCalledWith(
+      uniqueChainId,
+    )
     expect(readContract).toHaveBeenNthCalledWith(1, mockClient, {
       abi: veHemiAbi,
       address: mockVeHemiAddress,

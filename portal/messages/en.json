@@ -370,8 +370,8 @@
       "unlocked": "Unlocked",
       "unlocks-on": "Unlocks on {date}"
     },
-    "unlock-successful": "Unlock successful",
     "total-voting-power": "Total voting power",
+    "unlock-successful": "Unlock successful",
     "voting-power": "Voting Power",
     "your-positions": "Your positions"
   },

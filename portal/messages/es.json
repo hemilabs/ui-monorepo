@@ -370,8 +370,8 @@
       "unlocked": "Desbloqueado",
       "unlocks-on": "Desbloquea el {date}"
     },
-    "unlock-successful": "Desbloqueo exitoso",
     "total-voting-power": "Poder de voto total",
+    "unlock-successful": "Desbloqueo exitoso",
     "voting-power": "Poder de Voto",
     "your-positions": "Tus posiciones"
   },

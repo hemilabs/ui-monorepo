@@ -95,6 +95,23 @@ const memoizedGetVoteDelegationAddress = pMemoize(getVoteDelegationAddress, {
   resolver: client => client.chain?.id,
 })
 
+function delegationToVotingPower(
+  delegation: {
+    bias: bigint
+    delegatee: Address
+    end: bigint | number
+    slope: bigint
+  },
+  ownerAddress: Address,
+  now: bigint,
+): bigint {
+  if (!isAddressEqual(delegation.delegatee, ownerAddress)) return BigInt(0)
+  const end = BigInt(delegation.end)
+  if (end <= now) return BigInt(0)
+  const voteDecay = delegation.slope * now
+  return delegation.bias > voteDecay ? delegation.bias - voteDecay : BigInt(0)
+}
+
 export const getPositionVotingPower = async function ({
   client,
   ownerAddress,
@@ -121,37 +138,8 @@ export const getPositionVotingPower = async function ({
     functionName: 'delegation',
   })
 
-  // If delegated to another wallet, voting power is 0 for owner
-  if (!isAddressEqual(delegation.delegatee, ownerAddress)) {
-    return BigInt(0)
-  }
-
-  // Get current timestamp in seconds
   const now = BigInt(Math.floor(Date.now() / 1000))
-
-  // If lock expired, voting power is 0
-  if (delegation.end <= now) {
-    return BigInt(0)
-  }
-
-  // Calculate voting power: bias - (slope * timestamp)
-  // Based on contract's _getDelegateVotesAt logic
-  const voteDecay = delegation.slope * now
-  const votingPower =
-    delegation.bias > voteDecay ? delegation.bias - voteDecay : BigInt(0)
-
-  return votingPower
-}
-
-function delegationToVotingPower(
-  delegation: { bias: bigint; delegatee: Address; end: bigint; slope: bigint },
-  ownerAddress: Address,
-  now: bigint,
-): bigint {
-  if (!isAddressEqual(delegation.delegatee, ownerAddress)) return BigInt(0)
-  if (delegation.end <= now) return BigInt(0)
-  const voteDecay = delegation.slope * now
-  return delegation.bias > voteDecay ? delegation.bias - voteDecay : BigInt(0)
+  return delegationToVotingPower(delegation, ownerAddress, now)
 }
 
 export const getPositionsVotingPowerSum = async function ({

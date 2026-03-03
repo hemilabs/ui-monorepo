@@ -13,7 +13,12 @@ export const getPositionVotingPowerQueryKey = ({
   chainId: Chain['id']
   ownerAddress: Address
   tokenId: bigint
-}) => ['position-voting-power', chainId, ownerAddress, tokenId.toString()]
+}) => [
+  'position-voting-power',
+  chainId,
+  ownerAddress.toLowerCase(),
+  tokenId.toString(),
+]
 
 export const usePositionVotingPower = function (tokenId: bigint) {
   const { hemiWalletClient } = useHemiWalletClient()

@@ -166,21 +166,21 @@ export const useIncreaseAmount = function ({
           }),
         })
 
-        // Voting power
-        queryClient.invalidateQueries({
-          queryKey: getPositionVotingPowerQueryKey({
-            chainId: token.chainId,
-            ownerAddress: address!,
-            tokenId,
-          }),
-        })
-        queryClient.invalidateQueries({
-          queryKey: getTotalVotingPowerQueryKey({
-            address,
-            chainId: token.chainId,
-          }),
-        })
+        // Voting power (guard: address can be undefined if wallet disconnected before callback)
         if (address) {
+          queryClient.invalidateQueries({
+            queryKey: getPositionVotingPowerQueryKey({
+              chainId: token.chainId,
+              ownerAddress: address,
+              tokenId,
+            }),
+          })
+          queryClient.invalidateQueries({
+            queryKey: getTotalVotingPowerQueryKey({
+              address,
+              chainId: token.chainId,
+            }),
+          })
           queryClient.invalidateQueries({
             queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
               chainId: token.chainId,

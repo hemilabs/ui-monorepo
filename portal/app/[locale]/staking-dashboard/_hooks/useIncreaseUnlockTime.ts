@@ -152,12 +152,14 @@ export const useIncreaseUnlockTime = function ({
               chainId: token.chainId,
             }),
           })
-          queryClient.invalidateQueries({
-            queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
-              chainId: token.chainId,
-              ownerAddress: address,
-            }),
-          })
+          if (address) {
+            queryClient.invalidateQueries({
+              queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
+                chainId: token.chainId,
+                ownerAddress: address,
+              }),
+            })
+          }
 
           track?.('staking dashboard - increase unlock time success')
         },

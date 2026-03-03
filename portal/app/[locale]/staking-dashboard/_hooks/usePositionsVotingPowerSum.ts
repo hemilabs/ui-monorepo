@@ -27,14 +27,14 @@ const getPositionsVotingPowerSumQueryKey = ({
   tokenIds.map(String).sort().join(','),
 ]
 
-/** Prefix for invalidation: matches all position sum queries for this user/chain */
+/** Prefix for invalidation: matches all position sum queries for this user/chain. Requires ownerAddress so invalidation reliably matches cached keys. */
 export const getPositionsVotingPowerSumQueryKeyPrefix = ({
   chainId,
   ownerAddress,
 }: {
   chainId: number
-  ownerAddress: Address | undefined
-}) => ['positions-voting-power-sum', chainId, ownerAddress?.toLowerCase()]
+  ownerAddress: Address
+}) => ['positions-voting-power-sum', chainId, ownerAddress.toLowerCase()]
 
 function computeSum(
   positions: StakingPosition[] | undefined,

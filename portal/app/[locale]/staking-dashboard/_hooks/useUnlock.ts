@@ -152,12 +152,14 @@ export const useUnlock = function ({
           chainId: token.chainId,
         }),
       })
-      queryClient.invalidateQueries({
-        queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
-          chainId: token.chainId,
-          ownerAddress: address,
-        }),
-      })
+      if (address) {
+        queryClient.invalidateQueries({
+          queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
+            chainId: token.chainId,
+            ownerAddress: address,
+          }),
+        })
+      }
     },
   })
 }

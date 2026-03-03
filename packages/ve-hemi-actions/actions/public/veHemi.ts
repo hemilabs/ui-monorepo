@@ -184,21 +184,18 @@ export const getPositionsVotingPowerSum = async function ({
   }
 
   const results = (await multicall(client, {
-    allowFailure: true,
+    allowFailure: false,
     contracts: tokenIds.map(tokenId => ({
       abi: veHemiVoteDelegationAbi,
       address: voteDelegationAddress,
       args: [tokenId],
       functionName: 'delegation',
     })),
-  })) as { result?: DelegationResult; status: string }[]
+  })) as DelegationResult[]
 
   let sum = BigInt(0)
   for (let i = 0; i < results.length; i++) {
-    const r = results[i]
-    if (r.status === 'success' && r.result) {
-      sum += delegationToVotingPower(r.result, ownerAddress, now)
-    }
+    sum += delegationToVotingPower(results[i], ownerAddress, now)
   }
   return sum
 }

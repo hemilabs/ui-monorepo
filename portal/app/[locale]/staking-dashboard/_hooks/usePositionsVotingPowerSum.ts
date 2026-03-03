@@ -12,7 +12,7 @@ import { useAccount } from 'wagmi'
 
 import { useStakingPositions } from './useStakingPositions'
 
-export const getPositionsVotingPowerSumQueryKey = ({
+const getPositionsVotingPowerSumQueryKey = ({
   chainId,
   ownerAddress,
   tokenIds,

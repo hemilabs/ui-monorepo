@@ -38,7 +38,7 @@ export const CardInfo = function <T>({
         {icon != null && (
           <Image
             alt={iconAlt ?? ''}
-            aria-hidden={iconAlt === undefined}
+            aria-hidden={!iconAlt}
             className="absolute right-4 top-4"
             height={16}
             src={icon}

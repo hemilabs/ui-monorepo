@@ -164,22 +164,19 @@ export const getPositionsVotingPowerSum = async function ({
   const voteDelegationAddress = await memoizedGetVoteDelegationAddress(client)
   const now = BigInt(Math.floor(Date.now() / 1000))
 
-  type DelegationResult = {
-    bias: bigint
-    delegatee: Address
-    end: bigint
-    slope: bigint
-  }
-
-  const results = (await multicall(client, {
+  const contracts = tokenIds.map(
+    tokenId =>
+      ({
+        abi: veHemiVoteDelegationAbi,
+        address: voteDelegationAddress,
+        args: [tokenId],
+        functionName: 'delegation',
+      }) as const,
+  )
+  const results = await multicall(client, {
     allowFailure: false,
-    contracts: tokenIds.map(tokenId => ({
-      abi: veHemiVoteDelegationAbi,
-      address: voteDelegationAddress,
-      args: [tokenId],
-      functionName: 'delegation',
-    })),
-  })) as DelegationResult[]
+    contracts,
+  })
 
   let sum = BigInt(0)
   for (let i = 0; i < results.length; i++) {

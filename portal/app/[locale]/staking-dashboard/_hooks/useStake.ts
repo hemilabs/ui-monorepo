@@ -213,14 +213,12 @@ export const useStake = function ({
           chainId: token.chainId,
         }),
       })
-      if (address) {
-        queryClient.invalidateQueries({
-          queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
-            chainId: token.chainId,
-            ownerAddress: address,
-          }),
-        })
-      }
+      queryClient.invalidateQueries({
+        queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
+          chainId: token.chainId,
+          ownerAddress: address!,
+        }),
+      })
     },
   })
 }

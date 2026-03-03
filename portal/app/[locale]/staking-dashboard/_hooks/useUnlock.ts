@@ -146,13 +146,13 @@ export const useUnlock = function ({
         queryKey: nativeTokenBalanceQueryKey,
       })
 
-      queryClient.invalidateQueries({
-        queryKey: getTotalVotingPowerQueryKey({
-          address,
-          chainId: token.chainId,
-        }),
-      })
       if (address) {
+        queryClient.invalidateQueries({
+          queryKey: getTotalVotingPowerQueryKey({
+            address,
+            chainId: token.chainId,
+          }),
+        })
         queryClient.invalidateQueries({
           queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
             chainId: token.chainId,

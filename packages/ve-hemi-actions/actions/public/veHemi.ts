@@ -1,6 +1,6 @@
 import pMemoize from 'promise-mem'
 import { isAddress, isAddressEqual, type Address, type Client } from 'viem'
-import { readContract } from 'viem/actions'
+import { multicall, readContract } from 'viem/actions'
 
 import { veHemiAbi } from '../../abi'
 import { veHemiVoteDelegationAbi } from '../../voteDelegationAbi'
@@ -141,6 +141,66 @@ export const getPositionVotingPower = async function ({
     delegation.bias > voteDecay ? delegation.bias - voteDecay : BigInt(0)
 
   return votingPower
+}
+
+function delegationToVotingPower(
+  delegation: { bias: bigint; delegatee: Address; end: bigint; slope: bigint },
+  ownerAddress: Address,
+  now: bigint,
+): bigint {
+  if (!isAddressEqual(delegation.delegatee, ownerAddress)) return BigInt(0)
+  if (delegation.end <= now) return BigInt(0)
+  const voteDecay = delegation.slope * now
+  return delegation.bias > voteDecay ? delegation.bias - voteDecay : BigInt(0)
+}
+
+export const getPositionsVotingPowerSum = async function ({
+  client,
+  ownerAddress,
+  tokenIds,
+}: {
+  client: Client
+  ownerAddress: Address
+  tokenIds: bigint[]
+}) {
+  if (!client.chain) {
+    throw new Error('Client chain is not defined')
+  }
+  if (!isAddress(ownerAddress)) {
+    throw new Error('Invalid owner address')
+  }
+  if (tokenIds.length === 0) {
+    return BigInt(0)
+  }
+
+  const voteDelegationAddress = await memoizedGetVoteDelegationAddress(client)
+  const now = BigInt(Math.floor(Date.now() / 1000))
+
+  type DelegationResult = {
+    bias: bigint
+    delegatee: Address
+    end: bigint
+    slope: bigint
+  }
+
+  const results = (await multicall(client, {
+    allowFailure: true,
+    contracts: tokenIds.map(tokenId => ({
+      abi: veHemiVoteDelegationAbi,
+      address: voteDelegationAddress,
+      args: [tokenId],
+      functionName: 'delegation',
+    })),
+  })) as { result?: DelegationResult; status: string }[]
+
+  let sum = BigInt(0)
+  for (let i = 0; i < results.length; i++) {
+    const r = results[i]
+    if (r.status === 'success' && r.result) {
+      sum += delegationToVotingPower(r.result, ownerAddress, now)
+    }
+  }
+  return sum
 }
 
 export const getTotalVotingPower = async function ({

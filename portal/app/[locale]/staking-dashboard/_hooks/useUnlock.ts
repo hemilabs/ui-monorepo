@@ -17,7 +17,9 @@ import { withdraw } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
+import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
+import { getTotalVotingPowerQueryKey } from './useTotalVotingPower'
 
 type UseUnlock = {
   amount: bigint
@@ -142,6 +144,19 @@ export const useUnlock = function ({
 
       queryClient.invalidateQueries({
         queryKey: nativeTokenBalanceQueryKey,
+      })
+
+      queryClient.invalidateQueries({
+        queryKey: getTotalVotingPowerQueryKey({
+          address,
+          chainId: token.chainId,
+        }),
+      })
+      queryClient.invalidateQueries({
+        queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
+          chainId: token.chainId,
+          ownerAddress: address,
+        }),
       })
     },
   })

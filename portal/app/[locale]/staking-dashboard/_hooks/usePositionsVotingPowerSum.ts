@@ -1,19 +1,60 @@
-import { useQueries } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useMemo } from 'react'
-import { StakingPositionStatus } from 'types/stakingDashboard'
-import { getPositionVotingPower } from 've-hemi-actions/actions'
+import {
+  type StakingPosition,
+  StakingPositionStatus,
+} from 'types/stakingDashboard'
+import { getPositionsVotingPowerSum } from 've-hemi-actions/actions'
+import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
-import { getPositionVotingPowerQueryKey } from './usePositionVotingPower'
 import { useStakingPositions } from './useStakingPositions'
+
+export const getPositionsVotingPowerSumQueryKey = ({
+  chainId,
+  ownerAddress,
+  tokenIds,
+}: {
+  chainId: number
+  ownerAddress: Address
+  tokenIds: bigint[]
+}) => [
+  'positions-voting-power-sum',
+  chainId,
+  ownerAddress.toLowerCase(),
+  tokenIds.map(String).sort().join(','),
+]
+
+/** Prefix for invalidation: matches all position sum queries for this user/chain */
+export const getPositionsVotingPowerSumQueryKeyPrefix = ({
+  chainId,
+  ownerAddress,
+}: {
+  chainId: number
+  ownerAddress: Address | undefined
+}) => ['positions-voting-power-sum', chainId, ownerAddress?.toLowerCase()]
+
+function computeSum(
+  positions: StakingPosition[] | undefined,
+  tokenIds: bigint[],
+  batchSum: bigint | undefined,
+): bigint | undefined {
+  if (positions === undefined) return undefined
+  if (tokenIds.length === 0) return BigInt(0)
+  return batchSum
+}
 
 export const usePositionsVotingPowerSum = function () {
   const { hemiWalletClient } = useHemiWalletClient()
   const { address } = useAccount()
   const chainId = useHemi().id
-  const { data: positions } = useStakingPositions()
+  const {
+    data: positions,
+    isError: isPositionsError,
+    isLoading: isPositionsLoading,
+  } = useStakingPositions()
 
   const tokenIds = useMemo(
     () =>
@@ -23,40 +64,38 @@ export const usePositionsVotingPowerSum = function () {
     [positions],
   )
 
-  const queries = useQueries({
-    queries: tokenIds.map(tokenId => ({
-      enabled: !!address && !!hemiWalletClient && tokenId > BigInt(0),
-      queryFn: () =>
-        getPositionVotingPower({
-          client: hemiWalletClient!,
-          ownerAddress: address!,
-          tokenId,
-        }),
-      queryKey: getPositionVotingPowerQueryKey({
-        chainId,
+  const batchQuery = useQuery({
+    enabled:
+      !!address &&
+      !!hemiWalletClient &&
+      positions !== undefined &&
+      tokenIds.length > 0,
+    queryFn: () =>
+      getPositionsVotingPowerSum({
+        client: hemiWalletClient!,
         ownerAddress: address!,
-        tokenId,
+        tokenIds,
       }),
-      refetchInterval: 1000 * 60 * 5, // 5 minutes
-      retry: 2,
-    })),
+    queryKey: getPositionsVotingPowerSumQueryKey({
+      chainId,
+      ownerAddress: address!,
+      tokenIds,
+    }),
+    refetchInterval: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
   })
 
-  const sum = useMemo(
-    () =>
-      tokenIds.length === 0
-        ? BigInt(0)
-        : queries.every(q => q.isSuccess && q.data !== undefined)
-          ? queries.reduce((acc, q) => acc + (q.data ?? BigInt(0)), BigInt(0))
-          : undefined,
-    [queries, tokenIds.length],
+  const data = useMemo(
+    () => computeSum(positions, tokenIds, batchQuery.data),
+    [positions, tokenIds, batchQuery.data],
   )
 
-  const isLoading = tokenIds.length > 0 && queries.some(q => q.isLoading)
-  const isError = queries.some(q => q.isError)
+  const isLoading =
+    isPositionsLoading || (tokenIds.length > 0 && batchQuery.isLoading)
+  const isError = isPositionsError || batchQuery.isError
 
   return {
-    data: sum,
+    data,
     isError,
     isLoading,
   }

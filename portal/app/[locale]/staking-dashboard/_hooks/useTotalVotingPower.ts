@@ -5,7 +5,7 @@ import { getTotalVotingPower } from 've-hemi-actions/actions'
 import type { Address } from 'viem'
 import { useAccount } from 'wagmi'
 
-const getTotalVotingPowerQueryKey = ({
+export const getTotalVotingPowerQueryKey = ({
   address,
   chainId,
 }: {

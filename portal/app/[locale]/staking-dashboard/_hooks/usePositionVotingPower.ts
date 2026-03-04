@@ -11,12 +11,12 @@ export const getPositionVotingPowerQueryKey = ({
   tokenId,
 }: {
   chainId: Chain['id']
-  ownerAddress: Address
+  ownerAddress: Address | undefined
   tokenId: bigint
 }) => [
   'position-voting-power',
   chainId,
-  ownerAddress.toLowerCase(),
+  ownerAddress?.toLowerCase(),
   tokenId.toString(),
 ]
 
@@ -35,7 +35,7 @@ export const usePositionVotingPower = function (tokenId: bigint) {
       }),
     queryKey: getPositionVotingPowerQueryKey({
       chainId,
-      ownerAddress: address!,
+      ownerAddress: address,
       tokenId,
     }),
     refetchInterval: 1000 * 60 * 5, // 5 minutes

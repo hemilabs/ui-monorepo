@@ -18,12 +18,12 @@ const getPositionsVotingPowerSumQueryKey = ({
   tokenIds,
 }: {
   chainId: number
-  ownerAddress: Address
+  ownerAddress: Address | undefined
   tokenIds: bigint[]
 }) => [
   'positions-voting-power-sum',
   chainId,
-  ownerAddress.toLowerCase(),
+  ownerAddress?.toLowerCase(),
   tokenIds.map(String).sort().join(','),
 ]
 
@@ -68,7 +68,7 @@ export const usePositionsVotingPowerSum = function () {
     () =>
       getPositionsVotingPowerSumQueryKey({
         chainId,
-        ownerAddress: address!,
+        ownerAddress: address,
         tokenIds,
       }),
     [chainId, address, tokenIds],

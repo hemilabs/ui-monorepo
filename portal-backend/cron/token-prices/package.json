@@ -1,6 +1,6 @@
 {
   "name": "token-prices-cron",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "dependencies": {
     "@sentry/node": "10.5.0",
     "redis": "4.7.1",

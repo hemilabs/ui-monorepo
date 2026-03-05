@@ -20,8 +20,10 @@ import { useAccount } from 'wagmi'
 import { daysToSeconds } from '../_utils/lockCreationTimes'
 
 import { getCalculateAprQueryKey } from './useCalculateApr'
+import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
 import { getPositionVotingPowerQueryKey } from './usePositionVotingPower'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
+import { getTotalVotingPowerQueryKey } from './useTotalVotingPower'
 
 type UseIncreaseUnlockTime = {
   lockupDays: number
@@ -136,13 +138,28 @@ export const useIncreaseUnlockTime = function ({
             }),
           })
 
-          // Voting power
-          queryClient.invalidateQueries({
-            queryKey: getPositionVotingPowerQueryKey({
-              chainId: token.chainId,
-              tokenId,
-            }),
-          })
+          // Voting power (guard: address can be undefined if wallet disconnected before callback)
+          if (address) {
+            queryClient.invalidateQueries({
+              queryKey: getPositionVotingPowerQueryKey({
+                chainId: token.chainId,
+                ownerAddress: address,
+                tokenId,
+              }),
+            })
+            queryClient.invalidateQueries({
+              queryKey: getTotalVotingPowerQueryKey({
+                address,
+                chainId: token.chainId,
+              }),
+            })
+            queryClient.invalidateQueries({
+              queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
+                chainId: token.chainId,
+                ownerAddress: address,
+              }),
+            })
+          }
 
           track?.('staking dashboard - increase unlock time success')
         },

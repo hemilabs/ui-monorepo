@@ -208,16 +208,47 @@ const toHtAccess = config =>
   # Map the 404 page into Next's custom 404 page
   ErrorDocument 404 /404.html`
 
+const cloudflareHeaders = config => ({
+  '/*': [...config.headers.flatMap(({ headers }) => headers)],
+  '/_next/static/*': [
+    { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+  ],
+})
+
+const toCloudflareHeaders = config =>
+  Object.entries(cloudflareHeaders(config))
+    .map(
+      ([pattern, headers]) =>
+        `${pattern}\n${headers.map(h => `  ${h.key}: ${h.value}`).join('\n')}`,
+    )
+    .join('\n\n') + '\n'
+
+const cfBuild = !!process.env.CF_BUILD
+
 // eslint-disable-next-line promise/catch-or-return
-Promise.all([
-  // needed for serving with serve, useful to test headers locally
-  writeFile(
-    path.resolve(__dirname, '../out/serve.json'),
-    JSON.stringify(serveJson, null, 2),
-  ),
-  // needed for serving with hostinger
-  writeFile(path.resolve(__dirname, '../out/.htaccess'), toHtAccess(serveJson)),
-]).then(() =>
+Promise.all(
+  cfBuild
+    ? [
+        // Cloudflare static asset headers
+        // https://developers.cloudflare.com/workers/static-assets/headers/
+        writeFile(
+          path.resolve(__dirname, '../out/_headers'),
+          toCloudflareHeaders(serveJson),
+        ),
+      ]
+    : [
+        // needed for serving with serve, useful to test headers locally
+        writeFile(
+          path.resolve(__dirname, '../out/serve.json'),
+          JSON.stringify(serveJson, null, 2),
+        ),
+        // needed for serving with hostinger
+        writeFile(
+          path.resolve(__dirname, '../out/.htaccess'),
+          toHtAccess(serveJson),
+        ),
+      ],
+).then(() =>
   // eslint-disable-next-line no-console
   console.info('Headers generated successfully'),
 )

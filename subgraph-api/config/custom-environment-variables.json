@@ -8,6 +8,13 @@
     "__name": "ORIGIN_LIST"
   },
   "port": "PORT",
+  "sentry": {
+    "dsn": "SENTRY_DSN",
+    "loggingLevels": {
+      "__format": "json",
+      "__name": "SENTRY_LOGGING_LEVELS"
+    }
+  },
   "subgraph": {
     "apiKey": "SUBGRAPH_API_KEY",
     "apiUrl": "SUBGRAPH_API_URL",

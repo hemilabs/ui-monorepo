@@ -1,5 +1,6 @@
 /* eslint-disable promise/no-callback-in-promise */
 
+import * as Sentry from '@sentry/node'
 import config from 'config'
 import cors from 'cors'
 import express from 'express'
@@ -218,6 +219,8 @@ export function createApiServer() {
   app.use(function (req: Request, res: Response) {
     sendJsonResponse(res, 404, { error: 'Not Found' })
   })
+
+  Sentry.setupExpressErrorHandler(app)
 
   app.use(function (
     err: Error,

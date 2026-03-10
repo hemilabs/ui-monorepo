@@ -8,7 +8,7 @@ These environment variables control how the API works:
 
 | Variable              | Description                                                     | Default                  |
 | --------------------- | --------------------------------------------------------------- | ------------------------ |
-| ORIGIN_LIST           | Comma-separated list of allowed origins. '\*' is not supported. | `http://localhos:3000`   |
+| ORIGIN_LIST           | Comma-separated list of allowed origins. '\*' is not supported. | `http://localhost:3000`  |
 | PORT                  | The HTTP port the server listens for requests.                  | 3003                     |
 | SENTRY_DSN            | The Sentry DSN.                                                 |                          |
 | SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).    | ["log", "warn", "error"] |

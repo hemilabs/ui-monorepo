@@ -106,7 +106,7 @@ These environment variables control how the cache works:
 | ABSINTHE_API_KEY      | The JWT used to authenticate to the Absinthe GraphQL API.         |                                            |
 | ABSINTHE_API_URL      | The Absinthe GraphQL API URL.                                     | `https://gql3.absinthe.network/v1/graphql` |
 | BTC_VAULTS_CACHE_MIN  | The time to cache the BTC vaults data in minutes.                 | 1                                          |
-| ORIGINS               | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhos:3000`                     |
+| ORIGINS               | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhost:3000`                    |
 | PORT                  | The HTTP port the server listens for requests.                    | 3006                                       |
 | REDIS_URL             | The URL of the Redis database.                                    | `redis://localhost:6379`                   |
 | RPC_URL_HEMI          | URL of the Hemi RPC node.                                         | `https://rpc.hemi.network/rpc`             |

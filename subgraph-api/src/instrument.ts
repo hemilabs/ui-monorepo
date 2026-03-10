@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/node'
 import config from 'config'
 
 const { dsn, loggingLevels } = config.get<{
-  dsn: string
+  dsn?: string
   loggingLevels: ConsoleLevel[]
 }>('sentry')
 

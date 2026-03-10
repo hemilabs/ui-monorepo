@@ -1,9 +1,12 @@
+import 'dotenv/config'
 import type { ConsoleLevel } from '@sentry/core'
 import * as Sentry from '@sentry/node'
 import config from 'config'
 
-const dsn = config.get<string>('sentry.dsn')
-const loggingLevels = config.get<ConsoleLevel[]>('sentry.loggingLevels')
+const { dsn, loggingLevels } = config.get<{
+  dsn: string
+  loggingLevels: ConsoleLevel[]
+}>('sentry')
 
 if (dsn) {
   Sentry.init({

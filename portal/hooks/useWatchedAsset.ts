@@ -4,7 +4,7 @@ import { useAccount } from 'wagmi'
 
 import { useHemi } from './useHemi'
 
-// See https://github.com/hemilabs/wallet-watch-asset/blob/9ac4cef8ce57b90d350ebf029ad90b195257fc90/src/index.js#L36
+// Storage key format matches @hemilabs/wallet-watch-asset
 export const useWatchedAsset = function (tokenAddress: EvmToken['address']) {
   const { address } = useAccount()
   const hemi = useHemi()

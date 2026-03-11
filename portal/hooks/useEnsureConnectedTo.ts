@@ -1,11 +1,14 @@
+import { useEnsureConnectedTo as useEnsureConnectedToEvm } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { type RemoteChain } from 'types/chain'
 import { isBtcNetworkId, isEvmNetworkId } from 'utils/chain'
-import { useAccount, useSwitchChain } from 'wagmi'
 
+/**
+ * Ensures the wallet is connected to the target chain (EVM or Bitcoin).
+ * Uses @hemilabs/react-hooks for EVM; extends with Bitcoin support locally.
+ */
 export const useEnsureConnectedTo = function () {
-  const { switchChainAsync } = useSwitchChain()
-  const { address: evmAddress, chainId: evmChainId } = useAccount()
+  const ensureConnectedToEvm = useEnsureConnectedToEvm()
   const {
     address: btcAddress,
     chainId: btcChainId,
@@ -14,11 +17,7 @@ export const useEnsureConnectedTo = function () {
 
   return async function ensureConnectedTo(targetChainId: RemoteChain['id']) {
     if (isEvmNetworkId(targetChainId)) {
-      if (!evmAddress) throw new Error('No EVM account connected')
-      if (evmChainId !== targetChainId) {
-        await switchChainAsync({ chainId: targetChainId })
-      }
-      return
+      return ensureConnectedToEvm(targetChainId)
     }
 
     if (isBtcNetworkId(targetChainId)) {
@@ -27,7 +26,7 @@ export const useEnsureConnectedTo = function () {
       if (btcChainId !== targetChainId) {
         await btcConnector.switchNetwork(targetChainId)
       }
-      return
+      return undefined
     }
 
     throw new Error(`Unsupported chain type: ${targetChainId}`)

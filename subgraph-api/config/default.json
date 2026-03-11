@@ -2,6 +2,9 @@
   "debug": false,
   "originList": ["http://localhost:3000"],
   "port": 3003,
+  "sentry": {
+    "loggingLevels": ["log", "warn", "error"]
+  },
   "subgraph": {
     "apiKey": "",
     "apiUrl": "https://gateway.thegraph.com/api",

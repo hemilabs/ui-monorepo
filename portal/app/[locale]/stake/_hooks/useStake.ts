@@ -18,7 +18,7 @@ import { toChecksumAddress } from 'utils/address'
 import { isNativeToken } from 'utils/nativeToken'
 import { stake } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
-import { Hash } from 'viem'
+import { Hash, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { getStakedBalanceQueryKey } from './useStakedBalance'
@@ -28,7 +28,9 @@ export const useStake = function (token: StakeToken) {
   const { address } = useAccount()
   const ensureConnectedTo = useEnsureConnectedToChain()
   const tokenAsAddress = {
-    address: toChecksumAddress(token.address),
+    address: operatesNativeToken
+      ? zeroAddress
+      : toChecksumAddress(token.address),
     chainId: token.chainId,
   }
   const allowanceQueryKeyValue = allowanceQueryKey({

@@ -6,7 +6,7 @@ import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupport
 import { useEvmDeposits } from 'hooks/useEvmDeposits'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
 import { isPendingOperation } from 'utils/tunnel'
@@ -25,9 +25,13 @@ const WatchEvmDeposit = function ({
 }) {
   const { address } = useAccount()
   const { updateDeposit } = useTunnelHistory()
-  const erc20BalanceQueryKey = tokenBalanceQueryKey(
-    { address: deposit.l2Token, chainId: deposit.l2ChainId },
-    address,
+  const erc20BalanceQueryKey = useMemo(
+    () =>
+      tokenBalanceQueryKey(
+        { address: deposit.l2Token, chainId: deposit.l2ChainId },
+        address,
+      ),
+    [deposit.l2Token, deposit.l2ChainId, address],
   )
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     deposit.l2ChainId,

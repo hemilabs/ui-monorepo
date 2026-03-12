@@ -22,6 +22,7 @@ import {
   type StakeStatusEnumType,
   type StakeToken,
 } from 'types/stake'
+import { toChecksumAddress } from 'utils/address'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
@@ -76,9 +77,12 @@ export const StakeOperation = function ({
   const spender = stakeManagerAddresses[token.chainId]
 
   const { data: allowance = BigInt(0), isPending } = useAllowance({
-    owner: address,
+    owner: address ? toChecksumAddress(address) : undefined,
     spender,
-    token: { address: token.address, chainId: token.chainId },
+    token: {
+      address: toChecksumAddress(token.address),
+      chainId: token.chainId,
+    },
   })
 
   const amount = parseTokenUnits(amountInput, token)

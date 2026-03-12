@@ -9,7 +9,7 @@ import {
   depositEth,
 } from 'hemi-tunnel-actions'
 import { tokenBalanceQueryKey } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
@@ -51,7 +51,7 @@ export const useDeposit = function ({
   const amount = parseTokenUnits(fromInput, fromToken)
 
   const { address } = useAccount()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const { addTransaction, clearTransactionsInMemory } = useContext(
     TransactionsInProgressContext,
   )

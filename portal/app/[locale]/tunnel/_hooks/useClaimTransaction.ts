@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import EventEmitter from 'events'
 import { type FinalizeEvents, finalizeWithdrawal } from 'hemi-tunnel-actions'
 import { tokenBalanceQueryKey } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
@@ -20,7 +20,7 @@ export const useClaimTransaction = function ({
   withdrawal: ToEvmWithdrawOperation
 }) {
   const { address: account } = useAccount()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const hemiClient = useHemiClient()
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     withdrawal.l1ChainId,

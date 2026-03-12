@@ -1,21 +1,23 @@
-import { useEnsureConnectedTo as useEnsureConnectedToEvm } from '@hemilabs/react-hooks/useEnsureConnectedTo'
+import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { type RemoteChain } from 'types/chain'
 import { isBtcNetworkId, isEvmNetworkId } from 'utils/chain'
 
 /**
  * Ensures the wallet is connected to the target chain (EVM or Bitcoin).
- * Uses @hemilabs/react-hooks for EVM; extends with Bitcoin support locally.
+ * Uses @hemilabs/react-hooks useEnsureConnectedTo for EVM; adds Bitcoin support.
  */
-export const useEnsureConnectedTo = function () {
-  const ensureConnectedToEvm = useEnsureConnectedToEvm()
+export const useEnsureConnectedToChain = function () {
+  const ensureConnectedToEvm = useEnsureConnectedTo()
   const {
     address: btcAddress,
     chainId: btcChainId,
     connector: btcConnector,
   } = useBtcAccount()
 
-  return async function ensureConnectedTo(targetChainId: RemoteChain['id']) {
+  return async function ensureConnectedToChain(
+    targetChainId: RemoteChain['id'],
+  ) {
     if (isEvmNetworkId(targetChainId)) {
       return ensureConnectedToEvm(targetChainId)
     }

@@ -4,10 +4,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getBtcStakingVaultContractAddress } from 'hemi-btc-staking-actions'
 import { depositToken } from 'hemi-btc-staking-actions/actions'
 import { tokenBalanceQueryKey } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import { parseTokenUnits } from 'utils/token'
 import { useAccount } from 'wagmi'
 
@@ -34,7 +34,7 @@ export const useDeposit = function ({
 
   const { address } = useAccount()
   const hemi = useHemi()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const vaultAddress = getBtcStakingVaultContractAddress(token.chainId)
   const queryClient = useQueryClient()
 
@@ -53,7 +53,7 @@ export const useDeposit = function ({
 
   const { hemiWalletClient } = useHemiWalletClient()
 
-  const { allowanceQueryKey } = useNeedsApproval({
+  const { allowanceQueryKey } = useNeedsApprovalQuery({
     address: token.address,
     amount,
     chainId: token.chainId,

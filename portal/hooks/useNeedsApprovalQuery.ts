@@ -1,8 +1,11 @@
-import { useAllowance } from 'hooks/useAllowance'
+import {
+  allowanceQueryKey,
+  useAllowance,
+} from '@hemilabs/react-hooks/useAllowance'
 import { Address, Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
-export const useNeedsApproval = function ({
+export const useNeedsApprovalQuery = function ({
   address,
   amount,
   chainId,
@@ -15,19 +18,23 @@ export const useNeedsApproval = function ({
 }) {
   const { address: owner } = useAccount()
 
+  const token = { address: address as Address, chainId }
+
   const {
     data: allowance = BigInt(0),
     isError,
     isLoading,
-    queryKey: allowanceQueryKey,
     status: allowanceStatus,
-  } = useAllowance(address, {
-    args: { owner, spender },
-    chainId,
+  } = useAllowance({
+    owner,
+    spender,
+    token,
   })
 
+  const allowanceQueryKeyValue = allowanceQueryKey({ owner, spender, token })
+
   return {
-    allowanceQueryKey,
+    allowanceQueryKey: allowanceQueryKeyValue,
     isAllowanceError: isError,
     isAllowanceLoading: isLoading,
     needsApproval: amount > allowance && allowanceStatus === 'success',

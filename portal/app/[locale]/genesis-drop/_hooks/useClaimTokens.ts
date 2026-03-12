@@ -8,7 +8,7 @@ import {
   type LockupMonths,
 } from 'genesis-drop-actions'
 import { claimTokens } from 'genesis-drop-actions/actions'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUmami } from 'hooks/useUmami'
@@ -27,7 +27,7 @@ export const useClaimTokens = function ({
 }) {
   const { address } = useAccount()
   const hemi = useHemi()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const { hemiWalletClient } = useHemiWalletClient()
   const queryClient = useQueryClient()
   const { track } = useUmami()

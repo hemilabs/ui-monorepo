@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getBtcStakingVaultContractAddress } from 'hemi-btc-staking-actions'
 import { withdraw } from 'hemi-btc-staking-actions/actions'
 import { tokenBalanceQueryKey } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { parseTokenUnits } from 'utils/token'
@@ -35,7 +35,7 @@ export const useWithdraw = function ({
 
   const { address } = useAccount()
   const hemi = useHemi()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const queryClient = useQueryClient()
 
   const tokenBalanceQueryKeyValue = tokenBalanceQueryKey(

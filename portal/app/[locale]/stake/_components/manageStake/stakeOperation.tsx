@@ -1,3 +1,4 @@
+import { useAllowance } from '@hemilabs/react-hooks/useAllowance'
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { DrawerParagraph } from 'components/drawer'
 import { HemiFees } from 'components/hemiFees'
@@ -9,7 +10,6 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { Spinner } from 'components/spinner'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
-import { useAllowance } from 'hooks/useAllowance'
 import { useAmount } from 'hooks/useAmount'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
@@ -75,16 +75,11 @@ export const StakeOperation = function ({
   const operatesNativeToken = isNativeToken(token)
   const spender = stakeManagerAddresses[token.chainId]
 
-  const { data: allowance = BigInt(0), isPending } = useAllowance(
-    token.address,
-    {
-      args: {
-        owner: address,
-        spender,
-      },
-      chainId: token.chainId,
-    },
-  )
+  const { data: allowance = BigInt(0), isPending } = useAllowance({
+    owner: address,
+    spender,
+    token: { address: token.address, chainId: token.chainId },
+  })
 
   const amount = parseTokenUnits(amountInput, token)
 

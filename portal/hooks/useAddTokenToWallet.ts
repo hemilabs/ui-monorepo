@@ -4,7 +4,7 @@ import { EvmToken } from 'types/token'
 import { type Address } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 
-import { useEnsureConnectedTo } from './useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from './useEnsureConnectedToChain'
 import { useUmami } from './useUmami'
 
 type Options = {
@@ -14,7 +14,7 @@ type Options = {
 
 export const useAddTokenToWallet = function (options: Options) {
   const { address } = useAccount()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const { data: walletClient } = useWalletClient({
     chainId: options.token.chainId,
   })

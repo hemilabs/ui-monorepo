@@ -30,7 +30,7 @@ import {
 import { useBitcoin } from './useBitcoin'
 import { useBtcDeposits } from './useBtcDeposits'
 import { useBtcWithdrawals } from './useBtcWithdrawals'
-import { useEnsureConnectedTo } from './useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from './useEnsureConnectedToChain'
 import { useHemi } from './useHemi'
 import { useHemiClient, useHemiWalletClient } from './useHemiClient'
 import { useTunnelHistory } from './useTunnelHistory'
@@ -45,7 +45,7 @@ export const useConfirmBitcoinDeposit = function (
   const queryClient = useQueryClient()
   const { hemiWalletClient } = useHemiWalletClient()
   const { updateDeposit } = useTunnelHistory()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
 
   const {
     data: confirmBitcoinDepositTxHash,
@@ -303,7 +303,7 @@ export const useWithdrawBitcoin = function () {
   const { txHash, updateTxHash } = useTunnelOperation()
   const queryClient = useQueryClient()
   const withdrawals = useBtcWithdrawals()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
 
   const {
     data: withdrawData,
@@ -458,7 +458,7 @@ export const useChallengeBitcoinWithdrawal = function (
   const hemi = useHemi()
   const { updateWithdrawal } = useTunnelHistory()
   const queryClient = useQueryClient()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
 
   const {
     data: challengeTransactionHash,

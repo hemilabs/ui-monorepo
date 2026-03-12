@@ -1,6 +1,6 @@
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { claimAllRewards } from 'merkl-claim-rewards/actions'
@@ -36,7 +36,7 @@ export const useClaimRewards = function ({
   const { data: merklData } = useMerklCampaigns()
   const { data: merklRewards } = useMerklRewards()
   const queryClient = useQueryClient()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
 
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     hemiClient.chain!.id,

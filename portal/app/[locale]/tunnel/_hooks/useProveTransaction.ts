@@ -3,7 +3,7 @@ import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpd
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import EventEmitter from 'events'
 import { type ProveEvents, proveWithdrawal } from 'hemi-tunnel-actions'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
@@ -20,7 +20,7 @@ export const useProveTransaction = function ({
   withdrawal,
 }: UseProveTransaction) {
   const { address: account } = useAccount()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     withdrawal.l1ChainId,
   )

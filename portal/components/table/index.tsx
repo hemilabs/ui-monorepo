@@ -1,12 +1,12 @@
 'use client'
 
+import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useWindowSize } from 'hooks/useWindowSize'
 import { ReactNode, RefObject, useRef } from 'react'
 import { screenBreakpoints } from 'styles'
 

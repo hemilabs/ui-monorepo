@@ -1,11 +1,12 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getBtcStakingVaultContractAddress } from 'hemi-btc-staking-actions'
 import { depositToken } from 'hemi-btc-staking-actions/actions'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { tokenBalanceQueryKey } from 'hooks/useBalance'
 import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { parseTokenUnits } from 'utils/token'
 import { useAccount } from 'wagmi'
@@ -37,12 +38,12 @@ export const useDeposit = function ({
   const vaultAddress = getBtcStakingVaultContractAddress(token.chainId)
   const queryClient = useQueryClient()
 
-  const { queryKey: tokenBalanceQueryKey } = useTokenBalance(
-    token.chainId,
-    token.address,
+  const tokenBalanceQueryKeyValue = tokenBalanceQueryKey(
+    { address: token.address, chainId: token.chainId },
+    address,
   )
 
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     token.chainId,
   )
 
@@ -134,7 +135,7 @@ export const useDeposit = function ({
 
         // Update the user token balance
         queryClient.setQueryData(
-          tokenBalanceQueryKey,
+          tokenBalanceQueryKeyValue,
           (old: bigint) => old - amount,
         )
 
@@ -171,7 +172,7 @@ export const useDeposit = function ({
     },
     onSettled() {
       queryClient.invalidateQueries({
-        queryKey: tokenBalanceQueryKey,
+        queryKey: tokenBalanceQueryKeyValue,
       })
 
       queryClient.invalidateQueries({

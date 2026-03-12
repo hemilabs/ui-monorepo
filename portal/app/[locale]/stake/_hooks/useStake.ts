@@ -1,7 +1,8 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { useAllowance } from 'hooks/useAllowance'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { tokenBalanceQueryKey } from 'hooks/useBalance'
 import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -32,11 +33,11 @@ export const useStake = function (token: StakeToken) {
   const [networkType] = useNetworkType()
   const hemiPublicClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
-  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
-    token.chainId,
-    token.address,
+  const erc20BalanceQueryKey = tokenBalanceQueryKey(
+    { address: token.address, chainId: token.chainId },
+    address,
   )
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     token.chainId,
   )
 

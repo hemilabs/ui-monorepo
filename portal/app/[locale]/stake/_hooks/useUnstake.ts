@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useTokenBalance } from 'hooks/useBalance'
+import { tokenBalanceQueryKey } from 'hooks/useBalance'
 import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -24,9 +24,9 @@ export const useUnstake = function (token: StakeToken) {
   const hemiPublicClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
   const [networkType] = useNetworkType()
-  const { queryKey: balanceQueryKey } = useTokenBalance(
-    token.chainId,
-    token.address,
+  const balanceQueryKey = tokenBalanceQueryKey(
+    { address: token.address, chainId: token.chainId },
+    address,
   )
   const t = useTranslations()
 

@@ -1,29 +1,35 @@
-import { useNativeBalance as useNativeTokenBalance } from '@hemilabs/react-hooks/useNativeBalance'
-import { EvmToken } from 'types/token'
-import { isNativeAddress } from 'utils/nativeToken'
-import { type Address, erc20Abi, isAddress } from 'viem'
-import { useAccount, useReadContract } from 'wagmi'
+import {
+  tokenBalanceQueryKey,
+  useTokenBalance,
+} from '@hemilabs/react-hooks/useTokenBalance'
+import { type Address, type Chain } from 'viem'
 
-export { useNativeTokenBalance }
-
-export const useTokenBalance = function (
-  chainId: EvmToken['chainId'],
-  tokenAddress: string,
-) {
-  const { address, isConnected } = useAccount()
-  return useReadContract({
-    abi: erc20Abi,
+/**
+ * Adapter for @hemilabs/react-hooks/useTokenBalance. Token list uses
+ * address: string for both EVM (0x...) and Bitcoin (bc1..., 1..., 3...).
+ * This hook is for EVM ERC20 balance only; we cast string → Address here.
+ * Call only with EVM token addresses (not native, not BTC).
+ */
+const useTokenBalanceAdapter = (chainId: Chain['id'], tokenAddress: string) =>
+  useTokenBalance({
     address: tokenAddress as Address,
-    args: address ? [address] : undefined,
     chainId,
-    functionName: 'balanceOf',
-    query: {
-      enabled:
-        isConnected &&
-        !!address &&
-        isAddress(address) &&
-        isAddress(tokenAddress) &&
-        !isNativeAddress(tokenAddress),
-    },
   })
+
+/**
+ * Same adapter for the query key (invalidation, etc.). Accepts token with
+ * address: string; casts to Address only inside.
+ */
+const tokenBalanceQueryKeyAdapter = (
+  token: { chainId: Chain['id']; address: string },
+  account: Address | undefined,
+) =>
+  tokenBalanceQueryKey(
+    { address: token.address as Address, chainId: token.chainId },
+    account,
+  )
+
+export {
+  useTokenBalanceAdapter as useTokenBalance,
+  tokenBalanceQueryKeyAdapter as tokenBalanceQueryKey,
 }

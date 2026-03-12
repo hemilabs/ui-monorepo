@@ -1,7 +1,8 @@
 'use client'
 
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { DisplayAmount } from 'components/displayAmount'
-import { useTokenBalance, useNativeTokenBalance } from 'hooks/useBalance'
+import { useTokenBalance } from 'hooks/useBalance'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
@@ -39,7 +40,7 @@ export const RenderCryptoBalance = function ({
 }
 
 const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
-  const { data, status } = useNativeTokenBalance(token.chainId)
+  const { data, status } = useNativeBalance(token.chainId)
   return (
     <RenderCryptoBalance balance={data?.value} status={status} token={token} />
   )

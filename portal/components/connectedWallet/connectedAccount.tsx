@@ -1,3 +1,4 @@
+import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { bitcoinMainnet, bitcoinTestnet } from 'btc-wallet/chains'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { useSwitchChain as useSwitchBtcChain } from 'btc-wallet/hooks/useSwitchChain'
@@ -12,7 +13,6 @@ import {
   useConnectedToUnsupportedEvmChain,
 } from 'hooks/useConnectedToUnsupportedChain'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'

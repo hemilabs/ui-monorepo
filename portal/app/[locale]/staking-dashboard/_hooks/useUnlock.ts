@@ -1,9 +1,10 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { tokenBalanceQueryKey } from 'hooks/useBalance'
 import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useUmami } from 'hooks/useUmami'
 import {
   StakingDashboardToken,
@@ -41,9 +42,9 @@ export const useUnlock = function ({
   const { address } = useAccount()
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
-  const { queryKey: hemiBalanceQueryKey } = useTokenBalance(
-    token.chainId,
-    token.address,
+  const hemiBalanceQueryKey = tokenBalanceQueryKey(
+    { address: token.address, chainId: token.chainId },
+    address,
   )
 
   const stakingPositionQueryKey = getStakingPositionsQueryKey({
@@ -51,7 +52,7 @@ export const useUnlock = function ({
     chainId: token.chainId,
   })
 
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     token.chainId,
   )
 

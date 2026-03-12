@@ -1,7 +1,7 @@
 'use client'
 
+import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Drawer } from 'components/drawer'
-import { useWindowSize } from 'hooks/useWindowSize'
 import { screenBreakpoints } from 'styles'
 
 import { NavbarDesktop } from './navbarDesktop'

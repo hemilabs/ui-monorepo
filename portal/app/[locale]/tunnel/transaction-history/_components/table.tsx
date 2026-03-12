@@ -1,3 +1,5 @@
+import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
+import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import {
   ColumnDef,
   Row,
@@ -13,8 +15,6 @@ import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
 import { getNewColumnOrder } from 'components/table/_utils'
 import { TxLink } from 'components/txLink'
-import { useOnClickOutside } from 'hooks/useOnClickOutside'
-import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
 import { ComponentProps, RefObject, useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'

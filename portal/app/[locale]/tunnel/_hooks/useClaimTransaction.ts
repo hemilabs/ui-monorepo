@@ -1,10 +1,11 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import EventEmitter from 'events'
 import { type FinalizeEvents, finalizeWithdrawal } from 'hemi-tunnel-actions'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { tokenBalanceQueryKey } from 'hooks/useBalance'
 import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemiClient } from 'hooks/useHemiClient'
-import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
@@ -21,13 +22,13 @@ export const useClaimTransaction = function ({
   const { address: account } = useAccount()
   const ensureConnectedTo = useEnsureConnectedTo()
   const hemiClient = useHemiClient()
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     withdrawal.l1ChainId,
   )
   const queryClient = useQueryClient()
-  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
-    withdrawal.l1ChainId,
-    withdrawal.l1Token,
+  const erc20BalanceQueryKey = tokenBalanceQueryKey(
+    { address: withdrawal.l1Token, chainId: withdrawal.l1ChainId },
+    account,
   )
   const { updateWithdrawal } = useTunnelHistory()
   const { track } = useUmami()

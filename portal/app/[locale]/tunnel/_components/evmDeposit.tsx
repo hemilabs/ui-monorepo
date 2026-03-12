@@ -8,7 +8,7 @@ import { useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApprovalFees } from 'hooks/useEstimateApprovalFees'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -91,7 +91,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
 
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
-    useNeedsApproval({
+    useNeedsApprovalQuery({
       address: fromToken.address,
       amount,
       chainId: fromToken.chainId,

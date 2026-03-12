@@ -5,7 +5,7 @@ import { EventEmitter } from 'events'
 import { tokenBalanceQueryKey } from 'hooks/useBalance'
 import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import { useUmami } from 'hooks/useUmami'
 import {
   StakingDashboardOperation,
@@ -70,7 +70,7 @@ export const useStake = function ({
 
   const { hemiWalletClient } = useHemiWalletClient()
 
-  const { allowanceQueryKey } = useNeedsApproval({
+  const { allowanceQueryKey } = useNeedsApprovalQuery({
     address: token.address,
     amount,
     chainId: token.chainId,

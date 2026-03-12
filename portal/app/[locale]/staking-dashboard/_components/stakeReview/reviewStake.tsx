@@ -9,7 +9,7 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useEstimateApprovalFees } from 'hooks/useEstimateApprovalFees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import { useTranslations } from 'next-intl'
 import {
   StakingDashboardStatus,
@@ -46,7 +46,7 @@ export const ReviewStake = function ({ onClose }: Props) {
 
   const amount = parseTokenUnits(input, token)
 
-  const { needsApproval } = useNeedsApproval({
+  const { needsApproval } = useNeedsApprovalQuery({
     address: token.address,
     amount,
     chainId: token.chainId,

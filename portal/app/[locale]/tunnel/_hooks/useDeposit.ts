@@ -11,7 +11,7 @@ import {
 import { tokenBalanceQueryKey } from 'hooks/useBalance'
 import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
 import { useContext } from 'react'
@@ -77,7 +77,7 @@ export const useDeposit = function ({
 
   const depositingNative = isNativeAddress(fromToken.address)
 
-  const { allowanceQueryKey } = useNeedsApproval({
+  const { allowanceQueryKey } = useNeedsApprovalQuery({
     address: fromToken.address,
     amount,
     chainId: fromToken.chainId,

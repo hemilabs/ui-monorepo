@@ -10,7 +10,7 @@ import { useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApprovalFees } from 'hooks/useEstimateApprovalFees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useState } from 'react'
 import {
@@ -66,7 +66,7 @@ export const ReviewIncreaseAmount = function ({ onClose }: Props) {
   const amount = parseTokenUnits(input!, token)
 
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
-    useNeedsApproval({
+    useNeedsApprovalQuery({
       address: token.address,
       amount,
       chainId: token.chainId,

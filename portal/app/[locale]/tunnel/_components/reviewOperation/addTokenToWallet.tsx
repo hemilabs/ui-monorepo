@@ -1,4 +1,4 @@
-import { useAddTokenToWallet } from 'hooks/useAddTokenToWallet'
+import { useSaveTokenToWallet } from 'hooks/useSaveTokenToWallet'
 import { useWatchedAsset } from 'hooks/useWatchedAsset'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
@@ -32,7 +32,7 @@ export const AddTokenToWallet = function ({ token }: Props) {
   const t = useTranslations('tunnel-page.review-deposit')
   const isTokenAdded = useWatchedAsset(token.address)
 
-  const { mutate, status } = useAddTokenToWallet({
+  const { mutate, status } = useSaveTokenToWallet({
     token,
   })
   // only show the button if the token is an ERC20, and if it wasn't previously added.

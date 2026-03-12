@@ -3,7 +3,7 @@ import {
   encodeStakeEth,
   stakeManagerAddresses,
 } from 'hemi-viem-stake-actions'
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useEstimateTransactionFees } from 'hooks/useEstimateTransactionFees'
 import { StakeToken } from 'types/stake'
 import { isNativeToken } from 'utils/nativeToken'
 import { useAccount, useEstimateGas } from 'wagmi'
@@ -38,7 +38,7 @@ export const useEstimateStakeFees = function ({
     value: isNative ? amount : undefined,
   })
 
-  return useEstimateFees({
+  return useEstimateTransactionFees({
     chainId: token.chainId,
     enabled: gasUnits !== undefined,
     gasUnits,

@@ -1,5 +1,5 @@
 import { encodeDepositErc20, encodeDepositEth } from 'hemi-tunnel-actions'
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useEstimateTransactionFees } from 'hooks/useEstimateTransactionFees'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
@@ -33,7 +33,7 @@ export const useEstimateDepositFees = function ({
     value: isNative ? amount : undefined,
   })
 
-  return useEstimateFees({
+  return useEstimateTransactionFees({
     chainId: fromToken.chainId,
     enabled: gasUnits !== undefined,
     gasUnits,

@@ -1,7 +1,4 @@
-import {
-  allowanceQueryKey,
-  useAllowance,
-} from '@hemilabs/react-hooks/useAllowance'
+import { allowanceQueryKey } from '@hemilabs/react-hooks/useAllowance'
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
@@ -34,11 +31,6 @@ export const useStake = function (token: StakeToken) {
     address: toChecksumAddress(token.address),
     chainId: token.chainId,
   }
-  useAllowance({
-    owner: address,
-    spender: stakeManagerAddresses[token.chainId],
-    token: tokenAsAddress,
-  })
   const allowanceQueryKeyValue = allowanceQueryKey({
     owner: address,
     spender: stakeManagerAddresses[token.chainId],

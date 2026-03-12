@@ -12,7 +12,7 @@ type Options = {
   token: EvmToken
 }
 
-export const useAddTokenToWallet = function (options: Options) {
+export const useSaveTokenToWallet = function (options: Options) {
   const { address } = useAccount()
   const ensureConnectedTo = useEnsureConnectedToChain()
   const { data: walletClient } = useWalletClient({

@@ -53,7 +53,7 @@ type UseEstimateFees = {
  * @returns {bigint} result.fees - Estimated total fee in wei.
  * @returns {boolean} result.isError - Indicates whether there was a gas estimation error.
  */
-export function useEstimateFees({
+export function useEstimateTransactionFees({
   chainId,
   enabled = true,
   isGasUnitsError = false,

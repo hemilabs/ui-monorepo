@@ -6,7 +6,7 @@ import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
-import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
+import { useEstimateApprovalFees } from 'hooks/useEstimateApprovalFees'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -118,7 +118,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   })
 
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
-    useEstimateApproveErc20Fees({
+    useEstimateApprovalFees({
       amount,
       spender: l1StandardBridgeAddress,
       token: fromToken,

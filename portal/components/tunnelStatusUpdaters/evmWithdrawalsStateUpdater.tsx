@@ -6,7 +6,7 @@ import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupport
 import { useToEvmWithdrawals } from 'hooks/useToEvmWithdrawals'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { MessageStatus, ToEvmWithdrawOperation } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
 import {
@@ -31,9 +31,13 @@ const WatchEvmWithdrawal = function ({
 }) {
   const { address } = useAccount()
   const { updateWithdrawal } = useTunnelHistory()
-  const erc20BalanceQueryKey = tokenBalanceQueryKey(
-    { address: withdrawal.l1Token, chainId: withdrawal.l1ChainId },
-    address,
+  const erc20BalanceQueryKey = useMemo(
+    () =>
+      tokenBalanceQueryKey(
+        { address: withdrawal.l1Token, chainId: withdrawal.l1ChainId },
+        address,
+      ),
+    [withdrawal.l1Token, withdrawal.l1ChainId, address],
   )
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     withdrawal.l1ChainId,

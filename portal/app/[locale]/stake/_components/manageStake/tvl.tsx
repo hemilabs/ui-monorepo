@@ -1,5 +1,5 @@
 import { RenderFiatBalance } from 'components/fiatBalance'
-import { useTotalSupply } from 'hooks/useTotalSupply'
+import { useErc20TotalSupply } from 'hooks/useErc20TotalSupply'
 import { type StakeToken } from 'types/stake'
 import { type EvmToken } from 'types/token'
 import { formatTVL } from 'utils/format'
@@ -7,7 +7,10 @@ import { isNativeAddress } from 'utils/nativeToken'
 import { getWrappedEther } from 'utils/token'
 
 const TokenTvl = function ({ token }: { token: EvmToken }) {
-  const { data: supply, status } = useTotalSupply(token.address, token.chainId)
+  const { data: supply, status } = useErc20TotalSupply(
+    token.address,
+    token.chainId,
+  )
   return (
     <RenderFiatBalance
       balance={supply}

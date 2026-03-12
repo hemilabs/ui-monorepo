@@ -12,7 +12,7 @@ import { ToastLoader } from 'components/toast/toastLoader'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { useAmount } from 'hooks/useAmount'
 import { useTokenBalance } from 'hooks/useBalance'
-import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
+import { useEstimateApprovalFees } from 'hooks/useEstimateApprovalFees'
 import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -84,7 +84,7 @@ export const StakeOperation = function ({
   const amount = parseTokenUnits(amountInput, token)
 
   const { fees: approvalEstimatedFees, isError: isApprovalEstimatedFeesError } =
-    useEstimateApproveErc20Fees({
+    useEstimateApprovalFees({
       amount,
       spender,
       token,

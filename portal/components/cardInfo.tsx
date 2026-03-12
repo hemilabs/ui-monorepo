@@ -35,7 +35,7 @@ export const CardInfo = function <T>({
           <span className="body-text-medium text-neutral-500">{label}</span>
           <h3>{getValue()}</h3>
         </div>
-        {icon != null && (
+        {icon !== null && (
           <Image
             alt={iconAlt ?? ''}
             aria-hidden={!iconAlt}

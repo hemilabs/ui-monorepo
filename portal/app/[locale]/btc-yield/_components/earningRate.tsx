@@ -1,3 +1,4 @@
+import { CardInfo } from 'components/cardInfo'
 import { Tooltip } from 'components/tooltip'
 import { useTranslations } from 'next-intl'
 import { type MerklOpportunityResponse } from 'utils/merkl'
@@ -13,7 +14,6 @@ import {
   getUniqueRewardTokens,
 } from '../_utils'
 
-import { CardInfo } from './cardInfo'
 import earningRateIcon from './icons/earningRate.svg'
 import { TokenDisplay } from './tokenDisplay'
 

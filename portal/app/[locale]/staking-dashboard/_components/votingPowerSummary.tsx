@@ -1,5 +1,6 @@
 'use client'
 
+import { CardInfo } from 'components/cardInfo'
 import { DisplayAmount } from 'components/displayAmount'
 import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import { useTranslations } from 'next-intl'
@@ -9,8 +10,6 @@ import { useAccount } from 'wagmi'
 
 import { usePositionsVotingPowerSum } from '../_hooks/usePositionsVotingPowerSum'
 import { useTotalVotingPower } from '../_hooks/useTotalVotingPower'
-
-import { CardInfo } from './cardInfo'
 
 export const VotingPowerSummary = function () {
   const t = useTranslations('staking-dashboard')

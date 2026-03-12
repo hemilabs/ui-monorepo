@@ -316,6 +316,15 @@ const StakeOperationView = ({
   </>
 )
 
+const getBalanceValue = (
+  balance: bigint | { value: bigint } | undefined,
+): bigint | undefined =>
+  balance === undefined
+    ? undefined
+    : typeof balance === 'bigint'
+      ? balance
+      : balance.value
+
 const useBalance = function (token: StakeToken) {
   const nativeBalance = useNativeBalance(token.chainId)
   const tokenBalance = useTokenBalance(token.chainId, token.address)
@@ -377,13 +386,7 @@ export const StakeOperation = function ({
   const { data: balance, isSuccess: balanceLoaded } = useBalance(token)
 
   const allowanceLoaded = !isPending || operatesNativeToken
-
-  const balanceValue =
-    balance === undefined
-      ? undefined
-      : typeof balance === 'bigint'
-        ? balance
-        : balance.value
+  const balanceValue = getBalanceValue(balance)
 
   const {
     canSubmit: isSubmitValid,
@@ -398,7 +401,9 @@ export const StakeOperation = function ({
   })
 
   const allowanceBigInt = BigInt(allowance as bigint)
-  const requiresApproval = allowanceBigInt < parseTokenUnits(amountInput, token)
+  const requiresApproval =
+    !operatesNativeToken &&
+    allowanceBigInt < parseTokenUnits(amountInput, token)
 
   const canStake =
     allowanceLoaded && balanceLoaded && !isSubmitting && isSubmitValid

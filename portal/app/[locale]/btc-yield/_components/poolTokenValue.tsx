@@ -1,5 +1,6 @@
 'use client'
 
+import { CardInfo } from 'components/cardInfo'
 import { useTranslations } from 'next-intl'
 import { formatNumber } from 'utils/format'
 import { formatUnits } from 'viem'
@@ -7,7 +8,6 @@ import { formatUnits } from 'viem'
 import { usePoolAsset } from '../_hooks/usePoolAsset'
 import { usePoolTokenValue } from '../_hooks/usePoolTokenValue'
 
-import { CardInfo } from './cardInfo'
 import poolTokenValueIcon from './icons/poolTokenValue.svg'
 
 export const PoolTokenValue = function () {

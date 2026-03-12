@@ -14,6 +14,7 @@ import {
   type StakeTableFilterOptions,
 } from './_components/stakeTable/stakeTableFilter'
 import { StakingDashboardDisabledTestnet } from './_components/stakingDashboardDisabledTestnet'
+import { VotingPowerSummary } from './_components/votingPowerSummary'
 import { StakingDashboardProvider } from './_context/stakingDashboardContext'
 import { useStakingPositions } from './_hooks/useStakingPositions'
 import { isStakingDashboardEnabledOnTestnet } from './_utils/isStakingDashboardEnabledOnTestnet'
@@ -34,7 +35,10 @@ function StakingContent() {
 
   return (
     <StakingDashboardProvider>
-      <div className="mt-8 flex flex-col-reverse gap-6 lg:flex-row">
+      <div className="mt-12 w-full">
+        <VotingPowerSummary />
+      </div>
+      <div className="mt-6 flex flex-col-reverse gap-6 lg:flex-row">
         <div className="xl:grow-2 w-full lg:w-1/2 xl:shrink xl:basis-0">
           <div className="mb-4 ml-1 flex flex-row md:w-fit">
             <StakeTableFilter filter={filter} onFilter={handleFilter} />

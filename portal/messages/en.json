@@ -370,8 +370,10 @@
       "unlocked": "Unlocked",
       "unlocks-on": "Unlocks on {date}"
     },
+    "total-voting-power": "Total voting power",
     "unlock-successful": "Unlock successful",
-    "voting-power": "Voting Power"
+    "voting-power": "Voting Power",
+    "your-positions": "Your positions"
   },
   "metadata": {
     "title": "Hemi Portal"

@@ -370,8 +370,10 @@
       "unlocked": "Desbloqueado",
       "unlocks-on": "Desbloquea el {date}"
     },
+    "total-voting-power": "Poder de voto total",
     "unlock-successful": "Desbloqueo exitoso",
-    "voting-power": "Poder de Voto"
+    "voting-power": "Poder de Voto",
+    "your-positions": "Sus posiciones"
   },
   "metadata": {
     "title": "Portal de Hemi"

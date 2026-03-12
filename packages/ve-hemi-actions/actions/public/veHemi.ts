@@ -1,6 +1,6 @@
 import pMemoize from 'promise-mem'
 import { isAddress, isAddressEqual, type Address, type Client } from 'viem'
-import { readContract } from 'viem/actions'
+import { multicall, readContract } from 'viem/actions'
 
 import { veHemiAbi } from '../../abi'
 import { veHemiVoteDelegationAbi } from '../../voteDelegationAbi'
@@ -95,6 +95,23 @@ const memoizedGetVoteDelegationAddress = pMemoize(getVoteDelegationAddress, {
   resolver: client => client.chain?.id,
 })
 
+function delegationToVotingPower(
+  delegation: {
+    bias: bigint
+    delegatee: Address
+    end: bigint | number
+    slope: bigint
+  },
+  ownerAddress: Address,
+  now: bigint,
+): bigint {
+  if (!isAddressEqual(delegation.delegatee, ownerAddress)) return BigInt(0)
+  const end = BigInt(delegation.end)
+  if (end <= now) return BigInt(0)
+  const voteDecay = delegation.slope * now
+  return delegation.bias > voteDecay ? delegation.bias - voteDecay : BigInt(0)
+}
+
 export const getPositionVotingPower = async function ({
   client,
   ownerAddress,
@@ -121,24 +138,76 @@ export const getPositionVotingPower = async function ({
     functionName: 'delegation',
   })
 
-  // If delegated to another wallet, voting power is 0 for owner
-  if (!isAddressEqual(delegation.delegatee, ownerAddress)) {
+  const now = BigInt(Math.floor(Date.now() / 1000))
+  return delegationToVotingPower(delegation, ownerAddress, now)
+}
+
+export const getPositionsVotingPowerSum = async function ({
+  client,
+  ownerAddress,
+  tokenIds,
+}: {
+  client: Client
+  ownerAddress: Address
+  tokenIds: bigint[]
+}) {
+  if (!client.chain) {
+    throw new Error('Client chain is not defined')
+  }
+  if (!isAddress(ownerAddress)) {
+    throw new Error('Invalid owner address')
+  }
+  if (tokenIds.length === 0) {
     return BigInt(0)
   }
 
-  // Get current timestamp in seconds
+  const voteDelegationAddress = await memoizedGetVoteDelegationAddress(client)
   const now = BigInt(Math.floor(Date.now() / 1000))
 
-  // If lock expired, voting power is 0
-  if (delegation.end <= now) {
-    return BigInt(0)
+  const contracts = tokenIds.map(
+    tokenId =>
+      ({
+        abi: veHemiVoteDelegationAbi,
+        address: voteDelegationAddress,
+        args: [tokenId],
+        functionName: 'delegation',
+      }) as const,
+  )
+  const results = await multicall(client, {
+    allowFailure: false,
+    contracts,
+  })
+
+  let sum = BigInt(0)
+  for (let i = 0; i < results.length; i++) {
+    sum += delegationToVotingPower(results[i], ownerAddress, now)
+  }
+  return sum
+}
+
+export const getTotalVotingPower = async function ({
+  client,
+  ownerAddress,
+}: {
+  client: Client
+  ownerAddress: Address
+}) {
+  if (!client.chain) {
+    throw new Error('Client chain is not defined')
   }
 
-  // Calculate voting power: bias - (slope * timestamp)
-  // Based on contract's _getDelegateVotesAt logic
-  const voteDecay = delegation.slope * now
-  const votingPower =
-    delegation.bias > voteDecay ? delegation.bias - voteDecay : BigInt(0)
+  if (!isAddress(ownerAddress)) {
+    throw new Error('Invalid owner address')
+  }
 
-  return votingPower
+  const voteDelegationAddress = await memoizedGetVoteDelegationAddress(client)
+
+  const votes = await readContract(client, {
+    abi: veHemiVoteDelegationAbi,
+    address: voteDelegationAddress,
+    args: [ownerAddress],
+    functionName: 'getVotes',
+  })
+
+  return votes
 }

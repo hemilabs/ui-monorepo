@@ -2,7 +2,8 @@ import {
   allowanceQueryKey,
   useAllowance,
 } from '@hemilabs/react-hooks/useAllowance'
-import { Address, Chain } from 'viem'
+import { isNativeAddress } from 'utils/nativeToken'
+import { Address, Chain, isAddress, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 export const useNeedsApprovalQuery = function ({
@@ -18,7 +19,15 @@ export const useNeedsApprovalQuery = function ({
 }) {
   const { address: owner } = useAccount()
 
-  const token = { address: address as Address, chainId }
+  const isErc20Address =
+    isAddress(address, { strict: false }) && !isNativeAddress(address)
+
+  const token = {
+    address: (isErc20Address ? address : zeroAddress) as Address,
+    chainId,
+  }
+
+  const effectiveOwner = isErc20Address ? owner : undefined
 
   const {
     data: allowance = BigInt(0),
@@ -26,12 +35,16 @@ export const useNeedsApprovalQuery = function ({
     isLoading,
     status: allowanceStatus,
   } = useAllowance({
-    owner,
+    owner: effectiveOwner,
     spender,
     token,
   })
 
-  const allowanceQueryKeyValue = allowanceQueryKey({ owner, spender, token })
+  const allowanceQueryKeyValue = allowanceQueryKey({
+    owner: effectiveOwner,
+    spender,
+    token,
+  })
 
   return {
     allowanceQueryKey: allowanceQueryKeyValue,

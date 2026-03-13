@@ -2,7 +2,7 @@ import { Token } from 'types/token'
 import { type Address, type Chain, erc20Abi } from 'viem'
 import { useReadContract } from 'wagmi'
 
-export const useTotalSupply = (
+export const useErc20TotalSupply = (
   address: Token['address'],
   chainId?: Chain['id'],
 ) =>

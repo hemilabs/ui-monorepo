@@ -4,7 +4,7 @@ import {
   type EligibilityData,
   type LockupMonths,
 } from 'genesis-drop-actions'
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useEstimateTransactionFees } from 'hooks/useEstimateTransactionFees'
 import { useHemi } from 'hooks/useHemi'
 import { Hex } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
@@ -39,7 +39,7 @@ export const useEstimateClaimFees = function ({
     to: contractAddress,
   })
 
-  return useEstimateFees({
+  return useEstimateTransactionFees({
     chainId: hemi.id,
     enabled: gasUnits !== undefined,
     gasUnits,

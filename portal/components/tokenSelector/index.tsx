@@ -1,7 +1,7 @@
+import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Modal } from 'components/modal'
 import { useUmami } from 'hooks/useUmami'
 import { useVisualViewportSize } from 'hooks/useVisualViewportSize'
-import { useWindowSize } from 'hooks/useWindowSize'
 import dynamic from 'next/dynamic'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'

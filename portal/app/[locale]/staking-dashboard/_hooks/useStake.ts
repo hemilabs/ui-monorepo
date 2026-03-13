@@ -1,10 +1,11 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { tokenBalanceQueryKey } from 'hooks/useBalance'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import { useUmami } from 'hooks/useUmami'
 import {
   StakingDashboardOperation,
@@ -46,15 +47,15 @@ export const useStake = function ({
   const { setDrawerQueryString } = useDrawerStakingQueryString()
   const { track } = useUmami()
   const { address } = useAccount()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
   const queryClient = useQueryClient()
-  const { queryKey: hemiBalanceQueryKey } = useTokenBalance(
-    token.chainId,
-    token.address,
+  const hemiBalanceQueryKey = tokenBalanceQueryKey(
+    { address: token.address, chainId: token.chainId },
+    address,
   )
 
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     token.chainId,
   )
 
@@ -69,7 +70,7 @@ export const useStake = function ({
 
   const { hemiWalletClient } = useHemiWalletClient()
 
-  const { allowanceQueryKey } = useNeedsApproval({
+  const { allowanceQueryKey } = useNeedsApprovalQuery({
     address: token.address,
     amount,
     chainId: token.chainId,

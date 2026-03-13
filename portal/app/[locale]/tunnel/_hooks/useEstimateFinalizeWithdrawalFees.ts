@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useEstimateTransactionFees } from 'hooks/useEstimateTransactionFees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
@@ -48,7 +48,7 @@ export const useEstimateFinalizeWithdrawalFees = function ({
     ],
   })
 
-  return useEstimateFees({
+  return useEstimateTransactionFees({
     chainId: l1ChainId,
     enabled: gasUnits !== undefined,
     gasUnits,

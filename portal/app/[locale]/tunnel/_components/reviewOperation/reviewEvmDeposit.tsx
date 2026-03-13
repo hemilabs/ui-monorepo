@@ -9,7 +9,7 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { useChain } from 'hooks/useChain'
-import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
+import { useEstimateApprovalFees } from 'hooks/useEstimateApprovalFees'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
@@ -57,7 +57,7 @@ const ReviewContent = function ({
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
 
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
-    useEstimateApproveErc20Fees({
+    useEstimateApprovalFees({
       amount: BigInt(deposit.amount),
       enabled: [
         EvmDepositStatus.APPROVAL_TX_FAILED,

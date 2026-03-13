@@ -1,3 +1,5 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { TransactionsInProgressContext } from 'context/transactionsInProgressContext'
 import { EventEmitter } from 'events'
@@ -6,11 +8,10 @@ import {
   depositErc20,
   depositEth,
 } from 'hemi-tunnel-actions'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
-import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
+import { tokenBalanceQueryKey } from 'hooks/useBalance'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
 import { useContext } from 'react'
@@ -50,18 +51,18 @@ export const useDeposit = function ({
   const amount = parseTokenUnits(fromInput, fromToken)
 
   const { address } = useAccount()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const { addTransaction, clearTransactionsInMemory } = useContext(
     TransactionsInProgressContext,
   )
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     fromToken.chainId,
   )
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
   const queryClient = useQueryClient()
-  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
-    fromToken.chainId,
-    fromToken.address,
+  const erc20BalanceQueryKey = tokenBalanceQueryKey(
+    { address: fromToken.address, chainId: fromToken.chainId },
+    address,
   )
 
   const { addDepositToTunnelHistory, updateDeposit } = useTunnelHistory()
@@ -76,7 +77,7 @@ export const useDeposit = function ({
 
   const depositingNative = isNativeAddress(fromToken.address)
 
-  const { allowanceQueryKey } = useNeedsApproval({
+  const { allowanceQueryKey } = useNeedsApprovalQuery({
     address: fromToken.address,
     amount,
     chainId: fromToken.chainId,

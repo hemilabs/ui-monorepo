@@ -1,12 +1,13 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getBtcStakingVaultContractAddress } from 'hemi-btc-staking-actions'
 import { depositToken } from 'hemi-btc-staking-actions/actions'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { tokenBalanceQueryKey } from 'hooks/useBalance'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import { parseTokenUnits } from 'utils/token'
 import { useAccount } from 'wagmi'
 
@@ -33,16 +34,16 @@ export const useDeposit = function ({
 
   const { address } = useAccount()
   const hemi = useHemi()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const vaultAddress = getBtcStakingVaultContractAddress(token.chainId)
   const queryClient = useQueryClient()
 
-  const { queryKey: tokenBalanceQueryKey } = useTokenBalance(
-    token.chainId,
-    token.address,
+  const tokenBalanceQueryKeyValue = tokenBalanceQueryKey(
+    { address: token.address, chainId: token.chainId },
+    address,
   )
 
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     token.chainId,
   )
 
@@ -52,7 +53,7 @@ export const useDeposit = function ({
 
   const { hemiWalletClient } = useHemiWalletClient()
 
-  const { allowanceQueryKey } = useNeedsApproval({
+  const { allowanceQueryKey } = useNeedsApprovalQuery({
     address: token.address,
     amount,
     chainId: token.chainId,
@@ -134,7 +135,7 @@ export const useDeposit = function ({
 
         // Update the user token balance
         queryClient.setQueryData(
-          tokenBalanceQueryKey,
+          tokenBalanceQueryKeyValue,
           (old: bigint) => old - amount,
         )
 
@@ -171,7 +172,7 @@ export const useDeposit = function ({
     },
     onSettled() {
       queryClient.invalidateQueries({
-        queryKey: tokenBalanceQueryKey,
+        queryKey: tokenBalanceQueryKeyValue,
       })
 
       queryClient.invalidateQueries({

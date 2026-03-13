@@ -1,6 +1,7 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { QueryStatus } from '@tanstack/react-query'
 import Big from 'big.js'
-import { useTokenBalance, useNativeTokenBalance } from 'hooks/useBalance'
+import { useTokenBalance } from 'hooks/useBalance'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { ComponentProps } from 'react'
@@ -63,7 +64,7 @@ export const RenderFiatBalance = (
 )
 
 const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
-  const { data, status } = useNativeTokenBalance(token.chainId)
+  const { data, status } = useNativeBalance(token.chainId)
   return (
     <RenderFiatBalance
       balance={data?.value}

@@ -1,13 +1,14 @@
 'use client'
 
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
-import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
+import { useEstimateApprovalFees } from 'hooks/useEstimateApprovalFees'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import { useNetworkType } from 'hooks/useNetworkType'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -85,12 +86,12 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   const {
     data: walletNativeTokenBalance,
     isSuccess: nativeTokenBalanceLoaded,
-  } = useNativeTokenBalance(fromToken.chainId)
+  } = useNativeBalance(fromToken.chainId)
 
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
 
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
-    useNeedsApproval({
+    useNeedsApprovalQuery({
       address: fromToken.address,
       amount,
       chainId: fromToken.chainId,
@@ -117,7 +118,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   })
 
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
-    useEstimateApproveErc20Fees({
+    useEstimateApprovalFees({
       amount,
       spender: l1StandardBridgeAddress,
       token: fromToken,

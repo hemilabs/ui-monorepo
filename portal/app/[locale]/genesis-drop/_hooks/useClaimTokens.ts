@@ -1,3 +1,5 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type EventEmitter } from 'events'
 import {
@@ -6,11 +8,9 @@ import {
   type LockupMonths,
 } from 'genesis-drop-actions'
 import { claimTokens } from 'genesis-drop-actions/actions'
-import { useNativeTokenBalance } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useUmami } from 'hooks/useUmami'
 import { Hex } from 'viem'
 import { useAccount } from 'wagmi'
@@ -27,14 +27,12 @@ export const useClaimTokens = function ({
 }) {
   const { address } = useAccount()
   const hemi = useHemi()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const { hemiWalletClient } = useHemiWalletClient()
   const queryClient = useQueryClient()
   const { track } = useUmami()
 
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
-    hemi.id,
-  )
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(hemi.id)
 
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     hemi.id,

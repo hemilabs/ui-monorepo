@@ -3,10 +3,10 @@
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
 import { useTokenBalance } from 'hooks/useBalance'
-import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
+import { useEstimateApprovalFees } from 'hooks/useEstimateApprovalFees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
@@ -57,7 +57,7 @@ export const Stake = function () {
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
 
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
-    useNeedsApproval({
+    useNeedsApprovalQuery({
       address: token.address,
       amount,
       chainId: token.chainId,
@@ -82,7 +82,7 @@ export const Stake = function () {
   const canStake = validInput && isValidLockup({ value: lockupDays })
 
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
-    useEstimateApproveErc20Fees({
+    useEstimateApprovalFees({
       amount,
       spender: veHemiAddress,
       token,

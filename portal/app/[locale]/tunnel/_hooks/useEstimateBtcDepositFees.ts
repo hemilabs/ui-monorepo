@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { bitcoinTunnelManagerAddresses } from 'hemi-viem'
 import { encodeConfirmDeposit } from 'hemi-viem/actions'
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useEstimateTransactionFees } from 'hooks/useEstimateTransactionFees'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { BtcDepositOperation } from 'types/tunnel'
 import { calculateDepositOutputIndex } from 'utils/bitcoin'
@@ -54,7 +54,7 @@ export function useEstimateBtcDepositFees({
     to: bitcoinManagerAddresses,
   })
 
-  return useEstimateFees({
+  return useEstimateTransactionFees({
     chainId: deposit.l2ChainId,
     enabled: gasUnits !== undefined,
     gasUnits,

@@ -6,10 +6,10 @@ import {
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
-import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
+import { useEstimateApprovalFees } from 'hooks/useEstimateApprovalFees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import { useTranslations } from 'next-intl'
 import {
   StakingDashboardStatus,
@@ -46,7 +46,7 @@ export const ReviewStake = function ({ onClose }: Props) {
 
   const amount = parseTokenUnits(input, token)
 
-  const { needsApproval } = useNeedsApproval({
+  const { needsApproval } = useNeedsApprovalQuery({
     address: token.address,
     amount,
     chainId: token.chainId,
@@ -54,7 +54,7 @@ export const ReviewStake = function ({ onClose }: Props) {
   })
 
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
-    useEstimateApproveErc20Fees({
+    useEstimateApprovalFees({
       amount,
       enabled: [
         StakingDashboardStatus.APPROVAL_TX_FAILED,

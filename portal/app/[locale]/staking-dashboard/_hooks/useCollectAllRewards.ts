@@ -1,10 +1,10 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
+import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
-import { useNativeTokenBalance } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useUmami } from 'hooks/useUmami'
 import {
   CollectAllRewardsDashboardOperation,
@@ -34,7 +34,7 @@ export const useCollectRewards = function ({
   const { setDrawerQueryString } = useDrawerStakingQueryString()
   const { track } = useUmami()
   const { address } = useAccount()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const queryClient = useQueryClient()
   const { tokens: rewardTokens } = useRewardTokens()
   const hemi = useHemi()
@@ -43,9 +43,7 @@ export const useCollectRewards = function ({
     hemi.id,
   )
 
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
-    hemi.id,
-  )
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(hemi.id)
 
   const { hemiWalletClient } = useHemiWalletClient()
 

@@ -14,9 +14,9 @@ import { ToastLoader } from 'components/toast/toastLoader'
 import { validateInput } from 'components/tokenInput/utils'
 import { getBtcStakingVaultContractAddress } from 'hemi-btc-staking-actions'
 import { useTokenBalance } from 'hooks/useBalance'
-import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
+import { useEstimateApprovalFees } from 'hooks/useEstimateApprovalFees'
 import { useHemi } from 'hooks/useHemi'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useNeedsApprovalQuery } from 'hooks/useNeedsApprovalQuery'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
@@ -86,7 +86,7 @@ export const VaultDepositOperation = function ({
   const amount = parseTokenUnits(input, token)
 
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
-    useNeedsApproval({
+    useNeedsApprovalQuery({
       address: token.address,
       amount,
       chainId: token.chainId,
@@ -94,7 +94,7 @@ export const VaultDepositOperation = function ({
     })
 
   const { fees: approvalTokenGasFees, isError: isApprovalTokenGasFeesError } =
-    useEstimateApproveErc20Fees({
+    useEstimateApprovalFees({
       amount,
       enabled:
         depositStatus === BitcoinYieldDepositStatus.APPROVAL_TX_FAILED ||

@@ -1,11 +1,12 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useQueryClient } from '@tanstack/react-query'
 import { WithWorker } from 'components/withWorker'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { tokenBalanceQueryKey } from 'hooks/useBalance'
 import { useConnectedToUnsupportedEvmChain } from 'hooks/useConnectedToUnsupportedChain'
 import { useEvmDeposits } from 'hooks/useEvmDeposits'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { EvmDepositOperation, EvmDepositStatus } from 'types/tunnel'
 import { isNativeAddress } from 'utils/nativeToken'
 import { isPendingOperation } from 'utils/tunnel'
@@ -22,12 +23,17 @@ const WatchEvmDeposit = function ({
   deposit: EvmDepositOperation
   worker: AppToWorker
 }) {
+  const { address } = useAccount()
   const { updateDeposit } = useTunnelHistory()
-  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
-    deposit.l2ChainId,
-    deposit.l2Token,
+  const erc20BalanceQueryKey = useMemo(
+    () =>
+      tokenBalanceQueryKey(
+        { address: deposit.l2Token, chainId: deposit.l2ChainId },
+        address,
+      ),
+    [deposit.l2Token, deposit.l2ChainId, address],
   )
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     deposit.l2ChainId,
   )
   const queryClient = useQueryClient()

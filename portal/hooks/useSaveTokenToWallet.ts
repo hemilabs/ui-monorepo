@@ -1,10 +1,10 @@
+import watchAsset from '@hemilabs/wallet-watch-asset'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { EvmToken } from 'types/token'
 import { type Address } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
-import watchAsset from 'wallet-watch-asset'
 
-import { useEnsureConnectedTo } from './useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from './useEnsureConnectedToChain'
 import { useUmami } from './useUmami'
 
 type Options = {
@@ -12,9 +12,9 @@ type Options = {
   token: EvmToken
 }
 
-export const useAddTokenToWallet = function (options: Options) {
+export const useSaveTokenToWallet = function (options: Options) {
   const { address } = useAccount()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const { data: walletClient } = useWalletClient({
     chainId: options.token.chainId,
   })

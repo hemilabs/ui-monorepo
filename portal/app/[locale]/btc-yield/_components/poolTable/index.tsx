@@ -1,3 +1,4 @@
+import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import {
   type ExpandedState,
   flexRender,
@@ -8,7 +9,6 @@ import {
 import { Column } from 'components/table/_components/column'
 import { ColumnHeader } from 'components/table/_components/columnHeader'
 import { getNewColumnOrder } from 'components/table/_utils'
-import { useWindowSize } from 'hooks/useWindowSize'
 import { Fragment, useState } from 'react'
 import { screenBreakpoints } from 'styles'
 

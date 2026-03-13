@@ -1,9 +1,9 @@
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useEstimateTransactionFees } from 'hooks/useEstimateTransactionFees'
 import { EvmToken } from 'types/token'
 import { Address, encodeFunctionData, erc20Abi } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
-export const useEstimateApproveErc20Fees = function ({
+export const useEstimateApprovalFees = function ({
   amount,
   enabled = true,
   spender,
@@ -24,7 +24,7 @@ export const useEstimateApproveErc20Fees = function ({
     to: token.address as Address,
   })
 
-  return useEstimateFees({
+  return useEstimateTransactionFees({
     chainId: token.chainId,
     enabled: gasUnits !== undefined,
     gasUnits,

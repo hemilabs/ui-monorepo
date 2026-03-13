@@ -3,9 +3,9 @@
 import { Button, ButtonLink } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { EligibilityData } from 'genesis-drop-actions'
-import { useAddTokenToWallet } from 'hooks/useAddTokenToWallet'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiToken } from 'hooks/useHemiToken'
+import { useSaveTokenToWallet } from 'hooks/useSaveTokenToWallet'
 import { useWatchedAsset } from 'hooks/useWatchedAsset'
 import { useTranslations } from 'next-intl'
 import { ReactNode, useEffect } from 'react'
@@ -79,7 +79,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
   const hemiToken = useHemiToken()
   const isTokenAdded = useWatchedAsset(hemiToken.address)
 
-  const { mutate: addToken, status: addTokenStatus } = useAddTokenToWallet({
+  const { mutate: addToken, status: addTokenStatus } = useSaveTokenToWallet({
     token: hemiToken,
   })
 

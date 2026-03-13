@@ -3,7 +3,7 @@ import { Button } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { Modal } from 'components/modal'
 import hemiSocials from 'hemi-socials'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
+import { useEnsureConnectedToChain } from 'hooks/useEnsureConnectedToChain'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useTranslations } from 'next-intl'
@@ -56,7 +56,7 @@ type Props = {
 export const TermsAndConditions = function ({ onAccept, onClose }: Props) {
   const { address } = useAccount()
   const hemi = useHemi()
-  const ensureConnectedTo = useEnsureConnectedTo()
+  const ensureConnectedTo = useEnsureConnectedToChain()
   const { hemiWalletClient } = useHemiWalletClient()
   const t = useTranslations()
 

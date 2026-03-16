@@ -26,7 +26,7 @@ export const customTunnelPartnersWhitelist: Partial<
     },
   },
   [hemi.id]: {
-    //cbBTC
+    // cbBTC
     '0x1596bE338B999E2376675C908168A7548C8B0525': {
       tunnelPartners: ['meson', 'stargate', 'freetech', 'orbiter'],
       tunnelSymbol: 'cbBTC',

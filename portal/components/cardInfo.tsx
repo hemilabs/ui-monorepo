@@ -5,14 +5,17 @@ import { type ReactNode } from 'react'
 type Props<T> = {
   data: T | undefined
   formatValue: (value: T) => ReactNode
+  icon?: StaticImageData | null
+  iconAlt?: string
   isError: boolean
-  icon: StaticImageData
   label: string
 }
+
 export const CardInfo = function <T>({
   data,
   formatValue,
   icon,
+  iconAlt,
   isError,
   label,
 }: Props<T>) {
@@ -32,13 +35,16 @@ export const CardInfo = function <T>({
           <span className="body-text-medium text-neutral-500">{label}</span>
           <h3>{getValue()}</h3>
         </div>
-        <Image
-          alt="Card icon"
-          className="absolute right-4 top-4"
-          height={16}
-          src={icon}
-          width={16}
-        />
+        {icon && (
+          <Image
+            alt={iconAlt ?? ''}
+            aria-hidden={!iconAlt}
+            className="absolute right-4 top-4"
+            height={16}
+            src={icon}
+            width={16}
+          />
+        )}
       </div>
     </Card>
   )

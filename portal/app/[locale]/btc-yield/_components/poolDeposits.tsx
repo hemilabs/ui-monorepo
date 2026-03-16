@@ -1,12 +1,12 @@
 'use client'
 
+import { CardInfo } from 'components/cardInfo'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { useTranslations } from 'next-intl'
 
 import { usePoolAsset } from '../_hooks/usePoolAsset'
 import { usePoolDeposits } from '../_hooks/usePoolDeposits'
 
-import { CardInfo } from './cardInfo'
 import poolDepositIcon from './icons/poolDeposit.svg'
 
 export const PoolDeposits = function () {

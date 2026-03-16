@@ -24,7 +24,9 @@ import { useAccount } from 'wagmi'
 import { daysToSeconds } from '../_utils/lockCreationTimes'
 
 import { useDrawerStakingQueryString } from './useDrawerStakingQueryString'
+import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
+import { getTotalVotingPowerQueryKey } from './useTotalVotingPower'
 
 type UseStake = {
   input: string
@@ -204,6 +206,21 @@ export const useStake = function ({
       queryClient.invalidateQueries({
         queryKey: nativeTokenBalanceQueryKey,
       })
+
+      if (address) {
+        queryClient.invalidateQueries({
+          queryKey: getTotalVotingPowerQueryKey({
+            address,
+            chainId: token.chainId,
+          }),
+        })
+        queryClient.invalidateQueries({
+          queryKey: getPositionsVotingPowerSumQueryKeyPrefix({
+            chainId: token.chainId,
+            ownerAddress: address,
+          }),
+        })
+      }
     },
   })
 }

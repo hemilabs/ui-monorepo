@@ -15,12 +15,22 @@ export const customTunnelPartnersWhitelist: Partial<
       tunnelPartners: ['meson', 'stargate', 'freetech', 'orbiter'],
       tunnelSymbol: 'USDC',
     },
+    // cbBTC
+    '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf': {
+      tunnelPartners: ['meson', 'stargate', 'freetech', 'orbiter'],
+      tunnelSymbol: 'cbBTC',
+    },
     // USDT
     '0xdAC17F958D2ee523a2206206994597C13D831ec7': {
       tunnelPartners: ['meson', 'stargate', 'freetech'],
     },
   },
   [hemi.id]: {
+    //cbBTC
+    '0x1596bE338B999E2376675C908168A7548C8B0525': {
+      tunnelPartners: ['meson', 'stargate', 'freetech', 'orbiter'],
+      tunnelSymbol: 'cbBTC',
+    },
     // USDC
     '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA': {
       tunnelPartners: ['meson', 'stargate', 'freetech', 'orbiter'],

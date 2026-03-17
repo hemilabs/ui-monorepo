@@ -6,7 +6,10 @@ import { mainnet } from 'viem/chains'
 export const customTunnelPartnersWhitelist: Partial<
   Record<
     Chain['id'],
-    Record<string, Pick<Extensions, 'tunnelSymbol' | 'tunnelPartners'>>
+    Record<
+      string,
+      Pick<Extensions, 'tunnelSymbol' | 'tunnelPartners' | 'tunnelDstAddress'>
+    >
   >
 > = {
   [mainnet.id]: {
@@ -17,7 +20,8 @@ export const customTunnelPartnersWhitelist: Partial<
     },
     // cbBTC
     '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf': {
-      tunnelPartners: ['meson', 'stargate', 'freetech', 'orbiter'],
+      tunnelDstAddress: '0x9778bC12904DB935Ca8be4fae26636BF7D6Da456',
+      tunnelPartners: ['stargate'],
       tunnelSymbol: 'cbBTC',
     },
     // USDT
@@ -26,11 +30,6 @@ export const customTunnelPartnersWhitelist: Partial<
     },
   },
   [hemi.id]: {
-    // cbBTC
-    '0x1596bE338B999E2376675C908168A7548C8B0525': {
-      tunnelPartners: ['meson', 'stargate', 'freetech', 'orbiter'],
-      tunnelSymbol: 'cbBTC',
-    },
     // USDC
     '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA': {
       tunnelPartners: ['meson', 'stargate', 'freetech', 'orbiter'],

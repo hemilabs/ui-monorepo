@@ -20,6 +20,7 @@ export type Extensions = {
   // Custom token symbol to show in the Tunnel
   tunnelSymbol?: string
   tunnelPartners?: TunnelPartners[]
+  tunnelDstAddress?: string
 }
 
 type BaseToken = {

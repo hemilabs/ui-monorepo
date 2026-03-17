@@ -23,11 +23,14 @@ export const Stargate = function ({ fromToken, label, toToken }: Props) {
   const fromChain = useChain(fromToken.chainId)
   const toChain = useChain(toToken.chainId)
 
+  const dstTokenOverride = fromToken.extensions?.tunnelDstAddress
+  const dstTokenAddress = dstTokenOverride ?? toToken.address
+
   const url = `https://stargate.finance/bridge${queryStringObjectToString({
     dstChain: toChain!.name.toLowerCase(),
     dstToken: isNativeAddress(toToken.address)
       ? stargateEthereumAddress
-      : toToken.address,
+      : dstTokenAddress,
     srcChain: fromChain!.name.toLowerCase(),
     srcToken: isNativeAddress(fromToken.address)
       ? stargateEthereumAddress

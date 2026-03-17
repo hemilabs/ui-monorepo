@@ -1,8 +1,8 @@
+import watchAsset from '@hemilabs/wallet-watch-asset'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { EvmToken } from 'types/token'
 import { type Address } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
-import watchAsset from 'wallet-watch-asset'
 
 import { useEnsureConnectedTo } from './useEnsureConnectedTo'
 import { useUmami } from './useUmami'

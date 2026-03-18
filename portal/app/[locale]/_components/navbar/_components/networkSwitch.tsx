@@ -1,3 +1,5 @@
+import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
+import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { CheckMark } from 'components/icons/checkMark'
 import { Chevron } from 'components/icons/chevron'
 import { NetworkIcon } from 'components/icons/networkIcon'
@@ -7,9 +9,7 @@ import {
   type NetworkType,
   useNetworkType,
 } from 'hooks/useNetworkType'
-import { useOnClickOutside } from 'hooks/useOnClickOutside'
 import { useUmami } from 'hooks/useUmami'
-import { useWindowSize } from 'hooks/useWindowSize'
 import { useTranslations } from 'next-intl'
 import { useState, Suspense, useRef, ComponentProps } from 'react'
 import ReactDOM from 'react-dom'

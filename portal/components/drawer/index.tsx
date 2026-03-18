@@ -1,8 +1,8 @@
 'use client'
 
+import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
+import { useOnKeyUp } from '@hemilabs/react-hooks/useOnKeyUp'
 import { CloseIcon } from 'components/icons/closeIcon'
-import { useOnClickOutside } from 'hooks/useOnClickOutside'
-import { useOnKeyUp } from 'hooks/useOnKeyUp'
 import { ComponentType } from 'react'
 import ReactDOM from 'react-dom'
 import { getPortalContainer } from 'utils/document'

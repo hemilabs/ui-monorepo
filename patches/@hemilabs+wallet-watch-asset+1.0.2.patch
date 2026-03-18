@@ -1,0 +1,17 @@
+diff --git a/node_modules/@hemilabs/wallet-watch-asset/src/index.js b/node_modules/@hemilabs/wallet-watch-asset/src/index.js
+index fc22949..23c19a6 100644
+--- a/node_modules/@hemilabs/wallet-watch-asset/src/index.js
++++ b/node_modules/@hemilabs/wallet-watch-asset/src/index.js
+@@ -29,9 +29,9 @@ async function watchAsset(provider, account, token, storage) {
+   const { address, chainId, decimals, logoURI, symbol } = token;
+ 
+   // The only wallet known so far with EIP-747 support is MetaMask.
+-  if (!provider.isMetaMask) {
+-    throw new Error("Wallet not supported");
+-  }
++  // if (!provider.isMetaMask) {
++  //   throw new Error("Wallet not supported");
++  // }
+ 
+   const storageKey = `watchedAssets:${account}`;
+   const watchedAssets = storage?.getItem(storageKey) || "";

@@ -1,5 +1,5 @@
+import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useWindowSize } from 'hooks/useWindowSize'
 import { Suspense } from 'react'
 import { screenBreakpoints } from 'styles'
 

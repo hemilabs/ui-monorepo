@@ -1,3 +1,4 @@
+import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useTunnelOperation } from 'app/[locale]/tunnel/_hooks/useTunnelOperation'
 import { BtcChain } from 'btc-wallet/chains'
@@ -30,7 +31,6 @@ import {
 import { useBitcoin } from './useBitcoin'
 import { useBtcDeposits } from './useBtcDeposits'
 import { useBtcWithdrawals } from './useBtcWithdrawals'
-import { useEnsureConnectedTo } from './useEnsureConnectedTo'
 import { useHemi } from './useHemi'
 import { useHemiClient, useHemiWalletClient } from './useHemiClient'
 import { useTunnelHistory } from './useTunnelHistory'

@@ -1,10 +1,10 @@
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
+import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
 import { useNativeTokenBalance } from 'hooks/useBalance'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useUmami } from 'hooks/useUmami'
 import {
   CollectAllRewardsDashboardOperation,

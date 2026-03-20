@@ -1,10 +1,10 @@
+import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import watchAsset from '@hemilabs/wallet-watch-asset'
 import { useMutation, UseMutationOptions } from '@tanstack/react-query'
 import { EvmToken } from 'types/token'
 import { type Address } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 
-import { useEnsureConnectedTo } from './useEnsureConnectedTo'
 import { useUmami } from './useUmami'
 
 type Options = {

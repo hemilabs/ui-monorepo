@@ -1,3 +1,4 @@
+import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import EventEmitter from 'events'
 import {
@@ -6,7 +7,6 @@ import {
   type WithdrawEvents,
 } from 'hemi-tunnel-actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'

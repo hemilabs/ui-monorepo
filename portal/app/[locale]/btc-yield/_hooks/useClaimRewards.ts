@@ -1,5 +1,5 @@
+import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'

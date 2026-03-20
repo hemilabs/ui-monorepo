@@ -1,3 +1,4 @@
+import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type EventEmitter } from 'events'
 import {
@@ -7,7 +8,6 @@ import {
 } from 'genesis-drop-actions'
 import { claimTokens } from 'genesis-drop-actions/actions'
 import { useNativeTokenBalance } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'

@@ -1,3 +1,4 @@
+import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { TransactionsInProgressContext } from 'context/transactionsInProgressContext'
 import { EventEmitter } from 'events'
@@ -7,7 +8,6 @@ import {
   depositEth,
 } from 'hemi-tunnel-actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
-import { useEnsureConnectedTo } from 'hooks/useEnsureConnectedTo'
 import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'

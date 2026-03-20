@@ -1,9 +1,9 @@
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
+import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useUpdateNativeBalanceAfterReceipt } from 'hooks/useInvalidateNativeBalanceAfterReceipt'
 import { useUmami } from 'hooks/useUmami'
 import {
   StakingDashboardToken,

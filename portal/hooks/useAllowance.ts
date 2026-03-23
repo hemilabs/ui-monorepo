@@ -5,13 +5,14 @@ import {
 import { type UseQueryOptions } from '@tanstack/react-query'
 import { isNativeAddress } from 'utils/nativeToken'
 import { type Address, type Chain, isAddress } from 'viem'
+
 type Owner = Address
 type Spender = Address
 
 type AllowanceQuery = Omit<
   UseQueryOptions<bigint, Error, bigint>,
-  'queryFn' | 'queryKey'
->
+  'queryFn' | 'queryKey' | 'enabled'
+> & { enabled?: boolean }
 
 type Options = {
   args: { owner: Owner | undefined; spender: Spender | undefined }
@@ -33,7 +34,7 @@ export const useAllowance = (
         !!owner &&
         !!spender &&
         query?.enabled !== false,
-    } as AllowanceQuery,
+    } satisfies AllowanceQuery as AllowanceQuery,
     spender,
     token: { address: erc20Address as Address, chainId },
   }),

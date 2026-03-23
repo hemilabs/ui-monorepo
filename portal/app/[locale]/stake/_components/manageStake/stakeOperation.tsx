@@ -25,7 +25,7 @@ import {
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
-import { type Address, formatUnits } from 'viem'
+import { type Address, formatUnits, isAddress, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEstimateStakeFees } from '../../_hooks/useEstimateStakeFees'
@@ -79,6 +79,9 @@ export const StakeOperation = function ({
   const [amountInput, setAmountInput] = useAmount()
   const operatesNativeToken = isNativeToken(token)
   const spender = stakeManagerAddresses[token.chainId]
+  const erc20Address: Address = isAddress(token.address)
+    ? token.address
+    : zeroAddress
 
   const { data: allowance = BigInt(0), isPending } = useAllowance<bigint>({
     owner: address,
@@ -86,7 +89,7 @@ export const StakeOperation = function ({
       enabled: !operatesNativeToken,
     } satisfies AllowanceQuery as AllowanceQuery,
     spender,
-    token: { address: token.address as Address, chainId: token.chainId },
+    token: { address: erc20Address, chainId: token.chainId },
   })
 
   const amount = parseTokenUnits(amountInput, token)

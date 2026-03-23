@@ -1,7 +1,7 @@
+import { allowanceQueryKey } from '@hemilabs/react-hooks/useAllowance'
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
-import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -16,7 +16,7 @@ import {
 import { isNativeToken } from 'utils/nativeToken'
 import { stake } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
-import { Hash } from 'viem'
+import { type Address, type Hash, isAddress, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { getStakedBalanceQueryKey } from './useStakedBalance'
@@ -25,9 +25,13 @@ export const useStake = function (token: StakeToken) {
   const operatesNativeToken = isNativeToken(token)
   const { address } = useAccount()
   const ensureConnectedTo = useEnsureConnectedTo()
-  const { queryKey: allowanceQueryKey } = useAllowance(token.address, {
-    args: { owner: address, spender: stakeManagerAddresses[token.chainId] },
-    chainId: token.chainId,
+  const erc20Address: Address = isAddress(token.address)
+    ? token.address
+    : zeroAddress
+  const allowanceKey = allowanceQueryKey({
+    owner: address,
+    spender: stakeManagerAddresses[token.chainId],
+    token: { address: erc20Address, chainId: token.chainId },
   })
   const [networkType] = useNetworkType()
   const hemiPublicClient = useHemiClient()
@@ -108,7 +112,7 @@ export const useStake = function (token: StakeToken) {
           setStakeStatus(StakeStatusEnum.APPROVAL_TX_COMPLETED)
           if (!operatesNativeToken) {
             // invalidate allowance after an erc20 approval took place
-            queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
+            queryClient.invalidateQueries({ queryKey: allowanceKey })
           }
         },
         onTokenApprove: () =>

@@ -1,8 +1,8 @@
-FROM node:24-alpine
+FROM node:24.14.0-alpine3.23
 
 ENV NODE_ENV=production
 
-RUN npm install --global npm@11
+RUN npm install --global npm@11.12.0
 
 WORKDIR /app
 

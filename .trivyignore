@@ -1,7 +1,0 @@
-# subgraphs/* > @graphprotocol/graph-cli@0.97.1 > gluegun@5.2.0 > cross-spawn@7.0.3
-# https://github.com/graphprotocol/graph-tooling/issues/2043
-CVE-2024-21538
-
-# * > glob@10.4.5
-# Rebuilding the lockfile did not update to @11.1.0
-CVE-2025-64756

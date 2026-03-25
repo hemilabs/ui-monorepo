@@ -1,10 +1,10 @@
+import { allowanceQueryKey as getAllowanceQueryKey } from '@hemilabs/react-hooks/useAllowance'
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useUmami } from 'hooks/useUmami'
 import {
   StakingDashboardOperation,
@@ -19,6 +19,7 @@ import {
   getVeHemiContractAddress,
 } from 've-hemi-actions'
 import { createLock } from 've-hemi-actions/actions'
+import { type Address, isAddress, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { daysToSeconds } from '../_utils/lockCreationTimes'
@@ -71,11 +72,13 @@ export const useStake = function ({
 
   const { hemiWalletClient } = useHemiWalletClient()
 
-  const { allowanceQueryKey } = useNeedsApproval({
-    address: token.address,
-    amount,
-    chainId: token.chainId,
+  const erc20Address: Address = isAddress(token.address)
+    ? token.address
+    : zeroAddress
+  const allowanceQueryKey = getAllowanceQueryKey({
+    owner: address,
     spender: veHemiAddress,
+    token: { address: erc20Address, chainId: token.chainId },
   })
 
   return useMutation({

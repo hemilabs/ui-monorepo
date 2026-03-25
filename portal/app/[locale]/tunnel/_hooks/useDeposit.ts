@@ -1,3 +1,4 @@
+import { allowanceQueryKey as getAllowanceQueryKey } from '@hemilabs/react-hooks/useAllowance'
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -10,7 +11,6 @@ import {
 } from 'hemi-tunnel-actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
 import { useContext } from 'react'
@@ -25,7 +25,7 @@ import { findChainById } from 'utils/chain'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { isNativeAddress } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
-import { Chain, zeroAddress } from 'viem'
+import { type Address, type Chain, isAddress, zeroAddress } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelOperation'
@@ -76,11 +76,13 @@ export const useDeposit = function ({
 
   const depositingNative = isNativeAddress(fromToken.address)
 
-  const { allowanceQueryKey } = useNeedsApproval({
-    address: fromToken.address,
-    amount,
-    chainId: fromToken.chainId,
-    spender: l1StandardBridgeAddress,
+  const erc20Address: Address = isAddress(fromToken.address)
+    ? fromToken.address
+    : zeroAddress
+  const allowanceQueryKey = getAllowanceQueryKey({
+    owner: address,
+    spender: depositingNative ? undefined : l1StandardBridgeAddress,
+    token: { address: erc20Address, chainId: fromToken.chainId },
   })
 
   return useMutation({

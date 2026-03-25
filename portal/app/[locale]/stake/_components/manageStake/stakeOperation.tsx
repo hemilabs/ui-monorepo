@@ -67,6 +67,16 @@ const useBalance = function (token: StakeToken) {
   return isNativeToken(token) ? nativeBalance : tokenBalance
 }
 
+const stakeRequiresErc20Approval = ({
+  allowance,
+  amount,
+  operatesNativeToken,
+}: {
+  allowance: bigint
+  amount: bigint
+  operatesNativeToken: boolean
+}) => !operatesNativeToken && allowance < amount
+
 export const StakeOperation = function ({
   closeDrawer,
   heading,
@@ -222,7 +232,11 @@ export const StakeOperation = function ({
   const canStake =
     allowanceLoaded && balanceLoaded && !isSubmitting && isSubmitValid
 
-  const requiresApproval = allowance < parseTokenUnits(amountInput, token)
+  const requiresApproval = stakeRequiresErc20Approval({
+    allowance,
+    amount,
+    operatesNativeToken,
+  })
 
   const handleStake = () => stake({ amountInput })
 

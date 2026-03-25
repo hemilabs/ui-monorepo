@@ -77,6 +77,18 @@ const stakeRequiresErc20Approval = ({
   operatesNativeToken: boolean
 }) => !operatesNativeToken && allowance < amount
 
+const isStakeAllowanceQueryEnabled = ({
+  address,
+  operatesNativeToken,
+  spender,
+  tokenAddress,
+}: {
+  address: Address | undefined
+  operatesNativeToken: boolean
+  spender: Address | undefined
+  tokenAddress: string
+}) => !operatesNativeToken && !!address && isAddress(tokenAddress) && !!spender
+
 export const StakeOperation = function ({
   closeDrawer,
   heading,
@@ -96,7 +108,12 @@ export const StakeOperation = function ({
   const { data: allowance = BigInt(0), isPending } = useAllowance<bigint>({
     owner: address,
     query: {
-      enabled: !operatesNativeToken,
+      enabled: isStakeAllowanceQueryEnabled({
+        address,
+        operatesNativeToken,
+        spender,
+        tokenAddress: token.address,
+      }),
     } satisfies AllowanceQuery as AllowanceQuery,
     spender,
     token: { address: erc20Address, chainId: token.chainId },

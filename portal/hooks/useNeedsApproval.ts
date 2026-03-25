@@ -32,16 +32,14 @@ export const useNeedsApproval = function ({
     spender: effectiveSpender,
     token,
   })
-  const query = {
+
+  const query: AllowanceQuery = {
     enabled:
       !isNativeAddress(address) &&
       isAddress(address) &&
       !!owner &&
       !!effectiveSpender,
-  } satisfies AllowanceQuery as unknown as Omit<
-    UseQueryOptions<bigint, Error, bigint>,
-    'queryFn' | 'queryKey' | 'enabled'
-  >
+  }
 
   const {
     data: allowance = BigInt(0),

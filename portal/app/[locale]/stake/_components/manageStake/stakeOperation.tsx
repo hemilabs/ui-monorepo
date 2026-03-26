@@ -22,10 +22,11 @@ import {
   type StakeStatusEnumType,
   type StakeToken,
 } from 'types/stake'
+import { normalizeTokenAddressForAllowance } from 'utils/allowanceQueryKey'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
-import { type Address, formatUnits, isAddress, zeroAddress } from 'viem'
+import { type Address, formatUnits, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEstimateStakeFees } from '../../_hooks/useEstimateStakeFees'
@@ -101,20 +102,20 @@ export const StakeOperation = function ({
   const [amountInput, setAmountInput] = useAmount()
   const operatesNativeToken = isNativeToken(token)
   const spender = stakeManagerAddresses[token.chainId]
-  const erc20Address: Address = isAddress(token.address)
-    ? token.address
-    : zeroAddress
+  const erc20Address = normalizeTokenAddressForAllowance(token.address)
 
-  const { data: allowance = BigInt(0), isPending } = useAllowance<bigint>({
+  const query: AllowanceQuery = {
+    enabled: isStakeAllowanceQueryEnabled({
+      address,
+      operatesNativeToken,
+      spender,
+      tokenAddress: token.address,
+    }),
+  }
+
+  const { data: allowance = BigInt(0), isPending } = useAllowance({
     owner: address,
-    query: {
-      enabled: isStakeAllowanceQueryEnabled({
-        address,
-        operatesNativeToken,
-        spender,
-        tokenAddress: token.address,
-      }),
-    } satisfies AllowanceQuery as AllowanceQuery,
+    query,
     spender,
     token: { address: erc20Address, chainId: token.chainId },
   })

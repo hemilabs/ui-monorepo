@@ -1,4 +1,3 @@
-import { allowanceQueryKey as getAllowanceQueryKey } from '@hemilabs/react-hooks/useAllowance'
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -7,8 +6,8 @@ import { depositToken } from 'hemi-btc-staking-actions/actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { parseTokenUnits } from 'utils/token'
-import { type Address, isAddress, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import {
@@ -53,13 +52,11 @@ export const useDeposit = function ({
 
   const { hemiWalletClient } = useHemiWalletClient()
 
-  const erc20Address: Address = isAddress(token.address)
-    ? token.address
-    : zeroAddress
-  const allowanceQueryKey = getAllowanceQueryKey({
+  const allowanceQueryKey = buildAllowanceQueryKey({
+    chainId: token.chainId,
     owner: address,
     spender: vaultAddress,
-    token: { address: erc20Address, chainId: token.chainId },
+    tokenAddress: token.address,
   })
 
   const poolDepositsQueryKey = getPoolDepositsQueryKey(token.chainId)

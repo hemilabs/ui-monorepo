@@ -1,4 +1,3 @@
-import { allowanceQueryKey } from '@hemilabs/react-hooks/useAllowance'
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
@@ -13,10 +12,11 @@ import {
   type StakeStatusEnumType,
   type StakeToken,
 } from 'types/stake'
+import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { isNativeToken } from 'utils/nativeToken'
 import { stake } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
-import { type Address, type Hash, isAddress, zeroAddress } from 'viem'
+import { type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { getStakedBalanceQueryKey } from './useStakedBalance'
@@ -25,13 +25,11 @@ export const useStake = function (token: StakeToken) {
   const operatesNativeToken = isNativeToken(token)
   const { address } = useAccount()
   const ensureConnectedTo = useEnsureConnectedTo()
-  const erc20Address: Address = isAddress(token.address)
-    ? token.address
-    : zeroAddress
-  const allowanceKey = allowanceQueryKey({
+  const allowanceKey = buildAllowanceQueryKey({
+    chainId: token.chainId,
     owner: address,
     spender: stakeManagerAddresses[token.chainId],
-    token: { address: erc20Address, chainId: token.chainId },
+    tokenAddress: token.address,
   })
   const [networkType] = useNetworkType()
   const hemiPublicClient = useHemiClient()

@@ -1,4 +1,3 @@
-import { allowanceQueryKey as getAllowanceQueryKey } from '@hemilabs/react-hooks/useAllowance'
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -12,10 +11,10 @@ import {
   type StakingDashboardToken,
   type StakingPosition,
 } from 'types/stakingDashboard'
+import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { parseTokenUnits } from 'utils/token'
 import { getVeHemiContractAddress, IncreaseAmountEvents } from 've-hemi-actions'
 import { increaseAmount } from 've-hemi-actions/actions'
-import { type Address, isAddress, zeroAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { getCalculateAprQueryKey } from './useCalculateApr'
@@ -66,13 +65,11 @@ export const useIncreaseAmount = function ({
 
   const { hemiWalletClient } = useHemiWalletClient()
 
-  const erc20Address: Address = isAddress(token.address)
-    ? token.address
-    : zeroAddress
-  const allowanceQueryKey = getAllowanceQueryKey({
+  const allowanceQueryKey = buildAllowanceQueryKey({
+    chainId: token.chainId,
     owner: address,
     spender: veHemiAddress,
-    token: { address: erc20Address, chainId: token.chainId },
+    tokenAddress: token.address,
   })
 
   return useMutation({

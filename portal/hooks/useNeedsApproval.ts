@@ -1,10 +1,11 @@
-import {
-  allowanceQueryKey,
-  useAllowance,
-} from '@hemilabs/react-hooks/useAllowance'
+import { useAllowance } from '@hemilabs/react-hooks/useAllowance'
 import { type UseQueryOptions } from '@tanstack/react-query'
+import {
+  buildAllowanceQueryKey,
+  normalizeTokenAddressForAllowance,
+} from 'utils/allowanceQueryKey'
 import { isNativeAddress } from 'utils/nativeToken'
-import { type Address, type Chain, isAddress, zeroAddress } from 'viem'
+import { type Address, type Chain, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 type AllowanceQuery = Omit<
@@ -24,13 +25,16 @@ export const useNeedsApproval = function ({
   chainId: Chain['id']
 }) {
   const { address: owner } = useAccount()
-  const erc20Address: Address = isAddress(address) ? address : zeroAddress
   const effectiveSpender = isNativeAddress(address) ? undefined : spender
-  const token = { address: erc20Address, chainId }
-  const allowanceKey = allowanceQueryKey({
+  const token = {
+    address: normalizeTokenAddressForAllowance(address),
+    chainId,
+  }
+  const allowanceKey = buildAllowanceQueryKey({
+    chainId,
     owner,
     spender: effectiveSpender,
-    token,
+    tokenAddress: address,
   })
 
   const query: AllowanceQuery = {

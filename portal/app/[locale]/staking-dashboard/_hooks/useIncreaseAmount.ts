@@ -4,7 +4,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useUmami } from 'hooks/useUmami'
 import {
   type StakingDashboardOperation,
@@ -12,6 +11,7 @@ import {
   type StakingDashboardToken,
   type StakingPosition,
 } from 'types/stakingDashboard'
+import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { parseTokenUnits } from 'utils/token'
 import { getVeHemiContractAddress, IncreaseAmountEvents } from 've-hemi-actions'
 import { increaseAmount } from 've-hemi-actions/actions'
@@ -65,11 +65,11 @@ export const useIncreaseAmount = function ({
 
   const { hemiWalletClient } = useHemiWalletClient()
 
-  const { allowanceQueryKey } = useNeedsApproval({
-    address: token.address,
-    amount,
+  const allowanceQueryKey = buildAllowanceQueryKey({
     chainId: token.chainId,
+    owner: address,
     spender: veHemiAddress,
+    tokenAddress: token.address,
   })
 
   return useMutation({

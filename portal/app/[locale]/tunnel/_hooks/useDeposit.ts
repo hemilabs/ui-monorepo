@@ -10,7 +10,6 @@ import {
 } from 'hemi-tunnel-actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
 import { useContext } from 'react'
@@ -21,11 +20,12 @@ import {
   EvmDepositStatus,
   MessageDirection,
 } from 'types/tunnel'
+import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { findChainById } from 'utils/chain'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { isNativeAddress } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
-import { Chain, zeroAddress } from 'viem'
+import { type Chain, zeroAddress } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
 
 import { useTunnelOperation } from './useTunnelOperation'
@@ -76,11 +76,11 @@ export const useDeposit = function ({
 
   const depositingNative = isNativeAddress(fromToken.address)
 
-  const { allowanceQueryKey } = useNeedsApproval({
-    address: fromToken.address,
-    amount,
+  const allowanceQueryKey = buildAllowanceQueryKey({
     chainId: fromToken.chainId,
-    spender: l1StandardBridgeAddress,
+    owner: address,
+    spender: depositingNative ? undefined : l1StandardBridgeAddress,
+    tokenAddress: fromToken.address,
   })
 
   return useMutation({

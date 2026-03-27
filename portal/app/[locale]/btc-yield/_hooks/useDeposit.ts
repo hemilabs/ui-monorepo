@@ -6,7 +6,7 @@ import { depositToken } from 'hemi-btc-staking-actions/actions'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { parseTokenUnits } from 'utils/token'
 import { useAccount } from 'wagmi'
 
@@ -52,11 +52,11 @@ export const useDeposit = function ({
 
   const { hemiWalletClient } = useHemiWalletClient()
 
-  const { allowanceQueryKey } = useNeedsApproval({
-    address: token.address,
-    amount,
+  const allowanceQueryKey = buildAllowanceQueryKey({
     chainId: token.chainId,
+    owner: address,
     spender: vaultAddress,
+    tokenAddress: token.address,
   })
 
   const poolDepositsQueryKey = getPoolDepositsQueryKey(token.chainId)

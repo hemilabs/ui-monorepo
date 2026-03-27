@@ -1,7 +1,6 @@
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
-import { useAllowance } from 'hooks/useAllowance'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
@@ -13,10 +12,11 @@ import {
   type StakeStatusEnumType,
   type StakeToken,
 } from 'types/stake'
+import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { isNativeToken } from 'utils/nativeToken'
 import { stake } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
-import { Hash } from 'viem'
+import { type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { getStakedBalanceQueryKey } from './useStakedBalance'
@@ -25,9 +25,11 @@ export const useStake = function (token: StakeToken) {
   const operatesNativeToken = isNativeToken(token)
   const { address } = useAccount()
   const ensureConnectedTo = useEnsureConnectedTo()
-  const { queryKey: allowanceQueryKey } = useAllowance(token.address, {
-    args: { owner: address, spender: stakeManagerAddresses[token.chainId] },
+  const allowanceKey = buildAllowanceQueryKey({
     chainId: token.chainId,
+    owner: address,
+    spender: stakeManagerAddresses[token.chainId],
+    tokenAddress: token.address,
   })
   const [networkType] = useNetworkType()
   const hemiPublicClient = useHemiClient()
@@ -108,7 +110,7 @@ export const useStake = function (token: StakeToken) {
           setStakeStatus(StakeStatusEnum.APPROVAL_TX_COMPLETED)
           if (!operatesNativeToken) {
             // invalidate allowance after an erc20 approval took place
-            queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
+            queryClient.invalidateQueries({ queryKey: allowanceKey })
           }
         },
         onTokenApprove: () =>

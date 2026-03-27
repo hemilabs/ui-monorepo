@@ -1,6 +1,14 @@
-import { useAllowance } from 'hooks/useAllowance'
-import { Address, Chain } from 'viem'
+import { useAllowance } from '@hemilabs/react-hooks/useAllowance'
+import { type UseQueryOptions } from '@tanstack/react-query'
+import { normalizeTokenAddressForAllowance } from 'utils/allowanceQueryKey'
+import { isNativeAddress } from 'utils/nativeToken'
+import { type Address, type Chain, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
+
+type AllowanceQuery = Omit<
+  UseQueryOptions<bigint, Error, bigint>,
+  'queryFn' | 'queryKey' | 'enabled'
+> & { enabled?: boolean }
 
 export const useNeedsApproval = function ({
   address,
@@ -14,20 +22,33 @@ export const useNeedsApproval = function ({
   chainId: Chain['id']
 }) {
   const { address: owner } = useAccount()
+  const effectiveSpender = isNativeAddress(address) ? undefined : spender
+  const token = {
+    address: normalizeTokenAddressForAllowance(address),
+    chainId,
+  }
+
+  const query: AllowanceQuery = {
+    enabled:
+      !isNativeAddress(address) &&
+      isAddress(address) &&
+      !!owner &&
+      !!effectiveSpender,
+  }
 
   const {
     data: allowance = BigInt(0),
     isError,
     isLoading,
-    queryKey: allowanceQueryKey,
     status: allowanceStatus,
-  } = useAllowance(address, {
-    args: { owner, spender },
-    chainId,
+  } = useAllowance({
+    owner,
+    query,
+    spender: effectiveSpender,
+    token,
   })
 
   return {
-    allowanceQueryKey,
     isAllowanceError: isError,
     isAllowanceLoading: isLoading,
     needsApproval: amount > allowance && allowanceStatus === 'success',

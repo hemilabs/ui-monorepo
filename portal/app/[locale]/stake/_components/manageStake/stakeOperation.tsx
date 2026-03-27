@@ -1,3 +1,5 @@
+import { useAllowance } from '@hemilabs/react-hooks/useAllowance'
+import { type UseQueryOptions } from '@tanstack/react-query'
 import { DrawerParagraph } from 'components/drawer'
 import { HemiFees } from 'components/hemiFees'
 import {
@@ -8,7 +10,6 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { Spinner } from 'components/spinner'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
-import { useAllowance } from 'hooks/useAllowance'
 import { useAmount } from 'hooks/useAmount'
 import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
@@ -21,10 +22,11 @@ import {
   type StakeStatusEnumType,
   type StakeToken,
 } from 'types/stake'
+import { normalizeTokenAddressForAllowance } from 'utils/allowanceQueryKey'
 import { getNativeToken, isNativeToken } from 'utils/nativeToken'
 import { canSubmit } from 'utils/stake'
 import { parseTokenUnits } from 'utils/token'
-import { formatUnits } from 'viem'
+import { type Address, formatUnits, isAddress } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEstimateStakeFees } from '../../_hooks/useEstimateStakeFees'
@@ -45,6 +47,11 @@ import { StakeCallToAction } from './stakeCallToAction'
 import { StrategyDetails } from './strategyDetails'
 import { SubmitButton } from './submitButton'
 
+type AllowanceQuery = Omit<
+  UseQueryOptions<bigint, Error, bigint>,
+  'queryFn' | 'queryKey' | 'enabled'
+> & { enabled?: boolean }
+
 type Props = {
   closeDrawer: () => void
   heading: string
@@ -61,6 +68,28 @@ const useBalance = function (token: StakeToken) {
   return isNativeToken(token) ? nativeBalance : tokenBalance
 }
 
+const stakeRequiresErc20Approval = ({
+  allowance,
+  amount,
+  operatesNativeToken,
+}: {
+  allowance: bigint
+  amount: bigint
+  operatesNativeToken: boolean
+}) => !operatesNativeToken && allowance < amount
+
+const isStakeAllowanceQueryEnabled = ({
+  address,
+  operatesNativeToken,
+  spender,
+  tokenAddress,
+}: {
+  address: Address | undefined
+  operatesNativeToken: boolean
+  spender: Address | undefined
+  tokenAddress: string
+}) => !operatesNativeToken && !!address && isAddress(tokenAddress) && !!spender
+
 export const StakeOperation = function ({
   closeDrawer,
   heading,
@@ -73,17 +102,23 @@ export const StakeOperation = function ({
   const [amountInput, setAmountInput] = useAmount()
   const operatesNativeToken = isNativeToken(token)
   const spender = stakeManagerAddresses[token.chainId]
+  const erc20Address = normalizeTokenAddressForAllowance(token.address)
 
-  const { data: allowance = BigInt(0), isPending } = useAllowance(
-    token.address,
-    {
-      args: {
-        owner: address,
-        spender,
-      },
-      chainId: token.chainId,
-    },
-  )
+  const query: AllowanceQuery = {
+    enabled: isStakeAllowanceQueryEnabled({
+      address,
+      operatesNativeToken,
+      spender,
+      tokenAddress: token.address,
+    }),
+  }
+
+  const { data: allowance = BigInt(0), isPending } = useAllowance({
+    owner: address,
+    query,
+    spender,
+    token: { address: erc20Address, chainId: token.chainId },
+  })
 
   const amount = parseTokenUnits(amountInput, token)
 
@@ -215,7 +250,11 @@ export const StakeOperation = function ({
   const canStake =
     allowanceLoaded && balanceLoaded && !isSubmitting && isSubmitValid
 
-  const requiresApproval = allowance < parseTokenUnits(amountInput, token)
+  const requiresApproval = stakeRequiresErc20Approval({
+    allowance,
+    amount,
+    operatesNativeToken,
+  })
 
   const handleStake = () => stake({ amountInput })
 

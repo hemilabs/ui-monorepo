@@ -5,7 +5,7 @@ import { type EvmToken } from 'types/token'
 import { formatTVL } from 'utils/format'
 import { isNativeAddress } from 'utils/nativeToken'
 import { getWrappedEther } from 'utils/token'
-import { Address } from 'viem'
+import { type Address } from 'viem'
 
 const TokenTvl = function ({ token }: { token: EvmToken }) {
   const { data: supply, status } = useTotalSupply({

@@ -10,6 +10,7 @@ This monorepo uses npm workspaces, and contains the following projects:
   - **packages/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported).
   - **packages/genesis-drop-actions**: Package that contains functions needed for the TGE event.
   - **packages/hemi-btc-staking-actions**: Package that contains viem actions for Bitcoin staking on Hemi.
+  - **packages/hemi-earn-actions**: Package that contains viem actions for Hemi Earn ERC-4626 vaults.
   - **packages/hemi-tunnel-actions**: Package that contains viem actions to use the Hemi tunnel.
   - **packages/hemi-viem-stake-actions**: Package that contains viem actions to use the Hemi Stake.
   - **packages/merkl-claim-rewards**: Package that contains actions to integrate with Merkl functionality.

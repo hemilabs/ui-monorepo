@@ -1,4 +1,4 @@
-import { usePortalEstimateFees } from 'hooks/usePortalEstimateFees'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { StakingDashboardToken } from 'types/stakingDashboard'
 import { getVeHemiContractAddress } from 've-hemi-actions'
 import { encodeCreateLock } from 've-hemi-actions/actions'
@@ -30,7 +30,7 @@ export const useEstimateCreateLockFees = function ({
     value: undefined,
   })
 
-  return usePortalEstimateFees({
+  return useEstimateFees({
     chainId: token.chainId,
     enabled: gasUnits !== undefined,
     gasUnits,

@@ -1,4 +1,4 @@
-import { usePortalEstimateFees } from 'hooks/usePortalEstimateFees'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { StakingDashboardToken } from 'types/stakingDashboard'
 import { getVeHemiContractAddress } from 've-hemi-actions'
 import { encodeWithdraw } from 've-hemi-actions/actions'
@@ -26,7 +26,7 @@ export const useEstimateWithdrawFees = function ({
     to: veHemiAddress,
   })
 
-  return usePortalEstimateFees({
+  return useEstimateFees({
     chainId: token.chainId,
     enabled: gasUnits !== undefined,
     gasUnits,

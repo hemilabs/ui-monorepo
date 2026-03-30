@@ -1,9 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import { bitcoinTunnelManagerAddresses } from 'hemi-viem'
 import { encodeInitiateWithdrawal } from 'hemi-viem/actions'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
-import { usePortalEstimateFees } from 'hooks/usePortalEstimateFees'
 import { getVaultChildIndex } from 'utils/hemiClientExtraActions'
 import { type PublicClient } from 'viem'
 import { useEstimateGas } from 'wagmi'
@@ -65,7 +65,7 @@ export function useEstimateBtcWithdrawFees({
     to: bitcoinManagerAddresses,
   })
 
-  return usePortalEstimateFees({
+  return useEstimateFees({
     chainId: hemi.id,
     enabled: gasSuccess,
     gasUnits,

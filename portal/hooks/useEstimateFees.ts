@@ -20,7 +20,7 @@ const fallbackPriorityFeeByChain: Record<number, bigint> = {
   [hemiSepolia.id]: hemiSepoliaFallbackPriorityFeeWei,
 }
 
-type UsePortalEstimateFees = {
+type UseEstimateFees = {
   chainId: number
   enabled?: boolean
   isGasUnitsError?: boolean
@@ -29,17 +29,17 @@ type UsePortalEstimateFees = {
 }
 
 /**
- * Portal wrapper around `@hemilabs/react-hooks/utils/fees` `estimateTotalFee`, preserving
- * Hemi-specific fallback priority fees and fee-history gating from the legacy hook.
- * Named distinct from the package `useEstimateFees` to satisfy lint/knip (no name collision).
+ * Portal fee estimation using `@hemilabs/react-hooks/utils/fees` `estimateTotalFee`, preserving
+ * Hemi-specific fallback priority fees and fee-history gating from the legacy implementation.
+ * (Does not use the package `useEstimateFees` hook — only the shared `estimateTotalFee` helper.)
  */
-export function usePortalEstimateFees({
+export function useEstimateFees({
   chainId,
   enabled = true,
   isGasUnitsError = false,
   overEstimation = defaultOverEstimation,
   ...props
-}: UsePortalEstimateFees) {
+}: UseEstimateFees) {
   const { isConnected } = useAccount()
   const isConnectedToExpectedChain = useIsConnectedToExpectedNetwork(chainId)
 

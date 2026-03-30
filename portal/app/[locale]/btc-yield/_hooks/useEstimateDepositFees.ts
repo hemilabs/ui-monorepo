@@ -1,7 +1,7 @@
 import { getBtcStakingVaultContractAddress } from 'hemi-btc-staking-actions'
 import { encodeDepositToken } from 'hemi-btc-staking-actions/actions'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
-import { usePortalEstimateFees } from 'hooks/usePortalEstimateFees'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 export const useEstimateDepositFees = function ({
@@ -30,7 +30,7 @@ export const useEstimateDepositFees = function ({
     to: vaultAddress,
   })
 
-  return usePortalEstimateFees({
+  return useEstimateFees({
     chainId: hemi.id,
     enabled: gasUnits !== undefined,
     gasUnits,

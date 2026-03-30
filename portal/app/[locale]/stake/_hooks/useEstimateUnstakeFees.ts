@@ -1,5 +1,5 @@
 import { encodeUnstake, stakeManagerAddresses } from 'hemi-viem-stake-actions'
-import { usePortalEstimateFees } from 'hooks/usePortalEstimateFees'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { StakeToken } from 'types/stake'
 import { useEstimateGas } from 'wagmi'
 
@@ -23,7 +23,7 @@ export const useEstimateUnstakeFees = function ({
     to: bridgeAddress,
   })
 
-  return usePortalEstimateFees({
+  return useEstimateFees({
     chainId: token.chainId,
     enabled: gasUnits !== undefined,
     gasUnits,

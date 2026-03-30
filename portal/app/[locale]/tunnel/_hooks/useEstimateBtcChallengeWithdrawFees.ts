@@ -1,6 +1,6 @@
 import { bitcoinTunnelManagerAddresses } from 'hemi-viem'
 import { encodeChallengeWithdrawal } from 'hemi-viem/actions'
-import { usePortalEstimateFees } from 'hooks/usePortalEstimateFees'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useEstimateGas } from 'wagmi'
 
 export function useEstimateChallengeBtcWithdrawFees({
@@ -23,7 +23,7 @@ export function useEstimateChallengeBtcWithdrawFees({
     to: bitcoinManagerAddresses,
   })
 
-  return usePortalEstimateFees({
+  return useEstimateFees({
     chainId: l2ChainId,
     enabled: gasUnits !== undefined,
     gasUnits,

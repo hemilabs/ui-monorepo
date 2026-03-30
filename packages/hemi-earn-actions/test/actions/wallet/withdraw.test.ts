@@ -25,7 +25,6 @@ const mockWalletClient = {
 } as unknown as WalletClient
 
 const validParameters = {
-  account: zeroAddress,
   owner: zeroAddress,
   receiver: zeroAddress,
   shares: BigInt(100),

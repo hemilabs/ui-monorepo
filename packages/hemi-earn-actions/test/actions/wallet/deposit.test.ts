@@ -38,7 +38,6 @@ const mockWalletClient = {
 const validParameters = {
   account: zeroAddress,
   amount: BigInt(100),
-  receiver: zeroAddress,
   vaultAddress: zeroAddress,
   walletClient: mockWalletClient,
 }
@@ -182,12 +181,14 @@ describe('depositToken', function () {
 
     const { emitter, promise } = depositToken(validParameters)
 
+    const onCheckAllowance = vi.fn()
     const onPreApprove = vi.fn()
     const onPreDeposit = vi.fn()
     const onUserSignedDeposit = vi.fn()
     const onDepositTransactionSucceeded = vi.fn()
     const onSettled = vi.fn()
 
+    emitter.on('check-allowance', onCheckAllowance)
     emitter.on('pre-approve', onPreApprove)
     emitter.on('pre-deposit', onPreDeposit)
     emitter.on('user-signed-deposit', onUserSignedDeposit)
@@ -196,6 +197,7 @@ describe('depositToken', function () {
 
     await promise
 
+    expect(onCheckAllowance).toHaveBeenCalledOnce()
     expect(onPreApprove).not.toHaveBeenCalled()
     expect(onPreDeposit).toHaveBeenCalledOnce()
     expect(onUserSignedDeposit).toHaveBeenCalledExactlyOnceWith(zeroHash)

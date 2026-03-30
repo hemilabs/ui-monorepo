@@ -57,14 +57,12 @@ const calculateAdjustedShares = function ({
 }
 
 const runWithdraw = ({
-  account,
   owner,
   receiver,
   shares,
   vaultAddress,
   walletClient,
 }: {
-  account: Address
   owner: Address
   receiver: Address
   shares: bigint
@@ -78,9 +76,10 @@ const runWithdraw = ({
         throw new Error('Chain is not defined on wallet')
       }
 
-      // Memoize the balanceOf call to use it for both validation and dust sweeping
+      // Memoize the balanceOf call to use it for both validation and dust sweeping.
+      // Use owner (not account) since redeem burns shares from the owner's balance.
       const userShares = await balanceOf(walletClient, {
-        account,
+        account: owner,
         address: vaultAddress,
       })
 

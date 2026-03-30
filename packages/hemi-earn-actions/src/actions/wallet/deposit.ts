@@ -66,13 +66,11 @@ const canDepositToken = async function ({
 const runDepositToken = ({
   account,
   amount,
-  receiver,
   vaultAddress,
   walletClient,
 }: {
   account: Address
   amount: bigint
-  receiver: Address
   vaultAddress: Address
   walletClient: WalletClient
 }) =>
@@ -105,6 +103,7 @@ const runDepositToken = ({
       }
 
       // Check current allowance
+      emitter.emit('check-allowance')
       const currentAllowance = await allowance(walletClient, {
         address: assetAddress,
         owner: account,
@@ -149,31 +148,31 @@ const runDepositToken = ({
 
       emitter.emit('pre-deposit')
 
-      const stakeHash = await vaultDeposit(walletClient, {
+      const depositHash = await vaultDeposit(walletClient, {
         address: vaultAddress,
         assets: amount,
-        receiver,
+        receiver: account,
       }).catch(function (error: Error) {
         emitter.emit('user-signing-deposit-error', error)
       })
 
-      if (!stakeHash) {
+      if (!depositHash) {
         return
       }
 
-      emitter.emit('user-signed-deposit', stakeHash)
+      emitter.emit('user-signed-deposit', depositHash)
 
-      const stakeReceipt = await waitForTransactionReceipt(walletClient, {
-        hash: stakeHash,
+      const depositReceipt = await waitForTransactionReceipt(walletClient, {
+        hash: depositHash,
       }).catch(function (error: Error) {
         emitter.emit('deposit-failed', error)
       })
 
-      if (!stakeReceipt) {
+      if (!depositReceipt) {
         return
       }
 
-      const stakeEventMap: Record<
+      const depositEventMap: Record<
         TransactionReceipt['status'],
         keyof DepositEvents
       > = {
@@ -181,7 +180,7 @@ const runDepositToken = ({
         success: 'deposit-transaction-succeeded',
       }
 
-      emitter.emit(stakeEventMap[stakeReceipt.status], stakeReceipt)
+      emitter.emit(depositEventMap[depositReceipt.status], depositReceipt)
     } catch (error) {
       emitter.emit('unexpected-error', error as Error)
     } finally {

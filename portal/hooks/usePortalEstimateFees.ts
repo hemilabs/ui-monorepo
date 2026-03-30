@@ -54,7 +54,7 @@ export function usePortalEstimateFees({
     rewardPercentiles: [30],
   })
 
-  const baseFeePerGas = feeHistory?.baseFeePerGas?.at(-1) ?? 0n
+  const baseFeePerGas = feeHistory?.baseFeePerGas?.at(-1) ?? BigInt(0)
 
   const { data: maxPriorityFeePerGas, isError: isMaxPriorityFeePerGasError } =
     useEstimateMaxPriorityFeePerGas({
@@ -63,7 +63,7 @@ export function usePortalEstimateFees({
 
   const fallbackPriorityFee = fallbackPriorityFeeByChain[chainId] ?? oneGweiWei
 
-  const gasUnits = props.gasUnits ?? 0n
+  const gasUnits = props.gasUnits ?? BigInt(0)
 
   const fees = estimateTotalFee({
     baseFeePerGas,
@@ -74,7 +74,7 @@ export function usePortalEstimateFees({
   })
 
   return {
-    fees: fees ?? 0n,
+    fees: fees ?? BigInt(0),
     isError:
       isGasUnitsError || isFeeHistoryError || isMaxPriorityFeePerGasError,
   }

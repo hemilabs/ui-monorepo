@@ -1,6 +1,6 @@
 import { encodeInitiateWithdraw } from 'hemi-tunnel-actions'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useL2BridgeAddress } from 'hooks/useL2BridgeAddress'
+import { usePortalEstimateFees } from 'hooks/usePortalEstimateFees'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
 import { EvmToken } from 'types/token'
 import { isNativeAddress } from 'utils/nativeToken'
@@ -32,7 +32,7 @@ export const useEstimateWithdrawFees = function ({
     value: isNative ? amount : undefined,
   })
 
-  return useEstimateFees({
+  return usePortalEstimateFees({
     chainId: fromToken.chainId,
     enabled: gasUnits !== undefined,
     gasUnits,

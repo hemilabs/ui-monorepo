@@ -1,4 +1,4 @@
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { usePortalEstimateFees } from 'hooks/usePortalEstimateFees'
 import { getVeHemiRewardsContractAddress } from 've-hemi-rewards'
 import { encodeCollectAllRewards } from 've-hemi-rewards/actions'
 import { useAccount, useEstimateGas } from 'wagmi'
@@ -26,7 +26,7 @@ export const useEstimateCollectAllRewardsFees = function ({
     to: veHemiRewardsAddress,
   })
 
-  return useEstimateFees({
+  return usePortalEstimateFees({
     chainId,
     enabled: gasUnits !== undefined,
     gasUnits,

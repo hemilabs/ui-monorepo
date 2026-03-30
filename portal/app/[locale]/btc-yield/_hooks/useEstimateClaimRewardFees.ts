@@ -1,5 +1,5 @@
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
+import { usePortalEstimateFees } from 'hooks/usePortalEstimateFees'
 import { encodeClaimAllRewards } from 'merkl-claim-rewards/actions'
 import { useAccount, useEstimateGas } from 'wagmi'
 
@@ -32,7 +32,7 @@ export const useEstimateClaimRewardFees = function ({
     to: MERKL_DISTRIBUTOR_ADDRESS,
   })
 
-  return useEstimateFees({
+  return usePortalEstimateFees({
     chainId: hemi.id,
     enabled: gasUnits !== undefined,
     gasUnits,

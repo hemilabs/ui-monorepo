@@ -1,4 +1,4 @@
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { usePortalEstimateFees } from 'hooks/usePortalEstimateFees'
 import { EvmToken } from 'types/token'
 import { Address, encodeFunctionData, erc20Abi } from 'viem'
 import { useEstimateGas } from 'wagmi'
@@ -24,7 +24,7 @@ export const useEstimateApproveErc20Fees = function ({
     to: token.address as Address,
   })
 
-  return useEstimateFees({
+  return usePortalEstimateFees({
     chainId: token.chainId,
     enabled: gasUnits !== undefined,
     gasUnits,

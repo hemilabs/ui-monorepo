@@ -45,6 +45,7 @@ NEXT_PUBLIC_ANALYTICS_FORMO_WRITE_KEY=<string> # Formo analytics write key
 NEXT_PUBLIC_BTC_YIELD_CLAIM_REWARDS=<true|false> # Enable claim rewards on the Btc yield page
 NEXT_PUBLIC_BTC_YIELD_OPPORTUNITY_ID=<string> # Merkl Opportunity ID for BTC yield campaigns
 NEXT_PUBLIC_ENABLE_BTC_YIELD_PAGE=<true|false> # Enable the Btc yield page
+NEXT_PUBLIC_ENABLE_HEMI_EARN_PAGE=<true|false> # Enable the Hemi Earn page
 NEXT_PUBLIC_ENABLE_BTC_YIELD_TESTNET=<true|false> # Enable bitcoin yield on Testnet, for local development
 NEXT_PUBLIC_ENABLE_STAKE_GOVERNANCE_TESTNET=<true|false> # Enable stake governance on Testnet, for local development
 NEXT_PUBLIC_ENABLE_STAKE_TESTNET=<true|false> # Enable Stake campaign on Testnet, for local development

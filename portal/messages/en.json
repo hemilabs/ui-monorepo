@@ -1,4 +1,8 @@
 {
+  "hemi-earn": {
+    "heading": "Earn yield with Hemi Earn",
+    "subheading": "One click earn for your assets"
+  },
   "bitcoin-yield": {
     "bridge-btc-and-receive": "Bridge your BTC through the tunnel and receive {symbol}",
     "drawer": {

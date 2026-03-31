@@ -13,6 +13,7 @@ import { EcosystemLink } from './_components/ecosystemLink'
 import { GenesisDrop } from './_components/genesisDrop'
 import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
+import { HemiEarn } from './_components/hemiEarn'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiStatusLink } from './_components/hemiStatusLink'
 import { HomeLink } from './_components/homeLink'
@@ -49,6 +50,9 @@ export const NavbarDesktop = () => (
       <Help />
     </div>
     <ul className="z-10 flex h-full flex-col gap-y-0.5 overflow-y-auto overflow-x-hidden [&>li:not(.no-padding)]:px-3">
+      <PaddedListItem>
+        <HemiEarn />
+      </PaddedListItem>
       <PaddedListItem>
         <BitcoinYield />
       </PaddedListItem>

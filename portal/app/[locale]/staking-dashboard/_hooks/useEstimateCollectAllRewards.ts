@@ -1,4 +1,5 @@
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
+import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
 import { getVeHemiRewardsContractAddress } from 've-hemi-rewards'
 import { encodeCollectAllRewards } from 've-hemi-rewards/actions'
 import { useAccount, useEstimateGas } from 'wagmi'
@@ -20,16 +21,19 @@ export const useEstimateCollectAllRewardsFees = function ({
     tokenId,
   })
 
-  const { data: gasUnits } = useEstimateGas({
+  const { data: gasUnits, isError } = useEstimateGas({
     data,
     query: { enabled: isConnected && enabled },
     to: veHemiRewardsAddress,
   })
 
-  return useEstimateFees({
+  const { fees, isError: isFeeError } = useEstimateFees({
     chainId,
-    enabled: gasUnits !== undefined,
+    fallbackPriorityFee: getFallbackPriorityFeeForChain(chainId),
     gasUnits,
+    isGasUnitsError: isError,
     overEstimation: 1.5,
   })
+
+  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

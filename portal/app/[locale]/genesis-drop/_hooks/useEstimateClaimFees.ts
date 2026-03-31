@@ -1,11 +1,12 @@
+import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
 import {
   encodeClaimTokens,
   getMerkleBoxAddress,
   type EligibilityData,
   type LockupMonths,
 } from 'genesis-drop-actions'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
+import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
 import { Hex } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
@@ -39,11 +40,13 @@ export const useEstimateClaimFees = function ({
     to: contractAddress,
   })
 
-  return useEstimateFees({
+  const { fees, isError: isFeeError } = useEstimateFees({
     chainId: hemi.id,
-    enabled: gasUnits !== undefined,
+    fallbackPriorityFee: getFallbackPriorityFeeForChain(hemi.id),
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,
   })
+
+  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

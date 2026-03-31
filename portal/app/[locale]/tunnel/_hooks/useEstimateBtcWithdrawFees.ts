@@ -1,9 +1,10 @@
+import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
 import { useQuery } from '@tanstack/react-query'
 import { bitcoinTunnelManagerAddresses } from 'hemi-viem'
 import { encodeInitiateWithdrawal } from 'hemi-viem/actions'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
+import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
 import { getVaultChildIndex } from 'utils/hemiClientExtraActions'
 import { type PublicClient } from 'viem'
 import { useEstimateGas } from 'wagmi'
@@ -55,21 +56,19 @@ export function useEstimateBtcWithdrawFees({
     ],
   })
 
-  const {
-    data: gasUnits,
-    isError: isGasError,
-    isSuccess: gasSuccess,
-  } = useEstimateGas({
+  const { data: gasUnits, isError: isGasError } = useEstimateGas({
     data: encodedData,
     query: { enabled: isSuccess && !!encodedData },
     to: bitcoinManagerAddresses,
   })
 
-  return useEstimateFees({
+  const { fees, isError: isFeeError } = useEstimateFees({
     chainId: hemi.id,
-    enabled: gasSuccess,
+    fallbackPriorityFee: getFallbackPriorityFeeForChain(hemi.id),
     gasUnits,
     isGasUnitsError: isGasError,
     overEstimation: 1.5,
   })
+
+  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

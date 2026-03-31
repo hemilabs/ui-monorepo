@@ -1,9 +1,10 @@
+import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
 import { useQuery } from '@tanstack/react-query'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { ToEvmWithdrawOperation } from 'types/tunnel'
 import { getEvmL1PublicClient } from 'utils/chainClients'
+import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
 import { type Chain } from 'viem'
 import { getWithdrawals } from 'viem/op-stack'
 import { useAccount } from 'wagmi'
@@ -48,11 +49,13 @@ export const useEstimateFinalizeWithdrawalFees = function ({
     ],
   })
 
-  return useEstimateFees({
+  const { fees, isError: isFeeError } = useEstimateFees({
     chainId: l1ChainId,
-    enabled: gasUnits !== undefined,
+    fallbackPriorityFee: getFallbackPriorityFeeForChain(l1ChainId),
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,
   })
+
+  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

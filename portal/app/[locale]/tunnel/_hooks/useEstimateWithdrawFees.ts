@@ -1,8 +1,9 @@
+import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
 import { encodeInitiateWithdraw } from 'hemi-tunnel-actions'
-import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useL2BridgeAddress } from 'hooks/useL2BridgeAddress'
 import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
 import { EvmToken } from 'types/token'
+import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
 import { isNativeAddress } from 'utils/nativeToken'
 import { Address, Chain } from 'viem'
 import { useEstimateGas } from 'wagmi'
@@ -32,11 +33,13 @@ export const useEstimateWithdrawFees = function ({
     value: isNative ? amount : undefined,
   })
 
-  return useEstimateFees({
+  const { fees, isError: isFeeError } = useEstimateFees({
     chainId: fromToken.chainId,
-    enabled: gasUnits !== undefined,
+    fallbackPriorityFee: getFallbackPriorityFeeForChain(fromToken.chainId),
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,
   })
+
+  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

@@ -1,5 +1,6 @@
-import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
 import { StakingDashboardToken } from 'types/stakingDashboard'
+import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
 import { getVeHemiContractAddress } from 've-hemi-actions'
 import { encodeCreateLock } from 've-hemi-actions/actions'
 import { useAccount, useEstimateGas } from 'wagmi'
@@ -23,17 +24,20 @@ export const useEstimateCreateLockFees = function ({
     lockDurationInSeconds,
   })
 
-  const { data: gasUnits } = useEstimateGas({
+  const { data: gasUnits, isError } = useEstimateGas({
     data,
     query: { enabled: isConnected && enabled },
     to: veHemiAddress,
     value: undefined,
   })
 
-  return useEstimateFees({
+  const { fees, isError: isFeeError } = useEstimateFees({
     chainId: token.chainId,
-    enabled: gasUnits !== undefined,
+    fallbackPriorityFee: getFallbackPriorityFeeForChain(token.chainId),
     gasUnits,
+    isGasUnitsError: isError,
     overEstimation: 1.5,
   })
+
+  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

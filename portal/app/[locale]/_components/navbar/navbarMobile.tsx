@@ -10,6 +10,7 @@ import { EcosystemLink } from './_components/ecosystemLink'
 import { GenesisDrop } from './_components/genesisDrop'
 import { GetStarted } from './_components/getStarted'
 import { HelpButton } from './_components/help/helpButton'
+import { HemiEarn } from './_components/hemiEarn'
 import { HemiExplorerLink } from './_components/hemiExplorerLink'
 import { HemiStatusLink } from './_components/hemiStatusLink'
 import { IconContainer as BaseIconContainer } from './_components/iconContainer'
@@ -59,6 +60,9 @@ export const NavbarMobile = function () {
     <div className="h-90dvh flex flex-col bg-white">
       <div className="flex-1 overflow-y-auto px-5 py-6">
         <ul className="flex h-fit flex-wrap justify-start gap-2">
+          <SmallBox>
+            <HemiEarn />
+          </SmallBox>
           <SmallBox>
             <BitcoinYield />
           </SmallBox>

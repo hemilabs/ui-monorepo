@@ -1,4 +1,8 @@
 {
+  "hemi-earn": {
+    "heading": "Obtenha rendimento com Hemi Earn",
+    "subheading": "Ganhe rendimento com seus ativos em um clique"
+  },
   "bitcoin-yield": {
     "bridge-btc-and-receive": "Transfira seu BTC através do túnel e receba {symbol}",
     "drawer": {

@@ -1,6 +1,15 @@
 {
   "hemi-earn": {
     "heading": "Earn yield with Hemi Earn",
+    "info": {
+      "across-vaults": "Across {count, plural, one {# vault} other {# vaults}}",
+      "total-apy": "Total avg. APY",
+      "total-apy-tooltip": "Weighted average APY across all your active vault positions",
+      "total-deposits": "Your total deposits",
+      "total-deposits-tooltip": "Your deposited value across all Hemi Earn vaults",
+      "total-yield": "Total yield earned",
+      "total-yield-tooltip": "Total yield you have earned across all vaults"
+    },
     "subheading": "One click earn for your assets"
   },
   "bitcoin-yield": {

@@ -22,11 +22,9 @@ type UseEstimateFeesResult = {
 export const useEstimateFees = function (
   params: UseEstimateFeesParams,
 ): UseEstimateFeesResult {
-  const { chainId, ...rest } = params
   const { fees, isError } = useEstimateFeesFromLib({
-    ...rest,
-    chainId,
-    fallbackPriorityFee: getFallbackPriorityFeeForChain(chainId),
+    ...params,
+    fallbackPriorityFee: getFallbackPriorityFeeForChain(params.chainId),
   })
   return { fees: fees ?? BigInt(0), isError }
 }

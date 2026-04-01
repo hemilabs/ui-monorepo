@@ -1,6 +1,5 @@
-import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { EvmToken } from 'types/token'
-import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
 import { Address, encodeFunctionData, erc20Abi } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
@@ -25,13 +24,10 @@ export const useEstimateApproveErc20Fees = function ({
     to: token.address as Address,
   })
 
-  const { fees, isError: isFeeError } = useEstimateFees({
+  return useEstimateFees({
     chainId: token.chainId,
-    fallbackPriorityFee: getFallbackPriorityFeeForChain(token.chainId),
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,
   })
-
-  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

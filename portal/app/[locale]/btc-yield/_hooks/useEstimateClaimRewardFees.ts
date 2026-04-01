@@ -1,7 +1,6 @@
-import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { encodeClaimAllRewards } from 'merkl-claim-rewards/actions'
-import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 import {
@@ -33,13 +32,10 @@ export const useEstimateClaimRewardFees = function ({
     to: MERKL_DISTRIBUTOR_ADDRESS,
   })
 
-  const { fees, isError: isFeeError } = useEstimateFees({
+  return useEstimateFees({
     chainId: hemi.id,
-    fallbackPriorityFee: getFallbackPriorityFeeForChain(hemi.id),
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,
   })
-
-  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

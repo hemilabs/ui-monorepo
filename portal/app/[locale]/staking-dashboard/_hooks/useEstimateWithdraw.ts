@@ -1,6 +1,5 @@
-import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { StakingDashboardToken } from 'types/stakingDashboard'
-import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
 import { getVeHemiContractAddress } from 've-hemi-actions'
 import { encodeWithdraw } from 've-hemi-actions/actions'
 import { useAccount, useEstimateGas } from 'wagmi'
@@ -27,13 +26,10 @@ export const useEstimateWithdrawFees = function ({
     to: veHemiAddress,
   })
 
-  const { fees, isError: isFeeError } = useEstimateFees({
+  return useEstimateFees({
     chainId: token.chainId,
-    fallbackPriorityFee: getFallbackPriorityFeeForChain(token.chainId),
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,
   })
-
-  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

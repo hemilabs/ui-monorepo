@@ -1,7 +1,6 @@
-import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
 import { encodeUnstake, stakeManagerAddresses } from 'hemi-viem-stake-actions'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { StakeToken } from 'types/stake'
-import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
 import { useEstimateGas } from 'wagmi'
 
 export const useEstimateUnstakeFees = function ({
@@ -24,13 +23,10 @@ export const useEstimateUnstakeFees = function ({
     to: bridgeAddress,
   })
 
-  const { fees, isError: isFeeError } = useEstimateFees({
+  return useEstimateFees({
     chainId: token.chainId,
-    fallbackPriorityFee: getFallbackPriorityFeeForChain(token.chainId),
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,
   })
-
-  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

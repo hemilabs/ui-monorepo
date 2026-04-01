@@ -1,7 +1,6 @@
-import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
 import { bitcoinTunnelManagerAddresses } from 'hemi-viem'
 import { encodeChallengeWithdrawal } from 'hemi-viem/actions'
-import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useEstimateGas } from 'wagmi'
 
 export function useEstimateChallengeBtcWithdrawFees({
@@ -24,13 +23,10 @@ export function useEstimateChallengeBtcWithdrawFees({
     to: bitcoinManagerAddresses,
   })
 
-  const { fees, isError: isFeeError } = useEstimateFees({
+  return useEstimateFees({
     chainId: l2ChainId,
-    fallbackPriorityFee: getFallbackPriorityFeeForChain(l2ChainId),
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,
   })
-
-  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

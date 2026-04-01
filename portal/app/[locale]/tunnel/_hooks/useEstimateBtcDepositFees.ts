@@ -1,12 +1,11 @@
-import { useEstimateFees } from '@hemilabs/react-hooks/useEstimateFees'
 import { useQuery } from '@tanstack/react-query'
 import { bitcoinTunnelManagerAddresses } from 'hemi-viem'
 import { encodeConfirmDeposit } from 'hemi-viem/actions'
+import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { BtcDepositOperation } from 'types/tunnel'
 import { calculateDepositOutputIndex } from 'utils/bitcoin'
 import { createBtcApi, mapBitcoinNetwork } from 'utils/btcApi'
-import { getFallbackPriorityFeeForChain } from 'utils/fallbackPriorityFee'
 import { getVaultIndexByBTCAddress } from 'utils/hemiMemoized'
 import { type PublicClient } from 'viem'
 import { useEstimateGas } from 'wagmi'
@@ -55,13 +54,10 @@ export function useEstimateBtcDepositFees({
     to: bitcoinManagerAddresses,
   })
 
-  const { fees, isError: isFeeError } = useEstimateFees({
+  return useEstimateFees({
     chainId: deposit.l2ChainId,
-    fallbackPriorityFee: getFallbackPriorityFeeForChain(deposit.l2ChainId),
     gasUnits,
     isGasUnitsError: isGasError,
     overEstimation: 1.5,
   })
-
-  return { fees: fees ?? BigInt(0), isError: isFeeError }
 }

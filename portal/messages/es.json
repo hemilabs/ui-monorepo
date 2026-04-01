@@ -2,7 +2,7 @@
   "hemi-earn": {
     "heading": "Obtenga rendimiento con Hemi Earn",
     "info": {
-      "across-vaults": "En {count} vaults",
+      "across-vaults": "En {count, plural, one {# vault} other {# vaults}}",
       "total-apy": "TEA prom. total",
       "total-apy-tooltip": "TEA promedio ponderada en todas sus posiciones activas",
       "total-deposits": "Sus depósitos totales",

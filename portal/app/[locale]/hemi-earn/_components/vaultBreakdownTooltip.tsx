@@ -11,7 +11,7 @@ export const VaultBreakdownTooltip = ({ vaultBreakdown }: Props) => (
     {vaultBreakdown.map(vault => (
       <div
         className="flex items-center justify-between gap-x-4"
-        key={vault.name}
+        key={`${vault.tokenChainId}-${vault.tokenAddress}`}
       >
         <div className="flex items-center gap-x-1">
           <TokenDisplay

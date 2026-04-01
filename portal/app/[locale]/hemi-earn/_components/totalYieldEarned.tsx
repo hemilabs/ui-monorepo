@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 import { formatFiatNumber } from 'utils/format'
 
 import { useTotalYieldEarned } from '../_hooks/useTotalYieldEarned'
-import { TotalYieldEarnedIconIcon } from '../_icons/totalYieldEarnedIcon'
+import { TotalYieldEarnedIcon } from '../_icons/totalYieldEarnedIcon'
 
 import { EarnCard } from './earnCard'
 import { VaultBreakdownTooltip } from './vaultBreakdownTooltip'
@@ -20,7 +20,7 @@ export const TotalYieldEarned = function () {
 
   return (
     <EarnCard
-      icon={<TotalYieldEarnedIconIcon />}
+      icon={<TotalYieldEarnedIcon />}
       isError={isError}
       isLoading={isPending}
       label={t('info.total-yield')}

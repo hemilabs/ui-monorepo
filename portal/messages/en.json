@@ -2,7 +2,7 @@
   "hemi-earn": {
     "heading": "Earn yield with Hemi Earn",
     "info": {
-      "across-vaults": "Across {count} vaults",
+      "across-vaults": "Across {count, plural, one {# vault} other {# vaults}}",
       "total-apy": "Total avg. APY",
       "total-apy-tooltip": "Weighted average APY across all your active vault positions",
       "total-deposits": "Your total deposits",

@@ -2,9 +2,9 @@
   "hemi-earn": {
     "heading": "Obtenha rendimento com Hemi Earn",
     "info": {
-      "across-vaults": "Em {count} vaults",
-      "total-apy": "TEA médio total",
-      "total-apy-tooltip": "TEA médio ponderada em todas as suas posições ativas",
+      "across-vaults": "Em {count, plural, one {# vault} other {# vaults}}",
+      "total-apy": "TEA média total",
+      "total-apy-tooltip": "TEA média ponderada em todas as suas posições ativas",
       "total-deposits": "Seus depósitos totais",
       "total-deposits-tooltip": "Seu valor depositado em todos os vaults do Hemi Earn",
       "total-yield": "Rendimento total ganho",

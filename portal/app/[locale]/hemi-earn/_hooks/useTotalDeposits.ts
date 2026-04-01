@@ -1,0 +1,41 @@
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+import { useHemi } from 'hooks/useHemi'
+import { formatFiatNumber } from 'utils/format'
+
+import { type EarnCardData } from '../types'
+
+import { useHemiEarnTokens } from './useHemiEarnTokens'
+
+type TotalDepositsData = EarnCardData & { totalUsd: number }
+
+export const useTotalDeposits = function () {
+  const { id } = useHemi()
+  const tokens = useHemiEarnTokens()
+
+  const {
+    data: queryData,
+    isError,
+    isPending,
+  } = useQuery<{ totalUsd: number }>({
+    queryFn: () =>
+      new Promise(resolve => setTimeout(() => resolve({ totalUsd: 0 }), 2000)),
+    queryKey: ['hemi-earn', 'total-deposits', id],
+  })
+
+  const data: TotalDepositsData | undefined = queryData
+    ? {
+        totalUsd: queryData.totalUsd,
+        vaultBreakdown: tokens.map(token => ({
+          name: token.symbol,
+          tokenAddress: token.address,
+          tokenChainId: id,
+          value: `$${formatFiatNumber(0)}`,
+        })),
+        vaultCount: tokens.length,
+      }
+    : undefined
+
+  return { data, isError, isPending }
+}

@@ -10,7 +10,24 @@
       "total-yield": "Rendimiento total ganado",
       "total-yield-tooltip": "Rendimiento total que ha ganado en todos los vaults"
     },
-    "subheading": "Gane rendimiento con sus activos en un solo clic"
+    "subheading": "Gane rendimiento con sus activos en un solo clic",
+    "table": {
+      "actions": "Acciones",
+      "apy": "TEA",
+      "apy-base": "Base",
+      "apy-incentivized": "Incentivada",
+      "deposit-and-earn-yield": "Deposite y gane rendimiento",
+      "exposure": "Exposición",
+      "manage": "Gestionar",
+      "my-positions": "Mis posiciones",
+      "no-positions-subtitle": "Deposite en un vault para empezar a ganar rendimiento.",
+      "no-positions-title": "Sin posiciones activas",
+      "pool": "Pool",
+      "pools": "Pools",
+      "total-deposits": "Depósitos totales",
+      "yield-earned": "Rendimiento ganado",
+      "your-deposit": "Su depósito"
+    }
   },
   "bitcoin-yield": {
     "bridge-btc-and-receive": "Transfiera su BTC a través del túnel y reciba {symbol}",

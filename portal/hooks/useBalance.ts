@@ -1,19 +1,11 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { EvmToken } from 'types/token'
 import { isNativeAddress } from 'utils/nativeToken'
 import { type Address, type Chain, erc20Abi, isAddress } from 'viem'
-import {
-  useAccount,
-  useBalance as useWagmiBalance,
-  useReadContract,
-} from 'wagmi'
+import { useAccount, useReadContract } from 'wagmi'
 
-export const useNativeTokenBalance = function (chainId: Chain['id']) {
-  const { address } = useAccount()
-  return useWagmiBalance({
-    address,
-    chainId,
-  })
-}
+export const useNativeTokenBalance = (chainId: Chain['id']) =>
+  useNativeBalance(chainId)
 
 export const useTokenBalance = function (
   chainId: EvmToken['chainId'],

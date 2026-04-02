@@ -4,7 +4,9 @@ import { hemi, hemiSepolia } from 'hemi-viem'
 import { useHemi } from 'hooks/useHemi'
 import { useMemo } from 'react'
 import { tokenList } from 'tokenList'
+import { type EvmToken } from 'types/token'
 import { toChecksumAddress } from 'utils/address'
+import { isEvmToken } from 'utils/token'
 
 // TODO: replace with vault.asset() calls when earn vaults are deployed
 const EARN_TOKEN_ADDRESSES: Partial<Record<number, string[]>> = {
@@ -23,7 +25,8 @@ export const useHemiEarnTokens = function () {
   return useMemo(
     () =>
       tokenList.tokens.filter(
-        t =>
+        (t): t is EvmToken =>
+          isEvmToken(t) &&
           t.chainId === id &&
           (EARN_TOKEN_ADDRESSES[id] ?? []).includes(t.address),
       ),

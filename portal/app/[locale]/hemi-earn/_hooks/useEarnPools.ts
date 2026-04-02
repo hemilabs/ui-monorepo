@@ -5,7 +5,8 @@ import { getEarnVaultAddresses } from 'hemi-earn-actions'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { useMemo } from 'react'
-import { type Chain, zeroAddress } from 'viem'
+import { type EvmToken } from 'types/token'
+import { type Address, zeroAddress } from 'viem'
 import { totalAssets } from 'viem-erc4626/actions'
 
 import { type EarnPool } from '../types'
@@ -17,10 +18,9 @@ export const useEarnPools = function () {
   const hemiClient = useHemiClient()
   const tokens = useHemiEarnTokens()
 
-  const vaultTokens = useMemo(
+  const vaultTokens = useMemo<{ token: EvmToken; vaultAddress: Address }[]>(
     function () {
       const vaultAddresses = getEarnVaultAddresses(chainId)
-
       return tokens.map((token, index) => ({
         token,
         vaultAddress: vaultAddresses[index] ?? zeroAddress,
@@ -47,19 +47,19 @@ export const useEarnPools = function () {
         exposureTokens: (vaultTokens[(index + 1) % vaultTokens.length]?.token
           .address !== token.address
           ? [
-              { address: token.address, chainId: token.chainId as Chain['id'] },
+              { address: token.address as Address, chainId: token.chainId },
               {
-                address:
-                  vaultTokens[(index + 1) % vaultTokens.length].token.address,
-                chainId: vaultTokens[(index + 1) % vaultTokens.length].token
-                  .chainId as Chain['id'],
+                address: vaultTokens[(index + 1) % vaultTokens.length].token
+                  .address as Address,
+                chainId:
+                  vaultTokens[(index + 1) % vaultTokens.length].token.chainId,
               },
             ]
           : [
-              { address: token.address, chainId: token.chainId as Chain['id'] },
+              { address: token.address as Address, chainId: token.chainId },
             ]) satisfies EarnPool['exposureTokens'],
         token,
-        totalDeposits: deposits[index],
+        totalDeposits: deposits[index] ?? BigInt(0),
         vaultAddress,
       }))
     },

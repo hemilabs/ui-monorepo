@@ -3,6 +3,7 @@ import { Button } from 'components/button'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { Header } from 'components/table/_components/header'
+import { useRouter } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { formatFiatNumber } from 'utils/format'
@@ -15,6 +16,7 @@ import { PoolData } from '../poolData'
 const Fallback = () => <span className="text-sm text-neutral-950">-</span>
 
 export const useGetPositionsColumns = function () {
+  const router = useRouter()
   const t = useTranslations('hemi-earn')
 
   return useMemo(
@@ -84,10 +86,16 @@ export const useGetPositionsColumns = function () {
           meta: { width: '150px' },
         },
         {
-          cell: () => (
+          cell: ({ row }) => (
             <div className="flex w-full justify-start lg:justify-end">
-              {/* TODO: open manage drawer — to be implemented in a future PR */}
-              <Button size="xSmall" type="button" variant="secondary">
+              <Button
+                onClick={() =>
+                  router.push(`/hemi-earn/vault/${row.original.vaultAddress}`)
+                }
+                size="xSmall"
+                type="button"
+                variant="secondary"
+              >
                 {t('table.manage')}
               </Button>
             </div>
@@ -101,6 +109,6 @@ export const useGetPositionsColumns = function () {
           meta: { width: '100px' },
         },
       ] satisfies ColumnDef<EarnPosition>[],
-    [t],
+    [router, t],
   )
 }

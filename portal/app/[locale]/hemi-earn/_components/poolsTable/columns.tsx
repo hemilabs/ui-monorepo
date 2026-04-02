@@ -3,6 +3,7 @@ import { Button } from 'components/button'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { Header } from 'components/table/_components/header'
+import { useRouter } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { formatFiatNumber } from 'utils/format'
@@ -16,6 +17,7 @@ import { PoolData } from '../poolData'
 const Fallback = () => <span className="text-sm text-neutral-950">-</span>
 
 export const useGetPoolsColumns = function () {
+  const router = useRouter()
   const t = useTranslations('hemi-earn')
 
   return useMemo(
@@ -83,10 +85,16 @@ export const useGetPoolsColumns = function () {
           meta: { width: '120px' },
         },
         {
-          cell: () => (
+          cell: ({ row }) => (
             <div className="flex w-full justify-start lg:justify-end">
-              {/* TODO: open deposit drawer — to be implemented in a future PR */}
-              <Button size="xSmall" type="button" variant="primary">
+              <Button
+                onClick={() =>
+                  router.push(`/hemi-earn/vault/${row.original.vaultAddress}`)
+                }
+                size="xSmall"
+                type="button"
+                variant="primary"
+              >
                 {t('table.deposit-and-earn-yield')}
               </Button>
             </div>
@@ -100,6 +108,6 @@ export const useGetPoolsColumns = function () {
           meta: { width: '260px' },
         },
       ] satisfies ColumnDef<EarnPool>[],
-    [t],
+    [router, t],
   )
 }

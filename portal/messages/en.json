@@ -10,6 +10,11 @@
       "total-yield": "Total yield earned",
       "total-yield-tooltip": "Total yield you have earned across all vaults"
     },
+    "navigation": {
+      "back": "Back",
+      "hemi-earn": "Hemi earn",
+      "vault-name": "{tokenSymbol} vault"
+    },
     "subheading": "One click earn for your assets",
     "table": {
       "actions": "Actions",
@@ -27,6 +32,10 @@
       "total-deposits": "Total deposits",
       "yield-earned": "Yield earned",
       "your-deposit": "Your deposit"
+    },
+    "vault": {
+      "apy": "APY",
+      "total-deposits": "Vault total deposits"
     }
   },
   "bitcoin-yield": {

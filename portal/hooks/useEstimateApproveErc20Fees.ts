@@ -26,7 +26,6 @@ export const useEstimateApproveErc20Fees = function ({
 
   return useEstimateFees({
     chainId: token.chainId,
-    enabled: gasUnits !== undefined,
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,

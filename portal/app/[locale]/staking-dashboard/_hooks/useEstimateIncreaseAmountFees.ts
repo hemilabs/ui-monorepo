@@ -23,7 +23,7 @@ export const useEstimateIncreaseAmountFees = function ({
     tokenId,
   })
 
-  const { data: gasUnits } = useEstimateGas({
+  const { data: gasUnits, isError } = useEstimateGas({
     data,
     query: { enabled: isConnected && enabled },
     to: veHemiAddress,
@@ -31,8 +31,8 @@ export const useEstimateIncreaseAmountFees = function ({
 
   return useEstimateFees({
     chainId: token.chainId,
-    enabled: gasUnits !== undefined,
     gasUnits,
+    isGasUnitsError: isError,
     overEstimation: 1.5,
   })
 }

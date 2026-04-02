@@ -56,7 +56,6 @@ export function useEstimateBtcDepositFees({
 
   return useEstimateFees({
     chainId: deposit.l2ChainId,
-    enabled: gasUnits !== undefined,
     gasUnits,
     isGasUnitsError: isGasError,
     overEstimation: 1.5,

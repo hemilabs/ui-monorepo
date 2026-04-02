@@ -20,7 +20,7 @@ export const useEstimateCollectAllRewardsFees = function ({
     tokenId,
   })
 
-  const { data: gasUnits } = useEstimateGas({
+  const { data: gasUnits, isError } = useEstimateGas({
     data,
     query: { enabled: isConnected && enabled },
     to: veHemiRewardsAddress,
@@ -28,8 +28,8 @@ export const useEstimateCollectAllRewardsFees = function ({
 
   return useEstimateFees({
     chainId,
-    enabled: gasUnits !== undefined,
     gasUnits,
+    isGasUnitsError: isError,
     overEstimation: 1.5,
   })
 }

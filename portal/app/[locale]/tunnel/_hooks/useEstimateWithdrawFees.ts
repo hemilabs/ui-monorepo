@@ -34,7 +34,6 @@ export const useEstimateWithdrawFees = function ({
 
   return useEstimateFees({
     chainId: fromToken.chainId,
-    enabled: gasUnits !== undefined,
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,

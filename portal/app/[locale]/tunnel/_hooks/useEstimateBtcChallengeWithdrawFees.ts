@@ -25,7 +25,6 @@ export function useEstimateChallengeBtcWithdrawFees({
 
   return useEstimateFees({
     chainId: l2ChainId,
-    enabled: gasUnits !== undefined,
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,

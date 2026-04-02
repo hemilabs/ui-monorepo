@@ -34,7 +34,6 @@ export const useEstimateClaimRewardFees = function ({
 
   return useEstimateFees({
     chainId: hemi.id,
-    enabled: gasUnits !== undefined,
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,

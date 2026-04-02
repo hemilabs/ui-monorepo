@@ -50,7 +50,6 @@ export const useEstimateFinalizeWithdrawalFees = function ({
 
   return useEstimateFees({
     chainId: l1ChainId,
-    enabled: gasUnits !== undefined,
     gasUnits,
     isGasUnitsError: isError,
     overEstimation: 1.5,

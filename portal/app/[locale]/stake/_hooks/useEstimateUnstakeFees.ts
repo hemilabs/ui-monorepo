@@ -14,7 +14,7 @@ export const useEstimateUnstakeFees = function ({
 }) {
   const bridgeAddress = stakeManagerAddresses[token.chainId]
 
-  const { data: gasUnits } = useEstimateGas({
+  const { data: gasUnits, isError } = useEstimateGas({
     data: encodeUnstake({
       amount,
       tokenAddress: token.address as `0x${string}`,
@@ -25,8 +25,8 @@ export const useEstimateUnstakeFees = function ({
 
   return useEstimateFees({
     chainId: token.chainId,
-    enabled: gasUnits !== undefined,
     gasUnits,
+    isGasUnitsError: isError,
     overEstimation: 1.5,
   })
 }

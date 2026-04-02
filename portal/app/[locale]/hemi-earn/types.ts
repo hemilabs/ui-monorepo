@@ -14,17 +14,17 @@ export type EarnCardData = {
 }
 
 export type EarnPool = {
-  vaultAddress: Address
-  token: EvmToken
   apy: { base: number; incentivized: number; total: number }
-  totalDeposits: bigint
   exposureTokens: { address: Address; chainId: EvmToken['chainId'] }[]
+  token: EvmToken
+  totalDeposits: bigint
+  vaultAddress: Address
 }
 
 export type EarnPosition = {
-  vaultAddress: Address
-  token: EvmToken
   apy: { base: number; incentivized: number; total: number }
-  yourDeposit: bigint
+  token: EvmToken
+  vaultAddress: Address
   yieldEarned: string
+  yourDeposit: bigint
 }

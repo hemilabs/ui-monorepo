@@ -3,16 +3,43 @@ import { Button } from 'components/button'
 import { ErrorBoundary } from 'components/errorBoundary'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { Header } from 'components/table/_components/header'
+import { useNetworkType } from 'hooks/useNetworkType'
+import { useRouter } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { useMemo } from 'react'
 import { formatFiatNumber } from 'utils/format'
-import { formatUnits } from 'viem'
+import { queryStringObjectToString } from 'utils/url'
+import { type Address, formatUnits } from 'viem'
 
 import { type EarnPosition } from '../../types'
 import { ApyWithTooltip } from '../apyWithTooltip'
 import { PoolData } from '../poolData'
 
 const Fallback = () => <span className="text-sm text-neutral-950">-</span>
+
+const ManageAction = function ({ vaultAddress }: { vaultAddress: Address }) {
+  const router = useRouter()
+  const t = useTranslations('hemi-earn')
+  const [networkType] = useNetworkType()
+  return (
+    <div className="flex w-full justify-start lg:justify-end">
+      <Button
+        onClick={() =>
+          router.push(
+            `/hemi-earn/vault/${vaultAddress}${queryStringObjectToString({
+              networkType,
+            })}`,
+          )
+        }
+        size="xSmall"
+        type="button"
+        variant="secondary"
+      >
+        {t('table.manage')}
+      </Button>
+    </div>
+  )
+}
 
 export const useGetPositionsColumns = function () {
   const t = useTranslations('hemi-earn')
@@ -84,13 +111,8 @@ export const useGetPositionsColumns = function () {
           meta: { width: '150px' },
         },
         {
-          cell: () => (
-            <div className="flex w-full justify-start lg:justify-end">
-              {/* TODO: open manage drawer — to be implemented in a future PR */}
-              <Button size="xSmall" type="button" variant="secondary">
-                {t('table.manage')}
-              </Button>
-            </div>
+          cell: ({ row }) => (
+            <ManageAction vaultAddress={row.original.vaultAddress} />
           ),
           header: () => (
             <div className="w-full max-lg:pl-4 lg:pr-4 *:lg:text-right">

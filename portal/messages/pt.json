@@ -10,6 +10,11 @@
       "total-yield": "Rendimento total ganho",
       "total-yield-tooltip": "Rendimento total que você ganhou em todos os vaults"
     },
+    "navigation": {
+      "back": "Voltar",
+      "hemi-earn": "Hemi Earn",
+      "vault-name": "vault {tokenSymbol}"
+    },
     "subheading": "Ganhe rendimento com seus ativos em um clique",
     "table": {
       "actions": "Ações",
@@ -27,6 +32,10 @@
       "total-deposits": "Depósitos totais",
       "yield-earned": "Rendimento ganho",
       "your-deposit": "Seu depósito"
+    },
+    "vault": {
+      "apy": "TEA",
+      "total-deposits": "Depósitos totais do vault"
     }
   },
   "bitcoin-yield": {

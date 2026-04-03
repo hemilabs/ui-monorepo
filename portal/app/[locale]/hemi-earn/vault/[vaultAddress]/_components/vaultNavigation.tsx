@@ -1,11 +1,14 @@
 'use client'
 
+import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { Button, ButtonIcon } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useRouter } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { queryStringObjectToString } from 'utils/url'
 
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { type EarnPool } from '../../../types'
@@ -19,6 +22,10 @@ export const VaultNavigation = function ({ pool }: Props) {
   const t = useTranslations('hemi-earn')
   const { data: pools = [] } = useEarnPools()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [networkType] = useNetworkType()
+  const dropdownRef = useOnClickOutside<HTMLDivElement>(() =>
+    setIsDropdownOpen(false),
+  )
 
   return (
     <div className="flex items-center gap-x-1">
@@ -34,7 +41,9 @@ export const VaultNavigation = function ({ pool }: Props) {
         </ButtonIcon>
       </div>
       <Button
-        onClick={() => router.push('/hemi-earn')}
+        onClick={() =>
+          router.push(`/hemi-earn${queryStringObjectToString({ networkType })}`)
+        }
         size="xSmall"
         type="button"
         variant="tertiary"
@@ -42,7 +51,7 @@ export const VaultNavigation = function ({ pool }: Props) {
         {t('navigation.hemi-earn')}
       </Button>
       <span className="text-xs font-semibold text-neutral-950">/</span>
-      <div className="relative">
+      <div className="relative" ref={dropdownRef}>
         <Button
           onClick={() => setIsDropdownOpen(prev => !prev)}
           size="xSmall"
@@ -53,33 +62,31 @@ export const VaultNavigation = function ({ pool }: Props) {
           <Chevron.Bottom className="[&>path]:fill-neutral-950" />
         </Button>
         {isDropdownOpen && (
-          <>
-            <div
-              className="fixed inset-0 z-10"
-              onClick={() => setIsDropdownOpen(false)}
+          <div className="absolute left-0 top-full z-20 mt-1">
+            <Menu
+              items={pools.map(p => ({
+                content: (
+                  <button
+                    className="-mx-2 -my-1 block px-2 py-1 text-left text-sm"
+                    onClick={function () {
+                      setIsDropdownOpen(false)
+                      router.push(
+                        `/hemi-earn/vault/${
+                          p.vaultAddress
+                        }${queryStringObjectToString({ networkType })}`,
+                      )
+                    }}
+                    type="button"
+                  >
+                    {t('navigation.vault-name', {
+                      tokenSymbol: p.token.symbol,
+                    })}
+                  </button>
+                ),
+                id: p.vaultAddress,
+              }))}
             />
-            <div className="absolute left-0 top-full z-20 mt-1">
-              <Menu
-                items={pools.map(p => ({
-                  content: (
-                    <button
-                      className="w-full text-left text-sm"
-                      onClick={function () {
-                        setIsDropdownOpen(false)
-                        router.push(`/hemi-earn/vault/${p.vaultAddress}`)
-                      }}
-                      type="button"
-                    >
-                      {t('navigation.vault-name', {
-                        tokenSymbol: p.token.symbol,
-                      })}
-                    </button>
-                  ),
-                  id: p.vaultAddress,
-                }))}
-              />
-            </div>
-          </>
+          </div>
         )}
       </div>
     </div>

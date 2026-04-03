@@ -3,7 +3,7 @@ import { type Address, zeroAddress } from 'viem'
 
 const EARN_VAULT_ADDRESSES: Record<number, Address[]> = {
   [hemi.id]: [
-    '0xC95873B97E28FFfC9230A335cE193D8D7f09e523', // TODO: replace with deployed hemiBTC vault address once provided, or via on-chain registry
+    zeroAddress, // TODO: replace with deployed hemiBTC vault address once provided, or via on-chain registry
     zeroAddress, // TODO: replace with deployed USDC vault address once provided, or via on-chain registry
   ],
   [hemiSepolia.id]: [

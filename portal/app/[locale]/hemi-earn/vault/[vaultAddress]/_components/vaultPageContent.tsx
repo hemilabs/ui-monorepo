@@ -22,11 +22,7 @@ export const VaultPageContent = function ({ vaultAddress }: Props) {
   const router = useRouter()
   const locale = useLocale()
   const [networkType] = useNetworkType()
-  const { data: pools, fetchStatus, isPending } = useEarnPools()
-  // When `enabled: false` (no vaults on this chain), React Query keeps
-  // `isPending: true` forever. `fetchStatus === 'idle'` detects that case so
-  // we can still redirect instead of showing the skeleton indefinitely.
-  const isLoading = isPending && fetchStatus !== 'idle'
+  const { data: pools, isPending } = useEarnPools()
 
   const pool = pools?.find(
     p =>
@@ -51,14 +47,14 @@ export const VaultPageContent = function ({ vaultAddress }: Props) {
 
   useEffect(
     function redirectIfNotFound() {
-      if (!isLoading && !pool) {
+      if (!isPending && !pool) {
         router.push(`/hemi-earn${queryStringObjectToString({ networkType })}`)
       }
     },
-    [isLoading, networkType, pool, router],
+    [isPending, networkType, pool, router],
   )
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <PageLayout variant="wide">
         <Skeleton className="h-7 w-48 rounded-md" />

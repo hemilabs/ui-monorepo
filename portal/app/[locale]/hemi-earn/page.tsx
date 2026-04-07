@@ -2,10 +2,12 @@
 
 import { PageLayout } from 'components/pageLayout'
 import dynamic from 'next/dynamic'
+import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 import { InfoCards } from './_components/infoCards'
 import { TopSection } from './_components/topSection'
+import { useHemiEarnTokens } from './_hooks/useHemiEarnTokens'
 
 const EarnTableSkeleton = () => (
   <div className="mt-10 w-full">
@@ -31,12 +33,22 @@ const EarnTable = dynamic(
   },
 )
 
+const TokensGate = function ({ children }: { children: ReactNode }) {
+  const { data } = useHemiEarnTokens()
+  if (data) {
+    return <>{children}</>
+  }
+  return <EarnTableSkeleton />
+}
+
 export default function Page() {
   return (
     <PageLayout variant="wide">
       <TopSection />
       <InfoCards />
-      <EarnTable />
+      <TokensGate>
+        <EarnTable />
+      </TokensGate>
     </PageLayout>
   )
 }

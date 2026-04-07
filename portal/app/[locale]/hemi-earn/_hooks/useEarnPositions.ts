@@ -11,7 +11,7 @@ import { useHemiEarnTokens } from './useHemiEarnTokens'
 
 export const useEarnPositions = function (): EarnPosition[] {
   const { id: chainId } = useHemi()
-  const tokens = useHemiEarnTokens()
+  const { data: tokens = [] } = useHemiEarnTokens()
 
   return useMemo(
     function () {

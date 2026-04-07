@@ -12,7 +12,7 @@ type TotalAvgApyData = EarnCardData & { apy: number }
 
 export const useTotalAvgApy = function () {
   const { id } = useHemi()
-  const tokens = useHemiEarnTokens()
+  const { data: tokens = [] } = useHemiEarnTokens()
 
   const {
     data: queryData,

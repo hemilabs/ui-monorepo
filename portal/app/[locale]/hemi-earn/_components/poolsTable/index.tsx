@@ -9,6 +9,7 @@ import {
 import { Column } from 'components/table/_components/column'
 import { ColumnHeader } from 'components/table/_components/columnHeader'
 import { getNewColumnOrder } from 'components/table/_utils'
+import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
 
 import { useEarnPools } from '../../_hooks/useEarnPools'
@@ -17,7 +18,7 @@ import { useGetPoolsColumns } from './columns'
 
 export const PoolsTable = function () {
   const columns = useGetPoolsColumns()
-  const { data: pools = [] } = useEarnPools()
+  const { data: pools = [], isPending } = useEarnPools()
   const { width } = useWindowSize()
 
   const table = useReactTable({
@@ -33,6 +34,10 @@ export const PoolsTable = function () {
       }),
     },
   })
+
+  if (isPending) {
+    return <Skeleton className="h-17 w-full rounded-xl" />
+  }
 
   return (
     <div

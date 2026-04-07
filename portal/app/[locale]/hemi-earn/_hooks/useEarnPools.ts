@@ -16,7 +16,7 @@ import { useHemiEarnTokens } from './useHemiEarnTokens'
 export const useEarnPools = function () {
   const { id: chainId } = useHemi()
   const hemiClient = useHemiClient()
-  const tokens = useHemiEarnTokens()
+  const { data: tokens = [] } = useHemiEarnTokens()
 
   const vaultTokens = useMemo<{ token: EvmToken; vaultAddress: Address }[]>(
     function () {

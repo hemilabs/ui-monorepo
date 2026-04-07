@@ -12,7 +12,7 @@ type TotalYieldEarnedData = EarnCardData & { totalUsd: number }
 
 export const useTotalYieldEarned = function () {
   const { id } = useHemi()
-  const tokens = useHemiEarnTokens()
+  const { data: tokens = [] } = useHemiEarnTokens()
 
   const {
     data: queryData,

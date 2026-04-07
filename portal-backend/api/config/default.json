@@ -1,7 +1,4 @@
 {
-  "absinthe": {
-    "apiUrl": "https://gql3.absinthe.network/v1/graphql"
-  },
   "btcVaults": {
     "cacheMin": 1
   },

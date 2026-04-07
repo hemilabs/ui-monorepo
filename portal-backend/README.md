@@ -60,16 +60,6 @@ $ curl http://localhost:3006/net-stats
 {"btc-transactions":"7310797","latest-keystone":"2774674","timestamp":1759162804799}
 ```
 
-#### `GET /points/:address`
-
-Provides the amount of Hemi points any user has earned through the **Incentivized Testnet**, **Hemi Staking** campaigns, etc.
-Data is provided by [Absinthe](https://absinthe.network/).
-
-```console
-$ curl http://localhost:3006/0x0000000000000000000000000000000000000001
-{"points":10000}
-```
-
 #### `GET /prices`
 
 Retrieves token prices (in USD) stored in a key/value store.
@@ -101,21 +91,19 @@ $ curl http://localhost:3006/ve-hemi-rewards/43111
 
 These environment variables control how the cache works:
 
-| Variable              | Description                                                       | Default                                    |
-| --------------------- | ----------------------------------------------------------------- | ------------------------------------------ |
-| ABSINTHE_API_KEY      | The JWT used to authenticate to the Absinthe GraphQL API.         |                                            |
-| ABSINTHE_API_URL      | The Absinthe GraphQL API URL.                                     | `https://gql3.absinthe.network/v1/graphql` |
-| BTC_VAULTS_CACHE_MIN  | The time to cache the BTC vaults data in minutes.                 | 1                                          |
-| ORIGINS               | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhost:3000`                    |
-| PORT                  | The HTTP port the server listens for requests.                    | 3006                                       |
-| REDIS_URL             | The URL of the Redis database.                                    | `redis://localhost:6379`                   |
-| RPC_URL_HEMI          | URL of the Hemi RPC node.                                         | `https://rpc.hemi.network/rpc`             |
-| SENTRY_DSN            | The Sentry DSN.                                                   |                                            |
-| SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).      | ["log", "warn", "error"]                   |
-| TVL_DATA_SAMPLE_ID    | The sample id within the TVL data.                                |                                            |
-| TVL_DATA_PASSWORD     | The Databox Password.                                             |                                            |
-| TVL_DATA_URL          | The Databox URL that shall be used to get the TVL.                |                                            |
-| TVL_REVALIDATE_MIN    | The time the TVL will be considered fresh.                        | 20                                         |
+| Variable              | Description                                                       | Default                        |
+| --------------------- | ----------------------------------------------------------------- | ------------------------------ |
+| BTC_VAULTS_CACHE_MIN  | The time to cache the BTC vaults data in minutes.                 | 1                              |
+| ORIGINS               | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhost:3000`        |
+| PORT                  | The HTTP port the server listens for requests.                    | 3006                           |
+| REDIS_URL             | The URL of the Redis database.                                    | `redis://localhost:6379`       |
+| RPC_URL_HEMI          | URL of the Hemi RPC node.                                         | `https://rpc.hemi.network/rpc` |
+| SENTRY_DSN            | The Sentry DSN.                                                   |                                |
+| SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).      | ["log", "warn", "error"]       |
+| TVL_DATA_SAMPLE_ID    | The sample id within the TVL data.                                |                                |
+| TVL_DATA_PASSWORD     | The Databox Password.                                             |                                |
+| TVL_DATA_URL          | The Databox URL that shall be used to get the TVL.                |                                |
+| TVL_REVALIDATE_MIN    | The time the TVL will be considered fresh.                        | 20                             |
 
 (1) Only stars (`*`) are supported. I.e. `https://*.hemi.xyz` will match any subdomain or subdomain chain.
 

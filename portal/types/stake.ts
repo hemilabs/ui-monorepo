@@ -29,7 +29,7 @@ export const stakeProtocols = [
 
 export type StakeProtocols = (typeof stakeProtocols)[number]
 
-export type Reward =
+type Reward =
   | 'babypie'
   | 'bedrock'
   | 'bitfi'

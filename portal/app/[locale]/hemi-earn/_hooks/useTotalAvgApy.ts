@@ -12,7 +12,7 @@ type TotalAvgApyData = EarnCardData & { apy: number }
 
 export const useTotalAvgApy = function () {
   const { id } = useHemi()
-  const tokens = useHemiEarnTokens()
+  const { data: vaultTokens = [] } = useHemiEarnTokens()
 
   const {
     data: queryData,
@@ -27,13 +27,13 @@ export const useTotalAvgApy = function () {
   const data: TotalAvgApyData | undefined = queryData
     ? {
         apy: queryData.apy,
-        vaultBreakdown: tokens.map(token => ({
+        vaultBreakdown: vaultTokens.map(({ token }) => ({
           name: token.symbol,
           tokenAddress: token.address,
           tokenChainId: id,
           value: formatApyDisplay(0),
         })),
-        vaultCount: tokens.length,
+        vaultCount: vaultTokens.length,
       }
     : undefined
 

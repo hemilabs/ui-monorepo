@@ -1,6 +1,7 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import Big from 'big.js'
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useTokenBalance } from 'hooks/useBalance'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import { useEstimateBtcFees } from 'hooks/useEstimateBtcFees'
 import { useTranslations } from 'next-intl'
@@ -45,7 +46,7 @@ export const SetMaxEvmBalance = function ({
   const {
     data: walletNativeTokenBalance,
     isLoading: isLoadingNativeTokenBalance,
-  } = useNativeTokenBalance(token.chainId)
+  } = useNativeBalance(token.chainId)
 
   const { data: walletTokenBalance } = useTokenBalance(
     token.chainId,

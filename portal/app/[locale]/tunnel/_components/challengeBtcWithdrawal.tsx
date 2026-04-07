@@ -1,6 +1,7 @@
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from 'components/button'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useTokenBalance } from 'hooks/useBalance'
 import { useChallengeBitcoinWithdrawal } from 'hooks/useBtcTunnel'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
@@ -33,7 +34,7 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
     withdrawal.l2ChainId,
     withdrawal.l2Token,
   )
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeTokenBalance(
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     withdrawal.l2ChainId,
   )
   const queryClient = useQueryClient()

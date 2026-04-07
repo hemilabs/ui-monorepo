@@ -1,9 +1,10 @@
 'use client'
 
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
@@ -85,7 +86,7 @@ export const EvmDeposit = function ({ state }: EvmDepositProps) {
   const {
     data: walletNativeTokenBalance,
     isSuccess: nativeTokenBalanceLoaded,
-  } = useNativeTokenBalance(fromToken.chainId)
+  } = useNativeBalance(fromToken.chainId)
 
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
 

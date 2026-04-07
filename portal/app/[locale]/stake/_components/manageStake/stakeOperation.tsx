@@ -1,4 +1,5 @@
 import { useAllowance } from '@hemilabs/react-hooks/useAllowance'
+import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { type UseQueryOptions } from '@tanstack/react-query'
 import { DrawerParagraph } from 'components/drawer'
 import { HemiFees } from 'components/hemiFees'
@@ -11,7 +12,7 @@ import { Spinner } from 'components/spinner'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { stakeManagerAddresses } from 'hemi-viem-stake-actions'
 import { useAmount } from 'hooks/useAmount'
-import { useNativeTokenBalance, useTokenBalance } from 'hooks/useBalance'
+import { useTokenBalance } from 'hooks/useBalance'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useHemi } from 'hooks/useHemi'
 import dynamic from 'next/dynamic'
@@ -62,7 +63,7 @@ type Props = {
 }
 
 const useBalance = function (token: StakeToken) {
-  const nativeBalance = useNativeTokenBalance(token.chainId)
+  const nativeBalance = useNativeBalance(token.chainId)
   const tokenBalance = useTokenBalance(token.chainId, token.address)
 
   return isNativeToken(token) ? nativeBalance : tokenBalance

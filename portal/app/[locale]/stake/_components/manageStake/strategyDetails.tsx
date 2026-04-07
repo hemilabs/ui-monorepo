@@ -2,8 +2,6 @@ import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import { StakeToken } from 'types/stake'
 
-import { TokenRewards } from '../tokenRewards'
-
 import { Tvl } from './tvl'
 import { Website } from './website'
 
@@ -27,12 +25,6 @@ export const StrategyDetails = function ({ token }: Props) {
     <div className="flex flex-col">
       <Container>
         <h5 className="font-medium">{t('heading')}</h5>
-      </Container>
-      <Container>
-        <Subtitle text={t('rewards')} />
-        <div className="flex h-6 flex-wrap gap-x-1">
-          <TokenRewards rewards={token.extensions.rewards} />
-        </div>
       </Container>
       <Container>
         <Subtitle text={t('tvl')} />

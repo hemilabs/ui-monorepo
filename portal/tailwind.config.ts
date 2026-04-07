@@ -81,13 +81,6 @@ const config: Config = {
           900: '#82220C',
           950: '#460E04',
         },
-        'points': {
-          'bsquared': '#FFB852',
-          'eigenpie': '#131247',
-          'pump-btc': '#69DFFA',
-          'solv': '#EDE5FB',
-          'unirouter': '#9600FF',
-        },
         'sky': {
           450: '#009CF5',
           550: '#0EA5E9',

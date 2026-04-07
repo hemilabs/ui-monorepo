@@ -455,10 +455,11 @@
       "staked": "Staked",
       "stake-more": "Hacer más stake",
       "staking-assets": "Activos en stake",
-      "subtitle": "Visualice sus posiciones activas de boost staking y las recompensas obtenidas.",
+      "subtitle": "Visualice sus posiciones activas de boost staking.",
       "heading": "Boost staking",
       "title": "Panel",
       "total-earned-points": "Total de puntos Hemi ganados",
+      "total-earned-points-description": "Temporada finalizada.",
       "total-staked-on-hemi": "Total en stake en Hemi",
       "your-stake": "Su Stake"
     },
@@ -466,12 +467,11 @@
       "approve-and-stake": "Aprobar y Hacer Stake",
       "description-manage-stake": "Recargue su stake o retire en cualquier momento— ¡Usted tiene el control total!",
       "manage-your-stake": "Gestione su stake",
-      "stake-and-earn-rewards": "¡Haga stake de {symbol} y gane recompensas!",
+      "stake-and-earn-rewards": "Haga stake de {symbol} para potenciar su participación.",
       "stake-token": "Hacer stake de {symbol}",
       "staking": "Haciendo stake...",
       "strategy-details": {
         "heading": "Detalles de la Estrategia",
-        "rewards": "Recompensas",
         "tvl": "TVL (en Hemi)",
         "website": "Sitio web"
       },
@@ -480,28 +480,20 @@
       "unstake-token": "Desbloquear {symbol}",
       "unstaking": "Desbloqueando...",
       "unwrap": "Convertir",
-      "you-can-unstake-anytime": "Puede retirar en cualquier momento y conservar los puntos ya ganados."
-    },
-    "points": {
-      "diamonds": "Diamantes",
-      "points": "Puntos",
-      "seeds": "Semillas",
-      "x2-babypie-jewels": "x2 Joyas Babypie",
-      "x2-eigenpie-points": "x2 Eigenpie Puntos",
-      "x2point5-river-points": "x2.5 River Puntos"
+      "you-can-unstake-anytime": "Puede retirar en cualquier momento."
     },
     "protocol": "Protocolo",
-    "ready-to-earn": "¿Listo para ganar? Comience a hacer stake y vea cómo se acumulan sus puntos",
+    "ready-to-earn": "¿Listo para hacer stake? Use activos compatibles para ampliar su participación en la gobernanza.",
     "rewards": "Recompensas",
     "stake": {
       "action": "Acción",
       "learn-how-to-stake-on-hemi": "Aprenda como hacer stake en Hemi",
       "new-here": "¿Nuevo aquí?",
       "heading": "Stake for boost",
-      "subheading": "Haga staking de tokens para acumular puntos en los programas compatibles.",
+      "subheading": "Haga staking de tokens para potenciar su poder de gobernanza.",
       "title": "Stake"
     },
-    "start-staking-earn-points": "Comience a hacer stake y ganar puntos",
+    "start-staking-earn-points": "Empiece a hacer stake",
     "toast": {
       "go-staking-dashboard": "Vea su panel de control de sus stakes",
       "here-your-stake-tx": "Aquí está su transacción de {type}:",

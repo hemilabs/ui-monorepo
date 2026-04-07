@@ -21,11 +21,11 @@ export const fetchHemiEarnTokens = async function ({
     ),
   )
   return results.reduce<VaultToken[]>(function (acc, tokenAddress, index) {
-    if (tokenAddress == null) {
+    if (tokenAddress === null) {
       return acc
     }
     const token = getTokenByAddress(tokenAddress, chainId)
-    if (token != null && isEvmToken(token)) {
+    if (token !== undefined && isEvmToken(token)) {
       acc.push({ token, vaultAddress: vaultAddresses[index] })
     }
     return acc

@@ -54,3 +54,37 @@ This is the list of MCP servers that can be connected to. Use the listed guideli
 Note: Some guidelines may use settings customization, but VS code has standardize them into using mcp.json. Further info [here](https://code.visualstudio.com/docs/copilot/chat/mcp-servers)
 
 - [Figma](https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Dev-Mode-MCP-Server)
+
+## Docker images
+
+To locally check a Docker image for vulnerabilities, i.e. `portal-backend/api`, run the following commands:
+
+```sh
+docker build --tag temp-image:local portal-backend/api
+docker scout cves --exit-code --only-severity critical,high --vex-author ".*" --vex-location . temp-image:local
+```
+
+In the case some vulnerabilities must be ignored, update `vex.json` by adding a new statement and update the file global timestamp too.
+Following is an example of a statement to ignore a vulnerability in `glob` that originates in the installed NPM global package:
+
+```json
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "author": "Your Name <your-email@hemi.xyz>",
+  "statements": [
+    {
+      "vulnerability": {
+        "name": "CVE-2025-64756"
+      },
+      "products": [
+        { "@id": "pkg:npm/glob@10.4.5" },
+        { "@id": "pkg:npm/glob@11.0.3" }
+      ],
+      "status": "not_affected",
+      "justification": "vulnerable_code_not_in_execute_path"
+    }
+  ],
+  "timestamp": "2026-03-24T00:00:00Z",
+  "version": 1
+}
+```

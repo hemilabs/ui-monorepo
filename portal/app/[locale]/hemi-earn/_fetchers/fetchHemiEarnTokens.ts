@@ -1,9 +1,11 @@
 import { getEarnVaultAddresses } from 'hemi-earn-actions'
-import { getTokenByAddress, isEvmToken } from 'utils/token'
-import { type Chain, type PublicClient, zeroAddress } from 'viem'
+import { type Address, type Chain, type PublicClient, zeroAddress } from 'viem'
 import { asset } from 'viem-erc4626/actions'
 
-import { type VaultToken } from '../types'
+type VaultAsset = {
+  tokenAddress: Address
+  vaultAddress: Address
+}
 
 export const fetchHemiEarnTokens = async function ({
   chainId,
@@ -11,23 +13,15 @@ export const fetchHemiEarnTokens = async function ({
 }: {
   chainId: Chain['id']
   client: PublicClient
-}): Promise<VaultToken[]> {
-  const vaultAddresses = getEarnVaultAddresses(chainId)
-  const results = await Promise.all(
-    vaultAddresses.map(addr =>
-      addr === zeroAddress
-        ? Promise.resolve(null)
-        : asset(client, { address: addr }),
-    ),
+}): Promise<VaultAsset[]> {
+  const vaultAddresses = getEarnVaultAddresses(chainId).filter(
+    addr => addr !== zeroAddress,
   )
-  return results.reduce<VaultToken[]>(function (acc, tokenAddress, index) {
-    if (tokenAddress === null) {
-      return acc
-    }
-    const token = getTokenByAddress(tokenAddress, chainId)
-    if (token !== undefined && isEvmToken(token)) {
-      acc.push({ token, vaultAddress: vaultAddresses[index] })
-    }
-    return acc
-  }, [])
+  const tokenAddresses = await Promise.all(
+    vaultAddresses.map(addr => asset(client, { address: addr })),
+  )
+  return tokenAddresses.map((tokenAddress, index) => ({
+    tokenAddress,
+    vaultAddress: vaultAddresses[index],
+  }))
 }

@@ -14,12 +14,12 @@ import { type EarnCardData } from '../types'
 
 import { useHemiEarnTokens } from './useHemiEarnTokens'
 
-type TotalDepositsData = EarnCardData & { totalUsd: number }
+type TotalDepositsData = EarnCardData & { totalUsd: string }
 
 export const useTotalDeposits = function () {
   const { id: chainId } = useHemi()
   const hemiClient = useHemiClient()
-  const { data: tokens = [] } = useHemiEarnTokens()
+  const { data: vaultTokens = [] } = useHemiEarnTokens()
   const { data: prices } = useTokenPrices()
 
   const {
@@ -27,8 +27,8 @@ export const useTotalDeposits = function () {
     isError,
     isPending,
   } = useQuery({
-    enabled: tokens.length > 0,
-    queryFn: () => fetchTotalDeposits({ chainId, client: hemiClient, tokens }),
+    enabled: vaultTokens.length > 0,
+    queryFn: () => fetchTotalDeposits({ client: hemiClient, vaultTokens }),
     queryKey: ['hemi-earn', 'total-deposits', chainId],
   })
 
@@ -44,7 +44,7 @@ export const useTotalDeposits = function () {
               ),
             Big(0),
           )
-          .toNumber(),
+          .toFixed(),
         vaultBreakdown: deposits.map(({ amount, token }) => ({
           name: token.symbol,
           tokenAddress: token.address,

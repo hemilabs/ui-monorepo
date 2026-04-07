@@ -49,7 +49,7 @@ const tokenB: EvmToken = {
 }
 
 describe('fetchHemiEarnTokens', function () {
-  it('returns resolved EVM tokens for each non-zero vault', async function () {
+  it('returns vault-token pairs for each deployed vault', async function () {
     vi.mocked(getEarnVaultAddresses).mockReturnValue([vaultA, vaultB])
     vi.mocked(asset)
       .mockResolvedValueOnce(tokenAddressA)
@@ -60,7 +60,10 @@ describe('fetchHemiEarnTokens', function () {
 
     const result = await fetchHemiEarnTokens({ chainId, client })
 
-    expect(result).toEqual([tokenA, tokenB])
+    expect(result).toEqual([
+      { token: tokenA, vaultAddress: vaultA },
+      { token: tokenB, vaultAddress: vaultB },
+    ])
     expect(asset).toHaveBeenCalledTimes(2)
     expect(asset).toHaveBeenCalledWith(client, { address: vaultA })
     expect(asset).toHaveBeenCalledWith(client, { address: vaultB })
@@ -73,9 +76,34 @@ describe('fetchHemiEarnTokens', function () {
 
     const result = await fetchHemiEarnTokens({ chainId, client })
 
-    expect(result).toEqual([tokenA])
+    expect(result).toEqual([{ token: tokenA, vaultAddress: vaultA }])
     expect(asset).toHaveBeenCalledTimes(1)
     expect(asset).toHaveBeenCalledWith(client, { address: vaultA })
+  })
+
+  it('preserves correct vault-token pairing with interleaved zero addresses', async function () {
+    vi.mocked(getEarnVaultAddresses).mockReturnValue([
+      zeroAddress,
+      vaultA,
+      zeroAddress,
+      vaultB,
+    ])
+    vi.mocked(asset)
+      .mockResolvedValueOnce(tokenAddressA)
+      .mockResolvedValueOnce(tokenAddressB)
+    vi.mocked(getTokenByAddress)
+      .mockReturnValueOnce(tokenA)
+      .mockReturnValueOnce(tokenB)
+
+    const result = await fetchHemiEarnTokens({ chainId, client })
+
+    expect(result).toEqual([
+      { token: tokenA, vaultAddress: vaultA },
+      { token: tokenB, vaultAddress: vaultB },
+    ])
+    expect(asset).toHaveBeenCalledTimes(2)
+    expect(asset).toHaveBeenNthCalledWith(1, client, { address: vaultA })
+    expect(asset).toHaveBeenNthCalledWith(2, client, { address: vaultB })
   })
 
   it('filters out addresses not found in the token list', async function () {
@@ -89,7 +117,7 @@ describe('fetchHemiEarnTokens', function () {
 
     const result = await fetchHemiEarnTokens({ chainId, client })
 
-    expect(result).toEqual([tokenA])
+    expect(result).toEqual([{ token: tokenA, vaultAddress: vaultA }])
   })
 
   it('returns an empty array when all vaults are zero addresses', async function () {

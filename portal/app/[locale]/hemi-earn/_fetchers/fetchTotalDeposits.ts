@@ -1,33 +1,26 @@
-import { getEarnVaultAddresses } from 'hemi-earn-actions'
-import { type EvmToken } from 'types/token'
-import { type Chain, type PublicClient, zeroAddress } from 'viem'
+import { type PublicClient } from 'viem'
 import { totalAssets } from 'viem-erc4626/actions'
 
-type VaultDeposit = {
+import { type VaultToken } from '../types'
+
+type VaultDeposit = VaultToken & {
   amount: bigint
-  token: EvmToken
 }
 
 export const fetchTotalDeposits = async function ({
-  chainId,
   client,
-  tokens,
+  vaultTokens,
 }: {
-  chainId: Chain['id']
   client: PublicClient
-  tokens: EvmToken[]
+  vaultTokens: VaultToken[]
 }): Promise<VaultDeposit[]> {
-  const vaultAddresses = getEarnVaultAddresses(chainId)
   const amounts = await Promise.all(
-    tokens.map(function (_, index) {
-      const vaultAddress = vaultAddresses[index]
-      return vaultAddress && vaultAddress !== zeroAddress
-        ? totalAssets(client, { address: vaultAddress })
-        : Promise.resolve(BigInt(0))
-    }),
+    vaultTokens.map(({ vaultAddress }) =>
+      totalAssets(client, { address: vaultAddress }),
+    ),
   )
-  return tokens.map((token, index) => ({
+  return vaultTokens.map((vt, index) => ({
+    ...vt,
     amount: amounts[index] ?? BigInt(0),
-    token,
   }))
 }

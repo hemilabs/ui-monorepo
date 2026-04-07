@@ -12,7 +12,7 @@ type TotalYieldEarnedData = EarnCardData & { totalUsd: number }
 
 export const useTotalYieldEarned = function () {
   const { id } = useHemi()
-  const { data: tokens = [] } = useHemiEarnTokens()
+  const { data: vaultTokens = [] } = useHemiEarnTokens()
 
   const {
     data: queryData,
@@ -27,13 +27,13 @@ export const useTotalYieldEarned = function () {
   const data: TotalYieldEarnedData | undefined = queryData
     ? {
         totalUsd: queryData.totalUsd,
-        vaultBreakdown: tokens.map(token => ({
+        vaultBreakdown: vaultTokens.map(({ token }) => ({
           name: token.symbol,
           tokenAddress: token.address,
           tokenChainId: id,
           value: `$${formatFiatNumber(0)}`,
         })),
-        vaultCount: tokens.length,
+        vaultCount: vaultTokens.length,
       }
     : undefined
 

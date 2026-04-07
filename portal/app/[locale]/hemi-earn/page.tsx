@@ -34,10 +34,9 @@ const EarnTable = dynamic(
 )
 
 const TokensGate = function ({ children }: { children: ReactNode }) {
-  const { data } = useHemiEarnTokens()
-  if (data) {
-    return <>{children}</>
-  }
+  const { data, isError } = useHemiEarnTokens()
+  if (isError) return null
+  if (data) return <>{children}</>
   return <EarnTableSkeleton />
 }
 

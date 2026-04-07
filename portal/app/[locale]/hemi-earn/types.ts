@@ -1,6 +1,11 @@
 import { type EvmToken } from 'types/token'
 import { type Address } from 'viem'
 
+export type VaultToken = {
+  token: EvmToken
+  vaultAddress: Address
+}
+
 export type VaultBreakdown = {
   name: string
   tokenAddress: string

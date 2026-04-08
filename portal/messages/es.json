@@ -35,7 +35,32 @@
     },
     "vault": {
       "apy": "TEA",
-      "total-deposits": "Depósitos totales del vault"
+      "deposit": "Depositar",
+      "deposit-successful": "Depósito exitoso",
+      "drawer": {
+        "approving": "Aprobando {symbol}",
+        "deposit": {
+          "heading": "Revisar Depósito",
+          "subheading": "Complete los pasos restantes para depositar sus tokens."
+        },
+        "deposit-token": "Depositar {symbol}",
+        "withdraw": {
+          "heading": "Revisar Retiro",
+          "subheading": "Complete los pasos restantes para retirar sus tokens."
+        },
+        "withdraw-token": "Retirar {symbol}"
+      },
+      "form": {
+        "approve-and-deposit": "Aprobar y Depositar",
+        "deposit": "Depositar",
+        "depositing": "Depositando...",
+        "withdraw": "Retirar",
+        "withdrawing": "Retirando..."
+      },
+      "here-is-your-tx": "Aquí está su transacción:",
+      "total-deposits": "Depósitos totales del vault",
+      "withdraw": "Retirar",
+      "withdraw-successful": "Retiro exitoso"
     }
   },
   "bitcoin-yield": {

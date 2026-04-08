@@ -10,6 +10,7 @@ import { Column } from 'components/table/_components/column'
 import { ColumnHeader } from 'components/table/_components/columnHeader'
 import { getNewColumnOrder } from 'components/table/_utils'
 import { useTranslations } from 'next-intl'
+import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
 
 import { useEarnPositions } from '../../_hooks/useEarnPositions'
@@ -37,7 +38,7 @@ const NoPositionsEmptyState = function () {
 
 export const MyPositionsTable = function () {
   const columns = useGetPositionsColumns()
-  const positions = useEarnPositions()
+  const { data: positions = [], isPending } = useEarnPositions()
   const { width } = useWindowSize()
 
   const table = useReactTable({
@@ -72,6 +73,10 @@ export const MyPositionsTable = function () {
       ))}
     </thead>
   )
+
+  if (isPending) {
+    return <Skeleton className="h-17 w-full rounded-xl" />
+  }
 
   if (positions.length === 0) {
     return (

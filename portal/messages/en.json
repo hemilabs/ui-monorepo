@@ -35,7 +35,32 @@
     },
     "vault": {
       "apy": "APY",
-      "total-deposits": "Vault total deposits"
+      "deposit": "Deposit",
+      "deposit-successful": "Deposit successful",
+      "drawer": {
+        "approving": "Approving {symbol}",
+        "deposit": {
+          "heading": "Review Deposit",
+          "subheading": "Complete the remaining steps to deposit your tokens."
+        },
+        "deposit-token": "Deposit {symbol}",
+        "withdraw": {
+          "heading": "Review Withdrawal",
+          "subheading": "Complete the remaining steps to withdraw your tokens."
+        },
+        "withdraw-token": "Withdraw {symbol}"
+      },
+      "form": {
+        "approve-and-deposit": "Approve and Deposit",
+        "deposit": "Deposit",
+        "depositing": "Depositing...",
+        "withdraw": "Withdraw",
+        "withdrawing": "Withdrawing..."
+      },
+      "here-is-your-tx": "Here's your transaction:",
+      "total-deposits": "Vault total deposits",
+      "withdraw": "Withdraw",
+      "withdraw-successful": "Withdraw successful"
     }
   },
   "bitcoin-yield": {

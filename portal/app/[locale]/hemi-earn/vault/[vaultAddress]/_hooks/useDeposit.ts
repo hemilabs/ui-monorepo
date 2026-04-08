@@ -127,7 +127,7 @@ export const useDeposit = function ({
         // Update token balance (subtract deposited amount)
         queryClient.setQueryData(
           tokenBalanceQueryKey,
-          (old: bigint) => old - amount,
+          (old: bigint | undefined) => (old === undefined ? old : old - amount),
         )
       })
 

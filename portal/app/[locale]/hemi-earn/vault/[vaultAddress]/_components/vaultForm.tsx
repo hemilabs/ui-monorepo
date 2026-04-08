@@ -50,6 +50,16 @@ export const VaultForm = function () {
   const t = useTranslations('hemi-earn.vault')
   const [activeTab, setActiveTab] = useState<ActiveTab>('deposit')
 
+  const switchToDeposit = function () {
+    updateInput('0')
+    setActiveTab('deposit')
+  }
+
+  const switchToWithdraw = function () {
+    updateInput('0')
+    setActiveTab('withdraw')
+  }
+
   if (!pool.token) {
     return (
       <Skeleton
@@ -82,15 +92,9 @@ export const VaultForm = function () {
         />
       )}
       {activeTab === 'deposit' ? (
-        <Deposit
-          onSwitchToWithdraw={() => (
-            updateInput('0'), setActiveTab('withdraw')
-          )}
-        />
+        <Deposit onSwitchToWithdraw={switchToWithdraw} />
       ) : (
-        <Withdraw
-          onSwitchToDeposit={() => (updateInput('0'), setActiveTab('deposit'))}
-        />
+        <Withdraw onSwitchToDeposit={switchToDeposit} />
       )}
       <Suspense>
         <SideDrawer />

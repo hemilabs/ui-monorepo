@@ -123,12 +123,10 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   })
 
   const handleDeposit = function () {
-    deposit()
-    if (needsApproval) {
-      setOperationRunning('approving')
-    } else {
-      setOperationRunning('depositing')
-    }
+    deposit(undefined, {
+      onError: () => setOperationRunning('idle'),
+    })
+    setOperationRunning(needsApproval ? 'approving' : 'depositing')
   }
 
   function RenderBelowForm() {

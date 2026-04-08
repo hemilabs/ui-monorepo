@@ -104,7 +104,9 @@ export const Withdraw = function ({ onSwitchToDeposit }: Props) {
   })
 
   const handleWithdraw = function () {
-    withdrawFn()
+    withdrawFn(undefined, {
+      onError: () => setOperationRunning('idle'),
+    })
     setOperationRunning('withdrawing')
   }
 

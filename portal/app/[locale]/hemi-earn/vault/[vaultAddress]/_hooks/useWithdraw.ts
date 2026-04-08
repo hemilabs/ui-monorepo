@@ -104,7 +104,7 @@ export const useWithdraw = function ({
         // Update token balance (add withdrawn amount)
         queryClient.setQueryData(
           tokenBalanceQueryKey,
-          (old: bigint) => old + amount,
+          (old: bigint | undefined) => (old === undefined ? old : old + amount),
         )
       })
 

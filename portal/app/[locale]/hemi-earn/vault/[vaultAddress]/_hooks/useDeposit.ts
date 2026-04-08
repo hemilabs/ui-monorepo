@@ -10,8 +10,11 @@ import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { parseTokenUnits } from 'utils/token'
+import { erc4626Abi, parseEventLogs } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { getEarnPoolsQueryKey } from '../../../_hooks/useEarnPools'
+import { getEarnPositionsQueryKey } from '../../../_hooks/useEarnPositions'
 import { type EarnPool } from '../../../types'
 import {
   type VaultDepositOperation,
@@ -124,11 +127,32 @@ export const useDeposit = function ({
 
         updateNativeBalanceAfterFees(receipt)
 
-        // Update token balance (subtract deposited amount)
-        queryClient.setQueryData(
-          tokenBalanceQueryKey,
-          (old: bigint | undefined) => (old === undefined ? old : old - amount),
-        )
+        const [depositLog] = parseEventLogs({
+          abi: erc4626Abi,
+          eventName: 'Deposit',
+          logs: receipt.logs,
+        })
+
+        if (depositLog) {
+          const { assets } = depositLog.args
+
+          // Update token balance
+          queryClient.setQueryData(
+            tokenBalanceQueryKey,
+            (old: bigint | undefined) =>
+              old === undefined ? old : old - assets,
+          )
+
+          // Update vault balance
+          queryClient.setQueryData(
+            getUserVaultBalanceQueryKey({
+              chainId: hemi.id,
+              vaultAddress: pool.vaultAddress,
+            }),
+            (old: bigint | undefined) =>
+              old === undefined ? old : old + assets,
+          )
+        }
       })
 
       emitter.on('deposit-transaction-reverted', function (receipt) {
@@ -159,7 +183,7 @@ export const useDeposit = function ({
       queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
       queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
       queryClient.invalidateQueries({
-        queryKey: ['hemi-earn', 'pools', hemi.id],
+        queryKey: getEarnPoolsQueryKey(hemi.id),
       })
       queryClient.invalidateQueries({
         queryKey: getUserVaultBalanceQueryKey({
@@ -168,7 +192,7 @@ export const useDeposit = function ({
         }),
       })
       queryClient.invalidateQueries({
-        queryKey: ['hemi-earn', 'positions', hemi.id, address],
+        queryKey: getEarnPositionsQueryKey(hemi.id, address),
       })
     },
   })

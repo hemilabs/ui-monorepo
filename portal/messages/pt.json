@@ -35,7 +35,6 @@
     },
     "vault": {
       "apy": "TEA",
-      "deposit": "Depositar",
       "deposit-successful": "Depósito realizado com sucesso",
       "drawer": {
         "approving": "Aprovando {symbol}",
@@ -51,15 +50,10 @@
         "withdraw-token": "Sacar {symbol}"
       },
       "form": {
-        "approve-and-deposit": "Aprovar e Depositar",
-        "deposit": "Depositar",
-        "depositing": "Depositando...",
-        "withdraw": "Sacar",
         "withdrawing": "Sacando..."
       },
       "here-is-your-tx": "Aqui está sua transação:",
       "total-deposits": "Depósitos totais do vault",
-      "withdraw": "Sacar",
       "withdraw-successful": "Saque realizado com sucesso"
     }
   },

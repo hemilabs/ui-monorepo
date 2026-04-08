@@ -73,7 +73,6 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       chainId: hemi.id,
       gasUnits: depositGasUnits,
       isGasUnitsError: isDepositGasUnitsError,
-      overEstimation: 1.5,
     })
 
   const getStepFees = ({

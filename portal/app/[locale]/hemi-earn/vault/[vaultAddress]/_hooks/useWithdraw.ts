@@ -9,9 +9,12 @@ import { useTokenBalance } from 'hooks/useBalance'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { parseTokenUnits } from 'utils/token'
+import { erc4626Abi, parseEventLogs } from 'viem'
 import { convertToShares } from 'viem-erc4626/actions'
 import { useAccount } from 'wagmi'
 
+import { getEarnPoolsQueryKey } from '../../../_hooks/useEarnPools'
+import { getEarnPositionsQueryKey } from '../../../_hooks/useEarnPositions'
 import { type EarnPool } from '../../../types'
 import {
   type VaultWithdrawOperation,
@@ -101,11 +104,32 @@ export const useWithdraw = function ({
 
         updateNativeBalanceAfterFees(receipt)
 
-        // Update token balance (add withdrawn amount)
-        queryClient.setQueryData(
-          tokenBalanceQueryKey,
-          (old: bigint | undefined) => (old === undefined ? old : old + amount),
-        )
+        const [withdrawLog] = parseEventLogs({
+          abi: erc4626Abi,
+          eventName: 'Withdraw',
+          logs: receipt.logs,
+        })
+
+        if (withdrawLog) {
+          const { assets } = withdrawLog.args
+
+          // Update token balance
+          queryClient.setQueryData(
+            tokenBalanceQueryKey,
+            (old: bigint | undefined) =>
+              old === undefined ? old : old + assets,
+          )
+
+          // Update vault balance
+          queryClient.setQueryData(
+            getUserVaultBalanceQueryKey({
+              chainId: hemi.id,
+              vaultAddress: pool.vaultAddress,
+            }),
+            (old: bigint | undefined) =>
+              old === undefined ? old : old > assets ? old - assets : BigInt(0),
+          )
+        }
       })
 
       emitter.on('withdraw-transaction-reverted', function (receipt) {
@@ -129,7 +153,7 @@ export const useWithdraw = function ({
       queryClient.invalidateQueries({ queryKey: tokenBalanceQueryKey })
       queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
       queryClient.invalidateQueries({
-        queryKey: ['hemi-earn', 'pools', hemi.id],
+        queryKey: getEarnPoolsQueryKey(hemi.id),
       })
       queryClient.invalidateQueries({
         queryKey: getUserVaultBalanceQueryKey({
@@ -138,7 +162,7 @@ export const useWithdraw = function ({
         }),
       })
       queryClient.invalidateQueries({
-        queryKey: ['hemi-earn', 'positions', hemi.id, address],
+        queryKey: getEarnPositionsQueryKey(hemi.id, address),
       })
     },
   })

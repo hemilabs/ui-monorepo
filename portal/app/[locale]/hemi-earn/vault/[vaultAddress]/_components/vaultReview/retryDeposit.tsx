@@ -54,11 +54,7 @@ export const RetryDeposit = function () {
       <SubmitWhenConnected
         submitButton={
           <Button disabled={isDepositing} size="small">
-            {t(
-              isDepositing
-                ? 'hemi-earn.vault.form.depositing'
-                : 'common.try-again',
-            )}
+            {t(isDepositing ? 'common.depositing' : 'common.try-again')}
           </Button>
         }
         submitButtonSize="small"

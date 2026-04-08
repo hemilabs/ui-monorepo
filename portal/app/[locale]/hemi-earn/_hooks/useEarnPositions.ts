@@ -1,40 +1,51 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
-import { balanceOf, convertToAssets } from 'viem-erc4626/actions'
+import { type Address, type Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { type EarnPosition } from '../types'
+import { userVaultBalanceQueryOptions } from '../vault/[vaultAddress]/_hooks/useUserVaultBalance'
 
-import { useEarnPools } from './useEarnPools'
+import { earnPoolsQueryOptions } from './useEarnPools'
+import { useHemiEarnTokens } from './useHemiEarnTokens'
+
+export const getEarnPositionsQueryKey = (
+  chainId: Chain['id'],
+  address: Address | undefined,
+) => ['hemi-earn', 'positions', chainId, address]
 
 export const useEarnPositions = function () {
   const { id: chainId } = useHemi()
   const hemiClient = useHemiClient()
   const { address } = useAccount()
-  const { data: pools = [] } = useEarnPools()
+  const queryClient = useQueryClient()
+  const { data: vaultTokens = [] } = useHemiEarnTokens()
 
   return useQuery<EarnPosition[]>({
-    enabled: pools.length > 0 && !!address,
+    enabled: !!address && !!hemiClient && vaultTokens.length > 0,
     async queryFn() {
-      const balances = await Promise.all(
-        pools.map(async function (pool) {
-          const shares = await balanceOf(hemiClient, {
-            account: address!,
-            address: pool.vaultAddress,
-          })
-
-          if (shares === BigInt(0)) {
-            return BigInt(0)
-          }
-
-          return convertToAssets(hemiClient, {
-            address: pool.vaultAddress,
-            shares,
-          })
+      const pools = await queryClient.ensureQueryData(
+        earnPoolsQueryOptions({
+          chainId,
+          hemiClient: hemiClient!,
+          vaultTokens,
         }),
+      )
+
+      const balances = await Promise.all(
+        pools.map(pool =>
+          queryClient.ensureQueryData(
+            userVaultBalanceQueryOptions({
+              address: address!,
+              chainId,
+              hemiClient: hemiClient!,
+              vaultAddress: pool.vaultAddress,
+            }),
+          ),
+        ),
       )
 
       return pools
@@ -48,6 +59,6 @@ export const useEarnPositions = function () {
         }))
         .filter(position => position.yourDeposit > BigInt(0))
     },
-    queryKey: ['hemi-earn', 'positions', chainId, address],
+    queryKey: getEarnPositionsQueryKey(chainId, address),
   })
 }

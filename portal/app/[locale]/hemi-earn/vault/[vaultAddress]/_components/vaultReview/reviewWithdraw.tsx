@@ -64,7 +64,6 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       chainId: hemi.id,
       gasUnits: withdrawGasUnits,
       isGasUnitsError: isWithdrawGasUnitsError,
-      overEstimation: 1.5,
     })
 
   const showFees = [

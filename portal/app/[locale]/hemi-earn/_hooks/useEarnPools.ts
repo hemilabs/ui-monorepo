@@ -1,22 +1,31 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiClient } from 'hooks/useHemiClient'
-import { type Address } from 'viem'
+import { type Address, type Chain, type PublicClient } from 'viem'
 import { totalAssets } from 'viem-erc4626/actions'
 
-import { type EarnPool } from '../types'
+import { type EarnPool, type VaultToken } from '../types'
 
 import { useHemiEarnTokens } from './useHemiEarnTokens'
 
-export const useEarnPools = function () {
-  const { id: chainId } = useHemi()
-  const hemiClient = useHemiClient()
-  const { data: vaultTokens = [] } = useHemiEarnTokens()
+export const getEarnPoolsQueryKey = (chainId: Chain['id']) => [
+  'hemi-earn',
+  'pools',
+  chainId,
+]
 
-  return useQuery<EarnPool[]>({
-    enabled: vaultTokens.length > 0,
+export const earnPoolsQueryOptions = ({
+  chainId,
+  hemiClient,
+  vaultTokens,
+}: {
+  chainId: Chain['id']
+  hemiClient: PublicClient
+  vaultTokens: VaultToken[]
+}) =>
+  queryOptions<EarnPool[]>({
     async queryFn() {
       const deposits = await Promise.all(
         vaultTokens.map(({ vaultAddress }) =>
@@ -47,6 +56,16 @@ export const useEarnPools = function () {
         vaultAddress,
       }))
     },
-    queryKey: ['hemi-earn', 'pools', chainId],
+    queryKey: getEarnPoolsQueryKey(chainId),
+  })
+
+export const useEarnPools = function () {
+  const { id: chainId } = useHemi()
+  const hemiClient = useHemiClient()
+  const { data: vaultTokens = [] } = useHemiEarnTokens()
+
+  return useQuery({
+    ...earnPoolsQueryOptions({ chainId, hemiClient: hemiClient!, vaultTokens }),
+    enabled: vaultTokens.length > 0,
   })
 }

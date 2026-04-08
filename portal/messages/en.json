@@ -35,7 +35,6 @@
     },
     "vault": {
       "apy": "APY",
-      "deposit": "Deposit",
       "deposit-successful": "Deposit successful",
       "drawer": {
         "approving": "Approving {symbol}",
@@ -51,15 +50,10 @@
         "withdraw-token": "Withdraw {symbol}"
       },
       "form": {
-        "approve-and-deposit": "Approve and Deposit",
-        "deposit": "Deposit",
-        "depositing": "Depositing...",
-        "withdraw": "Withdraw",
         "withdrawing": "Withdrawing..."
       },
       "here-is-your-tx": "Here's your transaction:",
       "total-deposits": "Vault total deposits",
-      "withdraw": "Withdraw",
       "withdraw-successful": "Withdraw successful"
     }
   },

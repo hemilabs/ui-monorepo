@@ -88,7 +88,6 @@ export const Withdraw = function ({ onSwitchToDeposit }: Props) {
       chainId: hemi.id,
       gasUnits: withdrawGasUnits,
       isGasUnitsError: isWithdrawGasUnitsError,
-      overEstimation: 1.5,
     })
 
   const { isPending: isRunningOperation, mutate: withdrawFn } = useWithdraw({
@@ -104,6 +103,9 @@ export const Withdraw = function ({ onSwitchToDeposit }: Props) {
   })
 
   const handleWithdraw = function () {
+    if (!canWithdraw) {
+      return
+    }
     withdrawFn(undefined, {
       onError: () => setOperationRunning('idle'),
     })

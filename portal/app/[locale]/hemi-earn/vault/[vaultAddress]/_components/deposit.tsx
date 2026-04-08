@@ -46,8 +46,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     updateInput,
   } = useVaultForm()
 
-  const { status } = useEvmAccount()
-  const { address } = useEvmAccount()
+  const { address, status } = useEvmAccount()
   const hemi = useHemi()
 
   const amount = parseTokenUnits(input, pool.token)
@@ -99,7 +98,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
       chainId: hemi.id,
       gasUnits: depositGasUnits,
       isGasUnitsError: isDepositGasUnitsError,
-      overEstimation: 1.5,
     })
 
   const totalFees =
@@ -123,6 +121,9 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   })
 
   const handleDeposit = function () {
+    if (!canDeposit) {
+      return
+    }
     deposit(undefined, {
       onError: () => setOperationRunning('idle'),
     })
@@ -130,7 +131,9 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   }
 
   function RenderBelowForm() {
-    if (!canDeposit) return null
+    if (!canDeposit) {
+      return null
+    }
     return <HemiFees fees={totalFees} isError={isFeesError} />
   }
 

@@ -39,16 +39,12 @@ export const SubmitDeposit = function ({
       return t('common.approving')
     }
     if (operationRunning === 'depositing') {
-      return t('hemi-earn.vault.form.depositing')
+      return t('common.depositing')
     }
     if (validationError) {
       return validationError
     }
-    return t(
-      needsApproval
-        ? 'hemi-earn.vault.form.approve-and-deposit'
-        : 'hemi-earn.vault.form.deposit',
-    )
+    return t(needsApproval ? 'common.approve-and-deposit' : 'common.deposit')
   }
 
   return (

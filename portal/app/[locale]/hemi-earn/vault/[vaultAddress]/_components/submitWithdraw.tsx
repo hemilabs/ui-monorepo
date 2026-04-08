@@ -28,7 +28,7 @@ export const SubmitWithdraw = function ({
     if (validationError) {
       return validationError
     }
-    return t('hemi-earn.vault.form.withdraw')
+    return t('common.withdraw')
   }
 
   return (

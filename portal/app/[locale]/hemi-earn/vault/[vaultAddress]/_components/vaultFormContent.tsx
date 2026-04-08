@@ -27,7 +27,7 @@ export const VaultFormContent = function ({
 }: Props) {
   const { input, pool, updateInput } = useVaultForm()
 
-  const t = useTranslations('hemi-earn')
+  const t = useTranslations('common')
 
   return (
     <>
@@ -37,21 +37,21 @@ export const VaultFormContent = function ({
           selected={activeTab === 'deposit'}
           size="xSmall"
         >
-          {t('vault.deposit')}
+          {t('deposit')}
         </Tab>
         <Tab
           onClick={activeTab === 'deposit' ? onSwitchTab : undefined}
           selected={activeTab === 'withdraw'}
           size="xSmall"
         >
-          {t('vault.withdraw')}
+          {t('withdraw')}
         </Tab>
       </Tabs>
       <TokenInput
         balanceComponent={balanceComponent}
         disabled={isRunningOperation}
         errorKey={errorKey}
-        label={t(activeTab === 'deposit' ? 'vault.deposit' : 'vault.withdraw')}
+        label={t(activeTab === 'deposit' ? 'deposit' : 'withdraw')}
         maxBalanceButton={setMaxBalanceButton}
         onChange={updateInput}
         token={pool.token}

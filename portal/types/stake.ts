@@ -29,26 +29,9 @@ export const stakeProtocols = [
 
 export type StakeProtocols = (typeof stakeProtocols)[number]
 
-export type Reward =
-  | 'babypie'
-  | 'bedrock'
-  | 'bitfi'
-  | 'bsquared'
-  | 'eigenpie'
-  | 'hemi'
-  | 'hemi2x'
-  | 'hemi3x'
-  | 'kernel'
-  | 'lorenzo'
-  | 'pumpbtc'
-  | 'river'
-  | 'solv'
-  | 'unirouter'
-  | 'yieldnest'
-
 export type StakeExtensions = Omit<Extensions, 'protocol'> & {
   protocol: StakeProtocols
-  rewards: Reward[]
+  rewards: string[]
   website: string
 }
 

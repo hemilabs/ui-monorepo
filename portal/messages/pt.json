@@ -455,10 +455,11 @@
       "staked": "Staked",
       "stake-more": "Faça mais stake",
       "staking-assets": "Ativos em stake",
-      "subtitle": "Visualize suas posições ativas de boost staking e as recompensas obtidas.",
+      "subtitle": "Visualize suas posições ativas de boost staking.",
       "heading": "Boost staking",
       "title": "Painel",
       "total-earned-points": "Total de pontos Hemi ganhos",
+      "total-earned-points-description": "Temporada encerrada.",
       "total-staked-on-hemi": "Total em stake em Hemi",
       "your-stake": "O seu Stake"
     },
@@ -466,12 +467,11 @@
       "approve-and-stake": "Aprovar e Fazer Stake",
       "description-manage-stake": "Aumente o seu stake ou levante a qualquer momento— tem controle total!",
       "manage-your-stake": "Gerir o seu stake",
-      "stake-and-earn-rewards": "Faça stake de {symbol} e ganhe recompensas!",
+      "stake-and-earn-rewards": "Faça stake de {symbol} para aumentar a sua participação.",
       "stake-token": "Faça stake de {symbol}",
       "staking": "A fazer stake...",
       "strategy-details": {
         "heading": "Detalhes da Estratégia",
-        "rewards": "Recompensas",
         "tvl": "TVL (no Hemi)",
         "website": "Website"
       },
@@ -480,28 +480,18 @@
       "unstake-token": "Desbloquear {symbol}",
       "unstaking": "A desbloquear...",
       "unwrap": "Desembrulhar",
-      "you-can-unstake-anytime": "Pode desbloquear a qualquer momento e manter os pontos já ganhos."
-    },
-    "points": {
-      "diamonds": "Diamantes",
-      "points": "Pontos",
-      "seeds": "Sementes",
-      "x2-babypie-jewels": "x2 Joias Babypie",
-      "x2-eigenpie-points": "x2 Pontos Eigenpie",
-      "x2point5-river-points": "x2.5 Pontos River"
+      "you-can-unstake-anytime": "Pode desbloquear a qualquer momento."
     },
     "protocol": "Protocolo",
-    "ready-to-earn": "Pronto para ganhar? Comece a fazer stake e veja seus pontos aumentarem",
+    "ready-to-earn": "Pronto para fazer stake? Utilize ativos disponíveis para começar a fazer stake.",
     "rewards": "Recompensas",
     "stake": {
       "action": "Ação",
-      "learn-how-to-stake-on-hemi": "Saiba como fazer stake no Hemi",
-      "new-here": "Novo por aqui?",
       "heading": "Stake for boost",
-      "subheading": "Faça stake para ganhar recompensas e aumentar os seus pontos.",
+      "subheading": "Faça stake dos seus tokens.",
       "title": "Stake"
     },
-    "start-staking-earn-points": "Comece a fazer stake e ganhar pontos",
+    "start-staking-earn-points": "Comece a fazer stake",
     "toast": {
       "go-staking-dashboard": "Ver o seu painel de stake",
       "here-your-stake-tx": "Aqui está a sua transação de {type}:",

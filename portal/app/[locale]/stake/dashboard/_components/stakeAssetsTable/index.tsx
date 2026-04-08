@@ -20,7 +20,6 @@ import { ProtocolImage } from '../../../_components/protocolImage'
 import { StakedBalance } from '../../../_components/stakedBalance'
 import { StakedBalanceUsd } from '../../../_components/stakedBalanceUsd'
 import { TokenBalance } from '../../../_components/tokenBalance'
-import { TokenRewards } from '../../../_components/tokenRewards'
 import { useDrawerStakeQueryString } from '../../../_hooks/useDrawerStakeQueryString'
 import { useStakePositions } from '../../../_hooks/useStakedBalance'
 
@@ -92,16 +91,6 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     header: () => <Header text={t('dashboard.staked')} />,
     id: 'staked',
     meta: { width: '100px' },
-  },
-  {
-    cell: ({ row }) => (
-      <div className="flex flex-wrap items-center gap-1 overflow-hidden">
-        <TokenRewards rewards={row.original.extensions.rewards} />
-      </div>
-    ),
-    header: () => <Header text={t('rewards')} />,
-    id: 'rewards',
-    meta: { width: '350px' },
   },
   {
     cell: ({ row }) => (

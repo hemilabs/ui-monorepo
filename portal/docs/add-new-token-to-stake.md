@@ -36,6 +36,7 @@ export const stakeWhiteList: Partial<
         // satUSD
         '0xb4818BB69478730EF4e33Cc068dD94278e2766cB': {
             protocol: 'satoshi',
+            // `rewards` is required by `StakeExtensions` / token metadata; the portal UI does not display program tags.
             rewards: ['hemi3x', 'satoshi'],
             website: 'https://www.satoshiprotocol.org',
         },
@@ -81,46 +82,7 @@ export const protocolImages: Record<StakeProtocols, StaticImageData> = {
 }
 ```
 
-## Step 5 - Add the new rewards icon images (if needed)
-
-If the new token you added have rewards that are not already in the [tokenRewards.tsx](../app/[locale]/stake/_components/tokenRewards.tsx) list you must add the icon image file to the [rewards icons](../app/[locale]/stake/_components/icons) folder and create the reward points tag component as follows:
-
-```ts
-// portal/app/[locale]/stake/_components/pointsTag.tsx
-
-import { SatoshiPointsIcon } from './icons/satoshiPointsIcon'
-
-...
-
-export const SatoshiPoints = () => (
-  <PointsTag
-    backgroundColor="bg-black"
-    icon={<SatoshiPointsIcon />}
-    label="points"
-    textColor="text-white"
-  />
-)
-```
-
-After that you just need to add the reward points tag component to the [tokenRewards.tsx](../app/[locale]/stake/_components/tokenRewards.tsx) list:
-
-```ts
-// portal/app/[locale]/stake/_components/tokenRewards.tsx
-
-import {
-  ...
-  SatoshiPoints,
-  ...
-} from './pointsTag'
-
-const rewardComponentMap: Record<Reward, ReactNode> = {
-  ...
-  satoshi: <SatoshiPoints />,
-  ...
-}
-```
-
-## Step 6 - Check if token is whitelisted
+## Step 5 - Check if token is whitelisted
 
 Before merging your changes to the `main` branch you need to make sure the new token you added is already whitelisted to staking and you can do that by calling `tokenAllowlist` method in the [staking pool smart contract](https://explorer.hemi.xyz/address/0x4F5E928763CBFaF5fFD8907ebbB0DAbd5f78bA83) as shown in the screenshot below:
 

@@ -7,7 +7,6 @@ import { formatFiatNumber, formatTVL } from 'utils/format'
 import { calculateUsdValue } from 'utils/prices'
 import { useAccount } from 'wagmi'
 
-import { useHemiPoints } from '../../../_hooks/useHemiPoints'
 import { useStakePositions } from '../../../_hooks/useStakedBalance'
 import { useTotalStaked } from '../../../_hooks/useTotalStaked'
 
@@ -43,26 +42,7 @@ const Container = ({ children }: { children: ReactNode }) => (
 )
 
 export const EarnedPoints = function () {
-  const { isConnected } = useAccount()
-  const { data: points, isError, isLoading } = useHemiPoints()
   const t = useTranslations('stake-page.dashboard')
-
-  const getPoints = function () {
-    if (!isConnected || isError) {
-      return '-'
-    }
-    if (isLoading) {
-      return '...'
-    }
-    // technically, this should never happen, but a few reports in Sentry
-    // show that it if somehow the user is connected, but the app failed to retrieve
-    // the Address, it will reach this point, where the user is connected, but without any error
-    // as the query is disabled. This line is a safety net.
-    if (points === undefined) {
-      return '-'
-    }
-    return points.toString()
-  }
 
   return (
     <Container>
@@ -76,7 +56,9 @@ export const EarnedPoints = function () {
           }}
         >
           <Text heading={t('total-earned-points')} />
-          <Points color="text-orange-600" points={getPoints()} />
+          <p className="text-sm text-orange-600">
+            {t('total-earned-points-description')}
+          </p>
         </div>
       </div>
       <Image

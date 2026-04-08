@@ -3,20 +3,17 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { ButtonLink } from 'components/button'
 import { Balance } from 'components/cryptoBalance'
-import { ExternalLink } from 'components/externalLink'
 import { FiatBalance } from 'components/fiatBalance'
 import { Table } from 'components/table'
 import { Header } from 'components/table/_components/header'
 import { TokenLogo } from 'components/tokenLogo'
-import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { MouseEvent, useMemo } from 'react'
+import { useMemo } from 'react'
 import { StakeToken } from 'types/stake'
 
 import { useDrawerStakeQueryString } from '../../_hooks/useDrawerStakeQueryString'
 import { ProtocolImage } from '../protocolImage'
 import { TokenBalance } from '../tokenBalance'
-import { TokenRewards } from '../tokenRewards'
 
 type StakeColumnsProps = {
   t: ReturnType<typeof useTranslations<'stake-page'>>
@@ -54,16 +51,6 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     header: () => <Header text={t('wallet-balance')} />,
     id: 'wallet-balance',
     meta: { width: '100px' },
-  },
-  {
-    cell: ({ row }) => (
-      <div className="flex flex-wrap items-center gap-1 overflow-hidden">
-        <TokenRewards rewards={row.original.extensions.rewards} />
-      </div>
-    ),
-    header: () => <Header text={t('rewards')} />,
-    id: 'rewards',
-    meta: { width: '300px' },
   },
   {
     cell: function CallToAction({ row }) {
@@ -104,17 +91,6 @@ type Props = {
 
 export const StakeStrategyTable = function ({ data, loading }: Props) {
   const t = useTranslations('stake-page')
-  const { track } = useUmami()
-
-  const learnHowToStakeLink =
-    'https://docs.hemi.xyz/how-to-tutorials/using-hemi/stake'
-
-  const trackLinkClick = function (e: MouseEvent<HTMLAnchorElement>) {
-    e.preventDefault()
-    e.stopPropagation()
-    track?.('stake - learn stake')
-    window.open(learnHowToStakeLink, '_blank')
-  }
 
   const cols = useMemo(
     () =>
@@ -134,14 +110,6 @@ export const StakeStrategyTable = function ({ data, loading }: Props) {
           priorityColumnIdsOnSmall={['action']}
         />
       </div>
-      <p className="ml-2 mt-2.5 flex font-normal text-neutral-600">
-        {t('stake.new-here')}
-        <ExternalLink href={learnHowToStakeLink} onClick={trackLinkClick}>
-          <span className="hoverable-text ml-1">
-            {t('stake.learn-how-to-stake-on-hemi')}
-          </span>
-        </ExternalLink>
-      </p>
     </div>
   )
 }

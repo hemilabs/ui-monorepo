@@ -455,10 +455,11 @@
       "staked": "Staked",
       "stake-more": "Stake more",
       "staking-assets": "Staking assets",
-      "subtitle": "Monitor your boost staking positions and rewards.",
+      "subtitle": "Monitor your boost staking positions.",
       "heading": "Boost staking",
       "title": "Dashboard",
       "total-earned-points": "Total Hemi points earned",
+      "total-earned-points-description": "Season ended.",
       "total-staked-on-hemi": "Total Staked on Hemi",
       "your-stake": "Your Stake"
     },
@@ -466,12 +467,11 @@
       "approve-and-stake": "Approve and Stake",
       "description-manage-stake": "Top up your stake, or withdraw anytime—you're in full control!",
       "manage-your-stake": "Manage your stake",
-      "stake-and-earn-rewards": "Stake {symbol} and earn rewards!",
+      "stake-and-earn-rewards": "Stake {symbol} to boost your participation.",
       "stake-token": "Stake {symbol}",
       "staking": "Staking...",
       "strategy-details": {
         "heading": "Strategy Details",
-        "rewards": "Rewards",
         "tvl": "TVL (on Hemi)",
         "website": "Website"
       },
@@ -480,28 +480,18 @@
       "unstake-token": "Unstake {symbol}",
       "unstaking": "Unstaking...",
       "unwrap": "Unwrap",
-      "you-can-unstake-anytime": "You can unstake any time and keep the points already earned."
-    },
-    "points": {
-      "diamonds": "Diamonds",
-      "points": "Points",
-      "seeds": "Seeds",
-      "x2-babypie-jewels": "x2 Babypie Jewels",
-      "x2-eigenpie-points": "x2 Eigenpie Points",
-      "x2point5-river-points": "x2.5 River Points"
+      "you-can-unstake-anytime": "You can unstake any time."
     },
     "protocol": "Protocol",
-    "ready-to-earn": "Ready to earn? Start staking and watch your points add up",
+    "ready-to-earn": "Ready to stake? Use supported assets and start staking.",
     "rewards": "Rewards",
     "stake": {
       "action": "Action",
-      "learn-how-to-stake-on-hemi": "Learn how to stake on Hemi",
-      "new-here": "New here?",
       "heading": "Stake for boost",
-      "subheading": "Stake tokens to earn points across supported programs.",
+      "subheading": "Stake your tokens.",
       "title": "Stake"
     },
-    "start-staking-earn-points": "Start staking and earn points",
+    "start-staking-earn-points": "Start staking",
     "toast": {
       "go-staking-dashboard": "View your staking dashboard",
       "here-your-stake-tx": "Here’s your {type} transaction:",

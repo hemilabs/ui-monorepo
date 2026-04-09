@@ -1,3 +1,4 @@
+import { AddTokenToWallet } from 'components/addTokenToWallet'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
 import {
@@ -26,8 +27,6 @@ import { useAccount } from 'wagmi'
 import { useEstimateBtcDepositFees } from '../../_hooks/useEstimateBtcDepositFees'
 import { ConfirmBtcDeposit } from '../confirmBtcDeposit'
 import { RetryBtcDeposit } from '../retryBtcDeposit'
-
-import { AddTokenToWallet } from './addTokenToWallet'
 
 const getCallToAction = function (deposit: BtcDepositOperation) {
   switch (deposit.status) {
@@ -235,7 +234,17 @@ const ReviewContent = function ({
         BtcDepositStatus.BTC_DEPOSITED_MANUALLY,
       ].includes(depositStatus)
     ) {
-      return <AddTokenToWallet token={toToken} />
+      return (
+        <AddTokenToWallet
+          labels={{
+            error: t('add-token-to-wallet-error'),
+            idle: t('add-token-to-wallet-idle'),
+            pending: t('add-token-to-wallet-pending'),
+            success: t('add-token-to-wallet-success'),
+          }}
+          token={toToken}
+        />
+      )
     }
     return null
   }

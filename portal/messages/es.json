@@ -35,7 +35,26 @@
     },
     "vault": {
       "apy": "TEA",
-      "total-deposits": "Depósitos totales del vault"
+      "deposit-successful": "Depósito exitoso",
+      "drawer": {
+        "approving": "Aprobando {symbol}",
+        "deposit": {
+          "heading": "Revisar Depósito",
+          "subheading": "Complete los pasos restantes para depositar sus tokens."
+        },
+        "deposit-token": "Depositar {symbol}",
+        "withdraw": {
+          "heading": "Revisar Retiro",
+          "subheading": "Complete los pasos restantes para retirar sus tokens."
+        },
+        "withdraw-token": "Retirar {symbol}"
+      },
+      "form": {
+        "withdrawing": "Retirando..."
+      },
+      "here-is-your-tx": "Aquí está su transacción:",
+      "total-deposits": "Depósitos totales del vault",
+      "withdraw-successful": "Retiro exitoso"
     }
   },
   "bitcoin-yield": {
@@ -97,6 +116,10 @@
     "accept": "Aceptar",
     "actions": "Acciones",
     "add": "Agregar",
+    "add-token-to-wallet-error": "No se pudo agregar el token a su billetera",
+    "add-token-to-wallet-idle": "Agregar token a su billetera",
+    "add-token-to-wallet-pending": "Agregando token a su billetera...",
+    "add-token-to-wallet-success": "Token agregado a su billetera",
     "added": "Agregada",
     "allowance-load-failed": "No se pudo cargar el monto autorizado",
     "amount": "Monto",

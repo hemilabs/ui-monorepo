@@ -19,7 +19,7 @@ export const VaultInfoCards = function ({ pool }: Props) {
   const t = useTranslations('hemi-earn')
 
   return (
-    <div className="xs:flex-row flex w-full flex-col items-stretch gap-4 md:gap-5">
+    <div className="flex w-full flex-col items-stretch gap-4 sm:flex-row md:gap-5">
       <div className="flex-1">
         <VaultCard
           icon={<TotalDepositsIcon />}

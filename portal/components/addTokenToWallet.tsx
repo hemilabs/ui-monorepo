@@ -1,12 +1,14 @@
+'use client'
+
 import { useAddTokenToWallet } from 'hooks/useAddTokenToWallet'
 import { useWatchedAsset } from 'hooks/useWatchedAsset'
-import { useTranslations } from 'next-intl'
-import { ComponentProps } from 'react'
+import { type ComponentProps } from 'react'
 import { orange600 } from 'styles'
-import { EvmToken } from 'types/token'
+import { type EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
 
 type Props = {
+  labels: Record<'error' | 'idle' | 'pending' | 'success', string>
   token: EvmToken
 }
 
@@ -28,13 +30,13 @@ const PlusIcon = (props: ComponentProps<'svg'>) => (
   </svg>
 )
 
-export const AddTokenToWallet = function ({ token }: Props) {
-  const t = useTranslations('tunnel-page.review-deposit')
+export const AddTokenToWallet = function ({ labels, token }: Props) {
   const isTokenAdded = useWatchedAsset(token.address)
 
   const { mutate, status } = useAddTokenToWallet({
     token,
   })
+
   // only show the button if the token is an ERC20, and if it wasn't previously added.
   // Note that if it was just added, status is "success", thus preventing to hide the
   // success message.
@@ -44,25 +46,19 @@ export const AddTokenToWallet = function ({ token }: Props) {
 
   const canAdd = !['pending', 'success'].includes(status)
 
-  function addToken() {
-    if (canAdd) {
-      mutate()
-    }
-  }
-
   return (
     <button
       className={`group/add-token mx-auto flex w-full items-center justify-center gap-x-2 pt-4 text-sm font-medium text-orange-600 ${
         canAdd ? 'cursor-pointer hover:text-orange-700' : ''
       }`}
       disabled={!canAdd}
-      onClick={addToken}
+      onClick={() => canAdd && mutate()}
       type="button"
     >
       {canAdd && (
         <PlusIcon className="group-hover/add-token:[&>path]:fill-orange-700" />
       )}
-      <span>{t(`add-token-to-wallet-${status}`)}</span>
+      <span>{labels[status]}</span>
     </button>
   )
 }

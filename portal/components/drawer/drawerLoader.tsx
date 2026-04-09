@@ -9,7 +9,6 @@ export const DrawerLoader = ({
   withDrawer = true,
 }: {
   className?: string
-  /** Si es `false`, solo el skeleton (el `Drawer` lo envuelve el padre). Evita doble animación con `next/dynamic`. */
   withDrawer?: boolean
 } & Pick<ComponentProps<typeof Drawer>, 'position'>) =>
   withDrawer ? (

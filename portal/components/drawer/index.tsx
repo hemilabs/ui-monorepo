@@ -38,7 +38,6 @@ export const Drawer = function ({
 }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const closingStartedRef = useRef(false)
-  /** Evita que el mismo `click` que abre el drawer cuente como “fuera” (target = botón, no el panel). */
   const suppressOutsideCloseRef = useRef(true)
 
   useEffect(function allowOutsideCloseAfterOpenClick() {
@@ -108,7 +107,6 @@ export const Drawer = function ({
   const drawerContainer = container ?? getDrawerPortalContainer()
 
   if (!drawerContainer) {
-    // container not found, prevent "ReactDOM.createPortal" from crashing
     return null
   }
 

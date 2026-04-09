@@ -50,11 +50,21 @@ export const Drawer = function ({
   }, [])
 
   useEffect(function scheduleDrawerOpen() {
-    const id = requestAnimationFrame(() =>
-      requestAnimationFrame(() => setIsOpen(true)),
-    )
-    return function cancelRaf() {
-      cancelAnimationFrame(id)
+    let innerRafId: number | undefined
+    let cancelled = false
+    const outerRafId = requestAnimationFrame(function scheduleInnerOpen() {
+      innerRafId = requestAnimationFrame(function openDrawerAfterPaint() {
+        if (!cancelled) {
+          setIsOpen(true)
+        }
+      })
+    })
+    return function cancelScheduledOpen() {
+      cancelled = true
+      cancelAnimationFrame(outerRafId)
+      if (innerRafId !== undefined) {
+        cancelAnimationFrame(innerRafId)
+      }
     }
   }, [])
 
@@ -113,7 +123,7 @@ export const Drawer = function ({
   return ReactDOM.createPortal(
     <>
       <div
-        className={`drawer-panel fixed bottom-0 left-0 right-0 z-30 w-full overflow-y-auto rounded-t-lg bg-transparent md:bottom-2 ${
+        className={`drawer-panel fixed bottom-0 left-0 right-0 z-30 w-full rounded-t-lg bg-transparent md:bottom-2 ${
           position === 'right'
             ? 'md:left-auto md:right-2'
             : 'md:left-2 md:right-auto'

@@ -1,11 +1,13 @@
 @layer components {
   .drawer-panel {
+    overflow-y: auto;
     transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
     will-change: transform;
   }
 
   @media (max-width: 767px) {
     .drawer-panel {
+      max-height: 100dvh;
       transform: translate3d(0, 100%, 0);
     }
   }
@@ -41,7 +43,7 @@
   }
 
   .drawer-content {
-    @apply flex max-h-[calc(100vh-100px)] w-full flex-col overflow-y-hidden bg-white pt-6 md:w-[450px];
+    @apply flex min-h-0 w-full flex-col bg-white pt-6 md:w-[450px];
   }
 
   .drawer-content > *:not(.skip-parent-padding-x) {

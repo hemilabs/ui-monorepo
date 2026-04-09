@@ -49,23 +49,8 @@ export const Drawer = function ({
     }
   }, [])
 
-  useEffect(function scheduleDrawerOpen() {
-    let innerRafId: number | undefined
-    let cancelled = false
-    const outerRafId = requestAnimationFrame(function scheduleInnerOpen() {
-      innerRafId = requestAnimationFrame(function openDrawerAfterPaint() {
-        if (!cancelled) {
-          setIsOpen(true)
-        }
-      })
-    })
-    return function cancelScheduledOpen() {
-      cancelled = true
-      cancelAnimationFrame(outerRafId)
-      if (innerRafId !== undefined) {
-        cancelAnimationFrame(innerRafId)
-      }
-    }
+  useEffect(function openDrawerAfterFirstPaint() {
+    setIsOpen(true)
   }, [])
 
   const handleClose = useCallback(

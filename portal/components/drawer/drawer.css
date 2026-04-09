@@ -1,6 +1,47 @@
 @layer components {
+  .drawer-panel {
+    transition: transform 300ms cubic-bezier(0.32, 0.72, 0, 1);
+    will-change: transform;
+  }
+
+  @media (max-width: 767px) {
+    .drawer-panel {
+      transform: translate3d(0, 100%, 0);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .drawer-panel[data-position='right'] {
+      transform: translate3d(100%, 0, 0);
+    }
+
+    .drawer-panel[data-position='left'] {
+      transform: translate3d(-100%, 0, 0);
+    }
+  }
+
+  .drawer-panel.drawer-panel--open {
+    transform: translate3d(0, 0, 0);
+  }
+
+  .drawer-backdrop {
+    opacity: 0;
+    transition: opacity 380ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .drawer-backdrop.drawer-backdrop--open {
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drawer-panel,
+    .drawer-backdrop {
+      transition-duration: 0.01ms;
+    }
+  }
+
   .drawer-content {
-    @apply flex w-full flex-col overflow-y-hidden bg-white pt-6 md:w-[450px];
+    @apply flex max-h-[calc(100vh-100px)] w-full flex-col overflow-y-hidden bg-white pt-6 md:w-[450px];
   }
 
   /* Use the .skip-parent-padding-x for elements that should not have the px-* applied. For example, components

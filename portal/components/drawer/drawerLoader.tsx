@@ -6,14 +6,22 @@ import { Drawer } from './index'
 export const DrawerLoader = ({
   className = '',
   position,
-}: { className?: string } & Pick<
-  ComponentProps<typeof Drawer>,
-  'position'
->) => (
-  <Drawer position={position}>
+  withDrawer = true,
+}: {
+  className?: string
+  /** Si es `false`, solo el skeleton (el `Drawer` lo envuelve el padre). Evita doble animación con `next/dynamic`. */
+  withDrawer?: boolean
+} & Pick<ComponentProps<typeof Drawer>, 'position'>) =>
+  withDrawer ? (
+    <Drawer position={position}>
+      <Skeleton
+        className="w-full md:w-[450px]"
+        containerClassName={`flex ${className ?? ''}`}
+      />
+    </Drawer>
+  ) : (
     <Skeleton
       className="w-full md:w-[450px]"
-      containerClassName={`flex ${className ?? ''}`}
+      containerClassName={`drawer-content flex ${className ?? ''}`}
     />
-  </Drawer>
-)
+  )

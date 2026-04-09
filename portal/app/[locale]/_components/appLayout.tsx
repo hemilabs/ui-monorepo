@@ -1,27 +1,14 @@
 'use client'
 
-import { DrawerLoader } from 'components/drawer/drawerLoader'
-import dynamic from 'next/dynamic'
-import React, { Suspense, useState, ReactNode } from 'react'
+import { Drawer } from 'components/drawer'
+import React, { Suspense, useCallback, useState, ReactNode } from 'react'
 
 import { AppLayoutContainer } from './appLayoutContainer'
 import { Header } from './header'
 import { MainContainer } from './mainContainer'
+import { NavbarResponsive } from './navbar/navbarResponsive'
 import { NavBarUrlSync } from './navbar/navBarUrlSync'
 import { TestnetIndicator } from './testnetIndicator'
-
-const NavbarResponsive = dynamic(
-  () => import('./navbar/navbarResponsive').then(mod => mod.NavbarResponsive),
-  {
-    loading: () => (
-      <DrawerLoader
-        className="h-90dvh md:w-54 w-full md:h-full"
-        position="left"
-      />
-    ),
-    ssr: false,
-  },
-)
 
 type Props = {
   children: ReactNode
@@ -31,6 +18,10 @@ export const AppLayout = function ({ children }: Props) {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false)
 
   const toggleMenu = () => setIsNavbarOpen(!isNavbarOpen)
+
+  const closeNavbar = useCallback(function closeNavbar() {
+    setIsNavbarOpen(false)
+  }, [])
 
   return (
     <AppLayoutContainer>
@@ -56,7 +47,9 @@ export const AppLayout = function ({ children }: Props) {
         </div>
       </MainContainer>
       {isNavbarOpen && (
-        <NavbarResponsive onClose={() => setIsNavbarOpen(false)} />
+        <Drawer onClose={closeNavbar} position="left">
+          <NavbarResponsive />
+        </Drawer>
       )}
     </AppLayoutContainer>
   )

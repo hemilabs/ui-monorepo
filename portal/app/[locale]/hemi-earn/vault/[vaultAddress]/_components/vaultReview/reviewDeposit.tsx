@@ -1,5 +1,6 @@
 'use client'
 
+import { AddTokenToWallet } from 'components/addTokenToWallet'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
 import {
@@ -12,9 +13,10 @@ import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useHemi } from 'hooks/useHemi'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
-import { parseTokenUnits } from 'utils/token'
+import { isEvmToken, parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
@@ -33,6 +35,7 @@ type Props = {
 export const ReviewDeposit = function ({ onClose }: Props) {
   const { depositOperation, input, pool } = useVaultForm()
   const t = useTranslations('hemi-earn.vault.drawer')
+  const tCommon = useTranslations('common')
   const hemi = useHemi()
   const { address } = useAccount()
 
@@ -175,13 +178,39 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     return steps
   }
 
-  const getCallToAction = (status: VaultDepositStatusType) =>
-    [
-      VaultDepositStatus.APPROVAL_TX_FAILED,
-      VaultDepositStatus.DEPOSIT_TX_FAILED,
-    ].includes(status) ? (
-      <RetryDeposit />
-    ) : null
+  const { data: vaultShareToken } = useToken({
+    address: pool.vaultAddress,
+    chainId: hemi.id,
+  })
+
+  const getCallToAction = function (status: VaultDepositStatusType) {
+    if (
+      [
+        VaultDepositStatus.APPROVAL_TX_FAILED,
+        VaultDepositStatus.DEPOSIT_TX_FAILED,
+      ].includes(status)
+    ) {
+      return <RetryDeposit />
+    }
+    if (
+      status === VaultDepositStatus.DEPOSIT_TX_CONFIRMED &&
+      vaultShareToken &&
+      isEvmToken(vaultShareToken)
+    ) {
+      return (
+        <AddTokenToWallet
+          labels={{
+            error: tCommon('add-token-to-wallet-error'),
+            idle: tCommon('add-token-to-wallet-idle'),
+            pending: tCommon('add-token-to-wallet-pending'),
+            success: tCommon('add-token-to-wallet-success'),
+          }}
+          token={vaultShareToken}
+        />
+      )
+    }
+    return null
+  }
 
   return (
     <Operation

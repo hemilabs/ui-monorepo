@@ -1,5 +1,6 @@
 'use client'
 
+import { AddTokenToWallet } from 'components/addTokenToWallet'
 import { ChainIcon } from 'components/reviewOperation/chainIcon'
 import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
@@ -26,8 +27,6 @@ import { formatUnits } from 'viem'
 
 import { useEstimateDepositFees } from '../../_hooks/useEstimateDepositFees'
 import { RetryEvmDeposit } from '../retryEvmDeposit'
-
-import { AddTokenToWallet } from './addTokenToWallet'
 
 const getCallToAction = (deposit: EvmDepositOperation) =>
   deposit.status !== undefined &&
@@ -201,7 +200,17 @@ const ReviewContent = function ({
     ) {
       return null
     }
-    return <AddTokenToWallet token={toToken} />
+    return (
+      <AddTokenToWallet
+        labels={{
+          error: t('add-token-to-wallet-error'),
+          idle: t('add-token-to-wallet-idle'),
+          pending: t('add-token-to-wallet-pending'),
+          success: t('add-token-to-wallet-success'),
+        }}
+        token={toToken}
+      />
+    )
   }
 
   return (

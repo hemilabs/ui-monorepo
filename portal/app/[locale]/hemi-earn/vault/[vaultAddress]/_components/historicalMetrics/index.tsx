@@ -1,0 +1,199 @@
+'use client'
+
+import { Card } from 'components/card'
+import { useLocale, useTranslations } from 'next-intl'
+import { type ReactNode, useState } from 'react'
+import Skeleton from 'react-loading-skeleton'
+import { formatCompactFiatParts } from 'utils/format'
+
+import { HistoricalMetricsIcon } from '../../../../_icons/historicalMetricsIcon'
+import {
+  type MetricPeriod,
+  type MetricType,
+  useHistoricalMetrics,
+} from '../../_hooks/useHistoricalMetrics'
+
+import { HistoricalMetricsChart } from './historicalMetricsChart'
+
+const HeadlineValue = function ({
+  locale,
+  metricType,
+  value,
+}: {
+  locale: string
+  metricType: MetricType
+  value: number
+}) {
+  if (metricType === 'apy') {
+    return <>{value.toFixed(2)}%</>
+  }
+  const { number, suffix } = formatCompactFiatParts(value, locale)
+  return (
+    <>
+      <span>{number}</span>
+      <span className="text-neutral-400">{suffix}</span>
+    </>
+  )
+}
+
+const SegmentedControlItem = ({
+  children,
+  className = '',
+  onClick,
+  selected,
+}: {
+  children: ReactNode
+  className?: string
+  onClick: VoidFunction
+  selected: boolean
+}) => (
+  <button
+    className={`flex h-7 cursor-pointer items-center justify-center whitespace-nowrap rounded-md px-2.5 text-xs font-semibold leading-4 tracking-wide ${
+      selected
+        ? 'bg-white text-neutral-950 shadow-sm'
+        : 'bg-neutral-100 text-neutral-700 hover:text-neutral-950'
+    } ${className}`}
+    onClick={onClick}
+    type="button"
+  >
+    {children}
+  </button>
+)
+
+export const HistoricalMetrics = function () {
+  const t = useTranslations('hemi-earn.vault.historical-metrics')
+  const locale = useLocale()
+  const [period, setPeriod] = useState<MetricPeriod>('1w')
+  const [metricType, setMetricType] = useState<MetricType>('deposits')
+
+  const { data, isError } = useHistoricalMetrics(period, metricType)
+
+  const lastValue =
+    data && data.length > 0 ? data[data.length - 1].y : undefined
+
+  return (
+    <Card shadow="sm">
+      <div className="w-full p-4">
+        <div className="flex items-center justify-between">
+          <span className="body-text-medium text-neutral-500">
+            {t('title')}
+          </span>
+          <HistoricalMetricsIcon />
+        </div>
+        <div className="mt-3 flex items-center justify-between">
+          <h2 className="shrink-0 text-2xl font-semibold leading-8 -tracking-[0.48px] text-neutral-950">
+            {lastValue !== undefined ? (
+              <HeadlineValue
+                locale={locale}
+                metricType={metricType}
+                value={lastValue}
+              />
+            ) : isError ? (
+              '-'
+            ) : (
+              <Skeleton className="h-7 w-28" />
+            )}
+          </h2>
+          {/* Desktop: period + metric type toggles inline */}
+          <div className="hidden items-center gap-3 lg:flex">
+            <div className="flex items-center gap-2">
+              <SegmentedControlItem
+                onClick={() => setPeriod('1w')}
+                selected={period === '1w'}
+              >
+                {t('1-week')}
+              </SegmentedControlItem>
+              <SegmentedControlItem
+                onClick={() => setPeriod('1m')}
+                selected={period === '1m'}
+              >
+                {t('month', { count: 1 })}
+              </SegmentedControlItem>
+              <SegmentedControlItem
+                onClick={() => setPeriod('3m')}
+                selected={period === '3m'}
+              >
+                {t('month', { count: 3 })}
+              </SegmentedControlItem>
+              <SegmentedControlItem
+                onClick={() => setPeriod('1y')}
+                selected={period === '1y'}
+              >
+                {t('1-year')}
+              </SegmentedControlItem>
+            </div>
+            <div className="h-3 w-0.5 bg-neutral-200" />
+            <div className="flex items-center gap-2">
+              <SegmentedControlItem
+                onClick={() => setMetricType('deposits')}
+                selected={metricType === 'deposits'}
+              >
+                {t('vault-deposits')}
+              </SegmentedControlItem>
+              <SegmentedControlItem
+                onClick={() => setMetricType('apy')}
+                selected={metricType === 'apy'}
+              >
+                {t('apy')}
+              </SegmentedControlItem>
+            </div>
+          </div>
+          {/* Mobile: only metric type toggle inline */}
+          <div className="flex items-center gap-2 lg:hidden">
+            <SegmentedControlItem
+              onClick={() => setMetricType('deposits')}
+              selected={metricType === 'deposits'}
+            >
+              {t('vault-deposits')}
+            </SegmentedControlItem>
+            <SegmentedControlItem
+              onClick={() => setMetricType('apy')}
+              selected={metricType === 'apy'}
+            >
+              {t('apy')}
+            </SegmentedControlItem>
+          </div>
+        </div>
+        <div className="mt-8">
+          <HistoricalMetricsChart
+            data={data}
+            isError={isError}
+            metricType={metricType}
+            period={period}
+          />
+        </div>
+        {/* Mobile: period buttons below chart */}
+        <div className="mt-6 flex items-center gap-2 lg:hidden">
+          <SegmentedControlItem
+            className="flex-1"
+            onClick={() => setPeriod('1w')}
+            selected={period === '1w'}
+          >
+            {t('1-week')}
+          </SegmentedControlItem>
+          <SegmentedControlItem
+            className="flex-1"
+            onClick={() => setPeriod('1m')}
+            selected={period === '1m'}
+          >
+            {t('month', { count: 1 })}
+          </SegmentedControlItem>
+          <SegmentedControlItem
+            className="flex-1"
+            onClick={() => setPeriod('3m')}
+            selected={period === '3m'}
+          >
+            {t('month', { count: 3 })}
+          </SegmentedControlItem>
+          <SegmentedControlItem
+            className="flex-1"
+            onClick={() => setPeriod('1y')}
+            selected={period === '1y'}
+          >
+            {t('1-year')}
+          </SegmentedControlItem>
+        </div>
+      </div>
+    </Card>
+  )
+}

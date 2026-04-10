@@ -62,6 +62,7 @@
     "vault-strategies": "1.0.0",
     "ve-hemi-actions": "1.0.0",
     "ve-hemi-rewards": "1.0.0",
+    "victory": "37.3.6",
     "viem": "2.28.4",
     "viem-erc20": "2.0.0",
     "viem-erc4626": "1.0.0",

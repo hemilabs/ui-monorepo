@@ -1,10 +1,13 @@
 import {
   formatBtcAddress,
+  formatCompactFiat,
+  formatCompactFiatParts,
   formatEvmAddress,
   formatEvmHash,
   formatFutureTime,
   formatPastTime,
   formatPercentage,
+  formatShortDate,
   formatTVL,
 } from 'utils/format'
 import { describe, expect, it } from 'vitest'
@@ -189,6 +192,125 @@ describe('utils/format', function () {
 
     it('should format a string number greater than one hundred thousand without decimals', function () {
       expect(formatTVL('2500000.13')).toBe('$2,500,000')
+    })
+  })
+
+  describe('formatCompactFiat', function () {
+    // Intl.NumberFormat separates the number and the compact suffix with a
+    // non-breaking space (U+00A0) in es/pt locales — not a regular ASCII
+    // space. Use an explicit constant so the expectations are unambiguous.
+    const nbsp = '\u00A0'
+
+    it('should format a small number in en locale', function () {
+      expect(formatCompactFiat(999, 'en')).toBe('$999')
+    })
+
+    it('should format thousands in en locale', function () {
+      expect(formatCompactFiat(1500, 'en')).toBe('$1.5K')
+    })
+
+    it('should format millions in en locale', function () {
+      expect(formatCompactFiat(420_000_000, 'en')).toBe('$420M')
+    })
+
+    it('should format billions in en locale', function () {
+      expect(formatCompactFiat(1_200_000_000, 'en')).toBe('$1.2B')
+    })
+
+    it('should format zero in en locale', function () {
+      expect(formatCompactFiat(0, 'en')).toBe('$0')
+    })
+
+    it('should honor maximumFractionDigits when provided', function () {
+      expect(formatCompactFiat(420_170_000, 'en', 2)).toBe('$420.17M')
+    })
+
+    it('should format millions in es locale with trailing space', function () {
+      expect(formatCompactFiat(420_000_000, 'es')).toBe(`$420${nbsp}M`)
+    })
+
+    it('should format millions in es locale with comma decimal', function () {
+      expect(formatCompactFiat(420_170_000, 'es', 2)).toBe(`$420,17${nbsp}M`)
+    })
+
+    it('should format millions in pt locale using "mi" suffix', function () {
+      expect(formatCompactFiat(420_000_000, 'pt')).toBe(`$420${nbsp}mi`)
+    })
+  })
+
+  describe('formatCompactFiatParts', function () {
+    const nbsp = '\u00A0'
+
+    it('should split number and suffix for millions in en locale', function () {
+      expect(formatCompactFiatParts(420_170_000, 'en')).toEqual({
+        number: '$420.17',
+        suffix: 'M',
+      })
+    })
+
+    it('should split number and suffix for billions in en locale', function () {
+      expect(formatCompactFiatParts(1_234_567_890, 'en')).toEqual({
+        number: '$1.23',
+        suffix: 'B',
+      })
+    })
+
+    it('should return an empty suffix for small numbers', function () {
+      expect(formatCompactFiatParts(999, 'en')).toEqual({
+        number: '$999',
+        suffix: '',
+      })
+    })
+
+    it('should return an empty suffix for zero', function () {
+      expect(formatCompactFiatParts(0, 'en')).toEqual({
+        number: '$0',
+        suffix: '',
+      })
+    })
+
+    it('should honor an explicit maximumFractionDigits', function () {
+      expect(formatCompactFiatParts(420_170_000, 'en', 0)).toEqual({
+        number: '$420',
+        suffix: 'M',
+      })
+    })
+
+    it('should use comma decimals in es locale', function () {
+      expect(formatCompactFiatParts(420_170_000, 'es')).toEqual({
+        number: `$420,17${nbsp}`,
+        suffix: 'M',
+      })
+    })
+
+    it('should use "mi" suffix in pt locale', function () {
+      expect(formatCompactFiatParts(420_170_000, 'pt')).toEqual({
+        number: `$420,17${nbsp}`,
+        suffix: 'mi',
+      })
+    })
+  })
+
+  describe('formatShortDate', function () {
+    // Use local-time constructor so the formatted day is stable regardless of
+    // the test runner's timezone.
+    const march15 = new Date(2026, 2, 15)
+    const december5 = new Date(2026, 11, 5)
+
+    it('should format a date in en locale', function () {
+      expect(formatShortDate(march15, 'en')).toBe('Mar 15')
+    })
+
+    it('should format a date in es locale', function () {
+      expect(formatShortDate(march15, 'es')).toBe('15 mar')
+    })
+
+    it('should format a date in pt locale', function () {
+      expect(formatShortDate(march15, 'pt')).toBe('15 de mar.')
+    })
+
+    it('should zero-pad single-digit days', function () {
+      expect(formatShortDate(december5, 'en')).toBe('Dec 05')
     })
   })
 

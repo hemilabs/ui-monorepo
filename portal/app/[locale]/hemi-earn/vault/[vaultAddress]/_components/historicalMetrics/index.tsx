@@ -2,9 +2,9 @@
 
 import { Card } from 'components/card'
 import { useLocale, useTranslations } from 'next-intl'
-import { type ReactNode, useState } from 'react'
+import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { formatCompactFiatParts } from 'utils/format'
+import { type Address } from 'viem'
 
 import { HistoricalMetricsIcon } from '../../../../_icons/historicalMetricsIcon'
 import {
@@ -13,63 +13,44 @@ import {
   useHistoricalMetrics,
 } from '../../_hooks/useHistoricalMetrics'
 
+import { HeadlineValue } from './headlineValue'
 import { HistoricalMetricsChart } from './historicalMetricsChart'
+import { SegmentedControlItem } from './segmentedControlItem'
 
-const HeadlineValue = function ({
-  locale,
-  metricType,
-  value,
-}: {
-  locale: string
-  metricType: MetricType
-  value: number
-}) {
-  if (metricType === 'apy') {
-    return <>{value.toFixed(2)}%</>
-  }
-  const { number, suffix } = formatCompactFiatParts(value, locale)
-  return (
-    <>
-      <span>{number}</span>
-      <span className="text-neutral-400">{suffix}</span>
-    </>
-  )
+type Props = {
+  vaultAddress: Address
 }
 
-const SegmentedControlItem = ({
-  children,
-  className = '',
-  onClick,
-  selected,
-}: {
-  children: ReactNode
-  className?: string
-  onClick: VoidFunction
-  selected: boolean
-}) => (
-  <button
-    className={`flex h-7 cursor-pointer items-center justify-center whitespace-nowrap rounded-md px-2.5 text-xs font-semibold leading-4 tracking-wide ${
-      selected
-        ? 'bg-white text-neutral-950 shadow-sm'
-        : 'bg-neutral-100 text-neutral-700 hover:text-neutral-950'
-    } ${className}`}
-    onClick={onClick}
-    type="button"
-  >
-    {children}
-  </button>
-)
-
-export const HistoricalMetrics = function () {
+export const HistoricalMetrics = function ({ vaultAddress }: Props) {
   const t = useTranslations('hemi-earn.vault.historical-metrics')
   const locale = useLocale()
   const [period, setPeriod] = useState<MetricPeriod>('1w')
   const [metricType, setMetricType] = useState<MetricType>('deposits')
 
-  const { data, isError } = useHistoricalMetrics(period, metricType)
+  const { data, isError, isPending } = useHistoricalMetrics({
+    metricType,
+    period,
+    vaultAddress,
+  })
 
   const lastValue =
     data && data.length > 0 ? data[data.length - 1].y : undefined
+
+  const renderHeadline = function () {
+    if (isPending) {
+      return <Skeleton className="h-7 w-28" />
+    }
+    if (isError || lastValue === undefined) {
+      return '-'
+    }
+    return (
+      <HeadlineValue
+        locale={locale}
+        metricType={metricType}
+        value={lastValue}
+      />
+    )
+  }
 
   return (
     <Card shadow="sm">
@@ -82,17 +63,7 @@ export const HistoricalMetrics = function () {
         </div>
         <div className="mt-3 flex items-center justify-between">
           <h2 className="shrink-0 text-2xl font-semibold leading-8 -tracking-[0.48px] text-neutral-950">
-            {lastValue !== undefined ? (
-              <HeadlineValue
-                locale={locale}
-                metricType={metricType}
-                value={lastValue}
-              />
-            ) : isError ? (
-              '-'
-            ) : (
-              <Skeleton className="h-7 w-28" />
-            )}
+            {renderHeadline()}
           </h2>
           {/* Desktop: period + metric type toggles inline */}
           <div className="hidden items-center gap-3 lg:flex">
@@ -158,6 +129,7 @@ export const HistoricalMetrics = function () {
           <HistoricalMetricsChart
             data={data}
             isError={isError}
+            isPending={isPending}
             metricType={metricType}
             period={period}
           />

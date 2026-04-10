@@ -181,6 +181,7 @@ const EmptyChart = ({
 type Props = {
   data: MetricDataPoint[] | undefined
   isError: boolean
+  isPending: boolean
   metricType: MetricType
   period: MetricPeriod
 }
@@ -188,6 +189,7 @@ type Props = {
 export const HistoricalMetricsChart = function ({
   data,
   isError,
+  isPending,
   metricType,
   period,
 }: Props) {
@@ -195,7 +197,7 @@ export const HistoricalMetricsChart = function ({
   const { width: windowWidth } = useWindowSize()
   const chartWidth = getChartWidth(windowWidth)
 
-  if (data !== undefined) {
+  if (data !== undefined && data.length > 0) {
     return (
       <div>
         <VictoryChart
@@ -281,6 +283,17 @@ export const HistoricalMetricsChart = function ({
           width={chartWidth}
         />
       </div>
+    )
+  }
+
+  if (!isPending) {
+    return (
+      <EmptyChart
+        locale={locale}
+        metricType={metricType}
+        period={period}
+        width={chartWidth}
+      />
     )
   }
 

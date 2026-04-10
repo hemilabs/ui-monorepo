@@ -1,0 +1,17 @@
+{
+  "@context": "https://openvex.dev/ns/v0.2.0",
+  "author": "Gabriel Montes <gabriel@hemi.xyz>",
+  "statements": [
+    {
+      "justification": "vulnerable_code_not_in_execute_path",
+      "products": [{ "@id": "pkg:npm/picomatch@4.0.3" }],
+      "status": "not_affected",
+      "timestamp": "2026-04-07T22:21:43.152Z",
+      "vulnerability": {
+        "name": "CVE-2026-33671"
+      }
+    }
+  ],
+  "timestamp": "2026-04-07T22:21:43.152Z",
+  "version": 1
+}

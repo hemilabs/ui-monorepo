@@ -1,8 +1,4 @@
 {
-  "absinthe": {
-    "apiKey": "ABSINTHE_API_KEY",
-    "apiUrl": "ABSINTHE_API_URL"
-  },
   "btcVaults": {
     "cacheMin": {
       "__format": "json",

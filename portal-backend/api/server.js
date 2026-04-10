@@ -11,7 +11,6 @@ const { getBtcVaultsData } = require('./src/btc-vaults')
 const { getTvl } = require('./src/databox')(config.get('tvl.data'))
 const { getAllUserClaimData } = require('./src/claims')()
 const { getNetStats } = require('./src/net-stats')(config.get('rpcUrl'))
-const { getUserPoints } = require('./src/absinthe')(config.get('absinthe'))
 const cache = require('./src/redis')(config.get('redis'))
 
 const { getVeHemiRewards } = require('./src/ve-hemi')({ cache })
@@ -58,16 +57,6 @@ app.get(
   toJsonMiddleware(getNetStats, {
     maxAge: 60 * 60 * 1000,
   }),
-)
-
-app.get(
-  /\/points\/(0x[0-9a-fA-F]{40})/,
-  toJsonMiddleware(
-    async address => ({ points: await getUserPoints(address) }),
-    {
-      revalidate: 60 * 1000,
-    },
-  ),
 )
 
 app.get(

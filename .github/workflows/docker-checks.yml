@@ -33,10 +33,10 @@ jobs:
         with:
           command: cves
           exit-code: true
-          only-fixed: true
-          only-severities: critical,high
-          only-vex-affected: true
           image: ${{ matrix.image }}:local
+          only-severities: critical,high
+          vex-author: '.*'
+          vex-location: '.'
     strategy:
       matrix:
         include:

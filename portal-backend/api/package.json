@@ -1,6 +1,6 @@
 {
   "name": "portal-backend",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "dependencies": {
     "@sentry/node": "10.5.0",
     "config": "4.1.0",
@@ -8,7 +8,6 @@
     "esplora-client": "1.2.0",
     "express": "5.1.0",
     "hemi-viem": "2.6.1",
-    "p-retry": "4.6.2",
     "promise-limit-one": "1.1.0",
     "promise-mem": "1.0.4",
     "promise-swr": "1.0.2",

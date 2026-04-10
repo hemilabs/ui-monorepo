@@ -6,6 +6,8 @@ import { CloseIcon } from 'components/icons/closeIcon'
 import {
   ComponentType,
   createContext,
+  type ReactNode,
+  type TransitionEvent,
   useCallback,
   useContext,
   useEffect,
@@ -22,7 +24,7 @@ const DrawerAnimatedCloseContext = createContext<VoidFunction | undefined>(
 )
 
 type Props = {
-  children: React.ReactNode
+  children: ReactNode
   container?: HTMLElement
   onClose?: VoidFunction
   overlay?: ComponentType
@@ -74,9 +76,7 @@ export const Drawer = function ({
   )
 
   const handleTransitionEnd = useCallback(
-    function onPanelTransitionEnd(
-      event: React.TransitionEvent<HTMLDivElement>,
-    ) {
+    function onPanelTransitionEnd(event: TransitionEvent<HTMLDivElement>) {
       const isPanel = event.target === event.currentTarget
       const isTransform = event.propertyName === 'transform'
       const closingAnimFinished =
@@ -174,7 +174,7 @@ export function DrawerTopSection({
   )
 }
 
-export const DrawerSection = ({ children }: { children: React.ReactNode }) => (
+export const DrawerSection = ({ children }: { children: ReactNode }) => (
   <div className="skip-parent-padding-x border-y border-solid border-neutral-300/55 bg-neutral-50 p-6">
     {children}
   </div>

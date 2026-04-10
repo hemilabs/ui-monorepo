@@ -14,13 +14,13 @@ export const DrawerLoader = ({
   withDrawer ? (
     <Drawer position={position}>
       <Skeleton
-        className="w-full md:w-[450px]"
+        className="md:w-drawer w-full"
         containerClassName={`flex ${className ?? ''}`}
       />
     </Drawer>
   ) : (
     <Skeleton
-      className="w-full md:w-[450px]"
+      className="md:w-drawer w-full"
       containerClassName={`drawer-content flex ${className ?? ''}`}
     />
   )

@@ -4,7 +4,12 @@ import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { useLocale } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
-import { formatCompactFiat, formatDate, formatShortDate } from 'utils/format'
+import {
+  formatCompactFiat,
+  formatDate,
+  formatPercentage,
+  formatShortDate,
+} from 'utils/format'
 import {
   VictoryArea,
   VictoryAxis,
@@ -80,13 +85,22 @@ const formatShortTimestamp = (timestampMs: number, locale: string) =>
 const formatFullTimestamp = (timestampMs: number, locale: string) =>
   formatDate(new Date(timestampMs), locale)
 
+// 'compact' is meant for the axis ticks, where APY is rendered as a rounded
+// integer ("4%") to keep the axis readable. 'full' keeps the full precision
+// via formatPercentage ("4.53%") and is used in the tooltip, where the user
+// is explicitly asking for detail.
+type FormatPrecision = 'compact' | 'full'
+
 const formatYAxis = function (
   value: number,
   metricType: MetricType,
   locale: string,
+  precision: FormatPrecision = 'compact',
 ) {
   if (metricType === 'apy') {
-    return `${Math.round(value)}%`
+    return precision === 'full'
+      ? formatPercentage(value)
+      : `${Math.round(value)}%`
   }
   return formatCompactFiat(value, locale)
 }
@@ -109,7 +123,7 @@ function ChartTooltipLabel({
   }
 
   const dateText = formatFullTimestamp(datum.x, locale)
-  const valueText = formatYAxis(datum.y, metricType, locale)
+  const valueText = formatYAxis(datum.y, metricType, locale, 'full')
 
   return (
     <text
@@ -227,6 +241,7 @@ export const HistoricalMetricsChart = function ({
                   datum.y,
                   metricType,
                   locale,
+                  'full',
                 )}`
               }
               voronoiBlacklist={['area']}

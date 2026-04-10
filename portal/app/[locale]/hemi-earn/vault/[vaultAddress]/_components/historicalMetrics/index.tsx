@@ -1,7 +1,7 @@
 'use client'
 
 import { Card } from 'components/card'
-import { useLocale, useTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type Address } from 'viem'
@@ -23,7 +23,6 @@ type Props = {
 
 export const HistoricalMetrics = function ({ vaultAddress }: Props) {
   const t = useTranslations('hemi-earn.vault.historical-metrics')
-  const locale = useLocale()
   const [period, setPeriod] = useState<MetricPeriod>('1w')
   const [metricType, setMetricType] = useState<MetricType>('deposits')
 
@@ -43,13 +42,7 @@ export const HistoricalMetrics = function ({ vaultAddress }: Props) {
     if (isError || lastValue === undefined) {
       return '-'
     }
-    return (
-      <HeadlineValue
-        locale={locale}
-        metricType={metricType}
-        value={lastValue}
-      />
-    )
+    return <HeadlineValue metricType={metricType} value={lastValue} />
   }
 
   return (

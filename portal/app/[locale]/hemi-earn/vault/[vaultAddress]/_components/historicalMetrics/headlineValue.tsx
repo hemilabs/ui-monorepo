@@ -1,16 +1,18 @@
-import { formatCompactFiatParts } from 'utils/format'
+import { useLocale } from 'next-intl'
+import { formatCompactFiatParts, formatPercentage } from 'utils/format'
 
 import { type MetricType } from '../../_hooks/useHistoricalMetrics'
 
 type Props = {
-  locale: string
   metricType: MetricType
   value: number
 }
 
-export const HeadlineValue = function ({ locale, metricType, value }: Props) {
+export const HeadlineValue = function ({ metricType, value }: Props) {
+  const locale = useLocale()
+
   if (metricType === 'apy') {
-    return <>{value.toFixed(2)}%</>
+    return <>{formatPercentage(value)}</>
   }
   const { number, suffix } = formatCompactFiatParts(value, locale)
   return (

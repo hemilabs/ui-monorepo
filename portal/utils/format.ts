@@ -94,9 +94,48 @@ export const formatTVL = function (amount: number | string) {
   return `$${formatFiatNumberTVL(amount)}`
 }
 
+// When `maximumFractionDigits` is undefined, the Intl compact notation default
+// is used (it rounds based on significant digits, eg. "420M", "1.2B").
+const compactFiatFormatter = (locale: string, maximumFractionDigits?: number) =>
+  new Intl.NumberFormat(locale, {
+    compactDisplay: 'short',
+    notation: 'compact',
+    ...(maximumFractionDigits !== undefined && { maximumFractionDigits }),
+  })
+
+export const formatCompactFiat = (
+  value: number,
+  locale: string,
+  maximumFractionDigits?: number,
+) => `$${compactFiatFormatter(locale, maximumFractionDigits).format(value)}`
+
+// Same as formatCompactFiat, but splits the numeric part from the K/M/B
+// suffix so callers can style them differently (eg. dim the suffix).
+export const formatCompactFiatParts = function (
+  value: number,
+  locale: string,
+  maximumFractionDigits = 2,
+) {
+  const parts = compactFiatFormatter(
+    locale,
+    maximumFractionDigits,
+  ).formatToParts(value)
+  const suffix = parts.find(p => p.type === 'compact')?.value ?? ''
+  const number = parts
+    .filter(p => p.type !== 'compact')
+    .map(p => p.value)
+    .join('')
+  return { number: `$${number}`, suffix }
+}
+
 export const formatDate = (date: Date, locale: string) =>
   new Intl.DateTimeFormat(locale, {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
   }).format(date)
+
+export const formatShortDate = (date: Date, locale: string) =>
+  new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short' }).format(
+    date,
+  )

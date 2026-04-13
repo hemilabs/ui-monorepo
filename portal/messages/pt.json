@@ -53,6 +53,14 @@
         "withdrawing": "Sacando..."
       },
       "here-is-your-tx": "Aqui está sua transação:",
+      "historical-metrics": {
+        "1-week": "1 semana",
+        "1-year": "1 ano",
+        "apy": "TEA",
+        "month": "{count, plural, one {# mês} other {# meses}}",
+        "title": "Métricas históricas",
+        "vault-deposits": "Depósitos do vault"
+      },
       "total-deposits": "Depósitos totais do vault",
       "withdraw-successful": "Saque realizado com sucesso"
     }

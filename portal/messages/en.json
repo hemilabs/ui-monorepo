@@ -53,6 +53,14 @@
         "withdrawing": "Withdrawing..."
       },
       "here-is-your-tx": "Here's your transaction:",
+      "historical-metrics": {
+        "1-week": "1 week",
+        "1-year": "1 year",
+        "apy": "APY",
+        "month": "{count, plural, one {# month} other {# months}}",
+        "title": "Historical metrics",
+        "vault-deposits": "Vault deposits"
+      },
       "total-deposits": "Vault total deposits",
       "withdraw-successful": "Withdraw successful"
     }

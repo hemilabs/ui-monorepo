@@ -1,6 +1,5 @@
 'use client'
 
-import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { ToastLoader } from 'components/toast/toastLoader'
 import { useHemiToken } from 'hooks/useHemiToken'
 import dynamic from 'next/dynamic'
@@ -17,14 +16,7 @@ import { useStakingDashboard } from '../_context/stakingDashboardContext'
 import { useDrawerStakingQueryString } from '../_hooks/useDrawerStakingQueryString'
 
 import { Stake } from './stake'
-
-const StakeReview = dynamic(
-  () => import('./stakeReview').then(mod => mod.StakeReview),
-  {
-    loading: () => <DrawerLoader className="h-[95dvh] md:h-full" />,
-    ssr: false,
-  },
-)
+import { StakeReview } from './stakeReview'
 
 const StakeToast = dynamic(
   () => import('./stakeToast').then(mod => mod.StakeToast),

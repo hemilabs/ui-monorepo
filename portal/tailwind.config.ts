@@ -319,7 +319,7 @@ const config: Config = {
         filter: 'filter',
       },
       width: {
-        // Drawer panel width (desktop); shared by drawer.css and drawerLoader
+        // Drawer panel width (desktop); shared by drawer.css and Drawer
         drawer: '450px',
       },
     },

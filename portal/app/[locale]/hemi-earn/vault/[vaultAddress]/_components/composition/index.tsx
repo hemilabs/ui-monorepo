@@ -78,9 +78,7 @@ export const Composition = function ({ vaultAddress }: Props) {
             <CompositionIcon />
           </div>
           <div className="flex items-center justify-between">
-            <h2 className="shrink-0 text-2xl font-semibold text-neutral-950">
-              {renderHeadline()}
-            </h2>
+            <h2 className="shrink-0 text-neutral-950">{renderHeadline()}</h2>
             <div className="flex items-center gap-2">
               <SegmentedControlItem
                 onClick={function () {

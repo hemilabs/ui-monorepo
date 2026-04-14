@@ -60,7 +60,7 @@ export const CompositionChart = function ({
           />
         </svg>
         {hoveredItem !== null && (
-          <span className="font-inter-display text-mid-md pointer-events-none absolute font-semibold text-orange-500">
+          <span className="text-mid-md pointer-events-none absolute font-semibold text-orange-500">
             {`${hoveredItem.share}%`}
           </span>
         )}

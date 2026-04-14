@@ -95,7 +95,7 @@ export const CompositionTable = function ({
             >
               {row.getVisibleCells().map(cell => (
                 <td
-                  className={`flex h-full w-full flex-grow cursor-pointer items-center border-b border-solid border-neutral-100 py-3 group-hover/row:bg-neutral-50 first:[&>*]:pl-4 last:[&>*]:pr-4 ${
+                  className={`flex size-full flex-grow cursor-pointer items-center border-b border-solid border-neutral-100 py-3 group-hover/row:bg-neutral-50 first:[&>*]:pl-4 last:[&>*]:pr-4 ${
                     cell.column.columnDef.meta?.className ?? ''
                   }`}
                   key={cell.id}

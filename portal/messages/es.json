@@ -53,6 +53,17 @@
         "withdrawing": "Retirando..."
       },
       "here-is-your-tx": "Aquí está su transacción:",
+      "composition": {
+        "amount": "Monto",
+        "apy": "TEA",
+        "by-protocol": "Por protocolo",
+        "by-token": "Por token",
+        "position": "Posición",
+        "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
+        "share": "Participación",
+        "title": "Composición",
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
+      },
       "historical-metrics": {
         "1-week": "1 semana",
         "1-year": "1 año",

@@ -12,6 +12,7 @@ import { type Address } from 'viem'
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { VaultFormProvider } from '../_context/vaultFormContext'
 
+import { Composition } from './composition'
 import { HistoricalMetrics } from './historicalMetrics'
 import { VaultForm } from './vaultForm'
 import { VaultInfoCards } from './vaultInfoCards'
@@ -81,6 +82,7 @@ export const VaultPageContent = function ({ vaultAddress }: Props) {
           <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-2/3">
             <VaultInfoCards pool={pool} />
             <HistoricalMetrics vaultAddress={pool.vaultAddress} />
+            <Composition vaultAddress={pool.vaultAddress} />
           </div>
           <div className="order-1 lg:order-2 lg:basis-1/3">
             <VaultForm />

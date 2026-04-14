@@ -53,6 +53,17 @@
         "withdrawing": "Withdrawing..."
       },
       "here-is-your-tx": "Here's your transaction:",
+      "composition": {
+        "amount": "Amount",
+        "apy": "APY",
+        "by-protocol": "By protocol",
+        "by-token": "By token",
+        "position": "Position",
+        "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
+        "share": "Share",
+        "title": "Composition",
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
+      },
       "historical-metrics": {
         "1-week": "1 week",
         "1-year": "1 year",

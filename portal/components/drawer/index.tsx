@@ -105,6 +105,8 @@ export const Drawer = function ({
     return null
   }
 
+  const mdPanelWidthClass = position === 'right' ? 'md:w-drawer' : 'md:w-fit'
+
   return ReactDOM.createPortal(
     <>
       <div
@@ -112,7 +114,7 @@ export const Drawer = function ({
           position === 'right'
             ? 'md:left-auto md:right-2'
             : 'md:left-2 md:right-auto'
-        } shadow-xl md:top-2 md:w-fit md:rounded-lg ${
+        } shadow-xl md:top-2 ${mdPanelWidthClass} md:rounded-lg ${
           isOpen ? 'drawer-panel--open' : ''
         }`}
         data-position={position}

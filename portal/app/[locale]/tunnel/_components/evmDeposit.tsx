@@ -1,7 +1,7 @@
 'use client'
 
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
-import { DrawerLoader } from 'components/drawer/drawerLoader'
+import { CustomTunnelsThroughPartners } from 'components/customTunnelsThroughPartners'
 import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { FeesContainer } from 'components/feesContainer'
 import { useTokenBalance } from 'hooks/useBalance'
@@ -29,17 +29,6 @@ import { Erc20TokenApproval } from './erc20TokenApproval'
 import { FormContent, TunnelForm } from './form'
 import { SubmitEvmDeposit } from './submitEvmDeposit'
 import { TunnelProviderToggle } from './tunnelProviderToggle'
-
-const CustomTunnelsThroughPartners = dynamic(
-  () =>
-    import('components/customTunnelsThroughPartners').then(
-      mod => mod.CustomTunnelsThroughPartners,
-    ),
-  {
-    loading: () => <DrawerLoader className="h-[45dvh] md:h-full" />,
-    ssr: false,
-  },
-)
 
 const SetMaxEvmBalance = dynamic(
   () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),

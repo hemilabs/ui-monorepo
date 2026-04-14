@@ -14,7 +14,7 @@ export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
   const t = useTranslations()
 
   return (
-    <div className="drawer-content pb-6 md:h-full md:max-w-md">
+    <div className="drawer-content !min-h-full pb-6 md:max-w-md">
       <div className="mb-3 flex flex-col gap-y-3">
         <DrawerTopSection
           heading={t('common.connect-wallets')}

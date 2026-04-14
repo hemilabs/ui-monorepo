@@ -8,7 +8,7 @@ const Sentry = require('@sentry/node')
 require('./src/instrument.js')
 
 const { getBtcVaultsData } = require('./src/btc-vaults')
-const { getTvl } = require('./src/databox')(config.get('tvl.data'))
+const { getTvl } = require('./src/dune')(config.get('tvl.dune'))
 const { getAllUserClaimData } = require('./src/claims')()
 const { getNetStats } = require('./src/net-stats')(config.get('rpcUrl'))
 const cache = require('./src/redis')(config.get('redis'))

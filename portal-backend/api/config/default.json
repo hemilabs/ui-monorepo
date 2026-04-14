@@ -14,7 +14,7 @@
     "loggingLevels": ["log", "warn", "error"]
   },
   "tvl": {
-    "data": {},
-    "revalidateMin": 20
+    "dune": {},
+    "revalidateMin": 720
   }
 }

@@ -83,13 +83,19 @@ export const Composition = function ({ vaultAddress }: Props) {
             </h2>
             <div className="flex items-center gap-2">
               <SegmentedControlItem
-                onClick={() => setViewMode('token')}
+                onClick={function () {
+                  setViewMode('token')
+                  setHoveredIndex(null)
+                }}
                 selected={viewMode === 'token'}
               >
                 {t('by-token')}
               </SegmentedControlItem>
               <SegmentedControlItem
-                onClick={() => setViewMode('protocol')}
+                onClick={function () {
+                  setViewMode('protocol')
+                  setHoveredIndex(null)
+                }}
                 selected={viewMode === 'protocol'}
               >
                 {t('by-protocol')}

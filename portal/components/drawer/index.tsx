@@ -17,7 +17,7 @@ import {
 import ReactDOM from 'react-dom'
 import { getDrawerPortalContainer } from 'utils/document'
 
-import { Overlay } from '../overlay'
+import { DrawerOverlay } from '../overlay'
 
 const DrawerAnimatedCloseContext = createContext<VoidFunction | undefined>(
   undefined,
@@ -35,7 +35,7 @@ export const Drawer = function ({
   children,
   container,
   onClose,
-  overlay: OverlayComponent = Overlay,
+  overlay: OverlayComponent = DrawerOverlay,
   position = 'right',
 }: Props) {
   const [isOpen, setIsOpen] = useState(false)

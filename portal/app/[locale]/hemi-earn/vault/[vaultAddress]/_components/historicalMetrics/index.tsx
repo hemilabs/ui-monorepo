@@ -12,10 +12,10 @@ import {
   type MetricType,
   useHistoricalMetrics,
 } from '../../_hooks/useHistoricalMetrics'
+import { SegmentedControlItem } from '../segmentedControlItem'
 
 import { HeadlineValue } from './headlineValue'
 import { HistoricalMetricsChart } from './historicalMetricsChart'
-import { SegmentedControlItem } from './segmentedControlItem'
 
 type Props = {
   vaultAddress: Address

@@ -35,6 +35,17 @@
     },
     "vault": {
       "apy": "APY",
+      "composition": {
+        "amount": "Amount",
+        "apy": "APY",
+        "by-protocol": "By protocol",
+        "by-token": "By token",
+        "position": "Position",
+        "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
+        "share": "Share",
+        "title": "Composition",
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
+      },
       "deposit-successful": "Deposit successful",
       "drawer": {
         "approving": "Approving {symbol}",

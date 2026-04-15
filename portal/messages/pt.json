@@ -35,6 +35,17 @@
     },
     "vault": {
       "apy": "TEA",
+      "composition": {
+        "amount": "Valor",
+        "apy": "TEA",
+        "by-protocol": "Por protocolo",
+        "by-token": "Por token",
+        "position": "Posição",
+        "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
+        "share": "Participação",
+        "title": "Composição",
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
+      },
       "deposit-successful": "Depósito realizado com sucesso",
       "drawer": {
         "approving": "Aprovando {symbol}",

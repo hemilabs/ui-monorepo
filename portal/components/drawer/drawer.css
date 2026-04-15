@@ -28,7 +28,7 @@
 
   .drawer-backdrop {
     opacity: 0;
-    transition: opacity 380ms cubic-bezier(0.32, 0.72, 0, 1);
+    transition: opacity 300ms cubic-bezier(0.32, 0.72, 0, 1);
   }
 
   .drawer-backdrop.drawer-backdrop--open {

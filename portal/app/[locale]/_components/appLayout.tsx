@@ -1,7 +1,15 @@
 'use client'
 
+import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { Drawer } from 'components/drawer'
-import React, { Suspense, useCallback, useState, ReactNode } from 'react'
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react'
+import { screenBreakpoints } from 'styles'
 
 import { AppLayoutContainer } from './appLayoutContainer'
 import { Header } from './header'
@@ -16,12 +24,25 @@ type Props = {
 
 export const AppLayout = function ({ children }: Props) {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false)
+  const { width } = useWindowSize()
 
   const toggleMenu = () => setIsNavbarOpen(!isNavbarOpen)
 
   const closeNavbar = useCallback(function closeNavbar() {
     setIsNavbarOpen(false)
   }, [])
+
+  useEffect(
+    function closeNavbarWhenDesktopLayout() {
+      if (width != null && width >= screenBreakpoints.xl) {
+        setIsNavbarOpen(false)
+      }
+    },
+    [width],
+  )
+
+  const showNavbarDrawer =
+    isNavbarOpen && (width == null || width < screenBreakpoints.xl)
 
   return (
     <AppLayoutContainer>
@@ -46,7 +67,7 @@ export const AppLayout = function ({ children }: Props) {
           </div>
         </div>
       </MainContainer>
-      {isNavbarOpen && (
+      {showNavbarDrawer && (
         <Drawer onClose={closeNavbar} position="left">
           <NavbarResponsive />
         </Drawer>

@@ -24,13 +24,9 @@
     }
   },
   "tvl": {
-    "data": {
-      "sampleId": {
-        "__format": "json",
-        "__name": "TVL_DATA_SAMPLE_ID"
-      },
-      "password": "TVL_DATA_PASSWORD",
-      "url": "TVL_DATA_URL"
+    "dune": {
+      "apiKey": "TVL_DUNE_API_KEY",
+      "queryId": "TVL_DUNE_QUERY_ID"
     },
     "revalidateMin": {
       "__format": "json",

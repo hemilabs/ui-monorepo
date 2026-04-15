@@ -71,7 +71,7 @@ $ curl http://localhost:3006/prices
 
 #### `GET /tvl`
 
-Computes and caches the TVL so the portal can have a value even if [Databox](https://databox.com/) is down or returns errors.
+Computes and caches the TVL so the portal can have a value even if [Dune](https://dune.com/) is down or returns errors.
 
 ```console
 $ curl http://localhost:3006/tvl
@@ -100,10 +100,9 @@ These environment variables control how the cache works:
 | RPC_URL_HEMI          | URL of the Hemi RPC node.                                         | `https://rpc.hemi.network/rpc` |
 | SENTRY_DSN            | The Sentry DSN.                                                   |                                |
 | SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).      | ["log", "warn", "error"]       |
-| TVL_DATA_SAMPLE_ID    | The sample id within the TVL data.                                |                                |
-| TVL_DATA_PASSWORD     | The Databox Password.                                             |                                |
-| TVL_DATA_URL          | The Databox URL that shall be used to get the TVL.                |                                |
-| TVL_REVALIDATE_MIN    | The time the TVL will be considered fresh.                        | 20                             |
+| TVL_DUNE_API_KEY      | The Dune API key.                                                 |                                |
+| TVL_DUNE_QUERY_ID     | The Dune TVL query id.                                            |                                |
+| TVL_REVALIDATE_MIN    | The time the TVL will be considered fresh.                        | 720                            |
 
 (1) Only stars (`*`) are supported. I.e. `https://*.hemi.xyz` will match any subdomain or subdomain chain.
 

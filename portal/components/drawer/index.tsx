@@ -23,6 +23,13 @@ const DrawerAnimatedCloseContext = createContext<VoidFunction | undefined>(
   undefined,
 )
 
+function drawerBackdropClassName(isOpen: boolean, isClosing: boolean) {
+  const openClass = isOpen ? 'drawer-backdrop--open' : ''
+  const pointerClass =
+    isOpen || isClosing ? 'pointer-events-auto' : 'pointer-events-none'
+  return `drawer-backdrop fixed inset-0 z-20 ${openClass} ${pointerClass}`
+}
+
 type Props = {
   children: ReactNode
   container?: HTMLElement
@@ -39,6 +46,7 @@ export const Drawer = function ({
   position = 'right',
 }: Props) {
   const [isOpen, setIsOpen] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
   const closingStartedRef = useRef(false)
   const suppressOutsideCloseRef = useRef(true)
 
@@ -59,6 +67,7 @@ export const Drawer = function ({
     function closeDrawer() {
       if (onClose && !closingStartedRef.current) {
         closingStartedRef.current = true
+        setIsClosing(true)
         setIsOpen(false)
       }
     },
@@ -83,6 +92,7 @@ export const Drawer = function ({
         isPanel && isTransform && !isOpen && closingStartedRef.current
       if (closingAnimFinished) {
         closingStartedRef.current = false
+        setIsClosing(false)
         onClose?.()
       }
     },
@@ -127,11 +137,7 @@ export const Drawer = function ({
           {children}
         </DrawerAnimatedCloseContext.Provider>
       </div>
-      <div
-        className={`drawer-backdrop fixed inset-0 z-20 ${
-          isOpen ? 'drawer-backdrop--open' : ''
-        }`}
-      >
+      <div className={drawerBackdropClassName(isOpen, isClosing)}>
         <OverlayComponent />
       </div>
     </>,

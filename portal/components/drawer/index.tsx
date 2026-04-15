@@ -48,6 +48,7 @@ export const Drawer = function ({
   const [isOpen, setIsOpen] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   const closingStartedRef = useRef(false)
+  const hasPanelBeenOpenRef = useRef(false)
   const suppressOutsideCloseRef = useRef(true)
 
   useEffect(function allowOutsideCloseAfterOpenClick() {
@@ -63,13 +64,29 @@ export const Drawer = function ({
     setIsOpen(true)
   }, [])
 
+  useEffect(
+    function markPanelOpened() {
+      if (isOpen) {
+        hasPanelBeenOpenRef.current = true
+      }
+    },
+    [isOpen],
+  )
+
   const handleClose = useCallback(
     function closeDrawer() {
-      if (onClose && !closingStartedRef.current) {
-        closingStartedRef.current = true
-        setIsClosing(true)
-        setIsOpen(false)
+      if (!onClose || closingStartedRef.current) {
+        return
       }
+
+      if (!hasPanelBeenOpenRef.current) {
+        onClose()
+        return
+      }
+
+      closingStartedRef.current = true
+      setIsClosing(true)
+      setIsOpen(false)
     },
     [onClose],
   )

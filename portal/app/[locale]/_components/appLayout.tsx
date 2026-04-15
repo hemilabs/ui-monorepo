@@ -26,7 +26,7 @@ export const AppLayout = function ({ children }: Props) {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false)
   const { width } = useWindowSize()
 
-  const toggleMenu = () => setIsNavbarOpen(!isNavbarOpen)
+  const toggleMenu = () => setIsNavbarOpen(prev => !prev)
 
   const closeNavbar = useCallback(function closeNavbar() {
     setIsNavbarOpen(false)

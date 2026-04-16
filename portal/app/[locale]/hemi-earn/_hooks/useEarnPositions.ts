@@ -8,7 +8,7 @@ import { getPublicClient } from 'wagmi/actions'
 import { type EarnPosition } from '../types'
 import { userVaultBalanceQueryOptions } from '../vault/[vaultAddress]/_hooks/useUserVaultBalance'
 
-import { earnPoolsQueryOptions } from './useEarnPools'
+import { earnPoolsQueryOptions, groupByChain } from './useEarnPools'
 import { useHemiEarnTokens } from './useHemiEarnTokens'
 
 export const earnPositionsKeyPrefix = ['hemi-earn', 'positions']
@@ -24,9 +24,10 @@ export const useEarnPositions = function () {
     enabled: !!address && vaultTokens.length > 0,
     async queryFn() {
       const allPositions = await Promise.all(
-        Array.from(
-          Map.groupBy(vaultTokens, vt => vt.token.chainId).entries(),
-        ).map(async function ([chainId, tokens]) {
+        Array.from(groupByChain(vaultTokens).entries()).map(async function ([
+          chainId,
+          tokens,
+        ]) {
           const client = getPublicClient(config, { chainId })!
 
           const pools = await queryClient.ensureQueryData(

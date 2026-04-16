@@ -16,7 +16,10 @@ import { type VaultToken } from '../types'
 const getEarnChainIdsByNetworkType = (networkType: NetworkType) =>
   getEarnChainIds().filter(function (chainId) {
     const chain = findChainById(chainId)
-    return networkType === 'testnet' ? chain?.testnet : !chain?.testnet
+    if (!chain) {
+      return false
+    }
+    return networkType === 'testnet' ? chain.testnet : !chain.testnet
   })
 
 export const useHemiEarnTokens = function () {
@@ -48,11 +51,12 @@ export const useHemiEarnTokens = function () {
   })
 
   const isPending =
-    vaultAssetQueries.every(q => q.isPending) ||
+    vaultAssetQueries.some(q => q.isPending) ||
     (vaultAssets.length > 0 && tokenQueries.some(q => q.isPending))
   const isError =
-    vaultAssetQueries.every(q => q.isError) ||
-    (vaultAssets.length > 0 && tokenQueries.every(q => q.isError))
+    !isPending &&
+    (vaultAssetQueries.every(q => q.isError) ||
+      (vaultAssets.length > 0 && tokenQueries.every(q => q.isError)))
 
   const data: VaultToken[] | undefined =
     isPending || isError

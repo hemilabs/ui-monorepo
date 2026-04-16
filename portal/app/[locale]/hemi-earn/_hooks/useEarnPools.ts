@@ -1,6 +1,6 @@
 'use client'
 
-import { queryOptions, useQuery } from '@tanstack/react-query'
+import { queryOptions, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { type Address, type Chain, type PublicClient } from 'viem'
 import { totalAssets } from 'viem-erc4626/actions'
@@ -61,12 +61,27 @@ export const earnPoolsQueryOptions = ({
     queryKey: getEarnPoolsQueryKey(chainId),
   })
 
-const groupByChain = (vaultTokens: VaultToken[]) =>
-  Map.groupBy(vaultTokens, vt => vt.token.chainId)
+export const groupByChain = function (vaultTokens: VaultToken[]) {
+  const grouped = new Map<Chain['id'], VaultToken[]>()
+
+  for (const vaultToken of vaultTokens) {
+    const chainId = vaultToken.token.chainId
+    const existing = grouped.get(chainId)
+
+    if (existing) {
+      existing.push(vaultToken)
+    } else {
+      grouped.set(chainId, [vaultToken])
+    }
+  }
+
+  return grouped
+}
 
 export const useEarnPools = function () {
   const [networkType] = useNetworkType()
   const config = useConfig()
+  const queryClient = useQueryClient()
   const { data: vaultTokens = [] } = useHemiEarnTokens()
 
   return useQuery<EarnPool[]>({
@@ -75,11 +90,13 @@ export const useEarnPools = function () {
       const perChainPools = await Promise.all(
         Array.from(groupByChain(vaultTokens).entries()).map(
           ([chainId, tokens]) =>
-            earnPoolsQueryOptions({
-              chainId,
-              client: getPublicClient(config, { chainId })!,
-              vaultTokens: tokens,
-            }).queryFn!({} as never),
+            queryClient.ensureQueryData(
+              earnPoolsQueryOptions({
+                chainId,
+                client: getPublicClient(config, { chainId })!,
+                vaultTokens: tokens,
+              }),
+            ),
         ),
       )
       return perChainPools.flat()

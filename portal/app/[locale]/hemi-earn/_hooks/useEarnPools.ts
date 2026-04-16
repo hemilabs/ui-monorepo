@@ -104,7 +104,7 @@ export const useEarnPools = function () {
     queryKey: [
       ...earnPoolsKeyPrefix,
       networkType,
-      vaultTokens.map(vt => vt.vaultAddress),
+      ...vaultTokens.map(vt => vt.vaultAddress),
     ],
   })
 }

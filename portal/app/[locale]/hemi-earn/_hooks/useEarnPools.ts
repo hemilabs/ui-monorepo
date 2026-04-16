@@ -61,22 +61,8 @@ export const earnPoolsQueryOptions = ({
     queryKey: getEarnPoolsQueryKey(chainId),
   })
 
-export const groupByChain = function (vaultTokens: VaultToken[]) {
-  const grouped = new Map<Chain['id'], VaultToken[]>()
-
-  for (const vaultToken of vaultTokens) {
-    const chainId = vaultToken.token.chainId
-    const existing = grouped.get(chainId)
-
-    if (existing) {
-      existing.push(vaultToken)
-    } else {
-      grouped.set(chainId, [vaultToken])
-    }
-  }
-
-  return grouped
-}
+export const groupByChain = (vaultTokens: VaultToken[]) =>
+  Map.groupBy(vaultTokens, vt => vt.token.chainId)
 
 export const useEarnPools = function () {
   const [networkType] = useNetworkType()

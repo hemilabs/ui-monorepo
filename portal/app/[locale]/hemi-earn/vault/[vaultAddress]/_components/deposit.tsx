@@ -1,19 +1,20 @@
 'use client'
 
-import { HemiFees } from 'components/hemiFees'
+import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { encodeDepositToken } from 'hemi-earn-actions/actions'
 import { useTokenBalance } from 'hooks/useBalance'
+import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useHemi } from 'hooks/useHemi'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
-import { type Address } from 'viem'
+import { type Address, formatUnits } from 'viem'
 import { useAccount as useEvmAccount, useEstimateGas } from 'wagmi'
 
 import { useVaultForm } from '../_context/vaultFormContext'
@@ -47,7 +48,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   } = useVaultForm()
 
   const { address, status } = useEvmAccount()
-  const hemi = useHemi()
 
   const amount = parseTokenUnits(input, pool.token)
 
@@ -95,7 +95,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
 
   const { fees: depositGasFees, isError: isDepositGasFeesError } =
     useEstimateFees({
-      chainId: hemi.id,
+      chainId: pool.token.chainId,
       gasUnits: depositGasUnits,
       isGasUnitsError: isDepositGasUnitsError,
     })
@@ -130,11 +130,29 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     setOperationRunning(needsApproval ? 'approving' : 'depositing')
   }
 
+  const chain = useChain(pool.token.chainId)
+  const nativeToken = getNativeToken(pool.token.chainId)
+
   function RenderBelowForm() {
     if (!canDeposit) {
       return null
     }
-    return <HemiFees fees={totalFees} isError={isFeesError} />
+    return (
+      <div className="px-4">
+        <EvmFeesSummary
+          gas={{
+            amount: formatUnits(
+              totalFees,
+              chain?.nativeCurrency.decimals ?? 18,
+            ),
+            isError: isFeesError,
+            label: t('common.network-gas-fee', { network: chain?.name ?? '' }),
+            token: nativeToken,
+          }}
+          operationToken={nativeToken}
+        />
+      </div>
+    )
   }
 
   return (

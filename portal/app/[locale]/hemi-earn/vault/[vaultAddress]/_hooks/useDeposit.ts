@@ -6,15 +6,15 @@ import { EventEmitter } from 'events'
 import { type DepositEvents } from 'hemi-earn-actions'
 import { depositToken } from 'hemi-earn-actions/actions'
 import { useTokenBalance } from 'hooks/useBalance'
-import { useHemi } from 'hooks/useHemi'
-import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { parseTokenUnits } from 'utils/token'
 import { erc4626Abi, parseEventLogs } from 'viem'
-import { useAccount } from 'wagmi'
+import { useAccount, useConfig } from 'wagmi'
+import { getWalletClient } from 'wagmi/actions'
 
-import { getEarnPoolsQueryKey } from '../../../_hooks/useEarnPools'
-import { getEarnPositionsQueryKey } from '../../../_hooks/useEarnPositions'
+import { earnPoolsKeyPrefix } from '../../../_hooks/useEarnPools'
+import { earnPositionsKeyPrefix } from '../../../_hooks/useEarnPositions'
+import { totalDepositsKeyPrefix } from '../../../_hooks/useTotalDeposits'
 import { type EarnPool } from '../../../types'
 import {
   type VaultDepositOperation,
@@ -38,30 +38,26 @@ export const useDeposit = function ({
   updateDepositOperation,
 }: UseDeposit) {
   const amount = parseTokenUnits(input, pool.token)
+  const chainId = pool.token.chainId
 
   const { setDrawerQueryString } = useDrawerVaultQueryString()
   const { address } = useAccount()
-  const hemi = useHemi()
+  const config = useConfig()
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
 
   const { queryKey: tokenBalanceQueryKey } = useTokenBalance(
-    pool.token.chainId,
+    chainId,
     pool.token.address,
   )
 
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
-    pool.token.chainId,
-  )
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(chainId)
 
-  const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
-    pool.token.chainId,
-  )
-
-  const { hemiWalletClient } = useHemiWalletClient()
+  const updateNativeBalanceAfterFees =
+    useUpdateNativeBalanceAfterReceipt(chainId)
 
   const allowanceQueryKey = buildAllowanceQueryKey({
-    chainId: pool.token.chainId,
+    chainId,
     owner: address,
     spender: pool.vaultAddress,
     tokenAddress: pool.token.address,
@@ -73,13 +69,15 @@ export const useDeposit = function ({
         throw new Error('No account connected')
       }
 
-      await ensureConnectedTo(hemi.id)
+      await ensureConnectedTo(chainId)
+
+      const walletClient = await getWalletClient(config, { chainId })
 
       const { emitter, promise } = depositToken({
         account: address,
         amount,
         vaultAddress: pool.vaultAddress,
-        walletClient: hemiWalletClient!,
+        walletClient,
       })
 
       emitter.on('user-signed-approval', function (approvalTxHash) {
@@ -146,7 +144,7 @@ export const useDeposit = function ({
           // Update vault balance
           queryClient.setQueryData(
             getUserVaultBalanceQueryKey({
-              chainId: hemi.id,
+              chainId,
               vaultAddress: pool.vaultAddress,
             }),
             (old: bigint | undefined) =>
@@ -183,16 +181,19 @@ export const useDeposit = function ({
       queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
       queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
       queryClient.invalidateQueries({
-        queryKey: getEarnPoolsQueryKey(hemi.id),
+        queryKey: earnPoolsKeyPrefix,
       })
       queryClient.invalidateQueries({
         queryKey: getUserVaultBalanceQueryKey({
-          chainId: hemi.id,
+          chainId,
           vaultAddress: pool.vaultAddress,
         }),
       })
       queryClient.invalidateQueries({
-        queryKey: getEarnPositionsQueryKey(hemi.id, address),
+        queryKey: earnPositionsKeyPrefix,
+      })
+      queryClient.invalidateQueries({
+        queryKey: totalDepositsKeyPrefix,
       })
     },
   })

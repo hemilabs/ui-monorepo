@@ -67,7 +67,7 @@ export const VaultNavigation = function ({ pool }: Props) {
               items={pools.map(p => ({
                 content: (
                   <button
-                    className="-mx-2 -my-1 block px-2 py-1 text-left text-sm"
+                    className="-mx-2 -my-1 block whitespace-nowrap px-2 py-1 text-left text-sm"
                     onClick={function () {
                       setIsDropdownOpen(false)
                       router.push(

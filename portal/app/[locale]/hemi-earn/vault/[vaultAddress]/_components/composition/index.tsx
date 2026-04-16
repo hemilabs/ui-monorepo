@@ -4,7 +4,7 @@ import { Card } from 'components/card'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { type Address } from 'viem'
+import { type Address, type Chain } from 'viem'
 
 import { CompositionIcon } from '../../../../_icons/compositionIcon'
 import {
@@ -33,10 +33,11 @@ const compositionColors = [
 ]
 
 type Props = {
+  chainId: Chain['id']
   vaultAddress: Address
 }
 
-export const Composition = function ({ vaultAddress }: Props) {
+export const Composition = function ({ chainId, vaultAddress }: Props) {
   const t = useTranslations('hemi-earn.vault.composition')
   const [viewMode, setViewMode] = useState<CompositionViewMode>('token')
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
@@ -46,6 +47,7 @@ export const Composition = function ({ vaultAddress }: Props) {
     isError,
     isPending,
   } = useComposition({
+    chainId,
     vaultAddress,
     viewMode,
   })

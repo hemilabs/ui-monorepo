@@ -10,7 +10,10 @@ type Props = {
 
 export const UserVaultBalance = function ({ token }: Props) {
   const { pool } = useVaultForm()
-  const { data: balance, status } = useUserVaultBalance(pool.vaultAddress)
+  const { data: balance, status } = useUserVaultBalance(
+    pool.vaultAddress,
+    pool.token.chainId,
+  )
 
   return <RenderCryptoBalance balance={balance} status={status} token={token} />
 }

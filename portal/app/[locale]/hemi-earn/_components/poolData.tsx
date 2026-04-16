@@ -1,6 +1,6 @@
 import { ExternalLink } from 'components/externalLink'
 import { TokenLogo } from 'components/tokenLogo'
-import { useHemi } from 'hooks/useHemi'
+import { useChain } from 'hooks/useChain'
 import { type Token } from 'types/token'
 import { formatEvmAddress } from 'utils/format'
 import { type Address } from 'viem'
@@ -11,7 +11,7 @@ type Props = {
 }
 
 export const PoolData = function ({ token, vaultAddress }: Props) {
-  const hemi = useHemi()
+  const chain = useChain(token.chainId)
 
   return (
     <div className="flex items-center gap-x-3">
@@ -24,7 +24,7 @@ export const PoolData = function ({ token, vaultAddress }: Props) {
         </span>
         <span className="body-text-normal text-neutral-500 hover:text-neutral-950">
           <ExternalLink
-            href={`${hemi.blockExplorers!.default.url}/address/${vaultAddress}`}
+            href={`${chain?.blockExplorers?.default.url}/address/${vaultAddress}`}
           >
             {formatEvmAddress(vaultAddress)}
           </ExternalLink>

@@ -1,9 +1,7 @@
 import { queryOptions, useQuery } from '@tanstack/react-query'
-import { useHemi } from 'hooks/useHemi'
-import { useHemiClient } from 'hooks/useHemiClient'
 import { type Address, type Chain, type PublicClient } from 'viem'
 import { balanceOf, convertToAssets } from 'viem-erc4626/actions'
-import { useAccount } from 'wagmi'
+import { useAccount, usePublicClient } from 'wagmi'
 
 export const getUserVaultBalanceQueryKey = ({
   chainId,
@@ -16,17 +14,17 @@ export const getUserVaultBalanceQueryKey = ({
 export const userVaultBalanceQueryOptions = ({
   address,
   chainId,
-  hemiClient,
+  client,
   vaultAddress,
 }: {
   address: Address
   chainId: Chain['id']
-  hemiClient: PublicClient
+  client: PublicClient
   vaultAddress: Address
 }) =>
   queryOptions({
     async queryFn() {
-      const shares = await balanceOf(hemiClient, {
+      const shares = await balanceOf(client, {
         account: address,
         address: vaultAddress,
       })
@@ -35,7 +33,7 @@ export const userVaultBalanceQueryOptions = ({
         return BigInt(0)
       }
 
-      return convertToAssets(hemiClient, {
+      return convertToAssets(client, {
         address: vaultAddress,
         shares,
       })
@@ -43,18 +41,20 @@ export const userVaultBalanceQueryOptions = ({
     queryKey: getUserVaultBalanceQueryKey({ chainId, vaultAddress }),
   })
 
-export const useUserVaultBalance = function (vaultAddress: Address) {
-  const { id: chainId } = useHemi()
-  const hemiClient = useHemiClient()
+export const useUserVaultBalance = function (
+  vaultAddress: Address,
+  chainId: Chain['id'],
+) {
+  const client = usePublicClient({ chainId })
   const { address } = useAccount()
 
   return useQuery({
     ...userVaultBalanceQueryOptions({
       address: address!,
       chainId,
-      hemiClient: hemiClient!,
+      client: client!,
       vaultAddress,
     }),
-    enabled: !!address && !!hemiClient,
+    enabled: !!address && !!client,
   })
 }

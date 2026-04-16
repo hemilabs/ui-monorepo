@@ -4,7 +4,7 @@ import { Card } from 'components/card'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
-import { type Address } from 'viem'
+import { type Address, type Chain } from 'viem'
 
 import { HistoricalMetricsIcon } from '../../../../_icons/historicalMetricsIcon'
 import {
@@ -18,15 +18,17 @@ import { HeadlineValue } from './headlineValue'
 import { HistoricalMetricsChart } from './historicalMetricsChart'
 
 type Props = {
+  chainId: Chain['id']
   vaultAddress: Address
 }
 
-export const HistoricalMetrics = function ({ vaultAddress }: Props) {
+export const HistoricalMetrics = function ({ chainId, vaultAddress }: Props) {
   const t = useTranslations('hemi-earn.vault.historical-metrics')
   const [period, setPeriod] = useState<MetricPeriod>('1w')
   const [metricType, setMetricType] = useState<MetricType>('deposits')
 
   const { data, isError, isPending } = useHistoricalMetrics({
+    chainId,
     metricType,
     period,
     vaultAddress,

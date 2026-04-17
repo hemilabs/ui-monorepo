@@ -437,6 +437,8 @@
       "burned": "Burned",
       "connect-to-hemi": "Connect to {network} to view your stake positions.",
       "connect-to-stake": "Connect your wallet to view your ${symbol} staked.",
+      "delegated-out": "Delegated out",
+      "from-delegation": "From delegation",
       "get-started": "Get started by staking your ${symbol}",
       "get-started-burned": "Your burned positions will show up here once their lockup periods have ended.",
       "locked-amount": "Locked Amount",

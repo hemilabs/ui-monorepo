@@ -38,7 +38,7 @@ export const EvmWallet = function () {
   // This ensures proper cleanup and allows reconnecting the same wallet
   const disconnectWallet = () => disconnect({ connector })
 
-  if (status === 'connected') {
+  if (walletIsConnected(status)) {
     return (
       <Box
         topContent={
@@ -64,23 +64,25 @@ export const EvmWallet = function () {
       </Box>
     )
   }
-  if (!walletIsConnected(status)) {
-    return (
-      <ConnectWalletAccordion
-        event="evm connect"
-        getWalletState={getEvmWalletState}
-        icon={<EthLogo />}
-        onConnect={handleConnect}
-        renderDetailView={(wallet, onBack) => (
-          <WalletQRCodeView onBack={onBack} wallet={wallet} />
-        )}
-        renderLogo={wallet => (
-          <EvmWalletLogo className="size-14" walletName={wallet.name} />
-        )}
-        text={t('connect-evm-wallet')}
-        wallets={evmWallets}
-      />
-    )
+
+  if (status === 'connecting') {
+    return <Skeleton className="h-16 w-full rounded-lg" />
   }
-  return <Skeleton className="h-16 w-full rounded-lg" />
+
+  return (
+    <ConnectWalletAccordion
+      event="evm connect"
+      getWalletState={getEvmWalletState}
+      icon={<EthLogo />}
+      onConnect={handleConnect}
+      renderDetailView={(wallet, onBack) => (
+        <WalletQRCodeView onBack={onBack} wallet={wallet} />
+      )}
+      renderLogo={wallet => (
+        <EvmWalletLogo className="size-14" walletName={wallet.name} />
+      )}
+      text={t('connect-evm-wallet')}
+      wallets={evmWallets}
+    />
+  )
 }

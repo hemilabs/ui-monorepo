@@ -437,6 +437,8 @@
       "burned": "Queimado",
       "connect-to-hemi": "Conecte à {network} para ver as suas posições de stake.",
       "connect-to-stake": "Conecte a sua carteira para ver o seu ${symbol} em stake.",
+      "delegated-out": "Delegado para fora",
+      "from-delegation": "Vindo de delegação",
       "get-started": "Comece a fazer stake com seu ${symbol}",
       "get-started-burned": "As suas posições queimadas aparecerão aqui assim que os seus períodos de bloqueio terminarem.",
       "locked-amount": "Quantidade Bloqueada",

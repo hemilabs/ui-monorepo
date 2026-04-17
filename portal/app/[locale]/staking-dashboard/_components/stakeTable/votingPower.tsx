@@ -4,7 +4,7 @@ import { useVeHemiToken } from 'hooks/useVeHemiToken'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { formatPercentage } from 'utils/format'
-import { formatUnits, isAddress, isAddressEqual } from 'viem'
+import { type Address, formatUnits, isAddress, isAddressEqual } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { usePositionVotingPower } from '../../_hooks/usePositionVotingPower'
@@ -27,12 +27,12 @@ function getBadgeKey({
   owner,
   votingPower,
 }: {
-  address: string | undefined
+  address: Address | undefined
   owner: string
   votingPower: bigint
 }) {
   const isCurrentOwner =
-    !!address && isAddress(owner) && isAddressEqual(owner, address)
+    address !== undefined && isAddress(owner) && isAddressEqual(owner, address)
   if (isCurrentOwner && votingPower === BigInt(0)) {
     return 'table.delegated-out'
   }

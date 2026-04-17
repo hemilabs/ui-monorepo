@@ -1,35 +1,37 @@
 'use client'
 
-import { queryOptions, useQuery } from '@tanstack/react-query'
-import { useHemi } from 'hooks/useHemi'
-import { useHemiClient } from 'hooks/useHemiClient'
+import { queryOptions, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { type Address, type Chain, type PublicClient } from 'viem'
 import { totalAssets } from 'viem-erc4626/actions'
+import { useConfig } from 'wagmi'
+import { getPublicClient } from 'wagmi/actions'
 
 import { type EarnPool, type VaultToken } from '../types'
 
 import { useHemiEarnTokens } from './useHemiEarnTokens'
 
-export const getEarnPoolsQueryKey = (chainId: Chain['id']) => [
-  'hemi-earn',
-  'pools',
+export const earnPoolsKeyPrefix = ['hemi-earn', 'pools']
+
+const getEarnPoolsQueryKey = (chainId: Chain['id']) => [
+  ...earnPoolsKeyPrefix,
   chainId,
 ]
 
 export const earnPoolsQueryOptions = ({
   chainId,
-  hemiClient,
+  client,
   vaultTokens,
 }: {
   chainId: Chain['id']
-  hemiClient: PublicClient
+  client: PublicClient
   vaultTokens: VaultToken[]
 }) =>
   queryOptions<EarnPool[]>({
     async queryFn() {
       const deposits = await Promise.all(
         vaultTokens.map(({ vaultAddress }) =>
-          totalAssets(hemiClient, { address: vaultAddress }),
+          totalAssets(client, { address: vaultAddress }),
         ),
       )
 
@@ -59,13 +61,36 @@ export const earnPoolsQueryOptions = ({
     queryKey: getEarnPoolsQueryKey(chainId),
   })
 
+export const groupByChain = (vaultTokens: VaultToken[]) =>
+  Map.groupBy(vaultTokens, vt => vt.token.chainId)
+
 export const useEarnPools = function () {
-  const { id: chainId } = useHemi()
-  const hemiClient = useHemiClient()
+  const [networkType] = useNetworkType()
+  const config = useConfig()
+  const queryClient = useQueryClient()
   const { data: vaultTokens = [] } = useHemiEarnTokens()
 
-  return useQuery({
-    ...earnPoolsQueryOptions({ chainId, hemiClient: hemiClient!, vaultTokens }),
+  return useQuery<EarnPool[]>({
     enabled: vaultTokens.length > 0,
+    async queryFn() {
+      const perChainPools = await Promise.all(
+        Array.from(groupByChain(vaultTokens).entries()).map(
+          ([chainId, tokens]) =>
+            queryClient.ensureQueryData(
+              earnPoolsQueryOptions({
+                chainId,
+                client: getPublicClient(config, { chainId })!,
+                vaultTokens: tokens,
+              }),
+            ),
+        ),
+      )
+      return perChainPools.flat()
+    },
+    queryKey: [
+      ...earnPoolsKeyPrefix,
+      networkType,
+      ...vaultTokens.map(vt => vt.vaultAddress),
+    ],
   })
 }

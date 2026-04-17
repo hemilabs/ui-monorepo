@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { useHemi } from 'hooks/useHemi'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { formatFiatNumber } from 'utils/format'
 
 import { type EarnCardData } from '../types'
@@ -10,8 +10,9 @@ import { useHemiEarnTokens } from './useHemiEarnTokens'
 
 type TotalYieldEarnedData = EarnCardData & { totalUsd: number }
 
+// TODO: this is a placeholder until we have the actual APY data available.
 export const useTotalYieldEarned = function () {
-  const { id } = useHemi()
+  const [networkType] = useNetworkType()
   const { data: vaultTokens = [] } = useHemiEarnTokens()
 
   const {
@@ -21,7 +22,7 @@ export const useTotalYieldEarned = function () {
   } = useQuery<{ totalUsd: number }>({
     queryFn: () =>
       new Promise(resolve => setTimeout(() => resolve({ totalUsd: 0 }), 2000)),
-    queryKey: ['hemi-earn', 'total-yield-earned', id],
+    queryKey: ['hemi-earn', 'total-yield-earned', networkType],
   })
 
   const data: TotalYieldEarnedData | undefined = queryData
@@ -30,7 +31,7 @@ export const useTotalYieldEarned = function () {
         vaultBreakdown: vaultTokens.map(({ token }) => ({
           name: token.symbol,
           tokenAddress: token.address,
-          tokenChainId: id,
+          tokenChainId: token.chainId,
           value: `$${formatFiatNumber(0)}`,
         })),
         vaultCount: vaultTokens.length,

@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useHemi } from 'hooks/useHemi'
-import { type Address } from 'viem'
+import { type Address, type Chain } from 'viem'
 
 export type MetricPeriod = '1w' | '1m' | '3m' | '1y'
 export type MetricType = 'deposits' | 'apy'
@@ -47,19 +46,20 @@ const generateMockData = function (
 const mockDelay = 2000
 
 type UseHistoricalMetrics = {
+  chainId: Chain['id']
   metricType: MetricType
   period: MetricPeriod
   vaultAddress: Address
 }
 
 // TODO: replace mocked data with real API call once the backend endpoint is available.
-export const useHistoricalMetrics = function ({
+export const useHistoricalMetrics = ({
+  chainId,
   metricType,
   period,
   vaultAddress,
-}: UseHistoricalMetrics) {
-  const { id: chainId } = useHemi()
-  return useQuery({
+}: UseHistoricalMetrics) =>
+  useQuery({
     queryFn: () =>
       new Promise<MetricDataPoint[]>(resolve =>
         setTimeout(
@@ -69,4 +69,3 @@ export const useHistoricalMetrics = function ({
       ),
     queryKey: ['historical-metrics', chainId, vaultAddress, period, metricType],
   })
-}

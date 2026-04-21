@@ -620,6 +620,60 @@ export const getMerkleClaim = function ({
   )
 }
 
+type VaultHistoryEntry = {
+  id: string
+  shareValue: string
+  timestamp: string
+  totalAssets: string
+  vault: string
+}
+
+type GetVaultHistoryQueryResponse = GraphResponse<{
+  vaultHistories: VaultHistoryEntry[]
+}>
+
+export const getVaultHistory = function ({
+  address,
+  chainId,
+  since,
+}: {
+  address: Address
+  chainId: Chain['id']
+  since: number
+}) {
+  const subgraphIds = {
+    [hemi.id]: subgraphConfig.earn.mainnet,
+    [hemiSepolia.id]: subgraphConfig.earn.testnet,
+  }
+
+  const subgraphUrl = getSubgraphUrl({ chainId, subgraphIds })
+
+  const schema = {
+    query: `query GetVaultHistory($vault: Bytes!, $since: BigInt!) {
+      vaultHistories(
+        where: { vault: $vault, timestamp_gte: $since }
+        orderBy: timestamp
+        orderDirection: asc
+        first: 1000
+      ) {
+        id
+        shareValue
+        timestamp
+        totalAssets
+        vault
+      }
+    }`,
+    variables: { since: since.toString(), vault: address.toLowerCase() },
+  }
+
+  return request<GetVaultHistoryQueryResponse>(subgraphUrl, schema).then(
+    function (response) {
+      checkGraphQLErrors(response)
+      return response.data.vaultHistories
+    },
+  )
+}
+
 type GetLockedPositionsQueryResponse = GraphResponse<{
   lockedPositions: {
     amount: string

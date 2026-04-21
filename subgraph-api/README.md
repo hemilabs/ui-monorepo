@@ -22,6 +22,7 @@ These environment variables control how the API works:
 - `GET /:chainId/withdrawals/:address/(btc|evm)`
 - `GET /:chainId/staked`
 - `GET /:chainId/claim/:address/:claimGroup`
+- `GET /:chainId/earn/vaults/:address/history`
 
 ## Local development and testing
 

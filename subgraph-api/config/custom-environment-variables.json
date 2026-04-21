@@ -19,6 +19,10 @@
     "apiKey": "SUBGRAPH_API_KEY",
     "apiUrl": "SUBGRAPH_API_URL",
     "origin": "SUBGRAPH_ORIGIN",
+    "earn": {
+      "mainnet": "SUBGRAPH_EARN_MAINNET",
+      "testnet": "SUBGRAPH_EARN_TESTNET"
+    },
     "veHemi": {
       "testnet": "SUBGRAPH_VE_HEMI_TESTNET"
     }

@@ -25,6 +25,7 @@
       "exposure": "Exposure",
       "manage": "Manage",
       "my-positions": "My positions",
+      "connect-to-view-positions": "Connect your wallet to view your positions.",
       "no-positions-subtitle": "Deposit into a vault to start earning yield.",
       "no-positions-title": "No active positions",
       "pool": "Pool",

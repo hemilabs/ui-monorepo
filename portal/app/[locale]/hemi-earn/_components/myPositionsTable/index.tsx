@@ -6,17 +6,50 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { Button } from 'components/button'
+import { WalletIcon } from 'components/icons/walletIcon'
 import { Column } from 'components/table/_components/column'
 import { ColumnHeader } from 'components/table/_components/columnHeader'
 import { getNewColumnOrder } from 'components/table/_utils'
+import { TableEmptyState } from 'components/tableEmptyState'
+import { useDrawerContext } from 'hooks/useDrawerContext'
+import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
+import { walletIsConnected } from 'utils/wallet'
+import { useAccount } from 'wagmi'
 
 import { useEarnPositions } from '../../_hooks/useEarnPositions'
 import { TotalYieldEarnedIcon } from '../../_icons/totalYieldEarnedIcon'
 
 import { useGetPositionsColumns } from './columns'
+
+const ConnectWalletEmptyState = function () {
+  const { openDrawer } = useDrawerContext()
+  const t = useTranslations()
+  const { track } = useUmami()
+
+  const onClick = function () {
+    openDrawer?.()
+    track?.('evm connect')
+  }
+
+  return (
+    <div className="flex min-h-40 w-full items-center justify-center">
+      <TableEmptyState
+        action={
+          <Button onClick={onClick} size="xSmall" type="button">
+            {t('common.connect-wallet')}
+          </Button>
+        }
+        icon={<WalletIcon />}
+        subtitle={t('hemi-earn.table.connect-to-view-positions')}
+        title={t('common.your-wallet-not-connected')}
+      />
+    </div>
+  )
+}
 
 const NoPositionsEmptyState = function () {
   const t = useTranslations('hemi-earn.table')
@@ -39,6 +72,7 @@ const NoPositionsEmptyState = function () {
 export const MyPositionsTable = function () {
   const columns = useGetPositionsColumns()
   const { data: positions = [], isPending } = useEarnPositions()
+  const { status } = useAccount()
   const { width } = useWindowSize()
 
   const table = useReactTable({
@@ -73,6 +107,19 @@ export const MyPositionsTable = function () {
       ))}
     </thead>
   )
+
+  if (!walletIsConnected(status)) {
+    return (
+      <div className="w-full overflow-hidden rounded-xl bg-neutral-100 text-sm font-medium">
+        <table className="w-full border-separate border-spacing-0 px-1">
+          {tableHead}
+        </table>
+        <div className="mx-1 -mt-1.5 mb-1 rounded-xl bg-white shadow-md">
+          <ConnectWalletEmptyState />
+        </div>
+      </div>
+    )
+  }
 
   if (isPending) {
     return <Skeleton className="h-17 w-full rounded-xl" />

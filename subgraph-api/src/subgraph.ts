@@ -632,7 +632,7 @@ type GetVaultHistoryQueryResponse = GraphResponse<{
   vaultHistories: VaultHistoryEntry[]
 }>
 
-export const getVaultHistory = function ({
+export const getVaultHistory = async function ({
   address,
   chainId,
   since,
@@ -647,35 +647,54 @@ export const getVaultHistory = function ({
   }
 
   const subgraphUrl = getSubgraphUrl({ chainId, subgraphIds })
+  const vault = address.toLowerCase()
+  const limit = 100
+  const allHistories: VaultHistoryEntry[] = []
+  let sinceTimestamp = since.toString()
 
-  const schema = {
-    query: `query GetVaultHistory($vault: Bytes!, $since: BigInt!) {
-      vaultHistories(
-        where: { vault: $vault, timestamp_gte: $since }
-        orderBy: timestamp
-        orderDirection: asc
-        first: 1000
-      ) {
-        id
-        shareValue
-        timestamp
-        totalAssets
-        vault
-      }
-    }`,
-    variables: { since: since.toString(), vault: address.toLowerCase() },
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const schema = {
+      query: `query GetVaultHistory($vault: Bytes!, $since: BigInt!, $limit: Int!) {
+        vaultHistories(
+          where: { vault: $vault, timestamp_gte: $since }
+          orderBy: timestamp
+          orderDirection: asc
+          first: $limit
+        ) {
+          id
+          shareValue
+          timestamp
+          totalAssets
+          vault
+        }
+      }`,
+      variables: { limit, since: sinceTimestamp, vault },
+    }
+
+    const response = await request<GetVaultHistoryQueryResponse>(
+      subgraphUrl,
+      schema,
+    )
+    checkGraphQLErrors(response)
+    const { vaultHistories } = response.data
+
+    allHistories.push(...vaultHistories)
+
+    if (vaultHistories.length < limit) {
+      break
+    }
+
+    // Advance past the last timestamp to avoid duplicates
+    const lastTimestamp = vaultHistories[vaultHistories.length - 1].timestamp
+    sinceTimestamp = (Number(lastTimestamp) + 1).toString()
   }
 
-  return request<GetVaultHistoryQueryResponse>(subgraphUrl, schema).then(
-    function (response) {
-      checkGraphQLErrors(response)
-      return response.data.vaultHistories.map(history => ({
-        ...history,
-        // @ts-expect-error vault is address lowercased
-        vault: toChecksum(history.vault),
-      }))
-    },
-  )
+  return allHistories.map(history => ({
+    ...history,
+    // @ts-expect-error vault is address lowercased
+    vault: toChecksum(history.vault),
+  }))
 }
 
 type GetLockedPositionsQueryResponse = GraphResponse<{

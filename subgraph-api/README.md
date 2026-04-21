@@ -23,6 +23,7 @@ These environment variables control how the API works:
 - `GET /:chainId/staked`
 - `GET /:chainId/claim/:address/:claimGroup`
 - `GET /:chainId/earn/vaults/:address/history`
+  - Optional query param: `since=<unix-seconds>` to return history entries from that timestamp onward.
 
 ## Local development and testing
 

@@ -669,7 +669,11 @@ export const getVaultHistory = function ({
   return request<GetVaultHistoryQueryResponse>(subgraphUrl, schema).then(
     function (response) {
       checkGraphQLErrors(response)
-      return response.data.vaultHistories
+      return response.data.vaultHistories.map(history => ({
+        ...history,
+        // @ts-expect-error vault is address lowercased
+        vault: toChecksum(history.vault),
+      }))
     },
   )
 }

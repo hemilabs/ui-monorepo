@@ -1,6 +1,10 @@
 import { type EvmToken } from 'types/token'
 import { type Address } from 'viem'
 
+export type MetricDataPoint = { x: number; y: number }
+export type MetricPeriod = '1w' | '1m' | '3m' | '1y'
+export type MetricType = 'deposits' | 'apy'
+
 export type VaultToken = {
   token: EvmToken
   vaultAddress: Address

@@ -83,6 +83,7 @@ export const VaultPageContent = function ({ vaultAddress }: Props) {
             <VaultInfoCards pool={pool} />
             <HistoricalMetrics
               chainId={pool.token.chainId}
+              token={pool.token}
               vaultAddress={pool.vaultAddress}
             />
             <Composition

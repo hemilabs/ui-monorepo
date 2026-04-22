@@ -82,7 +82,6 @@ export const VaultPageContent = function ({ vaultAddress }: Props) {
           <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-2/3">
             <VaultInfoCards pool={pool} />
             <HistoricalMetrics
-              chainId={pool.token.chainId}
               token={pool.token}
               vaultAddress={pool.vaultAddress}
             />

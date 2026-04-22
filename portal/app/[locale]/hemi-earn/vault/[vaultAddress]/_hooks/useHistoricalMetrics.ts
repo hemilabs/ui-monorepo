@@ -4,7 +4,7 @@ import { useTokenPrices } from 'hooks/useTokenPrices'
 import { type EvmToken } from 'types/token'
 import { getTokenPrice } from 'utils/token'
 import { isValidUrl } from 'utils/url'
-import { type Address, type Chain } from 'viem'
+import { type Address } from 'viem'
 
 import {
   calculateTvlHistory,
@@ -19,16 +19,14 @@ type VaultHistoryResponse = {
 }
 
 const fetchVaultHistory = (
-  chainId: Chain['id'],
+  chainId: EvmToken['chainId'],
   vaultAddress: Address,
   period: MetricPeriod,
 ) =>
   fetch(`${subgraphApiUrl}/${chainId}/earn/vaults/${vaultAddress}/history`, {
     method: 'GET',
     queryString: { period },
-  }).then((data: VaultHistoryResponse) => data.history) as Promise<
-    VaultHistoryPoint[]
-  >
+  }).then((data: VaultHistoryResponse) => data.history)
 
 // TODO: replace mock APY with real calculation from shareValue once approach is defined
 const generateMockApyData = (history: VaultHistoryPoint[]) =>
@@ -42,7 +40,6 @@ const generateMockApyData = (history: VaultHistoryPoint[]) =>
   })
 
 type UseHistoricalMetrics = {
-  chainId: Chain['id']
   metricType: MetricType
   period: MetricPeriod
   token: EvmToken
@@ -50,7 +47,6 @@ type UseHistoricalMetrics = {
 }
 
 export const useHistoricalMetrics = function ({
-  chainId,
   metricType,
   period,
   token,
@@ -61,8 +57,8 @@ export const useHistoricalMetrics = function ({
 
   return useQuery({
     enabled: subgraphApiUrl !== undefined && isValidUrl(subgraphApiUrl),
-    queryFn: () => fetchVaultHistory(chainId, vaultAddress, period),
-    queryKey: ['historical-metrics', chainId, metricType, period, vaultAddress],
+    queryFn: () => fetchVaultHistory(token.chainId, vaultAddress, period),
+    queryKey: ['historical-metrics', period, token.chainId, vaultAddress],
     select(history) {
       if (metricType === 'deposits') {
         return calculateTvlHistory(history, token.decimals, tokenPrice)

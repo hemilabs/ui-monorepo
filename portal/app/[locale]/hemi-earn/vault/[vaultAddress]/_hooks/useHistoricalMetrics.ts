@@ -18,34 +18,6 @@ type VaultHistoryResponse = {
   history: VaultHistoryPoint[]
 }
 
-// TODO: replace mock APY data with real calculation from shareValue once approach is defined
-const periodDurations: Record<MetricPeriod, number> = {
-  '1m': 30 * 24 * 60 * 60 * 1000,
-  '1w': 7 * 24 * 60 * 60 * 1000,
-  '1y': 365 * 24 * 60 * 60 * 1000,
-  '3m': 90 * 24 * 60 * 60 * 1000,
-}
-
-const seededRandom = function (seed: number) {
-  const x = Math.sin(seed) * 10000
-  return x - Math.floor(x)
-}
-
-const generateMockApyData = function (period: MetricPeriod) {
-  const now = Date.now()
-  const duration = periodDurations[period]
-  const points = 20
-  const step = duration / (points - 1)
-
-  return Array.from({ length: points }, function (_, i) {
-    const random = seededRandom(i + 100)
-    return {
-      x: now - duration + i * step,
-      y: 2 + random * 3,
-    }
-  })
-}
-
 const fetchVaultHistory = (
   chainId: Chain['id'],
   vaultAddress: Address,
@@ -57,6 +29,17 @@ const fetchVaultHistory = (
   }).then((data: VaultHistoryResponse) => data.history) as Promise<
     VaultHistoryPoint[]
   >
+
+// TODO: replace mock APY with real calculation from shareValue once approach is defined
+const generateMockApyData = (history: VaultHistoryPoint[]) =>
+  history.map(function ({ timestamp }, i) {
+    const x = Math.sin(i + 100) * 10000
+    const random = x - Math.floor(x)
+    return {
+      x: Number(timestamp) * 1000,
+      y: 2 + random * 3,
+    }
+  })
 
 type UseHistoricalMetrics = {
   chainId: Chain['id']
@@ -74,22 +57,18 @@ export const useHistoricalMetrics = function ({
   vaultAddress,
 }: UseHistoricalMetrics) {
   const { data: prices } = useTokenPrices()
+  const tokenPrice = getTokenPrice(token, prices)
 
   return useQuery({
-    enabled:
-      subgraphApiUrl !== undefined &&
-      isValidUrl(subgraphApiUrl) &&
-      prices !== undefined,
-    async queryFn() {
-      if (metricType === 'apy') {
-        // TODO: replace mock APY data with real calculation from shareValue once approach is defined
-        return generateMockApyData(period)
+    enabled: subgraphApiUrl !== undefined && isValidUrl(subgraphApiUrl),
+    queryFn: () => fetchVaultHistory(chainId, vaultAddress, period),
+    queryKey: ['historical-metrics', chainId, metricType, period, vaultAddress],
+    select(history) {
+      if (metricType === 'deposits') {
+        return calculateTvlHistory(history, token.decimals, tokenPrice)
       }
-
-      const history = await fetchVaultHistory(chainId, vaultAddress, period)
-      const tokenPrice = getTokenPrice(token, prices)
-      return calculateTvlHistory(history, token.decimals, tokenPrice)
+      // TODO: replace mock APY with real calculation from shareValue once approach is defined
+      return generateMockApyData(history)
     },
-    queryKey: ['historical-metrics', chainId, vaultAddress, period, metricType],
   })
 }

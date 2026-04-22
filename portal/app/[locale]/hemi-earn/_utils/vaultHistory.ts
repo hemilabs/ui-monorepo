@@ -4,6 +4,7 @@ import { formatUnits } from 'viem'
 import { type MetricDataPoint } from '../types'
 
 export type VaultHistoryPoint = {
+  shareValue: string
   timestamp: string
   totalAssets: string
 }

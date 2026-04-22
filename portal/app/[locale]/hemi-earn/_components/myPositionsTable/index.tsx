@@ -36,7 +36,7 @@ const ConnectWalletEmptyState = function () {
   }
 
   return (
-    <div className="flex min-h-40 w-full items-center justify-center">
+    <div className="flex w-full items-center justify-center py-10">
       <TableEmptyState
         action={
           <Button onClick={onClick} size="xSmall" type="button">

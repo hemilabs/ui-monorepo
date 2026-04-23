@@ -119,7 +119,7 @@ const isDelegationActive = (
   now: bigint,
 ) => BigInt(delegation.end) > now
 
-export type PositionVotingPowerDetails = {
+type PositionVotingPowerDetails = {
   delegatee: Address
   isDelegatedAway: boolean
   votingPower: bigint

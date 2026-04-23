@@ -5,7 +5,7 @@ import { getPositionVotingPowerDetails } from 've-hemi-actions/actions'
 import type { Address, Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
-export const getPositionDelegationDetailsQueryKey = ({
+const getPositionDelegationDetailsQueryKey = ({
   chainId,
   ownerAddress,
   tokenId,

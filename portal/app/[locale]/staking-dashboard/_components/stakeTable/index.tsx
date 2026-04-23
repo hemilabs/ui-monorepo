@@ -68,10 +68,10 @@ const stakingColumns = ({
   },
   {
     cell({ row }) {
-      const { amount, owner, tokenId } = row.original
+      const { amount, tokenId } = row.original
       return (
         <div className="flex items-center justify-center gap-x-2">
-          <VotingPower amount={amount} owner={owner} tokenId={tokenId} />
+          <VotingPower amount={amount} tokenId={tokenId} />
         </div>
       )
     },

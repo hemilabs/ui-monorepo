@@ -34,13 +34,11 @@ export async function getVaultHistoryHandler(
 ) {
   const { chainId } = req.data
   const { address } = req.params
-  const { period } = req.query
+  const { period = '1w' } = req.query
 
-  if (!period || !validPeriods.includes(period as Period)) {
+  if (!validPeriods.includes(period as Period)) {
     sendJsonResponse(res, 400, {
-      error: `period is required and must be one of: ${validPeriods.join(
-        ', ',
-      )}`,
+      error: `period must be one of: ${validPeriods.join(', ')}`,
     })
     return
   }

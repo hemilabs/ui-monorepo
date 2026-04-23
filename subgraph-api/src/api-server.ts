@@ -13,6 +13,7 @@ import type { ChainIdPathParams, ReqData } from '../types/server.ts'
 import { getBtcDepositOnHemi } from './route-handlers/get-btc-deposit-on-hemi.ts'
 import { getClaimTransactionHandler } from './route-handlers/get-claim-transaction-hash.ts'
 import { getLockedPositionsHandler } from './route-handlers/get-locked-positions.ts'
+import { getVaultHistoryHandler } from './route-handlers/get-vault-history.ts'
 import { getWithdrawalProofAndClaimHandler } from './route-handlers/get-withdrawal-proof-and-claim.ts'
 import {
   getBtcWithdrawals,
@@ -214,6 +215,13 @@ export function createApiServer() {
     parseChainId,
     validateChainIsHemi,
     asyncHandler(getLockedPositionsHandler),
+  )
+
+  app.get(
+    '/:chainIdStr(\\d+)/earn/vaults/:address(0x[0-9a-fA-F]{40})/history',
+    parseChainId,
+    validateChainIsHemi,
+    asyncHandler(getVaultHistoryHandler),
   )
 
   app.use(function (req: Request, res: Response) {

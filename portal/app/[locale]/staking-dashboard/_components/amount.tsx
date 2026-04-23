@@ -3,16 +3,29 @@ import { TokenLogo } from 'components/tokenLogo'
 import { TxLink } from 'components/txLink'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { StakingPosition } from 'types/stakingDashboard'
-import { formatUnits } from 'viem'
+import { Address, formatUnits } from 'viem'
+import { useAccount } from 'wagmi'
+
+import { usePositionDelegationDetails } from '../_hooks/usePositionDelegationDetails'
+
+import { DelegationIndicators } from './stakeTable/delegationIndicators'
 
 type Props = {
   operation: StakingPosition
 }
 
 export const Amount = function ({ operation }: Props) {
-  const { amount } = operation
+  const { amount, owner, pastOwners, tokenId } = operation
 
+  const { address } = useAccount()
   const token = useHemiToken()
+  const { data: delegationDetails } = usePositionDelegationDetails(tokenId)
+
+  const isWalletOwner =
+    !!address && owner.toLowerCase() === address.toLowerCase()
+  const isReceivedPosition = isWalletOwner && pastOwners.length > 0
+  const isDelegatedAway = !!delegationDetails?.isDelegatedAway && isWalletOwner
+  const delegatedAddress = delegationDetails?.delegatee as Address | undefined
 
   return (
     <div className="flex items-center gap-x-5 text-neutral-950">
@@ -34,6 +47,11 @@ export const Amount = function ({ operation }: Props) {
             txHash={operation.transactionHash}
           />
         </span>
+        <DelegationIndicators
+          delegatedAddress={delegatedAddress}
+          isDelegatedAway={isDelegatedAway}
+          isReceivedPosition={isReceivedPosition}
+        />
       </div>
     </div>
   )

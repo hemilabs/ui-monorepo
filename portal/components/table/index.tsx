@@ -7,12 +7,20 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { ReactNode, RefObject, useRef } from 'react'
+import {
+  ComponentProps,
+  ComponentType,
+  ReactNode,
+  RefObject,
+  useRef,
+} from 'react'
 import { screenBreakpoints } from 'styles'
 
+import { Column } from './_components/column'
 import { ColumnHeader } from './_components/columnHeader'
 import { LoadingMoreIndicator } from './_components/loadingMoreIndicator'
 import { LoadingSkeletonRows } from './_components/loadingSkeletonRows'
+import { StaticRows } from './_components/staticRows'
 import { TableBodyContainer } from './_components/tableBodyContainer'
 import { VirtualRows } from './_components/virtualRows'
 import { useInfiniteScroll } from './_hooks/useInfiniteScroll'
@@ -66,10 +74,12 @@ const TableHeader = <TData,>({
 )
 
 type TableBodyProps<TData> = {
+  CellComponent: ComponentType<ComponentProps<'td'>>
   fetchMoreOnBottomReached: (el?: HTMLDivElement | null) => void
   isFetching: boolean
   loading: boolean
   onRowClick?: (row: TData) => void
+  onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
   rowSize: number
   rowVirtualizer: ReturnType<typeof useTableVirtualizer<TData>>
@@ -79,10 +89,12 @@ type TableBodyProps<TData> = {
 }
 
 function TableBody<TData>({
+  CellComponent,
   fetchMoreOnBottomReached,
   isFetching,
   loading,
   onRowClick,
+  onRowHover,
   placeholder,
   rowSize,
   rowVirtualizer,
@@ -122,8 +134,10 @@ function TableBody<TData>({
               table={table}
             />
             <VirtualRows
+              CellComponent={CellComponent}
               loading={loading}
               onRowClick={onRowClick}
+              onRowHover={onRowHover}
               rows={rows}
               virtualItems={virtualItems}
             />
@@ -143,14 +157,65 @@ function TableBody<TData>({
   )
 }
 
+type StaticTableBodyProps<TData> = {
+  CellComponent: ComponentType<ComponentProps<'td'>>
+  loading: boolean
+  onRowClick?: (row: TData) => void
+  onRowHover?: (index: number | null) => void
+  placeholder?: ReactNode
+  skeletonRows: number
+  table: ReturnType<typeof useReactTable<TData>>
+}
+
+function StaticTableBody<TData>({
+  CellComponent,
+  loading,
+  onRowClick,
+  onRowHover,
+  placeholder,
+  skeletonRows,
+  table,
+}: StaticTableBodyProps<TData>) {
+  const { rows } = table.getRowModel()
+
+  return (
+    <div className="-mt-1.5 mb-1 overflow-hidden rounded-xl bg-white shadow-md">
+      {!placeholder ? (
+        <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
+          <tbody>
+            <LoadingSkeletonRows
+              loading={loading}
+              rows={rows}
+              skeletonRows={skeletonRows}
+              table={table}
+            />
+            <StaticRows
+              CellComponent={CellComponent}
+              loading={loading}
+              onRowClick={onRowClick}
+              onRowHover={onRowHover}
+              rows={rows}
+            />
+          </tbody>
+        </table>
+      ) : (
+        placeholder
+      )}
+    </div>
+  )
+}
+
 export type TableProps<TData> = {
+  cellComponent?: ComponentType<ComponentProps<'td'>>
   columns: ColumnDef<TData>[]
   data: TData[] | undefined
   fetchNextPage?: VoidFunction
   hasNextPage?: boolean
   isFetching?: boolean
   loading?: boolean
+  mode?: 'static' | 'virtual'
   onRowClick?: (row: TData) => void
+  onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
   priorityColumnIdsOnSmall?: string[]
   rowSize?: number
@@ -159,13 +224,16 @@ export type TableProps<TData> = {
 }
 
 export function Table<TData>({
+  cellComponent: CellComponent = Column,
   columns,
   data = [],
   fetchNextPage,
   hasNextPage = false,
   isFetching = false,
   loading = false,
+  mode = 'virtual',
   onRowClick,
+  onRowHover,
   placeholder,
   priorityColumnIdsOnSmall,
   rowSize = 64,
@@ -215,35 +283,52 @@ export function Table<TData>({
 
   const virtualItems = rowVirtualizer.getVirtualItems()
 
+  const isVirtual = mode === 'virtual'
+  const heightClass = isVirtual ? ' h-full' : ''
+
   return (
-    <div className="flex h-full flex-col">
+    <div className={`flex flex-col${heightClass}`}>
       <div
-        className="flex h-full flex-col overflow-x-auto"
+        className={`flex flex-col overflow-x-auto${heightClass}`}
         style={{
           scrollbarColor: '#d4d4d4 transparent',
           scrollbarWidth: 'thin',
         }}
       >
-        <div className="flex h-full min-w-max flex-col px-1">
+        <div className={`flex min-w-max flex-col px-1${heightClass}`}>
           <TableHeader
             hasVerticalBodyScrollbar={hasVerticalBodyScrollbar}
             smallBreakpoint={smallBreakpoint}
             table={table}
             width={width}
           />
-          <TableBody
-            fetchMoreOnBottomReached={fetchMoreOnBottomReached}
-            isFetching={isFetching}
-            loading={loading}
-            onRowClick={onRowClick}
-            placeholder={placeholder}
-            rowSize={rowSize}
-            rowVirtualizer={rowVirtualizer}
-            scrollContainerRef={scrollContainerRef}
-            skeletonRows={skeletonRows}
-            table={table}
-            virtualItems={virtualItems}
-          />
+          {isVirtual ? (
+            <TableBody
+              CellComponent={CellComponent}
+              fetchMoreOnBottomReached={fetchMoreOnBottomReached}
+              isFetching={isFetching}
+              loading={loading}
+              onRowClick={onRowClick}
+              onRowHover={onRowHover}
+              placeholder={placeholder}
+              rowSize={rowSize}
+              rowVirtualizer={rowVirtualizer}
+              scrollContainerRef={scrollContainerRef}
+              skeletonRows={skeletonRows}
+              table={table}
+              virtualItems={virtualItems}
+            />
+          ) : (
+            <StaticTableBody
+              CellComponent={CellComponent}
+              loading={loading}
+              onRowClick={onRowClick}
+              onRowHover={onRowHover}
+              placeholder={placeholder}
+              skeletonRows={skeletonRows}
+              table={table}
+            />
+          )}
         </div>
       </div>
     </div>

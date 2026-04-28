@@ -1,22 +1,13 @@
 'use client'
 
-import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
-import {
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from '@tanstack/react-table'
 import { Button } from 'components/button'
 import { WalletIcon } from 'components/icons/walletIcon'
-import { Column } from 'components/table/_components/column'
-import { ColumnHeader } from 'components/table/_components/columnHeader'
-import { getNewColumnOrder } from 'components/table/_utils'
+import { Table } from 'components/table'
 import { TableEmptyState } from 'components/tableEmptyState'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
-import { screenBreakpoints } from 'styles'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
@@ -73,98 +64,28 @@ export const MyPositionsTable = function () {
   const columns = useGetPositionsColumns()
   const { data: positions = [], isPending } = useEarnPositions()
   const { status } = useAccount()
-  const { width } = useWindowSize()
 
-  const table = useReactTable({
-    columns,
-    data: positions,
-    getCoreRowModel: getCoreRowModel(),
-    state: {
-      columnOrder: getNewColumnOrder({
-        breakpoint: screenBreakpoints.lg,
-        columns,
-        priorityColumnIds: ['actions'],
-        width,
-      }),
-    },
-  })
+  const isConnected = walletIsConnected(status)
 
-  const tableHead = (
-    <thead className="sticky top-0 z-10">
-      {table.getHeaderGroups().map(headerGroup => (
-        <tr className="flex w-full items-center" key={headerGroup.id}>
-          {headerGroup.headers.map(header => (
-            <ColumnHeader
-              key={header.id}
-              style={{
-                width: header.column.columnDef.meta?.width,
-              }}
-            >
-              {flexRender(header.column.columnDef.header, header.getContext())}
-            </ColumnHeader>
-          ))}
-        </tr>
-      ))}
-    </thead>
-  )
-
-  if (!walletIsConnected(status)) {
-    return (
-      <div className="w-full overflow-hidden rounded-xl bg-neutral-100 text-sm font-medium">
-        <table className="w-full border-separate border-spacing-0 px-1">
-          {tableHead}
-        </table>
-        <div className="mx-1 -mt-1.5 mb-1 rounded-xl bg-white shadow-md">
-          <ConnectWalletEmptyState />
-        </div>
-      </div>
-    )
-  }
-
-  if (isPending) {
+  if (isConnected && isPending) {
     return <Skeleton className="h-17 w-full rounded-xl" />
   }
 
-  if (positions.length === 0) {
-    return (
-      <div className="w-full overflow-hidden rounded-xl bg-neutral-100 text-sm font-medium">
-        <table className="w-full border-separate border-spacing-0 px-1">
-          {tableHead}
-        </table>
-        <div className="mx-1 -mt-1.5 mb-1 rounded-xl bg-white shadow-md">
-          <NoPositionsEmptyState />
-        </div>
-      </div>
-    )
-  }
+  const placeholder = !isConnected ? (
+    <ConnectWalletEmptyState />
+  ) : positions.length === 0 ? (
+    <NoPositionsEmptyState />
+  ) : undefined
 
   return (
-    <div
-      className="w-full overflow-x-auto rounded-xl bg-neutral-100 text-sm font-medium"
-      style={{
-        scrollbarColor: '#d4d4d4 transparent',
-        scrollbarWidth: 'thin',
-      }}
-    >
-      <table className="w-full border-separate border-spacing-0 whitespace-nowrap px-1">
-        {tableHead}
-        <tbody className="-mt-1.5 mb-1 flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden rounded-xl bg-white shadow-md">
-          {table.getRowModel().rows.map(row => (
-            <tr className="group/row flex w-full items-center" key={row.id}>
-              {row.getVisibleCells().map(cell => (
-                <Column
-                  key={cell.id}
-                  style={{
-                    width: cell.column.columnDef.meta?.width,
-                  }}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Column>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="w-full rounded-xl bg-neutral-100 text-sm font-medium">
+      <Table
+        columns={columns}
+        data={positions}
+        mode="static"
+        placeholder={placeholder}
+        priorityColumnIdsOnSmall={['actions']}
+      />
     </div>
   )
 }

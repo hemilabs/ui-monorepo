@@ -12,6 +12,7 @@ import {
   ComponentType,
   ReactNode,
   RefObject,
+  UIEventHandler,
   useRef,
 } from 'react'
 import { screenBreakpoints } from 'styles'
@@ -30,15 +31,19 @@ import { useTableVirtualizer } from './_hooks/useTableVirtualizer'
 
 type TableHeaderProps<TData> = {
   hasVerticalBodyScrollbar: boolean
+  headerScrollRef: RefObject<HTMLDivElement | null>
   smallBreakpoint: number
   table: ReturnType<typeof useReactTable<TData>>
+  tableMinWidth: number
   width: number
 }
 
 const TableHeader = <TData,>({
   hasVerticalBodyScrollbar,
+  headerScrollRef,
   smallBreakpoint,
   table,
+  tableMinWidth,
   width,
 }: TableHeaderProps<TData>) => (
   <div
@@ -46,36 +51,42 @@ const TableHeader = <TData,>({
       hasVerticalBodyScrollbar && width >= smallBreakpoint ? 'pr-2.5' : ''
     }`}
   >
-    <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
-      <thead>
-        {table.getHeaderGroups().map(headerGroup => (
-          <tr className="flex w-full items-center" key={headerGroup.id}>
-            {headerGroup.headers.map(header => (
-              <ColumnHeader
-                className={
-                  header.column.columnDef.meta?.className ?? 'justify-start'
-                }
-                key={header.id}
-                style={{
-                  width: header.column.columnDef.meta?.width,
-                }}
-              >
-                {flexRender(
-                  header.column.columnDef.header,
-                  header.getContext(),
-                )}
-              </ColumnHeader>
-            ))}
-          </tr>
-        ))}
-      </thead>
-    </table>
+    <div className="overflow-x-hidden" ref={headerScrollRef}>
+      <table
+        className="w-full border-separate border-spacing-0 whitespace-nowrap"
+        style={{ minWidth: `${tableMinWidth}px` }}
+      >
+        <thead>
+          {table.getHeaderGroups().map(headerGroup => (
+            <tr className="flex w-full items-center" key={headerGroup.id}>
+              {headerGroup.headers.map(header => (
+                <ColumnHeader
+                  className={
+                    header.column.columnDef.meta?.className ?? 'justify-start'
+                  }
+                  key={header.id}
+                  style={{
+                    width: header.column.columnDef.meta?.width,
+                  }}
+                >
+                  {flexRender(
+                    header.column.columnDef.header,
+                    header.getContext(),
+                  )}
+                </ColumnHeader>
+              ))}
+            </tr>
+          ))}
+        </thead>
+      </table>
+    </div>
   </div>
 )
 
 type TableBodyProps<TData> = {
   CellComponent: ComponentType<ComponentProps<'td'>>
   fetchMoreOnBottomReached: (el?: HTMLDivElement | null) => void
+  headerScrollRef: RefObject<HTMLDivElement | null>
   isFetching: boolean
   loading: boolean
   onRowClick?: (row: TData) => void
@@ -86,11 +97,13 @@ type TableBodyProps<TData> = {
   scrollContainerRef: RefObject<HTMLDivElement | null>
   skeletonRows: number
   table: ReturnType<typeof useReactTable<TData>>
+  tableMinWidth: number
 }
 
 function TableBody<TData>({
   CellComponent,
   fetchMoreOnBottomReached,
+  headerScrollRef,
   isFetching,
   loading,
   onRowClick,
@@ -101,23 +114,34 @@ function TableBody<TData>({
   scrollContainerRef,
   skeletonRows,
   table,
+  tableMinWidth,
   virtualItems,
 }: TableBodyProps<TData> & {
   virtualItems: ReturnType<typeof rowVirtualizer.getVirtualItems>
 }) {
   const { rows } = table.getRowModel()
 
+  const handleScroll: UIEventHandler<HTMLDivElement> = function (e) {
+    fetchMoreOnBottomReached(e.currentTarget)
+    if (headerScrollRef.current) {
+      headerScrollRef.current.scrollLeft = e.currentTarget.scrollLeft
+    }
+  }
+
   return (
     <TableBodyContainer
-      onScroll={e => fetchMoreOnBottomReached(e.currentTarget)}
-      ref={scrollContainerRef}
+      onScroll={handleScroll}
+      scrollRef={scrollContainerRef}
       style={{
         scrollbarColor: '#d4d4d4 transparent',
         scrollbarWidth: 'thin',
       }}
     >
       {!placeholder ? (
-        <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
+        <table
+          className="w-full border-separate border-spacing-0 whitespace-nowrap"
+          style={{ minWidth: `${tableMinWidth}px` }}
+        >
           <tbody
             className="relative"
             style={{
@@ -159,48 +183,70 @@ function TableBody<TData>({
 
 type StaticTableBodyProps<TData> = {
   CellComponent: ComponentType<ComponentProps<'td'>>
+  headerScrollRef: RefObject<HTMLDivElement | null>
   loading: boolean
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
   skeletonRows: number
   table: ReturnType<typeof useReactTable<TData>>
+  tableMinWidth: number
 }
 
 function StaticTableBody<TData>({
   CellComponent,
+  headerScrollRef,
   loading,
   onRowClick,
   onRowHover,
   placeholder,
   skeletonRows,
   table,
+  tableMinWidth,
 }: StaticTableBodyProps<TData>) {
   const { rows } = table.getRowModel()
 
+  const handleScroll: UIEventHandler<HTMLDivElement> = function (e) {
+    if (headerScrollRef.current) {
+      headerScrollRef.current.scrollLeft = e.currentTarget.scrollLeft
+    }
+  }
+
   return (
     <div className="-mt-1.5 mb-1 overflow-hidden rounded-xl bg-white shadow-md">
-      {!placeholder ? (
-        <table className="w-full border-separate border-spacing-0 whitespace-nowrap">
-          <tbody>
-            <LoadingSkeletonRows
-              loading={loading}
-              rows={rows}
-              skeletonRows={skeletonRows}
-              table={table}
-            />
-            <StaticRows
-              CellComponent={CellComponent}
-              loading={loading}
-              onRowClick={onRowClick}
-              onRowHover={onRowHover}
-              rows={rows}
-            />
-          </tbody>
-        </table>
-      ) : (
-        placeholder
-      )}
+      <div
+        className="overflow-x-auto"
+        onScroll={handleScroll}
+        style={{
+          scrollbarColor: '#d4d4d4 transparent',
+          scrollbarWidth: 'thin',
+        }}
+      >
+        {!placeholder ? (
+          <table
+            className="w-full border-separate border-spacing-0 whitespace-nowrap"
+            style={{ minWidth: `${tableMinWidth}px` }}
+          >
+            <tbody>
+              <LoadingSkeletonRows
+                loading={loading}
+                rows={rows}
+                skeletonRows={skeletonRows}
+                table={table}
+              />
+              <StaticRows
+                CellComponent={CellComponent}
+                loading={loading}
+                onRowClick={onRowClick}
+                onRowHover={onRowHover}
+                rows={rows}
+              />
+            </tbody>
+          </table>
+        ) : (
+          placeholder
+        )}
+      </div>
     </div>
   )
 }
@@ -241,6 +287,7 @@ export function Table<TData>({
   smallBreakpoint = screenBreakpoints.lg,
 }: TableProps<TData>) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const headerScrollRef = useRef<HTMLDivElement>(null)
   const { height, width } = useWindowSize()
 
   const hasVerticalBodyScrollbar = useScrollbarDetection({
@@ -266,6 +313,11 @@ export function Table<TData>({
     state: { columnOrder },
   })
 
+  const tableMinWidth = columns.reduce(
+    (sum, col) => sum + (col.meta?.width ?? 0),
+    0,
+  )
+
   const { rows } = table.getRowModel()
 
   const { fetchMoreOnBottomReached } = useInfiniteScroll({
@@ -287,50 +339,46 @@ export function Table<TData>({
   const heightClass = isVirtual ? ' h-full' : ''
 
   return (
-    <div className={`flex flex-col${heightClass}`}>
-      <div
-        className={`flex flex-col overflow-x-auto${heightClass}`}
-        style={{
-          scrollbarColor: '#d4d4d4 transparent',
-          scrollbarWidth: 'thin',
-        }}
-      >
-        <div className={`flex min-w-max flex-col px-1${heightClass}`}>
-          <TableHeader
-            hasVerticalBodyScrollbar={hasVerticalBodyScrollbar}
-            smallBreakpoint={smallBreakpoint}
-            table={table}
-            width={width}
-          />
-          {isVirtual ? (
-            <TableBody
-              CellComponent={CellComponent}
-              fetchMoreOnBottomReached={fetchMoreOnBottomReached}
-              isFetching={isFetching}
-              loading={loading}
-              onRowClick={onRowClick}
-              onRowHover={onRowHover}
-              placeholder={placeholder}
-              rowSize={rowSize}
-              rowVirtualizer={rowVirtualizer}
-              scrollContainerRef={scrollContainerRef}
-              skeletonRows={skeletonRows}
-              table={table}
-              virtualItems={virtualItems}
-            />
-          ) : (
-            <StaticTableBody
-              CellComponent={CellComponent}
-              loading={loading}
-              onRowClick={onRowClick}
-              onRowHover={onRowHover}
-              placeholder={placeholder}
-              skeletonRows={skeletonRows}
-              table={table}
-            />
-          )}
-        </div>
-      </div>
+    <div className={`flex flex-col px-1${heightClass}`}>
+      <TableHeader
+        hasVerticalBodyScrollbar={hasVerticalBodyScrollbar}
+        headerScrollRef={headerScrollRef}
+        smallBreakpoint={smallBreakpoint}
+        table={table}
+        tableMinWidth={tableMinWidth}
+        width={width}
+      />
+      {isVirtual ? (
+        <TableBody
+          CellComponent={CellComponent}
+          fetchMoreOnBottomReached={fetchMoreOnBottomReached}
+          headerScrollRef={headerScrollRef}
+          isFetching={isFetching}
+          loading={loading}
+          onRowClick={onRowClick}
+          onRowHover={onRowHover}
+          placeholder={placeholder}
+          rowSize={rowSize}
+          rowVirtualizer={rowVirtualizer}
+          scrollContainerRef={scrollContainerRef}
+          skeletonRows={skeletonRows}
+          table={table}
+          tableMinWidth={tableMinWidth}
+          virtualItems={virtualItems}
+        />
+      ) : (
+        <StaticTableBody
+          CellComponent={CellComponent}
+          headerScrollRef={headerScrollRef}
+          loading={loading}
+          onRowClick={onRowClick}
+          onRowHover={onRowHover}
+          placeholder={placeholder}
+          skeletonRows={skeletonRows}
+          table={table}
+          tableMinWidth={tableMinWidth}
+        />
+      )}
     </div>
   )
 }

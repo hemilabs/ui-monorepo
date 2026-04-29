@@ -28,7 +28,7 @@ export const useGetCompositionColumns = function () {
           ),
           header: () => <Header text={t('position')} />,
           id: 'position',
-          meta: { width: '200px' },
+          meta: { width: 200 },
         },
         {
           cell: ({ row }) => (
@@ -38,7 +38,7 @@ export const useGetCompositionColumns = function () {
           ),
           header: () => <Header text={t('amount')} />,
           id: 'amount',
-          meta: { className: 'justify-end', width: '120px' },
+          meta: { className: 'justify-end', width: 120 },
         },
         {
           cell: ({ row }) => (
@@ -48,7 +48,7 @@ export const useGetCompositionColumns = function () {
           ),
           header: () => <Header text={t('apy')} />,
           id: 'apy',
-          meta: { className: 'justify-end', width: '80px' },
+          meta: { className: 'justify-end', width: 80 },
         },
         {
           cell: ({ row }) => (
@@ -58,7 +58,7 @@ export const useGetCompositionColumns = function () {
           ),
           header: () => <Header text={t('share')} />,
           id: 'share',
-          meta: { className: 'justify-end', width: '80px' },
+          meta: { className: 'justify-end', width: 80 },
         },
       ] satisfies ColumnDef<CompositionItemWithColor>[],
     [t],

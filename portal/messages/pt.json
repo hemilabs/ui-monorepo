@@ -450,7 +450,13 @@
       "tx": "Tx",
       "unlock": "Desbloquear",
       "unlocked": "Desbloqueado",
-      "unlocks-on": "Desbloqueia em {date}"
+      "unlocks-on": "Desbloqueia em {date}",
+      "delegated": "Delegado",
+      "delegated-to-address": "Poder de voto delegado para {address}",
+      "position-delegated-to-you": "Posição delegada para você",
+      "received": "Recebido",
+      "received-from-previous-owner": "Este lockup foi recebido de um proprietário anterior",
+      "you-delegated-this-position": "Você delegou esta posição"
     },
     "total-voting-power": "Poder de voto total",
     "unlock-successful": "Desbloqueio bem-sucedido",

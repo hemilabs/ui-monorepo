@@ -8,6 +8,7 @@ export { encodeWithdraw, withdraw } from './wallet/withdraw'
 export {
   getBalanceOfNFTAt,
   getLockedBalance,
+  getPositionVotingPowerDetails,
   getPositionVotingPower,
   getPositionsVotingPowerSum,
   getTotalVotingPower,

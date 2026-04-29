@@ -450,7 +450,13 @@
       "tx": "Tx",
       "unlock": "Unlock",
       "unlocked": "Unlocked",
-      "unlocks-on": "Unlocks on {date}"
+      "unlocks-on": "Unlocks on {date}",
+      "delegated": "Delegated",
+      "delegated-to-address": "Voting power delegated to {address}",
+      "position-delegated-to-you": "Position delegated to you",
+      "received": "Received",
+      "received-from-previous-owner": "This lockup was received from a previous owner",
+      "you-delegated-this-position": "You delegated this position"
     },
     "total-voting-power": "Total voting power",
     "unlock-successful": "Unlock successful",

@@ -15,18 +15,18 @@ export const getTotalVotingPowerQueryKey = ({
 
 export const useTotalVotingPower = function () {
   const { hemiWalletClient } = useHemiWalletClient()
-  const { address } = useAccount()
+  const { address: ownerAddress } = useAccount()
   const chainId = useHemi().id
 
   return useQuery({
-    enabled: !!hemiWalletClient && !!address,
+    enabled: !!hemiWalletClient && !!ownerAddress,
     queryFn: () =>
       getTotalVotingPower({
         client: hemiWalletClient!,
-        ownerAddress: address!,
+        ownerAddress: ownerAddress!,
       }),
     queryKey: getTotalVotingPowerQueryKey({
-      address,
+      address: ownerAddress,
       chainId,
     }),
     refetchInterval: 1000 * 60 * 5, // 5 minutes

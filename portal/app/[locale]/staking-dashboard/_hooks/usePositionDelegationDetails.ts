@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
-import { getPositionVotingPower } from 've-hemi-actions/actions'
+import { getPositionVotingPowerDetails } from 've-hemi-actions/actions'
 import type { Address, Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
-export const getPositionVotingPowerQueryKey = ({
+const getPositionDelegationDetailsQueryKey = ({
   chainId,
   ownerAddress,
   tokenId,
@@ -14,13 +14,13 @@ export const getPositionVotingPowerQueryKey = ({
   ownerAddress: Address | undefined
   tokenId: bigint
 }) => [
-  'position-voting-power',
+  'position-delegation-details',
   chainId,
   ownerAddress?.toLowerCase(),
   tokenId.toString(),
 ]
 
-export const usePositionVotingPower = function (tokenId: bigint) {
+export const usePositionDelegationDetails = function (tokenId: bigint) {
   const { hemiWalletClient } = useHemiWalletClient()
   const { address: ownerAddress } = useAccount()
   const chainId = useHemi().id
@@ -28,12 +28,12 @@ export const usePositionVotingPower = function (tokenId: bigint) {
   return useQuery({
     enabled: !!hemiWalletClient && !!ownerAddress && tokenId > BigInt(0),
     queryFn: () =>
-      getPositionVotingPower({
+      getPositionVotingPowerDetails({
         client: hemiWalletClient!,
         ownerAddress: ownerAddress!,
         tokenId,
       }),
-    queryKey: getPositionVotingPowerQueryKey({
+    queryKey: getPositionDelegationDetailsQueryKey({
       chainId,
       ownerAddress,
       tokenId,

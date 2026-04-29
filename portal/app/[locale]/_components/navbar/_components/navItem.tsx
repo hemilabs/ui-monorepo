@@ -7,17 +7,6 @@ import { IconContainer } from './iconContainer'
 
 type Selectable = { selected?: boolean }
 
-export type NavItemProps = {
-  event?: AnalyticsEvent
-  icon?: ReactNode
-  iconContainer?: ComponentType<ComponentProps<typeof IconContainer>>
-  itemContainer?: ComponentType<ComponentProps<'div'> & Selectable>
-  rightSection?: ReactNode
-  row?: ComponentType<ComponentProps<'div'>>
-  text: string
-  urlToBeSelected?: string | UrlObject
-}
-
 export const Row = (props: ComponentProps<'div'>) => (
   <div
     className="flex w-full flex-col items-center gap-2 md:flex-row"
@@ -49,6 +38,17 @@ export const ItemContainer = ({
     {children}
   </div>
 )
+
+export type NavItemProps = {
+  event?: AnalyticsEvent
+  icon?: ReactNode
+  iconContainer?: ComponentType<ComponentProps<typeof IconContainer>>
+  itemContainer?: ComponentType<ComponentProps<typeof ItemContainer>>
+  rightSection?: ReactNode
+  row?: ComponentType<ComponentProps<'div'>>
+  text: string
+  urlToBeSelected?: string | UrlObject
+}
 
 export const ItemText = ({
   hoverClassName = 'text-neutral-600 group-hover/item:text-neutral-950',

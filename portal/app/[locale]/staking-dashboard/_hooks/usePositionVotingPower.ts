@@ -22,20 +22,20 @@ export const getPositionVotingPowerQueryKey = ({
 
 export const usePositionVotingPower = function (tokenId: bigint) {
   const { hemiWalletClient } = useHemiWalletClient()
-  const { address } = useAccount()
+  const { address: ownerAddress } = useAccount()
   const chainId = useHemi().id
 
   return useQuery({
-    enabled: !!hemiWalletClient && !!address && tokenId > BigInt(0),
+    enabled: !!hemiWalletClient && !!ownerAddress && tokenId > BigInt(0),
     queryFn: () =>
       getPositionVotingPower({
         client: hemiWalletClient!,
-        ownerAddress: address!,
+        ownerAddress: ownerAddress!,
         tokenId,
       }),
     queryKey: getPositionVotingPowerQueryKey({
       chainId,
-      ownerAddress: address,
+      ownerAddress,
       tokenId,
     }),
     refetchInterval: 1000 * 60 * 5, // 5 minutes

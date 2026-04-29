@@ -313,10 +313,9 @@ export function Table<TData>({
     state: { columnOrder },
   })
 
-  const tableMinWidth = columns.reduce(
-    (sum, col) => sum + (col.meta?.width ?? 0),
-    0,
-  )
+  const tableMinWidth = table
+    .getVisibleLeafColumns()
+    .reduce((sum, column) => sum + (column.columnDef.meta?.width ?? 0), 0)
 
   const { rows } = table.getRowModel()
 

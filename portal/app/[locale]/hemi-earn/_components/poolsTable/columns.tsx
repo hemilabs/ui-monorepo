@@ -59,7 +59,7 @@ export const useGetPoolsColumns = function () {
           ),
           header: () => <Header text={t('table.pool')} />,
           id: 'pool',
-          meta: { width: '200px' },
+          meta: { width: 200 },
         },
         {
           cell: ({ row }) => (
@@ -87,7 +87,7 @@ export const useGetPoolsColumns = function () {
           ),
           header: () => <Header text={t('table.total-deposits')} />,
           id: 'total-deposits',
-          meta: { width: '200px' },
+          meta: { width: 200 },
         },
         {
           cell: ({ row }) => (
@@ -97,7 +97,7 @@ export const useGetPoolsColumns = function () {
           ),
           header: () => <Header text={t('table.apy')} />,
           id: 'apy',
-          meta: { width: '120px' },
+          meta: { width: 120 },
         },
         {
           cell: ({ row }) => (
@@ -107,7 +107,7 @@ export const useGetPoolsColumns = function () {
           ),
           header: () => <Header text={t('table.exposure')} />,
           id: 'exposure',
-          meta: { width: '120px' },
+          meta: { width: 120 },
         },
         {
           cell: ({ row }) => (
@@ -119,7 +119,7 @@ export const useGetPoolsColumns = function () {
             </div>
           ),
           id: 'actions',
-          meta: { width: '260px' },
+          meta: { width: 260 },
         },
       ] satisfies ColumnDef<EarnPool>[],
     [t],

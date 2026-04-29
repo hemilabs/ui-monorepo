@@ -28,7 +28,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('protocol')} />,
     id: 'protocol',
-    meta: { width: '150px' },
+    meta: { width: 150 },
   },
   {
     cell: ({ row }) => (
@@ -39,7 +39,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('asset')} />,
     id: 'asset',
-    meta: { width: '120px' },
+    meta: { width: 120 },
   },
   {
     cell: ({ row }) => (
@@ -50,7 +50,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     ),
     header: () => <Header text={t('wallet-balance')} />,
     id: 'wallet-balance',
-    meta: { width: '100px' },
+    meta: { width: 100 },
   },
   {
     cell: function CallToAction({ row }) {
@@ -80,7 +80,7 @@ const stakeColumns = ({ t }: StakeColumnsProps): ColumnDef<StakeToken>[] => [
     },
     header: () => <Header text={t('stake.action')} />,
     id: 'action',
-    meta: { width: '80px' },
+    meta: { width: 80 },
   },
 ]
 

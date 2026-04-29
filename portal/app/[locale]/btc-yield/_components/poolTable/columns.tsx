@@ -26,7 +26,7 @@ export const useGetColumns = function () {
           ),
           header: () => <Header text={t('bitcoin-yield.table.pool')} />,
           id: 'pool',
-          meta: { width: '200px' },
+          meta: { width: 200 },
         },
         {
           cell: () => (
@@ -38,7 +38,7 @@ export const useGetColumns = function () {
             <Header text={t('bitcoin-yield.table.staked-balance')} />
           ),
           id: 'balance',
-          meta: { width: '200px' },
+          meta: { width: 200 },
         },
         {
           cell: () => (
@@ -48,7 +48,7 @@ export const useGetColumns = function () {
           ),
           header: () => <Header text={t('bitcoin-yield.table.rewards')} />,
           id: 'rewards',
-          meta: { width: '200px' },
+          meta: { width: 200 },
         },
         {
           cell: ({ row }) => <Actions row={row} />,
@@ -58,7 +58,7 @@ export const useGetColumns = function () {
             </div>
           ),
           id: 'actions',
-          meta: { width: '350px' },
+          meta: { width: 350 },
         },
       ] satisfies ColumnDef<Vault>[],
     [t],

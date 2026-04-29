@@ -58,7 +58,7 @@ export const useGetPositionsColumns = function () {
           ),
           header: () => <Header text={t('table.pool')} />,
           id: 'pool',
-          meta: { width: '200px' },
+          meta: { width: 200 },
         },
         {
           cell: ({ row }) => (
@@ -86,7 +86,7 @@ export const useGetPositionsColumns = function () {
           ),
           header: () => <Header text={t('table.your-deposit')} />,
           id: 'your-deposit',
-          meta: { width: '200px' },
+          meta: { width: 200 },
         },
         {
           cell: ({ row }) => (
@@ -96,7 +96,7 @@ export const useGetPositionsColumns = function () {
           ),
           header: () => <Header text={t('table.apy')} />,
           id: 'apy',
-          meta: { width: '120px' },
+          meta: { width: 120 },
         },
         {
           cell: ({ row }) => (
@@ -108,7 +108,7 @@ export const useGetPositionsColumns = function () {
           ),
           header: () => <Header text={t('table.yield-earned')} />,
           id: 'yield-earned',
-          meta: { width: '150px' },
+          meta: { width: 150 },
         },
         {
           cell: ({ row }) => (
@@ -120,7 +120,7 @@ export const useGetPositionsColumns = function () {
             </div>
           ),
           id: 'actions',
-          meta: { width: '100px' },
+          meta: { width: 100 },
         },
       ] satisfies ColumnDef<EarnPosition>[],
     [t],

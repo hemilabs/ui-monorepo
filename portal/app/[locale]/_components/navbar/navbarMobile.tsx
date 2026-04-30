@@ -147,9 +147,9 @@ export const NavbarMobile = function () {
           </FullItem>
         </ul>
       </div>
-      <div className="flex w-full shrink-0 items-center gap-x-3 bg-white p-5 [&_a]:size-full [&_button]:size-11">
+      <div className="flex w-full shrink-0 items-center gap-x-3 bg-white p-5 [&_a]:w-full [&_button]:size-11">
         <Help />
-        <GetStarted />
+        <GetStarted size="xLarge" />
       </div>
     </div>
   )

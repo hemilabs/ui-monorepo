@@ -1,5 +1,6 @@
-import { Drawer, DrawerParagraph, DrawerTopSection } from 'components/drawer'
-import { useUmami } from 'hooks/useUmami'
+'use client'
+
+import { DrawerParagraph, DrawerTopSection } from 'components/drawer'
 import { useTranslations } from 'next-intl'
 
 import { BtcWallet } from './wallets/btcWallet'
@@ -11,31 +12,22 @@ type Props = {
 
 export const ConnectWalletsDrawer = function ({ closeDrawer }: Props) {
   const t = useTranslations()
-  const { track } = useUmami()
-
-  const onClose = function () {
-    track?.('close wallet drawer')
-
-    closeDrawer()
-  }
 
   return (
-    <Drawer onClose={onClose}>
-      <div className="drawer-content h-[85vh] overflow-y-auto md:h-full md:max-w-md">
-        <div className="mb-3 flex h-full flex-col gap-y-3">
-          <DrawerTopSection
-            heading={t('common.connect-wallets')}
-            onClose={closeDrawer}
-          />
-          <div className="mt-5">
-            <EvmWallet />
-          </div>
-          <BtcWallet />
-          <DrawerParagraph>
-            {t('connect-wallets.btc-wallet-requirement')}
-          </DrawerParagraph>
+    <div className="drawer-content !min-h-full pb-6 md:max-w-md">
+      <div className="mb-3 flex flex-col gap-y-3">
+        <DrawerTopSection
+          heading={t('common.connect-wallets')}
+          onClose={closeDrawer}
+        />
+        <div className="mt-5">
+          <EvmWallet />
         </div>
+        <BtcWallet />
+        <DrawerParagraph>
+          {t('connect-wallets.btc-wallet-requirement')}
+        </DrawerParagraph>
       </div>
-    </Drawer>
+    </div>
   )
 }

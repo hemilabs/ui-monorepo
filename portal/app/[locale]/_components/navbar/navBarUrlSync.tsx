@@ -8,6 +8,7 @@ type Props = {
 
 // UI-less component so I can wrap it on suspense.
 // Hooks can't be wrapped...
+
 export const NavBarUrlSync = function ({ setIsNavbarOpen }: Props) {
   const [networkType] = useNetworkType()
   const pathname = usePathnameWithoutLocale()

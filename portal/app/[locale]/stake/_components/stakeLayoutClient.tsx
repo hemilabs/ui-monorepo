@@ -1,24 +1,15 @@
 'use client'
 
-import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { StakeTabs } from 'components/stakeTabs'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useStakeTokens } from 'hooks/useStakeTokens'
-import dynamic from 'next/dynamic'
 import { Suspense } from 'react'
 import { isStakeEnabledOnTestnet } from 'utils/stake'
 
 import { useDrawerStakeQueryString } from '../_hooks/useDrawerStakeQueryString'
 
+import { ManageStake } from './manageStake'
 import { StakeDisabledTestnet } from './stakeDisabledTestnet'
-
-const ManageStake = dynamic(
-  () => import('./manageStake').then(mod => mod.ManageStake),
-  {
-    loading: () => <DrawerLoader className="h-[95dvh] md:h-full" />,
-    ssr: false,
-  },
-)
 
 const SideDrawer = function () {
   const { drawerMode, setDrawerQueryString, tokenAddress } =

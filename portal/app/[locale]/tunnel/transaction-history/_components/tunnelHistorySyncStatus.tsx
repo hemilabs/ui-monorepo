@@ -14,7 +14,7 @@ export const TunnelHistorySyncStatus = function () {
     <div
       className={`flex items-center gap-x-1 ${hide ? 'invisible' : 'block'}`}
     >
-      <Spinner color="#FF6C15" size={15} />
+      <Spinner size={15} variant="orange-warm" />
       <span className="text-neutral-600">{t('loading-transactions')}</span>
     </div>
   )

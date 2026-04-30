@@ -67,7 +67,7 @@ export default function Page() {
 
     const spinner = (
       <div className="mt-5">
-        <Spinner color="#FF6A00" size="small" />
+        <Spinner size="small" variant="orange-bright" />
       </div>
     )
 

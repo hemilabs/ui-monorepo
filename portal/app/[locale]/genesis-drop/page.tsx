@@ -67,7 +67,7 @@ export default function Page() {
 
     const spinner = (
       <div className="mt-5">
-        <Spinner size="small" variant="orange-bright" />
+        <Spinner size="small" variant="orange" />
       </div>
     )
 

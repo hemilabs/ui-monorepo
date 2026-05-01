@@ -77,7 +77,7 @@ export const Actions = function ({ row }: Props) {
           variant="secondary"
         >
           {loadingStrategies ? (
-            <Spinner size="xSmall" variant="orange-600" />
+            <Spinner size="xSmall" variant="orange" />
           ) : row.getIsExpanded() ? (
             <Chevron.Up className={cssHoverChevron} />
           ) : (

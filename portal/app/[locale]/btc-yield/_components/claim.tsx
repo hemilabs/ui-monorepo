@@ -40,7 +40,7 @@ export const Claim = function () {
       !address ? (
         t('bitcoin-yield.table.claim-rewards')
       ) : (
-        <Spinner size="xSmall" variant="orange-600" />
+        <Spinner size="xSmall" variant="orange" />
       )}
     </Button>
   )

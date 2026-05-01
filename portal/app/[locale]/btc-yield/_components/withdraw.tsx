@@ -30,7 +30,7 @@ export const Withdraw = function () {
       variant="secondary"
     >
       {poolBalanceLoading && !!address ? (
-        <Spinner size="xSmall" variant="orange-600" />
+        <Spinner size="xSmall" variant="orange" />
       ) : (
         t('common.withdraw')
       )}

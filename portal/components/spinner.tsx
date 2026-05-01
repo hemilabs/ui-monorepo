@@ -1,10 +1,9 @@
 import React, { useId } from 'react'
+import { orange600 } from 'styles'
 
 const variantColors = {
-  'light': '#FFF7F0',
-  'orange-600': '#FF4600',
-  'orange-bright': '#FF6A00',
-  'orange-warm': '#FF6C15',
+  light: '#FFF7F0',
+  orange: orange600,
 } as const
 
 type SpinnerVariant = keyof typeof variantColors

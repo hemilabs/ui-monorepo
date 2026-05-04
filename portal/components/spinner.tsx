@@ -1,15 +1,26 @@
 import React, { useId } from 'react'
+import { orange600 } from 'styles'
+
+const variantColors = {
+  light: '#FFF7F0',
+  orange: orange600,
+} as const
+
+type SpinnerVariant = keyof typeof variantColors
 
 type SpinnerProps = {
   className?: string
+  /** When set, overrides `variant` (e.g. a one-off brand hex). */
   color?: string
   size?: 'xSmall' | 'small' | 'medium' | 'large' | number
+  variant?: SpinnerVariant
 }
 
 export const Spinner = function ({
   className = '',
-  color = '#FFF7F0',
+  color,
   size = 'medium',
+  variant = 'light',
 }: SpinnerProps) {
   // IMPORTANT: We generate a unique ID for each spinner instance using React's useId() hook.
   // This ensures that when multiple spinners are used on the same page, each has its own
@@ -18,6 +29,8 @@ export const Spinner = function ({
   // have different colors. The unique ID prevents these conflicts by giving each spinner
   // its own isolated gradient definitions in the SVG.
   const uniqueId = useId()
+
+  const resolvedColor = color ?? variantColors[variant]
 
   const getDimensions = function () {
     if (typeof size === 'number') {
@@ -50,11 +63,11 @@ export const Spinner = function ({
       >
         <defs>
           <linearGradient id={`${uniqueId}-gradient1`}>
-            <stop offset="0%" stopColor={color} stopOpacity="0.2" />
-            <stop offset="100%" stopColor={color} stopOpacity="0.7" />
+            <stop offset="0%" stopColor={resolvedColor} stopOpacity="0.2" />
+            <stop offset="100%" stopColor={resolvedColor} stopOpacity="0.7" />
           </linearGradient>
           <linearGradient id={`${uniqueId}-gradient2`}>
-            <stop offset="0%" stopColor={color} stopOpacity="1" />
+            <stop offset="0%" stopColor={resolvedColor} stopOpacity="1" />
             <stop offset="100%" stopColor={'#FFF7F0'} stopOpacity="0.3" />
           </linearGradient>
         </defs>
@@ -80,7 +93,7 @@ export const Spinner = function ({
               strokeWidth / 2
             } ${center - 2}`}
             fill="none"
-            stroke={color}
+            stroke={resolvedColor}
             strokeLinecap="round"
           />
           <animateTransform

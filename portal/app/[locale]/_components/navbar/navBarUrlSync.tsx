@@ -1,23 +1,23 @@
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import { useEffect } from 'react'
 
 type Props = {
-  setIsNavbarOpen: Dispatch<SetStateAction<boolean>>
+  closeNavbar: VoidFunction
 }
 
 // UI-less component so I can wrap it on suspense.
 // Hooks can't be wrapped...
 
-export const NavBarUrlSync = function ({ setIsNavbarOpen }: Props) {
+export const NavBarUrlSync = function ({ closeNavbar }: Props) {
   const [networkType] = useNetworkType()
   const pathname = usePathnameWithoutLocale()
 
   useEffect(
     function closeNavBarOnUrlChangeMobile() {
-      setIsNavbarOpen(false)
+      closeNavbar()
     },
-    [networkType, pathname, setIsNavbarOpen],
+    [closeNavbar, networkType, pathname],
   )
   return null
 }

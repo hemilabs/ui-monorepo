@@ -5,7 +5,6 @@ import { HamburgerIcon } from 'components/icons/hamburgerIcon'
 import { StakeTabs } from 'components/stakeTabs'
 import { TunnelTabs } from 'components/tunnelTabs'
 import dynamic from 'next/dynamic'
-import { Dispatch, SetStateAction } from 'react'
 
 import { Badge } from '../badge'
 
@@ -20,18 +19,12 @@ const WalletConnection = dynamic(
 )
 
 type Props = {
-  isMobileViewport: boolean
   isMenuOpen: boolean
-  setIsNavbarOpen: Dispatch<SetStateAction<boolean>>
+  openNavbar: VoidFunction
   toggleMenu: VoidFunction
 }
 
-export const Header = ({
-  isMenuOpen,
-  isMobileViewport,
-  setIsNavbarOpen,
-  toggleMenu,
-}: Props) => (
+export const Header = ({ isMenuOpen, openNavbar, toggleMenu }: Props) => (
   <header
     className="md:h-13 md:py-4.5 flex h-14 items-center border-b border-solid
      border-neutral-300/55 bg-white px-3 py-3 md:bg-transparent md:px-0"
@@ -41,11 +34,7 @@ export const Header = ({
       <Badge />
     </div>
     <div className="size-13 hidden items-center justify-center border-r border-neutral-300/55 md:flex xl:hidden">
-      <ButtonIcon
-        onClick={() => setIsNavbarOpen(true)}
-        size="xSmall"
-        variant="secondary"
-      >
+      <ButtonIcon onClick={openNavbar} size="xSmall" variant="secondary">
         <HamburgerIcon />
       </ButtonIcon>
     </div>
@@ -54,7 +43,7 @@ export const Header = ({
       <TunnelTabs />
       <GenesisDropTabs />
     </div>
-    {!isMobileViewport && <WalletConnection />}
+    <WalletConnection />
     <div className="hidden sm:flex md:hidden">
       <ButtonIcon
         onClick={toggleMenu}

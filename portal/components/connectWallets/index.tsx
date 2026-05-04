@@ -2,16 +2,14 @@
 
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { Button } from 'components/button'
-import { Drawer } from 'components/drawer'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { ComponentProps, useCallback } from 'react'
+import { ComponentProps } from 'react'
 import { formatBtcAddress, formatEvmAddress } from 'utils/format'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount as useEvmAccount } from 'wagmi'
 
-import { ConnectWalletsDrawer } from './connectWalletsDrawer'
 import { EvmWalletLogo } from './evmWalletLogo'
 import { UnisatLogo } from './unisatLogo'
 
@@ -34,7 +32,7 @@ type WalletConnectionPlacement = 'bottom-bar' | 'header'
 
 const placementClassName: Record<WalletConnectionPlacement, string> = {
   'bottom-bar': 'flex-1',
-  'header': 'ml-auto mr-3',
+  'header': 'ml-auto mr-3 hidden sm:block',
 }
 
 export const WalletConnection = function ({
@@ -42,7 +40,7 @@ export const WalletConnection = function ({
 }: {
   placement?: WalletConnectionPlacement
 }) {
-  const { closeDrawer, isDrawerOpen, openDrawer } = useDrawerContext()
+  const { openDrawer } = useDrawerContext()
   const t = useTranslations()
 
   const { address: btcAddress, status: btcStatus } = useBtcAccount()
@@ -67,14 +65,6 @@ export const WalletConnection = function ({
     openDrawer()
     track?.('connect wallets')
   }
-
-  const onWalletDrawerClose = useCallback(
-    function onWalletDrawerClose() {
-      track?.('close wallet drawer')
-      closeDrawer()
-    },
-    [closeDrawer, track],
-  )
 
   const buttonVariant =
     walletsConnected.length > 0 ? 'secondary' : ('primary' as const)
@@ -110,11 +100,6 @@ export const WalletConnection = function ({
             </div>
           )}
         </Button>
-        {isDrawerOpen && (
-          <Drawer onClose={onWalletDrawerClose}>
-            <ConnectWalletsDrawer closeDrawer={closeDrawer} />
-          </Drawer>
-        )}
       </div>
     </div>
   )

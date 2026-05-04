@@ -63,7 +63,7 @@ export const Eligible = function ({ eligibility }: Props) {
   if (isClaimable === undefined) {
     return (
       <div className="mt-5">
-        <Spinner color="#FF6A00" size="small" />
+        <Spinner size="small" variant="orange" />
       </div>
     )
   }

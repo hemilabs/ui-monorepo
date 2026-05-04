@@ -2,7 +2,6 @@ import { Button } from 'components/button'
 import { Spinner } from 'components/spinner'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
-import { orange600 } from 'styles'
 import { useAccount } from 'wagmi'
 
 import { useHasClaimableRewards } from '../_hooks/useHasClaimableRewards'
@@ -41,7 +40,7 @@ export const Claim = function () {
       !address ? (
         t('bitcoin-yield.table.claim-rewards')
       ) : (
-        <Spinner color={orange600} size="xSmall" />
+        <Spinner size="xSmall" variant="orange" />
       )}
     </Button>
   )

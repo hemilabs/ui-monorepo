@@ -1,15 +1,23 @@
 import React, { useId } from 'react'
+import { orange600 } from 'styles'
+
+const variantColors = {
+  light: '#FFF7F0',
+  orange: orange600,
+} as const
+
+type SpinnerVariant = keyof typeof variantColors
 
 type SpinnerProps = {
-  size?: 'xSmall' | 'small' | 'medium' | 'large' | number
-  color?: string
   className?: string
+  size?: 'xSmall' | 'small' | 'medium' | 'large' | number
+  variant?: SpinnerVariant
 }
 
 export const Spinner = function ({
   className = '',
-  color = '#FFF7F0',
   size = 'medium',
+  variant = 'light',
 }: SpinnerProps) {
   // IMPORTANT: We generate a unique ID for each spinner instance using React's useId() hook.
   // This ensures that when multiple spinners are used on the same page, each has its own
@@ -18,6 +26,8 @@ export const Spinner = function ({
   // have different colors. The unique ID prevents these conflicts by giving each spinner
   // its own isolated gradient definitions in the SVG.
   const uniqueId = useId()
+
+  const color = variantColors[variant]
 
   const getDimensions = function () {
     if (typeof size === 'number') {

@@ -1,24 +1,29 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import Big from 'big.js'
-import { useHemi } from 'hooks/useHemi'
-import { useHemiClient } from 'hooks/useHemiClient'
+import { useNetworkType } from 'hooks/useNetworkType'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { formatFiatNumber } from 'utils/format'
 import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
+import { useAccount, useConfig } from 'wagmi'
+import { getPublicClient } from 'wagmi/actions'
 
-import { fetchTotalDeposits } from '../_fetchers/fetchTotalDeposits'
 import { type EarnCardData } from '../types'
+import { userVaultBalanceQueryOptions } from '../vault/[vaultAddress]/_hooks/useUserVaultBalance'
 
 import { useHemiEarnTokens } from './useHemiEarnTokens'
+
+export const totalDepositsKeyPrefix = ['hemi-earn', 'total-deposits']
 
 type TotalDepositsData = EarnCardData & { totalUsd: string }
 
 export const useTotalDeposits = function () {
-  const { id: chainId } = useHemi()
-  const hemiClient = useHemiClient()
+  const [networkType] = useNetworkType()
+  const { address } = useAccount()
+  const config = useConfig()
+  const queryClient = useQueryClient()
   const { data: vaultTokens = [] } = useHemiEarnTokens()
   const { data: prices } = useTokenPrices()
 
@@ -27,9 +32,32 @@ export const useTotalDeposits = function () {
     isError,
     isPending,
   } = useQuery({
-    enabled: vaultTokens.length > 0,
-    queryFn: () => fetchTotalDeposits({ client: hemiClient, vaultTokens }),
-    queryKey: ['hemi-earn', 'total-deposits', chainId],
+    enabled: !!address && vaultTokens.length > 0,
+    async queryFn() {
+      const balances = await Promise.all(
+        vaultTokens.map(({ token, vaultAddress }) =>
+          queryClient.ensureQueryData(
+            userVaultBalanceQueryOptions({
+              address: address!,
+              chainId: token.chainId,
+              client: getPublicClient(config, { chainId: token.chainId })!,
+              vaultAddress,
+            }),
+          ),
+        ),
+      )
+      return vaultTokens.map(({ token, vaultAddress }, index) => ({
+        amount: balances[index] ?? BigInt(0),
+        token,
+        vaultAddress,
+      }))
+    },
+    queryKey: [
+      ...totalDepositsKeyPrefix,
+      networkType,
+      address,
+      vaultTokens.map(vt => vt.vaultAddress),
+    ],
   })
 
   const data: TotalDepositsData | undefined = deposits
@@ -48,7 +76,7 @@ export const useTotalDeposits = function () {
         vaultBreakdown: deposits.map(({ amount, token }) => ({
           name: token.symbol,
           tokenAddress: token.address,
-          tokenChainId: chainId,
+          tokenChainId: token.chainId,
           value: `$${formatFiatNumber(
             Big(formatUnits(amount, token.decimals))
               .times(getTokenPrice(token, prices))

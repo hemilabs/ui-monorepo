@@ -1,15 +1,16 @@
 'use client'
 
-import { HemiFees } from 'components/hemiFees'
+import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { encodeWithdraw } from 'hemi-earn-actions/actions'
+import { useChain } from 'hooks/useChain'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
-import { type Address } from 'viem'
+import { type Address, formatUnits } from 'viem'
 import { useAccount as useEvmAccount, useEstimateGas } from 'wagmi'
 
 import { useVaultForm } from '../_context/vaultFormContext'
@@ -42,12 +43,11 @@ export const Withdraw = function ({ onSwitchToDeposit }: Props) {
   } = useVaultForm()
 
   const { address, status } = useEvmAccount()
-  const hemi = useHemi()
 
   const amount = parseTokenUnits(input, pool.token)
 
   const { data: vaultBalance, isSuccess: vaultBalanceLoaded } =
-    useUserVaultBalance(pool.vaultAddress)
+    useUserVaultBalance(pool.vaultAddress, pool.token.chainId)
 
   const {
     canSubmit: validInput,
@@ -65,6 +65,7 @@ export const Withdraw = function ({ onSwitchToDeposit }: Props) {
 
   const { data: shares } = useConvertToShares({
     assets: amount,
+    chainId: pool.token.chainId,
     enabled: canWithdraw,
     vaultAddress: pool.vaultAddress,
   })
@@ -85,7 +86,7 @@ export const Withdraw = function ({ onSwitchToDeposit }: Props) {
 
   const { fees: withdrawGasFees, isError: isWithdrawGasFeesError } =
     useEstimateFees({
-      chainId: hemi.id,
+      chainId: pool.token.chainId,
       gasUnits: withdrawGasUnits,
       isGasUnitsError: isWithdrawGasUnitsError,
     })
@@ -112,11 +113,29 @@ export const Withdraw = function ({ onSwitchToDeposit }: Props) {
     setOperationRunning('withdrawing')
   }
 
+  const chain = useChain(pool.token.chainId)
+  const nativeToken = getNativeToken(pool.token.chainId)
+
   function RenderBelowForm() {
     if (!canWithdraw) {
       return null
     }
-    return <HemiFees fees={withdrawGasFees} isError={isWithdrawGasFeesError} />
+    return (
+      <div className="px-4">
+        <EvmFeesSummary
+          gas={{
+            amount: formatUnits(
+              withdrawGasFees,
+              chain?.nativeCurrency.decimals ?? 18,
+            ),
+            isError: isWithdrawGasFeesError,
+            label: t('common.network-gas-fee', { network: chain?.name ?? '' }),
+            token: nativeToken,
+          }}
+          operationToken={nativeToken}
+        />
+      </div>
+    )
   }
 
   return (

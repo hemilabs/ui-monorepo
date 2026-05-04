@@ -12,6 +12,9 @@
     },
     "subgraphs/*": {
       "entry": "src/mappings/*.ts"
+    },
+    "subgraphs/hemi-earn-vaults-subgraph": {
+      "entry": ["src/mappings/*.ts", "tests/*.test.ts"]
     }
   }
 }

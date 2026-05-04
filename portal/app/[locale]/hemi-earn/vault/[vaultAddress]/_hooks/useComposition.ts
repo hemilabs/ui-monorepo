@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useHemi } from 'hooks/useHemi'
-import { type Address } from 'viem'
+import { type Address, type Chain } from 'viem'
 
 export type CompositionViewMode = 'token' | 'protocol'
 
@@ -53,21 +52,21 @@ const generateMockData = function (viewMode: CompositionViewMode) {
 const mockDelay = 2000
 
 type UseComposition = {
+  chainId: Chain['id']
   vaultAddress: Address
   viewMode: CompositionViewMode
 }
 
 // TODO: replace mocked data with real API call once the backend endpoint is available.
-export const useComposition = function ({
+export const useComposition = ({
+  chainId,
   vaultAddress,
   viewMode,
-}: UseComposition) {
-  const { id: chainId } = useHemi()
-  return useQuery({
+}: UseComposition) =>
+  useQuery({
     queryFn: () =>
       new Promise<CompositionItem[]>(resolve =>
         setTimeout(() => resolve(generateMockData(viewMode)), mockDelay),
       ),
     queryKey: ['composition', chainId, vaultAddress, viewMode],
   })
-}

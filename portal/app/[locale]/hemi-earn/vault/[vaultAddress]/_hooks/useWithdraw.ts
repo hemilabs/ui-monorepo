@@ -6,15 +6,15 @@ import { EventEmitter } from 'events'
 import { type WithdrawEvents } from 'hemi-earn-actions'
 import { withdraw } from 'hemi-earn-actions/actions'
 import { useTokenBalance } from 'hooks/useBalance'
-import { useHemi } from 'hooks/useHemi'
-import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { parseTokenUnits } from 'utils/token'
 import { erc4626Abi, parseEventLogs } from 'viem'
 import { convertToShares } from 'viem-erc4626/actions'
-import { useAccount } from 'wagmi'
+import { useAccount, useConfig } from 'wagmi'
+import { getWalletClient } from 'wagmi/actions'
 
-import { getEarnPoolsQueryKey } from '../../../_hooks/useEarnPools'
-import { getEarnPositionsQueryKey } from '../../../_hooks/useEarnPositions'
+import { earnPoolsKeyPrefix } from '../../../_hooks/useEarnPools'
+import { earnPositionsKeyPrefix } from '../../../_hooks/useEarnPositions'
+import { totalDepositsKeyPrefix } from '../../../_hooks/useTotalDeposits'
 import { type EarnPool } from '../../../types'
 import {
   type VaultWithdrawOperation,
@@ -39,24 +39,20 @@ export const useWithdraw = function ({
 }: UseWithdraw) {
   const { setDrawerQueryString } = useDrawerVaultQueryString()
   const { address } = useAccount()
-  const hemi = useHemi()
+  const chainId = pool.token.chainId
+  const config = useConfig()
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
 
   const { queryKey: tokenBalanceQueryKey } = useTokenBalance(
-    pool.token.chainId,
+    chainId,
     pool.token.address,
   )
 
-  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
-    pool.token.chainId,
-  )
+  const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(chainId)
 
-  const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
-    pool.token.chainId,
-  )
-
-  const { hemiWalletClient } = useHemiWalletClient()
+  const updateNativeBalanceAfterFees =
+    useUpdateNativeBalanceAfterReceipt(chainId)
 
   return useMutation({
     async mutationFn() {
@@ -64,13 +60,15 @@ export const useWithdraw = function ({
         throw new Error('No account connected')
       }
 
-      await ensureConnectedTo(hemi.id)
+      await ensureConnectedTo(chainId)
+
+      const walletClient = await getWalletClient(config, { chainId })
 
       const amount = parseTokenUnits(input, pool.token)
 
       // Convert assets to shares for withdrawal.
       // Read from the contract directly (not from a cached hook) to get a fresh value.
-      const shares = await convertToShares(hemiWalletClient!, {
+      const shares = await convertToShares(walletClient, {
         address: pool.vaultAddress,
         assets: amount,
       })
@@ -80,7 +78,7 @@ export const useWithdraw = function ({
         receiver: address,
         shares,
         vaultAddress: pool.vaultAddress,
-        walletClient: hemiWalletClient!,
+        walletClient,
       })
 
       emitter.on('user-signed-withdraw', function (transactionHash) {
@@ -123,7 +121,7 @@ export const useWithdraw = function ({
           // Update vault balance
           queryClient.setQueryData(
             getUserVaultBalanceQueryKey({
-              chainId: hemi.id,
+              chainId,
               vaultAddress: pool.vaultAddress,
             }),
             (old: bigint | undefined) =>
@@ -153,16 +151,19 @@ export const useWithdraw = function ({
       queryClient.invalidateQueries({ queryKey: tokenBalanceQueryKey })
       queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
       queryClient.invalidateQueries({
-        queryKey: getEarnPoolsQueryKey(hemi.id),
+        queryKey: earnPoolsKeyPrefix,
       })
       queryClient.invalidateQueries({
         queryKey: getUserVaultBalanceQueryKey({
-          chainId: hemi.id,
+          chainId,
           vaultAddress: pool.vaultAddress,
         }),
       })
       queryClient.invalidateQueries({
-        queryKey: getEarnPositionsQueryKey(hemi.id, address),
+        queryKey: earnPositionsKeyPrefix,
+      })
+      queryClient.invalidateQueries({
+        queryKey: totalDepositsKeyPrefix,
       })
     },
   })

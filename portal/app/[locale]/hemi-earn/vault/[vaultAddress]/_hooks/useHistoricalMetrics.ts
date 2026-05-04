@@ -1,72 +1,70 @@
 import { useQuery } from '@tanstack/react-query'
-import { useHemi } from 'hooks/useHemi'
+import fetch from 'fetch-plus-plus'
+import { useTokenPrices } from 'hooks/useTokenPrices'
+import { type EvmToken } from 'types/token'
+import { getTokenPrice } from 'utils/token'
+import { isValidUrl } from 'utils/url'
 import { type Address } from 'viem'
 
-export type MetricPeriod = '1w' | '1m' | '3m' | '1y'
-export type MetricType = 'deposits' | 'apy'
-export type MetricDataPoint = { x: number; y: number }
+import {
+  calculateTvlHistory,
+  type VaultHistoryPoint,
+} from '../../../_utils/vaultHistory'
+import { type MetricPeriod, type MetricType } from '../../../types'
 
-const periodDurations: Record<MetricPeriod, number> = {
-  '1m': 30 * 24 * 60 * 60 * 1000,
-  '1w': 7 * 24 * 60 * 60 * 1000,
-  '1y': 365 * 24 * 60 * 60 * 1000,
-  '3m': 90 * 24 * 60 * 60 * 1000,
+const subgraphApiUrl = process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL
+
+type VaultHistoryResponse = {
+  history: VaultHistoryPoint[]
 }
 
-// Simple seeded pseudo-random for deterministic mock data
-const seededRandom = function (seed: number) {
-  const x = Math.sin(seed) * 10000
-  return x - Math.floor(x)
-}
-
-const generateMockData = function (
+const fetchVaultHistory = (
+  chainId: EvmToken['chainId'],
+  vaultAddress: Address,
   period: MetricPeriod,
-  metricType: MetricType,
-) {
-  const now = Date.now()
-  const duration = periodDurations[period]
-  const points = 20
-  const step = duration / (points - 1)
+) =>
+  fetch(`${subgraphApiUrl}/${chainId}/earn/vaults/${vaultAddress}/history`, {
+    method: 'GET',
+    queryString: { period },
+  }).then((data: VaultHistoryResponse) => data.history)
 
-  return Array.from({ length: points }, function (_, i) {
-    const seed = i + (metricType === 'apy' ? 100 : 200)
-    const random = seededRandom(seed)
-
-    const y =
-      metricType === 'apy'
-        ? 2 + random * 3 // APY between 2% and 5%
-        : 380_000_000 + random * 50_000_000 // Deposits between $380M and $430M
-
+// TODO: replace mock APY with real calculation from shareValue once approach is defined
+const generateMockApyData = (history: VaultHistoryPoint[]) =>
+  history.map(function ({ timestamp }, i) {
+    const x = Math.sin(i + 100) * 10000
+    const random = x - Math.floor(x)
     return {
-      x: now - duration + i * step,
-      y,
+      x: Number(timestamp) * 1000,
+      y: 2 + random * 3,
     }
   })
-}
-
-const mockDelay = 2000
 
 type UseHistoricalMetrics = {
   metricType: MetricType
   period: MetricPeriod
+  token: EvmToken
   vaultAddress: Address
 }
 
-// TODO: replace mocked data with real API call once the backend endpoint is available.
 export const useHistoricalMetrics = function ({
   metricType,
   period,
+  token,
   vaultAddress,
 }: UseHistoricalMetrics) {
-  const { id: chainId } = useHemi()
+  const { data: prices } = useTokenPrices()
+  const tokenPrice = getTokenPrice(token, prices)
+
   return useQuery({
-    queryFn: () =>
-      new Promise<MetricDataPoint[]>(resolve =>
-        setTimeout(
-          () => resolve(generateMockData(period, metricType)),
-          mockDelay,
-        ),
-      ),
-    queryKey: ['historical-metrics', chainId, vaultAddress, period, metricType],
+    enabled: subgraphApiUrl !== undefined && isValidUrl(subgraphApiUrl),
+    queryFn: () => fetchVaultHistory(token.chainId, vaultAddress, period),
+    queryKey: ['historical-metrics', period, token.chainId, vaultAddress],
+    select(history) {
+      if (metricType === 'deposits') {
+        return calculateTvlHistory(history, token.decimals, tokenPrice)
+      }
+      // TODO: replace mock APY with real calculation from shareValue once approach is defined
+      return generateMockApyData(history)
+    },
   })
 }

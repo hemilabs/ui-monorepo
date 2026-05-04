@@ -1,0 +1,7 @@
+type VaultHistory @entity(immutable: false) {
+  id: ID!
+  shareValue: BigInt!
+  totalAssets: BigInt!
+  timestamp: BigInt!
+  vault: Bytes!
+}

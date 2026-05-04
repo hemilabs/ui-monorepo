@@ -2,6 +2,8 @@
 
 import { useTranslations } from 'next-intl'
 import { formatFiatNumber } from 'utils/format'
+import { walletIsConnected } from 'utils/wallet'
+import { useAccount } from 'wagmi'
 
 import { useTotalDeposits } from '../_hooks/useTotalDeposits'
 import { TotalDepositsIcon } from '../_icons/totalDepositsIcon'
@@ -11,7 +13,9 @@ import { VaultBreakdownTooltip } from './vaultBreakdownTooltip'
 
 export const TotalDeposits = function () {
   const { data, isError, isPending } = useTotalDeposits()
+  const { status } = useAccount()
   const t = useTranslations('hemi-earn')
+  const isDisconnected = !walletIsConnected(status)
 
   const tooltipContent =
     data && data.vaultBreakdown.length > 0 ? (
@@ -21,7 +25,7 @@ export const TotalDeposits = function () {
   return (
     <EarnCard
       icon={<TotalDepositsIcon />}
-      isError={isError}
+      isError={isError || isDisconnected}
       isLoading={isPending}
       label={t('info.total-deposits')}
       subtitle={t('info.across-vaults', { count: data?.vaultCount ?? 0 })}

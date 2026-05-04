@@ -45,7 +45,8 @@ export function useTableData<TData>({
     () => new Array(skeletonRows).fill(null),
     [skeletonRows],
   )
-  const safeData = data && data.length > 0 ? data : skeletonArray
+  const safeData =
+    data && data.length > 0 ? data : showSkeleton ? skeletonArray : []
 
   const columnOrder = getNewColumnOrder({
     breakpoint: smallBreakpoint,

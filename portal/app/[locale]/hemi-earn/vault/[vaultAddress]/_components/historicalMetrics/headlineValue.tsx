@@ -1,7 +1,7 @@
 import { useLocale } from 'next-intl'
 import { formatCompactFiatParts, formatPercentage } from 'utils/format'
 
-import { type MetricType } from '../../_hooks/useHistoricalMetrics'
+import { type MetricType } from '../../../../types'
 
 type Props = {
   metricType: MetricType

@@ -19,3 +19,6 @@ export const getEarnVaultAddresses = function (chainId: number): Address[] {
   }
   return [...addresses]
 }
+
+export const getEarnChainIds = () =>
+  Object.keys(EARN_VAULT_ADDRESSES).map(Number)

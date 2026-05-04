@@ -15,4 +15,6 @@ subgraphs/data
 # Graph CLI generated artifacts
 subgraphs/*/build
 subgraphs/*/generated
+subgraphs/*/tests/.bin/
+subgraphs/*/tests/.latest.json
 tsconfig.tsbuildinfo

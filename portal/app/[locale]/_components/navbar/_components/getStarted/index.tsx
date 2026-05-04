@@ -1,4 +1,4 @@
-import { ButtonLink } from 'components/button'
+import { ButtonLink, type ButtonSize } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { Link } from 'components/link'
 import { useUmami } from 'hooks/useUmami'
@@ -6,11 +6,12 @@ import { useTranslations } from 'next-intl'
 import React, { ComponentProps, Suspense } from 'react'
 
 type Props = Pick<ComponentProps<typeof Link>, 'href' | 'onClick'> & {
+  size?: ButtonSize
   t: ReturnType<typeof useTranslations<'navbar'>>
 }
 
-const UI = ({ href, onClick, t }: Props) => (
-  <ButtonLink href={href} onClick={onClick} size="small" variant="secondary">
+const UI = ({ href, onClick, size = 'small', t }: Props) => (
+  <ButtonLink href={href} onClick={onClick} size={size} variant="secondary">
     <span>{t('get-started')}</span>
     <Chevron.Right className="[&>path]:fill-neutral-500" />
   </ButtonLink>
@@ -24,9 +25,10 @@ const GetStartedImpl = function (props: Omit<Props, 'onClick'>) {
   return <UI {...props} onClick={onClick} />
 }
 
-export const GetStarted = function () {
+export const GetStarted = function ({ size }: { size?: ButtonSize } = {}) {
   const props = {
     href: '/get-started',
+    size,
     t: useTranslations('navbar'),
   }
 

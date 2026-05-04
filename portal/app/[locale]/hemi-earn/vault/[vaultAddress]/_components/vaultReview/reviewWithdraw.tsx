@@ -8,8 +8,8 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { encodeWithdraw } from 'hemi-earn-actions/actions'
+import { useChain } from 'hooks/useChain'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
@@ -32,7 +32,8 @@ type Props = {
 export const ReviewWithdraw = function ({ onClose }: Props) {
   const { input, pool, withdrawOperation } = useVaultForm()
   const t = useTranslations('hemi-earn.vault.drawer')
-  const hemi = useHemi()
+  const chainId = pool.token.chainId
+  const chain = useChain(chainId)
   const { address } = useAccount()
 
   const withdrawStatus =
@@ -42,6 +43,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   const { data: shares } = useConvertToShares({
     assets: amount,
+    chainId,
     vaultAddress: pool.vaultAddress,
   })
 
@@ -61,10 +63,12 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   const { fees: withdrawGasFees, isError: isWithdrawGasFeesError } =
     useEstimateFees({
-      chainId: hemi.id,
+      chainId,
       gasUnits: withdrawGasUnits,
       isGasUnitsError: isWithdrawGasUnitsError,
     })
+
+  const nativeDecimals = chain?.nativeCurrency.decimals ?? 18
 
   const showFees = [
     VaultWithdrawStatus.WITHDRAW_TX_PENDING,
@@ -82,16 +86,16 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       description: (
         <ChainLabel
           active={withdrawStatus === VaultWithdrawStatus.WITHDRAW_TX_PENDING}
-          chainId={hemi.id}
+          chainId={chainId}
           label={t('withdraw-token', { symbol: pool.token.symbol })}
         />
       ),
-      explorerChainId: pool.token.chainId,
+      explorerChainId: chainId,
       fees: showFees
         ? {
-            amount: formatUnits(withdrawGasFees, hemi.nativeCurrency.decimals),
+            amount: formatUnits(withdrawGasFees, nativeDecimals),
             isError: isWithdrawGasFeesError,
-            token: getNativeToken(hemi.id),
+            token: getNativeToken(chainId),
           }
         : undefined,
       status: statusMap[withdrawStatus] ?? ProgressStatus.PROGRESS,

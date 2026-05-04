@@ -33,8 +33,8 @@ describe('fetchHemiEarnTokens', function () {
     const result = await fetchHemiEarnTokens({ chainId, client })
 
     expect(result).toEqual([
-      { tokenAddress: tokenAddressA, vaultAddress: vaultA },
-      { tokenAddress: tokenAddressB, vaultAddress: vaultB },
+      { chainId, tokenAddress: tokenAddressA, vaultAddress: vaultA },
+      { chainId, tokenAddress: tokenAddressB, vaultAddress: vaultB },
     ])
     expect(asset).toHaveBeenCalledTimes(2)
     expect(asset).toHaveBeenCalledWith(client, { address: vaultA })
@@ -48,7 +48,7 @@ describe('fetchHemiEarnTokens', function () {
     const result = await fetchHemiEarnTokens({ chainId, client })
 
     expect(result).toEqual([
-      { tokenAddress: tokenAddressA, vaultAddress: vaultA },
+      { chainId, tokenAddress: tokenAddressA, vaultAddress: vaultA },
     ])
     expect(asset).toHaveBeenCalledTimes(1)
     expect(asset).toHaveBeenCalledWith(client, { address: vaultA })
@@ -68,8 +68,8 @@ describe('fetchHemiEarnTokens', function () {
     const result = await fetchHemiEarnTokens({ chainId, client })
 
     expect(result).toEqual([
-      { tokenAddress: tokenAddressA, vaultAddress: vaultA },
-      { tokenAddress: tokenAddressB, vaultAddress: vaultB },
+      { chainId, tokenAddress: tokenAddressA, vaultAddress: vaultA },
+      { chainId, tokenAddress: tokenAddressB, vaultAddress: vaultB },
     ])
     expect(asset).toHaveBeenCalledTimes(2)
     expect(asset).toHaveBeenNthCalledWith(1, client, { address: vaultA })

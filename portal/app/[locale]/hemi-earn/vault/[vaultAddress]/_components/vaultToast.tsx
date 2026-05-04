@@ -1,23 +1,28 @@
 import { Toast } from 'components/toast'
-import { useHemi } from 'hooks/useHemi'
+import { useChain } from 'hooks/useChain'
 import { useTranslations } from 'next-intl'
 import { formatEvmHash } from 'utils/format'
-import { type Hash } from 'viem'
+import { type Chain, type Hash } from 'viem'
 
 type Props = {
+  chainId: Chain['id']
   title: string
   transactionHash: Hash
 }
 
-export const VaultToast = function ({ title, transactionHash }: Props) {
-  const hemi = useHemi()
+export const VaultToast = function ({
+  chainId,
+  title,
+  transactionHash,
+}: Props) {
+  const chain = useChain(chainId)
   const t = useTranslations('hemi-earn.vault')
   return (
     <Toast
       description={t('here-is-your-tx')}
       title={title}
       tx={{
-        href: `${hemi.blockExplorers?.default.url}/tx/${transactionHash}`,
+        href: `${chain?.blockExplorers?.default.url}/tx/${transactionHash}`,
         label: formatEvmHash(transactionHash),
       }}
     />

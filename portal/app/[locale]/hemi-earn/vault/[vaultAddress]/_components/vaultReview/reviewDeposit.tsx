@@ -9,9 +9,9 @@ import {
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { encodeDepositToken } from 'hemi-earn-actions/actions'
+import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useHemi } from 'hooks/useHemi'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
@@ -36,7 +36,8 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const { depositOperation, input, pool } = useVaultForm()
   const t = useTranslations('hemi-earn.vault.drawer')
   const tCommon = useTranslations('common')
-  const hemi = useHemi()
+  const chainId = pool.token.chainId
+  const chain = useChain(chainId)
   const { address } = useAccount()
 
   const depositStatus =
@@ -47,7 +48,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const { needsApproval } = useNeedsApproval({
     address: pool.token.address,
     amount,
-    chainId: pool.token.chainId,
+    chainId,
     spender: pool.vaultAddress,
   })
 
@@ -73,10 +74,12 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   const { fees: depositGasFees, isError: isDepositGasFeesError } =
     useEstimateFees({
-      chainId: hemi.id,
+      chainId,
       gasUnits: depositGasUnits,
       isGasUnitsError: isDepositGasUnitsError,
     })
+
+  const nativeDecimals = chain?.nativeCurrency.decimals ?? 18
 
   const getStepFees = ({
     fee,
@@ -89,9 +92,9 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   }): StepPropsWithoutPosition['fees'] =>
     show
       ? {
-          amount: formatUnits(fee, hemi.nativeCurrency.decimals),
+          amount: formatUnits(fee, nativeDecimals),
           isError,
-          token: getNativeToken(hemi.id),
+          token: getNativeToken(chainId),
         }
       : undefined
 
@@ -119,11 +122,11 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       description: (
         <ChainLabel
           active={depositStatus === VaultDepositStatus.APPROVAL_TX_PENDING}
-          chainId={hemi.id}
+          chainId={chainId}
           label={t('approving', { symbol: pool.token.symbol })}
         />
       ),
-      explorerChainId: pool.token.chainId,
+      explorerChainId: chainId,
       fees: getStepFees({
         fee: approvalGasFees,
         isError: isApprovalGasFeesError,
@@ -154,11 +157,11 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       description: (
         <ChainLabel
           active={depositStatus === VaultDepositStatus.DEPOSIT_TX_PENDING}
-          chainId={hemi.id}
+          chainId={chainId}
           label={t('deposit-token', { symbol: pool.token.symbol })}
         />
       ),
-      explorerChainId: pool.token.chainId,
+      explorerChainId: chainId,
       fees: getStepFees({
         fee: depositGasFees,
         isError: isDepositGasFeesError,
@@ -180,7 +183,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   const { data: vaultShareToken } = useToken({
     address: pool.vaultAddress,
-    chainId: hemi.id,
+    chainId,
   })
 
   const getCallToAction = function (status: VaultDepositStatusType) {

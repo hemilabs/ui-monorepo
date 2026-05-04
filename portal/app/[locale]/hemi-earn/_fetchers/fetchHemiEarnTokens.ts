@@ -3,6 +3,7 @@ import { type Address, type Chain, type PublicClient, zeroAddress } from 'viem'
 import { asset } from 'viem-erc4626/actions'
 
 type VaultAsset = {
+  chainId: Chain['id']
   tokenAddress: Address
   vaultAddress: Address
 }
@@ -21,6 +22,7 @@ export const fetchHemiEarnTokens = async function ({
     vaultAddresses.map(addr => asset(client, { address: addr })),
   )
   return tokenAddresses.map((tokenAddress, index) => ({
+    chainId,
     tokenAddress,
     vaultAddress: vaultAddresses[index],
   }))

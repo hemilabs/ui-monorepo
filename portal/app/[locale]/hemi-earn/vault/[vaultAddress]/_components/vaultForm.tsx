@@ -73,12 +73,14 @@ export const VaultForm = function () {
     <>
       {showDepositToast && (
         <VaultToast
+          chainId={pool.token.chainId}
           title={t('deposit-successful')}
           transactionHash={depositOperation.transactionHash!}
         />
       )}
       {showWithdrawToast && (
         <VaultToast
+          chainId={pool.token.chainId}
           title={t('withdraw-successful')}
           transactionHash={withdrawOperation.transactionHash!}
         />

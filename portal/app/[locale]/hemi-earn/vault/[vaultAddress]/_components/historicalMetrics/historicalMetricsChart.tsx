@@ -23,7 +23,7 @@ import {
   type MetricDataPoint,
   type MetricPeriod,
   type MetricType,
-} from '../../_hooks/useHistoricalMetrics'
+} from '../../../../types'
 
 const getChartPadding = (metricType: MetricType) => ({
   bottom: 24,

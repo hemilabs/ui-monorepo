@@ -26,10 +26,12 @@ type Props = Pick<
 
 const SwitchUI = function ({
   iconContainer: IconContainer = DefaultIconContainer,
+  isOpen = false,
   network,
   row: RowComponent = Row,
   setIsOpen,
 }: Omit<Props, 'itemContainer'> & {
+  isOpen?: boolean
   network: NetworkType
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>
 }) {
@@ -38,15 +40,26 @@ const SwitchUI = function ({
   const getNetworkText = () => network[0].toUpperCase() + network.slice(1)
 
   return (
-    <RowComponent onClick={() => setIsOpen?.(isOpen => !isOpen)}>
-      <IconContainer>
+    <RowComponent onClick={() => setIsOpen?.(open => !open)}>
+      <IconContainer
+        selected={isOpen}
+        selectedClassName="[&_svg>path]:fill-neutral-950"
+      >
         <div className="max-md:size-4 md:w-3">
           <NetworkIcon />
         </div>
       </IconContainer>
-      <ItemText text={t('network')} />
+      <ItemText
+        selected={isOpen}
+        selectedClassName="text-neutral-950"
+        text={t('network')}
+      />
       <div className="ml-auto flex items-center gap-x-1">
-        <ItemText text={getNetworkText()} />
+        <ItemText
+          selected={isOpen}
+          selectedClassName="text-neutral-950"
+          text={getNetworkText()}
+        />
         <Chevron.Bottom />
       </div>
     </RowComponent>
@@ -75,25 +88,27 @@ const NetworkSwitchImpl = function ({
     if (!menuContainerRef.current) return { left: 0, top: 0 }
 
     const rect = menuContainerRef.current.getBoundingClientRect()
+    // Open just below the trigger so the dropdown does not overlap it.
+    const top = rect.bottom + 4
     if (width < screenBreakpoints.md) {
       return {
         // this takes the whole width, so this is the only one that needs "right" set.
         left: '1.25rem',
         right: '1.25rem',
-        top: rect.top,
+        top,
       }
     }
     if (width < screenBreakpoints.lg) {
       // menu container is slightly displaced to the right due to the drawer
       return {
         left: '1rem',
-        top: rect.top,
+        top,
       }
     }
     // menu container here is completely to the left
     return {
       left: '0.5rem',
-      top: rect.top,
+      top,
     }
   }
 
@@ -102,8 +117,14 @@ const NetworkSwitchImpl = function ({
       onClick={() => setIsOpen(true)}
       ref={menuContainerRef}
       selected={isOpen}
+      selectedClassName="bg-neutral-100"
     >
-      <SwitchUI network={networkType} setIsOpen={setIsOpen} {...props} />
+      <SwitchUI
+        isOpen={isOpen}
+        network={networkType}
+        setIsOpen={setIsOpen}
+        {...props}
+      />
       {isOpen &&
         document.body &&
         ReactDOM.createPortal(

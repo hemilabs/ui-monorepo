@@ -61,7 +61,19 @@ export const Drawer = function ({
   }, [])
 
   useEffect(function openDrawerAfterFirstPaint() {
-    setIsOpen(true)
+    let raf1Id = 0
+    let raf2Id = 0
+
+    raf1Id = window.requestAnimationFrame(function scheduleOpenAfterPaint() {
+      raf2Id = window.requestAnimationFrame(function openDrawerAfterLayout() {
+        setIsOpen(true)
+      })
+    })
+
+    return function cancelOpenDrawerRaf() {
+      window.cancelAnimationFrame(raf1Id)
+      window.cancelAnimationFrame(raf2Id)
+    }
   }, [])
 
   useEffect(

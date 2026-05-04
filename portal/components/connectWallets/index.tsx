@@ -30,7 +30,18 @@ const WalletIcon = (props: ComponentProps<'svg'>) => (
   </svg>
 )
 
-export const WalletConnection = function () {
+type WalletConnectionPlacement = 'bottom-bar' | 'header'
+
+const placementClassName: Record<WalletConnectionPlacement, string> = {
+  'bottom-bar': 'flex-1',
+  'header': 'ml-auto mr-3',
+}
+
+export const WalletConnection = function ({
+  placement = 'header',
+}: {
+  placement?: WalletConnectionPlacement
+}) {
   const { closeDrawer, isDrawerOpen, openDrawer } = useDrawerContext()
   const t = useTranslations()
 
@@ -69,7 +80,7 @@ export const WalletConnection = function () {
     walletsConnected.length > 0 ? 'secondary' : ('primary' as const)
 
   return (
-    <div className="ml-auto mr-3">
+    <div className={placementClassName[placement]}>
       <div className="group flex items-center gap-x-3">
         <Button
           onClick={onConnectWalletsClick}

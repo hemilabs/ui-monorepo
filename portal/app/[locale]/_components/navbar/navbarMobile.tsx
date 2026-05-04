@@ -57,7 +57,7 @@ const CustomContainer = (props: ComponentProps<typeof ItemContainer>) => (
 export const NavbarMobile = function () {
   const t = useTranslations('navbar')
   return (
-    <div className="h-90dvh flex flex-col bg-white">
+    <div className="h-90dvh flex flex-col bg-white pb-14 sm:pb-0">
       <div className="flex-1 overflow-y-auto px-5 py-6">
         <ul className="flex h-fit flex-wrap justify-start gap-2">
           <SmallBox>

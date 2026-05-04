@@ -14,6 +14,7 @@ import { screenBreakpoints } from 'styles'
 import { AppLayoutContainer } from './appLayoutContainer'
 import { Header } from './header'
 import { MainContainer } from './mainContainer'
+import { MobileBottomBar } from './mobileBottomBar'
 import { NavbarResponsive } from './navbar/navbarResponsive'
 import { NavBarUrlSync } from './navbar/navBarUrlSync'
 import { TestnetIndicator } from './testnetIndicator'
@@ -25,7 +26,11 @@ type Props = {
 export const AppLayout = function ({ children }: Props) {
   const [isNavbarOpen, setIsNavbarOpen] = useState(false)
   const { width } = useWindowSize()
+  // width > 0 guards against SSR where window is unavailable (returns 0)
+  const isMobileViewport = width > 0 && width < screenBreakpoints.sm
 
+  const closeMenu = () => setIsNavbarOpen(false)
+  const openMenu = () => setIsNavbarOpen(true)
   const toggleMenu = () => setIsNavbarOpen(prev => !prev)
 
   const closeNavbar = useCallback(function closeNavbar() {
@@ -72,6 +77,12 @@ export const AppLayout = function ({ children }: Props) {
           <NavbarResponsive />
         </Drawer>
       )}
+      <MobileBottomBar
+        closeMenu={closeMenu}
+        isMenuOpen={isNavbarOpen}
+        isMobileViewport={isMobileViewport}
+        openMenu={openMenu}
+      />
     </AppLayoutContainer>
   )
 }

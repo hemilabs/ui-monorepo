@@ -45,7 +45,7 @@ export const EarnCard = function () {
 
   return (
     <ErrorBoundary>
-      <div className="group/card-image h-22 fixed bottom-10 right-6 z-20 max-w-64 cursor-pointer">
+      <div className="group/card-image h-22 fixed bottom-24 right-6 z-20 max-w-64 cursor-pointer sm:bottom-10">
         <ExternalLink href={MerkleUrl} onClick={navigate}>
           <EarnRewards onClose={close} />
         </ExternalLink>

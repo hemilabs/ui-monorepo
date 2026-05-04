@@ -10,8 +10,8 @@ const UI = ({
   networkType,
 }: Props & { networkType: NetworkType }) => (
   <div
-    className={`box-border h-[calc(100dvh-3.5rem)] flex-grow
-          md:h-[calc(100dvh-4.25rem-1rem)]
+    className={`box-border h-[calc(100dvh-7rem)] grow-0
+          sm:h-[calc(100dvh-3.5rem)] sm:flex-grow md:h-[calc(100dvh-4.25rem-1rem)]
           ${
             networkType === 'testnet'
               ? 'max-md:border-3 max-md:border-solid max-md:border-orange-600'

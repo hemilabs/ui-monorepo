@@ -20,12 +20,18 @@ const WalletConnection = dynamic(
 )
 
 type Props = {
+  isMobileViewport: boolean
   isMenuOpen: boolean
   setIsNavbarOpen: Dispatch<SetStateAction<boolean>>
-  toggleMenu: () => void
+  toggleMenu: VoidFunction
 }
 
-export const Header = ({ isMenuOpen, setIsNavbarOpen, toggleMenu }: Props) => (
+export const Header = ({
+  isMenuOpen,
+  isMobileViewport,
+  setIsNavbarOpen,
+  toggleMenu,
+}: Props) => (
   <header
     className="md:h-13 md:py-4.5 flex h-14 items-center border-b border-solid
      border-neutral-300/55 bg-white px-3 py-3 md:bg-transparent md:px-0"
@@ -48,8 +54,8 @@ export const Header = ({ isMenuOpen, setIsNavbarOpen, toggleMenu }: Props) => (
       <TunnelTabs />
       <GenesisDropTabs />
     </div>
-    <WalletConnection />
-    <div className="md:hidden">
+    {!isMobileViewport && <WalletConnection />}
+    <div className="hidden sm:flex md:hidden">
       <ButtonIcon
         onClick={toggleMenu}
         size="xSmall"

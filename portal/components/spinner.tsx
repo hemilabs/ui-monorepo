@@ -1,9 +1,9 @@
 import React, { useId } from 'react'
 
 type SpinnerProps = {
-  size?: 'xSmall' | 'small' | 'medium' | 'large' | number
-  color?: string
   className?: string
+  color?: string
+  size?: 'xSmall' | 'small' | 'medium' | 'large' | number
 }
 
 export const Spinner = function ({

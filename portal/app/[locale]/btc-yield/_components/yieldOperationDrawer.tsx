@@ -4,13 +4,12 @@ import { Drawer } from 'components/drawer'
 import { Spinner } from 'components/spinner'
 import { useAmount } from 'hooks/useAmount'
 import dynamic from 'next/dynamic'
-import { orange600 } from 'styles'
 
 import { useOperationDrawer } from '../_hooks/useOperationDrawer'
 
 const OperationLoadingFallback = () => (
   <div className="drawer-content flex h-full w-full flex-col items-center justify-center py-16">
-    <Spinner color={orange600} size="medium" />
+    <Spinner size="medium" variant="orange" />
   </div>
 )
 

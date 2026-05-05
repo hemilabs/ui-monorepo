@@ -43,7 +43,7 @@
   }
 
   .drawer-content {
-    @apply md:w-drawer flex min-h-0 w-full flex-col bg-white pt-6;
+    @apply md:w-drawer flex min-h-0 w-full flex-col bg-white pb-14 pt-6 sm:pb-0;
   }
 
   /* Use the .skip-parent-padding-x for elements that should not have the px-* applied. For example, components

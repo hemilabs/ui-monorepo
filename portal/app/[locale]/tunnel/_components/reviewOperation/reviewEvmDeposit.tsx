@@ -15,7 +15,6 @@ import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
-import { orange600 } from 'styles'
 import { EvmToken } from 'types/token'
 import {
   type EvmDepositOperation,
@@ -254,7 +253,7 @@ export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
     />
   ) : (
     <div className="box-border flex h-full min-h-[80dvh] w-full items-center justify-center md:min-h-0">
-      <Spinner color={orange600} size="medium" />
+      <Spinner size="medium" variant="orange" />
     </div>
   )
 }

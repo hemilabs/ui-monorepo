@@ -1,25 +1,19 @@
+'use client'
+
 import { useAccount as useBtcAccount } from 'btc-wallet/hooks/useAccount'
 import { Button } from 'components/button'
-import { DrawerLoader } from 'components/drawer/drawerLoader'
+import { Drawer } from 'components/drawer'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { ComponentProps } from 'react'
+import { ComponentProps, useCallback } from 'react'
 import { formatBtcAddress, formatEvmAddress } from 'utils/format'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount as useEvmAccount } from 'wagmi'
 
+import { ConnectWalletsDrawer } from './connectWalletsDrawer'
 import { EvmWalletLogo } from './evmWalletLogo'
 import { UnisatLogo } from './unisatLogo'
-
-const ConnectWalletsDrawer = dynamic(
-  () => import('./connectWalletsDrawer').then(mod => mod.ConnectWalletsDrawer),
-  {
-    loading: () => <DrawerLoader className="h-85vh md:h-full" />,
-    ssr: false,
-  },
-)
 
 const WalletIcon = (props: ComponentProps<'svg'>) => (
   <svg
@@ -63,6 +57,14 @@ export const WalletConnection = function () {
     track?.('connect wallets')
   }
 
+  const onWalletDrawerClose = useCallback(
+    function onWalletDrawerClose() {
+      track?.('close wallet drawer')
+      closeDrawer()
+    },
+    [closeDrawer, track],
+  )
+
   const buttonVariant =
     walletsConnected.length > 0 ? 'secondary' : ('primary' as const)
 
@@ -97,7 +99,11 @@ export const WalletConnection = function () {
             </div>
           )}
         </Button>
-        {isDrawerOpen && <ConnectWalletsDrawer closeDrawer={closeDrawer} />}
+        {isDrawerOpen && (
+          <Drawer onClose={onWalletDrawerClose}>
+            <ConnectWalletsDrawer closeDrawer={closeDrawer} />
+          </Drawer>
+        )}
       </div>
     </div>
   )

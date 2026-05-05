@@ -9,12 +9,12 @@ import {
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { Spinner } from 'components/spinner'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
-import Skeleton from 'react-loading-skeleton'
 import { EvmToken } from 'types/token'
 import {
   type EvmDepositOperation,
@@ -252,6 +252,8 @@ export const ReviewEvmDeposit = function ({ deposit, onClose }: Props) {
       toToken={toToken as EvmToken}
     />
   ) : (
-    <Skeleton className="h-full" />
+    <div className="box-border flex h-full min-h-[80dvh] w-full items-center justify-center md:min-h-0">
+      <Spinner size="medium" variant="orange" />
+    </div>
   )
 }

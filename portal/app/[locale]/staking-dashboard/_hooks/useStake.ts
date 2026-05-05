@@ -107,10 +107,27 @@ export const useStake = function ({
         updateStakingDashboardOperation({
           status: StakingDashboardStatus.APPROVAL_TX_FAILED,
         })
+        setDrawerQueryString('staking')
 
         updateNativeBalanceAfterFees(receipt)
 
         track?.('staking dashboard - approve reverted')
+      })
+      emitter.on('user-signing-approve-error', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.APPROVAL_TX_FAILED,
+        })
+        setDrawerQueryString('staking')
+
+        track?.('staking dashboard - signing approve error')
+      })
+      emitter.on('approve-failed', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.APPROVAL_TX_FAILED,
+        })
+        setDrawerQueryString('staking')
+
+        track?.('staking dashboard - approve failed')
       })
       emitter.on('approve-transaction-succeeded', function (receipt) {
         updateStakingDashboardOperation({
@@ -133,8 +150,25 @@ export const useStake = function ({
         updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_FAILED,
         })
+        setDrawerQueryString('staking')
 
         track?.('staking dashboard - signing lock creation error')
+      })
+      emitter.on('lock-creation-failed-validation', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+        setDrawerQueryString('staking')
+
+        track?.('staking dashboard - lock creation failed validation')
+      })
+      emitter.on('lock-creation-failed', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+        setDrawerQueryString('staking')
+
+        track?.('staking dashboard - lock creation failed')
       })
       emitter.on('lock-creation-transaction-succeeded', function (receipt) {
         updateStakingDashboardOperation({
@@ -183,11 +217,20 @@ export const useStake = function ({
         updateStakingDashboardOperation({
           status: StakingDashboardStatus.STAKE_TX_FAILED,
         })
+        setDrawerQueryString('staking')
 
         // Although the transaction was reverted, the gas was paid.
         updateNativeBalanceAfterFees(receipt)
 
         track?.('staking dashboard - lock creation reverted')
+      })
+      emitter.on('unexpected-error', function () {
+        updateStakingDashboardOperation({
+          status: StakingDashboardStatus.STAKE_TX_FAILED,
+        })
+        setDrawerQueryString('staking')
+
+        track?.('staking dashboard - unexpected error')
       })
 
       on?.(emitter)

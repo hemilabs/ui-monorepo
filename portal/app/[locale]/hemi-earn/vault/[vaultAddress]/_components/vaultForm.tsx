@@ -1,6 +1,5 @@
 'use client'
 
-import { DrawerLoader } from 'components/drawer/drawerLoader'
 import { ToastLoader } from 'components/toast/toastLoader'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
@@ -13,15 +12,8 @@ import { VaultDepositStatus } from '../_types/vaultOperations'
 import { VaultWithdrawStatus } from '../_types/vaultOperations'
 
 import { Deposit } from './deposit'
+import { VaultReview } from './vaultReview'
 import { Withdraw } from './withdraw'
-
-const VaultReview = dynamic(
-  () => import('./vaultReview').then(mod => mod.VaultReview),
-  {
-    loading: () => <DrawerLoader className="h-[95dvh] md:h-full" />,
-    ssr: false,
-  },
-)
 
 const VaultToast = dynamic(
   () => import('./vaultToast').then(mod => mod.VaultToast),

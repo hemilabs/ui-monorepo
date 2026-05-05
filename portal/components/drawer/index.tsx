@@ -3,14 +3,35 @@
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { useOnKeyUp } from '@hemilabs/react-hooks/useOnKeyUp'
 import { CloseIcon } from 'components/icons/closeIcon'
-import { ComponentType } from 'react'
+import {
+  ComponentType,
+  createContext,
+  type ReactNode,
+  type TransitionEvent,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import ReactDOM from 'react-dom'
-import { getPortalContainer } from 'utils/document'
+import { getDrawerPortalContainer } from 'utils/document'
 
-import { Overlay } from '../overlay'
+import { DrawerOverlay } from '../overlay'
+
+const DrawerAnimatedCloseContext = createContext<VoidFunction | undefined>(
+  undefined,
+)
+
+function drawerBackdropClassName(isOpen: boolean, isClosing: boolean) {
+  const openClass = isOpen ? 'drawer-backdrop--open' : ''
+  const pointerClass =
+    isOpen || isClosing ? 'pointer-events-auto' : 'pointer-events-none'
+  return `drawer-backdrop fixed inset-0 z-20 ${openClass} ${pointerClass}`
+}
 
 type Props = {
-  children: React.ReactNode
+  children: ReactNode
   container?: HTMLElement
   onClose?: VoidFunction
   overlay?: ComponentType
@@ -21,37 +42,133 @@ export const Drawer = function ({
   children,
   container,
   onClose,
-  overlay: OverlayComponent = Overlay,
+  overlay: OverlayComponent = DrawerOverlay,
   position = 'right',
 }: Props) {
-  const drawerRef = useOnClickOutside<HTMLDivElement>(onClose)
+  const [isOpen, setIsOpen] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
+  const closingStartedRef = useRef(false)
+  const hasPanelBeenOpenRef = useRef(false)
+  const suppressOutsideCloseRef = useRef(true)
+
+  useEffect(function allowOutsideCloseAfterOpenClick() {
+    const id = window.setTimeout(function enableOutsideClose() {
+      suppressOutsideCloseRef.current = false
+    }, 0)
+    return function cancelOutsideCloseTimer() {
+      window.clearTimeout(id)
+    }
+  }, [])
+
+  useEffect(function openDrawerAfterFirstPaint() {
+    let raf1Id = 0
+    let raf2Id = 0
+
+    raf1Id = window.requestAnimationFrame(function scheduleOpenAfterPaint() {
+      raf2Id = window.requestAnimationFrame(function openDrawerAfterLayout() {
+        setIsOpen(true)
+      })
+    })
+
+    return function cancelOpenDrawerRaf() {
+      window.cancelAnimationFrame(raf1Id)
+      window.cancelAnimationFrame(raf2Id)
+    }
+  }, [])
+
+  useEffect(
+    function markPanelOpened() {
+      if (isOpen) {
+        hasPanelBeenOpenRef.current = true
+      }
+    },
+    [isOpen],
+  )
+
+  const handleClose = useCallback(
+    function closeDrawer() {
+      if (!onClose || closingStartedRef.current) {
+        return
+      }
+
+      if (!hasPanelBeenOpenRef.current) {
+        onClose()
+        return
+      }
+
+      closingStartedRef.current = true
+      setIsClosing(true)
+      setIsOpen(false)
+    },
+    [onClose],
+  )
+
+  const handleOutsideClose = useCallback(
+    function onClickOutsideDrawer() {
+      if (suppressOutsideCloseRef.current) {
+        return
+      }
+      handleClose()
+    },
+    [handleClose],
+  )
+
+  const handleTransitionEnd = useCallback(
+    function onPanelTransitionEnd(event: TransitionEvent<HTMLDivElement>) {
+      const isPanel = event.target === event.currentTarget
+      const isTransform = event.propertyName === 'transform'
+      const closingAnimFinished =
+        isPanel && isTransform && !isOpen && closingStartedRef.current
+      if (closingAnimFinished) {
+        closingStartedRef.current = false
+        setIsClosing(false)
+        onClose?.()
+      }
+    },
+    [isOpen, onClose],
+  )
+
+  const drawerRef = useOnClickOutside<HTMLDivElement>(
+    onClose ? handleOutsideClose : undefined,
+  )
 
   useOnKeyUp(function (e) {
     if (e.key === 'Escape') {
-      onClose?.()
+      handleClose()
     }
   }, drawerRef)
 
-  const drawerContainer = container ?? getPortalContainer()
+  const drawerContainer = container ?? getDrawerPortalContainer()
 
   if (!drawerContainer) {
-    // container not found, prevent "ReactDOM.createPortal" from crashing
     return null
   }
+
+  const mdPanelWidthClass = position === 'right' ? 'md:w-drawer' : 'md:w-fit'
 
   return ReactDOM.createPortal(
     <>
       <div
-        className={`fixed bottom-0 left-0 right-0 z-30 w-full overflow-y-auto rounded-t-lg bg-transparent md:bottom-2 ${
+        className={`drawer-panel fixed bottom-0 left-0 right-0 z-30 w-full rounded-t-lg bg-transparent md:bottom-2 ${
           position === 'right'
             ? 'md:left-auto md:right-2'
             : 'md:left-2 md:right-auto'
-        } shadow-xl md:top-2 md:w-fit md:rounded-lg`}
+        } shadow-xl md:top-2 ${mdPanelWidthClass} md:rounded-lg ${
+          isOpen ? 'drawer-panel--open' : ''
+        }`}
+        data-position={position}
+        onTransitionEnd={handleTransitionEnd}
         ref={drawerRef}
       >
-        {children}
+        <DrawerAnimatedCloseContext.Provider
+          value={onClose ? handleClose : undefined}
+        >
+          {children}
+        </DrawerAnimatedCloseContext.Provider>
       </div>
-      <OverlayComponent />
+      <div className={drawerBackdropClassName(isOpen, isClosing)}>
+        <OverlayComponent />
+      </div>
     </>,
     drawerContainer,
   )
@@ -61,24 +178,40 @@ export const DrawerParagraph = ({ children }: { children: string }) => (
   <p className="font-medium text-neutral-500">{children}</p>
 )
 
-export const DrawerTopSection = ({
+export function DrawerTopSection({
   heading,
   onClose,
 }: {
   heading: string
   onClose?: () => void
-}) => (
-  <div className="flex items-center justify-between">
-    <h2>{heading}</h2>
-    {!!onClose && (
-      <button className="size-5 cursor-pointer" onClick={onClose} type="button">
-        <CloseIcon className="size-full [&>path]:hover:stroke-black" />
-      </button>
-    )}
-  </div>
-)
+}) {
+  const requestAnimatedClose = useContext(DrawerAnimatedCloseContext)
 
-export const DrawerSection = ({ children }: { children: React.ReactNode }) => (
+  function handleCloseClick() {
+    if (requestAnimatedClose !== undefined) {
+      requestAnimatedClose()
+      return
+    }
+    onClose?.()
+  }
+
+  return (
+    <div className="flex items-center justify-between">
+      <h2>{heading}</h2>
+      {(!!onClose || !!requestAnimatedClose) && (
+        <button
+          className="size-5 cursor-pointer"
+          onClick={handleCloseClick}
+          type="button"
+        >
+          <CloseIcon className="size-full [&>path]:hover:stroke-black" />
+        </button>
+      )}
+    </div>
+  )
+}
+
+export const DrawerSection = ({ children }: { children: ReactNode }) => (
   <div className="skip-parent-padding-x border-y border-solid border-neutral-300/55 bg-neutral-50 p-6">
     {children}
   </div>

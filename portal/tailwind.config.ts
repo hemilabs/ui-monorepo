@@ -318,6 +318,10 @@ const config: Config = {
       transitionProperty: {
         filter: 'filter',
       },
+      width: {
+        // Drawer panel width (desktop); shared by drawer.css and Drawer
+        drawer: '450px',
+      },
     },
   },
 }

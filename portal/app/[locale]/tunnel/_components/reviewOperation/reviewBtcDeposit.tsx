@@ -6,6 +6,7 @@ import {
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { Spinner } from 'components/spinner'
 import { WarningBox } from 'components/warningBox'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useChain } from 'hooks/useChain'
@@ -13,7 +14,6 @@ import { useGetFeePrices } from 'hooks/useEstimateBtcFees'
 import { useHemi } from 'hooks/useHemi'
 import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
-import Skeleton from 'react-loading-skeleton'
 import { EvmToken, type BtcToken } from 'types/token'
 import {
   type BtcDepositOperation,
@@ -292,7 +292,9 @@ export const ReviewBtcDeposit = function ({ deposit, onClose }: Props) {
           toToken={toToken as EvmToken}
         />
       ) : (
-        <Skeleton className="h-full" />
+        <div className="box-border flex h-full min-h-[80dvh] w-full items-center justify-center md:min-h-0">
+          <Spinner size="medium" variant="orange" />
+        </div>
       )}
     </>
   )

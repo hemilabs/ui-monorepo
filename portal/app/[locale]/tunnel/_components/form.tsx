@@ -1,12 +1,11 @@
 import { Card } from 'components/card'
-import { DrawerLoader } from 'components/drawer/drawerLoader'
+import { CustomTokenDrawer } from 'components/customTokenDrawer'
 import { TokenInput } from 'components/tokenInput'
 import { TokenSelector } from 'components/tokenSelector'
 import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { useCustomTokenAddress } from 'hooks/useCustomTokenAddress'
 import { useHemi } from 'hooks/useHemi'
 import { useTunnelTokens } from 'hooks/useTunnelTokens'
-import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { FormEvent, ReactNode } from 'react'
 import { isEvmNetworkId } from 'utils/chain'
@@ -14,15 +13,6 @@ import { isEvmNetworkId } from 'utils/chain'
 import { useTunnelState } from '../_hooks/useTunnelState'
 
 import { NetworkSelectors } from './networkSelectors'
-
-const CustomTokenDrawer = dynamic(
-  () =>
-    import('components/customTokenDrawer').then(mod => mod.CustomTokenDrawer),
-  {
-    loading: () => <DrawerLoader className="h-[80dvh] md:h-full" />,
-    ssr: false,
-  },
-)
 
 type FormContentProps = {
   calculateReceiveAmount?: (input: string) => string

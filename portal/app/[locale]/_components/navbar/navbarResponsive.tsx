@@ -1,27 +1,16 @@
 'use client'
 
 import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
-import { Drawer } from 'components/drawer'
 import { screenBreakpoints } from 'styles'
 
 import { NavbarDesktop } from './navbarDesktop'
 import { NavbarMobile } from './navbarMobile'
 
-type Props = {
-  onClose: VoidFunction
-}
-
-// The tablet navbar is the desktop one contained in a Drawer
-export const NavbarResponsive = function ({ onClose }: Props) {
+export const NavbarResponsive = function () {
   const { width } = useWindowSize()
   if (width >= screenBreakpoints.xl) {
-    // as of lg breakpoint in tailwind, it should not render anything
-    // Can't use CSS because the drawer works as a Portal in React.
+    // as of xl breakpoint in tailwind, it should not render anything
     return null
   }
-  return (
-    <Drawer onClose={onClose} position="left">
-      {width >= screenBreakpoints.md ? <NavbarDesktop /> : <NavbarMobile />}
-    </Drawer>
-  )
+  return width >= screenBreakpoints.md ? <NavbarDesktop /> : <NavbarMobile />
 }

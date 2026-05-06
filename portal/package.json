@@ -21,7 +21,7 @@
     "@hemilabs/wallet-watch-asset": "1.0.2",
     "@rainbow-me/rainbowkit": "2.2.8",
     "@sentry/nextjs": "9.9.0",
-    "@tanstack/react-query": "5.69.0",
+    "@tanstack/react-query": "5.100.9",
     "@tanstack/react-table": "8.21.3",
     "@tanstack/react-virtual": "3.13.24",
     "big.js": "7.0.1",

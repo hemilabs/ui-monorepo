@@ -25,26 +25,44 @@ const SubLogoInfoIcon = (props: ComponentProps<'svg'>) => (
   </svg>
 )
 
-export const SubLogoTooltip = ({
+const wrapperClassName =
+  'group/sub-logo inline-flex rounded-lg bg-neutral-50 p-2'
+
+export function SubLogoTooltip({
   children,
   icon,
   tooltipText,
-}: SubLogoTooltipProps) => (
-  <Tooltip disabled={!tooltipText} text={tooltipText} variant="simple">
-    <div className="group/sub-logo inline-flex rounded-lg bg-neutral-50 p-2">
-      <div className="relative inline-flex">
-        {children}
-        {tooltipText && (
-          <span
-            className="absolute bottom-0 right-0 z-10 inline-flex translate-x-1/2 translate-y-1/2 items-center justify-center
-              rounded-full border-[1.6px] border-solid border-white bg-white"
-          >
-            {icon ?? (
-              <SubLogoInfoIcon className="size-3 text-neutral-500 transition-colors duration-200 group-hover/sub-logo:text-neutral-900" />
-            )}
-          </span>
-        )}
-      </div>
+}: SubLogoTooltipProps) {
+  const body = (
+    <div className="relative inline-flex">
+      {children}
+      {tooltipText ? (
+        <span
+          aria-hidden
+          className="absolute bottom-0 right-0 z-10 inline-flex translate-x-1/2 translate-y-1/2 items-center justify-center
+            rounded-full border-[1.6px] border-solid border-white bg-white"
+        >
+          {icon ?? (
+            <SubLogoInfoIcon className="size-3 text-neutral-500 transition-colors duration-200 group-hover/sub-logo:text-neutral-900 group-focus-visible/sub-logo:text-neutral-900" />
+          )}
+        </span>
+      ) : null}
     </div>
-  </Tooltip>
-)
+  )
+
+  return (
+    <Tooltip disabled={!tooltipText} text={tooltipText} variant="simple">
+      {tooltipText ? (
+        <button
+          aria-label={tooltipText}
+          className={`${wrapperClassName} cursor-default border-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2`}
+          type="button"
+        >
+          {body}
+        </button>
+      ) : (
+        <div className={wrapperClassName}>{body}</div>
+      )}
+    </Tooltip>
+  )
+}

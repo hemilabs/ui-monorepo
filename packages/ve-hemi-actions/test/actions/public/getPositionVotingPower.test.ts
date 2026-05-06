@@ -1,6 +1,6 @@
 import { zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { veHemiAbi } from '../../../abi'
 import { getPositionVotingPower } from '../../../actions/public/veHemi'
@@ -10,14 +10,25 @@ import { veHemiVoteDelegationAbi } from '../../../voteDelegationAbi'
 vi.mock('viem/actions')
 
 describe('getPositionVotingPower', function () {
+  const mockNowSeconds = BigInt(1_700_000_000)
+
   const mockVeHemiAddress = zeroAddress
   const mockVoteDelegationAddress = '0x1234567890123456789012345678901234567890'
   const mockOwnerAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
   const mockTokenId = BigInt(1)
 
+  beforeEach(function () {
+    vi.useFakeTimers()
+    vi.setSystemTime(Number(mockNowSeconds * BigInt(1000)))
+  })
+
+  afterEach(function () {
+    vi.useRealTimers()
+  })
+
   it('should return voting power for an active position', async function () {
     const mockClient = { chain: { id: 2001 } }
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    const now = mockNowSeconds
     const futureEnd = now + BigInt(86400) // 1 day from now
 
     const mockDelegation = {
@@ -57,7 +68,7 @@ describe('getPositionVotingPower', function () {
 
   it('should return 0 when position is delegated to another wallet', async function () {
     const mockClient = { chain: { id: 2004 } }
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    const now = mockNowSeconds
     const futureEnd = now + BigInt(86400)
 
     const anotherWallet = '0x9999999999999999999999999999999999999999'
@@ -88,7 +99,7 @@ describe('getPositionVotingPower', function () {
 
   it('should return 0 for expired position', async function () {
     const mockClient = { chain: { id: 2002 } }
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    const now = mockNowSeconds
     const pastEnd = now - BigInt(86400)
 
     const mockDelegation = {
@@ -117,7 +128,7 @@ describe('getPositionVotingPower', function () {
 
   it('should return 0 when vote decay exceeds bias', async function () {
     const mockClient = { chain: { id: 2003 } }
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    const now = mockNowSeconds
     const futureEnd = now + BigInt(86400)
 
     const mockDelegation = {

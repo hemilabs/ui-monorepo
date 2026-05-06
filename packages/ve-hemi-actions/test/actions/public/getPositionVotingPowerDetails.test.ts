@@ -1,6 +1,6 @@
 import { zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { veHemiAbi } from '../../../abi'
 import { getPositionVotingPowerDetails } from '../../../actions/public/veHemi'
@@ -10,15 +10,26 @@ import { veHemiVoteDelegationAbi } from '../../../voteDelegationAbi'
 vi.mock('viem/actions')
 
 describe('getPositionVotingPowerDetails', function () {
+  const mockNowSeconds = BigInt(1_700_000_000)
+
   const mockVeHemiAddress = zeroAddress
   const mockVoteDelegationAddress = '0x1234567890123456789012345678901234567890'
   const mockOwnerAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
   const anotherWallet = '0x9999999999999999999999999999999999999999'
   const mockTokenId = BigInt(1)
 
+  beforeEach(function () {
+    vi.useFakeTimers()
+    vi.setSystemTime(Number(mockNowSeconds * BigInt(1000)))
+  })
+
+  afterEach(function () {
+    vi.useRealTimers()
+  })
+
   it('should report not delegated away and return voting power when delegated to self', async function () {
     const mockClient = { chain: { id: 2001 } }
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    const now = mockNowSeconds
     const futureEnd = now + BigInt(86400)
 
     const mockDelegation = {
@@ -60,7 +71,7 @@ describe('getPositionVotingPowerDetails', function () {
 
   it('should report delegated away with zero voting power when delegated to another address', async function () {
     const mockClient = { chain: { id: 2004 } }
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    const now = mockNowSeconds
     const futureEnd = now + BigInt(86400)
 
     const mockDelegation = {
@@ -91,7 +102,7 @@ describe('getPositionVotingPowerDetails', function () {
 
   it('should not count as delegated away and return zero voting power for expired delegation', async function () {
     const mockClient = { chain: { id: 2002 } }
-    const now = BigInt(Math.floor(Date.now() / 1000))
+    const now = mockNowSeconds
     const pastEnd = now - BigInt(86400)
 
     const mockDelegation = {

@@ -20,10 +20,13 @@ export const Amount = function ({ operation }: Props) {
 
   const { address: ownerAddress } = useAccount()
   const token = useHemiToken()
-  const { data: delegationDetails } = usePositionDelegationDetails(tokenId)
 
   const isWalletOwner =
     !!ownerAddress && owner.toLowerCase() === ownerAddress.toLowerCase()
+
+  const { data: delegationDetails } = usePositionDelegationDetails(tokenId, {
+    enabled: isWalletOwner,
+  })
   const isReceivedPosition = isWalletOwner && pastOwners.length > 0
   const isDelegatedAway = !!delegationDetails?.isDelegatedAway && isWalletOwner
 

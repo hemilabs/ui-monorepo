@@ -449,7 +449,7 @@
       "on": "En {date}",
       "position-delegated-to-you": "Posición delegada hacia usted",
       "received": "Recibido",
-      "received-from-previous-owner": "Este lockup fue recibido de un dueño anterior",
+      "received-from-previous-owner": "Este bloqueo fue recibido de un dueño anterior",
       "time-remaining": "Tiempo restante",
       "tx": "Tx",
       "unlock": "Desbloquear",

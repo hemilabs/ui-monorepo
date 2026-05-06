@@ -4,6 +4,7 @@ import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { ConnectWalletsDrawer } from 'components/connectWallets/connectWalletsDrawer'
 import { Drawer } from 'components/drawer'
 import { useDrawerContext } from 'hooks/useDrawerContext'
+import { useUmami } from 'hooks/useUmami'
 import React, {
   Suspense,
   useCallback,
@@ -20,6 +21,26 @@ import { MobileBottomBar } from './mobileBottomBar'
 import { NavbarResponsive } from './navbar/navbarResponsive'
 import { NavBarUrlSync } from './navbar/navBarUrlSync'
 import { TestnetIndicator } from './testnetIndicator'
+
+// Rendered only when the wallet drawer is open — never during static
+// prerendering — so useUmami (useSearchParams) is safe here.
+const WalletDrawer = function ({ closeDrawer }: { closeDrawer: VoidFunction }) {
+  const { track } = useUmami()
+
+  const onClose = useCallback(
+    function onWalletDrawerClose() {
+      track?.('close wallet drawer')
+      closeDrawer()
+    },
+    [closeDrawer, track],
+  )
+
+  return (
+    <Drawer onClose={onClose}>
+      <ConnectWalletsDrawer closeDrawer={closeDrawer} />
+    </Drawer>
+  )
+}
 
 type Props = {
   children: ReactNode
@@ -97,11 +118,7 @@ export const AppLayout = function ({ children }: Props) {
             <NavbarResponsive />
           </Drawer>
         )}
-        {isDrawerOpen && (
-          <Drawer onClose={closeDrawer}>
-            <ConnectWalletsDrawer closeDrawer={closeDrawer} />
-          </Drawer>
-        )}
+        {isDrawerOpen && <WalletDrawer closeDrawer={closeDrawer} />}
       </AppLayoutContainer>
       <MobileBottomBar
         closeMenu={closeMenu}

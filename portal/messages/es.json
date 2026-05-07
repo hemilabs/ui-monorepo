@@ -451,7 +451,8 @@
       "unlock": "Desbloquear",
       "unlocked": "Desbloqueado",
       "unlocks-on": "Desbloquea el {date}",
-      "you-delegated-this-position": "Usted delegó esta posición"
+      "you-delegated-this-position": "Usted delegó esta posición",
+      "you-transferred-this-position": "Usted transfirió esta posición"
     },
     "total-voting-power": "Poder de voto total",
     "unlock-successful": "Desbloqueo exitoso",

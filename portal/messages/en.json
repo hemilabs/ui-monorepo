@@ -451,7 +451,8 @@
       "unlock": "Unlock",
       "unlocked": "Unlocked",
       "unlocks-on": "Unlocks on {date}",
-      "you-delegated-this-position": "You delegated this position"
+      "you-delegated-this-position": "You delegated this position",
+      "you-transferred-this-position": "You transferred this position"
     },
     "total-voting-power": "Total voting power",
     "unlock-successful": "Unlock successful",

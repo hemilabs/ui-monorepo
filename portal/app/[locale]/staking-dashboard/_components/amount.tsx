@@ -23,6 +23,12 @@ export const Amount = function ({ operation }: Props) {
 
   const isWalletOwner =
     !!ownerAddress && owner.toLowerCase() === ownerAddress.toLowerCase()
+  const isWalletPastOwner =
+    !!ownerAddress &&
+    pastOwners.some(
+      pastOwner => pastOwner.toLowerCase() === ownerAddress.toLowerCase(),
+    )
+  const isTransferredPosition = !isWalletOwner && isWalletPastOwner
 
   const { data: delegationDetails } = usePositionDelegationDetails(tokenId, {
     enabled: isWalletOwner,
@@ -35,6 +41,8 @@ export const Amount = function ({ operation }: Props) {
     delegationTooltip = t('table.position-delegated-to-you')
   } else if (isDelegatedAway) {
     delegationTooltip = t('table.you-delegated-this-position')
+  } else if (isTransferredPosition) {
+    delegationTooltip = t('table.you-transferred-this-position')
   }
 
   return (

@@ -272,7 +272,7 @@ export type TableProps<TData> = {
 export function Table<TData>({
   cellComponent: CellComponent = Column,
   columns,
-  data = [],
+  data,
   fetchNextPage,
   hasNextPage = false,
   isFetching = false,

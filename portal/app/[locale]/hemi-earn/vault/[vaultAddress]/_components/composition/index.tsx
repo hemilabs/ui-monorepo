@@ -2,7 +2,7 @@
 
 import { Card } from 'components/card'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type Address, type Chain } from 'viem'
 
@@ -52,10 +52,14 @@ export const Composition = function ({ chainId, vaultAddress }: Props) {
     viewMode,
   })
 
-  const dataWithColors = data.map((item, index) => ({
-    ...item,
-    color: compositionColors[index % compositionColors.length],
-  }))
+  const dataWithColors = useMemo(
+    () =>
+      data.map((item, index) => ({
+        ...item,
+        color: compositionColors[index % compositionColors.length],
+      })),
+    [data],
+  )
 
   const renderHeadline = function () {
     if (dataWithColors.length > 0) {

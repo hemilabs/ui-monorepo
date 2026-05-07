@@ -17,6 +17,9 @@ type Props<TData> = Omit<
     width: number
   }
 
+// using a stable reference
+const emptyArray: unknown[] = []
+
 export function useTableData<TData>({
   columns,
   data,
@@ -46,7 +49,7 @@ export function useTableData<TData>({
     [skeletonRows],
   )
   const safeData =
-    data && data.length > 0 ? data : showSkeleton ? skeletonArray : []
+    data && data.length > 0 ? data : showSkeleton ? skeletonArray : emptyArray
 
   const columnOrder = getNewColumnOrder({
     breakpoint: smallBreakpoint,

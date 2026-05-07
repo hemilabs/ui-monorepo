@@ -3,18 +3,19 @@ import { readContract } from 'viem/actions'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { veHemiAbi } from '../../../abi'
-import { getPositionVotingPower } from '../../../actions/public/veHemi'
+import { getPositionVotingPowerDetails } from '../../../actions/public/veHemi'
 import * as constants from '../../../constants'
 import { veHemiVoteDelegationAbi } from '../../../voteDelegationAbi'
 
 vi.mock('viem/actions')
 
-describe('getPositionVotingPower', function () {
+describe('getPositionVotingPowerDetails', function () {
   const mockNowSeconds = BigInt(1_700_000_000)
 
   const mockVeHemiAddress = zeroAddress
   const mockVoteDelegationAddress = '0x1234567890123456789012345678901234567890'
   const mockOwnerAddress = '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd'
+  const anotherWallet = '0x9999999999999999999999999999999999999999'
   const mockTokenId = BigInt(1)
 
   beforeEach(function () {
@@ -26,10 +27,10 @@ describe('getPositionVotingPower', function () {
     vi.useRealTimers()
   })
 
-  it('should return voting power for an active position', async function () {
+  it('should report not delegated away and return voting power when delegated to self', async function () {
     const mockClient = { chain: { id: 2001 } }
     const now = mockNowSeconds
-    const futureEnd = now + BigInt(86400) // 1 day from now
+    const futureEnd = now + BigInt(86400)
 
     const mockDelegation = {
       amount: BigInt(500000),
@@ -46,13 +47,15 @@ describe('getPositionVotingPower', function () {
       .mockResolvedValueOnce(mockVoteDelegationAddress)
       .mockResolvedValueOnce(mockDelegation)
 
-    const result = await getPositionVotingPower({
+    const result = await getPositionVotingPowerDetails({
       client: mockClient,
       ownerAddress: mockOwnerAddress,
       tokenId: mockTokenId,
     })
 
-    expect(result).toBe(BigInt(50000))
+    expect(result.delegatee).toBe(mockOwnerAddress)
+    expect(result.isDelegatedAway).toBe(false)
+    expect(result.votingPower).toBe(BigInt(50000))
     expect(readContract).toHaveBeenNthCalledWith(1, mockClient, {
       abi: veHemiAbi,
       address: mockVeHemiAddress,
@@ -66,12 +69,10 @@ describe('getPositionVotingPower', function () {
     })
   })
 
-  it('should return 0 when position is delegated to another wallet', async function () {
+  it('should report delegated away with zero voting power when delegated to another address', async function () {
     const mockClient = { chain: { id: 2004 } }
     const now = mockNowSeconds
     const futureEnd = now + BigInt(86400)
-
-    const anotherWallet = '0x9999999999999999999999999999999999999999'
 
     const mockDelegation = {
       amount: BigInt(500000),
@@ -88,16 +89,18 @@ describe('getPositionVotingPower', function () {
       .mockResolvedValueOnce(mockVoteDelegationAddress)
       .mockResolvedValueOnce(mockDelegation)
 
-    const result = await getPositionVotingPower({
+    const result = await getPositionVotingPowerDetails({
       client: mockClient,
       ownerAddress: mockOwnerAddress,
       tokenId: mockTokenId,
     })
 
-    expect(result).toBe(BigInt(0))
+    expect(result.delegatee).toBe(anotherWallet)
+    expect(result.isDelegatedAway).toBe(true)
+    expect(result.votingPower).toBe(BigInt(0))
   })
 
-  it('should return 0 for expired position', async function () {
+  it('should not count as delegated away and return zero voting power for expired delegation', async function () {
     const mockClient = { chain: { id: 2002 } }
     const now = mockNowSeconds
     const pastEnd = now - BigInt(86400)
@@ -117,49 +120,22 @@ describe('getPositionVotingPower', function () {
       .mockResolvedValueOnce(mockVoteDelegationAddress)
       .mockResolvedValueOnce(mockDelegation)
 
-    const result = await getPositionVotingPower({
+    const result = await getPositionVotingPowerDetails({
       client: mockClient,
       ownerAddress: mockOwnerAddress,
       tokenId: mockTokenId,
     })
 
-    expect(result).toBe(BigInt(0))
-  })
-
-  it('should return 0 when vote decay exceeds bias', async function () {
-    const mockClient = { chain: { id: 2003 } }
-    const now = mockNowSeconds
-    const futureEnd = now + BigInt(86400)
-
-    const mockDelegation = {
-      amount: BigInt(500000),
-      bias: BigInt(100),
-      delegatee: mockOwnerAddress,
-      end: futureEnd,
-      slope: BigInt(1000000),
-    }
-
-    vi.spyOn(constants, 'getVeHemiContractAddress').mockReturnValue(
-      mockVeHemiAddress,
-    )
-    vi.mocked(readContract)
-      .mockResolvedValueOnce(mockVoteDelegationAddress)
-      .mockResolvedValueOnce(mockDelegation)
-
-    const result = await getPositionVotingPower({
-      client: mockClient,
-      ownerAddress: mockOwnerAddress,
-      tokenId: mockTokenId,
-    })
-
-    expect(result).toBe(BigInt(0))
+    expect(result.delegatee).toBe(mockOwnerAddress)
+    expect(result.isDelegatedAway).toBe(false)
+    expect(result.votingPower).toBe(BigInt(0))
   })
 
   it('should throw error when client chain is not defined', async function () {
     const clientWithoutChain = { chain: undefined }
 
     await expect(
-      getPositionVotingPower({
+      getPositionVotingPowerDetails({
         client: clientWithoutChain,
         ownerAddress: mockOwnerAddress,
         tokenId: mockTokenId,

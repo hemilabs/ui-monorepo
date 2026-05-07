@@ -112,7 +112,20 @@ function delegationToVotingPower(
   return delegation.bias > voteDecay ? delegation.bias - voteDecay : BigInt(0)
 }
 
-export const getPositionVotingPower = async function ({
+const isDelegationActive = (
+  delegation: {
+    end: bigint | number
+  },
+  now: bigint,
+) => BigInt(delegation.end) > now
+
+type PositionVotingPowerDetails = {
+  delegatee: Address
+  isDelegatedAway: boolean
+  votingPower: bigint
+}
+
+export const getPositionVotingPowerDetails = async function ({
   client,
   ownerAddress,
   tokenId,
@@ -120,7 +133,7 @@ export const getPositionVotingPower = async function ({
   client: Client
   ownerAddress: Address
   tokenId: bigint
-}) {
+}): Promise<PositionVotingPowerDetails> {
   if (!client.chain) {
     throw new Error('Client chain is not defined')
   }
@@ -139,7 +152,31 @@ export const getPositionVotingPower = async function ({
   })
 
   const now = BigInt(Math.floor(Date.now() / 1000))
-  return delegationToVotingPower(delegation, ownerAddress, now)
+
+  return {
+    delegatee: delegation.delegatee,
+    isDelegatedAway:
+      isDelegationActive(delegation, now) &&
+      !isAddressEqual(delegation.delegatee, ownerAddress),
+    votingPower: delegationToVotingPower(delegation, ownerAddress, now),
+  }
+}
+
+export const getPositionVotingPower = async function ({
+  client,
+  ownerAddress,
+  tokenId,
+}: {
+  client: Client
+  ownerAddress: Address
+  tokenId: bigint
+}) {
+  const details = await getPositionVotingPowerDetails({
+    client,
+    ownerAddress,
+    tokenId,
+  })
+  return details.votingPower
 }
 
 export const getPositionsVotingPowerSum = async function ({

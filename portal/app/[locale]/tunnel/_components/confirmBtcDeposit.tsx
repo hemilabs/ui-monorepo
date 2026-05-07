@@ -113,7 +113,7 @@ export const ConfirmBtcDeposit = function ({ deposit }: Props) {
       submitButton={
         <Button
           disabled={!isReadyToConfirm || isConfirming}
-          size="xLarge"
+          size="small"
           type="submit"
         >
           {t(`tunnel-page.submit-button.${getText()}`)}

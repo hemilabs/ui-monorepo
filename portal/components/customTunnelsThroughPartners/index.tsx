@@ -3,7 +3,6 @@ import { WarningBox } from 'components/warningBox'
 import { useTranslations } from 'next-intl'
 import { Token } from 'types/token'
 
-import { FreeTech } from './freetech'
 import { Meson } from './meson'
 import { Orbiter } from './orbiter'
 import { Stargate } from './stargate'
@@ -41,9 +40,6 @@ export const CustomTunnelsThroughPartners = function ({
           )}
           {fromToken.extensions?.tunnelPartners?.includes('stargate') && (
             <Stargate fromToken={fromToken} toToken={toToken} />
-          )}
-          {fromToken.extensions?.tunnelPartners?.includes('freetech') && (
-            <FreeTech />
           )}
           {fromToken.extensions?.tunnelPartners?.includes('meson') && <Meson />}
         </div>

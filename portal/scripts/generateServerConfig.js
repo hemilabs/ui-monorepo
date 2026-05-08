@@ -1,6 +1,10 @@
 'use strict'
 
-require('dotenv').config({ override: true, path: ['.env', '.env.local'] })
+require('dotenv').config({
+  override: true,
+  path: ['.env', '.env.local'],
+  quiet: true,
+})
 const { writeFile } = require('fs/promises')
 const { website } = require('hemi-socials')
 const path = require('path')

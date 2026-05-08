@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
-import { getNewColumnOrder } from '../_utils'
+import { getNewColumnOrder, getSafeData } from '../_utils'
 import { TableProps } from '../index'
 
 type Props<TData> = Omit<
@@ -16,9 +16,6 @@ type Props<TData> = Omit<
   > & {
     width: number
   }
-
-// using a stable reference
-const emptyArray: unknown[] = []
 
 export function useTableData<TData>({
   columns,
@@ -48,8 +45,7 @@ export function useTableData<TData>({
     () => new Array(skeletonRows).fill(null),
     [skeletonRows],
   )
-  const safeData =
-    data && data.length > 0 ? data : showSkeleton ? skeletonArray : emptyArray
+  const safeData = getSafeData(data, showSkeleton, skeletonArray)
 
   const columnOrder = getNewColumnOrder({
     breakpoint: smallBreakpoint,

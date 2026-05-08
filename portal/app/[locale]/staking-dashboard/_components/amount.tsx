@@ -5,7 +5,7 @@ import { TxLink } from 'components/txLink'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
 import { StakingPosition } from 'types/stakingDashboard'
-import { formatUnits } from 'viem'
+import { Address, formatUnits, isAddressEqual } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { usePositionDelegationDetails } from '../_hooks/usePositionDelegationDetails'
@@ -22,11 +22,11 @@ export const Amount = function ({ operation }: Props) {
   const token = useHemiToken()
 
   const isWalletOwner =
-    !!ownerAddress && owner.toLowerCase() === ownerAddress.toLowerCase()
+    !!ownerAddress && isAddressEqual(owner as Address, ownerAddress)
   const isWalletPastOwner =
     !!ownerAddress &&
-    pastOwners.some(
-      pastOwner => pastOwner.toLowerCase() === ownerAddress.toLowerCase(),
+    pastOwners.some(pastOwner =>
+      isAddressEqual(pastOwner as Address, ownerAddress),
     )
   const isTransferredPosition = !isWalletOwner && isWalletPastOwner
 

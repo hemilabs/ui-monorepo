@@ -1,11 +1,15 @@
 import { useQuery } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
-import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { useHemiClient } from 'hooks/useHemiClient'
 import { getPositionVotingPowerDetails } from 've-hemi-actions/actions'
 import type { Address, Chain } from 'viem'
 import { useAccount } from 'wagmi'
 
-const getPositionDelegationDetailsQueryKey = ({
+type PositionDelegationDetails = Awaited<
+  ReturnType<typeof getPositionVotingPowerDetails>
+>
+
+export const getPositionDelegationDetailsQueryKey = ({
   chainId,
   ownerAddress,
   tokenId,
@@ -20,32 +24,30 @@ const getPositionDelegationDetailsQueryKey = ({
   tokenId.toString(),
 ]
 
-type UsePositionDelegationDetailsOptions = {
-  /** When false, skips the on-chain query (e.g. row not owned by connected wallet). */
-  enabled?: boolean
-}
-
-export const usePositionDelegationDetails = function (
+export const usePositionDelegationDetails = function <
+  TData = PositionDelegationDetails,
+>(
   tokenId: bigint,
   {
     enabled: enabledFromCaller = true,
-  }: UsePositionDelegationDetailsOptions = {},
+    select,
+  }: {
+    /** When false, skips the on-chain query (e.g. row not owned by connected wallet). */
+    enabled?: boolean
+    select?: (data: PositionDelegationDetails) => TData
+  } = {},
 ) {
-  const { hemiWalletClient } = useHemiWalletClient()
+  const hemiClient = useHemiClient()
   const { address: ownerAddress } = useAccount()
   const chainId = useHemi().id
 
-  const canFetch =
-    !!hemiWalletClient &&
-    !!ownerAddress &&
-    tokenId > BigInt(0) &&
-    enabledFromCaller
+  const canFetch = !!ownerAddress && tokenId > BigInt(0) && enabledFromCaller
 
   return useQuery({
     enabled: canFetch,
     queryFn: () =>
       getPositionVotingPowerDetails({
-        client: hemiWalletClient!,
+        client: hemiClient,
         ownerAddress: ownerAddress!,
         tokenId,
       }),
@@ -56,5 +58,6 @@ export const usePositionDelegationDetails = function (
     }),
     refetchInterval: 1000 * 60 * 5, // 5 minutes
     retry: 2,
+    select,
   })
 }

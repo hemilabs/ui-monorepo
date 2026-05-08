@@ -162,23 +162,6 @@ export const getPositionVotingPowerDetails = async function ({
   }
 }
 
-export const getPositionVotingPower = async function ({
-  client,
-  ownerAddress,
-  tokenId,
-}: {
-  client: Client
-  ownerAddress: Address
-  tokenId: bigint
-}) {
-  const details = await getPositionVotingPowerDetails({
-    client,
-    ownerAddress,
-    tokenId,
-  })
-  return details.votingPower
-}
-
 export const getPositionsVotingPowerSum = async function ({
   client,
   ownerAddress,

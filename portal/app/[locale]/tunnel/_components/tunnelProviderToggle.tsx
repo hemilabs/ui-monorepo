@@ -1,6 +1,5 @@
 import { Cobridge } from 'components/customTunnelsThroughPartners/cobridge'
 import { FireFly } from 'components/customTunnelsThroughPartners/firefly'
-import { FreeTech } from 'components/customTunnelsThroughPartners/freetech'
 import { Interport } from 'components/customTunnelsThroughPartners/interport'
 import { Memebridge } from 'components/customTunnelsThroughPartners/memebridge'
 import { Meson } from 'components/customTunnelsThroughPartners/meson'
@@ -37,7 +36,6 @@ function ThirdPartyOptions({ fromChainId, toChainId }: ThirdPartyOptionsProps) {
         label="Stargate"
         toToken={toNativeToken}
       />
-      <FreeTech label="Free Tech" />
       <Interport fromChainId={fromChainId} toChainId={toChainId} />
       <Meson label="Meson" />
       <Cobridge fromChainId={fromChainId} toChainId={toChainId} />

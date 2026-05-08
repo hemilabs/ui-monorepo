@@ -15,7 +15,7 @@ export const customTunnelPartnersWhitelist: Partial<
   [mainnet.id]: {
     // USDC
     '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48': {
-      tunnelPartners: ['meson', 'stargate', 'freetech', 'orbiter'],
+      tunnelPartners: ['meson', 'stargate', 'orbiter'],
       tunnelSymbol: 'USDC',
     },
     // cbBTC
@@ -26,18 +26,18 @@ export const customTunnelPartnersWhitelist: Partial<
     },
     // USDT
     '0xdAC17F958D2ee523a2206206994597C13D831ec7': {
-      tunnelPartners: ['meson', 'stargate', 'freetech'],
+      tunnelPartners: ['meson', 'stargate'],
     },
   },
   [hemi.id]: {
     // USDC
     '0xad11a8BEb98bbf61dbb1aa0F6d6F2ECD87b35afA': {
-      tunnelPartners: ['meson', 'stargate', 'freetech', 'orbiter'],
+      tunnelPartners: ['meson', 'stargate', 'orbiter'],
       tunnelSymbol: 'USDC',
     },
     // USDT
     '0xbB0D083fb1be0A9f6157ec484b6C79E0A4e31C2e': {
-      tunnelPartners: ['meson', 'stargate', 'freetech'],
+      tunnelPartners: ['meson', 'stargate'],
       tunnelSymbol: 'USDT',
     },
   },

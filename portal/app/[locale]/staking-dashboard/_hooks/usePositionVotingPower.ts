@@ -1,24 +1,4 @@
-import type { Address, Chain } from 'viem'
-
-import {
-  getPositionDelegationDetailsQueryKey,
-  usePositionDelegationDetails,
-} from './usePositionDelegationDetails'
-
-export const getPositionVotingPowerQueryKey = ({
-  chainId,
-  ownerAddress,
-  tokenId,
-}: {
-  chainId: Chain['id']
-  ownerAddress: Address | undefined
-  tokenId: bigint
-}) =>
-  getPositionDelegationDetailsQueryKey({
-    chainId,
-    ownerAddress,
-    tokenId,
-  })
+import { usePositionDelegationDetails } from './usePositionDelegationDetails'
 
 export const usePositionVotingPower = (tokenId: bigint) =>
   usePositionDelegationDetails(tokenId, {

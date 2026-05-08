@@ -55,7 +55,7 @@ export function SubLogoTooltip({
       {tooltipText ? (
         <button
           aria-label={tooltipText}
-          className={`${wrapperClassName} cursor-default border-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2`}
+          className={`${wrapperClassName} border-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-400 focus-visible:ring-offset-2`}
           type="button"
         >
           {body}

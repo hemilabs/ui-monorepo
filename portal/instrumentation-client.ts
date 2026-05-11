@@ -61,7 +61,29 @@ function enableSentry() {
     ...walletConnectErrors,
   ]
 
+  // Matches the format "portal@yyyymmdd_sequence". The project name is
+  // hardcoded as we are not going to change it anytime soon. Reading it from an
+  // environment variable would be possible but it would add unnecessary
+  // complexity IMO.
+  const releaseNameRegex = /^portal@\d{8}_\d+$/
+
   Sentry.init({
+    // This is a workaround to filter out errors that are not actionable and
+    // that we know are coming from browser extensions or unsupported wallets.
+    // We want to keep the noise down in Sentry to be able to focus on real
+    // issues.
+    beforeSend(event) {
+      if (event.release && !releaseNameRegex.test(event.release)) {
+        return null // Drops the error event
+      }
+      return event
+    },
+    beforeSendTransaction(event) {
+      if (event.release && !releaseNameRegex.test(event.release)) {
+        return null // Drops the transaction event
+      }
+      return event
+    },
     denyUrls: [
       // Filter all Wallet Connect related urls
       /(https|wss):\/\/.*\.walletconnect\.(com|org)/,

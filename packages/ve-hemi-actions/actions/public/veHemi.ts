@@ -95,19 +95,33 @@ const memoizedGetVoteDelegationAddress = pMemoize(getVoteDelegationAddress, {
   resolver: client => client.chain?.id,
 })
 
+/** viem may type `uint48` `end` as number; normalize for internal bigint-only helpers. */
+const delegationWithBigIntEnd = <
+  T extends {
+    bias: bigint
+    delegatee: Address
+    end: bigint | number
+    slope: bigint
+  },
+>(
+  delegation: T,
+) => ({
+  ...delegation,
+  end: BigInt(delegation.end),
+})
+
 function delegationToVotingPower(
   delegation: {
     bias: bigint
     delegatee: Address
-    end: bigint | number
+    end: bigint
     slope: bigint
   },
   ownerAddress: Address,
   now: bigint,
 ): bigint {
   if (!isAddressEqual(delegation.delegatee, ownerAddress)) return BigInt(0)
-  const end = BigInt(delegation.end)
-  if (end <= now) return BigInt(0)
+  if (delegation.end <= now) return BigInt(0)
   const voteDecay = delegation.slope * now
   return delegation.bias > voteDecay ? delegation.bias - voteDecay : BigInt(0)
 }
@@ -117,7 +131,7 @@ const isDelegationActive = (
     end: bigint
   },
   now: bigint,
-) => BigInt(delegation.end) > now
+) => delegation.end > now
 
 type PositionVotingPowerDetails = {
   delegatee: Address
@@ -150,15 +164,20 @@ export const getPositionVotingPowerDetails = async function ({
     args: [tokenId],
     functionName: 'delegation',
   })
+  const delegationNormalized = delegationWithBigIntEnd(delegation)
 
   const now = BigInt(Math.floor(Date.now() / 1000))
 
   return {
-    delegatee: delegation.delegatee,
+    delegatee: delegationNormalized.delegatee,
     isDelegatedAway:
-      isDelegationActive(delegation, now) &&
-      !isAddressEqual(delegation.delegatee, ownerAddress),
-    votingPower: delegationToVotingPower(delegation, ownerAddress, now),
+      isDelegationActive(delegationNormalized, now) &&
+      !isAddressEqual(delegationNormalized.delegatee, ownerAddress),
+    votingPower: delegationToVotingPower(
+      delegationNormalized,
+      ownerAddress,
+      now,
+    ),
   }
 }
 
@@ -200,7 +219,11 @@ export const getPositionsVotingPowerSum = async function ({
 
   let sum = BigInt(0)
   for (let i = 0; i < results.length; i++) {
-    sum += delegationToVotingPower(results[i], ownerAddress, now)
+    sum += delegationToVotingPower(
+      delegationWithBigIntEnd(results[i]),
+      ownerAddress,
+      now,
+    )
   }
   return sum
 }

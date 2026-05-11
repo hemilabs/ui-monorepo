@@ -29,7 +29,7 @@
     "camelcase-keys": "10.0.0",
     "crypto-shortener": "1.2.0",
     "debug": "4.4.0",
-    "dotenv": "16.4.7",
+    "dotenv": "17.4.2",
     "esplora-client": "1.2.0",
     "eth-rpc-cache": "2.1.0",
     "fetch-plus-plus": "1.0.0",

@@ -41,16 +41,6 @@ const nextConfig: NextConfig = {
   },
 }
 
-const release =
-  process.env.SENTRY_ENVIRONMENT && process.env.SENTRY_RELEASE
-    ? {
-        deploy: {
-          env: process.env.SENTRY_ENVIRONMENT,
-        },
-        name: process.env.SENTRY_RELEASE,
-      }
-    : { create: false, finalize: false }
-
 const sentryOptions: SentryBuildOptions = {
   authToken: process.env.SENTRY_AUTH_TOKEN,
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/#widen-the-upload-scope
@@ -59,7 +49,15 @@ const sentryOptions: SentryBuildOptions = {
   reactComponentAnnotation: {
     enabled: true,
   },
-  release,
+  release:
+    process.env.SENTRY_ENVIRONMENT && process.env.SENTRY_RELEASE
+      ? {
+          deploy: {
+            env: process.env.SENTRY_ENVIRONMENT,
+          },
+          name: process.env.SENTRY_RELEASE,
+        }
+      : undefined,
   // eslint-disable-next-line camelcase
   unstable_sentryWebpackPluginOptions: {
     applicationKey: process.env.NEXT_PUBLIC_SENTRY_FILTER_KEY_ID,

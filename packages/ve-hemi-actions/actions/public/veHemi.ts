@@ -114,7 +114,7 @@ function delegationToVotingPower(
 
 const isDelegationActive = (
   delegation: {
-    end: bigint | number
+    end: bigint
   },
   now: bigint,
 ) => BigInt(delegation.end) > now

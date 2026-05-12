@@ -8,7 +8,7 @@ export { encodeWithdraw, withdraw } from './wallet/withdraw'
 export {
   getBalanceOfNFTAt,
   getLockedBalance,
-  getPositionVotingPower,
+  getPositionVotingPowerDetails,
   getPositionsVotingPowerSum,
   getTotalVotingPower,
 } from './public/veHemi'

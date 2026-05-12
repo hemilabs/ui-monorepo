@@ -19,8 +19,8 @@ import { increaseAmount } from 've-hemi-actions/actions'
 import { useAccount } from 'wagmi'
 
 import { getCalculateAprQueryKey } from './useCalculateApr'
+import { getPositionDelegationDetailsQueryKey } from './usePositionDelegationDetails'
 import { getPositionsVotingPowerSumQueryKeyPrefix } from './usePositionsVotingPowerSum'
-import { getPositionVotingPowerQueryKey } from './usePositionVotingPower'
 import { getStakingPositionsQueryKey } from './useStakingPositions'
 import { getTotalVotingPowerQueryKey } from './useTotalVotingPower'
 
@@ -170,7 +170,7 @@ export const useIncreaseAmount = function ({
         // Voting power (guard: address can be undefined if wallet disconnected before callback)
         if (address) {
           queryClient.invalidateQueries({
-            queryKey: getPositionVotingPowerQueryKey({
+            queryKey: getPositionDelegationDetailsQueryKey({
               chainId: token.chainId,
               ownerAddress: address,
               tokenId,

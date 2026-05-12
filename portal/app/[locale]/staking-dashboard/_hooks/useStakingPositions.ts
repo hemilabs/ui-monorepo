@@ -39,14 +39,16 @@ export const useStakingPositions = function (
     'enabled' | 'queryFn' | 'queryKey'
   > = {},
 ) {
-  const { address } = useAccount()
+  const { address: ownerAddress } = useAccount()
   const hemi = useHemi()
 
   return useQuery({
-    enabled: !!address,
+    enabled: !!ownerAddress,
     async queryFn() {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${hemi.id}/locks/${address}`,
+        `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${
+          hemi.id
+        }/locks/${ownerAddress!}`,
       ).catch(() => ({ ok: false }) as Response)
       if (!response.ok) {
         return []
@@ -70,7 +72,7 @@ export const useStakingPositions = function (
       return positions
     },
     queryKey: getStakingPositionsQueryKey({
-      address,
+      address: ownerAddress,
       chainId: hemi.id,
     }),
     ...options,

@@ -22,29 +22,28 @@ export const VotingPower = function ({ amount, tokenId }: Props) {
     return <Skeleton className="h-10 w-20" />
   }
 
-  if (votingPower !== undefined) {
-    const formattedPower = formatUnits(votingPower, token.decimals)
-
-    const percentageOfMax =
-      amount > BigInt(0)
-        ? Math.min(100, Number((votingPower * BigInt(10000)) / amount) / 100)
-        : 0
-
-    return (
-      <div className="flex flex-col">
-        <span className="text-sm font-medium text-neutral-950">
-          <DisplayAmount amount={formattedPower} token={veHemiToken} />
-        </span>
-        <span className="text-xs font-normal text-neutral-500">
-          {formatPercentage(percentageOfMax)}
-        </span>
-      </div>
-    )
-  }
-
-  if (error) {
+  if (error && votingPower === undefined) {
     return <span className="text-sm text-neutral-950">-</span>
   }
 
-  return <Skeleton className="h-10 w-20" />
+  if (votingPower === undefined) {
+    return <Skeleton className="h-10 w-20" />
+  }
+
+  const formattedPower = formatUnits(votingPower, token.decimals)
+  const percentageOfMax =
+    amount > BigInt(0)
+      ? Math.min(100, Number((votingPower * BigInt(10000)) / amount) / 100)
+      : 0
+
+  return (
+    <div className="flex flex-col">
+      <span className="text-sm font-medium text-neutral-950">
+        <DisplayAmount amount={formattedPower} token={veHemiToken} />
+      </span>
+      <span className="text-xs font-normal text-neutral-500">
+        {formatPercentage(percentageOfMax)}
+      </span>
+    </div>
+  )
 }

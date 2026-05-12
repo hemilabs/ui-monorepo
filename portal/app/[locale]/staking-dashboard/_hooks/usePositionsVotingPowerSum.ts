@@ -48,7 +48,7 @@ function computeSum(
 
 export const usePositionsVotingPowerSum = function () {
   const { hemiWalletClient } = useHemiWalletClient()
-  const { address } = useAccount()
+  const { address: ownerAddress } = useAccount()
   const chainId = useHemi().id
   const {
     data: positions,
@@ -68,22 +68,22 @@ export const usePositionsVotingPowerSum = function () {
     () =>
       getPositionsVotingPowerSumQueryKey({
         chainId,
-        ownerAddress: address,
+        ownerAddress,
         tokenIds,
       }),
-    [chainId, address, tokenIds],
+    [chainId, ownerAddress, tokenIds],
   )
 
   const batchQuery = useQuery({
     enabled:
-      !!address &&
+      !!ownerAddress &&
       !!hemiWalletClient &&
       positions !== undefined &&
       tokenIds.length > 0,
     queryFn: () =>
       getPositionsVotingPowerSum({
         client: hemiWalletClient!,
-        ownerAddress: address!,
+        ownerAddress: ownerAddress!,
         tokenIds,
       }),
     queryKey,

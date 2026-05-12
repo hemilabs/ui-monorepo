@@ -1,7 +1,8 @@
 'use client'
 
 import { EvmFeesSummary } from 'components/evmFeesSummary'
-import { encodeDepositToken } from 'hemi-earn-actions/actions'
+import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
+import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
@@ -51,12 +52,14 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
 
   const amount = parseTokenUnits(input, pool.token)
 
+  const routerAddress = getHemiEarnRouterAddress()
+
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
     useNeedsApproval({
       address: pool.token.address,
       amount,
       chainId: pool.token.chainId,
-      spender: pool.vaultAddress,
+      spender: routerAddress,
     })
 
   const { data: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
@@ -79,18 +82,26 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
       amount,
-      spender: pool.vaultAddress,
+      spender: routerAddress,
       token: pool.token,
     })
 
+  // TODO(phase-2): `requestDeposit` is payable with `msg.value = nativeFee`
+  // from `quoteDeposit`. The gas estimate omits that value; once the quote
+  // is consumed in the UI, feed it as `value` here.
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({
       data:
         canDeposit && address
-          ? encodeDepositToken({ amount, receiver: address })
+          ? encodeRequestDeposit({
+              amount,
+              asset: pool.vaultAddress,
+              fulfillmentFee: BigInt(0),
+              receiver: address,
+            })
           : undefined,
       query: { enabled: canDeposit && !!address },
-      to: pool.vaultAddress as Address,
+      to: routerAddress as Address,
     })
 
   const { fees: depositGasFees, isError: isDepositGasFeesError } =

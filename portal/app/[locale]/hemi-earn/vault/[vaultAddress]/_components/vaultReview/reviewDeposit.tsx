@@ -8,7 +8,8 @@ import {
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
-import { encodeDepositToken } from 'hemi-earn-actions/actions'
+import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
+import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
@@ -44,12 +45,13 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     depositOperation?.status ?? VaultDepositStatus.APPROVAL_TX_COMPLETED
 
   const amount = parseTokenUnits(input, pool.token)
+  const routerAddress = getHemiEarnRouterAddress()
 
   const { needsApproval } = useNeedsApproval({
     address: pool.token.address,
     amount,
     chainId,
-    spender: pool.vaultAddress,
+    spender: routerAddress,
   })
 
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
@@ -59,17 +61,24 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         VaultDepositStatus.APPROVAL_TX_FAILED,
         VaultDepositStatus.APPROVAL_TX_PENDING,
       ].includes(depositStatus),
-      spender: pool.vaultAddress,
+      spender: routerAddress,
       token: pool.token,
     })
 
+  // TODO(phase-2): gas estimate omits the LayerZero `msg.value` (from
+  // `quoteDeposit`). Wire it once the quote is consumed in the UI.
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({
       data: address
-        ? encodeDepositToken({ amount, receiver: address })
+        ? encodeRequestDeposit({
+            amount,
+            asset: pool.vaultAddress,
+            fulfillmentFee: BigInt(0),
+            receiver: address,
+          })
         : undefined,
       query: { enabled: !!address && amount > BigInt(0) },
-      to: pool.vaultAddress,
+      to: routerAddress,
     })
 
   const { fees: depositGasFees, isError: isDepositGasFeesError } =

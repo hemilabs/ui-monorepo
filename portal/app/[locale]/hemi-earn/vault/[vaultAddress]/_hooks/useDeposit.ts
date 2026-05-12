@@ -3,12 +3,14 @@ import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
-import { type DepositEvents } from 'hemi-earn-actions'
-import { depositToken } from 'hemi-earn-actions/actions'
+import {
+  type RequestDepositEvents,
+  getHemiEarnRouterAddress,
+} from 'hemi-earn-actions'
+import { requestDeposit } from 'hemi-earn-actions/actions'
 import { useTokenBalance } from 'hooks/useBalance'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { parseTokenUnits } from 'utils/token'
-import { erc4626Abi, parseEventLogs } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 import { getWalletClient } from 'wagmi/actions'
 
@@ -26,10 +28,15 @@ import { getUserVaultBalanceQueryKey } from './useUserVaultBalance'
 
 type UseDeposit = {
   input: string
-  on?: (emitter: EventEmitter<DepositEvents>) => void
+  on?: (emitter: EventEmitter<RequestDepositEvents>) => void
   pool: EarnPool
   updateDepositOperation: (payload?: VaultDepositOperation) => void
 }
+
+// TODO(phase-2): `fulfillmentFee` is the LayerZero composeValue used for the
+// return message that mints/transfers the share back to the user on Hemi. The
+// value should come from a quote helper or a configured default
+const FULFILLMENT_FEE = BigInt(0)
 
 export const useDeposit = function ({
   input,
@@ -39,6 +46,7 @@ export const useDeposit = function ({
 }: UseDeposit) {
   const amount = parseTokenUnits(input, pool.token)
   const chainId = pool.token.chainId
+  const routerAddress = getHemiEarnRouterAddress()
 
   const { setDrawerQueryString } = useDrawerVaultQueryString()
   const { address } = useAccount()
@@ -59,7 +67,7 @@ export const useDeposit = function ({
   const allowanceQueryKey = buildAllowanceQueryKey({
     chainId,
     owner: address,
-    spender: pool.vaultAddress,
+    spender: routerAddress,
     tokenAddress: pool.token.address,
   })
 
@@ -73,10 +81,13 @@ export const useDeposit = function ({
 
       const walletClient = await getWalletClient(config, { chainId })
 
-      const { emitter, promise } = depositToken({
+      const { emitter, promise } = requestDeposit({
         account: address,
         amount,
-        vaultAddress: pool.vaultAddress,
+        asset: pool.vaultAddress,
+        fulfillmentFee: FULFILLMENT_FEE,
+        receiver: address,
+        routerAddress,
         walletClient,
       })
 
@@ -119,38 +130,12 @@ export const useDeposit = function ({
       })
 
       emitter.on('deposit-transaction-succeeded', function (receipt) {
+        // TODO(phase-2): when the share tracker is implemented, parse the
+        // `DepositRequested` log to capture the requestId
         updateDepositOperation({
           status: VaultDepositStatus.DEPOSIT_TX_CONFIRMED,
         })
-
         updateNativeBalanceAfterFees(receipt)
-
-        const [depositLog] = parseEventLogs({
-          abi: erc4626Abi,
-          eventName: 'Deposit',
-          logs: receipt.logs,
-        })
-
-        if (depositLog) {
-          const { assets } = depositLog.args
-
-          // Update token balance
-          queryClient.setQueryData(
-            tokenBalanceQueryKey,
-            (old: bigint | undefined) =>
-              old === undefined ? old : old - assets,
-          )
-
-          // Update vault balance
-          queryClient.setQueryData(
-            getUserVaultBalanceQueryKey({
-              chainId,
-              vaultAddress: pool.vaultAddress,
-            }),
-            (old: bigint | undefined) =>
-              old === undefined ? old : old + assets,
-          )
-        }
       })
 
       emitter.on('deposit-transaction-reverted', function (receipt) {

@@ -1,7 +1,5 @@
-import { queryOptions, useQuery } from '@tanstack/react-query'
-import { type Address, type Chain, type PublicClient } from 'viem'
-import { balanceOf, convertToAssets } from 'viem-erc4626/actions'
-import { useAccount, usePublicClient } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
+import { type Address, type Chain } from 'viem'
 
 export const getUserVaultBalanceQueryKey = ({
   chainId,
@@ -11,50 +9,20 @@ export const getUserVaultBalanceQueryKey = ({
   vaultAddress: Address
 }) => ['hemi-earn', 'user-vault-balance', chainId, vaultAddress]
 
-export const userVaultBalanceQueryOptions = ({
-  address,
-  chainId,
-  client,
-  vaultAddress,
-}: {
-  address: Address
-  chainId: Chain['id']
-  client: PublicClient
-  vaultAddress: Address
-}) =>
-  queryOptions({
-    async queryFn() {
-      const shares = await balanceOf(client, {
-        account: address,
-        address: vaultAddress,
-      })
-
-      if (shares === BigInt(0)) {
-        return BigInt(0)
-      }
-
-      return convertToAssets(client, {
-        address: vaultAddress,
-        shares,
-      })
-    },
-    queryKey: getUserVaultBalanceQueryKey({ chainId, vaultAddress }),
-  })
-
-export const useUserVaultBalance = function (
+// TODO(phase-2): mocked intentionally. Real implementation needs to read the
+// user's sVetBTC OFT balance on Hemi and convert it to underlying assets via
+// the StakingVault on Ethereum (`convertToAssets`).
+//
+// IMPORTANT: the returned value MUST be asset-denominated (8 decimals for the
+// BTC variants), NOT raw share units (18 decimals). `validateSubmit` in
+// `withdraw.tsx` parses the user input with `pool.token` (asset) decimals and
+// compares against this balance — returning shares here would silently break
+// validation under the asset-unit UX.
+export const useUserVaultBalance = (
   vaultAddress: Address,
   chainId: Chain['id'],
-) {
-  const client = usePublicClient({ chainId })
-  const { address } = useAccount()
-
-  return useQuery({
-    ...userVaultBalanceQueryOptions({
-      address: address!,
-      chainId,
-      client: client!,
-      vaultAddress,
-    }),
-    enabled: !!address && !!client,
+) =>
+  useQuery({
+    queryFn: () => BigInt(0),
+    queryKey: getUserVaultBalanceQueryKey({ chainId, vaultAddress }),
   })
-}

@@ -1,124 +1,111 @@
 import { EventEmitter } from 'events'
 import { toPromiseEvent } from 'to-promise-event'
 import type { Address, TransactionReceipt, WalletClient } from 'viem'
-import { encodeFunctionData, erc4626Abi } from 'viem'
-import { waitForTransactionReceipt } from 'viem/actions'
-import {
-  allowance,
-  approve,
-  asset,
-  balanceOf,
-  deposit as vaultDeposit,
-  maxDeposit,
-} from 'viem-erc4626/actions'
+import { waitForTransactionReceipt, writeContract } from 'viem/actions'
+import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 
-import type { DepositEvents } from '../../types'
+import { routerAbi } from '../../abi'
+import { getHemiEarnRouterAddress } from '../../constants'
+import type { RequestDepositEvents } from '../../types'
+import { quoteDeposit } from '../public/quoteDeposit'
 
-const canDepositToken = async function ({
+const canRequestDeposit = async function ({
   account,
   amount,
-  assetAddress,
-  vaultAddress,
+  asset,
   walletClient,
 }: {
   account: Address
   amount: bigint
-  assetAddress: Address
-  vaultAddress: Address
+  asset: Address
   walletClient: WalletClient
-}): Promise<{
-  canDeposit: boolean
-  reason?: string
-}> {
+}): Promise<{ canDeposit: boolean; reason?: string }> {
   if (!amount || amount <= BigInt(0)) {
-    return {
-      canDeposit: false,
-      reason: 'invalid amount',
-    }
+    return { canDeposit: false, reason: 'invalid amount' }
   }
 
-  const [tokenBalance, maxAmountDeposit] = await Promise.all([
-    balanceOf(walletClient, {
-      account,
-      address: assetAddress,
-    }),
-    maxDeposit(walletClient, {
-      address: vaultAddress,
-      receiver: account,
-    }),
-  ])
+  const tokenBalance = await balanceOf(walletClient, {
+    account,
+    address: asset,
+  })
 
   if (tokenBalance < amount) {
-    return {
-      canDeposit: false,
-      reason: 'insufficient balance',
-    }
+    return { canDeposit: false, reason: 'insufficient balance' }
   }
-  if (amount > maxAmountDeposit) {
-    return {
-      canDeposit: false,
-      reason: 'amount exceeds max deposit limit',
-    }
-  }
+
   return { canDeposit: true }
 }
 
-const runDepositToken = ({
+const runRequestDeposit = ({
   account,
   amount,
-  vaultAddress,
+  asset,
+  fulfillmentFee,
+  receiver,
+  routerAddress = getHemiEarnRouterAddress(),
   walletClient,
 }: {
   account: Address
   amount: bigint
-  vaultAddress: Address
+  asset: Address
+  fulfillmentFee: bigint
+  receiver: Address
+  routerAddress?: Address
   walletClient: WalletClient
 }) =>
-  async function (emitter: EventEmitter<DepositEvents>) {
+  // eslint-disable-next-line complexity -- linear request workflow with branching event emissions
+  async function (emitter: EventEmitter<RequestDepositEvents>) {
     try {
-      // should always be defined, though
       if (!walletClient.chain) {
         throw new Error('Chain is not defined on wallet')
       }
 
-      // Get the underlying asset address first
-      const assetAddress = await asset(walletClient, {
-        address: vaultAddress,
-      })
-
-      const { canDeposit: canDepositFlag, reason } = await canDepositToken({
+      const { canDeposit, reason } = await canRequestDeposit({
         account,
         amount,
-        assetAddress,
-        vaultAddress,
+        asset,
         walletClient,
       }).catch(() => ({
         canDeposit: false,
         reason: 'failed to validate inputs',
       }))
 
-      if (!canDepositFlag) {
+      if (!canDeposit) {
         emitter.emit('deposit-failed-validation', reason!)
         return
       }
 
-      // Check current allowance
-      emitter.emit('check-allowance')
-      const currentAllowance = await allowance(walletClient, {
-        address: assetAddress,
-        owner: account,
-        spender: vaultAddress,
+      emitter.emit('pre-quote')
+      const nativeFee = await quoteDeposit({
+        asset,
+        assets: amount,
+        client: walletClient,
+        fulfillmentFee,
+        routerAddress,
+      }).catch(function (error) {
+        emitter.emit('quote-failed', error)
       })
 
-      // If allowance is insufficient, approve first
+      if (nativeFee === undefined) {
+        return
+      }
+      emitter.emit('quote-succeeded', nativeFee)
+
+      emitter.emit('check-allowance')
+      const currentAllowance = await allowance(walletClient, {
+        address: asset,
+        owner: account,
+        spender: routerAddress,
+      })
+
       if (currentAllowance < amount) {
         emitter.emit('pre-approve')
 
         const approvalHash = await approve(walletClient, {
-          address: assetAddress,
+          address: asset,
           amount,
-          spender: vaultAddress,
-        }).catch(function (error: Error) {
+          spender: routerAddress,
+        }).catch(function (error) {
           emitter.emit('user-signing-approval-error', error)
         })
 
@@ -130,7 +117,7 @@ const runDepositToken = ({
 
         const approvalReceipt = await waitForTransactionReceipt(walletClient, {
           hash: approvalHash,
-        }).catch(function (error: Error) {
+        }).catch(function (error) {
           emitter.emit('deposit-failed', error)
         })
 
@@ -148,11 +135,15 @@ const runDepositToken = ({
 
       emitter.emit('pre-deposit')
 
-      const depositHash = await vaultDeposit(walletClient, {
-        address: vaultAddress,
-        assets: amount,
-        receiver: account,
-      }).catch(function (error: Error) {
+      const depositHash = await writeContract(walletClient, {
+        abi: routerAbi,
+        account,
+        address: routerAddress,
+        args: [asset, amount, receiver, true, fulfillmentFee],
+        chain: walletClient.chain,
+        functionName: 'requestDeposit',
+        value: nativeFee,
+      }).catch(function (error) {
         emitter.emit('user-signing-deposit-error', error)
       })
 
@@ -164,7 +155,7 @@ const runDepositToken = ({
 
       const depositReceipt = await waitForTransactionReceipt(walletClient, {
         hash: depositHash,
-      }).catch(function (error: Error) {
+      }).catch(function (error) {
         emitter.emit('deposit-failed', error)
       })
 
@@ -174,7 +165,7 @@ const runDepositToken = ({
 
       const depositEventMap: Record<
         TransactionReceipt['status'],
-        keyof DepositEvents
+        keyof RequestDepositEvents
       > = {
         reverted: 'deposit-transaction-reverted',
         success: 'deposit-transaction-succeeded',
@@ -188,18 +179,5 @@ const runDepositToken = ({
     }
   }
 
-export const depositToken = (...args: Parameters<typeof runDepositToken>) =>
-  toPromiseEvent<DepositEvents>(runDepositToken(...args))
-
-export const encodeDepositToken = ({
-  amount,
-  receiver,
-}: {
-  amount: bigint
-  receiver: Address
-}) =>
-  encodeFunctionData({
-    abi: erc4626Abi,
-    args: [amount, receiver],
-    functionName: 'deposit',
-  })
+export const requestDeposit = (...args: Parameters<typeof runRequestDeposit>) =>
+  toPromiseEvent<RequestDepositEvents>(runRequestDeposit(...args))

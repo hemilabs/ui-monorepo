@@ -1,24 +1,23 @@
-import { hemi, hemiSepolia } from 'hemi-viem'
 import { type Address, zeroAddress } from 'viem'
 
-const EARN_VAULT_ADDRESSES: Record<number, Address[]> = {
-  [hemi.id]: [
-    zeroAddress, // TODO: replace with deployed hemiBTC vault address once provided, or via on-chain registry
-    zeroAddress, // TODO: replace with deployed USDC vault address once provided, or via on-chain registry
-  ],
-  [hemiSepolia.id]: [
-    zeroAddress, // TODO: replace with deployed hemiBTC vault address once provided, or via on-chain registry
-    zeroAddress, // TODO: replace with deployed USDC vault address once provided, or via on-chain registry
-  ],
-} as const
+// TODO: placeholder — replace with the deployed Router on Hemi mainnet once available.
+export const HEMI_EARN_ROUTER_ADDRESS: Address = zeroAddress
 
-export const getEarnVaultAddresses = function (chainId: number): Address[] {
-  const addresses = EARN_VAULT_ADDRESSES[chainId]
-  if (!addresses || addresses.length === 0) {
-    throw new Error(`Earn vaults not deployed on chain ${chainId}`)
-  }
-  return [...addresses]
-}
+// TODO: placeholder — replace with the sVetBTC OFT address on Hemi once deployed.
+export const HEMI_EARN_SHARE_TOKEN: Address = zeroAddress
 
-export const getEarnChainIds = () =>
-  Object.keys(EARN_VAULT_ADDRESSES).map(Number)
+// TODO: placeholder — replace each zeroAddress with the corresponding OFT on Hemi
+// (hemiBTC OFT, WBTC OFT, cbBTC OFT) once the deposit assets are deployed.
+export const HEMI_EARN_SUPPORTED_ASSETS: readonly Address[] = [
+  zeroAddress,
+  zeroAddress,
+  zeroAddress,
+] as const
+
+export const getHemiEarnRouterAddress = (): Address => HEMI_EARN_ROUTER_ADDRESS
+
+export const getHemiEarnShareToken = (): Address => HEMI_EARN_SHARE_TOKEN
+
+export const getHemiEarnSupportedAssets = (): Address[] => [
+  ...HEMI_EARN_SUPPORTED_ASSETS,
+]

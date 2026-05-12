@@ -3,12 +3,13 @@ import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
-import { type WithdrawEvents } from 'hemi-earn-actions'
-import { withdraw } from 'hemi-earn-actions/actions'
+import {
+  type RequestRedeemEvents,
+  getHemiEarnRouterAddress,
+} from 'hemi-earn-actions'
+import { requestRedeem } from 'hemi-earn-actions/actions'
 import { useTokenBalance } from 'hooks/useBalance'
 import { parseTokenUnits } from 'utils/token'
-import { erc4626Abi, parseEventLogs } from 'viem'
-import { convertToShares } from 'viem-erc4626/actions'
 import { useAccount, useConfig } from 'wagmi'
 import { getWalletClient } from 'wagmi/actions'
 
@@ -26,10 +27,14 @@ import { getUserVaultBalanceQueryKey } from './useUserVaultBalance'
 
 type UseWithdraw = {
   input: string
-  on?: (emitter: EventEmitter<WithdrawEvents>) => void
+  on?: (emitter: EventEmitter<RequestRedeemEvents>) => void
   pool: EarnPool
   updateWithdrawOperation: (payload?: VaultWithdrawOperation) => void
 }
+
+// TODO(phase-2): `fulfillmentFee` is the LayerZero composeValue used for the
+// return message. See the matching note in `useDeposit.ts`.
+const FULFILLMENT_FEE = BigInt(0)
 
 export const useWithdraw = function ({
   input,
@@ -43,6 +48,7 @@ export const useWithdraw = function ({
   const config = useConfig()
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
+  const routerAddress = getHemiEarnRouterAddress()
 
   const { queryKey: tokenBalanceQueryKey } = useTokenBalance(
     chainId,
@@ -64,20 +70,26 @@ export const useWithdraw = function ({
 
       const walletClient = await getWalletClient(config, { chainId })
 
-      const amount = parseTokenUnits(input, pool.token)
+      // The user input is in asset units (hemiBTC/WBTC/cbBTC, 8 decimals) but
+      // the Router expects `shares` in 18-decimal units. This call is
+      // intentionally wrong on phase 1 — it will revert on the live Router
+      // because the magnitude is off by ~10^10 and the value semantically
+      // represents an asset amount, not a share amount.
+      //
+      // TODO(phase-2): replace with the real asset → shares conversion:
+      //   const assetAmount  = parseTokenUnits(input, pool.token)            // 8-dec, asset
+      //   const vetBTCAmount = await gateway.previewWithdraw(remoteAsset, assetAmount)  // 18-dec
+      //   const sharesNeeded = await stakingVault.convertToShares(vetBTCAmount)         // 18-dec
+      // Then submit `requestRedeem(asset, sharesNeeded, ...)`.
+      const shares = parseTokenUnits(input, pool.token)
 
-      // Convert assets to shares for withdrawal.
-      // Read from the contract directly (not from a cached hook) to get a fresh value.
-      const shares = await convertToShares(walletClient, {
-        address: pool.vaultAddress,
-        assets: amount,
-      })
-
-      const { emitter, promise } = withdraw({
-        owner: address,
+      const { emitter, promise } = requestRedeem({
+        account: address,
+        asset: pool.vaultAddress,
+        fulfillmentFee: FULFILLMENT_FEE,
         receiver: address,
+        routerAddress,
         shares,
-        vaultAddress: pool.vaultAddress,
         walletClient,
       })
 
@@ -96,38 +108,13 @@ export const useWithdraw = function ({
       })
 
       emitter.on('withdraw-transaction-succeeded', function (receipt) {
+        // TODO(phase-2): when the share tracker is implemented, parse the
+        // `RedeemRequested` log to capture the requestId. For now we trust the
+        // receipt; mocked reads return placeholders on invalidation.
         updateWithdrawOperation({
           status: VaultWithdrawStatus.WITHDRAW_TX_CONFIRMED,
         })
-
         updateNativeBalanceAfterFees(receipt)
-
-        const [withdrawLog] = parseEventLogs({
-          abi: erc4626Abi,
-          eventName: 'Withdraw',
-          logs: receipt.logs,
-        })
-
-        if (withdrawLog) {
-          const { assets } = withdrawLog.args
-
-          // Update token balance
-          queryClient.setQueryData(
-            tokenBalanceQueryKey,
-            (old: bigint | undefined) =>
-              old === undefined ? old : old + assets,
-          )
-
-          // Update vault balance
-          queryClient.setQueryData(
-            getUserVaultBalanceQueryKey({
-              chainId,
-              vaultAddress: pool.vaultAddress,
-            }),
-            (old: bigint | undefined) =>
-              old === undefined ? old : old > assets ? old - assets : BigInt(0),
-          )
-        }
       })
 
       emitter.on('withdraw-transaction-reverted', function (receipt) {

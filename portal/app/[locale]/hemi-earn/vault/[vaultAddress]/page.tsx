@@ -1,4 +1,4 @@
-import { getEarnChainIds, getEarnVaultAddresses } from 'hemi-earn-actions'
+import { getHemiEarnSupportedAssets } from 'hemi-earn-actions'
 
 import { VaultPageContent } from './_components/vaultPageContent'
 
@@ -6,13 +6,12 @@ type Props = {
   params: Promise<{ vaultAddress: string }>
 }
 
-// We include addresses from all chains so the static export covers all
-// possible vault URLs regardless of which network the user has selected.
-// Chain enforcement happens at runtime: `useEarnPools` only returns pools for
-// the active chain, so navigating to a vault address that doesn't belong to
-// the current chain will find no matching pool and redirect back to /hemi-earn.
+// Hemi Earn is single-chain (Hemi) and the new Router exposes multiple deposit
+// assets sharing one share token. The `vaultAddress` route param maps to a
+// deposit asset address. `useEarnPools` filters by the active chain at runtime
+// so visiting an unknown address redirects back to /hemi-earn.
 export const generateStaticParams = function () {
-  const addresses = getEarnChainIds().flatMap(getEarnVaultAddresses)
+  const addresses = getHemiEarnSupportedAssets()
   return [...new Set(addresses)].map(vaultAddress => ({ vaultAddress }))
 }
 

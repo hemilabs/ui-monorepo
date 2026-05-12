@@ -1,7 +1,8 @@
 'use client'
 
 import { EvmFeesSummary } from 'components/evmFeesSummary'
-import { encodeWithdraw } from 'hemi-earn-actions/actions'
+import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
+import { encodeRequestRedeem } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useTranslations } from 'next-intl'
@@ -14,7 +15,6 @@ import { type Address, formatUnits } from 'viem'
 import { useAccount as useEvmAccount, useEstimateGas } from 'wagmi'
 
 import { useVaultForm } from '../_context/vaultFormContext'
-import { useConvertToShares } from '../_hooks/useConvertToShares'
 import { useUserVaultBalance } from '../_hooks/useUserVaultBalance'
 import { useWithdraw } from '../_hooks/useWithdraw'
 import { type VaultWithdrawOperationRunning } from '../_types/vaultOperations'
@@ -62,26 +62,32 @@ export const Withdraw = function ({ onSwitchToDeposit }: Props) {
   })
 
   const canWithdraw = validInput
+  const routerAddress = getHemiEarnRouterAddress()
 
-  const { data: shares } = useConvertToShares({
-    assets: amount,
-    chainId: pool.token.chainId,
-    enabled: canWithdraw,
-    vaultAddress: pool.vaultAddress,
-  })
-
+  // TODO(phase-2): the input here is forwarded to `requestRedeem` as the
+  // `shares` argument, but the UX should be in asset units (hemiBTC, WBTC,
+  // cbBTC) — users do not think in shares. Read the share price from the
+  // StakingVault on Ethereum to (a) display the user's share balance as
+  // asset, and (b) convert the entered asset amount back to shares before
+  // submitting.
+  //
+  // TODO(phase-2): `requestRedeem` is payable with `msg.value = nativeFee`
+  // from `quoteRedeem`. The gas estimate omits that value; once the quote
+  // is consumed in the UI, feed it as `value` here and surface the
+  // LayerZero fee separately from the network gas.
   const { data: withdrawGasUnits, isError: isWithdrawGasUnitsError } =
     useEstimateGas({
       data:
-        canWithdraw && address && shares !== undefined
-          ? encodeWithdraw({
-              owner: address,
+        canWithdraw && address
+          ? encodeRequestRedeem({
+              asset: pool.vaultAddress,
+              fulfillmentFee: BigInt(0),
               receiver: address,
-              shares,
+              shares: amount,
             })
           : undefined,
-      query: { enabled: canWithdraw && !!address && shares !== undefined },
-      to: pool.vaultAddress as Address,
+      query: { enabled: canWithdraw && !!address },
+      to: routerAddress as Address,
     })
 
   const { fees: withdrawGasFees, isError: isWithdrawGasFeesError } =

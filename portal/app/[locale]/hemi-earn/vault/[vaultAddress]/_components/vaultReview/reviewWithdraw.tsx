@@ -7,7 +7,8 @@ import {
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
-import { encodeWithdraw } from 'hemi-earn-actions/actions'
+import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
+import { encodeRequestRedeem } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useTranslations } from 'next-intl'
@@ -17,7 +18,6 @@ import { type Address, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 import { useVaultForm } from '../../_context/vaultFormContext'
-import { useConvertToShares } from '../../_hooks/useConvertToShares'
 import {
   VaultWithdrawStatus,
   type VaultWithdrawStatusType,
@@ -40,25 +40,26 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     withdrawOperation?.status ?? VaultWithdrawStatus.WITHDRAW_TX_PENDING
 
   const amount = parseTokenUnits(input, pool.token)
+  const routerAddress = getHemiEarnRouterAddress()
 
-  const { data: shares } = useConvertToShares({
-    assets: amount,
-    chainId,
-    vaultAddress: pool.vaultAddress,
-  })
-
+  // TODO(phase-2): `amount` is forwarded as `shares` to the encoder, but the
+  // UI shows asset units (hemiBTC/WBTC/cbBTC). Once the share-price read
+  // from the StakingVault is wired, convert asset → shares before encoding.
+  //
+  // TODO(phase-2): gas estimate omits the LayerZero `msg.value` from
+  // `quoteRedeem`. Wire it once the quote is consumed in the UI.
   const { data: withdrawGasUnits, isError: isWithdrawGasUnitsError } =
     useEstimateGas({
-      data:
-        address && shares !== undefined
-          ? encodeWithdraw({
-              owner: address,
-              receiver: address,
-              shares,
-            })
-          : undefined,
-      query: { enabled: !!address && shares !== undefined },
-      to: pool.vaultAddress as Address,
+      data: address
+        ? encodeRequestRedeem({
+            asset: pool.vaultAddress,
+            fulfillmentFee: BigInt(0),
+            receiver: address,
+            shares: amount,
+          })
+        : undefined,
+      query: { enabled: !!address },
+      to: routerAddress as Address,
     })
 
   const { fees: withdrawGasFees, isError: isWithdrawGasFeesError } =

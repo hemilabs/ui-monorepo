@@ -22,6 +22,10 @@ export const useEarnPositions = function () {
 
   return useQuery<EarnPosition[]>({
     enabled: !!address && vaultTokens.length > 0,
+    // `initialData` keeps `isPending` false when the query is disabled
+    // (no wallet connected or placeholder asset state). See the matching
+    // note in `useEarnPools.ts`.
+    initialData: [],
     queryFn: () => [],
     queryKey: [
       ...earnPositionsKeyPrefix,

@@ -130,6 +130,24 @@ export const useWithdraw = function ({
         })
       })
 
+      emitter.on('quote-failed', function () {
+        updateWithdrawOperation({
+          status: VaultWithdrawStatus.WITHDRAW_TX_FAILED,
+        })
+      })
+
+      emitter.on('withdraw-failed', function () {
+        updateWithdrawOperation({
+          status: VaultWithdrawStatus.WITHDRAW_TX_FAILED,
+        })
+      })
+
+      emitter.on('unexpected-error', function () {
+        updateWithdrawOperation({
+          status: VaultWithdrawStatus.WITHDRAW_TX_FAILED,
+        })
+      })
+
       on?.(emitter)
 
       return promise

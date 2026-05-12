@@ -20,6 +20,11 @@ export const useEarnPools = function () {
 
   return useQuery<EarnPool[]>({
     enabled: vaultTokens.length > 0,
+    // `initialData` keeps `isPending` false even when the query is disabled
+    // (no assets configured yet, placeholder state). Without it, React Query
+    // v5 reports `isPending: true` for disabled queries, which would render
+    // the pools table skeleton indefinitely.
+    initialData: [],
     queryFn: () =>
       vaultTokens.map(({ token, vaultAddress }, index) => ({
         apy: { base: 0, incentivized: 0, total: 0 },

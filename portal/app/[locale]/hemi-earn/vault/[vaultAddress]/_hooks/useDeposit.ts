@@ -157,6 +157,24 @@ export const useDeposit = function ({
         })
       })
 
+      emitter.on('quote-failed', function () {
+        updateDepositOperation({
+          status: VaultDepositStatus.DEPOSIT_TX_FAILED,
+        })
+      })
+
+      emitter.on('deposit-failed', function () {
+        updateDepositOperation({
+          status: VaultDepositStatus.DEPOSIT_TX_FAILED,
+        })
+      })
+
+      emitter.on('unexpected-error', function () {
+        updateDepositOperation({
+          status: VaultDepositStatus.DEPOSIT_TX_FAILED,
+        })
+      })
+
       on?.(emitter)
 
       return promise

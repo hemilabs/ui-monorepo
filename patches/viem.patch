@@ -1,0 +1,24 @@
+diff --git a/_cjs/chains/definitions/sepolia.js b/_cjs/chains/definitions/sepolia.js
+--- a/_cjs/chains/definitions/sepolia.js
++++ b/_cjs/chains/definitions/sepolia.js
+@@ -7,3 +7,3 @@
+     name: 'Sepolia',
+-    nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
++    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+     rpcUrls: {
+diff --git a/_esm/chains/definitions/sepolia.js b/_esm/chains/definitions/sepolia.js
+--- a/_esm/chains/definitions/sepolia.js
++++ b/_esm/chains/definitions/sepolia.js
+@@ -4,3 +4,3 @@
+     name: 'Sepolia',
+-    nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
++    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+     rpcUrls: {
+diff --git a/chains/definitions/sepolia.ts b/chains/definitions/sepolia.ts
+--- a/chains/definitions/sepolia.ts
++++ b/chains/definitions/sepolia.ts
+@@ -5,3 +5,3 @@
+   name: 'Sepolia',
+-  nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
++  nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
+   rpcUrls: {

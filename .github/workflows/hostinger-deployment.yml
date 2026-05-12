@@ -31,7 +31,9 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
-      - uses: hemilabs/actions/setup-node-env@e67f2b7d682accaeb026ebe393f8a161b2daa35b # v2.2.0
+      - uses: hemilabs/actions/setup-node-env@8f87619b7f0122c39e14a32514ab3e4e0d4c3966 # v2.3.0
+        with:
+          package-manager: pnpm
       - uses: ./.github/actions/deploy-portal
         with:
           HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}
@@ -85,7 +87,9 @@ jobs:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
-      - uses: hemilabs/actions/setup-node-env@e67f2b7d682accaeb026ebe393f8a161b2daa35b # v2.2.0
+      - uses: hemilabs/actions/setup-node-env@8f87619b7f0122c39e14a32514ab3e4e0d4c3966 # v2.3.0
+        with:
+          package-manager: pnpm
       - uses: ./.github/actions/deploy-portal
         with:
           HOSTINGER_HOST: ${{ secrets.HOSTINGER_HOST }}

@@ -4,7 +4,7 @@ A comprehensive collection of UI components and utilities for blockchain applica
 
 ## 📦 Projects
 
-This monorepo uses npm workspaces, and contains the following projects:
+This monorepo uses pnpm workspaces, and contains the following projects:
 
 - **packages/\***: Contains a comprehensive list of reusable packages.
   - **packages/btc-wallet**: Components for Bitcoin wallet integration (Currently, only Unisat is supported).
@@ -25,10 +25,16 @@ This monorepo uses npm workspaces, and contains the following projects:
 
 ## Setup
 
-To setup the repository, run the following command in the root of the repo:
+This repo pins its package manager via the `packageManager` field in `package.json`. Enable [Corepack](https://nodejs.org/api/corepack.html) once so the correct pnpm version is used automatically:
 
 ```sh
-npm install
+corepack enable
+```
+
+Then, from the root of the repo:
+
+```sh
+pnpm install
 ```
 
 This will setup all dependencies in all the workspaces. Check each workspace's README.md for further installation steps if needed.

@@ -14,7 +14,7 @@ This is a private package that can only be used within the scope of this monorep
 }
 ```
 
-Then run `npm install` from the root of the monorepo.
+Then run `pnpm install` from the root of the monorepo.
 
 ## Overview
 

@@ -34,8 +34,8 @@ beforeEach(function () {
 
 in tests as the vitest config will automatically clear the mocks.
 
-- After writing all the code, format with prettier. Prettier is installed in the root of the repo, and we use its default config. You can get the prettier version from the root's package.json. To format the code, you can use `npm run format:write`
-- Do not export/expose functions unless they are strictly need to. To verify that there are no unused exports, we use `knip`. There is a command in the root repo, `npm run deps:check`
+- After writing all the code, format with prettier. Prettier is installed in the root of the repo, and we use its default config. You can get the prettier version from the root's package.json. To format the code, you can use `pnpm format:write`
+- Do not export/expose functions unless they are strictly need to. To verify that there are no unused exports, we use `knip`. There is a command in the root repo, `pnpm deps:check`
 - Prefer functions like filter, map, reduce, over for, while loops for better readability, unless the complexity/performance impact favors the latter over the former.
 - When placing object keys, place them in ascending sorted order. This applies when creating objects, or defining properties in parameters / arguments / types.
 - Use `camelCase` for variable and function names, as well as file names. If reading a variable from another package does not follow this convention, it is preferred to convert it into a new variable that does follow it, and use the new variable instead.
@@ -43,3 +43,4 @@ in tests as the vitest config will automatically clear the mocks.
 - If changes into a config file are needed, ask before executing them. Config files are sensible changes and may impact many places, so they need to be careful reviewed.
 - Each workspace should have a README, which shall be read as part of the context when working on the workspace.
 - When adding environment variables, update the README of the project with its name. These env variables may also be added to the workflow files in the [../](.github) folder if their values are to be read from Github Actions vars and secrets
+- The pnpm version is pinned in two places: the `packageManager` field of the root `package.json` and the `corepack prepare pnpm@<version>` line of every Dockerfile (portal-backend/api, portal-backend/cron/\*, subgraph-api). When bumping pnpm, update both — they must stay in sync. Each per-service Docker build uses its own directory as the build context, so it can't read the root `package.json`; this duplication is the deliberate trade-off for keeping Dockerfiles self-contained.

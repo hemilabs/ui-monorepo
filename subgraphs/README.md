@@ -22,16 +22,16 @@ Once the containers are up, if it is the first time the subgraph is going to be 
 
 ```sh
 cd <subgraph-folder>
-npm run create-local
+pnpm create-local
 ```
 
 In order to push the subgraph into the container, use
 
 ```sh
 # deploys sepolia, if the container started is a sepolia one.
-npm run deploy-local:sepolia
+pnpm deploy-local:sepolia
 # deploys mainnet, if the container started is a mainnet one.
-npm run deploy-local:mainnet
+pnpm deploy-local:mainnet
 ```
 
 After deploying, the terminal will output the URL for querying the subgraph through HTTP requests.
@@ -49,16 +49,16 @@ The subgraph naming convention should be `hemi-${package.json}.name-${chain}`. F
 After created, a Deploy API Key is listed in the "Dashboard". Authorize the graph-cli by running
 
 ```sh
-npm run graph:auth <API_KEY>
+pnpm graph:auth <API_KEY>
 ```
 
 Once authorized, deploy the subgraph by running
 
 ```sh
 # deploy sepolia in The Subgraph Studio
-npm run deploy-studio:sepolia
+pnpm deploy-studio:sepolia
 # deploy mainnet in The Subgraph Studio
-npm run deploy-studio:mainnet
+pnpm deploy-studio:mainnet
 ```
 
 Note that the version label of the deployment is read from the `package.json` file, so if it is not updated, the deploy will fail. Either update the `package.json` version, or remove the subgraph and re-create it.

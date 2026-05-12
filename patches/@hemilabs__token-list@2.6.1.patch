@@ -1,7 +1,7 @@
-diff --git a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
+diff --git a/src/hemi.tokenlist.json b/src/hemi.tokenlist.json
 index ffd23f5..7c104d8 100644
---- a/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
-+++ b/node_modules/@hemilabs/token-list/src/hemi.tokenlist.json
+--- a/src/hemi.tokenlist.json
++++ b/src/hemi.tokenlist.json
 @@ -403,6 +403,11 @@
        "decimals": 8,
        "extensions": {

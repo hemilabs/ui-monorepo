@@ -87,7 +87,7 @@ pnpm dev
 Run tests with the following command:
 
 ```sh
-npm test
+pnpm test
 ```
 
 ## Building and Deployment

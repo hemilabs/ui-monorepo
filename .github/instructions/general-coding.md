@@ -11,7 +11,7 @@ applyTo: '**'
 - If some functionality needs to be exported into a reusable package, they must be added as a new project under the [packages folder](../../packages).
 - For any web3 code, like reading or writing to smart contracts, use `viem`, and `wagmi` if needed.
 - Do not use arrow functions, except when the function consist of only one statement. In those cases, use arrow functions without brackets.
-- When adding tests, the `test` folder replicates the folder structure where the file being tested is imported from. To run the test, use `npm test` in the project folder.
+- When adding tests, the `test` folder replicates the folder structure where the file being tested is imported from. To run the test, use `pnpm test` in the project folder.
 - When adding a `vitest.config.ts`, use this configuration:
 
 ```typescript

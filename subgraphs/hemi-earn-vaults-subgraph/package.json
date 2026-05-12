@@ -16,7 +16,7 @@
     "graph:auth": "graph auth",
     "prepare": "pnpm run codegen",
     "remove-local": "graph remove --node http://localhost:8020/ $npm_package_name",
-    "pretest": "pnpm run codegen && [ -d node_modules ] || ln -s ../../node_modules node_modules",
+    "pretest": "pnpm run codegen && { [ -d node_modules ] || ln -s ../../node_modules node_modules; }",
     "test": "graph test"
   },
   "dependencies": {

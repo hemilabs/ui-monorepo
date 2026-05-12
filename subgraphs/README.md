@@ -49,7 +49,7 @@ The subgraph naming convention should be `hemi-${package.json}.name-${chain}`. F
 After created, a Deploy API Key is listed in the "Dashboard". Authorize the graph-cli by running
 
 ```sh
-pnpm graph:auth <API_KEY>
+pnpm graph:auth -- <API_KEY>
 ```
 
 Once authorized, deploy the subgraph by running

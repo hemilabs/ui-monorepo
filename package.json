@@ -22,5 +22,5 @@
     "prettier-plugin-tailwindcss": "0.5.9"
   },
   "private": true,
-  "packageManager": "pnpm@10.28.1"
+  "packageManager": "pnpm@10.33.4"
 }

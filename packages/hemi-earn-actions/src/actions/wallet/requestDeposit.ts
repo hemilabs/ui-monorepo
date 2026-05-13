@@ -43,6 +43,7 @@ const runRequestDeposit = ({
   fulfillmentFee,
   receiver,
   routerAddress = getHemiEarnRouterAddress(),
+  sharesOutMin = BigInt(0),
   walletClient,
 }: {
   account: Address
@@ -51,6 +52,10 @@ const runRequestDeposit = ({
   fulfillmentFee: bigint
   receiver: Address
   routerAddress?: Address
+  // Minimum shares accepted on fulfillment (slippage protection enforced
+  // on the remote chain). Defaults to `0n` until the asset → shares
+  // conversion is wired up; phase 2 will compute this from the share price.
+  sharesOutMin?: bigint
   walletClient: WalletClient
 }) =>
   // eslint-disable-next-line complexity -- linear request workflow with branching event emissions
@@ -139,7 +144,7 @@ const runRequestDeposit = ({
         abi: routerAbi,
         account,
         address: routerAddress,
-        args: [asset, amount, receiver, true, fulfillmentFee],
+        args: [asset, amount, sharesOutMin, receiver, true, fulfillmentFee],
         chain: walletClient.chain,
         functionName: 'requestDeposit',
         value: nativeFee,

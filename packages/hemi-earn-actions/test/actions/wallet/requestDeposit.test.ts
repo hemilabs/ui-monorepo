@@ -160,7 +160,21 @@ describe('requestDeposit', function () {
     expect(onUserSignedDeposit).toHaveBeenCalledExactlyOnceWith(zeroHash)
     expect(onSucceeded).toHaveBeenCalledExactlyOnceWith(receipt)
     expect(approve).not.toHaveBeenCalled()
-    expect(writeContract).toHaveBeenCalledOnce()
+    expect(writeContract).toHaveBeenCalledWith(
+      mockWalletClient,
+      expect.objectContaining({
+        args: [
+          zeroAddress,
+          validParameters.amount,
+          BigInt(0),
+          zeroAddress,
+          true,
+          BigInt(0),
+        ],
+        functionName: 'requestDeposit',
+        value: BigInt(42),
+      }),
+    )
     expect(onSettled).toHaveBeenCalledOnce()
   })
 

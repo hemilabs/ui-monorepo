@@ -15,6 +15,7 @@ const someAddress = '0x000000000000000000000000000000000000dEaD' as Address
 describe('getRequest', function () {
   it('maps the on-chain struct into a typed Request', async function () {
     vi.mocked(readContract).mockResolvedValue({
+      amountOutMin: BigInt(40),
       asset: someAddress,
       assets: BigInt(100),
       automatic: true,
@@ -31,6 +32,7 @@ describe('getRequest', function () {
     })
 
     expect(result).toEqual({
+      amountOutMin: BigInt(40),
       asset: someAddress,
       assets: BigInt(100),
       automatic: true,
@@ -52,6 +54,7 @@ describe('getRequest', function () {
   it('preserves narrow kind/status values across the cast', async function () {
     // REDEEM (kind=1) + FINALIZED (status=3)
     vi.mocked(readContract).mockResolvedValue({
+      amountOutMin: BigInt(0),
       asset: someAddress,
       assets: BigInt(0),
       automatic: false,

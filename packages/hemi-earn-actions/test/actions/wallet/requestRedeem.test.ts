@@ -113,7 +113,14 @@ describe('requestRedeem', function () {
     expect(writeContract).toHaveBeenCalledWith(
       mockWalletClient,
       expect.objectContaining({
-        args: [zeroAddress, userBalance, zeroAddress, true, BigInt(0)],
+        args: [
+          zeroAddress,
+          userBalance,
+          BigInt(0),
+          zeroAddress,
+          true,
+          BigInt(0),
+        ],
       }),
     )
   })

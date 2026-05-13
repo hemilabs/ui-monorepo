@@ -6,6 +6,7 @@ import { getHemiEarnRouterAddress } from '../../constants'
 import type { RequestKind, RequestStatus } from '../../types'
 
 export type Request = {
+  amountOutMin: bigint
   asset: Address
   assets: bigint
   automatic: boolean

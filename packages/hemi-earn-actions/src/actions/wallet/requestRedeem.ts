@@ -52,6 +52,7 @@ const calculateAdjustedShares = function ({
 const runRequestRedeem = ({
   account,
   asset,
+  assetsOutMin = BigInt(0),
   fulfillmentFee,
   receiver,
   routerAddress = getHemiEarnRouterAddress(),
@@ -61,6 +62,10 @@ const runRequestRedeem = ({
 }: {
   account: Address
   asset: Address
+  // Minimum underlying assets accepted on fulfillment (slippage protection
+  // enforced on the remote chain). Defaults to `0n` until the share → asset
+  // conversion is wired up; phase 2 will compute this from the share price.
+  assetsOutMin?: bigint
   fulfillmentFee: bigint
   receiver: Address
   routerAddress?: Address
@@ -165,7 +170,14 @@ const runRequestRedeem = ({
         abi: routerAbi,
         account,
         address: routerAddress,
-        args: [asset, adjustedShares, receiver, true, fulfillmentFee],
+        args: [
+          asset,
+          adjustedShares,
+          assetsOutMin,
+          receiver,
+          true,
+          fulfillmentFee,
+        ],
         chain: walletClient.chain,
         functionName: 'requestRedeem',
         value: nativeFee,

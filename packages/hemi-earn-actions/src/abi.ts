@@ -25,6 +25,7 @@ export const routerAbi = [
     inputs: [
       { internalType: 'address', name: 'asset_', type: 'address' },
       { internalType: 'uint256', name: 'assets_', type: 'uint256' },
+      { internalType: 'uint256', name: 'sharesOutMin_', type: 'uint256' },
       { internalType: 'address', name: 'receiver_', type: 'address' },
       { internalType: 'bool', name: 'automatic_', type: 'bool' },
       { internalType: 'uint128', name: 'fulfillmentFee_', type: 'uint128' },
@@ -38,6 +39,7 @@ export const routerAbi = [
     inputs: [
       { internalType: 'address', name: 'asset_', type: 'address' },
       { internalType: 'uint256', name: 'shares_', type: 'uint256' },
+      { internalType: 'uint256', name: 'assetsOutMin_', type: 'uint256' },
       { internalType: 'address', name: 'receiver_', type: 'address' },
       { internalType: 'bool', name: 'automatic_', type: 'bool' },
       { internalType: 'uint128', name: 'fulfillmentFee_', type: 'uint128' },
@@ -102,6 +104,7 @@ export const routerAbi = [
           { internalType: 'address', name: 'asset', type: 'address' },
           { internalType: 'uint256', name: 'assets', type: 'uint256' },
           { internalType: 'uint256', name: 'shares', type: 'uint256' },
+          { internalType: 'uint256', name: 'amountOutMin', type: 'uint256' },
           { internalType: 'address', name: 'receiver', type: 'address' },
           { internalType: 'bool', name: 'automatic', type: 'bool' },
           { internalType: 'uint8', name: 'status', type: 'uint8' },

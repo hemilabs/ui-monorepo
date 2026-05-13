@@ -85,7 +85,7 @@ export const useWithdraw = function ({
 
       const { emitter, promise } = requestRedeem({
         account: address,
-        asset: pool.vaultAddress,
+        asset: pool.assetAddress,
         fulfillmentFee: FULFILLMENT_FEE,
         receiver: address,
         routerAddress,
@@ -160,8 +160,8 @@ export const useWithdraw = function ({
       })
       queryClient.invalidateQueries({
         queryKey: getUserVaultBalanceQueryKey({
+          assetAddress: pool.assetAddress,
           chainId,
-          vaultAddress: pool.vaultAddress,
         }),
       })
       queryClient.invalidateQueries({

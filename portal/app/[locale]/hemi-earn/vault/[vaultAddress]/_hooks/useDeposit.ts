@@ -84,7 +84,7 @@ export const useDeposit = function ({
       const { emitter, promise } = requestDeposit({
         account: address,
         amount,
-        asset: pool.vaultAddress,
+        asset: pool.assetAddress,
         fulfillmentFee: FULFILLMENT_FEE,
         receiver: address,
         routerAddress,
@@ -188,8 +188,8 @@ export const useDeposit = function ({
       })
       queryClient.invalidateQueries({
         queryKey: getUserVaultBalanceQueryKey({
+          assetAddress: pool.assetAddress,
           chainId,
-          vaultAddress: pool.vaultAddress,
         }),
       })
       queryClient.invalidateQueries({

@@ -47,7 +47,7 @@ export const Withdraw = function ({ onSwitchToDeposit }: Props) {
   const amount = parseTokenUnits(input, pool.token)
 
   const { data: vaultBalance, isSuccess: vaultBalanceLoaded } =
-    useUserVaultBalance(pool.vaultAddress, pool.token.chainId)
+    useUserVaultBalance(pool.assetAddress, pool.token.chainId)
 
   const {
     canSubmit: validInput,
@@ -80,7 +80,7 @@ export const Withdraw = function ({ onSwitchToDeposit }: Props) {
       data:
         canWithdraw && address
           ? encodeRequestRedeem({
-              asset: pool.vaultAddress,
+              asset: pool.assetAddress,
               fulfillmentFee: BigInt(0),
               receiver: address,
               shares: amount,

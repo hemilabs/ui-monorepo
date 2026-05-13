@@ -6,16 +6,18 @@ type Props = {
   params: Promise<{ vaultAddress: string }>
 }
 
-// Hemi Earn is single-chain (Hemi) and the new Router exposes multiple deposit
-// assets sharing one share token. The `vaultAddress` route param maps to a
-// deposit asset address. `useEarnPools` filters by the active chain at runtime
-// so visiting an unknown address redirects back to /hemi-earn.
+// Hemi Earn is single-chain (Hemi). Each supported entry pairs a deposit
+// asset with the share token it settles to (multiple assets can map to the
+// same share — e.g. the BTC variants all map to svetBTC). The Next.js route
+// segment is still named `vaultAddress` (the folder is `[vaultAddress]/`)
+// but the value carries the deposit asset address; `useEarnPools` filters at
+// runtime so unknown addresses redirect back to /hemi-earn.
 export const generateStaticParams = function () {
-  const addresses = getHemiEarnSupportedAssets()
-  return [...new Set(addresses)].map(vaultAddress => ({ vaultAddress }))
+  const addresses = getHemiEarnSupportedAssets().map(({ asset }) => asset)
+  return [...new Set(addresses)].map(asset => ({ vaultAddress: asset }))
 }
 
 export default async function Page({ params }: Props) {
-  const { vaultAddress } = await params
-  return <VaultPageContent vaultAddress={vaultAddress} />
+  const { vaultAddress: assetAddress } = await params
+  return <VaultPageContent assetAddress={assetAddress} />
 }

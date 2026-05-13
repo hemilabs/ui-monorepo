@@ -19,10 +19,10 @@ import { VaultInfoCards } from './vaultInfoCards'
 import { VaultNavigation } from './vaultNavigation'
 
 type Props = {
-  vaultAddress: string
+  assetAddress: string
 }
 
-export const VaultPageContent = function ({ vaultAddress }: Props) {
+export const VaultPageContent = function ({ assetAddress }: Props) {
   const router = useRouter()
   const locale = useLocale()
   const [networkType] = useNetworkType()
@@ -30,7 +30,7 @@ export const VaultPageContent = function ({ vaultAddress }: Props) {
 
   const pool = pools?.find(
     p =>
-      p.vaultAddress.toLowerCase() === (vaultAddress as Address).toLowerCase(),
+      p.assetAddress.toLowerCase() === (assetAddress as Address).toLowerCase(),
   )
 
   const networkTypeRef = useRef(networkType)
@@ -82,12 +82,12 @@ export const VaultPageContent = function ({ vaultAddress }: Props) {
           <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-2/3">
             <VaultInfoCards pool={pool} />
             <HistoricalMetrics
+              assetAddress={pool.assetAddress}
               token={pool.token}
-              vaultAddress={pool.vaultAddress}
             />
             <Composition
+              assetAddress={pool.assetAddress}
               chainId={pool.token.chainId}
-              vaultAddress={pool.vaultAddress}
             />
           </div>
           <div className="order-1 lg:order-2 lg:basis-1/3">

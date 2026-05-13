@@ -34,10 +34,10 @@ const compositionColors = [
 
 type Props = {
   chainId: Chain['id']
-  vaultAddress: Address
+  assetAddress: Address
 }
 
-export const Composition = function ({ chainId, vaultAddress }: Props) {
+export const Composition = function ({ assetAddress, chainId }: Props) {
   const t = useTranslations('hemi-earn.vault.composition')
   const [viewMode, setViewMode] = useState<CompositionViewMode>('token')
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
@@ -47,8 +47,8 @@ export const Composition = function ({ chainId, vaultAddress }: Props) {
     isError,
     isPending,
   } = useComposition({
+    assetAddress,
     chainId,
-    vaultAddress,
     viewMode,
   })
 

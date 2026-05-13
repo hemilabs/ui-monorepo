@@ -31,16 +31,16 @@ export const useTotalDeposits = function () {
     // note in `useEarnPools.ts`.
     initialData: [],
     queryFn: () =>
-      vaultTokens.map(({ token, vaultAddress }) => ({
+      vaultTokens.map(({ assetAddress, token }) => ({
         amount: BigInt(0),
+        assetAddress,
         token,
-        vaultAddress,
       })),
     queryKey: [
       ...totalDepositsKeyPrefix,
       networkType,
       address,
-      vaultTokens.map(vt => vt.vaultAddress),
+      vaultTokens.map(vt => vt.assetAddress),
     ],
   })
 

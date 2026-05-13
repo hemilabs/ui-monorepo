@@ -17,19 +17,19 @@ import { HistoricalMetricsChart } from './historicalMetricsChart'
 
 type Props = {
   token: EvmToken
-  vaultAddress: Address
+  assetAddress: Address
 }
 
-export const HistoricalMetrics = function ({ token, vaultAddress }: Props) {
+export const HistoricalMetrics = function ({ assetAddress, token }: Props) {
   const t = useTranslations('hemi-earn.vault.historical-metrics')
   const [period, setPeriod] = useState<MetricPeriod>('1w')
   const [metricType, setMetricType] = useState<MetricType>('deposits')
 
   const { data, isError, isPending } = useHistoricalMetrics({
+    assetAddress,
     metricType,
     period,
     token,
-    vaultAddress,
   })
 
   const lastValue =

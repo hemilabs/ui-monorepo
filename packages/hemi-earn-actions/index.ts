@@ -1,9 +1,9 @@
 export {
   HEMI_EARN_ROUTER_ADDRESS,
-  HEMI_EARN_SHARE_TOKEN,
   HEMI_EARN_SUPPORTED_ASSETS,
+  type HemiEarnAsset,
   getHemiEarnRouterAddress,
-  getHemiEarnShareToken,
+  getHemiEarnShareForAsset,
   getHemiEarnSupportedAssets,
 } from './src/constants'
 

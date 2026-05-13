@@ -31,7 +31,7 @@ export const useEarnPositions = function () {
       ...earnPositionsKeyPrefix,
       networkType,
       address,
-      ...vaultTokens.map(vt => vt.vaultAddress),
+      ...vaultTokens.map(vt => vt.assetAddress),
     ],
   })
 }

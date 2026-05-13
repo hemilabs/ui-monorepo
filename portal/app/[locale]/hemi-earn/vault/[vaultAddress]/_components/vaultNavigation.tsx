@@ -72,7 +72,7 @@ export const VaultNavigation = function ({ pool }: Props) {
                       setIsDropdownOpen(false)
                       router.push(
                         `/hemi-earn/vault/${
-                          p.vaultAddress
+                          p.assetAddress
                         }${queryStringObjectToString({ networkType })}`,
                       )
                     }}
@@ -83,7 +83,7 @@ export const VaultNavigation = function ({ pool }: Props) {
                     })}
                   </button>
                 ),
-                id: p.vaultAddress,
+                id: p.assetAddress,
               }))}
             />
           </div>

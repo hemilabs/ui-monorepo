@@ -18,7 +18,7 @@ import { PoolData } from '../poolData'
 
 const Fallback = () => <span className="text-sm text-neutral-950">-</span>
 
-const DepositAction = function ({ vaultAddress }: { vaultAddress: Address }) {
+const DepositAction = function ({ assetAddress }: { assetAddress: Address }) {
   const router = useRouter()
   const t = useTranslations('hemi-earn')
   const [networkType] = useNetworkType()
@@ -27,7 +27,7 @@ const DepositAction = function ({ vaultAddress }: { vaultAddress: Address }) {
       <Button
         onClick={() =>
           router.push(
-            `/hemi-earn/vault/${vaultAddress}${queryStringObjectToString({
+            `/hemi-earn/vault/${assetAddress}${queryStringObjectToString({
               networkType,
             })}`,
           )
@@ -52,8 +52,8 @@ export const useGetPoolsColumns = function () {
           cell: ({ row }) => (
             <ErrorBoundary fallback={<Fallback />}>
               <PoolData
+                assetAddress={row.original.assetAddress}
                 token={row.original.token}
-                vaultAddress={row.original.vaultAddress}
               />
             </ErrorBoundary>
           ),
@@ -111,7 +111,7 @@ export const useGetPoolsColumns = function () {
         },
         {
           cell: ({ row }) => (
-            <DepositAction vaultAddress={row.original.vaultAddress} />
+            <DepositAction assetAddress={row.original.assetAddress} />
           ),
           header: () => (
             <div className="w-full max-lg:pl-4 lg:pr-4 *:lg:text-right">

@@ -53,14 +53,14 @@ const mockDelay = 2000
 
 type UseComposition = {
   chainId: Chain['id']
-  vaultAddress: Address
+  assetAddress: Address
   viewMode: CompositionViewMode
 }
 
 // TODO: replace mocked data with real API call once the backend endpoint is available.
 export const useComposition = ({
+  assetAddress,
   chainId,
-  vaultAddress,
   viewMode,
 }: UseComposition) =>
   useQuery({
@@ -68,5 +68,5 @@ export const useComposition = ({
       new Promise<CompositionItem[]>(resolve =>
         setTimeout(() => resolve(generateMockData(viewMode)), mockDelay),
       ),
-    queryKey: ['composition', chainId, vaultAddress, viewMode],
+    queryKey: ['composition', chainId, assetAddress, viewMode],
   })

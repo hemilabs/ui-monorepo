@@ -72,7 +72,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       data: address
         ? encodeRequestDeposit({
             amount,
-            asset: pool.vaultAddress,
+            asset: pool.assetAddress,
             fulfillmentFee: BigInt(0),
             receiver: address,
           })
@@ -191,7 +191,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   }
 
   const { data: vaultShareToken } = useToken({
-    address: pool.vaultAddress,
+    address: pool.assetAddress,
     chainId,
   })
 

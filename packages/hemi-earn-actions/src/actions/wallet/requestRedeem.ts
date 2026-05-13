@@ -7,7 +7,7 @@ import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 import { routerAbi } from '../../abi'
 import {
   getHemiEarnRouterAddress,
-  getHemiEarnShareToken,
+  getHemiEarnShareForAsset,
 } from '../../constants'
 import type { RequestRedeemEvents } from '../../types'
 import { quoteRedeem } from '../public/quoteRedeem'
@@ -37,15 +37,11 @@ const calculateAdjustedShares = function ({
   requestedShares: bigint
   userShares: bigint
 }) {
-  // Defense-in-depth: if upstream sized `requestedShares` wrong (e.g. parsed
-  // with the wrong decimals), do not silently sweep to the full balance —
-  // forward the bad value so it surfaces as an on-chain revert instead.
-  if (requestedShares > userShares) {
-    return requestedShares
-  }
   // During withdraw operations, the requested shares may be very close to
   // (but not exactly) the user's balance due to rounding. If above 99.9% of
   // the balance, withdraw the full balance to avoid leaving dust behind.
+  // Invariant: `requestedShares <= userShares` is guaranteed by the upstream
+  // `canRequestRedeem` validation in `runRequestRedeem` before this is called.
   const threshold = (userShares * BigInt(999)) / BigInt(1000)
   if (requestedShares >= threshold) {
     return userShares
@@ -60,7 +56,7 @@ const runRequestRedeem = ({
   receiver,
   routerAddress = getHemiEarnRouterAddress(),
   shares,
-  shareToken = getHemiEarnShareToken(),
+  shareToken,
   walletClient,
 }: {
   account: Address
@@ -69,6 +65,8 @@ const runRequestRedeem = ({
   receiver: Address
   routerAddress?: Address
   shares: bigint
+  // Optional override; defaults to the share registered for `asset` in
+  // `HEMI_EARN_SUPPORTED_ASSETS`.
   shareToken?: Address
   walletClient: WalletClient
 }) =>
@@ -79,9 +77,11 @@ const runRequestRedeem = ({
         throw new Error('Chain is not defined on wallet')
       }
 
+      const shareAddress = shareToken ?? getHemiEarnShareForAsset(asset)
+
       const userShares = await balanceOf(walletClient, {
         account,
-        address: shareToken,
+        address: shareAddress,
       }).catch(() => BigInt(-1))
 
       if (userShares < BigInt(0)) {
@@ -119,7 +119,7 @@ const runRequestRedeem = ({
 
       emitter.emit('check-allowance')
       const currentAllowance = await allowance(walletClient, {
-        address: shareToken,
+        address: shareAddress,
         owner: account,
         spender: routerAddress,
       })
@@ -128,7 +128,7 @@ const runRequestRedeem = ({
         emitter.emit('pre-approve')
 
         const approvalHash = await approve(walletClient, {
-          address: shareToken,
+          address: shareAddress,
           amount: adjustedShares,
           spender: routerAddress,
         }).catch(function (error) {

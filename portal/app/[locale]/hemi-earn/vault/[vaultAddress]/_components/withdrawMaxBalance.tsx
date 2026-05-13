@@ -18,7 +18,7 @@ export const WithdrawMaxBalance = function ({
 }: Props) {
   const { pool } = useVaultForm()
   const { data: balance, isPending } = useUserVaultBalance(
-    pool.vaultAddress,
+    pool.assetAddress,
     pool.token.chainId,
   )
 

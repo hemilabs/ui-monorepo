@@ -14,12 +14,12 @@ export const useHemiEarnTokens = function () {
   const config = useConfig()
 
   const vaultAssets = getHemiEarnSupportedAssets().filter(
-    addr => addr !== zeroAddress,
+    ({ asset }) => asset !== zeroAddress,
   )
 
   const tokenQueries = useQueries({
-    queries: vaultAssets.map(address =>
-      tokenQueryOptions({ address, chainId: hemi.id, config }),
+    queries: vaultAssets.map(({ asset }) =>
+      tokenQueryOptions({ address: asset, chainId: hemi.id, config }),
     ),
   })
 
@@ -35,8 +35,8 @@ export const useHemiEarnTokens = function () {
           (acc, query, index) =>
             query.data && isEvmToken(query.data)
               ? acc.concat({
+                  assetAddress: vaultAssets[index].asset,
                   token: query.data,
-                  vaultAddress: vaultAssets[index],
                 })
               : acc,
           [],

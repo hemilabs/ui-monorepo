@@ -7,10 +7,10 @@ import { type Address } from 'viem'
 
 type Props = {
   token: Token
-  vaultAddress: Address
+  assetAddress: Address
 }
 
-export const PoolData = function ({ token, vaultAddress }: Props) {
+export const PoolData = function ({ assetAddress, token }: Props) {
   const chain = useChain(token.chainId)
 
   return (
@@ -24,9 +24,9 @@ export const PoolData = function ({ token, vaultAddress }: Props) {
         </span>
         <span className="body-text-normal text-neutral-500 hover:text-neutral-950">
           <ExternalLink
-            href={`${chain?.blockExplorers?.default.url}/address/${vaultAddress}`}
+            href={`${chain?.blockExplorers?.default.url}/address/${assetAddress}`}
           >
-            {formatEvmAddress(vaultAddress)}
+            {formatEvmAddress(assetAddress)}
           </ExternalLink>
         </span>
       </div>

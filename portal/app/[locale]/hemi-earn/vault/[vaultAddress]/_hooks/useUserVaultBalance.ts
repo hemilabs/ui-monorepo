@@ -2,12 +2,12 @@ import { useQuery } from '@tanstack/react-query'
 import { type Address, type Chain } from 'viem'
 
 export const getUserVaultBalanceQueryKey = ({
+  assetAddress,
   chainId,
-  vaultAddress,
 }: {
+  assetAddress: Address
   chainId: Chain['id'] | undefined
-  vaultAddress: Address
-}) => ['hemi-earn', 'user-vault-balance', chainId, vaultAddress]
+}) => ['hemi-earn', 'user-vault-balance', chainId, assetAddress]
 
 // TODO(phase-2): mocked intentionally. Real implementation needs to read the
 // user's sVetBTC OFT balance on Hemi and convert it to underlying assets via
@@ -19,10 +19,10 @@ export const getUserVaultBalanceQueryKey = ({
 // compares against this balance — returning shares here would silently break
 // validation under the asset-unit UX.
 export const useUserVaultBalance = (
-  vaultAddress: Address,
+  assetAddress: Address,
   chainId: Chain['id'],
 ) =>
   useQuery({
     queryFn: () => BigInt(0),
-    queryKey: getUserVaultBalanceQueryKey({ chainId, vaultAddress }),
+    queryKey: getUserVaultBalanceQueryKey({ assetAddress, chainId }),
   })

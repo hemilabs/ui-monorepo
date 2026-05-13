@@ -37,17 +37,17 @@ const generateMockMetric = function (
 }
 
 type UseHistoricalMetrics = {
+  assetAddress: Address
   metricType: MetricType
   period: MetricPeriod
   token: EvmToken
-  vaultAddress: Address
 }
 
 export const useHistoricalMetrics = ({
+  assetAddress,
   metricType,
   period,
   token,
-  vaultAddress,
 }: UseHistoricalMetrics) =>
   useQuery({
     queryFn: (): Promise<MetricDataPoint[]> =>
@@ -57,6 +57,6 @@ export const useHistoricalMetrics = ({
       metricType,
       period,
       token.chainId,
-      vaultAddress,
+      assetAddress,
     ],
   })

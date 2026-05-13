@@ -48,11 +48,23 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   //
   // TODO(phase-2): gas estimate omits the LayerZero `msg.value` from
   // `quoteRedeem`. Wire it once the quote is consumed in the UI.
+  //
+  // TODO(phase-2): the withdraw flow needs an approval step. `Router.sol`
+  // does `share.safeTransferFrom(msg.sender, address(this), shares_)` inside
+  // `requestRedeem`, so the user must approve the share token (sVetBTC OFT)
+  // to the Router first. The wallet action (`requestRedeem` in
+  // hemi-earn-actions) already emits `check-allowance` / `pre-approve` /
+  // `user-signed-approval` / `approve-transaction-succeeded`, but this
+  // review screen still renders a single `addWithdrawStep` — mirroring
+  // `reviewDeposit.tsx`, it should: (a) extend `VaultWithdrawStatus` with
+  // APPROVAL_TX_PENDING/FAILED/COMPLETED, (b) call `useNeedsApproval` on the
+  // share token + Router, (c) call `useEstimateApproveErc20Fees`, (d) add an
+  // `addApprovalStep` and prepend it when needed.
   const { data: withdrawGasUnits, isError: isWithdrawGasUnitsError } =
     useEstimateGas({
       data: address
         ? encodeRequestRedeem({
-            asset: pool.vaultAddress,
+            asset: pool.assetAddress,
             fulfillmentFee: BigInt(0),
             receiver: address,
             shares: amount,

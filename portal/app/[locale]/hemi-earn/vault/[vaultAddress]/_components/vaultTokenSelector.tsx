@@ -56,7 +56,7 @@ export const VaultTokenSelector = function ({ disabled, pool }: Props) {
                     setIsDropdownOpen(false)
                     router.push(
                       `/hemi-earn/vault/${
-                        p.vaultAddress
+                        p.assetAddress
                       }${queryStringObjectToString({ networkType })}`,
                     )
                   }}
@@ -66,7 +66,7 @@ export const VaultTokenSelector = function ({ disabled, pool }: Props) {
                   {p.token.symbol}
                 </button>
               ),
-              id: p.vaultAddress,
+              id: p.assetAddress,
             }))}
           />
         </div>

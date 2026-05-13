@@ -95,7 +95,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
         canDeposit && address
           ? encodeRequestDeposit({
               amount,
-              asset: pool.vaultAddress,
+              asset: pool.assetAddress,
               fulfillmentFee: BigInt(0),
               receiver: address,
             })

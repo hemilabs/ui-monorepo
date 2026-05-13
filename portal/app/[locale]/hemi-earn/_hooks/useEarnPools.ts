@@ -26,8 +26,9 @@ export const useEarnPools = function () {
     // the pools table skeleton indefinitely.
     initialData: [],
     queryFn: () =>
-      vaultTokens.map(({ token, vaultAddress }, index) => ({
+      vaultTokens.map(({ assetAddress, token }, index) => ({
         apy: { base: 0, incentivized: 0, total: 0 },
+        assetAddress,
         exposureTokens:
           vaultTokens[(index + 1) % vaultTokens.length]?.token.address !==
           token.address
@@ -43,12 +44,11 @@ export const useEarnPools = function () {
             : [{ address: token.address as Address, chainId: token.chainId }],
         token,
         totalDeposits: BigInt(0),
-        vaultAddress,
       })),
     queryKey: [
       ...earnPoolsKeyPrefix,
       networkType,
-      ...vaultTokens.map(vt => vt.vaultAddress),
+      ...vaultTokens.map(vt => vt.assetAddress),
     ],
   })
 }

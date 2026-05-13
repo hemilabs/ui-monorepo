@@ -49,14 +49,14 @@ export const EvmWallet = function () {
         return undefined
       }
       const id = window.setTimeout(function () {
-        disconnect({ connector })
+        disconnectWallet()
         resetConnect()
       }, STALE_CONNECTING_MS)
       return function clearConnectingAbortTimer() {
         window.clearTimeout(id)
       }
     },
-    [connector, disconnect, resetConnect, status],
+    [connector, disconnectWallet, resetConnect, status],
   )
 
   if (walletIsConnected(status)) {

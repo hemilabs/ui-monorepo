@@ -5,7 +5,6 @@
     "deps:check": "knip",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
-    "postinstall": "patch-package",
     "lint": "eslint --cache .",
     "lint:fix": "eslint --cache . --fix",
     "prepare": "husky"
@@ -19,17 +18,9 @@
     "husky": "9.1.7",
     "knip": "5.61.3",
     "lint-staged": "15.2.10",
-    "patch-package": "8.0.0",
     "prettier": "3.1.1",
     "prettier-plugin-tailwindcss": "0.5.9"
   },
   "private": true,
-  "workspaces": [
-    "packages/*",
-    "portal",
-    "portal-backend/api",
-    "portal-backend/cron/*",
-    "subgraph-api",
-    "subgraphs/*"
-  ]
+  "packageManager": "pnpm@10.33.4"
 }

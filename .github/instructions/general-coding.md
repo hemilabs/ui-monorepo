@@ -11,7 +11,7 @@ applyTo: '**'
 - If some functionality needs to be exported into a reusable package, they must be added as a new project under the [packages folder](../../packages).
 - For any web3 code, like reading or writing to smart contracts, use `viem`, and `wagmi` if needed.
 - Do not use arrow functions, except when the function consist of only one statement. In those cases, use arrow functions without brackets.
-- When adding tests, the `test` folder replicates the folder structure where the file being tested is imported from. To run the test, use `npm test` in the project folder.
+- When adding tests, the `test` folder replicates the folder structure where the file being tested is imported from. To run the test, use `pnpm test` in the project folder.
 - When adding a `vitest.config.ts`, use this configuration:
 
 ```typescript
@@ -34,8 +34,8 @@ beforeEach(function () {
 
 in tests as the vitest config will automatically clear the mocks.
 
-- After writing all the code, format with prettier. Prettier is installed in the root of the repo, and we use its default config. You can get the prettier version from the root's package.json. To format the code, you can use `npm run format:write`
-- Do not export/expose functions unless they are strictly need to. To verify that there are no unused exports, we use `knip`. There is a command in the root repo, `npm run deps:check`
+- After writing all the code, format with prettier. Prettier is installed in the root of the repo, and we use its default config. You can get the prettier version from the root's package.json. To format the code, you can use `pnpm format:write`
+- Do not export/expose functions unless they are strictly need to. To verify that there are no unused exports, we use `knip`. There is a command in the root repo, `pnpm deps:check`
 - Prefer functions like filter, map, reduce, over for, while loops for better readability, unless the complexity/performance impact favors the latter over the former.
 - When placing object keys, place them in ascending sorted order. This applies when creating objects, or defining properties in parameters / arguments / types.
 - Use `camelCase` for variable and function names, as well as file names. If reading a variable from another package does not follow this convention, it is preferred to convert it into a new variable that does follow it, and use the new variable instead.
@@ -43,3 +43,4 @@ in tests as the vitest config will automatically clear the mocks.
 - If changes into a config file are needed, ask before executing them. Config files are sensible changes and may impact many places, so they need to be careful reviewed.
 - Each workspace should have a README, which shall be read as part of the context when working on the workspace.
 - When adding environment variables, update the README of the project with its name. These env variables may also be added to the workflow files in the [../](.github) folder if their values are to be read from Github Actions vars and secrets
+- The pnpm version is pinned via the `packageManager` field in `package.json`: once in the root and once in each service that ships in a Docker image (portal-backend/api, portal-backend/cron/\*, subgraph-api). When bumping pnpm, update all of them — they must stay in sync. The per-service field is required because each Docker build uses its own directory as the build context (so it can't read the root `package.json`) and because corepack's activation is per-user — without the field, the `node` user in the container would download a default pnpm at runtime instead of the pinned version. Dockerfiles only run `corepack enable`; the version itself comes from the service's `package.json`.

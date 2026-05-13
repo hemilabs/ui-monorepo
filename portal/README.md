@@ -79,7 +79,7 @@ See [Environment Variables](./Environment%20Variables.md) to ensure changes to t
 Use the following command:
 
 ```sh
-npm run dev
+pnpm dev
 ```
 
 ## Testing
@@ -87,7 +87,7 @@ npm run dev
 Run tests with the following command:
 
 ```sh
-npm test
+pnpm test
 ```
 
 ## Building and Deployment
@@ -95,7 +95,7 @@ npm test
 Run the following command:
 
 ```sh
-npm run build
+pnpm build
 ```
 
 The .out folder's content should be deployed as a static page.

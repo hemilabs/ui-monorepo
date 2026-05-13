@@ -112,7 +112,7 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: npm run deploy -w portal
+    - run: pnpm --filter portal run deploy
       shell: bash
       name: Build site
       env:

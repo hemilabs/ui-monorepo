@@ -1,11 +1,7 @@
 {
   "ignore": ["portal/i18n/request.ts", "subgraphs/utils/index.ts"],
   "ignoreBinaries": ["ipconfig", "sleep"],
-  "ignoreDependencies": [
-    "@wagmi/core",
-    "eslint-config-next",
-    "eslint-config-prettier"
-  ],
+  "ignoreDependencies": ["eslint-config-next", "eslint-config-prettier"],
   "workspaces": {
     "portal-backend/api": {
       "entry": "scripts/*.js"
@@ -14,7 +10,8 @@
       "entry": "src/mappings/*.ts"
     },
     "subgraphs/hemi-earn-vaults-subgraph": {
-      "entry": ["src/mappings/*.ts", "tests/*.test.ts"]
+      "entry": ["src/mappings/*.ts", "tests/*.test.ts"],
+      "ignoreDependencies": ["assemblyscript"]
     }
   }
 }

@@ -1,0 +1,36 @@
+packages:
+  - 'packages/*'
+  - 'portal'
+  - 'portal-backend/api'
+  - 'portal-backend/cron/*'
+  - 'subgraph-api'
+  - 'subgraphs/*'
+
+minimumReleaseAge: 10080 # 7 days in minutes
+minimumReleaseAgeExclude:
+  - '@hemilabs/*'
+
+blockExoticSubdeps: true
+
+publicHoistPattern:
+  - '*eslint*'
+
+onlyBuiltDependencies:
+  - '@parcel/watcher' # native file watcher used by next-intl in dev mode
+  - '@sentry/cli' # downloads sentry-cli binary for sourcemap upload during `next build`
+  - '@swc/core' # SWC platform binary used by next-intl's build-time AST transforms
+  - 'esbuild' # platform binary used by vitest (via vite) for test transforms
+  - 'sharp' # libvips bindings required by Next.js production image optimization
+  - 'unrs-resolver' # Rust resolver required by eslint-import-resolver-typescript during lint
+
+ignoredBuiltDependencies:
+  - 'bufferutil' # optional native ws speedup; ws falls back to pure JS
+  - 'core-js' # only a sponsor-banner postinstall, no functional payload
+  - 'keccak' # has a pure-JS fallback; the native addon is never loaded in the browser bundle
+  - 'utf-8-validate' # optional native ws speedup; ws falls back to pure JS
+
+patchedDependencies:
+  '@hemilabs/token-list@2.6.1': 'patches/@hemilabs__token-list@2.6.1.patch'
+  '@hemilabs/wallet-watch-asset@1.0.2': 'patches/@hemilabs__wallet-watch-asset@1.0.2.patch'
+  'coinselect@3.1.13': 'patches/coinselect@3.1.13.patch'
+  'viem@*': 'patches/viem.patch'

@@ -30,12 +30,14 @@ runs:
         slack-mention: ${{ inputs.slack-mention }}
         slack-webhook-url: ${{ inputs.slack-webhook-url }}
         status: 'started :stopwatch:'
-    - uses: hemilabs/actions/setup-node-env@e67f2b7d682accaeb026ebe393f8a161b2daa35b # v2.2.0
-    - run: npx --yes graph auth "$GRAPH_API_KEY"
+    - uses: hemilabs/actions/setup-node-env@8f87619b7f0122c39e14a32514ab3e4e0d4c3966 # v2.3.0
+      with:
+        package-manager: pnpm
+    - run: pnpm dlx @graphprotocol/graph-cli auth "$GRAPH_API_KEY"
       shell: bash
       env:
         GRAPH_API_KEY: ${{ inputs.graph-api-key }}
-    - run: npm run deploy
+    - run: pnpm run deploy
       shell: bash
       working-directory: subgraphs/${{ inputs.subgraph }}
     - if: always()

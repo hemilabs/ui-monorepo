@@ -1,6 +1,6 @@
-import { WalletConnector } from 'btc-wallet/connectors/types'
 import { createContext, useState } from 'react'
 
+import { WalletConnector } from '../connectors/types'
 import { ConnectionStatus } from '../types'
 
 type GlobalState = {

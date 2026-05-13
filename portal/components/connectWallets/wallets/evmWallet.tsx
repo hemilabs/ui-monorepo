@@ -6,7 +6,7 @@ import { FiatBalance } from 'components/fiatBalance'
 import { useAllWallets } from 'hooks/useAllWallets'
 import { useChainIsSupported } from 'hooks/useChainIsSupported'
 import { useTranslations } from 'next-intl'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { getNativeToken } from 'utils/nativeToken'
 import { walletIsConnected } from 'utils/wallet'
@@ -41,7 +41,10 @@ export const EvmWallet = function () {
 
   // Disconnect the specific connector that is currently connected
   // This ensures proper cleanup and allows reconnecting the same wallet
-  const disconnectWallet = () => disconnect({ connector })
+  const disconnectWallet = useCallback(
+    () => disconnect({ connector }),
+    [connector, disconnect],
+  )
 
   useEffect(
     function abortConnectingAfterTimeout() {
@@ -56,7 +59,7 @@ export const EvmWallet = function () {
         window.clearTimeout(id)
       }
     },
-    [connector, disconnectWallet, resetConnect, status],
+    [disconnectWallet, resetConnect, status],
   )
 
   if (walletIsConnected(status)) {

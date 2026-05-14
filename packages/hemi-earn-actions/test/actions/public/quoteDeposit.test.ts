@@ -1,4 +1,4 @@
-import { type Client, zeroAddress } from 'viem'
+import { type Address, type Client, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -9,27 +9,65 @@ vi.mock('viem/actions', () => ({
 }))
 
 const client = {} as Client
+const asset = '0x000000000000000000000000000000000000dEaD' as Address
+const routerAddress = '0x000000000000000000000000000000000000bEEf' as Address
 
 describe('quoteDeposit', function () {
   it('forwards args and returns the native fee', async function () {
     vi.mocked(readContract).mockResolvedValue(BigInt(42))
 
     const result = await quoteDeposit({
-      asset: zeroAddress,
+      asset,
       assets: BigInt(100),
       client,
       fulfillmentFee: BigInt(7),
-      routerAddress: zeroAddress,
+      routerAddress,
     })
 
     expect(result).toBe(BigInt(42))
     expect(readContract).toHaveBeenCalledWith(
       client,
       expect.objectContaining({
-        address: zeroAddress,
-        args: [zeroAddress, BigInt(100), BigInt(7)],
+        address: routerAddress,
+        args: [asset, BigInt(100), BigInt(7)],
         functionName: 'quoteDeposit',
       }),
     )
+  })
+
+  it('rejects the zero address as asset', async function () {
+    await expect(
+      quoteDeposit({
+        asset: zeroAddress,
+        assets: BigInt(100),
+        client,
+        fulfillmentFee: BigInt(7),
+        routerAddress,
+      }),
+    ).rejects.toThrow(/`asset` cannot be the zero address/)
+  })
+
+  it('rejects non-positive assets', async function () {
+    await expect(
+      quoteDeposit({
+        asset,
+        assets: BigInt(0),
+        client,
+        fulfillmentFee: BigInt(7),
+        routerAddress,
+      }),
+    ).rejects.toThrow(/`assets` must be greater than zero/)
+  })
+
+  it('rejects negative fulfillmentFee', async function () {
+    await expect(
+      quoteDeposit({
+        asset,
+        assets: BigInt(100),
+        client,
+        fulfillmentFee: BigInt(-1),
+        routerAddress,
+      }),
+    ).rejects.toThrow(/`fulfillmentFee` cannot be negative/)
   })
 })

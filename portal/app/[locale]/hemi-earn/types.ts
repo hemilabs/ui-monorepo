@@ -6,8 +6,8 @@ export type MetricPeriod = '1w' | '1m' | '3m' | '1y'
 export type MetricType = 'deposits' | 'apy'
 
 export type VaultToken = {
-  token: EvmToken
   assetAddress: Address
+  token: EvmToken
 }
 
 export type VaultBreakdown = {
@@ -24,16 +24,16 @@ export type EarnCardData = {
 
 export type EarnPool = {
   apy: { base: number; incentivized: number; total: number }
+  assetAddress: Address
   exposureTokens: { address: Address; chainId: EvmToken['chainId'] }[]
   token: EvmToken
   totalDeposits: bigint
-  assetAddress: Address
 }
 
 export type EarnPosition = {
   apy: { base: number; incentivized: number; total: number }
-  token: EvmToken
   assetAddress: Address
+  token: EvmToken
   yieldEarned: string
   yourDeposit: bigint
 }

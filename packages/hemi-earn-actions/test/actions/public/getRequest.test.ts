@@ -51,6 +51,24 @@ describe('getRequest', function () {
     )
   })
 
+  it('rejects a non-positive requestId', async function () {
+    await expect(
+      getRequest({
+        client,
+        requestId: BigInt(0),
+        routerAddress: zeroAddress,
+      }),
+    ).rejects.toThrow(/`requestId` must be greater than zero/)
+
+    await expect(
+      getRequest({
+        client,
+        requestId: BigInt(-1),
+        routerAddress: zeroAddress,
+      }),
+    ).rejects.toThrow(/`requestId` must be greater than zero/)
+  })
+
   it('preserves narrow kind/status values across the cast', async function () {
     // REDEEM (kind=1) + FINALIZED (status=3)
     vi.mocked(readContract).mockResolvedValue({

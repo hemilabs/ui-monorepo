@@ -1,10 +1,10 @@
-import type { Address, Client } from 'viem'
+import { type Address, type Client, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { routerAbi } from '../../abi'
 import { getHemiEarnRouterAddress } from '../../constants'
 
-export const quoteRedeem = async ({
+export const quoteRedeem = async function ({
   asset,
   client,
   fulfillmentFee,
@@ -16,10 +16,21 @@ export const quoteRedeem = async ({
   fulfillmentFee: bigint
   routerAddress?: Address
   shares: bigint
-}): Promise<bigint> =>
-  readContract(client, {
+}): Promise<bigint> {
+  if (asset === zeroAddress) {
+    throw new Error('quoteRedeem: `asset` cannot be the zero address')
+  }
+  if (shares <= BigInt(0)) {
+    throw new Error('quoteRedeem: `shares` must be greater than zero')
+  }
+  if (fulfillmentFee < BigInt(0)) {
+    throw new Error('quoteRedeem: `fulfillmentFee` cannot be negative')
+  }
+
+  return readContract(client, {
     abi: routerAbi,
     address: routerAddress,
     args: [asset, shares, fulfillmentFee],
     functionName: 'quoteRedeem',
   })
+}

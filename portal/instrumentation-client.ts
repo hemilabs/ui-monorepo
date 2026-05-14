@@ -1,7 +1,5 @@
 import * as Sentry from '@sentry/nextjs'
 
-const enabled = !!process.env.NEXT_PUBLIC_SENTRY_DSN
-
 const unsupportedWalletErrors = [
   '@polkadot/keyring requires direct dependencies',
   "Backpack couldn't override `window.ethereum`.",
@@ -67,23 +65,12 @@ function enableSentry() {
   // complexity IMO.
   const releaseNameRegex = /^portal@\d{8}_\d+$/
 
+  // Inlined at build time via NEXT_PUBLIC_ prefix, so it cannot be tampered
+  // with by browser extensions overwriting globalThis.SENTRY_RELEASE.
+  // See https://github.com/getsentry/sentry-javascript-bundler-plugins/issues/791
+  const release = process.env.NEXT_PUBLIC_SENTRY_RELEASE
+
   Sentry.init({
-    // This is a workaround to filter out errors that are not actionable and
-    // that we know are coming from browser extensions or unsupported wallets.
-    // We want to keep the noise down in Sentry to be able to focus on real
-    // issues.
-    beforeSend(event) {
-      if (event.release && !releaseNameRegex.test(event.release)) {
-        return null // Drops the error event
-      }
-      return event
-    },
-    beforeSendTransaction(event) {
-      if (event.release && !releaseNameRegex.test(event.release)) {
-        return null // Drops the transaction event
-      }
-      return event
-    },
     denyUrls: [
       // Filter all Wallet Connect related urls
       /(https|wss):\/\/.*\.walletconnect\.(com|org)/,
@@ -91,8 +78,8 @@ function enableSentry() {
       // filter in case any of the env variables are undefined, although in prod all should be defined.
     ].filter(Boolean) as (string | RegExp)[],
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
-    enabled,
     ignoreErrors,
+    // Integrations listed here are added alongside the default ones.
     integrations: [
       // See https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/integrations/captureconsole/
       Sentry.captureConsoleIntegration({
@@ -122,14 +109,36 @@ function enableSentry() {
       }),
     ],
     normalizeDepth: 6,
+    release,
     tracesSampleRate:
       process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE &&
       !Number.isNaN(process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE)
         ? Number(process.env.NEXT_PUBLIC_TRACES_SAMPLE_RATE)
         : undefined,
+    // Custom transport wrapper to prevent phantom releases created by browser
+    // extensions that pollute globalThis.SENTRY_RELEASE. Rewrites any foreign
+    // release in the envelope header to our own release. This covers sessions,
+    // client reports and other envelope types.
+    // See https://github.com/getsentry/sentry-javascript-bundler-plugins/issues/791
+    transport(options: Parameters<typeof Sentry.makeFetchTransport>[0]) {
+      const inner = Sentry.makeFetchTransport(options)
+      return {
+        ...inner,
+        send(envelope: Parameters<typeof inner.send>[0]) {
+          const [header] = envelope
+          if (
+            header.release &&
+            !releaseNameRegex.test(header.release as string)
+          ) {
+            header.release = release
+          }
+          return inner.send(envelope)
+        },
+      }
+    },
   })
 }
 
-if (enabled) {
+if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
   enableSentry()
 }

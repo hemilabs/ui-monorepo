@@ -63,6 +63,7 @@ jobs:
           NEXT_PUBLIC_ENABLE_STAKE_TESTNET: ${{ vars.NEXT_PUBLIC_ENABLE_STAKE_TESTNET }}
           NEXT_PUBLIC_PORTAL_API_URL: ${{ vars.NEXT_PUBLIC_PORTAL_API_URL }}
           NEXT_PUBLIC_SENTRY_DSN: ${{ vars.NEXT_PUBLIC_SENTRY_DSN }}
+          NEXT_PUBLIC_SENTRY_RELEASE: ${{ format('{0}@{1}', vars.SENTRY_PROJECT, github.event.release.name) }}
           NEXT_PUBLIC_SUBGRAPHS_API_URL: ${{ vars.NEXT_PUBLIC_SUBGRAPHS_API_URL }}
           NEXT_PUBLIC_TRACES_SAMPLE_RATE: ${{ vars.NEXT_PUBLIC_TRACES_SAMPLE_RATE }}
           NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ vars.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
@@ -70,7 +71,6 @@ jobs:
           SENTRY_ENVIRONMENT: ${{ vars.ENVIRONMENT_NAME }}
           SENTRY_ORG: ${{ vars.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
-          SENTRY_RELEASE: ${{ format('{0}@{1}', vars.SENTRY_PROJECT, github.event.release.name) }}
       - if: ${{ !cancelled() }}
         uses: bloq/actions/notify-deploy-to-slack@ffeb51ecfe42bb78533630b64c1082b09ef3bd2f # v1.6.1
         with:

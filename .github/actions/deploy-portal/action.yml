@@ -84,6 +84,9 @@ inputs:
   NEXT_PUBLIC_SENTRY_DSN:
     required: false
     description: Sentry DSN URL
+  NEXT_PUBLIC_SENTRY_RELEASE:
+    required: false
+    description: Sentry release name
   NEXT_PUBLIC_SUBGRAPHS_API_URL:
     required: false
     description: Subgraphs API URL
@@ -105,9 +108,6 @@ inputs:
   SENTRY_PROJECT:
     required: false
     description: Sentry project
-  SENTRY_RELEASE:
-    required: false
-    description: Sentry Release version
 
 runs:
   using: composite
@@ -138,6 +138,7 @@ runs:
         NEXT_PUBLIC_ENABLE_STAKE_TESTNET: ${{ inputs.NEXT_PUBLIC_ENABLE_STAKE_TESTNET }}
         NEXT_PUBLIC_PORTAL_API_URL: ${{ inputs.NEXT_PUBLIC_PORTAL_API_URL }}
         NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.NEXT_PUBLIC_SENTRY_DSN }}
+        NEXT_PUBLIC_SENTRY_RELEASE: ${{ inputs.NEXT_PUBLIC_SENTRY_RELEASE }}
         NEXT_PUBLIC_SUBGRAPHS_API_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPHS_API_URL }}
         NEXT_PUBLIC_TRACES_SAMPLE_RATE: ${{ inputs.NEXT_PUBLIC_TRACES_SAMPLE_RATE }}
         NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ inputs.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
@@ -145,7 +146,6 @@ runs:
         SENTRY_ENVIRONMENT: ${{ inputs.SENTRY_ENVIRONMENT }}
         SENTRY_ORG: ${{ inputs.SENTRY_ORG }}
         SENTRY_PROJECT: ${{ inputs.SENTRY_PROJECT }}
-        SENTRY_RELEASE: ${{ inputs.SENTRY_RELEASE }}
     - name: Check portal build
       id: portal_build
       uses: andstor/file-existence-action@076e0072799f4942c8bc574a82233e1e4d13e9d6 # v3.0.0

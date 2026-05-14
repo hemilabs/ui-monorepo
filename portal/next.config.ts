@@ -50,12 +50,12 @@ const sentryOptions: SentryBuildOptions = {
     enabled: true,
   },
   release:
-    process.env.SENTRY_ENVIRONMENT && process.env.SENTRY_RELEASE
+    process.env.SENTRY_ENVIRONMENT && process.env.NEXT_PUBLIC_SENTRY_RELEASE
       ? {
           deploy: {
             env: process.env.SENTRY_ENVIRONMENT,
           },
-          name: process.env.SENTRY_RELEASE,
+          name: process.env.NEXT_PUBLIC_SENTRY_RELEASE,
         }
       : undefined,
   // eslint-disable-next-line camelcase

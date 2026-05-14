@@ -6,11 +6,13 @@ import { FiatBalance } from 'components/fiatBalance'
 import { useAllWallets } from 'hooks/useAllWallets'
 import { useChainIsSupported } from 'hooks/useChainIsSupported'
 import { useTranslations } from 'next-intl'
+import { useCallback, useEffect } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { getNativeToken } from 'utils/nativeToken'
 import { walletIsConnected } from 'utils/wallet'
 import {
   useAccount as useEvmAccount,
+  useConnect,
   useDisconnect as useEvmDisconnect,
 } from 'wagmi'
 
@@ -26,17 +28,39 @@ import {
 } from '../hooks/useEvmWalletConnect'
 import { WalletQRCodeView } from '../walletQRCodeView'
 
+const STALE_CONNECTING_MS = 10_000
+
 export const EvmWallet = function () {
   const { chain, chainId, connector, status } = useEvmAccount()
   const t = useTranslations('connect-wallets')
   const { evmWallets } = useAllWallets()
   const chainSupported = useChainIsSupported(chainId)
   const { disconnect } = useEvmDisconnect()
+  const { reset: resetConnect } = useConnect()
   const { handleConnect } = useEvmWalletConnect()
 
   // Disconnect the specific connector that is currently connected
   // This ensures proper cleanup and allows reconnecting the same wallet
-  const disconnectWallet = () => disconnect({ connector })
+  const disconnectWallet = useCallback(
+    () => disconnect({ connector }),
+    [connector, disconnect],
+  )
+
+  useEffect(
+    function abortConnectingAfterTimeout() {
+      if (status !== 'connecting') {
+        return undefined
+      }
+      const id = window.setTimeout(function () {
+        disconnectWallet()
+        resetConnect()
+      }, STALE_CONNECTING_MS)
+      return function clearConnectingAbortTimer() {
+        window.clearTimeout(id)
+      }
+    },
+    [disconnectWallet, resetConnect, status],
+  )
 
   if (walletIsConnected(status)) {
     return (

@@ -3,6 +3,7 @@ export {
   type Request,
   getAssetRegistry,
   getRequest,
+  inversePreviewRedeem,
   previewGatewayDeposit,
   previewGatewayRedeem,
   quoteDeposit,

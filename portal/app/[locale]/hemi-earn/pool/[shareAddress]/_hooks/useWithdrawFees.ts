@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { getGatewayForShare, getStakingVaultForShare } from 'hemi-earn-actions'
 import {
   encodeRequestRedeem,
-  previewGatewayDeposit,
+  inversePreviewRedeem,
 } from 'hemi-earn-actions/actions'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
@@ -22,9 +22,13 @@ type QuoteRedeem = {
 
 // Converts the user-entered asset amount to share units. The Router expects
 // shares in the StakingVault's units, but the input is in the deposit
-// asset's units (USDC, cbBTC, …). The conversion is the inverse of the
-// withdraw preview pipeline: asset → peggedToken (Gateway.previewDeposit) →
-// shares (StakingVault.convertToShares).
+// asset's units (USDC, cbBTC, …). Inverts the redeem pipeline rather than
+// reusing `previewDeposit`: the deposit path applies `mintFee` while the
+// redeem path applies `redeemFee`, and when those differ the two preview
+// functions are not inverses of each other, so reusing `previewDeposit`
+// silently miscomputes the shares to burn. `inversePreviewRedeem` probes
+// `previewRedeem` once and self-calibrates against whatever the Gateway's
+// fee model actually is.
 //
 // `peggedAmount` is the intermediate pegged-token value — exposed because
 // the redeem also burns this many vault assets, which lets `useWithdraw`
@@ -42,11 +46,11 @@ export const useAssetsToShares = ({
     enabled: amount > BigInt(0),
     async queryFn() {
       const ethereumClient = getEvmL1PublicClient(mainnet.id)
-      const peggedAmount = await previewGatewayDeposit({
-        amountIn: amount,
+      const peggedAmount = await inversePreviewRedeem({
+        amount,
         client: ethereumClient,
         gatewayAddress: getGatewayForShare(shareAddress),
-        tokenIn: assetAddress,
+        tokenOut: assetAddress,
       })
       if (peggedAmount <= BigInt(0)) {
         return { peggedAmount: BigInt(0), shares: BigInt(0) }

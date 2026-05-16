@@ -2,39 +2,20 @@
   "hemi-earn": {
     "heading": "Earn yield with Hemi Earn",
     "info": {
-      "across-vaults": "Across {count, plural, one {# vault} other {# vaults}}",
+      "across-pools": "Across {count, plural, one {# pool} other {# pools}}",
       "total-apy": "Total avg. APY",
-      "total-apy-tooltip": "Weighted average APY across all your active vault positions",
+      "total-apy-tooltip": "Weighted average APY across all your active pool positions",
       "total-deposits": "Your total deposits",
-      "total-deposits-tooltip": "Your deposited value across all Hemi Earn vaults",
+      "total-deposits-tooltip": "Your deposited value across all Hemi Earn pools",
       "total-yield": "Total yield earned",
-      "total-yield-tooltip": "Total yield you have earned across all vaults"
+      "total-yield-tooltip": "Total yield you have earned across all pools"
     },
     "navigation": {
       "back": "Back",
       "hemi-earn": "Hemi Earn",
-      "vault-name": "{tokenSymbol} vault"
+      "pool-name": "{tokenSymbol} pool"
     },
-    "subheading": "One click earn for your assets",
-    "table": {
-      "actions": "Actions",
-      "apy": "APY",
-      "apy-base": "Base",
-      "apy-incentivized": "Incentivized",
-      "connect-to-view-positions": "Connect your wallet to view your positions.",
-      "deposit-and-earn-yield": "Deposit and earn yield",
-      "exposure": "Exposure",
-      "manage": "Manage",
-      "my-positions": "My positions",
-      "no-positions-subtitle": "Deposit into a vault to start earning yield.",
-      "no-positions-title": "No active positions",
-      "pool": "Pool",
-      "pools": "Pools",
-      "total-deposits": "Total deposits",
-      "yield-earned": "Yield earned",
-      "your-deposit": "Your deposit"
-    },
-    "vault": {
+    "pool": {
       "apy": "APY",
       "composition": {
         "amount": "Amount",
@@ -62,6 +43,7 @@
         "withdraw-token": "Withdraw {symbol}"
       },
       "form": {
+        "total-fee": "Total gas fee",
         "withdrawing": "Withdrawing..."
       },
       "here-is-your-tx": "Here's your transaction:",
@@ -70,11 +52,30 @@
         "1-year": "1 year",
         "apy": "APY",
         "month": "{count, plural, one {# month} other {# months}}",
-        "title": "Historical metrics",
-        "vault-deposits": "Vault deposits"
+        "pool-deposits": "Pool deposits",
+        "title": "Historical metrics"
       },
-      "total-deposits": "Vault total deposits",
+      "total-deposits": "Pool total deposits",
       "withdraw-successful": "Withdraw successful"
+    },
+    "subheading": "One click earn for your assets",
+    "table": {
+      "actions": "Actions",
+      "apy": "APY",
+      "apy-base": "Base",
+      "apy-incentivized": "Incentivized",
+      "connect-to-view-positions": "Connect your wallet to view your positions.",
+      "deposit-and-earn-yield": "Deposit and earn yield",
+      "exposure": "Exposure",
+      "manage": "Manage",
+      "my-positions": "My positions",
+      "no-positions-subtitle": "Deposit into a pool to start earning yield.",
+      "no-positions-title": "No active positions",
+      "pool": "Pool",
+      "pools": "Pools",
+      "total-deposits": "Total deposits",
+      "yield-earned": "Yield earned",
+      "your-deposit": "Your deposit"
     }
   },
   "bitcoin-yield": {
@@ -144,6 +145,7 @@
     "allowance-load-failed": "Failed to load allowance",
     "amount": "Amount",
     "approve-and-deposit": "Approve and Deposit",
+    "approve-and-withdraw": "Approve and Withdraw",
     "approving": "Approving...",
     "approving-token": "Approving {symbol}",
     "balance": "Balance",

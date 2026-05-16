@@ -1,61 +1,88 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
-import { useNetworkType } from 'hooks/useNetworkType'
-import { useAccount } from 'wagmi'
+import { useQueries } from '@tanstack/react-query'
+import Big from 'big.js'
+import { getStakingVaultForShare } from 'hemi-earn-actions'
+import { useTokenPrices } from 'hooks/useTokenPrices'
+import { mainnet } from 'networks/mainnet'
+import { getEvmL1PublicClient } from 'utils/chainClients'
+import { formatFiatNumber } from 'utils/format'
+import { getTokenPrice } from 'utils/token'
+import { formatUnits } from 'viem'
+import { convertToAssets } from 'viem-erc4626/actions'
 
 import { type EarnCardData } from '../types'
 
-import { useHemiEarnTokens } from './useHemiEarnTokens'
-
-export const totalDepositsKeyPrefix = ['hemi-earn', 'total-deposits']
+import { useEarnPositions } from './useEarnPositions'
 
 type TotalDepositsData = EarnCardData & { totalUsd: string }
 
-// TODO(phase-2): mocked intentionally. Depends on the real `useUserVaultBalance`
-// hook and on share price reads from the StakingVault on Ethereum to convert
-// shares into USD. Out of scope for the Router refactor.
-export const useTotalDeposits = function () {
-  const [networkType] = useNetworkType()
-  const { address } = useAccount()
-  const { data: vaultTokens = [] } = useHemiEarnTokens()
+const positionUsd = (
+  peggedAmount: bigint,
+  peggedTokenDecimals: number,
+  price: string,
+) => Big(formatUnits(peggedAmount, peggedTokenDecimals)).times(price)
 
+// Sums the USD value of every share position the user holds. Each entry is
+// `convertToAssets(stakingVault, shares)` (shares → pegged token) priced via
+// `getTokenPrice(peggedToken)` against the portal price feed — same path
+// `ShareFiatBalance` uses for a single position, just aggregated here.
+export const useTotalDeposits = function () {
   const {
-    data: deposits,
-    isError,
-    isPending,
-  } = useQuery({
-    enabled: !!address && vaultTokens.length > 0,
-    // `initialData` keeps `isPending` false when the query is disabled
-    // (no wallet connected or placeholder asset state). See the matching
-    // note in `useEarnPools.ts`.
-    initialData: [],
-    queryFn: () =>
-      vaultTokens.map(({ assetAddress, token }) => ({
-        amount: BigInt(0),
-        assetAddress,
-        token,
-      })),
-    queryKey: [
-      ...totalDepositsKeyPrefix,
-      networkType,
-      address,
-      vaultTokens.map(vt => vt.assetAddress),
-    ],
+    data: positions = [],
+    isError: isPositionsError,
+    isPending: isPositionsPending,
+  } = useEarnPositions()
+  const { data: prices } = useTokenPrices({ retryOnMount: false })
+
+  const peggedAmountQueries = useQueries({
+    queries: positions.map(position => ({
+      enabled: position.yourDeposit > BigInt(0),
+      queryFn: () =>
+        convertToAssets(getEvmL1PublicClient(mainnet.id), {
+          address: getStakingVaultForShare(position.shareAddress),
+          shares: position.yourDeposit,
+        }),
+      queryKey: [
+        'hemi-earn',
+        'total-deposits',
+        position.shareAddress,
+        position.yourDeposit.toString(),
+      ],
+    })),
   })
 
-  const data: TotalDepositsData | undefined = deposits
-    ? {
-        totalUsd: '0',
-        vaultBreakdown: deposits.map(({ token }) => ({
-          name: token.symbol,
-          tokenAddress: token.address,
-          tokenChainId: token.chainId,
-          value: '$0',
-        })),
-        vaultCount: deposits.length,
-      }
-    : undefined
+  const breakdown = positions.map((position, index) => ({
+    position,
+    usd: positionUsd(
+      peggedAmountQueries[index]?.data ?? BigInt(0),
+      position.peggedToken.decimals,
+      prices ? getTokenPrice(position.peggedToken, prices) : '0',
+    ),
+  }))
+
+  const totalUsd = breakdown
+    .reduce((acc, { usd }) => acc.plus(usd), Big(0))
+    .toFixed(2)
+
+  const data: TotalDepositsData = {
+    poolBreakdown: breakdown.map(({ position, usd }) => ({
+      name: position.shareToken.symbol,
+      tokenAddress: position.shareToken.address,
+      tokenChainId: position.shareToken.chainId,
+      value: `$${formatFiatNumber(usd.toFixed(2))}`,
+    })),
+    poolCount: positions.length,
+    totalUsd,
+  }
+
+  const isPending =
+    isPositionsPending ||
+    peggedAmountQueries.some(q => q.isPending && q.isFetching)
+  const isError =
+    isPositionsError ||
+    (peggedAmountQueries.length > 0 &&
+      peggedAmountQueries.every(q => q.isError))
 
   return { data, isError, isPending }
 }

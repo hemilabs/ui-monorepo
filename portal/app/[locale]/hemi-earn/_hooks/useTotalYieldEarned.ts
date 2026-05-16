@@ -6,14 +6,14 @@ import { formatFiatNumber } from 'utils/format'
 
 import { type EarnCardData } from '../types'
 
-import { useHemiEarnTokens } from './useHemiEarnTokens'
+import { useHemiEarnShares } from './useHemiEarnShares'
 
 type TotalYieldEarnedData = EarnCardData & { totalUsd: number }
 
 // TODO: this is a placeholder until we have the actual APY data available.
 export const useTotalYieldEarned = function () {
   const [networkType] = useNetworkType()
-  const { data: vaultTokens = [] } = useHemiEarnTokens()
+  const { data: shares = [] } = useHemiEarnShares()
 
   const {
     data: queryData,
@@ -27,14 +27,14 @@ export const useTotalYieldEarned = function () {
 
   const data: TotalYieldEarnedData | undefined = queryData
     ? {
-        totalUsd: queryData.totalUsd,
-        vaultBreakdown: vaultTokens.map(({ token }) => ({
-          name: token.symbol,
-          tokenAddress: token.address,
-          tokenChainId: token.chainId,
+        poolBreakdown: shares.map(share => ({
+          name: share.shareToken.symbol,
+          tokenAddress: share.shareToken.address,
+          tokenChainId: share.shareToken.chainId,
           value: `$${formatFiatNumber(0)}`,
         })),
-        vaultCount: vaultTokens.length,
+        poolCount: shares.length,
+        totalUsd: queryData.totalUsd,
       }
     : undefined
 

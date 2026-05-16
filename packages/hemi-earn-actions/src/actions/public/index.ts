@@ -1,3 +1,8 @@
+export { type RegistryEntry, getAssetRegistry } from './getAssetRegistry'
 export { type Request, getRequest } from './getRequest'
+export { previewGatewayDeposit } from './previewGatewayDeposit'
+export { previewGatewayRedeem } from './previewGatewayRedeem'
 export { quoteDeposit } from './quoteDeposit'
+export { quoteDepositFulfilment } from './quoteDepositFulfilment'
 export { quoteRedeem } from './quoteRedeem'
+export { quoteRedeemFulfillment } from './quoteRedeemFulfillment'

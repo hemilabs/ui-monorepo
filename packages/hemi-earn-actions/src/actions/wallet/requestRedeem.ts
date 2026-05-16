@@ -5,10 +5,7 @@ import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 
 import { routerAbi } from '../../abi'
-import {
-  getHemiEarnRouterAddress,
-  getHemiEarnShareForAsset,
-} from '../../constants'
+import { getHemiEarnRouterAddress } from '../../constants'
 import type { RequestRedeemEvents } from '../../types'
 import { quoteRedeem } from '../public/quoteRedeem'
 
@@ -70,9 +67,11 @@ const runRequestRedeem = ({
   receiver: Address
   routerAddress?: Address
   shares: bigint
-  // Optional override; defaults to the share registered for `asset` in
-  // `HEMI_EARN_SUPPORTED_ASSETS`.
-  shareToken?: Address
+  // Share OFT registered for `asset` on the Router. Required — the asset
+  // registry is loaded dynamically by the portal (via `getAssetRegistry`),
+  // so callers always have this value available and the action no longer
+  // tries to resolve it from a static map.
+  shareToken: Address
   walletClient: WalletClient
 }) =>
   // eslint-disable-next-line complexity -- linear redeem workflow with branching event emissions
@@ -82,11 +81,9 @@ const runRequestRedeem = ({
         throw new Error('Chain is not defined on wallet')
       }
 
-      const shareAddress = shareToken ?? getHemiEarnShareForAsset(asset)
-
       const userShares = await balanceOf(walletClient, {
         account,
-        address: shareAddress,
+        address: shareToken,
       }).catch(() => BigInt(-1))
 
       if (userShares < BigInt(0)) {
@@ -124,7 +121,7 @@ const runRequestRedeem = ({
 
       emitter.emit('check-allowance')
       const currentAllowance = await allowance(walletClient, {
-        address: shareAddress,
+        address: shareToken,
         owner: account,
         spender: routerAddress,
       })
@@ -133,7 +130,7 @@ const runRequestRedeem = ({
         emitter.emit('pre-approve')
 
         const approvalHash = await approve(walletClient, {
-          address: shareAddress,
+          address: shareToken,
           amount: adjustedShares,
           spender: routerAddress,
         }).catch(function (error) {

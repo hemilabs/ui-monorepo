@@ -1,54 +1,72 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
+import { useQueries } from '@tanstack/react-query'
+import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { type Address } from 'viem'
+import { mainnet } from 'networks/mainnet'
+import { getEvmL1PublicClient } from 'utils/chainClients'
+import { totalAssets } from 'viem-erc4626/actions'
 
 import { type EarnPool } from '../types'
 
-import { useHemiEarnTokens } from './useHemiEarnTokens'
+import { useHemiEarnShares } from './useHemiEarnShares'
 
-export const earnPoolsKeyPrefix = ['hemi-earn', 'pools']
+export const getEarnPoolTotalAssetsQueryKey = ({
+  networkType,
+  shareAddress,
+}: {
+  networkType: string
+  shareAddress: string
+}) => ['hemi-earn', 'pools', networkType, shareAddress, 'totalAssets']
 
-// TODO(phase-2): mocked intentionally. APY and TVL (`totalAssets`) live on the
-// sVetBTC StakingVault on Ethereum, so this hook will need to read cross-chain
-// (RPC Ethereum or a subgraph). Out of scope for the Router refactor. Returns
-// zero APY/TVL so the pools table renders with placeholder values.
+// TODO(phase-2): APY is still mocked. The real value comes from a
+// share-price time series on the StakingVault (or a subgraph aggregating
+// yield-distributor events). The Router refactor surfaces TVL via
+// `totalAssets`; APY needs its own pipeline before this hook can drop
+// the placeholder.
 export const useEarnPools = function () {
   const [networkType] = useNetworkType()
-  const { data: vaultTokens = [] } = useHemiEarnTokens()
+  const {
+    data: shares = [],
+    isError: isSharesError,
+    isPending: isSharesPending,
+  } = useHemiEarnShares()
 
-  return useQuery<EarnPool[]>({
-    enabled: vaultTokens.length > 0,
-    // `initialData` keeps `isPending` false even when the query is disabled
-    // (no assets configured yet, placeholder state). Without it, React Query
-    // v5 reports `isPending: true` for disabled queries, which would render
-    // the pools table skeleton indefinitely.
-    initialData: [],
-    queryFn: () =>
-      vaultTokens.map(({ assetAddress, token }, index) => ({
-        apy: { base: 0, incentivized: 0, total: 0 },
-        assetAddress,
-        exposureTokens:
-          vaultTokens[(index + 1) % vaultTokens.length]?.token.address !==
-          token.address
-            ? [
-                { address: token.address as Address, chainId: token.chainId },
-                {
-                  address: vaultTokens[(index + 1) % vaultTokens.length].token
-                    .address as Address,
-                  chainId:
-                    vaultTokens[(index + 1) % vaultTokens.length].token.chainId,
-                },
-              ]
-            : [{ address: token.address as Address, chainId: token.chainId }],
-        token,
-        totalDeposits: BigInt(0),
-      })),
-    queryKey: [
-      ...earnPoolsKeyPrefix,
-      networkType,
-      ...vaultTokens.map(vt => vt.assetAddress),
-    ],
+  // TVL reads hit Ethereum L1 (the StakingVault). They're intentionally NOT
+  // part of `isPending` below: the page must be able to render with placeholder
+  // TVL while the cross-chain read is in flight (especially on the anvil
+  // sandbox where the L1 RPC may not actually serve the StakingVault address).
+  // `totalDeposits` falls back to `0n` until the query resolves.
+  const tvlQueries = useQueries({
+    queries: shares.map(share => ({
+      enabled: shares.length > 0,
+      queryFn: () =>
+        totalAssets(getEvmL1PublicClient(mainnet.id), {
+          address: getStakingVaultForShare(share.shareAddress),
+        }),
+      queryKey: getEarnPoolTotalAssetsQueryKey({
+        networkType,
+        shareAddress: share.shareAddress,
+      }),
+      // Fail fast instead of retrying 3× with exponential backoff — a missing
+      // L1 RPC config (or a sandbox setup without an Ethereum-side mirror)
+      // shouldn't keep the UI in a pending state for ~7s on every page load.
+      retry: false,
+    })),
   })
+
+  const data: EarnPool[] = shares.map((share, index) => ({
+    apy: { base: 0, incentivized: 0, total: 0 },
+    assets: share.assets,
+    exposureTokens: share.assets.map(a => ({
+      address: a.address,
+      chainId: a.token.chainId,
+    })),
+    peggedToken: share.peggedToken,
+    shareAddress: share.shareAddress,
+    shareToken: share.shareToken,
+    totalDeposits: tvlQueries[index]?.data ?? BigInt(0),
+  }))
+
+  return { data, isError: isSharesError, isPending: isSharesPending }
 }

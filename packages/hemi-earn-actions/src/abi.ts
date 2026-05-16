@@ -274,4 +274,29 @@ export const routerAbi = [
     name: 'RequestRecovered',
     type: 'event',
   },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'address',
+        name: 'asset',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'share',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'remoteAsset',
+        type: 'address',
+      },
+    ],
+    name: 'AssetDataUpdated',
+    type: 'event',
+  },
 ] as const

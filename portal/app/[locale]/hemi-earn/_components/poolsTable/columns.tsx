@@ -18,7 +18,7 @@ import { PoolData } from '../poolData'
 
 const Fallback = () => <span className="text-sm text-neutral-950">-</span>
 
-const DepositAction = function ({ assetAddress }: { assetAddress: Address }) {
+const DepositAction = function ({ shareAddress }: { shareAddress: Address }) {
   const router = useRouter()
   const t = useTranslations('hemi-earn')
   const [networkType] = useNetworkType()
@@ -27,7 +27,7 @@ const DepositAction = function ({ assetAddress }: { assetAddress: Address }) {
       <Button
         onClick={() =>
           router.push(
-            `/hemi-earn/vault/${assetAddress}${queryStringObjectToString({
+            `/hemi-earn/pool/${shareAddress}${queryStringObjectToString({
               networkType,
             })}`,
           )
@@ -52,8 +52,8 @@ export const useGetPoolsColumns = function () {
           cell: ({ row }) => (
             <ErrorBoundary fallback={<Fallback />}>
               <PoolData
-                assetAddress={row.original.assetAddress}
-                token={row.original.token}
+                shareAddress={row.original.shareAddress}
+                shareToken={row.original.shareToken}
               />
             </ErrorBoundary>
           ),
@@ -70,17 +70,17 @@ export const useGetPoolsColumns = function () {
                     balance={row.original.totalDeposits}
                     customFormatter={usd => `$${formatFiatNumber(usd)}`}
                     queryStatus="success"
-                    token={row.original.token}
+                    token={row.original.peggedToken}
                   />
                 </span>
                 <span className="body-text-normal flex gap-x-1 text-neutral-500">
                   <span>
                     {formatUnits(
                       row.original.totalDeposits,
-                      row.original.token.decimals,
+                      row.original.peggedToken.decimals,
                     )}
                   </span>
-                  <span>{row.original.token.symbol}</span>
+                  <span>{row.original.peggedToken.symbol}</span>
                 </span>
               </div>
             </ErrorBoundary>
@@ -111,7 +111,7 @@ export const useGetPoolsColumns = function () {
         },
         {
           cell: ({ row }) => (
-            <DepositAction assetAddress={row.original.assetAddress} />
+            <DepositAction shareAddress={row.original.shareAddress} />
           ),
           header: () => (
             <div className="w-full max-lg:pl-4 lg:pr-4 *:lg:text-right">

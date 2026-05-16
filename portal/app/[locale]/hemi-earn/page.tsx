@@ -7,7 +7,7 @@ import Skeleton from 'react-loading-skeleton'
 
 import { InfoCards } from './_components/infoCards'
 import { TopSection } from './_components/topSection'
-import { useHemiEarnTokens } from './_hooks/useHemiEarnTokens'
+import { useHemiEarnShares } from './_hooks/useHemiEarnShares'
 
 const EarnTableSkeleton = () => (
   <div className="mt-10 w-full">
@@ -34,7 +34,7 @@ const EarnTable = dynamic(
 )
 
 const TokensGate = function ({ children }: { children: ReactNode }) {
-  const { data, isError } = useHemiEarnTokens()
+  const { data, isError } = useHemiEarnShares()
   if (isError) return null
   if (data) return <>{children}</>
   return <EarnTableSkeleton />

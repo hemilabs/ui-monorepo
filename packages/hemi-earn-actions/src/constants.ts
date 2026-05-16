@@ -1,42 +1,56 @@
 import { type Address, zeroAddress } from 'viem'
 
-// Pair of (deposit asset on Hemi, share token returned on Hemi). Multiple
-// assets can share the same `share` (e.g. hemiBTC, WBTC, cbBTC all map to the
-// svetBTC OFT). Mirrors `Router.assetsData[asset]` on-chain, minus the
-// Ethereum-side `remoteAsset` which is irrelevant on the Hemi-side client.
-export type HemiEarnAsset = {
-  asset: Address
-  share: Address
-}
-
-// TODO: placeholder — replace with the deployed Router on Hemi mainnet once available.
+// TODO: placeholder — replace with the deployed Router on Hemi mainnet once
+// the addresses are confirmed.
 export const HEMI_EARN_ROUTER_ADDRESS: Address = zeroAddress
 
-// TODO: placeholder — replace each entry with the corresponding deposit asset
-// + share token OFT addresses on Hemi once deployed.
+// TODO: placeholder — replace with the deployed Agent on Ethereum mainnet
+// once the addresses are confirmed. Used by the portal to quote the
+// LayerZero fulfillment fee from the remote chain.
+export const HEMI_EARN_AGENT_ADDRESS: Address = zeroAddress
+
+// Block at which the Router was deployed on Hemi. Used as `fromBlock` for the
+// dynamic asset registry's `eth_getLogs` scan so we don't sweep the entire
+// chain history (production RPCs cap the log range — typically 10k–50k blocks
+// per call — and `fromBlock: 0n` would either error out or be very slow).
 //
-// First batch is the vetBTC pool: three BTC variants paired with the svetBTC
-// OFT. Additional Vetro pools (e.g. VUSD with USDC/USDT) can be appended as
-// new entries sharing their own `share` token.
-export const HEMI_EARN_SUPPORTED_ASSETS: readonly HemiEarnAsset[] = [
-  { asset: zeroAddress, share: zeroAddress }, // hemiBTC OFT → svetBTC OFT
-  { asset: zeroAddress, share: zeroAddress }, // WBTC OFT    → svetBTC OFT
-  { asset: zeroAddress, share: zeroAddress }, // cbBTC OFT   → svetBTC OFT
+// TODO: replace with the deployment block of the production Router on Hemi
+// mainnet once the addresses are confirmed. `0n` is fine on the anvil sandbox
+// because the chain only has a few hundred blocks.
+export const HEMI_EARN_ROUTER_BIRTH_BLOCK: bigint = BigInt(0)
+
+// Named address constants for each share OFT registered on the Router.
+// Exported individually so the portal (and other consumers) can import the
+// canonical address without re-declaring it. Mirrors Vetro's pattern
+// (`sVetBtcAddress`, `sVusdAddress` in `@vetro-protocol/earn`).
+//
+// TODO: placeholder — replace with the production svetBTC OFT on Hemi once
+// the addresses are confirmed.
+export const SVETBTC_OFT_ADDRESS: Address = zeroAddress
+
+// Share OFTs registered on the Router. Kept static for two reasons:
+//   1. `generateStaticParams` (build time) needs to know which `/pool/[share]`
+//      routes to prerender, and that lookup can't hit the chain.
+//   2. The set of share tokens changes much less often than the asset list
+//      (a new asset routes into an existing share; new shares mean a brand
+//      new product surface).
+// The asset → share registry is loaded dynamically at runtime via the
+// `getAssetRegistry` public action (it reads `AssetDataUpdated` events from
+// the Router), so adding a new asset to an existing share doesn't require
+// a portal redeploy.
+export const HEMI_EARN_SHARES: readonly Address[] = [
+  SVETBTC_OFT_ADDRESS,
 ] as const
 
 export const getHemiEarnRouterAddress = (): Address => HEMI_EARN_ROUTER_ADDRESS
 
-export const getHemiEarnSupportedAssets = (): HemiEarnAsset[] => [
-  ...HEMI_EARN_SUPPORTED_ASSETS,
-]
+export const getHemiEarnAgentAddress = (): Address => HEMI_EARN_AGENT_ADDRESS
 
-// Looks up the share token an asset settles to. Throws when the asset is not
-// registered so callers fail loudly instead of silently passing zeroAddress
-// downstream.
-export const getHemiEarnShareForAsset = function (asset: Address): Address {
-  const entry = HEMI_EARN_SUPPORTED_ASSETS.find(e => e.asset === asset)
-  if (!entry) {
-    throw new Error(`Asset not registered in Hemi Earn: ${asset}`)
-  }
-  return entry.share
-}
+export const getHemiEarnRouterBirthBlock = (): bigint =>
+  HEMI_EARN_ROUTER_BIRTH_BLOCK
+
+// Unique share OFT addresses registered on the Router. Used to enumerate
+// share-keyed routes (`generateStaticParams`). Filters out `zeroAddress` so
+// unconfigured rows don't leak into the UI.
+export const getHemiEarnShares = (): Address[] =>
+  HEMI_EARN_SHARES.filter(s => s !== zeroAddress)

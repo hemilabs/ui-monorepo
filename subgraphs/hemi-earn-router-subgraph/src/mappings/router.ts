@@ -28,7 +28,7 @@ export function handleRequestFulfilled(event: RequestFulfilledEvent): void {
     return
   }
   request.status = 'FULFILLED'
-  // This are the actual shares the user received
+  // These are the actual shares the user received
   request.amountOut = event.params.amountIn
   request.save()
 }
@@ -49,9 +49,9 @@ export function handleRequestUndone(event: RequestUndoneEvent): void {
     return
   }
   request.status = 'UNDONE'
-  // amount of assets that will be returned to the user,
-  // I think it wil match what was the amountIn of the request, but the contract
-  // does updates it in its code, so let's match for the case the values do differ
+  // Amount of assets the user will receive back. This should match the
+  // request's amountIn, but the contract overwrites this field, so we
+  // capture whatever value actually returns.
   request.amountOut = event.params.amountIn
   request.save()
 }

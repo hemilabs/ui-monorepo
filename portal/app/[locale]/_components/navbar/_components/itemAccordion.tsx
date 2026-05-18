@@ -6,7 +6,7 @@ import { NetworkType, useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
 import { useRouter } from 'i18n/navigation'
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense, startTransition, useEffect, useState } from 'react'
 import { screenBreakpoints } from 'styles'
 import { UrlObject } from 'url'
 
@@ -77,8 +77,8 @@ function ItemAccordionUI({
 
   function handleClick() {
     if (!hasSelectedItem) {
-      handleOpenAccordion()
-      setIsOpen(prev => !prev)
+      setIsOpen(true)
+      startTransition(handleOpenAccordion)
     }
   }
 

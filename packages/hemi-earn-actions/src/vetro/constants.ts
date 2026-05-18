@@ -1,4 +1,4 @@
-import { type Address, zeroAddress } from 'viem'
+import { type Address, isAddressEqual, zeroAddress } from 'viem'
 
 // Maps a Hemi-side share OFT (e.g. sVUSD) to its Ethereum-side anchors:
 //   - `stakingVault`: the ERC-4626 sVetToken contract on Ethereum (used for
@@ -36,7 +36,9 @@ export const HEMI_EARN_VETRO_ANCHORS: readonly HemiEarnVetroAnchor[] = [
 ] as const
 
 const findAnchor = function (shareOft: Address): HemiEarnVetroAnchor {
-  const entry = HEMI_EARN_VETRO_ANCHORS.find(a => a.shareOft === shareOft)
+  const entry = HEMI_EARN_VETRO_ANCHORS.find(a =>
+    isAddressEqual(a.shareOft, shareOft),
+  )
   if (!entry) {
     throw new Error(`Share OFT not registered in Hemi Earn Vetro: ${shareOft}`)
   }

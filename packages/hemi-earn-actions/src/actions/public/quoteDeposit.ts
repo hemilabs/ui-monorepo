@@ -1,4 +1,4 @@
-import { type Address, type Client, zeroAddress } from 'viem'
+import { type Address, type Client, isAddressEqual, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { routerAbi } from '../../abi'
@@ -17,7 +17,7 @@ export const quoteDeposit = async function ({
   fulfillmentFee: bigint
   routerAddress?: Address
 }): Promise<bigint> {
-  if (asset === zeroAddress) {
+  if (isAddressEqual(asset, zeroAddress)) {
     throw new Error('quoteDeposit: `asset` cannot be the zero address')
   }
   if (assets <= BigInt(0)) {

@@ -1,4 +1,4 @@
-import { type Address, zeroAddress } from 'viem'
+import { type Address, isAddressEqual, zeroAddress } from 'viem'
 
 // TODO: placeholder — replace with the deployed Router on Hemi mainnet once
 // the addresses are confirmed.
@@ -53,4 +53,4 @@ export const getHemiEarnRouterBirthBlock = (): bigint =>
 // share-keyed routes (`generateStaticParams`). Filters out `zeroAddress` so
 // unconfigured rows don't leak into the UI.
 export const getHemiEarnShares = (): Address[] =>
-  HEMI_EARN_SHARES.filter(s => s !== zeroAddress)
+  HEMI_EARN_SHARES.filter(s => !isAddressEqual(s, zeroAddress))

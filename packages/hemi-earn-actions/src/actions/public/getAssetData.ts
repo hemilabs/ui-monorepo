@@ -1,4 +1,4 @@
-import { type Address, type Client, zeroAddress } from 'viem'
+import { type Address, type Client, isAddressEqual, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { routerAbi } from '../../abi'
@@ -24,7 +24,7 @@ export const getAssetData = async function ({
   client: Client
   routerAddress?: Address
 }): Promise<AssetData> {
-  if (asset === zeroAddress) {
+  if (isAddressEqual(asset, zeroAddress)) {
     throw new Error('getAssetData: `asset` cannot be the zero address')
   }
 

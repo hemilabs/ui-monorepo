@@ -1,4 +1,4 @@
-import { type Address, type Client, zeroAddress } from 'viem'
+import { type Address, type Client, isAddressEqual, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 
 import { gatewayAbi } from '../../vetro/gatewayAbi'
@@ -18,12 +18,12 @@ export const previewGatewayRedeem = async function ({
   peggedTokenIn: bigint
   tokenOut: Address
 }): Promise<bigint> {
-  if (gatewayAddress === zeroAddress) {
+  if (isAddressEqual(gatewayAddress, zeroAddress)) {
     throw new Error(
       'previewGatewayRedeem: `gatewayAddress` cannot be the zero address',
     )
   }
-  if (tokenOut === zeroAddress) {
+  if (isAddressEqual(tokenOut, zeroAddress)) {
     throw new Error(
       'previewGatewayRedeem: `tokenOut` cannot be the zero address',
     )

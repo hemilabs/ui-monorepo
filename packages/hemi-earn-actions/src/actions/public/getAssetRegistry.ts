@@ -3,6 +3,7 @@ import {
   type BlockNumber,
   type BlockTag,
   type Client,
+  isAddressEqual,
   zeroAddress,
 } from 'viem'
 import { getContractEvents } from 'viem/actions'
@@ -48,7 +49,7 @@ export const getAssetRegistry = async function ({
   const latest = new Map<Address, RegistryEntry>()
   for (const log of logs) {
     const { asset, remoteAsset, share } = log.args
-    if (!asset || !share || share === zeroAddress) continue
+    if (!asset || !share || isAddressEqual(share, zeroAddress)) continue
     latest.set(asset, { asset, remoteAsset: remoteAsset ?? zeroAddress, share })
   }
   return Array.from(latest.values())

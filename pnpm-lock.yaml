@@ -676,22 +676,6 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
-  subgraphs/hemi-earn-vaults-subgraph:
-    dependencies:
-      '@graphprotocol/graph-cli':
-        specifier: 0.97.1
-        version: 0.97.1(@types/node@24.10.2)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
-      '@graphprotocol/graph-ts':
-        specifier: 0.38.1
-        version: 0.38.1
-    devDependencies:
-      assemblyscript:
-        specifier: 0.19.23
-        version: 0.19.23
-      matchstick-as:
-        specifier: 0.6.0
-        version: 0.6.0
-
   subgraphs/hemi-stake-operations-subgraph:
     dependencies:
       '@graphprotocol/graph-cli':

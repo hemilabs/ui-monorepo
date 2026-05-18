@@ -1,0 +1,27 @@
+{
+  "name": "hemi-earn-router-subgraph",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "graph build",
+    "build:hemi": "graph build --network hemi",
+    "codegen": "graph codegen",
+    "create-local": "graph create --node http://localhost:8020/ $(jq -r .name package.json)",
+    "deploy": "pnpm run deploy-studio:hemi",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 $(jq -r .name package.json) --version-label $(jq -r .version package.json)",
+    "deploy-local:hemi": "pnpm run deploy-local -- --network hemi",
+    "deploy-studio:hemi": "graph deploy --node https://api.studio.thegraph.com/deploy/ $(jq -r .name package.json)-hemi  --version-label $(jq -r .version package.json) --network hemi",
+    "graph:auth": "graph auth",
+    "prepare": "pnpm run codegen",
+    "pretest": "pnpm run codegen && { [ -d node_modules ] || ln -s ../../node_modules node_modules; }",
+    "remove-local": "graph remove --node http://localhost:8020/ $(jq -r .name package.json)",
+    "test": "graph test"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.97.1",
+    "@graphprotocol/graph-ts": "0.38.1"
+  },
+  "devDependencies": {
+    "assemblyscript": "0.19.23",
+    "matchstick-as": "0.6.0"
+  }
+}

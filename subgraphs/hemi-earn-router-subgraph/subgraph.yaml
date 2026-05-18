@@ -1,0 +1,35 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Router
+    network: hemi
+    source:
+      abi: Router
+      address: "0x0000000000000000000000000000000000000000"
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Deposit
+      abis:
+        - name: Router
+          file: ./abis/Router.json
+      eventHandlers:
+        - event: DepositRequested(indexed uint256,indexed address,uint256,indexed
+            address,bool)
+          handler: handleDepositRequested
+        - event: RequestFulfilled(indexed uint256,uint256)
+          handler: handleRequestFulfilled
+        - event: RequestClaimed(indexed uint256,indexed address)
+          handler: handleRequestClaimed
+        - event: RequestUndone(indexed uint256,uint256)
+          handler: handleRequestUndone
+        - event: RequestRecovered(indexed uint256,indexed address)
+          handler: handleRequestRecovered
+      file: ./src/mappings/router.ts

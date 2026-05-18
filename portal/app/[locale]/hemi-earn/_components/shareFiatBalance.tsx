@@ -39,7 +39,7 @@ export const ShareFiatBalance = function ({
 
   return (
     <RenderFiatBalance
-      balance={assetsValue ?? BigInt(0)}
+      balance={assetsValue}
       customFormatter={usd => `$${formatFiatNumber(usd)}`}
       queryStatus={status}
       token={peggedToken}

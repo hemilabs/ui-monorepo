@@ -33,8 +33,9 @@ runs:
     - uses: hemilabs/actions/setup-node-env@8f87619b7f0122c39e14a32514ab3e4e0d4c3966 # v2.3.0
       with:
         package-manager: pnpm
-    - run: pnpm dlx @graphprotocol/graph-cli auth "$GRAPH_API_KEY"
+    - run: pnpm run graph:auth "$GRAPH_API_KEY"
       shell: bash
+      working-directory: subgraphs/${{ inputs.subgraph }}
       env:
         GRAPH_API_KEY: ${{ inputs.graph-api-key }}
     - run: pnpm run deploy

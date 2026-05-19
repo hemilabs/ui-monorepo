@@ -1,8 +1,8 @@
 import type { Address, Client } from 'viem'
 import { readContract } from 'viem/actions'
 
-import { routerAbi } from '../../abi'
 import { getHemiEarnRouterAddress } from '../../constants'
+import { routerAbi } from '../../routerAbi'
 import type { RequestKind, RequestStatus } from '../../types'
 
 export type Request = {

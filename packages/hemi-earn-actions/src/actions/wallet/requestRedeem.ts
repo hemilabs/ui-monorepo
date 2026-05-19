@@ -4,8 +4,8 @@ import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 
-import { routerAbi } from '../../abi'
 import { getHemiEarnRouterAddress } from '../../constants'
+import { routerAbi } from '../../routerAbi'
 import type { RequestRedeemEvents } from '../../types'
 import { quoteRedeem } from '../public/quoteRedeem'
 

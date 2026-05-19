@@ -8,8 +8,8 @@ import {
 } from 'viem'
 import { getContractEvents } from 'viem/actions'
 
-import { routerAbi } from '../../abi'
 import { getHemiEarnRouterAddress } from '../../constants'
+import { routerAbi } from '../../routerAbi'
 
 export type RegistryEntry = {
   asset: Address

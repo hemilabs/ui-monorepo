@@ -1,8 +1,8 @@
 import { type Address, type Client, isAddressEqual, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 
-import { routerAbi } from '../../abi'
 import { getHemiEarnRouterAddress } from '../../constants'
+import { routerAbi } from '../../routerAbi'
 
 export type AssetData = {
   // Hemi-side share OFT this deposit asset settles into (e.g. svetBTC).

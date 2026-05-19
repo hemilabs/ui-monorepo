@@ -1,6 +1,6 @@
 import { type Address, encodeFunctionData } from 'viem'
 
-import { routerAbi } from '../../abi'
+import { routerAbi } from '../../routerAbi'
 
 export const encodeRequestDeposit = ({
   amount,

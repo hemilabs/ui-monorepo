@@ -12,7 +12,7 @@ import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
 import { useEarnPositions } from '../../_hooks/useEarnPositions'
-import { TotalYieldEarnedIcon } from '../../_icons/totalYieldEarnedIcon'
+import { SparkleIcon } from '../../_icons/sparkleIcon'
 
 import { useGetPositionsColumns } from './columns'
 
@@ -48,7 +48,7 @@ const NoPositionsEmptyState = function () {
   return (
     <div className="flex min-h-40 w-full flex-col items-center justify-center gap-y-2">
       <div className="flex size-8 items-center justify-center rounded-full border border-orange-100 bg-orange-50">
-        <TotalYieldEarnedIcon />
+        <SparkleIcon />
       </div>
       <div className="flex flex-col items-center gap-y-1 text-center">
         <p className="text-mid-md font-semibold tracking-tight text-neutral-950">

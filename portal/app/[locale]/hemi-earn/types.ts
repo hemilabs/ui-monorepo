@@ -11,18 +11,6 @@ export type EarnAsset = {
   token: EvmToken
 }
 
-export type PoolBreakdown = {
-  name: string
-  tokenAddress: string
-  tokenChainId: EvmToken['chainId']
-  value: string
-}
-
-export type EarnCardData = {
-  poolBreakdown: PoolBreakdown[]
-  poolCount: number
-}
-
 // A pool, in this codebase, is one Vetro share vault on the Ethereum side
 // (e.g. sVUSD) plus every deposit asset registered on the Hemi Router that
 // settles into it. APY and TVL live at the share level — the per-asset rows

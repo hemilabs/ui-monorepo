@@ -676,6 +676,22 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
+  subgraphs/hemi-earn-router-subgraph:
+    dependencies:
+      '@graphprotocol/graph-cli':
+        specifier: 0.97.1
+        version: 0.97.1(@types/node@24.10.2)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
+      '@graphprotocol/graph-ts':
+        specifier: 0.38.1
+        version: 0.38.1
+    devDependencies:
+      assemblyscript:
+        specifier: 0.19.23
+        version: 0.19.23
+      matchstick-as:
+        specifier: 0.6.0
+        version: 0.6.0
+
   subgraphs/hemi-stake-operations-subgraph:
     dependencies:
       '@graphprotocol/graph-cli':
@@ -15609,7 +15625,7 @@ snapshots:
       '@rescript/std': 9.0.0
       graphql: 16.11.0
       graphql-import-node: 0.0.5(graphql@16.11.0)
-      js-yaml: 4.1.0
+      js-yaml: 4.1.1
 
   '@formatjs/ecma402-abstract@2.3.4':
     dependencies:
@@ -16386,7 +16402,7 @@ snapshots:
       is-wsl: 2.2.0
       lilconfig: 3.1.3
       minimatch: 9.0.9
-      semver: 7.7.2
+      semver: 7.7.4
       string-width: 4.2.3
       supports-color: 8.1.1
       widest-line: 3.1.0
@@ -16395,9 +16411,9 @@ snapshots:
 
   '@oclif/plugin-autocomplete@3.2.47':
     dependencies:
-      '@oclif/core': 4.3.0
+      '@oclif/core': 4.11.0
       ansis: 3.17.0
-      debug: 4.4.1
+      debug: 4.4.3(supports-color@8.1.1)
       ejs: 3.1.10
     transitivePeerDependencies:
       - supports-color
@@ -16413,7 +16429,7 @@ snapshots:
 
   '@oclif/plugin-warn-if-update-available@3.1.62':
     dependencies:
-      '@oclif/core': 4.3.0
+      '@oclif/core': 4.11.0
       ansis: 3.17.0
       debug: 4.4.3(supports-color@8.1.1)
       http-call: 5.3.0
@@ -20419,7 +20435,7 @@ snapshots:
 
   docker-compose@1.2.0:
     dependencies:
-      yaml: 2.8.0
+      yaml: 2.8.4
 
   doctrine@2.1.0:
     dependencies:
@@ -22773,7 +22789,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.8.3)(zod@3.25.76)
+      abitype: 1.2.3(typescript@5.8.3)(zod@3.25.76)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.8.3

@@ -2,6 +2,7 @@ import { ComponentProps } from 'react'
 
 export const StakeIcon = (props: ComponentProps<'svg'>) => (
   <svg
+    className="size-full"
     fill="none"
     viewBox="0 0 16 16"
     xmlns="http://www.w3.org/2000/svg"

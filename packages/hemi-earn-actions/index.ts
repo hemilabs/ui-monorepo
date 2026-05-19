@@ -1,13 +1,14 @@
 export {
   HEMI_EARN_AGENT_ADDRESS,
   HEMI_EARN_ROUTER_ADDRESS,
-  HEMI_EARN_ROUTER_BIRTH_BLOCK,
   HEMI_EARN_SHARES,
+  HEMI_EARN_SUPPORTED_ASSETS,
+  type HemiEarnAsset,
   SVETBTC_OFT_ADDRESS,
   getHemiEarnAgentAddress,
   getHemiEarnRouterAddress,
-  getHemiEarnRouterBirthBlock,
   getHemiEarnShares,
+  getHemiEarnSupportedAssets,
 } from './src/constants'
 
 export type {

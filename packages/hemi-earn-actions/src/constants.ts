@@ -9,16 +9,6 @@ export const HEMI_EARN_ROUTER_ADDRESS: Address = zeroAddress
 // LayerZero fulfillment fee from the remote chain.
 export const HEMI_EARN_AGENT_ADDRESS: Address = zeroAddress
 
-// Block at which the Router was deployed on Hemi. Used as `fromBlock` for the
-// dynamic asset registry's `eth_getLogs` scan so we don't sweep the entire
-// chain history (production RPCs cap the log range — typically 10k–50k blocks
-// per call — and `fromBlock: 0n` would either error out or be very slow).
-//
-// TODO: replace with the deployment block of the production Router on Hemi
-// mainnet once the addresses are confirmed. `0n` is fine on the anvil sandbox
-// because the chain only has a few hundred blocks.
-export const HEMI_EARN_ROUTER_BIRTH_BLOCK: bigint = BigInt(0)
-
 // Named address constants for each share OFT registered on the Router.
 // Exported individually so the portal (and other consumers) can import the
 // canonical address without re-declaring it. Mirrors Vetro's pattern
@@ -34,23 +24,44 @@ export const SVETBTC_OFT_ADDRESS: Address = zeroAddress
 //   2. The set of share tokens changes much less often than the asset list
 //      (a new asset routes into an existing share; new shares mean a brand
 //      new product surface).
-// The asset → share registry is loaded dynamically at runtime via the
-// `getAssetRegistry` public action (it reads `AssetDataUpdated` events from
-// the Router), so adding a new asset to an existing share doesn't require
-// a portal redeploy.
 export const HEMI_EARN_SHARES: readonly Address[] = [
   SVETBTC_OFT_ADDRESS,
 ] as const
 
+// One deposit asset registered on the Router. `asset` is the Hemi-side OFT
+// the user holds and passes to `requestDeposit`; `share` is the share OFT
+// it settles into (must be one of `HEMI_EARN_SHARES`).
+export type HemiEarnAsset = {
+  asset: Address
+  share: Address
+}
+
+// Hardcoded asset → share registry. The Router exposes `assetsData(asset)`
+// for per-key lookups but no enumeration view, so the portal mirrors the
+// list here. Adding a new deposit asset to an existing share requires
+// appending an entry and shipping a new portal build — tracked as a
+// follow-up to migrate to a subgraph (or a contract-level enumeration
+// getter) once one of those lands.
+//
+// TODO: populate with the `(asset OFT, share OFT)` pairs once
+// SC team deploys.
+export const HEMI_EARN_SUPPORTED_ASSETS: readonly HemiEarnAsset[] = [] as const
+
 export const getHemiEarnRouterAddress = (): Address => HEMI_EARN_ROUTER_ADDRESS
 
 export const getHemiEarnAgentAddress = (): Address => HEMI_EARN_AGENT_ADDRESS
-
-export const getHemiEarnRouterBirthBlock = (): bigint =>
-  HEMI_EARN_ROUTER_BIRTH_BLOCK
 
 // Unique share OFT addresses registered on the Router. Used to enumerate
 // share-keyed routes (`generateStaticParams`). Filters out `zeroAddress` so
 // unconfigured rows don't leak into the UI.
 export const getHemiEarnShares = (): Address[] =>
   HEMI_EARN_SHARES.filter(s => !isAddressEqual(s, zeroAddress))
+
+// Deposit assets registered for any of the active share OFTs. Filters out
+// any entry whose `asset` or `share` is still the zero-address placeholder.
+export const getHemiEarnSupportedAssets = (): HemiEarnAsset[] =>
+  HEMI_EARN_SUPPORTED_ASSETS.filter(
+    ({ asset, share }) =>
+      !isAddressEqual(asset, zeroAddress) &&
+      !isAddressEqual(share, zeroAddress),
+  )

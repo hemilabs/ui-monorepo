@@ -1,5 +1,4 @@
 export { type AssetData, getAssetData } from './getAssetData'
-export { type RegistryEntry, getAssetRegistry } from './getAssetRegistry'
 export { type Request, getRequest } from './getRequest'
 export { inversePreviewRedeem } from './inversePreviewRedeem'
 export { previewGatewayDeposit } from './previewGatewayDeposit'

@@ -1,9 +1,7 @@
 export {
   type AssetData,
-  type RegistryEntry,
   type Request,
   getAssetData,
-  getAssetRegistry,
   getRequest,
   inversePreviewRedeem,
   previewGatewayDeposit,

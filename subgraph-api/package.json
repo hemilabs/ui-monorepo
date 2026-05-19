@@ -6,8 +6,8 @@
     "start": "DOTENV_CONFIG_QUIET=true node --import=./src/instrument.ts server.ts"
   },
   "dependencies": {
-    "@sentry/core": "10.43.0",
-    "@sentry/node": "10.43.0",
+    "@sentry/core": "10.53.1",
+    "@sentry/node": "10.53.1",
     "@tsconfig/node24": "24.0.3",
     "config": "3.3.12",
     "cors": "2.8.5",

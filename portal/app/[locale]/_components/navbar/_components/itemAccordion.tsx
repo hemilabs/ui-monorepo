@@ -6,7 +6,7 @@ import { NetworkType, useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
 import { useUmami } from 'hooks/useUmami'
 import { useRouter } from 'i18n/navigation'
-import { Suspense, startTransition, useEffect, useState } from 'react'
+import { Suspense, startTransition, useEffect, useRef, useState } from 'react'
 import { screenBreakpoints } from 'styles'
 import { UrlObject } from 'url'
 
@@ -35,6 +35,7 @@ function ItemAccordionUI({
   width = 0,
 }: Omit<Props, 'event' | 'urlToBeSelected'> & { networkType: NetworkType }) {
   const [isOpen, setIsOpen] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
   const pathname = usePathnameWithoutLocale()
   const router = useRouter()
 
@@ -100,25 +101,32 @@ function ItemAccordionUI({
         </div>
       </AccordionContainer>
       <div
-        className={`mt-1 overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? 'max-h-32' : 'max-h-0'
-        }`}
+        className="mt-1 overflow-hidden transition-[height] duration-300 ease-in-out"
+        style={{
+          height: isOpen ? contentRef.current?.scrollHeight ?? 'auto' : 0,
+        }}
       >
-        {items.map(function ({ event, href, text: itemText, urlToBeSelected }) {
-          const isSelected = matchesPath(pathname, urlToBeSelected)
+        <div ref={contentRef}>
+          {items.map(function ({
+            event,
+            href,
+            text: itemText,
+            urlToBeSelected,
+          }) {
+            const isSelected = matchesPath(pathname, urlToBeSelected)
 
-          return (
-            <Link
-              href={href}
-              key={itemText}
-              onClick={
-                eventEnabled && eventTrack && !!event
-                  ? () => eventTrack(event)
-                  : undefined
-              }
-            >
-              <div
-                className={`group/item relative ml-4 flex flex-col gap-1 px-5 py-1.5 text-sm
+            return (
+              <Link
+                href={href}
+                key={itemText}
+                onClick={
+                  eventEnabled && eventTrack && !!event
+                    ? () => eventTrack(event)
+                    : undefined
+                }
+              >
+                <div
+                  className={`group/item relative ml-4 flex flex-col gap-1 px-5 py-1.5 text-sm
                   before:absolute before:left-0 before:top-0 before:h-full before:w-0.5 before:bg-neutral-200
                   ${
                     isSelected
@@ -126,12 +134,13 @@ function ItemAccordionUI({
                       : ''
                   }
                 `}
-              >
-                <ItemText selected={isSelected} text={itemText} />
-              </div>
-            </Link>
-          )
-        })}
+                >
+                  <ItemText selected={isSelected} text={itemText} />
+                </div>
+              </Link>
+            )
+          })}
+        </div>
       </div>
     </div>
   )

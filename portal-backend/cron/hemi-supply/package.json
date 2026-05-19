@@ -2,7 +2,7 @@
   "name": "hemi-supply-cron",
   "version": "1.1.0",
   "dependencies": {
-    "@sentry/node": "10.5.0",
+    "@sentry/node": "10.53.1",
     "redis": "4.7.1",
     "safe-async-fn": "1.0.0",
     "startinterval2": "1.0.1"

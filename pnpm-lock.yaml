@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  postcss: 8.5.14
+
 patchedDependencies:
   '@hemilabs/token-list@2.6.1':
     hash: 44296f3915d68c777468256a8b6e514b9aaf70d347654dac093ba95b410a7e92
@@ -6480,7 +6483,7 @@ packages:
     engines: { node: ^10 || ^12 || >=14 }
     hasBin: true
     peerDependencies:
-      postcss: ^8.1.0
+      postcss: 8.5.14
 
   available-typed-arrays@1.0.7:
     resolution:
@@ -11802,7 +11805,7 @@ packages:
       }
     engines: { node: '>=14.0.0' }
     peerDependencies:
-      postcss: ^8.0.0
+      postcss: 8.5.14
 
   postcss-import@16.1.0:
     resolution:
@@ -11811,7 +11814,7 @@ packages:
       }
     engines: { node: '>=18.0.0' }
     peerDependencies:
-      postcss: ^8.0.0
+      postcss: 8.5.14
 
   postcss-js@4.1.0:
     resolution:
@@ -11820,7 +11823,7 @@ packages:
       }
     engines: { node: ^12 || ^14 || >= 16 }
     peerDependencies:
-      postcss: ^8.4.21
+      postcss: 8.5.14
 
   postcss-load-config@4.0.2:
     resolution:
@@ -11829,7 +11832,7 @@ packages:
       }
     engines: { node: '>= 14' }
     peerDependencies:
-      postcss: '>=8.0.9'
+      postcss: 8.5.14
       ts-node: '>=9.0.0'
     peerDependenciesMeta:
       postcss:
@@ -11844,7 +11847,7 @@ packages:
       }
     engines: { node: '>=12.0' }
     peerDependencies:
-      postcss: ^8.2.14
+      postcss: 8.5.14
 
   postcss-selector-parser@6.1.2:
     resolution:
@@ -11858,13 +11861,6 @@ packages:
       {
         integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==,
       }
-
-  postcss@8.4.31:
-    resolution:
-      {
-        integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==,
-      }
-    engines: { node: ^10 || ^12 || >=14 }
 
   postcss@8.5.14:
     resolution:
@@ -22570,7 +22566,7 @@ snapshots:
       '@next/env': 15.5.3
       '@swc/helpers': 0.5.15
       caniuse-lite: 1.0.30001791
-      postcss: 8.4.31
+      postcss: 8.5.14
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
       styled-jsx: 5.1.6(@babel/core@7.29.0)(react@19.1.1)
@@ -23055,12 +23051,6 @@ snapshots:
       util-deprecate: 1.0.2
 
   postcss-value-parser@4.2.0: {}
-
-  postcss@8.4.31:
-    dependencies:
-      nanoid: 3.3.12
-      picocolors: 1.1.1
-      source-map-js: 1.2.1
 
   postcss@8.5.14:
     dependencies:

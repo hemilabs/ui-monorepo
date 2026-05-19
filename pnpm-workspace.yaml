@@ -18,6 +18,9 @@ onlyBuiltDependencies:
   - 'sharp' # libvips bindings required by Next.js production image optimization
   - 'unrs-resolver' # Rust resolver required by eslint-import-resolver-typescript during lint
 
+overrides:
+  postcss: '8.5.14' # Needed as Next pins 8.4.31 exactly
+
 packages:
   - 'packages/*'
   - 'portal'

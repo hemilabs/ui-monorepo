@@ -6,14 +6,14 @@ import { useNetworkType } from 'hooks/useNetworkType'
 import { formatApyDisplay } from '../_utils'
 import { type EarnCardData } from '../types'
 
-import { useHemiEarnTokens } from './useHemiEarnTokens'
+import { useHemiEarnShares } from './useHemiEarnShares'
 
 type TotalAvgApyData = EarnCardData & { apy: number }
 
 // TODO: this is a placeholder until we have the actual APY data available.
 export const useTotalAvgApy = function () {
   const [networkType] = useNetworkType()
-  const { data: vaultTokens = [] } = useHemiEarnTokens()
+  const { data: shares = [] } = useHemiEarnShares()
 
   const {
     data: queryData,
@@ -28,13 +28,13 @@ export const useTotalAvgApy = function () {
   const data: TotalAvgApyData | undefined = queryData
     ? {
         apy: queryData.apy,
-        vaultBreakdown: vaultTokens.map(({ token }) => ({
-          name: token.symbol,
-          tokenAddress: token.address,
-          tokenChainId: token.chainId,
+        poolBreakdown: shares.map(share => ({
+          name: share.shareToken.symbol,
+          tokenAddress: share.shareToken.address,
+          tokenChainId: share.shareToken.chainId,
           value: formatApyDisplay(0),
         })),
-        vaultCount: vaultTokens.length,
+        poolCount: shares.length,
       }
     : undefined
 

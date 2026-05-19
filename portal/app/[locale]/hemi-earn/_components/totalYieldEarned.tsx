@@ -7,15 +7,15 @@ import { useTotalYieldEarned } from '../_hooks/useTotalYieldEarned'
 import { TotalYieldEarnedIcon } from '../_icons/totalYieldEarnedIcon'
 
 import { EarnCard } from './earnCard'
-import { VaultBreakdownTooltip } from './vaultBreakdownTooltip'
+import { PoolBreakdownTooltip } from './poolBreakdownTooltip'
 
 export const TotalYieldEarned = function () {
   const { data, isError, isPending } = useTotalYieldEarned()
   const t = useTranslations('hemi-earn')
 
   const tooltipContent =
-    data && data.vaultBreakdown.length > 0 ? (
-      <VaultBreakdownTooltip vaultBreakdown={data.vaultBreakdown} />
+    data && data.poolBreakdown.length > 0 ? (
+      <PoolBreakdownTooltip poolBreakdown={data.poolBreakdown} />
     ) : undefined
 
   return (
@@ -24,7 +24,7 @@ export const TotalYieldEarned = function () {
       isError={isError}
       isLoading={isPending}
       label={t('info.total-yield')}
-      subtitle={t('info.across-vaults', { count: data?.vaultCount ?? 0 })}
+      subtitle={t('info.across-pools', { count: data?.poolCount ?? 0 })}
       tooltipContent={tooltipContent}
       value={<>${formatFiatNumber(data?.totalUsd ?? 0)}</>}
     />

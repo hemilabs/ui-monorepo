@@ -2,39 +2,20 @@
   "hemi-earn": {
     "heading": "Obtenha rendimento com Hemi Earn",
     "info": {
-      "across-vaults": "Em {count, plural, one {# vault} other {# vaults}}",
+      "across-pools": "Em {count, plural, one {# fundo} other {# fundos}}",
       "total-apy": "TEA média total",
       "total-apy-tooltip": "TEA média ponderada em todas as suas posições ativas",
       "total-deposits": "Seus depósitos totais",
-      "total-deposits-tooltip": "Seu valor depositado em todos os vaults do Hemi Earn",
+      "total-deposits-tooltip": "Seu valor depositado em todos os fundos do Hemi Earn",
       "total-yield": "Rendimento total ganho",
-      "total-yield-tooltip": "Rendimento total que você ganhou em todos os vaults"
+      "total-yield-tooltip": "Rendimento total que você ganhou em todos os fundos"
     },
     "navigation": {
       "back": "Voltar",
       "hemi-earn": "Hemi Earn",
-      "vault-name": "vault {tokenSymbol}"
+      "pool-name": "fundo {tokenSymbol}"
     },
-    "subheading": "Ganhe rendimento com seus ativos em um clique",
-    "table": {
-      "actions": "Ações",
-      "apy": "TEA",
-      "apy-base": "Base",
-      "apy-incentivized": "Incentivada",
-      "connect-to-view-positions": "Conecte a sua carteira para ver as suas posições.",
-      "deposit-and-earn-yield": "Depositar e ganhar rendimento",
-      "exposure": "Exposição",
-      "manage": "Gerenciar",
-      "my-positions": "Minhas posições",
-      "no-positions-subtitle": "Deposite em um vault para começar a ganhar rendimento.",
-      "no-positions-title": "Nenhuma posição ativa",
-      "pool": "Pool",
-      "pools": "Pools",
-      "total-deposits": "Depósitos totais",
-      "yield-earned": "Rendimento ganho",
-      "your-deposit": "Seu depósito"
-    },
-    "vault": {
+    "pool": {
       "apy": "TEA",
       "composition": {
         "amount": "Valor",
@@ -62,6 +43,7 @@
         "withdraw-token": "Sacar {symbol}"
       },
       "form": {
+        "total-fee": "Custo total de gas",
         "withdrawing": "Sacando..."
       },
       "here-is-your-tx": "Aqui está sua transação:",
@@ -70,11 +52,30 @@
         "1-year": "1 ano",
         "apy": "TEA",
         "month": "{count, plural, one {# mês} other {# meses}}",
-        "title": "Métricas históricas",
-        "vault-deposits": "Depósitos do vault"
+        "pool-deposits": "Depósitos do fundo",
+        "title": "Métricas históricas"
       },
-      "total-deposits": "Depósitos totais do vault",
+      "total-deposits": "Depósitos totais do fundo",
       "withdraw-successful": "Saque realizado com sucesso"
+    },
+    "subheading": "Ganhe rendimento com seus ativos em um clique",
+    "table": {
+      "actions": "Ações",
+      "apy": "TEA",
+      "apy-base": "Base",
+      "apy-incentivized": "Incentivada",
+      "connect-to-view-positions": "Conecte a sua carteira para ver as suas posições.",
+      "deposit-and-earn-yield": "Depositar e ganhar rendimento",
+      "exposure": "Exposição",
+      "manage": "Gerenciar",
+      "my-positions": "Minhas posições",
+      "no-positions-subtitle": "Deposite em um fundo para começar a ganhar rendimento.",
+      "no-positions-title": "Nenhuma posição ativa",
+      "pool": "Fundo",
+      "pools": "Fundos",
+      "total-deposits": "Depósitos totais",
+      "yield-earned": "Rendimento ganho",
+      "your-deposit": "Seu depósito"
     }
   },
   "bitcoin-yield": {
@@ -144,6 +145,7 @@
     "allowance-load-failed": "Falha ao carregar a margem",
     "amount": "Quantia",
     "approve-and-deposit": "Aprovar e Depositar",
+    "approve-and-withdraw": "Aprovar e Sacar",
     "approving": "A aprovar...",
     "approving-token": "A aprovar {symbol}",
     "balance": "Saldo",

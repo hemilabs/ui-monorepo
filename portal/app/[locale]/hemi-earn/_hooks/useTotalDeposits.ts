@@ -1,91 +1,88 @@
 'use client'
 
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueries } from '@tanstack/react-query'
 import Big from 'big.js'
-import { useNetworkType } from 'hooks/useNetworkType'
+import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { useTokenPrices } from 'hooks/useTokenPrices'
+import { mainnet } from 'networks/mainnet'
+import { getEvmL1PublicClient } from 'utils/chainClients'
 import { formatFiatNumber } from 'utils/format'
 import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
-import { useAccount, useConfig } from 'wagmi'
-import { getPublicClient } from 'wagmi/actions'
+import { convertToAssets } from 'viem-erc4626/actions'
 
 import { type EarnCardData } from '../types'
-import { userVaultBalanceQueryOptions } from '../vault/[vaultAddress]/_hooks/useUserVaultBalance'
 
-import { useHemiEarnTokens } from './useHemiEarnTokens'
-
-export const totalDepositsKeyPrefix = ['hemi-earn', 'total-deposits']
+import { useEarnPositions } from './useEarnPositions'
 
 type TotalDepositsData = EarnCardData & { totalUsd: string }
 
-export const useTotalDeposits = function () {
-  const [networkType] = useNetworkType()
-  const { address } = useAccount()
-  const config = useConfig()
-  const queryClient = useQueryClient()
-  const { data: vaultTokens = [] } = useHemiEarnTokens()
-  const { data: prices } = useTokenPrices()
+const positionUsd = (
+  peggedAmount: bigint,
+  peggedTokenDecimals: number,
+  price: string,
+) => Big(formatUnits(peggedAmount, peggedTokenDecimals)).times(price)
 
+// Sums the USD value of every share position the user holds. Each entry is
+// `convertToAssets(stakingVault, shares)` (shares → pegged token) priced via
+// `getTokenPrice(peggedToken)` against the portal price feed — same path
+// `ShareFiatBalance` uses for a single position, just aggregated here.
+export const useTotalDeposits = function () {
   const {
-    data: deposits,
-    isError,
-    isPending,
-  } = useQuery({
-    enabled: !!address && vaultTokens.length > 0,
-    async queryFn() {
-      const balances = await Promise.all(
-        vaultTokens.map(({ token, vaultAddress }) =>
-          queryClient.ensureQueryData(
-            userVaultBalanceQueryOptions({
-              address: address!,
-              chainId: token.chainId,
-              client: getPublicClient(config, { chainId: token.chainId })!,
-              vaultAddress,
-            }),
-          ),
-        ),
-      )
-      return vaultTokens.map(({ token, vaultAddress }, index) => ({
-        amount: balances[index] ?? BigInt(0),
-        token,
-        vaultAddress,
-      }))
-    },
-    queryKey: [
-      ...totalDepositsKeyPrefix,
-      networkType,
-      address,
-      vaultTokens.map(vt => vt.vaultAddress),
-    ],
+    data: positions = [],
+    isError: isPositionsError,
+    isPending: isPositionsPending,
+  } = useEarnPositions()
+  const { data: prices } = useTokenPrices({ retryOnMount: false })
+
+  const peggedAmountQueries = useQueries({
+    queries: positions.map(position => ({
+      enabled: position.yourDeposit > BigInt(0),
+      queryFn: () =>
+        convertToAssets(getEvmL1PublicClient(mainnet.id), {
+          address: getStakingVaultForShare(position.shareAddress),
+          shares: position.yourDeposit,
+        }),
+      queryKey: [
+        'hemi-earn',
+        'total-deposits',
+        position.shareAddress,
+        position.yourDeposit.toString(),
+      ],
+    })),
   })
 
-  const data: TotalDepositsData | undefined = deposits
-    ? {
-        totalUsd: deposits
-          .reduce(
-            (acc, { amount, token }) =>
-              acc.plus(
-                Big(formatUnits(amount, token.decimals)).times(
-                  getTokenPrice(token, prices),
-                ),
-              ),
-            Big(0),
-          )
-          .toFixed(),
-        vaultBreakdown: deposits.map(({ amount, token }) => ({
-          name: token.symbol,
-          tokenAddress: token.address,
-          tokenChainId: token.chainId,
-          value: `$${formatFiatNumber(
-            Big(formatUnits(amount, token.decimals))
-              .times(getTokenPrice(token, prices))
-              .toFixed(),
-          )}`,
-        })),
-        vaultCount: deposits.length,
-      }
-    : undefined
+  const breakdown = positions.map((position, index) => ({
+    position,
+    usd: positionUsd(
+      peggedAmountQueries[index]?.data ?? BigInt(0),
+      position.peggedToken.decimals,
+      prices ? getTokenPrice(position.peggedToken, prices) : '0',
+    ),
+  }))
+
+  const totalUsd = breakdown
+    .reduce((acc, { usd }) => acc.plus(usd), Big(0))
+    .toFixed(2)
+
+  const data: TotalDepositsData = {
+    poolBreakdown: breakdown.map(({ position, usd }) => ({
+      name: position.shareToken.symbol,
+      tokenAddress: position.shareToken.address,
+      tokenChainId: position.shareToken.chainId,
+      value: `$${formatFiatNumber(usd.toFixed(2))}`,
+    })),
+    poolCount: positions.length,
+    totalUsd,
+  }
+
+  const isPending =
+    isPositionsPending ||
+    peggedAmountQueries.some(q => q.isPending && q.isFetching)
+  const isError =
+    isPositionsError ||
+    (peggedAmountQueries.length > 0 &&
+      peggedAmountQueries.every(q => q.isError))
 
   return { data, isError, isPending }
 }

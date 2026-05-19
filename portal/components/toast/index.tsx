@@ -5,6 +5,7 @@ import { CheckMark } from 'components/icons/checkMark'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { Link } from 'components/link'
 import { type ComponentProps, useEffect, useState } from 'react'
+import ReactDOM from 'react-dom'
 
 type Props = {
   autoCloseMs?: number
@@ -43,11 +44,15 @@ export const Toast = function ({
     [autoCloseMs],
   )
 
-  if (closedToast) {
+  if (closedToast || typeof document === 'undefined') {
     return null
   }
 
-  return (
+  // Portal to `document.body` so the toast sits in the same stacking context
+  // as the drawer (also body-portaled). Without this, an intermediate
+  // ancestor in the app layout would create a subordinate stacking context
+  // and trap the toast behind any open drawer regardless of z-index.
+  return ReactDOM.createPortal(
     <div
       className="fixed inset-x-4 bottom-20 z-40 flex justify-between
       gap-x-3 rounded-xl border border-solid border-black/85 bg-neutral-800 p-3.5
@@ -76,6 +81,7 @@ export const Toast = function ({
       <button className="size-5" onClick={() => setClosedToast(true)}>
         <CloseIcon className="size-full [&>path]:hover:stroke-white" />
       </button>
-    </div>
+    </div>,
+    document.body,
   )
 }

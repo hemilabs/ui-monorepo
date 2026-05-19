@@ -1,76 +1,78 @@
 'use client'
 
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueries } from '@tanstack/react-query'
+import { hemi } from 'hemi-viem'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { useAccount, useConfig } from 'wagmi'
-import { getPublicClient } from 'wagmi/actions'
+import { getHemiClient } from 'utils/chainClients'
+import { balanceOf } from 'viem-erc20/actions'
+import { useAccount } from 'wagmi'
 
 import { type EarnPosition } from '../types'
-import { userVaultBalanceQueryOptions } from '../vault/[vaultAddress]/_hooks/useUserVaultBalance'
 
-import { earnPoolsQueryOptions, groupByChain } from './useEarnPools'
-import { useHemiEarnTokens } from './useHemiEarnTokens'
+import { useHemiEarnShares } from './useHemiEarnShares'
 
 export const earnPositionsKeyPrefix = ['hemi-earn', 'positions']
 
+// TODO(phase-2): APY is still mocked (see `useEarnPools`). Yield-earned is
+// out of scope (no subgraph indexing `RequestClaimed` yet); only the raw
+// share OFT balance is surfaced for now.
 export const useEarnPositions = function () {
   const [networkType] = useNetworkType()
   const { address } = useAccount()
-  const config = useConfig()
-  const queryClient = useQueryClient()
-  const { data: vaultTokens = [] } = useHemiEarnTokens()
+  const {
+    data: shares = [],
+    isError: isSharesError,
+    isPending: isSharesPending,
+  } = useHemiEarnShares()
 
-  return useQuery<EarnPosition[]>({
-    enabled: !!address && vaultTokens.length > 0,
-    async queryFn() {
-      const allPositions = await Promise.all(
-        Array.from(groupByChain(vaultTokens).entries()).map(async function ([
-          chainId,
-          tokens,
-        ]) {
-          const client = getPublicClient(config, { chainId })!
-
-          const pools = await queryClient.ensureQueryData(
-            earnPoolsQueryOptions({
-              chainId,
-              client,
-              vaultTokens: tokens,
-            }),
-          )
-
-          const balances = await Promise.all(
-            pools.map(pool =>
-              queryClient.ensureQueryData(
-                userVaultBalanceQueryOptions({
-                  address: address!,
-                  chainId,
-                  client,
-                  vaultAddress: pool.vaultAddress,
-                }),
-              ),
-            ),
-          )
-
-          return pools
-            .map((pool, index) => ({
-              apy: pool.apy,
-              token: pool.token,
-              vaultAddress: pool.vaultAddress,
-              // TODO: yield earned requires off-chain data once available
-              yieldEarned: '-',
-              yourDeposit: balances[index] ?? BigInt(0),
-            }))
-            .filter(position => position.yourDeposit > BigInt(0))
+  const balanceQueries = useQueries({
+    queries: shares.map(share => ({
+      enabled: !!address && shares.length > 0,
+      queryFn: () =>
+        balanceOf(getHemiClient(hemi.id), {
+          account: address!,
+          address: share.shareAddress,
         }),
-      )
-
-      return allPositions.flat()
-    },
-    queryKey: [
-      ...earnPositionsKeyPrefix,
-      networkType,
-      address,
-      ...vaultTokens.map(vt => vt.vaultAddress),
-    ],
+      queryKey: [
+        ...earnPositionsKeyPrefix,
+        networkType,
+        address,
+        share.shareAddress,
+        'shareBalance',
+      ],
+    })),
   })
+
+  // Treat the shares skeleton as part of the loading lifecycle — otherwise
+  // disconnected users see "no positions" while the registry is still
+  // resolving, and registry errors are silently turned into an empty list.
+  const isPending =
+    isSharesPending ||
+    (!!address &&
+      shares.length > 0 &&
+      balanceQueries.some(q => q.isPending && q.isFetching))
+  const isError =
+    isSharesError ||
+    (!isPending &&
+      !!address &&
+      shares.length > 0 &&
+      balanceQueries.every(q => q.isError))
+
+  const data: EarnPosition[] = !address
+    ? []
+    : shares
+        .map((share, index) => ({
+          balance: balanceQueries[index]?.data ?? BigInt(0),
+          share,
+        }))
+        .filter(({ balance }) => balance > BigInt(0))
+        .map(({ balance, share }) => ({
+          apy: { base: 0, incentivized: 0, total: 0 },
+          peggedToken: share.peggedToken,
+          shareAddress: share.shareAddress,
+          shareToken: share.shareToken,
+          yourDeposit: balance,
+        }))
+
+  return { data, isError, isPending }
 }

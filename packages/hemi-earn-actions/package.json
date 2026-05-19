@@ -1,12 +1,12 @@
 {
   "name": "hemi-earn-actions",
   "version": "1.0.0",
-  "description": "Hemi Earn ERC-4626 vault actions",
+  "description": "Hemi Earn Router actions (cross-chain via LayerZero)",
   "keywords": [
-    "ERC-4626",
     "earn",
     "hemi",
     "hemilabs",
+    "layerzero",
     "viem"
   ],
   "license": "MIT",
@@ -21,7 +21,7 @@
   "dependencies": {
     "hemi-viem": "2.6.1",
     "to-promise-event": "1.0.0",
-    "viem-erc4626": "1.0.0"
+    "viem-erc20": "2.0.0"
   },
   "devDependencies": {
     "@tsconfig/node24": "24.0.3",

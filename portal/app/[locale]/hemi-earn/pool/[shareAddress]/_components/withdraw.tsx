@@ -1,0 +1,199 @@
+'use client'
+
+import { EvmFeesSummary } from 'components/evmFeesSummary'
+import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
+import { useChain } from 'hooks/useChain'
+import { useNeedsApproval } from 'hooks/useNeedsApproval'
+import { useTranslations } from 'next-intl'
+import { useState } from 'react'
+import { getNativeToken } from 'utils/nativeToken'
+import { parseTokenUnits } from 'utils/token'
+import { validateSubmit } from 'utils/validateSubmit'
+import { walletIsConnected } from 'utils/wallet'
+import { formatUnits } from 'viem'
+import { useAccount as useEvmAccount } from 'wagmi'
+
+import { usePoolForm } from '../_context/poolFormContext'
+import { useUserPoolBalance } from '../_hooks/useUserPoolBalance'
+import { useWithdraw } from '../_hooks/useWithdraw'
+import { useAssetsToShares, useWithdrawFees } from '../_hooks/useWithdrawFees'
+import { type WithdrawOperationRunning } from '../_types/operations'
+
+import { VaultFormLayout } from './form'
+import { PoolFormContent } from './poolFormContent'
+import { SubmitWithdraw } from './submitWithdraw'
+import { UserPoolBalance } from './userPoolBalance'
+import { WithdrawMaxBalance } from './withdrawMaxBalance'
+
+export const Withdraw = function ({
+  onSwitchToDeposit,
+}: {
+  onSwitchToDeposit: VoidFunction
+}) {
+  const t = useTranslations()
+  const [operationRunning, setOperationRunning] =
+    useState<WithdrawOperationRunning>('idle')
+
+  const {
+    input,
+    pool,
+    resetStateAfterOperation,
+    selectedAsset,
+    updateInput,
+    updateWithdrawOperation,
+  } = usePoolForm()
+
+  const { address, status } = useEvmAccount()
+
+  const amount = parseTokenUnits(input, selectedAsset.token)
+
+  const { data: poolBalance, isSuccess: poolBalanceLoaded } =
+    useUserPoolBalance({
+      assetAddress: selectedAsset.address,
+      shareAddress: pool.shareAddress,
+    })
+
+  // Input is in asset units (e.g. USDC); the Router takes shares. The hook
+  // chains `Gateway.previewDeposit` (asset → peggedToken) and
+  // `StakingVault.convertToShares` (peggedToken → shares) to mirror the
+  // gateway fee path. Both fall back to zero while the query is pending —
+  // `canWithdraw` below gates submission until validation and conversion are
+  // ready. `peggedAmount` is forwarded to `useWithdraw` so the optimistic
+  // TVL bump happens in vault units (vBTC/vUSD), not the deposit asset's.
+  const {
+    data: { peggedAmount, shares } = {
+      peggedAmount: BigInt(0),
+      shares: BigInt(0),
+    },
+  } = useAssetsToShares({
+    amount,
+    assetAddress: selectedAsset.address,
+    shareAddress: pool.shareAddress,
+  })
+
+  const {
+    canSubmit: validInput,
+    error: validationError,
+    errorKey,
+  } = validateSubmit({
+    amountInput: input,
+    balance: poolBalance?.assetOut,
+    operation: 'withdrawal',
+    t,
+    token: selectedAsset.token,
+  })
+
+  const canWithdraw = validInput && shares > BigInt(0)
+  const routerAddress = getHemiEarnRouterAddress()
+
+  const { isAllowanceError, isAllowanceLoading, needsApproval } =
+    useNeedsApproval({
+      address: pool.shareAddress,
+      amount: shares,
+      chainId: selectedAsset.token.chainId,
+      spender: routerAddress,
+    })
+
+  const { isFeesError, quote, totalFees } = useWithdrawFees({
+    asset: selectedAsset.address,
+    canWithdraw,
+    chainId: selectedAsset.token.chainId,
+    needsApproval,
+    receiver: address,
+    shares,
+    shareToken: pool.shareToken,
+    spender: routerAddress,
+  })
+
+  const { isPending: isRunningOperation, mutate: withdrawFn } = useWithdraw({
+    amount,
+    fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
+    on(emitter) {
+      emitter.on('approve-transaction-succeeded', () =>
+        setOperationRunning('withdrawing'),
+      )
+      emitter.on('withdraw-transaction-succeeded', function () {
+        resetStateAfterOperation()
+      })
+      emitter.on('withdraw-settled', () => setOperationRunning('idle'))
+    },
+    peggedAmount,
+    pool,
+    selectedAsset,
+    shares,
+    updateWithdrawOperation,
+  })
+
+  const handleWithdraw = function () {
+    if (!canWithdraw || !quote) {
+      return
+    }
+    withdrawFn(undefined, {
+      onError: () => setOperationRunning('idle'),
+    })
+    setOperationRunning(needsApproval ? 'approving' : 'withdrawing')
+  }
+
+  const chain = useChain(selectedAsset.token.chainId)
+  const nativeToken = getNativeToken(selectedAsset.token.chainId)
+
+  function RenderBelowForm() {
+    if (!canWithdraw) {
+      return null
+    }
+    return (
+      <div className="px-4">
+        <EvmFeesSummary
+          gas={{
+            amount: formatUnits(
+              totalFees,
+              chain?.nativeCurrency.decimals ?? 18,
+            ),
+            isError: isFeesError,
+            label: t('hemi-earn.pool.form.total-fee'),
+            token: nativeToken,
+          }}
+          operationToken={nativeToken}
+        />
+      </div>
+    )
+  }
+
+  return (
+    <VaultFormLayout
+      belowForm={<RenderBelowForm />}
+      formContent={
+        <PoolFormContent
+          activeTab="withdraw"
+          balanceComponent={UserPoolBalance}
+          errorKey={
+            walletIsConnected(status) && poolBalanceLoaded
+              ? errorKey
+              : undefined
+          }
+          isRunningOperation={isRunningOperation}
+          onSwitchTab={onSwitchToDeposit}
+          setMaxBalanceButton={
+            <WithdrawMaxBalance
+              disabled={isRunningOperation}
+              onSetMaxBalance={updateInput}
+              token={selectedAsset.token}
+            />
+          }
+        />
+      }
+      onSubmit={handleWithdraw}
+      submitButton={
+        <SubmitWithdraw
+          canWithdraw={canWithdraw && !!quote}
+          isAllowanceError={isAllowanceError}
+          isAllowanceLoading={isAllowanceLoading}
+          isRunningOperation={isRunningOperation}
+          needsApproval={needsApproval}
+          operationRunning={operationRunning}
+          validationError={validationError}
+        />
+      }
+    />
+  )
+}

@@ -147,9 +147,9 @@ importers:
       to-promise-event:
         specifier: 1.0.0
         version: 1.0.0
-      viem-erc4626:
-        specifier: 1.0.0
-        version: 1.0.0(viem-erc20@2.1.0(viem@2.28.4(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)))(viem@2.28.4(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
+      viem-erc20:
+        specifier: 2.0.0
+        version: 2.0.0(viem@2.28.4(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
     devDependencies:
       '@tsconfig/node24':
         specifier: 24.0.3
@@ -24690,11 +24690,6 @@ snapshots:
     dependencies:
       viem: 2.28.4(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       viem-erc20: 2.0.0(viem@2.28.4(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
-
-  viem-erc4626@1.0.0(viem-erc20@2.1.0(viem@2.28.4(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)))(viem@2.28.4(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)):
-    dependencies:
-      viem: 2.28.4(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
-      viem-erc20: 2.1.0(viem@2.28.4(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
 
   viem@2.23.2(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76):
     dependencies:

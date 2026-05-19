@@ -2,18 +2,18 @@
   "hemi-earn": {
     "heading": "Obtenha rendimento com Hemi Earn",
     "info": {
-      "across-pools": "Em {count, plural, one {# pool} other {# pools}}",
+      "across-pools": "Em {count, plural, one {# fundo} other {# fundos}}",
       "total-apy": "TEA média total",
       "total-apy-tooltip": "TEA média ponderada em todas as suas posições ativas",
       "total-deposits": "Seus depósitos totais",
-      "total-deposits-tooltip": "Seu valor depositado em todos os pools do Hemi Earn",
+      "total-deposits-tooltip": "Seu valor depositado em todos os fundos do Hemi Earn",
       "total-yield": "Rendimento total ganho",
-      "total-yield-tooltip": "Rendimento total que você ganhou em todos os pools"
+      "total-yield-tooltip": "Rendimento total que você ganhou em todos os fundos"
     },
     "navigation": {
       "back": "Voltar",
       "hemi-earn": "Hemi Earn",
-      "pool-name": "pool {tokenSymbol}"
+      "pool-name": "fundo {tokenSymbol}"
     },
     "pool": {
       "apy": "TEA",
@@ -52,10 +52,10 @@
         "1-year": "1 ano",
         "apy": "TEA",
         "month": "{count, plural, one {# mês} other {# meses}}",
-        "pool-deposits": "Depósitos do pool",
+        "pool-deposits": "Depósitos do fundo",
         "title": "Métricas históricas"
       },
-      "total-deposits": "Depósitos totais do pool",
+      "total-deposits": "Depósitos totais do fundo",
       "withdraw-successful": "Saque realizado com sucesso"
     },
     "subheading": "Ganhe rendimento com seus ativos em um clique",
@@ -69,10 +69,10 @@
       "exposure": "Exposição",
       "manage": "Gerenciar",
       "my-positions": "Minhas posições",
-      "no-positions-subtitle": "Deposite em um pool para começar a ganhar rendimento.",
+      "no-positions-subtitle": "Deposite em um fundo para começar a ganhar rendimento.",
       "no-positions-title": "Nenhuma posição ativa",
-      "pool": "Pool",
-      "pools": "Pools",
+      "pool": "Fundo",
+      "pools": "Fundos",
       "total-deposits": "Depósitos totais",
       "yield-earned": "Rendimento ganho",
       "your-deposit": "Seu depósito"

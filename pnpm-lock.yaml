@@ -394,8 +394,8 @@ importers:
         specifier: workspace:*
         version: link:../packages/hemi-viem-stake-actions
       lodash:
-        specifier: 4.17.21
-        version: 4.17.21
+        specifier: 4.18.1
+        version: 4.18.1
       merkl-claim-rewards:
         specifier: workspace:*
         version: link:../packages/merkl-claim-rewards
@@ -10530,12 +10530,6 @@ packages:
     resolution:
       {
         integrity: sha512-sReKOYJIJf74dhJONhU4e0/shzi1trVbSWDOhKYE5XV2O+H7Sb2Dihwuc7xWxVl+DgFPyTqIN3zMfT9cq5iWDg==,
-      }
-
-  lodash@4.17.21:
-    resolution:
-      {
-        integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==,
       }
 
   lodash@4.18.1:
@@ -22336,8 +22330,6 @@ snapshots:
 
   lodash.upperfirst@4.3.1: {}
 
-  lodash@4.17.21: {}
-
   lodash@4.18.1: {}
 
   log-symbols@3.0.0:
@@ -24439,61 +24431,61 @@ snapshots:
 
   victory-area@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
       victory-vendor: 37.3.6
 
   victory-axis@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
 
   victory-bar@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
       victory-vendor: 37.3.6
 
   victory-box-plot@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
       victory-vendor: 37.3.6
 
   victory-brush-container@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       react-fast-compare: 3.2.2
       victory-core: 37.3.6(react@19.1.1)
 
   victory-brush-line@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       react-fast-compare: 3.2.2
       victory-core: 37.3.6(react@19.1.1)
 
   victory-candlestick@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
 
   victory-canvas@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-bar: 37.3.6(react@19.1.1)
       victory-core: 37.3.6(react@19.1.1)
 
   victory-chart@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       react-fast-compare: 3.2.2
       victory-axis: 37.3.6(react@19.1.1)
@@ -24503,14 +24495,14 @@ snapshots:
 
   victory-core@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       react-fast-compare: 3.2.2
       victory-vendor: 37.3.6
 
   victory-create-container@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-brush-container: 37.3.6(react@19.1.1)
       victory-core: 37.3.6(react@19.1.1)
@@ -24521,19 +24513,19 @@ snapshots:
 
   victory-cursor-container@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
 
   victory-errorbar@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
 
   victory-group@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       react-fast-compare: 3.2.2
       victory-core: 37.3.6(react@19.1.1)
@@ -24541,7 +24533,7 @@ snapshots:
 
   victory-histogram@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       react-fast-compare: 3.2.2
       victory-bar: 37.3.6(react@19.1.1)
@@ -24550,53 +24542,53 @@ snapshots:
 
   victory-legend@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
 
   victory-line@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
       victory-vendor: 37.3.6
 
   victory-pie@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
       victory-vendor: 37.3.6
 
   victory-polar-axis@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
 
   victory-scatter@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
 
   victory-selection-container@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
 
   victory-shared-events@37.3.6(react@19.1.1):
     dependencies:
       json-stringify-safe: 5.0.1
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       react-fast-compare: 3.2.2
       victory-core: 37.3.6(react@19.1.1)
 
   victory-stack@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       react-fast-compare: 3.2.2
       victory-core: 37.3.6(react@19.1.1)
@@ -24604,7 +24596,7 @@ snapshots:
 
   victory-tooltip@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
 
@@ -24628,7 +24620,7 @@ snapshots:
   victory-voronoi-container@37.3.6(react@19.1.1):
     dependencies:
       delaunay-find: 0.0.6
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       react-fast-compare: 3.2.2
       victory-core: 37.3.6(react@19.1.1)
@@ -24637,13 +24629,13 @@ snapshots:
   victory-voronoi@37.3.6(react@19.1.1):
     dependencies:
       d3-voronoi: 1.1.4
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
 
   victory-zoom-container@37.3.6(react@19.1.1):
     dependencies:
-      lodash: 4.17.21
+      lodash: 4.18.1
       react: 19.1.1
       victory-core: 37.3.6(react@19.1.1)
 

@@ -2,13 +2,9 @@
   "hemi-earn": {
     "heading": "Earn yield with Hemi Earn",
     "info": {
-      "across-pools": "Across {count, plural, one {# pool} other {# pools}}",
-      "total-apy": "Total avg. APY",
-      "total-apy-tooltip": "Weighted average APY across all your active pool positions",
-      "total-deposits": "Your total deposits",
-      "total-deposits-tooltip": "Your deposited value across all Hemi Earn pools",
-      "total-yield": "Total yield earned",
-      "total-yield-tooltip": "Total yield you have earned across all pools"
+      "earned-amount": "Your earned amount",
+      "rewards": "Your rewards",
+      "staked-balance": "Your staked balance"
     },
     "navigation": {
       "back": "Back",

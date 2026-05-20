@@ -6,16 +6,13 @@ import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { useTokenPrices } from 'hooks/useTokenPrices'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
-import { formatFiatNumber } from 'utils/format'
 import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
 import { convertToAssets } from 'viem-erc4626/actions'
 
-import { type EarnCardData } from '../types'
-
 import { useEarnPositions } from './useEarnPositions'
 
-type TotalDepositsData = EarnCardData & { totalUsd: string }
+type TotalDepositsData = { totalUsd: string }
 
 const positionUsd = (
   peggedAmount: bigint,
@@ -52,29 +49,21 @@ export const useTotalDeposits = function () {
     })),
   })
 
-  const breakdown = positions.map((position, index) => ({
-    position,
-    usd: positionUsd(
-      peggedAmountQueries[index]?.data ?? BigInt(0),
-      position.peggedToken.decimals,
-      prices ? getTokenPrice(position.peggedToken, prices) : '0',
-    ),
-  }))
-
-  const totalUsd = breakdown
-    .reduce((acc, { usd }) => acc.plus(usd), Big(0))
+  const totalUsd = positions
+    .reduce(
+      (acc, position, index) =>
+        acc.plus(
+          positionUsd(
+            peggedAmountQueries[index]?.data ?? BigInt(0),
+            position.peggedToken.decimals,
+            prices ? getTokenPrice(position.peggedToken, prices) : '0',
+          ),
+        ),
+      Big(0),
+    )
     .toFixed(2)
 
-  const data: TotalDepositsData = {
-    poolBreakdown: breakdown.map(({ position, usd }) => ({
-      name: position.shareToken.symbol,
-      tokenAddress: position.shareToken.address,
-      tokenChainId: position.shareToken.chainId,
-      value: `$${formatFiatNumber(usd.toFixed(2))}`,
-    })),
-    poolCount: positions.length,
-    totalUsd,
-  }
+  const data: TotalDepositsData = { totalUsd }
 
   const isPending =
     isPositionsPending ||

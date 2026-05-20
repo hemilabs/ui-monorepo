@@ -2,13 +2,9 @@
   "hemi-earn": {
     "heading": "Obtenga rendimiento con Hemi Earn",
     "info": {
-      "across-pools": "En {count, plural, one {# fondo} other {# fondos}}",
-      "total-apy": "TEA prom. total",
-      "total-apy-tooltip": "TEA promedio ponderada en todas sus posiciones activas",
-      "total-deposits": "Sus depósitos totales",
-      "total-deposits-tooltip": "Su valor depositado en todos los fondos de Hemi Earn",
-      "total-yield": "Rendimiento total ganado",
-      "total-yield-tooltip": "Rendimiento total que ha ganado en todos los fondos"
+      "earned-amount": "Cantidad ganada",
+      "rewards": "Sus recompensas",
+      "staked-balance": "Su saldo invertido"
     },
     "navigation": {
       "back": "Atrás",

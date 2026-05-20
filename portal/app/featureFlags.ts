@@ -5,4 +5,10 @@ export const featureFlags = {
   enableHemiEarnPage: process.env.NEXT_PUBLIC_ENABLE_HEMI_EARN_PAGE === 'true',
 }
 
-export type NavFeatureFlag = 'enableBtcYieldPage' | 'enableHemiEarnPage'
+/** Nav items gated by feature flags — add keys here when a new nav entry uses `flag`. */
+export const navFeatureFlagKeys = [
+  'enableBtcYieldPage',
+  'enableHemiEarnPage',
+] as const satisfies ReadonlyArray<keyof typeof featureFlags>
+
+export type NavFeatureFlag = (typeof navFeatureFlagKeys)[number]

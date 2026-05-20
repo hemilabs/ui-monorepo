@@ -25,7 +25,17 @@ export const SVETBTC_OFT_ADDRESS: Address = zeroAddress
 // `@vetro-protocol/gateway` README and on the `Gateway` JSDoc ("Portal-API
 // symbol used to convert this gateway's peg unit into USD"). After this
 // bootstrap, the rest of the code works purely with addresses.
-const vetBtcGateway = gateways.find(g => g.pegBaseSymbol === 'BTC')!.address
+function findVetroGateway(pegBaseSymbol: string) {
+  const gateway = gateways.find(g => g.pegBaseSymbol === pegBaseSymbol)
+  if (!gateway) {
+    throw new Error(
+      `Vetro gateway with pegBaseSymbol="${pegBaseSymbol}" not found in @vetro-protocol/gateway`,
+    )
+  }
+  return gateway.address
+}
+
+const vetBtcGateway = findVetroGateway('BTC')
 
 // vetBTC pegged token deployed on Ethereum mainnet by Vetro. Not exported
 // by `@vetro-protocol/gateway` (the package only exposes a runtime resolver
@@ -43,15 +53,15 @@ export const VETBTC_PEGGED_ADDRESS: Address =
 // we mirror it here so the portal can preview cross-chain results without
 // round-tripping to the Agent first.
 export type HemiEarnShareEntry = {
-  // Hemi-side OFT (svetBTC, sVUSD). Placeholder until SC team confirms.
-  shareOft: Address
-  // Ethereum-side ERC-4626 sVetToken, from `@vetro-protocol/earn`.
-  stakingVault: Address
   // Ethereum-side Vetro Gateway, from `@vetro-protocol/gateway`.
   gateway: Address
   // Ethereum-side pegged token (vBTC, vUSD) — what `stakingVault.asset()`
   // returns and what the gateway mints/burns.
   peggedToken: Address
+  // Hemi-side OFT (svetBTC, sVUSD). Placeholder until SC team confirms.
+  shareOft: Address
+  // Ethereum-side ERC-4626 sVetToken, from `@vetro-protocol/earn`.
+  stakingVault: Address
 }
 
 // `shareOft` is the only field no Vetro package can cover (Hemi-side); it

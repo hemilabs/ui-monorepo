@@ -1,4 +1,4 @@
-import { SVETBTC_OFT_ADDRESS, VETBTC_PEGGED_ADDRESS } from 'hemi-earn-actions'
+import { SVETBTC_OFT_ADDRESS } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { type EvmToken } from 'types/token'
 import { toChecksumAddress } from 'utils/address'
@@ -9,6 +9,15 @@ import { type Address } from 'viem'
 // imported from `hemi-earn-actions` so the package stays the single source
 // of truth for on-chain identifiers.
 const HEMI_LOGO_BASE = 'https://hemilabs.github.io/token-list/l1Logos'
+
+// vetBTC pegged token (Ethereum mainnet, mirrored on Hemi by display logic).
+// The package `@vetro-protocol/gateway` doesn't export it as a named const —
+// it's only reachable via the on-chain `gateway.PEGGED_TOKEN()` resolver
+// (used at runtime by `useHemiEarnShares`). We keep a literal here because
+// the lookup table below needs the address as its key. Sourced from
+// `vetro-monorepo/web/src/utils/tokenList.ts`.
+const VETBTC_PEGGED_ADDRESS: Address =
+  '0xf196C68233464A16CFDa319a47c21f4cECa62001'
 
 const HEMI_EARN_TOKENS: EvmToken[] = [
   // Share OFT — address imported from the package; metadata is portal-side

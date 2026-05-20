@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
-import { InfoCards } from './_components/infoCards'
+import { InfoCards, InfoCardsSkeleton } from './_components/infoCards'
 import { TopSection } from './_components/topSection'
 import { useHemiEarnShares } from './_hooks/useHemiEarnShares'
 
@@ -33,19 +33,33 @@ const EarnTable = dynamic(
   },
 )
 
+// Gates the page on the first resolution of `useHemiEarnShares`. The hook
+// reads each share's pegged-token address from the gateway on-chain, and
+// without this gate the InfoCards + EarnTable would all mount with their
+// own `useQueries` subscriptions while that fetch is still in flight,
+// fanning out across 5+ sibling consumers and locking the main thread.
+// Mounting only after the gate releases means children read the resolved
+// pegged-token address from the react-query cache synchronously.
 const TokensGate = function ({ children }: { children: ReactNode }) {
-  const { data, isError } = useHemiEarnShares()
+  const { isError, isPending } = useHemiEarnShares()
   if (isError) return null
-  if (data) return <>{children}</>
-  return <EarnTableSkeleton />
+  if (isPending) {
+    return (
+      <>
+        <InfoCardsSkeleton />
+        <EarnTableSkeleton />
+      </>
+    )
+  }
+  return <>{children}</>
 }
 
 export default function Page() {
   return (
     <PageLayout variant="wide">
       <TopSection />
-      <InfoCards />
       <TokensGate>
+        <InfoCards />
         <EarnTable />
       </TokensGate>
     </PageLayout>

@@ -1,6 +1,7 @@
 import { sVetBtcAddress } from '@vetro-protocol/earn'
 import { gateways } from '@vetro-protocol/gateway'
-import { type Address, isAddressEqual, zeroAddress } from 'viem'
+import { getPeggedToken } from '@vetro-protocol/gateway/actions'
+import { type Address, type Client, isAddressEqual, zeroAddress } from 'viem'
 
 // TODO: placeholder — replace with the deployed Router on Hemi mainnet once
 // the addresses are confirmed.
@@ -37,27 +38,15 @@ function findVetroGateway(pegBaseSymbol: string) {
 
 const vetBtcGateway = findVetroGateway('BTC')
 
-// vetBTC pegged token deployed on Ethereum mainnet by Vetro. Not exported
-// by `@vetro-protocol/gateway` (the package only exposes a runtime resolver
-// `getPeggedToken(gatewayAddress)`); we hardcode it because:
-//   1. The pegged token is immutable per gateway deployment.
-//   2. Calling `getPeggedToken` from `useHemiEarnShares` forces the hook to
-//      become async, which fans out across 5 sibling consumers and produces
-//      a render storm on the Hemi Earn page.
-// Address taken from `vetro-monorepo/web/src/utils/tokenList.ts`.
-export const VETBTC_PEGGED_ADDRESS: Address =
-  '0xf196C68233464A16CFDa319a47c21f4cECa62001'
-
 // Hemi-side share OFT + its Ethereum-side anchors. The Agent on Ethereum
 // resolves the same set on-chain via `assetsData(asset).asset().gateway()`;
 // we mirror it here so the portal can preview cross-chain results without
 // round-tripping to the Agent first.
 export type HemiEarnShareEntry = {
-  // Ethereum-side Vetro Gateway, from `@vetro-protocol/gateway`.
+  // Ethereum-side Vetro Gateway, from `@vetro-protocol/gateway`. The
+  // pegged token is not stored here — it's resolved on-chain via the
+  // gateway's `PEGGED_TOKEN()` view (see `getPeggedTokenForShare`).
   gateway: Address
-  // Ethereum-side pegged token (vBTC, vUSD) — what `stakingVault.asset()`
-  // returns and what the gateway mints/burns.
-  peggedToken: Address
   // Hemi-side OFT (svetBTC, sVUSD). Placeholder until SC team confirms.
   shareOft: Address
   // Ethereum-side ERC-4626 sVetToken, from `@vetro-protocol/earn`.
@@ -71,14 +60,12 @@ export type HemiEarnShareEntry = {
 export const HEMI_EARN_SHARES_REGISTRY: readonly HemiEarnShareEntry[] = [
   {
     gateway: vetBtcGateway,
-    peggedToken: VETBTC_PEGGED_ADDRESS,
     shareOft: SVETBTC_OFT_ADDRESS,
     stakingVault: sVetBtcAddress,
   },
   // VUSD entry will be added when SVUSD_OFT_ADDRESS lands:
   // {
   //   gateway: vUsdGateway,
-  //   peggedToken: VUSD_PEGGED_ADDRESS,
   //   shareOft: SVUSD_OFT_ADDRESS,
   //   stakingVault: sVusdAddress,
   // },
@@ -146,5 +133,11 @@ export const getGatewayForShare = (shareOft: Address) =>
   findShareEntry(shareOft).gateway
 
 // Ethereum-side pegged token (vBTC, vUSD) for a Hemi-side share OFT.
-export const getPeggedTokenForShare = (shareOft: Address) =>
-  findShareEntry(shareOft).peggedToken
+// Resolved on-chain via the gateway's `PEGGED_TOKEN()` view — callers
+// should wrap in `useQuery` / `useQueries` and cache the result (the
+// pegged token is immutable per gateway deployment).
+export const getPeggedTokenForShare = (
+  client: Client,
+  shareOft: Address,
+): Promise<Address> =>
+  getPeggedToken(client, { address: findShareEntry(shareOft).gateway })

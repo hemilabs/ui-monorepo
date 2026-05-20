@@ -1,11 +1,14 @@
 'use client'
 
+import { useQueries } from '@tanstack/react-query'
 import {
   getHemiEarnShares,
   getHemiEarnSupportedAssets,
   getPeggedTokenForShare,
 } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
+import { mainnet } from 'networks/mainnet'
+import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address, isAddressEqual } from 'viem'
 
 import { getHemiEarnToken } from '../_constants/tokens'
@@ -13,8 +16,9 @@ import { type EarnAsset, type EarnPool } from '../types'
 
 // Skeleton view of each Vetro share vault: one entry per distinct share OFT
 // registered on the Router, plus every deposit asset that settles into it.
-// Both lists come from `hemi-earn-actions` (the package). Token metadata
-// (symbol/decimals/logoURI) is resolved synchronously from the curated
+// The pegged-token address is read on-chain via the gateway's
+// `PEGGED_TOKEN()` view (`getPeggedTokenForShare`); token metadata
+// (symbol/decimals/logoURI) is then looked up in the curated
 // `HEMI_EARN_TOKENS` list — mirrors Vetro's `knownTokens` pattern.
 type ShareSkeleton = Pick<
   EarnPool,
@@ -34,14 +38,24 @@ function buildAsset(address: Address): EarnAsset[] {
 
 export const useHemiEarnShares = function () {
   const supportedAssets = getHemiEarnSupportedAssets()
-  const data: ShareSkeleton[] = []
+  const shareAddresses = getHemiEarnShares()
 
-  for (const shareAddress of getHemiEarnShares()) {
+  const peggedQueries = useQueries({
+    queries: shareAddresses.map(shareAddress => ({
+      queryFn: () =>
+        getPeggedTokenForShare(getEvmL1PublicClient(mainnet.id), shareAddress),
+      queryKey: ['hemi-earn', 'pegged-token-for-share', shareAddress],
+      staleTime: Infinity,
+    })),
+  })
+
+  const data: ShareSkeleton[] = []
+  for (let i = 0; i < shareAddresses.length; i++) {
+    const shareAddress = shareAddresses[i]
+    const peggedAddress = peggedQueries[i]?.data
+    if (!peggedAddress) continue
     const shareToken = getHemiEarnToken(shareAddress, hemi.id)
-    const peggedToken = getHemiEarnToken(
-      getPeggedTokenForShare(shareAddress),
-      hemi.id,
-    )
+    const peggedToken = getHemiEarnToken(peggedAddress, hemi.id)
     if (!shareToken || !peggedToken) continue
     const assets = supportedAssets
       .filter(entry => isAddressEqual(entry.share, shareAddress))
@@ -50,5 +64,9 @@ export const useHemiEarnShares = function () {
     data.push({ assets, peggedToken, shareAddress, shareToken })
   }
 
-  return { data, isError: false, isPending: false }
+  return {
+    data,
+    isError: peggedQueries.some(q => q.isError),
+    isPending: peggedQueries.some(q => q.isPending),
+  }
 }

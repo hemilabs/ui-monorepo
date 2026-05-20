@@ -6,9 +6,7 @@ export const featureFlags = {
 }
 
 /** Nav items gated by feature flags — add keys here when a new nav entry uses `flag`. */
-export const navFeatureFlagKeys = [
-  'enableBtcYieldPage',
-  'enableHemiEarnPage',
-] as const satisfies ReadonlyArray<keyof typeof featureFlags>
-
-export type NavFeatureFlag = (typeof navFeatureFlagKeys)[number]
+export type NavFeatureFlag = Extract<
+  keyof typeof featureFlags,
+  'enableBtcYieldPage' | 'enableHemiEarnPage'
+>

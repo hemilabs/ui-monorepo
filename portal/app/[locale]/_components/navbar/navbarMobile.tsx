@@ -1,6 +1,7 @@
+import { featureFlags, NavFeatureFlag } from 'app/featureFlags'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { ComponentProps } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 
 import { BitcoinKitLink } from './_components/bitcoinKitLink'
 import { BitcoinYield } from './_components/bitcoinYield'
@@ -42,9 +43,17 @@ const RowContainer = (props: ComponentProps<'div'>) => (
   />
 )
 
-const SmallBox = (props: ComponentProps<'li'>) => (
-  <li className="h-24.5 shrink grow basis-1/3" {...props} />
-)
+type SmallBoxProps = ComponentProps<'li'> & {
+  children?: ReactNode
+  flag?: NavFeatureFlag
+}
+
+const SmallBox = ({ children, flag, ...props }: SmallBoxProps) =>
+  flag !== undefined && !featureFlags[flag] ? null : (
+    <li className="h-24.5 shrink grow basis-1/3" {...props}>
+      {children}
+    </li>
+  )
 
 const CustomContainer = (props: ComponentProps<typeof ItemContainer>) => (
   <ItemContainer
@@ -60,10 +69,10 @@ export const NavbarMobile = function () {
     <div className="h-90dvh flex flex-col bg-white pb-14 sm:pb-0">
       <div className="flex-1 overflow-y-auto px-5 py-6">
         <ul className="flex h-fit flex-wrap justify-start gap-2">
-          <SmallBox>
+          <SmallBox flag="enableHemiEarnPage">
             <HemiEarn />
           </SmallBox>
-          <SmallBox>
+          <SmallBox flag="enableBtcYieldPage">
             <BitcoinYield />
           </SmallBox>
           <SmallBox>

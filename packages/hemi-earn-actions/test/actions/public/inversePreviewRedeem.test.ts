@@ -1,16 +1,20 @@
+import { previewRedeem } from '@vetro-protocol/gateway/actions'
 import { type Address, type Client, zeroAddress } from 'viem'
-import { readContract } from 'viem/actions'
 import { describe, expect, it, vi } from 'vitest'
 
 import { inversePreviewRedeem } from '../../../src/actions/public/inversePreviewRedeem'
 
-vi.mock('viem/actions', () => ({
-  readContract: vi.fn(),
+// Mock the upstream package action directly. With pnpm's isolated modules,
+// mocking `viem/actions` doesn't reach the copy of `readContract` imported
+// by `@vetro-protocol/gateway/actions`, so we intercept at the action layer
+// the SUT actually calls.
+vi.mock('@vetro-protocol/gateway/actions', () => ({
+  previewRedeem: vi.fn(),
 }))
 
 const client = {} as Client
-const gatewayAddress = '0x000000000000000000000000000000000000bEEf' as Address
-const tokenOut = '0x000000000000000000000000000000000000dEaD' as Address
+const gatewayAddress = '0x000000000000000000000000000000000000beef' as Address
+const tokenOut = '0x000000000000000000000000000000000000dead' as Address
 
 describe('inversePreviewRedeem', function () {
   it('probes previewRedeem at amount and inverts the linear relationship', async function () {
@@ -20,7 +24,7 @@ describe('inversePreviewRedeem', function () {
     // / probe) = ceil(100_000_000 / 9980) = 10021 (10020.04...).
     // At 10020 the redeem would only return 9999 (floor of 10020*9980/10000),
     // so the ceil step is what guarantees the UX promise.
-    vi.mocked(readContract).mockResolvedValue(BigInt(9980))
+    vi.mocked(previewRedeem).mockResolvedValue(BigInt(9980))
 
     const result = await inversePreviewRedeem({
       amount: BigInt(10000),
@@ -30,19 +34,16 @@ describe('inversePreviewRedeem', function () {
     })
 
     expect(result).toBe(BigInt(10021))
-    expect(readContract).toHaveBeenCalledWith(
-      client,
-      expect.objectContaining({
-        address: gatewayAddress,
-        args: [tokenOut, BigInt(10000)],
-        functionName: 'previewRedeem',
-      }),
-    )
+    expect(previewRedeem).toHaveBeenCalledWith(client, {
+      address: gatewayAddress,
+      peggedTokenIn: BigInt(10000),
+      tokenOut,
+    })
   })
 
   it('returns amount unchanged when the gateway has no fee', async function () {
     // Anvil mock with redeemRateBps = 10000 → probe == amount → peggedIn == amount.
-    vi.mocked(readContract).mockResolvedValue(BigInt(1_000_000))
+    vi.mocked(previewRedeem).mockResolvedValue(BigInt(1_000_000))
 
     const result = await inversePreviewRedeem({
       amount: BigInt(1_000_000),
@@ -56,7 +57,7 @@ describe('inversePreviewRedeem', function () {
 
   it('returns zero when previewRedeem returns zero', async function () {
     // Gateway disabled / asset blocked — caller can gate the UI on `0n`.
-    vi.mocked(readContract).mockResolvedValue(BigInt(0))
+    vi.mocked(previewRedeem).mockResolvedValue(BigInt(0))
 
     const result = await inversePreviewRedeem({
       amount: BigInt(1_000),
@@ -68,7 +69,14 @@ describe('inversePreviewRedeem', function () {
     expect(result).toBe(BigInt(0))
   })
 
-  it('rejects zero gateway address', async function () {
+  // Input validation (zero addresses, non-positive amount) is delegated to
+  // `previewRedeem` from `@vetro-protocol/gateway` — that action throws
+  // before reaching our ceiling-division logic. Coverage for the validation
+  // itself lives upstream in the gateway package's tests; here we just
+  // assert errors from the action surface through unchanged.
+  it('propagates validation errors from previewRedeem', async function () {
+    vi.mocked(previewRedeem).mockRejectedValue(new Error('Gateway is invalid'))
+
     await expect(
       inversePreviewRedeem({
         amount: BigInt(1),
@@ -76,28 +84,6 @@ describe('inversePreviewRedeem', function () {
         gatewayAddress: zeroAddress,
         tokenOut,
       }),
-    ).rejects.toThrow(/`gatewayAddress` cannot be the zero address/)
-  })
-
-  it('rejects zero tokenOut', async function () {
-    await expect(
-      inversePreviewRedeem({
-        amount: BigInt(1),
-        client,
-        gatewayAddress,
-        tokenOut: zeroAddress,
-      }),
-    ).rejects.toThrow(/`tokenOut` cannot be the zero address/)
-  })
-
-  it('rejects non-positive amount', async function () {
-    await expect(
-      inversePreviewRedeem({
-        amount: BigInt(0),
-        client,
-        gatewayAddress,
-        tokenOut,
-      }),
-    ).rejects.toThrow(/`amount` must be greater than zero/)
+    ).rejects.toThrow(/Gateway is invalid/)
   })
 })

@@ -9,6 +9,7 @@ ignoredBuiltDependencies:
 minimumReleaseAge: 10080 # 7 days in minutes
 minimumReleaseAgeExclude:
   - '@hemilabs/*'
+  - '@vetro-protocol/*'
 
 onlyBuiltDependencies:
   - '@parcel/watcher' # native file watcher used by next-intl in dev mode

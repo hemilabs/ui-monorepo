@@ -1,14 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
+import { previewDeposit } from '@vetro-protocol/gateway/actions'
 import {
   getGatewayForShare,
   getHemiEarnAgentAddress,
   getHemiEarnRouterAddress,
 } from 'hemi-earn-actions'
-import {
-  previewGatewayDeposit,
-  quoteDeposit,
-  quoteDepositFulfilment,
-} from 'hemi-earn-actions/actions'
+import { quoteDeposit, quoteDepositFulfilment } from 'hemi-earn-actions/actions'
 import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient, getHemiClient } from 'utils/chainClients'
@@ -60,10 +57,9 @@ export const useQuoteDeposit = ({
           fulfillmentFee,
           routerAddress: getHemiEarnRouterAddress(),
         }),
-        previewGatewayDeposit({
+        previewDeposit(ethereumClient, {
+          address: getGatewayForShare(shareAddress),
           amountIn: amount,
-          client: ethereumClient,
-          gatewayAddress: getGatewayForShare(shareAddress),
           tokenIn: asset,
         }),
       ])

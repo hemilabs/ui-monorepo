@@ -1,4 +1,5 @@
 import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
+import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { AnalyticsEvent } from 'app/analyticsEvents'
 import { ExternalLink as AnchorTag } from 'components/externalLink'
 import { ArrowDownLeftIcon } from 'components/icons/arrowDownLeftIcon'
@@ -17,7 +18,8 @@ import {
   useState,
 } from 'react'
 import ReactDOM from 'react-dom'
-import { getPortalContainer } from 'utils/document'
+import { screenBreakpoints } from 'styles'
+import { getDrawerPortalContainer, getPortalContainer } from 'utils/document'
 
 import { IconContainer } from '../iconContainer'
 import { ItemContainer, ItemText, Row } from '../navItem'
@@ -129,7 +131,14 @@ const DexImpl = function () {
   const [networkType] = useNetworkType()
   const isTestnet = networkType === 'testnet'
 
-  const dropdownPortalContainer = getPortalContainer()
+  const { width } = useWindowSize()
+  // Below `xl`, the navbar is rendered inside a Drawer portaled to body, so
+  // portal the dropdown to body too — otherwise it lands in #app-layout-container
+  // which sits behind the Drawer and the content stays hidden.
+  const isInlineNavbar = width != null && width >= screenBreakpoints.xl
+  const dropdownPortalContainer = isInlineNavbar
+    ? getPortalContainer()
+    : getDrawerPortalContainer()
 
   return isTestnet ? (
     <HemiSwapLink event="nav - dex" text={t('title')} />
@@ -167,7 +176,7 @@ const DexImpl = function () {
             className="md:translate-y-30 absolute bottom-0 left-0 top-24
               z-30 flex w-full flex-col items-start overflow-y-auto rounded-t-2xl
               bg-white p-4 shadow-lg md:top-0 md:h-fit md:w-64 md:translate-x-56
-              md:rounded-lg md:p-1 lg:translate-x-2"
+              md:rounded-lg md:p-1 xl:translate-x-2"
             onMouseDown={e => e.stopPropagation()}
             onTouchStart={e => e.stopPropagation()}
             ref={ref}

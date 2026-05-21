@@ -1,5 +1,6 @@
 'use client'
 
+import { featureFlags } from 'app/featureFlags'
 import dynamic from 'next/dynamic'
 import { ReactNode } from 'react'
 
@@ -50,12 +51,16 @@ export const NavbarDesktop = () => (
       <Help />
     </div>
     <ul className="z-10 flex h-full flex-col gap-y-0.5 overflow-y-auto overflow-x-hidden [&>li:not(.no-padding)]:px-3">
-      <PaddedListItem>
-        <HemiEarn />
-      </PaddedListItem>
-      <PaddedListItem>
-        <BitcoinYield />
-      </PaddedListItem>
+      {featureFlags.enableHemiEarnPage && (
+        <PaddedListItem>
+          <HemiEarn />
+        </PaddedListItem>
+      )}
+      {featureFlags.enableBtcYieldPage && (
+        <PaddedListItem>
+          <BitcoinYield />
+        </PaddedListItem>
+      )}
       <PaddedListItem>
         <TunnelLink />
       </PaddedListItem>

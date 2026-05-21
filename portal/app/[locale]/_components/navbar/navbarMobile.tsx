@@ -1,3 +1,4 @@
+import { featureFlags } from 'app/featureFlags'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
@@ -60,12 +61,16 @@ export const NavbarMobile = function () {
     <div className="h-90dvh flex flex-col bg-white pb-14 sm:pb-0">
       <div className="flex-1 overflow-y-auto px-5 py-6">
         <ul className="flex h-fit flex-wrap justify-start gap-2">
-          <SmallBox>
-            <HemiEarn />
-          </SmallBox>
-          <SmallBox>
-            <BitcoinYield />
-          </SmallBox>
+          {featureFlags.enableHemiEarnPage && (
+            <SmallBox>
+              <HemiEarn />
+            </SmallBox>
+          )}
+          {featureFlags.enableBtcYieldPage && (
+            <SmallBox>
+              <BitcoinYield />
+            </SmallBox>
+          )}
           <SmallBox>
             <TunnelLink />
           </SmallBox>

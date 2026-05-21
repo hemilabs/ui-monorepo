@@ -1,6 +1,6 @@
 'use client'
 
-import { featureFlags, NavFeatureFlag } from 'app/featureFlags'
+import { featureFlags } from 'app/featureFlags'
 import dynamic from 'next/dynamic'
 import { ReactNode } from 'react'
 
@@ -36,15 +36,10 @@ const Help = dynamic(() => import('./_components/help').then(mod => mod.Help), {
 const PaddedListItem = ({
   children,
   className = '',
-  flag,
 }: {
   children: ReactNode
   className?: string
-  flag?: NavFeatureFlag
-}) =>
-  flag !== undefined && !featureFlags[flag] ? null : (
-    <li className={`[&>div]:px-2 ${className}`}>{children}</li>
-  )
+}) => <li className={`[&>div]:px-2 ${className}`}>{children}</li>
 
 export const NavbarDesktop = () => (
   <div className="w-54 relative flex h-full flex-col justify-between overflow-x-hidden bg-white pt-3">
@@ -56,12 +51,16 @@ export const NavbarDesktop = () => (
       <Help />
     </div>
     <ul className="z-10 flex h-full flex-col gap-y-0.5 overflow-y-auto overflow-x-hidden [&>li:not(.no-padding)]:px-3">
-      <PaddedListItem flag="enableHemiEarnPage">
-        <HemiEarn />
-      </PaddedListItem>
-      <PaddedListItem flag="enableBtcYieldPage">
-        <BitcoinYield />
-      </PaddedListItem>
+      {featureFlags.enableHemiEarnPage && (
+        <PaddedListItem>
+          <HemiEarn />
+        </PaddedListItem>
+      )}
+      {featureFlags.enableBtcYieldPage && (
+        <PaddedListItem>
+          <BitcoinYield />
+        </PaddedListItem>
+      )}
       <PaddedListItem>
         <TunnelLink />
       </PaddedListItem>

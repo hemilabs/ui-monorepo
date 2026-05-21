@@ -39,6 +39,9 @@ export const PoolInfoBar = function ({ pool }: Props) {
     chainId: mainnet.id,
   }))
 
+  const formattedAddress = formatEvmAddress(pool.shareAddress)
+  const explorerUrl = chain?.blockExplorers?.default.url
+
   const handleManage = () =>
     router.push(
       `/hemi-earn/pool/${pool.shareAddress}${queryStringObjectToString({
@@ -54,12 +57,16 @@ export const PoolInfoBar = function ({ pool }: Props) {
       <div className="grid grid-cols-2 gap-4 md:flex md:flex-1 md:items-center md:gap-6">
         <PoolInfoItem label={t('pool-contract')}>
           <span className="body-text-medium text-neutral-950">
-            <ExternalLink
-              className="hover:text-orange-500"
-              href={`${chain?.blockExplorers?.default.url}/address/${pool.shareAddress}`}
-            >
-              {formatEvmAddress(pool.shareAddress)}
-            </ExternalLink>
+            {explorerUrl ? (
+              <ExternalLink
+                className="hover:text-orange-500"
+                href={`${explorerUrl}/address/${pool.shareAddress}`}
+              >
+                {formattedAddress}
+              </ExternalLink>
+            ) : (
+              formattedAddress
+            )}
           </span>
         </PoolInfoItem>
         <PoolInfoItem label={t('total-deposits')}>

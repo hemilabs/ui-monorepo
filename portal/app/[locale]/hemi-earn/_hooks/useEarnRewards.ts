@@ -1,3 +1,5 @@
+'use client'
+
 import { useQuery } from '@tanstack/react-query'
 import fetch from 'fetch-plus-plus'
 import { isValidUrl } from 'utils/url'

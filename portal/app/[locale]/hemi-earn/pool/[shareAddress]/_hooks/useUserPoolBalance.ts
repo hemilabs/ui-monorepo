@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
+import { previewRedeem } from '@vetro-protocol/gateway/actions'
 import { getGatewayForShare, getStakingVaultForShare } from 'hemi-earn-actions'
-import { previewGatewayRedeem } from 'hemi-earn-actions/actions'
 import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient, getHemiClient } from 'utils/chainClients'
@@ -75,9 +75,8 @@ export const useUserPoolBalance = function ({
       if (peggedAmount <= BigInt(0)) {
         return { assetOut: BigInt(0), shares }
       }
-      const assetOut = await previewGatewayRedeem({
-        client: ethereumClient,
-        gatewayAddress: getGatewayForShare(shareAddress),
+      const assetOut = await previewRedeem(ethereumClient, {
+        address: getGatewayForShare(shareAddress),
         peggedTokenIn: peggedAmount,
         tokenOut: assetAddress,
       })

@@ -1,7 +1,5 @@
-import { type Address, type Client, isAddressEqual, zeroAddress } from 'viem'
-import { readContract } from 'viem/actions'
-
-import { gatewayAbi } from '../../vetro/gatewayAbi'
+import { previewRedeem } from '@vetro-protocol/gateway/actions'
+import { type Address, type Client } from 'viem'
 
 // Solves `Gateway.previewRedeem(tokenOut, peggedTokenIn) === amount` for
 // `peggedTokenIn` — i.e. the pegged-token amount that must leave the vault
@@ -32,26 +30,11 @@ export const inversePreviewRedeem = async function ({
   gatewayAddress: Address
   tokenOut: Address
 }): Promise<bigint> {
-  if (isAddressEqual(gatewayAddress, zeroAddress)) {
-    throw new Error(
-      'inversePreviewRedeem: `gatewayAddress` cannot be the zero address',
-    )
-  }
-  if (isAddressEqual(tokenOut, zeroAddress)) {
-    throw new Error(
-      'inversePreviewRedeem: `tokenOut` cannot be the zero address',
-    )
-  }
-  if (amount <= BigInt(0)) {
-    throw new Error('inversePreviewRedeem: `amount` must be greater than zero')
-  }
-
-  const probe = (await readContract(client, {
-    abi: gatewayAbi,
+  const probe = await previewRedeem(client, {
     address: gatewayAddress,
-    args: [tokenOut, amount],
-    functionName: 'previewRedeem',
-  })) as bigint
+    peggedTokenIn: amount,
+    tokenOut,
+  })
 
   // A zero probe means the redeem path returns nothing for any peggedIn
   // (gateway disabled or asset blocked). Surface as zero so callers can gate

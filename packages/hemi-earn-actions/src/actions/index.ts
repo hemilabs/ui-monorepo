@@ -4,8 +4,6 @@ export {
   getAssetData,
   getRequest,
   inversePreviewRedeem,
-  previewGatewayDeposit,
-  previewGatewayRedeem,
   quoteDeposit,
   quoteDepositFulfilment,
   quoteRedeem,

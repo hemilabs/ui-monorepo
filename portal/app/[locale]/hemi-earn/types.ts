@@ -20,8 +20,13 @@ export type EarnAsset = {
 // token's units (vBTC, vUSD — that's what the vault's `asset()` returns).
 // Pair it with `peggedToken` for formatting and pricing; never with
 // `shareToken`, since the share OFT has no public price feed.
+// `apy` is tri-state:
+//   `undefined` — APY query still pending (show skeleton)
+//   `null`      — APY query settled but no value for this share (error or
+//                 missing in response → show '-')
+//   `number`    — 7-day APY available
 export type EarnPool = {
-  apy: { base: number; incentivized: number; total: number }
+  apy: number | null | undefined
   assets: EarnAsset[]
   exposureTokens: { address: Address; chainId: EvmToken['chainId'] }[]
   peggedToken: EvmToken
@@ -30,11 +35,10 @@ export type EarnPool = {
   totalDeposits: bigint
 }
 
-// One row in the My Positions table. `yourDeposit` is the raw share OFT
-// balance (denominated in `shareToken.decimals`); fiat conversion goes
-// through `peggedToken` via `convertToAssets` (see `ShareValueDisplay`).
+// `yourDeposit` is the raw share OFT balance (denominated in
+// `shareToken.decimals`); fiat conversion goes through `peggedToken` via
+// `convertToAssets`.
 export type EarnPosition = {
-  apy: { base: number; incentivized: number; total: number }
   peggedToken: EvmToken
   shareAddress: Address
   shareToken: EvmToken

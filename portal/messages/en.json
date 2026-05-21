@@ -55,23 +55,12 @@
       "withdraw-successful": "Withdraw successful"
     },
     "subheading": "One click earn for your assets",
-    "table": {
-      "actions": "Actions",
-      "apy": "APY",
-      "apy-base": "Base",
-      "apy-incentivized": "Incentivized",
-      "connect-to-view-positions": "Connect your wallet to view your positions.",
-      "deposit-and-earn-yield": "Deposit and earn yield",
-      "exposure": "Exposure",
+    "pool-info": {
+      "apy": "Current 7-Day APY",
       "manage": "Manage",
-      "my-positions": "My positions",
-      "no-positions-subtitle": "Deposit into a pool to start earning yield.",
-      "no-positions-title": "No active positions",
-      "pool": "Pool",
-      "pools": "Pools",
-      "total-deposits": "Total deposits",
-      "yield-earned": "Yield earned",
-      "your-deposit": "Your deposit"
+      "pool-contract": "Pool Contract",
+      "potential-rewards": "Potential rewards",
+      "total-deposits": "Total deposits"
     }
   },
   "bitcoin-yield": {

@@ -9,33 +9,24 @@ import { InfoCards, InfoCardsSkeleton } from './_components/infoCards'
 import { TopSection } from './_components/topSection'
 import { useHemiEarnShares } from './_hooks/useHemiEarnShares'
 
-const EarnTableSkeleton = () => (
-  <div className="mt-10 w-full">
-    <div className="flex w-full gap-x-2 md:w-fit">
-      <div className="flex-1 md:w-16 md:flex-none">
-        <Skeleton className="h-7 w-full rounded-md" />
-      </div>
-      <div className="flex-1 md:w-28 md:flex-none">
-        <Skeleton className="h-7 w-full rounded-md" />
-      </div>
-    </div>
-    <Skeleton className="h-17 mt-4 w-full rounded-xl" />
+const PoolsListSkeleton = () => (
+  <div className="mt-10 flex w-full flex-col gap-4">
+    <Skeleton className="h-19 w-full rounded-xl" />
+    <Skeleton className="h-19 w-full rounded-xl" />
   </div>
 )
 
-// Dynamically load the table because the column order depends on viewport size
-// so, if we don't do this, there will be a very visible layout shift
-const EarnTable = dynamic(
-  () => import('./_components/earnTable').then(mod => mod.EarnTable),
+const PoolsSection = dynamic(
+  () => import('./_components/poolsSection').then(mod => mod.PoolsSection),
   {
-    loading: () => <EarnTableSkeleton />,
+    loading: () => <PoolsListSkeleton />,
     ssr: false,
   },
 )
 
 // Gates the page on the first resolution of `useHemiEarnShares`. The hook
 // reads each share's pegged-token address from the gateway on-chain, and
-// without this gate the InfoCards + EarnTable would all mount with their
+// without this gate the InfoCards + PoolsSection would all mount with their
 // own `useQueries` subscriptions while that fetch is still in flight,
 // fanning out across 5+ sibling consumers and locking the main thread.
 // Mounting only after the gate releases means children read the resolved
@@ -47,7 +38,7 @@ const TokensGate = function ({ children }: { children: ReactNode }) {
     return (
       <>
         <InfoCardsSkeleton />
-        <EarnTableSkeleton />
+        <PoolsListSkeleton />
       </>
     )
   }
@@ -60,7 +51,7 @@ export default function Page() {
       <TopSection />
       <TokensGate>
         <InfoCards />
-        <EarnTable />
+        <PoolsSection />
       </TokensGate>
     </PageLayout>
   )

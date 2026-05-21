@@ -1,6 +1,6 @@
 {
-  "ignore": ["portal/i18n/request.ts", "subgraphs/utils/index.ts"],
-  "ignoreBinaries": ["ipconfig", "sleep"],
+  "ignore": ["subgraphs/utils/index.ts"],
+  "ignoreBinaries": ["ipconfig", "jq"],
   "ignoreDependencies": [
     "assemblyscript",
     "eslint-config-next",

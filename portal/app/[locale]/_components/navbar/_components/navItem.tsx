@@ -31,7 +31,7 @@ export const ItemContainer = ({
   }) => (
   <div
     {...props}
-    className={`group/item group/nav flex ${justifyItems} h-auto cursor-pointer items-center rounded-lg ${padding} transition-colors duration-300 md:rounded-md ${
+    className={`group/item group/nav flex ${justifyItems} h-full cursor-pointer items-center rounded-lg md:h-auto ${padding} transition-colors duration-300 md:rounded-md ${
       selected ? selectedClassName : hoverClassName
     }`}
   >

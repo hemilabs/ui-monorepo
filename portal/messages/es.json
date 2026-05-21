@@ -55,23 +55,12 @@
       "withdraw-successful": "Retiro exitoso"
     },
     "subheading": "Gane rendimiento con sus activos en un solo clic",
-    "table": {
-      "actions": "Acciones",
-      "apy": "TEA",
-      "apy-base": "Base",
-      "apy-incentivized": "Incentivada",
-      "connect-to-view-positions": "Conecte su billetera para ver sus posiciones.",
-      "deposit-and-earn-yield": "Deposite y gane rendimiento",
-      "exposure": "Exposición",
+    "pool-info": {
+      "apy": "TEA actual de 7 días",
       "manage": "Gestionar",
-      "my-positions": "Mis posiciones",
-      "no-positions-subtitle": "Deposite en un fondo para empezar a ganar rendimiento.",
-      "no-positions-title": "Sin posiciones activas",
-      "pool": "Fondo",
-      "pools": "Fondos",
-      "total-deposits": "Depósitos totales",
-      "yield-earned": "Rendimiento ganado",
-      "your-deposit": "Su depósito"
+      "pool-contract": "Contrato del fondo",
+      "potential-rewards": "Recompensas potenciales",
+      "total-deposits": "Depósitos totales"
     }
   },
   "bitcoin-yield": {

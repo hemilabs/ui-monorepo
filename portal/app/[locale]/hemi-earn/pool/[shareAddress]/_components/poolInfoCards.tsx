@@ -39,10 +39,12 @@ export const PoolInfoCards = function ({ pool }: Props) {
       <div className="flex-1">
         <PoolCard
           icon={<AvgApyIcon />}
-          isError={false}
-          isLoading={false}
+          isError={pool.apy === null}
+          isLoading={pool.apy === undefined}
           label={t('pool.apy')}
-          value={<>{formatApyDisplay(pool.apy.total)}</>}
+          value={
+            typeof pool.apy === 'number' ? formatApyDisplay(pool.apy) : null
+          }
         />
       </div>
     </div>

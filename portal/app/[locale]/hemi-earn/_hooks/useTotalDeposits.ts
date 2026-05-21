@@ -22,8 +22,7 @@ const positionUsd = (
 
 // Sums the USD value of every share position the user holds. Each entry is
 // `convertToAssets(stakingVault, shares)` (shares → pegged token) priced via
-// `getTokenPrice(peggedToken)` against the portal price feed — same path
-// `ShareFiatBalance` uses for a single position, just aggregated here.
+// `getTokenPrice(peggedToken)` against the portal price feed.
 export const useTotalDeposits = function () {
   const {
     data: positions = [],

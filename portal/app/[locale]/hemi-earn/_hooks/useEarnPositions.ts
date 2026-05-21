@@ -13,9 +13,6 @@ import { useHemiEarnShares } from './useHemiEarnShares'
 
 export const earnPositionsKeyPrefix = ['hemi-earn', 'positions']
 
-// TODO(phase-2): APY is still mocked (see `useEarnPools`). Yield-earned is
-// out of scope (no subgraph indexing `RequestClaimed` yet); only the raw
-// share OFT balance is surfaced for now.
 export const useEarnPositions = function () {
   const [networkType] = useNetworkType()
   const { address } = useAccount()
@@ -67,7 +64,6 @@ export const useEarnPositions = function () {
         }))
         .filter(({ balance }) => balance > BigInt(0))
         .map(({ balance, share }) => ({
-          apy: { base: 0, incentivized: 0, total: 0 },
           peggedToken: share.peggedToken,
           shareAddress: share.shareAddress,
           shareToken: share.shareToken,

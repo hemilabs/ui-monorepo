@@ -1,29 +1,24 @@
 'use client'
 
-import { useQueries } from '@tanstack/react-query'
-import { getStakingVaultForShare } from 'hemi-earn-actions'
+import { useQueries, useQuery } from '@tanstack/react-query'
 import { useNetworkType } from 'hooks/useNetworkType'
-import { mainnet } from 'networks/mainnet'
-import { getEvmL1PublicClient } from 'utils/chainClients'
-import { totalAssets } from 'viem-erc4626/actions'
 
 import { type EarnPool } from '../types'
 
+import {
+  earnApyQueryOptions,
+  isApyApiConfigured,
+  selectApyValue,
+} from './useEarnApy'
+import { earnTvlQueryOptions } from './useEarnTvl'
 import { useHemiEarnShares } from './useHemiEarnShares'
 
-export const getEarnPoolTotalAssetsQueryKey = ({
-  networkType,
-  shareAddress,
-}: {
-  networkType: string
-  shareAddress: string
-}) => ['hemi-earn', 'pools', networkType, shareAddress, 'totalAssets']
-
-// TODO(phase-2): APY is still mocked. The real value comes from a
-// share-price time series on the StakingVault (or a subgraph aggregating
-// yield-distributor events). The Router refactor surfaces TVL via
-// `totalAssets`; APY needs its own pipeline before this hook can drop
-// the placeholder.
+// Composes the per-pool view out of the registry of shares plus two
+// independent side queries: TVL (one read per share, on-chain) and APY
+// (a single shared HTTP call whose response is keyed by vault address).
+// Each piece keeps its own freshness lifecycle — TVL is invalidated by
+// deposit/withdraw, APY refetches on a 5-minute interval — and we just
+// pick the resolved values up here at render time.
 export const useEarnPools = function () {
   const [networkType] = useNetworkType()
   const {
@@ -32,31 +27,22 @@ export const useEarnPools = function () {
     isPending: isSharesPending,
   } = useHemiEarnShares()
 
-  // TVL reads hit Ethereum L1 (the StakingVault). They're intentionally NOT
-  // part of `isPending` below: the page must be able to render with placeholder
-  // TVL while the cross-chain read is in flight (especially on the anvil
-  // sandbox where the L1 RPC may not actually serve the StakingVault address).
-  // `totalDeposits` falls back to `0n` until the query resolves.
+  // TVL queries are intentionally NOT part of `isPending`: the page should
+  // render with a `0n` placeholder while the cross-chain read is in flight.
   const tvlQueries = useQueries({
     queries: shares.map(share => ({
+      ...earnTvlQueryOptions({ networkType, shareAddress: share.shareAddress }),
       enabled: shares.length > 0,
-      queryFn: () =>
-        totalAssets(getEvmL1PublicClient(mainnet.id), {
-          address: getStakingVaultForShare(share.shareAddress),
-        }),
-      queryKey: getEarnPoolTotalAssetsQueryKey({
-        networkType,
-        shareAddress: share.shareAddress,
-      }),
-      // Fail fast instead of retrying 3× with exponential backoff — a missing
-      // L1 RPC config (or a sandbox setup without an Ethereum-side mirror)
-      // shouldn't keep the UI in a pending state for ~7s on every page load.
-      retry: false,
     })),
   })
 
+  const { data: apyByVault, isPending: isApyQueryPending } = useQuery(
+    earnApyQueryOptions(),
+  )
+  const isApyPending = isApyApiConfigured && isApyQueryPending
+
   const data: EarnPool[] = shares.map((share, index) => ({
-    apy: { base: 0, incentivized: 0, total: 0 },
+    apy: selectApyValue(apyByVault, isApyPending, share.shareAddress),
     assets: share.assets,
     exposureTokens: share.assets.map(a => ({
       address: a.address,

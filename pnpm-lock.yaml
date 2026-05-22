@@ -427,8 +427,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0
       p-queue:
-        specifier: 8.1.1
-        version: 8.1.1
+        specifier: 9.2.0
+        version: 9.2.0
       promise-mem:
         specifier: 1.0.4
         version: 1.0.4
@@ -11385,13 +11385,6 @@ packages:
       }
     engines: { node: '>=16' }
 
-  p-queue@8.1.1:
-    resolution:
-      {
-        integrity: sha512-aNZ+VfjobsWryoiPnEApGGmf5WmNsCo9xu8dfaYamG5qaLP7ClhLN6NgsFe6SwJ2UbLEBK5dv9x8Mn5+RVhMWQ==,
-      }
-    engines: { node: '>=18' }
-
   p-queue@9.2.0:
     resolution:
       {
@@ -11405,13 +11398,6 @@ packages:
         integrity: sha512-312Id396EbJdvRONlngUx0NydfrIQ5lsYu0znKVUzVvArzEIt08V1qhtyESbGVd1FGX7UKtiFp5uwKZdM8wIuQ==,
       }
     engines: { node: '>=8' }
-
-  p-timeout@6.1.4:
-    resolution:
-      {
-        integrity: sha512-MyIV3ZA/PmyBN/ud8vV9XzwTrNtR4jFrObymZYnZqMmW0zA8Z17vnT0rBgFE/TlohB+YCHqXMgZzb3Csp49vqg==,
-      }
-    engines: { node: '>=14.16' }
 
   p-timeout@7.0.1:
     resolution:
@@ -22578,11 +22564,6 @@ snapshots:
 
   p-map@6.0.0: {}
 
-  p-queue@8.1.1:
-    dependencies:
-      eventemitter3: 5.0.4
-      p-timeout: 6.1.4
-
   p-queue@9.2.0:
     dependencies:
       eventemitter3: 5.0.4
@@ -22592,8 +22573,6 @@ snapshots:
     dependencies:
       '@types/retry': 0.12.0
       retry: 0.13.1
-
-  p-timeout@6.1.4: {}
 
   p-timeout@7.0.1: {}
 

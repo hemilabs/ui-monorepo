@@ -1,6 +1,6 @@
-import { hemi } from 'hemi-viem'
 import type { Address, PublicClient } from 'viem'
 import { readContract } from 'viem/actions'
+import { hemi } from 'viem/chains'
 import { describe, expect, it, vi } from 'vitest'
 
 import { getRewardPeriod } from '../../actions/public/getRewardPeriod'
@@ -9,9 +9,13 @@ vi.mock('viem/actions', () => ({
   readContract: vi.fn(),
 }))
 
+vi.mock('../../constants', () => ({
+  getVeHemiRewardsContractAddress: vi.fn(() => '0x123'),
+}))
+
 describe('getRewardPeriod', function () {
   const mockClient = {
-    chain: { id: hemi.id },
+    chain: hemi,
   } as PublicClient
 
   const tokenAddress: Address = '0x1234567890123456789012345678901234567890'

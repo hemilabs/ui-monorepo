@@ -7,14 +7,10 @@ import { useEarnPools } from '../_hooks/useEarnPools'
 import { PoolInfoBar } from './poolInfoBar'
 
 const PoolInfoBarSkeleton = () => (
-  <Skeleton className="h-19.5 w-full rounded-xl" />
+  <Skeleton className="md:h-19.5 h-58 w-full rounded-xl" />
 )
 
-type Props = {
-  placeholderCount?: number
-}
-
-export const PoolsList = function ({ placeholderCount = 2 }: Props) {
+export const PoolsList = function () {
   const { data: pools = [], isPending } = useEarnPools()
 
   if (!isPending) {
@@ -29,9 +25,10 @@ export const PoolsList = function ({ placeholderCount = 2 }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      {Array.from({ length: placeholderCount }).map((_, i) => (
-        <PoolInfoBarSkeleton key={i} />
-      ))}
+      <PoolInfoBarSkeleton />
+      <div className="hidden md:block">
+        <PoolInfoBarSkeleton />
+      </div>
     </div>
   )
 }

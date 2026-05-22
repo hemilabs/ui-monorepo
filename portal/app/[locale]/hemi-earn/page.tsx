@@ -11,8 +11,10 @@ import { useHemiEarnShares } from './_hooks/useHemiEarnShares'
 
 const PoolsListSkeleton = () => (
   <div className="mt-6 flex w-full flex-col gap-4">
-    <Skeleton className="h-19.5 w-full rounded-xl" />
-    <Skeleton className="h-19.5 w-full rounded-xl" />
+    <Skeleton className="md:h-19.5 h-58 w-full rounded-xl" />
+    <div className="hidden md:block">
+      <Skeleton className="h-19.5 w-full rounded-xl" />
+    </div>
   </div>
 )
 

@@ -22,7 +22,13 @@ export const PoolInfoItem = function ({
       return <span className="body-text-medium text-neutral-950">{value}</span>
     }
     if (isLoading) {
-      return <Skeleton height={17} width={80} />
+      return (
+        <Skeleton
+          containerClassName="block leading-none"
+          height={18}
+          width={80}
+        />
+      )
     }
     return <span className="body-text-medium text-neutral-950">-</span>
   }

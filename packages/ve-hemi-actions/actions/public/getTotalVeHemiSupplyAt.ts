@@ -11,7 +11,7 @@ export const getTotalVeHemiSupplyAt = async function (
   if (!client.chain) {
     throw new Error('Client chain is not defined')
   }
-  if (!Number.isSafeInteger(timestamp)) {
+  if (!Number.isSafeInteger(timestamp) || timestamp < 0) {
     throw new Error('Invalid timestamp')
   }
 

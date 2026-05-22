@@ -6,8 +6,10 @@ import { getVeHemiContractAddress } from '../../constants'
 
 export const getTotalVeHemiSupplyAt = async function (
   client: Client,
-  timestamp: number,
+  options: { timestamp: number },
 ) {
+  const { timestamp } = options ?? {}
+
   if (!client.chain) {
     throw new Error('Client chain is not defined')
   }

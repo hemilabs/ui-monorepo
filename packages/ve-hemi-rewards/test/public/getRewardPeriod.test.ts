@@ -66,6 +66,12 @@ describe('getRewardPeriod', function () {
     ).rejects.toThrow('Invalid timestamp')
   })
 
+  it('throws on negative timestamp', async function () {
+    await expect(
+      getRewardPeriod(mockClient, { timestamp: -1, tokenAddress }),
+    ).rejects.toThrow('Invalid timestamp')
+  })
+
   it('throws on malformed token address', async function () {
     await expect(
       getRewardPeriod(mockClient, {

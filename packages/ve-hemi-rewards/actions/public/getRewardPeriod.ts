@@ -22,7 +22,7 @@ export const getRewardPeriod = async function (
   if (!isAddress(tokenAddress)) {
     throw new Error('Invalid token address')
   }
-  if (!Number.isSafeInteger(timestamp)) {
+  if (!Number.isSafeInteger(timestamp) || timestamp < 0) {
     throw new Error('Invalid timestamp')
   }
 

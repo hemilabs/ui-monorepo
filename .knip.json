@@ -8,7 +8,7 @@
   ],
   "workspaces": {
     "portal-backend/api": {
-      "entry": "scripts/*.js"
+      "entry": ["scripts/*.cjs"]
     },
     "subgraphs/*": {
       "entry": ["src/mappings/*.ts"]

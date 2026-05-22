@@ -1,21 +1,32 @@
-'use strict'
+import type { RequestHandler } from 'express'
+import pLimitOne from 'promise-limit-one'
+import pMemoize from 'promise-mem'
+import pSwr from 'promise-swr'
+import safeAsyncFn from 'safe-async-fn'
 
-const pLimitOne = require('promise-limit-one')
-const pMemoize = require('promise-mem')
-const pSwr = require('promise-swr')
-const safeAsyncFn = require('safe-async-fn')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyAsyncFn = (...args: any[]) => Promise<any>
 
-function getSafeCachedFn(fn, options) {
+type CacheOptions = {
+  maxAge?: number
+  revalidate?: number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  resolver?: (...args: any[]) => string
+}
+
+function getSafeCachedFn(fn: AnyAsyncFn, options: CacheOptions) {
   const cachedFn = options.revalidate
     ? pSwr(fn, options)
     : options.maxAge
       ? pMemoize(fn, options)
       : pLimitOne(fn)
-  // @ts-ignore ts(2345)
   return safeAsyncFn(cachedFn)
 }
 
-function toJsonMiddleware(fn, options = {}) {
+function toJsonMiddleware(
+  fn: AnyAsyncFn,
+  options: CacheOptions = {},
+): RequestHandler {
   const wrapped = getSafeCachedFn(fn, options)
   return async function (req, res) {
     const [err, data] = await wrapped(...Object.values(req.params))
@@ -28,7 +39,10 @@ function toJsonMiddleware(fn, options = {}) {
   }
 }
 
-function toTextMiddleware(fn, options = {}) {
+function toTextMiddleware(
+  fn: AnyAsyncFn,
+  options: CacheOptions = {},
+): RequestHandler {
   const wrapped = getSafeCachedFn(fn, options)
   return async function (req, res) {
     const [err, data] = await wrapped(...Object.values(req.params))
@@ -41,7 +55,4 @@ function toTextMiddleware(fn, options = {}) {
   }
 }
 
-module.exports = {
-  toJsonMiddleware,
-  toTextMiddleware,
-}
+export { toJsonMiddleware, toTextMiddleware }

@@ -1,7 +1,5 @@
-'use strict'
-
-const { esploraClient } = require('esplora-client')
-const {
+import { esploraClient } from 'esplora-client'
+import {
   getBitcoinChainLastHeader,
   getBitcoinCustodyAddress,
   getBitcoinVaultStateAddress,
@@ -13,24 +11,25 @@ const {
   getVaultStatus,
   hemi,
   hemiSepolia,
-} = require('hemi-viem')
-const viem = require('viem')
+} from 'hemi-viem'
+import { type Address, createPublicClient, http, type PublicClient } from 'viem'
 
-function getHemiClient(chainId) {
-  const chain = { [hemi.id]: hemi, [hemiSepolia.id]: hemiSepolia }[chainId]
-  const transport = viem.http()
-  return viem.createPublicClient({ chain, transport })
+function getHemiClient(chainId: string) {
+  const chain = { [hemi.id]: hemi, [hemiSepolia.id]: hemiSepolia }[
+    Number(chainId)
+  ]
+  return createPublicClient({ chain, transport: http() }) as PublicClient
 }
 
-async function getBitcoinChainHeight(network) {
+async function getBitcoinChainHeight(network: 'testnet' | 'mainnet') {
   const client = esploraClient({ network })
   const height = await client.bitcoin.blocks.getBlocksTipHeight()
   return { height }
 }
 
-async function getBitcoinChainData(client) {
+async function getBitcoinChainData(client: PublicClient) {
   const [bitcoin, bitcoinKit] = await Promise.all([
-    getBitcoinChainHeight(client.chain.testnet ? 'testnet' : 'mainnet'),
+    getBitcoinChainHeight(client.chain!.testnet ? 'testnet' : 'mainnet'),
     getBitcoinChainLastHeader(client),
   ])
   return {
@@ -39,7 +38,10 @@ async function getBitcoinChainData(client) {
   }
 }
 
-async function getBitcoinAddressBalance(network, address) {
+async function getBitcoinAddressBalance(
+  network: 'testnet' | 'mainnet',
+  address: string,
+) {
   const client = esploraClient({ network })
   const addressData = await client.bitcoin.addresses.getAddress({ address })
   return (
@@ -48,20 +50,26 @@ async function getBitcoinAddressBalance(network, address) {
   )
 }
 
-async function getVaultBitcoinBalanceData(client, { vaultAddress }) {
+async function getVaultBitcoinBalanceData(
+  client: PublicClient,
+  { vaultAddress }: { vaultAddress: Address },
+) {
   const bitcoinCustodyAddress = await getBitcoinCustodyAddress(client, {
     vaultAddress,
   })
   const balanceSats = bitcoinCustodyAddress
     ? await getBitcoinAddressBalance(
-        client.chain.testnet ? 'testnet' : 'mainnet',
+        client.chain!.testnet ? 'testnet' : 'mainnet',
         bitcoinCustodyAddress,
       )
     : 0
   return { balanceSats, bitcoinCustodyAddress }
 }
 
-async function getVaultPendingWithdrawalsData(client, { vaultAddress }) {
+async function getVaultPendingWithdrawalsData(
+  client: PublicClient,
+  { vaultAddress }: { vaultAddress: Address },
+) {
   const vaultStateAddress = await getBitcoinVaultStateAddress(client, {
     vaultAddress,
   })
@@ -79,7 +87,10 @@ async function getVaultPendingWithdrawalsData(client, { vaultAddress }) {
   }
 }
 
-async function getVaultData(client, { vaultIndex }) {
+async function getVaultData(
+  client: PublicClient,
+  { vaultIndex }: { vaultIndex: number },
+) {
   const vaultAddress = await getVaultByIndex(client, { vaultIndex })
   const [bitcoinBalanceData, pendingWithdrawalsData, status] =
     await Promise.all([
@@ -95,28 +106,22 @@ async function getVaultData(client, { vaultIndex }) {
   }
 }
 
-async function getAllVaultsData(client) {
+async function getAllVaultsData(client: PublicClient) {
   const length = await getVaultCounter(client)
   return Promise.all(
     Array.from({ length }, (_, i) => getVaultData(client, { vaultIndex: i })),
   )
 }
 
-/**
- * @param {number} chainId
- */
-async function getBtcVaultsData(chainId) {
+async function getBtcVaultsData(chainId: string) {
   const client = getHemiClient(chainId)
-  const isTestnet = client.chain.testnet
+  const isTestnet = client.chain!.testnet
   const [bitcoinChainData, tunnelManagerData, vaultsData] = await Promise.all([
     getBitcoinChainData(client),
-    // @ts-ignore ts(2345)
     getTunnelManagerStatus(client),
     getAllVaultsData(client),
   ])
   return { bitcoinChainData, isTestnet, tunnelManagerData, vaultsData }
 }
 
-module.exports = {
-  getBtcVaultsData,
-}
+export { getBtcVaultsData }

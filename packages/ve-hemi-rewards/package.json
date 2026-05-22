@@ -29,7 +29,7 @@
     "@types/node": "24.10.2",
     "typescript": "5.8.3",
     "viem": "2.28.4",
-    "vitest": "3.2.4"
+    "vitest": "4.1.6"
   },
   "peerDependencies": {
     "viem": "^2.x"

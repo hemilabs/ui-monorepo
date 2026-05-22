@@ -29,7 +29,11 @@ export const useTotalDeposits = function () {
     isError: isPositionsError,
     isPending: isPositionsPending,
   } = useEarnPositions()
-  const { data: prices } = useTokenPrices({ retryOnMount: false })
+  const {
+    data: prices,
+    isError: isPricesError,
+    isPending: isPricesPending,
+  } = useTokenPrices({ retryOnMount: false })
 
   const peggedAmountQueries = useQueries({
     queries: positions.map(position => ({
@@ -64,11 +68,14 @@ export const useTotalDeposits = function () {
 
   const data: TotalDepositsData = { totalUsd }
 
+  const hasPositions = positions.length > 0
   const isPending =
     isPositionsPending ||
+    (hasPositions && isPricesPending) ||
     peggedAmountQueries.some(q => q.isPending && q.isFetching)
   const isError =
     isPositionsError ||
+    (hasPositions && isPricesError) ||
     (peggedAmountQueries.length > 0 &&
       peggedAmountQueries.every(q => q.isError))
 

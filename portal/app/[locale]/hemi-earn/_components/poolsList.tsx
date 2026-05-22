@@ -7,7 +7,7 @@ import { useEarnPools } from '../_hooks/useEarnPools'
 import { PoolInfoBar } from './poolInfoBar'
 
 const PoolInfoBarSkeleton = () => (
-  <Skeleton className="h-19 w-full rounded-xl" />
+  <Skeleton className="h-19.5 w-full rounded-xl" />
 )
 
 type Props = {

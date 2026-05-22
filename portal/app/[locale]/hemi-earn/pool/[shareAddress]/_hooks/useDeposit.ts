@@ -15,8 +15,8 @@ import { parseTokenUnits } from 'utils/token'
 import { useAccount, useConfig } from 'wagmi'
 import { getWalletClient } from 'wagmi/actions'
 
-import { getEarnPoolTotalAssetsQueryKey } from '../../../_hooks/useEarnPools'
-import { earnPositionsKeyPrefix } from '../../../_hooks/useEarnPositions'
+import { earnPositionsKeyPrefix } from '../../../_fetchers/fetchEarnPositions'
+import { earnTvlQueryKey } from '../../../_hooks/useEarnTvl'
 import { type EarnAsset, type EarnPool } from '../../../types'
 import { type DepositOperation, DepositStatus } from '../_types/operations'
 
@@ -88,7 +88,7 @@ export const useDeposit = function ({
     shareAddress: pool.shareAddress,
   })
 
-  const poolTotalAssetsQueryKey = getEarnPoolTotalAssetsQueryKey({
+  const poolTotalAssetsQueryKey = earnTvlQueryKey({
     networkType,
     shareAddress: pool.shareAddress,
   })

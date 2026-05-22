@@ -3,6 +3,7 @@ import { newMockEvent } from 'matchstick-as'
 
 import {
   DepositRequested,
+  RedeemRequested,
   RequestClaimed,
   RequestFulfilled,
   RequestRecovered,
@@ -41,6 +42,43 @@ export function createDepositRequestedEvent(
     new ethereum.EventParam(
       'assets',
       ethereum.Value.fromUnsignedBigInt(assets),
+    ),
+  )
+  event.parameters.push(
+    new ethereum.EventParam('receiver', ethereum.Value.fromAddress(receiver)),
+  )
+  event.parameters.push(
+    new ethereum.EventParam('automatic', ethereum.Value.fromBoolean(automatic)),
+  )
+  setTxHash(event, txHash)
+  setBlockTimestamp(event, timestamp)
+  return event
+}
+
+export function createRedeemRequestedEvent(
+  requestId: BigInt,
+  asset: Address,
+  shares: BigInt,
+  receiver: Address,
+  automatic: boolean,
+  txHash: Bytes,
+  timestamp: BigInt,
+): RedeemRequested {
+  const event = changetype<RedeemRequested>(newMockEvent())
+  event.parameters = new Array<ethereum.EventParam>()
+  event.parameters.push(
+    new ethereum.EventParam(
+      'requestId',
+      ethereum.Value.fromUnsignedBigInt(requestId),
+    ),
+  )
+  event.parameters.push(
+    new ethereum.EventParam('asset', ethereum.Value.fromAddress(asset)),
+  )
+  event.parameters.push(
+    new ethereum.EventParam(
+      'shares',
+      ethereum.Value.fromUnsignedBigInt(shares),
     ),
   )
   event.parameters.push(

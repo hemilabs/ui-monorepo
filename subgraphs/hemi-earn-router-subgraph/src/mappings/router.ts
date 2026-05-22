@@ -1,5 +1,6 @@
 import {
   DepositRequested as DepositRequestedEvent,
+  RedeemRequested as RedeemRequestedEvent,
   RequestClaimed as RequestClaimedEvent,
   RequestFulfilled as RequestFulfilledEvent,
   RequestRecovered as RequestRecoveredEvent,
@@ -22,13 +23,28 @@ export function handleDepositRequested(event: DepositRequestedEvent): void {
   request.save()
 }
 
+export function handleRedeemRequested(event: RedeemRequestedEvent): void {
+  const id = event.params.requestId.toString()
+  const request = new Request(id)
+  request.requestId = event.params.requestId
+  request.kind = 'REDEEM'
+  request.asset = event.params.asset
+  request.amountIn = event.params.shares
+  request.receiver = event.params.receiver
+  request.automatic = event.params.automatic
+  request.initiatedAt = event.block.timestamp
+  request.status = 'PENDING'
+  request.initiateTxHash = event.transaction.hash
+  request.save()
+}
+
 export function handleRequestFulfilled(event: RequestFulfilledEvent): void {
   const request = Request.load(event.params.requestId.toString())
   if (request == null) {
     return
   }
   request.status = 'FULFILLED'
-  // These are the actual shares the user received
+  // Actual amount the user received (shares for deposits, assets for redeems)
   request.amountOut = event.params.amountIn
   request.save()
 }

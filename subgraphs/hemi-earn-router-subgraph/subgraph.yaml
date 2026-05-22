@@ -25,6 +25,9 @@ dataSources:
             DepositRequested(indexed uint256,indexed address,uint256,indexed
             address,bool)
           handler: handleDepositRequested
+        - event: RedeemRequested(indexed uint256,indexed address,uint256,indexed
+            address,bool)
+          handler: handleRedeemRequested
         - event: RequestFulfilled(indexed uint256,uint256)
           handler: handleRequestFulfilled
         - event: RequestClaimed(indexed uint256,indexed address)

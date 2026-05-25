@@ -2,7 +2,7 @@ import { type Address, type Client, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 import { describe, expect, it, vi } from 'vitest'
 
-import { quoteDepositFulfilment } from '../../../src/actions/public/quoteDepositFulfilment'
+import { quoteDepositFulfillment } from '../../../src/actions/public/quoteDepositFulfillment'
 
 vi.mock('viem/actions', () => ({
   readContract: vi.fn(),
@@ -12,11 +12,11 @@ const client = {} as Client
 const asset = '0x000000000000000000000000000000000000dEaD' as Address
 const agentAddress = '0x000000000000000000000000000000000000bEEf' as Address
 
-describe('quoteDepositFulfilment', function () {
+describe('quoteDepositFulfillment', function () {
   it('forwards args and returns the native fee', async function () {
     vi.mocked(readContract).mockResolvedValue(BigInt(42))
 
-    const result = await quoteDepositFulfilment({
+    const result = await quoteDepositFulfillment({
       agentAddress,
       asset,
       client,
@@ -28,14 +28,14 @@ describe('quoteDepositFulfilment', function () {
       expect.objectContaining({
         address: agentAddress,
         args: [asset],
-        functionName: 'quoteDepositFulfilment',
+        functionName: 'quoteDepositFulfillment',
       }),
     )
   })
 
   it('rejects the zero address as asset', async function () {
     await expect(
-      quoteDepositFulfilment({
+      quoteDepositFulfillment({
         agentAddress,
         asset: zeroAddress,
         client,

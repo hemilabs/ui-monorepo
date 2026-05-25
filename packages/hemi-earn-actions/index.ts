@@ -17,6 +17,10 @@ export {
 } from './src/constants'
 
 export type {
+  ClaimDepositEvents,
+  ClaimRedeemEvents,
+  RecoverDepositEvents,
+  RecoverRedeemEvents,
   RequestDepositEvents,
   RequestKind,
   RequestRedeemEvents,

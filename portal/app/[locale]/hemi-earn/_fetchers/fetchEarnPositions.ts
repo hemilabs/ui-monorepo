@@ -10,7 +10,7 @@ import { hemiEarnSharesQueryOptions } from './fetchHemiEarnShares'
 
 export const earnPositionsKeyPrefix = ['hemi-earn', 'positions']
 
-export const shareBalanceQueryOptions = ({
+const shareBalanceQueryOptions = ({
   account,
   networkType,
   shareAddress,
@@ -50,10 +50,18 @@ export const fetchEarnPositions = async function ({
   // Use `allSettled` so a single failing share-balance read doesn't take down
   // the whole composition: matches the previous `useQueries` behavior where
   // the hook only escalated to an error state if *every* read failed.
+  //
+  // `fetchQuery` (instead of `ensureQueryData`) is load-bearing: deposit/
+  // withdraw flows invalidate `earnPositionsKeyPrefix` on `onSettled`, which
+  // marks these reads as stale but doesn't evict them. `ensureQueryData`
+  // returns stale cache even with `revalidateIfStale: true` (the latter only
+  // schedules a background prefetch), so the staked-balance card stayed on
+  // the pre-deposit value until a hard refresh. `fetchQuery` actually waits
+  // for fresh data when the query is stale.
   const settled = await Promise.allSettled(
     shares.map(share =>
       queryClient
-        .ensureQueryData(
+        .fetchQuery(
           shareBalanceQueryOptions({
             account,
             networkType,

@@ -10,7 +10,7 @@ import { getHemiEarnAgentAddress } from '../../constants'
 // into the total `msg.value` of `requestDeposit`. Without this read the
 // Router would underprovision the cross-chain return message and the request
 // would stall on the Ethereum side.
-export const quoteDepositFulfilment = async function ({
+export const quoteDepositFulfillment = async function ({
   agentAddress = getHemiEarnAgentAddress(),
   asset,
   client,
@@ -21,7 +21,7 @@ export const quoteDepositFulfilment = async function ({
 }): Promise<bigint> {
   if (isAddressEqual(asset, zeroAddress)) {
     throw new Error(
-      'quoteDepositFulfilment: `asset` cannot be the zero address',
+      'quoteDepositFulfillment: `asset` cannot be the zero address',
     )
   }
 
@@ -29,6 +29,6 @@ export const quoteDepositFulfilment = async function ({
     abi: agentAbi,
     address: agentAddress,
     args: [asset],
-    functionName: 'quoteDepositFulfilment',
+    functionName: 'quoteDepositFulfillment',
   })
 }

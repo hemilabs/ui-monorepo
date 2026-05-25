@@ -45,9 +45,29 @@ export type RequestRedeemEvents = CommonEvents &
     'withdraw-transaction-succeeded': [TransactionReceipt]
   }
 
+// Single-tx Router writes with no approval / no quote leg (claim & recover).
+// The 4 settlement actions share the same shape — `getRequest` already lets
+// the UI read the current `Status` to know which one to surface, so the
+// event vocabulary is intentionally generic and reused via type aliases.
+type SettlementEvents = {
+  'pre-tx': []
+  'tx-failed': [Error]
+  'tx-failed-validation': [string]
+  'tx-settled': []
+  'tx-transaction-reverted': [TransactionReceipt]
+  'tx-transaction-succeeded': [TransactionReceipt]
+  'user-signed-tx': [Hash]
+  'user-signing-tx-error': [Error]
+}
+
+export type ClaimDepositEvents = CommonEvents & SettlementEvents
+export type ClaimRedeemEvents = CommonEvents & SettlementEvents
+export type RecoverDepositEvents = CommonEvents & SettlementEvents
+export type RecoverRedeemEvents = CommonEvents & SettlementEvents
+
 // Mirrors the on-chain `Kind` enum from Router.sol (DEPOSIT = 0, REDEEM = 1).
 export type RequestKind = 0 | 1
 
 // Mirrors the on-chain `Status` enum from Router.sol
-// (PENDING = 0, FULFILLED = 1, UNDONE = 2, FINALIZED = 3).
+// (PENDING = 0, FULFILLED = 1, CANCELLED = 2, FINALIZED = 3).
 export type RequestStatus = 0 | 1 | 2 | 3

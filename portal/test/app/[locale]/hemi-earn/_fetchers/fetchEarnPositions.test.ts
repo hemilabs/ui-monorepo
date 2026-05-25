@@ -1,7 +1,4 @@
-import {
-  fetchEarnPositions,
-  shareBalanceQueryOptions,
-} from 'app/[locale]/hemi-earn/_fetchers/fetchEarnPositions'
+import { fetchEarnPositions } from 'app/[locale]/hemi-earn/_fetchers/fetchEarnPositions'
 import {
   hemiEarnSharesQueryOptions,
   type ShareSkeleton,
@@ -9,16 +6,24 @@ import {
 import { hemi } from 'hemi-viem'
 import { type EvmToken } from 'types/token'
 import { type Address } from 'viem'
-import { describe, expect, it, vi } from 'vitest'
+import { balanceOf } from 'viem-erc20/actions'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { createTestQueryClient } from '../../../../createTestQueryClient'
 
 // Avoid pulling `eth-rpc-cache` (and its broken ESM resolution under vitest)
-// through the chainClients → transport import chain. The queryFns that would
-// use these clients are never invoked here because the cache is seeded.
+// through the chainClients → transport import chain.
 vi.mock('utils/chainClients', () => ({
   getEvmL1PublicClient: vi.fn(),
   getHemiClient: vi.fn(),
+}))
+
+// `fetchEarnPositions` calls `queryClient.fetchQuery(shareBalanceQueryOptions)`
+// which always invokes `queryFn` when the cached entry is stale (default
+// `staleTime: 0`). Seeding via `setQueryData` is therefore not enough — we
+// also need the queryFn (`balanceOf` from `viem-erc20/actions`) to resolve.
+vi.mock('viem-erc20/actions', () => ({
+  balanceOf: vi.fn(),
 }))
 
 const account = '0x000000000000000000000000000000000000abcd' as Address
@@ -80,25 +85,39 @@ const seedShares = (
     shares,
   )
 
-const seedBalance = (
-  queryClient: ReturnType<typeof createTestQueryClient>,
-  shareAddress: Address,
-  balance: bigint,
-) =>
-  queryClient.setQueryData(
-    shareBalanceQueryOptions({ account, networkType, shareAddress }).queryKey,
-    balance,
-  )
+// Resolves `balanceOf` per shareAddress using the second argument's `address`.
+// Lets each test express "for share X return Y" without re-mocking the
+// implementation each time.
+const mockBalances = (balances: Record<Address, bigint | Error>) =>
+  vi.mocked(balanceOf).mockImplementation(async function (
+    _client,
+    { address },
+  ) {
+    const result = balances[address as Address]
+    if (result === undefined) {
+      throw new Error(`unexpected balanceOf call for ${address}`)
+    }
+    if (result instanceof Error) {
+      throw result
+    }
+    return result
+  })
 
 describe('app/[locale]/hemi-earn/_fetchers/fetchEarnPositions', function () {
+  beforeEach(function () {
+    vi.mocked(balanceOf).mockReset()
+  })
+
   it('returns one position per non-zero balance', async function () {
     const queryClient = createTestQueryClient()
     seedShares(queryClient, [
       skeleton(shareAddrA, shareTokenA, peggedTokenA),
       skeleton(shareAddrB, shareTokenB, peggedTokenB),
     ])
-    seedBalance(queryClient, shareAddrA, 5n * 10n ** 18n)
-    seedBalance(queryClient, shareAddrB, 7n * 10n ** 18n)
+    mockBalances({
+      [shareAddrA]: 5n * 10n ** 18n,
+      [shareAddrB]: 7n * 10n ** 18n,
+    })
 
     const result = await fetchEarnPositions({
       account,
@@ -128,8 +147,10 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchEarnPositions', function () {
       skeleton(shareAddrA, shareTokenA, peggedTokenA),
       skeleton(shareAddrB, shareTokenB, peggedTokenB),
     ])
-    seedBalance(queryClient, shareAddrA, 0n)
-    seedBalance(queryClient, shareAddrB, 3n * 10n ** 18n)
+    mockBalances({
+      [shareAddrA]: 0n,
+      [shareAddrB]: 3n * 10n ** 18n,
+    })
 
     const result = await fetchEarnPositions({
       account,
@@ -160,11 +181,9 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchEarnPositions', function () {
       skeleton(shareAddrA, shareTokenA, peggedTokenA),
       skeleton(shareAddrB, shareTokenB, peggedTokenB),
     ])
-    seedBalance(queryClient, shareAddrA, 4n * 10n ** 18n)
-    // shareB intentionally has no seeded data; with no queryFn defined here
-    // ensureQueryData rejects, exercising the `allSettled` tolerance path.
-    queryClient.setDefaultOptions({
-      queries: { queryFn: () => Promise.reject(new Error('rpc down')) },
+    mockBalances({
+      [shareAddrA]: 4n * 10n ** 18n,
+      [shareAddrB]: new Error('rpc down'),
     })
 
     const result = await fetchEarnPositions({
@@ -183,8 +202,9 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchEarnPositions', function () {
       skeleton(shareAddrA, shareTokenA, peggedTokenA),
       skeleton(shareAddrB, shareTokenB, peggedTokenB),
     ])
-    queryClient.setDefaultOptions({
-      queries: { queryFn: () => Promise.reject(new Error('rpc down')) },
+    mockBalances({
+      [shareAddrA]: new Error('rpc down'),
+      [shareAddrB]: new Error('rpc down'),
     })
 
     await expect(

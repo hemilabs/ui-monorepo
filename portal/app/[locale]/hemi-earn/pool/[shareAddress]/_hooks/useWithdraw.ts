@@ -116,6 +116,7 @@ export const useWithdraw = function ({
         account: address,
         asset: selectedAsset.address,
         fulfillmentFee,
+        operator: address,
         receiver: address,
         routerAddress,
         shares,

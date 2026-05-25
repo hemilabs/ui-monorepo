@@ -108,6 +108,7 @@ export const useDeposit = function ({
         amount,
         asset: selectedAsset.address,
         fulfillmentFee,
+        operator: address,
         receiver: address,
         routerAddress,
         walletClient,

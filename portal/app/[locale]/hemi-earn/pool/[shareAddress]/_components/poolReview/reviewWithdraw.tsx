@@ -82,6 +82,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
           ? encodeRequestRedeem({
               asset: selectedAsset.address,
               fulfillmentFee: quote.fulfillmentFee,
+              operator: address,
               receiver: address,
               shares,
             })

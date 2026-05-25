@@ -5,7 +5,7 @@
 export const agentAbi = [
   {
     inputs: [{ internalType: 'address', name: 'asset_', type: 'address' }],
-    name: 'quoteDepositFulfilment',
+    name: 'quoteDepositFulfillment',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
     type: 'function',

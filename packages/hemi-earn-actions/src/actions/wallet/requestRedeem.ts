@@ -51,6 +51,7 @@ const runRequestRedeem = ({
   asset,
   assetsOutMin = BigInt(0),
   fulfillmentFee,
+  operator,
   receiver,
   routerAddress = getHemiEarnRouterAddress(),
   shares,
@@ -64,6 +65,9 @@ const runRequestRedeem = ({
   // conversion is wired up; phase 2 will compute this from the share price.
   assetsOutMin?: bigint
   fulfillmentFee: bigint
+  // Address authorized to call `Agent.cancel(id)` on the remote chain.
+  // Contract reverts with `ZeroAddress` if `0x0` is passed.
+  operator: Address
   receiver: Address
   routerAddress?: Address
   shares: bigint
@@ -172,6 +176,7 @@ const runRequestRedeem = ({
           adjustedShares,
           assetsOutMin,
           receiver,
+          operator,
           true,
           fulfillmentFee,
         ],

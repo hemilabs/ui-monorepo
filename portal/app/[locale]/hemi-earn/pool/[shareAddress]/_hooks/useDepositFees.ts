@@ -31,6 +31,7 @@ const buildGasData = ({
         amount,
         asset,
         fulfillmentFee: quote.fulfillmentFee,
+        operator: receiver,
         receiver,
       })
 

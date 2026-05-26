@@ -163,6 +163,15 @@ $ curl http://localhost:3006/subgraphs/43111/locks/0x000000000000000000000000000
 {"positions":[]}
 ```
 
+##### `GET /subgraphs/:chain-id/earn-requests/:address`
+
+Returns the Hemi Earn Router requests (deposits and redeems) for the given address. Runs on Hemi mainnet only.
+
+```console
+$ curl http://localhost:3006/subgraphs/43111/earn-requests/0x0000000000000000000000000000000000000001
+{"requests":[{"id":"0x...","requestId":"1","kind":"DEPOSIT","asset":"0x0000...","amountIn":"1000000000000000000","amountOut":"998000000000000000","receiver":"0x1234...","automatic":false,"initiatedAt":"1759162804","status":"FULFILLED","initiateTxHash":"0xabc...","claimTxHash":"0xdef...","recoverTxHash":null}]}
+```
+
 ### Configuration
 
 These environment variables control how the cache works:

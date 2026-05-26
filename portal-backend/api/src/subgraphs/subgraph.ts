@@ -21,7 +21,10 @@ import type {
 
 type Schema = {
   query: string
-  variables?: Record<string, string | number>
+  // undefined is allowed so optional cursor variables (e.g. an inclusive
+  // pagination bound that is absent on the first page) can be passed through;
+  // graph-node treats an absent/null variable as "ignore that filter".
+  variables?: Record<string, string | number | undefined>
 }
 
 type SuccessResponse<T> = { data: T }
@@ -87,6 +90,66 @@ function checkGraphQLErrors<T>(
     const errorMessages = response.errors.map(e => e.message).join(', ')
     throw new Error(`GraphQL Error: ${errorMessages}`)
   }
+}
+
+// graph-node doesn't support cursor pagination and rejects a $skip greater than
+// 5000. See https://github.com/graphprotocol/graph-node/issues/613
+const maxSkip = 5000
+
+/**
+ * Fetches every row of a paginated subgraph collection.
+ *
+ * graph-node only offers limit/skip pagination and caps $skip at 5000, so this
+ * pages with skip until the next page would cross that cap, then resets skip to
+ * 0 and advances a cursor (the order-by field value of the last row seen) so
+ * the next window continues where the previous one ended. Because the cursor
+ * filter is inclusive, rows are deduped by their id.
+ *
+ * The caller owns the query, including the order field, the direction and the
+ * inclusive cursor filter matching that direction (e.g. `field_lte` for `desc`,
+ * `field_gte` for `asc`); this helper only drives skip, the cursor and dedup.
+ *
+ * @param fetchPage Runs one request given the page window and the current
+ * cursor (undefined on the first window), returning that page's rows.
+ * @param getCursor Reads the cursor value (the order-by field) from a row.
+ * @param pageSize Rows to request per page. Defaults to 100.
+ */
+const paginateSubgraph = async function <TRow extends { id: string }>({
+  fetchPage,
+  getCursor,
+  pageSize = 100,
+}: {
+  fetchPage: (window: {
+    cursor: string | undefined
+    first: number
+    skip: number
+  }) => Promise<TRow[]>
+  getCursor: (row: TRow) => string
+  pageSize?: number
+}) {
+  const byId = new Map<string, TRow>()
+  let cursor: string | undefined
+  let skip = 0
+  let page: TRow[]
+
+  do {
+    page = await fetchPage({ cursor, first: pageSize, skip })
+    for (const row of page) {
+      byId.set(row.id, row)
+    }
+
+    if (skip + pageSize > maxSkip) {
+      skip = 0
+      const last = page.at(-1)
+      if (last) {
+        cursor = getCursor(last)
+      }
+    } else {
+      skip += pageSize
+    }
+  } while (page.length === pageSize)
+
+  return [...byId.values()]
 }
 
 /**
@@ -694,4 +757,100 @@ export const getLockedPositions = function ({
       }))
     },
   )
+}
+
+type EarnRequestRow = {
+  id: string
+  requestId: string
+  kind: 'DEPOSIT' | 'REDEEM'
+  asset: string
+  amountIn: string
+  amountOut: string | null
+  receiver: string
+  automatic: boolean
+  initiatedAt: string
+  status: 'PENDING' | 'FULFILLED' | 'CLAIMED' | 'CANCELLED' | 'RECOVERED'
+  initiateTxHash: Address
+  claimTxHash: Address | null
+  recoverTxHash: Address | null
+}
+
+type GetEarnRequestsQueryResponse = GraphResponse<{
+  requests: EarnRequestRow[]
+}>
+
+/**
+ * Retrieves the full list of Hemi Earn Router requests (deposits and redeems)
+ * for a given user, paginating internally against the subgraph until exhausted.
+ */
+export const getEarnRequests = async function ({
+  address,
+  chainId,
+}: {
+  address: Address
+  chainId: Chain['id']
+}) {
+  const subgraphIds = {
+    [hemi.id]: subgraphConfig.hemiEarnRouter.mainnet,
+  }
+
+  const url = getSubgraphUrl({ chainId, subgraphIds })
+  const lowercasedAddress = address.toLowerCase()
+
+  const rows = await paginateSubgraph<EarnRequestRow>({
+    async fetchPage({ cursor, first, skip }) {
+      const schema = {
+        // Ordered by initiatedAt desc, so the cursor walks downward with an
+        // inclusive initiatedAt_lte. graph-node ignores the filter when the
+        // value is null (the first window).
+        query: `query GetEarnRequests($address: Bytes!, $first: Int!, $initiatedAtMax: BigInt, $skip: Int!) {
+          requests(
+            first: $first,
+            skip: $skip,
+            orderBy: initiatedAt,
+            orderDirection: desc,
+            where: { receiver: $address, initiatedAt_lte: $initiatedAtMax }
+          ) {
+            amountIn
+            amountOut
+            asset
+            automatic
+            claimTxHash
+            id
+            initiatedAt
+            initiateTxHash
+            kind
+            receiver
+            recoverTxHash
+            requestId
+            status
+          }
+        }`,
+        variables: {
+          address: lowercasedAddress,
+          first,
+          initiatedAtMax: cursor,
+          skip,
+        },
+      }
+
+      const response = await request<GetEarnRequestsQueryResponse>(url, schema)
+      checkGraphQLErrors(response)
+      return response.data.requests
+    },
+    getCursor: row => row.initiatedAt,
+  })
+
+  return rows.map(r => ({
+    ...r,
+    // The Subgraph lowercases all Bytes when saving; convert address-shaped
+    // fields back to checksum to avoid mismatches in the consumer.
+    // @ts-expect-error subgraph stores addresses as lowercased Bytes
+    asset: toChecksum(r.asset),
+    claimTxHash: r.claimTxHash ? toChecksum(r.claimTxHash) : null,
+    initiateTxHash: toChecksum(r.initiateTxHash),
+    // @ts-expect-error subgraph stores addresses as lowercased Bytes
+    receiver: toChecksum(r.receiver),
+    recoverTxHash: r.recoverTxHash ? toChecksum(r.recoverTxHash) : null,
+  }))
 }

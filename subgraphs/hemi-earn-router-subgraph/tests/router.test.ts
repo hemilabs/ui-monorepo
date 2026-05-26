@@ -10,19 +10,19 @@ import {
 import {
   handleDepositRequested,
   handleRedeemRequested,
+  handleRequestCancelled,
   handleRequestClaimed,
   handleRequestFulfilled,
   handleRequestRecovered,
-  handleRequestUndone,
 } from '../src/mappings/router'
 
 import {
   createDepositRequestedEvent,
   createRedeemRequestedEvent,
+  createRequestCancelledEvent,
   createRequestClaimedEvent,
   createRequestFulfilledEvent,
   createRequestRecoveredEvent,
-  createRequestUndoneEvent,
 } from './router-utils'
 
 const ENTITY = 'Request'
@@ -51,7 +51,7 @@ const fulfillTxHash = Bytes.fromHexString(
 const claimTxHash = Bytes.fromHexString(
   '0xaa00000000000000000000000000000000000000000000000000000000000003',
 ) as Bytes
-const undoTxHash = Bytes.fromHexString(
+const cancelTxHash = Bytes.fromHexString(
   '0xaa00000000000000000000000000000000000000000000000000000000000004',
 ) as Bytes
 const recoverTxHash = Bytes.fromHexString(
@@ -170,14 +170,14 @@ describe('Router subgraph', function () {
     )
   })
 
-  test('Undo path: undone records returned amountOut and recovered transitions to RECOVERED with recoverTxHash', function () {
+  test('Cancel path: cancelled records returned amountOut and recovered transitions to RECOVERED with recoverTxHash', function () {
     emitDeposit(false)
 
-    handleRequestUndone(
-      createRequestUndoneEvent(requestId, assetsReturned, undoTxHash),
+    handleRequestCancelled(
+      createRequestCancelledEvent(requestId, assetsReturned, cancelTxHash),
     )
     assert.entityCount(ENTITY, 1)
-    assert.fieldEquals(ENTITY, requestIdString, 'status', 'UNDONE')
+    assert.fieldEquals(ENTITY, requestIdString, 'status', 'CANCELLED')
     assert.fieldEquals(
       ENTITY,
       requestIdString,
@@ -207,8 +207,8 @@ describe('Router subgraph', function () {
     handleRequestClaimed(
       createRequestClaimedEvent(unknownId, receiver, claimTxHash),
     )
-    handleRequestUndone(
-      createRequestUndoneEvent(unknownId, assetsReturned, undoTxHash),
+    handleRequestCancelled(
+      createRequestCancelledEvent(unknownId, assetsReturned, cancelTxHash),
     )
     handleRequestRecovered(
       createRequestRecoveredEvent(unknownId, receiver, recoverTxHash),
@@ -286,14 +286,14 @@ describe('Router subgraph', function () {
     )
   })
 
-  test('Redeem undo path: undone records returned shares and recovered transitions to RECOVERED', function () {
+  test('Redeem cancel path: cancelled records returned shares and recovered transitions to RECOVERED', function () {
     emitRedeem(false)
 
-    handleRequestUndone(
-      createRequestUndoneEvent(requestId, sharesReturned, undoTxHash),
+    handleRequestCancelled(
+      createRequestCancelledEvent(requestId, sharesReturned, cancelTxHash),
     )
     assert.entityCount(ENTITY, 1)
-    assert.fieldEquals(ENTITY, requestIdString, 'status', 'UNDONE')
+    assert.fieldEquals(ENTITY, requestIdString, 'status', 'CANCELLED')
     assert.fieldEquals(
       ENTITY,
       requestIdString,

@@ -1,10 +1,10 @@
 import {
   DepositRequested as DepositRequestedEvent,
   RedeemRequested as RedeemRequestedEvent,
+  RequestCancelled as RequestCancelledEvent,
   RequestClaimed as RequestClaimedEvent,
   RequestFulfilled as RequestFulfilledEvent,
   RequestRecovered as RequestRecoveredEvent,
-  RequestUndone as RequestUndoneEvent,
 } from '../../generated/Router/Router'
 import { Request } from '../../generated/schema'
 
@@ -59,12 +59,12 @@ export function handleRequestClaimed(event: RequestClaimedEvent): void {
   request.save()
 }
 
-export function handleRequestUndone(event: RequestUndoneEvent): void {
+export function handleRequestCancelled(event: RequestCancelledEvent): void {
   const request = Request.load(event.params.requestId.toString())
   if (request == null) {
     return
   }
-  request.status = 'UNDONE'
+  request.status = 'CANCELLED'
   // Amount of assets the user will receive back. This should match the
   // request's amountIn, but the contract overwrites this field, so we
   // capture whatever value actually returns.

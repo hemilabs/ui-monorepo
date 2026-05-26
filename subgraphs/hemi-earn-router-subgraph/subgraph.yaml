@@ -32,8 +32,8 @@ dataSources:
           handler: handleRequestFulfilled
         - event: RequestClaimed(indexed uint256,indexed address)
           handler: handleRequestClaimed
-        - event: RequestUndone(indexed uint256,uint256)
-          handler: handleRequestUndone
+        - event: RequestCancelled(indexed uint256,uint256)
+          handler: handleRequestCancelled
         - event: RequestRecovered(indexed uint256,indexed address)
           handler: handleRequestRecovered
       file: ./src/mappings/router.ts

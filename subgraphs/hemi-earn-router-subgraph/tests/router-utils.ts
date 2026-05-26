@@ -4,10 +4,10 @@ import { newMockEvent } from 'matchstick-as'
 import {
   DepositRequested,
   RedeemRequested,
+  RequestCancelled,
   RequestClaimed,
   RequestFulfilled,
   RequestRecovered,
-  RequestUndone,
 } from '../generated/Router/Router'
 
 function setTxHash(event: ethereum.Event, txHash: Bytes): void {
@@ -135,12 +135,12 @@ export function createRequestClaimedEvent(
   return event
 }
 
-export function createRequestUndoneEvent(
+export function createRequestCancelledEvent(
   requestId: BigInt,
   amountIn: BigInt,
   txHash: Bytes,
-): RequestUndone {
-  const event = changetype<RequestUndone>(newMockEvent())
+): RequestCancelled {
+  const event = changetype<RequestCancelled>(newMockEvent())
   event.parameters = new Array<ethereum.EventParam>()
   event.parameters.push(
     new ethereum.EventParam(

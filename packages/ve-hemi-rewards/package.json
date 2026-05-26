@@ -34,6 +34,7 @@
   "peerDependencies": {
     "viem": "^2.x"
   },
+  "type": "module",
   "exports": {
     ".": "./index.ts",
     "./actions": "./actions/index.ts"

@@ -4,11 +4,11 @@ import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { encodeFunctionData } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
-import { veHemiAbi } from '../../abi'
-import { getVeHemiContractAddress } from '../../constants'
-import type { IncreaseUnlockTimeEvents } from '../../types'
-import { validateIncreaseUnlockTimeInputs } from '../../utils'
-import { getLockedBalance } from '../public/veHemi'
+import { veHemiAbi } from '../../abi.ts'
+import { getVeHemiContractAddress } from '../../constants.ts'
+import type { IncreaseUnlockTimeEvents } from '../../types.ts'
+import { validateIncreaseUnlockTimeInputs } from '../../utils.ts'
+import { getLockedBalance } from '../public/veHemi.ts'
 
 const canIncreaseUnlockTime = async function ({
   account,

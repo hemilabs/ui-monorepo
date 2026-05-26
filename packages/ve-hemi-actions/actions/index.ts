@@ -1,15 +1,18 @@
-export { createLock, encodeCreateLock } from './wallet/createLock'
-export { encodeIncreaseAmount, increaseAmount } from './wallet/increaseAmount'
+export { createLock, encodeCreateLock } from './wallet/createLock.ts'
+export {
+  encodeIncreaseAmount,
+  increaseAmount,
+} from './wallet/increaseAmount.ts'
 export {
   encodeIncreaseUnlockTime,
   increaseUnlockTime,
-} from './wallet/increaseUnlockTime'
-export { encodeWithdraw, withdraw } from './wallet/withdraw'
+} from './wallet/increaseUnlockTime.ts'
+export { encodeWithdraw, withdraw } from './wallet/withdraw.ts'
 export {
   getBalanceOfNFTAt,
   getLockedBalance,
   getPositionVotingPowerDetails,
   getPositionsVotingPowerSum,
   getTotalVotingPower,
-} from './public/veHemi'
-export { getTotalVeHemiSupplyAt } from './public/getTotalVeHemiSupplyAt'
+} from './public/veHemi.ts'
+export { getTotalVeHemiSupplyAt } from './public/getTotalVeHemiSupplyAt.ts'

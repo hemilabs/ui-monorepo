@@ -3,7 +3,7 @@ import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { waitForTransactionReceipt } from 'viem/actions'
 import { approve, allowance } from 'viem-erc20/actions'
 
-import type { ApprovalEvents } from '../../types'
+import type { ApprovalEvents } from '../../types.ts'
 
 type DefaultEventMap = [never]
 type EventMap<T> = Record<keyof T, unknown[]> | DefaultEventMap

@@ -4,11 +4,11 @@ import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { encodeFunctionData } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
-import { veHemiAbi } from '../../abi'
-import { getVeHemiContractAddress } from '../../constants'
-import type { WithdrawEvents } from '../../types'
-import { validateWithdrawInputs } from '../../utils'
-import { getLockedBalance, getOwnerOf } from '../public/veHemi'
+import { veHemiAbi } from '../../abi.ts'
+import { getVeHemiContractAddress } from '../../constants.ts'
+import type { WithdrawEvents } from '../../types.ts'
+import { validateWithdrawInputs } from '../../utils.ts'
+import { getLockedBalance, getOwnerOf } from '../public/veHemi.ts'
 
 const canRunWithdraw = async function ({
   account,

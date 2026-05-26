@@ -51,17 +51,15 @@ export const fetchEarnPositions = async function ({
   // the whole composition: matches the previous `useQueries` behavior where
   // the hook only escalated to an error state if *every* read failed.
   //
-  // `fetchQuery` (instead of `ensureQueryData`) is load-bearing: deposit/
-  // withdraw flows invalidate `earnPositionsKeyPrefix` on `onSettled`, which
-  // marks these reads as stale but doesn't evict them. `ensureQueryData`
-  // returns stale cache even with `revalidateIfStale: true` (the latter only
-  // schedules a background prefetch), so the staked-balance card stayed on
-  // the pre-deposit value until a hard refresh. `fetchQuery` actually waits
-  // for fresh data when the query is stale.
+  // `ensureQueryData` reads cached results when present. Freshness after a
+  // deposit/withdraw is the mutation's responsibility — `useDeposit` and
+  // `useWithdraw` call `removeQueries({ queryKey: earnPositionsKeyPrefix })`
+  // on `onSettled`, which evicts both the outer aggregated query and these
+  // nested share-balance entries so the next read hits the network.
   const settled = await Promise.allSettled(
     shares.map(share =>
       queryClient
-        .fetchQuery(
+        .ensureQueryData(
           shareBalanceQueryOptions({
             account,
             networkType,

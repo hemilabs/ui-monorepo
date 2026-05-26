@@ -1,8 +1,8 @@
 import type { Client } from 'viem'
 import { readContract } from 'viem/actions'
 
-import { veHemiAbi } from '../../abi'
-import { getVeHemiContractAddress } from '../../constants'
+import { veHemiAbi } from '../../abi.ts'
+import { getVeHemiContractAddress } from '../../constants.ts'
 
 export const getTotalVeHemiSupplyAt = async function (
   client: Client,

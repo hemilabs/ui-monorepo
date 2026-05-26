@@ -5,13 +5,13 @@ import { encodeFunctionData } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { balanceOf } from 'viem-erc20/actions'
 
-import { veHemiAbi } from '../../abi'
-import { getVeHemiContractAddress } from '../../constants'
-import type { CreateLockEvents } from '../../types'
-import { validateCreateLockInputs } from '../../utils'
-import { memoizedGetHemiTokenAddress } from '../public/veHemi'
+import { veHemiAbi } from '../../abi.ts'
+import { getVeHemiContractAddress } from '../../constants.ts'
+import type { CreateLockEvents } from '../../types.ts'
+import { validateCreateLockInputs } from '../../utils.ts'
+import { memoizedGetHemiTokenAddress } from '../public/veHemi.ts'
 
-import { handleApproval } from './approval'
+import { handleApproval } from './approval.ts'
 
 const canCreateLock = async function ({
   account,

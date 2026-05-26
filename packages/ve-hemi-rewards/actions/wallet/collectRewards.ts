@@ -4,9 +4,9 @@ import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { encodeFunctionData } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
-import { veHemiRewardsAbi } from '../../abi'
-import { getVeHemiRewardsContractAddress } from '../../constants'
-import type { CollectAllRewardsEvents } from '../../types'
+import { veHemiRewardsAbi } from '../../abi.ts'
+import { getVeHemiRewardsContractAddress } from '../../constants.ts'
+import type { CollectAllRewardsEvents } from '../../types.ts'
 
 const canCollectAllRewards = async function ({
   tokenId,

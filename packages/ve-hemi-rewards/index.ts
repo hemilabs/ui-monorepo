@@ -1,3 +1,3 @@
-export { getVeHemiRewardsContractAddress } from './constants'
+export { getVeHemiRewardsContractAddress } from './constants.ts'
 
-export type { CollectAllRewardsEvents } from './types'
+export type { CollectAllRewardsEvents } from './types.ts'

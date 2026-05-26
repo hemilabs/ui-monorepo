@@ -1,12 +1,12 @@
 import type { Address, TransactionReceipt } from 'viem'
 import { isAddress, parseEventLogs, zeroAddress } from 'viem'
 
-import { veHemiAbi } from './abi'
+import { veHemiAbi } from './abi.ts'
 import {
   MaxLockDurationSeconds,
   MinLockDurationSeconds,
   SupportedChains,
-} from './constants'
+} from './constants.ts'
 
 const validateAccount = function (account: Address) {
   if (!isAddress(account)) {

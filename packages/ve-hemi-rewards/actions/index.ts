@@ -1,6 +1,6 @@
-export { getRewardPeriod } from './public/getRewardPeriod'
-export { calculateRewards, getRewardTokens } from './public/veHemiRewards'
+export { getRewardPeriod } from './public/getRewardPeriod.ts'
+export { calculateRewards, getRewardTokens } from './public/veHemiRewards.ts'
 export {
   collectAllRewards,
   encodeCollectAllRewards,
-} from './wallet/collectRewards'
+} from './wallet/collectRewards.ts'

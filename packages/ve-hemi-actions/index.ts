@@ -3,13 +3,13 @@ export type {
   IncreaseAmountEvents,
   IncreaseUnlockTimeEvents,
   WithdrawEvents,
-} from './types'
+} from './types.ts'
 
 export {
   getVeHemiContractAddress,
   MaxLockDurationSeconds,
   MinLockDurationSeconds,
   SixDaysSeconds,
-} from './constants'
+} from './constants.ts'
 
-export { getLockEvent, validateCreateLockInputs } from './utils'
+export { getLockEvent, validateCreateLockInputs } from './utils.ts'

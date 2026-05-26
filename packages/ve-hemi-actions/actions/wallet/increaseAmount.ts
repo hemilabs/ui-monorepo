@@ -5,13 +5,16 @@ import { encodeFunctionData } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { balanceOf } from 'viem-erc20/actions'
 
-import { veHemiAbi } from '../../abi'
-import { getVeHemiContractAddress } from '../../constants'
-import type { IncreaseAmountEvents } from '../../types'
-import { validateIncreaseAmountInputs } from '../../utils'
-import { getLockedBalance, memoizedGetHemiTokenAddress } from '../public/veHemi'
+import { veHemiAbi } from '../../abi.ts'
+import { getVeHemiContractAddress } from '../../constants.ts'
+import type { IncreaseAmountEvents } from '../../types.ts'
+import { validateIncreaseAmountInputs } from '../../utils.ts'
+import {
+  getLockedBalance,
+  memoizedGetHemiTokenAddress,
+} from '../public/veHemi.ts'
 
-import { handleApproval } from './approval'
+import { handleApproval } from './approval.ts'
 
 const canIncreaseAmount = async function ({
   account,

@@ -6,8 +6,8 @@ import {
 } from 'viem'
 import { readContract } from 'viem/actions'
 
-import { veHemiRewardsAbi } from '../../abi'
-import { getVeHemiRewardsContractAddress } from '../../constants'
+import { veHemiRewardsAbi } from '../../abi.ts'
+import { getVeHemiRewardsContractAddress } from '../../constants.ts'
 
 export const getRewardPeriod = async function (
   client: Client,

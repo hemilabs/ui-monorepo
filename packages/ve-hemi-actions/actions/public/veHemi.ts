@@ -2,10 +2,10 @@ import pMemoize from 'promise-mem'
 import { isAddress, isAddressEqual, type Address, type Client } from 'viem'
 import { multicall, readContract } from 'viem/actions'
 
-import { veHemiAbi } from '../../abi'
-import { veHemiVoteDelegationAbi } from '../../voteDelegationAbi'
+import { veHemiAbi } from '../../abi.ts'
+import { veHemiVoteDelegationAbi } from '../../voteDelegationAbi.ts'
 
-import { getVeHemiContractAddress } from './../../constants'
+import { getVeHemiContractAddress } from './../../constants.ts'
 
 export const getHemiTokenAddress = async function (client: Client) {
   if (!client.chain) {

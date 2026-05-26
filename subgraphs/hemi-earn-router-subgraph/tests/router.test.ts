@@ -198,7 +198,7 @@ describe('Router subgraph', function () {
     )
   })
 
-  test('Shared events for an unknown requestId are no-ops', function () {
+  test('Lifecycle events for an unknown requestId create a placeholder Request', function () {
     const unknownId = BigInt.fromI32(9999)
 
     handleRequestFulfilled(
@@ -214,7 +214,19 @@ describe('Router subgraph', function () {
       createRequestRecoveredEvent(unknownId, receiver, recoverTxHash),
     )
 
-    assert.entityCount(ENTITY, 0)
+    // Defensive mapping: lifecycle handlers create a placeholder Request when
+    // the originating DepositRequested/RedeemRequested hasn't been observed
+    // (event ordering inverted by the local anvil mock, or subgraph reindexed
+    // past the request's creation block). Each subsequent handler updates the
+    // same placeholder, so we end with one entity reflecting the final
+    // lifecycle state.
+    const id = unknownId.toString()
+    assert.entityCount(ENTITY, 1)
+    assert.fieldEquals(ENTITY, id, 'requestId', unknownId.toString())
+    assert.fieldEquals(ENTITY, id, 'status', 'RECOVERED')
+    assert.fieldEquals(ENTITY, id, 'amountOut', assetsReturned.toString())
+    assert.fieldEquals(ENTITY, id, 'claimTxHash', claimTxHash.toHexString())
+    assert.fieldEquals(ENTITY, id, 'recoverTxHash', recoverTxHash.toHexString())
   })
 
   test('RedeemRequested creates a Request with kind=REDEEM and status=PENDING', function () {

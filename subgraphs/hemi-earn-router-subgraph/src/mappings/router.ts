@@ -1,4 +1,4 @@
-import { BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts'
+import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
 
 import {
   DepositRequested as DepositRequestedEvent,
@@ -36,10 +36,14 @@ function loadOrInitRequest(
     request.requestId = requestId
     // Sentinels for required fields — overwritten by Deposit/Redeem when the
     // request-creation event arrives (later in same tx, or never if missed).
+    // `asset` and `receiver` are address-shaped in practice (the schema types
+    // them as `Bytes!` for storage); use the 20-byte zero address so that
+    // downstream consumers (e.g. portal calls to `getAddress(asset)`) keep
+    // working on placeholder rows instead of choking on `0x`.
     request.kind = 'DEPOSIT'
-    request.asset = Bytes.empty()
+    request.asset = Address.zero()
     request.amountIn = BigInt.zero()
-    request.receiver = Bytes.empty()
+    request.receiver = Address.zero()
     request.automatic = false
     request.initiatedAt = event.block.timestamp
     request.initiateTxHash = event.transaction.hash

@@ -221,12 +221,18 @@ describe('Router subgraph', function () {
     // same placeholder, so we end with one entity reflecting the final
     // lifecycle state.
     const id = unknownId.toString()
+    const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
     assert.entityCount(ENTITY, 1)
     assert.fieldEquals(ENTITY, id, 'requestId', unknownId.toString())
     assert.fieldEquals(ENTITY, id, 'status', 'RECOVERED')
     assert.fieldEquals(ENTITY, id, 'amountOut', assetsReturned.toString())
     assert.fieldEquals(ENTITY, id, 'claimTxHash', claimTxHash.toHexString())
     assert.fieldEquals(ENTITY, id, 'recoverTxHash', recoverTxHash.toHexString())
+    // The placeholder must use a 20-byte zero address for the address-shaped
+    // fields (asset / receiver) — `0x` (Bytes.empty) is not parseable as an
+    // address downstream.
+    assert.fieldEquals(ENTITY, id, 'asset', ZERO_ADDRESS)
+    assert.fieldEquals(ENTITY, id, 'receiver', ZERO_ADDRESS)
   })
 
   test('RedeemRequested creates a Request with kind=REDEEM and status=PENDING', function () {

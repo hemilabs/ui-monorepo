@@ -12,3 +12,4 @@ export {
   getPositionsVotingPowerSum,
   getTotalVotingPower,
 } from './public/veHemi'
+export { getTotalVeHemiSupplyAt } from './public/getTotalVeHemiSupplyAt'

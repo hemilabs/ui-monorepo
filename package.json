@@ -10,7 +10,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@commitlint/cli": "19.7.1",
+    "@commitlint/cli": "21.0.1",
     "better-sort-package-json": "1.1.1",
     "commitlint-config-bloq": "1.1.0",
     "eslint": "8.57.0",

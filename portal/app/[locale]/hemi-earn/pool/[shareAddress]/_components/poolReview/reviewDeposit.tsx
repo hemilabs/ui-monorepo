@@ -76,6 +76,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
               amount,
               asset: selectedAsset.address,
               fulfillmentFee: quote.fulfillmentFee,
+              operator: address,
               receiver: address,
             })
           : undefined,

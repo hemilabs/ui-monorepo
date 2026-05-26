@@ -2,11 +2,33 @@ import { type Address, encodeFunctionData } from 'viem'
 
 import { routerAbi } from '../../routerAbi'
 
+const encodeRouterRequestIdCall = (
+  functionName:
+    | 'claimDeposit'
+    | 'claimRedeem'
+    | 'recoverDeposit'
+    | 'recoverRedeem',
+  requestId: bigint,
+) => encodeFunctionData({ abi: routerAbi, args: [requestId], functionName })
+
+export const encodeClaimDeposit = ({ requestId }: { requestId: bigint }) =>
+  encodeRouterRequestIdCall('claimDeposit', requestId)
+
+export const encodeClaimRedeem = ({ requestId }: { requestId: bigint }) =>
+  encodeRouterRequestIdCall('claimRedeem', requestId)
+
+export const encodeRecoverDeposit = ({ requestId }: { requestId: bigint }) =>
+  encodeRouterRequestIdCall('recoverDeposit', requestId)
+
+export const encodeRecoverRedeem = ({ requestId }: { requestId: bigint }) =>
+  encodeRouterRequestIdCall('recoverRedeem', requestId)
+
 export const encodeRequestDeposit = ({
   amount,
   asset,
   automatic = true,
   fulfillmentFee,
+  operator,
   receiver,
   sharesOutMin = BigInt(0),
 }: {
@@ -14,6 +36,9 @@ export const encodeRequestDeposit = ({
   asset: Address
   automatic?: boolean
   fulfillmentFee: bigint
+  // Address authorized to call `Agent.cancel(id)` on the remote chain.
+  // Contract reverts with `ZeroAddress` if `0x0` is passed.
+  operator: Address
   receiver: Address
   // Minimum shares accepted on fulfillment (slippage protection enforced
   // on the remote chain). Defaults to `0n` until the asset → shares
@@ -22,7 +47,15 @@ export const encodeRequestDeposit = ({
 }) =>
   encodeFunctionData({
     abi: routerAbi,
-    args: [asset, amount, sharesOutMin, receiver, automatic, fulfillmentFee],
+    args: [
+      asset,
+      amount,
+      sharesOutMin,
+      receiver,
+      operator,
+      automatic,
+      fulfillmentFee,
+    ],
     functionName: 'requestDeposit',
   })
 
@@ -31,6 +64,7 @@ export const encodeRequestRedeem = ({
   assetsOutMin = BigInt(0),
   automatic = true,
   fulfillmentFee,
+  operator,
   receiver,
   shares,
 }: {
@@ -41,11 +75,22 @@ export const encodeRequestRedeem = ({
   assetsOutMin?: bigint
   automatic?: boolean
   fulfillmentFee: bigint
+  // Address authorized to call `Agent.cancel(id)` on the remote chain.
+  // Contract reverts with `ZeroAddress` if `0x0` is passed.
+  operator: Address
   receiver: Address
   shares: bigint
 }) =>
   encodeFunctionData({
     abi: routerAbi,
-    args: [asset, shares, assetsOutMin, receiver, automatic, fulfillmentFee],
+    args: [
+      asset,
+      shares,
+      assetsOutMin,
+      receiver,
+      operator,
+      automatic,
+      fulfillmentFee,
+    ],
     functionName: 'requestRedeem',
   })

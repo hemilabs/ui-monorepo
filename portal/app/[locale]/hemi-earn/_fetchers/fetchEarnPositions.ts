@@ -10,7 +10,7 @@ import { hemiEarnSharesQueryOptions } from './fetchHemiEarnShares'
 
 export const earnPositionsKeyPrefix = ['hemi-earn', 'positions']
 
-export const shareBalanceQueryOptions = ({
+const shareBalanceQueryOptions = ({
   account,
   networkType,
   shareAddress,
@@ -50,6 +50,12 @@ export const fetchEarnPositions = async function ({
   // Use `allSettled` so a single failing share-balance read doesn't take down
   // the whole composition: matches the previous `useQueries` behavior where
   // the hook only escalated to an error state if *every* read failed.
+  //
+  // `ensureQueryData` reads cached results when present. Freshness after a
+  // deposit/withdraw is the mutation's responsibility — `useDeposit` and
+  // `useWithdraw` call `removeQueries({ queryKey: earnPositionsKeyPrefix })`
+  // on `onSettled`, which evicts both the outer aggregated query and these
+  // nested share-balance entries so the next read hits the network.
   const settled = await Promise.allSettled(
     shares.map(share =>
       queryClient

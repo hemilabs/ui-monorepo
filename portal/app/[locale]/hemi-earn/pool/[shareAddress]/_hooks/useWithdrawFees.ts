@@ -88,6 +88,7 @@ const buildGasData = ({
     : encodeRequestRedeem({
         asset,
         fulfillmentFee: quote.fulfillmentFee,
+        operator: receiver,
         receiver,
         shares,
       })

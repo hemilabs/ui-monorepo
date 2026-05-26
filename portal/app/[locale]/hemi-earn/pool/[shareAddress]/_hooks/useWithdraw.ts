@@ -116,6 +116,7 @@ export const useWithdraw = function ({
         account: address,
         asset: selectedAsset.address,
         fulfillmentFee,
+        operator: address,
         receiver: address,
         routerAddress,
         shares,
@@ -254,7 +255,14 @@ export const useWithdraw = function ({
       queryClient.invalidateQueries({
         queryKey: userPoolBalanceQueryKeyPrefix,
       })
-      queryClient.invalidateQueries({
+      // `removeQueries` (instead of `invalidateQueries`) is load-bearing for
+      // this prefix. `fetchEarnPositions` reads inner share balances via
+      // `ensureQueryData`, which returns stale cache when entries exist —
+      // and `invalidateQueries` only refetches *active* subscribers, leaving
+      // those inactive nested entries stale. Evicting forces the next read
+      // path through the network and the staked-balance card actually
+      // refreshes after a withdraw instead of waiting for a hard reload.
+      queryClient.removeQueries({
         queryKey: earnPositionsKeyPrefix,
       })
     },

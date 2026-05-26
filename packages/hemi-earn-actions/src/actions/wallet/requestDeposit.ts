@@ -41,6 +41,7 @@ const runRequestDeposit = ({
   amount,
   asset,
   fulfillmentFee,
+  operator,
   receiver,
   routerAddress = getHemiEarnRouterAddress(),
   sharesOutMin = BigInt(0),
@@ -50,6 +51,9 @@ const runRequestDeposit = ({
   amount: bigint
   asset: Address
   fulfillmentFee: bigint
+  // Address authorized to call `Agent.cancel(id)` on the remote chain.
+  // Contract reverts with `ZeroAddress` if `0x0` is passed.
+  operator: Address
   receiver: Address
   routerAddress?: Address
   // Minimum shares accepted on fulfillment (slippage protection enforced
@@ -144,7 +148,15 @@ const runRequestDeposit = ({
         abi: routerAbi,
         account,
         address: routerAddress,
-        args: [asset, amount, sharesOutMin, receiver, true, fulfillmentFee],
+        args: [
+          asset,
+          amount,
+          sharesOutMin,
+          receiver,
+          operator,
+          true,
+          fulfillmentFee,
+        ],
         chain: walletClient.chain,
         functionName: 'requestDeposit',
         value: nativeFee,

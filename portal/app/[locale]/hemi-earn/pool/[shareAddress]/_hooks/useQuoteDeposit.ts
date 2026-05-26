@@ -5,7 +5,10 @@ import {
   getHemiEarnAgentAddress,
   getHemiEarnRouterAddress,
 } from 'hemi-earn-actions'
-import { quoteDeposit, quoteDepositFulfilment } from 'hemi-earn-actions/actions'
+import {
+  quoteDeposit,
+  quoteDepositFulfillment,
+} from 'hemi-earn-actions/actions'
 import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient, getHemiClient } from 'utils/chainClients'
@@ -22,7 +25,7 @@ type QuoteDeposit = {
 
 // Chains the contract reads needed to know the user's true cost on Hemi
 // plus the pegged-token equivalent of the deposit:
-//   1. Agent.quoteDepositFulfilment(asset) on Ethereum — the LayerZero fee the
+//   1. Agent.quoteDepositFulfillment(asset) on Ethereum — the LayerZero fee the
 //      Agent will need to send the fulfillment response back to Hemi.
 //   2. Router.quoteDeposit(asset, assets, fulfillmentFee) on Hemi — the
 //      total `msg.value` the user attaches to `requestDeposit`.
@@ -44,7 +47,7 @@ export const useQuoteDeposit = ({
     enabled: amount > BigInt(0),
     async queryFn() {
       const ethereumClient = getEvmL1PublicClient(mainnet.id)
-      const fulfillmentFee = await quoteDepositFulfilment({
+      const fulfillmentFee = await quoteDepositFulfillment({
         agentAddress: getHemiEarnAgentAddress(),
         asset,
         client: ethereumClient,

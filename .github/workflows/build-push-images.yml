@@ -5,14 +5,14 @@ on:
     branches:
       - main
     paths:
-      - 'portal-backend/**'
-      - 'subgraph-api/**'
       # portal-backend/api bundles these workspace packages into its image via
       # `pnpm deploy`, so changes to them must republish it. Ideally this would
       # be dependency-aware via `pnpm --filter "...[ref]"`, but that needs a
       # dynamic-matrix rework — tracked for a future PR/issue.
       - 'packages/ve-hemi-actions/**'
       - 'packages/ve-hemi-rewards/**'
+      - 'portal-backend/**'
+      - 'subgraph-api/**'
 
 permissions:
   contents: read

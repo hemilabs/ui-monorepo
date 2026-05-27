@@ -1,0 +1,15 @@
+# Used only by the portal-backend/api image, which builds from the repo root.
+# Other images (crons, subgraph-api) build from their own folders and read their
+# own .dockerignore. Keep all package.json, pnpm-lock.yaml, pnpm-workspace.yaml
+# and patches/ — pnpm needs them to resolve the workspace.
+**/node_modules
+**/.next
+**/dist
+**/out
+**/coverage
+**/.turbo
+**/*.tsbuildinfo
+**/*.log
+**/.DS_Store
+.git
+.github

@@ -21,7 +21,9 @@ services:
     restart: always
   portal-api:
     build:
-      context: api
+      # Repo root, because the api bundles workspace packages via pnpm deploy.
+      context: ..
+      dockerfile: portal-backend/api/Dockerfile
     depends_on:
       - cache
     environment:

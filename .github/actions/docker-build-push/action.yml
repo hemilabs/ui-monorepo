@@ -7,6 +7,10 @@ inputs:
     description: 'The build context'
     required: false
     default: '.'
+  dockerfile:
+    description: 'Dockerfile path (relative to the workspace). Defaults to <context>/Dockerfile.'
+    required: false
+    default: ''
   dockerHubPassword:
     description: 'Docker Hub token'
     required: true
@@ -41,6 +45,7 @@ runs:
     - uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
       with:
         context: ${{ inputs.context }}
+        file: ${{ inputs.dockerfile || format('{0}/Dockerfile', inputs.context) }}
         labels: ${{ steps.meta.outputs.labels }}
         platforms: linux/amd64
         provenance: true

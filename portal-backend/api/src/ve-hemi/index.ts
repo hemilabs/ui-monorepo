@@ -106,7 +106,7 @@ function createVeHemi({ cache }: { cache: Cache }) {
    * rewards per day for the past 60 days and assumes that reward level will
    * continue for the 60 epochs.
    */
-  async function getVeHemiRewards(chainId: string) {
+  async function getVeHemiRewards(chainId: '43111' | '743111') {
     // Will not compute the rewards for chains other than Hemi mainnet
     if (Number(chainId) !== hemi.id) {
       return new Array(YEAR_EPOCHS).fill(0)

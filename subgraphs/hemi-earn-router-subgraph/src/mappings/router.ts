@@ -10,37 +10,44 @@ import {
 } from '../../generated/Router/Router'
 import { Request } from '../../generated/schema'
 
-// Loads the Request entity, or creates one with sentinel field values when a
-// lifecycle event (Fulfilled / Claimed / Cancelled / Recovered) arrives
-// BEFORE the originating DepositRequested / RedeemRequested. This happens:
-//   1. When graph-node processes events in an order where the lifecycle event
-//      precedes the request-creation event in the same tx (e.g. the local
-//      anvil mock that collapses the cross-chain hop into one transaction
-//      emits RequestFulfilled inside the requestDeposit call, ahead of the
-//      final `emit DepositRequested(...)`); production cross-chain timing
-//      naturally separates these into different blocks.
+// Lifecycle handlers (Fulfilled / Claimed / Cancelled / Recovered) don't
+// know the request `kind` — that information only lives in the originating
+// Deposit/Redeem event. When those handlers have to create a placeholder
+// (see `loadOrInitRequest` below), they pass this value as a best-guess
+// sentinel. In the anvil mock the Deposit/Redeem event always arrives later
+// in the same tx and overwrites it; the bias only surfaces if the subgraph
+// is (re)indexed past the creation block and the placeholder persists.
+const FALLBACK_KIND = 'DEPOSIT'
+
+// Loads the Request entity, or creates one with sentinel field values when
+// the originating Deposit/Redeem hasn't been observed yet. This happens:
+//   1. When graph-node processes events in an order where a lifecycle event
+//      (Fulfilled / Claimed / Cancelled / Recovered) precedes the request-
+//      creation event in the same tx — the local anvil mock collapses the
+//      cross-chain hop into one transaction and emits RequestFulfilled
+//      inside `requestDeposit`, ahead of the final `emit DepositRequested`;
+//      production cross-chain timing naturally separates these into
+//      different blocks.
 //   2. When the subgraph is (re)indexed with `startBlock` past a request's
-//      creation block, so DepositRequested was never observed locally.
+//      creation block, so the creation event was never observed locally.
 // Sentinels are placeholders for the required (non-null) fields. When (and
-// if) the corresponding DepositRequested / RedeemRequested arrives later, it
-// overwrites them with the real values — but does NOT touch `status`, which
-// is owned by the lifecycle handlers.
+// if) the corresponding Deposit/Redeem arrives later, it overwrites them
+// with the real values; lifecycle handlers overwrite `status`/`amountOut`/
+// `*TxHash`. Address-shaped fields use the 20-byte zero address so
+// downstream consumers (e.g. portal calls to `getAddress(asset)`) keep
+// working on placeholder rows instead of choking on `0x`. `kind` is taken
+// from the caller — Deposit/Redeem pass their own kind; lifecycle handlers
+// pass `FALLBACK_KIND` since they have no way to know.
 function loadOrInitRequest(
   id: string,
-  requestId: BigInt,
+  kind: string,
   event: ethereum.Event,
 ): Request {
   let request = Request.load(id)
   if (request == null) {
     request = new Request(id)
-    request.requestId = requestId
-    // Sentinels for required fields — overwritten by Deposit/Redeem when the
-    // request-creation event arrives (later in same tx, or never if missed).
-    // `asset` and `receiver` are address-shaped in practice (the schema types
-    // them as `Bytes!` for storage); use the 20-byte zero address so that
-    // downstream consumers (e.g. portal calls to `getAddress(asset)`) keep
-    // working on placeholder rows instead of choking on `0x`.
-    request.kind = 'DEPOSIT'
+    request.requestId = BigInt.fromString(id)
+    request.kind = kind
     request.asset = Address.zero()
     request.amountIn = BigInt.zero()
     request.receiver = Address.zero()
@@ -53,17 +60,16 @@ function loadOrInitRequest(
 }
 
 export function handleDepositRequested(event: DepositRequestedEvent): void {
-  const id = event.params.requestId.toString()
-  let request = Request.load(id)
-  if (request == null) {
-    request = new Request(id)
-    request.status = 'PENDING'
-  }
+  const request = loadOrInitRequest(
+    event.params.requestId.toString(),
+    'DEPOSIT',
+    event,
+  )
   // Populate request-time fields. `status` is intentionally NOT reassigned
   // when the entity pre-exists — a lifecycle handler (Fulfilled / Claimed /
-  // Cancelled / Recovered) already wrote the current status and resetting to
-  // PENDING here would clobber it. The `new Request(...)` branch above seeds
-  // PENDING for the fresh-entity case.
+  // Cancelled / Recovered) already wrote the current status and resetting
+  // to PENDING here would clobber it. `loadOrInitRequest` seeds PENDING for
+  // the fresh-entity case.
   request.requestId = event.params.requestId
   request.kind = 'DEPOSIT'
   request.asset = event.params.asset
@@ -76,12 +82,11 @@ export function handleDepositRequested(event: DepositRequestedEvent): void {
 }
 
 export function handleRedeemRequested(event: RedeemRequestedEvent): void {
-  const id = event.params.requestId.toString()
-  let request = Request.load(id)
-  if (request == null) {
-    request = new Request(id)
-    request.status = 'PENDING'
-  }
+  const request = loadOrInitRequest(
+    event.params.requestId.toString(),
+    'REDEEM',
+    event,
+  )
   request.requestId = event.params.requestId
   request.kind = 'REDEEM'
   request.asset = event.params.asset
@@ -96,7 +101,7 @@ export function handleRedeemRequested(event: RedeemRequestedEvent): void {
 export function handleRequestFulfilled(event: RequestFulfilledEvent): void {
   const request = loadOrInitRequest(
     event.params.requestId.toString(),
-    event.params.requestId,
+    FALLBACK_KIND,
     event,
   )
   request.status = 'FULFILLED'
@@ -108,7 +113,7 @@ export function handleRequestFulfilled(event: RequestFulfilledEvent): void {
 export function handleRequestClaimed(event: RequestClaimedEvent): void {
   const request = loadOrInitRequest(
     event.params.requestId.toString(),
-    event.params.requestId,
+    FALLBACK_KIND,
     event,
   )
   request.status = 'CLAIMED'
@@ -119,7 +124,7 @@ export function handleRequestClaimed(event: RequestClaimedEvent): void {
 export function handleRequestCancelled(event: RequestCancelledEvent): void {
   const request = loadOrInitRequest(
     event.params.requestId.toString(),
-    event.params.requestId,
+    FALLBACK_KIND,
     event,
   )
   request.status = 'CANCELLED'
@@ -133,7 +138,7 @@ export function handleRequestCancelled(event: RequestCancelledEvent): void {
 export function handleRequestRecovered(event: RequestRecoveredEvent): void {
   const request = loadOrInitRequest(
     event.params.requestId.toString(),
-    event.params.requestId,
+    FALLBACK_KIND,
     event,
   )
   request.status = 'RECOVERED'

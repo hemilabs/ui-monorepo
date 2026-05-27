@@ -96,5 +96,4 @@ const port = config.get<number>('port')
 app.listen(port, function () {
   const version = config.get<string>('version')
   console.log(`Portal backend v${version} running on port ${port}`)
-  console.debug(`Config: ${JSON.stringify(config.util.toObject())}`)
 })

@@ -18,6 +18,7 @@ import { useAccount as useEvmAccount } from 'wagmi'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useDepositFees } from '../_hooks/useDepositFees'
+import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { type DepositOperationRunning } from '../_types/operations'
 
 import { VaultFormLayout } from './form'
@@ -89,10 +90,21 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
       token: selectedAsset.token,
     })
 
+  const { setDrawerQueryString } = useDrawerQueryString()
+
   const { isPending: isRunningOperation, mutate: deposit } = useDeposit({
     fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
     input,
     on(emitter) {
+      // Open the pool drawer as soon as the user signs anything — wired here
+      // (rather than inside `useDeposit`) so the hook stays reusable outside
+      // the pool page (the home retry calls it without a drawer to open).
+      emitter.on('user-signed-approval', () =>
+        setDrawerQueryString('depositing'),
+      )
+      emitter.on('user-signed-deposit', () =>
+        setDrawerQueryString('depositing'),
+      )
       emitter.on('approve-transaction-succeeded', () =>
         setOperationRunning('depositing'),
       )
@@ -101,7 +113,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
       })
       emitter.on('deposit-settled', () => setOperationRunning('idle'))
     },
-    peggedAmount: quote?.peggedAmount ?? BigInt(0),
     pool,
     selectedAsset,
     updateDepositOperation,

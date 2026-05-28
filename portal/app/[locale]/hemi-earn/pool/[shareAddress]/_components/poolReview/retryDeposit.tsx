@@ -6,6 +6,7 @@ import { parseTokenUnits } from 'utils/token'
 
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useDeposit } from '../../_hooks/useDeposit'
+import { useDrawerQueryString } from '../../_hooks/useDrawerQueryString'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { type DepositOperationRunning } from '../../_types/operations'
 
@@ -14,12 +15,14 @@ export const RetryDeposit = function () {
     useState<DepositOperationRunning>('idle')
 
   const {
+    depositOperation,
     input,
     pool,
     resetStateAfterOperation,
     selectedAsset,
     updateDepositOperation,
   } = usePoolForm()
+  const { setDrawerQueryString } = useDrawerQueryString()
 
   const t = useTranslations()
 
@@ -34,6 +37,12 @@ export const RetryDeposit = function () {
     fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
     input,
     on(emitter) {
+      emitter.on('user-signed-approval', () =>
+        setDrawerQueryString('depositing'),
+      )
+      emitter.on('user-signed-deposit', () =>
+        setDrawerQueryString('depositing'),
+      )
       emitter.on('approve-transaction-reverted', () =>
         setOperationRunning('failed'),
       )
@@ -52,9 +61,12 @@ export const RetryDeposit = function () {
         resetStateAfterOperation()
       })
     },
-    peggedAmount: quote?.peggedAmount ?? BigInt(0),
     pool,
     selectedAsset,
+    // Hide the specific failed row from the table when the user commits to
+    // this retry. `depositOperation.transactionHash` is the failed deposit's
+    // hash (set on `user-signed-deposit` and not cleared by the revert).
+    supersedesInitiateTxHash: depositOperation?.transactionHash,
     updateDepositOperation,
   })
 

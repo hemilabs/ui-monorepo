@@ -26,9 +26,6 @@ export const PoolsList = function () {
   return (
     <div className="flex flex-col gap-4">
       <PoolInfoBarSkeleton />
-      <div className="hidden md:block">
-        <PoolInfoBarSkeleton />
-      </div>
     </div>
   )
 }

@@ -24,7 +24,7 @@
         "title": "Composition",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}"
       },
-      "deposit-successful": "Deposit successful",
+      "deposit-successful": "Deposit submitted",
       "drawer": {
         "approving": "Approving {symbol}",
         "deposit": {
@@ -61,6 +61,39 @@
       "pool-contract": "Pool Contract",
       "potential-rewards": "Potential rewards",
       "total-deposits": "Total deposits"
+    },
+    "transactions": {
+      "column": {
+        "amount": "Amount",
+        "date": "Date",
+        "status": "Status",
+        "tx-hash": "Tx Hash",
+        "type": "Type"
+      },
+      "connect-to-view": "Connect your wallet to view your earn transactions.",
+      "deposit": "Deposit",
+      "drawer": {
+        "deposit-heading": "Deposit details",
+        "deposit-subheading": "Review your deposit transaction.",
+        "step": {
+          "approval-needed": "Approval needed",
+          "deposit-cancelled": "Deposit cancelled",
+          "deposit-completed": "Deposit completed",
+          "deposit-failed": "Deposit failed",
+          "deposit-in-progress": "Deposit in progress",
+          "deposit-recovered": "Deposit recovered"
+        }
+      },
+      "nothing-here": "Nothing here yet",
+      "nothing-here-subtitle": "Your transactions will appear once you get started.",
+      "status": {
+        "deposited": "Deposited",
+        "in-progress": "In progress",
+        "tx-failed": "Tx Failed"
+      },
+      "subtitle": "Track the status of your deposits and withdrawals.",
+      "title": "My earn transactions",
+      "view": "View"
     }
   },
   "bitcoin-yield": {

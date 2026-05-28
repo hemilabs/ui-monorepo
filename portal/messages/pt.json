@@ -24,7 +24,7 @@
         "title": "Composição",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}"
       },
-      "deposit-successful": "Depósito realizado com sucesso",
+      "deposit-successful": "Depósito enviado",
       "drawer": {
         "approving": "Aprovando {symbol}",
         "deposit": {
@@ -61,6 +61,39 @@
       "pool-contract": "Contrato do fundo",
       "potential-rewards": "Recompensas potenciais",
       "total-deposits": "Depósitos totais"
+    },
+    "transactions": {
+      "column": {
+        "amount": "Quantia",
+        "date": "Data",
+        "status": "Status",
+        "tx-hash": "Hash da Tx",
+        "type": "Tipo"
+      },
+      "connect-to-view": "Conecte sua carteira para ver suas transações de earn.",
+      "deposit": "Depósito",
+      "drawer": {
+        "deposit-heading": "Detalhes do depósito",
+        "deposit-subheading": "Revise sua transação de depósito.",
+        "step": {
+          "approval-needed": "Aprovação necessária",
+          "deposit-cancelled": "Depósito cancelado",
+          "deposit-completed": "Depósito concluído",
+          "deposit-failed": "Depósito falhou",
+          "deposit-in-progress": "Depósito em andamento",
+          "deposit-recovered": "Depósito recuperado"
+        }
+      },
+      "nothing-here": "Nada por aqui ainda",
+      "nothing-here-subtitle": "Suas transações aparecerão assim que você começar.",
+      "status": {
+        "deposited": "Depositado",
+        "in-progress": "Em andamento",
+        "tx-failed": "Tx falhou"
+      },
+      "subtitle": "Acompanhe o status de seus depósitos e saques.",
+      "title": "Minhas transações de earn",
+      "view": "Ver"
     }
   },
   "bitcoin-yield": {

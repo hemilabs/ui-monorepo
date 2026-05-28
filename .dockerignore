@@ -10,10 +10,10 @@
 **/out
 **/coverage
 **/.turbo
-**/\*.tsbuildinfo
-**/_.log
+**/*.tsbuildinfo
+**/*.log
 **/.DS_Store
-**/.env_
+**/.env*
 .git
 .github
 portal-backend/api/scripts

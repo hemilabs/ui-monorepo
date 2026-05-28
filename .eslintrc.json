@@ -39,17 +39,17 @@
       }
     },
     {
-      "extends": ["bloq/node", "prettier"],
-      "files": ["portal-backend/api/scripts/*.js"],
-      "rules": {
-        "no-console": "off",
-        "node/no-unpublished-require": "off"
-      }
-    },
-    {
       "extends": ["bloq/node", "bloq/typescript", "prettier"],
-      "files": ["subgraph-api/**/*.ts"],
+      "files": ["portal-backend/api/**/*.ts", "subgraph-api/**/*.ts"],
       "rules": {
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_",
+            "ignoreRestSiblings": true,
+            "varsIgnorePattern": "^_"
+          }
+        ],
         "import/order": [
           "warn",
           {
@@ -62,12 +62,27 @@
             "newlines-between": "always"
           }
         ],
+        "no-console": "off",
+        "node/no-unpublished-import": [
+          "error",
+          {
+            "allowModules": ["@sentry/core", "@total-typescript/ts-reset"]
+          }
+        ],
         "node/no-unsupported-features/es-syntax": [
           "error",
           {
             "ignores": ["modules"]
           }
         ]
+      }
+    },
+    {
+      "extends": ["bloq/node", "prettier"],
+      "files": ["portal-backend/api/scripts/*.cjs"],
+      "rules": {
+        "no-console": "off",
+        "node/no-unpublished-require": "off"
       }
     },
     {

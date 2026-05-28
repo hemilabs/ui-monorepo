@@ -1,6 +1,10 @@
-'use strict'
+type PostJsonOptions = Omit<RequestInit, 'body' | 'method'>
 
-async function postJson(resource, payload, options = {}) {
+async function postJson(
+  resource: string,
+  payload: Record<string, unknown>,
+  options: PostJsonOptions = {},
+): Promise<unknown> {
   const res = await fetch(resource, {
     body: JSON.stringify(payload),
     method: 'POST',
@@ -23,4 +27,4 @@ async function postJson(resource, payload, options = {}) {
   return res.json()
 }
 
-module.exports = postJson
+export { postJson }

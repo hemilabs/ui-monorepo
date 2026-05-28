@@ -5,6 +5,12 @@ on:
     branches:
       - main
     paths:
+      # portal-backend/api bundles these workspace packages into its image via
+      # `pnpm deploy`, so changes to them must republish it. Ideally this would
+      # be dependency-aware via `pnpm --filter "...[ref]"`, but that needs a
+      # dynamic-matrix rework — tracked for a future PR/issue.
+      - 'packages/ve-hemi-actions/**'
+      - 'packages/ve-hemi-rewards/**'
       - 'portal-backend/**'
       - 'subgraph-api/**'
 
@@ -17,11 +23,12 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - run: |
-          version=$(jq -r '.version' ${{ matrix.context }}/package.json)
+          version=$(jq -r '.version' ${{ matrix.versionFile || format('{0}/package.json', matrix.context) }})
           echo "VERSION=$version" >> $GITHUB_ENV
       - uses: ./.github/actions/docker-build-push
         with:
           context: ${{ matrix.context }}
+          dockerfile: ${{ matrix.dockerfile }}
           dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
           dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
           images: ${{ matrix.image }}
@@ -29,7 +36,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - context: portal-backend/api
+          - context: .
+            dockerfile: portal-backend/api/Dockerfile
+            versionFile: portal-backend/api/package.json
             image: hemilabs/portal-backend-api
           - context: portal-backend/cron/hemi-supply
             image: hemilabs/hemi-supply-cron

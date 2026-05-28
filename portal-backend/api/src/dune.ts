@@ -1,23 +1,19 @@
-'use strict'
+import fetchJson from 'tiny-fetch-json'
 
-const fetchJson = require('tiny-fetch-json')
+type ResultRow = {
+  balance_usd: number
+  week: string
+}
 
-/**
- * @typedef {object} ResultRow
- * @property {number} balance_usd
- * @property {string} week
- *
- * @typedef {object} DuneResponse
- * @property {object} result
- * @property {ResultRow[]} result.rows
- */
+type DuneResponse = {
+  result: {
+    rows: ResultRow[]
+  }
+}
 
-/**
- * @param {object} config
- * @param {string} config.apiKey - The API key for the Dune API.
- * @param {string} config.queryId - The query ID for the Dune API.
- */
-module.exports = function ({ apiKey, queryId }) {
+export type DuneOptions = { apiKey: string; queryId: string }
+
+function createDune({ apiKey, queryId }: DuneOptions) {
   /**
    * Fetches TVL from Dune.
    *
@@ -27,19 +23,14 @@ module.exports = function ({ apiKey, queryId }) {
    * only the relevant columns and a limited number of rows (50) are requested.
    * The results are returned sorted by week in descending order, so the most
    * recent week is always the first row.
-   *
-   * @returns {Promise<number>} The TVL.
-   * @throws {Error} If the fetch fails or any structure is missing or invalid.
    */
   async function getTvl() {
     try {
-      const response = /** @type {DuneResponse} */ (
-        await fetchJson(
-          `https://api.dune.com/api/v1/query/${queryId}/results` +
-            '?columns=balance_usd,week' +
-            '&limit=50',
-          { headers: { 'x-dune-api-key': apiKey } },
-        )
+      const response: DuneResponse = await fetchJson(
+        `https://api.dune.com/api/v1/query/${queryId}/results` +
+          '?columns=balance_usd,week' +
+          '&limit=50',
+        { headers: { 'x-dune-api-key': apiKey } },
       )
       if (!response.result.rows.length) {
         throw new Error('No rows returned')
@@ -63,3 +54,5 @@ module.exports = function ({ apiKey, queryId }) {
     getTvl,
   }
 }
+
+export { createDune }

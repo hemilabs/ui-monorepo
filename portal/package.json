@@ -24,7 +24,7 @@
     "@tanstack/react-query": "5.100.9",
     "@tanstack/react-table": "8.21.3",
     "@tanstack/react-virtual": "3.13.24",
-    "@vetro-protocol/gateway": "1.0.0-beta",
+    "@vetro-protocol/gateway": "1.0.0",
     "@wagmi/core": "2.17.3",
     "big.js": "7.0.1",
     "btc-wallet": "workspace:*",

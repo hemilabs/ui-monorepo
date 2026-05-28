@@ -1,15 +1,19 @@
-# Used only by the portal-backend/api image, which builds from the repo root.
-# Other images (crons, subgraph-api) build from their own folders and read their
-# own .dockerignore. Keep all package.json, pnpm-lock.yaml, pnpm-workspace.yaml
-# and patches/ — pnpm needs them to resolve the workspace.
+# Used by the images that build from the repo root (portal-backend/api and the
+# portal-backend/cron/\* services). subgraph-api still builds from its own folder
+# and uses its own .dockerignore. until it gets removed
+# See https://github.com/hemilabs/ui-monorepo/issues/1425
+# Keep all package.json, pnpm-lock.yaml, pnpm-workspace.yaml and patches/
+# pnpm needs them to resolve the workspace.
 **/node_modules
 **/.next
 **/dist
 **/out
 **/coverage
 **/.turbo
-**/*.tsbuildinfo
-**/*.log
+**/\*.tsbuildinfo
+**/_.log
 **/.DS_Store
+**/.env_
 .git
 .github
+portal-backend/api/scripts

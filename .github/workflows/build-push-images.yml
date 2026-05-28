@@ -40,11 +40,18 @@ jobs:
             dockerfile: portal-backend/api/Dockerfile
             versionFile: portal-backend/api/package.json
             image: hemilabs/portal-backend-api
-          - context: portal-backend/cron/hemi-supply
+          - context: .
+            dockerfile: portal-backend/cron/hemi-supply/Dockerfile
+            versionFile: portal-backend/cron/hemi-supply/package.json
             image: hemilabs/hemi-supply-cron
-          - context: portal-backend/cron/token-prices
+          - context: .
+            dockerfile: portal-backend/cron/token-prices/Dockerfile
+            versionFile: portal-backend/cron/token-prices/package.json
             image: hemilabs/token-prices-cron
-          - context: portal-backend/cron/vaults-monitor
+          - context: .
+            dockerfile: portal-backend/cron/vaults-monitor/Dockerfile
+            versionFile: portal-backend/cron/vaults-monitor/package.json
             image: hemilabs/vaults-monitor-cron
+          # Kept as is, as it will be removed - See https://github.com/hemilabs/ui-monorepo/issues/1425
           - context: subgraph-api
             image: hemilabs/subgraph-api

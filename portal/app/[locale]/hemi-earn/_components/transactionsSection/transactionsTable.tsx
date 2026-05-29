@@ -11,7 +11,7 @@ import { useEarnPools } from '../../_hooks/useEarnPools'
 import { useEarnTransactions } from '../../_hooks/useEarnTransactions'
 
 import { buildColumns } from './columns'
-import { CompactCell } from './compactCell'
+import { CompactColumn } from './compactColumn'
 import { ConnectWallet } from './connectWallet'
 import { NoTransactions } from './noTransactions'
 import { TransactionDrawer } from './transactionDrawer'
@@ -49,7 +49,7 @@ export const TransactionsTable = function () {
     }
     return (
       <Table
-        cellComponent={CompactCell}
+        cellComponent={CompactColumn}
         columns={columns}
         data={transactions}
         loading={isPending}

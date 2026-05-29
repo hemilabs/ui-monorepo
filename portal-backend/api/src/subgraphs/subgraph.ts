@@ -360,7 +360,7 @@ export const getEvmWithdrawals = function ({
         to: toChecksum(d.to),
       }))
     },
-  )
+  ) satisfies Promise<ToEvmWithdrawOperation[]>
 }
 
 const getBtcDepositsSubgraphUrl = function (chainId: Chain['id']) {

@@ -93,6 +93,9 @@ inputs:
   NEXT_PUBLIC_TRACES_SAMPLE_RATE:
     required: false
     description: Sentry traces sample rate
+  NEXT_PUBLIC_VETRO_API_URL:
+    required: false
+    description: Vetro API URL powering the Hemi Earn page
   NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID:
     required: false
     description: Wallet Connect project ID
@@ -141,6 +144,7 @@ runs:
         NEXT_PUBLIC_SENTRY_RELEASE: ${{ inputs.NEXT_PUBLIC_SENTRY_RELEASE }}
         NEXT_PUBLIC_SUBGRAPHS_API_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPHS_API_URL }}
         NEXT_PUBLIC_TRACES_SAMPLE_RATE: ${{ inputs.NEXT_PUBLIC_TRACES_SAMPLE_RATE }}
+        NEXT_PUBLIC_VETRO_API_URL: ${{ inputs.NEXT_PUBLIC_VETRO_API_URL }}
         NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ inputs.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}
         SENTRY_AUTH_TOKEN: ${{ inputs.SENTRY_AUTH_TOKEN }}
         SENTRY_ENVIRONMENT: ${{ inputs.SENTRY_ENVIRONMENT }}

@@ -565,9 +565,6 @@ importers:
       hemi-viem:
         specifier: 2.6.1
         version: 2.6.1(viem@2.28.4(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
-      promise-limit-one:
-        specifier: 1.1.0
-        version: 1.1.0
       promise-mem:
         specifier: 1.0.4
         version: 1.0.4
@@ -11871,12 +11868,6 @@ packages:
       }
     engines: { node: '>=0.4.0' }
 
-  promise-limit-one@1.1.0:
-    resolution:
-      {
-        integrity: sha512-Y0yB010UUS2yRXItmzr9RpbxYjhXjny76nYOlpIfTfxCaaT6S+GSCU11EkRz/MWQ6pfcw626X1E9x+YBHbvY8w==,
-      }
-
   promise-mem@1.0.2:
     resolution:
       {
@@ -22702,8 +22693,6 @@ snapshots:
   progress-events@1.1.0: {}
 
   progress@2.0.3: {}
-
-  promise-limit-one@1.1.0: {}
 
   promise-mem@1.0.2:
     dependencies:

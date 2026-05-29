@@ -12,7 +12,6 @@
     "esplora-client": "1.2.0",
     "express": "5.1.0",
     "hemi-viem": "2.6.1",
-    "promise-limit-one": "1.1.0",
     "promise-mem": "1.0.4",
     "promise-swr": "1.0.2",
     "redis": "4.7.1",

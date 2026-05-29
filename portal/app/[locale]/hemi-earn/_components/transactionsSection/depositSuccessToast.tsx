@@ -7,11 +7,8 @@ import { type Hash } from 'viem'
 
 import { useLocalEarnOperations } from '../../_hooks/useLocalEarnOperations'
 import { PoolToast } from '../../pool/[shareAddress]/_components/poolToast'
-import {
-  DepositStatus,
-  type DepositOperation,
-} from '../../pool/[shareAddress]/_types/operations'
-import { type LocalEarnOperation } from '../../types'
+import { DepositStatus } from '../../pool/[shareAddress]/_types/operations'
+import { isLocalEarnDeposit, type LocalEarnOperation } from '../../types'
 
 // Visible window before the toast unmounts. Matches the `<Toast>` primitive's
 // own auto-close (10s) so the inner close-animation isn't cut short.
@@ -28,11 +25,10 @@ const TOAST_MS = 10_000
 // vanish in well under a second on a fast indexer, giving
 // the impression that nothing happened.
 const isDepositConfirmedAndUnsettled = (op: LocalEarnOperation) =>
-  op.kind === 'DEPOSIT' &&
+  isLocalEarnDeposit(op) &&
   !op.settled &&
   !!op.initiateTxHash &&
-  (op.operation as DepositOperation).status ===
-    DepositStatus.DEPOSIT_TX_CONFIRMED
+  op.operation.status === DepositStatus.DEPOSIT_TX_CONFIRMED
 
 export const DepositSuccessToast = function () {
   const { localOperations } = useLocalEarnOperations()
@@ -103,7 +99,7 @@ export const DepositSuccessToast = function () {
     <PoolToast
       chainId={hemi.id}
       key={latched.startedAt}
-      title={t('deposit-successful')}
+      title={t('deposit-submitted')}
       transactionHash={latched.initiateTxHash}
     />
   )

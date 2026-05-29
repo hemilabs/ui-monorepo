@@ -58,9 +58,6 @@ export const TransactionsTable = function () {
         // On small breakpoints the View button moves to the first column so
         // it stays reachable when other cells overflow / wrap.
         priorityColumnIdsOnSmall={['actions']}
-        // Matches the 48px row height in the Figma. `<CompactCell>` mirrors
-        // the default `<Column>` but with `min-h-12` so the row actually
-        // renders at this height (the default cell has `min-h-16` hardcoded).
         rowSize={48}
         skeletonRows={5}
       />

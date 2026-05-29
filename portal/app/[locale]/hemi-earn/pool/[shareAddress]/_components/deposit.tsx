@@ -181,7 +181,9 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
         <SubmitDeposit
           canDeposit={canDeposit && !!quote}
           isAllowanceError={isAllowanceError}
-          isAllowanceLoading={isAllowanceLoading}
+          isLoading={
+            isAllowanceLoading || !tokenBalanceLoaded || (canDeposit && !quote)
+          }
           isRunningOperation={isRunningOperation}
           needsApproval={needsApproval}
           operationRunning={operationRunning}

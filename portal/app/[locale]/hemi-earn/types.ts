@@ -11,25 +11,11 @@ export type MetricPeriod = '1w' | '1m' | '3m' | '1y'
 export type MetricType = 'deposits' | 'apy'
 
 export type EarnTransactionStatusType =
-  // Subgraph-issued: the request-deposit tx has been mined on Hemi and
-  // indexed by the subgraph. Cross-chain delivery to the Vetro vault is
-  // still in flight. Semantically the on-chain piece is done — the drawer
-  // step shows COMPLETED at this point.
   | 'PENDING'
   | 'FULFILLED'
   | 'CLAIMED'
   | 'CANCELLED'
   | 'RECOVERED'
-  // Portal-internal — the subgraph never returns either of these.
-  //
-  // `TX_PENDING` flags a local deposit whose request-deposit tx is still
-  // in flight (signed, not yet mined). It's distinct from subgraph
-  // `PENDING` so the drawer can render "in progress" before mining and
-  // "completed" once mined, without overloading a single status.
-  //
-  // `FAILED` flags a local deposit whose approve/deposit tx reverted (or
-  // whose wallet prompt the user rejected). The retry CTA in the drawer
-  // is what flips this back to an in-flight status.
   | 'TX_PENDING'
   | 'FAILED'
 
@@ -111,14 +97,12 @@ export type EarnPosition = {
 // The home drawer is read-only and never shows the approval step, so the
 // approve tx hash isn't persisted here — only `initiateTxHash` (and later
 // `claimTxHash`/`recoverTxHash` from the subgraph) feed the displayed steps.
-export type LocalEarnOperation = {
+type LocalEarnOperationBase = {
   account: Address
   amountIn: string
   asset: Address
   chainId: Chain['id']
   initiateTxHash?: Hash
-  kind: 'DEPOSIT' | 'REDEEM'
-  operation: DepositOperation | WithdrawOperation
   operator?: Address
   settled?: boolean
   shareAddress: Address
@@ -127,3 +111,21 @@ export type LocalEarnOperation = {
   // comparison there must change too.
   startedAt: number
 }
+
+export type LocalEarnDepositOperation = LocalEarnOperationBase & {
+  kind: 'DEPOSIT'
+  operation: DepositOperation
+}
+
+type LocalEarnWithdrawOperation = LocalEarnOperationBase & {
+  kind: 'REDEEM'
+  operation: WithdrawOperation
+}
+
+export type LocalEarnOperation =
+  | LocalEarnDepositOperation
+  | LocalEarnWithdrawOperation
+
+export const isLocalEarnDeposit = (
+  op: LocalEarnOperation,
+): op is LocalEarnDepositOperation => op.kind === 'DEPOSIT'

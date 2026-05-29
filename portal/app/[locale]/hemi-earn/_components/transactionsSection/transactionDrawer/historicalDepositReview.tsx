@@ -41,7 +41,7 @@ const stepConfigByStatus: Record<
   CLAIMED: (tx, t) => ({
     description: <span>{t('step.deposit-completed')}</span>,
     status: ProgressStatus.COMPLETED,
-    txHash: tx.claimTxHash ?? tx.initiateTxHash,
+    txHash: tx.claimTxHash ?? undefined,
   }),
   FAILED: (tx, t) => ({
     description: <span>{t('step.deposit-failed')}</span>,
@@ -79,7 +79,7 @@ const stepConfigByStatus: Record<
   RECOVERED: (tx, t) => ({
     description: <span>{t('step.deposit-recovered')}</span>,
     status: ProgressStatus.COMPLETED,
-    txHash: tx.recoverTxHash ?? tx.initiateTxHash,
+    txHash: tx.recoverTxHash ?? undefined,
   }),
   // Local-only: the user's request-deposit tx is still in flight (signed
   // but not yet mined). Distinct from subgraph PENDING — that one means

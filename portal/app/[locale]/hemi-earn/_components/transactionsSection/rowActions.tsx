@@ -18,7 +18,7 @@ type Props = {
 // definition.
 export const RowActions = function ({ transaction }: Props) {
   const t = useTranslations('hemi-earn.transactions')
-  const { setTxDrawerQueryString } = useTxDrawerQueryString()
+  const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   // Loader appears only for in-flight statuses. Terminal states (CLAIMED
   // success, FAILED revert) render the View button text only.
   const showLoaderIcon =

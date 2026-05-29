@@ -11,7 +11,8 @@ import {
 import {
   type EarnTransaction,
   type EarnTransactionStatusType,
-  type LocalEarnOperation,
+  type LocalEarnDepositOperation,
+  isLocalEarnDeposit,
 } from '../types'
 
 import { useEarnTransactionsQuery } from './useEarnTransactionsQuery'
@@ -38,16 +39,14 @@ const localStatusByDepositStatus: Record<
   [DepositStatus.DEPOSIT_TX_CONFIRMED]: 'PENDING',
 }
 
-const localStatus = (
-  operation: LocalEarnOperation['operation'],
-): EarnTransactionStatusType =>
-  localStatusByDepositStatus[(operation as DepositOperation).status]
+const localStatus = (operation: DepositOperation): EarnTransactionStatusType =>
+  localStatusByDepositStatus[operation.status]
 
 // Convert a not-yet-indexed local deposit into a row the table can render.
 // Callers must filter out approve-only entries (no `initiateTxHash` yet)
 // before passing to this function — the cast below trusts that.
 const localToEarnTransaction = (
-  local: LocalEarnOperation,
+  local: LocalEarnDepositOperation,
 ): EarnTransaction => ({
   amountIn: local.amountIn,
   amountOut: null,
@@ -87,7 +86,8 @@ export const useEarnTransactions = function () {
         subgraph.map(t => t.initiateTxHash.toLowerCase()),
       )
       const inFlight = localOperations
-        .filter(op => op.kind === 'DEPOSIT' && !op.settled)
+        .filter(isLocalEarnDeposit)
+        .filter(op => !op.settled)
         // Only show in the table once the user has signed the deposit tx —
         // an approve-only entry isn't a committed deposit (the user can still
         // back out of the wallet prompt). The entry stays in localStorage so

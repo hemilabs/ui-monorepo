@@ -1,3 +1,4 @@
+import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
 import { RedErrorIcon } from 'components/icons/redErrorIcon'
 import { useTranslations } from 'next-intl'
 
@@ -5,7 +6,6 @@ import {
   type EarnTransactionKindType,
   type EarnTransactionStatusType,
 } from '../../types'
-import { DepositedCheckIcon } from '../icons/depositedCheckIcon'
 import { InProgressIcon } from '../icons/inProgressIcon'
 
 type Props = {
@@ -21,7 +21,7 @@ export const StatusBadge = function ({ status }: Props) {
   if (status === 'CLAIMED') {
     return (
       <div className="flex items-center gap-x-2">
-        <DepositedCheckIcon />
+        <CheckCircleIcon className="text-neutral-400" />
         <span className="text-neutral-500">{t('status.deposited')}</span>
       </div>
     )

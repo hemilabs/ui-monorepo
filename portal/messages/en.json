@@ -24,7 +24,7 @@
         "title": "Composition",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}"
       },
-      "deposit-successful": "Deposit submitted",
+      "deposit-submitted": "Deposit submitted",
       "drawer": {
         "approving": "Approving {symbol}",
         "deposit": {
@@ -93,7 +93,8 @@
       },
       "subtitle": "Track the status of your deposits and withdrawals.",
       "title": "My earn transactions",
-      "view": "View"
+      "view": "View",
+      "withdrawal": "Withdrawal"
     }
   },
   "bitcoin-yield": {

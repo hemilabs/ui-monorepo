@@ -75,7 +75,7 @@ export const buildColumns = ({
   {
     cell: ({ row }) => (
       <span className="text-neutral-900">
-        {row.original.kind === 'DEPOSIT' ? t('deposit') : ''}
+        {row.original.kind === 'DEPOSIT' ? t('deposit') : t('withdrawal')}
       </span>
     ),
     header: () => <Header text={t('column.type')} />,

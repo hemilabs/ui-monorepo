@@ -1,4 +1,4 @@
-import { GreenCheckIcon } from 'components/icons/greenCheckIcon'
+import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
 import { RedErrorIcon } from 'components/icons/redErrorIcon'
 import { useTranslations } from 'next-intl'
 
@@ -20,7 +20,11 @@ export const AddressValidity = function ({ validity }: Props) {
   const isValid = validity === 'this-address-is-valid'
   return (
     <div className="flex items-center gap-x-1">
-      {isValid ? <GreenCheckIcon /> : <RedErrorIcon />}
+      {isValid ? (
+        <CheckCircleIcon className="text-emerald-500" />
+      ) : (
+        <RedErrorIcon />
+      )}
       <span
         className={`text-sm font-medium ${
           isValid ? 'text-emerald-500' : 'text-rose-500'

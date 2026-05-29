@@ -24,7 +24,7 @@ const resolvePoolAndAsset = function (pools: EarnPool[], asset: Address) {
 }
 
 const TransactionDrawerContent = function () {
-  const { setTxDrawerQueryString, txId } = useTxDrawerQueryString()
+  const [txId, setTxDrawerQueryString] = useTxDrawerQueryString()
   const { data: transactions } = useEarnTransactions()
   const { data: pools } = useEarnPools()
 

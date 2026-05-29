@@ -34,7 +34,7 @@ export const RetryFailedDeposit = function ({
   pool,
   transaction,
 }: Props) {
-  const { setTxDrawerQueryString } = useTxDrawerQueryString()
+  const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   const [operationRunning, setOperationRunning] =
     useState<DepositOperationRunning>('idle')
   const t = useTranslations()
@@ -73,7 +73,6 @@ export const RetryFailedDeposit = function ({
     selectedAsset: asset,
     // Hide the specific failed row from the table once this retry is signed.
     supersedesInitiateTxHash: transaction.initiateTxHash,
-    updateDepositOperation() {},
   })
 
   const isDepositing = operationRunning === 'depositing'

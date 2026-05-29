@@ -74,7 +74,7 @@ export const PoolForm = function () {
       {showDepositToast && (
         <PoolToast
           chainId={pool.shareToken.chainId}
-          title={t('deposit-successful')}
+          title={t('deposit-submitted')}
           transactionHash={depositOperation.transactionHash!}
         />
       )}

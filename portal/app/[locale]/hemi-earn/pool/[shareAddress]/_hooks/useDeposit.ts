@@ -31,7 +31,7 @@ type UseDeposit = {
   // flagged `settled` so the table doesn't show the old failure alongside
   // the new attempt. Only the exact hash is touched — no broader filtering.
   supersedesInitiateTxHash?: Hash
-  updateDepositOperation: (payload?: DepositOperation) => void
+  updateDepositOperation?: (payload?: DepositOperation) => void
 }
 
 export const useDeposit = function ({
@@ -109,7 +109,7 @@ export const useDeposit = function ({
       })
 
       emitter.on('user-signed-approval', function (approvalTxHash) {
-        updateDepositOperation({
+        updateDepositOperation?.({
           approvalTxHash,
           status: DepositStatus.APPROVAL_TX_PENDING,
           transactionHash: undefined,
@@ -117,14 +117,14 @@ export const useDeposit = function ({
       })
 
       emitter.on('approve-transaction-reverted', function (receipt) {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.APPROVAL_TX_FAILED,
         })
         updateNativeBalanceAfterFees(receipt)
       })
 
       emitter.on('approve-transaction-succeeded', function (receipt) {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.APPROVAL_TX_COMPLETED,
         })
         updateNativeBalanceAfterFees(receipt)
@@ -132,13 +132,13 @@ export const useDeposit = function ({
       })
 
       emitter.on('user-signing-approval-error', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.APPROVAL_TX_FAILED,
         })
       })
 
       emitter.on('user-signed-deposit', function (transactionHash) {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_PENDING,
           transactionHash,
         })
@@ -159,7 +159,7 @@ export const useDeposit = function ({
       })
 
       emitter.on('deposit-transaction-succeeded', function (receipt) {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_CONFIRMED,
         })
         upsertLocalOperation({
@@ -180,7 +180,7 @@ export const useDeposit = function ({
       })
 
       emitter.on('deposit-transaction-reverted', function (receipt) {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
         upsertLocalOperation({
@@ -191,7 +191,7 @@ export const useDeposit = function ({
       })
 
       emitter.on('user-signing-deposit-error', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
         // No local upsert — no `initiateTxHash` was produced, so this never
@@ -199,19 +199,19 @@ export const useDeposit = function ({
       })
 
       emitter.on('deposit-failed-validation', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
       })
 
       emitter.on('quote-failed', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
       })
 
       emitter.on('deposit-failed', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
         upsertLocalOperation({
@@ -221,7 +221,7 @@ export const useDeposit = function ({
       })
 
       emitter.on('unexpected-error', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
       })

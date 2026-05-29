@@ -10,7 +10,7 @@ import { type WithdrawOperationRunning } from '../_types/operations'
 type Props = {
   canWithdraw: boolean
   isAllowanceError: boolean
-  isAllowanceLoading: boolean
+  isLoading: boolean
   isRunningOperation: boolean
   needsApproval: boolean
   operationRunning: WithdrawOperationRunning
@@ -20,7 +20,7 @@ type Props = {
 export const SubmitWithdraw = function ({
   canWithdraw,
   isAllowanceError,
-  isAllowanceLoading,
+  isLoading,
   isRunningOperation,
   needsApproval,
   operationRunning,
@@ -29,7 +29,7 @@ export const SubmitWithdraw = function ({
   const t = useTranslations()
 
   const getOperationButtonText = function () {
-    if (isAllowanceLoading) {
+    if (isLoading) {
       return <Spinner size="small" />
     }
     if (isAllowanceError) {
@@ -51,7 +51,7 @@ export const SubmitWithdraw = function ({
     <SubmitWhenConnected
       submitButton={
         <Button
-          disabled={!canWithdraw || isRunningOperation || isAllowanceLoading}
+          disabled={!canWithdraw || isRunningOperation || isLoading}
           size="small"
           type="submit"
         >

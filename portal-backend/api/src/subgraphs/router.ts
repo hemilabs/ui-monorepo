@@ -25,8 +25,12 @@ function parseChainId(
   next: NextFunction,
 ) {
   const { chainIdStr } = req.params
+  if (!isInteger(chainIdStr)) {
+    next('route')
+    return
+  }
   req.data = req.data || {}
-  req.data.chainId = parseInt(chainIdStr)
+  req.data.chainId = Number.parseInt(chainIdStr)
   next()
 }
 

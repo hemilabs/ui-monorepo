@@ -51,6 +51,8 @@ export const useDeposit = function ({
   const config = useConfig()
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
+  // Requires <LocalEarnOperationsProvider> upstream (mounted in the
+  // hemi-earn layout). Hook throws at runtime if used outside it.
   const { markSettledByInitiateTxHash, upsertLocalOperation } =
     useLocalEarnOperations()
 

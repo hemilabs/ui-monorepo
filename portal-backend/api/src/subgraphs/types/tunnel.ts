@@ -49,6 +49,9 @@ export type ToEvmWithdrawOperation = CommonOperation &
   } & {
     claimTxHash?: Hash
     proveTxHash?: Hash
+    // EVM withdrawals always have a recipient; narrow the shared
+    // CommonOperation `to: string | null` (null only happens for BTC).
+    to: string
   }
 
 export type ToBtcWithdrawOperation = CommonOperation &

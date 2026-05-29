@@ -9,6 +9,7 @@ import { createDune, type DuneOptions } from './src/dune.ts'
 import { globToRegExp } from './src/glob-to-regexp.ts'
 import { createNetStats, type NetStatsOptions } from './src/net-stats.ts'
 import { createRedisCache, type RedisOptions } from './src/redis.ts'
+import { createSubgraphsRouter } from './src/subgraphs/router.ts'
 import { toJsonMiddleware, toTextMiddleware } from './src/to-middleware.ts'
 import { createVeHemi } from './src/ve-hemi/index.ts'
 
@@ -78,6 +79,8 @@ app.get(
     revalidate: 4 * 60 * 60 * 1000, // 4 hours
   }),
 )
+
+app.use('/subgraphs', createSubgraphsRouter())
 
 const notFoundHandler: RequestHandler = function (req, res) {
   res.status(404).send({ error: 'Not Found' })

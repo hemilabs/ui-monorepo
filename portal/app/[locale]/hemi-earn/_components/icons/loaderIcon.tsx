@@ -1,5 +1,11 @@
 export const LoaderIcon = () => (
-  <svg fill="none" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
+  <svg
+    className="animate-spin"
+    fill="none"
+    height="16"
+    width="16"
+    xmlns="http://www.w3.org/2000/svg"
+  >
     <path
       d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM2.96 8a5.04 5.04 0 1 0 10.08 0A5.04 5.04 0 0 0 2.96 8Z"
       fill="#FF4600"

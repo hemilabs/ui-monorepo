@@ -55,9 +55,15 @@ export const TransactionsTable = function () {
         loading={isPending}
         // Virtual mode (default) gives sticky header + body scroll out of the
         // box, so a long list of past deposits doesn't push the page height.
-        // On small breakpoints the View button moves to the first column so
-        // it stays reachable when other cells overflow / wrap.
-        priorityColumnIdsOnSmall={['actions']}
+        // Mobile column order per designer: Action, Status, Type, Amount,
+        // Date (so the most-used cells stay reachable when narrow).
+        priorityColumnIdsOnSmall={[
+          'actions',
+          'status',
+          'type',
+          'amount',
+          'date',
+        ]}
         rowSize={48}
         skeletonRows={5}
       />

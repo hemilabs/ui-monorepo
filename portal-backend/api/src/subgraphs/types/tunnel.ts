@@ -36,6 +36,9 @@ export type EvmDepositOperation = CommonOperation &
     approvalTxHash?: Hash // only used for ERC20 deposits
     l1ChainId: Chain['id']
     l2ChainId: Chain['id']
+    // EVM deposits always have a recipient; narrow the shared CommonOperation
+    // `to: string | null` (a null `to` only happens for BTC withdrawals).
+    to: string
   }
 
 export type ToEvmWithdrawOperation = CommonOperation &

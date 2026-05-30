@@ -53,7 +53,7 @@ export const useDeposit = function ({
   const queryClient = useQueryClient()
   // Requires <LocalEarnOperationsProvider> upstream (mounted in the
   // hemi-earn layout). Hook throws at runtime if used outside it.
-  const { markSettledByInitiateTxHash, upsertLocalOperation } =
+  const { deleteLocalOperationByInitiateTxHash, upsertLocalOperation } =
     useLocalEarnOperations()
 
   const { queryKey: tokenBalanceQueryKey } = useTokenBalance(
@@ -152,11 +152,11 @@ export const useDeposit = function ({
             transactionHash,
           },
         })
-        // Hide the specific prior FAILED entry the user is replacing. Done
-        // here (and not on retry click) so the row only disappears once the
-        // user actually commits to the new attempt by signing.
+        // Remove the specific prior FAILED entry the user is replacing.
+        // Done here (and not on retry click) so the row only disappears
+        // once the user actually commits to the new attempt by signing.
         if (supersedesInitiateTxHash) {
-          markSettledByInitiateTxHash(supersedesInitiateTxHash)
+          deleteLocalOperationByInitiateTxHash(supersedesInitiateTxHash)
         }
       })
 

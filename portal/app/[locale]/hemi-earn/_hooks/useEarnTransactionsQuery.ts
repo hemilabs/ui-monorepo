@@ -33,8 +33,7 @@ export const useEarnTransactionsQuery = function () {
   const { localOperations } = useLocalEarnOperations()
 
   const inFlightLocalsExist = localOperations.some(
-    op =>
-      op.kind === 'DEPOSIT' && !op.settled && op.initiateTxHash !== undefined,
+    op => op.kind === 'DEPOSIT' && op.initiateTxHash !== undefined,
   )
 
   return useQuery({

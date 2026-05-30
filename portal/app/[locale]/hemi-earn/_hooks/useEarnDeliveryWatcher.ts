@@ -13,45 +13,29 @@ import {
 import { useEarnTransactionsQuery } from './useEarnTransactionsQuery'
 import { useLocalEarnOperations } from './useLocalEarnOperations'
 
-// Query-key prefixes invalidated when a deposit transitions to a terminal
-// Vetro state (CLAIMED / RECOVERED). These are the queries that only change
-// once cross-chain delivery completes — invalidating earlier (e.g. inside
-// `useDeposit.onSettled`) just re-fetches the pre-deposit state because
-// LayerZero hasn't run yet.
 const vetroPoolsPrefix = ['hemi-earn', 'pools'] as const
 const vetroUserPoolBalancePrefix = ['hemi-earn', 'user-pool-balance'] as const
 
 type ReconcileArgs = {
-  localOperations: LocalEarnOperation[]
-  reconciledRef: { current: Set<string> }
-  subgraphHashToStatus: Map<string, EarnTransactionStatusType>
-  upsertLocalOperation: ReturnType<
+  deleteLocalOperationByInitiateTxHash: ReturnType<
     typeof useLocalEarnOperations
-  >['upsertLocalOperation']
+  >['deleteLocalOperationByInitiateTxHash']
+  localOperations: LocalEarnOperation[]
+  subgraphHashes: Set<string>
 }
 
-// Flips matching local entries to `settled: true` once the subgraph has
-// indexed them at all — regardless of subgraph status. Drives table cleanup
-// and polling termination. Independent from the invalidation watcher below,
-// which fires on the separate subgraph status transition.
+// Hard-deletes any local entry whose `initiateTxHash` has appeared in the
+// subgraph — the subgraph row supersedes the local mirror. Idempotent: a
+// re-entry of a hash already gone is a no-op.
 function reconcileLocals({
+  deleteLocalOperationByInitiateTxHash,
   localOperations,
-  reconciledRef,
-  subgraphHashToStatus,
-  upsertLocalOperation,
+  subgraphHashes,
 }: ReconcileArgs) {
   for (const local of localOperations) {
-    if (local.settled || !local.initiateTxHash) continue
-    const hash = local.initiateTxHash.toLowerCase()
-    if (reconciledRef.current.has(hash)) continue
-    if (!subgraphHashToStatus.has(hash)) continue
-    reconciledRef.current.add(hash)
-    upsertLocalOperation({
-      account: local.account,
-      kind: local.kind,
-      settled: true,
-      startedAt: local.startedAt,
-    })
+    if (!local.initiateTxHash) continue
+    if (!subgraphHashes.has(local.initiateTxHash.toLowerCase())) continue
+    deleteLocalOperationByInitiateTxHash(local.initiateTxHash)
   }
 }
 
@@ -75,9 +59,6 @@ function detectCrossChainDelivery(
   return false
 }
 
-// Broad-prefix invalidation for the queries that move only after cross-chain
-// delivery: vault TVL, user pool position, staked-balance card. Transitions
-// are sparse, so re-fetching all matching keys is cheap.
 function invalidateVetroBalances(
   queryClient: ReturnType<typeof useQueryClient>,
 ) {
@@ -95,25 +76,6 @@ function invalidateVetroBalances(
   queryClient.resetQueries({ queryKey: earnPositionsKeyPrefix })
 }
 
-// Side-effect hook that drives two jobs off the same polling subscription:
-//
-// 1. Local reconcile — when the subgraph first indexes a local entry (any
-//    status, including PENDING), flip its `settled` flag so the table stops
-//    rendering the optimistic row and the polling predicate can eventually
-//    wind down. `reconciledRef` keeps this idempotent.
-//
-// 2. Cross-chain delivery detection — separately, watch the subgraph status
-//    itself for an in-flight → CLAIMED/RECOVERED transition. This is the
-//    precise moment Vetro-side balances actually move, and it's what triggers
-//    the cache invalidation that refreshes the staked-balance card and the
-//    pool TVL card.
-//
-// These cannot share state: in a delayed-CLAIMED flow the subgraph returns
-// PENDING first, which marks the local entry settled. By the time CLAIMED
-// arrives, the local-driven path has already short-circuited via
-// `reconciledRef`. The separate `previousSubgraphStatusRef` sees the
-// PENDING → CLAIMED transition and fires the invalidation regardless.
-//
 // Mount this exactly once per route group (today, inside the layout-level
 // `<EarnStatusUpdaters>`). Mounting from multiple consumers would multiply
 // the side-effect work without changing behavior — react-query dedupes the
@@ -121,23 +83,19 @@ function invalidateVetroBalances(
 export const useEarnDeliveryWatcher = function () {
   const { address } = useAccount()
   const queryClient = useQueryClient()
-  const { localOperations, upsertLocalOperation } = useLocalEarnOperations()
+  const { deleteLocalOperationByInitiateTxHash, localOperations } =
+    useLocalEarnOperations()
   const { data } = useEarnTransactionsQuery()
 
-  const reconciledRef = useRef<Set<string>>(new Set())
   const previousSubgraphStatusRef = useRef<
     Map<string, EarnTransactionStatusType>
   >(new Map())
 
-  // Refs are session-scoped state, but the data they track is account-scoped.
-  // Wipe both when the connected wallet changes so we don't carry account A's
-  // reconciled hashes / status snapshot into account B's polling loop — left
-  // unchecked this leaks memory across switches and can wedge a retry-after-
-  // FAILED entry that shares an `initiateTxHash` with a previously-reconciled
-  // one.
+  // The previous-status snapshot is account-scoped — wipe it on wallet
+  // change so account A's hashes don't leak into account B's transition
+  // detection.
   useEffect(
-    function resetRefsOnAccountChange() {
-      reconciledRef.current = new Set()
+    function resetSnapshotOnAccountChange() {
       previousSubgraphStatusRef.current = new Map()
     },
     [address],
@@ -157,15 +115,20 @@ export const useEarnDeliveryWatcher = function () {
       )
       previousSubgraphStatusRef.current = subgraphHashToStatus
       reconcileLocals({
+        deleteLocalOperationByInitiateTxHash,
         localOperations,
-        reconciledRef,
-        subgraphHashToStatus,
-        upsertLocalOperation,
+        subgraphHashes: new Set(subgraphHashToStatus.keys()),
       })
       if (crossChainDelivered) {
         invalidateVetroBalances(queryClient)
       }
     },
-    [address, data, localOperations, queryClient, upsertLocalOperation],
+    [
+      address,
+      data,
+      deleteLocalOperationByInitiateTxHash,
+      localOperations,
+      queryClient,
+    ],
   )
 }

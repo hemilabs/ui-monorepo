@@ -20,13 +20,12 @@ const TOAST_MS = 10_000
 // `<PoolFormProvider>`, so the pool-side toast wouldn't see those events).
 //
 // The toast is **latched**: the parent keeps `<PoolToast>` mounted for the
-// full `TOAST_MS` window even after the underlying local entry becomes
-// `settled` (subgraph reconciled it). Without the latch the toast could
-// vanish in well under a second on a fast indexer, giving
-// the impression that nothing happened.
-const isDepositConfirmedAndUnsettled = (op: LocalEarnOperation) =>
+// full `TOAST_MS` window even after the underlying local entry is hard-
+// deleted by the reconcile loop. Without the latch the toast could vanish
+// in well under a second on a fast indexer, giving the impression that
+// nothing happened.
+const isDepositConfirmed = (op: LocalEarnOperation) =>
   isLocalEarnDeposit(op) &&
-  !op.settled &&
   !!op.initiateTxHash &&
   op.operation.status === DepositStatus.DEPOSIT_TX_CONFIRMED
 
@@ -34,12 +33,12 @@ export const DepositSuccessToast = function () {
   const { localOperations } = useLocalEarnOperations()
   const t = useTranslations('hemi-earn.pool')
 
-  // Snapshot taken on the first render: hashes that were already in the
-  // `DEPOSIT_TX_CONFIRMED + !settled` window when this component mounted.
-  // Those are reloads or late-mounts of an existing confirmation — the
-  // toast was either already shown in a previous session or never deserved
-  // to show here, so we skip them. Hashes that transition into the window
-  // *after* mount are new confirmations and do toast.
+  // Snapshot taken on the first render: hashes that were already at
+  // `DEPOSIT_TX_CONFIRMED` when this component mounted. Those are reloads
+  // or late-mounts of an existing confirmation — the toast was either
+  // already shown in a previous session or never deserved to fire here, so
+  // we skip them. Hashes that transition into the window *after* mount are
+  // new confirmations and do toast.
   //
   // Lazy-init via `current === null` so the snapshot reflects the
   // localOperations state at the very first render (a `useEffect` would
@@ -48,14 +47,14 @@ export const DepositSuccessToast = function () {
   if (seenOnMountRef.current === null) {
     seenOnMountRef.current = new Set(
       localOperations
-        .filter(isDepositConfirmedAndUnsettled)
+        .filter(isDepositConfirmed)
         .map(op => op.initiateTxHash!.toLowerCase()),
     )
   }
 
   const confirmed = useMemo(
     function () {
-      const candidates = localOperations.filter(isDepositConfirmedAndUnsettled)
+      const candidates = localOperations.filter(isDepositConfirmed)
       return candidates.sort((a, b) => b.startedAt - a.startedAt)[0]
     },
     [localOperations],

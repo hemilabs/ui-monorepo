@@ -87,7 +87,6 @@ export const useEarnTransactions = function () {
       )
       const inFlight = localOperations
         .filter(isLocalEarnDeposit)
-        .filter(op => !op.settled)
         // Only show in the table once the user has signed the deposit tx —
         // an approve-only entry isn't a committed deposit (the user can still
         // back out of the wallet prompt). The entry stays in localStorage so

@@ -82,21 +82,14 @@ export type EarnPosition = {
 }
 
 // Local mirror of an earn operation initiated from this browser. Survives the
-// route change between /hemi-earn and /hemi-earn/pool/[shareAddress], and
-// survives the subgraph indexing the resulting request — once `settled` flips
-// to true the entry stops appearing as a separate row in the table.
+// route change between /hemi-earn and /hemi-earn/pool/[shareAddress]. Entries
+// are hard-deleted once the subgraph indexes the matching request — see
+// `useEarnDeliveryWatcher`'s reconcile loop.
 //
 // `amountIn` is a string because bigint can't be serialized to JSON (and
 // therefore can't be persisted to localStorage). Same convention as
 // `CommonOperation.amount` in `portal/types/tunnel.ts`. Convert with
 // `BigInt(...)` only when arithmetic is needed (e.g. formatUnits).
-//
-// `kind` is included from day one even though this PR only writes `'DEPOSIT'`,
-// so withdraw can add to the same store later without a schema migration.
-//
-// The home drawer is read-only and never shows the approval step, so the
-// approve tx hash isn't persisted here — only `initiateTxHash` (and later
-// `claimTxHash`/`recoverTxHash` from the subgraph) feed the displayed steps.
 type LocalEarnOperationBase = {
   account: Address
   amountIn: string
@@ -104,7 +97,6 @@ type LocalEarnOperationBase = {
   chainId: Chain['id']
   initiateTxHash?: Hash
   operator?: Address
-  settled?: boolean
   shareAddress: Address
   // Unix seconds. Matches the unit of `TTL_SECONDS` in
   // `localEarnOperationsContext.tsx` — if this ever changes to ms, the GC

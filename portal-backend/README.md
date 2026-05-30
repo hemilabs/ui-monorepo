@@ -87,22 +87,102 @@ $ curl http://localhost:3006/ve-hemi-rewards/43111
 [0,0,0,0,0,0.001623267574410933,0.0013566087424163847,...other 50 elements,0,0,0]
 ```
 
+#### Subgraph routes
+
+The routes under the `/subgraphs` prefix proxy the subgraphs that index the data needed by the Tunnel and the Staking Campaign. Each route validates the `:chain-id` for its operation and returns `404 Not Found` on a mismatch. Most deposit/withdrawal queries run on the Ethereum chains (`1`, `11155111`) and the Hemi chains (`43111`, `743111`) respectively, but note two exceptions: BTC deposits (`/deposits/:hash/btc`) are queried on Hemi, and hashed-withdrawal proofs (`/hashedWithdrawals/:hash`) are queried on Ethereum. Addresses must match `0x[0-9a-fA-F]{40}`.
+
+##### `GET /subgraphs/:chain-id/:operation/meta`
+
+Returns the last block indexed by the tunnel subgraph for the given chain. `:operation` is `deposits` (Ethereum chains) or `withdrawals` (Hemi chains).
+
+```console
+$ curl http://localhost:3006/subgraphs/1/deposits/meta
+{"number":25189339}
+```
+
+##### `GET /subgraphs/:chain-id/deposits/:address`
+
+Returns the EVM deposits from an Ethereum chain into Hemi for the given address. Accepts the optional `fromBlock`, `limit` and `skip` query params.
+
+```console
+$ curl "http://localhost:3006/subgraphs/1/deposits/0x0000000000000000000000000000000000000001?limit=1"
+{"deposits":[{"amount":"1000000000000000000","blockNumber":25189339,"direction":0,"from":"0x1234...","l1ChainId":1,"l1Token":"0x0000...","l2ChainId":43111,"l2Token":"0x0000...","timestamp":1759162804,"to":"0x1234...","transactionHash":"0xabc..."}]}
+```
+
+##### `GET /subgraphs/:chain-id/deposits/:hash/btc`
+
+Returns the BTC deposit on Hemi identified by the given Bitcoin transaction id. Responds with `404 Not Found` if the deposit does not exist.
+
+```console
+$ curl http://localhost:3006/subgraphs/43111/deposits/<btc-tx-id>/btc
+{"blockNumber":"1234","depositSats":"100000","depositTxId":"0x...","id":"...","netSatsAfterFee":"99000","recipient":"0x1234...","timestamp":"1759162804","transactionHash":"0xabc...","vault":"0x3DA1..."}
+```
+
+##### `GET /subgraphs/:chain-id/hashedWithdrawals/:hash`
+
+Returns the prove and claim transaction hashes for the given hashed withdrawal. Runs on the Ethereum chains. Responds with `404 Not Found` if the withdrawal does not exist.
+
+```console
+$ curl http://localhost:3006/subgraphs/1/hashedWithdrawals/0x<hashed-withdrawal>
+{"id":"0x...","claimTxHash":"0xabc...","proveTxHash":"0xdef..."}
+```
+
+##### `GET /subgraphs/:chain-id/withdrawals/:address/:type`
+
+Returns the withdrawals from Hemi for the given address. `:type` is `btc` or `evm`. Accepts the optional `fromBlock`, `limit` and `skip` query params.
+
+```console
+$ curl "http://localhost:3006/subgraphs/43111/withdrawals/0x0000000000000000000000000000000000000001/evm?limit=1"
+{"withdrawals":[{"amount":"1000000000000000000","blockNumber":4504196,"direction":1,"from":"0x1234...","l1ChainId":1,"l1Token":"0x0000...","l2ChainId":43111,"l2Token":"0x0000...","timestamp":1759162804,"to":"0x1234...","transactionHash":"0xabc..."}]}
+```
+
+##### `GET /subgraphs/:chain-id/staked`
+
+Returns the total staked amount per account from the Stake subgraph.
+
+```console
+$ curl http://localhost:3006/subgraphs/43111/staked
+{"staked":[{"totalStaked":"17616893499688152282458","id":"0x027a9d301FB747cd972CFB29A63f3BDA551DFc5c"},...]}
+```
+
+##### `GET /subgraphs/:chain-id/claim/:address/:claim-group`
+
+Returns the Merkle claim data for the given address and numeric claim group. Responds with `404 Not Found` if there is no claim.
+
+```console
+$ curl http://localhost:3006/subgraphs/43111/claim/0x0000000000000000000000000000000000000001/0
+{"account":"0x1234...","amount":"50000000000000000000","blockNumber":"1234","blockTimestamp":"1759162804","erc20":"0x0000...","lockupMonths":12,"ratio":15.23,"transactionHash":"0xabc..."}
+```
+
+##### `GET /subgraphs/:chain-id/locks/:address`
+
+Returns the veHEMI locked positions owned (or previously owned) by the given address.
+
+```console
+$ curl http://localhost:3006/subgraphs/43111/locks/0x0000000000000000000000000000000000000001
+{"positions":[]}
+```
+
 ### Configuration
 
 These environment variables control how the cache works:
 
-| Variable              | Description                                                       | Default                        |
-| --------------------- | ----------------------------------------------------------------- | ------------------------------ |
-| BTC_VAULTS_CACHE_MIN  | The time to cache the BTC vaults data in minutes.                 | 1                              |
-| ORIGINS               | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhost:3000`        |
-| PORT                  | The HTTP port the server listens for requests.                    | 3006                           |
-| REDIS_URL             | The URL of the Redis database.                                    | `redis://localhost:6379`       |
-| RPC_URL_HEMI          | URL of the Hemi RPC node.                                         | `https://rpc.hemi.network/rpc` |
-| SENTRY_DSN            | The Sentry DSN.                                                   |                                |
-| SENTRY_LOGGING_LEVELS | The logging levels to send to Sentry (props of console.log).      | ["log", "warn", "error"]       |
-| TVL_DUNE_API_KEY      | The Dune API key.                                                 |                                |
-| TVL_DUNE_QUERY_ID     | The Dune TVL query id.                                            |                                |
-| TVL_REVALIDATE_MIN    | The time the TVL will be considered fresh.                        | 720                            |
+| Variable                 | Description                                                       | Default                            |
+| ------------------------ | ----------------------------------------------------------------- | ---------------------------------- |
+| BTC_VAULTS_CACHE_MIN     | The time to cache the BTC vaults data in minutes.                 | 1                                  |
+| ORIGINS                  | Comma-separated list of allowed origins. Globs are supported (1). | `http://localhost:3000`            |
+| PORT                     | The HTTP port the server listens for requests.                    | 3006                               |
+| REDIS_URL                | The URL of the Redis database.                                    | `redis://localhost:6379`           |
+| RPC_URL_HEMI             | URL of the Hemi RPC node.                                         | `https://rpc.hemi.network/rpc`     |
+| SENTRY_DSN               | The Sentry DSN.                                                   |                                    |
+| SENTRY_LOGGING_LEVELS    | The logging levels to send to Sentry (props of console.log).      | ["log", "warn", "error"]           |
+| SUBGRAPH_API_KEY         | The API key needed to query the subgraphs.                        |                                    |
+| SUBGRAPH_API_URL         | The base URL of the subgraphs gateway.                            | `https://gateway.thegraph.com/api` |
+| SUBGRAPH_ORIGIN          | The `Origin` header sent when querying the subgraphs.             | `https://app.hemi.xyz`             |
+| SUBGRAPH_VE_HEMI_TESTNET | Override for the published testnet veHEMI subgraph id.            |                                    |
+| TVL_DUNE_API_KEY         | The Dune API key.                                                 |                                    |
+| TVL_DUNE_QUERY_ID        | The Dune TVL query id.                                            |                                    |
+| TVL_REVALIDATE_MIN       | The time the TVL will be considered fresh.                        | 720                                |
 
 (1) Only stars (`*`) are supported. I.e. `https://*.hemi.xyz` will match any subdomain or subdomain chain.
 

@@ -166,6 +166,7 @@ export const useDeposit = function ({
         })
         upsertLocalOperation({
           ...baseLocalPayload,
+          initiateTxHash: receipt.transactionHash,
           operation: { status: DepositStatus.DEPOSIT_TX_CONFIRMED },
         })
         updateNativeBalanceAfterFees(receipt)
@@ -187,6 +188,7 @@ export const useDeposit = function ({
         })
         upsertLocalOperation({
           ...baseLocalPayload,
+          initiateTxHash: receipt.transactionHash,
           operation: { status: DepositStatus.DEPOSIT_TX_FAILED },
         })
         updateNativeBalanceAfterFees(receipt)

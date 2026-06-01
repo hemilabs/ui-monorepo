@@ -60,10 +60,7 @@ export const FundWallet = function () {
   return (
     <Section
       heading={t('add-funds-to-your-wallet')}
-      step={{
-        description: t('fund-your-wallets'),
-        position: 2,
-      }}
+      step={{ position: 2 }}
       subheading={t(`here-are-some-options-${networkType}`)}
     >
       <div className="flex flex-col gap-y-3 md:basis-1/2">

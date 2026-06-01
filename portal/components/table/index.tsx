@@ -31,6 +31,8 @@ import { useTableVirtualizer } from './_hooks/useTableVirtualizer'
 
 type TableHeaderProps<TData> = {
   hasVerticalBodyScrollbar: boolean
+  headerClassName?: string
+  headerRowClassName?: string
   headerScrollRef: RefObject<HTMLDivElement | null>
   smallBreakpoint: number
   table: ReturnType<typeof useReactTable<TData>>
@@ -40,6 +42,8 @@ type TableHeaderProps<TData> = {
 
 const TableHeader = <TData,>({
   hasVerticalBodyScrollbar,
+  headerClassName,
+  headerRowClassName,
   headerScrollRef,
   smallBreakpoint,
   table,
@@ -47,7 +51,7 @@ const TableHeader = <TData,>({
   width,
 }: TableHeaderProps<TData>) => (
   <div
-    className={`rounded-t-xl bg-neutral-100 pb-1.5 ${
+    className={`bg-neutral-100 ${headerClassName ?? 'rounded-t-xl pb-1.5'} ${
       hasVerticalBodyScrollbar && width >= smallBreakpoint ? 'pr-2.5' : ''
     }`}
   >
@@ -58,7 +62,10 @@ const TableHeader = <TData,>({
       >
         <thead>
           {table.getHeaderGroups().map(headerGroup => (
-            <tr className="flex w-full items-center" key={headerGroup.id}>
+            <tr
+              className={`flex w-full items-center ${headerRowClassName ?? ''}`}
+              key={headerGroup.id}
+            >
               {headerGroup.headers.map(header => (
                 <ColumnHeader
                   className={
@@ -85,6 +92,7 @@ const TableHeader = <TData,>({
 
 type TableBodyProps<TData> = {
   CellComponent: ComponentType<ComponentProps<'td'>>
+  bodyContainerClassName?: string
   fetchMoreOnBottomReached: (el?: HTMLDivElement | null) => void
   headerScrollRef: RefObject<HTMLDivElement | null>
   isFetching: boolean
@@ -92,6 +100,7 @@ type TableBodyProps<TData> = {
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
+  rowClassName?: string
   rowSize: number
   rowVirtualizer: ReturnType<typeof useTableVirtualizer<TData>>
   scrollContainerRef: RefObject<HTMLDivElement | null>
@@ -102,6 +111,7 @@ type TableBodyProps<TData> = {
 
 function TableBody<TData>({
   CellComponent,
+  bodyContainerClassName,
   fetchMoreOnBottomReached,
   headerScrollRef,
   isFetching,
@@ -109,6 +119,7 @@ function TableBody<TData>({
   onRowClick,
   onRowHover,
   placeholder,
+  rowClassName,
   rowSize,
   rowVirtualizer,
   scrollContainerRef,
@@ -130,6 +141,7 @@ function TableBody<TData>({
 
   return (
     <TableBodyContainer
+      className={bodyContainerClassName}
       onScroll={handleScroll}
       scrollRef={scrollContainerRef}
       style={{
@@ -162,6 +174,7 @@ function TableBody<TData>({
               loading={loading}
               onRowClick={onRowClick}
               onRowHover={onRowHover}
+              rowClassName={rowClassName}
               rows={rows}
               virtualItems={virtualItems}
             />
@@ -183,23 +196,27 @@ function TableBody<TData>({
 
 type StaticTableBodyProps<TData> = {
   CellComponent: ComponentType<ComponentProps<'td'>>
+  bodyContainerClassName?: string
   headerScrollRef: RefObject<HTMLDivElement | null>
   loading: boolean
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
+  rowClassName?: string
   skeletonRows: number
   table: ReturnType<typeof useReactTable<TData>>
   tableMinWidth: number
 }
 
 function StaticTableBody<TData>({
+  bodyContainerClassName,
   CellComponent,
   headerScrollRef,
   loading,
   onRowClick,
   onRowHover,
   placeholder,
+  rowClassName,
   skeletonRows,
   table,
   tableMinWidth,
@@ -213,7 +230,12 @@ function StaticTableBody<TData>({
   }
 
   return (
-    <div className="-mt-1.5 mb-1 overflow-hidden rounded-xl bg-white shadow-md">
+    <div
+      className={
+        bodyContainerClassName ??
+        '-mt-1.5 mb-1 overflow-hidden rounded-xl bg-white shadow-md'
+      }
+    >
       <div
         className="overflow-x-auto"
         onScroll={handleScroll}
@@ -239,6 +261,7 @@ function StaticTableBody<TData>({
                 loading={loading}
                 onRowClick={onRowClick}
                 onRowHover={onRowHover}
+                rowClassName={rowClassName}
                 rows={rows}
               />
             </tbody>
@@ -252,8 +275,10 @@ function StaticTableBody<TData>({
 }
 
 export type TableProps<TData> = {
+  bodyContainerClassName?: string
   cellComponent?: ComponentType<ComponentProps<'td'>>
   columns: ColumnDef<TData>[]
+  containerClassName?: string
   data: TData[] | undefined
   fetchNextPage?: VoidFunction
   hasNextPage?: boolean
@@ -263,6 +288,9 @@ export type TableProps<TData> = {
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
+  rowClassName?: string
+  headerClassName?: string
+  headerRowClassName?: string
   priorityColumnIdsOnSmall?: string[]
   rowSize?: number
   skeletonRows?: number
@@ -270,11 +298,15 @@ export type TableProps<TData> = {
 }
 
 export function Table<TData>({
+  bodyContainerClassName,
   cellComponent: CellComponent = Column,
   columns,
+  containerClassName,
   data,
   fetchNextPage,
   hasNextPage = false,
+  headerClassName,
+  headerRowClassName,
   isFetching = false,
   loading = false,
   mode = 'virtual',
@@ -282,6 +314,7 @@ export function Table<TData>({
   onRowHover,
   placeholder,
   priorityColumnIdsOnSmall,
+  rowClassName,
   rowSize = 64,
   skeletonRows = 4,
   smallBreakpoint = screenBreakpoints.lg,
@@ -336,11 +369,14 @@ export function Table<TData>({
 
   const isVirtual = mode === 'virtual'
   const heightClass = isVirtual ? ' h-full' : ''
+  const rootClassName = containerClassName ?? `flex flex-col px-1${heightClass}`
 
   return (
-    <div className={`flex flex-col px-1${heightClass}`}>
+    <div className={rootClassName}>
       <TableHeader
         hasVerticalBodyScrollbar={hasVerticalBodyScrollbar}
+        headerClassName={headerClassName}
+        headerRowClassName={headerRowClassName}
         headerScrollRef={headerScrollRef}
         smallBreakpoint={smallBreakpoint}
         table={table}
@@ -350,6 +386,7 @@ export function Table<TData>({
       {isVirtual ? (
         <TableBody
           CellComponent={CellComponent}
+          bodyContainerClassName={bodyContainerClassName}
           fetchMoreOnBottomReached={fetchMoreOnBottomReached}
           headerScrollRef={headerScrollRef}
           isFetching={isFetching}
@@ -357,6 +394,7 @@ export function Table<TData>({
           onRowClick={onRowClick}
           onRowHover={onRowHover}
           placeholder={placeholder}
+          rowClassName={rowClassName}
           rowSize={rowSize}
           rowVirtualizer={rowVirtualizer}
           scrollContainerRef={scrollContainerRef}
@@ -368,11 +406,13 @@ export function Table<TData>({
       ) : (
         <StaticTableBody
           CellComponent={CellComponent}
+          bodyContainerClassName={bodyContainerClassName}
           headerScrollRef={headerScrollRef}
           loading={loading}
           onRowClick={onRowClick}
           onRowHover={onRowHover}
           placeholder={placeholder}
+          rowClassName={rowClassName}
           skeletonRows={skeletonRows}
           table={table}
           tableMinWidth={tableMinWidth}

@@ -2,124 +2,81 @@ import { AnalyticsEvent } from 'app/analyticsEvents'
 import { ButtonLink } from 'components/button'
 import { Card } from 'components/card'
 import { ExternalLink } from 'components/externalLink'
-import { Tab, Tabs } from 'components/tabs'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
-import Image from 'next/image'
+import Image, { StaticImageData } from 'next/image'
 import { useTranslations } from 'next-intl'
-import { useState } from 'react'
 
-import hemiBannerMobile from '../_assets/hemi-banner.svg'
+import btcWallet from '../_assets/btcWallet.svg'
+import evmWallet from '../_assets/evmWallet.svg'
+import tunnelToHemi from '../_assets/tunnelToHemi.svg'
 
-type Props = {
-  event: AnalyticsEvent // There are too many too list, just allow all of them
-  href: string
+import { Section } from './section'
+
+type TutorialCardProps = {
+  event: AnalyticsEvent
   heading: string
+  href: string
+  icon: StaticImageData
+  iconAlt: string
   subheading: string
 }
 
-const Box = function ({ event, heading, href, subheading }: Props) {
+const TutorialCard = function ({
+  event,
+  heading,
+  href,
+  icon,
+  iconAlt,
+  subheading,
+}: TutorialCardProps) {
   const { enabled, track } = useUmami()
 
   const addTracking = () => (enabled ? () => track(event) : undefined)
 
   return (
-    <div className="rounded-2xl border border-solid border-neutral-300/55 bg-white hover:bg-gray-50">
-      <ExternalLink
-        className="block cursor-pointer p-4 text-sm font-medium"
-        href={href}
-        onClick={addTracking()}
-      >
-        <h5 className="text-neutral-950">{heading}</h5>
-        <p className="text-neutral-500">{subheading}</p>
-      </ExternalLink>
-    </div>
-  )
-}
-
-const DeveloperTooling = function () {
-  const t = useTranslations('get-started.learn-more-tutorials')
-  return (
-    <div className="flex flex-col gap-y-3">
-      <Box
-        event="tut - hello world"
-        heading={t('hello-world')}
-        href="https://docs.hemi.xyz/how-to-tutorials/tutorials/using-remix-ide"
-        subheading={t('learn-to-develop-hello-world')}
-      />
-      <Box
-        event="tut - deploy erc20"
-        heading={t('deploy-erc20')}
-        href="https://docs.hemi.xyz/how-to-tutorials/tutorials/erc-20"
-        subheading={t('learn-to-deploy-erc20')}
-      />
-      <Box
-        event="tut - get btc balance"
-        heading={t('get-bitcoin-balance')}
-        href="https://docs.hemi.xyz/how-to-tutorials/tutorials/using-remix-ide-1"
-        subheading={t('learn-to-get-bitcoin-balance')}
-      />
-      <Box
-        event="tut - setup safe"
-        heading={t('set-up-safe')}
-        href="https://docs.hemi.xyz/how-to-tutorials/tutorials/set-up-a-safe-wallet"
-        subheading={t('learn-about-multisig-wallet')}
-      />
-      <Box
-        event="tut - create capsule"
-        heading={t('create-a-capsule')}
-        href="https://docs.hemi.xyz/how-to-tutorials/tutorials/create-a-capsule"
-        subheading={t('learn-about-capsules')}
-      />
-    </div>
-  )
-}
-
-const PoPMiner = function () {
-  const t = useTranslations('get-started.learn-more-tutorials')
-  const [networkType] = useNetworkType()
-  const isTestnet = networkType === 'testnet'
-
-  return (
-    <div className="flex flex-col gap-y-3">
-      <Box
-        event="tut - pop miner cli"
-        heading={t('run-cli-pop-miner')}
-        href="https://docs.hemi.xyz/how-to-tutorials/tutorials/setup-part-1"
-        subheading={t('set-up-cli-pop-miner')}
-      />
-      {isTestnet && (
-        <Box
-          event="tut - add hemi"
-          heading={t('add-themi-wallet')}
-          href="https://docs.hemi.xyz/how-to-tutorials/tutorials/add-themi-to-metamask"
-          subheading={t('learn-to-add-themi-wallet')}
-        />
-      )}
-    </div>
+    <ExternalLink
+      className="flex h-28 overflow-hidden rounded-lg bg-white shadow-[0px_0px_0px_1px_rgba(0,0,0,0.05)] transition-colors hover:bg-neutral-50"
+      href={href}
+      onClick={addTracking()}
+    >
+      <div className="flex size-28 shrink-0 items-center justify-center">
+        <Image alt={iconAlt} height={112} src={icon} width={112} />
+      </div>
+      <div className="flex min-w-0 flex-col justify-center gap-1 py-3 pr-4">
+        <h5 className="text-sm font-semibold text-neutral-950">{heading}</h5>
+        <p className="text-sm font-normal text-neutral-500">{subheading}</p>
+      </div>
+    </ExternalLink>
   )
 }
 
 const WalletSetup = function () {
   const t = useTranslations('get-started.learn-more-tutorials')
+
   return (
     <div className="flex flex-col gap-y-3">
-      <Box
+      <TutorialCard
         event="tut - setup evm"
         heading={t('set-up-evm-wallet')}
         href="https://docs.hemi.xyz/main/start-here/developers"
+        icon={evmWallet}
+        iconAlt={t('set-up-evm-wallet')}
         subheading={t('learn-to-setup-evm-wallet')}
       />
-      <Box
+      <TutorialCard
         event="tut - setup btc"
         heading={t('set-up-btc-wallet')}
         href="https://docs.hemi.xyz/how-to-tutorials/tutorials/btc-wallet-setup"
+        icon={btcWallet}
+        iconAlt={t('set-up-btc-wallet')}
         subheading={t('learn-to-setup-btc-wallet')}
       />
-      <Box
+      <TutorialCard
         event="tut - tunnel eth"
-        heading={t('tunnel-eth-to-hemi')}
+        heading={t('tunnel-assets-to-hemi')}
         href="https://docs.hemi.xyz/how-to-tutorials/tutorials/tunnel-eth-to-hemi"
+        icon={tunnelToHemi}
+        iconAlt={t('tunnel-assets-to-hemi')}
         subheading={t('learn-to-tunnel-to-hemi')}
       />
     </div>
@@ -127,10 +84,6 @@ const WalletSetup = function () {
 }
 
 export const LearnMore = function () {
-  const [selectedTab, setSelectedTab] = useState<
-    'wallet' | 'dev-tooling' | 'PoP-miner'
-  >('wallet')
-  const tCommon = useTranslations('common')
   const t = useTranslations('get-started')
   const { enabled, track } = useUmami()
 
@@ -140,78 +93,34 @@ export const LearnMore = function () {
     enabled ? () => track('tut - learn more') : undefined
 
   return (
-    <>
-      <h2>{t('learn-more-about-hemi')}</h2>
-      <p className="mb-6 font-medium text-neutral-600 md:mb-8">
-        {t('tutorials-and-tools')}
-      </p>
+    <Section card={false} step={{ position: 3 }}>
       <Card>
-        <div className="p-1 pb-2 font-medium md:p-3 md:pb-6">
-          <Image
-            alt="Hemi banner"
-            className="h-24 w-full rounded-lg md:h-auto"
-            src={hemiBannerMobile}
-            style={{ objectFit: 'cover' }}
-          />
-          <div className="mt-4 flex flex-col gap-y-2 px-2 md:mt-6 md:flex-row md:gap-x-6">
-            <div className="mb-6">
-              <h4>{t('tutorials')}</h4>
-              <p className="text-neutral-600">{t('tutorials-subheading')}</p>
-              <div className="mt-3 hidden w-fit md:block">
-                <ButtonLink
-                  href={tutorialsUrl}
-                  onClick={addTracking()}
-                  size="xSmall"
-                >
-                  {tCommon('learn-more')}
-                </ButtonLink>
-              </div>
+        <div className="flex flex-col gap-6 p-4 font-medium lg:flex-row lg:items-start lg:p-6">
+          <div className="flex max-w-[332px] flex-col gap-4">
+            <div>
+              <h3 className="text-mid-md font-semibold text-neutral-950">
+                {t('learn-how-to-use-hemi')}
+              </h3>
+              <p className="mt-1 font-normal text-neutral-500">
+                {t('tutorials-subheading')}
+              </p>
             </div>
-            <div className="flex basis-full flex-col gap-y-4 xl:basis-1/2">
-              <div className="md:self-start">
-                <Tabs>
-                  <Tab
-                    onClick={function () {
-                      setSelectedTab('wallet')
-                      track?.('tut - wallet setup')
-                    }}
-                    selected={selectedTab === 'wallet'}
-                  >
-                    <span className="whitespace-nowrap">
-                      {t('learn-more-tutorials.wallet-setup')}
-                    </span>
-                  </Tab>
-                  <Tab
-                    onClick={function () {
-                      setSelectedTab('dev-tooling')
-                      track?.('tut - dev tooling')
-                    }}
-                    selected={selectedTab === 'dev-tooling'}
-                  >
-                    <span className="whitespace-nowrap">
-                      {t('learn-more-tutorials.developer-tooling')}
-                    </span>
-                  </Tab>
-                  <Tab
-                    onClick={function () {
-                      setSelectedTab('PoP-miner')
-                      track?.('tut - pop miner')
-                    }}
-                    selected={selectedTab === 'PoP-miner'}
-                  >
-                    <span className="whitespace-nowrap">
-                      {t('learn-more-tutorials.pop-miner')}
-                    </span>
-                  </Tab>
-                </Tabs>
-              </div>
-              {selectedTab === 'dev-tooling' && <DeveloperTooling />}
-              {selectedTab === 'PoP-miner' && <PoPMiner />}
-              {selectedTab === 'wallet' && <WalletSetup />}
+            <div className="w-fit [&_.button--base]:font-semibold">
+              <ButtonLink
+                href={tutorialsUrl}
+                onClick={addTracking()}
+                size="xSmall"
+                variant="primary"
+              >
+                {t('view-all-tutorials')}
+              </ButtonLink>
             </div>
+          </div>
+          <div className="min-w-0 flex-1 lg:max-w-[500px]">
+            <WalletSetup />
           </div>
         </div>
       </Card>
-    </>
+    </Section>
   )
 }

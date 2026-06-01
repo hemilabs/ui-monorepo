@@ -1,5 +1,7 @@
 import { useIsMutating } from '@tanstack/react-query'
+import { Button } from 'components/button'
 import { CheckMark } from 'components/icons/checkMark'
+import { PlusIcon } from 'components/icons/plusIcon'
 import { useIsConnectedToExpectedNetwork } from 'hooks/useIsConnectedToExpectedNetwork'
 import { useTranslations } from 'next-intl'
 import { type Chain } from 'viem'
@@ -12,7 +14,7 @@ type Props = {
 }
 
 export const AddChainButton = function ({ chain }: Props) {
-  const { status: accountStatus } = useAccount()
+  const { isConnected } = useAccount()
   const [isChainAdded] = useChainAdded(chain)
   const isConnectedToChain = useIsConnectedToExpectedNetwork(chain.id)
   const isMutating =
@@ -23,7 +25,7 @@ export const AddChainButton = function ({ chain }: Props) {
   const t = useTranslations('get-started')
   const tCommon = useTranslations('common')
 
-  if (isChainAdded || isConnectedToChain) {
+  if (isConnected && (isChainAdded || isConnectedToChain)) {
     return (
       <div className="flex items-center gap-x-1">
         <span className="text-neutral-500">{tCommon('added')}</span>
@@ -32,21 +34,16 @@ export const AddChainButton = function ({ chain }: Props) {
     )
   }
 
-  const getText = function () {
-    if (isMutating) {
-      return t('adding-chain')
-    }
-
-    if (accountStatus === 'disconnected') {
-      return tCommon('connect-wallet')
-    }
-
-    return t('add-to-wallet')
-  }
+  const label = isMutating ? t('adding-chain') : t('add-to-wallet')
 
   return (
-    <button className="hoverable-text cursor-pointer" type="button">
-      {getText()}
-    </button>
+    <div className="shrink-0">
+      <Button size="xSmall" variant="secondary">
+        <PlusIcon className="[&>path]:fill-neutral-500" />
+        <span className="whitespace-nowrap text-xs font-semibold text-neutral-950">
+          {label}
+        </span>
+      </Button>
+    </div>
   )
 }

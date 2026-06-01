@@ -41,7 +41,7 @@ export const ConfigurationUrl = function ({
           {href}
         </ExternalLink>
       ) : (
-        <span className="mr-auto overflow-hidden text-ellipsis whitespace-nowrap text-neutral-950">
+        <span className="body-text-normal overflow-hidden text-ellipsis whitespace-nowrap text-neutral-500">
           {href}
         </span>
       )}

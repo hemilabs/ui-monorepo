@@ -8,6 +8,7 @@ type Props<TData> = {
   loading: boolean
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
+  rowClassName?: string
   rows: Row<TData>[]
 }
 
@@ -16,6 +17,7 @@ export function StaticRows<TData>({
   loading,
   onRowClick,
   onRowHover,
+  rowClassName = 'group/row flex w-full items-center',
   rows,
 }: Props<TData>) {
   if (loading && rows.length === 0) {
@@ -26,7 +28,7 @@ export function StaticRows<TData>({
     <>
       {rows.map(row => (
         <tr
-          className="group/row flex w-full items-center"
+          className={rowClassName}
           key={row.id}
           onClick={onRowClick ? () => onRowClick(row.original) : undefined}
           onMouseEnter={onRowHover ? () => onRowHover(row.index) : undefined}

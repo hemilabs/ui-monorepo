@@ -1,3 +1,6 @@
+'use client'
+
+import { Card } from 'components/card'
 import { Tab, Tabs } from 'components/tabs'
 import { hemi as hemiMainnet, hemiSepolia as hemiTestnet } from 'hemi-viem'
 import { useHemi } from 'hooks/useHemi'
@@ -78,33 +81,42 @@ export const AddHemiWallet = function () {
   }
 
   return (
-    <Section
-      heading={t('add-hemi-to-your-wallet')}
-      step={{
-        description: t('add-networks-to-wallet'),
-        position: 1,
-      }}
-      subheading={t(`add-networks-${networkType}`)}
-    >
-      <div className="flex flex-col gap-y-4 md:basis-1/2">
-        <div className="md:self-end">
-          <Tabs>
-            <Tab
-              onClick={onSelectAutomatic}
-              selected={networkConfiguration === 'automatic'}
-            >
-              {t('add-networks.automatic')}
-            </Tab>
-            <Tab
-              onClick={onSelectManual}
-              selected={networkConfiguration === 'manual'}
-            >
-              {t('add-networks.manual')}
-            </Tab>
-          </Tabs>
+    <Section card={false} step={{ position: 1 }}>
+      <Card>
+        <div className="grid w-full grid-cols-1 font-medium lg:grid-cols-[396px_1fr] lg:items-start">
+          <div className="p-6">
+            <div className="max-w-[332px]">
+              <h3 className="text-mid-md font-semibold text-neutral-950">
+                {t('add-hemi-network-to-your-wallet')}
+              </h3>
+              <p className="mt-1 font-normal text-neutral-500">
+                {t(`add-networks-${networkType}`)}
+              </p>
+            </div>
+          </div>
+          <div className="p-6">
+            <div className="ml-auto w-full max-w-[500px]">
+              <div className="mb-4 flex justify-end [&_ul]:w-auto">
+                <Tabs>
+                  <Tab
+                    onClick={onSelectAutomatic}
+                    selected={networkConfiguration === 'automatic'}
+                  >
+                    {t('add-networks.automatic')}
+                  </Tab>
+                  <Tab
+                    onClick={onSelectManual}
+                    selected={networkConfiguration === 'manual'}
+                  >
+                    {t('add-networks.manual')}
+                  </Tab>
+                </Tabs>
+              </div>
+              <AddSection networkConfiguration={networkConfiguration} />
+            </div>
+          </div>
         </div>
-        <AddSection networkConfiguration={networkConfiguration} />
-      </div>
+      </Card>
     </Section>
   )
 }

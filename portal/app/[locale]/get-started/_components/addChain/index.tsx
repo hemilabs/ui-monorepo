@@ -69,7 +69,7 @@ export const AddChain = function ({ chain, children }: Props) {
       className={
         isConnected && (isChainAdded || isConnectedToChain)
           ? ''
-          : 'cursor-pointer hover:bg-gray-50'
+          : 'cursor-pointer hover:bg-neutral-50'
       }
       onClick={onClick}
     >

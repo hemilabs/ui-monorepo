@@ -29,13 +29,17 @@ export const AddChainAutomatically = function ({ chain, layer }: Props) {
   const t = useTranslations('get-started')
 
   const content = (
-    <div className="flex flex-row gap-x-1">
-      <div className="w-5">
+    <div className="flex w-full items-center justify-between gap-4">
+      <div className="flex items-center gap-2">
         <ChainLogo chainId={chain.id} />
+        <span className="body-text-semibold text-neutral-950">
+          {chain.name}
+        </span>
+        <span className="body-text-normal text-neutral-500">
+          {t('layer', { layer })}
+        </span>
       </div>
-      <span className="ml-1 text-neutral-950">{chain.name}</span>
-      <span className="text-neutral-500">{t('layer', { layer })}</span>
-      <div className="ml-auto">{<AddChainButton chain={chain} />}</div>
+      <AddChainButton chain={chain} />
     </div>
   )
 

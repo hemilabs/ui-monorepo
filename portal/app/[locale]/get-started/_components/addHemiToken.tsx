@@ -78,8 +78,9 @@ const tokenTableColumns = ({
 ]
 
 const filterTokensBySearch = function (tokens: EvmToken[], searchText: string) {
-  const query = searchText.trim().toLowerCase()
-  const userTypedAddress = isAddress(searchText.trim())
+  const trimmed = searchText.trim()
+  const query = trimmed.toLowerCase()
+  const userTypedAddress = isAddress(trimmed)
 
   return query
     ? tokens.filter(
@@ -88,7 +89,7 @@ const filterTokensBySearch = function (tokens: EvmToken[], searchText: string) {
           token.symbol.toLowerCase().includes(query) ||
           (userTypedAddress &&
             isAddress(token.address) &&
-            isAddressEqual(token.address, searchText.trim())),
+            isAddressEqual(token.address, trimmed)),
       )
     : tokens
 }

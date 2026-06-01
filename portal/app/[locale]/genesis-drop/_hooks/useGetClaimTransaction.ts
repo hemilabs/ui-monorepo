@@ -1,18 +1,8 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
-import { LockupMonths } from 'genesis-drop-actions'
 import { useHemi } from 'hooks/useHemi'
-import { Address, Chain, Hash } from 'viem'
+import { getClaimTransaction, ParsedClaimTransaction } from 'utils/subgraph'
+import { Address, Chain } from 'viem'
 import { useAccount } from 'wagmi'
-
-type Response = {
-  account: Address
-  amount: string
-  lockupMonths: LockupMonths
-  ratio: number
-  transactionHash: Hash
-}
-
-type ParsedResponse = Omit<Response, 'amount'> & { amount: bigint }
 
 export const getClaimTransactionQueryKey = ({
   address,
@@ -32,7 +22,7 @@ export const getClaimTransactionQueryKey = ({
 export const useGetClaimTransaction = function (
   claimGroupId: number,
   options: Omit<
-    UseQueryOptions<ParsedResponse | null>,
+    UseQueryOptions<ParsedClaimTransaction | null>,
     'enabled' | 'queryFn' | 'queryKey'
   > = {},
 ) {
@@ -41,25 +31,12 @@ export const useGetClaimTransaction = function (
 
   return useQuery({
     enabled: !!address && claimGroupId !== undefined,
-    async queryFn() {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${hemi.id}/claim/${address}/${claimGroupId}`,
-      )
-
-      if (!response.ok) {
-        return null
-      }
-
-      const data: Response = await response.json()
-
-      return {
-        account: data.account,
-        amount: BigInt(data.amount),
-        lockupMonths: data.lockupMonths,
-        ratio: data.ratio,
-        transactionHash: data.transactionHash,
-      } satisfies ParsedResponse
-    },
+    queryFn: () =>
+      getClaimTransaction({
+        address: address!,
+        chainId: hemi.id,
+        claimGroupId,
+      }),
     queryKey: getClaimTransactionQueryKey({
       address,
       chainId: hemi.id,

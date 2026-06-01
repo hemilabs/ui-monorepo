@@ -87,9 +87,6 @@ inputs:
   NEXT_PUBLIC_SENTRY_RELEASE:
     required: false
     description: Sentry release name
-  NEXT_PUBLIC_SUBGRAPHS_API_URL:
-    required: false
-    description: Subgraphs API URL
   NEXT_PUBLIC_TRACES_SAMPLE_RATE:
     required: false
     description: Sentry traces sample rate
@@ -142,7 +139,6 @@ runs:
         NEXT_PUBLIC_PORTAL_API_URL: ${{ inputs.NEXT_PUBLIC_PORTAL_API_URL }}
         NEXT_PUBLIC_SENTRY_DSN: ${{ inputs.NEXT_PUBLIC_SENTRY_DSN }}
         NEXT_PUBLIC_SENTRY_RELEASE: ${{ inputs.NEXT_PUBLIC_SENTRY_RELEASE }}
-        NEXT_PUBLIC_SUBGRAPHS_API_URL: ${{ inputs.NEXT_PUBLIC_SUBGRAPHS_API_URL }}
         NEXT_PUBLIC_TRACES_SAMPLE_RATE: ${{ inputs.NEXT_PUBLIC_TRACES_SAMPLE_RATE }}
         NEXT_PUBLIC_VETRO_API_URL: ${{ inputs.NEXT_PUBLIC_VETRO_API_URL }}
         NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID: ${{ inputs.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}

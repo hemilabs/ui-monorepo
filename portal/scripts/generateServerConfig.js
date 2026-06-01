@@ -73,10 +73,6 @@ if (process.env.NEXT_PUBLIC_PORTAL_API_URL) {
   fetchDomains.add(new URL(process.env.NEXT_PUBLIC_PORTAL_API_URL).origin)
 }
 
-if (process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL) {
-  fetchDomains.add(new URL(process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL).origin)
-}
-
 if (process.env.NEXT_PUBLIC_VETRO_API_URL) {
   fetchDomains.add(new URL(process.env.NEXT_PUBLIC_VETRO_API_URL).origin)
 }

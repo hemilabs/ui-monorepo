@@ -1,29 +1,9 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
 import { StakingPosition } from 'types/stakingDashboard'
+import { getLockedPositions } from 'utils/subgraph'
 import { Address, Chain } from 'viem'
 import { useAccount } from 'wagmi'
-
-type ApiPosition = Omit<
-  StakingPosition,
-  | 'amount'
-  | 'blockNumber'
-  | 'blockTimestamp'
-  | 'lockTime'
-  | 'timestamp'
-  | 'tokenId'
-> & {
-  amount: string
-  blockNumber: string
-  blockTimestamp: string
-  lockTime: string
-  timestamp: string
-  tokenId: string
-}
-
-type ApiResponse = {
-  positions: ApiPosition[]
-}
 
 export const getStakingPositionsQueryKey = ({
   address,
@@ -44,33 +24,11 @@ export const useStakingPositions = function (
 
   return useQuery({
     enabled: !!ownerAddress,
-    async queryFn() {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${
-          hemi.id
-        }/locks/${ownerAddress!}`,
-      ).catch(() => ({ ok: false }) as Response)
-      if (!response.ok) {
-        return []
-      }
-
-      const data: ApiResponse = await response.json()
-
-      const positions = data.positions.map(
-        position =>
-          ({
-            ...position,
-            amount: BigInt(position.amount),
-            blockNumber: BigInt(position.blockNumber),
-            blockTimestamp: BigInt(position.blockTimestamp),
-            lockTime: BigInt(position.lockTime),
-            timestamp: BigInt(position.timestamp),
-            tokenId: BigInt(position.tokenId),
-          }) as StakingPosition,
-      )
-
-      return positions
-    },
+    queryFn: () =>
+      getLockedPositions({
+        address: ownerAddress!,
+        chainId: hemi.id,
+      }),
     queryKey: getStakingPositionsQueryKey({
       address: ownerAddress,
       chainId: hemi.id,

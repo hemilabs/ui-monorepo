@@ -2,7 +2,7 @@ import { NativeTokenSpecialAddressOnL2 } from 'tokenList/nativeTokens'
 import { RemoteChain } from 'types/chain'
 import { EvmToken } from 'types/token'
 import { getNativeToken } from 'utils/nativeToken'
-import { isAddressEqual } from 'viem'
+import { isAddress, isAddressEqual } from 'viem'
 
 export const getL1BridgePair = function (
   token: EvmToken,
@@ -18,17 +18,21 @@ export const getL1BridgePair = function (
     return null
   }
 
-  const l1ChainId = Number(l1ChainIdStr)
-  const network = remoteNetworks.find(n => n.id === l1ChainId)
+  const network = remoteNetworks.find(n => n.id.toString() === l1ChainIdStr)
   if (!network) {
     return null
   }
 
   const bridgeAddress = bridgeInfo[l1ChainIdStr]?.tokenAddress
-  const address =
-    !bridgeAddress ||
+  // tokenAddress may not be a real 0x address (e.g. "BTC" for Bitcoin-backed
+  // tokens), so guard isAddressEqual to avoid throwing during render.
+  const isNativeEthOnL2 =
+    !!bridgeAddress &&
+    isAddress(bridgeAddress) &&
     isAddressEqual(bridgeAddress, NativeTokenSpecialAddressOnL2)
-      ? getNativeToken(l1ChainId).address
+  const address =
+    !bridgeAddress || isNativeEthOnL2
+      ? getNativeToken(network.id).address
       : bridgeAddress
 
   return {

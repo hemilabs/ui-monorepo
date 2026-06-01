@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { tokenList } from 'tokenList'
 import { EvmToken } from 'types/token'
+import { isNativeToken } from 'utils/nativeToken'
 import { isEvmToken } from 'utils/token'
 
 import { useHemi } from './useHemi'
@@ -12,7 +13,9 @@ export const useHemiTokens = function () {
     () =>
       tokenList.tokens.filter(
         (token): token is EvmToken =>
-          isEvmToken(token) && token.chainId === hemi.id,
+          isEvmToken(token) &&
+          token.chainId === hemi.id &&
+          !isNativeToken(token),
       ),
     [hemi.id],
   )

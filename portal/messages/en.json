@@ -352,7 +352,7 @@
       "run-cli-pop-miner": "Run the CLI PoP Miner",
       "set-up-btc-wallet": "Set up a BTC wallet",
       "set-up-cli-pop-miner": "Set up and run your PoP miner, either by downloading pre-built binaries or by building from source.",
-      "set-up-evm-wallet": "Set up a EVM wallet",
+      "set-up-evm-wallet": "Set up an EVM wallet",
       "set-up-safe": "Set Up a Safe Wallet",
       "tunnel-assets-to-hemi": "Tunnel assets to Hemi",
       "tunnel-eth-to-hemi": "Tunnel ETH to Hemi",

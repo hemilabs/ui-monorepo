@@ -3,6 +3,7 @@
 import { ButtonLink } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { RenderFiatBalance } from 'components/fiatBalance'
+import { TokenLogo } from 'components/tokenLogo'
 import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { useChain } from 'hooks/useChain'
 import { mainnet } from 'networks/mainnet'
@@ -56,6 +57,16 @@ export const PoolInfoBar = function ({ pool }: Props) {
               formattedAddress
             )}
           </span>
+        </PoolInfoItem>
+        <PoolInfoItem label={t('share-token')}>
+          <div className="flex items-center gap-x-1.5">
+            <div className="flex items-center justify-center rounded-full border border-gray-200">
+              <TokenLogo size="small" token={pool.shareToken} version="L1" />
+            </div>
+            <span className="body-text-medium text-neutral-950">
+              {pool.shareToken.symbol}
+            </span>
+          </div>
         </PoolInfoItem>
         <PoolInfoItem label={t('total-deposits')}>
           <span className="body-text-medium text-neutral-950">

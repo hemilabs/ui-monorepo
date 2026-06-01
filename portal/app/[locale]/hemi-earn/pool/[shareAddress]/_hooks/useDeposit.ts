@@ -9,54 +9,52 @@ import {
 } from 'hemi-earn-actions'
 import { requestDeposit } from 'hemi-earn-actions/actions'
 import { useTokenBalance } from 'hooks/useBalance'
-import { useNetworkType } from 'hooks/useNetworkType'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { parseTokenUnits } from 'utils/token'
+import { type Hash } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 import { getWalletClient } from 'wagmi/actions'
 
-import { earnPositionsKeyPrefix } from '../../../_fetchers/fetchEarnPositions'
-import { earnTvlQueryKey } from '../../../_hooks/useEarnTvl'
+import { earnTransactionsKeyPrefix } from '../../../_fetchers/fetchEarnTransactions'
+import { useLocalEarnOperations } from '../../../_hooks/useLocalEarnOperations'
 import { type EarnAsset, type EarnPool } from '../../../types'
 import { type DepositOperation, DepositStatus } from '../_types/operations'
-
-import { useDrawerQueryString } from './useDrawerQueryString'
-import { getUserPoolBalanceQueryKey } from './useUserPoolBalance'
 
 type UseDeposit = {
   fulfillmentFee: bigint
   input: string
   on?: (emitter: EventEmitter<RequestDepositEvents>) => void
-  // Pegged-token amount that `Gateway.previewDeposit(asset, amount)` will
-  // mint into the vault, used to bump `totalAssets()` optimistically in its
-  // native unit. Computed by the caller (the deposit drawer) alongside the
-  // LayerZero quote — see `useQuoteDeposit`. Pass `0n` while the preview is
-  // pending; the `onSettled` invalidation reconciles in that case.
-  peggedAmount: bigint
   pool: EarnPool
   selectedAsset: EarnAsset
-  updateDepositOperation: (payload?: DepositOperation) => void
+  // Set by retry callers: the `initiateTxHash` of the specific prior FAILED
+  // attempt being replaced. Once the new deposit is signed, that entry is
+  // flagged `settled` so the table doesn't show the old failure alongside
+  // the new attempt. Only the exact hash is touched — no broader filtering.
+  supersedesInitiateTxHash?: Hash
+  updateDepositOperation?: (payload?: DepositOperation) => void
 }
 
 export const useDeposit = function ({
   fulfillmentFee,
   input,
   on,
-  peggedAmount,
   pool,
   selectedAsset,
+  supersedesInitiateTxHash,
   updateDepositOperation,
 }: UseDeposit) {
   const amount = parseTokenUnits(input, selectedAsset.token)
   const chainId = selectedAsset.token.chainId
   const routerAddress = getHemiEarnRouterAddress()
 
-  const { setDrawerQueryString } = useDrawerQueryString()
   const { address } = useAccount()
   const config = useConfig()
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
-  const [networkType] = useNetworkType()
+  // Requires <LocalEarnOperationsProvider> upstream (mounted in the
+  // hemi-earn layout). Hook throws at runtime if used outside it.
+  const { deleteLocalOperationByInitiateTxHash, upsertLocalOperation } =
+    useLocalEarnOperations()
 
   const { queryKey: tokenBalanceQueryKey } = useTokenBalance(
     chainId,
@@ -75,24 +73,6 @@ export const useDeposit = function ({
     tokenAddress: selectedAsset.address,
   })
 
-  const userPoolBalanceQueryKey = getUserPoolBalanceQueryKey({
-    account: address,
-    assetAddress: selectedAsset.address,
-    chainId,
-    shareAddress: pool.shareAddress,
-  })
-
-  const userPoolBalanceQueryKeyPrefix = getUserPoolBalanceQueryKey({
-    account: address,
-    chainId,
-    shareAddress: pool.shareAddress,
-  })
-
-  const poolTotalAssetsQueryKey = earnTvlQueryKey({
-    networkType,
-    shareAddress: pool.shareAddress,
-  })
-
   return useMutation({
     async mutationFn() {
       if (!address) {
@@ -102,6 +82,22 @@ export const useDeposit = function ({
       await ensureConnectedTo(chainId)
 
       const walletClient = await getWalletClient(config, { chainId })
+
+      // Local-store entries are only created once the user signs the deposit
+      // tx (where we have an `initiateTxHash`). Approval events stay in the
+      // pool-form context but don't get persisted — the home drawer is
+      // read-only and doesn't show approval steps.
+      const startedAt = Math.floor(Date.now() / 1000)
+      const baseLocalPayload = {
+        account: address,
+        amountIn: amount.toString(),
+        asset: selectedAsset.address,
+        chainId,
+        kind: 'DEPOSIT' as const,
+        operator: address,
+        shareAddress: pool.shareAddress,
+        startedAt,
+      }
 
       const { emitter, promise } = requestDeposit({
         account: address,
@@ -115,23 +111,22 @@ export const useDeposit = function ({
       })
 
       emitter.on('user-signed-approval', function (approvalTxHash) {
-        updateDepositOperation({
+        updateDepositOperation?.({
           approvalTxHash,
           status: DepositStatus.APPROVAL_TX_PENDING,
           transactionHash: undefined,
         })
-        setDrawerQueryString('depositing')
       })
 
       emitter.on('approve-transaction-reverted', function (receipt) {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.APPROVAL_TX_FAILED,
         })
         updateNativeBalanceAfterFees(receipt)
       })
 
       emitter.on('approve-transaction-succeeded', function (receipt) {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.APPROVAL_TX_COMPLETED,
         })
         updateNativeBalanceAfterFees(receipt)
@@ -139,93 +134,98 @@ export const useDeposit = function ({
       })
 
       emitter.on('user-signing-approval-error', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.APPROVAL_TX_FAILED,
         })
       })
 
       emitter.on('user-signed-deposit', function (transactionHash) {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_PENDING,
           transactionHash,
         })
-        setDrawerQueryString('depositing')
+        upsertLocalOperation({
+          ...baseLocalPayload,
+          initiateTxHash: transactionHash,
+          operation: {
+            status: DepositStatus.DEPOSIT_TX_PENDING,
+            transactionHash,
+          },
+        })
+        // Remove the specific prior FAILED entry the user is replacing.
+        // Done here (and not on retry click) so the row only disappears
+        // once the user actually commits to the new attempt by signing.
+        if (supersedesInitiateTxHash) {
+          deleteLocalOperationByInitiateTxHash(supersedesInitiateTxHash)
+        }
       })
 
       emitter.on('deposit-transaction-succeeded', function (receipt) {
-        // TODO(phase-3): parse the `DepositRequested` log to capture the
-        // requestId so the UI can track the cross-chain fulfillment.
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_CONFIRMED,
+        })
+        upsertLocalOperation({
+          ...baseLocalPayload,
+          initiateTxHash: receipt.transactionHash,
+          operation: { status: DepositStatus.DEPOSIT_TX_CONFIRMED },
         })
         updateNativeBalanceAfterFees(receipt)
 
-        // Optimistic bumps. Invalidation in `onSettled` reconciles, but the
-        // chained cross-chain refetches take a beat, so the UI feels stale
-        // without these.
-        //   - `tokenBalance`: wallet ERC-20 went down by exactly `amount`.
-        //   - `poolTotalAssets`: vault `totalAssets()` is in pegged-token
-        //     units, so we add `peggedAmount` (pre-fetched via
-        //     `previewGatewayDeposit`), not `amount`. If the pegged preview
-        //     hasn't resolved yet, `peggedAmount` is `0n` and we skip the
-        //     bump — the invalidation still corrects it.
-        //   - `userPoolBalance.assetOut`: what the withdraw drawer shows.
-        //     Bumped by `amount` (asset units) — close to the round-tripped
-        //     value (gateway fees are tiny); invalidation reconciles the
-        //     exact figure plus the `shares` field for the selected asset,
-        //     and the prefix invalidation covers any other cached assets.
+        // Decrement wallet ERC-20 immediately — Router pulled the tokens in
+        // this same tx. Pool TVL and user position aren't touched here: those
+        // only move after the cross-chain delivery (1–3 min). The CLAIMED /
+        // RECOVERED reconcile in `useEarnTransactions` invalidates them when
+        // the subgraph reports the terminal state.
         queryClient.setQueryData<bigint>(
           tokenBalanceQueryKey,
           (old = BigInt(0)) => (old > amount ? old - amount : BigInt(0)),
         )
-        if (peggedAmount > BigInt(0)) {
-          queryClient.setQueryData<bigint>(
-            poolTotalAssetsQueryKey,
-            (old = BigInt(0)) => old + peggedAmount,
-          )
-        }
-        queryClient.setQueryData<{ assetOut: bigint; shares: bigint }>(
-          userPoolBalanceQueryKey,
-          old =>
-            old
-              ? { ...old, assetOut: old.assetOut + amount }
-              : { assetOut: amount, shares: BigInt(0) },
-        )
       })
 
       emitter.on('deposit-transaction-reverted', function (receipt) {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
+        })
+        upsertLocalOperation({
+          ...baseLocalPayload,
+          initiateTxHash: receipt.transactionHash,
+          operation: { status: DepositStatus.DEPOSIT_TX_FAILED },
         })
         updateNativeBalanceAfterFees(receipt)
       })
 
       emitter.on('user-signing-deposit-error', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
+        // No local upsert — no `initiateTxHash` was produced, so this never
+        // had a table row to update.
       })
 
       emitter.on('deposit-failed-validation', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
       })
 
       emitter.on('quote-failed', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
       })
 
       emitter.on('deposit-failed', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
+        })
+        upsertLocalOperation({
+          ...baseLocalPayload,
+          operation: { status: DepositStatus.DEPOSIT_TX_FAILED },
         })
       })
 
       emitter.on('unexpected-error', function () {
-        updateDepositOperation({
+        updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
       })
@@ -235,25 +235,15 @@ export const useDeposit = function ({
       return promise
     },
     onSettled() {
+      // Only invalidate queries that reflect Hemi-side state right now. The
+      // Vetro-side queries (pool TVL, user pool balance, staked-balance card)
+      // are invalidated by `useEarnTransactions` when the subgraph reports
+      // CLAIMED / RECOVERED, since cross-chain delivery hasn't happened yet
+      // at this point in the mutation lifecycle.
       queryClient.invalidateQueries({ queryKey: tokenBalanceQueryKey })
       queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
       queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
-      queryClient.invalidateQueries({
-        queryKey: poolTotalAssetsQueryKey,
-      })
-      queryClient.invalidateQueries({
-        queryKey: userPoolBalanceQueryKeyPrefix,
-      })
-      // `removeQueries` (instead of `invalidateQueries`) is load-bearing for
-      // this prefix. `fetchEarnPositions` reads inner share balances via
-      // `ensureQueryData`, which returns stale cache when entries exist —
-      // and `invalidateQueries` only refetches *active* subscribers, leaving
-      // those inactive nested entries stale. Evicting forces the next read
-      // path through the network and the staked-balance card actually
-      // refreshes after a deposit instead of waiting for a hard reload.
-      queryClient.removeQueries({
-        queryKey: earnPositionsKeyPrefix,
-      })
+      queryClient.invalidateQueries({ queryKey: earnTransactionsKeyPrefix })
     },
   })
 }

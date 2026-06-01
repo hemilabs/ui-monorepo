@@ -13,7 +13,6 @@ import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
@@ -43,13 +42,6 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   const amount = parseTokenUnits(input, selectedAsset.token)
   const routerAddress = getHemiEarnRouterAddress()
-
-  const { needsApproval } = useNeedsApproval({
-    address: selectedAsset.address,
-    amount,
-    chainId,
-    spender: routerAddress,
-  })
 
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
@@ -190,9 +182,28 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     }
   }
 
+  // TODO(design): append a third "Cross-chain delivery" step after the
+  // deposit step. Confirmed with the designer — same step needs to be
+  // mirrored in `historicalDepositReview.tsx` (and the withdraw drawers
+  // once that flow lands).
+  //
+  // Semantics:
+  //   - DEPOSIT_TX_CONFIRMED + subgraph PENDING            → PROGRESS
+  //   - subgraph FULFILLED + tx.automatic === true         → PROGRESS
+  //   - subgraph FULFILLED + tx.automatic === false        → CTA — render
+  //     a "Claim deposit" button; the user signs the claim tx themselves.
+  //     Needs its own fee line via `getStepFees`.
+  //   - subgraph CLAIMED                                   → COMPLETED
+  //     with `claimTxHash`
+  //   - subgraph CANCELLED                                 → FAILED
+  //     (recover CTA on automatic=false)
+  //
+  // The subgraph status isn't piped into this component today; the watcher
+  // in `useEarnDeliveryWatcher` already polls it and could expose the row
+  // through the local store or a derived hook.
   const getSteps = function () {
     const steps: StepPropsWithoutPosition[] = []
-    if (needsApproval || depositOperation?.approvalTxHash) {
+    if (depositOperation?.approvalTxHash) {
       steps.push(addApprovalStep())
     }
     steps.push(addDepositStep())

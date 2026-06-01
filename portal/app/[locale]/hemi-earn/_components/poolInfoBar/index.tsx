@@ -39,7 +39,7 @@ export const PoolInfoBar = function ({ pool }: Props) {
 
   return (
     <div className="md:min-h-19.5 flex w-full flex-col gap-4 rounded-xl bg-white p-4 shadow-sm md:flex-row md:items-center md:gap-6">
-      <div className="w-19 flex h-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100">
+      <div className="md:w-19 flex h-10 w-full shrink-0 items-center justify-center rounded-lg bg-neutral-100">
         <TokenIconStack tokens={pool.exposureTokens} />
       </div>
       <div className="grid grid-cols-2 gap-4 md:flex md:flex-1 md:items-center md:gap-6">

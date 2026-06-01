@@ -187,7 +187,9 @@ export const Withdraw = function ({
         <SubmitWithdraw
           canWithdraw={canWithdraw && !!quote}
           isAllowanceError={isAllowanceError}
-          isAllowanceLoading={isAllowanceLoading}
+          isLoading={
+            isAllowanceLoading || !poolBalanceLoaded || (canWithdraw && !quote)
+          }
           isRunningOperation={isRunningOperation}
           needsApproval={needsApproval}
           operationRunning={operationRunning}

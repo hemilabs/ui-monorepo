@@ -10,7 +10,3 @@ Consider the following defaults/considerations whenever writing/updating code. M
 - [Frontend guidelines](./instructions/frontend.md) when working with the frontend code.
 - [Portal guidelines](./instructions/portal.md) when working with the portal code.
 - [Typescript guidelines](./instructions/typescript.md) to all typescript code.
-
-## MCP servers
-
-The [mcp.json](./mcp.json) contains the MCP entries to connect to.

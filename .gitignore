@@ -4,7 +4,8 @@
 .next
 .nx/cache
 .serverless
-.vscode/
+.vscode/*
+!.vscode/mcp.json
 lerna-debug.log
 node_modules
 out

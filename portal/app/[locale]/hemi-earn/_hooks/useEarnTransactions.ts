@@ -69,10 +69,11 @@ const hashesMatch = (a: Hash | undefined, b: Hash | undefined) =>
 // subgraph rows merged with not-yet-indexed local entries, sorted by
 // initiated-at descending.
 //
-// Side effects (marking local entries `settled`, invalidating Vetro-side
-// balance caches on CLAIMED/RECOVERED transitions) live in the separate
-// `useEarnDeliveryWatcher` so they fire exactly once per polling cycle
-// instead of N times — once per active consumer of this hook.
+// Side effects (removing local entries once the subgraph indexes them,
+// invalidating Vetro-side balance caches on CLAIMED/RECOVERED transitions)
+// live in the separate `useEarnDeliveryWatcher` so they fire exactly once
+// per polling cycle instead of N times — once per active consumer of this
+// hook.
 export const useEarnTransactions = function () {
   const { data, isError, isLoading } = useEarnTransactionsQuery()
   const { localOperations } = useLocalEarnOperations()

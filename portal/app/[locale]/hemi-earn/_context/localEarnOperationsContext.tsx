@@ -14,7 +14,7 @@ import { useAccount } from 'wagmi'
 import { type LocalEarnOperation } from '../types'
 
 const STORAGE_KEY = 'hemi-earn:local-operations'
-const TTL_SECONDS = 90 * 24 * 60 * 60
+const TTL_SECONDS = 7 * 24 * 60 * 60
 const MAX_ENTRIES_PER_ACCOUNT = 100
 
 type Store = Record<string, LocalEarnOperation[]>

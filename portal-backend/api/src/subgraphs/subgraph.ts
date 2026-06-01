@@ -763,10 +763,10 @@ type EarnRequestRow = {
   id: string
   requestId: string
   kind: 'DEPOSIT' | 'REDEEM'
-  asset: string
+  asset: Address
   amountIn: string
   amountOut: string | null
-  receiver: string
+  receiver: Address
   automatic: boolean
   initiatedAt: string
   status: 'PENDING' | 'FULFILLED' | 'CLAIMED' | 'CANCELLED' | 'RECOVERED'
@@ -845,11 +845,9 @@ export const getEarnRequests = async function ({
     ...r,
     // The Subgraph lowercases all Bytes when saving; convert address-shaped
     // fields back to checksum to avoid mismatches in the consumer.
-    // @ts-expect-error subgraph stores addresses as lowercased Bytes
     asset: toChecksum(r.asset),
     claimTxHash: r.claimTxHash ? toChecksum(r.claimTxHash) : null,
     initiateTxHash: toChecksum(r.initiateTxHash),
-    // @ts-expect-error subgraph stores addresses as lowercased Bytes
     receiver: toChecksum(r.receiver),
     recoverTxHash: r.recoverTxHash ? toChecksum(r.recoverTxHash) : null,
   }))

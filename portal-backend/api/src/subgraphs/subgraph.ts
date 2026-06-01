@@ -770,9 +770,9 @@ type EarnRequestRow = {
   automatic: boolean
   initiatedAt: string
   status: 'PENDING' | 'FULFILLED' | 'CLAIMED' | 'CANCELLED' | 'RECOVERED'
-  initiateTxHash: Address
-  claimTxHash: Address | null
-  recoverTxHash: Address | null
+  initiateTxHash: Hash
+  claimTxHash: Hash | null
+  recoverTxHash: Hash | null
 }
 
 type GetEarnRequestsQueryResponse = GraphResponse<{
@@ -846,9 +846,6 @@ export const getEarnRequests = async function ({
     // The Subgraph lowercases all Bytes when saving; convert address-shaped
     // fields back to checksum to avoid mismatches in the consumer.
     asset: toChecksum(r.asset),
-    claimTxHash: r.claimTxHash ? toChecksum(r.claimTxHash) : null,
-    initiateTxHash: toChecksum(r.initiateTxHash),
     receiver: toChecksum(r.receiver),
-    recoverTxHash: r.recoverTxHash ? toChecksum(r.recoverTxHash) : null,
   }))
 }

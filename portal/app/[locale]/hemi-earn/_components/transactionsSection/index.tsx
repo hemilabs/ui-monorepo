@@ -3,7 +3,6 @@
 import { PageTitle } from 'components/pageTitle'
 import { useTranslations } from 'next-intl'
 
-import { DepositSuccessToast } from './depositSuccessToast'
 import { TransactionsTable } from './transactionsTable'
 
 export const TransactionsSection = function () {
@@ -14,7 +13,6 @@ export const TransactionsSection = function () {
       <div className="mt-6">
         <TransactionsTable />
       </div>
-      <DepositSuccessToast />
     </div>
   )
 }

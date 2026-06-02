@@ -24,14 +24,15 @@
         "title": "Composição",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}"
       },
-      "deposit-submitted": "Depósito enviado",
+      "deposit-successful": "Depósito realizado com sucesso",
       "drawer": {
         "approving": "Aprovando {symbol}",
         "deposit": {
-          "heading": "Revisar Depósito",
-          "subheading": "Complete as etapas restantes para depositar seus tokens."
+          "heading": "Revisar depósito de stake",
+          "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
         },
-        "deposit-token": "Depositar {symbol}",
+        "stake-token": "Fazer stake de {symbol}",
+        "get-share-tokens": "Receber share tokens",
         "withdraw": {
           "heading": "Revisar Saque",
           "subheading": "Complete as etapas restantes para sacar seus tokens."
@@ -74,15 +75,12 @@
       "connect-to-view": "Conecte sua carteira para ver suas transações de earn.",
       "deposit": "Depósito",
       "drawer": {
-        "deposit-heading": "Detalhes do depósito",
-        "deposit-subheading": "Revise sua transação de depósito.",
+        "deposit-heading": "Detalhes do depósito de stake",
+        "deposit-subheading": "Revise sua transação de depósito de stake.",
         "step": {
           "approval-needed": "Aprovação necessária",
-          "deposit-cancelled": "Depósito cancelado",
-          "deposit-completed": "Depósito concluído",
-          "deposit-failed": "Depósito falhou",
-          "deposit-in-progress": "Depósito em andamento",
-          "deposit-recovered": "Depósito recuperado"
+          "stake-token": "Fazer stake de {symbol}",
+          "get-share-tokens": "Receber share tokens"
         }
       },
       "nothing-here": "Nada por aqui ainda",

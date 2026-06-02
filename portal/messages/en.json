@@ -24,14 +24,15 @@
         "title": "Composition",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}"
       },
-      "deposit-submitted": "Deposit submitted",
+      "deposit-successful": "Deposit successful",
       "drawer": {
         "approving": "Approving {symbol}",
         "deposit": {
-          "heading": "Review Deposit",
-          "subheading": "Complete the remaining steps to deposit your tokens."
+          "heading": "Review stake deposit",
+          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
         },
-        "deposit-token": "Deposit {symbol}",
+        "stake-token": "Stake {symbol}",
+        "get-share-tokens": "Get share tokens",
         "withdraw": {
           "heading": "Review Withdrawal",
           "subheading": "Complete the remaining steps to withdraw your tokens."
@@ -74,15 +75,12 @@
       "connect-to-view": "Connect your wallet to view your earn transactions.",
       "deposit": "Deposit",
       "drawer": {
-        "deposit-heading": "Deposit details",
-        "deposit-subheading": "Review your deposit transaction.",
+        "deposit-heading": "Stake deposit details",
+        "deposit-subheading": "Review your stake deposit transaction.",
         "step": {
           "approval-needed": "Approval needed",
-          "deposit-cancelled": "Deposit cancelled",
-          "deposit-completed": "Deposit completed",
-          "deposit-failed": "Deposit failed",
-          "deposit-in-progress": "Deposit in progress",
-          "deposit-recovered": "Deposit recovered"
+          "stake-token": "Stake {symbol}",
+          "get-share-tokens": "Get share tokens"
         }
       },
       "nothing-here": "Nothing here yet",

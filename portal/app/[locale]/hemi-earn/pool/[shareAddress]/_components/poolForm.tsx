@@ -8,7 +8,6 @@ import Skeleton from 'react-loading-skeleton'
 
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
-import { DepositStatus } from '../_types/operations'
 import { WithdrawStatus } from '../_types/operations'
 
 import { Deposit } from './deposit'
@@ -37,8 +36,7 @@ const SideDrawer = function () {
 }
 
 export const PoolForm = function () {
-  const { depositOperation, pool, updateInput, withdrawOperation } =
-    usePoolForm()
+  const { pool, updateInput, withdrawOperation } = usePoolForm()
   const t = useTranslations('hemi-earn.pool')
   const [activeTab, setActiveTab] = useState<ActiveTab>('deposit')
 
@@ -61,23 +59,15 @@ export const PoolForm = function () {
     )
   }
 
-  const showDepositToast =
-    depositOperation?.status === DepositStatus.DEPOSIT_TX_CONFIRMED &&
-    depositOperation.transactionHash
-
+  // Deposit success toast is rendered at the hemi-earn layout level via
+  // `<DepositSuccessToast>` so it fires off the subgraph CLAIMED transition
+  // (the full cross-chain flow's completion), not at request-deposit mined.
   const showWithdrawToast =
     withdrawOperation?.status === WithdrawStatus.WITHDRAW_TX_CONFIRMED &&
     withdrawOperation.transactionHash
 
   return (
     <>
-      {showDepositToast && (
-        <PoolToast
-          chainId={pool.shareToken.chainId}
-          title={t('deposit-submitted')}
-          transactionHash={depositOperation.transactionHash!}
-        />
-      )}
       {showWithdrawToast && (
         <PoolToast
           chainId={pool.shareToken.chainId}

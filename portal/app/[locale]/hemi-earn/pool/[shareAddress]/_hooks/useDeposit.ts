@@ -113,6 +113,7 @@ export const useDeposit = function ({
 
       emitter.on('user-signed-approval', function (approvalTxHash) {
         updateDepositOperation?.({
+          amountIn: amount.toString(),
           approvalTxHash,
           status: DepositStatus.APPROVAL_TX_PENDING,
           transactionHash: undefined,
@@ -142,6 +143,7 @@ export const useDeposit = function ({
 
       emitter.on('user-signed-deposit', function (transactionHash) {
         updateDepositOperation?.({
+          amountIn: amount.toString(),
           status: DepositStatus.DEPOSIT_TX_PENDING,
           transactionHash,
         })

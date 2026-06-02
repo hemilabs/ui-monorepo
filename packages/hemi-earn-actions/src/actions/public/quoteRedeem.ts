@@ -8,12 +8,18 @@ export const quoteRedeem = async function ({
   asset,
   client,
   fulfillmentFee,
+  isInstant,
   routerAddress = getHemiEarnRouterAddress(),
   shares,
 }: {
   asset: Address
   client: Client
   fulfillmentFee: bigint
+  // Declares the redeem path the Router should reserve remote gas for. Must
+  // match what `Agent.handleRedeemRequest` will compute on Ethereum — see
+  // `resolveIsInstant`. If this disagrees with the vault's actual state for
+  // the caller, the Agent sends an immediate cancel back instead of executing.
+  isInstant: boolean
   routerAddress?: Address
   shares: bigint
 }): Promise<bigint> {
@@ -30,7 +36,7 @@ export const quoteRedeem = async function ({
   return readContract(client, {
     abi: routerAbi,
     address: routerAddress,
-    args: [asset, shares, fulfillmentFee],
+    args: [asset, shares, fulfillmentFee, isInstant],
     functionName: 'quoteRedeem',
   })
 }

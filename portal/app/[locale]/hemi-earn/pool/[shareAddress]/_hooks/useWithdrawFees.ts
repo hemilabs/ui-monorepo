@@ -17,6 +17,7 @@ import { useQuoteRedeem } from './useQuoteRedeem'
 
 type QuoteRedeem = {
   fulfillmentFee: bigint
+  isInstant: boolean
   nativeFee: bigint
 }
 
@@ -88,6 +89,7 @@ const buildGasData = ({
     : encodeRequestRedeem({
         asset,
         fulfillmentFee: quote.fulfillmentFee,
+        isInstant: quote.isInstant,
         operator: receiver,
         receiver,
         shares,
@@ -129,6 +131,7 @@ export const useWithdrawFees = function ({
   chainId,
   needsApproval,
   receiver,
+  shareAddress,
   shares,
   shareToken,
   spender,
@@ -138,6 +141,9 @@ export const useWithdrawFees = function ({
   chainId: EvmToken['chainId']
   needsApproval: boolean
   receiver: Address | undefined
+  // Hemi-side share OFT for the pool. Forwarded to `useQuoteRedeem` so it
+  // can resolve the staking vault on Ethereum for the `isInstant` check.
+  shareAddress: Address
   shares: bigint
   shareToken: EvmToken
   spender: Address
@@ -150,7 +156,9 @@ export const useWithdrawFees = function ({
     })
 
   const { data: quote, isError: isQuoteError } = useQuoteRedeem({
+    account: receiver,
     asset,
+    shareAddress,
     shares: canWithdraw ? shares : BigInt(0),
   })
 

@@ -11,7 +11,11 @@ export type Request = {
   assets: bigint
   automatic: boolean
   kind: RequestKind
+  // Address authorized to call `Router.cancel(id)` for cooldown redeems.
+  // Set at request time; the UI gates the Cancel CTA on `operator === account`.
+  operator: Address
   receiver: Address
+  share: Address
   shares: bigint
   status: RequestStatus
 }

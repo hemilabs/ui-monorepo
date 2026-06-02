@@ -20,6 +20,7 @@ describe('quoteRedeem', function () {
       asset,
       client,
       fulfillmentFee: BigInt(7),
+      isInstant: false,
       routerAddress,
       shares: BigInt(100),
     })
@@ -29,8 +30,28 @@ describe('quoteRedeem', function () {
       client,
       expect.objectContaining({
         address: routerAddress,
-        args: [asset, BigInt(100), BigInt(7)],
+        args: [asset, BigInt(100), BigInt(7), false],
         functionName: 'quoteRedeem',
+      }),
+    )
+  })
+
+  it('forwards isInstant=true when the caller declares the instant path', async function () {
+    vi.mocked(readContract).mockResolvedValue(BigInt(42))
+
+    await quoteRedeem({
+      asset,
+      client,
+      fulfillmentFee: BigInt(7),
+      isInstant: true,
+      routerAddress,
+      shares: BigInt(100),
+    })
+
+    expect(readContract).toHaveBeenCalledWith(
+      client,
+      expect.objectContaining({
+        args: [asset, BigInt(100), BigInt(7), true],
       }),
     )
   })
@@ -41,6 +62,7 @@ describe('quoteRedeem', function () {
         asset: zeroAddress,
         client,
         fulfillmentFee: BigInt(7),
+        isInstant: false,
         routerAddress,
         shares: BigInt(100),
       }),
@@ -53,6 +75,7 @@ describe('quoteRedeem', function () {
         asset,
         client,
         fulfillmentFee: BigInt(7),
+        isInstant: false,
         routerAddress,
         shares: BigInt(0),
       }),
@@ -65,6 +88,7 @@ describe('quoteRedeem', function () {
         asset,
         client,
         fulfillmentFee: BigInt(-1),
+        isInstant: false,
         routerAddress,
         shares: BigInt(100),
       }),

@@ -8,6 +8,7 @@ import {
 } from 'matchstick-as/assembly/index'
 
 import {
+  handleCancellationRequested,
   handleDepositRequested,
   handleRedeemRequested,
   handleRequestCancelled,
@@ -17,6 +18,7 @@ import {
 } from '../src/mappings/router'
 
 import {
+  createCancellationRequestedEvent,
   createDepositRequestedEvent,
   createRedeemRequestedEvent,
   createRequestCancelledEvent,
@@ -40,7 +42,10 @@ const assetsReturned = BigInt.fromString('990000000000000000') // 0.99e18 (Agent
 const shares = BigInt.fromString('800000000000000000') // 0.8e18
 const assetsOut = BigInt.fromString('790000000000000000') // 0.79e18 (Agent kept a fee)
 const sharesReturned = BigInt.fromString('800000000000000000') // 0.8e18
+const depositAmountOutMin = BigInt.fromString('900000000000000000') // 0.9e18
+const redeemAmountOutMin = BigInt.fromString('700000000000000000') // 0.7e18
 const initiatedAt = BigInt.fromI32(1769731200) // 2026-01-30 00:00:00 UTC
+const cancelRequestedAt = BigInt.fromI32(1769731500) // 5 min later
 
 const depositTxHash = Bytes.fromHexString(
   '0xaa00000000000000000000000000000000000000000000000000000000000001',
@@ -60,6 +65,9 @@ const recoverTxHash = Bytes.fromHexString(
 const redeemTxHash = Bytes.fromHexString(
   '0xaa00000000000000000000000000000000000000000000000000000000000006',
 ) as Bytes
+const cancelRequestTxHash = Bytes.fromHexString(
+  '0xaa00000000000000000000000000000000000000000000000000000000000007',
+) as Bytes
 
 function emitDeposit(automatic: boolean): void {
   handleDepositRequested(
@@ -67,6 +75,7 @@ function emitDeposit(automatic: boolean): void {
       requestId,
       asset,
       assets,
+      depositAmountOutMin,
       receiver,
       automatic,
       depositTxHash,
@@ -81,6 +90,7 @@ function emitRedeem(automatic: boolean): void {
       requestId,
       asset,
       shares,
+      redeemAmountOutMin,
       receiver,
       automatic,
       redeemTxHash,
@@ -107,6 +117,12 @@ describe('Router subgraph', function () {
     )
     assert.fieldEquals(ENTITY, requestIdString, 'asset', asset.toHexString())
     assert.fieldEquals(ENTITY, requestIdString, 'amountIn', assets.toString())
+    assert.fieldEquals(
+      ENTITY,
+      requestIdString,
+      'amountOutMin',
+      depositAmountOutMin.toString(),
+    )
     assert.fieldEquals(
       ENTITY,
       requestIdString,
@@ -144,9 +160,7 @@ describe('Router subgraph', function () {
       sharesOut.toString(),
     )
 
-    handleRequestClaimed(
-      createRequestClaimedEvent(requestId, receiver, claimTxHash),
-    )
+    handleRequestClaimed(createRequestClaimedEvent(requestId, claimTxHash))
     assert.entityCount(ENTITY, 1)
     assert.fieldEquals(ENTITY, requestIdString, 'status', 'CLAIMED')
     assert.fieldEquals(
@@ -186,7 +200,7 @@ describe('Router subgraph', function () {
     )
 
     handleRequestRecovered(
-      createRequestRecoveredEvent(requestId, receiver, recoverTxHash),
+      createRequestRecoveredEvent(requestId, recoverTxHash),
     )
     assert.entityCount(ENTITY, 1)
     assert.fieldEquals(ENTITY, requestIdString, 'status', 'RECOVERED')
@@ -204,14 +218,12 @@ describe('Router subgraph', function () {
     handleRequestFulfilled(
       createRequestFulfilledEvent(unknownId, sharesOut, fulfillTxHash),
     )
-    handleRequestClaimed(
-      createRequestClaimedEvent(unknownId, receiver, claimTxHash),
-    )
+    handleRequestClaimed(createRequestClaimedEvent(unknownId, claimTxHash))
     handleRequestCancelled(
       createRequestCancelledEvent(unknownId, assetsReturned, cancelTxHash),
     )
     handleRequestRecovered(
-      createRequestRecoveredEvent(unknownId, receiver, recoverTxHash),
+      createRequestRecoveredEvent(unknownId, recoverTxHash),
     )
 
     // Defensive mapping: lifecycle handlers create a placeholder Request when
@@ -251,6 +263,12 @@ describe('Router subgraph', function () {
     assert.fieldEquals(
       ENTITY,
       requestIdString,
+      'amountOutMin',
+      redeemAmountOutMin.toString(),
+    )
+    assert.fieldEquals(
+      ENTITY,
+      requestIdString,
       'receiver',
       receiver.toHexString(),
     )
@@ -285,9 +303,7 @@ describe('Router subgraph', function () {
       assetsOut.toString(),
     )
 
-    handleRequestClaimed(
-      createRequestClaimedEvent(requestId, receiver, claimTxHash),
-    )
+    handleRequestClaimed(createRequestClaimedEvent(requestId, claimTxHash))
     assert.entityCount(ENTITY, 1)
     assert.fieldEquals(ENTITY, requestIdString, 'status', 'CLAIMED')
     assert.fieldEquals(
@@ -320,7 +336,7 @@ describe('Router subgraph', function () {
     )
 
     handleRequestRecovered(
-      createRequestRecoveredEvent(requestId, receiver, recoverTxHash),
+      createRequestRecoveredEvent(requestId, recoverTxHash),
     )
     assert.entityCount(ENTITY, 1)
     assert.fieldEquals(ENTITY, requestIdString, 'status', 'RECOVERED')
@@ -339,9 +355,7 @@ describe('Router subgraph', function () {
     handleRequestFulfilled(
       createRequestFulfilledEvent(requestId, sharesOut, fulfillTxHash),
     )
-    handleRequestClaimed(
-      createRequestClaimedEvent(requestId, receiver, claimTxHash),
-    )
+    handleRequestClaimed(createRequestClaimedEvent(requestId, claimTxHash))
 
     assert.entityCount(ENTITY, 1)
     assert.fieldEquals(ENTITY, requestIdString, 'status', 'CLAIMED')
@@ -350,6 +364,30 @@ describe('Router subgraph', function () {
       requestIdString,
       'claimTxHash',
       claimTxHash.toHexString(),
+    )
+  })
+
+  test('CancellationRequested records the timestamp without changing status', function () {
+    emitRedeem(false)
+
+    handleCancellationRequested(
+      createCancellationRequestedEvent(
+        requestId,
+        cancelRequestTxHash,
+        cancelRequestedAt,
+      ),
+    )
+
+    assert.entityCount(ENTITY, 1)
+    // Status stays PENDING — only the keeper-driven Agent.cancel callback
+    // transitions the Router into CANCELLED. This handler is a diagnostic
+    // marker for the UI/operator that the cancel is in flight.
+    assert.fieldEquals(ENTITY, requestIdString, 'status', 'PENDING')
+    assert.fieldEquals(
+      ENTITY,
+      requestIdString,
+      'cancellationRequestedAt',
+      cancelRequestedAt.toString(),
     )
   })
 })

@@ -3,6 +3,7 @@ import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { parseTokenUnits } from 'utils/token'
+import { useAccount } from 'wagmi'
 
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
@@ -23,6 +24,7 @@ export const RetryWithdraw = function () {
   } = usePoolForm()
 
   const t = useTranslations()
+  const { address } = useAccount()
   const amount = parseTokenUnits(input, selectedAsset.token)
 
   const {
@@ -37,13 +39,16 @@ export const RetryWithdraw = function () {
   })
 
   const { data: quote } = useQuoteRedeem({
+    account: address,
     asset: selectedAsset.address,
+    shareAddress: pool.shareAddress,
     shares,
   })
 
   const { mutate: runWithdraw } = useWithdraw({
     amount,
     fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
+    isInstant: quote?.isInstant ?? false,
     on(emitter) {
       emitter.on('approve-transaction-reverted', () =>
         setOperationRunning('failed'),

@@ -17,6 +17,7 @@ export {
 } from './src/constants'
 
 export type {
+  CancelRedeemEvents,
   ClaimDepositEvents,
   ClaimRedeemEvents,
   RecoverDepositEvents,

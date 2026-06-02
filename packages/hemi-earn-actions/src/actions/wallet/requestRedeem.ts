@@ -51,6 +51,7 @@ const runRequestRedeem = ({
   asset,
   assetsOutMin = BigInt(0),
   fulfillmentFee,
+  isInstant,
   operator,
   receiver,
   routerAddress = getHemiEarnRouterAddress(),
@@ -65,7 +66,11 @@ const runRequestRedeem = ({
   // conversion is wired up; phase 2 will compute this from the share price.
   assetsOutMin?: bigint
   fulfillmentFee: bigint
-  // Address authorized to call `Agent.cancel(id)` on the remote chain.
+  // Declares the redeem path (instant vs cooldown). Must match the vault's
+  // actual state for `account` — resolve via `resolveIsInstant`. Mismatch
+  // causes the Agent to send an immediate cancel; user pays gas for nothing.
+  isInstant: boolean
+  // Address authorized to call `Router.cancel(id)` for cooldown redeems.
   // Contract reverts with `ZeroAddress` if `0x0` is passed.
   operator: Address
   receiver: Address
@@ -112,6 +117,7 @@ const runRequestRedeem = ({
         asset,
         client: walletClient,
         fulfillmentFee,
+        isInstant,
         routerAddress,
         shares: adjustedShares,
       }).catch(function (error) {
@@ -179,6 +185,7 @@ const runRequestRedeem = ({
           operator,
           true,
           fulfillmentFee,
+          isInstant,
         ],
         chain: walletClient.chain,
         functionName: 'requestRedeem',

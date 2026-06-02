@@ -1,6 +1,7 @@
 import { Address, BigInt, ethereum } from '@graphprotocol/graph-ts'
 
 import {
+  CancellationRequested as CancellationRequestedEvent,
   DepositRequested as DepositRequestedEvent,
   RedeemRequested as RedeemRequestedEvent,
   RequestCancelled as RequestCancelledEvent,
@@ -10,13 +11,14 @@ import {
 } from '../../generated/Router/Router'
 import { Request } from '../../generated/schema'
 
-// Lifecycle handlers (Fulfilled / Claimed / Cancelled / Recovered) don't
-// know the request `kind` — that information only lives in the originating
-// Deposit/Redeem event. When those handlers have to create a placeholder
-// (see `loadOrInitRequest` below), they pass this value as a best-guess
-// sentinel. In the anvil mock the Deposit/Redeem event always arrives later
-// in the same tx and overwrites it; the bias only surfaces if the subgraph
-// is (re)indexed past the creation block and the placeholder persists.
+// Lifecycle handlers (Fulfilled / Claimed / Cancelled / Recovered /
+// CancellationRequested) don't know the request `kind` — that information
+// only lives in the originating Deposit/Redeem event. When those handlers
+// have to create a placeholder (see `loadOrInitRequest` below), they pass
+// this value as a best-guess sentinel. In the anvil mock the Deposit/Redeem
+// event always arrives later in the same tx and overwrites it; the bias only
+// surfaces if the subgraph is (re)indexed past the creation block and the
+// placeholder persists.
 const FALLBACK_KIND = 'DEPOSIT'
 
 // Loads the Request entity, or creates one with sentinel field values when
@@ -50,6 +52,7 @@ function loadOrInitRequest(
     request.kind = kind
     request.asset = Address.zero()
     request.amountIn = BigInt.zero()
+    request.amountOutMin = BigInt.zero()
     request.receiver = Address.zero()
     request.automatic = false
     request.initiatedAt = event.block.timestamp
@@ -74,6 +77,7 @@ export function handleDepositRequested(event: DepositRequestedEvent): void {
   request.kind = 'DEPOSIT'
   request.asset = event.params.asset
   request.amountIn = event.params.assets
+  request.amountOutMin = event.params.amountOutMin
   request.receiver = event.params.receiver
   request.automatic = event.params.automatic
   request.initiatedAt = event.block.timestamp
@@ -91,6 +95,7 @@ export function handleRedeemRequested(event: RedeemRequestedEvent): void {
   request.kind = 'REDEEM'
   request.asset = event.params.asset
   request.amountIn = event.params.shares
+  request.amountOutMin = event.params.amountOutMin
   request.receiver = event.params.receiver
   request.automatic = event.params.automatic
   request.initiatedAt = event.block.timestamp
@@ -106,7 +111,7 @@ export function handleRequestFulfilled(event: RequestFulfilledEvent): void {
   )
   request.status = 'FULFILLED'
   // Actual amount the user received (shares for deposits, assets for redeems)
-  request.amountOut = event.params.amountIn
+  request.amountOut = event.params.amount
   request.save()
 }
 
@@ -131,7 +136,7 @@ export function handleRequestCancelled(event: RequestCancelledEvent): void {
   // Amount of assets the user will receive back. This should match the
   // request's amountIn, but the contract overwrites this field, so we
   // capture whatever value actually returns.
-  request.amountOut = event.params.amountIn
+  request.amountOut = event.params.amount
   request.save()
 }
 
@@ -143,5 +148,21 @@ export function handleRequestRecovered(event: RequestRecoveredEvent): void {
   )
   request.status = 'RECOVERED'
   request.recoverTxHash = event.transaction.hash
+  request.save()
+}
+
+// Records that the operator hit `Router.cancel(id)` to flag a PENDING
+// cooldown redeem for the keeper. Does NOT change `status` — the request
+// stays PENDING until the keeper drives `Agent.cancel` and the
+// `MSG_REQUEST_CANCEL` callback transitions the Router into CANCELLED.
+export function handleCancellationRequested(
+  event: CancellationRequestedEvent,
+): void {
+  const request = loadOrInitRequest(
+    event.params.requestId.toString(),
+    FALLBACK_KIND,
+    event,
+  )
+  request.cancellationRequestedAt = event.block.timestamp
   request.save()
 }

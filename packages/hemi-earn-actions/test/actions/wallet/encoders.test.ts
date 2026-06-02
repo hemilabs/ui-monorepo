@@ -28,12 +28,34 @@ describe('encoders', function () {
     const data = encodeRequestRedeem({
       asset: zeroAddress,
       fulfillmentFee: BigInt(0),
+      isInstant: false,
       operator: zeroAddress,
       receiver: zeroAddress,
       shares: BigInt(100),
     })
 
     expect(data).toMatch(/^0x[0-9a-f]+$/i)
+  })
+
+  it('produces different requestRedeem calldata for instant vs cooldown', function () {
+    const cooldown = encodeRequestRedeem({
+      asset: zeroAddress,
+      fulfillmentFee: BigInt(0),
+      isInstant: false,
+      operator: zeroAddress,
+      receiver: zeroAddress,
+      shares: BigInt(100),
+    })
+    const instant = encodeRequestRedeem({
+      asset: zeroAddress,
+      fulfillmentFee: BigInt(0),
+      isInstant: true,
+      operator: zeroAddress,
+      receiver: zeroAddress,
+      shares: BigInt(100),
+    })
+
+    expect(cooldown).not.toBe(instant)
   })
 
   it('produces different data for requestDeposit vs requestRedeem', function () {
@@ -47,6 +69,7 @@ describe('encoders', function () {
     const redeemData = encodeRequestRedeem({
       asset: zeroAddress,
       fulfillmentFee: BigInt(0),
+      isInstant: false,
       operator: zeroAddress,
       receiver: zeroAddress,
       shares: BigInt(100),
@@ -91,6 +114,7 @@ describe('encoders', function () {
     const data = encodeRequestRedeem({
       asset: zeroAddress,
       fulfillmentFee: BigInt(0),
+      isInstant: false,
       operator,
       receiver,
       shares: BigInt(100),

@@ -100,6 +100,7 @@ export const Withdraw = function ({
     chainId: selectedAsset.token.chainId,
     needsApproval,
     receiver: address,
+    shareAddress: pool.shareAddress,
     shares,
     shareToken: pool.shareToken,
     spender: routerAddress,
@@ -108,6 +109,7 @@ export const Withdraw = function ({
   const { isPending: isRunningOperation, mutate: withdrawFn } = useWithdraw({
     amount,
     fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
+    isInstant: quote?.isInstant ?? false,
     on(emitter) {
       emitter.on('approve-transaction-succeeded', () =>
         setOperationRunning('withdrawing'),

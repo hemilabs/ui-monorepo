@@ -20,7 +20,9 @@ describe('getRequest', function () {
       assets: BigInt(100),
       automatic: true,
       kind: 0,
+      operator: someAddress,
       receiver: someAddress,
+      share: someAddress,
       shares: BigInt(50),
       status: 1,
     })
@@ -37,7 +39,9 @@ describe('getRequest', function () {
       assets: BigInt(100),
       automatic: true,
       kind: 0,
+      operator: someAddress,
       receiver: someAddress,
+      share: someAddress,
       shares: BigInt(50),
       status: 1,
     })
@@ -77,7 +81,9 @@ describe('getRequest', function () {
       assets: BigInt(0),
       automatic: false,
       kind: 1,
+      operator: someAddress,
       receiver: someAddress,
+      share: someAddress,
       shares: BigInt(99),
       status: 3,
     })

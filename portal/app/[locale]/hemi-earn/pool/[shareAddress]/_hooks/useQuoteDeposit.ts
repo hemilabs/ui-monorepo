@@ -4,6 +4,7 @@ import {
   getGatewayForShare,
   getHemiEarnAgentAddress,
   getHemiEarnRouterAddress,
+  getStakingVaultForShare,
 } from 'hemi-earn-actions'
 import {
   quoteDeposit,
@@ -25,8 +26,10 @@ type QuoteDeposit = {
 
 // Chains the contract reads needed to know the user's true cost on Hemi
 // plus the pegged-token equivalent of the deposit:
-//   1. Agent.quoteDepositFulfillment(asset) on Ethereum — the LayerZero fee the
-//      Agent will need to send the fulfillment response back to Hemi.
+//   1. Agent.quoteDepositFulfillment(share) on Ethereum — the LayerZero fee
+//      the Agent will need to OFT the sVetToken shares back to Hemi. The
+//      `share` arg is the Ethereum-side staking vault (resolved from the
+//      Hemi-side share OFT via `getStakingVaultForShare`).
 //   2. Router.quoteDeposit(asset, assets, fulfillmentFee) on Hemi — the
 //      total `msg.value` the user attaches to `requestDeposit`.
 //   3. Gateway.previewDeposit(asset, amount) on Ethereum — the pegged-token
@@ -49,8 +52,8 @@ export const useQuoteDeposit = ({
       const ethereumClient = getEvmL1PublicClient(mainnet.id)
       const fulfillmentFee = await quoteDepositFulfillment({
         agentAddress: getHemiEarnAgentAddress(),
-        asset,
         client: ethereumClient,
+        share: getStakingVaultForShare(shareAddress),
       })
       const [nativeFee, peggedAmount] = await Promise.all([
         quoteDeposit({

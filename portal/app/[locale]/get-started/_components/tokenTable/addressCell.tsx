@@ -5,7 +5,7 @@ import { formatTokenAddress } from '../../_utils/formatTokenAddress'
 import { getL1BridgePair } from '../../_utils/getL1BridgePair'
 
 type Props = {
-  address: string
+  address: EvmToken['address']
   networkName: string
 }
 

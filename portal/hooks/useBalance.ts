@@ -1,26 +1,41 @@
+import {
+  tokenBalanceQueryKey,
+  tokenBalanceQueryOptions,
+} from '@hemilabs/react-hooks/useTokenBalance'
+import { useQuery } from '@tanstack/react-query'
 import { EvmToken } from 'types/token'
 import { isNativeAddress } from 'utils/nativeToken'
-import { type Address, erc20Abi, isAddress } from 'viem'
-import { useAccount, useReadContract } from 'wagmi'
+import { type Address, isAddress } from 'viem'
+import { useAccount, usePublicClient } from 'wagmi'
+
+export const getTokenBalanceQueryKey = ({
+  account,
+  chainId,
+  tokenAddress,
+}: {
+  account: Address | undefined
+  chainId: EvmToken['chainId']
+  tokenAddress: string
+}) =>
+  tokenBalanceQueryKey({ address: tokenAddress as Address, chainId }, account)
 
 export const useTokenBalance = function (
   chainId: EvmToken['chainId'],
   tokenAddress: string,
 ) {
   const { address, isConnected } = useAccount()
-  return useReadContract({
-    abi: erc20Abi,
-    address: tokenAddress as Address,
-    args: address ? [address] : undefined,
-    chainId,
-    functionName: 'balanceOf',
-    query: {
-      enabled:
-        isConnected &&
-        !!address &&
-        isAddress(address) &&
-        isAddress(tokenAddress) &&
-        !isNativeAddress(tokenAddress),
-    },
+  const client = usePublicClient({ chainId })
+  return useQuery({
+    ...tokenBalanceQueryOptions({
+      account: address!,
+      client: client!,
+      token: { address: tokenAddress as Address, chainId },
+    }),
+    enabled:
+      isConnected &&
+      !!address &&
+      isAddress(tokenAddress) &&
+      !isNativeAddress(tokenAddress) &&
+      !!client,
   })
 }

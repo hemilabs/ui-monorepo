@@ -9,7 +9,7 @@ import {
   depositErc20,
   depositEth,
 } from 'hemi-tunnel-actions'
-import { useTokenBalance } from 'hooks/useBalance'
+import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useL1StandardBridgeAddress } from 'hooks/useL1StandardBridgeAddress'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
@@ -60,10 +60,11 @@ export const useDeposit = function ({
   )
   const l1StandardBridgeAddress = useL1StandardBridgeAddress(fromToken.chainId)
   const queryClient = useQueryClient()
-  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
-    fromToken.chainId,
-    fromToken.address,
-  )
+  const erc20BalanceQueryKey = getTokenBalanceQueryKey({
+    account: address,
+    chainId: fromToken.chainId,
+    tokenAddress: fromToken.address,
+  })
 
   const { addDepositToTunnelHistory, updateDeposit } = useTunnelHistory()
   const { txHash: currentTxHash, updateTxHash } = useTunnelOperation()

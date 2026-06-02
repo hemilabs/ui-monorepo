@@ -1,13 +1,14 @@
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useQueryClient } from '@tanstack/react-query'
 import { Button } from 'components/button'
-import { useTokenBalance } from 'hooks/useBalance'
+import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useChallengeBitcoinWithdrawal } from 'hooks/useBtcTunnel'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
-import { type FormEvent, useEffect, useState } from 'react'
+import { type FormEvent, useEffect, useMemo, useState } from 'react'
 import { BtcWithdrawStatus, ToBtcWithdrawOperation } from 'types/tunnel'
+import { useAccount } from 'wagmi'
 
 import { DrawerCallToAction } from './reviewOperation/drawerCallToAction'
 
@@ -30,9 +31,15 @@ export const ChallengeBtcWithdrawal = function ({ withdrawal }: Props) {
 
   const t = useTranslations('tunnel-page')
   const { track } = useUmami()
-  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
-    withdrawal.l2ChainId,
-    withdrawal.l2Token,
+  const { address } = useAccount()
+  const erc20BalanceQueryKey = useMemo(
+    () =>
+      getTokenBalanceQueryKey({
+        account: address,
+        chainId: withdrawal.l2ChainId,
+        tokenAddress: withdrawal.l2Token,
+      }),
+    [address, withdrawal.l2ChainId, withdrawal.l2Token],
   )
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     withdrawal.l2ChainId,

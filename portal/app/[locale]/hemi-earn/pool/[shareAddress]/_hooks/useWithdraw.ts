@@ -8,7 +8,7 @@ import {
   getHemiEarnRouterAddress,
 } from 'hemi-earn-actions'
 import { requestRedeem } from 'hemi-earn-actions/actions'
-import { useTokenBalance } from 'hooks/useBalance'
+import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { useAccount, useConfig } from 'wagmi'
@@ -62,15 +62,17 @@ export const useWithdraw = function ({
   const [networkType] = useNetworkType()
   const routerAddress = getHemiEarnRouterAddress()
 
-  const { queryKey: tokenBalanceQueryKey } = useTokenBalance(
+  const tokenBalanceQueryKey = getTokenBalanceQueryKey({
+    account: address,
     chainId,
-    selectedAsset.address,
-  )
+    tokenAddress: selectedAsset.address,
+  })
 
-  const { queryKey: shareBalanceQueryKey } = useTokenBalance(
+  const shareBalanceQueryKey = getTokenBalanceQueryKey({
+    account: address,
     chainId,
-    pool.shareAddress,
-  )
+    tokenAddress: pool.shareAddress,
+  })
 
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(chainId)
 

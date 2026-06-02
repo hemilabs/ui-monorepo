@@ -8,7 +8,7 @@ import {
   initiateWithdrawEth,
   type WithdrawEvents,
 } from 'hemi-tunnel-actions'
-import { useTokenBalance } from 'hooks/useBalance'
+import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
@@ -50,10 +50,11 @@ export const useWithdraw = function ({
     fromToken.chainId,
   )
   const queryClient = useQueryClient()
-  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
-    fromToken.chainId,
-    fromToken.address,
-  )
+  const erc20BalanceQueryKey = getTokenBalanceQueryKey({
+    account,
+    chainId: fromToken.chainId,
+    tokenAddress: fromToken.address,
+  })
   const { addWithdrawalToTunnelHistory, updateWithdrawal } = useTunnelHistory()
   const { updateTxHash } = useTunnelOperation()
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(

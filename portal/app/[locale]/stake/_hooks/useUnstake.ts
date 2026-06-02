@@ -1,6 +1,6 @@
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useTokenBalance } from 'hooks/useBalance'
+import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemiClient, useHemiWalletClient } from 'hooks/useHemiClient'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useUmami } from 'hooks/useUmami'
@@ -24,10 +24,11 @@ export const useUnstake = function (token: StakeToken) {
   const hemiPublicClient = useHemiClient()
   const { hemiWalletClient } = useHemiWalletClient()
   const [networkType] = useNetworkType()
-  const { queryKey: balanceQueryKey } = useTokenBalance(
-    token.chainId,
-    token.address,
-  )
+  const balanceQueryKey = getTokenBalanceQueryKey({
+    account: address,
+    chainId: token.chainId,
+    tokenAddress: token.address,
+  })
   const t = useTranslations()
 
   // Use this state to prevent multiple submissions, and force the animation to run

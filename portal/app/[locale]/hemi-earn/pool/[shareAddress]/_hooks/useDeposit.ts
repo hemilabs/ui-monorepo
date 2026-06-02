@@ -8,7 +8,7 @@ import {
   getHemiEarnRouterAddress,
 } from 'hemi-earn-actions'
 import { requestDeposit } from 'hemi-earn-actions/actions'
-import { useTokenBalance } from 'hooks/useBalance'
+import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
 import { parseTokenUnits } from 'utils/token'
 import { type Hash } from 'viem'
@@ -56,10 +56,11 @@ export const useDeposit = function ({
   const { deleteLocalOperationByInitiateTxHash, upsertLocalOperation } =
     useLocalEarnOperations()
 
-  const { queryKey: tokenBalanceQueryKey } = useTokenBalance(
+  const tokenBalanceQueryKey = getTokenBalanceQueryKey({
+    account: address,
     chainId,
-    selectedAsset.address,
-  )
+    tokenAddress: selectedAsset.address,
+  })
 
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(chainId)
 

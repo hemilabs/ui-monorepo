@@ -3,7 +3,7 @@ import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
-import { useTokenBalance } from 'hooks/useBalance'
+import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUmami } from 'hooks/useUmami'
 import {
@@ -44,10 +44,11 @@ export const useIncreaseAmount = function ({
   const ensureConnectedTo = useEnsureConnectedTo()
   const veHemiAddress = getVeHemiContractAddress(token.chainId)
   const queryClient = useQueryClient()
-  const { queryKey: hemiBalanceQueryKey } = useTokenBalance(
-    token.chainId,
-    token.address,
-  )
+  const hemiBalanceQueryKey = getTokenBalanceQueryKey({
+    account: address,
+    chainId: token.chainId,
+    tokenAddress: token.address,
+  })
 
   const amount = parseTokenUnits(input, token)
 

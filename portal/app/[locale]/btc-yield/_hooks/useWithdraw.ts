@@ -4,7 +4,7 @@ import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpd
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { getBtcStakingVaultContractAddress } from 'hemi-btc-staking-actions'
 import { withdraw } from 'hemi-btc-staking-actions/actions'
-import { useTokenBalance } from 'hooks/useBalance'
+import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { parseTokenUnits } from 'utils/token'
@@ -38,10 +38,11 @@ export const useWithdraw = function ({
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
 
-  const { queryKey: tokenBalanceQueryKey } = useTokenBalance(
-    token.chainId,
-    token.address,
-  )
+  const tokenBalanceQueryKey = getTokenBalanceQueryKey({
+    account: address,
+    chainId: token.chainId,
+    tokenAddress: token.address,
+  })
 
   const { queryKey: nativeTokenBalanceQueryKey } = useNativeBalance(
     token.chainId,

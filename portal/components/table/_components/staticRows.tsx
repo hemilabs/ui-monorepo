@@ -3,6 +3,8 @@ import { ComponentProps, ComponentType } from 'react'
 
 import { Column } from './column'
 
+const baseRowClassName = 'group/row flex w-full items-center'
+
 type Props<TData> = {
   CellComponent?: ComponentType<ComponentProps<'td'>>
   loading: boolean
@@ -17,7 +19,7 @@ export function StaticRows<TData>({
   loading,
   onRowClick,
   onRowHover,
-  rowClassName = 'group/row flex w-full items-center',
+  rowClassName,
   rows,
 }: Props<TData>) {
   if (loading && rows.length === 0) {
@@ -28,7 +30,7 @@ export function StaticRows<TData>({
     <>
       {rows.map(row => (
         <tr
-          className={rowClassName}
+          className={`${baseRowClassName} ${rowClassName ?? ''}`}
           key={row.id}
           onClick={onRowClick ? () => onRowClick(row.original) : undefined}
           onMouseEnter={onRowHover ? () => onRowHover(row.index) : undefined}

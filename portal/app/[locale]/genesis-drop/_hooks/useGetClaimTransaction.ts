@@ -1,6 +1,9 @@
 import { useQuery, UseQueryOptions } from '@tanstack/react-query'
 import { useHemi } from 'hooks/useHemi'
-import { getClaimTransaction, ParsedClaimTransaction } from 'utils/subgraph'
+import {
+  getClaimTransaction,
+  type ParsedClaimTransaction,
+} from 'utils/subgraph'
 import { Address, Chain } from 'viem'
 import { useAccount } from 'wagmi'
 

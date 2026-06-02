@@ -1,5 +1,6 @@
 import { hemi } from 'hemi-viem'
 import {
+  type Address,
   type TransactionReceipt,
   type WalletClient,
   zeroAddress,
@@ -20,9 +21,9 @@ const mockWalletClient = {
 } as unknown as WalletClient
 
 const validParameters = {
-  account: zeroAddress,
+  account: '0x000000000000000000000000000000000000dEaD' as Address,
   requestId: BigInt(1),
-  routerAddress: zeroAddress,
+  routerAddress: '0x000000000000000000000000000000000000bEEf' as Address,
   walletClient: mockWalletClient,
 }
 
@@ -59,6 +60,22 @@ describe('cancelRedeem', function () {
 
     expect(onFailedValidation).toHaveBeenCalledExactlyOnceWith(
       'invalid requestId',
+    )
+  })
+
+  it('emits "tx-failed-validation" when account is the zero address', async function () {
+    const { emitter, promise } = cancelRedeem({
+      ...validParameters,
+      account: zeroAddress,
+    })
+
+    const onFailedValidation = vi.fn()
+    emitter.on('tx-failed-validation', onFailedValidation)
+
+    await promise
+
+    expect(onFailedValidation).toHaveBeenCalledExactlyOnceWith(
+      'invalid account',
     )
   })
 

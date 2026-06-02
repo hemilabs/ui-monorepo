@@ -1,6 +1,12 @@
 import { EventEmitter } from 'events'
 import { toPromiseEvent } from 'to-promise-event'
-import type { Address, TransactionReceipt, WalletClient } from 'viem'
+import {
+  type Address,
+  type TransactionReceipt,
+  type WalletClient,
+  isAddressEqual,
+  zeroAddress,
+} from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
 import { getHemiEarnRouterAddress } from '../../constants'
@@ -33,6 +39,11 @@ const runCancelRedeem = ({
 
       if (requestId <= BigInt(0)) {
         emitter.emit('tx-failed-validation', 'invalid requestId')
+        return
+      }
+
+      if (isAddressEqual(account, zeroAddress)) {
+        emitter.emit('tx-failed-validation', 'invalid account')
         return
       }
 

@@ -2,7 +2,7 @@ import {
   getCooldownEnabled,
   getInstantWithdrawWhitelist,
 } from '@vetro-protocol/earn/actions'
-import { type Address, type Client, isAddressEqual, zeroAddress } from 'viem'
+import { type Address, type Client } from 'viem'
 
 // Mirrors `Agent.handleRedeemRequest` (Agent.sol:235):
 //   _instantAllowed = !staking.cooldownEnabled() || staking.instantWithdrawWhitelist(caller)
@@ -20,15 +20,6 @@ export const resolveIsInstant = async function ({
   client: Client
   stakingVault: Address
 }): Promise<boolean> {
-  if (isAddressEqual(stakingVault, zeroAddress)) {
-    throw new Error(
-      'resolveIsInstant: `stakingVault` cannot be the zero address',
-    )
-  }
-  if (isAddressEqual(caller, zeroAddress)) {
-    throw new Error('resolveIsInstant: `caller` cannot be the zero address')
-  }
-
   const [cooldownEnabled, whitelisted] = await Promise.all([
     getCooldownEnabled(client, { address: stakingVault }),
     getInstantWithdrawWhitelist(client, {

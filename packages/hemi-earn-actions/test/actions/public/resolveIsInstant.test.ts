@@ -2,7 +2,7 @@ import {
   getCooldownEnabled,
   getInstantWithdrawWhitelist,
 } from '@vetro-protocol/earn/actions'
-import { type Address, type Client, zeroAddress } from 'viem'
+import { type Address, type Client } from 'viem'
 import { describe, expect, it, vi } from 'vitest'
 
 import { resolveIsInstant } from '../../../src/actions/public/resolveIsInstant'
@@ -42,17 +42,5 @@ describe('resolveIsInstant', function () {
     const result = await resolveIsInstant({ caller, client, stakingVault })
 
     expect(result).toBe(false)
-  })
-
-  it('rejects a zero stakingVault', async function () {
-    await expect(
-      resolveIsInstant({ caller, client, stakingVault: zeroAddress }),
-    ).rejects.toThrow(/`stakingVault` cannot be the zero address/)
-  })
-
-  it('rejects a zero caller', async function () {
-    await expect(
-      resolveIsInstant({ caller: zeroAddress, client, stakingVault }),
-    ).rejects.toThrow(/`caller` cannot be the zero address/)
   })
 })

@@ -95,29 +95,33 @@ export const LearnMore = function () {
   return (
     <Section card={false} step={{ position: 3 }}>
       <Card>
-        <div className="flex flex-col gap-6 p-4 font-medium lg:flex-row lg:items-start lg:p-6">
-          <div className="flex max-w-[332px] flex-col gap-4">
-            <div>
-              <h3 className="text-mid-md font-semibold text-neutral-950">
-                {t('learn-how-to-use-hemi')}
-              </h3>
-              <p className="mt-1 font-normal text-neutral-500">
-                {t('tutorials-subheading')}
-              </p>
-            </div>
-            <div className="w-fit [&_.button--base]:font-semibold">
-              <ButtonLink
-                href={tutorialsUrl}
-                onClick={addTracking()}
-                size="xSmall"
-                variant="primary"
-              >
-                {t('view-all-tutorials')}
-              </ButtonLink>
+        <div className="grid w-full grid-cols-1 font-medium lg:grid-cols-[396px_1fr] lg:items-start">
+          <div className="p-6">
+            <div className="flex max-w-[332px] flex-col gap-4">
+              <div>
+                <h3 className="text-mid-md font-semibold text-neutral-950">
+                  {t('learn-how-to-use-hemi')}
+                </h3>
+                <p className="mt-1 font-normal text-neutral-500">
+                  {t('tutorials-subheading')}
+                </p>
+              </div>
+              <div className="w-fit [&_.button--base]:font-semibold">
+                <ButtonLink
+                  href={tutorialsUrl}
+                  onClick={addTracking()}
+                  size="xSmall"
+                  variant="primary"
+                >
+                  {t('view-all-tutorials')}
+                </ButtonLink>
+              </div>
             </div>
           </div>
-          <div className="min-w-0 flex-1 lg:max-w-[500px]">
-            <WalletSetup />
+          <div className="p-6">
+            <div className="ml-auto w-full max-w-[500px]">
+              <WalletSetup />
+            </div>
           </div>
         </div>
       </Card>

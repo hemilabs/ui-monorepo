@@ -44,16 +44,18 @@ export const useQuoteRedeem = ({
     enabled: shares > BigInt(0) && !!account,
     async queryFn() {
       const ethereumClient = getEvmL1PublicClient(mainnet.id)
-      const isInstant = await resolveIsInstant({
-        caller: account!,
-        client: ethereumClient,
-        stakingVault: getStakingVaultForShare(shareAddress),
-      })
-      const fulfillmentFee = await quoteRedeemFulfillment({
-        agentAddress: getHemiEarnAgentAddress(),
-        asset,
-        client: ethereumClient,
-      })
+      const [isInstant, fulfillmentFee] = await Promise.all([
+        resolveIsInstant({
+          caller: account!,
+          client: ethereumClient,
+          stakingVault: getStakingVaultForShare(shareAddress),
+        }),
+        quoteRedeemFulfillment({
+          agentAddress: getHemiEarnAgentAddress(),
+          asset,
+          client: ethereumClient,
+        }),
+      ])
       const nativeFee = await quoteRedeem({
         asset,
         client: getHemiClient(hemi.id),

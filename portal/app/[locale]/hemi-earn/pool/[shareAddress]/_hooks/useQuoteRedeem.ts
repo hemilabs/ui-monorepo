@@ -5,6 +5,7 @@ import {
   getStakingVaultForShare,
 } from 'hemi-earn-actions'
 import {
+  getAssetData,
   quoteRedeem,
   quoteRedeemFulfillment,
   resolveIsInstant,
@@ -44,22 +45,33 @@ export const useQuoteRedeem = ({
     enabled: shares > BigInt(0) && !!account,
     async queryFn() {
       const ethereumClient = getEvmL1PublicClient(mainnet.id)
-      const [isInstant, callbackFee] = await Promise.all([
+      const hemiClient = getHemiClient(hemi.id)
+      // `Agent.quoteRedeemFulfillment` lives on Ethereum and needs the
+      // *remote* asset address (the OFT registered on the Agent), not the
+      // Hemi-side asset OFT the user holds. Resolve via the Router's
+      // `assetsData(asset).remoteAsset`. Runs in parallel with the staking
+      // vault read on Ethereum — they are independent.
+      const [isInstant, assetData] = await Promise.all([
         resolveIsInstant({
           caller: account!,
           client: ethereumClient,
           stakingVault: getStakingVaultForShare(shareAddress),
         }),
-        quoteRedeemFulfillment({
-          agentAddress: getHemiEarnAgentAddress(),
+        getAssetData({
           asset,
-          client: ethereumClient,
+          client: hemiClient,
+          routerAddress: getHemiEarnRouterAddress(),
         }),
       ])
+      const callbackFee = await quoteRedeemFulfillment({
+        agentAddress: getHemiEarnAgentAddress(),
+        asset: assetData.remoteAsset,
+        client: ethereumClient,
+      })
       const nativeFee = await quoteRedeem({
         asset,
         callbackFee,
-        client: getHemiClient(hemi.id),
+        client: hemiClient,
         isInstant,
         routerAddress: getHemiEarnRouterAddress(),
         shares,

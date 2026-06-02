@@ -26,6 +26,15 @@ describe('resolveIsInstant', function () {
     expect(result).toBe(true)
   })
 
+  it('returns true when cooldown is disabled and caller is whitelisted', async function () {
+    vi.mocked(getCooldownEnabled).mockResolvedValue(false)
+    vi.mocked(getInstantWithdrawWhitelist).mockResolvedValue(true)
+
+    const result = await resolveIsInstant({ caller, client, stakingVault })
+
+    expect(result).toBe(true)
+  })
+
   it('returns true when caller is whitelisted even with cooldown enabled', async function () {
     vi.mocked(getCooldownEnabled).mockResolvedValue(true)
     vi.mocked(getInstantWithdrawWhitelist).mockResolvedValue(true)

@@ -38,7 +38,12 @@ export const AddChainButton = function ({ chain }: Props) {
 
   return (
     <div className="shrink-0">
-      <Button disabled={isMutating} size="xSmall" variant="secondary">
+      <Button
+        disabled={isMutating}
+        size="xSmall"
+        type="button"
+        variant="secondary"
+      >
         <PlusIcon className="[&>path]:fill-neutral-500" />
         <span className="whitespace-nowrap text-xs font-semibold text-neutral-950">
           {label}

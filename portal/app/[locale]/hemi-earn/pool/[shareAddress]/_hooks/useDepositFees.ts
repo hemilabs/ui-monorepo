@@ -8,7 +8,7 @@ import { useEstimateGas } from 'wagmi'
 import { useQuoteDeposit } from './useQuoteDeposit'
 
 type QuoteDeposit = {
-  fulfillmentFee: bigint
+  callbackFee: bigint
   nativeFee: bigint
 }
 
@@ -30,7 +30,7 @@ const buildGasData = ({
     : encodeRequestDeposit({
         amount,
         asset,
-        fulfillmentFee: quote.fulfillmentFee,
+        callbackFee: quote.callbackFee,
         operator: receiver,
         receiver,
       })

@@ -93,7 +93,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const { setDrawerQueryString } = useDrawerQueryString()
 
   const { isPending: isRunningOperation, mutate: deposit } = useDeposit({
-    fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
+    callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
     on(emitter) {
       // Open the pool drawer as soon as the user signs anything — wired here

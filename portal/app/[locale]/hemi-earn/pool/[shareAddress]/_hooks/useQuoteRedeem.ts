@@ -15,7 +15,7 @@ import { getEvmL1PublicClient, getHemiClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
 type QuoteRedeem = {
-  fulfillmentFee: bigint
+  callbackFee: bigint
   // Whether the Router should reserve gas for the instant-redeem path. Must
   // match the vault's actual state for `account` — resolved on-chain via
   // `resolveIsInstant`. Consumers pass this through to `requestRedeem` /
@@ -44,7 +44,7 @@ export const useQuoteRedeem = ({
     enabled: shares > BigInt(0) && !!account,
     async queryFn() {
       const ethereumClient = getEvmL1PublicClient(mainnet.id)
-      const [isInstant, fulfillmentFee] = await Promise.all([
+      const [isInstant, callbackFee] = await Promise.all([
         resolveIsInstant({
           caller: account!,
           client: ethereumClient,
@@ -58,13 +58,13 @@ export const useQuoteRedeem = ({
       ])
       const nativeFee = await quoteRedeem({
         asset,
+        callbackFee,
         client: getHemiClient(hemi.id),
-        fulfillmentFee,
         isInstant,
         routerAddress: getHemiEarnRouterAddress(),
         shares,
       })
-      return { fulfillmentFee, isInstant, nativeFee }
+      return { callbackFee, isInstant, nativeFee }
     },
     queryKey: [
       'hemi-earn',

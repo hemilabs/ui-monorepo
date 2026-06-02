@@ -18,8 +18,8 @@ describe('quoteRedeem', function () {
 
     const result = await quoteRedeem({
       asset,
+      callbackFee: BigInt(7),
       client,
-      fulfillmentFee: BigInt(7),
       isInstant: false,
       routerAddress,
       shares: BigInt(100),
@@ -41,8 +41,8 @@ describe('quoteRedeem', function () {
 
     await quoteRedeem({
       asset,
+      callbackFee: BigInt(7),
       client,
-      fulfillmentFee: BigInt(7),
       isInstant: true,
       routerAddress,
       shares: BigInt(100),
@@ -60,8 +60,8 @@ describe('quoteRedeem', function () {
     await expect(
       quoteRedeem({
         asset: zeroAddress,
+        callbackFee: BigInt(7),
         client,
-        fulfillmentFee: BigInt(7),
         isInstant: false,
         routerAddress,
         shares: BigInt(100),
@@ -73,8 +73,8 @@ describe('quoteRedeem', function () {
     await expect(
       quoteRedeem({
         asset,
+        callbackFee: BigInt(7),
         client,
-        fulfillmentFee: BigInt(7),
         isInstant: false,
         routerAddress,
         shares: BigInt(0),
@@ -82,16 +82,16 @@ describe('quoteRedeem', function () {
     ).rejects.toThrow(/`shares` must be greater than zero/)
   })
 
-  it('rejects negative fulfillmentFee', async function () {
+  it('rejects negative callbackFee', async function () {
     await expect(
       quoteRedeem({
         asset,
+        callbackFee: BigInt(-1),
         client,
-        fulfillmentFee: BigInt(-1),
         isInstant: false,
         routerAddress,
         shares: BigInt(100),
       }),
-    ).rejects.toThrow(/`fulfillmentFee` cannot be negative/)
+    ).rejects.toThrow(/`callbackFee` cannot be negative/)
   })
 })

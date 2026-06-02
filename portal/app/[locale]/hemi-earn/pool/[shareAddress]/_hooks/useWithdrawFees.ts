@@ -16,7 +16,7 @@ import { useEstimateGas } from 'wagmi'
 import { useQuoteRedeem } from './useQuoteRedeem'
 
 type QuoteRedeem = {
-  fulfillmentFee: bigint
+  callbackFee: bigint
   isInstant: boolean
   nativeFee: bigint
 }
@@ -88,7 +88,7 @@ const buildGasData = ({
     ? undefined
     : encodeRequestRedeem({
         asset,
-        fulfillmentFee: quote.fulfillmentFee,
+        callbackFee: quote.callbackFee,
         isInstant: quote.isInstant,
         operator: receiver,
         receiver,

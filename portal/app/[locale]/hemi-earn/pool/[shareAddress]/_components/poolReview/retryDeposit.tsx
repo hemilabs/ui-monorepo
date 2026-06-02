@@ -34,7 +34,7 @@ export const RetryDeposit = function () {
   })
 
   const { mutate: runDeposit } = useDeposit({
-    fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
+    callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
     on(emitter) {
       emitter.on('user-signed-approval', () =>

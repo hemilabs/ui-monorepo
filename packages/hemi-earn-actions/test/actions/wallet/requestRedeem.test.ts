@@ -34,7 +34,7 @@ const mockWalletClient = {
 const validParameters = {
   account: zeroAddress,
   asset: zeroAddress,
-  fulfillmentFee: BigInt(0),
+  callbackFee: BigInt(0),
   isInstant: false,
   operator: zeroAddress,
   receiver: zeroAddress,

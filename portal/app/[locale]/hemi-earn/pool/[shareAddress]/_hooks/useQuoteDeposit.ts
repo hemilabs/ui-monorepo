@@ -16,7 +16,7 @@ import { getEvmL1PublicClient, getHemiClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
 type QuoteDeposit = {
-  fulfillmentFee: bigint
+  callbackFee: bigint
   nativeFee: bigint
   // Pegged-token amount the vault will receive for this deposit
   // (`Gateway.previewDeposit(asset, amount)`). Used by `useDeposit` to
@@ -30,11 +30,11 @@ type QuoteDeposit = {
 //      the Agent will need to OFT the sVetToken shares back to Hemi. The
 //      `share` arg is the Ethereum-side staking vault (resolved from the
 //      Hemi-side share OFT via `getStakingVaultForShare`).
-//   2. Router.quoteDeposit(asset, assets, fulfillmentFee) on Hemi — the
+//   2. Router.quoteDeposit(asset, assets, callbackFee) on Hemi — the
 //      total `msg.value` the user attaches to `requestDeposit`.
 //   3. Gateway.previewDeposit(asset, amount) on Ethereum — the pegged-token
 //      amount that lands in the vault, used for the optimistic TVL update.
-// The Router can't compute fulfillmentFee itself (it lives on Hemi while the
+// The Router can't compute callbackFee itself (it lives on Hemi while the
 // Agent lives on Ethereum), so this hook is the source of truth for the
 // LayerZero leg of the fees.
 export const useQuoteDeposit = ({
@@ -50,7 +50,7 @@ export const useQuoteDeposit = ({
     enabled: amount > BigInt(0),
     async queryFn() {
       const ethereumClient = getEvmL1PublicClient(mainnet.id)
-      const fulfillmentFee = await quoteDepositFulfillment({
+      const callbackFee = await quoteDepositFulfillment({
         agentAddress: getHemiEarnAgentAddress(),
         client: ethereumClient,
         share: getStakingVaultForShare(shareAddress),
@@ -59,8 +59,8 @@ export const useQuoteDeposit = ({
         quoteDeposit({
           asset,
           assets: amount,
+          callbackFee,
           client: getHemiClient(hemi.id),
-          fulfillmentFee,
           routerAddress: getHemiEarnRouterAddress(),
         }),
         previewDeposit(ethereumClient, {
@@ -69,7 +69,7 @@ export const useQuoteDeposit = ({
           tokenIn: asset,
         }),
       ])
-      return { fulfillmentFee, nativeFee, peggedAmount }
+      return { callbackFee, nativeFee, peggedAmount }
     },
     queryKey: [
       'hemi-earn',

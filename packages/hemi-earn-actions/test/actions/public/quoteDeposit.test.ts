@@ -19,8 +19,8 @@ describe('quoteDeposit', function () {
     const result = await quoteDeposit({
       asset,
       assets: BigInt(100),
+      callbackFee: BigInt(7),
       client,
-      fulfillmentFee: BigInt(7),
       routerAddress,
     })
 
@@ -40,8 +40,8 @@ describe('quoteDeposit', function () {
       quoteDeposit({
         asset: zeroAddress,
         assets: BigInt(100),
+        callbackFee: BigInt(7),
         client,
-        fulfillmentFee: BigInt(7),
         routerAddress,
       }),
     ).rejects.toThrow(/`asset` cannot be the zero address/)
@@ -52,22 +52,22 @@ describe('quoteDeposit', function () {
       quoteDeposit({
         asset,
         assets: BigInt(0),
+        callbackFee: BigInt(7),
         client,
-        fulfillmentFee: BigInt(7),
         routerAddress,
       }),
     ).rejects.toThrow(/`assets` must be greater than zero/)
   })
 
-  it('rejects negative fulfillmentFee', async function () {
+  it('rejects negative callbackFee', async function () {
     await expect(
       quoteDeposit({
         asset,
         assets: BigInt(100),
+        callbackFee: BigInt(-1),
         client,
-        fulfillmentFee: BigInt(-1),
         routerAddress,
       }),
-    ).rejects.toThrow(/`fulfillmentFee` cannot be negative/)
+    ).rejects.toThrow(/`callbackFee` cannot be negative/)
   })
 })

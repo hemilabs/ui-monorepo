@@ -47,7 +47,7 @@ export const RetryWithdraw = function () {
 
   const { mutate: runWithdraw } = useWithdraw({
     amount,
-    fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
+    callbackFee: quote?.callbackFee ?? BigInt(0),
     isInstant: quote?.isInstant ?? false,
     on(emitter) {
       emitter.on('approve-transaction-reverted', () =>

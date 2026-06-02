@@ -26,7 +26,7 @@ type UseWithdraw = {
   // User-entered withdraw amount in `selectedAsset` units. Drives the
   // optimistic TVL/balance updates after the redeem mines.
   amount: bigint
-  fulfillmentFee: bigint
+  callbackFee: bigint
   // Resolved by the caller via `useQuoteRedeem`, which mirrors what the
   // Agent computes on Ethereum (`!cooldownEnabled || whitelisted`). The
   // request body and the Router's gas reservation must agree on this; a
@@ -50,7 +50,7 @@ type UseWithdraw = {
 
 export const useWithdraw = function ({
   amount,
-  fulfillmentFee,
+  callbackFee,
   isInstant,
   on,
   peggedAmount,
@@ -121,7 +121,7 @@ export const useWithdraw = function ({
       const { emitter, promise } = requestRedeem({
         account: address,
         asset: selectedAsset.address,
-        fulfillmentFee,
+        callbackFee,
         isInstant,
         operator: address,
         receiver: address,

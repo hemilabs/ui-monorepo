@@ -35,7 +35,7 @@ const validParameters = {
   account: zeroAddress,
   amount: BigInt(100),
   asset: zeroAddress,
-  fulfillmentFee: BigInt(0),
+  callbackFee: BigInt(0),
   operator: zeroAddress,
   receiver: zeroAddress,
   routerAddress: zeroAddress,

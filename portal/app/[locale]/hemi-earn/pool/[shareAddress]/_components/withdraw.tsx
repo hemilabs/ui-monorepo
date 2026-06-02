@@ -108,7 +108,7 @@ export const Withdraw = function ({
 
   const { isPending: isRunningOperation, mutate: withdrawFn } = useWithdraw({
     amount,
-    fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
+    callbackFee: quote?.callbackFee ?? BigInt(0),
     isInstant: quote?.isInstant ?? false,
     on(emitter) {
       emitter.on('approve-transaction-succeeded', () =>

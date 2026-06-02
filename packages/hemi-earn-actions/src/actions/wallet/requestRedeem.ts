@@ -50,7 +50,7 @@ const runRequestRedeem = ({
   account,
   asset,
   assetsOutMin = BigInt(0),
-  fulfillmentFee,
+  callbackFee,
   isInstant,
   operator,
   receiver,
@@ -65,7 +65,7 @@ const runRequestRedeem = ({
   // enforced on the remote chain). Defaults to `0n` until the share → asset
   // conversion is wired up; phase 2 will compute this from the share price.
   assetsOutMin?: bigint
-  fulfillmentFee: bigint
+  callbackFee: bigint
   // Declares the redeem path (instant vs cooldown). Must match the vault's
   // actual state for `account` — resolve via `resolveIsInstant`. Mismatch
   // causes the Agent to send an immediate cancel; user pays gas for nothing.
@@ -115,8 +115,8 @@ const runRequestRedeem = ({
       emitter.emit('pre-quote')
       const nativeFee = await quoteRedeem({
         asset,
+        callbackFee,
         client: walletClient,
-        fulfillmentFee,
         isInstant,
         routerAddress,
         shares: adjustedShares,
@@ -184,7 +184,7 @@ const runRequestRedeem = ({
           receiver,
           operator,
           true,
-          fulfillmentFee,
+          callbackFee,
           isInstant,
         ],
         chain: walletClient.chain,

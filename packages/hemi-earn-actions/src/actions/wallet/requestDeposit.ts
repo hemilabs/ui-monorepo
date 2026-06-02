@@ -40,7 +40,7 @@ const runRequestDeposit = ({
   account,
   amount,
   asset,
-  fulfillmentFee,
+  callbackFee,
   operator,
   receiver,
   routerAddress = getHemiEarnRouterAddress(),
@@ -50,7 +50,7 @@ const runRequestDeposit = ({
   account: Address
   amount: bigint
   asset: Address
-  fulfillmentFee: bigint
+  callbackFee: bigint
   // Address authorized to call `Agent.cancel(id)` on the remote chain.
   // Contract reverts with `ZeroAddress` if `0x0` is passed.
   operator: Address
@@ -88,8 +88,8 @@ const runRequestDeposit = ({
       const nativeFee = await quoteDeposit({
         asset,
         assets: amount,
+        callbackFee,
         client: walletClient,
-        fulfillmentFee,
         routerAddress,
       }).catch(function (error) {
         emitter.emit('quote-failed', error)
@@ -155,7 +155,7 @@ const runRequestDeposit = ({
           receiver,
           operator,
           true,
-          fulfillmentFee,
+          callbackFee,
         ],
         chain: walletClient.chain,
         functionName: 'requestDeposit',

@@ -6,7 +6,7 @@ import { getHemiEarnAgentAddress } from '../../constants'
 
 // Reads the LayerZero native fee the Agent on Ethereum needs to send the
 // fulfillment response (sVetToken OFT) back to the Router on Hemi. The
-// caller passes this value as `fulfillmentFee` into `quoteDeposit`
+// caller passes this value as `callbackFee` into `quoteDeposit`
 // (Hemi-side), which folds it into the total `msg.value` of `requestDeposit`.
 //
 // `share` is the **Ethereum-side staking vault (sVetToken) address** — the

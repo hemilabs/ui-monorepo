@@ -333,7 +333,11 @@
     "tutorials-subheading": "New to Hemi? Our step-by-step tutorials walk you through everything you need to know, from setting up your wallet to bridging tokens and using dApps.",
     "view-all-tutorials": "View all tutorials",
     "add-networks-mainnet": "Add the Hemi network to your wallet so it can recognize the network and let you send transactions, bridge assets, and use apps.",
-    "add-networks-testnet": "Add Ethereum Sepolia & Hemi testnet to your wallet."
+    "add-networks-testnet": "Add Ethereum Sepolia & Hemi testnet to your wallet.",
+    "add-networks": {
+      "automatic": "Automatically",
+      "manual": "Manually"
+    }
   },
   "staking-dashboard": {
     "amount": "Amount",

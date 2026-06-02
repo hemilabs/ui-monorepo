@@ -333,7 +333,11 @@
     "tutorials-subheading": "Novo no Hemi? Nossos tutoriais passo a passo orientam você em tudo o que precisa saber, desde configurar sua carteira até fazer bridge de tokens e usar dApps.",
     "view-all-tutorials": "Ver todos os tutoriais",
     "add-networks-mainnet": "Adicione a rede Hemi à sua carteira para que ela possa reconhecer a rede e permitir que envie transações, faça bridge de ativos e use aplicativos.",
-    "add-networks-testnet": "Adicionar Ethereum Sepolia e Hemi testnet à sua carteira."
+    "add-networks-testnet": "Adicionar Ethereum Sepolia e Hemi testnet à sua carteira.",
+    "add-networks": {
+      "automatic": "Automaticamente",
+      "manual": "Manualmente"
+    }
   },
   "staking-dashboard": {
     "amount": "Quantidade",

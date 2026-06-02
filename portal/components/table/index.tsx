@@ -31,8 +31,6 @@ import { useTableVirtualizer } from './_hooks/useTableVirtualizer'
 
 type TableHeaderProps<TData> = {
   hasVerticalBodyScrollbar: boolean
-  headerClassName?: string
-  headerRowClassName?: string
   headerScrollRef: RefObject<HTMLDivElement | null>
   smallBreakpoint: number
   table: ReturnType<typeof useReactTable<TData>>
@@ -42,8 +40,6 @@ type TableHeaderProps<TData> = {
 
 const TableHeader = <TData,>({
   hasVerticalBodyScrollbar,
-  headerClassName,
-  headerRowClassName,
   headerScrollRef,
   smallBreakpoint,
   table,
@@ -51,7 +47,7 @@ const TableHeader = <TData,>({
   width,
 }: TableHeaderProps<TData>) => (
   <div
-    className={`bg-neutral-100 ${headerClassName ?? 'rounded-t-xl pb-1.5'} ${
+    className={`rounded-t-xl bg-neutral-100 pb-1.5 ${
       hasVerticalBodyScrollbar && width >= smallBreakpoint ? 'pr-2.5' : ''
     }`}
   >
@@ -62,10 +58,7 @@ const TableHeader = <TData,>({
       >
         <thead>
           {table.getHeaderGroups().map(headerGroup => (
-            <tr
-              className={`flex w-full items-center ${headerRowClassName ?? ''}`}
-              key={headerGroup.id}
-            >
+            <tr className="flex w-full items-center" key={headerGroup.id}>
               {headerGroup.headers.map(header => (
                 <ColumnHeader
                   className={
@@ -289,8 +282,6 @@ export type TableProps<TData> = {
   onRowHover?: (index: number | null) => void
   placeholder?: ReactNode
   rowClassName?: string
-  headerClassName?: string
-  headerRowClassName?: string
   priorityColumnIdsOnSmall?: string[]
   rowSize?: number
   skeletonRows?: number
@@ -305,8 +296,6 @@ export function Table<TData>({
   data,
   fetchNextPage,
   hasNextPage = false,
-  headerClassName,
-  headerRowClassName,
   isFetching = false,
   loading = false,
   mode = 'virtual',
@@ -375,8 +364,6 @@ export function Table<TData>({
     <div className={rootClassName}>
       <TableHeader
         hasVerticalBodyScrollbar={hasVerticalBodyScrollbar}
-        headerClassName={headerClassName}
-        headerRowClassName={headerRowClassName}
         headerScrollRef={headerScrollRef}
         smallBreakpoint={smallBreakpoint}
         table={table}

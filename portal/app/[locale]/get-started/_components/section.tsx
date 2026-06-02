@@ -17,7 +17,7 @@ export const Section = ({ children, step, ...props }: Props) => (
       <Step {...step} />
     </div>
     {props.card !== false ? (
-      <div className="pt-[68px]">
+      <div className="pt-17">
         <Card>
           <div className="flex flex-col gap-y-6 p-4 font-medium lg:flex-row lg:justify-between lg:p-6">
             <div>
@@ -31,7 +31,7 @@ export const Section = ({ children, step, ...props }: Props) => (
         </Card>
       </div>
     ) : (
-      <div className="pt-[68px]">{children}</div>
+      <div className="pt-17">{children}</div>
     )}
   </section>
 )

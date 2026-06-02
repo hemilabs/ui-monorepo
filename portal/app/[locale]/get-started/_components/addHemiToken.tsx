@@ -1,20 +1,19 @@
 'use client'
 
-import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
 import { ColumnDef } from '@tanstack/react-table'
 import { Card } from 'components/card'
 import { SearchInput } from 'components/inputText'
 import { Table } from 'components/table'
+import { Column } from 'components/table/_components/column'
 import { Header } from 'components/table/_components/header'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiTokens } from 'hooks/useHemiTokens'
 import { useNetworks } from 'hooks/useNetworks'
 import { useTranslations } from 'next-intl'
-import { useMemo, useState } from 'react'
+import { ComponentProps, useMemo, useState } from 'react'
 import { RemoteChain } from 'types/chain'
 import { EvmToken } from 'types/token'
 import { isAddress, isAddressEqual } from 'viem'
-import { type Chain } from 'viem'
 
 import { NoMatchingTokens } from './noMatchingTokens'
 import { Section } from './section'
@@ -23,17 +22,25 @@ import {
   TokenTableL1AddressCell,
 } from './tokenTable/addressCell'
 import { AddTokenTableButton } from './tokenTable/addTokenButton'
-import { GetStartedTableColumn } from './tokenTable/column'
 import { TokenTableTokenCell } from './tokenTable/tokenCell'
 
+const PlainColumn = (props: ComponentProps<'td'>) => (
+  <Column variant="plain" {...props} />
+)
+
+function HemiAddressCell({ token }: { token: EvmToken }) {
+  const hemi = useHemi()
+  return (
+    <TokenTableAddressCell address={token.address} networkName={hemi.name} />
+  )
+}
+
 type TokenTableColumnsProps = {
-  hemi: Chain
   remoteNetworks: RemoteChain[]
   t: ReturnType<typeof useTranslations<'get-started'>>
 }
 
 const tokenTableColumns = ({
-  hemi,
   remoteNetworks,
   t,
 }: TokenTableColumnsProps): ColumnDef<EvmToken>[] => [
@@ -55,12 +62,7 @@ const tokenTableColumns = ({
     meta: { width: 147 },
   },
   {
-    cell: ({ row }) => (
-      <TokenTableAddressCell
-        address={row.original.address}
-        networkName={hemi.name}
-      />
-    ),
+    cell: ({ row }) => <HemiAddressCell token={row.original} />,
     header: () => <Header text={t('l2-address')} />,
     id: 'l2-address',
     meta: { width: 385 },
@@ -96,24 +98,22 @@ const filterTokensBySearch = function (tokens: EvmToken[], searchText: string) {
 
 export const AddHemiToken = function () {
   const t = useTranslations('get-started')
-  const hemi = useHemi()
   const { remoteNetworks } = useNetworks()
   const hemiTokens = useHemiTokens()
   const [searchText, setSearchText] = useState('')
-  const debouncedSearchText = useDebounce(searchText)
 
   const columns = useMemo(
-    () => tokenTableColumns({ hemi, remoteNetworks, t }),
-    [hemi, remoteNetworks, t],
+    () => tokenTableColumns({ remoteNetworks, t }),
+    [remoteNetworks, t],
   )
 
   const tokens = useMemo(
-    () => filterTokensBySearch(hemiTokens, debouncedSearchText),
-    [debouncedSearchText, hemiTokens],
+    () => filterTokensBySearch(hemiTokens, searchText),
+    [hemiTokens, searchText],
   )
 
   const showNoMatchingTokens =
-    debouncedSearchText.trim().length > 0 && tokens.length === 0
+    searchText.trim().length > 0 && tokens.length === 0
 
   return (
     <Section card={false} step={{ position: 2 }}>
@@ -142,7 +142,7 @@ export const AddHemiToken = function () {
           <div className="mt-6 w-full rounded-xl text-sm font-medium">
             <div className="h-72 overflow-hidden">
               <Table
-                cellComponent={GetStartedTableColumn}
+                cellComponent={PlainColumn}
                 columns={columns}
                 data={tokens}
                 placeholder={

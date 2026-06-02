@@ -35,7 +35,7 @@ const TutorialCard = function ({
 
   return (
     <ExternalLink
-      className="flex h-28 overflow-hidden rounded-lg bg-white shadow-[0px_0px_0px_1px_rgba(0,0,0,0.05)] transition-colors hover:bg-neutral-50"
+      className="shadow-bs flex h-28 overflow-hidden rounded-lg bg-white transition-colors hover:bg-neutral-50"
       href={href}
       onClick={addTracking()}
     >

@@ -6,13 +6,13 @@ type Props = {
 }
 
 const StepNumber = ({ position }: { position: number }) => (
-  <div className="flex size-full flex-col justify-center text-center text-[11px] font-semibold lining-nums tabular-nums leading-[0] tracking-[0.11px] text-white">
-    <span className="leading-[11px]">{position}</span>
+  <div className="text-xxs flex size-full items-center justify-center font-semibold lining-nums tabular-nums text-white">
+    {position}
   </div>
 )
 
 export const Step = ({ description, position }: Props) => (
-  <div className="relative h-[68px] w-5 shrink-0">
+  <div className="h-17 relative w-5 shrink-0">
     <div className="absolute left-1/2 top-0 -translate-x-1/2">
       <LongVerticalLine dashed={false} stroke="stroke-neutral-300" />
     </div>

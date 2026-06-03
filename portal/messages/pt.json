@@ -40,9 +40,9 @@
       },
       "form": {
         "cooldown-warning": "Sacar fundos leva 7 dias para concluir.",
-        "ethereum-gas-fee": "Taxa de gas no Ethereum",
+        "ethereum-gas-fee": "Taxa de gás no Ethereum",
         "network-fee": "Taxa de rede",
-        "total-fee": "Custo total de gas",
+        "total-fee": "Custo total de gás",
         "withdrawing": "Sacando...",
         "you-will-receive": "Você vai receber"
       },

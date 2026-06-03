@@ -15,7 +15,6 @@ import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient, getHemiClient } from 'utils/chainClients'
 import { type Address } from 'viem'
-import { convertToShares } from 'viem-erc4626/actions'
 
 type QuoteDeposit = {
   callbackFee: bigint
@@ -24,10 +23,6 @@ type QuoteDeposit = {
   // (`Gateway.previewDeposit(remoteAsset, amount)`). Used by `useDeposit` to
   // optimistically bump `totalAssets()` in its native unit.
   peggedAmount: bigint
-  // Share-token amount the user will receive for this deposit
-  // (`StakingVault.convertToShares(peggedAmount)`). Drives the "You'll receive"
-  // preview in the deposit form.
-  shares: bigint
 }
 
 // Chains the contract reads needed to know the user's true cost on Hemi
@@ -87,14 +82,7 @@ export const useQuoteDeposit = ({
           tokenIn: assetData.remoteAsset,
         }),
       ])
-      const shares =
-        peggedAmount > BigInt(0)
-          ? await convertToShares(ethereumClient, {
-              address: getStakingVaultForShare(shareAddress),
-              assets: peggedAmount,
-            })
-          : BigInt(0)
-      return { callbackFee, nativeFee, peggedAmount, shares }
+      return { callbackFee, nativeFee, peggedAmount }
     },
     queryKey: [
       'hemi-earn',

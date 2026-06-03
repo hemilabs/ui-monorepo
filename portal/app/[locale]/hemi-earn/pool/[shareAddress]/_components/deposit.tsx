@@ -18,6 +18,7 @@ import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useDepositFees } from '../_hooks/useDepositFees'
+import { useDepositShares } from '../_hooks/useDepositShares'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { type DepositOperationRunning } from '../_types/operations'
 
@@ -145,6 +146,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     shareAddress: pool.shareAddress,
   })
 
+  const { data: shares } = useDepositShares({
+    peggedAmount: quote?.peggedAmount,
+    shareAddress: pool.shareAddress,
+  })
+
   const { setDrawerQueryString } = useDrawerQueryString()
 
   const { isPending: isRunningOperation, mutate: deposit } = useDeposit({
@@ -199,7 +205,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
             nativeToken={nativeToken}
             networkFee={networkFee}
             shareToken={pool.shareToken}
-            shares={quote?.shares}
+            shares={shares}
             totalFees={totalFees}
           />
         )

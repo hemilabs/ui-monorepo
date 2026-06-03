@@ -14,7 +14,6 @@ import { walletIsConnected } from 'utils/wallet'
 import { type Address } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
-import { useCooldownDuration } from '../../../_hooks/useCooldownDuration'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
@@ -37,12 +36,11 @@ const SetMaxEvmBalance = dynamic(
 type BelowFormProps = {
   account: Address | undefined
   bridgingFee: bigint
-  cooldownDays: number | undefined
   hemiGasFee: bigint
-  isCooldownDaysLoading: boolean
   isCooldownEligible: boolean
   isFeesError: boolean
   nativeToken: EvmToken
+  shareAddress: Address
   shareToken: EvmToken
   shares: bigint | undefined
   totalFees: bigint
@@ -51,12 +49,11 @@ type BelowFormProps = {
 const BelowForm = ({
   account,
   bridgingFee,
-  cooldownDays,
   hemiGasFee,
-  isCooldownDaysLoading,
   isCooldownEligible,
   isFeesError,
   nativeToken,
+  shareAddress,
   shares,
   shareToken,
   totalFees,
@@ -74,7 +71,7 @@ const BelowForm = ({
       />
     </div>
     {account && isCooldownEligible && (
-      <CooldownWarning days={cooldownDays} isLoading={isCooldownDaysLoading} />
+      <CooldownWarning shareAddress={shareAddress} />
     )}
   </div>
 )
@@ -153,11 +150,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     shareAddress: pool.shareAddress,
   })
 
-  const { data: cooldownDays, isPending: isCooldownDaysLoading } =
-    useCooldownDuration({
-      shareAddress: pool.shareAddress,
-    })
-
   const { data: shares } = useDepositShares({
     peggedAmount: quote?.peggedAmount,
     shareAddress: pool.shareAddress,
@@ -212,12 +204,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
           <BelowForm
             account={address}
             bridgingFee={layerZeroFee}
-            cooldownDays={cooldownDays}
             hemiGasFee={hemiGasFee}
-            isCooldownDaysLoading={isCooldownDaysLoading}
             isCooldownEligible={isCooldownEligible}
             isFeesError={isFeesError}
             nativeToken={nativeToken}
+            shareAddress={pool.shareAddress}
             shareToken={pool.shareToken}
             shares={shares}
             totalFees={totalFees}

@@ -114,6 +114,7 @@ export const useDepositFees = function ({
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
 
   return {
+    approvalGasFees,
     depositGasFees,
     isFeesError: computeIsFeesError({
       isApprovalGasFeesError,

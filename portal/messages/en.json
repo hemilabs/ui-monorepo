@@ -39,8 +39,12 @@
         "withdraw-token": "Withdraw {symbol}"
       },
       "form": {
+        "cooldown-warning": "Withdrawing funds takes 7 days to complete.",
+        "ethereum-gas-fee": "Ethereum gas fee",
+        "network-fee": "Network fee",
         "total-fee": "Total gas fee",
-        "withdrawing": "Withdrawing..."
+        "withdrawing": "Withdrawing...",
+        "you-will-receive": "You'll receive"
       },
       "here-is-your-tx": "Here's your transaction:",
       "historical-metrics": {

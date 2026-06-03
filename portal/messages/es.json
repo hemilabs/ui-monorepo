@@ -39,8 +39,12 @@
         "withdraw-token": "Retirar {symbol}"
       },
       "form": {
+        "cooldown-warning": "Retirar fondos tarda 7 días en completarse.",
+        "ethereum-gas-fee": "Costo de gas en Ethereum",
+        "network-fee": "Costo de red",
         "total-fee": "Costo total de gas",
-        "withdrawing": "Retirando..."
+        "withdrawing": "Retirando...",
+        "you-will-receive": "Recibirás"
       },
       "here-is-your-tx": "Aquí está su transacción:",
       "historical-metrics": {

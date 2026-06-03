@@ -13,10 +13,12 @@ const GetStarted = function () {
 
   return (
     <PageLayout variant="center">
-      <PageTitle subtitle={t('subheading')} title={t('heading')} />
-      <AddHemiWallet />
-      <AddHemiToken />
-      <LearnMore />
+      <div className="pb-12 lg:pb-16">
+        <PageTitle subtitle={t('subheading')} title={t('heading')} />
+        <AddHemiWallet />
+        <AddHemiToken />
+        <LearnMore />
+      </div>
     </PageLayout>
   )
 }

@@ -21,8 +21,8 @@ export type EarnTransactionStatusType =
 
 export type EarnTransactionKindType = 'DEPOSIT' | 'REDEEM'
 
-// Mirror of the `EarnRequestRow` returned by the subgraph-api endpoint
-// `GET /:chainId/earn-requests/:address` (PR #1946). BigInt values arrive as
+// Mirror of the `EarnRequestRow` returned by the portal-api endpoint
+// `GET /subgraphs/:chainId/earn-requests/:address` (PR #1946). BigInt values arrive as
 // JSON strings; consumers parse with `BigInt(...)` for arithmetic
 // (`formatUnits`) and `Number(...)` for display (`InRelativeTime`). The
 // subgraph schema doesn't expose `operator` yet, so it's intentionally absent.

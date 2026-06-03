@@ -28,7 +28,6 @@ packages:
   - 'portal'
   - 'portal-backend/api'
   - 'portal-backend/cron/*'
-  - 'subgraph-api'
   - 'subgraphs/*'
 
 patchedDependencies:

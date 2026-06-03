@@ -12,7 +12,6 @@ on:
       - 'packages/ve-hemi-actions/**'
       - 'packages/ve-hemi-rewards/**'
       - 'portal-backend/**'
-      - 'subgraph-api/**'
 
 permissions:
   contents: read
@@ -23,11 +22,11 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - run: |
-          version=$(jq -r '.version' ${{ matrix.versionFile || format('{0}/package.json', matrix.context) }})
+          version=$(jq -r '.version' ${{ matrix.versionFile || './package.json' }})
           echo "VERSION=$version" >> $GITHUB_ENV
       - uses: ./.github/actions/docker-build-push
         with:
-          context: ${{ matrix.context }}
+          context: .
           dockerfile: ${{ matrix.dockerfile }}
           dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
           dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -36,22 +35,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - context: .
-            dockerfile: portal-backend/api/Dockerfile
+          - dockerfile: portal-backend/api/Dockerfile
             versionFile: portal-backend/api/package.json
             image: hemilabs/portal-backend-api
-          - context: .
-            dockerfile: portal-backend/cron/hemi-supply/Dockerfile
+          - dockerfile: portal-backend/cron/hemi-supply/Dockerfile
             versionFile: portal-backend/cron/hemi-supply/package.json
             image: hemilabs/hemi-supply-cron
-          - context: .
-            dockerfile: portal-backend/cron/token-prices/Dockerfile
+          - dockerfile: portal-backend/cron/token-prices/Dockerfile
             versionFile: portal-backend/cron/token-prices/package.json
             image: hemilabs/token-prices-cron
-          - context: .
-            dockerfile: portal-backend/cron/vaults-monitor/Dockerfile
+          - dockerfile: portal-backend/cron/vaults-monitor/Dockerfile
             versionFile: portal-backend/cron/vaults-monitor/package.json
             image: hemilabs/vaults-monitor-cron
-          # Kept as is, as it will be removed - See https://github.com/hemilabs/ui-monorepo/issues/1425
-          - context: subgraph-api
-            image: hemilabs/subgraph-api

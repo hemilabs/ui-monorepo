@@ -10,7 +10,6 @@ lerna-debug.log
 node_modules
 out
 packages/*/dist
-subgraph-api/.env*
 subgraphs/.env
 # information from docker-compose
 subgraphs/data

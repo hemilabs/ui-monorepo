@@ -20,7 +20,6 @@ This monorepo uses pnpm workspaces, and contains the following projects:
   - **packages/ve-hemi-rewards**: Package that contains functions needed to interact with the veHEMI rewards system.
 - **portal**: Portal webapp living at [https://app.hemi.xyz](https://app.hemi.xyz).
 - **portal-backend**: Various APIs and cron jobs the Portal uses.
-- **subgraph-api**: API for querying hemi subgraphs needed for the portal.
 - **subgraphs/\***: The different subgraphs needed for the portal, such as tunneling operations.
 
 ## Setup

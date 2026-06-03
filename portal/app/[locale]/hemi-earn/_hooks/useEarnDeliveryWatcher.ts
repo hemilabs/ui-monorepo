@@ -17,25 +17,29 @@ const vetroPoolsPrefix = ['hemi-earn', 'pools'] as const
 const vetroUserPoolBalancePrefix = ['hemi-earn', 'user-pool-balance'] as const
 
 type ReconcileArgs = {
-  deleteLocalOperationByInitiateTxHash: ReturnType<
-    typeof useLocalEarnOperations
-  >['deleteLocalOperationByInitiateTxHash']
   localOperations: LocalEarnOperation[]
+  markSettledByInitiateTxHash: ReturnType<
+    typeof useLocalEarnOperations
+  >['markSettledByInitiateTxHash']
   subgraphHashes: Set<string>
 }
 
-// Hard-deletes any local entry whose `initiateTxHash` has appeared in the
-// subgraph — the subgraph row supersedes the local mirror. Idempotent: a
-// re-entry of a hash already gone is a no-op.
+// Soft-settles any local entry whose `initiateTxHash` has appeared in the
+// subgraph — the subgraph row supersedes the local mirror in the merged
+// table, but the local entry stays in storage so drawers can still read
+// locally-captured metadata (e.g. `approvalTxHash`) that the indexer
+// doesn't expose. Idempotent: re-flagging an already-settled entry is a
+// no-op.
 function reconcileLocals({
-  deleteLocalOperationByInitiateTxHash,
   localOperations,
+  markSettledByInitiateTxHash,
   subgraphHashes,
 }: ReconcileArgs) {
   for (const local of localOperations) {
     if (!local.initiateTxHash) continue
+    if (local.settled) continue
     if (!subgraphHashes.has(local.initiateTxHash.toLowerCase())) continue
-    deleteLocalOperationByInitiateTxHash(local.initiateTxHash)
+    markSettledByInitiateTxHash(local.initiateTxHash)
   }
 }
 
@@ -83,7 +87,7 @@ function invalidateVetroBalances(
 export const useEarnDeliveryWatcher = function () {
   const { address } = useAccount()
   const queryClient = useQueryClient()
-  const { deleteLocalOperationByInitiateTxHash, localOperations } =
+  const { localOperations, markSettledByInitiateTxHash } =
     useLocalEarnOperations()
   const { data } = useEarnTransactionsQuery()
 
@@ -115,20 +119,14 @@ export const useEarnDeliveryWatcher = function () {
       )
       previousSubgraphStatusRef.current = subgraphHashToStatus
       reconcileLocals({
-        deleteLocalOperationByInitiateTxHash,
         localOperations,
+        markSettledByInitiateTxHash,
         subgraphHashes: new Set(subgraphHashToStatus.keys()),
       })
       if (crossChainDelivered) {
         invalidateVetroBalances(queryClient)
       }
     },
-    [
-      address,
-      data,
-      deleteLocalOperationByInitiateTxHash,
-      localOperations,
-      queryClient,
-    ],
+    [address, data, localOperations, markSettledByInitiateTxHash, queryClient],
   )
 }

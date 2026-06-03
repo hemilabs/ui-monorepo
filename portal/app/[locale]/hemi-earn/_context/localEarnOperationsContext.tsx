@@ -14,7 +14,7 @@ import { useAccount } from 'wagmi'
 import { type LocalEarnOperation } from '../types'
 
 const STORAGE_KEY = 'hemi-earn:local-operations'
-const TTL_SECONDS = 7 * 24 * 60 * 60
+const TTL_SECONDS = 90 * 24 * 60 * 60
 const MAX_ENTRIES_PER_ACCOUNT = 100
 
 type Store = Record<string, LocalEarnOperation[]>
@@ -27,13 +27,15 @@ type UpsertPayload = Partial<LocalEarnOperation> & {
 
 type LocalEarnOperationsContextValue = {
   clearForAccount: (account: Address) => void
-  // Removes the entry whose `initiateTxHash` matches. Scoped to the connected
-  // wallet so a hash-match can't accidentally touch another account's entries
-  // on a shared device. Used by retry flows (to supersede a specific prior
-  // attempt) and by the reconcile loop (once the subgraph has indexed the
-  // request, the local mirror is no longer needed).
-  deleteLocalOperationByInitiateTxHash: (initiateTxHash: Hash) => void
   localOperations: LocalEarnOperation[]
+  // Soft-deletes the entry whose `initiateTxHash` matches by flipping
+  // `settled: true`. Scoped to the connected wallet so a hash-match can't
+  // accidentally touch another account's entries on a shared device. Used
+  // by retry flows (to supersede a specific prior attempt) and by the
+  // reconcile loop (once the subgraph has indexed the request, the row
+  // hides from the merge but the entry stays around so the drawer can
+  // still read locally-captured metadata like `approvalTxHash`).
+  markSettledByInitiateTxHash: (initiateTxHash: Hash) => void
   upsertLocalOperation: (payload: UpsertPayload) => void
 }
 
@@ -138,7 +140,7 @@ export const LocalEarnOperationsProvider = function ({
     [setStore],
   )
 
-  const deleteLocalOperationByInitiateTxHash = useCallback(
+  const markSettledByInitiateTxHash = useCallback(
     function (initiateTxHash: Hash) {
       if (!address) return
       const targetAccount = normalizeAccount(address)
@@ -146,11 +148,19 @@ export const LocalEarnOperationsProvider = function ({
         const accountEntries = prev[targetAccount]
         if (!accountEntries) return prev
         const needle = initiateTxHash.toLowerCase()
-        const filtered = accountEntries.filter(
-          e => e.initiateTxHash?.toLowerCase() !== needle,
-        )
-        if (filtered.length === accountEntries.length) return prev
-        return { ...prev, [targetAccount]: filtered }
+        let mutated = false
+        const updated = accountEntries.map(function (e) {
+          if (
+            e.initiateTxHash?.toLowerCase() !== needle ||
+            e.settled === true
+          ) {
+            return e
+          }
+          mutated = true
+          return { ...e, settled: true }
+        })
+        if (!mutated) return prev
+        return { ...prev, [targetAccount]: updated }
       })
     },
     [address, setStore],
@@ -167,14 +177,14 @@ export const LocalEarnOperationsProvider = function ({
   const value = useMemo<LocalEarnOperationsContextValue>(
     () => ({
       clearForAccount,
-      deleteLocalOperationByInitiateTxHash,
       localOperations,
+      markSettledByInitiateTxHash,
       upsertLocalOperation,
     }),
     [
       clearForAccount,
-      deleteLocalOperationByInitiateTxHash,
       localOperations,
+      markSettledByInitiateTxHash,
       upsertLocalOperation,
     ],
   )

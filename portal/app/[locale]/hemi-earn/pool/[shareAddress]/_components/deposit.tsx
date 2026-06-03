@@ -96,13 +96,13 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
     on(emitter) {
-      // Drawer opens only after the deposit tx is signed. Approval
-      // happens as a pre-drawer wallet modal, with the form's submit
-      // button surfacing the "Approving..." state. Mirrors the tunnel
-      // pattern where the approval step is hidden when its tx hash isn't
-      // surfaced — here we never surface it. Wired here (rather than
-      // inside `useDeposit`) so the hook stays reusable outside the pool
-      // page (the home retry calls it without a drawer to open).
+      // Open the pool drawer as soon as the user signs anything — wired
+      // here (rather than inside `useDeposit`) so the hook stays reusable
+      // outside the pool page (the home retry calls it without a drawer
+      // to open).
+      emitter.on('user-signed-approval', () =>
+        setDrawerQueryString('depositing'),
+      )
       emitter.on('user-signed-deposit', () =>
         setDrawerQueryString('depositing'),
       )

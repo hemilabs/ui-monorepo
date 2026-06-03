@@ -92,6 +92,17 @@ const buildWaitingForSharesStep = (
   txHash: getTerminalDeliveryTxHash(tx),
 })
 
+const buildApprovalStep = (
+  approvalTxHash: NonNullable<EarnTransaction['approvalTxHash']>,
+  token: EvmToken,
+  t: Translator,
+) => ({
+  description: <span>{t('step.approve-token', { symbol: token.symbol })}</span>,
+  explorerChainId: hemi.id,
+  status: ProgressStatus.COMPLETED,
+  txHash: approvalTxHash,
+})
+
 export const HistoricalDepositReview = function ({
   callToAction,
   onClose,
@@ -115,6 +126,12 @@ export const HistoricalDepositReview = function ({
       description: <span>{t('step.approval-needed')}</span>,
       status: ProgressStatus.NOT_READY,
     })
+  }
+  // Only the locally-mirrored entries carry `approvalTxHash` (see merge in
+  // `useEarnTransactions`). Rows opened from another browser/device won't
+  // have this step — the indexer doesn't link an approval tx to a request.
+  if (transaction.approvalTxHash) {
+    steps.push(buildApprovalStep(transaction.approvalTxHash, token, t))
   }
   steps.push(buildStakeStep(transaction, token, t))
   steps.push(buildWaitingForSharesStep(transaction, t, waitingForShares))

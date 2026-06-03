@@ -79,6 +79,7 @@
         "deposit-subheading": "Revise sua transação de depósito de stake.",
         "step": {
           "approval-needed": "Aprovação necessária",
+          "approve-token": "Aprovar {symbol}",
           "stake-token": "Fazer stake de {symbol}",
           "get-share-tokens": "Receber share tokens"
         }

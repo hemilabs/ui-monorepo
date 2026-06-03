@@ -1,6 +1,7 @@
 'use client'
 
 import { AddTokenToWallet } from 'components/addTokenToWallet'
+import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
@@ -10,6 +11,7 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
+import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
@@ -30,9 +32,8 @@ type Props = {
   onClose: VoidFunction
 }
 
-// Drawer opens after the user signs the deposit tx (never during approval —
-// approval is handled as a pre-drawer wallet modal, mirroring the tunnel
-// pattern). Steps shown: Stake + Get share tokens.
+// Drawer opens after the user signs the first wallet prompt (approval if
+// needed, otherwise the deposit).
 export const ReviewDeposit = function ({ onClose }: Props) {
   const { depositOperation, input, pool, selectedAsset } = usePoolForm()
   const t = useTranslations('hemi-earn.pool.drawer')
@@ -57,6 +58,17 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   const amount = parseTokenUnits(input, selectedAsset.token)
   const routerAddress = getHemiEarnRouterAddress()
+
+  const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
+    useEstimateApproveErc20Fees({
+      amount,
+      enabled: [
+        DepositStatus.APPROVAL_TX_FAILED,
+        DepositStatus.APPROVAL_TX_PENDING,
+      ].includes(depositStatus),
+      spender: routerAddress,
+      token: selectedAsset.token,
+    })
 
   const { data: quote } = useQuoteDeposit({
     amount,
@@ -107,6 +119,36 @@ export const ReviewDeposit = function ({ onClose }: Props) {
           token: getNativeToken(chainId),
         }
       : undefined
+
+  const addApprovalStep = function () {
+    const showFees = [
+      DepositStatus.APPROVAL_TX_FAILED,
+      DepositStatus.APPROVAL_TX_PENDING,
+    ].includes(depositStatus)
+
+    const statusMap: Partial<Record<DepositStatusType, ProgressStatusType>> = {
+      [DepositStatus.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
+      [DepositStatus.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
+    }
+
+    return {
+      description: (
+        <ChainLabel
+          active={depositStatus === DepositStatus.APPROVAL_TX_PENDING}
+          chainId={chainId}
+          label={t('approving', { symbol: selectedAsset.token.symbol })}
+        />
+      ),
+      explorerChainId: chainId,
+      fees: getStepFees({
+        fee: approvalGasFees,
+        isError: isApprovalGasFeesError,
+        show: showFees,
+      }),
+      status: statusMap[depositStatus] ?? ProgressStatus.COMPLETED,
+      txHash: depositOperation?.approvalTxHash,
+    }
+  }
 
   const addStakeStep = function () {
     const statusMap: Record<DepositStatusType, ProgressStatusType> = {
@@ -198,13 +240,23 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     return null
   }
 
+  const getSteps = function () {
+    const steps: StepPropsWithoutPosition[] = []
+    if (depositOperation?.approvalTxHash) {
+      steps.push(addApprovalStep())
+    }
+    steps.push(addStakeStep())
+    steps.push(addGetShareTokensStep())
+    return steps
+  }
+
   return (
     <Operation
       amount={depositOperation?.amountIn ?? amount.toString()}
       callToAction={getCallToAction()}
       heading={t('deposit.heading')}
       onClose={onClose}
-      steps={[addStakeStep(), addGetShareTokensStep()]}
+      steps={getSteps()}
       subheading={t('deposit.subheading')}
       token={selectedAsset.token}
     />

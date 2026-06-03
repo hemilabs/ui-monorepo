@@ -37,6 +37,9 @@ export const RetryDeposit = function () {
     callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
     on(emitter) {
+      emitter.on('user-signed-approval', () =>
+        setDrawerQueryString('depositing'),
+      )
       emitter.on('user-signed-deposit', () =>
         setDrawerQueryString('depositing'),
       )
@@ -59,6 +62,7 @@ export const RetryDeposit = function () {
       })
     },
     pool,
+    priorApprovalTxHash: depositOperation?.approvalTxHash,
     selectedAsset,
     // Hide the specific failed row from the table when the user commits to
     // this retry. `depositOperation.transactionHash` is the failed deposit's

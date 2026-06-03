@@ -34,7 +34,11 @@ export const AddChainButton = function ({ chain }: Props) {
     )
   }
 
-  const label = isMutating ? t('adding-chain') : t('add-to-wallet')
+  const label = isMutating
+    ? t('adding-chain')
+    : isConnected
+      ? t('add-to-wallet')
+      : tCommon('connect-wallet')
 
   return (
     <div className="shrink-0">

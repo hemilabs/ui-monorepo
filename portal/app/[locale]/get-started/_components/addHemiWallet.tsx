@@ -59,7 +59,6 @@ const AddSection = function ({
 }
 
 export const AddHemiWallet = function () {
-  const [networkType] = useNetworkType()
   const t = useTranslations('get-started')
   const { track } = useUmami()
 
@@ -90,7 +89,7 @@ export const AddHemiWallet = function () {
                 {t('add-hemi-network-to-your-wallet')}
               </h3>
               <p className="mt-1 font-normal text-neutral-500">
-                {t(`add-networks-${networkType}`)}
+                {t('add-hemi-network-description')}
               </p>
             </div>
           </div>

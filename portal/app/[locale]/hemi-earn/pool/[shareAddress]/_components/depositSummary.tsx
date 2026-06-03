@@ -1,5 +1,6 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { TokenLogo } from 'components/tokenLogo'
+import { hemi } from 'hemi-viem'
 import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -77,20 +78,20 @@ const SharesRow = function ({ shares, shareToken }: SharesRowProps) {
 }
 
 type Props = {
-  ethereumGasFee: bigint
+  bridgingFee: bigint
+  hemiGasFee: bigint
   isFeesError: boolean
   nativeToken: EvmToken
-  networkFee: bigint
   shareToken: EvmToken
   shares: bigint | undefined
   totalFees: bigint
 }
 
 export const DepositSummary = function ({
-  ethereumGasFee,
+  bridgingFee,
+  hemiGasFee,
   isFeesError,
   nativeToken,
-  networkFee,
   shares,
   shareToken,
   totalFees,
@@ -101,15 +102,15 @@ export const DepositSummary = function ({
       <SharesRow shareToken={shareToken} shares={shares} />
       <div className="h-px w-full bg-neutral-200" />
       <FeeRow
-        amount={networkFee}
+        amount={hemiGasFee}
         isError={isFeesError}
-        label={t('hemi-earn.pool.form.network-fee')}
+        label={t('common.network-gas-fee', { network: hemi.name })}
         token={nativeToken}
       />
       <FeeRow
-        amount={ethereumGasFee}
+        amount={bridgingFee}
         isError={isFeesError}
-        label={t('hemi-earn.pool.form.ethereum-gas-fee')}
+        label={t('hemi-earn.pool.form.bridging-fees')}
         token={nativeToken}
       />
       <FeeRow

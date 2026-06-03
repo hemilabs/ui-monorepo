@@ -36,13 +36,13 @@ const SetMaxEvmBalance = dynamic(
 
 type BelowFormProps = {
   account: Address | undefined
+  bridgingFee: bigint
   cooldownDays: number | undefined
-  ethereumGasFee: bigint
+  hemiGasFee: bigint
   isCooldownDaysLoading: boolean
   isCooldownEligible: boolean
   isFeesError: boolean
   nativeToken: EvmToken
-  networkFee: bigint
   shareToken: EvmToken
   shares: bigint | undefined
   totalFees: bigint
@@ -50,13 +50,13 @@ type BelowFormProps = {
 
 const BelowForm = ({
   account,
+  bridgingFee,
   cooldownDays,
-  ethereumGasFee,
+  hemiGasFee,
   isCooldownDaysLoading,
   isCooldownEligible,
   isFeesError,
   nativeToken,
-  networkFee,
   shares,
   shareToken,
   totalFees,
@@ -64,10 +64,10 @@ const BelowForm = ({
   <div className="flex flex-col gap-y-4">
     <div className="px-4">
       <DepositSummary
-        ethereumGasFee={ethereumGasFee}
+        bridgingFee={bridgingFee}
+        hemiGasFee={hemiGasFee}
         isFeesError={isFeesError}
         nativeToken={nativeToken}
-        networkFee={networkFee}
         shareToken={shareToken}
         shares={shares}
         totalFees={totalFees}
@@ -202,7 +202,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   }
 
   const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
-  const networkFee =
+  const hemiGasFee =
     depositGasFees + (needsApproval ? approvalGasFees : BigInt(0))
 
   return (
@@ -211,13 +211,13 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
         canDeposit && (
           <BelowForm
             account={address}
+            bridgingFee={layerZeroFee}
             cooldownDays={cooldownDays}
-            ethereumGasFee={layerZeroFee}
+            hemiGasFee={hemiGasFee}
             isCooldownDaysLoading={isCooldownDaysLoading}
             isCooldownEligible={isCooldownEligible}
             isFeesError={isFeesError}
             nativeToken={nativeToken}
-            networkFee={networkFee}
             shareToken={pool.shareToken}
             shares={shares}
             totalFees={totalFees}

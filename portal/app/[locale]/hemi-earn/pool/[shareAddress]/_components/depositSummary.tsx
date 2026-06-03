@@ -1,6 +1,6 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { TokenLogo } from 'components/tokenLogo'
-import { hemi } from 'hemi-viem'
+import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -97,6 +97,7 @@ export const DepositSummary = function ({
   totalFees,
 }: Props) {
   const t = useTranslations()
+  const hemi = useHemi()
   return (
     <div className="flex flex-col gap-y-2.5">
       <SharesRow shareToken={shareToken} shares={shares} />

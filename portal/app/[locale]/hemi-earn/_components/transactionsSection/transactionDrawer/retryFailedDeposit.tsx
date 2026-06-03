@@ -70,6 +70,7 @@ export const RetryFailedDeposit = function ({
       })
     },
     pool,
+    priorApprovalTxHash: transaction.approvalTxHash,
     selectedAsset: asset,
     // Hide the specific failed row from the table once this retry is signed.
     supersedesInitiateTxHash: transaction.initiateTxHash,

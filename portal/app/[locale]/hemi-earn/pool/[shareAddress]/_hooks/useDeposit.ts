@@ -25,6 +25,11 @@ type UseDeposit = {
   input: string
   on?: (emitter: EventEmitter<RequestDepositEvents>) => void
   pool: EarnPool
+  // Set by retry callers when the prior attempt had a successful approval
+  // (allowance is still on-chain, so `requestDeposit` won't emit
+  // `user-signed-approval` again). Carried forward into the new local-store
+  // entry so the historical drawer keeps surfacing the approval step.
+  priorApprovalTxHash?: Hash
   selectedAsset: EarnAsset
   // Set by retry callers: the `initiateTxHash` of the specific prior FAILED
   // attempt being replaced. Once the new deposit is signed, that entry is
@@ -39,6 +44,7 @@ export const useDeposit = function ({
   input,
   on,
   pool,
+  priorApprovalTxHash,
   selectedAsset,
   supersedesInitiateTxHash,
   updateDepositOperation,
@@ -53,7 +59,7 @@ export const useDeposit = function ({
   const queryClient = useQueryClient()
   // Requires <LocalEarnOperationsProvider> upstream (mounted in the
   // hemi-earn layout). Hook throws at runtime if used outside it.
-  const { deleteLocalOperationByInitiateTxHash, upsertLocalOperation } =
+  const { markSettledByInitiateTxHash, upsertLocalOperation } =
     useLocalEarnOperations()
 
   const tokenBalanceQueryKey = getTokenBalanceQueryKey({
@@ -84,10 +90,13 @@ export const useDeposit = function ({
 
       const walletClient = await getWalletClient(config, { chainId })
 
-      // Local-store entries are only created once the user signs the deposit
-      // tx (where we have an `initiateTxHash`). Approval events stay in the
-      // pool-form context but don't get persisted — the home drawer is
-      // read-only and doesn't show approval steps.
+      // Local-store entries are created at two points:
+      //   1. `user-signed-approval` — captures `approvalTxHash` so the
+      //      historical drawer can later render the approval step (the
+      //      indexer has no way to link an approval tx to a request).
+      //   2. `user-signed-deposit` — adds `initiateTxHash`, which is the
+      //      key the merge in `useEarnTransactions` uses to dedupe against
+      //      the subgraph row.
       const startedAt = Math.floor(Date.now() / 1000)
       const baseLocalPayload = {
         account: address,
@@ -99,6 +108,13 @@ export const useDeposit = function ({
         shareAddress: pool.shareAddress,
         startedAt,
       }
+
+      // Tracks the approval hash for this specific attempt. Seeded from
+      // `priorApprovalTxHash` so retries (where allowance is still on-chain
+      // and `user-signed-approval` won't fire) keep showing the original
+      // approval step in the historical drawer. Overwritten when a fresh
+      // approval is signed in this attempt.
+      let observedApprovalTxHash: Hash | undefined = priorApprovalTxHash
 
       const { emitter, promise } = requestDeposit({
         account: address,
@@ -112,10 +128,22 @@ export const useDeposit = function ({
       })
 
       emitter.on('user-signed-approval', function (approvalTxHash) {
+        observedApprovalTxHash = approvalTxHash
         updateDepositOperation?.({
+          amountIn: amount.toString(),
           approvalTxHash,
           status: DepositStatus.APPROVAL_TX_PENDING,
           transactionHash: undefined,
+        })
+        // Persist the approval hash to the local store so the historical
+        // drawer can later surface the approval step even on a different
+        // route — the indexer never sees this association.
+        upsertLocalOperation({
+          ...baseLocalPayload,
+          approvalTxHash,
+          operation: {
+            status: DepositStatus.APPROVAL_TX_PENDING,
+          },
         })
       })
 
@@ -142,22 +170,24 @@ export const useDeposit = function ({
 
       emitter.on('user-signed-deposit', function (transactionHash) {
         updateDepositOperation?.({
+          amountIn: amount.toString(),
           status: DepositStatus.DEPOSIT_TX_PENDING,
           transactionHash,
         })
         upsertLocalOperation({
           ...baseLocalPayload,
+          approvalTxHash: observedApprovalTxHash,
           initiateTxHash: transactionHash,
           operation: {
             status: DepositStatus.DEPOSIT_TX_PENDING,
             transactionHash,
           },
         })
-        // Remove the specific prior FAILED entry the user is replacing.
+        // Hide the specific prior FAILED entry the user is replacing.
         // Done here (and not on retry click) so the row only disappears
         // once the user actually commits to the new attempt by signing.
         if (supersedesInitiateTxHash) {
-          deleteLocalOperationByInitiateTxHash(supersedesInitiateTxHash)
+          markSettledByInitiateTxHash(supersedesInitiateTxHash)
         }
       })
 

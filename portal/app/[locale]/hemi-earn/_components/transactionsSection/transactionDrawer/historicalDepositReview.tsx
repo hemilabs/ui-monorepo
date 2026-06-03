@@ -1,7 +1,10 @@
 'use client'
 
 import { Operation } from 'components/reviewOperation/operation'
-import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import {
+  ProgressStatus,
+  type ProgressStatusType,
+} from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
@@ -10,6 +13,8 @@ import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
 
+import { SparkleIcon } from '../../../_icons/sparkleIcon'
+import { getTerminalDeliveryTxHash } from '../../../_utils'
 import {
   type EarnTransaction,
   type EarnTransactionStatusType,
@@ -26,85 +31,78 @@ type Translator = ReturnType<
   typeof useTranslations<'hemi-earn.transactions.drawer'>
 >
 
-const stepConfigByStatus: Record<
-  EarnTransactionStatusType,
-  (
-    tx: EarnTransaction,
-    t: Translator,
-  ) => Pick<StepPropsWithoutPosition, 'description' | 'status' | 'txHash'>
-> = {
-  CANCELLED: (tx, t) => ({
-    description: <span>{t('step.deposit-cancelled')}</span>,
-    status: ProgressStatus.FAILED,
-    txHash: tx.initiateTxHash,
-  }),
-  CLAIMED: (tx, t) => ({
-    description: <span>{t('step.deposit-completed')}</span>,
-    status: ProgressStatus.COMPLETED,
-    txHash: tx.claimTxHash ?? undefined,
-  }),
-  FAILED: (tx, t) => ({
-    description: <span>{t('step.deposit-failed')}</span>,
-    status: ProgressStatus.FAILED,
-    txHash: tx.initiateTxHash,
-  }),
-  // TODO(design): add a second "Cross-chain delivery" step after the
-  // request-deposit step. Confirmed with the designer — needs to be
-  // mirrored across this drawer and `reviewDeposit.tsx` on the pool page,
-  // plus the withdraw drawers once that flow lands.
-  //
-  // Semantics for the new step:
-  //   - subgraph PENDING        → PROGRESS (LayerZero in flight)
-  //   - subgraph FULFILLED + tx.automatic === true   → PROGRESS
-  //     (waiting on auto-claim)
-  //   - subgraph FULFILLED + tx.automatic === false  → CTA — render a
-  //     "Claim deposit" button; the user has to send the claim tx
-  //     themselves. Fees apply, so this step needs the same fee line
-  //     treatment as the deposit step on the pool review.
-  //   - subgraph CLAIMED        → COMPLETED with `tx.claimTxHash`
-  //   - subgraph CANCELLED      → FAILED (recover CTA on automatic=false)
-  //
-  // Until then, PENDING / FULFILLED collapse into a single COMPLETED step
-  // so the on-chain piece isn't misrepresented as in-progress.
-  FULFILLED: (tx, t) => ({
-    description: <span>{t('step.deposit-completed')}</span>,
-    status: ProgressStatus.COMPLETED,
-    txHash: tx.initiateTxHash,
-  }),
-  PENDING: (tx, t) => ({
-    description: <span>{t('step.deposit-completed')}</span>,
-    status: ProgressStatus.COMPLETED,
-    txHash: tx.initiateTxHash,
-  }),
-  RECOVERED: (tx, t) => ({
-    description: <span>{t('step.deposit-recovered')}</span>,
-    status: ProgressStatus.COMPLETED,
-    txHash: tx.recoverTxHash ?? undefined,
-  }),
-  // Local-only: the user's request-deposit tx is still in flight (signed
-  // but not yet mined). Distinct from subgraph PENDING — that one means
-  // mined-and-indexed.
-  TX_PENDING: (tx, t) => ({
-    description: <span>{t('step.deposit-in-progress')}</span>,
-    status: ProgressStatus.PROGRESS,
-    txHash: tx.initiateTxHash,
-  }),
+type StepStates = {
+  stake: ProgressStatusType
+  waitingForShares: ProgressStatusType
 }
 
-const buildDepositStep = (
+const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
+  CANCELLED: {
+    stake: ProgressStatus.FAILED,
+    waitingForShares: ProgressStatus.NOT_READY,
+  },
+  CLAIMED: {
+    stake: ProgressStatus.COMPLETED,
+    waitingForShares: ProgressStatus.COMPLETED,
+  },
+  FAILED: {
+    stake: ProgressStatus.FAILED,
+    waitingForShares: ProgressStatus.NOT_READY,
+  },
+  FULFILLED: {
+    stake: ProgressStatus.COMPLETED,
+    waitingForShares: ProgressStatus.PROGRESS,
+  },
+  PENDING: {
+    stake: ProgressStatus.COMPLETED,
+    waitingForShares: ProgressStatus.PROGRESS,
+  },
+  RECOVERED: {
+    stake: ProgressStatus.COMPLETED,
+    waitingForShares: ProgressStatus.COMPLETED,
+  },
+  TX_PENDING: {
+    stake: ProgressStatus.PROGRESS,
+    waitingForShares: ProgressStatus.NOT_READY,
+  },
+}
+
+function buildStakeStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
+  const status = stepStatesByStatus[tx.status].stake
+  return {
+    description: (
+      <div className="flex items-center gap-x-2">
+        <SparkleIcon />
+        <span>{t('step.stake-token', { symbol: token.symbol })}</span>
+      </div>
+    ),
+    explorerChainId: hemi.id,
+    status,
+    txHash: tx.initiateTxHash,
+  }
+}
+
+const buildWaitingForSharesStep = (
   tx: EarnTransaction,
   t: Translator,
-): StepPropsWithoutPosition => ({
-  explorerChainId: hemi.id,
-  ...stepConfigByStatus[tx.status](tx, t),
+  status: ProgressStatusType,
+) => ({
+  description: <span>{t('step.get-share-tokens')}</span>,
+  status,
+  txHash: getTerminalDeliveryTxHash(tx),
 })
 
-// Drawer for entries that only exist in the subgraph — i.e. the
-// user doesn't have a local mirror of this deposit (different browser, local
-// storage cleared, etc). The subgraph schema doesn't carry approve tx hashes,
-// so historical entries never render an approval step — with one focused
-// exception: a FAILED entry can preview an "Approval needed" step when the
-// on-chain allowance is currently insufficient for the retry.
+const buildApprovalStep = (
+  approvalTxHash: NonNullable<EarnTransaction['approvalTxHash']>,
+  token: EvmToken,
+  t: Translator,
+) => ({
+  description: <span>{t('step.approve-token', { symbol: token.symbol })}</span>,
+  explorerChainId: hemi.id,
+  status: ProgressStatus.COMPLETED,
+  txHash: approvalTxHash,
+})
+
 export const HistoricalDepositReview = function ({
   callToAction,
   onClose,
@@ -120,6 +118,8 @@ export const HistoricalDepositReview = function ({
     spender: getHemiEarnRouterAddress(),
   })
 
+  const { waitingForShares } = stepStatesByStatus[transaction.status]
+
   const steps: StepPropsWithoutPosition[] = []
   if (transaction.status === 'FAILED' && needsApproval) {
     steps.push({
@@ -127,7 +127,14 @@ export const HistoricalDepositReview = function ({
       status: ProgressStatus.NOT_READY,
     })
   }
-  steps.push(buildDepositStep(transaction, t))
+  // Only the locally-mirrored entries carry `approvalTxHash` (see merge in
+  // `useEarnTransactions`). Rows opened from another browser/device won't
+  // have this step — the indexer doesn't link an approval tx to a request.
+  if (transaction.approvalTxHash) {
+    steps.push(buildApprovalStep(transaction.approvalTxHash, token, t))
+  }
+  steps.push(buildStakeStep(transaction, token, t))
+  steps.push(buildWaitingForSharesStep(transaction, t, waitingForShares))
 
   return (
     <Operation

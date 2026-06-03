@@ -96,9 +96,10 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
     on(emitter) {
-      // Open the pool drawer as soon as the user signs anything — wired here
-      // (rather than inside `useDeposit`) so the hook stays reusable outside
-      // the pool page (the home retry calls it without a drawer to open).
+      // Open the pool drawer as soon as the user signs anything — wired
+      // here (rather than inside `useDeposit`) so the hook stays reusable
+      // outside the pool page (the home retry calls it without a drawer
+      // to open).
       emitter.on('user-signed-approval', () =>
         setDrawerQueryString('depositing'),
       )

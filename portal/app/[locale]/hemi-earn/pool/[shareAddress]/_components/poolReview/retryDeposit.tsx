@@ -62,6 +62,7 @@ export const RetryDeposit = function () {
       })
     },
     pool,
+    priorApprovalTxHash: depositOperation?.approvalTxHash,
     selectedAsset,
     // Hide the specific failed row from the table when the user commits to
     // this retry. `depositOperation.transactionHash` is the failed deposit's

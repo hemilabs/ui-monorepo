@@ -29,6 +29,11 @@ export type EarnTransactionKindType = 'DEPOSIT' | 'REDEEM'
 export type EarnTransaction = {
   amountIn: string
   amountOut: string | null
+  // Approval tx hash, only available for entries surfaced from this
+  // browser's local store (where `useDeposit` captures it on
+  // `user-signed-approval`). Subgraph-only rows don't expose it — the
+  // indexer has no way to tie an approval tx to a specific request.
+  approvalTxHash?: Hash
   asset: Address
   automatic: boolean
   claimTxHash: Hash | null
@@ -82,9 +87,12 @@ export type EarnPosition = {
 }
 
 // Local mirror of an earn operation initiated from this browser. Survives the
-// route change between /hemi-earn and /hemi-earn/pool/[shareAddress]. Entries
-// are hard-deleted once the subgraph indexes the matching request — see
-// `useEarnDeliveryWatcher`'s reconcile loop.
+// route change between /hemi-earn and /hemi-earn/pool/[shareAddress] and is
+// soft-deleted (flag `settled: true`) once the subgraph indexes the matching
+// request — `useEarnDeliveryWatcher`'s reconcile loop flips the flag. The
+// entry stays in storage so the drawer can keep enriching the subgraph row
+// with locally-captured metadata that the indexer doesn't expose (e.g.
+// `approvalTxHash`). TTL + per-account cap keep storage bounded.
 //
 // `amountIn` is a string because bigint can't be serialized to JSON (and
 // therefore can't be persisted to localStorage). Same convention as
@@ -93,10 +101,12 @@ export type EarnPosition = {
 type LocalEarnOperationBase = {
   account: Address
   amountIn: string
+  approvalTxHash?: Hash
   asset: Address
   chainId: Chain['id']
   initiateTxHash?: Hash
   operator?: Address
+  settled?: boolean
   shareAddress: Address
   // Unix seconds. Matches the unit of `TTL_SECONDS` in
   // `localEarnOperationsContext.tsx` — if this ever changes to ms, the GC

@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import { type Hash } from 'viem'
 
+import { hashesMatch } from '../_utils'
 import {
   DepositStatus,
   type DepositOperation,
@@ -50,6 +51,7 @@ const localToEarnTransaction = (
 ): EarnTransaction => ({
   amountIn: local.amountIn,
   amountOut: null,
+  approvalTxHash: local.approvalTxHash,
   asset: local.asset,
   automatic: true,
   claimTxHash: null,
@@ -61,9 +63,6 @@ const localToEarnTransaction = (
   requestId: `local-${local.startedAt}`,
   status: localStatus(local.operation),
 })
-
-const hashesMatch = (a: Hash | undefined, b: Hash | undefined) =>
-  !!a && !!b && a.toLowerCase() === b.toLowerCase()
 
 // Public data hook for the transactions table and drawer. Returns the
 // subgraph rows merged with not-yet-indexed local entries, sorted by
@@ -80,19 +79,36 @@ export const useEarnTransactions = function () {
 
   const merged = useMemo(
     function () {
-      const subgraph = (data ?? []).filter(
-        t => t.kind === 'DEPOSIT' && t.status !== 'RECOVERED',
+      const localDeposits = localOperations.filter(isLocalEarnDeposit)
+      // Locally-captured metadata keyed by initiate tx hash. Survives the
+      // soft-settle flag because the entry stays in storage — that's the
+      // whole point of soft-delete: enrich subgraph rows with bits the
+      // indexer doesn't expose (`approvalTxHash`).
+      const localByInitiateHash = new Map(
+        localDeposits
+          .filter(op => op.initiateTxHash !== undefined)
+          .map(op => [op.initiateTxHash!.toLowerCase(), op]),
       )
+      const subgraph = (data ?? [])
+        .filter(t => t.kind === 'DEPOSIT' && t.status !== 'RECOVERED')
+        .map(function (t) {
+          const local = localByInitiateHash.get(t.initiateTxHash.toLowerCase())
+          if (!local?.approvalTxHash) return t
+          return { ...t, approvalTxHash: local.approvalTxHash }
+        })
       const subgraphHashes = new Set(
         subgraph.map(t => t.initiateTxHash.toLowerCase()),
       )
-      const inFlight = localOperations
-        .filter(isLocalEarnDeposit)
+      const inFlight = localDeposits
         // Only show in the table once the user has signed the deposit tx —
         // an approve-only entry isn't a committed deposit (the user can still
         // back out of the wallet prompt). The entry stays in localStorage so
         // the row reappears once `useDeposit` upserts the initiate tx hash.
         .filter(op => op.initiateTxHash !== undefined)
+        // Skip soft-settled entries — the subgraph row supersedes them in
+        // the table (we still kept the entry around above to enrich the
+        // subgraph row with `approvalTxHash`).
+        .filter(op => !op.settled)
         .filter(op => !subgraphHashes.has(op.initiateTxHash!.toLowerCase()))
         .filter(
           op =>

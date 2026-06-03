@@ -39,7 +39,8 @@
         "withdraw-token": "Sacar {symbol}"
       },
       "form": {
-        "cooldown-warning": "Sacar fundos leva 7 dias para concluir.",
+        "cooldown-warning": "Sacar fundos leva {days, plural, one {# dia} other {# dias}} para concluir.",
+        "cooldown-warning-fallback": "Sacar fundos leva alguns dias para concluir.",
         "ethereum-gas-fee": "Taxa de gás no Ethereum",
         "network-fee": "Taxa de rede",
         "total-fee": "Custo total de gás",

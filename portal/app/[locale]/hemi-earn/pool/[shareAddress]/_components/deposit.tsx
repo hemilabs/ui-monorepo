@@ -14,6 +14,7 @@ import { walletIsConnected } from 'utils/wallet'
 import { type Address } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
+import { useCooldownDuration } from '../../../_hooks/useCooldownDuration'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
@@ -35,7 +36,9 @@ const SetMaxEvmBalance = dynamic(
 
 type BelowFormProps = {
   account: Address | undefined
+  cooldownDays: number | undefined
   ethereumGasFee: bigint
+  isCooldownDaysLoading: boolean
   isCooldownEligible: boolean
   isFeesError: boolean
   nativeToken: EvmToken
@@ -47,7 +50,9 @@ type BelowFormProps = {
 
 const BelowForm = ({
   account,
+  cooldownDays,
   ethereumGasFee,
+  isCooldownDaysLoading,
   isCooldownEligible,
   isFeesError,
   nativeToken,
@@ -68,7 +73,9 @@ const BelowForm = ({
         totalFees={totalFees}
       />
     </div>
-    {account && isCooldownEligible && <CooldownWarning />}
+    {account && isCooldownEligible && (
+      <CooldownWarning days={cooldownDays} isLoading={isCooldownDaysLoading} />
+    )}
   </div>
 )
 
@@ -146,6 +153,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     shareAddress: pool.shareAddress,
   })
 
+  const { data: cooldownDays, isPending: isCooldownDaysLoading } =
+    useCooldownDuration({
+      shareAddress: pool.shareAddress,
+    })
+
   const { data: shares } = useDepositShares({
     peggedAmount: quote?.peggedAmount,
     shareAddress: pool.shareAddress,
@@ -199,7 +211,9 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
         canDeposit && (
           <BelowForm
             account={address}
+            cooldownDays={cooldownDays}
             ethereumGasFee={layerZeroFee}
+            isCooldownDaysLoading={isCooldownDaysLoading}
             isCooldownEligible={isCooldownEligible}
             isFeesError={isFeesError}
             nativeToken={nativeToken}

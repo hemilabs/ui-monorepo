@@ -21,7 +21,7 @@ import { useAccount, useEstimateGas } from 'wagmi'
 
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { SparkleIcon } from '../../../../_icons/sparkleIcon'
-import { getTerminalDeliveryTxHash } from '../../../../_utils'
+import { getTerminalDeliveryTxHash, hashesMatch } from '../../../../_utils'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { DepositStatus, type DepositStatusType } from '../../_types/operations'
@@ -45,13 +45,9 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   // Shared subscription with the layout-mounted watcher; lets the new
   // get-share-tokens step flip to COMPLETED off the subgraph status.
   const { data: subgraphRows = [] } = useEarnTransactionsQuery()
-  const subgraphRow = depositOperation?.transactionHash
-    ? subgraphRows.find(
-        r =>
-          r.initiateTxHash.toLowerCase() ===
-          depositOperation.transactionHash!.toLowerCase(),
-      )
-    : undefined
+  const subgraphRow = subgraphRows.find(r =>
+    hashesMatch(r.initiateTxHash, depositOperation?.transactionHash),
+  )
 
   const depositStatus =
     depositOperation?.status ?? DepositStatus.APPROVAL_TX_COMPLETED

@@ -6,6 +6,7 @@ import { type Address, isAddressEqual } from 'viem'
 
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { useEarnTransactions } from '../../../_hooks/useEarnTransactions'
+import { hashesMatch } from '../../../_utils'
 import { type EarnPool, type EarnTransaction } from '../../../types'
 
 import { HistoricalDepositReview } from './historicalDepositReview'
@@ -13,7 +14,7 @@ import { RetryFailedDeposit } from './retryFailedDeposit'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 const findTransactionByTxId = (transactions: EarnTransaction[], txId: string) =>
-  transactions.find(t => t.initiateTxHash.toLowerCase() === txId.toLowerCase())
+  transactions.find(t => hashesMatch(t.initiateTxHash, txId))
 
 const resolvePoolAndAsset = function (pools: EarnPool[], asset: Address) {
   for (const pool of pools) {

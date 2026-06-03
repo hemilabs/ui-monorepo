@@ -11,6 +11,7 @@ import useLocalStorageState from 'use-local-storage-state'
 import { type Address, type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { hashesMatch } from '../_utils'
 import { type LocalEarnOperation } from '../types'
 
 const STORAGE_KEY = 'hemi-earn:local-operations'
@@ -62,10 +63,7 @@ const matchesExisting = function (
   payload: UpsertPayload,
 ): boolean {
   if (payload.initiateTxHash && entry.initiateTxHash) {
-    return (
-      entry.initiateTxHash.toLowerCase() ===
-      payload.initiateTxHash.toLowerCase()
-    )
+    return hashesMatch(entry.initiateTxHash, payload.initiateTxHash)
   }
   return entry.startedAt === payload.startedAt
 }

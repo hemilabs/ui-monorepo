@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import { type Hash } from 'viem'
 
+import { hashesMatch } from '../_utils'
 import {
   DepositStatus,
   type DepositOperation,
@@ -62,9 +63,6 @@ const localToEarnTransaction = (
   requestId: `local-${local.startedAt}`,
   status: localStatus(local.operation),
 })
-
-const hashesMatch = (a: Hash | undefined, b: Hash | undefined) =>
-  !!a && !!b && a.toLowerCase() === b.toLowerCase()
 
 // Public data hook for the transactions table and drawer. Returns the
 // subgraph rows merged with not-yet-indexed local entries, sorted by

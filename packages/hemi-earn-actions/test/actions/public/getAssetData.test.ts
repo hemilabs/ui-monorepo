@@ -13,14 +13,25 @@ const routerAddress = '0x000000000000000000000000000000000000bEEf' as Address
 const asset = '0x000000000000000000000000000000000000dEaD' as Address
 const share = '0x000000000000000000000000000000000000Beef' as Address
 const remoteAsset = '0x000000000000000000000000000000000000c0DE' as Address
+const remoteShare = '0x000000000000000000000000000000000000fEED' as Address
 
 describe('getAssetData', function () {
   it('forwards the asset to `assetsData` and returns the struct', async function () {
-    vi.mocked(readContract).mockResolvedValue({ remoteAsset, share })
+    vi.mocked(readContract).mockResolvedValue({
+      enabled: true,
+      remoteAsset,
+      remoteShare,
+      share,
+    })
 
     const result = await getAssetData({ asset, client, routerAddress })
 
-    expect(result).toEqual({ remoteAsset, share })
+    expect(result).toEqual({
+      enabled: true,
+      remoteAsset,
+      remoteShare,
+      share,
+    })
     expect(readContract).toHaveBeenCalledWith(
       client,
       expect.objectContaining({
@@ -29,6 +40,19 @@ describe('getAssetData', function () {
         functionName: 'assetsData',
       }),
     )
+  })
+
+  it('preserves enabled=false for disabled assets', async function () {
+    vi.mocked(readContract).mockResolvedValue({
+      enabled: false,
+      remoteAsset,
+      remoteShare,
+      share,
+    })
+
+    const result = await getAssetData({ asset, client, routerAddress })
+
+    expect(result.enabled).toBe(false)
   })
 
   it('rejects a zero `asset`', async function () {

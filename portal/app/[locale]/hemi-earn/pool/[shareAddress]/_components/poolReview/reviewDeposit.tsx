@@ -67,7 +67,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
           ? encodeRequestDeposit({
               amount,
               asset: selectedAsset.address,
-              fulfillmentFee: quote.fulfillmentFee,
+              callbackFee: quote.callbackFee,
               operator: address,
               receiver: address,
             })

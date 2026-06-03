@@ -27,7 +27,7 @@ export const encodeRequestDeposit = ({
   amount,
   asset,
   automatic = true,
-  fulfillmentFee,
+  callbackFee,
   operator,
   receiver,
   sharesOutMin = BigInt(0),
@@ -35,7 +35,7 @@ export const encodeRequestDeposit = ({
   amount: bigint
   asset: Address
   automatic?: boolean
-  fulfillmentFee: bigint
+  callbackFee: bigint
   // Address authorized to call `Agent.cancel(id)` on the remote chain.
   // Contract reverts with `ZeroAddress` if `0x0` is passed.
   operator: Address
@@ -54,7 +54,7 @@ export const encodeRequestDeposit = ({
       receiver,
       operator,
       automatic,
-      fulfillmentFee,
+      callbackFee,
     ],
     functionName: 'requestDeposit',
   })
@@ -63,7 +63,8 @@ export const encodeRequestRedeem = ({
   asset,
   assetsOutMin = BigInt(0),
   automatic = true,
-  fulfillmentFee,
+  callbackFee,
+  isInstant,
   operator,
   receiver,
   shares,
@@ -74,8 +75,12 @@ export const encodeRequestRedeem = ({
   // conversion is wired up; phase 2 will compute this from the share price.
   assetsOutMin?: bigint
   automatic?: boolean
-  fulfillmentFee: bigint
-  // Address authorized to call `Agent.cancel(id)` on the remote chain.
+  callbackFee: bigint
+  // Declares the redeem path (instant vs cooldown). Must match the vault's
+  // actual state for the caller — resolve via `resolveIsInstant` before
+  // calling. A mismatch causes the Agent to send an immediate cancel.
+  isInstant: boolean
+  // Address authorized to call `Router.cancel(id)` for cooldown redeems.
   // Contract reverts with `ZeroAddress` if `0x0` is passed.
   operator: Address
   receiver: Address
@@ -90,7 +95,8 @@ export const encodeRequestRedeem = ({
       receiver,
       operator,
       automatic,
-      fulfillmentFee,
+      callbackFee,
+      isInstant,
     ],
     functionName: 'requestRedeem',
   })

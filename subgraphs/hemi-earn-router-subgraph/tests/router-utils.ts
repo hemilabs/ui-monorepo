@@ -2,6 +2,7 @@ import { Address, BigInt, Bytes, ethereum } from '@graphprotocol/graph-ts'
 import { newMockEvent } from 'matchstick-as'
 
 import {
+  CancellationRequested,
   DepositRequested,
   RedeemRequested,
   RequestCancelled,
@@ -22,6 +23,7 @@ export function createDepositRequestedEvent(
   requestId: BigInt,
   asset: Address,
   assets: BigInt,
+  amountOutMin: BigInt,
   receiver: Address,
   automatic: boolean,
   txHash: Bytes,
@@ -45,6 +47,12 @@ export function createDepositRequestedEvent(
     ),
   )
   event.parameters.push(
+    new ethereum.EventParam(
+      'amountOutMin',
+      ethereum.Value.fromUnsignedBigInt(amountOutMin),
+    ),
+  )
+  event.parameters.push(
     new ethereum.EventParam('receiver', ethereum.Value.fromAddress(receiver)),
   )
   event.parameters.push(
@@ -59,6 +67,7 @@ export function createRedeemRequestedEvent(
   requestId: BigInt,
   asset: Address,
   shares: BigInt,
+  amountOutMin: BigInt,
   receiver: Address,
   automatic: boolean,
   txHash: Bytes,
@@ -82,6 +91,12 @@ export function createRedeemRequestedEvent(
     ),
   )
   event.parameters.push(
+    new ethereum.EventParam(
+      'amountOutMin',
+      ethereum.Value.fromUnsignedBigInt(amountOutMin),
+    ),
+  )
+  event.parameters.push(
     new ethereum.EventParam('receiver', ethereum.Value.fromAddress(receiver)),
   )
   event.parameters.push(
@@ -94,7 +109,7 @@ export function createRedeemRequestedEvent(
 
 export function createRequestFulfilledEvent(
   requestId: BigInt,
-  amountIn: BigInt,
+  amount: BigInt,
   txHash: Bytes,
 ): RequestFulfilled {
   const event = changetype<RequestFulfilled>(newMockEvent())
@@ -107,8 +122,8 @@ export function createRequestFulfilledEvent(
   )
   event.parameters.push(
     new ethereum.EventParam(
-      'amountIn',
-      ethereum.Value.fromUnsignedBigInt(amountIn),
+      'amount',
+      ethereum.Value.fromUnsignedBigInt(amount),
     ),
   )
   setTxHash(event, txHash)
@@ -117,7 +132,6 @@ export function createRequestFulfilledEvent(
 
 export function createRequestClaimedEvent(
   requestId: BigInt,
-  receiver: Address,
   txHash: Bytes,
 ): RequestClaimed {
   const event = changetype<RequestClaimed>(newMockEvent())
@@ -128,16 +142,13 @@ export function createRequestClaimedEvent(
       ethereum.Value.fromUnsignedBigInt(requestId),
     ),
   )
-  event.parameters.push(
-    new ethereum.EventParam('receiver', ethereum.Value.fromAddress(receiver)),
-  )
   setTxHash(event, txHash)
   return event
 }
 
 export function createRequestCancelledEvent(
   requestId: BigInt,
-  amountIn: BigInt,
+  amount: BigInt,
   txHash: Bytes,
 ): RequestCancelled {
   const event = changetype<RequestCancelled>(newMockEvent())
@@ -150,8 +161,8 @@ export function createRequestCancelledEvent(
   )
   event.parameters.push(
     new ethereum.EventParam(
-      'amountIn',
-      ethereum.Value.fromUnsignedBigInt(amountIn),
+      'amount',
+      ethereum.Value.fromUnsignedBigInt(amount),
     ),
   )
   setTxHash(event, txHash)
@@ -160,7 +171,6 @@ export function createRequestCancelledEvent(
 
 export function createRequestRecoveredEvent(
   requestId: BigInt,
-  receiver: Address,
   txHash: Bytes,
 ): RequestRecovered {
   const event = changetype<RequestRecovered>(newMockEvent())
@@ -171,9 +181,24 @@ export function createRequestRecoveredEvent(
       ethereum.Value.fromUnsignedBigInt(requestId),
     ),
   )
+  setTxHash(event, txHash)
+  return event
+}
+
+export function createCancellationRequestedEvent(
+  requestId: BigInt,
+  txHash: Bytes,
+  timestamp: BigInt,
+): CancellationRequested {
+  const event = changetype<CancellationRequested>(newMockEvent())
+  event.parameters = new Array<ethereum.EventParam>()
   event.parameters.push(
-    new ethereum.EventParam('receiver', ethereum.Value.fromAddress(receiver)),
+    new ethereum.EventParam(
+      'requestId',
+      ethereum.Value.fromUnsignedBigInt(requestId),
+    ),
   )
   setTxHash(event, txHash)
+  setBlockTimestamp(event, timestamp)
   return event
 }

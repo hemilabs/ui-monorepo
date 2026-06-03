@@ -21,6 +21,12 @@
         "type": "uint256"
       },
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountOutMin",
+        "type": "uint256"
+      },
+      {
         "indexed": true,
         "internalType": "address",
         "name": "receiver",
@@ -58,6 +64,12 @@
         "type": "uint256"
       },
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amountOutMin",
+        "type": "uint256"
+      },
+      {
         "indexed": true,
         "internalType": "address",
         "name": "receiver",
@@ -85,7 +97,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amountIn",
+        "name": "amount",
         "type": "uint256"
       }
     ],
@@ -102,28 +114,9 @@
         "type": "uint256"
       },
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
-      }
-    ],
-    "name": "RequestClaimed",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "requestId",
-        "type": "uint256"
-      },
-      {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amountIn",
+        "name": "amount",
         "type": "uint256"
       }
     ],
@@ -138,15 +131,35 @@
         "internalType": "uint256",
         "name": "requestId",
         "type": "uint256"
-      },
+      }
+    ],
+    "name": "RequestClaimed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": true,
-        "internalType": "address",
-        "name": "receiver",
-        "type": "address"
+        "internalType": "uint256",
+        "name": "requestId",
+        "type": "uint256"
       }
     ],
     "name": "RequestRecovered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "requestId",
+        "type": "uint256"
+      }
+    ],
+    "name": "CancellationRequested",
     "type": "event"
   }
 ]

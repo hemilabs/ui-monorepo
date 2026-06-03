@@ -49,7 +49,7 @@ export const RetryFailedDeposit = function ({
   })
 
   const { mutate: runDeposit } = useDeposit({
-    fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
+    callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
     on(emitter) {
       emitter.on('approve-transaction-reverted', () =>

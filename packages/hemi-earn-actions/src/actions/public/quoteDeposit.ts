@@ -7,14 +7,14 @@ import { routerAbi } from '../../routerAbi'
 export const quoteDeposit = async function ({
   asset,
   assets,
+  callbackFee,
   client,
-  fulfillmentFee,
   routerAddress = getHemiEarnRouterAddress(),
 }: {
   asset: Address
   assets: bigint
   client: Client
-  fulfillmentFee: bigint
+  callbackFee: bigint
   routerAddress?: Address
 }): Promise<bigint> {
   if (isAddressEqual(asset, zeroAddress)) {
@@ -23,14 +23,14 @@ export const quoteDeposit = async function ({
   if (assets <= BigInt(0)) {
     throw new Error('quoteDeposit: `assets` must be greater than zero')
   }
-  if (fulfillmentFee < BigInt(0)) {
-    throw new Error('quoteDeposit: `fulfillmentFee` cannot be negative')
+  if (callbackFee < BigInt(0)) {
+    throw new Error('quoteDeposit: `callbackFee` cannot be negative')
   }
 
   return readContract(client, {
     abi: routerAbi,
     address: routerAddress,
-    args: [asset, assets, fulfillmentFee],
+    args: [asset, assets, callbackFee],
     functionName: 'quoteDeposit',
   })
 }

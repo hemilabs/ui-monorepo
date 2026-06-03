@@ -300,6 +300,7 @@
   },
   "get-started": {
     "add-hemi-network-to-your-wallet": "Adicionar a rede Hemi à sua carteira",
+    "add-hemi-network-description": "Isto permite que a sua carteira interaja com a Hemi para transações, bridges e dApps.",
     "add-hemi-tokens": "Adicionar tokens Hemi",
     "add-hemi-tokens-description": "Os tokens Hemi estão emparelhados com as suas versões ERC-20 na Ethereum. Para ver e usar um ativo na Hemi, a sua carteira precisa do endereço do token Hemi (L2).",
     "add-token": "Adicionar token",
@@ -330,8 +331,6 @@
     "subheading": "Ative rendimento Bitcoin compatível sem sair da custódia.",
     "tutorials-subheading": "Novo no Hemi? Nossos tutoriais passo a passo orientam você em tudo o que precisa saber, desde configurar sua carteira até fazer bridge de tokens e usar dApps.",
     "view-all-tutorials": "Ver todos os tutoriais",
-    "add-networks-mainnet": "Adicione a rede Hemi à sua carteira para que ela possa reconhecer a rede e permitir que envie transações, faça bridge de ativos e use aplicativos.",
-    "add-networks-testnet": "Adicionar Ethereum Sepolia e Hemi testnet à sua carteira.",
     "add-networks": {
       "automatic": "Automaticamente",
       "manual": "Manualmente"

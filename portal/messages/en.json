@@ -300,6 +300,7 @@
   },
   "get-started": {
     "add-hemi-network-to-your-wallet": "Add Hemi network to your wallet",
+    "add-hemi-network-description": "This lets your wallet interact with Hemi for transactions, bridges, and dApps.",
     "add-hemi-tokens": "Add Hemi tokens",
     "add-hemi-tokens-description": "Hemi tokens are paired with their ERC-20 versions on Ethereum. To see and use an asset on Hemi, your wallet needs the Hemi (L2) token address.",
     "add-token": "Add token",
@@ -330,8 +331,6 @@
     "subheading": "Activate compliant Bitcoin yield without leaving custody.",
     "tutorials-subheading": "New to Hemi? Our step-by-step tutorials walk you through everything you need to know, from setting up your wallet to bridging tokens and using dApps.",
     "view-all-tutorials": "View all tutorials",
-    "add-networks-mainnet": "Add the Hemi network to your wallet so it can recognize the network and let you send transactions, bridge assets, and use apps.",
-    "add-networks-testnet": "Add Ethereum Sepolia & Hemi testnet to your wallet.",
     "add-networks": {
       "automatic": "Automatically",
       "manual": "Manually"

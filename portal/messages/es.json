@@ -300,6 +300,7 @@
   },
   "get-started": {
     "add-hemi-network-to-your-wallet": "Agregue la red Hemi a su billetera",
+    "add-hemi-network-description": "Esto permite que su billetera interactúe con Hemi para transacciones, bridges y dApps.",
     "add-hemi-tokens": "Agregar tokens de Hemi",
     "add-hemi-tokens-description": "Los tokens de Hemi están emparejados con sus versiones ERC-20 en Ethereum. Para ver y usar un activo en Hemi, su billetera necesita la dirección del token de Hemi (L2).",
     "add-token": "Añadir token",
@@ -330,8 +331,6 @@
     "subheading": "Active rendimiento de Bitcoin compatible sin renunciar a la custodia.",
     "tutorials-subheading": "¿Nuevo en Hemi? Nuestros tutoriales paso a paso te guían en todo lo que necesitas saber, desde configurar tu billetera hasta hacer bridge de tokens y usar dApps.",
     "view-all-tutorials": "Ver todos los tutoriales",
-    "add-networks-mainnet": "Agregue la red Hemi a su billetera para que pueda reconocer la red y le permita enviar transacciones, hacer bridge de activos y usar aplicaciones.",
-    "add-networks-testnet": "Añada Ethereum Sepolia y Hemi testnet a su billetera.",
     "add-networks": {
       "automatic": "Automáticamente",
       "manual": "Manualmente"

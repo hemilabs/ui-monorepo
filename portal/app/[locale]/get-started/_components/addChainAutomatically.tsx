@@ -18,9 +18,7 @@ const AddChain = lazy(() =>
 const AddChainButton = dynamic(
   () => import('./addChain/addChainButton').then(mod => mod.AddChainButton),
   {
-    loading: () => (
-      <span className="text-sm font-medium text-neutral-950">...</span>
-    ),
+    loading: () => <span aria-hidden="true" className="block h-7" />,
     ssr: false,
   },
 )
@@ -29,7 +27,7 @@ export const AddChainAutomatically = function ({ chain, layer }: Props) {
   const t = useTranslations('get-started')
 
   const content = (
-    <div className="flex w-full items-center justify-between gap-4">
+    <div className="flex w-full items-start justify-between gap-4">
       <div className="flex items-center gap-2">
         <ChainLogo chainId={chain.id} />
         <span className="body-text-semibold text-neutral-950">
@@ -39,7 +37,9 @@ export const AddChainAutomatically = function ({ chain, layer }: Props) {
           {t('layer', { layer })}
         </span>
       </div>
-      <AddChainButton chain={chain} />
+      <div className="self-center">
+        <AddChainButton chain={chain} />
+      </div>
     </div>
   )
 

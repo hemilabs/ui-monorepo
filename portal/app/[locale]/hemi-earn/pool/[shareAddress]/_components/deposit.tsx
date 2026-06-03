@@ -1,26 +1,29 @@
 'use client'
 
-import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { useTokenBalance } from 'hooks/useBalance'
-import { useChain } from 'hooks/useChain'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { type EvmToken } from 'types/token'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
-import { formatUnits } from 'viem'
+import { type Address } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
+import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
 import { useDepositFees } from '../_hooks/useDepositFees'
+import { useDepositShares } from '../_hooks/useDepositShares'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
 import { type DepositOperationRunning } from '../_types/operations'
 
+import { CooldownWarning } from './cooldownWarning'
+import { DepositSummary } from './depositSummary'
 import { VaultFormLayout } from './form'
 import { PoolFormContent } from './poolFormContent'
 import { SubmitDeposit } from './submitDeposit'
@@ -28,6 +31,49 @@ import { SubmitDeposit } from './submitDeposit'
 const SetMaxEvmBalance = dynamic(
   () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),
   { ssr: false },
+)
+
+type BelowFormProps = {
+  account: Address | undefined
+  bridgingFee: bigint
+  hemiGasFee: bigint
+  isCooldownEligible: boolean
+  isFeesError: boolean
+  nativeToken: EvmToken
+  shareAddress: Address
+  shareToken: EvmToken
+  shares: bigint | undefined
+  totalFees: bigint
+}
+
+const BelowForm = ({
+  account,
+  bridgingFee,
+  hemiGasFee,
+  isCooldownEligible,
+  isFeesError,
+  nativeToken,
+  shareAddress,
+  shares,
+  shareToken,
+  totalFees,
+}: BelowFormProps) => (
+  <div className="flex flex-col gap-y-4">
+    <div className="px-4">
+      <DepositSummary
+        bridgingFee={bridgingFee}
+        hemiGasFee={hemiGasFee}
+        isFeesError={isFeesError}
+        nativeToken={nativeToken}
+        shareToken={shareToken}
+        shares={shares}
+        totalFees={totalFees}
+      />
+    </div>
+    {account && isCooldownEligible && (
+      <CooldownWarning shareAddress={shareAddress} />
+    )}
+  </div>
 )
 
 type Props = {
@@ -78,17 +124,36 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
 
   const canDeposit = validInput
 
-  const { depositGasFees, isFeesError, layerZeroFee, quote, totalFees } =
-    useDepositFees({
-      amount,
-      asset: selectedAsset.address,
-      canDeposit,
-      needsApproval,
-      receiver: address,
-      shareAddress: pool.shareAddress,
-      spender: routerAddress,
-      token: selectedAsset.token,
-    })
+  const {
+    approvalGasFees,
+    depositGasFees,
+    isFeesError,
+    layerZeroFee,
+    quote,
+    totalFees,
+  } = useDepositFees({
+    amount,
+    asset: selectedAsset.address,
+    canDeposit,
+    needsApproval,
+    receiver: address,
+    shareAddress: pool.shareAddress,
+    spender: routerAddress,
+    token: selectedAsset.token,
+  })
+
+  // Fail safe: when the eligibility read on Ethereum is in-flight or errors,
+  // assume the cooldown applies so the warning shows. Silently hiding it
+  // would let the user sign a deposit thinking instant withdraw is available.
+  const { data: isCooldownEligible = true } = useIsCooldownEligible({
+    account: address,
+    shareAddress: pool.shareAddress,
+  })
+
+  const { data: shares } = useDepositShares({
+    peggedAmount: quote?.peggedAmount,
+    shareAddress: pool.shareAddress,
+  })
 
   const { setDrawerQueryString } = useDrawerQueryString()
 
@@ -129,34 +194,28 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     setOperationRunning(needsApproval ? 'approving' : 'depositing')
   }
 
-  const chain = useChain(selectedAsset.token.chainId)
-  const nativeToken = getNativeToken(selectedAsset.token.chainId)
-
-  function RenderBelowForm() {
-    if (!canDeposit) {
-      return null
-    }
-    return (
-      <div className="px-4">
-        <EvmFeesSummary
-          gas={{
-            amount: formatUnits(
-              totalFees,
-              chain?.nativeCurrency.decimals ?? 18,
-            ),
-            isError: isFeesError,
-            label: t('hemi-earn.pool.form.total-fee'),
-            token: nativeToken,
-          }}
-          operationToken={nativeToken}
-        />
-      </div>
-    )
-  }
+  const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
+  const hemiGasFee =
+    depositGasFees + (needsApproval ? approvalGasFees : BigInt(0))
 
   return (
     <VaultFormLayout
-      belowForm={<RenderBelowForm />}
+      belowForm={
+        canDeposit && (
+          <BelowForm
+            account={address}
+            bridgingFee={layerZeroFee}
+            hemiGasFee={hemiGasFee}
+            isCooldownEligible={isCooldownEligible}
+            isFeesError={isFeesError}
+            nativeToken={nativeToken}
+            shareAddress={pool.shareAddress}
+            shareToken={pool.shareToken}
+            shares={shares}
+            totalFees={totalFees}
+          />
+        )
+      }
       formContent={
         <PoolFormContent
           activeTab="deposit"

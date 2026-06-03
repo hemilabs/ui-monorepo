@@ -40,8 +40,12 @@
         "withdraw-token": "Withdraw {symbol}"
       },
       "form": {
+        "bridging-fees": "Bridging fees",
+        "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
+        "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
         "total-fee": "Total gas fee",
-        "withdrawing": "Withdrawing..."
+        "withdrawing": "Withdrawing...",
+        "you-will-receive": "You'll receive"
       },
       "here-is-your-tx": "Here's your transaction:",
       "historical-metrics": {

@@ -40,8 +40,12 @@
         "withdraw-token": "Retirar {symbol}"
       },
       "form": {
+        "bridging-fees": "Tarifas de bridge",
+        "cooldown-warning": "Retirar fondos tarda {days, plural, one {# día} other {# días}} en completarse.",
+        "cooldown-warning-fallback": "Retirar fondos tarda algunos días en completarse.",
         "total-fee": "Costo total de gas",
-        "withdrawing": "Retirando..."
+        "withdrawing": "Retirando...",
+        "you-will-receive": "Recibirá"
       },
       "here-is-your-tx": "Aquí está su transacción:",
       "historical-metrics": {

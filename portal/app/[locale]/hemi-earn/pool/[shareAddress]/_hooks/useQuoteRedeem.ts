@@ -12,7 +12,7 @@ import {
 } from 'hemi-earn-actions/actions'
 import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
-import { getEvmL1PublicClient, getHemiClient } from 'utils/chainClients'
+import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
 type QuoteRedeem = {
@@ -45,7 +45,7 @@ export const useQuoteRedeem = ({
     enabled: shares > BigInt(0) && !!account,
     async queryFn() {
       const ethereumClient = getEvmL1PublicClient(mainnet.id)
-      const hemiClient = getHemiClient(hemi.id)
+      const hemiClient = getPublicClient(hemi.id)
       // `Agent.quoteRedeemFulfillment` lives on Ethereum and needs the
       // *remote* asset address (the OFT registered on the Agent), not the
       // Hemi-side asset OFT the user holds. Resolve via the Router's

@@ -13,7 +13,7 @@ import {
 } from 'hemi-earn-actions/actions'
 import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
-import { getEvmL1PublicClient, getHemiClient } from 'utils/chainClients'
+import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
 type QuoteDeposit = {
@@ -55,7 +55,7 @@ export const useQuoteDeposit = ({
     enabled: amount > BigInt(0),
     async queryFn() {
       const ethereumClient = getEvmL1PublicClient(mainnet.id)
-      const hemiClient = getHemiClient(hemi.id)
+      const hemiClient = getPublicClient(hemi.id)
       const [callbackFee, assetData] = await Promise.all([
         quoteDepositFulfillment({
           agentAddress: getHemiEarnAgentAddress(),

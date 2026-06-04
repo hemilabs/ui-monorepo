@@ -15,7 +15,12 @@ type Params = {
 export const getUseTokenQueryKey = (
   address: Params['address'],
   chainId: Params['chainId'],
-) => ['erc20-token-complete', address, chainId]
+) => [
+  'erc20-token-complete',
+  // Normalize to the canonical EIP-55 form so callers dedup regardless of casing
+  address === undefined ? address : toChecksumAddress(address),
+  chainId,
+]
 
 export const tokenQueryOptions = ({
   address,

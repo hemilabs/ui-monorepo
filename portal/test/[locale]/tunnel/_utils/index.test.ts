@@ -2,6 +2,10 @@ import * as tokenInputUtils from 'components/tokenInput/utils'
 import { validateSubmit } from 'utils/validateSubmit'
 import { describe, it, expect, vi, afterEach } from 'vitest'
 
+vi.mock('utils/chainClients', () => ({
+  getPublicClient: vi.fn(),
+}))
+
 // Minimal mock for t, matching only the required signature for the test
 const t = (key: string) => key
 

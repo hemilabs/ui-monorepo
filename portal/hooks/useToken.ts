@@ -5,7 +5,6 @@ import { toChecksumAddress } from 'utils/address'
 import { isNativeAddress } from 'utils/nativeToken'
 import { getErc20Token, getTokenByAddress } from 'utils/token'
 import { type Address, type Chain, isAddress } from 'viem'
-import { type Config, useConfig } from 'wagmi'
 
 type Params = {
   address: string | undefined
@@ -21,12 +20,10 @@ export const getUseTokenQueryKey = (
 export const tokenQueryOptions = ({
   address,
   chainId,
-  config,
   options = {},
 }: {
   address: Params['address']
   chainId: Params['chainId']
-  config: Config
   options?: Omit<UseQueryOptions<Token, Error>, 'queryKey' | 'queryFn'>
 }) =>
   queryOptions({
@@ -44,17 +41,11 @@ export const tokenQueryOptions = ({
         (getErc20Token({
           address: checksumAddress as Address,
           chainId: chainId as Chain['id'],
-          config,
         }) satisfies Promise<Token>)
       )
     },
     queryKey: getUseTokenQueryKey(address, chainId),
   })
 
-export const useToken = function ({ address, chainId, options = {} }: Params) {
-  const config = useConfig()
-
-  return useQuery<Token, Error>(
-    tokenQueryOptions({ address, chainId, config, options }),
-  )
-}
+export const useToken = ({ address, chainId, options = {} }: Params) =>
+  useQuery<Token, Error>(tokenQueryOptions({ address, chainId, options }))

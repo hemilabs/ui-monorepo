@@ -8,7 +8,11 @@ import {
   isCustomToken,
 } from 'utils/token'
 import { parseUnits as viemParseUnits } from 'viem'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+vi.mock('utils/chainClients', () => ({
+  getPublicClient: vi.fn(),
+}))
 
 const baseToken = {
   address: '0x123',

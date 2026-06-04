@@ -1,18 +1,23 @@
-import { type Config, readContract } from '@wagmi/core'
 import pMemoize from 'promise-mem'
 import { tokenList } from 'tokenList'
 import { stakeProtocols, type StakeProtocols, StakeToken } from 'types/stake'
 import { EvmToken, L2Token, Token } from 'types/token'
 import { Token as TokenType } from 'types/token'
+import { getPublicClient } from 'utils/chainClients'
 import {
   type Address,
   type Chain,
-  erc20Abi,
   isAddress,
   isAddressEqual,
   checksumAddress as toChecksum,
   parseUnits as viemParseUnits,
 } from 'viem'
+import { readContract } from 'viem/actions'
+import {
+  decimals as getDecimals,
+  name as getName,
+  symbol as getSymbol,
+} from 'viem-erc20/actions'
 
 import { getNativeToken, isNativeAddress } from './nativeToken'
 import { opErc20Abi } from './opErc20Abi'
@@ -72,21 +77,17 @@ export const getErc20Token = pMemoize(
   async function ({
     address,
     chainId,
-    config,
   }: {
     address: Address
     chainId: Chain['id']
-    config: Config
   }) {
-    const read = <T extends 'decimals' | 'name' | 'symbol'>(functionName: T) =>
-      readContract(config, {
-        abi: erc20Abi,
-        address,
-        chainId,
-        functionName,
-      })
+    const client = getPublicClient(chainId)
 
-    return Promise.all([read('decimals'), read('name'), read('symbol')]).then(
+    return Promise.all([
+      getDecimals(client, { address }),
+      getName(client, { address }),
+      getSymbol(client, { address }),
+    ]).then(
       ([decimals, name, symbol]) =>
         ({
           address: toChecksum(address),
@@ -101,21 +102,12 @@ export const getErc20Token = pMemoize(
 )
 
 export const getL2Erc20Token = pMemoize(
-  async ({
-    address,
-    chainId,
-    config,
-  }: {
-    address: Address
-    chainId: Chain['id']
-    config: Config
-  }) =>
+  async ({ address, chainId }: { address: Address; chainId: Chain['id'] }) =>
     Promise.all([
-      getErc20Token({ address, chainId, config }),
-      readContract(config, {
+      getErc20Token({ address, chainId }),
+      readContract(getPublicClient(chainId), {
         abi: opErc20Abi,
         address,
-        chainId,
         functionName: 'l1Token',
         // The token may not have an l1 counter part
       }).catch(() => undefined),

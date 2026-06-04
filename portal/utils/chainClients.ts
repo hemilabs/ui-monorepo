@@ -3,6 +3,14 @@ import { buildTransport } from 'utils/transport'
 import { type Chain, createPublicClient, type PublicClient } from 'viem'
 import { publicActionsL1, PublicActionsL1 } from 'viem/op-stack'
 
+export const getPublicClient = function (chainId: Chain['id']) {
+  const chain = findChainById(chainId) as Chain
+  return createPublicClient({
+    chain,
+    transport: buildTransport(chain),
+  })
+}
+
 export const getHemiClient = function (chainId: Chain['id']) {
   // L2 are always EVM
   const l2Chain = findChainById(chainId) as Chain

@@ -27,7 +27,7 @@ export const AddChainButton = function ({ chain }: Props) {
 
   if (isConnected && (isChainAdded || isConnectedToChain)) {
     return (
-      <div className="flex items-center gap-x-1">
+      <div className="flex h-7 items-center gap-x-1">
         <span className="text-neutral-500">{tCommon('added')}</span>
         <CheckMark className="[&>path]:stroke-emerald-500" />
       </div>
@@ -41,7 +41,7 @@ export const AddChainButton = function ({ chain }: Props) {
       : tCommon('connect-wallet')
 
   return (
-    <div className="shrink-0">
+    <div className="flex h-7 shrink-0 items-center">
       <Button
         disabled={isMutating}
         size="xSmall"

@@ -1,9 +1,8 @@
-import { ChainLogo } from 'components/chainLogo'
 import dynamic from 'next/dynamic'
-import { useTranslations } from 'next-intl'
 import { lazy, Suspense } from 'react'
 import { type Chain } from 'viem'
 
+import { ChainIdentityRow } from './addChain/chainIdentityRow'
 import { Container } from './addChain/container'
 
 type Props = {
@@ -24,23 +23,12 @@ const AddChainButton = dynamic(
 )
 
 export const AddChainAutomatically = function ({ chain, layer }: Props) {
-  const t = useTranslations('get-started')
-
   const content = (
-    <div className="flex w-full items-start justify-between gap-4">
-      <div className="flex items-center gap-2">
-        <ChainLogo chainId={chain.id} />
-        <span className="body-text-semibold text-neutral-950">
-          {chain.name}
-        </span>
-        <span className="body-text-normal text-neutral-500">
-          {t('layer', { layer })}
-        </span>
-      </div>
-      <div className="self-center">
-        <AddChainButton chain={chain} />
-      </div>
-    </div>
+    <ChainIdentityRow
+      chain={chain}
+      layer={layer}
+      trailing={<AddChainButton chain={chain} />}
+    />
   )
 
   return (

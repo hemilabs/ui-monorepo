@@ -73,8 +73,10 @@ const computeIsFeesError = ({
 
 // Takes `quote` and `shares` from the caller — the Withdraw form owns those
 // preview queries so it can subscribe once. The hook derives `canWithdraw`
-// and `assetsOutMin` internally so the slippage policy lives in one place
-// (mirror of `useDepositFees`).
+// and `assetsOutMin` internally so the slippage policy lives in one place.
+// Returns only what `withdraw.tsx` consumes: the deposit form needs the
+// approval split for separate rendering, but the withdraw form renders a
+// single "Total gas fee" with the split already folded into `totalFees`.
 export const useWithdrawFees = function ({
   amount,
   asset,
@@ -135,7 +137,6 @@ export const useWithdrawFees = function ({
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
 
   return {
-    approvalGasFees,
     assetsOutMin,
     canWithdraw,
     isFeesError: computeIsFeesError({
@@ -144,13 +145,11 @@ export const useWithdrawFees = function ({
       isWithdrawGasFeesError,
       needsApproval,
     }),
-    layerZeroFee,
     totalFees: computeTotalFees({
       approvalGasFees,
       layerZeroFee,
       needsApproval,
       withdrawGasFees,
     }),
-    withdrawGasFees,
   }
 }

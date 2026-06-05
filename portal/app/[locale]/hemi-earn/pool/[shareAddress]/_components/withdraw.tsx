@@ -13,11 +13,8 @@ import { walletIsConnected } from 'utils/wallet'
 import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
-import {
-  REDEEM_SLIPPAGE_BPS,
-  applySlippage,
-} from '../../../_constants/slippage'
 import { usePoolForm } from '../_context/poolFormContext'
+import { useQuoteRedeem } from '../_hooks/useQuoteRedeem'
 import { useUserPoolBalance } from '../_hooks/useUserPoolBalance'
 import { useWithdraw } from '../_hooks/useWithdraw'
 import { useAssetsToShares, useWithdrawFees } from '../_hooks/useWithdrawFees'
@@ -95,9 +92,6 @@ export const Withdraw = function ({
     token: selectedAsset.token,
   })
 
-  const canWithdraw = validInput && shares > BigInt(0)
-  const assetsOutMin =
-    amount > BigInt(0) ? applySlippage(amount, REDEEM_SLIPPAGE_BPS) : BigInt(0)
   const routerAddress = getHemiEarnRouterAddress()
 
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
@@ -108,19 +102,32 @@ export const Withdraw = function ({
       spender: routerAddress,
     })
 
-  const { isFeesError, isQuoteError, isQuoteLoading, quote, totalFees } =
-    useWithdrawFees({
+  const {
+    data: quote,
+    isError: isQuoteError,
+    isLoading: isQuoteLoading,
+  } = useQuoteRedeem({
+    account: address,
+    asset: selectedAsset.address,
+    shareAddress: pool.shareAddress,
+    shares: validInput && shares > BigInt(0) ? shares : BigInt(0),
+  })
+
+  const { assetsOutMin, canWithdraw, isFeesError, totalFees } = useWithdrawFees(
+    {
+      amount,
       asset: selectedAsset.address,
-      assetsOutMin,
-      canWithdraw,
       chainId: selectedAsset.token.chainId,
+      isQuoteError,
       needsApproval,
+      quote,
       receiver: address,
-      shareAddress: pool.shareAddress,
       shares,
       shareToken: pool.shareToken,
       spender: routerAddress,
-    })
+      validInput,
+    },
+  )
 
   const { isPending: isRunningOperation, mutate: withdrawFn } = useWithdraw({
     amount,

@@ -11,7 +11,10 @@ import { type Address } from 'viem'
 import { convertToShares } from 'viem-erc4626/actions'
 import { useEstimateGas } from 'wagmi'
 
-import { useQuoteRedeem } from './useQuoteRedeem'
+import {
+  REDEEM_SLIPPAGE_BPS,
+  applySlippage,
+} from '../../../_constants/slippage'
 
 type QuoteRedeem = {
   callbackFee: bigint
@@ -119,32 +122,34 @@ const computeIsFeesError = ({
   isQuoteError ||
   (needsApproval && isApprovalGasFeesError)
 
-// Mirror of `useDepositFees`: approval gas (share OFT → Router), requestRedeem
-// gas, and the LayerZero native fee paid as `msg.value`.
+// Takes `quote` and `shares` from the caller — the Withdraw form owns those
+// preview queries so it can subscribe once. The hook derives `canWithdraw`
+// and `assetsOutMin` internally so the slippage policy lives in one place
+// (mirror of `useDepositFees`).
 export const useWithdrawFees = function ({
+  amount,
   asset,
-  assetsOutMin,
-  canWithdraw,
   chainId,
+  isQuoteError,
   needsApproval,
+  quote,
   receiver,
-  shareAddress,
   shares,
   shareToken,
   spender,
+  validInput,
 }: {
+  amount: bigint
   asset: Address
-  assetsOutMin: bigint
-  canWithdraw: boolean
   chainId: EvmToken['chainId']
+  isQuoteError: boolean
   needsApproval: boolean
+  quote: QuoteRedeem | undefined
   receiver: Address | undefined
-  // Hemi-side share OFT for the pool. Forwarded to `useQuoteRedeem` so it
-  // can resolve the staking vault on Ethereum for the `isInstant` check.
-  shareAddress: Address
   shares: bigint
   shareToken: EvmToken
   spender: Address
+  validInput: boolean
 }) {
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
@@ -153,16 +158,9 @@ export const useWithdrawFees = function ({
       token: shareToken,
     })
 
-  const {
-    data: quote,
-    isError: isQuoteError,
-    isLoading: isQuoteLoading,
-  } = useQuoteRedeem({
-    account: receiver,
-    asset,
-    shareAddress,
-    shares: canWithdraw ? shares : BigInt(0),
-  })
+  const canWithdraw = validInput && shares > BigInt(0)
+  const assetsOutMin =
+    amount > BigInt(0) ? applySlippage(amount, REDEEM_SLIPPAGE_BPS) : BigInt(0)
 
   const { data: withdrawGasUnits, isError: isWithdrawGasUnitsError } =
     useEstimateGas({
@@ -189,16 +187,16 @@ export const useWithdrawFees = function ({
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
 
   return {
+    approvalGasFees,
+    assetsOutMin,
+    canWithdraw,
     isFeesError: computeIsFeesError({
       isApprovalGasFeesError,
       isQuoteError,
       isWithdrawGasFeesError,
       needsApproval,
     }),
-    isQuoteError,
-    isQuoteLoading,
     layerZeroFee,
-    quote,
     totalFees: computeTotalFees({
       approvalGasFees,
       layerZeroFee,

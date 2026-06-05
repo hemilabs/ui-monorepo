@@ -14,10 +14,6 @@ import { walletIsConnected } from 'utils/wallet'
 import { type Address } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
-import {
-  DEPOSIT_SLIPPAGE_BPS,
-  applySlippage,
-} from '../../../_constants/slippage'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
@@ -166,29 +162,25 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     shareAddress: pool.shareAddress,
   })
 
-  // Without this, a fast submit before the preview resolves would land
-  // `sharesOutMin=0n` on-chain — zero slippage protection.
-  const canDeposit = validInput && !!shares && shares > BigInt(0)
-  const sharesOutMin = shares
-    ? applySlippage(shares, DEPOSIT_SLIPPAGE_BPS)
-    : BigInt(0)
-
   const {
     approvalGasFees,
+    canDeposit,
     depositGasFees,
     isFeesError,
     layerZeroFee,
+    sharesOutMin,
     totalFees,
   } = useDepositFees({
     amount,
     asset: selectedAsset.address,
-    canDeposit,
+    isQuoteError,
     needsApproval,
+    quote,
     receiver: address,
-    shareAddress: pool.shareAddress,
-    sharesOutMin,
+    shares,
     spender: routerAddress,
     token: selectedAsset.token,
+    validInput,
   })
 
   const { setDrawerQueryString } = useDrawerQueryString()

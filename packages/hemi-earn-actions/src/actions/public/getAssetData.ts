@@ -1,4 +1,10 @@
-import { type Address, type Client, isAddressEqual, zeroAddress } from 'viem'
+import {
+  type Address,
+  type Client,
+  isAddress,
+  isAddressEqual,
+  zeroAddress,
+} from 'viem'
 import { readContract } from 'viem/actions'
 
 import { getHemiEarnRouterAddress } from '../../constants'
@@ -24,15 +30,25 @@ export type AssetData = {
 // Per-key lookup of the Router's asset registry: given a Hemi-side deposit
 // asset (e.g. the hemiBTC OFT), returns the share OFT it settles into plus
 // the Ethereum-side asset the Agent uses on fulfillment.
-export const getAssetData = async function ({
-  asset,
-  client,
-  routerAddress = getHemiEarnRouterAddress(),
-}: {
-  asset: Address
-  client: Client
-  routerAddress?: Address
-}): Promise<AssetData> {
+export const getAssetData = async function (
+  client: Client,
+  {
+    asset,
+    routerAddress = getHemiEarnRouterAddress(),
+  }: {
+    asset: Address
+    routerAddress?: Address
+  },
+): Promise<AssetData> {
+  if (!client) {
+    throw new Error('getAssetData: `client` is not defined')
+  }
+  if (!isAddress(asset, { strict: false })) {
+    throw new Error('getAssetData: `asset` is not a valid address')
+  }
+  if (!isAddress(routerAddress, { strict: false })) {
+    throw new Error('getAssetData: `routerAddress` is not a valid address')
+  }
   if (isAddressEqual(asset, zeroAddress)) {
     throw new Error('getAssetData: `asset` cannot be the zero address')
   }

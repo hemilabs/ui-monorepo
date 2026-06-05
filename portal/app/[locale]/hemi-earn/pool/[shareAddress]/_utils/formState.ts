@@ -32,6 +32,7 @@ export function resolvePreviewIssue({
 }): PreviewIssue | undefined {
   if (!validInput || isPreviewLoading) return undefined
   if (isPreviewError) return 'network-error'
+  if (peggedAmount === undefined) return undefined
   if (peggedAmount === BigInt(0)) return 'asset-unavailable'
   if (!hasShares) return 'amount-too-small'
   return undefined

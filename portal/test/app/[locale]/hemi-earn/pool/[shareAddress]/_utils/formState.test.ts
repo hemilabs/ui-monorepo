@@ -70,7 +70,7 @@ describe('resolvePreviewIssue', function () {
         hasShares: false,
         peggedAmount: undefined,
       }),
-    ).toBe('amount-too-small')
+    ).toBeUndefined()
   })
 })
 

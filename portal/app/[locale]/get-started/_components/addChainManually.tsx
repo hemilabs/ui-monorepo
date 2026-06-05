@@ -40,7 +40,6 @@ export const AddChainManually = function ({ chain, layer }: Props) {
     <NetworkConfigCard>
       <ChainHeaderRow chain={chain} layer={layer} />
       <DataSection
-        clickableLink={false}
         label={`${t('rpc-url')}:`}
         value={chain.rpcUrls.default.http[0]}
       />
@@ -50,7 +49,6 @@ export const AddChainManually = function ({ chain, layer }: Props) {
         value={chain.nativeCurrency.symbol}
       />
       <DataSection
-        clickableLink={false}
         label={`${t('block-explorer-url')}:`}
         value={chain.blockExplorers!.default.url}
       />

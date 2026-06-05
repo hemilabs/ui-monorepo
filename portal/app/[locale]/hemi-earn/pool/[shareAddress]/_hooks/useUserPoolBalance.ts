@@ -3,7 +3,7 @@ import { previewRedeem } from '@vetro-protocol/gateway/actions'
 import { getGatewayForShare, getStakingVaultForShare } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
-import { getEvmL1PublicClient, getHemiClient } from 'utils/chainClients'
+import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
 import { type Address, type Chain } from 'viem'
 import { balanceOf } from 'viem-erc20/actions'
 import { convertToAssets } from 'viem-erc4626/actions'
@@ -60,7 +60,7 @@ export const useUserPoolBalance = function ({
   return useQuery<UserPoolBalance>({
     enabled: !!address,
     async queryFn() {
-      const shares = await balanceOf(getHemiClient(chainId), {
+      const shares = await balanceOf(getPublicClient(chainId), {
         account: address!,
         address: shareAddress,
       })

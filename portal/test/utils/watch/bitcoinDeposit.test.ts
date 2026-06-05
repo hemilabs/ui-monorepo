@@ -34,7 +34,7 @@ vi.mock(import('utils/btcApi'), async function (importOriginal) {
 })
 
 vi.mock('utils/chainClients', () => ({
-  getHemiClient: vi.fn(),
+  getPublicClient: vi.fn(),
 }))
 
 vi.mock('utils/hemi', () => ({

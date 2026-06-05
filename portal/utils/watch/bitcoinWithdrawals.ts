@@ -1,5 +1,5 @@
 import { type ToBtcWithdrawOperation, BtcWithdrawStatus } from 'types/tunnel'
-import { getHemiClient } from 'utils/chainClients'
+import { getPublicClient } from 'utils/chainClients'
 import { getEvmBlock, getEvmTransactionReceipt } from 'utils/evmApi'
 import {
   getBitcoinWithdrawalUuid,
@@ -38,7 +38,7 @@ export const watchBitcoinWithdrawal = async function (
 ) {
   const updates: Partial<ToBtcWithdrawOperation> = {}
 
-  const hemiClient = getHemiClient(withdrawal.l2ChainId)
+  const hemiClient = getPublicClient(withdrawal.l2ChainId)
 
   // if the withdrawal is on a final state, it won't change, so there's no need to re-check it
   const newStatus = isPendingOperation(withdrawal)

@@ -5,7 +5,11 @@ import {
 import { EvmToken } from 'types/token'
 import { SixDaysSeconds } from 've-hemi-actions'
 import { zeroAddress } from 'viem'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+vi.mock('utils/chainClients', () => ({
+  getPublicClient: vi.fn(),
+}))
 
 const token = { address: zeroAddress, decimals: 18, symbol: 'HEMI' } as EvmToken
 

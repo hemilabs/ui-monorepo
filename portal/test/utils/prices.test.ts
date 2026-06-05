@@ -1,7 +1,11 @@
 import { TokenWithBalance } from 'types/token'
 import { calculateUsdValue } from 'utils/prices'
 import { parseUnits } from 'viem'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
+
+vi.mock('utils/chainClients', () => ({
+  getPublicClient: vi.fn(),
+}))
 
 describe('utils/prices', function () {
   describe('calculateUsdValue', function () {

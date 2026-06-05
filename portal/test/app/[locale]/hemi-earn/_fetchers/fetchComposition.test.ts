@@ -9,7 +9,6 @@ import {
   getAssetForShare,
 } from 'app/[locale]/hemi-earn/_hooks/gatewayForAsset'
 import fetch from 'fetch-plus-plus'
-import { SVETBTC_OFT_ADDRESS } from 'hemi-earn-actions'
 import { tokenQueryOptions } from 'hooks/useToken'
 import { tokenPricesQueryOptions } from 'hooks/useTokenPrices'
 import { mainnet } from 'networks/mainnet'
@@ -30,9 +29,23 @@ vi.mock('utils/chainClients', () => ({
 // The treasury endpoint call — the only direct network request of the fetcher.
 vi.mock('fetch-plus-plus', () => ({ default: vi.fn() }))
 
+const { assetAddress, shareAddress } = vi.hoisted(() => ({
+  assetAddress: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' as Address,
+  shareAddress: '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' as Address,
+}))
+
+// The committed hemi-earn registry ships placeholder (zero) addresses until
+// the production deployment is configured, so the test registers its own
+// share/asset entry instead of relying on the real data.
+vi.mock('hemi-earn-actions', async importOriginal => ({
+  ...(await importOriginal<typeof import('hemi-earn-actions')>()),
+  getHemiEarnSupportedAssets: () => [
+    { asset: assetAddress, share: shareAddress },
+  ],
+}))
+
 const apiUrl = 'https://vetro.test'
-// Real registry entry: the svetBTC share and its registered deposit asset.
-const shareAddress = SVETBTC_OFT_ADDRESS
+// Resolves through the real lookup, against the mocked registry entry
 const asset = getAssetForShare(shareAddress)
 // Real gateway configs, so the peg-base lookup exercises the production data.
 const btcGateway = gateways.find(g => g.pegBaseSymbol === 'BTC')!.address

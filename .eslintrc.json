@@ -40,7 +40,7 @@
     },
     {
       "extends": ["bloq/node", "bloq/typescript", "prettier"],
-      "files": ["portal-backend/api/**/*.ts", "subgraph-api/**/*.ts"],
+      "files": ["portal-backend/api/**/*.ts"],
       "rules": {
         "@typescript-eslint/no-unused-vars": [
           "error",

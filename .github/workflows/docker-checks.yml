@@ -10,13 +10,11 @@ on:
       - 'packages/ve-hemi-actions/**'
       - 'packages/ve-hemi-rewards/**'
       - 'portal-backend/**'
-      - 'subgraph-api/**'
   push:
     paths:
       - 'packages/ve-hemi-actions/**'
       - 'packages/ve-hemi-rewards/**'
       - 'portal-backend/**'
-      - 'subgraph-api/**'
 
 permissions:
   contents: read
@@ -32,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - run: docker build --tag ${{ matrix.image }}:local ${{ matrix.dockerfile && format('-f {0} ', matrix.dockerfile) || '' }}${{ matrix.context }}
+      - run: docker build --tag ${{ matrix.image }}:local ${{ matrix.dockerfile && format('-f {0} ', matrix.dockerfile) || '' }}.
       - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -48,18 +46,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - context: .
-            dockerfile: portal-backend/api/Dockerfile
+          - dockerfile: portal-backend/api/Dockerfile
             image: hemilabs/portal-backend-api
-          - context: .
-            dockerfile: portal-backend/cron/hemi-supply/Dockerfile
+          - dockerfile: portal-backend/cron/hemi-supply/Dockerfile
             image: hemilabs/hemi-supply-cron
-          - context: .
-            dockerfile: portal-backend/cron/token-prices/Dockerfile
+          - dockerfile: portal-backend/cron/token-prices/Dockerfile
             image: hemilabs/token-prices-cron
-          - context: .
-            dockerfile: portal-backend/cron/vaults-monitor/Dockerfile
+          - dockerfile: portal-backend/cron/vaults-monitor/Dockerfile
             image: hemilabs/vaults-monitor-cron
-          # Kept as is, as it will be removed - See https://github.com/hemilabs/ui-monorepo/issues/1425
-          - context: subgraph-api
-            image: hemilabs/subgraph-api

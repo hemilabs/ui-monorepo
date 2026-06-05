@@ -175,7 +175,7 @@ export const getWithdrawalProofClaimTxs = function (
   // When proving (and claiming) withdrawals, the storageKey where the proof will be saved
   // in the contract is based on hashing a withdrawal object. See this hashing in
   // https://github.com/hemilabs/optimism/blob/bde08fd3e335c235455b4cee6a6f8dbf88446201/packages/contracts-bedrock/src/L1/OptimismPortal2.sol#L542
-  // The same happens when claiming. As this hash is emitted in the Prove and Claim events, the subgraph-api allows us to filter by it.
+  // The same happens when claiming. As this hash is emitted in the Prove and Claim events, the subgraphs API allows us to filter by it.
   // Because of that, we need to regenerate the hash to be able to query the events indexed.
   // The code below is an implementation based of
   // https://github.com/hemilabs/optimism/blob/bde08fd3e335c235455b4cee6a6f8dbf88446201/packages/contracts-bedrock/src/libraries/Hashing.sol#L107

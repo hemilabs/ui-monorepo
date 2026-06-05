@@ -16,20 +16,16 @@ import { SegmentedControlItem } from '../segmentedControlItem'
 import { CompositionChart } from './compositionChart'
 import { CompositionTable } from './compositionTable'
 
-// Orange gradient palette supporting up to 12 items (dark to light)
+// Orange palette (dark to light); items beyond the palette wrap around
 const compositionColors = [
-  '#FF4600',
-  '#FF570D',
-  '#FF6A1A',
-  '#FF7B2E',
-  '#FF8C42',
-  '#FF9C5E',
-  '#FFB07A',
-  '#FFC299',
-  '#FFD4B8',
-  '#FFDEC7',
-  '#FFE8D6',
-  '#FFF3EB',
+  '#CC2F02', // orange-700
+  '#FF4600', // orange-600
+  '#FF600A', // orange-500
+  '#FF8332', // orange-400
+  '#FFB06D', // orange-300
+  '#FFD1A5', // orange-200
+  '#FFEAD3', // orange-100
+  '#FFF6EC', // orange-50
 ]
 
 type Props = {
@@ -42,11 +38,7 @@ export const Composition = function ({ chainId, shareAddress }: Props) {
   const [viewMode, setViewMode] = useState<CompositionViewMode>('token')
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
-  const {
-    data = [],
-    isError,
-    isPending,
-  } = useComposition({
+  const { data, isError, isPending } = useComposition({
     chainId,
     shareAddress,
     viewMode,
@@ -54,7 +46,7 @@ export const Composition = function ({ chainId, shareAddress }: Props) {
 
   const dataWithColors = useMemo(
     () =>
-      data.map((item, index) => ({
+      (data ?? []).map((item, index) => ({
         ...item,
         color: compositionColors[index % compositionColors.length],
       })),
@@ -63,9 +55,11 @@ export const Composition = function ({ chainId, shareAddress }: Props) {
 
   const renderHeadline = function () {
     if (dataWithColors.length > 0) {
+      // The reserve buffer row is not a position, so keep it out of the count
+      const count = dataWithColors.filter(item => !item.isReserveBuffer).length
       return viewMode === 'token'
-        ? t('tokens-count', { count: dataWithColors.length })
-        : t('protocols-count', { count: dataWithColors.length })
+        ? t('tokens-count', { count })
+        : t('protocols-count', { count })
     }
     if (isError) {
       return '-'

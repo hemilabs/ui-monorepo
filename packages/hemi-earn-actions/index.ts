@@ -7,7 +7,6 @@ export {
   type HemiEarnAsset,
   type HemiEarnShareEntry,
   SVETBTC_OFT_ADDRESS,
-  getGatewayForShare,
   getHemiEarnAgentAddress,
   getHemiEarnRouterAddress,
   getHemiEarnShares,

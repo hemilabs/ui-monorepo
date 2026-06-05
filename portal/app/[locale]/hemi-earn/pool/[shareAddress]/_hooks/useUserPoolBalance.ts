@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { previewRedeem } from '@vetro-protocol/gateway/actions'
-import { getGatewayForShare, getStakingVaultForShare } from 'hemi-earn-actions'
+import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
@@ -8,6 +8,8 @@ import { type Address, type Chain } from 'viem'
 import { balanceOf } from 'viem-erc20/actions'
 import { convertToAssets } from 'viem-erc4626/actions'
 import { useAccount } from 'wagmi'
+
+import { gatewayForAssetQueryOptions } from '../../../_hooks/gatewayForAsset'
 
 export function getUserPoolBalanceQueryKey({
   account,
@@ -56,6 +58,7 @@ export const useUserPoolBalance = function ({
 }) {
   const chainId = hemi.id
   const { address } = useAccount()
+  const queryClient = useQueryClient()
 
   return useQuery<UserPoolBalance>({
     enabled: !!address,
@@ -75,8 +78,11 @@ export const useUserPoolBalance = function ({
       if (peggedAmount <= BigInt(0)) {
         return { assetOut: BigInt(0), shares }
       }
+      const gateway = await queryClient.ensureQueryData(
+        gatewayForAssetQueryOptions(assetAddress),
+      )
       const assetOut = await previewRedeem(ethereumClient, {
-        address: getGatewayForShare(shareAddress),
+        address: gateway,
         peggedTokenIn: peggedAmount,
         tokenOut: assetAddress,
       })

@@ -128,10 +128,6 @@ function findShareEntry(shareOft: Address) {
 export const getStakingVaultForShare = (shareOft: Address) =>
   findShareEntry(shareOft).stakingVault
 
-// Ethereum-side Vetro Gateway for a Hemi-side share OFT.
-export const getGatewayForShare = (shareOft: Address) =>
-  findShareEntry(shareOft).gateway
-
 // Ethereum-side pegged token (vBTC, vUSD) for a Hemi-side share OFT.
 // Resolved on-chain via the gateway's `PEGGED_TOKEN()` view — callers
 // should wrap in `useQuery` / `useQueries` and cache the result (the

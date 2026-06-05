@@ -7,10 +7,12 @@ import { useAddTokenToWallet } from 'hooks/useAddTokenToWallet'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useWatchedAsset } from 'hooks/useWatchedAsset'
 import { useTranslations } from 'next-intl'
-import { type ReactNode, useEffect } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { EvmToken } from 'types/token'
 import { isNativeToken } from 'utils/nativeToken'
 import { useAccount } from 'wagmi'
+
+import { AddTokenToWalletToast } from './addTokenToWalletToast'
 
 type Props = {
   token: EvmToken
@@ -64,17 +66,28 @@ export const AddTokenTableButton = function ({ token }: Props) {
   const { openDrawer } = useDrawerContext()
   const isTokenAdded = useWatchedAsset(token.address)
 
+  const [toastKey, setToastKey] = useState(0)
+  const [toastVariant, setToastVariant] = useState<'error' | 'success' | null>(
+    null,
+  )
+
   const { isPending, mutate, reset, status } = useAddTokenToWallet({
     token,
   })
 
   useEffect(
-    function resetAfterAddTokenError() {
-      if (status === 'error') {
+    function handleMutationStatus() {
+      if (status === 'success') {
+        setToastVariant('success')
+        setToastKey(k => k + 1)
+      } else if (status === 'error') {
+        setToastVariant('error')
+        setToastKey(k => k + 1)
         reset()
       }
     },
-    [reset, status],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [status],
   )
 
   if (isNativeToken(token)) {
@@ -92,12 +105,17 @@ export const AddTokenTableButton = function ({ token }: Props) {
   }
 
   return (
-    <ActionSlot>
-      {isAdded ? (
-        <AddedAction />
-      ) : (
-        <AddTokenAction disabled={isPending} onClick={onClick} />
+    <>
+      {toastVariant !== null && (
+        <AddTokenToWalletToast key={toastKey} variant={toastVariant} />
       )}
-    </ActionSlot>
+      <ActionSlot>
+        {isAdded ? (
+          <AddedAction />
+        ) : (
+          <AddTokenAction disabled={isPending} onClick={onClick} />
+        )}
+      </ActionSlot>
+    </>
   )
 }

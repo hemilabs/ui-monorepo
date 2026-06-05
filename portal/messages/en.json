@@ -304,6 +304,8 @@
     "add-hemi-tokens": "Add Hemi tokens",
     "add-hemi-tokens-description": "Hemi tokens are paired with their ERC-20 versions on Ethereum. To see and use an asset on Hemi, your wallet needs the Hemi (L2) token address.",
     "add-token": "Add token",
+    "add-token-error-description": "Please try again.",
+    "add-token-error-title": "Couldn't add token to your wallet",
     "action": "Action",
     "add-to-wallet": "Add network",
     "adding-chain": "Adding...",

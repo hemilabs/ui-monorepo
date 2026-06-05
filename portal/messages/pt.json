@@ -304,6 +304,8 @@
     "add-hemi-tokens": "Adicionar tokens Hemi",
     "add-hemi-tokens-description": "Os tokens Hemi estão emparelhados com as suas versões ERC-20 na Ethereum. Para ver e usar um ativo na Hemi, a sua carteira precisa do endereço do token Hemi (L2).",
     "add-token": "Adicionar token",
+    "add-token-error-description": "Por favor, tente novamente.",
+    "add-token-error-title": "Não foi possível adicionar o token à sua carteira",
     "action": "Ação",
     "add-to-wallet": "Adicionar rede",
     "adding-chain": "A adicionar...",

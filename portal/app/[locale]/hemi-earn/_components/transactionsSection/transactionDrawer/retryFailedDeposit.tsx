@@ -6,7 +6,12 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { formatUnits } from 'viem'
 
+import {
+  DEPOSIT_SLIPPAGE_BPS,
+  applySlippage,
+} from '../../../_constants/slippage'
 import { useDeposit } from '../../../pool/[shareAddress]/_hooks/useDeposit'
+import { useDepositShares } from '../../../pool/[shareAddress]/_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../../pool/[shareAddress]/_hooks/useQuoteDeposit'
 import { type DepositOperationRunning } from '../../../pool/[shareAddress]/_types/operations'
 import {
@@ -48,6 +53,15 @@ export const RetryFailedDeposit = function ({
     shareAddress: pool.shareAddress,
   })
 
+  const { data: shares } = useDepositShares({
+    peggedAmount: quote?.peggedAmount,
+    shareAddress: pool.shareAddress,
+  })
+
+  const sharesOutMin = shares
+    ? applySlippage(shares, DEPOSIT_SLIPPAGE_BPS)
+    : BigInt(0)
+
   const { mutate: runDeposit } = useDeposit({
     callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
@@ -72,6 +86,7 @@ export const RetryFailedDeposit = function ({
     pool,
     priorApprovalTxHash: transaction.approvalTxHash,
     selectedAsset: asset,
+    sharesOutMin,
     // Hide the specific failed row from the table once this retry is signed.
     supersedesInitiateTxHash: transaction.initiateTxHash,
   })
@@ -80,7 +95,7 @@ export const RetryFailedDeposit = function ({
 
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()
-    if (!quote) return
+    if (!quote || !shares || shares <= BigInt(0)) return
     setOperationRunning('depositing')
     runDeposit()
   }
@@ -89,7 +104,10 @@ export const RetryFailedDeposit = function ({
     <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
       <SubmitWhenConnected
         submitButton={
-          <Button disabled={isDepositing || !quote} size="small">
+          <Button
+            disabled={isDepositing || !quote || !shares || shares <= BigInt(0)}
+            size="small"
+          >
             {t(isDepositing ? 'common.depositing' : 'common.try-again')}
           </Button>
         }

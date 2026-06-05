@@ -18,12 +18,14 @@ const buildGasData = ({
   canDeposit,
   quote,
   receiver,
+  sharesOutMin,
 }: {
   amount: bigint
   asset: Address
   canDeposit: boolean
   quote: QuoteDeposit | undefined
   receiver: Address | undefined
+  sharesOutMin: bigint
 }) =>
   !canDeposit || !receiver || !quote
     ? undefined
@@ -33,6 +35,7 @@ const buildGasData = ({
         callbackFee: quote.callbackFee,
         operator: receiver,
         receiver,
+        sharesOutMin,
       })
 
 const computeTotalFees = ({
@@ -75,6 +78,7 @@ export const useDepositFees = function ({
   needsApproval,
   receiver,
   shareAddress,
+  sharesOutMin,
   spender,
   token,
 }: {
@@ -84,6 +88,7 @@ export const useDepositFees = function ({
   needsApproval: boolean
   receiver: Address | undefined
   shareAddress: Address
+  sharesOutMin: bigint
   spender: Address
   token: EvmToken
 }) {
@@ -98,7 +103,14 @@ export const useDepositFees = function ({
 
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({
-      data: buildGasData({ amount, asset, canDeposit, quote, receiver }),
+      data: buildGasData({
+        amount,
+        asset,
+        canDeposit,
+        quote,
+        receiver,
+        sharesOutMin,
+      }),
       query: { enabled: canDeposit && !!receiver && !!quote },
       to: spender,
       value: quote?.nativeFee,

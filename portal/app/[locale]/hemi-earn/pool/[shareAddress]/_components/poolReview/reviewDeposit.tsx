@@ -19,10 +19,15 @@ import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
+import {
+  DEPOSIT_SLIPPAGE_BPS,
+  applySlippage,
+} from '../../../../_constants/slippage'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { SparkleIcon } from '../../../../_icons/sparkleIcon'
 import { getTerminalDeliveryTxHash, hashesMatch } from '../../../../_utils'
 import { usePoolForm } from '../../_context/poolFormContext'
+import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { DepositStatus, type DepositStatusType } from '../../_types/operations'
 
@@ -72,6 +77,15 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     shareAddress: pool.shareAddress,
   })
 
+  const { data: shares } = useDepositShares({
+    peggedAmount: quote?.peggedAmount,
+    shareAddress: pool.shareAddress,
+  })
+
+  const sharesOutMin = shares
+    ? applySlippage(shares, DEPOSIT_SLIPPAGE_BPS)
+    : BigInt(0)
+
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({
       data:
@@ -82,6 +96,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
               callbackFee: quote.callbackFee,
               operator: address,
               receiver: address,
+              sharesOutMin,
             })
           : undefined,
       query: { enabled: !!address && amount > BigInt(0) && !!quote },

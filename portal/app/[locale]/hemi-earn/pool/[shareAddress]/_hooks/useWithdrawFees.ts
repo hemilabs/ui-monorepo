@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+import { previewWithdraw } from '@vetro-protocol/gateway/actions'
 import { getGatewayForShare, getStakingVaultForShare } from 'hemi-earn-actions'
-import {
-  encodeRequestRedeem,
-  inversePreviewRedeem,
-} from 'hemi-earn-actions/actions'
+import { encodeRequestRedeem } from 'hemi-earn-actions/actions'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { mainnet } from 'networks/mainnet'
@@ -23,13 +21,9 @@ type QuoteRedeem = {
 
 // Converts the user-entered asset amount to share units. The Router expects
 // shares in the StakingVault's units, but the input is in the deposit
-// asset's units (USDC, cbBTC, …). Inverts the redeem pipeline rather than
-// reusing `previewDeposit`: the deposit path applies `mintFee` while the
-// redeem path applies `redeemFee`, and when those differ the two preview
-// functions are not inverses of each other, so reusing `previewDeposit`
-// silently miscomputes the shares to burn. `inversePreviewRedeem` probes
-// `previewRedeem` once and self-calibrates against whatever the Gateway's
-// fee model actually is.
+// asset's units (USDC, cbBTC, …). Uses the Gateway's `previewWithdraw` —
+// the canonical inverse of `previewRedeem` — so the redeem fee is applied
+// on-chain instead of approximated client-side.
 //
 // `peggedAmount` is the intermediate pegged-token value — exposed because
 // the redeem also burns this many vault assets, which lets `useWithdraw`
@@ -47,10 +41,9 @@ export const useAssetsToShares = ({
     enabled: amount > BigInt(0),
     async queryFn() {
       const ethereumClient = getEvmL1PublicClient(mainnet.id)
-      const peggedAmount = await inversePreviewRedeem({
-        amount,
-        client: ethereumClient,
-        gatewayAddress: getGatewayForShare(shareAddress),
+      const peggedAmount = await previewWithdraw(ethereumClient, {
+        address: getGatewayForShare(shareAddress),
+        amountOut: amount,
         tokenOut: assetAddress,
       })
       if (peggedAmount <= BigInt(0)) {
@@ -73,12 +66,14 @@ export const useAssetsToShares = ({
 
 const buildGasData = ({
   asset,
+  assetsOutMin,
   canWithdraw,
   quote,
   receiver,
   shares,
 }: {
   asset: Address
+  assetsOutMin: bigint
   canWithdraw: boolean
   quote: QuoteRedeem | undefined
   receiver: Address | undefined
@@ -88,6 +83,7 @@ const buildGasData = ({
     ? undefined
     : encodeRequestRedeem({
         asset,
+        assetsOutMin,
         callbackFee: quote.callbackFee,
         isInstant: quote.isInstant,
         operator: receiver,
@@ -127,6 +123,7 @@ const computeIsFeesError = ({
 // gas, and the LayerZero native fee paid as `msg.value`.
 export const useWithdrawFees = function ({
   asset,
+  assetsOutMin,
   canWithdraw,
   chainId,
   needsApproval,
@@ -137,6 +134,7 @@ export const useWithdrawFees = function ({
   spender,
 }: {
   asset: Address
+  assetsOutMin: bigint
   canWithdraw: boolean
   chainId: EvmToken['chainId']
   needsApproval: boolean
@@ -155,7 +153,11 @@ export const useWithdrawFees = function ({
       token: shareToken,
     })
 
-  const { data: quote, isError: isQuoteError } = useQuoteRedeem({
+  const {
+    data: quote,
+    isError: isQuoteError,
+    isLoading: isQuoteLoading,
+  } = useQuoteRedeem({
     account: receiver,
     asset,
     shareAddress,
@@ -166,6 +168,7 @@ export const useWithdrawFees = function ({
     useEstimateGas({
       data: buildGasData({
         asset,
+        assetsOutMin,
         canWithdraw,
         quote,
         receiver,
@@ -192,6 +195,8 @@ export const useWithdrawFees = function ({
       isWithdrawGasFeesError,
       needsApproval,
     }),
+    isQuoteError,
+    isQuoteLoading,
     layerZeroFee,
     quote,
     totalFees: computeTotalFees({

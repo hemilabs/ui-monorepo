@@ -39,7 +39,8 @@ export const RetryDeposit = function () {
   })
 
   const { data: shares } = useDepositShares({
-    peggedAmount: quote?.peggedAmount,
+    amount,
+    asset: selectedAsset.address,
     shareAddress: pool.shareAddress,
   })
 

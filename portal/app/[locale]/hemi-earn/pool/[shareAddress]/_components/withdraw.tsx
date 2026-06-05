@@ -14,10 +14,11 @@ import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { usePoolForm } from '../_context/poolFormContext'
+import { useAssetsToShares } from '../_hooks/useAssetsToShares'
 import { useQuoteRedeem } from '../_hooks/useQuoteRedeem'
 import { useUserPoolBalance } from '../_hooks/useUserPoolBalance'
 import { useWithdraw } from '../_hooks/useWithdraw'
-import { useAssetsToShares, useWithdrawFees } from '../_hooks/useWithdrawFees'
+import { useWithdrawFees } from '../_hooks/useWithdrawFees'
 import { type WithdrawOperationRunning } from '../_types/operations'
 import {
   computeIsLoading,

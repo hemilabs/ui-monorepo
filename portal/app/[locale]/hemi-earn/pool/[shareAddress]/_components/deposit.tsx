@@ -158,7 +158,8 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     isError: isSharesError,
     isLoading: isSharesLoading,
   } = useDepositShares({
-    peggedAmount: quote?.peggedAmount,
+    amount,
+    asset: selectedAsset.address,
     shareAddress: pool.shareAddress,
   })
 

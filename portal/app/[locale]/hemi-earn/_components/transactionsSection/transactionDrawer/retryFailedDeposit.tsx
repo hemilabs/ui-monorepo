@@ -54,7 +54,8 @@ export const RetryFailedDeposit = function ({
   })
 
   const { data: shares } = useDepositShares({
-    peggedAmount: quote?.peggedAmount,
+    amount,
+    asset: asset.address,
     shareAddress: pool.shareAddress,
   })
 

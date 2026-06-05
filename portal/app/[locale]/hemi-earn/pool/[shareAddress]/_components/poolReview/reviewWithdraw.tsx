@@ -24,8 +24,8 @@ import {
   applySlippage,
 } from '../../../../_constants/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
+import { useAssetsToShares } from '../../_hooks/useAssetsToShares'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
-import { useAssetsToShares } from '../../_hooks/useWithdrawFees'
 import {
   WithdrawStatus,
   type WithdrawStatusType,

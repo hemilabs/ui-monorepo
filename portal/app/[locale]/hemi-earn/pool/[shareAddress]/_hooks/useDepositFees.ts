@@ -103,10 +103,7 @@ export const useDepositFees = function ({
   // before the preview resolves would land `sharesOutMin=0n` on-chain —
   // zero slippage protection.
   const canDeposit = validInput && shares !== undefined && shares > BigInt(0)
-  const sharesOutMin =
-    shares && shares > BigInt(0)
-      ? applySlippage(shares, DEPOSIT_SLIPPAGE_BPS)
-      : BigInt(0)
+  const sharesOutMin = applySlippage(shares ?? BigInt(0), DEPOSIT_SLIPPAGE_BPS)
 
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({

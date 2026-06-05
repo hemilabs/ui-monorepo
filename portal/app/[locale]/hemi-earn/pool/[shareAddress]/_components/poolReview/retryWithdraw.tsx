@@ -10,9 +10,9 @@ import {
   applySlippage,
 } from '../../../../_constants/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
+import { useAssetsToShares } from '../../_hooks/useAssetsToShares'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useWithdraw } from '../../_hooks/useWithdraw'
-import { useAssetsToShares } from '../../_hooks/useWithdrawFees'
 import { type WithdrawOperationRunning } from '../../_types/operations'
 
 export const RetryWithdraw = function () {

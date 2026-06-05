@@ -78,7 +78,8 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   })
 
   const { data: shares } = useDepositShares({
-    peggedAmount: quote?.peggedAmount,
+    amount,
+    asset: selectedAsset.address,
     shareAddress: pool.shareAddress,
   })
 

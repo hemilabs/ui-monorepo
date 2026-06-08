@@ -77,7 +77,7 @@ export async function fetchQuoteDeposit({
   return { callbackFee, nativeFee, peggedAmount }
 }
 
-export const getQuoteDepositQueryKey = ({
+const getQuoteDepositQueryKey = ({
   amount,
   asset,
   shareAddress,

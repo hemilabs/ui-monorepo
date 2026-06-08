@@ -24,7 +24,12 @@ export const AddChain = function ({ chain, children }: Props) {
   const { data: walletClient } = useWalletClient()
 
   const { isPending, mutate: addChain } = useMutation({
-    mutationFn: (c: Chain) => walletClient!.addChain({ chain: c }),
+    mutationFn(c: Chain) {
+      if (!walletClient) {
+        throw new Error('Wallet client is not ready')
+      }
+      return walletClient.addChain({ chain: c })
+    },
     mutationKey: ['add-chain-mutation', chain.id],
     onSuccess() {
       setIsChainAdded(true)

@@ -1,6 +1,7 @@
 import { WarningIcon } from 'components/icons/warningIcon'
 import { useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
+import { secondsToDays } from 'utils/time'
 import { type Address } from 'viem'
 
 import { useCooldownDuration } from '../../../_hooks/useCooldownDuration'
@@ -11,9 +12,13 @@ type Props = {
 
 export const CooldownWarning = function ({ shareAddress }: Props) {
   const t = useTranslations()
-  const { data: days, isPending: isLoading } = useCooldownDuration({
+  const { data: durationSec, isPending: isLoading } = useCooldownDuration({
     shareAddress,
   })
+  const days =
+    durationSec !== undefined
+      ? Math.round(secondsToDays(durationSec))
+      : undefined
   return (
     <div className="flex items-center gap-x-1 rounded-lg bg-neutral-100 p-4 text-sm font-medium text-neutral-900">
       <WarningIcon />

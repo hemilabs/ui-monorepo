@@ -32,11 +32,16 @@
           "heading": "Review stake deposit",
           "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
         },
+        "cooldown-ended": "Cooldown period complete",
         "stake-token": "Stake {symbol}",
         "get-share-tokens": "Get share tokens",
+        "receive-token": "Receive {symbol}",
+        "unstake-token": "Unstake {symbol}",
+        "wait-cooldown-countdown": "Cooldown ends in {days}d {hours}h",
+        "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
         "withdraw": {
-          "heading": "Review Withdrawal",
-          "subheading": "Complete the remaining steps to withdraw your tokens."
+          "heading": "Review stake withdrawal",
+          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
         },
         "withdraw-token": "Withdraw {symbol}"
       },

@@ -3,7 +3,6 @@ import { getCooldownDuration } from '@vetro-protocol/earn/actions'
 import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
-import { secondsToDays } from 'utils/time'
 import { type Address } from 'viem'
 
 // `cooldownDuration` is governance-controlled and rarely changes. Caching
@@ -11,6 +10,10 @@ import { type Address } from 'viem'
 // reconnect.
 const STALE_TIME_MS = 4 * 60 * 60 * 1000
 
+// Returns the raw on-chain cooldown duration in seconds. Callers that just
+// need the day count (e.g. the warning banner) convert with
+// `secondsToDays`; the withdraw drawer's live countdown needs the raw
+// seconds to tick at minute resolution.
 export const useCooldownDuration = ({
   shareAddress,
 }: {
@@ -22,7 +25,7 @@ export const useCooldownDuration = ({
         getEvmL1PublicClient(mainnet.id),
         { address: getStakingVaultForShare(shareAddress) },
       )
-      return Math.round(secondsToDays(Number(seconds)))
+      return Number(seconds)
     },
     queryKey: ['hemi-earn', 'cooldown-duration', shareAddress],
     staleTime: STALE_TIME_MS,

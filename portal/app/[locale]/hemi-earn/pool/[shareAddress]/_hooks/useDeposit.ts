@@ -10,6 +10,7 @@ import {
 import { requestDeposit } from 'hemi-earn-actions/actions'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
+import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
 import { type Hash } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
@@ -102,7 +103,7 @@ export const useDeposit = function ({
       //   2. `user-signed-deposit` — adds `initiateTxHash`, which is the
       //      key the merge in `useEarnTransactions` uses to dedupe against
       //      the subgraph row.
-      const startedAt = Math.floor(Date.now() / 1000)
+      const startedAt = Number(unixNowTimestamp())
       const baseLocalPayload = {
         account: address,
         amountIn: amount.toString(),

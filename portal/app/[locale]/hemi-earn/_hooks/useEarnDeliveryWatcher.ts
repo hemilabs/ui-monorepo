@@ -47,10 +47,12 @@ const isInFlightStatus = (status: EarnTransactionStatusType) =>
   status !== 'CLAIMED' && status !== 'CANCELLED' && status !== 'RECOVERED'
 
 // Walks the previous-vs-current subgraph status maps and reports whether any
-// deposit hash transitioned from an in-flight state into a terminal delivery
-// state (CLAIMED / RECOVERED) since the last poll. First-time observations
-// of already-terminal hashes (page reload after CLAIMED) do NOT count —
-// those rows are historical and don't move balances.
+// request hash transitioned from an in-flight state into a terminal delivery
+// state (CLAIMED / RECOVERED) since the last poll. Applies to both deposits
+// (shares landing on Ethereum) and redeems (underlying tokens landing on
+// Hemi) — both move the user's pool position and TVL. First-time
+// observations of already-terminal hashes (page reload after CLAIMED) do
+// NOT count — those rows are historical and don't move balances.
 function detectCrossChainDelivery(
   previous: Map<string, EarnTransactionStatusType>,
   current: Map<string, EarnTransactionStatusType>,
@@ -63,11 +65,10 @@ function detectCrossChainDelivery(
   return false
 }
 
-function invalidateVetroBalances(
-  queryClient: ReturnType<typeof useQueryClient>,
-) {
+function invalidateOnDelivery(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.invalidateQueries({ queryKey: vetroPoolsPrefix })
   queryClient.invalidateQueries({ queryKey: vetroUserPoolBalancePrefix })
+  queryClient.invalidateQueries({ queryKey: ['tokenBalance'] })
   // `resetQueries` is the only single-call primitive that does both halves
   // of what we need: it removes every matching cache entry (so the inner
   // `ensureQueryData` reads inside `fetchEarnPositions` go to the network
@@ -109,9 +110,7 @@ export const useEarnDeliveryWatcher = function () {
     function reconcileAndInvalidate() {
       if (!data || data.length === 0 || !address) return
       const subgraphHashToStatus = new Map<string, EarnTransactionStatusType>(
-        data
-          .filter(t => t.kind === 'DEPOSIT')
-          .map(t => [t.initiateTxHash.toLowerCase(), t.status]),
+        data.map(t => [t.initiateTxHash.toLowerCase(), t.status]),
       )
       const crossChainDelivered = detectCrossChainDelivery(
         previousSubgraphStatusRef.current,
@@ -124,7 +123,7 @@ export const useEarnDeliveryWatcher = function () {
         subgraphHashes: new Set(subgraphHashToStatus.keys()),
       })
       if (crossChainDelivered) {
-        invalidateVetroBalances(queryClient)
+        invalidateOnDelivery(queryClient)
       }
     },
     [address, data, localOperations, markSettledByInitiateTxHash, queryClient],

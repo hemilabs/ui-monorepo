@@ -49,10 +49,11 @@ const isInFlightStatus = (status: EarnTransactionStatusType) =>
 // Walks the previous-vs-current subgraph status maps and reports whether any
 // request hash transitioned from an in-flight state into a terminal delivery
 // state (CLAIMED / RECOVERED) since the last poll. Applies to both deposits
-// (shares landing on Ethereum) and redeems (underlying tokens landing on
-// Hemi) — both move the user's pool position and TVL. First-time
-// observations of already-terminal hashes (page reload after CLAIMED) do
-// NOT count — those rows are historical and don't move balances.
+// (share OFTs landing on the user's Hemi wallet) and redeems (underlying
+// tokens landing on the user's Hemi wallet) — both move the user's pool
+// position and TVL. First-time observations of already-terminal hashes
+// (page reload after CLAIMED) do NOT count — those rows are historical
+// and don't move balances.
 function detectCrossChainDelivery(
   previous: Map<string, EarnTransactionStatusType>,
   current: Map<string, EarnTransactionStatusType>,

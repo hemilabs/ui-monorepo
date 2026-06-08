@@ -5,7 +5,7 @@ import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 import { convertToShares } from 'viem-erc4626/actions'
 
-import { fetchQuoteDeposit, getQuoteDepositQueryKey } from './fetchQuoteDeposit'
+import { quoteDepositOptions } from './fetchQuoteDeposit'
 
 export type DepositSharesParams = {
   amount: bigint
@@ -21,11 +21,16 @@ export async function fetchDepositShares(
   queryClient: QueryClient,
   { amount, asset, shareAddress }: DepositSharesParams,
 ): Promise<bigint> {
-  const quote = await queryClient.fetchQuery({
-    queryFn: () => fetchQuoteDeposit({ amount, asset, shareAddress }),
-    queryKey: getQuoteDepositQueryKey({ amount, asset, shareAddress }),
+  const { queryFn, queryKey } = quoteDepositOptions({
+    amount,
+    asset,
+    queryClient,
+    shareAddress,
   })
-  if (quote.peggedAmount <= BigInt(0)) return BigInt(0)
+  const quote = await queryClient.fetchQuery({ queryFn, queryKey })
+  if (quote.peggedAmount <= BigInt(0)) {
+    return BigInt(0)
+  }
   return convertToShares(getEvmL1PublicClient(mainnet.id), {
     address: getStakingVaultForShare(shareAddress),
     assets: quote.peggedAmount,

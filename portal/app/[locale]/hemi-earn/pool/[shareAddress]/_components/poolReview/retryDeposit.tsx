@@ -4,8 +4,13 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { parseTokenUnits } from 'utils/token'
 
+import {
+  DEPOSIT_SLIPPAGE_BPS,
+  applySlippage,
+} from '../../../../_constants/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useDeposit } from '../../_hooks/useDeposit'
+import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useDrawerQueryString } from '../../_hooks/useDrawerQueryString'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { type DepositOperationRunning } from '../../_types/operations'
@@ -32,6 +37,16 @@ export const RetryDeposit = function () {
     asset: selectedAsset.address,
     shareAddress: pool.shareAddress,
   })
+
+  const { data: shares } = useDepositShares({
+    amount,
+    asset: selectedAsset.address,
+    shareAddress: pool.shareAddress,
+  })
+
+  const sharesOutMin = shares
+    ? applySlippage(shares, DEPOSIT_SLIPPAGE_BPS)
+    : BigInt(0)
 
   const { mutate: runDeposit } = useDeposit({
     callbackFee: quote?.callbackFee ?? BigInt(0),
@@ -64,6 +79,7 @@ export const RetryDeposit = function () {
     pool,
     priorApprovalTxHash: depositOperation?.approvalTxHash,
     selectedAsset,
+    sharesOutMin,
     // Hide the specific failed row from the table when the user commits to
     // this retry. `depositOperation.transactionHash` is the failed deposit's
     // hash (set on `user-signed-deposit` and not cleared by the revert).
@@ -75,7 +91,7 @@ export const RetryDeposit = function () {
 
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()
-    if (!quote) return
+    if (!quote || !shares || shares <= BigInt(0)) return
     setOperationRunning('depositing')
     runDeposit()
   }
@@ -84,7 +100,10 @@ export const RetryDeposit = function () {
     <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
       <SubmitWhenConnected
         submitButton={
-          <Button disabled={isDepositing || !quote} size="small">
+          <Button
+            disabled={isDepositing || !quote || !shares || shares <= BigInt(0)}
+            size="small"
+          >
             {t(isDepositing ? 'common.depositing' : 'common.try-again')}
           </Button>
         }

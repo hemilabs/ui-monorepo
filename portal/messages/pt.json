@@ -40,9 +40,12 @@
         "withdraw-token": "Sacar {symbol}"
       },
       "form": {
+        "amount-too-small": "Valor muito pequeno",
+        "asset-unavailable": "Ativo indisponível",
         "bridging-fees": "Taxas de bridge",
         "cooldown-warning": "Sacar fundos leva {days, plural, one {# dia} other {# dias}} para concluir.",
         "cooldown-warning-fallback": "Sacar fundos leva alguns dias para concluir.",
+        "network-error": "Falha no preview — tente de novo",
         "total-fee": "Custo total de gás",
         "withdrawing": "Sacando...",
         "you-will-receive": "Você vai receber"

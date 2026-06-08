@@ -5,7 +5,10 @@ import { type EvmToken } from 'types/token'
 import { type Address } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
-import { useQuoteDeposit } from './useQuoteDeposit'
+import {
+  DEPOSIT_SLIPPAGE_BPS,
+  applySlippage,
+} from '../../../_constants/slippage'
 
 type QuoteDeposit = {
   callbackFee: bigint
@@ -18,12 +21,14 @@ const buildGasData = ({
   canDeposit,
   quote,
   receiver,
+  sharesOutMin,
 }: {
   amount: bigint
   asset: Address
   canDeposit: boolean
   quote: QuoteDeposit | undefined
   receiver: Address | undefined
+  sharesOutMin: bigint
 }) =>
   !canDeposit || !receiver || !quote
     ? undefined
@@ -33,6 +38,7 @@ const buildGasData = ({
         callbackFee: quote.callbackFee,
         operator: receiver,
         receiver,
+        sharesOutMin,
       })
 
 const computeTotalFees = ({
@@ -63,42 +69,52 @@ const computeIsFeesError = ({
   isQuoteError ||
   (needsApproval && isApprovalGasFeesError)
 
-// Bundles every cost the user pays on a deposit:
-//   - approval gas (Hemi, ERC-20 allowance to the Router)
-//   - requestDeposit gas (Hemi, payable tx that triggers the LZ send)
-//   - LayerZero native fee (`msg.value` forwarded to the Agent fulfillment)
-// Owning the whole pipeline here keeps the Deposit form a thin orchestrator.
+// Takes `quote` and `shares` from the caller — the Deposit form owns those
+// preview queries so it can subscribe once. The hook derives `canDeposit` and
+// `sharesOutMin` internally so the slippage policy lives in one place (mirror
+// of `useWithdrawFees`).
 export const useDepositFees = function ({
   amount,
   asset,
-  canDeposit,
+  isQuoteError,
   needsApproval,
+  quote,
   receiver,
-  shareAddress,
+  shares,
   spender,
   token,
+  validInput,
 }: {
   amount: bigint
   asset: Address
-  canDeposit: boolean
+  isQuoteError: boolean
   needsApproval: boolean
+  quote: QuoteDeposit | undefined
   receiver: Address | undefined
-  shareAddress: Address
+  shares: bigint | undefined
   spender: Address
   token: EvmToken
+  validInput: boolean
 }) {
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({ amount, spender, token })
 
-  const { data: quote, isError: isQuoteError } = useQuoteDeposit({
-    amount,
-    asset,
-    shareAddress,
-  })
+  // Gate submit on a positive shares preview. Without this, a fast submit
+  // before the preview resolves would land `sharesOutMin=0n` on-chain —
+  // zero slippage protection.
+  const canDeposit = validInput && shares !== undefined && shares > BigInt(0)
+  const sharesOutMin = applySlippage(shares ?? BigInt(0), DEPOSIT_SLIPPAGE_BPS)
 
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({
-      data: buildGasData({ amount, asset, canDeposit, quote, receiver }),
+      data: buildGasData({
+        amount,
+        asset,
+        canDeposit,
+        quote,
+        receiver,
+        sharesOutMin,
+      }),
       query: { enabled: canDeposit && !!receiver && !!quote },
       to: spender,
       value: quote?.nativeFee,
@@ -115,6 +131,7 @@ export const useDepositFees = function ({
 
   return {
     approvalGasFees,
+    canDeposit,
     depositGasFees,
     isFeesError: computeIsFeesError({
       isApprovalGasFeesError,
@@ -123,7 +140,7 @@ export const useDepositFees = function ({
       needsApproval,
     }),
     layerZeroFee,
-    quote,
+    sharesOutMin,
     totalFees: computeTotalFees({
       approvalGasFees,
       depositGasFees,

@@ -31,6 +31,10 @@ type UseDeposit = {
   // entry so the historical drawer keeps surfacing the approval step.
   priorApprovalTxHash?: Hash
   selectedAsset: EarnAsset
+  // Slippage-protected minimum shares the caller expects to receive on
+  // fulfillment. Enforced on the remote chain when the Agent stakes into
+  // the vault.
+  sharesOutMin: bigint
   // Set by retry callers: the `initiateTxHash` of the specific prior FAILED
   // attempt being replaced. Once the new deposit is signed, that entry is
   // flagged `settled` so the table doesn't show the old failure alongside
@@ -46,6 +50,7 @@ export const useDeposit = function ({
   pool,
   priorApprovalTxHash,
   selectedAsset,
+  sharesOutMin,
   supersedesInitiateTxHash,
   updateDepositOperation,
 }: UseDeposit) {
@@ -124,6 +129,7 @@ export const useDeposit = function ({
         operator: address,
         receiver: address,
         routerAddress,
+        sharesOutMin,
         walletClient,
       })
 

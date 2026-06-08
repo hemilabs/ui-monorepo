@@ -19,9 +19,13 @@ import { parseTokenUnits } from 'utils/token'
 import { type Address, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
+import {
+  REDEEM_SLIPPAGE_BPS,
+  applySlippage,
+} from '../../../../_constants/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
+import { useAssetsToShares } from '../../_hooks/useAssetsToShares'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
-import { useAssetsToShares } from '../../_hooks/useWithdrawFees'
 import {
   WithdrawStatus,
   type WithdrawStatusType,
@@ -44,6 +48,8 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     withdrawOperation?.status ?? WithdrawStatus.APPROVAL_TX_COMPLETED
 
   const amount = parseTokenUnits(input, selectedAsset.token)
+  const assetsOutMin =
+    amount > BigInt(0) ? applySlippage(amount, REDEEM_SLIPPAGE_BPS) : BigInt(0)
   const routerAddress = getHemiEarnRouterAddress()
 
   const { data: { shares } = { shares: BigInt(0) } } = useAssetsToShares({
@@ -83,6 +89,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         address && quote && shares > BigInt(0)
           ? encodeRequestRedeem({
               asset: selectedAsset.address,
+              assetsOutMin,
               callbackFee: quote.callbackFee,
               isInstant: quote.isInstant,
               operator: address,

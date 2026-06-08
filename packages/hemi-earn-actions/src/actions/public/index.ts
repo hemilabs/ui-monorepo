@@ -1,6 +1,5 @@
 export { type AssetData, getAssetData } from './getAssetData'
 export { type Request, getRequest } from './getRequest'
-export { inversePreviewRedeem } from './inversePreviewRedeem'
 export { quoteDeposit } from './quoteDeposit'
 export { quoteDepositFulfillment } from './quoteDepositFulfillment'
 export { quoteRedeem } from './quoteRedeem'

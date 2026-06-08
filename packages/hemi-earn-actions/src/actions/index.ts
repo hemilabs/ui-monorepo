@@ -3,7 +3,6 @@ export {
   type Request,
   getAssetData,
   getRequest,
-  inversePreviewRedeem,
   quoteDeposit,
   quoteDepositFulfillment,
   quoteRedeem,

@@ -14,10 +14,18 @@ import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { usePoolForm } from '../_context/poolFormContext'
+import { useAssetsToShares } from '../_hooks/useAssetsToShares'
+import { useQuoteRedeem } from '../_hooks/useQuoteRedeem'
 import { useUserPoolBalance } from '../_hooks/useUserPoolBalance'
 import { useWithdraw } from '../_hooks/useWithdraw'
-import { useAssetsToShares, useWithdrawFees } from '../_hooks/useWithdrawFees'
+import { useWithdrawFees } from '../_hooks/useWithdrawFees'
 import { type WithdrawOperationRunning } from '../_types/operations'
+import {
+  computeIsLoading,
+  resolveErrorKey,
+  resolvePreviewIssue,
+  resolveValidationError,
+} from '../_utils/formState'
 
 import { VaultFormLayout } from './form'
 import { PoolFormContent } from './poolFormContent'
@@ -65,6 +73,8 @@ export const Withdraw = function ({
       peggedAmount: BigInt(0),
       shares: BigInt(0),
     },
+    isError: isAssetsToSharesError,
+    isLoading: isAssetsToSharesLoading,
   } = useAssetsToShares({
     amount,
     assetAddress: selectedAsset.address,
@@ -83,7 +93,6 @@ export const Withdraw = function ({
     token: selectedAsset.token,
   })
 
-  const canWithdraw = validInput && shares > BigInt(0)
   const routerAddress = getHemiEarnRouterAddress()
 
   const { isAllowanceError, isAllowanceLoading, needsApproval } =
@@ -94,20 +103,36 @@ export const Withdraw = function ({
       spender: routerAddress,
     })
 
-  const { isFeesError, quote, totalFees } = useWithdrawFees({
+  const {
+    data: quote,
+    isError: isQuoteError,
+    isLoading: isQuoteLoading,
+  } = useQuoteRedeem({
+    account: address,
     asset: selectedAsset.address,
-    canWithdraw,
-    chainId: selectedAsset.token.chainId,
-    needsApproval,
-    receiver: address,
     shareAddress: pool.shareAddress,
-    shares,
-    shareToken: pool.shareToken,
-    spender: routerAddress,
+    shares: validInput && shares > BigInt(0) ? shares : BigInt(0),
   })
+
+  const { assetsOutMin, canWithdraw, isFeesError, totalFees } = useWithdrawFees(
+    {
+      amount,
+      asset: selectedAsset.address,
+      chainId: selectedAsset.token.chainId,
+      isQuoteError,
+      needsApproval,
+      quote,
+      receiver: address,
+      shares,
+      shareToken: pool.shareToken,
+      spender: routerAddress,
+      validInput,
+    },
+  )
 
   const { isPending: isRunningOperation, mutate: withdrawFn } = useWithdraw({
     amount,
+    assetsOutMin,
     callbackFee: quote?.callbackFee ?? BigInt(0),
     isInstant: quote?.isInstant ?? false,
     on(emitter) {
@@ -139,6 +164,32 @@ export const Withdraw = function ({
   const chain = useChain(selectedAsset.token.chainId)
   const nativeToken = getNativeToken(selectedAsset.token.chainId)
 
+  const hasQuote = !!quote
+  const isPreviewLoading = isAssetsToSharesLoading || isQuoteLoading
+
+  const previewIssue = resolvePreviewIssue({
+    hasShares: shares > BigInt(0),
+    isPreviewError: isAssetsToSharesError || isQuoteError,
+    isPreviewLoading,
+    peggedAmount,
+    validInput,
+  })
+  const effectiveValidationError = resolveValidationError(
+    previewIssue ? t(`hemi-earn.pool.form.${previewIssue}`) : undefined,
+    validationError,
+  )
+  const displayedErrorKey = resolveErrorKey(
+    walletIsConnected(status),
+    poolBalanceLoaded,
+    errorKey,
+  )
+  const isSubmitLoading = computeIsLoading({
+    balanceLoaded: poolBalanceLoaded,
+    isAllowanceLoading,
+    isPreviewLoading,
+    validInput,
+  })
+
   function RenderBelowForm() {
     if (!canWithdraw) {
       return null
@@ -168,11 +219,7 @@ export const Withdraw = function ({
         <PoolFormContent
           activeTab="withdraw"
           balanceComponent={UserPoolBalance}
-          errorKey={
-            walletIsConnected(status) && poolBalanceLoaded
-              ? errorKey
-              : undefined
-          }
+          errorKey={displayedErrorKey}
           isRunningOperation={isRunningOperation}
           onSwitchTab={onSwitchToDeposit}
           setMaxBalanceButton={
@@ -187,15 +234,13 @@ export const Withdraw = function ({
       onSubmit={handleWithdraw}
       submitButton={
         <SubmitWithdraw
-          canWithdraw={canWithdraw && !!quote}
+          canWithdraw={canWithdraw && hasQuote}
           isAllowanceError={isAllowanceError}
-          isLoading={
-            isAllowanceLoading || !poolBalanceLoaded || (canWithdraw && !quote)
-          }
+          isLoading={isSubmitLoading}
           isRunningOperation={isRunningOperation}
           needsApproval={needsApproval}
           operationRunning={operationRunning}
-          validationError={validationError}
+          validationError={effectiveValidationError}
         />
       }
     />

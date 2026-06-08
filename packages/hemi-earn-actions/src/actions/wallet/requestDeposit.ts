@@ -57,8 +57,9 @@ const runRequestDeposit = ({
   receiver: Address
   routerAddress?: Address
   // Minimum shares accepted on fulfillment (slippage protection enforced
-  // on the remote chain). Defaults to `0n` until the asset → shares
-  // conversion is wired up; phase 2 will compute this from the share price.
+  // on the remote chain). Defaults to `0n` when omitted; portal callers
+  // compute this via `applySlippage` against the UX_SPEC defaults (see
+  // `portal/.../hemi-earn/_constants/slippage.ts`).
   sharesOutMin?: bigint
   walletClient: WalletClient
 }) =>

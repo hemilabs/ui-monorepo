@@ -5,10 +5,14 @@ import { type FormEvent, useState } from 'react'
 import { parseTokenUnits } from 'utils/token'
 import { useAccount } from 'wagmi'
 
+import {
+  REDEEM_SLIPPAGE_BPS,
+  applySlippage,
+} from '../../../../_constants/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
+import { useAssetsToShares } from '../../_hooks/useAssetsToShares'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
 import { useWithdraw } from '../../_hooks/useWithdraw'
-import { useAssetsToShares } from '../../_hooks/useWithdrawFees'
 import { type WithdrawOperationRunning } from '../../_types/operations'
 
 export const RetryWithdraw = function () {
@@ -26,6 +30,8 @@ export const RetryWithdraw = function () {
   const t = useTranslations()
   const { address } = useAccount()
   const amount = parseTokenUnits(input, selectedAsset.token)
+  const assetsOutMin =
+    amount > BigInt(0) ? applySlippage(amount, REDEEM_SLIPPAGE_BPS) : BigInt(0)
 
   const {
     data: { peggedAmount, shares } = {
@@ -47,6 +53,7 @@ export const RetryWithdraw = function () {
 
   const { mutate: runWithdraw } = useWithdraw({
     amount,
+    assetsOutMin,
     callbackFee: quote?.callbackFee ?? BigInt(0),
     isInstant: quote?.isInstant ?? false,
     on(emitter) {

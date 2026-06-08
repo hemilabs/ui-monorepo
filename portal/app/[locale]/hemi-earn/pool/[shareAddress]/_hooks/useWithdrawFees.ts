@@ -1,19 +1,14 @@
-import { useQuery } from '@tanstack/react-query'
-import { getGatewayForShare, getStakingVaultForShare } from 'hemi-earn-actions'
-import {
-  encodeRequestRedeem,
-  inversePreviewRedeem,
-} from 'hemi-earn-actions/actions'
+import { encodeRequestRedeem } from 'hemi-earn-actions/actions'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { mainnet } from 'networks/mainnet'
 import { type EvmToken } from 'types/token'
-import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
-import { convertToShares } from 'viem-erc4626/actions'
 import { useEstimateGas } from 'wagmi'
 
-import { useQuoteRedeem } from './useQuoteRedeem'
+import {
+  REDEEM_SLIPPAGE_BPS,
+  applySlippage,
+} from '../../../_constants/slippage'
 
 type QuoteRedeem = {
   callbackFee: bigint
@@ -21,64 +16,16 @@ type QuoteRedeem = {
   nativeFee: bigint
 }
 
-// Converts the user-entered asset amount to share units. The Router expects
-// shares in the StakingVault's units, but the input is in the deposit
-// asset's units (USDC, cbBTC, …). Inverts the redeem pipeline rather than
-// reusing `previewDeposit`: the deposit path applies `mintFee` while the
-// redeem path applies `redeemFee`, and when those differ the two preview
-// functions are not inverses of each other, so reusing `previewDeposit`
-// silently miscomputes the shares to burn. `inversePreviewRedeem` probes
-// `previewRedeem` once and self-calibrates against whatever the Gateway's
-// fee model actually is.
-//
-// `peggedAmount` is the intermediate pegged-token value — exposed because
-// the redeem also burns this many vault assets, which lets `useWithdraw`
-// optimistically subtract it from `totalAssets()` in the right unit.
-export const useAssetsToShares = ({
-  amount,
-  assetAddress,
-  shareAddress,
-}: {
-  amount: bigint
-  assetAddress: Address
-  shareAddress: Address
-}) =>
-  useQuery({
-    enabled: amount > BigInt(0),
-    async queryFn() {
-      const ethereumClient = getEvmL1PublicClient(mainnet.id)
-      const peggedAmount = await inversePreviewRedeem({
-        amount,
-        client: ethereumClient,
-        gatewayAddress: getGatewayForShare(shareAddress),
-        tokenOut: assetAddress,
-      })
-      if (peggedAmount <= BigInt(0)) {
-        return { peggedAmount: BigInt(0), shares: BigInt(0) }
-      }
-      const shares = await convertToShares(ethereumClient, {
-        address: getStakingVaultForShare(shareAddress),
-        assets: peggedAmount,
-      })
-      return { peggedAmount, shares }
-    },
-    queryKey: [
-      'hemi-earn',
-      'asset-to-shares',
-      shareAddress,
-      assetAddress,
-      amount.toString(),
-    ],
-  })
-
 const buildGasData = ({
   asset,
+  assetsOutMin,
   canWithdraw,
   quote,
   receiver,
   shares,
 }: {
   asset: Address
+  assetsOutMin: bigint
   canWithdraw: boolean
   quote: QuoteRedeem | undefined
   receiver: Address | undefined
@@ -88,6 +35,7 @@ const buildGasData = ({
     ? undefined
     : encodeRequestRedeem({
         asset,
+        assetsOutMin,
         callbackFee: quote.callbackFee,
         isInstant: quote.isInstant,
         operator: receiver,
@@ -123,30 +71,36 @@ const computeIsFeesError = ({
   isQuoteError ||
   (needsApproval && isApprovalGasFeesError)
 
-// Mirror of `useDepositFees`: approval gas (share OFT → Router), requestRedeem
-// gas, and the LayerZero native fee paid as `msg.value`.
+// Takes `quote` and `shares` from the caller — the Withdraw form owns those
+// preview queries so it can subscribe once. The hook derives `canWithdraw`
+// and `assetsOutMin` internally so the slippage policy lives in one place.
+// Returns only what `withdraw.tsx` consumes: the deposit form needs the
+// approval split for separate rendering, but the withdraw form renders a
+// single "Total gas fee" with the split already folded into `totalFees`.
 export const useWithdrawFees = function ({
+  amount,
   asset,
-  canWithdraw,
   chainId,
+  isQuoteError,
   needsApproval,
+  quote,
   receiver,
-  shareAddress,
   shares,
   shareToken,
   spender,
+  validInput,
 }: {
+  amount: bigint
   asset: Address
-  canWithdraw: boolean
   chainId: EvmToken['chainId']
+  isQuoteError: boolean
   needsApproval: boolean
+  quote: QuoteRedeem | undefined
   receiver: Address | undefined
-  // Hemi-side share OFT for the pool. Forwarded to `useQuoteRedeem` so it
-  // can resolve the staking vault on Ethereum for the `isInstant` check.
-  shareAddress: Address
   shares: bigint
   shareToken: EvmToken
   spender: Address
+  validInput: boolean
 }) {
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
@@ -155,17 +109,14 @@ export const useWithdrawFees = function ({
       token: shareToken,
     })
 
-  const { data: quote, isError: isQuoteError } = useQuoteRedeem({
-    account: receiver,
-    asset,
-    shareAddress,
-    shares: canWithdraw ? shares : BigInt(0),
-  })
+  const canWithdraw = validInput && shares > BigInt(0)
+  const assetsOutMin = applySlippage(amount, REDEEM_SLIPPAGE_BPS)
 
   const { data: withdrawGasUnits, isError: isWithdrawGasUnitsError } =
     useEstimateGas({
       data: buildGasData({
         asset,
+        assetsOutMin,
         canWithdraw,
         quote,
         receiver,
@@ -186,20 +137,19 @@ export const useWithdrawFees = function ({
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
 
   return {
+    assetsOutMin,
+    canWithdraw,
     isFeesError: computeIsFeesError({
       isApprovalGasFeesError,
       isQuoteError,
       isWithdrawGasFeesError,
       needsApproval,
     }),
-    layerZeroFee,
-    quote,
     totalFees: computeTotalFees({
       approvalGasFees,
       layerZeroFee,
       needsApproval,
       withdrawGasFees,
     }),
-    withdrawGasFees,
   }
 }

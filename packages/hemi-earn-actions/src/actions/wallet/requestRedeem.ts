@@ -62,8 +62,9 @@ const runRequestRedeem = ({
   account: Address
   asset: Address
   // Minimum underlying assets accepted on fulfillment (slippage protection
-  // enforced on the remote chain). Defaults to `0n` until the share → asset
-  // conversion is wired up; phase 2 will compute this from the share price.
+  // enforced on the remote chain). Defaults to `0n` when omitted; portal
+  // callers compute this via `applySlippage` against the UX_SPEC defaults
+  // (see `portal/.../hemi-earn/_constants/slippage.ts`).
   assetsOutMin?: bigint
   callbackFee: bigint
   // Declares the redeem path (instant vs cooldown). Must match the vault's

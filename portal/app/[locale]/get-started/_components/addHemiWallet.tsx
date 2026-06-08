@@ -94,7 +94,7 @@ export const AddHemiWallet = function () {
             </div>
           </div>
           <div className="p-6">
-            <div className="ml-auto w-full max-w-[500px]">
+            <div className="w-full lg:ml-auto lg:max-w-[500px]">
               <div className="mb-4 flex justify-end [&_ul]:w-auto">
                 <Tabs>
                   <Tab

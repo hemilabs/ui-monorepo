@@ -1,7 +1,5 @@
 'use client'
 
-import { Button } from 'components/button'
-import { PlusIcon as TablePlusIcon } from 'components/icons/plusIcon'
 import { useAddTokenToWallet } from 'hooks/useAddTokenToWallet'
 import { useWatchedAsset } from 'hooks/useWatchedAsset'
 import { type ComponentProps } from 'react'
@@ -12,7 +10,6 @@ import { isNativeToken } from 'utils/nativeToken'
 type Props = {
   labels: Record<'error' | 'idle' | 'pending' | 'success', string>
   token: EvmToken
-  variant?: 'button' | 'link'
 }
 
 const PlusIcon = (props: ComponentProps<'svg'>) => (
@@ -33,11 +30,7 @@ const PlusIcon = (props: ComponentProps<'svg'>) => (
   </svg>
 )
 
-export const AddTokenToWallet = function ({
-  labels,
-  token,
-  variant = 'link',
-}: Props) {
+export const AddTokenToWallet = function ({ labels, token }: Props) {
   const isTokenAdded = useWatchedAsset(token.address)
 
   const { mutate, status } = useAddTokenToWallet({
@@ -52,24 +45,6 @@ export const AddTokenToWallet = function ({
   }
 
   const canAdd = !['pending', 'success'].includes(status)
-
-  if (variant === 'button') {
-    return (
-      <div className="shrink-0">
-        <Button
-          disabled={!canAdd}
-          onClick={() => canAdd && mutate()}
-          size="xSmall"
-          variant="secondary"
-        >
-          {canAdd && <TablePlusIcon className="shrink-0" />}
-          <span className="whitespace-nowrap text-xs font-semibold text-neutral-950">
-            {labels[status]}
-          </span>
-        </Button>
-      </div>
-    )
-  }
 
   return (
     <button

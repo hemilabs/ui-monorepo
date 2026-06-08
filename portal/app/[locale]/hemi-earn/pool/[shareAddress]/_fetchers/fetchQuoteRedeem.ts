@@ -46,9 +46,8 @@ export async function fetchQuoteRedeem({
       client: ethereumClient,
       stakingVault: getStakingVaultForShare(shareAddress),
     }),
-    getAssetData({
+    getAssetData(hemiClient, {
       asset,
-      client: hemiClient,
       routerAddress: getHemiEarnRouterAddress(),
     }),
   ])

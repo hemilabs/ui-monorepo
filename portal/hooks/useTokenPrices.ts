@@ -1,4 +1,4 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query'
+import { queryOptions, useQuery, UseQueryOptions } from '@tanstack/react-query'
 import fetch from 'fetch-plus-plus'
 import { isValidUrl } from 'utils/url'
 
@@ -6,10 +6,10 @@ const portalApiUrl = process.env.NEXT_PUBLIC_PORTAL_API_URL
 
 type Prices = Record<string, string>
 
-export const useTokenPrices = (
+export const tokenPricesQueryOptions = (
   options: Omit<UseQueryOptions<Prices, Error>, 'queryKey' | 'queryFn'> = {},
 ) =>
-  useQuery({
+  queryOptions({
     // If the URL is not set, prices are not returned. Consumers of the hook
     // should consider this scenario
     enabled: portalApiUrl !== undefined && isValidUrl(portalApiUrl),
@@ -23,3 +23,7 @@ export const useTokenPrices = (
     retry: 2,
     ...options,
   })
+
+export const useTokenPrices = (
+  options: Omit<UseQueryOptions<Prices, Error>, 'queryKey' | 'queryFn'> = {},
+) => useQuery(tokenPricesQueryOptions(options))

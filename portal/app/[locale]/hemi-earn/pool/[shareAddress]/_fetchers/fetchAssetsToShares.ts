@@ -1,10 +1,15 @@
-import { type UseQueryOptions } from '@tanstack/react-query'
+import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
 import { previewWithdraw } from '@vetro-protocol/gateway/actions'
-import { getGatewayForShare, getStakingVaultForShare } from 'hemi-earn-actions'
+import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 import { convertToShares } from 'viem-erc4626/actions'
+
+import {
+  gatewayForAssetQueryOptions,
+  getAssetForShare,
+} from '../../../_hooks/gatewayForAsset'
 
 export type AssetsToShares = {
   peggedAmount: bigint
@@ -14,6 +19,7 @@ export type AssetsToShares = {
 export type AssetsToSharesParams = {
   amount: bigint
   assetAddress: Address
+  queryClient: QueryClient
   shareAddress: Address
 }
 
@@ -29,11 +35,17 @@ export type AssetsToSharesParams = {
 export async function fetchAssetsToShares({
   amount,
   assetAddress,
+  queryClient,
   shareAddress,
 }: AssetsToSharesParams): Promise<AssetsToShares> {
   const ethereumClient = getEvmL1PublicClient(mainnet.id)
+  // Resolve the gateway on-chain from the share's deposit asset, reusing the
+  // shared asset-data/remote-share cache entries instead of a static lookup.
+  const gateway = await queryClient.ensureQueryData(
+    gatewayForAssetQueryOptions(getAssetForShare(shareAddress)),
+  )
   const peggedAmount = await previewWithdraw(ethereumClient, {
-    address: getGatewayForShare(shareAddress),
+    address: gateway,
     amountOut: amount,
     tokenOut: assetAddress,
   })

@@ -1,6 +1,7 @@
 'use client'
 
 import Skeleton from 'react-loading-skeleton'
+import { formatPercentage } from 'utils/format'
 import { VictoryPie } from 'victory'
 
 import { type CompositionItemWithColor } from './compositionColumns'
@@ -61,7 +62,7 @@ export const CompositionChart = function ({
         </svg>
         {hoveredItem !== null && (
           <span className="text-mid-md pointer-events-none absolute font-semibold text-orange-500">
-            {`${hoveredItem.share}%`}
+            {formatPercentage(hoveredItem.share)}
           </span>
         )}
       </div>

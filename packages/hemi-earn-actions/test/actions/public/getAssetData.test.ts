@@ -24,7 +24,7 @@ describe('getAssetData', function () {
       share,
     })
 
-    const result = await getAssetData({ asset, client, routerAddress })
+    const result = await getAssetData(client, { asset, routerAddress })
 
     expect(result).toEqual({
       enabled: true,
@@ -50,14 +50,32 @@ describe('getAssetData', function () {
       share,
     })
 
-    const result = await getAssetData({ asset, client, routerAddress })
+    const result = await getAssetData(client, { asset, routerAddress })
 
     expect(result.enabled).toBe(false)
   })
 
   it('rejects a zero `asset`', async function () {
     await expect(
-      getAssetData({ asset: zeroAddress, client, routerAddress }),
+      getAssetData(client, { asset: zeroAddress, routerAddress }),
     ).rejects.toThrow(/`asset` cannot be the zero address/)
+  })
+
+  it('rejects an undefined `client`', async function () {
+    await expect(
+      getAssetData(undefined as unknown as Client, { asset, routerAddress }),
+    ).rejects.toThrow(/`client` is not defined/)
+  })
+
+  it('rejects an invalid `asset`', async function () {
+    await expect(
+      getAssetData(client, { asset: '0xnope', routerAddress }),
+    ).rejects.toThrow(/`asset` is not a valid address/)
+  })
+
+  it('rejects an invalid `routerAddress`', async function () {
+    await expect(
+      getAssetData(client, { asset, routerAddress: '0xnope' as Address }),
+    ).rejects.toThrow(/`routerAddress` is not a valid address/)
   })
 })

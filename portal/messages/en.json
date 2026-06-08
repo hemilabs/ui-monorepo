@@ -20,6 +20,7 @@
         "by-token": "By token",
         "position": "Position",
         "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
+        "reserve-buffer": "Reserve Buffer",
         "share": "Share",
         "title": "Composition",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}"

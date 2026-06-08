@@ -13,8 +13,14 @@ vi.mock('viem-erc4626/actions', () => ({
   convertToShares: vi.fn(),
 }))
 
+const assetAddress = '0x1111111111111111111111111111111111111111' as Address
+const shareAddress = '0x2222222222222222222222222222222222222222' as Address
+const gateway = '0x6666666666666666666666666666666666666666' as Address
+
 vi.mock('hemi-earn-actions', () => ({
-  getGatewayForShare: () => '0xGateway',
+  getHemiEarnSupportedAssets: () => [
+    { asset: assetAddress, share: shareAddress },
+  ],
   getStakingVaultForShare: () => '0xStakingVault',
 }))
 
@@ -22,8 +28,18 @@ vi.mock('utils/chainClients', () => ({
   getEvmL1PublicClient: () => ({ chain: 'mainnet' }),
 }))
 
-const assetAddress = '0x1111111111111111111111111111111111111111' as Address
-const shareAddress = '0x2222222222222222222222222222222222222222' as Address
+// Fake query client that resolves the gateway the fetcher maps from the
+// share's asset through the cache, branching on the query's key.
+const createQueryClient = () => ({
+  ensureQueryData: vi.fn(function ({ queryKey }) {
+    switch (queryKey[1]) {
+      case 'gateway-for-asset':
+        return Promise.resolve(gateway)
+      default:
+        return Promise.reject(new Error(`unexpected query ${queryKey[1]}`))
+    }
+  }),
+})
 
 describe('fetchAssetsToShares', function () {
   beforeEach(function () {
@@ -35,6 +51,7 @@ describe('fetchAssetsToShares', function () {
     const result = await fetchAssetsToShares({
       amount: BigInt(1000),
       assetAddress,
+      queryClient: createQueryClient() as never,
       shareAddress,
     })
 
@@ -45,6 +62,7 @@ describe('fetchAssetsToShares', function () {
     expect(previewWithdraw).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({
+        address: gateway,
         amountOut: BigInt(1000),
         tokenOut: assetAddress,
       }),
@@ -61,6 +79,7 @@ describe('fetchAssetsToShares', function () {
     const result = await fetchAssetsToShares({
       amount: BigInt(1000),
       assetAddress,
+      queryClient: createQueryClient() as never,
       shareAddress,
     })
 
@@ -74,6 +93,7 @@ describe('fetchAssetsToShares', function () {
     const result = await fetchAssetsToShares({
       amount: BigInt(1000),
       assetAddress,
+      queryClient: createQueryClient() as never,
       shareAddress,
     })
 
@@ -88,6 +108,7 @@ describe('fetchAssetsToShares', function () {
       fetchAssetsToShares({
         amount: BigInt(1000),
         assetAddress,
+        queryClient: createQueryClient() as never,
         shareAddress,
       }),
     ).rejects.toThrow('Gateway down')

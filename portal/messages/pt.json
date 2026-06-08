@@ -20,6 +20,7 @@
         "by-token": "Por token",
         "position": "Posição",
         "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
+        "reserve-buffer": "Reserva de liquidez",
         "share": "Participação",
         "title": "Composição",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}"

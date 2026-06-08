@@ -1,13 +1,11 @@
-import { type UseQueryOptions } from '@tanstack/react-query'
+import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
 import { previewDeposit } from '@vetro-protocol/gateway/actions'
 import {
-  getGatewayForShare,
   getHemiEarnAgentAddress,
   getHemiEarnRouterAddress,
   getStakingVaultForShare,
 } from 'hemi-earn-actions'
 import {
-  getAssetData,
   quoteDeposit,
   quoteDepositFulfillment,
 } from 'hemi-earn-actions/actions'
@@ -15,6 +13,9 @@ import { hemi } from 'hemi-viem'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
+
+import { gatewayForAssetQueryOptions } from '../../../_hooks/gatewayForAsset'
+import { assetDataQueryOptions } from '../../../_hooks/useAssetData'
 
 export type QuoteDeposit = {
   callbackFee: bigint
@@ -25,6 +26,7 @@ export type QuoteDeposit = {
 export type QuoteDepositParams = {
   amount: bigint
   asset: Address
+  queryClient: QueryClient
   shareAddress: Address
 }
 
@@ -35,40 +37,47 @@ export type QuoteDepositParams = {
 export async function fetchQuoteDeposit({
   amount,
   asset,
+  queryClient,
   shareAddress,
 }: QuoteDepositParams): Promise<QuoteDeposit> {
   const ethereumClient = getEvmL1PublicClient(mainnet.id)
   const hemiClient = getPublicClient(hemi.id)
-  const [callbackFee, assetData] = await Promise.all([
-    quoteDepositFulfillment({
-      agentAddress: getHemiEarnAgentAddress(),
-      client: ethereumClient,
-      share: getStakingVaultForShare(shareAddress),
-    }),
-    getAssetData({
-      asset,
-      client: hemiClient,
-      routerAddress: getHemiEarnRouterAddress(),
-    }),
-  ])
-  const [nativeFee, peggedAmount] = await Promise.all([
-    quoteDeposit({
-      asset,
-      assets: amount,
-      callbackFee,
-      client: hemiClient,
-      routerAddress: getHemiEarnRouterAddress(),
-    }),
+
+  const peggedAmountPromise = Promise.all([
+    queryClient.ensureQueryData(gatewayForAssetQueryOptions(asset)),
+    queryClient.ensureQueryData(assetDataQueryOptions(asset)),
+  ]).then(([gateway, assetData]) =>
     previewDeposit(ethereumClient, {
-      address: getGatewayForShare(shareAddress),
+      address: gateway,
       amountIn: amount,
       tokenIn: assetData.remoteAsset,
     }),
+  )
+
+  const callbackFeePromise = quoteDepositFulfillment({
+    agentAddress: getHemiEarnAgentAddress(),
+    client: ethereumClient,
+    share: getStakingVaultForShare(shareAddress),
+  })
+
+  const [callbackFee, nativeFee, peggedAmount] = await Promise.all([
+    callbackFeePromise,
+    callbackFeePromise.then(cbFee =>
+      quoteDeposit({
+        asset,
+        assets: amount,
+        callbackFee: cbFee,
+        client: hemiClient,
+        routerAddress: getHemiEarnRouterAddress(),
+      }),
+    ),
+    peggedAmountPromise,
   ])
+
   return { callbackFee, nativeFee, peggedAmount }
 }
 
-export const getQuoteDepositQueryKey = ({
+const getQuoteDepositQueryKey = ({
   amount,
   asset,
   shareAddress,

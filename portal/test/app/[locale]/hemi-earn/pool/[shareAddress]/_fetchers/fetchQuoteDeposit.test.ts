@@ -1,6 +1,5 @@
 import { previewDeposit } from '@vetro-protocol/gateway/actions'
 import {
-  getAssetData,
   quoteDeposit,
   quoteDepositFulfillment,
 } from 'hemi-earn-actions/actions'
@@ -20,9 +19,9 @@ vi.mock('@vetro-protocol/gateway/actions', () => ({
 }))
 
 vi.mock('hemi-earn-actions', () => ({
-  getGatewayForShare: () => '0xGateway',
   getHemiEarnAgentAddress: () => '0xAgent',
   getHemiEarnRouterAddress: () => '0xRouter',
+  getHemiEarnSupportedAssets: () => [],
   getStakingVaultForShare: () => '0xStakingVault',
 }))
 
@@ -34,15 +33,32 @@ vi.mock('utils/chainClients', () => ({
 const asset = '0x1111111111111111111111111111111111111111' as Address
 const shareAddress = '0x2222222222222222222222222222222222222222' as Address
 const remoteAsset = '0x3333333333333333333333333333333333333333' as Address
+const gateway = '0x6666666666666666666666666666666666666666' as Address
+
+const assetData = {
+  enabled: true,
+  remoteAsset,
+  remoteShare: '0x4444444444444444444444444444444444444444' as Address,
+  share: '0x5555555555555555555555555555555555555555' as Address,
+}
+
+// Fake query client that resolves the gateway and asset-data lookups the
+// fetcher threads through the cache, branching on each query's key.
+const createQueryClient = () => ({
+  ensureQueryData: vi.fn(function ({ queryKey }) {
+    switch (queryKey[1]) {
+      case 'gateway-for-asset':
+        return Promise.resolve(gateway)
+      case 'asset-data':
+        return Promise.resolve(assetData)
+      default:
+        return Promise.reject(new Error(`unexpected query ${queryKey[1]}`))
+    }
+  }),
+})
 
 describe('fetchQuoteDeposit', function () {
   beforeEach(function () {
-    vi.mocked(getAssetData).mockResolvedValue({
-      enabled: true,
-      remoteAsset,
-      remoteShare: '0x4444444444444444444444444444444444444444',
-      share: '0x5555555555555555555555555555555555555555',
-    })
     vi.mocked(quoteDepositFulfillment).mockResolvedValue(BigInt(11))
     vi.mocked(quoteDeposit).mockResolvedValue(BigInt(22))
     vi.mocked(previewDeposit).mockResolvedValue(BigInt(33))
@@ -52,6 +68,7 @@ describe('fetchQuoteDeposit', function () {
     const result = await fetchQuoteDeposit({
       amount: BigInt(1000),
       asset,
+      queryClient: createQueryClient() as never,
       shareAddress,
     })
 
@@ -63,7 +80,12 @@ describe('fetchQuoteDeposit', function () {
   })
 
   it('threads the resolved remoteAsset through previewDeposit', async function () {
-    await fetchQuoteDeposit({ amount: BigInt(1000), asset, shareAddress })
+    await fetchQuoteDeposit({
+      amount: BigInt(1000),
+      asset,
+      queryClient: createQueryClient() as never,
+      shareAddress,
+    })
 
     expect(previewDeposit).toHaveBeenCalledWith(
       expect.anything(),
@@ -74,7 +96,12 @@ describe('fetchQuoteDeposit', function () {
   it('threads the resolved callbackFee through quoteDeposit', async function () {
     vi.mocked(quoteDepositFulfillment).mockResolvedValue(BigInt(99))
 
-    await fetchQuoteDeposit({ amount: BigInt(1000), asset, shareAddress })
+    await fetchQuoteDeposit({
+      amount: BigInt(1000),
+      asset,
+      queryClient: createQueryClient() as never,
+      shareAddress,
+    })
 
     expect(quoteDeposit).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -88,7 +115,12 @@ describe('fetchQuoteDeposit', function () {
     vi.mocked(quoteDepositFulfillment).mockRejectedValue(new Error('RPC down'))
 
     await expect(
-      fetchQuoteDeposit({ amount: BigInt(1000), asset, shareAddress }),
+      fetchQuoteDeposit({
+        amount: BigInt(1000),
+        asset,
+        queryClient: createQueryClient() as never,
+        shareAddress,
+      }),
     ).rejects.toThrow('RPC down')
   })
 })

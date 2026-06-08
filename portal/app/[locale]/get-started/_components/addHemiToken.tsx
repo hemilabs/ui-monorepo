@@ -65,17 +65,17 @@ const tokenTableColumns = ({
     cell: ({ row }) => <HemiAddressCell token={row.original} />,
     header: () => <Header text={t('l2-address')} />,
     id: 'l2-address',
-    meta: { width: 385 },
+    meta: { width: 147 },
   },
   {
     cell: ({ row }) => (
-      <div className="flex w-full justify-end">
+      <div className="flex w-full justify-start lg:justify-end">
         <AddTokenTableButton token={row.original} />
       </div>
     ),
     header: () => <Header text={t('action')} />,
     id: 'action',
-    meta: { className: 'justify-end', width: 116 },
+    meta: { className: 'justify-start lg:justify-end', width: 116 },
   },
 ]
 

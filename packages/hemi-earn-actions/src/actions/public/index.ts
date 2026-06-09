@@ -1,3 +1,4 @@
+export { getAgentAddress } from './getAgentAddress'
 export { type AssetData, getAssetData } from './getAssetData'
 export { type Request, getRequest } from './getRequest'
 export { quoteDeposit } from './quoteDeposit'

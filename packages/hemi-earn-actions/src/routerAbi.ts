@@ -358,4 +358,11 @@ export const routerAbi = [
     name: 'AssetDataUpdated',
     type: 'event',
   },
+  {
+    inputs: [],
+    name: 'peerAddress',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const

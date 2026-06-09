@@ -32,14 +32,14 @@
           "heading": "Revisar depósito de stake",
           "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
         },
-        "cooldown-ended": "Período de cooldown concluído",
+        "cooldown-ended": "Período de espera concluído",
         "stake-token": "Fazer stake de {symbol}",
         "get-share-tokens": "Receber share tokens",
         "receive-token": "Receber {symbol}",
         "unstake-token": "Fazer unstake de {symbol}",
-        "wait-cooldown-countdown": "{days, plural, =0 {Cooldown termina em {hours}h} other {Cooldown termina em #d {hours}h}}",
-        "wait-cooldown-countdown-soon": "Cooldown termina em menos de uma hora",
-        "wait-cooldown-pending": "Aguarde o período de cooldown de {days, plural, one {# dia} other {# dias}}",
+        "wait-cooldown-countdown": "{days, plural, =0 {O período de espera termina em {hours}h} other {O período de espera termina em #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "O período de espera termina em menos de uma hora",
+        "wait-cooldown-pending": "O período de espera é de {days, plural, one {# dia} other {# dias}}",
         "withdraw": {
           "heading": "Revisar saque de stake",
           "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."

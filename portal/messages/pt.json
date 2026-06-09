@@ -38,6 +38,7 @@
         "receive-token": "Receber {symbol}",
         "unstake-token": "Fazer unstake de {symbol}",
         "wait-cooldown-countdown": "{days, plural, =0 {Cooldown termina em {hours}h} other {Cooldown termina em #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "Cooldown termina em menos de uma hora",
         "wait-cooldown-pending": "Aguarde o período de cooldown de {days, plural, one {# dia} other {# dias}}",
         "withdraw": {
           "heading": "Revisar saque de stake",

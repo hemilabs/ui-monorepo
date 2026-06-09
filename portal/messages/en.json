@@ -38,6 +38,7 @@
         "receive-token": "Receive {symbol}",
         "unstake-token": "Unstake {symbol}",
         "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "Cooldown ends in less than an hour",
         "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
         "withdraw": {
           "heading": "Review stake withdrawal",

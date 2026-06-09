@@ -231,6 +231,17 @@ function deriveCooldownPostAction({
     }
   }
 
+  // Sub-hour remaining: avoid the misleading "0h" by collapsing to a
+  // generic "less than an hour" copy. Tick interval is at minute
+  // resolution, so showing a precise minute countdown would lie about
+  // freshness; the shorter copy is honest about where we are.
+  if (cooldownRemainingSec < 3600) {
+    return {
+      description: t('wait-cooldown-countdown-soon'),
+      status: ProgressStatus.PROGRESS,
+    }
+  }
+
   const remainingDays = Math.floor(secondsToDays(cooldownRemainingSec))
   const remainingHours = Math.floor(
     secondsToHours(cooldownRemainingSec - remainingDays * 86400),

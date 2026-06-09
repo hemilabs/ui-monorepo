@@ -9,6 +9,17 @@ vi.mock('viem/actions', () => ({
   readContract: vi.fn(),
 }))
 
+// The real Router address is still a TBD placeholder (zeroAddress) in
+// constants, which would trip the zero-address guard on the default-router
+// path. Mock a non-zero default until the deployed address lands.
+const { defaultRouterAddress } = vi.hoisted(() => ({
+  defaultRouterAddress: '0x000000000000000000000000000000000000cAFe',
+}))
+
+vi.mock('../../../src/constants', () => ({
+  getHemiEarnRouterAddress: () => defaultRouterAddress,
+}))
+
 const client = {} as Client
 const routerAddress = '0x000000000000000000000000000000000000bEEf' as Address
 // A full 20-byte agent address left-padded into a bytes32, so the test

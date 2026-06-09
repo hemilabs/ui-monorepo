@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/react-query'
+import { queryOptions } from '@tanstack/react-query'
 import { getAgentAddress } from 'hemi-earn-actions/actions'
 import { getPublicClient } from 'utils/chainClients'
 import { hemi } from 'viem/chains'
@@ -11,6 +11,3 @@ export const agentAddressQueryOptions = () =>
     // Immutable once the peer is set, so cache it indefinitely.
     staleTime: Infinity,
   })
-
-export const useHemiEarnAgentAddress = () =>
-  useQuery(agentAddressQueryOptions())

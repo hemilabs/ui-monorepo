@@ -20,11 +20,9 @@ const TICK_MS = 60_000
 
 const nowInSeconds = () => Number(unixNowTimestamp())
 
-export function useEarnCooldownRemaining({
-  claimableAt,
-}: {
-  claimableAt: bigint | number | undefined
-}) {
+export function useEarnCooldownRemaining(
+  claimableAt: bigint | number | undefined,
+) {
   const [nowSec, setNowSec] = useState(nowInSeconds)
 
   const claimableAtSec =

@@ -284,9 +284,9 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       : undefined,
     shareAddress: pool.shareAddress,
   })
-  const cooldownRemainingSec = useEarnCooldownRemaining({
-    claimableAt: requestDetails?.claimableAt,
-  })
+  const cooldownRemainingSec = useEarnCooldownRemaining(
+    requestDetails?.claimableAt,
+  )
 
   const withdrawStatus =
     withdrawOperation?.status ?? WithdrawStatus.APPROVAL_TX_COMPLETED

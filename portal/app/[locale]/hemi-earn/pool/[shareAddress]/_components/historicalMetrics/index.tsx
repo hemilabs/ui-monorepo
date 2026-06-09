@@ -32,22 +32,21 @@ export const HistoricalMetrics = function ({ peggedToken, shareToken }: Props) {
   })
 
   const renderHeadline = function () {
+    if (isPending) {
+      return <Skeleton className="h-7 w-28" />
+    }
     const lastValue =
       data && data.length > 0 ? data[data.length - 1].y : undefined
-
-    if (lastValue !== undefined) {
-      return (
-        <HeadlineValue
-          metricType={metricType}
-          peggedToken={peggedToken}
-          value={lastValue}
-        />
-      )
-    }
-    if (isError) {
+    if (isError || lastValue === undefined) {
       return '-'
     }
-    return <Skeleton className="h-7 w-28" />
+    return (
+      <HeadlineValue
+        metricType={metricType}
+        peggedToken={peggedToken}
+        value={lastValue}
+      />
+    )
   }
 
   return (

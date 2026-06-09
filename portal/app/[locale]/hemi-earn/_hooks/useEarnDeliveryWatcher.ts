@@ -1,12 +1,17 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { tokenBalanceQueryKeyPrefix } from 'hooks/useBalance'
+import { getHemiEarnSupportedAssets } from 'hemi-earn-actions'
+import { hemi } from 'hemi-viem'
+import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useEffect, useRef } from 'react'
+import { type Address, isAddressEqual } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { earnPositionsKeyPrefix } from '../_fetchers/fetchEarnPositions'
 import {
+  type EarnTransaction,
+  type EarnTransactionKindType,
   type EarnTransactionStatusType,
   type LocalEarnOperation,
 } from '../types'
@@ -47,30 +52,67 @@ function reconcileLocals({
 const isInFlightStatus = (status: EarnTransactionStatusType) =>
   status !== 'CLAIMED' && status !== 'CANCELLED' && status !== 'RECOVERED'
 
-// Walks the previous-vs-current subgraph status maps and reports whether any
-// request hash transitioned from an in-flight state into a terminal delivery
-// state (CLAIMED / RECOVERED) since the last poll. Applies to both deposits
-// (share OFTs landing on the user's Hemi wallet) and redeems (underlying
-// tokens landing on the user's Hemi wallet) — both move the user's pool
-// position and TVL. First-time observations of already-terminal hashes
-// (page reload after CLAIMED) do NOT count — those rows are historical
-// and don't move balances.
-function detectCrossChainDelivery(
-  previous: Map<string, EarnTransactionStatusType>,
-  current: Map<string, EarnTransactionStatusType>,
-) {
-  for (const [hash, status] of current) {
-    if (status !== 'CLAIMED' && status !== 'RECOVERED') continue
-    const prev = previous.get(hash)
-    if (prev !== undefined && isInFlightStatus(prev)) return true
-  }
-  return false
+type DeliveredEvent = {
+  asset: Address
+  kind: EarnTransactionKindType
+  receiver: Address
 }
 
-function invalidateOnDelivery(queryClient: ReturnType<typeof useQueryClient>) {
+// Walks the subgraph rows and reports every request that transitioned from
+// an in-flight state into a terminal delivery state (CLAIMED / RECOVERED)
+// since the previous poll. Returns the delivered events with enough metadata
+// (kind, asset, receiver) for the caller to build the exact cache keys
+// that actually moved — deposits make the share OFT land on the user's
+// Hemi wallet, redeems make the underlying land on the user's Hemi wallet.
+// First-time observations of already-terminal hashes (page reload after
+// CLAIMED) do NOT count — those rows are historical and don't move
+// balances.
+function detectCrossChainDeliveries(
+  previous: Map<string, EarnTransactionStatusType>,
+  rows: EarnTransaction[],
+) {
+  const events: DeliveredEvent[] = []
+  for (const row of rows) {
+    if (row.status !== 'CLAIMED' && row.status !== 'RECOVERED') continue
+    const prev = previous.get(row.initiateTxHash.toLowerCase())
+    if (prev === undefined || !isInFlightStatus(prev)) continue
+    events.push({
+      asset: row.asset,
+      kind: row.kind,
+      receiver: row.receiver,
+    })
+  }
+  return events
+}
+
+// Resolves the share OFT registered against a deposit asset. The deposit
+// pulls the underlying in, but the cache that moves at CLAIMED time is
+// the share's balance — so for DEPOSIT events we invalidate that key
+// instead of `event.asset`.
+const findShareForAsset = (asset: Address) =>
+  getHemiEarnSupportedAssets().find(entry => isAddressEqual(entry.asset, asset))
+    ?.share
+
+const tokenAddressForEvent = (event: DeliveredEvent) =>
+  event.kind === 'DEPOSIT' ? findShareForAsset(event.asset) : event.asset
+
+function invalidateOnDelivery(
+  queryClient: ReturnType<typeof useQueryClient>,
+  events: DeliveredEvent[],
+) {
   queryClient.invalidateQueries({ queryKey: vetroPoolsPrefix })
   queryClient.invalidateQueries({ queryKey: vetroUserPoolBalancePrefix })
-  queryClient.invalidateQueries({ queryKey: tokenBalanceQueryKeyPrefix })
+  for (const event of events) {
+    const tokenAddress = tokenAddressForEvent(event)
+    if (tokenAddress === undefined) continue
+    queryClient.invalidateQueries({
+      queryKey: getTokenBalanceQueryKey({
+        account: event.receiver,
+        chainId: hemi.id,
+        tokenAddress,
+      }),
+    })
+  }
   // `resetQueries` is the only single-call primitive that does both halves
   // of what we need: it removes every matching cache entry (so the inner
   // `ensureQueryData` reads inside `fetchEarnPositions` go to the network
@@ -114,9 +156,9 @@ export const useEarnDeliveryWatcher = function () {
       const subgraphHashToStatus = new Map<string, EarnTransactionStatusType>(
         data.map(t => [t.initiateTxHash.toLowerCase(), t.status]),
       )
-      const crossChainDelivered = detectCrossChainDelivery(
+      const deliveries = detectCrossChainDeliveries(
         previousSubgraphStatusRef.current,
-        subgraphHashToStatus,
+        data,
       )
       previousSubgraphStatusRef.current = subgraphHashToStatus
       reconcileLocals({
@@ -124,8 +166,8 @@ export const useEarnDeliveryWatcher = function () {
         markSettledByInitiateTxHash,
         subgraphHashes: new Set(subgraphHashToStatus.keys()),
       })
-      if (crossChainDelivered) {
-        invalidateOnDelivery(queryClient)
+      if (deliveries.length > 0) {
+        invalidateOnDelivery(queryClient, deliveries)
       }
     },
     [address, data, localOperations, markSettledByInitiateTxHash, queryClient],

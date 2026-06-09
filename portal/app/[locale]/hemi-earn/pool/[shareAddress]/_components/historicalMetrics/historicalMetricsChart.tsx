@@ -4,8 +4,9 @@ import { useWindowSize } from '@hemilabs/react-hooks/useWindowSize'
 import { useLocale } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { screenBreakpoints } from 'styles'
+import { EvmToken } from 'types/token'
 import {
-  formatCompactFiat,
+  formatCompactFiatParts,
   formatDate,
   formatPercentage,
   formatShortDate,
@@ -27,10 +28,10 @@ import {
 
 const getChartPadding = (metricType: MetricType) => ({
   bottom: 24,
-  // APY labels are short ("4%"), but deposits labels can be longer since
-  // locales like es/pt render compact notation with a space (eg. "$400 M"
-  // instead of the en "$400M"), so we reserve extra room for them.
-  left: metricType === 'apy' ? 28 : 51,
+  // APY labels are short ("4%"), but deposits labels carry the token symbol
+  // ("400M vetBTC") and locales like es/pt add a space in compact notation
+  // ("400 M" instead of the en "400M"), so we reserve extra room for them.
+  left: metricType === 'apy' ? 28 : 80,
   right: 0,
   top: 4,
 })
@@ -38,7 +39,7 @@ const getChartPadding = (metricType: MetricType) => ({
 const tickLabelStyle = {
   fill: '#737373',
   fontFamily: 'Geist, sans-serif',
-  fontSize: 11,
+  fontSize: 9,
   fontWeight: 500,
   letterSpacing: 0.22,
   lineHeight: '16px',
@@ -91,30 +92,40 @@ const formatFullTimestamp = (timestampMs: number, locale: string) =>
 // is explicitly asking for detail.
 type FormatPrecision = 'compact' | 'full'
 
-const formatYAxis = function (
-  value: number,
-  metricType: MetricType,
-  locale: string,
-  precision: FormatPrecision = 'compact',
-) {
+const formatYAxis = function ({
+  locale,
+  metricType,
+  peggedToken,
+  precision = 'compact',
+  value,
+}: {
+  locale: string
+  metricType: MetricType
+  peggedToken: EvmToken
+  precision?: FormatPrecision
+  value: number
+}) {
   if (metricType === 'apy') {
     return precision === 'full'
       ? formatPercentage(value)
       : `${Math.round(value)}%`
   }
-  return formatCompactFiat(value, locale)
+  const { number, suffix } = formatCompactFiatParts(value, locale)
+  return `${number}${suffix} ${peggedToken.symbol}`
 }
 
 function ChartTooltipLabel({
   datum,
   locale,
   metricType,
+  peggedToken,
   x,
   y,
 }: {
   datum?: MetricDataPoint
   locale: string
   metricType: MetricType
+  peggedToken: EvmToken
   x?: number
   y?: number
 }) {
@@ -123,12 +134,18 @@ function ChartTooltipLabel({
   }
 
   const dateText = formatFullTimestamp(datum.x, locale)
-  const valueText = formatYAxis(datum.y, metricType, locale, 'full')
+  const valueText = formatYAxis({
+    locale,
+    metricType,
+    peggedToken,
+    precision: 'full',
+    value: datum.y,
+  })
 
   return (
     <text
       dominantBaseline="central"
-      style={{ fontSize: 11 }}
+      style={{ fontSize: 9 }}
       textAnchor="middle"
       x={x}
       y={y}
@@ -165,11 +182,13 @@ const getChartWidth = (windowWidth: number) =>
 const EmptyChart = ({
   locale,
   metricType,
+  peggedToken,
   period,
   width,
 }: {
   locale: string
   metricType: MetricType
+  peggedToken: EvmToken
   period: MetricPeriod
   width: number
 }) => (
@@ -186,7 +205,9 @@ const EmptyChart = ({
     <VictoryAxis
       dependentAxis
       style={yAxisStyle}
-      tickFormat={(v: number) => formatYAxis(v, metricType, locale)}
+      tickFormat={(v: number) =>
+        formatYAxis({ locale, metricType, peggedToken, value: v })
+      }
       tickValues={metricType === 'apy' ? [0, 2, 4, 6] : undefined}
     />
   </VictoryChart>
@@ -197,6 +218,7 @@ type Props = {
   isError: boolean
   isPending: boolean
   metricType: MetricType
+  peggedToken: EvmToken
   period: MetricPeriod
 }
 
@@ -205,6 +227,7 @@ export const HistoricalMetricsChart = function ({
   isError,
   isPending,
   metricType,
+  peggedToken,
   period,
 }: Props) {
   const locale = useLocale()
@@ -230,6 +253,7 @@ export const HistoricalMetricsChart = function ({
                     <ChartTooltipLabel
                       locale={locale}
                       metricType={metricType}
+                      peggedToken={peggedToken}
                     />
                   }
                   pointerLength={0}
@@ -237,12 +261,13 @@ export const HistoricalMetricsChart = function ({
                 />
               }
               labels={({ datum }: { datum: MetricDataPoint }) =>
-                `${formatFullTimestamp(datum.x, locale)}  ${formatYAxis(
-                  datum.y,
-                  metricType,
+                `${formatFullTimestamp(datum.x, locale)}  ${formatYAxis({
                   locale,
-                  'full',
-                )}`
+                  metricType,
+                  peggedToken,
+                  precision: 'full',
+                  value: datum.y,
+                })}`
               }
               voronoiBlacklist={['area']}
             />
@@ -259,7 +284,9 @@ export const HistoricalMetricsChart = function ({
           <VictoryAxis
             dependentAxis
             style={yAxisStyle}
-            tickFormat={(v: number) => formatYAxis(v, metricType, locale)}
+            tickFormat={(v: number) =>
+              formatYAxis({ locale, metricType, peggedToken, value: v })
+            }
           />
           <AreaGradient />
           <VictoryArea
@@ -294,6 +321,7 @@ export const HistoricalMetricsChart = function ({
         <EmptyChart
           locale={locale}
           metricType={metricType}
+          peggedToken={peggedToken}
           period={period}
           width={chartWidth}
         />
@@ -306,6 +334,7 @@ export const HistoricalMetricsChart = function ({
       <EmptyChart
         locale={locale}
         metricType={metricType}
+        peggedToken={peggedToken}
         period={period}
         width={chartWidth}
       />
@@ -318,6 +347,7 @@ export const HistoricalMetricsChart = function ({
         <EmptyChart
           locale={locale}
           metricType={metricType}
+          peggedToken={peggedToken}
           period={period}
           width={chartWidth}
         />

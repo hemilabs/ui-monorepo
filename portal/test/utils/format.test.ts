@@ -243,49 +243,49 @@ describe('utils/format', function () {
 
     it('should split number and suffix for millions in en locale', function () {
       expect(formatCompactFiatParts(420_170_000, 'en')).toEqual({
-        number: '$420.17',
+        number: '420.17',
         suffix: 'M',
       })
     })
 
     it('should split number and suffix for billions in en locale', function () {
       expect(formatCompactFiatParts(1_234_567_890, 'en')).toEqual({
-        number: '$1.23',
+        number: '1.23',
         suffix: 'B',
       })
     })
 
     it('should return an empty suffix for small numbers', function () {
       expect(formatCompactFiatParts(999, 'en')).toEqual({
-        number: '$999',
+        number: '999',
         suffix: '',
       })
     })
 
     it('should return an empty suffix for zero', function () {
       expect(formatCompactFiatParts(0, 'en')).toEqual({
-        number: '$0',
+        number: '0',
         suffix: '',
       })
     })
 
     it('should honor an explicit maximumFractionDigits', function () {
       expect(formatCompactFiatParts(420_170_000, 'en', 0)).toEqual({
-        number: '$420',
+        number: '420',
         suffix: 'M',
       })
     })
 
     it('should use comma decimals in es locale', function () {
       expect(formatCompactFiatParts(420_170_000, 'es')).toEqual({
-        number: `$420,17${nbsp}`,
+        number: `420,17${nbsp}`,
         suffix: 'M',
       })
     })
 
     it('should use "mi" suffix in pt locale', function () {
       expect(formatCompactFiatParts(420_170_000, 'pt')).toEqual({
-        number: `$420,17${nbsp}`,
+        number: `420,17${nbsp}`,
         suffix: 'mi',
       })
     })

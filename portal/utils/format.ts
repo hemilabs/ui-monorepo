@@ -125,7 +125,7 @@ export const formatCompactFiatParts = function (
     .filter(p => p.type !== 'compact')
     .map(p => p.value)
     .join('')
-  return { number: `$${number}`, suffix }
+  return { number, suffix }
 }
 
 export const formatDate = (date: Date, locale: string) =>

@@ -42,8 +42,7 @@
         "withdraw": {
           "heading": "Revisar saque de stake",
           "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
-        },
-        "withdraw-token": "Sacar {symbol}"
+        }
       },
       "form": {
         "amount-too-small": "Valor muito pequeno",

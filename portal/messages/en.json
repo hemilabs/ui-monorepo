@@ -42,8 +42,7 @@
         "withdraw": {
           "heading": "Review stake withdrawal",
           "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
-        },
-        "withdraw-token": "Withdraw {symbol}"
+        }
       },
       "form": {
         "amount-too-small": "Amount too small",

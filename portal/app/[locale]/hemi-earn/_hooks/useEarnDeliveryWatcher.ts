@@ -1,6 +1,7 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
+import { tokenBalanceQueryKeyPrefix } from 'hooks/useBalance'
 import { useEffect, useRef } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -69,7 +70,7 @@ function detectCrossChainDelivery(
 function invalidateOnDelivery(queryClient: ReturnType<typeof useQueryClient>) {
   queryClient.invalidateQueries({ queryKey: vetroPoolsPrefix })
   queryClient.invalidateQueries({ queryKey: vetroUserPoolBalancePrefix })
-  queryClient.invalidateQueries({ queryKey: ['tokenBalance'] })
+  queryClient.invalidateQueries({ queryKey: tokenBalanceQueryKeyPrefix })
   // `resetQueries` is the only single-call primitive that does both halves
   // of what we need: it removes every matching cache entry (so the inner
   // `ensureQueryData` reads inside `fetchEarnPositions` go to the network

@@ -8,10 +8,6 @@ import { isNativeAddress } from 'utils/nativeToken'
 import { type Address, isAddress } from 'viem'
 import { useAccount, usePublicClient } from 'wagmi'
 
-export const tokenBalanceQueryKeyPrefix = [
-  'tokenBalance' satisfies ReturnType<typeof tokenBalanceQueryKey>[0],
-] as const
-
 export const getTokenBalanceQueryKey = ({
   account,
   chainId,

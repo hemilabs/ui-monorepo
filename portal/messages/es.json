@@ -37,7 +37,7 @@
         "get-share-tokens": "Recibir share tokens",
         "receive-token": "Recibir {symbol}",
         "unstake-token": "Hacer unstake de {symbol}",
-        "wait-cooldown-countdown": "Cooldown termina en {days}d {hours}h",
+        "wait-cooldown-countdown": "{days, plural, =0 {Cooldown termina en {hours}h} other {Cooldown termina en #d {hours}h}}",
         "wait-cooldown-pending": "Espere el período de cooldown de {days, plural, one {# día} other {# días}}",
         "withdraw": {
           "heading": "Revisar retiro de stake",

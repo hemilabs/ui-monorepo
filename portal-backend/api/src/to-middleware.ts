@@ -37,11 +37,9 @@ function toJsonMiddleware(
   return async function (req, res) {
     const [err, data] = await wrapped(...Object.values(req.params))
     if (err) {
-      console.error(`Failed to handle request to ${req.path}: ${err.stack}`)
-      res.status(500).json({ error: 'Internal Server Error' })
-    } else {
-      res.status(200).json(data)
+      throw err
     }
+    res.status(200).json(data)
   }
 }
 
@@ -53,11 +51,11 @@ function toTextMiddleware(
   return async function (req, res) {
     const [err, data] = await wrapped(...Object.values(req.params))
     if (err) {
-      console.error(`Failed to handle request to ${req.path}: ${err.stack}`)
-      res.status(500).type('text').send('Internal Server Error')
-    } else {
-      res.status(200).type('text').send(data.toString())
+      // Errors are rethrown to the global error handler, which responds with
+      // JSON regardless of the route's content type. This is ok for now.
+      throw err
     }
+    res.status(200).type('text').send(data.toString())
   }
 }
 

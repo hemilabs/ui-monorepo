@@ -1,6 +1,5 @@
-import { type UseQueryOptions } from '@tanstack/react-query'
+import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
 import {
-  getHemiEarnAgentAddress,
   getHemiEarnRouterAddress,
   getStakingVaultForShare,
 } from 'hemi-earn-actions'
@@ -15,6 +14,8 @@ import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
+import { agentAddressQueryOptions } from '../../../_hooks/useHemiEarnAgentAddress'
+
 export type QuoteRedeem = {
   callbackFee: bigint
   isInstant: boolean
@@ -24,6 +25,7 @@ export type QuoteRedeem = {
 export type QuoteRedeemParams = {
   account: Address
   asset: Address
+  queryClient: QueryClient
   shareAddress: Address
   shares: bigint
 }
@@ -35,12 +37,13 @@ export type QuoteRedeemParams = {
 export async function fetchQuoteRedeem({
   account,
   asset,
+  queryClient,
   shareAddress,
   shares,
 }: QuoteRedeemParams): Promise<QuoteRedeem> {
   const ethereumClient = getEvmL1PublicClient(mainnet.id)
   const hemiClient = getPublicClient(hemi.id)
-  const [isInstant, assetData] = await Promise.all([
+  const [isInstant, assetData, agentAddress] = await Promise.all([
     resolveIsInstant({
       caller: account,
       client: ethereumClient,
@@ -50,9 +53,10 @@ export async function fetchQuoteRedeem({
       asset,
       routerAddress: getHemiEarnRouterAddress(),
     }),
+    queryClient.ensureQueryData(agentAddressQueryOptions()),
   ])
   const callbackFee = await quoteRedeemFulfillment({
-    agentAddress: getHemiEarnAgentAddress(),
+    agentAddress,
     asset: assetData.remoteAsset,
     client: ethereumClient,
   })
@@ -76,7 +80,7 @@ const getQuoteRedeemQueryKey = ({
   asset,
   shareAddress,
   shares,
-}: QuoteRedeemHookParams) =>
+}: Omit<QuoteRedeemHookParams, 'queryClient'>) =>
   [
     'hemi-earn',
     'quote-redeem',
@@ -89,12 +93,19 @@ const getQuoteRedeemQueryKey = ({
 export const quoteRedeemOptions = ({
   account,
   asset,
+  queryClient,
   shareAddress,
   shares,
 }: QuoteRedeemHookParams): UseQueryOptions<QuoteRedeem> => ({
   enabled: shares > BigInt(0) && !!account,
   // The `enabled` flag above guarantees `account` is defined when this runs.
   queryFn: () =>
-    fetchQuoteRedeem({ account: account!, asset, shareAddress, shares }),
+    fetchQuoteRedeem({
+      account: account!,
+      asset,
+      queryClient,
+      shareAddress,
+      shares,
+    }),
   queryKey: getQuoteRedeemQueryKey({ account, asset, shareAddress, shares }),
 })

@@ -1,6 +1,7 @@
 export {
   type AssetData,
   type Request,
+  getAgentAddress,
   getAssetData,
   getRequest,
   quoteDeposit,

@@ -9,6 +9,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fetchQuoteDeposit } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchQuoteDeposit'
 
 vi.mock('hemi-earn-actions/actions', () => ({
+  getAgentAddress: vi.fn(),
   getAssetData: vi.fn(),
   quoteDeposit: vi.fn(),
   quoteDepositFulfillment: vi.fn(),
@@ -19,7 +20,6 @@ vi.mock('@vetro-protocol/gateway/actions', () => ({
 }))
 
 vi.mock('hemi-earn-actions', () => ({
-  getHemiEarnAgentAddress: () => '0xAgent',
   getHemiEarnRouterAddress: () => '0xRouter',
   getHemiEarnSupportedAssets: () => [],
   getStakingVaultForShare: () => '0xStakingVault',
@@ -47,6 +47,8 @@ const assetData = {
 const createQueryClient = () => ({
   ensureQueryData: vi.fn(function ({ queryKey }) {
     switch (queryKey[1]) {
+      case 'agent-address':
+        return Promise.resolve('0xAgent')
       case 'gateway-for-asset':
         return Promise.resolve(gateway)
       case 'asset-data':
@@ -90,6 +92,19 @@ describe('fetchQuoteDeposit', function () {
     expect(previewDeposit).toHaveBeenCalledWith(
       expect.anything(),
       expect.objectContaining({ amountIn: BigInt(1000), tokenIn: remoteAsset }),
+    )
+  })
+
+  it('threads the resolved agentAddress through quoteDepositFulfillment', async function () {
+    await fetchQuoteDeposit({
+      amount: BigInt(1000),
+      asset,
+      queryClient: createQueryClient() as never,
+      shareAddress,
+    })
+
+    expect(quoteDepositFulfillment).toHaveBeenCalledWith(
+      expect.objectContaining({ agentAddress: '0xAgent' }),
     )
   })
 

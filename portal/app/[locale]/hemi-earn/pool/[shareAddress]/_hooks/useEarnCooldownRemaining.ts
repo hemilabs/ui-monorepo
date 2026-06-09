@@ -20,24 +20,28 @@ const TICK_MS = 60_000
 
 const nowInSeconds = () => Number(unixNowTimestamp())
 
+export function computeCooldownRemaining(
+  claimableAt: bigint | number | undefined,
+  nowSec: number,
+) {
+  if (claimableAt === undefined) return undefined
+  const remaining = Number(claimableAt) - nowSec
+  return remaining > 0 ? remaining : 0
+}
+
 export function useEarnCooldownRemaining(
   claimableAt: bigint | number | undefined,
 ) {
   const [nowSec, setNowSec] = useState(nowInSeconds)
 
-  const claimableAtSec =
-    claimableAt === undefined ? undefined : Number(claimableAt)
-
   useEffect(
     function tick() {
-      if (claimableAtSec === undefined) return undefined
+      if (claimableAt === undefined) return undefined
       const id = setInterval(() => setNowSec(nowInSeconds()), TICK_MS)
       return () => clearInterval(id)
     },
-    [claimableAtSec],
+    [claimableAt],
   )
 
-  if (claimableAtSec === undefined) return undefined
-  const remaining = claimableAtSec - nowSec
-  return remaining > 0 ? remaining : 0
+  return computeCooldownRemaining(claimableAt, nowSec)
 }

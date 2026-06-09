@@ -15,31 +15,38 @@ import { HeadlineValue } from './headlineValue'
 import { HistoricalMetricsChart } from './historicalMetricsChart'
 
 type Props = {
+  peggedToken: EvmToken
   shareToken: EvmToken
 }
 
-export const HistoricalMetrics = function ({ shareToken }: Props) {
+export const HistoricalMetrics = function ({ peggedToken, shareToken }: Props) {
   const t = useTranslations('hemi-earn.pool.historical-metrics')
   const [period, setPeriod] = useState<MetricPeriod>('1w')
   const [metricType, setMetricType] = useState<MetricType>('deposits')
 
   const { data, isError, isPending } = useHistoricalMetrics({
     metricType,
+    peggedToken,
     period,
     shareToken,
   })
-
-  const lastValue =
-    data && data.length > 0 ? data[data.length - 1].y : undefined
 
   const renderHeadline = function () {
     if (isPending) {
       return <Skeleton className="h-7 w-28" />
     }
+    const lastValue =
+      data && data.length > 0 ? data[data.length - 1].y : undefined
     if (isError || lastValue === undefined) {
       return '-'
     }
-    return <HeadlineValue metricType={metricType} value={lastValue} />
+    return (
+      <HeadlineValue
+        metricType={metricType}
+        peggedToken={peggedToken}
+        value={lastValue}
+      />
+    )
   }
 
   return (
@@ -121,6 +128,7 @@ export const HistoricalMetrics = function ({ shareToken }: Props) {
             isError={isError}
             isPending={isPending}
             metricType={metricType}
+            peggedToken={peggedToken}
             period={period}
           />
         </div>

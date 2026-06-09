@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
+import fetch from 'fetch-plus-plus'
+import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { type EvmToken } from 'types/token'
-import { type Address } from 'viem'
+import { isValidUrl } from 'utils/url'
+import { type Address, formatUnits } from 'viem'
 
 import {
   type MetricDataPoint,
@@ -8,9 +11,11 @@ import {
   type MetricType,
 } from '../../../types'
 
-// Temporary stub: the previous subgraph endpoint was removed in #1917.
-// Returns mocked MetricDataPoint[] directly so the chart still renders;
-// re-wire to the new data source once it's available.
+const apiUrl = process.env.NEXT_PUBLIC_VETRO_API_URL
+const isVetroApiConfigured = apiUrl !== undefined && isValidUrl(apiUrl)
+
+// Temporary stub: there's no APY-history endpoint yet, so the `apy` metric still
+// renders mocked MetricDataPoint[]. Re-wire it once a time series is available.
 
 const periodToMs: Record<MetricPeriod, number> = {
   '1m': 30 * 24 * 60 * 60 * 1000,
@@ -36,24 +41,47 @@ const generateMockMetric = function (
   })
 }
 
+type TotalDepositsHistory = { timestamp: number; totalDeposits: string }[]
+
+const fetchTotalDeposits = async function (
+  shareToken: EvmToken,
+  peggedToken: EvmToken,
+  period: MetricPeriod,
+): Promise<MetricDataPoint[]> {
+  const stakingVault = getStakingVaultForShare(shareToken.address as Address)
+  const history = (await fetch(
+    `${apiUrl}/variable-stake/total-deposits-history/${stakingVault}/${period}`,
+  )) as TotalDepositsHistory
+  return history.map(({ timestamp, totalDeposits }) => ({
+    x: timestamp,
+    y: Number(formatUnits(BigInt(totalDeposits), peggedToken.decimals)),
+  }))
+}
+
 type UseHistoricalMetrics = {
   metricType: MetricType
+  peggedToken: EvmToken
   period: MetricPeriod
   shareToken: EvmToken
 }
 
 export const useHistoricalMetrics = ({
   metricType,
+  peggedToken,
   period,
   shareToken,
 }: UseHistoricalMetrics) =>
   useQuery({
+    enabled: metricType === 'apy' || isVetroApiConfigured,
     queryFn: (): Promise<MetricDataPoint[]> =>
-      Promise.resolve(generateMockMetric(period, metricType)),
+      metricType === 'apy'
+        ? Promise.resolve(generateMockMetric(period, metricType))
+        : fetchTotalDeposits(shareToken, peggedToken, period),
     queryKey: [
       'historical-metrics',
       metricType,
       period,
+      peggedToken.address,
       shareToken.chainId,
       shareToken.address as Address,
     ],

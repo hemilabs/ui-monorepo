@@ -81,7 +81,10 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
         <div className="mt-6 flex flex-col gap-3 md:gap-5 lg:flex-row">
           <div className="order-2 flex flex-col gap-4 md:gap-5 lg:order-1 lg:basis-2/3">
             <PoolInfoCards pool={pool} />
-            <HistoricalMetrics shareToken={pool.shareToken} />
+            <HistoricalMetrics
+              peggedToken={pool.peggedToken}
+              shareToken={pool.shareToken}
+            />
             <Composition
               chainId={pool.shareToken.chainId}
               shareAddress={pool.shareAddress}

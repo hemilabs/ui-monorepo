@@ -1,14 +1,20 @@
 import { useLocale } from 'next-intl'
+import { EvmToken } from 'types/token'
 import { formatCompactFiatParts, formatPercentage } from 'utils/format'
 
 import { type MetricType } from '../../../../types'
 
 type Props = {
   metricType: MetricType
+  peggedToken: EvmToken
   value: number
 }
 
-export const HeadlineValue = function ({ metricType, value }: Props) {
+export const HeadlineValue = function ({
+  metricType,
+  peggedToken,
+  value,
+}: Props) {
   const locale = useLocale()
 
   if (metricType === 'apy') {
@@ -19,6 +25,7 @@ export const HeadlineValue = function ({ metricType, value }: Props) {
     <>
       <span>{number}</span>
       <span className="text-neutral-400">{suffix}</span>
+      <span>{` ${peggedToken.symbol}`}</span>
     </>
   )
 }

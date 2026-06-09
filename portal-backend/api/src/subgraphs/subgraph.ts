@@ -12,6 +12,7 @@ import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
 import { postJson } from '../post-json.ts'
 
+import { UpstreamGraphQLError } from './errors.ts'
 import type {
   BtcDepositOperation,
   EvmDepositOperation,
@@ -54,6 +55,8 @@ const getSubgraphUrl = function ({
 const request = <TResponse>(url: string, schema: Schema): Promise<TResponse> =>
   postJson(url, schema, {
     headers: { Origin: subgraphConfig.origin },
+  }).catch(function (err) {
+    throw new UpstreamGraphQLError(err.message, { cause: err })
   }) as Promise<TResponse>
 
 const getTunnelSubgraphUrl = function (chainId: Chain['id']) {
@@ -85,7 +88,7 @@ function checkGraphQLErrors<T>(
   if ('errors' in response && response.errors.length > 0) {
     // Extract error messages and join them
     const errorMessages = response.errors.map(e => e.message).join(', ')
-    throw new Error(`GraphQL Error: ${errorMessages}`)
+    throw new UpstreamGraphQLError(`GraphQL Error: ${errorMessages}`)
   }
 }
 

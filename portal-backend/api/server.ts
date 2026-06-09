@@ -9,6 +9,7 @@ import { createDune, type DuneOptions } from './src/dune.ts'
 import { globToRegExp } from './src/glob-to-regexp.ts'
 import { createNetStats, type NetStatsOptions } from './src/net-stats.ts'
 import { createRedisCache, type RedisOptions } from './src/redis.ts'
+import { UpstreamGraphQLError } from './src/subgraphs/errors.ts'
 import { createSubgraphsRouter } from './src/subgraphs/router.ts'
 import { toJsonMiddleware, toTextMiddleware } from './src/to-middleware.ts'
 import { createVeHemi } from './src/ve-hemi/index.ts'
@@ -90,6 +91,13 @@ app.use(notFoundHandler)
 setupExpressErrorHandler(app)
 
 const errorHandler: ErrorRequestHandler = function (error, _req, res, _next) {
+  if (error instanceof UpstreamGraphQLError) {
+    // Intentionally not filtered from Sentry — upstream issues are still
+    // tracked there
+    console.warn('Upstream GraphQL error:', error)
+    res.status(502).send({ error: 'Bad Gateway' })
+    return
+  }
   console.error('Internal Server Error:', error)
   res.status(500).send({ error: 'Internal Server Error' })
 }

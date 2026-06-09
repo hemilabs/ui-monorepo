@@ -23,8 +23,9 @@ export const HeadlineValue = function ({
   const { number, suffix } = formatCompactFiatParts(value, locale)
   return (
     <>
-      <span>{`${number} ${peggedToken.symbol}`}</span>
+      <span>{number}</span>
       <span className="text-neutral-400">{suffix}</span>
+      <span>{` ${peggedToken.symbol}`}</span>
     </>
   )
 }

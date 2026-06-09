@@ -22,10 +22,11 @@ type Props = {
 }
 
 // Fires when a request reaches the subgraph `CLAIMED` state — the moment
-// the full cross-chain flow completes (shares on Ethereum for deposits,
-// underlying back on Hemi for redeems). Mounted once per kind at the
-// hemi-earn layout level so it survives navigation between the pool page
-// and the home page.
+// the full cross-chain flow completes (share OFTs landing on the user's
+// Hemi wallet for deposits, underlying tokens landing on the user's Hemi
+// wallet for redeems). Mounted once per kind at the hemi-earn layout
+// level so it survives navigation between the pool page and the home
+// page.
 //
 // To avoid noise on first mount (a session with historical CLAIMED rows),
 // the component snapshots the already-claimed hashes on the first non-

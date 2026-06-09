@@ -79,7 +79,7 @@ const getTunnelSubgraphUrl = function (chainId: Chain['id']) {
 /**
  * Helper function to check for errors in GraphQL responses
  * @param response The GraphQL response to check
- * @throws Error if the response contains errors
+ * @throws UpstreamGraphQLError if the response contains errors
  */
 function checkGraphQLErrors<T>(
   response: GraphResponse<T>,

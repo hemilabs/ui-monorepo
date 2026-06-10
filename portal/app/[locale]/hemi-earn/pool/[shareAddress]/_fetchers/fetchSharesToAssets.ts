@@ -8,6 +8,7 @@ import {
   gatewayForAssetQueryOptions,
   getAssetForShare,
 } from '../../../_hooks/gatewayForAsset'
+import { assetDataQueryOptions } from '../../../_hooks/useAssetData'
 
 import { sharesToPeggedOptions } from './fetchSharesToPegged'
 
@@ -42,14 +43,18 @@ export async function fetchSharesToAssets({
   if (peggedAmount <= BigInt(0)) {
     return { assetOut: BigInt(0), peggedAmount: BigInt(0) }
   }
-  const gateway = await queryClient.ensureQueryData(
-    gatewayForAssetQueryOptions(getAssetForShare(shareAddress)),
-  )
+
+  const [gateway, assetData] = await Promise.all([
+    queryClient.ensureQueryData(
+      gatewayForAssetQueryOptions(getAssetForShare(shareAddress)),
+    ),
+    queryClient.ensureQueryData(assetDataQueryOptions(assetAddress)),
+  ])
   const ethereumClient = getEvmL1PublicClient(mainnet.id)
   const assetOut = await previewRedeem(ethereumClient, {
     address: gateway,
     peggedTokenIn: peggedAmount,
-    tokenOut: assetAddress,
+    tokenOut: assetData.remoteAsset,
   })
   return { assetOut, peggedAmount }
 }

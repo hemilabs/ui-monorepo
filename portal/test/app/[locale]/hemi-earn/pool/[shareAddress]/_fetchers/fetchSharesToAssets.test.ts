@@ -11,6 +11,7 @@ vi.mock('@vetro-protocol/gateway/actions', () => ({
 const assetAddress = '0x1111111111111111111111111111111111111111' as Address
 const shareAddress = '0x2222222222222222222222222222222222222222' as Address
 const gateway = '0x6666666666666666666666666666666666666666' as Address
+const remoteAsset = '0x7777777777777777777777777777777777777777' as Address
 
 vi.mock('hemi-earn-actions', () => ({
   getHemiEarnSupportedAssets: () => [
@@ -26,6 +27,8 @@ vi.mock('utils/chainClients', () => ({
 const createQueryClient = (peggedAmount: bigint) => ({
   ensureQueryData: vi.fn(function ({ queryKey }) {
     switch (queryKey[1]) {
+      case 'asset-data':
+        return Promise.resolve({ remoteAsset })
       case 'gateway-for-asset':
         return Promise.resolve(gateway)
       case 'shares-to-pegged':
@@ -65,7 +68,7 @@ describe('fetchSharesToAssets', function () {
       expect.objectContaining({
         address: gateway,
         peggedTokenIn: BigInt(200),
-        tokenOut: assetAddress,
+        tokenOut: remoteAsset,
       }),
     )
   })

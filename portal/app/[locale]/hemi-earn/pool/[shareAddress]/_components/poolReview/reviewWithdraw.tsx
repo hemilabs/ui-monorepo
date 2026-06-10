@@ -18,9 +18,9 @@ import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
 import { getNativeToken } from 'utils/nativeToken'
-import { secondsToDays, secondsToHours } from 'utils/time'
+import { secondsToDays, secondsToHours, secondsToWholeDays } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
-import { type Address, formatUnits } from 'viem'
+import { type Address, type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 import {
@@ -83,8 +83,8 @@ function buildReceiveStep({
   receiveToken: EvmToken
   subgraphRow:
     | {
-        claimTxHash: string | null
-        recoverTxHash: string | null
+        claimTxHash: Hash | null
+        recoverTxHash: Hash | null
         status: string
       }
     | undefined
@@ -215,7 +215,7 @@ function deriveCooldownPostAction({
   // shows up once the on-chain read settles.
   if (cooldownDurationSec === undefined) return undefined
 
-  const days = Math.round(secondsToDays(cooldownDurationSec))
+  const days = secondsToWholeDays(cooldownDurationSec)
 
   if (!unstakeMined) {
     return {

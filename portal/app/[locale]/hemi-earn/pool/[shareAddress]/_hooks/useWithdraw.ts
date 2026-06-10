@@ -11,11 +11,14 @@ import { requestRedeem } from 'hemi-earn-actions/actions'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
+import { unixNowTimestamp } from 'utils/time'
+import { type Hash } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
 import { getWalletClient } from 'wagmi/actions'
 
 import { earnPositionsKeyPrefix } from '../../../_fetchers/fetchEarnPositions'
 import { earnTvlQueryKey } from '../../../_hooks/useEarnTvl'
+import { useLocalEarnOperations } from '../../../_hooks/useLocalEarnOperations'
 import { type EarnAsset, type EarnPool } from '../../../types'
 import { type WithdrawOperation, WithdrawStatus } from '../_types/operations'
 
@@ -43,12 +46,22 @@ type UseWithdraw = {
   // the preview is pending; `onSettled` invalidation reconciles.
   peggedAmount: bigint
   pool: EarnPool
+  // Set by retry callers when the prior attempt had a successful approval
+  // (allowance is still on-chain, so `requestRedeem` won't emit
+  // `user-signed-approval` again). Carried forward into the new local-store
+  // entry so the historical drawer keeps surfacing the approval step.
+  priorApprovalTxHash?: Hash
   selectedAsset: EarnAsset
   // Pre-converted share amount in shareToken units. Computed by the caller
   // (the withdraw drawer) via `convertToShares` so the off-chain input flow
   // stays close to the asset-unit UX while this hook stays focused on the
   // on-chain submission.
   shares: bigint
+  // Set by retry callers: the `initiateTxHash` of the specific prior FAILED
+  // attempt being replaced. Once the new withdraw is signed, that entry is
+  // flagged `settled` so the table doesn't show the old failure alongside
+  // the new attempt.
+  supersedesInitiateTxHash?: Hash
   updateWithdrawOperation: (payload?: WithdrawOperation) => void
 }
 
@@ -60,8 +73,10 @@ export const useWithdraw = function ({
   on,
   peggedAmount,
   pool,
+  priorApprovalTxHash,
   selectedAsset,
   shares,
+  supersedesInitiateTxHash,
   updateWithdrawOperation,
 }: UseWithdraw) {
   const { setDrawerQueryString } = useDrawerQueryString()
@@ -72,6 +87,10 @@ export const useWithdraw = function ({
   const queryClient = useQueryClient()
   const [networkType] = useNetworkType()
   const routerAddress = getHemiEarnRouterAddress()
+  // Requires <LocalEarnOperationsProvider> upstream (mounted in the
+  // hemi-earn layout). Hook throws at runtime if used outside it.
+  const { markSettledByInitiateTxHash, upsertLocalOperation } =
+    useLocalEarnOperations()
 
   const tokenBalanceQueryKey = getTokenBalanceQueryKey({
     account: address,
@@ -125,6 +144,38 @@ export const useWithdraw = function ({
 
       const walletClient = await getWalletClient(config, { chainId })
 
+      // Local-store entries are created at two points:
+      //   1. `user-signed-approval` — captures `approvalTxHash` so a future
+      //      historical drawer can later render the approval step (the
+      //      indexer has no way to link an approval tx to a request).
+      //   2. `user-signed-withdraw` — adds `initiateTxHash`, which is the
+      //      key the merge would use to dedupe against the subgraph row.
+      // REDEEM rows aren't surfaced in the table yet, but the local entries
+      // still drive `useEarnTransactionsQuery` polling and the cooldown
+      // sub-step's reactivity.
+      const startedAt = Number(unixNowTimestamp())
+      // `amountIn` for REDEEM stores the share amount being burned (raw
+      // share-token units). The drawer displays this directly as "X
+      // {shareSymbol}" — survives `resetStateAfterOperation()` clearing
+      // the form input. DEPOSIT stores the asset amount instead; the
+      // difference reflects what each kind actually puts in on-chain.
+      const baseLocalPayload = {
+        account: address,
+        amountIn: shares.toString(),
+        asset: selectedAsset.address,
+        chainId,
+        kind: 'REDEEM' as const,
+        operator: address,
+        shareAddress: pool.shareAddress,
+        startedAt,
+      }
+
+      // Tracks the approval hash for this specific attempt. Seeded from
+      // `priorApprovalTxHash` so retries (where allowance is still on-chain
+      // and `user-signed-approval` won't fire) keep showing the original
+      // approval step. Overwritten when a fresh approval is signed.
+      let observedApprovalTxHash: Hash | undefined = priorApprovalTxHash
+
       const { emitter, promise } = requestRedeem({
         account: address,
         asset: selectedAsset.address,
@@ -140,10 +191,22 @@ export const useWithdraw = function ({
       })
 
       emitter.on('user-signed-approval', function (approvalTxHash) {
+        observedApprovalTxHash = approvalTxHash
         updateWithdrawOperation({
+          amountIn: shares.toString(),
           approvalTxHash,
           status: WithdrawStatus.APPROVAL_TX_PENDING,
           transactionHash: undefined,
+        })
+        // Persist the approval hash to the local store so the drawer can
+        // surface the approval step across route changes — the indexer
+        // never sees this association.
+        upsertLocalOperation({
+          ...baseLocalPayload,
+          approvalTxHash,
+          operation: {
+            status: WithdrawStatus.APPROVAL_TX_PENDING,
+          },
         })
         setDrawerQueryString('withdrawing')
       })
@@ -171,9 +234,25 @@ export const useWithdraw = function ({
 
       emitter.on('user-signed-withdraw', function (transactionHash) {
         updateWithdrawOperation({
+          amountIn: shares.toString(),
           status: WithdrawStatus.WITHDRAW_TX_PENDING,
           transactionHash,
         })
+        upsertLocalOperation({
+          ...baseLocalPayload,
+          approvalTxHash: observedApprovalTxHash,
+          initiateTxHash: transactionHash,
+          operation: {
+            status: WithdrawStatus.WITHDRAW_TX_PENDING,
+            transactionHash,
+          },
+        })
+        // Hide the specific prior FAILED entry the user is replacing. Done
+        // here (and not on retry click) so the row only disappears once the
+        // user actually commits to the new attempt by signing.
+        if (supersedesInitiateTxHash) {
+          markSettledByInitiateTxHash(supersedesInitiateTxHash)
+        }
         setDrawerQueryString('withdrawing')
       })
 
@@ -188,6 +267,12 @@ export const useWithdraw = function ({
         // requestId so the UI can track cross-chain fulfillment.
         updateWithdrawOperation({
           status: WithdrawStatus.WITHDRAW_TX_CONFIRMED,
+        })
+        upsertLocalOperation({
+          ...baseLocalPayload,
+          approvalTxHash: observedApprovalTxHash,
+          initiateTxHash: receipt.transactionHash,
+          operation: { status: WithdrawStatus.WITHDRAW_TX_CONFIRMED },
         })
         updateNativeBalanceAfterFees(receipt)
         // Optimistic bumps. Invalidation in `onSettled` reconciles, but the
@@ -227,6 +312,12 @@ export const useWithdraw = function ({
       emitter.on('withdraw-transaction-reverted', function (receipt) {
         updateWithdrawOperation({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
+        })
+        upsertLocalOperation({
+          ...baseLocalPayload,
+          approvalTxHash: observedApprovalTxHash,
+          initiateTxHash: receipt.transactionHash,
+          operation: { status: WithdrawStatus.WITHDRAW_TX_FAILED },
         })
         updateNativeBalanceAfterFees(receipt)
       })

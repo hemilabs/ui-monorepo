@@ -57,6 +57,7 @@ export type WithdrawStatusType =
   (typeof WithdrawStatus)[keyof typeof WithdrawStatus]
 
 export type WithdrawOperation = {
+  amountIn?: string
   approvalTxHash?: Hash
   status: WithdrawStatusType
   transactionHash?: Hash

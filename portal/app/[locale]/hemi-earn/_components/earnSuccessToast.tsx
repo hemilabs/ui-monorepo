@@ -1,31 +1,40 @@
 'use client'
 
 import { hemi } from 'hemi-viem'
-import { useTranslations } from 'next-intl'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { type Address, type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useEarnTransactionsQuery } from '../_hooks/useEarnTransactionsQuery'
 import { PoolToast } from '../pool/[shareAddress]/_components/poolToast'
+import { type EarnTransactionKindType } from '../types'
 
 // Visible window before the toast unmounts. Matches the `<Toast>` primitive's
 // own auto-close (10s) so the inner close-animation isn't cut short.
 const TOAST_MS = 10_000
 
-// Fires when a deposit reaches the subgraph `CLAIMED` state — the moment
-// the full cross-chain flow completes and the shares actually land on the
-// user's wallet. Mounted once at the hemi-earn layout level so it survives
-// navigation between the pool page and the home page.
+type Props = {
+  // Subgraph kind to watch — `DEPOSIT` for the shares-landing toast,
+  // `REDEEM` for the underlying-received toast. Each consumer mounts its
+  // own instance with the matching kind + title.
+  kind: EarnTransactionKindType
+  title: string
+}
+
+// Fires when a request reaches the subgraph `CLAIMED` state — the moment
+// the full cross-chain flow completes (share OFTs landing on the user's
+// Hemi wallet for deposits, underlying tokens landing on the user's Hemi
+// wallet for redeems). Mounted once per kind at the hemi-earn layout
+// level so it survives navigation between the pool page and the home
+// page.
 //
 // To avoid noise on first mount (a session with historical CLAIMED rows),
 // the component snapshots the already-claimed hashes on the first non-
 // empty render and only latches the toast for rows that become CLAIMED
 // after that.
-export const DepositSuccessToast = function () {
+export const EarnSuccessToast = function ({ kind, title }: Props) {
   const { address } = useAccount()
   const { data } = useEarnTransactionsQuery()
-  const t = useTranslations('hemi-earn.pool')
 
   const seenClaimedOnMountRef = useRef<Set<string> | null>(null)
   // Hashes already surfaced this session. Without this ref the toast would
@@ -47,7 +56,7 @@ export const DepositSuccessToast = function () {
   if (seenClaimedOnMountRef.current === null && data !== undefined) {
     seenClaimedOnMountRef.current = new Set(
       data
-        .filter(tx => tx.kind === 'DEPOSIT' && tx.status === 'CLAIMED')
+        .filter(tx => tx.kind === kind && tx.status === 'CLAIMED')
         .map(tx => tx.initiateTxHash.toLowerCase()),
     )
   }
@@ -59,7 +68,7 @@ export const DepositSuccessToast = function () {
       const fresh = data
         .filter(
           tx =>
-            tx.kind === 'DEPOSIT' &&
+            tx.kind === kind &&
             tx.status === 'CLAIMED' &&
             !!tx.claimTxHash &&
             !snapshot.has(tx.initiateTxHash.toLowerCase()),
@@ -67,7 +76,7 @@ export const DepositSuccessToast = function () {
         .sort((a, b) => Number(b.initiatedAt) - Number(a.initiatedAt))
       return fresh[0]
     },
-    [data],
+    [data, kind],
   )
 
   const [latched, setLatched] = useState<{
@@ -105,7 +114,7 @@ export const DepositSuccessToast = function () {
     <PoolToast
       chainId={hemi.id}
       key={latched.initiateTxHash}
-      title={t('deposit-successful')}
+      title={title}
       transactionHash={latched.claimTxHash}
     />
   )

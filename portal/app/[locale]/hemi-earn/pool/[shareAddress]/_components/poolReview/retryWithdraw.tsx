@@ -25,6 +25,7 @@ export const RetryWithdraw = function () {
     resetStateAfterOperation,
     selectedAsset,
     updateWithdrawOperation,
+    withdrawOperation,
   } = usePoolForm()
 
   const t = useTranslations()
@@ -77,8 +78,13 @@ export const RetryWithdraw = function () {
     },
     peggedAmount,
     pool,
+    priorApprovalTxHash: withdrawOperation?.approvalTxHash,
     selectedAsset,
     shares,
+    // Hide the specific failed row from the table when the user commits to
+    // this retry. `withdrawOperation.transactionHash` is the failed redeem's
+    // hash (set on `user-signed-withdraw` and not cleared by the revert).
+    supersedesInitiateTxHash: withdrawOperation?.transactionHash,
     updateWithdrawOperation,
   })
 

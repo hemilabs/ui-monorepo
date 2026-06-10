@@ -20,7 +20,7 @@ import { useEarnTransactionsQuery } from './useEarnTransactionsQuery'
 import { useLocalEarnOperations } from './useLocalEarnOperations'
 
 const vetroPoolsPrefix = ['hemi-earn', 'pools'] as const
-const vetroUserPoolBalancePrefix = ['hemi-earn', 'user-pool-balance'] as const
+const vetroUserShareValuePrefix = ['hemi-earn', 'user-share-value'] as const
 
 type ReconcileArgs = {
   localOperations: LocalEarnOperation[]
@@ -52,10 +52,13 @@ function reconcileLocals({
 const isInFlightStatus = (status: EarnTransactionStatusType) =>
   status !== 'CLAIMED' && status !== 'CANCELLED' && status !== 'RECOVERED'
 
+type DeliveredStatus = 'CLAIMED' | 'RECOVERED'
+
 type DeliveredEvent = {
   asset: Address
   kind: EarnTransactionKindType
   receiver: Address
+  status: DeliveredStatus
 }
 
 // Walks the subgraph rows and reports every request that transitioned from
@@ -80,28 +83,36 @@ function detectCrossChainDeliveries(
       asset: row.asset,
       kind: row.kind,
       receiver: row.receiver,
+      status: row.status,
     })
   }
   return events
 }
 
-// Resolves the share OFT registered against a deposit asset. The deposit
-// pulls the underlying in, but the cache that moves at CLAIMED time is
-// the share's balance — so for DEPOSIT events we invalidate that key
-// instead of `event.asset`.
 const findShareForAsset = (asset: Address) =>
   getHemiEarnSupportedAssets().find(entry => isAddressEqual(entry.asset, asset))
     ?.share
 
+// Maps a terminal event to the token whose balance actually moved:
+//   DEPOSIT + CLAIMED   → share OFT lands on the user's Hemi wallet
+//   DEPOSIT + RECOVERED → the deposited asset is refunded
+//   REDEEM  + CLAIMED   → the underlying asset is delivered
+//   REDEEM  + RECOVERED → shares are returned to the user
+// RECOVERED inverts the delivery vs CLAIMED in both directions, so we
+// need (kind, status) to pick the right cache key.
+const movesShareBalance = (event: DeliveredEvent) =>
+  (event.kind === 'DEPOSIT' && event.status === 'CLAIMED') ||
+  (event.kind === 'REDEEM' && event.status === 'RECOVERED')
+
 const tokenAddressForEvent = (event: DeliveredEvent) =>
-  event.kind === 'DEPOSIT' ? findShareForAsset(event.asset) : event.asset
+  movesShareBalance(event) ? findShareForAsset(event.asset) : event.asset
 
 function invalidateOnDelivery(
   queryClient: ReturnType<typeof useQueryClient>,
   events: DeliveredEvent[],
 ) {
   queryClient.invalidateQueries({ queryKey: vetroPoolsPrefix })
-  queryClient.invalidateQueries({ queryKey: vetroUserPoolBalancePrefix })
+  queryClient.invalidateQueries({ queryKey: vetroUserShareValuePrefix })
   for (const event of events) {
     const tokenAddress = tokenAddressForEvent(event)
     if (tokenAddress === undefined) continue

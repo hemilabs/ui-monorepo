@@ -56,6 +56,16 @@ const computeTotalFees = ({
 }) =>
   withdrawGasFees + layerZeroFee + (needsApproval ? approvalGasFees : BigInt(0))
 
+const computeHemiGasFees = ({
+  approvalGasFees,
+  needsApproval,
+  withdrawGasFees,
+}: {
+  approvalGasFees: bigint
+  needsApproval: boolean
+  withdrawGasFees: bigint
+}) => withdrawGasFees + (needsApproval ? approvalGasFees : BigInt(0))
+
 const computeIsFeesError = ({
   isApprovalGasFeesError,
   isQuoteError,
@@ -71,15 +81,14 @@ const computeIsFeesError = ({
   isQuoteError ||
   (needsApproval && isApprovalGasFeesError)
 
-// Takes `quote` and `shares` from the caller — the Withdraw form owns those
-// preview queries so it can subscribe once. The hook derives `canWithdraw`
-// and `assetsOutMin` internally so the slippage policy lives in one place.
-// Returns only what `withdraw.tsx` consumes: the deposit form needs the
-// approval split for separate rendering, but the withdraw form renders a
-// single "Total gas fee" with the split already folded into `totalFees`.
+// Takes `quote`, `shares`, and `assetOut` from the caller — the Withdraw
+// form owns those preview queries so it can subscribe once. The hook
+// derives `canWithdraw` and `assetsOutMin` internally so the slippage
+// policy lives in one place. Returns the Hemi-side gas + LayerZero split so
+// the summary can render them as separate rows (mirror of `useDepositFees`).
 export const useWithdrawFees = function ({
-  amount,
   asset,
+  assetOut,
   chainId,
   isQuoteError,
   needsApproval,
@@ -90,8 +99,8 @@ export const useWithdrawFees = function ({
   spender,
   validInput,
 }: {
-  amount: bigint
   asset: Address
+  assetOut: bigint
   chainId: EvmToken['chainId']
   isQuoteError: boolean
   needsApproval: boolean
@@ -109,8 +118,8 @@ export const useWithdrawFees = function ({
       token: shareToken,
     })
 
-  const canWithdraw = validInput && shares > BigInt(0)
-  const assetsOutMin = applySlippage(amount, REDEEM_SLIPPAGE_BPS)
+  const canWithdraw = validInput && shares > BigInt(0) && assetOut > BigInt(0)
+  const assetsOutMin = applySlippage(assetOut, REDEEM_SLIPPAGE_BPS)
 
   const { data: withdrawGasUnits, isError: isWithdrawGasUnitsError } =
     useEstimateGas({
@@ -139,12 +148,18 @@ export const useWithdrawFees = function ({
   return {
     assetsOutMin,
     canWithdraw,
+    hemiGasFees: computeHemiGasFees({
+      approvalGasFees,
+      needsApproval,
+      withdrawGasFees,
+    }),
     isFeesError: computeIsFeesError({
       isApprovalGasFeesError,
       isQuoteError,
       isWithdrawGasFeesError,
       needsApproval,
     }),
+    layerZeroFee,
     totalFees: computeTotalFees({
       approvalGasFees,
       layerZeroFee,

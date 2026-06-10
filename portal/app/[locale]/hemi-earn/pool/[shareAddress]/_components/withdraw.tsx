@@ -1,22 +1,21 @@
 'use client'
 
-import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
-import { useChain } from 'hooks/useChain'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { type EvmToken } from 'types/token'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
-import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
+import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
-import { useAssetsToShares } from '../_hooks/useAssetsToShares'
 import { useQuoteRedeem } from '../_hooks/useQuoteRedeem'
-import { useUserPoolBalance } from '../_hooks/useUserPoolBalance'
+import { useSharesToAssets } from '../_hooks/useSharesToAssets'
+import { useUserShareValue } from '../_hooks/useUserShareValue'
 import { useWithdraw } from '../_hooks/useWithdraw'
 import { useWithdrawFees } from '../_hooks/useWithdrawFees'
 import { type WithdrawOperationRunning } from '../_types/operations'
@@ -28,6 +27,7 @@ import {
 } from '../_utils/formState'
 
 import { VaultFormLayout } from './form'
+import { OperationBelowForm } from './operationBelowForm'
 import { PoolFormContent } from './poolFormContent'
 import { SubmitWithdraw } from './submitWithdraw'
 import { UserPoolBalance } from './userPoolBalance'
@@ -53,33 +53,34 @@ export const Withdraw = function ({
 
   const { address, status } = useEvmAccount()
 
-  const amount = parseTokenUnits(input, selectedAsset.token)
+  // Input is in share-token units (svetBTC). The Router's `requestRedeem`
+  // burns shares directly, so the form mirrors that on-chain unit.
+  const shares = parseTokenUnits(input, pool.shareToken)
 
-  const { data: poolBalance, isSuccess: poolBalanceLoaded } =
-    useUserPoolBalance({
-      assetAddress: selectedAsset.address,
-      shareAddress: pool.shareAddress,
-    })
-
-  // Input is in asset units (e.g. USDC); the Router takes shares. The hook
-  // chains `Gateway.previewDeposit` (asset → peggedToken) and
-  // `StakingVault.convertToShares` (peggedToken → shares) to mirror the
-  // gateway fee path. Both fall back to zero while the query is pending —
-  // `canWithdraw` below gates submission until validation and conversion are
-  // ready. `peggedAmount` is forwarded to `useWithdraw` so the optimistic
-  // TVL bump happens in vault units (vBTC/vUSD), not the deposit asset's.
-  const {
-    data: { peggedAmount, shares } = {
-      peggedAmount: BigInt(0),
-      shares: BigInt(0),
-    },
-    isError: isAssetsToSharesError,
-    isLoading: isAssetsToSharesLoading,
-  } = useAssetsToShares({
-    amount,
-    assetAddress: selectedAsset.address,
+  const { data: shareValue, isSuccess: shareValueLoaded } = useUserShareValue({
     shareAddress: pool.shareAddress,
   })
+
+  // Shares → asset preview drives both the "You'll receive" row and the
+  // slippage floor. `peggedAmount` is the intermediate vault unit, used by
+  // `useWithdraw` to optimistically drop `totalAssets()` after the redeem
+  // mines. Raw values (`assetOutRaw`/`peggedAmountRaw`) stay `undefined`
+  // while the query is pending so the summary can show a skeleton; the
+  // bigint aliases below are the floored versions consumed by hooks.
+  const {
+    data: sharesToAssetsData,
+    isError: isSharesToAssetsError,
+    isLoading: isSharesToAssetsLoading,
+  } = useSharesToAssets({
+    assetAddress: selectedAsset.address,
+    shareAddress: pool.shareAddress,
+    shares,
+  })
+
+  const { assetOut: assetOutRaw, peggedAmount: peggedAmountRaw } =
+    sharesToAssetsData ?? {}
+  const assetOut = assetOutRaw ?? BigInt(0)
+  const peggedAmount = peggedAmountRaw ?? BigInt(0)
 
   const {
     canSubmit: validInput,
@@ -87,10 +88,10 @@ export const Withdraw = function ({
     errorKey,
   } = validateSubmit({
     amountInput: input,
-    balance: poolBalance?.assetOut,
+    balance: shareValue?.shares,
     operation: 'withdrawal',
     t,
-    token: selectedAsset.token,
+    token: pool.shareToken,
   })
 
   const routerAddress = getHemiEarnRouterAddress()
@@ -99,7 +100,7 @@ export const Withdraw = function ({
     useNeedsApproval({
       address: pool.shareAddress,
       amount: shares,
-      chainId: selectedAsset.token.chainId,
+      chainId: pool.shareToken.chainId,
       spender: routerAddress,
     })
 
@@ -111,30 +112,47 @@ export const Withdraw = function ({
     account: address,
     asset: selectedAsset.address,
     shareAddress: pool.shareAddress,
-    shares: validInput && shares > BigInt(0) ? shares : BigInt(0),
+    // `useQuoteRedeem` already gates internally on `shares > 0n` via
+    // `enabled`, so a `0n` here is enough to skip the request when the
+    // form input isn't valid yet.
+    shares: validInput ? shares : BigInt(0),
   })
 
-  const { assetsOutMin, canWithdraw, isFeesError, totalFees } = useWithdrawFees(
-    {
-      amount,
-      asset: selectedAsset.address,
-      chainId: selectedAsset.token.chainId,
-      isQuoteError,
-      needsApproval,
-      quote,
-      receiver: address,
-      shares,
-      shareToken: pool.shareToken,
-      spender: routerAddress,
-      validInput,
-    },
-  )
+  const {
+    assetsOutMin,
+    canWithdraw,
+    hemiGasFees,
+    isFeesError,
+    layerZeroFee,
+    totalFees,
+  } = useWithdrawFees({
+    asset: selectedAsset.address,
+    assetOut,
+    chainId: selectedAsset.token.chainId,
+    isQuoteError,
+    needsApproval,
+    quote,
+    receiver: address,
+    shares,
+    shareToken: pool.shareToken,
+    spender: routerAddress,
+    validInput,
+  })
+
+  // Fail safe: when the eligibility read on Ethereum is in-flight or errors,
+  // assume the cooldown applies so the warning shows. Silently hiding it
+  // would let the user start a withdraw thinking the funds land instantly.
+  const { data: isCooldownEligible = true } = useIsCooldownEligible({
+    account: address,
+    shareAddress: pool.shareAddress,
+  })
+
+  const { callbackFee = BigInt(0), isInstant = false } = quote ?? {}
 
   const { isPending: isRunningOperation, mutate: withdrawFn } = useWithdraw({
-    amount,
     assetsOutMin,
-    callbackFee: quote?.callbackFee ?? BigInt(0),
-    isInstant: quote?.isInstant ?? false,
+    callbackFee,
+    isInstant,
     on(emitter) {
       emitter.on('approve-transaction-succeeded', () =>
         setOperationRunning('withdrawing'),
@@ -161,15 +179,17 @@ export const Withdraw = function ({
     setOperationRunning(needsApproval ? 'approving' : 'withdrawing')
   }
 
-  const chain = useChain(selectedAsset.token.chainId)
-  const nativeToken = getNativeToken(selectedAsset.token.chainId)
+  const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
 
   const hasQuote = !!quote
-  const isPreviewLoading = isAssetsToSharesLoading || isQuoteLoading
+  const isPreviewLoading = [isSharesToAssetsLoading, isQuoteLoading].some(
+    Boolean,
+  )
+  const isPreviewError = [isSharesToAssetsError, isQuoteError].some(Boolean)
 
   const previewIssue = resolvePreviewIssue({
-    hasShares: shares > BigInt(0),
-    isPreviewError: isAssetsToSharesError || isQuoteError,
+    hasShares: assetOut > BigInt(0),
+    isPreviewError,
     isPreviewLoading,
     peggedAmount,
     validInput,
@@ -180,53 +200,58 @@ export const Withdraw = function ({
   )
   const displayedErrorKey = resolveErrorKey(
     walletIsConnected(status),
-    poolBalanceLoaded,
+    shareValueLoaded,
     errorKey,
   )
   const isSubmitLoading = computeIsLoading({
-    balanceLoaded: poolBalanceLoaded,
+    balanceLoaded: shareValueLoaded,
     isAllowanceLoading,
     isPreviewLoading,
     validInput,
   })
 
-  function RenderBelowForm() {
-    if (!canWithdraw) {
-      return null
-    }
-    return (
-      <div className="px-4">
-        <EvmFeesSummary
-          gas={{
-            amount: formatUnits(
-              totalFees,
-              chain?.nativeCurrency.decimals ?? 18,
-            ),
-            isError: isFeesError,
-            label: t('hemi-earn.pool.form.total-fee'),
-            token: nativeToken,
-          }}
-          operationToken={nativeToken}
-        />
-      </div>
-    )
-  }
-
   return (
     <VaultFormLayout
-      belowForm={<RenderBelowForm />}
+      belowForm={
+        canWithdraw && (
+          <OperationBelowForm
+            account={address}
+            bridgingFee={layerZeroFee}
+            hemiGasFee={hemiGasFees}
+            isCooldownEligible={isCooldownEligible}
+            isFeesError={isFeesError}
+            nativeToken={nativeToken}
+            shareAddress={pool.shareAddress}
+            topRow={{
+              amount: assetOutRaw,
+              label: t('hemi-earn.pool.form.you-will-receive'),
+              token: selectedAsset.token,
+            }}
+            totalFees={totalFees}
+          />
+        )
+      }
       formContent={
         <PoolFormContent
+          aboveInput={<UserPoolBalance />}
           activeTab="withdraw"
-          balanceComponent={UserPoolBalance}
           errorKey={displayedErrorKey}
+          fiatBalance={{
+            // When `shares` is 0n the preview query stays disabled and
+            // `peggedAmountRaw` is `undefined` — force 0n here so the
+            // fiat row mirrors the deposit's "$0" behaviour for an empty
+            // input instead of locking the skeleton on forever.
+            balance: shares > BigInt(0) ? peggedAmountRaw : BigInt(0),
+            token: pool.peggedToken,
+          }}
+          inputLabel={t('hemi-earn.pool.form.withdraw-share-tokens-as')}
+          inputToken={pool.shareToken}
           isRunningOperation={isRunningOperation}
           onSwitchTab={onSwitchToDeposit}
           setMaxBalanceButton={
             <WithdrawMaxBalance
               disabled={isRunningOperation}
               onSetMaxBalance={updateInput}
-              token={selectedAsset.token}
             />
           }
         />

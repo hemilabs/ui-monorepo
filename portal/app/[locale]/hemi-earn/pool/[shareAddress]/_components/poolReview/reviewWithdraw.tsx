@@ -33,9 +33,9 @@ import { useIsCooldownEligible } from '../../../../_hooks/useIsCooldownEligible'
 import { useRequestDetails } from '../../../../_hooks/useRequestDetails'
 import { hashesMatch } from '../../../../_utils'
 import { usePoolForm } from '../../_context/poolFormContext'
-import { useAssetsToShares } from '../../_hooks/useAssetsToShares'
 import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
+import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
 import {
   WithdrawStatus,
   type WithdrawStatusType,
@@ -302,16 +302,21 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const withdrawStatus =
     withdrawOperation?.status ?? WithdrawStatus.APPROVAL_TX_COMPLETED
 
-  const amount = parseTokenUnits(input, selectedAsset.token)
-  const assetsOutMin =
-    amount > BigInt(0) ? applySlippage(amount, REDEEM_SLIPPAGE_BPS) : BigInt(0)
+  // Input is in share-token units (svetBTC); the Router burns shares
+  // directly. `assetsOutMin` is derived from the asset preview below.
+  const shares = parseTokenUnits(input, pool.shareToken)
   const routerAddress = getHemiEarnRouterAddress()
 
-  const { data: { shares } = { shares: BigInt(0) } } = useAssetsToShares({
-    amount,
+  const { data: { assetOut } = { assetOut: BigInt(0) } } = useSharesToAssets({
     assetAddress: selectedAsset.address,
     shareAddress: pool.shareAddress,
+    shares,
   })
+
+  const assetsOutMin =
+    assetOut > BigInt(0)
+      ? applySlippage(assetOut, REDEEM_SLIPPAGE_BPS)
+      : BigInt(0)
 
   const { needsApproval } = useNeedsApproval({
     address: pool.shareAddress,

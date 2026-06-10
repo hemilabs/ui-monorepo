@@ -14,15 +14,24 @@ type Props<T extends Token = Token> = {
   token: T
 }
 
+type SkeletonWidth = 'default' | 'wide'
+
+const skeletonContainerClassNames: Record<SkeletonWidth, string> = {
+  default: 'basis-1/3',
+  wide: 'w-24',
+}
+
 export const RenderCryptoBalance = function ({
   balance,
   showSymbol = false,
+  skeletonWidth = 'default',
   status,
   token,
-}: Props & { balance: bigint | undefined; showSymbol?: boolean } & Pick<
-    ReturnType<typeof useTokenBalance>,
-    'status'
-  >) {
+}: Props & {
+  balance: bigint | undefined
+  showSymbol?: boolean
+  skeletonWidth?: SkeletonWidth
+} & Pick<ReturnType<typeof useTokenBalance>, 'status'>) {
   if (balance !== undefined) {
     return (
       <DisplayAmount
@@ -35,8 +44,12 @@ export const RenderCryptoBalance = function ({
   if (status === 'error') {
     return <>-</>
   }
-  // Loading state
-  return <Skeleton className="h-full" containerClassName="basis-1/3" />
+  return (
+    <Skeleton
+      className="h-full"
+      containerClassName={skeletonContainerClassNames[skeletonWidth]}
+    />
+  )
 }
 
 const NativeTokenBalance = function ({ token }: Props<EvmToken>) {

@@ -1,31 +1,40 @@
 import { Tab, Tabs } from 'components/tabs'
 import { TokenInput } from 'components/tokenInput'
 import { useTranslations } from 'next-intl'
-import { type ComponentType, type ReactNode } from 'react'
-import { type EvmToken } from 'types/token'
+import { type ReactNode } from 'react'
+import { type EvmToken, type Token } from 'types/token'
 
 import { usePoolForm } from '../_context/poolFormContext'
 
 import { AssetSelector } from './assetSelector'
 
 type Props = {
+  aboveInput?: ReactNode
   activeTab: 'deposit' | 'withdraw'
-  balanceComponent?: ComponentType<{ token: EvmToken }>
   errorKey: string | undefined
+  fiatBalance?: {
+    balance: bigint | undefined
+    token: Token
+  }
+  inputLabel: string
+  inputToken: EvmToken
   isRunningOperation: boolean
   onSwitchTab: VoidFunction
   setMaxBalanceButton: ReactNode
 }
 
 export const PoolFormContent = function ({
+  aboveInput,
   activeTab,
-  balanceComponent,
   errorKey,
+  fiatBalance,
+  inputLabel,
+  inputToken,
   isRunningOperation,
   onSwitchTab,
   setMaxBalanceButton,
 }: Props) {
-  const { input, pool, selectedAsset, updateInput } = usePoolForm()
+  const { input, pool, updateInput } = usePoolForm()
 
   const t = useTranslations('common')
 
@@ -47,14 +56,15 @@ export const PoolFormContent = function ({
           {t('withdraw')}
         </Tab>
       </Tabs>
+      {aboveInput}
       <TokenInput
-        balanceComponent={balanceComponent}
         disabled={isRunningOperation}
         errorKey={errorKey}
-        label={t(activeTab === 'deposit' ? 'deposit' : 'withdraw')}
+        fiatBalance={fiatBalance}
+        label={inputLabel}
         maxBalanceButton={setMaxBalanceButton}
         onChange={updateInput}
-        token={selectedAsset.token}
+        token={inputToken}
         tokenSelector={
           <AssetSelector disabled={isRunningOperation} pool={pool} />
         }

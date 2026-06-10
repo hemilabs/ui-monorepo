@@ -11,7 +11,6 @@ import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
-import { type Address } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
@@ -29,58 +28,14 @@ import {
   resolveValidationError,
 } from '../_utils/formState'
 
-import { CooldownWarning } from './cooldownWarning'
-import { DepositSummary } from './depositSummary'
 import { VaultFormLayout } from './form'
+import { OperationBelowForm } from './operationBelowForm'
 import { PoolFormContent } from './poolFormContent'
 import { SubmitDeposit } from './submitDeposit'
 
 const SetMaxEvmBalance = dynamic(
   () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),
   { ssr: false },
-)
-
-type BelowFormProps = {
-  account: Address | undefined
-  bridgingFee: bigint
-  hemiGasFee: bigint
-  isCooldownEligible: boolean
-  isFeesError: boolean
-  nativeToken: EvmToken
-  shareAddress: Address
-  shareToken: EvmToken
-  shares: bigint | undefined
-  totalFees: bigint
-}
-
-const BelowForm = ({
-  account,
-  bridgingFee,
-  hemiGasFee,
-  isCooldownEligible,
-  isFeesError,
-  nativeToken,
-  shareAddress,
-  shares,
-  shareToken,
-  totalFees,
-}: BelowFormProps) => (
-  <div className="flex flex-col gap-y-4">
-    <div className="px-4">
-      <DepositSummary
-        bridgingFee={bridgingFee}
-        hemiGasFee={hemiGasFee}
-        isFeesError={isFeesError}
-        nativeToken={nativeToken}
-        shareToken={shareToken}
-        shares={shares}
-        totalFees={totalFees}
-      />
-    </div>
-    {account && isCooldownEligible && (
-      <CooldownWarning shareAddress={shareAddress} />
-    )}
-  </div>
 )
 
 type Props = {
@@ -260,7 +215,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     <VaultFormLayout
       belowForm={
         canDeposit && (
-          <BelowForm
+          <OperationBelowForm
             account={address}
             bridgingFee={layerZeroFee}
             hemiGasFee={hemiGasFee}
@@ -268,8 +223,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
             isFeesError={isFeesError}
             nativeToken={nativeToken}
             shareAddress={pool.shareAddress}
-            shareToken={pool.shareToken}
-            shares={shares}
+            topRow={{
+              amount: shares,
+              label: t('hemi-earn.pool.form.you-will-receive'),
+              token: pool.shareToken,
+            }}
             totalFees={totalFees}
           />
         )
@@ -278,6 +236,8 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
         <PoolFormContent
           activeTab="deposit"
           errorKey={displayedErrorKey}
+          inputLabel={t('common.deposit')}
+          inputToken={selectedAsset.token}
           isRunningOperation={isRunningOperation}
           onSwitchTab={onSwitchToWithdraw}
           setMaxBalanceButton={

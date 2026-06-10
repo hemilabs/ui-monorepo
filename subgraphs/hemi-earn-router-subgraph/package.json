@@ -14,7 +14,7 @@
     "prepare": "pnpm run codegen",
     "pretest": "pnpm run codegen && { [ -d node_modules ] || ln -s ../../node_modules node_modules; }",
     "remove-local": "graph remove --node http://localhost:8020/ $(jq -r .name package.json)",
-    "test": "graph test"
+    "test": "graph test -v 0.6.0"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.97.1",

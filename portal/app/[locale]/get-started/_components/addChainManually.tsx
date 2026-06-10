@@ -19,7 +19,7 @@ const DataSection = ({
   label: string
   value: string
 }) => (
-  <div className="flex items-center justify-between gap-4 border-b border-neutral-100 py-4 last:border-b-0">
+  <div className="flex flex-row flex-wrap items-center justify-between gap-x-2 gap-y-2 border-t border-solid border-neutral-300/55 py-6 text-sm font-medium last:pb-0 md:flex-nowrap md:py-4">
     <span className="body-text-semibold shrink-0 text-neutral-950">
       {label}
     </span>

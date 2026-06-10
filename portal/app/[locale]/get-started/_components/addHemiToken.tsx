@@ -28,6 +28,10 @@ const PlainColumn = (props: ComponentProps<'td'>) => (
   <Column variant="plain" {...props} />
 )
 
+const TokenTableHeader = ({ text }: { text: string }) => (
+  <Header className="text-sm" text={text} />
+)
+
 function HemiAddressCell({ token }: { token: EvmToken }) {
   const hemi = useHemi()
   return (
@@ -46,7 +50,7 @@ const tokenTableColumns = ({
 }: TokenTableColumnsProps): ColumnDef<EvmToken>[] => [
   {
     cell: ({ row }) => <TokenTableTokenCell token={row.original} />,
-    header: () => <Header text={t('token')} />,
+    header: () => <TokenTableHeader text={t('token')} />,
     id: 'token',
     meta: { width: 200 },
   },
@@ -57,13 +61,13 @@ const tokenTableColumns = ({
         token={row.original}
       />
     ),
-    header: () => <Header text={t('l1-address')} />,
+    header: () => <TokenTableHeader text={t('l1-address')} />,
     id: 'l1-address',
     meta: { width: 147 },
   },
   {
     cell: ({ row }) => <HemiAddressCell token={row.original} />,
-    header: () => <Header text={t('l2-address')} />,
+    header: () => <TokenTableHeader text={t('l2-address')} />,
     id: 'l2-address',
     meta: { width: 147 },
   },
@@ -73,7 +77,7 @@ const tokenTableColumns = ({
         <AddTokenTableButton token={row.original} />
       </div>
     ),
-    header: () => <Header text={t('action')} />,
+    header: () => <TokenTableHeader text={t('action')} />,
     id: 'action',
     meta: { className: 'justify-start lg:justify-end', width: 116 },
   },

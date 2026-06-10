@@ -33,10 +33,12 @@ export const useAddTokenToWallet = function (options: Options) {
         {
           address: token.address as Address,
           chainId: token.chainId,
+          decimals: token.decimals,
           // token logos include the small Hemi logo, but wallets crop it.
           // Besides, many wallets add the chain logo anyways, so we're safe to
           // use the L1 logo version
           logoURI: token.extensions?.l1LogoURI,
+          symbol: token.symbol,
         },
         localStorage,
       )

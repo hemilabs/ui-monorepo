@@ -1,8 +1,13 @@
-import { type Address, type Client, isAddressEqual, zeroAddress } from 'viem'
+import {
+  type Address,
+  type Client,
+  isAddress,
+  isAddressEqual,
+  zeroAddress,
+} from 'viem'
 import { readContract } from 'viem/actions'
 
 import { agentAbi } from '../../agentAbi'
-import { getHemiEarnAgentAddress } from '../../constants'
 
 // Reads the LayerZero native fee the Agent on Ethereum needs to send the
 // fulfillment response back to the Router on Hemi for a redeem. Caller passes
@@ -10,14 +15,24 @@ import { getHemiEarnAgentAddress } from '../../constants'
 // `requestRedeem`. The Agent looks up the share OFT internally from the asset
 // address — the portal only needs to supply the asset.
 export const quoteRedeemFulfillment = async function ({
-  agentAddress = getHemiEarnAgentAddress(),
+  agentAddress,
   asset,
   client,
 }: {
-  agentAddress?: Address
+  agentAddress: Address
   asset: Address
   client: Client
 }): Promise<bigint> {
+  if (!isAddress(agentAddress, { strict: false })) {
+    throw new Error(
+      'quoteRedeemFulfillment: `agentAddress` is not a valid address',
+    )
+  }
+  if (isAddressEqual(agentAddress, zeroAddress)) {
+    throw new Error(
+      'quoteRedeemFulfillment: `agentAddress` cannot be the zero address',
+    )
+  }
   if (isAddressEqual(asset, zeroAddress)) {
     throw new Error(
       'quoteRedeemFulfillment: `asset` cannot be the zero address',

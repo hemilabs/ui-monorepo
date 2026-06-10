@@ -10,6 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { fetchQuoteRedeem } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchQuoteRedeem'
 
 vi.mock('hemi-earn-actions/actions', () => ({
+  getAgentAddress: vi.fn(),
   getAssetData: vi.fn(),
   quoteRedeem: vi.fn(),
   quoteRedeemFulfillment: vi.fn(),
@@ -17,7 +18,6 @@ vi.mock('hemi-earn-actions/actions', () => ({
 }))
 
 vi.mock('hemi-earn-actions', () => ({
-  getHemiEarnAgentAddress: () => '0xAgent',
   getHemiEarnRouterAddress: () => '0xRouter',
   getStakingVaultForShare: () => '0xStakingVault',
 }))
@@ -31,6 +31,19 @@ const account = '0x9999999999999999999999999999999999999999' as Address
 const asset = '0x1111111111111111111111111111111111111111' as Address
 const shareAddress = '0x2222222222222222222222222222222222222222' as Address
 const remoteAsset = '0x3333333333333333333333333333333333333333' as Address
+
+// Fake query client that resolves the agent-address lookup the fetcher threads
+// through the cache, branching on the query's key.
+const createQueryClient = () => ({
+  ensureQueryData: vi.fn(function ({ queryKey }) {
+    switch (queryKey[1]) {
+      case 'agent-address':
+        return Promise.resolve('0xAgent')
+      default:
+        return Promise.reject(new Error(`unexpected query ${queryKey[1]}`))
+    }
+  }),
+})
 
 describe('fetchQuoteRedeem', function () {
   beforeEach(function () {
@@ -49,6 +62,7 @@ describe('fetchQuoteRedeem', function () {
     const result = await fetchQuoteRedeem({
       account,
       asset,
+      queryClient: createQueryClient() as never,
       shareAddress,
       shares: BigInt(500),
     })
@@ -64,12 +78,13 @@ describe('fetchQuoteRedeem', function () {
     await fetchQuoteRedeem({
       account,
       asset,
+      queryClient: createQueryClient() as never,
       shareAddress,
       shares: BigInt(500),
     })
 
     expect(quoteRedeemFulfillment).toHaveBeenCalledWith(
-      expect.objectContaining({ asset: remoteAsset }),
+      expect.objectContaining({ agentAddress: '0xAgent', asset: remoteAsset }),
     )
   })
 
@@ -80,6 +95,7 @@ describe('fetchQuoteRedeem', function () {
     await fetchQuoteRedeem({
       account,
       asset,
+      queryClient: createQueryClient() as never,
       shareAddress,
       shares: BigInt(500),
     })
@@ -99,7 +115,13 @@ describe('fetchQuoteRedeem', function () {
     )
 
     await expect(
-      fetchQuoteRedeem({ account, asset, shareAddress, shares: BigInt(500) }),
+      fetchQuoteRedeem({
+        account,
+        asset,
+        queryClient: createQueryClient() as never,
+        shareAddress,
+        shares: BigInt(500),
+      }),
     ).rejects.toThrow('Vault unreachable')
   })
 })

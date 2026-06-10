@@ -1,7 +1,6 @@
 import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
 import { previewDeposit } from '@vetro-protocol/gateway/actions'
 import {
-  getHemiEarnAgentAddress,
   getHemiEarnRouterAddress,
   getStakingVaultForShare,
 } from 'hemi-earn-actions'
@@ -16,6 +15,7 @@ import { type Address } from 'viem'
 
 import { gatewayForAssetQueryOptions } from '../../../_hooks/gatewayForAsset'
 import { assetDataQueryOptions } from '../../../_hooks/useAssetData'
+import { agentAddressQueryOptions } from '../../../_hooks/useHemiEarnAgentAddress'
 
 export type QuoteDeposit = {
   callbackFee: bigint
@@ -54,11 +54,15 @@ export async function fetchQuoteDeposit({
     }),
   )
 
-  const callbackFeePromise = quoteDepositFulfillment({
-    agentAddress: getHemiEarnAgentAddress(),
-    client: ethereumClient,
-    share: getStakingVaultForShare(shareAddress),
-  })
+  const callbackFeePromise = queryClient
+    .ensureQueryData(agentAddressQueryOptions())
+    .then(agentAddress =>
+      quoteDepositFulfillment({
+        agentAddress,
+        client: ethereumClient,
+        share: getStakingVaultForShare(shareAddress),
+      }),
+    )
 
   const [callbackFee, nativeFee, peggedAmount] = await Promise.all([
     callbackFeePromise,

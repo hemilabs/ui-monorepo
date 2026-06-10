@@ -42,4 +42,24 @@ describe('quoteRedeemFulfillment', function () {
       }),
     ).rejects.toThrow(/`asset` cannot be the zero address/)
   })
+
+  it('rejects the zero address as agentAddress', async function () {
+    await expect(
+      quoteRedeemFulfillment({
+        agentAddress: zeroAddress,
+        asset,
+        client,
+      }),
+    ).rejects.toThrow(/`agentAddress` cannot be the zero address/)
+  })
+
+  it('rejects an invalid agentAddress', async function () {
+    await expect(
+      quoteRedeemFulfillment({
+        agentAddress: '0xnotanaddress' as Address,
+        asset,
+        client,
+      }),
+    ).rejects.toThrow(/`agentAddress` is not a valid address/)
+  })
 })

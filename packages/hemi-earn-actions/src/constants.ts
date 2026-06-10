@@ -7,11 +7,6 @@ import { type Address, type Client, isAddressEqual, zeroAddress } from 'viem'
 // the addresses are confirmed.
 export const HEMI_EARN_ROUTER_ADDRESS: Address = zeroAddress
 
-// TODO: placeholder — replace with the deployed Agent on Ethereum mainnet
-// once the addresses are confirmed. Used by the portal to quote the
-// LayerZero fulfillment fee from the remote chain.
-export const HEMI_EARN_AGENT_ADDRESS: Address = zeroAddress
-
 // Named address constants for each share OFT registered on the Router.
 // Exported individually so the portal (and other consumers) can import the
 // canonical address without re-declaring it. Mirrors Vetro's pattern
@@ -97,8 +92,6 @@ export type HemiEarnAsset = {
 export const HEMI_EARN_SUPPORTED_ASSETS: readonly HemiEarnAsset[] = [] as const
 
 export const getHemiEarnRouterAddress = () => HEMI_EARN_ROUTER_ADDRESS
-
-export const getHemiEarnAgentAddress = () => HEMI_EARN_AGENT_ADDRESS
 
 export const getHemiEarnShares = () =>
   HEMI_EARN_SHARES.filter(s => !isAddressEqual(s, zeroAddress))

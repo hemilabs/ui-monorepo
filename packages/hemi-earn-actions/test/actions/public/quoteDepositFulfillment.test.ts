@@ -42,4 +42,24 @@ describe('quoteDepositFulfillment', function () {
       }),
     ).rejects.toThrow(/`share` cannot be the zero address/)
   })
+
+  it('rejects the zero address as agentAddress', async function () {
+    await expect(
+      quoteDepositFulfillment({
+        agentAddress: zeroAddress,
+        client,
+        share,
+      }),
+    ).rejects.toThrow(/`agentAddress` cannot be the zero address/)
+  })
+
+  it('rejects an invalid agentAddress', async function () {
+    await expect(
+      quoteDepositFulfillment({
+        agentAddress: '0xnotanaddress' as Address,
+        client,
+        share,
+      }),
+    ).rejects.toThrow(/`agentAddress` is not a valid address/)
+  })
 })

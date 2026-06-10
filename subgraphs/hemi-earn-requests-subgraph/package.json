@@ -1,0 +1,27 @@
+{
+  "name": "hemi-earn-requests-subgraph",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "codegen": "envio codegen",
+    "dev": "envio dev",
+    "prepare": "pnpm run codegen",
+    "start": "envio start",
+    "stop": "envio stop",
+    "pretest": "pnpm run codegen",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "envio": "3.0.2"
+  },
+  "devDependencies": {
+    "@tsconfig/node24": "24.0.3",
+    "typescript": "5.8.3",
+    "vitest": "4.1.6"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "private": true,
+  "type": "module"
+}

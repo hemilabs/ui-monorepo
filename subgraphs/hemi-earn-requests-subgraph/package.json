@@ -12,7 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "envio": "3.0.2"
+    "envio": "3.1.0"
   },
   "devDependencies": {
     "@tsconfig/node24": "24.0.3",

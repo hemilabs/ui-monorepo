@@ -31,6 +31,12 @@ const createQueryClient = (peggedAmount: bigint) => ({
         return Promise.resolve({ remoteAsset })
       case 'gateway-for-asset':
         return Promise.resolve(gateway)
+      default:
+        return Promise.reject(new Error(`unexpected query ${queryKey[1]}`))
+    }
+  }),
+  fetchQuery: vi.fn(function ({ queryKey }) {
+    switch (queryKey[1]) {
       case 'shares-to-pegged':
         return Promise.resolve({ peggedAmount })
       default:
@@ -44,7 +50,7 @@ describe('fetchSharesToAssets', function () {
     vi.mocked(previewRedeem).mockResolvedValue(BigInt(42))
   })
 
-  it('composes the cached shares→pegged step with previewRedeem', async function () {
+  it('composes the shares→pegged step with previewRedeem', async function () {
     const queryClient = createQueryClient(BigInt(200))
 
     const result = await fetchSharesToAssets({
@@ -58,7 +64,7 @@ describe('fetchSharesToAssets', function () {
       assetOut: BigInt(42),
       peggedAmount: BigInt(200),
     })
-    expect(queryClient.ensureQueryData).toHaveBeenCalledWith(
+    expect(queryClient.fetchQuery).toHaveBeenCalledWith(
       expect.objectContaining({
         queryKey: expect.arrayContaining(['shares-to-pegged']),
       }),

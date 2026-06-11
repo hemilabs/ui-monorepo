@@ -11,6 +11,7 @@ import { requestRedeem } from 'hemi-earn-actions/actions'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
+import { maxBigInt } from 'utils/bigint'
 import { unixNowTimestamp } from 'utils/time'
 import { type Hash } from 'viem'
 import { useAccount, useConfig } from 'wagmi'
@@ -261,17 +262,14 @@ export const useWithdraw = function ({
           operation: { status: WithdrawStatus.WITHDRAW_TX_CONFIRMED },
         })
         updateNativeBalanceAfterFees(receipt)
-        // Optimistic bumps. Invalidation in `onSettled` reconciles, but the
-        // chained cross-chain refetches take a beat, so the UI feels stale
-        // without these.
-        //   - `userShareValue`: shares + peggedAmount both go down; powers
-        //     the "Available to withdraw" card and the input fiat.
-        //   - `shareBalance`: wallet share OFT goes down by exactly `shares`.
-        //   - `poolTotalAssets`: vault `totalAssets()` is in pegged-token
-        //     units, so we subtract `peggedAmount` (pre-fetched via
-        //     `convertToAssets`). If the pegged preview hasn't resolved,
-        //     `peggedAmount` is `0n` and we skip — invalidation still
-        //     corrects it.
+        // Optimistic bumps for user-side caches only. The Hemi tx burns the
+        // user's shares so wallet/share-value caches can be decremented
+        // right away. `poolTotalAssets` is intentionally left to the
+        // `onSettled` invalidation + the cross-chain delivery watcher: the
+        // vault on Ethereum still holds the assets until the LayerZero
+        // relay lands, so optimistically subtracting here would under-
+        // report TVL across the UI for the cross-chain window (and a
+        // refetch before delivery would bounce the number back up).
         queryClient.setQueryData<{ peggedAmount: bigint; shares: bigint }>(
           userShareValueQueryKey,
           old =>
@@ -279,25 +277,15 @@ export const useWithdraw = function ({
               ? {
                   peggedAmount:
                     peggedAmount > BigInt(0)
-                      ? old.peggedAmount > peggedAmount
-                        ? old.peggedAmount - peggedAmount
-                        : BigInt(0)
+                      ? maxBigInt(old.peggedAmount - peggedAmount, BigInt(0))
                       : old.peggedAmount,
-                  shares: old.shares > shares ? old.shares - shares : BigInt(0),
+                  shares: maxBigInt(old.shares - shares, BigInt(0)),
                 }
               : old,
         )
-        queryClient.setQueryData<bigint>(
-          shareBalanceQueryKey,
-          (old = BigInt(0)) => (old > shares ? old - shares : BigInt(0)),
+        queryClient.setQueryData<bigint>(shareBalanceQueryKey, old =>
+          old === undefined ? old : maxBigInt(old - shares, BigInt(0)),
         )
-        if (peggedAmount > BigInt(0)) {
-          queryClient.setQueryData<bigint>(
-            poolTotalAssetsQueryKey,
-            (old = BigInt(0)) =>
-              old > peggedAmount ? old - peggedAmount : BigInt(0),
-          )
-        }
       })
 
       emitter.on('withdraw-transaction-reverted', function (receipt) {

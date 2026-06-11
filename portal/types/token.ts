@@ -11,11 +11,6 @@ export type Extensions = {
       tokenAddress?: Address
     }
   }
-  // Marks an ERC-4626 share token whose USD value should be computed via
-  // `convertToAssets(shares) × peggedToken.price` so accumulated yield is
-  // reflected; callers that don't have a pegged-amount handy must route
-  // through a share-aware fiat helper instead of `getTokenPrice` directly.
-  isVaultShare?: boolean
   protocol?: string
   // Use this to map which symbol should be used to map prices
   priceSymbol?: string

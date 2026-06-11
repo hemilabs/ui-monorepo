@@ -26,7 +26,6 @@ const HEMI_EARN_TOKENS: EvmToken[] = [
     address: SVETBTC_OFT_ADDRESS,
     chainId: hemi.id,
     decimals: 18,
-    extensions: { isVaultShare: true },
     logoURI: `${HEMI_LOGO_BASE}/svetbtc.svg`,
     name: 'Staked Vetro BTC',
     symbol: 'svetBTC',

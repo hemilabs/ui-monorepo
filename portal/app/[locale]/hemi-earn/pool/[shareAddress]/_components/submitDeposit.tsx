@@ -51,7 +51,9 @@ export const SubmitDeposit = function ({
     <SubmitWhenConnected
       submitButton={
         <Button
-          disabled={!canDeposit || isRunningOperation || isLoading}
+          disabled={
+            !canDeposit || isRunningOperation || isLoading || isAllowanceError
+          }
           size="small"
           type="submit"
         >

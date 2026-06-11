@@ -10,6 +10,7 @@ import {
 import { requestDeposit } from 'hemi-earn-actions/actions'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { buildAllowanceQueryKey } from 'utils/allowanceQueryKey'
+import { maxBigInt } from 'utils/bigint'
 import { unixNowTimestamp } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
 import { type Hash } from 'viem'
@@ -214,9 +215,8 @@ export const useDeposit = function ({
         // only move after the cross-chain delivery (1–3 min). The CLAIMED /
         // RECOVERED reconcile in `useEarnTransactions` invalidates them when
         // the subgraph reports the terminal state.
-        queryClient.setQueryData<bigint>(
-          tokenBalanceQueryKey,
-          (old = BigInt(0)) => (old > amount ? old - amount : BigInt(0)),
+        queryClient.setQueryData<bigint>(tokenBalanceQueryKey, old =>
+          old === undefined ? old : maxBigInt(old - amount, BigInt(0)),
         )
       })
 

@@ -1,8 +1,15 @@
-import { type Address, type Hash, zeroAddress } from 'viem'
+import { type Address, type Hash, getAddress, zeroAddress } from 'viem'
 
 import { type EarnTransaction } from '../types'
 
 export const earnTransactionsKeyPrefix = ['hemi-earn', 'transactions'] as const
+
+// Snap `receiver` to checksum so it matches `useAccount()` in balance
+// cache keys; `asset` stays lowercase to match `tokens.ts`.
+const normalizeEarnTransaction = (row: EarnTransaction): EarnTransaction => ({
+  ...row,
+  receiver: getAddress(row.receiver),
+})
 
 // TODO(api): replace the mock below with the real GraphQL fetch once the
 // indexer API ships (see PR #1946 — `GET /:chainId/earn-requests/:address`
@@ -56,5 +63,5 @@ export const fetchEarnTransactions = async function ({
   networkType: string
 }): Promise<EarnTransaction[]> {
   await new Promise(resolve => setTimeout(resolve, MOCK_DELAY_MS))
-  return buildMockTransactions(account)
+  return buildMockTransactions(account).map(normalizeEarnTransaction)
 }

@@ -1,19 +1,14 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { type EvmToken } from 'types/token'
 import { type Address } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
-import {
-  DEPOSIT_SLIPPAGE_BPS,
-  applySlippage,
-} from '../../../_constants/slippage'
-
-type QuoteDeposit = {
-  callbackFee: bigint
-  nativeFee: bigint
-}
+import { depositPreviewOptions } from '../_fetchers/fetchDepositPreview'
+import { type QuoteDeposit } from '../_fetchers/fetchQuoteDeposit'
 
 const buildGasData = ({
   amount,
@@ -57,53 +52,88 @@ const computeTotalFees = ({
 const computeIsFeesError = ({
   isApprovalGasFeesError,
   isDepositGasFeesError,
-  isQuoteError,
+  isPreviewError,
   needsApproval,
 }: {
   isApprovalGasFeesError: boolean
   isDepositGasFeesError: boolean
-  isQuoteError: boolean
+  isPreviewError: boolean
   needsApproval: boolean
 }) =>
   isDepositGasFeesError ||
-  isQuoteError ||
+  isPreviewError ||
   (needsApproval && isApprovalGasFeesError)
 
-// Takes `quote` and `shares` from the caller — the Deposit form owns those
-// preview queries so it can subscribe once. The hook derives `canDeposit` and
-// `sharesOutMin` internally so the slippage policy lives in one place (mirror
-// of `useWithdrawFees`).
-export const useDepositFees = function ({
+// Mirror of `useWithdrawPreview`: subscribes to the composed
+// `depositPreviewOptions` (shares + quote) and pairs it with the
+// canonical `useNeedsApproval` for allowance reads. Adds wagmi-side gas
+// estimation on top.
+export const useDepositPreview = function ({
+  account,
   amount,
   asset,
-  isQuoteError,
-  needsApproval,
-  quote,
-  receiver,
-  shares,
+  shareAddress,
   spender,
   token,
   validInput,
 }: {
+  account: Address | undefined
   amount: bigint
   asset: Address
-  isQuoteError: boolean
-  needsApproval: boolean
-  quote: QuoteDeposit | undefined
-  receiver: Address | undefined
-  shares: bigint | undefined
+  shareAddress: Address
   spender: Address
   token: EvmToken
   validInput: boolean
 }) {
-  const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
-    useEstimateApproveErc20Fees({ amount, spender, token })
+  const queryClient = useQueryClient()
+
+  const {
+    data: composed,
+    isError: isPreviewError,
+    isLoading: isPreviewLoading,
+  } = useQuery(
+    depositPreviewOptions({
+      account,
+      amount,
+      asset,
+      queryClient,
+      shareAddress,
+      validInput,
+    }),
+  )
+
+  const { isAllowanceError, isAllowanceLoading, needsApproval } =
+    useNeedsApproval({
+      address: asset,
+      amount,
+      chainId: token.chainId,
+      spender,
+    })
+
+  const shares = composed?.shares
+  const quote = composed?.quote
+  const sharesOutMin = composed?.sharesOutMin ?? BigInt(0)
+  const layerZeroFee = quote?.nativeFee ?? BigInt(0)
 
   // Gate submit on a positive shares preview. Without this, a fast submit
   // before the preview resolves would land `sharesOutMin=0n` on-chain —
   // zero slippage protection.
-  const canDeposit = validInput && shares !== undefined && shares > BigInt(0)
-  const sharesOutMin = applySlippage(shares ?? BigInt(0), DEPOSIT_SLIPPAGE_BPS)
+  // Also gate on `!isAllowanceLoading` so the fees summary can't render with
+  // `needsApproval=false` while allowance is still pending (the total would
+  // jump up once allowance settles).
+  const canDeposit =
+    validInput &&
+    shares !== undefined &&
+    shares > BigInt(0) &&
+    !isAllowanceLoading
+
+  const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
+    useEstimateApproveErc20Fees({
+      amount,
+      enabled: needsApproval,
+      spender,
+      token,
+    })
 
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({
@@ -112,10 +142,10 @@ export const useDepositFees = function ({
         asset,
         canDeposit,
         quote,
-        receiver,
+        receiver: account,
         sharesOutMin,
       }),
-      query: { enabled: canDeposit && !!receiver && !!quote },
+      query: { enabled: canDeposit && !!account && !!quote },
       to: spender,
       value: quote?.nativeFee,
     })
@@ -127,19 +157,24 @@ export const useDepositFees = function ({
       isGasUnitsError: isDepositGasUnitsError,
     })
 
-  const layerZeroFee = quote?.nativeFee ?? BigInt(0)
-
   return {
     approvalGasFees,
     canDeposit,
     depositGasFees,
+    isAllowanceError,
+    isAllowanceLoading,
     isFeesError: computeIsFeesError({
       isApprovalGasFeesError,
       isDepositGasFeesError,
-      isQuoteError,
+      isPreviewError,
       needsApproval,
     }),
+    isPreviewError,
+    isPreviewLoading,
     layerZeroFee,
+    needsApproval,
+    quote,
+    shares,
     sharesOutMin,
     totalFees: computeTotalFees({
       approvalGasFees,

@@ -10,8 +10,8 @@ import {
   applySlippage,
 } from '../../../../_constants/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
-import { useAssetsToShares } from '../../_hooks/useAssetsToShares'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
+import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
 import { useWithdraw } from '../../_hooks/useWithdraw'
 import { type WithdrawOperationRunning } from '../../_types/operations'
 
@@ -30,20 +30,25 @@ export const RetryWithdraw = function () {
 
   const t = useTranslations()
   const { address } = useAccount()
-  const amount = parseTokenUnits(input, selectedAsset.token)
-  const assetsOutMin =
-    amount > BigInt(0) ? applySlippage(amount, REDEEM_SLIPPAGE_BPS) : BigInt(0)
+  // Input is in share-token units (svetBTC); the Router burns shares
+  // directly. `assetsOutMin` is derived from the asset preview below.
+  const shares = parseTokenUnits(input, pool.shareToken)
 
   const {
-    data: { peggedAmount, shares } = {
+    data: { assetOut, peggedAmount } = {
+      assetOut: BigInt(0),
       peggedAmount: BigInt(0),
-      shares: BigInt(0),
     },
-  } = useAssetsToShares({
-    amount,
+  } = useSharesToAssets({
     assetAddress: selectedAsset.address,
     shareAddress: pool.shareAddress,
+    shares,
   })
+
+  const assetsOutMin =
+    assetOut > BigInt(0)
+      ? applySlippage(assetOut, REDEEM_SLIPPAGE_BPS)
+      : BigInt(0)
 
   const { data: quote } = useQuoteRedeem({
     account: address,
@@ -53,7 +58,6 @@ export const RetryWithdraw = function () {
   })
 
   const { mutate: runWithdraw } = useWithdraw({
-    amount,
     assetsOutMin,
     callbackFee: quote?.callbackFee ?? BigInt(0),
     isInstant: quote?.isInstant ?? false,
@@ -90,9 +94,11 @@ export const RetryWithdraw = function () {
 
   const isWithdrawing = operationRunning === 'withdrawing'
 
+  const canRetry = !!quote && shares > BigInt(0) && assetOut > BigInt(0)
+
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()
-    if (!quote || shares <= BigInt(0)) return
+    if (!canRetry) return
     setOperationRunning('withdrawing')
     runWithdraw()
   }
@@ -101,7 +107,7 @@ export const RetryWithdraw = function () {
     <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
       <SubmitWhenConnected
         submitButton={
-          <Button disabled={isWithdrawing || !quote} size="small">
+          <Button disabled={isWithdrawing || !canRetry} size="small">
             {t(
               isWithdrawing
                 ? 'hemi-earn.pool.form.withdrawing'

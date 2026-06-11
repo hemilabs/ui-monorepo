@@ -45,26 +45,24 @@ const FeeRow = function ({ amount, isError, label, token }: FeeRowProps) {
   )
 }
 
-type SharesRowProps = {
-  shareToken: EvmToken
-  shares: bigint | undefined
+export type TopRowProps = {
+  amount: bigint | undefined
+  label: string
+  token: EvmToken
 }
 
-const SharesRow = function ({ shares, shareToken }: SharesRowProps) {
-  const t = useTranslations()
-  const label = t('hemi-earn.pool.form.you-will-receive')
-
-  if (shares !== undefined) {
+const TopRow = function ({ amount, label, token }: TopRowProps) {
+  if (amount !== undefined) {
     return (
       <Row label={label}>
         <div className="flex items-center gap-x-1 text-neutral-950">
           <DisplayAmount
-            amount={formatUnits(shares, shareToken.decimals)}
+            amount={formatUnits(amount, token.decimals)}
             showTokenLogo={false}
-            token={shareToken}
+            token={token}
           />
           <div className="shadow-bs rounded-full">
-            <TokenLogo size="small" token={shareToken} />
+            <TokenLogo size="small" token={token} />
           </div>
         </div>
       </Row>
@@ -82,25 +80,23 @@ type Props = {
   hemiGasFee: bigint
   isFeesError: boolean
   nativeToken: EvmToken
-  shareToken: EvmToken
-  shares: bigint | undefined
+  topRow: TopRowProps
   totalFees: bigint
 }
 
-export const DepositSummary = function ({
+export const OperationSummary = function ({
   bridgingFee,
   hemiGasFee,
   isFeesError,
   nativeToken,
-  shares,
-  shareToken,
+  topRow,
   totalFees,
 }: Props) {
   const t = useTranslations()
   const hemi = useHemi()
   return (
     <div className="flex flex-col gap-y-2.5">
-      <SharesRow shareToken={shareToken} shares={shares} />
+      <TopRow {...topRow} />
       <div className="h-px w-full bg-neutral-200" />
       <FeeRow
         amount={hemiGasFee}

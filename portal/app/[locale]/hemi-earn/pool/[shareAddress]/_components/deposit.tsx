@@ -2,7 +2,6 @@
 
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { useTokenBalance } from 'hooks/useBalance'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
@@ -11,16 +10,13 @@ import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
-import { type Address } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
-import { useDepositFees } from '../_hooks/useDepositFees'
-import { useDepositShares } from '../_hooks/useDepositShares'
+import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
-import { useQuoteDeposit } from '../_hooks/useQuoteDeposit'
 import { type DepositOperationRunning } from '../_types/operations'
 import {
   computeIsLoading,
@@ -29,58 +25,14 @@ import {
   resolveValidationError,
 } from '../_utils/formState'
 
-import { CooldownWarning } from './cooldownWarning'
-import { DepositSummary } from './depositSummary'
 import { VaultFormLayout } from './form'
+import { OperationBelowForm } from './operationBelowForm'
 import { PoolFormContent } from './poolFormContent'
 import { SubmitDeposit } from './submitDeposit'
 
 const SetMaxEvmBalance = dynamic(
   () => import('components/setMaxBalance').then(mod => mod.SetMaxEvmBalance),
   { ssr: false },
-)
-
-type BelowFormProps = {
-  account: Address | undefined
-  bridgingFee: bigint
-  hemiGasFee: bigint
-  isCooldownEligible: boolean
-  isFeesError: boolean
-  nativeToken: EvmToken
-  shareAddress: Address
-  shareToken: EvmToken
-  shares: bigint | undefined
-  totalFees: bigint
-}
-
-const BelowForm = ({
-  account,
-  bridgingFee,
-  hemiGasFee,
-  isCooldownEligible,
-  isFeesError,
-  nativeToken,
-  shareAddress,
-  shares,
-  shareToken,
-  totalFees,
-}: BelowFormProps) => (
-  <div className="flex flex-col gap-y-4">
-    <div className="px-4">
-      <DepositSummary
-        bridgingFee={bridgingFee}
-        hemiGasFee={hemiGasFee}
-        isFeesError={isFeesError}
-        nativeToken={nativeToken}
-        shareToken={shareToken}
-        shares={shares}
-        totalFees={totalFees}
-      />
-    </div>
-    {account && isCooldownEligible && (
-      <CooldownWarning shareAddress={shareAddress} />
-    )}
-  </div>
 )
 
 type Props = {
@@ -112,14 +64,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const amount = parseTokenUnits(input, selectedAsset.token)
   const routerAddress = getHemiEarnRouterAddress()
 
-  const { isAllowanceError, isAllowanceLoading, needsApproval } =
-    useNeedsApproval({
-      address: selectedAsset.address,
-      amount,
-      chainId: selectedAsset.token.chainId,
-      spender: routerAddress,
-    })
-
   const { data: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
     useTokenBalance(selectedAsset.token.chainId, selectedAsset.address)
 
@@ -143,42 +87,29 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     shareAddress: pool.shareAddress,
   })
 
-  const {
-    data: quote,
-    isError: isQuoteError,
-    isLoading: isQuoteLoading,
-  } = useQuoteDeposit({
-    amount,
-    asset: selectedAsset.address,
-    shareAddress: pool.shareAddress,
-  })
-
-  const {
-    data: shares,
-    isError: isSharesError,
-    isLoading: isSharesLoading,
-  } = useDepositShares({
-    amount,
-    asset: selectedAsset.address,
-    shareAddress: pool.shareAddress,
-  })
-
+  // Single composed query owns shares preview, quote, and allowance reads.
+  // `deposit.tsx` only consumes the derived outputs here — no separate
+  // subscriptions for those upstream queries.
   const {
     approvalGasFees,
     canDeposit,
     depositGasFees,
+    isAllowanceError,
+    isAllowanceLoading,
     isFeesError,
+    isPreviewError,
+    isPreviewLoading,
     layerZeroFee,
-    sharesOutMin,
-    totalFees,
-  } = useDepositFees({
-    amount,
-    asset: selectedAsset.address,
-    isQuoteError,
     needsApproval,
     quote,
-    receiver: address,
     shares,
+    sharesOutMin,
+    totalFees,
+  } = useDepositPreview({
+    account: address,
+    amount,
+    asset: selectedAsset.address,
+    shareAddress: pool.shareAddress,
     spender: routerAddress,
     token: selectedAsset.token,
     validInput,
@@ -231,11 +162,10 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     needsApproval,
   )
   const hasQuote = !!quote
-  const isPreviewLoading = isQuoteLoading || isSharesLoading
 
   const previewIssue = resolvePreviewIssue({
     hasShares: !!shares,
-    isPreviewError: isQuoteError || isSharesError,
+    isPreviewError,
     isPreviewLoading,
     peggedAmount: quote?.peggedAmount,
     validInput,
@@ -260,7 +190,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     <VaultFormLayout
       belowForm={
         canDeposit && (
-          <BelowForm
+          <OperationBelowForm
             account={address}
             bridgingFee={layerZeroFee}
             hemiGasFee={hemiGasFee}
@@ -268,8 +198,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
             isFeesError={isFeesError}
             nativeToken={nativeToken}
             shareAddress={pool.shareAddress}
-            shareToken={pool.shareToken}
-            shares={shares}
+            topRow={{
+              amount: shares,
+              label: t('hemi-earn.pool.form.you-will-receive'),
+              token: pool.shareToken,
+            }}
             totalFees={totalFees}
           />
         )
@@ -278,6 +211,8 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
         <PoolFormContent
           activeTab="deposit"
           errorKey={displayedErrorKey}
+          inputLabel={t('common.deposit')}
+          inputToken={selectedAsset.token}
           isRunningOperation={isRunningOperation}
           onSwitchTab={onSwitchToWithdraw}
           setMaxBalanceButton={

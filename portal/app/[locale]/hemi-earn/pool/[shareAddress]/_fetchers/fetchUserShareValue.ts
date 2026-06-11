@@ -1,11 +1,10 @@
-import { type UseQueryOptions } from '@tanstack/react-query'
-import { getStakingVaultForShare } from 'hemi-earn-actions'
+import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
 import { hemi } from 'hemi-viem'
-import { mainnet } from 'networks/mainnet'
-import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
+import { getPublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 import { balanceOf } from 'viem-erc20/actions'
-import { convertToAssets } from 'viem-erc4626/actions'
+
+import { sharesToPeggedOptions } from './fetchSharesToPegged'
 
 export type UserShareValue = {
   peggedAmount: bigint
@@ -14,17 +13,17 @@ export type UserShareValue = {
 
 export type UserShareValueParams = {
   account: Address | undefined
+  queryClient: QueryClient
   shareAddress: Address
 }
 
 // Reads the user's share OFT balance on Hemi and converts it to vault
-// pegged-token units via `StakingVault.convertToAssets`. Independent of the
-// withdraw asset selection — the share figure and pegged value are stable
-// against dropdown changes. `peggedAmount` is the right input for the fiat
-// preview because it follows `pricePerShare`, so accumulated yield is
-// reflected naturally instead of being collapsed to a flat 1:1 mapping.
+// pegged-token units via `sharesToPeggedOptions`. Independent of the
+// withdraw asset selection; `peggedAmount` follows `pricePerShare`, so
+// accumulated yield is reflected naturally in the fiat preview.
 export async function fetchUserShareValue({
   account,
+  queryClient,
   shareAddress,
 }: UserShareValueParams): Promise<UserShareValue> {
   if (!account) {
@@ -37,17 +36,16 @@ export async function fetchUserShareValue({
   if (shares <= BigInt(0)) {
     return { peggedAmount: BigInt(0), shares: BigInt(0) }
   }
-  const peggedAmount = await convertToAssets(getEvmL1PublicClient(mainnet.id), {
-    address: getStakingVaultForShare(shareAddress),
-    shares,
-  })
+  const { peggedAmount } = await queryClient.ensureQueryData(
+    sharesToPeggedOptions({ shareAddress, shares }),
+  )
   return { peggedAmount, shares }
 }
 
 export const getUserShareValueQueryKey = ({
   account,
   shareAddress,
-}: UserShareValueParams) =>
+}: Omit<UserShareValueParams, 'queryClient'>) =>
   ['hemi-earn', 'user-share-value', hemi.id, account, shareAddress] as const
 
 export const userShareValueOptions = (

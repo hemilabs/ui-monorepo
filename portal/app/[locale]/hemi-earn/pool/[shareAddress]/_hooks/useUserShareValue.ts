@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useAccount } from 'wagmi'
 
 import {
@@ -7,8 +7,11 @@ import {
 } from '../_fetchers/fetchUserShareValue'
 
 export const useUserShareValue = function (
-  params: Omit<UserShareValueParams, 'account'>,
+  params: Omit<UserShareValueParams, 'account' | 'queryClient'>,
 ) {
   const { address } = useAccount()
-  return useQuery(userShareValueOptions({ ...params, account: address }))
+  const queryClient = useQueryClient()
+  return useQuery(
+    userShareValueOptions({ ...params, account: address, queryClient }),
+  )
 }

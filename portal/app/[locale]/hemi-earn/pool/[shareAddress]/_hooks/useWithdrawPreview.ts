@@ -1,20 +1,14 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { encodeRequestRedeem } from 'hemi-earn-actions/actions'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
+import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { type EvmToken } from 'types/token'
 import { type Address } from 'viem'
 import { useEstimateGas } from 'wagmi'
 
-import {
-  REDEEM_SLIPPAGE_BPS,
-  applySlippage,
-} from '../../../_constants/slippage'
-
-type QuoteRedeem = {
-  callbackFee: bigint
-  isInstant: boolean
-  nativeFee: bigint
-}
+import { type QuoteRedeem } from '../_fetchers/fetchQuoteRedeem'
+import { withdrawPreviewOptions } from '../_fetchers/fetchWithdrawPreview'
 
 const buildGasData = ({
   asset,
@@ -68,58 +62,88 @@ const computeHemiGasFees = ({
 
 const computeIsFeesError = ({
   isApprovalGasFeesError,
-  isQuoteError,
+  isPreviewError,
   isWithdrawGasFeesError,
   needsApproval,
 }: {
   isApprovalGasFeesError: boolean
-  isQuoteError: boolean
+  isPreviewError: boolean
   isWithdrawGasFeesError: boolean
   needsApproval: boolean
 }) =>
   isWithdrawGasFeesError ||
-  isQuoteError ||
+  isPreviewError ||
   (needsApproval && isApprovalGasFeesError)
 
-// Takes `quote`, `shares`, and `assetOut` from the caller — the Withdraw
-// form owns those preview queries so it can subscribe once. The hook
-// derives `canWithdraw` and `assetsOutMin` internally so the slippage
-// policy lives in one place. Returns the Hemi-side gas + LayerZero split so
-// the summary can render them as separate rows (mirror of `useDepositFees`).
-export const useWithdrawFees = function ({
+// Subscribes to a single composed query (`withdrawPreviewOptions`) that
+// fans out `sharesToAssets` + `quoteRedeem` via `ensureQueryData`, and
+// pairs it with the canonical `useNeedsApproval` for allowance reads so
+// the form can tell an allowance failure apart from a preview failure.
+// Adds the wagmi-side gas estimation on top.
+export const useWithdrawPreview = function ({
+  account,
   asset,
-  assetOut,
-  chainId,
-  isQuoteError,
-  needsApproval,
-  quote,
-  receiver,
+  shareAddress,
   shares,
   shareToken,
   spender,
   validInput,
 }: {
+  account: Address | undefined
   asset: Address
-  assetOut: bigint
-  chainId: EvmToken['chainId']
-  isQuoteError: boolean
-  needsApproval: boolean
-  quote: QuoteRedeem | undefined
-  receiver: Address | undefined
-  shares: bigint
+  shareAddress: Address
   shareToken: EvmToken
+  shares: bigint
   spender: Address
   validInput: boolean
 }) {
+  const queryClient = useQueryClient()
+
+  const {
+    data: composed,
+    isError: isPreviewError,
+    isLoading: isPreviewLoading,
+  } = useQuery(
+    withdrawPreviewOptions({
+      account,
+      asset,
+      queryClient,
+      shareAddress,
+      shares,
+      validInput,
+    }),
+  )
+
+  const { isAllowanceError, isAllowanceLoading, needsApproval } =
+    useNeedsApproval({
+      address: shareAddress,
+      amount: shares,
+      chainId: shareToken.chainId,
+      spender,
+    })
+
+  const assetOut = composed?.assetOut ?? BigInt(0)
+  const peggedAmount = composed?.peggedAmount ?? BigInt(0)
+  const assetsOutMin = composed?.assetsOutMin ?? BigInt(0)
+  const quote = composed?.quote
+  const layerZeroFee = quote?.nativeFee ?? BigInt(0)
+
+  // Gate on `!isAllowanceLoading` so the fees summary (driven by canWithdraw)
+  // can't render with `needsApproval=false` while allowance is still pending —
+  // otherwise the user sees a wrong total that jumps up once allowance settles.
+  const canWithdraw =
+    validInput &&
+    shares > BigInt(0) &&
+    assetOut > BigInt(0) &&
+    !isAllowanceLoading
+
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
       amount: shares,
+      enabled: needsApproval,
       spender,
       token: shareToken,
     })
-
-  const canWithdraw = validInput && shares > BigInt(0) && assetOut > BigInt(0)
-  const assetsOutMin = applySlippage(assetOut, REDEEM_SLIPPAGE_BPS)
 
   const { data: withdrawGasUnits, isError: isWithdrawGasUnitsError } =
     useEstimateGas({
@@ -128,24 +152,28 @@ export const useWithdrawFees = function ({
         assetsOutMin,
         canWithdraw,
         quote,
-        receiver,
+        receiver: account,
         shares,
       }),
-      query: { enabled: canWithdraw && !!receiver && !!quote },
+      query: { enabled: canWithdraw && !!account && !!quote },
       to: spender,
       value: quote?.nativeFee,
     })
 
   const { fees: withdrawGasFees, isError: isWithdrawGasFeesError } =
     useEstimateFees({
-      chainId,
+      chainId: shareToken.chainId,
       gasUnits: withdrawGasUnits,
       isGasUnitsError: isWithdrawGasUnitsError,
     })
 
-  const layerZeroFee = quote?.nativeFee ?? BigInt(0)
-
+  // `*Raw` fields preserve `undefined` while the composed query is loading
+  // so the summary can render a skeleton; the bigint aliases default to 0n
+  // for hooks that don't tolerate undefined (e.g. `useWithdraw`'s
+  // optimistic decrements).
   return {
+    assetOut,
+    assetOutRaw: composed?.assetOut,
     assetsOutMin,
     canWithdraw,
     hemiGasFees: computeHemiGasFees({
@@ -153,13 +181,21 @@ export const useWithdrawFees = function ({
       needsApproval,
       withdrawGasFees,
     }),
+    isAllowanceError,
+    isAllowanceLoading,
     isFeesError: computeIsFeesError({
       isApprovalGasFeesError,
-      isQuoteError,
+      isPreviewError,
       isWithdrawGasFeesError,
       needsApproval,
     }),
+    isPreviewError,
+    isPreviewLoading,
     layerZeroFee,
+    needsApproval,
+    peggedAmount,
+    peggedAmountRaw: composed?.peggedAmount,
+    quote,
     totalFees: computeTotalFees({
       approvalGasFees,
       layerZeroFee,

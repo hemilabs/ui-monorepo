@@ -1,7 +1,6 @@
 'use client'
 
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { type EvmToken } from 'types/token'
@@ -13,11 +12,9 @@ import { useAccount as useEvmAccount } from 'wagmi'
 
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
-import { useQuoteRedeem } from '../_hooks/useQuoteRedeem'
-import { useSharesToAssets } from '../_hooks/useSharesToAssets'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
 import { useWithdraw } from '../_hooks/useWithdraw'
-import { useWithdrawFees } from '../_hooks/useWithdrawFees'
+import { useWithdrawPreview } from '../_hooks/useWithdrawPreview'
 import { type WithdrawOperationRunning } from '../_types/operations'
 import {
   computeIsLoading,
@@ -61,27 +58,6 @@ export const Withdraw = function ({
     shareAddress: pool.shareAddress,
   })
 
-  // Shares → asset preview drives both the "You'll receive" row and the
-  // slippage floor. `peggedAmount` is the intermediate vault unit, used by
-  // `useWithdraw` to optimistically drop `totalAssets()` after the redeem
-  // mines. Raw values (`assetOutRaw`/`peggedAmountRaw`) stay `undefined`
-  // while the query is pending so the summary can show a skeleton; the
-  // bigint aliases below are the floored versions consumed by hooks.
-  const {
-    data: sharesToAssetsData,
-    isError: isSharesToAssetsError,
-    isLoading: isSharesToAssetsLoading,
-  } = useSharesToAssets({
-    assetAddress: selectedAsset.address,
-    shareAddress: pool.shareAddress,
-    shares,
-  })
-
-  const { assetOut: assetOutRaw, peggedAmount: peggedAmountRaw } =
-    sharesToAssetsData ?? {}
-  const assetOut = assetOutRaw ?? BigInt(0)
-  const peggedAmount = peggedAmountRaw ?? BigInt(0)
-
   const {
     canSubmit: validInput,
     error: validationError,
@@ -96,43 +72,30 @@ export const Withdraw = function ({
 
   const routerAddress = getHemiEarnRouterAddress()
 
-  const { isAllowanceError, isAllowanceLoading, needsApproval } =
-    useNeedsApproval({
-      address: pool.shareAddress,
-      amount: shares,
-      chainId: pool.shareToken.chainId,
-      spender: routerAddress,
-    })
-
+  // Single composed query owns shares→assets preview, redeem quote, and
+  // allowance reads. `withdraw.tsx` only consumes the derived outputs
+  // here — no separate subscriptions for those upstream queries.
   const {
-    data: quote,
-    isError: isQuoteError,
-    isLoading: isQuoteLoading,
-  } = useQuoteRedeem({
-    account: address,
-    asset: selectedAsset.address,
-    shareAddress: pool.shareAddress,
-    // `useQuoteRedeem` already gates internally on `shares > 0n` via
-    // `enabled`, so a `0n` here is enough to skip the request when the
-    // form input isn't valid yet.
-    shares: validInput ? shares : BigInt(0),
-  })
-
-  const {
+    assetOut,
+    assetOutRaw,
     assetsOutMin,
     canWithdraw,
     hemiGasFees,
+    isAllowanceError,
+    isAllowanceLoading,
     isFeesError,
+    isPreviewError,
+    isPreviewLoading,
     layerZeroFee,
-    totalFees,
-  } = useWithdrawFees({
-    asset: selectedAsset.address,
-    assetOut,
-    chainId: selectedAsset.token.chainId,
-    isQuoteError,
     needsApproval,
+    peggedAmount,
+    peggedAmountRaw,
     quote,
-    receiver: address,
+    totalFees,
+  } = useWithdrawPreview({
+    account: address,
+    asset: selectedAsset.address,
+    shareAddress: pool.shareAddress,
     shares,
     shareToken: pool.shareToken,
     spender: routerAddress,
@@ -180,12 +143,7 @@ export const Withdraw = function ({
   }
 
   const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
-
   const hasQuote = !!quote
-  const isPreviewLoading = [isSharesToAssetsLoading, isQuoteLoading].some(
-    Boolean,
-  )
-  const isPreviewError = [isSharesToAssetsError, isQuoteError].some(Boolean)
 
   const previewIssue = resolvePreviewIssue({
     hasShares: assetOut > BigInt(0),

@@ -2,7 +2,6 @@
 
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { useTokenBalance } from 'hooks/useBalance'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
@@ -16,10 +15,8 @@ import { useAccount as useEvmAccount } from 'wagmi'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
-import { useDepositFees } from '../_hooks/useDepositFees'
-import { useDepositShares } from '../_hooks/useDepositShares'
+import { useDepositPreview } from '../_hooks/useDepositPreview'
 import { useDrawerQueryString } from '../_hooks/useDrawerQueryString'
-import { useQuoteDeposit } from '../_hooks/useQuoteDeposit'
 import { type DepositOperationRunning } from '../_types/operations'
 import {
   computeIsLoading,
@@ -67,14 +64,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const amount = parseTokenUnits(input, selectedAsset.token)
   const routerAddress = getHemiEarnRouterAddress()
 
-  const { isAllowanceError, isAllowanceLoading, needsApproval } =
-    useNeedsApproval({
-      address: selectedAsset.address,
-      amount,
-      chainId: selectedAsset.token.chainId,
-      spender: routerAddress,
-    })
-
   const { data: walletTokenBalance, isSuccess: tokenBalanceLoaded } =
     useTokenBalance(selectedAsset.token.chainId, selectedAsset.address)
 
@@ -98,42 +87,29 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     shareAddress: pool.shareAddress,
   })
 
-  const {
-    data: quote,
-    isError: isQuoteError,
-    isLoading: isQuoteLoading,
-  } = useQuoteDeposit({
-    amount,
-    asset: selectedAsset.address,
-    shareAddress: pool.shareAddress,
-  })
-
-  const {
-    data: shares,
-    isError: isSharesError,
-    isLoading: isSharesLoading,
-  } = useDepositShares({
-    amount,
-    asset: selectedAsset.address,
-    shareAddress: pool.shareAddress,
-  })
-
+  // Single composed query owns shares preview, quote, and allowance reads.
+  // `deposit.tsx` only consumes the derived outputs here — no separate
+  // subscriptions for those upstream queries.
   const {
     approvalGasFees,
     canDeposit,
     depositGasFees,
+    isAllowanceError,
+    isAllowanceLoading,
     isFeesError,
+    isPreviewError,
+    isPreviewLoading,
     layerZeroFee,
-    sharesOutMin,
-    totalFees,
-  } = useDepositFees({
-    amount,
-    asset: selectedAsset.address,
-    isQuoteError,
     needsApproval,
     quote,
-    receiver: address,
     shares,
+    sharesOutMin,
+    totalFees,
+  } = useDepositPreview({
+    account: address,
+    amount,
+    asset: selectedAsset.address,
+    shareAddress: pool.shareAddress,
     spender: routerAddress,
     token: selectedAsset.token,
     validInput,
@@ -186,11 +162,10 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     needsApproval,
   )
   const hasQuote = !!quote
-  const isPreviewLoading = isQuoteLoading || isSharesLoading
 
   const previewIssue = resolvePreviewIssue({
     hasShares: !!shares,
-    isPreviewError: isQuoteError || isSharesError,
+    isPreviewError,
     isPreviewLoading,
     peggedAmount: quote?.peggedAmount,
     validInput,

@@ -50,7 +50,7 @@ export const ConfigurationUrl = function ({
         text={
           <span className="flex items-center gap-x-1">
             <span>{t(`${copied ? 'copied' : 'copy'}`)}</span>
-            {copied && <CheckMark className="[&>path]:stroke-emerald-500" />}
+            {copied && <CheckMark className="[&>path]:fill-emerald-500" />}
           </span>
         }
         trigger={['hover', 'focus']}

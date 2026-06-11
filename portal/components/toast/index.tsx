@@ -35,7 +35,7 @@ const ToastIcon = function ({ variant }: { variant: ToastVariant }) {
   }
   return (
     <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-950">
-      <CheckMark className="size-4 [&>path]:stroke-emerald-500" />
+      <CheckMark className="size-4 [&>path]:fill-emerald-500" />
     </div>
   )
 }
@@ -82,7 +82,7 @@ export const Toast = function ({
         {variant !== undefined ? (
           <ToastIcon variant={variant} />
         ) : (
-          <CheckMark className="[&>path]:stroke-emerald-500" />
+          <CheckMark className="[&>path]:fill-emerald-500" />
         )}
       </div>
       <div className="flex flex-[1_0_0] flex-col items-start gap-y-1.5">

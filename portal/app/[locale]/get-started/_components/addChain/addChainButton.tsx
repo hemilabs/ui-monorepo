@@ -29,7 +29,7 @@ export const AddChainButton = function ({ chain }: Props) {
     return (
       <div className="flex h-7 items-center gap-x-1">
         <span className="text-neutral-500">{tCommon('added')}</span>
-        <CheckMark className="[&>path]:stroke-emerald-500" />
+        <CheckMark className="[&>path]:fill-emerald-500" />
       </div>
     )
   }

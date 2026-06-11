@@ -33,7 +33,7 @@ const AddedAction = function () {
 
   return (
     <>
-      <CheckMark className="size-4 [&>path]:stroke-emerald-500" />
+      <CheckMark className="size-4 [&>path]:fill-emerald-500" />
       <ActionLabel>{tCommon('added')}</ActionLabel>
     </>
   )

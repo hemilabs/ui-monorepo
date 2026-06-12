@@ -19,4 +19,5 @@ export const gatewayForShareQueryOptions = (shareAddress: Address) =>
       )
     },
     queryKey: ['hemi-earn', 'gateway-for-share', shareAddress],
+    staleTime: Infinity,
   })

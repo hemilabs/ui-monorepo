@@ -688,22 +688,6 @@ importers:
         specifier: 4.1.6
         version: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@24.10.2)(vite@7.3.2(@types/node@24.10.2)(jiti@2.7.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.9.0))
 
-  subgraphs/hemi-earn-router-subgraph:
-    dependencies:
-      '@graphprotocol/graph-cli':
-        specifier: 0.97.1
-        version: 0.97.1(@types/node@24.10.2)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
-      '@graphprotocol/graph-ts':
-        specifier: 0.38.1
-        version: 0.38.1
-    devDependencies:
-      assemblyscript:
-        specifier: 0.19.23
-        version: 0.19.23
-      matchstick-as:
-        specifier: 0.6.0
-        version: 0.6.0
-
   subgraphs/hemi-stake-operations-subgraph:
     dependencies:
       '@graphprotocol/graph-cli':
@@ -10925,12 +10909,6 @@ packages:
       }
     engines: { node: '>=18' }
 
-  matchstick-as@0.6.0:
-    resolution:
-      {
-        integrity: sha512-E36fWsC1AbCkBFt05VsDDRoFvGSdcZg6oZJrtIe/YDBbuFh8SKbR5FcoqDhNWqSN+F7bN/iS2u8Md0SM+4pUpw==,
-      }
-
   math-intrinsics@1.1.0:
     resolution:
       {
@@ -14829,13 +14807,6 @@ packages:
         optional: true
       jsdom:
         optional: true
-
-  wabt@1.0.24:
-    resolution:
-      {
-        integrity: sha512-8l7sIOd3i5GWfTWciPL0+ff/FK/deVK2Q6FN+MPz4vfUcD78i2M/49XJTwF6aml91uIiuXJEsLKWMB2cw/mtKg==,
-      }
-    hasBin: true
 
   wagmi@2.15.7:
     resolution:
@@ -22821,10 +22792,6 @@ snapshots:
       markdown-it: 14.1.0
       markdownlint-micromark: 0.1.9
 
-  matchstick-as@0.6.0:
-    dependencies:
-      wabt: 1.0.24
-
   math-intrinsics@1.1.0: {}
 
   mdurl@2.0.0: {}
@@ -25347,8 +25314,6 @@ snapshots:
       '@types/node': 24.10.2
     transitivePeerDependencies:
       - msw
-
-  wabt@1.0.24: {}
 
   wagmi@2.15.7(@tanstack/query-core@5.100.9)(@tanstack/react-query@5.100.9(react@19.1.1))(@types/react@19.1.13)(bufferutil@4.1.0)(encoding@0.1.13)(react@19.1.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.28.4(patch_hash=2c103b691bf333d47e3036fd621d41c27c78e3ed367384b389fd6518dfd67846)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))(zod@3.25.76):
     dependencies:

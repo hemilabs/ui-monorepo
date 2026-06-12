@@ -1,6 +1,7 @@
 'use client'
 
 import { ExternalLink } from 'components/externalLink'
+import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
 import { CheckMark } from 'components/icons/checkMark'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { ErrorCircleIcon } from 'components/icons/errorCircleIcon'
@@ -33,11 +34,7 @@ const ToastIcon = function ({ variant }: { variant: ToastVariant }) {
       </div>
     )
   }
-  return (
-    <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-emerald-950">
-      <CheckMark className="size-4 [&>path]:fill-emerald-500" />
-    </div>
-  )
+  return <CheckCircleIcon />
 }
 
 export const Toast = function ({
@@ -74,19 +71,21 @@ export const Toast = function ({
   // and trap the toast behind any open drawer regardless of z-index.
   return ReactDOM.createPortal(
     <div
-      className="fixed inset-x-4 bottom-20 z-40 flex justify-between
-      gap-x-3 rounded-xl border border-solid border-black/85 bg-neutral-800 p-3.5
-    text-sm font-medium text-white md:bottom-auto md:left-auto md:right-8 md:top-20"
+      className="border-black/88 shadow-soft fixed inset-x-4 bottom-20 z-40 flex items-center gap-3 rounded-xl
+      border bg-neutral-800 p-3.5 pb-4 text-white
+      md:bottom-auto md:left-auto md:right-8 md:top-20"
     >
-      <div className="mt-0.5">
+      <div className="shrink-0">
         {variant !== undefined ? (
           <ToastIcon variant={variant} />
         ) : (
           <CheckMark className="[&>path]:fill-emerald-500" />
         )}
       </div>
-      <div className="flex flex-[1_0_0] flex-col items-start gap-y-1.5">
-        <h5 className="text-base">{title}</h5>
+      <div className="flex flex-[1_0_0] flex-col items-start">
+        <p className="text-base font-medium leading-4 tracking-[-0.32px] text-white">
+          {title}
+        </p>
         {(description !== undefined || tx !== undefined) && (
           <p className="text-neutral-400 md:max-w-96">
             {description}
@@ -106,7 +105,7 @@ export const Toast = function ({
           </Link>
         )}
       </div>
-      <button className="size-5" onClick={() => setClosedToast(true)}>
+      <button className="size-5 shrink-0" onClick={() => setClosedToast(true)}>
         <CloseIcon className="size-full [&>path]:hover:stroke-white" />
       </button>
     </div>,

@@ -22,6 +22,10 @@ export const AddTokenToWalletToast = function ({ variant }: Props) {
   }
 
   return (
-    <Toast title={tCommon('add-token-to-wallet-success')} variant="success" />
+    <Toast
+      autoCloseMs={0}
+      title={tCommon('add-token-to-wallet-success')}
+      variant="success"
+    />
   )
 }

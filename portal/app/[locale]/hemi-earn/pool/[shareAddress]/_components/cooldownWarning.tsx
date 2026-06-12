@@ -7,13 +7,13 @@ import { type Address } from 'viem'
 import { useCooldownDuration } from '../../../_hooks/useCooldownDuration'
 
 type Props = {
-  shareAddress: Address
+  stakingVault: Address
 }
 
-export const CooldownWarning = function ({ shareAddress }: Props) {
+export const CooldownWarning = function ({ stakingVault }: Props) {
   const t = useTranslations()
   const { data: durationSec, isPending: isLoading } = useCooldownDuration({
-    shareAddress,
+    stakingVault,
   })
   const days =
     durationSec !== undefined ? secondsToWholeDays(durationSec) : undefined

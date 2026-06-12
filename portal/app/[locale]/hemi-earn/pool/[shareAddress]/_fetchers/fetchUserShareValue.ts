@@ -4,7 +4,7 @@ import { getPublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 import { balanceOf } from 'viem-erc20/actions'
 
-import { sharesToPeggedOptions } from './fetchSharesToPegged'
+import { sharesToPeggedOptions } from '../../../_fetchers/fetchSharesToPegged'
 
 export type UserShareValue = {
   peggedAmount: bigint

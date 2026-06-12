@@ -118,7 +118,7 @@ export const useWithdraw = function ({
 
   const poolTotalAssetsQueryKey = earnTvlQueryKey({
     networkType,
-    shareAddress: pool.shareAddress,
+    stakingVault: pool.stakingVault,
   })
 
   return useMutation({

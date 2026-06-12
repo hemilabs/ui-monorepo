@@ -1,9 +1,10 @@
 import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
-import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 import { convertToShares } from 'viem-erc4626/actions'
+
+import { shareConfigQueryOptions } from '../../../_fetchers/fetchHemiEarnAssetConfigs'
 
 import { quoteDepositOptions } from './fetchQuoteDeposit'
 
@@ -31,8 +32,11 @@ export async function fetchDepositShares(
   if (quote.peggedAmount <= BigInt(0)) {
     return BigInt(0)
   }
+  const { remoteShare } = await queryClient.ensureQueryData(
+    shareConfigQueryOptions(shareAddress),
+  )
   return convertToShares(getEvmL1PublicClient(mainnet.id), {
-    address: getStakingVaultForShare(shareAddress),
+    address: remoteShare,
     assets: quote.peggedAmount,
   })
 }
@@ -51,10 +55,9 @@ const getDepositSharesQueryKey = ({
   ] as const
 
 export const depositSharesOptions = (
-  queryClient: QueryClient,
   params: DepositSharesParams,
 ): UseQueryOptions<bigint> => ({
   enabled: params.amount > BigInt(0),
-  queryFn: () => fetchDepositShares(queryClient, params),
+  queryFn: ({ client }) => fetchDepositShares(client, params),
   queryKey: getDepositSharesQueryKey(params),
 })

@@ -21,8 +21,6 @@ vi.mock('@vetro-protocol/gateway/actions', () => ({
 
 vi.mock('hemi-earn-actions', () => ({
   getHemiEarnRouterAddress: () => '0xRouter',
-  getHemiEarnSupportedAssets: () => [],
-  getStakingVaultForShare: () => '0xStakingVault',
 }))
 
 vi.mock('utils/chainClients', () => ({
@@ -33,26 +31,29 @@ vi.mock('utils/chainClients', () => ({
 const asset = '0x1111111111111111111111111111111111111111' as Address
 const shareAddress = '0x2222222222222222222222222222222222222222' as Address
 const remoteAsset = '0x3333333333333333333333333333333333333333' as Address
+const remoteShare = '0x4444444444444444444444444444444444444444' as Address
 const gateway = '0x6666666666666666666666666666666666666666' as Address
 
 const assetData = {
   enabled: true,
   remoteAsset,
-  remoteShare: '0x4444444444444444444444444444444444444444' as Address,
+  remoteShare,
   share: '0x5555555555555555555555555555555555555555' as Address,
 }
 
-// Fake query client that resolves the gateway and asset-data lookups the
-// fetcher threads through the cache, branching on each query's key.
+// Fake query client that resolves the gateway, asset-data and share-config
+// lookups the fetcher threads through the cache, branching on each query's key.
 const createQueryClient = () => ({
   ensureQueryData: vi.fn(function ({ queryKey }) {
     switch (queryKey[1]) {
       case 'agent-address':
         return Promise.resolve('0xAgent')
-      case 'gateway-for-asset':
+      case 'gateway-for-share':
         return Promise.resolve(gateway)
       case 'asset-data':
         return Promise.resolve(assetData)
+      case 'share-config':
+        return Promise.resolve({ asset, remoteShare, share: shareAddress })
       default:
         return Promise.reject(new Error(`unexpected query ${queryKey[1]}`))
     }
@@ -104,7 +105,7 @@ describe('fetchQuoteDeposit', function () {
     })
 
     expect(quoteDepositFulfillment).toHaveBeenCalledWith(
-      expect.objectContaining({ agentAddress: '0xAgent' }),
+      expect.objectContaining({ agentAddress: '0xAgent', share: remoteShare }),
     )
   })
 

@@ -74,16 +74,13 @@ const skeleton = (
   peggedToken,
   shareAddress,
   shareToken,
+  stakingVault: shareAddress,
 })
 
 const seedShares = (
   queryClient: ReturnType<typeof createTestQueryClient>,
   shares: ShareSkeleton[],
-) =>
-  queryClient.setQueryData(
-    hemiEarnSharesQueryOptions({ queryClient }).queryKey,
-    shares,
-  )
+) => queryClient.setQueryData(hemiEarnSharesQueryOptions().queryKey, shares)
 
 // Resolves `balanceOf` per shareAddress using the second argument's `address`.
 // Lets each test express "for share X return Y" without re-mocking the

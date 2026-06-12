@@ -4,7 +4,6 @@ import { ButtonLink } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { RenderFiatBalance } from 'components/fiatBalance'
 import { TokenLogo } from 'components/tokenLogo'
-import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { useChain } from 'hooks/useChain'
 import { mainnet } from 'networks/mainnet'
 import { useLocale, useTranslations } from 'next-intl'
@@ -26,9 +25,9 @@ export const PoolInfoBar = function ({ pool }: Props) {
   const locale = useLocale()
   const chain = useChain(pool.shareToken.chainId)
 
-  const stakingVaultAddress = getStakingVaultForShare(pool.shareAddress)
-  const { data: rewards = [], isLoading: isRewardsLoading } =
-    useEarnRewards(stakingVaultAddress)
+  const { data: rewards = [], isLoading: isRewardsLoading } = useEarnRewards(
+    pool.stakingVault,
+  )
 
   const rewardTokens = rewards.map(reward => ({
     address: reward.token.address,

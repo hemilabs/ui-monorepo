@@ -16,7 +16,7 @@ vi.mock('utils/chainClients', () => ({
 }))
 
 vi.mock(
-  '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchSharesToPegged',
+  '../../../../../../../app/[locale]/hemi-earn/_fetchers/fetchSharesToPegged',
   () => ({
     sharesToPeggedOptions: () => ({
       queryKey: ['hemi-earn', 'shares-to-pegged'],

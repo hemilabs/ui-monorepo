@@ -31,7 +31,10 @@ export const useEarnPools = function () {
   // render with a `0n` placeholder while the cross-chain read is in flight.
   const tvlQueries = useQueries({
     queries: shares.map(share => ({
-      ...earnTvlQueryOptions({ networkType, shareAddress: share.shareAddress }),
+      ...earnTvlQueryOptions({
+        networkType,
+        stakingVault: share.stakingVault,
+      }),
       enabled: shares.length > 0,
     })),
   })
@@ -42,7 +45,7 @@ export const useEarnPools = function () {
   const isApyPending = isApyApiConfigured && isApyQueryPending
 
   const data: EarnPool[] = shares.map((share, index) => ({
-    apy: selectApyValue(apyByVault, isApyPending, share.shareAddress),
+    apy: selectApyValue(apyByVault, isApyPending, share.stakingVault),
     assets: share.assets,
     exposureTokens: share.assets.map(a => ({
       address: a.address,
@@ -51,6 +54,7 @@ export const useEarnPools = function () {
     peggedToken: share.peggedToken,
     shareAddress: share.shareAddress,
     shareToken: share.shareToken,
+    stakingVault: share.stakingVault,
     totalDeposits: tvlQueries[index]?.data ?? BigInt(0),
   }))
 

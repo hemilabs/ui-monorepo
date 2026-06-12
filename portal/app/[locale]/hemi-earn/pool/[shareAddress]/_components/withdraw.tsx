@@ -107,7 +107,7 @@ export const Withdraw = function ({
   // would let the user start a withdraw thinking the funds land instantly.
   const { data: isCooldownEligible = true } = useIsCooldownEligible({
     account: address,
-    shareAddress: pool.shareAddress,
+    stakingVault: pool.stakingVault,
   })
 
   const { callbackFee = BigInt(0), isInstant = false } = quote ?? {}
@@ -179,7 +179,7 @@ export const Withdraw = function ({
             isCooldownEligible={isCooldownEligible}
             isFeesError={isFeesError}
             nativeToken={nativeToken}
-            shareAddress={pool.shareAddress}
+            stakingVault={pool.stakingVault}
             topRow={{
               amount: assetOutRaw,
               label: t('hemi-earn.pool.form.you-will-receive'),

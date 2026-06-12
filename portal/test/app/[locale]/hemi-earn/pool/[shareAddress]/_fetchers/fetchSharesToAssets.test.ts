@@ -13,13 +13,6 @@ const shareAddress = '0x2222222222222222222222222222222222222222' as Address
 const gateway = '0x6666666666666666666666666666666666666666' as Address
 const remoteAsset = '0x7777777777777777777777777777777777777777' as Address
 
-vi.mock('hemi-earn-actions', () => ({
-  getHemiEarnSupportedAssets: () => [
-    { asset: assetAddress, share: shareAddress },
-  ],
-  getStakingVaultForShare: () => '0xStakingVault',
-}))
-
 vi.mock('utils/chainClients', () => ({
   getEvmL1PublicClient: () => ({ chain: 'mainnet' }),
 }))
@@ -29,7 +22,7 @@ const createQueryClient = (peggedAmount: bigint) => ({
     switch (queryKey[1]) {
       case 'asset-data':
         return Promise.resolve({ remoteAsset })
-      case 'gateway-for-asset':
+      case 'gateway-for-share':
         return Promise.resolve(gateway)
       default:
         return Promise.reject(new Error(`unexpected query ${queryKey[1]}`))

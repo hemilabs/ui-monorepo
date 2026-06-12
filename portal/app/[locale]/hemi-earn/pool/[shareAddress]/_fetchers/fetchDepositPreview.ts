@@ -50,11 +50,7 @@ export const depositPreviewOptions = ({
     async queryFn() {
       const [shares, quote] = await Promise.all([
         queryClient.ensureQueryData(
-          depositSharesOptions(queryClient, {
-            amount,
-            asset,
-            shareAddress,
-          }),
+          depositSharesOptions({ amount, asset, shareAddress }),
         ),
         queryClient.ensureQueryData(
           quoteDepositOptions({ amount, asset, queryClient, shareAddress }),

@@ -1,7 +1,6 @@
 'use client'
 
 import { useQueryClient } from '@tanstack/react-query'
-import { getHemiEarnSupportedAssets } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useEffect, useRef } from 'react'
@@ -9,6 +8,10 @@ import { type Address, isAddressEqual } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { earnPositionsKeyPrefix } from '../_fetchers/fetchEarnPositions'
+import {
+  type HemiEarnAssetConfig,
+  hemiEarnAssetConfigsQueryOptions,
+} from '../_fetchers/fetchHemiEarnAssetConfigs'
 import {
   type EarnTransaction,
   type EarnTransactionKindType,
@@ -92,9 +95,8 @@ function detectCrossChainDeliveries(
   return events
 }
 
-const findShareForAsset = (asset: Address) =>
-  getHemiEarnSupportedAssets().find(entry => isAddressEqual(entry.asset, asset))
-    ?.share
+const findShareForAsset = (configs: HemiEarnAssetConfig[], asset: Address) =>
+  configs.find(config => isAddressEqual(config.asset, asset))?.share
 
 // Maps a terminal event to the token whose balance actually moved:
 //   DEPOSIT + FINALIZED → share OFT lands on the user's Hemi wallet
@@ -107,8 +109,13 @@ const movesShareBalance = (event: DeliveredEvent) =>
   (event.kind === 'DEPOSIT' && event.status === 'FINALIZED') ||
   (event.kind === 'REDEEM' && event.status === 'RECOVERED')
 
-const tokenAddressForEvent = (event: DeliveredEvent) =>
-  movesShareBalance(event) ? findShareForAsset(event.asset) : event.asset
+const tokenAddressForEvent = (
+  configs: HemiEarnAssetConfig[],
+  event: DeliveredEvent,
+) =>
+  movesShareBalance(event)
+    ? findShareForAsset(configs, event.asset)
+    : event.asset
 
 function invalidateOnDelivery(
   queryClient: ReturnType<typeof useQueryClient>,
@@ -116,8 +123,14 @@ function invalidateOnDelivery(
 ) {
   queryClient.invalidateQueries({ queryKey: vetroPoolsPrefix })
   queryClient.invalidateQueries({ queryKey: vetroUserShareValuePrefix })
+  // Synchronous read of the already-loaded on-chain asset config list (the
+  // earn pages fetch it via `useHemiEarnShares`). If it isn't cached yet the
+  // share-balance key is skipped; the pools/positions invalidation below
+  // still runs.
+  const configs =
+    queryClient.getQueryData(hemiEarnAssetConfigsQueryOptions().queryKey) ?? []
   for (const event of events) {
-    const tokenAddress = tokenAddressForEvent(event)
+    const tokenAddress = tokenAddressForEvent(configs, event)
     if (tokenAddress === undefined) continue
     queryClient.invalidateQueries({
       queryKey: getTokenBalanceQueryKey({

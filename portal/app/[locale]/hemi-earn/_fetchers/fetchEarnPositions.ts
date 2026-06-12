@@ -43,9 +43,7 @@ export const fetchEarnPositions = async function ({
   networkType: string
   queryClient: QueryClient
 }): Promise<EarnPosition[]> {
-  const shares = await queryClient.ensureQueryData(
-    hemiEarnSharesQueryOptions({ queryClient }),
-  )
+  const shares = await queryClient.ensureQueryData(hemiEarnSharesQueryOptions())
 
   // Use `allSettled` so a single failing share-balance read doesn't take down
   // the whole composition: matches the previous `useQueries` behavior where

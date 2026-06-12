@@ -2,13 +2,11 @@
 
 import { useQueries } from '@tanstack/react-query'
 import Big from 'big.js'
-import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { useTokenPrices } from 'hooks/useTokenPrices'
-import { mainnet } from 'networks/mainnet'
-import { getEvmL1PublicClient } from 'utils/chainClients'
 import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
-import { convertToAssets } from 'viem-erc4626/actions'
+
+import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
 
 import { useEarnPositions } from './useEarnPositions'
 
@@ -36,20 +34,12 @@ export const useTotalDeposits = function () {
   } = useTokenPrices({ retryOnMount: false })
 
   const peggedAmountQueries = useQueries({
-    queries: positions.map(position => ({
-      enabled: position.yourDeposit > BigInt(0),
-      queryFn: () =>
-        convertToAssets(getEvmL1PublicClient(mainnet.id), {
-          address: getStakingVaultForShare(position.shareAddress),
-          shares: position.yourDeposit,
-        }),
-      queryKey: [
-        'hemi-earn',
-        'total-deposits',
-        position.shareAddress,
-        position.yourDeposit.toString(),
-      ],
-    })),
+    queries: positions.map(position =>
+      sharesToPeggedOptions({
+        shareAddress: position.shareAddress,
+        shares: position.yourDeposit,
+      }),
+    ),
   })
 
   const totalUsd = positions
@@ -57,7 +47,7 @@ export const useTotalDeposits = function () {
       (acc, position, index) =>
         acc.plus(
           positionUsd(
-            peggedAmountQueries[index]?.data ?? BigInt(0),
+            peggedAmountQueries[index]?.data?.peggedAmount ?? BigInt(0),
             position.peggedToken.decimals,
             prices ? getTokenPrice(position.peggedToken, prices) : '0',
           ),

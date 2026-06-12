@@ -1,8 +1,8 @@
 diff --git a/src/hemi.tokenlist.json b/src/hemi.tokenlist.json
-index ffd23f5..7c104d8 100644
+index 79a0b9e020113267aa45622aa89c000661907e9a..f5339e1dd3cfe33ea2557a883628b9a341ead386 100644
 --- a/src/hemi.tokenlist.json
 +++ b/src/hemi.tokenlist.json
-@@ -403,6 +403,11 @@
+@@ -420,6 +420,11 @@
        "decimals": 8,
        "extensions": {
          "birthBlock": 1125154,
@@ -11,10 +11,10 @@ index ffd23f5..7c104d8 100644
 +            "tokenAddress": "BTC"
 +          }
 +        },
-         "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/hemibtc.svg"
-       },
-       "logoURI": "https://hemilabs.github.io/token-list/logos/hemibtc.svg",
-@@ -415,10 +420,15 @@
+         "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/hemibtc.svg",
+         "oft": {
+           "adapterAddress": "0xDefa4A253a0Ec96a2e6D74A409B3B348924bf390",
+@@ -452,10 +457,15 @@
        "decimals": 6,
        "extensions": {
          "birthBlock": 623077,
@@ -31,7 +31,7 @@ index ffd23f5..7c104d8 100644
        "symbol": "USDC.e"
      },
      {
-@@ -473,6 +483,11 @@
+@@ -510,6 +520,11 @@
        "decimals": 6,
        "extensions": {
          "birthBlock": 666946,
@@ -43,7 +43,7 @@ index ffd23f5..7c104d8 100644
          "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/usdt.svg"
        },
        "logoURI": "https://hemilabs.github.io/token-list/logos/usdt.svg",
-@@ -620,11 +635,16 @@
+@@ -669,11 +684,16 @@
        "decimals": 8,
        "extensions": {
          "birthBlock": 2165818,
@@ -62,7 +62,7 @@ index ffd23f5..7c104d8 100644
      },
      {
        "address": "0x3Adf21A6cbc9ce6D5a3ea401E7Bae9499d391298",
-@@ -691,8 +711,20 @@
+@@ -740,8 +760,20 @@
          "l1LogoURI": "https://hemilabs.github.io/token-list/l1Logos/hdai.svg"
        },
        "logoURI": "https://hemilabs.github.io/token-list/logos/hdai.svg",

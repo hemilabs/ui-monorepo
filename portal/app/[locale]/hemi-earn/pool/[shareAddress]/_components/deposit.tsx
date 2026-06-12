@@ -84,7 +84,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   // would let the user sign a deposit thinking instant withdraw is available.
   const { data: isCooldownEligible = true } = useIsCooldownEligible({
     account: address,
-    shareAddress: pool.shareAddress,
+    stakingVault: pool.stakingVault,
   })
 
   // Single composed query owns shares preview, quote, and allowance reads.
@@ -197,7 +197,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
             isCooldownEligible={isCooldownEligible}
             isFeesError={isFeesError}
             nativeToken={nativeToken}
-            shareAddress={pool.shareAddress}
+            stakingVault={pool.stakingVault}
             topRow={{
               amount: shares,
               label: t('hemi-earn.pool.form.you-will-receive'),

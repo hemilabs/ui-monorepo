@@ -7,7 +7,6 @@ import { useMemo, type ReactNode } from 'react'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
-import { useEarnPools } from '../../_hooks/useEarnPools'
 import { useEarnTransactions } from '../../_hooks/useEarnTransactions'
 
 import { buildColumns } from './columns'
@@ -26,9 +25,8 @@ export const TransactionsTable = function () {
   const t = useTranslations('hemi-earn.transactions')
   const { status } = useAccount()
   const { data: transactions, isPending } = useEarnTransactions()
-  const { data: pools } = useEarnPools()
 
-  const columns = useMemo(() => buildColumns({ pools, t }), [pools, t])
+  const columns = useMemo(() => buildColumns({ t }), [t])
 
   const isEmpty = transactions.length === 0 && !isPending
 

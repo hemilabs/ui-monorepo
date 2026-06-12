@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 import {
   type DepositSharesParams,
@@ -6,4 +6,4 @@ import {
 } from '../_fetchers/fetchDepositShares'
 
 export const useDepositShares = (params: DepositSharesParams) =>
-  useQuery(depositSharesOptions(useQueryClient(), params))
+  useQuery(depositSharesOptions(params))

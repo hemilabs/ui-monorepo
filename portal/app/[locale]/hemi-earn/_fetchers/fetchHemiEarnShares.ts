@@ -1,75 +1,91 @@
 import { type QueryClient, queryOptions } from '@tanstack/react-query'
-import {
-  getHemiEarnShares,
-  getHemiEarnSupportedAssets,
-  getPeggedTokenForShare,
-} from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
+import { tokenQueryOptions } from 'hooks/useToken'
 import { mainnet } from 'networks/mainnet'
-import { getEvmL1PublicClient } from 'utils/chainClients'
+import { type RemoteChain } from 'types/chain'
+import { type EvmToken } from 'types/token'
 import { type Address, isAddressEqual } from 'viem'
 
-import { getHemiEarnToken } from '../_constants/tokens'
+import { vaultAssetQueryOptions } from '../_hooks/vaultAsset'
 import { type EarnAsset, type EarnPool } from '../types'
+
+import {
+  hemiEarnAssetConfigsQueryOptions,
+  uniqueShareConfigs,
+} from './fetchHemiEarnAssetConfigs'
 
 export type ShareSkeleton = Pick<
   EarnPool,
-  'assets' | 'peggedToken' | 'shareAddress' | 'shareToken'
+  'assets' | 'peggedToken' | 'shareAddress' | 'shareToken' | 'stakingVault'
 >
 
-export const peggedTokenForShareQueryOptions = (shareAddress: Address) =>
-  queryOptions({
-    queryFn: () =>
-      getPeggedTokenForShare(getEvmL1PublicClient(mainnet.id), shareAddress),
-    queryKey: ['hemi-earn', 'pegged-token-for-share', shareAddress],
-    staleTime: Infinity,
-  })
+export const fetchHemiEarnShares = async function (
+  queryClient: QueryClient,
+): Promise<ShareSkeleton[]> {
+  const configs = await queryClient.ensureQueryData(
+    hemiEarnAssetConfigsQueryOptions(),
+  )
 
-// Anchor `EarnAsset.address` to the curated token entry's address rather
-// than the raw constant value. `HEMI_EARN_TOKENS` stores addresses
-// lowercased, and `useTokenBalance` keys queries off whatever address it
-// was passed — using `token.address` here keeps both casings aligned across
-// the app so optimistic `setQueryData` after a deposit lands on the same
-// cache entry the balance UI is subscribed to.
-function buildAsset(address: Address): EarnAsset[] {
-  const token = getHemiEarnToken(address, hemi.id)
-  return token ? [{ address: token.address as Address, token }] : []
-}
+  // Resolve token metadata (symbol, decimals, logo, priceSymbol) through the
+  // shared token query — the curated token list with an on-chain erc20
+  // fallback. The pegged token lives on Ethereum mainnet (the staking vault's
+  // `asset()`), while share/deposit tokens are Hemi-side, so each is looked up
+  // on its own chain. Returns `undefined` so the share/asset is skipped when
+  // neither source resolves the token.
+  const resolveToken = async function (
+    address: Address,
+    chainId: RemoteChain['id'],
+  ): Promise<EvmToken | undefined> {
+    try {
+      return (await queryClient.ensureQueryData(
+        tokenQueryOptions({ address, chainId }),
+      )) as EvmToken
+    } catch {
+      return undefined
+    }
+  }
 
-export const fetchHemiEarnShares = async function ({
-  queryClient,
-}: {
-  queryClient: QueryClient
-}): Promise<ShareSkeleton[]> {
-  const supportedAssets = getHemiEarnSupportedAssets()
-  const shareAddresses = getHemiEarnShares()
-
+  // A share can accept several deposit assets, so the asset-config list repeats
+  // `share`/`remoteShare`; build one skeleton per unique share to avoid
+  // duplicate pools (and double-counted positions/TVL).
   const skeletons = await Promise.all(
-    shareAddresses.map(async function (shareAddress) {
+    uniqueShareConfigs(configs).map(async function ({
+      remoteShare,
+      share: shareAddress,
+    }) {
       const peggedAddress = await queryClient.ensureQueryData(
-        peggedTokenForShareQueryOptions(shareAddress),
+        vaultAssetQueryOptions(remoteShare),
       )
-      const shareToken = getHemiEarnToken(shareAddress, hemi.id)
-      const peggedToken = getHemiEarnToken(peggedAddress, hemi.id)
+      const [shareToken, peggedToken] = await Promise.all([
+        resolveToken(shareAddress, hemi.id),
+        resolveToken(peggedAddress, mainnet.id),
+      ])
       if (!shareToken || !peggedToken) return null
-      const assets = supportedAssets
-        .filter(entry => isAddressEqual(entry.share, shareAddress))
-        .flatMap(entry => buildAsset(entry.asset))
+      const tokens = await Promise.all(
+        configs
+          .filter(entry => isAddressEqual(entry.share, shareAddress))
+          .map(entry => resolveToken(entry.asset, hemi.id)),
+      )
+      const assets: EarnAsset[] = tokens
+        .filter((token): token is EvmToken => token !== undefined)
+        .map(token => ({ address: token.address as Address, token }))
       if (assets.length === 0) return null
-      return { assets, peggedToken, shareAddress, shareToken }
+      return {
+        assets,
+        peggedToken,
+        shareAddress,
+        shareToken,
+        stakingVault: remoteShare,
+      }
     }),
   )
 
   return skeletons.filter((s): s is ShareSkeleton => s !== null)
 }
 
-export const hemiEarnSharesQueryOptions = ({
-  queryClient,
-}: {
-  queryClient: QueryClient
-}) =>
+export const hemiEarnSharesQueryOptions = () =>
   queryOptions({
-    queryFn: () => fetchHemiEarnShares({ queryClient }),
+    queryFn: ({ client }) => fetchHemiEarnShares(client),
     queryKey: ['hemi-earn', 'shares'],
     staleTime: Infinity,
   })

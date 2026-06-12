@@ -1,3 +1,9 @@
+packages:
+  - 'packages/*'
+  - 'portal'
+  - 'portal-backend/api'
+  - 'portal-backend/cron/*'
+  - 'subgraphs/*'
 blockExoticSubdeps: true
 
 ignoredBuiltDependencies:
@@ -22,15 +28,8 @@ onlyBuiltDependencies:
 overrides:
   postcss: '8.5.14' # Needed as Next pins 8.4.31 exactly
 
-packages:
-  - 'packages/*'
-  - 'portal'
-  - 'portal-backend/api'
-  - 'portal-backend/cron/*'
-  - 'subgraphs/*'
-
 patchedDependencies:
-  '@hemilabs/token-list@2.6.1': 'patches/@hemilabs__token-list@2.6.1.patch'
+  '@hemilabs/token-list@3.0.0': patches/@hemilabs__token-list@3.0.0.patch
   '@hemilabs/wallet-watch-asset@1.0.2': 'patches/@hemilabs__wallet-watch-asset@1.0.2.patch'
   'coinselect@3.1.13': 'patches/coinselect@3.1.13.patch'
   'viem@*': 'patches/viem.patch'

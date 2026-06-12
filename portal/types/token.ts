@@ -11,6 +11,14 @@ export type Extensions = {
       tokenAddress?: Address
     }
   }
+  oft?: {
+    adapterAddress?: Address
+    peers?: {
+      [keyof: string]: {
+        tokenAddress?: Address
+      }
+    }
+  }
   protocol?: string
   // Use this to map which symbol should be used to map prices
   priceSymbol?: string

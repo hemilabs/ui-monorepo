@@ -1,34 +1,34 @@
 'use client'
 
 import { queryOptions } from '@tanstack/react-query'
-import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 import { totalAssets } from 'viem-erc4626/actions'
 
 // Exported so deposit/withdraw mutations can invalidate this entry after
-// settling on-chain.
+// settling on-chain. Keyed by the staking vault (the address actually read)
+// rather than the share OFT.
 export const earnTvlQueryKey = ({
   networkType,
-  shareAddress,
+  stakingVault,
 }: {
   networkType: string
-  shareAddress: string
-}) => ['hemi-earn', 'pools', networkType, shareAddress, 'totalAssets']
+  stakingVault: Address
+}) => ['hemi-earn', 'pools', networkType, stakingVault, 'totalAssets']
 
 export const earnTvlQueryOptions = ({
   networkType,
-  shareAddress,
+  stakingVault,
 }: {
   networkType: string
-  shareAddress: Address
+  stakingVault: Address
 }) =>
   queryOptions({
     queryFn: () =>
       totalAssets(getEvmL1PublicClient(mainnet.id), {
-        address: getStakingVaultForShare(shareAddress),
+        address: stakingVault,
       }),
-    queryKey: earnTvlQueryKey({ networkType, shareAddress }),
+    queryKey: earnTvlQueryKey({ networkType, stakingVault }),
     retry: false,
   })

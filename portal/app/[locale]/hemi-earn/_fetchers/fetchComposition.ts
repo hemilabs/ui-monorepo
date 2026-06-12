@@ -7,10 +7,7 @@ import { mainnet } from 'networks/mainnet'
 import { type Token } from 'types/token'
 import { type Address, formatUnits, isAddressEqual } from 'viem'
 
-import {
-  gatewayForAssetQueryOptions,
-  getAssetForShare,
-} from '../_hooks/gatewayForAsset'
+import { gatewayForShareQueryOptions } from '../_hooks/gatewayForShare'
 
 // Shape of each entry returned by `GET /analytics/treasury/:gatewayAddress`.
 // Token amounts (`totalDebt`, `withdrawable`, a strategy's `totalDebt`) are
@@ -144,7 +141,7 @@ export const fetchComposition = async function ({
   shareAddress: Address
 }): Promise<CompositionData> {
   const gatewayAddress = await queryClient.ensureQueryData(
-    gatewayForAssetQueryOptions(getAssetForShare(shareAddress)),
+    gatewayForShareQueryOptions(shareAddress),
   )
   // Whitelisted-token oracles are denominated in the gateway's peg unit, so a
   // single feed lookup for the peg symbol prices every token. "USD" pegs are

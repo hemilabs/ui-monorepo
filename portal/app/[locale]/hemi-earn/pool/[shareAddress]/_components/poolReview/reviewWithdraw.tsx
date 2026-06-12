@@ -264,13 +264,13 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   const { data: isCooldownEligible } = useIsCooldownEligible({
     account: address,
-    shareAddress: pool.shareAddress,
+    stakingVault: pool.stakingVault,
   })
   // Pool-level cooldown duration drives the static "Wait for the N-day
   // cooldown period" copy while we don't yet have a request to query
   // (pre-sign / pre-indexed).
   const { data: cooldownDurationSec } = useCooldownDuration({
-    shareAddress: pool.shareAddress,
+    stakingVault: pool.stakingVault,
   })
   // `claimableAt` is `string | null` — use `!= null` so a legitimate `'0'`
   // isn't conflated with "unset" the way a truthy-check would.

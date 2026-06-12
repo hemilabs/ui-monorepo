@@ -1,0 +1,63 @@
+# Multichain indexer for the Hemi Earn cross-chain request flow.
+#
+# The Router (on Hemi) mints a requestId and emits *Requested events; the Agent
+# (on Ethereum) processes the request and emits *Processed events. Both sides are
+# tied together by `requestId`, which is used as the Request entity id so each
+# event upserts the same entity regardless of which chain it arrives from.
+chains:
+  # ---- Hemi: the Router lives here ----
+  - contracts:
+      - address:
+          - '0x8a23DF259c6798F9eacC51Ae816461218c3acddc' # Router on Hemi.
+        events:
+          - event: 'DepositRequested(uint256 indexed requestId, address indexed asset, uint256 assets, uint256 amountOutMin, address indexed receiver, bool automatic)'
+          - event: 'RedeemRequested(uint256 indexed requestId, address indexed asset, uint256 shares, uint256 amountOutMin, address indexed receiver, bool automatic)'
+          - event: 'RequestFulfilled(uint256 indexed requestId, uint256 amount)'
+          - event: 'RequestCancelled(uint256 indexed requestId, uint256 amount)'
+          - event: 'RequestClaimed(uint256 indexed requestId)'
+          - event: 'RequestRecovered(uint256 indexed requestId)'
+          - event: 'CancellationRequested(uint256 indexed requestId)'
+        handler: src/mappings/eventHandlers.ts
+        name: Router
+    id: 43111
+    # Hemi is NOT served by Envio HyperSync (43111.hypersync.xyz 404s), so the
+    # Router is indexed over RPC (`for: sync` makes RPC the data source for both
+    # historical and real-time). The public RPC below works but is rate-limited;
+    # for production point this at a dedicated/paid Hemi RPC — or set the url to
+    # an env-var interpolation like {HEMI_RPC_URL} prefixed with a dollar sign
+    # (requires that variable to be set at codegen/run time).
+    # Note: RPC sync is significantly slower than HyperSync.
+    rpc:
+      for: sync
+      url: https://rpc.hemi.network/rpc
+    start_block: 4539427
+
+  # ---- Ethereum: the Agent lives here ----
+  - contracts:
+      # Index the PROXY — it is the event emitter. hemi-earn#115 upgraded its
+      # implementation (to 0x46e6ade9b7b59e151c5bcc877c9b90d50021553a) so the
+      # same proxy now emits the amount-carrying *Processed events.
+      - address:
+          - '0xfd07a07505f73c63a6f8ff03b7474a90c0b3c5ce' # Agent proxy on Ethereum.
+        events:
+          - event: 'DepositRequestReceived(uint256 indexed requestId, address asset, uint256 assets)'
+          - event: 'DepositRequestProcessed(uint256 indexed requestId, uint256 assets, uint256 staked, uint256 shares)'
+          - event: 'RedeemRequestReceived(uint256 indexed requestId, address share, address asset, uint256 shares)'
+          - event: 'RedeemRequestProcessed(uint256 indexed requestId, uint256 shares, uint256 unstaked, uint256 assets)'
+          - event: 'UnstakeRequested(uint256 indexed requestId, uint256 claimableAt)'
+          - event: 'RequestCancellationTriggered(uint256 indexed requestId)'
+          - event: 'RequestFailed(uint256 indexed requestId, bytes reason)'
+          - event: 'RequestRetried(uint256 indexed requestId)'
+        handler: src/mappings/eventHandlers.ts
+        name: Agent
+    id: 1
+    start_block: 25224437
+
+field_selection:
+  # `transaction.from` is the real initiator (msg.sender) — it is NOT in any event
+  # param, so it is read from the transaction. `hash` is used for provenance.
+  transaction_fields:
+    - from
+    - hash
+
+name: hemi-earn-requests

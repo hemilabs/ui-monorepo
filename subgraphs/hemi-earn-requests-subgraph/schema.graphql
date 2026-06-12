@@ -1,0 +1,45 @@
+enum RequestKind {
+  DEPOSIT
+  REDEEM
+}
+
+# Router-authoritative lifecycle status. Handlers guard transitions so a late
+# cross-chain event can never move a request back to an earlier status.
+enum RequestStatus {
+  PENDING
+  FULFILLED
+  CANCELLED
+  FINALIZED
+  RECOVERED
+}
+
+type Request {
+  amountIn: BigInt
+  amountOut: BigInt
+  amountOutMin: BigInt
+  asset: String
+  automatic: Boolean
+  cancellationRequested: Boolean!
+  cancellationRequestedAt: BigInt
+  cancelledAmount: BigInt
+  claimableAt: BigInt
+  claimTxHash: String
+  failed: Boolean!
+  # raw `reason` bytes from the Agent's RequestFailed event
+  failureReason: String
+  finalizedAt: BigInt
+  fulfilledAt: BigInt
+  id: ID!
+  initiator: String @index # indexed: looked up per initiator
+  kind: RequestKind
+  processedAt: BigInt
+  processTxHash: String
+  receivedAt: BigInt
+  receiver: String
+  recoverTxHash: String
+  requestedAt: BigInt
+  requestId: BigInt!
+  requestTxHash: String
+  retryCount: Int!
+  status: RequestStatus!
+}

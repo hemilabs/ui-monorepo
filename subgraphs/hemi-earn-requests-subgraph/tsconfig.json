@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "erasableSyntaxOnly": true,
+    "noEmit": true
+  },
+  "extends": "@tsconfig/node24/tsconfig.json",
+  "exclude": ["node_modules", ".envio"],
+  "include": ["src/**/*.ts", "tests/**/*.ts", "envio-env.d.ts"]
+}

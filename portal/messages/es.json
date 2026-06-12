@@ -20,6 +20,7 @@
         "by-token": "Por token",
         "position": "Posición",
         "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
+        "reserve-buffer": "Reserva de liquidez",
         "share": "Participación",
         "title": "Composición",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}"
@@ -28,19 +29,34 @@
       "drawer": {
         "approving": "Aprobando {symbol}",
         "deposit": {
-          "heading": "Revisar Depósito",
-          "subheading": "Complete los pasos restantes para depositar sus tokens."
+          "heading": "Revisar depósito de stake",
+          "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
         },
-        "deposit-token": "Depositar {symbol}",
+        "cooldown-ended": "Período de espera completado",
+        "stake-token": "Hacer stake de {symbol}",
+        "get-share-tokens": "Recibir share tokens",
+        "receive-token": "Recibir {symbol}",
+        "unstake-token": "Hacer unstake de {symbol}",
+        "wait-cooldown-countdown": "{days, plural, =0 {El período de espera termina en {hours}h} other {El período de espera termina en #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "El período de espera termina en menos de una hora",
+        "wait-cooldown-pending": "El período de espera es de {days, plural, one {# día} other {# días}}",
         "withdraw": {
-          "heading": "Revisar Retiro",
-          "subheading": "Complete los pasos restantes para retirar sus tokens."
-        },
-        "withdraw-token": "Retirar {symbol}"
+          "heading": "Revisar retiro de stake",
+          "subheading": "Su transacción ha sido enviada y está esperando confirmación en la blockchain."
+        }
       },
       "form": {
+        "amount-too-small": "Monto demasiado pequeño",
+        "asset-unavailable": "Activo no disponible",
+        "available-to-withdraw": "Disponible para retirar",
+        "bridging-fees": "Tarifas de bridge",
+        "cooldown-warning": "Retirar fondos tarda {days, plural, one {# día} other {# días}} en completarse.",
+        "cooldown-warning-fallback": "Retirar fondos tarda algunos días en completarse.",
+        "network-error": "Error al previsualizar — reintente",
         "total-fee": "Costo total de gas",
-        "withdrawing": "Retirando..."
+        "withdraw-share-tokens-as": "Retirar tokens de participación como",
+        "withdrawing": "Retirando...",
+        "you-will-receive": "Recibirá"
       },
       "here-is-your-tx": "Aquí está su transacción:",
       "historical-metrics": {
@@ -60,7 +76,40 @@
       "manage": "Gestionar",
       "pool-contract": "Contrato del fondo",
       "potential-rewards": "Recompensas potenciales",
+      "share-token": "Token de participación",
       "total-deposits": "Depósitos totales"
+    },
+    "transactions": {
+      "column": {
+        "amount": "Cantidad",
+        "date": "Fecha",
+        "status": "Estado",
+        "tx-hash": "Hash de Tx",
+        "type": "Tipo"
+      },
+      "connect-to-view": "Conecte su billetera para ver sus transacciones de earn.",
+      "deposit": "Depósito",
+      "drawer": {
+        "deposit-heading": "Detalles del depósito de stake",
+        "deposit-subheading": "Revise su transacción de depósito de stake.",
+        "step": {
+          "approval-needed": "Aprobación necesaria",
+          "approve-token": "Aprobar {symbol}",
+          "stake-token": "Hacer stake de {symbol}",
+          "get-share-tokens": "Recibir share tokens"
+        }
+      },
+      "nothing-here": "Aún no hay nada aquí",
+      "nothing-here-subtitle": "Sus transacciones aparecerán una vez que comience.",
+      "status": {
+        "deposited": "Depositado",
+        "in-progress": "En progreso",
+        "tx-failed": "Tx fallida"
+      },
+      "subtitle": "Realice un seguimiento del estado de sus depósitos y retiros.",
+      "title": "Mis transacciones de earn",
+      "view": "Ver",
+      "withdrawal": "Retiro"
     }
   },
   "bitcoin-yield": {

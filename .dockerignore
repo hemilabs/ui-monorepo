@@ -1,0 +1,17 @@
+# Used by the images that build from the repo root (portal-backend/api and the
+# portal-backend/cron/* services).
+# Keep all package.json, pnpm-lock.yaml, pnpm-workspace.yaml and patches/
+# pnpm needs them to resolve the workspace.
+**/node_modules
+**/.next
+**/dist
+**/out
+**/coverage
+**/.turbo
+**/*.tsbuildinfo
+**/*.log
+**/.DS_Store
+**/.env*
+.git
+.github
+portal-backend/api/scripts

@@ -1,4 +1,6 @@
 import fetch from 'fetch-plus-plus'
+import type { LockupMonths } from 'genesis-drop-actions'
+import type { StakingPosition } from 'types/stakingDashboard'
 import type {
   EvmDepositOperation,
   ToBtcWithdrawOperation,
@@ -18,7 +20,7 @@ import { getWithdrawals } from 'viem/op-stack'
 import { isL2NetworkId } from './chain'
 
 const getSubgraphBaseUrl = (chainId: Chain['id']) =>
-  `${process.env.NEXT_PUBLIC_SUBGRAPHS_API_URL}/${chainId}`
+  `${process.env.NEXT_PUBLIC_PORTAL_API_URL}/subgraphs/${chainId}`
 
 const request = <TResponse>(
   url: string,
@@ -173,7 +175,7 @@ export const getWithdrawalProofClaimTxs = function (
   // When proving (and claiming) withdrawals, the storageKey where the proof will be saved
   // in the contract is based on hashing a withdrawal object. See this hashing in
   // https://github.com/hemilabs/optimism/blob/bde08fd3e335c235455b4cee6a6f8dbf88446201/packages/contracts-bedrock/src/L1/OptimismPortal2.sol#L542
-  // The same happens when claiming. As this hash is emitted in the Prove and Claim events, the subgraph-api allows us to filter by it.
+  // The same happens when claiming. As this hash is emitted in the Prove and Claim events, the subgraphs API allows us to filter by it.
   // Because of that, we need to regenerate the hash to be able to query the events indexed.
   // The code below is an implementation based of
   // https://github.com/hemilabs/optimism/blob/bde08fd3e335c235455b4cee6a6f8dbf88446201/packages/contracts-bedrock/src/libraries/Hashing.sol#L107
@@ -218,4 +220,110 @@ export const getBtcDepositInfo = async function ({
   return request<{ netSatsAfterFee: string; transactionHash: Hash } | null>(
     `${url}/deposits/${depositTxId}/btc`,
   ).catch(() => null)
+}
+
+/**
+ * Raw staking position as returned by the subgraph API, with numeric fields
+ * serialized as strings.
+ */
+type StakingPositionApiResult = Omit<
+  StakingPosition,
+  | 'amount'
+  | 'blockNumber'
+  | 'blockTimestamp'
+  | 'lockTime'
+  | 'timestamp'
+  | 'tokenId'
+> & {
+  amount: string
+  blockNumber: string
+  blockTimestamp: string
+  lockTime: string
+  timestamp: string
+  tokenId: string
+}
+
+/**
+ * Retrieves the staking (locked) positions for an address.
+ * @param params Parameters of the call.
+ * @param params.address The address of the position owner.
+ * @param params.chainId Hemi chain Id.
+ * @returns List of staking positions, or an empty list on failure.
+ */
+export const getLockedPositions = function ({
+  address,
+  chainId,
+}: {
+  address: Address
+  chainId: Chain['id']
+}) {
+  const url = getSubgraphBaseUrl(chainId)
+
+  return request<{ positions: StakingPositionApiResult[] }>(
+    `${url}/locks/${address}`,
+  )
+    .then(({ positions }) =>
+      positions.map(
+        position =>
+          ({
+            ...position,
+            amount: BigInt(position.amount),
+            blockNumber: BigInt(position.blockNumber),
+            blockTimestamp: BigInt(position.blockTimestamp),
+            lockTime: BigInt(position.lockTime),
+            timestamp: BigInt(position.timestamp),
+            tokenId: BigInt(position.tokenId),
+          }) as StakingPosition,
+      ),
+    )
+    .catch(() => [] as StakingPosition[])
+}
+
+/**
+ * Raw token claim transaction as returned by the subgraph API, with the amount
+ * serialized as a string.
+ */
+export type ClaimTransaction = {
+  account: Address
+  amount: string
+  lockupMonths: LockupMonths
+  ratio: number
+  transactionHash: Hash
+}
+
+export type ParsedClaimTransaction = Omit<ClaimTransaction, 'amount'> & {
+  amount: bigint
+}
+
+/**
+ * Retrieves the token claim transaction for an address and claim group.
+ * @param params Parameters of the call.
+ * @param params.address The address of the claimer.
+ * @param params.chainId Hemi chain Id.
+ * @param params.claimGroupId The id of the claim group to query.
+ * @returns The claim transaction, or null if not found.
+ */
+export const getClaimTransaction = function ({
+  address,
+  chainId,
+  claimGroupId,
+}: {
+  address: Address
+  chainId: Chain['id']
+  claimGroupId: number
+}) {
+  const url = getSubgraphBaseUrl(chainId)
+
+  return request<ClaimTransaction>(`${url}/claim/${address}/${claimGroupId}`)
+    .then(
+      data =>
+        ({
+          account: data.account,
+          amount: BigInt(data.amount),
+          lockupMonths: data.lockupMonths,
+          ratio: data.ratio,
+          transactionHash: data.transactionHash,
+        }) satisfies ParsedClaimTransaction,
+    )
+    .catch(() => null)
 }

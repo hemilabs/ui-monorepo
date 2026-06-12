@@ -15,7 +15,7 @@ import { createTestQueryClient } from '../../../../createTestQueryClient'
 // through the chainClients → transport import chain.
 vi.mock('utils/chainClients', () => ({
   getEvmL1PublicClient: vi.fn(),
-  getHemiClient: vi.fn(),
+  getPublicClient: vi.fn(),
 }))
 
 // `fetchEarnPositions` calls `queryClient.fetchQuery(shareBalanceQueryOptions)`

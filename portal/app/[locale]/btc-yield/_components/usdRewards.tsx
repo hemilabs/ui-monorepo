@@ -7,13 +7,11 @@ import { TokenWithBalance } from 'types/token'
 import { formatFiatNumber } from 'utils/format'
 import { type MerklRewards } from 'utils/merkl'
 import { calculateUsdValue } from 'utils/prices'
-import { useConfig } from 'wagmi'
 
 type Props = {
   merklRewards: MerklRewards
 }
 export const UsdRewards = function ({ merklRewards }: Props) {
-  const config = useConfig()
   const hemi = useHemi()
   const { data: prices, isError: isPricesError } = useTokenPrices()
 
@@ -24,7 +22,6 @@ export const UsdRewards = function ({ merklRewards }: Props) {
       tokenQueryOptions({
         address,
         chainId: hemi.id,
-        config,
       }),
     ),
   })

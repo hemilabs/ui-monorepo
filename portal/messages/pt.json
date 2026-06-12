@@ -20,6 +20,7 @@
         "by-token": "Por token",
         "position": "Posição",
         "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
+        "reserve-buffer": "Reserva de liquidez",
         "share": "Participação",
         "title": "Composição",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}"
@@ -28,19 +29,34 @@
       "drawer": {
         "approving": "Aprovando {symbol}",
         "deposit": {
-          "heading": "Revisar Depósito",
-          "subheading": "Complete as etapas restantes para depositar seus tokens."
+          "heading": "Revisar depósito de stake",
+          "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
         },
-        "deposit-token": "Depositar {symbol}",
+        "cooldown-ended": "Período de espera concluído",
+        "stake-token": "Fazer stake de {symbol}",
+        "get-share-tokens": "Receber share tokens",
+        "receive-token": "Receber {symbol}",
+        "unstake-token": "Fazer unstake de {symbol}",
+        "wait-cooldown-countdown": "{days, plural, =0 {O período de espera termina em {hours}h} other {O período de espera termina em #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "O período de espera termina em menos de uma hora",
+        "wait-cooldown-pending": "O período de espera é de {days, plural, one {# dia} other {# dias}}",
         "withdraw": {
-          "heading": "Revisar Saque",
-          "subheading": "Complete as etapas restantes para sacar seus tokens."
-        },
-        "withdraw-token": "Sacar {symbol}"
+          "heading": "Revisar saque de stake",
+          "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
+        }
       },
       "form": {
-        "total-fee": "Custo total de gas",
-        "withdrawing": "Sacando..."
+        "amount-too-small": "Valor muito pequeno",
+        "asset-unavailable": "Ativo indisponível",
+        "available-to-withdraw": "Disponível para sacar",
+        "bridging-fees": "Taxas de bridge",
+        "cooldown-warning": "Sacar fundos leva {days, plural, one {# dia} other {# dias}} para concluir.",
+        "cooldown-warning-fallback": "Sacar fundos leva alguns dias para concluir.",
+        "network-error": "Falha no preview — tente de novo",
+        "total-fee": "Custo total de gás",
+        "withdraw-share-tokens-as": "Sacar tokens de participação como",
+        "withdrawing": "Sacando...",
+        "you-will-receive": "Você vai receber"
       },
       "here-is-your-tx": "Aqui está sua transação:",
       "historical-metrics": {
@@ -60,7 +76,40 @@
       "manage": "Gerenciar",
       "pool-contract": "Contrato do fundo",
       "potential-rewards": "Recompensas potenciais",
+      "share-token": "Token de participação",
       "total-deposits": "Depósitos totais"
+    },
+    "transactions": {
+      "column": {
+        "amount": "Quantia",
+        "date": "Data",
+        "status": "Status",
+        "tx-hash": "Hash da Tx",
+        "type": "Tipo"
+      },
+      "connect-to-view": "Conecte sua carteira para ver suas transações de earn.",
+      "deposit": "Depósito",
+      "drawer": {
+        "deposit-heading": "Detalhes do depósito de stake",
+        "deposit-subheading": "Revise sua transação de depósito de stake.",
+        "step": {
+          "approval-needed": "Aprovação necessária",
+          "approve-token": "Aprovar {symbol}",
+          "stake-token": "Fazer stake de {symbol}",
+          "get-share-tokens": "Receber share tokens"
+        }
+      },
+      "nothing-here": "Nada por aqui ainda",
+      "nothing-here-subtitle": "Suas transações aparecerão assim que você começar.",
+      "status": {
+        "deposited": "Depositado",
+        "in-progress": "Em andamento",
+        "tx-failed": "Tx falhou"
+      },
+      "subtitle": "Acompanhe o status de seus depósitos e saques.",
+      "title": "Minhas transações de earn",
+      "view": "Ver",
+      "withdrawal": "Saque"
     }
   },
   "bitcoin-yield": {

@@ -7,6 +7,7 @@ import {
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { TokenLogo } from 'components/tokenLogo'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { encodeRequestRedeem } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
@@ -14,14 +15,26 @@ import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'next-intl'
+import { type ReactNode } from 'react'
+import { type EvmToken } from 'types/token'
 import { getNativeToken } from 'utils/nativeToken'
+import { secondsToDays, secondsToHours, secondsToWholeDays } from 'utils/time'
 import { parseTokenUnits } from 'utils/token'
-import { type Address, formatUnits } from 'viem'
+import { type Address, type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
+import {
+  REDEEM_SLIPPAGE_BPS,
+  applySlippage,
+} from '../../../../_constants/slippage'
+import { useCooldownDuration } from '../../../../_hooks/useCooldownDuration'
+import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
+import { useIsCooldownEligible } from '../../../../_hooks/useIsCooldownEligible'
+import { hashesMatch } from '../../../../_utils'
 import { usePoolForm } from '../../_context/poolFormContext'
+import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
-import { useAssetsToShares } from '../../_hooks/useWithdrawFees'
+import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
 import {
   WithdrawStatus,
   type WithdrawStatusType,
@@ -33,6 +46,206 @@ type Props = {
   onClose: VoidFunction
 }
 
+type CooldownPostAction = {
+  description: ReactNode
+  status: ProgressStatusType
+}
+
+type CooldownInputs = {
+  cooldownDurationSec: number | undefined
+  cooldownRemainingSec: number | undefined
+  isCooldownEligible: boolean | undefined
+  subgraphStatus: string | undefined
+  t: ReturnType<typeof useTranslations<'hemi-earn.pool.drawer'>>
+  unstakeMined: boolean
+}
+
+// Maps the local withdraw status, subgraph row, and cooldown state to the
+// receive step's progress + terminal hash. Module-level so the component
+// stays under the complexity threshold.
+//
+// The step only flips to PROGRESS once the user is actually waiting on the
+// remote claim — either because they're whitelisted (no cooldown) or
+// because the cooldown timer has elapsed. Otherwise it stays NOT_READY so
+// the drawer doesn't show two simultaneous spinners (one on the cooldown
+// sub-step, one here).
+function buildReceiveStep({
+  cooldownRemainingSec,
+  isCooldownEligible,
+  receiveToken,
+  subgraphRow,
+  t,
+  withdrawStatus,
+}: {
+  cooldownRemainingSec: number | undefined
+  isCooldownEligible: boolean | undefined
+  receiveToken: EvmToken
+  subgraphRow:
+    | {
+        claimTxHash: Hash | null
+        recoverTxHash: Hash | null
+        status: string
+      }
+    | undefined
+  t: ReturnType<typeof useTranslations<'hemi-earn.pool.drawer'>>
+  withdrawStatus: WithdrawStatusType
+}): StepPropsWithoutPosition {
+  // Only FINALIZED actually delivers the underlying. RECOVERED returns
+  // shares to the user (not the asset this step is labeled with), so the
+  // step never flips COMPLETED in that case — recovery UX is handled
+  // outside this drawer (tracked in its own follow-up).
+  const claimTxHash =
+    subgraphRow?.status === 'FINALIZED'
+      ? subgraphRow.claimTxHash ?? undefined
+      : undefined
+  const unstakeMined = withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED
+  // Two distinct questions, kept as separate predicates so each reads
+  // for what it actually asks:
+  //   - `needsCooldown`: does this user have to wait at all? Defaults
+  //     to true while `useIsCooldownEligible` is loading — cooldown
+  //     active is the normal case; whitelist / disabled-cooldown are
+  //     the exception.
+  //   - `cooldownElapsed`: for users that DO wait, has the timer
+  //     finished?
+  const needsCooldown = isCooldownEligible !== false
+  const cooldownElapsed = cooldownRemainingSec === 0
+  const status: ProgressStatusType = claimTxHash
+    ? ProgressStatus.COMPLETED
+    : unstakeMined && (!needsCooldown || cooldownElapsed)
+      ? ProgressStatus.PROGRESS
+      : ProgressStatus.NOT_READY
+  return {
+    description: (
+      <div className="flex items-center gap-x-2">
+        <TokenLogo size="small" token={receiveToken} />
+        <span>{t('receive-token', { symbol: receiveToken.symbol })}</span>
+      </div>
+    ),
+    status,
+    txHash: claimTxHash,
+  }
+}
+
+const FAILED_STATUSES: WithdrawStatusType[] = [
+  WithdrawStatus.APPROVAL_TX_FAILED,
+  WithdrawStatus.WITHDRAW_TX_FAILED,
+]
+
+const renderRetryCta = (status: WithdrawStatusType) =>
+  FAILED_STATUSES.includes(status) ? <RetryWithdraw /> : null
+
+// Builds the `data:` argument for `useEstimateGas`. Module-level so the
+// component doesn't pay the branching tax for this conditional encode.
+function encodeRedeemForGasEstimate({
+  account,
+  assetAddress,
+  assetsOutMin,
+  quote,
+  shares,
+}: {
+  account: Address | undefined
+  assetAddress: Address
+  assetsOutMin: bigint
+  quote:
+    | { callbackFee: bigint; isInstant: boolean; nativeFee: bigint }
+    | undefined
+  shares: bigint
+}) {
+  if (!account || !quote || shares <= BigInt(0)) return undefined
+  return encodeRequestRedeem({
+    asset: assetAddress,
+    assetsOutMin,
+    callbackFee: quote.callbackFee,
+    isInstant: quote.isInstant,
+    operator: account,
+    receiver: account,
+    shares,
+  })
+}
+
+// Decides what (if anything) to render under the Unstake step as a clock
+// sub-step. Pure function so the component's complexity stays low.
+//
+// Mirrors the tunnel's wait-step pattern (e.g. `reviewEvmWithdrawal`):
+// the sub-step stays mounted across its whole lifecycle (NOT_READY →
+// PROGRESS → COMPLETED) so the user keeps a visible milestone even
+// after the wait period elapses. The only case we hide it entirely is
+// when the user simply doesn't have a cooldown (whitelist / disabled).
+function deriveCooldownPostAction({
+  cooldownDurationSec,
+  cooldownRemainingSec,
+  isCooldownEligible,
+  subgraphStatus,
+  t,
+  unstakeMined,
+}: CooldownInputs): CooldownPostAction | undefined {
+  if (isCooldownEligible === false) return undefined
+  // The cooldown is effectively over once any of:
+  //   - the local timer elapsed
+  //   - the subgraph row reached CLAIMED (auto-claim fired the moment
+  //     the cooldown matured)
+  //   - the subgraph row reached RECOVERED (cancel/recovery ended the
+  //     cooldown early)
+  // Keep the sub-step visible as a COMPLETED milestone — without this,
+  // an auto-claim landing seconds after the timer hits zero would make
+  // the sub-step disappear right when the user expects to see it tick
+  // over to "done".
+  const cooldownOver =
+    cooldownRemainingSec === 0 ||
+    subgraphStatus === 'FINALIZED' ||
+    subgraphStatus === 'RECOVERED'
+  if (cooldownOver) {
+    return {
+      description: t('cooldown-ended'),
+      status: ProgressStatus.COMPLETED,
+    }
+  }
+  // Duration still loading — render nothing for now; the postAction
+  // shows up once the on-chain read settles.
+  if (cooldownDurationSec === undefined) return undefined
+
+  const days = secondsToWholeDays(cooldownDurationSec)
+
+  if (!unstakeMined) {
+    return {
+      description: t('wait-cooldown-pending', { days }),
+      status: ProgressStatus.NOT_READY,
+    }
+  }
+
+  if (cooldownRemainingSec === undefined) {
+    return {
+      description: t('wait-cooldown-pending', { days }),
+      status: ProgressStatus.PROGRESS,
+    }
+  }
+
+  // Sub-hour remaining: avoid the misleading "0h" by collapsing to a
+  // generic "less than an hour" copy. Tick interval is at minute
+  // resolution, so showing a precise minute countdown would lie about
+  // freshness; the shorter copy is honest about where we are.
+  if (cooldownRemainingSec < 3600) {
+    return {
+      description: t('wait-cooldown-countdown-soon'),
+      status: ProgressStatus.PROGRESS,
+    }
+  }
+
+  const remainingDays = Math.floor(secondsToDays(cooldownRemainingSec))
+  const remainingHours = Math.floor(
+    secondsToHours(cooldownRemainingSec - remainingDays * 86400),
+  )
+  return {
+    description: t('wait-cooldown-countdown', {
+      days: remainingDays,
+      hours: remainingHours,
+    }),
+    status: ProgressStatus.PROGRESS,
+  }
+}
+
+// Drawer opens after the user signs the first wallet prompt (approval if
+// needed, otherwise the redeem).
 export const ReviewWithdraw = function ({ onClose }: Props) {
   const { input, pool, selectedAsset, withdrawOperation } = usePoolForm()
   const t = useTranslations('hemi-earn.pool.drawer')
@@ -40,17 +253,51 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const chain = useChain(chainId)
   const { address } = useAccount()
 
+  // Shared subscription with the layout-mounted watcher; lets the new
+  // receive step flip to COMPLETED off the subgraph status.
+  const { data: subgraphRows = [] } = useEarnTransactionsQuery()
+  const subgraphRow = subgraphRows.find(
+    r =>
+      r.kind === 'REDEEM' &&
+      hashesMatch(r.requestTxHash, withdrawOperation?.transactionHash),
+  )
+
+  const { data: isCooldownEligible } = useIsCooldownEligible({
+    account: address,
+    shareAddress: pool.shareAddress,
+  })
+  // Pool-level cooldown duration drives the static "Wait for the N-day
+  // cooldown period" copy while we don't yet have a request to query
+  // (pre-sign / pre-indexed).
+  const { data: cooldownDurationSec } = useCooldownDuration({
+    shareAddress: pool.shareAddress,
+  })
+  // `claimableAt` is `string | null` — use `!= null` so a legitimate `'0'`
+  // isn't conflated with "unset" the way a truthy-check would.
+  const cooldownRemainingSec = useEarnCooldownRemaining(
+    subgraphRow?.claimableAt != null
+      ? BigInt(subgraphRow.claimableAt)
+      : undefined,
+  )
+
   const withdrawStatus =
     withdrawOperation?.status ?? WithdrawStatus.APPROVAL_TX_COMPLETED
 
-  const amount = parseTokenUnits(input, selectedAsset.token)
+  // Input is in share-token units (svetBTC); the Router burns shares
+  // directly. `assetsOutMin` is derived from the asset preview below.
+  const shares = parseTokenUnits(input, pool.shareToken)
   const routerAddress = getHemiEarnRouterAddress()
 
-  const { data: { shares } = { shares: BigInt(0) } } = useAssetsToShares({
-    amount,
+  const { data: { assetOut } = { assetOut: BigInt(0) } } = useSharesToAssets({
     assetAddress: selectedAsset.address,
     shareAddress: pool.shareAddress,
+    shares,
   })
+
+  const assetsOutMin =
+    assetOut > BigInt(0)
+      ? applySlippage(assetOut, REDEEM_SLIPPAGE_BPS)
+      : BigInt(0)
 
   const { needsApproval } = useNeedsApproval({
     address: pool.shareAddress,
@@ -71,22 +318,21 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     })
 
   const { data: quote } = useQuoteRedeem({
+    account: address,
     asset: selectedAsset.address,
+    shareAddress: pool.shareAddress,
     shares,
   })
 
   const { data: withdrawGasUnits, isError: isWithdrawGasUnitsError } =
     useEstimateGas({
-      data:
-        address && quote && shares > BigInt(0)
-          ? encodeRequestRedeem({
-              asset: selectedAsset.address,
-              fulfillmentFee: quote.fulfillmentFee,
-              operator: address,
-              receiver: address,
-              shares,
-            })
-          : undefined,
+      data: encodeRedeemForGasEstimate({
+        account: address,
+        assetAddress: selectedAsset.address,
+        assetsOutMin,
+        quote,
+        shares,
+      }),
       query: { enabled: !!address && shares > BigInt(0) && !!quote },
       to: routerAddress as Address,
       value: quote?.nativeFee,
@@ -130,13 +376,6 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       [WithdrawStatus.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
     }
 
-    const getStatus = function () {
-      if (withdrawStatus === undefined) {
-        return ProgressStatus.COMPLETED
-      }
-      return statusMap[withdrawStatus] ?? ProgressStatus.COMPLETED
-    }
-
     return {
       description: (
         <ChainLabel
@@ -151,12 +390,12 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         isError: isApprovalGasFeesError,
         show: showFees,
       }),
-      status: getStatus(),
+      status: statusMap[withdrawStatus] ?? ProgressStatus.COMPLETED,
       txHash: withdrawOperation?.approvalTxHash,
     }
   }
 
-  const addWithdrawStep = function (): StepPropsWithoutPosition {
+  const addUnstakeStep = function (): StepPropsWithoutPosition {
     const statusMap: Record<WithdrawStatusType, ProgressStatusType> = {
       [WithdrawStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
       [WithdrawStatus.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
@@ -179,17 +418,24 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
     return {
       description: (
-        <ChainLabel
-          active={withdrawStatus === WithdrawStatus.WITHDRAW_TX_PENDING}
-          chainId={chainId}
-          label={t('withdraw-token', { symbol: selectedAsset.token.symbol })}
-        />
+        <div className="flex items-center gap-x-2">
+          <TokenLogo size="small" token={pool.shareToken} />
+          <span>{t('unstake-token', { symbol: pool.shareToken.symbol })}</span>
+        </div>
       ),
       explorerChainId: chainId,
       fees: getStepFees({
         fee: withdrawLineTotal,
         isError: isWithdrawGasFeesError,
         show: showFees,
+      }),
+      postAction: deriveCooldownPostAction({
+        cooldownDurationSec,
+        cooldownRemainingSec,
+        isCooldownEligible,
+        subgraphStatus: subgraphRow?.status,
+        t,
+        unstakeMined: withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED,
       }),
       status: statusMap[withdrawStatus] ?? ProgressStatus.NOT_READY,
       txHash: withdrawOperation?.transactionHash,
@@ -201,27 +447,29 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     if (needsApproval || withdrawOperation?.approvalTxHash) {
       steps.push(addApprovalStep())
     }
-    steps.push(addWithdrawStep())
+    steps.push(addUnstakeStep())
+    steps.push(
+      buildReceiveStep({
+        cooldownRemainingSec,
+        isCooldownEligible,
+        receiveToken: selectedAsset.token,
+        subgraphRow,
+        t,
+        withdrawStatus,
+      }),
+    )
     return steps
   }
 
-  const getCallToAction = (status: WithdrawStatusType) =>
-    [
-      WithdrawStatus.APPROVAL_TX_FAILED,
-      WithdrawStatus.WITHDRAW_TX_FAILED,
-    ].includes(status) ? (
-      <RetryWithdraw />
-    ) : null
-
   return (
     <Operation
-      amount={amount.toString()}
-      callToAction={getCallToAction(withdrawStatus)}
+      amount={withdrawOperation?.amountIn ?? shares.toString()}
+      callToAction={renderRetryCta(withdrawStatus)}
       heading={t('withdraw.heading')}
       onClose={onClose}
       steps={getSteps()}
       subheading={t('withdraw.subheading')}
-      token={selectedAsset.token}
+      token={pool.shareToken}
     />
   )
 }

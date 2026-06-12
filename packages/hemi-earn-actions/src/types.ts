@@ -64,6 +64,12 @@ export type ClaimDepositEvents = CommonEvents & SettlementEvents
 export type ClaimRedeemEvents = CommonEvents & SettlementEvents
 export type RecoverDepositEvents = CommonEvents & SettlementEvents
 export type RecoverRedeemEvents = CommonEvents & SettlementEvents
+// `Router.cancel(id)` only emits `CancellationRequested` and never moves the
+// request out of PENDING — the user still needs to wait for the keeper-driven
+// Agent cancel + `recoverRedeem` follow-ups. The event vocabulary still maps
+// onto `SettlementEvents` because the tx flow here is identical: one Hemi
+// write with no allowance / no quote.
+export type CancelRedeemEvents = CommonEvents & SettlementEvents
 
 // Mirrors the on-chain `Kind` enum from Router.sol (DEPOSIT = 0, REDEEM = 1).
 export type RequestKind = 0 | 1

@@ -53,7 +53,7 @@ export const useGetCompositionColumns = function () {
         {
           cell: ({ row }) => (
             <span className="text-sm font-medium text-neutral-950">
-              {row.original.share}%
+              {formatPercentage(row.original.share)}
             </span>
           ),
           header: () => <Header text={t('share')} />,

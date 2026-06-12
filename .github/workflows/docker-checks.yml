@@ -3,12 +3,18 @@ name: Docker Checks
 on:
   pull_request:
     paths:
+      # portal-backend/api bundles these workspace packages into its image via
+      # `pnpm deploy`, so changes to them must re-run its checks. Ideally this
+      # would be dependency-aware via `pnpm --filter "...[ref]"`, but that needs
+      # a dynamic-matrix rework — tracked for a future PR/issue.
+      - 'packages/ve-hemi-actions/**'
+      - 'packages/ve-hemi-rewards/**'
       - 'portal-backend/**'
-      - 'subgraph-api/**'
   push:
     paths:
+      - 'packages/ve-hemi-actions/**'
+      - 'packages/ve-hemi-rewards/**'
       - 'portal-backend/**'
-      - 'subgraph-api/**'
 
 permissions:
   contents: read
@@ -24,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - run: docker build --tag ${{ matrix.image }}:local ${{ matrix.context }}
+      - run: docker build --tag ${{ matrix.image }}:local ${{ matrix.dockerfile && format('-f {0} ', matrix.dockerfile) || '' }}.
       - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -40,13 +46,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - context: portal-backend/api
+          - dockerfile: portal-backend/api/Dockerfile
             image: hemilabs/portal-backend-api
-          - context: portal-backend/cron/hemi-supply
+          - dockerfile: portal-backend/cron/hemi-supply/Dockerfile
             image: hemilabs/hemi-supply-cron
-          - context: portal-backend/cron/token-prices
+          - dockerfile: portal-backend/cron/token-prices/Dockerfile
             image: hemilabs/token-prices-cron
-          - context: portal-backend/cron/vaults-monitor
+          - dockerfile: portal-backend/cron/vaults-monitor/Dockerfile
             image: hemilabs/vaults-monitor-cron
-          - context: subgraph-api
-            image: hemilabs/subgraph-api

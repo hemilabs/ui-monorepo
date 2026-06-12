@@ -1,5 +1,4 @@
 export {
-  HEMI_EARN_AGENT_ADDRESS,
   HEMI_EARN_ROUTER_ADDRESS,
   HEMI_EARN_SHARES,
   HEMI_EARN_SHARES_REGISTRY,
@@ -7,8 +6,6 @@ export {
   type HemiEarnAsset,
   type HemiEarnShareEntry,
   SVETBTC_OFT_ADDRESS,
-  getGatewayForShare,
-  getHemiEarnAgentAddress,
   getHemiEarnRouterAddress,
   getHemiEarnShares,
   getHemiEarnSupportedAssets,
@@ -17,6 +14,7 @@ export {
 } from './src/constants'
 
 export type {
+  CancelRedeemEvents,
   ClaimDepositEvents,
   ClaimRedeemEvents,
   RecoverDepositEvents,

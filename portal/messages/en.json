@@ -20,6 +20,7 @@
         "by-token": "By token",
         "position": "Position",
         "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
+        "reserve-buffer": "Reserve Buffer",
         "share": "Share",
         "title": "Composition",
         "tokens-count": "{count, plural, one {# token} other {# tokens}}"
@@ -28,19 +29,34 @@
       "drawer": {
         "approving": "Approving {symbol}",
         "deposit": {
-          "heading": "Review Deposit",
-          "subheading": "Complete the remaining steps to deposit your tokens."
+          "heading": "Review stake deposit",
+          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
         },
-        "deposit-token": "Deposit {symbol}",
+        "cooldown-ended": "Cooldown period complete",
+        "stake-token": "Stake {symbol}",
+        "get-share-tokens": "Get share tokens",
+        "receive-token": "Receive {symbol}",
+        "unstake-token": "Unstake {symbol}",
+        "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "Cooldown ends in less than an hour",
+        "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
         "withdraw": {
-          "heading": "Review Withdrawal",
-          "subheading": "Complete the remaining steps to withdraw your tokens."
-        },
-        "withdraw-token": "Withdraw {symbol}"
+          "heading": "Review stake withdrawal",
+          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
+        }
       },
       "form": {
+        "amount-too-small": "Amount too small",
+        "asset-unavailable": "Asset unavailable",
+        "available-to-withdraw": "Available to withdraw",
+        "bridging-fees": "Bridging fees",
+        "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
+        "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
+        "network-error": "Preview failed — try again",
         "total-fee": "Total gas fee",
-        "withdrawing": "Withdrawing..."
+        "withdraw-share-tokens-as": "Withdraw share tokens as",
+        "withdrawing": "Withdrawing...",
+        "you-will-receive": "You'll receive"
       },
       "here-is-your-tx": "Here's your transaction:",
       "historical-metrics": {
@@ -60,7 +76,40 @@
       "manage": "Manage",
       "pool-contract": "Pool Contract",
       "potential-rewards": "Potential rewards",
+      "share-token": "Share token",
       "total-deposits": "Total deposits"
+    },
+    "transactions": {
+      "column": {
+        "amount": "Amount",
+        "date": "Date",
+        "status": "Status",
+        "tx-hash": "Tx Hash",
+        "type": "Type"
+      },
+      "connect-to-view": "Connect your wallet to view your earn transactions.",
+      "deposit": "Deposit",
+      "drawer": {
+        "deposit-heading": "Stake deposit details",
+        "deposit-subheading": "Review your stake deposit transaction.",
+        "step": {
+          "approval-needed": "Approval needed",
+          "approve-token": "Approve {symbol}",
+          "stake-token": "Stake {symbol}",
+          "get-share-tokens": "Get share tokens"
+        }
+      },
+      "nothing-here": "Nothing here yet",
+      "nothing-here-subtitle": "Your transactions will appear once you get started.",
+      "status": {
+        "deposited": "Deposited",
+        "in-progress": "In progress",
+        "tx-failed": "Tx Failed"
+      },
+      "subtitle": "Track the status of your deposits and withdrawals.",
+      "title": "My earn transactions",
+      "view": "View",
+      "withdrawal": "Withdrawal"
     }
   },
   "bitcoin-yield": {

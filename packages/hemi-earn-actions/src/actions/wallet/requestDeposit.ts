@@ -40,7 +40,7 @@ const runRequestDeposit = ({
   account,
   amount,
   asset,
-  fulfillmentFee,
+  callbackFee,
   operator,
   receiver,
   routerAddress = getHemiEarnRouterAddress(),
@@ -50,15 +50,16 @@ const runRequestDeposit = ({
   account: Address
   amount: bigint
   asset: Address
-  fulfillmentFee: bigint
+  callbackFee: bigint
   // Address authorized to call `Agent.cancel(id)` on the remote chain.
   // Contract reverts with `ZeroAddress` if `0x0` is passed.
   operator: Address
   receiver: Address
   routerAddress?: Address
   // Minimum shares accepted on fulfillment (slippage protection enforced
-  // on the remote chain). Defaults to `0n` until the asset → shares
-  // conversion is wired up; phase 2 will compute this from the share price.
+  // on the remote chain). Defaults to `0n` when omitted; portal callers
+  // compute this via `applySlippage` against the UX_SPEC defaults (see
+  // `portal/.../hemi-earn/_constants/slippage.ts`).
   sharesOutMin?: bigint
   walletClient: WalletClient
 }) =>
@@ -88,8 +89,8 @@ const runRequestDeposit = ({
       const nativeFee = await quoteDeposit({
         asset,
         assets: amount,
+        callbackFee,
         client: walletClient,
-        fulfillmentFee,
         routerAddress,
       }).catch(function (error) {
         emitter.emit('quote-failed', error)
@@ -155,7 +156,7 @@ const runRequestDeposit = ({
           receiver,
           operator,
           true,
-          fulfillmentFee,
+          callbackFee,
         ],
         chain: walletClient.chain,
         functionName: 'requestDeposit',

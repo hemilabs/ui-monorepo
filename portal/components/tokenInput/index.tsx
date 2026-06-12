@@ -24,6 +24,15 @@ type Props<T extends Token> = {
   }>
   disabled: boolean
   errorKey: string | undefined
+  // Overrides the default fiat preview (input × token price). Use when the
+  // input unit isn't directly priced and the caller has a pre-converted
+  // amount in a priced token (e.g. withdraw input is in svetBTC shares,
+  // and the fiat is computed from the pegged-token equivalent so yield is
+  // reflected — the share OFT has no public price feed).
+  fiatBalance?: {
+    balance: bigint | undefined
+    token: Token
+  }
   label: string
   maxBalanceButton?: ReactNode
   onChange: (value: string) => void
@@ -47,6 +56,7 @@ export const TokenInput = function <T extends Token>({
   balanceComponent,
   disabled,
   errorKey,
+  fiatBalance,
   label,
   maxBalanceButton,
   onChange,
@@ -80,7 +90,13 @@ export const TokenInput = function <T extends Token>({
           {showFiatBalance && (
             <div className="flex items-center text-sm  text-neutral-500">
               <span className="mr-1">$</span>
-              {!Number.isNaN(value) ? (
+              {fiatBalance ? (
+                <RenderFiatBalance
+                  balance={fiatBalance.balance}
+                  queryStatus="success"
+                  token={fiatBalance.token}
+                />
+              ) : !Number.isNaN(value) ? (
                 <RenderFiatBalance
                   balance={parseTokenUnits(value, token)}
                   queryStatus="success"

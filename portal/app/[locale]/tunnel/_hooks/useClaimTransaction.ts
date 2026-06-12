@@ -4,7 +4,7 @@ import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpd
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import EventEmitter from 'events'
 import { type FinalizeEvents, finalizeWithdrawal } from 'hemi-tunnel-actions'
-import { useTokenBalance } from 'hooks/useBalance'
+import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemiClient } from 'hooks/useHemiClient'
 import { useTunnelHistory } from 'hooks/useTunnelHistory'
 import { useUmami } from 'hooks/useUmami'
@@ -26,10 +26,11 @@ export const useClaimTransaction = function ({
     withdrawal.l1ChainId,
   )
   const queryClient = useQueryClient()
-  const { queryKey: erc20BalanceQueryKey } = useTokenBalance(
-    withdrawal.l1ChainId,
-    withdrawal.l1Token,
-  )
+  const erc20BalanceQueryKey = getTokenBalanceQueryKey({
+    account,
+    chainId: withdrawal.l1ChainId,
+    tokenAddress: withdrawal.l1Token,
+  })
   const { updateWithdrawal } = useTunnelHistory()
   const { track } = useUmami()
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(

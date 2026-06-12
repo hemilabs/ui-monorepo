@@ -4,11 +4,12 @@
 .next
 .nx/cache
 .serverless
-.vscode/
+.vscode/*
+!.vscode/mcp.json
 lerna-debug.log
 node_modules
 out
-subgraph-api/.env*
+packages/*/dist
 subgraphs/.env
 # information from docker-compose
 subgraphs/data

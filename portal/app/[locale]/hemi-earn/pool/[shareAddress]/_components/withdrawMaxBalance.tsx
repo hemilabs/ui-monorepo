@@ -1,27 +1,23 @@
 import { MaxButton } from 'components/setMaxBalance'
-import { type EvmToken } from 'types/token'
 import { formatUnits } from 'viem'
 
 import { usePoolForm } from '../_context/poolFormContext'
-import { useUserPoolBalance } from '../_hooks/useUserPoolBalance'
+import { useUserShareValue } from '../_hooks/useUserShareValue'
 
 type Props = {
   disabled: boolean
   onSetMaxBalance: (amount: string) => void
-  token: EvmToken
 }
 
 export const WithdrawMaxBalance = function ({
   disabled,
   onSetMaxBalance,
-  token,
 }: Props) {
-  const { pool, selectedAsset } = usePoolForm()
-  const { data, isPending } = useUserPoolBalance({
-    assetAddress: selectedAsset.address,
+  const { pool } = usePoolForm()
+  const { data, isPending } = useUserShareValue({
     shareAddress: pool.shareAddress,
   })
-  const balance = data?.assetOut
+  const balance = data?.shares
 
   return (
     <MaxButton
@@ -30,7 +26,8 @@ export const WithdrawMaxBalance = function ({
       }
       onClick={
         balance !== undefined
-          ? () => onSetMaxBalance(formatUnits(balance, token.decimals))
+          ? () =>
+              onSetMaxBalance(formatUnits(balance, pool.shareToken.decimals))
           : undefined
       }
     />

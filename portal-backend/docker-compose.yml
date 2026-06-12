@@ -1,9 +1,12 @@
+# Every service builds from the repo root with an explicit dockerfile path, so
+# any image can pull workspace packages via `pnpm deploy` if it needs them.
 services:
   cache:
     image: redis:7.2.7-alpine
   hemi-supply-cron:
     build:
-      context: cron/hemi-supply
+      context: ..
+      dockerfile: portal-backend/cron/hemi-supply/Dockerfile
     depends_on:
       - cache
     environment:
@@ -21,7 +24,8 @@ services:
     restart: always
   portal-api:
     build:
-      context: api
+      context: ..
+      dockerfile: portal-backend/api/Dockerfile
     depends_on:
       - cache
     environment:
@@ -32,6 +36,10 @@ services:
       REDIS_URL: redis://cache:6379
       SENTRY_DSN: ${SENTRY_DSN}
       SENTRY_LOGGING_LEVELS: ${SENTRY_LOGGING_LEVELS}
+      SUBGRAPH_API_KEY: ${SUBGRAPH_API_KEY}
+      SUBGRAPH_API_URL: ${SUBGRAPH_API_URL}
+      SUBGRAPH_ORIGIN: ${SUBGRAPH_ORIGIN}
+      SUBGRAPH_VE_HEMI_TESTNET: ${SUBGRAPH_VE_HEMI_TESTNET}
       TVL_DUNE_API_KEY: ${TVL_DUNE_API_KEY}
       TVL_DUNE_QUERY_ID: ${TVL_DUNE_QUERY_ID}
       TVL_REVALIDATE_MIN: ${TVL_REVALIDATE_MIN}
@@ -40,7 +48,8 @@ services:
     restart: always
   token-prices-cron:
     build:
-      context: cron/token-prices
+      context: ..
+      dockerfile: portal-backend/cron/token-prices/Dockerfile
     depends_on:
       - cache
     environment:
@@ -53,7 +62,8 @@ services:
     restart: always
   vaults-monitor-cron:
     build:
-      context: cron/vaults-monitor
+      context: ..
+      dockerfile: portal-backend/cron/vaults-monitor/Dockerfile
     depends_on:
       - portal-api
     environment:

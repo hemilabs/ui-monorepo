@@ -3,11 +3,16 @@ import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { parseTokenUnits } from 'utils/token'
+import { useAccount } from 'wagmi'
 
+import {
+  REDEEM_SLIPPAGE_BPS,
+  applySlippage,
+} from '../../../../_constants/slippage'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
+import { useSharesToAssets } from '../../_hooks/useSharesToAssets'
 import { useWithdraw } from '../../_hooks/useWithdraw'
-import { useAssetsToShares } from '../../_hooks/useWithdrawFees'
 import { type WithdrawOperationRunning } from '../../_types/operations'
 
 export const RetryWithdraw = function () {
@@ -20,30 +25,42 @@ export const RetryWithdraw = function () {
     resetStateAfterOperation,
     selectedAsset,
     updateWithdrawOperation,
+    withdrawOperation,
   } = usePoolForm()
 
   const t = useTranslations()
-  const amount = parseTokenUnits(input, selectedAsset.token)
+  const { address } = useAccount()
+  // Input is in share-token units (svetBTC); the Router burns shares
+  // directly. `assetsOutMin` is derived from the asset preview below.
+  const shares = parseTokenUnits(input, pool.shareToken)
 
   const {
-    data: { peggedAmount, shares } = {
+    data: { assetOut, peggedAmount } = {
+      assetOut: BigInt(0),
       peggedAmount: BigInt(0),
-      shares: BigInt(0),
     },
-  } = useAssetsToShares({
-    amount,
+  } = useSharesToAssets({
     assetAddress: selectedAsset.address,
     shareAddress: pool.shareAddress,
+    shares,
   })
 
+  const assetsOutMin =
+    assetOut > BigInt(0)
+      ? applySlippage(assetOut, REDEEM_SLIPPAGE_BPS)
+      : BigInt(0)
+
   const { data: quote } = useQuoteRedeem({
+    account: address,
     asset: selectedAsset.address,
+    shareAddress: pool.shareAddress,
     shares,
   })
 
   const { mutate: runWithdraw } = useWithdraw({
-    amount,
-    fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
+    assetsOutMin,
+    callbackFee: quote?.callbackFee ?? BigInt(0),
+    isInstant: quote?.isInstant ?? false,
     on(emitter) {
       emitter.on('approve-transaction-reverted', () =>
         setOperationRunning('failed'),
@@ -65,16 +82,23 @@ export const RetryWithdraw = function () {
     },
     peggedAmount,
     pool,
+    priorApprovalTxHash: withdrawOperation?.approvalTxHash,
     selectedAsset,
     shares,
+    // Hide the specific failed row from the table when the user commits to
+    // this retry. `withdrawOperation.transactionHash` is the failed redeem's
+    // hash (set on `user-signed-withdraw` and not cleared by the revert).
+    supersedesInitiateTxHash: withdrawOperation?.transactionHash,
     updateWithdrawOperation,
   })
 
   const isWithdrawing = operationRunning === 'withdrawing'
 
+  const canRetry = !!quote && shares > BigInt(0) && assetOut > BigInt(0)
+
   const handleRetry = function (e: FormEvent) {
     e.preventDefault()
-    if (!quote || shares <= BigInt(0)) return
+    if (!canRetry) return
     setOperationRunning('withdrawing')
     runWithdraw()
   }
@@ -83,7 +107,7 @@ export const RetryWithdraw = function () {
     <form className="flex w-full [&>button]:w-full" onSubmit={handleRetry}>
       <SubmitWhenConnected
         submitButton={
-          <Button disabled={isWithdrawing || !quote} size="small">
+          <Button disabled={isWithdrawing || !canRetry} size="small">
             {t(
               isWithdrawing
                 ? 'hemi-earn.pool.form.withdrawing'

@@ -23,6 +23,14 @@
       "__name": "SENTRY_LOGGING_LEVELS"
     }
   },
+  "subgraph": {
+    "apiKey": "SUBGRAPH_API_KEY",
+    "apiUrl": "SUBGRAPH_API_URL",
+    "origin": "SUBGRAPH_ORIGIN",
+    "veHemi": {
+      "testnet": "SUBGRAPH_VE_HEMI_TESTNET"
+    }
+  },
   "tvl": {
     "dune": {
       "apiKey": "TVL_DUNE_API_KEY",

@@ -13,14 +13,21 @@ import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
+import {
+  DEPOSIT_SLIPPAGE_BPS,
+  applySlippage,
+} from '../../../../_constants/slippage'
+import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
+import { SparkleIcon } from '../../../../_icons/sparkleIcon'
+import { getTerminalDeliveryTxHash, hashesMatch } from '../../../../_utils'
 import { usePoolForm } from '../../_context/poolFormContext'
+import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
 import { DepositStatus, type DepositStatusType } from '../../_types/operations'
 
@@ -30,6 +37,8 @@ type Props = {
   onClose: VoidFunction
 }
 
+// Drawer opens after the user signs the first wallet prompt (approval if
+// needed, otherwise the deposit).
 export const ReviewDeposit = function ({ onClose }: Props) {
   const { depositOperation, input, pool, selectedAsset } = usePoolForm()
   const t = useTranslations('hemi-earn.pool.drawer')
@@ -38,18 +47,20 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const chain = useChain(chainId)
   const { address } = useAccount()
 
+  // Shared subscription with the layout-mounted watcher; lets the new
+  // get-share-tokens step flip to COMPLETED off the subgraph status.
+  const { data: subgraphRows = [] } = useEarnTransactionsQuery()
+  const subgraphRow = subgraphRows.find(
+    r =>
+      r.kind === 'DEPOSIT' &&
+      hashesMatch(r.requestTxHash, depositOperation?.transactionHash),
+  )
+
   const depositStatus =
     depositOperation?.status ?? DepositStatus.APPROVAL_TX_COMPLETED
 
   const amount = parseTokenUnits(input, selectedAsset.token)
   const routerAddress = getHemiEarnRouterAddress()
-
-  const { needsApproval } = useNeedsApproval({
-    address: selectedAsset.address,
-    amount,
-    chainId,
-    spender: routerAddress,
-  })
 
   const { fees: approvalGasFees, isError: isApprovalGasFeesError } =
     useEstimateApproveErc20Fees({
@@ -68,6 +79,16 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     shareAddress: pool.shareAddress,
   })
 
+  const { data: shares } = useDepositShares({
+    amount,
+    asset: selectedAsset.address,
+    shareAddress: pool.shareAddress,
+  })
+
+  const sharesOutMin = shares
+    ? applySlippage(shares, DEPOSIT_SLIPPAGE_BPS)
+    : BigInt(0)
+
   const { data: depositGasUnits, isError: isDepositGasUnitsError } =
     useEstimateGas({
       data:
@@ -75,9 +96,10 @@ export const ReviewDeposit = function ({ onClose }: Props) {
           ? encodeRequestDeposit({
               amount,
               asset: selectedAsset.address,
-              fulfillmentFee: quote.fulfillmentFee,
+              callbackFee: quote.callbackFee,
               operator: address,
               receiver: address,
+              sharesOutMin,
             })
           : undefined,
       query: { enabled: !!address && amount > BigInt(0) && !!quote },
@@ -112,7 +134,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         }
       : undefined
 
-  const addApprovalStep = function (): StepPropsWithoutPosition {
+  const addApprovalStep = function () {
     const showFees = [
       DepositStatus.APPROVAL_TX_FAILED,
       DepositStatus.APPROVAL_TX_PENDING,
@@ -121,13 +143,6 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     const statusMap: Partial<Record<DepositStatusType, ProgressStatusType>> = {
       [DepositStatus.APPROVAL_TX_FAILED]: ProgressStatus.FAILED,
       [DepositStatus.APPROVAL_TX_PENDING]: ProgressStatus.PROGRESS,
-    }
-
-    const getStatus = function () {
-      if (depositStatus === undefined) {
-        return ProgressStatus.COMPLETED
-      }
-      return statusMap[depositStatus] ?? ProgressStatus.COMPLETED
     }
 
     return {
@@ -144,12 +159,12 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         isError: isApprovalGasFeesError,
         show: showFees,
       }),
-      status: getStatus(),
+      status: statusMap[depositStatus] ?? ProgressStatus.COMPLETED,
       txHash: depositOperation?.approvalTxHash,
     }
   }
 
-  const addDepositStep = function (): StepPropsWithoutPosition {
+  const addStakeStep = function () {
     const statusMap: Record<DepositStatusType, ProgressStatusType> = {
       [DepositStatus.APPROVAL_TX_PENDING]: ProgressStatus.NOT_READY,
       [DepositStatus.APPROVAL_TX_FAILED]: ProgressStatus.NOT_READY,
@@ -171,13 +186,15 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     // `requestDeposit` tx.
     const depositLineTotal = depositGasFees + layerZeroFee
 
+    const status = statusMap[depositStatus] ?? ProgressStatus.NOT_READY
     return {
       description: (
-        <ChainLabel
-          active={depositStatus === DepositStatus.DEPOSIT_TX_PENDING}
-          chainId={chainId}
-          label={t('deposit-token', { symbol: selectedAsset.token.symbol })}
-        />
+        <div className="flex items-center gap-x-2">
+          <SparkleIcon />
+          <span>
+            {t('stake-token', { symbol: selectedAsset.token.symbol })}
+          </span>
+        </div>
       ),
       explorerChainId: chainId,
       fees: getStepFees({
@@ -185,30 +202,43 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         isError: isDepositGasFeesError,
         show: showFees,
       }),
-      status: statusMap[depositStatus] ?? ProgressStatus.NOT_READY,
+      status,
       txHash: depositOperation?.transactionHash,
     }
   }
 
-  const getSteps = function () {
-    const steps: StepPropsWithoutPosition[] = []
-    if (needsApproval || depositOperation?.approvalTxHash) {
-      steps.push(addApprovalStep())
+  const addGetShareTokensStep = function () {
+    const terminalHash = getTerminalDeliveryTxHash(subgraphRow)
+
+    const getStatus = function (): ProgressStatusType {
+      if (terminalHash) return ProgressStatus.COMPLETED
+      if (depositStatus === DepositStatus.DEPOSIT_TX_CONFIRMED) {
+        return ProgressStatus.PROGRESS
+      }
+      return ProgressStatus.NOT_READY
     }
-    steps.push(addDepositStep())
-    return steps
+
+    return {
+      description: <span>{t('get-share-tokens')}</span>,
+      status: getStatus(),
+      txHash: terminalHash,
+    }
   }
 
-  const getCallToAction = function (status: DepositStatusType) {
+  const getCallToAction = function () {
     if (
       [
         DepositStatus.APPROVAL_TX_FAILED,
         DepositStatus.DEPOSIT_TX_FAILED,
-      ].includes(status)
+      ].includes(depositStatus)
     ) {
       return <RetryDeposit />
     }
-    if (status === DepositStatus.DEPOSIT_TX_CONFIRMED) {
+    // Shares only land in the user's wallet once cross-chain delivery
+    // completes (subgraph FINALIZED). Showing the "Add token" CTA before
+    // that points the wallet at a token with no balance and confuses
+    // wallets that gate metadata reads on a non-zero balance.
+    if (subgraphRow?.status === 'FINALIZED') {
       return (
         <AddTokenToWallet
           labels={{
@@ -224,10 +254,20 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     return null
   }
 
+  const getSteps = function () {
+    const steps: StepPropsWithoutPosition[] = []
+    if (depositOperation?.approvalTxHash) {
+      steps.push(addApprovalStep())
+    }
+    steps.push(addStakeStep())
+    steps.push(addGetShareTokensStep())
+    return steps
+  }
+
   return (
     <Operation
-      amount={amount.toString()}
-      callToAction={getCallToAction(depositStatus)}
+      amount={depositOperation?.amountIn ?? amount.toString()}
+      callToAction={getCallToAction()}
       heading={t('deposit.heading')}
       onClose={onClose}
       steps={getSteps()}

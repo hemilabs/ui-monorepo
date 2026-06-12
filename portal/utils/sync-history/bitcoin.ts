@@ -20,7 +20,7 @@ import {
   mapBitcoinNetwork,
   type MempoolJsBitcoinTransaction,
 } from 'utils/btcApi'
-import { getHemiClient } from 'utils/chainClients'
+import { getPublicClient } from 'utils/chainClients'
 import {
   getBitcoinDepositFee,
   getHemiStatusOfBtcDeposit,
@@ -160,7 +160,7 @@ export const createBitcoinSync = function ({
 > & {
   l1Chain: BtcChain
 } & Pick<HistorySyncer<BlockSyncType>, 'withdrawalsSyncInfo'>) {
-  const hemiClient = getHemiClient(l2Chain.id)
+  const hemiClient = getPublicClient(l2Chain.id)
 
   const syncDeposits = async function () {
     let localDepositSyncInfo: TransactionListSyncType = {

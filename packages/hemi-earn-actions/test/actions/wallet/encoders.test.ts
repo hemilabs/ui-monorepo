@@ -15,7 +15,7 @@ describe('encoders', function () {
     const data = encodeRequestDeposit({
       amount: BigInt(100),
       asset: zeroAddress,
-      fulfillmentFee: BigInt(0),
+      callbackFee: BigInt(0),
       operator: zeroAddress,
       receiver: zeroAddress,
     })
@@ -27,7 +27,8 @@ describe('encoders', function () {
   it('encodes requestRedeem', function () {
     const data = encodeRequestRedeem({
       asset: zeroAddress,
-      fulfillmentFee: BigInt(0),
+      callbackFee: BigInt(0),
+      isInstant: false,
       operator: zeroAddress,
       receiver: zeroAddress,
       shares: BigInt(100),
@@ -36,17 +37,39 @@ describe('encoders', function () {
     expect(data).toMatch(/^0x[0-9a-f]+$/i)
   })
 
+  it('produces different requestRedeem calldata for instant vs cooldown', function () {
+    const cooldown = encodeRequestRedeem({
+      asset: zeroAddress,
+      callbackFee: BigInt(0),
+      isInstant: false,
+      operator: zeroAddress,
+      receiver: zeroAddress,
+      shares: BigInt(100),
+    })
+    const instant = encodeRequestRedeem({
+      asset: zeroAddress,
+      callbackFee: BigInt(0),
+      isInstant: true,
+      operator: zeroAddress,
+      receiver: zeroAddress,
+      shares: BigInt(100),
+    })
+
+    expect(cooldown).not.toBe(instant)
+  })
+
   it('produces different data for requestDeposit vs requestRedeem', function () {
     const depositData = encodeRequestDeposit({
       amount: BigInt(100),
       asset: zeroAddress,
-      fulfillmentFee: BigInt(0),
+      callbackFee: BigInt(0),
       operator: zeroAddress,
       receiver: zeroAddress,
     })
     const redeemData = encodeRequestRedeem({
       asset: zeroAddress,
-      fulfillmentFee: BigInt(0),
+      callbackFee: BigInt(0),
+      isInstant: false,
       operator: zeroAddress,
       receiver: zeroAddress,
       shares: BigInt(100),
@@ -64,7 +87,7 @@ describe('encoders', function () {
     const data = encodeRequestDeposit({
       amount: BigInt(100),
       asset: zeroAddress,
-      fulfillmentFee: BigInt(0),
+      callbackFee: BigInt(0),
       operator,
       receiver,
     })
@@ -90,7 +113,8 @@ describe('encoders', function () {
 
     const data = encodeRequestRedeem({
       asset: zeroAddress,
-      fulfillmentFee: BigInt(0),
+      callbackFee: BigInt(0),
+      isInstant: false,
       operator,
       receiver,
       shares: BigInt(100),

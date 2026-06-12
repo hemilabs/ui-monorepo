@@ -19,8 +19,8 @@
     "tsc:check": "tsc"
   },
   "dependencies": {
-    "@vetro-protocol/earn": "1.0.0-beta",
-    "@vetro-protocol/gateway": "1.0.0-beta",
+    "@vetro-protocol/earn": "1.0.0",
+    "@vetro-protocol/gateway": "1.2.0",
     "hemi-viem": "2.6.1",
     "to-promise-event": "1.0.0",
     "viem-erc20": "2.0.0"

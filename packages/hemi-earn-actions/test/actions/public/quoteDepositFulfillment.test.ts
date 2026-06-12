@@ -9,17 +9,17 @@ vi.mock('viem/actions', () => ({
 }))
 
 const client = {} as Client
-const asset = '0x000000000000000000000000000000000000dEaD' as Address
+const share = '0x000000000000000000000000000000000000dEaD' as Address
 const agentAddress = '0x000000000000000000000000000000000000bEEf' as Address
 
 describe('quoteDepositFulfillment', function () {
-  it('forwards args and returns the native fee', async function () {
+  it('forwards the share address and returns the native fee', async function () {
     vi.mocked(readContract).mockResolvedValue(BigInt(42))
 
     const result = await quoteDepositFulfillment({
       agentAddress,
-      asset,
       client,
+      share,
     })
 
     expect(result).toBe(BigInt(42))
@@ -27,19 +27,39 @@ describe('quoteDepositFulfillment', function () {
       client,
       expect.objectContaining({
         address: agentAddress,
-        args: [asset],
+        args: [share],
         functionName: 'quoteDepositFulfillment',
       }),
     )
   })
 
-  it('rejects the zero address as asset', async function () {
+  it('rejects the zero address as share', async function () {
     await expect(
       quoteDepositFulfillment({
         agentAddress,
-        asset: zeroAddress,
         client,
+        share: zeroAddress,
       }),
-    ).rejects.toThrow(/`asset` cannot be the zero address/)
+    ).rejects.toThrow(/`share` cannot be the zero address/)
+  })
+
+  it('rejects the zero address as agentAddress', async function () {
+    await expect(
+      quoteDepositFulfillment({
+        agentAddress: zeroAddress,
+        client,
+        share,
+      }),
+    ).rejects.toThrow(/`agentAddress` cannot be the zero address/)
+  })
+
+  it('rejects an invalid agentAddress', async function () {
+    await expect(
+      quoteDepositFulfillment({
+        agentAddress: '0xnotanaddress' as Address,
+        client,
+        share,
+      }),
+    ).rejects.toThrow(/`agentAddress` is not a valid address/)
   })
 })

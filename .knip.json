@@ -1,20 +1,13 @@
 {
   "ignore": ["subgraphs/utils/index.ts"],
   "ignoreBinaries": ["ipconfig", "jq"],
-  "ignoreDependencies": [
-    "assemblyscript",
-    "eslint-config-next",
-    "eslint-config-prettier"
-  ],
+  "ignoreDependencies": ["eslint-config-next", "eslint-config-prettier"],
   "workspaces": {
     "portal-backend/api": {
-      "entry": "scripts/*.js"
+      "entry": ["scripts/*.cjs"]
     },
     "subgraphs/*": {
       "entry": ["src/mappings/*.ts"]
-    },
-    "subgraphs/hemi-earn-router-subgraph": {
-      "entry": ["src/mappings/*.ts", "tests/*.test.ts"]
     }
   }
 }

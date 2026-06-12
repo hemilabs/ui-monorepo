@@ -5,13 +5,11 @@ import { useMemo } from 'react'
 import { EvmToken } from 'types/token'
 import { getErc20Token, getTokenByAddress } from 'utils/token'
 import type { Address } from 'viem'
-import { useConfig } from 'wagmi'
 
 import { useRewardTokensAddresses as useRewardTokensQuery } from './useRewardTokensAddresses'
 
 export const useRewardTokens = function () {
   const { id } = useHemi()
-  const config = useConfig()
   const {
     data: rewardTokenAddresses = [],
     isLoading: isLoadingTokenAddresses,
@@ -22,7 +20,7 @@ export const useRewardTokens = function () {
       enabled: !!address,
       queryFn: async () =>
         getTokenByAddress(address, id) ??
-        getErc20Token({ address, chainId: id, config }),
+        getErc20Token({ address, chainId: id }),
       queryKey: getUseTokenQueryKey(address, id),
     })),
   })

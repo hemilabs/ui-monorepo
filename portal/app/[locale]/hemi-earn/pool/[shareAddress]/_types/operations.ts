@@ -22,6 +22,7 @@ export type DepositStatusType =
   (typeof DepositStatus)[keyof typeof DepositStatus]
 
 export type DepositOperation = {
+  amountIn?: string
   approvalTxHash?: Hash
   status: DepositStatusType
   transactionHash?: Hash
@@ -56,6 +57,7 @@ export type WithdrawStatusType =
   (typeof WithdrawStatus)[keyof typeof WithdrawStatus]
 
 export type WithdrawOperation = {
+  amountIn?: string
   approvalTxHash?: Hash
   status: WithdrawStatusType
   transactionHash?: Hash

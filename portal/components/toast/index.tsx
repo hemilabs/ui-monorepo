@@ -1,10 +1,10 @@
 'use client'
 
 import { ExternalLink } from 'components/externalLink'
-import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
 import { CheckMark } from 'components/icons/checkMark'
 import { CloseIcon } from 'components/icons/closeIcon'
 import { ErrorCircleIcon } from 'components/icons/errorCircleIcon'
+import { GreenCheckIcon } from 'components/icons/greenCheckIcon'
 import { Link } from 'components/link'
 import { type ComponentProps, useEffect, useState } from 'react'
 import ReactDOM from 'react-dom'
@@ -34,7 +34,7 @@ const ToastIcon = function ({ variant }: { variant: ToastVariant }) {
       </div>
     )
   }
-  return <CheckCircleIcon />
+  return <GreenCheckIcon />
 }
 
 export const Toast = function ({
@@ -105,8 +105,12 @@ export const Toast = function ({
           </Link>
         )}
       </div>
-      <button className="size-5 shrink-0" onClick={() => setClosedToast(true)}>
-        <CloseIcon className="size-full [&>path]:hover:stroke-white" />
+      <button
+        aria-label="Close notification"
+        className="size-5 shrink-0"
+        onClick={() => setClosedToast(true)}
+      >
+        <CloseIcon className="size-full [&>path]:hover:fill-white" />
       </button>
     </div>,
     document.body,

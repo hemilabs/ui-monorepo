@@ -17,7 +17,7 @@ import { createTestQueryClient } from '../../../../createTestQueryClient'
 // use the client is never invoked here because the cache is seeded.
 vi.mock('utils/chainClients', () => ({
   getEvmL1PublicClient: vi.fn(),
-  getHemiClient: vi.fn(),
+  getPublicClient: vi.fn(),
 }))
 
 // Override only the registry getters — leave addresses/`getPeggedTokenForShare`

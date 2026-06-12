@@ -1,14 +1,16 @@
 export {
   type AssetData,
   type Request,
+  getAgentAddress,
   getAssetData,
   getRequest,
-  inversePreviewRedeem,
   quoteDeposit,
   quoteDepositFulfillment,
   quoteRedeem,
   quoteRedeemFulfillment,
+  resolveIsInstant,
 } from './public'
+export { cancelRedeem } from './wallet/cancelRedeem'
 export { claimDeposit } from './wallet/claimDeposit'
 export { claimRedeem } from './wallet/claimRedeem'
 export {

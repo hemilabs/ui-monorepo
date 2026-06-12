@@ -5,8 +5,13 @@ on:
     branches:
       - main
     paths:
+      # portal-backend/api bundles these workspace packages into its image via
+      # `pnpm deploy`, so changes to them must republish it. Ideally this would
+      # be dependency-aware via `pnpm --filter "...[ref]"`, but that needs a
+      # dynamic-matrix rework — tracked for a future PR/issue.
+      - 'packages/ve-hemi-actions/**'
+      - 'packages/ve-hemi-rewards/**'
       - 'portal-backend/**'
-      - 'subgraph-api/**'
 
 permissions:
   contents: read
@@ -17,11 +22,12 @@ jobs:
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       - run: |
-          version=$(jq -r '.version' ${{ matrix.context }}/package.json)
+          version=$(jq -r '.version' ${{ matrix.versionFile || './package.json' }})
           echo "VERSION=$version" >> $GITHUB_ENV
       - uses: ./.github/actions/docker-build-push
         with:
-          context: ${{ matrix.context }}
+          context: .
+          dockerfile: ${{ matrix.dockerfile }}
           dockerHubPassword: ${{ secrets.DOCKERHUB_TOKEN }}
           dockerHubUsername: ${{ secrets.DOCKERHUB_USERNAME }}
           images: ${{ matrix.image }}
@@ -29,13 +35,15 @@ jobs:
     strategy:
       matrix:
         include:
-          - context: portal-backend/api
+          - dockerfile: portal-backend/api/Dockerfile
+            versionFile: portal-backend/api/package.json
             image: hemilabs/portal-backend-api
-          - context: portal-backend/cron/hemi-supply
+          - dockerfile: portal-backend/cron/hemi-supply/Dockerfile
+            versionFile: portal-backend/cron/hemi-supply/package.json
             image: hemilabs/hemi-supply-cron
-          - context: portal-backend/cron/token-prices
+          - dockerfile: portal-backend/cron/token-prices/Dockerfile
+            versionFile: portal-backend/cron/token-prices/package.json
             image: hemilabs/token-prices-cron
-          - context: portal-backend/cron/vaults-monitor
+          - dockerfile: portal-backend/cron/vaults-monitor/Dockerfile
+            versionFile: portal-backend/cron/vaults-monitor/package.json
             image: hemilabs/vaults-monitor-cron
-          - context: subgraph-api
-            image: hemilabs/subgraph-api

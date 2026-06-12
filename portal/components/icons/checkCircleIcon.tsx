@@ -1,22 +1,20 @@
-import { ComponentProps } from 'react'
+type Props = {
+  className?: string
+}
 
-export const CheckCircleIcon = (props: ComponentProps<'svg'>) => (
+export const CheckCircleIcon = ({ className }: Props) => (
   <svg
+    className={className}
     fill="none"
-    height={20}
-    viewBox="0 0 20 20"
-    width={20}
+    height={16}
+    width={16}
     xmlns="http://www.w3.org/2000/svg"
-    {...props}
   >
-    <circle cx="10" cy="10" fill="#022c22" r="10" />
-    <g transform="translate(2, 2)">
-      <path
-        clipRule="evenodd"
-        d="M12.4168 3.37625C12.5823 3.48659 12.6972 3.65814 12.7362 3.85317C12.7752 4.04821 12.7351 4.25075 12.6248 4.41625L7.62482 11.9162C7.56324 12.0085 7.48197 12.0859 7.38685 12.143C7.29174 12.2 7.18516 12.2353 7.07479 12.2462C6.96441 12.2571 6.85299 12.2434 6.74856 12.206C6.64412 12.1687 6.54926 12.1087 6.47082 12.0302L3.47082 9.03025C3.33834 8.88807 3.26622 8.70003 3.26965 8.50573C3.27308 8.31143 3.35179 8.12604 3.4892 7.98863C3.62661 7.85121 3.812 7.7725 4.0063 7.76907C4.2006 7.76565 4.38865 7.83777 4.53082 7.97025L6.88382 10.3232L11.3768 3.58325C11.4873 3.41793 11.6589 3.30325 11.854 3.26443C12.049 3.22561 12.2514 3.26583 12.4168 3.37625Z"
-        fill="#10B981"
-        fillRule="evenodd"
-      />
-    </g>
+    <path
+      clipRule="evenodd"
+      d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Zm3.844-8.791a.75.75 0 0 0-1.188-.918l-3.7 4.79-1.649-1.833a.75.75 0 1 0-1.114 1.004l2.25 2.5a.75.75 0 0 0 1.15-.043l4.251-5.5Z"
+      fill="currentColor"
+      fillRule="evenodd"
+    />
   </svg>
 )

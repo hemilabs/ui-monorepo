@@ -1,6 +1,6 @@
 import { type QueryClient, queryOptions } from '@tanstack/react-query'
 import { hemi } from 'hemi-viem'
-import { getHemiClient } from 'utils/chainClients'
+import { getPublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 import { balanceOf } from 'viem-erc20/actions'
 
@@ -21,7 +21,7 @@ const shareBalanceQueryOptions = ({
 }) =>
   queryOptions({
     queryFn: () =>
-      balanceOf(getHemiClient(hemi.id), {
+      balanceOf(getPublicClient(hemi.id), {
         account,
         address: shareAddress,
       }),

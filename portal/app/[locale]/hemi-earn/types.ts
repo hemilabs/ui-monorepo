@@ -1,9 +1,54 @@
 import { type EvmToken } from 'types/token'
-import { type Address } from 'viem'
+import { type Address, type Chain, type Hash } from 'viem'
+
+import {
+  type DepositOperation,
+  type WithdrawOperation,
+} from './pool/[shareAddress]/_types/operations'
 
 export type MetricDataPoint = { x: number; y: number }
 export type MetricPeriod = '1w' | '1m' | '3m' | '1y'
 export type MetricType = 'deposits' | 'apy'
+
+export type EarnTransactionStatusType =
+  | 'PENDING'
+  | 'FULFILLED'
+  | 'FINALIZED'
+  | 'CANCELLED'
+  | 'RECOVERED'
+  | 'TX_PENDING'
+  | 'FAILED'
+
+export type EarnTransactionKindType = 'DEPOSIT' | 'REDEEM'
+
+// Mirror of the `Request` entity exposed by the `hemi-earn-requests-subgraph`
+// Envio indexer. BigInt values arrive as JSON strings; consumers parse with
+// `BigInt(...)` for arithmetic (`formatUnits`) and `Number(...)` for display
+// (`InRelativeTime`). `'TX_PENDING'` and `'FAILED'` are portal-synthetic
+// statuses (derived in `useEarnTransactions` and at the fetcher boundary
+// respectively) — they don't exist in the subgraph schema.
+export type EarnTransaction = {
+  amountIn: string
+  amountOut: string | null
+  // Approval tx hash, only available for entries surfaced from this
+  // browser's local store (where `useDeposit` captures it on
+  // `user-signed-approval`). Subgraph-only rows don't expose it — the
+  // indexer has no way to tie an approval tx to a specific request.
+  approvalTxHash?: Hash
+  asset: Address
+  automatic: boolean
+  // Unix-seconds the Vetro Agent set on Ethereum at LayerZero-observation
+  // time. Null until the Agent emits `UnstakeRequested`; immutable after.
+  claimableAt?: string | null
+  claimTxHash: Hash | null
+  kind: EarnTransactionKindType
+  receiver: Address
+  recoverTxHash: Hash | null
+  requestedAt: string
+  requestId: string
+  requestTxHash: Hash
+  status: EarnTransactionStatusType
+}
 
 // One deposit option that settles into a share OFT.
 export type EarnAsset = {
@@ -44,3 +89,49 @@ export type EarnPosition = {
   shareToken: EvmToken
   yourDeposit: bigint
 }
+
+// Local mirror of an earn operation initiated from this browser. Survives the
+// route change between /hemi-earn and /hemi-earn/pool/[shareAddress] and is
+// soft-deleted (flag `settled: true`) once the subgraph indexes the matching
+// request — `useEarnDeliveryWatcher`'s reconcile loop flips the flag. The
+// entry stays in storage so the drawer can keep enriching the subgraph row
+// with locally-captured metadata that the indexer doesn't expose (e.g.
+// `approvalTxHash`). TTL + per-account cap keep storage bounded.
+//
+// `amountIn` is a string because bigint can't be serialized to JSON (and
+// therefore can't be persisted to localStorage). Same convention as
+// `CommonOperation.amount` in `portal/types/tunnel.ts`. Convert with
+// `BigInt(...)` only when arithmetic is needed (e.g. formatUnits).
+type LocalEarnOperationBase = {
+  account: Address
+  amountIn: string
+  approvalTxHash?: Hash
+  asset: Address
+  chainId: Chain['id']
+  initiateTxHash?: Hash
+  operator?: Address
+  settled?: boolean
+  shareAddress: Address
+  // Unix seconds. Matches the unit of `TTL_SECONDS` in
+  // `localEarnOperationsContext.tsx` — if this ever changes to ms, the GC
+  // comparison there must change too.
+  startedAt: number
+}
+
+export type LocalEarnDepositOperation = LocalEarnOperationBase & {
+  kind: 'DEPOSIT'
+  operation: DepositOperation
+}
+
+type LocalEarnWithdrawOperation = LocalEarnOperationBase & {
+  kind: 'REDEEM'
+  operation: WithdrawOperation
+}
+
+export type LocalEarnOperation =
+  | LocalEarnDepositOperation
+  | LocalEarnWithdrawOperation
+
+export const isLocalEarnDeposit = (
+  op: LocalEarnOperation,
+): op is LocalEarnDepositOperation => op.kind === 'DEPOSIT'

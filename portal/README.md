@@ -57,8 +57,7 @@ NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_MAINNET=3 # Vault index to use for bitcoin in 
 NEXT_PUBLIC_DEFAULT_BITCOIN_VAULT_SEPOLIA=4 # Vault index to use for bitcoin in hemi sepolia. Defaults to 0
 # Backend API URL
 NEXT_PUBLIC_PORTAL_API_URL=<url> # To get the token prices, user points, TVL and more
-# Subgraphs endpoint ID
-NEXT_PUBLIC_SUBGRAPHS_API_URL=<url>
+NEXT_PUBLIC_VETRO_API_URL=<url> # Vetro API URL; powers the Hemi Earn page (variable-stake APY and user rewards)
 # The following variables could be used to customize the contracts addresses used by Hemi (for example, for testing with a forked blockchain):
 NEXT_PUBLIC_ADDRESS_MANAGER=<address>
 NEXT_PUBLIC_L2_BRIDGE=<address>

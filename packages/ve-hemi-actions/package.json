@@ -16,6 +16,7 @@
     "name": "Gonzalo D'Elia"
   },
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
     "test": "vitest run",
     "tsc:check": "tsc"
   },
@@ -37,7 +38,13 @@
   },
   "type": "module",
   "exports": {
-    ".": "./index.ts",
-    "./actions": "./actions/index.ts"
+    ".": {
+      "compiled": "./dist/index.js",
+      "default": "./index.ts"
+    },
+    "./actions": {
+      "compiled": "./dist/actions/index.js",
+      "default": "./actions/index.ts"
+    }
   }
 }

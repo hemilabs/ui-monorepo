@@ -3,7 +3,7 @@ export const routerAbi = [
     inputs: [
       { internalType: 'address', name: 'asset_', type: 'address' },
       { internalType: 'uint256', name: 'assets_', type: 'uint256' },
-      { internalType: 'uint128', name: 'fulfillmentFee_', type: 'uint128' },
+      { internalType: 'uint128', name: 'callbackFee_', type: 'uint128' },
     ],
     name: 'quoteDeposit',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -14,7 +14,8 @@ export const routerAbi = [
     inputs: [
       { internalType: 'address', name: 'asset_', type: 'address' },
       { internalType: 'uint256', name: 'shares_', type: 'uint256' },
-      { internalType: 'uint128', name: 'fulfillmentFee_', type: 'uint128' },
+      { internalType: 'uint128', name: 'callbackFee_', type: 'uint128' },
+      { internalType: 'bool', name: 'isInstant_', type: 'bool' },
     ],
     name: 'quoteRedeem',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -29,7 +30,7 @@ export const routerAbi = [
       { internalType: 'address', name: 'receiver_', type: 'address' },
       { internalType: 'address', name: 'operator_', type: 'address' },
       { internalType: 'bool', name: 'automatic_', type: 'bool' },
-      { internalType: 'uint128', name: 'fulfillmentFee_', type: 'uint128' },
+      { internalType: 'uint128', name: 'callbackFee_', type: 'uint128' },
     ],
     name: 'requestDeposit',
     outputs: [{ internalType: 'uint256', name: 'requestId_', type: 'uint256' }],
@@ -44,7 +45,8 @@ export const routerAbi = [
       { internalType: 'address', name: 'receiver_', type: 'address' },
       { internalType: 'address', name: 'operator_', type: 'address' },
       { internalType: 'bool', name: 'automatic_', type: 'bool' },
-      { internalType: 'uint128', name: 'fulfillmentFee_', type: 'uint128' },
+      { internalType: 'uint128', name: 'callbackFee_', type: 'uint128' },
+      { internalType: 'bool', name: 'isInstant_', type: 'bool' },
     ],
     name: 'requestRedeem',
     outputs: [{ internalType: 'uint256', name: 'requestId_', type: 'uint256' }],
@@ -80,6 +82,13 @@ export const routerAbi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'uint256', name: 'requestId_', type: 'uint256' }],
+    name: 'cancel',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'address', name: 'asset', type: 'address' }],
     name: 'assetsData',
     outputs: [
@@ -87,6 +96,8 @@ export const routerAbi = [
         components: [
           { internalType: 'address', name: 'share', type: 'address' },
           { internalType: 'address', name: 'remoteAsset', type: 'address' },
+          { internalType: 'address', name: 'remoteShare', type: 'address' },
+          { internalType: 'bool', name: 'enabled', type: 'bool' },
         ],
         internalType: 'struct Router.AssetData',
         name: '',
@@ -104,9 +115,11 @@ export const routerAbi = [
         components: [
           { internalType: 'uint8', name: 'kind', type: 'uint8' },
           { internalType: 'address', name: 'asset', type: 'address' },
+          { internalType: 'address', name: 'share', type: 'address' },
           { internalType: 'uint256', name: 'assets', type: 'uint256' },
           { internalType: 'uint256', name: 'shares', type: 'uint256' },
           { internalType: 'uint256', name: 'amountOutMin', type: 'uint256' },
+          { internalType: 'address', name: 'operator', type: 'address' },
           { internalType: 'address', name: 'receiver', type: 'address' },
           { internalType: 'bool', name: 'automatic', type: 'bool' },
           { internalType: 'uint8', name: 'status', type: 'uint8' },
@@ -148,6 +161,12 @@ export const routerAbi = [
         type: 'uint256',
       },
       {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amountOutMin',
+        type: 'uint256',
+      },
+      {
         indexed: true,
         internalType: 'address',
         name: 'receiver',
@@ -185,6 +204,12 @@ export const routerAbi = [
         type: 'uint256',
       },
       {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'amountOutMin',
+        type: 'uint256',
+      },
+      {
         indexed: true,
         internalType: 'address',
         name: 'receiver',
@@ -212,7 +237,7 @@ export const routerAbi = [
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'amountIn',
+        name: 'amount',
         type: 'uint256',
       },
     ],
@@ -231,7 +256,7 @@ export const routerAbi = [
       {
         indexed: false,
         internalType: 'uint256',
-        name: 'amountIn',
+        name: 'amount',
         type: 'uint256',
       },
     ],
@@ -247,12 +272,6 @@ export const routerAbi = [
         name: 'requestId',
         type: 'uint256',
       },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'receiver',
-        type: 'address',
-      },
     ],
     name: 'RequestClaimed',
     type: 'event',
@@ -266,14 +285,40 @@ export const routerAbi = [
         name: 'requestId',
         type: 'uint256',
       },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'receiver',
-        type: 'address',
-      },
     ],
     name: 'RequestRecovered',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: 'uint256',
+        name: 'requestId',
+        type: 'uint256',
+      },
+    ],
+    name: 'CancellationRequested',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: 'uint256',
+        name: 'requestId',
+        type: 'uint256',
+      },
+      {
+        indexed: false,
+        internalType: 'bytes',
+        name: 'reason',
+        type: 'bytes',
+      },
+    ],
+    name: 'AutoFinalizationFailed',
     type: 'event',
   },
   {
@@ -297,8 +342,27 @@ export const routerAbi = [
         name: 'remoteAsset',
         type: 'address',
       },
+      {
+        indexed: false,
+        internalType: 'address',
+        name: 'remoteShare',
+        type: 'address',
+      },
+      {
+        indexed: false,
+        internalType: 'bool',
+        name: 'enabled',
+        type: 'bool',
+      },
     ],
     name: 'AssetDataUpdated',
     type: 'event',
+  },
+  {
+    inputs: [],
+    name: 'peerAddress',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
   },
 ] as const

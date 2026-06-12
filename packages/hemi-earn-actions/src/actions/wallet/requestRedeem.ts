@@ -50,7 +50,8 @@ const runRequestRedeem = ({
   account,
   asset,
   assetsOutMin = BigInt(0),
-  fulfillmentFee,
+  callbackFee,
+  isInstant,
   operator,
   receiver,
   routerAddress = getHemiEarnRouterAddress(),
@@ -61,11 +62,16 @@ const runRequestRedeem = ({
   account: Address
   asset: Address
   // Minimum underlying assets accepted on fulfillment (slippage protection
-  // enforced on the remote chain). Defaults to `0n` until the share → asset
-  // conversion is wired up; phase 2 will compute this from the share price.
+  // enforced on the remote chain). Defaults to `0n` when omitted; portal
+  // callers compute this via `applySlippage` against the UX_SPEC defaults
+  // (see `portal/.../hemi-earn/_constants/slippage.ts`).
   assetsOutMin?: bigint
-  fulfillmentFee: bigint
-  // Address authorized to call `Agent.cancel(id)` on the remote chain.
+  callbackFee: bigint
+  // Declares the redeem path (instant vs cooldown). Must match the vault's
+  // actual state for `account` — resolve via `resolveIsInstant`. Mismatch
+  // causes the Agent to send an immediate cancel; user pays gas for nothing.
+  isInstant: boolean
+  // Address authorized to call `Router.cancel(id)` for cooldown redeems.
   // Contract reverts with `ZeroAddress` if `0x0` is passed.
   operator: Address
   receiver: Address
@@ -110,8 +116,9 @@ const runRequestRedeem = ({
       emitter.emit('pre-quote')
       const nativeFee = await quoteRedeem({
         asset,
+        callbackFee,
         client: walletClient,
-        fulfillmentFee,
+        isInstant,
         routerAddress,
         shares: adjustedShares,
       }).catch(function (error) {
@@ -178,7 +185,8 @@ const runRequestRedeem = ({
           receiver,
           operator,
           true,
-          fulfillmentFee,
+          callbackFee,
+          isInstant,
         ],
         chain: walletClient.chain,
         functionName: 'requestRedeem',

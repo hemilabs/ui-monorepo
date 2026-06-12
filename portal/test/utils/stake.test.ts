@@ -15,6 +15,10 @@ vi.mock('viem-erc20/actions', () => ({
   balanceOf: vi.fn(),
 }))
 
+vi.mock('utils/chainClients', () => ({
+  getPublicClient: vi.fn(),
+}))
+
 vi.mock('hemi-viem-stake-actions/actions', () => ({
   stakedBalance: vi.fn(),
   unstakeToken: vi.fn(),

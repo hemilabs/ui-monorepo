@@ -1,11 +1,11 @@
 import { ToEvmWithdrawOperation } from 'types/tunnel'
-import { getEvmL1PublicClient, getHemiClient } from 'utils/chainClients'
+import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
 import { getWithdrawals } from 'viem/op-stack'
 
 export const getTimeToProveInSeconds = async function (
   withdrawal: ToEvmWithdrawOperation,
 ): Promise<number> {
-  const hemiClient = getHemiClient(withdrawal.l2ChainId)
+  const hemiClient = getPublicClient(withdrawal.l2ChainId)
   const publicClientL1 = getEvmL1PublicClient(withdrawal.l1ChainId)
 
   const receipt = await hemiClient.getTransactionReceipt({
@@ -26,7 +26,7 @@ export const getTimeToProveInSeconds = async function (
 export const getTimeToFinalizeInSeconds = async function (
   withdrawal: ToEvmWithdrawOperation,
 ): Promise<number> {
-  const hemiClient = getHemiClient(withdrawal.l2ChainId)
+  const hemiClient = getPublicClient(withdrawal.l2ChainId)
   const publicClientL1 = getEvmL1PublicClient(withdrawal.l1ChainId)
 
   const receipt = await hemiClient.getTransactionReceipt({

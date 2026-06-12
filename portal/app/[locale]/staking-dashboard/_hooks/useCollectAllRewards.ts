@@ -3,6 +3,7 @@ import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { EventEmitter } from 'events'
+import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemi } from 'hooks/useHemi'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
 import { useUmami } from 'hooks/useUmami'
@@ -122,14 +123,28 @@ export const useCollectRewards = function ({
       return promise
     },
     onSettled() {
-      // Invalidate rewards queries in the background
+      // Invalidate per-reward-token queries in the background.
       rewardTokens.forEach(function ({ address: rewardsAddress }) {
-        const queryKey = getCalculateRewardsQueryKey({
-          chainId: hemi.id,
-          rewardToken: rewardsAddress,
-          tokenId,
+        // The claimable amount counter.
+        queryClient.invalidateQueries({
+          queryKey: getCalculateRewardsQueryKey({
+            chainId: hemi.id,
+            rewardToken: rewardsAddress,
+            tokenId,
+          }),
         })
-        queryClient.invalidateQueries({ queryKey })
+
+        // The wallet ERC-20 balance of the collected reward token,
+        // so the balances shown in the UI reflect the just-claimed amounts.
+        if (address) {
+          queryClient.invalidateQueries({
+            queryKey: getTokenBalanceQueryKey({
+              account: address,
+              chainId: hemi.id,
+              tokenAddress: rewardsAddress,
+            }),
+          })
+        }
       })
 
       // Invalidate native token balance in the background

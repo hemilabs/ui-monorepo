@@ -1,25 +1,30 @@
 'use client'
 
-import { EvmFeesSummary } from 'components/evmFeesSummary'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
-import { useChain } from 'hooks/useChain'
-import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
+import { type EvmToken } from 'types/token'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
-import { formatUnits } from 'viem'
 import { useAccount as useEvmAccount } from 'wagmi'
 
+import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
-import { useUserPoolBalance } from '../_hooks/useUserPoolBalance'
+import { useUserShareValue } from '../_hooks/useUserShareValue'
 import { useWithdraw } from '../_hooks/useWithdraw'
-import { useAssetsToShares, useWithdrawFees } from '../_hooks/useWithdrawFees'
+import { useWithdrawPreview } from '../_hooks/useWithdrawPreview'
 import { type WithdrawOperationRunning } from '../_types/operations'
+import {
+  computeIsLoading,
+  resolveErrorKey,
+  resolvePreviewIssue,
+  resolveValidationError,
+} from '../_utils/formState'
 
 import { VaultFormLayout } from './form'
+import { OperationBelowForm } from './operationBelowForm'
 import { PoolFormContent } from './poolFormContent'
 import { SubmitWithdraw } from './submitWithdraw'
 import { UserPoolBalance } from './userPoolBalance'
@@ -45,29 +50,11 @@ export const Withdraw = function ({
 
   const { address, status } = useEvmAccount()
 
-  const amount = parseTokenUnits(input, selectedAsset.token)
+  // Input is in share-token units (svetBTC). The Router's `requestRedeem`
+  // burns shares directly, so the form mirrors that on-chain unit.
+  const shares = parseTokenUnits(input, pool.shareToken)
 
-  const { data: poolBalance, isSuccess: poolBalanceLoaded } =
-    useUserPoolBalance({
-      assetAddress: selectedAsset.address,
-      shareAddress: pool.shareAddress,
-    })
-
-  // Input is in asset units (e.g. USDC); the Router takes shares. The hook
-  // chains `Gateway.previewDeposit` (asset → peggedToken) and
-  // `StakingVault.convertToShares` (peggedToken → shares) to mirror the
-  // gateway fee path. Both fall back to zero while the query is pending —
-  // `canWithdraw` below gates submission until validation and conversion are
-  // ready. `peggedAmount` is forwarded to `useWithdraw` so the optimistic
-  // TVL bump happens in vault units (vBTC/vUSD), not the deposit asset's.
-  const {
-    data: { peggedAmount, shares } = {
-      peggedAmount: BigInt(0),
-      shares: BigInt(0),
-    },
-  } = useAssetsToShares({
-    amount,
-    assetAddress: selectedAsset.address,
+  const { data: shareValue, isSuccess: shareValueLoaded } = useUserShareValue({
     shareAddress: pool.shareAddress,
   })
 
@@ -77,37 +64,58 @@ export const Withdraw = function ({
     errorKey,
   } = validateSubmit({
     amountInput: input,
-    balance: poolBalance?.assetOut,
+    balance: shareValue?.shares,
     operation: 'withdrawal',
     t,
-    token: selectedAsset.token,
+    token: pool.shareToken,
   })
 
-  const canWithdraw = validInput && shares > BigInt(0)
   const routerAddress = getHemiEarnRouterAddress()
 
-  const { isAllowanceError, isAllowanceLoading, needsApproval } =
-    useNeedsApproval({
-      address: pool.shareAddress,
-      amount: shares,
-      chainId: selectedAsset.token.chainId,
-      spender: routerAddress,
-    })
-
-  const { isFeesError, quote, totalFees } = useWithdrawFees({
-    asset: selectedAsset.address,
+  // Single composed query owns shares→assets preview, redeem quote, and
+  // allowance reads. `withdraw.tsx` only consumes the derived outputs
+  // here — no separate subscriptions for those upstream queries.
+  const {
+    assetOut,
+    assetOutRaw,
+    assetsOutMin,
     canWithdraw,
-    chainId: selectedAsset.token.chainId,
+    hemiGasFees,
+    isAllowanceError,
+    isAllowanceLoading,
+    isFeesError,
+    isPreviewError,
+    isPreviewLoading,
+    layerZeroFee,
     needsApproval,
-    receiver: address,
+    peggedAmount,
+    peggedAmountRaw,
+    quote,
+    totalFees,
+  } = useWithdrawPreview({
+    account: address,
+    asset: selectedAsset.address,
+    shareAddress: pool.shareAddress,
     shares,
     shareToken: pool.shareToken,
     spender: routerAddress,
+    validInput,
   })
 
+  // Fail safe: when the eligibility read on Ethereum is in-flight or errors,
+  // assume the cooldown applies so the warning shows. Silently hiding it
+  // would let the user start a withdraw thinking the funds land instantly.
+  const { data: isCooldownEligible = true } = useIsCooldownEligible({
+    account: address,
+    shareAddress: pool.shareAddress,
+  })
+
+  const { callbackFee = BigInt(0), isInstant = false } = quote ?? {}
+
   const { isPending: isRunningOperation, mutate: withdrawFn } = useWithdraw({
-    amount,
-    fulfillmentFee: quote?.fulfillmentFee ?? BigInt(0),
+    assetsOutMin,
+    callbackFee,
+    isInstant,
     on(emitter) {
       emitter.on('approve-transaction-succeeded', () =>
         setOperationRunning('withdrawing'),
@@ -134,50 +142,74 @@ export const Withdraw = function ({
     setOperationRunning(needsApproval ? 'approving' : 'withdrawing')
   }
 
-  const chain = useChain(selectedAsset.token.chainId)
-  const nativeToken = getNativeToken(selectedAsset.token.chainId)
+  const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
+  const hasQuote = !!quote
 
-  function RenderBelowForm() {
-    if (!canWithdraw) {
-      return null
-    }
-    return (
-      <div className="px-4">
-        <EvmFeesSummary
-          gas={{
-            amount: formatUnits(
-              totalFees,
-              chain?.nativeCurrency.decimals ?? 18,
-            ),
-            isError: isFeesError,
-            label: t('hemi-earn.pool.form.total-fee'),
-            token: nativeToken,
-          }}
-          operationToken={nativeToken}
-        />
-      </div>
-    )
-  }
+  const previewIssue = resolvePreviewIssue({
+    hasShares: assetOut > BigInt(0),
+    isPreviewError,
+    isPreviewLoading,
+    peggedAmount,
+    validInput,
+  })
+  const effectiveValidationError = resolveValidationError(
+    previewIssue ? t(`hemi-earn.pool.form.${previewIssue}`) : undefined,
+    validationError,
+  )
+  const displayedErrorKey = resolveErrorKey(
+    walletIsConnected(status),
+    shareValueLoaded,
+    errorKey,
+  )
+  const isSubmitLoading = computeIsLoading({
+    balanceLoaded: shareValueLoaded,
+    isAllowanceLoading,
+    isPreviewLoading,
+    validInput,
+  })
 
   return (
     <VaultFormLayout
-      belowForm={<RenderBelowForm />}
+      belowForm={
+        canWithdraw && (
+          <OperationBelowForm
+            account={address}
+            bridgingFee={layerZeroFee}
+            hemiGasFee={hemiGasFees}
+            isCooldownEligible={isCooldownEligible}
+            isFeesError={isFeesError}
+            nativeToken={nativeToken}
+            shareAddress={pool.shareAddress}
+            topRow={{
+              amount: assetOutRaw,
+              label: t('hemi-earn.pool.form.you-will-receive'),
+              token: selectedAsset.token,
+            }}
+            totalFees={totalFees}
+          />
+        )
+      }
       formContent={
         <PoolFormContent
+          aboveInput={<UserPoolBalance />}
           activeTab="withdraw"
-          balanceComponent={UserPoolBalance}
-          errorKey={
-            walletIsConnected(status) && poolBalanceLoaded
-              ? errorKey
-              : undefined
-          }
+          errorKey={displayedErrorKey}
+          fiatBalance={{
+            // When `shares` is 0n the preview query stays disabled and
+            // `peggedAmountRaw` is `undefined` — force 0n here so the
+            // fiat row mirrors the deposit's "$0" behaviour for an empty
+            // input instead of locking the skeleton on forever.
+            balance: shares > BigInt(0) ? peggedAmountRaw : BigInt(0),
+            token: pool.peggedToken,
+          }}
+          inputLabel={t('hemi-earn.pool.form.withdraw-share-tokens-as')}
+          inputToken={pool.shareToken}
           isRunningOperation={isRunningOperation}
           onSwitchTab={onSwitchToDeposit}
           setMaxBalanceButton={
             <WithdrawMaxBalance
               disabled={isRunningOperation}
               onSetMaxBalance={updateInput}
-              token={selectedAsset.token}
             />
           }
         />
@@ -185,13 +217,13 @@ export const Withdraw = function ({
       onSubmit={handleWithdraw}
       submitButton={
         <SubmitWithdraw
-          canWithdraw={canWithdraw && !!quote}
+          canWithdraw={canWithdraw && hasQuote}
           isAllowanceError={isAllowanceError}
-          isAllowanceLoading={isAllowanceLoading}
+          isLoading={isSubmitLoading}
           isRunningOperation={isRunningOperation}
           needsApproval={needsApproval}
           operationRunning={operationRunning}
-          validationError={validationError}
+          validationError={effectiveValidationError}
         />
       }
     />

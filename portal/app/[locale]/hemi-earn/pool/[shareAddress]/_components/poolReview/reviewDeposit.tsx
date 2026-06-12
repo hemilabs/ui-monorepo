@@ -50,8 +50,10 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   // Shared subscription with the layout-mounted watcher; lets the new
   // get-share-tokens step flip to COMPLETED off the subgraph status.
   const { data: subgraphRows = [] } = useEarnTransactionsQuery()
-  const subgraphRow = subgraphRows.find(r =>
-    hashesMatch(r.initiateTxHash, depositOperation?.transactionHash),
+  const subgraphRow = subgraphRows.find(
+    r =>
+      r.kind === 'DEPOSIT' &&
+      hashesMatch(r.requestTxHash, depositOperation?.transactionHash),
   )
 
   const depositStatus =
@@ -233,10 +235,10 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       return <RetryDeposit />
     }
     // Shares only land in the user's wallet once cross-chain delivery
-    // completes (subgraph CLAIMED). Showing the "Add token" CTA before
+    // completes (subgraph FINALIZED). Showing the "Add token" CTA before
     // that points the wallet at a token with no balance and confuses
     // wallets that gate metadata reads on a non-zero balance.
-    if (subgraphRow?.status === 'CLAIMED') {
+    if (subgraphRow?.status === 'FINALIZED') {
       return (
         <AddTokenToWallet
           labels={{

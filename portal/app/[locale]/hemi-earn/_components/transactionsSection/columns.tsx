@@ -65,7 +65,7 @@ export const buildColumns = ({
   {
     cell: ({ row }) => (
       <span className="font-normal text-neutral-500">
-        <InRelativeTime timestamp={Number(row.original.initiatedAt)} />
+        <InRelativeTime timestamp={Number(row.original.requestedAt)} />
       </span>
     ),
     header: () => <Header text={t('column.date')} />,

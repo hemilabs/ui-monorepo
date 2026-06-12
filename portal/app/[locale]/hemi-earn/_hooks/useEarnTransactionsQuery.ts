@@ -18,14 +18,11 @@ import { useLocalEarnOperations } from './useLocalEarnOperations'
 // subgraph view). React Query dedupes the underlying fetch across both
 // consumers — a single network call per interval drives every subscriber.
 //
-// Polling: every 10s while there's at least one row we're actively waiting
-// on — either a subgraph entry stuck on a non-terminal status (cross-chain
-// in flight, auto-claim still pending, cooldown maturing for a redeem) or a
-// local entry whose initiateTxHash hasn't shown up in the subgraph yet
-// (indexer lag). Stops once all rows are terminal (CLAIMED / CANCELLED /
-// RECOVERED). Both deposits and redeems contribute to the predicate — the
-// drawer's third step depends on this polling to flip its status once the
-// subgraph catches up.
+// Polling: every 10s while at least one row is non-terminal (cross-chain
+// in flight, auto-claim pending, cooldown maturing) or a local entry hasn't
+// shown up in the subgraph yet. Stops on FINALIZED / CANCELLED / RECOVERED
+// / FAILED — FAILED is portal-terminal because the user needs to retry, not
+// wait for the eventual Router cancel.
 export const useEarnTransactionsQuery = function () {
   const [networkType] = useNetworkType()
   const { address } = useAccount()
@@ -43,9 +40,10 @@ export const useEarnTransactionsQuery = function () {
       const subgraphData = (query.state.data ?? []) as EarnTransaction[]
       const hasSubgraphInFlight = subgraphData.some(
         t =>
-          t.status !== 'CLAIMED' &&
+          t.status !== 'FINALIZED' &&
           t.status !== 'CANCELLED' &&
-          t.status !== 'RECOVERED',
+          t.status !== 'RECOVERED' &&
+          t.status !== 'FAILED',
       )
       return hasSubgraphInFlight || inFlightLocalsExist ? 10_000 : false
     },

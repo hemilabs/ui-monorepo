@@ -3,15 +3,14 @@
 import { useEffect, useState } from 'react'
 import { unixNowTimestamp } from 'utils/time'
 
-// Local-only countdown driven by the on-chain `claimableAt` timestamp
-// (read via `useRequestDetails`). Ticks every 60s so the drawer's
-// cooldown sub-step copy (and any future table column) updates without
-// round-tripping through react-query.
+// Local-only countdown driven by `claimableAt` from the Envio subgraph.
+// Ticks every 60s so the drawer's cooldown sub-step copy (and any future
+// table column) updates without round-tripping through react-query.
 //
 // `claimableAt` is the unix-seconds timestamp at which the Vetro Agent
 // will allow the claim to fire (set on Ethereum at observation time —
 // the authoritative source for cooldown maturity, free of the
-// LayerZero-delay drift a local `initiatedAt + duration` calculation
+// LayerZero-delay drift a local `requestedAt + duration` calculation
 // would carry).
 //
 // Returns `undefined` while the input is missing, otherwise the

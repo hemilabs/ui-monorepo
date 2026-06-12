@@ -30,7 +30,6 @@ import {
 import { useCooldownDuration } from '../../../../_hooks/useCooldownDuration'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { useIsCooldownEligible } from '../../../../_hooks/useIsCooldownEligible'
-import { useRequestDetails } from '../../../../_hooks/useRequestDetails'
 import { hashesMatch } from '../../../../_utils'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
@@ -91,12 +90,12 @@ function buildReceiveStep({
   t: ReturnType<typeof useTranslations<'hemi-earn.pool.drawer'>>
   withdrawStatus: WithdrawStatusType
 }): StepPropsWithoutPosition {
-  // Only CLAIMED actually delivers the underlying. RECOVERED returns
+  // Only FINALIZED actually delivers the underlying. RECOVERED returns
   // shares to the user (not the asset this step is labeled with), so the
   // step never flips COMPLETED in that case — recovery UX is handled
   // outside this drawer (tracked in its own follow-up).
   const claimTxHash =
-    subgraphRow?.status === 'CLAIMED'
+    subgraphRow?.status === 'FINALIZED'
       ? subgraphRow.claimTxHash ?? undefined
       : undefined
   const unstakeMined = withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED
@@ -134,16 +133,6 @@ const FAILED_STATUSES: WithdrawStatusType[] = [
 
 const renderRetryCta = (status: WithdrawStatusType) =>
   FAILED_STATUSES.includes(status) ? <RetryWithdraw /> : null
-
-// Subgraph statuses past the cross-chain handoff — the Vetro Agent has
-// acted on the request, so per-request reads like `getRequestDetails`
-// have valid data to return. PENDING is excluded because the Agent
-// hasn't observed yet, and the contract may revert or return zeros.
-const AGENT_OBSERVED_STATUSES = ['FULFILLED', 'CLAIMED', 'RECOVERED'] as const
-
-const hasAgentObserved = (subgraphStatus: string | undefined) =>
-  subgraphStatus !== undefined &&
-  (AGENT_OBSERVED_STATUSES as readonly string[]).includes(subgraphStatus)
 
 // Builds the `data:` argument for `useEstimateGas`. Module-level so the
 // component doesn't pay the branching tax for this conditional encode.
@@ -203,7 +192,7 @@ function deriveCooldownPostAction({
   // over to "done".
   const cooldownOver =
     cooldownRemainingSec === 0 ||
-    subgraphStatus === 'CLAIMED' ||
+    subgraphStatus === 'FINALIZED' ||
     subgraphStatus === 'RECOVERED'
   if (cooldownOver) {
     return {
@@ -270,7 +259,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const subgraphRow = subgraphRows.find(
     r =>
       r.kind === 'REDEEM' &&
-      hashesMatch(r.initiateTxHash, withdrawOperation?.transactionHash),
+      hashesMatch(r.requestTxHash, withdrawOperation?.transactionHash),
   )
 
   const { data: isCooldownEligible } = useIsCooldownEligible({
@@ -283,20 +272,12 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const { data: cooldownDurationSec } = useCooldownDuration({
     shareAddress: pool.shareAddress,
   })
-  // Per-request `claimableAt` from Ethereum is the authoritative cooldown
-  // maturity timestamp — set by the Vetro Agent at LayerZero-observation
-  // time, never drifts after that. We only query it once the subgraph
-  // confirms the Agent has acted (FULFILLED+); before that the Vetro
-  // contract may revert or return a zero struct, and caching either
-  // outcome under `staleTime: Infinity` would poison the countdown.
-  const { data: requestDetails } = useRequestDetails({
-    requestId: hasAgentObserved(subgraphRow?.status)
-      ? subgraphRow?.requestId
-      : undefined,
-    shareAddress: pool.shareAddress,
-  })
+  // `claimableAt` is `string | null` — use `!= null` so a legitimate `'0'`
+  // isn't conflated with "unset" the way a truthy-check would.
   const cooldownRemainingSec = useEarnCooldownRemaining(
-    requestDetails?.claimableAt,
+    subgraphRow?.claimableAt != null
+      ? BigInt(subgraphRow.claimableAt)
+      : undefined,
   )
 
   const withdrawStatus =

@@ -55,19 +55,18 @@ export const uniqueShareConfigs = (configs: HemiEarnAssetConfig[]) => [
 // treasury. Each gateway exposes its treasury (`getTreasury`) whose
 // `getWhitelistedTokens` lists the accepted tokens. A token is whitelisted on
 // at most one treasury, so the gateways' lists are disjoint — flatten and
-// checksum them. `allSettled` so one unreadable gateway doesn't take down the
-// whole registry (and with it the entire earn UI); its assets are just omitted.
+// checksum them. Reads fail-fast (`Promise.all`): an unreadable gateway means
+// a broken registry, so surface it and fail the build rather than ship a
+// partial token set.
 const fetchWhitelistedL1Tokens = async function () {
   const l1Client = l1PublicClient()
-  const perGateway = await Promise.allSettled(
+  const perGateway = await Promise.all(
     gateways.map(async function (gateway) {
       const treasury = await getTreasury(l1Client, { address: gateway.address })
       return getWhitelistedTokens(l1Client, { address: treasury })
     }),
   )
-  return perGateway
-    .flatMap(result => (result.status === 'fulfilled' ? result.value : []))
-    .map(toChecksumAddress)
+  return perGateway.flat().map(toChecksumAddress)
 }
 
 // Hemi-side counterpart of an Ethereum token, via the token list's

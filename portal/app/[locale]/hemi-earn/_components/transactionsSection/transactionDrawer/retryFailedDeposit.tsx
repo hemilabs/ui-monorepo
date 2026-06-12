@@ -89,7 +89,7 @@ export const RetryFailedDeposit = function ({
     selectedAsset: asset,
     sharesOutMin,
     // Hide the specific failed row from the table once this retry is signed.
-    supersedesInitiateTxHash: transaction.initiateTxHash,
+    supersedesInitiateTxHash: transaction.requestTxHash,
   })
 
   const isDepositing = operationRunning === 'depositing'

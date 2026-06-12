@@ -18,7 +18,7 @@ type Props = {
 // "Withdrawn") without churning the call sites.
 export const StatusBadge = function ({ status }: Props) {
   const t = useTranslations('hemi-earn.transactions')
-  if (status === 'CLAIMED') {
+  if (status === 'FINALIZED') {
     return (
       <div className="flex items-center gap-x-2">
         <CheckCircleIcon className="text-neutral-400" />

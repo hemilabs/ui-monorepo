@@ -41,13 +41,13 @@ const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
     stake: ProgressStatus.FAILED,
     waitingForShares: ProgressStatus.NOT_READY,
   },
-  CLAIMED: {
-    stake: ProgressStatus.COMPLETED,
-    waitingForShares: ProgressStatus.COMPLETED,
-  },
   FAILED: {
     stake: ProgressStatus.FAILED,
     waitingForShares: ProgressStatus.NOT_READY,
+  },
+  FINALIZED: {
+    stake: ProgressStatus.COMPLETED,
+    waitingForShares: ProgressStatus.COMPLETED,
   },
   FULFILLED: {
     stake: ProgressStatus.COMPLETED,
@@ -67,8 +67,22 @@ const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   },
 }
 
+const isLocalRow = (tx: EarnTransaction) => tx.requestId.startsWith('local-')
+
+// FAILED splits by source: local rows mean the Hemi tx itself reverted (stake
+// step is FAILED), subgraph rows mean the Vetro Agent failed after a
+// successful Hemi tx (stake step completed, failure is in the cross-chain
+// step instead).
+const resolveStepStates = (tx: EarnTransaction): StepStates =>
+  tx.status === 'FAILED' && !isLocalRow(tx)
+    ? {
+        stake: ProgressStatus.COMPLETED,
+        waitingForShares: ProgressStatus.FAILED,
+      }
+    : stepStatesByStatus[tx.status]
+
 function buildStakeStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
-  const status = stepStatesByStatus[tx.status].stake
+  const status = resolveStepStates(tx).stake
   return {
     description: (
       <div className="flex items-center gap-x-2">
@@ -78,7 +92,7 @@ function buildStakeStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
     ),
     explorerChainId: hemi.id,
     status,
-    txHash: tx.initiateTxHash,
+    txHash: tx.requestTxHash,
   }
 }
 
@@ -118,10 +132,15 @@ export const HistoricalDepositReview = function ({
     spender: getHemiEarnRouterAddress(),
   })
 
-  const { waitingForShares } = stepStatesByStatus[transaction.status]
+  const { waitingForShares } = resolveStepStates(transaction)
 
   const steps: StepPropsWithoutPosition[] = []
-  if (transaction.status === 'FAILED' && needsApproval) {
+  // Re-approve only makes sense for local FAILED (Hemi tx reverted).
+  if (
+    transaction.status === 'FAILED' &&
+    isLocalRow(transaction) &&
+    needsApproval
+  ) {
     steps.push({
       description: <span>{t('step.approval-needed')}</span>,
       status: ProgressStatus.NOT_READY,

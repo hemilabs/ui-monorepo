@@ -55,24 +55,24 @@ const localToEarnTransaction = (
   asset: local.asset,
   automatic: true,
   claimTxHash: null,
-  initiatedAt: String(local.startedAt),
-  initiateTxHash: local.initiateTxHash as Hash,
   kind: local.kind,
   receiver: local.account,
   recoverTxHash: null,
+  requestedAt: String(local.startedAt),
   requestId: `local-${local.startedAt}`,
+  requestTxHash: local.initiateTxHash as Hash,
   status: localStatus(local.operation),
 })
 
 // Public data hook for the transactions table and drawer. Returns the
 // subgraph rows merged with not-yet-indexed local entries, sorted by
-// initiated-at descending.
+// requested-at descending.
 //
 // Side effects (removing local entries once the subgraph indexes them,
-// invalidating Vetro-side balance caches on CLAIMED/RECOVERED transitions)
-// live in the separate `useEarnDeliveryWatcher` so they fire exactly once
-// per polling cycle instead of N times — once per active consumer of this
-// hook.
+// invalidating Vetro-side balance caches on FINALIZED/RECOVERED
+// transitions) live in the separate `useEarnDeliveryWatcher` so they fire
+// exactly once per polling cycle instead of N times — once per active
+// consumer of this hook.
 export const useEarnTransactions = function () {
   const { data, isError, isLoading } = useEarnTransactionsQuery()
   const { localOperations } = useLocalEarnOperations()
@@ -92,12 +92,12 @@ export const useEarnTransactions = function () {
       const subgraph = (data ?? [])
         .filter(t => t.kind === 'DEPOSIT' && t.status !== 'RECOVERED')
         .map(function (t) {
-          const local = localByInitiateHash.get(t.initiateTxHash.toLowerCase())
+          const local = localByInitiateHash.get(t.requestTxHash.toLowerCase())
           if (!local?.approvalTxHash) return t
           return { ...t, approvalTxHash: local.approvalTxHash }
         })
       const subgraphHashes = new Set(
-        subgraph.map(t => t.initiateTxHash.toLowerCase()),
+        subgraph.map(t => t.requestTxHash.toLowerCase()),
       )
       const inFlight = localDeposits
         // Only show in the table once the user has signed the deposit tx —
@@ -115,12 +115,12 @@ export const useEarnTransactions = function () {
             // Dedupe against any other local op that may have already been
             // mapped (defensive — shouldn't happen with the upsert).
             !subgraph.some(t =>
-              hashesMatch(t.initiateTxHash, op.initiateTxHash),
+              hashesMatch(t.requestTxHash, op.initiateTxHash),
             ),
         )
         .map(localToEarnTransaction)
       return [...inFlight, ...subgraph].sort(
-        (a, b) => Number(b.initiatedAt) - Number(a.initiatedAt),
+        (a, b) => Number(b.requestedAt) - Number(a.requestedAt),
       )
     },
     [data, localOperations],

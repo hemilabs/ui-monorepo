@@ -21,59 +21,59 @@ type Props = {
   title: string
 }
 
-// Fires when a request reaches the subgraph `CLAIMED` state — the moment
+// Fires when a request reaches the subgraph `FINALIZED` state — the moment
 // the full cross-chain flow completes (share OFTs landing on the user's
 // Hemi wallet for deposits, underlying tokens landing on the user's Hemi
 // wallet for redeems). Mounted once per kind at the hemi-earn layout
 // level so it survives navigation between the pool page and the home
 // page.
 //
-// To avoid noise on first mount (a session with historical CLAIMED rows),
-// the component snapshots the already-claimed hashes on the first non-
-// empty render and only latches the toast for rows that become CLAIMED
+// To avoid noise on first mount (a session with historical FINALIZED rows),
+// the component snapshots the already-finalized hashes on the first non-
+// empty render and only latches the toast for rows that become FINALIZED
 // after that.
 export const EarnSuccessToast = function ({ kind, title }: Props) {
   const { address } = useAccount()
   const { data } = useEarnTransactionsQuery()
 
-  const seenClaimedOnMountRef = useRef<Set<string> | null>(null)
+  const seenFinalizedOnMountRef = useRef<Set<string> | null>(null)
   // Hashes already surfaced this session. Without this ref the toast would
   // re-open after the `TOAST_MS` window because `newClaim` keeps returning
-  // the same CLAIMED row from the subgraph poll.
+  // the same FINALIZED row from the subgraph poll.
   const shownRef = useRef<Set<string>>(new Set())
   // Both refs are session-scoped state but the data they guard is account-
   // scoped. Wipe them when the connected wallet changes so account A's
   // hashes don't leak into account B's polling loop (otherwise every
-  // historical CLAIMED on account B fires a false toast right after the
+  // historical FINALIZED on account B fires a false toast right after the
   // wallet swap).
   const snapshotAccountRef = useRef<Address | undefined>(undefined)
   if (snapshotAccountRef.current !== address) {
-    seenClaimedOnMountRef.current = null
+    seenFinalizedOnMountRef.current = null
     shownRef.current = new Set()
     snapshotAccountRef.current = address
   }
 
-  if (seenClaimedOnMountRef.current === null && data !== undefined) {
-    seenClaimedOnMountRef.current = new Set(
+  if (seenFinalizedOnMountRef.current === null && data !== undefined) {
+    seenFinalizedOnMountRef.current = new Set(
       data
-        .filter(tx => tx.kind === kind && tx.status === 'CLAIMED')
-        .map(tx => tx.initiateTxHash.toLowerCase()),
+        .filter(tx => tx.kind === kind && tx.status === 'FINALIZED')
+        .map(tx => tx.requestTxHash.toLowerCase()),
     )
   }
 
   const newClaim = useMemo(
     function () {
-      const snapshot = seenClaimedOnMountRef.current
+      const snapshot = seenFinalizedOnMountRef.current
       if (!data || snapshot === null) return undefined
       const fresh = data
         .filter(
           tx =>
             tx.kind === kind &&
-            tx.status === 'CLAIMED' &&
+            tx.status === 'FINALIZED' &&
             !!tx.claimTxHash &&
-            !snapshot.has(tx.initiateTxHash.toLowerCase()),
+            !snapshot.has(tx.requestTxHash.toLowerCase()),
         )
-        .sort((a, b) => Number(b.initiatedAt) - Number(a.initiatedAt))
+        .sort((a, b) => Number(b.requestedAt) - Number(a.requestedAt))
       return fresh[0]
     },
     [data, kind],
@@ -81,24 +81,24 @@ export const EarnSuccessToast = function ({ kind, title }: Props) {
 
   const [latched, setLatched] = useState<{
     claimTxHash: Hash
-    initiateTxHash: Hash
+    requestTxHash: Hash
   } | null>(null)
 
   useEffect(
     function latchOnNewClaim() {
       if (!newClaim?.claimTxHash) return
-      const hash = newClaim.initiateTxHash.toLowerCase()
+      const hash = newClaim.requestTxHash.toLowerCase()
       if (shownRef.current.has(hash)) return
       shownRef.current.add(hash)
       setLatched({
         claimTxHash: newClaim.claimTxHash,
-        initiateTxHash: newClaim.initiateTxHash,
+        requestTxHash: newClaim.requestTxHash,
       })
     },
-    [newClaim?.claimTxHash, newClaim?.initiateTxHash],
+    [newClaim?.claimTxHash, newClaim?.requestTxHash],
   )
 
-  const latchedKey = latched?.initiateTxHash
+  const latchedKey = latched?.requestTxHash
   useEffect(
     function unlatchAfterToastWindow() {
       if (latchedKey === undefined) return undefined
@@ -113,7 +113,7 @@ export const EarnSuccessToast = function ({ kind, title }: Props) {
   return (
     <PoolToast
       chainId={hemi.id}
-      key={latched.initiateTxHash}
+      key={latched.requestTxHash}
       title={title}
       transactionHash={latched.claimTxHash}
     />

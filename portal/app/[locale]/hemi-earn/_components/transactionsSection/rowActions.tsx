@@ -19,14 +19,15 @@ type Props = {
 export const RowActions = function ({ transaction }: Props) {
   const t = useTranslations('hemi-earn.transactions')
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
-  // Loader appears only for in-flight statuses. Terminal states (CLAIMED
-  // success, FAILED revert) render the View button text only.
   const showLoaderIcon =
-    transaction.status !== 'CLAIMED' && transaction.status !== 'FAILED'
+    transaction.status !== 'FINALIZED' &&
+    transaction.status !== 'CANCELLED' &&
+    transaction.status !== 'RECOVERED' &&
+    transaction.status !== 'FAILED'
 
   const onClick = function (e: React.MouseEvent) {
     e.stopPropagation()
-    setTxDrawerQueryString(transaction.initiateTxHash)
+    setTxDrawerQueryString(transaction.requestTxHash)
   }
 
   return (

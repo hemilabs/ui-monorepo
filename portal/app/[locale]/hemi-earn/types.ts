@@ -13,7 +13,7 @@ export type MetricType = 'deposits' | 'apy'
 export type EarnTransactionStatusType =
   | 'PENDING'
   | 'FULFILLED'
-  | 'CLAIMED'
+  | 'FINALIZED'
   | 'CANCELLED'
   | 'RECOVERED'
   | 'TX_PENDING'
@@ -21,11 +21,12 @@ export type EarnTransactionStatusType =
 
 export type EarnTransactionKindType = 'DEPOSIT' | 'REDEEM'
 
-// Mirror of the `EarnRequestRow` returned by the portal-api endpoint
-// `GET /subgraphs/:chainId/earn-requests/:address` (PR #1946). BigInt values arrive as
-// JSON strings; consumers parse with `BigInt(...)` for arithmetic
-// (`formatUnits`) and `Number(...)` for display (`InRelativeTime`). The
-// subgraph schema doesn't expose `operator` yet, so it's intentionally absent.
+// Mirror of the `Request` entity exposed by the `hemi-earn-requests-subgraph`
+// Envio indexer. BigInt values arrive as JSON strings; consumers parse with
+// `BigInt(...)` for arithmetic (`formatUnits`) and `Number(...)` for display
+// (`InRelativeTime`). `'TX_PENDING'` and `'FAILED'` are portal-synthetic
+// statuses (derived in `useEarnTransactions` and at the fetcher boundary
+// respectively) — they don't exist in the subgraph schema.
 export type EarnTransaction = {
   amountIn: string
   amountOut: string | null
@@ -36,13 +37,16 @@ export type EarnTransaction = {
   approvalTxHash?: Hash
   asset: Address
   automatic: boolean
+  // Unix-seconds the Vetro Agent set on Ethereum at LayerZero-observation
+  // time. Null until the Agent emits `UnstakeRequested`; immutable after.
+  claimableAt?: string | null
   claimTxHash: Hash | null
-  initiatedAt: string
-  initiateTxHash: Hash
   kind: EarnTransactionKindType
   receiver: Address
   recoverTxHash: Hash | null
+  requestedAt: string
   requestId: string
+  requestTxHash: Hash
   status: EarnTransactionStatusType
 }
 

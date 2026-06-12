@@ -14,7 +14,7 @@ import { RetryFailedDeposit } from './retryFailedDeposit'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 const findTransactionByTxId = (transactions: EarnTransaction[], txId: string) =>
-  transactions.find(t => hashesMatch(t.initiateTxHash, txId))
+  transactions.find(t => hashesMatch(t.requestTxHash, txId))
 
 const resolvePoolAndAsset = function (pools: EarnPool[], asset: Address) {
   for (const pool of pools) {

@@ -50,9 +50,12 @@ function reconcileLocals({
 }
 
 const isInFlightStatus = (status: EarnTransactionStatusType) =>
-  status !== 'CLAIMED' && status !== 'CANCELLED' && status !== 'RECOVERED'
+  status !== 'FINALIZED' &&
+  status !== 'CANCELLED' &&
+  status !== 'RECOVERED' &&
+  status !== 'FAILED'
 
-type DeliveredStatus = 'CLAIMED' | 'RECOVERED'
+type DeliveredStatus = 'FINALIZED' | 'RECOVERED'
 
 type DeliveredEvent = {
   asset: Address
@@ -62,13 +65,13 @@ type DeliveredEvent = {
 }
 
 // Walks the subgraph rows and reports every request that transitioned from
-// an in-flight state into a terminal delivery state (CLAIMED / RECOVERED)
+// an in-flight state into a terminal delivery state (FINALIZED / RECOVERED)
 // since the previous poll. Returns the delivered events with enough metadata
 // (kind, asset, receiver) for the caller to build the exact cache keys
 // that actually moved — deposits make the share OFT land on the user's
 // Hemi wallet, redeems make the underlying land on the user's Hemi wallet.
 // First-time observations of already-terminal hashes (page reload after
-// CLAIMED) do NOT count — those rows are historical and don't move
+// FINALIZED) do NOT count — those rows are historical and don't move
 // balances.
 function detectCrossChainDeliveries(
   previous: Map<string, EarnTransactionStatusType>,
@@ -76,8 +79,8 @@ function detectCrossChainDeliveries(
 ) {
   const events: DeliveredEvent[] = []
   for (const row of rows) {
-    if (row.status !== 'CLAIMED' && row.status !== 'RECOVERED') continue
-    const prev = previous.get(row.initiateTxHash.toLowerCase())
+    if (row.status !== 'FINALIZED' && row.status !== 'RECOVERED') continue
+    const prev = previous.get(row.requestTxHash.toLowerCase())
     if (prev === undefined || !isInFlightStatus(prev)) continue
     events.push({
       asset: row.asset,
@@ -94,14 +97,14 @@ const findShareForAsset = (asset: Address) =>
     ?.share
 
 // Maps a terminal event to the token whose balance actually moved:
-//   DEPOSIT + CLAIMED   → share OFT lands on the user's Hemi wallet
+//   DEPOSIT + FINALIZED → share OFT lands on the user's Hemi wallet
 //   DEPOSIT + RECOVERED → the deposited asset is refunded
-//   REDEEM  + CLAIMED   → the underlying asset is delivered
+//   REDEEM  + FINALIZED → the underlying asset is delivered
 //   REDEEM  + RECOVERED → shares are returned to the user
-// RECOVERED inverts the delivery vs CLAIMED in both directions, so we
+// RECOVERED inverts the delivery vs FINALIZED in both directions, so we
 // need (kind, status) to pick the right cache key.
 const movesShareBalance = (event: DeliveredEvent) =>
-  (event.kind === 'DEPOSIT' && event.status === 'CLAIMED') ||
+  (event.kind === 'DEPOSIT' && event.status === 'FINALIZED') ||
   (event.kind === 'REDEEM' && event.status === 'RECOVERED')
 
 const tokenAddressForEvent = (event: DeliveredEvent) =>
@@ -165,7 +168,7 @@ export const useEarnDeliveryWatcher = function () {
     function reconcileAndInvalidate() {
       if (!data || data.length === 0 || !address) return
       const subgraphHashToStatus = new Map<string, EarnTransactionStatusType>(
-        data.map(t => [t.initiateTxHash.toLowerCase(), t.status]),
+        data.map(t => [t.requestTxHash.toLowerCase(), t.status]),
       )
       const deliveries = detectCrossChainDeliveries(
         previousSubgraphStatusRef.current,

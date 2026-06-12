@@ -17,12 +17,12 @@ const baseTx: EarnTransaction = {
   asset: zeroAddress,
   automatic: true,
   claimTxHash: null,
-  initiatedAt: '0',
-  initiateTxHash: `0x${'1'.repeat(64)}`,
   kind: 'DEPOSIT',
   receiver: zeroAddress,
   recoverTxHash: null,
+  requestedAt: '0',
   requestId: '0',
+  requestTxHash: `0x${'1'.repeat(64)}`,
   status: 'PENDING',
 }
 
@@ -49,12 +49,12 @@ describe('utils', function () {
   })
 
   describe('getTerminalDeliveryTxHash', function () {
-    it('returns claimTxHash for CLAIMED', function () {
+    it('returns claimTxHash for FINALIZED', function () {
       expect(
         getTerminalDeliveryTxHash({
           ...baseTx,
           claimTxHash: claimHash,
-          status: 'CLAIMED',
+          status: 'FINALIZED',
         }),
       ).toBe(claimHash)
     })
@@ -86,12 +86,12 @@ describe('utils', function () {
       ).toBeUndefined()
     })
 
-    it('returns undefined when CLAIMED but claimTxHash is null', function () {
+    it('returns undefined when FINALIZED but claimTxHash is null', function () {
       expect(
         getTerminalDeliveryTxHash({
           ...baseTx,
           claimTxHash: null,
-          status: 'CLAIMED',
+          status: 'FINALIZED',
         }),
       ).toBeUndefined()
     })

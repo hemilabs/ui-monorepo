@@ -4,6 +4,7 @@ import { useOnClickOutside } from '@hemilabs/react-hooks/useOnClickOutside'
 import { Button, ButtonIcon } from 'components/button'
 import { Chevron } from 'components/icons/chevron'
 import { Menu } from 'components/menu'
+import { TokenLogo } from 'components/tokenLogo'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { useRouter } from 'i18n/navigation'
 import { useTranslations } from 'next-intl'
@@ -58,6 +59,7 @@ export const PoolNavigation = function ({ pool }: Props) {
           type="button"
           variant="tertiary"
         >
+          <TokenLogo size="xSmall" token={pool.shareToken} version="L1" />
           {t('navigation.pool-name', { tokenSymbol: pool.shareToken.symbol })}
           <Chevron.Bottom className="[&>path]:fill-neutral-950" />
         </Button>
@@ -67,7 +69,7 @@ export const PoolNavigation = function ({ pool }: Props) {
               items={pools.map(p => ({
                 content: (
                   <button
-                    className="-mx-2 -my-1 block whitespace-nowrap px-2 py-1 text-left text-sm"
+                    className="-mx-2 -my-1 flex items-center gap-x-2 whitespace-nowrap px-2 py-1 text-left text-sm"
                     onClick={function () {
                       setIsDropdownOpen(false)
                       router.push(
@@ -78,6 +80,11 @@ export const PoolNavigation = function ({ pool }: Props) {
                     }}
                     type="button"
                   >
+                    <TokenLogo
+                      size="xSmall"
+                      token={p.shareToken}
+                      version="L1"
+                    />
                     {t('navigation.pool-name', {
                       tokenSymbol: p.shareToken.symbol,
                     })}

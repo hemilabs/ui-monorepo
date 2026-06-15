@@ -32,6 +32,8 @@ export const RowActions = function ({ transaction }: Props) {
 
   const onViewClick = function (e: MouseEvent) {
     e.stopPropagation()
+    // TODO: the REDEEM drawer doesn't exist yet — wiring it lands in the
+    // follow-up PR. Until then the click is a no-op for REDEEM rows.
     if (transaction.kind === 'REDEEM') return
     setTxDrawerQueryString(transaction.requestTxHash)
   }

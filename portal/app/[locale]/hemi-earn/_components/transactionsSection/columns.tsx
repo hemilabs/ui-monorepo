@@ -10,37 +10,44 @@ import { hemi } from 'hemi-viem'
 import { useToken } from 'hooks/useToken'
 import { type useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
-import { formatUnits } from 'viem'
+import { formatUnits, isAddressEqual } from 'viem'
 
+import { useEarnPools } from '../../_hooks/useEarnPools'
 import { type EarnTransaction } from '../../types'
 
 import { RowActions } from './rowActions'
 import { StatusBadge } from './statusBadge'
 import { WithdrawStatusCell } from './withdrawStatusCell'
 
-// Resolves the deposit asset's metadata through the shared token query (token
-// list with an on-chain erc20 fallback), keyed off the transaction's
-// Hemi-side asset address.
-// For REDEEM, `amountIn` is in share-token units (svetBTC), so prefer
-// `amountOut` (asset units) once Vetro reports it; until then the share
-// amount is a close enough approximation. For DEPOSIT, `amountIn` is
-// already in asset units.
-const displayAmountFor = (transaction: EarnTransaction) =>
-  transaction.kind === 'REDEEM'
-    ? transaction.amountOut ?? transaction.amountIn
-    : transaction.amountIn
-
+// For REDEEM, the amount unit depends on which Vetro phase the row is in:
+// post-FULFILLED we have `amountOut` in asset units (hemiBTC), pre-FULFILLED
+// only `amountIn` is available and it's in share-token units (svetBTC).
+// The displayed token has to match: shareToken from the pool while we're
+// showing shares, the Hemi-side asset token afterwards. For DEPOSIT,
+// `amountIn` is already in asset units, so the generic `useToken(asset)`
+// lookup is enough.
 function AmountCell({ transaction }: { transaction: EarnTransaction }) {
-  const { data: token, isLoading } = useToken({
+  const { data: assetToken, isLoading } = useToken({
     address: transaction.asset,
     chainId: hemi.id,
   })
-  const rawAmount = displayAmountFor(transaction)
+  const { data: pools = [] } = useEarnPools()
+  const pool =
+    transaction.kind === 'REDEEM'
+      ? pools.find(p =>
+          p.assets.some(a => isAddressEqual(a.address, transaction.asset)),
+        )
+      : undefined
 
-  if (isLoading) {
-    return <Skeleton className="w-16" />
-  }
+  const showingShares =
+    transaction.kind === 'REDEEM' && transaction.amountOut == null
+  const token = showingShares ? pool?.shareToken : assetToken
+  const rawAmount = showingShares
+    ? transaction.amountIn
+    : transaction.amountOut ?? transaction.amountIn
+
   if (!token) {
+    if (isLoading) return <Skeleton className="w-16" />
     return <span className="text-neutral-950">{rawAmount}</span>
   }
   return (

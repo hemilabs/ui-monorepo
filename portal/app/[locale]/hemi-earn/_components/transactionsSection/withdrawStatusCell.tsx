@@ -57,10 +57,10 @@ function deriveCooldownText({
   t: ReturnType<typeof useTranslations<'hemi-earn.transactions'>>
 }): string | undefined {
   if (isCooldownEligible !== true) return undefined
-  if (status === 'FULFILLED' && hasClaimableAt && remainingSec === 0) {
+  if (!isCooldownPhase(status)) return undefined
+  if (hasClaimableAt && remainingSec === 0) {
     return t('status.ready-to-claim')
   }
-  if (!isCooldownPhase(status)) return undefined
   const displaySec = hasClaimableAt ? remainingSec ?? 0 : cooldownDurationSec
   if (displaySec === undefined || displaySec <= 0) return undefined
   return formatCooldownText(displaySec, t)

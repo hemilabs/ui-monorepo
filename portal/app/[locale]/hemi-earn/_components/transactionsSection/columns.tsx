@@ -16,21 +16,32 @@ import { type EarnTransaction } from '../../types'
 
 import { RowActions } from './rowActions'
 import { StatusBadge } from './statusBadge'
+import { WithdrawStatusCell } from './withdrawStatusCell'
 
 // Resolves the deposit asset's metadata through the shared token query (token
 // list with an on-chain erc20 fallback), keyed off the transaction's
 // Hemi-side asset address.
+// For REDEEM, `amountIn` is in share-token units (svetBTC), so prefer
+// `amountOut` (asset units) once Vetro reports it; until then the share
+// amount is a close enough approximation. For DEPOSIT, `amountIn` is
+// already in asset units.
+const displayAmountFor = (transaction: EarnTransaction) =>
+  transaction.kind === 'REDEEM'
+    ? transaction.amountOut ?? transaction.amountIn
+    : transaction.amountIn
+
 function AmountCell({ transaction }: { transaction: EarnTransaction }) {
   const { data: token, isLoading } = useToken({
     address: transaction.asset,
     chainId: hemi.id,
   })
+  const rawAmount = displayAmountFor(transaction)
 
   if (isLoading) {
     return <Skeleton className="w-16" />
   }
   if (!token) {
-    return <span className="text-neutral-950">{transaction.amountIn}</span>
+    return <span className="text-neutral-950">{rawAmount}</span>
   }
   return (
     <ErrorBoundary
@@ -39,7 +50,7 @@ function AmountCell({ transaction }: { transaction: EarnTransaction }) {
       <div className="flex items-center gap-x-1.5 text-neutral-950">
         <TokenLogo size="small" token={token} />
         <DisplayAmount
-          amount={formatUnits(BigInt(transaction.amountIn), token.decimals)}
+          amount={formatUnits(BigInt(rawAmount), token.decimals)}
           showSymbol
           showTokenLogo={false}
           token={token}
@@ -83,9 +94,12 @@ export const buildColumns = ({
     meta: { className: 'justify-start flex-grow-0', width: 200 },
   },
   {
-    cell: ({ row }) => (
-      <StatusBadge kind={row.original.kind} status={row.original.status} />
-    ),
+    cell: ({ row }) =>
+      row.original.kind === 'REDEEM' ? (
+        <WithdrawStatusCell transaction={row.original} />
+      ) : (
+        <StatusBadge kind={row.original.kind} status={row.original.status} />
+      ),
     header: () => <Header text={t('column.status')} />,
     id: 'status',
     meta: { className: 'justify-start flex-grow-0', width: 190 },

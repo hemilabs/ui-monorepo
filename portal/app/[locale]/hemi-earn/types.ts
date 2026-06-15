@@ -125,7 +125,7 @@ export type LocalEarnDepositOperation = LocalEarnOperationBase & {
   operation: DepositOperation
 }
 
-type LocalEarnWithdrawOperation = LocalEarnOperationBase & {
+export type LocalEarnWithdrawOperation = LocalEarnOperationBase & {
   kind: 'REDEEM'
   operation: WithdrawOperation
 }
@@ -137,3 +137,7 @@ export type LocalEarnOperation =
 export const isLocalEarnDeposit = (
   op: LocalEarnOperation,
 ): op is LocalEarnDepositOperation => op.kind === 'DEPOSIT'
+
+export const isLocalEarnWithdraw = (
+  op: LocalEarnOperation,
+): op is LocalEarnWithdrawOperation => op.kind === 'REDEEM'

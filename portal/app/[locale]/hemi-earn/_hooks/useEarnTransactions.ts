@@ -6,14 +6,19 @@ import { type Hash } from 'viem'
 import { hashesMatch } from '../_utils'
 import {
   DepositStatus,
+  WithdrawStatus,
   type DepositOperation,
   type DepositStatusType,
+  type WithdrawOperation,
+  type WithdrawStatusType,
 } from '../pool/[shareAddress]/_types/operations'
 import {
   type EarnTransaction,
   type EarnTransactionStatusType,
   type LocalEarnDepositOperation,
+  type LocalEarnWithdrawOperation,
   isLocalEarnDeposit,
+  isLocalEarnWithdraw,
 } from '../types'
 
 import { useEarnTransactionsQuery } from './useEarnTransactionsQuery'
@@ -40,13 +45,30 @@ const localStatusByDepositStatus: Record<
   [DepositStatus.DEPOSIT_TX_CONFIRMED]: 'PENDING',
 }
 
-const localStatus = (operation: DepositOperation): EarnTransactionStatusType =>
-  localStatusByDepositStatus[operation.status]
+const localDepositStatus = (
+  operation: DepositOperation,
+): EarnTransactionStatusType => localStatusByDepositStatus[operation.status]
 
-// Convert a not-yet-indexed local deposit into a row the table can render.
+const localStatusByWithdrawStatus: Record<
+  WithdrawStatusType,
+  EarnTransactionStatusType
+> = {
+  [WithdrawStatus.APPROVAL_TX_PENDING]: 'TX_PENDING',
+  [WithdrawStatus.APPROVAL_TX_FAILED]: 'FAILED',
+  [WithdrawStatus.APPROVAL_TX_COMPLETED]: 'TX_PENDING',
+  [WithdrawStatus.WITHDRAW_TX_PENDING]: 'TX_PENDING',
+  [WithdrawStatus.WITHDRAW_TX_FAILED]: 'FAILED',
+  [WithdrawStatus.WITHDRAW_TX_CONFIRMED]: 'PENDING',
+}
+
+const localWithdrawStatus = (
+  operation: WithdrawOperation,
+): EarnTransactionStatusType => localStatusByWithdrawStatus[operation.status]
+
+// Convert a not-yet-indexed local entry into a row the table can render.
 // Callers must filter out approve-only entries (no `initiateTxHash` yet)
-// before passing to this function — the cast below trusts that.
-const localToEarnTransaction = (
+// before passing to these — the casts trust that.
+const localToEarnDepositTransaction = (
   local: LocalEarnDepositOperation,
 ): EarnTransaction => ({
   amountIn: local.amountIn,
@@ -61,7 +83,25 @@ const localToEarnTransaction = (
   requestedAt: String(local.startedAt),
   requestId: `local-${local.startedAt}`,
   requestTxHash: local.initiateTxHash as Hash,
-  status: localStatus(local.operation),
+  status: localDepositStatus(local.operation),
+})
+
+const localToEarnWithdrawTransaction = (
+  local: LocalEarnWithdrawOperation,
+): EarnTransaction => ({
+  amountIn: local.amountIn,
+  amountOut: null,
+  approvalTxHash: local.approvalTxHash,
+  asset: local.asset,
+  automatic: true,
+  claimTxHash: null,
+  kind: local.kind,
+  receiver: local.account,
+  recoverTxHash: null,
+  requestedAt: String(local.startedAt),
+  requestId: `local-${local.startedAt}`,
+  requestTxHash: local.initiateTxHash as Hash,
+  status: localWithdrawStatus(local.operation),
 })
 
 // Public data hook for the transactions table and drawer. Returns the
@@ -80,46 +120,55 @@ export const useEarnTransactions = function () {
   const merged = useMemo(
     function () {
       const localDeposits = localOperations.filter(isLocalEarnDeposit)
-      // Locally-captured metadata keyed by initiate tx hash. Survives the
+      const localWithdraws = localOperations.filter(isLocalEarnWithdraw)
+      // Locally-captured metadata keyed by request tx hash. Survives the
       // soft-settle flag because the entry stays in storage — that's the
       // whole point of soft-delete: enrich subgraph rows with bits the
       // indexer doesn't expose (`approvalTxHash`).
-      const localByInitiateHash = new Map(
-        localDeposits
+      const localByRequestHash = new Map(
+        [...localDeposits, ...localWithdraws]
           .filter(op => op.initiateTxHash !== undefined)
           .map(op => [op.initiateTxHash!.toLowerCase(), op]),
       )
       const subgraph = (data ?? [])
-        .filter(t => t.kind === 'DEPOSIT' && t.status !== 'RECOVERED')
+        .filter(t => t.status !== 'RECOVERED')
         .map(function (t) {
-          const local = localByInitiateHash.get(t.requestTxHash.toLowerCase())
+          const local = localByRequestHash.get(t.requestTxHash.toLowerCase())
           if (!local?.approvalTxHash) return t
           return { ...t, approvalTxHash: local.approvalTxHash }
         })
       const subgraphHashes = new Set(
         subgraph.map(t => t.requestTxHash.toLowerCase()),
       )
-      const inFlight = localDeposits
-        // Only show in the table once the user has signed the deposit tx —
-        // an approve-only entry isn't a committed deposit (the user can still
+      const inFlightDeposits = localDeposits
+        // Only show in the table once the user has signed the request tx —
+        // an approve-only entry isn't a committed action (the user can still
         // back out of the wallet prompt). The entry stays in localStorage so
-        // the row reappears once `useDeposit` upserts the initiate tx hash.
+        // the row reappears once the request hash is captured.
         .filter(op => op.initiateTxHash !== undefined)
-        // Skip soft-settled entries — the subgraph row supersedes them in
-        // the table (we still kept the entry around above to enrich the
-        // subgraph row with `approvalTxHash`).
+        // Skip soft-settled entries — the subgraph row supersedes them
+        // (we still kept the entry above to enrich with `approvalTxHash`).
         .filter(op => !op.settled)
         .filter(op => !subgraphHashes.has(op.initiateTxHash!.toLowerCase()))
         .filter(
           op =>
-            // Dedupe against any other local op that may have already been
-            // mapped (defensive — shouldn't happen with the upsert).
             !subgraph.some(t =>
               hashesMatch(t.requestTxHash, op.initiateTxHash),
             ),
         )
-        .map(localToEarnTransaction)
-      return [...inFlight, ...subgraph].sort(
+        .map(localToEarnDepositTransaction)
+      const inFlightWithdraws = localWithdraws
+        .filter(op => op.initiateTxHash !== undefined)
+        .filter(op => !op.settled)
+        .filter(op => !subgraphHashes.has(op.initiateTxHash!.toLowerCase()))
+        .filter(
+          op =>
+            !subgraph.some(t =>
+              hashesMatch(t.requestTxHash, op.initiateTxHash),
+            ),
+        )
+        .map(localToEarnWithdrawTransaction)
+      return [...inFlightDeposits, ...inFlightWithdraws, ...subgraph].sort(
         (a, b) => Number(b.requestedAt) - Number(a.requestedAt),
       )
     },

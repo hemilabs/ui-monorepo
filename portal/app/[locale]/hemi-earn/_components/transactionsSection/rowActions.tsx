@@ -1,10 +1,12 @@
 'use client'
 
-import { Button } from 'components/button'
+import { Button, ButtonIcon } from 'components/button'
 import { useTranslations } from 'next-intl'
+import { type MouseEvent } from 'react'
 
 import { type EarnTransaction } from '../../types'
 import { LoaderIcon } from '../icons/loaderIcon'
+import { TrashIcon } from '../icons/trashIcon'
 
 import { useTxDrawerQueryString } from './transactionDrawer/useTxDrawerQueryString'
 
@@ -12,10 +14,6 @@ type Props = {
   transaction: EarnTransaction
 }
 
-// `<RowActions>` is the extension point for per-status CTAs. Today it only
-// renders "View". TODO - Future PRs will add conditional Claim / Recover / Retry
-// buttons here (see plan §extensibility) without touching the table column
-// definition.
 export const RowActions = function ({ transaction }: Props) {
   const t = useTranslations('hemi-earn.transactions')
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
@@ -25,17 +23,47 @@ export const RowActions = function ({ transaction }: Props) {
     transaction.status !== 'RECOVERED' &&
     transaction.status !== 'FAILED'
 
-  const onClick = function (e: React.MouseEvent) {
+  // The Router stays PENDING for the whole cooldown window; FULFILLED is
+  // the brief post-claimUnstake window before the return OFT lands. Both
+  // are user-cancelable.
+  const showCancelButton =
+    transaction.kind === 'REDEEM' &&
+    (transaction.status === 'PENDING' || transaction.status === 'FULFILLED')
+
+  const onViewClick = function (e: MouseEvent) {
     e.stopPropagation()
+    if (transaction.kind === 'REDEEM') return
     setTxDrawerQueryString(transaction.requestTxHash)
   }
 
+  const onCancelClick = function (e: MouseEvent) {
+    e.stopPropagation()
+    // TODO: wire to cancelRedeem (packages/hemi-earn-actions) — drawer +
+    // write hook land in a follow-up PR.
+  }
+
   return (
-    <div className="pr-4">
-      <Button onClick={onClick} size="xSmall" type="button" variant="secondary">
+    <div className="flex items-center gap-x-2 pr-4">
+      <Button
+        onClick={onViewClick}
+        size="xSmall"
+        type="button"
+        variant="secondary"
+      >
         {showLoaderIcon ? <LoaderIcon /> : null}
         {t('view')}
       </Button>
+      {showCancelButton ? (
+        <ButtonIcon
+          aria-label={t('cancel-withdraw')}
+          onClick={onCancelClick}
+          size="xSmall"
+          type="button"
+          variant="secondary"
+        >
+          <TrashIcon className="size-4 text-neutral-500" />
+        </ButtonIcon>
+      ) : null}
     </div>
   )
 }

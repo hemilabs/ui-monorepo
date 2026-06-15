@@ -87,6 +87,7 @@
         "tx-hash": "Hash de Tx",
         "type": "Tipo"
       },
+      "cancel-withdraw": "Cancelar retiro",
       "connect-to-view": "Conecte su billetera para ver sus transacciones de earn.",
       "deposit": "Depósito",
       "drawer": {
@@ -102,9 +103,16 @@
       "nothing-here": "Aún no hay nada aquí",
       "nothing-here-subtitle": "Sus transacciones aparecerán una vez que comience.",
       "status": {
+        "cooldown-ready-in-days": "Cooldown · listo en {value}d",
+        "cooldown-ready-in-hours": "Cooldown · listo en {value}h",
+        "cooldown-ready-in-minutes": "Cooldown · listo en {value}m",
+        "cooldown-ready-soon": "Cooldown · listo en < 1m",
         "deposited": "Depositado",
         "in-progress": "En progreso",
-        "tx-failed": "Tx fallida"
+        "ready-to-claim": "Listo para recibir",
+        "tx-failed": "Tx fallida",
+        "withdrawal-canceled": "Retiro cancelado",
+        "withdrawn": "Retirado"
       },
       "subtitle": "Realice un seguimiento del estado de sus depósitos y retiros.",
       "title": "Mis transacciones de earn",

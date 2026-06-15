@@ -13,8 +13,8 @@ export const hashesMatch = (a: string | undefined, b: string | undefined) =>
   !!a && !!b && a.toLowerCase() === b.toLowerCase()
 
 export const formatApyDisplay = function (apy: number) {
-  if (apy < 0.01) {
-    return '< 0.01%'
+  if (apy !== 0 && apy > -0.01 && apy < 0.01) {
+    return apy > 0 ? '< 0.01%' : '< -0.01%'
   }
   return formatPercentage(apy)
 }

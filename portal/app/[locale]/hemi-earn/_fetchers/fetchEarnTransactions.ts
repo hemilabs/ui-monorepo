@@ -13,7 +13,6 @@ export const fetchEarnTransactions = async function ({
   account,
 }: {
   account: Address
-  networkType: string
 }): Promise<EarnTransaction[]> {
   const { requests } = (await fetchPlusPlus(getEarnRequestsUrl(account), {
     method: 'GET',

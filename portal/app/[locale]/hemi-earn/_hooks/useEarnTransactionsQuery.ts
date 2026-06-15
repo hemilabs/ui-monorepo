@@ -33,8 +33,8 @@ export const useEarnTransactionsQuery = function () {
   )
 
   return useQuery({
-    enabled: !!address,
-    queryFn: () => fetchEarnTransactions({ account: address!, networkType }),
+    enabled: !!address && networkType === 'mainnet',
+    queryFn: () => fetchEarnTransactions({ account: address! }),
     queryKey: [...earnTransactionsKeyPrefix, networkType, address],
     refetchInterval(query) {
       const subgraphData = (query.state.data ?? []) as EarnTransaction[]

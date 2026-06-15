@@ -40,6 +40,7 @@ export const AddChainManually = function ({ chain, layer }: Props) {
     <NetworkConfigCard>
       <ChainHeaderRow chain={chain} layer={layer} />
       <DataSection
+        clickableLink={false}
         label={`${t('rpc-url')}:`}
         value={chain.rpcUrls.default.http[0]}
       />

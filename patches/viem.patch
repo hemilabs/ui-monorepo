@@ -1,3 +1,11 @@
+diff --git a/_cjs/chains/definitions/mainnet.js b/_cjs/chains/definitions/mainnet.js
+--- a/_cjs/chains/definitions/mainnet.js
++++ b/_cjs/chains/definitions/mainnet.js
+@@ -10,3 +10,3 @@
+         default: {
+-            http: ['https://eth.merkle.io'],
++            http: ['https://eth.drpc.org'],
+         },
 diff --git a/_cjs/chains/definitions/sepolia.js b/_cjs/chains/definitions/sepolia.js
 --- a/_cjs/chains/definitions/sepolia.js
 +++ b/_cjs/chains/definitions/sepolia.js
@@ -6,6 +14,14 @@ diff --git a/_cjs/chains/definitions/sepolia.js b/_cjs/chains/definitions/sepoli
 -    nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
 +    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
      rpcUrls: {
+diff --git a/_esm/chains/definitions/mainnet.js b/_esm/chains/definitions/mainnet.js
+--- a/_esm/chains/definitions/mainnet.js
++++ b/_esm/chains/definitions/mainnet.js
+@@ -7,3 +7,3 @@
+         default: {
+-            http: ['https://eth.merkle.io'],
++            http: ['https://eth.drpc.org'],
+         },
 diff --git a/_esm/chains/definitions/sepolia.js b/_esm/chains/definitions/sepolia.js
 --- a/_esm/chains/definitions/sepolia.js
 +++ b/_esm/chains/definitions/sepolia.js
@@ -14,6 +30,14 @@ diff --git a/_esm/chains/definitions/sepolia.js b/_esm/chains/definitions/sepoli
 -    nativeCurrency: { name: 'Sepolia Ether', symbol: 'ETH', decimals: 18 },
 +    nativeCurrency: { name: 'Ether', symbol: 'ETH', decimals: 18 },
      rpcUrls: {
+diff --git a/chains/definitions/mainnet.ts b/chains/definitions/mainnet.ts
+--- a/chains/definitions/mainnet.ts
++++ b/chains/definitions/mainnet.ts
+@@ -8,3 +8,3 @@
+     default: {
+-      http: ['https://eth.merkle.io'],
++      http: ['https://eth.drpc.org'],
+     },
 diff --git a/chains/definitions/sepolia.ts b/chains/definitions/sepolia.ts
 --- a/chains/definitions/sepolia.ts
 +++ b/chains/definitions/sepolia.ts

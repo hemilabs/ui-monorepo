@@ -19,7 +19,6 @@ vi.mock('hemi-earn-actions/actions', () => ({
 
 vi.mock('hemi-earn-actions', () => ({
   getHemiEarnRouterAddress: () => '0xRouter',
-  getStakingVaultForShare: () => '0xStakingVault',
 }))
 
 vi.mock('utils/chainClients', () => ({
@@ -31,14 +30,17 @@ const account = '0x9999999999999999999999999999999999999999' as Address
 const asset = '0x1111111111111111111111111111111111111111' as Address
 const shareAddress = '0x2222222222222222222222222222222222222222' as Address
 const remoteAsset = '0x3333333333333333333333333333333333333333' as Address
+const remoteShare = '0x4444444444444444444444444444444444444444' as Address
 
-// Fake query client that resolves the agent-address lookup the fetcher threads
-// through the cache, branching on the query's key.
+// Fake query client that resolves the agent-address and share-config lookups
+// the fetcher threads through the cache, branching on the query's key.
 const createQueryClient = () => ({
   ensureQueryData: vi.fn(function ({ queryKey }) {
     switch (queryKey[1]) {
       case 'agent-address':
         return Promise.resolve('0xAgent')
+      case 'share-config':
+        return Promise.resolve({ asset, remoteShare, share: shareAddress })
       default:
         return Promise.reject(new Error(`unexpected query ${queryKey[1]}`))
     }
@@ -85,6 +87,9 @@ describe('fetchQuoteRedeem', function () {
 
     expect(quoteRedeemFulfillment).toHaveBeenCalledWith(
       expect.objectContaining({ agentAddress: '0xAgent', asset: remoteAsset }),
+    )
+    expect(resolveIsInstant).toHaveBeenCalledWith(
+      expect.objectContaining({ stakingVault: remoteShare }),
     )
   })
 

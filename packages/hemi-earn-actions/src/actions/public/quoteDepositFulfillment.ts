@@ -18,7 +18,8 @@ import { agentAbi } from '../../agentAbi'
 // token being OFT-bridged back on the fulfillment leg. Since the
 // `b071540 Stateless Agent` refactor the Agent no longer holds an
 // `assetsData(asset)` mapping; the share has to be supplied directly.
-// Resolve via `getStakingVaultForShare(shareOft)` on the portal.
+// Resolve via `Router.assetsData(asset).remoteShare` on the portal (see the
+// `shareConfigQueryOptions` helper).
 export const quoteDepositFulfillment = async function ({
   agentAddress,
   client,

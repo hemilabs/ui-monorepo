@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
 import fetch from 'fetch-plus-plus'
-import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { type EvmToken } from 'types/token'
 import { isValidUrl } from 'utils/url'
 import { type Address, formatUnits } from 'viem'
@@ -43,12 +42,15 @@ const generateMockMetric = function (
 
 type TotalDepositsHistory = { timestamp: number; totalDeposits: string }[]
 
-const fetchTotalDeposits = async function (
-  shareToken: EvmToken,
-  peggedToken: EvmToken,
-  period: MetricPeriod,
-): Promise<MetricDataPoint[]> {
-  const stakingVault = getStakingVaultForShare(shareToken.address as Address)
+const fetchTotalDeposits = async function ({
+  peggedToken,
+  period,
+  stakingVault,
+}: {
+  peggedToken: EvmToken
+  period: MetricPeriod
+  stakingVault: Address
+}): Promise<MetricDataPoint[]> {
   const history = (await fetch(
     `${apiUrl}/variable-stake/total-deposits-history/${stakingVault}/${period}`,
   )) as TotalDepositsHistory
@@ -63,6 +65,7 @@ type UseHistoricalMetrics = {
   peggedToken: EvmToken
   period: MetricPeriod
   shareToken: EvmToken
+  stakingVault: Address
 }
 
 export const useHistoricalMetrics = ({
@@ -70,13 +73,14 @@ export const useHistoricalMetrics = ({
   peggedToken,
   period,
   shareToken,
+  stakingVault,
 }: UseHistoricalMetrics) =>
   useQuery({
     enabled: metricType === 'apy' || isVetroApiConfigured,
     queryFn: (): Promise<MetricDataPoint[]> =>
       metricType === 'apy'
         ? Promise.resolve(generateMockMetric(period, metricType))
-        : fetchTotalDeposits(shareToken, peggedToken, period),
+        : fetchTotalDeposits({ peggedToken, period, stakingVault }),
     queryKey: [
       'historical-metrics',
       metricType,

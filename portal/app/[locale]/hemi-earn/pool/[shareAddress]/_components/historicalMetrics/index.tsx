@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type EvmToken } from 'types/token'
+import { type Address } from 'viem'
 
 import { HistoricalMetricsIcon } from '../../../../_icons/historicalMetricsIcon'
 import { type MetricPeriod, type MetricType } from '../../../../types'
@@ -17,9 +18,14 @@ import { HistoricalMetricsChart } from './historicalMetricsChart'
 type Props = {
   peggedToken: EvmToken
   shareToken: EvmToken
+  stakingVault: Address
 }
 
-export const HistoricalMetrics = function ({ peggedToken, shareToken }: Props) {
+export const HistoricalMetrics = function ({
+  peggedToken,
+  shareToken,
+  stakingVault,
+}: Props) {
   const t = useTranslations('hemi-earn.pool.historical-metrics')
   const [period, setPeriod] = useState<MetricPeriod>('1w')
   const [metricType, setMetricType] = useState<MetricType>('deposits')
@@ -29,6 +35,7 @@ export const HistoricalMetrics = function ({ peggedToken, shareToken }: Props) {
     peggedToken,
     period,
     shareToken,
+    stakingVault,
   })
 
   const renderHeadline = function () {

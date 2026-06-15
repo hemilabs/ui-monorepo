@@ -22,7 +22,7 @@ describe('networks/utils', function () {
 
     it('should update RPC URLs with valid URLs from environment string', function () {
       const rpcUrlEnv =
-        'https://eth.drpc.org+https://ethereum-rpc.publicnode.com+https://1rpc.io/eth'
+        'https://ethereum-rpc.publicnode.com+https://1rpc.io/eth'
       const result = updateRpcUrls(mainnet, rpcUrlEnv)
 
       expect(result).toEqual({
@@ -30,7 +30,6 @@ describe('networks/utils', function () {
         rpcUrls: {
           default: {
             http: [
-              'https://eth.drpc.org',
               'https://ethereum-rpc.publicnode.com',
               'https://1rpc.io/eth',
             ],

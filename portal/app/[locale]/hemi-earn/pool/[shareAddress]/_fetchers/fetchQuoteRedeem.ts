@@ -1,8 +1,5 @@
 import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
-import {
-  getHemiEarnRouterAddress,
-  getStakingVaultForShare,
-} from 'hemi-earn-actions'
+import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import {
   getAssetData,
   quoteRedeem,
@@ -14,6 +11,7 @@ import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
+import { shareConfigQueryOptions } from '../../../_fetchers/fetchHemiEarnAssetConfigs'
 import { agentAddressQueryOptions } from '../../../_hooks/useHemiEarnAgentAddress'
 
 export type QuoteRedeem = {
@@ -43,11 +41,14 @@ export async function fetchQuoteRedeem({
 }: QuoteRedeemParams): Promise<QuoteRedeem> {
   const ethereumClient = getEvmL1PublicClient(mainnet.id)
   const hemiClient = getPublicClient(hemi.id)
+  const { remoteShare } = await queryClient.ensureQueryData(
+    shareConfigQueryOptions(shareAddress),
+  )
   const [isInstant, assetData, agentAddress] = await Promise.all([
     resolveIsInstant({
       caller: account,
       client: ethereumClient,
-      stakingVault: getStakingVaultForShare(shareAddress),
+      stakingVault: remoteShare,
     }),
     getAssetData(hemiClient, {
       asset,

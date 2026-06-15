@@ -2,7 +2,6 @@
 
 import { queryOptions } from '@tanstack/react-query'
 import fetch from 'fetch-plus-plus'
-import { getStakingVaultForShare } from 'hemi-earn-actions'
 import { isValidUrl } from 'utils/url'
 import { type Address } from 'viem'
 
@@ -24,14 +23,12 @@ export const earnApyQueryOptions = () =>
   })
 
 // Resolve the apy for a single share against an already-fetched response.
-// Returns `undefined` while the query is pending, `null` once settled but
-// missing for that share (errored response or vault not in the payload),
-// and the 7-day number otherwise.
+// The API keys its per-vault map by the share's Ethereum-side staking vault,
+// so callers pass that (`pool.stakingVault`). Returns `undefined` while the
+// query is pending, `null` once settled but missing for that vault (errored
+// response or vault not in the payload), and the 7-day number otherwise.
 export const selectApyValue = (
   data: ApyByVault | undefined,
   isPending: boolean,
-  shareAddress: Address,
-): number | null | undefined =>
-  isPending
-    ? undefined
-    : data?.[getStakingVaultForShare(shareAddress)]?.['7d'] ?? null
+  stakingVault: Address,
+) => (isPending ? undefined : data?.[stakingVault]?.['7d'] ?? null)

@@ -84,6 +84,7 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
             <HistoricalMetrics
               peggedToken={pool.peggedToken}
               shareToken={pool.shareToken}
+              stakingVault={pool.stakingVault}
             />
             <Composition
               chainId={pool.shareToken.chainId}

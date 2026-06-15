@@ -1,9 +1,6 @@
 import { type QueryClient, type UseQueryOptions } from '@tanstack/react-query'
 import { previewDeposit } from '@vetro-protocol/gateway/actions'
-import {
-  getHemiEarnRouterAddress,
-  getStakingVaultForShare,
-} from 'hemi-earn-actions'
+import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import {
   quoteDeposit,
   quoteDepositFulfillment,
@@ -13,7 +10,8 @@ import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient, getPublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
-import { gatewayForAssetQueryOptions } from '../../../_hooks/gatewayForAsset'
+import { shareConfigQueryOptions } from '../../../_fetchers/fetchHemiEarnAssetConfigs'
+import { gatewayForShareQueryOptions } from '../../../_hooks/gatewayForShare'
 import { assetDataQueryOptions } from '../../../_hooks/useAssetData'
 import { agentAddressQueryOptions } from '../../../_hooks/useHemiEarnAgentAddress'
 
@@ -44,7 +42,7 @@ export async function fetchQuoteDeposit({
   const hemiClient = getPublicClient(hemi.id)
 
   const peggedAmountPromise = Promise.all([
-    queryClient.ensureQueryData(gatewayForAssetQueryOptions(asset)),
+    queryClient.ensureQueryData(gatewayForShareQueryOptions(shareAddress)),
     queryClient.ensureQueryData(assetDataQueryOptions(asset)),
   ]).then(([gateway, assetData]) =>
     previewDeposit(ethereumClient, {
@@ -54,15 +52,18 @@ export async function fetchQuoteDeposit({
     }),
   )
 
-  const callbackFeePromise = queryClient
-    .ensureQueryData(agentAddressQueryOptions())
-    .then(agentAddress =>
-      quoteDepositFulfillment({
-        agentAddress,
-        client: ethereumClient,
-        share: getStakingVaultForShare(shareAddress),
-      }),
-    )
+  const callbackFeePromise = Promise.all([
+    queryClient.ensureQueryData(agentAddressQueryOptions()),
+    queryClient
+      .ensureQueryData(shareConfigQueryOptions(shareAddress))
+      .then(({ remoteShare }) => remoteShare),
+  ]).then(([agentAddress, remoteShare]) =>
+    quoteDepositFulfillment({
+      agentAddress,
+      client: ethereumClient,
+      share: remoteShare,
+    }),
+  )
 
   const [callbackFee, nativeFee, peggedAmount] = await Promise.all([
     callbackFeePromise,

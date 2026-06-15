@@ -2,17 +2,13 @@ import { type Address } from 'viem'
 import { convertToAssets } from 'viem-erc4626/actions'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-import { fetchSharesToPegged } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_fetchers/fetchSharesToPegged'
+import { fetchSharesToPegged } from '../../../../../app/[locale]/hemi-earn/_fetchers/fetchSharesToPegged'
 
 vi.mock('viem-erc4626/actions', () => ({
   convertToAssets: vi.fn(),
 }))
 
-const shareAddress = '0x2222222222222222222222222222222222222222' as Address
-
-vi.mock('hemi-earn-actions', () => ({
-  getStakingVaultForShare: () => '0xStakingVault',
-}))
+const stakingVault = '0x2222222222222222222222222222222222222222' as Address
 
 vi.mock('utils/chainClients', () => ({
   getEvmL1PublicClient: () => ({ chain: 'mainnet' }),
@@ -25,21 +21,21 @@ describe('fetchSharesToPegged', function () {
 
   it('returns peggedAmount from convertToAssets', async function () {
     const result = await fetchSharesToPegged({
-      shareAddress,
       shares: BigInt(1000),
+      stakingVault,
     })
 
     expect(result).toEqual({ peggedAmount: BigInt(200) })
     expect(convertToAssets).toHaveBeenCalledWith(
       expect.anything(),
-      expect.objectContaining({ shares: BigInt(1000) }),
+      expect.objectContaining({ address: stakingVault, shares: BigInt(1000) }),
     )
   })
 
   it('short-circuits and skips RPC when shares = 0n', async function () {
     const result = await fetchSharesToPegged({
-      shareAddress,
       shares: BigInt(0),
+      stakingVault,
     })
 
     expect(result).toEqual({ peggedAmount: BigInt(0) })
@@ -50,8 +46,8 @@ describe('fetchSharesToPegged', function () {
     vi.mocked(convertToAssets).mockResolvedValue(BigInt(-1))
 
     const result = await fetchSharesToPegged({
-      shareAddress,
       shares: BigInt(1000),
+      stakingVault,
     })
 
     expect(result).toEqual({ peggedAmount: BigInt(0) })
@@ -61,7 +57,7 @@ describe('fetchSharesToPegged', function () {
     vi.mocked(convertToAssets).mockRejectedValue(new Error('Vault down'))
 
     await expect(
-      fetchSharesToPegged({ shareAddress, shares: BigInt(1000) }),
+      fetchSharesToPegged({ shares: BigInt(1000), stakingVault }),
     ).rejects.toThrow('Vault down')
   })
 })

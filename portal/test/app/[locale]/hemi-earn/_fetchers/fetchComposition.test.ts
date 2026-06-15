@@ -4,10 +4,7 @@ import {
   fetchComposition,
   toCompositionItems,
 } from 'app/[locale]/hemi-earn/_fetchers/fetchComposition'
-import {
-  gatewayForAssetQueryOptions,
-  getAssetForShare,
-} from 'app/[locale]/hemi-earn/_hooks/gatewayForAsset'
+import { gatewayForShareQueryOptions } from 'app/[locale]/hemi-earn/_hooks/gatewayForShare'
 import fetch from 'fetch-plus-plus'
 import { tokenQueryOptions } from 'hooks/useToken'
 import { tokenPricesQueryOptions } from 'hooks/useTokenPrices'
@@ -29,24 +26,9 @@ vi.mock('utils/chainClients', () => ({
 // The treasury endpoint call — the only direct network request of the fetcher.
 vi.mock('fetch-plus-plus', () => ({ default: vi.fn() }))
 
-const { assetAddress, shareAddress } = vi.hoisted(() => ({
-  assetAddress: '0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa' as Address,
-  shareAddress: '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' as Address,
-}))
-
-// The committed hemi-earn registry ships placeholder (zero) addresses until
-// the production deployment is configured, so the test registers its own
-// share/asset entry instead of relying on the real data.
-vi.mock('hemi-earn-actions', async importOriginal => ({
-  ...(await importOriginal<typeof import('hemi-earn-actions')>()),
-  getHemiEarnSupportedAssets: () => [
-    { asset: assetAddress, share: shareAddress },
-  ],
-}))
+const shareAddress = '0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' as Address
 
 const apiUrl = 'https://vetro.test'
-// Resolves through the real lookup, against the mocked registry entry
-const asset = getAssetForShare(shareAddress)
 // Real gateway configs, so the peg-base lookup exercises the production data.
 const btcGateway = gateways.find(g => g.pegBaseSymbol === 'BTC')!.address
 const usdGateway = gateways.find(g => g.pegBaseSymbol === 'USD')!.address
@@ -77,7 +59,10 @@ const seedQueryClient = function ({
   tokens: Token[]
 }) {
   const queryClient = createTestQueryClient()
-  queryClient.setQueryData(gatewayForAssetQueryOptions(asset).queryKey, gateway)
+  queryClient.setQueryData(
+    gatewayForShareQueryOptions(shareAddress).queryKey,
+    gateway,
+  )
   queryClient.setQueryData(tokenPricesQueryOptions().queryKey, prices)
   tokens.forEach(token =>
     queryClient.setQueryData(

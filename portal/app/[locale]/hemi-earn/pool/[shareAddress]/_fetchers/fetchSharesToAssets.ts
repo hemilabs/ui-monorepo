@@ -4,13 +4,9 @@ import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
-import {
-  gatewayForAssetQueryOptions,
-  getAssetForShare,
-} from '../../../_hooks/gatewayForAsset'
+import { sharesToPeggedOptions } from '../../../_fetchers/fetchSharesToPegged'
+import { gatewayForShareQueryOptions } from '../../../_hooks/gatewayForShare'
 import { assetDataQueryOptions } from '../../../_hooks/useAssetData'
-
-import { sharesToPeggedOptions } from './fetchSharesToPegged'
 
 export type SharesToAssets = {
   assetOut: bigint
@@ -49,9 +45,7 @@ export async function fetchSharesToAssets({
       queryFn: sharesToPeggedQueryFn,
       queryKey: sharesToPeggedQueryKey,
     }),
-    queryClient.ensureQueryData(
-      gatewayForAssetQueryOptions(getAssetForShare(shareAddress)),
-    ),
+    queryClient.ensureQueryData(gatewayForShareQueryOptions(shareAddress)),
     queryClient.ensureQueryData(assetDataQueryOptions(assetAddress)),
   ])
   if (peggedAmount <= BigInt(0)) {

@@ -11,7 +11,7 @@ type Props = {
   isCooldownEligible: boolean
   isFeesError: boolean
   nativeToken: EvmToken
-  shareAddress: Address
+  stakingVault: Address
   topRow: TopRowProps
   totalFees: bigint
 }
@@ -23,7 +23,7 @@ export const OperationBelowForm = ({
   isCooldownEligible,
   isFeesError,
   nativeToken,
-  shareAddress,
+  stakingVault,
   topRow,
   totalFees,
 }: Props) => (
@@ -39,7 +39,7 @@ export const OperationBelowForm = ({
       />
     </div>
     {account && isCooldownEligible && (
-      <CooldownWarning shareAddress={shareAddress} />
+      <CooldownWarning stakingVault={stakingVault} />
     )}
   </div>
 )

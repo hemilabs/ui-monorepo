@@ -6,33 +6,29 @@ import { ErrorBoundary } from 'components/errorBoundary'
 import { InRelativeTime } from 'components/inRelativeTime'
 import { Header } from 'components/table/_components/header'
 import { TokenLogo } from 'components/tokenLogo'
+import { hemi } from 'hemi-viem'
+import { useToken } from 'hooks/useToken'
 import { type useTranslations } from 'next-intl'
-import { type Address, formatUnits, isAddressEqual } from 'viem'
+import Skeleton from 'react-loading-skeleton'
+import { formatUnits } from 'viem'
 
-import { type EarnPool, type EarnTransaction } from '../../types'
+import { type EarnTransaction } from '../../types'
 
 import { RowActions } from './rowActions'
 import { StatusBadge } from './statusBadge'
 
-// Resolves the deposit asset from the pool registry built by
-// `useHemiEarnShares`. We do NOT use the global `useToken` here because the
-// hemi-earn token list is its own curated registry (`HEMI_EARN_TOKENS` in
-// `_constants/tokens.ts`)
-const findToken = function (pools: EarnPool[], asset: Address) {
-  for (const pool of pools) {
-    const match = pool.assets.find(a => isAddressEqual(a.address, asset))
-    if (match) return match.token
+// Resolves the deposit asset's metadata through the shared token query (token
+// list with an on-chain erc20 fallback), keyed off the transaction's
+// Hemi-side asset address.
+function AmountCell({ transaction }: { transaction: EarnTransaction }) {
+  const { data: token, isLoading } = useToken({
+    address: transaction.asset,
+    chainId: hemi.id,
+  })
+
+  if (isLoading) {
+    return <Skeleton className="w-16" />
   }
-  return undefined
-}
-
-type AmountCellProps = {
-  pools: EarnPool[]
-  transaction: EarnTransaction
-}
-
-function AmountCell({ pools, transaction }: AmountCellProps) {
-  const token = findToken(pools, transaction.asset)
   if (!token) {
     return <span className="text-neutral-950">{transaction.amountIn}</span>
   }
@@ -54,12 +50,10 @@ function AmountCell({ pools, transaction }: AmountCellProps) {
 }
 
 type ColumnsContext = {
-  pools: EarnPool[]
   t: ReturnType<typeof useTranslations<'hemi-earn.transactions'>>
 }
 
 export const buildColumns = ({
-  pools,
   t,
 }: ColumnsContext): ColumnDef<EarnTransaction>[] => [
   {
@@ -83,7 +77,7 @@ export const buildColumns = ({
     meta: { className: 'justify-start flex-grow-0', width: 112 },
   },
   {
-    cell: ({ row }) => <AmountCell pools={pools} transaction={row.original} />,
+    cell: ({ row }) => <AmountCell transaction={row.original} />,
     header: () => <Header text={t('column.amount')} />,
     id: 'amount',
     meta: { className: 'justify-start flex-grow-0', width: 200 },

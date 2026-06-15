@@ -77,6 +77,8 @@ export type EarnPool = {
   peggedToken: EvmToken
   shareAddress: Address
   shareToken: EvmToken
+  // Ethereum-side ERC-4626 staking vault (`Router.assetsData(asset).remoteShare`)
+  stakingVault: Address
   totalDeposits: bigint
 }
 

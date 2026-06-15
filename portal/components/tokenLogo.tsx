@@ -12,6 +12,7 @@ import { BtcLogo } from './icons/btcLogo'
 // Prefer ordering these by value rather than by key
 /* eslint-disable sort-keys */
 const sizes = {
+  xSmall: 'size-4',
   small: 'size-5',
   medium: 'size-6',
   large: 'size-8',

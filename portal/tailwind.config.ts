@@ -28,6 +28,7 @@ const config: Config = {
     },
     extend: {
       animation: {
+        'fade-in': 'fade-in 250ms ease-out',
         'withdraw-progress': 'withdraw-progress 2s infinite',
       },
       backdropBlur: {

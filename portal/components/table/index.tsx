@@ -144,7 +144,7 @@ function TableBody<TData>({
     >
       {!placeholder ? (
         <table
-          className="w-full border-separate border-spacing-0 whitespace-nowrap"
+          className="relative w-full border-separate border-spacing-0 whitespace-nowrap"
           style={{ minWidth: `${tableMinWidth}px` }}
         >
           <tbody

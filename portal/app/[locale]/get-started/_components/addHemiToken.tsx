@@ -28,10 +28,6 @@ const PlainColumn = (props: ComponentProps<'td'>) => (
   <Column variant="plain" {...props} />
 )
 
-const TokenTableHeader = ({ text }: { text: string }) => (
-  <Header className="text-sm" text={text} />
-)
-
 function HemiAddressCell({ token }: { token: EvmToken }) {
   const hemi = useHemi()
   return (
@@ -50,7 +46,7 @@ const tokenTableColumns = ({
 }: TokenTableColumnsProps): ColumnDef<EvmToken>[] => [
   {
     cell: ({ row }) => <TokenTableTokenCell token={row.original} />,
-    header: () => <TokenTableHeader text={t('token')} />,
+    header: () => <Header text={t('token')} />,
     id: 'token',
     meta: { width: 200 },
   },
@@ -61,13 +57,13 @@ const tokenTableColumns = ({
         token={row.original}
       />
     ),
-    header: () => <TokenTableHeader text={t('l1-address')} />,
+    header: () => <Header text={t('l1-address')} />,
     id: 'l1-address',
     meta: { width: 147 },
   },
   {
     cell: ({ row }) => <HemiAddressCell token={row.original} />,
-    header: () => <TokenTableHeader text={t('l2-address')} />,
+    header: () => <Header text={t('l2-address')} />,
     id: 'l2-address',
     meta: { width: 147 },
   },
@@ -77,7 +73,7 @@ const tokenTableColumns = ({
         <AddTokenTableButton token={row.original} />
       </div>
     ),
-    header: () => <TokenTableHeader text={t('action')} />,
+    header: () => <Header text={t('action')} />,
     id: 'action',
     meta: { className: 'justify-start lg:justify-end', width: 116 },
   },
@@ -119,6 +115,21 @@ export const AddHemiToken = function () {
   const showNoMatchingTokens =
     searchText.trim().length > 0 && tokens.length === 0
 
+  const getContent = function () {
+    if (showNoMatchingTokens) {
+      return <NoMatchingTokens />
+    }
+    return (
+      <Table
+        cellComponent={PlainColumn}
+        columns={columns}
+        containerClassName="flex h-full flex-col"
+        data={tokens}
+        priorityColumnIdsOnSmall={['action', 'token']}
+      />
+    )
+  }
+
   return (
     <Section card={false} step={{ position: 2 }}>
       <Card>
@@ -144,18 +155,7 @@ export const AddHemiToken = function () {
             </div>
           </div>
           <div className="mt-6 w-full rounded-xl text-sm font-medium">
-            <div className="h-72 overflow-hidden">
-              <Table
-                cellComponent={PlainColumn}
-                columns={columns}
-                data={tokens}
-                placeholder={
-                  showNoMatchingTokens ? <NoMatchingTokens /> : undefined
-                }
-                priorityColumnIdsOnSmall={['action', 'token']}
-                rowSize={64}
-              />
-            </div>
+            <div className="h-90">{getContent()}</div>
           </div>
         </div>
       </Card>

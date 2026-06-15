@@ -111,7 +111,9 @@ export const AddHemiWallet = function () {
                   </Tab>
                 </Tabs>
               </div>
-              <AddSection networkConfiguration={networkConfiguration} />
+              <div className="animate-fade-in" key={networkConfiguration}>
+                <AddSection networkConfiguration={networkConfiguration} />
+              </div>
             </div>
           </div>
         </div>

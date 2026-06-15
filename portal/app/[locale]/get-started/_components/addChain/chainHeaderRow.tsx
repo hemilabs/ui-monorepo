@@ -8,7 +8,7 @@ type Props = {
 }
 
 export const ChainHeaderRow = ({ chain, layer }: Props) => (
-  <div className="border-b border-neutral-100 pb-4">
+  <div className="pb-4">
     <ChainIdentityRow chain={chain} layer={layer} />
   </div>
 )

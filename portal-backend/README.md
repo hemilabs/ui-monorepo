@@ -172,6 +172,11 @@ $ curl http://localhost:3006/subgraphs/43111/earn-requests/0x0000000000000000000
 {"requests":[{"amountIn":"1000000000000000000","amountOut":"1000000000000000000","asset":"0x...","automatic":true,"claimableAt":"1759162804","claimTxHash":"0xabc...","failed":false,"failureReason":null,"kind":"DEPOSIT","receiver":"0x1234...","recoverTxHash":null,"requestedAt":"1759162804","requestId":"6","requestTxHash":"0xdef...","status":"FINALIZED"}]}
 ```
 
+Requires the following env vars to be set on the backend:
+
+- `SUBGRAPH_HEMI_EARN_REQUESTS_API_URL` — the full GraphQL URL of the Envio `hemi-earn-requests` indexer.
+- `SUBGRAPH_HEMI_EARN_REQUESTS_API_KEY` — Bearer token for the Envio indexer (only sent when set; can be left empty against an unauthenticated local Envio).
+
 ### Configuration
 
 These environment variables control how the cache works:

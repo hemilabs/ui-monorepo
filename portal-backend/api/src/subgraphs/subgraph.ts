@@ -726,8 +726,9 @@ const deriveStatus = (row: SubgraphRequest): EarnRequestStatus =>
 const toEarnRequestRow = (row: SubgraphRequest): EarnRequestRow => ({
   amountIn: row.amountIn,
   amountOut: row.amountOut,
-  // @ts-expect-error address comes lowercased from the indexer
-  asset: row.asset,
+  // Kept lowercase on purpose so it matches the portal-side tokens
+  // registry; only `receiver` is normalized to checksum below.
+  asset: row.asset as Address,
   automatic: row.automatic ?? true,
   claimableAt: row.claimableAt,
   claimTxHash: row.claimTxHash as Hash | null,
@@ -747,6 +748,11 @@ const toEarnRequestRow = (row: SubgraphRequest): EarnRequestRow => ({
 // (Hasura at `localhost:8080`) keeps working.
 function requestHemiEarn<TResponse>(schema: Schema): Promise<TResponse> {
   const { apiKey, apiUrl } = subgraphConfig.hemiEarnRequests
+  if (!apiUrl) {
+    throw new UpstreamGraphQLError(
+      'hemi-earn-requests indexer URL is not configured (set SUBGRAPH_HEMI_EARN_REQUESTS_API_URL)',
+    )
+  }
   const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined
   return postJson(apiUrl, schema, { headers }).catch(function (err) {
     throw new UpstreamGraphQLError(err.message, { cause: err })
@@ -797,12 +803,14 @@ type GetEarnRequestsQueryResponse = GraphResponse<{
  * initiated by the given address. Filtered by `initiator` (msg.sender on
  * the Router call), not `receiver` — those can differ for smart-account
  * wallets, and the portal's "my transactions" view follows the signer.
+ *
+ * No `chainId` parameter: the `hemi-earn-requests-subgraph` is Hemi-mainnet
+ * only and the route gates that via `validateChainIsHemiMainnet`.
  */
 export const getEarnRequests = async function ({
   address,
 }: {
   address: Address
-  chainId: Chain['id']
 }) {
   const initiator = address.toLowerCase()
 

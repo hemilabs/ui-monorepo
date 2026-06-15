@@ -13,7 +13,11 @@ import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 import { postJson } from '../post-json.ts'
 
 import { UpstreamGraphQLError } from './errors.ts'
-import type { EarnRequestRow, EarnRequestStatus } from './types/earn.ts'
+import type {
+  EarnRequestRow,
+  EarnRequestStatus,
+  SubgraphRequest,
+} from './types/earn.ts'
 import type {
   BtcDepositOperation,
   EvmDepositOperation,
@@ -700,45 +704,24 @@ export const getLockedPositions = function ({
   )
 }
 
-type SubgraphRequest = {
-  amountIn: string
-  amountOut: string | null
-  asset: string
-  automatic: boolean | null
-  claimableAt: string | null
-  claimTxHash: string | null
-  failed: boolean
-  failureReason: string | null
-  kind: 'DEPOSIT' | 'REDEEM'
-  receiver: string
-  recoverTxHash: string | null
-  requestedAt: string
-  requestId: string
-  requestTxHash: string
-  status: 'PENDING' | 'FULFILLED' | 'FINALIZED' | 'CANCELLED' | 'RECOVERED'
-}
-
 // The indexer clears `failed` on `RequestRetried`, so a successful retry
 // won't be mis-labeled.
 const deriveStatus = (row: SubgraphRequest): EarnRequestStatus =>
   row.failed ? 'FAILED' : row.status
 
 const toEarnRequestRow = (row: SubgraphRequest): EarnRequestRow => ({
-  amountIn: row.amountIn,
-  amountOut: row.amountOut,
+  // Spread the fields that flow through unchanged (see
+  // `EarnRequestCommonFields` in `types/earn.ts`); the explicit
+  // overrides below transform the addresses, hashes, status and the
+  // nullable `automatic` flag.
+  ...row,
   // Kept lowercase on purpose so it matches the portal-side tokens
   // registry; only `receiver` is normalized to checksum below.
   asset: row.asset as Address,
   automatic: row.automatic ?? true,
-  claimableAt: row.claimableAt,
   claimTxHash: row.claimTxHash as Hash | null,
-  failed: row.failed,
-  failureReason: row.failureReason,
-  kind: row.kind,
   receiver: toChecksum(row.receiver as `0x${string}`),
   recoverTxHash: row.recoverTxHash as Hash | null,
-  requestedAt: row.requestedAt,
-  requestId: row.requestId,
   requestTxHash: row.requestTxHash as Hash,
   status: deriveStatus(row),
 })

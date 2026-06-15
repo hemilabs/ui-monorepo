@@ -163,6 +163,15 @@ $ curl http://localhost:3006/subgraphs/43111/locks/0x000000000000000000000000000
 {"positions":[]}
 ```
 
+##### `GET /subgraphs/:chain-id/earn-requests/:address`
+
+Returns the Hemi Earn cross-chain requests (deposits and redeems) initiated by the given address. Hemi mainnet only. Powered by the Envio multichain indexer (`hemi-earn-requests-subgraph`); rows are filtered by `initiator` (`msg.sender` on the Router call).
+
+```console
+$ curl http://localhost:3006/subgraphs/43111/earn-requests/0x0000000000000000000000000000000000000001
+{"requests":[{"amountIn":"1000000000000000000","amountOut":"1000000000000000000","asset":"0x...","automatic":true,"claimableAt":"1759162804","claimTxHash":"0xabc...","failed":false,"failureReason":null,"kind":"DEPOSIT","receiver":"0x1234...","recoverTxHash":null,"requestedAt":"1759162804","requestId":"6","requestTxHash":"0xdef...","status":"FINALIZED"}]}
+```
+
 ### Configuration
 
 These environment variables control how the cache works:

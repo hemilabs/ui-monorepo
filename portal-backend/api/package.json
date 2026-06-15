@@ -1,6 +1,6 @@
 {
   "name": "portal-backend",
-  "version": "2.4.1",
+  "version": "2.5.0",
   "scripts": {
     "build": "tsc",
     "start": "node --import=./src/instrument.ts server.ts"

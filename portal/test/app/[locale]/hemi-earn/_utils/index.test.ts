@@ -35,8 +35,8 @@ describe('utils', function () {
       expect(formatApyDisplay(0.005)).toBe('< 0.01%')
     })
 
-    it('should return "< 0.01%" for zero', function () {
-      expect(formatApyDisplay(0)).toBe('< 0.01%')
+    it('should return "0.00%" for zero', function () {
+      expect(formatApyDisplay(0)).toBe('0.00%')
     })
 
     it('should format percentage for value equal to 0.01', function () {

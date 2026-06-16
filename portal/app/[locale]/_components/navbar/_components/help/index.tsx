@@ -177,7 +177,7 @@ const LanguageMenu = function ({ active }: LanguageProps) {
             text={getLocalizedLocaleName(locale)}
           />
           <div className={active === locale ? 'block' : 'invisible'}>
-            <CheckMark className="[&>path]:stroke-emerald-500" />
+            <CheckMark className="[&>path]:fill-emerald-500" />
           </div>
         </div>
       ))}

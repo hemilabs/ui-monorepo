@@ -34,14 +34,14 @@ export const ConfigurationUrl = function ({
     <>
       {clickableLink ? (
         <ExternalLink
-          className="hoverable-text mr-auto overflow-hidden text-ellipsis whitespace-nowrap md:basis-auto"
+          className="hoverable-text body-text-medium mr-auto overflow-hidden text-ellipsis whitespace-nowrap md:basis-auto"
           href={href}
           {...props}
         >
           {href}
         </ExternalLink>
       ) : (
-        <span className="mr-auto overflow-hidden text-ellipsis whitespace-nowrap text-neutral-950">
+        <span className="body-text-normal overflow-hidden text-ellipsis whitespace-nowrap text-neutral-500">
           {href}
         </span>
       )}
@@ -50,7 +50,7 @@ export const ConfigurationUrl = function ({
         text={
           <span className="flex items-center gap-x-1">
             <span>{t(`${copied ? 'copied' : 'copy'}`)}</span>
-            {copied && <CheckMark className="[&>path]:stroke-emerald-500" />}
+            {copied && <CheckMark className="[&>path]:fill-emerald-500" />}
           </span>
         }
         trigger={['hover', 'focus']}

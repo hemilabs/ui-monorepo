@@ -4,11 +4,14 @@ import { ComponentProps, ComponentType } from 'react'
 
 import { Column } from './column'
 
+const baseRowClassName = 'group/row absolute flex w-full items-center'
+
 type Props<TData> = {
   CellComponent?: ComponentType<ComponentProps<'td'>>
   loading: boolean
   onRowClick?: (row: TData) => void
   onRowHover?: (index: number | null) => void
+  rowClassName?: string
   rows: Row<TData>[]
   virtualItems: VirtualItem[]
 }
@@ -18,6 +21,7 @@ export function VirtualRows<TData>({
   loading,
   onRowClick,
   onRowHover,
+  rowClassName,
   rows,
   virtualItems,
 }: Props<TData>) {
@@ -31,7 +35,7 @@ export function VirtualRows<TData>({
         const row = rows[virtualRow.index]
         return (
           <tr
-            className="group/row absolute flex w-full items-center"
+            className={`${baseRowClassName} ${rowClassName ?? ''}`}
             data-index={virtualRow.index}
             key={row.id}
             onClick={onRowClick ? () => onRowClick(row.original) : undefined}

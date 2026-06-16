@@ -23,8 +23,13 @@ export const AddChain = function ({ chain, children }: Props) {
   const { enabled, track } = useUmami()
   const { data: walletClient } = useWalletClient()
 
-  const { mutate: addChain } = useMutation({
-    mutationFn: (c: Chain) => walletClient!.addChain({ chain: c }),
+  const { isPending, mutate: addChain } = useMutation({
+    mutationFn(c: Chain) {
+      if (!walletClient) {
+        throw new Error('Wallet client is not ready')
+      }
+      return walletClient.addChain({ chain: c })
+    },
     mutationKey: ['add-chain-mutation', chain.id],
     onSuccess() {
       setIsChainAdded(true)
@@ -55,6 +60,9 @@ export const AddChain = function ({ chain, children }: Props) {
   )
 
   const onClick = function () {
+    if (isPending) {
+      return
+    }
     if (!isConnected) {
       openDrawer?.()
       return
@@ -69,7 +77,9 @@ export const AddChain = function ({ chain, children }: Props) {
       className={
         isConnected && (isChainAdded || isConnectedToChain)
           ? ''
-          : 'cursor-pointer hover:bg-gray-50'
+          : isPending
+            ? 'cursor-default'
+            : 'cursor-pointer hover:bg-neutral-50'
       }
       onClick={onClick}
     >

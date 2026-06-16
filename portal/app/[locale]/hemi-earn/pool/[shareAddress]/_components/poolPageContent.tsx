@@ -10,6 +10,7 @@ import { queryStringObjectToString } from 'utils/url'
 import { type Address } from 'viem'
 
 import { useEarnPools } from '../../../_hooks/useEarnPools'
+import { findPoolByShare } from '../../../_utils'
 import { PoolFormProvider } from '../_context/poolFormContext'
 
 import { Composition } from './composition'
@@ -28,10 +29,9 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
   const [networkType] = useNetworkType()
   const { data: pools, isPending } = useEarnPools()
 
-  const pool = pools?.find(
-    p =>
-      p.shareAddress.toLowerCase() === (shareAddress as Address).toLowerCase(),
-  )
+  const pool = pools
+    ? findPoolByShare(pools, shareAddress as Address)
+    : undefined
 
   const networkTypeRef = useRef(networkType)
   useEffect(

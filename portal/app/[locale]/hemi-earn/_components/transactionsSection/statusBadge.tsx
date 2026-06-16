@@ -1,5 +1,5 @@
 import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
-import { RedErrorIcon } from 'components/icons/redErrorIcon'
+import { ErrorIcon } from 'components/icons/errorIcon'
 import { useTranslations } from 'next-intl'
 
 import {
@@ -7,7 +7,6 @@ import {
   type EarnTransactionStatusType,
 } from '../../types'
 import { InProgressIcon } from '../icons/inProgressIcon'
-import { XCircleIcon } from '../icons/xCircleIcon'
 
 type Props = {
   cooldownText?: string
@@ -30,7 +29,7 @@ export const StatusBadge = function ({ cooldownText, kind, status }: Props) {
   if (status === 'FAILED') {
     return (
       <div className="flex items-center gap-x-2">
-        <RedErrorIcon />
+        <ErrorIcon className="text-rose-500" />
         <span className="text-neutral-900">{t('status.tx-failed')}</span>
       </div>
     )
@@ -38,7 +37,7 @@ export const StatusBadge = function ({ cooldownText, kind, status }: Props) {
   if (status === 'CANCELLED' && kind === 'REDEEM') {
     return (
       <div className="flex items-center gap-x-2">
-        <XCircleIcon className="text-neutral-400" />
+        <ErrorIcon className="text-neutral-400" />
         <span className="text-neutral-500">
           {t('status.withdrawal-canceled')}
         </span>

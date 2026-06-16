@@ -1,6 +1,7 @@
 import { formatPercentage } from 'utils/format'
+import { type Address, isAddressEqual } from 'viem'
 
-import { type EarnTransaction } from '../types'
+import { type EarnPool, type EarnTransaction } from '../types'
 
 // Case-insensitive equality for tx hashes. `viem` ships `isAddressEqual`
 // for 20-byte addresses but no equivalent for 32-byte tx hashes — the
@@ -29,3 +30,19 @@ export const getTerminalDeliveryTxHash = function (
   if (tx?.status === 'RECOVERED') return tx.recoverTxHash ?? undefined
   return undefined
 }
+
+// Resolves an `EarnPool` keyed by a Hemi-side asset address (a share can
+// accept multiple deposit assets, so we match on `pool.assets`). Returns
+// `undefined` when the asset isn't registered against any pool.
+export const findPoolByAsset = (
+  pools: EarnPool[],
+  asset: Address,
+): EarnPool | undefined =>
+  pools.find(p => p.assets.some(a => isAddressEqual(a.address, asset)))
+
+// Resolves an `EarnPool` keyed by its share OFT address.
+export const findPoolByShare = (
+  pools: EarnPool[],
+  shareAddress: Address,
+): EarnPool | undefined =>
+  pools.find(p => isAddressEqual(p.shareAddress, shareAddress))

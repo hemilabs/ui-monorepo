@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
+import { isAddressEqual } from 'viem'
 
 import { type EarnAsset, type EarnPool } from '../../../types'
 import { usePoolFormState } from '../_hooks/usePoolFormState'
@@ -45,7 +46,7 @@ export function PoolFormProvider({
 
   const selectedAsset = useMemo(
     () =>
-      pool.assets.find(a => a.address === selectedAssetAddress) ??
+      pool.assets.find(a => isAddressEqual(a.address, selectedAssetAddress)) ??
       pool.assets[0],
     [pool.assets, selectedAssetAddress],
   )

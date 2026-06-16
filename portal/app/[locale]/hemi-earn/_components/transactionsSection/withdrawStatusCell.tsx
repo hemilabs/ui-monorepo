@@ -1,12 +1,12 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { isAddressEqual } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useCooldownDuration } from '../../_hooks/useCooldownDuration'
 import { useEarnPools } from '../../_hooks/useEarnPools'
 import { useIsCooldownEligible } from '../../_hooks/useIsCooldownEligible'
+import { findPoolByAsset } from '../../_utils'
 import { useEarnCooldownRemaining } from '../../pool/[shareAddress]/_hooks/useEarnCooldownRemaining'
 import { type EarnPool, type EarnTransaction } from '../../types'
 
@@ -111,9 +111,7 @@ const WithdrawStatusCellResolved = function ({
 
 export const WithdrawStatusCell = function ({ transaction }: Props) {
   const { data: pools = [] } = useEarnPools()
-  const pool = pools.find(p =>
-    p.assets.some(a => isAddressEqual(a.address, transaction.asset)),
-  )
+  const pool = findPoolByAsset(pools, transaction.asset)
   if (!pool) {
     return <StatusBadge kind="REDEEM" status={transaction.status} />
   }

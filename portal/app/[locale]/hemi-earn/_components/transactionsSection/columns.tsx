@@ -10,9 +10,10 @@ import { hemi } from 'hemi-viem'
 import { useToken } from 'hooks/useToken'
 import { type useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
-import { formatUnits, isAddressEqual } from 'viem'
+import { formatUnits } from 'viem'
 
 import { useEarnPools } from '../../_hooks/useEarnPools'
+import { findPoolByAsset } from '../../_utils'
 import { type EarnTransaction } from '../../types'
 
 import { RowActions } from './rowActions'
@@ -34,9 +35,7 @@ function AmountCell({ transaction }: { transaction: EarnTransaction }) {
   const { data: pools = [] } = useEarnPools()
   const pool =
     transaction.kind === 'REDEEM'
-      ? pools.find(p =>
-          p.assets.some(a => isAddressEqual(a.address, transaction.asset)),
-        )
+      ? findPoolByAsset(pools, transaction.asset)
       : undefined
 
   const showingShares =

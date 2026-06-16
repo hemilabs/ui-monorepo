@@ -2,12 +2,12 @@
 
 import { Drawer } from 'components/drawer'
 import { Suspense } from 'react'
-import { type Address, isAddressEqual } from 'viem'
+import { isAddressEqual } from 'viem'
 
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { useEarnTransactions } from '../../../_hooks/useEarnTransactions'
-import { hashesMatch } from '../../../_utils'
-import { type EarnPool, type EarnTransaction } from '../../../types'
+import { findPoolByAsset, hashesMatch } from '../../../_utils'
+import { type EarnTransaction } from '../../../types'
 
 import { HistoricalDepositReview } from './historicalDepositReview'
 import { RetryFailedDeposit } from './retryFailedDeposit'
@@ -15,14 +15,6 @@ import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 const findTransactionByTxId = (transactions: EarnTransaction[], txId: string) =>
   transactions.find(t => hashesMatch(t.requestTxHash, txId))
-
-const resolvePoolAndAsset = function (pools: EarnPool[], asset: Address) {
-  for (const pool of pools) {
-    const match = pool.assets.find(a => isAddressEqual(a.address, asset))
-    if (match) return { asset: match, pool }
-  }
-  return undefined
-}
 
 const TransactionDrawerContent = function () {
   const [txId, setTxDrawerQueryString] = useTxDrawerQueryString()
@@ -44,14 +36,18 @@ const TransactionDrawerContent = function () {
     )
   }
 
-  const resolved = resolvePoolAndAsset(pools, transaction.asset)
-  if (!resolved) {
+  const pool = findPoolByAsset(pools, transaction.asset)
+  const asset = pool?.assets.find(a =>
+    isAddressEqual(a.address, transaction.asset),
+  )
+  if (!pool || !asset) {
     return (
       <Drawer onClose={close}>
         <div className="drawer-content" />
       </Drawer>
     )
   }
+  const resolved = { asset, pool }
 
   const callToAction =
     transaction.status === 'FAILED' ? (

@@ -2,13 +2,13 @@
 
 import { useQueries } from '@tanstack/react-query'
 import Big from 'big.js'
-import { useTokenPrices } from 'hooks/useTokenPrices'
 import { getTokenPrice } from 'utils/token'
 import { formatUnits } from 'viem'
 
 import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
 
 import { useEarnPositions } from './useEarnPositions'
+import { useEarnTokenPrices } from './useEarnTokenPrices'
 
 type TotalDepositsData = { totalUsd: string }
 
@@ -20,7 +20,7 @@ const positionUsd = (
 
 // Sums the USD value of every share position the user holds. Each entry is
 // `convertToAssets(stakingVault, shares)` (shares → pegged token) priced via
-// `getTokenPrice(peggedToken)` against the portal price feed.
+// `getTokenPrice(peggedToken)` against the oracle-merged earn price feed.
 export const useTotalDeposits = function () {
   const {
     data: positions = [],
@@ -31,7 +31,7 @@ export const useTotalDeposits = function () {
     data: prices,
     isError: isPricesError,
     isPending: isPricesPending,
-  } = useTokenPrices({ retryOnMount: false })
+  } = useEarnTokenPrices({ retryOnMount: false })
 
   const peggedAmountQueries = useQueries({
     queries: positions.map(position =>

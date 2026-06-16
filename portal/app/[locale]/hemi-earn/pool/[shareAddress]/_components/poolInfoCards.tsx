@@ -1,9 +1,9 @@
 'use client'
 
-import { RenderFiatBalance } from 'components/fiatBalance'
 import { useTranslations } from 'next-intl'
 import { formatFiatNumber } from 'utils/format'
 
+import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { AvgApyIcon } from '../../../_icons/avgApyIcon'
 import { TotalDepositsIcon } from '../../../_icons/totalDepositsIcon'
 import { formatApyDisplay } from '../../../_utils'
@@ -27,10 +27,10 @@ export const PoolInfoCards = function ({ pool }: Props) {
           isLoading={false}
           label={t('pool.total-deposits')}
           value={
-            <RenderFiatBalance
+            <RenderEarnFiatBalance
               balance={pool.totalDeposits}
               customFormatter={usd => `$${formatFiatNumber(usd)}`}
-              queryStatus="success"
+              queryStatus={pool.totalDepositsStatus}
               token={pool.peggedToken}
             />
           }

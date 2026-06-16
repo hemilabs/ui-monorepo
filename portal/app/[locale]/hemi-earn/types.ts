@@ -1,3 +1,4 @@
+import { type QueryStatus } from '@tanstack/react-query'
 import { type EvmToken } from 'types/token'
 import { type Address, type Chain, type Hash } from 'viem'
 
@@ -64,7 +65,9 @@ export type EarnAsset = {
 // `totalDeposits` is `StakingVault.totalAssets()`, expressed in the pegged
 // token's units (vBTC, vUSD — that's what the vault's `asset()` returns).
 // Pair it with `peggedToken` for formatting and pricing; never with
-// `shareToken`, since the share OFT has no public price feed.
+// `shareToken`, since the share OFT has no public price feed. It is
+// `undefined` while the TVL read is in flight — pair with `totalDepositsStatus`
+// so consumers can show a skeleton (pending) or '-' (error) instead of `$0`.
 // `apy` is tri-state:
 //   `undefined` — APY query still pending (show skeleton)
 //   `null`      — APY query settled but no value for this share (error or
@@ -79,7 +82,8 @@ export type EarnPool = {
   shareToken: EvmToken
   // Ethereum-side ERC-4626 staking vault (`Router.assetsData(asset).remoteShare`)
   stakingVault: Address
-  totalDeposits: bigint
+  totalDeposits: bigint | undefined
+  totalDepositsStatus: QueryStatus
 }
 
 // `yourDeposit` is the raw share OFT balance (denominated in

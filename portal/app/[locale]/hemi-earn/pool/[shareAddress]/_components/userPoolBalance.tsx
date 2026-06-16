@@ -1,9 +1,9 @@
 import { RenderCryptoBalance } from 'components/cryptoBalance'
-import { RenderFiatBalance } from 'components/fiatBalance'
 import { TokenLogo } from 'components/tokenLogo'
 import { useTranslations } from 'next-intl'
 import { useAccount } from 'wagmi'
 
+import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useUserShareValue } from '../_hooks/useUserShareValue'
 
@@ -38,7 +38,7 @@ export const UserPoolBalance = function () {
         <span className="flex items-center text-sm font-normal text-neutral-500">
           <span className="mr-0.5">$</span>
           {isConnected ? (
-            <RenderFiatBalance
+            <RenderEarnFiatBalance
               balance={data?.peggedAmount}
               queryStatus={status}
               token={pool.peggedToken}

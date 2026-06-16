@@ -27,8 +27,10 @@ export const useEarnPools = function () {
     isPending: isSharesPending,
   } = useHemiEarnShares()
 
-  // TVL queries are intentionally NOT part of `isPending`: the page should
-  // render with a `0n` placeholder while the cross-chain read is in flight.
+  // TVL queries are intentionally NOT part of `isPending`: the page renders
+  // immediately while the cross-chain read is in flight, and each pool's
+  // total-deposits cell shows its own skeleton (driven by `totalDepositsStatus`
+  // below) rather than blocking the whole page.
   const tvlQueries = useQueries({
     queries: shares.map(share => ({
       ...earnTvlQueryOptions({
@@ -55,7 +57,8 @@ export const useEarnPools = function () {
     shareAddress: share.shareAddress,
     shareToken: share.shareToken,
     stakingVault: share.stakingVault,
-    totalDeposits: tvlQueries[index]?.data ?? BigInt(0),
+    totalDeposits: tvlQueries[index]?.data,
+    totalDepositsStatus: tvlQueries[index]?.status ?? 'pending',
   }))
 
   return { data, isError: isSharesError, isPending: isSharesPending }

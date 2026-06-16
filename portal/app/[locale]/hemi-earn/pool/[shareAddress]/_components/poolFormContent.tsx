@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
 import { type EvmToken, type Token } from 'types/token'
 
+import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { usePoolForm } from '../_context/poolFormContext'
 
 import { AssetSelector } from './assetSelector'
@@ -61,6 +62,7 @@ export const PoolFormContent = function ({
         disabled={isRunningOperation}
         errorKey={errorKey}
         fiatBalance={fiatBalance}
+        fiatBalanceComponent={RenderEarnFiatBalance}
         label={inputLabel}
         maxBalanceButton={setMaxBalanceButton}
         onChange={updateInput}

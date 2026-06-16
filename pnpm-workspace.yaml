@@ -29,7 +29,7 @@ overrides:
   postcss: '8.5.14' # Needed as Next pins 8.4.31 exactly
 
 patchedDependencies:
-  '@hemilabs/token-list@3.0.0': patches/@hemilabs__token-list@3.0.0.patch
+  '@hemilabs/token-list@3.1.0': patches/@hemilabs__token-list@3.1.0.patch
   '@hemilabs/wallet-watch-asset@1.0.2': 'patches/@hemilabs__wallet-watch-asset@1.0.2.patch'
   'coinselect@3.1.13': 'patches/coinselect@3.1.13.patch'
   'viem@*': 'patches/viem.patch'

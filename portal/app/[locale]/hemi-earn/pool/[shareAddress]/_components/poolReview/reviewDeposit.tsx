@@ -1,13 +1,13 @@
 'use client'
 
 import { AddTokenToWallet } from 'components/addTokenToWallet'
-import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { TokenLogo } from 'components/tokenLogo'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
@@ -147,11 +147,18 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
     return {
       description: (
-        <ChainLabel
-          active={depositStatus === DepositStatus.APPROVAL_TX_PENDING}
-          chainId={chainId}
-          label={t('approving', { symbol: selectedAsset.token.symbol })}
-        />
+        <div className="flex items-center gap-x-2">
+          <TokenLogo size="small" token={selectedAsset.token} />
+          <span
+            className={`text-sm font-normal ${
+              depositStatus === DepositStatus.APPROVAL_TX_PENDING
+                ? 'text-orange-600'
+                : 'text-neutral-500'
+            }`}
+          >
+            {t('approving', { symbol: selectedAsset.token.symbol })}
+          </span>
+        </div>
       ),
       explorerChainId: chainId,
       fees: getStepFees({
@@ -190,7 +197,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     return {
       description: (
         <div className="flex items-center gap-x-2">
-          <SparkleIcon />
+          <TokenLogo size="small" token={selectedAsset.token} />
           <span>
             {t('stake-token', { symbol: selectedAsset.token.symbol })}
           </span>
@@ -219,7 +226,12 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     }
 
     return {
-      description: <span>{t('get-share-tokens')}</span>,
+      description: (
+        <div className="flex items-center gap-x-2">
+          <SparkleIcon />
+          <span>{t('get-share-tokens')}</span>
+        </div>
+      ),
       status: getStatus(),
       txHash: terminalHash,
     }

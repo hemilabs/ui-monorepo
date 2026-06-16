@@ -6,6 +6,7 @@ import {
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { TokenLogo } from 'components/tokenLogo'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
@@ -87,7 +88,7 @@ function buildStakeStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
   return {
     description: (
       <div className="flex items-center gap-x-2">
-        <SparkleIcon />
+        <TokenLogo size="small" token={token} />
         <span>{t('step.stake-token', { symbol: token.symbol })}</span>
       </div>
     ),
@@ -102,7 +103,12 @@ const buildWaitingForSharesStep = (
   t: Translator,
   status: ProgressStatusType,
 ) => ({
-  description: <span>{t('step.get-share-tokens')}</span>,
+  description: (
+    <div className="flex items-center gap-x-2">
+      <SparkleIcon />
+      <span>{t('step.get-share-tokens')}</span>
+    </div>
+  ),
   status,
   txHash: getTerminalDeliveryTxHash(tx),
 })
@@ -112,7 +118,12 @@ const buildApprovalStep = (
   token: EvmToken,
   t: Translator,
 ) => ({
-  description: <span>{t('step.approve-token', { symbol: token.symbol })}</span>,
+  description: (
+    <div className="flex items-center gap-x-2">
+      <TokenLogo size="small" token={token} />
+      <span>{t('step.approve-token', { symbol: token.symbol })}</span>
+    </div>
+  ),
   explorerChainId: hemi.id,
   status: ProgressStatus.COMPLETED,
   txHash: approvalTxHash,
@@ -143,7 +154,12 @@ export const HistoricalDepositReview = function ({
     needsApproval
   ) {
     steps.push({
-      description: <span>{t('step.approval-needed')}</span>,
+      description: (
+        <div className="flex items-center gap-x-2">
+          <TokenLogo size="small" token={token} />
+          <span>{t('step.approval-needed')}</span>
+        </div>
+      ),
       status: ProgressStatus.NOT_READY,
     })
   }

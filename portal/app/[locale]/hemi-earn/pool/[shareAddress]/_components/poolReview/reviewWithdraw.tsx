@@ -1,6 +1,5 @@
 'use client'
 
-import { ChainLabel } from 'components/reviewOperation/chainLabel'
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
@@ -176,8 +175,6 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const { data: cooldownDurationSec } = useCooldownDuration({
     stakingVault: pool.stakingVault,
   })
-  // `claimableAt` is `string | null` — use `!= null` so a legitimate `'0'`
-  // isn't conflated with "unset" the way a truthy-check would.
   const cooldownRemainingSec = useEarnCooldownRemaining(
     subgraphRow?.claimableAt != null
       ? BigInt(subgraphRow.claimableAt)
@@ -282,11 +279,18 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
     return {
       description: (
-        <ChainLabel
-          active={withdrawStatus === WithdrawStatus.APPROVAL_TX_PENDING}
-          chainId={chainId}
-          label={t('approving', { symbol: pool.shareToken.symbol })}
-        />
+        <div className="flex items-center gap-x-2">
+          <TokenLogo size="small" token={pool.shareToken} />
+          <span
+            className={`text-sm font-normal ${
+              withdrawStatus === WithdrawStatus.APPROVAL_TX_PENDING
+                ? 'text-orange-600'
+                : 'text-neutral-500'
+            }`}
+          >
+            {t('approving', { symbol: pool.shareToken.symbol })}
+          </span>
+        </div>
       ),
       explorerChainId: chainId,
       fees: getStepFees({

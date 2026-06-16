@@ -135,12 +135,85 @@ const buildApprovalStep = (
   t: Translator,
 ) => ({
   description: (
-    <span>{t('step.approve-token', { symbol: shareToken.symbol })}</span>
+    <div className="flex items-center gap-x-2">
+      <TokenLogo size="small" token={shareToken} />
+      <span>{t('step.approve-token', { symbol: shareToken.symbol })}</span>
+    </div>
   ),
   explorerChainId: hemi.id,
   status: ProgressStatus.COMPLETED,
   txHash: approvalTxHash,
 })
+
+function deriveReceiveStatus({
+  cooldownRemainingSec,
+  isCooldownEligible,
+  receiveFromStatus,
+  unstakeMined,
+}: {
+  cooldownRemainingSec: number | undefined
+  isCooldownEligible: boolean | undefined
+  receiveFromStatus: ProgressStatusType
+  unstakeMined: boolean
+}): ProgressStatusType {
+  if (receiveFromStatus !== ProgressStatus.NOT_READY) return receiveFromStatus
+  if (!unstakeMined) return receiveFromStatus
+  const needsCooldown = isCooldownEligible !== false
+  const cooldownElapsed = cooldownRemainingSec === 0
+  return !needsCooldown || cooldownElapsed
+    ? ProgressStatus.PROGRESS
+    : receiveFromStatus
+}
+
+function buildSteps({
+  cooldownPostAction,
+  needsApproval,
+  pool,
+  receive,
+  receiveToken,
+  t,
+  transaction,
+}: {
+  cooldownPostAction: ReturnType<typeof deriveCooldownPostAction>
+  needsApproval: boolean
+  pool: EarnPool
+  receive: ProgressStatusType
+  receiveToken: EvmToken | undefined
+  t: Translator
+  transaction: EarnTransaction
+}): StepPropsWithoutPosition[] {
+  const steps: StepPropsWithoutPosition[] = []
+  if (
+    transaction.status === 'FAILED' &&
+    isLocalEarnTransactionRow(transaction) &&
+    needsApproval
+  ) {
+    steps.push({
+      description: (
+        <div className="flex items-center gap-x-2">
+          <TokenLogo size="small" token={pool.shareToken} />
+          <span>{t('step.approval-needed')}</span>
+        </div>
+      ),
+      status: ProgressStatus.NOT_READY,
+    })
+  }
+  if (transaction.approvalTxHash) {
+    steps.push(
+      buildApprovalStep(transaction.approvalTxHash, pool.shareToken, t),
+    )
+  }
+  const unstakeStep = buildUnstakeStep(transaction, pool.shareToken, t)
+  steps.push(
+    cooldownPostAction
+      ? { ...unstakeStep, postAction: cooldownPostAction }
+      : unstakeStep,
+  )
+  if (receiveToken) {
+    steps.push(buildReceiveStep(transaction, receiveToken, t, receive))
+  }
+  return steps
+}
 
 export const HistoricalWithdrawReview = function ({
   callToAction,
@@ -178,14 +251,19 @@ export const HistoricalWithdrawReview = function ({
     stakingVault: pool.stakingVault,
   })
 
+  const claimableAt = transaction.claimableAt ?? null
   const cooldownRemainingSec = useEarnCooldownRemaining(
-    transaction.claimableAt != null
-      ? BigInt(transaction.claimableAt)
-      : undefined,
+    claimableAt !== null ? BigInt(claimableAt) : undefined,
   )
 
-  const { receive, unstake } = resolveStepStates(transaction)
+  const { receive: receiveFromStatus, unstake } = resolveStepStates(transaction)
   const unstakeMined = unstake === ProgressStatus.COMPLETED
+  const receive = deriveReceiveStatus({
+    cooldownRemainingSec,
+    isCooldownEligible,
+    receiveFromStatus,
+    unstakeMined,
+  })
 
   const cooldownPostAction = deriveCooldownPostAction({
     cooldownDurationSec,
@@ -196,48 +274,25 @@ export const HistoricalWithdrawReview = function ({
     unstakeMined,
   })
 
-  // Show shareToken while we only have amountIn (share units); switch to
-  // the asset token once amountOut lands (asset units). Same rule the
-  // AmountCell applies to table rows.
   const { amount: displayAmount, token: displayToken } = pickDisplay(
     transaction,
     pool.shareToken,
     receiveToken,
   )
 
-  const steps: StepPropsWithoutPosition[] = []
-  // Re-approve only makes sense for local FAILED (Hemi tx reverted).
-  if (
-    transaction.status === 'FAILED' &&
-    isLocalEarnTransactionRow(transaction) &&
-    needsApproval
-  ) {
-    steps.push({
-      description: <span>{t('step.approval-needed')}</span>,
-      status: ProgressStatus.NOT_READY,
-    })
-  }
-  // Only locally-mirrored entries carry `approvalTxHash` — see the merge
-  // in `useEarnTransactions`. Rows opened from another browser/device won't
-  // have this step (indexer doesn't link approval to request).
-  if (transaction.approvalTxHash) {
-    steps.push(
-      buildApprovalStep(transaction.approvalTxHash, pool.shareToken, t),
-    )
-  }
-  const unstakeStep = buildUnstakeStep(transaction, pool.shareToken, t)
-  steps.push(
-    cooldownPostAction
-      ? { ...unstakeStep, postAction: cooldownPostAction }
-      : unstakeStep,
-  )
-  if (receiveToken) {
-    steps.push(buildReceiveStep(transaction, receiveToken, t, receive))
-  }
-
   if (!displayToken) {
     return null
   }
+
+  const steps = buildSteps({
+    cooldownPostAction,
+    needsApproval,
+    pool,
+    receive,
+    receiveToken,
+    t,
+    transaction,
+  })
 
   return (
     <Operation

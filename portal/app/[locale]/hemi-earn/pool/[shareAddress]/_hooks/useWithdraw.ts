@@ -58,7 +58,7 @@ type UseWithdraw = {
   // flagged `settled` so the table doesn't show the old failure alongside
   // the new attempt.
   supersedesInitiateTxHash?: Hash
-  updateWithdrawOperation: (payload?: WithdrawOperation) => void
+  updateWithdrawOperation?: (payload?: WithdrawOperation) => void
 }
 
 export const useWithdraw = function ({
@@ -179,7 +179,7 @@ export const useWithdraw = function ({
 
       emitter.on('user-signed-approval', function (approvalTxHash) {
         observedApprovalTxHash = approvalTxHash
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           amountIn: shares.toString(),
           approvalTxHash,
           status: WithdrawStatus.APPROVAL_TX_PENDING,
@@ -199,14 +199,14 @@ export const useWithdraw = function ({
       })
 
       emitter.on('approve-transaction-reverted', function (receipt) {
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           status: WithdrawStatus.APPROVAL_TX_FAILED,
         })
         updateNativeBalanceAfterFees(receipt)
       })
 
       emitter.on('approve-transaction-succeeded', function (receipt) {
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           status: WithdrawStatus.APPROVAL_TX_COMPLETED,
         })
         updateNativeBalanceAfterFees(receipt)
@@ -214,13 +214,13 @@ export const useWithdraw = function ({
       })
 
       emitter.on('user-signing-approval-error', function () {
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           status: WithdrawStatus.APPROVAL_TX_FAILED,
         })
       })
 
       emitter.on('user-signed-withdraw', function (transactionHash) {
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           amountIn: shares.toString(),
           status: WithdrawStatus.WITHDRAW_TX_PENDING,
           transactionHash,
@@ -244,7 +244,7 @@ export const useWithdraw = function ({
       })
 
       emitter.on('user-signing-withdraw-error', function () {
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
         })
       })
@@ -252,7 +252,7 @@ export const useWithdraw = function ({
       emitter.on('withdraw-transaction-succeeded', function (receipt) {
         // TODO(phase-3): parse the `RedeemRequested` log to capture the
         // requestId so the UI can track cross-chain fulfillment.
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_CONFIRMED,
         })
         upsertLocalOperation({
@@ -289,7 +289,7 @@ export const useWithdraw = function ({
       })
 
       emitter.on('withdraw-transaction-reverted', function (receipt) {
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
         })
         upsertLocalOperation({
@@ -302,25 +302,25 @@ export const useWithdraw = function ({
       })
 
       emitter.on('withdraw-failed-validation', function () {
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
         })
       })
 
       emitter.on('quote-failed', function () {
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
         })
       })
 
       emitter.on('withdraw-failed', function () {
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
         })
       })
 
       emitter.on('unexpected-error', function () {
-        updateWithdrawOperation({
+        updateWithdrawOperation?.({
           status: WithdrawStatus.WITHDRAW_TX_FAILED,
         })
       })

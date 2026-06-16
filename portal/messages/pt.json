@@ -97,8 +97,12 @@
           "approval-needed": "Aprovação necessária",
           "approve-token": "Aprovar {symbol}",
           "stake-token": "Fazer stake de {symbol}",
-          "get-share-tokens": "Receber share tokens"
-        }
+          "get-share-tokens": "Receber share tokens",
+          "unstake-token": "Sacar {symbol}",
+          "receive-token": "Receber {symbol}"
+        },
+        "withdraw-heading": "Detalhes do saque de stake",
+        "withdraw-subheading": "Revise sua transação de saque de stake."
       },
       "nothing-here": "Nada por aqui ainda",
       "nothing-here-subtitle": "Suas transações aparecerão assim que você começar.",
@@ -240,6 +244,7 @@
     "waiting-completed": "Espera concluída",
     "wallets-connected": "{count} {count, plural, =1 {Carteira Conectada} other {Carteiras Conectadas}}",
     "withdraw": "Retirar",
+    "withdrawing": "A retirar...",
     "wrong-network": "Rede Errada",
     "wrong-type-network": "Rede {type} Errada",
     "your-wallet-not-connected": "A sua carteira não está conectada"

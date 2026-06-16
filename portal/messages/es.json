@@ -97,8 +97,12 @@
           "approval-needed": "Aprobación necesaria",
           "approve-token": "Aprobar {symbol}",
           "stake-token": "Hacer stake de {symbol}",
-          "get-share-tokens": "Recibir share tokens"
-        }
+          "get-share-tokens": "Recibir share tokens",
+          "unstake-token": "Retirar {symbol}",
+          "receive-token": "Recibir {symbol}"
+        },
+        "withdraw-heading": "Detalles del retiro de stake",
+        "withdraw-subheading": "Revise su transacción de retiro de stake."
       },
       "nothing-here": "Aún no hay nada aquí",
       "nothing-here-subtitle": "Sus transacciones aparecerán una vez que comience.",
@@ -240,6 +244,7 @@
     "waiting-completed": "Espera completada",
     "wallets-connected": "{count} {count, plural, =1 {Billetera Conectada} other {Billeteras Conectadas}} ",
     "withdraw": "Retirar",
+    "withdrawing": "Retirando...",
     "wrong-network": "Red Incorrecta",
     "wrong-type-network": "Red {type} Incorrecta",
     "your-wallet-not-connected": "Tu billetera no está conectada"

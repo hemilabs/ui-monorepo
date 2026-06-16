@@ -97,8 +97,12 @@
           "approval-needed": "Approval needed",
           "approve-token": "Approve {symbol}",
           "stake-token": "Stake {symbol}",
-          "get-share-tokens": "Get share tokens"
-        }
+          "get-share-tokens": "Get share tokens",
+          "unstake-token": "Unstake {symbol}",
+          "receive-token": "Receive {symbol}"
+        },
+        "withdraw-heading": "Stake withdrawal details",
+        "withdraw-subheading": "Review your stake withdrawal transaction."
       },
       "nothing-here": "Nothing here yet",
       "nothing-here-subtitle": "Your transactions will appear once you get started.",
@@ -240,6 +244,7 @@
     "waiting-completed": "Waiting completed",
     "wallets-connected": "{count} Connected {count, plural, =1 {Wallet} other {Wallets}} ",
     "withdraw": "Withdraw",
+    "withdrawing": "Withdrawing...",
     "wrong-network": "Wrong Network",
     "wrong-type-network": "Wrong {type} Network",
     "your-wallet-not-connected": "Your wallet is not connected"

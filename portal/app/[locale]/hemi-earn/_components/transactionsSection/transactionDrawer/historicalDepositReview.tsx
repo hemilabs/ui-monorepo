@@ -14,7 +14,10 @@ import { type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
 
 import { SparkleIcon } from '../../../_icons/sparkleIcon'
-import { getTerminalDeliveryTxHash } from '../../../_utils'
+import {
+  getTerminalDeliveryTxHash,
+  isLocalEarnTransactionRow,
+} from '../../../_utils'
 import {
   type EarnTransaction,
   type EarnTransactionStatusType,
@@ -67,14 +70,12 @@ const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   },
 }
 
-const isLocalRow = (tx: EarnTransaction) => tx.requestId.startsWith('local-')
-
 // FAILED splits by source: local rows mean the Hemi tx itself reverted (stake
 // step is FAILED), subgraph rows mean the Vetro Agent failed after a
 // successful Hemi tx (stake step completed, failure is in the cross-chain
 // step instead).
 const resolveStepStates = (tx: EarnTransaction): StepStates =>
-  tx.status === 'FAILED' && !isLocalRow(tx)
+  tx.status === 'FAILED' && !isLocalEarnTransactionRow(tx)
     ? {
         stake: ProgressStatus.COMPLETED,
         waitingForShares: ProgressStatus.FAILED,
@@ -138,7 +139,7 @@ export const HistoricalDepositReview = function ({
   // Re-approve only makes sense for local FAILED (Hemi tx reverted).
   if (
     transaction.status === 'FAILED' &&
-    isLocalRow(transaction) &&
+    isLocalEarnTransactionRow(transaction) &&
     needsApproval
   ) {
     steps.push({

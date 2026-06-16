@@ -338,16 +338,14 @@ export const useWithdraw = function ({
         queryKey: poolTotalAssetsQueryKey,
       })
       queryClient.invalidateQueries({ queryKey: userShareValueQueryKey })
-      // `removeQueries` (instead of `invalidateQueries`) is load-bearing for
-      // this prefix. `fetchEarnPositions` reads inner share balances via
-      // `ensureQueryData`, which returns stale cache when entries exist —
-      // and `invalidateQueries` only refetches *active* subscribers, leaving
-      // those inactive nested entries stale. Evicting forces the next read
-      // path through the network and the staked-balance card actually
-      // refreshes after a withdraw instead of waiting for a hard reload.
-      queryClient.removeQueries({
-        queryKey: earnPositionsKeyPrefix,
-      })
+      // `resetQueries` (not `removeQueries`) so the outer
+      // `useEarnPositions` observer actually refetches: `removeQueries`
+      // evicts the cache but leaves active observers unnotified, so the
+      // staked-balance card kept showing the pre-withdraw value until a
+      // hard reload. `resetQueries` evicts AND triggers the queryFn —
+      // which lets `fetchEarnPositions`' inner `ensureQueryData` reads
+      // go to the network instead of returning stale share balances.
+      queryClient.resetQueries({ queryKey: earnPositionsKeyPrefix })
     },
   })
 }

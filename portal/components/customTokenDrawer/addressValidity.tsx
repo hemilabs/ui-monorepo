@@ -1,5 +1,5 @@
 import { CheckCircleIcon } from 'components/icons/checkCircleIcon'
-import { RedErrorIcon } from 'components/icons/redErrorIcon'
+import { ErrorIcon } from 'components/icons/errorIcon'
 import { useTranslations } from 'next-intl'
 
 export type AddressValidity =
@@ -23,7 +23,7 @@ export const AddressValidity = function ({ validity }: Props) {
       {isValid ? (
         <CheckCircleIcon className="text-emerald-500" />
       ) : (
-        <RedErrorIcon />
+        <ErrorIcon className="text-rose-500" />
       )}
       <span
         className={`text-sm font-medium ${

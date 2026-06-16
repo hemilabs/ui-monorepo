@@ -12,25 +12,42 @@ import { type useTranslations } from 'next-intl'
 import Skeleton from 'react-loading-skeleton'
 import { formatUnits } from 'viem'
 
+import { useEarnPools } from '../../_hooks/useEarnPools'
+import { findPoolByAsset } from '../../_utils'
 import { type EarnTransaction } from '../../types'
 
 import { RowActions } from './rowActions'
 import { StatusBadge } from './statusBadge'
+import { WithdrawStatusCell } from './withdrawStatusCell'
 
-// Resolves the deposit asset's metadata through the shared token query (token
-// list with an on-chain erc20 fallback), keyed off the transaction's
-// Hemi-side asset address.
+// For REDEEM, the amount unit depends on which Vetro phase the row is in:
+// post-FULFILLED we have `amountOut` in asset units (hemiBTC), pre-FULFILLED
+// only `amountIn` is available and it's in share-token units (svetBTC).
+// The displayed token has to match: shareToken from the pool while we're
+// showing shares, the Hemi-side asset token afterwards. For DEPOSIT,
+// `amountIn` is already in asset units, so the generic `useToken(asset)`
+// lookup is enough.
 function AmountCell({ transaction }: { transaction: EarnTransaction }) {
-  const { data: token, isLoading } = useToken({
+  const { data: assetToken, isLoading } = useToken({
     address: transaction.asset,
     chainId: hemi.id,
   })
+  const { data: pools = [] } = useEarnPools()
+  const pool =
+    transaction.kind === 'REDEEM'
+      ? findPoolByAsset(pools, transaction.asset)
+      : undefined
 
-  if (isLoading) {
-    return <Skeleton className="w-16" />
-  }
+  const showingShares =
+    transaction.kind === 'REDEEM' && transaction.amountOut == null
+  const token = showingShares ? pool?.shareToken : assetToken
+  const rawAmount = showingShares
+    ? transaction.amountIn
+    : transaction.amountOut ?? transaction.amountIn
+
   if (!token) {
-    return <span className="text-neutral-950">{transaction.amountIn}</span>
+    if (isLoading) return <Skeleton className="w-16" />
+    return <span className="text-neutral-950">{rawAmount}</span>
   }
   return (
     <ErrorBoundary
@@ -39,7 +56,7 @@ function AmountCell({ transaction }: { transaction: EarnTransaction }) {
       <div className="flex items-center gap-x-1.5 text-neutral-950">
         <TokenLogo size="small" token={token} />
         <DisplayAmount
-          amount={formatUnits(BigInt(transaction.amountIn), token.decimals)}
+          amount={formatUnits(BigInt(rawAmount), token.decimals)}
           showSymbol
           showTokenLogo={false}
           token={token}
@@ -83,9 +100,12 @@ export const buildColumns = ({
     meta: { className: 'justify-start flex-grow-0', width: 200 },
   },
   {
-    cell: ({ row }) => (
-      <StatusBadge kind={row.original.kind} status={row.original.status} />
-    ),
+    cell: ({ row }) =>
+      row.original.kind === 'REDEEM' ? (
+        <WithdrawStatusCell transaction={row.original} />
+      ) : (
+        <StatusBadge kind={row.original.kind} status={row.original.status} />
+      ),
     header: () => <Header text={t('column.status')} />,
     id: 'status',
     meta: { className: 'justify-start flex-grow-0', width: 190 },

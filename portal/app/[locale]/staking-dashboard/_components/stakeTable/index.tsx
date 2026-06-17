@@ -49,7 +49,7 @@ const stakingColumns = ({
     ),
     header: () => <Header text={t('table.locked-amount')} />,
     id: 'locked-amount',
-    meta: { width: 170 },
+    meta: { width: 144 },
   },
   {
     cell({ row }) {
@@ -64,7 +64,7 @@ const stakingColumns = ({
     },
     header: () => <Header text={t('table.lockup')} />,
     id: 'lockup',
-    meta: { width: 120 },
+    meta: { width: 88 },
   },
   {
     cell({ row }) {
@@ -77,7 +77,7 @@ const stakingColumns = ({
     },
     header: () => <Header text={t('voting-power')} />,
     id: 'voting-power',
-    meta: { width: 150 },
+    meta: { width: 116 },
   },
   {
     cell({ row }) {
@@ -90,20 +90,20 @@ const stakingColumns = ({
     },
     header: () => <Header text={t('table.claimable-rewards')} />,
     id: 'rewards',
-    meta: { width: 170 },
+    meta: { width: 134 },
   },
   {
     cell: ({ row }) => <TimeRemaining operation={row.original} />,
     header: () => <Header text={t('table.time-remaining')} />,
     id: 'time-remaining',
-    meta: { className: 'justify-end', width: 140 },
+    meta: { className: 'justify-end', width: 108 },
   },
   {
     cell: ({ row }) => (
       <ActionCell openRowId={openRowId} row={row} setOpenRowId={setOpenRowId} />
     ),
     id: 'action',
-    meta: { width: 60 },
+    meta: { width: 52 },
   },
 ]
 

@@ -1,7 +1,7 @@
 import { RenderFiatBalance } from 'components/fiatBalance'
 import dynamic from 'next/dynamic'
 import { useTranslations } from 'next-intl'
-import { ComponentType, ReactNode } from 'react'
+import { ComponentProps, ComponentType, ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { Token } from 'types/token'
 import { parseTokenUnits } from 'utils/token'
@@ -33,6 +33,10 @@ type Props<T extends Token> = {
     balance: bigint | undefined
     token: Token
   }
+  // Renders the fiat preview. Defaults to the app-wide portal-priced
+  // `RenderFiatBalance`; callers pricing against a different feed (e.g. Hemi
+  // Earn's oracle-merged `RenderEarnFiatBalance`) pass their own.
+  fiatBalanceComponent?: ComponentType<ComponentProps<typeof RenderFiatBalance>>
   label: string
   maxBalanceButton?: ReactNode
   onChange: (value: string) => void
@@ -57,6 +61,7 @@ export const TokenInput = function <T extends Token>({
   disabled,
   errorKey,
   fiatBalance,
+  fiatBalanceComponent,
   label,
   maxBalanceButton,
   onChange,
@@ -67,6 +72,7 @@ export const TokenInput = function <T extends Token>({
 }: Props<T>) {
   const t = useTranslations('tunnel-page')
   const BalanceComponent = balanceComponent ?? Balance
+  const FiatBalanceComponent = fiatBalanceComponent ?? RenderFiatBalance
   return (
     <div
       className="hover:shadow-bs h-[124px] rounded-lg border border-solid border-transparent bg-neutral-50
@@ -91,13 +97,13 @@ export const TokenInput = function <T extends Token>({
             <div className="flex items-center text-sm  text-neutral-500">
               <span className="mr-1">$</span>
               {fiatBalance ? (
-                <RenderFiatBalance
+                <FiatBalanceComponent
                   balance={fiatBalance.balance}
                   queryStatus="success"
                   token={fiatBalance.token}
                 />
               ) : !Number.isNaN(value) ? (
-                <RenderFiatBalance
+                <FiatBalanceComponent
                   balance={parseTokenUnits(value, token)}
                   queryStatus="success"
                   token={token}

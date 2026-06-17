@@ -3,6 +3,7 @@ import {
   hemiEarnAssetConfigsQueryOptions,
 } from 'app/[locale]/hemi-earn/_fetchers/fetchHemiEarnAssetConfigs'
 import { fetchHemiEarnShares } from 'app/[locale]/hemi-earn/_fetchers/fetchHemiEarnShares'
+import { gatewayForRemoteShareQueryOptions } from 'app/[locale]/hemi-earn/_hooks/gatewayForRemoteShare'
 import { vaultAssetQueryOptions } from 'app/[locale]/hemi-earn/_hooks/vaultAsset'
 import { hemi } from 'hemi-viem'
 import { getUseTokenQueryKey } from 'hooks/useToken'
@@ -28,6 +29,10 @@ const SVETBTC = '0xD8D63De3b64bd06d99F8F5AD8B78Ed2fE7525eC0' as Address
 const REMOTE_SHARE = '0x0cB9D84d4bcEc8d3D5B2d99a6F07f4605325987e' as Address
 // The pegged token is the staking vault's `asset()` — an Ethereum-mainnet token.
 const VETBTC = '0xf196C68233464A16CFDa319a47c21f4cECa62001' as Address
+// Real `@vetro-protocol/gateway` entries — the BTC peg aliases the pegged
+// token to the 'WBTC' proxy, the USD peg to 'USDT'.
+const BTC_GATEWAY = '0xCBA2Ffa0AC52d7871a4221a871793Eb788013faB' as Address
+const USD_GATEWAY = '0xDaD503f8B9d42bb7af3AfC588358D30163e4416F' as Address
 const ASSET = '0x1111111111111111111111111111111111111111' as Address
 const ASSET_2 = '0x2222222222222222222222222222222222222222' as Address
 const REMOTE_ASSET = '0x3333333333333333333333333333333333333333' as Address
@@ -62,10 +67,12 @@ const seed = function (
   queryClient: ReturnType<typeof createTestQueryClient>,
   {
     configs,
+    gateway = BTC_GATEWAY,
     peggedAddress,
     tokens = [svetBtcToken, vetBtcToken, assetToken, asset2Token],
   }: {
     configs: HemiEarnAssetConfig[]
+    gateway?: Address
     peggedAddress: Address
     tokens?: EvmToken[]
   },
@@ -74,6 +81,10 @@ const seed = function (
   queryClient.setQueryData(
     vaultAssetQueryOptions(REMOTE_SHARE).queryKey,
     peggedAddress,
+  )
+  queryClient.setQueryData(
+    gatewayForRemoteShareQueryOptions(REMOTE_SHARE).queryKey,
+    gateway,
   )
   for (const token of tokens) {
     queryClient.setQueryData(
@@ -100,6 +111,32 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchHemiEarnShares', function () {
     expect(result[0].shareToken.symbol).toBe('svetBTC')
     expect(result[0].assets).toHaveLength(1)
     expect(result[0].assets[0].token.symbol).toBe('hemiBTC')
+  })
+
+  it('aliases the BTC-pegged token to its whitelisted WBTC proxy', async function () {
+    const queryClient = createTestQueryClient()
+    seed(queryClient, {
+      configs: [makeConfig({ asset: ASSET, share: SVETBTC })],
+      gateway: BTC_GATEWAY,
+      peggedAddress: VETBTC,
+    })
+
+    const result = await fetchHemiEarnShares(queryClient)
+
+    expect(result[0].peggedToken.extensions?.priceSymbol).toBe('WBTC')
+  })
+
+  it('aliases the USD-pegged token to its whitelisted USDT proxy', async function () {
+    const queryClient = createTestQueryClient()
+    seed(queryClient, {
+      configs: [makeConfig({ asset: ASSET, share: SVETBTC })],
+      gateway: USD_GATEWAY,
+      peggedAddress: VETBTC,
+    })
+
+    const result = await fetchHemiEarnShares(queryClient)
+
+    expect(result[0].peggedToken.extensions?.priceSymbol).toBe('USDT')
   })
 
   it('collapses a multi-asset share into a single skeleton carrying every asset', async function () {

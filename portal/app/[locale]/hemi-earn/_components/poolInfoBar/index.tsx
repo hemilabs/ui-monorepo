@@ -2,7 +2,6 @@
 
 import { ButtonLink } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
-import { RenderFiatBalance } from 'components/fiatBalance'
 import { TokenLogo } from 'components/tokenLogo'
 import { useChain } from 'hooks/useChain'
 import { mainnet } from 'networks/mainnet'
@@ -12,6 +11,7 @@ import { formatCompactFiat, formatEvmAddress } from 'utils/format'
 import { useEarnRewards } from '../../_hooks/useEarnRewards'
 import { formatApyDisplay } from '../../_utils'
 import { type EarnPool } from '../../types'
+import { RenderEarnFiatBalance } from '../earnFiatBalance'
 
 import { PoolInfoItem } from './poolInfoItem'
 import { TokenIconStack } from './tokenIconStack'
@@ -69,10 +69,10 @@ export const PoolInfoBar = function ({ pool }: Props) {
         </PoolInfoItem>
         <PoolInfoItem label={t('total-deposits')}>
           <span className="body-text-medium text-neutral-950">
-            <RenderFiatBalance
+            <RenderEarnFiatBalance
               balance={pool.totalDeposits}
               customFormatter={usd => formatCompactFiat(Number(usd), locale)}
-              queryStatus="success"
+              queryStatus={pool.totalDepositsStatus}
               token={pool.peggedToken}
             />
           </span>

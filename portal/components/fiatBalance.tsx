@@ -23,12 +23,17 @@ const RenderFiatBalanceUnsafe = function ({
   customFormatter = formatFiatNumber,
   queryStatus,
   token,
+  usePrices = useTokenPrices,
 }: Props & {
   balance: bigint | undefined
   customFormatter?: (amount: string) => string
   queryStatus: QueryStatus
+  // The price feed to read from. Defaults to the app-wide portal feed;
+  // callers that price against a different feed (e.g. Hemi Earn's
+  // oracle-merged `useEarnTokenPrices`) inject their own hook.
+  usePrices?: typeof useTokenPrices
 }) {
-  const { data: pricesData, status: pricesStatus } = useTokenPrices({
+  const { data: pricesData, status: pricesStatus } = usePrices({
     retryOnMount: false,
   })
 

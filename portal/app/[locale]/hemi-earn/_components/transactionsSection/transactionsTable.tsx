@@ -4,6 +4,7 @@ import { Card } from 'components/card'
 import { Table } from 'components/table'
 import { useTranslations } from 'next-intl'
 import { useMemo, type ReactNode } from 'react'
+import { screenBreakpoints } from 'styles'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
@@ -64,6 +65,9 @@ export const TransactionsTable = function () {
         ]}
         rowSize={48}
         skeletonRows={5}
+        // Keep the desktop column layout from 'md' (768px) up; the compact,
+        // reordered layout only applies on narrow mobile viewports.
+        smallBreakpoint={screenBreakpoints.md}
       />
     )
   })()

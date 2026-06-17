@@ -31,12 +31,17 @@ const ORACLE = '0x2222222222222222222222222222222222222222' as Address
 const WBTC = '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599' as Address
 
 // Each whitelisted token's oracle reports its price in the gateway's peg unit.
-// `latestAnswer` (8 decimals) of 0.998 → "0.998".
-const mockOracleRead = (latestAnswer: bigint, decimals: number) =>
+// `latestRoundData` returns the price as the `answer` field of the round tuple;
+// an 8-decimal answer of 0.998 → "0.998".
+const mockOracleRead = (answer: bigint, decimals: number) =>
   vi
     .mocked(readContract)
     .mockImplementation((_client, { functionName }: { functionName: string }) =>
-      Promise.resolve(functionName === 'decimals' ? decimals : latestAnswer),
+      Promise.resolve(
+        functionName === 'decimals'
+          ? decimals
+          : [BigInt(0), answer, BigInt(0), BigInt(0), BigInt(0)],
+      ),
     )
 
 const seedToken = (

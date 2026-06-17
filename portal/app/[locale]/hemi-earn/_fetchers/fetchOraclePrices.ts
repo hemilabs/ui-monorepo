@@ -23,8 +23,14 @@ const aggregatorV3Abi = [
   },
   {
     inputs: [],
-    name: 'latestAnswer',
-    outputs: [{ internalType: 'int256', name: '', type: 'int256' }],
+    name: 'latestRoundData',
+    outputs: [
+      { internalType: 'uint80', name: 'roundId', type: 'uint80' },
+      { internalType: 'int256', name: 'answer', type: 'int256' },
+      { internalType: 'uint256', name: 'startedAt', type: 'uint256' },
+      { internalType: 'uint256', name: 'updatedAt', type: 'uint256' },
+      { internalType: 'uint80', name: 'answeredInRound', type: 'uint80' },
+    ],
     stateMutability: 'view',
     type: 'function',
   },
@@ -54,11 +60,11 @@ export const fetchOraclePrices = async function (
         ),
         getTokenConfig(client, { address: treasuryAddress, token: address }),
       ])
-      const [latestAnswer, decimals] = await Promise.all([
+      const [[, answer], decimals] = await Promise.all([
         readContract(client, {
           abi: aggregatorV3Abi,
           address: oracle,
-          functionName: 'latestAnswer',
+          functionName: 'latestRoundData',
         }),
         readContract(client, {
           abi: aggregatorV3Abi,
@@ -68,7 +74,7 @@ export const fetchOraclePrices = async function (
       ])
       return [
         token.symbol.toUpperCase(),
-        formatUnits(latestAnswer, decimals),
+        formatUnits(answer, decimals),
       ] as const
     }),
   )

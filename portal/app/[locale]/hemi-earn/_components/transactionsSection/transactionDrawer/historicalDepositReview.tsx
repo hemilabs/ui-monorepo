@@ -6,6 +6,7 @@ import {
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
 import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
+import { TokenLogo } from 'components/tokenLogo'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
@@ -14,7 +15,10 @@ import { type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
 
 import { SparkleIcon } from '../../../_icons/sparkleIcon'
-import { getTerminalDeliveryTxHash } from '../../../_utils'
+import {
+  getTerminalDeliveryTxHash,
+  isLocalEarnTransactionRow,
+} from '../../../_utils'
 import {
   type EarnTransaction,
   type EarnTransactionStatusType,
@@ -67,14 +71,12 @@ const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   },
 }
 
-const isLocalRow = (tx: EarnTransaction) => tx.requestId.startsWith('local-')
-
 // FAILED splits by source: local rows mean the Hemi tx itself reverted (stake
 // step is FAILED), subgraph rows mean the Vetro Agent failed after a
 // successful Hemi tx (stake step completed, failure is in the cross-chain
 // step instead).
 const resolveStepStates = (tx: EarnTransaction): StepStates =>
-  tx.status === 'FAILED' && !isLocalRow(tx)
+  tx.status === 'FAILED' && !isLocalEarnTransactionRow(tx)
     ? {
         stake: ProgressStatus.COMPLETED,
         waitingForShares: ProgressStatus.FAILED,
@@ -86,7 +88,7 @@ function buildStakeStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
   return {
     description: (
       <div className="flex items-center gap-x-2">
-        <SparkleIcon />
+        <TokenLogo size="small" token={token} />
         <span>{t('step.stake-token', { symbol: token.symbol })}</span>
       </div>
     ),
@@ -101,7 +103,12 @@ const buildWaitingForSharesStep = (
   t: Translator,
   status: ProgressStatusType,
 ) => ({
-  description: <span>{t('step.get-share-tokens')}</span>,
+  description: (
+    <div className="flex items-center gap-x-2">
+      <SparkleIcon />
+      <span>{t('step.get-share-tokens')}</span>
+    </div>
+  ),
   status,
   txHash: getTerminalDeliveryTxHash(tx),
 })
@@ -111,7 +118,12 @@ const buildApprovalStep = (
   token: EvmToken,
   t: Translator,
 ) => ({
-  description: <span>{t('step.approve-token', { symbol: token.symbol })}</span>,
+  description: (
+    <div className="flex items-center gap-x-2">
+      <TokenLogo size="small" token={token} />
+      <span>{t('step.approve-token', { symbol: token.symbol })}</span>
+    </div>
+  ),
   explorerChainId: hemi.id,
   status: ProgressStatus.COMPLETED,
   txHash: approvalTxHash,
@@ -138,11 +150,16 @@ export const HistoricalDepositReview = function ({
   // Re-approve only makes sense for local FAILED (Hemi tx reverted).
   if (
     transaction.status === 'FAILED' &&
-    isLocalRow(transaction) &&
+    isLocalEarnTransactionRow(transaction) &&
     needsApproval
   ) {
     steps.push({
-      description: <span>{t('step.approval-needed')}</span>,
+      description: (
+        <div className="flex items-center gap-x-2">
+          <TokenLogo size="small" token={token} />
+          <span>{t('step.approval-needed')}</span>
+        </div>
+      ),
       status: ProgressStatus.NOT_READY,
     })
   }

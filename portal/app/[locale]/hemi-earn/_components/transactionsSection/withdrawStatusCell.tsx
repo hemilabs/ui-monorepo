@@ -85,15 +85,14 @@ const WithdrawStatusCellResolved = function ({
     stakingVault: pool.stakingVault,
   })
 
+  const claimableAt = transaction.claimableAt ?? null
   const remainingSec = useEarnCooldownRemaining(
-    transaction.claimableAt != null
-      ? BigInt(transaction.claimableAt)
-      : undefined,
+    claimableAt !== null ? BigInt(claimableAt) : undefined,
   )
 
   const cooldownText = deriveCooldownText({
     cooldownDurationSec,
-    hasClaimableAt: transaction.claimableAt != null,
+    hasClaimableAt: claimableAt !== null,
     isCooldownEligible,
     remainingSec,
     status: transaction.status,

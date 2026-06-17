@@ -46,3 +46,8 @@ export const findPoolByShare = (
   shareAddress: Address,
 ): EarnPool | undefined =>
   pools.find(p => isAddressEqual(p.shareAddress, shareAddress))
+
+// Local rows mean the Hemi `request*` tx reverted; subgraph rows mean the
+// Agent failed after a successful Hemi tx (recover, not retry).
+export const isLocalEarnTransactionRow = (tx: EarnTransaction) =>
+  tx.requestId.startsWith('local-')

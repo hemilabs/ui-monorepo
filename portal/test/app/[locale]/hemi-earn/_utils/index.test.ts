@@ -1,12 +1,16 @@
-import { zeroAddress } from 'viem'
+import { type Address, zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import {
+  findPoolByAsset,
+  findPoolByShare,
   formatApyDisplay,
   getTerminalDeliveryTxHash,
   hashesMatch,
+  isLocalEarnTransactionRow,
 } from '../../../../../app/[locale]/hemi-earn/_utils'
 import {
+  type EarnPool,
   type EarnTransaction,
   type EarnTransactionStatusType,
 } from '../../../../../app/[locale]/hemi-earn/types'
@@ -116,6 +120,57 @@ describe('utils', function () {
 
     it('returns undefined when tx is undefined', function () {
       expect(getTerminalDeliveryTxHash(undefined)).toBeUndefined()
+    })
+  })
+
+  describe('findPoolByAsset / findPoolByShare', function () {
+    const shareA = '0x000000000000000000000000000000000000aaaa' as Address
+    const shareB = '0x000000000000000000000000000000000000bbbb' as Address
+    const assetA1 = '0x0000000000000000000000000000000000001111' as Address
+    const assetA2 = '0x0000000000000000000000000000000000002222' as Address
+    const assetB1 = '0x0000000000000000000000000000000000003333' as Address
+    const unknown = '0x0000000000000000000000000000000000009999' as Address
+
+    const makePool = (shareAddress: Address, assets: Address[]) =>
+      ({
+        assets: assets.map(address => ({ address })),
+        shareAddress,
+      }) as unknown as EarnPool
+
+    const pools: EarnPool[] = [
+      makePool(shareA, [assetA1, assetA2]),
+      makePool(shareB, [assetB1]),
+    ]
+
+    it('findPoolByAsset finds the pool whose `assets` includes the address', function () {
+      expect(findPoolByAsset(pools, assetA2)?.shareAddress).toBe(shareA)
+      expect(findPoolByAsset(pools, assetB1)?.shareAddress).toBe(shareB)
+    })
+
+    it('findPoolByAsset returns undefined for an unknown asset', function () {
+      expect(findPoolByAsset(pools, unknown)).toBeUndefined()
+    })
+
+    it('findPoolByShare finds the pool by share address', function () {
+      expect(findPoolByShare(pools, shareB)?.shareAddress).toBe(shareB)
+    })
+
+    it('findPoolByShare returns undefined for an unknown share', function () {
+      expect(findPoolByShare(pools, unknown)).toBeUndefined()
+    })
+  })
+
+  describe('isLocalEarnTransactionRow', function () {
+    it('returns true for a row whose `requestId` is locally-prefixed', function () {
+      expect(
+        isLocalEarnTransactionRow({ ...baseTx, requestId: 'local-1700000000' }),
+      ).toBe(true)
+    })
+
+    it('returns false for a row whose `requestId` is a subgraph numeric id', function () {
+      expect(isLocalEarnTransactionRow({ ...baseTx, requestId: '42' })).toBe(
+        false,
+      )
     })
   })
 

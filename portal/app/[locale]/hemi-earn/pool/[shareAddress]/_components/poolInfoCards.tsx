@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 import { formatFiatNumber } from 'utils/format'
 
 import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
-import { AvgApyIcon } from '../../../_icons/avgApyIcon'
+import { ArrowGrowingIcon } from '../../../_icons/arrowGrowingIcon'
 import { TotalDepositsIcon } from '../../../_icons/totalDepositsIcon'
 import { formatApyDisplay } from '../../../_utils'
 import { type EarnPool } from '../../../types'
@@ -38,7 +38,7 @@ export const PoolInfoCards = function ({ pool }: Props) {
       </div>
       <div className="flex-1">
         <PoolCard
-          icon={<AvgApyIcon />}
+          icon={<ArrowGrowingIcon />}
           isError={pool.apy === null}
           isLoading={pool.apy === undefined}
           label={t('pool.apy')}

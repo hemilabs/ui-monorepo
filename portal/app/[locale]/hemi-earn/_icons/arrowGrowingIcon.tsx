@@ -1,4 +1,4 @@
-export const AvgApyIcon = () => (
+export const ArrowGrowingIcon = () => (
   <svg fill="none" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
     <path
       clipRule="evenodd"

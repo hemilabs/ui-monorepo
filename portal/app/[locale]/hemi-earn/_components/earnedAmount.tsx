@@ -6,7 +6,7 @@ import { walletIsConnected } from 'utils/wallet'
 import { useAccount } from 'wagmi'
 
 import { useEarnedAmount } from '../_hooks/useEarnedAmount'
-import { EarnedAmountIcon } from '../_icons/earnedAmountIcon'
+import { ArrowGrowingIcon } from '../_icons/arrowGrowingIcon'
 
 import { EarnCard } from './earnCard'
 
@@ -18,7 +18,7 @@ export const EarnedAmount = function () {
 
   return (
     <EarnCard
-      icon={<EarnedAmountIcon />}
+      icon={<ArrowGrowingIcon />}
       isError={isError || isDisconnected}
       isLoading={isPending}
       label={t('info.earned-amount')}

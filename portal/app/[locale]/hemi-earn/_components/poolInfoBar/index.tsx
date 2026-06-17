@@ -43,20 +43,22 @@ export const PoolInfoBar = function ({ pool }: Props) {
         <TokenIconStack tokens={pool.exposureTokens} />
       </div>
       <div className="grid grid-cols-2 gap-4 md:flex md:flex-1 md:items-center md:gap-6">
-        <PoolInfoItem label={t('pool-contract')}>
-          <span className="body-text-medium text-neutral-950">
-            {explorerUrl ? (
-              <ExternalLink
-                className="hover:text-orange-500"
-                href={`${explorerUrl}/address/${pool.shareAddress}`}
-              >
-                {formattedAddress}
-              </ExternalLink>
-            ) : (
-              formattedAddress
-            )}
-          </span>
-        </PoolInfoItem>
+        <div className="md:*:w-32">
+          <PoolInfoItem label={t('pool-contract')}>
+            <span className="body-text-medium text-neutral-950">
+              {explorerUrl ? (
+                <ExternalLink
+                  className="hover:text-orange-500"
+                  href={`${explorerUrl}/address/${pool.shareAddress}`}
+                >
+                  {formattedAddress}
+                </ExternalLink>
+              ) : (
+                formattedAddress
+              )}
+            </span>
+          </PoolInfoItem>
+        </div>
         <PoolInfoItem label={t('share-token')}>
           <div className="flex items-center gap-x-1.5">
             <div className="flex items-center justify-center rounded-full border border-gray-200">

@@ -113,6 +113,9 @@ export const buildColumns = ({
   {
     cell: ({ row }) => <RowActions transaction={row.original} />,
     id: 'actions',
-    meta: { className: 'justify-end', width: 90 },
+    // On mobile this column is reordered to the front, so it hugs the left
+    // edge (the table's first-cell pl-4 gives the 16px lead). From 'md' up it
+    // returns to the trailing edge and right-aligns.
+    meta: { className: 'justify-start md:justify-end', width: 90 },
   },
 ]

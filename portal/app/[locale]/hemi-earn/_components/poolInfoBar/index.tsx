@@ -43,30 +43,34 @@ export const PoolInfoBar = function ({ pool }: Props) {
         <TokenIconStack tokens={pool.exposureTokens} />
       </div>
       <div className="grid grid-cols-2 gap-4 md:flex md:flex-1 md:items-center md:gap-6">
-        <PoolInfoItem label={t('pool-contract')}>
-          <span className="body-text-medium text-neutral-950">
-            {explorerUrl ? (
-              <ExternalLink
-                className="hover:text-orange-500"
-                href={`${explorerUrl}/address/${pool.shareAddress}`}
-              >
-                {formattedAddress}
-              </ExternalLink>
-            ) : (
-              formattedAddress
-            )}
-          </span>
-        </PoolInfoItem>
-        <PoolInfoItem label={t('share-token')}>
-          <div className="flex items-center gap-x-1.5">
-            <div className="flex items-center justify-center rounded-full border border-gray-200">
-              <TokenLogo size="small" token={pool.shareToken} version="L1" />
-            </div>
+        <div className="md:w-32">
+          <PoolInfoItem label={t('pool-contract')}>
             <span className="body-text-medium text-neutral-950">
-              {pool.shareToken.symbol}
+              {explorerUrl ? (
+                <ExternalLink
+                  className="hover:text-orange-500"
+                  href={`${explorerUrl}/address/${pool.shareAddress}`}
+                >
+                  {formattedAddress}
+                </ExternalLink>
+              ) : (
+                formattedAddress
+              )}
             </span>
-          </div>
-        </PoolInfoItem>
+          </PoolInfoItem>
+        </div>
+        <div className="md:w-32">
+          <PoolInfoItem label={t('share-token')}>
+            <div className="flex items-center gap-x-1.5">
+              <div className="flex items-center justify-center rounded-full border border-gray-200">
+                <TokenLogo size="small" token={pool.shareToken} version="L1" />
+              </div>
+              <span className="body-text-medium text-neutral-950">
+                {pool.shareToken.symbol}
+              </span>
+            </div>
+          </PoolInfoItem>
+        </div>
         <PoolInfoItem label={t('total-deposits')}>
           <span className="body-text-medium text-neutral-950">
             <RenderEarnFiatBalance

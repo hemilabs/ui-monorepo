@@ -3,7 +3,6 @@
     "heading": "Earn yield with Hemi Earn",
     "info": {
       "earned-amount": "Your earned amount",
-      "rewards": "Your rewards",
       "staked-balance": "Your staked balance"
     },
     "navigation": {
@@ -15,7 +14,6 @@
       "apy": "APY",
       "composition": {
         "amount": "Amount",
-        "apy": "APY",
         "by-protocol": "By protocol",
         "by-token": "By token",
         "position": "Position",
@@ -75,7 +73,6 @@
       "apy": "Current 7-Day APY",
       "manage": "Manage",
       "pool-contract": "Pool Contract",
-      "potential-rewards": "Potential rewards",
       "share-token": "Share token",
       "total-deposits": "Total deposits"
     },

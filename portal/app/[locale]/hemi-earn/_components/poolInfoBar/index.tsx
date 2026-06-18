@@ -4,11 +4,9 @@ import { ButtonLink } from 'components/button'
 import { ExternalLink } from 'components/externalLink'
 import { TokenLogo } from 'components/tokenLogo'
 import { useChain } from 'hooks/useChain'
-import { mainnet } from 'networks/mainnet'
 import { useLocale, useTranslations } from 'next-intl'
 import { formatCompactFiat, formatEvmAddress } from 'utils/format'
 
-import { useEarnRewards } from '../../_hooks/useEarnRewards'
 import { formatApyDisplay } from '../../_utils'
 import { type EarnPool } from '../../types'
 import { RenderEarnFiatBalance } from '../earnFiatBalance'
@@ -24,15 +22,6 @@ export const PoolInfoBar = function ({ pool }: Props) {
   const t = useTranslations('hemi-earn.pool-info')
   const locale = useLocale()
   const chain = useChain(pool.shareToken.chainId)
-
-  const { data: rewards = [], isLoading: isRewardsLoading } = useEarnRewards(
-    pool.stakingVault,
-  )
-
-  const rewardTokens = rewards.map(reward => ({
-    address: reward.token.address,
-    chainId: mainnet.id,
-  }))
 
   const formattedAddress = formatEvmAddress(pool.shareAddress)
   const explorerUrl = chain?.blockExplorers?.default.url
@@ -80,14 +69,6 @@ export const PoolInfoBar = function ({ pool }: Props) {
               token={pool.peggedToken}
             />
           </span>
-        </PoolInfoItem>
-        <PoolInfoItem
-          isLoading={isRewardsLoading}
-          label={t('potential-rewards')}
-        >
-          {!isRewardsLoading ? (
-            <TokenIconStack interactive tokens={rewardTokens} />
-          ) : undefined}
         </PoolInfoItem>
         <PoolInfoItem
           isLoading={pool.apy === undefined}

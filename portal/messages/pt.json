@@ -3,7 +3,6 @@
     "heading": "Obtenha rendimento com Hemi Earn",
     "info": {
       "earned-amount": "Valor ganho",
-      "rewards": "Suas recompensas",
       "staked-balance": "Seu saldo aplicado"
     },
     "navigation": {
@@ -15,7 +14,6 @@
       "apy": "TEA",
       "composition": {
         "amount": "Valor",
-        "apy": "TEA",
         "by-protocol": "Por protocolo",
         "by-token": "Por token",
         "position": "Posição",
@@ -75,7 +73,6 @@
       "apy": "TEA atual de 7 dias",
       "manage": "Gerenciar",
       "pool-contract": "Contrato do fundo",
-      "potential-rewards": "Recompensas potenciais",
       "share-token": "Token de participação",
       "total-deposits": "Depósitos totais"
     },

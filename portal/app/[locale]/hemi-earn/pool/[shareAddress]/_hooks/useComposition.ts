@@ -20,7 +20,6 @@ export type CompositionViewMode = 'token' | 'protocol'
 
 export type CompositionItem = {
   amount: number
-  apy: number
   isReserveBuffer: boolean
   name: string
   share: number

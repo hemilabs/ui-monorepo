@@ -47,7 +47,6 @@ export const CompositionTable = function ({
               </div>
               <Skeleton className="w-12" />
               <Skeleton className="ml-4 w-10" />
-              <Skeleton className="ml-4 w-10" />
             </div>
           ))}
         </div>

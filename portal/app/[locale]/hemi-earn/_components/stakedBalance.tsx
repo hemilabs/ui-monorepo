@@ -9,6 +9,7 @@ import { useTotalDeposits } from '../_hooks/useTotalDeposits'
 import { TotalDepositsIcon } from '../_icons/totalDepositsIcon'
 
 import { EarnCard } from './earnCard'
+import { FromPoolsBadge } from './fromPoolsBadge'
 
 export const StakedBalance = function () {
   const { data, isError, isPending } = useTotalDeposits()
@@ -18,6 +19,7 @@ export const StakedBalance = function () {
 
   return (
     <EarnCard
+      badge={<FromPoolsBadge />}
       icon={<TotalDepositsIcon />}
       isError={isError || isDisconnected}
       isLoading={isPending}

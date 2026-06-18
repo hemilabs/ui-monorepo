@@ -3,6 +3,7 @@
     "heading": "Obtenha rendimento com Hemi Earn",
     "info": {
       "earned-amount": "Valor ganho",
+      "from-pools": "{count, plural, one {De # fundo} other {De # fundos}}",
       "staked-balance": "Seu saldo aplicado"
     },
     "navigation": {

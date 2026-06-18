@@ -3,6 +3,7 @@
     "heading": "Earn yield with Hemi Earn",
     "info": {
       "earned-amount": "Your earned amount",
+      "from-pools": "{count, plural, one {From # pool} other {From # pools}}",
       "staked-balance": "Your staked balance"
     },
     "navigation": {

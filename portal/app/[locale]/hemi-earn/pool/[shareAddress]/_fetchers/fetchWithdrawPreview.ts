@@ -65,7 +65,6 @@ export const withdrawPreviewOptions = ({
           quoteRedeemOptions({
             account,
             asset,
-            queryClient,
             shareAddress,
             shares,
           }),

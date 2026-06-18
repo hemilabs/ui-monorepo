@@ -3,7 +3,6 @@ import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
 import { parseTokenUnits } from 'utils/token'
-import { useAccount } from 'wagmi'
 
 import {
   REDEEM_SLIPPAGE_BPS,
@@ -29,7 +28,6 @@ export const RetryWithdraw = function () {
   } = usePoolForm()
 
   const t = useTranslations()
-  const { address } = useAccount()
   // Input is in share-token units (svetBTC); the Router burns shares
   // directly. `assetsOutMin` is derived from the asset preview below.
   const shares = parseTokenUnits(input, pool.shareToken)
@@ -51,7 +49,6 @@ export const RetryWithdraw = function () {
       : BigInt(0)
 
   const { data: quote } = useQuoteRedeem({
-    account: address,
     asset: selectedAsset.address,
     shareAddress: pool.shareAddress,
     shares,

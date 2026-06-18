@@ -1,4 +1,5 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { useAccount } from 'wagmi'
 
 import {
   type QuoteRedeemHookParams,
@@ -6,5 +7,11 @@ import {
 } from '../_fetchers/fetchQuoteRedeem'
 
 export const useQuoteRedeem = (
-  params: Omit<QuoteRedeemHookParams, 'queryClient'>,
-) => useQuery(quoteRedeemOptions({ ...params, queryClient: useQueryClient() }))
+  params: Omit<QuoteRedeemHookParams, 'account'>,
+) =>
+  useQuery(
+    quoteRedeemOptions({
+      ...params,
+      account: useAccount().address,
+    }),
+  )

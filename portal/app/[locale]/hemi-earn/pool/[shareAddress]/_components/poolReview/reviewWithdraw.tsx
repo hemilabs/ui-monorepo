@@ -219,7 +219,6 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     })
 
   const { data: quote } = useQuoteRedeem({
-    account: address,
     asset: selectedAsset.address,
     shareAddress: pool.shareAddress,
     shares,

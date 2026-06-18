@@ -215,28 +215,24 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
       expect(items).toEqual([
         {
           amount: 75,
-          apy: 1.01,
           isReserveBuffer: false,
           name: 'Strategy A1',
           share: 37.5,
         },
         {
           amount: 50,
-          apy: 1.01,
           isReserveBuffer: false,
           name: 'Strategy A2',
           share: 25,
         },
         {
           amount: 25,
-          apy: 1.01,
           isReserveBuffer: false,
           name: 'Strategy B1',
           share: 12.5,
         },
         {
           amount: 50,
-          apy: 1.01,
           isReserveBuffer: true,
           name: reserveBufferLabel,
           share: 25,
@@ -254,14 +250,12 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
       expect(items).toEqual([
         {
           amount: 150,
-          apy: 1.01,
           isReserveBuffer: false,
           name: 'WBTC',
           share: 75,
         },
         {
           amount: 50,
-          apy: 1.01,
           isReserveBuffer: false,
           name: 'cbBTC',
           share: 25,
@@ -286,7 +280,6 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
       expect(items).toEqual([
         {
           amount: 100,
-          apy: 1.01,
           isReserveBuffer: false,
           name: 'Strategy',
           share: 100,
@@ -312,7 +305,6 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
       expect(items).toEqual([
         {
           amount: 150,
-          apy: 1.01,
           isReserveBuffer: false,
           name: 'Strategy',
           share: 100,
@@ -348,7 +340,6 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
       ).toEqual([
         {
           amount: 100,
-          apy: 1.01,
           isReserveBuffer: false,
           name: 'Active',
           share: 100,
@@ -363,7 +354,6 @@ describe('app/[locale]/hemi-earn/_fetchers/fetchComposition', function () {
       ).toEqual([
         {
           amount: 100,
-          apy: 1.01,
           isReserveBuffer: false,
           name: 'WBTC',
           share: 100,

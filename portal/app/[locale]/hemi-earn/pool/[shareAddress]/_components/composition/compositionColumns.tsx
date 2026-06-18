@@ -42,16 +42,6 @@ export const useGetCompositionColumns = function () {
         },
         {
           cell: ({ row }) => (
-            <span className="text-sm font-medium text-orange-600">
-              {formatPercentage(row.original.apy)}
-            </span>
-          ),
-          header: () => <Header text={t('apy')} />,
-          id: 'apy',
-          meta: { className: 'justify-end', width: 80 },
-        },
-        {
-          cell: ({ row }) => (
             <span className="text-sm font-medium text-neutral-950">
               {formatPercentage(row.original.share)}
             </span>

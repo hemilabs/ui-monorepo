@@ -1,5 +1,4 @@
 import { EarnedAmount } from './earnedAmount'
-import { Rewards } from './rewards'
 import { StakedBalance } from './stakedBalance'
 
 const wrapperClassName =
@@ -9,6 +8,5 @@ export const InfoCards = () => (
   <div className={wrapperClassName}>
     <StakedBalance />
     <EarnedAmount />
-    <Rewards />
   </div>
 )

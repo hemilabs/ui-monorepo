@@ -123,7 +123,6 @@ export const toCompositionItems = function ({
   const total = visible.reduce((sum, item) => sum + item.amount, 0)
   return visible.map(item => ({
     amount: item.amount,
-    apy: 1.01,
     // Lets consumers exclude the buffer row from e.g. position counts
     isReserveBuffer: item.isReserveBuffer === true,
     name: item.name,

@@ -4,7 +4,6 @@ import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, useState } from 'react'
-import { useAccount } from 'wagmi'
 
 import {
   REDEEM_SLIPPAGE_BPS,
@@ -40,7 +39,6 @@ export const RetryFailedWithdraw = function ({
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
   const [operationRunning, setOperationRunning] =
     useState<WithdrawOperationRunning>('idle')
-  const { address } = useAccount()
   const t = useTranslations()
 
   // `amountIn` on a REDEEM row is in share-token units — exactly what the
@@ -64,7 +62,6 @@ export const RetryFailedWithdraw = function ({
       : BigInt(0)
 
   const { data: quote } = useQuoteRedeem({
-    account: address,
     asset: asset.address,
     shareAddress: pool.shareAddress,
     shares,

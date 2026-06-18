@@ -72,7 +72,10 @@ export async function fetchQuoteRedeem({
   return { callbackFee, isInstant, nativeFee }
 }
 
-export type QuoteRedeemHookParams = Omit<QuoteRedeemParams, 'account'> & {
+export type QuoteRedeemHookParams = Omit<
+  QuoteRedeemParams,
+  'account' | 'queryClient'
+> & {
   account: Address | undefined
 }
 
@@ -81,7 +84,7 @@ const getQuoteRedeemQueryKey = ({
   asset,
   shareAddress,
   shares,
-}: Omit<QuoteRedeemHookParams, 'queryClient'>) =>
+}: QuoteRedeemHookParams) =>
   [
     'hemi-earn',
     'quote-redeem',
@@ -94,13 +97,12 @@ const getQuoteRedeemQueryKey = ({
 export const quoteRedeemOptions = ({
   account,
   asset,
-  queryClient,
   shareAddress,
   shares,
 }: QuoteRedeemHookParams): UseQueryOptions<QuoteRedeem> => ({
   enabled: shares > BigInt(0) && !!account,
   // The `enabled` flag above guarantees `account` is defined when this runs.
-  queryFn: () =>
+  queryFn: ({ client: queryClient }) =>
     fetchQuoteRedeem({
       account: account!,
       asset,

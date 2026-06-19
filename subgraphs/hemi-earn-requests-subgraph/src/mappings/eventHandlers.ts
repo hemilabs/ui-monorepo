@@ -44,10 +44,13 @@ const baseRequest = (id: string, requestId: bigint): Request => ({
   status: 'PENDING',
 })
 
-// Status ranking. Terminal states share rank 2 and are sticky: once a request
-// is terminal it never changes, and status never regresses to a lower rank.
+// Status ranking. Terminal states share rank 2 and are sticky; intermediate
+// states (FULFILLED, CANCELLED) sit at rank 1 so they can transition forward
+// to their respective terminals (FINALIZED via RequestClaimed, RECOVERED via
+// RequestRecovered). Once a request is terminal it never changes, and status
+// never regresses to a lower rank.
 const STATUS_RANK: Record<Request['status'], number> = {
-  CANCELLED: 2,
+  CANCELLED: 1,
   FINALIZED: 2,
   FULFILLED: 1,
   PENDING: 0,

@@ -13,7 +13,12 @@ import Skeleton from 'react-loading-skeleton'
 import { formatUnits } from 'viem'
 
 import { useEarnPools } from '../../_hooks/useEarnPools'
-import { findPoolByAsset } from '../../_utils'
+import {
+  findPoolByAsset,
+  hasFailedSettlement,
+  needsManualClaim,
+  needsRecover,
+} from '../../_utils'
 import { type EarnTransaction } from '../../types'
 
 import { RowActions } from './rowActions'
@@ -104,18 +109,27 @@ export const buildColumns = ({
       row.original.kind === 'REDEEM' ? (
         <WithdrawStatusCell transaction={row.original} />
       ) : (
-        <StatusBadge kind={row.original.kind} status={row.original.status} />
+        <StatusBadge
+          kind={row.original.kind}
+          manualClaimNeeded={needsManualClaim(row.original)}
+          manualRecoverNeeded={needsRecover(row.original)}
+          settlementFailed={hasFailedSettlement(row.original)}
+          status={row.original.status}
+        />
       ),
     header: () => <Header text={t('column.status')} />,
     id: 'status',
-    meta: { className: 'justify-start flex-grow-0', width: 190 },
+    // Wide enough to keep the longest status ("Something went wrong - Recover
+    // funds" / the manual-claim copy) on a single line across locales.
+    meta: { className: 'justify-start flex-grow-0', width: 340 },
   },
   {
     cell: ({ row }) => <RowActions transaction={row.original} />,
     id: 'actions',
     // On mobile this column is reordered to the front, so it hugs the left
     // edge (the table's first-cell pl-4 gives the 16px lead). From 'md' up it
-    // returns to the trailing edge and right-aligns.
-    meta: { className: 'justify-start md:justify-end', width: 90 },
+    // returns to the trailing edge and right-aligns. Wide enough to fit the
+    // "Claim share tokens" / "Recover funds" CTA without overflowing the cell.
+    meta: { className: 'justify-start md:justify-end', width: 180 },
   },
 ]

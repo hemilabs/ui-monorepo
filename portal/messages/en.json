@@ -34,6 +34,8 @@
         "cooldown-ended": "Cooldown period complete",
         "stake-token": "Stake {symbol}",
         "get-share-tokens": "Get share tokens",
+        "funds-returned": "Funds returned",
+        "funds-to-recover": "Funds to recover",
         "receive-token": "Receive {symbol}",
         "unstake-token": "Unstake {symbol}",
         "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
@@ -78,6 +80,8 @@
       "total-deposits": "Total deposits"
     },
     "transactions": {
+      "claim-share-tokens": "Claim share tokens",
+      "claiming": "Claiming...",
       "column": {
         "amount": "Amount",
         "date": "Date",
@@ -96,6 +100,8 @@
           "approve-token": "Approve {symbol}",
           "stake-token": "Stake {symbol}",
           "get-share-tokens": "Get share tokens",
+          "funds-returned": "Funds returned",
+          "funds-to-recover": "Funds to recover",
           "unstake-token": "Unstake {symbol}",
           "receive-token": "Receive {symbol}"
         },
@@ -104,14 +110,20 @@
       },
       "nothing-here": "Nothing here yet",
       "nothing-here-subtitle": "Your transactions will appear once you get started.",
+      "recover-funds": "Recover funds",
+      "recovering": "Recovering...",
       "status": {
         "cooldown-ready-in-days": "Cooldown · ready in {value}d",
         "cooldown-ready-in-hours": "Cooldown · ready in {value}h",
         "cooldown-ready-in-minutes": "Cooldown · ready in {value}m",
         "cooldown-ready-soon": "Cooldown · ready in < 1m",
         "deposited": "Deposited",
+        "funds-returned": "Funds returned",
         "in-progress": "In progress",
+        "manual-claim-needed": "In progress - Manual claim needed",
         "ready-to-claim": "Ready to claim",
+        "recover-funds-needed": "Something went wrong - Recover funds",
+        "returned": "Returned",
         "tx-failed": "Tx Failed",
         "withdrawal-canceled": "Withdrawal canceled",
         "withdrawn": "Withdrawn"

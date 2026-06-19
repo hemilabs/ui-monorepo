@@ -13,11 +13,15 @@ import { useNeedsApproval } from 'hooks/useNeedsApproval'
 import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
+import { type Hash } from 'viem'
 
 import { SparkleIcon } from '../../../_icons/sparkleIcon'
 import {
   getTerminalDeliveryTxHash,
   isLocalEarnTransactionRow,
+  isRecoverPath,
+  needsManualClaim,
+  needsRecover,
 } from '../../../_utils'
 import {
   type EarnTransaction,
@@ -42,7 +46,9 @@ type StepStates = {
 
 const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   CANCELLED: {
-    stake: ProgressStatus.FAILED,
+    // The request tx landed (stake done); the cancel/return shows in the
+    // recover-path terminal step, not a failed stake.
+    stake: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.NOT_READY,
   },
   FAILED: {
@@ -98,20 +104,75 @@ function buildStakeStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
   }
 }
 
-const buildWaitingForSharesStep = (
+// COMPLETED wins over everything; a reverted settlement → FAILED; a mining tx →
+// PROGRESS; a pending manual action → READY (active, not a spinner); else the
+// natural status.
+function resolveTerminalStatus(
   tx: EarnTransaction,
-  t: Translator,
-  status: ProgressStatusType,
-) => ({
-  description: (
-    <div className="flex items-center gap-x-2">
-      <SparkleIcon />
-      <span>{t('step.get-share-tokens')}</span>
-    </div>
-  ),
-  status,
-  txHash: getTerminalDeliveryTxHash(tx),
-})
+  baseStatus: ProgressStatusType,
+  settlementTxHash: Hash | undefined,
+): ProgressStatusType {
+  const natural = isRecoverPath(tx)
+    ? tx.status === 'RECOVERED'
+      ? ProgressStatus.COMPLETED
+      : ProgressStatus.PROGRESS
+    : baseStatus
+  if (natural === ProgressStatus.COMPLETED) return ProgressStatus.COMPLETED
+  if (tx.settlement?.failed) return ProgressStatus.FAILED
+  if (settlementTxHash) return ProgressStatus.PROGRESS
+  if (needsManualClaim(tx) || needsRecover(tx)) return ProgressStatus.READY
+  return natural
+}
+
+// Happy path → "Get share tokens"; recover path → "Funds returned" (the asset
+// comes back, so it's labeled with the asset token).
+function buildTerminalStep({
+  baseStatus,
+  settlementTxHash,
+  t,
+  token,
+  tx,
+}: {
+  baseStatus: ProgressStatusType
+  settlementTxHash: Hash | undefined
+  t: Translator
+  token: EvmToken
+  tx: EarnTransaction
+}): StepPropsWithoutPosition {
+  const status = resolveTerminalStatus(tx, baseStatus, settlementTxHash)
+  const txHash = settlementTxHash ?? getTerminalDeliveryTxHash(tx)
+  // Only a manual claim/recover has a user-signed tx worth linking.
+  const explorerChainId = tx.automatic === false ? hemi.id : undefined
+  if (isRecoverPath(tx)) {
+    // "Funds returned" only once RECOVERED; CANCELLED still awaits the recover.
+    const recoverLabel =
+      tx.status === 'RECOVERED'
+        ? 'step.funds-returned'
+        : 'step.funds-to-recover'
+    return {
+      description: (
+        <div className="flex items-center gap-x-2">
+          <TokenLogo size="small" token={token} />
+          <span>{t(recoverLabel)}</span>
+        </div>
+      ),
+      explorerChainId,
+      status,
+      txHash,
+    }
+  }
+  return {
+    description: (
+      <div className="flex items-center gap-x-2">
+        <SparkleIcon />
+        <span>{t('step.get-share-tokens')}</span>
+      </div>
+    ),
+    explorerChainId,
+    status,
+    txHash,
+  }
+}
 
 const buildApprovalStep = (
   approvalTxHash: NonNullable<EarnTransaction['approvalTxHash']>,
@@ -145,6 +206,11 @@ export const HistoricalDepositReview = function ({
   })
 
   const { waitingForShares } = resolveStepStates(transaction)
+  // Only a still-mining settlement drives the step to PROGRESS; a failed one
+  // leaves the natural (FAILED) status and surfaces a Retry CTA instead.
+  const { settlement } = transaction
+  const settlementTxHash =
+    settlement && !settlement.failed ? settlement.txHash : undefined
 
   const steps: StepPropsWithoutPosition[] = []
   // Re-approve only makes sense for local FAILED (Hemi tx reverted).
@@ -170,7 +236,15 @@ export const HistoricalDepositReview = function ({
     steps.push(buildApprovalStep(transaction.approvalTxHash, token, t))
   }
   steps.push(buildStakeStep(transaction, token, t))
-  steps.push(buildWaitingForSharesStep(transaction, t, waitingForShares))
+  steps.push(
+    buildTerminalStep({
+      baseStatus: waitingForShares,
+      settlementTxHash,
+      t,
+      token,
+      tx: transaction,
+    }),
+  )
 
   return (
     <Operation

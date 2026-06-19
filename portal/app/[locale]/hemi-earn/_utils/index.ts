@@ -51,3 +51,36 @@ export const findPoolByShare = (
 // Agent failed after a successful Hemi tx (recover, not retry).
 export const isLocalEarnTransactionRow = (tx: EarnTransaction) =>
   tx.requestId.startsWith('local-')
+
+// A FULFILLED deposit with auto-claim off: the shares are back on the Router
+// but the user must sign `claimDeposit(id)` to receive them.
+export const needsManualClaim = (tx: EarnTransaction) =>
+  tx.kind === 'DEPOSIT' && tx.status === 'FULFILLED' && tx.automatic === false
+
+// A CANCELLED deposit with auto-recover off: the original asset is back on the
+// Router and the user must sign `recoverDeposit(id)` to pull it to their wallet.
+// `recoverDeposit` reverts unless the request is CANCELLED, so this is the only
+// state where the Recover CTA is valid.
+export const needsRecover = (tx: EarnTransaction) =>
+  tx.kind === 'DEPOSIT' && tx.status === 'CANCELLED' && tx.automatic === false
+
+// Broader than `needsRecover`: any deposit on the recover branch (awaiting or
+// past recovery), regardless of `automatic`. Drives the display — the terminal
+// step shows the returned asset, not shares — even when auto-recover means no
+// CTA is shown.
+export const isRecoverPath = (tx: EarnTransaction) =>
+  tx.kind === 'DEPOSIT' &&
+  (tx.status === 'CANCELLED' || tx.status === 'RECOVERED')
+
+// The Hemi `request*` tx reverted before it ever landed on-chain, so the user
+// can re-run the original request. Subgraph FAILED rows are a different beast
+// (handled elsewhere), hence the local-only gate.
+export const canRetryRow = (tx: EarnTransaction) =>
+  tx.status === 'FAILED' && isLocalEarnTransactionRow(tx)
+
+// A manual claim/recover the user signed reverted on Hemi. The on-chain status
+// is unchanged (still FULFILLED/CANCELLED), so we surface the revert as a
+// failure in the badge/step and offer a retry, rather than trusting the now
+// misleading "needed" state.
+export const hasFailedSettlement = (tx: EarnTransaction) =>
+  tx.settlement?.failed === true

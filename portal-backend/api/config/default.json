@@ -16,6 +16,10 @@
   "subgraph": {
     "apiKey": "",
     "apiUrl": "https://gateway.thegraph.com/api",
+    "hemiEarnRequests": {
+      "apiKey": "",
+      "apiUrl": ""
+    },
     "origin": "https://app.hemi.xyz",
     "stake": {
       "mainnet": "7qiewFZ7UyDpj3gyNaCDUk55NqHLdbjWQLduS5dcYfQ4",

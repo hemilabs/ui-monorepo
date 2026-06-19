@@ -14,6 +14,11 @@ import { postJson } from '../post-json.ts'
 
 import { UpstreamGraphQLError } from './errors.ts'
 import type {
+  EarnRequestRow,
+  EarnRequestStatus,
+  SubgraphRequest,
+} from './types/earn.ts'
+import type {
   BtcDepositOperation,
   EvmDepositOperation,
   ToBtcWithdrawOperation,
@@ -697,4 +702,140 @@ export const getLockedPositions = function ({
       }))
     },
   )
+}
+
+// `failed` is an Agent-side flag the indexer clears on `RequestRetried` but not
+// on cancel, so it lingers through CANCELLED/RECOVERED. A terminal Router status
+// wins over it: only a still-PENDING request surfaces as FAILED, otherwise a
+// failed-then-cancelled deposit would be masked as a failure and the portal's
+// recover path would never show.
+const deriveStatus = (row: SubgraphRequest): EarnRequestStatus =>
+  row.failed && row.status === 'PENDING' ? 'FAILED' : row.status
+
+const toEarnRequestRow = (row: SubgraphRequest): EarnRequestRow => ({
+  // Spread the fields that flow through unchanged (see
+  // `EarnRequestCommonFields` in `types/earn.ts`); the explicit
+  // overrides below transform the addresses, hashes, status and the
+  // nullable `automatic` flag.
+  ...row,
+  // Kept lowercase on purpose so it matches the portal-side tokens
+  // registry; only `receiver` is normalized to checksum below.
+  asset: row.asset as Address,
+  automatic: row.automatic ?? true,
+  claimTxHash: row.claimTxHash as Hash | null,
+  receiver: toChecksum(row.receiver as `0x${string}`),
+  recoverTxHash: row.recoverTxHash as Hash | null,
+  requestTxHash: row.requestTxHash as Hash,
+  status: deriveStatus(row),
+})
+
+// Envio HyperIndex uses Bearer-token auth. Header is only added when an
+// API key is configured so local dev against an unauthenticated indexer
+// (Hasura at `localhost:8080`) keeps working.
+function requestHemiEarn<TResponse>(schema: Schema): Promise<TResponse> {
+  const { apiKey, apiUrl } = subgraphConfig.hemiEarnRequests
+  if (!apiUrl) {
+    throw new UpstreamGraphQLError(
+      'hemi-earn-requests indexer URL is not configured (set SUBGRAPH_HEMI_EARN_REQUESTS_API_URL)',
+    )
+  }
+  const headers = apiKey ? { Authorization: `Bearer ${apiKey}` } : undefined
+  return postJson(apiUrl, schema, { headers }).catch(function (err) {
+    throw new UpstreamGraphQLError(err.message, { cause: err })
+  }) as Promise<TResponse>
+}
+
+/**
+ * Hasura-style paginator for the Envio indexer.
+ *
+ * Envio runs on Postgres so it doesn't carry graph-node's `skip` cap that
+ * `paginateSubgraph` works around — pagination is plain `limit`/`offset`
+ * until a short page (fewer rows than `pageSize`) ends the loop.
+ *
+ * The caller owns the query, including the `order_by` clause and any
+ * `where` filter; this helper only drives `offset` and aggregates the
+ * pages.
+ *
+ * @param fetchPage Runs one request given the page window, returning that
+ * page's rows.
+ * @param pageSize Rows to request per page. Defaults to 100.
+ */
+const paginateHemiEarnSubgraph = async function <TRow>({
+  fetchPage,
+  pageSize = 100,
+}: {
+  fetchPage: (window: { limit: number; offset: number }) => Promise<TRow[]>
+  pageSize?: number
+}) {
+  const rows: TRow[] = []
+  let offset = 0
+  let page: TRow[]
+
+  do {
+    page = await fetchPage({ limit: pageSize, offset })
+    rows.push(...page)
+    offset += pageSize
+  } while (page.length === pageSize)
+
+  return rows
+}
+
+type GetEarnRequestsQueryResponse = GraphResponse<{
+  Request: SubgraphRequest[]
+}>
+
+/**
+ * Retrieves the Hemi Earn cross-chain requests (deposits and redeems)
+ * initiated by the given address. Filtered by `initiator` (msg.sender on
+ * the Router call), not `receiver` — those can differ for smart-account
+ * wallets, and the portal's "my transactions" view follows the signer.
+ *
+ * No `chainId` parameter: the `hemi-earn-requests-subgraph` is Hemi-mainnet
+ * only and the route gates that via `validateChainIsHemiMainnet`.
+ */
+export const getEarnRequests = async function ({
+  address,
+}: {
+  address: Address
+}) {
+  const initiator = address.toLowerCase()
+
+  const rows = await paginateHemiEarnSubgraph<SubgraphRequest>({
+    async fetchPage({ limit, offset }) {
+      const schema = {
+        query: `query GetEarnRequests($initiator: String!, $limit: Int!, $offset: Int!) {
+          Request(
+            where: { initiator: { _eq: $initiator } }
+            order_by: { requestedAt: desc }
+            limit: $limit
+            offset: $offset
+          ) {
+            amountIn
+            amountOut
+            asset
+            automatic
+            claimableAt
+            claimTxHash
+            failed
+            failureReason
+            kind
+            receiver
+            recoverTxHash
+            requestedAt
+            requestId
+            requestTxHash
+            status
+          }
+        }`,
+        variables: { initiator, limit, offset },
+      }
+
+      const response =
+        await requestHemiEarn<GetEarnRequestsQueryResponse>(schema)
+      checkGraphQLErrors(response)
+      return response.data.Request
+    },
+  })
+
+  return rows.map(toEarnRequestRow)
 }

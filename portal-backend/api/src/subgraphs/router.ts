@@ -8,6 +8,7 @@ import type { ChainIdPathParams, ReqData } from '../types.ts'
 
 import { getBtcDepositOnHemi } from './route-handlers/get-btc-deposit-on-hemi.ts'
 import { getClaimTransactionHandler } from './route-handlers/get-claim-transaction-hash.ts'
+import { getEarnRequestsHandler } from './route-handlers/get-earn-requests.ts'
 import { getLockedPositionsHandler } from './route-handlers/get-locked-positions.ts'
 import { getWithdrawalProofAndClaimHandler } from './route-handlers/get-withdrawal-proof-and-claim.ts'
 import {
@@ -55,6 +56,18 @@ function validateChainIsHemi(
     req.data.chainId &&
     [hemi.id, hemiSepolia.id].includes(req.data.chainId)
   ) {
+    next()
+  } else {
+    next('route')
+  }
+}
+
+function validateChainIsHemiMainnet(
+  req: Request & ReqData,
+  res: Response,
+  next: NextFunction,
+) {
+  if (req.data.chainId === hemi.id) {
     next()
   } else {
     next('route')
@@ -251,6 +264,14 @@ export function createSubgraphsRouter() {
     validateAddress,
     validateChainIsHemi,
     getLockedPositionsHandler,
+  )
+
+  router.get(
+    '/:chainIdStr/earn-requests/:address',
+    parseChainId,
+    validateAddress,
+    validateChainIsHemiMainnet,
+    getEarnRequestsHandler,
   )
 
   return router

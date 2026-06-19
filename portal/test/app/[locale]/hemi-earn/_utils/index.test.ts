@@ -9,6 +9,7 @@ import {
   getTerminalDeliveryTxHash,
   hasFailedSettlement,
   hashesMatch,
+  isEarnRowInFlight,
   isLocalEarnTransactionRow,
   isRecoverPath,
   needsManualClaim,
@@ -328,6 +329,37 @@ describe('utils', function () {
 
     it('is false when there is no settlement', function () {
       expect(hasFailedSettlement(baseTx)).toBe(false)
+    })
+  })
+
+  describe('isEarnRowInFlight', function () {
+    it.each<EarnTransactionStatusType>(['PENDING', 'FULFILLED', 'TX_PENDING'])(
+      'is true for the non-terminal status %s',
+      function (status) {
+        expect(isEarnRowInFlight({ ...baseTx, status })).toBe(true)
+      },
+    )
+
+    it.each<EarnTransactionStatusType>(['FINALIZED', 'RECOVERED', 'FAILED'])(
+      'is false for the terminal status %s',
+      function (status) {
+        expect(isEarnRowInFlight({ ...baseTx, status })).toBe(false)
+      },
+    )
+
+    it.each([true, false])(
+      'is true for a CANCELLED deposit (automatic=%s — both walk to RECOVERED)',
+      function (automatic) {
+        expect(
+          isEarnRowInFlight({ ...baseTx, automatic, status: 'CANCELLED' }),
+        ).toBe(true)
+      },
+    )
+
+    it('is false for a CANCELLED redeem (withdrawal canceled, terminal)', function () {
+      expect(
+        isEarnRowInFlight({ ...baseTx, kind: 'REDEEM', status: 'CANCELLED' }),
+      ).toBe(false)
     })
   })
 

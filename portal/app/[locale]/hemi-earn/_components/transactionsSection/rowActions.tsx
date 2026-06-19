@@ -4,41 +4,28 @@ import { Button, ButtonIcon } from 'components/button'
 import { useTranslations } from 'next-intl'
 import { type MouseEvent } from 'react'
 
-import { needsManualClaim, needsRecover } from '../../_utils'
-import {
-  type EarnTransaction,
-  type EarnTransactionStatusType,
-} from '../../types'
+import { isEarnRowInFlight, needsManualClaim, needsRecover } from '../../_utils'
+import { type EarnTransaction } from '../../types'
 import { LoaderIcon } from '../icons/loaderIcon'
 import { TrashIcon } from '../icons/trashIcon'
 
 import { DepositRowCta } from './transactionDrawer/settleDeposit'
 import { useTxDrawerQueryString } from './transactionDrawer/useTxDrawerQueryString'
 
-const TERMINAL_STATUSES: EarnTransactionStatusType[] = [
-  'CANCELLED',
-  'FAILED',
-  'FINALIZED',
-  'RECOVERED',
-]
-
 type Props = {
   transaction: EarnTransaction
 }
 
-// Spinner while the row is in flight: a mining claim/recover settlement (even on
-// a CANCELLED row, which the status set treats as terminal) or a non-terminal
-// status. A reverted settlement shows no spinner — it's "Tx Failed" with a
-// Retry. The inline Claim/Recover CTA is only for the untouched manual state;
-// once a settlement exists (mining or reverted) the row hands back to View and
-// the drawer carries the spinner/Retry.
+// Spinner while the row is in flight (auto-progressing, including an auto-recover
+// CANCELLED deposit, or a claim/recover settlement tx mining), but never on a
+// reverted settlement — that's "Tx Failed" with a Retry. The inline
+// Claim/Recover CTA is only for the untouched manual state; once a settlement
+// exists (mining or reverted) the row hands back to View and the drawer carries
+// the spinner/Retry.
 function resolveActionState(transaction: EarnTransaction) {
   const { settlement } = transaction
-  const settlementPending = !!settlement && !settlement.failed
   return {
-    showLoaderIcon:
-      settlementPending ||
-      (!TERMINAL_STATUSES.includes(transaction.status) && !settlement?.failed),
+    showLoaderIcon: isEarnRowInFlight(transaction) && !settlement?.failed,
     showManualCta:
       !settlement &&
       (needsManualClaim(transaction) || needsRecover(transaction)),

@@ -84,3 +84,15 @@ export const canRetryRow = (tx: EarnTransaction) =>
 // misleading "needed" state.
 export const hasFailedSettlement = (tx: EarnTransaction) =>
   tx.settlement?.failed === true
+
+// A row the table is still actively tracking — drives both the polling loop and
+// the row spinner. Terminal: FINALIZED/RECOVERED/FAILED for any kind, plus a
+// CANCELLED REDEEM (withdrawal canceled). A CANCELLED DEPOSIT stays in flight:
+// it still walks to RECOVERED, whether auto-recover or via the user's recover,
+// so the table keeps polling and reflects it (even across devices/sessions),
+// mirroring how a FULFILLED deposit walks to FINALIZED.
+export const isEarnRowInFlight = (tx: EarnTransaction) =>
+  tx.status !== 'FINALIZED' &&
+  tx.status !== 'RECOVERED' &&
+  tx.status !== 'FAILED' &&
+  !(tx.status === 'CANCELLED' && tx.kind === 'REDEEM')

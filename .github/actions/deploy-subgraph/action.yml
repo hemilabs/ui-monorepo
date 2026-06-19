@@ -22,7 +22,7 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - uses: bloq/actions/notify-deploy-to-slack@ffeb51ecfe42bb78533630b64c1082b09ef3bd2f # v1.6.1
+    - uses: hemilabs/actions/notify-deploy-to-slack@7b7b652a4a4a7512207fb9ce319d8661cf79ad10
       with:
         app-name: Hemi Portal Subgraph ${{ inputs.subgraph }}
         environment: staging
@@ -42,7 +42,7 @@ runs:
       shell: bash
       working-directory: subgraphs/${{ inputs.subgraph }}
     - if: always()
-      uses: bloq/actions/notify-deploy-to-slack@ffeb51ecfe42bb78533630b64c1082b09ef3bd2f # v1.6.1
+      uses: hemilabs/actions/notify-deploy-to-slack@7b7b652a4a4a7512207fb9ce319d8661cf79ad10
       with:
         app-name: Hemi Portal Subgraph ${{ inputs.subgraph }}
         environment: staging

@@ -8,7 +8,7 @@ import { type Address } from 'viem'
 const apiUrl = process.env.NEXT_PUBLIC_VETRO_API_URL
 export const isApyApiConfigured = apiUrl !== undefined && isValidUrl(apiUrl)
 
-type ApyByVault = Record<Address, { apy: number }>
+type ApyByVault = Partial<Record<Address, { apy: number }>>
 
 // Shared queryOptions: a single network call serves every share via the
 // per-vault map returned by the API. Pair with `selectApyValue` below to

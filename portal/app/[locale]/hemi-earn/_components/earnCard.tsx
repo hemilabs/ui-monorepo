@@ -5,6 +5,7 @@ import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
 
 type Props = {
+  badge?: ReactNode
   icon: ReactNode
   isError: boolean
   isLoading: boolean
@@ -12,7 +13,14 @@ type Props = {
   value: ReactNode
 }
 
-export const EarnCard = ({ icon, isError, isLoading, label, value }: Props) => (
+export const EarnCard = ({
+  badge,
+  icon,
+  isError,
+  isLoading,
+  label,
+  value,
+}: Props) => (
   <Card shadow="sm">
     <div className="w-full p-4">
       <div className="flex flex-col gap-y-2">
@@ -29,6 +37,9 @@ export const EarnCard = ({ icon, isError, isLoading, label, value }: Props) => (
             <Skeleton className="h-7 w-20" />
           )}
         </p>
+        {!isLoading && !isError && badge && (
+          <div className="self-start empty:hidden">{badge}</div>
+        )}
       </div>
     </div>
   </Card>

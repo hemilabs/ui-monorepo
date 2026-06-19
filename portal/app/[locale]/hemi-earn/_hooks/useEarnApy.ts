@@ -8,7 +8,7 @@ import { type Address } from 'viem'
 const apiUrl = process.env.NEXT_PUBLIC_VETRO_API_URL
 export const isApyApiConfigured = apiUrl !== undefined && isValidUrl(apiUrl)
 
-type ApyByVault = Record<Address, { '7d': number }>
+type ApyByVault = Record<Address, { apy: number }>
 
 // Shared queryOptions: a single network call serves every share via the
 // per-vault map returned by the API. Pair with `selectApyValue` below to
@@ -26,9 +26,9 @@ export const earnApyQueryOptions = () =>
 // The API keys its per-vault map by the share's Ethereum-side staking vault,
 // so callers pass that (`pool.stakingVault`). Returns `undefined` while the
 // query is pending, `null` once settled but missing for that vault (errored
-// response or vault not in the payload), and the 7-day number otherwise.
+// response or vault not in the payload), and the apy number otherwise.
 export const selectApyValue = (
   data: ApyByVault | undefined,
   isPending: boolean,
   stakingVault: Address,
-) => (isPending ? undefined : data?.[stakingVault]?.['7d'] ?? null)
+) => (isPending ? undefined : data?.[stakingVault]?.apy ?? null)

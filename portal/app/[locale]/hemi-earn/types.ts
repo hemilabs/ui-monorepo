@@ -72,7 +72,7 @@ export type EarnAsset = {
 //   `undefined` — APY query still pending (show skeleton)
 //   `null`      — APY query settled but no value for this share (error or
 //                 missing in response → show '-')
-//   `number`    — 7-day APY available
+//   `number`    — APY available
 export type EarnPool = {
   apy: number | null | undefined
   assets: EarnAsset[]

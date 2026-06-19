@@ -141,7 +141,7 @@ const NetworkSwitchImpl = function ({
                 return {
                   content: (
                     <button
-                      className={`flex w-full items-center gap-x-2 ${
+                      className={`-mx-2 -my-1 flex w-full items-center gap-x-2 px-2 py-1 ${
                         selected ? 'text-neutral-950' : ''
                       }`}
                       disabled={selected}

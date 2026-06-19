@@ -704,10 +704,13 @@ export const getLockedPositions = function ({
   )
 }
 
-// The indexer clears `failed` on `RequestRetried`, so a successful retry
-// won't be mis-labeled.
+// `failed` is an Agent-side flag the indexer clears on `RequestRetried` but not
+// on cancel, so it lingers through CANCELLED/RECOVERED. A terminal Router status
+// wins over it: only a still-PENDING request surfaces as FAILED, otherwise a
+// failed-then-cancelled deposit would be masked as a failure and the portal's
+// recover path would never show.
 const deriveStatus = (row: SubgraphRequest): EarnRequestStatus =>
-  row.failed ? 'FAILED' : row.status
+  row.failed && row.status === 'PENDING' ? 'FAILED' : row.status
 
 const toEarnRequestRow = (row: SubgraphRequest): EarnRequestRow => ({
   // Spread the fields that flow through unchanged (see

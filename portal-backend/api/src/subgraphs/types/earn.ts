@@ -44,9 +44,11 @@ export type SubgraphRequest = EarnRequestCommonFields & {
 // One Hemi Earn cross-chain request, as returned by
 // `GET /subgraphs/:chainId/earn-requests/:address`. Shape mirrors the
 // portal's `EarnTransaction` type (minus the localStorage-only fields).
-// BigInt values arrive as strings. `failed` is redundant with
-// `status === 'FAILED'` but exposed for debug; `failureReason` carries the
-// raw revert reason for any future UI that surfaces it.
+// BigInt values arrive as strings. `failed` is the raw Agent-side flag and is
+// NOT redundant with `status === 'FAILED'`: a terminal status (CANCELLED /
+// RECOVERED) can carry `failed: true`, while the synthetic FAILED status only
+// applies to a still-PENDING request. `failureReason` carries the raw revert
+// reason for any future UI that surfaces it.
 export type EarnRequestRow = EarnRequestCommonFields & {
   asset: Address
   automatic: boolean

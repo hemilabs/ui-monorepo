@@ -31,7 +31,7 @@ export const CompositionChart = function ({
     const hoveredItem = hoveredIndex !== null ? data[hoveredIndex] : null
 
     return (
-      <div className="shadow-bs relative flex h-full items-center justify-center rounded-lg bg-neutral-50">
+      <div className="relative flex h-full items-center justify-center rounded-lg bg-neutral-50 shadow-bs">
         <svg
           height={chartSize}
           viewBox={`0 0 ${chartSize} ${chartSize}`}
@@ -61,7 +61,7 @@ export const CompositionChart = function ({
           />
         </svg>
         {hoveredItem !== null && (
-          <span className="text-mid-md pointer-events-none absolute font-semibold text-orange-500">
+          <span className="pointer-events-none absolute text-mid-md font-semibold text-orange-500">
             {formatPercentage(hoveredItem.share)}
           </span>
         )}
@@ -74,7 +74,7 @@ export const CompositionChart = function ({
   }
 
   return (
-    <div className="shadow-bs flex h-full items-center justify-center rounded-lg bg-neutral-50 p-6">
+    <div className="flex h-full items-center justify-center rounded-lg bg-neutral-50 p-6 shadow-bs">
       <Skeleton circle height={chartSize - 75} width={chartSize - 75} />
     </div>
   )

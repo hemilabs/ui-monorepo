@@ -43,7 +43,7 @@ function AmountCell({ transaction }: { transaction: EarnTransaction }) {
   const token = showingShares ? pool?.shareToken : assetToken
   const rawAmount = showingShares
     ? transaction.amountIn
-    : transaction.amountOut ?? transaction.amountIn
+    : (transaction.amountOut ?? transaction.amountIn)
 
   if (!token) {
     if (isLoading) return <Skeleton className="w-16" />

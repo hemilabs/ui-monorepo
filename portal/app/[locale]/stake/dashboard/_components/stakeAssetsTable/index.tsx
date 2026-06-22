@@ -157,7 +157,7 @@ export const StakeAssetsTable = function () {
 
   return (
     <div className="w-full rounded-xl text-sm font-medium">
-      <div className="md:min-h-136 h-[56dvh] overflow-hidden">
+      <div className="h-[56dvh] overflow-hidden md:min-h-136">
         <Table
           columns={cols}
           data={sortedTokens}

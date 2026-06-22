@@ -39,8 +39,7 @@ export function SubLogoTooltip({
       {tooltipText ? (
         <span
           aria-hidden
-          className="absolute bottom-0 right-0 z-10 inline-flex translate-x-1/2 translate-y-1/2 items-center justify-center
-            rounded-full border-[1.6px] border-solid border-white bg-white"
+          className="absolute bottom-0 right-0 z-10 inline-flex translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border-[1.6px] border-solid border-white bg-white"
         >
           {icon ?? (
             <SubLogoInfoIcon className="size-3 text-neutral-500 transition-colors duration-200 group-hover/sub-logo:text-neutral-900 group-focus-visible/sub-logo:text-neutral-900" />

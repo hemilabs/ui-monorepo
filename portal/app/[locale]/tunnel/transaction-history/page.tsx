@@ -38,7 +38,7 @@ const Page = function () {
         subtitle={t('transaction-history.subtitle')}
         title={t('transaction-history.title')}
       />
-      <div className="rounded-2.5xl mt-6 bg-neutral-100 p-1 text-sm font-medium md:mt-8">
+      <div className="mt-6 rounded-2.5xl bg-neutral-100 p-1 text-sm font-medium md:mt-8">
         <TopBar
           filterOption={filterOption}
           onFilterOptionChange={setFilterOption}

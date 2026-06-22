@@ -17,10 +17,7 @@ type Props = {
 }
 
 export const MobileBottomBar = ({ closeMenu, isMenuOpen, openMenu }: Props) => (
-  <div
-    className="fixed inset-x-0 bottom-0 z-50 flex h-14 items-center
-      border-t border-neutral-300/55 bg-white px-3 sm:hidden"
-  >
+  <div className="fixed inset-x-0 bottom-0 z-50 flex h-14 items-center border-t border-neutral-300/55 bg-white px-3 sm:hidden">
     <WalletConnection placement="bottom-bar" />
     <div className="ml-auto">
       {/* When opening (hamburger): stopImmediatePropagation blocks

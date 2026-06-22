@@ -150,7 +150,7 @@ export const ClaimOptions = function ({ eligibility }: Props) {
           }
         />
         <div className="relative">
-          <div className="border-1.5 border-sky-450 absolute -inset-2 rounded-2xl border-solid" />
+          <div className="absolute -inset-2 rounded-2xl border-1.5 border-solid border-sky-450" />
           <Strategy
             amount={eligibility.amount}
             bgColor="bg-recommended-claim"

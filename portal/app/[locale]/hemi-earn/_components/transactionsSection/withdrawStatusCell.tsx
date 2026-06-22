@@ -61,7 +61,7 @@ function deriveCooldownText({
   if (hasClaimableAt && remainingSec === 0) {
     return t('status.ready-to-claim')
   }
-  const displaySec = hasClaimableAt ? remainingSec ?? 0 : cooldownDurationSec
+  const displaySec = hasClaimableAt ? (remainingSec ?? 0) : cooldownDurationSec
   if (displaySec === undefined || displaySec <= 0) return undefined
   return formatCooldownText(displaySec, t)
 }

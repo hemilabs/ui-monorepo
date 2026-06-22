@@ -44,7 +44,7 @@ export const Modal = function ({
       <OverlayComponent />
       <dialog
         className={`pointer-event-auto fixed inset-0 z-50 flex min-h-screen justify-center overflow-y-auto overflow-x-hidden rounded-2xl bg-transparent shadow-xl outline-none focus:outline-none md:min-h-0 ${
-          verticalAlign === 'top' ? 'pt-13 m-0 items-start' : 'items-center'
+          verticalAlign === 'top' ? 'm-0 items-start pt-13' : 'items-center'
         }`}
         onTouchStart={e => e.stopPropagation()}
       >

@@ -99,13 +99,11 @@ export const AccordionIconContainer = ({
   selected = false,
 }: Selectable & { children: ReactNode }) => (
   <div
-    className={`flex size-6 items-center justify-center rounded-md
-      transition-colors duration-300 md:size-5
-      group-hover/nav:[&>svg>path]:fill-neutral-950 ${
-        selected
-          ? '[&>svg>path]:fill-neutral-950'
-          : '[&>svg>path]:fill-neutral-400'
-      }`}
+    className={`flex size-6 items-center justify-center rounded-md transition-colors duration-300 md:size-5 group-hover/nav:[&>svg>path]:fill-neutral-950 ${
+      selected
+        ? '[&>svg>path]:fill-neutral-950'
+        : '[&>svg>path]:fill-neutral-400'
+    }`}
   >
     {children}
   </div>
@@ -116,12 +114,11 @@ export const AccordionItemText = ({
   text,
 }: Pick<NavItemProps, 'text'> & Selectable) => (
   <span
-    className={`text-base font-medium transition-colors duration-300
-       group-hover/nav:text-neutral-950 md:text-sm ${
-         selected
-           ? 'text-neutral-950'
-           : 'text-neutral-600 group-hover/item:text-neutral-950'
-       }`}
+    className={`text-base font-medium transition-colors duration-300 group-hover/nav:text-neutral-950 md:text-sm ${
+      selected
+        ? 'text-neutral-950'
+        : 'text-neutral-600 group-hover/item:text-neutral-950'
+    }`}
   >
     {text}
   </span>

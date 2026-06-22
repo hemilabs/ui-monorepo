@@ -17,7 +17,7 @@ export const DisclaimerEth = function () {
         subheading={t('unstake-eth-as-weth-subheading')}
       >
         <ExternalLink
-          className="group/disclaimer flex cursor-pointer items-center gap-x-1 text-sm "
+          className="group/disclaimer flex cursor-pointer items-center gap-x-1 text-sm"
           href="https://pure.finance/en/wrap-eth/"
         >
           <span className="text-orange-600 group-hover/disclaimer:text-orange-700">

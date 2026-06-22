@@ -42,7 +42,7 @@ const PaddedListItem = ({
 }) => <li className={`[&>div]:px-2 ${className}`}>{children}</li>
 
 export const NavbarDesktop = () => (
-  <div className="w-54 relative flex h-full flex-col justify-between overflow-x-hidden bg-white pt-3">
+  <div className="relative flex h-full w-54 flex-col justify-between overflow-x-hidden bg-white pt-3">
     <div className="mb-6 flex items-center justify-between px-3">
       <div className="ml-2 flex items-center justify-start gap-x-2">
         <HomeLink />

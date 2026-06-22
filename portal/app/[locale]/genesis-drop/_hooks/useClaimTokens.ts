@@ -67,9 +67,8 @@ export const useClaimTokens = function ({
         walletClient: hemiWalletClient!,
       })
 
-      emitter.on(
-        'claim-failed-validation',
-        () => track?.('genesis-drop - failed validation', { lockupMonths }),
+      emitter.on('claim-failed-validation', () =>
+        track?.('genesis-drop - failed validation', { lockupMonths }),
       )
 
       emitter.on('claim-transaction-succeeded', function (receipt) {

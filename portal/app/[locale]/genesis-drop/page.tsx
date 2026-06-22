@@ -58,7 +58,7 @@ export default function Page() {
       return (
         <>
           <DisconnectedState />
-          <p className="max-w-50 mt-1 text-center text-xs font-medium text-neutral-500">
+          <p className="mt-1 max-w-50 text-center text-xs font-medium text-neutral-500">
             {t('connect-demos-wallet')}
           </p>
         </>

@@ -5,7 +5,7 @@ export const NetworkConfigCard = ({
   ...props
 }: ComponentProps<'div'>) => (
   <div
-    className={`shadow-bs rounded-lg bg-white p-4 ${className ?? ''}`}
+    className={`rounded-lg bg-white p-4 shadow-bs ${className ?? ''}`}
     {...props}
   />
 )

@@ -14,7 +14,7 @@ import { useOperationDrawer } from './_hooks/useOperationDrawer'
 const PoolTable = dynamic(
   () => import('./_components/poolTable').then(mod => mod.PoolTable),
   {
-    loading: () => <Skeleton className="h-17 mt-8 w-full rounded-xl" />,
+    loading: () => <Skeleton className="mt-8 h-17 w-full rounded-xl" />,
     ssr: false,
   },
 )

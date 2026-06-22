@@ -22,10 +22,7 @@ export const TwoRowBox = ({
   <div className={`relative z-0 flex w-full flex-col ${bottom ? '-mb-3' : ''}`}>
     <div className={`${commonCss} z-10 justify-between bg-white`}>{top}</div>
     {bottom && (
-      <div
-        className="pt-4.5 relative flex h-[50px] w-full -translate-y-2 items-center gap-x-1
-  rounded-b-lg border border-solid border-neutral-300/55 bg-neutral-100 px-4 pb-2.5"
-      >
+      <div className="relative flex h-[50px] w-full -translate-y-2 items-center gap-x-1 rounded-b-lg border border-solid border-neutral-300/55 bg-neutral-100 px-4 pb-2.5 pt-4.5">
         {bottom}
       </div>
     )}

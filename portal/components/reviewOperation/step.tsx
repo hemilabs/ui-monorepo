@@ -59,7 +59,7 @@ const Completed = function ({
   const t = useTranslations('common.transaction-status')
   return (
     <>
-      <div className="left-2.25 absolute top-0.5">
+      <div className="absolute left-2.25 top-0.5">
         <ShortVerticalLine dashed={false} stroke="stroke-orange-600" />
       </div>
       <div className="mt-4">
@@ -79,7 +79,7 @@ const Completed = function ({
         top={<span className="mr-auto text-neutral-600">{description}</span>}
       />
       {!!postAction && (
-        <div className="left-2.25 absolute bottom-6">
+        <div className="absolute bottom-6 left-2.25">
           <LongVerticalLine dashed={false} stroke="stroke-orange-600" />
         </div>
       )}
@@ -89,7 +89,7 @@ const Completed = function ({
 
 const NotReady = ({ description, position, postAction }: Props) => (
   <>
-    <div className="left-2.25 absolute top-0.5">
+    <div className="absolute left-2.25 top-0.5">
       <ShortVerticalLine stroke="stroke-neutral-300/55" />
     </div>
     <div className="mt-4">
@@ -99,7 +99,7 @@ const NotReady = ({ description, position, postAction }: Props) => (
       <span className="text-neutral-600">{description}</span>
     </OneRowBox>
     {!!postAction && (
-      <div className="left-2.25 absolute bottom-6">
+      <div className="absolute bottom-6 left-2.25">
         <ShortVerticalLine stroke="stroke-neutral-300/55" />
       </div>
     )}
@@ -117,7 +117,7 @@ const Progress = function ({
   const t = useTranslations('common.transaction-status')
   return (
     <>
-      <div className="left-2.25 absolute top-0.5">
+      <div className="absolute left-2.25 top-0.5">
         <ShortVerticalLine dashed={false} stroke="stroke-orange-600" />
       </div>
       <div className="mt-4">
@@ -140,7 +140,7 @@ const Progress = function ({
         }
       />
       {!!postAction && (
-        <div className="left-2.25 absolute bottom-6">
+        <div className="absolute bottom-6 left-2.25">
           <LongVerticalLine stroke="stroke-neutral-300/55" />
         </div>
       )}
@@ -150,7 +150,7 @@ const Progress = function ({
 
 const Ready = ({ description, fees, position, postAction }: Props) => (
   <>
-    <div className="left-2.25 absolute top-0.5">
+    <div className="absolute left-2.25 top-0.5">
       <ShortVerticalLine dashed={false} stroke="stroke-orange-600" />
     </div>
     <div className="mt-4">
@@ -161,7 +161,7 @@ const Ready = ({ description, fees, position, postAction }: Props) => (
       {fees && <Fees {...fees} />}
     </OneRowBox>
     {!!postAction && (
-      <div className="left-2.25 absolute bottom-6">
+      <div className="absolute bottom-6 left-2.25">
         <ShortVerticalLine stroke="stroke-neutral-300/55" />
       </div>
     )}
@@ -179,7 +179,7 @@ const Failed = function ({
   const t = useTranslations('common.transaction-status')
   return (
     <>
-      <div className="left-2.25 absolute top-0.5">
+      <div className="absolute left-2.25 top-0.5">
         <ShortVerticalLine dashed={false} stroke="stroke-rose-500" />
       </div>
       <div className="mt-4">
@@ -204,7 +204,7 @@ const Failed = function ({
         }
       />
       {!!postAction && (
-        <div className="left-2.25 absolute bottom-6">
+        <div className="absolute bottom-6 left-2.25">
           <ShortVerticalLine stroke="stroke-neutral-300/55" />
         </div>
       )}
@@ -216,7 +216,7 @@ const Rejected = function ({ description, fees, position, postAction }: Props) {
   const t = useTranslations('common.transaction-status')
   return (
     <>
-      <div className="left-2.25 absolute top-0.5">
+      <div className="absolute left-2.25 top-0.5">
         <ShortVerticalLine dashed={false} stroke="stroke-orange-600" />
       </div>
       <div className="mt-4">
@@ -232,7 +232,7 @@ const Rejected = function ({ description, fees, position, postAction }: Props) {
         }
       />
       {!!postAction && (
-        <div className="left-2.25 absolute bottom-6">
+        <div className="absolute bottom-6 left-2.25">
           <ShortVerticalLine stroke="stroke-neutral-300/55" />
         </div>
       )}

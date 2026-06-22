@@ -279,7 +279,7 @@ export function Lockup({
 
   return (
     <>
-      <div className="hover:shadow-bs w-full space-y-4 rounded-lg border border-solid border-transparent bg-neutral-50 p-4 ring-1 ring-transparent">
+      <div className="w-full space-y-4 rounded-lg border border-solid border-transparent bg-neutral-50 p-4 ring-1 ring-transparent hover:shadow-bs">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-neutral-500">
             {t('lockup-period')}

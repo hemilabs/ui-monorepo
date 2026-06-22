@@ -103,7 +103,7 @@ function ItemAccordionUI({
       <div
         className="mt-1 overflow-hidden transition-[height] duration-300 ease-in-out"
         style={{
-          height: isOpen ? contentRef.current?.scrollHeight ?? 'auto' : 0,
+          height: isOpen ? (contentRef.current?.scrollHeight ?? 'auto') : 0,
         }}
       >
         <div ref={contentRef}>
@@ -126,14 +126,11 @@ function ItemAccordionUI({
                 }
               >
                 <div
-                  className={`group/item relative ml-4 flex flex-col gap-1 px-5 py-1.5 text-sm
-                  before:absolute before:left-0 before:top-0 before:h-full before:w-0.5 before:bg-neutral-200
-                  ${
+                  className={`group/item relative ml-4 flex flex-col gap-1 px-5 py-1.5 text-sm before:absolute before:left-0 before:top-0 before:h-full before:w-0.5 before:bg-neutral-200 ${
                     isSelected
                       ? 'after:absolute after:left-0 after:top-1/2 after:h-4/6 after:w-0.5 after:-translate-y-1/2 after:bg-orange-600'
                       : ''
-                  }
-                `}
+                  } `}
                 >
                   <ItemText selected={isSelected} text={itemText} />
                 </div>

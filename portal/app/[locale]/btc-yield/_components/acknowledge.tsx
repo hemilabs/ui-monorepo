@@ -17,8 +17,7 @@ export const Acknowledge = function ({ acknowledged, setAcknowledged }: Props) {
     >
       <input
         checked={acknowledged}
-        className="checkbox mt-0.5 h-4 w-4 shrink-0 cursor-pointer appearance-none rounded
-            bg-white shadow-sm transition-all checked:bg-orange-600 focus:ring-2 focus:ring-orange-600"
+        className="checkbox mt-0.5 h-4 w-4 shrink-0 cursor-pointer appearance-none rounded bg-white shadow-sm transition-all checked:bg-orange-600 focus:ring-2 focus:ring-orange-600"
         id="acknowledge-beta-site"
         onChange={e => setAcknowledged(e.target.checked)}
         type="checkbox"

@@ -61,7 +61,7 @@ const TopRow = function ({ amount, label, token }: TopRowProps) {
             showTokenLogo={false}
             token={token}
           />
-          <div className="shadow-bs rounded-full">
+          <div className="rounded-full shadow-bs">
             <TokenLogo size="small" token={token} />
           </div>
         </div>

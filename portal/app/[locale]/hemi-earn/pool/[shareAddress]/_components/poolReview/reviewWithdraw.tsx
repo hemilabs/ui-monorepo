@@ -80,7 +80,7 @@ function buildReceiveStep({
   // outside this drawer (tracked in its own follow-up).
   const claimTxHash =
     subgraphRow?.status === 'FINALIZED'
-      ? subgraphRow.claimTxHash ?? undefined
+      ? (subgraphRow.claimTxHash ?? undefined)
       : undefined
   const unstakeMined = withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED
   // Two distinct questions, kept as separate predicates so each reads

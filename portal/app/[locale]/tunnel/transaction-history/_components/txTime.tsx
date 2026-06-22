@@ -10,7 +10,7 @@ type Props = {
 export const TxTime = function ({ timestamp }: Props) {
   // Unconfirmed TXs won't have a timestamp
   if (timestamp === undefined) {
-    return <Skeleton className="w-15 h-8" />
+    return <Skeleton className="h-8 w-15" />
   }
 
   return (

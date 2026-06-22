@@ -27,7 +27,7 @@ const Integration = ({
     <Card>
       <ExternalLink href={href}>
         <span className="flex w-full flex-col gap-y-1 p-6">
-          <span className="relative size-12 rounded-md bg-neutral-900 ">
+          <span className="relative size-12 rounded-md bg-neutral-900">
             <Image
               alt={`${name} logo`}
               className="px-2.5"
@@ -53,7 +53,7 @@ export const Integrations = function () {
   return (
     <section className="mt-12 flex flex-col gap-y-5 md:mt-14 md:gap-y-6">
       <h3>{t('heading', { symbol: poolAsset.symbol })}</h3>
-      <div className="xs:flex-row flex w-full flex-col flex-wrap gap-4 md:flex-nowrap md:gap-5 [&>.card-container]:w-full [&>.card-container]:max-md:basis-[calc(50%-theme(spacing.2))]">
+      <div className="flex w-full flex-col flex-wrap gap-4 xs:flex-row md:flex-nowrap md:gap-5 [&>.card-container]:w-full [&>.card-container]:max-md:basis-[calc(50%-theme(spacing.2))]">
         <Integration
           category={t('categories.defi')}
           description={t('spectra-description')}

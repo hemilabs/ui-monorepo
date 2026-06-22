@@ -200,7 +200,7 @@ export const ReviewIncreaseUnlockTime = function ({ onClose }: Props) {
 
   return (
     <>
-      <div className="min-h-21 mb-3 flex flex-col gap-y-3">
+      <div className="mb-3 flex min-h-21 flex-col gap-y-3">
         <DrawerTopSection
           heading={tDrawer('increase-unlock-time.heading', {
             symbol: token.symbol,

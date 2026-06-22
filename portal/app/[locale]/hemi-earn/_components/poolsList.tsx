@@ -7,7 +7,7 @@ import { useEarnPools } from '../_hooks/useEarnPools'
 import { PoolInfoBar } from './poolInfoBar'
 
 const PoolInfoBarSkeleton = () => (
-  <Skeleton className="md:h-19.5 h-58 w-full rounded-xl" />
+  <Skeleton className="h-58 w-full rounded-xl md:h-19.5" />
 )
 
 export const PoolsList = function () {

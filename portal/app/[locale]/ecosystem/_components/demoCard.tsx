@@ -41,17 +41,13 @@ export const DemoCard = function ({
   const addTracking = () => (enabled ? () => track(event) : undefined)
 
   return (
-    <div
-      className="solid group/demo-card relative h-[270px] flex-shrink
-    flex-grow rounded-[17px] border border-neutral-300/55
-    hover:cursor-pointer md:h-56 md:w-[295px] md:flex-shrink-0 md:flex-grow-0"
-    >
+    <div className="solid group/demo-card relative h-[270px] flex-shrink flex-grow rounded-[17px] border border-neutral-300/55 hover:cursor-pointer md:h-56 md:w-[295px] md:flex-shrink-0 md:flex-grow-0">
       <div className="absolute left-6 top-5 -z-10 h-12 w-12">
         <Image alt={altText} fill priority={true} src={icon} />
       </div>
       <Image
         alt={altText}
-        className="group-hover/demo-card:opacity-88 -z-20 rounded-2xl duration-150"
+        className="-z-20 rounded-2xl duration-150 group-hover/demo-card:opacity-88"
         fill
         priority={true}
         src={bgImage}

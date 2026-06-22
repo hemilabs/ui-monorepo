@@ -57,7 +57,7 @@ function usePageVisitTracker(claimGroupId: number) {
 }
 
 const Row = ({ children }: { children: ReactNode }) => (
-  <div className="text-mid flex items-center justify-between border-b border-solid border-neutral-300/55 py-3 font-medium last:border-b-0">
+  <div className="flex items-center justify-between border-b border-solid border-neutral-300/55 py-3 text-mid font-medium last:border-b-0">
     {children}
   </div>
 )
@@ -100,7 +100,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
   const t = useTranslations('genesis-drop')
 
   const loadingSkeleton = (
-    <Skeleton className="w-21 h-4" containerClassName="flex-1" />
+    <Skeleton className="h-4 w-21" containerClassName="flex-1" />
   )
 
   const isStandardLock = () => transaction?.lockupMonths === 6
@@ -219,7 +219,7 @@ export const ClaimDetails = function ({ eligibility }: Props) {
         </>
       )}
       <div
-        className="md:w-120 relative w-full rounded-xl bg-neutral-50"
+        className="relative w-full rounded-xl bg-neutral-50 md:w-120"
         style={{
           boxShadow:
             '0 0 0 1px rgba(10, 10, 10, 0.08), 0 1px 2px 0 rgba(10, 10, 10, 0.10)',

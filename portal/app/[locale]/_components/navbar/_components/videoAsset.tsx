@@ -14,7 +14,7 @@ const VideoAssetImpl = function () {
 
   return (
     <div
-      className={`w-54 h-30 absolute scale-150 overflow-x-hidden ${
+      className={`absolute h-30 w-54 scale-150 overflow-x-hidden ${
         isNotTestnet ? '-translate-y-22' : '-translate-y-30'
       }`}
     >

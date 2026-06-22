@@ -6,8 +6,7 @@ crashes, so Adapters for Nuqs are not available. We don't need them, but the but
 Because of that, we can add all the styles here, and then use plain buttons in those error pages.
 */
 .button--base {
-  @apply relative z-0 box-border flex items-center
-  justify-center overflow-hidden font-medium focus:outline-none disabled:opacity-55;
+  @apply relative z-0 box-border flex items-center justify-center overflow-hidden font-medium focus:outline-none disabled:opacity-55;
   /*
   Adds a smooth hover background effect using a before pseudo-element.
   This ensures consistent transitions across button variants by:
@@ -15,25 +14,20 @@ Because of that, we can add all the styles here, and then use plain buttons in t
   - Starting fully transparent (`before:opacity-0`) and transitioning to visible on hover (`hover:before:opacity-100`)
   - Applying a transition effect on opacity (`before:transition-opacity before:duration-200`)
   */
-  @apply before:absolute before:inset-0 before:-z-10 before:opacity-0
-  before:transition-opacity before:duration-200 before:content-['']
-  hover:before:opacity-100 disabled:hover:before:opacity-0;
+  @apply before:absolute before:inset-0 before:-z-10 before:opacity-0 before:transition-opacity before:duration-200 before:content-[''] hover:before:opacity-100 disabled:hover:before:opacity-0;
 }
 
 /* Button Variants */
 .button-primary {
-  @apply focus-visible:shadow-button-primary-focused before:bg-button-primary-hovered
-    bg-orange-600 text-white disabled:opacity-55;
+  @apply bg-orange-600 text-white before:bg-button-primary-hovered focus-visible:shadow-button-primary-focused disabled:opacity-55;
 }
 
 .button-secondary {
-  @apply focus-visible:shadow-button-secondary-focused bg-white text-neutral-950 shadow-sm
-  before:bg-neutral-50 disabled:bg-neutral-50 disabled:opacity-55;
+  @apply bg-white text-neutral-950 shadow-sm before:bg-neutral-50 focus-visible:shadow-button-secondary-focused disabled:bg-neutral-50 disabled:opacity-55;
 }
 
 .button-tertiary {
-  @apply focus-visible:shadow-button-tertiary-focused bg-transparent
-    text-neutral-950 before:bg-neutral-100 focus:bg-neutral-100;
+  @apply bg-transparent text-neutral-950 before:bg-neutral-100 focus:bg-neutral-100 focus-visible:shadow-button-tertiary-focused;
 }
 
 /* Button Sizes */
@@ -62,7 +56,7 @@ Because of that, we can add all the styles here, and then use plain buttons in t
 }
 
 .button-x-large {
-  @apply text-mid h-11 rounded-lg;
+  @apply h-11 rounded-lg text-mid;
 }
 
 .button-x-large.button-icon {

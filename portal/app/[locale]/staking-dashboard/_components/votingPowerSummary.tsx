@@ -32,10 +32,7 @@ export const VotingPowerSummary = function () {
     ) : null
 
   return (
-    <div
-      className="xs:flex-row flex w-full flex-col flex-wrap items-center justify-between gap-6 md:flex-nowrap
-        [&>.card-container]:w-full [&>.card-container]:max-md:min-w-0 [&>.card-container]:max-md:basis-full"
-    >
+    <div className="flex w-full flex-col flex-wrap items-center justify-between gap-6 xs:flex-row md:flex-nowrap [&>.card-container]:w-full [&>.card-container]:max-md:min-w-0 [&>.card-container]:max-md:basis-full">
       <CardInfo<bigint>
         data={isWalletReady ? positionsSum : undefined}
         formatValue={formatVeHemi}

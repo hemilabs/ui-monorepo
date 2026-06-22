@@ -2,12 +2,18 @@ import { type Address, zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import {
+  canRetryRow,
   findPoolByAsset,
   findPoolByShare,
   formatApyDisplay,
   getTerminalDeliveryTxHash,
+  hasFailedSettlement,
   hashesMatch,
+  isEarnRowInFlight,
   isLocalEarnTransactionRow,
+  isRecoverPath,
+  needsManualClaim,
+  needsRecover,
 } from '../../../../../app/[locale]/hemi-earn/_utils'
 import {
   type EarnPool,
@@ -171,6 +177,189 @@ describe('utils', function () {
       expect(isLocalEarnTransactionRow({ ...baseTx, requestId: '42' })).toBe(
         false,
       )
+    })
+  })
+
+  describe('needsManualClaim', function () {
+    it('is true for a FULFILLED deposit with auto-claim off', function () {
+      expect(
+        needsManualClaim({
+          ...baseTx,
+          automatic: false,
+          kind: 'DEPOSIT',
+          status: 'FULFILLED',
+        }),
+      ).toBe(true)
+    })
+
+    it('is false when auto-claim is on', function () {
+      expect(
+        needsManualClaim({ ...baseTx, automatic: true, status: 'FULFILLED' }),
+      ).toBe(false)
+    })
+
+    it.each<EarnTransactionStatusType>(['PENDING', 'CANCELLED', 'FINALIZED'])(
+      'is false for non-FULFILLED status %s',
+      function (status) {
+        expect(needsManualClaim({ ...baseTx, automatic: false, status })).toBe(
+          false,
+        )
+      },
+    )
+
+    it('is false for a REDEEM row', function () {
+      expect(
+        needsManualClaim({
+          ...baseTx,
+          automatic: false,
+          kind: 'REDEEM',
+          status: 'FULFILLED',
+        }),
+      ).toBe(false)
+    })
+  })
+
+  describe('needsRecover', function () {
+    it('is true for a CANCELLED deposit with auto-recover off', function () {
+      expect(
+        needsRecover({
+          ...baseTx,
+          automatic: false,
+          kind: 'DEPOSIT',
+          status: 'CANCELLED',
+        }),
+      ).toBe(true)
+    })
+
+    it('is false when auto-recover is on', function () {
+      expect(
+        needsRecover({ ...baseTx, automatic: true, status: 'CANCELLED' }),
+      ).toBe(false)
+    })
+
+    it('is false for RECOVERED (already recovered, not actionable)', function () {
+      expect(
+        needsRecover({ ...baseTx, automatic: false, status: 'RECOVERED' }),
+      ).toBe(false)
+    })
+
+    it('is false for a REDEEM row', function () {
+      expect(
+        needsRecover({
+          ...baseTx,
+          automatic: false,
+          kind: 'REDEEM',
+          status: 'CANCELLED',
+        }),
+      ).toBe(false)
+    })
+  })
+
+  describe('isRecoverPath', function () {
+    it.each<EarnTransactionStatusType>(['CANCELLED', 'RECOVERED'])(
+      'is true for a deposit in status %s regardless of automatic',
+      function (status) {
+        expect(isRecoverPath({ ...baseTx, automatic: true, status })).toBe(true)
+        expect(isRecoverPath({ ...baseTx, automatic: false, status })).toBe(
+          true,
+        )
+      },
+    )
+
+    it.each<EarnTransactionStatusType>(['PENDING', 'FULFILLED', 'FINALIZED'])(
+      'is false for the happy-path status %s',
+      function (status) {
+        expect(isRecoverPath({ ...baseTx, status })).toBe(false)
+      },
+    )
+
+    it('is false for a REDEEM row', function () {
+      expect(
+        isRecoverPath({ ...baseTx, kind: 'REDEEM', status: 'CANCELLED' }),
+      ).toBe(false)
+    })
+  })
+
+  describe('canRetryRow', function () {
+    it('is true for a local FAILED row', function () {
+      expect(
+        canRetryRow({
+          ...baseTx,
+          requestId: 'local-1700000000',
+          status: 'FAILED',
+        }),
+      ).toBe(true)
+    })
+
+    it('is false for a subgraph FAILED row (numeric requestId)', function () {
+      expect(
+        canRetryRow({ ...baseTx, requestId: '42', status: 'FAILED' }),
+      ).toBe(false)
+    })
+
+    it('is false for a non-FAILED local row', function () {
+      expect(
+        canRetryRow({
+          ...baseTx,
+          requestId: 'local-1700000000',
+          status: 'PENDING',
+        }),
+      ).toBe(false)
+    })
+  })
+
+  describe('hasFailedSettlement', function () {
+    it('is true when the settlement is flagged failed', function () {
+      expect(
+        hasFailedSettlement({
+          ...baseTx,
+          settlement: { failed: true, kind: 'CLAIM' },
+        }),
+      ).toBe(true)
+    })
+
+    it('is false for a pending (not-yet-failed) settlement', function () {
+      expect(
+        hasFailedSettlement({
+          ...baseTx,
+          settlement: { failed: false, kind: 'RECOVER', txHash: recoverHash },
+        }),
+      ).toBe(false)
+    })
+
+    it('is false when there is no settlement', function () {
+      expect(hasFailedSettlement(baseTx)).toBe(false)
+    })
+  })
+
+  describe('isEarnRowInFlight', function () {
+    it.each<EarnTransactionStatusType>(['PENDING', 'FULFILLED', 'TX_PENDING'])(
+      'is true for the non-terminal status %s',
+      function (status) {
+        expect(isEarnRowInFlight({ ...baseTx, status })).toBe(true)
+      },
+    )
+
+    it.each<EarnTransactionStatusType>(['FINALIZED', 'RECOVERED', 'FAILED'])(
+      'is false for the terminal status %s',
+      function (status) {
+        expect(isEarnRowInFlight({ ...baseTx, status })).toBe(false)
+      },
+    )
+
+    it.each([true, false])(
+      'is true for a CANCELLED deposit (automatic=%s — both walk to RECOVERED)',
+      function (automatic) {
+        expect(
+          isEarnRowInFlight({ ...baseTx, automatic, status: 'CANCELLED' }),
+        ).toBe(true)
+      },
+    )
+
+    it('is false for a CANCELLED redeem (withdrawal canceled, terminal)', function () {
+      expect(
+        isEarnRowInFlight({ ...baseTx, kind: 'REDEEM', status: 'CANCELLED' }),
+      ).toBe(false)
     })
   })
 

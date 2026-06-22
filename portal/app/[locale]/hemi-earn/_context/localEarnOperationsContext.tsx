@@ -12,7 +12,7 @@ import { type Address, type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { hashesMatch } from '../_utils'
-import { type LocalEarnOperation } from '../types'
+import { type EarnSettlement, type LocalEarnOperation } from '../types'
 
 const STORAGE_KEY = 'hemi-earn:local-operations'
 const TTL_SECONDS = 90 * 24 * 60 * 60
@@ -37,6 +37,13 @@ type LocalEarnOperationsContextValue = {
   // hides from the merge but the entry stays around so the drawer can
   // still read locally-captured metadata like `approvalTxHash`).
   markSettledByInitiateTxHash: (initiateTxHash: Hash) => void
+  // Records (or clears, with `undefined`) the manual claim/recover state on the
+  // local entry whose `initiateTxHash` matches the request tx. No-op when the
+  // request has no local entry (e.g. the deposit was made in another browser).
+  setSettlement: (
+    initiateTxHash: Hash,
+    settlement: EarnSettlement | undefined,
+  ) => void
   upsertLocalOperation: (payload: UpsertPayload) => void
 }
 
@@ -164,6 +171,27 @@ export const LocalEarnOperationsProvider = function ({
     [address, setStore],
   )
 
+  const setSettlement = useCallback(
+    function (initiateTxHash: Hash, settlement: EarnSettlement | undefined) {
+      if (!address) return
+      const targetAccount = normalizeAccount(address)
+      setStore(function (prev) {
+        const accountEntries = prev[targetAccount]
+        if (!accountEntries) return prev
+        const needle = initiateTxHash.toLowerCase()
+        let mutated = false
+        const updated = accountEntries.map(function (e) {
+          if (e.initiateTxHash?.toLowerCase() !== needle) return e
+          mutated = true
+          return { ...e, settlement }
+        })
+        if (!mutated) return prev
+        return { ...prev, [targetAccount]: updated }
+      })
+    },
+    [address, setStore],
+  )
+
   const localOperations = useMemo(
     function () {
       if (!address) return []
@@ -177,12 +205,14 @@ export const LocalEarnOperationsProvider = function ({
       clearForAccount,
       localOperations,
       markSettledByInitiateTxHash,
+      setSettlement,
       upsertLocalOperation,
     }),
     [
       clearForAccount,
       localOperations,
       markSettledByInitiateTxHash,
+      setSettlement,
       upsertLocalOperation,
     ],
   )

@@ -28,6 +28,15 @@ export type EarnTransactionKindType = 'DEPOSIT' | 'REDEEM'
 // (`InRelativeTime`). `'TX_PENDING'` and `'FAILED'` are portal-synthetic
 // statuses (derived in `useEarnTransactions` and at the fetcher boundary
 // respectively) — they don't exist in the subgraph schema.
+// A manual claim/recover the user signed on Hemi, tracked locally (the
+// reverted tx isn't a subgraph event). `failed` lets the drawer offer a Retry
+// to re-call the same step — same idea as the request-deposit retry.
+export type EarnSettlement = {
+  failed: boolean
+  kind: 'CLAIM' | 'RECOVER'
+  txHash?: Hash
+}
+
 export type EarnTransaction = {
   amountIn: string
   amountOut: string | null
@@ -48,6 +57,9 @@ export type EarnTransaction = {
   requestedAt: string
   requestId: string
   requestTxHash: Hash
+  // Locally-tracked manual claim/recover attempt for this request (enriched
+  // from the local store by `useEarnTransactions`, like `approvalTxHash`).
+  settlement?: EarnSettlement
   status: EarnTransactionStatusType
 }
 
@@ -116,6 +128,10 @@ type LocalEarnOperationBase = {
   chainId: Chain['id']
   initiateTxHash?: Hash
   operator?: Address
+  // Manual claim/recover the user signed on this request (keyed by the same
+  // `initiateTxHash` = the request tx). Survives the soft-settle so the drawer
+  // keeps offering the Retry after the subgraph indexes the request.
+  settlement?: EarnSettlement
   settled?: boolean
   shareAddress: Address
   // Unix seconds. Matches the unit of `TTL_SECONDS` in

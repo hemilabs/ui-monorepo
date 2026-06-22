@@ -131,11 +131,27 @@ export const useEarnTransactions = function () {
           .map(op => [op.initiateTxHash!.toLowerCase(), op]),
       )
       const subgraph = (data ?? [])
-        .filter(t => t.status !== 'RECOVERED')
+        // Recovered deposits surface as a "Funds returned" terminal row;
+        // recovered redeems stay hidden (their UX lands in a later PR).
+        .filter(t => !(t.status === 'RECOVERED' && t.kind === 'REDEEM'))
         .map(function (t) {
           const local = localByRequestHash.get(t.requestTxHash.toLowerCase())
-          if (!local?.approvalTxHash) return t
-          return { ...t, approvalTxHash: local.approvalTxHash }
+          if (!local) return t
+          // The authoritative terminal Router status wins over a lingering
+          // local settlement — a pending marker mid-indexing-lag or a stale
+          // reverted one. A FINALIZED/RECOVERED row must never re-expose the
+          // claim/recover CTA or a "Tx Failed" overlay.
+          const isTerminal =
+            t.status === 'FINALIZED' || t.status === 'RECOVERED'
+          return {
+            ...t,
+            ...(local.approvalTxHash
+              ? { approvalTxHash: local.approvalTxHash }
+              : {}),
+            ...(local.settlement && !isTerminal
+              ? { settlement: local.settlement }
+              : {}),
+          }
         })
       const subgraphHashes = new Set(
         subgraph.map(t => t.requestTxHash.toLowerCase()),

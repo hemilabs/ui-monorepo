@@ -1,6 +1,5 @@
 'use client'
 
-import { AddTokenToWallet } from 'components/addTokenToWallet'
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
@@ -16,16 +15,33 @@ import { useEstimateFees } from 'hooks/useEstimateFees'
 import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
-import { formatUnits } from 'viem'
+import { type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
+import {
+  AddShareTokenToWallet,
+  ClaimDeposit,
+  RecoverDeposit,
+} from '../../../../_components/transactionsSection/transactionDrawer/settleDeposit'
 import {
   DEPOSIT_SLIPPAGE_BPS,
   applySlippage,
 } from '../../../../_constants/slippage'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
+import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
 import { SparkleIcon } from '../../../../_icons/sparkleIcon'
-import { getTerminalDeliveryTxHash, hashesMatch } from '../../../../_utils'
+import {
+  getTerminalDeliveryTxHash,
+  hashesMatch,
+  isRecoverPath,
+  needsManualClaim,
+  needsRecover,
+} from '../../../../_utils'
+import {
+  type EarnSettlement,
+  type EarnTransaction,
+  type LocalEarnOperation,
+} from '../../../../types'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
@@ -37,12 +53,96 @@ type Props = {
   onClose: VoidFunction
 }
 
+// COMPLETED wins; a remote failure or reverted settlement → FAILED; a mining tx
+// → PROGRESS; a pending manual action → READY; else PROGRESS (recover/auto or
+// confirmed) or NOT_READY.
+function resolveGetSharesStatus({
+  awaitingUserAction,
+  hasSettlementTx,
+  isComplete,
+  isDepositConfirmed,
+  isFailed,
+  isRecover,
+  settlementFailed,
+}: {
+  awaitingUserAction: boolean
+  hasSettlementTx: boolean
+  isComplete: boolean
+  isDepositConfirmed: boolean
+  isFailed: boolean
+  isRecover: boolean
+  settlementFailed: boolean
+}): ProgressStatusType {
+  if (isComplete) return ProgressStatus.COMPLETED
+  if (isFailed || settlementFailed) return ProgressStatus.FAILED
+  if (hasSettlementTx) return ProgressStatus.PROGRESS
+  if (awaitingUserAction) return ProgressStatus.READY
+  if (isRecover || isDepositConfirmed) return ProgressStatus.PROGRESS
+  return ProgressStatus.NOT_READY
+}
+
+// `subgraphRow` is raw (not merge-enriched), so the manual claim/recover
+// settlement is read straight from the local store keyed by the request tx.
+const findLocalSettlement = (
+  localOperations: LocalEarnOperation[],
+  requestTxHash: Hash | undefined,
+) =>
+  requestTxHash
+    ? localOperations.find(
+        op =>
+          op.initiateTxHash && hashesMatch(op.initiateTxHash, requestTxHash),
+      )?.settlement
+    : undefined
+
+// `subgraphRow` is raw (not merge-enriched), so fold the local settlement in
+// before handing it to the CTA — otherwise the button can't reflect the
+// pending/reverted claim (it'd stay "Claim share tokens" after a revert).
+const enrichWithSettlement = (
+  row: EarnTransaction | undefined,
+  settlement: EarnSettlement | undefined,
+): EarnTransaction | undefined =>
+  row && settlement ? { ...row, settlement } : row
+
+function getSharesStepMeta(
+  subgraphRow: EarnTransaction | undefined,
+  marker: { failed: boolean; txHash?: Hash } | undefined,
+) {
+  // A failed marker leaves the natural status (so a Retry shows); only a
+  // still-mining one drives PROGRESS.
+  const settlementTxHash = marker && !marker.failed ? marker.txHash : undefined
+  const settlementFailed = marker?.failed ?? false
+  if (!subgraphRow) {
+    return {
+      awaitingUserAction: false,
+      isComplete: false,
+      isFailed: false,
+      isRecover: false,
+      settlementFailed,
+      settlementTxHash,
+    }
+  }
+  const isRecover = isRecoverPath(subgraphRow)
+  return {
+    awaitingUserAction:
+      needsManualClaim(subgraphRow) || needsRecover(subgraphRow),
+    isComplete: isRecover
+      ? subgraphRow.status === 'RECOVERED'
+      : subgraphRow.status === 'FINALIZED',
+    // Remote (Gateway/Agent) failure: the subgraph derives `failed → FAILED`
+    // while the Router stays PENDING. Reflect it instead of spinning forever.
+    isFailed: subgraphRow.status === 'FAILED',
+    isRecover,
+    settlementFailed,
+    settlementTxHash,
+  }
+}
+
 // Drawer opens after the user signs the first wallet prompt (approval if
 // needed, otherwise the deposit).
 export const ReviewDeposit = function ({ onClose }: Props) {
   const { depositOperation, input, pool, selectedAsset } = usePoolForm()
+  const { localOperations } = useLocalEarnOperations()
   const t = useTranslations('hemi-earn.pool.drawer')
-  const tCommon = useTranslations('common')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()
@@ -55,6 +155,12 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       r.kind === 'DEPOSIT' &&
       hashesMatch(r.requestTxHash, depositOperation?.transactionHash),
   )
+
+  const settlement = findLocalSettlement(
+    localOperations,
+    subgraphRow?.requestTxHash,
+  )
+  const settledRow = enrichWithSettlement(subgraphRow, settlement)
 
   const depositStatus =
     depositOperation?.status ?? DepositStatus.APPROVAL_TX_COMPLETED
@@ -216,24 +322,43 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   const addGetShareTokensStep = function () {
     const terminalHash = getTerminalDeliveryTxHash(subgraphRow)
-
-    const getStatus = function (): ProgressStatusType {
-      if (terminalHash) return ProgressStatus.COMPLETED
-      if (depositStatus === DepositStatus.DEPOSIT_TX_CONFIRMED) {
-        return ProgressStatus.PROGRESS
-      }
-      return ProgressStatus.NOT_READY
-    }
+    const {
+      awaitingUserAction,
+      isComplete,
+      isFailed,
+      isRecover,
+      settlementFailed,
+      settlementTxHash,
+    } = getSharesStepMeta(subgraphRow, settlement)
+    const deliveryHash = settlementTxHash ?? terminalHash
 
     return {
-      description: (
+      // Recover path → the asset comes back, labeled with the asset token.
+      // "Funds returned" only once RECOVERED; while still awaiting it reads as
+      // the pending "Funds to recover".
+      description: isRecover ? (
+        <div className="flex items-center gap-x-2">
+          <TokenLogo size="small" token={selectedAsset.token} />
+          <span>{t(isComplete ? 'funds-returned' : 'funds-to-recover')}</span>
+        </div>
+      ) : (
         <div className="flex items-center gap-x-2">
           <SparkleIcon />
           <span>{t('get-share-tokens')}</span>
         </div>
       ),
-      status: getStatus(),
-      txHash: terminalHash,
+      explorerChainId: deliveryHash ? chainId : undefined,
+      status: resolveGetSharesStatus({
+        awaitingUserAction,
+        hasSettlementTx: !!settlementTxHash,
+        isComplete,
+        isDepositConfirmed:
+          depositStatus === DepositStatus.DEPOSIT_TX_CONFIRMED,
+        isFailed,
+        isRecover,
+        settlementFailed,
+      }),
+      txHash: deliveryHash,
     }
   }
 
@@ -246,22 +371,34 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     ) {
       return <RetryDeposit />
     }
+    // Auto-claim off: the user signs the claim here once the Agent has
+    // delivered the shares back to the Router (FULFILLED).
+    if (settledRow && needsManualClaim(settledRow)) {
+      return (
+        <ClaimDeposit
+          asset={selectedAsset}
+          pool={pool}
+          transaction={settledRow}
+        />
+      )
+    }
+    // The request was cancelled and the original asset is back on the Router;
+    // the user signs the recover to pull it to their wallet.
+    if (settledRow && needsRecover(settledRow)) {
+      return (
+        <RecoverDeposit
+          asset={selectedAsset}
+          pool={pool}
+          transaction={settledRow}
+        />
+      )
+    }
     // Shares only land in the user's wallet once cross-chain delivery
     // completes (subgraph FINALIZED). Showing the "Add token" CTA before
     // that points the wallet at a token with no balance and confuses
     // wallets that gate metadata reads on a non-zero balance.
     if (subgraphRow?.status === 'FINALIZED') {
-      return (
-        <AddTokenToWallet
-          labels={{
-            error: tCommon('add-token-to-wallet-error'),
-            idle: tCommon('add-token-to-wallet-idle'),
-            pending: tCommon('add-token-to-wallet-pending'),
-            success: tCommon('add-token-to-wallet-success'),
-          }}
-          token={pool.shareToken}
-        />
-      )
+      return <AddShareTokenToWallet token={pool.shareToken} />
     }
     return null
   }

@@ -381,6 +381,37 @@ describe('terminal lifecycle', () => {
     expect(req.finalizedAt).toBe(1_700_000_000n)
   })
 
+  it('RequestCancelled then RequestRecovered transitions through to RECOVERED', async () => {
+    // Production on-chain path for the manual-recover flow:
+    //   PENDING → (Agent.cancel) → CANCELLED → (user signs recoverDeposit) → RECOVERED
+    // Both events fire in sequence at the Router; the indexer must let
+    // CANCELLED transition forward to RECOVERED. Mirrors the existing
+    // FULFILLED → FINALIZED progression for the happy path.
+    await onChain(HEMI, [
+      {
+        block: { number: HEMI_START, timestamp: 1_700_000_000 },
+        contract: 'Router',
+        event: 'RequestCancelled',
+        params: { amount: 1000n, requestId: 62n },
+      },
+      {
+        block: { number: HEMI_START + 1, timestamp: 1_700_000_100 },
+        contract: 'Router',
+        event: 'RequestRecovered',
+        params: { requestId: 62n },
+        transaction: { from: SENDER, hash: '0xrecover62' },
+      },
+    ])
+
+    const req = await ti.Request.getOrThrow('62')
+    expect(req.status).toBe('RECOVERED')
+    expect(req.recoverTxHash).toBe('0xrecover62')
+    expect(req.finalizedAt).toBe(1_700_000_100n)
+    // Cancellation companion stays populated from the intermediate step —
+    // historical record of why the recovery was needed.
+    expect(req.cancelledAmount).toBe(1000n)
+  })
+
   it('a later terminal event does not clobber the finalized request', async () => {
     await onChain(HEMI, [
       {

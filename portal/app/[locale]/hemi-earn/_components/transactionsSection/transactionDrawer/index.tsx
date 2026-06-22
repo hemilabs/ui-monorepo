@@ -7,17 +7,63 @@ import { isAddressEqual } from 'viem'
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { useEarnTransactions } from '../../../_hooks/useEarnTransactions'
 import {
+  canRetryRow,
   findPoolByAsset,
   hashesMatch,
-  isLocalEarnTransactionRow,
+  needsManualClaim,
+  needsRecover,
 } from '../../../_utils'
-import { type EarnTransaction } from '../../../types'
+import {
+  type EarnAsset,
+  type EarnPool,
+  type EarnTransaction,
+} from '../../../types'
 
 import { HistoricalDepositReview } from './historicalDepositReview'
 import { HistoricalWithdrawReview } from './historicalWithdrawReview'
 import { RetryFailedDeposit } from './retryFailedDeposit'
 import { RetryFailedWithdraw } from './retryFailedWithdraw'
+import {
+  AddShareTokenToWallet,
+  ClaimDeposit,
+  RecoverDeposit,
+} from './settleDeposit'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
+
+// The drawer is already open, so the deposit CTAs don't redirect on sign. A
+// `failedKind` (the user's claim/recover Hemi tx reverted) surfaces the CTA as
+// a Retry even though the subgraph status no longer matches.
+function depositCallToAction({
+  asset,
+  failedKind,
+  pool,
+  transaction,
+}: {
+  asset: EarnAsset
+  failedKind: 'CLAIM' | 'RECOVER' | undefined
+  pool: EarnPool
+  transaction: EarnTransaction
+}) {
+  if (canRetryRow(transaction)) {
+    return (
+      <RetryFailedDeposit asset={asset} pool={pool} transaction={transaction} />
+    )
+  }
+  if (needsManualClaim(transaction) || failedKind === 'CLAIM') {
+    return <ClaimDeposit asset={asset} pool={pool} transaction={transaction} />
+  }
+  if (needsRecover(transaction) || failedKind === 'RECOVER') {
+    return (
+      <RecoverDeposit asset={asset} pool={pool} transaction={transaction} />
+    )
+  }
+  // Shares have landed (claim done) — offer to add the share token to the
+  // wallet, matching the live drawer and the tunnel history.
+  if (transaction.status === 'FINALIZED') {
+    return <AddShareTokenToWallet token={pool.shareToken} />
+  }
+  return null
+}
 
 const findTransactionByTxId = (transactions: EarnTransaction[], txId: string) =>
   transactions.find(t => hashesMatch(t.requestTxHash, txId))
@@ -54,26 +100,26 @@ const TransactionDrawerContent = function () {
     )
   }
   const resolved = { asset, pool }
+  const { settlement } = transaction
+  const failedKind = settlement?.failed ? settlement.kind : undefined
 
-  // Only local FAILED rows are retryable; subgraph FAILED (Agent rejection
-  // after a successful Hemi tx) needs the recover flow shipped in a later PR.
-  const canRetry =
-    transaction.status === 'FAILED' && isLocalEarnTransactionRow(transaction)
-  const callToAction = canRetry ? (
-    transaction.kind === 'REDEEM' ? (
-      <RetryFailedWithdraw
-        asset={resolved.asset}
-        pool={resolved.pool}
-        transaction={transaction}
-      />
-    ) : (
-      <RetryFailedDeposit
-        asset={resolved.asset}
-        pool={resolved.pool}
-        transaction={transaction}
-      />
-    )
-  ) : undefined
+  // REDEEM only surfaces the retry CTA (its claim/recover/cancel flows land in a
+  // later PR); DEPOSIT additionally surfaces manual Claim / Recover.
+  const callToAction =
+    transaction.kind === 'REDEEM'
+      ? canRetryRow(transaction) && (
+          <RetryFailedWithdraw
+            asset={resolved.asset}
+            pool={resolved.pool}
+            transaction={transaction}
+          />
+        )
+      : depositCallToAction({
+          asset: resolved.asset,
+          failedKind,
+          pool: resolved.pool,
+          transaction,
+        })
 
   return (
     <Drawer onClose={close}>

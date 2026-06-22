@@ -90,7 +90,8 @@ export const hasFailedSettlement = (tx: EarnTransaction) =>
 // always shows the deposited asset (`amountIn`, asset units) — its `amountOut`
 // is the minted share amount (sVetToken, 18 decimals) and must never be rendered
 // against the 8-decimal asset token. A REDEEM shows shares (`amountIn` +
-// shareToken) until FULFILLED, then the returned asset (`amountOut` + assetToken).
+// shareToken) while `amountOut` is unset, then the returned asset (`amountOut` +
+// assetToken) once it's populated at fulfillment.
 export const pickEarnRowAmount = (
   transaction: EarnTransaction,
   { assetToken, shareToken }: { assetToken?: Token; shareToken?: Token },

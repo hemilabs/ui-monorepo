@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { hemi } from 'hemi-viem'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useEffect, useRef } from 'react'
-import { type Address, isAddressEqual } from 'viem'
+import { type Address, getAddress, isAddressEqual } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { earnPositionsKeyPrefix } from '../_fetchers/fetchEarnPositions'
@@ -52,11 +52,8 @@ function reconcileLocals({
   }
 }
 
-const isInFlightStatus = (status: EarnTransactionStatusType) =>
-  status !== 'FINALIZED' &&
-  status !== 'CANCELLED' &&
-  status !== 'RECOVERED' &&
-  status !== 'FAILED'
+const isPreDeliveryStatus = (status: EarnTransactionStatusType) =>
+  status !== 'FINALIZED' && status !== 'RECOVERED'
 
 type DeliveredStatus = 'FINALIZED' | 'RECOVERED'
 
@@ -84,7 +81,7 @@ function detectCrossChainDeliveries(
   for (const row of rows) {
     if (row.status !== 'FINALIZED' && row.status !== 'RECOVERED') continue
     const prev = previous.get(row.requestTxHash.toLowerCase())
-    if (prev === undefined || !isInFlightStatus(prev)) continue
+    if (prev === undefined || !isPreDeliveryStatus(prev)) continue
     events.push({
       asset: row.asset,
       kind: row.kind,
@@ -136,7 +133,7 @@ function invalidateOnDelivery(
       queryKey: getTokenBalanceQueryKey({
         account: event.receiver,
         chainId: hemi.id,
-        tokenAddress,
+        tokenAddress: getAddress(tokenAddress),
       }),
     })
   }

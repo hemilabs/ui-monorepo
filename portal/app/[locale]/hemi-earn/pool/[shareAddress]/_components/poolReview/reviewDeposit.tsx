@@ -1,6 +1,5 @@
 'use client'
 
-import { AddTokenToWallet } from 'components/addTokenToWallet'
 import { Operation } from 'components/reviewOperation/operation'
 import {
   ProgressStatus,
@@ -20,6 +19,7 @@ import { type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 import {
+  AddShareTokenToWallet,
   ClaimDeposit,
   RecoverDeposit,
 } from '../../../../_components/transactionsSection/transactionDrawer/settleDeposit'
@@ -143,7 +143,6 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const { depositOperation, input, pool, selectedAsset } = usePoolForm()
   const { localOperations } = useLocalEarnOperations()
   const t = useTranslations('hemi-earn.pool.drawer')
-  const tCommon = useTranslations('common')
   const chainId = selectedAsset.token.chainId
   const chain = useChain(chainId)
   const { address } = useAccount()
@@ -331,6 +330,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       settlementFailed,
       settlementTxHash,
     } = getSharesStepMeta(subgraphRow, settlement)
+    const deliveryHash = settlementTxHash ?? terminalHash
 
     return {
       // Recover path → the asset comes back, labeled with the asset token.
@@ -347,7 +347,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
           <span>{t('get-share-tokens')}</span>
         </div>
       ),
-      explorerChainId: subgraphRow?.automatic === false ? chainId : undefined,
+      explorerChainId: deliveryHash ? chainId : undefined,
       status: resolveGetSharesStatus({
         awaitingUserAction,
         hasSettlementTx: !!settlementTxHash,
@@ -358,7 +358,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         isRecover,
         settlementFailed,
       }),
-      txHash: settlementTxHash ?? terminalHash,
+      txHash: deliveryHash,
     }
   }
 
@@ -398,17 +398,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     // that points the wallet at a token with no balance and confuses
     // wallets that gate metadata reads on a non-zero balance.
     if (subgraphRow?.status === 'FINALIZED') {
-      return (
-        <AddTokenToWallet
-          labels={{
-            error: tCommon('add-token-to-wallet-error'),
-            idle: tCommon('add-token-to-wallet-idle'),
-            pending: tCommon('add-token-to-wallet-pending'),
-            success: tCommon('add-token-to-wallet-success'),
-          }}
-          token={pool.shareToken}
-        />
-      )
+      return <AddShareTokenToWallet token={pool.shareToken} />
     }
     return null
   }

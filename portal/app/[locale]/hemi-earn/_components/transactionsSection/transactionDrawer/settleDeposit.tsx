@@ -1,9 +1,11 @@
 'use client'
 
+import { AddTokenToWallet } from 'components/addTokenToWallet'
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, type ReactNode } from 'react'
+import { type EvmToken } from 'types/token'
 import { isAddressEqual } from 'viem'
 
 import { useClaimDeposit } from '../../../_hooks/useClaimDeposit'
@@ -205,4 +207,22 @@ export const DepositRowCta = function ({
     )
   }
   return null
+}
+
+// "Add {share token} to wallet" CTA, surfaced once a deposit is FINALIZED (the
+// share OFT has landed). Shared by the live and historical deposit drawers so
+// both match the tunnel-history affordance.
+export const AddShareTokenToWallet = function ({ token }: { token: EvmToken }) {
+  const tCommon = useTranslations('common')
+  return (
+    <AddTokenToWallet
+      labels={{
+        error: tCommon('add-token-to-wallet-error'),
+        idle: tCommon('add-token-to-wallet-idle'),
+        pending: tCommon('add-token-to-wallet-pending'),
+        success: tCommon('add-token-to-wallet-success'),
+      }}
+      token={token}
+    />
+  )
 }

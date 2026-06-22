@@ -4,6 +4,12 @@ import { WarningIcon } from 'components/icons/warningIcon'
 import { useTranslations } from 'next-intl'
 
 import {
+  hasFailedSettlement,
+  needsManualClaim,
+  needsRecover,
+} from '../../_utils'
+import {
+  type EarnTransaction,
   type EarnTransactionKindType,
   type EarnTransactionStatusType,
 } from '../../types'
@@ -13,13 +19,7 @@ type Translator = ReturnType<typeof useTranslations<'hemi-earn.transactions'>>
 
 type Props = {
   cooldownText?: string
-  kind: EarnTransactionKindType
-  manualClaimNeeded?: boolean
-  manualRecoverNeeded?: boolean
-  // The user-signed claim/recover tx reverted; surfaces as "Tx Failed" even
-  // though the on-chain status is still FULFILLED/CANCELLED.
-  settlementFailed?: boolean
-  status: EarnTransactionStatusType
+  transaction: EarnTransaction
 }
 
 const inProgress = (text: string) => ({
@@ -72,19 +72,14 @@ function resolveStatusBadge(
 }
 
 function resolveBadge(
-  {
-    cooldownText,
-    kind,
-    manualClaimNeeded,
-    manualRecoverNeeded,
-    settlementFailed,
-    status,
-  }: Props,
+  transaction: EarnTransaction,
+  cooldownText: string | undefined,
   t: Translator,
 ) {
+  const { kind, status } = transaction
   // A reverted claim/recover wins over the (now stale) manual-needed state.
-  if (settlementFailed) return failedBadge(t)
-  if (manualRecoverNeeded) {
+  if (hasFailedSettlement(transaction)) return failedBadge(t)
+  if (needsRecover(transaction)) {
     return {
       icon: <WarningIcon className="text-amber-500" />,
       text: t('status.recover-funds-needed'),
@@ -95,13 +90,21 @@ function resolveBadge(
   if (byStatus) return byStatus
   if (cooldownText !== undefined) return inProgress(cooldownText)
   return inProgress(
-    t(manualClaimNeeded ? 'status.manual-claim-needed' : 'status.in-progress'),
+    t(
+      needsManualClaim(transaction)
+        ? 'status.manual-claim-needed'
+        : 'status.in-progress',
+    ),
   )
 }
 
-export const StatusBadge = function (props: Props) {
+export const StatusBadge = function ({ cooldownText, transaction }: Props) {
   const t = useTranslations('hemi-earn.transactions')
-  const { icon, text, textClassName } = resolveBadge(props, t)
+  const { icon, text, textClassName } = resolveBadge(
+    transaction,
+    cooldownText,
+    t,
+  )
   return (
     <div className="flex min-w-0 items-center gap-x-2">
       <span className="flex shrink-0">{icon}</span>

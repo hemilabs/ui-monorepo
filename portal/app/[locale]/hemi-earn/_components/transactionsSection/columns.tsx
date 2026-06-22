@@ -13,12 +13,7 @@ import Skeleton from 'react-loading-skeleton'
 import { formatUnits } from 'viem'
 
 import { useEarnPools } from '../../_hooks/useEarnPools'
-import {
-  findPoolByAsset,
-  hasFailedSettlement,
-  needsManualClaim,
-  needsRecover,
-} from '../../_utils'
+import { findPoolByAsset } from '../../_utils'
 import { type EarnTransaction } from '../../types'
 
 import { RowActions } from './rowActions'
@@ -109,13 +104,7 @@ export const buildColumns = ({
       row.original.kind === 'REDEEM' ? (
         <WithdrawStatusCell transaction={row.original} />
       ) : (
-        <StatusBadge
-          kind={row.original.kind}
-          manualClaimNeeded={needsManualClaim(row.original)}
-          manualRecoverNeeded={needsRecover(row.original)}
-          settlementFailed={hasFailedSettlement(row.original)}
-          status={row.original.status}
-        />
+        <StatusBadge transaction={row.original} />
       ),
     header: () => <Header text={t('column.status')} />,
     id: 'status',

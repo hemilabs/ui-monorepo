@@ -141,8 +141,9 @@ function buildTerminalStep({
 }): StepPropsWithoutPosition {
   const status = resolveTerminalStatus(tx, baseStatus, settlementTxHash)
   const txHash = settlementTxHash ?? getTerminalDeliveryTxHash(tx)
-  // Only a manual claim/recover has a user-signed tx worth linking.
-  const explorerChainId = tx.automatic === false ? hemi.id : undefined
+  // Link whenever a delivery hash is available — an auto-finalized claim/recover
+  // has one too, even though the user didn't sign it.
+  const explorerChainId = txHash ? hemi.id : undefined
   if (isRecoverPath(tx)) {
     // "Funds returned" only once RECOVERED; CANCELLED still awaits the recover.
     const recoverLabel =

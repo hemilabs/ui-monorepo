@@ -99,20 +99,14 @@ const WithdrawStatusCellResolved = function ({
     t,
   })
 
-  return (
-    <StatusBadge
-      cooldownText={cooldownText}
-      kind="REDEEM"
-      status={transaction.status}
-    />
-  )
+  return <StatusBadge cooldownText={cooldownText} transaction={transaction} />
 }
 
 export const WithdrawStatusCell = function ({ transaction }: Props) {
   const { data: pools = [] } = useEarnPools()
   const pool = findPoolByAsset(pools, transaction.asset)
   if (!pool) {
-    return <StatusBadge kind="REDEEM" status={transaction.status} />
+    return <StatusBadge transaction={transaction} />
   }
   return <WithdrawStatusCellResolved pool={pool} transaction={transaction} />
 }

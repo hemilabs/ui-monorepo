@@ -38,7 +38,7 @@ export const useEarnTransactionsQuery = function () {
     queryKey: [...earnTransactionsKeyPrefix, networkType, address],
     refetchInterval(query) {
       const subgraphData = (query.state.data ?? []) as EarnTransaction[]
-      return subgraphData.some(isEarnRowInFlight) || inFlightLocalsExist
+      return inFlightLocalsExist || subgraphData.some(isEarnRowInFlight)
         ? 10_000
         : false
     },

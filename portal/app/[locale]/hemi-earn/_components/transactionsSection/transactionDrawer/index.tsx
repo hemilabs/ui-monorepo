@@ -23,18 +23,27 @@ import { HistoricalDepositReview } from './historicalDepositReview'
 import { HistoricalWithdrawReview } from './historicalWithdrawReview'
 import { RetryFailedDeposit } from './retryFailedDeposit'
 import { RetryFailedWithdraw } from './retryFailedWithdraw'
-import { ClaimDeposit, RecoverDeposit } from './settleDeposit'
+import {
+  AddShareTokenToWallet,
+  ClaimDeposit,
+  RecoverDeposit,
+} from './settleDeposit'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 // The drawer is already open, so the deposit CTAs don't redirect on sign. A
 // `failedKind` (the user's claim/recover Hemi tx reverted) surfaces the CTA as
 // a Retry even though the subgraph status no longer matches.
-function depositCallToAction(
-  asset: EarnAsset,
-  pool: EarnPool,
-  transaction: EarnTransaction,
-  failedKind: 'CLAIM' | 'RECOVER' | undefined,
-) {
+function depositCallToAction({
+  asset,
+  failedKind,
+  pool,
+  transaction,
+}: {
+  asset: EarnAsset
+  failedKind: 'CLAIM' | 'RECOVER' | undefined
+  pool: EarnPool
+  transaction: EarnTransaction
+}) {
   if (canRetryRow(transaction)) {
     return (
       <RetryFailedDeposit asset={asset} pool={pool} transaction={transaction} />
@@ -48,7 +57,12 @@ function depositCallToAction(
       <RecoverDeposit asset={asset} pool={pool} transaction={transaction} />
     )
   }
-  return undefined
+  // Shares have landed (claim done) — offer to add the share token to the
+  // wallet, matching the live drawer and the tunnel history.
+  if (transaction.status === 'FINALIZED') {
+    return <AddShareTokenToWallet token={pool.shareToken} />
+  }
+  return null
 }
 
 const findTransactionByTxId = (transactions: EarnTransaction[], txId: string) =>
@@ -100,12 +114,12 @@ const TransactionDrawerContent = function () {
             transaction={transaction}
           />
         )
-      : depositCallToAction(
-          resolved.asset,
-          resolved.pool,
-          transaction,
+      : depositCallToAction({
+          asset: resolved.asset,
           failedKind,
-        )
+          pool: resolved.pool,
+          transaction,
+        })
 
   return (
     <Drawer onClose={close}>

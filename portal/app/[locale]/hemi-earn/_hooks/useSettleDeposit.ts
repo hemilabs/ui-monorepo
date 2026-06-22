@@ -6,8 +6,8 @@ import { type EventEmitter } from 'events'
 import { type ClaimDepositEvents } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
-import { useAccount, useConfig } from 'wagmi'
-import { getWalletClient } from 'wagmi/actions'
+import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { useAccount } from 'wagmi'
 
 import { earnPositionsKeyPrefix } from '../_fetchers/fetchEarnPositions'
 import { earnTransactionsKeyPrefix } from '../_fetchers/fetchEarnTransactions'
@@ -47,7 +47,7 @@ export const useSettleDeposit = function ({
   transaction,
 }: UseSettleDeposit) {
   const { address } = useAccount()
-  const config = useConfig()
+  const { hemiWalletClient } = useHemiWalletClient()
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
   const { setSettlement } = useLocalEarnOperations()
@@ -74,12 +74,10 @@ export const useSettleDeposit = function ({
 
       await ensureConnectedTo(hemi.id)
 
-      const walletClient = await getWalletClient(config, { chainId: hemi.id })
-
       const { emitter, promise } = action({
         account: address,
         requestId: BigInt(requestId),
-        walletClient,
+        walletClient: hemiWalletClient!,
       })
 
       // Any failure flags the settlement so the drawer offers a Retry. On
@@ -118,7 +116,12 @@ export const useSettleDeposit = function ({
     },
     onSettled() {
       queryClient.invalidateQueries({ queryKey: earnTransactionsKeyPrefix })
-      queryClient.invalidateQueries({ queryKey: deliveredBalanceQueryKey })
+      // `resetQueries` (not `invalidate`) so the manage page shows a fresh value
+      // instead of flashing the stale balance: the deposit form usually mounts
+      // *after* the mutation (the user clicks "manage" post-recover), and an
+      // invalidated-but-cached entry would render the old number until the
+      // background refetch lands.
+      queryClient.resetQueries({ queryKey: deliveredBalanceQueryKey })
       queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })
       // `resetQueries` (not `removeQueries`) so the `useEarnPositions` observer
       // refetches and the staked-balance card updates — same rationale as

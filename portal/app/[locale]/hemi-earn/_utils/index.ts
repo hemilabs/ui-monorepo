@@ -99,7 +99,7 @@ export const pickEarnRowAmount = (
   transaction.kind === 'REDEEM'
     ? {
         rawAmount: transaction.amountOut ?? transaction.amountIn,
-        token: transaction.amountOut == null ? shareToken : assetToken,
+        token: transaction.amountOut === null ? shareToken : assetToken,
       }
     : { rawAmount: transaction.amountIn, token: assetToken }
 

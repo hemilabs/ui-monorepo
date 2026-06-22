@@ -1,3 +1,4 @@
+import { type Token } from 'types/token'
 import { formatPercentage } from 'utils/format'
 import { type Address, isAddressEqual } from 'viem'
 
@@ -84,6 +85,22 @@ export const canRetryRow = (tx: EarnTransaction) =>
 // misleading "needed" state.
 export const hasFailedSettlement = (tx: EarnTransaction) =>
   tx.settlement?.failed === true
+
+// Picks the amount + token to render for an earn transaction row. A DEPOSIT
+// always shows the deposited asset (`amountIn`, asset units) — its `amountOut`
+// is the minted share amount (sVetToken, 18 decimals) and must never be rendered
+// against the 8-decimal asset token. A REDEEM shows shares (`amountIn` +
+// shareToken) until FULFILLED, then the returned asset (`amountOut` + assetToken).
+export const pickEarnRowAmount = (
+  transaction: EarnTransaction,
+  { assetToken, shareToken }: { assetToken?: Token; shareToken?: Token },
+): { rawAmount: string; token: Token | undefined } =>
+  transaction.kind === 'REDEEM'
+    ? {
+        rawAmount: transaction.amountOut ?? transaction.amountIn,
+        token: transaction.amountOut == null ? shareToken : assetToken,
+      }
+    : { rawAmount: transaction.amountIn, token: assetToken }
 
 // A row the table is still actively tracking — drives both the polling loop and
 // the row spinner. Terminal: FINALIZED/RECOVERED/FAILED for any kind, plus a

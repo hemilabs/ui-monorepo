@@ -13,20 +13,13 @@ import Skeleton from 'react-loading-skeleton'
 import { formatUnits } from 'viem'
 
 import { useEarnPools } from '../../_hooks/useEarnPools'
-import { findPoolByAsset } from '../../_utils'
+import { findPoolByAsset, pickEarnRowAmount } from '../../_utils'
 import { type EarnTransaction } from '../../types'
 
 import { RowActions } from './rowActions'
 import { StatusBadge } from './statusBadge'
 import { WithdrawStatusCell } from './withdrawStatusCell'
 
-// For REDEEM, the amount unit depends on which Vetro phase the row is in:
-// post-FULFILLED we have `amountOut` in asset units (hemiBTC), pre-FULFILLED
-// only `amountIn` is available and it's in share-token units (svetBTC).
-// The displayed token has to match: shareToken from the pool while we're
-// showing shares, the Hemi-side asset token afterwards. For DEPOSIT,
-// `amountIn` is already in asset units, so the generic `useToken(asset)`
-// lookup is enough.
 function AmountCell({ transaction }: { transaction: EarnTransaction }) {
   const { data: assetToken, isLoading } = useToken({
     address: transaction.asset,
@@ -38,12 +31,10 @@ function AmountCell({ transaction }: { transaction: EarnTransaction }) {
       ? findPoolByAsset(pools, transaction.asset)
       : undefined
 
-  const showingShares =
-    transaction.kind === 'REDEEM' && transaction.amountOut == null
-  const token = showingShares ? pool?.shareToken : assetToken
-  const rawAmount = showingShares
-    ? transaction.amountIn
-    : (transaction.amountOut ?? transaction.amountIn)
+  const { rawAmount, token } = pickEarnRowAmount(transaction, {
+    assetToken,
+    shareToken: pool?.shareToken,
+  })
 
   if (!token) {
     if (isLoading) return <Skeleton className="w-16" />

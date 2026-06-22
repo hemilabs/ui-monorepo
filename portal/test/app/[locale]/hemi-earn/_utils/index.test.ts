@@ -1,3 +1,4 @@
+import { type EvmToken } from 'types/token'
 import { type Address, zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
@@ -14,6 +15,7 @@ import {
   isRecoverPath,
   needsManualClaim,
   needsRecover,
+  pickEarnRowAmount,
 } from '../../../../../app/[locale]/hemi-earn/_utils'
 import {
   type EarnPool,
@@ -360,6 +362,60 @@ describe('utils', function () {
       expect(
         isEarnRowInFlight({ ...baseTx, kind: 'REDEEM', status: 'CANCELLED' }),
       ).toBe(false)
+    })
+  })
+
+  describe('pickEarnRowAmount', function () {
+    const assetToken = { decimals: 8, symbol: 'hemiBTC' } as unknown as EvmToken
+    const shareToken = {
+      decimals: 18,
+      symbol: 'svetBTC',
+    } as unknown as EvmToken
+    const tokens = { assetToken, shareToken }
+
+    it('uses amountIn + assetToken for a DEPOSIT even once amountOut (shares) is set', function () {
+      // Regression: a finalized deposit carries `amountOut` = minted shares
+      // (18-dec). Rendering it against the 8-dec asset token showed 1,000,000
+      // instead of the deposited 0.0001.
+      expect(
+        pickEarnRowAmount(
+          {
+            ...baseTx,
+            amountIn: '10000',
+            amountOut: '100000000000000',
+            kind: 'DEPOSIT',
+            status: 'FINALIZED',
+          },
+          tokens,
+        ),
+      ).toEqual({ rawAmount: '10000', token: assetToken })
+    })
+
+    it('uses amountIn + assetToken for a DEPOSIT with no amountOut yet', function () {
+      expect(
+        pickEarnRowAmount(
+          { ...baseTx, amountIn: '10000', amountOut: null, kind: 'DEPOSIT' },
+          tokens,
+        ),
+      ).toEqual({ rawAmount: '10000', token: assetToken })
+    })
+
+    it('uses amountIn + shareToken for a REDEEM before it is fulfilled', function () {
+      expect(
+        pickEarnRowAmount(
+          { ...baseTx, amountIn: '5000', amountOut: null, kind: 'REDEEM' },
+          tokens,
+        ),
+      ).toEqual({ rawAmount: '5000', token: shareToken })
+    })
+
+    it('uses amountOut + assetToken for a REDEEM once fulfilled', function () {
+      expect(
+        pickEarnRowAmount(
+          { ...baseTx, amountIn: '5000', amountOut: '7777', kind: 'REDEEM' },
+          tokens,
+        ),
+      ).toEqual({ rawAmount: '7777', token: assetToken })
     })
   })
 

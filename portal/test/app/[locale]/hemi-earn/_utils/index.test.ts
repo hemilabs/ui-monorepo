@@ -198,10 +198,10 @@ describe('utils', function () {
       ).toBe(true)
     })
 
-    it('is false when auto-claim is on', function () {
+    it('is true even when auto-claim is on (auto-finalize reverted leaves it FULFILLED)', function () {
       expect(
         needsManualClaim({ ...baseTx, automatic: true, status: 'FULFILLED' }),
-      ).toBe(false)
+      ).toBe(true)
     })
 
     it.each<EarnTransactionStatusType>(['PENDING', 'CANCELLED', 'FINALIZED'])(
@@ -237,10 +237,10 @@ describe('utils', function () {
       ).toBe(true)
     })
 
-    it('is false when auto-recover is on', function () {
+    it('is true even when auto-recover is on (auto-finalize reverted leaves it CANCELLED)', function () {
       expect(
         needsRecover({ ...baseTx, automatic: true, status: 'CANCELLED' }),
-      ).toBe(false)
+      ).toBe(true)
     })
 
     it('is false for RECOVERED (already recovered, not actionable)', function () {

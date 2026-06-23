@@ -65,18 +65,20 @@ type Props = {
 // cross-chain (auto-claim or post-cooldown) → PROGRESS; else NOT_READY.
 function resolveReceiveStatus({
   awaitingClaim,
-  claimTxHash,
   crossChainInFlight,
+  isFinalized,
   settlement,
   settlementTxHash,
 }: {
   awaitingClaim: boolean
-  claimTxHash: Hash | undefined
   crossChainInFlight: boolean
+  isFinalized: boolean
   settlement: EarnSettlement | undefined
   settlementTxHash: Hash | undefined
 }): ProgressStatusType {
-  if (claimTxHash) return ProgressStatus.COMPLETED
+  // Key completion off the terminal status, not `claimTxHash` — a FINALIZED row
+  // with a null or still-indexing claim hash is still done.
+  if (isFinalized) return ProgressStatus.COMPLETED
   if (settlement?.failed) return ProgressStatus.FAILED
   if (settlementTxHash) return ProgressStatus.PROGRESS
   if (awaitingClaim) return ProgressStatus.READY
@@ -105,8 +107,8 @@ function buildReceiveStep({
 }): StepPropsWithoutPosition {
   // Only FINALIZED actually delivers the underlying asset (the recover path —
   // RECOVERED — returns shares instead and is rendered by `addRecoverStep`).
-  const claimTxHash =
-    row?.status === 'FINALIZED' ? (row.claimTxHash ?? undefined) : undefined
+  const isFinalized = row?.status === 'FINALIZED'
+  const claimTxHash = isFinalized ? (row?.claimTxHash ?? undefined) : undefined
   const settlement = row?.settlement
   const settlementTxHash =
     settlement && !settlement.failed ? settlement.txHash : undefined
@@ -126,8 +128,8 @@ function buildReceiveStep({
     explorerChainId: deliveryHash ? chainId : undefined,
     status: resolveReceiveStatus({
       awaitingClaim: !!row && needsManualClaim(row),
-      claimTxHash,
       crossChainInFlight: unstakeMined && (!needsCooldown || cooldownElapsed),
+      isFinalized,
       settlement,
       settlementTxHash,
     }),

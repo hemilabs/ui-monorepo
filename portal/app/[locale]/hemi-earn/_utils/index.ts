@@ -58,19 +58,23 @@ export const findPoolByShare = (
 export const isLocalEarnTransactionRow = (tx: EarnTransaction) =>
   tx.requestId.startsWith('local-')
 
-// A FULFILLED request with auto-claim off: the tokens are back on the Router and
-// the user must sign `claim{Deposit,Redeem}(id)` to receive them — shares for a
-// deposit, the underlying asset for a redeem.
+// A FULFILLED request awaiting a manual claim — the user signs
+// `claim{Deposit,Redeem}(id)` to receive the tokens (shares for a deposit, the
+// underlying asset for a redeem). Auto-finalize runs in the same tx as the
+// fulfillment (`Router._handleRequestFulfillment`), so a request only *rests* at
+// FULFILLED when it was manual (`automatic === false`) OR auto-finalize reverted
+// (caught, `AutoFinalizationFailed`) — both leave the manual claim as the escape,
+// so the `automatic` flag isn't checked here.
 export const needsManualClaim = (tx: EarnTransaction) =>
-  tx.status === 'FULFILLED' && tx.automatic === false
+  tx.status === 'FULFILLED'
 
-// A CANCELLED request with auto-recover off: the original tokens are back on the
-// Router and the user must sign `recover{Deposit,Redeem}(id)` to pull them to
-// their wallet — the asset for a deposit, the shares for a redeem. `recover*`
-// reverts unless the request is CANCELLED, so this is the only state where the
-// Recover CTA is valid.
-export const needsRecover = (tx: EarnTransaction) =>
-  tx.status === 'CANCELLED' && tx.automatic === false
+// A CANCELLED request awaiting a manual recover — the user signs
+// `recover{Deposit,Redeem}(id)` to pull the original tokens to their wallet (the
+// asset for a deposit, the shares for a redeem). Like `needsManualClaim`, a
+// request only rests at CANCELLED when it was manual or auto-recover reverted —
+// both need the manual recover, so `automatic` isn't checked. `recover*` reverts
+// unless the request is CANCELLED, so this is the only valid state.
+export const needsRecover = (tx: EarnTransaction) => tx.status === 'CANCELLED'
 
 // Broader than `needsRecover`: any request on the recover branch (awaiting or
 // past recovery), regardless of `automatic`. Drives the display — the terminal

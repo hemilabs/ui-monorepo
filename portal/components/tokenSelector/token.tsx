@@ -20,7 +20,7 @@ export const CustomToken = ({ token }: { token: TokenType | undefined }) => (
     </div>
     <div className="flex w-full flex-col">
       <div className="flex items-center justify-between">
-        {token ? <span>{token.name}</span> : <Skeleton className="w-26 h-4" />}
+        {token ? <span>{token.name}</span> : <Skeleton className="h-4 w-26" />}
       </div>
       <div className="flex items-center justify-between">
         {token ? (

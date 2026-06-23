@@ -125,7 +125,7 @@ export const Strategy = function ({
 
   return (
     <form
-      className={`sm:w-86 max-sm:max-w-90 relative w-full max-w-full rounded-lg bg-neutral-100 ${boxShadows[recommendationLevel]} flex flex-col`}
+      className={`relative w-full max-w-full rounded-lg bg-neutral-100 max-sm:max-w-90 sm:w-86 ${boxShadows[recommendationLevel]} flex flex-col`}
       onSubmit={handleSubmit}
     >
       <div
@@ -151,11 +151,11 @@ export const Strategy = function ({
             symbol: () => hemiToken.symbol,
           })}
         </p>
-        <div className="h-15 flex items-center justify-center border-y border-solid border-t-neutral-300/55 px-6 [&>button]:w-full">
+        <div className="flex h-15 items-center justify-center border-y border-solid border-t-neutral-300/55 px-6 [&>button]:w-full">
           {submitButton}
         </div>
       </div>
-      <div className="md:min-h-47 flex-1 rounded-b-lg max-md:h-fit">
+      <div className="flex-1 rounded-b-lg max-md:h-fit md:min-h-47">
         {recommendationLevel === 'low' ? (
           <SimpleBonus
             amount={renderStakedAmount(<Skeleton className="h-3 w-10" />)}

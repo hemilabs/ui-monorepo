@@ -85,16 +85,16 @@ export const TermsAndConditions = function ({ onAccept, onClose }: Props) {
 
   return (
     <Modal onClose={onClose}>
-      <div className="max-w-120 relative w-full bg-neutral-50">
+      <div className="relative w-full max-w-120 bg-neutral-50">
         <div className="relative z-10 rounded-lg bg-white shadow-sm">
-          <h3 className="text-mid-md px-6 py-4 font-semibold  text-neutral-950">
+          <h3 className="px-6 py-4 text-mid-md font-semibold text-neutral-950">
             {t('genesis-drop.terms-and-conditions.title')}
           </h3>
           <div className="h-px w-full border-b border-solid border-b-neutral-300/55" />
           <LegalText />
         </div>
         <form
-          className="h-15 relative flex w-full items-center justify-between gap-x-4 rounded-b-xl bg-neutral-50 px-4 [&>button]:w-full"
+          className="relative flex h-15 w-full items-center justify-between gap-x-4 rounded-b-xl bg-neutral-50 px-4 [&>button]:w-full"
           onSubmit={handleSubmit}
           style={{
             boxShadow:

@@ -119,7 +119,7 @@ export function WalletQRCodeView({ onBack, wallet }: Props) {
         </div>
       </div>
       <div className="flex h-full flex-col items-center justify-center gap-3 py-3.5">
-        <div className="shadow-bs hidden size-full items-center justify-center rounded-md bg-neutral-50/80 md:flex">
+        <div className="hidden size-full items-center justify-center rounded-md bg-neutral-50/80 shadow-bs md:flex">
           {uri ? (
             <QRCodeSVG size={240} value={uri} />
           ) : (

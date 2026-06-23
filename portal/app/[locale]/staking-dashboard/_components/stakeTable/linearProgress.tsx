@@ -11,7 +11,7 @@ export function LinearProgress({ percentage, unlockTime }: Props) {
   return (
     <div className="relative flex h-7 min-w-28 items-center justify-center overflow-hidden rounded-md bg-neutral-100 px-2 py-1.5">
       <div
-        className="bg-linear-progress-bar absolute inset-y-0 left-0 transition-all duration-300 ease-out"
+        className="absolute inset-y-0 left-0 bg-linear-progress-bar transition-all duration-300 ease-out"
         style={{
           width,
         }}

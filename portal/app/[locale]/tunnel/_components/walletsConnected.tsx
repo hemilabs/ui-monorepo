@@ -29,10 +29,7 @@ export const WalletsConnected = function () {
   const { btcWalletStatus, evmWalletStatus } = useAccounts()
   const t = useTranslations('connect-wallets')
   return (
-    <div
-      className="flex flex-nowrap items-center justify-between
-      gap-x-7 md:justify-center"
-    >
+    <div className="flex flex-nowrap items-center justify-between gap-x-7 md:justify-center">
       <Wallet status={evmWalletStatus} title={t('evm-wallet')} />
       <Wallet status={btcWalletStatus} title={t('btc-wallet')} />
     </div>

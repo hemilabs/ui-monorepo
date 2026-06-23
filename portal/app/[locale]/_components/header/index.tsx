@@ -25,15 +25,12 @@ type Props = {
 }
 
 export const Header = ({ isMenuOpen, openNavbar, toggleMenu }: Props) => (
-  <header
-    className="md:h-13 md:py-4.5 flex h-14 items-center border-b border-solid
-     border-neutral-300/55 bg-white px-3 py-3 md:bg-transparent md:px-0"
-  >
+  <header className="flex h-14 items-center border-b border-solid border-neutral-300/55 bg-white px-3 py-3 md:h-13 md:bg-transparent md:px-0 md:py-4.5">
     <div className="flex items-center gap-x-2 md:hidden">
       <HomeLink />
       <Badge />
     </div>
-    <div className="size-13 hidden items-center justify-center border-r border-neutral-300/55 md:flex xl:hidden">
+    <div className="hidden size-13 items-center justify-center border-r border-neutral-300/55 md:flex xl:hidden">
       <ButtonIcon onClick={openNavbar} size="xSmall" variant="secondary">
         <HamburgerIcon />
       </ButtonIcon>

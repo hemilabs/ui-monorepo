@@ -10,15 +10,11 @@ const UI = ({
   networkType,
 }: Props & { networkType: NetworkType }) => (
   <div
-    className={`
-      backdrop-blur-20 relative flex h-full w-3/4 flex-1 flex-col self-stretch overflow-y-hidden
-    bg-neutral-50/55 md:w-[calc(75%-8px)] xl:rounded-l-xl
-      ${
-        networkType === 'testnet'
-          ? 'md:border-2 md:border-orange-600'
-          : 'border-neutral-300/55 xl:border'
-      }
-      `}
+    className={`relative flex h-full w-3/4 flex-1 flex-col self-stretch overflow-y-hidden bg-neutral-50/55 backdrop-blur-20 md:w-[calc(75%-8px)] xl:rounded-l-xl ${
+      networkType === 'testnet'
+        ? 'md:border-2 md:border-orange-600'
+        : 'border-neutral-300/55 xl:border'
+    } `}
     id="app-layout-container"
   >
     {children}

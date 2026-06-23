@@ -396,7 +396,7 @@ export const useTunnelState = function (): TunnelState & TunnelFunctionEvents {
         const targetAddress =
           nativeToken.extensions?.bridgeInfo?.[hemi.id]?.tokenAddress
         const fromToken = targetAddress
-          ? getTokenByAddress(targetAddress, hemi.id) ?? tunneledEthHemi
+          ? (getTokenByAddress(targetAddress, hemi.id) ?? tunneledEthHemi)
           : tunneledEthHemi
 
         const toToken = getTunnelToken(fromToken, toNetworkId)

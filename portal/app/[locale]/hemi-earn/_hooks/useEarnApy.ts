@@ -31,4 +31,4 @@ export const selectApyValue = (
   data: ApyByVault | undefined,
   isPending: boolean,
   stakingVault: Address,
-) => (isPending ? undefined : data?.[stakingVault]?.apy ?? null)
+) => (isPending ? undefined : (data?.[stakingVault]?.apy ?? null))

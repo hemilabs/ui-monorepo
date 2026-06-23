@@ -40,14 +40,11 @@ const IconContainer = ({
   selected,
 }: Selectable & { children: ReactNode }) => (
   <div
-    className={`flex h-10 w-10
-      items-center justify-center rounded-lg bg-neutral-50
-      md:h-4 md:w-4 group-hover/row:[&>svg>path]:fill-neutral-950
-      ${
-        selected
-          ? '[&>svg>path]:fill-neutral-950'
-          : '[&>svg>path]:fill-neutral-500'
-      }`}
+    className={`flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-50 md:h-4 md:w-4 group-hover/row:[&>svg>path]:fill-neutral-950 ${
+      selected
+        ? '[&>svg>path]:fill-neutral-950'
+        : '[&>svg>path]:fill-neutral-500'
+    }`}
   >
     {children}
   </div>
@@ -55,8 +52,7 @@ const IconContainer = ({
 
 const Row = (props: { children: ReactNode } & ComponentProps<'div'>) => (
   <div
-    className="group/row flex h-14 items-center justify-between px-4
-    md:h-8 md:px-3 md:py-2"
+    className="group/row flex h-14 items-center justify-between px-4 md:h-8 md:px-3 md:py-2"
     {...props}
   />
 )
@@ -71,8 +67,7 @@ const MenuContainer = ({
 }) => (
   <div
     {...props}
-    className={`w-full cursor-pointer rounded-lg transition-colors duration-300
-       ${isOpen ? 'rounded-lg bg-neutral-50' : 'hover:bg-neutral-50'}`}
+    className={`w-full cursor-pointer rounded-lg transition-colors duration-300 ${isOpen ? 'rounded-lg bg-neutral-50' : 'hover:bg-neutral-50'}`}
     ref={ref}
   >
     {children}
@@ -84,10 +79,9 @@ const ItemText = ({
   text,
 }: Pick<Props, 'text'> & Selectable) => (
   <span
-    className={`text-base font-medium transition-colors duration-300
-      group-hover/row:text-neutral-950 md:text-sm ${
-        selected ? 'text-neutral-950' : 'text-neutral-700'
-      }`}
+    className={`text-base font-medium transition-colors duration-300 group-hover/row:text-neutral-950 md:text-sm ${
+      selected ? 'text-neutral-950' : 'text-neutral-700'
+    }`}
   >
     {text}
   </span>
@@ -157,18 +151,10 @@ const LanguageMenu = function ({ active }: LanguageProps) {
   }
 
   return (
-    <div
-      className="absolute bottom-0 right-0 z-40 flex
-    h-fit w-52 -translate-x-8 -translate-y-32
-    flex-col items-start
-    justify-center rounded-lg bg-white p-2 shadow-lg
-    md:top-0 md:translate-x-48 md:translate-y-1 md:p-1"
-    >
+    <div className="absolute bottom-0 right-0 z-40 flex h-fit w-52 -translate-x-8 -translate-y-32 flex-col items-start justify-center rounded-lg bg-white p-2 shadow-lg md:top-0 md:translate-x-48 md:translate-y-1 md:p-1">
       {locales.map(locale => (
         <div
-          className="group/row flex w-full items-center
-          justify-between rounded-md px-3
-          py-2 capitalize hover:bg-neutral-50"
+          className="group/row flex w-full items-center justify-between rounded-md px-3 py-2 capitalize hover:bg-neutral-50"
           key={locale}
           onClick={() => onClick(locale)}
         >
@@ -186,13 +172,7 @@ const LanguageMenu = function ({ active }: LanguageProps) {
 }
 
 const LegalAndPrivacy = () => (
-  <div
-    className="-translate-y-18 absolute bottom-0 right-0 z-20
-        flex w-64 -translate-x-8 flex-col
-        items-start gap-x-2
-        rounded-lg bg-white p-4 shadow-lg
-        md:translate-x-60 md:translate-y-7"
-  >
+  <div className="absolute bottom-0 right-0 z-20 flex w-64 -translate-x-8 -translate-y-18 flex-col items-start gap-x-2 rounded-lg bg-white p-4 shadow-lg md:translate-x-60 md:translate-y-7">
     <TermsAndConditions />
     <CmcAttribution />
   </div>
@@ -204,10 +184,7 @@ const Backdrop = ({
   onClick: MouseEventHandler<HTMLDivElement>
 }) => (
   <div
-    className="absolute left-0 top-0 z-20
-    h-screen w-screen bg-gradient-to-b
-    from-neutral-950/0 to-neutral-950/25
-    md:hidden"
+    className="absolute left-0 top-0 z-20 h-screen w-screen bg-gradient-to-b from-neutral-950/0 to-neutral-950/25 md:hidden"
     onClick={onClick}
   />
 )
@@ -229,11 +206,7 @@ export const Help = function () {
         helpPortalContainer &&
         ReactDOM.createPortal(
           <div
-            className="absolute bottom-0 left-0 z-30
-            flex h-36 w-full flex-col
-            items-start rounded-t-2xl bg-white p-4 shadow-lg
-            md:top-0 md:h-fit md:w-64 md:translate-x-52 md:translate-y-12
-            md:rounded-lg md:p-1 lg:translate-x-2 lg:translate-y-2"
+            className="absolute bottom-0 left-0 z-30 flex h-36 w-full flex-col items-start rounded-t-2xl bg-white p-4 shadow-lg md:top-0 md:h-fit md:w-64 md:translate-x-52 md:translate-y-12 md:rounded-lg md:p-1 lg:translate-x-2 lg:translate-y-2"
             onMouseDown={e => e.stopPropagation()}
             onTouchStart={e => e.stopPropagation()}
           >

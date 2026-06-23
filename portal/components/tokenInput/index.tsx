@@ -74,27 +74,22 @@ export const TokenInput = function <T extends Token>({
   const BalanceComponent = balanceComponent ?? Balance
   const FiatBalanceComponent = fiatBalanceComponent ?? RenderFiatBalance
   return (
-    <div
-      className="hover:shadow-bs h-[124px] rounded-lg border border-solid border-transparent bg-neutral-50
-      p-4 font-medium text-neutral-500"
-    >
+    <div className="h-[124px] rounded-lg border border-solid border-transparent bg-neutral-50 p-4 font-medium text-neutral-500 hover:shadow-bs">
       <div className="flex h-full items-center justify-between">
         <div className="flex h-full flex-shrink flex-grow flex-col items-start">
           <span className="text-sm">{label}</span>
           <input
-            className={`
-            max-w-1/2 my-2 w-full bg-transparent text-4xl ${getTextColor(
+            className={`max-w-1/2 my-2 w-full bg-transparent text-4xl ${getTextColor(
               value,
               errorKey,
-            )}
-            outline-none`}
+            )} outline-none`}
             disabled={disabled}
             onChange={e => onChange(e.target.value)}
             type="text"
             value={value}
           />
           {showFiatBalance && (
-            <div className="flex items-center text-sm  text-neutral-500">
+            <div className="flex items-center text-sm text-neutral-500">
               <span className="mr-1">$</span>
               {fiatBalance ? (
                 <FiatBalanceComponent

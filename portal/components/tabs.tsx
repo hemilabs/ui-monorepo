@@ -31,14 +31,11 @@ export const Tab = function ({
   const isLink = tabIsLink(props)
   return (
     <li
-      className={`
-        flex flex-1 items-center *:w-full md:flex-auto
-      ${
+      className={`flex flex-1 items-center *:w-full md:flex-auto ${
         selected
           ? '*:duration-600 before:*:duration-600 *:cursor-default *:bg-white *:transition-colors before:*:bg-white before:*:transition-colors hover:before:*:bg-white'
           : '*:duration-600 before:*:duration-600 *:bg-neutral-100 *:text-neutral-700 *:shadow-none *:transition-colors before:*:bg-neutral-100 before:*:transition-colors hover:*:text-neutral-950'
-      }
-    `}
+      } `}
     >
       {(!isLink || disabled) && (
         <Button

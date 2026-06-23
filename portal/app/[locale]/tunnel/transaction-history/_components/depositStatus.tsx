@@ -32,7 +32,7 @@ export const DepositStatus = function ({ deposit }: Props) {
       [EvmDepositStatus.DEPOSIT_RELAYED]: <TxStatus.Success />,
     }
 
-    const skeleton = <Skeleton className="w-15 h-8" />
+    const skeleton = <Skeleton className="h-8 w-15" />
 
     if (deposit.status === undefined) {
       return skeleton

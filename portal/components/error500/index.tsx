@@ -36,7 +36,7 @@ export const Error500 = function ({
     <div className="flex h-full">
       <Image
         alt="hemi 500 error background"
-        className="-top-15 absolute inset-0 -z-10 m-auto w-4/5"
+        className="absolute inset-0 -top-15 -z-10 m-auto w-4/5"
         src={svg500Error}
       />
       <div className="m-auto flex flex-col items-center gap-4">

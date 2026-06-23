@@ -14,8 +14,7 @@ const CloseButton = ({
   onClick: MouseEventHandler<HTMLButtonElement>
 }) => (
   <button
-    className="group/close-button pointer-events-auto absolute right-3.5 top-3 z-10 flex h-5 w-5 items-center justify-center md:opacity-0
-    md:transition-opacity md:duration-300 md:group-hover/card-image:visible md:group-hover/card-image:opacity-100"
+    className="group/close-button pointer-events-auto absolute right-3.5 top-3 z-10 flex h-5 w-5 items-center justify-center md:opacity-0 md:transition-opacity md:duration-300 md:group-hover/card-image:visible md:group-hover/card-image:opacity-100"
     onClick={onClick}
     type="button"
   >

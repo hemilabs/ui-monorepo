@@ -87,7 +87,7 @@ export const FromPoolsBadge = function () {
       }
       variant="simple"
     >
-      <span className="text-xxs flex h-4 w-fit items-center justify-center rounded-md border border-solid border-neutral-200 bg-neutral-100 px-1.5 font-medium text-neutral-600">
+      <span className="flex h-4 w-fit items-center justify-center rounded-md border border-solid border-neutral-200 bg-neutral-100 px-1.5 text-xxs font-medium text-neutral-600">
         {t('from-pools', { count })}
       </span>
     </Tooltip>

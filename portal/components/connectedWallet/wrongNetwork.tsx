@@ -26,8 +26,7 @@ export const WrongNetwork = function ({
 
   return (
     <button
-      className="group/wrong-network flex items-center gap-x-2 bg-transparent p-2 text-sm font-medium
-        text-rose-600 duration-150 hover:scale-105 hover:text-rose-700"
+      className="group/wrong-network flex items-center gap-x-2 bg-transparent p-2 text-sm font-medium text-rose-600 duration-150 hover:scale-105 hover:text-rose-700"
       onClick={onClick}
     >
       <span>{t('wrong-type-network', { type })}</span>

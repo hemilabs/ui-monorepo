@@ -30,7 +30,7 @@ export const CardInfo = function <T>({
   }
   return (
     <Card shadow="sm">
-      <div className="h-20.5 relative w-full p-4">
+      <div className="relative h-20.5 w-full p-4">
         <div className="flex flex-shrink-0 flex-col gap-y-2">
           <span className="body-text-medium text-neutral-500">{label}</span>
           <h3>{getValue()}</h3>

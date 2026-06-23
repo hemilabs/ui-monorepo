@@ -330,14 +330,15 @@ export const createBitcoinSync = function ({
           ...localDepositSyncInfo,
           fromKnownTx: hasVaultSyncToMinTx
             ? undefined
-            : localDepositSyncInfo.fromKnownTx ??
-              unprocessedTransactions[0].txId,
+            : (localDepositSyncInfo.fromKnownTx ??
+              unprocessedTransactions[0].txId),
           hasSyncToMinTx,
           // Track which vault we're currently processing - store the vault index (ID), not array position
           iterationVault: hasSyncToMinTx ? undefined : vaultIndex,
           // Once we sync up to the oldest transaction, next time we will only sync up to this point
           toKnownTx: hasVaultSyncToMinTx
-            ? localDepositSyncInfo.fromKnownTx ?? localDepositSyncInfo.toKnownTx
+            ? (localDepositSyncInfo.fromKnownTx ??
+              localDepositSyncInfo.toKnownTx)
             : localDepositSyncInfo.toKnownTx,
           // store it in case we need to restart the sync from a specific point, otherwise undefined
           txPivot: hasVaultSyncToMinTx ? undefined : batchPivotTx,
@@ -358,7 +359,7 @@ export const createBitcoinSync = function ({
         // Reset pivotTxId for each new vault - only use saved pivot if we're continuing the same vault
         pivotTxId:
           localDepositSyncInfo.iterationVault === vaultIndex
-            ? depositsSyncInfo.txPivot ?? depositsSyncInfo.fromKnownTx
+            ? (depositsSyncInfo.txPivot ?? depositsSyncInfo.fromKnownTx)
             : undefined,
         processTransactions,
         // caller of this function checks transactions is .length > 0, so there will always be a last option

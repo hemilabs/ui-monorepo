@@ -38,9 +38,7 @@ import { WithdrawStatus } from './withdrawStatus'
 
 const ColumnHeader = ({ children, className = '' }: ComponentProps<'th'>) => (
   <th
-    className={`border-color-neutral/55 transaction-history-cell ${className} h-8 border-b
-    border-t border-solid bg-neutral-50 font-medium first:rounded-l-lg first:border-l last:rounded-r-lg
-    last:border-r first:[&>span]:pl-4 last:[&>span]:pl-5`}
+    className={`border-color-neutral/55 transaction-history-cell ${className} h-8 border-b border-t border-solid bg-neutral-50 font-medium first:rounded-l-lg first:border-l last:rounded-r-lg last:border-r first:[&>span]:pl-4 last:[&>span]:pl-5`}
   >
     {children}
   </th>
@@ -48,8 +46,7 @@ const ColumnHeader = ({ children, className = '' }: ComponentProps<'th'>) => (
 
 const Column = (props: ComponentProps<'td'>) => (
   <td
-    className={`h-13 transaction-history-cell cursor-pointer border-b border-solid border-neutral-300/55
-    py-2.5 last:pr-2.5 group-hover/history-row:bg-neutral-50 first:[&>*]:pl-4 last:[&>*]:pl-5`}
+    className={`transaction-history-cell h-13 cursor-pointer border-b border-solid border-neutral-300/55 py-2.5 last:pr-2.5 group-hover/history-row:bg-neutral-50 first:[&>*]:pl-4 last:[&>*]:pl-5`}
     {...props}
   />
 )

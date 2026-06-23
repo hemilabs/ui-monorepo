@@ -55,7 +55,7 @@ export const Preview = function ({
             {t('withdraw')}
           </Tab>
         </Tabs>
-        <div className="[&>*]:shadow-bs mb-2 [&>*]:hover:shadow-sm">
+        <div className="mb-2 [&>*]:shadow-bs [&>*]:hover:shadow-sm">
           <TokenInput
             balanceComponent={balanceComponent}
             disabled={isOperating}

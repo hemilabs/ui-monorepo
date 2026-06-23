@@ -87,7 +87,7 @@ export const TokenSection = function ({
             {t('layer-token-address', { layer })}
           </DrawerParagraph>
         </div>
-        <div className="left-2.25 relative top-0.5">
+        <div className="relative left-2.25 top-0.5">
           <ShortVerticalLine stroke="stroke-neutral-300/55" />
         </div>
         <div className="mt-1 flex gap-x-3">

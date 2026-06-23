@@ -39,10 +39,7 @@ export const GetStarted = function ({ onClose }: Props) {
 
   return (
     <article className="group/get-started relative mb-8 gap-x-5 gap-y-10 border-y border-solid border-neutral-300/55 py-6">
-      <div
-        className="transition-filter flex flex-col items-center justify-between gap-x-3 gap-y-6
-        duration-300 group-hover/get-started:opacity-65 group-hover/get-started:blur-sm sm:flex-row"
-      >
+      <div className="flex flex-col items-center justify-between gap-x-3 gap-y-6 transition-filter duration-300 group-hover/get-started:opacity-65 group-hover/get-started:blur-sm sm:flex-row">
         <Step
           heading={t('common.connect-wallet')}
           image={step1}
@@ -59,10 +56,7 @@ export const GetStarted = function ({ onClose }: Props) {
           subheading={t('bitcoin-yield.put-to-work', { symbol })}
         />
       </div>
-      <div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-95 opacity-0 transition-all
-        delay-75 duration-300 group-hover/get-started:scale-100 group-hover/get-started:opacity-100"
-      >
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-95 opacity-0 transition-all delay-75 duration-300 group-hover/get-started:scale-100 group-hover/get-started:opacity-100">
         <Button
           onClick={onClose}
           size="xSmall"

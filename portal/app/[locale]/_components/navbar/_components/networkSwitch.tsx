@@ -129,7 +129,7 @@ const NetworkSwitchImpl = function ({
         document.body &&
         ReactDOM.createPortal(
           <div
-            className="md:w-50 absolute z-40 lg:fixed"
+            className="absolute z-40 md:w-50 lg:fixed"
             onMouseDown={e => e.stopPropagation()}
             onTouchStart={e => e.stopPropagation()}
             ref={ref}

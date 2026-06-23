@@ -107,10 +107,7 @@ const ConnectedWallet = function ({
   }
 
   return (
-    <div
-      className="group/connected-wallet relative flex h-8 items-center rounded-lg
-        py-2 text-sm font-medium text-neutral-950"
-    >
+    <div className="group/connected-wallet relative flex h-8 items-center rounded-lg py-2 text-sm font-medium text-neutral-950">
       <div className="flex items-center gap-3">
         <div className="relative size-8">
           <ProfileIcon />

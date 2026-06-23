@@ -90,7 +90,7 @@ export function ConnectWalletAccordion<T extends WalletItem>({
   return (
     <div className="rounded-lg bg-white shadow-sm">
       <button
-        className="hover:bg-connect-wallet-hovered group flex w-full cursor-pointer items-center gap-x-2 p-4"
+        className="group flex w-full cursor-pointer items-center gap-x-2 p-4 hover:bg-connect-wallet-hovered"
         onClick={handleClick}
       >
         {icon}
@@ -127,7 +127,7 @@ export function ConnectWalletAccordion<T extends WalletItem>({
 
                 return (
                   <button
-                    className="size-30 group relative mb-2 flex shrink-0 flex-col items-center justify-center gap-2 rounded-lg bg-neutral-50/80 p-2 transition-shadow duration-300 hover:shadow-sm md:mb-0"
+                    className="group relative mb-2 flex size-30 shrink-0 flex-col items-center justify-center gap-2 rounded-lg bg-neutral-50/80 p-2 transition-shadow duration-300 hover:shadow-sm md:mb-0"
                     key={wallet.id}
                     onClick={() => handleWalletClick(wallet)}
                   >
@@ -148,7 +148,7 @@ export function ConnectWalletAccordion<T extends WalletItem>({
                       {wallet.name}
                     </span>
                     {showInstall && (
-                      <div className="group-hover:backdrop-blur-2 absolute inset-0 flex items-center justify-center rounded-lg bg-white/80 opacity-0 transition-all duration-300 group-hover:opacity-100">
+                      <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-white/80 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:backdrop-blur-2">
                         <div className="flex items-center gap-1 text-orange-500 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                           <DownloadIcon />
                           <span className="text-sm font-semibold">

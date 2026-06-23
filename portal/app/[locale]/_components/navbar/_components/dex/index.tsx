@@ -116,10 +116,7 @@ const Backdrop = ({
   onClick: MouseEventHandler<HTMLDivElement>
 }) => (
   <div
-    className="absolute left-0 top-0 z-20
-    h-screen w-screen bg-gradient-to-b
-    from-neutral-950/0 to-neutral-950/25
-    md:hidden"
+    className="absolute left-0 top-0 z-20 h-screen w-screen bg-gradient-to-b from-neutral-950/0 to-neutral-950/25 md:hidden"
     onClick={onClick}
   />
 )
@@ -173,19 +170,13 @@ const DexImpl = function () {
         dropdownPortalContainer &&
         ReactDOM.createPortal(
           <div
-            className="md:translate-y-30 absolute bottom-0 left-0 top-24
-              z-30 flex w-full flex-col items-start overflow-y-auto rounded-t-2xl
-              bg-white p-4 shadow-lg md:top-0 md:h-fit md:w-64 md:translate-x-56
-              md:rounded-lg md:p-1 xl:translate-x-2"
+            className="absolute bottom-0 left-0 top-24 z-30 flex w-full flex-col items-start overflow-y-auto rounded-t-2xl bg-white p-4 shadow-lg md:top-0 md:h-fit md:w-64 md:translate-x-56 md:translate-y-30 md:rounded-lg md:p-1 xl:translate-x-2"
             onMouseDown={e => e.stopPropagation()}
             onTouchStart={e => e.stopPropagation()}
             ref={ref}
           >
             <ItemTitle text={t('aggregators')} />
-            <div
-              className="w-full *:w-full *:bg-white *:px-3 *:py-2 *:max-md:h-14 *:max-md:bg-transparent 
-                [&_a>div]:flex-row [&_a]:w-full [&_span]:max-md:text-base"
-            >
+            <div className="w-full *:w-full *:bg-white *:px-3 *:py-2 *:max-md:h-14 *:max-md:bg-transparent [&_a>div]:flex-row [&_a]:w-full [&_span]:max-md:text-base">
               <ExternalLink
                 event="nav - rubic"
                 href="https://app.rubic.exchange"

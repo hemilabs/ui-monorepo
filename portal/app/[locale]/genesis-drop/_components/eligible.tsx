@@ -71,7 +71,7 @@ export const Eligible = function ({ eligibility }: Props) {
   // if we reached this point, the user is eligible and can claim
   return (
     <>
-      <div className="md:max-w-105 max-h-24 w-full max-w-96">
+      <div className="max-h-24 w-full max-w-96 md:max-w-105">
         <EligibilityStatus amount={amount} status="eligible" />
       </div>
       <div className="flex items-center gap-x-1">

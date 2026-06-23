@@ -103,7 +103,7 @@ function BitcoinWithdrawAction({ withdraw }: Props) {
 // different content depending on the withdrawal parameters.
 export const WithdrawAction = ({ withdraw }: Props) =>
   withdraw.status === undefined ? (
-    <Skeleton className="w-15 h-8" />
+    <Skeleton className="h-8 w-15" />
   ) : isToEvmWithdraw(withdraw) ? (
     <EvmWithdrawAction withdraw={withdraw} />
   ) : (

@@ -20,6 +20,12 @@ export type CooldownInputs = {
   unstakeMined: boolean
 }
 
+// Statuses on the recover branch — the cooldown milestone doesn't apply there.
+const RECOVER_PATH_STATUSES = new Set<string | undefined>([
+  'CANCELLED',
+  'RECOVERED',
+])
+
 // Decides what (if anything) to render under the Unstake step as a clock
 // sub-step. Pure function so the component's complexity stays low.
 //
@@ -37,20 +43,28 @@ export function deriveCooldownPostAction({
   unstakeMined,
 }: CooldownInputs): CooldownPostAction | undefined {
   if (isCooldownEligible === false) return undefined
+  // Recover path (CANCELLED/RECOVERED): the cooldown was aborted/bypassed and the
+  // shares come straight back, so there's no cooldown milestone to show — the
+  // recover terminal step carries the state instead.
+  if (RECOVER_PATH_STATUSES.has(subgraphStatus)) {
+    return undefined
+  }
   // The cooldown is effectively over once any of:
   //   - the local timer elapsed
+  //   - the subgraph row reached FULFILLED (the Agent only fulfills a redeem
+  //     after the cooldown matured and `claimUnstake` ran, so a FULFILLED row
+  //     awaiting a manual claim implies the cooldown is done — the status is
+  //     authoritative over a stale `claimableAt`)
   //   - the subgraph row reached FINALIZED (auto-claim fired the moment
   //     the cooldown matured)
-  //   - the subgraph row reached RECOVERED (cancel/recovery ended the
-  //     cooldown early)
   // Keep the sub-step visible as a COMPLETED milestone — without this,
   // an auto-claim landing seconds after the timer hits zero would make
   // the sub-step disappear right when the user expects to see it tick
   // over to "done".
   const cooldownOver =
     cooldownRemainingSec === 0 ||
-    subgraphStatus === 'FINALIZED' ||
-    subgraphStatus === 'RECOVERED'
+    subgraphStatus === 'FULFILLED' ||
+    subgraphStatus === 'FINALIZED'
   if (cooldownOver) {
     return {
       description: t('cooldown-ended'),

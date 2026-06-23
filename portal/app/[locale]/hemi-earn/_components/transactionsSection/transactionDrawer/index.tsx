@@ -23,11 +23,9 @@ import { HistoricalDepositReview } from './historicalDepositReview'
 import { HistoricalWithdrawReview } from './historicalWithdrawReview'
 import { RetryFailedDeposit } from './retryFailedDeposit'
 import { RetryFailedWithdraw } from './retryFailedWithdraw'
-import {
-  AddShareTokenToWallet,
-  ClaimDeposit,
-  RecoverDeposit,
-} from './settleDeposit'
+import { ClaimDeposit, RecoverDeposit } from './settleDeposit'
+import { ClaimRedeem, RecoverRedeem } from './settleRedeem'
+import { AddTokenToWalletCta } from './settleShared'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 // The drawer is already open, so the deposit CTAs don't redirect on sign. A
@@ -60,7 +58,43 @@ function depositCallToAction({
   // Shares have landed (claim done) — offer to add the share token to the
   // wallet, matching the live drawer and the tunnel history.
   if (transaction.status === 'FINALIZED') {
-    return <AddShareTokenToWallet token={pool.shareToken} />
+    return <AddTokenToWalletCta token={pool.shareToken} />
+  }
+  return null
+}
+
+// Mirror of `depositCallToAction` for redeem: claim delivers the underlying
+// asset, recover returns the shares.
+function redeemCallToAction({
+  asset,
+  failedKind,
+  pool,
+  transaction,
+}: {
+  asset: EarnAsset
+  failedKind: 'CLAIM' | 'RECOVER' | undefined
+  pool: EarnPool
+  transaction: EarnTransaction
+}) {
+  if (canRetryRow(transaction)) {
+    return (
+      <RetryFailedWithdraw
+        asset={asset}
+        pool={pool}
+        transaction={transaction}
+      />
+    )
+  }
+  if (needsManualClaim(transaction) || failedKind === 'CLAIM') {
+    return <ClaimRedeem asset={asset} pool={pool} transaction={transaction} />
+  }
+  if (needsRecover(transaction) || failedKind === 'RECOVER') {
+    return <RecoverRedeem asset={asset} pool={pool} transaction={transaction} />
+  }
+  // The underlying asset has landed (claim done) — offer to add it to the wallet,
+  // matching the live drawer and the tunnel history.
+  if (transaction.status === 'FINALIZED') {
+    return <AddTokenToWalletCta token={asset.token} />
   }
   return null
 }
@@ -103,17 +137,14 @@ const TransactionDrawerContent = function () {
   const { settlement } = transaction
   const failedKind = settlement?.failed ? settlement.kind : undefined
 
-  // REDEEM only surfaces the retry CTA (its claim/recover/cancel flows land in a
-  // later PR); DEPOSIT additionally surfaces manual Claim / Recover.
   const callToAction =
     transaction.kind === 'REDEEM'
-      ? canRetryRow(transaction) && (
-          <RetryFailedWithdraw
-            asset={resolved.asset}
-            pool={resolved.pool}
-            transaction={transaction}
-          />
-        )
+      ? redeemCallToAction({
+          asset: resolved.asset,
+          failedKind,
+          pool: resolved.pool,
+          transaction,
+        })
       : depositCallToAction({
           asset: resolved.asset,
           failedKind,

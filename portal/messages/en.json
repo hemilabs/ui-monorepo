@@ -36,6 +36,8 @@
         "get-share-tokens": "Get share tokens",
         "funds-returned": "Funds returned",
         "funds-to-recover": "Funds to recover",
+        "shares-returned": "Shares returned",
+        "shares-to-recover": "Shares to recover",
         "receive-token": "Receive {symbol}",
         "unstake-token": "Unstake {symbol}",
         "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
@@ -80,6 +82,7 @@
       "total-deposits": "Total deposits"
     },
     "transactions": {
+      "claim-funds": "Claim funds",
       "claim-share-tokens": "Claim share tokens",
       "claiming": "Claiming...",
       "column": {
@@ -103,7 +106,9 @@
           "funds-returned": "Funds returned",
           "funds-to-recover": "Funds to recover",
           "unstake-token": "Unstake {symbol}",
-          "receive-token": "Receive {symbol}"
+          "receive-token": "Receive {symbol}",
+          "shares-returned": "Shares returned",
+          "shares-to-recover": "Shares to recover"
         },
         "withdraw-heading": "Stake withdrawal details",
         "withdraw-subheading": "Review your stake withdrawal transaction."
@@ -111,6 +116,7 @@
       "nothing-here": "Nothing here yet",
       "nothing-here-subtitle": "Your transactions will appear once you get started.",
       "recover-funds": "Recover funds",
+      "recover-shares": "Recover shares",
       "recovering": "Recovering...",
       "status": {
         "cooldown-ready-in-days": "Cooldown · ready in {value}d",
@@ -123,9 +129,10 @@
         "manual-claim-needed": "In progress - Manual claim needed",
         "ready-to-claim": "Ready to claim",
         "recover-funds-needed": "Something went wrong - Recover funds",
+        "recover-shares-needed": "Something went wrong - Recover shares",
         "returned": "Returned",
+        "shares-returned": "Shares returned",
         "tx-failed": "Tx Failed",
-        "withdrawal-canceled": "Withdrawal canceled",
         "withdrawn": "Withdrawn"
       },
       "subtitle": "Track the status of your deposits and withdrawals.",

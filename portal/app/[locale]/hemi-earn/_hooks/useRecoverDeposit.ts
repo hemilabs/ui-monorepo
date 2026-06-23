@@ -4,7 +4,7 @@ import { recoverDeposit } from 'hemi-earn-actions/actions'
 
 import { type EarnAsset, type EarnPool, type EarnTransaction } from '../types'
 
-import { useSettleDeposit } from './useSettleDeposit'
+import { useSettle } from './useSettle'
 
 type UseRecoverDeposit = {
   asset: EarnAsset
@@ -16,4 +16,10 @@ type UseRecoverDeposit = {
 // Signs `Router.recoverDeposit(requestId)` for a CANCELLED + manual deposit so
 // the original asset returns to the user's wallet (→ RECOVERED).
 export const useRecoverDeposit = (params: UseRecoverDeposit) =>
-  useSettleDeposit({ ...params, action: recoverDeposit, kind: 'RECOVER' })
+  useSettle({
+    action: recoverDeposit,
+    deliveredTokenAddress: params.asset.address,
+    kind: 'RECOVER',
+    on: params.on,
+    transaction: params.transaction,
+  })

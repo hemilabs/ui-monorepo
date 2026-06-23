@@ -20,9 +20,9 @@ import { useLocalEarnOperations } from './useLocalEarnOperations'
 // consumers — a single network call per interval drives every subscriber.
 //
 // Polling: every 10s while a row is in flight (`isEarnRowInFlight`: cross-chain
-// pending, auto-claim/auto-recover progressing, a deposit awaiting recovery,
-// cooldown maturing) or a local entry hasn't shown up in the subgraph yet.
-// Stops on the terminals (FINALIZED/RECOVERED/FAILED and a REDEEM CANCELLED).
+// pending, auto-claim/auto-recover progressing, a deposit or redeem awaiting
+// recovery, cooldown maturing) or a local entry hasn't shown up in the subgraph
+// yet. Stops on the terminals (FINALIZED/RECOVERED/FAILED).
 export const useEarnTransactionsQuery = function () {
   const [networkType] = useNetworkType()
   const { address } = useAccount()

@@ -36,6 +36,8 @@
         "get-share-tokens": "Receber share tokens",
         "funds-returned": "Fundos devolvidos",
         "funds-to-recover": "Fundos a recuperar",
+        "shares-returned": "Shares devolvidas",
+        "shares-to-recover": "Shares a recuperar",
         "receive-token": "Receber {symbol}",
         "unstake-token": "Fazer unstake de {symbol}",
         "wait-cooldown-countdown": "{days, plural, =0 {O período de espera termina em {hours}h} other {O período de espera termina em #d {hours}h}}",
@@ -80,6 +82,7 @@
       "total-deposits": "Depósitos totais"
     },
     "transactions": {
+      "claim-funds": "Receber fundos",
       "claim-share-tokens": "Receber share tokens",
       "claiming": "Recebendo...",
       "column": {
@@ -103,7 +106,9 @@
           "funds-returned": "Fundos devolvidos",
           "funds-to-recover": "Fundos a recuperar",
           "unstake-token": "Sacar {symbol}",
-          "receive-token": "Receber {symbol}"
+          "receive-token": "Receber {symbol}",
+          "shares-returned": "Shares devolvidas",
+          "shares-to-recover": "Shares a recuperar"
         },
         "withdraw-heading": "Detalhes do saque de stake",
         "withdraw-subheading": "Revise sua transação de saque de stake."
@@ -111,6 +116,7 @@
       "nothing-here": "Nada por aqui ainda",
       "nothing-here-subtitle": "Suas transações aparecerão assim que você começar.",
       "recover-funds": "Recuperar fundos",
+      "recover-shares": "Recuperar shares",
       "recovering": "Recuperando...",
       "status": {
         "cooldown-ready-in-days": "Cooldown · pronto em {value}d",
@@ -123,9 +129,10 @@
         "manual-claim-needed": "Em andamento - Resgate manual necessário",
         "ready-to-claim": "Pronto para receber",
         "recover-funds-needed": "Algo deu errado - Recuperar fundos",
+        "recover-shares-needed": "Algo deu errado - Recuperar shares",
         "returned": "Devolvido",
+        "shares-returned": "Shares devolvidas",
         "tx-failed": "Tx falhou",
-        "withdrawal-canceled": "Saque cancelado",
         "withdrawn": "Sacado"
       },
       "subtitle": "Acompanhe o status de seus depósitos e saques.",

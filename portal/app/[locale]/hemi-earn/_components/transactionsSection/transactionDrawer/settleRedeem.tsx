@@ -4,9 +4,9 @@ import { useTranslations } from 'next-intl'
 import { type FormEvent, type ReactNode } from 'react'
 import { isAddressEqual } from 'viem'
 
-import { useClaimDeposit } from '../../../_hooks/useClaimDeposit'
+import { useClaimRedeem } from '../../../_hooks/useClaimRedeem'
 import { useEarnPools } from '../../../_hooks/useEarnPools'
-import { useRecoverDeposit } from '../../../_hooks/useRecoverDeposit'
+import { useRecoverRedeem } from '../../../_hooks/useRecoverRedeem'
 import {
   findPoolByAsset,
   needsManualClaim,
@@ -33,7 +33,7 @@ type Props = {
   transaction: EarnTransaction
 }
 
-export const ClaimDeposit = function ({
+export const ClaimRedeem = function ({
   asset,
   fullWidth = true,
   pool,
@@ -44,7 +44,7 @@ export const ClaimDeposit = function ({
   const tCommon = useTranslations('common')
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
 
-  const { isPending, mutate } = useClaimDeposit({
+  const { isPending, mutate } = useClaimRedeem({
     asset,
     on: redirectOnSign
       ? emitter =>
@@ -76,14 +76,14 @@ export const ClaimDeposit = function ({
           ? t('claiming')
           : failed
             ? tCommon('try-again')
-            : t('claim-share-tokens')
+            : t('claim-funds')
       }
       onSubmit={onSubmit}
     />
   )
 }
 
-export const RecoverDeposit = function ({
+export const RecoverRedeem = function ({
   asset,
   fullWidth = true,
   pool,
@@ -94,7 +94,7 @@ export const RecoverDeposit = function ({
   const tCommon = useTranslations('common')
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
 
-  const { isPending, mutate } = useRecoverDeposit({
+  const { isPending, mutate } = useRecoverRedeem({
     asset,
     on: redirectOnSign
       ? emitter =>
@@ -126,7 +126,7 @@ export const RecoverDeposit = function ({
           ? t('recovering')
           : failed
             ? tCommon('try-again')
-            : t('recover-funds')
+            : t('recover-shares')
       }
       onSubmit={onSubmit}
     />
@@ -134,9 +134,9 @@ export const RecoverDeposit = function ({
 }
 
 // The table-row variant: resolves the pool/asset and renders the compact
-// Claim/Recover CTA (or nothing) for a deposit row. Retry stays a View→drawer
+// Claim/Recover CTA (or nothing) for a redeem row. Retry stays a View→drawer
 // flow, so it isn't handled here.
-export const DepositRowCta = function ({
+export const RedeemRowCta = function ({
   fallback,
   transaction,
 }: {
@@ -157,7 +157,7 @@ export const DepositRowCta = function ({
   }
   if (needsManualClaim(transaction)) {
     return (
-      <ClaimDeposit
+      <ClaimRedeem
         asset={asset}
         fullWidth={false}
         pool={pool}
@@ -168,7 +168,7 @@ export const DepositRowCta = function ({
   }
   if (needsRecover(transaction)) {
     return (
-      <RecoverDeposit
+      <RecoverRedeem
         asset={asset}
         fullWidth={false}
         pool={pool}

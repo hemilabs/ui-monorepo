@@ -1,8 +1,13 @@
 import { type Token } from 'types/token'
 import { formatPercentage } from 'utils/format'
-import { type Address, isAddressEqual } from 'viem'
+import { type Address, type Hash, isAddressEqual } from 'viem'
 
-import { type EarnPool, type EarnTransaction } from '../types'
+import {
+  type EarnPool,
+  type EarnSettlement,
+  type EarnTransaction,
+  type LocalEarnOperation,
+} from '../types'
 
 // Case-insensitive equality for tx hashes. `viem` ships `isAddressEqual`
 // for 20-byte addresses but no equivalent for 32-byte tx hashes — the
@@ -53,25 +58,26 @@ export const findPoolByShare = (
 export const isLocalEarnTransactionRow = (tx: EarnTransaction) =>
   tx.requestId.startsWith('local-')
 
-// A FULFILLED deposit with auto-claim off: the shares are back on the Router
-// but the user must sign `claimDeposit(id)` to receive them.
+// A FULFILLED request with auto-claim off: the tokens are back on the Router and
+// the user must sign `claim{Deposit,Redeem}(id)` to receive them — shares for a
+// deposit, the underlying asset for a redeem.
 export const needsManualClaim = (tx: EarnTransaction) =>
-  tx.kind === 'DEPOSIT' && tx.status === 'FULFILLED' && tx.automatic === false
+  tx.status === 'FULFILLED' && tx.automatic === false
 
-// A CANCELLED deposit with auto-recover off: the original asset is back on the
-// Router and the user must sign `recoverDeposit(id)` to pull it to their wallet.
-// `recoverDeposit` reverts unless the request is CANCELLED, so this is the only
-// state where the Recover CTA is valid.
+// A CANCELLED request with auto-recover off: the original tokens are back on the
+// Router and the user must sign `recover{Deposit,Redeem}(id)` to pull them to
+// their wallet — the asset for a deposit, the shares for a redeem. `recover*`
+// reverts unless the request is CANCELLED, so this is the only state where the
+// Recover CTA is valid.
 export const needsRecover = (tx: EarnTransaction) =>
-  tx.kind === 'DEPOSIT' && tx.status === 'CANCELLED' && tx.automatic === false
+  tx.status === 'CANCELLED' && tx.automatic === false
 
-// Broader than `needsRecover`: any deposit on the recover branch (awaiting or
+// Broader than `needsRecover`: any request on the recover branch (awaiting or
 // past recovery), regardless of `automatic`. Drives the display — the terminal
-// step shows the returned asset, not shares — even when auto-recover means no
-// CTA is shown.
+// step shows the returned tokens (asset for a deposit, shares for a redeem), not
+// the claimed ones — even when auto-recover means no CTA is shown.
 export const isRecoverPath = (tx: EarnTransaction) =>
-  tx.kind === 'DEPOSIT' &&
-  (tx.status === 'CANCELLED' || tx.status === 'RECOVERED')
+  tx.status === 'CANCELLED' || tx.status === 'RECOVERED'
 
 // The Hemi `request*` tx reverted before it ever landed on-chain, so the user
 // can re-run the original request. Subgraph FAILED rows are a different beast
@@ -103,14 +109,35 @@ export const pickEarnRowAmount = (
       }
     : { rawAmount: transaction.amountIn, token: assetToken }
 
+// Reads the manual claim/recover settlement marker straight from the local
+// store, keyed by the request tx — for callers holding a raw (not
+// merge-enriched) subgraph row, like the live pool drawers.
+export const findLocalSettlement = (
+  localOperations: LocalEarnOperation[],
+  requestTxHash: Hash | undefined,
+): EarnSettlement | undefined =>
+  requestTxHash
+    ? localOperations.find(
+        op =>
+          op.initiateTxHash && hashesMatch(op.initiateTxHash, requestTxHash),
+      )?.settlement
+    : undefined
+
+// Folds the local settlement into a raw subgraph row before handing it to the
+// CTA — otherwise the button can't reflect the pending/reverted claim/recover
+// (it'd stay on the idle label after a revert).
+export const enrichWithSettlement = (
+  row: EarnTransaction | undefined,
+  settlement: EarnSettlement | undefined,
+): EarnTransaction | undefined =>
+  row && settlement ? { ...row, settlement } : row
+
 // A row the table is still actively tracking — drives both the polling loop and
-// the row spinner. Terminal: FINALIZED/RECOVERED/FAILED for any kind, plus a
-// CANCELLED REDEEM (withdrawal canceled). A CANCELLED DEPOSIT stays in flight:
-// it still walks to RECOVERED, whether auto-recover or via the user's recover,
-// so the table keeps polling and reflects it (even across devices/sessions),
-// mirroring how a FULFILLED deposit walks to FINALIZED.
+// the row spinner. Terminal: FINALIZED/RECOVERED/FAILED. A CANCELLED request (any
+// kind) stays in flight: it still walks to RECOVERED, whether auto-recover or via
+// the user's recover, so the table keeps polling and reflects it (even across
+// devices/sessions), mirroring how a FULFILLED request walks to FINALIZED.
 export const isEarnRowInFlight = (tx: EarnTransaction) =>
   tx.status !== 'FINALIZED' &&
   tx.status !== 'RECOVERED' &&
-  tx.status !== 'FAILED' &&
-  !(tx.status === 'CANCELLED' && tx.kind === 'REDEEM')
+  tx.status !== 'FAILED'

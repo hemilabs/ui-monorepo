@@ -14,6 +14,7 @@ import { useToken } from 'hooks/useToken'
 import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
+import { type Hash } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { useCooldownDuration } from '../../../_hooks/useCooldownDuration'
@@ -21,6 +22,9 @@ import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import {
   getTerminalDeliveryTxHash,
   isLocalEarnTransactionRow,
+  isRecoverPath,
+  needsManualClaim,
+  needsRecover,
 } from '../../../_utils'
 import { deriveCooldownPostAction } from '../../../pool/[shareAddress]/_components/poolReview/cooldownPostAction'
 import { useEarnCooldownRemaining } from '../../../pool/[shareAddress]/_hooks/useEarnCooldownRemaining'
@@ -48,8 +52,10 @@ type StepStates = {
 
 const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   CANCELLED: {
+    // A cancelled redeem isn't a failed unstake — the request landed and the
+    // shares are coming back via the recover path.
     receive: ProgressStatus.NOT_READY,
-    unstake: ProgressStatus.FAILED,
+    unstake: ProgressStatus.COMPLETED,
   },
   FAILED: {
     receive: ProgressStatus.NOT_READY,
@@ -113,21 +119,78 @@ const pickDisplay = (
     ? { amount: tx.amountOut, token: assetToken }
     : { amount: tx.amountIn, token: shareToken }
 
-const buildReceiveStep = (
-  tx: EarnTransaction,
-  receiveToken: EvmToken,
-  t: Translator,
-  status: ProgressStatusType,
-) => ({
-  description: (
-    <div className="flex items-center gap-x-2">
-      <TokenLogo size="small" token={receiveToken} />
-      <span>{t('step.receive-token', { symbol: receiveToken.symbol })}</span>
-    </div>
-  ),
+function buildReceiveStep({
+  receiveToken,
+  settlementTxHash,
   status,
-  txHash: getTerminalDeliveryTxHash(tx),
-})
+  t,
+  tx,
+}: {
+  receiveToken: EvmToken
+  settlementTxHash: Hash | undefined
+  status: ProgressStatusType
+  t: Translator
+  tx: EarnTransaction
+}) {
+  // Link the mining claim while still FULFILLED (the terminal `claimTxHash` only
+  // lands once FINALIZED), matching the deposit drawer.
+  const txHash = settlementTxHash ?? getTerminalDeliveryTxHash(tx)
+  return {
+    description: (
+      <div className="flex items-center gap-x-2">
+        <TokenLogo size="small" token={receiveToken} />
+        <span>{t('step.receive-token', { symbol: receiveToken.symbol })}</span>
+      </div>
+    ),
+    explorerChainId: txHash ? hemi.id : undefined,
+    status,
+    txHash,
+  }
+}
+
+// COMPLETED once RECOVERED; a reverted recover → FAILED; a mining recover →
+// PROGRESS; a pending manual recover → READY (active); else auto-recover PROGRESS.
+function resolveRecoverStatus(
+  tx: EarnTransaction,
+  settlementTxHash: Hash | undefined,
+): ProgressStatusType {
+  if (tx.status === 'RECOVERED') return ProgressStatus.COMPLETED
+  if (tx.settlement?.failed) return ProgressStatus.FAILED
+  if (settlementTxHash) return ProgressStatus.PROGRESS
+  if (needsRecover(tx)) return ProgressStatus.READY
+  return ProgressStatus.PROGRESS
+}
+
+// On the recover path the user gets the SHARES back (not the asset), so the
+// terminal step is labeled with the share token: "Shares to recover" while
+// CANCELLED, "Shares returned" once RECOVERED.
+function buildRecoverStep(
+  tx: EarnTransaction,
+  shareToken: EvmToken,
+  t: Translator,
+  settlementTxHash: Hash | undefined,
+) {
+  // Link the mining manual-recover tx while CANCELLED (its terminal
+  // `recoverTxHash` only lands once RECOVERED), matching the deposit drawer.
+  const txHash = settlementTxHash ?? getTerminalDeliveryTxHash(tx)
+  return {
+    description: (
+      <div className="flex items-center gap-x-2">
+        <TokenLogo size="small" token={shareToken} />
+        <span>
+          {t(
+            tx.status === 'RECOVERED'
+              ? 'step.shares-returned'
+              : 'step.shares-to-recover',
+          )}
+        </span>
+      </div>
+    ),
+    explorerChainId: txHash ? hemi.id : undefined,
+    status: resolveRecoverStatus(tx, settlementTxHash),
+    txHash,
+  }
+}
 
 const buildApprovalStep = (
   approvalTxHash: NonNullable<EarnTransaction['approvalTxHash']>,
@@ -165,12 +228,30 @@ function deriveReceiveStatus({
     : receiveFromStatus
 }
 
+// FULFILLED + manual awaits the user's claim → READY (not a spinner — nothing is
+// progressing until they sign); a mining claim → PROGRESS; a reverted one →
+// FAILED; else the cooldown-derived status (already COMPLETED once FINALIZED).
+function resolveReceiveStatus(
+  tx: EarnTransaction,
+  cooldownDerived: ProgressStatusType,
+  settlementTxHash: Hash | undefined,
+): ProgressStatusType {
+  if (cooldownDerived === ProgressStatus.COMPLETED) {
+    return ProgressStatus.COMPLETED
+  }
+  if (tx.settlement?.failed) return ProgressStatus.FAILED
+  if (settlementTxHash) return ProgressStatus.PROGRESS
+  if (needsManualClaim(tx)) return ProgressStatus.READY
+  return cooldownDerived
+}
+
 function buildSteps({
   cooldownPostAction,
   needsApproval,
   pool,
   receive,
   receiveToken,
+  settlementTxHash,
   t,
   transaction,
 }: {
@@ -179,6 +260,7 @@ function buildSteps({
   pool: EarnPool
   receive: ProgressStatusType
   receiveToken: EvmToken | undefined
+  settlementTxHash: Hash | undefined
   t: Translator
   transaction: EarnTransaction
 }): StepPropsWithoutPosition[] {
@@ -204,13 +286,30 @@ function buildSteps({
     )
   }
   const unstakeStep = buildUnstakeStep(transaction, pool.shareToken, t)
+  // Recover path: the unstake landed and the shares come back (not the asset),
+  // so the cooldown/receive machinery doesn't apply.
+  if (isRecoverPath(transaction)) {
+    steps.push(unstakeStep)
+    steps.push(
+      buildRecoverStep(transaction, pool.shareToken, t, settlementTxHash),
+    )
+    return steps
+  }
   steps.push(
     cooldownPostAction
       ? { ...unstakeStep, postAction: cooldownPostAction }
       : unstakeStep,
   )
   if (receiveToken) {
-    steps.push(buildReceiveStep(transaction, receiveToken, t, receive))
+    steps.push(
+      buildReceiveStep({
+        receiveToken,
+        settlementTxHash,
+        status: receive,
+        t,
+        tx: transaction,
+      }),
+    )
   }
   return steps
 }
@@ -258,12 +357,19 @@ export const HistoricalWithdrawReview = function ({
 
   const { receive: receiveFromStatus, unstake } = resolveStepStates(transaction)
   const unstakeMined = unstake === ProgressStatus.COMPLETED
-  const receive = deriveReceiveStatus({
-    cooldownRemainingSec,
-    isCooldownEligible,
-    receiveFromStatus,
-    unstakeMined,
-  })
+  const { settlement } = transaction
+  const settlementTxHash =
+    settlement && !settlement.failed ? settlement.txHash : undefined
+  const receive = resolveReceiveStatus(
+    transaction,
+    deriveReceiveStatus({
+      cooldownRemainingSec,
+      isCooldownEligible,
+      receiveFromStatus,
+      unstakeMined,
+    }),
+    settlementTxHash,
+  )
 
   const cooldownPostAction = deriveCooldownPostAction({
     cooldownDurationSec,
@@ -290,6 +396,7 @@ export const HistoricalWithdrawReview = function ({
     pool,
     receive,
     receiveToken,
+    settlementTxHash,
     t,
     transaction,
   })

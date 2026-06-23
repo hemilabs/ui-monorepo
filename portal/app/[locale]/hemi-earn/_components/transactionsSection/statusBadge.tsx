@@ -49,22 +49,19 @@ function resolveStatusBadge(
   if (status === 'FAILED') {
     return failedBadge(t)
   }
-  // A cancelled deposit returned the original asset (the Recover CTA pulls it
-  // out); a cancelled redeem is terminal.
+  // A cancelled request (deposit or redeem) is mid-recover: the original tokens
+  // are coming back (auto-recover) or await the Recover CTA — never terminal.
   if (status === 'CANCELLED') {
-    return kind === 'REDEEM'
-      ? {
-          icon: <ErrorIcon className="text-neutral-400" />,
-          text: t('status.withdrawal-canceled'),
-          textClassName: 'text-neutral-500',
-        }
-      : inProgress(t('status.returned'))
+    return inProgress(t('status.returned'))
   }
-  // Recovered deposits are surfaced (recovered redeems stay filtered upstream).
+  // Recovered: the deposit's asset / the redeem's shares are back in the wallet.
   if (status === 'RECOVERED') {
     return {
       icon: <CheckCircleIcon className="text-neutral-400" />,
-      text: t('status.funds-returned'),
+      text:
+        kind === 'REDEEM'
+          ? t('status.shares-returned')
+          : t('status.funds-returned'),
       textClassName: 'text-neutral-500',
     }
   }
@@ -82,7 +79,10 @@ function resolveBadge(
   if (needsRecover(transaction)) {
     return {
       icon: <WarningIcon className="text-amber-500" />,
-      text: t('status.recover-funds-needed'),
+      text:
+        kind === 'REDEEM'
+          ? t('status.recover-shares-needed')
+          : t('status.recover-funds-needed'),
       textClassName: 'text-neutral-900',
     }
   }

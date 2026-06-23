@@ -19,10 +19,10 @@ import { type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 import {
-  AddShareTokenToWallet,
   ClaimDeposit,
   RecoverDeposit,
 } from '../../../../_components/transactionsSection/transactionDrawer/settleDeposit'
+import { AddTokenToWalletCta } from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
 import {
   DEPOSIT_SLIPPAGE_BPS,
   applySlippage,
@@ -31,17 +31,15 @@ import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactions
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
 import { SparkleIcon } from '../../../../_icons/sparkleIcon'
 import {
+  enrichWithSettlement,
+  findLocalSettlement,
   getTerminalDeliveryTxHash,
   hashesMatch,
   isRecoverPath,
   needsManualClaim,
   needsRecover,
 } from '../../../../_utils'
-import {
-  type EarnSettlement,
-  type EarnTransaction,
-  type LocalEarnOperation,
-} from '../../../../types'
+import { type EarnTransaction } from '../../../../types'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useDepositShares } from '../../_hooks/useDepositShares'
 import { useQuoteDeposit } from '../../_hooks/useQuoteDeposit'
@@ -80,28 +78,6 @@ function resolveGetSharesStatus({
   if (isRecover || isDepositConfirmed) return ProgressStatus.PROGRESS
   return ProgressStatus.NOT_READY
 }
-
-// `subgraphRow` is raw (not merge-enriched), so the manual claim/recover
-// settlement is read straight from the local store keyed by the request tx.
-const findLocalSettlement = (
-  localOperations: LocalEarnOperation[],
-  requestTxHash: Hash | undefined,
-) =>
-  requestTxHash
-    ? localOperations.find(
-        op =>
-          op.initiateTxHash && hashesMatch(op.initiateTxHash, requestTxHash),
-      )?.settlement
-    : undefined
-
-// `subgraphRow` is raw (not merge-enriched), so fold the local settlement in
-// before handing it to the CTA — otherwise the button can't reflect the
-// pending/reverted claim (it'd stay "Claim share tokens" after a revert).
-const enrichWithSettlement = (
-  row: EarnTransaction | undefined,
-  settlement: EarnSettlement | undefined,
-): EarnTransaction | undefined =>
-  row && settlement ? { ...row, settlement } : row
 
 function getSharesStepMeta(
   subgraphRow: EarnTransaction | undefined,
@@ -398,7 +374,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     // that points the wallet at a token with no balance and confuses
     // wallets that gate metadata reads on a non-zero balance.
     if (subgraphRow?.status === 'FINALIZED') {
-      return <AddShareTokenToWallet token={pool.shareToken} />
+      return <AddTokenToWalletCta token={pool.shareToken} />
     }
     return null
   }

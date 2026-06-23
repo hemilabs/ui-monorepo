@@ -10,6 +10,7 @@ import { LoaderIcon } from '../icons/loaderIcon'
 import { TrashIcon } from '../icons/trashIcon'
 
 import { DepositRowCta } from './transactionDrawer/settleDeposit'
+import { RedeemRowCta } from './transactionDrawer/settleRedeem'
 import { useTxDrawerQueryString } from './transactionDrawer/useTxDrawerQueryString'
 
 type Props = {
@@ -17,7 +18,7 @@ type Props = {
 }
 
 // Spinner while the row is in flight (auto-progressing, including an auto-recover
-// CANCELLED deposit, or a claim/recover settlement tx mining), but never on a
+// CANCELLED deposit or redeem, or a claim/recover settlement tx mining), but never on a
 // reverted settlement — that's "Tx Failed" with a Retry. The inline
 // Claim/Recover CTA is only for the untouched manual state; once a settlement
 // exists (mining or reverted) the row hands back to View and the drawer carries
@@ -37,6 +38,10 @@ export const RowActions = function ({ transaction }: Props) {
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
 
   const { showLoaderIcon, showManualCta } = resolveActionState(transaction)
+
+  // Deposit and redeem render different settlement CTAs (different hooks +
+  // labels); pick the row variant by kind.
+  const RowCta = transaction.kind === 'REDEEM' ? RedeemRowCta : DepositRowCta
 
   const showCancelButton =
     transaction.kind === 'REDEEM' &&
@@ -68,7 +73,7 @@ export const RowActions = function ({ transaction }: Props) {
   return (
     <div className="flex items-center gap-x-2 pr-4">
       {showManualCta ? (
-        <DepositRowCta fallback={viewButton} transaction={transaction} />
+        <RowCta fallback={viewButton} transaction={transaction} />
       ) : (
         viewButton
       )}

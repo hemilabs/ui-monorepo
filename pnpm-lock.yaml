@@ -8,9 +8,9 @@ overrides:
   postcss: 8.5.14
 
 patchedDependencies:
-  '@hemilabs/token-list@3.1.0':
+  '@hemilabs/token-list@3.2.0':
     hash: ba99566230e2751cb02cd9c823bd1eb799df8ea5524ea60682428190a4b89a88
-    path: patches/@hemilabs__token-list@3.1.0.patch
+    path: patches/@hemilabs__token-list@3.2.0.patch
   '@hemilabs/wallet-watch-asset@1.0.2':
     hash: 29bbea75a794a36a5ab734b563912a6cde0b08398e00727b76066fe46a72f5ec
     path: patches/@hemilabs__wallet-watch-asset@1.0.2.patch
@@ -328,8 +328,8 @@ importers:
         specifier: 1.6.0
         version: 1.6.0(@hemilabs/wallet-watch-asset@1.0.2(patch_hash=29bbea75a794a36a5ab734b563912a6cde0b08398e00727b76066fe46a72f5ec))(@tanstack/react-query@5.100.9(react@19.1.1))(react@19.1.1)(viem-erc20@2.0.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)))(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))(wagmi@2.15.7(@tanstack/query-core@5.100.9)(@tanstack/react-query@5.100.9(react@19.1.1))(@types/react@19.1.13)(bufferutil@4.1.0)(encoding@0.1.13)(react@19.1.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))(zod@3.25.76))
       '@hemilabs/token-list':
-        specifier: 3.1.0
-        version: 3.1.0(patch_hash=ba99566230e2751cb02cd9c823bd1eb799df8ea5524ea60682428190a4b89a88)
+        specifier: 3.2.0
+        version: 3.2.0(patch_hash=ba99566230e2751cb02cd9c823bd1eb799df8ea5524ea60682428190a4b89a88)
       '@hemilabs/wallet-watch-asset':
         specifier: 1.0.2
         version: 1.0.2(patch_hash=29bbea75a794a36a5ab734b563912a6cde0b08398e00727b76066fe46a72f5ec)
@@ -1832,10 +1832,10 @@ packages:
       viem-erc20: ^2
       wagmi: ^2
 
-  '@hemilabs/token-list@3.1.0':
+  '@hemilabs/token-list@3.2.0':
     resolution:
       {
-        integrity: sha512-xODmuSiGozho49c6B8vcSgBKiSG4S6B+mQu92w9qvBzz+zlOzGU5FeYM1/9D0QJhdJ1JSP9Mi/5RkEpTFHDu9g==,
+        integrity: sha512-sJYp5h7mYsQr3M315rtvhauQk37rqv4rhr0xLi4FF2Nc/+lSq6Hj/7LrA9cQFImli+5GQA2ULvyOSe/9onZLlQ==,
       }
     engines: { node: ^20.19.0 || >=22.12.0 }
 
@@ -16216,7 +16216,7 @@ snapshots:
       viem-erc20: 2.0.0(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
       wagmi: 2.15.7(@tanstack/query-core@5.100.9)(@tanstack/react-query@5.100.9(react@19.1.1))(@types/react@19.1.13)(bufferutil@4.1.0)(encoding@0.1.13)(react@19.1.1)(typescript@5.8.3)(utf-8-validate@5.0.10)(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))(zod@3.25.76)
 
-  '@hemilabs/token-list@3.1.0(patch_hash=ba99566230e2751cb02cd9c823bd1eb799df8ea5524ea60682428190a4b89a88)':
+  '@hemilabs/token-list@3.2.0(patch_hash=ba99566230e2751cb02cd9c823bd1eb799df8ea5524ea60682428190a4b89a88)':
     {}
 
   '@hemilabs/wallet-watch-asset@1.0.2(patch_hash=29bbea75a794a36a5ab734b563912a6cde0b08398e00727b76066fe46a72f5ec)':

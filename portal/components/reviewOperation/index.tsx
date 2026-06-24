@@ -5,6 +5,7 @@ import { CallToActionContainer } from './callToActionContainer'
 import { Step, type StepPropsWithoutPosition } from './step'
 
 type Props = {
+  aboveCallToAction?: ReactNode
   amount: ReactNode
   bottomSection?: ReactNode
   callToAction?: ReactNode
@@ -12,6 +13,7 @@ type Props = {
 }
 
 export const ReviewOperation = ({
+  aboveCallToAction,
   amount,
   bottomSection,
   callToAction,
@@ -35,6 +37,7 @@ export const ReviewOperation = ({
       </DrawerSection>
       {bottomSection}
     </div>
+    {aboveCallToAction}
     {!!callToAction && (
       <CallToActionContainer>{callToAction}</CallToActionContainer>
     )}

@@ -19,6 +19,7 @@ import {
   needsManualClaim,
   needsRecover,
   pickEarnRowAmount,
+  pickSettleBannerKey,
   resolveSettleStepStatus,
 } from '../../../../../app/[locale]/hemi-earn/_utils'
 import {
@@ -610,6 +611,51 @@ describe('utils', function () {
         resolveSettleStepStatus({ ...base, fallback: ProgressStatus.PROGRESS }),
       ).toBe(ProgressStatus.PROGRESS)
       expect(resolveSettleStepStatus(base)).toBe(ProgressStatus.NOT_READY)
+    })
+  })
+
+  describe('pickSettleBannerKey', function () {
+    it.each<[EarnTransaction['kind'], EarnTransactionStatusType, string]>([
+      ['DEPOSIT', 'FULFILLED', 'claim-shares'],
+      ['REDEEM', 'FULFILLED', 'claim-funds'],
+      ['DEPOSIT', 'CANCELLED', 'recover-funds'],
+      ['REDEEM', 'CANCELLED', 'recover-shares'],
+    ])('%s %s → %s', function (kind, status, expected) {
+      expect(pickSettleBannerKey({ ...baseTx, kind, status })).toBe(expected)
+    })
+
+    it.each<EarnTransactionStatusType>([
+      'PENDING',
+      'TX_PENDING',
+      'FINALIZED',
+      'RECOVERED',
+      'FAILED',
+    ])('returns undefined for the non-actionable status %s', function (status) {
+      expect(pickSettleBannerKey({ ...baseTx, status })).toBeUndefined()
+    })
+
+    it('returns undefined for an undefined row', function () {
+      expect(pickSettleBannerKey(undefined)).toBeUndefined()
+    })
+
+    it('returns undefined while a claim/recover is pending (settlement marker)', function () {
+      expect(
+        pickSettleBannerKey({
+          ...baseTx,
+          settlement: { failed: false, kind: 'CLAIM' },
+          status: 'FULFILLED',
+        }),
+      ).toBeUndefined()
+    })
+
+    it('returns undefined after a reverted settlement (try-again state)', function () {
+      expect(
+        pickSettleBannerKey({
+          ...baseTx,
+          settlement: { failed: true, kind: 'RECOVER' },
+          status: 'CANCELLED',
+        }),
+      ).toBeUndefined()
     })
   })
 })

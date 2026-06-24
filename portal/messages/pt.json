@@ -82,6 +82,24 @@
       "total-deposits": "Depósitos totais"
     },
     "transactions": {
+      "banner": {
+        "claim-funds": {
+          "heading": "Não foi possível receber seus fundos automaticamente",
+          "subheading": "Clique em 'Receber fundos' para receber seus fundos."
+        },
+        "claim-shares": {
+          "heading": "Não foi possível receber seus share tokens automaticamente",
+          "subheading": "Clique em 'Receber share tokens' para receber seus tokens."
+        },
+        "recover-funds": {
+          "heading": "Transação falhou",
+          "subheading": "Algo deu errado. Use o botão abaixo para devolver seus fundos à sua carteira."
+        },
+        "recover-shares": {
+          "heading": "Transação falhou",
+          "subheading": "Algo deu errado. Use o botão abaixo para devolver seus share tokens à sua carteira."
+        }
+      },
       "claim-funds": "Receber fundos",
       "claim-share-tokens": "Receber share tokens",
       "claiming": "Recebendo...",

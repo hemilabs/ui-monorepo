@@ -22,6 +22,7 @@ import { useAccount, useEstimateGas } from 'wagmi'
 
 import {
   AddTokenToWalletCta,
+  SettleBanner,
   SettleCta,
 } from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
 import {
@@ -484,6 +485,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   return (
     <Operation
+      aboveCallToAction={<SettleBanner transaction={settledRow} />}
       amount={withdrawOperation?.amountIn ?? shares.toString()}
       callToAction={getCallToAction()}
       heading={t('withdraw.heading')}

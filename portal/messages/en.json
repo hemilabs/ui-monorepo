@@ -82,6 +82,24 @@
       "total-deposits": "Total deposits"
     },
     "transactions": {
+      "banner": {
+        "claim-funds": {
+          "heading": "We couldn't claim your funds automatically",
+          "subheading": "Click on 'Claim funds' to get your funds."
+        },
+        "claim-shares": {
+          "heading": "We couldn't claim your share tokens automatically",
+          "subheading": "Click on 'Claim share tokens' to get your tokens."
+        },
+        "recover-funds": {
+          "heading": "Transaction failed",
+          "subheading": "Something went wrong. Use the button below to return your funds to your wallet."
+        },
+        "recover-shares": {
+          "heading": "Transaction failed",
+          "subheading": "Something went wrong. Use the button below to return your share tokens to your wallet."
+        }
+      },
       "claim-funds": "Claim funds",
       "claim-share-tokens": "Claim share tokens",
       "claiming": "Claiming...",

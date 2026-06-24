@@ -20,6 +20,7 @@ import { useAccount, useEstimateGas } from 'wagmi'
 
 import {
   AddTokenToWalletCta,
+  SettleBanner,
   SettleCta,
 } from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
 import {
@@ -392,6 +393,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   return (
     <Operation
+      aboveCallToAction={<SettleBanner transaction={settledRow} />}
       amount={depositOperation?.amountIn ?? amount.toString()}
       callToAction={getCallToAction()}
       heading={t('deposit.heading')}

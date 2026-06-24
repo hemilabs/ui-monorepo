@@ -10,6 +10,8 @@
     "generate:htaccess": "node ./scripts/generateServerConfig.js",
     "preserve": "pnpm run build",
     "serve": "serve out",
+    "storybook": "storybook dev -p 6006",
+    "storybook:build": "storybook build",
     "test": "vitest run"
   },
   "dependencies": {
@@ -73,6 +75,7 @@
     "wagmi": "2.15.7"
   },
   "devDependencies": {
+    "@storybook/nextjs": "10.4.4",
     "@total-typescript/ts-reset": "0.6.1",
     "@tsconfig/next": "2.0.3",
     "@types/big.js": "6.2.2",
@@ -88,6 +91,7 @@
     "postcss-import": "16.1.0",
     "qrcode-terminal": "0.12.0",
     "serve": "14.2.4",
+    "storybook": "10.4.4",
     "tailwindcss": "3.4.14",
     "typescript": "5.8.3",
     "vite-tsconfig-paths": "6.1.1",

@@ -393,8 +393,8 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   return (
     <Operation
+      aboveCallToAction={<SettleBanner transaction={settledRow} />}
       amount={depositOperation?.amountIn ?? amount.toString()}
-      bottomSection={<SettleBanner transaction={settledRow} />}
       callToAction={getCallToAction()}
       heading={t('deposit.heading')}
       onClose={onClose}

@@ -101,10 +101,10 @@ export const hasFailedSettlement = (tx: EarnTransaction) =>
   tx.settlement?.failed === true
 
 // Which explanatory banner (if any) a drawer should show above the settle CTA —
-// undefined unless the row is awaiting a manual claim (FULFILLED) or recover
-// (CANCELLED). The shares/funds split follows the same delivered-token inversion
-// as `SettleCta`: a deposit claim / redeem recover act on shares; a deposit
-// recover / redeem claim act on the underlying asset (funds).
+// undefined unless the row is awaiting an *untouched* manual claim (FULFILLED) or
+// recover (CANCELLED). The shares/funds split follows the same delivered-token
+// inversion as `SettleCta`: a deposit claim / redeem recover act on shares; a
+// deposit recover / redeem claim act on the underlying asset (funds).
 export const pickSettleBannerKey = function (
   tx: EarnTransaction | undefined,
 ):
@@ -114,6 +114,10 @@ export const pickSettleBannerKey = function (
   | 'recover-shares'
   | undefined {
   if (!tx) return undefined
+  // A settlement marker means the user already signed (the CTA now reads
+  // "Claiming…") or it reverted ("Try again"); the banner's "Click on 'Claim …'"
+  // copy would contradict the button, so drop it once they've engaged.
+  if (tx.settlement) return undefined
   const operation = needsManualClaim(tx)
     ? 'CLAIM'
     : needsRecover(tx)

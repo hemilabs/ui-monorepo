@@ -385,8 +385,8 @@ export const HistoricalWithdrawReview = function ({
 
   return (
     <Operation
+      aboveCallToAction={<SettleBanner transaction={transaction} />}
       amount={displayAmount}
-      bottomSection={<SettleBanner transaction={transaction} />}
       callToAction={callToAction}
       heading={t('withdraw-heading')}
       onClose={onClose}

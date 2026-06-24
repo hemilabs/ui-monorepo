@@ -97,7 +97,7 @@
         },
         "recover-shares": {
           "heading": "Transação falhou",
-          "subheading": "Algo deu errado. Use o botão abaixo para devolver suas shares à sua carteira."
+          "subheading": "Algo deu errado. Use o botão abaixo para devolver seus share tokens à sua carteira."
         }
       },
       "claim-funds": "Receber fundos",

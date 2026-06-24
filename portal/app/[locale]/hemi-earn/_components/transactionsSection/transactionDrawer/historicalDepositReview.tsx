@@ -251,8 +251,8 @@ export const HistoricalDepositReview = function ({
 
   return (
     <Operation
+      aboveCallToAction={<SettleBanner transaction={transaction} />}
       amount={transaction.amountIn}
-      bottomSection={<SettleBanner transaction={transaction} />}
       callToAction={callToAction}
       heading={t('deposit-heading')}
       onClose={onClose}

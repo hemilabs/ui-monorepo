@@ -5,6 +5,7 @@ import { type StepPropsWithoutPosition } from 'components/reviewOperation/step'
 import { ComponentProps, ReactNode } from 'react'
 
 type Props = {
+  aboveCallToAction?: ReactNode
   callToAction?: ReactNode
   bottomSection?: ReactNode
   steps: StepPropsWithoutPosition[]
@@ -16,6 +17,7 @@ type Props = {
   }
 
 export const Operation = ({
+  aboveCallToAction,
   amount,
   bottomSection,
   callToAction,
@@ -31,6 +33,7 @@ export const Operation = ({
       <DrawerParagraph>{subheading}</DrawerParagraph>
     </div>
     <ReviewOperation
+      aboveCallToAction={aboveCallToAction}
       amount={<Amount token={token} value={amount} />}
       bottomSection={bottomSection}
       callToAction={callToAction}

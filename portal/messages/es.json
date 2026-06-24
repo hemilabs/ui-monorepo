@@ -84,20 +84,20 @@
     "transactions": {
       "banner": {
         "claim-funds": {
-          "heading": "No pudimos recibir tus fondos automáticamente",
-          "subheading": "Haz clic en 'Recibir fondos' para recibir tus fondos."
+          "heading": "No pudimos recibir sus fondos automáticamente",
+          "subheading": "Haga clic en 'Recibir fondos' para recibir sus fondos."
         },
         "claim-shares": {
-          "heading": "No pudimos recibir tus share tokens automáticamente",
-          "subheading": "Haz clic en 'Recibir share tokens' para recibir tus tokens."
+          "heading": "No pudimos recibir sus share tokens automáticamente",
+          "subheading": "Haga clic en 'Recibir share tokens' para recibir sus tokens."
         },
         "recover-funds": {
           "heading": "La transacción falló",
-          "subheading": "Algo salió mal. Usa el botón de abajo para devolver tus fondos a tu billetera."
+          "subheading": "Algo salió mal. Use el botón de abajo para devolver sus fondos a su billetera."
         },
         "recover-shares": {
           "heading": "La transacción falló",
-          "subheading": "Algo salió mal. Usa el botón de abajo para devolver tus shares a tu billetera."
+          "subheading": "Algo salió mal. Use el botón de abajo para devolver sus share tokens a su billetera."
         }
       },
       "claim-funds": "Recibir fondos",

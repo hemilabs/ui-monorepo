@@ -209,10 +209,11 @@ export const SettleBanner = function ({
   const t = useTranslations('hemi-earn.transactions.banner')
   const key = pickSettleBannerKey(transaction)
   if (!key) return null
-  // `mt-auto` pins the banner to the bottom of the scrollable body, just above
-  // the CTA footer; the padding matches the drawer's 24px gutter (16px mobile).
+  // Rendered in the drawer's `aboveCallToAction` slot (outside the scroll area)
+  // so it stays pinned above the CTA regardless of step count. The padding
+  // matches the drawer's 24px gutter (16px on mobile).
   return (
-    <div className="mt-auto px-4 py-6 md:px-6">
+    <div className="px-4 py-6 md:px-6">
       <WarningBox
         heading={t(`${key}.heading`)}
         subheading={t(`${key}.subheading`)}

@@ -485,8 +485,8 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   return (
     <Operation
+      aboveCallToAction={<SettleBanner transaction={settledRow} />}
       amount={withdrawOperation?.amountIn ?? shares.toString()}
-      bottomSection={<SettleBanner transaction={settledRow} />}
       callToAction={getCallToAction()}
       heading={t('withdraw.heading')}
       onClose={onClose}

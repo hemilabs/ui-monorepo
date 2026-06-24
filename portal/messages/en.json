@@ -85,11 +85,11 @@
       "banner": {
         "claim-funds": {
           "heading": "We couldn't claim your funds automatically",
-          "subheading": "Click on 'Claim Funds' to get your funds."
+          "subheading": "Click on 'Claim funds' to get your funds."
         },
         "claim-shares": {
           "heading": "We couldn't claim your share tokens automatically",
-          "subheading": "Click on 'Claim Share Tokens' to get your tokens."
+          "subheading": "Click on 'Claim share tokens' to get your tokens."
         },
         "recover-funds": {
           "heading": "Transaction failed",
@@ -97,7 +97,7 @@
         },
         "recover-shares": {
           "heading": "Transaction failed",
-          "subheading": "Something went wrong. Use the button below to return your shares to your wallet."
+          "subheading": "Something went wrong. Use the button below to return your share tokens to your wallet."
         }
       },
       "claim-funds": "Claim funds",

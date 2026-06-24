@@ -637,5 +637,25 @@ describe('utils', function () {
     it('returns undefined for an undefined row', function () {
       expect(pickSettleBannerKey(undefined)).toBeUndefined()
     })
+
+    it('returns undefined while a claim/recover is pending (settlement marker)', function () {
+      expect(
+        pickSettleBannerKey({
+          ...baseTx,
+          settlement: { failed: false, kind: 'CLAIM' },
+          status: 'FULFILLED',
+        }),
+      ).toBeUndefined()
+    })
+
+    it('returns undefined after a reverted settlement (try-again state)', function () {
+      expect(
+        pickSettleBannerKey({
+          ...baseTx,
+          settlement: { failed: true, kind: 'RECOVER' },
+          status: 'CANCELLED',
+        }),
+      ).toBeUndefined()
+    })
   })
 })

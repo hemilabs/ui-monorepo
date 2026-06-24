@@ -36,6 +36,8 @@
         "get-share-tokens": "Recibir share tokens",
         "funds-returned": "Fondos devueltos",
         "funds-to-recover": "Fondos por recuperar",
+        "shares-returned": "Shares devueltas",
+        "shares-to-recover": "Shares por recuperar",
         "receive-token": "Recibir {symbol}",
         "unstake-token": "Hacer unstake de {symbol}",
         "wait-cooldown-countdown": "{days, plural, =0 {El período de espera termina en {hours}h} other {El período de espera termina en #d {hours}h}}",
@@ -80,6 +82,7 @@
       "total-deposits": "Depósitos totales"
     },
     "transactions": {
+      "claim-funds": "Recibir fondos",
       "claim-share-tokens": "Recibir share tokens",
       "claiming": "Recibiendo...",
       "column": {
@@ -103,7 +106,9 @@
           "funds-returned": "Fondos devueltos",
           "funds-to-recover": "Fondos por recuperar",
           "unstake-token": "Retirar {symbol}",
-          "receive-token": "Recibir {symbol}"
+          "receive-token": "Recibir {symbol}",
+          "shares-returned": "Shares devueltas",
+          "shares-to-recover": "Shares por recuperar"
         },
         "withdraw-heading": "Detalles del retiro de stake",
         "withdraw-subheading": "Revise su transacción de retiro de stake."
@@ -111,6 +116,7 @@
       "nothing-here": "Aún no hay nada aquí",
       "nothing-here-subtitle": "Sus transacciones aparecerán una vez que comience.",
       "recover-funds": "Recuperar fondos",
+      "recover-shares": "Recuperar shares",
       "recovering": "Recuperando...",
       "status": {
         "cooldown-ready-in-days": "Cooldown · listo en {value}d",
@@ -123,9 +129,10 @@
         "manual-claim-needed": "En progreso - Reclamo manual necesario",
         "ready-to-claim": "Listo para recibir",
         "recover-funds-needed": "Algo salió mal - Recuperar fondos",
+        "recover-shares-needed": "Algo salió mal - Recuperar shares",
         "returned": "Devuelto",
+        "shares-returned": "Shares devueltas",
         "tx-failed": "Tx fallida",
-        "withdrawal-canceled": "Retiro cancelado",
         "withdrawn": "Retirado"
       },
       "subtitle": "Realice un seguimiento del estado de sus depósitos y retiros.",

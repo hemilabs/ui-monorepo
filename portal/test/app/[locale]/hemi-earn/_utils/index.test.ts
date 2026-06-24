@@ -1,9 +1,12 @@
+import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type EvmToken } from 'types/token'
-import { type Address, zeroAddress } from 'viem'
+import { type Address, type Hash, zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
 
 import {
   canRetryRow,
+  enrichWithSettlement,
+  findLocalSettlement,
   findPoolByAsset,
   findPoolByShare,
   formatApyDisplay,
@@ -16,11 +19,14 @@ import {
   needsManualClaim,
   needsRecover,
   pickEarnRowAmount,
+  resolveSettleStepStatus,
 } from '../../../../../app/[locale]/hemi-earn/_utils'
 import {
   type EarnPool,
+  type EarnSettlement,
   type EarnTransaction,
   type EarnTransactionStatusType,
+  type LocalEarnOperation,
 } from '../../../../../app/[locale]/hemi-earn/types'
 
 const baseTx: EarnTransaction = {
@@ -194,10 +200,10 @@ describe('utils', function () {
       ).toBe(true)
     })
 
-    it('is false when auto-claim is on', function () {
+    it('is true even when auto-claim is on (auto-finalize reverted leaves it FULFILLED)', function () {
       expect(
         needsManualClaim({ ...baseTx, automatic: true, status: 'FULFILLED' }),
-      ).toBe(false)
+      ).toBe(true)
     })
 
     it.each<EarnTransactionStatusType>(['PENDING', 'CANCELLED', 'FINALIZED'])(
@@ -209,7 +215,7 @@ describe('utils', function () {
       },
     )
 
-    it('is false for a REDEEM row', function () {
+    it('is true for a FULFILLED redeem with auto-claim off (kind-agnostic)', function () {
       expect(
         needsManualClaim({
           ...baseTx,
@@ -217,7 +223,7 @@ describe('utils', function () {
           kind: 'REDEEM',
           status: 'FULFILLED',
         }),
-      ).toBe(false)
+      ).toBe(true)
     })
   })
 
@@ -233,10 +239,10 @@ describe('utils', function () {
       ).toBe(true)
     })
 
-    it('is false when auto-recover is on', function () {
+    it('is true even when auto-recover is on (auto-finalize reverted leaves it CANCELLED)', function () {
       expect(
         needsRecover({ ...baseTx, automatic: true, status: 'CANCELLED' }),
-      ).toBe(false)
+      ).toBe(true)
     })
 
     it('is false for RECOVERED (already recovered, not actionable)', function () {
@@ -245,7 +251,7 @@ describe('utils', function () {
       ).toBe(false)
     })
 
-    it('is false for a REDEEM row', function () {
+    it('is true for a CANCELLED redeem with auto-recover off (kind-agnostic)', function () {
       expect(
         needsRecover({
           ...baseTx,
@@ -253,7 +259,7 @@ describe('utils', function () {
           kind: 'REDEEM',
           status: 'CANCELLED',
         }),
-      ).toBe(false)
+      ).toBe(true)
     })
   })
 
@@ -275,11 +281,12 @@ describe('utils', function () {
       },
     )
 
-    it('is false for a REDEEM row', function () {
-      expect(
-        isRecoverPath({ ...baseTx, kind: 'REDEEM', status: 'CANCELLED' }),
-      ).toBe(false)
-    })
+    it.each<EarnTransactionStatusType>(['CANCELLED', 'RECOVERED'])(
+      'is true for a redeem in status %s (kind-agnostic)',
+      function (status) {
+        expect(isRecoverPath({ ...baseTx, kind: 'REDEEM', status })).toBe(true)
+      },
+    )
   })
 
   describe('canRetryRow', function () {
@@ -334,6 +341,82 @@ describe('utils', function () {
     })
   })
 
+  describe('findLocalSettlement', function () {
+    const reqHash = `0x${'b'.repeat(64)}` as Hash
+    const settlement: EarnSettlement = {
+      failed: false,
+      kind: 'CLAIM',
+      txHash: claimHash,
+    }
+    const makeLocalOp = (
+      initiateTxHash: string | undefined,
+      withSettlement?: EarnSettlement,
+    ) =>
+      ({
+        initiateTxHash,
+        settlement: withSettlement,
+      }) as unknown as LocalEarnOperation
+
+    it('returns the settlement of the op matching the request tx', function () {
+      const ops = [
+        makeLocalOp(`0x${'9'.repeat(64)}`),
+        makeLocalOp(reqHash, settlement),
+      ]
+      expect(findLocalSettlement(ops, reqHash)).toBe(settlement)
+    })
+
+    it('matches the request tx case-insensitively', function () {
+      const ops = [makeLocalOp(`0x${'B'.repeat(64)}`, settlement)]
+      expect(findLocalSettlement(ops, reqHash)).toBe(settlement)
+    })
+
+    it('returns undefined when no op matches', function () {
+      expect(
+        findLocalSettlement(
+          [makeLocalOp(`0x${'9'.repeat(64)}`, settlement)],
+          reqHash,
+        ),
+      ).toBeUndefined()
+    })
+
+    it('returns undefined when requestTxHash is undefined', function () {
+      expect(
+        findLocalSettlement([makeLocalOp(reqHash, settlement)], undefined),
+      ).toBeUndefined()
+    })
+
+    it('skips ops without an initiateTxHash', function () {
+      expect(
+        findLocalSettlement([makeLocalOp(undefined, settlement)], reqHash),
+      ).toBeUndefined()
+    })
+
+    it('returns undefined when the matching op has no settlement', function () {
+      expect(
+        findLocalSettlement([makeLocalOp(reqHash)], reqHash),
+      ).toBeUndefined()
+    })
+  })
+
+  describe('enrichWithSettlement', function () {
+    const settlement: EarnSettlement = { failed: true, kind: 'RECOVER' }
+
+    it('folds the settlement onto the row', function () {
+      expect(enrichWithSettlement(baseTx, settlement)).toEqual({
+        ...baseTx,
+        settlement,
+      })
+    })
+
+    it('returns the row unchanged when there is no settlement', function () {
+      expect(enrichWithSettlement(baseTx, undefined)).toBe(baseTx)
+    })
+
+    it('returns undefined when the row is undefined', function () {
+      expect(enrichWithSettlement(undefined, settlement)).toBeUndefined()
+    })
+  })
+
   describe('isEarnRowInFlight', function () {
     it.each<EarnTransactionStatusType>(['PENDING', 'FULFILLED', 'TX_PENDING'])(
       'is true for the non-terminal status %s',
@@ -342,12 +425,28 @@ describe('utils', function () {
       },
     )
 
-    it.each<EarnTransactionStatusType>(['FINALIZED', 'RECOVERED', 'FAILED'])(
+    it.each<EarnTransactionStatusType>(['FINALIZED', 'RECOVERED'])(
       'is false for the terminal status %s',
       function (status) {
         expect(isEarnRowInFlight({ ...baseTx, status })).toBe(false)
       },
     )
+
+    it('is true for a subgraph FAILED row (Agent failed cross-chain; walks to RECOVERED)', function () {
+      expect(
+        isEarnRowInFlight({ ...baseTx, requestId: '40', status: 'FAILED' }),
+      ).toBe(true)
+    })
+
+    it('is false for a local FAILED row (Hemi request tx reverted; terminal, retry from home)', function () {
+      expect(
+        isEarnRowInFlight({
+          ...baseTx,
+          requestId: 'local-1700000000',
+          status: 'FAILED',
+        }),
+      ).toBe(false)
+    })
 
     it.each([true, false])(
       'is true for a CANCELLED deposit (automatic=%s — both walk to RECOVERED)',
@@ -358,11 +457,19 @@ describe('utils', function () {
       },
     )
 
-    it('is false for a CANCELLED redeem (withdrawal canceled, terminal)', function () {
-      expect(
-        isEarnRowInFlight({ ...baseTx, kind: 'REDEEM', status: 'CANCELLED' }),
-      ).toBe(false)
-    })
+    it.each([true, false])(
+      'is true for a CANCELLED redeem (automatic=%s — now walks to RECOVERED)',
+      function (automatic) {
+        expect(
+          isEarnRowInFlight({
+            ...baseTx,
+            automatic,
+            kind: 'REDEEM',
+            status: 'CANCELLED',
+          }),
+        ).toBe(true)
+      },
+    )
   })
 
   describe('pickEarnRowAmount', function () {
@@ -446,6 +553,63 @@ describe('utils', function () {
 
     it('returns false when both are undefined', function () {
       expect(hashesMatch(undefined, undefined)).toBe(false)
+    })
+  })
+
+  describe('resolveSettleStepStatus', function () {
+    const base = {
+      awaitingAction: false,
+      fallback: ProgressStatus.NOT_READY,
+      isComplete: false,
+      settlementFailed: false,
+      settlementTxHash: undefined,
+    }
+    const someHash = `0x${'c'.repeat(64)}` as const
+
+    it('is COMPLETED when complete, over a failed/mining/awaiting settlement', function () {
+      expect(
+        resolveSettleStepStatus({
+          ...base,
+          awaitingAction: true,
+          isComplete: true,
+          settlementFailed: true,
+          settlementTxHash: someHash,
+        }),
+      ).toBe(ProgressStatus.COMPLETED)
+    })
+
+    it('is FAILED when the settlement reverted and is not complete', function () {
+      expect(
+        resolveSettleStepStatus({
+          ...base,
+          awaitingAction: true,
+          settlementFailed: true,
+          settlementTxHash: someHash,
+        }),
+      ).toBe(ProgressStatus.FAILED)
+    })
+
+    it('is PROGRESS while the settlement is mining', function () {
+      expect(
+        resolveSettleStepStatus({
+          ...base,
+          awaitingAction: true,
+          settlementTxHash: someHash,
+        }),
+      ).toBe(ProgressStatus.PROGRESS)
+    })
+
+    it('is READY for an untouched manual settlement', function () {
+      expect(resolveSettleStepStatus({ ...base, awaitingAction: true })).toBe(
+        ProgressStatus.READY,
+      )
+    })
+
+    it('falls back to the caller-provided in-flight status otherwise', function () {
+      expect(
+        resolveSettleStepStatus({ ...base, fallback: ProgressStatus.PROGRESS }),
+      ).toBe(ProgressStatus.PROGRESS)
+      expect(resolveSettleStepStatus(base)).toBe(ProgressStatus.NOT_READY)
     })
   })
 })

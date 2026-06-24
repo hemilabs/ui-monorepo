@@ -9,7 +9,7 @@ import { type EarnTransaction } from '../../types'
 import { LoaderIcon } from '../icons/loaderIcon'
 import { TrashIcon } from '../icons/trashIcon'
 
-import { DepositRowCta } from './transactionDrawer/settleDeposit'
+import { SettleRowCta } from './transactionDrawer/settleShared'
 import { useTxDrawerQueryString } from './transactionDrawer/useTxDrawerQueryString'
 
 type Props = {
@@ -17,7 +17,7 @@ type Props = {
 }
 
 // Spinner while the row is in flight (auto-progressing, including an auto-recover
-// CANCELLED deposit, or a claim/recover settlement tx mining), but never on a
+// CANCELLED deposit or redeem, or a claim/recover settlement tx mining), but never on a
 // reverted settlement — that's "Tx Failed" with a Retry. The inline
 // Claim/Recover CTA is only for the untouched manual state; once a settlement
 // exists (mining or reverted) the row hands back to View and the drawer carries
@@ -38,9 +38,11 @@ export const RowActions = function ({ transaction }: Props) {
 
   const { showLoaderIcon, showManualCta } = resolveActionState(transaction)
 
+  // Only while PENDING: `Router.cancel` reverts once the request is FULFILLED
+  // (the user claims instead) or terminal, and a FULFILLED row already shows the
+  // Claim CTA — showing Cancel next to it would be contradictory.
   const showCancelButton =
-    transaction.kind === 'REDEEM' &&
-    (transaction.status === 'PENDING' || transaction.status === 'FULFILLED')
+    transaction.kind === 'REDEEM' && transaction.status === 'PENDING'
 
   const onViewClick = function (e: MouseEvent) {
     e.stopPropagation()
@@ -68,7 +70,7 @@ export const RowActions = function ({ transaction }: Props) {
   return (
     <div className="flex items-center gap-x-2 pr-4">
       {showManualCta ? (
-        <DepositRowCta fallback={viewButton} transaction={transaction} />
+        <SettleRowCta fallback={viewButton} transaction={transaction} />
       ) : (
         viewButton
       )}

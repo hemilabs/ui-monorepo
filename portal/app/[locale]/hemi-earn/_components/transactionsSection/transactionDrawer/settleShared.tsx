@@ -3,14 +3,19 @@
 import { AddTokenToWallet } from 'components/addTokenToWallet'
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
+import {
+  claimDeposit,
+  claimRedeem,
+  recoverDeposit,
+  recoverRedeem,
+} from 'hemi-earn-actions/actions'
 import { useTranslations } from 'next-intl'
 import { type FormEvent, type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
 import { isAddressEqual } from 'viem'
 
-import { useClaimDeposit } from '../../../_hooks/useClaimDeposit'
 import { useEarnPools } from '../../../_hooks/useEarnPools'
-import { useRecoverDeposit } from '../../../_hooks/useRecoverDeposit'
+import { useSettle } from '../../../_hooks/useSettle'
 import {
   findPoolByAsset,
   needsManualClaim,
@@ -24,19 +29,9 @@ import {
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
-type Props = {
-  asset: EarnAsset
-  // Drawer CTAs stretch full-width; the table cell renders a compact button.
-  fullWidth?: boolean
-  pool: EarnPool
-  // When rendered in the table the drawer isn't open yet, so opening it on
-  // signing lets the user watch the settlement mine. In the drawer it's already
-  // open, so the redirect is skipped.
-  redirectOnSign?: boolean
-  transaction: EarnTransaction
-}
-
-const SettleDepositForm = ({
+// The compact settle button shared by every claim/recover CTA (deposit + redeem).
+// Drawer CTAs stretch full-width; the table cell renders a compact button.
+const SettleForm = ({
   disabled,
   fullWidth,
   label,
@@ -62,81 +57,69 @@ const SettleDepositForm = ({
   </form>
 )
 
-export const ClaimDeposit = function ({
-  asset,
-  fullWidth = true,
-  pool,
-  redirectOnSign,
-  transaction,
-}: Props) {
-  const t = useTranslations('hemi-earn.transactions')
-  const tCommon = useTranslations('common')
-  const [, setTxDrawerQueryString] = useTxDrawerQueryString()
+type SettleOperation = 'CLAIM' | 'RECOVER'
 
-  const { isPending, mutate } = useClaimDeposit({
-    asset,
-    on: redirectOnSign
-      ? emitter =>
-          emitter.on('user-signed-tx', () =>
-            setTxDrawerQueryString(transaction.requestTxHash),
-          )
-      : undefined,
-    pool,
-    transaction,
-  })
+// One table for the whole (kind, operation) matrix so the Router action and the
+// idle label stay in lockstep and can't get mismatched across call sites.
+const SETTLE_CONFIG = {
+  DEPOSIT: {
+    CLAIM: { action: claimDeposit, label: 'claim-share-tokens' },
+    RECOVER: { action: recoverDeposit, label: 'recover-funds' },
+  },
+  REDEEM: {
+    CLAIM: { action: claimRedeem, label: 'claim-funds' },
+    RECOVER: { action: recoverRedeem, label: 'recover-shares' },
+  },
+} as const
 
-  const { settlement } = transaction
-  const own = settlement?.kind === 'CLAIM' ? settlement : undefined
-  const pending = isPending || (!!own && !own.failed)
-  const failed = own?.failed ?? false
-
-  const onSubmit = function (e: FormEvent) {
-    e.preventDefault()
-    if (pending) return
-    mutate()
-  }
-
-  return (
-    <SettleDepositForm
-      disabled={pending}
-      fullWidth={fullWidth}
-      label={
-        pending
-          ? t('claiming')
-          : failed
-            ? tCommon('try-again')
-            : t('claim-share-tokens')
-      }
-      onSubmit={onSubmit}
-    />
-  )
+type SettleCtaProps = {
+  asset: EarnAsset
+  // Drawer CTAs stretch full-width; the table cell renders a compact button.
+  fullWidth?: boolean
+  operation: SettleOperation
+  pool: EarnPool
+  // When rendered in the table the drawer isn't open yet, so opening it on
+  // signing lets the user watch the settlement mine. In the drawer it's already
+  // open, so the redirect is skipped.
+  redirectOnSign?: boolean
+  transaction: EarnTransaction
 }
 
-export const RecoverDeposit = function ({
+// The claim/recover CTA for one request — a single component covering both kinds
+// and both operations. The delivered-token inversion lives here in one place: a
+// deposit claim / redeem recover deliver shares; a deposit recover / redeem claim
+// deliver the underlying asset (same rule as `useEarnDeliveryWatcher`).
+export const SettleCta = function ({
   asset,
   fullWidth = true,
+  operation,
   pool,
   redirectOnSign,
   transaction,
-}: Props) {
+}: SettleCtaProps) {
   const t = useTranslations('hemi-earn.transactions')
   const tCommon = useTranslations('common')
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
 
-  const { isPending, mutate } = useRecoverDeposit({
-    asset,
+  const { action, label } = SETTLE_CONFIG[transaction.kind][operation]
+  const deliversShares =
+    (transaction.kind === 'DEPOSIT') === (operation === 'CLAIM')
+
+  const { isPending, mutate } = useSettle({
+    action,
+    deliveredTokenAddress: deliversShares ? pool.shareAddress : asset.address,
+    kind: operation,
     on: redirectOnSign
       ? emitter =>
           emitter.on('user-signed-tx', () =>
             setTxDrawerQueryString(transaction.requestTxHash),
           )
       : undefined,
-    pool,
     transaction,
   })
 
   const { settlement } = transaction
-  const own = settlement?.kind === 'RECOVER' ? settlement : undefined
+  const own = settlement?.kind === operation ? settlement : undefined
   const pending = isPending || (!!own && !own.failed)
   const failed = own?.failed ?? false
 
@@ -147,15 +130,15 @@ export const RecoverDeposit = function ({
   }
 
   return (
-    <SettleDepositForm
+    <SettleForm
       disabled={pending}
       fullWidth={fullWidth}
       label={
         pending
-          ? t('recovering')
+          ? t(operation === 'CLAIM' ? 'claiming' : 'recovering')
           : failed
             ? tCommon('try-again')
-            : t('recover-funds')
+            : t(label)
       }
       onSubmit={onSubmit}
     />
@@ -163,9 +146,9 @@ export const RecoverDeposit = function ({
 }
 
 // The table-row variant: resolves the pool/asset and renders the compact
-// Claim/Recover CTA (or nothing) for a deposit row. Retry stays a View→drawer
-// flow, so it isn't handled here.
-export const DepositRowCta = function ({
+// Claim/Recover CTA (or nothing). Retry stays a View→drawer flow, so it isn't
+// handled here.
+export const SettleRowCta = function ({
   fallback,
   transaction,
 }: {
@@ -186,9 +169,10 @@ export const DepositRowCta = function ({
   }
   if (needsManualClaim(transaction)) {
     return (
-      <ClaimDeposit
+      <SettleCta
         asset={asset}
         fullWidth={false}
+        operation="CLAIM"
         pool={pool}
         redirectOnSign
         transaction={transaction}
@@ -197,9 +181,10 @@ export const DepositRowCta = function ({
   }
   if (needsRecover(transaction)) {
     return (
-      <RecoverDeposit
+      <SettleCta
         asset={asset}
         fullWidth={false}
+        operation="RECOVER"
         pool={pool}
         redirectOnSign
         transaction={transaction}
@@ -209,10 +194,11 @@ export const DepositRowCta = function ({
   return null
 }
 
-// "Add {share token} to wallet" CTA, surfaced once a deposit is FINALIZED (the
-// share OFT has landed). Shared by the live and historical deposit drawers so
-// both match the tunnel-history affordance.
-export const AddShareTokenToWallet = function ({ token }: { token: EvmToken }) {
+// "Add {token} to wallet" CTA surfaced once a request is FINALIZED (the delivered
+// token has landed): the share OFT for a deposit, the underlying asset for a
+// redeem. Shared by the live and historical drawers so both match the tunnel
+// history affordance.
+export const AddTokenToWalletCta = function ({ token }: { token: EvmToken }) {
   const tCommon = useTranslations('common')
   return (
     <AddTokenToWallet

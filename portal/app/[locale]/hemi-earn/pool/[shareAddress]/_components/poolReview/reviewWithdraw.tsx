@@ -21,13 +21,28 @@ import { type Address, type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 import {
+  AddTokenToWalletCta,
+  SettleCta,
+} from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
+import {
   REDEEM_SLIPPAGE_BPS,
   applySlippage,
 } from '../../../../_constants/slippage'
 import { useCooldownDuration } from '../../../../_hooks/useCooldownDuration'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { useIsCooldownEligible } from '../../../../_hooks/useIsCooldownEligible'
-import { hashesMatch } from '../../../../_utils'
+import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
+import {
+  enrichWithSettlement,
+  findLocalSettlement,
+  getTerminalDeliveryTxHash,
+  hashesMatch,
+  isRecoverPath,
+  needsManualClaim,
+  needsRecover,
+  resolveSettleStepStatus,
+} from '../../../../_utils'
+import { type EarnSettlement, type EarnTransaction } from '../../../../types'
 import { usePoolForm } from '../../_context/poolFormContext'
 import { useEarnCooldownRemaining } from '../../_hooks/useEarnCooldownRemaining'
 import { useQuoteRedeem } from '../../_hooks/useQuoteRedeem'
@@ -44,60 +59,65 @@ type Props = {
   onClose: VoidFunction
 }
 
-// Maps the local withdraw status, subgraph row, and cooldown state to the
-// receive step's progress + terminal hash. Module-level so the component
+// Adapts the receive step's local state to the shared `resolveSettleStepStatus`
+// ladder. A thin wrapper (not inlined) so `buildReceiveStep` stays under the
+// complexity threshold.
+const resolveReceiveStatus = ({
+  awaitingClaim,
+  crossChainInFlight,
+  isFinalized,
+  settlement,
+  settlementTxHash,
+}: {
+  awaitingClaim: boolean
+  crossChainInFlight: boolean
+  isFinalized: boolean
+  settlement: EarnSettlement | undefined
+  settlementTxHash: Hash | undefined
+}): ProgressStatusType =>
+  resolveSettleStepStatus({
+    awaitingAction: awaitingClaim,
+    fallback: crossChainInFlight
+      ? ProgressStatus.PROGRESS
+      : ProgressStatus.NOT_READY,
+    isComplete: isFinalized,
+    settlementFailed: settlement?.failed ?? false,
+    settlementTxHash,
+  })
+
+// Maps the settlement-enriched row, local withdraw status, and cooldown state to
+// the receive step's progress + terminal hash. Module-level so the component
 // stays under the complexity threshold.
-//
-// The step only flips to PROGRESS once the user is actually waiting on the
-// remote claim — either because they're whitelisted (no cooldown) or
-// because the cooldown timer has elapsed. Otherwise it stays NOT_READY so
-// the drawer doesn't show two simultaneous spinners (one on the cooldown
-// sub-step, one here).
 function buildReceiveStep({
+  chainId,
   cooldownRemainingSec,
   isCooldownEligible,
   receiveToken,
-  subgraphRow,
+  row,
   t,
   withdrawStatus,
 }: {
+  chainId: EvmToken['chainId']
   cooldownRemainingSec: number | undefined
   isCooldownEligible: boolean | undefined
   receiveToken: EvmToken
-  subgraphRow:
-    | {
-        claimTxHash: Hash | null
-        recoverTxHash: Hash | null
-        status: string
-      }
-    | undefined
+  row: EarnTransaction | undefined
   t: ReturnType<typeof useTranslations<'hemi-earn.pool.drawer'>>
   withdrawStatus: WithdrawStatusType
 }): StepPropsWithoutPosition {
-  // Only FINALIZED actually delivers the underlying. RECOVERED returns
-  // shares to the user (not the asset this step is labeled with), so the
-  // step never flips COMPLETED in that case — recovery UX is handled
-  // outside this drawer (tracked in its own follow-up).
-  const claimTxHash =
-    subgraphRow?.status === 'FINALIZED'
-      ? (subgraphRow.claimTxHash ?? undefined)
-      : undefined
+  // Only FINALIZED actually delivers the underlying asset (the recover path —
+  // RECOVERED — returns shares instead and is rendered by `addRecoverStep`).
+  const isFinalized = row?.status === 'FINALIZED'
+  const claimTxHash = isFinalized ? (row?.claimTxHash ?? undefined) : undefined
+  const settlement = row?.settlement
+  const settlementTxHash =
+    settlement && !settlement.failed ? settlement.txHash : undefined
   const unstakeMined = withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED
-  // Two distinct questions, kept as separate predicates so each reads
-  // for what it actually asks:
-  //   - `needsCooldown`: does this user have to wait at all? Defaults
-  //     to true while `useIsCooldownEligible` is loading — cooldown
-  //     active is the normal case; whitelist / disabled-cooldown are
-  //     the exception.
-  //   - `cooldownElapsed`: for users that DO wait, has the timer
-  //     finished?
+  // `needsCooldown` defaults to true while `useIsCooldownEligible` loads (the
+  // common case); `cooldownElapsed` asks whether the timer has finished.
   const needsCooldown = isCooldownEligible !== false
   const cooldownElapsed = cooldownRemainingSec === 0
-  const status: ProgressStatusType = claimTxHash
-    ? ProgressStatus.COMPLETED
-    : unstakeMined && (!needsCooldown || cooldownElapsed)
-      ? ProgressStatus.PROGRESS
-      : ProgressStatus.NOT_READY
+  const deliveryHash = settlementTxHash ?? claimTxHash
   return {
     description: (
       <div className="flex items-center gap-x-2">
@@ -105,8 +125,15 @@ function buildReceiveStep({
         <span>{t('receive-token', { symbol: receiveToken.symbol })}</span>
       </div>
     ),
-    status,
-    txHash: claimTxHash,
+    explorerChainId: chainId,
+    status: resolveReceiveStatus({
+      awaitingClaim: !!row && needsManualClaim(row),
+      crossChainInFlight: unstakeMined && (!needsCooldown || cooldownElapsed),
+      isFinalized,
+      settlement,
+      settlementTxHash,
+    }),
+    txHash: deliveryHash,
   }
 }
 
@@ -115,8 +142,26 @@ const FAILED_STATUSES: WithdrawStatusType[] = [
   WithdrawStatus.WITHDRAW_TX_FAILED,
 ]
 
-const renderRetryCta = (status: WithdrawStatusType) =>
-  FAILED_STATUSES.includes(status) ? <RetryWithdraw /> : null
+// Adapts the recover step's local state to the shared ladder, mirroring
+// `resolveReceiveStatus`; auto-recover (no manual action) rests at PROGRESS.
+const resolveRecoverStepStatus = ({
+  isComplete,
+  needsRecoverAction,
+  settlementFailed,
+  settlementTxHash,
+}: {
+  isComplete: boolean
+  needsRecoverAction: boolean
+  settlementFailed: boolean
+  settlementTxHash: Hash | undefined
+}): ProgressStatusType =>
+  resolveSettleStepStatus({
+    awaitingAction: needsRecoverAction,
+    fallback: ProgressStatus.PROGRESS,
+    isComplete,
+    settlementFailed,
+    settlementTxHash,
+  })
 
 // Builds the `data:` argument for `useEstimateGas`. Module-level so the
 // component doesn't pay the branching tax for this conditional encode.
@@ -164,6 +209,13 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       r.kind === 'REDEEM' &&
       hashesMatch(r.requestTxHash, withdrawOperation?.transactionHash),
   )
+
+  const { localOperations } = useLocalEarnOperations()
+  const settlement = findLocalSettlement(
+    localOperations,
+    subgraphRow?.requestTxHash,
+  )
+  const settledRow = enrichWithSettlement(subgraphRow, settlement)
 
   const { data: isCooldownEligible } = useIsCooldownEligible({
     account: address,
@@ -349,6 +401,65 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     }
   }
 
+  const addRecoverStep = function (): StepPropsWithoutPosition {
+    const settlementTxHash =
+      settlement && !settlement.failed ? settlement.txHash : undefined
+    const isComplete = subgraphRow?.status === 'RECOVERED'
+    const deliveryHash =
+      settlementTxHash ?? getTerminalDeliveryTxHash(subgraphRow)
+    return {
+      description: (
+        <div className="flex items-center gap-x-2">
+          <TokenLogo size="small" token={pool.shareToken} />
+          <span>{t(isComplete ? 'shares-returned' : 'shares-to-recover')}</span>
+        </div>
+      ),
+      explorerChainId: chainId,
+      status: resolveRecoverStepStatus({
+        isComplete,
+        needsRecoverAction: !!settledRow && needsRecover(settledRow),
+        settlementFailed: settlement?.failed ?? false,
+        settlementTxHash,
+      }),
+      txHash: deliveryHash,
+    }
+  }
+
+  const getCallToAction = function () {
+    if (FAILED_STATUSES.includes(withdrawStatus)) {
+      return <RetryWithdraw />
+    }
+    // Auto-claim off: the user signs the claim here once the Agent delivers the
+    // asset back to the Router (FULFILLED).
+    if (settledRow && needsManualClaim(settledRow)) {
+      return (
+        <SettleCta
+          asset={selectedAsset}
+          operation="CLAIM"
+          pool={pool}
+          transaction={settledRow}
+        />
+      )
+    }
+    // The redeem was cancelled and the shares are back on the Router; the user
+    // signs the recover to pull them to their wallet.
+    if (settledRow && needsRecover(settledRow)) {
+      return (
+        <SettleCta
+          asset={selectedAsset}
+          operation="RECOVER"
+          pool={pool}
+          transaction={settledRow}
+        />
+      )
+    }
+    // The asset only lands once cross-chain delivery completes (FINALIZED).
+    if (subgraphRow?.status === 'FINALIZED') {
+      return <AddTokenToWalletCta token={selectedAsset.token} />
+    }
+    return null
+  }
+
   const getSteps = function () {
     const steps: StepPropsWithoutPosition[] = []
     if (needsApproval || withdrawOperation?.approvalTxHash) {
@@ -356,14 +467,17 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     }
     steps.push(addUnstakeStep())
     steps.push(
-      buildReceiveStep({
-        cooldownRemainingSec,
-        isCooldownEligible,
-        receiveToken: selectedAsset.token,
-        subgraphRow,
-        t,
-        withdrawStatus,
-      }),
+      settledRow && isRecoverPath(settledRow)
+        ? addRecoverStep()
+        : buildReceiveStep({
+            chainId,
+            cooldownRemainingSec,
+            isCooldownEligible,
+            receiveToken: selectedAsset.token,
+            row: settledRow,
+            t,
+            withdrawStatus,
+          }),
     )
     return steps
   }
@@ -371,7 +485,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   return (
     <Operation
       amount={withdrawOperation?.amountIn ?? shares.toString()}
-      callToAction={renderRetryCta(withdrawStatus)}
+      callToAction={getCallToAction()}
       heading={t('withdraw.heading')}
       onClose={onClose}
       steps={getSteps()}

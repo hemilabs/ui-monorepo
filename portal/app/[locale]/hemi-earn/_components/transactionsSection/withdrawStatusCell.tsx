@@ -58,7 +58,10 @@ function deriveCooldownText({
 }): string | undefined {
   if (isCooldownEligible !== true) return undefined
   if (!isCooldownPhase(status)) return undefined
-  if (hasClaimableAt && remainingSec === 0) {
+  // FULFILLED means the Agent fulfilled the redeem (only after the cooldown
+  // matured), so the cooldown is authoritatively done regardless of a stale
+  // `claimableAt` — surface "ready to claim", not a lingering countdown.
+  if (status === 'FULFILLED' || (hasClaimableAt && remainingSec === 0)) {
     return t('status.ready-to-claim')
   }
   const displaySec = hasClaimableAt ? (remainingSec ?? 0) : cooldownDurationSec

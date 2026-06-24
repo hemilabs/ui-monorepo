@@ -7,45 +7,47 @@ import { type ClaimDepositEvents } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { getTokenBalanceQueryKey } from 'hooks/useBalance'
 import { useHemiWalletClient } from 'hooks/useHemiClient'
+import { type Address } from 'viem'
 import { useAccount } from 'wagmi'
 
 import { earnPositionsKeyPrefix } from '../_fetchers/fetchEarnPositions'
 import { earnTransactionsKeyPrefix } from '../_fetchers/fetchEarnTransactions'
-import { type EarnAsset, type EarnPool, type EarnTransaction } from '../types'
+import { type EarnTransaction } from '../types'
 
 import { useLocalEarnOperations } from './useLocalEarnOperations'
 
-// Both `claimDeposit` and `recoverDeposit` share this exact signature.
+// `claimDeposit`/`recoverDeposit`/`claimRedeem`/`recoverRedeem` all share this
+// signature — a single Hemi Router tx with no approval or quote leg.
 type SettleAction = (typeof import('hemi-earn-actions/actions'))['claimDeposit']
 
-type UseSettleDeposit = {
-  // The `hemi-earn-actions` wallet action to run (`claimDeposit` /
-  // `recoverDeposit`). Both finalize a single Hemi Router tx with no approval
-  // or quote leg.
+type UseSettle = {
   action: SettleAction
-  asset: EarnAsset
-  // Drives which delivered-token balance to refresh and the settlement kind:
-  // claim delivers shares, recover returns the original asset.
+  // The token that lands in the wallet on success — caller-supplied because the
+  // direction inverts by flow: a deposit claim delivers shares / recover returns
+  // the asset; a redeem claim delivers the asset / recover returns the shares.
+  deliveredTokenAddress: Address
+  // Drives the settlement marker: `CLAIM` (FULFILLED→FINALIZED) vs `RECOVER`
+  // (CANCELLED→RECOVERED).
   kind: 'CLAIM' | 'RECOVER'
+  // All four settlement actions emit the same shape; `ClaimDepositEvents` is the
+  // canonical alias.
   on?: (emitter: EventEmitter<ClaimDepositEvents>) => void
-  pool: EarnPool
   transaction: EarnTransaction
 }
 
-// Shared mutation core for the two single-tx deposit settlements. Mirrors the
-// `useWithdraw` scaffolding (wallet client + invalidations) but without the
-// approval/quote machinery. The settlement state is persisted on the local
-// entry (`setSettlement`): flagged failed on revert so the CTA returns as a
-// Retry, left pending on success and dropped by the merge once the row is
-// terminal (so the CTA doesn't flicker back during the indexing lag).
-export const useSettleDeposit = function ({
+// Shared mutation core for the single-tx claim/recover settlements (deposit and
+// redeem). Mirrors the `useWithdraw` scaffolding (wallet client + invalidations)
+// without the approval/quote machinery. The settlement state is persisted on the
+// local entry (`setSettlement`): flagged failed on revert so the CTA returns as a
+// Retry, left pending on success and dropped by the merge once the row is terminal
+// (so the CTA doesn't flicker back during the indexing lag).
+export const useSettle = function ({
   action,
-  asset,
+  deliveredTokenAddress,
   kind,
   on,
-  pool,
   transaction,
-}: UseSettleDeposit) {
+}: UseSettle) {
   const { address } = useAccount()
   const { hemiWalletClient } = useHemiWalletClient()
   const ensureConnectedTo = useEnsureConnectedTo()
@@ -58,12 +60,10 @@ export const useSettleDeposit = function ({
 
   const { requestId } = transaction
 
-  // Claim drops shares into the user's wallet; recover returns the original
-  // asset. Refresh whichever lands.
   const deliveredBalanceQueryKey = getTokenBalanceQueryKey({
     account: address,
     chainId: hemi.id,
-    tokenAddress: kind === 'CLAIM' ? pool.shareAddress : asset.address,
+    tokenAddress: deliveredTokenAddress,
   })
 
   return useMutation({
@@ -117,8 +117,8 @@ export const useSettleDeposit = function ({
     onSettled() {
       queryClient.invalidateQueries({ queryKey: earnTransactionsKeyPrefix })
       // `resetQueries` (not `invalidate`) so the manage page shows a fresh value
-      // instead of flashing the stale balance: the deposit form usually mounts
-      // *after* the mutation (the user clicks "manage" post-recover), and an
+      // instead of flashing the stale balance: the form usually mounts *after*
+      // the mutation (the user clicks "manage" post-settlement), and an
       // invalidated-but-cached entry would render the old number until the
       // background refetch lands.
       queryClient.resetQueries({ queryKey: deliveredBalanceQueryKey })

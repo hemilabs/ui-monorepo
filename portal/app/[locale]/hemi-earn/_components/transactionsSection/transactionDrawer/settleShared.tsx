@@ -3,6 +3,7 @@
 import { AddTokenToWallet } from 'components/addTokenToWallet'
 import { Button } from 'components/button'
 import { SubmitWhenConnected } from 'components/submitWhenConnected'
+import { WarningBox } from 'components/warningBox'
 import {
   claimDeposit,
   claimRedeem,
@@ -20,6 +21,7 @@ import {
   findPoolByAsset,
   needsManualClaim,
   needsRecover,
+  pickSettleBannerKey,
 } from '../../../_utils'
 import {
   type EarnAsset,
@@ -192,6 +194,31 @@ export const SettleRowCta = function ({
     )
   }
   return null
+}
+
+// Explains the manual Claim/Recover CTA — shown above the CTA inside the drawers.
+// Self-gates via `pickSettleBannerKey`, so nothing renders for the retry-original
+// / add-to-wallet / in-flight states. Uses its own translation namespace so it's
+// reusable across drawers that translate under different roots (`pool.drawer` vs
+// `transactions.drawer`).
+export const SettleBanner = function ({
+  transaction,
+}: {
+  transaction: EarnTransaction | undefined
+}) {
+  const t = useTranslations('hemi-earn.transactions.banner')
+  const key = pickSettleBannerKey(transaction)
+  if (!key) return null
+  // `mt-auto` pins the banner to the bottom of the scrollable body, just above
+  // the CTA footer; the padding matches the drawer's 24px gutter (16px mobile).
+  return (
+    <div className="mt-auto px-4 py-6 md:px-6">
+      <WarningBox
+        heading={t(`${key}.heading`)}
+        subheading={t(`${key}.subheading`)}
+      />
+    </div>
+  )
 }
 
 // "Add {token} to wallet" CTA surfaced once a request is FINALIZED (the delivered

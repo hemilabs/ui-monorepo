@@ -35,6 +35,8 @@ import {
   type EarnTransactionStatusType,
 } from '../../../types'
 
+import { SettleBanner } from './settleShared'
+
 type Props = {
   callToAction?: ReactNode
   onClose: VoidFunction
@@ -384,6 +386,7 @@ export const HistoricalWithdrawReview = function ({
   return (
     <Operation
       amount={displayAmount}
+      bottomSection={<SettleBanner transaction={transaction} />}
       callToAction={callToAction}
       heading={t('withdraw-heading')}
       onClose={onClose}

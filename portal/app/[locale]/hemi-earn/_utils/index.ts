@@ -100,6 +100,33 @@ export const canRetryRow = (tx: EarnTransaction) =>
 export const hasFailedSettlement = (tx: EarnTransaction) =>
   tx.settlement?.failed === true
 
+// Which explanatory banner (if any) a drawer should show above the settle CTA —
+// undefined unless the row is awaiting a manual claim (FULFILLED) or recover
+// (CANCELLED). The shares/funds split follows the same delivered-token inversion
+// as `SettleCta`: a deposit claim / redeem recover act on shares; a deposit
+// recover / redeem claim act on the underlying asset (funds).
+export const pickSettleBannerKey = function (
+  tx: EarnTransaction | undefined,
+):
+  | 'claim-funds'
+  | 'claim-shares'
+  | 'recover-funds'
+  | 'recover-shares'
+  | undefined {
+  if (!tx) return undefined
+  const operation = needsManualClaim(tx)
+    ? 'CLAIM'
+    : needsRecover(tx)
+      ? 'RECOVER'
+      : undefined
+  if (!operation) return undefined
+  const deliversShares = (tx.kind === 'DEPOSIT') === (operation === 'CLAIM')
+  if (operation === 'CLAIM') {
+    return deliversShares ? 'claim-shares' : 'claim-funds'
+  }
+  return deliversShares ? 'recover-shares' : 'recover-funds'
+}
+
 // Picks the amount + token to render for an earn transaction row. A DEPOSIT
 // always shows the deposited asset (`amountIn`, asset units) — its `amountOut`
 // is the minted share amount (sVetToken, 18 decimals) and must never be rendered

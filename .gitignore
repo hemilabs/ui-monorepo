@@ -10,6 +10,7 @@ lerna-debug.log
 node_modules
 out
 packages/*/dist
+storybook-static
 subgraphs/.env
 # information from docker-compose
 subgraphs/data

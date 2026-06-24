@@ -20,3 +20,13 @@ Furthermore, consider the [code structure](../../portal//README.md#structure), w
   - Ensure all three language files have the same keys with appropriate translations
   - Keys should be alphabetically sorted
 - The current supported languages are English (`en` - it is the default locale), Spanish (`es`) and Portuguese (`pt`).
+- **Translations must address the user with a formal, respectful register** (the same "you" the rest of the UI uses). Machine translation defaults to the informal register, so always review the tone of any string you add or edit:
+  - **Spanish (`es`)** — use the formal _usted_ form, never the informal _tú_:
+    - Possessives: `su` / `sus`, not `tu` / `tus` (e.g. "sus fondos", not "tus fondos").
+    - Verbs and imperatives: conjugate for _usted_ — "Haga clic", "Use", "Conecte", "Intente de nuevo" — not "Haz clic", "Usa", "Conecta", "Intenta de nuevo".
+    - Pronouns: prefer "le" / "lo" / "la"; avoid "te" / "ti".
+  - **Portuguese (`pt`)** — use the _você_ form, never the _tu_ form:
+    - Possessives: `seu` / `sua` / `seus` / `suas`, not `teu` / `tua` / `teus` / `tuas` (e.g. "seus fundos", not "teus fundos").
+    - Verbs: conjugate for _você_ (third person) — "Clique", "Use" — not "Clica", "Usa".
+    - Pronouns: prefer "você" / "lhe"; avoid "te" / "ti" / "contigo".
+  - Keep established product terms untranslated, as the rest of the UI does (e.g. "share tokens", "Testnet").

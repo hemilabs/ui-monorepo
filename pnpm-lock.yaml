@@ -541,6 +541,9 @@ importers:
       storybook:
         specifier: 10.4.4
         version: 10.4.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@testing-library/dom@10.4.1)(@types/react@19.1.13)(bufferutil@4.1.0)(prettier@3.8.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(utf-8-validate@5.0.10)
+      storybook-addon-pseudo-states:
+        specifier: 10.4.4
+        version: 10.4.4(storybook@10.4.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@testing-library/dom@10.4.1)(@types/react@19.1.13)(bufferutil@4.1.0)(prettier@3.8.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(utf-8-validate@5.0.10))
       tailwindcss:
         specifier: 3.4.14
         version: 3.4.14
@@ -15900,6 +15903,14 @@ packages:
       }
     engines: { node: '>= 0.4' }
 
+  storybook-addon-pseudo-states@10.4.4:
+    resolution:
+      {
+        integrity: sha512-AoZy3g3Lxzr0qfCT+xB6GgCHBcvReVyFOHbyU8B3apW8YoB7cxkj32y3+P63LbPSqAe61gK9B/FQFQ/2UAxw0Q==,
+      }
+    peerDependencies:
+      storybook: ^10.4.4
+
   storybook@10.4.4:
     resolution:
       {
@@ -28928,6 +28939,10 @@ snapshots:
     dependencies:
       es-errors: 1.3.0
       internal-slot: 1.1.0
+
+  storybook-addon-pseudo-states@10.4.4(storybook@10.4.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@testing-library/dom@10.4.1)(@types/react@19.1.13)(bufferutil@4.1.0)(prettier@3.8.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(utf-8-validate@5.0.10)):
+    dependencies:
+      storybook: 10.4.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@testing-library/dom@10.4.1)(@types/react@19.1.13)(bufferutil@4.1.0)(prettier@3.8.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(utf-8-validate@5.0.10)
 
   storybook@10.4.4(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)(@testing-library/dom@10.4.1)(@types/react@19.1.13)(bufferutil@4.1.0)(prettier@3.8.4)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)(utf-8-validate@5.0.10):
     dependencies:

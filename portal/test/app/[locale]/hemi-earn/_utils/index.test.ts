@@ -1,3 +1,4 @@
+import { ProgressStatus } from 'components/reviewOperation/progressStatus'
 import { type EvmToken } from 'types/token'
 import { type Address, type Hash, zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
@@ -18,6 +19,7 @@ import {
   needsManualClaim,
   needsRecover,
   pickEarnRowAmount,
+  resolveSettleStepStatus,
 } from '../../../../../app/[locale]/hemi-earn/_utils'
 import {
   type EarnPool,
@@ -423,12 +425,28 @@ describe('utils', function () {
       },
     )
 
-    it.each<EarnTransactionStatusType>(['FINALIZED', 'RECOVERED', 'FAILED'])(
+    it.each<EarnTransactionStatusType>(['FINALIZED', 'RECOVERED'])(
       'is false for the terminal status %s',
       function (status) {
         expect(isEarnRowInFlight({ ...baseTx, status })).toBe(false)
       },
     )
+
+    it('is true for a subgraph FAILED row (Agent failed cross-chain; walks to RECOVERED)', function () {
+      expect(
+        isEarnRowInFlight({ ...baseTx, requestId: '40', status: 'FAILED' }),
+      ).toBe(true)
+    })
+
+    it('is false for a local FAILED row (Hemi request tx reverted; terminal, retry from home)', function () {
+      expect(
+        isEarnRowInFlight({
+          ...baseTx,
+          requestId: 'local-1700000000',
+          status: 'FAILED',
+        }),
+      ).toBe(false)
+    })
 
     it.each([true, false])(
       'is true for a CANCELLED deposit (automatic=%s — both walk to RECOVERED)',
@@ -535,6 +553,63 @@ describe('utils', function () {
 
     it('returns false when both are undefined', function () {
       expect(hashesMatch(undefined, undefined)).toBe(false)
+    })
+  })
+
+  describe('resolveSettleStepStatus', function () {
+    const base = {
+      awaitingAction: false,
+      fallback: ProgressStatus.NOT_READY,
+      isComplete: false,
+      settlementFailed: false,
+      settlementTxHash: undefined,
+    }
+    const someHash = `0x${'c'.repeat(64)}` as const
+
+    it('is COMPLETED when complete, over a failed/mining/awaiting settlement', function () {
+      expect(
+        resolveSettleStepStatus({
+          ...base,
+          awaitingAction: true,
+          isComplete: true,
+          settlementFailed: true,
+          settlementTxHash: someHash,
+        }),
+      ).toBe(ProgressStatus.COMPLETED)
+    })
+
+    it('is FAILED when the settlement reverted and is not complete', function () {
+      expect(
+        resolveSettleStepStatus({
+          ...base,
+          awaitingAction: true,
+          settlementFailed: true,
+          settlementTxHash: someHash,
+        }),
+      ).toBe(ProgressStatus.FAILED)
+    })
+
+    it('is PROGRESS while the settlement is mining', function () {
+      expect(
+        resolveSettleStepStatus({
+          ...base,
+          awaitingAction: true,
+          settlementTxHash: someHash,
+        }),
+      ).toBe(ProgressStatus.PROGRESS)
+    })
+
+    it('is READY for an untouched manual settlement', function () {
+      expect(resolveSettleStepStatus({ ...base, awaitingAction: true })).toBe(
+        ProgressStatus.READY,
+      )
+    })
+
+    it('falls back to the caller-provided in-flight status otherwise', function () {
+      expect(
+        resolveSettleStepStatus({ ...base, fallback: ProgressStatus.PROGRESS }),
+      ).toBe(ProgressStatus.PROGRESS)
+      expect(resolveSettleStepStatus(base)).toBe(ProgressStatus.NOT_READY)
     })
   })
 })

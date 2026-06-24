@@ -19,10 +19,9 @@ import { type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 import {
-  ClaimDeposit,
-  RecoverDeposit,
-} from '../../../../_components/transactionsSection/transactionDrawer/settleDeposit'
-import { AddTokenToWalletCta } from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
+  AddTokenToWalletCta,
+  SettleCta,
+} from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
 import {
   DEPOSIT_SLIPPAGE_BPS,
   applySlippage,
@@ -351,8 +350,9 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     // delivered the shares back to the Router (FULFILLED).
     if (settledRow && needsManualClaim(settledRow)) {
       return (
-        <ClaimDeposit
+        <SettleCta
           asset={selectedAsset}
+          operation="CLAIM"
           pool={pool}
           transaction={settledRow}
         />
@@ -362,8 +362,9 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     // the user signs the recover to pull it to their wallet.
     if (settledRow && needsRecover(settledRow)) {
       return (
-        <RecoverDeposit
+        <SettleCta
           asset={selectedAsset}
+          operation="RECOVER"
           pool={pool}
           transaction={settledRow}
         />

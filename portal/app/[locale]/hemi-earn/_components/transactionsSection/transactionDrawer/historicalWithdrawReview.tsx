@@ -25,6 +25,7 @@ import {
   isRecoverPath,
   needsManualClaim,
   needsRecover,
+  resolveSettleStepStatus,
 } from '../../../_utils'
 import { deriveCooldownPostAction } from '../../../pool/[shareAddress]/_components/poolReview/cooldownPostAction'
 import { useEarnCooldownRemaining } from '../../../pool/[shareAddress]/_hooks/useEarnCooldownRemaining'
@@ -142,23 +143,10 @@ function buildReceiveStep({
         <span>{t('step.receive-token', { symbol: receiveToken.symbol })}</span>
       </div>
     ),
-    explorerChainId: txHash ? hemi.id : undefined,
+    explorerChainId: hemi.id,
     status,
     txHash,
   }
-}
-
-// COMPLETED once RECOVERED; a reverted recover → FAILED; a mining recover →
-// PROGRESS; a pending manual recover → READY (active); else auto-recover PROGRESS.
-function resolveRecoverStatus(
-  tx: EarnTransaction,
-  settlementTxHash: Hash | undefined,
-): ProgressStatusType {
-  if (tx.status === 'RECOVERED') return ProgressStatus.COMPLETED
-  if (tx.settlement?.failed) return ProgressStatus.FAILED
-  if (settlementTxHash) return ProgressStatus.PROGRESS
-  if (needsRecover(tx)) return ProgressStatus.READY
-  return ProgressStatus.PROGRESS
 }
 
 // On the recover path the user gets the SHARES back (not the asset), so the
@@ -186,8 +174,14 @@ function buildRecoverStep(
         </span>
       </div>
     ),
-    explorerChainId: txHash ? hemi.id : undefined,
-    status: resolveRecoverStatus(tx, settlementTxHash),
+    explorerChainId: hemi.id,
+    status: resolveSettleStepStatus({
+      awaitingAction: needsRecover(tx),
+      fallback: ProgressStatus.PROGRESS,
+      isComplete: tx.status === 'RECOVERED',
+      settlementFailed: tx.settlement?.failed ?? false,
+      settlementTxHash,
+    }),
     txHash,
   }
 }
@@ -226,23 +220,6 @@ function deriveReceiveStatus({
   return !needsCooldown || cooldownElapsed
     ? ProgressStatus.PROGRESS
     : receiveFromStatus
-}
-
-// FULFILLED + manual awaits the user's claim → READY (not a spinner — nothing is
-// progressing until they sign); a mining claim → PROGRESS; a reverted one →
-// FAILED; else the cooldown-derived status (already COMPLETED once FINALIZED).
-function resolveReceiveStatus(
-  tx: EarnTransaction,
-  cooldownDerived: ProgressStatusType,
-  settlementTxHash: Hash | undefined,
-): ProgressStatusType {
-  if (cooldownDerived === ProgressStatus.COMPLETED) {
-    return ProgressStatus.COMPLETED
-  }
-  if (tx.settlement?.failed) return ProgressStatus.FAILED
-  if (settlementTxHash) return ProgressStatus.PROGRESS
-  if (needsManualClaim(tx)) return ProgressStatus.READY
-  return cooldownDerived
 }
 
 function buildSteps({
@@ -360,16 +337,19 @@ export const HistoricalWithdrawReview = function ({
   const { settlement } = transaction
   const settlementTxHash =
     settlement && !settlement.failed ? settlement.txHash : undefined
-  const receive = resolveReceiveStatus(
-    transaction,
-    deriveReceiveStatus({
-      cooldownRemainingSec,
-      isCooldownEligible,
-      receiveFromStatus,
-      unstakeMined,
-    }),
+  const cooldownDerived = deriveReceiveStatus({
+    cooldownRemainingSec,
+    isCooldownEligible,
+    receiveFromStatus,
+    unstakeMined,
+  })
+  const receive = resolveSettleStepStatus({
+    awaitingAction: needsManualClaim(transaction),
+    fallback: cooldownDerived,
+    isComplete: cooldownDerived === ProgressStatus.COMPLETED,
+    settlementFailed: transaction.settlement?.failed ?? false,
     settlementTxHash,
-  )
+  })
 
   const cooldownPostAction = deriveCooldownPostAction({
     cooldownDurationSec,

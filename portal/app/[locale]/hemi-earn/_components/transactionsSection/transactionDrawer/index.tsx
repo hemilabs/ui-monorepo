@@ -23,22 +23,19 @@ import { HistoricalDepositReview } from './historicalDepositReview'
 import { HistoricalWithdrawReview } from './historicalWithdrawReview'
 import { RetryFailedDeposit } from './retryFailedDeposit'
 import { RetryFailedWithdraw } from './retryFailedWithdraw'
-import { ClaimDeposit, RecoverDeposit } from './settleDeposit'
-import { ClaimRedeem, RecoverRedeem } from './settleRedeem'
-import { AddTokenToWalletCta } from './settleShared'
+import { AddTokenToWalletCta, SettleCta } from './settleShared'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
-// The drawer is already open, so the deposit CTAs don't redirect on sign. A
-// `failedKind` (the user's claim/recover Hemi tx reverted) surfaces the CTA as
-// a Retry even though the subgraph status no longer matches.
+// The drawer is already open, so the CTAs don't redirect on sign. A reverted
+// claim/recover keeps the row at FULFILLED/CANCELLED, so the same
+// `needsManualClaim`/`needsRecover` branch re-surfaces the CTA (which shows
+// "try again" off the failed settlement marker).
 function depositCallToAction({
   asset,
-  failedKind,
   pool,
   transaction,
 }: {
   asset: EarnAsset
-  failedKind: 'CLAIM' | 'RECOVER' | undefined
   pool: EarnPool
   transaction: EarnTransaction
 }) {
@@ -47,12 +44,24 @@ function depositCallToAction({
       <RetryFailedDeposit asset={asset} pool={pool} transaction={transaction} />
     )
   }
-  if (needsManualClaim(transaction) || failedKind === 'CLAIM') {
-    return <ClaimDeposit asset={asset} pool={pool} transaction={transaction} />
-  }
-  if (needsRecover(transaction) || failedKind === 'RECOVER') {
+  if (needsManualClaim(transaction)) {
     return (
-      <RecoverDeposit asset={asset} pool={pool} transaction={transaction} />
+      <SettleCta
+        asset={asset}
+        operation="CLAIM"
+        pool={pool}
+        transaction={transaction}
+      />
+    )
+  }
+  if (needsRecover(transaction)) {
+    return (
+      <SettleCta
+        asset={asset}
+        operation="RECOVER"
+        pool={pool}
+        transaction={transaction}
+      />
     )
   }
   // Shares have landed (claim done) — offer to add the share token to the
@@ -67,12 +76,10 @@ function depositCallToAction({
 // asset, recover returns the shares.
 function redeemCallToAction({
   asset,
-  failedKind,
   pool,
   transaction,
 }: {
   asset: EarnAsset
-  failedKind: 'CLAIM' | 'RECOVER' | undefined
   pool: EarnPool
   transaction: EarnTransaction
 }) {
@@ -85,11 +92,25 @@ function redeemCallToAction({
       />
     )
   }
-  if (needsManualClaim(transaction) || failedKind === 'CLAIM') {
-    return <ClaimRedeem asset={asset} pool={pool} transaction={transaction} />
+  if (needsManualClaim(transaction)) {
+    return (
+      <SettleCta
+        asset={asset}
+        operation="CLAIM"
+        pool={pool}
+        transaction={transaction}
+      />
+    )
   }
-  if (needsRecover(transaction) || failedKind === 'RECOVER') {
-    return <RecoverRedeem asset={asset} pool={pool} transaction={transaction} />
+  if (needsRecover(transaction)) {
+    return (
+      <SettleCta
+        asset={asset}
+        operation="RECOVER"
+        pool={pool}
+        transaction={transaction}
+      />
+    )
   }
   // The underlying asset has landed (claim done) — offer to add it to the wallet,
   // matching the live drawer and the tunnel history.
@@ -134,20 +155,16 @@ const TransactionDrawerContent = function () {
     )
   }
   const resolved = { asset, pool }
-  const { settlement } = transaction
-  const failedKind = settlement?.failed ? settlement.kind : undefined
 
   const callToAction =
     transaction.kind === 'REDEEM'
       ? redeemCallToAction({
           asset: resolved.asset,
-          failedKind,
           pool: resolved.pool,
           transaction,
         })
       : depositCallToAction({
           asset: resolved.asset,
-          failedKind,
           pool: resolved.pool,
           transaction,
         })

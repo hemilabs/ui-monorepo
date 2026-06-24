@@ -1,3 +1,7 @@
+import {
+  ProgressStatus,
+  type ProgressStatusType,
+} from 'components/reviewOperation/progressStatus'
 import { type Token } from 'types/token'
 import { formatPercentage } from 'utils/format'
 import { type Address, type Hash, isAddressEqual } from 'viem'
@@ -137,11 +141,40 @@ export const enrichWithSettlement = (
   row && settlement ? { ...row, settlement } : row
 
 // A row the table is still actively tracking — drives both the polling loop and
-// the row spinner. Terminal: FINALIZED/RECOVERED/FAILED. A CANCELLED request (any
-// kind) stays in flight: it still walks to RECOVERED, whether auto-recover or via
-// the user's recover, so the table keeps polling and reflects it (even across
-// devices/sessions), mirroring how a FULFILLED request walks to FINALIZED.
+// the row spinner. Terminal: FINALIZED, RECOVERED, and a *local* FAILED (the Hemi
+// `request*` tx reverted — it's never indexed and never transitions on its own;
+// the user retries from home). A *subgraph* FAILED is the Agent failing
+// cross-chain, which still walks to CANCELLED→RECOVERED (auto-recover or the
+// keeper cancel), so it stays in flight — otherwise the table stops polling at the
+// transient FAILED and never catches the RECOVERED. A CANCELLED request (any kind)
+// likewise stays in flight, mirroring how a FULFILLED request walks to FINALIZED.
 export const isEarnRowInFlight = (tx: EarnTransaction) =>
   tx.status !== 'FINALIZED' &&
   tx.status !== 'RECOVERED' &&
-  tx.status !== 'FAILED'
+  !(tx.status === 'FAILED' && isLocalEarnTransactionRow(tx))
+
+// The progress ladder shared by a withdraw's terminal step — the receive step on
+// the claim path, the recover step on the cancel path — across both the live and
+// historical drawers. Same precedence in every case: done → COMPLETED; a reverted
+// settlement → FAILED; a mining one → PROGRESS; an untouched manual settlement →
+// READY (the user must sign, nothing is spinning yet); otherwise the caller's
+// in-flight `fallback` (cooldown-derived for receive, PROGRESS for recover).
+export const resolveSettleStepStatus = function ({
+  awaitingAction,
+  fallback,
+  isComplete,
+  settlementFailed,
+  settlementTxHash,
+}: {
+  awaitingAction: boolean
+  fallback: ProgressStatusType
+  isComplete: boolean
+  settlementFailed: boolean
+  settlementTxHash: Hash | undefined
+}): ProgressStatusType {
+  if (isComplete) return ProgressStatus.COMPLETED
+  if (settlementFailed) return ProgressStatus.FAILED
+  if (settlementTxHash) return ProgressStatus.PROGRESS
+  if (awaitingAction) return ProgressStatus.READY
+  return fallback
+}

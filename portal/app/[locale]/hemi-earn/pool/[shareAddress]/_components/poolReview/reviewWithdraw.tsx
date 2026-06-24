@@ -21,10 +21,9 @@ import { type Address, type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 import {
-  ClaimRedeem,
-  RecoverRedeem,
-} from '../../../../_components/transactionsSection/transactionDrawer/settleRedeem'
-import { AddTokenToWalletCta } from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
+  AddTokenToWalletCta,
+  SettleCta,
+} from '../../../../_components/transactionsSection/transactionDrawer/settleShared'
 import {
   REDEEM_SLIPPAGE_BPS,
   applySlippage,
@@ -41,6 +40,7 @@ import {
   isRecoverPath,
   needsManualClaim,
   needsRecover,
+  resolveSettleStepStatus,
 } from '../../../../_utils'
 import { type EarnSettlement, type EarnTransaction } from '../../../../types'
 import { usePoolForm } from '../../_context/poolFormContext'
@@ -59,11 +59,10 @@ type Props = {
   onClose: VoidFunction
 }
 
-// COMPLETED once the claim lands; a reverted claim → FAILED; a mining claim →
-// PROGRESS; a FULFILLED + manual redeem awaiting the user's claim → READY (not a
-// spinner — nothing is progressing until they sign); the asset still bound
-// cross-chain (auto-claim or post-cooldown) → PROGRESS; else NOT_READY.
-function resolveReceiveStatus({
+// Adapts the receive step's local state to the shared `resolveSettleStepStatus`
+// ladder. A thin wrapper (not inlined) so `buildReceiveStep` stays under the
+// complexity threshold.
+const resolveReceiveStatus = ({
   awaitingClaim,
   crossChainInFlight,
   isFinalized,
@@ -75,15 +74,16 @@ function resolveReceiveStatus({
   isFinalized: boolean
   settlement: EarnSettlement | undefined
   settlementTxHash: Hash | undefined
-}): ProgressStatusType {
-  // Key completion off the terminal status, not `claimTxHash` — a FINALIZED row
-  // with a null or still-indexing claim hash is still done.
-  if (isFinalized) return ProgressStatus.COMPLETED
-  if (settlement?.failed) return ProgressStatus.FAILED
-  if (settlementTxHash) return ProgressStatus.PROGRESS
-  if (awaitingClaim) return ProgressStatus.READY
-  return crossChainInFlight ? ProgressStatus.PROGRESS : ProgressStatus.NOT_READY
-}
+}): ProgressStatusType =>
+  resolveSettleStepStatus({
+    awaitingAction: awaitingClaim,
+    fallback: crossChainInFlight
+      ? ProgressStatus.PROGRESS
+      : ProgressStatus.NOT_READY,
+    isComplete: isFinalized,
+    settlementFailed: settlement?.failed ?? false,
+    settlementTxHash,
+  })
 
 // Maps the settlement-enriched row, local withdraw status, and cooldown state to
 // the receive step's progress + terminal hash. Module-level so the component
@@ -125,7 +125,7 @@ function buildReceiveStep({
         <span>{t('receive-token', { symbol: receiveToken.symbol })}</span>
       </div>
     ),
-    explorerChainId: deliveryHash ? chainId : undefined,
+    explorerChainId: chainId,
     status: resolveReceiveStatus({
       awaitingClaim: !!row && needsManualClaim(row),
       crossChainInFlight: unstakeMined && (!needsCooldown || cooldownElapsed),
@@ -142,9 +142,9 @@ const FAILED_STATUSES: WithdrawStatusType[] = [
   WithdrawStatus.WITHDRAW_TX_FAILED,
 ]
 
-// COMPLETED once RECOVERED; a reverted recover → FAILED; a mining one →
-// PROGRESS; a pending manual recover → READY; else auto-recover PROGRESS.
-function resolveRecoverStepStatus({
+// Adapts the recover step's local state to the shared ladder, mirroring
+// `resolveReceiveStatus`; auto-recover (no manual action) rests at PROGRESS.
+const resolveRecoverStepStatus = ({
   isComplete,
   needsRecoverAction,
   settlementFailed,
@@ -154,13 +154,14 @@ function resolveRecoverStepStatus({
   needsRecoverAction: boolean
   settlementFailed: boolean
   settlementTxHash: Hash | undefined
-}): ProgressStatusType {
-  if (isComplete) return ProgressStatus.COMPLETED
-  if (settlementFailed) return ProgressStatus.FAILED
-  if (settlementTxHash) return ProgressStatus.PROGRESS
-  if (needsRecoverAction) return ProgressStatus.READY
-  return ProgressStatus.PROGRESS
-}
+}): ProgressStatusType =>
+  resolveSettleStepStatus({
+    awaitingAction: needsRecoverAction,
+    fallback: ProgressStatus.PROGRESS,
+    isComplete,
+    settlementFailed,
+    settlementTxHash,
+  })
 
 // Builds the `data:` argument for `useEstimateGas`. Module-level so the
 // component doesn't pay the branching tax for this conditional encode.
@@ -413,7 +414,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
           <span>{t(isComplete ? 'shares-returned' : 'shares-to-recover')}</span>
         </div>
       ),
-      explorerChainId: deliveryHash ? chainId : undefined,
+      explorerChainId: chainId,
       status: resolveRecoverStepStatus({
         isComplete,
         needsRecoverAction: !!settledRow && needsRecover(settledRow),
@@ -432,8 +433,9 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     // asset back to the Router (FULFILLED).
     if (settledRow && needsManualClaim(settledRow)) {
       return (
-        <ClaimRedeem
+        <SettleCta
           asset={selectedAsset}
+          operation="CLAIM"
           pool={pool}
           transaction={settledRow}
         />
@@ -443,8 +445,9 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     // signs the recover to pull them to their wallet.
     if (settledRow && needsRecover(settledRow)) {
       return (
-        <RecoverRedeem
+        <SettleCta
           asset={selectedAsset}
+          operation="RECOVER"
           pool={pool}
           transaction={settledRow}
         />

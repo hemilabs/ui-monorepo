@@ -9,8 +9,7 @@ import { type EarnTransaction } from '../../types'
 import { LoaderIcon } from '../icons/loaderIcon'
 import { TrashIcon } from '../icons/trashIcon'
 
-import { DepositRowCta } from './transactionDrawer/settleDeposit'
-import { RedeemRowCta } from './transactionDrawer/settleRedeem'
+import { SettleRowCta } from './transactionDrawer/settleShared'
 import { useTxDrawerQueryString } from './transactionDrawer/useTxDrawerQueryString'
 
 type Props = {
@@ -39,13 +38,11 @@ export const RowActions = function ({ transaction }: Props) {
 
   const { showLoaderIcon, showManualCta } = resolveActionState(transaction)
 
-  // Deposit and redeem render different settlement CTAs (different hooks +
-  // labels); pick the row variant by kind.
-  const RowCta = transaction.kind === 'REDEEM' ? RedeemRowCta : DepositRowCta
-
+  // Only while PENDING: `Router.cancel` reverts once the request is FULFILLED
+  // (the user claims instead) or terminal, and a FULFILLED row already shows the
+  // Claim CTA — showing Cancel next to it would be contradictory.
   const showCancelButton =
-    transaction.kind === 'REDEEM' &&
-    (transaction.status === 'PENDING' || transaction.status === 'FULFILLED')
+    transaction.kind === 'REDEEM' && transaction.status === 'PENDING'
 
   const onViewClick = function (e: MouseEvent) {
     e.stopPropagation()
@@ -73,7 +70,7 @@ export const RowActions = function ({ transaction }: Props) {
   return (
     <div className="flex items-center gap-x-2 pr-4">
       {showManualCta ? (
-        <RowCta fallback={viewButton} transaction={transaction} />
+        <SettleRowCta fallback={viewButton} transaction={transaction} />
       ) : (
         viewButton
       )}

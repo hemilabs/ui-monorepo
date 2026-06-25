@@ -113,12 +113,14 @@ export const hasFailedSettlement = (tx: EarnTransaction) =>
 // A deliberate user cancel still in flight, vs an Agent failure — both reach
 // CANCELLED→recover, but only this reads neutrally. Detected by the indexed
 // `cancellationRequested`, bridged by the local `CANCEL` marker during indexing
-// lag; a reverted cancel (failed marker) is excluded (the modal owns that retry).
-// Scoped to PENDING/CANCELLED — a cancel can lose the race to the redeem, so a
-// terminal row reads as what happened, not a lingering "cancelling".
+// lag. `!tx.failed` gates both signals: an Agent failure reads as a failure even
+// with a lingering cancel marker (and a reverted cancel — failed marker — is out
+// too; the modal owns that retry). Scoped to PENDING/CANCELLED — a cancel can
+// lose the race to the redeem, so a terminal row reads as what happened.
 export const isUserCancel = (tx: EarnTransaction) =>
   (tx.status === 'PENDING' || tx.status === 'CANCELLED') &&
-  ((tx.cancellationRequested === true && !tx.failed) ||
+  !tx.failed &&
+  (tx.cancellationRequested === true ||
     (tx.settlement?.kind === 'CANCEL' && tx.settlement.failed !== true))
 
 // Which explanatory banner (if any) a drawer should show above the settle CTA —
@@ -141,9 +143,10 @@ export const pickSettleBannerKey = function (
   // `isUserCancel` already drops at RECOVERED, so the terminal step (not this
   // "returning your shares" banner) tells that story.
   if (isUserCancel(tx)) return 'cancelled'
-  // Any other settlement marker means the user already engaged with the
-  // claim/recover CTA (Claiming…/Try again); the banner would contradict it.
-  if (tx.settlement) return undefined
+  // A claim/recover marker means the user already engaged with that CTA
+  // (Claiming…/Try again); the banner would contradict it. A CANCEL marker isn't
+  // one, so it must not hide an Agent-failure recover banner.
+  if (claimRecoverSettlement(tx.settlement)) return undefined
   const operation = needsManualClaim(tx)
     ? 'CLAIM'
     : needsRecover(tx)

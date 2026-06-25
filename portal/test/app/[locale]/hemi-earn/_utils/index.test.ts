@@ -746,6 +746,18 @@ describe('utils', function () {
         }),
       ).toBe('cancelled')
     })
+
+    it('shows the recover banner for an Agent failure despite a CANCEL marker', function () {
+      expect(
+        pickSettleBannerKey({
+          ...baseTx,
+          failed: true,
+          kind: 'REDEEM',
+          settlement: { failed: false, kind: 'CANCEL' },
+          status: 'CANCELLED',
+        }),
+      ).toBe('recover-shares')
+    })
   })
 
   describe('isUserCancel', function () {
@@ -765,6 +777,17 @@ describe('utils', function () {
           ...baseTx,
           cancellationRequested: true,
           failed: true,
+          status: 'CANCELLED',
+        }),
+      ).toBe(false)
+    })
+
+    it('is false for an Agent failure even with a lingering CANCEL marker', function () {
+      expect(
+        isUserCancel({
+          ...baseTx,
+          failed: true,
+          settlement: { failed: false, kind: 'CANCEL' },
           status: 'CANCELLED',
         }),
       ).toBe(false)

@@ -1,13 +1,38 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { Button } from 'components/button'
+import { Chevron } from 'components/icons/chevron'
+import { ComponentProps } from 'react'
+
+type StoryProps = ComponentProps<typeof Button> & {
+  iconPosition: 'none' | 'left' | 'right'
+}
+
+// Match the Figma icon colors: white on primary, dark on secondary/tertiary.
+// The Chevron path ships a fixed gray fill, so override it like the app does.
+// `variant` defaults to primary in the component, so anything but an explicit
+// secondary/tertiary keeps the white icon (matches the rendered button).
+const iconColor = (variant: StoryProps['variant']) =>
+  variant === 'secondary' || variant === 'tertiary'
+    ? '[&>path]:fill-neutral-950'
+    : '[&>path]:fill-white'
 
 const meta = {
+  args: {
+    children: 'Connect Wallet',
+    iconPosition: 'none',
+    size: 'small',
+    variant: 'primary',
+  },
   argTypes: {
     children: {
       control: 'text',
     },
     disabled: {
       control: 'boolean',
+    },
+    iconPosition: {
+      control: 'inline-radio',
+      options: ['none', 'left', 'right'],
     },
     size: {
       control: 'select',
@@ -19,42 +44,60 @@ const meta = {
     },
   },
   component: Button,
+  render: ({ children, iconPosition, variant, ...args }) => (
+    <Button variant={variant} {...args}>
+      {iconPosition === 'left' && (
+        <Chevron.Left className={iconColor(variant)} />
+      )}
+      {children}
+      {iconPosition === 'right' && (
+        <Chevron.Right className={iconColor(variant)} />
+      )}
+    </Button>
+  ),
   title: 'Components/Button',
-} satisfies Meta<typeof Button>
+} satisfies Meta<StoryProps>
 
 export default meta
 
-type Story = StoryObj<typeof meta>
+type Story = StoryObj<StoryProps>
 
 export const Primary: Story = {
   args: {
-    children: 'Connect Wallet',
-    size: 'small',
     variant: 'primary',
   },
 }
 
 export const Secondary: Story = {
   args: {
-    children: 'Connect Wallet',
-    size: 'small',
     variant: 'secondary',
   },
 }
 
 export const Tertiary: Story = {
   args: {
-    children: 'Connect Wallet',
-    size: 'small',
     variant: 'tertiary',
   },
 }
 
 export const Disabled: Story = {
   args: {
-    children: 'Connect Wallet',
     disabled: true,
-    size: 'small',
-    variant: 'primary',
+  },
+}
+
+export const Hover: Story = {
+  parameters: {
+    pseudo: {
+      hover: true,
+    },
+  },
+}
+
+export const Focus: Story = {
+  parameters: {
+    pseudo: {
+      focusVisible: true,
+    },
   },
 }

@@ -29,7 +29,7 @@ const meta = {
     <div className="relative inline-block">
       {buttonMeta.render?.(args)}
       {loading && (
-        <span className="absolute inset-0">
+        <span aria-hidden className="pointer-events-none absolute inset-0">
           <Skeleton
             className={`block h-full ${
               args.size === 'xSmall' ? 'rounded-md' : 'rounded-lg'

@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { ButtonLoader } from 'components/buttonLoader'
 
-// `ButtonLoader` is the `loading` fallback shown while a submit button loads (e.g.
-// the dynamically imported ConnectEvmWallet). It has no props and bakes in its own
-// height, so it's framed in a box with a `small` button's shape (`h-8`, `rounded-lg`)
-// — `overflow-hidden` trims the loader to that size and the wrapper width sets it.
+// `ButtonLoader` is the `loading` fallback for a dynamically imported submit button
+// (e.g. ConnectEvmWallet). It has no props and a fixed height (`containerClassName=
+// "h-11.5"`, ~46px, the xLarge size it stands in for). This story deliberately frames
+// it in a `small` button box (`h-8`, `rounded-lg`): `overflow-hidden` trims the
+// loader's fixed height to that shape and the wrapper width sizes it.
 const meta = {
   component: ButtonLoader,
   decorators: [

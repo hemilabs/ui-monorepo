@@ -1,50 +1,24 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import { Button } from 'components/button'
-import { ComponentProps } from 'react'
-import Skeleton from 'react-loading-skeleton'
+import { ButtonLoader } from 'components/buttonLoader'
 
-import buttonMeta from './button.stories'
-
-// Reuse the Button story's controls (size, variant, children, icon, disabled) and
-// add a `loading` toggle. The loader has no size of its own: it overlays the button
-// and fills it, so changing `size` resizes the button and the skeleton follows.
-type StoryProps = ComponentProps<typeof Button> & {
-  iconPosition: 'none' | 'left' | 'right'
-  loading: boolean
-}
-
+// `ButtonLoader` is the `loading` fallback shown while a submit button loads (e.g.
+// the dynamically imported ConnectEvmWallet). It has no props and bakes in its own
+// height, so it's framed in a box with a `small` button's shape (`h-8`, `rounded-lg`)
+// — `overflow-hidden` trims the loader to that size and the wrapper width sets it.
 const meta = {
-  ...buttonMeta,
-  args: {
-    ...buttonMeta.args,
-    loading: true,
-  },
-  argTypes: {
-    ...buttonMeta.argTypes,
-    loading: {
-      control: 'boolean',
-    },
-  },
-  render: ({ loading, ...args }) => (
-    <div className="relative inline-block">
-      {buttonMeta.render?.(args)}
-      {loading && (
-        <span aria-hidden className="pointer-events-none absolute inset-0">
-          <Skeleton
-            className={`block h-full ${
-              args.size === 'xSmall' ? 'rounded-md' : 'rounded-lg'
-            }`}
-            containerClassName="block h-full leading-none"
-          />
-        </span>
-      )}
-    </div>
-  ),
+  component: ButtonLoader,
+  decorators: [
+    Story => (
+      <div className="h-8 w-28 overflow-hidden rounded-lg">
+        <Story />
+      </div>
+    ),
+  ],
   title: 'Components/Button Loader',
-} satisfies Meta<StoryProps>
+} satisfies Meta<typeof ButtonLoader>
 
 export default meta
 
-type Story = StoryObj<StoryProps>
+type Story = StoryObj<typeof ButtonLoader>
 
 export const Default: Story = {}

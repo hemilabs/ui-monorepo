@@ -83,6 +83,10 @@
     },
     "transactions": {
       "banner": {
+        "cancelled": {
+          "heading": "Saque cancelado",
+          "subheading": "Estamos devolvendo seus share tokens à sua carteira."
+        },
         "claim-funds": {
           "heading": "Não foi possível receber seus fundos automaticamente",
           "subheading": "Clique em 'Receber fundos' para receber seus fundos."
@@ -109,6 +113,13 @@
         "status": "Status",
         "tx-hash": "Hash da Tx",
         "type": "Tipo"
+      },
+      "cancel-modal": {
+        "cancelling": "Cancelando...",
+        "confirm": "Cancelar saque",
+        "description": "Se você cancelar, seus fundos voltam a ficar em stake e saem do período de espera.",
+        "keep": "Manter saque",
+        "title": "Cancelar saque"
       },
       "cancel-withdraw": "Cancelar saque",
       "connect-to-view": "Conecte sua carteira para ver suas transações de earn.",
@@ -137,6 +148,7 @@
       "recover-shares": "Recuperar shares",
       "recovering": "Recuperando...",
       "status": {
+        "cancelling": "Cancelando saque",
         "cooldown-ready-in-days": "Cooldown · pronto em {value}d",
         "cooldown-ready-in-hours": "Cooldown · pronto em {value}h",
         "cooldown-ready-in-minutes": "Cooldown · pronto em {value}m",
@@ -147,6 +159,7 @@
         "manual-claim-needed": "Em andamento - Resgate manual necessário",
         "ready-to-claim": "Pronto para receber",
         "recover-funds-needed": "Algo deu errado - Recuperar fundos",
+        "recover-shares-cancelled": "Saque cancelado - Recuperar shares",
         "recover-shares-needed": "Algo deu errado - Recuperar shares",
         "returned": "Devolvido",
         "shares-returned": "Shares devolvidas",

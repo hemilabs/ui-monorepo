@@ -1,6 +1,17 @@
-export const LoaderIcon = () => (
+type LoaderTone = 'brand' | 'inverted'
+
+const toneClassName: Record<LoaderTone, string> = {
+  brand: 'text-orange-600',
+  inverted: 'text-white',
+}
+
+type Props = {
+  tone?: LoaderTone
+}
+
+export const LoaderIcon = ({ tone = 'brand' }: Props) => (
   <svg
-    className="animate-spin"
+    className={`animate-spin ${toneClassName[tone]}`}
     fill="none"
     height="16"
     width="16"
@@ -8,12 +19,12 @@ export const LoaderIcon = () => (
   >
     <path
       d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM2.96 8a5.04 5.04 0 1 0 10.08 0A5.04 5.04 0 0 0 2.96 8Z"
-      fill="#FF4600"
+      fill="currentColor"
       fillOpacity={0.12}
     />
     <path
       d="M8 14.02c0 .541-.44.987-.977.912A7.001 7.001 0 0 1 3.05 3.05a7 7 0 0 1 3.973-1.982C7.56.993 8 1.438 8 1.98c0 .541-.443.97-.974 1.075a5.039 5.039 0 0 0 0 9.89c.531.105.974.534.974 1.075Z"
-      fill="#FF4600"
+      fill="currentColor"
     />
   </svg>
 )

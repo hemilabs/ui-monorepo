@@ -34,11 +34,13 @@ import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactions
 import { useIsCooldownEligible } from '../../../../_hooks/useIsCooldownEligible'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
 import {
+  claimRecoverSettlement,
   enrichWithSettlement,
   findLocalSettlement,
   getTerminalDeliveryTxHash,
   hashesMatch,
   isRecoverPath,
+  isUserCancel,
   needsManualClaim,
   needsRecover,
   resolveSettleStepStatus,
@@ -110,7 +112,9 @@ function buildReceiveStep({
   // RECOVERED — returns shares instead and is rendered by `addRecoverStep`).
   const isFinalized = row?.status === 'FINALIZED'
   const claimTxHash = isFinalized ? (row?.claimTxHash ?? undefined) : undefined
-  const settlement = row?.settlement
+  // A reverted CANCEL marker must not fail this step — strip it (the receive
+  // step only tracks claim/recover settlements).
+  const settlement = claimRecoverSettlement(row?.settlement)
   const settlementTxHash =
     settlement && !settlement.failed ? settlement.txHash : undefined
   const unstakeMined = withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED
@@ -217,6 +221,9 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     subgraphRow?.requestTxHash,
   )
   const settledRow = enrichWithSettlement(subgraphRow, settlement)
+  // A deliberate cancel still PENDING reads as the recover it's becoming: drop
+  // the moot cooldown countdown and render the recover (not receive) step.
+  const cancelling = !!settledRow && isUserCancel(settledRow)
 
   const { data: isCooldownEligible } = useIsCooldownEligible({
     account: address,
@@ -389,22 +396,27 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         isError: isWithdrawGasFeesError,
         show: showFees,
       }),
-      postAction: deriveCooldownPostAction({
-        cooldownDurationSec,
-        cooldownRemainingSec,
-        isCooldownEligible,
-        subgraphStatus: subgraphRow?.status,
-        t,
-        unstakeMined: withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED,
-      }),
+      postAction: cancelling
+        ? undefined
+        : deriveCooldownPostAction({
+            cooldownDurationSec,
+            cooldownRemainingSec,
+            isCooldownEligible,
+            subgraphStatus: subgraphRow?.status,
+            t,
+            unstakeMined:
+              withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED,
+          }),
       status: statusMap[withdrawStatus] ?? ProgressStatus.NOT_READY,
       txHash: withdrawOperation?.transactionHash,
     }
   }
 
   const addRecoverStep = function (): StepPropsWithoutPosition {
+    // Drop the CANCEL marker so it doesn't pose as this step's transaction.
+    const settleMarker = claimRecoverSettlement(settlement)
     const settlementTxHash =
-      settlement && !settlement.failed ? settlement.txHash : undefined
+      settleMarker && !settleMarker.failed ? settleMarker.txHash : undefined
     const isComplete = subgraphRow?.status === 'RECOVERED'
     const deliveryHash =
       settlementTxHash ?? getTerminalDeliveryTxHash(subgraphRow)
@@ -419,7 +431,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       status: resolveRecoverStepStatus({
         isComplete,
         needsRecoverAction: !!settledRow && needsRecover(settledRow),
-        settlementFailed: settlement?.failed ?? false,
+        settlementFailed: settleMarker?.failed ?? false,
         settlementTxHash,
       }),
       txHash: deliveryHash,
@@ -468,7 +480,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     }
     steps.push(addUnstakeStep())
     steps.push(
-      settledRow && isRecoverPath(settledRow)
+      (settledRow && isRecoverPath(settledRow)) || cancelling
         ? addRecoverStep()
         : buildReceiveStep({
             chainId,

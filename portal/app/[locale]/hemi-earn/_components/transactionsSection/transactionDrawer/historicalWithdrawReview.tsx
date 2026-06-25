@@ -20,9 +20,11 @@ import { useAccount } from 'wagmi'
 import { useCooldownDuration } from '../../../_hooks/useCooldownDuration'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import {
+  claimRecoverSettlement,
   getTerminalDeliveryTxHash,
   isLocalEarnTransactionRow,
   isRecoverPath,
+  isUserCancel,
   needsManualClaim,
   needsRecover,
   resolveSettleStepStatus,
@@ -266,8 +268,11 @@ function buildSteps({
   }
   const unstakeStep = buildUnstakeStep(transaction, pool.shareToken, t)
   // Recover path: the unstake landed and the shares come back (not the asset),
-  // so the cooldown/receive machinery doesn't apply.
-  if (isRecoverPath(transaction)) {
+  // so the cooldown/receive machinery doesn't apply. A deliberate cancel still
+  // PENDING (the keeper hasn't driven it to CANCELLED yet) joins this branch so
+  // the drawer drops the now-moot cooldown countdown + "Receive" step and reads
+  // as the recover it's becoming — matching the neutral "cancelling" banner.
+  if (isRecoverPath(transaction) || isUserCancel(transaction)) {
     steps.push(unstakeStep)
     steps.push(
       buildRecoverStep(transaction, pool.shareToken, t, settlementTxHash),
@@ -336,9 +341,10 @@ export const HistoricalWithdrawReview = function ({
 
   const { receive: receiveFromStatus, unstake } = resolveStepStates(transaction)
   const unstakeMined = unstake === ProgressStatus.COMPLETED
-  const { settlement } = transaction
+  // Drop the CANCEL marker so it doesn't pose as the recover step's transaction.
+  const settleMarker = claimRecoverSettlement(transaction.settlement)
   const settlementTxHash =
-    settlement && !settlement.failed ? settlement.txHash : undefined
+    settleMarker && !settleMarker.failed ? settleMarker.txHash : undefined
   const cooldownDerived = deriveReceiveStatus({
     cooldownRemainingSec,
     isCooldownEligible,
@@ -349,7 +355,7 @@ export const HistoricalWithdrawReview = function ({
     awaitingAction: needsManualClaim(transaction),
     fallback: cooldownDerived,
     isComplete: cooldownDerived === ProgressStatus.COMPLETED,
-    settlementFailed: transaction.settlement?.failed ?? false,
+    settlementFailed: settleMarker?.failed ?? false,
     settlementTxHash,
   })
 

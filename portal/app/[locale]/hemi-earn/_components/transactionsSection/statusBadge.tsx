@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl'
 
 import {
   hasFailedSettlement,
+  isUserCancel,
   needsManualClaim,
   needsRecover,
 } from '../../_utils'
@@ -33,6 +34,22 @@ const failedBadge = (t: Translator) => ({
   text: t('status.tx-failed'),
   textClassName: 'text-neutral-900',
 })
+
+const recoverBadge = (
+  userCancel: boolean,
+  kind: EarnTransactionKindType,
+  t: Translator,
+) =>
+  userCancel
+    ? inProgress(t('status.recover-shares-cancelled'))
+    : {
+        icon: <WarningIcon className="text-amber-500" />,
+        text:
+          kind === 'REDEEM'
+            ? t('status.recover-shares-needed')
+            : t('status.recover-funds-needed'),
+        textClassName: 'text-neutral-900',
+      }
 
 function resolveStatusBadge(
   kind: EarnTransactionKindType,
@@ -76,16 +93,12 @@ function resolveBadge(
   const { kind, status } = transaction
   // A reverted claim/recover wins over the (now stale) manual-needed state.
   if (hasFailedSettlement(transaction)) return failedBadge(t)
-  if (needsRecover(transaction)) {
-    return {
-      icon: <WarningIcon className="text-amber-500" />,
-      text:
-        kind === 'REDEEM'
-          ? t('status.recover-shares-needed')
-          : t('status.recover-funds-needed'),
-      textClassName: 'text-neutral-900',
-    }
-  }
+  const userCancel = isUserCancel(transaction)
+  // Once it rests at CANCELLED it's the recover stage — neutral for a user
+  // cancel, amber for an Agent failure. Only the still-processing PENDING cancel
+  // reads as the passive "Cancelling withdrawal".
+  if (needsRecover(transaction)) return recoverBadge(userCancel, kind, t)
+  if (userCancel) return inProgress(t('status.cancelling'))
   const byStatus = resolveStatusBadge(kind, status, t)
   if (byStatus) return byStatus
   if (cooldownText !== undefined) return inProgress(cooldownText)

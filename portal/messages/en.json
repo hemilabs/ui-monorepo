@@ -83,6 +83,10 @@
     },
     "transactions": {
       "banner": {
+        "cancelled": {
+          "heading": "Withdrawal cancelled",
+          "subheading": "We're returning your share tokens to your wallet."
+        },
         "claim-funds": {
           "heading": "We couldn't claim your funds automatically",
           "subheading": "Click on 'Claim funds' to get your funds."
@@ -109,6 +113,13 @@
         "status": "Status",
         "tx-hash": "Tx Hash",
         "type": "Type"
+      },
+      "cancel-modal": {
+        "cancelling": "Cancelling...",
+        "confirm": "Cancel withdrawal",
+        "description": "If you cancel it, your funds will go back to being staked and will no longer be in the cooldown lock.",
+        "keep": "Keep withdrawal",
+        "title": "Cancel withdrawal"
       },
       "cancel-withdraw": "Cancel withdrawal",
       "connect-to-view": "Connect your wallet to view your earn transactions.",
@@ -137,6 +148,7 @@
       "recover-shares": "Recover shares",
       "recovering": "Recovering...",
       "status": {
+        "cancelling": "Cancelling withdrawal",
         "cooldown-ready-in-days": "Cooldown · ready in {value}d",
         "cooldown-ready-in-hours": "Cooldown · ready in {value}h",
         "cooldown-ready-in-minutes": "Cooldown · ready in {value}m",
@@ -147,6 +159,7 @@
         "manual-claim-needed": "In progress - Manual claim needed",
         "ready-to-claim": "Ready to claim",
         "recover-funds-needed": "Something went wrong - Recover funds",
+        "recover-shares-cancelled": "Withdrawal cancelled - Recover shares",
         "recover-shares-needed": "Something went wrong - Recover shares",
         "returned": "Returned",
         "shares-returned": "Shares returned",

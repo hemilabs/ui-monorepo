@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   canRetryRow,
+  claimRecoverSettlement,
   enrichWithSettlement,
   findLocalSettlement,
   findPoolByAsset,
@@ -16,6 +17,7 @@ import {
   isEarnRowInFlight,
   isLocalEarnTransactionRow,
   isRecoverPath,
+  isUserCancel,
   needsManualClaim,
   needsRecover,
   pickEarnRowAmount,
@@ -35,7 +37,9 @@ const baseTx: EarnTransaction = {
   amountOut: null,
   asset: zeroAddress,
   automatic: true,
+  cancellationRequested: false,
   claimTxHash: null,
+  failed: false,
   kind: 'DEPOSIT',
   receiver: zeroAddress,
   recoverTxHash: null,
@@ -318,6 +322,38 @@ describe('utils', function () {
     })
   })
 
+  describe('claimRecoverSettlement', function () {
+    it('returns a CLAIM settlement unchanged', function () {
+      const settlement: EarnSettlement = {
+        failed: false,
+        kind: 'CLAIM',
+        txHash: claimHash,
+      }
+      expect(claimRecoverSettlement(settlement)).toBe(settlement)
+    })
+
+    it('returns a RECOVER settlement unchanged', function () {
+      const settlement: EarnSettlement = { failed: true, kind: 'RECOVER' }
+      expect(claimRecoverSettlement(settlement)).toBe(settlement)
+    })
+
+    it('strips a pending CANCEL marker (the cancel signal, not a settlement)', function () {
+      expect(
+        claimRecoverSettlement({ failed: false, kind: 'CANCEL' }),
+      ).toBeUndefined()
+    })
+
+    it('strips a reverted CANCEL marker too', function () {
+      expect(
+        claimRecoverSettlement({ failed: true, kind: 'CANCEL' }),
+      ).toBeUndefined()
+    })
+
+    it('returns undefined for no settlement', function () {
+      expect(claimRecoverSettlement(undefined)).toBeUndefined()
+    })
+  })
+
   describe('hasFailedSettlement', function () {
     it('is true when the settlement is flagged failed', function () {
       expect(
@@ -339,6 +375,15 @@ describe('utils', function () {
 
     it('is false when there is no settlement', function () {
       expect(hasFailedSettlement(baseTx)).toBe(false)
+    })
+
+    it('is false for a reverted CANCEL (the modal owns that retry)', function () {
+      expect(
+        hasFailedSettlement({
+          ...baseTx,
+          settlement: { failed: true, kind: 'CANCEL' },
+        }),
+      ).toBe(false)
     })
   })
 
@@ -656,6 +701,116 @@ describe('utils', function () {
           status: 'CANCELLED',
         }),
       ).toBeUndefined()
+    })
+
+    it('returns "cancelled" for a user-cancelled redeem (indexed flag)', function () {
+      expect(
+        pickSettleBannerKey({
+          ...baseTx,
+          cancellationRequested: true,
+          kind: 'REDEEM',
+          status: 'CANCELLED',
+        }),
+      ).toBe('cancelled')
+    })
+
+    it('returns undefined once a user-cancelled redeem is RECOVERED', function () {
+      expect(
+        pickSettleBannerKey({
+          ...baseTx,
+          cancellationRequested: true,
+          kind: 'REDEEM',
+          status: 'RECOVERED',
+        }),
+      ).toBeUndefined()
+    })
+
+    it('returns undefined when a cancelled redeem FINALIZED (cancel lost the race)', function () {
+      expect(
+        pickSettleBannerKey({
+          ...baseTx,
+          cancellationRequested: true,
+          kind: 'REDEEM',
+          status: 'FINALIZED',
+        }),
+      ).toBeUndefined()
+    })
+
+    it('returns "cancelled" while a CANCEL marker is pending (before indexing)', function () {
+      expect(
+        pickSettleBannerKey({
+          ...baseTx,
+          kind: 'REDEEM',
+          settlement: { failed: false, kind: 'CANCEL' },
+          status: 'PENDING',
+        }),
+      ).toBe('cancelled')
+    })
+  })
+
+  describe('isUserCancel', function () {
+    it('is true when cancellationRequested and not failed', function () {
+      expect(
+        isUserCancel({
+          ...baseTx,
+          cancellationRequested: true,
+          status: 'CANCELLED',
+        }),
+      ).toBe(true)
+    })
+
+    it('is false for an Agent failure (cancellationRequested but failed)', function () {
+      expect(
+        isUserCancel({
+          ...baseTx,
+          cancellationRequested: true,
+          failed: true,
+          status: 'CANCELLED',
+        }),
+      ).toBe(false)
+    })
+
+    it('is true while a CANCEL marker is pending (bridges the indexing lag)', function () {
+      expect(
+        isUserCancel({
+          ...baseTx,
+          settlement: { failed: false, kind: 'CANCEL' },
+        }),
+      ).toBe(true)
+    })
+
+    it('is false for a reverted CANCEL marker (the modal owns that retry)', function () {
+      expect(
+        isUserCancel({
+          ...baseTx,
+          settlement: { failed: true, kind: 'CANCEL' },
+        }),
+      ).toBe(false)
+    })
+
+    it('is false once RECOVERED, even with cancellationRequested (terminal)', function () {
+      expect(
+        isUserCancel({
+          ...baseTx,
+          cancellationRequested: true,
+          status: 'RECOVERED',
+        }),
+      ).toBe(false)
+    })
+
+    it('is false once FINALIZED with cancellationRequested (cancel lost the race)', function () {
+      expect(
+        isUserCancel({
+          ...baseTx,
+          cancellationRequested: true,
+          kind: 'REDEEM',
+          status: 'FINALIZED',
+        }),
+      ).toBe(false)
+    })
+
+    it('is false for a plain row (no flag, no marker)', function () {
+      expect(isUserCancel(baseTx)).toBe(false)
     })
   })
 })

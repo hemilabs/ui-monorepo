@@ -1,20 +1,38 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
+import { Button } from 'components/button'
 import { ButtonLoader } from 'components/buttonLoader'
+import { useEffect, useState } from 'react'
 
-// `ButtonLoader` is the `loading` fallback for a dynamically imported submit button
-// (e.g. ConnectEvmWallet). It has no props and a fixed height (`containerClassName=
-// "h-11.5"`, ~46px, the xLarge size it stands in for). This story deliberately frames
-// it in a `small` button box (`h-8`, `rounded-lg`): `overflow-hidden` trims the
-// loader's fixed height to that shape and the wrapper width sizes it.
+const LoadingButtonDemo = function () {
+  const [loading, setLoading] = useState(true)
+
+  useEffect(
+    function () {
+      if (!loading) {
+        return undefined
+      }
+      const timeout = setTimeout(() => setLoading(false), 5000)
+      return () => clearTimeout(timeout)
+    },
+    [loading],
+  )
+
+  return (
+    <div className="h-8 w-32">
+      {loading ? (
+        <ButtonLoader />
+      ) : (
+        <Button onClick={() => setLoading(true)} size="small" type="button">
+          Connect Wallet
+        </Button>
+      )}
+    </div>
+  )
+}
+
 const meta = {
   component: ButtonLoader,
-  decorators: [
-    Story => (
-      <div className="h-8 w-28 overflow-hidden rounded-lg">
-        <Story />
-      </div>
-    ),
-  ],
+  render: () => <LoadingButtonDemo />,
   title: 'Components/Button Loader',
 } satisfies Meta<typeof ButtonLoader>
 

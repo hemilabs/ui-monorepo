@@ -76,5 +76,6 @@ export const useHistoricalMetrics = ({
       peggedToken.address,
       shareToken.chainId,
       shareToken.address as Address,
+      stakingVault,
     ],
   })

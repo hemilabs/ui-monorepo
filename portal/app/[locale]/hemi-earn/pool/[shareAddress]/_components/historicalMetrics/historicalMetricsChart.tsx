@@ -81,10 +81,10 @@ const getPlaceholderXTicks = function (period: MetricPeriod) {
 }
 
 const formatShortTimestamp = (timestampMs: number, locale: string) =>
-  formatShortDate(new Date(timestampMs), locale)
+  formatShortDate(new Date(timestampMs), locale, 'UTC')
 
 const formatFullTimestamp = (timestampMs: number, locale: string) =>
-  formatDate(new Date(timestampMs), locale)
+  formatDate(new Date(timestampMs), locale, 'UTC')
 
 // 'compact' is meant for the axis ticks, where APY is rendered as a rounded
 // integer ("4%") to keep the axis readable. 'full' keeps the full precision

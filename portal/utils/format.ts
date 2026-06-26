@@ -128,14 +128,21 @@ export const formatCompactFiatParts = function (
   return { number, suffix }
 }
 
-export const formatDate = (date: Date, locale: string) =>
+export const formatDate = (date: Date, locale: string, timeZone?: string) =>
   new Intl.DateTimeFormat(locale, {
     day: '2-digit',
     month: '2-digit',
+    timeZone,
     year: 'numeric',
   }).format(date)
 
-export const formatShortDate = (date: Date, locale: string) =>
-  new Intl.DateTimeFormat(locale, { day: '2-digit', month: 'short' }).format(
-    date,
-  )
+export const formatShortDate = (
+  date: Date,
+  locale: string,
+  timeZone?: string,
+) =>
+  new Intl.DateTimeFormat(locale, {
+    day: '2-digit',
+    month: 'short',
+    timeZone,
+  }).format(date)

@@ -9,6 +9,6 @@ Consider the following defaults/considerations whenever writing/updating code. M
 - [General guidelines](./instructions/general-coding.instructions.md) — all code (`**`).
 - [Frontend guidelines](./instructions/frontend.instructions.md) — frontend code (`**/*.tsx`).
 - [Portal guidelines](./instructions/portal.instructions.md) — portal code (`portal/**`).
-- [Typescript guidelines](./instructions/typescript.instructions.md) — TypeScript code (`**/*.ts`).
+- [TypeScript guidelines](./instructions/typescript.instructions.md) — TypeScript code (`**/*.ts`).
 
 These rules are shared with Claude via the root [`CLAUDE.md`](../CLAUDE.md). Edit the rules in `.github/instructions/`, not in the wrappers.

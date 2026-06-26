@@ -13,31 +13,19 @@ import {
 const apiUrl = process.env.NEXT_PUBLIC_VETRO_API_URL
 const isVetroApiConfigured = apiUrl !== undefined && isValidUrl(apiUrl)
 
-// Temporary stub: there's no APY-history endpoint yet, so the `apy` metric still
-// renders mocked MetricDataPoint[]. Re-wire it once a time series is available.
+type ApyHistory = { apy: number; timestamp: number }[]
 
-const periodToMs: Record<MetricPeriod, number> = {
-  '1m': 30 * 24 * 60 * 60 * 1000,
-  '1w': 7 * 24 * 60 * 60 * 1000,
-  '1y': 365 * 24 * 60 * 60 * 1000,
-  '3m': 90 * 24 * 60 * 60 * 1000,
-}
-
-const generateMockMetric = function (
-  period: MetricPeriod,
-  metricType: MetricType,
-): MetricDataPoint[] {
-  const points = 30
-  const now = Date.now()
-  const span = periodToMs[period]
-  return Array.from({ length: points }, function (_, i) {
-    const x = now - span + (span * i) / (points - 1)
-    const noise = Math.sin(i + 100) * 10000
-    const random = noise - Math.floor(noise)
-    const y =
-      metricType === 'apy' ? 2 + random * 3 : 1_000_000 + random * 250_000
-    return { x, y }
-  })
+const fetchApyHistory = async function ({
+  period,
+  stakingVault,
+}: {
+  period: MetricPeriod
+  stakingVault: Address
+}): Promise<MetricDataPoint[]> {
+  const history = (await fetch(
+    `${apiUrl}/variable-stake/apy-history/${stakingVault}/${period}`,
+  )) as ApyHistory
+  return history.map(({ apy, timestamp }) => ({ x: timestamp, y: apy }))
 }
 
 type TotalDepositsHistory = { timestamp: number; totalDeposits: string }[]
@@ -76,10 +64,10 @@ export const useHistoricalMetrics = ({
   stakingVault,
 }: UseHistoricalMetrics) =>
   useQuery({
-    enabled: metricType === 'apy' || isVetroApiConfigured,
+    enabled: isVetroApiConfigured,
     queryFn: (): Promise<MetricDataPoint[]> =>
       metricType === 'apy'
-        ? Promise.resolve(generateMockMetric(period, metricType))
+        ? fetchApyHistory({ period, stakingVault })
         : fetchTotalDeposits({ peggedToken, period, stakingVault }),
     queryKey: [
       'historical-metrics',

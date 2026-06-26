@@ -2,6 +2,7 @@ import {
   formatBtcAddress,
   formatCompactFiat,
   formatCompactFiatParts,
+  formatDate,
   formatEvmAddress,
   formatEvmHash,
   formatFutureTime,
@@ -311,6 +312,26 @@ describe('utils/format', function () {
 
     it('should zero-pad single-digit days', function () {
       expect(formatShortDate(december5, 'en')).toBe('Dec 05')
+    })
+
+    it('should format in the given time zone', function () {
+      // A UTC-midnight instant falls on the previous day in negative-offset
+      // zones; passing 'UTC' keeps it on Jun 25 regardless of the runner's tz.
+      const utcMidnight = new Date('2026-06-25T00:00:00Z')
+      expect(formatShortDate(utcMidnight, 'en', 'UTC')).toBe('Jun 25')
+      expect(formatShortDate(utcMidnight, 'en', 'America/New_York')).toBe(
+        'Jun 24',
+      )
+    })
+  })
+
+  describe('formatDate', function () {
+    it('should format in the given time zone', function () {
+      const utcMidnight = new Date('2026-06-25T00:00:00Z')
+      expect(formatDate(utcMidnight, 'en', 'UTC')).toBe('06/25/2026')
+      expect(formatDate(utcMidnight, 'en', 'America/New_York')).toBe(
+        '06/24/2026',
+      )
     })
   })
 

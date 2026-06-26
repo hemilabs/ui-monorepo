@@ -4,7 +4,7 @@ applyTo: '**/*.ts'
 
 # Project rules for Typescript
 
-Apply the [general coding guidelines](./general-coding.md) to all code as a base guideline, unless there is an exception.
+Apply the [general coding guidelines](./general-coding.instructions.md) to all code as a base guideline, unless there is an exception.
 
 ## Tests Guidelines
 

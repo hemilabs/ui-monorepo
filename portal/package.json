@@ -17,7 +17,6 @@
   "dependencies": {
     "@binance/w3w-rainbow-connector-v2": "1.0.6",
     "@formatjs/intl-durationformat": "0.7.4",
-    "@formo/analytics": "1.26.0",
     "@hemilabs/react-hooks": "1.6.0",
     "@hemilabs/token-list": "3.2.0",
     "@hemilabs/wallet-watch-asset": "1.0.2",

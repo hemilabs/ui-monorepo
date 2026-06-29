@@ -100,8 +100,7 @@ export const canRetryRow = (tx: EarnTransaction) =>
 // retry lives in the cancel modal, not these surfaces.
 export const claimRecoverSettlement = (
   settlement: EarnSettlement | undefined,
-): EarnSettlement | undefined =>
-  settlement?.kind === 'CANCEL' ? undefined : settlement
+) => (settlement?.kind === 'CANCEL' ? undefined : settlement)
 
 // A manual claim/recover the user signed reverted on Hemi. The on-chain status
 // is unchanged (still FULFILLED/CANCELLED), so we surface the revert as a

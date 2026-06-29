@@ -31,18 +31,11 @@ export const CancelRedeemModal = function ({
     transaction,
   })
 
-  const onConfirm = function () {
-    if (isPending) return
-    mutate()
-  }
-
   return (
     <Modal onClose={isPending ? undefined : onClose}>
       <div className="flex w-full max-w-md flex-col gap-y-6 rounded-2xl bg-white p-6">
         <div className="flex flex-col gap-y-2">
-          <h3 className="text-mid-md font-semibold text-neutral-950">
-            {t('title')}
-          </h3>
+          <h3 className="text-neutral-950">{t('title')}</h3>
           <p className="text-sm font-medium text-neutral-500">
             {t('description')}
           </p>
@@ -59,7 +52,7 @@ export const CancelRedeemModal = function ({
           </Button>
           <Button
             disabled={isPending}
-            onClick={onConfirm}
+            onClick={() => mutate()}
             size="small"
             type="button"
             variant="primary"

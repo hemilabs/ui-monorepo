@@ -6,16 +6,19 @@ import { ReactNode } from 'react'
 // section) but each story uses the designer's Figma format (Hemi Portal, node 15283-17016): a card
 // whose rows pair the design-system name, a live sample and the size/line-height. Subtitle and
 // Caption are de-emphasized exactly as in the Figma.
+// Render-only stories with no component/args, so the args shape is the empty object.
+type StoryProps = Record<string, never>
+
 const meta = {
   parameters: {
     controls: { disable: true },
   },
   title: 'Typography',
-} satisfies Meta
+} satisfies Meta<StoryProps>
 
 export default meta
 
-type Story = StoryObj
+type Story = StoryObj<StoryProps>
 
 const SAMPLE = 'Put your temper to more use'
 

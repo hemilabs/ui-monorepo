@@ -19,6 +19,11 @@ export type EarnRequestStatus = SubgraphRequestStatus | 'FAILED'
 type EarnRequestCommonFields = {
   amountIn: string
   amountOut: string | null
+  // True once a cancellation has been requested — either the user signing
+  // `Router.cancel` or an Agent-side cancellation-intent event. Distinct
+  // from `failed` (an Agent-side failure), so the portal can brand a
+  // deliberate cancel apart from a real failure on a CANCELLED redeem.
+  cancellationRequested: boolean
   claimableAt: string | null
   failed: boolean
   failureReason: string | null

@@ -814,6 +814,7 @@ export const getEarnRequests = async function ({
             amountOut
             asset
             automatic
+            cancellationRequested
             claimableAt
             claimTxHash
             failed

@@ -1,5 +1,5 @@
 ---
-applyTo: '**/*.ts'
+applyTo: '**/*.{ts,tsx}'
 ---
 
 # Project rules for Typescript

@@ -93,12 +93,34 @@ export const isRecoverPath = (tx: EarnTransaction) =>
 export const canRetryRow = (tx: EarnTransaction) =>
   tx.status === 'FAILED' && isLocalEarnTransactionRow(tx)
 
+// A CANCEL marker shares the `settlement` field with CLAIM/RECOVER markers but
+// isn't a claim/recover settlement tx — it's the deliberate-cancel signal. Strip
+// it so the claim/recover machinery (failed badge, recover-step tx, manual CTA
+// gating) never mistakes the cancel for one of its own; a reverted cancel's
+// retry lives in the cancel modal, not these surfaces.
+export const claimRecoverSettlement = (
+  settlement: EarnSettlement | undefined,
+) => (settlement?.kind === 'CANCEL' ? undefined : settlement)
+
 // A manual claim/recover the user signed reverted on Hemi. The on-chain status
 // is unchanged (still FULFILLED/CANCELLED), so we surface the revert as a
 // failure in the badge/step and offer a retry, rather than trusting the now
 // misleading "needed" state.
 export const hasFailedSettlement = (tx: EarnTransaction) =>
-  tx.settlement?.failed === true
+  claimRecoverSettlement(tx.settlement)?.failed === true
+
+// A deliberate user cancel still in flight, vs an Agent failure — both reach
+// CANCELLED→recover, but only this reads neutrally. Detected by the indexed
+// `cancellationRequested`, bridged by the local `CANCEL` marker during indexing
+// lag. `!tx.failed` gates both signals: an Agent failure reads as a failure even
+// with a lingering cancel marker (and a reverted cancel — failed marker — is out
+// too; the modal owns that retry). Scoped to PENDING/CANCELLED — a cancel can
+// lose the race to the redeem, so a terminal row reads as what happened.
+export const isUserCancel = (tx: EarnTransaction) =>
+  (tx.status === 'PENDING' || tx.status === 'CANCELLED') &&
+  !tx.failed &&
+  (tx.cancellationRequested === true ||
+    (tx.settlement?.kind === 'CANCEL' && tx.settlement.failed !== true))
 
 // Which explanatory banner (if any) a drawer should show above the settle CTA —
 // undefined unless the row is awaiting an *untouched* manual claim (FULFILLED) or
@@ -108,16 +130,22 @@ export const hasFailedSettlement = (tx: EarnTransaction) =>
 export const pickSettleBannerKey = function (
   tx: EarnTransaction | undefined,
 ):
+  | 'cancelled'
   | 'claim-funds'
   | 'claim-shares'
   | 'recover-funds'
   | 'recover-shares'
   | undefined {
   if (!tx) return undefined
-  // A settlement marker means the user already signed (the CTA now reads
-  // "Claiming…") or it reverted ("Try again"); the banner's "Click on 'Claim …'"
-  // copy would contradict the button, so drop it once they've engaged.
-  if (tx.settlement) return undefined
+  // A deliberate cancel reads neutrally, not as a recover failure — even while
+  // its CANCEL marker is still pending before the subgraph indexes the cancel.
+  // `isUserCancel` already drops at RECOVERED, so the terminal step (not this
+  // "returning your shares" banner) tells that story.
+  if (isUserCancel(tx)) return 'cancelled'
+  // A claim/recover marker means the user already engaged with that CTA
+  // (Claiming…/Try again); the banner would contradict it. A CANCEL marker isn't
+  // one, so it must not hide an Agent-failure recover banner.
+  if (claimRecoverSettlement(tx.settlement)) return undefined
   const operation = needsManualClaim(tx)
     ? 'CLAIM'
     : needsRecover(tx)

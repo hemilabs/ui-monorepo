@@ -33,7 +33,7 @@ export type EarnTransactionKindType = 'DEPOSIT' | 'REDEEM'
 // to re-call the same step — same idea as the request-deposit retry.
 export type EarnSettlement = {
   failed: boolean
-  kind: 'CLAIM' | 'RECOVER'
+  kind: 'CLAIM' | 'RECOVER' | 'CANCEL'
   txHash?: Hash
 }
 
@@ -47,10 +47,17 @@ export type EarnTransaction = {
   approvalTxHash?: Hash
   asset: Address
   automatic: boolean
+  // True once the user signed `Router.cancel` for this request. With `failed`
+  // it tells a deliberate cancel (`cancellationRequested && !failed`) apart from
+  // an Agent failure on a CANCELLED/RECOVERED redeem.
+  cancellationRequested: boolean
   // Unix-seconds the Vetro Agent set on Ethereum at LayerZero-observation
   // time. Null until the Agent emits `UnstakeRequested`; immutable after.
   claimableAt?: string | null
   claimTxHash: Hash | null
+  // Agent-side failure flag (lingers through CANCELLED/RECOVERED). A recover
+  // with `failed: false` is a deliberate cancel, not a failure.
+  failed: boolean
   kind: EarnTransactionKindType
   receiver: Address
   recoverTxHash: Hash | null

@@ -21,6 +21,7 @@ const meta = {
     },
     text: { control: 'text' },
     variant: { control: false },
+    visible: { control: false },
   },
   component: Tooltip,
   decorators: [

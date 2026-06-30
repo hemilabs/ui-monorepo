@@ -1,177 +1,4 @@
 {
-  "hemi-earn": {
-    "heading": "Obtenha rendimento com Hemi Earn",
-    "info": {
-      "earned-amount": "Valor ganho",
-      "from-pools": "{count, plural, one {De # fundo} other {De # fundos}}",
-      "staked-balance": "Seu saldo aplicado"
-    },
-    "navigation": {
-      "back": "Voltar",
-      "hemi-earn": "Hemi Earn",
-      "pool-name": "fundo {tokenSymbol}"
-    },
-    "pool": {
-      "apy": "TEA",
-      "composition": {
-        "amount": "Valor",
-        "by-protocol": "Por protocolo",
-        "by-token": "Por token",
-        "position": "Posição",
-        "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
-        "reserve-buffer": "Reserva de liquidez",
-        "share": "Participação",
-        "title": "Composição",
-        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
-      },
-      "deposit-successful": "Depósito realizado com sucesso",
-      "drawer": {
-        "approving": "Aprovando {symbol}",
-        "deposit": {
-          "heading": "Revisar depósito de stake",
-          "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
-        },
-        "cooldown-ended": "Período de espera concluído",
-        "stake-token": "Fazer stake de {symbol}",
-        "get-share-tokens": "Receber share tokens",
-        "funds-returned": "Fundos devolvidos",
-        "funds-to-recover": "Fundos a recuperar",
-        "shares-returned": "Shares devolvidas",
-        "shares-to-recover": "Shares a recuperar",
-        "receive-token": "Receber {symbol}",
-        "unstake-token": "Fazer unstake de {symbol}",
-        "wait-cooldown-countdown": "{days, plural, =0 {O período de espera termina em {hours}h} other {O período de espera termina em #d {hours}h}}",
-        "wait-cooldown-countdown-soon": "O período de espera termina em menos de uma hora",
-        "wait-cooldown-pending": "O período de espera é de {days, plural, one {# dia} other {# dias}}",
-        "withdraw": {
-          "heading": "Revisar saque de stake",
-          "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
-        }
-      },
-      "form": {
-        "amount-too-small": "Valor muito pequeno",
-        "asset-unavailable": "Ativo indisponível",
-        "available-to-withdraw": "Disponível para sacar",
-        "bridging-fees": "Taxas de bridge",
-        "cooldown-warning": "Sacar fundos leva {days, plural, one {# dia} other {# dias}} para concluir.",
-        "cooldown-warning-fallback": "Sacar fundos leva alguns dias para concluir.",
-        "network-error": "Falha no preview — tente de novo",
-        "total-fee": "Custo total de gás",
-        "withdraw-share-tokens-as": "Sacar tokens de participação como",
-        "withdrawing": "Sacando...",
-        "you-will-receive": "Você vai receber"
-      },
-      "here-is-your-tx": "Aqui está sua transação:",
-      "historical-metrics": {
-        "1-week": "1 semana",
-        "1-year": "1 ano",
-        "apy": "TEA",
-        "month": "{count, plural, one {# mês} other {# meses}}",
-        "pool-deposits": "Depósitos do fundo",
-        "title": "Métricas históricas"
-      },
-      "total-deposits": "Depósitos totais do fundo",
-      "withdraw-successful": "Saque realizado com sucesso"
-    },
-    "subheading": "Ganhe rendimento com seus ativos em um clique",
-    "pool-info": {
-      "apy": "TEA",
-      "manage": "Gerenciar",
-      "pool-contract": "Contrato do fundo",
-      "share-token": "Token de participação",
-      "total-deposits": "Depósitos totais"
-    },
-    "transactions": {
-      "banner": {
-        "cancelled": {
-          "heading": "Saque cancelado",
-          "subheading": "Estamos devolvendo seus share tokens à sua carteira."
-        },
-        "claim-funds": {
-          "heading": "Não foi possível receber seus fundos automaticamente",
-          "subheading": "Clique em 'Receber fundos' para receber seus fundos."
-        },
-        "claim-shares": {
-          "heading": "Não foi possível receber seus share tokens automaticamente",
-          "subheading": "Clique em 'Receber share tokens' para receber seus tokens."
-        },
-        "recover-funds": {
-          "heading": "Transação falhou",
-          "subheading": "Algo deu errado. Use o botão abaixo para devolver seus fundos à sua carteira."
-        },
-        "recover-shares": {
-          "heading": "Transação falhou",
-          "subheading": "Algo deu errado. Use o botão abaixo para devolver seus share tokens à sua carteira."
-        }
-      },
-      "claim-funds": "Receber fundos",
-      "claim-share-tokens": "Receber share tokens",
-      "claiming": "Recebendo...",
-      "column": {
-        "amount": "Quantia",
-        "date": "Data",
-        "status": "Status",
-        "tx-hash": "Hash da Tx",
-        "type": "Tipo"
-      },
-      "cancel-modal": {
-        "cancelling": "Cancelando...",
-        "confirm": "Cancelar saque",
-        "description": "Se você cancelar, seus fundos voltam a ficar em stake e saem do período de espera.",
-        "keep": "Manter saque",
-        "title": "Cancelar saque"
-      },
-      "cancel-withdraw": "Cancelar saque",
-      "connect-to-view": "Conecte sua carteira para ver suas transações de earn.",
-      "deposit": "Depósito",
-      "drawer": {
-        "deposit-heading": "Detalhes do depósito de stake",
-        "deposit-subheading": "Revise sua transação de depósito de stake.",
-        "step": {
-          "approval-needed": "Aprovação necessária",
-          "approve-token": "Aprovar {symbol}",
-          "stake-token": "Fazer stake de {symbol}",
-          "get-share-tokens": "Receber share tokens",
-          "funds-returned": "Fundos devolvidos",
-          "funds-to-recover": "Fundos a recuperar",
-          "unstake-token": "Sacar {symbol}",
-          "receive-token": "Receber {symbol}",
-          "shares-returned": "Shares devolvidas",
-          "shares-to-recover": "Shares a recuperar"
-        },
-        "withdraw-heading": "Detalhes do saque de stake",
-        "withdraw-subheading": "Revise sua transação de saque de stake."
-      },
-      "nothing-here": "Nada por aqui ainda",
-      "nothing-here-subtitle": "Suas transações aparecerão assim que você começar.",
-      "recover-funds": "Recuperar fundos",
-      "recover-shares": "Recuperar shares",
-      "recovering": "Recuperando...",
-      "status": {
-        "cancelling": "Cancelando saque",
-        "cooldown-ready-in-days": "Cooldown · pronto em {value}d",
-        "cooldown-ready-in-hours": "Cooldown · pronto em {value}h",
-        "cooldown-ready-in-minutes": "Cooldown · pronto em {value}m",
-        "cooldown-ready-soon": "Cooldown · pronto em < 1m",
-        "deposited": "Depositado",
-        "funds-returned": "Fundos devolvidos",
-        "in-progress": "Em andamento",
-        "manual-claim-needed": "Em andamento - Resgate manual necessário",
-        "ready-to-claim": "Pronto para receber",
-        "recover-funds-needed": "Algo deu errado - Recuperar fundos",
-        "recover-shares-cancelled": "Saque cancelado - Recuperar shares",
-        "recover-shares-needed": "Algo deu errado - Recuperar shares",
-        "returned": "Devolvido",
-        "shares-returned": "Shares devolvidas",
-        "tx-failed": "Tx falhou",
-        "withdrawn": "Sacado"
-      },
-      "subtitle": "Acompanhe o status de seus depósitos e saques.",
-      "title": "Minhas transações de earn",
-      "view": "Ver",
-      "withdrawal": "Saque"
-    }
-  },
   "bitcoin-yield": {
     "bridge-btc-and-receive": "Transfira seu BTC através do túnel e receba {symbol}",
     "drawer": {
@@ -282,8 +109,8 @@
       "pending": "Pendente",
       "rejected": "Rejeitado"
     },
-    "tunnel-fees": "Taxas de túnel",
     "try-again": "Tentar novamente",
+    "tunnel-fees": "Taxas de túnel",
     "unexpected-error": "Ocorreu um erro inesperado. Por favor, tente novamente.",
     "unstake": "Desbloquear",
     "unsupported-chain-heading": "Não está conectado a uma rede suportada",
@@ -338,26 +165,25 @@
   },
   "error-pages": {
     "not-found": {
-      "title": "Oops! Página não encontrada",
+      "action": "Voltar à página inicial",
       "description": "Não conseguimos encontrar a página que procura.",
-      "action": "Voltar à página inicial"
+      "title": "Oops! Página não encontrada"
     },
     "unhandled-error": {
-      "title": "Algo correu mal",
-      "description": "Ocorreu um erro inesperado. Por favor, tente novamente ou <link>contacte-nos</link> se o problema persistir."
+      "description": "Ocorreu um erro inesperado. Por favor, tente novamente ou <link>contacte-nos</link> se o problema persistir.",
+      "title": "Algo correu mal"
     }
   },
   "genesis-drop": {
     "add-hemi-to-your-wallet": "Adicionar {symbol} à sua carteira",
-    "apy-in-staked-hemi": "TEA em ${symbol}",
     "apy-in-hemi-up-to": "Até {percentage}%",
-    "claimed": "Reivindicado",
+    "apy-in-staked-hemi": "TEA em ${symbol}",
     "claim-and-stake-successful": "Reivindicação e Stake bem-sucedidos",
     "claim-details": "Detalhes da reivindicação",
     "claim-groups": {
       "genesis-drop": "Lançamento Gênesis do Hemi",
-      "spectra-and-dodo": "Spectra + Dodo",
-      "other-drop": "Outro Lançamento"
+      "other-drop": "Outro Lançamento",
+      "spectra-and-dodo": "Spectra + Dodo"
     },
     "claim-name": "Nome da reivindicação:",
     "claim-options": {
@@ -366,15 +192,15 @@
       "bonus-staked-for-months": "<amount></amount> $<symbol></symbol> tokens em stake por <months></months> meses",
       "bonus-tokens": "Tokens de bônus",
       "claim": "Reivindicar",
-      "claim-title-6": "Gênesis Viajante",
       "claim-title-24": "Gênesis Guardião",
       "claim-title-48": "Gênesis Lenda",
+      "claim-title-6": "Gênesis Viajante",
       "claiming": "A reivindicar...",
       "future-incentives-from": "Incentivos futuros de",
-      "more-info-description": "Do total de tokens ganhos, uma parte estará disponível para reivindicação imediata (\"disponível agora\") enquanto o resto será automaticamente colocado em stake por um período de bloqueio definido.",
-      "more-rewards": "+<bonus></bonus>% mais ${symbol}",
       "liquid-hemi": "${symbol} líquidos",
       "lockup-period-months": "{months} meses",
+      "more-info-description": "Do total de tokens ganhos, uma parte estará disponível para reivindicação imediata (\"disponível agora\") enquanto o resto será automaticamente colocado em stake por um período de bloqueio definido.",
+      "more-rewards": "+<bonus></bonus>% mais ${symbol}",
       "plus-staked-tokens": "Mais <amount></amount> $<symbol></symbol> tokens em stake<break></break>por <period></period>.",
       "potential-staked-rewards": "Recompensas potenciais para seus tokens ${symbol} em stake",
       "recommended": "Recomendado",
@@ -387,21 +213,22 @@
       "up-to-multiplier-rewards": "Multiplicador de até {multiplier}x nas recompensas em stake"
     },
     "claim-rewards": "Reivindicar recompensas",
+    "claimed": "Reivindicado",
     "claiming-your-rewards": "Reivindicando suas recompensas",
     "connect-demos-wallet": "Certifique-se de conectar sua carteira verificada Demos.",
+    "go-to-staking-dashboard": "Ir para o painel de stake",
+    "have-questions": "Certifique-se de que está conectado à sua carteira verificada Demos. Se tiver dúvidas, abra um ticket no <discordLink>Discord</discordLink>, verifique <absintheLink>Absinthe</absintheLink> ou tente outra carteira.",
     "hemi-token-added": "{symbol} adicionado à sua carteira",
     "here-is-your-claim-tx": "Aqui está a sua transação de reivindicação:",
-    "have-questions": "Certifique-se de que está conectado à sua carteira verificada Demos. Se tiver dúvidas, abra um ticket no <discordLink>Discord</discordLink>, verifique <absintheLink>Absinthe</absintheLink> ou tente outra carteira.",
-    "go-to-staking-dashboard": "Ir para o painel de stake",
     "not-eligible": "Não elegível",
     "rewards-multiplier": "Multiplicador de recompensas",
-    "staked-for-months": "{amount} por {months} meses",
+    "share-x-text": "Sou elegível para {amount} ${symbol} no TGE Genesis drop do Hemi! 🎉 Verifique se você é elegível:",
     "stake-hemi": "Faça stake de {symbol}",
+    "staked-for-months": "{amount} por {months} meses",
     "switch-to-start-claiming": "Pode mudar de rede para começar a reivindicar o seu HEMI.",
     "terms-and-conditions": {
       "title": "Termos e condições do Lançamento Genesis Hemi"
     },
-    "share-x-text": "Sou elegível para {amount} ${symbol} no TGE Genesis drop do Hemi! 🎉 Verifique se você é elegível:",
     "title": "Programa de Recompensas",
     "up-to-multiplier": "Até {multiplier}x",
     "view-tx-on-explorer": "Ver TX no explorador",
@@ -409,20 +236,26 @@
     "your-rewards-are-on-their-way": "Suas recompensas estão a caminho!"
   },
   "get-started": {
-    "add-hemi-network-to-your-wallet": "Adicionar a rede Hemi à sua carteira",
+    "action": "Ação",
     "add-hemi-network-description": "Isto permite que a sua carteira interaja com a Hemi para transações, bridges e dApps.",
+    "add-hemi-network-to-your-wallet": "Adicionar a rede Hemi à sua carteira",
     "add-hemi-tokens": "Adicionar tokens Hemi",
     "add-hemi-tokens-description": "Os tokens Hemi estão emparelhados com as suas versões ERC-20 na Ethereum. Para ver e usar um ativo na Hemi, a sua carteira precisa do endereço do token Hemi (L2).",
+    "add-networks": {
+      "automatic": "Automaticamente",
+      "manual": "Manualmente"
+    },
+    "add-to-wallet": "Adicionar rede",
     "add-token": "Adicionar token",
     "add-token-error-description": "Por favor, tente novamente.",
     "add-token-error-title": "Não foi possível adicionar o token à sua carteira",
-    "action": "Ação",
-    "add-to-wallet": "Adicionar rede",
     "adding-chain": "A adicionar...",
     "block-explorer-url": "URL do explorador de blocos",
     "chain-id": "ID da Rede",
     "currency-symbol": "Símbolo da Moeda",
     "heading": "Comece a usar a Hemi",
+    "l1-address": "Endereço L1",
+    "l2-address": "Endereço L2",
     "layer": "Camada {layer}",
     "learn-how-to-use-hemi": "Aprenda a usar o Hemi",
     "learn-more-tutorials": {
@@ -433,20 +266,275 @@
       "set-up-evm-wallet": "Configure uma carteira EVM",
       "tunnel-assets-to-hemi": "Tunelar ativos para o Hemi"
     },
-    "l1-address": "Endereço L1",
-    "l2-address": "Endereço L2",
     "no-matching-tokens": "Nenhum token correspondente",
     "no-matching-tokens-hint": "Verifique a ortografia ou tente outro nome ou símbolo de token.",
     "rpc-url": "URL RPC",
     "search-tokens-placeholder": "Pesquisar tokens...",
-    "token": "Token",
     "subheading": "Ative rendimento Bitcoin compatível sem sair da custódia.",
+    "token": "Token",
     "tutorials-subheading": "Novo no Hemi? Nossos tutoriais passo a passo orientam você em tudo o que precisa saber, desde configurar sua carteira até fazer bridge de tokens e usar dApps.",
-    "view-all-tutorials": "Ver todos os tutoriais",
-    "add-networks": {
-      "automatic": "Automaticamente",
-      "manual": "Manualmente"
+    "view-all-tutorials": "Ver todos os tutoriais"
+  },
+  "hemi-earn": {
+    "heading": "Obtenha rendimento com Hemi Earn",
+    "info": {
+      "earned-amount": "Valor ganho",
+      "from-pools": "{count, plural, one {De # fundo} other {De # fundos}}",
+      "staked-balance": "Seu saldo aplicado"
+    },
+    "navigation": {
+      "back": "Voltar",
+      "hemi-earn": "Hemi Earn",
+      "pool-name": "fundo {tokenSymbol}"
+    },
+    "pool": {
+      "apy": "TEA",
+      "composition": {
+        "amount": "Valor",
+        "by-protocol": "Por protocolo",
+        "by-token": "Por token",
+        "position": "Posição",
+        "protocols-count": "{count, plural, one {# protocolo} other {# protocolos}}",
+        "reserve-buffer": "Reserva de liquidez",
+        "share": "Participação",
+        "title": "Composição",
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
+      },
+      "deposit-successful": "Depósito realizado com sucesso",
+      "drawer": {
+        "approving": "Aprovando {symbol}",
+        "cooldown-ended": "Período de espera concluído",
+        "deposit": {
+          "heading": "Revisar depósito de stake",
+          "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
+        },
+        "funds-returned": "Fundos devolvidos",
+        "funds-to-recover": "Fundos a recuperar",
+        "get-share-tokens": "Receber share tokens",
+        "receive-token": "Receber {symbol}",
+        "shares-returned": "Shares devolvidas",
+        "shares-to-recover": "Shares a recuperar",
+        "stake-token": "Fazer stake de {symbol}",
+        "unstake-token": "Fazer unstake de {symbol}",
+        "wait-cooldown-countdown": "{days, plural, =0 {O período de espera termina em {hours}h} other {O período de espera termina em #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "O período de espera termina em menos de uma hora",
+        "wait-cooldown-pending": "O período de espera é de {days, plural, one {# dia} other {# dias}}",
+        "withdraw": {
+          "heading": "Revisar saque de stake",
+          "subheading": "Sua transação foi enviada e está aguardando confirmação na blockchain."
+        }
+      },
+      "form": {
+        "amount-too-small": "Valor muito pequeno",
+        "asset-unavailable": "Ativo indisponível",
+        "available-to-withdraw": "Disponível para sacar",
+        "bridging-fees": "Taxas de bridge",
+        "cooldown-warning": "Sacar fundos leva {days, plural, one {# dia} other {# dias}} para concluir.",
+        "cooldown-warning-fallback": "Sacar fundos leva alguns dias para concluir.",
+        "network-error": "Falha no preview — tente de novo",
+        "total-fee": "Custo total de gás",
+        "withdraw-share-tokens-as": "Sacar tokens de participação como",
+        "withdrawing": "Sacando...",
+        "you-will-receive": "Você vai receber"
+      },
+      "here-is-your-tx": "Aqui está sua transação:",
+      "historical-metrics": {
+        "1-week": "1 semana",
+        "1-year": "1 ano",
+        "apy": "TEA",
+        "month": "{count, plural, one {# mês} other {# meses}}",
+        "pool-deposits": "Depósitos do fundo",
+        "title": "Métricas históricas"
+      },
+      "total-deposits": "Depósitos totais do fundo",
+      "withdraw-successful": "Saque realizado com sucesso"
+    },
+    "pool-info": {
+      "apy": "TEA",
+      "manage": "Gerenciar",
+      "pool-contract": "Contrato do fundo",
+      "share-token": "Token de participação",
+      "total-deposits": "Depósitos totais"
+    },
+    "subheading": "Ganhe rendimento com seus ativos em um clique",
+    "transactions": {
+      "banner": {
+        "cancelled": {
+          "heading": "Saque cancelado",
+          "subheading": "Estamos devolvendo seus share tokens à sua carteira."
+        },
+        "claim-funds": {
+          "heading": "Não foi possível receber seus fundos automaticamente",
+          "subheading": "Clique em 'Receber fundos' para receber seus fundos."
+        },
+        "claim-shares": {
+          "heading": "Não foi possível receber seus share tokens automaticamente",
+          "subheading": "Clique em 'Receber share tokens' para receber seus tokens."
+        },
+        "recover-funds": {
+          "heading": "Transação falhou",
+          "subheading": "Algo deu errado. Use o botão abaixo para devolver seus fundos à sua carteira."
+        },
+        "recover-shares": {
+          "heading": "Transação falhou",
+          "subheading": "Algo deu errado. Use o botão abaixo para devolver seus share tokens à sua carteira."
+        }
+      },
+      "cancel-modal": {
+        "cancelling": "Cancelando...",
+        "confirm": "Cancelar saque",
+        "description": "Se você cancelar, seus fundos voltam a ficar em stake e saem do período de espera.",
+        "keep": "Manter saque",
+        "title": "Cancelar saque"
+      },
+      "cancel-withdraw": "Cancelar saque",
+      "claim-funds": "Receber fundos",
+      "claim-share-tokens": "Receber share tokens",
+      "claiming": "Recebendo...",
+      "column": {
+        "amount": "Quantia",
+        "date": "Data",
+        "status": "Status",
+        "tx-hash": "Hash da Tx",
+        "type": "Tipo"
+      },
+      "connect-to-view": "Conecte sua carteira para ver suas transações de earn.",
+      "deposit": "Depósito",
+      "drawer": {
+        "deposit-heading": "Detalhes do depósito de stake",
+        "deposit-subheading": "Revise sua transação de depósito de stake.",
+        "step": {
+          "approval-needed": "Aprovação necessária",
+          "approve-token": "Aprovar {symbol}",
+          "funds-returned": "Fundos devolvidos",
+          "funds-to-recover": "Fundos a recuperar",
+          "get-share-tokens": "Receber share tokens",
+          "receive-token": "Receber {symbol}",
+          "shares-returned": "Shares devolvidas",
+          "shares-to-recover": "Shares a recuperar",
+          "stake-token": "Fazer stake de {symbol}",
+          "unstake-token": "Sacar {symbol}"
+        },
+        "withdraw-heading": "Detalhes do saque de stake",
+        "withdraw-subheading": "Revise sua transação de saque de stake."
+      },
+      "nothing-here": "Nada por aqui ainda",
+      "nothing-here-subtitle": "Suas transações aparecerão assim que você começar.",
+      "recover-funds": "Recuperar fundos",
+      "recover-shares": "Recuperar shares",
+      "recovering": "Recuperando...",
+      "status": {
+        "cancelling": "Cancelando saque",
+        "cooldown-ready-in-days": "Cooldown · pronto em {value}d",
+        "cooldown-ready-in-hours": "Cooldown · pronto em {value}h",
+        "cooldown-ready-in-minutes": "Cooldown · pronto em {value}m",
+        "cooldown-ready-soon": "Cooldown · pronto em < 1m",
+        "deposited": "Depositado",
+        "funds-returned": "Fundos devolvidos",
+        "in-progress": "Em andamento",
+        "manual-claim-needed": "Em andamento - Resgate manual necessário",
+        "ready-to-claim": "Pronto para receber",
+        "recover-funds-needed": "Algo deu errado - Recuperar fundos",
+        "recover-shares-cancelled": "Saque cancelado - Recuperar shares",
+        "recover-shares-needed": "Algo deu errado - Recuperar shares",
+        "returned": "Devolvido",
+        "shares-returned": "Shares devolvidas",
+        "tx-failed": "Tx falhou",
+        "withdrawn": "Sacado"
+      },
+      "subtitle": "Acompanhe o status de seus depósitos e saques.",
+      "title": "Minhas transações de earn",
+      "view": "Ver",
+      "withdrawal": "Saque"
     }
+  },
+  "metadata": {
+    "title": "Portal Hemi"
+  },
+  "navbar": {
+    "agree-to-terms-and-policy": "Ao utilizar esta aplicação, concorda com os <terms>Termos de Utilização</terms> e a <policy>Política de Privacidade</policy>",
+    "bitcoinkit": "Hemi Bitcoin Kit",
+    "boost-staking": "Boost staking",
+    "data-attribution": "Dados fornecidos por <link>CoinMarketCap.com</link>",
+    "dex": {
+      "aggregators": "Agregadores",
+      "subtitle": "DEXs",
+      "title": "DEX"
+    },
+    "docs": "Documentação",
+    "ecosystem": "Demonstrações",
+    "explorer": "Explorador",
+    "follow-us": "Siga-nos",
+    "genesis-drop": "Lançamento Génesis",
+    "get-started": "Começar",
+    "governance-staking": "Stake de governança",
+    "help": {
+      "language": "Idioma",
+      "legal-and-privacy": "Legal e Privacidade"
+    },
+    "network": "Rede",
+    "network-status": "Estado da rede",
+    "stake": "Stake",
+    "swap": "Troca",
+    "tools": "Ferramentas",
+    "tunnel": "Túnel",
+    "tvl": "TVL na Hemi"
+  },
+  "stake-page": {
+    "action": "Ação",
+    "asset": "Ativo",
+    "change-to-mainnet": "Mudar para Mainnet e faça stake",
+    "dashboard": {
+      "coming-soon": "Brevemente",
+      "heading": "Boost staking",
+      "stake-more": "Faça mais stake",
+      "staked": "Staked",
+      "staking-assets": "Ativos em stake",
+      "subtitle": "Visualize suas posições ativas de boost staking.",
+      "title": "Painel",
+      "total-earned-points": "Total de pontos Hemi ganhos",
+      "total-earned-points-description": "Temporada encerrada.",
+      "total-staked-on-hemi": "Total em stake em Hemi",
+      "your-stake": "O seu Stake"
+    },
+    "drawer": {
+      "approve-and-stake": "Aprovar e Fazer Stake",
+      "description-manage-stake": "Aumente o seu stake ou levante a qualquer momento— tem controle total!",
+      "manage-your-stake": "Gerir o seu stake",
+      "stake-and-earn-rewards": "Faça stake de {symbol} para aumentar a sua participação.",
+      "stake-token": "Faça stake de {symbol}",
+      "staking": "A fazer stake...",
+      "strategy-details": {
+        "heading": "Detalhes da Estratégia",
+        "tvl": "TVL (no Hemi)",
+        "website": "Website"
+      },
+      "unstake-eth-as-weth-heading": "ETH desbloqueado será recebido como WETH",
+      "unstake-eth-as-weth-subheading": "Quando fazer stake com ETH, este é automaticamente convertido em WETH. Ao desbloquear, receberá WETH, que pode converter novamente em ETH, se desejar.",
+      "unstake-token": "Desbloquear {symbol}",
+      "unstaking": "A desbloquear...",
+      "unwrap": "Desembrulhar",
+      "you-can-unstake-anytime": "Pode desbloquear a qualquer momento."
+    },
+    "protocol": "Protocolo",
+    "ready-to-earn": "Pronto para fazer stake? Utilize ativos disponíveis para começar a fazer stake.",
+    "rewards": "Recompensas",
+    "stake": {
+      "action": "Ação",
+      "heading": "Stake for boost",
+      "subheading": "Faça stake dos seus tokens.",
+      "title": "Stake"
+    },
+    "start-staking-earn-points": "Comece a fazer stake",
+    "toast": {
+      "go-staking-dashboard": "Ver o seu painel de stake",
+      "here-your-stake-tx": "Aqui está a sua transação de {type}:",
+      "staking": "stake",
+      "staking-successful": "Stake bem-sucedido",
+      "unstaking": "desbloqueio",
+      "unstaking-successful": "Desbloqueio bem-sucedido"
+    },
+    "wallet-balance": "Saldo da carteira"
   },
   "staking-dashboard": {
     "amount": "Quantidade",
@@ -495,10 +583,10 @@
       "years": "{years, plural, one {{years} ano} other {{years} anos}}"
     },
     "heading": "Governance staking",
-    "subheading": "Faça staking de ${symbol} para participar da governança do protocolo e receber recompensas.",
     "here-is-your-tx": "Aqui está a sua transação:",
     "lockup-period": "Período de bloqueio",
     "stake-successful": "Stake bem-sucedido",
+    "subheading": "Faça staking de ${symbol} para participar da governança do protocolo e receber recompensas.",
     "switch-to-start-staking": "Você pode mudar de rede para começar a fazer staking do seu HEMI.",
     "table": {
       "active": "Ativo",
@@ -530,94 +618,6 @@
     "voting-power": "Poder de Voto",
     "your-positions": "Suas posições"
   },
-  "metadata": {
-    "title": "Portal Hemi"
-  },
-  "navbar": {
-    "agree-to-terms-and-policy": "Ao utilizar esta aplicação, concorda com os <terms>Termos de Utilização</terms> e a <policy>Política de Privacidade</policy>",
-    "bitcoinkit": "Hemi Bitcoin Kit",
-    "boost-staking": "Boost staking",
-    "data-attribution": "Dados fornecidos por <link>CoinMarketCap.com</link>",
-    "dex": {
-      "aggregators": "Agregadores",
-      "subtitle": "DEXs",
-      "title": "DEX"
-    },
-    "docs": "Documentação",
-    "ecosystem": "Demonstrações",
-    "explorer": "Explorador",
-    "follow-us": "Siga-nos",
-    "genesis-drop": "Lançamento Génesis",
-    "get-started": "Começar",
-    "governance-staking": "Stake de governança",
-    "help": {
-      "language": "Idioma",
-      "legal-and-privacy": "Legal e Privacidade"
-    },
-    "network": "Rede",
-    "network-status": "Estado da rede",
-    "swap": "Troca",
-    "stake": "Stake",
-    "tools": "Ferramentas",
-    "tunnel": "Túnel",
-    "tvl": "TVL na Hemi"
-  },
-  "stake-page": {
-    "action": "Ação",
-    "asset": "Ativo",
-    "change-to-mainnet": "Mudar para Mainnet e faça stake",
-    "dashboard": {
-      "coming-soon": "Brevemente",
-      "staked": "Staked",
-      "stake-more": "Faça mais stake",
-      "staking-assets": "Ativos em stake",
-      "subtitle": "Visualize suas posições ativas de boost staking.",
-      "heading": "Boost staking",
-      "title": "Painel",
-      "total-earned-points": "Total de pontos Hemi ganhos",
-      "total-earned-points-description": "Temporada encerrada.",
-      "total-staked-on-hemi": "Total em stake em Hemi",
-      "your-stake": "O seu Stake"
-    },
-    "drawer": {
-      "approve-and-stake": "Aprovar e Fazer Stake",
-      "description-manage-stake": "Aumente o seu stake ou levante a qualquer momento— tem controle total!",
-      "manage-your-stake": "Gerir o seu stake",
-      "stake-and-earn-rewards": "Faça stake de {symbol} para aumentar a sua participação.",
-      "stake-token": "Faça stake de {symbol}",
-      "staking": "A fazer stake...",
-      "strategy-details": {
-        "heading": "Detalhes da Estratégia",
-        "tvl": "TVL (no Hemi)",
-        "website": "Website"
-      },
-      "unstake-eth-as-weth-heading": "ETH desbloqueado será recebido como WETH",
-      "unstake-eth-as-weth-subheading": "Quando fazer stake com ETH, este é automaticamente convertido em WETH. Ao desbloquear, receberá WETH, que pode converter novamente em ETH, se desejar.",
-      "unstake-token": "Desbloquear {symbol}",
-      "unstaking": "A desbloquear...",
-      "unwrap": "Desembrulhar",
-      "you-can-unstake-anytime": "Pode desbloquear a qualquer momento."
-    },
-    "protocol": "Protocolo",
-    "ready-to-earn": "Pronto para fazer stake? Utilize ativos disponíveis para começar a fazer stake.",
-    "rewards": "Recompensas",
-    "stake": {
-      "action": "Ação",
-      "heading": "Stake for boost",
-      "subheading": "Faça stake dos seus tokens.",
-      "title": "Stake"
-    },
-    "start-staking-earn-points": "Comece a fazer stake",
-    "toast": {
-      "go-staking-dashboard": "Ver o seu painel de stake",
-      "here-your-stake-tx": "Aqui está a sua transação de {type}:",
-      "staking": "stake",
-      "staking-successful": "Stake bem-sucedido",
-      "unstaking": "desbloqueio",
-      "unstaking-successful": "Desbloqueio bem-sucedido"
-    },
-    "wallet-balance": "Saldo da carteira"
-  },
   "token-custom-drawer": {
     "add-contract-to-preview": "Adicione um endereço de contrato para visualizar o token...",
     "add-this-pair": "Adicionar este par à lista de tokens da Hemi para todos tunelarem",
@@ -626,13 +626,13 @@
     "address-does-not-match-l2": "Não corresponde ao par L1",
     "heading": "Tunelar um token ERC-20 existente",
     "i-am-sure-to-tunnel": "Tenho a certeza de que quero tunelar com este token.",
+    "l1-address-not-configured": "Endereço L1 não configurado no contrato",
     "layer-token-address": "Endereço do token da Camada {layer}",
     "make-a-request-to-add": "Se deseja adicionar este par de tokens ERC-20 à lista de tokens aprovados da Hemi, <link>faça um pedido</link>.",
     "see-on-explorer": "Ver no {explorer}",
     "subheading": "Precisa de inserir o par de endereços de contrato de Ethereum e Hemi para tunelar com este token.",
     "this-address-is-not-valid": "Este endereço não é válido",
-    "this-address-is-valid": "Este endereço é válido",
-    "l1-address-not-configured": "Endereço L1 não configurado no contrato"
+    "this-address-is-valid": "Este endereço é válido"
   },
   "token-selector": {
     "all-tokens": "Todos os tokens",
@@ -680,15 +680,15 @@
       "add-token-to-wallet-success": "Contrato do token adicionado à sua carteira",
       "approve-confirmed": "Aprovação confirmada",
       "approve-initiated": "Aprovação iniciada",
+      "approve-on": "Aprovar em {networkName}",
       "btc-deposit-come-back-delay-note": "Se não receber o seu depósito após {hours} horas, regresse a esta página para reclamar manualmente.",
-      "deposit-completed": "Depósito concluído",
       "click-to-confirm": "Clique em 'Confirmar Depósito Manualmente' para depositar o seu Bitcoin no Hemi.",
       "confirm-deposit-on": "Confirmar depósito em {networkName}",
+      "deposit-completed": "Depósito concluído",
       "deposit-finalized": "Depósito finalizado",
       "deposit-on-its-way": "O seu depósito está a caminho! Aguarde enquanto a blockchain finaliza a transação.",
       "get-your-funds-on": "Obtenha os seus fundos em {networkName}",
       "initiate-deposit": "Iniciar depósito",
-      "approve-on": "Aprovar em {networkName}",
       "review-deposit": "Rever Depósito",
       "start-on": "Iniciar em {networkName}",
       "we-could-not-process-this-deposit": "Não conseguimos processar este depósito automaticamente",
@@ -697,8 +697,8 @@
     "review-withdrawal": {
       "challenge-to-get-bitcoins-back": "Clique em 'Desafiar Retirada' para reclamar o seu BTC e enviá-lo de volta para o seu endereço Hemi.",
       "challenge-withdrawal": "Desafiar Retirada",
-      "claim-your-funds": "Reclame os seus fundos em {networkName}",
       "claim-withdrawal": "Reclamar Retirada",
+      "claim-your-funds": "Reclame os seus fundos em {networkName}",
       "get-funds-back": "Recuperar os meus fundos para {networkName}",
       "heading": "Rever Retirada",
       "initiate-withdrawal": "Iniciar Retirada",
@@ -717,8 +717,8 @@
       "challenging": "A desafiar...",
       "claim-withdrawal": "Reclamar Retirada",
       "claiming-withdrawal": "A reclamar retirada...",
-      "confirming-deposit-manually": "A confirmar depósito manualmente...",
       "confirm-deposit-manually": "Confirmar depósito manualmente",
+      "confirming-deposit-manually": "A confirmar depósito manualmente...",
       "connect-both-wallets": "Conectar as suas carteiras BTC e EVM",
       "connect-btc-wallet": "Conectar a sua carteira BTC",
       "deposit": "Depositar",
@@ -748,16 +748,6 @@
         "type": "Tipo"
       },
       "deposit": "Depósito",
-      "no-transactions": "Nenhuma transação efetuada",
-      "no-transactions-get-started": "Comece por tunelar ativos de e para o Hemi",
-      "subtitle": "Consulte o status e as informações detalhadas das suas transações na Hemi.",
-      "title": "Histórico de Transações",
-      "top-bar": {
-        "all": "Todas",
-        "bitcoin": "Bitcoin",
-        "ethereum": "Ethereum",
-        "recent-transactions": "Transações Recentes"
-      },
       "filters": {
         "actions": {
           "all": "Todas as ações",
@@ -768,6 +758,16 @@
           "deposits": "Depósitos",
           "withdrawals": "Retiradas"
         }
+      },
+      "no-transactions": "Nenhuma transação efetuada",
+      "no-transactions-get-started": "Comece por tunelar ativos de e para o Hemi",
+      "subtitle": "Consulte o status e as informações detalhadas das suas transações na Hemi.",
+      "title": "Histórico de Transações",
+      "top-bar": {
+        "all": "Todas",
+        "bitcoin": "Bitcoin",
+        "ethereum": "Ethereum",
+        "recent-transactions": "Transações Recentes"
       },
       "tunnel-assets": "Tunelar ativos",
       "withdraw": "Retirar"

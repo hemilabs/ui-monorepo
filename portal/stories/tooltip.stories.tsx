@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { Tooltip } from 'components/tooltip'
 
-const INFO_TEXT =
+const infoText =
   'By activating 10x approval we automatically add 10x the amount of this transaction as allowance for future ones, saving you money on gas fees and time.'
-const RICH_TITLE = 'Approve 10x the amount of this deposit'
+const richTitle = 'Approve 10x the amount of this deposit'
 
 const Trigger = ({ label }: { label: string }) => (
   <span className="rounded-md border border-neutral-300 px-3 py-1 text-sm font-medium text-neutral-700">
@@ -51,7 +51,7 @@ export const Info: Story = {
   args: {
     children: <Trigger label="Info" />,
     placement: 'top',
-    text: INFO_TEXT,
+    text: infoText,
     variant: 'info',
     visible: true,
   },
@@ -61,8 +61,8 @@ export const Rich: Story = {
   args: {
     children: <Trigger label="Rich" />,
     placement: 'top',
-    text: INFO_TEXT,
-    title: RICH_TITLE,
+    text: infoText,
+    title: richTitle,
     variant: 'rich',
     visible: true,
   },

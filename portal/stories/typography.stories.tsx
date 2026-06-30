@@ -119,7 +119,7 @@ export const Button: Story = {
       <Row name="S" size="13/18">
         <span className="text-sm font-semibold">Button</span>
       </Row>
-      <Row name="XS" size="12/16">
+      <Row name="XS" size="12/17">
         <span className="text-xs font-semibold">Button</span>
       </Row>
     </Card>

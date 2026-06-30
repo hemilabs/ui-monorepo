@@ -69,7 +69,7 @@ export const applyWithdrawSharesGuard = function ({
   validInput: boolean
 } {
   const sharesExceedBalance =
-    isTokensMode && shareValueLoaded && shares > shareBalance
+    isTokensMode && baseValid && shareValueLoaded && shares > shareBalance
 
   return {
     errorKey: sharesExceedBalance ? 'insufficient-balance' : baseErrorKey,

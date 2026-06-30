@@ -210,6 +210,22 @@ describe('applyWithdrawSharesGuard', function () {
     )
   })
 
+  it('keeps the base error when shares exceed but the base is already invalid', function () {
+    expect(
+      applyWithdrawSharesGuard({
+        ...base,
+        baseError: 'Amount too small',
+        baseErrorKey: 'less-than-min-value',
+        baseValid: false,
+        shares: BigInt(1001),
+      }),
+    ).toEqual({
+      errorKey: 'less-than-min-value',
+      validationError: 'Amount too small',
+      validInput: false,
+    })
+  })
+
   it('does not apply the guard in shares-mode (base validation owns it)', function () {
     expect(
       applyWithdrawSharesGuard({

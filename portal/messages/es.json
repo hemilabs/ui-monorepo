@@ -628,7 +628,7 @@
     "i-am-sure-to-tunnel": "Estoy seguro que quiero tunelizar este token.",
     "l1-address-not-configured": "Dirección L1 no configurada en el contrato",
     "layer-token-address": "Dirección de contrato del token de capa {layer}",
-    "make-a-request-to-add": "Si deseas agregar este par de tokens ERC-20 a la lista de tokens aprobados de Hemi, <link>haz una solicitud</link>.",
+    "make-a-request-to-add": "Si desea agregar este par de tokens ERC-20 a la lista de tokens aprobados de Hemi, <link>haga una solicitud</link>.",
     "see-on-explorer": "Ver en {explorer}",
     "subheading": "Necesitas ingresar el par de direcciones de contrato tanto de Ethereum como de Hemi para tunelear con este token.",
     "this-address-is-not-valid": "Esta dirección es inválida",

@@ -4,10 +4,6 @@ import { Chevron } from 'components/icons/chevron'
 import { WarningBox } from 'components/warningBox'
 import { ComponentProps } from 'react'
 
-// Informational box used inside drawers / review screens (e.g. the unstake-ETH disclaimer). It
-// brings its own `bg-neutral-50` surface and sits on white panels, so the stories render on the
-// default light canvas, width-constrained to match the narrow drawers where it appears. `heading`
-// and `subheading` are text controls; a synthetic `withClose` toggles the optional close button.
 type StoryProps = ComponentProps<typeof WarningBox> & { withClose: boolean }
 
 const meta = {
@@ -37,14 +33,12 @@ export default meta
 
 type Story = StoryObj<StoryProps>
 
-// Playground: edit the texts and toggle the close button from the controls.
 export const Default: Story = {
   render: ({ withClose, ...args }) => (
     <WarningBox {...args} onClose={withClose ? () => undefined : undefined} />
   ),
 }
 
-// Render-only showcase: a warning box with rich `children` (a link), mirroring the app usage.
 export const WithChildren: Story = {
   parameters: {
     controls: { disable: true },

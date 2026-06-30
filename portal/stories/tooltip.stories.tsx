@@ -37,6 +37,15 @@ export default meta
 
 type Story = StoryObj<typeof Tooltip>
 
+export const Interactive: Story = {
+  args: {
+    children: <Trigger label="Hover me" />,
+    placement: 'top',
+    text: 'Copy',
+    variant: 'simple',
+  },
+}
+
 export const Simple: Story = {
   args: {
     children: <Trigger label="Copy" />,

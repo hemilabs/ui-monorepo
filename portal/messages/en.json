@@ -1,177 +1,4 @@
 {
-  "hemi-earn": {
-    "heading": "Earn yield with Hemi Earn",
-    "info": {
-      "earned-amount": "Your earned amount",
-      "from-pools": "{count, plural, one {From # pool} other {From # pools}}",
-      "staked-balance": "Your staked balance"
-    },
-    "navigation": {
-      "back": "Back",
-      "hemi-earn": "Hemi Earn",
-      "pool-name": "{tokenSymbol} pool"
-    },
-    "pool": {
-      "apy": "APY",
-      "composition": {
-        "amount": "Amount",
-        "by-protocol": "By protocol",
-        "by-token": "By token",
-        "position": "Position",
-        "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
-        "reserve-buffer": "Reserve Buffer",
-        "share": "Share",
-        "title": "Composition",
-        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
-      },
-      "deposit-successful": "Deposit successful",
-      "drawer": {
-        "approving": "Approving {symbol}",
-        "deposit": {
-          "heading": "Review stake deposit",
-          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
-        },
-        "cooldown-ended": "Cooldown period complete",
-        "stake-token": "Stake {symbol}",
-        "get-share-tokens": "Get share tokens",
-        "funds-returned": "Funds returned",
-        "funds-to-recover": "Funds to recover",
-        "shares-returned": "Shares returned",
-        "shares-to-recover": "Shares to recover",
-        "receive-token": "Receive {symbol}",
-        "unstake-token": "Unstake {symbol}",
-        "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
-        "wait-cooldown-countdown-soon": "Cooldown ends in less than an hour",
-        "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
-        "withdraw": {
-          "heading": "Review stake withdrawal",
-          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
-        }
-      },
-      "form": {
-        "amount-too-small": "Amount too small",
-        "asset-unavailable": "Asset unavailable",
-        "available-to-withdraw": "Available to withdraw",
-        "bridging-fees": "Bridging fees",
-        "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
-        "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
-        "network-error": "Preview failed — try again",
-        "total-fee": "Total gas fee",
-        "withdraw-share-tokens-as": "Withdraw share tokens as",
-        "withdrawing": "Withdrawing...",
-        "you-will-receive": "You'll receive"
-      },
-      "here-is-your-tx": "Here's your transaction:",
-      "historical-metrics": {
-        "1-week": "1 week",
-        "1-year": "1 year",
-        "apy": "APY",
-        "month": "{count, plural, one {# month} other {# months}}",
-        "pool-deposits": "Pool deposits",
-        "title": "Historical metrics"
-      },
-      "total-deposits": "Pool total deposits",
-      "withdraw-successful": "Withdraw successful"
-    },
-    "subheading": "One click earn for your assets",
-    "pool-info": {
-      "apy": "APY",
-      "manage": "Manage",
-      "pool-contract": "Pool Contract",
-      "share-token": "Share token",
-      "total-deposits": "Total deposits"
-    },
-    "transactions": {
-      "banner": {
-        "cancelled": {
-          "heading": "Withdrawal cancelled",
-          "subheading": "We're returning your share tokens to your wallet."
-        },
-        "claim-funds": {
-          "heading": "We couldn't claim your funds automatically",
-          "subheading": "Click on 'Claim funds' to get your funds."
-        },
-        "claim-shares": {
-          "heading": "We couldn't claim your share tokens automatically",
-          "subheading": "Click on 'Claim share tokens' to get your tokens."
-        },
-        "recover-funds": {
-          "heading": "Transaction failed",
-          "subheading": "Something went wrong. Use the button below to return your funds to your wallet."
-        },
-        "recover-shares": {
-          "heading": "Transaction failed",
-          "subheading": "Something went wrong. Use the button below to return your share tokens to your wallet."
-        }
-      },
-      "claim-funds": "Claim funds",
-      "claim-share-tokens": "Claim share tokens",
-      "claiming": "Claiming...",
-      "column": {
-        "amount": "Amount",
-        "date": "Date",
-        "status": "Status",
-        "tx-hash": "Tx Hash",
-        "type": "Type"
-      },
-      "cancel-modal": {
-        "cancelling": "Cancelling...",
-        "confirm": "Cancel withdrawal",
-        "description": "If you cancel it, your funds will go back to being staked and will no longer be in the cooldown lock.",
-        "keep": "Keep withdrawal",
-        "title": "Cancel withdrawal"
-      },
-      "cancel-withdraw": "Cancel withdrawal",
-      "connect-to-view": "Connect your wallet to view your earn transactions.",
-      "deposit": "Deposit",
-      "drawer": {
-        "deposit-heading": "Stake deposit details",
-        "deposit-subheading": "Review your stake deposit transaction.",
-        "step": {
-          "approval-needed": "Approval needed",
-          "approve-token": "Approve {symbol}",
-          "stake-token": "Stake {symbol}",
-          "get-share-tokens": "Get share tokens",
-          "funds-returned": "Funds returned",
-          "funds-to-recover": "Funds to recover",
-          "unstake-token": "Unstake {symbol}",
-          "receive-token": "Receive {symbol}",
-          "shares-returned": "Shares returned",
-          "shares-to-recover": "Shares to recover"
-        },
-        "withdraw-heading": "Stake withdrawal details",
-        "withdraw-subheading": "Review your stake withdrawal transaction."
-      },
-      "nothing-here": "Nothing here yet",
-      "nothing-here-subtitle": "Your transactions will appear once you get started.",
-      "recover-funds": "Recover funds",
-      "recover-shares": "Recover shares",
-      "recovering": "Recovering...",
-      "status": {
-        "cancelling": "Cancelling withdrawal",
-        "cooldown-ready-in-days": "Cooldown · ready in {value}d",
-        "cooldown-ready-in-hours": "Cooldown · ready in {value}h",
-        "cooldown-ready-in-minutes": "Cooldown · ready in {value}m",
-        "cooldown-ready-soon": "Cooldown · ready in < 1m",
-        "deposited": "Deposited",
-        "funds-returned": "Funds returned",
-        "in-progress": "In progress",
-        "manual-claim-needed": "In progress - Manual claim needed",
-        "ready-to-claim": "Ready to claim",
-        "recover-funds-needed": "Something went wrong - Recover funds",
-        "recover-shares-cancelled": "Withdrawal cancelled - Recover shares",
-        "recover-shares-needed": "Something went wrong - Recover shares",
-        "returned": "Returned",
-        "shares-returned": "Shares returned",
-        "tx-failed": "Tx Failed",
-        "withdrawn": "Withdrawn"
-      },
-      "subtitle": "Track the status of your deposits and withdrawals.",
-      "title": "My earn transactions",
-      "view": "View",
-      "withdrawal": "Withdrawal"
-    }
-  },
   "bitcoin-yield": {
     "bridge-btc-and-receive": "Bridge your BTC through the tunnel and receive {symbol}",
     "drawer": {
@@ -282,8 +109,8 @@
       "pending": "Pending",
       "rejected": "Rejected"
     },
-    "tunnel-fees": "Tunnel fees",
     "try-again": "Try again",
+    "tunnel-fees": "Tunnel fees",
     "unexpected-error": "An unexpected error has occurred. Please try again.",
     "unstake": "Unstake",
     "unsupported-chain-heading": "You're not connected to a supported chain",
@@ -338,26 +165,25 @@
   },
   "error-pages": {
     "not-found": {
-      "title": "Oops! Page not found",
+      "action": "Go back home",
       "description": "We can't find the page you're looking for.",
-      "action": "Go back home"
+      "title": "Oops! Page not found"
     },
     "unhandled-error": {
-      "title": "Something Went Wrong",
-      "description": "An unexpected error has occurred. Please try again or <link>contact us</link> if the problem persists."
+      "description": "An unexpected error has occurred. Please try again or <link>contact us</link> if the problem persists.",
+      "title": "Something Went Wrong"
     }
   },
   "genesis-drop": {
     "add-hemi-to-your-wallet": "Add {symbol} to your wallet",
-    "apy-in-staked-hemi": "APY in ${symbol}",
     "apy-in-hemi-up-to": "Up to {percentage}%",
-    "claimed": "Claimed",
+    "apy-in-staked-hemi": "APY in ${symbol}",
     "claim-and-stake-successful": "Claim and Stake successful",
     "claim-details": "Claim details",
     "claim-groups": {
       "genesis-drop": "Hemi Genesis Drop",
-      "spectra-and-dodo": "Spectra + Dodo",
-      "other-drop": "Other Drop"
+      "other-drop": "Other Drop",
+      "spectra-and-dodo": "Spectra + Dodo"
     },
     "claim-name": "Claim name:",
     "claim-options": {
@@ -366,15 +192,15 @@
       "bonus-staked-for-months": "<amount></amount> $<symbol></symbol> tokens staked for <months></months> months",
       "bonus-tokens": "Bonus tokens",
       "claim": "Claim",
-      "claim-title-6": "Genesis Voyager",
       "claim-title-24": "Genesis Guardian",
       "claim-title-48": "Genesis Legend",
+      "claim-title-6": "Genesis Voyager",
       "claiming": "Claiming...",
       "future-incentives-from": "Future incentives from",
-      "more-info-description": "Of your total earned tokens, a portion will be claimable immediately (\"available now\") while the rest will be staked automatically for a set lock-up period.",
-      "more-rewards": "+<bonus></bonus>% more ${symbol}",
       "liquid-hemi": "Liquid ${symbol}",
       "lockup-period-months": "{months} months",
+      "more-info-description": "Of your total earned tokens, a portion will be claimable immediately (\"available now\") while the rest will be staked automatically for a set lock-up period.",
+      "more-rewards": "+<bonus></bonus>% more ${symbol}",
       "plus-staked-tokens": "Plus <amount></amount> $<symbol></symbol> tokens staked<break></break>for <period></period>.",
       "potential-staked-rewards": "Potential rewards for your staked ${symbol}",
       "recommended": "Recommended",
@@ -387,21 +213,22 @@
       "up-to-multiplier-rewards": "Up to {multiplier}x multiplier on staked rewards"
     },
     "claim-rewards": "Claim rewards",
+    "claimed": "Claimed",
     "claiming-your-rewards": "Claiming your rewards",
     "connect-demos-wallet": "Make sure to connect your Demos verified wallet.",
+    "go-to-staking-dashboard": "Go to staking dashboard",
+    "have-questions": "Make sure you're connected to your Demos-verified wallet. If you have questions, open a ticket on <discordLink>Discord</discordLink>, check <absintheLink>Absinthe</absintheLink> or try another wallet.",
     "hemi-token-added": "{symbol} added to your wallet",
     "here-is-your-claim-tx": "Here's your claim transaction:",
-    "have-questions": "Make sure you're connected to your Demos-verified wallet. If you have questions, open a ticket on <discordLink>Discord</discordLink>, check <absintheLink>Absinthe</absintheLink> or try another wallet.",
-    "go-to-staking-dashboard": "Go to staking dashboard",
     "not-eligible": "Not eligible",
     "rewards-multiplier": "Rewards multiplier",
-    "staked-for-months": "{amount} for {months} months",
+    "share-x-text": "I am eligible for {amount} ${symbol} in the TGE Genesis drop of Hemi! 🎉 Check if you are eligible:",
     "stake-hemi": "Stake {symbol}",
+    "staked-for-months": "{amount} for {months} months",
     "switch-to-start-claiming": "You can switch networks to start claiming your HEMI.",
     "terms-and-conditions": {
       "title": "Hemi Genesis Drop Terms and Conditions"
     },
-    "share-x-text": "I am eligible for {amount} ${symbol} in the TGE Genesis drop of Hemi! 🎉 Check if you are eligible:",
     "title": "Rewards Program",
     "up-to-multiplier": "Up to {multiplier}x",
     "view-tx-on-explorer": "View TX on explorer",
@@ -409,20 +236,26 @@
     "your-rewards-are-on-their-way": "Your rewards are on their way!"
   },
   "get-started": {
-    "add-hemi-network-to-your-wallet": "Add Hemi network to your wallet",
+    "action": "Action",
     "add-hemi-network-description": "This lets your wallet interact with Hemi for transactions, bridges, and dApps.",
+    "add-hemi-network-to-your-wallet": "Add Hemi network to your wallet",
     "add-hemi-tokens": "Add Hemi tokens",
     "add-hemi-tokens-description": "Hemi tokens are paired with their ERC-20 versions on Ethereum. To see and use an asset on Hemi, your wallet needs the Hemi (L2) token address.",
+    "add-networks": {
+      "automatic": "Automatically",
+      "manual": "Manually"
+    },
+    "add-to-wallet": "Add network",
     "add-token": "Add token",
     "add-token-error-description": "Please try again.",
     "add-token-error-title": "Couldn't add token to your wallet",
-    "action": "Action",
-    "add-to-wallet": "Add network",
     "adding-chain": "Adding...",
     "block-explorer-url": "Block explorer URL",
     "chain-id": "Chain ID",
     "currency-symbol": "Currency symbol",
     "heading": "Get started on Hemi",
+    "l1-address": "L1 address",
+    "l2-address": "L2 address",
     "layer": "Layer {layer}",
     "learn-how-to-use-hemi": "Learn how to use Hemi",
     "learn-more-tutorials": {
@@ -433,20 +266,275 @@
       "set-up-evm-wallet": "Set up an EVM wallet",
       "tunnel-assets-to-hemi": "Tunnel assets to Hemi"
     },
-    "l1-address": "L1 address",
-    "l2-address": "L2 address",
     "no-matching-tokens": "No matching tokens",
     "no-matching-tokens-hint": "Check the spelling or try another token name or symbol.",
     "rpc-url": "RPC URL",
     "search-tokens-placeholder": "Search tokens...",
-    "token": "Token",
     "subheading": "Activate compliant Bitcoin yield without leaving custody.",
+    "token": "Token",
     "tutorials-subheading": "New to Hemi? Our step-by-step tutorials walk you through everything you need to know, from setting up your wallet to bridging tokens and using dApps.",
-    "view-all-tutorials": "View all tutorials",
-    "add-networks": {
-      "automatic": "Automatically",
-      "manual": "Manually"
+    "view-all-tutorials": "View all tutorials"
+  },
+  "hemi-earn": {
+    "heading": "Earn yield with Hemi Earn",
+    "info": {
+      "earned-amount": "Your earned amount",
+      "from-pools": "{count, plural, one {From # pool} other {From # pools}}",
+      "staked-balance": "Your staked balance"
+    },
+    "navigation": {
+      "back": "Back",
+      "hemi-earn": "Hemi Earn",
+      "pool-name": "{tokenSymbol} pool"
+    },
+    "pool": {
+      "apy": "APY",
+      "composition": {
+        "amount": "Amount",
+        "by-protocol": "By protocol",
+        "by-token": "By token",
+        "position": "Position",
+        "protocols-count": "{count, plural, one {# protocol} other {# protocols}}",
+        "reserve-buffer": "Reserve Buffer",
+        "share": "Share",
+        "title": "Composition",
+        "tokens-count": "{count, plural, one {# token} other {# tokens}}"
+      },
+      "deposit-successful": "Deposit successful",
+      "drawer": {
+        "approving": "Approving {symbol}",
+        "cooldown-ended": "Cooldown period complete",
+        "deposit": {
+          "heading": "Review stake deposit",
+          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
+        },
+        "funds-returned": "Funds returned",
+        "funds-to-recover": "Funds to recover",
+        "get-share-tokens": "Get share tokens",
+        "receive-token": "Receive {symbol}",
+        "shares-returned": "Shares returned",
+        "shares-to-recover": "Shares to recover",
+        "stake-token": "Stake {symbol}",
+        "unstake-token": "Unstake {symbol}",
+        "wait-cooldown-countdown": "{days, plural, =0 {Cooldown ends in {hours}h} other {Cooldown ends in #d {hours}h}}",
+        "wait-cooldown-countdown-soon": "Cooldown ends in less than an hour",
+        "wait-cooldown-pending": "Wait for the {days, plural, one {# day} other {# days}} cooldown period",
+        "withdraw": {
+          "heading": "Review stake withdrawal",
+          "subheading": "Your transaction has been submitted and is awaiting confirmation on the blockchain."
+        }
+      },
+      "form": {
+        "amount-too-small": "Amount too small",
+        "asset-unavailable": "Asset unavailable",
+        "available-to-withdraw": "Available to withdraw",
+        "bridging-fees": "Bridging fees",
+        "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
+        "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
+        "network-error": "Preview failed — try again",
+        "total-fee": "Total gas fee",
+        "withdraw-share-tokens-as": "Withdraw share tokens as",
+        "withdrawing": "Withdrawing...",
+        "you-will-receive": "You'll receive"
+      },
+      "here-is-your-tx": "Here's your transaction:",
+      "historical-metrics": {
+        "1-week": "1 week",
+        "1-year": "1 year",
+        "apy": "APY",
+        "month": "{count, plural, one {# month} other {# months}}",
+        "pool-deposits": "Pool deposits",
+        "title": "Historical metrics"
+      },
+      "total-deposits": "Pool total deposits",
+      "withdraw-successful": "Withdraw successful"
+    },
+    "pool-info": {
+      "apy": "APY",
+      "manage": "Manage",
+      "pool-contract": "Pool Contract",
+      "share-token": "Share token",
+      "total-deposits": "Total deposits"
+    },
+    "subheading": "One click earn for your assets",
+    "transactions": {
+      "banner": {
+        "cancelled": {
+          "heading": "Withdrawal cancelled",
+          "subheading": "We're returning your share tokens to your wallet."
+        },
+        "claim-funds": {
+          "heading": "We couldn't claim your funds automatically",
+          "subheading": "Click on 'Claim funds' to get your funds."
+        },
+        "claim-shares": {
+          "heading": "We couldn't claim your share tokens automatically",
+          "subheading": "Click on 'Claim share tokens' to get your tokens."
+        },
+        "recover-funds": {
+          "heading": "Transaction failed",
+          "subheading": "Something went wrong. Use the button below to return your funds to your wallet."
+        },
+        "recover-shares": {
+          "heading": "Transaction failed",
+          "subheading": "Something went wrong. Use the button below to return your share tokens to your wallet."
+        }
+      },
+      "cancel-modal": {
+        "cancelling": "Cancelling...",
+        "confirm": "Cancel withdrawal",
+        "description": "If you cancel it, your funds will go back to being staked and will no longer be in the cooldown lock.",
+        "keep": "Keep withdrawal",
+        "title": "Cancel withdrawal"
+      },
+      "cancel-withdraw": "Cancel withdrawal",
+      "claim-funds": "Claim funds",
+      "claim-share-tokens": "Claim share tokens",
+      "claiming": "Claiming...",
+      "column": {
+        "amount": "Amount",
+        "date": "Date",
+        "status": "Status",
+        "tx-hash": "Tx Hash",
+        "type": "Type"
+      },
+      "connect-to-view": "Connect your wallet to view your earn transactions.",
+      "deposit": "Deposit",
+      "drawer": {
+        "deposit-heading": "Stake deposit details",
+        "deposit-subheading": "Review your stake deposit transaction.",
+        "step": {
+          "approval-needed": "Approval needed",
+          "approve-token": "Approve {symbol}",
+          "funds-returned": "Funds returned",
+          "funds-to-recover": "Funds to recover",
+          "get-share-tokens": "Get share tokens",
+          "receive-token": "Receive {symbol}",
+          "shares-returned": "Shares returned",
+          "shares-to-recover": "Shares to recover",
+          "stake-token": "Stake {symbol}",
+          "unstake-token": "Unstake {symbol}"
+        },
+        "withdraw-heading": "Stake withdrawal details",
+        "withdraw-subheading": "Review your stake withdrawal transaction."
+      },
+      "nothing-here": "Nothing here yet",
+      "nothing-here-subtitle": "Your transactions will appear once you get started.",
+      "recover-funds": "Recover funds",
+      "recover-shares": "Recover shares",
+      "recovering": "Recovering...",
+      "status": {
+        "cancelling": "Cancelling withdrawal",
+        "cooldown-ready-in-days": "Cooldown · ready in {value}d",
+        "cooldown-ready-in-hours": "Cooldown · ready in {value}h",
+        "cooldown-ready-in-minutes": "Cooldown · ready in {value}m",
+        "cooldown-ready-soon": "Cooldown · ready in < 1m",
+        "deposited": "Deposited",
+        "funds-returned": "Funds returned",
+        "in-progress": "In progress",
+        "manual-claim-needed": "In progress - Manual claim needed",
+        "ready-to-claim": "Ready to claim",
+        "recover-funds-needed": "Something went wrong - Recover funds",
+        "recover-shares-cancelled": "Withdrawal cancelled - Recover shares",
+        "recover-shares-needed": "Something went wrong - Recover shares",
+        "returned": "Returned",
+        "shares-returned": "Shares returned",
+        "tx-failed": "Tx Failed",
+        "withdrawn": "Withdrawn"
+      },
+      "subtitle": "Track the status of your deposits and withdrawals.",
+      "title": "My earn transactions",
+      "view": "View",
+      "withdrawal": "Withdrawal"
     }
+  },
+  "metadata": {
+    "title": "Hemi Portal"
+  },
+  "navbar": {
+    "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
+    "bitcoinkit": "Hemi Bitcoin Kit",
+    "boost-staking": "Boost staking",
+    "data-attribution": "Data provided by <link>CoinMarketCap.com</link>",
+    "dex": {
+      "aggregators": "Aggregators",
+      "subtitle": "DEXs",
+      "title": "DEXs"
+    },
+    "docs": "Documentation",
+    "ecosystem": "Demos",
+    "explorer": "Explorer",
+    "follow-us": "Follow us",
+    "genesis-drop": "Genesis Drop",
+    "get-started": "Get started",
+    "governance-staking": "Governance staking",
+    "help": {
+      "language": "Language",
+      "legal-and-privacy": "Legal and Privacy"
+    },
+    "network": "Network",
+    "network-status": "Network status",
+    "stake": "Stake",
+    "swap": "Swap",
+    "tools": "Tools",
+    "tunnel": "Tunnel",
+    "tvl": "TVL on Hemi"
+  },
+  "stake-page": {
+    "action": "Action",
+    "asset": "Asset",
+    "change-to-mainnet": "Change to Mainnet and stake",
+    "dashboard": {
+      "coming-soon": "Coming Soon",
+      "heading": "Boost staking",
+      "stake-more": "Stake more",
+      "staked": "Staked",
+      "staking-assets": "Staking assets",
+      "subtitle": "Monitor your boost staking positions.",
+      "title": "Dashboard",
+      "total-earned-points": "Total Hemi points earned",
+      "total-earned-points-description": "Season ended.",
+      "total-staked-on-hemi": "Total Staked on Hemi",
+      "your-stake": "Your Stake"
+    },
+    "drawer": {
+      "approve-and-stake": "Approve and Stake",
+      "description-manage-stake": "Top up your stake, or withdraw anytime—you're in full control!",
+      "manage-your-stake": "Manage your stake",
+      "stake-and-earn-rewards": "Stake {symbol} to boost your participation.",
+      "stake-token": "Stake {symbol}",
+      "staking": "Staking...",
+      "strategy-details": {
+        "heading": "Strategy Details",
+        "tvl": "TVL (on Hemi)",
+        "website": "Website"
+      },
+      "unstake-eth-as-weth-heading": "Unstaked ETH will be received as WETH",
+      "unstake-eth-as-weth-subheading": "When you stake ETH, it is automatically converted to WETH. Upon unstaking, you'll receive WETH, which you can unwrap back to ETH if desired.",
+      "unstake-token": "Unstake {symbol}",
+      "unstaking": "Unstaking...",
+      "unwrap": "Unwrap",
+      "you-can-unstake-anytime": "You can unstake any time."
+    },
+    "protocol": "Protocol",
+    "ready-to-earn": "Ready to stake? Use supported assets and start staking.",
+    "rewards": "Rewards",
+    "stake": {
+      "action": "Action",
+      "heading": "Stake for boost",
+      "subheading": "Stake your tokens.",
+      "title": "Stake"
+    },
+    "start-staking-earn-points": "Start staking",
+    "toast": {
+      "go-staking-dashboard": "View your staking dashboard",
+      "here-your-stake-tx": "Here’s your {type} transaction:",
+      "staking": "staking",
+      "staking-successful": "Staking successful",
+      "unstaking": "unstaking",
+      "unstaking-successful": "Unstaking successful"
+    },
+    "wallet-balance": "Wallet balance"
   },
   "staking-dashboard": {
     "amount": "Amount",
@@ -495,10 +583,10 @@
       "years": "{years, plural, one {{years} year} other {{years} years}}"
     },
     "heading": "Governance staking",
-    "subheading": "Stake your ${symbol} to participate in governance and earn staking rewards.",
     "here-is-your-tx": "Here's your transaction:",
     "lockup-period": "Lockup period",
     "stake-successful": "Stake successful",
+    "subheading": "Stake your ${symbol} to participate in governance and earn staking rewards.",
     "switch-to-start-staking": "You can switch networks to start staking your HEMI.",
     "table": {
       "active": "Active",
@@ -530,94 +618,6 @@
     "voting-power": "Voting Power",
     "your-positions": "Your positions"
   },
-  "metadata": {
-    "title": "Hemi Portal"
-  },
-  "navbar": {
-    "agree-to-terms-and-policy": "By using this application, you agree to the <terms>Terms of Use</terms> and <policy>Privacy Policy</policy>",
-    "bitcoinkit": "Hemi Bitcoin Kit",
-    "boost-staking": "Boost staking",
-    "data-attribution": "Data provided by <link>CoinMarketCap.com</link>",
-    "dex": {
-      "aggregators": "Aggregators",
-      "subtitle": "DEXs",
-      "title": "DEXs"
-    },
-    "docs": "Documentation",
-    "ecosystem": "Demos",
-    "explorer": "Explorer",
-    "follow-us": "Follow us",
-    "genesis-drop": "Genesis Drop",
-    "get-started": "Get started",
-    "governance-staking": "Governance staking",
-    "help": {
-      "language": "Language",
-      "legal-and-privacy": "Legal and Privacy"
-    },
-    "network": "Network",
-    "network-status": "Network status",
-    "swap": "Swap",
-    "stake": "Stake",
-    "tools": "Tools",
-    "tunnel": "Tunnel",
-    "tvl": "TVL on Hemi"
-  },
-  "stake-page": {
-    "action": "Action",
-    "asset": "Asset",
-    "change-to-mainnet": "Change to Mainnet and stake",
-    "dashboard": {
-      "coming-soon": "Coming Soon",
-      "staked": "Staked",
-      "stake-more": "Stake more",
-      "staking-assets": "Staking assets",
-      "subtitle": "Monitor your boost staking positions.",
-      "heading": "Boost staking",
-      "title": "Dashboard",
-      "total-earned-points": "Total Hemi points earned",
-      "total-earned-points-description": "Season ended.",
-      "total-staked-on-hemi": "Total Staked on Hemi",
-      "your-stake": "Your Stake"
-    },
-    "drawer": {
-      "approve-and-stake": "Approve and Stake",
-      "description-manage-stake": "Top up your stake, or withdraw anytime—you're in full control!",
-      "manage-your-stake": "Manage your stake",
-      "stake-and-earn-rewards": "Stake {symbol} to boost your participation.",
-      "stake-token": "Stake {symbol}",
-      "staking": "Staking...",
-      "strategy-details": {
-        "heading": "Strategy Details",
-        "tvl": "TVL (on Hemi)",
-        "website": "Website"
-      },
-      "unstake-eth-as-weth-heading": "Unstaked ETH will be received as WETH",
-      "unstake-eth-as-weth-subheading": "When you stake ETH, it is automatically converted to WETH. Upon unstaking, you'll receive WETH, which you can unwrap back to ETH if desired.",
-      "unstake-token": "Unstake {symbol}",
-      "unstaking": "Unstaking...",
-      "unwrap": "Unwrap",
-      "you-can-unstake-anytime": "You can unstake any time."
-    },
-    "protocol": "Protocol",
-    "ready-to-earn": "Ready to stake? Use supported assets and start staking.",
-    "rewards": "Rewards",
-    "stake": {
-      "action": "Action",
-      "heading": "Stake for boost",
-      "subheading": "Stake your tokens.",
-      "title": "Stake"
-    },
-    "start-staking-earn-points": "Start staking",
-    "toast": {
-      "go-staking-dashboard": "View your staking dashboard",
-      "here-your-stake-tx": "Here’s your {type} transaction:",
-      "staking": "staking",
-      "staking-successful": "Staking successful",
-      "unstaking": "unstaking",
-      "unstaking-successful": "Unstaking successful"
-    },
-    "wallet-balance": "Wallet balance"
-  },
   "token-custom-drawer": {
     "add-contract-to-preview": "Add a contract address to preview the token...",
     "add-this-pair": "Add this pair to Hemi's token list for everyone to tunnel",
@@ -626,13 +626,13 @@
     "address-does-not-match-l2": "Doesn't match the L1 pair",
     "heading": "Tunnel an existing ERC-20 token",
     "i-am-sure-to-tunnel": "I'm sure I want to tunnel with this token.",
+    "l1-address-not-configured": "L1 address not configured in the contract",
     "layer-token-address": "Layer {layer} token address",
     "make-a-request-to-add": "If you'd like to add this ERC-20 token pair to Hemi's approved tokens list, <link>make a request</link>.",
     "see-on-explorer": "See on {explorer}",
     "subheading": "You need to input the pair of contract addresses from both Ethereum and Hemi to tunnel with this token.",
     "this-address-is-not-valid": "This address is not valid",
-    "this-address-is-valid": "This address is valid",
-    "l1-address-not-configured": "L1 address not configured in the contract"
+    "this-address-is-valid": "This address is valid"
   },
   "token-selector": {
     "all-tokens": "All tokens",
@@ -680,15 +680,15 @@
       "add-token-to-wallet-success": "Token contract added to your wallet",
       "approve-confirmed": "Approve confirmed",
       "approve-initiated": "Approve initiated",
+      "approve-on": "Approve on {networkName}",
       "btc-deposit-come-back-delay-note": "If you do not receive your deposit after {hours} hours return to this page to manually claim.",
-      "deposit-completed": "Deposit completed",
       "click-to-confirm": "Click on 'Confirm Deposit Manually' to deposit your Bitcoin to Hemi.",
       "confirm-deposit-on": "Confirm deposit on {networkName}",
+      "deposit-completed": "Deposit completed",
       "deposit-finalized": "Deposit finalized",
       "deposit-on-its-way": "Your deposit is on its way! Please wait while the blockchain finalizes the transaction.",
       "get-your-funds-on": "Get your funds on {networkName}",
       "initiate-deposit": "Initiate deposit",
-      "approve-on": "Approve on {networkName}",
       "review-deposit": "Review Deposit",
       "start-on": "Start on {networkName}",
       "we-could-not-process-this-deposit": "We couldn't process this deposit automatically",
@@ -697,8 +697,8 @@
     "review-withdrawal": {
       "challenge-to-get-bitcoins-back": "Click 'Challenge withdrawal' to reclaim your BTC and send it back to your Hemi address.",
       "challenge-withdrawal": "Challenge Withdrawal",
-      "claim-your-funds": "Claim your funds on {networkName}",
       "claim-withdrawal": "Claim withdrawal",
+      "claim-your-funds": "Claim your funds on {networkName}",
       "get-funds-back": "Get my funds back to {networkName}",
       "heading": "Review Withdrawal",
       "initiate-withdrawal": "Initiate withdrawal",
@@ -717,8 +717,8 @@
       "challenging": "Challenging...",
       "claim-withdrawal": "Claim Withdrawal",
       "claiming-withdrawal": "Claiming Withdrawal...",
-      "confirming-deposit-manually": "Confirming deposit manually...",
       "confirm-deposit-manually": "Confirm deposit manually",
+      "confirming-deposit-manually": "Confirming deposit manually...",
       "connect-both-wallets": "Connect your BTC and EVM wallets",
       "connect-btc-wallet": "Connect your BTC wallet",
       "deposit": "Deposit",
@@ -748,16 +748,6 @@
         "type": "Type"
       },
       "deposit": "Deposit",
-      "no-transactions": "No transactions made",
-      "no-transactions-get-started": "Get started by tunneling assets from and to hemi",
-      "subtitle": "Track the status and details of your Hemi transactions.",
-      "title": "Transaction history",
-      "top-bar": {
-        "all": "All",
-        "bitcoin": "Bitcoin",
-        "ethereum": "Ethereum",
-        "recent-transactions": "Recent Transactions"
-      },
       "filters": {
         "actions": {
           "all": "All actions",
@@ -768,6 +758,16 @@
           "deposits": "Deposits",
           "withdrawals": "Withdrawals"
         }
+      },
+      "no-transactions": "No transactions made",
+      "no-transactions-get-started": "Get started by tunneling assets from and to hemi",
+      "subtitle": "Track the status and details of your Hemi transactions.",
+      "title": "Transaction history",
+      "top-bar": {
+        "all": "All",
+        "bitcoin": "Bitcoin",
+        "ethereum": "Ethereum",
+        "recent-transactions": "Recent Transactions"
       },
       "tunnel-assets": "Tunnel assets",
       "withdraw": "Withdraw"

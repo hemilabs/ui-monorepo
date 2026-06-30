@@ -1,34 +1,47 @@
 'use client'
 
+import { TokenInput } from 'components/tokenInput'
+import { TokenSelectorReadOnly } from 'components/tokenSelector/readonly'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { useTranslations } from 'next-intl'
 import { useState } from 'react'
 import { type EvmToken } from 'types/token'
 import { getNativeToken } from 'utils/nativeToken'
-import { parseTokenUnits } from 'utils/token'
 import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount as useEvmAccount } from 'wagmi'
 
+import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
-import { useUserShareValue } from '../_hooks/useUserShareValue'
+import { useAssetsToShares } from '../_hooks/useAssetsToShares'
+import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
 import { useWithdraw } from '../_hooks/useWithdraw'
 import { useWithdrawPreview } from '../_hooks/useWithdrawPreview'
 import { type WithdrawOperationRunning } from '../_types/operations'
 import {
-  computeIsLoading,
   resolveErrorKey,
   resolvePreviewIssue,
   resolveValidationError,
 } from '../_utils/formState'
+import {
+  applyWithdrawSharesGuard,
+  computeWithdrawSubmitLoading,
+  deriveWithdrawShares,
+  getTypedAssetAmount,
+  getWithdrawValidationTarget,
+  resolveRoundToZeroIssue,
+  resolveWithdrawInputValues,
+} from '../_utils/withdrawForm'
 
+import { AssetSelector } from './assetSelector'
 import { VaultFormLayout } from './form'
 import { OperationBelowForm } from './operationBelowForm'
 import { PoolFormContent } from './poolFormContent'
 import { SubmitWithdraw } from './submitWithdraw'
-import { UserPoolBalance } from './userPoolBalance'
+import { WithdrawAvailableBalance } from './withdrawAvailableBalance'
 import { WithdrawMaxBalance } from './withdrawMaxBalance'
+import { WithdrawShareBalance } from './withdrawShareBalance'
 
 export const Withdraw = function ({
   onSwitchToDeposit,
@@ -44,37 +57,78 @@ export const Withdraw = function ({
     pool,
     resetStateAfterOperation,
     selectedAsset,
-    updateInput,
+    updateAssetInput,
+    updateSharesInput,
     updateWithdrawOperation,
+    withdrawMode,
   } = usePoolForm()
 
   const { address, status } = useEvmAccount()
 
-  // Input is in share-token units (svetBTC). The Router's `requestRedeem`
-  // burns shares directly, so the form mirrors that on-chain unit.
-  const shares = parseTokenUnits(input, pool.shareToken)
+  const isTokensMode = withdrawMode === 'tokens'
 
-  const { data: shareValue, isSuccess: shareValueLoaded } = useUserShareValue({
-    shareAddress: pool.shareAddress,
+  const { data: assetsToShares, isLoading: isAssetsToSharesLoading } =
+    useAssetsToShares({
+      amount: getTypedAssetAmount({
+        input,
+        isTokensMode,
+        token: selectedAsset.token,
+      }),
+      assetAddress: selectedAsset.address,
+      shareAddress: pool.shareAddress,
+    })
+
+  const shares = deriveWithdrawShares({
+    assetShares: assetsToShares?.shares,
+    input,
+    isTokensMode,
+    shareToken: pool.shareToken,
   })
 
   const {
-    canSubmit: validInput,
-    error: validationError,
-    errorKey,
+    assetOut: maxAssetOut,
+    isLoaded: maxAssetLoaded,
+    shareBalance,
+    shareValueLoaded,
+  } = useMaxWithdrawableAsset({
+    assetAddress: selectedAsset.address,
+    shareAddress: pool.shareAddress,
+  })
+
+  const { balance: validationBalance, token: validationToken } =
+    getWithdrawValidationTarget({
+      assetToken: selectedAsset.token,
+      isTokensMode,
+      maxAssetOut,
+      shareBalance,
+      shareToken: pool.shareToken,
+    })
+  const {
+    canSubmit: baseValid,
+    error: baseError,
+    errorKey: baseErrorKey,
   } = validateSubmit({
     amountInput: input,
-    balance: shareValue?.shares,
+    balance: validationBalance,
     operation: 'withdrawal',
     t,
-    token: pool.shareToken,
+    token: validationToken,
+  })
+  const { errorKey, validationError, validInput } = applyWithdrawSharesGuard({
+    baseError,
+    baseErrorKey,
+    baseValid,
+    insufficientBalanceError: t('common.insufficient-balance', {
+      symbol: validationToken.symbol,
+    }),
+    isTokensMode,
+    shareBalance,
+    shares,
+    shareValueLoaded,
   })
 
   const routerAddress = getHemiEarnRouterAddress()
 
-  // Single composed query owns shares→assets preview, redeem quote, and
-  // allowance reads. `withdraw.tsx` only consumes the derived outputs
-  // here — no separate subscriptions for those upstream queries.
   const {
     assetOut,
     assetOutRaw,
@@ -100,6 +154,15 @@ export const Withdraw = function ({
     shareToken: pool.shareToken,
     spender: routerAddress,
     validInput,
+  })
+
+  const { assetValue, sharesValue } = resolveWithdrawInputValues({
+    assetOut,
+    assetToken: selectedAsset.token,
+    input,
+    isTokensMode,
+    shares,
+    shareToken: pool.shareToken,
   })
 
   // Fail safe: when the eligibility read on Ethereum is in-flight or errors,
@@ -144,27 +207,37 @@ export const Withdraw = function ({
 
   const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
   const hasQuote = !!quote
+  const balanceLoaded = isTokensMode ? maxAssetLoaded : shareValueLoaded
 
-  const previewIssue = resolvePreviewIssue({
-    hasShares: assetOut > BigInt(0),
-    isPreviewError,
-    isPreviewLoading,
-    peggedAmount,
-    validInput,
-  })
+  const previewIssue =
+    resolveRoundToZeroIssue({
+      isAssetsToSharesLoading,
+      isTokensMode,
+      shares,
+      validInput,
+    }) ??
+    resolvePreviewIssue({
+      hasShares: assetOut > BigInt(0),
+      isPreviewError,
+      isPreviewLoading,
+      peggedAmount,
+      validInput,
+    })
   const effectiveValidationError = resolveValidationError(
     previewIssue ? t(`hemi-earn.pool.form.${previewIssue}`) : undefined,
     validationError,
   )
   const displayedErrorKey = resolveErrorKey(
     walletIsConnected(status),
-    shareValueLoaded,
+    balanceLoaded,
     errorKey,
   )
-  const isSubmitLoading = computeIsLoading({
-    balanceLoaded: shareValueLoaded,
+  const isSubmitLoading = computeWithdrawSubmitLoading({
+    balanceLoaded,
     isAllowanceLoading,
+    isAssetsToSharesLoading,
     isPreviewLoading,
+    isTokensMode,
     validInput,
   })
 
@@ -190,29 +263,46 @@ export const Withdraw = function ({
         )
       }
       formContent={
-        <PoolFormContent
-          aboveInput={<UserPoolBalance />}
-          activeTab="withdraw"
-          errorKey={displayedErrorKey}
-          fiatBalance={{
-            // When `shares` is 0n the preview query stays disabled and
-            // `peggedAmountRaw` is `undefined` — force 0n here so the
-            // fiat row mirrors the deposit's "$0" behaviour for an empty
-            // input instead of locking the skeleton on forever.
-            balance: shares > BigInt(0) ? peggedAmountRaw : BigInt(0),
-            token: pool.peggedToken,
-          }}
-          inputLabel={t('hemi-earn.pool.form.withdraw-share-tokens-as')}
-          inputToken={pool.shareToken}
-          isRunningOperation={isRunningOperation}
-          onSwitchTab={onSwitchToDeposit}
-          setMaxBalanceButton={
-            <WithdrawMaxBalance
-              disabled={isRunningOperation}
-              onSetMaxBalance={updateInput}
-            />
-          }
-        />
+        <PoolFormContent activeTab="withdraw" onSwitchTab={onSwitchToDeposit}>
+          <TokenInput
+            balanceComponent={WithdrawShareBalance}
+            disabled={isRunningOperation}
+            errorKey={isTokensMode ? undefined : displayedErrorKey}
+            fiatBalance={{
+              // When `shares` is 0n the preview query stays disabled and
+              // `peggedAmountRaw` is `undefined` — force 0n here so the fiat
+              // row reads "$0" for an empty input instead of a stuck skeleton.
+              balance: shares > BigInt(0) ? peggedAmountRaw : BigInt(0),
+              token: pool.peggedToken,
+            }}
+            fiatBalanceComponent={RenderEarnFiatBalance}
+            label={t('hemi-earn.pool.form.share-token-available-to-withdraw')}
+            maxBalanceButton={
+              <WithdrawMaxBalance
+                disabled={isRunningOperation}
+                onSetMaxBalance={updateSharesInput}
+              />
+            }
+            onChange={updateSharesInput}
+            token={pool.shareToken}
+            tokenSelector={<TokenSelectorReadOnly token={pool.shareToken} />}
+            value={sharesValue}
+          />
+          <TokenInput
+            balanceComponent={WithdrawAvailableBalance}
+            balanceLabel={t('hemi-earn.pool.form.available')}
+            disabled={isRunningOperation}
+            errorKey={isTokensMode ? displayedErrorKey : undefined}
+            fiatBalanceComponent={RenderEarnFiatBalance}
+            label={t('hemi-earn.pool.form.withdraw-share-tokens-as')}
+            onChange={updateAssetInput}
+            token={selectedAsset.token}
+            tokenSelector={
+              <AssetSelector disabled={isRunningOperation} pool={pool} />
+            }
+            value={assetValue}
+          />
+        </PoolFormContent>
       }
       onSubmit={handleWithdraw}
       submitButton={

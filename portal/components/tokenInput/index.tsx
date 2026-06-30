@@ -22,6 +22,7 @@ type Props<T extends Token> = {
   balanceComponent?: ComponentType<{
     token: T
   }>
+  balanceLabel?: string
   disabled: boolean
   errorKey: string | undefined
   // Overrides the default fiat preview (input × token price). Use when the
@@ -58,6 +59,7 @@ const getTextColor = function (value: string, errorKey: string | undefined) {
 
 export const TokenInput = function <T extends Token>({
   balanceComponent,
+  balanceLabel,
   disabled,
   errorKey,
   fiatBalance,
@@ -74,9 +76,9 @@ export const TokenInput = function <T extends Token>({
   const BalanceComponent = balanceComponent ?? Balance
   const FiatBalanceComponent = fiatBalanceComponent ?? RenderFiatBalance
   return (
-    <div className="h-[124px] rounded-lg border border-solid border-transparent bg-neutral-50 p-4 font-medium text-neutral-500 hover:shadow-bs">
+    <div className="min-h-[124px] rounded-lg border border-solid border-transparent bg-neutral-50 p-4 font-medium text-neutral-500 hover:shadow-bs">
       <div className="flex h-full items-center justify-between">
-        <div className="flex h-full flex-shrink flex-grow flex-col items-start">
+        <div className="flex h-full min-w-0 flex-shrink flex-grow flex-col items-start">
           <span className="text-sm">{label}</span>
           <input
             className={`max-w-1/2 my-2 w-full bg-transparent text-4xl ${getTextColor(
@@ -109,8 +111,10 @@ export const TokenInput = function <T extends Token>({
         </div>
         <div className="flex h-full flex-col items-end justify-end text-sm">
           {tokenSelector}
-          <div className="mt-3 flex items-center justify-end gap-x-2 text-sm">
-            <span className="text-neutral-500">{t('form.balance')}:</span>
+          <div className="mt-3 flex items-center justify-end gap-x-2 whitespace-nowrap text-sm">
+            <span className="text-neutral-500">
+              {balanceLabel ?? t('form.balance')}:
+            </span>
             <span className="text-neutral-950">
               <BalanceComponent token={token} />
             </span>

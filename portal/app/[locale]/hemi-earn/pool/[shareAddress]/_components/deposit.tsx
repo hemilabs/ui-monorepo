@@ -1,5 +1,6 @@
 'use client'
 
+import { TokenInput } from 'components/tokenInput'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { useTokenBalance } from 'hooks/useBalance'
 import dynamic from 'next/dynamic'
@@ -12,6 +13,7 @@ import { validateSubmit } from 'utils/validateSubmit'
 import { walletIsConnected } from 'utils/wallet'
 import { useAccount as useEvmAccount } from 'wagmi'
 
+import { RenderEarnFiatBalance } from '../../../_components/earnFiatBalance'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useDeposit } from '../_hooks/useDeposit'
@@ -25,6 +27,7 @@ import {
   resolveValidationError,
 } from '../_utils/formState'
 
+import { AssetSelector } from './assetSelector'
 import { VaultFormLayout } from './form'
 import { OperationBelowForm } from './operationBelowForm'
 import { PoolFormContent } from './poolFormContent'
@@ -208,22 +211,28 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
         )
       }
       formContent={
-        <PoolFormContent
-          activeTab="deposit"
-          errorKey={displayedErrorKey}
-          inputLabel={t('common.deposit')}
-          inputToken={selectedAsset.token}
-          isRunningOperation={isRunningOperation}
-          onSwitchTab={onSwitchToWithdraw}
-          setMaxBalanceButton={
-            <SetMaxEvmBalance
-              disabled={isRunningOperation}
-              gas={depositGasFees + layerZeroFee}
-              onSetMaxBalance={updateInput}
-              token={selectedAsset.token}
-            />
-          }
-        />
+        <PoolFormContent activeTab="deposit" onSwitchTab={onSwitchToWithdraw}>
+          <TokenInput
+            disabled={isRunningOperation}
+            errorKey={displayedErrorKey}
+            fiatBalanceComponent={RenderEarnFiatBalance}
+            label={t('common.deposit')}
+            maxBalanceButton={
+              <SetMaxEvmBalance
+                disabled={isRunningOperation}
+                gas={depositGasFees + layerZeroFee}
+                onSetMaxBalance={updateInput}
+                token={selectedAsset.token}
+              />
+            }
+            onChange={updateInput}
+            token={selectedAsset.token}
+            tokenSelector={
+              <AssetSelector disabled={isRunningOperation} pool={pool} />
+            }
+            value={input}
+          />
+        </PoolFormContent>
       }
       onSubmit={handleDeposit}
       submitButton={

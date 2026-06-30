@@ -24,16 +24,16 @@ const SideDrawer = function () {
 }
 
 export const PoolForm = function () {
-  const { pool, updateInput } = usePoolForm()
+  const { pool, updateSharesInput } = usePoolForm()
   const [activeTab, setActiveTab] = useState<ActiveTab>('deposit')
 
   const switchToDeposit = function () {
-    updateInput('0')
+    updateSharesInput('0')
     setActiveTab('deposit')
   }
 
   const switchToWithdraw = function () {
-    updateInput('0')
+    updateSharesInput('0')
     setActiveTab('withdraw')
   }
 

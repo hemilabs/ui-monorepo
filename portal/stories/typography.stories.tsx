@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 // "Not really a component" (issue #1993): the typography lives as global styles in
 // styles/globals.css (already imported in preview.ts). Organized like vetro (a `Typography/`

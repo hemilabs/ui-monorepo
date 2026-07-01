@@ -439,6 +439,7 @@
         "recover-shares-needed": "Algo salió mal - Recuperar shares",
         "returned": "Devuelto",
         "shares-returned": "Shares devueltas",
+        "shares-returned-cancelled": "Retiro cancelado - Shares devueltas",
         "tx-failed": "Tx fallida",
         "withdrawn": "Retirado"
       },

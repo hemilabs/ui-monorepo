@@ -14,6 +14,7 @@ import {
   getTerminalDeliveryTxHash,
   hasFailedSettlement,
   hashesMatch,
+  isDeliberateCancel,
   isEarnRowInFlight,
   isLocalEarnTransactionRow,
   isRecoverPath,
@@ -834,6 +835,40 @@ describe('utils', function () {
 
     it('is false for a plain row (no flag, no marker)', function () {
       expect(isUserCancel(baseTx)).toBe(false)
+    })
+  })
+
+  describe('isDeliberateCancel', function () {
+    it('is true for a user cancel (cancellationRequested, not failed)', function () {
+      expect(
+        isDeliberateCancel({ ...baseTx, cancellationRequested: true }),
+      ).toBe(true)
+    })
+
+    it('is true at the terminal RECOVERED state', function () {
+      expect(
+        isDeliberateCancel({
+          ...baseTx,
+          cancellationRequested: true,
+          kind: 'REDEEM',
+          status: 'RECOVERED',
+        }),
+      ).toBe(true)
+    })
+
+    it('is false for a keeper/Agent-failure recovery (failed)', function () {
+      expect(
+        isDeliberateCancel({
+          ...baseTx,
+          cancellationRequested: true,
+          failed: true,
+          status: 'RECOVERED',
+        }),
+      ).toBe(false)
+    })
+
+    it('is false without a cancel request', function () {
+      expect(isDeliberateCancel(baseTx)).toBe(false)
     })
   })
 })

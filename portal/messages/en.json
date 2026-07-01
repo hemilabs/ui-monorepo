@@ -327,13 +327,14 @@
       "form": {
         "amount-too-small": "Amount too small",
         "asset-unavailable": "Asset unavailable",
-        "available-to-withdraw": "Available to withdraw",
+        "available": "Available",
         "bridging-fees": "Bridging fees",
         "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
         "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
         "network-error": "Preview failed — try again",
+        "share-token-available-to-withdraw": "Share token available to withdraw",
         "total-fee": "Total gas fee",
-        "withdraw-share-tokens-as": "Withdraw share tokens as",
+        "withdraw-share-tokens-as": "Withdraw share token as",
         "withdrawing": "Withdrawing...",
         "you-will-receive": "You'll receive"
       },

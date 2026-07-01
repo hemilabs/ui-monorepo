@@ -7,9 +7,12 @@ import {
   type WithdrawOperation,
 } from '../_types/operations'
 
+type WithdrawMode = 'shares' | 'tokens'
+
 type PoolFormState = {
   depositOperation?: DepositOperation
   input: string
+  withdrawMode: WithdrawMode
   withdrawOperation?: WithdrawOperation
 }
 
@@ -20,7 +23,8 @@ type Action<T extends string> = {
 type ResetStateAfterOperation = Action<'resetStateAfterOperation'> & NoPayload
 type UpdateDepositOperation = Action<'updateDepositOperation'> &
   Payload<DepositOperation | undefined>
-type UpdateInput = Action<'updateInput'> & Payload<string>
+type UpdateInput = Action<'updateInput'> &
+  Payload<{ value: string; withdrawMode?: WithdrawMode }>
 type UpdateWithdrawOperation = Action<'updateWithdrawOperation'> &
   Payload<WithdrawOperation | undefined>
 
@@ -41,6 +45,7 @@ const actionHandlers: ActionHandlers = {
   resetStateAfterOperation: state => ({
     ...state,
     input: '0',
+    withdrawMode: 'shares',
   }),
 
   updateDepositOperation: (state, payload) => ({
@@ -55,7 +60,8 @@ const actionHandlers: ActionHandlers = {
 
   updateInput: (state, payload) => ({
     ...state,
-    input: payload,
+    input: payload.value,
+    withdrawMode: payload.withdrawMode ?? state.withdrawMode,
   }),
 
   updateWithdrawOperation: (state, payload) => ({
@@ -83,6 +89,7 @@ function reducer(state: PoolFormState, action: Actions) {
 export const usePoolFormState = function () {
   const [state, dispatch] = useReducer(reducer, {
     input: '0',
+    withdrawMode: 'shares',
   })
 
   const updateDepositOperation = useCallback(function (
@@ -91,12 +98,31 @@ export const usePoolFormState = function () {
     dispatch({ payload, type: 'updateDepositOperation' })
   }, [])
 
-  const updateInput = useCallback(function (payload: UpdateInput['payload']) {
-    const result = sanitizeAmount(payload)
+  const dispatchInput = useCallback(function (
+    value: string,
+    withdrawMode?: WithdrawMode,
+  ) {
+    const result = sanitizeAmount(value)
     if (!('error' in result)) {
-      dispatch({ payload: result.value, type: 'updateInput' })
+      dispatch({
+        payload: { value: result.value, withdrawMode },
+        type: 'updateInput',
+      })
     }
   }, [])
+
+  const updateInput = useCallback(
+    (value: string) => dispatchInput(value),
+    [dispatchInput],
+  )
+  const updateSharesInput = useCallback(
+    (value: string) => dispatchInput(value, 'shares'),
+    [dispatchInput],
+  )
+  const updateAssetInput = useCallback(
+    (value: string) => dispatchInput(value, 'tokens'),
+    [dispatchInput],
+  )
 
   const updateWithdrawOperation = useCallback(function (
     payload: UpdateWithdrawOperation['payload'],
@@ -110,8 +136,10 @@ export const usePoolFormState = function () {
       () => dispatch({ type: 'resetStateAfterOperation' }),
       [],
     ),
+    updateAssetInput,
     updateDepositOperation,
     updateInput,
+    updateSharesInput,
     updateWithdrawOperation,
   }
 }

@@ -19,7 +19,7 @@ export const inputErrors = [
   'insufficient-balance',
   'less-than-min-value',
 ] as const
-type InputError = (typeof inputErrors)[number]
+export type InputError = (typeof inputErrors)[number]
 
 export const isInputError = (error: string): error is InputError =>
   (inputErrors as readonly string[]).includes(error)

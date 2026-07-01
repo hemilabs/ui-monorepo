@@ -12,7 +12,7 @@ export const WithdrawAvailableBalance = function ({
 }) {
   const { pool, selectedAsset } = usePoolForm()
   const { isConnected } = useAccount()
-  const { assetOut, status } = useMaxWithdrawableAsset({
+  const { data, status } = useMaxWithdrawableAsset({
     assetAddress: selectedAsset.address,
     shareAddress: pool.shareAddress,
   })
@@ -23,7 +23,7 @@ export const WithdrawAvailableBalance = function ({
 
   return (
     <RenderCryptoBalance
-      balance={assetOut}
+      balance={data?.assetOut}
       showSymbol
       skeletonWidth="wide"
       status={status}

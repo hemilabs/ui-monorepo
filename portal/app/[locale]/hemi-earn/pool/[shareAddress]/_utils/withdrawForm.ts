@@ -134,3 +134,14 @@ export const resolveRoundToZeroIssue = ({
   isTokensMode && validInput && !isAssetsToSharesLoading && shares === BigInt(0)
     ? 'amount-too-small'
     : undefined
+
+export const splitWithdrawErrorKey = ({
+  displayedErrorKey,
+  isTokensMode,
+}: {
+  displayedErrorKey: string | undefined
+  isTokensMode: boolean
+}) => ({
+  assetErrorKey: isTokensMode ? displayedErrorKey : undefined,
+  sharesErrorKey: isTokensMode ? undefined : displayedErrorKey,
+})

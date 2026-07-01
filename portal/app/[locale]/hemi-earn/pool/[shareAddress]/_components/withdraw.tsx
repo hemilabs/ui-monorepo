@@ -16,6 +16,7 @@ import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import { usePoolForm } from '../_context/poolFormContext'
 import { useAssetsToShares } from '../_hooks/useAssetsToShares'
 import { useMaxWithdrawableAsset } from '../_hooks/useMaxWithdrawableAsset'
+import { useUserShareValue } from '../_hooks/useUserShareValue'
 import { useWithdraw } from '../_hooks/useWithdraw'
 import { useWithdrawPreview } from '../_hooks/useWithdrawPreview'
 import { type WithdrawOperationRunning } from '../_types/operations'
@@ -32,6 +33,7 @@ import {
   getWithdrawValidationTarget,
   resolveRoundToZeroIssue,
   resolveWithdrawInputValues,
+  splitWithdrawErrorKey,
 } from '../_utils/withdrawForm'
 
 import { AssetSelector } from './assetSelector'
@@ -85,15 +87,17 @@ export const Withdraw = function ({
     shareToken: pool.shareToken,
   })
 
-  const {
-    assetOut: maxAssetOut,
-    isLoaded: maxAssetLoaded,
-    shareBalance,
-    shareValueLoaded,
-  } = useMaxWithdrawableAsset({
-    assetAddress: selectedAsset.address,
+  const { data: shareValue, isSuccess: shareValueLoaded } = useUserShareValue({
     shareAddress: pool.shareAddress,
   })
+  const shareBalance = shareValue?.shares ?? BigInt(0)
+
+  const { data: maxWithdrawable, isFetched: maxAssetLoaded } =
+    useMaxWithdrawableAsset({
+      assetAddress: selectedAsset.address,
+      shareAddress: pool.shareAddress,
+    })
+  const maxAssetOut = maxWithdrawable?.assetOut
 
   const { balance: validationBalance, token: validationToken } =
     getWithdrawValidationTarget({
@@ -232,6 +236,10 @@ export const Withdraw = function ({
     balanceLoaded,
     errorKey,
   )
+  const { assetErrorKey, sharesErrorKey } = splitWithdrawErrorKey({
+    displayedErrorKey,
+    isTokensMode,
+  })
   const isSubmitLoading = computeWithdrawSubmitLoading({
     balanceLoaded,
     isAllowanceLoading,
@@ -267,7 +275,7 @@ export const Withdraw = function ({
           <TokenInput
             balanceComponent={WithdrawShareBalance}
             disabled={isRunningOperation}
-            errorKey={isTokensMode ? undefined : displayedErrorKey}
+            errorKey={sharesErrorKey}
             fiatBalance={{
               // When `shares` is 0n the preview query stays disabled and
               // `peggedAmountRaw` is `undefined` — force 0n here so the fiat
@@ -292,7 +300,7 @@ export const Withdraw = function ({
             balanceComponent={WithdrawAvailableBalance}
             balanceLabel={t('hemi-earn.pool.form.available')}
             disabled={isRunningOperation}
-            errorKey={isTokensMode ? displayedErrorKey : undefined}
+            errorKey={assetErrorKey}
             fiatBalanceComponent={RenderEarnFiatBalance}
             label={t('hemi-earn.pool.form.withdraw-share-tokens-as')}
             onChange={updateAssetInput}

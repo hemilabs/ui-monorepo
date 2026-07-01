@@ -9,6 +9,7 @@ import {
   getWithdrawValidationTarget,
   resolveRoundToZeroIssue,
   resolveWithdrawInputValues,
+  splitWithdrawErrorKey,
 } from '../../../../../../../app/[locale]/hemi-earn/pool/[shareAddress]/_utils/withdrawForm'
 
 // `parseTokenUnits` transitively imports `utils/chainClients`, whose
@@ -298,5 +299,31 @@ describe('resolveRoundToZeroIssue', function () {
     expect(
       resolveRoundToZeroIssue({ ...base, shares: BigInt(1) }),
     ).toBeUndefined()
+  })
+})
+
+describe('splitWithdrawErrorKey', function () {
+  it('routes the error to the asset field in tokens-mode', function () {
+    expect(
+      splitWithdrawErrorKey({
+        displayedErrorKey: 'insufficient-balance',
+        isTokensMode: true,
+      }),
+    ).toEqual({
+      assetErrorKey: 'insufficient-balance',
+      sharesErrorKey: undefined,
+    })
+  })
+
+  it('routes the error to the shares field in shares-mode', function () {
+    expect(
+      splitWithdrawErrorKey({
+        displayedErrorKey: 'insufficient-balance',
+        isTokensMode: false,
+      }),
+    ).toEqual({
+      assetErrorKey: undefined,
+      sharesErrorKey: 'insufficient-balance',
+    })
   })
 })

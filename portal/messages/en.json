@@ -440,6 +440,7 @@
         "recover-shares-needed": "Something went wrong - Recover shares",
         "returned": "Returned",
         "shares-returned": "Shares returned",
+        "shares-returned-cancelled": "Withdrawal cancelled - Shares returned",
         "tx-failed": "Tx Failed",
         "withdrawn": "Withdrawn"
       },

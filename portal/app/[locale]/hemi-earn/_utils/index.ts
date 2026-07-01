@@ -122,6 +122,12 @@ export const isUserCancel = (tx: EarnTransaction) =>
   (tx.cancellationRequested === true ||
     (tx.settlement?.kind === 'CANCEL' && tx.settlement.failed !== true))
 
+// A deliberate user cancel vs a keeper/Agent-failure recovery. Nature-only (no
+// status scope), so it also answers a terminal RECOVERED row where
+// `isUserCancel` no longer applies.
+export const isDeliberateCancel = (tx: EarnTransaction) =>
+  tx.cancellationRequested === true && !tx.failed
+
 // Which explanatory banner (if any) a drawer should show above the settle CTA —
 // undefined unless the row is awaiting an *untouched* manual claim (FULFILLED) or
 // recover (CANCELLED). The shares/funds split follows the same delivered-token

@@ -440,6 +440,7 @@
         "recover-shares-needed": "Algo deu errado - Recuperar shares",
         "returned": "Devolvido",
         "shares-returned": "Shares devolvidas",
+        "shares-returned-cancelled": "Saque cancelado - Shares devolvidas",
         "tx-failed": "Tx falhou",
         "withdrawn": "Sacado"
       },

@@ -16,7 +16,6 @@ export type AssetsToShares = {
 export type AssetsToSharesParams = {
   amount: bigint
   assetAddress: Address
-  queryClient: QueryClient
   shareAddress: Address
 }
 
@@ -25,7 +24,9 @@ export async function fetchAssetsToShares({
   assetAddress,
   queryClient,
   shareAddress,
-}: AssetsToSharesParams): Promise<AssetsToShares> {
+}: AssetsToSharesParams & {
+  queryClient: QueryClient
+}): Promise<AssetsToShares> {
   const [gateway, assetData] = await Promise.all([
     queryClient.ensureQueryData(gatewayForShareQueryOptions(shareAddress)),
     queryClient.ensureQueryData(assetDataQueryOptions(assetAddress)),
@@ -63,6 +64,7 @@ export const assetsToSharesOptions = (
   params: AssetsToSharesParams,
 ): UseQueryOptions<AssetsToShares> => ({
   enabled: params.amount > BigInt(0),
-  queryFn: () => fetchAssetsToShares(params),
+  queryFn: ({ client: queryClient }) =>
+    fetchAssetsToShares({ ...params, queryClient }),
   queryKey: getAssetsToSharesQueryKey(params),
 })

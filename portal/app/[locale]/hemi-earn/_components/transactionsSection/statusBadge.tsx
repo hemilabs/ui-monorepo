@@ -76,7 +76,7 @@ function resolveStatusBadge(transaction: EarnTransaction, t: Translator) {
   // The return icon separates a recovered/cancelled row from a completed one.
   if (status === 'RECOVERED') {
     return {
-      icon: <ReturnCircleIcon />,
+      icon: <ReturnCircleIcon className="text-neutral-400" />,
       text: resolveRecoveredText(transaction, t),
       textClassName: 'text-neutral-500',
     }

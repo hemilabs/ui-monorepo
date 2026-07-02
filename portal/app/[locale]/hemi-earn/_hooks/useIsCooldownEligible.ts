@@ -16,15 +16,13 @@ const STALE_TIME_MS = 4 * 60 * 60 * 1000
 // vault (`pool.stakingVault`) directly — callers already hold it.
 export const useIsCooldownEligible = ({
   account,
-  enabled = true,
   stakingVault,
 }: {
   account: Address | undefined
-  enabled?: boolean
   stakingVault: Address
 }) =>
   useQuery({
-    enabled: enabled && !!account,
+    enabled: !!account,
     async queryFn() {
       const isInstant = await resolveIsInstant({
         caller: account!,

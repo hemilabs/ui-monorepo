@@ -326,16 +326,13 @@ export const HistoricalWithdrawReview = function ({
     spender: getHemiEarnRouterAddress(),
   })
 
-  const needsCooldownReads = !isEarnRowTerminal(transaction)
-
   const { data: isCooldownEligible } = useIsCooldownEligible({
     account: address,
-    enabled: needsCooldownReads,
     stakingVault: pool.stakingVault,
   })
 
   const { data: cooldownDurationSec } = useCooldownDuration({
-    enabled: needsCooldownReads,
+    enabled: !isEarnRowTerminal(transaction),
     stakingVault: pool.stakingVault,
   })
 

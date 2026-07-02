@@ -209,13 +209,14 @@ export const isEarnRowTerminal = (tx: EarnTransaction) =>
   tx.status === 'FINALIZED' || tx.status === 'RECOVERED'
 
 // A row the table is still actively tracking — drives both the polling loop and
-// the row spinner. Terminal: FINALIZED, RECOVERED, and a *local* FAILED (the Hemi
-// `request*` tx reverted — it's never indexed and never transitions on its own;
-// the user retries from home). A *subgraph* FAILED is the Agent failing
-// cross-chain, which still walks to CANCELLED→RECOVERED (auto-recover or the
-// keeper cancel), so it stays in flight — otherwise the table stops polling at the
-// transient FAILED and never catches the RECOVERED. A CANCELLED request (any kind)
-// likewise stays in flight, mirroring how a FULFILLED request walks to FINALIZED.
+// the row spinner. Out of flight: the subgraph-terminal statuses (see
+// `isEarnRowTerminal`) plus a *local* FAILED (the Hemi `request*` tx reverted —
+// it's never indexed and never transitions on its own; the user retries from
+// home). A *subgraph* FAILED is the Agent failing cross-chain, which still walks
+// to CANCELLED→RECOVERED (auto-recover or the keeper cancel), so it stays in
+// flight — otherwise the table stops polling at the transient FAILED and never
+// catches the RECOVERED. A CANCELLED request (any kind) likewise stays in
+// flight, mirroring how a FULFILLED request walks to FINALIZED.
 export const isEarnRowInFlight = (tx: EarnTransaction) =>
   !isEarnRowTerminal(tx) &&
   !(tx.status === 'FAILED' && isLocalEarnTransactionRow(tx))

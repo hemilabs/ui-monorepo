@@ -538,7 +538,7 @@ describe('utils', function () {
       expect(isEarnRowTerminal({ ...baseTx, status })).toBe(false)
     })
 
-    it('is false for a local FAILED row, unlike isEarnRowInFlight', function () {
+    it('is false for a local FAILED row even though it is also out of flight', function () {
       const localFailed = {
         ...baseTx,
         requestId: 'local-1700000000',

@@ -45,7 +45,7 @@ function StakingContent() {
           </div>
           <StakeTable data={filteredData} filter={filter} loading={isLoading} />
         </div>
-        <div className="w-full shrink-0 lg:w-1/2 lg:shrink xl:flex-1">
+        <div className="w-full shrink-0 lg:sticky lg:top-4 lg:w-1/2 lg:shrink lg:self-start xl:flex-1">
           <StakeForm />
         </div>
       </div>

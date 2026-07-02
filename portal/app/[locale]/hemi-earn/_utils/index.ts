@@ -205,6 +205,9 @@ export const enrichWithSettlement = (
 ): EarnTransaction | undefined =>
   row && settlement ? { ...row, settlement } : row
 
+export const isEarnRowTerminal = (tx: EarnTransaction) =>
+  tx.status === 'FINALIZED' || tx.status === 'RECOVERED'
+
 // A row the table is still actively tracking — drives both the polling loop and
 // the row spinner. Terminal: FINALIZED, RECOVERED, and a *local* FAILED (the Hemi
 // `request*` tx reverted — it's never indexed and never transitions on its own;
@@ -214,8 +217,7 @@ export const enrichWithSettlement = (
 // transient FAILED and never catches the RECOVERED. A CANCELLED request (any kind)
 // likewise stays in flight, mirroring how a FULFILLED request walks to FINALIZED.
 export const isEarnRowInFlight = (tx: EarnTransaction) =>
-  tx.status !== 'FINALIZED' &&
-  tx.status !== 'RECOVERED' &&
+  !isEarnRowTerminal(tx) &&
   !(tx.status === 'FAILED' && isLocalEarnTransactionRow(tx))
 
 // The progress ladder shared by a withdraw's terminal step — the receive step on

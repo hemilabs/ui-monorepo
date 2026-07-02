@@ -3,7 +3,7 @@
 import { useMemo } from 'react'
 import { type Hash } from 'viem'
 
-import { hashesMatch } from '../_utils'
+import { hashesMatch, isEarnRowTerminal } from '../_utils'
 import {
   DepositStatus,
   WithdrawStatus,
@@ -141,7 +141,7 @@ export const useEarnTransactions = function () {
         // local settlement — a pending marker mid-indexing-lag or a stale
         // reverted one. A FINALIZED/RECOVERED row must never re-expose the
         // claim/recover CTA or a "Tx Failed" overlay.
-        const isTerminal = t.status === 'FINALIZED' || t.status === 'RECOVERED'
+        const isTerminal = isEarnRowTerminal(t)
         return {
           ...t,
           ...(local.approvalTxHash

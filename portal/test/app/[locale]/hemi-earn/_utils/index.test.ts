@@ -16,6 +16,7 @@ import {
   hashesMatch,
   isDeliberateCancel,
   isEarnRowInFlight,
+  isEarnRowTerminal,
   isLocalEarnTransactionRow,
   isRecoverPath,
   isUserCancel,
@@ -517,6 +518,35 @@ describe('utils', function () {
         ).toBe(true)
       },
     )
+  })
+
+  describe('isEarnRowTerminal', function () {
+    it.each<EarnTransactionStatusType>(['FINALIZED', 'RECOVERED'])(
+      'is true for the terminal status %s',
+      function (status) {
+        expect(isEarnRowTerminal({ ...baseTx, status })).toBe(true)
+      },
+    )
+
+    it.each<EarnTransactionStatusType>([
+      'CANCELLED',
+      'FAILED',
+      'FULFILLED',
+      'PENDING',
+      'TX_PENDING',
+    ])('is false for the non-terminal status %s', function (status) {
+      expect(isEarnRowTerminal({ ...baseTx, status })).toBe(false)
+    })
+
+    it('is false for a local FAILED row, unlike isEarnRowInFlight', function () {
+      const localFailed = {
+        ...baseTx,
+        requestId: 'local-1700000000',
+        status: 'FAILED',
+      } as EarnTransaction
+      expect(isEarnRowTerminal(localFailed)).toBe(false)
+      expect(isEarnRowInFlight(localFailed)).toBe(false)
+    })
   })
 
   describe('pickEarnRowAmount', function () {

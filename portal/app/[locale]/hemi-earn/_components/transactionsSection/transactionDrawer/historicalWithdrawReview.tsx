@@ -22,6 +22,7 @@ import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
 import {
   claimRecoverSettlement,
   getTerminalDeliveryTxHash,
+  isEarnRowTerminal,
   isLocalEarnTransactionRow,
   isRecoverPath,
   isUserCancel,
@@ -325,12 +326,16 @@ export const HistoricalWithdrawReview = function ({
     spender: getHemiEarnRouterAddress(),
   })
 
+  const needsCooldownReads = !isEarnRowTerminal(transaction)
+
   const { data: isCooldownEligible } = useIsCooldownEligible({
     account: address,
+    enabled: needsCooldownReads,
     stakingVault: pool.stakingVault,
   })
 
   const { data: cooldownDurationSec } = useCooldownDuration({
+    enabled: needsCooldownReads,
     stakingVault: pool.stakingVault,
   })
 

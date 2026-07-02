@@ -15,11 +15,14 @@ const STALE_TIME_MS = 4 * 60 * 60 * 1000
 // seconds to tick at minute resolution. Takes the Ethereum-side staking vault
 // (`pool.stakingVault`) directly — callers already hold it.
 export const useCooldownDuration = ({
+  enabled = true,
   stakingVault,
 }: {
+  enabled?: boolean
   stakingVault: Address
 }) =>
   useQuery({
+    enabled,
     async queryFn() {
       const seconds = await getCooldownDuration(
         getEvmL1PublicClient(mainnet.id),

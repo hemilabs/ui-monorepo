@@ -46,3 +46,24 @@ export const WithTransaction: Story = {
     />
   ),
 }
+
+export const WithGoTo: Story = {
+  parameters: {
+    controls: { disable: true },
+  },
+  render: () => (
+    <Toast
+      autoCloseMs={0}
+      description="Here's your staking transaction:"
+      goTo={{
+        href: '/stake/dashboard',
+        label: 'Go to staking dashboard',
+      }}
+      title="Staking successful"
+      tx={{
+        href: 'https://explorer.hemi.xyz/tx/0x1234abcd5678ef90',
+        label: '0x1234…ef90',
+      }}
+    />
+  ),
+}

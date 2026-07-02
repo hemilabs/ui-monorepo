@@ -91,7 +91,7 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
               shareAddress={pool.shareAddress}
             />
           </div>
-          <div className="order-1 lg:order-2 lg:basis-1/3">
+          <div className="order-1 lg:sticky lg:top-4 lg:order-2 lg:basis-1/3 lg:self-start">
             <PoolForm />
           </div>
         </div>

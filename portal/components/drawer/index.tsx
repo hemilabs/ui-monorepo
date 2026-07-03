@@ -23,6 +23,9 @@ const DrawerAnimatedCloseContext = createContext<VoidFunction | undefined>(
   undefined,
 )
 
+export const useDrawerAnimatedClose = () =>
+  useContext(DrawerAnimatedCloseContext)
+
 function drawerBackdropClassName(isOpen: boolean, isClosing: boolean) {
   const openClass = isOpen ? 'drawer-backdrop--open' : ''
   const pointerClass =
@@ -182,8 +185,8 @@ export function DrawerTopSection({
   heading,
   onClose,
 }: {
-  heading: string
-  onClose?: () => void
+  heading: ReactNode
+  onClose?: VoidFunction
 }) {
   const requestAnimatedClose = useContext(DrawerAnimatedCloseContext)
 

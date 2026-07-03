@@ -446,6 +446,8 @@
       },
       "subtitle": "Track the status of your deposits and withdrawals.",
       "title": "My earn transactions",
+      "transaction-not-found": "Transaction not found",
+      "transaction-not-found-subtitle": "We couldn't find this transaction. It may no longer be available.",
       "view": "View",
       "withdrawal": "Withdrawal"
     }

@@ -1,8 +1,8 @@
 'use client'
 
 import { Drawer } from 'components/drawer'
-import { Suspense } from 'react'
-import { isAddressEqual } from 'viem'
+import { Suspense, useEffect } from 'react'
+import { isAddressEqual, isHash } from 'viem'
 
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { useEarnTransactions } from '../../../_hooks/useEarnTransactions'
@@ -24,6 +24,8 @@ import { HistoricalWithdrawReview } from './historicalWithdrawReview'
 import { RetryFailedDeposit } from './retryFailedDeposit'
 import { RetryFailedWithdraw } from './retryFailedWithdraw'
 import { AddTokenToWalletCta, SettleCta } from './settleShared'
+import { TransactionDrawerSkeleton } from './transactionDrawerSkeleton'
+import { TransactionNotFound } from './transactionNotFound'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 // The drawer is already open, so the CTAs don't redirect on sign. A reverted
@@ -123,38 +125,70 @@ function redeemCallToAction({
 const findTransactionByTxId = (transactions: EarnTransaction[], txId: string) =>
   transactions.find(t => hashesMatch(t.requestTxHash, txId))
 
-const TransactionDrawerContent = function () {
-  const [txId, setTxDrawerQueryString] = useTxDrawerQueryString()
-  const { data: transactions } = useEarnTransactions()
-  const { data: pools } = useEarnPools()
-
-  if (!txId) {
-    return null
-  }
-
-  const close = () => setTxDrawerQueryString(null)
+const resolveDrawerData = function ({
+  pools,
+  transactions,
+  txId,
+}: {
+  pools: EarnPool[]
+  transactions: EarnTransaction[]
+  txId: string
+}) {
   const transaction = findTransactionByTxId(transactions, txId)
-
   if (!transaction) {
-    return (
-      <Drawer onClose={close}>
-        <div className="drawer-content" />
-      </Drawer>
-    )
+    return undefined
   }
-
   const pool = findPoolByAsset(pools, transaction.asset)
   const asset = pool?.assets.find(a =>
     isAddressEqual(a.address, transaction.asset),
   )
   if (!pool || !asset) {
+    return undefined
+  }
+  return { asset, pool, transaction }
+}
+
+const TransactionDrawerContent = function () {
+  const [txId, setTxDrawerQueryString] = useTxDrawerQueryString()
+  const { data: transactions, isPending: isTransactionsPending } =
+    useEarnTransactions()
+  const { data: pools, isPending: isPoolsPending } = useEarnPools()
+
+  // A malformed txId (e.g. ?earnTxId=0x123) isn't a transaction at all, so
+  // there's nothing to look up — drop it from the URL and show no drawer.
+  const hasInvalidTxId = txId !== null && !isHash(txId)
+  useEffect(
+    function clearInvalidTxId() {
+      if (hasInvalidTxId) {
+        setTxDrawerQueryString(null)
+      }
+    },
+    [hasInvalidTxId, setTxDrawerQueryString],
+  )
+
+  if (!txId || hasInvalidTxId) {
+    return null
+  }
+
+  const close = () => setTxDrawerQueryString(null)
+
+  if (isTransactionsPending || isPoolsPending) {
     return (
       <Drawer onClose={close}>
-        <div className="drawer-content" />
+        <TransactionDrawerSkeleton onClose={close} />
       </Drawer>
     )
   }
-  const resolved = { asset, pool }
+
+  const resolved = resolveDrawerData({ pools, transactions, txId })
+  if (!resolved) {
+    return (
+      <Drawer onClose={close}>
+        <TransactionNotFound onClose={close} />
+      </Drawer>
+    )
+  }
+  const { transaction } = resolved
 
   const callToAction =
     transaction.kind === 'REDEEM'

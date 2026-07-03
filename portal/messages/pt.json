@@ -446,6 +446,8 @@
       },
       "subtitle": "Acompanhe o status de seus depósitos e saques.",
       "title": "Minhas transações de earn",
+      "transaction-not-found": "Transação não encontrada",
+      "transaction-not-found-subtitle": "Não foi possível encontrar esta transação. Ela pode não estar mais disponível.",
       "view": "Ver",
       "withdrawal": "Saque"
     }

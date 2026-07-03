@@ -24,6 +24,8 @@ import { HistoricalWithdrawReview } from './historicalWithdrawReview'
 import { RetryFailedDeposit } from './retryFailedDeposit'
 import { RetryFailedWithdraw } from './retryFailedWithdraw'
 import { AddTokenToWalletCta, SettleCta } from './settleShared'
+import { TransactionDrawerSkeleton } from './transactionDrawerSkeleton'
+import { TransactionNotFound } from './transactionNotFound'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 // The drawer is already open, so the CTAs don't redirect on sign. A reverted
@@ -123,38 +125,58 @@ function redeemCallToAction({
 const findTransactionByTxId = (transactions: EarnTransaction[], txId: string) =>
   transactions.find(t => hashesMatch(t.requestTxHash, txId))
 
+const resolveDrawerData = function ({
+  pools,
+  transactions,
+  txId,
+}: {
+  pools: EarnPool[]
+  transactions: EarnTransaction[]
+  txId: string
+}) {
+  const transaction = findTransactionByTxId(transactions, txId)
+  if (!transaction) {
+    return undefined
+  }
+  const pool = findPoolByAsset(pools, transaction.asset)
+  const asset = pool?.assets.find(a =>
+    isAddressEqual(a.address, transaction.asset),
+  )
+  if (!pool || !asset) {
+    return undefined
+  }
+  return { asset, pool, transaction }
+}
+
 const TransactionDrawerContent = function () {
   const [txId, setTxDrawerQueryString] = useTxDrawerQueryString()
-  const { data: transactions } = useEarnTransactions()
-  const { data: pools } = useEarnPools()
+  const { data: transactions, isPending: isTransactionsPending } =
+    useEarnTransactions()
+  const { data: pools, isPending: isPoolsPending } = useEarnPools()
 
   if (!txId) {
     return null
   }
 
   const close = () => setTxDrawerQueryString(null)
-  const transaction = findTransactionByTxId(transactions, txId)
 
-  if (!transaction) {
+  if (isTransactionsPending || isPoolsPending) {
     return (
       <Drawer onClose={close}>
-        <div className="drawer-content" />
+        <TransactionDrawerSkeleton onClose={close} />
       </Drawer>
     )
   }
 
-  const pool = findPoolByAsset(pools, transaction.asset)
-  const asset = pool?.assets.find(a =>
-    isAddressEqual(a.address, transaction.asset),
-  )
-  if (!pool || !asset) {
+  const resolved = resolveDrawerData({ pools, transactions, txId })
+  if (!resolved) {
     return (
       <Drawer onClose={close}>
-        <div className="drawer-content" />
+        <TransactionNotFound onClose={close} />
       </Drawer>
     )
   }
-  const resolved = { asset, pool }
+  const { transaction } = resolved
 
   const callToAction =
     transaction.kind === 'REDEEM'

@@ -2,43 +2,121 @@ import type { Meta, StoryObj } from '@storybook/nextjs'
 import { ColumnDef } from '@tanstack/react-table'
 import { Table, type TableProps } from 'components/table'
 import { Header } from 'components/table/_components/header'
+import { type ReactNode } from 'react'
 
 type Row = {
   amount: string
-  status: string
+  apr: string
+  lockup: string
+  rewards: string
+  timeRemaining: string
   votingPower: string
 }
 
-const Cell = ({ text }: { text: string }) => (
-  <span className="text-sm text-neutral-950">{text}</span>
+const Centered = ({ children }: { children: ReactNode }) => (
+  <div className="flex items-center justify-center">{children}</div>
 )
 
 const columns: ColumnDef<Row>[] = [
   {
-    cell: ({ row }) => <Cell text={row.original.amount} />,
-    header: () => <Header text="Amount" />,
-    id: 'amount',
-    meta: { width: 220 },
+    cell: ({ row }) => (
+      <Centered>
+        <span className="text-sm text-neutral-950">{row.original.amount}</span>
+      </Centered>
+    ),
+    header: () => <Header text="Locked Amount" />,
+    id: 'locked-amount',
+    meta: { width: 170 },
   },
   {
-    cell: ({ row }) => <Cell text={row.original.votingPower} />,
+    cell: ({ row }) => (
+      <div className="flex flex-col">
+        <span className="text-xs font-normal text-emerald-600">
+          {row.original.apr}
+        </span>
+        <span className="text-neutral-500">{row.original.lockup}</span>
+      </div>
+    ),
+    header: () => <Header text="Lockup" />,
+    id: 'lockup',
+    meta: { width: 120 },
+  },
+  {
+    cell: ({ row }) => (
+      <Centered>
+        <span className="text-sm text-neutral-950">
+          {row.original.votingPower}
+        </span>
+      </Centered>
+    ),
     header: () => <Header text="Voting Power" />,
-    id: 'votingPower',
-    meta: { width: 220 },
+    id: 'voting-power',
+    meta: { width: 150 },
   },
   {
-    cell: ({ row }) => <Cell text={row.original.status} />,
-    header: () => <Header text="Status" />,
-    id: 'status',
-    meta: { width: 160 },
+    cell: ({ row }) => (
+      <Centered>
+        <span className="text-sm text-neutral-950">{row.original.rewards}</span>
+      </Centered>
+    ),
+    header: () => <Header text="Claimable rewards" />,
+    id: 'rewards',
+    meta: { width: 170 },
+  },
+  {
+    cell: ({ row }) => (
+      <span className="text-sm text-neutral-950">
+        {row.original.timeRemaining}
+      </span>
+    ),
+    header: () => <Header text="Time remaining" />,
+    id: 'time-remaining',
+    meta: { className: 'justify-end', width: 140 },
+  },
+  {
+    cell: () => (
+      <Centered>
+        <span className="text-sm text-neutral-500">···</span>
+      </Centered>
+    ),
+    id: 'action',
+    meta: { width: 60 },
   },
 ]
 
 const data: Row[] = [
-  { amount: '1,234.56 HEMI', status: 'Active', votingPower: '1,180.3' },
-  { amount: '89.50 HEMI', status: 'Active', votingPower: '72.1' },
-  { amount: '12,345.00 HEMI', status: 'Unlocked', votingPower: '0' },
-  { amount: '5.00 HEMI', status: 'Active', votingPower: '4.8' },
+  {
+    amount: '1,234.56 HEMI',
+    apr: '12.5% APR',
+    lockup: '12 months',
+    rewards: '18.20 HEMI',
+    timeRemaining: '284 days',
+    votingPower: '1,180.3',
+  },
+  {
+    amount: '89.50 HEMI',
+    apr: '8.0% APR',
+    lockup: '6 months',
+    rewards: '1.05 HEMI',
+    timeRemaining: '95 days',
+    votingPower: '72.1',
+  },
+  {
+    amount: '12,345.00 HEMI',
+    apr: '15.0% APR',
+    lockup: '24 months',
+    rewards: '540.00 HEMI',
+    timeRemaining: '712 days',
+    votingPower: '13,600.0',
+  },
+  {
+    amount: '5.00 HEMI',
+    apr: '4.5% APR',
+    lockup: '3 months',
+    rewards: '0.02 HEMI',
+    timeRemaining: '12 days',
+    votingPower: '4.8',
+  },
 ]
 
 const meta = {

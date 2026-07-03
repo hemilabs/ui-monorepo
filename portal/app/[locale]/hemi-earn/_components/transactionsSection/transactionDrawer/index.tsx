@@ -1,8 +1,8 @@
 'use client'
 
 import { Drawer } from 'components/drawer'
-import { Suspense } from 'react'
-import { isAddressEqual } from 'viem'
+import { Suspense, useEffect } from 'react'
+import { isAddressEqual, isHash } from 'viem'
 
 import { useEarnPools } from '../../../_hooks/useEarnPools'
 import { useEarnTransactions } from '../../../_hooks/useEarnTransactions'
@@ -154,7 +154,19 @@ const TransactionDrawerContent = function () {
     useEarnTransactions()
   const { data: pools, isPending: isPoolsPending } = useEarnPools()
 
-  if (!txId) {
+  // A malformed txId (e.g. ?earnTxId=0x123) isn't a transaction at all, so
+  // there's nothing to look up — drop it from the URL and show no drawer.
+  const hasInvalidTxId = txId !== null && !isHash(txId)
+  useEffect(
+    function clearInvalidTxId() {
+      if (hasInvalidTxId) {
+        setTxDrawerQueryString(null)
+      }
+    },
+    [hasInvalidTxId, setTxDrawerQueryString],
+  )
+
+  if (!txId || hasInvalidTxId) {
     return null
   }
 

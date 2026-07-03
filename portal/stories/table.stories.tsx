@@ -124,7 +124,6 @@ const meta = {
     columns,
     data,
     loading: false,
-    mode: 'static',
   },
   argTypes: {
     columns: { control: false },
@@ -150,6 +149,16 @@ export default meta
 type Story = StoryObj<TableProps<Row>>
 
 export const Default: Story = {}
+
+export const Loading: Story = {
+  args: {
+    data: [],
+    loading: true,
+  },
+  parameters: {
+    controls: { disable: true },
+  },
+}
 
 export const Empty: Story = {
   args: {

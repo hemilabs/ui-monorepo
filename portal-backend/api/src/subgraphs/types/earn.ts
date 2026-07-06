@@ -28,6 +28,7 @@ type EarnRequestCommonFields = {
   failed: boolean
   failureReason: string | null
   kind: 'DEPOSIT' | 'REDEEM'
+  processedAt: string | null
   requestedAt: string
   requestId: string
 }
@@ -40,6 +41,7 @@ export type SubgraphRequest = EarnRequestCommonFields & {
   asset: string
   automatic: boolean | null
   claimTxHash: string | null
+  processTxHash: string | null
   receiver: string
   recoverTxHash: string | null
   requestTxHash: string
@@ -58,6 +60,7 @@ export type EarnRequestRow = EarnRequestCommonFields & {
   asset: Address
   automatic: boolean
   claimTxHash: Hash | null
+  processTxHash: Hash | null
   receiver: Address
   recoverTxHash: Hash | null
   requestTxHash: Hash

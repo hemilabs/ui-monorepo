@@ -723,6 +723,7 @@ const toEarnRequestRow = (row: SubgraphRequest): EarnRequestRow => ({
   asset: row.asset as Address,
   automatic: row.automatic ?? true,
   claimTxHash: row.claimTxHash as Hash | null,
+  processTxHash: row.processTxHash as Hash | null,
   receiver: toChecksum(row.receiver as `0x${string}`),
   recoverTxHash: row.recoverTxHash as Hash | null,
   requestTxHash: row.requestTxHash as Hash,
@@ -820,6 +821,8 @@ export const getEarnRequests = async function ({
             failed
             failureReason
             kind
+            processedAt
+            processTxHash
             receiver
             recoverTxHash
             requestedAt

@@ -111,6 +111,13 @@ const config: Config = {
             lineHeight: '16px',
           },
         ],
+        'caption': [
+          '0.688rem', // 11px
+          {
+            letterSpacing: '0.11px', // 1%
+            lineHeight: '16px',
+          },
+        ],
         'xs': [
           '0.75rem', // 12px,
           {

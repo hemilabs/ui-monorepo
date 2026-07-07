@@ -1,9 +1,11 @@
 export {
   type AssetData,
   type Request,
+  type UnstakeRequest,
   getAgentAddress,
   getAssetData,
   getRequest,
+  getUnstakeRequest,
   quoteDeposit,
   quoteDepositFulfillment,
   quoteRedeem,
@@ -13,6 +15,7 @@ export {
 export { cancelRedeem } from './wallet/cancelRedeem'
 export { claimDeposit } from './wallet/claimDeposit'
 export { claimRedeem } from './wallet/claimRedeem'
+export { claimUnstake } from './wallet/claimUnstake'
 export {
   encodeClaimDeposit,
   encodeClaimRedeem,

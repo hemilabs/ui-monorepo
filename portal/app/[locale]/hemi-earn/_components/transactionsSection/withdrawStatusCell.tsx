@@ -41,10 +41,38 @@ function formatCooldownText(
 const isCooldownPhase = (status: EarnTransaction['status']) =>
   status === 'PENDING' || status === 'FULFILLED'
 
+function postCooldownText({
+  hasClaimableAt,
+  processedAt,
+  remainingSec,
+  status,
+  t,
+}: {
+  hasClaimableAt: boolean
+  processedAt: string | null | undefined
+  remainingSec: number | undefined
+  status: EarnTransaction['status']
+  t: ReturnType<typeof useTranslations<'hemi-earn.transactions'>>
+}) {
+  if (status === 'PENDING' && processedAt != null) {
+    return t('status.bridging-back')
+  }
+
+  if (status === 'FULFILLED') {
+    return t('status.ready-to-claim')
+  }
+
+  if (hasClaimableAt && remainingSec === 0) {
+    return t('status.ready-to-finalize')
+  }
+  return undefined
+}
+
 function deriveCooldownText({
   cooldownDurationSec,
   hasClaimableAt,
   isCooldownEligible,
+  processedAt,
   remainingSec,
   status,
   t,
@@ -52,18 +80,21 @@ function deriveCooldownText({
   cooldownDurationSec: number | undefined
   hasClaimableAt: boolean
   isCooldownEligible: boolean | undefined
+  processedAt: string | null | undefined
   remainingSec: number | undefined
   status: EarnTransaction['status']
   t: ReturnType<typeof useTranslations<'hemi-earn.transactions'>>
 }): string | undefined {
   if (isCooldownEligible !== true) return undefined
   if (!isCooldownPhase(status)) return undefined
-  // FULFILLED means the Agent fulfilled the redeem (only after the cooldown
-  // matured), so the cooldown is authoritatively done regardless of a stale
-  // `claimableAt` — surface "ready to claim", not a lingering countdown.
-  if (status === 'FULFILLED' || (hasClaimableAt && remainingSec === 0)) {
-    return t('status.ready-to-claim')
-  }
+  const postCooldown = postCooldownText({
+    hasClaimableAt,
+    processedAt,
+    remainingSec,
+    status,
+    t,
+  })
+  if (postCooldown !== undefined) return postCooldown
   const displaySec = hasClaimableAt ? (remainingSec ?? 0) : cooldownDurationSec
   if (displaySec === undefined || displaySec <= 0) return undefined
   return formatCooldownText(displaySec, t)
@@ -97,6 +128,7 @@ const WithdrawStatusCellResolved = function ({
     cooldownDurationSec,
     hasClaimableAt: claimableAt !== null,
     isCooldownEligible,
+    processedAt: transaction.processedAt,
     remainingSec,
     status: transaction.status,
     t,

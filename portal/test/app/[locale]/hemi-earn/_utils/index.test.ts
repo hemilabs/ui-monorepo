@@ -14,9 +14,12 @@ import {
   getTerminalDeliveryTxHash,
   hasFailedSettlement,
   hashesMatch,
+  isAwaitingFinalize,
+  isCooldownMature,
   isDeliberateCancel,
   isEarnRowInFlight,
   isEarnRowTerminal,
+  isFinalizeInFlight,
   isLocalEarnTransactionRow,
   isRecoverPath,
   isUserCancel,
@@ -25,6 +28,7 @@ import {
   pickEarnRowAmount,
   pickSettleBannerKey,
   resolveSettleStepStatus,
+  unstakeSettlement,
 } from '../../../../../app/[locale]/hemi-earn/_utils'
 import {
   type EarnPool,
@@ -348,6 +352,15 @@ describe('utils', function () {
     it('strips a reverted CANCEL marker too', function () {
       expect(
         claimRecoverSettlement({ failed: true, kind: 'CANCEL' }),
+      ).toBeUndefined()
+    })
+
+    it('strips an UNSTAKE marker (the Ethereum finalize, not a settlement)', function () {
+      expect(
+        claimRecoverSettlement({ failed: false, kind: 'UNSTAKE' }),
+      ).toBeUndefined()
+      expect(
+        claimRecoverSettlement({ failed: true, kind: 'UNSTAKE' }),
       ).toBeUndefined()
     })
 
@@ -899,6 +912,157 @@ describe('utils', function () {
 
     it('is false without a cancel request', function () {
       expect(isDeliberateCancel(baseTx)).toBe(false)
+    })
+  })
+
+  describe('unstakeSettlement', function () {
+    it('returns an UNSTAKE marker unchanged', function () {
+      const settlement: EarnSettlement = { failed: false, kind: 'UNSTAKE' }
+      expect(unstakeSettlement(settlement)).toBe(settlement)
+    })
+
+    it.each<EarnSettlement['kind']>(['CLAIM', 'RECOVER', 'CANCEL'])(
+      'returns undefined for a %s marker',
+      function (kind) {
+        expect(unstakeSettlement({ failed: false, kind })).toBeUndefined()
+      },
+    )
+
+    it('returns undefined for no settlement', function () {
+      expect(unstakeSettlement(undefined)).toBeUndefined()
+    })
+  })
+
+  describe('isCooldownMature', function () {
+    const matureRedeem: EarnTransaction = {
+      ...baseTx,
+      claimableAt: '1700000000',
+      kind: 'REDEEM',
+      status: 'PENDING',
+    }
+
+    it('is true for a PENDING cooldown redeem once remaining hits 0', function () {
+      expect(isCooldownMature(matureRedeem, 0)).toBe(true)
+    })
+
+    it('is false while the cooldown is still counting down', function () {
+      expect(isCooldownMature(matureRedeem, 120)).toBe(false)
+    })
+
+    it('is false when remaining is undefined (no claimableAt yet)', function () {
+      expect(
+        isCooldownMature({ ...matureRedeem, claimableAt: null }, undefined),
+      ).toBe(false)
+    })
+
+    it('is false once the Agent processed it (return flight)', function () {
+      expect(
+        isCooldownMature({ ...matureRedeem, processedAt: '1700000100' }, 0),
+      ).toBe(false)
+    })
+
+    it.each<EarnTransactionStatusType>(['FULFILLED', 'CANCELLED', 'FINALIZED'])(
+      'is false for the non-PENDING status %s',
+      function (status) {
+        expect(isCooldownMature({ ...matureRedeem, status }, 0)).toBe(false)
+      },
+    )
+
+    it('is false for a deposit', function () {
+      expect(isCooldownMature({ ...matureRedeem, kind: 'DEPOSIT' }, 0)).toBe(
+        false,
+      )
+    })
+
+    it('is false while the user is cancelling (cancellationRequested)', function () {
+      expect(
+        isCooldownMature({ ...matureRedeem, cancellationRequested: true }, 0),
+      ).toBe(false)
+    })
+
+    it('is false while a CANCEL marker is pending', function () {
+      expect(
+        isCooldownMature(
+          { ...matureRedeem, settlement: { failed: false, kind: 'CANCEL' } },
+          0,
+        ),
+      ).toBe(false)
+    })
+  })
+
+  describe('isAwaitingFinalize', function () {
+    const awaiting: EarnTransaction = {
+      ...baseTx,
+      claimableAt: '1700000000',
+      kind: 'REDEEM',
+      status: 'PENDING',
+    }
+
+    it('is true for a PENDING cooldown redeem not yet finalized', function () {
+      expect(isAwaitingFinalize(awaiting)).toBe(true)
+    })
+
+    it('is false once the Agent processed it (bridging back)', function () {
+      expect(
+        isAwaitingFinalize({ ...awaiting, processedAt: '1700000100' }),
+      ).toBe(false)
+    })
+
+    it('is false while the user is cancelling', function () {
+      expect(
+        isAwaitingFinalize({ ...awaiting, cancellationRequested: true }),
+      ).toBe(false)
+    })
+
+    it('is false for an instant redeem (no claimableAt)', function () {
+      expect(isAwaitingFinalize({ ...awaiting, claimableAt: null })).toBe(false)
+    })
+
+    it('is false for a deposit', function () {
+      expect(isAwaitingFinalize({ ...awaiting, kind: 'DEPOSIT' })).toBe(false)
+    })
+  })
+
+  describe('isFinalizeInFlight', function () {
+    it('is true when the Agent processed it (processedAt set)', function () {
+      expect(isFinalizeInFlight({ ...baseTx, processedAt: '1700000100' })).toBe(
+        true,
+      )
+    })
+
+    it('is true while a non-failed UNSTAKE marker is mining', function () {
+      expect(
+        isFinalizeInFlight({
+          ...baseTx,
+          settlement: { failed: false, kind: 'UNSTAKE' },
+        }),
+      ).toBe(true)
+    })
+
+    it('is false for a failed UNSTAKE marker (real revert)', function () {
+      expect(
+        isFinalizeInFlight({
+          ...baseTx,
+          settlement: { failed: true, kind: 'UNSTAKE' },
+        }),
+      ).toBe(false)
+    })
+
+    it('ignores a CLAIM marker', function () {
+      expect(
+        isFinalizeInFlight({
+          ...baseTx,
+          settlement: { failed: false, kind: 'CLAIM' },
+        }),
+      ).toBe(false)
+    })
+
+    it('is false with no processedAt and no marker', function () {
+      expect(isFinalizeInFlight(baseTx)).toBe(false)
+    })
+
+    it('is false for undefined', function () {
+      expect(isFinalizeInFlight(undefined)).toBe(false)
     })
   })
 })

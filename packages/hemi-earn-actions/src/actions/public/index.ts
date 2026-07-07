@@ -1,6 +1,7 @@
 export { getAgentAddress } from './getAgentAddress'
 export { type AssetData, getAssetData } from './getAssetData'
 export { type Request, getRequest } from './getRequest'
+export { type UnstakeRequest, getUnstakeRequest } from './getUnstakeRequest'
 export { quoteDeposit } from './quoteDeposit'
 export { quoteDepositFulfillment } from './quoteDepositFulfillment'
 export { quoteRedeem } from './quoteRedeem'

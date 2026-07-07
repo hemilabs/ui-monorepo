@@ -62,6 +62,7 @@ type SettlementEvents = {
 
 export type ClaimDepositEvents = CommonEvents & SettlementEvents
 export type ClaimRedeemEvents = CommonEvents & SettlementEvents
+export type ClaimUnstakeEvents = CommonEvents & SettlementEvents
 export type RecoverDepositEvents = CommonEvents & SettlementEvents
 export type RecoverRedeemEvents = CommonEvents & SettlementEvents
 // `Router.cancel(id)` only emits `CancellationRequested` and never moves the

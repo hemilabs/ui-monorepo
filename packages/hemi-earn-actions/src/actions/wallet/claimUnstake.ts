@@ -1,0 +1,80 @@
+import { EventEmitter } from 'events'
+import { toPromiseEvent } from 'to-promise-event'
+import type { Address, TransactionReceipt, WalletClient } from 'viem'
+import { waitForTransactionReceipt, writeContract } from 'viem/actions'
+
+import { agentAbi } from '../../agentAbi'
+import type { ClaimUnstakeEvents } from '../../types'
+
+const runClaimUnstake = ({
+  account,
+  agentAddress,
+  nativeFee = BigInt(0),
+  requestId,
+  walletClient,
+}: {
+  account: Address
+  agentAddress: Address
+  nativeFee?: bigint
+  requestId: bigint
+  walletClient: WalletClient
+}) =>
+  async function (emitter: EventEmitter<ClaimUnstakeEvents>) {
+    try {
+      if (!walletClient.chain) {
+        throw new Error('Chain is not defined on wallet')
+      }
+
+      if (requestId <= BigInt(0)) {
+        emitter.emit('tx-failed-validation', 'invalid requestId')
+        return
+      }
+
+      emitter.emit('pre-tx')
+
+      const txHash = await writeContract(walletClient, {
+        abi: agentAbi,
+        account,
+        address: agentAddress,
+        args: [requestId],
+        chain: walletClient.chain,
+        functionName: 'claimUnstake',
+        value: nativeFee,
+      }).catch(function (error) {
+        emitter.emit('user-signing-tx-error', error)
+      })
+
+      if (!txHash) {
+        return
+      }
+
+      emitter.emit('user-signed-tx', txHash)
+
+      const receipt = await waitForTransactionReceipt(walletClient, {
+        hash: txHash,
+      }).catch(function (error) {
+        emitter.emit('tx-failed', error)
+      })
+
+      if (!receipt) {
+        return
+      }
+
+      const eventMap: Record<
+        TransactionReceipt['status'],
+        keyof ClaimUnstakeEvents
+      > = {
+        reverted: 'tx-transaction-reverted',
+        success: 'tx-transaction-succeeded',
+      }
+
+      emitter.emit(eventMap[receipt.status], receipt)
+    } catch (error) {
+      emitter.emit('unexpected-error', error as Error)
+    } finally {
+      emitter.emit('tx-settled')
+    }
+  }
+
+export const claimUnstake = (...args: Parameters<typeof runClaimUnstake>) =>
+  toPromiseEvent<ClaimUnstakeEvents>(runClaimUnstake(...args))

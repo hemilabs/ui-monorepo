@@ -364,6 +364,10 @@
           "heading": "Withdrawal cancelled",
           "subheading": "We're returning your share tokens to your wallet."
         },
+        "claim-from-vault": {
+          "heading": "Ready to finalize your withdrawal",
+          "subheading": "This usually happens automatically, but you can finalize it yourself. This transaction runs on Ethereum."
+        },
         "claim-funds": {
           "heading": "We couldn't claim your funds automatically",
           "subheading": "Click on 'Claim funds' to get your funds."
@@ -389,6 +393,7 @@
         "title": "Cancel withdrawal"
       },
       "cancel-withdraw": "Cancel withdrawal",
+      "claim-from-vault": "Claim from vault",
       "claim-funds": "Claim funds",
       "claim-share-tokens": "Claim share tokens",
       "claiming": "Claiming...",
@@ -425,6 +430,7 @@
       "recover-shares": "Recover shares",
       "recovering": "Recovering...",
       "status": {
+        "bridging-back": "Bridging back to Hemi",
         "cancelling": "Cancelling withdrawal",
         "cooldown-ready-in-days": "Cooldown · ready in {value}d",
         "cooldown-ready-in-hours": "Cooldown · ready in {value}h",
@@ -435,6 +441,7 @@
         "in-progress": "In progress",
         "manual-claim-needed": "In progress - Manual claim needed",
         "ready-to-claim": "Ready to claim",
+        "ready-to-finalize": "Ready to finalize",
         "recover-funds-needed": "Something went wrong - Recover funds",
         "recover-shares-cancelled": "Withdrawal cancelled - Recover shares",
         "recover-shares-needed": "Something went wrong - Recover shares",

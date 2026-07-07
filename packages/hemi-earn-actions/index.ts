@@ -7,6 +7,7 @@ export type {
   CancelRedeemEvents,
   ClaimDepositEvents,
   ClaimRedeemEvents,
+  ClaimUnstakeEvents,
   RecoverDepositEvents,
   RecoverRedeemEvents,
   RequestDepositEvents,

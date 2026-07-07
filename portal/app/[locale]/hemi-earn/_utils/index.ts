@@ -230,12 +230,13 @@ export const isEarnRowInFlight = (tx: EarnTransaction) =>
 export const isAwaitingFinalize = (tx: EarnTransaction) =>
   tx.kind === 'REDEEM' &&
   tx.status === 'PENDING' &&
-  tx.claimableAt != null &&
-  tx.processedAt == null &&
+  (tx.claimableAt ?? null) !== null &&
+  (tx.processedAt ?? null) === null &&
   !isUserCancel(tx)
 
 export const isFinalizeInFlight = (tx: EarnTransaction | undefined) =>
-  tx?.processedAt != null || unstakeSettlement(tx?.settlement)?.failed === false
+  (tx?.processedAt ?? null) !== null ||
+  unstakeSettlement(tx?.settlement)?.failed === false
 
 export const isCooldownMature = (
   tx: EarnTransaction,

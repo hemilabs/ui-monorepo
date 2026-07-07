@@ -54,7 +54,7 @@ function postCooldownText({
   status: EarnTransaction['status']
   t: ReturnType<typeof useTranslations<'hemi-earn.transactions'>>
 }) {
-  if (status === 'PENDING' && processedAt != null) {
+  if (status === 'PENDING' && (processedAt ?? null) !== null) {
     return t('status.bridging-back')
   }
 

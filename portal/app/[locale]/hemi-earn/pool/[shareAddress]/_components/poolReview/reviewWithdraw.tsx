@@ -114,7 +114,7 @@ function resolveReceiveProgress({
   const finalizeInFlight = isFinalizeInFlight(row)
   const matureAwaitingFinalize =
     row?.status === 'PENDING' &&
-    row?.claimableAt != null &&
+    (row?.claimableAt ?? null) !== null &&
     cooldownElapsed &&
     !finalizeInFlight
   return resolveReceiveStatus({

@@ -17,12 +17,12 @@ import { type EarnTransaction } from '../../../types'
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
-const useMatureRemaining = (transaction: EarnTransaction | undefined) =>
-  useEarnCooldownRemaining(
-    transaction?.claimableAt != null
-      ? BigInt(transaction.claimableAt)
-      : undefined,
+const useMatureRemaining = function (transaction: EarnTransaction | undefined) {
+  const claimableAt = transaction?.claimableAt ?? null
+  return useEarnCooldownRemaining(
+    claimableAt !== null ? BigInt(claimableAt) : undefined,
   )
+}
 
 export const ClaimFromVaultCta = function ({
   fallback = null,

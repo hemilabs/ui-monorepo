@@ -1,7 +1,7 @@
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type EventEmitter } from 'events'
 import { type ClaimUnstakeEvents } from 'hemi-earn-actions'
 import {
@@ -10,6 +10,7 @@ import {
   quoteRedeemFulfillment,
 } from 'hemi-earn-actions/actions'
 import { mainnet } from 'networks/mainnet'
+import { maxBigInt } from 'utils/bigint'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { isAddressEqual, zeroAddress } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
@@ -30,7 +31,6 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
   const { setSettlement } = useLocalEarnOperations()
-  const { data: agentAddress } = useQuery(agentAddressQueryOptions())
   const { data: l1WalletClient } = useWalletClient({ chainId: mainnet.id })
   const updateNativeBalanceAfterFees = useUpdateNativeBalanceAfterReceipt(
     mainnet.id,
@@ -44,10 +44,10 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
       if (!address) {
         throw new Error('No account connected')
       }
-      if (!agentAddress) {
-        throw new Error('Agent address not resolved')
-      }
 
+      const agentAddress = await queryClient.ensureQueryData(
+        agentAddressQueryOptions(),
+      )
       const client = getEvmL1PublicClient(mainnet.id)
       const id = BigInt(requestId)
 
@@ -57,8 +57,9 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
         requestId: id,
       })
       if (isAddressEqual(unstakeRequest.share, zeroAddress)) {
-        queryClient.invalidateQueries({ queryKey: earnTransactionsKeyPrefix })
-        return
+        return queryClient.invalidateQueries({
+          queryKey: earnTransactionsKeyPrefix,
+        })
       }
 
       const quote = await quoteRedeemFulfillment({
@@ -66,10 +67,7 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
         asset: unstakeRequest.asset,
         client,
       })
-      const nativeFee =
-        quote > unstakeRequest.nativeFee
-          ? quote - unstakeRequest.nativeFee
-          : BigInt(0)
+      const nativeFee = maxBigInt(BigInt(0), quote - unstakeRequest.nativeFee)
 
       await ensureConnectedTo(mainnet.id)
 
@@ -109,7 +107,7 @@ export const useClaimUnstake = function ({ on, transaction }: UseClaimUnstake) {
 
       on?.(emitter)
 
-      await promise
+      return promise
     },
     onSettled() {
       queryClient.invalidateQueries({ queryKey: earnTransactionsKeyPrefix })

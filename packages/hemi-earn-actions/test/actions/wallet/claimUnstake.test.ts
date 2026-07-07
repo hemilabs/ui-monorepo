@@ -5,13 +5,18 @@ import {
   zeroAddress,
   zeroHash,
 } from 'viem'
-import { waitForTransactionReceipt, writeContract } from 'viem/actions'
+import {
+  getBalance,
+  waitForTransactionReceipt,
+  writeContract,
+} from 'viem/actions'
 import { mainnet } from 'viem/chains'
 import { describe, expect, it, vi } from 'vitest'
 
 import { claimUnstake } from '../../../src/actions/wallet/claimUnstake'
 
 vi.mock('viem/actions', () => ({
+  getBalance: vi.fn(),
   waitForTransactionReceipt: vi.fn(),
   writeContract: vi.fn(),
 }))
@@ -67,6 +72,7 @@ describe('claimUnstake', function () {
   it('happy path: signs with the native-fee top-up and emits succeeded', async function () {
     const receipt = { status: 'success' } as TransactionReceipt
 
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue(receipt)
 
@@ -95,6 +101,7 @@ describe('claimUnstake', function () {
   it('emits "tx-transaction-reverted" when receipt is reverted', async function () {
     const receipt = { status: 'reverted' } as TransactionReceipt
 
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(writeContract).mockResolvedValue(zeroHash)
     vi.mocked(waitForTransactionReceipt).mockResolvedValue(receipt)
 
@@ -109,6 +116,7 @@ describe('claimUnstake', function () {
   })
 
   it('emits "user-signing-tx-error" when signing fails', async function () {
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1000))
     vi.mocked(writeContract).mockRejectedValue(new Error('user rejected'))
 
     const { emitter, promise } = claimUnstake(validParameters)
@@ -119,5 +127,21 @@ describe('claimUnstake', function () {
     await promise
 
     expect(onSigningError).toHaveBeenCalledExactlyOnceWith(expect.any(Error))
+  })
+
+  it('emits "tx-failed-validation" when the balance is below the fee', async function () {
+    vi.mocked(getBalance).mockResolvedValue(BigInt(1))
+
+    const { emitter, promise } = claimUnstake(validParameters)
+
+    const onFailedValidation = vi.fn()
+    emitter.on('tx-failed-validation', onFailedValidation)
+
+    await promise
+
+    expect(onFailedValidation).toHaveBeenCalledExactlyOnceWith(
+      'insufficient balance for fee',
+    )
+    expect(writeContract).not.toHaveBeenCalled()
   })
 })

@@ -1,7 +1,11 @@
 import { EventEmitter } from 'events'
 import { toPromiseEvent } from 'to-promise-event'
 import type { Address, TransactionReceipt, WalletClient } from 'viem'
-import { waitForTransactionReceipt, writeContract } from 'viem/actions'
+import {
+  getBalance,
+  waitForTransactionReceipt,
+  writeContract,
+} from 'viem/actions'
 
 import { agentAbi } from '../../agentAbi'
 import type { ClaimUnstakeEvents } from '../../types'
@@ -28,6 +32,14 @@ const runClaimUnstake = ({
       if (requestId <= BigInt(0)) {
         emitter.emit('tx-failed-validation', 'invalid requestId')
         return
+      }
+
+      if (nativeFee > BigInt(0)) {
+        const balance = await getBalance(walletClient, { address: account })
+        if (balance < nativeFee) {
+          emitter.emit('tx-failed-validation', 'insufficient balance for fee')
+          return
+        }
       }
 
       emitter.emit('pre-tx')

@@ -364,10 +364,6 @@
           "heading": "Withdrawal cancelled",
           "subheading": "We're returning your share tokens to your wallet."
         },
-        "claim-from-vault": {
-          "heading": "Ready to finalize your withdrawal",
-          "subheading": "This usually happens automatically, but you can finalize it yourself. This transaction runs on Ethereum."
-        },
         "claim-funds": {
           "heading": "We couldn't claim your funds automatically",
           "subheading": "Click on 'Claim funds' to get your funds."
@@ -383,6 +379,10 @@
         "recover-shares": {
           "heading": "Transaction failed",
           "subheading": "Something went wrong. Use the button below to return your share tokens to your wallet."
+        },
+        "withdraw": {
+          "heading": "Your withdrawal is ready",
+          "subheading": "This usually happens automatically, but you can do it yourself. This transaction runs on Ethereum."
         }
       },
       "cancel-modal": {
@@ -393,7 +393,6 @@
         "title": "Cancel withdrawal"
       },
       "cancel-withdraw": "Cancel withdrawal",
-      "claim-from-vault": "Claim from vault",
       "claim-funds": "Claim funds",
       "claim-share-tokens": "Claim share tokens",
       "claiming": "Claiming...",
@@ -441,7 +440,7 @@
         "in-progress": "In progress",
         "manual-claim-needed": "In progress - Manual claim needed",
         "ready-to-claim": "Ready to claim",
-        "ready-to-finalize": "Ready to finalize",
+        "ready-to-withdraw": "Ready to withdraw",
         "recover-funds-needed": "Something went wrong - Recover funds",
         "recover-shares-cancelled": "Withdrawal cancelled - Recover shares",
         "recover-shares-needed": "Something went wrong - Recover shares",
@@ -456,6 +455,7 @@
       "transaction-not-found": "Transaction not found",
       "transaction-not-found-subtitle": "We couldn't find this transaction. It may no longer be available.",
       "view": "View",
+      "withdraw": "Withdraw",
       "withdrawal": "Withdrawal"
     }
   },

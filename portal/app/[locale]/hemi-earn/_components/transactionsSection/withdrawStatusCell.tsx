@@ -63,7 +63,7 @@ function postCooldownText({
   }
 
   if (hasClaimableAt && remainingSec === 0) {
-    return t('status.ready-to-finalize')
+    return t('status.ready-to-withdraw')
   }
   return undefined
 }

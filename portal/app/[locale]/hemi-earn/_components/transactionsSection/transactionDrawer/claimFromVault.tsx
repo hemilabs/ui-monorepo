@@ -76,7 +76,7 @@ export const ClaimFromVaultCta = function ({
               ? t('claiming')
               : failed
                 ? tCommon('try-again')
-                : t('claim-from-vault')}
+                : t('withdraw')}
           </Button>
         }
         submitButtonSize="small"
@@ -103,8 +103,8 @@ export const ClaimFromVaultBanner = function ({
   return (
     <div className="px-4 py-6 md:px-6">
       <WarningBox
-        heading={t('claim-from-vault.heading')}
-        subheading={t('claim-from-vault.subheading')}
+        heading={t('withdraw.heading')}
+        subheading={t('withdraw.subheading')}
       />
     </div>
   )

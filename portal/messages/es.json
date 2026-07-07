@@ -364,10 +364,6 @@
           "heading": "Retiro cancelado",
           "subheading": "Estamos devolviendo sus share tokens a su billetera."
         },
-        "claim-from-vault": {
-          "heading": "Listo para finalizar su retiro",
-          "subheading": "Esto normalmente ocurre de forma automática, pero puede finalizarlo usted mismo. Esta transacción se ejecuta en Ethereum."
-        },
         "claim-funds": {
           "heading": "No pudimos recibir sus fondos automáticamente",
           "subheading": "Haga clic en 'Recibir fondos' para recibir sus fondos."
@@ -383,6 +379,10 @@
         "recover-shares": {
           "heading": "La transacción falló",
           "subheading": "Algo salió mal. Use el botón de abajo para devolver sus share tokens a su billetera."
+        },
+        "withdraw": {
+          "heading": "Su retiro está listo",
+          "subheading": "Esto normalmente ocurre de forma automática, pero puede hacerlo usted mismo. Esta transacción se ejecuta en Ethereum."
         }
       },
       "cancel-modal": {
@@ -393,7 +393,6 @@
         "title": "Cancelar retiro"
       },
       "cancel-withdraw": "Cancelar retiro",
-      "claim-from-vault": "Recibir de la bóveda",
       "claim-funds": "Recibir fondos",
       "claim-share-tokens": "Recibir share tokens",
       "claiming": "Recibiendo...",
@@ -441,7 +440,7 @@
         "in-progress": "En progreso",
         "manual-claim-needed": "En progreso - Reclamo manual necesario",
         "ready-to-claim": "Listo para recibir",
-        "ready-to-finalize": "Listo para finalizar",
+        "ready-to-withdraw": "Listo para retirar",
         "recover-funds-needed": "Algo salió mal - Recuperar fondos",
         "recover-shares-cancelled": "Retiro cancelado - Recuperar shares",
         "recover-shares-needed": "Algo salió mal - Recuperar shares",
@@ -456,6 +455,7 @@
       "transaction-not-found": "Transacción no encontrada",
       "transaction-not-found-subtitle": "No pudimos encontrar esta transacción. Es posible que ya no esté disponible.",
       "view": "Ver",
+      "withdraw": "Retirar",
       "withdrawal": "Retiro"
     }
   },

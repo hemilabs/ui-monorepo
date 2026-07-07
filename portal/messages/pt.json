@@ -364,10 +364,6 @@
           "heading": "Saque cancelado",
           "subheading": "Estamos devolvendo seus share tokens à sua carteira."
         },
-        "claim-from-vault": {
-          "heading": "Pronto para finalizar seu saque",
-          "subheading": "Isso normalmente acontece automaticamente, mas você pode finalizá-lo. Esta transação é executada na Ethereum."
-        },
         "claim-funds": {
           "heading": "Não foi possível receber seus fundos automaticamente",
           "subheading": "Clique em 'Receber fundos' para receber seus fundos."
@@ -383,6 +379,10 @@
         "recover-shares": {
           "heading": "Transação falhou",
           "subheading": "Algo deu errado. Use o botão abaixo para devolver seus share tokens à sua carteira."
+        },
+        "withdraw": {
+          "heading": "Seu saque está pronto",
+          "subheading": "Isso normalmente acontece automaticamente, mas você mesmo pode fazer o saque. Esta transação é executada na Ethereum."
         }
       },
       "cancel-modal": {
@@ -393,7 +393,6 @@
         "title": "Cancelar saque"
       },
       "cancel-withdraw": "Cancelar saque",
-      "claim-from-vault": "Receber do cofre",
       "claim-funds": "Receber fundos",
       "claim-share-tokens": "Receber share tokens",
       "claiming": "Recebendo...",
@@ -441,7 +440,7 @@
         "in-progress": "Em andamento",
         "manual-claim-needed": "Em andamento - Resgate manual necessário",
         "ready-to-claim": "Pronto para receber",
-        "ready-to-finalize": "Pronto para finalizar",
+        "ready-to-withdraw": "Pronto para sacar",
         "recover-funds-needed": "Algo deu errado - Recuperar fundos",
         "recover-shares-cancelled": "Saque cancelado - Recuperar shares",
         "recover-shares-needed": "Algo deu errado - Recuperar shares",
@@ -456,6 +455,7 @@
       "transaction-not-found": "Transação não encontrada",
       "transaction-not-found-subtitle": "Não foi possível encontrar esta transação. Ela pode não estar mais disponível.",
       "view": "Ver",
+      "withdraw": "Sacar",
       "withdrawal": "Saque"
     }
   },

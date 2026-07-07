@@ -3,9 +3,8 @@ import type { ReactNode } from 'react'
 
 // "Not really a component" (issue #1993): the typography lives as global styles in
 // styles/globals.css (already imported in preview.ts). Organized like vetro (a `Typography/`
-// section) but each story uses the designer's Figma format (Hemi Portal, node 15283-17016): a card
-// whose rows pair the design-system name, a live sample and the size/line-height. Subtitle and
-// Caption are de-emphasized exactly as in the Figma.
+// section) but each story uses the designer's Figma format (Hemi Portal, node 15283-17016): rows
+// pairing the design-system name, a live sample and the size/line-height.
 // Render-only stories with no component/args, so the args shape is the empty object.
 type StoryProps = Record<string, never>
 
@@ -31,33 +30,16 @@ const Row = ({
   name: string
   size: string
 }) => (
-  <div className="flex items-center gap-x-6 border-b border-neutral-200 px-5 py-4 last:border-b-0">
+  <div className="flex items-center gap-x-6 px-5 py-4">
     <span className="w-16 shrink-0 text-sm text-neutral-500">{name}</span>
     <div className="min-w-0 flex-1">{children}</div>
     <span className="shrink-0 text-sm text-neutral-400">{size}</span>
   </div>
 )
 
-// `muted` mirrors the Figma, where Subtitle and Caption are shown de-emphasized.
-const Card = ({
-  children,
-  muted = false,
-}: {
-  children: ReactNode
-  muted?: boolean
-}) => (
-  <div
-    className={`max-w-3xl rounded-xl border border-neutral-200 ${
-      muted ? 'opacity-50' : ''
-    }`}
-  >
-    {children}
-  </div>
-)
-
 export const Headers: Story = {
   render: () => (
-    <Card>
+    <>
       <Row name="H1" size="36/40">
         <h1>{SAMPLE}</h1>
       </Row>
@@ -70,23 +52,21 @@ export const Headers: Story = {
       <Row name="H4" size="13/18">
         <h4>{SAMPLE}</h4>
       </Row>
-    </Card>
+    </>
   ),
 }
 
 export const Subtitle: Story = {
   render: () => (
-    <Card muted>
-      <Row name="S1" size="13/18">
-        <span className="body-text-normal text-neutral-500">{SAMPLE}</span>
-      </Row>
-    </Card>
+    <Row name="S1" size="13/18">
+      <span className="body-text-normal text-neutral-500">{SAMPLE}</span>
+    </Row>
   ),
 }
 
 export const Body: Story = {
   render: () => (
-    <Card>
+    <>
       <Row name="B" size="13/18">
         <span className="body-text-normal">{SAMPLE}</span>
       </Row>
@@ -96,23 +76,21 @@ export const Body: Story = {
       <Row name="B-SB" size="13/18">
         <span className="body-text-semibold">{SAMPLE}</span>
       </Row>
-    </Card>
+    </>
   ),
 }
 
 export const Caption: Story = {
   render: () => (
-    <Card muted>
-      <Row name="C1" size="11/16">
-        <span className="body-text-caption">{SAMPLE}</span>
-      </Row>
-    </Card>
+    <Row name="C1" size="11/16">
+      <span className="body-text-caption">{SAMPLE}</span>
+    </Row>
   ),
 }
 
 export const Button: Story = {
   render: () => (
-    <Card>
+    <>
       <Row name="XL" size="15/22">
         <span className="text-mid font-semibold">Button</span>
       </Row>
@@ -122,6 +100,6 @@ export const Button: Story = {
       <Row name="XS" size="12/17">
         <span className="text-xs font-semibold">Button</span>
       </Row>
-    </Card>
+    </>
   ),
 }

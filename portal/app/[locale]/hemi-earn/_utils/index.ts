@@ -93,14 +93,20 @@ export const isRecoverPath = (tx: EarnTransaction) =>
 export const canRetryRow = (tx: EarnTransaction) =>
   tx.status === 'FAILED' && isLocalEarnTransactionRow(tx)
 
-// A CANCEL marker shares the `settlement` field with CLAIM/RECOVER markers but
-// isn't a claim/recover settlement tx — it's the deliberate-cancel signal. Strip
-// it so the claim/recover machinery (failed badge, recover-step tx, manual CTA
-// gating) never mistakes the cancel for one of its own; a reverted cancel's
-// retry lives in the cancel modal, not these surfaces.
+// CANCEL and UNSTAKE markers share the `settlement` field with CLAIM/RECOVER
+// but aren't claim/recover settlement txs (CANCEL is the deliberate-cancel
+// signal; UNSTAKE is the Ethereum finalize). Strip them so the claim/recover
+// machinery (failed badge, recover-step tx, manual CTA gating) never mistakes
+// them for one of its own.
 export const claimRecoverSettlement = (
   settlement: EarnSettlement | undefined,
-) => (settlement?.kind === 'CANCEL' ? undefined : settlement)
+) =>
+  settlement?.kind === 'CANCEL' || settlement?.kind === 'UNSTAKE'
+    ? undefined
+    : settlement
+
+export const unstakeSettlement = (settlement: EarnSettlement | undefined) =>
+  settlement?.kind === 'UNSTAKE' ? settlement : undefined
 
 // A manual claim/recover the user signed reverted on Hemi. The on-chain status
 // is unchanged (still FULFILLED/CANCELLED), so we surface the revert as a
@@ -220,6 +226,22 @@ export const isEarnRowTerminal = (tx: EarnTransaction) =>
 export const isEarnRowInFlight = (tx: EarnTransaction) =>
   !isEarnRowTerminal(tx) &&
   !(tx.status === 'FAILED' && isLocalEarnTransactionRow(tx))
+
+export const isAwaitingFinalize = (tx: EarnTransaction) =>
+  tx.kind === 'REDEEM' &&
+  tx.status === 'PENDING' &&
+  (tx.claimableAt ?? null) !== null &&
+  (tx.processedAt ?? null) === null &&
+  !isUserCancel(tx)
+
+export const isFinalizeInFlight = (tx: EarnTransaction | undefined) =>
+  (tx?.processedAt ?? null) !== null ||
+  unstakeSettlement(tx?.settlement)?.failed === false
+
+export const isCooldownMature = (
+  tx: EarnTransaction,
+  remainingSec: number | undefined,
+) => isAwaitingFinalize(tx) && remainingSec === 0
 
 // The progress ladder shared by a withdraw's terminal step — the receive step on
 // the claim path, the recover step on the cancel path — across both the live and

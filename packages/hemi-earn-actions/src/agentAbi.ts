@@ -1,9 +1,11 @@
-// ABI subset for the Hemi Earn Agent (Ethereum-side). Only the read functions
-// the portal needs to call directly are bound here; write paths
-// (handleDepositRequest, handleRedeemRequest, retry, cancel, claimUnstake)
-// are triggered by LayerZero composes (or keepers) and never invoked from the
-// client.
 export const agentAbi = [
+  {
+    inputs: [{ internalType: 'uint256', name: 'requestId_', type: 'uint256' }],
+    name: 'claimUnstake',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
   {
     // Quotes the LZ native fee for the fulfillment OFT back to Hemi. The
     // param is the **Ethereum-side staking vault (sVetToken)** address —
@@ -19,6 +21,33 @@ export const agentAbi = [
     inputs: [{ internalType: 'address', name: 'asset_', type: 'address' }],
     name: 'quoteRedeemFulfillment',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'unstakeRequests',
+    outputs: [
+      {
+        components: [
+          { internalType: 'address', name: 'share', type: 'address' },
+          { internalType: 'uint256', name: 'shares', type: 'uint256' },
+          { internalType: 'address', name: 'asset', type: 'address' },
+          { internalType: 'address', name: 'operator', type: 'address' },
+          { internalType: 'uint256', name: 'amountOutMin', type: 'uint256' },
+          { internalType: 'uint256', name: 'nativeFee', type: 'uint256' },
+          {
+            internalType: 'uint256',
+            name: 'unstakingRequestId',
+            type: 'uint256',
+          },
+          { internalType: 'uint256', name: 'claimableAt', type: 'uint256' },
+        ],
+        internalType: 'struct Agent.UnstakeRequest',
+        name: '',
+        type: 'tuple',
+      },
+    ],
     stateMutability: 'view',
     type: 'function',
   },

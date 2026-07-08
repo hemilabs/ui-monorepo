@@ -23,6 +23,7 @@ import {
   claimRecoverSettlement,
   getTerminalDeliveryTxHash,
   isEarnRowTerminal,
+  isFinalizeInFlight,
   isLocalEarnTransactionRow,
   isRecoverPath,
   isUserCancel,
@@ -38,6 +39,7 @@ import {
   type EarnTransactionStatusType,
 } from '../../../types'
 
+import { ClaimFromVaultBanner } from './claimFromVault'
 import { SettleBanner } from './settleShared'
 
 type Props = {
@@ -184,7 +186,7 @@ function buildRecoverStep(
       awaitingAction: needsRecover(tx),
       fallback: ProgressStatus.PROGRESS,
       isComplete: tx.status === 'RECOVERED',
-      settlementFailed: tx.settlement?.failed ?? false,
+      settlementFailed: claimRecoverSettlement(tx.settlement)?.failed ?? false,
       settlementTxHash,
     }),
     txHash,
@@ -209,22 +211,23 @@ const buildApprovalStep = (
 
 function deriveReceiveStatus({
   cooldownRemainingSec,
+  finalizeInFlight,
   isCooldownEligible,
   receiveFromStatus,
   unstakeMined,
 }: {
   cooldownRemainingSec: number | undefined
+  finalizeInFlight: boolean
   isCooldownEligible: boolean | undefined
   receiveFromStatus: ProgressStatusType
   unstakeMined: boolean
 }): ProgressStatusType {
   if (receiveFromStatus !== ProgressStatus.NOT_READY) return receiveFromStatus
   if (!unstakeMined) return receiveFromStatus
-  const needsCooldown = isCooldownEligible !== false
-  const cooldownElapsed = cooldownRemainingSec === 0
-  return !needsCooldown || cooldownElapsed
-    ? ProgressStatus.PROGRESS
-    : receiveFromStatus
+  if (isCooldownEligible === false) return ProgressStatus.PROGRESS
+  if (cooldownRemainingSec !== 0) return receiveFromStatus
+
+  return finalizeInFlight ? ProgressStatus.PROGRESS : ProgressStatus.READY
 }
 
 function buildSteps({
@@ -347,8 +350,11 @@ export const HistoricalWithdrawReview = function ({
   const settleMarker = claimRecoverSettlement(transaction.settlement)
   const settlementTxHash =
     settleMarker && !settleMarker.failed ? settleMarker.txHash : undefined
+
+  const finalizeInFlight = isFinalizeInFlight(transaction)
   const cooldownDerived = deriveReceiveStatus({
     cooldownRemainingSec,
+    finalizeInFlight,
     isCooldownEligible,
     receiveFromStatus,
     unstakeMined,
@@ -393,7 +399,12 @@ export const HistoricalWithdrawReview = function ({
 
   return (
     <Operation
-      aboveCallToAction={<SettleBanner transaction={transaction} />}
+      aboveCallToAction={
+        <>
+          <SettleBanner transaction={transaction} />
+          <ClaimFromVaultBanner transaction={transaction} />
+        </>
+      }
       amount={displayAmount}
       callToAction={callToAction}
       heading={t('withdraw-heading')}

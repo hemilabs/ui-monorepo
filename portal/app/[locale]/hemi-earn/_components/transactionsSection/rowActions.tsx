@@ -7,8 +7,9 @@ import { type MouseEvent, useState } from 'react'
 
 import {
   claimRecoverSettlement,
+  isAwaitingFinalize,
   isEarnRowInFlight,
-  isUserCancel,
+  isFinalizeInFlight,
   needsManualClaim,
   needsRecover,
 } from '../../_utils'
@@ -17,6 +18,7 @@ import { LoaderIcon } from '../icons/loaderIcon'
 import { TrashIcon } from '../icons/trashIcon'
 
 import { CancelRedeemModal } from './cancelRedeemModal'
+import { ClaimFromVaultCta } from './transactionDrawer/claimFromVault'
 import { SettleRowCta } from './transactionDrawer/settleShared'
 import { useTxDrawerQueryString } from './transactionDrawer/useTxDrawerQueryString'
 
@@ -36,6 +38,7 @@ function resolveActionState(transaction: EarnTransaction) {
   // staying a marker-driven in-flight row.
   const settleMarker = claimRecoverSettlement(transaction.settlement)
   return {
+    showClaimFromVault: isAwaitingFinalize(transaction),
     showLoaderIcon: isEarnRowInFlight(transaction) && !settleMarker?.failed,
     showManualCta:
       !settleMarker &&
@@ -47,18 +50,12 @@ export const RowActions = function ({ transaction }: Props) {
   const t = useTranslations('hemi-earn.transactions')
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
 
-  const { showLoaderIcon, showManualCta } = resolveActionState(transaction)
+  const { showClaimFromVault, showLoaderIcon, showManualCta } =
+    resolveActionState(transaction)
   const [cancelModalOpen, setCancelModalOpen] = useState(false)
 
-  // Only a PENDING *cooldown* redeem is cancellable: `Router.cancel` reverts
-  // unless the request is still PENDING and its vault unstake exists
-  // (`claimableAt` set — instant redeems and the pre-unstake window aren't
-  // cancellable). Hide once a cancel is in flight so it can't be double-signed.
   const showCancelButton =
-    transaction.kind === 'REDEEM' &&
-    transaction.status === 'PENDING' &&
-    transaction.claimableAt != null &&
-    !isUserCancel(transaction)
+    isAwaitingFinalize(transaction) && !isFinalizeInFlight(transaction)
 
   const onViewClick = function (e: MouseEvent) {
     e.stopPropagation()
@@ -94,6 +91,13 @@ export const RowActions = function ({ transaction }: Props) {
       <div className="flex items-center gap-x-2 pr-4">
         {showManualCta ? (
           <SettleRowCta fallback={viewButton} transaction={transaction} />
+        ) : showClaimFromVault ? (
+          <ClaimFromVaultCta
+            fallback={viewButton}
+            fullWidth={false}
+            redirectOnSign
+            transaction={transaction}
+          />
         ) : (
           viewButton
         )}

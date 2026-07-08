@@ -379,6 +379,10 @@
         "recover-shares": {
           "heading": "Transação falhou",
           "subheading": "Algo deu errado. Use o botão abaixo para devolver seus share tokens à sua carteira."
+        },
+        "withdraw": {
+          "heading": "Seu saque está pronto",
+          "subheading": "Isso normalmente acontece automaticamente, mas você mesmo pode fazer o saque. Esta transação é executada na Ethereum."
         }
       },
       "cancel-modal": {
@@ -425,6 +429,7 @@
       "recover-shares": "Recuperar shares",
       "recovering": "Recuperando...",
       "status": {
+        "bridging-back": "Retornando para a Hemi",
         "cancelling": "Cancelando saque",
         "cooldown-ready-in-days": "Cooldown · pronto em {value}d",
         "cooldown-ready-in-hours": "Cooldown · pronto em {value}h",
@@ -435,6 +440,7 @@
         "in-progress": "Em andamento",
         "manual-claim-needed": "Em andamento - Resgate manual necessário",
         "ready-to-claim": "Pronto para receber",
+        "ready-to-withdraw": "Pronto para sacar",
         "recover-funds-needed": "Algo deu errado - Recuperar fundos",
         "recover-shares-cancelled": "Saque cancelado - Recuperar shares",
         "recover-shares-needed": "Algo deu errado - Recuperar shares",
@@ -449,6 +455,7 @@
       "transaction-not-found": "Transação não encontrada",
       "transaction-not-found-subtitle": "Não foi possível encontrar esta transação. Ela pode não estar mais disponível.",
       "view": "Ver",
+      "withdraw": "Sacar",
       "withdrawal": "Saque"
     }
   },

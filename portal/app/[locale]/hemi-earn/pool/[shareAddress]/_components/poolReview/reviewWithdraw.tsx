@@ -21,6 +21,10 @@ import { type Address, type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 import {
+  ClaimFromVaultBanner,
+  ClaimFromVaultCta,
+} from '../../../../_components/transactionsSection/transactionDrawer/claimFromVault'
+import {
   AddTokenToWalletCta,
   SettleBanner,
   SettleCta,
@@ -39,6 +43,8 @@ import {
   findLocalSettlement,
   getTerminalDeliveryTxHash,
   hashesMatch,
+  isAwaitingFinalize,
+  isFinalizeInFlight,
   isRecoverPath,
   isUserCancel,
   needsManualClaim,
@@ -88,6 +94,38 @@ const resolveReceiveStatus = ({
     settlementTxHash,
   })
 
+function resolveReceiveProgress({
+  cooldownElapsed,
+  isFinalized,
+  needsCooldown,
+  row,
+  settlement,
+  settlementTxHash,
+  unstakeMined,
+}: {
+  cooldownElapsed: boolean
+  isFinalized: boolean
+  needsCooldown: boolean
+  row: EarnTransaction | undefined
+  settlement: EarnSettlement | undefined
+  settlementTxHash: Hash | undefined
+  unstakeMined: boolean
+}): ProgressStatusType {
+  const finalizeInFlight = isFinalizeInFlight(row)
+  const matureAwaitingFinalize =
+    row?.status === 'PENDING' &&
+    (row?.claimableAt ?? null) !== null &&
+    cooldownElapsed &&
+    !finalizeInFlight
+  return resolveReceiveStatus({
+    awaitingClaim: (!!row && needsManualClaim(row)) || matureAwaitingFinalize,
+    crossChainInFlight: unstakeMined && (!needsCooldown || finalizeInFlight),
+    isFinalized,
+    settlement,
+    settlementTxHash,
+  })
+}
+
 // Maps the settlement-enriched row, local withdraw status, and cooldown state to
 // the receive step's progress + terminal hash. Module-level so the component
 // stays under the complexity threshold.
@@ -131,12 +169,14 @@ function buildReceiveStep({
       </div>
     ),
     explorerChainId: chainId,
-    status: resolveReceiveStatus({
-      awaitingClaim: !!row && needsManualClaim(row),
-      crossChainInFlight: unstakeMined && (!needsCooldown || cooldownElapsed),
+    status: resolveReceiveProgress({
+      cooldownElapsed,
       isFinalized,
+      needsCooldown,
+      row,
       settlement,
       settlementTxHash,
+      unstakeMined,
     }),
     txHash: deliveryHash,
   }
@@ -442,6 +482,9 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     if (FAILED_STATUSES.includes(withdrawStatus)) {
       return <RetryWithdraw />
     }
+    if (settledRow && isAwaitingFinalize(settledRow)) {
+      return <ClaimFromVaultCta transaction={settledRow} />
+    }
     // Auto-claim off: the user signs the claim here once the Agent delivers the
     // asset back to the Router (FULFILLED).
     if (settledRow && needsManualClaim(settledRow)) {
@@ -497,7 +540,12 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
 
   return (
     <Operation
-      aboveCallToAction={<SettleBanner transaction={settledRow} />}
+      aboveCallToAction={
+        <>
+          <SettleBanner transaction={settledRow} />
+          <ClaimFromVaultBanner transaction={settledRow} />
+        </>
+      }
       amount={withdrawOperation?.amountIn ?? shares.toString()}
       callToAction={getCallToAction()}
       heading={t('withdraw.heading')}

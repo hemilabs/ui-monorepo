@@ -379,6 +379,10 @@
         "recover-shares": {
           "heading": "La transacción falló",
           "subheading": "Algo salió mal. Use el botón de abajo para devolver sus share tokens a su billetera."
+        },
+        "withdraw": {
+          "heading": "Su retiro está listo",
+          "subheading": "Esto normalmente ocurre de forma automática, pero puede hacerlo usted mismo. Esta transacción se ejecuta en Ethereum."
         }
       },
       "cancel-modal": {
@@ -425,6 +429,7 @@
       "recover-shares": "Recuperar shares",
       "recovering": "Recuperando...",
       "status": {
+        "bridging-back": "Regresando a Hemi",
         "cancelling": "Cancelando retiro",
         "cooldown-ready-in-days": "Cooldown · listo en {value}d",
         "cooldown-ready-in-hours": "Cooldown · listo en {value}h",
@@ -435,6 +440,7 @@
         "in-progress": "En progreso",
         "manual-claim-needed": "En progreso - Reclamo manual necesario",
         "ready-to-claim": "Listo para recibir",
+        "ready-to-withdraw": "Listo para retirar",
         "recover-funds-needed": "Algo salió mal - Recuperar fondos",
         "recover-shares-cancelled": "Retiro cancelado - Recuperar shares",
         "recover-shares-needed": "Algo salió mal - Recuperar shares",
@@ -449,6 +455,7 @@
       "transaction-not-found": "Transacción no encontrada",
       "transaction-not-found-subtitle": "No pudimos encontrar esta transacción. Es posible que ya no esté disponible.",
       "view": "Ver",
+      "withdraw": "Retirar",
       "withdrawal": "Retiro"
     }
   },

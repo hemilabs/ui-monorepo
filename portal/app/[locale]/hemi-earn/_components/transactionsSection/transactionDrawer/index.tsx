@@ -10,6 +10,7 @@ import {
   canRetryRow,
   findPoolByAsset,
   hashesMatch,
+  isAwaitingFinalize,
   needsManualClaim,
   needsRecover,
 } from '../../../_utils'
@@ -19,6 +20,7 @@ import {
   type EarnTransaction,
 } from '../../../types'
 
+import { ClaimFromVaultCta } from './claimFromVault'
 import { HistoricalDepositReview } from './historicalDepositReview'
 import { HistoricalWithdrawReview } from './historicalWithdrawReview'
 import { RetryFailedDeposit } from './retryFailedDeposit'
@@ -93,6 +95,9 @@ function redeemCallToAction({
         transaction={transaction}
       />
     )
+  }
+  if (isAwaitingFinalize(transaction)) {
+    return <ClaimFromVaultCta transaction={transaction} />
   }
   if (needsManualClaim(transaction)) {
     return (

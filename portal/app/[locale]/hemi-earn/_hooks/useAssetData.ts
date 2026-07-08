@@ -3,11 +3,8 @@ import { type Address, isAddressEqual } from 'viem'
 
 import { hemiEarnAssetConfigsQueryOptions } from '../_fetchers/fetchHemiEarnAssetConfigs'
 
-// `Router.assetsData(asset)` on Hemi — resolves a Hemi-side asset to its
-// Ethereum-side counterparts (`remoteShare` = staking vault, `remoteAsset`).
-// Served from the cached on-chain asset-config list (which already read
-// `assetsData` for every registered asset) so the deposit/withdraw flows don't
-// re-issue the same per-asset RPC.
+// Hemi asset → its Ethereum counterparts (remoteShare = staking vault, remoteAsset),
+// served from the cached config list so the flows don't re-issue the per-asset RPC.
 export const assetDataQueryOptions = (asset: Address) =>
   queryOptions({
     async queryFn({ client }) {

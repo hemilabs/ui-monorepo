@@ -13,16 +13,9 @@ import { type EarnTransaction } from '../types'
 
 import { useLocalEarnOperations } from './useLocalEarnOperations'
 
-// Raw subgraph query. Internal building block shared by `useEarnTransactions`
-// (which merges with local entries for the table) and `useEarnDeliveryWatcher`
-// (which runs the reconcile + invalidation side effects against the raw
-// subgraph view). React Query dedupes the underlying fetch across both
-// consumers — a single network call per interval drives every subscriber.
-//
-// Polling: every 10s while a row is in flight (`isEarnRowInFlight`: cross-chain
-// pending, auto-claim/auto-recover progressing, a deposit or redeem awaiting
-// recovery, cooldown maturing) or a local entry hasn't shown up in the subgraph
-// yet. Stops on the terminals (FINALIZED/RECOVERED/FAILED).
+// Raw subgraph query shared by useEarnTransactions (merge) and useEarnDeliveryWatcher
+// (side effects); RQ dedupes to one fetch per interval. Polls every 10s while any row
+// is in flight or a local entry isn't indexed yet; stops on the terminals.
 export const useEarnTransactionsQuery = function () {
   const [networkType] = useNetworkType()
   const { address } = useAccount()

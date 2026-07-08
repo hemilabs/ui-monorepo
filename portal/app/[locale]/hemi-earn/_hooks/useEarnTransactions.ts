@@ -24,15 +24,8 @@ import {
 import { useEarnTransactionsQuery } from './useEarnTransactionsQuery'
 import { useLocalEarnOperations } from './useLocalEarnOperations'
 
-// Maps the granular local `DepositStatus` enum to the table-level
-// `EarnTransactionStatusType`. Declared as a `Record` so any new
-// `DepositStatus` member added later becomes a compile error instead of
-// silently falling through to "in progress".
-//
-// `TX_PENDING` covers everything before the request-deposit tx is mined.
-// `PENDING` covers the post-mine window before the subgraph indexes the
-// row — semantically equivalent to subgraph `PENDING` (on-chain piece
-// done, cross-chain in flight).
+// Record (not a function) so a new DepositStatus becomes a compile error. TX_PENDING =
+// before the tx mines; PENDING = mined but not yet indexed (= subgraph PENDING).
 const localStatusByDepositStatus: Record<
   DepositStatusType,
   EarnTransactionStatusType
@@ -65,9 +58,7 @@ const localWithdrawStatus = (
   operation: WithdrawOperation,
 ): EarnTransactionStatusType => localStatusByWithdrawStatus[operation.status]
 
-// Convert a not-yet-indexed local entry into a row the table can render.
-// Callers must filter out approve-only entries (no `initiateTxHash` yet)
-// before passing to these — the casts trust that.
+// Local entry → table row. Callers must filter out approve-only entries (no initiateTxHash) first — the cast trusts that.
 const localToEarnDepositTransaction = (
   local: LocalEarnDepositOperation,
 ): EarnTransaction => ({
@@ -108,15 +99,8 @@ const localToEarnWithdrawTransaction = (
   status: localWithdrawStatus(local.operation),
 })
 
-// Public data hook for the transactions table and drawer. Returns the
-// subgraph rows merged with not-yet-indexed local entries, sorted by
-// requested-at descending.
-//
-// Side effects (removing local entries once the subgraph indexes them,
-// invalidating Vetro-side balance caches on FINALIZED/RECOVERED
-// transitions) live in the separate `useEarnDeliveryWatcher` so they fire
-// exactly once per polling cycle instead of N times — once per active
-// consumer of this hook.
+// Merges subgraph rows with not-yet-indexed local entries (sorted desc). Side effects
+// live in useEarnDeliveryWatcher so they fire once per poll, not once per consumer.
 export const useEarnTransactions = function () {
   const { data, isError, isLoading } = useEarnTransactionsQuery()
   const { localOperations } = useLocalEarnOperations()
@@ -125,10 +109,7 @@ export const useEarnTransactions = function () {
     function () {
       const localDeposits = localOperations.filter(isLocalEarnDeposit)
       const localWithdraws = localOperations.filter(isLocalEarnWithdraw)
-      // Locally-captured metadata keyed by request tx hash. Survives the
-      // soft-settle flag because the entry stays in storage — that's the
-      // whole point of soft-delete: enrich subgraph rows with bits the
-      // indexer doesn't expose (`approvalTxHash`).
+      // Local metadata keyed by request hash; survives soft-settle to enrich subgraph rows with indexer-missing bits (approvalTxHash).
       const localByRequestHash = new Map(
         [...localDeposits, ...localWithdraws]
           .filter(op => op.initiateTxHash !== undefined)
@@ -137,10 +118,8 @@ export const useEarnTransactions = function () {
       const subgraph = (data ?? []).map(function (t) {
         const local = localByRequestHash.get(t.requestTxHash.toLowerCase())
         if (!local) return t
-        // The authoritative terminal Router status wins over a lingering
-        // local settlement — a pending marker mid-indexing-lag or a stale
-        // reverted one. A FINALIZED/RECOVERED row must never re-expose the
-        // claim/recover CTA or a "Tx Failed" overlay.
+        // Terminal Router status wins over a lingering local settlement — a
+        // FINALIZED/RECOVERED row must never re-expose the CTA or a Tx Failed overlay.
         const isTerminal = isEarnRowTerminal(t)
         return {
           ...t,
@@ -156,13 +135,9 @@ export const useEarnTransactions = function () {
         subgraph.map(t => t.requestTxHash.toLowerCase()),
       )
       const inFlightDeposits = localDeposits
-        // Only show in the table once the user has signed the request tx —
-        // an approve-only entry isn't a committed action (the user can still
-        // back out of the wallet prompt). The entry stays in localStorage so
-        // the row reappears once the request hash is captured.
+        // Show only once the request tx is signed — an approve-only entry isn't committed yet (the entry stays for when it is).
         .filter(op => op.initiateTxHash !== undefined)
-        // Skip soft-settled entries — the subgraph row supersedes them
-        // (we still kept the entry above to enrich with `approvalTxHash`).
+        // Skip soft-settled entries; the subgraph row supersedes them (kept above only to enrich).
         .filter(op => !op.settled)
         .filter(op => !subgraphHashes.has(op.initiateTxHash!.toLowerCase()))
         .filter(

@@ -31,8 +31,7 @@ import {
 
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
-// The compact settle button shared by every claim/recover CTA (deposit + redeem).
-// Drawer CTAs stretch full-width; the table cell renders a compact button.
+// Shared settle button for every claim/recover CTA; full-width in drawers, compact in the table cell.
 const SettleForm = ({
   disabled,
   fullWidth,
@@ -61,8 +60,7 @@ const SettleForm = ({
 
 type SettleOperation = 'CLAIM' | 'RECOVER'
 
-// One table for the whole (kind, operation) matrix so the Router action and the
-// idle label stay in lockstep and can't get mismatched across call sites.
+// (kind, operation) matrix so the Router action and its label stay in lockstep across call sites.
 const SETTLE_CONFIG = {
   DEPOSIT: {
     CLAIM: { action: claimDeposit, label: 'claim-share-tokens' },
@@ -76,21 +74,16 @@ const SETTLE_CONFIG = {
 
 type SettleCtaProps = {
   asset: EarnAsset
-  // Drawer CTAs stretch full-width; the table cell renders a compact button.
   fullWidth?: boolean
   operation: SettleOperation
   pool: EarnPool
-  // When rendered in the table the drawer isn't open yet, so opening it on
-  // signing lets the user watch the settlement mine. In the drawer it's already
-  // open, so the redirect is skipped.
+  // In the table the drawer isn't open yet, so sign opens it to watch the settlement mine; skipped in the drawer.
   redirectOnSign?: boolean
   transaction: EarnTransaction
 }
 
-// The claim/recover CTA for one request — a single component covering both kinds
-// and both operations. The delivered-token inversion lives here in one place: a
-// deposit claim / redeem recover deliver shares; a deposit recover / redeem claim
-// deliver the underlying asset (same rule as `useEarnDeliveryWatcher`).
+// Claim/recover CTA covering both kinds/operations. Delivered-token inversion lives here:
+// deposit claim / redeem recover deliver shares; the other two deliver the asset.
 export const SettleCta = function ({
   asset,
   fullWidth = true,
@@ -147,16 +140,12 @@ export const SettleCta = function ({
   )
 }
 
-// The table-row variant: resolves the pool/asset and renders the compact
-// Claim/Recover CTA (or nothing). Retry stays a View→drawer flow, so it isn't
-// handled here.
+// Table-row variant: resolves the pool/asset and renders the compact Claim/Recover CTA (retry stays a View→drawer flow).
 export const SettleRowCta = function ({
   fallback,
   transaction,
 }: {
-  // Rendered when the pool/asset can't be resolved yet (pools still loading) or
-  // for a delisted asset — keeps the row's View affordance instead of an empty
-  // cell.
+  // Shown when the pool/asset can't resolve (still loading or delisted) — keeps the View affordance.
   fallback?: ReactNode
   transaction: EarnTransaction
 }) {
@@ -196,11 +185,8 @@ export const SettleRowCta = function ({
   return null
 }
 
-// Explains the manual Claim/Recover CTA — shown above the CTA inside the drawers.
-// Self-gates via `pickSettleBannerKey`, so nothing renders for the retry-original
-// / add-to-wallet / in-flight states. Uses its own translation namespace so it's
-// reusable across drawers that translate under different roots (`pool.drawer` vs
-// `transactions.drawer`).
+// Explains the manual Claim/Recover CTA (self-gates via pickSettleBannerKey).
+// Own translation namespace so it's reusable across drawers under different roots.
 export const SettleBanner = function ({
   transaction,
 }: {
@@ -209,9 +195,7 @@ export const SettleBanner = function ({
   const t = useTranslations('hemi-earn.transactions.banner')
   const key = pickSettleBannerKey(transaction)
   if (!key) return null
-  // Rendered in the drawer's `aboveCallToAction` slot (outside the scroll area)
-  // so it stays pinned above the CTA regardless of step count. The padding
-  // matches the drawer's 24px gutter (16px on mobile).
+  // Padding matches the drawer's 24px gutter (16px on mobile).
   return (
     <div className="px-4 py-6 md:px-6">
       <WarningBox
@@ -222,10 +206,7 @@ export const SettleBanner = function ({
   )
 }
 
-// "Add {token} to wallet" CTA surfaced once a request is FINALIZED (the delivered
-// token has landed): the share OFT for a deposit, the underlying asset for a
-// redeem. Shared by the live and historical drawers so both match the tunnel
-// history affordance.
+// "Add to wallet" CTA offered once FINALIZED, when the delivered token has landed.
 export const AddTokenToWalletCta = function ({ token }: { token: EvmToken }) {
   const tCommon = useTranslations('common')
   return (

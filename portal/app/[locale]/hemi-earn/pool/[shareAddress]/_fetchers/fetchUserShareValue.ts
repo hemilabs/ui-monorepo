@@ -17,10 +17,7 @@ export type UserShareValueParams = {
   shareAddress: Address
 }
 
-// Reads the user's share OFT balance on Hemi and converts it to vault
-// pegged-token units via `sharesToPeggedOptions`. Independent of the
-// withdraw asset selection; `peggedAmount` follows `pricePerShare`, so
-// accumulated yield is reflected naturally in the fiat preview.
+// Share balance → pegged units; peggedAmount tracks pricePerShare, so accrued yield shows in the fiat preview.
 export async function fetchUserShareValue({
   account,
   queryClient,

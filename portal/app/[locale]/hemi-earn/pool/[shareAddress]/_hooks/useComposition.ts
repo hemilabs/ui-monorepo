@@ -34,8 +34,7 @@ type CompositionQueryOptions = {
   shareAddress: Address
 }
 
-// The cached data is grouping-agnostic, so both view modes share one entry —
-// `viewMode` only drives the `select` below and is kept out of the query key.
+// Cache is grouping-agnostic; viewMode only drives the select below, so it's out of the query key.
 const compositionQueryOptions = ({
   chainId,
   queryClient,
@@ -71,9 +70,7 @@ export const useComposition = function ({
       queryClient,
       shareAddress,
     }),
-    // The cached data is locale-free and ungrouped — the translated
-    // reserve-buffer label, the per-mode grouping and the derived share
-    // percentages are applied at render time.
+    // Cache is locale-free and ungrouped; translation + grouping + share % happen here at render time.
     select: (data: CompositionData): CompositionItem[] =>
       toCompositionItems({
         data,

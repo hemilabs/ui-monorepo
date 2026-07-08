@@ -1,18 +1,10 @@
-// Shared form-state helpers for the deposit and withdraw forms. Both forms
-// derive their submit-button state from the same pieces (wallet connected,
-// balance loaded, allowance loaded, preview loading) and surface the same
-// kinds of preview issues (floor-rounded dust, asset unavailable, network
-// error). Keeping the logic here prevents drift between the two forms.
-
+// Shared form-state helpers so the deposit and withdraw forms don't drift.
 export type PreviewIssue =
   | 'amount-too-small'
   | 'asset-unavailable'
   | 'network-error'
 
-// Discriminates the three distinct "no shares" causes the form can hit after
-// the preview resolves. Ordered most-actionable first: a network error means
-// "retry"; an unavailable asset means "wait / pick another"; only the
-// remaining shares-rounded-to-zero case is a genuine "amount too small".
+// The three "no shares" causes, ordered most-actionable first: network error, unavailable asset, then amount-too-small.
 export function resolvePreviewIssue({
   hasShares,
   isPreviewError,
@@ -23,10 +15,7 @@ export function resolvePreviewIssue({
   hasShares: boolean
   isPreviewError: boolean
   isPreviewLoading: boolean
-  // Intermediate pegged-token value from the on-chain preview. `undefined`
-  // when the upstream quote/preview hasn't produced one yet. `0n` is the
-  // signal that the Gateway returned nothing — the asset is paused or
-  // blocked, not that the requested amount was too small.
+  // undefined = preview not ready; 0n = the Gateway returned nothing (asset paused/blocked, not amount too small).
   peggedAmount: bigint | undefined
   validInput: boolean
 }): PreviewIssue | undefined {
@@ -56,9 +45,7 @@ export const computeIsLoading = ({
   validInput: boolean
 }) => isAllowanceLoading || !balanceLoaded || (validInput && isPreviewLoading)
 
-// `previewIssueMessage` takes precedence when set — the preview issue is
-// always more specific than the upstream validation error, and the two are
-// mutually exclusive in practice (`resolvePreviewIssue` gates on `validInput`).
+// Preview issue takes precedence — it's more specific and mutually exclusive with the validation error.
 export const resolveValidationError = (
   previewIssueMessage: string | undefined,
   validationError: string | undefined,

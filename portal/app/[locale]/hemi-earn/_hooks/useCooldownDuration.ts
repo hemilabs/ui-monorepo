@@ -4,16 +4,10 @@ import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
-// `cooldownDuration` is governance-controlled and rarely changes. Caching
-// for a few hours avoids refetching on every window focus / wallet
-// reconnect.
+// Governance-controlled and rarely changes; cache for hours to avoid refetch on every focus/reconnect.
 const STALE_TIME_MS = 4 * 60 * 60 * 1000
 
-// Returns the raw on-chain cooldown duration in seconds. Callers that just
-// need the day count (e.g. the warning banner) convert with
-// `secondsToDays`; the withdraw drawer's live countdown needs the raw
-// seconds to tick at minute resolution. Takes the Ethereum-side staking vault
-// (`pool.stakingVault`) directly — callers already hold it.
+// Raw cooldown duration in seconds (callers convert to days as needed).
 export const useCooldownDuration = ({
   enabled = true,
   stakingVault,

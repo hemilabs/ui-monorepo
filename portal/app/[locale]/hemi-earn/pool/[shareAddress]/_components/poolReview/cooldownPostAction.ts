@@ -20,20 +20,14 @@ export type CooldownInputs = {
   unstakeMined: boolean
 }
 
-// Statuses on the recover branch — the cooldown milestone doesn't apply there.
 const RECOVER_PATH_STATUSES = new Set<string | undefined>([
   'CANCELLED',
   'RECOVERED',
 ])
 
-// Decides what (if anything) to render under the Unstake step as a clock
-// sub-step. Pure function so the component's complexity stays low.
-//
-// Mirrors the tunnel's wait-step pattern (e.g. `reviewEvmWithdrawal`):
-// the sub-step stays mounted across its whole lifecycle (NOT_READY →
-// PROGRESS → COMPLETED) so the user keeps a visible milestone even
-// after the wait period elapses. The only case we hide it entirely is
-// when the user simply doesn't have a cooldown (whitelist / disabled).
+// The cooldown clock sub-step under Unstake. Like the tunnel's wait-step, it stays mounted
+// across its whole lifecycle so the milestone stays visible after the wait elapses; hidden only
+// when there's no cooldown (whitelist / disabled).
 export function deriveCooldownPostAction({
   cooldownDurationSec,
   cooldownRemainingSec,
@@ -43,24 +37,13 @@ export function deriveCooldownPostAction({
   unstakeMined,
 }: CooldownInputs): CooldownPostAction | undefined {
   if (isCooldownEligible === false) return undefined
-  // Recover path (CANCELLED/RECOVERED): the cooldown was aborted/bypassed and the
-  // shares come straight back, so there's no cooldown milestone to show — the
-  // recover terminal step carries the state instead.
+  // Recover path: cooldown was bypassed, shares come straight back — no milestone here (the recover step carries the state).
   if (RECOVER_PATH_STATUSES.has(subgraphStatus)) {
     return undefined
   }
-  // The cooldown is effectively over once any of:
-  //   - the local timer elapsed
-  //   - the subgraph row reached FULFILLED (the Agent only fulfills a redeem
-  //     after the cooldown matured and `claimUnstake` ran, so a FULFILLED row
-  //     awaiting a manual claim implies the cooldown is done — the status is
-  //     authoritative over a stale `claimableAt`)
-  //   - the subgraph row reached FINALIZED (auto-claim fired the moment
-  //     the cooldown matured)
-  // Keep the sub-step visible as a COMPLETED milestone — without this,
-  // an auto-claim landing seconds after the timer hits zero would make
-  // the sub-step disappear right when the user expects to see it tick
-  // over to "done".
+  // Cooldown is over once the timer elapses or the row reaches FULFILLED/FINALIZED (both imply
+  // it matured — authoritative over a stale claimableAt). Keep it as a COMPLETED milestone so an
+  // auto-claim landing right after zero doesn't make the sub-step vanish.
   const cooldownOver =
     cooldownRemainingSec === 0 ||
     subgraphStatus === 'FULFILLED' ||
@@ -71,8 +54,6 @@ export function deriveCooldownPostAction({
       status: ProgressStatus.COMPLETED,
     }
   }
-  // Duration still loading — render nothing for now; the postAction
-  // shows up once the on-chain read settles.
   if (cooldownDurationSec === undefined) return undefined
 
   const days = secondsToWholeDays(cooldownDurationSec)
@@ -91,10 +72,7 @@ export function deriveCooldownPostAction({
     }
   }
 
-  // Sub-hour remaining: avoid the misleading "0h" by collapsing to a
-  // generic "less than an hour" copy. Tick interval is at minute
-  // resolution, so showing a precise minute countdown would lie about
-  // freshness; the shorter copy is honest about where we are.
+  // Under an hour: show "less than an hour" — a precise countdown would lie given the minute-resolution tick.
   if (cooldownRemainingSec < 3600) {
     return {
       description: t('wait-cooldown-countdown-soon'),

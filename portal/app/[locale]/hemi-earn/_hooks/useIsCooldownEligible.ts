@@ -4,16 +4,10 @@ import { mainnet } from 'networks/mainnet'
 import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 
-// Underlying reads (`cooldownEnabled`, `instantWithdrawWhitelist`) are
-// governance/admin-controlled and change infrequently. Caching for a few
-// hours avoids refetching on every window focus / wallet reconnect.
+// Governance-controlled and rarely changes; cache for hours to avoid refetch on every focus/reconnect.
 const STALE_TIME_MS = 4 * 60 * 60 * 1000
 
-// Resolves whether the caller is subject to the vault's 7-day withdraw cooldown
-// (i.e. cooldown is enabled AND the caller is not on the instant-withdraw
-// whitelist). Mirrors `resolveIsInstant` and inverts it so the consumer can
-// gate UI like "withdraw takes 7 days" on a single boolean. Takes the staking
-// vault (`pool.stakingVault`) directly — callers already hold it.
+// True when the caller is subject to the withdraw cooldown — the inverse of resolveIsInstant, for gating UI on one boolean.
 export const useIsCooldownEligible = ({
   account,
   stakingVault,

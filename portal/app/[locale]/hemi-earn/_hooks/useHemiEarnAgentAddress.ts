@@ -8,7 +8,6 @@ export const agentAddressQueryOptions = () =>
     gcTime: Infinity,
     queryFn: () => getAgentAddress(getPublicClient(hemi.id)),
     queryKey: ['hemi-earn', 'agent-address'],
-    // `Router.peerAddress()` on Hemi, decoded to the Agent address on Ethereum.
     // Immutable once the peer is set, so cache it indefinitely.
     staleTime: Infinity,
   })

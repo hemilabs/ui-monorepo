@@ -99,17 +99,13 @@ export const buildColumns = ({
       ),
     header: () => <Header text={t('column.status')} />,
     id: 'status',
-    // Wide enough to keep the longest status ("Something went wrong - Recover
-    // funds" / the manual-claim copy) on a single line across locales.
+    // Wide enough for the longest status on one line across locales.
     meta: { className: 'justify-start flex-grow-0', width: 340 },
   },
   {
     cell: ({ row }) => <RowActions transaction={row.original} />,
     id: 'actions',
-    // On mobile this column is reordered to the front, so it hugs the left
-    // edge (the table's first-cell pl-4 gives the 16px lead). From 'md' up it
-    // returns to the trailing edge and right-aligns. Wide enough to fit the
-    // "Claim share tokens" / "Recover funds" CTA without overflowing the cell.
+    // Reordered to the front on mobile (hugs the left edge); md+ right-aligns. Wide enough for the CTA labels.
     meta: { className: 'justify-start md:justify-end', width: 180 },
   },
 ]

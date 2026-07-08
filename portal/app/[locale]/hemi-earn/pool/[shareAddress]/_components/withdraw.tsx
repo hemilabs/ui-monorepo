@@ -169,9 +169,7 @@ export const Withdraw = function ({
     shareToken: pool.shareToken,
   })
 
-  // Fail safe: when the eligibility read on Ethereum is in-flight or errors,
-  // assume the cooldown applies so the warning shows. Silently hiding it
-  // would let the user start a withdraw thinking the funds land instantly.
+  // Fail-safe: assume the cooldown applies while eligibility loads/errors, so we don't imply an instant withdraw.
   const { data: isCooldownEligible = true } = useIsCooldownEligible({
     account: address,
     stakingVault: pool.stakingVault,
@@ -277,9 +275,7 @@ export const Withdraw = function ({
             disabled={isRunningOperation}
             errorKey={sharesErrorKey}
             fiatBalance={{
-              // When `shares` is 0n the preview query stays disabled and
-              // `peggedAmountRaw` is `undefined` — force 0n here so the fiat
-              // row reads "$0" for an empty input instead of a stuck skeleton.
+              // shares 0n keeps the preview disabled (peggedAmountRaw undefined) — force 0n so the fiat row reads "$0", not a stuck skeleton.
               balance: shares > BigInt(0) ? peggedAmountRaw : BigInt(0),
               token: pool.peggedToken,
             }}

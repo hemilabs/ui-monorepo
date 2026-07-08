@@ -21,12 +21,8 @@ export type ShareSkeleton = Pick<
   'assets' | 'peggedToken' | 'shareAddress' | 'shareToken' | 'stakingVault'
 >
 
-// Pegged tokens (vetBTC, VUSD) aren't in the curated token list, so they
-// resolve via the erc20 fallback with no `priceSymbol`. They have no oracle of
-// their own either, so — like vetro-4 — price them by aliasing to a
-// whitelisted proxy token in their gateway. `useEarnTokenPrices` exposes those
-// proxies' oracle-adjusted USD prices, and `getTokenPrice` reads the alias
-// from `extensions.priceSymbol`.
+// Pegged tokens have no oracle; price them by aliasing to a whitelisted proxy
+// (BTC→WBTC, USD→USDT) via priceSymbol.
 const pegBaseToPriceSymbol: Record<string, string> = {
   BTC: 'WBTC',
   USD: 'USDT',
@@ -39,12 +35,7 @@ export const fetchHemiEarnShares = async function (
     hemiEarnAssetConfigsQueryOptions(),
   )
 
-  // Resolve token metadata (symbol, decimals, logo, priceSymbol) through the
-  // shared token query — the curated token list with an on-chain erc20
-  // fallback. The pegged token lives on Ethereum mainnet (the staking vault's
-  // `asset()`), while share/deposit tokens are Hemi-side, so each is looked up
-  // on its own chain. Returns `undefined` so the share/asset is skipped when
-  // neither source resolves the token.
+  // Resolve via the shared token query; the pegged token is on Ethereum, share/deposit tokens on Hemi (each on its own chain).
   const resolveToken = async function (
     address: Address,
     chainId: RemoteChain['id'],
@@ -58,9 +49,7 @@ export const fetchHemiEarnShares = async function (
     }
   }
 
-  // A share can accept several deposit assets, so the asset-config list repeats
-  // `share`/`remoteShare`; build one skeleton per unique share to avoid
-  // duplicate pools (and double-counted positions/TVL).
+  // A share accepts several deposit assets, so configs repeat it — one skeleton per unique share to avoid duplicate pools.
   const skeletons = await Promise.all(
     uniqueShareConfigs(configs).map(async function ({
       remoteShare,
@@ -76,10 +65,7 @@ export const fetchHemiEarnShares = async function (
       if (!shareToken || !peggedToken) {
         return null
       }
-      // The pegged token's USD price comes from its gateway's peg base (e.g.
-      // BTC for the vetBTC gateway, USD for VUSD). Resolve the gateway from the
-      // staking vault (same path `fetchComposition` uses; the `asset()` leg is
-      // already cached) and tag the pegged token with the matching feed symbol.
+      // Price the pegged token via its gateway's peg base; resolve the gateway from the staking vault and tag it with the feed symbol.
       const gatewayAddress = await queryClient.ensureQueryData(
         gatewayForRemoteShareQueryOptions(remoteShare),
       )
@@ -89,8 +75,7 @@ export const fetchHemiEarnShares = async function (
       const priceSymbol = pegBaseSymbol
         ? pegBaseToPriceSymbol[pegBaseSymbol]
         : undefined
-      // Build a new token rather than mutate — the resolved token is a shared
-      // cached reference. Fall back to the unpriced token for unmapped pegs.
+      // Build a new token, don't mutate — the resolved token is a shared cached reference.
       const pricedPeggedToken = priceSymbol
         ? {
             ...peggedToken,

@@ -18,9 +18,7 @@ const positionUsd = (
   price: string,
 ) => Big(formatUnits(peggedAmount, peggedTokenDecimals)).times(price)
 
-// Sums the USD value of every share position the user holds. Each entry is
-// `convertToAssets(stakingVault, shares)` (shares → pegged token) priced via
-// `getTokenPrice(peggedToken)` against the oracle-merged earn price feed.
+// Sums each position's USD: shares → pegged (convertToAssets) → priced via the oracle-merged earn feed.
 export const useTotalDeposits = function () {
   const {
     data: positions = [],

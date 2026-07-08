@@ -3,18 +3,9 @@
 import { useEffect, useState } from 'react'
 import { unixNowTimestamp } from 'utils/time'
 
-// Local-only countdown driven by `claimableAt` from the Envio subgraph.
-// Ticks every 60s so the drawer's cooldown sub-step copy (and any future
-// table column) updates without round-tripping through react-query.
-//
-// `claimableAt` is the unix-seconds timestamp at which the Vetro Agent
-// will allow the claim to fire (set on Ethereum at observation time —
-// the authoritative source for cooldown maturity, free of the
-// LayerZero-delay drift a local `requestedAt + duration` calculation
-// would carry).
-//
-// Returns `undefined` while the input is missing, otherwise the
-// remaining seconds (clamped at 0).
+// Local countdown from the subgraph's claimableAt (unix seconds, set on Ethereum — authoritative
+// for maturity, free of the LayerZero drift a local requestedAt + duration would carry). Ticks
+// every 60s; returns undefined until the input exists.
 const TICK_MS = 60_000
 
 const nowInSeconds = () => Number(unixNowTimestamp())

@@ -36,7 +36,6 @@ export function PoolFormProvider({
     () => pool.assets[0].address,
   )
 
-  // When the pool changes (route swap), reset the selection to the first asset.
   useEffect(
     function resetSelectionOnPoolChange() {
       setSelectedAssetAddress(pool.assets[0].address)

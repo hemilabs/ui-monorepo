@@ -45,15 +45,8 @@ export const fetchEarnPositions = async function ({
 }): Promise<EarnPosition[]> {
   const shares = await queryClient.ensureQueryData(hemiEarnSharesQueryOptions())
 
-  // Use `allSettled` so a single failing share-balance read doesn't take down
-  // the whole composition: matches the previous `useQueries` behavior where
-  // the hook only escalated to an error state if *every* read failed.
-  //
-  // `ensureQueryData` reads cached results when present. Freshness after a
-  // deposit/withdraw is the mutation's responsibility — `useDeposit` and
-  // `useWithdraw` call `removeQueries({ queryKey: earnPositionsKeyPrefix })`
-  // on `onSettled`, which evicts both the outer aggregated query and these
-  // nested share-balance entries so the next read hits the network.
+  // allSettled so one failing balance read doesn't sink the whole set (escalate only if all fail).
+  // ensureQueryData serves cache; withdraw/settle and the delivery watcher reset earnPositionsKeyPrefix for freshness.
   const settled = await Promise.allSettled(
     shares.map(share =>
       queryClient

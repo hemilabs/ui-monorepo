@@ -27,20 +27,13 @@ type UseDeposit = {
   input: string
   on?: (emitter: EventEmitter<RequestDepositEvents>) => void
   pool: EarnPool
-  // Set by retry callers when the prior attempt had a successful approval
-  // (allowance is still on-chain, so `requestDeposit` won't emit
-  // `user-signed-approval` again). Carried forward into the new local-store
-  // entry so the historical drawer keeps surfacing the approval step.
+  // Retry callers pass the prior approval hash (allowance still on-chain, so no new
+  // user-signed-approval); carried into the new entry so the drawer keeps the approval step.
   priorApprovalTxHash?: Hash
   selectedAsset: EarnAsset
-  // Slippage-protected minimum shares the caller expects to receive on
-  // fulfillment. Enforced on the remote chain when the Agent stakes into
-  // the vault.
   sharesOutMin: bigint
-  // Set by retry callers: the `initiateTxHash` of the specific prior FAILED
-  // attempt being replaced. Once the new deposit is signed, that entry is
-  // flagged `settled` so the table doesn't show the old failure alongside
-  // the new attempt. Only the exact hash is touched — no broader filtering.
+  // Retry callers pass the FAILED attempt's initiateTxHash; once the new deposit is signed,
+  // that exact entry is flagged settled so the old failure doesn't show beside the new attempt.
   supersedesInitiateTxHash?: Hash
   updateDepositOperation?: (payload?: DepositOperation) => void
 }
@@ -64,8 +57,6 @@ export const useDeposit = function ({
   const config = useConfig()
   const ensureConnectedTo = useEnsureConnectedTo()
   const queryClient = useQueryClient()
-  // Requires <LocalEarnOperationsProvider> upstream (mounted in the
-  // hemi-earn layout). Hook throws at runtime if used outside it.
   const { markSettledByInitiateTxHash, upsertLocalOperation } =
     useLocalEarnOperations()
 
@@ -97,13 +88,8 @@ export const useDeposit = function ({
 
       const walletClient = await getWalletClient(config, { chainId })
 
-      // Local-store entries are created at two points:
-      //   1. `user-signed-approval` — captures `approvalTxHash` so the
-      //      historical drawer can later render the approval step (the
-      //      indexer has no way to link an approval tx to a request).
-      //   2. `user-signed-deposit` — adds `initiateTxHash`, which is the
-      //      key the merge in `useEarnTransactions` uses to dedupe against
-      //      the subgraph row.
+      // Local entries are created at two points: user-signed-approval (captures approvalTxHash,
+      // which the indexer can't link) and user-signed-deposit (adds initiateTxHash, the merge dedupe key).
       const startedAt = Number(unixNowTimestamp())
       const baseLocalPayload = {
         account: address,
@@ -116,11 +102,7 @@ export const useDeposit = function ({
         startedAt,
       }
 
-      // Tracks the approval hash for this specific attempt. Seeded from
-      // `priorApprovalTxHash` so retries (where allowance is still on-chain
-      // and `user-signed-approval` won't fire) keep showing the original
-      // approval step in the historical drawer. Overwritten when a fresh
-      // approval is signed in this attempt.
+      // Approval hash for this attempt; seeded from priorApprovalTxHash for retries, overwritten if a fresh approval is signed.
       let observedApprovalTxHash: Hash | undefined = priorApprovalTxHash
 
       const { emitter, promise } = requestDeposit({
@@ -143,9 +125,7 @@ export const useDeposit = function ({
           status: DepositStatus.APPROVAL_TX_PENDING,
           transactionHash: undefined,
         })
-        // Persist the approval hash to the local store so the historical
-        // drawer can later surface the approval step even on a different
-        // route — the indexer never sees this association.
+        // Persist so the drawer can show the approval step across routes (the indexer never links it).
         upsertLocalOperation({
           ...baseLocalPayload,
           approvalTxHash,
@@ -191,9 +171,7 @@ export const useDeposit = function ({
             transactionHash,
           },
         })
-        // Hide the specific prior FAILED entry the user is replacing.
-        // Done here (and not on retry click) so the row only disappears
-        // once the user actually commits to the new attempt by signing.
+        // Hide the prior FAILED entry — here, not on retry click, so it only disappears once the user actually signs.
         if (supersedesInitiateTxHash) {
           markSettledByInitiateTxHash(supersedesInitiateTxHash)
         }
@@ -210,11 +188,8 @@ export const useDeposit = function ({
         })
         updateNativeBalanceAfterFees(receipt)
 
-        // Decrement wallet ERC-20 immediately — Router pulled the tokens in
-        // this same tx. Pool TVL and user position aren't touched here: those
-        // only move after the cross-chain delivery (1–3 min). The CLAIMED /
-        // RECOVERED reconcile in `useEarnTransactions` invalidates them when
-        // the subgraph reports the terminal state.
+        // Decrement the wallet balance now — the Router pulled tokens in this tx. Pool TVL/position
+        // wait for the cross-chain delivery (reconciled by useEarnTransactions at the terminal status).
         queryClient.setQueryData<bigint>(tokenBalanceQueryKey, old =>
           old === undefined ? old : maxBigInt(old - amount, BigInt(0)),
         )
@@ -236,8 +211,7 @@ export const useDeposit = function ({
         updateDepositOperation?.({
           status: DepositStatus.DEPOSIT_TX_FAILED,
         })
-        // No local upsert — no `initiateTxHash` was produced, so this never
-        // had a table row to update.
+        // No initiateTxHash was produced, so there's no row to upsert.
       })
 
       emitter.on('deposit-failed-validation', function () {
@@ -273,11 +247,8 @@ export const useDeposit = function ({
       return promise
     },
     onSettled() {
-      // Only invalidate queries that reflect Hemi-side state right now. The
-      // Vetro-side queries (pool TVL, user pool balance, staked-balance card)
-      // are invalidated by `useEarnTransactions` when the subgraph reports
-      // CLAIMED / RECOVERED, since cross-chain delivery hasn't happened yet
-      // at this point in the mutation lifecycle.
+      // Only invalidate Hemi-side state here; the Vetro-side queries move later, when
+      // useEarnTransactions sees the terminal status (cross-chain delivery hasn't happened yet).
       queryClient.invalidateQueries({ queryKey: tokenBalanceQueryKey })
       queryClient.invalidateQueries({ queryKey: allowanceQueryKey })
       queryClient.invalidateQueries({ queryKey: nativeTokenBalanceQueryKey })

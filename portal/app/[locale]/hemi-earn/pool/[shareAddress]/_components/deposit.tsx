@@ -82,17 +82,12 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     token: selectedAsset.token,
   })
 
-  // Fail safe: when the eligibility read on Ethereum is in-flight or errors,
-  // assume the cooldown applies so the warning shows. Silently hiding it
-  // would let the user sign a deposit thinking instant withdraw is available.
+  // Fail-safe: assume the cooldown applies while eligibility loads/errors, so we don't imply an instant withdraw.
   const { data: isCooldownEligible = true } = useIsCooldownEligible({
     account: address,
     stakingVault: pool.stakingVault,
   })
 
-  // Single composed query owns shares preview, quote, and allowance reads.
-  // `deposit.tsx` only consumes the derived outputs here — no separate
-  // subscriptions for those upstream queries.
   const {
     approvalGasFees,
     canDeposit,
@@ -124,10 +119,7 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
     callbackFee: quote?.callbackFee ?? BigInt(0),
     input,
     on(emitter) {
-      // Open the pool drawer as soon as the user signs anything — wired
-      // here (rather than inside `useDeposit`) so the hook stays reusable
-      // outside the pool page (the home retry calls it without a drawer
-      // to open).
+      // Open the drawer on first signature — wired here, not in useDeposit, so the hook stays reusable off the pool page (home retry has no drawer).
       emitter.on('user-signed-approval', () =>
         setDrawerQueryString('depositing'),
       )

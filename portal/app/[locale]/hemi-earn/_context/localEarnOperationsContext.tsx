@@ -29,17 +29,10 @@ type UpsertPayload = Partial<LocalEarnOperation> & {
 type LocalEarnOperationsContextValue = {
   clearForAccount: (account: Address) => void
   localOperations: LocalEarnOperation[]
-  // Soft-deletes the entry whose `initiateTxHash` matches by flipping
-  // `settled: true`. Scoped to the connected wallet so a hash-match can't
-  // accidentally touch another account's entries on a shared device. Used
-  // by retry flows (to supersede a specific prior attempt) and by the
-  // reconcile loop (once the subgraph has indexed the request, the row
-  // hides from the merge but the entry stays around so the drawer can
-  // still read locally-captured metadata like `approvalTxHash`).
+  // Soft-delete (settled:true) the entry matching initiateTxHash, scoped to the
+  // connected wallet; the entry stays so the drawer can still read its local metadata.
   markSettledByInitiateTxHash: (initiateTxHash: Hash) => void
-  // Records (or clears, with `undefined`) the manual claim/recover state on the
-  // local entry whose `initiateTxHash` matches the request tx. No-op when the
-  // request has no local entry (e.g. the deposit was made in another browser).
+  // Records/clears the claim/recover marker on the matching entry; no-op if the request has no local entry.
   setSettlement: (
     initiateTxHash: Hash,
     settlement: EarnSettlement | undefined,
@@ -62,9 +55,7 @@ const garbageCollect = function (entries: LocalEarnOperation[]) {
     .slice(0, MAX_ENTRIES_PER_ACCOUNT)
 }
 
-// Match an existing entry to update. Once we have an initiateTxHash, that's
-// the canonical key; before that, the (account, startedAt) tuple identifies
-// the user's signing session.
+// Key by initiateTxHash once known; before that, the (account, startedAt) tuple identifies the signing session.
 const matchesExisting = function (
   entry: LocalEarnOperation,
   payload: UpsertPayload,

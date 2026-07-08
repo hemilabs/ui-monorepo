@@ -10,9 +10,7 @@ import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address, formatUnits } from 'viem'
 import { readContract } from 'viem/actions'
 
-// Minimal Chainlink aggregator interface. A whitelisted token's oracle reports
-// the token's price denominated in the gateway's peg unit (e.g. WBTC/BTC for
-// the vetBTC gateway), not USD.
+// Chainlink aggregator; reports the token's price in the gateway's peg unit, not USD.
 const aggregatorV3Abi = [
   {
     inputs: [],
@@ -36,12 +34,8 @@ const aggregatorV3Abi = [
   },
 ] as const
 
-// Reads every whitelisted-token oracle for a gateway and returns a
-// `{ SYMBOL: price }` dict where each price is denominated in the gateway's peg
-// unit (BTC for the vetBTC gateway, USD for VUSD). `fetchEarnTokenPrices`
-// converts these to USD. The dict is keyed by the token's uppercased symbol so
-// each entry is unique within the gateway — `priceSymbol` is only a downstream
-// lookup alias and would collide here when several tokens share one alias.
+// Returns { SYMBOL: pegUnitPrice } keyed by the uppercased symbol — not priceSymbol,
+// which would collide when several tokens share one alias. fetchEarnTokenPrices converts to USD.
 export const fetchOraclePrices = async function (
   queryClient: QueryClient,
   gatewayAddress: Address,
@@ -86,7 +80,6 @@ export const oraclePricesQueryOptions = (gatewayAddress: Address) =>
   queryOptions({
     queryFn: ({ client }) => fetchOraclePrices(client, gatewayAddress),
     queryKey: ['hemi-earn', 'oracle-prices', gatewayAddress],
-    // refetch every 5 min
     refetchInterval: 5 * 60 * 1000,
     staleTime: 30 * 1000,
   })

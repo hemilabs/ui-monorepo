@@ -26,16 +26,10 @@ type Props = {
   transaction: EarnTransaction
 }
 
-// Spinner while the row is in flight (auto-progressing, including an auto-recover
-// CANCELLED deposit or redeem, or a claim/recover settlement tx mining), but never on a
-// reverted settlement — that's "Tx Failed" with a Retry. The inline
-// Claim/Recover CTA is only for the untouched manual state; once a settlement
-// exists (mining or reverted) the row hands back to View and the drawer carries
-// the spinner/Retry.
+// Spinner while in flight, but never on a reverted settlement (that's Tx Failed + Retry). The
+// inline CTA is only the untouched manual state; once a settlement exists the row hands back to View.
 function resolveActionState(transaction: EarnTransaction) {
-  // Drop the CANCEL marker so a user cancel resting at CANCELLED surfaces the
-  // Recover CTA (and drops the row spinner) like any other recover, instead of
-  // staying a marker-driven in-flight row.
+  // Drop the CANCEL marker so a user cancel at CANCELLED surfaces the Recover CTA (and drops the spinner) like any recover.
   const settleMarker = claimRecoverSettlement(transaction.settlement)
   return {
     showClaimFromVault: isAwaitingFinalize(transaction),
@@ -67,8 +61,7 @@ export const RowActions = function ({ transaction }: Props) {
     setCancelModalOpen(true)
   }
 
-  // Cancel tx confirmed: close the modal and open the drawer so the user can
-  // follow the recover flow the cancel just kicked off.
+  // Cancel confirmed — close the modal and open the drawer to follow the recover flow it kicked off.
   const onCancelSuccess = function () {
     setCancelModalOpen(false)
     setTxDrawerQueryString(transaction.requestTxHash)

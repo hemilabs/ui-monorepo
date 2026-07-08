@@ -30,10 +30,8 @@ import { TransactionDrawerSkeleton } from './transactionDrawerSkeleton'
 import { TransactionNotFound } from './transactionNotFound'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
-// The drawer is already open, so the CTAs don't redirect on sign. A reverted
-// claim/recover keeps the row at FULFILLED/CANCELLED, so the same
-// `needsManualClaim`/`needsRecover` branch re-surfaces the CTA (which shows
-// "try again" off the failed settlement marker).
+// Drawer's already open, so no redirect on sign. A reverted claim/recover stays at
+// FULFILLED/CANCELLED, re-surfacing the same CTA (as "try again").
 function depositCallToAction({
   asset,
   pool,
@@ -68,16 +66,14 @@ function depositCallToAction({
       />
     )
   }
-  // Shares have landed (claim done) — offer to add the share token to the
-  // wallet, matching the live drawer and the tunnel history.
+  // Claim done — offer to add the share token to the wallet.
   if (transaction.status === 'FINALIZED') {
     return <AddTokenToWalletCta token={pool.shareToken} />
   }
   return null
 }
 
-// Mirror of `depositCallToAction` for redeem: claim delivers the underlying
-// asset, recover returns the shares.
+// Redeem mirror: claim delivers the asset, recover returns the shares.
 function redeemCallToAction({
   asset,
   pool,
@@ -119,8 +115,7 @@ function redeemCallToAction({
       />
     )
   }
-  // The underlying asset has landed (claim done) — offer to add it to the wallet,
-  // matching the live drawer and the tunnel history.
+  // Claim done — offer to add the asset to the wallet.
   if (transaction.status === 'FINALIZED') {
     return <AddTokenToWalletCta token={asset.token} />
   }
@@ -159,8 +154,7 @@ const TransactionDrawerContent = function () {
     useEarnTransactions()
   const { data: pools, isPending: isPoolsPending } = useEarnPools()
 
-  // A malformed txId (e.g. ?earnTxId=0x123) isn't a transaction at all, so
-  // there's nothing to look up — drop it from the URL and show no drawer.
+  // A malformed txId (e.g. 0x123) isn't a real tx — drop it from the URL and show no drawer.
   const hasInvalidTxId = txId !== null && !isHash(txId)
   useEffect(
     function clearInvalidTxId() {

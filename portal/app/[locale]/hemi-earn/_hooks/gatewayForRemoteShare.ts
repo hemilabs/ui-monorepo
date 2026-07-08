@@ -6,10 +6,8 @@ import { type Address } from 'viem'
 
 import { vaultAssetQueryOptions } from './vaultAsset'
 
-// Resolves the Ethereum-side Vetro Gateway from the Ethereum-side StakingVault
-// (the Router's `remoteShare`), following the chain the Agent walks:
-// `StakingVault.asset()` → pegged token, then `PeggedToken.gateway()` → gateway.
-// The `asset()` leg is shared with `vaultAssetQueryOptions` so it runs once.
+// Gateway from the staking vault, following the Agent's walk: asset() → pegged token
+// → gateway(); the asset() leg is shared so it runs once.
 export const gatewayForRemoteShareQueryOptions = (remoteShare: Address) =>
   queryOptions({
     async queryFn({ client }) {

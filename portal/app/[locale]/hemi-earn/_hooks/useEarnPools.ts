@@ -13,12 +13,7 @@ import {
 import { earnTvlQueryOptions } from './useEarnTvl'
 import { useHemiEarnShares } from './useHemiEarnShares'
 
-// Composes the per-pool view out of the registry of shares plus two
-// independent side queries: TVL (one read per share, on-chain) and APY
-// (a single shared HTTP call whose response is keyed by vault address).
-// Each piece keeps its own freshness lifecycle — TVL is invalidated by
-// deposit/withdraw, APY refetches on a 5-minute interval — and we just
-// pick the resolved values up here at render time.
+// Combines the shares registry with independent TVL (per-share) and APY (one shared call) queries, each with its own freshness.
 export const useEarnPools = function () {
   const [networkType] = useNetworkType()
   const {
@@ -27,10 +22,7 @@ export const useEarnPools = function () {
     isPending: isSharesPending,
   } = useHemiEarnShares()
 
-  // TVL queries are intentionally NOT part of `isPending`: the page renders
-  // immediately while the cross-chain read is in flight, and each pool's
-  // total-deposits cell shows its own skeleton (driven by `totalDepositsStatus`
-  // below) rather than blocking the whole page.
+  // TVL is deliberately out of isPending: the page renders immediately and each cell shows its own skeleton via totalDepositsStatus.
   const tvlQueries = useQueries({
     queries: shares.map(share => ({
       ...earnTvlQueryOptions({

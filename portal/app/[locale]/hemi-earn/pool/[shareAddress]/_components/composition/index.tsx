@@ -16,7 +16,7 @@ import { SegmentedControlItem } from '../segmentedControlItem'
 import { CompositionChart } from './compositionChart'
 import { CompositionTable } from './compositionTable'
 
-// Orange palette (dark to light); items beyond the palette wrap around
+// Orange palette; colors cycle for items beyond the 8.
 const compositionColors = [
   '#CC2F02', // orange-700
   '#FF4600', // orange-600

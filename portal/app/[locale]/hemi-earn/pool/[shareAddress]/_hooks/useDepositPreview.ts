@@ -64,10 +64,7 @@ const computeIsFeesError = ({
   isPreviewError ||
   (needsApproval && isApprovalGasFeesError)
 
-// Mirror of `useWithdrawPreview`: subscribes to the composed
-// `depositPreviewOptions` (shares + quote) and pairs it with the
-// canonical `useNeedsApproval` for allowance reads. Adds wagmi-side gas
-// estimation on top.
+// Composed depositPreviewOptions (shares + quote) + useNeedsApproval for allowance, plus gas estimation.
 export const useDepositPreview = function ({
   account,
   amount,
@@ -115,12 +112,8 @@ export const useDepositPreview = function ({
   const sharesOutMin = composed?.sharesOutMin ?? BigInt(0)
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
 
-  // Gate submit on a positive shares preview. Without this, a fast submit
-  // before the preview resolves would land `sharesOutMin=0n` on-chain —
-  // zero slippage protection.
-  // Also gate on `!isAllowanceLoading` so the fees summary can't render with
-  // `needsApproval=false` while allowance is still pending (the total would
-  // jump up once allowance settles).
+  // Gate on a positive shares preview (else a fast submit lands sharesOutMin=0n — no slippage
+  // protection) and on !isAllowanceLoading (else the fee total jumps once allowance settles).
   const canDeposit =
     validInput &&
     shares !== undefined &&

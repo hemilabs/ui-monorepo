@@ -38,12 +38,8 @@ export const PoolPageContent = function ({ shareAddress }: Props) {
     function redirectOnNetworkChange() {
       if (networkTypeRef.current === networkType) return
       networkTypeRef.current = networkType
-      // nuqs defers its URL flush via setTimeout(~50ms). Calling router.push
-      // here fires immediately but nuqs's flush overwrites it 50ms later with
-      // the pool URL + ?networkType. Instead, we pre-set location.pathname to
-      // /hemi-earn via history.pushState *before* nuqs flushes. nuqs then reads
-      // the updated pathname and applies ?networkType to the earn page URL,
-      // and its own router.replace finishes the navigation — no hard reload needed.
+      // nuqs defers its URL flush ~50ms, so a router.push here would be overwritten. Pre-set
+      // location.pathname to /hemi-earn via pushState first; nuqs then applies ?networkType to the earn URL.
       history.pushState(null, '', `/${locale}/hemi-earn`)
     },
     [locale, networkType],

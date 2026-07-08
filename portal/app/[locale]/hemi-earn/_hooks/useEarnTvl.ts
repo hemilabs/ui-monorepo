@@ -6,9 +6,7 @@ import { getEvmL1PublicClient } from 'utils/chainClients'
 import { type Address } from 'viem'
 import { totalAssets } from 'viem-erc4626/actions'
 
-// Exported so deposit/withdraw mutations can invalidate this entry after
-// settling on-chain. Keyed by the staking vault (the address actually read)
-// rather than the share OFT.
+// Exported so mutations can invalidate after settling. Keyed by the staking vault (the address actually read), not the share OFT.
 export const earnTvlQueryKey = ({
   networkType,
   stakingVault,

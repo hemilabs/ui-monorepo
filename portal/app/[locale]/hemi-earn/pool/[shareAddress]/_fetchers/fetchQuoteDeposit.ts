@@ -28,10 +28,7 @@ export type QuoteDepositParams = {
   shareAddress: Address
 }
 
-// Plain async fetcher — react-query agnostic, so it can be called from any
-// chained queryFn (via `queryClient.ensureQueryData(quoteDepositOptions(...))`),
-// from server-side scripts, or unit-tested directly without mocking the
-// react-query observer.
+// Plain async (react-query agnostic) so it's callable from chained queryFns, server scripts, or unit tests.
 export async function fetchQuoteDeposit({
   amount,
   asset,

@@ -20,18 +20,10 @@ export type SharesToAssetsParams = {
   shares: bigint
 }
 
-// Converts a share amount to the asset units the user will receive on
-// redeem. Composes the share→pegged query (`fetchSharesToPegged`,
-// asset-agnostic) with the asset-specific gateway leg (`previewRedeem`),
-// so switching the withdraw asset dropdown only re-runs the gateway step.
-// `peggedAmount` is exposed because the redeem burns this many vault
-// assets, letting `useWithdraw` optimistically subtract it from
-// `totalAssets()` in the right unit.
-// `fetchQuery` (not `ensureQueryData`) on the shares→pegged leg so a
-// stale cached `peggedAmount` can't slip into `assetsOutMin` — vault
-// price drift between mounts would otherwise produce a `requestRedeem`
-// whose min is derived from an older `convertToAssets` than the one the
-// user sees in the form. Mirrors `fetchDepositShares`.
+// share→asset for redeem. Composes the asset-agnostic share→pegged leg with the gateway
+// previewRedeem, so switching the asset only re-runs the gateway step. peggedAmount is exposed
+// so useWithdraw can optimistically debit the user's share value. fetchQuery (not ensureQueryData) on the
+// share→pegged leg keeps a stale peggedAmount out of assetsOutMin.
 export async function fetchSharesToAssets({
   assetAddress,
   queryClient,

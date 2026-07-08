@@ -14,12 +14,8 @@ type Props = {
   transaction: EarnTransaction
 }
 
-// Confirmation modal for cancelling a cooldown redeem. Confirming signs
-// `Router.cancel`; the button spins until the tx settles. On success `onSuccess`
-// fires (the caller closes the modal and opens the drawer so the user can watch
-// the recover flow); on a revert/reject it stays open with the button back to
-// idle so the user can try again. `onClose` is the plain dismiss ("Keep
-// withdrawal" / overlay), which must NOT open the drawer.
+// Cancel-redeem confirmation (signs Router.cancel). onSuccess opens the drawer to
+// follow the recover flow; onClose is a plain dismiss that must NOT.
 export const CancelRedeemModal = function ({
   onClose,
   onSuccess,

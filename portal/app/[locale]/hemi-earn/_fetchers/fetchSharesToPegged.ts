@@ -15,11 +15,8 @@ export type SharesToPeggedParams = {
   shares: bigint
 }
 
-// Pure share→pegged conversion via `StakingVault.convertToAssets`. Takes the
-// resolved Ethereum-side staking vault (`remoteShare`) so it stays a leaf —
-// `sharesToPeggedOptions` resolves the vault from the share. Cached separately
-// from the asset-specific leg so switching the withdraw asset (which only
-// changes the gateway `previewRedeem` step) doesn't re-run this RPC.
+// share→pegged via StakingVault.convertToAssets. Cached separately from the asset
+// leg so switching the withdraw asset doesn't re-run this RPC.
 export async function fetchSharesToPegged({
   shares,
   stakingVault,

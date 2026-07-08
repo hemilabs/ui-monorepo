@@ -46,9 +46,7 @@ export const useCancelRedeem = function ({ on, transaction }: UseCancelRedeem) {
         walletClient: hemiWalletClient!,
       })
 
-      // Flag the marker failed on any revert/error so the modal returns to its
-      // idle state for another try; left pending on success so the row reads as
-      // cancelling and the merge drops it once terminal (RECOVERED).
+      // Flag failed on revert so the modal resets for a retry; left pending on success so the row reads as cancelling until terminal.
       const fail = () =>
         setSettlement(transaction.requestTxHash, {
           failed: true,
@@ -74,8 +72,7 @@ export const useCancelRedeem = function ({ on, transaction }: UseCancelRedeem) {
       emitter.on('user-signing-tx-error', fail)
       emitter.on('unexpected-error', fail)
 
-      // Caller listens for `tx-transaction-succeeded` to close the modal — only
-      // once the cancel is mined, so a revert keeps it open for another try.
+      // Caller closes the modal on tx-transaction-succeeded — only when mined, so a revert keeps it open.
       on?.(emitter)
 
       return promise

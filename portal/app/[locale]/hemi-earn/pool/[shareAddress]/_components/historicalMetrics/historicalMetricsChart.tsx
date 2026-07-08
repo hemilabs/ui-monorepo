@@ -28,9 +28,8 @@ import {
 
 const getChartPadding = (metricType: MetricType) => ({
   bottom: 24,
-  // APY labels are short ("4%"), but deposits labels carry the token symbol
-  // ("400M vetBTC") and locales like es/pt add a space in compact notation
-  // ("400 M" instead of the en "400M"), so we reserve extra room for them.
+  // deposits labels carry the token symbol (and es/pt add a space in compact
+  // notation), so reserve more left room than the short APY "4%".
   left: metricType === 'apy' ? 28 : 80,
   right: 0,
   top: 4,
@@ -86,10 +85,7 @@ const formatShortTimestamp = (timestampMs: number, locale: string) =>
 const formatFullTimestamp = (timestampMs: number, locale: string) =>
   formatDate(new Date(timestampMs), locale, 'UTC')
 
-// 'compact' is meant for the axis ticks, where APY is rendered as a rounded
-// integer ("4%") to keep the axis readable. 'full' keeps the full precision
-// via formatPercentage ("4.53%") and is used in the tooltip, where the user
-// is explicitly asking for detail.
+// compact = rounded axis ticks ("4%"); full = precise tooltip value ("4.53%").
 type FormatPrecision = 'compact' | 'full'
 
 const formatYAxis = function ({
@@ -160,14 +156,8 @@ function ChartTooltipLabel({
 
 const chartHeight = 130
 
-// Victory renders the chart as an SVG with a viewBox, and the SVG scales to
-// fill its container width. This means the chosen width defines the baseline
-// coordinate system used by the labels — a smaller viewBox width makes the
-// labels appear larger on screen (they get scaled up), and a larger viewBox
-// width makes them smaller. We pick different widths per breakpoint so the
-// axis tick labels end up roughly the same visual size on every layout.
-// Entries are checked from largest to smallest breakpoint and the first
-// match wins; the fallback is used below the smallest breakpoint.
+// The SVG scales to fill its container, so a smaller viewBox width makes labels appear
+// larger. Pick widths per breakpoint (largest first) so tick labels stay a consistent visual size.
 const chartWidthByBreakpoint: ReadonlyArray<[number, number]> = [
   [screenBreakpoints.xl, 680],
   [screenBreakpoints.lg, 520],

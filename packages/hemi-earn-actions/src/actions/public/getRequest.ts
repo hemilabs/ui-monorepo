@@ -11,8 +11,7 @@ export type Request = {
   assets: bigint
   automatic: boolean
   kind: RequestKind
-  // Address authorized to call `Router.cancel(id)` for cooldown redeems.
-  // Set at request time; the UI gates the Cancel CTA on `operator === account`.
+  // Authorized to call Router.cancel for cooldown redeems.
   operator: Address
   receiver: Address
   share: Address
@@ -29,8 +28,7 @@ export const getRequest = async function ({
   requestId: bigint
   routerAddress?: Address
 }): Promise<Request> {
-  // Router IDs start at 1 (see `Router.initialize`), so `0n` is never a valid
-  // request and would otherwise return a zero-initialized struct silently.
+  // Router IDs start at 1; reject 0n so we don't read a zero-initialized struct.
   if (requestId <= BigInt(0)) {
     throw new Error('getRequest: `requestId` must be greater than zero')
   }

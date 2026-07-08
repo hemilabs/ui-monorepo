@@ -15,10 +15,7 @@ export const quoteRedeem = async function ({
   asset: Address
   client: Client
   callbackFee: bigint
-  // Declares the redeem path the Router should reserve remote gas for. Must
-  // match what `Agent.handleRedeemRequest` will compute on Ethereum — see
-  // `resolveIsInstant`. If this disagrees with the vault's actual state for
-  // the caller, the Agent sends an immediate cancel back instead of executing.
+  // Must match what the Agent computes (see resolveIsInstant), else it cancels instead of executing.
   isInstant: boolean
   routerAddress?: Address
   shares: bigint

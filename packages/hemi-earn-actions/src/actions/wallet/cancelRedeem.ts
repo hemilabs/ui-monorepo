@@ -13,13 +13,8 @@ import { getHemiEarnRouterAddress } from '../../constants'
 import { routerAbi } from '../../routerAbi'
 import type { CancelRedeemEvents } from '../../types'
 
-// Wraps `Router.cancel(requestId)` on Hemi. Caller must be the request's
-// `operator` (see `getRequest(id).operator`); the contract reverts otherwise.
-// This call ONLY emits `CancellationRequested(requestId)` — it does not move
-// the request out of PENDING. A keeper observes the event off-chain and calls
-// `Agent.cancel(id)` on Ethereum to return the shares, which produces the
-// `MSG_REQUEST_CANCEL` callback that finally sets the Router status to
-// CANCELLED. The user then calls `recoverRedeem(id)` to pull shares back.
+// Caller must be the request operator. Router.cancel only emits CancellationRequested;
+// a keeper's Agent.cancel returns the shares (→ CANCELLED), then the user calls recoverRedeem.
 const runCancelRedeem = ({
   account,
   requestId,

@@ -7,10 +7,7 @@ export const agentAbi = [
     type: 'function',
   },
   {
-    // Quotes the LZ native fee for the fulfillment OFT back to Hemi. The
-    // param is the **Ethereum-side staking vault (sVetToken)** address —
-    // since the `Stateless Agent` refactor the Agent no longer resolves
-    // share-from-asset internally, so the caller must supply it.
+    // share_ is the Ethereum staking vault (sVetToken), not the Hemi share OFT.
     inputs: [{ internalType: 'address', name: 'share_', type: 'address' }],
     name: 'quoteDepositFulfillment',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],

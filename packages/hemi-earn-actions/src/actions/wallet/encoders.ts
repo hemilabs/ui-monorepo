@@ -36,14 +36,10 @@ export const encodeRequestDeposit = ({
   asset: Address
   automatic?: boolean
   callbackFee: bigint
-  // Address authorized to call `Agent.cancel(id)` on the remote chain.
-  // Contract reverts with `ZeroAddress` if `0x0` is passed.
+  // Authorized to call Agent.cancel on the remote chain; reverts if 0x0.
   operator: Address
   receiver: Address
-  // Minimum shares accepted on fulfillment (slippage protection enforced
-  // on the remote chain). Defaults to `0n` when omitted; portal callers
-  // compute this via `applySlippage` against the UX_SPEC defaults (see
-  // `portal/.../hemi-earn/_constants/slippage.ts`).
+  // Min shares accepted on fulfillment (slippage, enforced remotely); 0n disables it.
   sharesOutMin?: bigint
 }) =>
   encodeFunctionData({
@@ -71,19 +67,13 @@ export const encodeRequestRedeem = ({
   shares,
 }: {
   asset: Address
-  // Minimum underlying assets accepted on fulfillment (slippage protection
-  // enforced on the remote chain). Defaults to `0n` when omitted; portal
-  // callers compute this via `applySlippage` against the UX_SPEC defaults
-  // (see `portal/.../hemi-earn/_constants/slippage.ts`).
+  // Min assets accepted on fulfillment (slippage, enforced remotely); 0n disables it.
   assetsOutMin?: bigint
   automatic?: boolean
   callbackFee: bigint
-  // Declares the redeem path (instant vs cooldown). Must match the vault's
-  // actual state for the caller — resolve via `resolveIsInstant` before
-  // calling. A mismatch causes the Agent to send an immediate cancel.
+  // Instant vs cooldown path; must match the vault state (resolveIsInstant) or the Agent cancels.
   isInstant: boolean
-  // Address authorized to call `Router.cancel(id)` for cooldown redeems.
-  // Contract reverts with `ZeroAddress` if `0x0` is passed.
+  // Authorized to call Router.cancel for cooldown redeems; reverts if 0x0.
   operator: Address
   receiver: Address
   shares: bigint

@@ -46,7 +46,7 @@ export const fetchEarnPositions = async function ({
   const shares = await queryClient.ensureQueryData(hemiEarnSharesQueryOptions())
 
   // allSettled so one failing balance read doesn't sink the whole set (escalate only if all fail).
-  // ensureQueryData serves cache; the mutations evict earnPositionsKeyPrefix on settle for freshness.
+  // ensureQueryData serves cache; withdraw/settle and the delivery watcher reset earnPositionsKeyPrefix for freshness.
   const settled = await Promise.allSettled(
     shares.map(share =>
       queryClient

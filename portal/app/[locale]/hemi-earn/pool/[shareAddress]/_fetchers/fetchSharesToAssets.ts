@@ -22,7 +22,7 @@ export type SharesToAssetsParams = {
 
 // share→asset for redeem. Composes the asset-agnostic share→pegged leg with the gateway
 // previewRedeem, so switching the asset only re-runs the gateway step. peggedAmount is exposed
-// so useWithdraw can optimistically debit totalAssets(). fetchQuery (not ensureQueryData) on the
+// so useWithdraw can optimistically debit the user's share value. fetchQuery (not ensureQueryData) on the
 // share→pegged leg keeps a stale peggedAmount out of assetsOutMin.
 export async function fetchSharesToAssets({
   assetAddress,

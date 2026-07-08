@@ -76,7 +76,7 @@ const computeIsFeesError = ({
   (needsApproval && isApprovalGasFeesError)
 
 // Composed withdrawPreviewOptions (sharesToAssets + quoteRedeem) + useNeedsApproval so an
-// allowance failure reads apart from a preview failure, plus gas estimation.
+// allowance failure is distinguishable from a preview failure, plus gas estimation.
 export const useWithdrawPreview = function ({
   account,
   asset,

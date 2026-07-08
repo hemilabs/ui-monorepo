@@ -66,7 +66,7 @@ p {
 }
 
 .body-text-caption {
-  @apply text-xxs font-medium;
+  @apply text-caption font-medium;
 }
 .body-text-normal {
   @apply text-sm font-normal;

@@ -68,9 +68,6 @@ type Props = {
   onClose: VoidFunction
 }
 
-// Adapts the receive step's local state to the shared `resolveSettleStepStatus`
-// ladder. A thin wrapper (not inlined) so `buildReceiveStep` stays under the
-// complexity threshold.
 const resolveReceiveStatus = ({
   awaitingClaim,
   crossChainInFlight,
@@ -126,9 +123,6 @@ function resolveReceiveProgress({
   })
 }
 
-// Maps the settlement-enriched row, local withdraw status, and cooldown state to
-// the receive step's progress + terminal hash. Module-level so the component
-// stays under the complexity threshold.
 function buildReceiveStep({
   chainId,
   cooldownRemainingSec,
@@ -146,18 +140,15 @@ function buildReceiveStep({
   t: ReturnType<typeof useTranslations<'hemi-earn.pool.drawer'>>
   withdrawStatus: WithdrawStatusType
 }): StepPropsWithoutPosition {
-  // Only FINALIZED actually delivers the underlying asset (the recover path —
-  // RECOVERED — returns shares instead and is rendered by `addRecoverStep`).
+  // Only FINALIZED delivers the asset; RECOVERED returns shares (rendered by addRecoverStep).
   const isFinalized = row?.status === 'FINALIZED'
   const claimTxHash = isFinalized ? (row?.claimTxHash ?? undefined) : undefined
-  // A reverted CANCEL marker must not fail this step — strip it (the receive
-  // step only tracks claim/recover settlements).
+  // Strip a CANCEL marker so it can't fail this step (receive only tracks claim/recover).
   const settlement = claimRecoverSettlement(row?.settlement)
   const settlementTxHash =
     settlement && !settlement.failed ? settlement.txHash : undefined
   const unstakeMined = withdrawStatus === WithdrawStatus.WITHDRAW_TX_CONFIRMED
-  // `needsCooldown` defaults to true while `useIsCooldownEligible` loads (the
-  // common case); `cooldownElapsed` asks whether the timer has finished.
+  // Default to cooldown while eligibility loads; cooldownElapsed checks whether the timer finished.
   const needsCooldown = isCooldownEligible !== false
   const cooldownElapsed = cooldownRemainingSec === 0
   const deliveryHash = settlementTxHash ?? claimTxHash
@@ -187,8 +178,7 @@ const FAILED_STATUSES: WithdrawStatusType[] = [
   WithdrawStatus.WITHDRAW_TX_FAILED,
 ]
 
-// Adapts the recover step's local state to the shared ladder, mirroring
-// `resolveReceiveStatus`; auto-recover (no manual action) rests at PROGRESS.
+// Recover-step adapter to the shared ladder; auto-recover (no manual action) rests at PROGRESS.
 const resolveRecoverStepStatus = ({
   isComplete,
   needsRecoverAction,
@@ -208,8 +198,6 @@ const resolveRecoverStepStatus = ({
     settlementTxHash,
   })
 
-// Builds the `data:` argument for `useEstimateGas`. Module-level so the
-// component doesn't pay the branching tax for this conditional encode.
 function encodeRedeemForGasEstimate({
   account,
   assetAddress,
@@ -237,8 +225,6 @@ function encodeRedeemForGasEstimate({
   })
 }
 
-// Drawer opens after the user signs the first wallet prompt (approval if
-// needed, otherwise the redeem).
 export const ReviewWithdraw = function ({ onClose }: Props) {
   const { input, pool, selectedAsset, withdrawOperation } = usePoolForm()
   const t = useTranslations('hemi-earn.pool.drawer')
@@ -246,8 +232,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const chain = useChain(chainId)
   const { address } = useAccount()
 
-  // Shared subscription with the layout-mounted watcher; lets the new
-  // receive step flip to COMPLETED off the subgraph status.
+  // Shared subscription with the layout watcher; lets the receive step sync to the subgraph status.
   const { data: subgraphRows = [] } = useEarnTransactionsQuery()
   const subgraphRow = subgraphRows.find(
     r =>
@@ -261,17 +246,14 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     subgraphRow?.requestTxHash,
   )
   const settledRow = enrichWithSettlement(subgraphRow, settlement)
-  // A deliberate cancel still PENDING reads as the recover it's becoming: drop
-  // the moot cooldown countdown and render the recover (not receive) step.
+  // A still-PENDING deliberate cancel reads as the recover it's becoming: drop the countdown, render the recover step.
   const cancelling = !!settledRow && isUserCancel(settledRow)
 
   const { data: isCooldownEligible } = useIsCooldownEligible({
     account: address,
     stakingVault: pool.stakingVault,
   })
-  // Pool-level cooldown duration drives the static "Wait for the N-day
-  // cooldown period" copy while we don't yet have a request to query
-  // (pre-sign / pre-indexed).
+  // Pool-level cooldown duration drives the static "wait N days" copy before there's a request to query.
   const { data: cooldownDurationSec } = useCooldownDuration({
     stakingVault: pool.stakingVault,
   })
@@ -284,8 +266,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const withdrawStatus =
     withdrawOperation?.status ?? WithdrawStatus.APPROVAL_TX_COMPLETED
 
-  // Input is in share-token units (svetBTC); the Router burns shares
-  // directly. `assetsOutMin` is derived from the asset preview below.
+  // Input is in share units — the Router burns shares directly; assetsOutMin comes from the asset preview below.
   const shares = parseTokenUnits(input, pool.shareToken)
   const routerAddress = getHemiEarnRouterAddress()
 
@@ -418,9 +399,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       WithdrawStatus.WITHDRAW_TX_FAILED,
     ].includes(withdrawStatus)
 
-    // Mirror the deposit review: the LayerZero fee is paid as msg.value on the
-    // same `requestRedeem` tx, so we sum it into the withdraw line rather than
-    // showing a fictitious separate transaction.
+    // LayerZero fee is msg.value on the same requestRedeem tx, so fold it into the withdraw line (mirrors the deposit review).
     const withdrawLineTotal = withdrawGasFees + layerZeroFee
 
     return {
@@ -485,8 +464,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     if (settledRow && isAwaitingFinalize(settledRow)) {
       return <ClaimFromVaultCta transaction={settledRow} />
     }
-    // Auto-claim off: the user signs the claim here once the Agent delivers the
-    // asset back to the Router (FULFILLED).
+    // Auto-claim off: the user signs the claim once the Agent delivers the asset back (FULFILLED).
     if (settledRow && needsManualClaim(settledRow)) {
       return (
         <SettleCta
@@ -497,8 +475,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         />
       )
     }
-    // The redeem was cancelled and the shares are back on the Router; the user
-    // signs the recover to pull them to their wallet.
+    // Cancelled: the shares are back on the Router; the user signs recover to pull them to their wallet.
     if (settledRow && needsRecover(settledRow)) {
       return (
         <SettleCta

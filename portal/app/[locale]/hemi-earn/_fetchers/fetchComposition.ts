@@ -9,12 +9,8 @@ import { type Address, formatUnits, isAddressEqual } from 'viem'
 
 import { gatewayForShareQueryOptions } from '../_hooks/gatewayForShare'
 
-// Shape of each entry returned by `GET /analytics/treasury/:gatewayAddress`.
-// Token amounts (`totalDebt`, `withdrawable`, a strategy's `totalDebt`) are
-// denominated in the token's erc20 minimal units. `latestPrice` is the token's
-// oracle price denominated in the gateway's peg unit (e.g. BTC for the vetBTC
-// gateway), so converting to USD only needs the peg's USD price on top — see
-// `toCompositionData`.
+// Amounts are in erc20 minimal units; latestPrice is in the gateway's peg unit
+// (e.g. BTC for the vetBTC gateway), so USD = latestPrice × pegPrice.
 type TreasuryToken = {
   activeStrategies: { name: string; totalDebt: string }[]
   latestPrice: string
@@ -24,10 +20,7 @@ type TreasuryToken = {
   withdrawable: string
 }
 
-// Raw, locale-free and grouping-agnostic data cached by the composition query:
-// per whitelisted token, the USD value of each active strategy plus the
-// token's deployed (`totalDebt`) and total (`withdrawable`, deployed + idle)
-// USD values. Grouping into display items happens in `toCompositionItems`.
+// Cached raw data (locale-free, ungrouped); grouping into display items happens in toCompositionItems.
 export type CompositionData = {
   strategies: { amount: number; name: string }[]
   symbol: string
@@ -35,10 +28,6 @@ export type CompositionData = {
   withdrawable: number
 }[]
 
-// Turns the treasury response into the composition data. Each token's oracle
-// `latestPrice` is denominated in the gateway's peg unit, so its USD price is
-// `latestPrice × pegPrice` (the peg's USD price). `tokens` holds the resolved
-// metadata (symbol, decimals) to scale the token amounts.
 const toCompositionData = function (
   treasury: TreasuryToken[],
   tokens: Token[],
@@ -79,12 +68,8 @@ const toCompositionData = function (
   return data
 }
 
-// Groups the cached composition data into display items. 'protocol' lists the
-// individual strategies and appends the idle funds (`withdrawable` minus
-// `totalDebt`, across tokens) as a reserve-buffer entry. 'token' lists each
-// whitelisted token by its `withdrawable` value, which already contains the
-// token's idle share — so no separate buffer entry. Shares are percentages of
-// the grouped total.
+// 'protocol' groups by strategy and appends idle funds (withdrawable − totalDebt)
+// as a reserve buffer; 'token' groups by token (idle already included).
 export const toCompositionItems = function ({
   data,
   reserveBufferLabel,
@@ -123,7 +108,6 @@ export const toCompositionItems = function ({
   const total = visible.reduce((sum, item) => sum + item.amount, 0)
   return visible.map(item => ({
     amount: item.amount,
-    // Lets consumers exclude the buffer row from e.g. position counts
     isReserveBuffer: item.isReserveBuffer === true,
     name: item.name,
     share: total > 0 ? (item.amount / total) * 100 : 0,
@@ -142,9 +126,7 @@ export const fetchComposition = async function ({
   const gatewayAddress = await queryClient.ensureQueryData(
     gatewayForShareQueryOptions(shareAddress),
   )
-  // Whitelisted-token oracles are denominated in the gateway's peg unit, so a
-  // single feed lookup for the peg symbol prices every token. "USD" pegs are
-  // the identity (no conversion needed).
+  // Oracles are in the gateway's peg unit, so one peg-symbol price covers every token (USD peg = identity).
   const pegBaseSymbol = gateways.find(gateway =>
     isAddressEqual(gateway.address, gatewayAddress),
   )?.pegBaseSymbol
@@ -156,10 +138,7 @@ export const fetchComposition = async function ({
     `${apiUrl}/analytics/treasury/${gatewayAddress}`,
   )) as TreasuryToken[]
 
-  // The endpoint returns the token addresses but not their metadata, so
-  // resolve each one through the shared token query (token list + erc20
-  // fallback). Both lookups are cached and shared across reloads and other
-  // consumers.
+  // The endpoint returns addresses but no metadata; resolve each via the shared (cached) token query.
   const uniqueAddresses = [
     ...new Set(treasury.map(token => token.tokenAddress)),
   ]

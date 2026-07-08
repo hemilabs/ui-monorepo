@@ -14,10 +14,7 @@ export type DepositSharesParams = {
   shareAddress: Address
 }
 
-// `fetchQuery` (not `ensureQueryData`) so a stale cached `peggedAmount`
-// can't slip into `sharesOutMin` — gateway drift between mounts would
-// otherwise produce a `requestDeposit` whose min is derived from an
-// older quote than the one the user sees in the form.
+// fetchQuery (not ensureQueryData) so a stale cached peggedAmount can't slip into sharesOutMin from an older quote.
 export async function fetchDepositShares(
   queryClient: QueryClient,
   { amount, asset, shareAddress }: DepositSharesParams,

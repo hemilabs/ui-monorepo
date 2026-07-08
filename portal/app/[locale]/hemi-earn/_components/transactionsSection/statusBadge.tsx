@@ -68,12 +68,10 @@ function resolveStatusBadge(transaction: EarnTransaction, t: Translator) {
   if (status === 'FAILED') {
     return failedBadge(t)
   }
-  // A cancelled request (deposit or redeem) is mid-recover: the original tokens
-  // are coming back (auto-recover) or await the Recover CTA — never terminal.
+  // CANCELLED is mid-recover (auto-recover or awaiting the Recover CTA), never terminal.
   if (status === 'CANCELLED') {
     return inProgress(t('status.returned'))
   }
-  // The return icon separates a recovered/cancelled row from a completed one.
   if (status === 'RECOVERED') {
     return {
       icon: <ReturnCircleIcon className="text-neutral-400" />,
@@ -93,9 +91,7 @@ function resolveBadge(
   // A reverted claim/recover wins over the (now stale) manual-needed state.
   if (hasFailedSettlement(transaction)) return failedBadge(t)
   const userCancel = isUserCancel(transaction)
-  // Once it rests at CANCELLED it's the recover stage — neutral for a user
-  // cancel, amber for an Agent failure. Only the still-processing PENDING cancel
-  // reads as the passive "Cancelling withdrawal".
+  // At CANCELLED it's the recover stage — neutral for a user cancel, amber for an Agent failure; the PENDING cancel reads as "Cancelling".
   if (needsRecover(transaction)) return recoverBadge(userCancel, kind, t)
   if (userCancel) return inProgress(t('status.cancelling'))
   const byStatus = resolveStatusBadge(transaction, t)

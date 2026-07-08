@@ -48,8 +48,7 @@ type StepStates = {
 
 const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   CANCELLED: {
-    // The request tx landed (stake done); the cancel/return shows in the
-    // recover-path terminal step, not a failed stake.
+    // Request landed (stake done); the cancel/return shows in the terminal step, not a failed stake.
     stake: ProgressStatus.COMPLETED,
     waitingForShares: ProgressStatus.NOT_READY,
   },
@@ -79,10 +78,8 @@ const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   },
 }
 
-// FAILED splits by source: local rows mean the Hemi tx itself reverted (stake
-// step is FAILED), subgraph rows mean the Vetro Agent failed after a
-// successful Hemi tx (stake step completed, failure is in the cross-chain
-// step instead).
+// FAILED splits by source: local = Hemi tx reverted (stake FAILED); subgraph =
+// Agent failed after a good Hemi tx (failure in the cross-chain step).
 const resolveStepStates = (tx: EarnTransaction): StepStates =>
   tx.status === 'FAILED' && !isLocalEarnTransactionRow(tx)
     ? {
@@ -106,9 +103,6 @@ function buildStakeStep(tx: EarnTransaction, token: EvmToken, t: Translator) {
   }
 }
 
-// COMPLETED wins over everything; a reverted settlement → FAILED; a mining tx →
-// PROGRESS; a pending manual action → READY (active, not a spinner); else the
-// natural status.
 function resolveTerminalStatus(
   tx: EarnTransaction,
   baseStatus: ProgressStatusType,
@@ -126,8 +120,7 @@ function resolveTerminalStatus(
   return natural
 }
 
-// Happy path → "Get share tokens"; recover path → "Funds returned" (the asset
-// comes back, so it's labeled with the asset token).
+// Recover path returns the asset, so its terminal step is labeled with the asset token.
 function buildTerminalStep({
   baseStatus,
   settlementTxHash,
@@ -143,8 +136,7 @@ function buildTerminalStep({
 }): StepPropsWithoutPosition {
   const status = resolveTerminalStatus(tx, baseStatus, settlementTxHash)
   const txHash = settlementTxHash ?? getTerminalDeliveryTxHash(tx)
-  // Link whenever a delivery hash is available — an auto-finalized claim/recover
-  // has one too, even though the user didn't sign it.
+  // Link whenever a delivery hash exists — an auto-finalized claim/recover has one the user never signed.
   const explorerChainId = txHash ? hemi.id : undefined
   if (isRecoverPath(tx)) {
     // "Funds returned" only once RECOVERED; CANCELLED still awaits the recover.
@@ -209,8 +201,7 @@ export const HistoricalDepositReview = function ({
   })
 
   const { waitingForShares } = resolveStepStates(transaction)
-  // Only a still-mining settlement drives the step to PROGRESS; a failed one
-  // leaves the natural (FAILED) status and surfaces a Retry CTA instead.
+  // Only a still-mining settlement drives PROGRESS; a failed one keeps the natural (FAILED) status + Retry CTA.
   const { settlement } = transaction
   const settlementTxHash =
     settlement && !settlement.failed ? settlement.txHash : undefined
@@ -232,9 +223,7 @@ export const HistoricalDepositReview = function ({
       status: ProgressStatus.NOT_READY,
     })
   }
-  // Only the locally-mirrored entries carry `approvalTxHash` (see merge in
-  // `useEarnTransactions`). Rows opened from another browser/device won't
-  // have this step — the indexer doesn't link an approval tx to a request.
+  // Only local-mirror entries carry approvalTxHash; rows from another browser skip this step (the indexer can't link it).
   if (transaction.approvalTxHash) {
     steps.push(buildApprovalStep(transaction.approvalTxHash, token, t))
   }

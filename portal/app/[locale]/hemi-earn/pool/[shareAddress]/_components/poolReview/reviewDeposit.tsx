@@ -51,9 +51,6 @@ type Props = {
   onClose: VoidFunction
 }
 
-// COMPLETED wins; a remote failure or reverted settlement → FAILED; a mining tx
-// → PROGRESS; a pending manual action → READY; else PROGRESS (recover/auto or
-// confirmed) or NOT_READY.
 function resolveGetSharesStatus({
   awaitingUserAction,
   hasSettlementTx,
@@ -83,8 +80,7 @@ function getSharesStepMeta(
   subgraphRow: EarnTransaction | undefined,
   marker: { failed: boolean; txHash?: Hash } | undefined,
 ) {
-  // A failed marker leaves the natural status (so a Retry shows); only a
-  // still-mining one drives PROGRESS.
+  // A failed marker keeps the natural status (Retry shows); only a still-mining one drives PROGRESS.
   const settlementTxHash = marker && !marker.failed ? marker.txHash : undefined
   const settlementFailed = marker?.failed ?? false
   if (!subgraphRow) {
@@ -104,8 +100,7 @@ function getSharesStepMeta(
     isComplete: isRecover
       ? subgraphRow.status === 'RECOVERED'
       : subgraphRow.status === 'FINALIZED',
-    // Remote (Gateway/Agent) failure: the subgraph derives `failed → FAILED`
-    // while the Router stays PENDING. Reflect it instead of spinning forever.
+    // Remote (Agent) failure: subgraph marks FAILED while the Router stays PENDING — reflect it instead of spinning forever.
     isFailed: subgraphRow.status === 'FAILED',
     isRecover,
     settlementFailed,
@@ -113,8 +108,6 @@ function getSharesStepMeta(
   }
 }
 
-// Drawer opens after the user signs the first wallet prompt (approval if
-// needed, otherwise the deposit).
 export const ReviewDeposit = function ({ onClose }: Props) {
   const { depositOperation, input, pool, selectedAsset } = usePoolForm()
   const { localOperations } = useLocalEarnOperations()
@@ -123,8 +116,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
   const chain = useChain(chainId)
   const { address } = useAccount()
 
-  // Shared subscription with the layout-mounted watcher; lets the new
-  // get-share-tokens step flip to COMPLETED off the subgraph status.
+  // Shared subscription with the layout watcher; lets the get-share-tokens step sync to the subgraph status.
   const { data: subgraphRows = [] } = useEarnTransactionsQuery()
   const subgraphRow = subgraphRows.find(
     r =>
@@ -269,10 +261,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       DepositStatus.DEPOSIT_TX_FAILED,
     ].includes(depositStatus)
 
-    // Roll the LayerZero fee into the deposit step's gas line. Splitting it
-    // into its own step would imply a separate signature/transaction, which
-    // isn't the case — `msg.value = nativeFee` is paid as part of the same
-    // `requestDeposit` tx.
+    // Roll the LayerZero fee into the deposit gas line — it's msg.value on the same requestDeposit tx, not a separate signature.
     const depositLineTotal = depositGasFees + layerZeroFee
 
     const status = statusMap[depositStatus] ?? ProgressStatus.NOT_READY
@@ -309,9 +298,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     const deliveryHash = settlementTxHash ?? terminalHash
 
     return {
-      // Recover path → the asset comes back, labeled with the asset token.
-      // "Funds returned" only once RECOVERED; while still awaiting it reads as
-      // the pending "Funds to recover".
+      // Recover path returns the asset (labeled with the asset token); "Funds returned" only at RECOVERED.
       description: isRecover ? (
         <div className="flex items-center gap-x-2">
           <TokenLogo size="small" token={selectedAsset.token} />
@@ -347,8 +334,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     ) {
       return <RetryDeposit />
     }
-    // Auto-claim off: the user signs the claim here once the Agent has
-    // delivered the shares back to the Router (FULFILLED).
+    // Auto-claim off: the user signs the claim once the Agent delivers shares back (FULFILLED).
     if (settledRow && needsManualClaim(settledRow)) {
       return (
         <SettleCta
@@ -359,8 +345,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         />
       )
     }
-    // The request was cancelled and the original asset is back on the Router;
-    // the user signs the recover to pull it to their wallet.
+    // Cancelled: the original asset is back on the Router; the user signs recover to pull it to their wallet.
     if (settledRow && needsRecover(settledRow)) {
       return (
         <SettleCta
@@ -371,10 +356,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
         />
       )
     }
-    // Shares only land in the user's wallet once cross-chain delivery
-    // completes (subgraph FINALIZED). Showing the "Add token" CTA before
-    // that points the wallet at a token with no balance and confuses
-    // wallets that gate metadata reads on a non-zero balance.
+    // Only offer "Add token" at FINALIZED — earlier the wallet has no balance, and some wallets gate metadata reads on a non-zero balance.
     if (subgraphRow?.status === 'FINALIZED') {
       return <AddTokenToWalletCta token={pool.shareToken} />
     }

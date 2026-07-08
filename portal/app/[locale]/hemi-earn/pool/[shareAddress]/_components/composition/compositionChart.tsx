@@ -6,13 +6,11 @@ import { VictoryPie } from 'victory'
 
 import { type CompositionItemWithColor } from './compositionColumns'
 
-// Constants for the composition chart
 const chartSize = 216
 const innerRadius = 78
 const padAngle = 3
 const cornerRadius = 4
 
-// Lighter versions of the composition colors for the default (no hover) state
 const defaultOpacity = 0.3
 const activeOpacity = 1
 

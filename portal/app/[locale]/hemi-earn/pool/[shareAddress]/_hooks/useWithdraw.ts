@@ -27,36 +27,23 @@ import { type WithdrawOperation, WithdrawStatus } from '../_types/operations'
 import { useDrawerQueryString } from './useDrawerQueryString'
 
 type UseWithdraw = {
-  // Slippage-protected minimum the caller expects to receive on
-  // fulfillment, in `selectedAsset` units. Enforced on the remote chain;
-  // locked at request time and frozen across the ~7d cooldown.
+  // Slippage min in asset units; enforced remotely and frozen across the ~7d cooldown.
   assetsOutMin: bigint
   callbackFee: bigint
-  // Resolved by the caller via `useQuoteRedeem`, which mirrors what the
-  // Agent computes on Ethereum (`!cooldownEnabled || whitelisted`). The
-  // request body and the Router's gas reservation must agree on this; a
-  // mismatch causes the Agent to bounce the request as cancel.
+  // Must match what the Agent computes (via useQuoteRedeem) — a mismatch makes the Agent bounce the request as cancel.
   isInstant: boolean
   on?: (emitter: EventEmitter<RequestRedeemEvents>) => void
-  // Pegged-token amount that will leave `totalAssets()` when these shares
-  // are redeemed. Computed by the caller (the withdraw drawer) alongside
-  // the shares→asset conversion in `useSharesToAssets`. Pass `0n` while
-  // the preview is pending; `onSettled` invalidation reconciles.
+  // Pegged amount leaving totalAssets() on redeem (from useSharesToAssets); 0n while the preview is pending, reconciled by onSettled.
   peggedAmount: bigint
   pool: EarnPool
-  // Set by retry callers when the prior attempt had a successful approval
-  // (allowance is still on-chain, so `requestRedeem` won't emit
-  // `user-signed-approval` again). Carried forward into the new local-store
-  // entry so the historical drawer keeps surfacing the approval step.
+  // Retry callers pass the prior approval hash (allowance still on-chain, so no new
+  // user-signed-approval); carried into the new entry so the drawer keeps the approval step.
   priorApprovalTxHash?: Hash
   selectedAsset: EarnAsset
-  // Share amount in shareToken units — the user-entered withdraw amount.
-  // The Router's `requestRedeem` burns this many shares on Hemi.
+  // Withdraw amount in shareToken units; the Router's requestRedeem burns this many shares on Hemi.
   shares: bigint
-  // Set by retry callers: the `initiateTxHash` of the specific prior FAILED
-  // attempt being replaced. Once the new withdraw is signed, that entry is
-  // flagged `settled` so the table doesn't show the old failure alongside
-  // the new attempt.
+  // Retry callers pass the FAILED attempt's initiateTxHash; once the new withdraw is signed,
+  // that entry is flagged settled so the old failure doesn't show beside the new attempt.
   supersedesInitiateTxHash?: Hash
   updateWithdrawOperation?: (payload?: WithdrawOperation) => void
 }
@@ -82,8 +69,6 @@ export const useWithdraw = function ({
   const queryClient = useQueryClient()
   const [networkType] = useNetworkType()
   const routerAddress = getHemiEarnRouterAddress()
-  // Requires <LocalEarnOperationsProvider> upstream (mounted in the
-  // hemi-earn layout). Hook throws at runtime if used outside it.
   const { markSettledByInitiateTxHash, upsertLocalOperation } =
     useLocalEarnOperations()
 
@@ -131,21 +116,11 @@ export const useWithdraw = function ({
 
       const walletClient = await getWalletClient(config, { chainId })
 
-      // Local-store entries are created at two points:
-      //   1. `user-signed-approval` — captures `approvalTxHash` so a future
-      //      historical drawer can later render the approval step (the
-      //      indexer has no way to link an approval tx to a request).
-      //   2. `user-signed-withdraw` — adds `initiateTxHash`, which is the
-      //      key the merge would use to dedupe against the subgraph row.
-      // REDEEM rows aren't surfaced in the table yet, but the local entries
-      // still drive `useEarnTransactionsQuery` polling and the cooldown
-      // sub-step's reactivity.
+      // Local entries are created at two points: user-signed-approval (captures approvalTxHash,
+      // unlinkable by the indexer) and user-signed-withdraw (adds initiateTxHash, the merge dedupe key).
       const startedAt = Number(unixNowTimestamp())
-      // `amountIn` for REDEEM stores the share amount being burned (raw
-      // share-token units). The drawer displays this directly as "X
-      // {shareSymbol}" — survives `resetStateAfterOperation()` clearing
-      // the form input. DEPOSIT stores the asset amount instead; the
-      // difference reflects what each kind actually puts in on-chain.
+      // REDEEM stores the share amount being burned (share-token units), not the asset —
+      // that's what the drawer shows and what goes on-chain.
       const baseLocalPayload = {
         account: address,
         amountIn: shares.toString(),
@@ -157,10 +132,7 @@ export const useWithdraw = function ({
         startedAt,
       }
 
-      // Tracks the approval hash for this specific attempt. Seeded from
-      // `priorApprovalTxHash` so retries (where allowance is still on-chain
-      // and `user-signed-approval` won't fire) keep showing the original
-      // approval step. Overwritten when a fresh approval is signed.
+      // Approval hash for this attempt; seeded from priorApprovalTxHash for retries, overwritten if a fresh approval is signed.
       let observedApprovalTxHash: Hash | undefined = priorApprovalTxHash
 
       const { emitter, promise } = requestRedeem({
@@ -185,9 +157,7 @@ export const useWithdraw = function ({
           status: WithdrawStatus.APPROVAL_TX_PENDING,
           transactionHash: undefined,
         })
-        // Persist the approval hash to the local store so the drawer can
-        // surface the approval step across route changes — the indexer
-        // never sees this association.
+        // Persist so the drawer can show the approval step across routes (the indexer never links it).
         upsertLocalOperation({
           ...baseLocalPayload,
           approvalTxHash,
@@ -234,9 +204,7 @@ export const useWithdraw = function ({
             transactionHash,
           },
         })
-        // Hide the specific prior FAILED entry the user is replacing. Done
-        // here (and not on retry click) so the row only disappears once the
-        // user actually commits to the new attempt by signing.
+        // Hide the prior FAILED entry — here, not on retry click, so it only disappears once the user actually signs.
         if (supersedesInitiateTxHash) {
           markSettledByInitiateTxHash(supersedesInitiateTxHash)
         }
@@ -262,14 +230,9 @@ export const useWithdraw = function ({
           operation: { status: WithdrawStatus.WITHDRAW_TX_CONFIRMED },
         })
         updateNativeBalanceAfterFees(receipt)
-        // Optimistic bumps for user-side caches only. The Hemi tx burns the
-        // user's shares so wallet/share-value caches can be decremented
-        // right away. `poolTotalAssets` is intentionally left to the
-        // `onSettled` invalidation + the cross-chain delivery watcher: the
-        // vault on Ethereum still holds the assets until the LayerZero
-        // relay lands, so optimistically subtracting here would under-
-        // report TVL across the UI for the cross-chain window (and a
-        // refetch before delivery would bounce the number back up).
+        // Optimistic bumps for user-side caches only — the Hemi tx burns the user's shares now.
+        // Pool TVL waits for onSettled + the delivery watcher: the Ethereum vault still holds the
+        // assets until the relay lands, so debiting here would under-report TVL.
         queryClient.setQueryData<{ peggedAmount: bigint; shares: bigint }>(
           userShareValueQueryKey,
           old =>
@@ -338,13 +301,9 @@ export const useWithdraw = function ({
         queryKey: poolTotalAssetsQueryKey,
       })
       queryClient.invalidateQueries({ queryKey: userShareValueQueryKey })
-      // `resetQueries` (not `removeQueries`) so the outer
-      // `useEarnPositions` observer actually refetches: `removeQueries`
-      // evicts the cache but leaves active observers unnotified, so the
-      // staked-balance card kept showing the pre-withdraw value until a
-      // hard reload. `resetQueries` evicts AND triggers the queryFn —
-      // which lets `fetchEarnPositions`' inner `ensureQueryData` reads
-      // go to the network instead of returning stale share balances.
+      // resetQueries (not removeQueries) so the useEarnPositions observer refetches — removeQueries
+      // evicts but leaves observers unnotified, and reset also lets fetchEarnPositions' inner
+      // ensureQueryData reads hit the network instead of returning stale balances.
       queryClient.resetQueries({ queryKey: earnPositionsKeyPrefix })
     },
   })

@@ -33,12 +33,7 @@ type ReconcileArgs = {
   subgraphHashes: Set<string>
 }
 
-// Soft-settles any local entry whose `initiateTxHash` has appeared in the
-// subgraph — the subgraph row supersedes the local mirror in the merged
-// table, but the local entry stays in storage so drawers can still read
-// locally-captured metadata (e.g. `approvalTxHash`) that the indexer
-// doesn't expose. Idempotent: re-flagging an already-settled entry is a
-// no-op.
+// Soft-settle local entries once the subgraph indexes them; the entry stays for drawer metadata. Idempotent.
 function reconcileLocals({
   localOperations,
   markSettledByInitiateTxHash,
@@ -64,15 +59,9 @@ type DeliveredEvent = {
   status: DeliveredStatus
 }
 
-// Walks the subgraph rows and reports every request that transitioned from
-// an in-flight state into a terminal delivery state (FINALIZED / RECOVERED)
-// since the previous poll. Returns the delivered events with enough metadata
-// (kind, asset, receiver) for the caller to build the exact cache keys
-// that actually moved — deposits make the share OFT land on the user's
-// Hemi wallet, redeems make the underlying land on the user's Hemi wallet.
-// First-time observations of already-terminal hashes (page reload after
-// FINALIZED) do NOT count — those rows are historical and don't move
-// balances.
+// Requests that transitioned in-flight → terminal (FINALIZED/RECOVERED) since the last
+// poll, with the metadata to build the moved cache keys. First-time-terminal rows (page
+// reload) are historical and skipped — they don't move balances.
 function detectCrossChainDeliveries(
   previous: Map<string, EarnTransactionStatusType>,
   rows: EarnTransaction[],
@@ -95,13 +84,7 @@ function detectCrossChainDeliveries(
 const findShareForAsset = (configs: HemiEarnAssetConfig[], asset: Address) =>
   configs.find(config => isAddressEqual(config.asset, asset))?.share
 
-// Maps a terminal event to the token whose balance actually moved:
-//   DEPOSIT + FINALIZED → share OFT lands on the user's Hemi wallet
-//   DEPOSIT + RECOVERED → the deposited asset is refunded
-//   REDEEM  + FINALIZED → the underlying asset is delivered
-//   REDEEM  + RECOVERED → shares are returned to the user
-// RECOVERED inverts the delivery vs FINALIZED in both directions, so we
-// need (kind, status) to pick the right cache key.
+// Which token's balance moved. RECOVERED inverts the delivery vs FINALIZED, so both kind and status are needed.
 const movesShareBalance = (event: DeliveredEvent) =>
   (event.kind === 'DEPOSIT' && event.status === 'FINALIZED') ||
   (event.kind === 'REDEEM' && event.status === 'RECOVERED')
@@ -120,10 +103,7 @@ function invalidateOnDelivery(
 ) {
   queryClient.invalidateQueries({ queryKey: vetroPoolsPrefix })
   queryClient.invalidateQueries({ queryKey: vetroUserShareValuePrefix })
-  // Synchronous read of the already-loaded on-chain asset config list (the
-  // earn pages fetch it via `useHemiEarnShares`). If it isn't cached yet the
-  // share-balance key is skipped; the pools/positions invalidation below
-  // still runs.
+  // Sync read of the already-loaded config list; if not cached, skip the share-balance key (pools/positions still invalidate).
   const configs =
     queryClient.getQueryData(hemiEarnAssetConfigsQueryOptions().queryKey) ?? []
   for (const event of events) {
@@ -137,22 +117,12 @@ function invalidateOnDelivery(
       }),
     })
   }
-  // `resetQueries` is the only single-call primitive that does both halves
-  // of what we need: it removes every matching cache entry (so the inner
-  // `ensureQueryData` reads inside `fetchEarnPositions` go to the network
-  // instead of returning stale data) AND it triggers a refetch on the
-  // active observer (`useEarnPositions`, which stays mounted on the home
-  // page while the user waits for the deposit to settle). The intuitive
-  // pair `removeQueries` + `invalidateQueries` does not work in v5 — the
-  // first call evicts the cache entry, leaving `invalidateQueries` with
-  // nothing to match.
+  // resetQueries both evicts the cache (so fetchEarnPositions' ensureQueryData refetches)
+  // and refetches the mounted observer; removeQueries + invalidateQueries doesn't do both in v5.
   queryClient.resetQueries({ queryKey: earnPositionsKeyPrefix })
 }
 
-// Mount this exactly once per route group (today, inside the layout-level
-// `<EarnStatusUpdaters>`). Mounting from multiple consumers would multiply
-// the side-effect work without changing behavior — react-query dedupes the
-// underlying fetch, but every observer runs its own useEffect.
+// Mount exactly once per route group; extra mounts duplicate the side-effect work (RQ dedupes the fetch, not the effect).
 export const useEarnDeliveryWatcher = function () {
   const { address } = useAccount()
   const queryClient = useQueryClient()
@@ -164,9 +134,7 @@ export const useEarnDeliveryWatcher = function () {
     Map<string, EarnTransactionStatusType>
   >(new Map())
 
-  // The previous-status snapshot is account-scoped — wipe it on wallet
-  // change so account A's hashes don't leak into account B's transition
-  // detection.
+  // Account-scoped snapshot; wipe on wallet change so A's hashes don't leak into B's transition detection.
   useEffect(
     function resetSnapshotOnAccountChange() {
       previousSubgraphStatusRef.current = new Map()

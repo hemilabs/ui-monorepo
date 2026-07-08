@@ -33,10 +33,7 @@ const getDepositPreviewQueryKey = ({
     amount.toString(),
   ] as const
 
-// Mirror of `withdrawPreviewOptions` on the deposit side. Composes
-// quote-deposit + deposit-shares via `ensureQueryData`. Allowance lives
-// in `useNeedsApproval` at the hook layer so an allowance error is
-// surfaced independently from a quote/shares error.
+// Composes quote + deposit-shares. Allowance stays in useNeedsApproval so its error surfaces independently.
 export const depositPreviewOptions = ({
   account,
   amount,

@@ -60,8 +60,7 @@ type StepStates = {
 
 const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   CANCELLED: {
-    // A cancelled redeem isn't a failed unstake — the request landed and the
-    // shares are coming back via the recover path.
+    // A cancelled redeem isn't a failed unstake — the request landed; shares come back via the recover path.
     receive: ProgressStatus.NOT_READY,
     unstake: ProgressStatus.COMPLETED,
   },
@@ -91,9 +90,8 @@ const stepStatesByStatus: Record<EarnTransactionStatusType, StepStates> = {
   },
 }
 
-// FAILED splits by source: local rows mean the Hemi tx itself reverted
-// (unstake step is FAILED), subgraph rows mean the Vetro Agent failed after a
-// successful Hemi tx (unstake completed, failure is in the cross-chain step).
+// FAILED splits by source: local = Hemi tx reverted (unstake FAILED); subgraph =
+// Agent failed after a good Hemi tx (failure in the cross-chain step).
 const resolveStepStates = (tx: EarnTransaction): StepStates =>
   tx.status === 'FAILED' && !isLocalEarnTransactionRow(tx)
     ? {
@@ -140,8 +138,7 @@ function buildReceiveStep({
   t: Translator
   tx: EarnTransaction
 }) {
-  // Link the mining claim while still FULFILLED (the terminal `claimTxHash` only
-  // lands once FINALIZED), matching the deposit drawer.
+  // Link the mining claim while still FULFILLED — the terminal claimTxHash only lands at FINALIZED.
   const txHash = settlementTxHash ?? getTerminalDeliveryTxHash(tx)
   return {
     description: (
@@ -156,17 +153,14 @@ function buildReceiveStep({
   }
 }
 
-// On the recover path the user gets the SHARES back (not the asset), so the
-// terminal step is labeled with the share token: "Shares to recover" while
-// CANCELLED, "Shares returned" once RECOVERED.
+// Recover returns the SHARES (not the asset), so the terminal step is labeled with the share token.
 function buildRecoverStep(
   tx: EarnTransaction,
   shareToken: EvmToken,
   t: Translator,
   settlementTxHash: Hash | undefined,
 ) {
-  // Link the mining manual-recover tx while CANCELLED (its terminal
-  // `recoverTxHash` only lands once RECOVERED), matching the deposit drawer.
+  // Link the mining recover tx while CANCELLED — the terminal recoverTxHash only lands at RECOVERED.
   const txHash = settlementTxHash ?? getTerminalDeliveryTxHash(tx)
   return {
     description: (
@@ -271,11 +265,8 @@ function buildSteps({
     )
   }
   const unstakeStep = buildUnstakeStep(transaction, pool.shareToken, t)
-  // Recover path: the unstake landed and the shares come back (not the asset),
-  // so the cooldown/receive machinery doesn't apply. A deliberate cancel still
-  // PENDING (the keeper hasn't driven it to CANCELLED yet) joins this branch so
-  // the drawer drops the now-moot cooldown countdown + "Receive" step and reads
-  // as the recover it's becoming — matching the neutral "cancelling" banner.
+  // Recover path: shares come back, so the cooldown/receive machinery doesn't apply. A
+  // still-PENDING deliberate cancel joins here too, dropping the now-moot countdown + Receive step.
   if (isRecoverPath(transaction) || isUserCancel(transaction)) {
     steps.push(unstakeStep)
     steps.push(
@@ -309,13 +300,11 @@ export const HistoricalWithdrawReview = function ({
   transaction,
 }: Props) {
   const t = useTranslations('hemi-earn.transactions.drawer')
-  // The cooldown sub-step copy is shared with the live pool review; keep
-  // it under `pool.drawer` instead of duplicating the keys here.
+  // Cooldown copy is shared with the live pool review — reuse the pool.drawer namespace instead of duplicating keys.
   const tCooldown = useTranslations('hemi-earn.pool.drawer')
   const { address } = useAccount()
 
-  // `useToken` returns `Token | undefined` (BtcToken | EvmToken); for the
-  // Hemi-side asset address this is always an EvmToken.
+  // useToken returns Token | undefined; for the Hemi-side asset it's always an EvmToken.
   const { data: rawReceiveToken } = useToken({
     address: transaction.asset,
     chainId: hemi.id,

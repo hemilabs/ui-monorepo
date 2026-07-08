@@ -28,12 +28,8 @@ type Props = {
   transaction: EarnTransaction
 }
 
-// "Try again" CTA shown inside `<HistoricalDepositReview>` when a deposit
-// failed. Reuses `useDeposit` directly — the hook is decoupled from the pool
-// drawer (`setDrawerQueryString` is wired by the pool components, not here).
-// On `user-signed-deposit`, redirects the drawer's `earnTxId` to the new tx
-// hash so the drawer transitions in place from the FAILED view to the new
-// in-flight view (instead of closing or going blank).
+// Retry CTA in the historical deposit drawer; on user-signed-deposit it redirects
+// earnTxId to the new tx so the drawer transitions in place from FAILED to in-flight.
 export const RetryFailedDeposit = function ({
   asset,
   pool,

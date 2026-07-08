@@ -22,42 +22,29 @@ export type EarnTransactionStatusType =
 
 export type EarnTransactionKindType = 'DEPOSIT' | 'REDEEM'
 
-// Mirror of the `Request` entity exposed by the `hemi-earn-requests-subgraph`
-// Envio indexer. BigInt values arrive as JSON strings; consumers parse with
-// `BigInt(...)` for arithmetic (`formatUnits`) and `Number(...)` for display
-// (`InRelativeTime`). `'TX_PENDING'` and `'FAILED'` are portal-synthetic
-// statuses (derived in `useEarnTransactions` and at the fetcher boundary
-// respectively) — they don't exist in the subgraph schema.
-// A settlement the user signed for a request, tracked locally (the reverted tx
-// isn't a subgraph event). `CLAIM`/`RECOVER`/`CANCEL` are Hemi Router txs;
-// `UNSTAKE` is the Ethereum-side `Agent.claimUnstake` that finalizes a matured
-// cooldown redeem. `failed` lets the UI offer a Retry to re-call the step.
+// A locally-tracked settlement tx the user signed (not a subgraph event). UNSTAKE
+// is the Ethereum Agent.claimUnstake; failed lets the UI offer a Retry.
 export type EarnSettlement = {
   failed: boolean
   kind: 'CLAIM' | 'RECOVER' | 'CANCEL' | 'UNSTAKE'
   txHash?: Hash
 }
 
+// Subgraph Request row; bigints arrive as JSON strings. TX_PENDING/FAILED are
+// portal-synthetic statuses (not in the subgraph schema).
 export type EarnTransaction = {
   amountIn: string
   amountOut: string | null
-  // Approval tx hash, only available for entries surfaced from this
-  // browser's local store (where `useDeposit` captures it on
-  // `user-signed-approval`). Subgraph-only rows don't expose it — the
-  // indexer has no way to tie an approval tx to a specific request.
+  // Only present on local-store rows; the indexer can't tie an approval tx to a request.
   approvalTxHash?: Hash
   asset: Address
   automatic: boolean
-  // True once the user signed `Router.cancel` for this request. With `failed`
-  // it tells a deliberate cancel (`cancellationRequested && !failed`) apart from
-  // an Agent failure on a CANCELLED/RECOVERED redeem.
+  // True once the user signed Router.cancel; with failed, tells a deliberate cancel from an Agent failure.
   cancellationRequested: boolean
-  // Unix-seconds the Vetro Agent set on Ethereum at LayerZero-observation
-  // time. Null until the Agent emits `UnstakeRequested`; immutable after.
+  // Unix seconds set by the Agent on UnstakeRequested; null before, immutable after.
   claimableAt?: string | null
   claimTxHash: Hash | null
-  // Agent-side failure flag (lingers through CANCELLED/RECOVERED). A recover
-  // with `failed: false` is a deliberate cancel, not a failure.
+  // Agent-side failure flag; lingers through CANCELLED/RECOVERED (failed:false recover = deliberate cancel).
   failed: boolean
   kind: EarnTransactionKindType
   processedAt?: string | null
@@ -66,86 +53,56 @@ export type EarnTransaction = {
   requestedAt: string
   requestId: string
   requestTxHash: Hash
-  // Locally-tracked manual claim/recover attempt for this request (enriched
-  // from the local store by `useEarnTransactions`, like `approvalTxHash`).
   settlement?: EarnSettlement
   status: EarnTransactionStatusType
 }
 
-// One deposit option that settles into a share OFT.
 export type EarnAsset = {
   address: Address
   token: EvmToken
 }
 
-// A pool, in this codebase, is one Vetro share vault on the Ethereum side
-// (e.g. sVUSD) plus every deposit asset registered on the Hemi Router that
-// settles into it. APY and TVL live at the share level — the per-asset rows
-// of the old ERC-4626 model are now collapsed into `assets`.
-//
-// `totalDeposits` is `StakingVault.totalAssets()`, expressed in the pegged
-// token's units (vBTC, vUSD — that's what the vault's `asset()` returns).
-// Pair it with `peggedToken` for formatting and pricing; never with
-// `shareToken`, since the share OFT has no public price feed. It is
-// `undefined` while the TVL read is in flight — pair with `totalDepositsStatus`
-// so consumers can show a skeleton (pending) or '-' (error) instead of `$0`.
-// `apy` is tri-state:
-//   `undefined` — APY query still pending (show skeleton)
-//   `null`      — APY query settled but no value for this share (error or
-//                 missing in response → show '-')
-//   `number`    — APY available
+// A pool = one Vetro share vault (Ethereum) plus every Hemi deposit asset that settles into it.
 export type EarnPool = {
+  // null = settled with no value (show '-'); undefined = still pending.
   apy: number | null | undefined
   assets: EarnAsset[]
   exposureTokens: { address: Address; chainId: EvmToken['chainId'] }[]
   peggedToken: EvmToken
   shareAddress: Address
   shareToken: EvmToken
-  // Ethereum-side ERC-4626 staking vault (`Router.assetsData(asset).remoteShare`)
+  // Ethereum ERC-4626 staking vault (assetsData(asset).remoteShare).
   stakingVault: Address
+  // StakingVault.totalAssets() in peggedToken units — price via peggedToken, never shareToken (no feed); undefined while loading.
   totalDeposits: bigint | undefined
   totalDepositsStatus: QueryStatus
 }
 
-// `yourDeposit` is the raw share OFT balance (denominated in
-// `shareToken.decimals`); fiat conversion goes through `peggedToken` via
-// `convertToAssets`.
 export type EarnPosition = {
   peggedToken: EvmToken
   shareAddress: Address
   shareToken: EvmToken
+  // Raw share OFT balance (shareToken.decimals); fiat goes through peggedToken via convertToAssets.
   yourDeposit: bigint
 }
 
-// Local mirror of an earn operation initiated from this browser. Survives the
-// route change between /hemi-earn and /hemi-earn/pool/[shareAddress] and is
-// soft-deleted (flag `settled: true`) once the subgraph indexes the matching
-// request — `useEarnDeliveryWatcher`'s reconcile loop flips the flag. The
-// entry stays in storage so the drawer can keep enriching the subgraph row
-// with locally-captured metadata that the indexer doesn't expose (e.g.
-// `approvalTxHash`). TTL + per-account cap keep storage bounded.
-//
-// `amountIn` is a string because bigint can't be serialized to JSON (and
-// therefore can't be persisted to localStorage). Same convention as
-// `CommonOperation.amount` in `portal/types/tunnel.ts`. Convert with
-// `BigInt(...)` only when arithmetic is needed (e.g. formatUnits).
+// Local mirror of an earn op from this browser; survives route changes and is
+// soft-deleted (settled:true) once indexed, but kept so the drawer can still read
+// local-only metadata (e.g. approvalTxHash) the indexer never exposes.
 type LocalEarnOperationBase = {
   account: Address
+  // String because bigint isn't JSON-serializable for localStorage.
   amountIn: string
   approvalTxHash?: Hash
   asset: Address
   chainId: Chain['id']
   initiateTxHash?: Hash
   operator?: Address
-  // Manual claim/recover the user signed on this request (keyed by the same
-  // `initiateTxHash` = the request tx). Survives the soft-settle so the drawer
-  // keeps offering the Retry after the subgraph indexes the request.
+  // Manual claim/recover the user signed; survives the soft-settle so the drawer keeps offering Retry.
   settlement?: EarnSettlement
   settled?: boolean
   shareAddress: Address
-  // Unix seconds. Matches the unit of `TTL_SECONDS` in
-  // `localEarnOperationsContext.tsx` — if this ever changes to ms, the GC
-  // comparison there must change too.
+  // Unix seconds — must match TTL_SECONDS' unit in localEarnOperationsContext (the GC compares them).
   startedAt: number
 }
 

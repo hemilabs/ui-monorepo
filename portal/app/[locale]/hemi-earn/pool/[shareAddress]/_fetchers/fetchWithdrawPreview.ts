@@ -33,14 +33,8 @@ const getWithdrawPreviewQueryKey = ({
     shares.toString(),
   ] as const
 
-// Composes the two preview reads the withdraw form needs (shares → asset
-// preview + redeem quote) into a single query so the call site only deals
-// with one subscription. Allowance/needsApproval are intentionally NOT in
-// this composition — they live in `useNeedsApproval` so the form can
-// surface a real allowance failure independently from a preview/quote
-// failure. Freshness of the on-chain slippage min (`assetsOutMin`) is
-// guaranteed inside `fetchSharesToAssets`, which uses `fetchQuery` on the
-// shares→pegged sub-leg so a stale cached `peggedAmount` cannot slip in.
+// Composes sharesToAssets + redeem quote into one subscription. Allowance stays in useNeedsApproval
+// so its error surfaces independently; assetsOutMin freshness is handled by fetchSharesToAssets' fetchQuery.
 export const withdrawPreviewOptions = ({
   account,
   asset,

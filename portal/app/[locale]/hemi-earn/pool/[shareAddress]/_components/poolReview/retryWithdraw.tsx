@@ -28,8 +28,7 @@ export const RetryWithdraw = function () {
   } = usePoolForm()
 
   const t = useTranslations()
-  // Input is in share-token units (svetBTC); the Router burns shares
-  // directly. `assetsOutMin` is derived from the asset preview below.
+  // Input is in share units — the Router burns shares directly; assetsOutMin comes from the asset preview below.
   const shares = parseTokenUnits(input, pool.shareToken)
 
   const {
@@ -82,9 +81,7 @@ export const RetryWithdraw = function () {
     priorApprovalTxHash: withdrawOperation?.approvalTxHash,
     selectedAsset,
     shares,
-    // Hide the specific failed row from the table when the user commits to
-    // this retry. `withdrawOperation.transactionHash` is the failed redeem's
-    // hash (set on `user-signed-withdraw` and not cleared by the revert).
+    // Hide the specific failed row once this retry is signed (transactionHash is the failed redeem's hash).
     supersedesInitiateTxHash: withdrawOperation?.transactionHash,
     updateWithdrawOperation,
   })

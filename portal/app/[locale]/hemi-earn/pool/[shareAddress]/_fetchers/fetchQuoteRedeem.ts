@@ -28,10 +28,8 @@ export type QuoteRedeemParams = {
   shares: bigint
 }
 
-// Mirror of `fetchQuoteDeposit`: resolves the redeem path (instant vs
-// cooldown) on Ethereum, then `Agent.quoteRedeemFulfillment` on Ethereum,
-// then `Router.quoteRedeem` on Hemi with the resolved `isInstant`. Plain
-// async so it stays callable outside of react-query.
+// Resolves isInstant (Ethereum) → quoteRedeemFulfillment (Ethereum) → quoteRedeem (Hemi).
+// Plain async so it stays callable outside react-query.
 export async function fetchQuoteRedeem({
   account,
   asset,

@@ -52,10 +52,8 @@ export const TransactionsTable = function () {
         columns={columns}
         data={transactions}
         loading={isPending}
-        // Virtual mode (default) gives sticky header + body scroll out of the
-        // box, so a long list of past deposits doesn't push the page height.
-        // Mobile column order per designer: Action, Status, Type, Amount,
-        // Date (so the most-used cells stay reachable when narrow).
+        // Virtual mode: sticky header + body scroll so a long list doesn't grow the page.
+        // Mobile column order (designer): Actions, Status, Type, Amount, Date.
         priorityColumnIdsOnSmall={[
           'actions',
           'status',
@@ -65,8 +63,7 @@ export const TransactionsTable = function () {
         ]}
         rowSize={48}
         skeletonRows={5}
-        // Keep the desktop column layout from 'md' (768px) up; the compact,
-        // reordered layout only applies on narrow mobile viewports.
+        // Desktop layout from md up; the compact reordered layout is mobile-only.
         smallBreakpoint={screenBreakpoints.md}
       />
     )

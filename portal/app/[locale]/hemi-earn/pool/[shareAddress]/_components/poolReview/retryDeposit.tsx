@@ -80,9 +80,7 @@ export const RetryDeposit = function () {
     priorApprovalTxHash: depositOperation?.approvalTxHash,
     selectedAsset,
     sharesOutMin,
-    // Hide the specific failed row from the table when the user commits to
-    // this retry. `depositOperation.transactionHash` is the failed deposit's
-    // hash (set on `user-signed-deposit` and not cleared by the revert).
+    // Hide the specific failed row once this retry is signed (transactionHash is the failed deposit's hash).
     supersedesInitiateTxHash: depositOperation?.transactionHash,
     updateDepositOperation,
   })

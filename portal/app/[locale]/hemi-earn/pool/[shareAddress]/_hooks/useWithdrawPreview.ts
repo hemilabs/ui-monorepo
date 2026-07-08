@@ -75,11 +75,8 @@ const computeIsFeesError = ({
   isPreviewError ||
   (needsApproval && isApprovalGasFeesError)
 
-// Subscribes to a single composed query (`withdrawPreviewOptions`) that
-// fans out `sharesToAssets` + `quoteRedeem` via `ensureQueryData`, and
-// pairs it with the canonical `useNeedsApproval` for allowance reads so
-// the form can tell an allowance failure apart from a preview failure.
-// Adds the wagmi-side gas estimation on top.
+// Composed withdrawPreviewOptions (sharesToAssets + quoteRedeem) + useNeedsApproval so an
+// allowance failure reads apart from a preview failure, plus gas estimation.
 export const useWithdrawPreview = function ({
   account,
   asset,
@@ -128,9 +125,7 @@ export const useWithdrawPreview = function ({
   const quote = composed?.quote
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
 
-  // Gate on `!isAllowanceLoading` so the fees summary (driven by canWithdraw)
-  // can't render with `needsApproval=false` while allowance is still pending —
-  // otherwise the user sees a wrong total that jumps up once allowance settles.
+  // Gate on !isAllowanceLoading so the fee total doesn't render (and then jump) while allowance is still pending.
   const canWithdraw =
     validInput &&
     shares > BigInt(0) &&
@@ -167,10 +162,7 @@ export const useWithdrawPreview = function ({
       isGasUnitsError: isWithdrawGasUnitsError,
     })
 
-  // `*Raw` fields preserve `undefined` while the composed query is loading
-  // so the summary can render a skeleton; the bigint aliases default to 0n
-  // for hooks that don't tolerate undefined (e.g. `useWithdraw`'s
-  // optimistic decrements).
+  // *Raw fields keep undefined (for skeletons) while loading; the bigint aliases default to 0n for hooks that can't take undefined.
   return {
     assetOut,
     assetOutRaw: composed?.assetOut,

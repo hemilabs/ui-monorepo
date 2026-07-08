@@ -15,10 +15,7 @@ type Props = {
   pool: EarnPool
 }
 
-// Selects which deposit asset (e.g. USDC vs USDT) the user wants to send into
-// the share vault. Local state only — the route stays on the share, no
-// navigation. When a pool only has one asset (degenerate case), the chip is
-// read-only.
+// Local state only — picking a deposit asset doesn't navigate; a single-asset pool renders read-only.
 export const AssetSelector = function ({ disabled, pool }: Props) {
   const { selectedAsset, setSelectedAsset } = usePoolForm()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)

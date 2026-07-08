@@ -27,10 +27,7 @@ type Props = {
   transaction: EarnTransaction
 }
 
-// "Try again" CTA shown inside `<HistoricalWithdrawReview>` when a redeem
-// failed. Mirrors `<RetryFailedDeposit>`: reuses `useWithdraw` and on
-// `user-signed-withdraw` redirects the drawer's `earnTxId` so the FAILED
-// view transitions in place into the new in-flight view.
+// Retry CTA in the historical withdraw drawer; mirrors RetryFailedDeposit, redirecting earnTxId on user-signed-withdraw.
 export const RetryFailedWithdraw = function ({
   asset,
   pool,
@@ -41,8 +38,7 @@ export const RetryFailedWithdraw = function ({
     useState<WithdrawOperationRunning>('idle')
   const t = useTranslations()
 
-  // `amountIn` on a REDEEM row is in share-token units — exactly what the
-  // Router burns again on retry.
+  // A REDEEM row's amountIn is in share units — exactly what the Router re-burns on retry.
   const shares = BigInt(transaction.amountIn)
 
   const {

@@ -69,7 +69,6 @@ export const HistoricalMetrics = function ({
           <h2 className="shrink-0 text-2xl font-semibold leading-8 -tracking-[0.48px] text-neutral-950">
             {renderHeadline()}
           </h2>
-          {/* Desktop: period + metric type toggles inline */}
           <div className="hidden items-center gap-3 lg:flex">
             <div className="flex items-center gap-2">
               <SegmentedControlItem
@@ -113,7 +112,6 @@ export const HistoricalMetrics = function ({
               </SegmentedControlItem>
             </div>
           </div>
-          {/* Mobile: only metric type toggle inline */}
           <div className="flex items-center gap-2 lg:hidden">
             <SegmentedControlItem
               onClick={() => setMetricType('deposits')}
@@ -139,7 +137,6 @@ export const HistoricalMetrics = function ({
             period={period}
           />
         </div>
-        {/* Mobile: period buttons below chart */}
         <div className="mt-6 flex items-center gap-2 lg:hidden">
           <SegmentedControlItem
             className="flex-1"

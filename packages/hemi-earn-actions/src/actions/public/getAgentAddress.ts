@@ -12,9 +12,7 @@ import { readContract } from 'viem/actions'
 import { getHemiEarnRouterAddress } from '../../constants'
 import { routerAbi } from '../../routerAbi'
 
-// Reads the LayerZero peer stored on the Router (Hemi-side) and decodes it into
-// the Agent's address on Ethereum. The peer is stored as a left-padded bytes32,
-// so the address is the trailing 20 bytes.
+// The LayerZero peer is a left-padded bytes32; the Agent address is its trailing 20 bytes.
 export const getAgentAddress = async function (
   client: Client,
   {

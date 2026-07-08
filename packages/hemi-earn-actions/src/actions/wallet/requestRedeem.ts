@@ -34,11 +34,8 @@ const calculateAdjustedShares = function ({
   requestedShares: bigint
   userShares: bigint
 }) {
-  // During withdraw operations, the requested shares may be very close to
-  // (but not exactly) the user's balance due to rounding. If above 99.9% of
-  // the balance, withdraw the full balance to avoid leaving dust behind.
-  // Invariant: `requestedShares <= userShares` is guaranteed by the upstream
-  // `canRequestRedeem` validation in `runRequestRedeem` before this is called.
+  // Snap to the full balance when within 0.1% to avoid leaving dust
+  // (upstream canRequestRedeem already guarantees requestedShares <= userShares).
   const threshold = (userShares * BigInt(999)) / BigInt(1000)
   if (requestedShares >= threshold) {
     return userShares
@@ -61,26 +58,16 @@ const runRequestRedeem = ({
 }: {
   account: Address
   asset: Address
-  // Minimum underlying assets accepted on fulfillment (slippage protection
-  // enforced on the remote chain). Defaults to `0n` when omitted; portal
-  // callers compute this via `applySlippage` against the UX_SPEC defaults
-  // (see `portal/.../hemi-earn/_constants/slippage.ts`).
+  // Min assets accepted on fulfillment (slippage, enforced remotely); 0n disables it.
   assetsOutMin?: bigint
   callbackFee: bigint
-  // Declares the redeem path (instant vs cooldown). Must match the vault's
-  // actual state for `account` — resolve via `resolveIsInstant`. Mismatch
-  // causes the Agent to send an immediate cancel; user pays gas for nothing.
+  // Instant vs cooldown path; must match the vault state (resolveIsInstant) or the Agent cancels and the user eats gas.
   isInstant: boolean
-  // Address authorized to call `Router.cancel(id)` for cooldown redeems.
-  // Contract reverts with `ZeroAddress` if `0x0` is passed.
+  // Authorized to call Router.cancel for cooldown redeems; reverts if 0x0.
   operator: Address
   receiver: Address
   routerAddress?: Address
   shares: bigint
-  // Share OFT registered for `asset` on the Router. Required — the asset
-  // registry is loaded dynamically by the portal (via `getAssetRegistry`),
-  // so callers always have this value available and the action no longer
-  // tries to resolve it from a static map.
   shareToken: Address
   walletClient: WalletClient
 }) =>

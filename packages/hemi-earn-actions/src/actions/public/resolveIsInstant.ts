@@ -4,13 +4,7 @@ import {
 } from '@vetro-protocol/earn/actions'
 import { type Address, type Client } from 'viem'
 
-// Mirrors `Agent.handleRedeemRequest` (Agent.sol:235):
-//   _instantAllowed = !staking.cooldownEnabled() || staking.instantWithdrawWhitelist(caller)
-// The Router needs `isInstant` declared up-front so it can reserve the right
-// remote gas budget at quote/request time. If the value disagrees with the
-// vault's actual state for `caller` when the Agent processes the message, the
-// Agent sends an immediate cancel and the user pays gas for nothing — so this
-// helper must match the Agent's check exactly.
+// Mirrors Agent.handleRedeemRequest exactly; any drift makes the Agent cancel and the user eats gas.
 export const resolveIsInstant = async function ({
   caller,
   client,

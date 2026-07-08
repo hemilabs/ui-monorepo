@@ -24,9 +24,7 @@ const runClaimDeposit = ({
         throw new Error('Chain is not defined on wallet')
       }
 
-      // Router IDs start at 1 (see `Router.initialize`), so `0n` is never
-      // a valid request and the contract would otherwise revert with an
-      // opaque `RequestNotFound`. Fail loudly here instead.
+      // Router IDs start at 1; reject 0n instead of an opaque contract revert.
       if (requestId <= BigInt(0)) {
         emitter.emit('tx-failed-validation', 'invalid requestId')
         return

@@ -45,10 +45,7 @@ export type RequestRedeemEvents = CommonEvents &
     'withdraw-transaction-succeeded': [TransactionReceipt]
   }
 
-// Single-tx Router writes with no approval / no quote leg (claim & recover).
-// The 4 settlement actions share the same shape — `getRequest` already lets
-// the UI read the current `Status` to know which one to surface, so the
-// event vocabulary is intentionally generic and reused via type aliases.
+// One generic vocabulary reused by the single-tx settlement writes (claim & recover).
 type SettlementEvents = {
   'pre-tx': []
   'tx-failed': [Error]
@@ -65,11 +62,8 @@ export type ClaimRedeemEvents = CommonEvents & SettlementEvents
 export type ClaimUnstakeEvents = CommonEvents & SettlementEvents
 export type RecoverDepositEvents = CommonEvents & SettlementEvents
 export type RecoverRedeemEvents = CommonEvents & SettlementEvents
-// `Router.cancel(id)` only emits `CancellationRequested` and never moves the
-// request out of PENDING — the user still needs to wait for the keeper-driven
-// Agent cancel + `recoverRedeem` follow-ups. The event vocabulary still maps
-// onto `SettlementEvents` because the tx flow here is identical: one Hemi
-// write with no allowance / no quote.
+// Router.cancel only emits CancellationRequested; the keeper's Agent.cancel then
+// sets CANCELLED and the user calls recoverRedeem to pull shares back.
 export type CancelRedeemEvents = CommonEvents & SettlementEvents
 
 // Mirrors the on-chain `Kind` enum from Router.sol (DEPOSIT = 0, REDEEM = 1).

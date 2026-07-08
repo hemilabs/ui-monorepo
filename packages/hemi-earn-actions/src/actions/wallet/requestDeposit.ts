@@ -51,15 +51,11 @@ const runRequestDeposit = ({
   amount: bigint
   asset: Address
   callbackFee: bigint
-  // Address authorized to call `Agent.cancel(id)` on the remote chain.
-  // Contract reverts with `ZeroAddress` if `0x0` is passed.
+  // Authorized to call Agent.cancel on the remote chain; reverts if 0x0.
   operator: Address
   receiver: Address
   routerAddress?: Address
-  // Minimum shares accepted on fulfillment (slippage protection enforced
-  // on the remote chain). Defaults to `0n` when omitted; portal callers
-  // compute this via `applySlippage` against the UX_SPEC defaults (see
-  // `portal/.../hemi-earn/_constants/slippage.ts`).
+  // Min shares accepted on fulfillment (slippage, enforced remotely); 0n disables it.
   sharesOutMin?: bigint
   walletClient: WalletClient
 }) =>

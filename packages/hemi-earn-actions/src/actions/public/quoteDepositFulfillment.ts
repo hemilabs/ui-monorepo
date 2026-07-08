@@ -9,17 +9,8 @@ import { readContract } from 'viem/actions'
 
 import { agentAbi } from '../../agentAbi'
 
-// Reads the LayerZero native fee the Agent on Ethereum needs to send the
-// fulfillment response (sVetToken OFT) back to the Router on Hemi. The
-// caller passes this value as `callbackFee` into `quoteDeposit`
-// (Hemi-side), which folds it into the total `msg.value` of `requestDeposit`.
-//
-// `share` is the **Ethereum-side staking vault (sVetToken) address** — the
-// token being OFT-bridged back on the fulfillment leg. Since the
-// `b071540 Stateless Agent` refactor the Agent no longer holds an
-// `assetsData(asset)` mapping; the share has to be supplied directly.
-// Resolve via `Router.assetsData(asset).remoteShare` on the portal (see the
-// `shareConfigQueryOptions` helper).
+// Native fee the Agent needs to send its fulfillment OFT back to Hemi; the caller
+// folds it into requestDeposit's msg.value via quoteDeposit.
 export const quoteDepositFulfillment = async function ({
   agentAddress,
   client,

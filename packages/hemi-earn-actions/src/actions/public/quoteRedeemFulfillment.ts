@@ -9,11 +9,8 @@ import { readContract } from 'viem/actions'
 
 import { agentAbi } from '../../agentAbi'
 
-// Reads the LayerZero native fee the Agent on Ethereum needs to send the
-// fulfillment response back to the Router on Hemi for a redeem. Caller passes
-// this into `quoteRedeem` (Hemi-side) and ultimately as `msg.value` to
-// `requestRedeem`. The Agent looks up the share OFT internally from the asset
-// address — the portal only needs to supply the asset.
+// Native fee the Agent needs to send its redeem fulfillment back to Hemi; the caller
+// folds it into requestRedeem's msg.value via quoteRedeem.
 export const quoteRedeemFulfillment = async function ({
   agentAddress,
   asset,

@@ -5,6 +5,7 @@ export {
 
 export type {
   CancelRedeemEvents,
+  CancelRequestEvents,
   ClaimDepositEvents,
   ClaimRedeemEvents,
   ClaimUnstakeEvents,
@@ -14,4 +15,5 @@ export type {
   RequestKind,
   RequestRedeemEvents,
   RequestStatus,
+  RetryRequestEvents,
 } from './src/types'

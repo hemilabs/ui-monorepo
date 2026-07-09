@@ -65,6 +65,9 @@ export type RecoverRedeemEvents = CommonEvents & SettlementEvents
 // Router.cancel only emits CancellationRequested; the keeper's Agent.cancel then
 // sets CANCELLED and the user calls recoverRedeem to pull shares back.
 export type CancelRedeemEvents = CommonEvents & SettlementEvents
+// Agent-side writes for a failed request on Ethereum (cancel ≠ Router-side CancelRedeem).
+export type CancelRequestEvents = CommonEvents & SettlementEvents
+export type RetryRequestEvents = CommonEvents & SettlementEvents
 
 // Mirrors the on-chain `Kind` enum from Router.sol (DEPOSIT = 0, REDEEM = 1).
 export type RequestKind = 0 | 1

@@ -1,7 +1,21 @@
 export const agentAbi = [
   {
     inputs: [{ internalType: 'uint256', name: 'requestId_', type: 'uint256' }],
+    name: 'cancel',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'requestId_', type: 'uint256' }],
     name: 'claimUnstake',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'requestId_', type: 'uint256' }],
+    name: 'retry',
     outputs: [],
     stateMutability: 'payable',
     type: 'function',
@@ -41,6 +55,25 @@ export const agentAbi = [
           { internalType: 'uint256', name: 'claimableAt', type: 'uint256' },
         ],
         internalType: 'struct Agent.UnstakeRequest',
+        name: '',
+        type: 'tuple',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+    name: 'failedRequests',
+    outputs: [
+      {
+        components: [
+          { internalType: 'address', name: 'tokenIn', type: 'address' },
+          { internalType: 'uint256', name: 'amountIn', type: 'uint256' },
+          { internalType: 'bytes', name: 'msg', type: 'bytes' },
+          { internalType: 'uint256', name: 'nativeFee', type: 'uint256' },
+        ],
+        internalType: 'struct Agent.FailedRequest',
         name: '',
         type: 'tuple',
       },

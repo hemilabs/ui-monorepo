@@ -29,8 +29,10 @@ type EarnRequestCommonFields = {
   failureReason: string | null
   kind: 'DEPOSIT' | 'REDEEM'
   processedAt: string | null
+  receivedAt: string | null
   requestedAt: string
   requestId: string
+  retryCount: number
 }
 
 // Raw `Request` entity from the Envio `hemi-earn-requests-subgraph`. The

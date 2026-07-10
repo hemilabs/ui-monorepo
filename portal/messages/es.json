@@ -380,6 +380,11 @@
           "heading": "La transacción falló",
           "subheading": "Algo salió mal. Use el botón de abajo para devolver sus share tokens a su billetera."
         },
+        "remote-failed": {
+          "heading": "Su retiro quedó atascado en Ethereum",
+          "subheading": "El paso entre cadenas falló. Reintente para agregar gas y completar el retiro, o cancele para devolver sus share tokens a su billetera.",
+          "subheading-slippage": "El precio se movió más allá de su límite, por lo que el retiro no pudo completarse. Cancele para devolver sus share tokens a su billetera."
+        },
         "withdraw": {
           "heading": "Su retiro está listo",
           "subheading": "Esto normalmente ocurre de forma automática, pero puede hacerlo usted mismo. Esta transacción se ejecuta en Ethereum."
@@ -392,6 +397,7 @@
         "keep": "Mantener retiro",
         "title": "Cancelar retiro"
       },
+      "cancel-request": "Cancelar",
       "cancel-withdraw": "Cancelar retiro",
       "claim-funds": "Recibir fondos",
       "claim-share-tokens": "Recibir share tokens",
@@ -428,9 +434,12 @@
       "recover-funds": "Recuperar fondos",
       "recover-shares": "Recuperar shares",
       "recovering": "Recuperando...",
+      "retry": "Reintentar",
       "status": {
+        "action-needed": "Acción requerida",
         "bridging-back": "Regresando a Hemi",
         "cancelling": "Cancelando retiro",
+        "cancelling-request": "Cancelando...",
         "cooldown-ready-in-days": "Cooldown · listo en {value}d",
         "cooldown-ready-in-hours": "Cooldown · listo en {value}h",
         "cooldown-ready-in-minutes": "Cooldown · listo en {value}m",
@@ -444,6 +453,7 @@
         "recover-funds-needed": "Algo salió mal - Recuperar fondos",
         "recover-shares-cancelled": "Retiro cancelado - Recuperar shares",
         "recover-shares-needed": "Algo salió mal - Recuperar shares",
+        "retrying": "Reintentando...",
         "returned": "Devuelto",
         "shares-returned": "Shares devueltas",
         "shares-returned-cancelled": "Retiro cancelado - Shares devueltas",

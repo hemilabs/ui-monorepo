@@ -11,6 +11,7 @@ import {
   findPoolByAsset,
   hashesMatch,
   isAwaitingFinalize,
+  isRemoteFailed,
   needsManualClaim,
   needsRecover,
 } from '../../../_utils'
@@ -23,6 +24,7 @@ import {
 import { ClaimFromVaultCta } from './claimFromVault'
 import { HistoricalDepositReview } from './historicalDepositReview'
 import { HistoricalWithdrawReview } from './historicalWithdrawReview'
+import { RemoteFailedCta } from './remoteFailed'
 import { RetryFailedDeposit } from './retryFailedDeposit'
 import { RetryFailedWithdraw } from './retryFailedWithdraw'
 import { AddTokenToWalletCta, SettleCta } from './settleShared'
@@ -91,6 +93,9 @@ function redeemCallToAction({
         transaction={transaction}
       />
     )
+  }
+  if (isRemoteFailed(transaction)) {
+    return <RemoteFailedCta transaction={transaction} />
   }
   if (isAwaitingFinalize(transaction)) {
     return <ClaimFromVaultCta transaction={transaction} />

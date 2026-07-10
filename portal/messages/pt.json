@@ -380,6 +380,11 @@
           "heading": "Transação falhou",
           "subheading": "Algo deu errado. Use o botão abaixo para devolver seus share tokens à sua carteira."
         },
+        "remote-failed": {
+          "heading": "Seu saque travou na Ethereum",
+          "subheading": "A etapa entre cadeias falhou. Tente novamente para adicionar gas e concluir o saque, ou cancele para devolver seus share tokens à sua carteira.",
+          "subheading-slippage": "O preço se moveu além do seu limite, então o saque não pôde ser concluído. Cancele para devolver seus share tokens à sua carteira."
+        },
         "withdraw": {
           "heading": "Seu saque está pronto",
           "subheading": "Isso normalmente acontece automaticamente, mas você mesmo pode fazer o saque. Esta transação é executada na Ethereum."
@@ -392,6 +397,7 @@
         "keep": "Manter saque",
         "title": "Cancelar saque"
       },
+      "cancel-request": "Cancelar",
       "cancel-withdraw": "Cancelar saque",
       "claim-funds": "Receber fundos",
       "claim-share-tokens": "Receber share tokens",
@@ -428,9 +434,12 @@
       "recover-funds": "Recuperar fundos",
       "recover-shares": "Recuperar shares",
       "recovering": "Recuperando...",
+      "retry": "Tentar novamente",
       "status": {
+        "action-needed": "Ação necessária",
         "bridging-back": "Retornando para a Hemi",
         "cancelling": "Cancelando saque",
+        "cancelling-request": "Cancelando...",
         "cooldown-ready-in-days": "Cooldown · pronto em {value}d",
         "cooldown-ready-in-hours": "Cooldown · pronto em {value}h",
         "cooldown-ready-in-minutes": "Cooldown · pronto em {value}m",
@@ -444,6 +453,7 @@
         "recover-funds-needed": "Algo deu errado - Recuperar fundos",
         "recover-shares-cancelled": "Saque cancelado - Recuperar shares",
         "recover-shares-needed": "Algo deu errado - Recuperar shares",
+        "retrying": "Tentando novamente...",
         "returned": "Devolvido",
         "shares-returned": "Shares devolvidas",
         "shares-returned-cancelled": "Saque cancelado - Shares devolvidas",

@@ -4,12 +4,15 @@ import { ReturnCircleIcon } from 'components/icons/returnCircleIcon'
 import { WarningIcon } from 'components/icons/warningIcon'
 import { useTranslations } from 'next-intl'
 
+import { useRemoteFailedState } from '../../_hooks/useRemoteFailedState'
 import {
   hasFailedSettlement,
   isDeliberateCancel,
+  isRemoteFailed,
   isUserCancel,
   needsManualClaim,
   needsRecover,
+  remoteFailedSettlement,
 } from '../../_utils'
 import { type EarnTransaction, type EarnTransactionKindType } from '../../types'
 import { InProgressIcon } from '../icons/inProgressIcon'
@@ -32,6 +35,36 @@ const failedBadge = (t: Translator) => ({
   text: t('status.tx-failed'),
   textClassName: 'text-neutral-900',
 })
+
+// Amber (not the red Tx Failed): the request is recoverable, the user just needs to Retry/Cancel.
+const actionNeededBadge = (t: Translator) => ({
+  icon: <WarningIcon className="text-amber-500" />,
+  text: t('status.action-needed'),
+  textClassName: 'text-neutral-900',
+})
+
+// An in-flight retry/cancel reads as progress; a stuck remote failure asks the user to act.
+// Only drives the badge while still FAILED — once the row advances (FULFILLED/CANCELLED after a
+// successful retry/cancel) the lingering marker must hand back to the normal claim/recover badge.
+function remoteBadge(
+  transaction: EarnTransaction,
+  ready: boolean,
+  t: Translator,
+) {
+  if (!isRemoteFailed(transaction)) return undefined
+  const marker = remoteFailedSettlement(transaction.settlement)
+  if (marker && !marker.failed) {
+    return inProgress(
+      t(
+        marker.kind === 'RETRY'
+          ? 'status.retrying'
+          : 'status.cancelling-request',
+      ),
+    )
+  }
+  // Within the keeper grace the CTA is hidden, so read as in-progress, not "Action needed".
+  return ready ? actionNeededBadge(t) : inProgress(t('status.in-progress'))
+}
 
 const recoverBadge = (
   userCancel: boolean,
@@ -85,11 +118,14 @@ function resolveStatusBadge(transaction: EarnTransaction, t: Translator) {
 function resolveBadge(
   transaction: EarnTransaction,
   cooldownText: string | undefined,
+  remoteFailedReady: boolean,
   t: Translator,
 ) {
   const { kind } = transaction
   // A reverted claim/recover wins over the (now stale) manual-needed state.
   if (hasFailedSettlement(transaction)) return failedBadge(t)
+  const remote = remoteBadge(transaction, remoteFailedReady, t)
+  if (remote) return remote
   const userCancel = isUserCancel(transaction)
   // At CANCELLED it's the recover stage — neutral for a user cancel, amber for an Agent failure; the PENDING cancel reads as "Cancelling".
   if (needsRecover(transaction)) return recoverBadge(userCancel, kind, t)
@@ -108,9 +144,11 @@ function resolveBadge(
 
 export const StatusBadge = function ({ cooldownText, transaction }: Props) {
   const t = useTranslations('hemi-earn.transactions')
+  const { show: remoteFailedReady } = useRemoteFailedState(transaction)
   const { icon, text, textClassName } = resolveBadge(
     transaction,
     cooldownText,
+    remoteFailedReady,
     t,
   )
   return (

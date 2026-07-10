@@ -19,6 +19,7 @@ import { useAccount } from 'wagmi'
 
 import { useCooldownDuration } from '../../../_hooks/useCooldownDuration'
 import { useIsCooldownEligible } from '../../../_hooks/useIsCooldownEligible'
+import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
 import {
   claimRecoverSettlement,
   getTerminalDeliveryTxHash,
@@ -26,9 +27,11 @@ import {
   isFinalizeInFlight,
   isLocalEarnTransactionRow,
   isRecoverPath,
+  isRemoteFailed,
   isUserCancel,
   needsManualClaim,
   needsRecover,
+  remoteFailedStepStatus,
   resolveSettleStepStatus,
 } from '../../../_utils'
 import { deriveCooldownPostAction } from '../../../pool/[shareAddress]/_components/poolReview/cooldownPostAction'
@@ -40,6 +43,7 @@ import {
 } from '../../../types'
 
 import { ClaimFromVaultBanner } from './claimFromVault'
+import { RemoteFailedBanner } from './remoteFailed'
 import { SettleBanner } from './settleShared'
 
 type Props = {
@@ -333,6 +337,8 @@ export const HistoricalWithdrawReview = function ({
     claimableAt !== null ? BigInt(claimableAt) : undefined,
   )
 
+  const { show: remoteFailedReady } = useRemoteFailedState(transaction)
+
   const { receive: receiveFromStatus, unstake } = resolveStepStates(transaction)
   const unstakeMined = unstake === ProgressStatus.COMPLETED
   // Drop the CANCEL marker so it doesn't pose as the recover step's transaction.
@@ -348,13 +354,16 @@ export const HistoricalWithdrawReview = function ({
     receiveFromStatus,
     unstakeMined,
   })
-  const receive = resolveSettleStepStatus({
-    awaitingAction: needsManualClaim(transaction),
-    fallback: cooldownDerived,
-    isComplete: cooldownDerived === ProgressStatus.COMPLETED,
-    settlementFailed: settleMarker?.failed ?? false,
-    settlementTxHash,
-  })
+  // Receive step tracks the remote-failed sub-state (FAILED only when the CTA is surfaced).
+  const receive = isRemoteFailed(transaction)
+    ? remoteFailedStepStatus(remoteFailedReady, transaction.settlement)
+    : resolveSettleStepStatus({
+        awaitingAction: needsManualClaim(transaction),
+        fallback: cooldownDerived,
+        isComplete: cooldownDerived === ProgressStatus.COMPLETED,
+        settlementFailed: settleMarker?.failed ?? false,
+        settlementTxHash,
+      })
 
   const cooldownPostAction = deriveCooldownPostAction({
     cooldownDurationSec,
@@ -392,6 +401,7 @@ export const HistoricalWithdrawReview = function ({
         <>
           <SettleBanner transaction={transaction} />
           <ClaimFromVaultBanner transaction={transaction} />
+          <RemoteFailedBanner transaction={transaction} />
         </>
       }
       amount={displayAmount}

@@ -25,6 +25,10 @@ import {
   ClaimFromVaultCta,
 } from '../../../../_components/transactionsSection/transactionDrawer/claimFromVault'
 import {
+  RemoteFailedBanner,
+  RemoteFailedCta,
+} from '../../../../_components/transactionsSection/transactionDrawer/remoteFailed'
+import {
   AddTokenToWalletCta,
   SettleBanner,
   SettleCta,
@@ -37,6 +41,7 @@ import { useCooldownDuration } from '../../../../_hooks/useCooldownDuration'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { useIsCooldownEligible } from '../../../../_hooks/useIsCooldownEligible'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
+import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
 import {
   claimRecoverSettlement,
   enrichWithSettlement,
@@ -46,9 +51,11 @@ import {
   isAwaitingFinalize,
   isFinalizeInFlight,
   isRecoverPath,
+  isRemoteFailed,
   isUserCancel,
   needsManualClaim,
   needsRecover,
+  remoteFailedStepStatus,
   resolveSettleStepStatus,
 } from '../../../../_utils'
 import { type EarnSettlement, type EarnTransaction } from '../../../../types'
@@ -248,6 +255,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
   const settledRow = enrichWithSettlement(subgraphRow, settlement)
   // A still-PENDING deliberate cancel reads as the recover it's becoming: drop the countdown, render the recover step.
   const cancelling = !!settledRow && isUserCancel(settledRow)
+  const { show: remoteFailedReady } = useRemoteFailedState(settledRow)
 
   const { data: isCooldownEligible } = useIsCooldownEligible({
     account: address,
@@ -461,6 +469,9 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
     if (FAILED_STATUSES.includes(withdrawStatus)) {
       return <RetryWithdraw />
     }
+    if (isRemoteFailed(settledRow)) {
+      return <RemoteFailedCta transaction={settledRow!} />
+    }
     if (settledRow && isAwaitingFinalize(settledRow)) {
       return <ClaimFromVaultCta transaction={settledRow} />
     }
@@ -499,18 +510,31 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       steps.push(addApprovalStep())
     }
     steps.push(addUnstakeStep())
+    if ((settledRow && isRecoverPath(settledRow)) || cancelling) {
+      steps.push(addRecoverStep())
+      return steps
+    }
+    const receiveStep = buildReceiveStep({
+      chainId,
+      cooldownRemainingSec,
+      isCooldownEligible,
+      receiveToken: selectedAsset.token,
+      row: settledRow,
+      t,
+      withdrawStatus,
+    })
+    // Remote failure: FAILED only when the CTA is surfaced; in-progress during the grace or
+    // while a retry/cancel is being signed/mined.
     steps.push(
-      (settledRow && isRecoverPath(settledRow)) || cancelling
-        ? addRecoverStep()
-        : buildReceiveStep({
-            chainId,
-            cooldownRemainingSec,
-            isCooldownEligible,
-            receiveToken: selectedAsset.token,
-            row: settledRow,
-            t,
-            withdrawStatus,
-          }),
+      isRemoteFailed(settledRow)
+        ? {
+            ...receiveStep,
+            status: remoteFailedStepStatus(
+              remoteFailedReady,
+              settledRow?.settlement,
+            ),
+          }
+        : receiveStep,
     )
     return steps
   }
@@ -521,6 +545,7 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
         <>
           <SettleBanner transaction={settledRow} />
           <ClaimFromVaultBanner transaction={settledRow} />
+          <RemoteFailedBanner transaction={settledRow} />
         </>
       }
       amount={withdrawOperation?.amountIn ?? shares.toString()}

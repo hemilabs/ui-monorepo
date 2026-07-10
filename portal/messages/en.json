@@ -380,6 +380,11 @@
           "heading": "Transaction failed",
           "subheading": "Something went wrong. Use the button below to return your share tokens to your wallet."
         },
+        "remote-failed": {
+          "heading": "Your withdrawal is stuck on Ethereum",
+          "subheading": "The cross-chain step failed. Retry to add more gas and complete the withdrawal, or cancel to return your share tokens to your wallet.",
+          "subheading-slippage": "The price moved beyond your limit, so your withdrawal couldn't complete. Cancel to return your share tokens to your wallet."
+        },
         "withdraw": {
           "heading": "Your withdrawal is ready",
           "subheading": "This usually happens automatically, but you can do it yourself. This transaction runs on Ethereum."
@@ -392,6 +397,7 @@
         "keep": "Keep withdrawal",
         "title": "Cancel withdrawal"
       },
+      "cancel-request": "Cancel",
       "cancel-withdraw": "Cancel withdrawal",
       "claim-funds": "Claim funds",
       "claim-share-tokens": "Claim share tokens",
@@ -428,9 +434,12 @@
       "recover-funds": "Recover funds",
       "recover-shares": "Recover shares",
       "recovering": "Recovering...",
+      "retry": "Retry",
       "status": {
+        "action-needed": "Action needed",
         "bridging-back": "Bridging back to Hemi",
         "cancelling": "Cancelling withdrawal",
+        "cancelling-request": "Cancelling...",
         "cooldown-ready-in-days": "Cooldown · ready in {value}d",
         "cooldown-ready-in-hours": "Cooldown · ready in {value}h",
         "cooldown-ready-in-minutes": "Cooldown · ready in {value}m",
@@ -444,6 +453,7 @@
         "recover-funds-needed": "Something went wrong - Recover funds",
         "recover-shares-cancelled": "Withdrawal cancelled - Recover shares",
         "recover-shares-needed": "Something went wrong - Recover shares",
+        "retrying": "Retrying...",
         "returned": "Returned",
         "shares-returned": "Shares returned",
         "shares-returned-cancelled": "Withdrawal cancelled - Shares returned",

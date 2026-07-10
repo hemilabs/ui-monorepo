@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
-import { ColumnDef } from '@tanstack/react-table'
+import { type ColumnDef } from '@tanstack/react-table'
 import { Table, type TableProps } from 'components/table'
 import { Header } from 'components/table/_components/header'
 

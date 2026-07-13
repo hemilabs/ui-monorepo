@@ -823,11 +823,13 @@ export const getEarnRequests = async function ({
             kind
             processedAt
             processTxHash
+            receivedAt
             receiver
             recoverTxHash
             requestedAt
             requestId
             requestTxHash
+            retryCount
             status
           }
         }`,

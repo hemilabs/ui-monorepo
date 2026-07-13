@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/nextjs'
 import { type ColumnDef } from '@tanstack/react-table'
+import { ButtonIcon } from 'components/button'
 import { Table, type TableProps } from 'components/table'
 import { Header } from 'components/table/_components/header'
 
@@ -39,6 +40,20 @@ const RewardStack = () => (
   </div>
 )
 
+const EllipsisIcon = () => (
+  <svg
+    className="text-neutral-500"
+    fill="currentColor"
+    height={16}
+    viewBox="0 0 16 16"
+    width={16}
+  >
+    <circle cx={4} cy={8} r={1.25} />
+    <circle cx={8} cy={8} r={1.25} />
+    <circle cx={12} cy={8} r={1.25} />
+  </svg>
+)
+
 const ActionCell = ({ timeRemaining }: { timeRemaining: string }) => (
   <div className="flex w-full items-center justify-end gap-x-2">
     <div className="flex h-6 items-center gap-x-1 rounded-md bg-orange-600 px-2.5">
@@ -47,9 +62,9 @@ const ActionCell = ({ timeRemaining }: { timeRemaining: string }) => (
         {timeRemaining}
       </span>
     </div>
-    <div className="flex size-6 items-center justify-center rounded-md bg-neutral-100 text-neutral-500">
-      ···
-    </div>
+    <ButtonIcon size="xSmall" variant="secondary">
+      <EllipsisIcon />
+    </ButtonIcon>
   </div>
 )
 
@@ -59,9 +74,7 @@ const columns: ColumnDef<Row>[] = [
       <div className="flex items-center gap-x-3">
         <TokenIcon />
         <div className="flex flex-col">
-          <span className="text-sm text-neutral-950">
-            {row.original.lockedAmount}
-          </span>
+          <span className="text-neutral-950">{row.original.lockedAmount}</span>
           <span className="text-xxs text-neutral-500">
             {row.original.address}
           </span>
@@ -75,7 +88,7 @@ const columns: ColumnDef<Row>[] = [
   {
     cell: ({ row }) => (
       <div className="flex flex-col">
-        <span className="text-sm text-neutral-950">{row.original.lockup}</span>
+        <span className="text-neutral-950">{row.original.lockup}</span>
         <span className="text-xxs text-emerald-600">{row.original.apy}</span>
       </div>
     ),
@@ -86,9 +99,7 @@ const columns: ColumnDef<Row>[] = [
   {
     cell: ({ row }) => (
       <div className="flex flex-col">
-        <span className="text-sm text-neutral-950">
-          {row.original.votingPower}
-        </span>
+        <span className="text-neutral-950">{row.original.votingPower}</span>
         <span className="text-xxs text-neutral-500">
           {row.original.votingShare}
         </span>
@@ -181,7 +192,7 @@ const meta = {
   component: Table,
   decorators: [
     Story => (
-      <div className="h-96 w-full max-w-3xl">
+      <div className="h-96 w-full max-w-3xl text-sm font-medium">
         <Story />
       </div>
     ),

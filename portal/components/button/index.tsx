@@ -9,10 +9,14 @@ const variants = {
   tertiary: 'button-tertiary',
 } as const
 
-export type ButtonSize = 'xSmall' | 'small' | 'xLarge'
+export type ButtonSize = 'xxSmall' | 'xSmall' | 'small' | 'xLarge'
 
 /* eslint-disable sort-keys */
 const buttonSizePresets = {
+  xxSmall: {
+    icon: 'button-xx-small button-icon',
+    regular: 'button-xx-small button-regular',
+  },
   xSmall: {
     icon: 'button-x-small button-icon',
     regular: 'button-x-small button-regular',

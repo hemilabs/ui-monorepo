@@ -31,6 +31,18 @@ Because of that, we can add all the styles here, and then use plain buttons in t
 }
 
 /* Button Sizes */
+.button-xx-small {
+  @apply h-6 rounded-md text-xs;
+}
+
+.button-xx-small.button-regular {
+  @apply gap-x-1 px-2.5;
+}
+
+.button-xx-small.button-icon {
+  @apply min-w-6;
+}
+
 .button-x-small {
   @apply h-7 rounded-md text-xs;
 }

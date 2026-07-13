@@ -62,7 +62,7 @@ const ActionCell = ({ timeRemaining }: { timeRemaining: string }) => (
         {timeRemaining}
       </span>
     </div>
-    <ButtonIcon size="xSmall" variant="secondary">
+    <ButtonIcon size="xxSmall" variant="secondary">
       <EllipsisIcon />
     </ButtonIcon>
   </div>

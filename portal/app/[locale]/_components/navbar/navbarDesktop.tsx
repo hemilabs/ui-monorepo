@@ -7,7 +7,6 @@ import { ReactNode } from 'react'
 import { Badge } from '../badge'
 
 import { BitcoinKitLink } from './_components/bitcoinKitLink'
-import { BitcoinYield } from './_components/bitcoinYield'
 import { Dex } from './_components/dex'
 import { DocsLink } from './_components/docsLink'
 import { EcosystemLink } from './_components/ecosystemLink'
@@ -54,11 +53,6 @@ export const NavbarDesktop = () => (
       {featureFlags.enableHemiEarnPage && (
         <PaddedListItem>
           <HemiEarn />
-        </PaddedListItem>
-      )}
-      {featureFlags.enableBtcYieldPage && (
-        <PaddedListItem>
-          <BitcoinYield />
         </PaddedListItem>
       )}
       <PaddedListItem>

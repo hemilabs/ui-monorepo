@@ -4,7 +4,6 @@ import { useTranslations } from 'next-intl'
 import { ComponentProps } from 'react'
 
 import { BitcoinKitLink } from './_components/bitcoinKitLink'
-import { BitcoinYield } from './_components/bitcoinYield'
 import { Dex } from './_components/dex'
 import { DocsLink } from './_components/docsLink'
 import { EcosystemLink } from './_components/ecosystemLink'
@@ -64,11 +63,6 @@ export const NavbarMobile = function () {
           {featureFlags.enableHemiEarnPage && (
             <SmallBox>
               <HemiEarn />
-            </SmallBox>
-          )}
-          {featureFlags.enableBtcYieldPage && (
-            <SmallBox>
-              <BitcoinYield />
             </SmallBox>
           )}
           <SmallBox>

@@ -36,7 +36,7 @@ const meta = {
     },
     size: {
       control: 'select',
-      options: ['xSmall', 'small', 'xLarge'],
+      options: ['xxSmall', 'xSmall', 'small', 'xLarge'],
     },
     variant: {
       control: 'select',

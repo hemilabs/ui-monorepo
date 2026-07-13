@@ -14,6 +14,7 @@ import {
   needsRecover,
   remoteFailedSettlement,
 } from '../../_utils'
+import { decodeFailureReason } from '../../_utils/decodeFailureReason'
 import { type EarnTransaction, type EarnTransactionKindType } from '../../types'
 import { InProgressIcon } from '../icons/inProgressIcon'
 
@@ -43,6 +44,13 @@ const actionNeededBadge = (t: Translator) => ({
   textClassName: 'text-neutral-900',
 })
 
+// Slippage names the cause instead of the generic "Action needed": a retry can't fix it, only Cancel.
+const slippageBadge = (t: Translator) => ({
+  icon: <WarningIcon className="text-amber-500" />,
+  text: t('status.slippage-exceeded'),
+  textClassName: 'text-neutral-900',
+})
+
 // An in-flight retry/cancel reads as progress; a stuck remote failure asks the user to act.
 // Only drives the badge while still FAILED — once the row advances (FULFILLED/CANCELLED after a
 // successful retry/cancel) the lingering marker must hand back to the normal claim/recover badge.
@@ -63,7 +71,10 @@ function remoteBadge(
     )
   }
   // Within the keeper grace the CTA is hidden, so read as in-progress, not "Action needed".
-  return ready ? actionNeededBadge(t) : inProgress(t('status.in-progress'))
+  if (!ready) return inProgress(t('status.in-progress'))
+  return decodeFailureReason(transaction.failureReason) === 'slippage'
+    ? slippageBadge(t)
+    : actionNeededBadge(t)
 }
 
 const recoverBadge = (

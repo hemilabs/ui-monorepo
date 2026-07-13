@@ -382,8 +382,9 @@
         },
         "remote-failed": {
           "heading": "Seu saque travou na Ethereum",
-          "subheading": "A etapa entre cadeias falhou. Tente novamente para adicionar gas e concluir o saque, ou cancele para devolver seus share tokens à sua carteira.",
-          "subheading-slippage": "O preço se moveu além do seu limite, então o saque não pôde ser concluído. Cancele para devolver seus share tokens à sua carteira."
+          "heading-slippage": "Seu saque não foi concluído",
+          "subheading": "A etapa entre redes falhou. Tente novamente para adicionar gas e concluir o saque, ou cancele para devolver seus share tokens à sua carteira.",
+          "subheading-slippage": "O preço ultrapassou seu limite de slippage antes que a etapa final pudesse ser executada, então seus share tokens continuam retidos. Devolva-os à sua carteira e tente o saque novamente com uma tolerância de slippage maior."
         },
         "withdraw": {
           "heading": "Seu saque está pronto",
@@ -435,6 +436,7 @@
       "recover-shares": "Recuperar shares",
       "recovering": "Recuperando...",
       "retry": "Tentar novamente",
+      "return-share-tokens": "Devolver share tokens",
       "status": {
         "action-needed": "Ação necessária",
         "bridging-back": "Retornando para a Hemi",
@@ -457,6 +459,7 @@
         "returned": "Devolvido",
         "shares-returned": "Shares devolvidas",
         "shares-returned-cancelled": "Saque cancelado - Shares devolvidas",
+        "slippage-exceeded": "Limite de slippage excedido",
         "tx-failed": "Tx falhou",
         "withdrawn": "Sacado"
       },

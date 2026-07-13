@@ -19,7 +19,7 @@ import { type EarnSettlement, type EarnTransaction } from '../../../types'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 type RecoveryConfig = {
-  idleKey: 'cancel-request' | 'retry'
+  idleKey: 'cancel-request' | 'retry' | 'return-share-tokens'
   kind: EarnSettlement['kind']
   mutation: ReturnType<typeof useRetryRequest>
   pendingKey: 'status.cancelling-request' | 'status.retrying'
@@ -90,7 +90,7 @@ export const RemoteFailedCta = function ({
     primary: true,
   }
   const cancelConfig: RecoveryConfig = {
-    idleKey: 'cancel-request',
+    idleKey: category === 'slippage' ? 'return-share-tokens' : 'cancel-request',
     kind: 'CANCEL_REQUEST',
     mutation: cancel,
     pendingKey: 'status.cancelling-request',
@@ -145,7 +145,11 @@ export const RemoteFailedBanner = function ({
   return (
     <div className="px-4 py-6 md:px-6">
       <WarningBox
-        heading={t('remote-failed.heading')}
+        heading={t(
+          category === 'slippage'
+            ? 'remote-failed.heading-slippage'
+            : 'remote-failed.heading',
+        )}
         subheading={t(
           category === 'slippage'
             ? 'remote-failed.subheading-slippage'

@@ -382,8 +382,9 @@
         },
         "remote-failed": {
           "heading": "Su retiro quedó atascado en Ethereum",
-          "subheading": "El paso entre cadenas falló. Reintente para agregar gas y completar el retiro, o cancele para devolver sus share tokens a su billetera.",
-          "subheading-slippage": "El precio se movió más allá de su límite, por lo que el retiro no pudo completarse. Cancele para devolver sus share tokens a su billetera."
+          "heading-slippage": "Su retiro no se completó",
+          "subheading": "El paso entre redes falló. Reintente para agregar gas y completar el retiro, o cancele para devolver sus share tokens a su billetera.",
+          "subheading-slippage": "El precio superó su límite de slippage antes de que el paso final pudiera ejecutarse, por lo que sus share tokens siguen retenidos. Devuélvalos a su billetera y luego intente el retiro de nuevo con una tolerancia de slippage mayor."
         },
         "withdraw": {
           "heading": "Su retiro está listo",
@@ -435,6 +436,7 @@
       "recover-shares": "Recuperar shares",
       "recovering": "Recuperando...",
       "retry": "Reintentar",
+      "return-share-tokens": "Devolver share tokens",
       "status": {
         "action-needed": "Acción requerida",
         "bridging-back": "Regresando a Hemi",
@@ -457,6 +459,7 @@
         "returned": "Devuelto",
         "shares-returned": "Shares devueltas",
         "shares-returned-cancelled": "Retiro cancelado - Shares devueltas",
+        "slippage-exceeded": "Límite de slippage superado",
         "tx-failed": "Tx fallida",
         "withdrawn": "Retirado"
       },

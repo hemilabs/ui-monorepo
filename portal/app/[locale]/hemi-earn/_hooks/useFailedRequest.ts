@@ -30,13 +30,16 @@ export const useFailedRequest = function (
   return useQuery({
     enabled: !!address && isRemoteFailed(transaction),
     async queryFn() {
+      if (requestId === undefined) {
+        throw new Error('useFailedRequest: missing requestId')
+      }
       const agentAddress = await queryClient.ensureQueryData(
         agentAddressQueryOptions(),
       )
       return getFailedRequest({
         agentAddress,
         client: getEvmL1PublicClient(mainnet.id),
-        requestId: BigInt(requestId!),
+        requestId: BigInt(requestId),
       })
     },
     queryKey: getFailedRequestQueryKey(address, requestId),

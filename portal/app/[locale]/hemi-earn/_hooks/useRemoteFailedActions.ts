@@ -1,3 +1,5 @@
+'use client'
+
 import { useEnsureConnectedTo } from '@hemilabs/react-hooks/useEnsureConnectedTo'
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
 import { useUpdateNativeBalanceAfterReceipt } from '@hemilabs/react-hooks/useUpdateNativeBalanceAfterReceipt'
@@ -10,6 +12,7 @@ import {
 import {
   cancelRequest,
   getFailedRequest,
+  quoteDepositFulfillment,
   quoteRedeemFulfillment,
   retryRequest,
 } from 'hemi-earn-actions/actions'
@@ -83,14 +86,23 @@ const useRemoteFailedAction = function ({
         })
       }
 
-      const { remoteAsset } = await queryClient.ensureQueryData(
+      const { remoteAsset, remoteShare } = await queryClient.ensureQueryData(
         assetDataQueryOptions(asset),
       )
-      const quote = await quoteRedeemFulfillment({
-        agentAddress,
-        asset: remoteAsset,
-        client,
-      })
+      // Retry re-sends the asset fulfillment (asset OFT); cancel returns the shares (share OFT).
+      // Quote each on the OFT it actually uses so the top-up isn't sized against the wrong path.
+      const quote =
+        kind === 'RETRY'
+          ? await quoteRedeemFulfillment({
+              agentAddress,
+              asset: remoteAsset,
+              client,
+            })
+          : await quoteDepositFulfillment({
+              agentAddress,
+              client,
+              share: remoteShare,
+            })
       // retry/cancel run with failedRequest.nativeFee + msg.value on-chain, so only top up the shortfall.
       const nativeFee = maxBigInt(BigInt(0), quote - failedRequest.nativeFee)
 

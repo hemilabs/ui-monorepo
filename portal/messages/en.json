@@ -382,8 +382,9 @@
         },
         "remote-failed": {
           "heading": "Your withdrawal is stuck on Ethereum",
+          "heading-slippage": "Your withdrawal didn't complete",
           "subheading": "The cross-chain step failed. Retry to add more gas and complete the withdrawal, or cancel to return your share tokens to your wallet.",
-          "subheading-slippage": "The price moved beyond your limit, so your withdrawal couldn't complete. Cancel to return your share tokens to your wallet."
+          "subheading-slippage": "The price moved past your slippage limit before the final step could run, so your share tokens are still held. Return them to your wallet, then try the withdrawal again with a higher slippage tolerance."
         },
         "withdraw": {
           "heading": "Your withdrawal is ready",
@@ -435,6 +436,7 @@
       "recover-shares": "Recover shares",
       "recovering": "Recovering...",
       "retry": "Retry",
+      "return-share-tokens": "Return share tokens",
       "status": {
         "action-needed": "Action needed",
         "bridging-back": "Bridging back to Hemi",
@@ -457,6 +459,7 @@
         "returned": "Returned",
         "shares-returned": "Shares returned",
         "shares-returned-cancelled": "Withdrawal cancelled - Shares returned",
+        "slippage-exceeded": "Slippage limit exceeded",
         "tx-failed": "Tx Failed",
         "withdrawn": "Withdrawn"
       },

@@ -4,7 +4,8 @@ import { Chevron } from 'components/icons/chevron'
 import { ComponentProps } from 'react'
 
 type StoryProps = ComponentProps<typeof Button> & {
-  iconPosition: 'none' | 'left' | 'right'
+  iconLeft: boolean
+  iconRight: boolean
 }
 
 // Match the Figma icon colors: white on primary, dark on secondary/tertiary.
@@ -19,7 +20,8 @@ const iconColor = (variant: StoryProps['variant']) =>
 const meta = {
   args: {
     children: 'Connect Wallet',
-    iconPosition: 'none',
+    iconLeft: false,
+    iconRight: false,
     size: 'small',
     variant: 'primary',
   },
@@ -30,9 +32,11 @@ const meta = {
     disabled: {
       control: 'boolean',
     },
-    iconPosition: {
-      control: 'inline-radio',
-      options: ['none', 'left', 'right'],
+    iconLeft: {
+      control: 'boolean',
+    },
+    iconRight: {
+      control: 'boolean',
     },
     size: {
       control: 'select',
@@ -44,15 +48,11 @@ const meta = {
     },
   },
   component: Button,
-  render: ({ children, iconPosition, variant, ...args }) => (
+  render: ({ children, iconLeft, iconRight, variant, ...args }) => (
     <Button variant={variant} {...args}>
-      {iconPosition === 'left' && (
-        <Chevron.Left className={iconColor(variant)} />
-      )}
+      {iconLeft && <Chevron.Left className={iconColor(variant)} />}
       {children}
-      {iconPosition === 'right' && (
-        <Chevron.Right className={iconColor(variant)} />
-      )}
+      {iconRight && <Chevron.Right className={iconColor(variant)} />}
     </Button>
   ),
   title: 'Components/Button',
@@ -83,6 +83,13 @@ export const Tertiary: Story = {
 export const Disabled: Story = {
   args: {
     disabled: true,
+  },
+}
+
+export const TwoIcons: Story = {
+  args: {
+    iconLeft: true,
+    iconRight: true,
   },
 }
 

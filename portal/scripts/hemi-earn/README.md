@@ -5,36 +5,41 @@ Scripts to spin up and configure a local Hemi Earn sandbox against an Anvil fork
 ## Prerequisites
 
 - Node 24 (matches the repo `.nvmrc`) — required for native `.ts` execution via `--experimental-transform-types`.
-- [Foundry](https://book.getfoundry.sh/getting-started/installation) for the `anvil` binary.
-- A JSON-RPC URL for Hemi mainnet (e.g. `https://rpc.hemi.network/rpc`).
 - A test EOA — used to receive funded ETH and tokens.
+
+Foundry (`anvil`) is auto-installed by [`@hemilabs/anvil-fork-setup`](https://www.npmjs.com/package/@hemilabs/anvil-fork-setup) on first run if it's not already on your `PATH`.
 
 ## Quick start
 
-Run both commands from the repo root:
+From the repo root:
 
 ```bash
-# Terminal 1 — fork Hemi mainnet
-anvil --fork-url https://rpc.hemi.network/rpc
-
-# Terminal 2 — deploy mocks + fund the test account
 pnpm --filter hemi-earn-sandbox-scripts run setup -- --address 0xYourEOA
 ```
 
-The `--` before the script flags is required — otherwise pnpm intercepts `--address` as its own option. The invocation works from any folder in the repo (pnpm walks up to the workspace root), but the repo root is the natural place to keep things consistent.
+That single command starts an Anvil fork of Hemi mainnet on port 8545, deploys the required mocks, funds the test account, and enables cooldown. Anvil is detached (`child.unref()` inside `@hemilabs/anvil-fork-setup`), so it keeps running after the script exits and the portal can talk to it.
+
+The `--` before the script flags is required — otherwise pnpm intercepts `--address` as its own option.
 
 The setup script prints the deployed addresses at the end. The Vetro-aliased mocks (`vetBTC`, `Gateway`, `Staking`) live at their production addresses via `anvil_setCode`; the sandbox `Router`, `Agent`, `hemiBTC`, `WBTC`, and `cbBTC` are freshly deployed with deterministic addresses.
 
-### Running on a custom port
+### Bring your own Anvil
 
-If `8545` is already in use, start Anvil on a different port and forward it to the setup script:
+If you already have Anvil running (say, from a separate workflow), point the setup at it and skip the auto-start:
 
 ```bash
-anvil --port 8547 --fork-url https://rpc.hemi.network/rpc
-
 pnpm --filter hemi-earn-sandbox-scripts run setup -- \
   --address 0xYourEOA \
   --fork-url http://127.0.0.1:8547
+```
+
+### Custom port or upstream RPC
+
+```bash
+pnpm --filter hemi-earn-sandbox-scripts run setup -- \
+  --address 0xYourEOA \
+  --port 8547 \
+  --upstream-rpc https://your-hemi-rpc.example.com
 ```
 
 ## Available scripts
@@ -47,14 +52,17 @@ node --experimental-transform-types portal/scripts/hemi-earn/<script>.ts [flags]
 
 | Script           | Purpose                                                          |
 | ---------------- | ---------------------------------------------------------------- |
-| `setup.ts`       | Deploy mocks + fund the test account. One-shot entry point.      |
-| `deployMocks.ts` | Deploy mocks only. No funding.                                   |
+| `setup.ts`       | Start Anvil + deploy mocks + fund the test account.              |
+| `deployMocks.ts` | Deploy mocks only. Requires a running Anvil.                     |
 | `fundAccount.ts` | Fund an EOA with ETH + tokens. Requires deployed mock addresses. |
 
 ### Common flags
 
-- `--fork-url` / `-f`: RPC URL of the running Anvil (default `http://127.0.0.1:8545`).
-- `--deployer-pk`: private key used to sign deploy/write txs (default is Anvil's well-known account #0).
+- `--address` / `-a`: the test EOA to fund (required for `setup.ts`).
+- `--port` / `-p`: local port for the Anvil fork (default `8545`).
+- `--upstream-rpc` / `-u`: RPC to fork from (default `https://rpc.hemi.network/rpc`).
+- `--fork-url` / `-f`: URL of an already-running Anvil; when set, skips the auto-start.
+- `--deployer-pk`: private key used to sign deploy/write txs (default is Anvil's well-known account #0, re-exported from `@hemilabs/anvil-fork-setup/utils`).
 
 ## Cooldown
 

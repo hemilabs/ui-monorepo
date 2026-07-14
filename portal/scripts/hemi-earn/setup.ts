@@ -1,8 +1,13 @@
+import { startAnvilFork } from '@hemilabs/anvil-fork-setup'
 import { parseArgs } from 'node:util'
 import { isAddress, type Address, type Hex } from 'viem'
 
 import { scriptArgs } from './cli.ts'
-import { DEFAULT_DEPLOYER_PK, DEFAULT_FORK_URL } from './constants.ts'
+import {
+  DEFAULT_DEPLOYER_PK,
+  DEFAULT_UPSTREAM_RPC,
+  HEMI_CHAIN_ID,
+} from './constants.ts'
 import { deployMocks } from './deployMocks.ts'
 import { fundAccount } from './fundAccount.ts'
 
@@ -15,23 +20,51 @@ async function main() {
       'address': { short: 'a', type: 'string' },
       'deployer-pk': { type: 'string' },
       'fork-url': { short: 'f', type: 'string' },
+      'port': { short: 'p', type: 'string' },
+      'upstream-rpc': { short: 'u', type: 'string' },
     },
     strict: true,
   })
 
   if (!values.address || !isAddress(values.address, { strict: false })) {
     console.error(
-      'Usage: node portal/scripts/hemi-earn/setup.ts --address 0xYourEOA [-f http://127.0.0.1:8545]',
+      'Usage: pnpm --filter hemi-earn-sandbox-scripts run setup -- --address 0xYourEOA',
+    )
+    console.error('  [-p PORT]              port for the fork (default 8545)')
+    console.error(
+      '  [-u UPSTREAM_RPC]      RPC to fork from (default Hemi mainnet)',
+    )
+    console.error(
+      '  [-f FORK_URL]          use an anvil already running at this URL',
+    )
+    console.error(
+      '                         (skips auto-start; --port/--upstream-rpc ignored)',
     )
     process.exit(1)
   }
 
-  const forkUrl = values['fork-url'] ?? DEFAULT_FORK_URL
+  const userAddress = values.address as Address
   const deployerPk =
     (values['deployer-pk'] as Hex | undefined) ?? DEFAULT_DEPLOYER_PK
-  const userAddress = values.address as Address
 
-  console.log(`\nFork URL: ${forkUrl}`)
+  let forkUrl: string
+  if (values['fork-url']) {
+    forkUrl = values['fork-url']
+    console.log(`\nUsing existing anvil at ${forkUrl}`)
+  } else {
+    const port = values.port ? Number(values.port) : 8545
+    const upstreamRpc = values['upstream-rpc'] ?? DEFAULT_UPSTREAM_RPC
+    console.log(`\nStarting anvil fork of ${upstreamRpc} on port ${port}…`)
+    const fork = await startAnvilFork({
+      chainId: HEMI_CHAIN_ID,
+      forkUrl: upstreamRpc,
+      port,
+    })
+    forkUrl = fork.url
+    // The child process is detached (unref'd) so anvil keeps running after
+    // this script exits — the dev needs it alive for portal interactions.
+    console.log(`  ✓ anvil pid=${fork.pid} listening at ${forkUrl}`)
+  }
   console.log(`User:     ${userAddress}`)
 
   const deployed = await deployMocks({ deployerPk, forkUrl })

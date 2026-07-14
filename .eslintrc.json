@@ -47,6 +47,7 @@
       "rules": {
         "no-console": "off",
         "no-process-exit": "off",
+        "node/no-missing-import": "off",
         "node/no-unsupported-features/es-syntax": [
           "error",
           {

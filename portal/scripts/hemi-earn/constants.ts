@@ -1,6 +1,7 @@
+import { TEST_PRIVATE_KEY } from '@hemilabs/anvil-fork-setup/utils'
 import { sVetBtcAddress } from '@vetro-protocol/earn'
 import { gateways } from '@vetro-protocol/gateway'
-import { type Address, type Hex } from 'viem'
+import { type Address } from 'viem'
 
 // Ethereum-side pegged token backing the vetBTC gateway. Not exported by any
 // package — in production the portal reads `Gateway.PEGGED_TOKEN()` on-chain,
@@ -18,10 +19,9 @@ export const GATEWAY_PROD: Address = btcGateway.address
 
 export const STAKING_PROD: Address = sVetBtcAddress
 
-export const DEFAULT_FORK_URL = 'http://127.0.0.1:8545'
+export const HEMI_CHAIN_ID = 43111
 
-// Anvil's deterministic account #0. No secret — same key everyone on the
-// planet running `anvil` uses. Kept as a constant so scripts run against
-// a fresh fork with zero setup.
-export const DEFAULT_DEPLOYER_PK: Hex =
-  '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
+export const DEFAULT_FORK_URL = 'http://127.0.0.1:8545'
+export const DEFAULT_UPSTREAM_RPC = 'https://rpc.hemi.network/rpc'
+
+export const DEFAULT_DEPLOYER_PK = TEST_PRIVATE_KEY

@@ -5,6 +5,7 @@
     "setup": "node --experimental-transform-types setup.ts"
   },
   "dependencies": {
+    "@hemilabs/anvil-fork-setup": "2.0.0",
     "@vetro-protocol/earn": "1.0.0",
     "@vetro-protocol/gateway": "1.2.0",
     "viem": "2.28.4"

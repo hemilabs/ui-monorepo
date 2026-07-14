@@ -19,7 +19,7 @@ import { type EarnSettlement, type EarnTransaction } from '../../../types'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 type RecoveryConfig = {
-  idleKey: 'cancel-request' | 'retry' | 'return-share-tokens'
+  idleKey: 'retry' | 'return-share-tokens'
   kind: EarnSettlement['kind']
   mutation: ReturnType<typeof useRetryRequest>
   pendingKey: 'status.cancelling-request' | 'status.retrying'
@@ -90,7 +90,7 @@ export const RemoteFailedCta = function ({
     primary: true,
   }
   const cancelConfig: RecoveryConfig = {
-    idleKey: category === 'slippage' ? 'return-share-tokens' : 'cancel-request',
+    idleKey: 'return-share-tokens',
     kind: 'CANCEL_REQUEST',
     mutation: cancel,
     pendingKey: 'status.cancelling-request',

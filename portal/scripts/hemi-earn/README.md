@@ -14,7 +14,7 @@ Foundry (`anvil`) is auto-installed by [`@hemilabs/anvil-fork-setup`](https://ww
 From the repo root:
 
 ```bash
-pnpm --filter hemi-earn-sandbox-scripts run setup -- --address 0xYourEOA
+pnpm --filter portal sandbox:hemi-earn:setup -- --address 0xYourEOA
 ```
 
 That single command starts an Anvil fork of Hemi mainnet on port 8545, deploys the required mocks, funds the test account, and enables cooldown. Anvil is detached (`child.unref()` inside `@hemilabs/anvil-fork-setup`), so it keeps running after the script exits and the portal can talk to it.
@@ -28,7 +28,7 @@ The setup script prints the deployed addresses at the end. The Vetro-aliased moc
 If you already have Anvil running (say, from a separate workflow), point the setup at it and skip the auto-start:
 
 ```bash
-pnpm --filter hemi-earn-sandbox-scripts run setup -- \
+pnpm --filter portal sandbox:hemi-earn:setup -- \
   --address 0xYourEOA \
   --fork-url http://127.0.0.1:8547
 ```
@@ -36,7 +36,7 @@ pnpm --filter hemi-earn-sandbox-scripts run setup -- \
 ### Custom port or upstream RPC
 
 ```bash
-pnpm --filter hemi-earn-sandbox-scripts run setup -- \
+pnpm --filter portal sandbox:hemi-earn:setup -- \
   --address 0xYourEOA \
   --port 8547 \
   --upstream-rpc https://your-hemi-rpc.example.com
@@ -67,6 +67,10 @@ node --experimental-transform-types portal/scripts/hemi-earn/<script>.ts [flags]
 ## Cooldown
 
 The setup script enables cooldown on the staking vault with a 1-day duration, exercising the 2-step withdraw flow (request + claim after cooldown) by default.
+
+## Mock contracts
+
+`contracts/` holds the Solidity sources of the mocks used by the sandbox; `artifacts/` holds their pre-compiled JSON (bytecode + ABI). See [`contracts/README.md`](./contracts/README.md) for what each mock does and how to refresh them when they change upstream.
 
 ## Why the nested `package.json`
 

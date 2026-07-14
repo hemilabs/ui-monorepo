@@ -8,6 +8,7 @@
     "dev": "next dev",
     "dev:wifi": "WIFI=true LOCAL_IP=$(ipconfig getifaddr en0) PORT=3000 pnpm run dev",
     "generate:htaccess": "node ./scripts/generateServerConfig.js",
+    "sandbox:hemi-earn:setup": "node --experimental-transform-types scripts/hemi-earn/setup.ts",
     "preserve": "pnpm run build",
     "serve": "serve out",
     "storybook": "storybook dev -p 6006",
@@ -71,6 +72,7 @@
     "wagmi": "2.15.7"
   },
   "devDependencies": {
+    "@hemilabs/anvil-fork-setup": "2.0.0",
     "@storybook/nextjs": "10.4.4",
     "@total-typescript/ts-reset": "0.6.1",
     "@tsconfig/next": "2.0.3",

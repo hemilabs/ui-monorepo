@@ -1,7 +1,6 @@
 packages:
   - 'packages/*'
   - 'portal'
-  - 'portal/scripts/hemi-earn'
   - 'portal-backend/api'
   - 'portal-backend/cron/*'
   - 'subgraphs/*'

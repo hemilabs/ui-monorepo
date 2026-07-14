@@ -1,0 +1,16 @@
+{
+  "name": "hemi-earn-sandbox-scripts",
+  "version": "0.0.0",
+  "scripts": {
+    "setup": "node --experimental-transform-types setup.ts"
+  },
+  "dependencies": {
+    "@vetro-protocol/earn": "1.0.0",
+    "@vetro-protocol/gateway": "1.2.0"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "private": true,
+  "type": "module"
+}

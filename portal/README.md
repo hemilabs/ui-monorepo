@@ -84,6 +84,10 @@ Run tests with the following command:
 pnpm test
 ```
 
+## Local sandbox for Hemi Earn
+
+To test the Hemi Earn UI end-to-end against a controlled Anvil fork, see [`scripts/hemi-earn/README.md`](./scripts/hemi-earn/README.md). The sandbox deploys the required mocks and funds a test account so the UI can be exercised without external tooling.
+
 ## Building and Deployment
 
 Run the following command:

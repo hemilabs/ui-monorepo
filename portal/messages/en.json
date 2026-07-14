@@ -325,6 +325,12 @@
           "heading": "Transaction failed",
           "subheading": "Something went wrong. Use the button below to return your share tokens to your wallet."
         },
+        "remote-failed": {
+          "heading": "Your withdrawal is stuck on Ethereum",
+          "heading-slippage": "Your withdrawal didn't complete",
+          "subheading": "The cross-chain step failed. Retry to add more gas and complete the withdrawal, or cancel to return your share tokens to your wallet.",
+          "subheading-slippage": "The price moved past your slippage limit before the final step could run, so your share tokens are still held. Return them to your wallet, then try the withdrawal again with a higher slippage tolerance."
+        },
         "withdraw": {
           "heading": "Your withdrawal is ready",
           "subheading": "This usually happens automatically, but you can do it yourself. This transaction runs on Ethereum."
@@ -373,9 +379,13 @@
       "recover-funds": "Recover funds",
       "recover-shares": "Recover shares",
       "recovering": "Recovering...",
+      "retry": "Retry",
+      "return-share-tokens": "Return share tokens",
       "status": {
+        "action-needed": "Action needed",
         "bridging-back": "Bridging back to Hemi",
         "cancelling": "Cancelling withdrawal",
+        "cancelling-request": "Cancelling...",
         "cooldown-ready-in-days": "Cooldown · ready in {value}d",
         "cooldown-ready-in-hours": "Cooldown · ready in {value}h",
         "cooldown-ready-in-minutes": "Cooldown · ready in {value}m",
@@ -389,9 +399,11 @@
         "recover-funds-needed": "Something went wrong - Recover funds",
         "recover-shares-cancelled": "Withdrawal cancelled - Recover shares",
         "recover-shares-needed": "Something went wrong - Recover shares",
+        "retrying": "Retrying...",
         "returned": "Returned",
         "shares-returned": "Shares returned",
         "shares-returned-cancelled": "Withdrawal cancelled - Shares returned",
+        "slippage-exceeded": "Slippage limit exceeded",
         "tx-failed": "Tx Failed",
         "withdrawn": "Withdrawn"
       },

@@ -22,12 +22,16 @@ import {
   isFinalizeInFlight,
   isLocalEarnTransactionRow,
   isRecoverPath,
+  isRemoteFailed,
   isUserCancel,
   needsManualClaim,
   needsRecover,
   pickEarnRowAmount,
   pickSettleBannerKey,
+  remoteFailedSettlement,
+  remoteFailedStepStatus,
   resolveSettleStepStatus,
+  shouldShowRemoteFailedCtas,
   unstakeSettlement,
 } from '../../../../../app/[locale]/hemi-earn/_utils'
 import {
@@ -328,6 +332,42 @@ describe('utils', function () {
     })
   })
 
+  describe('isRemoteFailed', function () {
+    const remoteFailed: EarnTransaction = {
+      ...baseTx,
+      failed: true,
+      kind: 'REDEEM',
+      requestId: '42',
+      status: 'FAILED',
+    }
+
+    it('is true for a subgraph FAILED redeem flagged failed', function () {
+      expect(isRemoteFailed(remoteFailed)).toBe(true)
+    })
+
+    it('is false for a local FAILED row (retryable from home)', function () {
+      expect(
+        isRemoteFailed({ ...remoteFailed, requestId: 'local-1700000000' }),
+      ).toBe(false)
+    })
+
+    it('is false when the failed flag is not set', function () {
+      expect(isRemoteFailed({ ...remoteFailed, failed: false })).toBe(false)
+    })
+
+    it('is false for a deposit', function () {
+      expect(isRemoteFailed({ ...remoteFailed, kind: 'DEPOSIT' })).toBe(false)
+    })
+
+    it('is false for a non-FAILED status', function () {
+      expect(isRemoteFailed({ ...remoteFailed, status: 'PENDING' })).toBe(false)
+    })
+
+    it('is false for undefined', function () {
+      expect(isRemoteFailed(undefined)).toBe(false)
+    })
+  })
+
   describe('claimRecoverSettlement', function () {
     it('returns a CLAIM settlement unchanged', function () {
       const settlement: EarnSettlement = {
@@ -361,6 +401,15 @@ describe('utils', function () {
       ).toBeUndefined()
       expect(
         claimRecoverSettlement({ failed: true, kind: 'UNSTAKE' }),
+      ).toBeUndefined()
+    })
+
+    it('strips RETRY and CANCEL_REQUEST markers (Agent-side, not a settlement)', function () {
+      expect(
+        claimRecoverSettlement({ failed: false, kind: 'RETRY' }),
+      ).toBeUndefined()
+      expect(
+        claimRecoverSettlement({ failed: true, kind: 'CANCEL_REQUEST' }),
       ).toBeUndefined()
     })
 
@@ -1063,6 +1112,141 @@ describe('utils', function () {
 
     it('is false for undefined', function () {
       expect(isFinalizeInFlight(undefined)).toBe(false)
+    })
+  })
+
+  describe('remoteFailedSettlement', function () {
+    it('returns a RETRY marker unchanged', function () {
+      const settlement: EarnSettlement = { failed: false, kind: 'RETRY' }
+      expect(remoteFailedSettlement(settlement)).toBe(settlement)
+    })
+
+    it('returns a CANCEL_REQUEST marker unchanged', function () {
+      const settlement: EarnSettlement = {
+        failed: true,
+        kind: 'CANCEL_REQUEST',
+      }
+      expect(remoteFailedSettlement(settlement)).toBe(settlement)
+    })
+
+    it('ignores claim/recover/unstake markers', function () {
+      expect(
+        remoteFailedSettlement({ failed: false, kind: 'CLAIM' }),
+      ).toBeUndefined()
+      expect(
+        remoteFailedSettlement({ failed: false, kind: 'UNSTAKE' }),
+      ).toBeUndefined()
+    })
+
+    it('returns undefined for no settlement', function () {
+      expect(remoteFailedSettlement(undefined)).toBeUndefined()
+    })
+  })
+
+  describe('remoteFailedStepStatus', function () {
+    it('is FAILED when ready and nothing in flight', function () {
+      expect(remoteFailedStepStatus(true, undefined)).toBe(
+        ProgressStatus.FAILED,
+      )
+    })
+
+    it('is in progress while a retry/cancel is in flight', function () {
+      expect(
+        remoteFailedStepStatus(true, { failed: false, kind: 'RETRY' }),
+      ).toBe(ProgressStatus.PROGRESS)
+      expect(
+        remoteFailedStepStatus(true, { failed: false, kind: 'CANCEL_REQUEST' }),
+      ).toBe(ProgressStatus.PROGRESS)
+    })
+
+    it('is FAILED again once the retry/cancel reverted', function () {
+      expect(
+        remoteFailedStepStatus(true, { failed: true, kind: 'RETRY' }),
+      ).toBe(ProgressStatus.FAILED)
+    })
+
+    it('is in progress during the grace (not ready yet)', function () {
+      expect(remoteFailedStepStatus(false, undefined)).toBe(
+        ProgressStatus.PROGRESS,
+      )
+    })
+  })
+
+  describe('shouldShowRemoteFailedCtas', function () {
+    const stuckTx: EarnTransaction = {
+      ...baseTx,
+      failed: true,
+      kind: 'REDEEM',
+      receivedAt: '1000',
+      requestId: '42',
+      retryCount: 0,
+      status: 'FAILED',
+    }
+
+    it('is false when not stuck on-chain', function () {
+      expect(
+        shouldShowRemoteFailedCtas({
+          category: 'slippage',
+          isStuck: false,
+          nowSec: 999999,
+          tx: stuckTx,
+        }),
+      ).toBe(false)
+    })
+
+    it('shows immediately for slippage (needs a user call)', function () {
+      expect(
+        shouldShowRemoteFailedCtas({
+          category: 'slippage',
+          isStuck: true,
+          nowSec: 1001,
+          tx: stuckTx,
+        }),
+      ).toBe(true)
+    })
+
+    it('shows once a keeper retry already failed', function () {
+      expect(
+        shouldShowRemoteFailedCtas({
+          category: 'gas',
+          isStuck: true,
+          nowSec: 1001,
+          tx: { ...stuckTx, retryCount: 1 },
+        }),
+      ).toBe(true)
+    })
+
+    it('shows after the grace elapses', function () {
+      expect(
+        shouldShowRemoteFailedCtas({
+          category: 'gas',
+          isStuck: true,
+          nowSec: 1121,
+          tx: stuckTx,
+        }),
+      ).toBe(true)
+    })
+
+    it('stays hidden within the grace window', function () {
+      expect(
+        shouldShowRemoteFailedCtas({
+          category: 'gas',
+          isStuck: true,
+          nowSec: 1060,
+          tx: stuckTx,
+        }),
+      ).toBe(false)
+    })
+
+    it('stays hidden with no receivedAt and no retries', function () {
+      expect(
+        shouldShowRemoteFailedCtas({
+          category: 'unknown',
+          isStuck: true,
+          nowSec: 999999,
+          tx: { ...stuckTx, receivedAt: null },
+        }),
+      ).toBe(false)
     })
   })
 })

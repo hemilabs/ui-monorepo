@@ -10,6 +10,7 @@ import {
   isAwaitingFinalize,
   isEarnRowInFlight,
   isFinalizeInFlight,
+  isRemoteFailed,
   needsManualClaim,
   needsRecover,
 } from '../../_utils'
@@ -19,6 +20,7 @@ import { TrashIcon } from '../icons/trashIcon'
 
 import { CancelRedeemModal } from './cancelRedeemModal'
 import { ClaimFromVaultCta } from './transactionDrawer/claimFromVault'
+import { RemoteFailedCta } from './transactionDrawer/remoteFailed'
 import { SettleRowCta } from './transactionDrawer/settleShared'
 import { useTxDrawerQueryString } from './transactionDrawer/useTxDrawerQueryString'
 
@@ -37,6 +39,8 @@ function resolveActionState(transaction: EarnTransaction) {
     showManualCta:
       !settleMarker &&
       (needsManualClaim(transaction) || needsRecover(transaction)),
+    // Remote-failed self-gates: the CTA falls back to the View+spinner during the keeper grace.
+    showRemoteFailed: isRemoteFailed(transaction),
   }
 }
 
@@ -44,8 +48,12 @@ export const RowActions = function ({ transaction }: Props) {
   const t = useTranslations('hemi-earn.transactions')
   const [, setTxDrawerQueryString] = useTxDrawerQueryString()
 
-  const { showClaimFromVault, showLoaderIcon, showManualCta } =
-    resolveActionState(transaction)
+  const {
+    showClaimFromVault,
+    showLoaderIcon,
+    showManualCta,
+    showRemoteFailed,
+  } = resolveActionState(transaction)
   const [cancelModalOpen, setCancelModalOpen] = useState(false)
 
   const showCancelButton =
@@ -82,7 +90,14 @@ export const RowActions = function ({ transaction }: Props) {
   return (
     <>
       <div className="flex items-center gap-x-2 pr-4">
-        {showManualCta ? (
+        {showRemoteFailed ? (
+          <RemoteFailedCta
+            fallback={viewButton}
+            fullWidth={false}
+            redirectOnSign
+            transaction={transaction}
+          />
+        ) : showManualCta ? (
           <SettleRowCta fallback={viewButton} transaction={transaction} />
         ) : showClaimFromVault ? (
           <ClaimFromVaultCta

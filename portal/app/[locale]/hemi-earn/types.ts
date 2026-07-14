@@ -23,10 +23,11 @@ export type EarnTransactionStatusType =
 export type EarnTransactionKindType = 'DEPOSIT' | 'REDEEM'
 
 // A locally-tracked settlement tx the user signed (not a subgraph event). UNSTAKE
-// is the Ethereum Agent.claimUnstake; failed lets the UI offer a Retry.
+// is Agent.claimUnstake; RETRY/CANCEL_REQUEST are Agent.retry/cancel on a remote
+// failure; failed lets the UI offer a Retry.
 export type EarnSettlement = {
   failed: boolean
-  kind: 'CLAIM' | 'RECOVER' | 'CANCEL' | 'UNSTAKE'
+  kind: 'CLAIM' | 'RECOVER' | 'CANCEL' | 'UNSTAKE' | 'RETRY' | 'CANCEL_REQUEST'
   txHash?: Hash
 }
 
@@ -46,13 +47,19 @@ export type EarnTransaction = {
   claimTxHash: Hash | null
   // Agent-side failure flag; lingers through CANCELLED/RECOVERED (failed:false recover = deliberate cancel).
   failed: boolean
+  // Raw Agent revert reason (bytes) on a remote failure; decoded to pick the recovery CTA.
+  failureReason?: string | null
   kind: EarnTransactionKindType
   processedAt?: string | null
+  // Unix seconds the Agent received the request (== the failure block on a remote failure).
+  receivedAt?: string | null
   receiver: Address
   recoverTxHash: Hash | null
   requestedAt: string
   requestId: string
   requestTxHash: Hash
+  // Keeper retries of a remote-failed request; 0 until the first retry.
+  retryCount?: number
   settlement?: EarnSettlement
   status: EarnTransactionStatusType
 }

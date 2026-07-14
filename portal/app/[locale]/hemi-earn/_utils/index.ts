@@ -13,6 +13,8 @@ import {
   type LocalEarnOperation,
 } from '../types'
 
+import { type FailureCategory } from './decodeFailureReason'
+
 export const hashesMatch = (a: string | undefined, b: string | undefined) =>
   !!a && !!b && a.toLowerCase() === b.toLowerCase()
 
@@ -63,17 +65,47 @@ export const isRecoverPath = (tx: EarnTransaction) =>
 export const canRetryRow = (tx: EarnTransaction) =>
   tx.status === 'FAILED' && isLocalEarnTransactionRow(tx)
 
-// CANCEL/UNSTAKE reuse the settlement field but aren't claim/recover txs — strip
-// them so the claim/recover UI never treats them as its own.
+// Subgraph FAILED sibling of canRetryRow: the Agent reverted on Ethereum after a good Hemi
+// tx, so the request is stuck remotely and the user drives Agent.retry / Agent.cancel.
+export const isRemoteFailed = (tx: EarnTransaction | undefined) =>
+  !!tx &&
+  tx.kind === 'REDEEM' &&
+  tx.status === 'FAILED' &&
+  tx.failed &&
+  !isLocalEarnTransactionRow(tx)
+
+// CANCEL/UNSTAKE/RETRY/CANCEL_REQUEST reuse the settlement field but aren't claim/recover
+// txs — strip them so the claim/recover UI never treats them as its own.
 export const claimRecoverSettlement = (
   settlement: EarnSettlement | undefined,
 ) =>
-  settlement?.kind === 'CANCEL' || settlement?.kind === 'UNSTAKE'
+  settlement?.kind === 'CANCEL' ||
+  settlement?.kind === 'UNSTAKE' ||
+  settlement?.kind === 'RETRY' ||
+  settlement?.kind === 'CANCEL_REQUEST'
     ? undefined
     : settlement
 
 export const unstakeSettlement = (settlement: EarnSettlement | undefined) =>
   settlement?.kind === 'UNSTAKE' ? settlement : undefined
+
+export const remoteFailedSettlement = (
+  settlement: EarnSettlement | undefined,
+) =>
+  settlement?.kind === 'RETRY' || settlement?.kind === 'CANCEL_REQUEST'
+    ? settlement
+    : undefined
+
+// Remote-failed receive step: FAILED only once the CTA is surfaced (stuck past the grace, no
+// retry/cancel in flight); in-progress otherwise (grace window or a signed recovery mining).
+export const remoteFailedStepStatus = function (
+  ready: boolean,
+  settlement: EarnSettlement | undefined,
+) {
+  const marker = remoteFailedSettlement(settlement)
+  const inFlight = !!marker && !marker.failed
+  return ready && !inFlight ? ProgressStatus.FAILED : ProgressStatus.PROGRESS
+}
 
 // A signed claim/recover reverted while the on-chain status stayed FULFILLED/CANCELLED — surface it as failed, not "needed".
 export const hasFailedSettlement = (tx: EarnTransaction) =>
@@ -176,6 +208,31 @@ export const isCooldownMature = (
   tx: EarnTransaction,
   remainingSec: number | undefined,
 ) => isAwaitingFinalize(tx) && remainingSec === 0
+
+// Grace before offering Retry/Cancel on a remote failure, so the keeper gets first crack at
+// auto-recovering it. Anchored on the request's receivedAt (== the failure block).
+const REMOTE_FAILED_GRACE_SECONDS = 120
+
+// Grace gate for the remote-failed CTAs: stay quiet right after the failure so the keeper can
+// auto-recover, unless slippage (needs a user call), a keeper retry already failed, or the grace elapsed.
+export const shouldShowRemoteFailedCtas = function ({
+  category,
+  isStuck,
+  nowSec,
+  tx,
+}: {
+  category: FailureCategory
+  isStuck: boolean
+  nowSec: number
+  tx: EarnTransaction
+}) {
+  if (!isStuck) return false
+  if (category === 'slippage') return true
+  if ((tx.retryCount ?? 0) > 0) return true
+  // Guard against a missing / '0' / non-numeric receivedAt so the grace can't be skipped by Number(...) === 0.
+  const receivedAt = Number(tx.receivedAt ?? 0)
+  return receivedAt > 0 && nowSec - receivedAt > REMOTE_FAILED_GRACE_SECONDS
+}
 
 // Shared terminal-step ladder for both drawers' receive (claim) and recover steps;
 // untouched manual settlements resolve to READY (nothing spinning yet), else the caller's fallback.

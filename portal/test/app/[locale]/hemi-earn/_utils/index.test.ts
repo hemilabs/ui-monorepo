@@ -1,4 +1,5 @@
 import { ProgressStatus } from 'components/reviewOperation/progressStatus'
+import { mainnet } from 'networks/mainnet'
 import { type EvmToken } from 'types/token'
 import { type Address, type Hash, zeroAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
@@ -32,6 +33,7 @@ import {
   remoteFailedSettlement,
   remoteFailedStepStatus,
   resolveSettleStepStatus,
+  resolveStepExplorerChainId,
   shouldShowRemoteFailedCtas,
   unstakeSettlement,
 } from '../../../../../app/[locale]/hemi-earn/_utils'
@@ -1222,6 +1224,80 @@ describe('utils', function () {
       expect(remoteFailedStepStatus(false, undefined)).toBe(
         ProgressStatus.PROGRESS,
       )
+    })
+  })
+
+  describe('resolveStepExplorerChainId', function () {
+    const fallbackChainId = 999
+    const recoveryHash = '0xaaa' as Hash
+
+    it('is undefined when there is no tx hash', function () {
+      expect(
+        resolveStepExplorerChainId({
+          fallbackChainId,
+          settlement: {
+            failed: false,
+            kind: 'CANCEL_REQUEST',
+            txHash: recoveryHash,
+          },
+          txHash: undefined,
+        }),
+      ).toBeUndefined()
+    })
+
+    it('links a remote-failed retry/cancel tx to mainnet', function () {
+      expect(
+        resolveStepExplorerChainId({
+          fallbackChainId,
+          settlement: {
+            failed: false,
+            kind: 'CANCEL_REQUEST',
+            txHash: recoveryHash,
+          },
+          txHash: recoveryHash,
+        }),
+      ).toBe(mainnet.id)
+      expect(
+        resolveStepExplorerChainId({
+          fallbackChainId,
+          settlement: { failed: false, kind: 'RETRY', txHash: recoveryHash },
+          txHash: recoveryHash,
+        }),
+      ).toBe(mainnet.id)
+    })
+
+    it('uses the fallback chain when the hash is not the recovery tx', function () {
+      expect(
+        resolveStepExplorerChainId({
+          fallbackChainId,
+          settlement: {
+            failed: false,
+            kind: 'CANCEL_REQUEST',
+            txHash: recoveryHash,
+          },
+          txHash: '0xbbb' as Hash,
+        }),
+      ).toBe(fallbackChainId)
+    })
+
+    it('uses the fallback chain for a non-remote-failed settlement', function () {
+      expect(
+        resolveStepExplorerChainId({
+          fallbackChainId,
+          settlement: { failed: false, kind: 'CLAIM', txHash: recoveryHash },
+          txHash: recoveryHash,
+        }),
+      ).toBe(fallbackChainId)
+    })
+
+    it('uses the fallback chain when there is no settlement', function () {
+      expect(
+        resolveStepExplorerChainId({
+          fallbackChainId,
+          settlement: undefined,
+          txHash: recoveryHash,
+        }),
+      ).toBe(fallbackChainId)
     })
   })
 

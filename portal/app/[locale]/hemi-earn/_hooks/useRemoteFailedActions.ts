@@ -92,8 +92,9 @@ const useRemoteFailedAction = function ({
       // Quote the OFT the action actually sends: retry sends the fulfillment token
       // (deposit → share, redeem → asset), cancel returns tokenIn (deposit → asset,
       // redeem → share). Sizing against the wrong OFT would under/over-fund the top-up.
-      const usesShareOft =
-        (transaction.kind === 'DEPOSIT') === (kind === 'RETRY')
+      const isRetry = kind === 'RETRY'
+      const isDeposit = transaction.kind === 'DEPOSIT'
+      const usesShareOft = (isDeposit && isRetry) || (!isDeposit && !isRetry)
       const quote = usesShareOft
         ? await quoteDepositFulfillment({
             agentAddress,

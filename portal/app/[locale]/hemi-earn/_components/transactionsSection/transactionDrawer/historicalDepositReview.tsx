@@ -10,7 +10,6 @@ import { TokenLogo } from 'components/tokenLogo'
 import { getHemiEarnRouterAddress } from 'hemi-earn-actions'
 import { hemi } from 'hemi-viem'
 import { useNeedsApproval } from 'hooks/useNeedsApproval'
-import { mainnet } from 'networks/mainnet'
 import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
@@ -26,8 +25,8 @@ import {
   isRemoteFailedCancel,
   needsManualClaim,
   needsRecover,
-  remoteFailedSettlement,
   remoteFailedStepStatus,
+  resolveStepExplorerChainId,
 } from '../../../_utils'
 import {
   type EarnTransaction,
@@ -147,13 +146,11 @@ function buildTerminalStep({
     ? remoteFailedStepStatus(remoteFailedReady, tx.settlement)
     : resolveTerminalStatus(tx, baseStatus, settlementTxHash)
   const txHash = settlementTxHash ?? getTerminalDeliveryTxHash(tx)
-  // A remote-failed retry/cancel is signed on the Agent's L1, so link it to mainnet, not Hemi.
-  const recoveryTxHash = remoteFailedSettlement(tx.settlement)?.txHash
-  const explorerChainId = txHash
-    ? txHash === recoveryTxHash
-      ? mainnet.id
-      : hemi.id
-    : undefined
+  const explorerChainId = resolveStepExplorerChainId({
+    fallbackChainId: hemi.id,
+    settlement: tx.settlement,
+    txHash,
+  })
   if (isRecoverPath(tx) || isRemoteFailedCancel(tx)) {
     // "Funds returned" only once RECOVERED; CANCELLED / a signed remote-failed cancel awaits the recover.
     const recoverLabel =

@@ -23,6 +23,7 @@ import {
   isLocalEarnTransactionRow,
   isRecoverPath,
   isRemoteFailed,
+  isRemoteFailedCancel,
   isUserCancel,
   needsManualClaim,
   needsRecover,
@@ -355,8 +356,18 @@ describe('utils', function () {
       expect(isRemoteFailed({ ...remoteFailed, failed: false })).toBe(false)
     })
 
-    it('is false for a deposit', function () {
-      expect(isRemoteFailed({ ...remoteFailed, kind: 'DEPOSIT' })).toBe(false)
+    it('is true for a subgraph FAILED deposit flagged failed', function () {
+      expect(isRemoteFailed({ ...remoteFailed, kind: 'DEPOSIT' })).toBe(true)
+    })
+
+    it('is false for a local FAILED deposit', function () {
+      expect(
+        isRemoteFailed({
+          ...remoteFailed,
+          kind: 'DEPOSIT',
+          requestId: 'local-1700000000',
+        }),
+      ).toBe(false)
     })
 
     it('is false for a non-FAILED status', function () {
@@ -365,6 +376,48 @@ describe('utils', function () {
 
     it('is false for undefined', function () {
       expect(isRemoteFailed(undefined)).toBe(false)
+    })
+  })
+
+  describe('isRemoteFailedCancel', function () {
+    const remoteFailed: EarnTransaction = {
+      ...baseTx,
+      failed: true,
+      kind: 'DEPOSIT',
+      requestId: '42',
+      status: 'FAILED',
+    }
+
+    it('is true for a remote-failed row with a CANCEL_REQUEST marker', function () {
+      expect(
+        isRemoteFailedCancel({
+          ...remoteFailed,
+          settlement: { failed: false, kind: 'CANCEL_REQUEST' },
+        }),
+      ).toBe(true)
+    })
+
+    it('is false for a remote-failed row with a RETRY marker', function () {
+      expect(
+        isRemoteFailedCancel({
+          ...remoteFailed,
+          settlement: { failed: false, kind: 'RETRY' },
+        }),
+      ).toBe(false)
+    })
+
+    it('is false for a remote-failed row without a settlement', function () {
+      expect(isRemoteFailedCancel(remoteFailed)).toBe(false)
+    })
+
+    it('is false when the row is not remote-failed', function () {
+      expect(
+        isRemoteFailedCancel({
+          ...remoteFailed,
+          settlement: { failed: false, kind: 'CANCEL_REQUEST' },
+          status: 'PENDING',
+        }),
+      ).toBe(false)
     })
   })
 

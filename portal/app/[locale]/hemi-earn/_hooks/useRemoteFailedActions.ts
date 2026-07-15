@@ -89,20 +89,22 @@ const useRemoteFailedAction = function ({
       const { remoteAsset, remoteShare } = await queryClient.ensureQueryData(
         assetDataQueryOptions(asset),
       )
-      // Retry re-sends the asset fulfillment (asset OFT); cancel returns the shares (share OFT).
-      // Quote each on the OFT it actually uses so the top-up isn't sized against the wrong path.
-      const quote =
-        kind === 'RETRY'
-          ? await quoteRedeemFulfillment({
-              agentAddress,
-              asset: remoteAsset,
-              client,
-            })
-          : await quoteDepositFulfillment({
-              agentAddress,
-              client,
-              share: remoteShare,
-            })
+      // Quote the OFT the action actually sends: retry sends the fulfillment token
+      // (deposit → share, redeem → asset), cancel returns tokenIn (deposit → asset,
+      // redeem → share). Sizing against the wrong OFT would under/over-fund the top-up.
+      const usesShareOft =
+        (transaction.kind === 'DEPOSIT') === (kind === 'RETRY')
+      const quote = usesShareOft
+        ? await quoteDepositFulfillment({
+            agentAddress,
+            client,
+            share: remoteShare,
+          })
+        : await quoteRedeemFulfillment({
+            agentAddress,
+            asset: remoteAsset,
+            client,
+          })
       // retry/cancel run with failedRequest.nativeFee + msg.value on-chain, so only top up the shortfall.
       const nativeFee = maxBigInt(BigInt(0), quote - failedRequest.nativeFee)
 

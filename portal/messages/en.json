@@ -327,9 +327,13 @@
         },
         "remote-failed": {
           "heading": "Your withdrawal is stuck on Ethereum",
+          "heading-deposit": "Your deposit is stuck on Ethereum",
           "heading-slippage": "Your withdrawal didn't complete",
+          "heading-slippage-deposit": "Your deposit didn't complete",
           "subheading": "The cross-chain step failed. Retry to add more gas and complete the withdrawal, or cancel to return your share tokens to your wallet.",
-          "subheading-slippage": "The price moved past your slippage limit before the final step could run, so your share tokens are still held. Return them to your wallet, then try the withdrawal again with a higher slippage tolerance."
+          "subheading-deposit": "The cross-chain step failed. Retry to add more gas and complete the deposit, or cancel to return your funds to your wallet.",
+          "subheading-slippage": "The price moved past your slippage limit before the final step could run, so your share tokens are still held. Return them to your wallet, then try the withdrawal again with a higher slippage tolerance.",
+          "subheading-slippage-deposit": "The price moved past your slippage limit before the final step could run, so your funds are still held. Return them to your wallet, then try the deposit again with a higher slippage tolerance."
         },
         "withdraw": {
           "heading": "Your withdrawal is ready",
@@ -380,12 +384,12 @@
       "recover-shares": "Recover shares",
       "recovering": "Recovering...",
       "retry": "Retry",
+      "return-funds": "Return funds",
       "return-share-tokens": "Return share tokens",
       "status": {
         "action-needed": "Action needed",
         "bridging-back": "Bridging back to Hemi",
         "cancelling": "Cancelling withdrawal",
-        "cancelling-request": "Cancelling...",
         "cooldown-ready-in-days": "Cooldown · ready in {value}d",
         "cooldown-ready-in-hours": "Cooldown · ready in {value}h",
         "cooldown-ready-in-minutes": "Cooldown · ready in {value}m",
@@ -401,6 +405,8 @@
         "recover-shares-needed": "Something went wrong - Recover shares",
         "retrying": "Retrying...",
         "returned": "Returned",
+        "returning-funds": "Returning funds...",
+        "returning-share-tokens": "Returning share tokens...",
         "shares-returned": "Shares returned",
         "shares-returned-cancelled": "Withdrawal cancelled - Shares returned",
         "slippage-exceeded": "Slippage limit exceeded",

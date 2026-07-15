@@ -68,11 +68,7 @@ export const canRetryRow = (tx: EarnTransaction) =>
 // Subgraph FAILED sibling of canRetryRow: the Agent reverted on Ethereum after a good Hemi
 // tx, so the request is stuck remotely and the user drives Agent.retry / Agent.cancel.
 export const isRemoteFailed = (tx: EarnTransaction | undefined) =>
-  !!tx &&
-  tx.kind === 'REDEEM' &&
-  tx.status === 'FAILED' &&
-  tx.failed &&
-  !isLocalEarnTransactionRow(tx)
+  !!tx && tx.status === 'FAILED' && tx.failed && !isLocalEarnTransactionRow(tx)
 
 // CANCEL/UNSTAKE/RETRY/CANCEL_REQUEST reuse the settlement field but aren't claim/recover
 // txs — strip them so the claim/recover UI never treats them as its own.
@@ -106,6 +102,13 @@ export const remoteFailedStepStatus = function (
   const inFlight = !!marker && !marker.failed
   return ready && !inFlight ? ProgressStatus.FAILED : ProgressStatus.PROGRESS
 }
+
+// A remote-failed request whose chosen recovery is cancel, which returns tokenIn (funds for a
+// deposit, shares for a redeem) — the terminal step should show that returned token, not the
+// fulfillment. Keys off the signed CANCEL_REQUEST marker, so it flips once the cancel is signed.
+export const isRemoteFailedCancel = (tx: EarnTransaction | undefined) =>
+  isRemoteFailed(tx) &&
+  remoteFailedSettlement(tx?.settlement)?.kind === 'CANCEL_REQUEST'
 
 // A signed claim/recover reverted while the on-chain status stayed FULFILLED/CANCELLED — surface it as failed, not "needed".
 export const hasFailedSettlement = (tx: EarnTransaction) =>

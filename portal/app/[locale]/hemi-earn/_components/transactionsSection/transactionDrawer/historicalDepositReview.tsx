@@ -15,19 +15,24 @@ import { type ReactNode } from 'react'
 import { type EvmToken } from 'types/token'
 import { type Hash } from 'viem'
 
+import { useRemoteFailedState } from '../../../_hooks/useRemoteFailedState'
 import { SparkleIcon } from '../../../_icons/sparkleIcon'
 import {
   getTerminalDeliveryTxHash,
   isLocalEarnTransactionRow,
   isRecoverPath,
+  isRemoteFailed,
+  isRemoteFailedCancel,
   needsManualClaim,
   needsRecover,
+  remoteFailedStepStatus,
 } from '../../../_utils'
 import {
   type EarnTransaction,
   type EarnTransactionStatusType,
 } from '../../../types'
 
+import { RemoteFailedBanner } from './remoteFailed'
 import { SettleBanner } from './settleShared'
 
 type Props = {
@@ -123,23 +128,27 @@ function resolveTerminalStatus(
 // Recover path returns the asset, so its terminal step is labeled with the asset token.
 function buildTerminalStep({
   baseStatus,
+  remoteFailedReady,
   settlementTxHash,
   t,
   token,
   tx,
 }: {
   baseStatus: ProgressStatusType
+  remoteFailedReady: boolean
   settlementTxHash: Hash | undefined
   t: Translator
   token: EvmToken
   tx: EarnTransaction
 }): StepPropsWithoutPosition {
-  const status = resolveTerminalStatus(tx, baseStatus, settlementTxHash)
+  const status = isRemoteFailed(tx)
+    ? remoteFailedStepStatus(remoteFailedReady, tx.settlement)
+    : resolveTerminalStatus(tx, baseStatus, settlementTxHash)
   const txHash = settlementTxHash ?? getTerminalDeliveryTxHash(tx)
   // Link whenever a delivery hash exists — an auto-finalized claim/recover has one the user never signed.
   const explorerChainId = txHash ? hemi.id : undefined
-  if (isRecoverPath(tx)) {
-    // "Funds returned" only once RECOVERED; CANCELLED still awaits the recover.
+  if (isRecoverPath(tx) || isRemoteFailedCancel(tx)) {
+    // "Funds returned" only once RECOVERED; CANCELLED / a signed remote-failed cancel awaits the recover.
     const recoverLabel =
       tx.status === 'RECOVERED'
         ? 'step.funds-returned'
@@ -200,6 +209,8 @@ export const HistoricalDepositReview = function ({
     spender: getHemiEarnRouterAddress(),
   })
 
+  const { show: remoteFailedReady } = useRemoteFailedState(transaction)
+
   const { waitingForShares } = resolveStepStates(transaction)
   // Only a still-mining settlement drives PROGRESS; a failed one keeps the natural (FAILED) status + Retry CTA.
   const { settlement } = transaction
@@ -231,6 +242,7 @@ export const HistoricalDepositReview = function ({
   steps.push(
     buildTerminalStep({
       baseStatus: waitingForShares,
+      remoteFailedReady,
       settlementTxHash,
       t,
       token,
@@ -240,7 +252,12 @@ export const HistoricalDepositReview = function ({
 
   return (
     <Operation
-      aboveCallToAction={<SettleBanner transaction={transaction} />}
+      aboveCallToAction={
+        <>
+          <SettleBanner transaction={transaction} />
+          <RemoteFailedBanner transaction={transaction} />
+        </>
+      }
       amount={transaction.amountIn}
       callToAction={callToAction}
       heading={t('deposit-heading')}

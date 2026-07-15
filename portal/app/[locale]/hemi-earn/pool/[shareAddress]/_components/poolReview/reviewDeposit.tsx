@@ -12,6 +12,7 @@ import { encodeRequestDeposit } from 'hemi-earn-actions/actions'
 import { useChain } from 'hooks/useChain'
 import { useEstimateApproveErc20Fees } from 'hooks/useEstimateApproveErc20Fees'
 import { useEstimateFees } from 'hooks/useEstimateFees'
+import { mainnet } from 'networks/mainnet'
 import { useTranslations } from 'next-intl'
 import { getNativeToken } from 'utils/nativeToken'
 import { parseTokenUnits } from 'utils/token'
@@ -45,6 +46,7 @@ import {
   isRemoteFailedCancel,
   needsManualClaim,
   needsRecover,
+  remoteFailedSettlement,
   remoteFailedStepStatus,
 } from '../../../../_utils'
 import { type EarnTransaction } from '../../../../types'
@@ -305,6 +307,8 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       settlementTxHash,
     } = getSharesStepMeta(subgraphRow, settlement)
     const deliveryHash = settlementTxHash ?? terminalHash
+    // A remote-failed retry/cancel is signed on the Agent's L1, so link it to mainnet, not Hemi.
+    const recoveryTxHash = remoteFailedSettlement(settlement)?.txHash
     // A signed remote-failed cancel returns the funds, so it labels the step like the recover path.
     const isReturningFunds = isRecover || isRemoteFailedCancel(settledRow)
 
@@ -321,7 +325,11 @@ export const ReviewDeposit = function ({ onClose }: Props) {
           <span>{t('get-share-tokens')}</span>
         </div>
       ),
-      explorerChainId: deliveryHash ? chainId : undefined,
+      explorerChainId: deliveryHash
+        ? deliveryHash === recoveryTxHash
+          ? mainnet.id
+          : chainId
+        : undefined,
       status: isRemoteFailed(settledRow)
         ? remoteFailedStepStatus(remoteFailedReady, settledRow?.settlement)
         : resolveGetSharesStatus({

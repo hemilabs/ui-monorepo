@@ -12,6 +12,15 @@ describe('computeCrossChainFees', function () {
     ).toEqual({ bridgingFee: BigInt(600), ethereumFee: BigInt(400) })
   })
 
+  it('clamps bridgingFee to zero when callbackFee exceeds layerZeroFee', function () {
+    expect(
+      computeCrossChainFees({
+        layerZeroFee: BigInt(300),
+        quote: { callbackFee: BigInt(500) },
+      }),
+    ).toEqual({ bridgingFee: BigInt(0), ethereumFee: BigInt(500) })
+  })
+
   it('defaults both fees to zero when the quote is undefined', function () {
     expect(
       computeCrossChainFees({ layerZeroFee: BigInt(0), quote: undefined }),

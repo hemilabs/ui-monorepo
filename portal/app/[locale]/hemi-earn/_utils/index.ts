@@ -2,9 +2,10 @@ import {
   ProgressStatus,
   type ProgressStatusType,
 } from 'components/reviewOperation/progressStatus'
+import { mainnet } from 'networks/mainnet'
 import { type Token } from 'types/token'
 import { formatPercentage } from 'utils/format'
-import { type Address, type Hash, isAddressEqual } from 'viem'
+import { type Address, type Chain, type Hash, isAddressEqual } from 'viem'
 
 import {
   type EarnPool,
@@ -68,8 +69,7 @@ export const canRetryRow = (tx: EarnTransaction) =>
 // Subgraph FAILED sibling of canRetryRow: the Agent reverted on Ethereum after a good Hemi
 // tx, so the request is stuck remotely and the user drives Agent.retry / Agent.cancel.
 export const isRemoteFailed = (tx: EarnTransaction | undefined) =>
-  !!tx &&
-  tx.kind === 'REDEEM' &&
+  tx !== undefined &&
   tx.status === 'FAILED' &&
   tx.failed &&
   !isLocalEarnTransactionRow(tx)
@@ -106,6 +106,30 @@ export const remoteFailedStepStatus = function (
   const inFlight = !!marker && !marker.failed
   return ready && !inFlight ? ProgressStatus.FAILED : ProgressStatus.PROGRESS
 }
+
+// A remote-failed request whose chosen recovery is cancel, which returns tokenIn (funds for a
+// deposit, shares for a redeem) — the terminal step should show that returned token, not the
+// fulfillment. Keys off the signed CANCEL_REQUEST marker, so it flips once the cancel is signed.
+export const isRemoteFailedCancel = (tx: EarnTransaction | undefined) =>
+  isRemoteFailed(tx) &&
+  remoteFailedSettlement(tx?.settlement)?.kind === 'CANCEL_REQUEST'
+
+// A remote-failed retry/cancel is signed on the Agent's L1, so its step link points to mainnet;
+// any other delivery hash lives on the request's own chain.
+export const resolveStepExplorerChainId = ({
+  fallbackChainId,
+  settlement,
+  txHash,
+}: {
+  fallbackChainId: Chain['id']
+  settlement: EarnSettlement | undefined
+  txHash: Hash | undefined
+}) =>
+  txHash === undefined
+    ? undefined
+    : txHash === remoteFailedSettlement(settlement)?.txHash
+      ? mainnet.id
+      : fallbackChainId
 
 // A signed claim/recover reverted while the on-chain status stayed FULFILLED/CANCELLED — surface it as failed, not "needed".
 export const hasFailedSettlement = (tx: EarnTransaction) =>

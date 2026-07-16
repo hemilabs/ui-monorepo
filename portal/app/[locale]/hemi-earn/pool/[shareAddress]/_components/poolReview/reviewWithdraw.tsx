@@ -52,6 +52,7 @@ import {
   isFinalizeInFlight,
   isRecoverPath,
   isRemoteFailed,
+  isRemoteFailedCancel,
   isUserCancel,
   needsManualClaim,
   needsRecover,
@@ -510,7 +511,11 @@ export const ReviewWithdraw = function ({ onClose }: Props) {
       steps.push(addApprovalStep())
     }
     steps.push(addUnstakeStep())
-    if ((settledRow && isRecoverPath(settledRow)) || cancelling) {
+    if (
+      (settledRow &&
+        (isRecoverPath(settledRow) || isRemoteFailedCancel(settledRow))) ||
+      cancelling
+    ) {
       steps.push(addRecoverStep())
       return steps
     }

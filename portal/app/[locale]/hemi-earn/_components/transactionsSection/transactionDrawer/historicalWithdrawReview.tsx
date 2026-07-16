@@ -28,6 +28,7 @@ import {
   isLocalEarnTransactionRow,
   isRecoverPath,
   isRemoteFailed,
+  isRemoteFailedCancel,
   isUserCancel,
   needsManualClaim,
   needsRecover,
@@ -271,7 +272,11 @@ function buildSteps({
   const unstakeStep = buildUnstakeStep(transaction, pool.shareToken, t)
   // Recover path: shares come back, so the cooldown/receive machinery doesn't apply. A
   // still-PENDING deliberate cancel joins here too, dropping the now-moot countdown + Receive step.
-  if (isRecoverPath(transaction) || isUserCancel(transaction)) {
+  if (
+    isRecoverPath(transaction) ||
+    isUserCancel(transaction) ||
+    isRemoteFailedCancel(transaction)
+  ) {
     steps.push(unstakeStep)
     steps.push(
       buildRecoverStep(transaction, pool.shareToken, t, settlementTxHash),

@@ -19,6 +19,10 @@ import { type Hash, formatUnits } from 'viem'
 import { useAccount, useEstimateGas } from 'wagmi'
 
 import {
+  RemoteFailedBanner,
+  RemoteFailedCta,
+} from '../../../../_components/transactionsSection/transactionDrawer/remoteFailed'
+import {
   AddTokenToWalletCta,
   SettleBanner,
   SettleCta,
@@ -29,6 +33,7 @@ import {
 } from '../../../../_constants/slippage'
 import { useEarnTransactionsQuery } from '../../../../_hooks/useEarnTransactionsQuery'
 import { useLocalEarnOperations } from '../../../../_hooks/useLocalEarnOperations'
+import { useRemoteFailedState } from '../../../../_hooks/useRemoteFailedState'
 import { SparkleIcon } from '../../../../_icons/sparkleIcon'
 import {
   enrichWithSettlement,
@@ -36,8 +41,12 @@ import {
   getTerminalDeliveryTxHash,
   hashesMatch,
   isRecoverPath,
+  isRemoteFailed,
+  isRemoteFailedCancel,
   needsManualClaim,
   needsRecover,
+  remoteFailedStepStatus,
+  resolveStepExplorerChainId,
 } from '../../../../_utils'
 import { type EarnTransaction } from '../../../../types'
 import { usePoolForm } from '../../_context/poolFormContext'
@@ -129,6 +138,7 @@ export const ReviewDeposit = function ({ onClose }: Props) {
     subgraphRow?.requestTxHash,
   )
   const settledRow = enrichWithSettlement(subgraphRow, settlement)
+  const { show: remoteFailedReady } = useRemoteFailedState(settledRow)
 
   const depositStatus =
     depositOperation?.status ?? DepositStatus.APPROVAL_TX_COMPLETED
@@ -296,10 +306,12 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       settlementTxHash,
     } = getSharesStepMeta(subgraphRow, settlement)
     const deliveryHash = settlementTxHash ?? terminalHash
+    // A signed remote-failed cancel returns the funds, so it labels the step like the recover path.
+    const isReturningFunds = isRecover || isRemoteFailedCancel(settledRow)
 
     return {
       // Recover path returns the asset (labeled with the asset token); "Funds returned" only at RECOVERED.
-      description: isRecover ? (
+      description: isReturningFunds ? (
         <div className="flex items-center gap-x-2">
           <TokenLogo size="small" token={selectedAsset.token} />
           <span>{t(isComplete ? 'funds-returned' : 'funds-to-recover')}</span>
@@ -310,17 +322,23 @@ export const ReviewDeposit = function ({ onClose }: Props) {
           <span>{t('get-share-tokens')}</span>
         </div>
       ),
-      explorerChainId: deliveryHash ? chainId : undefined,
-      status: resolveGetSharesStatus({
-        awaitingUserAction,
-        hasSettlementTx: !!settlementTxHash,
-        isComplete,
-        isDepositConfirmed:
-          depositStatus === DepositStatus.DEPOSIT_TX_CONFIRMED,
-        isFailed,
-        isRecover,
-        settlementFailed,
+      explorerChainId: resolveStepExplorerChainId({
+        fallbackChainId: chainId,
+        settlement,
+        txHash: deliveryHash,
       }),
+      status: isRemoteFailed(settledRow)
+        ? remoteFailedStepStatus(remoteFailedReady, settledRow?.settlement)
+        : resolveGetSharesStatus({
+            awaitingUserAction,
+            hasSettlementTx: !!settlementTxHash,
+            isComplete,
+            isDepositConfirmed:
+              depositStatus === DepositStatus.DEPOSIT_TX_CONFIRMED,
+            isFailed,
+            isRecover,
+            settlementFailed,
+          }),
       txHash: deliveryHash,
     }
   }
@@ -333,6 +351,9 @@ export const ReviewDeposit = function ({ onClose }: Props) {
       ].includes(depositStatus)
     ) {
       return <RetryDeposit />
+    }
+    if (settledRow && isRemoteFailed(settledRow)) {
+      return <RemoteFailedCta transaction={settledRow} />
     }
     // Auto-claim off: the user signs the claim once the Agent delivers shares back (FULFILLED).
     if (settledRow && needsManualClaim(settledRow)) {
@@ -375,7 +396,12 @@ export const ReviewDeposit = function ({ onClose }: Props) {
 
   return (
     <Operation
-      aboveCallToAction={<SettleBanner transaction={settledRow} />}
+      aboveCallToAction={
+        <>
+          <SettleBanner transaction={settledRow} />
+          <RemoteFailedBanner transaction={settledRow} />
+        </>
+      }
       amount={depositOperation?.amountIn ?? amount.toString()}
       callToAction={getCallToAction()}
       heading={t('deposit.heading')}

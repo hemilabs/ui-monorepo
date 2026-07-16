@@ -48,6 +48,9 @@ function depositCallToAction({
       <RetryFailedDeposit asset={asset} pool={pool} transaction={transaction} />
     )
   }
+  if (isRemoteFailed(transaction)) {
+    return <RemoteFailedCta transaction={transaction} />
+  }
   if (needsManualClaim(transaction)) {
     return (
       <SettleCta

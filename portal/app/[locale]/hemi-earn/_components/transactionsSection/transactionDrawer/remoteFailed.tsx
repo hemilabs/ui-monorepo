@@ -19,10 +19,13 @@ import { type EarnSettlement, type EarnTransaction } from '../../../types'
 import { useTxDrawerQueryString } from './useTxDrawerQueryString'
 
 type RecoveryConfig = {
-  idleKey: 'retry' | 'return-share-tokens'
+  idleKey: 'retry' | 'return-funds' | 'return-share-tokens'
   kind: EarnSettlement['kind']
   mutation: ReturnType<typeof useRetryRequest>
-  pendingKey: 'status.cancelling-request' | 'status.retrying'
+  pendingKey:
+    | 'status.retrying'
+    | 'status.returning-funds'
+    | 'status.returning-share-tokens'
   primary: boolean
 }
 
@@ -90,10 +93,14 @@ export const RemoteFailedCta = function ({
     primary: true,
   }
   const cancelConfig: RecoveryConfig = {
-    idleKey: 'return-share-tokens',
+    idleKey:
+      transaction.kind === 'DEPOSIT' ? 'return-funds' : 'return-share-tokens',
     kind: 'CANCEL_REQUEST',
     mutation: cancel,
-    pendingKey: 'status.cancelling-request',
+    pendingKey:
+      transaction.kind === 'DEPOSIT'
+        ? 'status.returning-funds'
+        : 'status.returning-share-tokens',
     primary: category === 'slippage',
   }
   // A slippage retry just slips again against the frozen min-out, so offer only Cancel;
@@ -142,19 +149,13 @@ export const RemoteFailedBanner = function ({
   if (!show) {
     return null
   }
+  const variant = category === 'slippage' ? '-slippage' : ''
+  const suffix = transaction?.kind === 'DEPOSIT' ? '-deposit' : ''
   return (
     <div className="px-4 py-6 md:px-6">
       <WarningBox
-        heading={t(
-          category === 'slippage'
-            ? 'remote-failed.heading-slippage'
-            : 'remote-failed.heading',
-        )}
-        subheading={t(
-          category === 'slippage'
-            ? 'remote-failed.subheading-slippage'
-            : 'remote-failed.subheading',
-        )}
+        heading={t(`remote-failed.heading${variant}${suffix}`)}
+        subheading={t(`remote-failed.subheading${variant}${suffix}`)}
       />
     </div>
   )

@@ -62,12 +62,12 @@ function remoteBadge(
   if (!isRemoteFailed(transaction)) return undefined
   const marker = remoteFailedSettlement(transaction.settlement)
   if (marker && !marker.failed) {
+    const returningKey =
+      transaction.kind === 'DEPOSIT'
+        ? 'status.returning-funds'
+        : 'status.returning-share-tokens'
     return inProgress(
-      t(
-        marker.kind === 'RETRY'
-          ? 'status.retrying'
-          : 'status.cancelling-request',
-      ),
+      t(marker.kind === 'RETRY' ? 'status.retrying' : returningKey),
     )
   }
   // Within the keeper grace the CTA is hidden, so read as in-progress, not "Action needed".

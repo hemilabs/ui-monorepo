@@ -9,6 +9,7 @@ import { useEstimateGas } from 'wagmi'
 
 import { depositPreviewOptions } from '../_fetchers/fetchDepositPreview'
 import { type QuoteDeposit } from '../_fetchers/fetchQuoteDeposit'
+import { computeCrossChainFees } from '../_utils/crossChainFees'
 
 const buildGasData = ({
   amount,
@@ -63,18 +64,6 @@ const computeIsFeesError = ({
   isDepositGasFeesError ||
   isPreviewError ||
   (needsApproval && isApprovalGasFeesError)
-
-// nativeFee already bundles the Agent's Ethereum-side callback, so the bridging portion is what's left.
-const computeCrossChainFees = function ({
-  layerZeroFee,
-  quote,
-}: {
-  layerZeroFee: bigint
-  quote: QuoteDeposit | undefined
-}) {
-  const ethereumFee = quote?.callbackFee ?? BigInt(0)
-  return { bridgingFee: layerZeroFee - ethereumFee, ethereumFee }
-}
 
 // Composed depositPreviewOptions (shares + quote) + useNeedsApproval for allowance, plus gas estimation.
 export const useDepositPreview = function ({

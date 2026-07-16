@@ -9,6 +9,7 @@ import { useEstimateGas } from 'wagmi'
 
 import { type QuoteRedeem } from '../_fetchers/fetchQuoteRedeem'
 import { withdrawPreviewOptions } from '../_fetchers/fetchWithdrawPreview'
+import { computeCrossChainFees } from '../_utils/crossChainFees'
 
 const buildGasData = ({
   asset,
@@ -74,18 +75,6 @@ const computeIsFeesError = ({
   isWithdrawGasFeesError ||
   isPreviewError ||
   (needsApproval && isApprovalGasFeesError)
-
-// nativeFee already bundles the Agent's Ethereum-side callback, so the bridging portion is what's left.
-const computeCrossChainFees = function ({
-  layerZeroFee,
-  quote,
-}: {
-  layerZeroFee: bigint
-  quote: QuoteRedeem | undefined
-}) {
-  const ethereumFee = quote?.callbackFee ?? BigInt(0)
-  return { bridgingFee: layerZeroFee - ethereumFee, ethereumFee }
-}
 
 // Composed withdrawPreviewOptions (sharesToAssets + quoteRedeem) + useNeedsApproval so an
 // allowance failure is distinguishable from a preview failure, plus gas estimation.

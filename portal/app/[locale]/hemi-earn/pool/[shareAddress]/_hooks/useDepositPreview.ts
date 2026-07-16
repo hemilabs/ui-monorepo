@@ -64,6 +64,18 @@ const computeIsFeesError = ({
   isPreviewError ||
   (needsApproval && isApprovalGasFeesError)
 
+// nativeFee already bundles the Agent's Ethereum-side callback, so the bridging portion is what's left.
+const computeCrossChainFees = function ({
+  layerZeroFee,
+  quote,
+}: {
+  layerZeroFee: bigint
+  quote: QuoteDeposit | undefined
+}) {
+  const ethereumFee = quote?.callbackFee ?? BigInt(0)
+  return { bridgingFee: layerZeroFee - ethereumFee, ethereumFee }
+}
+
 // Composed depositPreviewOptions (shares + quote) + useNeedsApproval for allowance, plus gas estimation.
 export const useDepositPreview = function ({
   account,
@@ -111,6 +123,10 @@ export const useDepositPreview = function ({
   const quote = composed?.quote
   const sharesOutMin = composed?.sharesOutMin ?? BigInt(0)
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
+  const { bridgingFee, ethereumFee } = computeCrossChainFees({
+    layerZeroFee,
+    quote,
+  })
 
   // Gate on a positive shares preview (else a fast submit lands sharesOutMin=0n — no slippage
   // protection) and on !isAllowanceLoading (else the fee total jumps once allowance settles).
@@ -152,8 +168,10 @@ export const useDepositPreview = function ({
 
   return {
     approvalGasFees,
+    bridgingFee,
     canDeposit,
     depositGasFees,
+    ethereumFee,
     isAllowanceError,
     isAllowanceLoading,
     isFeesError: computeIsFeesError({

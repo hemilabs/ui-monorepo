@@ -75,6 +75,18 @@ const computeIsFeesError = ({
   isPreviewError ||
   (needsApproval && isApprovalGasFeesError)
 
+// nativeFee already bundles the Agent's Ethereum-side callback, so the bridging portion is what's left.
+const computeCrossChainFees = function ({
+  layerZeroFee,
+  quote,
+}: {
+  layerZeroFee: bigint
+  quote: QuoteRedeem | undefined
+}) {
+  const ethereumFee = quote?.callbackFee ?? BigInt(0)
+  return { bridgingFee: layerZeroFee - ethereumFee, ethereumFee }
+}
+
 // Composed withdrawPreviewOptions (sharesToAssets + quoteRedeem) + useNeedsApproval so an
 // allowance failure is distinguishable from a preview failure, plus gas estimation.
 export const useWithdrawPreview = function ({
@@ -124,6 +136,10 @@ export const useWithdrawPreview = function ({
   const assetsOutMin = composed?.assetsOutMin ?? BigInt(0)
   const quote = composed?.quote
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
+  const { bridgingFee, ethereumFee } = computeCrossChainFees({
+    layerZeroFee,
+    quote,
+  })
 
   // Gate on !isAllowanceLoading so the fee total doesn't render (and then jump) while allowance is still pending.
   const canWithdraw =
@@ -167,7 +183,9 @@ export const useWithdrawPreview = function ({
     assetOut,
     assetOutRaw: composed?.assetOut,
     assetsOutMin,
+    bridgingFee,
     canWithdraw,
+    ethereumFee,
     hemiGasFees: computeHemiGasFees({
       approvalGasFees,
       needsApproval,
@@ -183,7 +201,6 @@ export const useWithdrawPreview = function ({
     }),
     isPreviewError,
     isPreviewLoading,
-    layerZeroFee,
     needsApproval,
     peggedAmount,
     peggedAmountRaw: composed?.peggedAmount,

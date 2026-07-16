@@ -4,7 +4,7 @@ Scripts to spin up and configure a local Hemi Earn sandbox against an Anvil fork
 
 ## Prerequisites
 
-- Node 24 (matches the repo `.nvmrc`) — required for native `.ts` execution via `--experimental-transform-types`.
+- Node 24 (matches the repo `.nvmrc`) — required for native `.ts`.
 - A test EOA — used to receive funded ETH and tokens.
 
 Foundry (`anvil`) is auto-installed by [`@hemilabs/anvil-fork-setup`](https://www.npmjs.com/package/@hemilabs/anvil-fork-setup) on first run if it's not already on your `PATH`.
@@ -47,7 +47,7 @@ pnpm --filter portal sandbox:hemi-earn:setup -- \
 Each script is a standalone `.ts` module that exports its main function and can also be run as a CLI. Run them from anywhere via:
 
 ```bash
-node --experimental-transform-types portal/scripts/hemi-earn/<script>.ts [flags]
+node portal/scripts/hemi-earn/<script>.ts [flags]
 ```
 
 | Script           | Purpose                                                          |
@@ -74,4 +74,4 @@ The setup script enables cooldown on the staking vault with a 1-day duration, ex
 
 ## Why the nested `package.json`
 
-`portal/package.json` doesn't set `"type": "module"` (Next.js needs the default CJS resolution). The nested `package.json` in this folder scopes ESM to these scripts only, so Node can execute the `.ts` files with `import`/`export` syntax via `--experimental-transform-types` without touching the rest of `portal/`.
+`portal/package.json` doesn't set `"type": "module"` (Next.js needs the default CJS resolution). The nested `package.json` in this folder scopes ESM to these scripts only, so Node can execute the `.ts` files with `import`/`export` syntax without touching the rest of `portal/`.

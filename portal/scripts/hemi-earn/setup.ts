@@ -1,13 +1,10 @@
 import { startAnvilFork } from '@hemilabs/anvil-fork-setup'
 import { parseArgs } from 'node:util'
 import { isAddress, type Address, type Hex } from 'viem'
+import { hemi } from 'viem/chains'
 
 import { scriptArgs } from './cli.ts'
-import {
-  DEFAULT_DEPLOYER_PK,
-  DEFAULT_UPSTREAM_RPC,
-  HEMI_CHAIN_ID,
-} from './constants.ts'
+import { DEFAULT_DEPLOYER_PK } from './constants.ts'
 import { deployMocks } from './deployMocks.ts'
 import { fundAccount } from './fundAccount.ts'
 
@@ -53,10 +50,10 @@ async function main() {
     console.log(`\nUsing existing anvil at ${forkUrl}`)
   } else {
     const port = values.port ? Number(values.port) : 8545
-    const upstreamRpc = values['upstream-rpc'] ?? DEFAULT_UPSTREAM_RPC
+    const upstreamRpc = values['upstream-rpc'] ?? hemi.rpcUrls.default.http[0]
     console.log(`\nStarting anvil fork of ${upstreamRpc} on port ${port}…`)
     const fork = await startAnvilFork({
-      chainId: HEMI_CHAIN_ID,
+      chainId: hemi.id,
       forkUrl: upstreamRpc,
       port,
     })

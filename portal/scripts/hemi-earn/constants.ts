@@ -19,9 +19,6 @@ export const GATEWAY_PROD: Address = btcGateway.address
 
 export const STAKING_PROD: Address = sVetBtcAddress
 
-export const HEMI_CHAIN_ID = 43111
-
 export const DEFAULT_FORK_URL = 'http://127.0.0.1:8545'
-export const DEFAULT_UPSTREAM_RPC = 'https://rpc.hemi.network/rpc'
 
 export const DEFAULT_DEPLOYER_PK = TEST_PRIVATE_KEY

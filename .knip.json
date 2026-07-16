@@ -3,6 +3,11 @@
   "ignoreBinaries": ["ipconfig", "jq"],
   "ignoreDependencies": ["eslint-config-next", "eslint-config-prettier"],
   "workspaces": {
+    "portal": {
+      "typescript": {
+        "config": ["tsconfig.json", "scripts/hemi-earn/tsconfig.json"]
+      }
+    },
     "portal-backend/api": {
       "entry": ["scripts/*.cjs"]
     },

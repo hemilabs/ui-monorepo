@@ -25,7 +25,7 @@ async function main() {
 
   if (!values.address || !isAddress(values.address, { strict: false })) {
     console.error(
-      'Usage: pnpm --filter hemi-earn-sandbox-scripts run setup -- --address 0xYourEOA',
+      'Usage: pnpm --filter portal sandbox:hemi-earn:setup -- --address 0xYourEOA',
     )
     console.error('  [-p PORT]              port for the fork (default 8545)')
     console.error(

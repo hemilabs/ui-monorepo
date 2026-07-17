@@ -7,9 +7,11 @@ const config: StorybookConfig = {
     options: {},
   },
   // `next/font/local` registers the @font-face rules but @storybook/nextjs does
-  // not emit the font files, so serve the whole `fonts` directory at the path
-  // the generated rules reference (`/fonts/...`) to keep the app typography.
-  staticDirs: [{ from: '../fonts', to: '/fonts' }],
+  // not emit the font files, so serve the `inter` asset directory at the path
+  // the generated rules reference (`/fonts/inter/...`) to keep the app
+  // typography. Only `inter` is served so source files (e.g. `fonts/index.ts`)
+  // are not published in the Storybook build.
+  staticDirs: [{ from: '../fonts/inter', to: '/fonts/inter' }],
   stories: ['../stories/**/*.stories.@(ts|tsx)'],
 }
 

@@ -42,12 +42,6 @@ type Props = {
   onSwitchToWithdraw: VoidFunction
 }
 
-const computeHemiGasFee = (
-  depositGasFees: bigint,
-  approvalGasFees: bigint,
-  needsApproval: boolean,
-) => depositGasFees + (needsApproval ? approvalGasFees : BigInt(0))
-
 export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   const t = useTranslations()
   const [operationRunning, setOperationRunning] =
@@ -89,11 +83,11 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   })
 
   const {
-    approvalGasFees,
     bridgingFee,
     canDeposit,
     depositGasFees,
     ethereumFee,
+    hemiGasFee,
     isAllowanceError,
     isAllowanceLoading,
     isFeesError,
@@ -153,11 +147,6 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
   }
 
   const nativeToken = getNativeToken(selectedAsset.token.chainId) as EvmToken
-  const hemiGasFee = computeHemiGasFee(
-    depositGasFees,
-    approvalGasFees,
-    needsApproval,
-  )
   const hasQuote = !!quote
 
   const previewIssue = resolvePreviewIssue({

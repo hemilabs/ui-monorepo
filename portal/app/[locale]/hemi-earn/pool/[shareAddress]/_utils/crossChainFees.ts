@@ -7,7 +7,10 @@ export const computeCrossChainFees = function ({
   layerZeroFee: bigint
   quote: { callbackFee: bigint } | undefined
 }) {
-  const ethereumFee = quote?.callbackFee ?? BigInt(0)
+  if (quote === undefined) {
+    return { bridgingFee: undefined, ethereumFee: undefined }
+  }
+  const ethereumFee = quote.callbackFee
   const bridgingFee =
     layerZeroFee > ethereumFee ? layerZeroFee - ethereumFee : BigInt(0)
   return { bridgingFee, ethereumFee }

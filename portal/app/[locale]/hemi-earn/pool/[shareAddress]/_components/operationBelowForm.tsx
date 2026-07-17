@@ -6,15 +6,15 @@ import { OperationSummary, type TopRowProps } from './operationSummary'
 
 type Props = {
   account: Address | undefined
-  bridgingFee: bigint
-  ethereumFee: bigint
-  hemiGasFee: bigint
+  bridgingFee: bigint | undefined
+  ethereumFee: bigint | undefined
+  hemiGasFee: bigint | undefined
   isCooldownEligible: boolean
   isFeesError: boolean
   nativeToken: EvmToken
   stakingVault: Address
   topRow: TopRowProps
-  totalFees: bigint
+  totalFees: bigint | undefined
 }
 
 export const OperationBelowForm = ({

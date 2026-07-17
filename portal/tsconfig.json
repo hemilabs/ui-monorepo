@@ -7,6 +7,7 @@
     "lib": ["dom", "dom.iterable", "esnext", "WebWorker"],
     "target": "es6"
   },
+  "exclude": ["scripts/hemi-earn/**/*"],
   "extends": "@tsconfig/next/tsconfig.json",
   "include": [
     "intl.d.ts",

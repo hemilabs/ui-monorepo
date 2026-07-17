@@ -9,7 +9,11 @@
   ],
   "overrides": [
     {
-      "excludedFiles": ["portal/scripts/*.js", "portal/*.config.js"],
+      "excludedFiles": [
+        "portal/scripts/hemi-earn/**/*.ts",
+        "portal/scripts/*.js",
+        "portal/*.config.js"
+      ],
       "extends": [
         "bloq/next",
         "next/core-web-vitals",
@@ -36,6 +40,22 @@
     {
       "extends": ["bloq/node", "prettier"],
       "files": ["portal/*.config.js", "portal/scripts/*.js"]
+    },
+    {
+      "extends": ["bloq/node", "bloq/typescript", "prettier"],
+      "files": ["portal/scripts/hemi-earn/**/*.ts"],
+      "rules": {
+        "no-console": "off",
+        "no-process-exit": "off",
+        "node/no-extraneous-import": "off",
+        "node/no-missing-import": "off",
+        "node/no-unsupported-features/es-syntax": [
+          "error",
+          {
+            "ignores": ["modules"]
+          }
+        ]
+      }
     },
     {
       "extends": ["bloq/node", "prettier"],

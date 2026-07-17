@@ -276,6 +276,8 @@
         "bridging-fees": "Tarifas de bridge",
         "cooldown-warning": "Retirar fondos tarda {days, plural, one {# día} other {# días}} en completarse.",
         "cooldown-warning-fallback": "Retirar fondos tarda algunos días en completarse.",
+        "ethereum-gas-fee": "Tarifa de gas de Ethereum",
+        "hemi-fees": "Tarifas de Hemi",
         "network-error": "Error al previsualizar — reintente",
         "share-token-available-to-withdraw": "Token de participación disponible para retirar",
         "total-fee": "Costo total de gas",

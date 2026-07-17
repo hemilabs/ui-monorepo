@@ -9,6 +9,7 @@ import { useEstimateGas } from 'wagmi'
 
 import { depositPreviewOptions } from '../_fetchers/fetchDepositPreview'
 import { type QuoteDeposit } from '../_fetchers/fetchQuoteDeposit'
+import { computeCrossChainFees } from '../_utils/crossChainFees'
 
 const buildGasData = ({
   amount,
@@ -111,6 +112,10 @@ export const useDepositPreview = function ({
   const quote = composed?.quote
   const sharesOutMin = composed?.sharesOutMin ?? BigInt(0)
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
+  const { bridgingFee, ethereumFee } = computeCrossChainFees({
+    layerZeroFee,
+    quote,
+  })
 
   // Gate on a positive shares preview (else a fast submit lands sharesOutMin=0n — no slippage
   // protection) and on !isAllowanceLoading (else the fee total jumps once allowance settles).
@@ -152,8 +157,10 @@ export const useDepositPreview = function ({
 
   return {
     approvalGasFees,
+    bridgingFee,
     canDeposit,
     depositGasFees,
+    ethereumFee,
     isAllowanceError,
     isAllowanceLoading,
     isFeesError: computeIsFeesError({

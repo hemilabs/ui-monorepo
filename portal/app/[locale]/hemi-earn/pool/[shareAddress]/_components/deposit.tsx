@@ -90,8 +90,10 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
 
   const {
     approvalGasFees,
+    bridgingFee,
     canDeposit,
     depositGasFees,
+    ethereumFee,
     isAllowanceError,
     isAllowanceLoading,
     isFeesError,
@@ -187,7 +189,8 @@ export const Deposit = function ({ onSwitchToWithdraw }: Props) {
         canDeposit && (
           <OperationBelowForm
             account={address}
-            bridgingFee={layerZeroFee}
+            bridgingFee={bridgingFee}
+            ethereumFee={ethereumFee}
             hemiGasFee={hemiGasFee}
             isCooldownEligible={isCooldownEligible}
             isFeesError={isFeesError}

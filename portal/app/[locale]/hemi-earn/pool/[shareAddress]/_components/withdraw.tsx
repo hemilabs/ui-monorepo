@@ -137,14 +137,15 @@ export const Withdraw = function ({
     assetOut,
     assetOutRaw,
     assetsOutMin,
+    bridgingFee,
     canWithdraw,
+    ethereumFee,
     hemiGasFees,
     isAllowanceError,
     isAllowanceLoading,
     isFeesError,
     isPreviewError,
     isPreviewLoading,
-    layerZeroFee,
     needsApproval,
     peggedAmount,
     peggedAmountRaw,
@@ -253,7 +254,8 @@ export const Withdraw = function ({
         canWithdraw && (
           <OperationBelowForm
             account={address}
-            bridgingFee={layerZeroFee}
+            bridgingFee={bridgingFee}
+            ethereumFee={ethereumFee}
             hemiGasFee={hemiGasFees}
             isCooldownEligible={isCooldownEligible}
             isFeesError={isFeesError}

@@ -276,6 +276,8 @@
         "bridging-fees": "Taxas de bridge",
         "cooldown-warning": "Sacar fundos leva {days, plural, one {# dia} other {# dias}} para concluir.",
         "cooldown-warning-fallback": "Sacar fundos leva alguns dias para concluir.",
+        "ethereum-gas-fee": "Taxa de gás da Ethereum",
+        "hemi-fees": "Taxas de Hemi",
         "network-error": "Falha no preview — tente de novo",
         "share-token-available-to-withdraw": "Token de participação disponível para sacar",
         "total-fee": "Custo total de gás",

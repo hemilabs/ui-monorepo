@@ -7,6 +7,7 @@ import { OperationSummary, type TopRowProps } from './operationSummary'
 type Props = {
   account: Address | undefined
   bridgingFee: bigint
+  ethereumFee: bigint
   hemiGasFee: bigint
   isCooldownEligible: boolean
   isFeesError: boolean
@@ -19,6 +20,7 @@ type Props = {
 export const OperationBelowForm = ({
   account,
   bridgingFee,
+  ethereumFee,
   hemiGasFee,
   isCooldownEligible,
   isFeesError,
@@ -31,6 +33,7 @@ export const OperationBelowForm = ({
     <div className="px-4">
       <OperationSummary
         bridgingFee={bridgingFee}
+        ethereumFee={ethereumFee}
         hemiGasFee={hemiGasFee}
         isFeesError={isFeesError}
         nativeToken={nativeToken}

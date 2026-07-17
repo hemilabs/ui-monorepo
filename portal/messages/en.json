@@ -276,6 +276,8 @@
         "bridging-fees": "Bridging fees",
         "cooldown-warning": "Withdrawing funds takes {days, plural, one {# day} other {# days}} to complete.",
         "cooldown-warning-fallback": "Withdrawing funds takes several days to complete.",
+        "ethereum-gas-fee": "Ethereum gas fee",
+        "hemi-fees": "Hemi fees",
         "network-error": "Preview failed — try again",
         "share-token-available-to-withdraw": "Share token available to withdraw",
         "total-fee": "Total gas fee",

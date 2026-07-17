@@ -1,6 +1,5 @@
 import { DisplayAmount } from 'components/displayAmount'
 import { TokenLogo } from 'components/tokenLogo'
-import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { type ReactNode } from 'react'
 import Skeleton from 'react-loading-skeleton'
@@ -77,6 +76,7 @@ const TopRow = function ({ amount, label, token }: TopRowProps) {
 
 type Props = {
   bridgingFee: bigint
+  ethereumFee: bigint
   hemiGasFee: bigint
   isFeesError: boolean
   nativeToken: EvmToken
@@ -86,6 +86,7 @@ type Props = {
 
 export const OperationSummary = function ({
   bridgingFee,
+  ethereumFee,
   hemiGasFee,
   isFeesError,
   nativeToken,
@@ -93,7 +94,6 @@ export const OperationSummary = function ({
   totalFees,
 }: Props) {
   const t = useTranslations()
-  const hemi = useHemi()
   return (
     <div className="flex flex-col gap-y-2.5">
       <TopRow {...topRow} />
@@ -101,13 +101,19 @@ export const OperationSummary = function ({
       <FeeRow
         amount={hemiGasFee}
         isError={isFeesError}
-        label={t('common.network-gas-fee', { network: hemi.name })}
+        label={t('hemi-earn.pool.form.hemi-fees')}
         token={nativeToken}
       />
       <FeeRow
         amount={bridgingFee}
         isError={isFeesError}
         label={t('hemi-earn.pool.form.bridging-fees')}
+        token={nativeToken}
+      />
+      <FeeRow
+        amount={ethereumFee}
+        isError={isFeesError}
+        label={t('hemi-earn.pool.form.ethereum-gas-fee')}
         token={nativeToken}
       />
       <FeeRow

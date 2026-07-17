@@ -9,6 +9,7 @@ import { useEstimateGas } from 'wagmi'
 
 import { type QuoteRedeem } from '../_fetchers/fetchQuoteRedeem'
 import { withdrawPreviewOptions } from '../_fetchers/fetchWithdrawPreview'
+import { computeCrossChainFees } from '../_utils/crossChainFees'
 
 const buildGasData = ({
   asset,
@@ -124,6 +125,10 @@ export const useWithdrawPreview = function ({
   const assetsOutMin = composed?.assetsOutMin ?? BigInt(0)
   const quote = composed?.quote
   const layerZeroFee = quote?.nativeFee ?? BigInt(0)
+  const { bridgingFee, ethereumFee } = computeCrossChainFees({
+    layerZeroFee,
+    quote,
+  })
 
   // Gate on !isAllowanceLoading so the fee total doesn't render (and then jump) while allowance is still pending.
   const canWithdraw =
@@ -167,7 +172,9 @@ export const useWithdrawPreview = function ({
     assetOut,
     assetOutRaw: composed?.assetOut,
     assetsOutMin,
+    bridgingFee,
     canWithdraw,
+    ethereumFee,
     hemiGasFees: computeHemiGasFees({
       approvalGasFees,
       needsApproval,
@@ -183,7 +190,6 @@ export const useWithdrawPreview = function ({
     }),
     isPreviewError,
     isPreviewLoading,
-    layerZeroFee,
     needsApproval,
     peggedAmount,
     peggedAmountRaw: composed?.peggedAmount,

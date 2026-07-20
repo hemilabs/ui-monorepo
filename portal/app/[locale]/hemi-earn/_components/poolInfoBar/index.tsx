@@ -48,7 +48,7 @@ export const PoolInfoBar = function ({ pool }: Props) {
             </span>
           </PoolInfoItem>
         </div>
-        <div className="md:w-32">
+        <div className="md:w-24">
           <PoolInfoItem label={t('share-token')}>
             <div className="flex items-center gap-x-1.5">
               <div className="flex items-center justify-center rounded-full border border-gray-200">
@@ -60,16 +60,18 @@ export const PoolInfoBar = function ({ pool }: Props) {
             </div>
           </PoolInfoItem>
         </div>
-        <PoolInfoItem label={t('total-deposits')}>
-          <span className="body-text-medium text-neutral-950">
-            <RenderEarnFiatBalance
-              balance={pool.totalDeposits}
-              customFormatter={usd => formatCompactFiat(Number(usd), locale)}
-              queryStatus={pool.totalDepositsStatus}
-              token={pool.peggedToken}
-            />
-          </span>
-        </PoolInfoItem>
+        <div className="md:w-24">
+          <PoolInfoItem label={t('total-deposits')}>
+            <span className="body-text-medium text-neutral-950">
+              <RenderEarnFiatBalance
+                balance={pool.totalDeposits}
+                customFormatter={usd => formatCompactFiat(Number(usd), locale)}
+                queryStatus={pool.totalDepositsStatus}
+                token={pool.peggedToken}
+              />
+            </span>
+          </PoolInfoItem>
+        </div>
         <PoolInfoItem
           isLoading={pool.apy === undefined}
           label={t('apy')}

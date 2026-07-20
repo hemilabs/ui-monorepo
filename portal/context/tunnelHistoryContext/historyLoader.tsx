@@ -247,6 +247,9 @@ export const HistoryLoader = function ({
       if (!forceResync) {
         return
       }
+      // cancel any pending debounced save - otherwise its trailing call can
+      // run after the clear below and repopulate storage with stale data
+      debouncedSaveToStorage.cancel()
       // clear local storage
       clearHistoryInLocalStorage({
         address: address!,

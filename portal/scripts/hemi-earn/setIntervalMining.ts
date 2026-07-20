@@ -44,7 +44,9 @@ export async function runSetIntervalMining(argv: string[]) {
       'Usage: pnpm --filter portal sandbox:hemi-earn -- mining --seconds <N>',
     )
     console.error('  [-s N]                 interval in seconds (0 = instant)')
-    console.error('  [-f FORK_URL]          anvil RPC (default 127.0.0.1:8545)')
+    console.error(
+      '  [-f FORK_URL]          anvil RPC (default http://127.0.0.1:8545)',
+    )
     process.exit(1)
   }
 

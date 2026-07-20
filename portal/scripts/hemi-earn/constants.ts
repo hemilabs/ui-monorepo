@@ -22,3 +22,5 @@ export const STAKING_PROD: Address = sVetBtcAddress
 export const DEFAULT_FORK_URL = 'http://127.0.0.1:8545'
 
 export const DEFAULT_DEPLOYER_PK = TEST_PRIVATE_KEY
+
+export const DEFAULT_INTERVAL_MINING_SECS = 6

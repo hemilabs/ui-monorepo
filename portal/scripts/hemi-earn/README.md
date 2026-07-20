@@ -14,12 +14,12 @@ Foundry (`anvil`) is auto-installed by [`@hemilabs/anvil-fork-setup`](https://ww
 From the repo root:
 
 ```bash
-pnpm --filter portal sandbox:hemi-earn:setup -- --address 0xYourEOA
+pnpm --filter portal sandbox:hemi-earn -- setup --address 0xYourEOA
 ```
 
 That single command starts an Anvil fork of Hemi mainnet on port 8545, deploys the required mocks, funds the test account, and enables cooldown. Anvil is detached (`child.unref()` inside `@hemilabs/anvil-fork-setup`), so it keeps running after the script exits and the portal can talk to it.
 
-The `--` before the script flags is required — otherwise pnpm intercepts `--address` as its own option.
+The `--` before the subcommand is required — otherwise pnpm intercepts flags like `--address` as its own options.
 
 The setup script prints the deployed addresses at the end. The Vetro-aliased mocks (`vetBTC`, `Gateway`, `Staking`) live at their production addresses via `anvil_setCode`; the sandbox `Router`, `Agent`, `hemiBTC`, `WBTC`, and `cbBTC` are freshly deployed with deterministic addresses.
 
@@ -28,7 +28,7 @@ The setup script prints the deployed addresses at the end. The Vetro-aliased moc
 If you already have Anvil running (say, from a separate workflow), point the setup at it and skip the auto-start:
 
 ```bash
-pnpm --filter portal sandbox:hemi-earn:setup -- \
+pnpm --filter portal sandbox:hemi-earn -- setup \
   --address 0xYourEOA \
   --fork-url http://127.0.0.1:8547
 ```
@@ -36,37 +36,52 @@ pnpm --filter portal sandbox:hemi-earn:setup -- \
 ### Custom port or upstream RPC
 
 ```bash
-pnpm --filter portal sandbox:hemi-earn:setup -- \
+pnpm --filter portal sandbox:hemi-earn -- setup \
   --address 0xYourEOA \
   --port 8547 \
   --upstream-rpc https://your-hemi-rpc.example.com
 ```
 
-## Available scripts
+## Subcommands
 
-Each script is a standalone `.ts` module that exports its main function and can also be run as a CLI. Run them from anywhere via:
+All sandbox actions are dispatched through a single pnpm script that forwards its first positional token to the matching handler:
 
 ```bash
-node portal/scripts/hemi-earn/<script>.ts [flags]
+pnpm --filter portal sandbox:hemi-earn -- <subcommand> [flags]
 ```
 
-| Script           | Purpose                                                          |
-| ---------------- | ---------------------------------------------------------------- |
-| `setup.ts`       | Start Anvil + deploy mocks + fund the test account.              |
-| `deployMocks.ts` | Deploy mocks only. Requires a running Anvil.                     |
-| `fundAccount.ts` | Fund an EOA with ETH + tokens. Requires deployed mock addresses. |
+| Subcommand | Purpose                                                                      |
+| ---------- | ---------------------------------------------------------------------------- |
+| `setup`    | Start Anvil + deploy mocks + fund the test account.                          |
+| `mining`   | Toggle Anvil's interval mining at runtime (see [Slow mining](#slow-mining)). |
+
+Building blocks used by `setup` (`deployMocks.ts`, `fundAccount.ts`) are still invocable directly for advanced cases:
+
+```bash
+node portal/scripts/hemi-earn/deployMocks.ts [flags]
+node portal/scripts/hemi-earn/fundAccount.ts [flags]
+```
 
 ### Common flags
 
-- `--address` / `-a`: the test EOA to fund (required for `setup.ts`).
-- `--port` / `-p`: local port for the Anvil fork (default `8545`).
-- `--upstream-rpc` / `-u`: RPC to fork from (default `https://rpc.hemi.network/rpc`).
-- `--fork-url` / `-f`: URL of an already-running Anvil; when set, skips the auto-start.
-- `--deployer-pk`: private key used to sign deploy/write txs (default is Anvil's well-known account #0, re-exported from `@hemilabs/anvil-fork-setup/utils`).
+Flags are parsed by the handler of each subcommand.
+
+- `setup` — `--address` / `-a` (required), `--port` / `-p` (default `8545`), `--upstream-rpc` / `-u` (default `https://rpc.hemi.network/rpc`), `--fork-url` / `-f` (skips auto-start), `--deployer-pk` (default is Anvil's well-known account #0).
+- `mining` — `--seconds` / `-s` (default `6`, `0` returns to instant mining), `--fork-url` / `-f` (default `http://127.0.0.1:8545`).
 
 ## Cooldown
 
 The setup script enables cooldown on the staking vault with a 1-day duration, exercising the 2-step withdraw flow (request + claim after cooldown) by default.
+
+## Slow mining
+
+Slow-block mining is useful for reproducing intermediate UI states (pending tx spinners, cross-chain step indicators) without racing against Anvil's default instant mining. The `mining` subcommand toggles Anvil's `anvil_setIntervalMining` at runtime — on-chain state and Envio indexing are preserved, no restart needed.
+
+```bash
+pnpm --filter portal sandbox:hemi-earn -- mining --seconds 6   # a block every 6s
+pnpm --filter portal sandbox:hemi-earn -- mining --seconds 3   # a block every 3s
+pnpm --filter portal sandbox:hemi-earn -- mining --seconds 0   # back to instant
+```
 
 ## Mock contracts
 

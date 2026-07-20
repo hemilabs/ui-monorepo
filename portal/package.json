@@ -8,7 +8,7 @@
     "dev": "next dev",
     "dev:wifi": "WIFI=true LOCAL_IP=$(ipconfig getifaddr en0) PORT=3000 pnpm run dev",
     "generate:htaccess": "node ./scripts/generateServerConfig.js",
-    "sandbox:hemi-earn:setup": "node scripts/hemi-earn/setup.ts",
+    "sandbox:hemi-earn": "node scripts/hemi-earn/index.ts",
     "preserve": "pnpm run build",
     "serve": "serve out",
     "storybook": "storybook dev -p 6006",

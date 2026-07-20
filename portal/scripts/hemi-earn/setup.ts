@@ -1,4 +1,5 @@
 import { startAnvilFork } from '@hemilabs/anvil-fork-setup'
+import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
 import { isAddress, type Address, type Hex } from 'viem'
 import { hemi } from 'viem/chains'
@@ -10,9 +11,9 @@ import { fundAccount } from './fundAccount.ts'
 
 const BOX_WIDTH = 78
 
-async function main() {
+export async function runSetup(argv: string[]) {
   const { values } = parseArgs({
-    args: scriptArgs(),
+    args: argv,
     options: {
       'address': { short: 'a', type: 'string' },
       'deployer-pk': { type: 'string' },
@@ -25,7 +26,7 @@ async function main() {
 
   if (!values.address || !isAddress(values.address, { strict: false })) {
     console.error(
-      'Usage: pnpm --filter portal sandbox:hemi-earn:setup -- --address 0xYourEOA',
+      'Usage: pnpm --filter portal sandbox:hemi-earn -- setup --address 0xYourEOA',
     )
     console.error('  [-p PORT]              port for the fork (default 8545)')
     console.error(
@@ -93,13 +94,15 @@ async function main() {
   )
 }
 
-try {
-  await main()
-} catch (err) {
-  const message = err instanceof Error ? err.message : String(err)
-  console.error(`\n✗ Sandbox setup failed: ${message}`)
-  console.error(
-    '  The anvil fork may be in a partial state. Restart anvil and re-run.',
-  )
-  process.exit(1)
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  try {
+    await runSetup(scriptArgs())
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err)
+    console.error(`\n✗ Sandbox setup failed: ${message}`)
+    console.error(
+      '  The anvil fork may be in a partial state. Restart anvil and re-run.',
+    )
+    process.exit(1)
+  }
 }

@@ -21,17 +21,18 @@ describe('computeCrossChainFees', function () {
     ).toEqual({ bridgingFee: BigInt(0), ethereumFee: BigInt(500) })
   })
 
-  it('defaults both fees to zero when the quote is undefined', function () {
+  it('returns undefined fees when the quote is undefined', function () {
     expect(
       computeCrossChainFees({ layerZeroFee: BigInt(0), quote: undefined }),
-    ).toEqual({ bridgingFee: BigInt(0), ethereumFee: BigInt(0) })
+    ).toEqual({ bridgingFee: undefined, ethereumFee: undefined })
   })
 
-  it('keeps bridging + ethereum summing back to layerZeroFee', function () {
-    const { bridgingFee, ethereumFee } = computeCrossChainFees({
-      layerZeroFee: BigInt(1500),
-      quote: { callbackFee: BigInt(500) },
-    })
-    expect(bridgingFee + ethereumFee).toBe(BigInt(1500))
+  it('splits into parts that sum back to layerZeroFee', function () {
+    expect(
+      computeCrossChainFees({
+        layerZeroFee: BigInt(1500),
+        quote: { callbackFee: BigInt(500) },
+      }),
+    ).toEqual({ bridgingFee: BigInt(1000), ethereumFee: BigInt(500) })
   })
 })

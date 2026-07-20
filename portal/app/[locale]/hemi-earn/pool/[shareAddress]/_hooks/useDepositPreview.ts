@@ -37,7 +37,8 @@ const buildGasData = ({
         sharesOutMin,
       })
 
-const computeTotalFees = ({
+// Gas never resolves to exactly 0, so a 0 total means the estimate is still loading.
+const computeTotalFees = function ({
   approvalGasFees,
   depositGasFees,
   layerZeroFee,
@@ -47,8 +48,26 @@ const computeTotalFees = ({
   depositGasFees: bigint
   layerZeroFee: bigint
   needsApproval: boolean
-}) =>
-  depositGasFees + layerZeroFee + (needsApproval ? approvalGasFees : BigInt(0))
+}) {
+  const total =
+    depositGasFees +
+    layerZeroFee +
+    (needsApproval ? approvalGasFees : BigInt(0))
+  return total === BigInt(0) ? undefined : total
+}
+
+const computeHemiGasFee = function ({
+  approvalGasFees,
+  depositGasFees,
+  needsApproval,
+}: {
+  approvalGasFees: bigint
+  depositGasFees: bigint
+  needsApproval: boolean
+}) {
+  const total = depositGasFees + (needsApproval ? approvalGasFees : BigInt(0))
+  return total === BigInt(0) ? undefined : total
+}
 
 const computeIsFeesError = ({
   isApprovalGasFeesError,
@@ -156,11 +175,15 @@ export const useDepositPreview = function ({
     })
 
   return {
-    approvalGasFees,
     bridgingFee,
     canDeposit,
     depositGasFees,
     ethereumFee,
+    hemiGasFee: computeHemiGasFee({
+      approvalGasFees,
+      depositGasFees,
+      needsApproval,
+    }),
     isAllowanceError,
     isAllowanceLoading,
     isFeesError: computeIsFeesError({

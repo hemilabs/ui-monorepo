@@ -38,7 +38,8 @@ const buildGasData = ({
         shares,
       })
 
-const computeTotalFees = ({
+// Gas never resolves to exactly 0, so a 0 total means the estimate is still loading.
+const computeTotalFees = function ({
   approvalGasFees,
   layerZeroFee,
   needsApproval,
@@ -48,10 +49,15 @@ const computeTotalFees = ({
   layerZeroFee: bigint
   needsApproval: boolean
   withdrawGasFees: bigint
-}) =>
-  withdrawGasFees + layerZeroFee + (needsApproval ? approvalGasFees : BigInt(0))
+}) {
+  const total =
+    withdrawGasFees +
+    layerZeroFee +
+    (needsApproval ? approvalGasFees : BigInt(0))
+  return total === BigInt(0) ? undefined : total
+}
 
-const computeHemiGasFees = ({
+const computeHemiGasFees = function ({
   approvalGasFees,
   needsApproval,
   withdrawGasFees,
@@ -59,7 +65,10 @@ const computeHemiGasFees = ({
   approvalGasFees: bigint
   needsApproval: boolean
   withdrawGasFees: bigint
-}) => withdrawGasFees + (needsApproval ? approvalGasFees : BigInt(0))
+}) {
+  const total = withdrawGasFees + (needsApproval ? approvalGasFees : BigInt(0))
+  return total === BigInt(0) ? undefined : total
+}
 
 const computeIsFeesError = ({
   isApprovalGasFeesError,

@@ -14,22 +14,13 @@ const Row = ({ children, label }: { children: ReactNode; label: string }) => (
 )
 
 type FeeRowProps = {
-  amount: bigint
+  amount: bigint | undefined
   isError: boolean
   label: string
   token: EvmToken
 }
 
 const FeeRow = function ({ amount, isError, label, token }: FeeRowProps) {
-  const formatted = formatUnits(amount, token.decimals)
-
-  if (!isError && formatted !== '0') {
-    return (
-      <Row label={label}>
-        <DisplayAmount amount={formatted} showTokenLogo={false} token={token} />
-      </Row>
-    )
-  }
   if (isError) {
     return (
       <Row label={label}>
@@ -37,9 +28,20 @@ const FeeRow = function ({ amount, isError, label, token }: FeeRowProps) {
       </Row>
     )
   }
+  if (amount === undefined) {
+    return (
+      <Row label={label}>
+        <Skeleton className="w-12" />
+      </Row>
+    )
+  }
   return (
     <Row label={label}>
-      <Skeleton className="w-12" />
+      <DisplayAmount
+        amount={formatUnits(amount, token.decimals)}
+        showTokenLogo={false}
+        token={token}
+      />
     </Row>
   )
 }
@@ -75,13 +77,13 @@ const TopRow = function ({ amount, label, token }: TopRowProps) {
 }
 
 type Props = {
-  bridgingFee: bigint
-  ethereumFee: bigint
-  hemiGasFee: bigint
+  bridgingFee: bigint | undefined
+  ethereumFee: bigint | undefined
+  hemiGasFee: bigint | undefined
   isFeesError: boolean
   nativeToken: EvmToken
   topRow: TopRowProps
-  totalFees: bigint
+  totalFees: bigint | undefined
 }
 
 export const OperationSummary = function ({

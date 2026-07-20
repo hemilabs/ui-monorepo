@@ -12,6 +12,7 @@ import { type EarnPool } from '../../types'
 import { RenderEarnFiatBalance } from '../earnFiatBalance'
 
 import { PoolInfoItem } from './poolInfoItem'
+import { StakedAmount } from './stakedAmount'
 import { TokenIconStack } from './tokenIconStack'
 
 type Props = {
@@ -79,6 +80,7 @@ export const PoolInfoBar = function ({ pool }: Props) {
               : undefined
           }
         />
+        <StakedAmount pool={pool} />
       </div>
       <div className="flex w-full *:flex-1 md:ml-auto md:w-auto md:*:flex-initial">
         <ButtonLink

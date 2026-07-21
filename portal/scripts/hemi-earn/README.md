@@ -50,11 +50,11 @@ All sandbox actions are dispatched through a single pnpm script that forwards it
 pnpm --filter portal sandbox:hemi-earn -- <subcommand> [flags]
 ```
 
-| Subcommand | Purpose                                                                                               |
-| ---------- | ----------------------------------------------------------------------------------------------------- |
-| `setup`    | Start Anvil + deploy mocks + fund the test account.                                                   |
-| `mining`   | Toggle Anvil's interval mining at runtime (see [Slow mining](#slow-mining)).                          |
-| `relayer`  | Emulate the production keeper: claim mature cooldown redeems automatically (see [Relayer](#relayer)). |
+| Subcommand | Purpose                                                                                                                  |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `setup`    | Start Anvil + deploy mocks + fund the test account.                                                                      |
+| `mining`   | Toggle Anvil's interval mining at runtime (see [Slow mining](#slow-mining)).                                             |
+| `relayer`  | Emulate the production keeper: claim mature cooldown redeems and bridge cancellation requests (see [Relayer](#relayer)). |
 
 Building blocks used by `setup` (`deployMocks.ts`, `fundAccount.ts`) are still invocable directly for advanced cases:
 
@@ -87,13 +87,16 @@ pnpm --filter portal sandbox:hemi-earn -- mining --seconds 0   # back to instant
 
 ## Relayer
 
-The production Hemi Earn keeper watches the Agent for `UnstakeRequested` events and calls `claimUnstake(requestId)` once the on-chain `claimableAt` matures. Without it, redeems that fall on the cooldown branch stall at `COOLDOWN_MATURE` and the portal's step 2 never fires. The `relayer` subcommand ports that keeper for the local sandbox.
+The production Hemi Earn keeper handles two flows that a local sandbox has no equivalent for:
+
+1. **Cooldown auto-claim.** Watches the Agent for `UnstakeRequested` events and calls `claimUnstake(requestId)` once the on-chain `claimableAt` matures. Without it, redeems that fall on the cooldown branch stall at `COOLDOWN_MATURE` and the portal's step 2 never fires.
+2. **Cancel bridge.** Watches the Router for `CancellationRequested` events (fired by the portal's Cancel CTA mid-cooldown) and immediately calls `Agent.cancel(requestId)` to bridge the intent cross-chain. One-shot per event: if the on-chain cancel reverts, the entry is dropped and the user re-triggers from the UI.
 
 It's a **foreground daemon** — run it in its own terminal alongside the portal and stop it with `Ctrl+C`. Uses the on-chain block timestamp (not `Date.now()`) so `evm_increaseTime` in tests takes effect on the maturity check.
 
 `--router` and `--agent` are required — copy them from the address banner `setup` prints. This avoids silent drift if the deploy sequence in `deployMocks.ts` ever changes.
 
-By default the relayer backfills from block 0, so unstake requests emitted **before** you started it are still picked up and claimed. Pass `--from-block N` to skip earlier history (rarely useful on a fresh sandbox, but handy if the anvil fork has a lot of pre-existing state).
+By default the relayer backfills from block 0 for both event types, so unstake requests and cancellations emitted **before** you started it are still picked up. Pass `--from-block N` to skip earlier history (rarely useful on a fresh sandbox, but handy if the anvil fork has a lot of pre-existing state).
 
 ```bash
 # Default poll (1s), watching the Router/Agent that setup printed

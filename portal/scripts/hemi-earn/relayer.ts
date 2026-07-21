@@ -14,9 +14,16 @@ const unstakeRequestedAbi = parseAbiItem(
 const claimUnstakeAbi = parseAbiItem(
   'function claimUnstake(uint256 requestId) payable',
 )
+const cancellationRequestedAbi = parseAbiItem(
+  'event CancellationRequested(uint256 indexed requestId)',
+)
+const agentCancelAbi = parseAbiItem(
+  'function cancel(uint256 requestId) payable',
+)
 
 const stamp = () => new Date().toTimeString().slice(0, 8)
-const log = (msg: string) => console.log(`[${stamp()}] [autoclaim] ${msg}`)
+const log = (tag: string, msg: string) =>
+  console.log(`[${stamp()}] [${tag}] ${msg}`)
 const sleep = (ms: number) =>
   new Promise<void>(resolve => setTimeout(resolve, ms))
 
@@ -33,12 +40,12 @@ function printUsage() {
   console.error(
     '  [-f FORK_URL]           anvil RPC (default http://127.0.0.1:8545)',
   )
-  console.error('  [--deployer-pk PK]      signer for claimUnstake txs')
+  console.error('  [--deployer-pk PK]      signer for keeper txs')
   console.error(
     `  [--poll N]              poll interval in seconds (default ${DEFAULT_POLL_SECS})`,
   )
   console.error(
-    '  [--from-block N]        first block to scan for UnstakeRequested (default 0 — full backfill)',
+    '  [--from-block N]        first block to scan for keeper events (default 0 — full backfill)',
   )
   console.error(
     '  [--disable-autoclaim]   observe UnstakeRequested but skip claim (keeper-offline sim)',
@@ -112,27 +119,42 @@ export async function runRelayer(argv: string[]) {
   })
   const account = walletClient.account!
 
-  log(`starting against ${forkUrl}`)
-  log(`  router=${router}`)
-  log(`  agent=${agent}`)
-  log(`  poll=${pollMs / 1000}s${disableAutoclaim ? ' · autoclaim=OFF' : ''}`)
+  log('relayer', `starting against ${forkUrl}`)
+  log('relayer', `  router=${router}`)
+  log('relayer', `  agent=${agent}`)
+  log(
+    'relayer',
+    `  poll=${pollMs / 1000}s${disableAutoclaim ? ' · autoclaim=OFF' : ''}`,
+  )
 
-  const queue = new Map<string, bigint>()
-  const processed = new Set<string>()
+  const claimQueue = new Map<string, bigint>()
+  const claimProcessed = new Set<string>()
+  const cancelQueue = new Set<string>()
+  const cancelProcessed = new Set<string>()
   // fromBlock - 1n so the initial scan (fromBlock+1..head) starts at fromBlock.
   let lastBlock = fromBlock === 0n ? -1n : fromBlock - 1n
-  log(`scanning from block ${fromBlock}`)
+  log('relayer', `scanning from block ${fromBlock}`)
 
-  function enqueue(id: bigint, claimableAt: bigint) {
+  function enqueueClaim(id: bigint, claimableAt: bigint) {
     const key = id.toString()
-    if (processed.has(key) || queue.has(key)) return
+    if (claimProcessed.has(key) || claimQueue.has(key)) return
     if (disableAutoclaim) {
-      processed.add(key)
-      log(`observed requestId=${id} claimableAt=${claimableAt} (autoclaim OFF)`)
+      claimProcessed.add(key)
+      log(
+        'autoclaim',
+        `observed requestId=${id} claimableAt=${claimableAt} (autoclaim OFF)`,
+      )
       return
     }
-    queue.set(key, claimableAt)
-    log(`queued requestId=${id} claimableAt=${claimableAt}`)
+    claimQueue.set(key, claimableAt)
+    log('autoclaim', `queued requestId=${id} claimableAt=${claimableAt}`)
+  }
+
+  function enqueueCancel(id: bigint) {
+    const key = id.toString()
+    if (cancelProcessed.has(key) || cancelQueue.has(key)) return
+    cancelQueue.add(key)
+    log('cancel', `queued cancel requestId=${id}`)
   }
 
   async function claimOne(id: bigint) {
@@ -147,50 +169,104 @@ export async function runRelayer(argv: string[]) {
         functionName: 'claimUnstake',
       })
       await publicClient.waitForTransactionReceipt({ hash })
-      log(`claimed requestId=${id} (tx ${hash.slice(0, 14)}…)`)
-      processed.add(key)
-      queue.delete(key)
+      log('autoclaim', `claimed requestId=${id} (tx ${hash.slice(0, 14)}…)`)
+      claimProcessed.add(key)
+      claimQueue.delete(key)
     } catch (err) {
       const raw = (err as Error).message ?? ''
       const oneLine = raw.split('\n')[0].slice(0, 200)
 
       if (raw.includes('UnstakeRequestNotFound')) {
-        log(`requestId=${id} already claimed elsewhere — dropping`)
-        processed.add(key)
-        queue.delete(key)
+        log('autoclaim', `requestId=${id} already claimed elsewhere — dropping`)
+        claimProcessed.add(key)
+        claimQueue.delete(key)
         return
       }
-      log(`claim failed requestId=${id}: ${oneLine}`)
+      log('autoclaim', `claim failed requestId=${id}: ${oneLine}`)
     }
   }
 
-  async function scanAndDrain() {
+  async function cancelOne(id: bigint) {
+    const key = id.toString()
+    try {
+      const hash = await walletClient.writeContract({
+        abi: [agentCancelAbi],
+        account,
+        address: agent,
+        args: [id],
+        chain: walletClient.chain,
+        functionName: 'cancel',
+      })
+      await publicClient.waitForTransactionReceipt({ hash })
+      log('cancel', `cancelled requestId=${id} (tx ${hash.slice(0, 14)}…)`)
+    } catch (err) {
+      const oneLine = ((err as Error).message ?? '')
+        .split('\n')[0]
+        .slice(0, 200)
+      log('cancel', `cancel failed requestId=${id}: ${oneLine}`)
+    } finally {
+      // one-shot regardless: on failure the user re-triggers from the UI
+      // (a fresh CancellationRequested lands on the next tick).
+      cancelProcessed.add(key)
+      cancelQueue.delete(key)
+    }
+  }
+
+  async function scanEvents() {
     const head = await publicClient.getBlockNumber()
-    if (head > lastBlock) {
-      const logs = await publicClient.getLogs({
+    if (head <= lastBlock) return
+    const [unstakeLogs, cancelLogs] = await Promise.all([
+      publicClient.getLogs({
         address: agent,
         event: unstakeRequestedAbi,
         fromBlock: lastBlock + 1n,
         toBlock: head,
-      })
-      for (const entry of logs) {
-        enqueue(entry.args.requestId!, entry.args.claimableAt!)
-      }
-      lastBlock = head
+      }),
+      publicClient.getLogs({
+        address: router,
+        event: cancellationRequestedAbi,
+        fromBlock: lastBlock + 1n,
+        toBlock: head,
+      }),
+    ])
+    for (const entry of unstakeLogs) {
+      enqueueClaim(entry.args.requestId!, entry.args.claimableAt!)
     }
+    for (const entry of cancelLogs) {
+      enqueueCancel(entry.args.requestId!)
+    }
+    lastBlock = head
+  }
 
-    if (queue.size === 0) return
+  async function drainCancels() {
+    for (const key of [...cancelQueue]) {
+      if (cancelProcessed.has(key)) {
+        cancelQueue.delete(key)
+        continue
+      }
+      await cancelOne(BigInt(key))
+    }
+  }
+
+  async function drainAutoclaim() {
+    if (claimQueue.size === 0) return
     // On-chain time (not `Date.now()`) so `evm_increaseTime` in tests takes
     // effect on the maturity check.
     const block = await publicClient.getBlock()
-    for (const [key, claimableAt] of [...queue.entries()]) {
+    for (const [key, claimableAt] of [...claimQueue.entries()]) {
       if (claimableAt > block.timestamp) continue
-      if (processed.has(key)) {
-        queue.delete(key)
+      if (claimProcessed.has(key)) {
+        claimQueue.delete(key)
         continue
       }
       await claimOne(BigInt(key))
     }
+  }
+
+  async function scanAndDrain() {
+    await scanEvents()
+    await drainCancels()
+    await drainAutoclaim()
   }
 
   let stopped = false
@@ -203,11 +279,11 @@ export async function runRelayer(argv: string[]) {
       await scanAndDrain()
     } catch (err) {
       const msg = (err as Error).message?.split('\n')[0].slice(0, 120) ?? ''
-      log(`tick error: ${msg}`)
+      log('relayer', `tick error: ${msg}`)
     }
     await sleep(pollMs)
   }
-  log('shutting down')
+  log('relayer', 'shutting down')
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

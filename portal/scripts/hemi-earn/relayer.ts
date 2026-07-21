@@ -281,7 +281,7 @@ export async function runRelayer(argv: string[]) {
       const msg = (err as Error).message?.split('\n')[0].slice(0, 120) ?? ''
       log('relayer', `tick error: ${msg}`)
     }
-    await sleep(pollMs)
+    if (!stopped) await sleep(pollMs)
   }
   log('relayer', 'shutting down')
 }

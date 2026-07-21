@@ -6,6 +6,7 @@ import { useTokenBalance } from 'hooks/useBalance'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
+import { isBalanceUnavailable } from 'utils/balance'
 import { isNativeToken } from 'utils/nativeToken'
 import { isEvmToken } from 'utils/token'
 import { formatUnits } from 'viem'
@@ -23,6 +24,7 @@ const skeletonContainerClassNames: Record<SkeletonWidth, string> = {
 
 export const RenderCryptoBalance = function ({
   balance,
+  fetchStatus,
   showSymbol = false,
   skeletonWidth = 'default',
   status,
@@ -31,7 +33,8 @@ export const RenderCryptoBalance = function ({
   balance: bigint | undefined
   showSymbol?: boolean
   skeletonWidth?: SkeletonWidth
-} & Pick<ReturnType<typeof useTokenBalance>, 'status'>) {
+} & Pick<ReturnType<typeof useTokenBalance>, 'status'> &
+  Partial<Pick<ReturnType<typeof useTokenBalance>, 'fetchStatus'>>) {
   if (balance !== undefined) {
     return (
       <DisplayAmount
@@ -41,7 +44,7 @@ export const RenderCryptoBalance = function ({
       />
     )
   }
-  if (status === 'error') {
+  if (isBalanceUnavailable({ fetchStatus, status })) {
     return <>-</>
   }
   return (
@@ -53,18 +56,31 @@ export const RenderCryptoBalance = function ({
 }
 
 const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
-  const { data, status } = useNativeBalance(token.chainId)
+  const { data, fetchStatus, status } = useNativeBalance(token.chainId)
   return (
-    <RenderCryptoBalance balance={data?.value} status={status} token={token} />
+    <RenderCryptoBalance
+      balance={data?.value}
+      fetchStatus={fetchStatus}
+      status={status}
+      token={token}
+    />
   )
 }
 
 const TokenBalance = function ({ token }: Props<EvmToken>) {
-  const { data: balance, status } = useTokenBalance(
-    token.chainId,
-    token.address,
+  const {
+    data: balance,
+    fetchStatus,
+    status,
+  } = useTokenBalance(token.chainId, token.address)
+  return (
+    <RenderCryptoBalance
+      balance={balance}
+      fetchStatus={fetchStatus}
+      status={status}
+      token={token}
+    />
   )
-  return <RenderCryptoBalance balance={balance} status={status} token={token} />
 }
 
 const EvmBalance = (props: Props<EvmToken>) =>
@@ -75,10 +91,11 @@ const EvmBalance = (props: Props<EvmToken>) =>
   )
 
 const BtcBalance = function ({ token }: Props<BtcToken>) {
-  const { balance, status } = useBitcoinBalance()
+  const { balance, fetchStatus, status } = useBitcoinBalance()
   return (
     <RenderCryptoBalance
       balance={balance?.confirmed ? BigInt(balance?.confirmed) : undefined}
+      fetchStatus={fetchStatus}
       status={status}
       token={token}
     />

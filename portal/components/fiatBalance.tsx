@@ -1,5 +1,5 @@
 import { useNativeBalance } from '@hemilabs/react-hooks/useNativeBalance'
-import { QueryStatus } from '@tanstack/react-query'
+import { type FetchStatus, type QueryStatus } from '@tanstack/react-query'
 import Big from 'big.js'
 import { useTokenBalance } from 'hooks/useBalance'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
@@ -7,6 +7,7 @@ import { useTokenPrices } from 'hooks/useTokenPrices'
 import { ComponentProps } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
+import { isBalanceUnavailable } from 'utils/balance'
 import { formatFiatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
 import { getTokenPrice, isEvmToken } from 'utils/token'
@@ -21,12 +22,14 @@ type Props<T extends Token = Token> = {
 const RenderFiatBalanceUnsafe = function ({
   balance,
   customFormatter = formatFiatNumber,
+  fetchStatus,
   queryStatus,
   token,
   usePrices = useTokenPrices,
 }: Props & {
   balance: bigint | undefined
   customFormatter?: (amount: string) => string
+  fetchStatus?: FetchStatus
   queryStatus: QueryStatus
   // The price feed to read from. Defaults to the app-wide portal feed;
   // callers that price against a different feed (e.g. Hemi Earn's
@@ -50,8 +53,10 @@ const RenderFiatBalanceUnsafe = function ({
     )
   }
 
-  // Check for errors from either source
-  if (queryStatus === 'error' || pricesStatus === 'error') {
+  if (
+    isBalanceUnavailable({ fetchStatus, status: queryStatus }) ||
+    pricesStatus === 'error'
+  ) {
     return <>-</>
   }
 
@@ -69,10 +74,11 @@ export const RenderFiatBalance = (
 )
 
 const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
-  const { data, status } = useNativeBalance(token.chainId)
+  const { data, fetchStatus, status } = useNativeBalance(token.chainId)
   return (
     <RenderFiatBalance
       balance={data?.value}
+      fetchStatus={fetchStatus}
       queryStatus={status}
       token={token}
     />
@@ -80,12 +86,18 @@ const NativeTokenBalance = function ({ token }: Props<EvmToken>) {
 }
 
 const TokenBalance = function ({ token }: Props<EvmToken>) {
-  const { data: balance, status } = useTokenBalance(
-    token.chainId,
-    token.address,
-  )
+  const {
+    data: balance,
+    fetchStatus,
+    status,
+  } = useTokenBalance(token.chainId, token.address)
   return (
-    <RenderFiatBalance balance={balance} queryStatus={status} token={token} />
+    <RenderFiatBalance
+      balance={balance}
+      fetchStatus={fetchStatus}
+      queryStatus={status}
+      token={token}
+    />
   )
 }
 
@@ -97,10 +109,11 @@ const EvmBalance = (props: Props<EvmToken>) =>
   )
 
 const BtcBalance = function ({ token }: Props<BtcToken>) {
-  const { balance, status } = useBitcoinBalance()
+  const { balance, fetchStatus, status } = useBitcoinBalance()
   return (
     <RenderFiatBalance
       balance={BigInt(balance?.confirmed ?? 0)}
+      fetchStatus={fetchStatus}
       queryStatus={status}
       token={token}
     />

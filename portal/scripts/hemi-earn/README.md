@@ -69,7 +69,7 @@ Flags are parsed by the handler of each subcommand.
 
 - `setup` — `--address` / `-a` (required), `--port` / `-p` (default `8545`), `--upstream-rpc` / `-u` (default `https://rpc.hemi.network/rpc`), `--fork-url` / `-f` (skips auto-start), `--deployer-pk` (default is Anvil's well-known account #0).
 - `mining` — `--seconds` / `-s` (default `6`, `0` returns to instant mining), `--fork-url` / `-f` (default `http://127.0.0.1:8545`).
-- `relayer` — `--router` / `-r` (required), `--agent` / `-a` (required) — both come from the address banner `setup` prints; `--fork-url` / `-f`, `--deployer-pk`, `--poll` (seconds between ticks, default `1`), `--disable-autoclaim` (observe events but skip the claim; simulates a downed keeper).
+- `relayer` — `--router` / `-r` (required), `--agent` / `-a` (required) — both come from the address banner `setup` prints; `--fork-url` / `-f`, `--deployer-pk`, `--poll` (seconds between ticks, default `1`), `--from-block N` (first block to backfill from, default `0` — full history), `--disable-autoclaim` (observe events but skip the claim; simulates a downed keeper).
 
 ## Cooldown
 
@@ -93,6 +93,8 @@ It's a **foreground daemon** — run it in its own terminal alongside the portal
 
 `--router` and `--agent` are required — copy them from the address banner `setup` prints. This avoids silent drift if the deploy sequence in `deployMocks.ts` ever changes.
 
+By default the relayer backfills from block 0, so unstake requests emitted **before** you started it are still picked up and claimed. Pass `--from-block N` to skip earlier history (rarely useful on a fresh sandbox, but handy if the anvil fork has a lot of pre-existing state).
+
 ```bash
 # Default poll (1s), watching the Router/Agent that setup printed
 pnpm --filter portal sandbox:hemi-earn -- relayer \
@@ -105,7 +107,7 @@ pnpm --filter portal sandbox:hemi-earn -- relayer \
   --fork-url http://127.0.0.1:8547
 
 # Observe UnstakeRequested but skip the claim — exercises the portal's
-# "Claim from vault" manual scape-hatch CTA (simulates keeper offline).
+# "Claim from vault" manual escape-hatch CTA (simulates keeper offline).
 pnpm --filter portal sandbox:hemi-earn -- relayer \
   --router 0x... --agent 0x... \
   --disable-autoclaim

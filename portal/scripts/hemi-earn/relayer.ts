@@ -38,8 +38,23 @@ function printUsage() {
     `  [--poll N]              poll interval in seconds (default ${DEFAULT_POLL_SECS})`,
   )
   console.error(
+    '  [--from-block N]        first block to scan for UnstakeRequested (default 0 — full backfill)',
+  )
+  console.error(
     '  [--disable-autoclaim]   observe UnstakeRequested but skip claim (keeper-offline sim)',
   )
+}
+
+function parseFromBlock(raw: string | undefined): bigint {
+  if (raw === undefined) return 0n
+  try {
+    const parsed = BigInt(raw)
+    if (parsed < 0n) throw new Error('negative')
+    return parsed
+  } catch {
+    printUsage()
+    return process.exit(1)
+  }
 }
 
 function parseRelayerArgs(argv: string[]) {
@@ -50,6 +65,7 @@ function parseRelayerArgs(argv: string[]) {
       'deployer-pk': { type: 'string' },
       'disable-autoclaim': { type: 'boolean' },
       'fork-url': { short: 'f', type: 'string' },
+      'from-block': { type: 'string' },
       'poll': { type: 'string' },
       'router': { short: 'r', type: 'string' },
     },
@@ -74,14 +90,22 @@ function parseRelayerArgs(argv: string[]) {
       (values['deployer-pk'] as Hex | undefined) ?? DEFAULT_DEPLOYER_PK,
     disableAutoclaim: values['disable-autoclaim'] === true,
     forkUrl: values['fork-url'] ?? DEFAULT_FORK_URL,
+    fromBlock: parseFromBlock(values['from-block']),
     pollMs: Math.round(pollSecs * 1000),
     router,
   }
 }
 
 export async function runRelayer(argv: string[]) {
-  const { agent, deployerPk, disableAutoclaim, forkUrl, pollMs, router } =
-    parseRelayerArgs(argv)
+  const {
+    agent,
+    deployerPk,
+    disableAutoclaim,
+    forkUrl,
+    fromBlock,
+    pollMs,
+    router,
+  } = parseRelayerArgs(argv)
   const { publicClient, walletClient } = await buildClients({
     deployerPk,
     forkUrl,
@@ -95,8 +119,9 @@ export async function runRelayer(argv: string[]) {
 
   const queue = new Map<string, bigint>()
   const processed = new Set<string>()
-  let lastBlock = await publicClient.getBlockNumber()
-  log(`starting from block ${lastBlock}`)
+  // fromBlock - 1n so the initial scan (fromBlock+1..head) starts at fromBlock.
+  let lastBlock = fromBlock === 0n ? -1n : fromBlock - 1n
+  log(`scanning from block ${fromBlock}`)
 
   function enqueue(id: bigint, claimableAt: bigint) {
     const key = id.toString()

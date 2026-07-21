@@ -12,6 +12,8 @@ import { Token } from 'types/token'
 import { Chevron } from '../icons/chevron'
 import { TokenLogo } from '../tokenLogo'
 
+import { TokenSymbol } from './tokenSymbol'
+
 const TokenListLoading = function () {
   const { width } = useWindowSize()
   const { height: viewportHeight } = useVisualViewportSize()
@@ -74,9 +76,10 @@ export const TokenSelector = function ({
         type="button"
       >
         <TokenLogo size="small" token={selectedToken} />
-        <span className="font-semibold text-neutral-950">
-          {selectedToken.symbol}
-        </span>
+        <TokenSymbol
+          className="font-semibold text-neutral-950"
+          symbol={selectedToken.symbol}
+        />
         {tokens.length > 1 && (
           <Chevron.Bottom className="ml-auto flex-shrink-0 [&>path]:fill-neutral-500 [&>path]:group-hover/token-selector:fill-neutral-950" />
         )}

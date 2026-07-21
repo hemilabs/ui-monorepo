@@ -19,7 +19,7 @@
     "@binance/w3w-rainbow-connector-v2": "1.0.6",
     "@formatjs/intl-durationformat": "0.7.4",
     "@hemilabs/react-hooks": "1.6.0",
-    "@hemilabs/token-list": "3.2.0",
+    "@hemilabs/token-list": "3.3.0",
     "@hemilabs/wallet-watch-asset": "1.0.2",
     "@rainbow-me/rainbowkit": "2.2.8",
     "@sentry/nextjs": "9.9.0",

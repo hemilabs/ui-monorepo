@@ -42,7 +42,7 @@ export function TokenLogo({ size, token, version = 'default' }: Props) {
     bitcoinToken.address
   if (isBtcNetworkId(token.chainId) || (isTestnet && isHemiBtc)) {
     return (
-      <div className={`relative ${sizes[size]}`}>
+      <div className={`relative shrink-0 ${sizes[size]}`}>
         <div className="flex size-full items-center justify-center">
           <BtcLogo className="size-full" />
         </div>
@@ -57,7 +57,7 @@ export function TokenLogo({ size, token, version = 'default' }: Props) {
       : token.logoURI
 
   return logoURI ? (
-    <div className={`relative ${sizes[size]}`}>
+    <div className={`relative shrink-0 ${sizes[size]}`}>
       <Image
         alt={`${token.symbol} Logo`}
         className="w-full"
@@ -67,7 +67,7 @@ export function TokenLogo({ size, token, version = 'default' }: Props) {
       />
     </div>
   ) : (
-    <div className={`relative ${sizes[size]}`}>
+    <div className={`relative shrink-0 ${sizes[size]}`}>
       <CustomTokenLogo size={size} token={token} />
     </div>
   )

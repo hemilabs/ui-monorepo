@@ -50,10 +50,11 @@ All sandbox actions are dispatched through a single pnpm script that forwards it
 pnpm --filter portal sandbox:hemi-earn -- <subcommand> [flags]
 ```
 
-| Subcommand | Purpose                                                                      |
-| ---------- | ---------------------------------------------------------------------------- |
-| `setup`    | Start Anvil + deploy mocks + fund the test account.                          |
-| `mining`   | Toggle Anvil's interval mining at runtime (see [Slow mining](#slow-mining)). |
+| Subcommand | Purpose                                                                                               |
+| ---------- | ----------------------------------------------------------------------------------------------------- |
+| `setup`    | Start Anvil + deploy mocks + fund the test account.                                                   |
+| `mining`   | Toggle Anvil's interval mining at runtime (see [Slow mining](#slow-mining)).                          |
+| `relayer`  | Emulate the production keeper: claim mature cooldown redeems automatically (see [Relayer](#relayer)). |
 
 Building blocks used by `setup` (`deployMocks.ts`, `fundAccount.ts`) are still invocable directly for advanced cases:
 
@@ -68,10 +69,11 @@ Flags are parsed by the handler of each subcommand.
 
 - `setup` — `--address` / `-a` (required), `--port` / `-p` (default `8545`), `--upstream-rpc` / `-u` (default `https://rpc.hemi.network/rpc`), `--fork-url` / `-f` (skips auto-start), `--deployer-pk` (default is Anvil's well-known account #0).
 - `mining` — `--seconds` / `-s` (default `6`, `0` returns to instant mining), `--fork-url` / `-f` (default `http://127.0.0.1:8545`).
+- `relayer` — `--router` / `-r` (required), `--agent` / `-a` (required) — both come from the address banner `setup` prints; `--fork-url` / `-f`, `--deployer-pk`, `--poll` (seconds between ticks, default `1`), `--disable-autoclaim` (observe events but skip the claim; simulates a downed keeper).
 
 ## Cooldown
 
-The setup script enables cooldown on the staking vault with a 1-day duration, exercising the 2-step withdraw flow (request + claim after cooldown) by default.
+The setup script enables cooldown on the staking vault with a 1-day duration, exercising the 2-step withdraw flow (request + claim after cooldown) by default. The claim step is dispatched by the production keeper; locally, run the [`relayer`](#relayer) subcommand alongside the portal to reproduce that behavior.
 
 ## Slow mining
 
@@ -81,6 +83,32 @@ Slow-block mining is useful for reproducing intermediate UI states (pending tx s
 pnpm --filter portal sandbox:hemi-earn -- mining --seconds 6   # a block every 6s
 pnpm --filter portal sandbox:hemi-earn -- mining --seconds 3   # a block every 3s
 pnpm --filter portal sandbox:hemi-earn -- mining --seconds 0   # back to instant
+```
+
+## Relayer
+
+The production Hemi Earn keeper watches the Agent for `UnstakeRequested` events and calls `claimUnstake(requestId)` once the on-chain `claimableAt` matures. Without it, redeems that fall on the cooldown branch stall at `COOLDOWN_MATURE` and the portal's step 2 never fires. The `relayer` subcommand ports that keeper for the local sandbox.
+
+It's a **foreground daemon** — run it in its own terminal alongside the portal and stop it with `Ctrl+C`. Uses the on-chain block timestamp (not `Date.now()`) so `evm_increaseTime` in tests takes effect on the maturity check.
+
+`--router` and `--agent` are required — copy them from the address banner `setup` prints. This avoids silent drift if the deploy sequence in `deployMocks.ts` ever changes.
+
+```bash
+# Default poll (1s), watching the Router/Agent that setup printed
+pnpm --filter portal sandbox:hemi-earn -- relayer \
+  --router 0x8a791620dd6260079bf849dc5567adc3f2fdc318 \
+  --agent 0x2279b7a0a67db372996a5fab50d91eaa73d2ebe6
+
+# Point at a different fork URL
+pnpm --filter portal sandbox:hemi-earn -- relayer \
+  --router 0x... --agent 0x... \
+  --fork-url http://127.0.0.1:8547
+
+# Observe UnstakeRequested but skip the claim — exercises the portal's
+# "Claim from vault" manual scape-hatch CTA (simulates keeper offline).
+pnpm --filter portal sandbox:hemi-earn -- relayer \
+  --router 0x... --agent 0x... \
+  --disable-autoclaim
 ```
 
 ## Mock contracts

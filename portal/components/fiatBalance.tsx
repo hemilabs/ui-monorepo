@@ -7,9 +7,9 @@ import { useTokenPrices } from 'hooks/useTokenPrices'
 import { ComponentProps } from 'react'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
-import { isBalanceUnavailable } from 'utils/balance'
 import { formatFiatNumber } from 'utils/format'
 import { isNativeToken } from 'utils/nativeToken'
+import { isDataUnavailable } from 'utils/queryStatus'
 import { getTokenPrice, isEvmToken } from 'utils/token'
 import { formatUnits } from 'viem'
 
@@ -36,7 +36,11 @@ const RenderFiatBalanceUnsafe = function ({
   // oracle-merged `useEarnTokenPrices`) inject their own hook.
   usePrices?: typeof useTokenPrices
 }) {
-  const { data: pricesData, status: pricesStatus } = usePrices({
+  const {
+    data: pricesData,
+    fetchStatus: pricesFetchStatus,
+    status: pricesStatus,
+  } = usePrices({
     retryOnMount: false,
   })
 
@@ -54,8 +58,8 @@ const RenderFiatBalanceUnsafe = function ({
   }
 
   if (
-    isBalanceUnavailable({ fetchStatus, status: queryStatus }) ||
-    pricesStatus === 'error'
+    isDataUnavailable({ fetchStatus, status: queryStatus }) ||
+    isDataUnavailable({ fetchStatus: pricesFetchStatus, status: pricesStatus })
   ) {
     return <>-</>
   }

@@ -6,8 +6,8 @@ import { useTokenBalance } from 'hooks/useBalance'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
 import Skeleton from 'react-loading-skeleton'
 import { type BtcToken, type EvmToken, type Token } from 'types/token'
-import { isBalanceUnavailable } from 'utils/balance'
 import { isNativeToken } from 'utils/nativeToken'
+import { isDataUnavailable } from 'utils/queryStatus'
 import { isEvmToken } from 'utils/token'
 import { formatUnits } from 'viem'
 
@@ -44,7 +44,7 @@ export const RenderCryptoBalance = function ({
       />
     )
   }
-  if (isBalanceUnavailable({ fetchStatus, status })) {
+  if (isDataUnavailable({ fetchStatus, status })) {
     return <>-</>
   }
   return (

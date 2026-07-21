@@ -94,7 +94,9 @@ const BtcBalance = function ({ token }: Props<BtcToken>) {
   const { balance, fetchStatus, status } = useBitcoinBalance()
   return (
     <RenderCryptoBalance
-      balance={balance?.confirmed ? BigInt(balance?.confirmed) : undefined}
+      balance={
+        balance?.confirmed !== undefined ? BigInt(balance.confirmed) : undefined
+      }
       fetchStatus={fetchStatus}
       status={status}
       token={token}

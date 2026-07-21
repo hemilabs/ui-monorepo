@@ -112,7 +112,9 @@ const BtcBalance = function ({ token }: Props<BtcToken>) {
   const { balance, fetchStatus, status } = useBitcoinBalance()
   return (
     <RenderFiatBalance
-      balance={BigInt(balance?.confirmed ?? 0)}
+      balance={
+        balance?.confirmed !== undefined ? BigInt(balance.confirmed) : undefined
+      }
       fetchStatus={fetchStatus}
       queryStatus={status}
       token={token}

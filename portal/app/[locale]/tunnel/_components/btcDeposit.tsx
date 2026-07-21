@@ -1,5 +1,6 @@
 'use client'
 
+import { useDebounce } from '@hemilabs/react-hooks/useDebounce'
 import { useAccounts } from 'hooks/useAccounts'
 import { useBitcoin } from 'hooks/useBitcoin'
 import { useBitcoinBalance } from 'hooks/useBitcoinBalance'
@@ -95,7 +96,8 @@ export const BtcDeposit = function ({ state }: BtcDepositProps) {
     isMinDepositsSatsLoading,
   })
 
-  const amountBigInt = parseTokenUnits(fromInput, fromToken)
+  const debouncedFromInput = useDebounce(fromInput, 300)
+  const amountBigInt = parseTokenUnits(debouncedFromInput, fromToken)
 
   const {
     btcDepositFee,

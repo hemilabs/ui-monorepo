@@ -14,7 +14,7 @@ export const InformationBox = ({ actions, icon, subtitle, title }: Props) => (
         {icon}
       </div>
       <div className="max-w-4/5 flex flex-col items-center text-center">
-        <h4 className="text-sm font-semibold">{title}</h4>
+        <h4 className="mb-0.5 text-sm font-semibold">{title}</h4>
         <p className="text-sm text-neutral-500">{subtitle}</p>
       </div>
     </div>

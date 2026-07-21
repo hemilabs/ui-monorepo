@@ -2,7 +2,7 @@
 
 import { Button } from 'components/button'
 import { WalletIcon } from 'components/icons/walletIcon'
-import { TableEmptyState } from 'components/tableEmptyState'
+import { InformationBox } from 'components/informationBox'
 import { useDrawerContext } from 'hooks/useDrawerContext'
 import { useUmami } from 'hooks/useUmami'
 import { useTranslations } from 'next-intl'
@@ -18,8 +18,8 @@ export const ConnectWallet = function () {
   }
 
   return (
-    <TableEmptyState
-      action={
+    <InformationBox
+      actions={
         <Button onClick={onClick} size="xSmall" type="button">
           {t('common.connect-wallet')}
         </Button>

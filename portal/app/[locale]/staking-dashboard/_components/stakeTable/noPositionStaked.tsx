@@ -1,6 +1,6 @@
 'use client'
 
-import { TableEmptyState } from 'components/tableEmptyState'
+import { InformationBox } from 'components/informationBox'
 import { useHemiToken } from 'hooks/useHemiToken'
 import { useTranslations } from 'next-intl'
 
@@ -26,14 +26,6 @@ export function NoPositionStaked({
     : t('get-started', { symbol })
 
   return (
-    <TableEmptyState
-      icon={
-        <div className="flex size-8 items-center justify-center rounded-full bg-orange-50">
-          <EmptyIcon />
-        </div>
-      }
-      subtitle={subtitle}
-      title={title}
-    />
+    <InformationBox icon={<EmptyIcon />} subtitle={subtitle} title={title} />
   )
 }

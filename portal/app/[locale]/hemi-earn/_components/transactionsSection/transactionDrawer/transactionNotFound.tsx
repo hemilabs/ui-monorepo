@@ -3,7 +3,7 @@
 import { Button } from 'components/button'
 import { useDrawerAnimatedClose } from 'components/drawer'
 import { InboxIcon } from 'components/icons/inboxIcon'
-import { TableEmptyState } from 'components/tableEmptyState'
+import { InformationBox } from 'components/informationBox'
 import { useTranslations } from 'next-intl'
 
 export const TransactionNotFound = function ({
@@ -16,8 +16,8 @@ export const TransactionNotFound = function ({
   const requestClose = useDrawerAnimatedClose() ?? onClose
   return (
     <div className="drawer-content h-[80dvh] md:h-full">
-      <TableEmptyState
-        action={
+      <InformationBox
+        actions={
           <Button onClick={requestClose} size="xSmall" type="button">
             {tCommon('close')}
           </Button>

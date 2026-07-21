@@ -1,9 +1,18 @@
 {
   "compilerOptions": {
-    "erasableSyntaxOnly": true,
-    "noEmit": true
-  },
-  "extends": "@tsconfig/node24/tsconfig.json",
-  "exclude": ["node_modules", ".envio"],
-  "include": ["src/**/*.ts", "tests/**/*.ts", "envio-env.d.ts"]
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "strict": false,
+    "noImplicitOverride": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "lib": ["es2022"],
+    "types": ["node"]
+  }
 }

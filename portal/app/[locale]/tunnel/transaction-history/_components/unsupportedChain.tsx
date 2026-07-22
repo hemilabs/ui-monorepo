@@ -1,18 +1,12 @@
 import { Button } from 'components/button'
-import { TableEmptyState } from 'components/tableEmptyState'
+import { InformationBox } from 'components/informationBox'
 import { useHemi } from 'hooks/useHemi'
 import { useTranslations } from 'next-intl'
 import { orange600 } from 'styles'
 import { useSwitchChain } from 'wagmi'
 
 const Icon = () => (
-  <svg
-    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-    fill="none"
-    height={32}
-    width={32}
-    xmlns="http://www.w3.org/2000/svg"
-  >
+  <svg fill="none" height={32} width={32} xmlns="http://www.w3.org/2000/svg">
     <g filter="url(#icon_def_filter_a)">
       <path
         clipRule="evenodd"
@@ -54,8 +48,8 @@ export const UnsupportedChain = function () {
   const t = useTranslations()
 
   return (
-    <TableEmptyState
-      action={
+    <InformationBox
+      actions={
         <Button
           onClick={() => switchChain({ chainId: hemi.id })}
           size="xSmall"

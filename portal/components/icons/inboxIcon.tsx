@@ -9,13 +9,7 @@ export const InboxIcon = function () {
   const filterId = useId()
   const innerShadowId = useId()
   return (
-    <svg
-      className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-      fill="none"
-      height={20}
-      width={20}
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg fill="none" height={20} width={20} xmlns="http://www.w3.org/2000/svg">
       <g filter={`url(#${filterId})`}>
         <path
           clipRule="evenodd"

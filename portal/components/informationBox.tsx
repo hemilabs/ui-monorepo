@@ -1,0 +1,23 @@
+import { ReactNode } from 'react'
+
+type Props = {
+  actions?: ReactNode
+  icon: ReactNode
+  subtitle: string
+  title: string
+}
+
+export const InformationBox = ({ actions, icon, subtitle, title }: Props) => (
+  <div className="flex size-full flex-col items-center justify-center gap-y-4">
+    <div className="flex flex-col items-center gap-y-3">
+      <div className="flex size-8 items-center justify-center overflow-hidden rounded-full bg-orange-50">
+        {icon}
+      </div>
+      <div className="flex flex-col items-center text-center">
+        <h4 className="mb-0.5">{title}</h4>
+        <p className="text-neutral-500">{subtitle}</p>
+      </div>
+    </div>
+    {actions ? <div className="flex gap-x-3">{actions}</div> : null}
+  </div>
+)

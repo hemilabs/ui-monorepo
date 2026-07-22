@@ -6,7 +6,10 @@ import { useStakeTokens } from 'hooks/useStakeTokens'
 import { Suspense } from 'react'
 import { isStakeEnabledOnTestnet } from 'utils/stake'
 
-import { useDrawerStakeQueryString } from '../_hooks/useDrawerStakeQueryString'
+import {
+  isDrawerMode,
+  useDrawerStakeQueryString,
+} from '../_hooks/useDrawerStakeQueryString'
 
 import { ManageStake } from './manageStake'
 import { StakeDisabledTestnet } from './stakeDisabledTestnet'
@@ -16,7 +19,7 @@ const SideDrawer = function () {
     useDrawerStakeQueryString()
   const stakeTokens = useStakeTokens()
 
-  if (!tokenAddress || !drawerMode) {
+  if (!tokenAddress || !isDrawerMode(drawerMode)) {
     return null
   }
 

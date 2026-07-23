@@ -497,5 +497,6 @@ describe('Agent receives', () => {
     const req = await ti.Request.getOrThrow('63')
     expect(req.amountIn).toBe(1000n) // Router value kept, not clobbered to 999n
     expect(req.amountOut).toBe(12n)
+    expect(req.stakedAmount).toBe(999n) // pegged staked into the vault
   })
 })

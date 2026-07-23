@@ -14,7 +14,7 @@ A deposit/redeem is a request that spans two contracts on two chains:
 Every event carries the same `requestId`. That `requestId` is the `Request` entity id, so each event upserts the **same** entity — it is created as a partial view by whichever chain is indexed first and progressively filled in by later events from either chain (see `src/mappings/eventHandlers.ts`). Cross-chain ordering uses Envio's default
 ordered multichain mode, and `status` is guarded so it never regresses.
 
-The resulting `Request` entity (see `schema.graphql`) holds who/what (`initiator`, `receiver`, `asset`, `kind`), the amounts (`amountIn`, `amountOut`), the lifecycle `status`, and per-milestone timestamps/tx hashes.
+The resulting `Request` entity (see `schema.graphql`) holds who/what (`initiator`, `receiver`, `asset`, `kind`), the amounts (`amountIn`, `amountOut`, and the pegged `stakedAmount` used as the earned-value cost basis), the lifecycle `status`, and per-milestone timestamps/tx hashes.
 
 ### `initiator` caveat
 

@@ -3,9 +3,9 @@ import { toPromiseEvent } from 'to-promise-event'
 import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
-import { getHemiEarnRouterAddress } from '../../constants'
-import { routerAbi } from '../../routerAbi'
-import type { ClaimRedeemEvents } from '../../types'
+import { getHemiEarnRouterAddress } from '../../constants.ts'
+import { routerAbi } from '../../routerAbi.ts'
+import type { ClaimRedeemEvents } from '../../types.ts'
 
 const runClaimRedeem = ({
   account,

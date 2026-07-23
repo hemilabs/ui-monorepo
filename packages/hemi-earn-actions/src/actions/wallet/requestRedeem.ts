@@ -4,10 +4,10 @@ import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 
-import { getHemiEarnRouterAddress } from '../../constants'
-import { routerAbi } from '../../routerAbi'
-import type { RequestRedeemEvents } from '../../types'
-import { quoteRedeem } from '../public/quoteRedeem'
+import { getHemiEarnRouterAddress } from '../../constants.ts'
+import { routerAbi } from '../../routerAbi.ts'
+import type { RequestRedeemEvents } from '../../types.ts'
+import { quoteRedeem } from '../public/quoteRedeem.ts'
 
 const canRequestRedeem = function ({
   shares,

@@ -7,8 +7,8 @@ import {
   writeContract,
 } from 'viem/actions'
 
-import { agentAbi } from '../../agentAbi'
-import type { CancelRequestEvents } from '../../types'
+import { agentAbi } from '../../agentAbi.ts'
+import type { CancelRequestEvents } from '../../types.ts'
 
 const runCancelRequest = ({
   account,

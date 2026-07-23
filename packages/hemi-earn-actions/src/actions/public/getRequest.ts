@@ -1,9 +1,9 @@
 import type { Address, Client } from 'viem'
 import { readContract } from 'viem/actions'
 
-import { getHemiEarnRouterAddress } from '../../constants'
-import { routerAbi } from '../../routerAbi'
-import type { RequestKind, RequestStatus } from '../../types'
+import { getHemiEarnRouterAddress } from '../../constants.ts'
+import { routerAbi } from '../../routerAbi.ts'
+import type { RequestKind, RequestStatus } from '../../types.ts'
 
 export type Request = {
   amountOutMin: bigint

@@ -7,7 +7,7 @@ import {
 } from 'viem'
 import { readContract } from 'viem/actions'
 
-import { agentAbi } from '../../agentAbi'
+import { agentAbi } from '../../agentAbi.ts'
 
 // Native fee the Agent needs to send its redeem fulfillment back to Hemi; the caller
 // folds it into requestRedeem's msg.value via quoteRedeem.

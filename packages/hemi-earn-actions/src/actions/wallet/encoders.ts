@@ -1,6 +1,6 @@
 import { type Address, encodeFunctionData } from 'viem'
 
-import { routerAbi } from '../../routerAbi'
+import { routerAbi } from '../../routerAbi.ts'
 
 const encodeRouterRequestIdCall = (
   functionName:

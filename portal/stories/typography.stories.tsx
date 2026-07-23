@@ -49,7 +49,7 @@ export const Headers: Story = {
       <Row name="H3" size="17/24">
         <h3>{SAMPLE}</h3>
       </Row>
-      <Row name="H4" size="13/18">
+      <Row name="H4" size="13/20">
         <h4>{SAMPLE}</h4>
       </Row>
     </>

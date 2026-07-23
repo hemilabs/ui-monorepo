@@ -9,9 +9,9 @@ import {
 } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 
-import { getHemiEarnRouterAddress } from '../../constants'
-import { routerAbi } from '../../routerAbi'
-import type { CancelRedeemEvents } from '../../types'
+import { getHemiEarnRouterAddress } from '../../constants.ts'
+import { routerAbi } from '../../routerAbi.ts'
+import type { CancelRedeemEvents } from '../../types.ts'
 
 // Caller must be the request operator. Router.cancel only emits CancellationRequested;
 // a keeper's Agent.cancel returns the shares (→ CANCELLED), then the user calls recoverRedeem.

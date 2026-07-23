@@ -13,12 +13,12 @@ export {
   quoteRedeem,
   quoteRedeemFulfillment,
   resolveIsInstant,
-} from './public'
-export { cancelRedeem } from './wallet/cancelRedeem'
-export { cancelRequest } from './wallet/cancelRequest'
-export { claimDeposit } from './wallet/claimDeposit'
-export { claimRedeem } from './wallet/claimRedeem'
-export { claimUnstake } from './wallet/claimUnstake'
+} from './public/index.ts'
+export { cancelRedeem } from './wallet/cancelRedeem.ts'
+export { cancelRequest } from './wallet/cancelRequest.ts'
+export { claimDeposit } from './wallet/claimDeposit.ts'
+export { claimRedeem } from './wallet/claimRedeem.ts'
+export { claimUnstake } from './wallet/claimUnstake.ts'
 export {
   encodeClaimDeposit,
   encodeClaimRedeem,
@@ -26,9 +26,9 @@ export {
   encodeRecoverRedeem,
   encodeRequestDeposit,
   encodeRequestRedeem,
-} from './wallet/encoders'
-export { recoverDeposit } from './wallet/recoverDeposit'
-export { recoverRedeem } from './wallet/recoverRedeem'
-export { requestDeposit } from './wallet/requestDeposit'
-export { requestRedeem } from './wallet/requestRedeem'
-export { retryRequest } from './wallet/retryRequest'
+} from './wallet/encoders.ts'
+export { recoverDeposit } from './wallet/recoverDeposit.ts'
+export { recoverRedeem } from './wallet/recoverRedeem.ts'
+export { requestDeposit } from './wallet/requestDeposit.ts'
+export { requestRedeem } from './wallet/requestRedeem.ts'
+export { retryRequest } from './wallet/retryRequest.ts'

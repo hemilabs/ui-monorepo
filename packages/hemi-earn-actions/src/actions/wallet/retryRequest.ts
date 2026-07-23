@@ -7,8 +7,8 @@ import {
   writeContract,
 } from 'viem/actions'
 
-import { agentAbi } from '../../agentAbi'
-import type { RetryRequestEvents } from '../../types'
+import { agentAbi } from '../../agentAbi.ts'
+import type { RetryRequestEvents } from '../../types.ts'
 
 const runRetryRequest = ({
   account,

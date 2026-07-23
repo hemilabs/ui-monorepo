@@ -9,8 +9,8 @@ import {
 } from 'viem'
 import { readContract } from 'viem/actions'
 
-import { getHemiEarnRouterAddress } from '../../constants'
-import { routerAbi } from '../../routerAbi'
+import { getHemiEarnRouterAddress } from '../../constants.ts'
+import { routerAbi } from '../../routerAbi.ts'
 
 // The LayerZero peer is a left-padded bytes32; the Agent address is its trailing 20 bytes.
 export const getAgentAddress = async function (

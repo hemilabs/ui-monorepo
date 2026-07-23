@@ -7,8 +7,8 @@ import {
   writeContract,
 } from 'viem/actions'
 
-import { agentAbi } from '../../agentAbi'
-import type { ClaimUnstakeEvents } from '../../types'
+import { agentAbi } from '../../agentAbi.ts'
+import type { ClaimUnstakeEvents } from '../../types.ts'
 
 const runClaimUnstake = ({
   account,

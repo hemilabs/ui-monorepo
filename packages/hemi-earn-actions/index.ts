@@ -1,7 +1,7 @@
 export {
   HEMI_EARN_ROUTER_ADDRESS,
   getHemiEarnRouterAddress,
-} from './src/constants'
+} from './src/constants.ts'
 
 export type {
   CancelRedeemEvents,
@@ -16,4 +16,4 @@ export type {
   RequestRedeemEvents,
   RequestStatus,
   RetryRequestEvents,
-} from './src/types'
+} from './src/types.ts'

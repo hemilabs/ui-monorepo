@@ -4,10 +4,10 @@ import type { Address, TransactionReceipt, WalletClient } from 'viem'
 import { waitForTransactionReceipt, writeContract } from 'viem/actions'
 import { allowance, approve, balanceOf } from 'viem-erc20/actions'
 
-import { getHemiEarnRouterAddress } from '../../constants'
-import { routerAbi } from '../../routerAbi'
-import type { RequestDepositEvents } from '../../types'
-import { quoteDeposit } from '../public/quoteDeposit'
+import { getHemiEarnRouterAddress } from '../../constants.ts'
+import { routerAbi } from '../../routerAbi.ts'
+import type { RequestDepositEvents } from '../../types.ts'
+import { quoteDeposit } from '../public/quoteDeposit.ts'
 
 const canRequestDeposit = async function ({
   account,

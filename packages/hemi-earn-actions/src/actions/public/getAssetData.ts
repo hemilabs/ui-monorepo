@@ -7,8 +7,8 @@ import {
 } from 'viem'
 import { readContract } from 'viem/actions'
 
-import { getHemiEarnRouterAddress } from '../../constants'
-import { routerAbi } from '../../routerAbi'
+import { getHemiEarnRouterAddress } from '../../constants.ts'
+import { routerAbi } from '../../routerAbi.ts'
 
 export type AssetData = {
   enabled: boolean

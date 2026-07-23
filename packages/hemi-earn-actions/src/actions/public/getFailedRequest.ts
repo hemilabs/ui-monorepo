@@ -8,7 +8,7 @@ import {
 } from 'viem'
 import { readContract } from 'viem/actions'
 
-import { agentAbi } from '../../agentAbi'
+import { agentAbi } from '../../agentAbi.ts'
 
 export type FailedRequest = {
   amountIn: bigint

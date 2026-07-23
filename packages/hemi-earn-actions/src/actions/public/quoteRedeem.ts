@@ -1,8 +1,8 @@
 import { type Address, type Client, isAddressEqual, zeroAddress } from 'viem'
 import { readContract } from 'viem/actions'
 
-import { getHemiEarnRouterAddress } from '../../constants'
-import { routerAbi } from '../../routerAbi'
+import { getHemiEarnRouterAddress } from '../../constants.ts'
+import { routerAbi } from '../../routerAbi.ts'
 
 export const quoteRedeem = async function ({
   asset,

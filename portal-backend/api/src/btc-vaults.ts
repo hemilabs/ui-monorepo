@@ -1,4 +1,5 @@
 import { esploraClient } from 'esplora-client'
+import { hemi, hemiSepolia } from 'hemi-viem'
 import {
   getBitcoinChainLastHeader,
   getBitcoinCustodyAddress,
@@ -9,9 +10,7 @@ import {
   getVaultByIndex,
   getVaultCounter,
   getVaultStatus,
-  hemi,
-  hemiSepolia,
-} from 'hemi-viem'
+} from 'hemi-viem/actions'
 import { type Address, createPublicClient, http, type PublicClient } from 'viem'
 
 function getHemiClient(chainId: string) {

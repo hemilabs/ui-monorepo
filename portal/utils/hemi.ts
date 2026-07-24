@@ -4,10 +4,11 @@ import {
   acknowledgedDeposits,
   calculateDepositFee,
   calculateWithdrawalFee,
+  getTransactionByTxId,
+  getTxConfirmations,
   isBitcoinWithdrawalChallenged,
   isBitcoinWithdrawalFulfilled,
 } from 'hemi-viem/actions'
-import { getTransactionByTxId, getTxConfirmations } from 'hemi-viem/actions'
 import { bitcoinTunnelManagerAbi } from 'hemi-viem/contracts'
 import { HemiWalletClient } from 'hooks/useHemiClient'
 import {

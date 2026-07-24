@@ -6,7 +6,7 @@ export const Header = ({
   text: string
 }) => (
   <span
-    className={`block py-3 text-left font-semibold text-neutral-600 ${className}`}
+    className={`flex h-10 items-center text-left font-medium text-neutral-500 ${className}`}
   >
     {text}
   </span>

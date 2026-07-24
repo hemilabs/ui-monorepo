@@ -25,20 +25,20 @@ export const LockupTime = function ({ lockupTime, status, tokenId }: Props) {
   const renderApr = function () {
     if (apr !== undefined) {
       return (
-        <span className="text-xs font-normal text-emerald-600">
+        <span className="body-text-caption text-emerald-600">
           {t('apr', { percentage: formatNumber(apr) })}
         </span>
       )
     }
     if (error) {
-      return <span className="text-xs font-normal text-neutral-500">-</span>
+      return <span className="body-text-caption text-neutral-500">-</span>
     }
     return <Skeleton className="h-4 w-16" />
   }
 
   return (
     <div className="flex flex-col">
-      <span className="text-neutral-500">
+      <span className="text-neutral-950">
         <DurationTime seconds={seconds} />
       </span>
       {renderApr()}

@@ -41,7 +41,7 @@ export const VotingPower = function ({ amount, tokenId }: Props) {
       <span className="text-sm font-medium text-neutral-950">
         <DisplayAmount amount={formattedPower} token={veHemiToken} />
       </span>
-      <span className="text-xs font-normal text-neutral-500">
+      <span className="body-text-caption text-neutral-500">
         {formatPercentage(percentageOfMax)}
       </span>
     </div>

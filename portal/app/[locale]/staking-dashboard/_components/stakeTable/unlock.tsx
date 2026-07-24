@@ -65,7 +65,7 @@ export function Unlock({ operation, unlockDate }: Props) {
             {t('table.burned')}
           </span>
         </div>
-        <span className="text-xs font-normal text-neutral-500">
+        <span className="body-text-caption text-neutral-500">
           {t('table.on', {
             date: formatDate(unlockDate, locale),
           })}
@@ -83,7 +83,7 @@ export function Unlock({ operation, unlockDate }: Props) {
 
   return (
     <div className="mr-0.5">
-      <Button disabled={isUnlocking} onClick={handleUnlock} size="small">
+      <Button disabled={isUnlocking} onClick={handleUnlock} size="xxSmall">
         {t('table.unlock')}
       </Button>
     </div>

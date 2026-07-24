@@ -1,5 +1,8 @@
-import { DisplayAmount } from 'components/displayAmount'
+import { TokenLogo } from 'components/tokenLogo'
+import { Tooltip } from 'components/tooltip'
+import { useTranslations } from 'next-intl'
 import { EvmToken } from 'types/token'
+import { formatNumber } from 'utils/format'
 import { formatUnits } from 'viem'
 
 import { useCalculateRewards } from '../_hooks/useCalculateRewards'
@@ -9,7 +12,13 @@ type Props = {
   tokenId: bigint
 }
 
-function RewardRow({ token, tokenId }: { token: EvmToken; tokenId: bigint }) {
+function RewardAmount({
+  token,
+  tokenId,
+}: {
+  token: EvmToken
+  tokenId: bigint
+}) {
   const { data, isLoading } = useCalculateRewards({
     rewardToken: token.address,
     token,
@@ -20,20 +29,40 @@ function RewardRow({ token, tokenId }: { token: EvmToken; tokenId: bigint }) {
     isLoading || data === undefined ? '0' : formatUnits(data, token.decimals)
 
   return (
-    <div className="space-x-1 text-sm font-medium text-neutral-950">
-      <DisplayAmount amount={formattedAmount} token={token} />
+    <div className="flex items-center gap-x-1 text-sm font-medium text-white">
+      <TokenLogo size="xSmall" token={token} />
+      <span>{`${formatNumber(formattedAmount)} ${token.symbol}`}</span>
     </div>
   )
 }
 
 export function RewardsDisplay({ tokenId }: Props) {
+  const t = useTranslations('staking-dashboard.table')
   const { tokens: rewardTokens } = useRewardTokens()
 
   return (
-    <div className="space-y-1">
-      {rewardTokens.map(item => (
-        <RewardRow key={item.address} token={item} tokenId={tokenId} />
-      ))}
-    </div>
+    <Tooltip
+      text={
+        <div className="flex flex-col gap-y-1">
+          {rewardTokens.map(token => (
+            <RewardAmount key={token.address} token={token} tokenId={tokenId} />
+          ))}
+        </div>
+      }
+      variant="rich"
+    >
+      <div className="flex flex-col items-start gap-y-0.5">
+        <div className="flex -space-x-1">
+          {rewardTokens.map(token => (
+            <div className="rounded-full ring-2 ring-white" key={token.address}>
+              <TokenLogo size="xSmall" token={token} />
+            </div>
+          ))}
+        </div>
+        <span className="body-text-caption text-neutral-500">
+          {t('rewards-available', { count: rewardTokens.length })}
+        </span>
+      </div>
+    </Tooltip>
   )
 }

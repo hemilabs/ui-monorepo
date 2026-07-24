@@ -104,7 +104,7 @@ describe('replayCostBasis', function () {
     expect(positions.size).toBe(0)
   })
 
-  it('skips a deposit missing its stakedAmount (accrues nothing)', function () {
+  it('tracks shares but no cost basis for a deposit missing its stakedAmount', function () {
     const positions = replayCostBasis(
       [
         {
@@ -117,6 +117,33 @@ describe('replayCostBasis', function () {
       ],
       shareByAsset,
     )
-    expect(positions.get(SHARE_A)).toEqual({ costBasis: 0n, shares: 0n })
+    // Shares counted (so later redeems divide by the true balance), but the
+    // unknown staked amount adds no cost basis — it reads as pure profit.
+    expect(positions.get(SHARE_A)).toEqual({ costBasis: 0n, shares: 50n })
+  })
+
+  it('reduces cost basis against the full balance when a deposit lacks stakedAmount', function () {
+    // Known deposit (100 basis / 100 shares) + unknown-basis deposit (50 shares),
+    // then burn 60 of the 150 total. The reduction must divide by 150, not 100 —
+    // otherwise the known cost basis is wiped out too fast.
+    const positions = replayCostBasis(
+      [
+        deposit(ASSET_A1, '100', '100'),
+        {
+          amountIn: null,
+          amountOut: '50',
+          asset: ASSET_A1,
+          kind: 'DEPOSIT' as const,
+          stakedAmount: null,
+        },
+        redeem(ASSET_A1, '60'),
+      ],
+      shareByAsset,
+    )
+    // 100*WAD * (150 - 60) / 150 = 60*WAD
+    expect(positions.get(SHARE_A)).toEqual({
+      costBasis: 60n * WAD,
+      shares: 90n,
+    })
   })
 })

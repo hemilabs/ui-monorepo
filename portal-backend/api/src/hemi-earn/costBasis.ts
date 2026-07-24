@@ -48,7 +48,7 @@ const resolveShareByAsset = function (asset: string) {
       // A zero share means the asset isn't registered — fail loudly instead of
       // silently mis-keying the cost basis to the zero address.
       if (resolved === zeroAddress) {
-        throw new Error(`assetsData returned no share for asset ${asset}`)
+        throw new Error(`getAssetData returned a zero share for asset ${asset}`)
       }
       return resolved
     })
@@ -68,8 +68,9 @@ type GetEarnCostBasisQueryResponse = GraphResponse<{ Request: CostBasisRow[] }>
  * Computes a user's per-vault Hemi Earn cost basis by replaying their processed
  * requests. Filtered by `receiver` (the holder of the shares) — unlike
  * `getEarnRequests`, which follows `initiator` — because the earned card values
- * what the user holds. Keyed by the Hemi share OFT (== the portal shareAddress),
- * value in pegged base units (decimal string).
+ * what the user holds. Keyed by the Hemi share OFT (== the portal shareAddress);
+ * the value is a decimal string on the base-unit scale, which may be fractional
+ * after proportional redeems (WAD precision) — so it is not `BigInt`-safe.
  *
  * Known limitation: only Router deposits/redeems are replayed, so peer-to-peer
  * share-OFT transfers are not tracked — shares acquired outside a deposit read

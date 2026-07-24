@@ -497,6 +497,9 @@ importers:
       express:
         specifier: 5.1.0
         version: 5.1.0
+      hemi-earn-actions:
+        specifier: workspace:*
+        version: link:../../packages/hemi-earn-actions
       hemi-viem:
         specifier: 2.6.1
         version: 2.6.1(viem@2.28.4(patch_hash=09896f5ef2ef7a197f087a06a5883ca11ba310873fcdd6d8e104581845a51cf9)(bufferutil@4.1.0)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76))
@@ -552,6 +555,9 @@ importers:
       typescript:
         specifier: 5.8.3
         version: 5.8.3
+      vitest:
+        specifier: 4.1.6
+        version: 4.1.6(@opentelemetry/api@1.9.1)(@types/node@24.10.2)(vite@7.3.2(@types/node@24.10.2)(jiti@2.7.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.9.0))
 
   portal-backend/cron/hemi-supply:
     dependencies:

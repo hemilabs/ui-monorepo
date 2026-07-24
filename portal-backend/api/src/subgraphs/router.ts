@@ -162,9 +162,7 @@ function parseQueryParams(
 const getStaked = (chainIdStr: string) =>
   getTotalStaked(Number(chainIdStr)).then(staked => ({ staked }))
 
-// `_chainIdStr` is unused but must stay the first param — toJsonMiddleware passes
-// the route params positionally, so `address` needs to land as the second arg.
-const getCostBasis = (_chainIdStr: string, address: string) =>
+const getCostBasis = (_: string, address: string) =>
   getEarnCostBasis({ address: address as Address }).then(costBasis => ({
     costBasis,
   }))

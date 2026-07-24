@@ -19,9 +19,6 @@ import type { EarnCostBasis } from '../subgraphs/types/earn.ts'
 
 import { type CostBasisRow, WAD_DECIMALS, replayCostBasis } from './replay.ts'
 
-// Lazily created and reused across cost-basis lookups so the Hemi client is only
-// built when the endpoint is hit. Chain-default RPC with batching, matching how
-// the ve-hemi module consumes its package actions.
 let hemiEarnRpcClient: PublicClient | undefined
 const getHemiEarnRpcClient = function () {
   if (!hemiEarnRpcClient) {

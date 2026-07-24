@@ -16,9 +16,7 @@ export type CostBasisRow = {
 
 type Position = { costBasis: bigint; shares: bigint }
 
-// Fixed precision factor, NOT any token's decimals: the cost basis is scaled up
-// by WAD so the integer proportional-redeem division keeps sub-unit precision.
-// Callers divide back out by the same WAD_DECIMALS.
+// WAD scaling for the proportional-redeem division; not a token's decimals.
 export const WAD_DECIMALS = 18
 const WAD = 10n ** BigInt(WAD_DECIMALS)
 

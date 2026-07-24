@@ -50,6 +50,14 @@ export type SubgraphRequest = EarnRequestCommonFields & {
   status: SubgraphRequestStatus
 }
 
+// Per-vault cost basis for a user, as returned by
+// `GET /subgraphs/:chainId/earn-cost-basis/:address`. Keyed by the Hemi share
+// OFT (lowercased, == the portal's `EarnPosition.shareAddress`); the value is
+// the pegged-token cost basis in base units (decimal string, WAD precision
+// preserved). The portal subtracts it from `convertToAssets(shares)` to derive
+// "Total earned".
+export type EarnCostBasis = Record<Address, string>
+
 // One Hemi Earn cross-chain request, as returned by
 // `GET /subgraphs/:chainId/earn-requests/:address`. Shape mirrors the
 // portal's `EarnTransaction` type (minus the localStorage-only fields).

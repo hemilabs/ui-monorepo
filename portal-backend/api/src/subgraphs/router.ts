@@ -3,6 +3,7 @@ import type { NextFunction, Request, Response } from 'express'
 import type { Address } from 'viem'
 import { hemi, hemiSepolia, mainnet, sepolia } from 'viem/chains'
 
+import { getEarnCostBasis } from '../hemi-earn/costBasis.ts'
 import { toJsonMiddleware } from '../to-middleware.ts'
 import type { ChainIdPathParams, ReqData } from '../types.ts'
 
@@ -161,6 +162,13 @@ function parseQueryParams(
 const getStaked = (chainIdStr: string) =>
   getTotalStaked(Number(chainIdStr)).then(staked => ({ staked }))
 
+// `_chainIdStr` is unused but must stay the first param — toJsonMiddleware passes
+// the route params positionally, so `address` needs to land as the second arg.
+const getCostBasis = (_chainIdStr: string, address: string) =>
+  getEarnCostBasis({ address: address as Address }).then(costBasis => ({
+    costBasis,
+  }))
+
 export function createSubgraphsRouter() {
   // eslint-disable-next-line new-cap -- express.Router is a factory, not a constructor
   const router = express.Router()
@@ -272,6 +280,18 @@ export function createSubgraphsRouter() {
     validateAddress,
     validateChainIsHemiMainnet,
     getEarnRequestsHandler,
+  )
+
+  router.get(
+    '/:chainIdStr/earn-cost-basis/:address',
+    parseChainId,
+    validateAddress,
+    validateChainIsHemiMainnet,
+    toJsonMiddleware(getCostBasis, {
+      maxAge: 30 * 1000,
+      resolver: (chainIdStr, address) =>
+        `${chainIdStr}-${String(address).toLowerCase()}`,
+    }),
   )
 
   return router

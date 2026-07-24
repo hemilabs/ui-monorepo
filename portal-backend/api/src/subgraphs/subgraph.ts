@@ -32,7 +32,7 @@ type Schema = {
 
 type SuccessResponse<T> = { data: T }
 type ErrorResponse = { errors: { message: string }[] }
-type GraphResponse<T> = SuccessResponse<T> | ErrorResponse
+export type GraphResponse<T> = SuccessResponse<T> | ErrorResponse
 
 type ConfigType = typeof import('../../config/default.json')
 
@@ -86,7 +86,7 @@ const getTunnelSubgraphUrl = function (chainId: Chain['id']) {
  * @param response The GraphQL response to check
  * @throws UpstreamGraphQLError if the response contains errors
  */
-function checkGraphQLErrors<T>(
+export function checkGraphQLErrors<T>(
   response: GraphResponse<T>,
 ): asserts response is SuccessResponse<T> {
   // Check if response has errors
@@ -733,7 +733,7 @@ const toEarnRequestRow = (row: SubgraphRequest): EarnRequestRow => ({
 // Envio HyperIndex uses Bearer-token auth. Header is only added when an
 // API key is configured so local dev against an unauthenticated indexer
 // (Hasura at `localhost:8080`) keeps working.
-function requestHemiEarn<TResponse>(schema: Schema): Promise<TResponse> {
+export function requestHemiEarn<TResponse>(schema: Schema): Promise<TResponse> {
   const { apiKey, apiUrl } = subgraphConfig.hemiEarnRequests
   if (!apiUrl) {
     throw new UpstreamGraphQLError(
@@ -761,7 +761,7 @@ function requestHemiEarn<TResponse>(schema: Schema): Promise<TResponse> {
  * page's rows.
  * @param pageSize Rows to request per page. Defaults to 100.
  */
-const paginateHemiEarnSubgraph = async function <TRow>({
+export const paginateHemiEarnSubgraph = async function <TRow>({
   fetchPage,
   pageSize = 100,
 }: {

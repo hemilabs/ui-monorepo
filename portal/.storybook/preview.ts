@@ -3,8 +3,12 @@ import { interDisplay, interVariable } from 'fonts/index'
 import { createElement } from 'react'
 import { SkeletonTheme } from 'react-loading-skeleton'
 
-import 'styles/globals.css'
+// Import skeleton.css before globals.css so Tailwind utilities (e.g. w-16) win
+// over `.react-loading-skeleton { width: 100% }`. layout.tsx imports them the
+// other way, but Next reorders the compiled bundle to this effective order;
+// Storybook keeps the literal order, so we replicate the app's cascade here.
 import 'react-loading-skeleton/dist/skeleton.css'
+import 'styles/globals.css'
 
 const preview: Preview = {
   // Mirror the app root layout: expose the Inter font CSS variables (so

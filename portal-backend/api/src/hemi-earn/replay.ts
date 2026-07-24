@@ -29,11 +29,18 @@ const applyDeposit = function (
   position: Position,
   row: CostBasisRow,
 ): Position {
-  const staked = row.stakedAmount ?? null
   const minted = row.amountOut ?? null
-  if (staked === null || minted === null) return position
+  // No shares minted (deposit not processed yet) → nothing to accrue.
+  if (minted === null) return position
+  const staked = row.stakedAmount ?? null
   return {
-    costBasis: position.costBasis + BigInt(staked) * WAD,
+    // Always track the minted shares so a later redeem's proportional reduction
+    // divides by the true balance. Only accrue cost basis when the staked amount
+    // is known; an unknown one reads as pure profit.
+    costBasis:
+      staked === null
+        ? position.costBasis
+        : position.costBasis + BigInt(staked) * WAD,
     shares: position.shares + BigInt(minted),
   }
 }

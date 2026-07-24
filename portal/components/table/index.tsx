@@ -47,7 +47,7 @@ const TableHeader = <TData,>({
   width,
 }: TableHeaderProps<TData>) => (
   <div
-    className={`rounded-t-xl bg-neutral-100 pb-1.5 ${
+    className={`rounded-t-lg bg-neutral-100 pb-1.5 shadow-bs ${
       hasVerticalBodyScrollbar && width >= smallBreakpoint ? 'pr-2.5' : ''
     }`}
   >
@@ -226,7 +226,7 @@ function StaticTableBody<TData>({
     <div
       className={
         bodyContainerClassName ??
-        '-mt-1.5 mb-1 overflow-hidden rounded-xl bg-white shadow-md'
+        '-mt-1.5 mb-1 overflow-hidden rounded-lg bg-white shadow-sm'
       }
     >
       <div

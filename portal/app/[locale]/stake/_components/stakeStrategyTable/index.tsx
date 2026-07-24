@@ -101,10 +101,11 @@ export const StakeStrategyTable = function ({ data, loading }: Props) {
   )
 
   return (
-    <div className="w-full rounded-xl text-sm font-medium">
-      <div className="h-[56dvh] overflow-hidden md:min-h-136">
+    <div className="w-full text-sm font-medium">
+      <div className="h-[56dvh] md:min-h-136">
         <Table
           columns={cols}
+          containerClassName="flex h-full flex-col"
           data={data}
           loading={loading}
           priorityColumnIdsOnSmall={['action']}

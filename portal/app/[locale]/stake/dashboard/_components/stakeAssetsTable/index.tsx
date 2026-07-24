@@ -4,6 +4,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { ButtonLink } from 'components/button'
 import { Table } from 'components/table'
 import { Header } from 'components/table/_components/header'
+import { TableCard } from 'components/table/tableCard'
 import { TokenLogo } from 'components/tokenLogo'
 import { useNetworkType } from 'hooks/useNetworkType'
 import { usePathnameWithoutLocale } from 'hooks/usePathnameWithoutLocale'
@@ -155,21 +156,25 @@ export const StakeAssetsTable = function () {
 
   const cols = useMemo(() => stakeColumns({ t }), [t])
 
+  const isEmpty = tokensWithPosition.length === 0 && !isLoading
+
   return (
-    <div className="w-full rounded-xl text-sm font-medium">
-      <div className="h-[56dvh] overflow-hidden md:min-h-136">
-        <Table
-          columns={cols}
-          data={sortedTokens}
-          loading={isLoading}
-          onRowClick={handleRowClick}
-          placeholder={
-            tokensWithPosition.length === 0 && (
-              <WelcomeStake href={`/${stakeMoreUrl}`} onClick={goToStakePage} />
-            )
-          }
-          priorityColumnIdsOnSmall={['action']}
-        />
+    <div className="w-full text-sm font-medium">
+      <div className="h-[56dvh] md:min-h-136">
+        {isEmpty ? (
+          <TableCard>
+            <WelcomeStake href={`/${stakeMoreUrl}`} onClick={goToStakePage} />
+          </TableCard>
+        ) : (
+          <Table
+            columns={cols}
+            containerClassName="flex h-full flex-col"
+            data={sortedTokens}
+            loading={isLoading}
+            onRowClick={handleRowClick}
+            priorityColumnIdsOnSmall={['action']}
+          />
+        )}
       </div>
     </div>
   )

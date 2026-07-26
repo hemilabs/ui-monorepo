@@ -257,7 +257,7 @@ indexer.onEvent(
         kind: existing.kind ?? 'DEPOSIT',
         processedAt: BigInt(event.block.timestamp),
         processTxHash: event.transaction.hash,
-        stakedAmount: existing.stakedAmount ?? event.params.staked, // pegged staked into the vault
+        stakedAmount: event.params.staked, // pegged staked into the vault
       }),
       requestId: event.params.requestId,
     }),

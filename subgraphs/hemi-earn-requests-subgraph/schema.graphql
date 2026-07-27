@@ -35,11 +35,12 @@ type Request {
   processedAt: BigInt
   processTxHash: String
   receivedAt: BigInt
-  receiver: String
+  receiver: String @index # indexed: cost basis is looked up per receiver
   recoverTxHash: String
   requestedAt: BigInt
   requestId: BigInt!
   requestTxHash: String
   retryCount: Int!
+  stakedAmount: BigInt
   status: RequestStatus!
 }

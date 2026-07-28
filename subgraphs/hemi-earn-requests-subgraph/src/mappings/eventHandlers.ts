@@ -11,6 +11,8 @@ import type { EvmOnEventContext, Request } from 'envio'
 
 const lc = (address: string): string => address.toLowerCase()
 
+const zeroAddress = '0x0000000000000000000000000000000000000000'
+
 // A fully-defaulted Request, so partial-view creation is identical from either
 // chain. Optional schema fields default to `undefined`; required fields get a
 // concrete default.
@@ -222,6 +224,28 @@ indexer.onEvent(
       }),
       requestId: event.params.requestId,
     }),
+)
+
+// ---------------------------------------------------------------------------
+// Share OFT (Hemi) — genuine peer-to-peer transfers for FMV cost basis.
+// ---------------------------------------------------------------------------
+
+indexer.onEvent(
+  { contract: 'ShareToken', event: 'Transfer' },
+  async function ({ context, event }) {
+    const from = lc(event.params.from)
+    const to = lc(event.params.to)
+    // Skip mints and burns. Router in-transit legs pass through and are deduped
+    if (from === zeroAddress || to === zeroAddress) return
+    context.ShareTransfer.set({
+      from,
+      id: `${event.transaction.hash}-${event.logIndex}`,
+      share: lc(event.srcAddress),
+      timestamp: BigInt(event.block.timestamp),
+      to,
+      value: event.params.value,
+    })
+  },
 )
 
 // ---------------------------------------------------------------------------

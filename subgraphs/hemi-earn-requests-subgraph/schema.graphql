@@ -44,3 +44,14 @@ type Request {
   stakedAmount: BigInt
   status: RequestStatus!
 }
+
+# Share transfers minus mints and burns. Router in-transit legs are NOT excluded
+# here (the Router address isn't available to an Envio handler) — deduped later.
+type ShareTransfer {
+  from: String! @index
+  id: ID!
+  share: String!
+  timestamp: BigInt!
+  to: String! @index
+  value: BigInt!
+}

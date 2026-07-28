@@ -19,6 +19,14 @@ chains:
           - event: 'CancellationRequested(uint256 indexed requestId)'
         handler: src/mappings/eventHandlers.ts
         name: Router
+      # Share OFTs on Hemi
+      - address:
+          - '0xfe875CC86cC6BC2E93ab330D6b2c408C3Cd79710' # sVUSD share OFT on Hemi.
+          - '0xD8D63De3b64bd06d99F8F5AD8B78Ed2fE7525eC0' # svetBTC share OFT on Hemi.
+        events:
+          - event: 'Transfer(address indexed from, address indexed to, uint256 value)'
+        handler: src/mappings/eventHandlers.ts
+        name: ShareToken
     id: 43111
     # Hemi is NOT served by Envio HyperSync (43111.hypersync.xyz 404s), so the
     # Router is indexed over RPC (`for: sync` makes RPC the data source for both

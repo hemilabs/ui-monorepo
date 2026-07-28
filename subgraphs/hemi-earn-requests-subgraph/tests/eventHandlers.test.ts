@@ -18,6 +18,8 @@ const ASSET = mockAddresses[0]
 const RECEIVER = mockAddresses[1]
 const SENDER = mockAddresses[2]
 const SHARE = mockAddresses[3]
+const zeroAddress = '0x0000000000000000000000000000000000000000'
+const ROUTER = '0x8a23df259c6798f9eacc51ae816461218c3acddc'
 
 let ti: ReturnType<typeof createTestIndexer>
 beforeEach(() => {
@@ -498,5 +500,60 @@ describe('Agent receives', () => {
     expect(req.amountIn).toBe(1000n) // Router value kept, not clobbered to 999n
     expect(req.amountOut).toBe(12n)
     expect(req.stakedAmount).toBe(999n) // pegged staked into the vault
+  })
+})
+
+describe('ShareToken transfers', () => {
+  const leg = (
+    hash: string,
+    logIndex: number,
+    from: `0x${string}`,
+    to: `0x${string}`,
+  ) => ({
+    block: { number: HEMI_START, timestamp: 1_700_000_000 },
+    contract: 'ShareToken' as const,
+    event: 'Transfer' as const,
+    logIndex,
+    params: { from, to, value: 1n },
+    srcAddress: SHARE,
+    transaction: { from: SENDER, hash },
+  })
+
+  it('stores a wallet-to-wallet transfer', async () => {
+    await onChain(HEMI, [
+      {
+        block: { number: HEMI_START, timestamp: 1_700_000_000 },
+        contract: 'ShareToken',
+        event: 'Transfer',
+        logIndex: 5,
+        params: { from: SENDER, to: RECEIVER, value: 1000n },
+        srcAddress: SHARE,
+        transaction: { from: SENDER, hash: '0xtransfer' },
+      },
+    ])
+
+    const transfer = await ti.ShareTransfer.getOrThrow('0xtransfer-5')
+    expect(transfer.from).toBe(SENDER.toLowerCase())
+    expect(transfer.to).toBe(RECEIVER.toLowerCase())
+    expect(transfer.value).toBe(1000n)
+    expect(transfer.share).toBe(SHARE.toLowerCase())
+    expect(transfer.timestamp).toBe(1_700_000_000n)
+  })
+
+  it('skips mints and burns', async () => {
+    await onChain(HEMI, [
+      leg('0xmint', 0, zeroAddress, RECEIVER),
+      leg('0xburn', 1, SENDER, zeroAddress),
+    ])
+
+    expect(await ti.ShareTransfer.get('0xmint-0')).toBeUndefined()
+    expect(await ti.ShareTransfer.get('0xburn-1')).toBeUndefined()
+  })
+
+  it('keeps Router in-transit legs (deduped downstream)', async () => {
+    await onChain(HEMI, [leg('0xrouterleg', 2, ROUTER, RECEIVER)])
+
+    const stored = await ti.ShareTransfer.getOrThrow('0xrouterleg-2')
+    expect(stored.from).toBe(ROUTER.toLowerCase())
   })
 })

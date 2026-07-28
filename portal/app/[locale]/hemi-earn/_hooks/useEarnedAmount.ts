@@ -65,8 +65,7 @@ export const useEarnedAmount = function () {
   const isError =
     isPositionsError ||
     (hasPositions && (isPricesError || isCostBasisError)) ||
-    (peggedAmountQueries.length > 0 &&
-      peggedAmountQueries.every(q => q.isError))
+    peggedAmountQueries.some(q => q.isError)
 
   return { data: { totalUsd }, isError, isPending }
 }

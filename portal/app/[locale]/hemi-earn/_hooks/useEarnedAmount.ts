@@ -1,17 +1,72 @@
 'use client'
 
-import { useQuery } from '@tanstack/react-query'
-import { useNetworkType } from 'hooks/useNetworkType'
+import { useQueries } from '@tanstack/react-query'
+import Big from 'big.js'
+import { getTokenPrice } from 'utils/token'
 
-// TODO: placeholder mock — returns $0 until the earned-amount data source is available.
+import { sharesToPeggedOptions } from '../_fetchers/fetchSharesToPegged'
+import { clampEarnedUsd, positionEarnedUsd } from '../_utils/earnedAmount'
+
+import { useEarnCostBasis } from './useEarnCostBasis'
+import { useEarnPositions } from './useEarnPositions'
+import { useEarnTokenPrices } from './useEarnTokenPrices'
+
+// Total earned = Σ (convertToAssets(shares) − cost basis) per position, priced.
+// Cost basis (Vetro-parity, unrealized) comes from the earn-cost-basis endpoint;
+// the current value reuses the same shares→pegged→USD path as useTotalDeposits.
 export const useEarnedAmount = function () {
-  const [networkType] = useNetworkType()
+  const {
+    data: positions = [],
+    isError: isPositionsError,
+    isPending: isPositionsPending,
+  } = useEarnPositions()
+  const {
+    data: prices,
+    isError: isPricesError,
+    isPending: isPricesPending,
+  } = useEarnTokenPrices({ retryOnMount: false })
+  const {
+    data: costBasis,
+    isError: isCostBasisError,
+    isLoading: isCostBasisLoading,
+  } = useEarnCostBasis()
 
-  const { data, isError, isPending } = useQuery<{ totalUsd: number }>({
-    queryFn: () =>
-      new Promise(resolve => setTimeout(() => resolve({ totalUsd: 0 }), 2000)),
-    queryKey: ['hemi-earn', 'earned-amount', networkType],
+  const peggedAmountQueries = useQueries({
+    queries: positions.map(position =>
+      sharesToPeggedOptions({
+        shareAddress: position.shareAddress,
+        shares: position.yourDeposit,
+      }),
+    ),
   })
 
-  return { data, isError, isPending }
+  const total = positions.reduce(function (acc, position, index) {
+    const currentPegged = peggedAmountQueries[index]?.data?.peggedAmount
+
+    if (costBasis === undefined || currentPegged === undefined) return acc
+    return acc.plus(
+      positionEarnedUsd({
+        costBasisBaseUnits:
+          costBasis[position.shareAddress.toLowerCase()] ?? '0',
+        currentPegged,
+        decimals: position.peggedToken.decimals,
+        price: prices ? getTokenPrice(position.peggedToken, prices) : '0',
+      }),
+    )
+  }, Big(0))
+
+  const totalUsd = clampEarnedUsd(total).toFixed(2)
+
+  const hasPositions = positions.length > 0
+  const isPending =
+    isPositionsPending ||
+    (hasPositions && (isPricesPending || isCostBasisLoading)) ||
+    peggedAmountQueries.some(q => q.isPending && q.isFetching)
+  const isError =
+    isPositionsError ||
+    (hasPositions && (isPricesError || isCostBasisError)) ||
+    (peggedAmountQueries.length > 0 &&
+      peggedAmountQueries.every(q => q.isError))
+
+  return { data: { totalUsd }, isError, isPending }
 }

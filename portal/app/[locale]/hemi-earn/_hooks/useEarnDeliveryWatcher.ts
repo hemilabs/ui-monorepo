@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react'
 import { type Address, getAddress, isAddressEqual } from 'viem'
 import { useAccount } from 'wagmi'
 
+import { earnCostBasisKeyPrefix } from '../_fetchers/fetchEarnCostBasis'
 import { earnPositionsKeyPrefix } from '../_fetchers/fetchEarnPositions'
 import {
   type HemiEarnAssetConfig,
@@ -120,6 +121,8 @@ function invalidateOnDelivery(
   // resetQueries both evicts the cache (so fetchEarnPositions' ensureQueryData refetches)
   // and refetches the mounted observer; removeQueries + invalidateQueries doesn't do both in v5.
   queryClient.resetQueries({ queryKey: earnPositionsKeyPrefix })
+  // Refetch the earned card too: a delivered deposit/redeem changed the cost basis.
+  queryClient.invalidateQueries({ queryKey: earnCostBasisKeyPrefix })
 }
 
 // Mount exactly once per route group; extra mounts duplicate the side-effect work (RQ dedupes the fetch, not the effect).
